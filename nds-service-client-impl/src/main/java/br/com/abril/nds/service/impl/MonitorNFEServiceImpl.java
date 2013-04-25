@@ -616,7 +616,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		
 		for(ProdutoServico produtoServico : produtosSevicos) {
 			
-			String unidade = produtoServico.getUnidade();
+//			String unidade = produtoServico.getUnidade();
 					
 			codigoProduto 		= produtoServico.getCodigoProduto().toString();
 			descricaoProduto 	= produtoServico.getDescricaoProduto();

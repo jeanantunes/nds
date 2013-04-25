@@ -28,6 +28,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaFormaPagamento;
@@ -375,8 +376,10 @@ public interface CotaRepository extends Repository<Cota, Long> {
 
 	boolean cotaVinculadaCotaBase(Long idCota);
 	
-	List<Integer> verificarNumeroCotaExiste(Integer...cotaIdArray);
+	public List<Integer> numeroCotaExiste(TipoDistribuicaoCota tipoDistribuicaoCota, Integer... cotaIdArray);
 	
 	Cota obterCotaComBaseReferencia(Long idCota);
+
+	TipoDistribuicaoCota obterTipoDistribuicaoCotaPorNumeroCota(Integer numeroCota);
 	
 }

@@ -200,28 +200,28 @@ var parametrosDistribuidorController = $.extend(true, {
 			//Grid Classificacao Cota
 			{name:'parametrosDistribuidor.listClassificacaoCota[0].id', value: $('#listClassificacaoCota0\\.id').val()},
 			{name:'parametrosDistribuidor.listClassificacaoCota[0].codigoClassificacaoCota', value: $('#listClassificacaoCota0\\.codigoClassificacaoCota').val()},
-			{name:'parametrosDistribuidor.listClassificacaoCota[0].valorDe', value: $('#listClassificacaoCota0\\.valorDe').val()},
-			{name:'parametrosDistribuidor.listClassificacaoCota[0].valorAte', value:$('#listClassificacaoCota0\\.valorAte').val()},
+			{name:'parametrosDistribuidor.listClassificacaoCota[0].valorDe', value: $('#listClassificacaoCota0\\.valorDe').val().replace(/^.*\s|\./g, '').replace(/,/g, '.')},
+			{name:'parametrosDistribuidor.listClassificacaoCota[0].valorAte', value:$('#listClassificacaoCota0\\.valorAte').val().replace(/^.*\s|\./g, '').replace(/,/g, '.')},
 			
 			{name:'parametrosDistribuidor.listClassificacaoCota[1].id', value: $('#listClassificacaoCota1\\.id').val()},
 			{name:'parametrosDistribuidor.listClassificacaoCota[1].codigoClassificacaoCota', value: $('#listClassificacaoCota1\\.codigoClassificacaoCota').val()},
-			{name:'parametrosDistribuidor.listClassificacaoCota[1].valorDe', value: $('#listClassificacaoCota1\\.valorDe').val()},
-			{name:'parametrosDistribuidor.listClassificacaoCota[1].valorAte', value:$('#listClassificacaoCota1\\.valorAte').val()},
+			{name:'parametrosDistribuidor.listClassificacaoCota[1].valorDe', value: $('#listClassificacaoCota1\\.valorDe').val().replace(/^.*\s|\./g, '').replace(/,/g, '.')},
+			{name:'parametrosDistribuidor.listClassificacaoCota[1].valorAte', value:$('#listClassificacaoCota1\\.valorAte').val().replace(/^.*\s|\./g, '').replace(/,/g, '.')},
 			
 			{name:'parametrosDistribuidor.listClassificacaoCota[2].id', value: $('#listClassificacaoCota2\\.id').val()},
 			{name:'parametrosDistribuidor.listClassificacaoCota[2].codigoClassificacaoCota', value: $('#listClassificacaoCota2\\.codigoClassificacaoCota').val()},
-			{name:'parametrosDistribuidor.listClassificacaoCota[2].valorDe', value: $('#listClassificacaoCota2\\.valorDe').val()},
-			{name:'parametrosDistribuidor.listClassificacaoCota[2].valorAte', value:$('#listClassificacaoCota2\\.valorAte').val()},
+			{name:'parametrosDistribuidor.listClassificacaoCota[2].valorDe', value: $('#listClassificacaoCota2\\.valorDe').val().replace(/^.*\s|\./g, '').replace(/,/g, '.')},
+			{name:'parametrosDistribuidor.listClassificacaoCota[2].valorAte', value:$('#listClassificacaoCota2\\.valorAte').val().replace(/^.*\s|\./g, '').replace(/,/g, '.')},
 			
 			{name:'parametrosDistribuidor.listClassificacaoCota[3].id', value: $('#listClassificacaoCota3\\.id').val()},
 			{name:'parametrosDistribuidor.listClassificacaoCota[3].codigoClassificacaoCota', value: $('#listClassificacaoCota3\\.codigoClassificacaoCota').val()},
-			{name:'parametrosDistribuidor.listClassificacaoCota[3].valorDe', value: $('#listClassificacaoCota3\\.valorDe').val()},
-			{name:'parametrosDistribuidor.listClassificacaoCota[3].valorAte', value:$('#listClassificacaoCota3\\.valorAte').val()},
+			{name:'parametrosDistribuidor.listClassificacaoCota[3].valorDe', value: $('#listClassificacaoCota3\\.valorDe').val().replace(/^.*\s|\./g, '').replace(/,/g, '.')},
+			{name:'parametrosDistribuidor.listClassificacaoCota[3].valorAte', value:$('#listClassificacaoCota3\\.valorAte').val().replace(/^.*\s|\./g, '').replace(/,/g, '.')},
 			
 			{name:'parametrosDistribuidor.listClassificacaoCota[4].id', value: $('#listClassificacaoCota4\\.id').val()},
 			{name:'parametrosDistribuidor.listClassificacaoCota[4].codigoClassificacaoCota', value: $('#listClassificacaoCota4\\.codigoClassificacaoCota').val()},
-			{name:'parametrosDistribuidor.listClassificacaoCota[4].valorDe', value: $('#listClassificacaoCota4\\.valorDe').val()},
-			{name:'parametrosDistribuidor.listClassificacaoCota[4].valorAte', value:$('#listClassificacaoCota4\\.valorAte').val()},
+			{name:'parametrosDistribuidor.listClassificacaoCota[4].valorDe', value: $('#listClassificacaoCota4\\.valorDe').val().replace(/^.*\s|\./g, '').replace(/,/g, '.')},
+			{name:'parametrosDistribuidor.listClassificacaoCota[4].valorAte', value:$('#listClassificacaoCota4\\.valorAte').val().replace(/^.*\s|\./g, '').replace(/,/g, '.')},
 			
 			//Grid Percentual Excedente
 			{name:'parametrosDistribuidor.listPercentualExcedente[0].id', value: $('#listPercentualExcedente0\\.id').val()},
@@ -283,12 +283,28 @@ var parametrosDistribuidorController = $.extend(true, {
 	    var vendaMediaMais = $('#vendaMediaMais', this.workspace).val();
 	    var percentualMaximoFixacao = $('#percentualMaximoFixacao', this.workspace).val();
 	    
+	    var eficiencia0 = parseInt($('#listPercentualExcedente0\\.venda', this.workspace).val()) + parseInt($('#listPercentualExcedente0\\.pdv', this.workspace).val());
+	    var eficiencia1 = parseInt($('#listPercentualExcedente1\\.venda', this.workspace).val()) + parseInt($('#listPercentualExcedente1\\.pdv', this.workspace).val());
+	    var eficiencia2 = parseInt($('#listPercentualExcedente2\\.venda', this.workspace).val()) + parseInt($('#listPercentualExcedente2\\.pdv', this.workspace).val());
+	    
 	    if(vendaMediaMais > 10 || vendaMediaMais < 0) {
 		arrayMensagemWarning.push("- \'Venda Média +\' deve ser de 0 a 10!");
 	    }
 		
 	    if(percentualMaximoFixacao > 75 || percentualMaximoFixacao < 1) {
 		arrayMensagemWarning.push("- \'% Máximo de Fixação\' deve ser de 1% a 75%!");
+	    }
+	    
+	    if(eficiencia0 != 100) {
+		arrayMensagemWarning.push("- '\> 60 %\' deve ter o total da soma igual a 100%!");
+	    }
+	    
+	    if(eficiencia1 != 100) {
+		arrayMensagemWarning.push("- '\> 30% a 60%\' deve ter o total da soma igual a 100%!");
+	    }
+	    
+	    if(eficiencia2 != 100) {
+		arrayMensagemWarning.push("- '\0% a 30%\' deve ter o total da soma igual a 100%!");
 	    }
 	    
 	    if(arrayMensagemWarning.length > 0) {
@@ -631,27 +647,58 @@ var parametrosDistribuidorController = $.extend(true, {
 		.add('#listClassificacaoCota3\\.valorAte', this.workspace)
 		.add('#listClassificacaoCota4\\.valorDe', this.workspace)
 		.add('#listClassificacaoCota4\\.valorAte', this.workspace)
-		.maskMoney({
-			 thousands:'.', 
-			 decimal:',' 
-		});
+		.on('blur', function() {
+			$(this).formatCurrency({
+	        	symbol: 'R$ ',
+	        	decimalSymbol: ',',
+	        	digitGroupSymbol: '.'
+	    	});
+
+		})
+		.formatCurrency({
+        	symbol: 'R$ ',
+        	decimalSymbol: ',',
+        	digitGroupSymbol: '.'
+    	});
 		
 		if ($('#listClassificacaoCota4\\.valorDe', this.workspace).val() === '') {
-			$('#listClassificacaoCota4\\.valorDe', this.workspace).val('0.00');
+			$('#listClassificacaoCota4\\.valorDe', this.workspace).val('0.00').formatCurrency({
+	        	symbol: 'R$ ',
+	        	decimalSymbol: ',',
+	        	digitGroupSymbol: '.'
+        	});
 		}
 		
-		$('#listClassificacaoCota0\\.valorAte', this.workspace)
-		.add('#listClassificacaoCota1\\.valorAte', this.workspace)
-		.add('#listClassificacaoCota2\\.valorAte', this.workspace)
+		$('#listClassificacaoCota1\\.valorAte', this.workspace)
+		.on('blur', function(){
+		    if (this.value) {
+		        $('#listClassificacaoCota0\\.valorAte', this.workspace)
+		        .val(this.value)
+		        .formatCurrency({
+		        	symbol: 'R$ ',
+		        	decimalSymbol: ',',
+		        	digitGroupSymbol: '.'
+	        	});
+		    }
+		});
+		
+		$('#listClassificacaoCota2\\.valorAte', this.workspace)
 		.add('#listClassificacaoCota3\\.valorAte', this.workspace)
 		.add('#listClassificacaoCota4\\.valorAte', this.workspace)
 		.on('blur', function(){
 		    if (this.value) {
-		        var intIdValorDe = parseInt(this.id.match(/\d/), 10) - 1;
+		        var intId = parseInt(this.id.match(/\d/), 10);
+				var intIdValorDe = intId - 1;
 		        var campoValorDe = $('#listClassificacaoCota' + intIdValorDe + '\\.valorDe');
-		        var numValorAte = parseFloat(this.value.replace(/\./g, '').replace(/,/, '.'));
-		        campoValorDe.val((numValorAte + 0.01).toFixed(2)).maskMoney('mask');
-//		        console.log(numValorAte,campoValorDe.val());
+		        var numValorAte = parseFloat(this.value.replace(/\D/g,'')) / 100;
+		        campoValorDe.val((numValorAte + 0.01).toFixed(2)).formatCurrency({
+		        	symbol: 'R$ ',
+		        	decimalSymbol: ',',
+		        	digitGroupSymbol: '.'
+	        	});
+		        if (intId === 2) {
+		        	$('#listClassificacaoCota0\\.valorDe').val(campoValorDe.val());
+		        }
 		    }
 		});
 		

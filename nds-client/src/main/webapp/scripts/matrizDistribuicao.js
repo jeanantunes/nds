@@ -10,6 +10,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.instancia = descInstancia;
 	this.lancamentos = [];
 	this.isCliquePesquisar;
+	this.parametrosDePesquisa = null;
+	
 	
 	this.definirAcaoPesquisaTeclaEnter = function() {
 		definirAcaoPesquisaTeclaEnter();
@@ -19,22 +21,30 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		exibirMensagem("SUCCESS", ["Operação realizada com sucesso!"]);
 	},
 	
-	this.pesquisar = function() {
+	this.pesquisar = function(filtros) {
 		
-		$("#resumoPeriodo", _workspace).show();				
 		var data = [];
 		
-		data.push({name:'dataLancamento', value: $("#datepickerDe", _workspace).val()});
+		if (filtros == null) {
 		
-		$('[id^="fornecedor_"]').each(function(key){
-			if (this.checked) {
-				data.push({name:'idsFornecedores['+key+']', value: this.value});
-			}
-		});
+			data.push({name:'dataLancamento', value: $("#datepickerDe", _workspace).val()});
+			
+			$('[id^="fornecedor_"]').each(function(key){
+				if (this.checked) {
+					data.push({name:'idsFornecedores['+key+']', value: this.value});
+				}
+			});
+			
+			$("input[name='checkgroup_menu']:checked", _workspace).each(function(i) {
+				data.push({name:'idsFornecedores', value: $(this).val()});
+			});
+			
+			T.parametrosDePesquisa = data;
 		
-		$("input[name='checkgroup_menu']:checked", _workspace).each(function(i) {
-			data.push({name:'idsFornecedores', value: $(this).val()});
-		});
+		} 
+		else {
+			data = filtros;
+		}
 		
 		$.postJSON(
 			pathTela + "/matrizDistribuicao/obterMatrizDistribuicao", 
@@ -55,7 +65,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	},
 	
 	this.escondeGrid = function() { 
-		$(".gridDistribuicao", _workspace).hide();
+		$("#gridMatrizDistribuicao", _workspace).hide();
 	},
 
 	this.carregarGrid = function() {		
@@ -67,7 +77,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		T.isCliquePesquisar = true;
 		
-		$(".lancamentosProgramadosGrid", _workspace).flexOptions({			
+		$("#lancamentoMatrizDistribuicaoGrid", _workspace).flexOptions({			
 			url : pathTela + "/matrizDistribuicao/obterGridMatrizDistribuicao",
 			dataType : 'json',
 			autoload: false,
@@ -77,7 +87,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			onSubmit: function(elemento){return T.confirmarPaginacao(this);}
 		});
 		
-		$(".lancamentosProgramadosGrid", _workspace).flexReload();
+		$("#lancamentoMatrizDistribuicaoGrid", _workspace).flexReload();
 	},
 
 	this.confirmarPaginacao = function(elemento) {
@@ -98,11 +108,11 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			    	id: "selecaoLancamentosBtnConfirmar",
 			    	text: "Confirmar",
 			    	click: function() {
-						$(".lancamentosProgramadosGrid", _workspace).flexOptions({ onSubmit: null });
+						$("#lancamentoMatrizDistribuicaoGrid", _workspace).flexOptions({ onSubmit: null });
 						
-						$(".lancamentosProgramadosGrid", _workspace).flexReload();
+						$("#lancamentoMatrizDistribuicaoGrid", _workspace).flexReload();
 						
-					$(".lancamentosProgramadosGrid", _workspace)
+					$("#lancamentoMatrizDistribuicaoGrid", _workspace)
 					.flexOptions({ 
 						onSubmit: function(elemento) { 
 							return T.confirmarPaginacao(this); 
@@ -191,10 +201,10 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.processaRetornoPesquisa = function(resultadoPesquisa) {
 		
 		if (resultadoPesquisa[3]) {
-			$(".matrizFinalizada").show();
+			$("#matrizFinalizada").show();
 		}
 		else {
-			$(".matrizFinalizada").hide();
+			$("#matrizFinalizada").hide();
 		}
 		
 		$("#totalGerado", _workspace).clear();
@@ -244,7 +254,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		T.lancamentos.push({
 					idLancamento : row.cell.idLancamento,
 					estudo : row.cell.idEstudo,
-					lancto : row.cell.lancto,
+					lancto : row.cell.reparte,
 					promo : row.cell.promo,
 					suplem : row.cell.suplem,
 					juram : row.cell.juram,
@@ -805,21 +815,14 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		return 83531;
 	},
 	
-	this.redirectToTelaAnalise = function redirectToTelaAnalise(divToHide, divToShow, callBackParaPegarEstudo){
-		var lancamentoSelecionado;
-		
-		$.each(T.lancamentos, function(index, lancamento){
-			if(lancamento.selecionado) {
-				lancamentoSelecionado = lancamento;
-			}
-		});
+	this.redirectToTelaAnalise = function redirectToTelaAnalise(divToHide, divToShow, estudo){
 		
 		//TODO As telas de analise estão com erro, validar este direcionamento após correções.
 		var urlAnalise;
 		if ($('#parcial').val() === 'true') {
 			urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo;
 		} else {
-			urlAnalise = contextPath + '/lancamento/analise/normal/?id=' + (lancamentoSelecionado.estudo || callBackParaPegarEstudo());
+			urlAnalise = contextPath + '/lancamento/analise/normal/?id=' + estudo;
 		}
 		
 		$.get(
@@ -929,7 +932,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		T.isCliquePesquisar = true;
 		
-		$(".lancamentosProgramadosGrid", _workspace).flexOptions({			
+		$("#lancamentoMatrizDistribuicaoGrid", _workspace).flexOptions({			
 			url : pathTela + "/matrizDistribuicao/obterGridMatrizDistribuicao",
 			dataType : 'json',
 			autoload: false,
@@ -939,12 +942,12 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			onSubmit: T.confirmarPaginacao
 		});
 		
-		$(".lancamentosProgramadosGrid", _workspace).flexReload();
+		$("#lancamentoMatrizDistribuicaoGrid", _workspace).flexReload();
 	},
 	
 	this.mostrarGridEBotoesAcao = function () {
 		
-		$(".gridDistribuicao", _workspace).show();
+		$("#gridMatrizDistribuicao", _workspace).show();
 		
 	},
 	
@@ -1118,7 +1121,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		T.definirAcaoPesquisaTeclaEnter();
 		
-		$("#lancamentosProgramadosGrid", _workspace).flexigrid({
+		$("#lancamentoMatrizDistribuicaoGrid", _workspace).flexigrid({
 			colModel : [  {
 				display : 'Código',
 				name : 'codigoProduto',
@@ -1297,7 +1300,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 						});
 					}
 					
-					histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(params);
+					histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(params,T);
 					
 					$('#workspace').tabs({load : function(event, ui) {}});
 				}});
@@ -1326,35 +1329,16 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
                 }
         });
         if (selecionado == null) {
-                exibirMensagem("ERROR", ["Selecione "+ (maisDeUm ? "apenas" : "") +" um item para esta opção."]);
+                exibirMensagem("ERROR", ["Selecione um item para esta opção."]);
                 return;
         }
         var postData = [];
         postData.push({name : "codigoProduto", value : selecionado.codigoProduto});
+        postData.push({name : "numeroEdicao", value : selecionado.edicao});
         postData.push({name : "reparte", value : selecionado.repDistrib});
         $.postJSON(pathTela + "/matrizDistribuicao/gerarEstudoAutomatico", postData,
     			function(result) {
         			T.estudo = result;
-		        	$('<div>Exibir variaveis do estudo?</div>').dialog({ 
-		        	    title: "Estudo",
-		        	    buttons: [ { 
-		        	        text: "OK", 
-		        	        click: function() { 
-		        	            $( this ).dialog( "close" );
-//		        	            $('<div title="Variaveis do Estudo">')
-//		        	            .html(T.estudo.estudo)
-//		        	            .dialog();
-		        	            var myWindow=window.open('','');
-		        	            myWindow.document.write(T.estudo.estudo);
-		        	            myWindow.focus();
-		        	        } 
-		        	    }, {
-		        	    	text: "Cancel", 
-		        	        click: function() { 
-		        	            $( this ).dialog( "close" ); 
-		        	        }
-		        	    } ] 
-		        	});
         			T.carregarGrid();
         			T.exibirMensagemSucesso();
     			}
@@ -1375,7 +1359,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			}
 		});
 		if (selecionado == null) {
-			exibirMensagem("ERROR", ["Selecione "+ (maisDeUm ? "apenas" : "") +" um item para esta opção."]);
+			exibirMensagem("ERROR", ["Selecione um item para esta opção."]);
 			return;
 		}
 		var params = 'produto.codigoProduto='+ selecionado.codigoProduto;
@@ -1408,43 +1392,16 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			return;
 		}
 		var postData = [];
-		postData.push({
-			name : "edicao",
-			value : selecionado.edicao
-		});
-		postData.push({
-			name : "estudoId",
-			value : selecionado.estudo
-		});
-		postData.push({
-			name : "lancamentoId",
-			value : selecionado.idLancamento
-		});
-		postData.push({
-			name : "codigoProduto",
-			value : selecionado.codigoProduto
-		});
-		
-		postData.push({
-			name : "juramentado",
-			value : selecionado.juram
-		});
-		postData.push({
-			name : "suplementar",
-			value : selecionado.suplem
-		});
-		postData.push({
-			name : "lancado",
-			value : selecionado.lancto
-		});
-		postData.push({
-			name : "promocional",
-			value : selecionado.promo
-		});
-		postData.push({
-			name : "sobra",
-			value : selecionado.sobra
-		});
+		postData.push({name : "edicao", value : selecionado.edicao});
+		postData.push({name : "estudoId", value : selecionado.estudo});
+		postData.push({name : "lancamentoId", value : selecionado.idLancamento});
+		postData.push({name : "codigoProduto", value : selecionado.codigoProduto});
+		postData.push({name : "juramentado", value : selecionado.juram});
+		postData.push({name : "suplementar", value : selecionado.suplem});
+		postData.push({name : "lancado", value : selecionado.lancto});
+		postData.push({name : "promocional", value : selecionado.promo});
+		postData.push({name : "sobra", value : selecionado.sobra});
+		postData.push({name : "repDistrib", value : selecionado.repDistrib});
 		
 		var temp = $('#workspace').tabs( "option", "ajaxOptions");
 		$('#workspace').tabs( "option", "ajaxOptions", { data: postData, type: 'POST' } );

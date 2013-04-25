@@ -1106,7 +1106,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			
 			porcentagemDesconto = descontoLogistica.getPercentualDesconto();
 			break;
-	
+		default:
+		    break;
 		}
 		
 		if(porcentagemDesconto == null) {
@@ -1120,6 +1121,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	@Transactional
 	public List<ProdutoEdicaoDTO> obterEdicoesProduto(FiltroHistoricoVendaDTO filtro) {
 		return this.produtoEdicaoRepository.obterEdicoesProduto(filtro);
+	}
+
+	@Override
+	public void insereVendaRandomica(String codigoProduto, Integer numeroEdicao) {
+	    produtoEdicaoRepository.insereVendaRandomica(produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, new Long(numeroEdicao)));
 	}
 	
 }

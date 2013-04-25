@@ -21,7 +21,7 @@ public interface MixCotaProdutoService {
 	
 	public void removerMixCotaProduto(FiltroConsultaMixPorCotaDTO filtroConsultaMixCotaDTO);
 	
-	public List<RepartePDVDTO> obterRepartePdv(FiltroConsultaMixPorCotaDTO filtroConsultaMixCotaDTO);
+//	public List<RepartePDVDTO> obterRepartePdv(FiltroConsultaMixPorCotaDTO filtroConsultaMixCotaDTO);
 
 	public List<PdvDTO> obterListaPdvPorMix(Long id);
 	

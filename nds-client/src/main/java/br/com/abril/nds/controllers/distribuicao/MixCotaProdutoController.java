@@ -1,6 +1,5 @@
 package br.com.abril.nds.controllers.distribuicao;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -18,7 +17,6 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CopiaMixFixacaoDTO;
 import br.com.abril.nds.dto.FixacaoReparteDTO;
-import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.MixCotaDTO;
 import br.com.abril.nds.dto.MixCotaProdutoDTO;
 import br.com.abril.nds.dto.MixProdutoDTO;
@@ -55,9 +53,9 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 
-@SuppressWarnings("restriction")
 @Resource
 @Path("/distribuicao/mixCotaProduto")
 public class MixCotaProdutoController extends BaseController {
@@ -144,8 +142,13 @@ public class MixCotaProdutoController extends BaseController {
 
 	@Post
 	@Path("/pesquisarPorCota")
-	public void pesquisarPorCota(FiltroConsultaMixPorCotaDTO filtro,
-			String sortorder, String sortname, int page, int rp) {
+	public void pesquisarPorCota(FiltroConsultaMixPorCotaDTO filtro, String sortorder, String sortname, int page, int rp) {
+		
+		if (!cotaService.isTipoDistribuicaoCotaEspecifico(filtro.getCota(), TipoDistribuicaoCota.ALTERNATIVO)) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Cota não é do tipo Alternativo"));
+		}
+		
 		if (session.getAttribute(FILTRO_MIX_COTA_SESSION_ATTRIBUTE) == null) {
 			this.session.setAttribute(FILTRO_MIX_COTA_SESSION_ATTRIBUTE, filtro);
 		}
@@ -271,8 +274,8 @@ public class MixCotaProdutoController extends BaseController {
 
 	@Post
 	@Path("/salvarGridPdvReparte")
-	public void salvarGridPdvReparte(List<RepartePDVDTO> listPDV, String codProduto, String codCota, Long idMix){
-		repartePdvService.salvarRepartesPDVMix(listPDV,codProduto, codCota, idMix);
+	public void salvarGridPdvReparte(List<RepartePDVDTO> listPDV, String codProduto, Long idMix){
+		repartePdvService.salvarRepartesPDVMix(listPDV,codProduto, idMix);
 		throw new ValidacaoException(TipoMensagem.SUCCESS,"Operação realizada com sucesso!");
 	}
 	
@@ -374,20 +377,17 @@ public class MixCotaProdutoController extends BaseController {
 		session.setAttribute(FILTRO_MIX_PRODUTO_SESSION_ATTRIBUTE, filtroAtual);
 	}
 
-	private boolean isRangeRepartesValido(FixacaoReparteDTO fixacaoReparteDTO) {
-		boolean rangeEdicoesOK = (fixacaoReparteDTO.getEdicaoFinal() >= fixacaoReparteDTO
-				.getEdicaoInicial());
-		return rangeEdicoesOK;
-	}
+//	private boolean isRangeRepartesValido(FixacaoReparteDTO fixacaoReparteDTO) {
+//		boolean rangeEdicoesOK = (fixacaoReparteDTO.getEdicaoFinal() >= fixacaoReparteDTO
+//				.getEdicaoInicial());
+//		return rangeEdicoesOK;
+//	}
 	
 	@Post
 	@Path("/uploadArquivoLote")
+	public void uploadExcel(UploadedFile excelFile) throws FileNotFoundException, IOException{
 
-	public void uploadExcel(br.com.caelum.vraptor.interceptor.multipart.UploadedFile excelFile) throws FileNotFoundException, IOException{
-		
-		File file = XlsUploaderUtils.upLoadArquivo(excelFile);
-		
-		List<MixCotaDTO> listMixExcel = XlsUploaderUtils.getBeanListFromXls(MixCotaDTO.class, file );
+		List<MixCotaDTO> listMixExcel = XlsUploaderUtils.getBeanListFromXls(MixCotaDTO.class, excelFile);
 		
 		List<MixCotaDTO> mixCotaDTOInconsistente = importarMixCotaDTO(listMixExcel);
 		
@@ -436,7 +436,7 @@ public class MixCotaProdutoController extends BaseController {
 		for (int i = 0; i < listMixExcel.size(); i++) {
 			cotaIdArray[i] = listMixExcel.get(i).getNumeroCota();
 		}
-		List<Integer> verificarNumeroCotaExiste = this.cotaService.verificarNumeroCotaExiste(cotaIdArray);
+		List<Integer> verificarNumeroCotaExiste = cotaService.numeroCotaExiste(TipoDistribuicaoCota.ALTERNATIVO, cotaIdArray);
 		
 		for (MixCotaDTO mixCotaDTO : listMixExcel) {
 			if(!verificarNumeroCotaExiste.contains(mixCotaDTO.getNumeroCota())){

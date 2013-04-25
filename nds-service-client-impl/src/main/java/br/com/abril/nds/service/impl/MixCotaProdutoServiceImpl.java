@@ -39,6 +39,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.MixCotaProdutoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.UsuarioService;
+import br.com.abril.nds.vo.ValidacaoVO;
 @Service
 public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 	@Autowired
@@ -72,8 +73,8 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 	private RepartePDVRepository repartePDVRepository;
 	
 
-	@Transactional
 	@Override
+	@Transactional(readOnly = true)
 	public List<MixCotaDTO> pesquisarPorCota(FiltroConsultaMixPorCotaDTO
 			filtroConsultaMixCotaDTO) {
 		return mixCotaProdutoRepository.pesquisarPorCota(filtroConsultaMixCotaDTO);
@@ -87,26 +88,26 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		mixCotaProdutoRepository.remover(mixCotaProduto);
 		
 	}
-
-	@Transactional
+	
 	@Override
+	@Transactional(readOnly = true)
 	public List<MixProdutoDTO> pesquisarPorProduto(
 			FiltroConsultaMixPorProdutoDTO filtroConsultaMixProdutoDTO) {
 		return mixCotaProdutoRepository.pesquisarPorProduto(filtroConsultaMixProdutoDTO);
 	}
 
-	@Transactional
-	@Override
-	public List<RepartePDVDTO> obterRepartePdv(
-			FiltroConsultaMixPorCotaDTO filtroConsultaMixCotaDTO) {
-		MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.buscarPorId(filtroConsultaMixCotaDTO.getId());
-		return null;
-//				repartePDVRepository.obterRepartePdvPorCota(mixCotaProduto.getCota().getId());
-	}
+//	@Override
+//	@Transactional(readOnly = true)
+//	public List<RepartePDVDTO> obterRepartePdv(
+//			FiltroConsultaMixPorCotaDTO filtroConsultaMixCotaDTO) {
+//		MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.buscarPorId(filtroConsultaMixCotaDTO.getId());
+//		return null;
+////				repartePDVRepository.obterRepartePdvPorCota(mixCotaProduto.getCota().getId());
+//	}
 	
 	
 	@Override
-	@Transactional
+	@Transactional(readOnly=true)
 	public MixCotaProdutoDTO obterPorId(Long id){
 		return getMixCotaProdutoDTO(mixCotaProdutoRepository.buscarPorId(id));
 	}
@@ -132,7 +133,6 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			mixCotaProdutoDTO.setClassificacaoProduto(mixCotaProduto.getProduto().getTipoClassificacaoProduto().getDescricao());
 		}
 		if(mixCotaProduto.getRepartesPDV()!=null){
-			List<RepartePDVDTO> repartesDTO =new ArrayList<RepartePDVDTO>();
 			for(RepartePDV repartePDV: mixCotaProduto.getRepartesPDV()){
 				RepartePDVDTO repartePDVDTO = new RepartePDVDTO();
 				repartePDVDTO.setReparte(repartePDV.getReparte());
@@ -142,7 +142,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly=true)
 	public List<PdvDTO> obterListaPdvPorMix(Long id) {
 		MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.buscarPorId(id);
 		FiltroPdvDTO filtroPdvDTO = new FiltroPdvDTO();
@@ -171,6 +171,9 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		
 		Cota cota = cotaService.obterPorNumeroDaCota(cotaId);
 		Usuario usuario = usuarioService.getUsuarioLogado();
+		
+		List<String> produtosJaCadastrados = new ArrayList<String>(); 
+		
 		for (MixCotaProdutoDTO mixCotaProdutoDTO : listaMixCota) {
 				if(StringUtils.isEmpty(mixCotaProdutoDTO.getCodigoProduto()) || StringUtils.isEmpty(mixCotaProdutoDTO.getNomeProduto()) || mixCotaProdutoDTO.getReparteMinimo()==null || mixCotaProdutoDTO.getReparteMaximo()==null){
 					continue;
@@ -182,17 +185,22 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 					mixCotaProduto.setCota(cota);
 					mixCotaProduto.setDataHora(new Date());
 					mixCotaProduto.setReparteMinimo(mixCotaProdutoDTO.getReparteMinimo());
-					mixCotaProduto.setReparteMaximo(mixCotaProdutoDTO.getReparteMinimo());
+					mixCotaProduto.setReparteMaximo(mixCotaProdutoDTO.getReparteMaximo());
 					mixCotaProduto.setUsuario(usuario);
 					if(mixCotaProduto.getProduto()!=null || mixCotaProduto.getProduto().getId() !=null){
 						if(!mixCotaProdutoRepository.existeMixCotaProdutoCadastrado(mixCotaProduto.getProduto().getId(), mixCotaProduto.getCota().getId())){
 							mixCotaProdutoRepository.adicionar(mixCotaProduto);
 						}
-					}else{
-						continue;
+						else {
+							produtosJaCadastrados.add("Produto já Cadastrado: ["+produto.getCodigo()+":"+produto.getNome()+"]");
+						}
 					}
-				
 				}
+		}
+		
+		if (!produtosJaCadastrados.isEmpty()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, produtosJaCadastrados));
 		}
 	}
 	
@@ -203,6 +211,9 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		
 		Produto produto = produtoService.obterProdutoPorCodigo(produtoId);
 		Usuario usuario = usuarioService.getUsuarioLogado();
+		
+		List<String> cotasJaCadastradas = new ArrayList<String>(); 
+		
 		for (MixCotaProdutoDTO mixCotaProdutoDTO : listaMixCota) {
 			if(StringUtils.isEmpty(mixCotaProdutoDTO.getNomeCota()) || StringUtils.isEmpty(mixCotaProdutoDTO.getNumeroCota()) || mixCotaProdutoDTO.getReparteMinimo()==null || mixCotaProdutoDTO.getReparteMaximo()==null){
 				continue;
@@ -219,10 +230,16 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 					if(!mixCotaProdutoRepository.existeMixCotaProdutoCadastrado(mixCotaProduto.getProduto().getId(), mixCotaProduto.getCota().getId())){
 						mixCotaProdutoRepository.adicionar(mixCotaProduto);
 					}
-				}else{
-					continue;
+					else {
+						cotasJaCadastradas.add("Produto já Cadastrado: ["+cota.getNumeroCota()+":"+cota.getPessoa().getNome()+"]");
+					}
 				}
 			}
+		}
+		
+		if (!cotasJaCadastradas.isEmpty()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, cotasJaCadastradas));
 		}
 		
 	}

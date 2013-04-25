@@ -137,7 +137,7 @@ public class EstudoAlgoritmoService {
 	}
 
 	public void carregarParametros(EstudoTransient estudo) {
-		estudo.setProdutoEdicaoEstudo(produtoEdicaoDAO.getLastProdutoEdicaoByIdProduto(estudo.getProdutoEdicaoEstudo().getProduto().getCodigo()));
+		estudo.setProdutoEdicaoEstudo(produtoEdicaoDAO.getProdutoEdicaoEstudo(estudo.getProdutoEdicaoEstudo().getProduto().getCodigo(), estudo.getProdutoEdicaoEstudo().getNumeroEdicao()));
 		if (estudo.getPacotePadrao() == null) {
 			estudo.setPacotePadrao(BigInteger.valueOf(estudo.getProdutoEdicaoEstudo().getPacotePadrao()));
 		}
@@ -201,7 +201,7 @@ public class EstudoAlgoritmoService {
 		return gerarEstudoAutomatico(null, produto, reparte, usuario);
 	}
 
-    public EstudoTransient gerarEstudoAutomatico(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, ProdutoEdicaoEstudo produto,
+	public EstudoTransient gerarEstudoAutomatico(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, ProdutoEdicaoEstudo produto,
 	    BigInteger reparte, Usuario usuario) throws Exception {
 		log.debug("Iniciando execução do estudo.");
 		EstudoTransient estudo = new EstudoTransient();

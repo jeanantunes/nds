@@ -14,18 +14,17 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
-import br.com.abril.nds.enums.TipoMensagem;
-import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
-import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
+import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.model.planejamento.Estrategia;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstrategiaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
@@ -35,11 +34,11 @@ import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.RoteiroRepository;
 import br.com.abril.nds.service.EstudoAlgoritmoService;
 import br.com.abril.nds.util.ComponentesPDV;
-import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.view.Results;
 
 /**
@@ -59,6 +58,9 @@ public class DistribuicaoVendaMediaController extends BaseController {
 
 	@Autowired
 	private Result result;
+	
+	@Autowired
+	private Validator validator;
 
 	@Autowired
 	private HttpSession session;
@@ -86,6 +88,9 @@ public class DistribuicaoVendaMediaController extends BaseController {
 
 	@Autowired
 	private EstrategiaRepository estrategiaRepository;
+	
+	@Autowired
+	private DistribuicaoVendaMediaRepository distribuicaoVendaMediaRepository;
 
 	@Autowired
 	private EstudoAlgoritmoService estudoAlgoritmoService;
@@ -93,15 +98,13 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	@Path("index")
 	@Post
 	@Transactional(readOnly = true)
-	public void index(String codigoProduto, Long edicao, Long estudoId, Long lancamentoId, String juramentado, String suplementar, String lancado,
-			String promocional, String sobra) {
+	public void index(String codigoProduto, Long edicao, Long estudoId, Long lancamentoId, String juramentado, String suplementar,
+		String lancado, String promocional, String sobra, Long repDistrib) {
 		if (codigoProduto == null) {
 			result.nothing();
 			return;
 		}
-		Produto produto = produtoRepository.obterProdutoPorCodigo(codigoProduto);
-		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorProdutoEEdicaoOuNome(produto.getId(), edicao,
-				produto.getNomeComercial());
+		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicao);
 		if (estudoId != null) {
 			Estudo estudo = estudoRepository.buscarPorId(estudoId);
 			result.include("estudo", estudo);
@@ -110,7 +113,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 		if (lancamentoId == null) {
 			lancamento = findLancamentoBalanceado(produtoEdicao);
 		} else {
-			lancamento = lancamentoRepository.buscarPorId(lancamentoId);
+			lancamento = lancamentoRepository.buscarPorIdSemEstudo(lancamentoId);
 		}
 		Estrategia estrategia = estrategiaRepository.buscarPorProdutoEdicao(produtoEdicao);
 
@@ -123,6 +126,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 		result.include("lancado", lancado);
 		result.include("promocional", promocional);
 		result.include("sobra", sobra);
+		result.include("repDistrib", repDistrib);
 
 		result.include("lancamento", lancamento);
 		result.include("estrategia", estrategia);
@@ -136,13 +140,10 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	@Post
 	@Transactional(readOnly = true)
 	public void pesquisarProdutosEdicao(String codigo, String nome, Long edicao) {
-		List<ProdutoEdicao> resultado = produtoEdicaoRepository.pesquisar(codigo, nome, edicao);
-
-		List<ProdutoEdicaoDTO> convertido = converterResultado(resultado);
+		List<ProdutoEdicaoVendaMediaDTO> resultado = distribuicaoVendaMediaRepository.pesquisar(codigo, nome, edicao);
 
 		session.setAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO, resultado);
-
-		result.use(Results.json()).withoutRoot().from(convertido).recursive().serialize();
+		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 	}
 
 	private List<ProdutoEdicaoDTO> converterResultado(List<ProdutoEdicao> resultado) {
@@ -210,57 +211,52 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	@Path("removerProdutoEdicaoDaBase")
 	@Post
 	public void removerProdutoEdicaoDaBase(List<Integer> indexes) {
-		@SuppressWarnings("unchecked")
-		List<ProdutoEdicao> selecionados = (List<ProdutoEdicao>) session.getAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE);
-		List<ProdutoEdicao> toRemove = new ArrayList<ProdutoEdicao>();
+		List<ProdutoEdicaoVendaMediaDTO> selecionados = (List<ProdutoEdicaoVendaMediaDTO>) session.getAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE);
+		List<ProdutoEdicaoVendaMediaDTO> toRemove = new ArrayList<ProdutoEdicaoVendaMediaDTO>();
 		for (Integer index : indexes) {
 			toRemove.add(selecionados.get(index));
 		}
-
 		selecionados.removeAll(toRemove);
-
 		session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, selecionados);
-		List<ProdutoEdicaoDTO> convertido = converterResultado(selecionados);
-		result.use(Results.json()).withoutRoot().from(convertido).recursive().serialize();
+		result.use(Results.json()).withoutRoot().from(selecionados).recursive().serialize();
 	}
 
 	@Path("adicionarProdutoEdicaoABase")
 	@Post
 	public void adicionarProdutoEdicaoABase(List<Integer> indexes) {
-		@SuppressWarnings("unchecked")
-		List<ProdutoEdicao> resultadoPesquisa = (List<ProdutoEdicao>) session.getAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO);
-		@SuppressWarnings("unchecked")
-		List<ProdutoEdicao> selecionados = (List<ProdutoEdicao>) session.getAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE);
+		List<ProdutoEdicaoVendaMediaDTO> resultadoPesquisa = (List<ProdutoEdicaoVendaMediaDTO>) session.getAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO);
+		List<ProdutoEdicaoVendaMediaDTO> selecionados = (List<ProdutoEdicaoVendaMediaDTO>) session.getAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE);
 		if (selecionados == null) {
-			selecionados = new ArrayList<ProdutoEdicao>();
+			selecionados = new ArrayList<ProdutoEdicaoVendaMediaDTO>();
 		}
 
 		for (Integer index : indexes) {
-			ProdutoEdicao produtoEdicao = resultadoPesquisa.get(index);
+			ProdutoEdicaoVendaMediaDTO produtoEdicao = resultadoPesquisa.get(index);
 			if (!selecionados.contains(produtoEdicao)) {
 				selecionados.add(produtoEdicao);
 			}
 		}
 		session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, selecionados);
-
-		List<ProdutoEdicaoDTO> convertido = converterResultado(selecionados);
-		result.use(Results.json()).withoutRoot().from(convertido).recursive().serialize();
+		result.use(Results.json()).withoutRoot().from(selecionados).recursive().serialize();
 	}
 
-	@Path("gerarEstudo")
-	@Post
-	public void gerarEstudo(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, String codigoProduto) {
-		//FIXME o que retornar para a tela após estudo?
-		EstudoTransient estudo = null;
-		try {
-			estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, new ProdutoEdicaoEstudo(codigoProduto), 
-					distribuicaoVendaMedia.getReparteDistribuir(), this.getUsuarioLogado());
-		} catch (Exception e) {
-			log.error("Erro na geração do estudo.", e);
-    		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
-		}
-		result.use(Results.json()).from(estudo).recursive().serialize();
-	}
+    @Path("gerarEstudo")
+    @Post
+    public void gerarEstudo(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, String codigoProduto, Long numeroEdicao) throws Exception {
+	EstudoTransient estudo = null;
+//	try {
+	    ProdutoEdicaoEstudo produto = new ProdutoEdicaoEstudo(codigoProduto);
+	    produto.setNumeroEdicao(numeroEdicao);
+	    estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, produto, distribuicaoVendaMedia.getReparteDistribuir(),
+		    this.getUsuarioLogado());
+	    // result.use(Results.json()).from(, "result").serialize();
+	    result.use(Results.json()).from(estudo.getId(), "result").serialize();
+//	} catch (Exception e) {
+//	    log.error("Erro na geração do estudo.", e);
+//	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
+//	}
+//	validator.onErrorForwardTo(MatrizDistribuicaoController.class).index();
+    }
 
 	public HttpSession getSession() {
 		return session;

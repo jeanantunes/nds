@@ -1,6 +1,5 @@
 package br.com.abril.nds.controllers.distribuicao;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,8 +28,10 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
+import br.com.abril.nds.model.distribuicao.FixacaoReparte;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FixacaoReparteService;
@@ -49,16 +50,17 @@ import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/distribuicao/fixacaoReparte")
 public class FixacaoReparteController extends BaseController {
 	
+	private static final String OPERACAO_REALIZADA_COM_SUCESSO = "Operação realizada com sucesso!";
 	private static final String FILTRO_PRODUTO_SESSION_ATTRIBUTE = "filtroPorProduto";
 	private static final String FILTRO_COTA_SESSION_ATTRIBUTE = "filtroPorCota";
 	private static final int MAX_EDICOES =6;
-	private static final String IMPORT_INCONSISTENTE="importInconsistente";
 	private List<String> errosUpload=new ArrayList<String>();
 	
 	@Autowired
@@ -75,7 +77,6 @@ public class FixacaoReparteController extends BaseController {
 	
 	@Autowired
 	FixacaoReparteService fixacaoReparteService;
-	
 	
 	@Autowired
 	CotaService cotaService;
@@ -94,9 +95,6 @@ public class FixacaoReparteController extends BaseController {
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
-	
-	
-	
 
 	@Rules(Permissao.ROLE_DISTRIBUICAO_FIXACAO_REPARTE)
 	@Path("/")
@@ -139,10 +137,17 @@ public class FixacaoReparteController extends BaseController {
 		tratarFiltroPorCota(filtro);
 		//remove tipo cota adicionado no autocomplete	
 		filtro.setNomeCota(PessoaUtil.removerSufixoDeTipo(filtro.getNomeCota()));
+		
+		Cota cota = cotaService.obterPorNumeroDaCota(Integer.parseInt(filtro.getCota()));
+		if(cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possivel fixar reparte para cota tipo[" +
+					TipoDistribuicaoCota.ALTERNATIVO.toString() + "].");
+		}
+		
 		List<FixacaoReparteDTO>	resultadoPesquisa = fixacaoReparteService.obterFixacoesRepartePorCota(filtro);
 		
 		if(resultadoPesquisa.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não Foram encontrados resultados para a pesquisa");	
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados resultados para a pesquisa.");	
 		}
 		
 		TableModel<CellModelKeyValue<FixacaoReparteDTO>> tableModelCota = montarTableModelCota(filtro);
@@ -211,7 +216,6 @@ public class FixacaoReparteController extends BaseController {
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		List<FixacaoReparteDTO>	resultadoPesquisa = fixacaoReparteService.obterHistoricoLancamentoPorCota(filtro);
 		
-		
 		if(resultadoPesquisa.size()>0){
 			FixacaoReparteDTO fixacaoReparteDTO = resultadoPesquisa.get(0);
 			this.result.include("ultimaEdicao",fixacaoReparteDTO);
@@ -228,36 +232,21 @@ public class FixacaoReparteController extends BaseController {
 	@Path("/adicionarFixacaoReparte")
 	public void adicionarFixacaoReparte(FixacaoReparteDTO fixacaoReparteDTO){
 		
-		if(!isCotaValida(fixacaoReparteDTO)){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Informe uma cota ativa para realizar fixação!");
-		}else if(!isStatusEdicaoValido(fixacaoReparteDTO)){
-			throw new ValidacaoException(TipoMensagem.WARNING,"O status da edição não permite fixação!");
-		} else {
-			if(fixacaoReparteDTO.isQtdeEdicoesMarcado()){
-				if(fixacaoReparteDTO.getQtdeEdicoes() != null ){
-					if(fixacaoReparteDTO.getQtdeEdicoes() > MAX_EDICOES){
-						throw new ValidacaoException(TipoMensagem.WARNING,"O numero de edições fixadas não pode ser maior que 6");
-					}else if(fixacaoReparteDTO.getQtdeExemplares() == null || fixacaoReparteDTO.getQtdeExemplares() == 0){
-						throw new ValidacaoException(TipoMensagem.WARNING,"Quantidade de exemplares não pode ser vazia ou 0.");
-					}
-				}
-			} else {
-				if( fixacaoReparteDTO.getEdicaoInicial() ==null ||  fixacaoReparteDTO.getEdicaoInicial() == 0){
-					throw new ValidacaoException(TipoMensagem.WARNING,"Edição inicial não pode ser vazia ou 0.");
-				}else if( fixacaoReparteDTO.getEdicaoFinal() ==null ||  fixacaoReparteDTO.getEdicaoFinal() == 0){
-					throw new ValidacaoException(TipoMensagem.WARNING,"Edição final não pode ser vazia ou 0.");
-				}else if( fixacaoReparteDTO.getEdicaoFinal() < fixacaoReparteDTO.getEdicaoInicial()){
-					throw new ValidacaoException(TipoMensagem.WARNING,"Edição final não pode ser inferior a inicial.");
-				}else if(fixacaoReparteDTO.getEdicaoFinal() - fixacaoReparteDTO.getEdicaoInicial() > MAX_EDICOES){
-					throw new ValidacaoException(TipoMensagem.WARNING,"O intervalo não deve ultrapassar 6 edições!");
-				}else if(fixacaoReparteDTO.getQtdeExemplares() == null || fixacaoReparteDTO.getQtdeExemplares() == 0){
-					throw new ValidacaoException(TipoMensagem.WARNING,"Quantidade de exemplares não pode ser vazia ou 0.");
-				}
-			}
+		String fixacaoInvalida = validaFixacao(fixacaoReparteDTO);
+		if (fixacaoInvalida != null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, fixacaoInvalida);
 		}
 		
-		fixacaoReparteService.adicionarFixacaoReparte(fixacaoReparteDTO);
-		throw new ValidacaoException(TipoMensagem.SUCCESS,"Operação realizada com sucesso!");
+		FixacaoReparte fixacaoReparte = fixacaoReparteService.adicionarFixacaoReparte(fixacaoReparteDTO);
+		
+		if(fixacaoReparte.getCotaFixada().getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) {
+			throw new ValidacaoException(TipoMensagem.WARNING, OPERACAO_REALIZADA_COM_SUCESSO +
+					"<br>Status da Cota: " + SituacaoCadastro.SUSPENSO.toString());
+		}
+		
+		result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, OPERACAO_REALIZADA_COM_SUCESSO), 
+				"result").recursive().serialize();
 	}
 	
 	
@@ -265,7 +254,10 @@ public class FixacaoReparteController extends BaseController {
 	@Path("/removerFixacaoReparte")
 	public void removerFixacaoReparte(FixacaoReparteDTO fixacaoReparteDTO){
 		fixacaoReparteService.removerFixacaoReparte(fixacaoReparteDTO);
-		throw new ValidacaoException(TipoMensagem.SUCCESS,"Operaão realizada com sucesso!"); 
+		
+		result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, OPERACAO_REALIZADA_COM_SUCESSO), 
+				"result").recursive().serialize();
 	}
 	
 	@Post
@@ -297,11 +289,15 @@ public class FixacaoReparteController extends BaseController {
 		FixacaoReparteDTO fixacaoReparteDTO = fixacaoReparteService.obterFixacaoDTO(filtro.getIdFixacao());
 		result.use(Results.json()).withoutRoot().from(fixacaoReparteDTO).recursive().serialize();
 	}
+	
 	@Post
 	@Path("/salvarGridPdvReparte")
 	public void salvarGridPdvReparte(List<RepartePDVDTO> listPDV, String codProduto, String codCota, Long idFixacao, boolean manterFixa){
-		repartePdvService.salvarRepartesPDV(listPDV,codProduto, codCota, idFixacao, manterFixa);
-		throw new ValidacaoException(TipoMensagem.SUCCESS,"Operação realizada com sucesso!");
+		repartePdvService.salvarRepartesPDV(listPDV,codProduto, idFixacao, manterFixa);
+		
+		result.use(Results.json()).from(
+				new ValidacaoVO(TipoMensagem.SUCCESS, OPERACAO_REALIZADA_COM_SUCESSO), 
+				"result").recursive().serialize();
 	}
 	
 	@Post
@@ -312,10 +308,12 @@ public class FixacaoReparteController extends BaseController {
 		result.use(Results.json()).withoutRoot().from(quantidadePdvCotaDTO).recursive().serialize();
 	}
 	
+	//FIXME refatorar
+	@SuppressWarnings({ "unchecked" })
 	@Get
-	public void exportar(FileType fileType, String tipoExportacao) throws IOException {
-		List dto = new ArrayList<>();
-		Class clazz = null;
+	public <T> void exportar(FileType fileType, String tipoExportacao) throws IOException {
+		List<T> dto = new ArrayList<>();
+		Class<T> clazz = null;
 		FiltroConsultaFixacaoCotaDTO filtroPorCota = null;
 		FiltroConsultaFixacaoProdutoDTO filtroPorProduto = null;
 		List<FixacaoReparteDTO> resultadoPesquisa = null;
@@ -324,7 +322,7 @@ public class FixacaoReparteController extends BaseController {
 		filtroPorProduto = (FiltroConsultaFixacaoProdutoDTO) session.getAttribute(FILTRO_PRODUTO_SESSION_ATTRIBUTE);
 		
 		if (tipoExportacao.equals("historicoCota")) {
-			clazz = FixacaoReparteHistoricoDTO.class;
+			clazz = (Class<T>) FixacaoReparteHistoricoDTO.class;
 				resultadoPesquisa = fixacaoReparteService.obterHistoricoLancamentoPorProduto(filtroPorProduto);
 			if(resultadoPesquisa!=null ){	
 				for (FixacaoReparteDTO fixacaoReparteDTO : resultadoPesquisa) {
@@ -335,11 +333,11 @@ public class FixacaoReparteController extends BaseController {
 					fixacaoReparteHistoricoDTO.setDataLancamentoString(fixacaoReparteDTO.getDataLancamentoString());
 					fixacaoReparteHistoricoDTO.setDataRecolhimentoString(fixacaoReparteDTO.getDataRecolhimentoString());
 					fixacaoReparteHistoricoDTO.setStatus(fixacaoReparteDTO.getStatus());
-					dto.add(fixacaoReparteHistoricoDTO);
+					dto.add((T) fixacaoReparteHistoricoDTO);
 				}
 			}
 		}else if (tipoExportacao.equals("historicoProduto")) {
-			clazz = FixacaoReparteHistoricoDTO.class;
+			clazz = (Class<T>) FixacaoReparteHistoricoDTO.class;
 				resultadoPesquisa = fixacaoReparteService.obterHistoricoLancamentoPorCota(filtroPorCota);
 				if(resultadoPesquisa!=null ){	
 				for (FixacaoReparteDTO fixacaoReparteDTO : resultadoPesquisa) {
@@ -350,11 +348,11 @@ public class FixacaoReparteController extends BaseController {
 					fixacaoReparteHistoricoDTO.setDataLancamentoString(fixacaoReparteDTO.getDataLancamentoString());
 					fixacaoReparteHistoricoDTO.setDataRecolhimentoString(fixacaoReparteDTO.getDataRecolhimentoString());
 					fixacaoReparteHistoricoDTO.setStatus(fixacaoReparteDTO.getStatus());
-					dto.add(fixacaoReparteHistoricoDTO);
+					dto.add((T) fixacaoReparteHistoricoDTO);
 					}
 				}
 		} else if (tipoExportacao.equals("cota")) {
-			clazz = FixacaoReparteCotaDTO.class;
+			clazz = (Class<T>) FixacaoReparteCotaDTO.class;
 			resultadoPesquisa = fixacaoReparteService.obterFixacoesRepartePorCota(filtroPorCota);
 			
 			for (FixacaoReparteDTO fixacaoReparteDTO : resultadoPesquisa) {
@@ -371,10 +369,10 @@ public class FixacaoReparteController extends BaseController {
 				fixacaoReparteCotaDTO.setData(fixacaoReparteDTO.getData());
 				fixacaoReparteCotaDTO.setHora(fixacaoReparteDTO.getHora());
 				
-				dto.add(fixacaoReparteCotaDTO);
+				dto.add((T) fixacaoReparteCotaDTO);
 			}
 		}else if (tipoExportacao.equals("produto")) {
-			clazz = FixacaoReparteProdutoDTO.class;
+			clazz = (Class<T>) FixacaoReparteProdutoDTO.class;
 			resultadoPesquisa = fixacaoReparteService.obterFixacoesRepartePorProduto(filtroPorProduto);
 			
 			for (FixacaoReparteDTO fixacaoReparteDTO : resultadoPesquisa) {
@@ -390,7 +388,7 @@ public class FixacaoReparteController extends BaseController {
 				fixacaoReparteProdutoDTO.setData(fixacaoReparteDTO.getData());
 				fixacaoReparteProdutoDTO.setHora(fixacaoReparteDTO.getHora());
 				
-				dto.add(fixacaoReparteProdutoDTO);
+				dto.add((T) fixacaoReparteProdutoDTO);
 			}
 		} 
 			
@@ -428,11 +426,6 @@ public class FixacaoReparteController extends BaseController {
 		session.setAttribute(FILTRO_PRODUTO_SESSION_ATTRIBUTE, filtroAtual);
 	}
 	
-	private boolean isRangeEdicoesValido(FixacaoReparteDTO fixacaoReparteDTO) {
-		boolean rangeEdicoesOK =(fixacaoReparteDTO.getEdicaoFinal() >= fixacaoReparteDTO.getEdicaoInicial());
-		return rangeEdicoesOK ;
-	}
-	
 	private boolean isStatusEdicaoValido(FixacaoReparteDTO fixacaoReparteDTO) {
 		List<String>edicoesInvalidas =new ArrayList<String>();
 		edicoesInvalidas.add("lançada");
@@ -451,36 +444,37 @@ public class FixacaoReparteController extends BaseController {
 	
 	@Post
 	@Path("/uploadArquivoLoteFixacao")
-	public void uploadArquivoEmLote(br.com.caelum.vraptor.interceptor.multipart.UploadedFile excelFileFixacao) throws FileNotFoundException, IOException{
+	public void uploadArquivoEmLote(UploadedFile excelFileFixacao) throws FileNotFoundException, IOException{
 		List<FixacaoReparteDTO> listaRegistrosInvalidosExcel=null;
-		File file = XlsUploaderUtils.upLoadArquivo(excelFileFixacao);
-		List<FixacaoReparteDTO> listaFixacaoExcel = XlsUploaderUtils.getBeanListFromXls(FixacaoReparteDTO.class, file );
-	
-		if(!isListaVazia(listaFixacaoExcel)){
-			 listaRegistrosInvalidosExcel = obterListaInvalidos(listaFixacaoExcel);
-			 listaFixacaoExcel.removeAll(listaRegistrosInvalidosExcel);
-			 for (FixacaoReparteDTO fixacaoReparteDTO : listaFixacaoExcel) {
-				 fixacaoReparteService.adicionarFixacaoReparte(fixacaoReparteDTO);
-			}
-			 if(listaRegistrosInvalidosExcel.size() ==0){
-				 this.result.use(Results.json()).from(
-							new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso!"), 
-							"result").recursive().serialize();
-			 }else{
-				 this.result.use(Results.json()).from(
-							new ValidacaoVO(TipoMensagem.WARNING, getMsgErroUpload()), 
-							"result").recursive().serialize();
-			 }
+		List<FixacaoReparteDTO> listaFixacaoExcel = XlsUploaderUtils.getBeanListFromXls(FixacaoReparteDTO.class, excelFileFixacao);
+
+		if (!isListaVazia(listaFixacaoExcel)) {
 			
-			 
-		}else{
-			 this.result.use(Results.json()).from(
-						new ValidacaoVO(TipoMensagem.WARNING, "Arquivo esta vazio"), 
+			listaRegistrosInvalidosExcel = obterListaInvalidos(listaFixacaoExcel);
+			listaFixacaoExcel.removeAll(listaRegistrosInvalidosExcel);
+			
+			for (FixacaoReparteDTO fixacaoReparteDTO : listaFixacaoExcel) {
+				FixacaoReparte fixacaoReparte = fixacaoReparteService.adicionarFixacaoReparte(fixacaoReparteDTO);
+				if(fixacaoReparte.getCotaFixada().getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) {
+					getErrosUpload().add("- Status da Cota: " + SituacaoCadastro.SUSPENSO.toString() + ". (Cota[" + fixacaoReparteDTO.getCotaFixadaString() + "] Produto[" + fixacaoReparteDTO.getProdutoFixado() + "]).");
+				}
+			}
+			
+			if (listaRegistrosInvalidosExcel.isEmpty() && getErrosUpload().isEmpty()) {
+				result.use(Results.json()).from(
+						new ValidacaoVO(TipoMensagem.SUCCESS, OPERACAO_REALIZADA_COM_SUCESSO), 
 						"result").recursive().serialize();
+			} else {
+				result.use(Results.json()).from(
+						new ValidacaoVO(TipoMensagem.WARNING, getMsgErroUpload()), 
+						"result").recursive().serialize();
+			}
+			
+		} else {
+			result.use(Results.json()).from(
+					new ValidacaoVO(TipoMensagem.WARNING, "Arquivo está vazio."), 
+					"result").recursive().serialize();
 		}
-		
-		
-		
 	}
 	
 	@Post
@@ -537,75 +531,114 @@ public class FixacaoReparteController extends BaseController {
 		
 	}
 
-
 	private String getMsgErroUpload() {
 		StringBuilder builderErros = new StringBuilder("");
-		builderErros.append("Alguns registros nao foram adicionados \n");
+		builderErros.append("Os registros a seguir não foram adicionados:<br>");
 		for(String msg: getErrosUpload()){
-			builderErros.append(msg).append("\n");
+			builderErros.append(msg).append("<br>");
 		}
 		return builderErros.toString();
 	}
 
-
-	private List<FixacaoReparteDTO> obterListaInvalidos(List<FixacaoReparteDTO> listaFixacaoExcel) {
+	private List<FixacaoReparteDTO> obterListaInvalidos (List<FixacaoReparteDTO> listaFixacaoExcel) {
 		List<FixacaoReparteDTO>invalidos = new ArrayList<FixacaoReparteDTO>();
-		for(FixacaoReparteDTO fixacaoReparteDTO : listaFixacaoExcel){
-		//  validar se a cota existe  
-			  Integer[] cotaIdArray = new Integer[listaFixacaoExcel.size()];
-			  for (int i = 0; i < listaFixacaoExcel.size(); i++) {
-			   cotaIdArray[i] = listaFixacaoExcel.get(i).getCotaFixada();
-			  }
-			  List<Integer> verificarNumeroCotaExiste = this.cotaService.verificarNumeroCotaExiste(cotaIdArray);
-			  
-			  for (FixacaoReparteDTO fixacaoDTO : listaFixacaoExcel) {
-			   if(!verificarNumeroCotaExiste.contains(fixacaoDTO.getCotaFixada())){
-			    invalidos.add(fixacaoDTO);
-			    getErrosUpload().add("-Cota \t" + fixacaoDTO.getCotaFixada().toString() +  "\t nao encontrada");
-			   }
-			  }
+		
+		List<Integer> cotaIds = new ArrayList<>();
+		List<String> codigoProdutos = new ArrayList<>();
+		List<Integer> cotasExistentes = null;
+		List<String> produtosExistentes = null;
+		
+		for (FixacaoReparteDTO fixacaoReparteDTO : listaFixacaoExcel) {
+			
+			if (isPreechimentoInvalido(fixacaoReparteDTO)) {
+				invalidos.add(fixacaoReparteDTO);
+				getErrosUpload().add("- Selecione Ed. Inicial / Ed. Final ou Qtde. de Edições (Cota[" + fixacaoReparteDTO.getCotaFixadaString() + "] Produto[" + fixacaoReparteDTO.getProdutoFixado() + "]).");
+				continue;
+			}
+			
+			if (isQuantidadeEdicoesMaiorQueSeis(fixacaoReparteDTO)) {
+				invalidos.add(fixacaoReparteDTO);
+				getErrosUpload().add("- O numero de edições fixadas não pode ser maior que 6 (Cota[" + fixacaoReparteDTO.getCotaFixadaString() + "] Produto[" + fixacaoReparteDTO.getProdutoFixado() + "]).");
+				continue;
+			}
+			
+			if (fixacaoReparteService.isFixacaoExistente(fixacaoReparteDTO)) {
+				invalidos.add(fixacaoReparteDTO);
+				getErrosUpload().add("- Registro existente para o produto[" + fixacaoReparteDTO.getProdutoFixado() + "] e cota[" + fixacaoReparteDTO.getCotaFixadaString() + "].") ;
+				continue;
+			}
 
-			  /*
-			  validar se o produto é um produtoValido
-			  */
-			  String[] codigoProdutoArray = new String[listaFixacaoExcel.size()];
-			  for (int i = 0; i < listaFixacaoExcel.size(); i++) {
-			   codigoProdutoArray[i]=listaFixacaoExcel.get(i).getProdutoFixado();
-			  }
-			  
-			  List<String> verificarProdutoExiste = this.produtoService.verificarProdutoExiste(codigoProdutoArray);
-			  for (FixacaoReparteDTO fixacaoDTO : listaFixacaoExcel) {
-			   if(!verificarProdutoExiste.contains(fixacaoDTO.getProdutoFixado())){
-			    invalidos.add(fixacaoDTO);
-			    getErrosUpload().add("-Produto \t" + fixacaoDTO.getProdutoFixado() +  "\t nao encontrado");
-			   }
-			  }
-			  
-			  // Validacao preenchimento campos
-			  for (FixacaoReparteDTO fixacaoDTO : listaFixacaoExcel) {
-				  if(isPreechimentoInvalido(fixacaoReparteDTO)){
-					  invalidos.add(fixacaoDTO);
-					  getErrosUpload().add("-Impossivel identificar fixação por cota ou produto");
-				  }
-			  }
-			  
-			  //validacao existe registro salvo
-			  for (FixacaoReparteDTO fixacaoDTO : listaFixacaoExcel) {
-				  if(fixacaoReparteService.isFixacaoExistente(fixacaoReparteDTO)){
-					  invalidos.add(fixacaoDTO);
-					  getErrosUpload().add("-Registro existente para o codigo:\t" + fixacaoDTO.getProdutoFixado() + "\t e cota:" + fixacaoDTO.getCotaFixada().toString()) ;
-				  }
-			  }
-			  
+			cotaIds.add(fixacaoReparteDTO.getCotaFixada());
+			codigoProdutos.add(fixacaoReparteDTO.getProdutoFixado());
 		}
+		
+		if (!cotaIds.isEmpty()) {
+			cotasExistentes = cotaService.numeroCotaExiste(TipoDistribuicaoCota.CONVENCIONAL, cotaIds.toArray(new Integer[0]));
+		}
+		if (!codigoProdutos.isEmpty()) {
+			produtosExistentes = produtoService.verificarProdutoExiste(codigoProdutos.toArray(new String[0]));
+		}
+			
+		listaFixacaoExcel.removeAll(invalidos);
+		for (FixacaoReparteDTO fixacaoReparteDTO : listaFixacaoExcel) {
+			
+			if (cotasExistentes != null && !cotasExistentes.contains(fixacaoReparteDTO.getCotaFixada())) {
+				invalidos.add(fixacaoReparteDTO);
+				getErrosUpload().add("- Cota[" + fixacaoReparteDTO.getCotaFixada().toString() + "] não encontrada, inativa ou alternativa.");
+			} else if (produtosExistentes != null && !produtosExistentes.contains(fixacaoReparteDTO.getProdutoFixado())) {
+				invalidos.add(fixacaoReparteDTO);
+				getErrosUpload().add("- Produto[" + fixacaoReparteDTO.getProdutoFixado() +  "] não encontrado.");
+			}
+		}
+		
 		return invalidos;
 	}
 
+	private boolean isQuantidadeEdicoesMaiorQueSeis(FixacaoReparteDTO fixacaoReparteDTO) {	
+		if (fixacaoReparteDTO.getQtdeEdicoes() != null) {
+			return fixacaoReparteDTO.getQtdeEdicoes() > MAX_EDICOES;
+		}
+		return (fixacaoReparteDTO.getEdicaoFinal() - fixacaoReparteDTO.getEdicaoInicial()) > MAX_EDICOES;
+	}
+
+
+	private String validaFixacao(FixacaoReparteDTO fixacaoReparteDTO) {
+		
+		if(!isCotaValida(fixacaoReparteDTO)) {
+			return "Informe uma cota ativa/suspensa e convencional para realizar fixação!";
+		} else if(!isStatusEdicaoValido(fixacaoReparteDTO)) {
+			return "O status da edição não permite fixação!";
+		} else {
+			if(fixacaoReparteDTO.isQtdeEdicoesMarcado()) {
+				if(fixacaoReparteDTO.getQtdeEdicoes() != null ){
+					if(fixacaoReparteDTO.getQtdeEdicoes() > MAX_EDICOES) {
+						return "O numero de edições fixadas não pode ser maior que 6";
+					} else if(fixacaoReparteDTO.getQtdeExemplares() == null || fixacaoReparteDTO.getQtdeExemplares() == 0) {
+						return "Quantidade de exemplares não pode ser vazia ou 0.";
+					}
+				}
+			} else {
+				if(fixacaoReparteDTO.getEdicaoInicial() == null || fixacaoReparteDTO.getEdicaoInicial() == 0) {
+					return "Edição inicial não pode ser vazia ou 0.";
+				} else if( fixacaoReparteDTO.getEdicaoFinal() == null ||  fixacaoReparteDTO.getEdicaoFinal() == 0){
+					return "Edição final não pode ser vazia ou 0.";
+				} else if( fixacaoReparteDTO.getEdicaoFinal() < fixacaoReparteDTO.getEdicaoInicial()) {
+					return "Edição final não pode ser inferior a inicial.";
+				} else if(fixacaoReparteDTO.getEdicaoFinal() - fixacaoReparteDTO.getEdicaoInicial() > MAX_EDICOES) {
+					return "O intervalo não deve ultrapassar 6 edições!";
+				} else if(fixacaoReparteDTO.getQtdeExemplares() == null || fixacaoReparteDTO.getQtdeExemplares() == 0) {
+					return "Quantidade de exemplares não pode ser vazia ou 0.";
+				}
+			}
+		}
+		
+		return null;
+	}
 
 	private boolean isPreechimentoInvalido(FixacaoReparteDTO fixacaoReparteDTO) {
 		boolean edIniOk= (fixacaoReparteDTO.getEdicaoInicial()!=null && fixacaoReparteDTO.getEdicaoInicial() > 0);
-		boolean edFinalOk= (fixacaoReparteDTO.getEdicaoFinal()!=null && fixacaoReparteDTO.getEdicaoFinal() > 0 && fixacaoReparteDTO.getEdicaoFinal() > fixacaoReparteDTO.getEdicaoFinal());
-		boolean qtdeEdicoesOk= (fixacaoReparteDTO.getQtdeEdicoes()!=null && fixacaoReparteDTO.getQtdeEdicoes()>0);		
+		boolean edFinalOk= (fixacaoReparteDTO.getEdicaoFinal()!=null && fixacaoReparteDTO.getEdicaoFinal() > 0 && fixacaoReparteDTO.getEdicaoFinal() > fixacaoReparteDTO.getEdicaoInicial());
+		boolean qtdeEdicoesOk= (fixacaoReparteDTO.getQtdeEdicoes()!=null && fixacaoReparteDTO.getQtdeEdicoes()>0);
 		return ( edIniOk  && qtdeEdicoesOk) || (edFinalOk && qtdeEdicoesOk);
 	}
 	
@@ -613,19 +646,16 @@ public class FixacaoReparteController extends BaseController {
 		return fixacaoReparteService.isCotaValida(fixacaoReparteDTO) ;
 	}
 
-
-
 	private boolean isListaVazia(List<FixacaoReparteDTO> listaFixacaoExcel) {
 		return (listaFixacaoExcel == null || listaFixacaoExcel.isEmpty());
 	}
-
 
 	public List<String> getErrosUpload() {
 		return errosUpload;
 	}
 
-
 	public void setErrosUpload(List<String> errosUpload) {
 		this.errosUpload = errosUpload;
 	}
+
 }

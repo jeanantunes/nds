@@ -15,6 +15,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.distribuicao.SegmentoNaoRecebido;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.SegmentoNaoRecebidoRepository;
 import br.com.abril.nds.service.SegmentoNaoRecebidoService;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -24,6 +25,9 @@ public class SegmentoNaoRecebidoServiceImpl implements SegmentoNaoRecebidoServic
 
 	@Autowired
 	private SegmentoNaoRecebidoRepository segmentoNaoRecebidoRepo;
+	
+	@Autowired
+	private CotaRepository cotaRepository;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -48,10 +52,11 @@ public class SegmentoNaoRecebidoServiceImpl implements SegmentoNaoRecebidoServic
 	@Transactional(readOnly = true)
 	@Override
 	public List<CotaDTO> obterCotasNaoEstaoNoSegmento(FiltroSegmentoNaoRecebidoDTO filtro) {
-	    if (segmentoNaoRecebidoRepo.isCotaJaInserida(filtro.getTipoSegmentoProdutoId(), filtro.getNumeroCota())) {
-		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Cota Duplicada!"));
-	    }
-	    return  segmentoNaoRecebidoRepo.obterCotasNaoEstaoNoSegmento(filtro);
+		if (segmentoNaoRecebidoRepo.isCotaJaInserida(filtro.getTipoSegmentoProdutoId(), filtro.getNumeroCota())) {
+			Cota cota = cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Cota Duplicada! Status: " + cota.getSituacaoCadastro().toString()));
+		}
+		return  segmentoNaoRecebidoRepo.obterCotasNaoEstaoNoSegmento(filtro);
 	}
 
 	@Transactional(readOnly = true)

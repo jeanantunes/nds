@@ -21,49 +21,50 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 	@Override
 	public HistogramaPosEstudoAnaliseFaixaReparteDTO obterHistogramaPosEstudo(int faixaDe, int faixaAte, Integer estudoId) {
 		
-		StringBuilder hql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
+		sql.append("SELECT '").append(faixaDe).append(" a ").append(faixaAte).append("' faixaReparte, ");
+		sql.append("       SUM(REPARTE) reparteTotal, ");
+		sql.append("	   AVG(REPARTE) reparteMedio, ");
+		sql.append("       SUM(VENDA) vendaNominal, ");
+		sql.append("	   AVG(VENDA_MEDIA) vendaMedia, ");
+		sql.append("       COUNT(*) qtdCotas, ");
+		sql.append("	   SUM(RECEBIDO) qtdRecebida, ");
+		sql.append("	   SUM(VENDA) / SUM(REPARTE) vendaPercent, ");
+		sql.append("	   (SUM(REPARTE) - SUM(VENDA)) / COUNT(*) encalheMedio, ");
+		sql.append("       SUM(IS_REPARTE_MENOR_VENDA) qtdCotaPossuemReparteMenorVenda, ");
+		sql.append("       (SUM(REPARTE) / (SELECT REPARTE_DISTRIBUIR FROM ESTUDO WHERE ID = :ESTUDO_ID) * 100) participacaoReparte ");
+		sql.append("  FROM (SELECT REP.ID, ");
+		sql.append("               REP.NUMERO_COTA, ");
+		sql.append("               REP.REPARTE, ");
+		sql.append("               EST.RECEBIDO, ");
+		sql.append("               EST.VENDA, ");
+		sql.append("               EST.VENDA_MEDIA, ");
+		sql.append("               (EST.RECEBIDO / REP.REPARTE) PARTICIPACAO_REPARTE, ");
+		sql.append("               EST.QTDE_EDICOES, ");
+		sql.append("               (CASE WHEN REP.REPARTE < EST.VENDA THEN 1 ELSE 0 END) IS_REPARTE_MENOR_VENDA ");
+		sql.append("          FROM (SELECT C.ID, ");
+		sql.append("                       C.NUMERO_COTA, ");
+		sql.append("                       EC.REPARTE ");
+		sql.append("                  FROM ESTUDO_COTA EC ");
+		sql.append("                  JOIN COTA C ON C.ID = EC.COTA_ID ");
+		sql.append("                 WHERE EC.ESTUDO_ID = :ESTUDO_ID) REP ");
+		sql.append("          JOIN (SELECT C.ID, ");
+		sql.append("                       C.NUMERO_COTA, ");
+		sql.append("                       SUM(EPE.REPARTE) RECEBIDO, ");
+		sql.append("                       SUM(EPE.VENDA) VENDA, ");
+		sql.append("                       AVG(EPE.VENDA) VENDA_MEDIA, ");
+		sql.append("                       COUNT(*) QTDE_EDICOES ");
+		sql.append("                  FROM ESTUDO_PRODUTO_EDICAO EPE ");
+		sql.append("                  JOIN COTA C ON C.ID = EPE.COTA_ID ");
+		sql.append("                 WHERE EPE.ESTUDO_ID = :ESTUDO_ID ");
+		sql.append("                 GROUP BY C.ID, C.NUMERO_COTA) EST ON EST.ID = REP.ID ");
+		sql.append("         WHERE REP.REPARTE BETWEEN :DE AND :ATE) TES ");
 		
-		hql.append(" SELECT ");
-		hql.append(" '" + faixaDe + " a " + faixaAte + "' as faixaReparte, ");
-		hql.append("  sum(reparte) as reparteTotal, ");
-		hql.append("  avg(reparte) as reparteMedio, ");
-		hql.append("  sum(venda) as vendaNominal, ");
-		hql.append("  avg(venda) as vendaMedia, ");
-		hql.append("  (sum(venda) / sum(reparte) * 100) as vendaPercent, ");
-		hql.append("  ((sum(reparte) - sum(venda)) / sum(qtdCota)) as encalheMedio, ");
-		hql.append("  (sum(qtdRecebida)/sum(reparte) * 100) as participacaoReparte, ");
-		hql.append("  sum(qtdCota) as qtdCotas, ");
-		hql.append("  sum(qtdCotasQuePossuemReparteMenorQueVendaNominal) as qtdCotaPossuemReparteMenorVenda, ");
-		hql.append("  sum(qtdRecebida) as qtdRecebida ");
-		hql.append(" FROM ");
-		hql.append("  ( ");
-		hql.append("    SELECT ");
-		hql.append("      COUNT(DISTINCT cota.id) as qtdCota,");
-		hql.append("      movimento_estoque_cota.QTDE as reparte,");
-		hql.append("      estoque_produto_cota.QTDE_RECEBIDA - estoque_produto_cota.QTDE_DEVOLVIDA as venda,");
-		hql.append("      estoque_produto_cota.QTDE_RECEBIDA as qtdRecebida,");
-		hql.append("      estoque_produto_cota.QTDE_DEVOLVIDA as qtdDevolvida,");
-		hql.append("      CASE ");
-		hql.append("        WHEN  movimento_estoque_cota.QTDE < ( estoque_produto_cota.QTDE_RECEBIDA - estoque_produto_cota.QTDE_DEVOLVIDA )");
-		hql.append("          THEN 1");
-		hql.append("        ELSE 0");
-		hql.append("      END as qtdCotasQuePossuemReparteMenorQueVendaNominal");
-		hql.append("    FROM movimento_estoque_cota");
-		hql.append("      INNER JOIN estudo_cota ON estudo_cota.ID = movimento_estoque_cota.ESTUDO_COTA_ID");
-		hql.append("      INNER JOIN cota ON cota.ID = estudo_cota.COTA_ID");
-		hql.append("      INNER JOIN pessoa ON pessoa.ID = cota.PESSOA_ID");
-		hql.append("      INNER JOIN estoque_produto_cota ON estoque_produto_cota.ID = movimento_estoque_cota.ESTOQUE_PROD_COTA_ID");
-		hql.append("    WHERE ");
-		hql.append("      TIPO_MOVIMENTO_ID = 21  AND estudo_cota.ESTUDO_ID = :estudoId ");
-		hql.append("    GROUP BY cota.NUMERO_COTA");
-		hql.append("    HAVING reparte between :faixaDe and :faixaAte ");
-		hql.append("  ) as baseReparte");
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
-		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
-		
-		query.setParameter("estudoId", estudoId);
-		query.setParameter("faixaDe", faixaDe);
-		query.setParameter("faixaAte", faixaAte);
+		query.setParameter("ESTUDO_ID", estudoId);
+		query.setParameter("DE", faixaDe);
+		query.setParameter("ATE", faixaAte);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(HistogramaPosEstudoAnaliseFaixaReparteDTO.class));
 
@@ -71,5 +72,4 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		
 		return resultado;
 	}
-
 }

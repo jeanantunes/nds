@@ -253,8 +253,8 @@ var analiseHistoricoVendaController = $.extend(true, {
 		 html = '<td width="50" >Qtde Cotas:</td>' +
 		        '<td width="103" >' + rodape.qtdCota + '</td>' +
 		        '<td width="30" align="right">' + rodape.qtdPdv + '</td>' +
-		        '<td width="32" align="right">' + rodape.reparteMedio.toFixed(2) + '</td>' +
-		        '<td width="32" align="right">' + rodape.vendaMedia.toFixed(2) + '</td>' +
+		        '<td width="32" align="right">' + rodape.reparteMedio.toFixed(1) + '</td>' +
+		        '<td width="32" align="right">' + rodape.vendaMedia.toFixed(1) + '</td>' +
 		        '<td width="32" align="right">' + rodape.ed1Rep + '</td>' +
 		        '<td width="32" align="right">' + rodape.ed1Venda + '</td>' +
 		        '<td width="32" align="right">' + rodape.ed2Rep + '</td>' +

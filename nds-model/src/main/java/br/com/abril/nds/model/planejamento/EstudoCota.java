@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -44,7 +45,7 @@ public class EstudoCota implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ESTUDO_ID")
 	private Estudo estudo;
-	@ManyToOne(optional = false)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
 	
@@ -54,13 +55,13 @@ public class EstudoCota implements Serializable {
 	@Column(name = "REPARTE")
 	private BigInteger reparte;
 	
-	@OneToMany(mappedBy = "estudoCota")
+	@OneToMany(mappedBy = "estudoCota", fetch = FetchType.LAZY)
 	private Set<RateioDiferenca> rateiosDiferenca = new HashSet<RateioDiferenca>();
 	
-	@OneToMany(mappedBy = "estudoCota")
+	@OneToMany(mappedBy = "estudoCota", fetch = FetchType.LAZY)
 	private List<MovimentoEstoqueCota> movimentosEstoqueCota; 
 	
-	@OneToMany(mappedBy = "estudoCota")
+	@OneToMany(mappedBy = "estudoCota", fetch = FetchType.LAZY)
 	private List<ItemNotaEnvio> itemNotaEnvios;
 	
 	@Column(name = "CLASSIFICACAO")

@@ -69,7 +69,7 @@
        	  <legend>Produto: &nbsp;<span id="spanLegendProduto"></span></legend>
         
         	<table class="mixProdutosGrid"></table>
-         <span class="bt_novos" title="Adicionar em Lote"  id="btAddLoteMixCota"><a href="javascript:;" onclick="mixCotaProdutoController.add_lote();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
+         <span class="bt_novos" title="Adicionar em Lote"  id="btAddLoteMixCota"><a href="javascript:;" onclick="mixCotaProdutoController.addLoteMix();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
          <span class="bt_novos" title="Novo" id="btNovoMixProduto"><a href="javascript:;" onclick="mixCotaProdutoController.novoMixPorProduto()"><img src="images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>
          <span class="bt_novos" title="Gerar Arquivo" id="btGerarArquivoMixProduto"><a href="${pageContext.request.contextPath}/distribuicao/mixCotaProduto/exportarGridProduto?fileType=XLS"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
         <span class="bt_novos" title="Imprimir" id="btImprimirMixProduto"><a href="${pageContext.request.contextPath}/distribuicao/mixCotaProduto/exportarGridProduto?fileType=PDF"><img src="images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>

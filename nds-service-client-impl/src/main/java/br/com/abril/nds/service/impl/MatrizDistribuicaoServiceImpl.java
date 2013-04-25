@@ -273,10 +273,25 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 			else if (vo.getIdEstudo() != null && vo.getIdEstudo().intValue() > 0) {
 				
 				Estudo estudo = estudoRepository.buscarPorId(vo.getIdEstudo().longValue());
-				estudoRepository.remover(estudo);
-			}
-			else {
-				
+				if (!estudo.isLiberado()) {
+				    for (EstudoCota ec : estudo.getEstudoCotas()) {
+					estudoCotaRepository.remover(ec);
+				    }
+				    List<Lancamento> lancamentos = lancamentoRepository.obterPorEstudo(estudo);
+				    for (Lancamento l : lancamentos) {
+					l.setEstudo(null);
+					lancamentoRepository.alterar(l);
+				    }
+				    for (Lancamento l : estudo.getLancamentos()) {
+					l.setEstudo(null);
+					lancamentoRepository.alterar(l);
+				    }
+				    estudo.setLancamentos(null);
+				    estudoRepository.remover(estudo);
+				} else {
+				    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Este estudo já foi liberado, não é permitido excluí-lo!"));
+				}
+			} else {
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não existe estudo para o produto selecionado!"));
 			}
 		}

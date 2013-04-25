@@ -331,7 +331,10 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	List<ProdutoEdicaoDTO> findReparteEVenda(
 			List<ProdutoEdicaoDTO> produtosEdicao);
 
-	List<ProdutoEdicao> pesquisar(String codigoProduto, String nomeProduto,
-			Long edicao);
+	void insereVendaRandomica(ProdutoEdicao produtoEdicao);
+
+	List<ProdutoEdicao> listProdutoEdicaoPorCodProdutoNumEdicoes(
+			String codigoProduto, Long numeroEdicaoInicial,
+			Long numeroEdicaoFinal);
 
 }

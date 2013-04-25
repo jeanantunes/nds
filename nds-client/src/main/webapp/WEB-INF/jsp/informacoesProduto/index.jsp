@@ -91,30 +91,6 @@ $(function(){
     
     </div>
 </div> 
-	<!--		 
-	<div id="div_acessoRapido" class="box_acesso_rapido" style="display:none">
-          <span class="titulo"><a href="javascript:;" onclick="acessoRapido();" style="float:left;">Acesso Rápido</a></span>
-          <a href="javascript:;" onclick="acessoRapidoFechar();" style="float:right;" class="fechar">
-          	<span class="ui-icon ui-icon-close">&nbsp;</span></a>
-          <div class="class_acessos">
-             	<ul id="acessoRapido"></ul>
-          </div>
-   </div>
-	 -->
-
-
-<!-- 
-			
-			ESTE TRECHO É RESPONSÁVEL PELA EXIBIÇÃO DA CAPA DA REVISTA
-			
-
-<div id="dialog-capa" title="Capa do Produto" style="display:none;">  
-    <fieldset style="width:200px!important;">
-      <legend>Veja</legend>
-            <img src="../capas/4rodas.jpg" width="196" height="258" alt="Capa" />
-    </fieldset>
-</div>
- -->
 
 <div id="dialog-detalhes" title="Visualizando Produto" style="margin-right:0px!important; float:right!important;">
  <img id="imagemCapaEdicao" width="235" height="314" />
@@ -222,10 +198,6 @@ $(function(){
           <fieldset style="width:320px; margin-right:0px!important; margin-top:5px; text-align:center; margin-left:5px; height:255px;">
               	<legend>Capa</legend>
               	
-                <!-- 
-                <img src="${pageContext.request.contextPath}/capas/4rodas.jpg" width="167" height="215" />
-                 -->
-                
                 <img id="imagemCapaDetalhe" width="167" height="215" />
                 
           </fieldset>

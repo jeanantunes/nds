@@ -47,6 +47,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		return query.list();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Produto> obterProdutoLikeNome(String nome, Integer qtdMaxRegRetorno) {
 		String hql = "from Produto produto "
@@ -362,8 +363,9 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<String> verificarProdutoExiste(String[] codigoProduto) {
+	public List<String> verificarProdutoExiste(String... codigoProduto) {
 		StringBuilder hql = new StringBuilder("select codigo from produto where produto.codigo in (:codigoProdutoList)");
 		
 		SQLQuery query = super.getSession().createSQLQuery(hql.toString());

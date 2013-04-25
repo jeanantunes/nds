@@ -3,7 +3,6 @@ package br.com.abril.nds.controllers.lancamento;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -13,9 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AnaliseNormalDTO;
 import br.com.abril.nds.dto.filtro.AnaliseNormalQueryDTO;
-import br.com.abril.nds.model.cadastro.AnaliseNormalProdutoEdicaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.AnaliseNormalProdutoEdicaoDTO;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.service.AnaliseNormalService;
 import br.com.abril.nds.util.CellModelKeyValue;

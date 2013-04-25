@@ -26,7 +26,7 @@ public interface FixacaoReparteService {
 	
 	public List<FixacaoReparteDTO> obterHistoricoLancamentoPorCota(FiltroConsultaFixacaoCotaDTO filtroCota);
 	
-	public void adicionarFixacaoReparte(FixacaoReparteDTO fixacaoReparteDTO);
+	public FixacaoReparte adicionarFixacaoReparte(FixacaoReparteDTO fixacaoReparteDTO);
 	
 	public void removerFixacaoReparte(FixacaoReparteDTO fixacaoReparteDTO);
 	
