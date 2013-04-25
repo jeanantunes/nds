@@ -1,8 +1,10 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.Date;
 
 import org.hibernate.Criteria;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
@@ -44,6 +46,29 @@ public class EstoqueProdutoCotaJuramentadoRepositoryImpl extends AbstractReposit
 		criteria.setMaxResults(1);
 		
 		return (EstoqueProdutoCotaJuramentado) criteria.uniqueResult();
+	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public BigInteger buscarSomaEstoqueJuramentadoPorProdutoData(Long idProdutoEdicao, Date data) {
+
+		if (idProdutoEdicao == null || data == null) {
+			
+			throw new IllegalArgumentException("Informe os parâmetros corretamente!");
+		}
+		
+		Criteria criteria = super.getSession().createCriteria(EstoqueProdutoCotaJuramentado.class);
+		
+		criteria.setProjection(Projections.sum("qtde"));
+		
+		criteria.add(Restrictions.eq("produtoEdicao.id", idProdutoEdicao));
+		criteria.add(Restrictions.eq("data", data));
+				
+		criteria.setMaxResults(1);
+		
+		return (BigInteger) criteria.uniqueResult();
 	}
 	
 }

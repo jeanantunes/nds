@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
@@ -70,15 +72,83 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 	}
 	
 	@SuppressWarnings("unchecked")
+	public List<Long> obterListaIdControleConferenciaEncalheCota(FiltroConsultaEncalheDTO filtro) {
+		
+		StringBuffer sql = new StringBuffer();
+
+		sql.append("	select	");
+
+		sql.append("	DISTINCT(CONTROLE_CONF_ENC_COTA.ID)	as idControle ");
+		
+		sql.append("	from	");
+
+		sql.append("	CHAMADA_ENCALHE  ");
+		
+		sql.append("	inner join CHAMADA_ENCALHE_COTA on ");
+		sql.append("	( CHAMADA_ENCALHE.ID = CHAMADA_ENCALHE_COTA.CHAMADA_ENCALHE_ID ) ");
+ 		
+		sql.append("	inner join PRODUTO_EDICAO on ");
+		sql.append("	( PRODUTO_EDICAO.ID = CHAMADA_ENCALHE.PRODUTO_EDICAO_ID ) ");
+		
+		sql.append("	inner join PRODUTO on ");
+		sql.append("	( PRODUTO_EDICAO.PRODUTO_ID = PRODUTO.ID ) ");
+		
+		sql.append("	inner join PRODUTO_FORNECEDOR on ");
+		sql.append("	( PRODUTO_FORNECEDOR.PRODUTO_ID = PRODUTO.ID ) ");
+		
+		sql.append("	inner join FORNECEDOR on ");
+		sql.append("	( PRODUTO_FORNECEDOR.FORNECEDORES_ID = FORNECEDOR.ID ) ");
+		
+		sql.append("	inner join PESSOA on                   	");
+		sql.append("	( PESSOA.ID = FORNECEDOR.JURIDICA_ID )	");
+		
+		sql.append("	inner join CONTROLE_CONFERENCIA_ENCALHE_COTA CONTROLE_CONF_ENC_COTA on ");
+		sql.append("	( CONTROLE_CONF_ENC_COTA.DATA_OPERACAO = CHAMADA_ENCALHE.DATA_RECOLHIMENTO 	");
+		sql.append("	AND  CONTROLE_CONF_ENC_COTA.COTA_ID = CHAMADA_ENCALHE_COTA.COTA_ID ) ");
+		
+		sql.append("	where	");
+		
+		sql.append("	(CHAMADA_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal) ");
+		
+		sql.append("	AND CHAMADA_ENCALHE_COTA.FECHADO = :isPostergado ");
+		
+		if(filtro.getIdCota()!=null) {
+			sql.append(" and CHAMADA_ENCALHE_COTA.COTA_ID = :idCota  ");
+		}
+		
+		if(filtro.getIdFornecedor() != null) {
+			sql.append(" and FORNECEDOR.ID =  :idFornecedor ");
+		}
+
+		SQLQuery sqlquery = getSession().createSQLQuery(sql.toString()).addScalar("idControle", StandardBasicTypes.LONG);
+		
+		if(filtro.getIdCota()!=null) {
+			sqlquery.setParameter("idCota", filtro.getIdCota());
+		}
+
+		if(filtro.getIdFornecedor() != null) {
+			sqlquery.setParameter("idFornecedor", filtro.getIdFornecedor());
+		}
+		
+		sqlquery.setParameter("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
+		sqlquery.setParameter("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
+		sqlquery.setParameter("isPostergado", false);
+		
+		return sqlquery.list();
+		
+	}
+
+	
+	@SuppressWarnings("unchecked")
 	public List<ControleConferenciaEncalheCota> obterControleConferenciaEncalheCotaPorFiltro(FiltroConsultaEncalheDTO filtro) {
 				
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select ");
 		
-		hql.append(" distinct conferencia.controleConferenciaEncalheCota");
+		hql.append(" distinct controleConferenciaEncalheCota ");
 		
-		hql.append(" from ConferenciaEncalhe conferencia	");
+		hql.append(" from ControleConferenciaEncalheCota controleConferenciaEncalheCota	");
 		
 		hql.append(" join conferencia.movimentoEstoqueCota movimentoEstoqueCota ");
 		hql.append(" join movimentoEstoqueCota.produtoEdicao.produto.fornecedores fornecedor ");

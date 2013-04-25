@@ -799,8 +799,6 @@ public class ConferenciaEncalheController extends BaseController {
 		this.carregarListaConferencia(null, false, false);
 	}
 	
-	
-	
 	/**
 	 * Valida se a quantidade informada excede a quantidade especificada no reparte
 	 * @param qtdExemplares

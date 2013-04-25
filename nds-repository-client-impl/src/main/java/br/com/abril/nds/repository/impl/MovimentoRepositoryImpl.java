@@ -1,11 +1,11 @@
 package br.com.abril.nds.repository.impl;
 
-import java.math.BigInteger;
 import java.util.List;
 
 import org.hibernate.Query;
-import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.MovimentoAprovacaoDTO;
@@ -35,48 +35,46 @@ public class MovimentoRepositoryImpl extends AbstractRepositoryModel<Movimento, 
 	@SuppressWarnings("unchecked")
 	public List<MovimentoAprovacaoDTO> obterMovimentosAprovacao(FiltroControleAprovacaoDTO filtro) {
 
-		String hql = this.gerarQueryMovimentosAprovacao(filtro, false);
+		String hql = this.gerarQueryMovimentosAprovacao(filtro);
 		
 		if (filtro != null && filtro.getOrdenacaoColuna() != null) {
 			
 			switch (filtro.getOrdenacaoColuna()) {
 			
 				case TIPO_MOVIMENTO:
-					hql += "order by movimento.tipoMovimento.descricao ";
+					hql += "order by descricaoTipoMovimento ";
 					break;
 					
 				case DATA_MOVIMENTO:
-					hql += "order by movimento.dataCriacao ";
+					hql += "order by mdataCriacao ";
 					break;
 					
 				case NUMERO_COTA:
-					hql += "order by cota.numeroCota ";
+					hql += "order by numeroCota ";
 					break;
 				
 				case NOME_COTA:
-					hql += "order by (case when (pessoa.nome is not null) then ( pessoa.nome )"
-						+  " when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )"
-						+  " else null end)";
+					hql += "order by nomeCota ";
 					break;
 					
 				case VALOR:
-					hql += "order by movimento.valor ";
+					hql += "order by valor ";
 					break;
 					
 				case PARCELAS:
-					hql += "order by movimento.parcelas ";
+					hql += "order by parcelas ";
 					break;
 					
 				case PRAZO:
-					hql += "order by movimento.prazo ";
+					hql += "order by prazo ";
 					break;
 					
 				case REQUERENTE:
-					hql += "order by movimento.usuario.nome ";
+					hql += "order by nomeUsuarioRequerente ";
 					break;
 				
 				case STATUS:
-					hql += "order by movimento.status ";
+					hql += "order by statusMovimento ";
 					break;
 					
 				default:
@@ -88,9 +86,21 @@ public class MovimentoRepositoryImpl extends AbstractRepositoryModel<Movimento, 
 			}
 		}
 		
-		Query query = getSession().createQuery(hql);
+		SQLQuery query = getSession().createSQLQuery(hql);
 		
-		aplicarParametrosParaPesquisaMovimentoAprovacao(filtro, query);
+		query.addScalar("idMovimento", StandardBasicTypes.LONG);
+		query.addScalar("descricaoTipoMovimento");
+		query.addScalar("dataCriacao");
+		query.addScalar("numeroCota");
+		query.addScalar("nomeCota");
+		query.addScalar("valor");
+		query.addScalar("parcelas");
+		query.addScalar("prazo");
+		query.addScalar("nomeUsuarioRequerente");
+		query.addScalar("statusMovimento");
+		query.addScalar("motivo");
+		
+		this.aplicarParametrosParaPesquisaMovimentoAprovacao(filtro, query);
 		
  		if (filtro != null && filtro.getPaginacao() != null) {
 			
@@ -102,8 +112,8 @@ public class MovimentoRepositoryImpl extends AbstractRepositoryModel<Movimento, 
 				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 			}
 		}
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(MovimentoAprovacaoDTO.class));
+ 		
+		query.setResultTransformer(Transformers.aliasToBean(MovimentoAprovacaoDTO.class));
 		
 		return query.list();
 	}
@@ -111,11 +121,13 @@ public class MovimentoRepositoryImpl extends AbstractRepositoryModel<Movimento, 
 	@Override
 	public Long obterTotalMovimentosAprovacao(FiltroControleAprovacaoDTO filtro) {
 		
-		String hql = this.gerarQueryMovimentosAprovacao(filtro, true);
+		String hql = this.gerarQueryTotalMovimentosAprovacao(filtro);
 		
-		Query query = getSession().createQuery(hql);
+		SQLQuery query = getSession().createSQLQuery(hql);
 		
-		aplicarParametrosParaPesquisaMovimentoAprovacao(filtro, query);
+		query.addScalar("totalMovimentos", StandardBasicTypes.LONG);
+		
+		this.aplicarParametrosParaPesquisaMovimentoAprovacao(filtro, query);
 		
 		return (Long) query.uniqueResult();
 	}
@@ -145,78 +157,15 @@ public class MovimentoRepositoryImpl extends AbstractRepositoryModel<Movimento, 
 		}
 		
 		if (filtro.getStatusAprovacao() != null) {
-			query.setParameter("statusAprovacao", filtro.getStatusAprovacao());
+			query.setParameter("statusAprovacao", filtro.getStatusAprovacao().name());
 		}
-	}
-	
-	/**
-	 * Gera a query de movimentos para aprovação.
-	 *   
-	 * @param filtro - filtro da pesquisa
-	 * @param totalizar - flag para contagem de total
-	 * 
-	 * @return Query
-	 */
-	private String gerarQueryMovimentosAprovacao(FiltroControleAprovacaoDTO filtro, 
-												 boolean totalizar) {
-		
-		String hql;
-		
-		if (totalizar) {
-			
-			hql = "select count(movimento) ";
-			
-		} else {
-			
-			hql = " select "
-				+ " movimento.id as idMovimento, "
-				+ " movimento.tipoMovimento.descricao as descricaoTipoMovimento,"
-				+ " movimento.dataCriacao as dataCriacao, "
-				+ " cota.numeroCota as numeroCota,"
-				+ " (case when (pessoa.nome is not null) then ( pessoa.nome )"
-				+ " when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )"
-				+ " else null end) as nomeCota, "
-				+ " movimento.valor as valor, "
-				+ " movimento.parcelas as parcelas, "
-				+ " movimento.prazo as prazo, "
-				+ " movimento.usuario.nome as nomeUsuarioRequerente, "
-				+ " movimento.status as statusMovimento, "
-				+ " movimento.motivo as motivo ";
-		}
-		
-		hql += " from Movimento movimento "
-			 + " left join movimento.cota cota "
-			 + " left join cota.pessoa pessoa ";
-		
-		hql += " where movimento.tipoMovimento.aprovacaoAutomatica = :aprovacaoAutomatica ";
-		
-		if (filtro != null) {
-		
-			if (filtro.getIdTipoMovimento() != null) {
-				
-				hql += " and movimento.tipoMovimento.id = :idTipoMovimento ";
-			}
-			
-			if (filtro.getDataMovimento() != null) {
-				
-				hql += "  and movimento.dataCriacao = :dataMovimento ";
-			}
-			
-			if (filtro.getStatusAprovacao() != null) {
-				
-				hql += "  and movimento.status = :statusAprovacao ";
-				
-			}
-		}
-		
-		return hql;
 	}
 	
 	public boolean existeMovimentoEstoquePendente(List<GrupoMovimentoEstoque> gruposMovimento) {
 		
 		String hql = " select count(movimento) "
 			+ " from Movimento movimento "
-			+ " where movimento.tipoMovimento.grupoMovimentoEstoque in (:gruposMovimento)"
+			+ " where movimento.tipoMovimento.grupoMovimentoEstoque in (:gruposMovimento) "
 			+ " and status = :status ";
 		
 		Query query = getSession().createQuery(hql);
@@ -260,235 +209,298 @@ public class MovimentoRepositoryImpl extends AbstractRepositoryModel<Movimento, 
 		return (Movimento) query.uniqueResult();
 	}
 	
-	
-	
-	
-	
-	 @SuppressWarnings("unchecked")
-		private List<MovimentoAprovacaoDTO> getMovimentosAprovacao(FiltroControleAprovacaoDTO filtro){
-			
-			String sql = "";
+	private String gerarQueryMovimentosAprovacao(FiltroControleAprovacaoDTO filtro){
+		
+		StringBuilder sql = new StringBuilder();
 
-			sql+="select ";
-			
-			sql+=" movimento0_.ID as idMovimento, ";
-			sql+=" movimento0_.DESCRICAO_TIPO_MOVIMENTO as descricaoTipoMovimento,";
-			sql+=" movimento0_.DATA_CRIACAO as dataCriacao, ";
-		    sql+=" (CASE WHEN cota1_.NUMERO_COTA IS NULL THEN NULL ELSE cota1_.NUMERO_COTA END) as numeroCota,";
-			sql+=" (CASE WHEN pessoa2_.NOME IS NULL THEN (CASE WHEN pessoa2_.RAZAO_SOCIAL IS NULL THEN '' ELSE pessoa2_.RAZAO_SOCIAL END) ELSE pessoa2_.NOME END) as nomeCota, ";
-			sql+=" movimento0_.VALOR as valor, ";
-			sql+=" movimento0_.PARCELAS as parcelas, ";
-			sql+=" movimento0_.PRAZO as prazo, ";
-			sql+=" movimento0_.NOME_USUARIO as nomeUsuarioRequerente, ";
-			sql+=" movimento0_.STATUS as statusMovimento, ";
-			sql+=" movimento0_.MOTIVO as motivo ";
+		sql.append("select ");
+		
+		sql.append(" movimentoAprovacao.ID as idMovimento, ");
+		sql.append(" movimentoAprovacao.DESCRICAO as descricaoTipoMovimento, ");
+		sql.append(" movimentoAprovacao.DATA_CRIACAO as dataCriacao, ");
+	    sql.append(" cota.NUMERO_COTA as numeroCota, ");
+	    sql.append(" coalesce(pessoa.NOME, pessoa.RAZAO_SOCIAL, '') as nomeCota, ");
+		sql.append(" movimentoAprovacao.VALOR as valor, ");
+		sql.append(" movimentoAprovacao.PARCELAS as parcelas, ");
+		sql.append(" movimentoAprovacao.PRAZO as prazo, ");
+		sql.append(" movimentoAprovacao.NOME as nomeUsuarioRequerente, ");
+		sql.append(" movimentoAprovacao.STATUS as statusMovimento, ");
+		sql.append(" movimentoAprovacao.MOTIVO as motivo ");
 
-			sql+=this.gerarFromMovimentosAprovacao();
+		sql.append(this.gerarFromMovimentosAprovacao(filtro));
+		
+		return sql.toString();
+	}
+		
+	private String gerarQueryTotalMovimentosAprovacao(FiltroControleAprovacaoDTO filtro){
+		
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" select ");
+		
+		sql.append(" count(movimentoAprovacao.ID) as totalMovimentos ");
+
+		sql.append(this.gerarFromMovimentosAprovacao(filtro));
+		
+		return sql.toString();
+	}
+		
+	private String gerarFromMovimentosAprovacao(FiltroControleAprovacaoDTO filtro){
+		
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" from ");
+		sql.append(" ( ");
+		
+		sql.append(this.getQueryMovimentoEstoque(filtro));
+		
+		sql.append(" union ");
+		
+		sql.append(this.getQuerymMovimentoEstoqueCota(filtro));
+		
+		sql.append(" union ");
+		
+		sql.append(this.getQueryMovimentoFinanceiroCota(filtro));
+		
+		sql.append(" ) movimentoAprovacao ");
+		
+		sql.append(" left outer join ");
+		sql.append(" COTA cota ");
+		sql.append(" on movimentoAprovacao.COTA_ID = cota.ID ");
+		sql.append(" left outer join ");
+		sql.append(" PESSOA pessoa ");
+		sql.append(" on cota.PESSOA_ID = pessoa.ID ");
+		
+		return sql.toString();
+	}
+
+	private String getQueryMovimentoEstoque(FiltroControleAprovacaoDTO filtro) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select ");
+		sql.append(" movimento.ID, ");
+		sql.append(" APROVADO_AUTOMATICAMENTE, ");
+		sql.append(" DATA_APROVACAO, ");
+		sql.append(" MOTIVO, ");
+		sql.append(" STATUS, ");
+		sql.append(" DATA, ");
+		sql.append(" DATA_CRIACAO, ");
+		sql.append(" DATA_INTEGRACAO, ");
+		sql.append(" STATUS_INTEGRACAO, ");
+		sql.append(" APROVADOR_ID, ");
+		sql.append(" TIPO_MOVIMENTO_ID, ");
+		sql.append(" USUARIO_ID, ");
+		sql.append(" ORIGEM, ");
+		sql.append(" QTDE, ");
+		sql.append(" COD_ORIGEM_MOTIVO, ");
+		sql.append(" DAT_EMISSAO_DOC_ACERTO, ");
+		sql.append(" NUM_DOC_ACERTO, ");
+		sql.append(" PRODUTO_EDICAO_ID, ");
+		sql.append(" ESTOQUE_PRODUTO_ID, ");
+		sql.append(" ITEM_REC_FISICO_ID, ");
+		sql.append(" null as DATA_LANCAMENTO_ORIGINAL, ");
+		sql.append(" null as STATUS_ESTOQUE_FINANCEIRO, ");
+		sql.append(" null as PRECO_COM_DESCONTO, ");
+		sql.append(" null as PRECO_VENDA, ");
+		sql.append(" null as VALOR_DESCONTO, ");
+		sql.append(" null as COTA_ID, ");
+		sql.append(" null as ESTOQUE_PROD_COTA_ID, ");
+		sql.append(" null as ESTOQUE_PROD_COTA_JURAMENTADO_ID, ");
+		sql.append(" null as ESTUDO_COTA_ID, ");
+		sql.append(" null as NOTA_ENVIO_ITEM_NOTA_ENVIO_ID, ");
+		sql.append(" null as NOTA_ENVIO_ITEM_SEQUENCIA, ");
+		sql.append(" null as LANCAMENTO_ID, ");
+		sql.append(" null as MOVIMENTO_ESTOQUE_COTA_FURO_ID, ");
+		sql.append(" null as MOVIMENTO_FINANCEIRO_COTA_ID, ");
+		sql.append(" null as PARCELAS, ");
+		sql.append(" null as PRAZO, ");
+		sql.append(" null as VALOR, ");
+		sql.append(" null as LANCAMENTO_MANUAL, ");
+		sql.append(" null as OBSERVACAO, ");
+		sql.append(" null as BAIXA_COBRANCA_ID, ");
+		sql.append(" null as fornecedor_ID, ");
+		sql.append(" tipoMovimento.APROVACAO_AUTOMATICA, ");
+		sql.append(" tipoMovimento.DESCRICAO, ");
+		sql.append(" usuario.NOME ");
+
+		sql.append(" from ");
+		sql.append("     MOVIMENTO_ESTOQUE movimento ");
+		sql.append(" join ");
+		sql.append("     TIPO_MOVIMENTO tipoMovimento ");
+		sql.append("     	on tipoMovimento.ID = movimento.TIPO_MOVIMENTO_ID ");
+		sql.append(" join ");
+		sql.append(" 		USUARIO usuario ");
+		sql.append(" 			on usuario.ID = movimento.USUARIO_ID ");
+		
+		sql.append(" where ");
+		sql.append(" movimento.TIPO_MOVIMENTO_ID = tipoMovimento.ID ");
+		
+		sql.append(this.aplicarFiltro(filtro));
+		
+		return sql.toString();
+	}
+
+	private String getQuerymMovimentoEstoqueCota(FiltroControleAprovacaoDTO filtro) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select ");
+		sql.append(" movimento.ID, ");
+		sql.append(" APROVADO_AUTOMATICAMENTE, ");
+		sql.append(" DATA_APROVACAO, ");
+		sql.append(" MOTIVO, ");
+		sql.append(" STATUS, ");
+		sql.append(" DATA, ");
+		sql.append(" DATA_CRIACAO, ");
+		sql.append(" DATA_INTEGRACAO, ");
+		sql.append(" STATUS_INTEGRACAO, ");
+		sql.append(" APROVADOR_ID, ");
+		sql.append(" TIPO_MOVIMENTO_ID, ");
+		sql.append(" USUARIO_ID, ");
+		sql.append(" ORIGEM, ");
+		sql.append(" QTDE, ");
+		sql.append(" null as COD_ORIGEM_MOTIVO, ");
+		sql.append(" null as DAT_EMISSAO_DOC_ACERTO, ");
+		sql.append(" null as NUM_DOC_ACERTO, ");
+		sql.append(" PRODUTO_EDICAO_ID, ");
+		sql.append(" null as ESTOQUE_PRODUTO_ID, ");
+		sql.append(" null as ITEM_REC_FISICO_ID, ");
+		sql.append(" DATA_LANCAMENTO_ORIGINAL, ");
+		sql.append(" STATUS_ESTOQUE_FINANCEIRO, ");
+		sql.append(" PRECO_COM_DESCONTO, ");
+		sql.append(" PRECO_VENDA, ");
+		sql.append(" VALOR_DESCONTO, ");
+		sql.append(" COTA_ID, ");
+		sql.append(" ESTOQUE_PROD_COTA_ID, ");
+		sql.append(" ESTOQUE_PROD_COTA_JURAMENTADO_ID, ");
+		sql.append(" ESTUDO_COTA_ID, ");
+		sql.append(" NOTA_ENVIO_ITEM_NOTA_ENVIO_ID, ");
+		sql.append(" NOTA_ENVIO_ITEM_SEQUENCIA, ");
+		sql.append(" LANCAMENTO_ID, ");
+		sql.append(" MOVIMENTO_ESTOQUE_COTA_FURO_ID, ");
+		sql.append(" MOVIMENTO_FINANCEIRO_COTA_ID, ");
+		sql.append(" null as PARCELAS, ");
+		sql.append(" null as PRAZO, ");
+		sql.append(" null as VALOR, ");
+		sql.append(" null as LANCAMENTO_MANUAL, ");
+		sql.append(" null as OBSERVACAO, ");
+		sql.append(" null as BAIXA_COBRANCA_ID, ");
+		sql.append(" null as fornecedor_ID, ");
+		sql.append(" tipoMovimento.APROVACAO_AUTOMATICA, ");
+		sql.append(" tipoMovimento.DESCRICAO, ");
+		
+		sql.append(" usuario.NOME ");
+		sql.append(" from ");
+		sql.append("     MOVIMENTO_ESTOQUE_COTA movimento "); 
+		sql.append(" join ");
+		sql.append("     TIPO_MOVIMENTO tipoMovimento ");
+		sql.append("     	on tipoMovimento.ID = movimento.TIPO_MOVIMENTO_ID ");
+		sql.append(" join ");
+		sql.append(" 		USUARIO usuario ");
+		sql.append(" 			on usuario.ID = movimento.USUARIO_ID ");
+		
+		sql.append(" where ");
+		sql.append(" movimento.TIPO_MOVIMENTO_ID = tipoMovimento.ID ");
+		
+		sql.append(this.aplicarFiltro(filtro));
+		
+		return sql.toString();
+	}
+	
+	private String getQueryMovimentoFinanceiroCota(FiltroControleAprovacaoDTO filtro) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select ");
+		sql.append(" movimento.ID, ");
+		sql.append(" APROVADO_AUTOMATICAMENTE, ");
+		sql.append(" DATA_APROVACAO, ");
+		sql.append(" MOTIVO, ");
+		sql.append(" STATUS, ");
+		sql.append(" DATA, ");
+		sql.append(" DATA_CRIACAO, ");
+		sql.append(" DATA_INTEGRACAO, ");
+		sql.append(" STATUS_INTEGRACAO, ");
+		sql.append(" APROVADOR_ID, ");
+		sql.append(" TIPO_MOVIMENTO_ID, ");
+		sql.append(" USUARIO_ID, ");
+		sql.append(" null as ORIGEM, ");
+		sql.append(" null as QTDE, ");
+		sql.append(" null as COD_ORIGEM_MOTIVO, ");
+		sql.append(" null as DAT_EMISSAO_DOC_ACERTO, ");
+		sql.append(" null as NUM_DOC_ACERTO, ");
+		sql.append(" null as PRODUTO_EDICAO_ID, ");
+		sql.append(" null as ESTOQUE_PRODUTO_ID, ");
+		sql.append(" null as ITEM_REC_FISICO_ID, ");
+		sql.append(" null as DATA_LANCAMENTO_ORIGINAL, ");
+		sql.append(" null as STATUS_ESTOQUE_FINANCEIRO, ");
+		sql.append(" null as PRECO_COM_DESCONTO, ");
+		sql.append(" null as PRECO_VENDA, ");
+		sql.append(" null as VALOR_DESCONTO, ");
+		sql.append(" COTA_ID, ");
+		sql.append(" null as ESTOQUE_PROD_COTA_ID, ");
+		sql.append(" null as ESTOQUE_PROD_COTA_JURAMENTADO_ID, ");
+		sql.append(" null as ESTUDO_COTA_ID, ");
+		sql.append(" null as NOTA_ENVIO_ITEM_NOTA_ENVIO_ID, ");
+		sql.append(" null as NOTA_ENVIO_ITEM_SEQUENCIA, ");
+		sql.append(" null as LANCAMENTO_ID, ");
+		sql.append(" null as MOVIMENTO_ESTOQUE_COTA_FURO_ID, ");
+		sql.append(" null as MOVIMENTO_FINANCEIRO_COTA_ID, ");
+		sql.append(" PARCELAS, ");
+		sql.append(" PRAZO, ");
+		sql.append(" VALOR, ");
+		sql.append(" LANCAMENTO_MANUAL, ");
+		sql.append(" OBSERVACAO, ");
+		sql.append(" BAIXA_COBRANCA_ID, ");
+		sql.append(" fornecedor_ID, ");
+		sql.append(" tipoMovimento.APROVACAO_AUTOMATICA, ");
+		sql.append(" tipoMovimento.DESCRICAO, ");
+		
+		sql.append(" usuario.NOME ");
+		sql.append(" from ");
+		sql.append("     MOVIMENTO_FINANCEIRO_COTA movimento "); 
+		sql.append(" join ");
+		sql.append("     TIPO_MOVIMENTO tipoMovimento ");
+		sql.append("     	on tipoMovimento.ID = movimento.TIPO_MOVIMENTO_ID ");
+		sql.append(" join ");
+		sql.append(" 		USUARIO usuario ");
+		sql.append(" 			on usuario.ID = movimento.USUARIO_ID ");
+		
+		sql.append(" where ");
+		sql.append(" movimento.TIPO_MOVIMENTO_ID = tipoMovimento.ID ");
+		
+		sql.append(this.aplicarFiltro(filtro));
+		
+		return sql.toString();
+	}
+	
+	private String aplicarFiltro(FiltroControleAprovacaoDTO filtro) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" and tipoMovimento.APROVACAO_AUTOMATICA = :aprovacaoAutomatica ");
+		
+		if (filtro != null) {
 			
-	        Query query = this.getSession().createSQLQuery(sql);
-	        
-	        query.setResultTransformer(Transformers.aliasToBean(MovimentoAprovacaoDTO.class));
-	        
-			return (List<MovimentoAprovacaoDTO>) query.list();   
+			if (filtro.getIdTipoMovimento() != null) {
+				
+				sql.append(" and tipoMovimento.ID = :idTipoMovimento ");
+			}
+			
+			if (filtro.getDataMovimento() != null) {
+				
+				sql.append(" and movimento.DATA_CRIACAO = :dataMovimento ");
+			}
+			
+			if (filtro.getStatusAprovacao() != null) {
+				
+				sql.append(" and movimento.STATUS = :statusAprovacao ");
+				
+			}
 		}
 		
-		private BigInteger getCountMovimentosAprovacao(FiltroControleAprovacaoDTO filtro){
-			
-			String sql = "";
-
-			sql+="select ";
-			
-			sql+="count(movimento0_.ID) as col_0_0_ ";
-
-			sql+=this.gerarFromMovimentosAprovacao();
-			
-	        Query query = this.getSession().createSQLQuery(sql);
-			
-			return (BigInteger) query.uniqueResult();        
-		}
-		
-		private String gerarFromMovimentosAprovacao(){
-			
-			String sql = " ";
-
-			sql+="from ";
-			sql+="( select ";
-			sql+="me.ID,";
-			sql+="APROVADO_AUTOMATICAMENTE, ";
-			sql+="DATA_APROVACAO, ";
-			sql+="MOTIVO, ";
-			sql+="STATUS, ";
-			sql+="DATA, ";
-			sql+="DATA_CRIACAO, ";
-			sql+="DATA_INTEGRACAO, ";
-			sql+="STATUS_INTEGRACAO, ";
-			sql+="APROVADOR_ID, ";
-			sql+="TIPO_MOVIMENTO_ID, ";
-			sql+="USUARIO_ID, ";
-			sql+="ORIGEM, ";
-			sql+="QTDE, ";
-			sql+="COD_ORIGEM_MOTIVO, ";
-			sql+="DAT_EMISSAO_DOC_ACERTO, ";
-			sql+="NUM_DOC_ACERTO, ";
-			sql+="PRODUTO_EDICAO_ID, ";
-			sql+="ESTOQUE_PRODUTO_ID, ";
-			sql+="ITEM_REC_FISICO_ID, ";
-			sql+="null as DATA_LANCAMENTO_ORIGINAL, ";
-			sql+="null as STATUS_ESTOQUE_FINANCEIRO, ";
-			sql+="null as PRECO_COM_DESCONTO, ";
-			sql+="null as PRECO_VENDA, ";
-			sql+="null as VALOR_DESCONTO, ";
-			sql+="null as COTA_ID, ";
-			sql+="null as ESTOQUE_PROD_COTA_ID, ";
-			sql+="null as ESTOQUE_PROD_COTA_JURAMENTADO_ID, ";
-			sql+="null as ESTUDO_COTA_ID, ";
-			sql+="null as NOTA_ENVIO_ITEM_NOTA_ENVIO_ID, ";
-			sql+="null as NOTA_ENVIO_ITEM_SEQUENCIA, ";
-			sql+="null as LANCAMENTO_ID, ";
-			sql+="null as MOVIMENTO_ESTOQUE_COTA_FURO_ID, ";
-			sql+="null as MOVIMENTO_FINANCEIRO_COTA_ID, ";
-			sql+="null as PARCELAS, ";
-			sql+="null as PRAZO, ";
-			sql+="null as VALOR, ";
-			sql+="null as LANCAMENTO_MANUAL, ";
-			sql+="null as OBSERVACAO, ";
-			sql+="null as BAIXA_COBRANCA_ID, ";
-			sql+="null as fornecedor_ID, ";
-			
-			sql+="(SELECT U.NOME FROM USUARIO U WHERE U.ID = me.USUARIO_ID) as NOME_USUARIO, ";
-			sql+="(SELECT TM.DESCRICAO FROM TIPO_MOVIMENTO TM WHERE TM.ID = me.TIPO_MOVIMENTO_ID) as DESCRICAO_TIPO_MOVIMENTO ";
-			
-			sql+="from ";
-			sql+="MOVIMENTO_ESTOQUE me join ";
-			sql+="TIPO_MOVIMENTO tipomovime1_ ";
-			sql+="where ";
-			sql+="me.TIPO_MOVIMENTO_ID=tipomovime1_.ID ";
-			sql+="and tipomovime1_.APROVACAO_AUTOMATICA=1 ";
-			sql+="and me.DATA_CRIACAO='2013-03-27' ";
-			
-			sql+="union ";
-			
-			sql+="select ";
-			sql+="mec.ID, ";
-			sql+="APROVADO_AUTOMATICAMENTE, ";
-			sql+="DATA_APROVACAO, ";
-			sql+="MOTIVO, ";
-			sql+="STATUS, ";
-			sql+="DATA, ";
-			sql+="DATA_CRIACAO, ";
-			sql+="DATA_INTEGRACAO, ";
-			sql+="STATUS_INTEGRACAO, ";
-			sql+="APROVADOR_ID, ";
-			sql+="TIPO_MOVIMENTO_ID, ";
-			sql+="USUARIO_ID, ";
-			sql+="ORIGEM, ";
-			sql+="QTDE, ";
-			sql+="null as COD_ORIGEM_MOTIVO, ";
-			sql+="null as DAT_EMISSAO_DOC_ACERTO, ";
-			sql+="null as NUM_DOC_ACERTO, ";
-			sql+="PRODUTO_EDICAO_ID, ";
-			sql+="null as ESTOQUE_PRODUTO_ID, ";
-			sql+="null as ITEM_REC_FISICO_ID, ";
-			sql+="DATA_LANCAMENTO_ORIGINAL, ";
-			sql+="STATUS_ESTOQUE_FINANCEIRO, ";
-			sql+="PRECO_COM_DESCONTO, ";
-			sql+="PRECO_VENDA, ";
-			sql+="VALOR_DESCONTO, ";
-			sql+="COTA_ID, ";
-			sql+="ESTOQUE_PROD_COTA_ID, ";
-			sql+="ESTOQUE_PROD_COTA_JURAMENTADO_ID, ";
-			sql+="ESTUDO_COTA_ID, ";
-			sql+="NOTA_ENVIO_ITEM_NOTA_ENVIO_ID, ";
-			sql+="NOTA_ENVIO_ITEM_SEQUENCIA, ";
-			sql+="LANCAMENTO_ID, ";
-			sql+="MOVIMENTO_ESTOQUE_COTA_FURO_ID, ";
-			sql+="MOVIMENTO_FINANCEIRO_COTA_ID, ";
-			sql+="null as PARCELAS, ";
-			sql+="null as PRAZO, ";
-			sql+="null as VALOR, ";
-			sql+="null as LANCAMENTO_MANUAL, ";
-			sql+="null as OBSERVACAO, ";
-			sql+="null as BAIXA_COBRANCA_ID, ";
-			sql+="null as fornecedor_ID, ";
-			
-			sql+="(SELECT U.NOME FROM USUARIO U WHERE U.ID = mec.USUARIO_ID) as NOME_USUARIO, ";
-			sql+="(SELECT TM.DESCRICAO FROM TIPO_MOVIMENTO TM WHERE TM.ID = mec.TIPO_MOVIMENTO_ID) as DESCRICAO_TIPO_MOVIMENTO ";
-			
-			sql+="from ";
-			sql+="MOVIMENTO_ESTOQUE_COTA mec join ";
-			sql+="TIPO_MOVIMENTO tipomovime2_ ";
-			sql+="where ";
-			sql+="mec.TIPO_MOVIMENTO_ID=tipomovime2_.ID ";
-			sql+="and tipomovime2_.APROVACAO_AUTOMATICA=1 ";
-			sql+="and mec.DATA_CRIACAO='2013-03-27' ";
-			
-			sql+="union ";
-			
-			sql+="select ";
-			sql+="mfc.ID, ";
-			sql+="APROVADO_AUTOMATICAMENTE, ";
-			sql+="DATA_APROVACAO, ";
-			sql+="MOTIVO, ";
-			sql+="STATUS, ";
-			sql+="DATA, ";
-			sql+="DATA_CRIACAO, ";
-			sql+="DATA_INTEGRACAO, ";
-			sql+="STATUS_INTEGRACAO, ";
-			sql+="APROVADOR_ID, ";
-			sql+="TIPO_MOVIMENTO_ID, ";
-			sql+="USUARIO_ID, ";
-			sql+="null as ORIGEM, ";
-			sql+="null as QTDE, ";
-			sql+="null as COD_ORIGEM_MOTIVO, ";
-			sql+="null as DAT_EMISSAO_DOC_ACERTO, ";
-			sql+="null as NUM_DOC_ACERTO, ";
-			sql+="null as PRODUTO_EDICAO_ID, ";
-			sql+="null as ESTOQUE_PRODUTO_ID, ";
-			sql+="null as ITEM_REC_FISICO_ID, ";
-			sql+="null as DATA_LANCAMENTO_ORIGINAL, ";
-			sql+="null as STATUS_ESTOQUE_FINANCEIRO, ";
-			sql+="null as PRECO_COM_DESCONTO, ";
-			sql+="null as PRECO_VENDA, ";
-			sql+="null as VALOR_DESCONTO, ";
-			sql+="COTA_ID, ";
-			sql+="null as ESTOQUE_PROD_COTA_ID, ";
-			sql+="null as ESTOQUE_PROD_COTA_JURAMENTADO_ID, ";
-			sql+="null as ESTUDO_COTA_ID, ";
-			sql+="null as NOTA_ENVIO_ITEM_NOTA_ENVIO_ID, ";
-			sql+="null as NOTA_ENVIO_ITEM_SEQUENCIA, ";
-			sql+="null as LANCAMENTO_ID, ";
-			sql+="null as MOVIMENTO_ESTOQUE_COTA_FURO_ID, ";
-			sql+="null as MOVIMENTO_FINANCEIRO_COTA_ID, ";
-			sql+="PARCELAS, ";
-			sql+="PRAZO, ";
-			sql+="VALOR, ";
-			sql+="LANCAMENTO_MANUAL, ";
-			sql+="OBSERVACAO, ";
-			sql+="BAIXA_COBRANCA_ID, ";
-			sql+="fornecedor_ID, ";
-			
-			sql+="(SELECT U.NOME FROM USUARIO U WHERE U.ID = mfc.USUARIO_ID) as NOME_USUARIO, ";
-			sql+="(SELECT TM.DESCRICAO FROM TIPO_MOVIMENTO TM WHERE TM.ID = mfc.TIPO_MOVIMENTO_ID) as DESCRICAO_TIPO_MOVIMENTO ";
-			
-			sql+="from ";
-			sql+="MOVIMENTO_FINANCEIRO_COTA mfc ";
-			sql+="join ";
-			sql+="TIPO_MOVIMENTO tipomovime3_ ";
-			sql+="where ";
-			sql+="mfc.TIPO_MOVIMENTO_ID=tipomovime3_.ID ";
-			sql+="and tipomovime3_.APROVACAO_AUTOMATICA=1 ";
-			sql+="and mfc.DATA_CRIACAO='2013-03-27' ";
-			sql+=") movimento0_ ";
-			
-			sql+="left outer join ";
-			sql+="COTA cota1_ ";
-			sql+="on movimento0_.COTA_ID=cota1_.ID ";
-			sql+="left outer join ";
-			sql+="PESSOA pessoa2_ ";
-			sql+="on cota1_.PESSOA_ID=pessoa2_.ID ";
-			
-			return sql;
-		}
-	
+		return sql.toString();
+	}
 	
 }
