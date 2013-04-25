@@ -136,8 +136,8 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	public List<FixacaoReparteDTO> obterHistoricoLancamentoPorCota(
 			FiltroConsultaFixacaoCotaDTO filtroCota) {
 		Cota cota = cotaRepository.obterPorNumerDaCota(new Integer(filtroCota.getCota()));
-		List<FixacaoReparteDTO> resutado = estoqueProdutoCotaRepository.obterHistoricoEdicaoPorCota(cota, filtroCota.getCodigoProduto()) ;
-		return resutado; 
+		List<FixacaoReparteDTO> resultado =null; /*estoqueProdutoCotaRepository.obterHistoricoEdicaoPorCota(cota, filtroCota.getCodigoProduto()) ;*/
+		return resultado; 
 	}
 	
 	@Override
@@ -211,7 +211,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	private void validaStatusProduto(FixacaoReparteDTO fixacaoReparteDTO, Produto produto) {
 		
 		if (fixacaoReparteDTO.getEdicaoInicial() != null && fixacaoReparteDTO.getEdicaoFinal() != null) {
-			List<ProdutoEdicao> listProdutoEdicao = produtoEdicaoRepository.listProdutoEdicaoPorCodProdutoNumEdicoes(produto.getCodigo(), fixacaoReparteDTO.getEdicaoInicial().longValue(), fixacaoReparteDTO.getEdicaoFinal().longValue());
+			List<ProdutoEdicao> listProdutoEdicao = null;/*produtoEdicaoRepository.listProdutoEdicaoPorCodProdutoNumEdicoes(produto.getCodigo(), fixacaoReparteDTO.getEdicaoInicial().longValue(), fixacaoReparteDTO.getEdicaoFinal().longValue());*/
 			for (ProdutoEdicao produtoEdicao : listProdutoEdicao) {
 				statusPermitido(new ArrayList<>(produtoEdicao.getLancamentos()).get(0).getStatus());
 			}
