@@ -1,9 +1,7 @@
-
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>  
 <script type="text/javascript" src="scripts/pesquisaCota.js"></script>
 <script type="text/javascript" src="scripts/pesquisaProduto.js"></script>
 <script type="text/javascript" src="scripts/fixacaoReparte.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 
 <script type="text/javascript">
 var pesquisaProduto = new PesquisaProduto();
@@ -26,22 +24,18 @@ function filtroPorCota(){
 	$('.filtroPorCota').show();
 	$('.filtroPorProduto').hide();
 	$('.porExcessao').hide();
-	$("#codigoProduto").val("");
-	$("#nomeProduto").val("");
-	
-	//$('#historicoXLS').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=historicoCota");
-	//$('#historicoPDF').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=historicoCota");
-	
+
+	$('#historicoXLS').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=historicoCota");
+	$('#historicoPDF').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=historicoCota");
+
 }
 function filtroPorProduto(){
 	$('.filtroPorCota').hide();
 	$('.filtroPorProduto').show();
 	$('.porCota').hide();
-	$("#codigoCota").val("");
-	$("#nomeCota").val("");
-	
-	//$('#historicoXLS').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=historicoProduto");
-	//$('#historicoPDF').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=historicoProduto");
+
+	$('#historicoXLS').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=historicoProduto");
+	$('#historicoPDF').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=historicoProduto");
 }
 function mostraQtd(){
 	$('#edInicialModal').val("");
@@ -61,6 +55,7 @@ function mostraIntervalo(){
 
 <body>
 
+
 <br clear="all"/>
     <br />
     
@@ -70,13 +65,13 @@ function mostraIntervalo(){
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
           <tr>
             <td width="22" align="right"><input type="radio" name="filtroPrincipalRadio" id="radio"  value="Cota" onclick="filtroPorCota();" /></td>
-            <td width="50"> <label for="radio"> Cota </label></td>
+            <td width="50">Cota</td>
             <td width="22"><input type="radio" name="filtroPrincipalRadio" id="radio2" value="Produto" onclick="filtroPorProduto()" /></td>
-            <td width="49"> <label for="radio2">Produto</label></td>
+            <td width="49">Produto</td>
             <td width="781"><table width="760" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorProduto" style="display:none;">
           <tr>
             <td width="52">Código:</td>
-            <td width="86"><input type="text" name="codigoProduto" id="codigoProduto"  style="width:80px;" onkeydown="onlyNumeric(event);" onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigoProduto','#nomeProduto',false,undefined,undefined )"/></td>
+            <td width="86"><input type="text" name="codigoProduto" id="codigoProduto"  style="width:80px;" onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigoProduto','#nomeProduto',false,undefined,undefined )"/></td>
             <td width="48">Produto:</td>
             <td width="206"><input type="text" name="nomeProduto" id="nomeProduto" onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#nomeProduto');" style="width:200px;"/></td>
             <td width="75">Classificação:</td>
@@ -96,7 +91,7 @@ function mostraIntervalo(){
             <tr>
            	  <td width="30" >Cota:</td>
                 <td width="91">
-                <input type="text" name="codigoCota" id="codigoCota" style="width:80px;" onkeydown="onlyNumeric(event);" onchange="pesquisaCota.pesquisarPorNumeroCota('#codigoCota','#nomeCota',false,undefined,undefined)"/></td>
+                <input type="text" name="codigoCota" id="codigoCota" style="width:80px;" onchange="pesquisaCota.pesquisarPorNumeroCota('#codigoCota','#nomeCota',false,undefined,undefined)"/></td>
                 <td width="37" >Nome:</td>
                 <td width="470"><input type="text" name="nomeCota" id="nomeCota" style="width:200px;"/></td>
               <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="fixacaoReparteController.pesquisarPorCota();">Pesquisar</a></span></td>
@@ -116,33 +111,26 @@ function mostraIntervalo(){
 		       	  	<legend>Fixação Produto</legend>
 		        		<table class="fixacaoProdutoGrid"></table>
  			            <span class="bt_novos" title="Incluir Novo"  id="btNovoProduto"><a href="javascript:;" onclick="fixacaoReparteController.novo();"><img src="images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>
-			            <span class="bt_novos" title="Adicionar em Lote" id="btAddLoteProduto"><a href="javascript:;" href="javascript:;" onclick="fixacaoReparteController.add_lote();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
+			            <span class="bt_novos" title="Adicionar em Lote" id="btAddLoteProduto"><a href="javascript:;" href="javascript:;" onclick="add_lote_prod();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
 	         	    	<span class="bt_novos" title="Gerar Arquivo" id="btGerarArquivoProduto"><a href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=produto"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 						<span class="bt_novos" title="Imprimir" id="btImprimirProduto"><a  href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=produto"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 		      </fieldset>
-		     
-		     
 	      </div>
 	       <div class="porCota" style="display:none;">
 		      <fieldset class="classFieldset">
 		       	  <legend>Produtos</legend>
-		        
-		        	<table class="excessaoCotaGrid"></table> 
+
+		        	<table class="excessaoCotaGrid"></table>
 		             <span class="bt_novos" title="Incluir Novo" id="btNovoCota"><a href="javascript:;" onclick="fixacaoReparteController.novo();"><img src="images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>
-		             <span class="bt_novos" title="Adicionar em Lote" id="btAddLoteCota">
-		             	<a href="javascript:;" onclick="fixacaoReparteController.add_lote();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a>
-	             	 </span>
+		             <span class="bt_novos" title="Adicionar em Lote" id="btAddLoteCota"><a href="javascript:;" onclick="add_lote();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
 		             <span class="bt_novos" title="Gerar Arquivo" id="btGerarArquivoCota"><a href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=cota"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 					<span class="bt_novos" title="Imprimir" id="btImprimirCota"><a href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=cota"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 		      </fieldset>
    		   </div>
-	   
-	  
-	          
-    </div>
-    
 
-      
+
+
+    </div>
     
    <!-- MODAL NOVA FIXAÇÃO --> 
     
@@ -152,13 +140,13 @@ function mostraIntervalo(){
 		    	<legend id="subtitulo1">Produto:</legend>
 		        	<span id="spanCodigoProduto"></span>-<span id="spanNomeProduto"></span>
 		    </fieldset>
-		    
+
 		  <fieldset style="width:600px!important; margin-top:5px;">
 		   	<legend id="subtitulo2">Pesquisar Cota</legend>
 		    <table width="588" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		        <tr>
 		          <td width="41" id="label1">Cota:</td>
-		          <td width="66"><input type="text" name="codigoModal" id="codigoModal" style="width:60px;" onkeydown="onlyNumeric(event);" onchange="pesquisaCota.pesquisarPorNumeroCota('#codigoModal','#nomeModal');"/></td>
+		          <td width="66"><input type="text" name="codigoModal" id="codigoModal" style="width:60px;" onchange="pesquisaCota.pesquisarPorNumeroCota('#codigoModal','#nomeModal');"/></td>
 		          <td width="41" id="label2">Nome:</td>
 		          <td width="119">
 		          	<input type="text" name="nomeModal" id="nomeModal" style="width:110px;"/>
@@ -169,7 +157,7 @@ function mostraIntervalo(){
 								<option value="<c:out value="${tipoProduto.id}"/>"><c:out value="${tipoProduto.descricao}"/></option>
 							</c:forEach>
 	          			</select>
-			       
+
 			       </td>
 		          </select></td>
 		          <td width="73"><span class="bt_pesquisar"><a id="pesquisaModal" href="javascript:;" onclick="fixacaoReparteController.pesquisaHistoricoPorCota();">Pesquisar</a></span></td>
@@ -192,50 +180,33 @@ function mostraIntervalo(){
 		          <tr>
 		          	<td width="20"><input type="radio" name="radio" id="radioQtdeEdicoes" value="radio" checked onclick="mostraQtd();" /></td>
 		            <td width="74">Qtde Edições:</td>
-		            <td width="57"><input type="text" name="textfield" id="qtdeEdicoesModal" onkeydown="onlyNumeric(event);" style="width:50px;" class="qtdEd"/></td>
+		            <td width="57"><input type="text" name="textfield" id="qtdeEdicoesModal" style="width:50px;" class="qtdEd"/></td>
 		            <td width="20"><input type="radio" name="radio" id="radioIntervalo" value="radio" onclick="mostraIntervalo();" /></td>
 		            <td width="93">Intervalo Edições:</td>
 		            <td width="29" class="intervalo"> Inicial:</td>
-		            <td width="60" class="intervalo"><input type="text" name="edInicialModal" onkeydown="onlyNumeric(event);" id="edInicialModal" style="width:50px;"/></td>
+		            <td width="60" class="intervalo"><input type="text" name="edInicialModal" id="edInicialModal" style="width:50px;"/></td>
 		            <td width="31" class="intervalo"> Final:</td>
-		            <td width="52" class="intervalo"><input type="text" name="edFinalModal" id="edFinalModal" onkeydown="onlyNumeric(event);" style="width:50px;"/></td>
+		            <td width="52" class="intervalo"><input type="text" name="edFinalModal" id="edFinalModal" style="width:50px;"/></td>
 		            <td width="67">Qtde Fixada:</td>
-		            <td width="50"><input type="text" name="textfield2" id="qtdeFixadaModal" onkeydown="onlyNumeric(event);" style="width:50px;"/></td>
+		            <td width="50"><input type="text" name="textfield2" id="qtdeFixadaModal" style="width:50px;"/></td>
 		          </tr>
 		  </table>
 		  </fieldset>
 		    <br clear="all" />
-		
+
 		    <fieldset style="width:600px!important; margin-top:5px;">
 		    	<legend>Histórico</legend>
-		        
+
 		        <table class="historicoGrid"></table>
-		       
+
 		    <br clear="all" />
-		    
-		     <!-- <span class="bt_novos" title="Gerar Arquivo"><a id="historicoXLS" ><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span> -->
-		    
-		    <!-- <span class="bt_novos" title="Imprimir"><a id="historicoPDF" ><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span> -->
+
+		     <span class="bt_novos" title="Gerar Arquivo"><a id="historicoXLS" ><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+
+		    <span class="bt_novos" title="Imprimir"><a id="historicoPDF" ><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 		   </fieldset>
 	</div>
-	
-<!-- DIALOG  UPLOAD -->		
-	<div id="modalUploadArquivo" title="Adicionar em Lote" style="display:none;">
-	 <form id="formUploadLoteFixacao"  action="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/uploadArquivoLoteFixacao"  method="post"  enctype="multipart/form-data">
-	 		<p>Utilize o modelo de exemplo para fazer upload para o sistema: </p>
-	      	<p ><span class="bt_novos" title="Download Modelo"><a href="${pageContext.request.contextPath}/modelos/modelo_fixacao_reparte.xls"><img align="center" src="images/ico_excel.png" hspace="5" border="0" />Modelo de exemplo</a></span></p>
-	      	<br><br><br>
-	      	<hr>
-	      	<p>Selecione um arquivo para upload:</p>
-	      	<br>
-	      	<p align="center"><input type="file" id="excelFileFixacao" name="excelFileFixacao" style="width:200px"/></p>
-      </form>
-	</div>	
-	
-<!-- DIALOG MSG UPLOAD -->		
-	<div id="dialog-msg-upload" title="Adicionar em Lote" style="display:none;">
-	</div>
-	
+
 <!-- DIALOG EXCLUSAO -->	
 	<div id="dialog-excluir" title="Excluir Fixação" style="display:none;">
 	<p>Confirma a exclusão desta Fixação?</p>
@@ -247,8 +218,8 @@ function mostraIntervalo(){
 	</div>
 
 
-	
-	
+
+
 <!-- EDITAR FIXAÇÂO -->	
 	<div id="dialog-defineReparte" title="Reparte por PDV" style="display:none;">
   <fieldset style="width:605px!important;">
@@ -292,12 +263,12 @@ function mostraIntervalo(){
   </tr>
   <tr>
     <td colspan="3" align="right">Manter Fixa&nbsp; </td>
-    <td><input id="manterFixa" name="manterFixa" type="checkbox" /></td>
+    <td><input name="input2" type="checkbox" value="" /></td>
   </tr>
 </table>
 	</fieldset>
 
 </div>
-	
+
+
  </body>     
-      

@@ -47,6 +47,7 @@ public enum Permissao
 	ROLE_DISTRIBUICAO_HISTORICO_VENDA("Histórico de Vendas",										 	   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_REGIAO("Região", 				  													   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_AREAINFLUENCIA_GERADORFLUXO("Área de influência / Gerador de Fluxo", 				   Permissao.ROLE_DISTRIBUICAO),
+	ROLE_DISTRIBUICAO_CARACTERISTICA_DISTRIBUICAO("Características de Distribuição", 				   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_INFORMACOES_PRODUTO("Informações do Produto",	 									   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_MANUAL("Distribuição Manual", 				  							   		   Permissao.ROLE_DISTRIBUICAO),
 	ROLE_DISTRIBUICAO_HELP("Help",																		   Permissao.ROLE_DISTRIBUICAO),

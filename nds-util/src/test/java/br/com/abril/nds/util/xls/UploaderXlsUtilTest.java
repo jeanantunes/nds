@@ -1,12 +1,10 @@
 package br.com.abril.nds.util.xls;
 
-import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
 
 import br.com.abril.nds.util.upload.XlsMapper;
-import br.com.abril.nds.util.upload.XlsUploaderUtils;
 
 public class UploaderXlsUtilTest {
 
@@ -21,7 +19,7 @@ public class UploaderXlsUtilTest {
 	 */
 	public static void main(String[] args) throws URISyntaxException {		
 		URL url = ClassLoader.getSystemResource("cota-template.xlsx");
-		List<CotaTemplateDTO> lista = XlsUploaderUtils.getBeanListFromXls(CotaTemplateDTO.class, new File(url.toURI()));
+		List<CotaTemplateDTO> lista = null;//XlsUploaderUtils.getBeanListFromXls(CotaTemplateDTO.class, new File(url.toURI()));
 		for (CotaTemplateDTO cotaTemplateDTO : lista) {
 			System.out.println(cotaTemplateDTO.getCodigoProduto());
 			System.out.println(cotaTemplateDTO.getNumeroCota());
