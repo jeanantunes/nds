@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoAjusteReparte;
 import br.com.abril.nds.model.estudo.CotaDesenglobada;
 import br.com.abril.nds.model.estudo.CotaEnglobada;
@@ -95,8 +97,8 @@ public class CotaDAO {
 		return cotas;
 	}
 
-	public List<CotaEstudo> getCotasComEdicoesBase(EstudoTransient estudo) {
-		List<CotaEstudo> returnListCota = new ArrayList<>();
+	public LinkedList<CotaEstudo> getCotasComEdicoesBase(EstudoTransient estudo) {
+	    	LinkedList<CotaEstudo> returnListCota = new LinkedList<>();
 		for (ProdutoEdicaoEstudo edicao : estudo.getEdicoesBase()) {
 			idsPesos.put(edicao.getId(), edicao.getIndicePeso());
 		}
@@ -107,21 +109,25 @@ public class CotaDAO {
 		params.put("TIPO_SEGMENTO", estudo.getProdutoEdicaoEstudo().getTipoSegmentoProduto());
 		params.put("IDS_PRODUTOS", idsPesos.keySet());
 
-		returnListCota = jdbcTemplate.query(queryProdutoEdicaoPorCota, params, new RowMapper<CotaEstudo>() {
+		List<CotaEstudo> temp = jdbcTemplate.query(queryProdutoEdicaoPorCota, params, new RowMapper<CotaEstudo>() {
 			@Override
 			public CotaEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {
 				CotaEstudo cota = new CotaEstudo();
 				cota.setId(rs.getLong("COTA_ID"));
 				cota.setNumeroCota(rs.getInt("NUMERO_COTA"));
 				cota.setQuantidadePDVs(rs.getBigDecimal("QTDE_PDVS"));
-				cota.setMix(rs.getInt("MIX") == 1);
+				cota.setRecebeReparteComplementar(rs.getBoolean("RECEBE_COMPLEMENTAR"));
+				cota.setSituacaoCadastro(SituacaoCadastro.valueOf(rs.getString("SITUACAO_CADASTRO")));
+				cota.setMix(rs.getBoolean("MIX"));
 				cota.setRegiao(rs.getInt("REGIAO_ID"));
 				traduzAjusteReparte(rs, cota);
 				cota.setEdicoesRecebidas(getEdicoes(rs, idsPesos));
 				return cota;
 			}
 		});
-
+		for (CotaEstudo cota : temp) {
+		    returnListCota.add(cota);
+		}
 		returnListCota = agrupaCotas(returnListCota);
 		return returnListCota;
 	}
@@ -176,9 +182,9 @@ public class CotaDAO {
 		}
 	}
 
-	private List<CotaEstudo> agrupaCotas(List<CotaEstudo> lista) {
+	private LinkedList<CotaEstudo> agrupaCotas(LinkedList<CotaEstudo> lista) {
 		if (lista.size() > 0) {
-			List<CotaEstudo> novaLista = new ArrayList<CotaEstudo>();
+		    	LinkedList<CotaEstudo> novaLista = new LinkedList<CotaEstudo>();
 			CotaEstudo temp = lista.get(0);
 			for (int i = 1; i < lista.size(); i++) {
 				if (temp.equals(lista.get(i))) {

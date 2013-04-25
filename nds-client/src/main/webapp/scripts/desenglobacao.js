@@ -318,7 +318,7 @@ var desenglobacaoController = $.extend(true, {
     	$('#filtroDesenglobaNumeroCota').val('');
     	$('#filtroDesenglobaNomePessoa').val('');
     	
-		$("#dialog-novo").dialog({
+		$("#dialog-novo-desenglobacao").dialog({
 			resizable: false,
 			height:500,
 			width:650,
@@ -328,10 +328,10 @@ var desenglobacaoController = $.extend(true, {
 					$("#effect").show("highlight", {}, 1000, callback);
 					$(".grids").show();
 					desenglobacaoController.novaEnglobacao();
-					$(this).dialog("destroy");
+					$(this, desenglobacaoController.workspace).dialog("destroy");
 				},
 				"Cancelar": function() {
-					$(this).dialog("destroy");
+					$(this, desenglobacaoController.workspace).dialog("destroy");
 				}
 			}
 		});

@@ -1,8 +1,12 @@
 var regiaoController = $.extend(true, {
 	cotaAtual : '',
 	numCotas : null,
-	
+	tableResultNMaiores : "", 
 	init : function() {
+		
+		$('#numeroCota').change(function (){
+			pesquisaCota.pesquisarPorNumeroCota('#numeroCota', '#nomeCota');
+		});
 	
 		$(".faixaGrid", regiaoController.workspace).flexigrid({
 			preProcess : regiaoController.executarPreProcessFaixaGrid,
@@ -42,18 +46,18 @@ var regiaoController = $.extend(true, {
 			height : 200,
 		});
 
-		$(".lstCotasGrid").flexigrid({
-//			url : '../xml/cotasLst-xml.xml',
-//			dataType : 'xml',
+		$("#lstCotasRankingGrid").flexigrid({
+			preProcess : regiaoController.executarPreProcessSelCotas,
+			dataType : 'json',
 			colModel : [ {
 				display : 'Cota',
-				name : 'cota',
+				name : 'numeroCota',
 				width : 60,
 				sortable : true,
 				align : 'left',
 			}, {
 				display : 'Nome',
-				name : 'nome',
+				name : 'nomePessoa',
 				width : 300,
 				sortable : true,
 				align : 'left'
@@ -64,23 +68,20 @@ var regiaoController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : '',
+				display : 'Adicionar',
 				name : 'sel',
 				width : 20,
 				sortable : true,
 				align : 'center'
 			} ],
-			sortname : "cota",
+			sortname : "codigo",
 			sortorder : "asc",
-			usepager : true,
-			useRp : true,
-			rp : 15,
-			showTableToggleBtn : true,
 			width : 600,
 			height : 200
+			
 		});
 
-		$(".lstProdutosGrid").flexigrid({
+		$("#lstProdutosGrid").flexigrid({
 			preProcess : regiaoController.executarPreProcessLstProdutosGrid,
 			dataType : 'json',
 			colModel : [ {
@@ -130,30 +131,30 @@ var regiaoController = $.extend(true, {
 			height : 200
 		});
 
-		$(".nMaioresGrid").flexigrid({
-//			url : '../xml/nMaiores-xml.xml',
-//			dataType : 'xml',
+		$("#nMaioresGrid").flexigrid({
+//			preProcess : regiaoController.executarPreProcessNMaioresGrid,
+			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
-				name : 'codigo',
+				name : 'codProduto',
 				width : 60,
 				sortable : true,
 				align : 'left',
 			}, {
 				display : 'Produto',
-				name : 'produto',
+				name : 'nomeProduto',
 				width : 250,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Edição',
-				name : 'edicao',
+				name : 'numeroEdicao',
 				width : 60,
 				sortable : true,
 				align : 'left'
 			}, {
 				display : 'Classificação',
-				name : 'classificacao',
+				name : 'descricaoClassificacao',
 				width : 115,
 				sortable : true,
 				align : 'left'
@@ -389,7 +390,6 @@ var regiaoController = $.extend(true, {
 			width : 960,
 			height : 255
 		});
-//		$("#index").show();
 	},
 
 	
@@ -439,11 +439,13 @@ var regiaoController = $.extend(true, {
 		
 		$.each(resultado.rows, function(index, row) {
 			var checkBox = null;
+			
 			if(row.cell.isFixa){
 				checkBox = '<input type="checkbox" name="fixa" onchange="regiaoController.alterarRegiao('+row.cell.idRegiao+')" value="'+row.cell.isFixa+'" id="fixa" checked>';				
 			}else{
 				checkBox = '<input type="checkbox" name="fixa" onchange="regiaoController.alterarRegiao('+row.cell.idRegiao+')" value="'+row.cell.isFixa+'" id="fixa">';
 			}
+			
 			row.cell.isFixa = checkBox;
 			
 			var linkExcluir = '<a href="javascript:;" onclick="regiaoController.excluirRegiao('+row.cell.idRegiao+');" style="cursor:pointer">' +
@@ -474,12 +476,60 @@ var regiaoController = $.extend(true, {
 		
 		$.each(resultado.rows, function(index, row) {
 			
-			var checkAll = '<input type="checkbox" name="cotaSelected" id="cotaSelected" checked value='+row.cell.numeroCota+'>';
+			var checkAll;
+			
+			if($("#todos").is(":checked")){
+				checkAll = '<input type="checkbox" name="cotaSelected" id="cotaSelected" checked value='+row.cell.numeroCota+'>';
+			}else{
+				checkAll = '<input type="checkbox" name="cotaSelected" id="cotaSelected" unchecked value='+row.cell.numeroCota+'>';
+			}
+
 			row.cell.sel = checkAll;
 			
 		});
 		
 		$(".grids", regiaoController.workspace).show();
+		
+		return resultado;
+		
+	},
+	
+	rankingResult:new Array(),
+
+	//PreProcess ranking Nmaiores
+	executarPreProcessSelCotas : function(resultado){
+		
+		if (resultado.mensagens) {
+			exibirMensagem(
+					resultado.mensagens.tipoMensagem, 
+					resultado.mensagens.listaMensagens
+			);
+			
+			$("#lstCotasRankingGrid", regiaoController.workspace).hide();
+			
+			return resultado;
+		}
+		
+		//Resultado da pesquisa
+		regiaoController.rankingResult = resultado.rows;
+		
+		$.each(resultado.rows, function(index, row) {
+			
+			var checkAll;
+			
+			if($("#selTodasCotas").is(":checked")){
+				checkAll = '<input type="checkbox" name="rankingCotaSelected" id="rankingCotaSelected" checked value='+row.cell.numeroCota+'>';
+			}else{
+				checkAll = '<input type="checkbox" name="rankingCotaSelected" id="rankingCotaSelected" unchecked value='+row.cell.numeroCota+'>';
+			}
+			
+			row.cell.sel = checkAll;
+			
+		});
+		
+		$("#lstCotasRankingGrid", regiaoController.workspace).show();
+		
+		regiaoController.tableResultNMaiores = resultado;
 		
 		return resultado;
 		
@@ -516,6 +566,7 @@ var regiaoController = $.extend(true, {
 	
 	// PREPROCESS REGIAO AUTOMATICA - N_MAIORES - Lista Produtos
 	
+	produtosResult:new Array(),
 	executarPreProcessLstProdutosGrid : function (resultado){
 		if (resultado.mensagens) {
 			
@@ -524,23 +575,70 @@ var regiaoController = $.extend(true, {
 					resultado.mensagens.listaMensagens
 			);
 			
-			$(".lstProdutosGrid", regiaoController.workspace).hide();
+			$("#lstProdutosGrid", regiaoController.workspace).hide();
+			
+			return resultado;
+		}
+		
+		var codProduto = $('#idCodigo').val();
+		
+		//Resultado da pesquisa
+		
+		regiaoController.produtosResult = resultado.rows;
+		
+		$.each(resultado.rows, function(index, row) {
+			
+			var checkAll;
+			
+			if($("#selTodosProdutos").is(":checked")){
+				checkAll = '<input type="checkbox" name="prodNMaioresSelected" id="prodNMaioresSelected" checked value='+index+'>';
+			}else{
+				checkAll = '<input type="checkbox" name="prodNMaioresSelected" id="prodNMaioresSelected" unchecked value='+index+'>';
+			}
+			
+			row.cell.sel = checkAll;
+			
+			var capa = '<a href="javascript:;" onmouseover="regiaoController.popUpCapaOpen('+codProduto+','+row.cell.numeroEdicao+', event);" onmouseout="regiaoController.popUpCapaClose(event);" style="cursor:pointer">'+ 
+					   '<img src="' + contextPath + '/images/ico_detalhes.png" hspace="5" border="0" />'+
+					   '</a>'; 
+			
+			row.cell.capa = capa;
+			
+		});
+		
+		$("#lstProdutosGrid", regiaoController.workspace).show();
+		
+		return resultado;
+	},
+	
+	executarPreProcessNMaioresGrid : function (resultado){
+		if (resultado.mensagens) {
+			
+			exibirMensagem(
+					resultado.mensagens.tipoMensagem, 
+					resultado.mensagens.listaMensagens
+			);
+			
+			$("#nMaioresGrid", regiaoController.workspace).hide();
 			
 			return resultado;
 		}
 		
 		$.each(resultado.rows, function(index, row) {
 			
-			var checkAll = '<input type="checkbox" name="prodNMaioresSelected" id="prodNMaioresSelected" checked value='+row.cell.numeroEdicao+'>';
+			var linkDetalhe = '<a href="javascript:;" onclick="regiaoController.remove_cotas_grid('+a+');" style="cursor:pointer">' +
+								'<img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0" />'+	
+							   '</a>';
 			
-			row.cell.sel = checkAll;
+			row.cell.acao = linkDetalhe;
 			
 		});
 		
-		$(".lstProdutosGrid", regiaoController.workspace).show();
+		$("#nMaioresGrid", regiaoController.workspace).show();
 		
 		return resultado;
 	},
+
 	
 	// -- FUNCTIONS --
 	
@@ -593,15 +691,13 @@ var regiaoController = $.extend(true, {
 				}
 			}
 		});
-//		$(".regioesCadastradasGrid", this.workspace).flexReload();
 	},
 	
 	
 	// FUNCTIONS - Alterar REGIAO
 
 	alterarRegiao : function(id) {
-//		alert (id);
-		
+
 		var idFixo = id;
 		if(idFixo == id){
 			idFixo = id;
@@ -633,7 +729,6 @@ var regiaoController = $.extend(true, {
 					$("#dialog-alterarRegiao").dialog("close");
 				},
 				"Cancelar" : function() {
-//					$(this).dialog("close");
 					$("#dialog-alterarRegiao").dialog("close");
 				}
 			},
@@ -644,78 +739,7 @@ var regiaoController = $.extend(true, {
 	},
 	
 	
-	// FUNCTION - EDITAR REGIAO
-	
-	
-//	editarRegiao - EST� EM DESUSO!!!
-	
-	
-	editarRegiao : function(){
-//		var regiao = $("#comboRegioes option:selected").val();
-		
-		//alert(regiao);
-		
-//		$(".cotasRegiaoGrid", this.workspace).flexOptions({
-//			url: contextPath + "/distribuicao/regiao/carregarCotasRegiao",
-//			dataType : 'json',
-//			params:[{
-//				name : 'filtro.id', value:regiao
-//			}]
-//		});
-//		
-//		$(".cotasRegiaoGrid", this.workspace).flexReload();
-		
-		$("#dialog-editar").dialog({
-			resizable : false,
-			height : 170,
-			width : 380,
-			modal : true,
-			buttons : {
-				"Confirmar" : function() {
-					$.postJSON(contextPath + "/distribuicao/regiao/editarRegiao", 
-							{id:id},
-							function(result) {
-									$("#dialog-editar", this.workspace).dialog("close");
-
-									var tipoMensagem = result.tipoMensagem;
-									var listaMensagens = result.listaMensagens;
-									
-									if (tipoMensagem && listaMensagens) {
-										
-										exibirMensagem(tipoMensagem, listaMensagens);
-									}
-											
-									$(".cotasRegiaoGrid", this.workspace).flexReload();
-							},null);
-					
-					
-					
-					$(".regioesCadastradasGrid", regiaoController.workspace).flexOptions({
-						url: contextPath + "/distribuicao/regiao/carregarCotasRegiao",
-						dataType : 'json',
-						params:[{
-							name : 'filtro.id', value:regiao
-						}]
-					});
-						
-					$(".regioesCadastradasGrid", regiaoController.workspace).flexReload();		
-					
-				},
-				"Cancelar" : function() {
-					$(this).dialog("close");
-				}
-			},
-			beforeClose: function() {
-				clearMessageDialogTimeout('dialogMensagemNovo');
-			},
-			form: $("#dialog-excluir", this.workspace).parents("form"),
-		});
-			
-	},
-	
-	
 	// FUNCTION - CARREGAR COMBO REGI�O
-	
 	cotasDaRegiao : function(){
 		var regiao = $("#comboRegioes option:selected").val();
 		
@@ -732,9 +756,7 @@ var regiaoController = $.extend(true, {
 	
 	
 	// FUNCTION - ADD NOVA REGIAO
-	
 	addNovaRegiao : function() {
-		// $( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 		$("#nomeRegiao").val("");
 		$("#regiaoIsFixa").removeAttr('checked');
@@ -749,7 +771,6 @@ var regiaoController = $.extend(true, {
 					buttons : {
 						"Confirmar" : function() {
 							$(this).dialog("close");
-//							mostrar();
 							
 							var nome = $("#nomeRegiao").val();
 							var isFixa = $('#regiaoIsFixa').is(':checked');
@@ -782,20 +803,13 @@ var regiaoController = $.extend(true, {
 					}
 				});
 
-//		$("#regiaoIsFixa", this.regiaoController.workspace).val(0);
-//		if (document.dialog - addRegiao.regiaoIsFixa.checked) {
-//			$("#regiaoIsFixa", this.regiaoController.workspace).val(1);
-//		}
 	},
 	
 
 	
 	// FUNCTION - EXCLUIR REGI�O
-	
-	
 	excluirRegiao : function(id) {
-		// $( "#dialog:ui-dialog" ).dialog( "destroy" );
-//		alert (id);
+
 		$("#dialog-excluir").dialog({
 			resizable : false,
 			height : 170,
@@ -806,8 +820,6 @@ var regiaoController = $.extend(true, {
 					$.postJSON(contextPath + "/distribuicao/regiao/excluirRegiao", 
 							{id:id},
 							function(result) {
-//									$(".regioesCadastradasGrid", this.workspace).flexReload(),
-//									$("#dialog-excluir", this.workspace).dialog("close");
 
 									var tipoMensagem = result.tipoMensagem;
 									var listaMensagens = result.listaMensagens;
@@ -823,14 +835,6 @@ var regiaoController = $.extend(true, {
 							   true
 					);
 					$("#dialog-excluir").dialog("close");
-					
-//					$(".regioesCadastradasGrid", this.workspace).flexOptions({
-//						url: contextPath + "/distribuicao/regiao/carregarRegiao",
-//						dataType : 'json'
-//					});
-//						
-//					$(".regioesCadastradasGrid", this.workspace).flexReload();		
-					
 				},
 				"Cancelar" : function() {
 					$(this).dialog("close");
@@ -840,7 +844,6 @@ var regiaoController = $.extend(true, {
 			beforeClose: function() {
 				clearMessageDialogTimeout('dialogMensagemNovo');
 			},
-//			form: $("#dialog-excluir", regiaoController.workspace).parents("form")
 		});
 	},
 	
@@ -848,7 +851,6 @@ var regiaoController = $.extend(true, {
 // FUNCTION - REGIAO AUTOM�TICA - Dialog Principal
 	
 	regiaoAutomatica : function() {
-		// $( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 		$("#dialog-regiaoAutomatica").dialog({
 			resizable : false,
@@ -867,19 +869,27 @@ var regiaoController = $.extend(true, {
 		});
 	},
 	
-
-	
-	
 	// FUNCTION - REGI�O AUTOM�TICA - GRID PRINCIPAL
-	
 	addCotasRegAutomatica : function() {
-//		 $( "#dialog:ui-dialog" ).dialog( "destroy" );
-
+		
+		$('#qtdCotasRanking').val("");
+		
 		$("#dialog-cotas").dialog({
 			resizable : false,
 			height : 550,
 			width : 650,
 			modal : true,
+			open:function(){
+				produtosEscolhidosArray=new Array();
+				var clearData = {
+				        total: 0,    
+				        page:1,
+				        rows: []
+				};
+				
+				
+				$("#nMaioresGrid").flexAddData(clearData);
+			},
 			buttons : {
 				"Confirmar" : function() {
 					var idRegiaoSelecionada = $('#comboRegioes option:selected', regiaoController.workspace).val();
@@ -893,34 +903,45 @@ var regiaoController = $.extend(true, {
 					$(".regioesCadastradasGrid", regiaoController.workspace).flexReload();
 					$(".faixaGrid", regiaoController.workspace).flexReload();
 					$(this).dialog("close");
-//					$("#dialog-cotas").dialog("destroy");
-//					$ ("# jdialog_box_content") vazio ();
-//					$("#dialog-cotas").empty();
-//					$("#faixaGrid").empty();
-//					closest('#faixaGrid');
+
 					regiaoController.limparCamposAddAutomatica();
 					
-//					$("#faixaGrid").close();
+					//limpando grid utilizado
+					clearData = {
+					        total: 0,    
+					        page:1,
+					        rows: []
+					};
+					
+					$("#nMaioresGrid").flexAddData(clearData);
+					
 				},
 				"Cancelar" : function() {
 					$(this).dialog("close");
 					regiaoController.limparCamposAddAutomatica();
-//					$("#faixaGrid").empty();
-//					
-					$("#faixaGrid").closest('#grid');
-//					$(".faixaGrid", regiaoController.workspace).flexReload();
-//					$("#dialog-cotas").dialog("destroy");
-//					$("#dialog-cotas").flexReload();
-//					$("#faixaGrid").flexReload();
+
+					$("#nMaioresGrid").flexAddData(data);
+					
+					//limpando grid utilizado
+					clearData = {
+					        total: 0,    
+					        page:1,
+					        rows: []
+					};
+					
+					
+					$("#nMaioresGrid").flexAddData(clearData);
+					
 				}
 			}
 		});
 	},
 	
 	limparCamposAddAutomatica : function (){
-		regiaoController.filtroPorCep();
-		$("#radio").attr('checked', true);
 		
+		regiaoController.filtroInit();
+		
+		$("#radio").attr('checked', true);
 		$("#radio2").attr('checked', false);
 		$("#radio3").attr('checked', false);
 		$("#cepInicialPart1").val("");
@@ -939,7 +960,6 @@ var regiaoController = $.extend(true, {
 	// FUNCTION - ADD COTA
 
 	addCota : function() {
-		// $( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 		$("#dialog-addCota").dialog({
 					resizable : false,
@@ -958,121 +978,29 @@ var regiaoController = $.extend(true, {
 	},	
 	
 	
-	// FUNCTIONS - SEGMENTOS
-
-	
 	// FUNCTIONS - CARREGAR SEGMENTOS
 	
-/*
- * 
- * 
- * 
- * 
- * VERIFICAR A NECESSIDADE
- * 
- * 
- * 
- * 
- */
 	carregarSegmento : function() {
-		// $( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 		$(".segmentosGrid", this.workspace).flexOptions({
 			url: contextPath + "/distribuicao/regiao/carregarSegmentos",
 			dataType : 'json',
 		});
-			
-//		$(".segmentosGrid", this.workspace).flexReload();		
-
-//		$("#dialog-novo").dialog({
-//			resizable : false,
-//			height : 400,
-//			width : 650,
-//			modal : true,
-//			buttons : {
-//				"Confirmar" : function() {
-//					$(this).dialog("close");
-//
-//					$("#effect").show("highlight", {}, 1000, callback);
-//				},
-//				"Cancelar" : function() {
-//					$(this).dialog("close");
-//				}
-//			}
-//		});
 	},
 
 	
 	filtroNMaiores : function(){
-		$('.lstProdutosGrid').show();
+		$('#lstProdutosGrid').show();
 		
-		$(".lstProdutosGrid").flexOptions({
+		$("#lstProdutosGrid").flexOptions({
 			url: contextPath + "/distribuicao/regiao/buscarProduto",
 			dataType : 'json',
 			params : regiaoController.obterFiltroProdNMaiores()
 		});
 		
-		$(".lstProdutosGrid").flexReload();
+		$("#lstProdutosGrid").flexReload();
 		
-		/*
-		 * $(".cotasRegiaoGrid", this.workspace).flexOptions({
-			url: contextPath + "/distribuicao/regiao/carregarCotasRegiao",
-			dataType : 'json',
-			params:[{
-				name : 'filtro.id', value:segmento
-			}]
-		});
-		 */
-		
-		//########################################
-		
-		//teste.js
-		
-		// guardo nessa variável todos os parametros (Produtos e quantidadeCota)
-//		regiaoController.parametrosPesquisaNMaiores;
-//		
-//		regiaoController.parametrosPesquisaNMaiores = {
-//				"codigo" : "00000001"
-//		};
-//		
-//		
-//		regiaoController.parametrosPesquisaNMaiores = {
-//				name : "codigo", value : "00000001",
-//				name : "codigo", value : "00000001",
-//				name : "codigo", value : "00000001",
-//				name : "codigo", value : "00000001"
-//		};
-		
-		
-		//########################################		
 	},
-
-	
-	
-	
-	
-//		var codigo = $("#idCodigo").val();
-//		var nomeProduto = $("#nomeProduto").val();
-//		var classificacao = $("#comboClassificacao").val();
-//		
-//		$(".lstProdutosGrid", this.workspace).flexOptions({
-//			url: contextPath + "/distribuicao/regiao/buscarProduto",
-//			dataType : 'json',
-//			params:[
-//			        {name : 'filtro.codigoProduto', value:codigo},
-//			        {name : 'filtro.nome', value:nomeProduto},
-//			        {name : 'filtro.idTipoClassificacaoProduto', value:classificacao}
-//			        ]
-//		});
-//			
-//		$(".lstProdutosGrid", this.workspace).flexReload();
-	
-		/*
-		 * 
-		 * acabar de arrumar os grid, preprocess e função do botão pesquisar!
-		 * 
-		 * 
-		 */
 	
 	obterFiltroProdNMaiores : function(){
 
@@ -1148,6 +1076,15 @@ var regiaoController = $.extend(true, {
 	// FUNCTION - ADD PRODUTOS
 
 	add_produtos : function() {
+		
+		$("#idCodigo").val("");
+		$("#nomeProduto").val("");
+		$("#comboClassificacao").val("");
+		
+		$('#selTodosProdutos').attr('checked', true);
+		
+		$('#lstProdutosGrid').hide();
+		
 		$("#dialog-addNMaiores").dialog({
 			resizable : false,
 			height : 520,
@@ -1155,9 +1092,54 @@ var regiaoController = $.extend(true, {
 			modal : true,
 			buttons : {
 				"Confirmar" : function() {
-					$(this).dialog("close");
-
-					$("#effect").show("highlight", {}, 1000, callback);
+					
+					$("#lstProdutosGrid input[type=checkbox][name=prodNMaioresSelected]:checked").each(function() {
+						validatorProdEscolhidos.push(regiaoController.produtosResult[$(this).val()]);
+					});
+					
+					
+					if(validatorProdEscolhidos.length == 0){
+						var erros = new Array();
+				           erros[0] = "Nenhum produto selecionado. Selecione no mínimo 01 produto para inserção ou clique em cancelar para fechar a janela.";
+				           exibirMensagemDialog('WARNING',   erros,"");
+				           
+				           validatorProdEscolhidos.length= 0;
+				           return;
+					}else{
+						
+					if((validatorProdEscolhidos.length > 0) && (validatorProdEscolhidos.length <= 6)){
+					
+					$("#lstProdutosGrid input[type=checkbox][name=prodNMaioresSelected]:checked").each(function() {
+						produtosEscolhidosArray.push(regiaoController.produtosResult[$(this).val()]);
+					});
+					
+					for(var i=0; i < produtosEscolhidosArray.length; i++){
+						produtosEscolhidosArray[i].cell.acao="<input type='image' class='btnExcluir' onclick='removeProdutoEscohido(this.value);' value='"+i+"' style='cursor:pointer' src='" + contextPath + "/images/ico_excluir.gif'/>";
+					}
+					
+						var data = {
+								total: produtosEscolhidosArray.length,    
+								page:1,
+								rows: produtosEscolhidosArray
+						};
+						
+						
+						$("#nMaioresGrid").flexAddData(data);
+				
+						validatorProdEscolhidos.length= 0;
+						
+						$(this).dialog("close");
+					
+					}else{
+						var erros = new Array();
+				           erros[0] = "Selecione no máximo 06 edicões.";
+				           exibirMensagemDialog('WARNING',   erros,"");
+				           
+				           validatorProdEscolhidos.length= 0;
+				           return;
+				           
+					}
+					}
 				},
 				"Cancelar" : function() {
 					$(this).dialog("close");
@@ -1169,6 +1151,7 @@ var regiaoController = $.extend(true, {
 
 	
 	add_cotas : function() {
+		
 		$("#dialog-confirmacao").dialog({
 			resizable : false,
 			height : 150,
@@ -1177,6 +1160,7 @@ var regiaoController = $.extend(true, {
 			buttons : {"Confirmar" : function() {
 					$(this).dialog("close");
 					$("#effect").show("highlight", {}, 1000, callback);
+					
 					var idRegiaoSelecionada = $('#comboRegioes option:selected', regiaoController.workspace).val();
 					var cotas = [];
 
@@ -1185,21 +1169,33 @@ var regiaoController = $.extend(true, {
 							cotas.push({name:'cotas', value:this.value});
 					});
 
-					// adicionando a regiao
-					cotas.push({name:'idRegiao', value: idRegiaoSelecionada});
 					
-					$.postJSON(contextPath + "/distribuicao/regiao/incluirCota",
-							cotas, 
-							function(result) {
+					if(cotas.length > 0){
+				
+						// adicionando a regiao
+						cotas.push({name:'idRegiao', value: idRegiaoSelecionada});
+						
+						$.postJSON(contextPath + "/distribuicao/regiao/incluirCota",
+								cotas, 
+								function(result) {
+							
+							var tipoMensagem = result.tipoMensagem;
+							var listaMensagens = result.listaMensagens;
+							
+							if (tipoMensagem && listaMensagens) 
+								exibirMensagem(tipoMensagem, listaMensagens);
+							
+							$(".cotasRegiaoGrid", this.workspace).flexReload();
+						});
+					}else{
+						var erros = new Array();
+				           erros[0] = "Nenhuma cota selecionada. Volte e selecione uma cota para adição!";
+				           exibirMensagemDialog('WARNING',   erros,"");
 
-						var tipoMensagem = result.tipoMensagem;
-						var listaMensagens = result.listaMensagens;
-						
-						if (tipoMensagem && listaMensagens) 
-							exibirMensagem(tipoMensagem, listaMensagens);
-						
-						$(".cotasRegiaoGrid", this.workspace).flexReload();
-					});
+				           this.closeDialogPopUpSegmento1 = false;
+
+				           return;
+					}
 			},
 				"Cancelar" : function() {
 					$(this).dialog("close");
@@ -1226,21 +1222,34 @@ var regiaoController = $.extend(true, {
 							cotas.push({name:'cotas', value:this.value});
 					});
 
-					// adicionando a regi�o
-					cotas.push({name:'idRegiao', value: idRegiaoSelecionada});
-					
-					$.postJSON(contextPath + "/distribuicao/regiao/incluirCota",
-							cotas, 
-							function(result) {
+					if(cotas.length > 0){
+						
+						// adicionando a regi�o
+						cotas.push({name:'idRegiao', value: idRegiaoSelecionada});
+						
+						$.postJSON(contextPath + "/distribuicao/regiao/incluirCota",
+								cotas, 
+								function(result) {
 
-						var tipoMensagem = result.tipoMensagem;
-						var listaMensagens = result.listaMensagens;
+							var tipoMensagem = result.tipoMensagem;
+							var listaMensagens = result.listaMensagens;
+							
+							if (tipoMensagem && listaMensagens) 
+								exibirMensagem(tipoMensagem, listaMensagens);
+							
+							$(".cotasRegiaoGrid", this.workspace).flexReload();
+						});
 						
-						if (tipoMensagem && listaMensagens) 
-							exibirMensagem(tipoMensagem, listaMensagens);
-						
-						$(".cotasRegiaoGrid", this.workspace).flexReload();
-					});
+					}else{
+						var erros = new Array();
+				           erros[0] = "Nenhuma cota selecionada. Volte e selecione uma cota para adição!";
+				           exibirMensagemDialog('WARNING',   erros,"");
+
+				           this.closeDialogPopUpSegmento1 = false;
+
+				           return;
+					}
+					
 			},
 				"Cancelar" : function() {
 					$(this).dialog("close");
@@ -1252,7 +1261,6 @@ var regiaoController = $.extend(true, {
 	
 	
 	// add Produtos no Grid NMaiores, para pesquisa de cotas 
-
 	addProdutosParaPesquisa : function() {
 		$("#dialog-AddProdutos").dialog({
 			resizable : false,
@@ -1285,7 +1293,7 @@ var regiaoController = $.extend(true, {
 						
 						$(".cotasRegiaoGrid", this.workspace).flexReload();
 					});
-			},
+				},
 				"Cancelar" : function() {
 					$(this).dialog("close");
 				}
@@ -1296,7 +1304,6 @@ var regiaoController = $.extend(true, {
 	
 	
 	// FUNCTION - VERIFICA SE A REGI�O � FIXA 	
-	
 	isFixa : function(campo) {
 		
 		var elemento = $("#" + campo, regiaoController.workspace);
@@ -1309,11 +1316,18 @@ var regiaoController = $.extend(true, {
 		
 	},
 
-	
 	// FILTROS REGI�O AUTOM�TICA
+
+	filtroInit: function() {
+		$('.porCep').hide();
+		$('.porSegmento').hide();
+		$('.gridfaixaCep').hide();
+		$('.gridNMaiores').hide();
+		$('.gridsegmentos').hide();
+		
+	},
 	
 	// FUNCTION - FILTRO POR CEP
-	
 	filtroPorCep : function() {
 		$('.porCep').show();
 		$('.porSegmento').hide("drop", { direction: "left" }, "slow");
@@ -1321,22 +1335,20 @@ var regiaoController = $.extend(true, {
 		$('.gridNMaiores').hide("drop", { direction: "left" }, "slow");
 		$('.gridsegmentos').hide("drop", { direction: "left" }, "slow");
 		
-//		regiaoController.comboSegmento ();
-		
 	},
 	
 	// FUNCTION - FILTRO POR N-MAIORES
-
 	filtroPorNMaiores : function() {
 		$('.porCep').hide("drop", { direction: "left" }, "slow");
 		$('.porSegmento').hide("drop", { direction: "left" }, "slow");
 		$('.gridfaixaCep').hide("drop", { direction: "left" }, "slow");
 		$('.gridNMaiores').show();
 		$('.gridsegmentos').hide("drop", { direction: "left" }, "slow");
+		
+		$("#qtdCotasRanking").val("");
 	},
 
 	// FUNCTION - FILTRO POR SEGMENTO
-	
 	filtroPorSegmento : function() {
 		$('.porCep').hide("drop", { direction: "left" }, "slow");
 		$('.porSegmento').show();
@@ -1345,22 +1357,179 @@ var regiaoController = $.extend(true, {
 		$('.gridsegmentos').hide("drop", { direction: "left" }, "slow");
 	
 	},
-
-	
 	
 	// REGI�O AUTOM�TICA GRID'S
-	
-	
 	// FUNCTION - MOSTRAR POR CEP
 	
 	
 // FUNCTION - MOSTRAR POR N-MAIORES
-	
 	mostrarPorNMaiores : function() {
 		$('.gridfaixaCep').hide();
 		$('.gridNMaiores').show();
 		$('.gridsegmentos').hide();
 	},
+	
+
+	validarDadosParaRanking : function() {
+		
+		$('#numeroCota').val("");
+		$('#nomeCota').val("");
+		
+		var isValid = true;
+		var codValidado = new Array();
+		var edicaoValidada = new Array();
+		
+		if((produtosEscolhidosArray.length == 0) || (produtosEscolhidosArray == "")){
+			 var erros = new Array();
+	           erros[0] = "Inclua no mínimo 01 produto.";
+	           exibirMensagemDialog('WARNING',   erros,"");
+
+	           return;
+		}
+		
+		if(produtosEscolhidosArray.length <= 6){
+			
+			for(var i=0; i < produtosEscolhidosArray.length; i++){
+				
+				for(var u=i+1; u < produtosEscolhidosArray.length; u++){
+					
+					if(produtosEscolhidosArray[i].cell.numeroEdicao == produtosEscolhidosArray[u].cell.numeroEdicao){
+						isValid = false;
+					}
+				}
+				codValidado[i] = produtosEscolhidosArray[i].cell.codProduto;
+				edicaoValidada[i] = produtosEscolhidosArray[i].cell.numeroEdicao;
+			}
+		
+		}else{
+			isValid = false;
+		}
+		
+		
+		if (isValid == true){
+			
+			regiaoController.rankingNMaiores(codValidado, edicaoValidada);
+			
+		}else{
+			 var erros = new Array();
+	           erros[0] = "Os produtos selecionados só podem ser até 6 edições do mesmo produto ou até 6 produtos com edições diferentes";
+	           exibirMensagemDialog('WARNING',   erros,"");
+
+	           return;
+	           isValid = true;
+		}
+	},	
+	
+	
+	rankingNMaiores : function(codValidado, edicaoValidada) {
+			
+			var limitePesquisa = $("#qtdCotasRanking").val();
+			
+			if((limitePesquisa < 0) || (limitePesquisa == "")){
+				var erros = new Array();
+		           erros[0] = "Insira a quantidade de cotas.";
+		           exibirMensagemDialog('WARNING',   erros,"");
+
+		           return;
+			}else{
+			
+			$("#lstCotasRankingGrid").flexOptions({
+				url: contextPath + "/distribuicao/regiao/rankingCota",
+				dataType : 'json',
+				params: [{name: "filtro.codigoProduto", value: codValidado},
+				         {name: "filtro.numeroEdicao", value: edicaoValidada},
+				         {name: "filtro.limitePesquisa", value: limitePesquisa}]
+			});
+			
+				$("#lstCotasRankingGrid").flexReload();
+			
+			$("#dialog-rankingCotas").dialog({
+				resizable : false,
+				height : 520,
+				width : 645,
+				modal : true,
+				buttons : {
+					"Confirmar" : function() {
+						
+						var idRegiaoSelecionada = $('#comboRegioes option:selected', regiaoController.workspace).val();
+						var cotas = new Array();
+
+						$("input[type=checkbox][name='rankingCotaSelected']:checked").each(function() {
+							cotas.push({name:'cotas', value: $(this).val()});
+						});
+						
+						if(cotas.length > 0){
+							
+							// adicionando a regi�o
+							cotas.push({name:'idRegiao', value: idRegiaoSelecionada});
+							
+							$.postJSON(contextPath + "/distribuicao/regiao/incluirCota",
+									cotas, 
+									function(result) {
+								
+								var tipoMensagem = result.tipoMensagem;
+								var listaMensagens = result.listaMensagens;
+								
+								if (tipoMensagem && listaMensagens) 
+									exibirMensagem(tipoMensagem, listaMensagens);
+								
+								$(".cotasRegiaoGrid", this.workspace).flexReload();
+								$("#dialog-rankingCotas").dialog("close");
+							});
+						}else{
+							var erros = new Array();
+					           erros[0] = "Nenhuma cota selecionada. Volte e selecione uma cota para adição!";
+					           exibirMensagemDialog('WARNING',   erros,"");
+					           return;
+						}
+						
+						cotasRankingNMaioresArray.length = 0;
+						
+					},
+					"Cancelar" : function() {
+						$(this).dialog("close");
+						
+						cotasRankingNMaioresArray.length = 0;
+					}
+				}
+			});
+			}
+	},
+	
+	
+	filtroCotaRanking : function (){
+		
+		var numCota = $("#numeroCota").val();
+		var cotaEncontrada = "";
+		
+		for(var i=0; i<regiaoController.tableResultNMaiores.total; i++){
+		
+			if(regiaoController.tableResultNMaiores.rows[i].cell.numeroCota == numCota){
+				cotaEncontrada = regiaoController.tableResultNMaiores.rows[i].cell.numeroCota;
+			}
+		}
+		
+		if (cotaEncontrada != ""){
+			
+			$("#lstCotasRankingGrid").flexOptions({
+				url: contextPath + "/distribuicao/regiao/filtroRankingCota",
+				dataType : 'json',
+				params: [{name: "numCota", value: cotaEncontrada}]
+			});
+			
+				$("#lstCotasRankingGrid").flexReload();
+			
+		}else{
+			 var erros = new Array();
+	           erros[0] = "Cota não encontrada";
+	           exibirMensagemDialog('WARNING',   erros,"");
+
+	           return;
+		}
+		cotaEncontrada.length = 0;
+		
+	},
+	
 	
 	// FUNCTION - MOSTRAR POR SEGMENTO
 
@@ -1381,7 +1550,6 @@ var regiaoController = $.extend(true, {
 		$('.gridNMaiores').hide();
 		$('.gridsegmentos').hide();
 		
-		
 		$("#faixaGrid").flexOptions({
 			url: contextPath + "/distribuicao/regiao/buscarPorCep",
 			dataType : 'json',
@@ -1390,27 +1558,6 @@ var regiaoController = $.extend(true, {
 		
 		$("#faixaGrid").flexReload();	
 		
-//		$.postJSON(contextPath + "/distribuicao/regiao/buscarPorCep", 
-//				regiaoController.obterRangeDeCep(),
-//				function(result) {
-////						var tipoMensagem = result.tipoMensagem;
-////						var listaMensagens = result.listaMensagens;
-////						
-////						if (tipoMensagem && listaMensagens) {
-////							
-////							exibirMensagem(tipoMensagem, listaMensagens);
-////						}
-//						
-//						var json = JSON.stringify(result);
-//												
-//						$(".faixaGrid", regiaoController.workspace).flexAddData(json);
-//		
-//						$("#faixaGrid", regiaoController.workspace).flexReload();
-//						
-//				   },
-//				   null,
-//				   true
-//		);
 	},
 	
 	// FUNCTION - OBTER RANGE DE CEP'S
@@ -1470,7 +1617,6 @@ var regiaoController = $.extend(true, {
 	// FUNCTION - POP UP DETALHES
 	
 	popup_detalhes : function() {
-		// $( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 		$("#dialog-detalhes").dialog({
 			resizable : false,
@@ -1486,29 +1632,6 @@ var regiaoController = $.extend(true, {
 		$("#dialog-detalhes").dialog("close");
 	},
 
-	// FUNCTION - ADD COTAS NO GRID
-	
-	add_cotas_grid : function() {
-//		$('.cotasRegiaoGrid #row2', this.workspace).show();
-//		$('.cotasRegiaoGrid #row4').show();
-		
-	},
-	
-	/*
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
-	 */
-	
-	
 	// FUNCTION - ADD COTAS NA REGI�O [bot�o add Cotas]
 	
 	popupAddCotaRegiao : function(evitarReset) {
@@ -1562,13 +1685,6 @@ var regiaoController = $.extend(true, {
 						
 					});
 					
-//					$(".regioesCadastradasGrid", this.workspace).flexOptions({
-//						url: contextPath + "/distribuicao/regiao/carregarRegiao",
-//						dataType : 'json'
-//					});
-//						
-//					$(".regioesCadastradasGrid", this.workspace).flexReload();
-								
 					$( this ).dialog( "close" );
 					$("#idCotas").html("");
 				},
@@ -1578,9 +1694,7 @@ var regiaoController = $.extend(true, {
 					$( this ).dialog( "close" );
 				}				
 			},
-//			form: $("#dialog-addCota", cotaAusenteController.workspace).parents("form")
 		});
-//		$(".regioesCadastradasGrid", regiaoController.workspace).flexReload();
 	},
 	
 	// FUNCTION - PEGAR DADOS VIA JSON, PARA ENVIAR PRA CONTROLLER
@@ -1591,19 +1705,6 @@ var regiaoController = $.extend(true, {
 		data.push({name:'cotasCadastradasNaRegiao',		value: regiaoController.get("cotas")});
 	},
 	
-	
-//	getDados : function() {
-//		
-//		var data = [];
-//		
-//		data.push({name:'filtro.codigo',		value: vendaProdutoController.get("codigo")});
-//		data.push({name:'filtro.nomeProduto',		value: vendaProdutoController.get("produto")});
-//		data.push({name:'filtro.edicao',		value: vendaProdutoController.get("edicoes")});
-//		data.push({name:'filtro.idFornecedor',		value: vendaProdutoController.get("idFornecedor")});		
-//		data.push({name:'filtro.nomeFornecedor',	value: $('#idFornecedor option:selected', vendaProdutoController.workspace).text()});
-//		
-//		return data;
-//	},
 	
 	// FUNCTION - GERAR LINHA NO POP UP DE ADD COTA
 	
@@ -1688,24 +1789,6 @@ var regiaoController = $.extend(true, {
 	setNum : function(elemento) {
 		regiaoController.cotaAtual = elemento.getAttribute('num');
 	},
-	
-	// FUNCTION - CONFIRMAR AUSENCIA DA COTA
-	
-//	popupConfirmaAusenciaCota : function(cotas) {
-//		
-//		regiaoController.numCotas = cotas;
-//		
-//		var parametros = [];
-//		var numero;
-//		var idRegicaoSelecionada;
-//		
-//		$.each(cotas, function(index, num) {			
-//			//parametros.push({name:'numCotas['+ index +']', value: num});
-//			numero = parametros.push({name : 'numeroCota', value : num});
-//			idRegicaoSelecionada = $('#comboRegioes option:selected', regiaoController.workspace).val();
-//	  	});
-//		//JSON
-//	},
 	
 	getInput : function(value,id, width,textAlign,onblur,onchange,onkeyup, classe, onfocusin, attr, attrValue) {
 		
@@ -1806,6 +1889,63 @@ var regiaoController = $.extend(true, {
 		$("input[type=checkbox][name='prodNMaioresSelected']").attr("checked", valor);
 	},
 	
+	checkAllRankingNMaiores : function() {
+		var valor = $("#selTodasCotas").is(":checked");
+		$("input[type=checkbox][name='rankingCotaSelected']").attr("checked", valor);
+	},
+	
+	popUpCapaOpen : function popUpCapaOpen(codigoProduto, numeroEdicao, event) {
+		 
+		  produto = {
+		    codigoProduto : codigoProduto,
+		    numeroEdicao : numeroEdicao
+		  },
+		  
+		  $( "#dialog-detalhes" ).dialog({
+		   resizable: false,
+		   height:'auto',
+		   width:'auto',
+		   modal: false,
+		   open: regiaoController.open(event, produto),
+		   close : function(){
+		    $( "#dialog-detalhes" ).dialog( "close" );
+		   },
+		   position: { my: "left", at: "right", of: event.target }
+		  });
+		  
+		 },
+		 
+		 
+		 open : function(event,produto) {
+		 
+		    var randomnumber=Math.floor(Math.random()*11);
+		    
+		    $("#imagemCapaEdicao")
+		      .attr("src",contextPath
+		          + "/capa/getCapaEdicaoJson?random="+randomnumber+"&codigoProduto="
+		          + produto.codigoProduto
+		          + "&numeroEdicao="
+		          + produto.numeroEdicao);
+		    console.log($("#imagemCapaEdicao").attr("src"));
+		   },
+		   
+		   	   
+		   popUpCapaClose : function popUpCapaClose() {
+			   $( "#dialog-detalhes" ).dialog( "close" );
+		   },
+		   
+		   
+		   openDetalhe : function(codProd, numeroEd) {
+				 
+			    var randomnumber=Math.floor(Math.random()*11);
+			    
+			    $("#imagemCapaDetalhe")
+			      .attr("src",contextPath
+			          + "/capa/getCapaEdicaoJson?random="+randomnumber+"&codigoProduto="
+			          + codProd
+			          + "&numeroEdicao="
+			          + numeroEd);
+			   },
 	
 	//Remover cota da Regiao
 	remove_cotas_grid : function(id) {
@@ -1822,7 +1962,6 @@ var regiaoController = $.extend(true, {
 					$.postJSON(contextPath + "/distribuicao/regiao/excluirCotaDaRegiao", 
 							{id:id},
 							function(result) {
-//									$(".regioesCadastradasGrid", this.workspace).flexReload(),
 									$("#dialog-excluirCota", this.workspace).dialog("close");
 
 									var tipoMensagem = result.tipoMensagem;
@@ -1833,8 +1972,6 @@ var regiaoController = $.extend(true, {
 										exibirMensagem(tipoMensagem, listaMensagens);
 									}
 											
-//									$(".cotasRegiaoGrid", this.workspace).flexReload();
-									
 									$(".regioesCadastradasGrid", regiaoController.workspace).flexOptions({
 										url: contextPath + "/distribuicao/regiao/carregarCotasRegiao",
 										dataType : 'json',

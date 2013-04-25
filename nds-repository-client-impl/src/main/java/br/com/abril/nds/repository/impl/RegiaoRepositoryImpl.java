@@ -72,7 +72,6 @@ public class RegiaoRepositoryImpl extends AbstractRepositoryModel<Regiao, Long> 
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setParameter("idSegmento", filtro.getIdSegmento());
-//		query.setFirstResult(0);
 		query.setMaxResults(filtro.getLimiteBuscaPorSegmento());
 		query.setResultTransformer(new AliasToBeanResultTransformer(RegiaoCotaDTO.class));
 		

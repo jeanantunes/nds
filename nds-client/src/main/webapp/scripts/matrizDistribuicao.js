@@ -1329,35 +1329,16 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
                 }
         });
         if (selecionado == null) {
-                exibirMensagem("ERROR", ["Selecione "+ (maisDeUm ? "apenas" : "") +" um item para esta opção."]);
+                exibirMensagem("ERROR", ["Selecione um item para esta opção."]);
                 return;
         }
         var postData = [];
         postData.push({name : "codigoProduto", value : selecionado.codigoProduto});
+        postData.push({name : "numeroEdicao", value : selecionado.edicao});
         postData.push({name : "reparte", value : selecionado.repDistrib});
         $.postJSON(pathTela + "/matrizDistribuicao/gerarEstudoAutomatico", postData,
     			function(result) {
         			T.estudo = result;
-		        	$('<div>Exibir variaveis do estudo?</div>').dialog({ 
-		        	    title: "Estudo",
-		        	    buttons: [ { 
-		        	        text: "OK", 
-		        	        click: function() { 
-		        	            $( this ).dialog( "close" );
-//		        	            $('<div title="Variaveis do Estudo">')
-//		        	            .html(T.estudo.estudo)
-//		        	            .dialog();
-		        	            var myWindow=window.open('','');
-		        	            myWindow.document.write(T.estudo.estudo);
-		        	            myWindow.focus();
-		        	        } 
-		        	    }, {
-		        	    	text: "Cancel", 
-		        	        click: function() { 
-		        	            $( this ).dialog( "close" ); 
-		        	        }
-		        	    } ] 
-		        	});
         			T.carregarGrid();
         			T.exibirMensagemSucesso();
     			}
@@ -1378,7 +1359,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			}
 		});
 		if (selecionado == null) {
-			exibirMensagem("ERROR", ["Selecione "+ (maisDeUm ? "apenas" : "") +" um item para esta opção."]);
+			exibirMensagem("ERROR", ["Selecione um item para esta opção."]);
 			return;
 		}
 		var params = 'produto.codigoProduto='+ selecionado.codigoProduto;

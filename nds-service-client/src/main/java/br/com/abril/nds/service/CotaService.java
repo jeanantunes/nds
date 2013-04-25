@@ -34,6 +34,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.ComponentesPDV;
@@ -398,5 +399,11 @@ public interface CotaService {
 
 	public abstract boolean cotaVinculadaCotaBase(Long idCota);
 	
-	public List<Integer> verificarNumeroCotaExiste(Integer...cotaIdArray);
+	List<Integer> numeroCotaExiste(TipoDistribuicaoCota tipoDistribuicaoCota, Integer... cotaIdArray);
+
+	public TipoDistribuicaoCota obterTipoDistribuicaoCotaPorNumeroCota(Integer numeroCota);
+
+	public abstract boolean isTipoDistribuicaoCotaEspecifico(Integer numeroCota,
+			TipoDistribuicaoCota tipoDistribuicaoCota);
+
 }

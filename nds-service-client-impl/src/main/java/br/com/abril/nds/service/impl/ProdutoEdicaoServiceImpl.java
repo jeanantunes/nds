@@ -1106,7 +1106,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			
 			porcentagemDesconto = descontoLogistica.getPercentualDesconto();
 			break;
-	
+		default:
+		    break;
 		}
 		
 		if(porcentagemDesconto == null) {

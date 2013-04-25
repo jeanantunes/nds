@@ -54,7 +54,7 @@ public class EstudoDAO {
 			SqlParameterSource paramSource = new BeanPropertySqlParameterSource(estudo);
 			jdbcTemplate.update(insertEstudo, paramSource, keyHolder);
 			estudoId = keyHolder.getKey().longValue();
-			System.out.println(estudoId);
+			estudo.setId(estudoId);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -6,7 +6,6 @@ import org.quartz.JobExecutionException;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import br.com.abril.nds.repository.MixCotaProdutoRepository;
-import br.com.abril.nds.repository.RegiaoRepository;
 
 public class MixCotaProdutoJob implements Job {
 

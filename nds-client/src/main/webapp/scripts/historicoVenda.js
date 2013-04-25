@@ -12,7 +12,9 @@ var historicoVendaController = $.extend(true, {
 	
 		var flexGridService = new FlexGridService(),
 			pesquisaCota = new PesquisaCota(),
-			pesquisaProduto = new PesquisaProduto();
+			pesquisaProduto = new PesquisaProduto(),
+			autoComp = new AutoCompleteController(historicoVendaController.workspace);
+		
 		
 		// #### ASSOCIANDO OS EVENTOS NO DOM ####
 
@@ -41,11 +43,13 @@ var historicoVendaController = $.extend(true, {
 		});
 
 		$('#numeroCota').change(function (){
-			pesquisaCota.pesquisarPorNumeroCota('#numeroCota', '#nomePessoa');
+//			pesquisaCota.pesquisarPorNumeroCota('#numeroCota', '#nomePessoa');
+			autoComp.pesquisarPorCodigo("/cadastro/cota/pesquisarPorNumero", '#numeroCota', '#nomePessoa', 'numeroCota', 'nome', 'numero');
 		});
 		
 		$('#nomePessoa').keyup(function (){
-			pesquisaCota.autoCompletarPorNome('#nomePessoa');
+//			pesquisaCota.autoCompletarPorNome('#nomePessoa');
+			autoComp.autoCompletarPorNome("/cadastro/cota/autoCompletarPorNome",'#numeroCota', '#nomePessoa', "nomeCota", 2);
 		});
 		
 		$('#filtroCodigoProduto').change(function (){

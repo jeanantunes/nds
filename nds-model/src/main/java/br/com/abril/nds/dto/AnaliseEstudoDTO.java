@@ -25,7 +25,7 @@ public class AnaliseEstudoDTO implements Serializable {
 	private String statusEstudo = "";
 	
 	private StatusLancamento statusRecolhiOuExpedido;
-	private Integer statusLiberadoOuGerado;
+	private Boolean statusLiberadoOuGerado;
 	
 	private TipoClassificacaoProduto tpClassifProduto;
 	private PeriodicidadeProduto periodoProduto;
@@ -110,10 +110,10 @@ public class AnaliseEstudoDTO implements Serializable {
 	public void setStatusRecolhiOuExpedido(StatusLancamento statusRecolhiOuExpedido) {
 		this.statusRecolhiOuExpedido = statusRecolhiOuExpedido;
 	}
-	public Integer getStatusLiberadoOuGerado() {
+	public Boolean getStatusLiberadoOuGerado() {
 		return statusLiberadoOuGerado;
 	}
-	public void setStatusLiberadoOuGerado(Integer statusLiberadoOuGerado) {
+	public void setStatusLiberadoOuGerado(Boolean statusLiberadoOuGerado) {
 		this.statusLiberadoOuGerado = statusLiberadoOuGerado;
 	}
 }

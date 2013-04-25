@@ -2553,25 +2553,38 @@ public class CotaServiceImpl implements CotaService {
 
 	@Override
 	public List<DistribuidorClassificacaoCota> obterListaClassificacao() {
-		log.info("-->CotaServiceImpl.obterListaClassificacao");
 		return distribuidorClassificacaoCotaRepository.buscarTodos();
 	}
 
 	@Override
-	public List<Integer> verificarNumeroCotaExiste(Integer... cotaIdArray) {
-
-		return cotaRepository.verificarNumeroCotaExiste(cotaIdArray);
+	public List<Integer> numeroCotaExiste(TipoDistribuicaoCota tipoDistribuicaoCota, Integer... cotaIdArray) {
+		return cotaRepository.numeroCotaExiste(tipoDistribuicaoCota, cotaIdArray);
 	}
 	
 	@Override
 	public boolean cotaVinculadaCotaBase(Long idCota) {
-		
 		return cotaRepository.cotaVinculadaCotaBase(idCota);
 	}
 
 	@Override
 	public List<CotaDTO> obterPorNomeAutoComplete(String nome) {
 	    return cotaRepository.obterCotasPorNomeAutoComplete(nome);
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public TipoDistribuicaoCota obterTipoDistribuicaoCotaPorNumeroCota(Integer numeroCota) {
+		
+		return cotaRepository.obterTipoDistribuicaoCotaPorNumeroCota(numeroCota);
+	}
+	
+	
+	@Override
+	public boolean isTipoDistribuicaoCotaEspecifico(Integer numeroCota, TipoDistribuicaoCota tipoDistribuicaoCota) {
+		
+		TipoDistribuicaoCota tpDistribuicaoCota = obterTipoDistribuicaoCotaPorNumeroCota(numeroCota);
+		
+		return (tpDistribuicaoCota != null && tpDistribuicaoCota.equals(tipoDistribuicaoCota));
 	}
 }
 

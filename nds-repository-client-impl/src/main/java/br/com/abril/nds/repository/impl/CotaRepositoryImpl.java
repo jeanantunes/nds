@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
@@ -57,6 +58,7 @@ import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
@@ -2739,24 +2741,31 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		return (count > 0);
 	}
-	
-	@Override
-	public List<Integer> verificarNumeroCotaExiste(Integer...cotaIdArray) {
 
-		StringBuilder hql = new StringBuilder("select NUMERO_COTA from cota where cota.NUMERO_COTA in (:cotaIDList)");
+	@SuppressWarnings("unchecked")
+	@Override
+	@Transactional(readOnly = true)
+	public List<Integer> numeroCotaExiste(TipoDistribuicaoCota tipoDistribuicaoCota, Integer... cotaIdArray) {
+
+		StringBuilder hql = new StringBuilder();
+		hql.append("select c.NUMERO_COTA ");
+		hql.append("  from cota c ");
+		hql.append(" where c.NUMERO_COTA in (:cotaIDList)");
+		hql.append("   and c.SITUACAO_CADASTRO in (upper(:situacaoCadastroAtivo), upper(:situacaoCadastroSuspenso)) ");
+		hql.append("   and c.TIPO_DISTRIBUICAO_COTA = upper(:tipoDistribuicaoCota) ");
 		
-		SQLQuery query = super.getSession().createSQLQuery(hql.toString());
+		SQLQuery query = getSession().createSQLQuery(hql.toString());
 		query.setParameterList("cotaIDList", cotaIdArray);
+		query.setParameter("situacaoCadastroAtivo", SituacaoCadastro.ATIVO.toString());
+		query.setParameter("situacaoCadastroSuspenso", SituacaoCadastro.SUSPENSO.toString());
+		query.setParameter("tipoDistribuicaoCota", tipoDistribuicaoCota.toString());
 		
 		return query.list();
 	}
-	
-	
-	
 
 	@Override
 	public List<CotaDTO> obterCotasPorNomeAutoComplete(String nome) {
-	    List lista = super.getSession().createSQLQuery("select c.ID, c.NUMERO_COTA, p.NOME, c.SITUACAO_CADASTRO from COTA c join PESSOA p on p.ID = c.PESSOA_ID where p.nome like ?")
+	    List<?> lista = super.getSession().createSQLQuery("select c.ID, c.NUMERO_COTA, p.NOME, c.SITUACAO_CADASTRO from COTA c join PESSOA p on p.ID = c.PESSOA_ID where p.nome like ?")
 		    .addScalar("ID", LongType.INSTANCE).addScalar("NUMERO_COTA", IntegerType.INSTANCE)
 		    .addScalar("NOME", StringType.INSTANCE).addScalar("SITUACAO_CADASTRO", StringType.INSTANCE)
 		    .setParameter(0, "%"+ nome +"%").setMaxResults(10).list();
@@ -2787,4 +2796,16 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		return cota;
 	}
 
+	@Override
+	public TipoDistribuicaoCota obterTipoDistribuicaoCotaPorNumeroCota(Integer numeroCota) {
+		
+		StringBuilder query = new StringBuilder();
+		query.append("select tipoDistribuicaoCota from Cota where numeroCota = :numeroCota and situacaoCadastro = 'Ativo'");
+		
+		Query q = getSession().createQuery(query.toString());
+		
+		q.setParameter("numeroCota", numeroCota);
+		
+		return (TipoDistribuicaoCota)q.uniqueResult();
+	}
 }

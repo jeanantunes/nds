@@ -295,7 +295,7 @@ select, input{font-size: 12px; }
 
 #effect, #effect_1 { display: none; margin: 0px; padding:5px!important; width:98%;  position: absolute; }
  
-
+.dialog {display:none;}
 #dialog-novo, #dialog-alterar, #dialog-excluir, #dialog-pdv, #dialog-endereco{display:none;}
   #pf-fiador, #pf-comprador, #pf-jornaleiro, #dialog-financeiro, #dialog-cpf, #dialog-cnpj{display:none;}
   #pj-fiador, #pj-transportadora, #pj-fornecedor, #pj-jornaleiro, #tabs-pj, #tabs-pf, #dialog-reprogramar,  #dialog-novo-balanceamento, #dialog-novo-balanceamento_1{display:none;}

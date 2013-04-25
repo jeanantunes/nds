@@ -8,8 +8,8 @@
   <tr>
       <td><strong>Cota:</strong></td>
       <td><input name="cotaDTO.numeroCota" id="numeroCotaCNPJ" maxlength="16" type="text" style="width:100px" />
-      	     <select name="cotaDTO.TipoCota" id="cotaDTO.TipoCotaCPF" style="width:110px;" onchange="MANTER_COTA.verificaTipoCota(this);">
-	        <option selected="selected">Selecione...</option>
+      	     <select name="cotaDTO.tipoCota" id="cotaDTO.tipoCotaCPF" style="width:110px;" onchange="MANTER_COTA.verificaTipoCota(this);">
+	        <option value="" selected="selected">Selecione...</option>
 	        <option value="A">Alternativo</option>
 	        <option value="C">Convencional</option>
 	      </select>

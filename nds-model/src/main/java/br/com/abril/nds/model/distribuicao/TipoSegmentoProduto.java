@@ -1,14 +1,19 @@
 package br.com.abril.nds.model.distribuicao;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -29,6 +34,9 @@ public class TipoSegmentoProduto implements Serializable {
 	@Export(label = "Segmento", alignment=Alignment.LEFT, exhibitionOrder = 1)
 	@Column(name = "DESCRICAO", nullable = false)
 	private String descricao;
+	
+	@OneToMany(mappedBy = "tipoSegmentoProduto", fetch = FetchType.LAZY)
+	protected List<Produto> produtos = new ArrayList<Produto>();
 	
 	public TipoSegmentoProduto() {
 	}

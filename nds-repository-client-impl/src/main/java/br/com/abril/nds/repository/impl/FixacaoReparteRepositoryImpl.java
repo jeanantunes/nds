@@ -29,7 +29,6 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		super(FixacaoReparte.class);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public FixacaoReparte buscarPorId(Long id){
 		return super.buscarPorId(id);
@@ -42,35 +41,27 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		StringBuilder sql = new StringBuilder("");
 
 		sql.append(" select ")
-		
-		.append(" f.id as id, " +
-				" f.qtdeExemplares as qtdeExemplares," +
-				" f.qtdeEdicoes as qtdeEdicoes," +
-				" f.dataHora as dataHora," +
-				" f.edicaoInicial as edicaoInicial," +
-				" f.edicaoFinal as edicaoFinal," +
-				" f.edicaoFinal - f.edicaoInicial as edicoesAtendidas," +
-				" f.cotaFixada.numeroCota as cotaFixada," +
-				" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '')  as nomeCota," +
-				" f.produtoFixado.tipoClassificacaoProduto.descricao as classificacaoProduto," +
-				" f.usuario.login as usuario," +
-				" produto.codigo as codigoProduto," +
-				" count(pdv.id) as qtdPdv")
+		.append(" f.id as id, ")
+		.append(" f.qtdeExemplares as qtdeExemplares,")
+		.append(" f.qtdeEdicoes as qtdeEdicoes,")
+		.append(" f.dataHora as dataHora,")
+		.append(" f.edicaoInicial as edicaoInicial,")
+		.append(" f.edicaoFinal as edicaoFinal,")
+		.append(" f.edicaoFinal - f.edicaoInicial as edicoesAtendidas,")
+		.append(" f.cotaFixada.numeroCota as cotaFixada,")
+		.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '')  as nomeCota,")
+		.append(" f.produtoFixado.tipoClassificacaoProduto.descricao as classificacaoProduto,")
+		.append(" f.usuario.login as usuario,")
+		.append(" produto.codigo as codigoProduto,")
+		.append(" count(pdv.id) as qtdPdv")
 
 		.append(" from ")
-
 		.append(" FixacaoReparte f ")
-		
 		.append(" left join f.cotaFixada.pessoa as pessoa ")
-
 		.append(" left join f.cotaFixada.pdvs as pdv ")
-		
 		.append(" inner join f.produtoFixado as produto ")
-		
 		.append(" where ")
 		.append( " UPPER(produto.nome) like  UPPER(:nomeProduto) ")
-		
-		
 		.append(" and f.cotaFixada.tipoDistribuicaoCota = :tipoCota ");
 		
 		if(isClassificacaoPreenchida){
@@ -81,9 +72,8 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 			sql.append(	" and UPPER(produto.codigo) = UPPER(:codigoProduto) ");
 		}
 
-		sql.append(" GROUP BY f.id ");
-		
-		sql.append(" order by f.dataHora asc ");
+		sql.append(" GROUP BY f.id ")
+		.append(" order by f.cotaFixada.numeroCota asc ");
 		
 		Query query = getSession().createQuery(sql.toString());
 		
@@ -109,26 +99,23 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		
 		StringBuilder sql = new StringBuilder("");
 
-		sql.append(" select ");
+		sql.append(" select ")
+		.append(" f.id as id, ")
+		.append(" f.qtdeExemplares as qtdeExemplares,")
+		.append(" f.qtdeEdicoes as qtdeEdicoes,")
+		.append(" f.edicaoInicial as edicaoInicial,")
+		.append(" f.edicaoFinal as edicaoFinal,")
+		.append(" f.dataHora as dataHora ,")
+		.append(" f.edicaoFinal - f.edicaoInicial as edicoesAtendidas,")
+		.append(" f.cotaFixada.numeroCota as cotaFixada,")
+		.append(" f.produtoFixado.codigo as produtoFixado,")
+		.append(" f.produtoFixado.nome as nomeProduto, ")
+		.append(" f.produtoFixado.tipoClassificacaoProduto.descricao as classificacaoProduto,")
+		.append(" f.usuario.login as usuario,")
+		.append(" count(pdv.id) as qtdPdv")
 		
-		sql.append(" f.id as id, " +
-				" f.qtdeExemplares as qtdeExemplares," +
-				" f.qtdeEdicoes as qtdeEdicoes," +
-				" f.edicaoInicial as edicaoInicial," +
-				" f.edicaoFinal as edicaoFinal," +
-				" f.dataHora as dataHora ," +
-				" f.edicaoFinal - f.edicaoInicial as edicoesAtendidas," +
-				" f.cotaFixada.numeroCota as cotaFixada," +
-				" f.produtoFixado.codigo as produtoFixado," +
-				" f.produtoFixado.nome as nomeProduto, " +
-				" f.produtoFixado.tipoClassificacaoProduto.descricao as classificacaoProduto," +
-				" f.usuario.login as usuario," +
-				" count(pdv.id) as qtdPdv")
-
 		.append(" from ")
-
 		.append(" FixacaoReparte f ")
-
 		.append(" inner join f.cotaFixada as cota ")
 		.append(" inner join cota.pdvs as pdv ")
 		
@@ -136,16 +123,14 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		.append(" upper(cota.pessoa.nome) like  upper(:nomeCota) ")
 		.append(" or upper(cota.pessoa.nomeFantasia) like  upper(:nomeCota) ")
 		.append(" or upper(cota.pessoa.razaoSocial) like  upper(:nomeCota) ")
-		
 		.append(" and f.cotaFixada.tipoDistribuicaoCota = :tipoCota ");
 		
 		if(isNumeroCotaPreenchido ){
 			sql.append(	" and cota.numeroCota = :numeroCota ");
 		}
 
-		sql.append(" GROUP BY f.id ");
-		
-		sql.append(" order by f.dataHora asc ");
+		sql.append(" GROUP BY f.id ")
+		.append(" order by f.produtoFixado.nome asc ");
 		
 		Query query = getSession().createQuery(sql.toString());
 		query.setParameter("nomeCota", "%"+ cota.getNomeCota() +"%");
@@ -195,14 +180,11 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 	@Override
 	public FixacaoReparte buscarPorProdutoCota(Cota cota, Produto produto) {
 		
-		StringBuilder sql = new StringBuilder("");
+		StringBuilder sql = new StringBuilder();
 		
 		sql.append(" from ");
-
 		sql.append(" FixacaoReparte f ");
-		
 		sql.append(" where f.cotaFixada = :cotaSelecionada ");
-		
 		sql.append(" and f.produtoFixado = :produtoSelecionado  ");
 		
 		Query query  = getSession().createQuery(sql.toString());
@@ -215,13 +197,12 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 	
 	
 	
+	@SuppressWarnings("unchecked")
 	public List<FixacaoReparte> buscarPorCota(Cota cota){
 		StringBuilder sql = new StringBuilder("");
 		
 		sql.append(" from ");
-
 		sql.append(" FixacaoReparte f ");
-		
 		sql.append(" where f.cotaFixada = :cotaSelecionada ");
 		
 		Query query  = getSession().createQuery(sql.toString());
@@ -251,11 +232,8 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		StringBuilder sql = new StringBuilder("");
 		
 		sql.append(" from ")
-
 		.append(" FixacaoReparte f ")
-		
 		.append(" where f.cotaFixada.numeroCota = :cotaSelecionada ")
-		
 		.append(" and f.produtoFixado.codigo = :produtoSelecionado  ");
 		
 		Query query  = getSession().createQuery(sql.toString());

@@ -208,9 +208,20 @@ public class ParametrosDistribuidorController extends BaseController {
 		parametrosDistribuidorService.salvarDistribuidor(
 			parametrosDistribuidor, imgLogotipo, contentType);
 		
-		classificacaoCotaService.executeReclassificacaoCota();
+		boolean erroNaReclassificacao = false;
+		try {
+			classificacaoCotaService.executeReclassificacaoCota();
+		} catch (Exception e) {
+			e.printStackTrace();
+			erroNaReclassificacao = true;
+		}
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parâmetros do Distribuidor alterados com sucesso"),"result").recursive().serialize();
+		String mensagem = "Parâmetros do Distribuidor alterados com sucesso.";
+		if (erroNaReclassificacao) {
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, mensagem + "<br>Não foi possivel re-classificar as cotas."),"result").recursive().serialize();
+		} else {
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, mensagem),"result").recursive().serialize();
+		}
 	}
 	
 	private void gravarArquivoTemporario(InputStream imgLogotipo) {

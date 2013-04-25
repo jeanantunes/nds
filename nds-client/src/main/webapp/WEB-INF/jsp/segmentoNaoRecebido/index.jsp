@@ -153,6 +153,7 @@
              
       <!-- Confirmar a inclusão das cotas no segmento não recebido -->
       <span class="bt_novos" title="Confirmar" style="float:right;"><a href="javascript:;" onclick="segmentoNaoRecebidoController.incluirCotaSegmentoNaoRecebido()"><img src="${pageContext.request.contextPath}/images/ico_check.gif" hspace="5" border="0" />Confirmar</a></span>
+      <span class="bt_novos" title="Limpar" style="float:right;"><a href="javascript:;" onclick="segmentoNaoRecebidoController.limparListaCotas()">Limpar</a></span>
         
       </fieldset>
       </div>
