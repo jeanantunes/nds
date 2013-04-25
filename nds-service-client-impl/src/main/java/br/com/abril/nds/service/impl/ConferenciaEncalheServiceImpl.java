@@ -3021,7 +3021,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			controleConferenciaEncalheCotaRepository.alterar(controleConferenciaEncalheCota);
 		}
 		
-		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		Date dataOperacao = controleConferenciaEncalheCota.getDataOperacao();
 		
 		List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlip = 
 				conferenciaEncalheRepository.obterDadosSlipConferenciaEncalhe(
@@ -3058,14 +3058,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		for(ProdutoEdicaoSlipDTO produtoEdicaoSlip : listaProdutoEdicaoSlip) {
 				
  			diaAnt=dia;
- 			
-			BigInteger reparte = 
-					this.conferenciaEncalheRepository.obterReparteConferencia(
-							idCota,
-							controleConferenciaEncalheCota.getId(),
-							produtoEdicaoSlip.getIdProdutoEdicao());
-			
-			produtoEdicaoSlip.setReparte(reparte);
 			
 			qtdeTotalProdutos = BigIntegerUtil.soma(qtdeTotalProdutos, produtoEdicaoSlip.getEncalhe());
 			
