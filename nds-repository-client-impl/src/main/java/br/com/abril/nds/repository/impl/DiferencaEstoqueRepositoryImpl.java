@@ -615,7 +615,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		query.setParameter("dataBalanceamento", data);
 		
 		query.setParameterList(
-			"statusLancamento", new StatusLancamento[] {StatusLancamento.BALANCEADO});
+			"statusLancamento", 
+				new StatusLancamento[] {StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO});
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ImpressaoDiferencaEstoqueDTO.class));
 
@@ -641,7 +642,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		query.setParameter("dataBalanceamento", data);
 		
 		query.setParameterList(
-			"statusLancamento", new StatusLancamento[] {StatusLancamento.BALANCEADO});
+			"statusLancamento", 
+				new StatusLancamento[] {StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO});
 
 		return (Long) query.uniqueResult();
 	}
