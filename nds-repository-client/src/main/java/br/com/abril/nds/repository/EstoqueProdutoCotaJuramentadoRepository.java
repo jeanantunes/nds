@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigInteger;
 import java.util.Date;
 
 import br.com.abril.nds.model.cadastro.Cota;
@@ -20,5 +21,7 @@ public interface EstoqueProdutoCotaJuramentadoRepository extends Repository<Esto
 	EstoqueProdutoCotaJuramentado buscarEstoquePorProdutoECotaNaData(Long idProdutoEdicao, 
 															  		 Long idCota,
 															  		 Date data);
+	
+	BigInteger buscarSomaEstoqueJuramentadoPorProdutoData(Long idProdutoEdicao, Date data);
 	
 }

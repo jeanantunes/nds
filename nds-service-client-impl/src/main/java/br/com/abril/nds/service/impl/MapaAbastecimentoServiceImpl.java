@@ -409,22 +409,26 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	@Override
 	@Transactional
 	public List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorCota(FiltroMapaAbastecimentoDTO filtro) {
+		
 		List<ProdutoAbastecimentoDTO> mapaRetorno = new ArrayList<ProdutoAbastecimentoDTO>();
-		List<ProdutoAbastecimentoDTO> mapaCota = this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorCota(filtro);
+		
+		List<ProdutoAbastecimentoDTO> mapaCota = 
+			this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorCota(filtro);
+		
 		for (ProdutoAbastecimentoDTO produto : mapaCota) {
-			EstoqueProdutoCotaJuramentado produtoJuramentado = cotaJuramentadoRepository
-					.buscarEstoquePorProdutoECotaNaData(
-							produto.getIdProdutoEdicao(),
-							filtro.getCodigoCota().longValue(),
-							filtro.getDataDate());
+
+			BigInteger somaEstoqueJuramentado = 
+				this.cotaJuramentadoRepository.buscarSomaEstoqueJuramentadoPorProdutoData(
+					produto.getIdProdutoEdicao(), filtro.getDataDate());
 			
-			if (produtoJuramentado != null) {
+			if (somaEstoqueJuramentado != null) {
+				
 				BigInteger newReparte = BigInteger.valueOf(produto.getReparte().longValue());
-				produto.setReparte(newReparte.subtract(produtoJuramentado.getQtde()));
-				mapaRetorno.add(produto);
-			} else {
-				mapaRetorno.add(produto);
+				
+				produto.setReparte(newReparte.subtract(somaEstoqueJuramentado));
 			}
+			
+			mapaRetorno.add(produto);
 		}
 		
 		return mapaRetorno;
