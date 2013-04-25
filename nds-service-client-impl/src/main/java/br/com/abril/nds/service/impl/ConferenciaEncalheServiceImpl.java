@@ -798,20 +798,31 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		List<DebitoCreditoCotaDTO> listaDebitoCredito = new ArrayList<DebitoCreditoCotaDTO>();
 		
-		ConsolidadoFinanceiroCota consolidado = this.consolidadoFinanceiroRepository.buscarPorCotaEData(idCota, dataOperacao);
+		ConsolidadoFinanceiroCota consolidado = 
+			this.consolidadoFinanceiroRepository.buscarPorCotaEData(idCota, dataOperacao);
 		
-		if (consolidado==null){
+		if (consolidado == null) {
+			
 			return null;
 		}
-			
-		adicionarDebitoCreditoDeConsolidado(
-				listaDebitoCredito,
-				consolidado.getValorPostergado(), 
-				"Crédito Postergado" , "Pgto. Postergado",
-				consolidado.getDataConsolidado(), 
-				DateUtil.parseDataPTBR(DateUtil.formatarDataPTBR(consolidado.getDataConsolidado())));
 		
-					
+		Date dataConsolidadoPostergado = 
+			this.consolidadoFinanceiroRepository.obterDataAnteriorImediataPostergacao(consolidado);
+
+		if (dataConsolidadoPostergado != null) {
+			
+			String dataConsolidadoPostergadoFormatada = 
+				DateUtil.formatarDataPTBR(dataConsolidadoPostergado);
+			
+			adicionarDebitoCreditoDeConsolidado(
+					listaDebitoCredito,
+					consolidado.getValorPostergado(), 
+					"Crédito Postergado: " + dataConsolidadoPostergadoFormatada,
+					"Pgto. Postergado: " + dataConsolidadoPostergadoFormatada,
+					consolidado.getDataConsolidado(), 
+					DateUtil.parseDataPTBR(DateUtil.formatarDataPTBR(consolidado.getDataConsolidado())));
+		}
+						
 		adicionarDebitoCreditoDeConsolidado(
 				listaDebitoCredito,
 				consolidado.getDebitoCredito(), 
@@ -820,7 +831,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				consolidado.getDataConsolidado(), 
 				DateUtil.parseDataPTBR(DateUtil.formatarDataPTBR(consolidado.getDataConsolidado())));
 
-		
 		adicionarDebitoCreditoDeConsolidado(
 				listaDebitoCredito,
 				consolidado.getEncargos(),
@@ -828,14 +838,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				consolidado.getDataConsolidado(), 
 				DateUtil.parseDataPTBR(DateUtil.formatarDataPTBR(consolidado.getDataConsolidado())));
 
-		
 		adicionarDebitoCreditoDeConsolidado(
 				listaDebitoCredito,
 				consolidado.getPendente(),
 				"Pendente", "Pendente",
 				consolidado.getDataConsolidado(), 
 				DateUtil.parseDataPTBR(DateUtil.formatarDataPTBR(consolidado.getDataConsolidado())));
-
 		
 		adicionarDebitoCreditoDeConsolidado(
 				listaDebitoCredito,
@@ -871,7 +879,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		debitoCredito.setDataLancamento(dataLancamento);
 		
-		debitoCredito.setValor(valor.abs());
+		debitoCredito.setValor(MathUtil.round(valor.abs(), 2));
 		
 		listaDebitoCredito.add(debitoCredito);
 		
