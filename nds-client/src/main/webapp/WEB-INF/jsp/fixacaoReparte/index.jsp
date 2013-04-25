@@ -40,7 +40,6 @@ function filtroPorProduto(){
 	
 	//$('#historicoXLS').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=historicoProduto");
 	//$('#historicoPDF').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=historicoProduto");
->>>>>>> DGBti/fase2
 }
 function mostraQtd(){
 	$('#edInicialModal').val("");
@@ -72,13 +71,8 @@ function mostraIntervalo(){
             <td width="22" align="right"><input type="radio" name="filtroPrincipalRadio" id="radio"  value="Cota" onclick="filtroPorCota();" /></td>
             <td width="50">Cota</td>
             <td width="22"><input type="radio" name="filtroPrincipalRadio" id="radio2" value="Produto" onclick="filtroPorProduto()" /></td>
-<<<<<<< HEAD
-            <td width="49">Produto</td>
-            <td width="781"><table width="760" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorProduto" style="display:none;">
-=======
             <td width="49"> <label for="radio2">Produto</label></td>
             <td width="781"><table width="760" border="0" cellpadding="2" cellspacing="1" id="fixacaoReparte_filtroPorProduto" class="filtro filtroPorProduto" style="display:none;">
->>>>>>> DGBti/fase2
           <tr>
             <td width="52">Código:</td>
             <td width="86"><input type="text" name="codigoProduto" id="codigoProduto"  style="width:80px;" onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigoProduto','#nomeProduto',false,undefined,undefined )"/></td>
