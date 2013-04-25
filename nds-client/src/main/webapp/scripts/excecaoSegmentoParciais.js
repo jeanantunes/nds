@@ -839,11 +839,11 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 			dataType : 'json',
 			params : filtroPrincipalCota,
 		});
-		
-		grids.ProdutosNaoRecebidosGrid.reload({
-			dataType : 'json',
-			params : filtroPrincipalCota,
-		});
+		// comentado para não carregar a grid da direita automaticamente
+//		grids.ProdutosNaoRecebidosGrid.reload({
+//			dataType : 'json',
+//			params : filtroPrincipalCota,
+//		});
 	},
 	
 	porExcecao : function porExcessao(){
@@ -865,11 +865,11 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 			dataType : 'json',
 			params : filtroPrincipalProduto
 		});
-		
-		grids.CotasQueNaoRecebemExcecaoGrid.reload({
-			dataType : 'json',
-			params : filtroPrincipalProduto
-		});
+		// comentado para não carregar a grid da direita automaticamente
+//		grids.CotasQueNaoRecebemExcecaoGrid.reload({
+//			dataType : 'json',
+//			params : filtroPrincipalProduto
+//		});
 		
 	},
 	

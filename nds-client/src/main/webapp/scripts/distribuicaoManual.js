@@ -22,6 +22,8 @@ var distribuicaoManual = $.extend(true, {
 		distribuicaoManual.confirmar("#dialog-voltar", function() {
 			$(".ui-tabs-selected").find("span").click();
 			$("a[href='"+ pathTela +"/matrizDistribuicao']").click();
+		}, function() {
+			setTimeout(function() { $('#numeroCotaGrid'+ (distribuicaoManual.rowCount - 1), distribuicaoManual.workspace).focus(); }, 100);
 		});
 	},
 	
@@ -29,10 +31,12 @@ var distribuicaoManual = $.extend(true, {
 		distribuicaoManual.confirmar("#dialog-cancelar-estudo", function() {
 			$(".ui-tabs-selected").find("span").click();
 			$("a[href='"+ pathTela +"/matrizDistribuicao']").click();
+		}, function() {
+			setTimeout(function() { $('#numeroCotaGrid'+ (distribuicaoManual.rowCount - 1), distribuicaoManual.workspace).focus(); }, 100);
 		});
 	},
 	
-	confirmar : function(dialogId, callbackFunction, errorCallback) {
+	confirmar : function(dialogId, callbackFunction, errorCallback, posCloseCallback) {
 		$(dialogId).dialog({
 			resizable: false,
 			height:170,
@@ -88,12 +92,12 @@ var distribuicaoManual = $.extend(true, {
 				$('#repDistribuir').html(repDistrib);
 			} else {
 				$("#reparteGrid"+ index, distribuicaoManual.workspace).val('0');
-				exibirMensagemDialog('ERROR', ['Você não possui saldo suficiente para distribuir essa quantidade para a cota, reveja os valores.'], '');
+				exibirMensagemDialog('WARNING', ['Você não possui saldo suficiente para distribuir essa quantidade para a cota, reveja os valores.'], '');
 				$("#reparteGrid"+ index, distribuicaoManual.workspace).focus();
 			}
 		} else {
 			$("#reparteGrid"+ index, distribuicaoManual.workspace).val('0');
-			exibirMensagemDialog('ERROR', ['O reparte da cota deve ser menor que o Total de Reparte a Distribuir.'], '');
+			exibirMensagemDialog('WARNING', ['O reparte da cota deve ser menor que o Total de Reparte a Distribuir.'], '');
 			$("#reparteGrid"+ index, distribuicaoManual.workspace).focus();
 		}
 	},
@@ -174,12 +178,14 @@ var distribuicaoManual = $.extend(true, {
 							$('#reparteGrid'+ index, distribuicaoManual.workspace).focus();
 							distribuicaoManual.construirLinhaVazia();
 							distribuicaoManual.exibindoMensagem = false;
+							setTimeout(function() { $('#reparteGrid'+ index, distribuicaoManual.workspace).focus(); }, 100);
 						};
 						if (result.status == 'SUSPENSO') {
 							distribuicaoManual.exibindoMensagem = true;
 							distribuicaoManual.confirmar('#dialog-status-suspenso', callback, function() {
 								distribuicaoManual.limparLinha(index);
 								distribuicaoManual.exibindoMensagem = false;
+								setTimeout(function() { $('#numeroCotaGrid'+ index, distribuicaoManual.workspace).focus(); }, 100);
 							});
 						} else {
 							callback();
@@ -196,7 +202,7 @@ var distribuicaoManual = $.extend(true, {
 			);
 		} else {
 			$("#numeroCotaGrid"+ index, distribuicaoManual.workspace).val('');
-			exibirMensagemDialog('ERROR', ['A cota de número '+ numeroCota +' já foi inserida anteriormente.'], '');
+			exibirMensagemDialog('WARNING', ['A cota de número '+ numeroCota +' já foi inserida anteriormente.'], '');
 		}
 	},
 	
@@ -308,7 +314,10 @@ var distribuicaoManual = $.extend(true, {
 			);
 		};
 		if (parseInt($('#repDistribuir').html()) > 0) {
-			distribuicaoManual.confirmar("#dialog-saldo", callbackFunction);
+			distribuicaoManual.confirmar("#dialog-saldo", callbackFunction, function() {
+				console.log(distribuicaoManual.rowCount);
+				setTimeout(function() { $('#numeroCotaGrid'+ (distribuicaoManual.rowCount - 1), distribuicaoManual.workspace).focus(); }, 100);
+			});
 		} else {
 			callbackFunction();
 		}
