@@ -54,15 +54,16 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" (select count(pdv.id) from pdv where cota.id = pdv.cota_id) as qtdPdv, ") 
 		.append(" usuario.login as usuario, ")
 		.append(" tipo_classificacao_produto.descricao as classificacaoProduto, ")
-		.append(" avg(lancamento.reparte) as reparteMedio, avg(venda_produto.valor_total_venda) as vendaMedia, ")
+		.append(" round(avg(epc.qtde_recebida), 0) as reparteMedio, ")
+		.append(" round(avg(epc.qtde_recebida - epc.qtde_devolvida), 0) as vendaMedia, ")
 		.append(" coalesce((select lc.reparte from lancamento lc where lc.produto_edicao_id=produto_edicao.id and lancamento.status in ('LANÇADA','CALCULADA') limit 1),0) as ultimoReparte ")
 		
 		.append(" FROM mix_cota_produto ") 
 		.append(" LEFT join produto on mix_cota_produto.ID_PRODUTO = produto.ID ")
 		.append(" LEFT join produto_edicao on produto_edicao.PRODUTO_ID = produto.ID ") 
 		.append(" LEFT join lancamento on lancamento.PRODUTO_EDICAO_ID = produto_edicao.ID")
-		.append(" LEFT join venda_produto on venda_produto.ID_PRODUTO_EDICAO = produto_edicao.ID ")
 		.append(" LEFT join cota on mix_cota_produto.ID_COTA = cota.ID ")
+		.append(" LEFT join estoque_produto_cota epc on epc.cota_id = cota.id ")
 		.append(" LEFT join tipo_classificacao_produto ON tipo_classificacao_produto.ID = produto.TIPO_CLASSIFICACAO_PRODUTO_ID ")
 		.append(" LEFT join usuario on usuario.ID = mix_cota_produto.ID_USUARIO ")
 
