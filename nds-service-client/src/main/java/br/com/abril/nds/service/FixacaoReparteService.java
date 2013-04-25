@@ -2,6 +2,7 @@ package br.com.abril.nds.service;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.CopiaMixFixacaoDTO;
 import br.com.abril.nds.dto.FixacaoReparteDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoCotaDTO;
@@ -45,5 +46,7 @@ public interface FixacaoReparteService {
 	
 	public boolean isFixacaoExistente(FixacaoReparteDTO fixacaoReparteDTO);
 
-	public boolean isCotaValida(FixacaoReparteDTO fixacaoReparteDTO);;
+	public boolean isCotaValida(FixacaoReparteDTO fixacaoReparteDTO);
+
+	boolean gerarCopiafixacao(CopiaMixFixacaoDTO copiaDTO);;
 }

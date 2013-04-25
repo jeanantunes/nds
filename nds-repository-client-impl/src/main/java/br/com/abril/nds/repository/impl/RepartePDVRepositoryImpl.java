@@ -85,6 +85,23 @@ public class RepartePDVRepositoryImpl extends  AbstractRepositoryModel<RepartePD
 	        return (RepartePDV) q.uniqueResult();
 		
 	}
+
+	@Override
+	public List<RepartePDV> buscarPorIdFixacao(Long id) {
+		return this.buscarPorIdTipoReferencia("fixacaoReparte",id);
+	}
+	
+	@Override
+	public List<RepartePDV> buscarPorIdMix(Long id) {
+		return this.buscarPorIdTipoReferencia("mixCotaProduto",id);
+	}
+	
+	private List<RepartePDV> buscarPorIdTipoReferencia(String type,Long id) {
+		Query q = getSession().createQuery(" from RepartePDV rep WHERE rep."+type+".id = :idTipo ");
+        q.setParameter("idTipo", id);
+        return (List<RepartePDV>)q.list();
+		
+	}
 	
 	
 }

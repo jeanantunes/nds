@@ -16,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.CopiaMixFixacaoDTO;
 import br.com.abril.nds.dto.FixacaoReparteDTO;
+import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.MixCotaDTO;
 import br.com.abril.nds.dto.MixCotaProdutoDTO;
 import br.com.abril.nds.dto.MixProdutoDTO;
@@ -28,7 +30,9 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaMixPorCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaMixPorProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CotaService;
@@ -45,6 +49,7 @@ import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.util.upload.XlsUploaderUtils;
 import br.com.abril.nds.vo.PaginacaoVO;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -458,6 +463,59 @@ public class MixCotaProdutoController extends BaseController {
 		listMixExcel.removeAll(listCotaInconsistente);
 		
 		return listCotaInconsistente;
+
+	}
+
+	@Post
+	@Path("/gerarCopiaMix")
+	public void gerarCopiaMix(CopiaMixFixacaoDTO copiaMix){
+		
+		TipoMensagem tipoMsg = TipoMensagem.WARNING;
+		List<String> msg = new ArrayList<String>();
+
+		switch (copiaMix.getTipoCopia()) {
+		case COTA:
+			Cota cotaOrigem = cotaService.obterPorNumeroDaCota(copiaMix.getCotaNumeroOrigem());
+			Cota cotaDestino = cotaService.obterPorNumeroDaCota(copiaMix.getCotaNumeroDestino());
+
+			if(cotaOrigem.getTipoDistribuicaoCota()==null || cotaDestino.getTipoDistribuicaoCota()==null
+					|| !cotaOrigem.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO) 
+					|| !cotaDestino.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)){
+				msg.add( "Cotas não são do tipo ALTERNATIVO.");
+			} 
+			
+			break;
+		case PRODUTO:
+			
+			break;
+		}
+		
+		
+		if(msg.isEmpty()){
+			try {
+				
+				boolean gerarCopiaMix = this.mixCotaProdutoService.gerarCopiaMix(copiaMix);
+				if (gerarCopiaMix) {
+					tipoMsg = TipoMensagem.SUCCESS;
+					msg.add("Cópia executada com sucesso.");
+				} else {
+					tipoMsg = TipoMensagem.ERROR;
+					msg.add("Houve um erro ao gerar a cópia");
+				}
+			} 
+			catch(ValidacaoException e) {
+				tipoMsg = TipoMensagem.WARNING;
+				msg=e.getValidacao().getListaMensagens();
+			}
+			catch(Exception e) {
+				tipoMsg = TipoMensagem.ERROR;
+				msg.add("Houve um erro ao gerar a cópia");
+			}
+			
+		}
+		
+		result.use(Results.json()).from(new ValidacaoVO(tipoMsg, msg),"result").recursive().serialize();
+		
 	}
 
 }

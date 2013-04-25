@@ -1,5 +1,5 @@
-
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>  
+<!-- fixacaoReparte -->
 <script type="text/javascript" src="scripts/pesquisaCota.js"></script>
 <script type="text/javascript" src="scripts/pesquisaProduto.js"></script>
 <script type="text/javascript" src="scripts/fixacaoReparte.js"></script>
@@ -61,6 +61,90 @@ function mostraIntervalo(){
 
 <body>
 
+<div id="cotaCopiaFixacao-dialog" title="Cópia de Fixação" style="display:none;">
+      
+      <fieldset >
+   		<legend>Cota origem</legend>
+   		  <table border="0" cellspacing="1" cellpadding="1">
+   		  	<tr>
+	   		  <td><label><strong>Cota:</strong></label></td>
+	   		  <td>
+		      <input type="text" style="width:80px;" id="cotaFixacaoOrigemInput" 
+		      	onchange="pesquisaCota.pesquisarPorNumeroCota('#'+this.id,'#nomeCotaFixacaoOrigemInput',false,undefined,undefined)"/>
+		      </td>
+		      <td>
+		      <label><strong>Nome:</strong></label>
+		      </td>
+		      <td>
+		      <input type="text" style="width:200px;" id="nomeCotaFixacaoOrigemInput"/>
+   		  	</td>
+   		  	</tr>
+   		  </table>
+   		  
+   	  </fieldset>
+   	  <fieldset >
+   		<legend>Cota Destino</legend>
+   		  <table border="0" cellspacing="1" cellpadding="1">
+   		  	<tr>
+	   		  <td><label><strong>Cota:</strong></label></td>
+	   		  <td>
+		      <input type="text" style="width:80px;" id="cotaFixacaoDestinoInput"
+		      onchange="pesquisaCota.pesquisarPorNumeroCota('#'+this.id,'#nomeCotaFixacaoDestinoInput',false,undefined,undefined)"/>
+		      </td>
+		      <td>
+		      <label><strong>Nome:</strong></label>
+		      </td>
+		      <td>
+		      <input type="text" style="width:200px;" id="nomeCotaFixacaoDestinoInput"/>
+   		  	</td>
+   		  	</tr>
+   		  </table>
+   	  </fieldset>
+   	
+      </div>
+      
+      <div id="produtoCopiaFixacao-dialog" title="Cópia de Fixação" style="display:none;">
+	      
+	       <fieldset >
+   		<legend>Publica&ccedil;&atilde;o origem</legend>
+   		  <table border="0" cellspacing="1" cellpadding="1">
+   		  	<tr>
+	   		  <td><label><strong>C&oacute;digo:</strong></label></td>
+	   		  <td>
+		      <input type="text" style="width:80px;" id="codigoProdutoFixacaoOrigemInput" 
+		      onchange="pesquisaProduto.pesquisarPorCodigoProduto('#'+this.id,'#nomeProdutoFixacaoOrigemInput',false,undefined,undefined )"/>
+		      </td>
+		      <td>
+		      <label><strong>Produto:</strong></label>
+		      </td>
+		      <td>
+		      <input type="text" style="width:200px;" id="nomeProdutoFixacaoOrigemInput" onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#'+this.id);"/>
+   		  	</td>
+   		  	</tr>
+   		  </table>
+   		  
+   	  </fieldset>
+   	  <fieldset >
+   		<legend>Publica&ccedil;&atilde;o Destino</legend>
+   		  <table border="0" cellspacing="1" cellpadding="1">
+   		  	<tr>
+	   		  <td><label><strong>C&oacute;digo:</strong></label></td>
+	   		  <td>
+		      <input type="text" style="width:80px;" id="codigoProdutoFixacaoDestinoInput" 
+		      	onchange="pesquisaProduto.pesquisarPorCodigoProduto('#'+this.id,'#nomeProdutoFixacaoDestinoInput',false,undefined,undefined )"/>
+		      </td>
+		      <td>
+		      <label><strong>Produto:</strong></label>
+		      </td>
+		      <td>
+		      <input type="text" style="width:200px;" id="nomeProdutoFixacaoDestinoInput" onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#codigoProdutoDestinoInput');"/>
+   		  	</td>
+   		  	</tr>
+   		  </table>
+   	  </fieldset>
+	   
+      </div>
+      
 <br clear="all"/>
     <br />
     
@@ -119,6 +203,7 @@ function mostraIntervalo(){
 			            <span class="bt_novos" title="Adicionar em Lote" id="btAddLoteProduto"><a href="javascript:;" href="javascript:;" onclick="fixacaoReparteController.add_lote();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
 	         	    	<span class="bt_novos" title="Gerar Arquivo" id="btGerarArquivoProduto"><a href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=produto"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 						<span class="bt_novos" title="Imprimir" id="btImprimirProduto"><a  href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=produto"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+						<span class="bt_novos" title="Cópia de Fixação" id="btCopiaMix"><a href="javascript:;" onclick="fixacaoReparteController.abrirCopiaDialog()"><img src="images/ico_negociar.png" alt="Cópia de Fixação" hspace="5" border="0" />C&oacute;pia de Fixa&ccedil;&atilde;o</a></span>
 		      </fieldset>
 		     
 		     
@@ -134,6 +219,7 @@ function mostraIntervalo(){
 	             	 </span>
 		             <span class="bt_novos" title="Gerar Arquivo" id="btGerarArquivoCota"><a href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=cota"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 					<span class="bt_novos" title="Imprimir" id="btImprimirCota"><a href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=cota"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+					<span class="bt_novos" title="Cópia de Fixação" id="btCopiaMix"><a href="javascript:;" onclick="fixacaoReparteController.abrirCopiaDialog()"><img src="images/ico_negociar.png" alt="Cópia de Mix" hspace="5" border="0" />C&oacute;pia de Fixa&ccedil;&atilde;o</a></span>
 		      </fieldset>
    		   </div>
 	   

@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.CopiaMixFixacaoDTO;
 import br.com.abril.nds.dto.FixacaoReparteCotaDTO;
 import br.com.abril.nds.dto.FixacaoReparteDTO;
 import br.com.abril.nds.dto.FixacaoReparteHistoricoDTO;
@@ -26,7 +27,9 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CotaService;
@@ -408,6 +411,7 @@ public class FixacaoReparteController extends BaseController {
 			filtroAtual.getPaginacao().setPaginaAtual(1);
 		}
 		
+		
 		session.setAttribute(FILTRO_COTA_SESSION_ATTRIBUTE, filtroAtual);
 	}
 	
@@ -476,6 +480,60 @@ public class FixacaoReparteController extends BaseController {
 		}
 		
 		
+		
+	}
+	
+	@Post
+	@Path("/gerarCopiaFixacao")
+	public void gerarCopiaFixacao(CopiaMixFixacaoDTO copiaDTO){
+		
+		TipoMensagem tipoMsg = TipoMensagem.WARNING;
+		List<String> msg = new ArrayList<String>();
+		
+		
+
+		switch (copiaDTO.getTipoCopia()) {
+		case COTA:
+			Cota cotaOrigem = cotaService.obterPorNumeroDaCota(copiaDTO.getCotaNumeroOrigem());
+			Cota cotaDestino = cotaService.obterPorNumeroDaCota(copiaDTO.getCotaNumeroDestino());
+
+			if(cotaOrigem.getTipoDistribuicaoCota()==null || cotaDestino.getTipoDistribuicaoCota()==null
+					|| !cotaOrigem.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.CONVENCIONAL) 
+					|| !cotaDestino.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.CONVENCIONAL)){
+				msg.add( "Cotas não são do tipo CONVENCIONAL.");
+			} 
+			
+			break;
+		case PRODUTO:
+			
+			break;
+		}
+		
+		if(msg.isEmpty()){
+			try {
+				
+				
+				boolean gerarCopiaMix = this.fixacaoReparteService.gerarCopiafixacao(copiaDTO);
+				if (gerarCopiaMix) {
+					tipoMsg = TipoMensagem.SUCCESS;
+					msg.add("Cópia executada com sucesso.");
+				} else {
+					tipoMsg = TipoMensagem.ERROR;
+					msg.add("Houve um erro ao gerar a cópia");
+				}
+			} 
+			catch(ValidacaoException e) {
+				tipoMsg = TipoMensagem.WARNING;
+				msg=e.getValidacao().getListaMensagens();
+			}
+			catch(Exception e) {
+				tipoMsg = TipoMensagem.ERROR;
+				msg.add("Houve um erro ao gerar a cópia");
+			}
+			
+		}
+		
+		result.use(Results.json()).from(new ValidacaoVO(tipoMsg, msg),"result").recursive().serialize();
 		
 	}
 
@@ -570,7 +628,4 @@ public class FixacaoReparteController extends BaseController {
 	public void setErrosUpload(List<String> errosUpload) {
 		this.errosUpload = errosUpload;
 	}
-
-	
-	
 }

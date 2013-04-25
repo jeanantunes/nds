@@ -7,6 +7,7 @@ import br.com.abril.nds.dto.MixProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaMixPorCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaMixPorProdutoDTO;
 import br.com.abril.nds.model.distribuicao.MixCotaProduto;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 public interface MixCotaProdutoRepository extends
 		Repository<MixCotaProduto, Long> {
@@ -24,4 +25,9 @@ public interface MixCotaProdutoRepository extends
 	public void removerPorIdCota(Long idCota);
 
 	public void execucaoQuartz();
+
+	public void gerarCopiaMixCota(List<MixCotaDTO> mixCotaOrigem,Usuario usuario);
+
+	public void gerarCopiaMixProduto(List<MixProdutoDTO> mixProdutoOrigem,
+			Usuario usuarioLogado);
 }
