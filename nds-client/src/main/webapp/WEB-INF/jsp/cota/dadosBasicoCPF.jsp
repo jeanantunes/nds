@@ -13,7 +13,7 @@
      	 <strong>Tipo:</strong>
      	 
 	     <select name="cotaDTO.tipoCota" id="cotaDTO.tipoCota" style="width:110px;" onchange="MANTER_COTA.verificaTipoCota(this);">
-	        <option selected="selected">Selecione...</option>
+	        <option value="" selected="selected">Selecione...</option>
 	        <option value="A">Alternativo</option>
 	        <option value="C">Convencional</option>
 	      </select>

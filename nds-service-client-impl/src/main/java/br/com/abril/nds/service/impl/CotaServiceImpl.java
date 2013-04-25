@@ -2557,8 +2557,8 @@ public class CotaServiceImpl implements CotaService {
 	}
 
 	@Override
-	public List<Integer> verificarNumeroCotaExiste(Integer... cotaIdArray) {
-		return cotaRepository.verificarNumeroCotaExiste(cotaIdArray);
+	public List<Integer> numeroCotaExiste(TipoDistribuicaoCota tipoDistribuicaoCota, Integer... cotaIdArray) {
+		return cotaRepository.numeroCotaExiste(tipoDistribuicaoCota, cotaIdArray);
 	}
 	
 	@Override

@@ -399,7 +399,7 @@ public interface CotaService {
 
 	public abstract boolean cotaVinculadaCotaBase(Long idCota);
 	
-	public List<Integer> verificarNumeroCotaExiste(Integer...cotaIdArray);
+	List<Integer> numeroCotaExiste(TipoDistribuicaoCota tipoDistribuicaoCota, Integer... cotaIdArray);
 
 	public TipoDistribuicaoCota obterTipoDistribuicaoCotaPorNumeroCota(Integer numeroCota);
 

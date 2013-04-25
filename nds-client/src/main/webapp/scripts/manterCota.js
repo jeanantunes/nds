@@ -921,8 +921,23 @@ var MANTER_COTA = $.extend(true, {
                 },
             });
     	}
+    },
+    
+    uniqArray: function(dirtyArr, keyParam) {
+    	var cleanArrObj = {},
+    		returnArr = [];
     	
+    	for ( var i=0; i < dirtyArr.length; i++ ) {
+    		if(dirtyArr[i].value !== '') {
+    			cleanArrObj[dirtyArr[i][keyParam]] = dirtyArr[i];
+    		}
+    	}
     	
+    	for ( key in cleanArrObj ) {
+    		returnArr.push(cleanArrObj[key]);
+    	}
+    	
+    	return returnArr;
     }
 
 }, BaseController);
@@ -1090,7 +1105,7 @@ var COTA_FORNECEDOR = $.extend(true, {
         
         var param = {idCota:MANTER_COTA.idCota};
         
-        param = serializeArrayToPost('fornecedores', fornecedores, param)
+        param = serializeArrayToPost('fornecedores', fornecedores, param);
 
         $.postJSON(
             contextPath + "/cadastro/cota/salvarFornecedores",
@@ -1229,7 +1244,7 @@ var COTA_CNPJ = $.extend(true, {
         $("#emailNF", this.workspace).val(result.emailNF);
         $("#emiteNFE", this.workspace).attr("checked", (result.emiteNFE == true)?"checked":null);
         $("#classificacaoSelecionada", this.workspace).val(result.classificacaoSelecionada);
-        $('[name="cotaDTO.TipoCota"]', this.workspace).val(result.tipoCota);
+        $('[name="cotaDTO.tipoCota"]', this.workspace).val(result.tipoCota);
         
         $("#percentualCotaBase", this.workspace).html(result.percentualCotaBase+"%");
         
@@ -1269,7 +1284,7 @@ var COTA_CNPJ = $.extend(true, {
 
         formData.push({name:"cotaDTO.idCota", value: MANTER_COTA.idCota});
         formData.push({name:"cotaDTO.alteracaoTitularidade", value: MANTER_COTA.isAlteracaoTitularidade});
-        formData.push({name:"cotaDTO.tipoCota", value: $('[name="cotaDTO.TipoCota"]').val()});
+        formData.push({name:"cotaDTO.tipoCota", value: $('[name="cotaDTO.tipoCota"]:visible', this.workspace).val()});
 
         var existeCota = false;
         for (var i = 0; i < formData.length; i++) {
@@ -1285,9 +1300,11 @@ var COTA_CNPJ = $.extend(true, {
 	        	formData.push({name:"cotaDTO.numeroCota", value: $('[name="cotaDTO.numeroCota"]').val()});
 	        }
         }
+        
+        var uniqFormData = MANTER_COTA.uniqArray(formData, 'name');
 
         $.postJSON(contextPath + "/cadastro/cota/salvarCotaCNPJ",
-            formData ,
+    		uniqFormData,
             function(result){
                 MANTER_COTA.idCota = result.idCota;
                 MANTER_COTA.numeroCota = result.numeroCota;
@@ -1446,7 +1463,7 @@ var COTA_CPF = $.extend(true, {
         $("#emailNFCPF", this.workspace).val(result.emailNF);
         $("#emiteNFECPF", this.workspace).attr("checked", (result.emiteNFE == true)?"checked":null);
         $("#classificacaoSelecionadaCPF", this.workspace).val(result.classificacaoSelecionada);
-        $('[name="cotaDTO.TipoCota"]', this.workspace).val(result.tipoCota);
+        $('[name="cotaDTO.tipoCota"]', this.workspace).val(result.tipoCota);
         
         //Ajuste 0153
         $("#percentualCotaBase", this.workspace).html(result.percentualCotaBase+"%");
@@ -1492,16 +1509,18 @@ var COTA_CPF = $.extend(true, {
 
         formData.push({name:"cotaDTO.idCota",value: MANTER_COTA.idCota});
         formData.push({name:"cotaDTO.alteracaoTitularidade", value: MANTER_COTA.isAlteracaoTitularidade});
-        formData.push({name:"cotaDTO.tipoCota", value: $('[name="cotaDTO.TipoCota"]').val()});
+        formData.push({name:"cotaDTO.tipoCota", value: $('[name="cotaDTO.tipoCota"]:visible', this.workspace).val()});
 
         if (MANTER_COTA.numeroCota) {
         	formData.push({name:"cotaDTO.numeroCota", value: MANTER_COTA.numeroCota});
         } else {
         	formData.push({name:"cotaDTO.numeroCota", value: $('[name="cotaDTO.numeroCota"]').val()});
         }
+        
+        var uniqFormData = MANTER_COTA.uniqArray(formData, 'name');
 
         $.postJSON(contextPath + "/cadastro/cota/salvarCotaCPF",
-            formData ,
+    		uniqFormData,
             function(result){
 
                 MANTER_COTA.idCota = result.idCota;
