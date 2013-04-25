@@ -365,8 +365,13 @@ var fechamentoEncalheController = $.extend(true, {
 			params,
 			function (result) {
 			
-				var tipoMensagem = result.tipoMensagem;
-				var listaMensagens = result.listaMensagens;
+				var tipoMensagem, listaMensagens;
+				
+				if(result && result.tipoMensagem)
+					tipoMensagem = result.tipoMensagem;
+				
+				if(result && result.listaMensagens)
+					listaMensagens = result.listaMensagens;
 				
 				if (tipoMensagem && listaMensagens) {
 					
