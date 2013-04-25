@@ -717,7 +717,7 @@ var mixCotaProdutoController = $.extend(true, {
 			novaLinha = $("#tableNovoProduto tr:last").clone();
 			novaLinha.find("input").val("");
 			novaLinha.insertAfter("#tableNovoProduto tr:last");
-			$("#tableNovoProduto tr:last").find("input[type='image']").show();
+//			$("#tableNovoProduto tr:last").find("input[type='image']").show();
 			this.definirIdInputProduto();
 		}
 		
@@ -1102,6 +1102,82 @@ var mixCotaProdutoController = $.extend(true, {
 					});
 		    	   
 		       }
+		},
+		
+		abrirCopiaDialog:function(){
+			var type  =$("input[type=radio][name=radio]:checked").val();
+			type = type.toLowerCase();
+			var target = type+'Copia-dialog';
+			
+			var idsCopiaCota="#cotaOrigemInput,#nomeCotaOrigemInput,#cotaDestinoInput,#nomeCotaDestinoInput";
+			var idsCopiaProduto="#codigoProdutoOrigemInput,#nomeProdutoOrigemInput,#codigoProdutoDestinoInput,#nomeProdutoDestinoInput";
+			
+			$("#"+target).dialog({
+				resizable: false,
+				height:'auto',
+				width:500,
+				draggable: false,
+				modal: true,
+				buttons: {
+					"Iníciar cópia": function() {
+
+						var len=0;
+						
+						
+						if(type=='cota') {
+							len = $(idsCopiaCota).filter(function(){return this.value == "";}).length;
+						}else if(type=='produto'){
+							len = $(idsCopiaProduto).filter(function(){return this.value == "";}).length;
+							
+						}
+
+						if(len>0){
+							exibirMensagem("WARNING",["Dados para cópia não preenchidos."]);
+							return;
+						}
+						
+						var msgWar=null;
+						if(type=='cota' && ($("#cotaOrigemInput").val()==$("#cotaDestinoInput").val())){
+							msgWar="Cota Origem não pode ser igual a cota destino.";
+						}else if(type=='produto' && ($("#codigoProdutoOrigemInput").val()==$("#codigoProdutoDestinoInput").val() )){
+							msgWar="Produto Origem não pode ser igual a produto destino.";
+						}
+						
+						if(msgWar!=null){
+							exibirMensagem("WARNING",[msgWar]);
+							return;
+						}
+						
+						var data = [];
+//						console.log(type);
+						data.push({name:"copiaMix.tipoCopia",	value: type.toUpperCase()});
+						data.push({name:"copiaMix.cotaNumeroOrigem",	value: $("#cotaOrigemInput").val()});
+						data.push({name:"copiaMix.nomeCotaOrigem",	value: $("#nomeCotaOrigemInput").val()});
+						data.push({name:"copiaMix.cotaNumeroDestino",	value: $("#cotaDestinoInput").val()});
+						data.push({name:"copiaMix.nomeCotaDestino",	value: $("#nomeCotaDestinoInput").val()});
+						
+						data.push({name:"copiaMix.codigoProdutoOrigem",	value: $("#codigoProdutoOrigemInput").val()});
+						data.push({name:"copiaMix.nomeProdutoOrigem",	value: $("#nomeProdutoOrigemInput").val()});
+						data.push({name:"copiaMix.codigoProdutoDestino",	value: $("#codigoProdutoDestinoInput").val()});
+						data.push({name:"copiaMix.nomeProdutoDestino",	value: $("#nomeProdutoDestinoInput").val()});
+						
+						modal = this;
+						$.postJSON(contextPath + '/distribuicao/mixCotaProduto/gerarCopiaMix',  data, 
+								function(result){
+//								console.log(result);
+								$(modal).dialog("close");
+										exibirMensagem("WARNING",result.listaMensagens);
+								},
+								function(result){ });
+					},
+					"Cancelar": function() {
+						$(this).dialog("close");
+					}
+				},
+				close:function(){$(idsCopiaCota+","+idsCopiaProduto).val('');}
+			});
+			
+			
 		}
 		
 		

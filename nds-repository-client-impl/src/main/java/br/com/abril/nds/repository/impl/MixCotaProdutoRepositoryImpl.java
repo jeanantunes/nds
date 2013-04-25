@@ -1,21 +1,32 @@
 
 package br.com.abril.nds.repository.impl;
 
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.MixCotaDTO;
 import br.com.abril.nds.dto.MixProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaMixPorCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaMixPorProdutoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDTO;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
+import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.distribuicao.MixCotaProduto;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.MixCotaProdutoRepository;
+import br.com.abril.nds.repository.RepartePDVRepository;
+import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 /**
@@ -29,6 +40,12 @@ public class MixCotaProdutoRepositoryImpl extends
 		AbstractRepositoryModel<MixCotaProduto, Long> implements
 		MixCotaProdutoRepository {
 
+	@Autowired
+	private RepartePDVRepository repartePDVRepository;
+	
+	@Autowired
+	private UsuarioRepository usuarioRepository;
+	
 	public MixCotaProdutoRepositoryImpl() {
 		super(MixCotaProduto.class);
 	}
@@ -85,18 +102,17 @@ public class MixCotaProdutoRepositoryImpl extends
 		query.setParameter("cota", filtroConsultaMixCotaDTO.getCota());
 		query.setResultTransformer(new AliasToBeanResultTransformer(MixCotaDTO.class));
 		
-		configurarPaginacaoCota(filtroConsultaMixCotaDTO, query);
+		configurarPaginacao(filtroConsultaMixCotaDTO, query);
 		return query.list();
 	}
 	
 	
 	
-	private void configurarPaginacaoCota(FiltroConsultaMixPorCotaDTO dto,
-			Query query) {
+	private void configurarPaginacao(FiltroDTO dto,Query query) {
 
 		PaginacaoVO paginacao = dto.getPaginacao();
 
-		if (paginacao.getQtdResultadosTotal().equals(0)) {
+		if (paginacao!=null && paginacao.getQtdResultadosTotal().equals(0)) {
 			paginacao.setQtdResultadosTotal(query.list().size());
 		}
 
@@ -167,30 +183,11 @@ public class MixCotaProdutoRepositoryImpl extends
 		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(MixProdutoDTO.class));
-		configurarPaginacaoProduto(filtroConsultaMixProdutoDTO, query);
+		configurarPaginacao(filtroConsultaMixProdutoDTO, query);
 		
 		return query.list();
 	}
 
-	private void configurarPaginacaoProduto(FiltroConsultaMixPorProdutoDTO dto,
-			Query query) {
-
-		PaginacaoVO paginacao = dto.getPaginacao();
-
-		if (paginacao.getQtdResultadosTotal().equals(0)) {
-			paginacao.setQtdResultadosTotal(query.list().size());
-		}
-
-		/*if (paginacao.getQtdResultadosPorPagina() != null) {
-			query.setMaxResults(paginacao.getQtdResultadosPorPagina());
-		}*/
-
-		/*if (paginacao.getPosicaoInicial() != null) {
-			query.setFirstResult(paginacao.getPosicaoInicial());
-		}*/
-	}
-
-		
 	public boolean existeMixCotaProdutoCadastrado(Long idProduto, Long idCota){
 		StringBuilder hql = new StringBuilder("");
 
@@ -246,4 +243,91 @@ public class MixCotaProdutoRepositoryImpl extends
 		
 	}
 
+
+
+	@Override
+	public void gerarCopiaMixCota(List<MixCotaDTO> mixCotaOrigem,Usuario usuario) {
+		StringBuilder hql = new StringBuilder("");
+
+		hql.append(" INSERT INTO mix_cota_produto ")
+		.append(" (DATAHORA, REPARTE_MAX, REPARTE_MED, REPARTE_MIN, ULTIMO_REPARTE, VENDA_MED, ID_COTA, ID_PRODUTO, ID_USUARIO) VALUES "); 
+		
+		List<String> insertsList = new ArrayList<String>();
+		
+		for (MixCotaDTO mixCotaDTO : mixCotaOrigem) {
+//			insertsList.add(" (now(), REPARTE_MAX, REPARTE_MED, REPARTE_MIN, ULTIMO_REPARTE, VENDA_MED, ID_COTA, ID_PRODUTO, :idUsuario) ");
+			insertsList.add(" (now(), "+mixCotaDTO.getReparteMaximo()+", "+mixCotaDTO.getReparteMedio()+", "+mixCotaDTO.getReparteMinimo()+"," +
+					mixCotaDTO.getUltimoReparte()+", "+mixCotaDTO.getVendaMedia()+", "+mixCotaDTO.getIdCota()+", "+mixCotaDTO.getIdProduto()+", "+usuario.getId()+") ");
+		}
+				
+		hql.append(StringUtils.join(insertsList, ","));
+		Query query = getSession().createSQLQuery(hql.toString());
+		query.executeUpdate();
+		
+	}
+
+
+
+	@Override
+	public void gerarCopiaMixProduto(List<MixProdutoDTO> mixProdutoOrigem,Usuario usuarioLogado) {
+		
+		for (MixProdutoDTO mixProdutoDTO : mixProdutoOrigem) {
+			MixCotaProduto mcp = new MixCotaProduto();
+			mcp.setRepartesPDV(new ArrayList<RepartePDV>());
+			
+			Cota cota= new Cota();
+			cota.setId(mixProdutoDTO.getIdCota().longValue());
+			mcp.setCota(cota);
+			mcp.setDataHora(GregorianCalendar.getInstance().getTime());
+			
+			Produto produto = new Produto();
+			produto.setId(mixProdutoDTO.getIdProduto().longValue());
+			mcp.setProduto(produto);
+			mcp.setReparteMaximo(mixProdutoDTO.getReparteMaximo().longValue());
+			mcp.setReparteMedio(mixProdutoDTO.getReparteMedio().longValue());
+			mcp.setReparteMinimo(mixProdutoDTO.getReparteMinimo().longValue());
+			mcp.setUltimoReparte(mixProdutoDTO.getUltimoReparte().longValue());
+			mcp.setVendaMedia(mixProdutoDTO.getVendaMedia().longValue());
+			mcp.setUsuario(usuarioLogado);
+			
+			List<RepartePDV> repartePdvFixacaoList = repartePDVRepository.buscarPorIdMix(mixProdutoDTO.getId().longValue());
+			for (RepartePDV repartePDV : repartePdvFixacaoList) {
+				RepartePDV newReparte = new RepartePDV();
+				newReparte.setMixCotaProduto(mcp);
+				
+				newReparte.setPdv(repartePDV.getPdv());
+				newReparte.setProduto(produto);
+				newReparte.setReparte(repartePDV.getReparte());
+				mcp.getRepartesPDV().add(newReparte);
+			}
+			adicionar(mcp);
+		}
+		
+		
+		
+		/*
+
+		StringBuilder hql = new StringBuilder("");
+
+		hql.append(" INSERT INTO mix_cota_produto ")
+		.append(" (DATAHORA, REPARTE_MAX, REPARTE_MED, REPARTE_MIN, ULTIMO_REPARTE, VENDA_MED, ID_COTA, ID_PRODUTO, ID_USUARIO) VALUES "); 
+		
+		List<String> insertsList = new ArrayList<String>();
+		
+		for (MixProdutoDTO mixProdutoDTO : mixProdutoOrigem) {
+//			insertsList.add(" (now(), REPARTE_MAX, REPARTE_MED, REPARTE_MIN, ULTIMO_REPARTE, VENDA_MED, ID_COTA, ID_PRODUTO, :idUsuario) ");
+			insertsList.add(" (now(), "+mixProdutoDTO.getReparteMaximo()+", "+mixProdutoDTO.getReparteMedio()+", "+mixProdutoDTO.getReparteMinimo()+"," +
+					mixProdutoDTO.getUltimoReparte()+", "+mixProdutoDTO.getVendaMedia()+", "+mixProdutoDTO.getIdCota()+", "+mixProdutoDTO.getIdProduto()+", "+usuarioLogado.getId()+") ");
+		}
+				
+		hql.append(StringUtils.join(insertsList, ","));
+		Query query = getSession().createSQLQuery(hql.toString());
+		query.executeUpdate();
+		
+	*/}
+
+	
+	public static void main(String[] args) {
+		System.out.println("54654564654".matches("[0-9]+"));
+	}
 }

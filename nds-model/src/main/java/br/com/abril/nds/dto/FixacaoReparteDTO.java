@@ -81,9 +81,12 @@ public class FixacaoReparteDTO implements Serializable {
 	private String dataRecolhimentoString;
 	private String status;
 	private PaginacaoVO paginacaoVO;
-	private boolean qtdeEdicoesMarcado;
+	private Boolean qtdeEdicoesMarcado;
+	private Boolean manterFixa;
 	private String codigoProduto;
-
+	private Long cotaFixadaId;
+	private Long produtoFixadoId;
+	
 	public String getDataLancamentoString() {
 		return dataLancamentoString;
 	}
@@ -343,6 +346,30 @@ public class FixacaoReparteDTO implements Serializable {
 
 	public void setCodigoProduto(String codigoProduto) {
 		this.codigoProduto = codigoProduto;
+	}
+
+	public Boolean isManterFixa() {
+		return manterFixa;
+	}
+
+	public void setManterFixa(Boolean manterFixa) {
+		this.manterFixa = manterFixa;
+	}
+
+	public Long getCotaFixadaId() {
+		return cotaFixadaId;
+	}
+
+	public void setCotaFixadaId(Long cotaFixadaId) {
+		this.cotaFixadaId = cotaFixadaId;
+	}
+
+	public Long getProdutoFixadoId() {
+		return produtoFixadoId;
+	}
+
+	public void setProdutoFixadoId(Long produtoFixadoId) {
+		this.produtoFixadoId = produtoFixadoId;
 	}
 
 }
