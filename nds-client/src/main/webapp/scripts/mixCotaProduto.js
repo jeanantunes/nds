@@ -210,8 +210,6 @@ var mixCotaProdutoController = $.extend(true, {
 			height : 200
 		});
 		
-		
-		
 		},
 		
 	//funcao de pre-processamento do resultado da busca de fixacao por produto
@@ -434,9 +432,9 @@ var mixCotaProdutoController = $.extend(true, {
 	//retorna msg de sucesso durante exclusao Todos
 	exclusaoTodosSucesso:function(result){
 		if($("#radio").attr('checked') == 'checked'){
-			$(".mixCotasGrid").flexReload();
+			$(".mixCotasGrid").flexAddData();
 		}else{
-			$(".mixProdutosGrid").flexReload();
+			$(".mixProdutosGrid").flexAddData();
 		}
 		exibirMensagem("SUCCESS", ["Operação Realizada com sucesso!"]);
 	},
@@ -1075,12 +1073,12 @@ var mixCotaProdutoController = $.extend(true, {
 									exibirMensagemDialog("SUCCESS", ["Todo o arquivo foi importado com sucesso!"],"");
 								}else{
 									var a = new Array();
-									a.push("A arquivo possui registros incosistentes no total de "+responseText.mixCotaDTOInconsistente.length);
+									a.push("O arquivo possui [" + responseText.mixCotaDTOInconsistente.length + "] registros incosistentes:");
 									for ( var int = 0; int < responseText.mixCotaDTOInconsistente.length; int++) {
-										a.push("codigoProduto="+responseText.mixCotaDTOInconsistente[int].codigoProduto
-												+",numeroCota="+responseText.mixCotaDTOInconsistente[int].numeroCota
-												+",reparteMinimo="+responseText.mixCotaDTOInconsistente[int].reparteMinimo
-												+",reparteMaximo="+responseText.mixCotaDTOInconsistente[int].reparteMaximo);
+										a.push("Produto["+responseText.mixCotaDTOInconsistente[int].codigoProduto+"]"
+												+", Cota["+responseText.mixCotaDTOInconsistente[int].numeroCota+"]"
+												+", Reparte Minimo["+responseText.mixCotaDTOInconsistente[int].reparteMinimo+"]"
+												+", Reparte Maximo["+responseText.mixCotaDTOInconsistente[int].reparteMaximo+"]");
 									}
 									exibirMensagemDialog("WARNING", a);
 									

@@ -58,6 +58,7 @@ import br.com.caelum.vraptor.view.Results;
 public class FixacaoReparteController extends BaseController {
 	
 	private static final String OPERACAO_REALIZADA_COM_SUCESSO = "Operação realizada com sucesso!";
+	private static final ValidacaoVO SUCCESS_MSG = new ValidacaoVO(TipoMensagem.SUCCESS, OPERACAO_REALIZADA_COM_SUCESSO);
 	private static final String FILTRO_PRODUTO_SESSION_ATTRIBUTE = "filtroPorProduto";
 	private static final String FILTRO_COTA_SESSION_ATTRIBUTE = "filtroPorCota";
 	private static final int MAX_EDICOES =6;
@@ -244,9 +245,7 @@ public class FixacaoReparteController extends BaseController {
 					"<br>Status da Cota: " + SituacaoCadastro.SUSPENSO.toString());
 		}
 		
-		result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, OPERACAO_REALIZADA_COM_SUCESSO), 
-				"result").recursive().serialize();
+		result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
 	}
 	
 	
@@ -255,9 +254,7 @@ public class FixacaoReparteController extends BaseController {
 	public void removerFixacaoReparte(FixacaoReparteDTO fixacaoReparteDTO){
 		fixacaoReparteService.removerFixacaoReparte(fixacaoReparteDTO);
 		
-		result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, OPERACAO_REALIZADA_COM_SUCESSO), 
-				"result").recursive().serialize();
+		result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
 	}
 	
 	@Post
@@ -295,9 +292,7 @@ public class FixacaoReparteController extends BaseController {
 	public void salvarGridPdvReparte(List<RepartePDVDTO> listPDV, String codProduto, String codCota, Long idFixacao, boolean manterFixa){
 		repartePdvService.salvarRepartesPDV(listPDV,codProduto, idFixacao, manterFixa);
 		
-		result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, OPERACAO_REALIZADA_COM_SUCESSO), 
-				"result").recursive().serialize();
+		result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
 	}
 	
 	@Post
@@ -461,9 +456,7 @@ public class FixacaoReparteController extends BaseController {
 			}
 			
 			if (listaRegistrosInvalidosExcel.isEmpty() && getErrosUpload().isEmpty()) {
-				result.use(Results.json()).from(
-						new ValidacaoVO(TipoMensagem.SUCCESS, OPERACAO_REALIZADA_COM_SUCESSO), 
-						"result").recursive().serialize();
+				result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
 			} else {
 				result.use(Results.json()).from(
 						new ValidacaoVO(TipoMensagem.WARNING, getMsgErroUpload()), 

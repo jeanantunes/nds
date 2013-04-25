@@ -158,7 +158,7 @@ var fixacaoReparteController = $.extend(true, {
 		},  {
 			display : 'Reparte',
 			name : 'reparte',
-			width : 50,
+			width : 60,
 			sortable : true,
 			align : 'center'
 		}],
