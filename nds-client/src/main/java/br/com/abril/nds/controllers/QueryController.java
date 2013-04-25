@@ -1,7 +1,5 @@
 package br.com.abril.nds.controllers;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -15,8 +13,6 @@ import br.com.caelum.vraptor.Result;
 @Resource
 public class QueryController {
 
-	Logger log = LoggerFactory.getLogger(QueryController.class);
-	
 	@Autowired
 	private Result result;
 	
