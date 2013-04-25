@@ -132,7 +132,7 @@
 				<imageExpression><![CDATA[$P{LOGOTIPO}]]></imageExpression>
 			</image>
 			<textField isBlankWhenNull="true">
-				<reportElement uuid="a988c00d-72cb-4e32-bc2a-4797e9406751" positionType="Float" x="195" y="0" width="351" height="90"/>
+				<reportElement uuid="a988c00d-72cb-4e32-bc2a-4797e9406751" positionType="Float" x="196" y="31" width="351" height="22"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font size="14" isBold="true"/>
 				</textElement>
