@@ -254,7 +254,7 @@ var mixCotaProdutoController = $.extend(true, {
 			//arrumar formatacao campos bigdecimal para duas casas decimais
 			var ar= ["reparteMedio","vendaMedia","ultimoReparte"];
 			for ( var int = 0; int < ar.length; int++) {
-				var valorarrumado = parseFloat(data.rows[i].cell[ar[int]]).toFixed(2);
+				var valorarrumado = parseFloat(data.rows[i].cell[ar[int]]).toFixed(0);
 				data.rows[i].cell[ar[int]]=valorarrumado;
 			}
 		}
