@@ -22,7 +22,6 @@ import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
-import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
@@ -59,6 +58,8 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 	
 	@Autowired
 	private ChamadaEncalheCotaRepository chamadaEncalheCotaRepository;
+	
+	
 	
 	/*
 	 * (non-Javadoc)
@@ -181,15 +182,20 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 	public byte[] gerarDocumentosConferenciaEncalhe(FiltroConsultaEncalheDTO filtro) {
 		byte[] retorno = null; 
 		byte[] arquivo; 
-		
-		List<ControleConferenciaEncalheCota> listaConferenciaEncalheCotas = 
-				controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCotaPorFiltro(filtro); 
+	
+		List<Long> listaConferenciaEncalheCotas = 
+				controleConferenciaEncalheCotaRepository.obterListaIdControleConferenciaEncalheCota(filtro);
 		
 		if (listaConferenciaEncalheCotas != null) {
+			
 			List<byte[]> arquivos = new ArrayList<byte[]>();
-			for(ControleConferenciaEncalheCota conferenciaEncalheCota: listaConferenciaEncalheCotas) {
-				arquivo = conferenciaEncalheService.gerarSlip(conferenciaEncalheCota.getId(), false, TipoArquivo.PDF);
+			
+			for(Long idControleConferenciaEncalheCota : listaConferenciaEncalheCotas) {
+			
+				arquivo = conferenciaEncalheService.gerarSlip(idControleConferenciaEncalheCota, false, TipoArquivo.PDF);
+				
 				arquivos.add(arquivo);
+			
 			}
 
 			if (arquivos.size() == 1) {

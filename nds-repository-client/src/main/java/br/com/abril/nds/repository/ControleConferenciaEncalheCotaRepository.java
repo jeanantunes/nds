@@ -38,4 +38,16 @@ public interface ControleConferenciaEncalheCotaRepository  extends Repository<Co
 	 */
 	public StatusOperacao obterStatusControleConferenciaEncalheCota(Long idControleConferenciaEncalheCota);
 	
+	
+	
+	/**
+	 * Obtém lista de ids de controle conferencia de encalhe da cota associados
+	 * a chamada de encalhe dentro do periodo de tempo, fornecedor, e cota pesquisados.
+	 * 
+	 * @param filtro
+	 * 
+	 * @return List - Long
+	 */
+	public List<Long> obterListaIdControleConferenciaEncalheCota(FiltroConsultaEncalheDTO filtro);
+
 }
