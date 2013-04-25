@@ -358,7 +358,8 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 				 lancamento.getStatus().equals(StatusLancamento.EM_BALANCEAMENTO) ||
 				 lancamento.getStatus().equals(StatusLancamento.BALANCEADO) ||
 				 lancamento.getStatus().equals(StatusLancamento.EXPEDIDO) ||
-				 lancamento.getStatus().equals(StatusLancamento.CONFIRMADO)) {
+				 lancamento.getStatus().equals(StatusLancamento.CONFIRMADO)||
+				 lancamento.getStatus().equals(StatusLancamento.FECHADO)) {
 				
 				lancamento.setDataRecolhimentoPrevista(dtRecolhimento);
 				lancamento.setDataRecolhimentoDistribuidor(dtRecolhimento);
