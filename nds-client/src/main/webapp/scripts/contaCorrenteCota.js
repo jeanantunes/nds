@@ -435,43 +435,43 @@ var contaCorrenteCotaController = $.extend(true, {
 				display : 'Sequência',
 				name : 'sequencia',
 				width : 50,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Código',
 				name : 'codigoProduto',
 				width : 50,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Produto',
 				name : 'nomeProduto',
 				width : 130,
-				sortable : true,
+				sortable : false,
 				align : 'left'
 			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
 				width : 70,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			}, {
 				display : 'Preço Capa R$',
 				name : 'precoCapa',
 				width : 95,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			}, {
 				display : 'Preço c/ Desc. R$',
 				name : 'precoComDesconto',
 				width : 70,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			}, {
 				display : 'Encalhe',
 				name : 'encalhe',
 				width : 70,
-				sortable : true,
+				sortable : false,
 				align : 'right',
 			}, {
 				display : 'Fornecedor',
@@ -483,7 +483,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				display : 'Total R$',
 				name : 'total',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'right'
 			}],
 			sortname : "sequencia",
