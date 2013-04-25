@@ -21,10 +21,10 @@ public class CotasQueNaoEntraramNoEstudoServiceImpl implements CotasQueNaoEntrar
 			CotasQueNaoEntraramNoEstudoQueryDTO queryDTO) {
 		List<CotaQueNaoEntrouNoEstudoDTO> cotasQueNaoEntraramNoEstudo = analiseNormalRepository.buscaCotasQuerNaoEntraramNoEstudo(queryDTO);
 		
-		for (CotaQueNaoEntrouNoEstudoDTO cota : cotasQueNaoEntraramNoEstudo) {
-				//TODO implementar lógica das cotas que não entraram no estudo.
-			
-		}
+//		for (CotaQueNaoEntrouNoEstudoDTO cota : cotasQueNaoEntraramNoEstudo) {
+//				//TODO implementar lógica das cotas que não entraram no estudo.
+//			
+//		}
 		return cotasQueNaoEntraramNoEstudo;
 	}
 

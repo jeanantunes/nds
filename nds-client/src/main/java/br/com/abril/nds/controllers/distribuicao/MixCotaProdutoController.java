@@ -25,7 +25,6 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaMixPorCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaMixPorProdutoDTO;
-import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -55,7 +54,6 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 
-@SuppressWarnings("restriction")
 @Resource
 @Path("/distribuicao/mixCotaProduto")
 public class MixCotaProdutoController extends BaseController {
@@ -377,15 +375,14 @@ public class MixCotaProdutoController extends BaseController {
 		session.setAttribute(FILTRO_MIX_PRODUTO_SESSION_ATTRIBUTE, filtroAtual);
 	}
 
-	private boolean isRangeRepartesValido(FixacaoReparteDTO fixacaoReparteDTO) {
-		boolean rangeEdicoesOK = (fixacaoReparteDTO.getEdicaoFinal() >= fixacaoReparteDTO
-				.getEdicaoInicial());
-		return rangeEdicoesOK;
-	}
+//	private boolean isRangeRepartesValido(FixacaoReparteDTO fixacaoReparteDTO) {
+//		boolean rangeEdicoesOK = (fixacaoReparteDTO.getEdicaoFinal() >= fixacaoReparteDTO
+//				.getEdicaoInicial());
+//		return rangeEdicoesOK;
+//	}
 	
 	@Post
 	@Path("/uploadArquivoLote")
-
 	public void uploadExcel(UploadedFile excelFile) throws FileNotFoundException, IOException{
 
 		List<MixCotaDTO> listMixExcel = XlsUploaderUtils.getBeanListFromXls(MixCotaDTO.class, excelFile);
@@ -437,7 +434,7 @@ public class MixCotaProdutoController extends BaseController {
 		for (int i = 0; i < listMixExcel.size(); i++) {
 			cotaIdArray[i] = listMixExcel.get(i).getNumeroCota();
 		}
-		List<Integer> verificarNumeroCotaExiste = this.cotaService.verificarNumeroCotaExiste(cotaIdArray);
+		List<Integer> verificarNumeroCotaExiste = cotaService.numeroCotaExiste(TipoDistribuicaoCota.ALTERNATIVO, cotaIdArray);
 		
 		for (MixCotaDTO mixCotaDTO : listMixExcel) {
 			if(!verificarNumeroCotaExiste.contains(mixCotaDTO.getNumeroCota())){
