@@ -24,13 +24,18 @@ import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
 import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.DateUtil;
 
 @Service
 public class DistribuidorServiceImpl implements DistribuidorService {
 
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
+	
+	@Autowired
+	private CalendarioService calService;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -361,5 +366,47 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		ordinal = parametroRecolhimento.isDiaRecolhimentoQuinto()   ? 5 : ordinal;
 		
 		return ordinal;
+	}
+	
+	@Transactional(readOnly = true)
+	public List<Date> obterDatasAposFinalizacaoPrazoRecolhimento() {
+		
+		ParametrosRecolhimentoDistribuidor parametroRecolhimento = 
+				this.distribuidorRepository.parametrosRecolhimentoDistribuidor();
+		
+		List<Date> datas = new ArrayList<>();
+		
+		Date dataOperacao = distribuidorRepository.obterDataOperacaoDistribuidor();
+		
+		if(parametroRecolhimento.isDiaRecolhimentoPrimeiro()){
+			
+			datas.add(DateUtil.subtrairDias(dataOperacao, 1));
+		}
+		
+		if(parametroRecolhimento.isDiaRecolhimentoSegundo()){
+			
+			datas.add(DateUtil.subtrairDias(dataOperacao, 2));
+		}
+		
+		if(parametroRecolhimento.isDiaRecolhimentoTerceiro()){
+			
+			datas.add(DateUtil.subtrairDias(dataOperacao, 3));
+		}
+		
+		if(parametroRecolhimento.isDiaRecolhimentoQuarto()){
+			
+			datas.add(DateUtil.subtrairDias(dataOperacao, 4));
+		}
+		
+		if(parametroRecolhimento.isDiaRecolhimentoQuinto()){
+			
+			datas.add(DateUtil.subtrairDias(dataOperacao, 5));
+		}
+		
+		if(datas.isEmpty()){
+			datas.add(dataOperacao);
+		}
+		
+		return datas;
 	}
 }

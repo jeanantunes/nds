@@ -281,6 +281,10 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 
 			}
 		}
+		else{
+			
+			hql.append(" order by sequencia ");
+		}
 
 		SQLQuery query = getSession().createSQLQuery(hql.toString());
 		
@@ -732,6 +736,10 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 				
 			}			
 		}
+		else{
+			
+			hql.append(" order by sequencia ");
+		}
 		
 		Session session = getSession();
 					
@@ -921,14 +929,12 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" cfc.VALOR_POSTERGADO as valorPostergado, ")
 		   .append(" cfc.VENDA_ENCALHE as vendaEncalhe, ")
 		   .append(" ((select count(cob.ID) from COBRANCA cob where cob.DT_EMISSAO = cfc.DT_CONSOLIDADO and cob.COTA_ID = cfc.COTA_ID) > 0) as cobrado, ")
-		   //.append(" COALESCE ( ")
-		   //.append(" 	COALESCE ( ")
-		   //.append(" 		MIN(dividaRaiz.DATA), divida.DATA ")
-		   //.append(" 	), cfc.DT_CONSOLIDADO ")
-		   
-		   
-		   .append(" (select max(mfp.DATA) from MOVIMENTO_FINANCEIRO_COTA mfp where mfp.COTA_ID = cfc.COTA_ID and mfp.DATA < cfc.DT_CONSOLIDADO and mfp.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoDebito) or mfp.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoCredito)")
-		   
+		   //data raiz postergado
+		   .append(" (select max(cons.DT_CONSOLIDADO) from CONSOLIDADO_FINANCEIRO_COTA cons ")
+		   .append("  where cons.DT_CONSOLIDADO < cfc.DT_CONSOLIDADO and ")
+		   .append("  (select count(cob.id) from COBRANCA cob where cob.COTA_ID = cons.COTA_ID) = 0 and ")
+		   .append("   cons.COTA_ID = cfc.COTA_ID")
+		   //total
 		   .append(" ) AS dataRaiz, ")
 		   .append(" coalesce((select sum(bc.VALOR_PAGO) ")
 		   .append("           from BAIXA_COBRANCA bc ")

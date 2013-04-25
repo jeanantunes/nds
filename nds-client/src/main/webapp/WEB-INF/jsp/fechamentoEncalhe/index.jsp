@@ -1,4 +1,5 @@
 <input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
+<input id="permissaoColExemplDevolucao" type="hidden" value="${permissaoColExemplDevolucao}">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 

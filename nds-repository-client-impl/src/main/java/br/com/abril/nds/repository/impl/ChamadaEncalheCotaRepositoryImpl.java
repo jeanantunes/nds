@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.persistence.Column;
-
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
@@ -268,9 +266,8 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ChamadaEncalheCota> obterListaChamaEncalheCota(
-			Integer numeroCota, Date dataOperacao, Long idProdutoEdicao,
-			boolean indPesquisaCEFutura, boolean conferido, boolean postergado) {
+	public List<ChamadaEncalheCota> obterListaChamaEncalheCota(Integer numeroCota,Long idProdutoEdicao,
+															   boolean postergado,Date dataOperacao, Date... dataRecolhimento) {
 
 		StringBuilder hql = new StringBuilder();
 
@@ -282,12 +279,11 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 		hql.append(" chamadaEncalheCota.cota.numeroCota = :numeroCota ");
 
-		hql.append(" and chamadaEncalheCota.fechado = :conferido ");
-
 		hql.append(" and chamadaEncalheCota.postergado = :postergado ");
 
-		if (indPesquisaCEFutura) {
-			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento >= :dataOperacao ");
+		if (dataRecolhimento!= null && dataRecolhimento.length > 0) {
+			hql.append(" and (chamadaEncalheCota.chamadaEncalhe.dataRecolhimento >= :dataOperacao ");
+			hql.append(" or chamadaEncalheCota.chamadaEncalhe.dataRecolhimento IN (:dataRecolhimento ))");
 		} else {
 			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento = :dataOperacao ");
 		}
@@ -300,11 +296,13 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 		query.setParameter("numeroCota", numeroCota);
 
-		query.setParameter("conferido", conferido);
-
 		query.setParameter("postergado", postergado);
 
 		query.setParameter("dataOperacao", dataOperacao);
+		
+		if(dataRecolhimento!= null && dataRecolhimento.length > 0){
+			query.setParameterList("dataRecolhimento", dataRecolhimento);
+		}
 
 		if (idProdutoEdicao != null) {
 			query.setParameter("idProdutoEdicao", idProdutoEdicao);

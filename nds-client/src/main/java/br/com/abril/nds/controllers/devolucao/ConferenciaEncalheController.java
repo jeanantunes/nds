@@ -1,6 +1,5 @@
 package br.com.abril.nds.controllers.devolucao;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
@@ -45,6 +44,7 @@ import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.UsuarioService;
@@ -129,6 +129,9 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Autowired
 	private GerarCobrancaService gerarCobrancaService;
+	
+	@Autowired
+	private CotaService cotaService;
 	
 	@Autowired
 	private Result result;
@@ -319,6 +322,13 @@ public class ConferenciaEncalheController extends BaseController {
 	public void verificarReabertura(Integer numeroCota){
 		
 		limparDadosSessao();
+		
+		Cota cota = cotaService.obterPorNumeroDaCota(numeroCota);
+		
+		if (cota == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada!");
+		}
 		
 		this.session.setAttribute(HORA_INICIO_CONFERENCIA, new Date());
 		
@@ -591,49 +601,58 @@ public class ConferenciaEncalheController extends BaseController {
 	public void pesquisarProdutoEdicaoCodigoSM(Integer sm, Long idProdutoEdicaoAnterior, String quantidade){
 
 		this.verificarInicioConferencia();
+		
 		ProdutoEdicaoDTO produtoEdicao = null;
+		
 		ConferenciaEncalheDTO conferenciaEncalheDTO = null;
+		
 		Integer numeroCota = this.getNumeroCotaFromSession();
 		
 		if(sm == null && idProdutoEdicaoAnterior==null) {
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Informe SM.");
 		}
 
 		try {
 			
 			conferenciaEncalheDTO = getConferenciaEncalheDTOFromSession(null, sm);
+			
 			produtoEdicao = this.conferenciaEncalheService.pesquisarProdutoEdicaoPorSM(numeroCota, sm);
 			
 		} catch(ChamadaEncalheCotaInexistenteException e){
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe deste produto para essa cota.");
 		} catch(EncalheRecolhimentoParcialException e) {
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe para produto parcial na data operação.");
 		}
 		
 		if (conferenciaEncalheDTO == null && produtoEdicao == null){
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto Edição não encontrado.");
 		} else if (conferenciaEncalheDTO == null){
+			
 			conferenciaEncalheDTO = this.criarConferenciaEncalhe(produtoEdicao, quantidade, false, false);
 		}
 		
 		if (idProdutoEdicaoAnterior != null && quantidade != null){
 			
 			conferenciaEncalheDTO = getConferenciaEncalheDTOFromSession(idProdutoEdicaoAnterior, null);
-
-			if (conferenciaEncalheDTO != null){
-				BigInteger qtde = this.processarQtdeExemplar(produtoEdicao.getId(), conferenciaEncalheDTO, quantidade, false);
-				conferenciaEncalheDTO.setQtdExemplar(qtde);
-			} else {
-				conferenciaEncalheDTO = this.criarConferenciaEncalhe(produtoEdicao, quantidade, false, false);
-			}
+		}
 		
+		if (conferenciaEncalheDTO != null){
+			
+			BigInteger qtde = this.processarQtdeExemplar(produtoEdicao.getId(), conferenciaEncalheDTO, quantidade, false);
+			
+			conferenciaEncalheDTO.setQtdExemplar(qtde);
+		} else {
+			
+			conferenciaEncalheDTO = this.criarConferenciaEncalhe(produtoEdicao, quantidade, false, false);
 		}
 
 		indicarStatusConferenciaEncalheCotaAlterado();
 
 		this.result.use(Results.json()).from(conferenciaEncalheDTO, "result").serialize();
-		
-		
 	}
 	
 	@Post
@@ -1084,22 +1103,20 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			byte[] bs = arquivos.get(tipo_documento_impressao_encalhe);
 			
-			if(bs != null) {
-				
-				Map<String, Object> dados = new HashMap<String, Object>();
+			Map<String, Object> dados = new HashMap<String, Object>();
+			if(bs != null && bs.length > 0) {
 				
 				if(tipo_documento_impressao_encalhe.equals(TipoDocumentoConferenciaEncalhe.SLIP_TXT.name())){
 					dados.put("resultado", new String(arquivos.get(tipo_documento_impressao_encalhe)));
 				}else{
 					dados.put("resultado", Base64.encodeBytes(arquivos.get(tipo_documento_impressao_encalhe)));	
 				}
-				
-				dados.put("tipo_documento_impressao_encalhe", tipo_documento_impressao_encalhe);
-				this.result.use(CustomJson.class).from(dados).serialize();
 			}else{
-				this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, "Cenário de impressão não tratado, favor contatar a área de sistemas."));
+				dados.put("resultado", "");
 			}
-			
+
+			dados.put("tipo_documento_impressao_encalhe", tipo_documento_impressao_encalhe);
+			this.result.use(CustomJson.class).from(dados).serialize();
 		} else {
 			
 			this.result.use(Results.nothing());
@@ -1725,11 +1742,14 @@ public class ConferenciaEncalheController extends BaseController {
 					
 					BigDecimal desconto = conferenciaEncalheDTO.getDesconto() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getDesconto();
 					
+					BigDecimal precoComDesconto = conferenciaEncalheDTO.getPrecoComDesconto() == null ? BigDecimal.ZERO : conferenciaEncalheDTO.getPrecoComDesconto();
+					
+					
 					BigDecimal qtdExemplar = conferenciaEncalheDTO.getQtdExemplar() == null ? BigDecimal.ZERO : new BigDecimal(conferenciaEncalheDTO.getQtdExemplar());
 					
-					valorTotal = precoCapa.multiply(new BigDecimal(conferenciaEncalheDTO.getQtdInformada()));
+					valorTotal = valorTotal.add( conferenciaEncalheDTO.getValorTotal() != null ? conferenciaEncalheDTO.getValorTotal() :  BigDecimal.ZERO );
 					
-					valorEncalhe = valorEncalhe.add(precoCapa.subtract(desconto).multiply(qtdExemplar));
+					valorEncalhe = valorEncalhe.add(precoComDesconto.multiply(qtdExemplar));
 					
 					valorEncalheAtualizado = valorEncalheAtualizado.add(precoCapa.subtract(desconto).multiply(
 						new BigDecimal(conferenciaEncalheDTO.getQtdInformada()))
