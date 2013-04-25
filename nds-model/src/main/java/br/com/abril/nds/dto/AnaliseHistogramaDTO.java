@@ -60,6 +60,7 @@ public class AnaliseHistogramaDTO implements Serializable {
 	private Long qtdeTotalCotasAtivas=0l;
 	
 	private String idCotaStr;
+	private String idCotasEsmagadas;
 	
 	public String getFaixaVenda() {
 		return faixaVenda;
@@ -158,7 +159,7 @@ public class AnaliseHistogramaDTO implements Serializable {
 	
 	public void executeScaleValues(){
 		
-		repTotal = (repTotal==null)?BigDecimal.ZERO:repTotal.setScale(2,BigDecimal.ROUND_FLOOR);
+		repTotal = (repTotal==null)?BigDecimal.ZERO: repTotal.setScale(2,BigDecimal.ROUND_FLOOR);
 		repMedio = (repMedio==null)?BigDecimal.ZERO: repMedio.setScale(2,BigDecimal.ROUND_FLOOR);
 		vdaMedio = (vdaMedio==null)?BigDecimal.ZERO: vdaMedio.setScale(2,BigDecimal.ROUND_FLOOR);
 		vdaTotal = (vdaTotal==null)?BigDecimal.ZERO: vdaTotal.setScale(2,BigDecimal.ROUND_FLOOR);
@@ -184,7 +185,10 @@ public class AnaliseHistogramaDTO implements Serializable {
 	public void setIdCotaStr(String idCotaStr) {
 		this.idCotaStr = idCotaStr;
 	}
-	
-
-	
+	public String getIdCotasEsmagadas() {
+		return idCotasEsmagadas;
+	}
+	public void setIdCotasEsmagadas(String idCotasEsmagadas) {
+		this.idCotasEsmagadas = idCotasEsmagadas;
+	}
 }

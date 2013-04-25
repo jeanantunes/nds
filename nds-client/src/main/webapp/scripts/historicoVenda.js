@@ -124,7 +124,7 @@ var historicoVendaController = $.extend(true, {
 				params.push({name : "listProdutoEdicaoDto["+i+"].codigoProduto", value :  row.cell.codigoProduto});
 			}
 			
-			$.get(url, params, function(data){
+			$.post(url, params, function(data){
 			      if(data){ 
 			    	  $("#baseAnalise").hide();
 			    	  $('#analiseHistoricoContent').html(data);

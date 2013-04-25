@@ -859,8 +859,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				 " join produtoEdicao.produto produto " +
 				 " join produto.tipoClassificacaoProduto tipoClassificacaoProduto " +
 				 " join produto.tipoSegmentoProduto tipoSegmentoProduto " +
-				 
-				 
 				 " ";
 				 
 			
@@ -915,9 +913,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				}
 				queryStringProdutoEdicao +=
 						" join pdvs.segmentacao segmentacao " +
-						" join segmentacao.tipoPontoPDV ";
+						" join segmentacao.tipoPontoPDV as tipoPontoPDV ";
 				
-				whereList.add(" segmentacao.tipoPontoPDV.codigo = :codigoTipoPontoPDV ");
+				whereList.add(" tipoPontoPDV.codigo = :codigoTipoPontoPDV ");
 				parameterMap.put("codigoTipoPontoPDV",Long.parseLong(filtro.getElemento()));
 				
 				break;
@@ -929,9 +927,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				
 				queryStringProdutoEdicao +=
 						" join pdvs.segmentacao segmentacao " +
-						" join segmentacao.areaInfluenciaPDV ";
+						" join segmentacao.areaInfluenciaPDV as areaInfluenciaPDV ";
 				
-				whereList.add(" segmentacao.areaInfluenciaPDV.codigo = :codigoAreaInfluenciaPDV ");
+				whereList.add(" areaInfluenciaPDV.codigo = :codigoAreaInfluenciaPDV ");
 				parameterMap.put("codigoAreaInfluenciaPDV",Long.parseLong(filtro.getElemento()));
 				break;
 
@@ -1042,6 +1040,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				"	produto_Edicao.NUMERO_EDICAO in ( :nrEdicoes ))as partVenda," +
 				
 				" count(COTA_ID) as qtdeCotas, " +
+				" group_concat(COTA_ID) as idCotaStr, " +
+				" group_concat(cotasEsmagadas) as idCotasEsmagadas," +
 				// Cota esmagada = (qtde recebido - qtde devolvido)=0 
 				" sum(esmag) as cotasEsmagadas, " +
 				
@@ -1071,7 +1071,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				//select para totalizar a qtde de cotas ativas para calculo no resumo da tela da EMS 2029
 				" from " +
 				" ( select " +
-				"   case when estoqueProdutoCota.QTDE_DEVOLVIDA=0 then 1 else 0  end as esmag, " +
+				"	case when estoqueProdutoCota.QTDE_DEVOLVIDA=0 then cota2_.id else null end as cotasEsmagadas, " +
+				"   case when estoqueProdutoCota.QTDE_DEVOLVIDA=0 then 1 else null end as esmag, " +
 				"   case when estoqueProdutoCota.QTDE_DEVOLVIDA=0 then estoqueProdutoCota.QTDE_RECEBIDA else 0 end as vdEsmag," +
 				"   case when estoqueProdutoCota.QTDE_DEVOLVIDA=estoqueProdutoCota.QTDE_RECEBIDA then 1 else 0 end as qtdeCotasSemVenda," +
 				"   case when cota2_.SITUACAO_CADASTRO='ATIVO' then 1 else 0 end as cotaAtiva," +
@@ -1213,6 +1214,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.setParameter("ate", ate);
 		query.setParameter("produtoCodigo", codigoProduto);
 		query.setParameter("nrEdicoes", StringUtils.join(edicoes, ","));
+		
+		for (String key : parameterMap.keySet()) {
+			query.setParameter(key, parameterMap.get(key));
+		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseHistogramaDTO.class));
 
