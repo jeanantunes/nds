@@ -1,6 +1,7 @@
 
 package br.com.abril.nds.service.impl;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.CopiaMixFixacaoDTO;
 import br.com.abril.nds.dto.MixCotaDTO;
 import br.com.abril.nds.dto.MixCotaProdutoDTO;
 import br.com.abril.nds.dto.MixProdutoDTO;
@@ -274,5 +276,64 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 				
 				}
 		}
+	}
+	
+	@Override
+	@Transactional
+	public boolean gerarCopiaMix(CopiaMixFixacaoDTO copiaMix){
+		
+		switch (copiaMix.getTipoCopia()) {
+		case COTA:
+
+			FiltroConsultaMixPorCotaDTO fMixCota = new FiltroConsultaMixPorCotaDTO();
+			fMixCota.setCota(copiaMix.getCotaNumeroOrigem());
+			
+	
+			Cota cotaDestino = cotaService.obterPorNumeroDaCota(copiaMix.getCotaNumeroDestino());
+			
+			List<MixCotaDTO> mixCotaOrigem = pesquisarPorCota(fMixCota);
+			if(mixCotaOrigem==null || mixCotaOrigem.isEmpty()){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum MIX encontrado para cópia.");
+			}
+			for (MixCotaDTO mixCotaDTO : mixCotaOrigem) {
+				mixCotaDTO.setIdCota(new BigInteger(cotaDestino.getId().toString()));
+			}
+					
+			try {
+				this.mixCotaProdutoRepository.gerarCopiaMixCota(mixCotaOrigem,this.usuarioService.getUsuarioLogado());
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+			break;
+		case PRODUTO:
+			
+			FiltroConsultaMixPorProdutoDTO fMixProduto = new FiltroConsultaMixPorProdutoDTO();
+			
+			Produto produtoDestino = produtoService.obterProdutoPorCodigo(copiaMix.getCodigoProdutoDestino());
+			fMixProduto.setCodigoProduto(copiaMix.getCodigoProdutoOrigem());
+			
+			List<MixProdutoDTO> mixProdutoOrigem = pesquisarPorProduto(fMixProduto);
+			if(mixProdutoOrigem==null || mixProdutoOrigem.isEmpty()){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum MIX encontrado para cópia.");
+			}
+			
+			for (MixProdutoDTO mixProdutoDTO : mixProdutoOrigem) {
+				mixProdutoDTO.setIdProduto(new BigInteger(produtoDestino.getId().toString()));
+			}
+			
+			try {
+				this.mixCotaProdutoRepository.gerarCopiaMixProduto(mixProdutoOrigem,this.usuarioService.getUsuarioLogado());
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+			
+			break;
+
+		default:
+			break;
+		}
+		return true;
 	}
 }
