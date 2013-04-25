@@ -170,26 +170,31 @@ init : function() {
 		
 		var data = ajusteReparteController.getDados();
 
+		// Testar essa modificação!! 12/04 10hrs
+		
 		if (ajusteReparteController.isAjusteSegmento == true){
 			if(ajusteReparteController.get("segmento1") != ""){
 				data.push({name:"ajustes", value: ajusteReparteController.get("segmento1")});
+				data.push({name:"segmentos[0].id", value: ajusteReparteController.get("tipoSegmento1")});
 			}
 			if(ajusteReparteController.get("segmento2") != ""){
 				data.push({name:"ajustes", value: ajusteReparteController.get("segmento2")});
+				data.push({name:"segmentos[1].id", value: ajusteReparteController.get("tipoSegmento2")});
 			}
 			if(ajusteReparteController.get("segmento3") != ""){
 				data.push({name:"ajustes", value: ajusteReparteController.get("segmento3")});
+				data.push({name:"segmentos[2].id", value: ajusteReparteController.get("tipoSegmento3")});
 			}
 			
-			if(ajusteReparteController.get("tipoSegmento1") != "Selecione..."){
-				data.push({name:"segmentos[0].id", value: ajusteReparteController.get("tipoSegmento1")})
-			}
-			if(ajusteReparteController.get("tipoSegmento2") != "Selecione..."){
-				data.push({name:"segmentos[1].id", value: ajusteReparteController.get("tipoSegmento2")})
-			}
-			if(ajusteReparteController.get("tipoSegmento3") != "Selecione..."){
-				data.push({name:"segmentos[2].id", value: ajusteReparteController.get("tipoSegmento3")})
-			}
+//			if(ajusteReparteController.get("tipoSegmento1") != "Selecione..."){
+//				data.push({name:"segmentos[0].id", value: ajusteReparteController.get("tipoSegmento1")})
+//			}
+//			if(ajusteReparteController.get("tipoSegmento2") != "Selecione..."){
+//				data.push({name:"segmentos[1].id", value: ajusteReparteController.get("tipoSegmento2")})
+//			}
+//			if(ajusteReparteController.get("tipoSegmento3") != "Selecione..."){
+//				data.push({name:"segmentos[2].id", value: ajusteReparteController.get("tipoSegmento3")})
+//			}
 			
 			$.postJSON(contextPath + "/distribuicao/ajusteReparte/incluirAjusteSegmento", 
 					data,
@@ -251,13 +256,15 @@ init : function() {
 		  data.push({name:"ajusteDTO.numeroCota",  value: ajusteReparteController.get("numeroCota")});
 		  data.push({name:"ajusteDTO.nomeCota",  value: ajusteReparteController.get("nomeCota")});
 		  data.push({name:"ajusteDTO.formaAjuste",  value: ajusteReparteController.getRadio()});
-		  data.push({name:"ajusteDTO.ajusteAplicado", value: ajusteReparteController.getAjusteAplicado()});
 		  data.push({name:"ajusteDTO.motivoAjuste",  value: ajusteReparteController.get("motivoAjuste")});
 		  data.push({name:"ajusteDTO.dataInicioCadastro",  value: ajusteReparteController.get("dataInicio")});
 		  data.push({name:"ajusteDTO.dataFimCadastro",  value: ajusteReparteController.get("dataFim")});
 		  
-		  if($('input:radio[name=formaAjuste]:checked').val() == "AJUSTE_SEGMENTO"){
+		  if(ajusteReparteController.getRadio() == "AJUSTE_SEGMENTO"){
 			  this.isAjusteSegmento = true;
+		  }else{
+			  data.push({name:"ajusteDTO.ajusteAplicado", value: ajusteReparteController.getAjusteAplicado()});
+			  this.isAjusteSegmento = false;
 		  }
 		  
 		  return data;
@@ -270,14 +277,17 @@ init : function() {
 		  data.push({name:"ajusteDTO.numeroCota",  value: ajusteReparteController.get("numeroCotaEditar")});
 		  data.push({name:"ajusteDTO.nomeCota",  value: ajusteReparteController.get("nomeCotaEditar")});
 		  data.push({name:"ajusteDTO.formaAjuste",  value: ajusteReparteController.getRadioEditar()});
-		  data.push({name:"ajusteDTO.ajusteAplicado", value: ajusteReparteController.getAjusteAplicadoEditar()});
 		  data.push({name:"ajusteDTO.motivoAjuste",  value: ajusteReparteController.get("motivoAjusteEditar")});
 		  data.push({name:"ajusteDTO.dataInicioCadastro",  value: ajusteReparteController.get("dataInicioEditar")});
 		  data.push({name:"ajusteDTO.dataFimCadastro",  value: ajusteReparteController.get("dataFimEditar")});
 		  
-		  if($('input:radio[name=formaAjuste]:checked').val() == "AJUSTE_SEGMENTO"){
+		  if(ajusteReparteController.getRadioEditar() == "AJUSTE_SEGMENTO"){
 			  this.isAjusteSegmento = true;
+		  }else{
+			  this.isAjusteSegmento = false;
 		  }
+		  
+		  
 		  
 		  return data;
 		 },
@@ -329,6 +339,15 @@ init : function() {
 	
 	getAjusteAplicadoEditar : function (){
 		var valElemento = $("#"+ajusteReparteController.getRadioEditar()+"_editar_input").val();
+		
+//		if((valElemento == 0) || (valElemento == "")){
+//			var erros = new Array();
+//	           erros[0] = "Insira um índice para ajuste";
+//	           exibirMensagemDialog('WARNING',   erros,"");
+//	           
+//	           return;
+//		}
+		
 		return valElemento;
 	},
 	
@@ -391,6 +410,7 @@ init : function() {
 						ajusteReparteController.popularPopUpEditarSegmento(result);
 						ajusteReparteController.filtroPorSegmentoEditar();
 					}else{
+						ajusteReparteController.limparPopUpEditar();
 						ajusteReparteController.popularPopUpEditar(result);
 					}
 		});
@@ -405,6 +425,8 @@ init : function() {
 			buttons: {
 				"Confirmar": function() {
 					var data = ajusteReparteController.getDadosEditar();
+					
+					
 					data.push({name: 'id', value:idAjusteReparte});
 
 					if (ajusteReparteController.isAjusteSegmento == true){
@@ -434,7 +456,15 @@ init : function() {
 								   true
 						);
 						$( this ).dialog( "close" );
+					
 					}else{
+						
+						var ajusteAplicado = ajusteReparteController.getAjusteAplicadoEditar(); 
+						
+						if (ajusteAplicado){
+							
+						data.push({name:"ajusteDTO.ajusteAplicado", value: ajusteAplicado });
+						
 						$.postJSON(contextPath + "/distribuicao/ajusteReparte/alterarAjuste", 
 								data,
 								function(result) {
@@ -457,6 +487,13 @@ init : function() {
 							   true
 						);
 						$( this ).dialog( "close" );
+						
+						}else{
+						   var erros = new Array();
+				           erros[0] = "Insira um índice para ajuste";
+				           exibirMensagemDialog('WARNING',   erros,"");
+				           return;
+						}
 					}
 				},
 				"Cancelar": function() {
@@ -772,7 +809,8 @@ init : function() {
 	
 	
 	filtroPorVenda : function(){
-
+		
+		$("#AJUSTE_VENDA_MEDIA_input").val('');
 		$("#AJUSTE_VENDA_MEDIA_input").show();
 		$("#AJUSTE_HISTORICO_input").hide();
 		$("#AJUSTE_ENCALHE_MAX_input").hide();
@@ -780,6 +818,7 @@ init : function() {
 	
 	filtroPorVendaEditar : function(){
 
+		$("#AJUSTE_VENDA_MEDIA_editar_input").val('');
 		$("#AJUSTE_VENDA_MEDIA_editar_input").show();
 		$("#AJUSTE_HISTORICO_editar_input").hide();
 		$("#AJUSTE_ENCALHE_MAX_editar_input").hide();
@@ -787,6 +826,7 @@ init : function() {
 	
 	filtroPorEncalhe : function(){
 		
+		$("#AJUSTE_ENCALHE_MAX_input").val('');
 		$("#AJUSTE_ENCALHE_MAX_input").show();
 		$("#AJUSTE_HISTORICO_input").hide();
 		$("#AJUSTE_VENDA_MEDIA_input").hide();
@@ -794,6 +834,7 @@ init : function() {
 	
 	filtroPorEncalheEditar : function(){
 		
+		$("#AJUSTE_ENCALHE_MAX_editar_input").val('');
 		$("#AJUSTE_ENCALHE_MAX_editar_input").show();
 		$("#AJUSTE_HISTORICO_editar_input").hide();
 		$("#AJUSTE_VENDA_MEDIA_editar_input").hide();
@@ -1011,8 +1052,8 @@ init : function() {
 			
 			$("#AJUSTE_VENDA_MEDIA_input").mask("99");
 			$("#AJUSTE_VENDA_MEDIA_input").val("01");
-			$("#AJUSTE_VENDA_MEDIA_editar_input").mask("9");
-			$("#AJUSTE_VENDA_MEDIA_editar_input").val("1.0");
+			$("#AJUSTE_VENDA_MEDIA_editar_input").mask("99");
+			$("#AJUSTE_VENDA_MEDIA_editar_input").val("01");
 			
 			
 			$("#segmento1").mask("9.9");

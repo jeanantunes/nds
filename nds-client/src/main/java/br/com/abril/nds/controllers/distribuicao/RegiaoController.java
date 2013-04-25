@@ -17,9 +17,11 @@ import br.com.abril.nds.dto.AddLoteRegiaoDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RegiaoCotaDTO;
 import br.com.abril.nds.dto.RegiaoDTO;
+import br.com.abril.nds.dto.RegiaoNMaiores_CotaDTO;
 import br.com.abril.nds.dto.RegiaoNMaiores_ProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotasRegiaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroRegiaoNMaioresProdDTO;
+import br.com.abril.nds.dto.filtro.FiltroRegiaoNMaioresRankingDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.distribuicao.Regiao;
@@ -51,6 +53,8 @@ public class RegiaoController extends BaseController {
 	private Result result;
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "FiltroCotasRegiao";
+	
+	private static final String FILTRO_SESSION_ATTRIBUTE_NMaiores = "FiltroProdutosNMaiores";
 
 	@Autowired
 	private RegiaoService regiaoService;
@@ -240,10 +244,6 @@ public class RegiaoController extends BaseController {
 	@Path("/buscarPorSegmento")
 	public void buscarPorSegmento(FiltroCotasRegiaoDTO filtro){
 
-//		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
-
-//		this.tratarFiltroCotasRegiao(filtro);
-
 		tratarFiltroSegmento(filtro);
 
 		TableModel<CellModelKeyValue<RegiaoCotaDTO>> tableModel = montarTableModelBuscaSegmento(filtro);
@@ -267,10 +267,6 @@ public class RegiaoController extends BaseController {
 		tableModel.setPage(1);
 
 		tableModel.setTotal(listaCotasSegmento.size());
-
-//		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-//
-//		tableModel.setTotal(filtro.getPaginacao().getQtdResultadosTotal());
 
 		return tableModel;
 	}
@@ -390,6 +386,111 @@ public class RegiaoController extends BaseController {
 		return tableModel;
 	}
 	
+	@Post
+	@Path("/rankingCota")
+	public void rankingCota(FiltroRegiaoNMaioresRankingDTO filtro) throws Exception{
+
+		List<RegiaoNMaiores_CotaDTO> cotasRanking = new ArrayList<>();
+
+		TableModel<CellModelKeyValue<RegiaoNMaiores_CotaDTO>> tableModel = montarTableModelRanking(filtro, cotasRanking);
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+
+	
+
+	private TableModel<CellModelKeyValue<RegiaoNMaiores_CotaDTO>> montarTableModelRanking (FiltroRegiaoNMaioresRankingDTO filtro, List<RegiaoNMaiores_CotaDTO> cotasRanking) throws Exception {
+		
+		List<String> ids = new ArrayList<>();
+		List<RegiaoNMaiores_CotaDTO> ranking = new ArrayList<>();
+		
+		ids = tratarCodigosENumeros(filtro);
+		Integer limite = filtro.getLimitePesquisa();
+		
+		if(ids != null){
+			ranking = regiaoService.rankingCotas(ids, limite);
+			cotasRanking = ranking;
+		}
+		
+		if (ranking == null || ranking.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi possível montar um ranking, por produto edição! Não há dados.");
+		}
+
+		TableModel<CellModelKeyValue<RegiaoNMaiores_CotaDTO>> tableModel = new TableModel<CellModelKeyValue<RegiaoNMaiores_CotaDTO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(ranking));
+
+		tableModel.setPage(1);
+
+		tableModel.setTotal(ranking.size());
+
+		return tableModel;
+	}
+	
+	@Post
+	@Path("/filtroRankingCota")
+	public void filtroRankingCota(Integer numCota) {
+
+		TableModel<CellModelKeyValue<RegiaoNMaiores_CotaDTO>> tableModel = montarTableFiltroRanking(numCota);
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+
+	
+
+	private TableModel<CellModelKeyValue<RegiaoNMaiores_CotaDTO>> montarTableFiltroRanking (Integer numCota) {
+		
+		List<RegiaoNMaiores_CotaDTO> filtroCotasRanking = regiaoService.filtroRankingCotas(numCota);
+
+		TableModel<CellModelKeyValue<RegiaoNMaiores_CotaDTO>> tableModel = new TableModel<CellModelKeyValue<RegiaoNMaiores_CotaDTO>>();
+
+		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(filtroCotasRanking));
+
+		tableModel.setPage(1);
+
+		tableModel.setTotal(1);
+
+		return tableModel;
+	}
+	
+	private List<String> tratarCodigosENumeros(FiltroRegiaoNMaioresRankingDTO filtro) {
+		String codigos[] = null;
+		for (String cod : filtro.getCodigoProduto()) {
+			codigos = cod.split(",");
+		}
+		
+		String numeros[] = null;
+		for (String num : filtro.getNumeroEdicao()) {
+			numeros = num.split(",");
+		}
+		
+		List<String> ids = obterIdsProdEdicaoParaRanking(codigos, numeros); 
+		
+		return ids;
+	}
+
+	private List<String> obterIdsProdEdicaoParaRanking(String[] codigos, String[] numeros) {
+		
+		List<String> idS_prodEdicao = new ArrayList<>();
+		
+		for (int i = 0; i < codigos.length; i++) {
+			
+			for (int u = 0; u < numeros.length; u++) {
+
+				if(i == u){
+				String cod = codigos[i];
+				String num = numeros[u];
+				
+				List<String> idsTemp = regiaoService.listaIdProdEdicaoParaRanking(cod, num); 
+				
+				idS_prodEdicao.addAll(idsTemp);
+				
+				}
+			}
+		}
+		return idS_prodEdicao;
+	}
+	
 	private void tratarArgumentosFiltro (FiltroRegiaoNMaioresProdDTO filtro){
 		
 		if(filtro.getCodigoProduto() == null || filtro.getCodigoProduto().isEmpty()){
@@ -403,13 +504,13 @@ public class RegiaoController extends BaseController {
 	
 	private void tratarFiltroNMaiores(FiltroRegiaoNMaioresProdDTO filtroAtual) {
 		
-		FiltroRegiaoNMaioresProdDTO filtroSession = (FiltroRegiaoNMaioresProdDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		FiltroRegiaoNMaioresProdDTO filtroSession = (FiltroRegiaoNMaioresProdDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE_NMaiores);
 		
 		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
 			
 			filtroAtual.getPaginacao().setPaginaAtual(1);
 		}
-		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE_NMaiores, filtroAtual);
 	}
 	
 	private void validarEntradaDeVariasCotas(List<Integer> cotas, Long idRegiao) {
@@ -441,7 +542,7 @@ public class RegiaoController extends BaseController {
 			comboRegiao.add(new ItemDTO<Long,String>(itemRegiao.getIdRegiao() , itemRegiao.getNomeRegiao()));
 		}
 
-		result.include("listaRegiao",comboRegiao );
+		result.include("listaRegiao",comboRegiao);
 	}
 
 	private void carregarComboSegmento() {

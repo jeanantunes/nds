@@ -6,6 +6,7 @@ var histogramaPosEstudoController = $.extend(true, {
 	analiseGridRowConsolidada : {},
 	oldTabContent : "",
 	oldTabHeight : 0,
+	matrizDistribuicaoController : null,
 	
 	createInput : function createInput(id, value){
 		return '<input type="text" onkeydown="histogramaPosEstudoController.alterarFaixaAte(' + id + ', event);" value=' + value + ' />';
@@ -51,13 +52,7 @@ var histogramaPosEstudoController = $.extend(true, {
 		// Analise do estudo - EMS 2031
 		$('#analiseEstudo').click(function() {
 			
-			//TODO As telas de analise estão com erro, validar este direcionamento após correções.
-			var urlAnalise;
-			if ($('#parcial').val() === 'true') {
-				urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo;
-			} else {
-				urlAnalise = contextPath + '/lancamento/analise/normal/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo;
-			}
+			var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo;
 			$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
 			
 			/*
@@ -94,6 +89,9 @@ var histogramaPosEstudoController = $.extend(true, {
 							url,
 							[{name : "id", value : matrizSelecionada.estudo}],
 							function(response){
+								// refaz a pesquisa na matriz de distribuicao
+								var filtro = histogramaPosEstudoController.matrizDistribuicaoController.parametrosDePesquisa;
+								histogramaPosEstudoController.matrizDistribuicaoController.pesquisar(filtro);
 								// fecha a aba
 								$('.ui-tabs-selected').children('.ui-icon-close').click();
 							}
@@ -226,8 +224,9 @@ var histogramaPosEstudoController = $.extend(true, {
 							faixaAte = row.cell.faixaReparte.split("a")[1];
 							faixaReparteFormatada = histogramaPosEstudoController.formatarMilhar(parseInt(faixaDe)) + " a " + histogramaPosEstudoController.formatarMilhar(parseInt(faixaAte));
 							
+							var elemLink = '<a href="javascript:;" onclick="histogramaPosEstudoController.abrirAnaliseFaixa('+ faixaDe +', '+ faixaAte +')">'+ faixaReparteFormatada +'</a>';
 							// adicionando a linha
-							row.cell.faixaReparte = faixaReparteFormatada;
+							row.cell.faixaReparte = elemLink;
 							
 							rowConsolidado.cell.reparteTotalFormatado += parseInt(row.cell.reparteTotalFormatado || 0);
 							rowConsolidado.cell.vendaNominalFormatado += parseInt(row.cell.vendaNominalFormatado || 0);
@@ -403,7 +402,7 @@ var histogramaPosEstudoController = $.extend(true, {
 					gridConfiguration : {
 						dataType : 'json',
 						colModel : [ {
-							display : 'Faixa de Reparte Dê',
+							display : 'Faixa de Reparte De',
 							name : 'faixaReparteDe',
 							width : 130,
 							sortable : true,
@@ -428,8 +427,14 @@ var histogramaPosEstudoController = $.extend(true, {
 		};
 	},
 	
+	abrirAnaliseFaixa : function(faixaDe, faixaAte) {
+		var url = contextPath + '/distribuicao/analise/parcial/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo +'&faixaDe='+ faixaDe +'&faixaAte='+ faixaAte;
+		$('#workspace').tabs('addTab', 'Análise de Estudos', url);
+	},
 	
-	popularFieldsetHistogramaPreAnalise : function (selecionado){
+	popularFieldsetHistogramaPreAnalise : function (selecionado, matrizDistribuicaoController){
+		
+		histogramaPosEstudoController.matrizDistribuicaoController = matrizDistribuicaoController;
 		
 		var	url = contextPath + "/distribuicao/histogramaPosEstudo/carregarDadosFieldsetHistogramaPreAnalise";
 
@@ -449,7 +454,11 @@ var histogramaPosEstudoController = $.extend(true, {
 					 $('#nomeProdutoFs').html(jsonData.nomeProduto);
 					 $('#edicaoProdutoFs').html(jsonData.edicao);
 					 $('#classificacaoProdutoFs').html(jsonData.classificacao);
-					 $('#segmentoFs').html(jsonData.tipoSegmentoProduto.descricao);
+					 
+					 if (jsonData.tipoSegmentoProduto != undefined) {
+						 $('#segmentoFs').html(jsonData.tipoSegmentoProduto.descricao);
+					 }
+					 
 					 $('#codigoEstudoFs').html(jsonData.estudo);
 					 $('#periodoFs').html(jsonData.periodicidadeProduto);
 					 $('#parcial').val(jsonData.parcial);

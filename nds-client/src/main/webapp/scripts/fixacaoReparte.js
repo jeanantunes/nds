@@ -1,5 +1,5 @@
-var codigos =  new Array(),
-	repartes =  new Array(),
+var codigos =  [],
+	repartes =  [],
 	listaPDV = [];
 
 var fixacaoReparteController = $.extend(true, {
@@ -9,20 +9,20 @@ var fixacaoReparteController = $.extend(true, {
 			preProcess: fixacaoReparteController.preProcessHistoricoGrid,
 			dataType : 'json',
 			colModel : [ {
-				display : 'EdiÃ§Ã£o',
-				name : 'edicaoString',
+				display : 'Edição',
+				name : 'edicao',
 				width : 75,
 				sortable : true,
 				align : 'left'
 			},{
 				display : 'Reparte',
-				name : 'reparteString',
+				name : 'reparte',
 				width : 80,
 				sortable : true,
 				align : 'center'
 			},{
 				display : 'Venda',
-				name : 'vendaString',
+				name : 'venda',
 				width : 80,
 				sortable : true,
 				align : 'center'
@@ -158,7 +158,7 @@ var fixacaoReparteController = $.extend(true, {
 		},  {
 			display : 'Reparte',
 			name : 'reparte',
-			width : 40,
+			width : 50,
 			sortable : true,
 			align : 'center'
 		}],
@@ -174,7 +174,7 @@ var fixacaoReparteController = $.extend(true, {
 
 
 	//Grid de fixacao por cota
-	$(".excessaoCotaGrid").flexigrid({
+	$(".fixacaoCotaGrid").flexigrid({
 			preProcess: function(data){return fixacaoReparteController.preProcessarResultadoConsultaFixacao(data);},			
 			dataType : 'json',
 			colModel : [ {
@@ -330,8 +330,8 @@ var fixacaoReparteController = $.extend(true, {
 
 			data.rows[i].cell["acao"]=fixacaoReparteController.getActionsConsultaFixacaoCota(data.rows[i].cell);
 		}
-
-		$('.excessaoCotaGrid').show();
+		
+		$('.fixacaoCotaGrid').show();
 		if (data.result){
 			return data.result[1];
 		}
@@ -436,8 +436,9 @@ var fixacaoReparteController = $.extend(true, {
 
 	//retorna msg de sucesso durante exclusao de cota
 	exclusaoCotaSucesso:function(result){
-		$(".excessaoCotaGrid").flexReload();
 
+		$(".fixacaoCotaGrid").flexReload();
+		
 	},
 
 	//retorna msg de erro durante exclusao de cota
@@ -504,8 +505,6 @@ var fixacaoReparteController = $.extend(true, {
 								  name : "listPDV["+idx+"].codigoPdv" , 
 								  value : linha.name
 								  });
-
-
 						  }
 
 						  if(linha.value == 'undefined'){
@@ -519,8 +518,6 @@ var fixacaoReparteController = $.extend(true, {
 								  name : "listPDV["+idx+"].reparte" , 
 								  value : linha.value
 								  });
-
-
 						  }
 
 					  });
@@ -538,8 +535,13 @@ var fixacaoReparteController = $.extend(true, {
 						  name : "idFixacao" , 
 						  value : idFixacao
 						  });
-
-					if(somaReparte > reparteTotal){
+					  
+					  listaPDV.push({
+						  name : "manterFixa" , 
+						  value : $("#manterFixa").is(":checked")
+						  });
+					  
+					if(somaReparte != reparteTotal) {
 						$("#dialog-confirma-reparte").dialog({
 							resizable: false,
 							height:'auto',
@@ -549,11 +551,11 @@ var fixacaoReparteController = $.extend(true, {
 								"Confirmar": function() {
 									//parametros para salvar repartes pdvs
 									$.postJSON(contextPath + '/distribuicao/fixacaoReparte/salvarGridPdvReparte',  listaPDV, 
-											function(result){
-														$(".excessaoCotaGrid").flexReload();
-														$("#dialog-defineReparte").dialog("close"); 
-											},
-											function(result){ });
+										function(result){
+											$(".fixacaoCotaGrid").flexReload();
+											$("#dialog-defineReparte").dialog("close"); 
+										},
+										function(result){ });
 									$(this).dialog("close");
 								},
 								"Cancelar": function() {
@@ -561,10 +563,9 @@ var fixacaoReparteController = $.extend(true, {
 								}
 							},
 						});
-
-					}else{
-						$.postJSON(contextPath + '/distribuicao/fixacaoReparte/salvarGridPdvReparte', listaPDV);
-
+						
+					} else {
+						$.postJSON(contextPath + '/distribuicao/fixacaoReparte/salvarGridPdvReparte', listaPDV,function(result){$("#dialog-defineReparte").dialog("close");} );
 					}
 //					$( this ).dialog( "close" );
 //					$("#effect").show("highlight", {}, 1000, callback);
@@ -639,25 +640,27 @@ var fixacaoReparteController = $.extend(true, {
 
 	//funcao que retorna input de reparte a grid de reparte por pdv
 	getInputReparte:function(cell){
-		return "<input type='text' class='reparteGridinput' name='"+cell.id+"' value=\'"+ (cell.reparte || 0)  +"\'/>";
-
+		return "<input type='text' class='reparteGridinput'  onkeydown='onlyNumeric(event);' maxlength='5' size='6'  name='"+cell.id+"' value=\'"+ (cell.reparte || 0)  +"\'/>";
+		
 	},
 	//funcao de exibicao de grid
 	exibeGridCota:function(){
-		$('.porCota').show();
-		$('.porExcessao').hide();
+
+		$('#fixacaoReparte_porCota').show();
+		$('#fixacaoReparte_fixacaoProduto').hide();
 	},
 
 	//funcao de exibicao de grid
 	exibeGridProduto:function(){
-		$('.porExcessao').show();
-		$('.porCota').hide();
+
+		$('#fixacaoReparte_fixacaoProduto').show();
+		$('#fixacaoReparte_porCota').hide();
 	},
 
 	//Funcao de pre-processamento da chamada postJSON que preenche a grid de historico
 	preProcessHistoricoGrid:function(result){
 		if(result.rows[0]){
-			$("#edicaoDestaque").text(result.rows[0].cell.edicaoString);
+			$("#edicaoDestaque").text(result.rows[0].cell.edicao);
 			$("#statusDestaque").text(result.rows[0].cell.status);
 			$("#historicoXLS").show();
 			$("#historicoPDF").show();
@@ -686,14 +689,14 @@ var fixacaoReparteController = $.extend(true, {
 	//Funcao que realiza pesquisa de fixaÃ§Ãµes por cota
 	pesquisarPorCota:function(){
 		fixacaoReparteController.exibeGridCota();
-		$(".excessaoCotaGrid", fixacaoReparteController.workspace).flexOptions({
+		$(".fixacaoCotaGrid", fixacaoReparteController.workspace).flexOptions({
 			url: contextPath + "/distribuicao/fixacaoReparte/pesquisarPorCota",
 			dataType : 'json',
 			params: fixacaoReparteController.getDadosCota()
 		});
-
-		$(".excessaoCotaGrid", fixacaoReparteController.workspace).flexReload();
-
+		
+		$(".fixacaoCotaGrid", fixacaoReparteController.workspace).flexReload();
+				
 	},
 
 		get : function(campo) {
@@ -763,7 +766,8 @@ var fixacaoReparteController = $.extend(true, {
 				data.push({name:'fixacaoReparteDTO.cotaFixada',value: $("#spanCodigoProduto").text()});
 				data.push({name:'fixacaoReparteDTO.produtoFixado',value: $("#codigoModal").val()});
 			}
-
+		
+			data.push({name:'fixacaoReparteDTO.edicao', 		value: $('#edicaoDestaque').text()});
 			data.push({name:'fixacaoReparteDTO.qtdeEdicoes',	value: $("#qtdeEdicoesModal").val()});
 			data.push({name:'fixacaoReparteDTO.qtdeExemplares',	value: $("#qtdeFixadaModal").val()});
 			data.push({name:'fixacaoReparteDTO.edicaoInicial',	value: $("#edInicialModal").val()});
@@ -820,11 +824,10 @@ var fixacaoReparteController = $.extend(true, {
 		//Executada em caso de sucesso durante tentativa de chamada postJSON para adicionar fixaÃ§Ã£o
 		executarSuccessCallBack:function(result){
 			if($('#selectModal').css('display')=='inline-block'){
-				$(".excessaoCotaGrid",fixacaoReparteController.workspace).flexReload();
+				$(".fixacaoCotaGrid",fixacaoReparteController.workspace).flexReload();
 				fixacaoReparteController.limparCamposModalNovo();
 				$("#dialog-novo").dialog('close');
 			}else if($('#selectModal').css('display')=='none'){
-				console.log('escondido');
 				$(".fixacaoProdutoGrid",fixacaoReparteController.workspace).flexReload();
 				fixacaoReparteController.limparCamposModalNovo();
 				$("#dialog-novo").dialog('close');
@@ -832,7 +835,7 @@ var fixacaoReparteController = $.extend(true, {
 
 
 		},
-
+		
 		//Limpa os campos preenchidos durante a fixação, apos finalizada a adição de fixação
 		limparCamposModalNovo:function(){
 			$("#qtdeEdicoesModal").val("");
@@ -844,7 +847,9 @@ var fixacaoReparteController = $.extend(true, {
 
 		//Executada em caso de erro durante tentativa de chamada postJSON para adicionar fixaÃ§Ã£o
 		executarErrorCallBack:function(result){
-			//exibirMensagem("ERROR", ["NÃ£o foi possivel adicionar fixaÃ§Ã£o "]);
+			if(result.mensagens.listaMensagens[0] === "Operação realizada com sucesso!<br>Status da Cota: Suspenso") {
+				fixacaoReparteController.executarSuccessCallBack(result);
+			}
 		},
 
 		// FunÃ§Ã£o que valida campos obrigatorios no modal  de nova fixaÃ§Ã£o

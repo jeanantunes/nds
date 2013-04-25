@@ -13,29 +13,34 @@ $(function(){
 });
 
 function porCota(){
-	$('.porCota').show();
-	$('.porExcessao').hide();
+	$('#fixacaoReparte_porCota').show();
+	$('#fixacaoReparte_fixacaoProduto').hide();
 }
 function porExcessao(){
-	$('.porCota').hide();
-	$('.porExcessao').show();
+	$('#fixacaoReparte_porCota').hide();
+	$('#fixacaoReparte_fixacaoProduto').show();
 }
 function filtroPorCota(){
-	$('.filtroPorCota').show();
-	$('.filtroPorProduto').hide();
-	$('.porExcessao').hide();
-
-	$('#historicoXLS').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=historicoCota");
-	$('#historicoPDF').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=historicoCota");
-
+	$('#fixaxaoReparte_filtroPorCota').show();
+	$('#fixacaoReparte_filtroPorProduto').hide();
+	$('#fixacaoReparte_fixacaoProduto').hide();
+	$("#codigoProduto").val("");
+	$("#nomeProduto").val("");
+	
+	//$('#historicoXLS').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=historicoCota");
+	//$('#historicoPDF').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=historicoCota");
+	
 }
 function filtroPorProduto(){
-	$('.filtroPorCota').hide();
-	$('.filtroPorProduto').show();
-	$('.porCota').hide();
-
-	$('#historicoXLS').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=historicoProduto");
-	$('#historicoPDF').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=historicoProduto");
+	$('#fixaxaoReparte_filtroPorCota').hide();
+	$('#fixacaoReparte_filtroPorProduto').show();
+	$('#fixacaoReparte_porCota').hide();
+	$("#codigoCota").val("");
+	$("#nomeCota").val("");
+	
+	//$('#historicoXLS').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=historicoProduto");
+	//$('#historicoPDF').attr('href', contextPath + "/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=historicoProduto");
+>>>>>>> DGBti/fase2
 }
 function mostraQtd(){
 	$('#edInicialModal').val("");
@@ -67,8 +72,13 @@ function mostraIntervalo(){
             <td width="22" align="right"><input type="radio" name="filtroPrincipalRadio" id="radio"  value="Cota" onclick="filtroPorCota();" /></td>
             <td width="50">Cota</td>
             <td width="22"><input type="radio" name="filtroPrincipalRadio" id="radio2" value="Produto" onclick="filtroPorProduto()" /></td>
+<<<<<<< HEAD
             <td width="49">Produto</td>
             <td width="781"><table width="760" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorProduto" style="display:none;">
+=======
+            <td width="49"> <label for="radio2">Produto</label></td>
+            <td width="781"><table width="760" border="0" cellpadding="2" cellspacing="1" id="fixacaoReparte_filtroPorProduto" class="filtro filtroPorProduto" style="display:none;">
+>>>>>>> DGBti/fase2
           <tr>
             <td width="52">Código:</td>
             <td width="86"><input type="text" name="codigoProduto" id="codigoProduto"  style="width:80px;" onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigoProduto','#nomeProduto',false,undefined,undefined )"/></td>
@@ -78,7 +88,7 @@ function mostraIntervalo(){
             <td width="167">
             	<select name="select" id="select" style="width:160px;">
 			            <c:forEach items="${classificacao}" var="tipoProduto">
-							<option value="<c:out value="${tipoProduto.id}"/>"><c:out value="${tipoProduto.descricao}"/></option>
+							<option value="<c:out value="${tipoProduto.id}"/>" ${tipoProduto.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoProduto.descricao}"/></option>
 						</c:forEach>
           		</select>
             
@@ -87,7 +97,7 @@ function mostraIntervalo(){
           </tr>
         </table>
         
-        <table width="758" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorCota" style="display:none;">
+        <table width="758" border="0" cellpadding="2" cellspacing="1" id="fixaxaoReparte_filtroPorCota" class="filtro filtroPorCota" style="display:none;">
             <tr>
            	  <td width="30" >Cota:</td>
                 <td width="91">
@@ -106,7 +116,7 @@ function mostraIntervalo(){
       <div class="linha_separa_fields">&nbsp;</div>
 
 	 <div class="grids" style="display:block;">
-	      <div class="porExcessao" style="display:none;">
+	      <div class="porExcessao" id="fixacaoReparte_fixacaoProduto" style="display:none;">
 		      <fieldset class="classFieldset">
 		       	  	<legend>Fixação Produto</legend>
 		        		<table class="fixacaoProdutoGrid"></table>
@@ -116,18 +126,17 @@ function mostraIntervalo(){
 						<span class="bt_novos" title="Imprimir" id="btImprimirProduto"><a  href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=produto"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 		      </fieldset>
 	      </div>
-	       <div class="porCota" style="display:none;">
+	       <div class="porCota" id="fixacaoReparte_porCota" style="display:none;">
 		      <fieldset class="classFieldset">
 		       	  <legend>Produtos</legend>
-
-		        	<table class="excessaoCotaGrid"></table>
+		        
+		        	<table class="fixacaoCotaGrid"></table> 
 		             <span class="bt_novos" title="Incluir Novo" id="btNovoCota"><a href="javascript:;" onclick="fixacaoReparteController.novo();"><img src="images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>
 		             <span class="bt_novos" title="Adicionar em Lote" id="btAddLoteCota"><a href="javascript:;" onclick="add_lote();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
 		             <span class="bt_novos" title="Gerar Arquivo" id="btGerarArquivoCota"><a href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=cota"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 					<span class="bt_novos" title="Imprimir" id="btImprimirCota"><a href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=cota"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 		      </fieldset>
    		   </div>
-
 
 
     </div>
@@ -154,7 +163,7 @@ function mostraIntervalo(){
 			       <td width="119">
 			       		<select name="selectModal" id="selectModal" style="width:160px;display:none;">
 				            <c:forEach items="${classificacao}" var="tipoProduto">
-								<option value="<c:out value="${tipoProduto.id}"/>"><c:out value="${tipoProduto.descricao}"/></option>
+								<option value="<c:out value="${tipoProduto.id}"/>" ${tipoProduto.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoProduto.descricao}"/></option>
 							</c:forEach>
 	          			</select>
 

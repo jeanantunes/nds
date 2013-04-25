@@ -38,11 +38,7 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		hql.append(" WHEN lancamento.status = :RECOLHIDO OR lancamento.status = :EXPEDIDO THEN lancamento.status ");
 		hql.append(" ELSE null ");
 		hql.append(" END AS statusRecolhiOuExpedido, ");
-		
-		hql.append(" CASE ");
-		hql.append(" WHEN estudo.liberado = 1 OR estudo.liberado = 0 THEN estudo.liberado ");
-		hql.append(" ELSE null ");
-		hql.append(" END AS statusLiberadoOuGerado ");
+		hql.append(" estudo.liberado AS statusLiberadoOuGerado ");
 		
 		hql.append(" FROM Estudo estudo, Lancamento lancamento");
 		hql.append(" JOIN estudo.produtoEdicao as prodEdicao ");
@@ -52,6 +48,7 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		hql.append(" WHERE estudo.produtoEdicao.id = lancamento.produtoEdicao.id ");
 		
 		hql.append(this.getSqlWhereBuscarEstudos(filtro));
+		hql.append(" ORDER BY prodEdicao.numeroEdicao desc ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		

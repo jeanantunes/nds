@@ -4,11 +4,13 @@
 <script type="text/javascript" src="scripts/vendaProduto.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/autoCompleteCampos.js"></script>
 
 <script language="javascript" type="text/javascript">
 
 var pesquisaProduto = new PesquisaProduto();
 var pesquisaCota = new PesquisaCota();
+
 
 $(function(){
 	vendaProdutoController.init();
@@ -72,18 +74,12 @@ $(function(){
 		      <tr>
 		      	<td width="44">Código:</td>
               	<td colspan="3">
-		        	<input type="text" name="textfield5" id="codigo" style="width:80px;" onkeyup="pesquisaProduto.autoCompletarPorCodigoProduto('#codigo', undefined);"
-		        				onblur="vendaProdutoController.pesquisarPorCodigoProduto('#codigo', '#produto', false,
-										undefined,
-										undefined);" />
+		        	<input type="text" name="codigo" id="codigo" style="width:80px;" />
 				</td>
 				
 		        <td width="49">Produto:</td>
               	<td width="159">
-		        	<input type="text" name="publica" id="produto" style="width:150px;" onkeyup="vendaProdutoController.autoCompletarPorNome('#produto', false);"
-						onblur="vendaProdutoController.pesquisarPorNome('#codigo', '#produto', false,
-								undefined,
-								undefined);" />
+		        	<input type="text" name="produto" id="produto" style="width:150px;" />
 				</td>
 		        <td width="75">Edição:</td>
               	<td width="90">
@@ -108,7 +104,7 @@ $(function(){
               </td>
               <td>Nome:</td>
               <td>
-           		<input type="text" name="publica2" id="nomeCota" style="width:150px;"/>
+           		<input type="text" name="nomeCota" id="nomeCota" style="width:150px;"/>
               </td>
               <td>Classificação:</td>
               <td colspan="3">

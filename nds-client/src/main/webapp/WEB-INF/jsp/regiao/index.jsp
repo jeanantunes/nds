@@ -14,6 +14,29 @@ $(function(){
 	regiaoController.init();
 });
 
+var produtosEscolhidosArray=new Array();
+var validatorProdEscolhidos=new Array();
+
+var cotasRankingNMaioresArray=new Array();
+var numCotasRankingNM=new Array();
+
+function removeProdutoEscohido(idx){
+	produtosEscolhidosArray.splice(parseInt(idx),1);
+	
+	var data = {
+	        total: produtosEscolhidosArray.length,    
+	        page:1,
+	        rows: produtosEscolhidosArray
+	};
+	
+	
+	$("#nMaioresGrid").flexAddData(data);
+	
+	$(".btnExcluir").each(function(idx,value){
+		$(this).val(idx);
+	});
+}
+
 </script>
 
 <style type="text/css">
@@ -25,9 +48,9 @@ $(function(){
 	display: none;
 }
 
-#row5 {
+/* #row5 {
 	display: none;
-}
+} */
 </style>
 </head>
 
@@ -51,6 +74,14 @@ $(function(){
 		<p>Confirma a inserção destas cotas na região?</p>
 	</div>
 	</form>
+	
+	<div id="dialog-AddProdutos" title="Incluir produtos para pesquisa de cotas." style="display: none;">
+		<p>Confirma a inserção destes produtos?</p>
+	</div>
+	
+	<div id="dialog-detalhes" title="Visualizando Produto" style="margin-right:0px!important; float:right!important;">
+	 <img id="imagemCapaEdicao" width="235" height="314" />
+	</div>
 	
 	<div id="dialog-pesqCotas" title="Selecionar Cotas"
 		style="display: none;">
@@ -95,7 +126,7 @@ $(function(){
 	</div>
 	 -->
 	
-	<!-- ADD POR N-MAIORES -->
+	<!-- ADD POR N-MAIORES, ADD PRODUTOS -->
 	
 	<div id="dialog-addNMaiores" title="Adicionar Produtos"
 		style="display: none;">
@@ -135,11 +166,46 @@ $(function(){
 		<fieldset
 			style="width: 600px !important; margin-top: 10px !important;">
 			<legend>Produtos</legend>
-			<table class="lstProdutosGrid"></table>
-			<span class="bt_sellAll" style="float: right;"><label
-				for="sel">Selecionar Todos</label><input type="checkbox" id="sel"
-				name="Todos" onclick="regiaoController.checkAll();"
-				style="float: left; margin-right: 25px;" /> </span>
+			
+			<table id="lstProdutosGrid"></table>
+			<span class="bt_sellAll" style="float: right;">
+				<label for="sel">Selecionar Todos</label>
+					<input type="checkbox" id="selTodosProdutos" name="Todos" onclick="regiaoController.checkAllNMaiores();"
+				style="float: left; margin-right: 25px;" checked /> </span>
+		</fieldset>
+
+	</div>
+	
+	<!-- ADD POR NMAIORES, RANKING DE COTAS -->
+	
+	<div id="dialog-rankingCotas" title="Seleção de Cotas"
+		style="display: none;">
+		<fieldset style="width: 600px !important;">
+			<legend>Seleção de Cotas</legend>
+			<table width="588" border="0" cellspacing="2" cellpadding="2">
+				<tr>
+					<td width="36">Cota:</td>
+					<td width="77">
+						<input type="text" name="numeroCota" id="numeroCota" style="width: 60px;" />
+					</td>
+					<td width="40">Nome:</td>
+					<td width="129">
+						<input type="text" name="nomeCota" id="nomeCota" style="width: 120px;" />
+					</td>
+					<td width="106"><span class="bt_pesquisar"><a href="javascript:;" onclick="regiaoController.filtroCotaRanking();">Pesquisar</a></span></td>					
+				</tr>
+			</table>
+		</fieldset>
+
+		<fieldset
+			style="width: 600px !important; margin-top: 10px !important;">
+			<legend>Cotas</legend>
+			
+			<table id="lstCotasRankingGrid"></table>
+			<span class="bt_sellAll" style="float: right;">
+				<label for="sel">Selecionar Todos</label>
+					<input type="checkbox" id="selTodasCotas" name="Todos" onclick="regiaoController.checkAllRankingNMaiores();"
+				style="float: left; margin-right: 25px;" checked /> </span>
 		</fieldset>
 
 	</div>
@@ -156,10 +222,12 @@ $(function(){
 						value="radio" onclick="regiaoController.filtroPorCep();" />
 					</td>
 					<td width="40">CEP</td>
+					
 					<td width="20"><input type="radio" name="radio" id="radio2"
 						value="radio" onclick="regiaoController.filtroPorNMaiores();" />
 					</td>
 					<td width="74">N Maiores</td>
+					
 					<td width="20"><input type="radio" name="radio" id="radio3"
 						value="radio" onclick="regiaoController.filtroPorSegmento();" />
 					</td>
@@ -254,16 +322,18 @@ $(function(){
 		<fieldset style="width: 600px !important; margin-top: 10px;"
 			class="gridNMaiores">
 			<legend>N Maiores</legend>
-			<table class="nMaioresGrid"></table>
+			<table id="nMaioresGrid"></table>
 
 			<span class="bt_novos"><a href="javascript:;"
 				onclick="regiaoController.add_produtos();"><img
-					src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" />Incluir</a> </span> <span
-				style="float: right; margin-top: 5px; margin-right: 50px;">Qtde
-				de Cotas:&nbsp;&nbsp; <input name="" type="text"
-				style="width: 60px;" /> <a href="javascript:;"
-				onclick="regiaoController.add_cotas();"><img
-					src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" /> </a> </span>
+					src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" />Incluir</a> </span> 
+				<span style="float: right; margin-top: 5px; margin-right: 50px;">
+					Qtde de Cotas: &nbsp;&nbsp; 
+					<input name="qtdCotasRanking" id="qtdCotasRanking" type="text" style="width: 60px;" /> 
+						<a href="javascript:;" onclick="regiaoController.validarDadosParaRanking();">
+						<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" /> 
+						</a> 
+				</span>
 		</fieldset>
 
 		<!-- REGIAO AUTOMÁTICA - POR SEGMENTO -->

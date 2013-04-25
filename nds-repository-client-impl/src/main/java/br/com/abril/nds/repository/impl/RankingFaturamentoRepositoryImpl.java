@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigInteger;
 import java.util.List;
 
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -60,11 +61,11 @@ public class RankingFaturamentoRepositoryImpl extends AbstractRepositoryModel<Ra
 	public List<RankingFaturamento>  buscarPorCota(Cota cota){
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("from ranking_faturamento where " + 
-		           "     ranking_faturamento_gerados_id = (max(id) from ranking_faturamento_gerados"+
-				   "     and cota = :cota");
+		hql.append(" select rf from RankingFaturamento rf where "); 
+		hql.append(" rf.rankingFaturamentoGerado.id = (select max(rfg.id) from RankingFaturamentoGerado rfg)");
+		hql.append(" and rf.cota = :cota");
 		
-		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
+		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("cota", cota);
 		
 		

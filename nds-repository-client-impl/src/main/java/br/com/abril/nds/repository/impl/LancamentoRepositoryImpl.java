@@ -1560,4 +1560,13 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 	return query.list();
     }
 
+    @Override
+    public Lancamento buscarPorIdSemEstudo(Long lancamentoId) {
+	Criteria cri = getSession().createCriteria(Lancamento.class);
+//	cri.setProjection(Projections.distinct(Projections.property("id")));
+	cri.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+	cri.add(Restrictions.eq("id", lancamentoId));
+	return (Lancamento) cri.uniqueResult();
+    }
+
 }

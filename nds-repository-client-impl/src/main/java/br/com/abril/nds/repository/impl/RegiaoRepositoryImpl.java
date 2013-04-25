@@ -52,7 +52,7 @@ public class RegiaoRepositoryImpl extends AbstractRepositoryModel<Regiao, Long> 
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" SELECT ");
+		hql.append(" SELECT DISTINCT ");
 		
 		hql.append(" cota.numeroCota as numeroCota, ");
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeCota,");
@@ -72,7 +72,6 @@ public class RegiaoRepositoryImpl extends AbstractRepositoryModel<Regiao, Long> 
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setParameter("idSegmento", filtro.getIdSegmento());
-//		query.setFirstResult(0);
 		query.setMaxResults(filtro.getLimiteBuscaPorSegmento());
 		query.setResultTransformer(new AliasToBeanResultTransformer(RegiaoCotaDTO.class));
 		

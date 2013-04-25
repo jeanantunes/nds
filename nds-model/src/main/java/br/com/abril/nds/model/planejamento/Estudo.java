@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -53,10 +54,10 @@ public class Estudo implements Serializable {
 	@JoinColumn(name = "PRODUTO_EDICAO_ID", nullable = false)
 	private ProdutoEdicao produtoEdicao;
 	@NotFound(action = NotFoundAction.IGNORE)
-	@OneToMany(mappedBy = "estudo")
+	@OneToMany(mappedBy = "estudo", fetch = FetchType.LAZY)
 	private Set<Lancamento> lancamentos = new HashSet<Lancamento>();
 	
-	@OneToMany(mappedBy = "estudo")
+	@OneToMany(mappedBy = "estudo", fetch = FetchType.LAZY)
 	private Set<EstudoCota> estudoCotas = new HashSet<EstudoCota>();
 	
 	/** Status do Estudo. */
@@ -75,7 +76,7 @@ public class Estudo implements Serializable {
 	private Date dataAlteracao;
 	
 	@Column(name = "LIBERADO")
-	private Integer liberado;
+	private boolean liberado;
 	
 	@Column(name = "REPARTE_DISTRIBUIR")
 	private BigInteger reparteDistribuir;
@@ -86,7 +87,7 @@ public class Estudo implements Serializable {
 	@Column(name = "PACOTE_PADRAO")
 	private BigInteger pacotePadrao; //TODO BigDecimal
 	
-	@ManyToOne (optional = true)
+	@ManyToOne (optional = true, fetch = FetchType.LAZY)
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario; 
 	
@@ -164,11 +165,11 @@ public class Estudo implements Serializable {
 		this.dataAlteracao = dataAlteracao;
 	}
 
-	public Integer getLiberado() {
+	public boolean isLiberado() {
 		return liberado;
 	}
 
-	public void setLiberado(Integer liberado) {
+	public void setLiberado(boolean liberado) {
 		this.liberado = liberado;
 	}
 

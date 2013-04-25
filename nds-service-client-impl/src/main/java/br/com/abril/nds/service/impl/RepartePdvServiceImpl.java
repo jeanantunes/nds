@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.RepartePDVDTO;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
@@ -58,9 +57,8 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 
 	@Override
 	@Transactional
-	public void salvarRepartesPDVMix(List<RepartePDVDTO> listaRepartes, String codProduto, String codCota, Long idMix) {
+	public void salvarRepartesPDVMix(List<RepartePDVDTO> listaRepartes, String codProduto, Long idMix) {
 		int soma = 0;
-		Cota cota=  cotaRepository.obterPorNumerDaCota(new Integer(codCota));
 		Produto produto= produtoRepository.obterProdutoPorCodigo(codProduto);
 		MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.buscarPorId(idMix);
 		PDV pdv = null;
@@ -88,22 +86,23 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 
 	@Override
 	@Transactional
-	public void salvarRepartesPDV(List<RepartePDVDTO> listaRepartes, String codProduto, String codCota, Long idFixacao, boolean manterFixa) {
+	public void salvarRepartesPDV(List<RepartePDVDTO> listaRepartes, String codProduto, Long idFixacao, boolean manterFixa) {
 		int soma = 0;
-		Cota cota=  cotaRepository.obterPorNumerDaCota(new Integer(codCota));
-		Produto produto= produtoRepository.obterProdutoPorCodigo(codProduto);
+		Produto produto = produtoRepository.obterProdutoPorCodigo(codProduto);
 		FixacaoReparte fixacaoReparte = fixacaoReparteRepository.buscarPorId(idFixacao);
 		fixacaoReparte.setManterFixa(manterFixa);
 		PDV pdv = null;
 		
 		for (RepartePDVDTO repartePDVDTO : listaRepartes) {
-			if(repartePDVDTO.getCodigoPdv() !=null){
-				pdv= pdvRepository.buscarPorId(repartePDVDTO.getCodigoPdv());
+			if(repartePDVDTO.getCodigoPdv() !=null) {
+				pdv = pdvRepository.buscarPorId(repartePDVDTO.getCodigoPdv());
 			}
-			RepartePDV repartePDV =  repartePDVRepository.obterRepartePorPdv(idFixacao, produto.getId(), pdv.getId());
-			if(repartePDV == null){
+			
+			RepartePDV repartePDV = repartePDVRepository.obterRepartePorPdv(idFixacao, produto.getId(), pdv.getId());
+			if(repartePDV == null) {
 				repartePDV = new RepartePDV();
-			}	
+			}
+			
 			repartePDV.setFixacaoReparte(fixacaoReparte);
 			repartePDV.setPdv(pdv);
 			repartePDV.setReparte(repartePDVDTO.getReparte().intValue());
@@ -112,11 +111,8 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 			soma += repartePDV.getReparte();
 			repartePDVRepository.merge(repartePDV);
 		}
+		
 		fixacaoReparte.setQtdeExemplares(soma);
 		fixacaoReparteRepository.alterar(fixacaoReparte);
-		
 	}
-
-	
-	
 }

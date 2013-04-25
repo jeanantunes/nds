@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.AnaliseParcialDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.repository.AnaliseParcialRepository;
+import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.service.AnaliseParcialService;
 
 @Service
@@ -17,17 +18,20 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 
 	@Autowired
 	private AnaliseParcialRepository analiseNormalRepository;
+	
+	@Autowired
+	private EstudoRepository estudoRepository;
 
 	@Override
 	@Transactional
 	public EstudoCota buscarPorId(Long id) {
-		EstudoCota estudo = analiseNormalRepository.buscarPorId(id);
+		EstudoCota estudo = new EstudoCota();
+		estudo.setEstudo(estudoRepository.buscarPorId(id));
 		return estudo;
 	}
 
 	@Override
-	public List<AnaliseParcialDTO> buscaAnaliseParcialPorEstudo(
-			AnaliseParcialQueryDTO queryDTO) {
+	public List<AnaliseParcialDTO> buscaAnaliseParcialPorEstudo(AnaliseParcialQueryDTO queryDTO) {
 		return analiseNormalRepository.buscaAnaliseParcialPorEstudo(queryDTO);
 	}
 

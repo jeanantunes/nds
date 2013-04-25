@@ -6,7 +6,6 @@ import org.quartz.JobExecutionException;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import br.com.abril.nds.repository.FixacaoReparteRepository;
-import br.com.abril.nds.repository.MixCotaProdutoRepository;
 
 public class FixacaoReparteJob implements Job {
 

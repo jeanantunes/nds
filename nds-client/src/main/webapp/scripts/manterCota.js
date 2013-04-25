@@ -54,6 +54,11 @@ var MANTER_COTA = $.extend(true, {
     },
     
     verificaTipoCota : function(tipoCotaCPF) {
+    	
+    	if (MANTER_COTA.idCota == "") {
+    		return;
+    	}
+    	
     	$("<div>")
     	.html("O Mix (para o tipo alternativo) e a Fixação (para o tipo convencional) desta Cota serão apagados, confirma?")
     	.dialog({
@@ -1224,6 +1229,7 @@ var COTA_CNPJ = $.extend(true, {
         $("#emailNF", this.workspace).val(result.emailNF);
         $("#emiteNFE", this.workspace).attr("checked", (result.emiteNFE == true)?"checked":null);
         $("#classificacaoSelecionada", this.workspace).val(result.classificacaoSelecionada);
+        $('[name="cotaDTO.TipoCota"]', this.workspace).val(result.tipoCota);
         
         $("#percentualCotaBase", this.workspace).html(result.percentualCotaBase+"%");
         
@@ -1263,11 +1269,21 @@ var COTA_CNPJ = $.extend(true, {
 
         formData.push({name:"cotaDTO.idCota", value: MANTER_COTA.idCota});
         formData.push({name:"cotaDTO.alteracaoTitularidade", value: MANTER_COTA.isAlteracaoTitularidade});
+        formData.push({name:"cotaDTO.tipoCota", value: $('[name="cotaDTO.TipoCota"]').val()});
 
-//        var numeroCota = {name:"cotaDTO.numeroCota", value: MANTER_COTA.numeroCota};
-        var numeroCota = {name:"cotaDTO.numeroCota", value: $('[name="cotaDTO.numeroCota"]').val()};
-        if ($('#numeroCota').is(':disabled')) {
-            formData.push(numeroCota);
+        var existeCota = false;
+        for (var i = 0; i < formData.length; i++) {
+        	if (formData[i].value == 'cotaDTO.numeroCota') {
+        		existeCota = true;
+        		break;
+        	}
+        }
+        if (!existeCota) {
+	        if (MANTER_COTA.numeroCota) {
+	        	formData.push({name:"cotaDTO.numeroCota", value: MANTER_COTA.numeroCota});
+	        } else {
+	        	formData.push({name:"cotaDTO.numeroCota", value: $('[name="cotaDTO.numeroCota"]').val()});
+	        }
         }
 
         $.postJSON(contextPath + "/cadastro/cota/salvarCotaCNPJ",
@@ -1430,6 +1446,7 @@ var COTA_CPF = $.extend(true, {
         $("#emailNFCPF", this.workspace).val(result.emailNF);
         $("#emiteNFECPF", this.workspace).attr("checked", (result.emiteNFE == true)?"checked":null);
         $("#classificacaoSelecionadaCPF", this.workspace).val(result.classificacaoSelecionada);
+        $('[name="cotaDTO.TipoCota"]', this.workspace).val(result.tipoCota);
         
         //Ajuste 0153
         $("#percentualCotaBase", this.workspace).html(result.percentualCotaBase+"%");
@@ -1475,10 +1492,12 @@ var COTA_CPF = $.extend(true, {
 
         formData.push({name:"cotaDTO.idCota",value: MANTER_COTA.idCota});
         formData.push({name:"cotaDTO.alteracaoTitularidade", value: MANTER_COTA.isAlteracaoTitularidade});
+        formData.push({name:"cotaDTO.tipoCota", value: $('[name="cotaDTO.TipoCota"]').val()});
 
-        var numeroCota = {name:"cotaDTO.numeroCota", value: MANTER_COTA.numeroCota};
-        if ($('#numeroCotaCPF').is(':disabled')) {
-            formData.push(numeroCota);
+        if (MANTER_COTA.numeroCota) {
+        	formData.push({name:"cotaDTO.numeroCota", value: MANTER_COTA.numeroCota});
+        } else {
+        	formData.push({name:"cotaDTO.numeroCota", value: $('[name="cotaDTO.numeroCota"]').val()});
         }
 
         $.postJSON(contextPath + "/cadastro/cota/salvarCotaCPF",

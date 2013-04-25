@@ -34,7 +34,6 @@ import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.distribuicao.RankingSegmento;
-import br.com.abril.nds.model.distribuicao.RegistroCotaRegiao;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
@@ -126,7 +125,6 @@ public class Cota implements Serializable {
 	@OneToMany(mappedBy="cota", fetch=FetchType.LAZY)
 	private List<EstoqueProdutoCota> estoqueProdutoCota;
 	
-
 	/**
 	 * Data de início de atividade da cota
 	 */
@@ -591,6 +589,4 @@ public class Cota implements Serializable {
 	public void setEstoqueProdutoCota(List<EstoqueProdutoCota> estoqueProdutoCota) {
 		this.estoqueProdutoCota = estoqueProdutoCota;
 	}
-	
-	
 }

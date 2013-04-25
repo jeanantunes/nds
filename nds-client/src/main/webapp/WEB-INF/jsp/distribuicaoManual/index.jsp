@@ -21,7 +21,23 @@
 </style>
 </head>
 
+<div id="distribuicaoManualTelaAnalise" />
+<div id="distribuicaoManualContent">
+
 <body>
+	<div id="dialog-cancelar-estudo" title="Cancelar Estudo" style="display: none;">
+		<p>Tem certeza que deseja cancelar este estudo?</p>
+	</div>
+	<div id="dialog-voltar" title="Voltar" style="display: none;">
+		<p>Tem certeza que deseja voltar para a matriz de distribuição e cancelar este estudo?</p>
+	</div>
+	<div id="dialog-saldo" title="Confirmação de Saldo" style="display: none;">
+		<p>Não foram distribuídos todos os exemplares, tem certeza que deseja gerar o estudo mesmo assim?</p>
+	</div>
+	<div id="dialog-status-suspenso" title="Cota com status suspenso" style="display: none;">
+		<p>Cota suspensa, deseja continuar?</p>
+	</div>
+
 	<div id="dialog-cancelar" title="Cancelar Operação"
 		style="display: none;">
 		<fieldset style="width: 320px !important;">
@@ -112,7 +128,7 @@
 						alt="Voltar" hspace="5" border="0" />Voltar</a>
 				</span>
 				<span class="bt_novos">
-					<a href="javascript:;" onclick="distribuicaoManual.voltar();">
+					<a href="javascript:;" onclick="distribuicaoManual.cancelar();">
 						<img src="${pageContext.request.contextPath}/images/ico_excluir.gif"
 						alt="Cancelar" hspace="5" border="0" />Cancelar</a>
 				</span>
@@ -129,4 +145,4 @@
 			</fieldset>
 		</div>
 	</div>
-</body>
+</body></div>

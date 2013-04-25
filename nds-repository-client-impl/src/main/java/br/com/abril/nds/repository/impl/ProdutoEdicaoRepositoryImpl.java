@@ -15,6 +15,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -35,6 +36,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -186,6 +188,15 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		return (ProdutoEdicao) query.uniqueResult();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<ProdutoEdicao> listProdutoEdicaoPorCodProdutoNumEdicoes(String codigoProduto, Long numeroEdicaoInicial, Long numeroEdicaoFinal) {
+		return super.getSession().createCriteria(ProdutoEdicao.class)
+				.add(Restrictions.between("numeroEdicao", numeroEdicaoInicial, numeroEdicaoFinal))
+				.addOrder(Order.asc("numeroEdicao"))
+				.createCriteria("produto")
+				.add(Restrictions.eq("codigo", codigoProduto)).list();
+	}
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<ProdutoEdicao> obterProdutoEdicaoPorCodigoBarra(String codigoBarra) {
@@ -313,26 +324,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	public ProdutoEdicao obterProdutoEdicaoPorSM(Long sm) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public List<ProdutoEdicao> pesquisar(String codigoProduto,
-			String nomeProduto, Long edicao) {
-		
-		Criteria criteria = super.getSession().createCriteria(ProdutoEdicao.class);
-		if(edicao != null){
-			criteria = criteria.add(Restrictions.eq("numeroEdicao", edicao));
-		}
-		criteria = criteria.createAlias("produto", "produto");
-		if(codigoProduto != null){
-			criteria = criteria.add(Restrictions.eq("produto.codigo", codigoProduto));
-		}
-		if(nomeProduto != null){
-			criteria = criteria.add(Restrictions.eq("produto.nome", nomeProduto));
-		}
-		List<ProdutoEdicao> resultado =  criteria.list();
-		
-		return resultado;
 	}
 	
 	@Override
@@ -995,7 +986,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		queryStringProdutoEdicao += " where "+StringUtils.join(whereList," and ");
 		
 		//Group by
-		queryStringProdutoEdicao +=" GROUP BY produtoEdicao.numeroEdicao "; 
+		queryStringProdutoEdicao +=" GROUP BY produtoEdicao.numeroEdicao ";
+		queryStringProdutoEdicao +=" ORDER BY produtoEdicao.numeroEdicao desc ";
 		
 		Query query = this.getSession().createQuery(queryStringProdutoEdicao);
 
@@ -1251,7 +1243,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" produto.periodicidade as periodicidade, ");
 		hql.append(" lancamento.dataLancamentoPrevista as dataLancamento, ");
 		hql.append(" sum(lancamento.reparte) as repartePrevisto, ");
-		hql.append(" sum(ifnull(estoqueProduto.qtdeDevolucaoFornecedor,0)  - movimentos.qtde) as qtdeVendas,");
+		hql.append(" sum(movimentos.qtde - coalesce(estoqueProduto.qtdeDevolucaoFornecedor, 0)) as qtdeVendas,");
 		hql.append(" lancamento.status as situacaoLancamento, ");
 		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa, ");
 		hql.append(" produto.tipoClassificacaoProduto as tipoClassificacaoProduto ");
@@ -1286,7 +1278,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			parameters.put("numeroEdicao", filtro.getNumeroEdicao());
 		} 
 		
-		hql.append("GROUP BY produtoEdicao.numeroEdicao");
+		hql.append(" GROUP BY produtoEdicao.numeroEdicao ");
+		hql.append(" ORDER BY produtoEdicao.numeroEdicao DESC ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
@@ -1504,11 +1497,27 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	    
 	    Session s = getSession();
 	    
+	    Map<Long, BigInteger> prod = new HashMap<>(); 
 	    Criteria esto = s.createCriteria(EstoqueProdutoCota.class).add(Restrictions.eq("produtoEdicao.id", produtoEdicao.getId()));
 	    List<EstoqueProdutoCota> temp = esto.list();
 	    for (EstoqueProdutoCota x : temp) {
-		x.setQtdeDevolvida(BigInteger.valueOf(Math.round(1 + (Math.random() * x.getQtdeRecebida().longValue()))));
+		BigInteger venda = BigInteger.valueOf(Math.round((Math.random() * x.getQtdeRecebida().longValue())));
+		if (prod.get(x.getProdutoEdicao().getId()) == null) {
+		    prod.put(x.getProdutoEdicao().getId(), venda);
+		} else {
+		    prod.put(x.getProdutoEdicao().getId(), prod.get(x.getProdutoEdicao().getId()).add(venda));
+		}
+		x.setQtdeDevolvida(venda);
 		s.persist(x);
+	    }
+	    
+	    Criteria espr = s.createCriteria(EstoqueProduto.class).add(Restrictions.eq("produtoEdicao.id", produtoEdicao.getId()));
+	    List<EstoqueProduto> temp3 = espr.list();
+	    for (EstoqueProduto x : temp3) {
+		if (prod.get(x.getProdutoEdicao().getId()) != null) {
+		    x.setQtdeDevolucaoFornecedor(prod.get(x.getProdutoEdicao().getId()));
+		    s.persist(x);
+		}
 	    }
 	    
 	    Criteria lanc = s.createCriteria(Lancamento.class).add(Restrictions.eq("produtoEdicao.id", produtoEdicao.getId()));

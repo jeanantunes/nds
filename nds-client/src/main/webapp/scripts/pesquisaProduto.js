@@ -150,6 +150,7 @@ function PesquisaProduto(workspace) {
 			},
 			select : function(event, ui) {
 				pesquisaProduto.descricaoAtribuida = true;
+				
 			},
 			minLength: 4,
 			delay : 0,
@@ -304,35 +305,10 @@ function PesquisaProduto(workspace) {
 		
 		if (codProduto && codProduto.length >= 5) {
 			$.postJSON(contextPath + "/produto/autoCompletarPorCodProduto", {codigoProduto:codProduto},
-					   function(result) { pesquisaProduto.exibirAutoComplete(result, idCampoCodProduto,5); },
+					   function(result) { pesquisaProduto.exibirAutoComplete(result, idCampoCodProduto); },
 					   null, isFromModal);
 		}
 	},
-	
-	/*
-	 * 	this.autoCompletarPorNome = function(idCampoNomeCota, isFromModal) {
-		
-		pesquisaCota.pesquisaRealizada = false;
-		
-		var nomeCota = $(idCampoNomeCota, pesquisaCota.workspace).val();
-		
-		nomeCota = $.trim(nomeCota);
-		
-		$(idCampoNomeCota, pesquisaCota.workspace).autocomplete({source: [""]});
-		
-		if (nomeCota && nomeCota.length > 2) {
-			
-			$.postJSON(
-				contextPath + "/cadastro/cota/autoCompletarPorNome", {nomeCota:nomeCota},
-				function(result) { 
-					pesquisaCota.exibirAutoComplete(result, idCampoNomeCota, 3);
-				},
-				null, 
-				isFromModal
-			);
-		}
-	},
-	 */
 	
 	
 	this.exibirAutoCompleteEdicao = function(result, idEdicao) {

@@ -323,7 +323,7 @@ function esconde_redutor(){
                           </tr>
                           <tr>
                             <td>Edição:</td>
-                            <td>${ produtoEdicao.numeroEdicao }</td>
+                            <td id="numeroEdicao">${ produtoEdicao.numeroEdicao }</td>
                           </tr>
                           <tr>
                             <td>Preço R$</td>
@@ -353,11 +353,11 @@ function esconde_redutor(){
                         
                     </fieldset>
                   <fieldset style="width:270px!important; margin-bottom:10px; margin-left:10px; float:left;">
-               	    <legend>Estudo Nº: ${ estudo.id }</legend>
+               	    <legend>Estudo Nº: <span id="idEstudo"></span></legend>
                    	  <table width="270" border="0" cellspacing="2" cellpadding="2">
                         <tr class="class_linha_1">
                           <td width="99"><strong>Status do Estudo:</strong></td>
-                          <td width="157"><strong>${ estudo.status.descricao }</strong></td>
+                          <td width="157"><strong>${estudo.status.descricao}</strong></td>
                         </tr>
                       </table>
                    	  <table width="275" border="0" cellspacing="2" cellpadding="2">
@@ -679,280 +679,279 @@ function esconde_redutor(){
     
     </div>
 </div> 
+
 <script>
 $(".listaRegiaoGrid").flexigrid({
-			//url : '../xml/pesqRegiao-xml.xml',
-			dataType : 'json',
-			colModel : [ {
-				display : 'Região',
-				name : 'regiao',
-				width : 330,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : '',
-				name : 'sel',
-				width : 20,
-				sortable : true,
-				align : 'center'
-			}],
-			width : 400,
-			height : 200
-		});
- $(".edicaoProdCadastradosGrid").flexigrid({
-			//url : '../xml/pesqEdicaoD-xml.xml',
-			dataType : 'json',
-			colModel : [ {
-				display : 'Edição',
-				name : 'numeroEdicao',
-				width : 40,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Período',
-				name : 'periodicidade',
-				width : 40,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Data Lançamento',
-				name : 'dataLancamentoFormatada',
-				width : 90,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Reparte',
-				name : 'reparte',
-				width : 40,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Venda',
-				name : 'venda',
-				width : 35,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Status',
-				name : 'statusSituacao',
-				width : 70,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Classificação',
-				name : 'classificacao',
-				width : 70,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Capa',
-				name : 'capa',
-				width : 25,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : '',
-				name : 'select',
-				width : 20,
-				sortable : true,
-				align : 'center'
-			}],
-			width : 560,
-			height : 200
-		});
-	$(".elemento1Grid").flexigrid({
-			//url : '../xml/elemento1-xml.xml',
-			dataType : 'json',
-			colModel : [ {
-				display : 'Componentes',
-				name : 'componenteDesc',
-				width : 120,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Elementos',
-				name : 'elementoDesc',
-				width : 145,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : '% Bonificacao',
-				name : 'percBonificacaoInput',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Reparte Min.',
-				name : 'reparteMinimoInput',
-				width : 70,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Todas<br/> as Cotas',
-				name : 'sel',
-				width : 45,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Ação',
-				name : 'acao',
-				width : 25,
-				sortable : true,
-				align : 'center'
-			}],
-			width : 580,
-			height : 130
-		});
-	
-	
-		$(".bonificacoesGrid").flexigrid({
-			//url : '../xml/criarRegiao1-xml.xml',
-			dataType : 'json',
-			colModel : [{
-				display : 'Elementos',
-				name : 'descricao',
-				width : 205,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Ação',
-				name : 'acao',
-				width : 30,
-				sortable : true,
-				align : 'center'
-			}],
-			width : 280,
-			height : 110
-		});
-		
-		
-		
-	$(".estrategiaGrid").flexigrid({
-			//url : '../xml/listaEstrategias-xml.xml',
-			dataType : 'json',
-			colModel : [ {
-				display : 'Código',
-				name : 'codigo',
-				width : 35,
-				sortable : true,
-				align : 'left'
-			},{
-				display : 'Prod.',
-				name : 'produto',
-				width : 90,
-				sortable : true,
-				align : 'left'
-			},{
-				display : 'Edição',
-				name : 'edicao',
-				width : 35,
-				sortable : true,
-				align : 'left'
-			},{
-				display : 'Per.',
-				name : 'periodo',
-				width : 20,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Peso',
-				name : 'peso',
-				width : 20,
-				sortable : true,
-				align : 'center'
-			}],
-			width : 280,
-			height : 110
-		});
-		
-		
-		
-	$(".lstComponentesGrid").flexigrid({
-			//url : '../xml/listaComponentes-xml.xml',
-			dataType : 'json',
-			colModel : [ {
-				display : 'Componentes',
-				name : 'componentes',
-				width : 205,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Ação',
-				name : 'acao',
-				width : 30,
-				sortable : true,
-				align : 'center'
-			}],
-			width : 280,
-			height : 110
-		});
-	$(".dadosBasesGrid").flexigrid({
-			//url : '../xml/dadosDistribB-xml.xml',
-			dataType : 'json',
-			colModel : [ {
-				display : 'Código',
-				name : 'codigoProduto',
-				width : 40,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Produto',
-				name : 'nomeComercial',
-				width : 80,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Edição',
-				name : 'numeroEdicao',
-				width : 35,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Período',
-				name : 'periodicidade',
-				width : 50,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Status',
-				name : 'statusSituacao',
-				width : 70,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Reparte',
-				name : 'reparte',
-				width : 45,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Venda',
-				name : 'venda',
-				width : 40,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Venda %',
-				name : 'percentualVenda',
-				width : 40,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Peso',
-				name : 'pesoInput',
-				width : 40,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : '',
-				name : 'select',
-				width : 20,
-				sortable : true,
-				align : 'center'
-			}],
-			width : 600,
-			height : 240
-		});
+	//url : '../xml/pesqRegiao-xml.xml',
+	dataType : 'json',
+	colModel : [ {
+		display : 'Região',
+		name : 'regiao',
+		width : 330,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : '',
+		name : 'sel',
+		width : 20,
+		sortable : true,
+		align : 'center'
+	}],
+	width : 400,
+	height : 200
+});
+$(".edicaoProdCadastradosGrid").flexigrid({
+	//url : '../xml/pesqEdicaoD-xml.xml',
+	dataType : 'json',
+	colModel : [ {
+		display : 'Edição',
+		name : 'numeroEdicao',
+		width : 40,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : 'Período',
+		name : 'periodo',
+		width : 40,
+		sortable : true,
+		align : 'center'
+	}, {
+		display : 'Data Lançamento',
+		name : 'dataLancamentoFormatada',
+		width : 90,
+		sortable : true,
+		align : 'center'
+	}, {
+		display : 'Reparte',
+		name : 'reparte',
+		width : 40,
+		sortable : true,
+		align : 'right'
+	}, {
+		display : 'Venda',
+		name : 'venda',
+		width : 35,
+		sortable : true,
+		align : 'right'
+	}, {
+		display : 'Status',
+		name : 'status',
+		width : 70,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : 'Classificação',
+		name : 'classificacao',
+		width : 70,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : 'Capa',
+		name : 'capa',
+		width : 25,
+		sortable : true,
+		align : 'center'
+	}, {
+		display : '',
+		name : 'select',
+		width : 20,
+		sortable : true,
+		align : 'center'
+	}],
+	width : 560,
+	height : 200
+});
+$(".elemento1Grid").flexigrid({
+	//url : '../xml/elemento1-xml.xml',
+	dataType : 'json',
+	colModel : [ {
+		display : 'Componentes',
+		name : 'componenteDesc',
+		width : 120,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : 'Elementos',
+		name : 'elementoDesc',
+		width : 145,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : '% Bonificacao',
+		name : 'percBonificacaoInput',
+		width : 80,
+		sortable : true,
+		align : 'center'
+	}, {
+		display : 'Reparte Min.',
+		name : 'reparteMinimoInput',
+		width : 70,
+		sortable : true,
+		align : 'center'
+	}, {
+		display : 'Todas<br/> as Cotas',
+		name : 'sel',
+		width : 45,
+		sortable : true,
+		align : 'center'
+	}, {
+		display : 'Ação',
+		name : 'acao',
+		width : 25,
+		sortable : true,
+		align : 'center'
+	}],
+	width : 580,
+	height : 130
+});
+
+
+$(".bonificacoesGrid").flexigrid({
+	//url : '../xml/criarRegiao1-xml.xml',
+	dataType : 'json',
+	colModel : [{
+		display : 'Elementos',
+		name : 'descricao',
+		width : 205,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : 'Ação',
+		name : 'acao',
+		width : 30,
+		sortable : true,
+		align : 'center'
+	}],
+	width : 280,
+	height : 110
+});
+
+
+
+$(".estrategiaGrid").flexigrid({
+	//url : '../xml/listaEstrategias-xml.xml',
+	dataType : 'json',
+	colModel : [ {
+		display : 'Código',
+		name : 'codigo',
+		width : 35,
+		sortable : true,
+		align : 'left'
+	},{
+		display : 'Prod.',
+		name : 'produto',
+		width : 90,
+		sortable : true,
+		align : 'left'
+	},{
+		display : 'Edição',
+		name : 'edicao',
+		width : 35,
+		sortable : true,
+		align : 'left'
+	},{
+		display : 'Per.',
+		name : 'periodo',
+		width : 20,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : 'Peso',
+		name : 'peso',
+		width : 20,
+		sortable : true,
+		align : 'center'
+	}],
+	width : 280,
+	height : 110
+});
+
+
+
+$(".lstComponentesGrid").flexigrid({
+	//url : '../xml/listaComponentes-xml.xml',
+	dataType : 'json',
+	colModel : [ {
+		display : 'Componentes',
+		name : 'componentes',
+		width : 205,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : 'Ação',
+		name : 'acao',
+		width : 30,
+		sortable : true,
+		align : 'center'
+	}],
+	width : 280,
+	height : 110
+});
+$(".dadosBasesGrid").flexigrid({
+	//url : '../xml/dadosDistribB-xml.xml',
+	dataType : 'json',
+	colModel : [ {
+		display : 'Código',
+		name : 'codigoProduto',
+		width : 45,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : 'Produto',
+		name : 'nome',
+		width : 80,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : 'Edição',
+		name : 'numeroEdicao',
+		width : 35,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : 'Período',
+		name : 'periodo',
+		width : 50,
+		sortable : true,
+		align : 'center'
+	}, {
+		display : 'Status',
+		name : 'status',
+		width : 70,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : 'Reparte',
+		name : 'reparte',
+		width : 45,
+		sortable : true,
+		align : 'center'
+	}, {
+		display : 'Venda',
+		name : 'venda',
+		width : 40,
+		sortable : true,
+		align : 'center'
+	}, {
+		display : 'Venda %',
+		name : 'percentualVenda',
+		width : 40,
+		sortable : true,
+		align : 'right'
+	}, {
+		display : 'Peso',
+		name : 'pesoInput',
+		width : 40,
+		sortable : true,
+		align : 'center'
+	}, {
+		display : '',
+		name : 'select',
+		width : 20,
+		sortable : true,
+		align : 'center'
+	}],
+	width : 600,
+	height : 240
+});
 </script>
-<%--
- --%>

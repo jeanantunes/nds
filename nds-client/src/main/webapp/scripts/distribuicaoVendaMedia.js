@@ -40,8 +40,11 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		row.peso = 1;
 		row.select = '<input onclick="distribuicaoVendaMedia.selecionarProdutoBase(' + index + ', this)" type="checkbox" value=""/>';
 		
-		if(row.statusSituacao == undefined){
-			row.statusSituacao = '';
+		if(row.periodo == undefined){
+			row.periodo = '';
+		}
+		if(row.status == undefined){
+			row.status = '';
 		}
 		if(row.reparte == undefined){
 			row.reparte = '';
@@ -59,8 +62,11 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	};
 	
 	this.processarLinhaPesquisaBases = function(index, row){
-		row.capa = '<a onmouseover="distribuicaoVendaMedia.popup_detalhes('+row.codigoProduto+', '+row.numeroEdicao+');" onmouseout="popup_detalhes_close();" href="javascript:;"><img src="../images/ico_detalhes.png" border="0"/></a>';
+		row.capa = '<a onmouseover="distribuicaoVendaMedia.popup_detalhes(\''+row.codigoProduto+'\', '+row.numeroEdicao+');" onmouseout="popup_detalhes_close();" href="javascript:;"><img src="'+ pathTela +'/images/ico_detalhes.png" border="0"/></a>';
 		row.select = '<input onclick="distribuicaoVendaMedia.selecionarProdutoBasePopUp(' + index + ', this)" type="checkbox" value=""/>';
+		if(row.periodo == undefined){
+			row.periodo = '';
+		}
 		if(row.reparte == undefined){
 			row.reparte = '';
 		}
@@ -349,33 +355,11 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		}
 		
 		data.push({name : "codigoProduto", value : $('#codigoProduto').text()});
+		data.push({name : "numeroEdicao", value : $('#numeroEdicao').html()});
 		
-		//FIXME O que exibir nesta tela após estudo?
-		
-		$.post(pathTela + "/distribuicaoVendaMedia/gerarEstudo", data, function(response) {
-			$('<div>Exibir variaveis do estudo?</div>').dialog({ 
-        	    title: "Estudo",
-        	    buttons: [ { 
-        	        text: "OK", 
-        	        click: function() { 
-        	            $( this ).dialog( "close" );
-        	            var myWindow=window.open('','');
-        	            myWindow.document.write(response.estudo);
-        	            myWindow.focus();
-        	        } 
-        	    }, {
-        	    	text: "Cancel", 
-        	        click: function() { 
-        	            $( this ).dialog( "close" ); 
-        	        }
-        	    } ] 
-        	});
-			/*
-			var currentTab = getCurrentTabContainer();
-			currentTab.html(response);
-			currentTab.innerHeight(650);
-			redimensionarWorkspace();
-			*/
+		$.postJSON(pathTela + "/distribuicaoVendaMedia/gerarEstudo", data, function(result) {
+			$('#idEstudo').html(result.long);
+			exibirMensagemDialog("SUCCESS", ["Operação realizada com sucesso!"], "");
 		});
 	};
 	
