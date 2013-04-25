@@ -1005,18 +1005,19 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		//Criada para EMS 2029
 		String queryStringProdutoEdicao = 
 				"select 'De "+de+" a "+ate+"' as faixaVenda," +
-				" reparteTotal as repTotal, " +
-				" sum(reparteTotal)/count(HIST.COTA_ID) as repMedio, " +
+				" sum(reparteTotal) as repTotal, " +
+				" sum(reparteTotal)/count(COTA_ID) as repMedio, " +
 				" sum(HIST.qtde_Recebida - HIST.qtde_Devolvida) as vdaTotal, " +
-				" sum(HIST.qtde_Recebida - HIST.qtde_Devolvida)/count(HIST.COTA_ID) as vdaMedio, " +
-				" (sum(HIST.qtde_Recebida - hist.qtde_Devolvida)/reparteTotal)*100 as percVenda, " +
+				" sum(HIST.qtde_Recebida - HIST.qtde_Devolvida)/count(COTA_ID) as vdaMedio, " +
+				" (sum(HIST.qtde_Recebida - hist.qtde_Devolvida)/sum(reparteTotal))*100 as percVenda, " +
 				
 				// encalheMedio = ((rep total-vda nominal)/qte.cotas)
-				" (sum(reparteTotal)-sum(HIST.qtde_Recebida - HIST.qtde_Devolvida))/count(HIST.COTA_ID) as encalheMedio, " +
+				// " (sum(reparteTotal)-sum(HIST.qtde_Recebida - HIST.qtde_Devolvida))/count(HIST.COTA_ID) as encalheMedio, " +
+				" (avg(HIST.qtde_Devolvida)) as encalheMedio , " + 
 				
 				//Part Reparte – participação do reparte desta faixa de venda em relação ao reparte total da edição
 				// O valor dessa coluna é a soma de reparte das cotas que fazem parte desta faixa dividido pelo reparte total da edição.
-				" sum(hist.qtde_Recebida)/reparteTotal as partReparte, " +
+				" sum(hist.qtde_Recebida)/sum(reparteTotal) as partReparte, " +
 				
 				//Part Venda - mesmo critério que Part de Reparte, porém, observando a venda. 
 				//Resumindo, é a soma de venda das cotas que fazem parte desta faixa dividido pela venda total da edição.
@@ -1065,11 +1066,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				"   case when estoqueProdutoCota.QTDE_DEVOLVIDA=0 then estoqueProdutoCota.QTDE_RECEBIDA else 0 end as vdEsmag," +
 				"   case when estoqueProdutoCota.QTDE_DEVOLVIDA=estoqueProdutoCota.QTDE_RECEBIDA then 1 else 0 end as qtdeCotasSemVenda," +
 				"   case when cota2_.SITUACAO_CADASTRO='ATIVO' then 1 else 0 end as cotaAtiva," +
-				"	(select sum(reparte) from lancamento " +
-				"			JOIN produto_edicao on produto_edicao.ID = lancamento.PRODUTO_EDICAO_ID" +
-				"			JOIN PRODUTO ON produto_edicao.PRODUTO_ID=PRODUTO.ID" +
-				"			where produto.CODIGO = :produtoCodigo and " +
-				"			produto_Edicao.NUMERO_EDICAO in ( :nrEdicoes) ) as reparteTotal," +
+				"	estoqueProdutoCota.QTDE_RECEBIDA as reparteTotal," +	
 					" estoqueProdutoCota.ID as col_2_0_, " +
 					" estoqueProdutoCota.COTA_ID as COTA_ID, " +
 					" estoqueProdutoCota.PRODUTO_EDICAO_ID as PRODUTO6_585_, " +
@@ -1202,7 +1199,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.setParameter("de", de);
 		query.setParameter("ate", ate);
 		query.setParameter("produtoCodigo", codigoProduto);
-		query.setParameter("nrEdicoes", StringUtils.join(edicoes, ","));
+		query.setParameterList("nrEdicoes", edicoes);
 		
 		for (String key : parameterMap.keySet()) {
 			query.setParameter(key, parameterMap.get(key));

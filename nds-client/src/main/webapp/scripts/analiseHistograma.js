@@ -266,11 +266,9 @@ var anaLiseHistogramaController = $.extend(true, {
 					$("#"+idArray[i]).text(lastRow.cell[valueArray[i]]);
 				}
 				
-				
-				
 				// Adicionar o link as cotas esmagadas
 				// criei outro loop porque existe uma variável dentro do array "valueArray" que depende das cotas esmagadas (value.cell.cotasEsmagadas)
-				// com isso não foi possível adicionar a linha 253 no primeiro $.each
+				// com isso não foi possível adicionar no primeiro $.each (loop)
 				$.each(data.rows, function(index, value) {
 					if(parseInt(value.cell.qtdeCotas)>0){
 						value.cell.cotasEsmagadas="<a href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+index+",'idCotasEsmagadas');\">"+value.cell.cotasEsmagadas+"</a>";
