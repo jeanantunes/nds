@@ -281,6 +281,10 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 
 			}
 		}
+		else{
+			
+			hql.append(" order by sequencia ");
+		}
 
 		SQLQuery query = getSession().createSQLQuery(hql.toString());
 		
@@ -731,6 +735,10 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 				hql.append(paginacao.getOrdenacao().toString());
 				
 			}			
+		}
+		else{
+			
+			hql.append(" order by sequencia ");
 		}
 		
 		Session session = getSession();
