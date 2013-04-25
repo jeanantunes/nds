@@ -210,6 +210,8 @@ var ConferenciaEncalhe = $.extend(true, {
 
 		$("#cod_barras_conf_encalhe").keydown(function (event) {
 			
+			ConferenciaEncalhe.tratarEventoTeclaEspaco();
+			
 			//Pressionar tecla seta para frente ">" - Move foco
 		    if (event.keyCode == 39) {
 		    	$('#sm', ConferenciaEncalhe.workspace).focus();
@@ -221,7 +223,10 @@ var ConferenciaEncalhe = $.extend(true, {
 		});
 		
 		$("#sm").keydown(function (event) {			
-		    if (event.keyCode == 37) {//"<"
+		    
+			ConferenciaEncalhe.tratarEventoTeclaEspaco();
+			
+			if (event.keyCode == 37) {//"<"
 		    	$('#cod_barras_conf_encalhe', ConferenciaEncalhe.workspace).focus();
 		    	setTimeout (function () {$('#cod_barras_conf_encalhe', ConferenciaEncalhe.workspace).select();}, 1);
 		    }
@@ -229,6 +234,14 @@ var ConferenciaEncalhe = $.extend(true, {
 		this.bindkeypressCodigoBarras();
 		ConferenciaEncalhe.removerAtalhos();
 		$(".atalhosCE", ConferenciaEncalhe.workspace).hide();
+	},
+	
+	tratarEventoTeclaEspaco : function() {
+		
+		if (event.keyCode == 32 && visibleOverlay()) {
+			 
+			focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+		}
 	},
 	
 	 bindkeypressCodigoBarras:function(){
@@ -498,9 +511,11 @@ var ConferenciaEncalhe = $.extend(true, {
 			}
 			
 			ConferenciaEncalhe.limparDadosProduto();
-		});
-		
+		},
+		function() {
 			
+			focusSelectRefField($("#numeroCota", ConferenciaEncalhe.workspace));
+		});	
 	},
 	
 	pesquisarCota : function() {
