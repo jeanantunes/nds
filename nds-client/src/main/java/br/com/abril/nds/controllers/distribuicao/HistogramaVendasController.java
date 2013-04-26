@@ -69,13 +69,11 @@ public class HistogramaVendasController extends BaseController {
 	@Autowired
 	private PdvService pdvService;
 	
-	
 	@Autowired
 	private EnderecoService enderecoService;
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
-	
 	
 	@Rules(Permissao.ROLE_DISTRIBUICAO_HISTOGRAMA_VENDAS)
 	public void index(){
@@ -133,7 +131,6 @@ public class HistogramaVendasController extends BaseController {
 			break;
 		}
 		
-		
 		result.use(Results.json()).from(resultList, "result").recursive().serialize();
 	}
 	
@@ -187,7 +184,6 @@ public class HistogramaVendasController extends BaseController {
 			enumeratedList = StringUtils.join(nrEdicoes, " - ");
 		}
 		
-		
 		result.include("filtroUtilizado", getFiltroSessao());
 		result.include("listaEdicoes", enumeratedList);
 		result.include("segmentoLabel", segmento);
@@ -200,9 +196,7 @@ public class HistogramaVendasController extends BaseController {
 		
 		
 		//Pesquisar base de estudo e salvar em sessão
-//		List list = new ArrayList();
 		List<AnaliseHistogramaDTO> list = produtoEdicaoService.obterBaseEstudoHistogramaPorFaixaVenda(getFiltroSessao(),codigoProduto, faixasVenda, nrEdicoes);
-		
 	
 		session.setAttribute(HISTOGRAMA_SESSION_ATTRIBUTE, list);
 	}

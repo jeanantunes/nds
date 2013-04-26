@@ -51,14 +51,11 @@ public class MixCotaProdutoRepositoryImpl extends
 		super(MixCotaProduto.class);
 	}
 
-		
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<MixCotaDTO> pesquisarPorCota(
 			FiltroConsultaMixPorCotaDTO filtroConsultaMixCotaDTO) {
 		StringBuilder sql = new StringBuilder("");
-		
 		
 		sql.append(" select ") 
 		.append(" mix_cota_produto.ID id,  ")
@@ -81,6 +78,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" LEFT join produto_edicao on produto_edicao.PRODUTO_ID = produto.ID ") 
 		.append(" LEFT join lancamento on lancamento.PRODUTO_EDICAO_ID = produto_edicao.ID")
 		.append(" LEFT join cota on mix_cota_produto.ID_COTA = cota.ID ")
+		.append(" LEFT join estoque_produto_cota epc on epc.cota_id = cota.id ")
 		.append(" LEFT join tipo_classificacao_produto ON tipo_classificacao_produto.ID = produto.TIPO_CLASSIFICACAO_PRODUTO_ID ")
 		.append(" LEFT join usuario on usuario.ID = mix_cota_produto.ID_USUARIO ")
 
@@ -200,7 +198,6 @@ public class MixCotaProdutoRepositoryImpl extends
 		query.setParameter("idProduto", idProduto);
 		query.setParameter("idCota", idCota);
 		return query.list().size() >0;
-		
 	}
 
 
@@ -266,8 +263,6 @@ public class MixCotaProdutoRepositoryImpl extends
 		
 	}
 
-
-
 	@Override
 	public void gerarCopiaMixProduto(List<MixProdutoDTO> mixProdutoOrigem,Usuario usuarioLogado) {
 		
@@ -302,8 +297,8 @@ public class MixCotaProdutoRepositoryImpl extends
 			}
 			adicionar(mcp);
 		}
-		
 	}
+		
 	
 		@Override
 		public MixCotaProduto obterMixPorCotaProduto(Long cotaId, Long produtoId) {

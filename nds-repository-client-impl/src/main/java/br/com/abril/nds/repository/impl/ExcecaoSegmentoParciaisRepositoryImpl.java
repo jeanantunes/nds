@@ -125,14 +125,20 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends AbstractRepositoryMod
 	    hql.append(" and coalesce(pe.nomeFantasia, pe.razaoSocial, pe.nome,'') = :nomePessoa ");
 	    parameters.put("nomePessoa", filtro.getCotaDto().getNomePessoa());
 	}
+	boolean consultaFiltrada = false;
 	if (filtro.getProdutoDto() != null) {
 	    if (filtro.getProdutoDto().getCodigoProduto() != null && !filtro.getProdutoDto().getCodigoProduto().equals(0)) {
+		consultaFiltrada = true;
 		hql.append(" and p.codigo = :codigoProduto ");
 		parameters.put("codigoProduto", filtro.getProdutoDto().getCodigoProduto());
 	    } else if (filtro.getProdutoDto().getNomeProduto() != null && !filtro.getProdutoDto().getNomeProduto().isEmpty()) {
+		consultaFiltrada = true;
 		hql.append(" and p.nome = :nomeProduto ");
 		parameters.put("nomeProduto", filtro.getProdutoDto().getNomeProduto());
 	    }
+	}
+	if (!consultaFiltrada) {
+	    hql.append(" and 1 = 0 ");
 	}
 	hql.append(" order by c.numeroCota");
 
@@ -176,14 +182,20 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends AbstractRepositoryMod
 	    hql.append(" and p.nome = :nomeProduto ");
 	    parameters.put("nomeProduto", filtro.getProdutoDto().getNomeProduto());
 	}
+	boolean consultaFiltrada = false;
 	if (filtro.getCotaDto() != null) {
 	    if (filtro.getCotaDto().getNumeroCota() != null && !filtro.getCotaDto().getNumeroCota().equals(0)) {
+		consultaFiltrada = true;
 		hql.append(" and c.numeroCota = :numeroCota ");
 		parameters.put("numeroCota", filtro.getCotaDto().getNumeroCota());
 	    } else if (filtro.getCotaDto().getNomePessoa() != null && !filtro.getCotaDto().getNomePessoa().isEmpty()) {
+		consultaFiltrada = true;
 		hql.append(" and coalesce(pe.nomeFantasia, pe.razaoSocial, pe.nome,'') = :nomePessoa ");
 		parameters.put("nomePessoa", filtro.getCotaDto().getNomePessoa());
 	    }
+	}
+	if (!consultaFiltrada) {
+	    hql.append(" and 1 = 0 ");
 	}
 	hql.append(" order by numeroCota, nomePessoa ");
 

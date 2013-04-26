@@ -31,7 +31,7 @@
                 <td width="25%">
 	                <select name="select" id="select" style="width:160px;">
 				            <c:forEach items="${classificacao}" var="tipoProduto">
-								<option value="<c:out value="${tipoProduto.descricao}"/>"><c:out value="${tipoProduto.descricao}"/></option>
+								<option value="<c:out value="${tipoProduto.descricao}"/>" ${tipoProduto.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoProduto.descricao}"/></option>
 							</c:forEach>
 	          		</select>
                 </td>
@@ -255,8 +255,8 @@
 	<table id="tableNovoProduto" border="0" cellspacing="1" cellpadding="1" >
          <thead>
         		<tr>
-         		<td><strong>C&oacute;digo:</strong></td>
          		<td><strong>Cota:</strong></td>
+         		<td><strong>Nome PDV:</strong></td>
          		<td><strong>Rep. Minimo:</strong></td>
          		<td><strong>Rep. Maximo:</strong></td>
          		<td><a href="javascript:mixCotaProdutoController.addLinhaProduto();"><img src="images/ico_add.gif"/></a></td>
@@ -308,8 +308,8 @@ function limpaCamposRadioCota(){
 	$('#nomeCotaMix').val("");
 }
 function limpaCamposRadioProduto(){
-	$('#codigoProduto').val("");
-	$('#nomeProduto').val("");
+	$('#codigoProdutoMix').val("");
+	$('#nomeProdutoMix').val("");
 }
 </script>
       
