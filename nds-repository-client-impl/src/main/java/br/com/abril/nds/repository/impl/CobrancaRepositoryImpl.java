@@ -16,7 +16,6 @@ import br.com.abril.nds.client.vo.NegociacaoDividaDetalheVO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
 import br.com.abril.nds.model.StatusCobranca;
-import br.com.abril.nds.model.StatusControle;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -347,47 +346,6 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 			query.setParameter("data", data);
 		}
 		
-		return (BigDecimal) query.uniqueResult();
-	}
-	
-	@Override
-	public BigDecimal obterValorCobrancaNaoPagoDaCota(Integer numeroCota){
-		
-		BigDecimal valorCobrancaNaoPago = this.obterValorNaoPagoCobranca(numeroCota); 
-
-		return valorCobrancaNaoPago != null ? valorCobrancaNaoPago : BigDecimal.ZERO;
-	}
-	
-	/**
-	 * Retorna o valor das cobranças em aberto de uma determinada cota
-	 * 
-	 * @param dataVencimento - data de vencimento da cobrança
-	 * 
-	 * @param numeroCota - numero da cota
-	 * 
-	 * @return BigDecimal
-	 */
-	private BigDecimal obterValorNaoPagoCobranca(Integer numeroCota) {
-		
-		StringBuilder hql = new StringBuilder();
-
-		hql.append(" select sum(cobranca.valor + coalesce(cobranca.encargos, 0)) ")
-			.append(" from Cobranca cobranca, Distribuidor distribuidor, ControleBaixaBancaria cbb ")
-			.append(" inner join cobranca.cota cota ")
-			.append(" where cota.numeroCota		  =	 :numeroCota ")
-			.append(" and cobranca.statusCobranca =  :status ")
-			.append(" and cobranca.dataVencimento < distribuidor.dataOperacao ")
-			.append(" and (cobranca.divida.origemNegociacao = :origemNegociacao ")
-			.append(" 	or cobranca.divida.origemNegociacao is null) ")
-			.append(" and cbb.dataOperacao = distribuidor.dataOperacao ")
-			.append(" and cbb.status = :concluidoSucesso ");
-
-		Query query = this.getSession().createQuery(hql.toString());
-		query.setParameter("status", StatusCobranca.NAO_PAGO);
-		query.setParameter("numeroCota", numeroCota);
-		query.setParameter("origemNegociacao", false);
-		query.setParameter("concluidoSucesso", StatusControle.CONCLUIDO_SUCESSO);
-
 		return (BigDecimal) query.uniqueResult();
 	}
 

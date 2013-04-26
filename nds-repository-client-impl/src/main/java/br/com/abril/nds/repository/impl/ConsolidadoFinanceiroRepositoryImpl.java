@@ -934,7 +934,6 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("  where cons.DT_CONSOLIDADO < cfc.DT_CONSOLIDADO and ")
 		   .append("  (select count(cob.id) from COBRANCA cob where cob.COTA_ID = cons.COTA_ID) = 0 and ")
 		   .append("   cons.COTA_ID = cfc.COTA_ID")
-		   //total
 		   .append(" ) AS dataRaiz, ")
 		   .append(" coalesce((select sum(bc.VALOR_PAGO) ")
 		   .append("           from BAIXA_COBRANCA bc ")
@@ -946,6 +945,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("           and cota.ID = cobranca.COTA_ID ")
 		   .append("           and divida.CONSOLIDADO_ID = cfc.ID ")
 		   .append("           and cfc.ID),0) as valorPago, ")
+		   //total
 		   .append(" cfc.TOTAL as total, ")
 		   //saldo = total - valorPago
 		   .append(" (total - ")

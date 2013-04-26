@@ -269,6 +269,66 @@ public class BoletoServiceImpl implements BoletoService {
 			resumoBaixaBoletos.setDataCompetencia(DateUtil.formatarDataPTBR(dataOperacao));
 			resumoBaixaBoletos.setSomaPagamentos(arquivoPagamento.getSomaPagamentos());
 			
+			//gerar movimentos financeiros para cobranças não pagas
+			List<Boleto> boletosNaoPagos = this.boletoRepository.obterBoletosNaoPagos(dataPagamento);
+			
+			for (Boleto boleto : boletosNaoPagos){
+				
+				Divida divida = boleto.getDivida();
+				divida.setStatus(StatusDivida.PENDENTE);
+				this.dividaRepository.alterar(divida);
+				
+				boleto.setStatusCobranca(StatusCobranca.NAO_PAGO);
+				this.boletoRepository.alterar(boleto);
+				
+				//movimentoFinanceiro do valor do boleto
+				this.gerarMovimentoFinanceiro(
+						dataOperacao,
+						usuario,
+						boleto.getCota(),
+						boleto.getValor(), 
+						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+								GrupoMovimentoFinaceiro.PENDENTE),
+						"Oriundo de cobrança não paga");
+				
+				BigDecimal valor = this.cobrancaService.calcularJuros(
+						boleto.getBanco(), 
+						boleto.getCota().getId(), 
+						boleto.getValor(), 
+						boleto.getDataVencimento(), 
+						this.calendarioService.adicionarDiasRetornarDiaUtil(dataOperacao, 1));
+					
+				if (valor != null && valor.compareTo(BigDecimal.ZERO) > 0){
+					
+					//movimento finaceiro juros
+					this.gerarMovimentoFinanceiro(
+							dataOperacao,
+							usuario,
+							boleto.getCota(),
+							valor,
+							this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+									GrupoMovimentoFinaceiro.JUROS),
+							"Juros oriundos de cobrança não paga");
+				}
+				
+				valor = this.cobrancaService.calcularMulta(
+						boleto.getBanco(), 
+						boleto.getCota(), 
+						boleto.getValor());
+				
+				if (valor != null && valor.compareTo(BigDecimal.ZERO) > 0){
+					
+					//movimento financeiro multa
+					this.gerarMovimentoFinanceiro(
+							dataOperacao,
+							usuario,
+							boleto.getCota(), 
+							valor,
+							this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+									GrupoMovimentoFinaceiro.MULTA),
+							"Multa oriunda de cobrança não paga");
+				}
+			}
 		} catch (Exception e) {
 			
 			this.controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_ERROS,
@@ -286,6 +346,25 @@ public class BoletoServiceImpl implements BoletoService {
 		}
 	}
 	
+	private void gerarMovimentoFinanceiro(Date dataOperacao, Usuario usuario, Cota cota, 
+			BigDecimal valor, TipoMovimentoFinanceiro tipoMovimentoFinanceiro, String observacao) {
+		
+		MovimentoFinanceiroCotaDTO dto = new MovimentoFinanceiroCotaDTO();
+		dto.setAprovacaoAutomatica(true);
+		dto.setCota(cota);
+		dto.setDataCriacao(dataOperacao);
+		dto.setDataOperacao(dataOperacao);
+		dto.setDataVencimento(this.calendarioService.adicionarDiasRetornarDiaUtil(dataOperacao, 1));
+		dto.setLancamentoManual(false);
+		dto.setObservacao(observacao);
+		dto.setTipoEdicao(TipoEdicao.INCLUSAO);
+		dto.setUsuario(usuario);
+		dto.setValor(valor);
+		dto.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
+		
+		this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(dto);
+	}
+
 	@Override
 	@Transactional
 	public void baixarBoleto(TipoBaixaCobranca tipoBaixaCobranca, PagamentoDTO pagamento, Usuario usuario,

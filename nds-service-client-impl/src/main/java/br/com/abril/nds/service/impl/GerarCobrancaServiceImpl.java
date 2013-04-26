@@ -521,9 +521,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		consolidadoFinanceiroCota.setCota(cota);
 		consolidadoFinanceiroCota.setDataConsolidado(dataOperacao);
 		consolidadoFinanceiroCota.setMovimentos(movimentos);
-		consolidadoFinanceiroCota.setPendente(
-			this.obterValorPendenteCobrancaConsolidado(cota.getNumeroCota())
-		);
 		
 		BigDecimal vlMovFinanDebitoCredito = BigDecimal.ZERO;
 		BigDecimal vlMovFinanEncalhe = BigDecimal.ZERO;
@@ -531,6 +528,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		BigDecimal vlMovFinanVendaEncalhe = BigDecimal.ZERO;
 		BigDecimal vlMovPostergado = BigDecimal.ZERO;
 		BigDecimal vlMovConsignado = BigDecimal.ZERO;
+		BigDecimal vlMovPendente = BigDecimal.ZERO;
 
 		for (MovimentoFinanceiroCota movimentoFinanceiroCota : movimentos){
 			
@@ -580,6 +578,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					vlMovPostergado = 
 							this.adicionarValor(vlMovPostergado, movimentoFinanceiroCota);
 				break;
+				case PENDENTE:
+					vlMovPendente =
+						this.adicionarValor(vlMovPendente, movimentoFinanceiroCota);
+				break;
 			}
 		}
 		
@@ -590,7 +592,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				.add(vlMovFinanVendaEncalhe)
 				.add(vlMovFinanDebitoCredito)
 				.add(vlMovFinanEncargos)
-				.subtract(consolidadoFinanceiroCota.getPendente()!=null?consolidadoFinanceiroCota.getPendente():BigDecimal.ZERO);
+				.add(vlMovPendente);
 		
 		consolidadoFinanceiroCota.setTotal(vlMovFinanTotal);
 		consolidadoFinanceiroCota.setDebitoCredito(vlMovFinanDebitoCredito);
@@ -599,6 +601,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		consolidadoFinanceiroCota.setVendaEncalhe(vlMovFinanVendaEncalhe.abs());
 		consolidadoFinanceiroCota.setValorPostergado(vlMovPostergado);
 		consolidadoFinanceiroCota.setConsignado(vlMovConsignado.abs());
+		consolidadoFinanceiroCota.setPendente(vlMovPendente.abs());
 		
 		//insere postergado pois não encontrou forma de cobrança
 		if (formaCobrancaPrincipal == null){
@@ -1055,10 +1058,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	 * 
 	 * @return BigDecimal - valor pendente de cobrança do sonsolidado
 	 */
-	private BigDecimal obterValorPendenteCobrancaConsolidado(Integer numeroCota){
-		
-		return cobrancaRepository.obterValorCobrancaNaoPagoDaCota(numeroCota);
-	}
+//	private BigDecimal obterValorPendenteCobrancaConsolidado(Integer numeroCota){
+//		
+//		return cobrancaRepository.obterValorCobrancaNaoPagoDaCota(numeroCota);
+//	}
 	
 	private BigDecimal adicionarValor(BigDecimal valor, MovimentoFinanceiroCota movimentoFinanceiroCota){
 		

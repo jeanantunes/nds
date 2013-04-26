@@ -1332,7 +1332,7 @@ public class Fixture {
 		TipoMovimentoFinanceiro tipoMovimento = new TipoMovimentoFinanceiro();
 		tipoMovimento.setAprovacaoAutomatica(true);
 		tipoMovimento.setDescricao("Pendente");
-		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.DEBITO);
+		tipoMovimento.setGrupoMovimentoFinaceiro(GrupoMovimentoFinaceiro.PENDENTE);
 		return tipoMovimento;
 	}	
 	
