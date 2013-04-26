@@ -1052,19 +1052,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					dataOperacao);
 	}
 	
-	/**
-	 * 
-	 * Retorna o valor de cobrança em aberto que a cota não pagou até a presente data de geração do novo consolidado em questão.
-	 * 
-	 * @param numeroCota - número da cota
-	 * 
-	 * @return BigDecimal - valor pendente de cobrança do sonsolidado
-	 */
-//	private BigDecimal obterValorPendenteCobrancaConsolidado(Integer numeroCota){
-//		
-//		return cobrancaRepository.obterValorCobrancaNaoPagoDaCota(numeroCota);
-//	}
-	
 	private BigDecimal adicionarValor(BigDecimal valor, MovimentoFinanceiroCota movimentoFinanceiroCota){
 		
 		if (movimentoFinanceiroCota.getValor() == null){
