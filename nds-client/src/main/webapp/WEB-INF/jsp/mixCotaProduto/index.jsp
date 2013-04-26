@@ -50,7 +50,7 @@
 
         	
         	
-          <span class="bt_novos" title="Adicionar em Lote"  id="btAddLoteMixCota"><a href="javascript:;" onclick="mixCotaProdutoController.add_lote();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
+          <span class="bt_novos" title="Adicionar em Lote"  id="btAddLoteMixCota"><a href="javascript:;" onclick="mixCotaProdutoController.addLoteMix();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
          
          <span class="bt_novos" title="Novo"  id="btNovoMixCota"><a href="javascript:mixCotaProdutoController.novoMixPorCota();"><img src="images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>
          <!--<span class="bt_novos" title="Histï¿½rico"><a href="javascript:;" onclick="mostra_historico();"><img src="../images/ico_msg_anteriores.gif" hspace="5" border="0" />Histï¿½rico</a></span>-->
@@ -164,6 +164,19 @@
 	   
       </div>
       
+      <!-- DIALOG  UPLOAD -->		
+	<div id="modalUploadArquivoMix" title="Adicionar em Lote" style="display:none;">
+	 <form action="${pageContext.request.contextPath}/distribuicao/mixCotaProduto/uploadArquivoLote" id="formUploadLoteMix" method="post"  enctype="multipart/form-data">
+	 		<p>Utilize o modelo de exemplo para fazer upload para o sistema: </p>
+	      	<p ><span class="bt_novos" title="Download Modelo"><a href="${pageContext.request.contextPath}/modelos/modelo_mix.xls"><img align="center" src="images/ico_excel.png" hspace="5" border="0" />Modelo de exemplo</a></span></p>
+	      	<br><br><br>
+	      	<hr>
+	      	<p>Selecione um arquivo para upload:</p>
+	      	<br>
+	      	<p align="center"><input type="file" id="excelFile" name="excelFile" style="width:200px"/></p>
+      </form>
+	</div>	
+	
    <!-- MODAL REPARTE POR PDV -->	
 	<div id="dialog-defineReparte" title="Definir reparte por PDV" style="display:none;">
   <fieldset style="width:605px!important;">
