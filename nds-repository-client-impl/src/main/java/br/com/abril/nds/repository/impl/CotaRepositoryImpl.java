@@ -2743,8 +2743,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
 	@Transactional(readOnly = true)
+	@Override
 	public List<Integer> numeroCotaExiste(TipoDistribuicaoCota tipoDistribuicaoCota, Integer... cotaIdArray) {
 
 		StringBuilder hql = new StringBuilder();
