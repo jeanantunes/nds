@@ -339,5 +339,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	List<Lancamento> obterLancamentosParcialEdicao(Long idProdutoEdicao, String sortorder, String sortname);
 
 	Set<Date> obterDatasLancamentosExpedidos(Intervalo<Date> intervalo);
+
+	List<ProdutoLancamentoDTO> verificarDataConfirmada(ProdutoLancamentoDTO produtoLancamentoDTO);
 	
 }
