@@ -152,4 +152,10 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	 * @return
 	 */
 	List<ChamadaEncalheCota> obterListChamadaEncalheCota(Long chamadaEncalheID, Long cotaID);
+
+	BigDecimal obterTotalDescontoDaChamaEncalheCota(Integer numeroCota,
+			Date dataOperacao, Boolean conferido, Boolean postergado);
+
+	BigDecimal obterTotalDaChamaEncalheCotaSemDesconto(Integer numeroCota,
+			Date dataOperacao, Boolean conferido, Boolean postergado);
 }

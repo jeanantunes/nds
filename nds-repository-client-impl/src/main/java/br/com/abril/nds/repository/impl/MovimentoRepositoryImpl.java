@@ -46,7 +46,7 @@ public class MovimentoRepositoryImpl extends AbstractRepositoryModel<Movimento, 
 					break;
 					
 				case DATA_MOVIMENTO:
-					hql += "order by mdataCriacao ";
+					hql += "order by dataCriacao ";
 					break;
 					
 				case NUMERO_COTA:
