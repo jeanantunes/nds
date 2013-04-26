@@ -1,5 +1,6 @@
 package br.com.abril.nds.client.vo;
 
+import java.awt.Image;
 import java.io.Serializable;
 
 import br.com.abril.nds.dto.FornecedoresBandeiraDTO;
@@ -20,10 +21,11 @@ public class ImpressaoBandeiraVO implements Serializable  {
 	private String 	destino;
 	private String 	canal;
 	private String  volumes;
+	private Image logoDistribuidor;
 	
 	
 	
-	public ImpressaoBandeiraVO(FornecedoresBandeiraDTO fornecedoresBandeiraDTO, String volumes) {
+	public ImpressaoBandeiraVO(FornecedoresBandeiraDTO fornecedoresBandeiraDTO, String volumes, Image logoDistribuidor) {
 		super();
 		this.nome = fornecedoresBandeiraDTO.getNome();
 		this.semana =  fornecedoresBandeiraDTO.getSemana();
@@ -36,6 +38,7 @@ public class ImpressaoBandeiraVO implements Serializable  {
 			this.canal = "BANCA";
 		}
 		this.volumes = volumes;
+		this.logoDistribuidor = logoDistribuidor;
 			
 	}
 	
@@ -109,6 +112,23 @@ public class ImpressaoBandeiraVO implements Serializable  {
 		this.volumes = volumes;
 	}
 
+
+	/**
+	 * @return the logoDistribuidor
+	 */
+	public Image getLogoDistribuidor() {
+		return logoDistribuidor;
+	}
+
+
+	/**
+	 * @param logoDistribuidor the logoDistribuidor to set
+	 */
+	public void setLogoDistribuidor(Image logoDistribuidor) {
+		this.logoDistribuidor = logoDistribuidor;
+	}
+
+	
 	
 	
 }

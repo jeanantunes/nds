@@ -48,7 +48,7 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 		
 		StringBuffer hql = new StringBuffer("");
 		
-		hql.append(" select sum(parcial.qtde) 				");		
+		hql.append(" select sum(coalesce(parcial.qtde, 0)) 	");		
 		
 		hql.append(" from ConferenciaEncalheParcial parcial	");
 		
@@ -229,7 +229,7 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 	private StringBuffer getSubQueryMovimentoEstoqueCota() {
 		
 		StringBuffer hqlMovimentoEstoqueCota = new StringBuffer("")
-		.append(" ( select sum(estoque.qtde + estoque.qtdeSuplementar + estoque.qtdeDevolucaoEncalhe) ")
+		.append(" ( select sum(  coalesce(estoque.qtde, 0) + coalesce(estoque.qtdeSuplementar, 0) + coalesce(estoque.qtdeDevolucaoEncalhe, 0) ) ")
 		.append(" from EstoqueProduto estoque		")
 		.append(" where ")
 		.append(" estoque.produtoEdicao.id = parcial.produtoEdicao.id ) ");
@@ -368,8 +368,7 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 			query.setParameter("statusAprovacao", statusAprovacao);
 		}
 
-		if( ( idProdutoEdicao != null || ( codigoProduto != null && numeroEdicao!=null) ) && 
-				dataMovimento != null) {
+		if( ( idProdutoEdicao != null || ( codigoProduto != null && numeroEdicao!=null) ) ) {
 
 			if(idProdutoEdicao!=null) {
 				query.setParameter("idProdutoEdicao", idProdutoEdicao);
@@ -377,9 +376,12 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 				query.setParameter("codigoProduto", codigoProduto);
 				query.setParameter("numeroEdicao", numeroEdicao);
 			}
+		}
+		
+		if(dataMovimento != null) {
 			
 			query.setParameter("dataMovimento", dataMovimento);
-			
+		
 		}
 		
 		return query.list();

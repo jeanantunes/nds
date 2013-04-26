@@ -41,7 +41,9 @@ public class SlipDTO {
 	
 	private List<ComposicaoCobrancaSlipDTO> listaComposicaoCobrancaDTO;
 	
+	private BigDecimal valorTotalDesconto;
 	
+	private BigDecimal valorTotalSemDesconto;
 	
 	/**
 	 * Obtém numeroCota
@@ -314,6 +316,22 @@ public class SlipDTO {
 	public void setListaComposicaoCobrancaDTO(
 			List<ComposicaoCobrancaSlipDTO> listaComposicaoCobrancaDTO) {
 		this.listaComposicaoCobrancaDTO = listaComposicaoCobrancaDTO;
+	}
+
+	public BigDecimal getValorTotalDesconto() {
+		return valorTotalDesconto;
+	}
+
+	public void setValorTotalDesconto(BigDecimal valorTotalDesconto) {
+		this.valorTotalDesconto = valorTotalDesconto;
+	}
+
+	public BigDecimal getValorTotalSemDesconto() {
+		return valorTotalSemDesconto;
+	}
+
+	public void setValorTotalSemDesconto(BigDecimal valorTotalSemDesconto) {
+		this.valorTotalSemDesconto = valorTotalSemDesconto;
 	}
 	
 }

@@ -28,6 +28,7 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.interceptor.download.ByteArrayDownload;
 import br.com.caelum.vraptor.interceptor.download.Download;
+import br.com.caelum.vraptor.interceptor.download.InputStreamDownload;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
@@ -75,6 +76,7 @@ public class EmissaoBandeiraController extends BaseController {
 			 
 			this.result.use(FlexiGridJson.class).from(listaEmissaoBandeiraVO).total(chamadaEncalheService.countObterBandeirasDaSemana(semana).intValue()).page(page).serialize();
 		}
+		
 	}
 
 
@@ -127,12 +129,9 @@ public class EmissaoBandeiraController extends BaseController {
 		return new ByteArrayDownload(comprovate,"application/pdf", "imprimirBandeiraManual.pdf", true);
 	}
 	
-	
-	
-	
-	
-	
-
-
+	public Download obterLogoDistribuidor() {
+		
+		return new InputStreamDownload(super.getLogoDistribuidor(), null, null);
+	}
 	
 }
