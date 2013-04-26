@@ -848,7 +848,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		}
 		
 		$(".outrosVlrsGrid", ConferenciaEncalhe.workspace).flexAddData({
-			page: result.listaDebitoCredito.page, total: result.listaDebitoCredito.total, rows: result.listaDebitoCredito.rows
+			page: result.listaDebitoCredito.page, total: result.listaDebitoCredito.total, rows: ConferenciaEncalhe.arredondarValorDebitoCredito(result.listaDebitoCredito.rows)
 		});
 		
 		$("#totalReparte", ConferenciaEncalhe.workspace).text(parseFloat(result.reparte).toFixed(2));
@@ -877,6 +877,17 @@ var ConferenciaEncalhe = $.extend(true, {
 		}
 		
 		bloquearItensEdicao(ConferenciaEncalhe.workspace);
+	},
+	
+	
+	arredondarValorDebitoCredito : function(listaDebitoCredito) {
+		
+		$.each(listaDebitoCredito, function(index, value){
+				value.cell.valor = parseFloat(value.cell.valor).toFixed(2);
+		});
+		
+		return listaDebitoCredito;
+		
 	},
 	
 	gerarDocumentosConferenciaEncalhe : function(tiposDocumento) {

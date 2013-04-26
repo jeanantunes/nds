@@ -59,6 +59,7 @@ import br.com.abril.nds.sessionscoped.ConferenciaEncalheSessionScopeAttr;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
+import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.PDFUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -411,6 +412,7 @@ public class ConferenciaEncalheController extends BaseController {
 		indicarStatusConferenciaEncalheCotaSalvo();
 		
 	}
+	
 	
 	@Post
 	public void carregarListaConferencia(Integer numeroCota, boolean indObtemDadosFromBD,  boolean indConferenciaContingencia){
