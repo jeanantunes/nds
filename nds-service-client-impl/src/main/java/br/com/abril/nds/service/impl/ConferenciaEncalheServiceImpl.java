@@ -5,10 +5,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -596,6 +595,36 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		BigDecimal reparte =
 			chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCota(
+				numeroCota, dataOperacao, false, false);
+		
+		if (reparte == null) {
+			
+			reparte = BigDecimal.ZERO;
+		}
+		
+		return reparte;
+	}
+	
+	@Transactional(readOnly = true)
+	public BigDecimal obterValorTotalDesconto(Integer numeroCota, Date dataOperacao) {
+		
+		BigDecimal reparte =
+			chamadaEncalheCotaRepository.obterTotalDescontoDaChamaEncalheCota(
+				numeroCota, dataOperacao, false, false);
+		
+		if (reparte == null) {
+			
+			reparte = BigDecimal.ZERO;
+		}
+		
+		return reparte;
+	}
+	
+	@Transactional(readOnly = true)
+	public BigDecimal obterValorTotalReparteSemDesconto(Integer numeroCota, Date dataOperacao) {
+		
+		BigDecimal reparte =
+			chamadaEncalheCotaRepository.obterTotalDaChamaEncalheCotaSemDesconto(
 				numeroCota, dataOperacao, false, false);
 		
 		if (reparte == null) {
@@ -3031,9 +3060,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		carregarListaProdutoEdicaoAusenteNoEncalhe(listaProdutoEdicaoSlip, idCota, dataOperacao);
 		
-		
-		NumberFormat formatter = new DecimalFormat("00000");
-		
 		Integer numeroCota 		= controleConferenciaEncalheCota.getCota().getNumeroCota();
 	
 		String nomeCota 		= controleConferenciaEncalheCota.getCota().getPessoa().getNome();
@@ -3045,21 +3071,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		BigDecimal valorTotalEncalhe 	= null;
 		BigDecimal valorTotalPagar 		= null;
 		
-	
-		
-		BigDecimal valorTotalReparte = obterValorTotalReparte(numeroCota, dataOperacao);
+		BigDecimal valorTotalReparte = this.obterValorTotalReparte(numeroCota, dataOperacao);
+		BigDecimal valorTotalDesconto = this.obterValorTotalDesconto(numeroCota, dataOperacao);
+		BigDecimal valorTotalSemDesconto = this.obterValorTotalReparteSemDesconto(numeroCota, dataOperacao);
 		
 		BigInteger qtdeTotalProdutosDia = null;
 		BigDecimal valorTotalEncalheDia = null;
-		long diaAnt=0;
 		long dia=0;
 		boolean exibeSubtotalDia = false;
 		
 		for(ProdutoEdicaoSlipDTO produtoEdicaoSlip : listaProdutoEdicaoSlip) {
 				
- 			diaAnt=dia;
-			
-			qtdeTotalProdutos = BigIntegerUtil.soma(qtdeTotalProdutos, produtoEdicaoSlip.getEncalhe());
+ 			qtdeTotalProdutos = BigIntegerUtil.soma(qtdeTotalProdutos, produtoEdicaoSlip.getEncalhe());
 			
 			valorTotalEncalhe = BigDecimalUtil.soma(valorTotalEncalhe, produtoEdicaoSlip.getValorTotal());
 			
@@ -3073,11 +3096,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 			}
 			
-			dia = this.obterDiasEntreDatas(produtoEdicaoSlip);
+			dia = this.obterDiasEntreDatas(produtoEdicaoSlip) + 1;
  
-			String numCE = formatter.format(produtoEdicaoSlip.getIdChamadaEncalhe());
-			
-			produtoEdicaoSlip.setOrdinalDiaConferenciaEncalhe(dia==diaAnt?"":this.getDiaMesOrdinal(dia)+" DIA - CE NUM "+numCE);
+			produtoEdicaoSlip.setOrdinalDiaConferenciaEncalhe(this.getDiaMesOrdinal(dia)+" DIA");
 		
 		    exibeSubtotalDia = (listaProdutoEdicaoSlip.indexOf(produtoEdicaoSlip)==(listaProdutoEdicaoSlip.size()-1))||
 		    		           (dia!=this.obterDiasEntreDatas(listaProdutoEdicaoSlip.get(listaProdutoEdicaoSlip.indexOf(produtoEdicaoSlip)+1)));	
@@ -3107,7 +3128,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		slipDTO.setTotalProdutoDia(qtdeTotalProdutos);  
 		slipDTO.setTotalProdutos(qtdeTotalProdutos);    
 		slipDTO.setValorEncalheDia(valorTotalEncalhe);    
-		slipDTO.setValorTotalEncalhe(valorTotalEncalhe); 
+		slipDTO.setValorTotalEncalhe(valorTotalEncalhe);
+		
+		slipDTO.setValorTotalDesconto(valorTotalDesconto);
+		slipDTO.setValorTotalSemDesconto(valorTotalSemDesconto);
 		
 		slipDTO.setValorDevido(valorTotalReparte);        
 		slipDTO.setValorSlip(valorTotalReparte.subtract(valorTotalEncalhe));           
@@ -3169,10 +3193,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		
 		BigDecimal totalPagar = listaComposicaoCobranca.isEmpty() ? valorTotalPagar : totalComposicao;
+		
+		slipDTO.setValorTotalPagar(totalPagar);
 
 		parametersSlip.put("VALOR_DEVIDO", valorTotalReparte);
 		
 		parametersSlip.put("VALOR_SLIP", slipDTO.getValorSlip());
+		
+		parametersSlip.put("VALOR_TOTAL_SEM_DESCONTO", slipDTO.getValorTotalSemDesconto());
+		
+		parametersSlip.put("VALOR_TOTAL_DESCONTO", slipDTO.getValorTotalDesconto());
 		
 		parametersSlip.put("VALOR_TOTAL_PAGAR", totalPagar);
 		
@@ -3266,9 +3296,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		StringBuffer sb = new StringBuffer();
 		ImpressaoMatricialUtil e = new ImpressaoMatricialUtil(sb);
+		String ultimoOrdinal = null;
 		
 		e.darEspaco(1);
-		e.adicionar("TREELOG S/A LOGISTICA E DISTRIBUICAO");
+		e.adicionar(this.distribuidorService.obterRazaoSocialDistribuidor());
 		e.quebrarLinhaEscape();
 		e.darEspaco(3);
 		e.adicionar("SLIP DE RECOLHIMENTO DE ENCALHE");
@@ -3284,21 +3315,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		e.quebrarLinhaEscape();
 		e.adicionar("----------------------------------------");
 		e.quebrarLinhaEscape();
-		e.adicionar("DESCRICAO", 9);e.darEspaco(1);
-		e.adicionar("EDICAO", 6);e.darEspaco(1);
-		e.adicionar("REP", 3);e.darEspaco(1);
-		e.adicionar("ENC", 3);e.darEspaco(1);
-		e.adicionar("PRECO", 7);e.darEspaco(1);
-		e.adicionar("TOTAL", 8);
-		e.quebrarLinhaEscape();
 		
 		Iterator<ProdutoEdicaoSlipDTO> iterator = slipDTO.getListaProdutoEdicaoSlipDTO().iterator();
 		while(iterator.hasNext()){
 			ProdutoEdicaoSlipDTO itemLista = iterator.next();
 			
-			//Comentado a definir com Cesar como ficará OrdinalDiaConferenciaEncalhe
-//			e.adicionar(itemLista.getOrdinalDiaConferenciaEncalhe());
-//			e.quebrarLinhaEscape();
+			if (!itemLista.getOrdinalDiaConferenciaEncalhe().equals(ultimoOrdinal)){
+			
+				this.inserirCabecalho(e, itemLista.getOrdinalDiaConferenciaEncalhe());
+				ultimoOrdinal = itemLista.getOrdinalDiaConferenciaEncalhe();
+			}
 			
 			e.adicionar(itemLista.getNomeProduto() == null ? "": itemLista.getNomeProduto(), 9);e.darEspaco(1);
 			e.adicionar(itemLista.getNumeroEdicao() == null ? "" : itemLista.getNumeroEdicao().toString(), 6);e.darEspaco(1);
@@ -3340,9 +3366,21 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		e.quebrarLinhaEscape();
 		e.quebrarLinhaEscape();
 		
-		
-		
 		adicionarComposicaoCobranca(e, slipDTO.getListaComposicaoCobrancaDTO());
+		
+		e.adicionarCompleteEspaco("Reparte Capa", 
+			slipDTO.getValorTotalSemDesconto().setScale(2, RoundingMode.HALF_EVEN).toString());
+		e.quebrarLinhaEscape();
+		
+		e.adicionarCompleteEspaco("Desconto Reparte", 
+			slipDTO.getValorTotalDesconto().setScale(2, RoundingMode.HALF_EVEN).toString());
+		e.quebrarLinhaEscape();
+		
+		e.adicionarCompleteEspaco("Valor Líquido Devido", 
+				slipDTO.getValorTotalSemDesconto().subtract(slipDTO.getValorTotalDesconto())
+				.setScale(2, RoundingMode.HALF_EVEN).toString());
+		e.quebrarLinhaEscape();
+		e.quebrarLinhaEscape();
 		
 		String valorTotalPagar = slipDTO.getValorTotalPagar() == null ? "0,00" : slipDTO.getValorTotalPagar().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
 		e.adicionarCompleteTraco("VALOR TOTAL A PAGAR", valorTotalPagar);
@@ -3352,6 +3390,21 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		String saida = sb.toString();
 		
 		return saida.getBytes();
+	}
+
+	private void inserirCabecalho(ImpressaoMatricialUtil e, String ordinalDiaConferenciaEncalhe) {
+		
+		e.darEspaco((38 - ordinalDiaConferenciaEncalhe.length()) / 2);
+		e.adicionar(ordinalDiaConferenciaEncalhe);
+		e.quebrarLinhaEscape();
+		
+		e.adicionar("DESCRICAO", 9);e.darEspaco(1);
+		e.adicionar("EDICAO", 6);e.darEspaco(1);
+		e.adicionar("REP", 3);e.darEspaco(1);
+		e.adicionar("ENC", 3);e.darEspaco(1);
+		e.adicionar("PRECO", 7);e.darEspaco(1);
+		e.adicionar("TOTAL", 8);
+		e.quebrarLinhaEscape();
 	}
 
 	private void adicionarComposicaoCobranca(ImpressaoMatricialUtil e, List<ComposicaoCobrancaSlipDTO> listaComposicaoCobrancaDTO) {
