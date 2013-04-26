@@ -774,11 +774,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 				if(OperacaoFinaceira.CREDITO.equals(debitoCreditoNaoConsolidado)) {
 
-					debitoCreditoNaoConsolidado.setObservacoes("Créditos");
+					debitoCreditoNaoConsolidado.setObservacoes("Créditos - "+debitoCreditoNaoConsolidado.getTipoMovimento());
 
 				} else {
 
-					debitoCreditoNaoConsolidado.setObservacoes("Débitos");
+					debitoCreditoNaoConsolidado.setObservacoes("Débitos - "+debitoCreditoNaoConsolidado.getTipoMovimento());
 
 				}
 				
