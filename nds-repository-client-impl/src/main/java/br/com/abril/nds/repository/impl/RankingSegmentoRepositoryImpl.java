@@ -18,7 +18,7 @@ public class RankingSegmentoRepositoryImpl extends RankingAbstract implements Ra
 		BigInteger novoId = criarNovoIDRanking();
 		
 		hql.append(
-				" insert into ranking_segmento (COTA_ID,TIPO_SEGMENTO_PRODUTO_ID,SEGMENTO_DESCRICAO,PRODUTO_EDICAO_ID,QTDE,RANKING_SEGMENTO_GERADOS_ID)( ")
+				" insert into ranking_segmento (COTA_ID,TIPO_SEGMENTO_PRODUTO_ID,SEGMENTO_DESCRICAO,PRODUTO_EDICAO_ID,QTDE,RANKING_SEGMENTOS_GERADOS_ID)( ")
 				.append(" select cota_id,tipo_segmento_produto_id,segmento_descricao,produto_edicao_id,sum(qtde) as qtde,").append(novoId).append(" from ")
 				.append(" (select mec.cota_id,tsp.id as tipo_segmento_produto_id,	tsp.descricao segmento_descricao, pe.id produto_edicao_id, mec.tipo_movimento_id, ")
 				.append(" case when mec.tipo_movimento_id=21 then (mec.qtde) ")
