@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.CopiaMixFixacaoDTO;
 import br.com.abril.nds.dto.FixacaoReparteCotaDTO;
 import br.com.abril.nds.dto.FixacaoReparteDTO;
 import br.com.abril.nds.dto.FixacaoReparteHistoricoDTO;
@@ -57,6 +58,7 @@ import br.com.caelum.vraptor.view.Results;
 public class FixacaoReparteController extends BaseController {
 	
 	private static final String OPERACAO_REALIZADA_COM_SUCESSO = "Operação realizada com sucesso!";
+	private static final ValidacaoVO SUCCESS_MSG = new ValidacaoVO(TipoMensagem.SUCCESS, OPERACAO_REALIZADA_COM_SUCESSO);
 	private static final String FILTRO_PRODUTO_SESSION_ATTRIBUTE = "filtroPorProduto";
 	private static final String FILTRO_COTA_SESSION_ATTRIBUTE = "filtroPorCota";
 	private static final int MAX_EDICOES =6;
@@ -243,9 +245,7 @@ public class FixacaoReparteController extends BaseController {
 					"<br>Status da Cota: " + SituacaoCadastro.SUSPENSO.toString());
 		}
 		
-		result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, OPERACAO_REALIZADA_COM_SUCESSO), 
-				"result").recursive().serialize();
+		result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
 	}
 	
 	
@@ -254,9 +254,7 @@ public class FixacaoReparteController extends BaseController {
 	public void removerFixacaoReparte(FixacaoReparteDTO fixacaoReparteDTO){
 		fixacaoReparteService.removerFixacaoReparte(fixacaoReparteDTO);
 		
-		result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, OPERACAO_REALIZADA_COM_SUCESSO), 
-				"result").recursive().serialize();
+		result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
 	}
 	
 	@Post
@@ -294,9 +292,7 @@ public class FixacaoReparteController extends BaseController {
 	public void salvarGridPdvReparte(List<RepartePDVDTO> listPDV, String codProduto, String codCota, Long idFixacao, boolean manterFixa){
 		repartePdvService.salvarRepartesPDV(listPDV,codProduto, idFixacao, manterFixa);
 		
-		result.use(Results.json()).from(
-				new ValidacaoVO(TipoMensagem.SUCCESS, OPERACAO_REALIZADA_COM_SUCESSO), 
-				"result").recursive().serialize();
+		result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
 	}
 	
 	@Post
@@ -408,6 +404,7 @@ public class FixacaoReparteController extends BaseController {
 			filtroAtual.getPaginacao().setPaginaAtual(1);
 		}
 		
+		
 		session.setAttribute(FILTRO_COTA_SESSION_ATTRIBUTE, filtroAtual);
 	}
 	
@@ -459,9 +456,7 @@ public class FixacaoReparteController extends BaseController {
 			}
 			
 			if (listaRegistrosInvalidosExcel.isEmpty() && getErrosUpload().isEmpty()) {
-				result.use(Results.json()).from(
-						new ValidacaoVO(TipoMensagem.SUCCESS, OPERACAO_REALIZADA_COM_SUCESSO), 
-						"result").recursive().serialize();
+				result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
 			} else {
 				result.use(Results.json()).from(
 						new ValidacaoVO(TipoMensagem.WARNING, getMsgErroUpload()), 
@@ -473,6 +468,60 @@ public class FixacaoReparteController extends BaseController {
 					new ValidacaoVO(TipoMensagem.WARNING, "Arquivo está vazio."), 
 					"result").recursive().serialize();
 		}
+	}
+	
+	@Post
+	@Path("/gerarCopiaFixacao")
+	public void gerarCopiaFixacao(CopiaMixFixacaoDTO copiaDTO){
+		
+		TipoMensagem tipoMsg = TipoMensagem.WARNING;
+		List<String> msg = new ArrayList<String>();
+		
+		
+
+		switch (copiaDTO.getTipoCopia()) {
+		case COTA:
+			Cota cotaOrigem = cotaService.obterPorNumeroDaCota(copiaDTO.getCotaNumeroOrigem());
+			Cota cotaDestino = cotaService.obterPorNumeroDaCota(copiaDTO.getCotaNumeroDestino());
+
+			if(cotaOrigem.getTipoDistribuicaoCota()==null || cotaDestino.getTipoDistribuicaoCota()==null
+					|| !cotaOrigem.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.CONVENCIONAL) 
+					|| !cotaDestino.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.CONVENCIONAL)){
+				msg.add( "Cotas não são do tipo CONVENCIONAL.");
+			} 
+			
+			break;
+		case PRODUTO:
+			
+			break;
+		}
+		
+		if(msg.isEmpty()){
+			try {
+				
+				
+				boolean gerarCopiaMix = this.fixacaoReparteService.gerarCopiafixacao(copiaDTO);
+				if (gerarCopiaMix) {
+					tipoMsg = TipoMensagem.SUCCESS;
+					msg.add("Cópia executada com sucesso.");
+				} else {
+					tipoMsg = TipoMensagem.ERROR;
+					msg.add("Houve um erro ao gerar a cópia");
+				}
+			} 
+			catch(ValidacaoException e) {
+				tipoMsg = TipoMensagem.WARNING;
+				msg=e.getValidacao().getListaMensagens();
+			}
+			catch(Exception e) {
+				tipoMsg = TipoMensagem.ERROR;
+				msg.add("Houve um erro ao gerar a cópia");
+			}
+			
+		}
+		
+		result.use(Results.json()).from(new ValidacaoVO(tipoMsg, msg),"result").recursive().serialize();
+		
 	}
 
 	private String getMsgErroUpload() {
@@ -601,5 +650,5 @@ public class FixacaoReparteController extends BaseController {
 	public void setErrosUpload(List<String> errosUpload) {
 		this.errosUpload = errosUpload;
 	}
-	
+
 }

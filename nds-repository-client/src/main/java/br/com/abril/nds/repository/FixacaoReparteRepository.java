@@ -8,6 +8,7 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoProdutoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 public interface FixacaoReparteRepository  extends Repository<FixacaoReparte, Long> {
 	
@@ -26,5 +27,10 @@ public interface FixacaoReparteRepository  extends Repository<FixacaoReparte, Lo
 	public boolean isFixacaoExistente(FixacaoReparteDTO fixacaoReparteDTO);
 
 	public void execucaoQuartz();
+
+	public void gerarCopiaPorCotaFixacaoReparte(
+			List<FixacaoReparteDTO> mixCotaOrigem, Usuario usuarioLogado);
+
+	public void gerarCopiaPorProdutoFixacaoReparte(List<FixacaoReparteDTO> mixProdutoOrigem, Usuario usuarioLogado);
 
 }

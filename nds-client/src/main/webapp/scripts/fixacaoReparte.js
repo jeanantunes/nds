@@ -158,7 +158,7 @@ var fixacaoReparteController = $.extend(true, {
 		},  {
 			display : 'Reparte',
 			name : 'reparte',
-			width : 50,
+			width : 60,
 			sortable : true,
 			align : 'center'
 		}],
@@ -949,7 +949,141 @@ var fixacaoReparteController = $.extend(true, {
 			});
 			$(".historicoGrid").flexReload();
 
-		}
+		},
+		
+//click do botao adicionar em lote		
+		add_lote:function(){
+			$("#modalUploadArquivo").dialog({
+				resizable: false,
+				height:'auto',
+				width:400,
+				modal: true,
+				buttons: {
+					"Confirmar": function() {
+						fixacaoReparteController.executarSubmitArquivo();
+					},
+					"Cancelar": function() {
+						$("#excelFileFixacao").val("");
+						$(this).dialog("close");
+					}
+				},
+			});
+		},
+		
+		
+		
+		executarSubmitArquivo:function(){
+			 var fileName = $("#excelFileFixacao").val();
+		      
+		       var ext = fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase();
+		       if(ext!="xls" & ext!="xlsx"){
+		    	   exibirMensagem("WARNING", ["Somente arquivos com extensão .XLS ou .XLSX são permitidos."]);
+		    	   $(this).val('');
+		    	   return;
+		       }else{
+		    	   
+		    	   $("#formUploadLoteFixacao").ajaxSubmit({
+		     		   
+		     		      success: function(responseText, statusText, xhr, $form)  { 
+		     		    	  
+		     		    	  var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
+		     		          var tipoMensagem = mensagens.tipoMensagem;
+		     		          var listaMensagens = mensagens.listaMensagens;
 
+		     		          if (tipoMensagem && listaMensagens) {
+		     		           
+		     		           if (tipoMensagem != 'SUCCESS') {
+		     		            
+		     		            exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialog-msg-upload');
+		     		           }
+		     		           $("#dialog-lote").dialog( "close" );
+		     		           
+		     		           exibirMensagem(tipoMensagem, listaMensagens); 
+		     		          }
+		     		      }, 
+		     		      type: 'POST',
+		     		      dataType: 'json',
+
+		     		   
+		     	   });
+		    	   
+		       }
+		},
+		
+		abrirCopiaDialog:function(){
+			var type  =$("input[type=radio][name=filtroPrincipalRadio]:checked").val();
+			type = type.toLowerCase();
+			var target = type+'CopiaFixacao-dialog';
+
+			var idsCopiaCota = "#cotaFixacaoOrigemInput,#nomeCotaFixacaoOrigemInput,#cotaFixacaoDestinoInput,#nomeCotaFixacaoDestinoInput";
+			var idsCopiaProduto = "#codigoProdutoFixacaoOrigemInput,#nomeProdutoFixacaoOrigemInput,#codigoProdutoFixacaoDestinoInput,#nomeProdutoFixacaoDestinoInput";
+			
+			$("#"+target).dialog({
+				resizable: false,
+				height:'auto',
+				width:500,
+				draggable: false,
+				modal: true,
+				buttons: {
+					"Iníciar cópia": function() {
+
+						var len=0;
+						
+						if(type=='cota') {
+							len = $(idsCopiaCota).filter(function(){return this.value == "";}).length;
+						}else if(type=='produto'){
+							len = $(idsCopiaProduto).filter(function(){return this.value == "";}).length;
+							
+						}
+
+						if(len>0){
+							exibirMensagem("WARNING",["Dados para cópia não preenchidos."]);
+							return;
+						}
+						
+						var msgWar=null;
+						if(type=='cota' &&  ( $("#cotaFixacaoOrigemInput").val()==$("#cotaFixacaoDestinoInput").val())){
+							msgWar="Cota Origem não pode ser igual a cota destino.";
+						}else if(type=='produto' &&  ( $("#codigoProdutoFixacaoOrigemInput").val()==$("#codigoProdutoFixacaoDestinoInput").val() )){
+							msgWar="Produto Origem não pode ser igual a produto destino.";
+						}
+						
+						if(msgWar!=null){
+							exibirMensagem("WARNING",[msgWar]);
+							return;
+						}
+						
+						var data = [];
+//						console.log(type);
+						data.push({name:"copiaDTO.tipoCopia",	value: type.toUpperCase()});
+						data.push({name:"copiaDTO.cotaNumeroOrigem",	value: $("#cotaFixacaoOrigemInput").val()});
+						data.push({name:"copiaDTO.nomeCotaOrigem",	value: $("#nomeCotaFixacaoOrigemInput").val()});
+						data.push({name:"copiaDTO.cotaNumeroDestino",	value: $("#cotaFixacaoDestinoInput").val()});
+						data.push({name:"copiaDTO.nomeCotaDestino",	value: $("#nomeCotaFixacaoDestinoInput").val()});
+						                 
+						data.push({name:"copiaDTO.codigoProdutoOrigem",	value: $("#codigoProdutoFixacaoOrigemInput").val()});
+						data.push({name:"copiaDTO.nomeProdutoOrigem",	value: $("#nomeProdutoFixacaoOrigemInput").val()});
+						data.push({name:"copiaDTO.codigoProdutoDestino",	value: $("#codigoProdutoFixacaoDestinoInput").val()});
+						data.push({name:"copiaDTO.nomeProdutoDestino",	value: $("#nomeProdutoFixacaoDestinoInput").val()});
+						
+						modal = this;
+						$.postJSON(contextPath + '/distribuicao/fixacaoReparte/gerarCopiaFixacao',  data, 
+								function(result){
+								console.log(result);
+								$(modal).dialog("close");
+										exibirMensagem("WARNING",result.listaMensagens);
+								},
+								function(result){ });
+					},
+					"Cancelar": function() {
+						$(this).dialog("close");
+					}
+				},
+				close:function(){$(idsCopiaCota+","+idsCopiaProduto).val('');}
+			});
+			
+			
+		}
+		
 	}, BaseController);
 //@ sourceURL=fixacaoReparte.js
