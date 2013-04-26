@@ -6,7 +6,7 @@ import java.math.BigInteger;
 import br.com.abril.nds.util.upload.XlsMapper;
 
 public class CotaTemplateDTO implements Serializable {
-
+	
 	/**
 	 * 
 	 */

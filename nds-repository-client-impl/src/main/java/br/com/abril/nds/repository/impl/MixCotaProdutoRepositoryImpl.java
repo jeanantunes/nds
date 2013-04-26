@@ -82,9 +82,9 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" LEFT join tipo_classificacao_produto ON tipo_classificacao_produto.ID = produto.TIPO_CLASSIFICACAO_PRODUTO_ID ")
 		.append(" LEFT join usuario on usuario.ID = mix_cota_produto.ID_USUARIO ")
 
-		.append("where");
+		.append(" where ");
 		if(filtroConsultaMixCotaDTO.getProdutoId()!=null ){
-			sql.append("produto.CODIGO = :idProduto ");
+			sql.append(" produto.CODIGO = :idProduto ");
 			
 		}else{
 			
@@ -93,7 +93,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		sql.append(" and lancamento.status='FECHADO'")
 		.append(" and cota.tipo_distribuicao_cota = :tipoCota")
 		.append(" group by produto.codigo ")
-		.append(" order by lancamento.DATA_LCTO_DISTRIBUIDOR DESC");
+		.append(" order by lancamento.DATA_LCTO_DISTRIBUIDOR DESC ");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		query.setParameter("tipoCota", TipoDistribuicaoCota.ALTERNATIVO.toString());
@@ -168,7 +168,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		}
 		sql.append(" and cota.tipo_distribuicao_cota = :tipoCota")
 		.append(" group by cota.numero_cota ")
-		.append(" order by lancamento.DATA_LCTO_DISTRIBUIDOR DESC");
+		.append(" order by lancamento.DATA_LCTO_DISTRIBUIDOR DESC ");
 	
 		
 		Query query = getSession().createSQLQuery(sql.toString());
@@ -299,12 +299,13 @@ public class MixCotaProdutoRepositoryImpl extends
 		}
 	}
 		
-	@Override
-	public MixCotaProduto obterMixPorCotaProduto(Long cotaId, Long produtoId) {
-		return (MixCotaProduto) getSession().createCriteria(MixCotaProduto.class)
-		.add(Restrictions.eq("cota.id", cotaId))
-		.add(Restrictions.eq("produto.id", produtoId))
-		.uniqueResult();
-	}
+	
+		@Override
+		public MixCotaProduto obterMixPorCotaProduto(Long cotaId, Long produtoId) {
+			return (MixCotaProduto) getSession().createCriteria(MixCotaProduto.class)
+			.add(Restrictions.eq("cota.id", cotaId))
+			.add(Restrictions.eq("produto.id", produtoId))
+			.uniqueResult();
+		}
 
 }
