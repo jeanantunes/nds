@@ -96,23 +96,13 @@ public class CalendarioServiceImpl implements CalendarioService {
 	public Date adicionarDiasRetornarDiaUtil(Date data, int numDias) {
 
 		Calendar cal = Calendar.getInstance();
-		cal.setTime(data);
-
+		
 		if (numDias == 0) {
-
-			// Verifica se o dia informado é util.
-			// Caso não seja, incrementa até encontrar o primeiro dia útil.
-			while (DateUtil.isSabadoDomingo(cal) || isFeriado(cal)) {
-				cal.setTime(DateUtil.adicionarDias(cal.getTime(), 1));
-			}
-
+				
+			cal.setTime(this.obterProximaDataDiaUtil(data));
 		} else {
 
-			// Adiciona o número de dias úteis informado.
-			for (int i = 0; i < numDias; i++) {
-
-				cal.setTime(DateUtil.adicionarDias(cal.getTime(), 1));
-			}
+			cal.setTime(DateUtil.adicionarDias(data, numDias));
 		}
 
 		return cal.getTime();
@@ -787,5 +777,24 @@ public class CalendarioServiceImpl implements CalendarioService {
 		}
 		return feriadoMunicipalSemOperacao;
 	}
-
+	
+	/**
+     * Obtem a proxima data com dia util, considerando Feriados, Sabados e Domingos
+     * @param data
+     * @return Date
+     */
+	@Override
+	public Date obterProximaDataDiaUtil(Date data) {
+		
+		Calendar c = Calendar.getInstance();
+		
+		c.setTime(data);
+		
+		if (this.feriadoRepository.isFeriado(data) || DateUtil.isSabadoDomingo(c)){
+			
+			data = this.obterProximaDataDiaUtil(DateUtil.adicionarDias(data, 1));
+		}
+		
+		return data;
+	}
 }
