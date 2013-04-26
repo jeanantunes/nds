@@ -30,32 +30,41 @@ public class EdicoesFechadasRepositoryImpl extends AbstractRepositoryModel<Movim
 	 */
 	@Override
 	public BigInteger obterResultadoTotalEdicoesFechadas(Date dataDe, Date dataAte, Long idFornecedor) {
-		StringBuilder hql = new StringBuilder();
+StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT ( sum(movimentoEstoque.qtde) ) ");
+		hql.append("  SELECT cast( count(distinct produtoEdicao.id) as big_integer) 				")
+		    .append(" FROM ConferenciaEncalheParcial AS conf 					")
+			.append(" inner JOIN conf.produtoEdicao AS produtoEdicao 			")
+			.append(" inner JOIN produtoEdicao.estoqueProduto AS estoqueProduto ")
+			.append(" inner JOIN produtoEdicao.produto AS produto ")
+			.append(" inner JOIN produto.fornecedores AS fornecedores ")
+			.append(" inner JOIN fornecedores.juridica AS juridica ");
 		
-		hql.append(" FROM MovimentoEstoque AS movimentoEstoque ")
-			.append(" LEFT JOIN movimentoEstoque.estoqueProduto.produtoEdicao AS produtoEdicao ")
-			.append(" LEFT JOIN produtoEdicao.produto AS produto ")
-			.append(" LEFT JOIN produto.fornecedores AS fornecedores ")
-			.append(" LEFT JOIN fornecedores.juridica AS juridica ");
+		hql.append(" WHERE ( conf.dataMovimento BETWEEN :dataDe AND :dataAte ) and ")
+		
+		.append("	((estoqueProduto.qtde is not null and estoqueProduto.qtde > 0) or ")
+		.append("	(estoqueProduto.qtdeSuplementar is not null and estoqueProduto.qtdeSuplementar > 0) or ")
+		.append("	(estoqueProduto.qtdeDevolucaoEncalhe is not null and estoqueProduto.qtdeDevolucaoEncalhe > 0) or ")
+		.append("	(estoqueProduto.qtdeDanificado is not null and estoqueProduto.qtdeDanificado > 0)) ");
 
-		//.append(" LEFT JOIN produtoEdicao.lancamentos AS lancamentos ")
-
-		hql.append(" WHERE ( produtoEdicao.dataDesativacao BETWEEN :dataDe AND :dataAte ) ");
 		
-		if (idFornecedor!=null) {
+		if (idFornecedor !=  null) {
 			hql.append(" AND fornecedores.id = :idFornecedor ");
 		}
-
+		
+		hql.append(" GROUP BY produtoEdicao.id  ");
+		
+		
 		Query query = this.getSession().createQuery(hql.toString());
 
     	query.setParameter("dataDe", dataDe);
+    	
     	query.setParameter("dataAte", dataAte);
 
-    	if(idFornecedor!=null){
+    	if(idFornecedor !=  null){
 	    	query.setParameter("idFornecedor", idFornecedor);
-	    }
+	    }		
+		
 		
 		return (BigInteger) query.uniqueResult();
 	}
@@ -71,21 +80,33 @@ public class EdicoesFechadasRepositoryImpl extends AbstractRepositoryModel<Movim
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("SELECT produtoEdicao.id as idProdutoEdicao, produto.codigo as codigoProduto , ")
+		hql.append("	SELECT produtoEdicao.id as idProdutoEdicao, produto.codigo as codigoProduto , ")
 			.append("   produto.nome as nomeProduto, ")
 			.append("   produtoEdicao.numeroEdicao as edicaoProduto, " )
 			.append("   juridica.nomeFantasia as nomeFornecedor, " )
-			.append("   (SELECT min(lancamentos.dataRecolhimentoDistribuidor) from Lancamento AS lancamentos WHERE lancamentos.produtoEdicao.id = fechamentoEncalhe.fechamentoEncalhePK.produtoEdicao.id) as dataLancamento , ")
+			.append("   (SELECT min(lancamentos.dataRecolhimentoDistribuidor) from Lancamento AS lancamentos WHERE lancamentos.produtoEdicao.id = conf.produtoEdicao.id) as dataLancamento , ")
 			.append("   produtoEdicao.parcial as parcial, ")
-			.append("   (SELECT max(lancamentos.dataRecolhimentoDistribuidor) from Lancamento AS lancamentos WHERE lancamentos.produtoEdicao.id = fechamentoEncalhe.fechamentoEncalhePK.produtoEdicao.id)  as dataRecolhimento, ")
-			.append("    cast( sum(fechamentoEncalhe.quantidade) as big_integer ) as saldo");
+			.append("   (SELECT max(lancamentos.dataRecolhimentoDistribuidor) from Lancamento AS lancamentos WHERE lancamentos.produtoEdicao.id = conf.produtoEdicao.id)  as dataRecolhimento, ")
+			.append("    cast( ")
+			.append("	(coalesce(estoqueProduto.qtde, 0) 					+ ")
+			.append("	coalesce(estoqueProduto.qtdeSuplementar, 0) 		+ ")
+			.append("	coalesce(estoqueProduto.qtdeDevolucaoEncalhe, 0) 	+ ")
+			.append("	coalesce(estoqueProduto.qtdeDanificado,	0)) ")
+			.append("	as big_integer ) as saldo ");
 		
-		hql.append(" FROM FechamentoEncalhe AS fechamentoEncalhe ")
-			.append(" inner JOIN fechamentoEncalhe.fechamentoEncalhePK.produtoEdicao AS produtoEdicao ")
+		hql.append(" FROM ConferenciaEncalheParcial AS conf ")
+			.append(" inner JOIN conf.produtoEdicao AS produtoEdicao ")
+			.append(" inner JOIN produtoEdicao.estoqueProduto AS estoqueProduto ")
 			.append(" inner JOIN produtoEdicao.produto AS produto ")
 			.append(" inner JOIN produto.fornecedores AS fornecedores ")
 			.append(" inner JOIN fornecedores.juridica AS juridica ");
-		hql.append(" WHERE ( fechamentoEncalhe.fechamentoEncalhePK.dataEncalhe BETWEEN :dataDe AND :dataAte ) ");
+		
+		hql.append(" WHERE ( conf.dataMovimento BETWEEN :dataDe AND :dataAte ) and ")	
+		
+		.append("	((estoqueProduto.qtde is not null and estoqueProduto.qtde > 0) or ")
+		.append("	(estoqueProduto.qtdeSuplementar is not null and estoqueProduto.qtdeSuplementar > 0) or ")
+		.append("	(estoqueProduto.qtdeDevolucaoEncalhe is not null and estoqueProduto.qtdeDevolucaoEncalhe > 0) or ")
+		.append("	(estoqueProduto.qtdeDanificado is not null and estoqueProduto.qtdeDanificado > 0)) ");
 		
 		if (idFornecedor !=  null) {
 			hql.append(" AND fornecedores.id = :idFornecedor ");
@@ -102,6 +123,7 @@ public class EdicoesFechadasRepositoryImpl extends AbstractRepositoryModel<Movim
 		query.setResultTransformer(new AliasToBeanResultTransformer(RegistroEdicoesFechadasVO.class));
 
     	query.setParameter("dataDe", dataDe);
+    	
     	query.setParameter("dataAte", dataAte);
 
     	if(idFornecedor !=  null){
@@ -116,6 +138,7 @@ public class EdicoesFechadasRepositoryImpl extends AbstractRepositoryModel<Movim
 		}
 		return query.list();
 	}
+	
 	
 	@Override
 	public Long quantidadeResultadoEdicoesFechadas(Date dataDe, Date dataAte, Long idFornecedor){

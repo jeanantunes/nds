@@ -368,8 +368,7 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 			query.setParameter("statusAprovacao", statusAprovacao);
 		}
 
-		if( ( idProdutoEdicao != null || ( codigoProduto != null && numeroEdicao!=null) ) && 
-				dataMovimento != null) {
+		if( ( idProdutoEdicao != null || ( codigoProduto != null && numeroEdicao!=null) ) ) {
 
 			if(idProdutoEdicao!=null) {
 				query.setParameter("idProdutoEdicao", idProdutoEdicao);
@@ -377,9 +376,12 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 				query.setParameter("codigoProduto", codigoProduto);
 				query.setParameter("numeroEdicao", numeroEdicao);
 			}
+		}
+		
+		if(dataMovimento != null) {
 			
 			query.setParameter("dataMovimento", dataMovimento);
-			
+		
 		}
 		
 		return query.list();
