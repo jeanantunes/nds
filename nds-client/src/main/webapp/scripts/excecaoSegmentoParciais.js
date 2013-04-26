@@ -144,7 +144,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 		autoComplete.limparCampoOnChange('#cotasQueNaoRecebemNomeCota', new Array('#cotasQueNaoRecebemNumeroCota'));
 		
 		$('#pesquisarProdutosParciaisNaoRecebidos').click(function (){
-			if ($('#cotasQueNaoRecebemNumeroCota').val() != '') {
+			if (($('#idProduto').val() != '') && ($('#nomeProduto').val() != '')) {
 				excecaoSegmentoParciaisController.pesquisarProdutoNaoRecebidoPeloNomeOuCodigo({
 					codigo:$('#codigoProduto').val(), nome:$('#nomeProduto').val()});
 			} else {
@@ -153,7 +153,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 		});
 		
 		$('#pesquisarCotaQueNaoRecebem').click(function (){
-			if (($('#nomeProduto').val() != '') && ($('#nomeProduto').val() != '')) {
+			if ($('#cotasQueNaoRecebemNumeroCota').val() != '') {
 				excecaoSegmentoParciaisController.pesquisarCotasQueNaoRecebemExcessaoPeloNomeOuCodigo ({
 					codigo: $('#cotasQueNaoRecebemNumeroCota').val()});
 			} else {
