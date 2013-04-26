@@ -9,22 +9,48 @@ var distribuicaoManual = $.extend(true, {
 	inputPercEstoque : '<div class="textoGridCota" id="percEstoqueGrid#index" >#valor</div>',
 	inputReparte : '<div><input type="text" class="inputGridCota" id="reparteGrid#index" name="reparteGrid" value="#valor" onchange="distribuicaoManual.calcularPercEstoque(#index)" class="inputGridCota" /></div>',
 	inputNumeroCota : '<div><input type="text" class="inputGridCota" id="numeroCotaGrid#index" name="numeroCotaGrid" value="#valor" onchange="distribuicaoManual.pesquisarCota(\'#numeroCotaGrid#index\', #index)" /></div>',
+	idLancamento : 0,
+	
+	obterMatrizSelecionada : function obterMatrizSelecionada(){
+		var selecionado = {};
+		
+		$.each(matrizDistribuicao.lancamentos, function(index, lancamento){
+			if(lancamento.selecionado) {
+				selecionado = lancamento;
+			}
+		});
+		
+		return selecionado;
+	},
 	
 	init : function() {
+		var lancamentoSelecionado = distribuicaoManual.obterMatrizSelecionada();
+		
 		distribuicaoManual.workspace = $('.estudosManuaisGrid');
 		this.configGrid();
 		distribuicaoManual.workspace.find('tbody').append(distribuicaoManual.construirLinhaVazia());
 		distribuicaoManual.rowCount++;
+		
+		distribuicaoManual.idLancamento = lancamentoSelecionado.idLancamento;
 		this.atualizarTotalDistribuido(0);
 	},
 	
 	voltar : function() {
-		distribuicaoManual.confirmar("#dialog-voltar", function() {
+		var idEstudo = $('#estudo').text();
+		
+		if (!idEstudo) {
+			distribuicaoManual.confirmar("#dialog-voltar", function() {
+				$(".ui-tabs-selected").find("span").click();
+				$("a[href='"+ pathTela +"/matrizDistribuicao']").click();
+			}, function() {
+				setTimeout(function() { $('#numeroCotaGrid'+ (distribuicaoManual.rowCount - 1), distribuicaoManual.workspace).focus(); }, 100);
+			});
+		}else{
 			$(".ui-tabs-selected").find("span").click();
 			$("a[href='"+ pathTela +"/matrizDistribuicao']").click();
-		}, function() {
-			setTimeout(function() { $('#numeroCotaGrid'+ (distribuicaoManual.rowCount - 1), distribuicaoManual.workspace).focus(); }, 100);
-		});
+		}
+		
+		matrizDistribuicao.pesquisar();
 	},
 	
 	cancelar : function() {
@@ -293,12 +319,15 @@ var distribuicaoManual = $.extend(true, {
 			data.push({name: 'estudoDTO.produtoEdicaoId', value: $('#idProdutoEdicao').val()});
 			data.push({name: 'estudoDTO.reparteDistribuir', value: $('#reparteInicial').val()});
 			data.push({name: 'estudoDTO.dataLancamento', value: $('#dataLancamento').html()});
+			data.push({name: 'estudoDTO.lancamentoId', value: distribuicaoManual.idLancamento});
+			
 			for (var i = 0; i < distribuicaoManual.rowCount; i++) {
 				if ($("#reparteGrid"+ i, distribuicaoManual.workspace).val() && ($("#reparteGrid"+ i, distribuicaoManual.workspace).val() > 0)) {
 					data.push({name: "estudoCotasDTO["+ i +"].idCota", value: $("#numeroCotaGrid"+ i, distribuicaoManual.workspace).val()});
 					data.push({name: "estudoCotasDTO["+ i +"].qtdeEfetiva", value: $("#reparteGrid"+ i, distribuicaoManual.workspace).val()});
 				}
 			}
+			
 			$.postJSON(contextPath +"/distribuicaoManual/gravarEstudo",
 					data,
 					function(result){

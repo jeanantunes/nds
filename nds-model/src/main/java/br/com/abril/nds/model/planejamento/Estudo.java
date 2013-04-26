@@ -76,7 +76,7 @@ public class Estudo implements Serializable {
 	private Date dataAlteracao;
 	
 	@Column(name = "LIBERADO")
-	private boolean liberado;
+	private Boolean liberado;
 	
 	@Column(name = "REPARTE_DISTRIBUIR")
 	private BigInteger reparteDistribuir;
@@ -165,11 +165,11 @@ public class Estudo implements Serializable {
 		this.dataAlteracao = dataAlteracao;
 	}
 
-	public boolean isLiberado() {
+	public Boolean isLiberado() {
 		return liberado;
 	}
 
-	public void setLiberado(boolean liberado) {
+	public void setLiberado(Boolean liberado) {
 		this.liberado = liberado;
 	}
 

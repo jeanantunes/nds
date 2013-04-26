@@ -43,8 +43,8 @@ public class EstudoServiceImpl implements EstudoService {
 	@Autowired
 	private EstudoCotaRepository estudoCotaRepository;
 
-        @Autowired
-        private LancamentoRepository lancamentoRepository;
+    @Autowired
+    private LancamentoRepository lancamentoRepository;
 
 	@Transactional(readOnly = true)
 	public Estudo obterEstudoDoLancamentoPorDataProdutoEdicao(Date dataReferencia, Long idProdutoEdicao) {
@@ -59,12 +59,15 @@ public class EstudoServiceImpl implements EstudoService {
 	}
 
 	@Override
+	@Transactional
 	public void gravarEstudo(Estudo estudo) {
-	    estudoRepository.adicionar(estudo);
+		estudoRepository.adicionar(estudo);
+	    
 	    for (EstudoCota estudoCota : estudo.getEstudoCotas()) {
-		estudoCota.setEstudo(estudo);
-		estudoCotaRepository.adicionar(estudoCota);
+			estudoCota.setEstudo(estudo);
+			estudoCotaRepository.adicionar(estudoCota);
 	    }
+	    
 	}
 
 	@Override
@@ -205,5 +208,16 @@ public class EstudoServiceImpl implements EstudoService {
 
 	return listIdEstudoAdicionado;
     }
-	
+
+	@Override
+	@Transactional
+	public void alterarEstudo(Estudo estudo) {
+		this.estudoRepository.alterar(estudo);
+	}
+
+	@Override
+	@Transactional
+	public void setIdLancamentoNoEstudo(Long idLancamento, Long idEstudo) {
+		this.estudoRepository.setIdLancamentoNoEstudo(idLancamento, idEstudo);
+	}
 }
