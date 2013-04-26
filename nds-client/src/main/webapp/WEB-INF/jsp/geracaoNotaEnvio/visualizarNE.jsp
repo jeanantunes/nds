@@ -76,7 +76,7 @@ td { line-height: 20px!important; padding-left:3px; padding-right:3px; }
 		<tr>
 			<td colspan="2"
 				style="border-left: 1px solid #000; border-bottom: 1px solid #000;"><span
-				class="dadosNota"><c:out value="${notaEnvio.emitente.endereco.logradouro}"/> <br />
+				class="dadosNota"><c:out value="${notaEnvio.emitente.endereco.tipoLogradouro}"/>&nbsp;<c:out value="${notaEnvio.emitente.endereco.logradouro}"/> <br />
 			</span></td>
 			<td style="border-bottom: 1px solid #000;"><span
 				class="dadosNota"><c:out value="${notaEnvio.emitente.endereco.numero}"/></span></td>
@@ -155,7 +155,7 @@ td { line-height: 20px!important; padding-left:3px; padding-right:3px; }
 		<tr>
 			<td
 				style="border-left: 1px solid #000; border-bottom: 1px solid #000;"><span
-				class="dadosNota"><c:out value="${notaEnvio.destinatario.endereco.logradouro}"/><br />
+				class="dadosNota"><c:out value="${notaEnvio.destinatario.endereco.tipoLogradouro}"/>&nbsp;<c:out value="${notaEnvio.destinatario.endereco.logradouro}"/><br />
 			</span></td>
 			<td
 				style="border-left: 1px solid #000; border-bottom: 1px solid #000;"><span

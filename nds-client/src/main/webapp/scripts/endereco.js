@@ -196,7 +196,7 @@ function Endereco(paramTela, paramMessage) {
 				$("#"+paramTela+"enderecoid", Endereco.workspace).val(result.endereco.id);
 				$("#"+paramTela+"tipoEndereco", Endereco.workspace).val(result.tipoEndereco);
 				$("#"+paramTela+"cep", Endereco.workspace).val(adicionarMascaraCEP(result.endereco.cep));
-				$("#"+paramTela+"tipoLogradouro", Endereco.workspace).val(result.endereco.tipoLogradouro);
+				$("#"+paramTela+"tipoLogradouro option").each(function() { this.selected = (this.text.toUpperCase() == result.endereco.tipoLogradouro.toUpperCase()); });
 				$("#"+paramTela+"logradouro", Endereco.workspace).val(result.endereco.logradouro);
 				$("#"+paramTela+"numero", Endereco.workspace).val(result.endereco.numero);
 				$("#"+paramTela+"complemento", Endereco.workspace).val(result.endereco.complemento);
@@ -330,7 +330,7 @@ function Endereco(paramTela, paramMessage) {
 			function(result) {
 				
 					$("#"+paramTela+"idEndereco", Endereco.workspace).val(result.id);
-					$("#"+paramTela+"tipoLogradouro", Endereco.workspace).val(result.tipoLogradouro);
+					$("#"+paramTela+"tipoLogradouro", Endereco.workspace).val(result.tipoLogradouro.toUpperCase());
 					$("#"+paramTela+"logradouro", Endereco.workspace).val(result.logradouro);
 					$("#"+paramTela+"codigoBairro", Endereco.workspace).val(result.codigoBairro);
 					$("#"+paramTela+"bairro", Endereco.workspace).val(result.bairro);

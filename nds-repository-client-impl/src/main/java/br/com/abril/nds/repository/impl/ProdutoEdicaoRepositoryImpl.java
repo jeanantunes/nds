@@ -706,7 +706,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		return query.list();
 	}
 
-
 	@Override
 	public String buscarNome(Long idProdutoEdicao) {
 		

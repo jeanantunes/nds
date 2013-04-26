@@ -120,4 +120,6 @@ public interface DiferencaEstoqueService {
 	
 	public Diferenca lancarDiferenca(Diferenca diferenca, TipoEstoque tipoEstoque);
 	
+	void validarDadosParaImpressaoNaData(String dataMovimentoFormatada);
+	
 }

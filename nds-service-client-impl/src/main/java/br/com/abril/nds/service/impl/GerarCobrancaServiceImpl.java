@@ -577,13 +577,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				case POSTERGADO_DEBITO:
 				case POSTERGADO_CREDITO:
 					
-					if (dataOperacao.after(movimentoFinanceiroCota.getData())){
-					
-						vlMovPostergado = 
-								this.adicionarValor(vlMovPostergado, movimentoFinanceiroCota);
-
-					}
-					
+					vlMovPostergado = 
+							this.adicionarValor(vlMovPostergado, movimentoFinanceiroCota);
 				break;
 			}
 		}
@@ -1024,6 +1019,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			    this.consolidadoFinanceiroRepository.remover(consolidado);
 			}
 		}
+		
+		this.removerPostergados(idCota, dataOperacao);
 	}
 	
 	private void removerDividaCobrancaConsolidado(Divida divida, ConsolidadoFinanceiroCota consolidado,
@@ -1032,19 +1029,22 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		this.cobrancaRepository.remover(divida.getCobranca());
 		
 	    this.dividaRepository.remover(divida);
-	    
-		List<TipoMovimentoFinanceiro> listaPostergados = Arrays.asList(
-			this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-					GrupoMovimentoFinaceiro.POSTERGADO_CREDITO),
-					
-			this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-					GrupoMovimentoFinaceiro.POSTERGADO_DEBITO)
-		);
+	}
+	
+	private void removerPostergados(Long idCota, Date dataOperacao){
 		
-		this.movimentoFinanceiroCotaService.removerPostergadosDia(
-				consolidado.getCota().getId(), 
-				listaPostergados,
-				dataOperacao);
+		List<TipoMovimentoFinanceiro> listaPostergados = Arrays.asList(
+				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+						GrupoMovimentoFinaceiro.POSTERGADO_CREDITO),
+						
+				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+						GrupoMovimentoFinaceiro.POSTERGADO_DEBITO)
+			);
+			
+			this.movimentoFinanceiroCotaService.removerPostergadosDia(
+					idCota,
+					listaPostergados,
+					dataOperacao);
 	}
 	
 	/**

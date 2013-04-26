@@ -5,8 +5,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.persistence.Column;
-
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
@@ -22,20 +20,114 @@ import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 public class ChamadaEncalheCotaRepositoryImpl extends
 		AbstractRepositoryModel<ChamadaEncalheCota, Long> implements
 		ChamadaEncalheCotaRepository {
+	
+	private static final String REPARTE_COM_DESCONTO = "reparte";
+	
+	private static final String REPARTE_SEM_DESCONTO = "reparteSemDesconto";
+	
+	private static final String DESCONTO = "desconto";
 
 	public ChamadaEncalheCotaRepositoryImpl() {
 		super(ChamadaEncalheCota.class);
 	}
 
+	@Override
 	public BigDecimal obterReparteDaChamaEncalheCota(
 			Integer numeroCota, 
 			Date dataOperacao,
 			Boolean conferido, Boolean postergado) {
 
+		Query query = 
+				this.getSession().createSQLQuery(
+						this.getSqlValor(conferido, postergado, REPARTE_COM_DESCONTO));
+
+		query.setParameter("dataOperacao", dataOperacao);
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		if(conferido!=null) {
+			query.setParameter("conferido", conferido);
+		}
+		
+		if(postergado!=null) {
+			query.setParameter("postergado", postergado);
+		}
+		
+		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+		
+		return (BigDecimal) query.uniqueResult();
+	}
+	
+	@Override
+	public BigDecimal obterTotalDescontoDaChamaEncalheCota(
+			Integer numeroCota, 
+			Date dataOperacao,
+			Boolean conferido, Boolean postergado) {
+
+		Query query = 
+				this.getSession().createSQLQuery(
+						this.getSqlValor(conferido, postergado, DESCONTO));
+
+		query.setParameter("dataOperacao", dataOperacao);
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		if(conferido!=null) {
+			query.setParameter("conferido", conferido);
+		}
+		
+		if(postergado!=null) {
+			query.setParameter("postergado", postergado);
+		}
+		
+		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+		
+		return (BigDecimal) query.uniqueResult();
+	}
+	
+	@Override
+	public BigDecimal obterTotalDaChamaEncalheCotaSemDesconto(
+			Integer numeroCota, 
+			Date dataOperacao,
+			Boolean conferido, Boolean postergado) {
+		
+		Query query = 
+				this.getSession().createSQLQuery(
+						this.getSqlValor(conferido, postergado, REPARTE_SEM_DESCONTO));
+
+		query.setParameter("dataOperacao", dataOperacao);
+		
+		query.setParameter("numeroCota", numeroCota);
+		
+		if(conferido!=null) {
+			query.setParameter("conferido", conferido);
+		}
+		
+		if(postergado!=null) {
+			query.setParameter("postergado", postergado);
+		}
+		
+		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+		
+		return (BigDecimal) query.uniqueResult();
+	}
+
+	private String getSqlValor(Boolean conferido, Boolean postergado, String valor) {
 		StringBuffer subSqlWhereDesconto = new StringBuffer();
 		
-		subSqlWhereDesconto.append(" (SELECT ");	
-		subSqlWhereDesconto.append("	MEC.PRECO_COM_DESCONTO ");
+		subSqlWhereDesconto.append(" (SELECT ");
+		
+		if (REPARTE_COM_DESCONTO.equals(valor)){
+			
+			subSqlWhereDesconto.append("	MEC.PRECO_COM_DESCONTO ");
+		} else if (DESCONTO.equals(valor)){
+			
+			subSqlWhereDesconto.append(" MEC.PRECO_VENDA - MEC.PRECO_COM_DESCONTO ");
+		} else {
+			
+			subSqlWhereDesconto.append(" MEC.PRECO_VENDA ");
+		}
+		
 		subSqlWhereDesconto.append(" FROM 	");
 		subSqlWhereDesconto.append(" MOVIMENTO_ESTOQUE_COTA MEC, TIPO_MOVIMENTO TIPO_MOV	");
 		subSqlWhereDesconto.append(" WHERE  	");
@@ -49,7 +141,19 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append(" SELECT SUM( COALESCE( ");
-		sql.append( subSqlWhereDesconto.toString() +  ", PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+		sql.append(subSqlWhereDesconto.toString());
+		
+		if (REPARTE_COM_DESCONTO.equals(valor)){
+			
+			sql.append(", PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+		} else if (DESCONTO.equals(valor)){
+			
+			sql.append(", 0 ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+		} else {
+			
+			sql.append(", PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+		}
+		
 		sql.append(" ) ");
 		
 		sql.append("    FROM    ");
@@ -78,24 +182,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 			sql.append(" AND CH_ENCALHE_COTA.POSTERGADO = :postergado		");
 		}
 		
-		
-		Query query = this.getSession().createSQLQuery(sql.toString());
-
-		query.setParameter("dataOperacao", dataOperacao);
-		
-		query.setParameter("numeroCota", numeroCota);
-		
-		if(conferido!=null) {
-			query.setParameter("conferido", conferido);
-		}
-		
-		if(postergado!=null) {
-			query.setParameter("postergado", postergado);
-		}
-		
-		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
-		
-		return (BigDecimal) query.uniqueResult();
+		return sql.toString();
 	}
 
 	public BigDecimal obterReparteDaChamaEncalheCotaNoPeriodo(
@@ -199,6 +286,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List<ChamadaEncalheCota> obterListaChamadaEncalheCota(Long idCota, Long idProdutoEdicao) {
 		
 		StringBuilder hql = new StringBuilder();
@@ -268,9 +356,8 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<ChamadaEncalheCota> obterListaChamaEncalheCota(
-			Integer numeroCota, Date dataOperacao, Long idProdutoEdicao,
-			boolean indPesquisaCEFutura, boolean conferido, boolean postergado) {
+	public List<ChamadaEncalheCota> obterListaChamaEncalheCota(Integer numeroCota,Long idProdutoEdicao,
+															   boolean postergado,Date dataOperacao, Date... dataRecolhimento) {
 
 		StringBuilder hql = new StringBuilder();
 
@@ -282,12 +369,11 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 		hql.append(" chamadaEncalheCota.cota.numeroCota = :numeroCota ");
 
-		hql.append(" and chamadaEncalheCota.fechado = :conferido ");
-
 		hql.append(" and chamadaEncalheCota.postergado = :postergado ");
 
-		if (indPesquisaCEFutura) {
-			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento >= :dataOperacao ");
+		if (dataRecolhimento!= null && dataRecolhimento.length > 0) {
+			hql.append(" and (chamadaEncalheCota.chamadaEncalhe.dataRecolhimento >= :dataOperacao ");
+			hql.append(" or chamadaEncalheCota.chamadaEncalhe.dataRecolhimento IN (:dataRecolhimento ))");
 		} else {
 			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento = :dataOperacao ");
 		}
@@ -300,11 +386,13 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 		query.setParameter("numeroCota", numeroCota);
 
-		query.setParameter("conferido", conferido);
-
 		query.setParameter("postergado", postergado);
 
 		query.setParameter("dataOperacao", dataOperacao);
+		
+		if(dataRecolhimento!= null && dataRecolhimento.length > 0){
+			query.setParameterList("dataRecolhimento", dataRecolhimento);
+		}
 
 		if (idProdutoEdicao != null) {
 			query.setParameter("idProdutoEdicao", idProdutoEdicao);

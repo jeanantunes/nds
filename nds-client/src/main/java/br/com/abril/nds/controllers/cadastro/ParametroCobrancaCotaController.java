@@ -36,7 +36,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
-import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoCota;
@@ -256,20 +255,6 @@ public class ParametroCobrancaCotaController extends BaseController {
 
 		ParametroCobrancaCotaDTO parametroCobranca;
 		if (ModoTela.CADASTRO_COTA == modoTela) {
-		    parametroCobranca = this.parametroCobrancaCotaService.obterDadosParametroCobrancaPorCota(idCota);
-		    
-		    if (parametroCobranca==null){
-		        parametroCobranca = new ParametroCobrancaCotaDTO();
-		        parametroCobranca.setIdCota(idCota);
-		        parametroCobranca.setContrato(false);
-		        parametroCobranca.setFatorVencimento(0);
-		        parametroCobranca.setQtdDividasAberto(0);
-		        parametroCobranca.setSugereSuspensao(false);
-		        parametroCobranca.setValorMinimo(BigDecimal.ZERO);
-		        parametroCobranca.setVrDividasAberto(BigDecimal.ZERO);
-		        
-		        this.parametroCobrancaCotaService.postarParametroCobranca(parametroCobranca);
-		    }
 		    parametroCobranca = this.parametroCobrancaCotaService.obterDadosParametroCobrancaPorCota(idCota);
 		} else {
 		    parametroCobranca = parametroCobrancaCotaService.obterParametrosCobrancaHistoricoTitularidadeCota(idCota, idHistorico);

@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -117,7 +118,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 				lancamento.getProdutoEdicao().getProduto().getNome(), 
 				lancamento.getProdutoEdicao().getNumeroEdicao(), 
 				lancamento.getProdutoEdicao().getProduto().getTipoProduto().getDescricao(), 
-				lancamento.getProdutoEdicao().getPrecoVenda().toString().replace(".", ","), 
+				lancamento.getProdutoEdicao().getPrecoVenda().setScale(2, RoundingMode.HALF_EVEN).toString().replace(".", ","), 
 				lancamento.getProdutoEdicao().getPacotePadrao(), 
 				lancamento.getReparte().intValue(), 
 				sdf.format(lancamento.getDataRecolhimentoPrevista()), 
