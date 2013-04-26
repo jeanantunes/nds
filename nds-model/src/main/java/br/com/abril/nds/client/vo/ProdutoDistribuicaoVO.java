@@ -57,6 +57,9 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 	@Export(label="Estudo", exhibitionOrder = 13)
 	private BigInteger idEstudo;
 	
+	@Export(label="Status")
+	private String status;
+	
 	private String dataLancto;
 	
 	private BigDecimal reparte;
@@ -68,7 +71,7 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 	private Long idUsuario;
 	
 	private String codigoBarraProduto;
-	
+
 	public BigInteger getIdLancamento() {
 		return idLancamento;
 	}
@@ -266,6 +269,14 @@ public class ProdutoDistribuicaoVO  implements Serializable {
 		} else if (!idLancamento.equals(other.idLancamento))
 			return false;
 		return true;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
 	}
 	
 	

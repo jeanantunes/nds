@@ -85,8 +85,6 @@ public class MatrizLancamentoController extends BaseController {
 	
 	private static final String ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO = "balanceamentoAlterado";
 	
-	private static final String GRID_MATRIZ_LANCAMENTO = "gridMatrizLancamento";
-	
 	@Path("/")
 	public void index() {
 		
@@ -103,11 +101,19 @@ public class MatrizLancamentoController extends BaseController {
 	
 	@Post
 	public void obterMatrizLancamento(Date dataLancamento, List<Long> idsFornecedores) {
+				
 		validarDadosPesquisa(dataLancamento, idsFornecedores);
+		
 		removerAtributoAlteracaoSessao();
+		
 		FiltroLancamentoDTO filtro = configurarFiltropesquisa(dataLancamento, idsFornecedores);
-		BalanceamentoLancamentoDTO balanceamentoLancamento = this.obterBalanceamentoLancamento(filtro);
-		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = this.obterResultadoResumoLancamento(balanceamentoLancamento);
+		
+		BalanceamentoLancamentoDTO balanceamentoLancamento = 
+			this.obterBalanceamentoLancamento(filtro);
+				
+		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
+			this.obterResultadoResumoLancamento(balanceamentoLancamento);
+						
 		this.result.use(CustomJson.class).put("resultado", resultadoResumoBalanceamento).serialize();
 		
 	}
@@ -129,7 +135,6 @@ public class MatrizLancamentoController extends BaseController {
 		if (listaProdutoBalanceamento != null && !listaProdutoBalanceamento.isEmpty()) {	
 			
 			processarBalanceamento(listaProdutoBalanceamento, filtro);
-			session.setAttribute(GRID_MATRIZ_LANCAMENTO, listaProdutoBalanceamento);
 			
 		} else {
 			
@@ -233,14 +238,21 @@ public class MatrizLancamentoController extends BaseController {
 		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
 	}
 	
-	@SuppressWarnings("unchecked")
+	
 	@Post
 	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
-	public void reprogramarLancamentosSelecionados(List<ProdutoLancamentoVO> produtosLancamento, String novaDataFormatada, boolean selTodos) {
+	public void perguntarDataConfirmadaOuNao( ProdutoLancamentoDTO produtoLancamento ){
 		
-		if (selTodos) {
-			produtosLancamento = (List<ProdutoLancamentoVO>) session.getAttribute(GRID_MATRIZ_LANCAMENTO);			
-		}
+		boolean retornoDataConfirmada = this.matrizLancamentoService.isDataConfirmada(produtoLancamento);
+		this.result.use(Results.json()).from(retornoDataConfirmada).serialize();
+	}
+	
+	
+	
+	@Post
+	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
+	public void reprogramarLancamentosSelecionados(List<ProdutoLancamentoVO> produtosLancamento,
+												   String novaDataFormatada) {
 		
 		this.validarDadosReprogramar(novaDataFormatada);
 		
@@ -250,7 +262,7 @@ public class MatrizLancamentoController extends BaseController {
 
 		this.validarListaParaReprogramacao(produtosLancamento);
 		
-		this.validarDataReprogramacao(produtosLancamento, novaData);
+//		this.validarDataReprogramacao(produtosLancamento, novaData);
 		
 		this.atualizarMapaLancamento(produtosLancamento, novaData);
 		
@@ -278,7 +290,7 @@ public class MatrizLancamentoController extends BaseController {
 		
 		this.validarListaParaReprogramacao(produtosLancamento);
 		
-		this.validarDataReprogramacao(produtosLancamento, novaData);
+		//this.validarDataReprogramacao(produtosLancamento, novaData);
 		
 		this.atualizarMapaLancamento(produtosLancamento, novaData);
 		
@@ -364,6 +376,8 @@ public class MatrizLancamentoController extends BaseController {
 	 * @param novaData - nova data de recolhimento
 	 */
 	private void validarDataReprogramacao(List<ProdutoLancamentoVO> produtosLancamento, Date novaData) {
+		
+		
 		
 		List<ConfirmacaoVO> confirmacoes = this.montarListaDatasConfirmacao();
 
@@ -1044,10 +1058,14 @@ public class MatrizLancamentoController extends BaseController {
 		BalanceamentoLancamentoDTO balanceamentoLancamento = 
 			(BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
 		
+		
+		
 		if (balanceamentoLancamento == null) {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
 		}
+		
+		balanceamentoLancamento = matrizLancamentoService.verificarQuebraConfirmacaoDiaDeAcordoComMatriz(balanceamentoLancamento);
 		
 		List<ConfirmacaoVO> confirmacoesVO =
 			matrizLancamentoService.obterDatasConfirmacao(balanceamentoLancamento);
