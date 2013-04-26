@@ -1,5 +1,8 @@
 package br.com.abril.nds.service.impl;
 
+import java.awt.Image;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +19,8 @@ import br.com.abril.nds.client.vo.ImpressaoBandeiraVO;
 import br.com.abril.nds.dto.FornecedoresBandeiraDTO;
 import br.com.abril.nds.service.ChamadaEncalheService;
 import br.com.abril.nds.service.EmissaoBandeiraService;
+import br.com.abril.nds.service.ParametrosDistribuidorService;
+import br.com.abril.nds.util.JasperUtil;
 
 
 @Service
@@ -23,6 +28,9 @@ public class EmissaoBandeiraServiceImpl implements  EmissaoBandeiraService {
 	
 	@Autowired
 	private ChamadaEncalheService chamadaEncalheService;
+	
+	@Autowired
+	protected ParametrosDistribuidorService parametrosDistribuidorService;
 
 	@Override
 	public byte[] imprimirBandeira(Integer semana, Integer numeroPallets) throws Exception {
@@ -30,15 +38,28 @@ public class EmissaoBandeiraServiceImpl implements  EmissaoBandeiraService {
 		
 		List<FornecedoresBandeiraDTO> lista = chamadaEncalheService.obterDadosFornecedoresParaImpressaoBandeira(semana);
 		List<ImpressaoBandeiraVO> listaRelatorio = new ArrayList<ImpressaoBandeiraVO>(); 
+		
+		InputStream inputStream = parametrosDistribuidorService.getLogotipoDistribuidor();
+		
+		if(inputStream == null) {
+			inputStream = new ByteArrayInputStream(new byte[0]);
+		}
+		
+		Image image = JasperUtil.getImagemRelatorio(inputStream);
+		
 		for (FornecedoresBandeiraDTO bandeiraDTO : lista){
 			for (int i=1; i<=numeroPallets;i++ ){
-				listaRelatorio.add(new ImpressaoBandeiraVO(bandeiraDTO,i+"/"+numeroPallets));
+				listaRelatorio.add(new ImpressaoBandeiraVO(bandeiraDTO,i+"/"+numeroPallets, image));
 			}
 				
 		}
-	    JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(listaRelatorio); 
-		URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/emissao_bandeira.jasper");
+	    
+		JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(listaRelatorio); 
+		
+	    URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/emissao_bandeira.jasper");
+		
 		String path = url.toURI().getPath();
+		
 		return JasperRunManager.runReportToPdf(path, parameters,ds);
 	}
 
@@ -60,5 +81,5 @@ public class EmissaoBandeiraServiceImpl implements  EmissaoBandeiraService {
 		return JasperRunManager.runReportToPdf(path, parameters,ds);
 		
 	}
-
+	
 }
