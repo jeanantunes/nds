@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -71,21 +72,21 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" (select count(pdv.id) from pdv where cota.id = pdv.cota_id) as qtdPdv, ") 
 		.append(" usuario.login as usuario, ")
 		.append(" tipo_classificacao_produto.descricao as classificacaoProduto, ")
-		.append(" avg(lancamento.reparte) as reparteMedio, avg(venda_produto.valor_total_venda) as vendaMedia, ")
+		.append(" round(avg(epc.qtde_recebida), 0) as reparteMedio, ")
+		.append(" round(avg(epc.qtde_recebida - epc.qtde_devolvida), 0) as vendaMedia, ")
 		.append(" coalesce((select lc.reparte from lancamento lc where lc.produto_edicao_id=produto_edicao.id and lancamento.status in ('LANÇADA','CALCULADA') limit 1),0) as ultimoReparte ")
 		
 		.append(" FROM mix_cota_produto ") 
 		.append(" LEFT join produto on mix_cota_produto.ID_PRODUTO = produto.ID ")
 		.append(" LEFT join produto_edicao on produto_edicao.PRODUTO_ID = produto.ID ") 
 		.append(" LEFT join lancamento on lancamento.PRODUTO_EDICAO_ID = produto_edicao.ID")
-		.append(" LEFT join venda_produto on venda_produto.ID_PRODUTO_EDICAO = produto_edicao.ID ")
 		.append(" LEFT join cota on mix_cota_produto.ID_COTA = cota.ID ")
 		.append(" LEFT join tipo_classificacao_produto ON tipo_classificacao_produto.ID = produto.TIPO_CLASSIFICACAO_PRODUTO_ID ")
 		.append(" LEFT join usuario on usuario.ID = mix_cota_produto.ID_USUARIO ")
 
-		.append("where");
+		.append(" where ");
 		if(filtroConsultaMixCotaDTO.getProdutoId()!=null ){
-			sql.append("produto.CODIGO = :idProduto ");
+			sql.append(" produto.CODIGO = :idProduto ");
 			
 		}else{
 			
@@ -94,7 +95,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		sql.append(" and lancamento.status='FECHADO'")
 		.append(" and cota.tipo_distribuicao_cota = :tipoCota")
 		.append(" group by produto.codigo ")
-		.append(" order by lancamento.DATA_LCTO_DISTRIBUIDOR DESC limit 6");
+		.append(" order by lancamento.DATA_LCTO_DISTRIBUIDOR DESC ");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		query.setParameter("tipoCota", TipoDistribuicaoCota.ALTERNATIVO.toString());
@@ -169,7 +170,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		}
 		sql.append(" and cota.tipo_distribuicao_cota = :tipoCota")
 		.append(" group by cota.numero_cota ")
-		.append(" order by lancamento.DATA_LCTO_DISTRIBUIDOR DESC limit 6");
+		.append(" order by lancamento.DATA_LCTO_DISTRIBUIDOR DESC ");
 	
 		
 		Query query = getSession().createSQLQuery(sql.toString());
@@ -302,31 +303,14 @@ public class MixCotaProdutoRepositoryImpl extends
 			adicionar(mcp);
 		}
 		
-		
-		
-		/*
-
-		StringBuilder hql = new StringBuilder("");
-
-		hql.append(" INSERT INTO mix_cota_produto ")
-		.append(" (DATAHORA, REPARTE_MAX, REPARTE_MED, REPARTE_MIN, ULTIMO_REPARTE, VENDA_MED, ID_COTA, ID_PRODUTO, ID_USUARIO) VALUES "); 
-		
-		List<String> insertsList = new ArrayList<String>();
-		
-		for (MixProdutoDTO mixProdutoDTO : mixProdutoOrigem) {
-//			insertsList.add(" (now(), REPARTE_MAX, REPARTE_MED, REPARTE_MIN, ULTIMO_REPARTE, VENDA_MED, ID_COTA, ID_PRODUTO, :idUsuario) ");
-			insertsList.add(" (now(), "+mixProdutoDTO.getReparteMaximo()+", "+mixProdutoDTO.getReparteMedio()+", "+mixProdutoDTO.getReparteMinimo()+"," +
-					mixProdutoDTO.getUltimoReparte()+", "+mixProdutoDTO.getVendaMedia()+", "+mixProdutoDTO.getIdCota()+", "+mixProdutoDTO.getIdProduto()+", "+usuarioLogado.getId()+") ");
-		}
-				
-		hql.append(StringUtils.join(insertsList, ","));
-		Query query = getSession().createSQLQuery(hql.toString());
-		query.executeUpdate();
-		
-	*/}
-
-	
-	public static void main(String[] args) {
-		System.out.println("54654564654".matches("[0-9]+"));
 	}
+	
+		@Override
+		public MixCotaProduto obterMixPorCotaProduto(Long cotaId, Long produtoId) {
+			return (MixCotaProduto) getSession().createCriteria(MixCotaProduto.class)
+			.add(Restrictions.eq("cota.id", cotaId))
+			.add(Restrictions.eq("produto.id", produtoId))
+			.uniqueResult();
+		}
+
 }
