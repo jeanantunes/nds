@@ -17,7 +17,7 @@ public class CotaAusenteEncalheDTO implements Serializable {
 	@Export(label = "Cota", alignment = Alignment.CENTER, exhibitionOrder = 1, widthPercent=10)
 	private Integer numeroCota;
 
-	@Export(label = "Nome", alignment = Alignment.CENTER, exhibitionOrder = 2, widthPercent=30)
+	@Export(label = "Nome", alignment = Alignment.LEFT, exhibitionOrder = 2, widthPercent=30)
 	private String colaboradorName = "";
 
 	@Export(label = "Box", alignment = Alignment.CENTER, exhibitionOrder = 3, widthPercent=10)

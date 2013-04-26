@@ -1,6 +1,5 @@
 package br.com.abril.nds.controllers.devolucao;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
@@ -45,6 +44,7 @@ import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.UsuarioService;
@@ -129,6 +129,9 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	@Autowired
 	private GerarCobrancaService gerarCobrancaService;
+	
+	@Autowired
+	private CotaService cotaService;
 	
 	@Autowired
 	private Result result;
@@ -319,6 +322,13 @@ public class ConferenciaEncalheController extends BaseController {
 	public void verificarReabertura(Integer numeroCota){
 		
 		limparDadosSessao();
+		
+		Cota cota = cotaService.obterPorNumeroDaCota(numeroCota);
+		
+		if (cota == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada!");
+		}
 		
 		this.session.setAttribute(HORA_INICIO_CONFERENCIA, new Date());
 		
@@ -788,8 +798,6 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		this.carregarListaConferencia(null, false, false);
 	}
-	
-	
 	
 	/**
 	 * Valida se a quantidade informada excede a quantidade especificada no reparte

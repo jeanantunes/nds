@@ -281,6 +281,10 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 
 			}
 		}
+		else{
+			
+			hql.append(" order by sequencia ");
+		}
 
 		SQLQuery query = getSession().createSQLQuery(hql.toString());
 		
@@ -731,6 +735,10 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 				hql.append(paginacao.getOrdenacao().toString());
 				
 			}			
+		}
+		else{
+			
+			hql.append(" order by sequencia ");
 		}
 		
 		Session session = getSession();
@@ -1396,4 +1404,22 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		
 		return (Long) query.uniqueResult();
 	}
+	
+	@Override
+	public Date obterDataAnteriorImediataPostergacao(ConsolidadoFinanceiroCota consolidadoFinanceiroCota) {
+		
+		String hql = " select max(cfc.dataConsolidado) " +
+					 " from ConsolidadoFinanceiroCota cfc " +
+					 " where cfc.dataConsolidado < :dataConsolidado " +
+					 " and cfc.cota = :cotaConsolidado " +
+					 " and (select count(cob.id) from Cobranca cob where cob.cota = cfc.cota) = 0";	
+		
+		Query query = this.getSession().createQuery(hql);
+		
+		query.setParameter("dataConsolidado", consolidadoFinanceiroCota.getDataConsolidado());
+		query.setParameter("cotaConsolidado", consolidadoFinanceiroCota.getCota());
+		
+		return (Date) query.uniqueResult();
+	}
+	
 }

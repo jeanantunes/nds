@@ -205,12 +205,11 @@ public class ContaCorrenteCotaController extends BaseController {
 	 * @param page
 	 */
 	@SuppressWarnings("unused")
-	public void consultarConsignadoCota(FiltroConsolidadoConsignadoCotaDTO filtro){
+	public void consultarConsignadoCota(FiltroConsolidadoConsignadoCotaDTO filtro, String sortname, String sortorder){
 		
 		request.getSession().setAttribute(FILTRO_SESSION_ATTRIBUTE_CONSIGNADO, filtro);
 		
-		List<ConsignadoCotaDTO> listaConsignadoCota = consolidadoFinanceiroService
-				.obterMovimentoEstoqueCotaConsignado(filtro);
+		List<ConsignadoCotaDTO> listaConsignadoCota = consolidadoFinanceiroService.obterMovimentoEstoqueCotaConsignado(filtro);
 		
 		Collection<InfoTotalFornecedorDTO> listaInfoTotalFornecedor = mostrarInfoTotalForncedoresConsignado(listaConsignadoCota);
 		

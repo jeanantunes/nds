@@ -56,8 +56,9 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		
 		// Validar código do distribuidor:
 		Distribuidor distribuidor = this.distribuidorService.obter();
-		if(!distribuidor.getCodigoDistribuidorDinap().equals(
-				input.getCodigoDistribuidor())){			
+		
+		if(!distribuidor.getCodigoDistribuidorDinap().equals(input.getCodigoDistribuidor())){
+			
 			this.ndsiLoggerFactory.getLogger().logWarning(message,
 					EventoExecucaoEnum.RELACIONAMENTO, 
 					"Código do distribuidor do arquivo não é o mesmo do Sistema.");
@@ -67,9 +68,11 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		// Validar Produto/Edicao
 		final String codigoProduto = input.getCodigoProduto();
 		final Long numeroEdicao = input.getEdicaoCapa();
-		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto,
-				numeroEdicao);
+		
+		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto,numeroEdicao);
+		
 		if (produtoEdicao == null) {
+			
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
 					"Impossivel realizar Insert/update - Nenhum resultado encontrado para Produto: "
@@ -78,8 +81,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			return;
 		}
 		
-		LancamentoParcial lancamentoParcial = this.obterLancalmentoParcial(
-				input, produtoEdicao);
+		LancamentoParcial lancamentoParcial = this.obterLancalmentoParcial(input, produtoEdicao);
 
 		this.gerarPeriodoLancamentoParcial(input, lancamentoParcial);
 	}
@@ -97,8 +99,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 
 		try {
 
-			Criteria criteria = this.getSession().createCriteria(
-					ProdutoEdicao.class, "produtoEdicao");
+			Criteria criteria = this.getSession().createCriteria(ProdutoEdicao.class, "produtoEdicao");
 
 			criteria.createAlias("produtoEdicao.produto", "produto");
 			criteria.setFetchMode("produto", FetchMode.JOIN);
@@ -124,8 +125,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	 * 
 	 * @return
 	 */
-	private LancamentoParcial obterLancalmentoParcial(EMS0136Input input,
-			ProdutoEdicao produtoEdicao) {
+	private LancamentoParcial obterLancalmentoParcial(EMS0136Input input,ProdutoEdicao produtoEdicao) {
 		
 		/* 
 		 * Obtém o Lançamento Parcial já cadastrado.
@@ -133,7 +133,9 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		 */
 		Criteria criteria = getSession().createCriteria(LancamentoParcial.class);
 		criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
+		
 		LancamentoParcial parcial = (LancamentoParcial) criteria.uniqueResult();
+		
 		if (parcial == null) {
 			parcial = new LancamentoParcial();
 			parcial.setProdutoEdicao(produtoEdicao);
@@ -143,8 +145,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		 * Insere/Atualiza o restante dos dados do Lançamento Parcial vindo
 		 * da Interface. 
 		 */
-		StatusLancamentoParcial status = this.obterStatusLancamentoParcial(
-				input);	
+		StatusLancamentoParcial status = this.obterStatusLancamentoParcial(input);	
 		parcial.setStatus(status);
 		
 		/*
@@ -153,8 +154,8 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		 * - Data vinda da Interface é MENOR que a do LançamentoParcial;
 		 */
 		if (parcial.getLancamentoInicial() == null 
-				|| input.getDataLancamento().before(
-						parcial.getLancamentoInicial())) {
+				|| input.getDataLancamento().before(parcial.getLancamentoInicial())) {
+			
 			parcial.setLancamentoInicial(input.getDataLancamento());
 		}
 		
@@ -164,8 +165,8 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		 * - Data vinda da Interface é MAIOR que a do LançamentoParcial;
 		 */
 		if (parcial.getRecolhimentoFinal() == null
-				|| input.getDataRecolhimento().after(
-						parcial.getRecolhimentoFinal())) {
+				|| input.getDataRecolhimento().after(parcial.getRecolhimentoFinal())) {
+			
 			parcial.setRecolhimentoFinal(input.getDataRecolhimento());
 		}
 		
@@ -214,8 +215,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		Date dataOperacao = distribuidorService.obter().getDataOperacao();
 
 		// Resgata todos os itens recebimentos fisicos para armazenar no novo lancamento
-		List<ItemRecebimentoFisico> itens = obtemItensRecebimentosFisicos(
-				lancamentoParcial, dataOperacao);
+		List<ItemRecebimentoFisico> itens = obtemItensRecebimentosFisicos(lancamentoParcial, dataOperacao);
 		
 		/*getSession().flush();
 		getSession().clear();
@@ -248,10 +248,11 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 
 		
 		Integer numeroPeriodo = input.getNumeroPeriodo();
-		Criteria criteria = getSession().createCriteria(
-				PeriodoLancamentoParcial.class);
+		
+		Criteria criteria = getSession().createCriteria(PeriodoLancamentoParcial.class);
 		criteria.add(Restrictions.eq("lancamentoParcial", lancamentoParcial));
 		criteria.add(Restrictions.eq("numeroPeriodo", numeroPeriodo));
+		
 		PeriodoLancamentoParcial pParcial = (PeriodoLancamentoParcial) criteria.uniqueResult();
 		
 		if (pParcial == null) {
@@ -260,9 +261,9 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			pParcial.setLancamentoParcial(lancamentoParcial);
 		}
 
-		Lancamento lancamento = this.obterLancamento(input, 
-				lancamentoParcial.getProdutoEdicao());
+		Lancamento lancamento = this.obterLancamento(input,lancamentoParcial.getProdutoEdicao());
 		lancamento.setRecebimentos(new HashSet(itens));
+		
 		pParcial.setLancamento(lancamento);
 		pParcial.setDataCriacao(dataOperacao);
 		pParcial.setTipo(this.obterTipoLancamentoParcial(input));
@@ -271,6 +272,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 				: StatusLancamentoParcial.PROJETADO));
 
 		input.getDataRecolhimento();
+		
 		if (pParcial.getId() == null) {
 			this.getSession().persist(pParcial);
 		} else {
@@ -307,8 +309,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	 * 
 	 * @return
 	 */
-	private Lancamento obterLancamento(EMS0136Input input,
-			ProdutoEdicao produtoEdicao) {
+	private Lancamento obterLancamento(EMS0136Input input,ProdutoEdicao produtoEdicao) {
 		
 		/*
 		 * Verifica se existe um lançamento já criado anteriormente (via outra
@@ -319,10 +320,8 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		Criteria criteria = getSession().createCriteria(Lancamento.class);
 		
 		Date dtLancamento = input.getDataLancamento();
-		Criterion criDataPrevista = Restrictions.eq(
-				"dataLancamentoPrevista", dtLancamento);
-		Criterion criDataDistribuidor = Restrictions.eq(
-				"dataLancamentoDistribuidor", dtLancamento);
+		Criterion criDataPrevista = Restrictions.eq("dataLancamentoPrevista", dtLancamento);
+		Criterion criDataDistribuidor = Restrictions.eq("dataLancamentoDistribuidor", dtLancamento);
 		criteria.add(Restrictions.or(criDataPrevista, criDataDistribuidor));
 		criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
 		
@@ -347,7 +346,10 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			lancamento.setSequenciaMatriz(null);
 			lancamento.setStatus(StatusLancamento.CONFIRMADO);
 		} else {
-			if ( lancamento.getStatus().equals(StatusLancamento.PLANEJADO) || lancamento.getStatus().equals(StatusLancamento.CONFIRMADO) ) {
+			
+			if ( lancamento.getStatus().equals(StatusLancamento.PLANEJADO) 
+					|| lancamento.getStatus().equals(StatusLancamento.CONFIRMADO) ) {
+				
 				lancamento.setDataLancamentoDistribuidor(dtLancamento);
 				lancamento.setDataLancamentoPrevista(dtLancamento);
 			}
@@ -355,7 +357,10 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			if ( lancamento.getStatus().equals(StatusLancamento.PLANEJADO) ||
 				 lancamento.getStatus().equals(StatusLancamento.EM_BALANCEAMENTO) ||
 				 lancamento.getStatus().equals(StatusLancamento.BALANCEADO) ||
-				 lancamento.getStatus().equals(StatusLancamento.EXPEDIDO) ) {
+				 lancamento.getStatus().equals(StatusLancamento.EXPEDIDO) ||
+				 lancamento.getStatus().equals(StatusLancamento.CONFIRMADO)||
+				 lancamento.getStatus().equals(StatusLancamento.FECHADO)) {
+				
 				lancamento.setDataRecolhimentoPrevista(dtRecolhimento);
 				lancamento.setDataRecolhimentoDistribuidor(dtRecolhimento);
 			}

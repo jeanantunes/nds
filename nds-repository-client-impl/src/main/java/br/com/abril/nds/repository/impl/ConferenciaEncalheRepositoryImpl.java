@@ -144,6 +144,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" PROD_EDICAO.NUMERO_EDICAO as numeroEdicao,		");
 		hql.append(" PROD_EDICAO.ID as idProdutoEdicao,				");
 		hql.append( " COALESCE(" + subSqlPrecoComDesconto.toString() + ", PROD_EDICAO.PRECO_VENDA, 0) AS precoVenda, ");
+		hql.append(" CH_ENCALHE_COTA.QTDE_PREVISTA AS reparte, 		");
 		hql.append( " 0 AS encalhe, 				");
 		hql.append( " 0 AS valorTotal, 				");
 		hql.append(" CH_ENCALHE.DATA_RECOLHIMENTO AS dataOperacao, ");
@@ -188,6 +189,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		((SQLQuery)query).addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
 		((SQLQuery)query).addScalar("precoVenda", StandardBasicTypes.BIG_DECIMAL);
 		((SQLQuery)query).addScalar("encalhe", StandardBasicTypes.BIG_INTEGER);
+		((SQLQuery)query).addScalar("reparte", StandardBasicTypes.BIG_INTEGER);
 		((SQLQuery)query).addScalar("valorTotal", StandardBasicTypes.BIG_DECIMAL);
 		((SQLQuery)query).addScalar("dataOperacao");
 		((SQLQuery)query).addScalar("dataRecolhimento");
@@ -227,6 +229,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" coalesce(conferencia.movimentoEstoqueCota.valoresAplicados.precoComDesconto,  conferencia.movimentoEstoqueCota.produtoEdicao.precoVenda, 0) as precoVenda,	");
 		
 		hql.append(" conferencia.movimentoEstoqueCota.qtde as encalhe, ");
+		
+		hql.append(" conferencia.chamadaEncalheCota.qtdePrevista as reparte, ");
 		
 		hql.append(" ( coalesce(conferencia.movimentoEstoqueCota.valoresAplicados.precoComDesconto,  ");
 		

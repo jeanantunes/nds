@@ -196,11 +196,14 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			parametroCobranca = cota.getParametroCobranca();
 			
 			if (parametroCobranca==null){
+				FormaCobranca formaCobrancaDistribuidor = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+				
 				parametroCobranca = new ParametroCobrancaCota();
 				parametroCobranca.setCota(cota);
 				parametroCobranca.setFatorVencimento(1);
 				parametroCobranca.setFormasCobrancaCota(null);
-				parametroCobranca.setValorMininoCobranca(BigDecimal.ZERO);
+				parametroCobranca.setValorMininoCobranca(formaCobrancaDistribuidor.getValorMinimoEmissao());
+				parametroCobranca.setUnificaCobranca(formaCobrancaDistribuidor.getPoliticaCobranca().isUnificaCobranca());
 				parametroCobranca.setTipoCota(null);
 				parametroCobranca.setPoliticaSuspensao(null);
 				this.parametroCobrancaCotaRepository.adicionar(parametroCobranca);
@@ -627,7 +630,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 		
 		
-		// caso não encontre as formas de cobrança... incluir aqui a forma de cobrança Principal do Distribuidor
+		// caso não encontre as formas de cobrança... é utilizado a forma de cobrança PRINCIPAL do Distribuidor
 		if (formasCobranca == null || formasCobranca.size() == 0) {
 			formasCobranca = new ArrayList<>();
 			FormaCobranca formaCobrancaDistribuidor = this.formaCobrancaRepository.obterFormaCobranca();
