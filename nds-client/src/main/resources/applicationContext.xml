@@ -48,12 +48,31 @@
 				<prop key="hibernate.show_sql">true</prop>
 				<prop key="hibernate.format_sql">true</prop>
 				<prop key="hibernate.jdbc.batch_size">100</prop>
-				<prop key="hibernate.connection.characterEncoding">UTF-8</prop>
 				<!-- <prop key="hibernate.hbm2ddl.auto">update</prop> -->
+				
+				<!-- CONNECTION -->
+				
+				<prop key="hibernate.connection.characterEncoding">UTF-8</prop>
+				<prop key="hibernate.connection.zeroDateTimeBehavior">convertToNull</prop>
+				
+				
+				<!-- CACHE -->
+				
 				<prop key="hibernate.cache.use_second_level_cache">true</prop>
 				<prop key="hibernate.cache.use_query_cache">true</prop>
 				<prop key="hibernate.cache.region.factory_class">org.hibernate.cache.ehcache.EhCacheRegionFactory</prop>
-				<prop key="hibernate.connection.zeroDateTimeBehavior">convertToNull</prop>
+
+				<!-- c3p0 -->
+				
+				<prop key="hibernate.c3p0.max_size">10</prop>
+			    <prop key="hibernate.c3p0.min_size">2</prop>
+			    <prop key="hibernate.c3p0.timeout">30000</prop>
+			    <prop key="hibernate.c3p0.max_statements">100</prop>
+			    <prop key="hibernate.c3p0.maxStatementsPerConnection">5</prop>
+			    <prop key="hibernate.c3p0.idle_test_period">1500</prop>
+			    <prop key="hibernate.c3p0.acquire_increment">2</prop>
+			    <prop key="hibernate.c3p0.testConnectionOnCheckout">true</prop>
+			    <prop key="hibernate.c3p0.preferredTestQuery">SELECT 1</prop>
 			</props>
 		</property>
 		
