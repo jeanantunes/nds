@@ -250,7 +250,7 @@ var mixCotaProdutoController = $.extend(true, {
 			data.rows[i].cell["acao"]=mixCotaProdutoController.getActionsGridCota(data.rows[i].cell);
 			
 			//arrumar formatacao campos bigdecimal para duas casas decimais
-			var ar= ["reparteMedio","vendaMedia","ultimoReparte"];
+			var ar = ["reparteMedio","vendaMedia","ultimoReparte"];
 			for ( var int = 0; int < ar.length; int++) {
 				var valorarrumado = parseFloat(data.rows[i].cell[ar[int]]).toFixed(0);
 				data.rows[i].cell[ar[int]]=valorarrumado;
