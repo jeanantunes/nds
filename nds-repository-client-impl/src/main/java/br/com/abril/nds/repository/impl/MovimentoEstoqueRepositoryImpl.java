@@ -67,7 +67,13 @@ implements MovimentoEstoqueRepository {
 		
 		hql.append(" group by m.produtoEdicao.id, m.data, m.tipoMovimento.id ");		
 		
-		hql.append(" order by case when m.origem = 'CARGA_INICIAL' then m.data else m.dataCriacao end asc, m.id ");
+		hql.append(" order by ");
+		
+		hql.append(" case when m.origem = 'CARGA_INICIAL' then m.data else m.dataCriacao end asc, ");
+		
+		hql.append(" case when m.origem = 'CARGA_INICIAL' then m.tipoMovimento.operacaoEstoque end asc, " );
+		
+		hql.append(" m.id ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
