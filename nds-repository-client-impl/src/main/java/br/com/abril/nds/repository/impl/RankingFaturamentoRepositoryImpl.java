@@ -55,6 +55,32 @@ public class RankingFaturamentoRepositoryImpl extends AbstractRepositoryModel<Ra
 		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
 		query.executeUpdate();
 		
+		atualizarClassificacaoCota();
+	}
+	
+	@Override
+	public void atualizarClassificacaoCota() {
+	    StringBuilder sql = new StringBuilder();
+	    sql.append("update cota c ");
+	    sql.append("  join ranking_faturamento r on r.cota_id = c.id ");
+	    sql.append("   and r.ranking_faturamento_gerados_id = (select max(id) from ranking_faturamento_gerados) ");
+	    sql.append("   set c.classificacao_espectativa_faturamento = ");
+	    sql.append("   (case when r.faturamento < (select coalesce(valor_ate, 1000) ");
+	    sql.append("                                 from distribuidor_classificacao_cota ");
+	    sql.append("                                where cod_classificacao = 'D') then 'D' ");
+	    sql.append("         when r.faturamento < (select coalesce(valor_ate, 2000) ");
+	    sql.append("                                 from distribuidor_classificacao_cota ");
+	    sql.append("                                where cod_classificacao = 'C') then 'C' ");
+	    sql.append("         when r.faturamento < (select coalesce(valor_ate, 4000) ");
+	    sql.append("                                 from distribuidor_classificacao_cota ");
+	    sql.append("                                where cod_classificacao = 'B') then 'B' ");
+	    sql.append("         else (case when (select count(p.id) ");
+	    sql.append("                            from pdv p ");
+	    sql.append("                           where p.cota_id = c.id) < 2 then 'A' else 'AA' end) ");
+	    sql.append("   end) ");
+	    
+	    SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+	    query.executeUpdate();
 	}
 	
 	@SuppressWarnings("unchecked")
