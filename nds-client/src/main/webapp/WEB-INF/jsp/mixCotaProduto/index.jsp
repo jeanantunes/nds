@@ -60,11 +60,7 @@
 		 <span class="bt_novos" title="Cópia de mix" id="btCopiaMix"><a href="javascript:;" onclick="mixCotaProdutoController.abrirCopiaDialog()"><img src="images/ico_negociar.png" alt="Cópia de Mix" hspace="5" border="0" />C&oacute;pia de Mix</a></span>
             
       </fieldset>
-      <form action="${pageContext.request.contextPath}/distribuicao/mixCotaProduto/uploadArquivoLote" id="formUploadLoteMix" method="post" target="_blank" style="display:none" enctype="multipart/form-data">
-
-      	<input type="file" id="excelFile" name="excelFile"/>
-      </form>
-      
+            
       <fieldset class="classFieldset pesqProduto" style="display:none;">
        	  <legend>Produto: &nbsp;<span id="spanLegendProduto"></span></legend>
         
@@ -269,7 +265,7 @@
          <thead>
         		<tr>
          		<td><strong>Cota:</strong></td>
-         		<td><strong>Nome PDV:</strong></td>
+         		<td><strong>Nome Cota:</strong></td>
          		<td><strong>Rep. Minimo:</strong></td>
          		<td><strong>Rep. Maximo:</strong></td>
          		<td><a href="javascript:mixCotaProdutoController.addLinhaProduto();"><img src="images/ico_add.gif"/></a></td>

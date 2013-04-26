@@ -632,7 +632,8 @@ var mixCotaProdutoController = $.extend(true, {
 	
 	//Adiciona nova linha ao grid por Produto
 	novoMixPorProduto : function(){
-		
+		if($("#codigoProdutoMix").val()==''){exibirMensagem("WARNING", ["Pesquisa um produto para o Mix."]); return; }
+
 		$("#dialog-incluir-mix-produto").dialog({
 			resizable: false,
 			height:'auto',
