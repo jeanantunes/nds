@@ -908,7 +908,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		debitoCredito.setDataLancamento(dataLancamento);
 		
-		debitoCredito.setValor(MathUtil.round(valor.abs(), 2));
+		debitoCredito.setValor(valor.abs());
 		
 		listaDebitoCredito.add(debitoCredito);
 		
