@@ -774,11 +774,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 				if(OperacaoFinaceira.CREDITO.equals(debitoCreditoNaoConsolidado)) {
 
-					debitoCreditoNaoConsolidado.setObservacoes("Créditos");
+					debitoCreditoNaoConsolidado.setObservacoes("Créditos - "+debitoCreditoNaoConsolidado.getTipoMovimento());
 
 				} else {
 
-					debitoCreditoNaoConsolidado.setObservacoes("Débitos");
+					debitoCreditoNaoConsolidado.setObservacoes("Débitos - "+debitoCreditoNaoConsolidado.getTipoMovimento());
 
 				}
 				
@@ -908,7 +908,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		debitoCredito.setDataLancamento(dataLancamento);
 		
-		debitoCredito.setValor(MathUtil.round(valor.abs(), 2));
+		debitoCredito.setValor(valor.abs());
 		
 		listaDebitoCredito.add(debitoCredito);
 		

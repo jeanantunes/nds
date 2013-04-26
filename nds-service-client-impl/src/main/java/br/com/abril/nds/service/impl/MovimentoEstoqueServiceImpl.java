@@ -356,7 +356,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			 							boolean validarTransfEstoqueDiferenca) {
 
 		if (StatusAprovacao.APROVADO.equals(movimentoEstoque.getStatus())) {
-
+			
 			Long idProdutoEdicao = movimentoEstoque.getProdutoEdicao().getId();
 			
 			EstoqueProduto estoqueProduto = 
@@ -376,6 +376,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			}
 			
 			BigInteger novaQuantidade;
+			
+			BigInteger novaQuantidadeSomatorioEstoque = BigInteger.ZERO;
 
 			boolean isOperacaoEntrada = 
 				OperacaoEstoque.ENTRADA.equals(tipoMovimentoEstoque.getOperacaoEstoque());
@@ -420,15 +422,32 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	
 					 BigInteger qtdeDevolucaoFornecedor = estoqueProduto.getQtdeDevolucaoFornecedor() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoFornecedor();
 	
-					 novaQuantidade = isOperacaoEntrada ? qtdeDevolucaoFornecedor.add(movimentoEstoque.getQtde()) :
-						 qtdeDevolucaoFornecedor.subtract(movimentoEstoque.getQtde());
+					 novaQuantidade = qtdeDevolucaoFornecedor.add(movimentoEstoque.getQtde());
 					 
-					 BigInteger qtdeDevolucaoEncalhe = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
+					 BigInteger _qtdeLancamento = estoqueProduto.getQtde() == null ? BigInteger.ZERO : estoqueProduto.getQtde();
+					 BigInteger _qtdeSuplementar = estoqueProduto.getQtdeSuplementar() == null ? BigInteger.ZERO : estoqueProduto.getQtdeSuplementar();
+					 BigInteger _qtdeDevolucaoEncalhe = estoqueProduto.getQtdeDevolucaoEncalhe() == null ? BigInteger.ZERO : estoqueProduto.getQtdeDevolucaoEncalhe();
 	
-					 qtdeDevolucaoEncalhe = qtdeDevolucaoEncalhe.subtract(movimentoEstoque.getQtde());
+					 novaQuantidadeSomatorioEstoque = _qtdeLancamento.add(_qtdeSuplementar).add(_qtdeDevolucaoEncalhe);
+					 novaQuantidadeSomatorioEstoque = novaQuantidadeSomatorioEstoque.subtract(movimentoEstoque.getQtde());
 					 
-					 estoqueProduto.setQtdeDevolucaoEncalhe(qtdeDevolucaoEncalhe);
+					 BigInteger totalValorSubtrairDoEstoque = movimentoEstoque.getQtde();
+					 BigInteger valorSubtrairDoEstoque = BigInteger.ZERO;
 					 
+					 valorSubtrairDoEstoque = subtrairDoEstoque(_qtdeLancamento, totalValorSubtrairDoEstoque);
+					 _qtdeLancamento = _qtdeLancamento.subtract(valorSubtrairDoEstoque);
+					 totalValorSubtrairDoEstoque = totalValorSubtrairDoEstoque.subtract(valorSubtrairDoEstoque);
+					 
+					 valorSubtrairDoEstoque = subtrairDoEstoque(_qtdeSuplementar, totalValorSubtrairDoEstoque);
+					 _qtdeSuplementar = _qtdeSuplementar.subtract(valorSubtrairDoEstoque);
+					 totalValorSubtrairDoEstoque = totalValorSubtrairDoEstoque.subtract(valorSubtrairDoEstoque);
+					 
+					 valorSubtrairDoEstoque = subtrairDoEstoque(_qtdeDevolucaoEncalhe, totalValorSubtrairDoEstoque);
+					 _qtdeDevolucaoEncalhe = _qtdeDevolucaoEncalhe.subtract(valorSubtrairDoEstoque);
+					 
+					 estoqueProduto.setQtde(_qtdeLancamento);
+					 estoqueProduto.setQtdeSuplementar(_qtdeSuplementar);
+					 estoqueProduto.setQtdeDevolucaoEncalhe(_qtdeDevolucaoEncalhe);
 					 estoqueProduto.setQtdeDevolucaoFornecedor(novaQuantidade);
 	
 					 break;
@@ -494,10 +513,16 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			}
 
 			// Caso seja importação, deve inserir mesmo se o estoque ficar negativo - Definido em conjunto com Cesar Pop Punk
-			if (!isImportacao) {
+			if (!isImportacao && !TipoEstoque.DEVOLUCAO_FORNECEDOR.equals(tipoEstoque)) {
 				this.validarAlteracaoEstoqueProdutoDistribuidor(
 					novaQuantidade, tipoEstoque, estoqueProduto.getProdutoEdicao(),
 					validarTransfEstoqueDiferenca);
+			}
+			
+			if(!isImportacao && TipoEstoque.DEVOLUCAO_FORNECEDOR.equals(tipoEstoque)) {
+				this.validarAlteracaoEstoqueProdutoDistribuidorParaDevolucaoFornecedor(
+						novaQuantidadeSomatorioEstoque, estoqueProduto.getProdutoEdicao(), 
+						validarTransfEstoqueDiferenca);
 			}
 			
 			if (estoqueProduto.getId() == null) {
@@ -515,6 +540,51 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		return null;
 	}
 
+	
+	private void subtrairDevolucaoFornecedorDosEstoques() {
+		
+	}
+	
+	private BigInteger subtrairDoEstoque(BigInteger qtdeEstoque, BigInteger qtdeSubtrairDoEstoque) {
+		
+		if( BigInteger.ZERO.compareTo(qtdeEstoque) >= 0 ) {
+		
+			return BigInteger.ZERO;
+		
+		}
+		
+		if(qtdeEstoque.compareTo(qtdeSubtrairDoEstoque) > 0) {
+		
+			return qtdeSubtrairDoEstoque;
+		
+		} else {
+			
+			return qtdeEstoque;
+			
+		}
+		
+		
+	}
+
+	private void validarAlteracaoEstoqueProdutoDistribuidorParaDevolucaoFornecedor(
+			BigInteger saldoEstoque, ProdutoEdicao produtoEdicao, boolean validarTransfEstoqueDiferenca) {
+
+		
+		
+		if (validarTransfEstoqueDiferenca
+				&& !this.validarSaldoEstoque(saldoEstoque)) {
+
+			throw new ValidacaoException(TipoMensagem.WARNING,
+					"Saldo do produto ["
+							+ produtoEdicao.getProduto().getCodigo() + " - "
+							+ produtoEdicao.getProduto().getNomeComercial()
+							+ " - " + produtoEdicao.getNumeroEdicao()
+							+ "] nos estoques \"Lançamento, Devolução Encalhe e Suplementar\", " +
+							"insuficientes para movimentação.");
+		}
+	}
+	
+	
 	private void validarAlteracaoEstoqueProdutoDistribuidor(BigInteger saldoEstoque, 
 															TipoEstoque tipoEstoque,
 															ProdutoEdicao produtoEdicao,

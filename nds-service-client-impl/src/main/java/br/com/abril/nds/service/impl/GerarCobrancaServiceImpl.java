@@ -902,7 +902,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		Calendar diaPostergado = Calendar.getInstance();
 		diaPostergado.setTime(dataOperacao);
 		diaPostergado.add(Calendar.DAY_OF_MONTH, qtdDiasNovaCobranca);
-		
+	
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = null;
 		if (vlMovFinanTotal.compareTo(BigDecimal.ZERO) > 0){
 			
@@ -942,8 +942,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		if (vlMovFinanTotal != null && vlMovFinanTotal.compareTo(BigDecimal.ZERO) != 0){
 			
+			Date data = this.calendarioService.obterProximaDataDiaUtil(diaPostergado.getTime());
+			
 			movimentoFinanceiroCota = new MovimentoFinanceiroCota();
-			movimentoFinanceiroCota.setData(diaPostergado.getTime());
+			movimentoFinanceiroCota.setData(data);
 			movimentoFinanceiroCota.setDataCriacao(dataOperacao);
 			movimentoFinanceiroCota.setUsuario(usuario);
 			movimentoFinanceiroCota.setValor(vlMovFinanTotal.abs());

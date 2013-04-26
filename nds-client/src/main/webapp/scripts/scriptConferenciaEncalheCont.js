@@ -516,7 +516,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		}
 		
 		$(".outrosVlrsGrid", ConferenciaEncalheCont.workspace).flexAddData({
-			page: result.listaDebitoCredito.page, total: result.listaDebitoCredito.total, rows: result.listaDebitoCredito.rows
+			page: result.listaDebitoCredito.page, total: result.listaDebitoCredito.total, rows: ConferenciaEncalheCont.arredondarValorDebitoCredito(result.listaDebitoCredito.rows)
 		});
 		
 		$("#totalReparte", ConferenciaEncalheCont.workspace).text(parseFloat(result.reparte).toFixed(2));
@@ -530,6 +530,16 @@ var ConferenciaEncalheCont = $.extend(true, {
 		$("#statusCota", ConferenciaEncalheCont.workspace).text(result.situacao);
 		
 		focusSelectRefField($("[name=inputValorExemplares]", ConferenciaEncalhe.workspace).first());
+	},
+	
+	arredondarValorDebitoCredito : function(listaDebitoCredito) {
+		
+		$.each(listaDebitoCredito, function(index, value){
+				value.cell.valor = parseFloat(value.cell.valor).toFixed(2);
+		});
+		
+		return listaDebitoCredito;
+		
 	},
 	
 	atualizarValores: function(index, valorReal) {

@@ -137,6 +137,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 		hql.append(" mfc.tipoMovimento.operacaoFinaceira as tipoLancamento, ");
 		
+		hql.append(" mfc.tipoMovimento.descricao as tipoMovimento, ");
+		
 		hql.append(" mfc.valor as valor, ");
 		
 		hql.append(" mfc.data as dataLancamento, ");

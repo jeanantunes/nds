@@ -1020,15 +1020,15 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			sql.append(" PROD_EDICAO.ID, ");
 			
 			sql.append(" ( SELECT SUM(  		");
-			sql.append(" ESTOQUE_PROD.QTDE +	");
-			sql.append(" ESTOQUE_PROD.QTDE_SUPLEMENTAR + 		");
-			sql.append(" ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE )	");
+			sql.append(" COALESCE(ESTOQUE_PROD.QTDE, 0) +	");
+			sql.append(" COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0) + 		");
+			sql.append(" COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0))	");
 			sql.append(" FROM ESTOQUE_PRODUTO ESTOQUE_PROD ");
 			sql.append(" WHERE ESTOQUE_PROD.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ) as qtdDevolucao, ");
 			
 			if(indBuscaTotalParcial) {
 				sql.append(" ( ");
-				sql.append(" SELECT SUM(PARCIAL.QTDE) ");
+				sql.append(" SELECT SUM( COALESCE(PARCIAL.QTDE, 0)) ");
 				sql.append(" FROM CONFERENCIA_ENC_PARCIAL PARCIAL ");
 				sql.append(" WHERE PROD_EDICAO.ID = PARCIAL.PRODUTOEDICAO_ID AND  ");
 				sql.append(" PARCIAL.STATUS_APROVACAO = :statusAprovacao  ");
