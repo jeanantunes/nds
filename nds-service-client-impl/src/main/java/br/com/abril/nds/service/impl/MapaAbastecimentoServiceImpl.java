@@ -21,8 +21,6 @@ import br.com.abril.nds.dto.ProdutoMapaCotaDTO;
 import br.com.abril.nds.dto.ProdutoMapaDTO;
 import br.com.abril.nds.dto.ProdutoMapaRotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
-import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
@@ -261,50 +259,49 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	@Transactional
 	public MapaCotaDTO obterMapaDeImpressaoPorCota(FiltroMapaAbastecimentoDTO filtro) {
 		
-		List<ProdutoAbastecimentoDTO> produtosCota = movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorCota(filtro);
-		
-		Cota cota = cotaRepository.obterPorNumerDaCota(filtro.getCodigoCota());
+		List<ProdutoAbastecimentoDTO> produtosCota = 
+			this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorCota(filtro);
 		
 		CompararProdutoMapaCotaDTO comparator = new CompararProdutoMapaCotaDTO();
-		TreeMap<Long,ProdutoMapaCotaDTO> produtoMapa = 
-				new TreeMap<Long, ProdutoMapaCotaDTO>();
+		
+		TreeMap<Long,ProdutoMapaCotaDTO> produtoMapa = new TreeMap<Long, ProdutoMapaCotaDTO>();
+		
 		comparator.setProdutoMapa(produtoMapa);
 		
-		MapaCotaDTO mapaCota = new MapaCotaDTO(
-					cota==null?null:cota.getNumeroCota(),
-					cota==null?null:cota.getPessoa().getNome(),
-					null);
+		MapaCotaDTO mapaCota = new MapaCotaDTO();
 		
-		for(ProdutoAbastecimentoDTO item : produtosCota) {
-			if(!produtoMapa.containsKey(item.getIdProdutoEdicao())){
+		for (ProdutoAbastecimentoDTO item : produtosCota) {
+			
+			if (!produtoMapa.containsKey(item.getIdProdutoEdicao())) {
+
+				BigInteger somaEstoqueJuramentado = 
+					this.cotaJuramentadoRepository.buscarSomaEstoqueJuramentadoPorProdutoData(
+						item.getIdProdutoEdicao(), filtro.getDataDate());
 				
-				EstoqueProdutoCotaJuramentado produtoJuramentado = cotaJuramentadoRepository
-						.buscarEstoquePorProdutoECotaNaData(
-								item.getIdProdutoEdicao(),
-								filtro.getCodigoCota().longValue(),
-								filtro.getDataDate());
-				
-				if (produtoJuramentado != null) {
-					BigInteger newReparte = BigInteger.valueOf(item.getReparte().longValue());
-					item.setNomeProduto(item.getNomeProduto() + " *");
-					item.setReparte(newReparte.subtract(produtoJuramentado.getQtde()));
+				if (somaEstoqueJuramentado != null) {
+					
+					BigInteger newReparte = BigInteger.valueOf(item.getReparte());
+					
+					item.setReparte(newReparte.subtract(somaEstoqueJuramentado));
 				}
 				
-				produtoMapa.put(
-						item.getIdProdutoEdicao(), 
-						new ProdutoMapaCotaDTO(
-								item.getNomeProduto(), 
-								item.getNumeroEdicao(), 
-								item.getSequenciaMatriz(), 
-								0));
+				ProdutoMapaCotaDTO produtoMapaCotaDTO = 
+					new ProdutoMapaCotaDTO(
+						item.getNomeProduto(), item.getNumeroEdicao(), item.getSequenciaMatriz(), 0);
+				
+				produtoMapa.put(item.getIdProdutoEdicao(), produtoMapaCotaDTO);
 				
 				Integer qtdeAtual = produtoMapa.get(item.getIdProdutoEdicao()).getTotal();
+				
 				produtoMapa.get(item.getIdProdutoEdicao()).setTotal(qtdeAtual + item.getReparte());
 			}
 		}
 		
-		TreeMap<Long, ProdutoMapaCotaDTO> mapaProdutosOrdenados = new TreeMap<Long, ProdutoMapaCotaDTO>(comparator);
+		TreeMap<Long, ProdutoMapaCotaDTO> mapaProdutosOrdenados =
+			new TreeMap<Long, ProdutoMapaCotaDTO>(comparator);
+		
 		mapaProdutosOrdenados.putAll(produtoMapa);
+		
 		mapaCota.setProdutos(mapaProdutosOrdenados);
 		
 		return mapaCota;
