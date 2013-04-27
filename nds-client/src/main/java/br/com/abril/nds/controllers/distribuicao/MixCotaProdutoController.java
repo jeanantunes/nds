@@ -146,11 +146,6 @@ public class MixCotaProdutoController extends BaseController {
 	@Path("/pesquisarPorCota")
 	public void pesquisarPorCota(FiltroConsultaMixPorCotaDTO filtro, String sortorder, String sortname, int page, int rp) {
 		
-		if (!cotaService.isTipoDistribuicaoCotaEspecifico(filtro.getCota(), TipoDistribuicaoCota.ALTERNATIVO)) {
-			
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Cota não é do tipo Alternativo"));
-		}
-		
 		if (session.getAttribute(FILTRO_MIX_COTA_SESSION_ATTRIBUTE) == null) {
 			this.session.setAttribute(FILTRO_MIX_COTA_SESSION_ATTRIBUTE, filtro);
 		}

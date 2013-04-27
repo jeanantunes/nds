@@ -451,7 +451,7 @@ public class FixacaoReparteController extends BaseController {
 			for (FixacaoReparteDTO fixacaoReparteDTO : listaFixacaoExcel) {
 				FixacaoReparte fixacaoReparte = fixacaoReparteService.adicionarFixacaoReparte(fixacaoReparteDTO);
 				if(fixacaoReparte.getCotaFixada().getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) {
-					getErrosUpload().add("- Status da Cota: " + SituacaoCadastro.SUSPENSO.toString() + ". (Cota[" + fixacaoReparteDTO.getCotaFixadaString() + "] Produto[" + fixacaoReparteDTO.getProdutoFixado() + "]).");
+					getErrosUpload().add("- Fixação inserida, status da Cota: " + SituacaoCadastro.SUSPENSO.toString() + ". (Cota[" + fixacaoReparteDTO.getCotaFixadaString() + "] Produto[" + fixacaoReparteDTO.getProdutoFixado() + "]).");
 				}
 			}
 			
