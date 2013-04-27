@@ -296,7 +296,7 @@ public class MixCotaProdutoController extends BaseController {
 		
 		if (mensagens != null && !mensagens.isEmpty()) {
 			
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.SUCCESS, mensagens));
 		}
 		
 		throw new ValidacaoException(TipoMensagem.SUCCESS, "Operação realizada com sucesso!");

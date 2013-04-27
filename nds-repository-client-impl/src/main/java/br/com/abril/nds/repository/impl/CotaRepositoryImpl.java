@@ -2759,23 +2759,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		return query.list();
 	}
 	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Integer> verificarTipoDistribuicaoCotas(TipoDistribuicaoCota tipoDistribuicaoCota, Integer...cotaIdArray) {
-
-		StringBuilder hql = new StringBuilder("select NUMERO_COTA from cota where cota.NUMERO_COTA in (:cotaIDList)");
-		hql.append(" and (cota.SITUACAO_CADASTRO = upper(:situacaoCadastroAtivo) ");
-		hql.append("      or cota.SITUACAO_CADASTRO = upper(:situacaoCadastroSuspenso) )");
-		hql.append(" and cota.TIPO_DISTRIBUICAO_COTA = upper(:tipoDistribuicaoCota)");
-		
-		SQLQuery query = super.getSession().createSQLQuery(hql.toString());
-		query.setParameterList("cotaIDList", cotaIdArray);
-		query.setParameter("situacaoCadastroAtivo", SituacaoCadastro.ATIVO.toString());
-		query.setParameter("situacaoCadastroSuspenso", SituacaoCadastro.SUSPENSO.toString());
-		query.setParameter("tipoDistribuicaoCota", TipoDistribuicaoCota.CONVENCIONAL.toString());
-		
-		return query.list();
-	}
 
 	@Override
 	public List<CotaDTO> obterCotasPorNomeAutoComplete(String nome) {

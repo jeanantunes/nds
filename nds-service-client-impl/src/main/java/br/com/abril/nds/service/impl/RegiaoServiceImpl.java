@@ -64,7 +64,8 @@ public class RegiaoServiceImpl implements RegiaoService  {
 	public void excluirRegiao(Long id) {
 		Regiao regiao = this.regiaoRepository.buscarPorId(id);
 		
-		this.regiaoRepository.remover(regiao);
+		registroCotaRegiaoRepository.removerRegistroCotaReagiaPorRegiao(regiao);
+		regiaoRepository.remover(regiao);
 	}
 
 	@Override
