@@ -207,19 +207,16 @@ var anaLiseHistogramaController = $.extend(true, {
 		$("#histogramaVendasContent").show();
 	},
 	
-	formatarFaixasVenda : function formatarFaixasVenda(rows){
-		var rowCell; // representa as celulas da linha;
-		
-		for ( var index in rows) {
-			rowCell = rows[index].cell;
+	formatarFaixasVenda : function formatarFaixasVenda(rowCell){
+		var cotasEsmagadasFormatado = '';
 		
 			rowCell.repTotal = formatarMilhar(rowCell.repTotal);
 			rowCell.vdaTotal = formatarMilhar(parseInt(rowCell.vdaTotal));
 			
-			if ($(rowCell.cotasEsmagadas).text() == "0") {
-				rowCell.cotasEsmagadas = formatarMilhar($(rowCell.cotasEsmagadas).text());
-			}else{
-				$(rowCell.cotasEsmagadas).text(formatarMilhar($(rowCell.cotasEsmagadas).text()));
+			cotasEsmagadasFormatado = formatarMilhar($(rowCell.cotasEsmagadas).text());
+			
+			if (cotasEsmagadasFormatado == "0") {
+				rowCell.cotasEsmagadas = 0;
 			}
 			 
 			rowCell.vendaEsmagadas = formatarMilhar(rowCell.vendaEsmagadas);
@@ -231,8 +228,6 @@ var anaLiseHistogramaController = $.extend(true, {
 			rowCell.partVenda = floatToPrice(rowCell.partVenda);
 			rowCell.repMedio = floatToPrice(rowCell.repMedio);
 			rowCell.vdaMedio = floatToPrice(rowCell.vdaMedio);
-		}
-		
 	},
 	
 	iniciarGridAnalise:function(){
@@ -249,14 +244,6 @@ var anaLiseHistogramaController = $.extend(true, {
 				
 				resultadoAnalise=data.rows;
 				
-				$.each(data.rows, function(index, value) {
-					value.cell.repTotal = parseInt(value.cell.repTotal, 10);
-					
-					if(parseInt(value.cell.qtdeCotas)>0){
-						value.cell.faixaVenda="<a href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+index+",'idCotaStr');\">"+value.cell.faixaVenda+"</a>";						
-					}
-				});
-				
 				var idArray=["cotasAtivasCell","repartTotalCell","repMedioCell","vdaMedioCell","cotasEsmagadasCell","vdaTotalCell","vendaEsmagadasCell","encalheMedioCell","cotasProdutoCell","reparteDistribuidoCell"];
 				var valueArray=["qtdeCotasAtivas","repTotal","repMedio","vdaMedio","cotasEsmagadas","vdaTotal","vendaEsmagadas","encalheMedio","qtdeCotas","reparteDistribuido"];
 				
@@ -267,12 +254,17 @@ var anaLiseHistogramaController = $.extend(true, {
 				}
 				
 				// Adicionar o link as cotas esmagadas
-				// criei outro loop porque existe uma variável dentro do array "valueArray" que depende das cotas esmagadas (value.cell.cotasEsmagadas)
-				// com isso não foi possível adicionar no primeiro $.each (loop)
-				$.each(data.rows, function(index, value) {
-					if(parseInt(value.cell.qtdeCotas)>0){
-						value.cell.cotasEsmagadas="<a href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+index+",'idCotasEsmagadas');\">"+value.cell.cotasEsmagadas+"</a>";
+				$.each(data.rows, function(index, row) {
+					rowCell = row.cell;
+					rowCell.partVenda =  rowCell.vdaTotal /lastRow.cell.vdaTotal;
+					rowCell.partReparte =  rowCell.repTotal /lastRow.cell.repTotal;
+					
+					if(parseInt(rowCell.qtdeCotas)>0){
+						rowCell.faixaVenda="<a href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+index+",'idCotaStr');\">"+rowCell.faixaVenda+"</a>";						
+						rowCell.cotasEsmagadas="<a href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+index+",'idCotasEsmagadas');\">"+formatarMilhar(rowCell.cotasEsmagadas)+"</a>";
 					}
+					
+					anaLiseHistogramaController.formatarFaixasVenda(rowCell);
 				});
 
 				var vdaTotal = parseInt(lastRow.cell.vdaTotal);
@@ -295,7 +287,7 @@ var anaLiseHistogramaController = $.extend(true, {
 				
 				$("#abrangenciaVendaCell").text(r+"%");
 				
-				anaLiseHistogramaController.formatarFaixasVenda(data.rows);
+//				anaLiseHistogramaController.formatarFaixasVenda(data.rows);
 				
 				return data;
 			},
