@@ -691,4 +691,16 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 	    
 		return criteria.list();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Boleto> obterBoletosNaoPagos(Date data){
+		
+		String hql = "select boleto " + this.obterFromWhereBoletosInadimplentes();
+		
+		Query query = this.getSession().createQuery(hql);
+		query.setParameter("data", data);
+		
+		return query.list();
+	}
 }
