@@ -1,5 +1,3 @@
-//var tempData=null;
-
 function montarDados(){
 
 	params = new Array();
@@ -14,10 +12,7 @@ function montarDados(){
 	url = contextPath + "/distribuicao/historicoVenda/pesquisaProduto";
 	$.post(url, params, function(data){
 		if(data){
-//						console.log("retorno do post...");
 						anaLiseHistogramaController.tempData = data;
-//						console.log(anaLiseHistogramaController.data);
-							
 						
 						/* montando popup superior */ 
 						$("#voltarBaseAnalise").click(function(){
@@ -25,10 +20,8 @@ function montarDados(){
 							$("#analiseHistoricoVendasContent").hide();
 						});
 						
-					//	console.log("link pra mostrar!!! "+($(".linkMostrarTodos").length));
 						$("#analiseHistoricoPopUpNomeProduto").clear();
 						$("#analiseHistoricoPopUpNomeProduto").append('<td class="class_linha_1"><strong>Produto:</strong></td>');
-					//	console.log($("#analiseHistoricoPopUpNomeProduto").length);
 						
 						// tr numeroEdicao
 						$('#analiseHistoricoPopUpNumeroEdicao').html('')
@@ -47,9 +40,7 @@ function montarDados(){
 						.append('<td class="class_linha_2"><strong>Venda:</strong></td>');
 						
 						// carregando popUp_analiseHistoricoVenda
-//						console.log(anaLiseHistogramaController);
 						for ( var int2 = 0; int2 < anaLiseHistogramaController.tempData.rows.length; int2++) {
-//							console.log(int2)
 							row = anaLiseHistogramaController.tempData.rows[int2];
 							
 							$("#analiseHistoricoPopUpNomeProduto").append('<td class="class_linha_1">'+row.cell.nomeProduto+'</td>');
@@ -72,9 +63,8 @@ function montarDados(){
 						
 		}
 	});
-	//analiseHistoricoVendaController.init();
-	
 }
+
 function updateFaixa(input,idx){
 	if(input.value=='' || input.value==null || parseInt(input.value)==0 ||(parseInt(input.value) <= faixasVenda[idx-1].cell.faixaReparteDe)){
 		if(faixasVenda[idx-1].cell.bkp){
@@ -217,6 +207,29 @@ var anaLiseHistogramaController = $.extend(true, {
 		$("#histogramaVendasContent").show();
 	},
 	
+	formatarFaixasVenda : function formatarFaixasVenda(rowCell){
+		var cotasEsmagadasFormatado = '';
+		
+			rowCell.repTotal = formatarMilhar(rowCell.repTotal);
+			rowCell.vdaTotal = formatarMilhar(parseInt(rowCell.vdaTotal));
+			
+			cotasEsmagadasFormatado = formatarMilhar($(rowCell.cotasEsmagadas).text());
+			
+			if (cotasEsmagadasFormatado == "0") {
+				rowCell.cotasEsmagadas = 0;
+			}
+			 
+			rowCell.vendaEsmagadas = formatarMilhar(rowCell.vendaEsmagadas);
+			rowCell.qtdeCotasAtivas = formatarMilhar(rowCell.qtdeCotasAtivas);
+			rowCell.qtdeCotas = formatarMilhar(rowCell.qtdeCotas);
+			rowCell.qtdeCotasSemVendas = formatarMilhar(rowCell.qtdeCotasSemVendas);
+			rowCell.encalheMedio = floatToPrice(rowCell.encalheMedio);
+			rowCell.partReparte = floatToPrice(rowCell.partReparte);
+			rowCell.partVenda = floatToPrice(rowCell.partVenda);
+			rowCell.repMedio = floatToPrice(rowCell.repMedio);
+			rowCell.vdaMedio = floatToPrice(rowCell.vdaMedio);
+	},
+	
 	iniciarGridAnalise:function(){
 		
 		$("#estudosAnaliseHistGrid",anaLiseHistogramaController.workspace).flexigrid({
@@ -228,52 +241,53 @@ var anaLiseHistogramaController = $.extend(true, {
 					
 					data = data.result;
 				}
-				resultadoAnalise=data.rows;
 				
-				$.each(data.rows, function(index, value) {
-//					console.log(value.cell.idCotaStr);
-					value.cell.repTotal = parseInt(value.cell.repTotal, 10);
-					
-					if(parseInt(value.cell.qtdeCotas)>0){
-						value.cell.faixaVenda="<a href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+index+");\">"+value.cell.faixaVenda+"</a>";						
-					}
-				});
+				resultadoAnalise=data.rows;
 				
 				var idArray=["cotasAtivasCell","repartTotalCell","repMedioCell","vdaMedioCell","cotasEsmagadasCell","vdaTotalCell","vendaEsmagadasCell","encalheMedioCell","cotasProdutoCell","reparteDistribuidoCell"];
 				var valueArray=["qtdeCotasAtivas","repTotal","repMedio","vdaMedio","cotasEsmagadas","vdaTotal","vendaEsmagadas","encalheMedio","qtdeCotas","reparteDistribuido"];
 				
+				var lastRow = $(data.rows).last()[0];
+				
 				for ( var i = 0; i < idArray.length; i++) {
-					$("#"+idArray[i]).text($(data.rows).last()[0].cell[valueArray[i]]);
+					$("#"+idArray[i]).text(lastRow.cell[valueArray[i]]);
 				}
 				
-				var vdaTotal = parseInt($(data.rows).last()[0].cell.vdaTotal);
-				var repTotal = parseInt($(data.rows).last()[0].cell.repTotal);
+				// Adicionar o link as cotas esmagadas
+				$.each(data.rows, function(index, row) {
+					rowCell = row.cell;
+					rowCell.partVenda =  rowCell.vdaTotal /lastRow.cell.vdaTotal;
+					rowCell.partReparte =  rowCell.repTotal /lastRow.cell.repTotal;
+					
+					if(parseInt(rowCell.qtdeCotas)>0){
+						rowCell.faixaVenda="<a href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+index+",'idCotaStr');\">"+rowCell.faixaVenda+"</a>";						
+						rowCell.cotasEsmagadas="<a href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+index+",'idCotasEsmagadas');\">"+formatarMilhar(rowCell.cotasEsmagadas)+"</a>";
+					}
+					
+					anaLiseHistogramaController.formatarFaixasVenda(rowCell);
+				});
+
+				var vdaTotal = parseInt(lastRow.cell.vdaTotal);
+				var repTotal = parseInt(lastRow.cell.repTotal);
 				
-				var qtdeCotas = parseInt($(data.rows).last()[0].cell.qtdeCotas);
+				var qtdeCotas = parseInt(lastRow.cell.qtdeCotas);
 				//cotas ativas da faixa de venda
-				var qtdeCotasAtivas = parseInt($(data.rows).last()[0].cell.qtdeCotasAtivas);
+				var qtdeCotasAtivas = parseInt(lastRow.cell.qtdeCotasAtivas);
 				//total de cotas ativas 
-				var qtdeTotalCotasAtivas = parseInt($(data.rows).last()[0].cell.qtdeTotalCotasAtivas);
-				var qtdeCotasSemVenda = parseInt($(data.rows).last()[0].cell.qtdeCotasSemVenda);
-				
+				var qtdeTotalCotasAtivas = parseInt(lastRow.cell.qtdeTotalCotasAtivas);
+				var qtdeCotasSemVenda = parseInt(lastRow.cell.qtdeCotasSemVenda);
 				
 				var eficVenda = parseFloat(vdaTotal/repTotal*100).toFixed(2);
 				$("#eficienciaDeVendaCell").text(eficVenda+"%");
 				
-				
 				var r = parseFloat(Math.round( (qtdeCotas/qtdeTotalCotasAtivas)*100 )).toFixed(2);
-//				console.log(r);
 				$("#abrangenciaDistribuicaoCell").text(r+"%");
-				/*
-				console.log("qtdeCotas::"+qtdeCotas);
-				console.log("qtdeCotasSemVenda::"+qtdeCotasSemVenda);
-				console.log("qtdeTotalCotasAtivas::"+qtdeTotalCotasAtivas);
-				console.log("qtdeCotas-qtdeCotasSemVenda/qtdeTotalCotasAtivas*100::"+(qtdeCotas-qtdeCotasSemVenda/qtdeTotalCotasAtivas*100));
-				*/
+
 				r = parseFloat(Math.round( (qtdeCotas-qtdeCotasSemVenda)/qtdeTotalCotasAtivas*100 )).toFixed(2);
 				
 				$("#abrangenciaVendaCell").text(r+"%");
 				
+//				anaLiseHistogramaController.formatarFaixasVenda(data.rows);
 				
 				return data;
 			},
@@ -359,9 +373,9 @@ var anaLiseHistogramaController = $.extend(true, {
 		
 	},
 	
-	executarAnaliseHistoricoVenda:function(idx){
-		console.log(resultadoAnalise[idx].cell.idCotaStr);
-		var idCotaArray = resultadoAnalise[idx].cell.idCotaStr.split(',');
+	executarAnaliseHistoricoVenda:function(idx, propriedade){
+		var idCotaArray = resultadoAnalise[idx].cell[propriedade].split(',');
+		
 		
 		url = contextPath + "/distribuicao/historicoVenda/analiseHistorico";
 
@@ -496,13 +510,13 @@ function popup_histograma() {
 		showToggleBtn: false,
 		resizable: true,
 		colModel : [ {
-			display : 'Faixa de Reparte De',
+			display : 'Faixa de Venda De',
 			name : 'formatFaixaDe',
 			width : 130,
 			sortable : false,
 			align : 'center'
 		},{
-			display : 'Faixa de Reparte Até',
+			display : 'Faixa de Venda Até',
 			name : 'inputfaixaReparteAte',
 			width : 130,
 			sortable : false,

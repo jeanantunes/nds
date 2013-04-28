@@ -11,10 +11,12 @@ import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
 import br.com.abril.nds.dto.HistogramaPosEstudoDadoInicioDTO;
 import br.com.abril.nds.dto.ProdutoBaseSugeridaDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
+import br.com.abril.nds.dto.TipoSegmentoProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.repository.EstudoProdutoEdicaoBaseRepository;
 import br.com.abril.nds.repository.ProdutoBaseSugeridaRepository;
@@ -79,15 +81,18 @@ public class HistogramaPosEstudoController extends BaseController{
 		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(selecionado.getCodigoProduto(), selecionado.getEdicao());
 		selecionado.setParcial(produtoEdicao.isParcial());
 		
-		selecionado.setTipoSegmentoProduto(produto.getTipoSegmentoProduto());
-		selecionado.setPeriodicidadeProduto(produto.getPeriodicidade().getOrdem());
+		TipoSegmentoProduto segmento = produto.getTipoSegmentoProduto();
+		TipoSegmentoProdutoDTO segmentoDTO = new TipoSegmentoProdutoDTO();
+		segmentoDTO.setIdSegmento(segmento.getId());
+		segmentoDTO.setDescricao(segmento.getDescricao());
 		
+		selecionado.setTipoSegmentoProduto(segmentoDTO);
+		selecionado.setPeriodicidadeProduto(produto.getPeriodicidade().getOrdem());
 		if (estudo != null && estudo.isLiberado()) {
 			selecionado.setEstudoLiberado(Boolean.TRUE);
-		}else{
+		} else {
 			selecionado.setEstudoLiberado(Boolean.FALSE);
 		}
-		
 		result.use(Results.json()).withoutRoot().from(selecionado).recursive().serialize();
 	}
 	

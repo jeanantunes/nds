@@ -2,6 +2,7 @@ package br.com.abril.nds.service;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.CopiaMixFixacaoDTO;
 import br.com.abril.nds.dto.MixCotaDTO;
 import br.com.abril.nds.dto.MixCotaProdutoDTO;
 import br.com.abril.nds.dto.MixProdutoDTO;
@@ -30,10 +31,11 @@ public interface MixCotaProdutoService {
 	
 	public void excluirMixPorCota(Long idCota);
 	
-	public List<String> adicionarListaMixPorCota(List<MixCotaProdutoDTO> listaMixCota, Integer cotaId);
+	public void adicionarListaMixPorCota(List<MixCotaProdutoDTO> listaMixCota, Integer cotaId);
 
-	public List<String> adicionarListaMixPorProduto(List<MixCotaProdutoDTO> listaMixProduto , String produtoId);	
+	public void adicionarListaMixPorProduto(List<MixCotaProdutoDTO> listaMixProduto , String produtoId);	
 	
-	public List<String> adicionarListaMixPorCota(List<MixCotaProdutoDTO> mixCotaProdutoDTOList);
-	
+	public void adicionarMixEmLote(List<MixCotaProdutoDTO> mixCotaProdutoDTOList);
+
+	public boolean gerarCopiaMix(CopiaMixFixacaoDTO copiaMix);
 }

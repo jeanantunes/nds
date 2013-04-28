@@ -2,137 +2,134 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 
-import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
-
-@SuppressWarnings("serial")
 public class HistogramaPosEstudoDadoInicioDTO implements Serializable {
 
-	private String classificacao;
-	private String nomeProduto;
-	private String codigoProduto;
-	private String dataLcto;
-	private String edicao;
-	private String estudo;
-	private Long idLancamento;
-	private Integer lncto;
-	private Integer repDistrib;
-	private Integer sobra;
-	private TipoSegmentoProduto tipoSegmentoProduto;
-	private Integer periodicidadeProduto;
-	private boolean estudoLiberado;
-	private boolean parcial;
+    private static final long serialVersionUID = -7594276887499370636L;
 
-	public String getClassificacao() {
-		return classificacao;
-	}
+    private String classificacao;
+    private String nomeProduto;
+    private String codigoProduto;
+    private String dataLcto;
+    private String edicao;
+    private String estudo;
+    private Long idLancamento;
+    private Integer lncto;
+    private Integer repDistrib;
+    private Integer sobra;
+    private Integer periodicidadeProduto;
+    private boolean estudoLiberado;
+    private boolean parcial;
+    private TipoSegmentoProdutoDTO tipoSegmentoProduto;
 
-	public void setClassificacao(String classificacao) {
-		this.classificacao = classificacao;
-	}
+    public String getClassificacao() {
+	return classificacao;
+    }
 
-	public String getNomeProduto() {
-		return nomeProduto;
-	}
+    public TipoSegmentoProdutoDTO getTipoSegmentoProduto() {
+        return tipoSegmentoProduto;
+    }
 
-	public void setNomeProduto(String nomeProduto) {
-		this.nomeProduto = nomeProduto;
-	}
+    public void setTipoSegmentoProduto(TipoSegmentoProdutoDTO tipoSegmentoProduto) {
+        this.tipoSegmentoProduto = tipoSegmentoProduto;
+    }
 
-	public String getCodigoProduto() {
-		return codigoProduto;
-	}
+    public void setClassificacao(String classificacao) {
+	this.classificacao = classificacao;
+    }
 
-	public void setCodigoProduto(String codigoProduto) {
-		this.codigoProduto = codigoProduto;
-	}
+    public String getNomeProduto() {
+	return nomeProduto;
+    }
 
-	public String getDataLcto() {
-		return dataLcto;
-	}
+    public void setNomeProduto(String nomeProduto) {
+	this.nomeProduto = nomeProduto;
+    }
 
-	public void setDataLcto(String dataLcto) {
-		this.dataLcto = dataLcto;
-	}
+    public String getCodigoProduto() {
+	return codigoProduto;
+    }
 
-	public String getEdicao() {
-		return edicao;
-	}
+    public void setCodigoProduto(String codigoProduto) {
+	this.codigoProduto = codigoProduto;
+    }
 
-	public void setEdicao(String edicao) {
-		this.edicao = edicao;
-	}
+    public String getDataLcto() {
+	return dataLcto;
+    }
 
-	public String getEstudo() {
-		return estudo;
-	}
+    public void setDataLcto(String dataLcto) {
+	this.dataLcto = dataLcto;
+    }
 
-	public void setEstudo(String estudo) {
-		this.estudo = estudo;
-	}
+    public String getEdicao() {
+	return edicao;
+    }
 
-	public Long getIdLancamento() {
-		return idLancamento;
-	}
+    public void setEdicao(String edicao) {
+	this.edicao = edicao;
+    }
 
-	public void setIdLancamento(Long idLancamento) {
-		this.idLancamento = idLancamento;
-	}
+    public String getEstudo() {
+	return estudo;
+    }
 
-	public Integer getLncto() {
-		return lncto;
-	}
+    public void setEstudo(String estudo) {
+	this.estudo = estudo;
+    }
 
-	public void setLncto(Integer lncto) {
-		this.lncto = lncto;
-	}
+    public Long getIdLancamento() {
+	return idLancamento;
+    }
 
-	public Integer getRepDistrib() {
-		return repDistrib;
-	}
+    public void setIdLancamento(Long idLancamento) {
+	this.idLancamento = idLancamento;
+    }
 
-	public void setRepDistrib(Integer repDistrib) {
-		this.repDistrib = repDistrib;
-	}
+    public Integer getLncto() {
+	return lncto;
+    }
 
-	public Integer getSobra() {
-		return sobra;
-	}
+    public void setLncto(Integer lncto) {
+	this.lncto = lncto;
+    }
 
-	public void setSobra(Integer sobra) {
-		this.sobra = sobra;
-	}
+    public Integer getRepDistrib() {
+	return repDistrib;
+    }
 
-	public TipoSegmentoProduto getTipoSegmentoProduto() {
-		return tipoSegmentoProduto;
-	}
+    public void setRepDistrib(Integer repDistrib) {
+	this.repDistrib = repDistrib;
+    }
 
-	public void setTipoSegmentoProduto(TipoSegmentoProduto tipoSegmentoProduto) {
-		this.tipoSegmentoProduto = tipoSegmentoProduto;
-	}
+    public Integer getSobra() {
+	return sobra;
+    }
 
-	public Integer getPeriodicidadeProduto() {
-		return periodicidadeProduto;
-	}
+    public void setSobra(Integer sobra) {
+	this.sobra = sobra;
+    }
 
-	public void setPeriodicidadeProduto(
-			Integer periodicidadeProduto) {
-		this.periodicidadeProduto = periodicidadeProduto;
-	}
+    public Integer getPeriodicidadeProduto() {
+	return periodicidadeProduto;
+    }
 
-	public boolean isEstudoLiberado() {
-		return estudoLiberado;
-	}
+    public void setPeriodicidadeProduto(Integer periodicidadeProduto) {
+	this.periodicidadeProduto = periodicidadeProduto;
+    }
 
-	public void setEstudoLiberado(boolean estudoLiberado) {
-		this.estudoLiberado = estudoLiberado;
-	}
+    public boolean isEstudoLiberado() {
+	return estudoLiberado;
+    }
 
-	public boolean isParcial() {
-		return parcial;
-	}
+    public void setEstudoLiberado(boolean estudoLiberado) {
+	this.estudoLiberado = estudoLiberado;
+    }
 
-	public void setParcial(boolean parcial) {
-		this.parcial = parcial;
-	}
+    public boolean isParcial() {
+	return parcial;
+    }
 
+    public void setParcial(boolean parcial) {
+	this.parcial = parcial;
+    }
 }

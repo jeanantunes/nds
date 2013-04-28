@@ -7,7 +7,6 @@ import java.util.Date;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.aop.framework.adapter.ThrowsAdviceInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.EstudoComplementarVO;

@@ -1,18 +1,25 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.CopiaMixFixacaoDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.FixacaoReparteDTO;
+import br.com.abril.nds.dto.MixCotaDTO;
+import br.com.abril.nds.dto.MixProdutoDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoProdutoDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaMixPorCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaMixPorProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -35,7 +42,9 @@ import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FixacaoReparteService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.UsuarioService;
 
 @Service
@@ -54,7 +63,13 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	private ProdutoRepository produtoRepository;
 	
 	@Autowired
+	private ProdutoService produtoService;
+	
+	@Autowired
 	private CotaRepository cotaRepository;
+	
+	@Autowired
+	private CotaService cotaService;
 	
 	@Autowired
 	private UsuarioService usuarioService;
@@ -113,7 +128,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		List<FixacaoReparteDTO> listaFixacaoReparteDTO = new ArrayList<FixacaoReparteDTO>();
 		String codigoCotaBusca = filtroConsultaFixacaoCotaDTO.getCota();
 		
-		if(codigoCotaBusca != null && codigoCotaBusca !=""){
+		if(StringUtils.isNotEmpty(codigoCotaBusca)){
 			listaFixacaoReparteDTO = fixacaoReparteRepository.obterFixacoesRepartePorCota(filtroConsultaFixacaoCotaDTO);
 		}
 		return listaFixacaoReparteDTO;
@@ -136,8 +151,8 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	public List<FixacaoReparteDTO> obterHistoricoLancamentoPorCota(
 			FiltroConsultaFixacaoCotaDTO filtroCota) {
 		Cota cota = cotaRepository.obterPorNumerDaCota(new Integer(filtroCota.getCota()));
-		List<FixacaoReparteDTO> resutado = estoqueProdutoCotaRepository.obterHistoricoEdicaoPorCota(cota, filtroCota.getCodigoProduto()) ;
-		return resutado; 
+		List<FixacaoReparteDTO> resultado =null; /*estoqueProdutoCotaRepository.obterHistoricoEdicaoPorCota(cota, filtroCota.getCodigoProduto()) ;*/
+		return resultado; 
 	}
 	
 	@Override
@@ -162,8 +177,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		FixacaoReparte fixacaoReparte = this.obterFixacao(id);
 		FiltroPdvDTO filtroPdvDTO = new FiltroPdvDTO();
 		filtroPdvDTO.setIdCota(fixacaoReparte.getCotaFixada().getId());
-		List <PdvDTO> listPDVs = pdvRepository.obterPdvPorCotaComEndereco(filtroPdvDTO.getIdCota());
-		return listPDVs; 
+		return pdvRepository.obterPDVsPorCota(filtroPdvDTO);
 	}
 	
 	@Override
@@ -212,7 +226,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	private void validaStatusProduto(FixacaoReparteDTO fixacaoReparteDTO, Produto produto) {
 		
 		if (fixacaoReparteDTO.getEdicaoInicial() != null && fixacaoReparteDTO.getEdicaoFinal() != null) {
-			List<ProdutoEdicao> listProdutoEdicao = produtoEdicaoRepository.listProdutoEdicaoPorCodProdutoNumEdicoes(produto.getCodigo(), fixacaoReparteDTO.getEdicaoInicial().longValue(), fixacaoReparteDTO.getEdicaoFinal().longValue());
+			List<ProdutoEdicao> listProdutoEdicao = null;/*produtoEdicaoRepository.listProdutoEdicaoPorCodProdutoNumEdicoes(produto.getCodigo(), fixacaoReparteDTO.getEdicaoInicial().longValue(), fixacaoReparteDTO.getEdicaoFinal().longValue());*/
 			for (ProdutoEdicao produtoEdicao : listProdutoEdicao) {
 				statusPermitido(new ArrayList<>(produtoEdicao.getLancamentos()).get(0).getStatus());
 			}
@@ -353,4 +367,68 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 				|| cota.getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO))
 				&& cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.CONVENCIONAL);
 	}
+
+	@Override
+	public boolean gerarCopiafixacao(CopiaMixFixacaoDTO copiaDTO) {
+
+		
+		switch (copiaDTO.getTipoCopia()) {
+		case COTA:
+
+			FiltroConsultaFixacaoCotaDTO fMixCota = new FiltroConsultaFixacaoCotaDTO();
+			fMixCota.setCota(copiaDTO.getCotaNumeroOrigem().toString());
+			
+	
+			Cota cotaDestino = cotaService.obterPorNumeroDaCota(copiaDTO.getCotaNumeroDestino());
+			
+			List<FixacaoReparteDTO> mixCotaOrigem = fixacaoReparteRepository.obterFixacoesRepartePorCota(fMixCota);
+			if(mixCotaOrigem==null || mixCotaOrigem.isEmpty()){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Fixação de Reparte não encontrada para cópia.");
+			}
+			for (FixacaoReparteDTO mixCotaDTO : mixCotaOrigem) {
+				mixCotaDTO.setCotaFixadaId(cotaDestino.getId());
+			}
+					
+			try {
+//				this.mixCotaProdutoRepository.gerarCopiaMixCota(mixCotaOrigem,this.usuarioService.getUsuarioLogado());
+				fixacaoReparteRepository.gerarCopiaPorCotaFixacaoReparte(mixCotaOrigem,this.usuarioService.getUsuarioLogado());
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+			break;
+		case PRODUTO:
+			
+			FiltroConsultaFixacaoProdutoDTO fMixProduto = new FiltroConsultaFixacaoProdutoDTO();
+			
+			Produto produtoDestino = produtoService.obterProdutoPorCodigo(copiaDTO.getCodigoProdutoDestino());
+			fMixProduto.setCodigoProduto(copiaDTO.getCodigoProdutoOrigem());
+			
+			List<FixacaoReparteDTO> mixProdutoOrigem = fixacaoReparteRepository.obterFixacoesRepartePorProduto(fMixProduto);
+			
+//			List<MixProdutoDTO> mixProdutoOrigem = pesquisarPorProduto(fMixProduto);
+			if(mixProdutoOrigem==null || mixProdutoOrigem.isEmpty()){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Fixação de Reparte não encontrada para cópia.");
+			}
+			
+			for (FixacaoReparteDTO mixProdutoDTO : mixProdutoOrigem) {
+				mixProdutoDTO.setProdutoFixadoId(produtoDestino.getId());
+			}
+			
+			try {
+				this.fixacaoReparteRepository.gerarCopiaPorProdutoFixacaoReparte(mixProdutoOrigem,this.usuarioService.getUsuarioLogado());
+			} catch (Exception e) {
+				e.printStackTrace();
+				return false;
+			}
+			
+			break;
+
+		default:
+			break;
+		}
+		return true;
+	
+	}
+	
 }

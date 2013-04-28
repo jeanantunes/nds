@@ -41,7 +41,7 @@ $(function(){
 			<table class="lstSegmentosGrid">
 				<tr>
 				<td>
-				<select name="tipoSegmento1" id="tipoSegmento1" style="width: 200px;" onchange="ajusteReparteController.validarTipoSegmento1()" >
+				<select name="tipoSegmento1" id="tipoSegmento1" style="width: 200px;" onblur="ajusteReparteController.validarTipoSegmento1()" >
 					<option selected="selected">Selecione...</option>
 						<c:forEach items="${listaSegmentos}" var="segmento">
 					<option value="${segmento.id}">${segmento.descricao}</option>
@@ -57,7 +57,7 @@ $(function(){
 
 				<tr>
 				<td>
-				<select name="tipoSegmento2" id="tipoSegmento2" style="width: 200px;" onchange="ajusteReparteController.validarTipoSegmento2()" >
+				<select name="tipoSegmento2" id="tipoSegmento2" style="width: 200px;" onblur="ajusteReparteController.validarTipoSegmento2()" >
 					<option selected="selected">Selecione...</option>
 						<c:forEach items="${listaSegmentos}" var="segmento">
 					<option value="${segmento.id}">${segmento.descricao}</option>
@@ -71,7 +71,7 @@ $(function(){
 
 				<tr>
 				<td>
-				<select name="tipoSegmento3" id="tipoSegmento3" style="width: 200px;" onchange="ajusteReparteController.validarTipoSegmento3()" >
+				<select name="tipoSegmento3" id="tipoSegmento3" style="width: 200px;" onblur="ajusteReparteController.validarTipoSegmento3()" >
 					<option selected="selected">Selecione...</option>
 						<c:forEach items="${listaSegmentos}" var="segmento">
 					<option value="${segmento.id}">${segmento.descricao}</option>
@@ -163,6 +163,34 @@ $(function(){
 							<input name="ajuste_encalhe_max_input" id="AJUSTE_ENCALHE_MAX_input" value="1" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoEncalhe();" type="text" style="width: 50px;" />  
 						</span>
 					</td>
+				</tr>
+			</table>
+			
+			<table id="tableSegmentos" style="display: none;">
+				<tr>
+		          <td width="80"><strong>Segmentos:</strong></td>
+					
+					<td width="60" id="colSegmento1">Segmento 1:</td>
+					<td width="40">
+						<input name="exibirSegmento1" id="exibirSegmento1" type="text" style="width: 30px;" align="middle"/>
+		            <td width="25">
+		           		<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir" border="0"
+		           			 onclick = "ajusteReparteController.limparExibicaoSegmento(exibirSegmento1, tipoSegmento1, segmento1);" /></td>
+					
+					<td width="60" id="colSegmento2">Segmento 2:</td>
+					<td width="40">
+						<input name="exibirSegmento2" id="exibirSegmento2" type="text" style="width: 30px;" align="middle"/>
+		            <td width="25">
+		            	<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir" border="0" 
+							 onclick = "ajusteReparteController.limparExibicaoSegmento(exibirSegmento2, tipoSegmento2, segmento2);" /></td>
+					
+					<td width="60" id="colSegmento3">Segmento 3:</td>
+					<td width="40">
+						<input name="exibirSegmento3" id="exibirSegmento3" type="text" style="width: 30px;" align="middle"/>
+                    <td width="25">
+                    	<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir" border="0"
+                    		 onclick = "ajusteReparteController.limparExibicaoSegmento(exibirSegmento3, tipoSegmento3, segmento3);" /></td>
+                    
 				</tr>
 			</table>
 
@@ -270,6 +298,36 @@ $(function(){
 							<input name="ajuste_encalhe_max_input" id="AJUSTE_ENCALHE_MAX_editar_input" value="1" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoEncalheEditar();" type="text" style="width: 25px;" />  
 						</span>
 					</td>
+				</tr>
+			</table>
+			
+			<table id="tableSegmentosEditar" style="display: none;">
+				<tr>
+		          <td width="80"><strong>Segmentos:</strong></td>
+					
+					<td width="60">Segmento 1: </td>
+					<td width="40">
+						<input name="exibirSegmento1" id="exibirSegmento1Editar" type="text" style="width: 30px;" align="middle"/>
+		            <td width="25">
+		           		<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir" border="0"
+		           			 onclick = "ajusteReparteController.limparExibicaoSegmento(exibirSegmento1, tipoSegmento1, segmento1);" /></td>
+					
+					<!-- 
+					<td width="60">Segmento 2: </td>
+					<td width="40">
+						<input name="exibirSegmento2" id="exibirSegmento2Editar" type="text" style="width: 30px;" align="middle"/>
+		            <td width="25">
+		            	<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir" border="0" 
+							 onclick = "ajusteReparteController.limparExibicaoSegmento(exibirSegmento2, tipoSegmento2, segmento2);" /></td>
+					
+					<td width="60">Segmento 3: </td>
+					<td width="40">
+						<input name="exibirSegmento3" id="exibirSegmento3Editar" type="text" style="width: 30px;" align="middle"/>
+                    <td width="25">
+                    	<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir" border="0"
+                    		 onclick = "ajusteReparteController.limparExibicaoSegmento(exibirSegmento3, tipoSegmento3, segmento3);" /></td>
+					 -->
+                    
 				</tr>
 			</table>
 

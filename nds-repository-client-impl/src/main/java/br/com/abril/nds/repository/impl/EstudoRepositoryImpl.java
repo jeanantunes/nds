@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EstudoCotaRepository;
@@ -209,6 +210,20 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 
 	return maxId;
     }
+
+
+	@Override
+	public void setIdLancamentoNoEstudo(Long idLancamento, Long idEstudo) {
+
+		Query query = 
+				this.getSession().createQuery(
+						"update Estudo set LANCAMENTO_ID = :idLancamento where id = :idEstudo ");
+		
+		query.setParameter("idLancamento", idLancamento);
+		query.setParameter("idEstudo", idEstudo);
+		
+		query.executeUpdate();
+	}
 }
 
 
