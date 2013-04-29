@@ -118,14 +118,12 @@ var emissaoBandeiraController = $.extend(true, {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
 					window.location = contextPath + "/devolucao/emissaoBandeira/imprimirBandeira?semana=" + emissaoBandeiraController.semanaPesquisa+ "&numeroPallets=" + $.trim( $("#numeroPallets").val());
-			
-
-					
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
+			form: $("#dialog-pallets", this.workspace).parents("form")
 		});
 		
 		
@@ -163,7 +161,8 @@ var emissaoBandeiraController = $.extend(true, {
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
 				}
-			}
+			},
+			form: $("#dialog-pallets-bandeira-manual", this.workspace).parents("form")
 		});
 		return false;
 

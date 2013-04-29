@@ -3,6 +3,7 @@
 	<property name="ireport.zoom" value="0.700987798962785"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<parameter name="LOGO_DISTRIBUIDOR" class="java.awt.Image"/>
 	<queryString language="SQL">
 		<![CDATA[]]>
 	</queryString>
@@ -13,7 +14,6 @@
 	<field name="destino" class="java.lang.String"/>
 	<field name="canal" class="java.lang.String"/>
 	<field name="volumes" class="java.lang.String"/>
-	<field name="logoDistribuidor" class="java.awt.Image"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -23,7 +23,7 @@
 			<elementGroup>
 				<image onErrorType="Blank">
 					<reportElement x="11" y="5" width="172" height="102"/>
-					<imageExpression><![CDATA[$F{logoDistribuidor}]]></imageExpression>
+					<imageExpression><![CDATA[$P{LOGO_DISTRIBUIDOR}]]></imageExpression>
 				</image>
 				<rectangle>
 					<reportElement x="183" y="5" width="376" height="102"/>
