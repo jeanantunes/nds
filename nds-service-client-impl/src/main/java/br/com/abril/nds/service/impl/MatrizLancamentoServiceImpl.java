@@ -644,7 +644,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				
 				datasConfirmadas.add(entry.getKey());
 				
-				boolean balanceamentoConfirmado = produtoLancamento.isStatusLancamentoConfirmado();
+				boolean balanceamentoConfirmado = produtoLancamento.isStatusLancamentoBalanceado();
 				
 				if (!balanceamentoConfirmado) {
 					
@@ -734,7 +734,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			
 			Date dataLancamentoDistribuidor = produtoLancamento.getDataLancamentoDistribuidor();
 			
-			if (produtoLancamento.isStatusLancamentoConfirmado()) {
+			if (produtoLancamento.isStatusLancamentoBalanceado()) {
 
 				this.adicionarProdutoLancamentoNaMatriz(
 					matrizLancamento, produtoLancamento, dataLancamentoDistribuidor);
@@ -1314,7 +1314,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			return false;
 		}
 		
-		if (produtoLancamento.isStatusLancamentoConfirmado()) {
+		if (produtoLancamento.isStatusLancamentoBalanceado()) {
 			
 			return false;
 		}
@@ -1334,7 +1334,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		} else {
 
 			for (ProdutoLancamentoDTO verificarConfirmado : listaverificadaConfirmada) {
-				if (verificarConfirmado.isStatusLancamentoConfirmado()) {
+				if (verificarConfirmado.isStatusLancamentoBalanceado()) {
 
 					return true;
 
@@ -1633,7 +1633,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			}
 			
 			for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamentoDTO) {
-				if (!produtoLancamentoDTO.isStatusLancamentoConfirmado()) {
+				if (!produtoLancamentoDTO.isStatusLancamentoBalanceado()) {
 					mapaLancamento.put(produtoLancamentoDTO.getIdLancamento(), produtoLancamentoDTO);
 					idsLancamento.add(produtoLancamentoDTO.getIdLancamento());
 				}
