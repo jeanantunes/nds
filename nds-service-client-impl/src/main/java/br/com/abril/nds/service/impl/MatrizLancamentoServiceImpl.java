@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -643,7 +644,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				
 				datasConfirmadas.add(entry.getKey());
 				
-				boolean balanceamentoConfirmado = produtoLancamento.isBalanceamentoConfirmado();
+				boolean balanceamentoConfirmado = produtoLancamento.isStatusLancamentoConfirmado();
 				
 				if (!balanceamentoConfirmado) {
 					
@@ -733,7 +734,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			
 			Date dataLancamentoDistribuidor = produtoLancamento.getDataLancamentoDistribuidor();
 			
-			if (produtoLancamento.isBalanceamentoConfirmado()) {
+			if (produtoLancamento.isStatusLancamentoConfirmado()) {
 
 				this.adicionarProdutoLancamentoNaMatriz(
 					matrizLancamento, produtoLancamento, dataLancamentoDistribuidor);
@@ -1313,12 +1314,35 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			return false;
 		}
 		
-		if (produtoLancamento.isBalanceamentoConfirmado()) {
+		if (produtoLancamento.isStatusLancamentoConfirmado()) {
 			
 			return false;
 		}
 		
 		return true;
+	}
+	
+	public boolean isDataConfirmada(ProdutoLancamentoDTO produtoLancamentoDTO) {
+
+		List<ProdutoLancamentoDTO> listaverificadaConfirmada = this.lancamentoRepository
+				.verificarDataConfirmada(produtoLancamentoDTO);
+
+		if (listaverificadaConfirmada.isEmpty()) {
+
+			return false;
+
+		} else {
+
+			for (ProdutoLancamentoDTO verificarConfirmado : listaverificadaConfirmada) {
+				if (verificarConfirmado.isStatusLancamentoConfirmado()) {
+
+					return true;
+
+				}
+			}
+
+			return false;
+		}
 	}
 	
 	/**
@@ -1609,7 +1633,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			}
 			
 			for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamentoDTO) {
-				if (!produtoLancamentoDTO.isBalanceamentoConfirmado()) {
+				if (!produtoLancamentoDTO.isStatusLancamentoConfirmado()) {
 					mapaLancamento.put(produtoLancamentoDTO.getIdLancamento(), produtoLancamentoDTO);
 					idsLancamento.add(produtoLancamentoDTO.getIdLancamento());
 				}
@@ -1667,5 +1691,33 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		}
 
 		return matrizLancamentoConfirmada;
+	}
+	
+	@Override
+	public BalanceamentoLancamentoDTO verificarQuebraConfirmacaoDiaDeAcordoComMatriz(
+			BalanceamentoLancamentoDTO balanceamentoLancamento) {
+
+		Iterator<Date> dataConfirmadaIterator = balanceamentoLancamento
+				.getDatasExpedicaoConfirmada().iterator();
+
+		while (dataConfirmadaIterator.hasNext()) {
+			Date dataConfirmada = dataConfirmadaIterator.next();
+
+			Set<Entry<Date, List<ProdutoLancamentoDTO>>> entryset = balanceamentoLancamento
+					.getMatrizLancamento().entrySet();
+			Iterator<Entry<Date, List<ProdutoLancamentoDTO>>> iterator = entryset
+					.iterator();
+
+			while (iterator.hasNext()) {
+				Date dataGetEntry = (Date) iterator.next().getKey();
+
+				if (dataConfirmada.equals(dataGetEntry)
+						&& (dataConfirmada != null || dataGetEntry != null)) {
+					dataConfirmadaIterator.remove();
+				}
+			}
+
+		}
+		return balanceamentoLancamento;
 	}
 }
