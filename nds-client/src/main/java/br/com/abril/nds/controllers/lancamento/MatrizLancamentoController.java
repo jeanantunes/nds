@@ -764,9 +764,17 @@ public class MatrizLancamentoController extends BaseController {
 		
 		produtoBalanceamentoVO.setPossuiFuro(produtoLancamentoDTO.isPossuiFuro());
 		
-		produtoBalanceamentoVO.setDestacarLinha(
-			!produtoLancamentoDTO.isPossuiRecebimentoFisico()
-				|| produtoLancamentoDTO.isAlteradoInteface());
+		//verificar regra de negócio
+		
+//		produtoBalanceamentoVO.setDestacarLinha(
+//			!produtoLancamentoDTO.isPossuiRecebimentoFisico()
+//				|| produtoLancamentoDTO.isAlteradoInteface());
+		
+		
+		if((produtoBalanceamentoVO.getReparteFisico().equals("0") || produtoBalanceamentoVO.getReparteFisico().equals("")) || (produtoBalanceamentoVO.getDistribuicao().equals("0") || produtoBalanceamentoVO.getDistribuicao().equals("")) )
+		{
+			produtoBalanceamentoVO.setDestacarLinha(true);
+		}
 				
 		return produtoBalanceamentoVO;
 	}	
@@ -940,6 +948,7 @@ public class MatrizLancamentoController extends BaseController {
 			List<ProdutoLancamentoDTO> listaProdutosRecolhimento = entry.getValue();
 			
 			if (listaProdutosRecolhimento != null && !listaProdutosRecolhimento.isEmpty()) {
+				
 				
 				boolean exibeDestaque = false;
 				
