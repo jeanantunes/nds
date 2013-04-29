@@ -43,11 +43,11 @@ var lancamentosSelecionados = [];
 }
 
 .gridLinhaDestacada a {
-   color:#fff;
+   color:inherit;
 }
 
 .gridLinhaDestacada a:hover {
-   color:#000;
+   color:inherit;
 }
 
 </style>
