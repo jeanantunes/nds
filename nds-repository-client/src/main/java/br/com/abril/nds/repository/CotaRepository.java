@@ -376,7 +376,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 
 	boolean cotaVinculadaCotaBase(Long idCota);
 	
-	public List<Integer> numeroCotaExiste(TipoDistribuicaoCota tipoDistribuicaoCota, Integer... cotaIdArray);
+	List<Integer> numeroCotaExiste(TipoDistribuicaoCota tipoDistribuicaoCota, Integer... cotaIdArray);
 	
 	Cota obterCotaComBaseReferencia(Long idCota);
 
