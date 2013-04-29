@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.RegiaoCotaDTO;
@@ -14,14 +15,22 @@ import br.com.abril.nds.dto.RegiaoNMaiores_ProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotasRegiaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.dto.filtro.FiltroRegiaoNMaioresProdDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.distribuicao.Regiao;
 import br.com.abril.nds.model.distribuicao.RegistroCotaRegiao;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.RegistroCotaRegiaoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
 public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<RegistroCotaRegiao, Long> implements RegistroCotaRegiaoRepository {
 
+	@Autowired
+	private CotaRepository cotaRepository;
+	
 	public RegistroCotaRegiaoRepositoryImpl() {
 		super(RegistroCotaRegiao.class);
 	}
@@ -313,5 +322,69 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 			query.setResultTransformer(new AliasToBeanResultTransformer(RegiaoNMaiores_CotaDTO.class));
 			
 			return query.list();
+		}
+		
+		@Override
+		public Long adicionar(RegistroCotaRegiao regiaoCotaRegiao) {
+			
+			if (regiaoCotaRegiao == null || regiaoCotaRegiao.getCota() == null) {
+				
+				return null;
+			}
+			
+			Cota cota = cotaRepository.buscarPorId(regiaoCotaRegiao.getCota().getId());
+			
+			if (cota != null && !isCotaRegiaoCadastrada(regiaoCotaRegiao.getRegiao(), cota)) {
+				
+				return super.adicionar(regiaoCotaRegiao);
+			}
+			
+			return null;
+		}
+		
+		public boolean isCotaRegiaoCadastrada(Regiao regiao, Cota cota) {
+			
+			StringBuilder sql = new StringBuilder();
+			
+			sql.append(" from RegistroCotaRegiao");
+			sql.append(" where  regiao.id = :idRegiao");
+			sql.append(" and    cota.id   = :idCota");
+			
+			Query query = getSession().createQuery(sql.toString());
+			
+			query.setParameter("idRegiao", regiao.getId());
+			query.setParameter("idCota",   cota.getId());
+			
+			return !query.list().isEmpty(); 
+		}
+		
+		@Override
+		public List<RegistroCotaRegiao> obterRegistroCotaReagiaPorRegiao(Regiao regiao) {
+			
+			StringBuilder sql = new StringBuilder();
+			
+			sql.append(" from RegistroCotaRegiao");
+			sql.append(" where  regiao.id = :idRegiao");
+			
+			Query query = getSession().createQuery(sql.toString());
+			
+			query.setParameter("idRegiao", regiao.getId());
+			
+			return query.list();
+		}
+		
+		@Override
+		public void removerRegistroCotaReagiaPorRegiao(Regiao regiao) {
+			
+			StringBuilder sql = new StringBuilder();
+			
+			sql.append(" delete from RegistroCotaRegiao");
+			sql.append(" where  regiao.id = :idRegiao");
+			
+			Query query = getSession().createQuery(sql.toString());
+			
+			query.setParameter("idRegiao", regiao.getId());
+			
+			query.executeUpdate();
 		}
 }
