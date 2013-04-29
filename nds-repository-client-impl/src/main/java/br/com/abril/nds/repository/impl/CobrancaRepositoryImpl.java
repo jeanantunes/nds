@@ -348,44 +348,6 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		
 		return (BigDecimal) query.uniqueResult();
 	}
-	
-	@Override
-	public BigDecimal obterValorCobrancaNaoPagoDaCota(Integer numeroCota){
-		
-		BigDecimal valorCobrancaNaoPago = this.obterValorNaoPagoCobranca(numeroCota); 
-
-		return valorCobrancaNaoPago != null ? valorCobrancaNaoPago : BigDecimal.ZERO;
-	}
-	
-	/**
-	 * Retorna o valor das cobranças em aberto de uma determinada cota
-	 * 
-	 * @param dataVencimento - data de vencimento da cobrança
-	 * 
-	 * @param numeroCota - numero da cota
-	 * 
-	 * @return BigDecimal
-	 */
-	private BigDecimal obterValorNaoPagoCobranca(Integer numeroCota) {
-		
-		StringBuilder hql = new StringBuilder();
-
-		hql.append(" select sum(cobranca.valor + coalesce(cobranca.encargos, 0)) ")
-			.append(" from Cobranca cobranca, Distribuidor distribuidor ")
-			.append(" inner join cobranca.cota cota ")
-			.append(" where cota.numeroCota		  =	 :numeroCota ")
-			.append(" and cobranca.statusCobranca =  :status ")
-			.append(" and cobranca.dataEmissao < distribuidor.dataOperacao ")
-			.append(" and (cobranca.divida.origemNegociacao = :origemNegociacao ")
-			.append(" 	or cobranca.divida.origemNegociacao is null) ");
-
-		Query query = this.getSession().createQuery(hql.toString());
-		query.setParameter("status", StatusCobranca.NAO_PAGO);
-		query.setParameter("numeroCota", numeroCota);
-		query.setParameter("origemNegociacao", false);
-
-		return (BigDecimal) query.uniqueResult();
-	}
 
 	@SuppressWarnings("unchecked")
 	@Override

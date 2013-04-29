@@ -20,8 +20,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.RateioCotaVO;
-import br.com.abril.nds.client.vo.relatorioLancamentoFaltasSobrasVO;
+import br.com.abril.nds.client.vo.RelatorioLancamentoFaltasSobrasVO;
 import br.com.abril.nds.dto.DetalheDiferencaCotaDTO;
+import br.com.abril.nds.dto.ImpressaoDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.RateioDiferencaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheDiferencaCotaDTO;
@@ -61,9 +62,11 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.JasperUtil;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -117,6 +120,8 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	@Autowired
 	private MovimentoEstoqueRepository movimentoEstoqueRepository;
 	
+	@Autowired
+	private ParametrosDistribuidorService parametrosDistribuidorService;
 	
 	@Transactional(readOnly = true)
 	public List<Diferenca> obterDiferencasLancamento(FiltroLancamentoDiferencaEstoqueDTO filtro) {
@@ -872,22 +877,62 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	@Override
 	@Transactional(readOnly = true)
 	public byte[] imprimirRelatorioFaltasSobras(Date dataMovimento) throws Exception {
-		FiltroLancamentoDiferencaEstoqueDTO filtro = new FiltroLancamentoDiferencaEstoqueDTO();
-		filtro.setDataMovimento(dataMovimento);
+	 	
+		List<ImpressaoDiferencaEstoqueDTO> dadosImpressao =
+			this.diferencaEstoqueRepository.obterDadosParaImpressaoNaData(dataMovimento);
+		
+		if (dadosImpressao == null
+				|| dadosImpressao.isEmpty()) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, "Não há dados para impressão nesta data");
+		}
+		
+	 	List<RelatorioLancamentoFaltasSobrasVO> listaRelatorio =  
+	 		new ArrayList<RelatorioLancamentoFaltasSobrasVO>();
 	
- 	List<Diferenca> listaLancamentoDiferencas =this.obterDiferencasLancamento(filtro);
- 	List<relatorioLancamentoFaltasSobrasVO> listaRelatorio =  new ArrayList<relatorioLancamentoFaltasSobrasVO>();
-	Map<String, Object> parameters = new HashMap<String, Object>();
-
-	for (Diferenca diferenca : listaLancamentoDiferencas){
-		listaRelatorio.add(new relatorioLancamentoFaltasSobrasVO(diferenca));
+		for (ImpressaoDiferencaEstoqueDTO dadoImpressao : dadosImpressao) {
+			
+			listaRelatorio.add(new RelatorioLancamentoFaltasSobrasVO(dadoImpressao));
+		}
+		
+		Map<String, Object> parametrosRelatorio = new HashMap<String, Object>();
+		
+		parametrosRelatorio.put("DISTRIBUIDOR", this.distribuidorService.obterRazaoSocialDistribuidor());
+		parametrosRelatorio.put("DATA_MOVIMENTO", DateUtil.formatarDataPTBR(dataMovimento));
+		parametrosRelatorio.put("LOGO_DISTRIBUIDOR", JasperUtil.getImagemRelatorio(this.parametrosDistribuidorService.getLogotipoDistribuidor()));
+		
+		JRBeanCollectionDataSource datasourceRelatorio = new JRBeanCollectionDataSource(listaRelatorio);
+		
+		URL urlRelatorio = 
+			Thread.currentThread().getContextClassLoader().getResource("/reports/faltas_sobras.jasper");
+		
+		String caminhoRelatorio = urlRelatorio.toURI().getPath();
+		
+		return JasperRunManager.runReportToPdf(caminhoRelatorio, parametrosRelatorio, datasourceRelatorio);
 	}
 	
-	parameters.put("DISTRIBUIDOR", this.distribuidorService.obterRazaoSocialDistribuidor());
-	JRBeanCollectionDataSource ds = new JRBeanCollectionDataSource(listaRelatorio); 
-	URL url = Thread.currentThread().getContextClassLoader().getResource("/reports/faltas_sobras.jasper");
-	String path = url.toURI().getPath();
-	return JasperRunManager.runReportToPdf(path, parameters,ds);
+	@Override
+	@Transactional(readOnly = true)
+	public void validarDadosParaImpressaoNaData(String dataMovimentoFormatada) {
+		
+		if (dataMovimentoFormatada == null 
+				|| dataMovimentoFormatada.trim().equals("")) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Informe uma data de movimento");
+		}	
+		
+		Date dataMovimento = DateUtil.parseDataPTBR(dataMovimentoFormatada);
+		
+		Long quantidadeDadosImpressao = 
+			this.diferencaEstoqueRepository.obterQuantidadeDadosParaImpressaoNaData(dataMovimento);
+		
+		if (quantidadeDadosImpressao == null 
+				|| quantidadeDadosImpressao == 0L) {
+		
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, "Não há dados para impressão nesta data");
+		}
 	}
 	
 }

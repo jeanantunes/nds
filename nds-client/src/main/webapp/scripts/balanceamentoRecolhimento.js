@@ -385,7 +385,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			
 			$(linkAtualizar, balanceamentoRecolhimentoController.workspace).unbind("click");
 			$(linkAtualizar, balanceamentoRecolhimentoController.workspace).bind("click",
-					  	 		  function() { balanceamentoRecolhimentoController.reprogramarRecolhimentoUnico(idLinha); });
+					  	 		  function() { balanceamentoRecolhimentoController.reprogramarRecolhimentoUnico(idLinha, false ); });
 		}
 	},
 	
@@ -891,12 +891,21 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				   true
 		);
 	},
-
-	reprogramarRecolhimentoUnico : function(idRow) {
+	
+	reprogramarRecolhimentoUnico : function(idRow, boolean) {
+		
+		var dataBoxResumo = null;
+		$('.box_resumo label', balanceamentoRecolhimentoController.workspace).each(function(key, value){
+			var dataSplit = $(value).text().split('/');
+			
+			dataBoxResumo = new Date(dataSplit[2],dataSplit[1], dataSplit[0]);
+		});
+		
 		
 		var linhasDaGrid = $('.balanceamentoGrid tr', balanceamentoRecolhimentoController.workspace);
 		
 		var linhaSelecionada = null;
+		
 		
 		$.each(linhasDaGrid, function(index, value) {
 			
@@ -911,31 +920,59 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 15, "novaData");
 				var idFornecedor = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 15, "hiddenIdFornecedor");
 				
-				linhaSelecionada = {idFornecedor:idFornecedor,idLancamento:idLancamento,novaData:novaData};
+				var novaDataSplit = novaData.split('/');
+					
+				novaDataFormatoDate = new Date(novaDataSplit[2], novaDataSplit[1], novaDataSplit[0]);
+
+				if(novaDataFormatoDate > dataBoxResumo)
+				{
+					var dataAntiga = $("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val();
+					
+					$(".container").append('<div id="alertAceite">A data está fora da semana de recolhimento. Você deseja continuar?</div>');
+					
+					$("#alertAceite").dialog({
+						buttons : {
+					        "Confirmar" : function() {
+					        	$('#alertAceite').remove();
+					        	boolean = true;
+					   		
+					        	linhaSelecionada = {idFornecedor:idFornecedor,idLancamento:idLancamento,novaData:novaData,aceiteDataNova:boolean};
+					        	
+					    		var param = {dataAntigaFormatada:dataAntiga};
+					    		if(linhaSelecionada){
+					    			param =  serializeObjectToPost('produtoRecolhimento', linhaSelecionada,param);
+					    		}
+					    		
+					    		$.postJSON(contextPath + "/devolucao/balanceamentoMatriz/reprogramarRecolhimentoUnico",param,
+					    				   function(result) {
+					    				   		balanceamentoRecolhimentoController.atualizarResumoBalanceamento();
+					    				   },
+					    				   function() {
+					    				   }
+					    		);
+					        },
+					        "Cancelar" : function() {
+					        	$('#alertAceite').remove();
+					        	balanceamentoRecolhimentoController.recolocacaoDataAntigaReprogramarRecolhimentoUnico(idRow, dataAntiga);
+					        }
+					      }
+					    });
+				   	
+				   	$("#alertAceite").dialog("open");
+					
+					
+				}	
 			}
 		});
-		
-		var dataAntiga = $("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val();
-		
-		var param = {dataAntigaFormatada:dataAntiga};
-		if(linhaSelecionada){
-			param =  serializeObjectToPost('produtoRecolhimento', linhaSelecionada,param);
-		}
-		
-		$.postJSON(contextPath + "/devolucao/balanceamentoMatriz/reprogramarRecolhimentoUnico",param,
-				   function(result) {
-				   
-				   		balanceamentoRecolhimentoController.atualizarResumoBalanceamento();
-				   },
-				   function() {
-					   
-					   var divNovaData = $("#divNovaData" + idRow, balanceamentoRecolhimentoController.workspace);
-					   
-					   var inputNovaData = $(divNovaData, balanceamentoRecolhimentoController.workspace).find("input[name='novaData']");
-					   
-					   $(inputNovaData).val(dataAntiga);
-				   }
-		);
+	},
+	
+	recolocacaoDataAntigaReprogramarRecolhimentoUnico : function(idRow, dataAntiga)
+	{
+		var divNovaData = $("#divNovaData" + idRow, balanceamentoRecolhimentoController.workspace);
+		   
+		var inputNovaData = $(divNovaData, balanceamentoRecolhimentoController.workspace).find("input[name='novaData']");
+		   
+		$(inputNovaData).val(dataAntiga);
 	},
 	
 	fecharGridBalanceamento : function() {

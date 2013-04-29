@@ -60,10 +60,14 @@ var emissaoBandeiraController = $.extend(true, {
 	},
 	
 	pesquisar : function() {
-		semanaPesquisa = $("#semanaPesquisa").val();
+		
+		var numeroSemana = emissaoBandeiraController.getNumeroSemana();
+		
+		emissaoBandeiraController.semanaPesquisa = numeroSemana;
+		
 		$(".bandeirasRcltoGrid", this.workspace).flexOptions({
 			url: contextPath + "/devolucao/emissaoBandeira/pesquisar",
-			params: [{name:'semana', value:semanaPesquisa}] 
+			params: [{name:'semana', value:emissaoBandeiraController.semanaPesquisa}] 
 		   ,
 			newp: 1
 		});
@@ -91,8 +95,9 @@ var emissaoBandeiraController = $.extend(true, {
 	},
 	
 	imprimirArquivo : function(fileType) {
+		
 		window.location = contextPath + "/devolucao/emissaoBandeira/imprimirArquivo?"
-			+ "semana=" + semanaPesquisa
+			+ "semana=" + emissaoBandeiraController.semanaPesquisa
 			+ "&sortname=" + $(".bandeirasRcltoGrid", emissaoBandeiraController.workspace).flexGetSortName()
 			+ "&sortorder=" + $(".bandeirasRcltoGrid", emissaoBandeiraController.workspace).getSortOrder()
 			+ "&rp=" + $(".bandeirasRcltoGrid", emissaoBandeiraController.workspace).flexGetRowsPerPage()
@@ -112,7 +117,7 @@ var emissaoBandeiraController = $.extend(true, {
 			buttons: {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
-					window.location = contextPath + "/devolucao/emissaoBandeira/imprimirBandeira?semana=" + semanaPesquisa+ "&numeroPallets=" + $.trim( $("#numeroPallets").val());
+					window.location = contextPath + "/devolucao/emissaoBandeira/imprimirBandeira?semana=" + emissaoBandeiraController.semanaPesquisa+ "&numeroPallets=" + $.trim( $("#numeroPallets").val());
 			
 
 					
@@ -162,6 +167,20 @@ var emissaoBandeiraController = $.extend(true, {
 		});
 		return false;
 
+	},
+	
+	getNumeroSemana : function() {
+		
+		var numeroSemana = '';
+		
+		var anoSemanaNumero = $("#semanaPesquisa", this.workspace).val();
+		
+		if(anoSemanaNumero && anoSemanaNumero.length>=5){
+		
+			numeroSemana = anoSemanaNumero.substr(4);
+		}
+		
+		return numeroSemana;
 	},
 	
 }, BaseController);

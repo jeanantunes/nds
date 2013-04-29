@@ -281,6 +281,10 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 
 			}
 		}
+		else{
+			
+			hql.append(" order by sequencia ");
+		}
 
 		SQLQuery query = getSession().createSQLQuery(hql.toString());
 		
@@ -732,6 +736,10 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 				
 			}			
 		}
+		else{
+			
+			hql.append(" order by sequencia ");
+		}
 		
 		Session session = getSession();
 					
@@ -921,14 +929,11 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" cfc.VALOR_POSTERGADO as valorPostergado, ")
 		   .append(" cfc.VENDA_ENCALHE as vendaEncalhe, ")
 		   .append(" ((select count(cob.ID) from COBRANCA cob where cob.DT_EMISSAO = cfc.DT_CONSOLIDADO and cob.COTA_ID = cfc.COTA_ID) > 0) as cobrado, ")
-		   //.append(" COALESCE ( ")
-		   //.append(" 	COALESCE ( ")
-		   //.append(" 		MIN(dividaRaiz.DATA), divida.DATA ")
-		   //.append(" 	), cfc.DT_CONSOLIDADO ")
-		   
-		   
-		   .append(" (select max(mfp.DATA) from MOVIMENTO_FINANCEIRO_COTA mfp where mfp.COTA_ID = cfc.COTA_ID and mfp.DATA < cfc.DT_CONSOLIDADO and mfp.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoDebito) or mfp.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoCredito)")
-		   
+		   //data raiz postergado
+		   .append(" (select max(cons.DT_CONSOLIDADO) from CONSOLIDADO_FINANCEIRO_COTA cons ")
+		   .append("  where cons.DT_CONSOLIDADO < cfc.DT_CONSOLIDADO and ")
+		   .append("  (select count(cob.id) from COBRANCA cob where cob.COTA_ID = cons.COTA_ID) = 0 and ")
+		   .append("   cons.COTA_ID = cfc.COTA_ID")
 		   .append(" ) AS dataRaiz, ")
 		   .append(" coalesce((select sum(bc.VALOR_PAGO) ")
 		   .append("           from BAIXA_COBRANCA bc ")
@@ -940,6 +945,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("           and cota.ID = cobranca.COTA_ID ")
 		   .append("           and divida.CONSOLIDADO_ID = cfc.ID ")
 		   .append("           and cfc.ID),0) as valorPago, ")
+		   //total
 		   .append(" cfc.TOTAL as total, ")
 		   //saldo = total - valorPago
 		   .append(" (total - ")
@@ -1398,4 +1404,22 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		
 		return (Long) query.uniqueResult();
 	}
+	
+	@Override
+	public Date obterDataAnteriorImediataPostergacao(ConsolidadoFinanceiroCota consolidadoFinanceiroCota) {
+		
+		String hql = " select max(cfc.dataConsolidado) " +
+					 " from ConsolidadoFinanceiroCota cfc " +
+					 " where cfc.dataConsolidado < :dataConsolidado " +
+					 " and cfc.cota = :cotaConsolidado " +
+					 " and (select count(cob.id) from Cobranca cob where cob.cota = cfc.cota) = 0";	
+		
+		Query query = this.getSession().createQuery(hql);
+		
+		query.setParameter("dataConsolidado", consolidadoFinanceiroCota.getDataConsolidado());
+		query.setParameter("cotaConsolidado", consolidadoFinanceiroCota.getCota());
+		
+		return (Date) query.uniqueResult();
+	}
+	
 }

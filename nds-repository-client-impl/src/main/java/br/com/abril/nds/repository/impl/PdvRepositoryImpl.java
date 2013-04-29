@@ -83,7 +83,7 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		hql.append("SELECT pdv.id as id, pdv.nome as nomePDV, " )
 				.append("  tipoPontoPDV.descricao as descricaoTipoPontoPDV ,")
 				.append("  pdv.contato as contato,")
-				.append("  endereco.logradouro || ',' || endereco.numero || '-' || endereco.bairro || '-' || endereco.cidade as  endereco , ")
+				.append("  endereco.tipoLogradouro || ' ' || endereco.logradouro || ',' || endereco.numero || '-' || endereco.bairro || '-' || endereco.cidade as  endereco , ")
 				.append("  telefone.ddd || '-'|| telefone.numero as telefone ,")
 				.append("  pdv.caracteristicas.pontoPrincipal as principal,")
 				.append("  pdv.status as statusPDV ,")

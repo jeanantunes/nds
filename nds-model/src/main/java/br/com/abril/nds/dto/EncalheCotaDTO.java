@@ -15,33 +15,34 @@ public class EncalheCotaDTO implements Serializable {
 
 	private static final long serialVersionUID = 2186060384671120600L;
 	
-	@Export(label = "Código")
+	@Export(label = "Sequência", fontSize=9, widthPercent=7)
+	private Integer sequencia;
+	
+	@Export(label = "Código", fontSize=9)
 	private String codigoProduto;
 
-	@Export(label = "Produto")
+	@Export(label = "Produto", fontSize=9, widthPercent=30)
 	private String nomeProduto;
 
-	@Export(label = "Edição")
+	@Export(label = "Edição", fontSize=9)
 	private Long numeroEdicao;
 
-	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
+	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA, fontSize=9)
 	private BigDecimal precoCapa;
 
-	@Export(label = "Preço c/ Desc. R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
+	@Export(label = "Preço c/ Desc. R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA, fontSize=9)
 	private BigDecimal precoComDesconto;
 	
-	@Export(label = "Encalhe", alignment = Alignment.CENTER)
+	@Export(label = "Encalhe", alignment = Alignment.CENTER, fontSize=9)
 	private BigInteger encalhe;
 	
-	@Export(label = "Fornecedor")
+	@Export(label = "Fornecedor", fontSize=9, widthPercent=7)
 	private String nomeFornecedor;
 
-	@Export(label = "Toral R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
+	@Export(label = "Toral R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA, fontSize=9)
 	private BigDecimal total;
 
 	private BigDecimal desconto;
-	
-	private Integer sequencia;
 	
 	public String getCodigoProduto() {
 		return codigoProduto;

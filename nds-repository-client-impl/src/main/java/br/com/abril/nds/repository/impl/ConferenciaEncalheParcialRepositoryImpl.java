@@ -48,31 +48,54 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 		
 		StringBuffer hql = new StringBuffer("");
 		
-		hql.append(" select sum(parcial.qtde) 				");		
+		hql.append(" select sum(coalesce(parcial.qtde, 0)) 	");		
 		
 		hql.append(" from ConferenciaEncalheParcial parcial	");
 		
-		hql.append(" where ");
+		if(	statusAprovacao != null || 
+			dataMovimento != null 	||
+			(codigoProduto != null 	&& numeroEdicao != null)
+		) {
 
-		hql.append(" parcial.statusAprovacao = :statusAprovacao  and	");
+			hql.append(" where ");
+			
+		}
 		
-		hql.append(" parcial.dataMovimento = :dataMovimento  and		");
+		boolean indAnd = false;
 		
-		hql.append(" parcial.produtoEdicao.id = ");
+		if(statusAprovacao != null) {
+			hql.append(" parcial.statusAprovacao = :statusAprovacao  ");
+			indAnd = true;
+		}
 		
-		hql.append(" ( select pe.id from ProdutoEdicao pe where pe.numeroEdicao = :numeroEdicao and pe.produto.codigo = :codigoProduto ) ");
+		if(dataMovimento != null) {
+			hql = indAnd ? hql.append(" and ") : hql;
+			hql.append(" parcial.dataMovimento = :dataMovimento ");
+			indAnd = true;
+		}
 		
+		if(codigoProduto != null 	&& numeroEdicao != null) {
+			hql = indAnd ? hql.append(" and ") : hql;
+			hql.append(" parcial.produtoEdicao.id = ");
+			hql.append(" ( select pe.id from ProdutoEdicao pe where pe.numeroEdicao = :numeroEdicao and pe.produto.codigo = :codigoProduto ) ");
+			indAnd = true;
+		}
 		
 		
 		Query query = getSession().createQuery(hql.toString());
-
-		query.setParameter("statusAprovacao", statusAprovacao);
 		
-		query.setParameter("dataMovimento", dataMovimento);
-
-		query.setParameter("codigoProduto", codigoProduto);
-
-		query.setParameter("numeroEdicao", numeroEdicao);
+		if(statusAprovacao != null) {
+			query.setParameter("statusAprovacao", statusAprovacao);
+		}
+		
+		if(dataMovimento != null) {
+			query.setParameter("dataMovimento", dataMovimento);
+		}
+		
+		if(codigoProduto != null 	&& numeroEdicao != null) {
+			query.setParameter("codigoProduto", codigoProduto);
+			query.setParameter("numeroEdicao", numeroEdicao);
+		}
 		
 		return (BigInteger) query.uniqueResult();
 		
@@ -206,7 +229,7 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 	private StringBuffer getSubQueryMovimentoEstoqueCota() {
 		
 		StringBuffer hqlMovimentoEstoqueCota = new StringBuffer("")
-		.append(" ( select sum(estoque.qtde + estoque.qtdeSuplementar + estoque.qtdeDevolucaoEncalhe) ")
+		.append(" ( select sum(  coalesce(estoque.qtde, 0) + coalesce(estoque.qtdeSuplementar, 0) + coalesce(estoque.qtdeDevolucaoEncalhe, 0) ) ")
 		.append(" from EstoqueProduto estoque		")
 		.append(" where ")
 		.append(" estoque.produtoEdicao.id = parcial.produtoEdicao.id ) ");
@@ -251,7 +274,18 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 		
 		hql.append(" from ConferenciaEncalheParcial parcial ");
 		
-		hql.append(" where ");
+		
+		if( diferencaApurada != null ||
+			nfParcialGerada  != null ||
+			statusAprovacao  != null ||
+			idProdutoEdicao  != null || 
+			( codigoProduto  != null && numeroEdicao!=null ) ||
+			dataMovimento != null ) {
+			
+			hql.append(" where ");
+			
+		}
+		
 		
 		boolean indAnd = false;
 		
@@ -280,10 +314,23 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 			indAnd = true;
 			
 			hql.append(" parcial.statusAprovacao = :statusAprovacao ");
+			
 		}
 		
-		if( ( idProdutoEdicao != null || ( codigoProduto != null && numeroEdicao!=null) ) && 
-			dataMovimento != null) {
+		
+		if(dataMovimento != null) {
+			
+			if(indAnd) {
+				hql.append(" and ");
+			}
+			
+			indAnd = true;
+			
+			hql.append(" parcial.dataMovimento = :dataMovimento ");
+		}
+		
+		
+		if( ( idProdutoEdicao != null || ( codigoProduto != null && numeroEdicao!=null) ) ) {
 			
 			if(indAnd) {
 				hql.append(" and ");
@@ -298,15 +345,11 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 				hql.append(" ( select pe.id from ProdutoEdicao pe where pe.numeroEdicao = :numeroEdicao and pe.produto.codigo = :codigoProduto ) ");
 			}
 			
-			hql.append(" and parcial.dataMovimento = :dataMovimento ");
-			
-			
 		} else {
 
 			hql.append(" group by ");
-			hql.append(" parcial.produtoEdicao.id, ");
-			hql.append(" parcial.produtoEdicao.precoVenda, ");
-			hql.append(" parcial.dataMovimento ");
+			
+			hql.append(" parcial.produtoEdicao.id ");
 			
 		}
 		
@@ -325,8 +368,7 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 			query.setParameter("statusAprovacao", statusAprovacao);
 		}
 
-		if( ( idProdutoEdicao != null || ( codigoProduto != null && numeroEdicao!=null) ) && 
-				dataMovimento != null) {
+		if( ( idProdutoEdicao != null || ( codigoProduto != null && numeroEdicao!=null) ) ) {
 
 			if(idProdutoEdicao!=null) {
 				query.setParameter("idProdutoEdicao", idProdutoEdicao);
@@ -334,9 +376,12 @@ public class ConferenciaEncalheParcialRepositoryImpl extends AbstractRepositoryM
 				query.setParameter("codigoProduto", codigoProduto);
 				query.setParameter("numeroEdicao", numeroEdicao);
 			}
+		}
+		
+		if(dataMovimento != null) {
 			
 			query.setParameter("dataMovimento", dataMovimento);
-			
+		
 		}
 		
 		return query.list();
