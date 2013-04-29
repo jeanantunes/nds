@@ -24,6 +24,12 @@ public class ConsultaNotaFiscalVO implements Serializable {
 	@Export(label = "Número da Nota")
 	private Long numeroNota;
 	
+	@Export(label = "Série")
+	private String serie;
+	
+	@Export(label = "Nota Envio")
+	private Long notaEnvio;
+	
 	@Export(label = "Data de Emissão", alignment = Alignment.CENTER)
 	private Date dataEmissao;
 	
@@ -145,6 +151,22 @@ public class ConsultaNotaFiscalVO implements Serializable {
 	 */
 	public void setValor(String valor) {
 		this.valor = valor;
+	}
+
+	public String getSerie() {
+		return serie;
+	}
+
+	public void setSerie(String serie) {
+		this.serie = serie;
+	}
+
+	public Long getNotaEnvio() {
+		return notaEnvio;
+	}
+
+	public void setNotaEnvio(Long notaEnvio) {
+		this.notaEnvio = notaEnvio;
 	}
 	
 	
