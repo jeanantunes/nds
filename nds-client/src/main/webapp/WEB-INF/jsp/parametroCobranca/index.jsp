@@ -157,11 +157,19 @@
                                     </tr>
                                 </table>
                             </td>
-                            <td align="right">
+                            <td align="right" width="15%">
                             <input type="checkbox" name="principal" id="principal" /></td>
-                            <td><label for="principal">Principal</label></td>
+                            <td ><label for="principal">Principal</label></td>
+                            
                         </tr>
-    
+    					<tr>
+	    					<td></td>
+	    					<td></td>
+	    					<td align="right"><input type="checkbox" name="cobradoPeloBackoffice" id="cobradoPeloBackoffice" /></td>
+							<td><label for="cobradoPeloBackoffice">Cobrança feita pelo Back Office</label></td>
+    					</tr>
+    					
+    					
                         <tr>
                             <td valign="top">Instru&ccedil;&otilde;es:</td>
                             <td colspan="3"><textarea name="instrucoes" rows="2"
