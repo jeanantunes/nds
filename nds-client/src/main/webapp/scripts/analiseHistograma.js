@@ -289,8 +289,6 @@ var anaLiseHistogramaController = $.extend(true, {
 				
 				$("#abrangenciaVendaCell").text(r+"%");
 				
-//				anaLiseHistogramaController.formatarFaixasVenda(data.rows);
-				
 				return data;
 			},
 			colModel : [ {

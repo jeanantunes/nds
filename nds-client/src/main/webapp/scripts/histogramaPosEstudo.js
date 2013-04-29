@@ -513,7 +513,9 @@ var histogramaPosEstudoController = $.extend(true, {
 	},
 	
 	alterarFaixaAte : function (rowId, event){
-		var	faixaReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid;
+		var	faixaReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid,
+			selectedRow = {},
+			nextRow = {};
 		
 		if (event.keyIdentifier == "Enter") {
 			event.cancelBubble = true;
@@ -567,9 +569,13 @@ var histogramaPosEstudoController = $.extend(true, {
 	},
 	
 	excluirFaixa : function (rowId, event){
-		var	faixaReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid;
+		var	faixaReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid,
 			createInput = histogramaPosEstudoController.createInput,
-			createImgExcluir = histogramaPosEstudoController.createImgExcluir;
+			createImgExcluir = histogramaPosEstudoController.createImgExcluir,
+			selectedRow = {},
+			previousRow = {},
+			nextRow = {};
+			
 
 		if (faixaReparteGrid.tableModel.rows.length > 1) {
 				
