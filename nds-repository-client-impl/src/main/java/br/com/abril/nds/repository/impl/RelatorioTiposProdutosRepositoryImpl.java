@@ -85,7 +85,7 @@ public class RelatorioTiposProdutosRepositoryImpl extends AbstractRepository imp
 	
 	public Long obterQunatidade(FiltroRelatorioTiposProdutos filtro){
 		
-		SQLQuery query = getSession().createSQLQuery(obterHql(filtro,true));
+ 		SQLQuery query = getSession().createSQLQuery(obterHql(filtro,true));
 		
 		query.addScalar("total", StandardBasicTypes.LONG);
 		
@@ -179,7 +179,7 @@ public class RelatorioTiposProdutosRepositoryImpl extends AbstractRepository imp
 			}
 		}
 		
-		if(filtro.getPaginacaoVO()!= null){
+		if(filtro.getPaginacaoVO()!= null && !isCount){
 			
 			hql.append(aplicarOrdenacao(filtro));
 		}
