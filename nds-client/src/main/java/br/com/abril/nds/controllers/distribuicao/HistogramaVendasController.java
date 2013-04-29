@@ -173,7 +173,7 @@ public class HistogramaVendasController extends BaseController {
 	@Post
 	@Path("/analiseHistograma")
 	public void  analiseHistograma(String edicoes,String segmento,String codigoProduto,String nomeProduto,String[] faixasVenda
-			,String labelComponente,String labelElemento,String classificacaoLabel){
+			,String labelComponente,String labelElemento,String classificacaoLabel, boolean isPracaAtendida, boolean isPracaSede){
 		String[] nrEdicoes = edicoes.split(",");
 		
 		String enumeratedList = null;

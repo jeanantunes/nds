@@ -162,7 +162,8 @@ var histogramaVendasController = $.extend(true, {
 			return;
 		}
 		
-		//$.getJSON(contextPath + "/distribuicao/histogramaVendas/analiseHistograma");
+		var isPracaSede = $('#histogramaVenda_pracaSede').is(':checked'),
+			isPracaAtendida = $('#histogramaVenda_pracaAtendida').is(':checked');
 		
 		var faixas = new Array();
 		
@@ -171,7 +172,6 @@ var histogramaVendasController = $.extend(true, {
 			if(obj.cell.enabled)
 				faixas.push(obj.cell.faixaReparteDe+"-"+obj.cell.faixaReparteAte);
 		}
-//		console.log(faixas);
 		
 		var labelComponente="",labelElemento="";
 		if($("#inserirComponentes").is(":checked") && $("#componente").val()!="-1" && $("#elemento").val()!="-1"){
@@ -187,7 +187,9 @@ var histogramaVendasController = $.extend(true, {
 				"codigoProduto":codigoProduto_HistogramaVenda,
 				"classificacaoLabel":descricaoTipoClassificacao_histogramaVenda,
 				"labelComponente":labelComponente,
-				"labelElemento":labelElemento};
+				"labelElemento":labelElemento,
+				"isPracaAtendida" : isPracaAtendida,
+				"isPracaSede" : isPracaSede};
 		
 		$.post(contextPath + "/distribuicao/histogramaVendas/analiseHistograma", data, function(data){
 	      if(data){ 
@@ -316,12 +318,14 @@ function filtroSede(){
 	$('.filtroPracaSede').show();
 	$('.filtroPracaAtendida').hide();
 	$('.filtroComponentes').hide();
+	$('#inserirComponentes').attr('checked', false);
 }
 function filtroAtendida(){
 	$('.filtroTodas').hide();
 	$('.filtroPracaSede').hide();
 	$('.filtroPracaAtendida').show();
 	$('.filtroComponentes').hide();
+	$('#inserirComponentes').attr('checked', false);
 }
 function filtroComponentes(){
 	$('.filtroTodas').hide();

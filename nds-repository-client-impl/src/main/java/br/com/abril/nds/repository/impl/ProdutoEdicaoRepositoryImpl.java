@@ -1006,9 +1006,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		String queryStringProdutoEdicao = 
 				"select 'De "+de+" a "+ate+"' as faixaVenda," +
 				" sum(reparteTotal) as repTotal, " +
-				" sum(reparteTotal)/count(COTA_ID) as repMedio, " +
+				" sum(reparteTotal)/count(distinct COTA_ID) as repMedio, " +
 				" sum(HIST.qtde_Recebida - HIST.qtde_Devolvida) as vdaTotal, " +
-				" sum(HIST.qtde_Recebida - HIST.qtde_Devolvida)/count(COTA_ID) as vdaMedio, " +
+				" sum(HIST.qtde_Recebida - HIST.qtde_Devolvida)/count(distinct COTA_ID) as vdaMedio, " +
 				" (sum(HIST.qtde_Recebida - hist.qtde_Devolvida)/sum(reparteTotal))*100 as percVenda, " +
 				
 				// encalheMedio = ((rep total-vda nominal)/qte.cotas)
@@ -1029,31 +1029,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				"	where produto.CODIGO = :produtoCodigo and " +
 				"	produto_Edicao.NUMERO_EDICAO in ( :nrEdicoes ))as partVenda," +
 				
-				" count(COTA_ID) as qtdeCotas, " +
-				" group_concat(COTA_ID) as idCotaStr, " +
-				" group_concat(cotasEsmagadas) as idCotasEsmagadas," +
-				// Cota esmagada = (qtde recebido - qtde devolvido)=0 
-				" sum(esmag) as cotasEsmagadas, " +
-				
-				/*
-				 *  Venda Esmag - é apenas a quantidade de venda esmagada das cotas. Obs. esmagamento é quando o reparte da cota é igual a venda da cota 
-				 *  (diferente de zero). Neste caso, associamos essa venda = ao reparte como venda esmagada. 
-				 *  Ex.:
-					Cota 1
-					Reparte: 10
-					Venda: 10
-					Venda Esmagada: 10
-					
-					Cota 2
-					Reparte: 5
-					Venda: 5
-					Venda Esmagada: 5
-					
-					Cota 3
-					Reparte: 3
-					Venda: 2
-					Venda Esmagada: Não possui venda esmagada
-*/
+				" count(distinct COTA_ID) as qtdeCotas, " +
+				" group_concat(distinct COTA_ID) as idCotaStr, " +
+				" group_concat(distinct cotasEsmagadas) as idCotasEsmagadas," +
+				" count(distinct cotasEsmagadas) as cotasEsmagadas, " +
 				" sum(vdEsmag) as vendaEsmagadas, " +
 				" sum(cotaAtiva) as qtdeCotasAtivas, " +
 				" sum(HIST.qtdeCotasSemVenda) as qtdeCotasSemVenda" +
@@ -1061,14 +1040,13 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				//select para totalizar a qtde de cotas ativas para calculo no resumo da tela da EMS 2029
 				" from " +
 				" ( select " +
-				"	case when estoqueProdutoCota.QTDE_DEVOLVIDA=0 then cota2_.id else null end as cotasEsmagadas, " +
-				"   case when estoqueProdutoCota.QTDE_DEVOLVIDA=0 then 1 else null end as esmag, " +
+				"	case when estoqueProdutoCota.QTDE_DEVOLVIDA=0 then cota2_.numero_cota else null end as cotasEsmagadas, " +
 				"   case when estoqueProdutoCota.QTDE_DEVOLVIDA=0 then estoqueProdutoCota.QTDE_RECEBIDA else 0 end as vdEsmag," +
 				"   case when estoqueProdutoCota.QTDE_DEVOLVIDA=estoqueProdutoCota.QTDE_RECEBIDA then 1 else 0 end as qtdeCotasSemVenda," +
 				"   case when cota2_.SITUACAO_CADASTRO='ATIVO' then 1 else 0 end as cotaAtiva," +
 				"	estoqueProdutoCota.QTDE_RECEBIDA as reparteTotal," +	
 					" estoqueProdutoCota.ID as col_2_0_, " +
-					" estoqueProdutoCota.COTA_ID as COTA_ID, " +
+					" cota2_.numero_cota as COTA_ID, " +
 					" estoqueProdutoCota.PRODUTO_EDICAO_ID as PRODUTO6_585_, " +
 					" estoqueProdutoCota.QTDE_DEVOLVIDA as QTDE_DEVOLVIDA, " +
 					" estoqueProdutoCota.QTDE_RECEBIDA as QTDE_RECEBIDA, " +
@@ -1093,7 +1071,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 					  " left outer join BOX box on cota2_.box_id=box.id";
 					
 			whereList.add(" box.tipo_box = :tipoBox ");
-			parameterMap.put("tipoBox",TipoBox.values()[Integer.parseInt(filtro.getFiltroPor())]);
+			parameterMap.put("tipoBox",TipoBox.values()[Integer.parseInt(filtro.getFiltroPor())].toString());
 		}
 		
 		// check opcao de componente e elemento
@@ -1140,7 +1118,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 					      +" left outer join ENDERECO endereco on endereco.id=enderecoPDV.endereco_id";
 
 				whereList
-						.add(" enderecosPDV.principal = true and endereco.bairro = :bairroPDV ");
+						.add(" enderecoPDV.principal = true and endereco.bairro = :bairroPDV ");
 				parameterMap.put("bairroPDV", filtro.getElemento());
 
 				break;

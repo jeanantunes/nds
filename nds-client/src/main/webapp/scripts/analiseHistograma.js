@@ -224,10 +224,11 @@ var anaLiseHistogramaController = $.extend(true, {
 			rowCell.qtdeCotas = formatarMilhar(rowCell.qtdeCotas);
 			rowCell.qtdeCotasSemVendas = formatarMilhar(rowCell.qtdeCotasSemVendas);
 			rowCell.encalheMedio = floatToPrice(rowCell.encalheMedio);
-			rowCell.partReparte = floatToPrice(rowCell.partReparte);
-			rowCell.partVenda = floatToPrice(rowCell.partVenda);
+			rowCell.partReparte = floatToPrice(rowCell.partReparte * 100);
+			rowCell.partVenda = floatToPrice(rowCell.partVenda * 100);
 			rowCell.repMedio = floatToPrice(rowCell.repMedio);
 			rowCell.vdaMedio = floatToPrice(rowCell.vdaMedio);
+			rowCell.percVenda = floatToPrice(rowCell.percVenda * 100);
 	},
 	
 	iniciarGridAnalise:function(){
@@ -256,8 +257,9 @@ var anaLiseHistogramaController = $.extend(true, {
 				// Adicionar o link as cotas esmagadas
 				$.each(data.rows, function(index, row) {
 					rowCell = row.cell;
-					rowCell.partVenda =  rowCell.vdaTotal /lastRow.cell.vdaTotal;
-					rowCell.partReparte =  rowCell.repTotal /lastRow.cell.repTotal;
+					rowCell.partVenda =  (rowCell.vdaTotal  /lastRow.cell.vdaTotal) || 0;
+					rowCell.partReparte =  (rowCell.repTotal /lastRow.cell.repTotal) || 0;
+					rowCell.percVenda =  (rowCell.vdaTotal /rowCell.repTotal) || 0;
 					
 					if(parseInt(rowCell.qtdeCotas)>0){
 						rowCell.faixaVenda="<a href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+index+",'idCotaStr');\">"+rowCell.faixaVenda+"</a>";						
@@ -277,7 +279,7 @@ var anaLiseHistogramaController = $.extend(true, {
 				var qtdeTotalCotasAtivas = parseInt(lastRow.cell.qtdeTotalCotasAtivas);
 				var qtdeCotasSemVenda = parseInt(lastRow.cell.qtdeCotasSemVenda);
 				
-				var eficVenda = parseFloat(vdaTotal/repTotal*100).toFixed(2);
+				var eficVenda = parseFloat(vdaTotal/ lastRow.cell.repTotal*100).toFixed(2);
 				$("#eficienciaDeVendaCell").text(eficVenda+"%");
 				
 				var r = parseFloat(Math.round( (qtdeCotas/qtdeTotalCotasAtivas)*100 )).toFixed(2);
@@ -405,35 +407,9 @@ var anaLiseHistogramaController = $.extend(true, {
 		      }
 		});
 		
-		/*
-		params = new Array();
-		
-		params.push({name : "filtro.produtoDto.codigoProduto", value :  codigoProduto_HistogramaVenda});
-		for ( var int = 0; int < edicoesEscolhidas_HistogramaVenda.length; int++) {
-			params.push({name : "filtro.listProdutoEdicaoDTO["+int+"].numeroEdicao", value :  edicoesEscolhidas_HistogramaVenda[int]});
-			
-		}
-
-		//carregando pop superior para as edições
-		url = contextPath + "/distribuicao/historicoVenda/pesquisaProduto";
-		$.post(url, params, function(data){
-			if(data){
-				console.log("retorno do post...");
-				anaLiseHistogramaController.tempData = data;
-				console.log(anaLiseHistogramaController.data);
-			}
-		});
-		*/
-			
-		
 	},
+
 	refazerHistograma:function(){
-		/*var data = {"edicoes":edicoesEscolhidas.sort().toString(),
-				"faixasVenda":faixas,
-				"codigoProduto":codigoProduto};
-		
-		*/
-		
 		var faixas = new Array();
 		
 		for ( var int = 0; int < faixasVenda.length; int++) {
@@ -447,63 +423,18 @@ var anaLiseHistogramaController = $.extend(true, {
 		formData.push({name:"faixasVenda",value:faixas});
 		formData.push({name:"codigoProduto",value:codigoProduto_HistogramaVenda});
 		
-//		console.log($.param(formData));
 		$("#estudosAnaliseHistGrid").flexOptions({
 			url: contextPath + "/distribuicao/histogramaVendas/populateHistograma",
 			dataType : 'json',
 			params: formData
 		});
 		$("#estudosAnaliseHistGrid").flexReload();
-		
-		
-		/*$.post(contextPath + "/distribuicao/histogramaVendas/analiseHistograma", data, function(data){
-	      if(data){ 
-	    	  $("#histogramaVendasContent").hide();
-	    	  $('#analiseHistogramaVendasContent').html(data);
-	    	  
-	    	  anaLiseHistogramaController.iniciarGridAnalise();
-	      }
-	    });*/
-		
 	}
 
 });
 
 
-/*
-$(".baseSugeridaGrid").flexigrid({
-			url : '../xml/baseSugerida2-xml.xml',
-			dataType : 'xml',
-			colModel : [ {
-				display : 'CÃ³digo',
-				name : 'codigo',
-				width : 60,
-				sortable : true,
-				align : 'left'
-			},{
-				display : 'Produto',
-				name : 'produto',
-				width : 130,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'EdiÃ§Ã£o',
-				name : 'edicao',
-				width : 50,
-				sortable : true,
-				align : 'left'
-			}],
-			width : 300,
-			height : 180
-		});
-
-*/
-
-
-
 function popup_histograma() {
-	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-
 	$("#faixasReparteGrid",anaLiseHistogramaController.workspace).flexigrid({
 		singleSelect:true,
 		dataType : 'json',
@@ -550,7 +481,6 @@ function popup_histograma() {
 		buttons: {
 			"Confirmar": function() {
 				$( this ).dialog( "close" );
-				$("#effect").show("highlight", {}, 1000, callback);
 				$(".grids").show();
 				anaLiseHistogramaController.refazerHistograma();
 				
@@ -564,8 +494,6 @@ function popup_histograma() {
 
 
 function popup_divergencias() {
-		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
-	
 		$( "#dialog-divergencia" ).dialog({
 			resizable: false,
 			height:360,
