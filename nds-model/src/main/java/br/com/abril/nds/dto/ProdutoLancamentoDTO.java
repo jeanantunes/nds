@@ -32,7 +32,9 @@ public class ProdutoLancamentoDTO implements Serializable {
 
 	private BigDecimal precoVenda;
 	
-	private StatusLancamento statusLancamento;
+	private StatusLancamento status;
+	
+	private String statusLancamento;
 
 	private Long peso;
 
@@ -159,7 +161,7 @@ public class ProdutoLancamentoDTO implements Serializable {
 	/**
 	 * @return the statusLancamento
 	 */
-	public StatusLancamento getStatusLancamento() {
+	public String getStatusLancamento() {
 		return statusLancamento;
 	}
 
@@ -168,7 +170,15 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 */
 	public void setStatusLancamento(String statusLancamento) {
 		
-		this.statusLancamento = Util.getEnumByStringValue(StatusLancamento.values(), statusLancamento);
+		this.statusLancamento = statusLancamento;
+	}
+
+	public StatusLancamento getStatus() {
+		return status;
+	}
+
+	public void setStatus(StatusLancamento status) {
+		this.status = status;
 	}
 
 	/**
@@ -479,8 +489,12 @@ public class ProdutoLancamentoDTO implements Serializable {
 	/**
 	 * @return the balanceamentoConfirmado
 	 */
-	public boolean isBalanceamentoConfirmado() {
+	public boolean isStatusLancamentoBalanceado() {
 		return StatusLancamento.BALANCEADO.equals(statusLancamento);
+	}
+	
+	public boolean isStatusLancamentoConfirmado() {
+		return StatusLancamento.CONFIRMADO.equals(status);
 	}
 
 	/**

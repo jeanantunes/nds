@@ -245,6 +245,81 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		var data = [];
 		
+		data.push({name : 'produtoLancamento.novaDataLancamento', value : T.lancamentos[index].novaDataLancamento});
+		$.postJSON(
+			pathTela + "/matrizLancamento/perguntarDataConfirmadaOuNao",
+			data,
+			function(retorno) {
+				
+				if(retorno.boolean == true)
+				{
+					$(_workspace).append('<div id="confirm_button"></div>');
+					
+					$( "#confirm_button", _workspace )
+					.text('Essa data é uma data já confirmada. Você deseja continuar?');
+					
+					$( "#confirm_button", _workspace ).dialog({
+						resizable: false,
+						height:'auto',
+						width:300,
+						modal: true,
+						buttons: [
+						    {
+						    	id: "dialogConfirmarBtnConfirmar",
+						    	text: "Confirmar",
+						    	click: function() {
+						    		
+						    		T.enviarDataDeLancamentoUnico(index);
+						    		$(this).dialog("close");
+						    	}
+						    },
+						    {
+						    	id: "dialogConfirmarBtnCancelar",
+						    	text: "Cancelar",
+						    	click: function() {
+						    
+						    		$(this).dialog("close");
+						    	}
+							}
+						],
+						beforeClose: function() {
+							clearMessageDialogTimeout("#confirm_button");
+					    },
+					    form: $("#confirm_button", _workspace).parents("form")
+					});
+				}
+				else
+				{
+					T.enviarDataDeLancamentoUnico(index);
+				}
+				
+			}
+		);
+	},
+	
+	this.perguntarSeDataEhConfirmadaOuNao = function(novaDataDeLancamento)
+	{
+		var data = [];
+		
+		data.push({name : 'produtoLancamento.novaDataLancamento', value : novaDataDeLancamento});
+		var retornoDadosDoMetodo = null;
+		$.postJSON(
+			pathTela + "/matrizLancamento/perguntarDataConfirmadaOuNao",
+			data,
+			function(retorno) {
+				retornoDadosDoMetodo = retorno.boolean;
+			}
+		);
+	
+		var retornoDaPergunta = retornoDadosDoMetodo;
+		return retornoDaPergunta;
+	},
+	
+	this.enviarDataDeLancamentoUnico = function(index) {
+		
+		
+		var data = [];
+		
 		data.push({name: 'produtoLancamento.id', 					   value: T.lancamentos[index].id});
 		data.push({name: 'produtoLancamento.novaDataLancamento', 	   value: T.lancamentos[index].novaDataLancamento});
 		data.push({name: 'produtoLancamento.nomeProduto', 			   value: T.lancamentos[index].nomeProduto});
@@ -272,15 +347,73 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			);
 	},
 	
-	this.reprogramarLancamentosSelecionados = function() {
+	this.verificaSeDataEstaConfirmada = function(novaDataDeLancamento)
+	{	
+		var data = [];
 		
+		data.push({name : 'produtoLancamento.novaDataLancamento', value : novaDataDeLancamento});
+		$.postJSON(
+			pathTela + "/matrizLancamento/perguntarDataConfirmadaOuNao",
+			data,
+			function(retorno) {
+				
+				if(retorno.boolean == true)
+				{
+					$(_workspace).append('<div id="confirm_button"></div>');
+					
+					$( "#confirm_button", _workspace )
+					.text('Essa data é uma data já confirmada. Você deseja continuar?');
+					
+					$( "#confirm_button", _workspace ).dialog({
+						resizable: false,
+						height:'auto',
+						width:300,
+						modal: true,
+						buttons: [
+						    {
+						    	id: "dialogConfirmarBtnConfirmar",
+						    	text: "Confirmar",
+						    	click: function() {
+						    		
+						    		T.reprogramarLancamentosSelecionados();
+						    		$(this).dialog("close");
+						    	}
+						    },
+						    {
+						    	id: "dialogConfirmarBtnCancelar",
+						    	text: "Cancelar",
+						    	click: function() {
+						    
+						    		$(this).dialog("close");
+						    	}
+							}
+						],
+						beforeClose: function() {
+							clearMessageDialogTimeout("#confirm_button");
+					    },
+					    form: $("#confirm_button", _workspace).parents("form")
+					});
+				}
+				else
+				{
+					T.reprogramarLancamentosSelecionados();
+				}
+				
+			}
+		);	
+	},
+	
+	this.reprogramarLancamentosSelecionados = function() {
+
 		var selecionados = [];
 		
 		$.each(T.lancamentos, function(index, lancamento){
+		
 			if(lancamento.selecionado == true) {
 				selecionados.push(lancamento);
 			}
 		});
+		
 				
 		var data = [];
 		var todos = $('#selTodos', _workspace);
@@ -823,7 +956,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			    	text: "Confirmar",
 			    	click: function() {
 					
-			    		balanceamentoLancamento.reprogramarLancamentosSelecionados();
+			    		balanceamentoLancamento.verificaSeDataEstaConfirmada($('#novaDataLancamento').val());
 			    	}
 			    },
 			    {

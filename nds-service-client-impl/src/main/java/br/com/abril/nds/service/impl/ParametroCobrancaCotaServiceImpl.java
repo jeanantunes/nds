@@ -196,11 +196,14 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			parametroCobranca = cota.getParametroCobranca();
 			
 			if (parametroCobranca==null){
+				FormaCobranca formaCobrancaDistribuidor = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+				
 				parametroCobranca = new ParametroCobrancaCota();
 				parametroCobranca.setCota(cota);
 				parametroCobranca.setFatorVencimento(1);
 				parametroCobranca.setFormasCobrancaCota(null);
-				parametroCobranca.setValorMininoCobranca(BigDecimal.ZERO);
+				parametroCobranca.setValorMininoCobranca(formaCobrancaDistribuidor.getValorMinimoEmissao());
+				parametroCobranca.setUnificaCobranca(formaCobrancaDistribuidor.getPoliticaCobranca().isUnificaCobranca());
 				parametroCobranca.setTipoCota(null);
 				parametroCobranca.setPoliticaSuspensao(null);
 				this.parametroCobrancaCotaRepository.adicionar(parametroCobranca);
@@ -429,7 +432,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	@Transactional
 	public void postarFormaCobranca(FormaCobrancaDTO formaCobrancaDTO) {
 		
-		
 		FormaCobranca formaCobranca = null;
 		ContaBancariaDeposito contaBancariaCota = null;
 		Set<ConcentracaoCobrancaCota> concentracoesCobranca = null;
@@ -466,25 +468,9 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			}  
 		}
 		
-		
-		
-		
-		
-		
-		
-		
-		
 		FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(formaCobrancaDTO.getIdCota());
 		
 		formaCobranca.setPrincipal(formaCobrancaPrincipal==null);
-
-		
-		
-		
-		
-		
-		
-		
 		
 		//CONCENTRACAO COBRANCA (DIAS DA SEMANA)
 		concentracoesCobranca = new HashSet<ConcentracaoCobrancaCota>();
@@ -555,13 +541,20 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		
 		if(concentracoesCobranca.size()>0){
 		    formaCobranca.setConcentracaoCobrancaCota(concentracoesCobranca);
+		}else if (formaCobrancaDTO.getConcentracaoCobrancaCota() != null) {
+			formaCobranca.setConcentracaoCobrancaCota(formaCobrancaDTO.getConcentracaoCobrancaCota());
 		}
 		
-		List<Integer> diasdoMes = new ArrayList<Integer>();
-		diasdoMes.add(formaCobrancaDTO.getDiaDoMes());
-		diasdoMes.add(formaCobrancaDTO.getPrimeiroDiaQuinzenal());
-		diasdoMes.add(formaCobrancaDTO.getSegundoDiaQuinzenal());
-		formaCobranca.setDiasDoMes(diasdoMes);
+		if (formaCobrancaDTO.getDiasDoMes() != null) {
+			formaCobranca.setDiasDoMes(formaCobrancaDTO.getDiasDoMes());
+		}else{
+			List<Integer> diasdoMes = new ArrayList<Integer>();
+			diasdoMes.add(formaCobrancaDTO.getDiaDoMes());
+			diasdoMes.add(formaCobrancaDTO.getPrimeiroDiaQuinzenal());
+			diasdoMes.add(formaCobrancaDTO.getSegundoDiaQuinzenal());
+			formaCobranca.setDiasDoMes(diasdoMes);
+		}
+		
 		formaCobranca.setTipoFormaCobranca(formaCobrancaDTO.getTipoFormaCobranca());
 		formaCobranca.setTipoCobranca(formaCobrancaDTO.getTipoCobranca());
 		formaCobranca.setBanco(banco);
@@ -580,12 +573,13 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		contaBancariaCota.setDvConta(formaCobrancaDTO.getContaDigito());
 		
 		formaCobranca.setContaBancariaCota(contaBancariaCota);
-
 		
 		formaCobranca.setAtiva(true);
 		
 		formaCobranca.setFornecedores(null);
-		if ((formaCobrancaDTO.getFornecedoresId()!=null)&&(formaCobrancaDTO.getFornecedoresId().size()>0)){
+		if(formaCobrancaDTO.getFornecedores() != null){
+			formaCobranca.setFornecedores(formaCobrancaDTO.getFornecedores());
+		}else if ((formaCobrancaDTO.getFornecedoresId()!=null)&&(formaCobrancaDTO.getFornecedoresId().size()>0)){
 			Fornecedor fornecedor;
 		    Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 		    for (Long idFornecedor:formaCobrancaDTO.getFornecedoresId()){
@@ -599,7 +593,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		    }
 		}
 		
-	    if(novaFormaCobranca){
+	    if(novaFormaCobranca || formaCobrancaDTO.isParametroDistribuidor()){
 	    	ParametroCobrancaCota parametroCobranca = this.parametroCobrancaCotaRepository.buscarPorId(formaCobrancaDTO.getIdParametroCobranca());
 		    formaCobranca.setParametroCobrancaCota(parametroCobranca);
 
@@ -631,8 +625,18 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		
 		String strConcentracoes="";
 		String strFornecedores="";
+		boolean isParametroDistribuidor = false;
 		Set<ConcentracaoCobrancaCota> concentracoes = new HashSet<ConcentracaoCobrancaCota>();
 		Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
+		
+		
+		// caso não encontre as formas de cobrança... é utilizado a forma de cobrança PRINCIPAL do Distribuidor
+		if (formasCobranca == null || formasCobranca.size() == 0) {
+			formasCobranca = new ArrayList<>();
+			FormaCobranca formaCobrancaDistribuidor = this.formaCobrancaRepository.obterFormaCobranca();
+			isParametroDistribuidor = true;
+			formasCobranca.add(formaCobrancaDistribuidor);
+		}
 		
 		for(FormaCobranca formaCobrancaItem:formasCobranca){
 			
@@ -675,7 +679,8 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 					                                   strFornecedores,
 					                                   strConcentracoes,
 					                                   (formaCobrancaItem.getTipoCobranca()!=null?formaCobrancaItem.getTipoCobranca().getDescTipoCobranca():""),
-					                                   (formaCobrancaItem.getBanco()!=null?formaCobrancaItem.getBanco().getNome()+" : "+formaCobrancaItem.getBanco().getAgencia()+" : "+formaCobrancaItem.getBanco().getConta()+"-"+formaCobrancaItem.getBanco().getDvConta():"")
+					                                   (formaCobrancaItem.getBanco()!=null?formaCobrancaItem.getBanco().getNome()+" : "+formaCobrancaItem.getBanco().getAgencia()+" : "+formaCobrancaItem.getBanco().getConta()+"-"+formaCobrancaItem.getBanco().getDvConta():""),
+					                                   isParametroDistribuidor
 					                                  )
 			                    );
 		}

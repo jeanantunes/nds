@@ -137,6 +137,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 		hql.append(" mfc.tipoMovimento.operacaoFinaceira as tipoLancamento, ");
 		
+		hql.append(" mfc.tipoMovimento.descricao as tipoMovimento, ");
+		
 		hql.append(" mfc.valor as valor, ");
 		
 		hql.append(" mfc.data as dataLancamento, ");
@@ -944,13 +946,14 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 			hql.append(indWhere ? " and " : " where ")
 			   .append(" m.cota.id = :idCota ");
 			
-			indWhere = true;
+			indWhere = true; 
 		}
 		
 		if (dataCriacao != null){
 			
 			hql.append(indWhere ? " and " : " where ")
 			   .append(" m.dataCriacao = :data ");
+			indWhere = true;
 		}
 		
 		hql.append(indWhere ? " and " : " where ")
@@ -1048,7 +1051,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	}
 	
 	@Override
-	public BigDecimal obterSomatorioTipoMovimentoPorConsolidado(Long idConsolidado, Date dataCriacao, 
+	public BigDecimal obterSomatorioTipoMovimentoPorConsolidado(Long idConsolidado, Date data, 
 			Integer numeroCota, Collection<TipoMovimentoFinanceiro> tiposMovimento){
 		
 		StringBuilder hql = new StringBuilder("select sum (m.valor) ");
@@ -1064,10 +1067,10 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 			indWhere = true;
 		}
 		
-		if (dataCriacao != null){
+		if (data != null){
 			
 			hql.append(indWhere ? " and " : " where ")
-			   .append(" m.dataCriacao = :dataCriacao ");
+			   .append(" m.data = :data ");
 			indWhere = true;
 		}
 		
@@ -1082,9 +1085,9 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 			query.setParameter("idConsolidado", idConsolidado);
 		}
 		
-		if (dataCriacao != null){
+		if (data != null){
 			
-			query.setParameter("dataCriacao", dataCriacao);
+			query.setParameter("data", data);
 		}
 		
 		query.setParameterList("tiposMovimento", tiposMovimento);

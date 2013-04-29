@@ -377,14 +377,11 @@ var lancamentoController = $.extend(true, {
 			singleSelect: true
 		});
 	},
-	
-	
-	
-	
+
 	imprimirRelatorioFaltasSobras : function(){
 		
 		$.postJSON(
-				contextPath + "/estoque/diferenca/validaDataRelatorioFaltasSobras", 
+				contextPath + "/estoque/diferenca/validarDadosParaImpressao", 
 				[{name:'dataMovimentoFormatada', value: $("#datePickerDataMovimento", lancamentoController.workspace).val()}] ,
 				function(resultado) {
 					var tipoMensagem = null; 

@@ -77,7 +77,6 @@
 							</td>											
 							<td width="314">&nbsp;</td>
 							<td class="atalhosCE" width="60" align="center" bgcolor="#F4F4F4"><strong>Atalhos:</strong></td>
-							<td class="atalhosCE" width="102" bgcolor="#F8F8F8"><strong>F2</strong>-Novo Produto</td>
 							<td class="atalhosCE" width="119" bgcolor="#F8F8F8"><strong>F6</strong>-Nova Nota Fiscal</td>
 							<td class="atalhosCE" width="62" bgcolor="#F8F8F8"><strong>F8</strong>-Salvar</td>
 							<td class="atalhosCE" width="145" bgcolor="#F8F8F8"><strong>F9</strong>-Finalizar Conferência</td>
@@ -188,7 +187,7 @@
 						
 						<input name="idProdutoEdicaoHidden" type="hidden" id="idProdutoEdicaoHidden" />
 						
-						<a isEdicao="true" href="javascript:;" class="ok_filtro" onclick="ConferenciaEncalhe.adicionarProdutoConferido();">
+						<a isEdicao="true" href="javascript:;" class="ok_filtro" onclick="ConferenciaEncalhe.buscarProdutoConferencia();" >
 							<img src="${pageContext.request.contextPath}/images/bt_check.gif" alt="Incluir" width="22" height="22" border="0" />
 						</a>
 					</td>

@@ -156,12 +156,15 @@ var fechamentoEncalheController = $.extend(true, {
 			usepager : true,
 			useRp : true,
 			rp : 15,
-			showTableToggleBtn : true,
+			showTableToggleBtn : false,
 			width : 1020,
 			height : 'auto',
 			singleSelect : true
 		});
 		
+		if($("#permissaoColExemplDevolucao").val() != "true"){
+			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(6,false);
+		}
 	},
 	
 	pesquisar : function(aplicaRegraMudancaTipo) {
@@ -257,27 +260,37 @@ var fechamentoEncalheController = $.extend(true, {
 	limparInputsFisico: function(index) {
 		
 		var tabela = $('.fechamentoGrid', fechamentoEncalheController.workspace).get(0);
-		var campo = tabela.rows[index].cells[7].firstChild.firstChild;
+		var campo = tabela.rows[index].cells[8].firstChild.firstChild;
+		var diferenca = tabela.rows[index].cells[9].firstChild;
 		
 		if (!campo.disabled) {
 
-			campo.val("");
+			campo.value = "";
+			diferenca.innerHTML = "";
 		}
 	},
 	
 	replicarItem : function(index) {
-		
+
 		var tabela = $('.fechamentoGrid', fechamentoEncalheController.workspace).get(0);
-		var valor = tabela.rows[index].cells[5].firstChild.innerHTML;
-		var campo = tabela.rows[index].cells[7].firstChild.firstChild;
-		var diferenca = tabela.rows[index].cells[8].firstChild;
+		var valor = tabela.rows[index].cells[6].firstChild.innerHTML;
+		var campo = tabela.rows[index].cells[8].firstChild.firstChild;
+		var diferenca = tabela.rows[index].cells[9].firstChild;
 		
 		if(campo.disabled){
 			return;
 		}
 		
-		campo.value = valor;
-		diferenca.innerHTML = "0";
+		if (!$("#ch" + index, this.workspace).attr("checked")) {
+			
+			campo.value = "";
+			diferenca.innerHTML = "";
+		
+		} else {
+		
+			campo.value = valor;
+			diferenca.innerHTML = "0";
+		}
 	},
 	
 	checkAll:function(input){
@@ -290,8 +303,8 @@ var fechamentoEncalheController = $.extend(true, {
 	onChangeFisico : function(campo, index) {
 		
 		var tabela = $('.fechamentoGrid', fechamentoEncalheController.workspace).get(0);
-		var devolucao = parseInt(tabela.rows[index].cells[5].firstChild.innerHTML);
-		var diferenca = tabela.rows[index].cells[8].firstChild;
+		var devolucao = parseInt(tabela.rows[index].cells[6].firstChild.innerHTML);
+		var diferenca = tabela.rows[index].cells[9].firstChild;
 		
 		if (campo.value == "") {
 			diferenca.innerHTML = "";
@@ -307,7 +320,7 @@ var fechamentoEncalheController = $.extend(true, {
 		var arr = new Array();
 		
 		for (i=0; i<tabela.rows.length; i++) {
-			fisico = tabela.rows[i].cells[6].firstChild.firstChild.value;
+			fisico = tabela.rows[i].cells[8].firstChild.firstChild.value;
 			arr.push(fisico);
 		}
 		
@@ -362,8 +375,13 @@ var fechamentoEncalheController = $.extend(true, {
 			params,
 			function (result) {
 			
-				var tipoMensagem = result.tipoMensagem;
-				var listaMensagens = result.listaMensagens;
+				var tipoMensagem, listaMensagens;
+				
+				if(result && result.tipoMensagem)
+					tipoMensagem = result.tipoMensagem;
+				
+				if(result && result.listaMensagens)
+					listaMensagens = result.listaMensagens;
 				
 				if (tipoMensagem && listaMensagens) {
 					

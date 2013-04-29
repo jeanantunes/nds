@@ -246,28 +246,6 @@ public class CobrancaRepositoryImplTest extends AbstractRepositoryImplTest {
 		Assert.assertNotNull(listaCobrancas);
 	}
 
-	@Test
-	public void testObterValorPendenteCobranca() {
-
-		BigDecimal valorPendenteCobranca = cobrancaRepository
-				.obterValorCobrancaNaoPagoDaCota(NUMERO_COTA);
-
-		Assert.assertNotNull(valorPendenteCobranca);
-
-		BigDecimal valorTotalCobrnaca = BigDecimal.ZERO;
-		valorTotalCobrnaca = valorTotalCobrnaca.add(boleto2.getValor());
-		valorTotalCobrnaca = valorTotalCobrnaca.add(boleto3.getValor());
-
-		BigDecimal valorTotalBaixaCobrnaca = BigDecimal.ZERO;
-		valorTotalBaixaCobrnaca = valorTotalBaixaCobrnaca.add(baixa2
-				.getValorPago());
-		valorTotalBaixaCobrnaca = valorTotalBaixaCobrnaca.add(baixa3
-				.getValorPago());
-
-		Assert.assertTrue(valorPendenteCobranca.compareTo(valorTotalCobrnaca
-				.subtract(valorTotalBaixaCobrnaca)) == 0);
-	}
-
 	// TESTES SEM USO DE MASSA
 
 	@Test
@@ -527,20 +505,6 @@ public class CobrancaRepositoryImplTest extends AbstractRepositoryImplTest {
 
 		valorCobranca = cobrancaRepository
 				.obterValorCobrancasQuitadasPorData(data.getTime());
-
-		Assert.assertNotNull(valorCobranca);
-
-	}
-
-	@Test
-	public void testarObterValorCobrancaNaoPagoDaCota() {
-
-		BigDecimal valorCobranca;
-
-		Integer numeroCota = 1;
-
-		valorCobranca = cobrancaRepository
-				.obterValorCobrancaNaoPagoDaCota(numeroCota);
 
 		Assert.assertNotNull(valorCobranca);
 

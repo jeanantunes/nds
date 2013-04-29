@@ -33,7 +33,7 @@ var lancamentosSelecionados = [];
 .dialog-confirm-balanceamento { display:none; }
 
 .gridLinhaDestacada {
-  background:#F00; 
+  background:#888; 
   font-weight:bold; 
   color:#fff;
 }

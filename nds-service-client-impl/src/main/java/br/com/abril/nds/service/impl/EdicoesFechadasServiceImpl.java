@@ -30,9 +30,8 @@ public class EdicoesFechadasServiceImpl implements EdicoesFechadasService {
 	public List<RegistroEdicoesFechadasVO> obterResultadoEdicoesFechadas(Date dataDe, Date dateAte, Long idFornecedor) {	
 		
 		return edicoesFechadasRepository.obterResultadoEdicoesFechadas(dataDe, dateAte, idFornecedor, null, null, null, null);
+		
 	}
-	
-	
 	
 
 	/* (non-Javadoc)
@@ -43,13 +42,9 @@ public class EdicoesFechadasServiceImpl implements EdicoesFechadasService {
 	public BigInteger obterTotalResultadoEdicoesFechadas(
 			Date dataDe, Date dateAte, Long idFornecedor) {
 		
-		// Filtra por fornecedor específico
 		return edicoesFechadasRepository.obterResultadoTotalEdicoesFechadas(dataDe, dateAte, idFornecedor);
+		
 	}
-	
-	
-	
-
 
 
 
@@ -74,23 +69,6 @@ public class EdicoesFechadasServiceImpl implements EdicoesFechadasService {
 				dateAte, idFornecedor, sortorder, sortname, firstResult,
 				maxResults);
 	}
-
-
-
-
-	/**
-	 * @param dataDe
-	 * @param dataAte
-	 * @param idFornecedor
-	 * @return
-	 * @see br.com.abril.nds.repository.EdicoesFechadasRepository#quantidadeResultadoEdicoesFechadas(java.util.Date, java.util.Date, java.lang.Long)
-	 */
-	@Override
-	@Transactional(readOnly = true)
-	public Long quantidadeResultadoEdicoesFechadas(Date dataDe, Date dataAte,
-			Long idFornecedor) {
-		return edicoesFechadasRepository.quantidadeResultadoEdicoesFechadas(
-				dataDe, dataAte, idFornecedor);
-	}
+	
 	
 }

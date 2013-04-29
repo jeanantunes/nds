@@ -434,7 +434,7 @@ public class MatrizRecolhimentoController extends BaseController {
 		
 		this.validarDadosReprogramar(novaDataFormatada, filtro.getNumeroSemana());
 		
-		this.validarDataReprogramacao(filtro.getNumeroSemana(), novaData, filtro.getDataPesquisa());
+		this.validarDataReprogramacao(filtro.getNumeroSemana(), novaData, filtro.getDataPesquisa(), produtoRecolhimento.isAceiteDataNova());
 		
 		List<ProdutoRecolhimentoFormatadoVO> listaProdutoRecolhimento = new ArrayList<ProdutoRecolhimentoFormatadoVO>();
 		
@@ -1030,6 +1030,42 @@ public class MatrizRecolhimentoController extends BaseController {
 	 * @param novaData - nova data de recolhimento
 	 * @param dataBalanceamento - data de balanceamento
 	 */
+	private void validarDataReprogramacao(Integer numeroSemana, Date novaData, Date dataBalanceamento, boolean aceiteDataNova) {
+		
+		this.recolhimentoService.verificaDataOperacao(novaData);
+		
+		List<ConfirmacaoVO> confirmacoes = this.montarListaDatasConfirmacao();
+		
+		for (ConfirmacaoVO confirmacao : confirmacoes) {
+			
+			if (DateUtil.parseDataPTBR(confirmacao.getMensagem()).equals(novaData)) {
+				
+				if (confirmacao.isConfirmado()) {
+					
+					throw new ValidacaoException(TipoMensagem.WARNING,
+						"O recolhimento não pode ser reprogramado para uma data já confirmada!");
+				}
+			}
+		}
+		
+		Date dataInicioSemana = DateUtil.obterDataDaSemanaNoAno(
+			numeroSemana, this.distribuidorService.inicioSemana().getCodigoDiaSemana(), dataBalanceamento);
+		
+		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
+		
+		boolean dataValidaSemana =
+			DateUtil.validarDataEntrePeriodo(novaData, dataInicioSemana, dataFimSemana);
+		
+		if (!dataValidaSemana && aceiteDataNova == false) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"A data não é referente à semana " + numeroSemana + 
+				". Você deseja continuar?");
+//					"A data deve estar entre " + DateUtil.formatarDataPTBR(dataInicioSemana) + " e " 
+//				+ DateUtil.formatarDataPTBR(dataFimSemana) + ", referente à semana " + numeroSemana);
+		}
+	}
+	
 	private void validarDataReprogramacao(Integer numeroSemana, Date novaData, Date dataBalanceamento) {
 		
 		this.recolhimentoService.verificaDataOperacao(novaData);
@@ -1059,8 +1095,10 @@ public class MatrizRecolhimentoController extends BaseController {
 		if (!dataValidaSemana) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,
-				"A data deve estar entre " + DateUtil.formatarDataPTBR(dataInicioSemana) + " e " 
-				+ DateUtil.formatarDataPTBR(dataFimSemana) + ", referente à semana " + numeroSemana);
+				"A data que será inserida não é referente à semana " + numeroSemana + 
+				". Você deseja continuar?");
+//					"A data deve estar entre " + DateUtil.formatarDataPTBR(dataInicioSemana) + " e " 
+//				+ DateUtil.formatarDataPTBR(dataFimSemana) + ", referente à semana " + numeroSemana);
 		}
 	}
 	

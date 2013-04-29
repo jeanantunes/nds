@@ -161,6 +161,7 @@ public class DiferencaEstoqueController extends BaseController {
 		this.limparSessao();
 		
 		result.include("dataAtual", DateUtil.formatarDataPTBR(new Date()));
+		result.include("permissaoBotaoConfirmacao", usuarioPossuiRule(Permissao.ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_BOTAO_CONFIRMACAO));
 	}
 	
 	@Get
@@ -2515,60 +2516,42 @@ public class DiferencaEstoqueController extends BaseController {
 
 		List<EstoqueDTO> estoques = new ArrayList<EstoqueDTO>();
 		
-		if(estoque.getQtde() != null ) {
-			
-			estoques.add(
-					new EstoqueDTO(
-							TipoEstoque.LANCAMENTO.name(), 
-							TipoEstoque.LANCAMENTO.getDescricao(),
-							estoque.getQtde() 
-							) 
-					); 
-		}
+		BigInteger qtde =
+			(estoque.getQtde() != null)
+				? estoque.getQtde() : BigInteger.ZERO;
 		
-		if(estoque.getQtdeSuplementar() != null ) {
-				
-			estoques.add(
-					new EstoqueDTO(
-							TipoEstoque.SUPLEMENTAR.name(), 
-							TipoEstoque.SUPLEMENTAR.getDescricao(),
-							estoque.getQtdeSuplementar() 
-							) 
-					);
-		}
+		estoques.add(
+				new EstoqueDTO(
+						TipoEstoque.LANCAMENTO.name(), 
+						TipoEstoque.LANCAMENTO.getDescricao(),
+						qtde 
+						) 
+				); 
+	
 		
-		if(estoque.getQtdeDevolucaoEncalhe() != null ) {
-			
-			estoques.add(
-					new EstoqueDTO(
-							TipoEstoque.DEVOLUCAO_ENCALHE.name(), 
-							TipoEstoque.DEVOLUCAO_ENCALHE.getDescricao(),
-						    estoque.getQtdeDevolucaoEncalhe()
-							) 
-					); 
-		}
+		BigInteger qtdeSuplementar =
+			(estoque.getQtdeSuplementar() != null)
+				? estoque.getQtdeSuplementar() : BigInteger.ZERO;
 		
-		if(estoque.getQtdeDevolucaoFornecedor() != null ) {
+		estoques.add(
+				new EstoqueDTO(
+						TipoEstoque.SUPLEMENTAR.name(), 
+						TipoEstoque.SUPLEMENTAR.getDescricao(),
+						qtdeSuplementar
+						) 
+				);
 		
-			estoques.add(
-					new EstoqueDTO(
-							TipoEstoque.DEVOLUCAO_FORNECEDOR.name(), 
-							TipoEstoque.DEVOLUCAO_FORNECEDOR.getDescricao(),
-							estoque.getQtdeDevolucaoFornecedor()
-							) 
-					); 
-		}
+		BigInteger qtdeDevolucaoEncalhe =
+			(estoque.getQtdeDevolucaoEncalhe() != null)
+				? estoque.getQtdeDevolucaoEncalhe() : BigInteger.ZERO;
 		
-		if(estoque.getQtdeDanificado() != null ) {
-		
-			estoques.add(
-					new EstoqueDTO(
-							TipoEstoque.DANIFICADO.name(), 
-							TipoEstoque.DANIFICADO.getDescricao(),
-							estoque.getQtdeDanificado()
-							) 
-					); 
-		}
+		estoques.add(
+				new EstoqueDTO(
+						TipoEstoque.DEVOLUCAO_ENCALHE.name(), 
+						TipoEstoque.DEVOLUCAO_ENCALHE.getDescricao(),
+					    qtdeDevolucaoEncalhe
+						) 
+				); 
 		
 		return estoques;
 	}
@@ -2817,24 +2800,27 @@ public class DiferencaEstoqueController extends BaseController {
 	}
 	
 	@Post
-	@Path("/validaDataRelatorioFaltasSobras")
-	public void validaDataRelatorioFaltasSobras(String dataMovimentoFormatada ) throws Exception{
-		if (dataMovimentoFormatada == null || dataMovimentoFormatada.equals("")){
-				throw new ValidacaoException(TipoMensagem.WARNING, "Informe uma data de movimento");
-		}		
+	@Path("/validarDadosParaImpressao")
+	public void validarDadosParaImpressao(String dataMovimentoFormatada) throws Exception {
+		
+		this.diferencaEstoqueService.validarDadosParaImpressaoNaData(dataMovimentoFormatada);
 	
 		this.result.use(Results.json()).from("", "result").recursive().serialize();
 	}
 	
-	
-	@Get("/imprimirRelatorioFaltasSobras")
-	public Download imprimirRelatorioFaltasSobras(String dataMovimentoFormatada ) throws Exception{
+	@Get
+	@Path("/imprimirRelatorioFaltasSobras")
+	public Download imprimirRelatorioFaltasSobras(String dataMovimentoFormatada) throws Exception {
 		
 		Date dataMovimento = DateUtil.parseDataPTBR(dataMovimentoFormatada);
 		
-		byte[] comprovate = diferencaEstoqueService.imprimirRelatorioFaltasSobras(dataMovimento);
+		byte[] relatorio = this.diferencaEstoqueService.imprimirRelatorioFaltasSobras(dataMovimento);
+
+		String nomeArquivoRelatorio = "relatorioFaltasSobras" + FileType.PDF.getExtension();
 		
-		return new ByteArrayDownload(comprovate,"application/pdf", "relatorioFaltasSobras.pdf", true);
+		return new ByteArrayDownload(
+			relatorio, FileType.PDF.getContentType(), nomeArquivoRelatorio, true);
 	}
+	
 }
  

@@ -38,7 +38,6 @@ public class ImpressaoBandeiraVO implements Serializable  {
 		this.volumes = volumes;
 			
 	}
-	
 
 	public ImpressaoBandeiraVO(String nome, Integer semana,
 			String codigoPracaNoProdin, String praca, String destino,
@@ -52,9 +51,6 @@ public class ImpressaoBandeiraVO implements Serializable  {
 		this.canal = canal == null? "" : canal;
 		this.volumes = volumes == null? "" : volumes;
 	}
-
-
-	
 	
 	public ImpressaoBandeiraVO(){
 		
@@ -108,7 +104,5 @@ public class ImpressaoBandeiraVO implements Serializable  {
 	public void setVolumes(String volumes) {
 		this.volumes = volumes;
 	}
-
-	
 	
 }

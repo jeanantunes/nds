@@ -5,7 +5,8 @@ public enum StatusDivida {
 	EM_ABERTO("Em Aberto"), 
 	QUITADA("Quitada"),
 	NEGOCIADA("Negociada"),
-	POSTERGADA("Postergada");
+	POSTERGADA("Postergada"),
+	PENDENTE("Pendente");
 
 	private String descricao;
 	
