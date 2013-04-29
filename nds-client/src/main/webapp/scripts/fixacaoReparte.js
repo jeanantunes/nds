@@ -475,8 +475,9 @@ var fixacaoReparteController = $.extend(true, {
 
 	//funcao que executa chamada postJSON que busca dados da fixacao 
 	editarFixacao:function (idFixacao,qtdeReparte, numeroCota, codigoProduto){
-		var reparteTotal= qtdeReparte;
-		arrayPesquisa = [];
+		var reparteTotal= qtdeReparte,
+			arrayPesquisa = [];
+		
 		arrayPesquisa.push({
 			name : "filtro.codigoProduto", 
 			value : codigoProduto
@@ -511,7 +512,9 @@ var fixacaoReparteController = $.extend(true, {
 			open: 	fixacaoReparteController.preencherGridPdv(arrayPesquisa),
 			buttons: {
 				"Confirmar": function() {
-					var somaReparte=0;
+					var somaReparte=0,
+						listaPDV = [];
+					
 					$("#pdvCotaGrid .reparteGridinput").each(function(idx, linha){
 						if(linha.name == 'undefined'){
 							codigos.push(0);
@@ -571,7 +574,11 @@ var fixacaoReparteController = $.extend(true, {
 								"Confirmar": function() {
 									//parametros para salvar repartes pdvs
 									$.postJSON(contextPath + '/distribuicao/fixacaoReparte/salvarGridPdvReparte',  uniqlistaPDV, function(result) {
-										$(".fixacaoCotaGrid").flexReload();
+										
+										$(".fixacaoCotaGrid, .fixacaoProdutoGrid", fixacaoReparteController.workspace)
+										.filter(':visible')
+										.flexReload();
+										
 										$("#dialog-defineReparte").dialog("close"); 
 									},
 									function(result){ });
