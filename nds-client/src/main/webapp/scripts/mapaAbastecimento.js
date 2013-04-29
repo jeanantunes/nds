@@ -279,6 +279,8 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 		});
 		$(tableClass, _workspace).flexReload();
 		$(grid, _workspace).show();
+		
+		$(".areaBts", _workspace).show();	
 	},
 	
 	this.processarMensagens = function(result) {

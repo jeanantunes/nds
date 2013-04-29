@@ -13,6 +13,9 @@
 		var pesquisaProdutoMapaAbastecimento = new PesquisaProduto();
 	
 		var MA = new MapaAbastecimento('${pageContext.request.contextPath}', 'MA', BaseController.workspace);
+		
+		$(".areaBts", BaseController.workspace).hide();	
+		
 	</script>
 	
 		
