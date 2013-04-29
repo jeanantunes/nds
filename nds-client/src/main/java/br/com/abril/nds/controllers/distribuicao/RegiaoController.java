@@ -304,8 +304,6 @@ public class RegiaoController extends BaseController {
 
 		popularRegistroESalvarCota(cotas, idRegiao);
 
-//		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cota inserida com sucesso!"), 
-//				"result").recursive().serialize();
 	}
 	
 	
