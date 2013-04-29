@@ -10,6 +10,7 @@ public enum StatusLancamento {
 	FURO("Furo"),
 	EXPEDIDO("Expedido"),
 	EM_BALANCEAMENTO_RECOLHIMENTO("Em Balanceamento Recolhimento"),
+	EM_BALANCEAMENTO_LANCAMENTO("Em Balanceamento Lancamento"),
 	BALANCEADO_RECOLHIMENTO("Balanceado Recolhimento"),
 	EXCLUIDO_RECOLHIMENTO("Excluído Recolhimento"),
 	RECOLHIDO("Recolhido"),
