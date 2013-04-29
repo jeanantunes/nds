@@ -225,6 +225,8 @@ var ConferenciaEncalhe = $.extend(true, {
 		    }else if (event.keyCode == 37) {//"<"
 		    	$('#qtdeExemplar', ConferenciaEncalhe.workspace).focus();
 		    	setTimeout (function () {$('#qtdeExemplar', ConferenciaEncalhe.workspace).select();}, 1);
+		    }else if (event.keyCode == 27){
+		    	$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).val("");
 		    }
 		});
 		
@@ -1316,15 +1318,22 @@ var ConferenciaEncalhe = $.extend(true, {
 			function(result){
 				
 				ConferenciaEncalhe.preProcessarConsultaConferenciaEncalhe(result);	
+				
+                ConferenciaEncalhe.limparDadosProduto();
+				
+				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+				
+				$("#qtdeExemplar", ConferenciaEncalhe.workspace).val(1);
 			},
-			null	
+			function(){
+				
+				ConferenciaEncalhe.limparDadosProduto();
+				
+				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+				
+				$("#qtdeExemplar", ConferenciaEncalhe.workspace).val(1);
+			}	
 		);
-		
-		ConferenciaEncalhe.limparDadosProduto();
-		
-		focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
-		
-		$("#qtdeExemplar", ConferenciaEncalhe.workspace).val(1);
 	},
 
 	limparDadosProduto : function(){
@@ -1439,6 +1448,7 @@ var ConferenciaEncalhe = $.extend(true, {
 			}, close : function(){
 				
 				ConferenciaEncalhe.modalAberta = false;
+				
 				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
 			},
 			form: $("#dialog-notaFiscal", this.workspace).parents("form")
@@ -1653,6 +1663,8 @@ var ConferenciaEncalhe = $.extend(true, {
 				$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete({});
 					
 				$('#cod_barras_conf_encalhe', ConferenciaEncalhe.workspace).val("");
+				
+				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
 			}
 		);
 	},
@@ -1689,6 +1701,8 @@ var ConferenciaEncalhe = $.extend(true, {
 				function(){
 					
 					$('#sm', ConferenciaEncalhe.workspace).val("");
+					
+					$('#sm', ConferenciaEncalhe.workspace).focus();
 				}, 
 				false, 
 				"idTelaConferenciaEncalhe"
