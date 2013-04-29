@@ -174,8 +174,7 @@ public class HistogramaVendasController extends BaseController {
 	
 	@Post
 	@Path("/analiseHistograma")
-	public void  analiseHistograma(String edicoes,String segmento,String codigoProduto,String nomeProduto,String[] faixasVenda
-			,String labelComponente,String labelElemento,String classificacaoLabel){
+	public void  analiseHistograma(String edicoes,String segmento,String codigoProduto,String nomeProduto,String labelComponente,String labelElemento,String classificacaoLabel){
 		String[] nrEdicoes = edicoes.split(",");
 		
 		String enumeratedList = null;
@@ -196,15 +195,8 @@ public class HistogramaVendasController extends BaseController {
 		result.include("labelElemento", labelElemento);
 		result.include("classificacaoLabel", classificacaoLabel);
 		
-		//faixa de venda
-		String[] faixaIterator = faixasVenda;
-		
-		if (faixaIterator == null || faixaIterator.length == 0) {
-			faixaIterator = faixaVendaInicial;
-		}
-		
 		//Pesquisar base de estudo e salvar em sessão
-		List<AnaliseHistogramaDTO> list = produtoEdicaoService.obterBaseEstudoHistogramaPorFaixaVenda(getFiltroSessao(),codigoProduto, faixaIterator, nrEdicoes);
+		List<AnaliseHistogramaDTO> list = produtoEdicaoService.obterBaseEstudoHistogramaPorFaixaVenda(getFiltroSessao(),codigoProduto, faixaVendaInicial, nrEdicoes);
 	
 		session.setAttribute(HISTOGRAMA_SESSION_ATTRIBUTE, list);
 	}

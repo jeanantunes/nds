@@ -76,7 +76,7 @@ var anaLiseHistogramaController = $.extend(true, {
 	},
 	
 	createInput : function createInput(id, value){
-		return '<input type="text" onkeydown="anaLiseHistogramaController.alterarFaixaAte(' + id + ', event);" value=' + value + ' />';
+		return '<input type="text" id="input' + id + '" onkeydown="anaLiseHistogramaController.alterarFaixaAte(' + id + ', event);" value=' + value + ' />';
 	},
 	
 	createImgExcluir : function createImgExcluir(rowId){
@@ -406,7 +406,9 @@ var anaLiseHistogramaController = $.extend(true, {
 	alterarFaixaAte : function (rowId, event){
 		var	faixaReparteGrid = anaLiseHistogramaController.Grids.FaixasReparteGrid,
 			selectedRow = {},
-			nextRow = {};
+			nextRow = {},
+			newRow = {};
+			
 		
 		if (event.keyIdentifier == "Enter") {
 			event.cancelBubble = true;
@@ -431,7 +433,7 @@ var anaLiseHistogramaController = $.extend(true, {
 				nextRow.cell.faixaVendaDe = (parseInt(event.target.value) + 1 ) + " a";
 			} else {
 				// copia a última linha
-				var newRow = {
+				newRow = {
 						id : 0,
 						cell : {
 							faixaVendaDe : 0,
@@ -456,6 +458,8 @@ var anaLiseHistogramaController = $.extend(true, {
 			anaLiseHistogramaController.organizarRowId(faixaReparteGrid);
 			
 			faixaReparteGrid.addTableModel(faixaReparteGrid.tableModel);
+			
+			$('#input'+ (selectedRow.id + 1)).focus();
 		}
 	},
 	
@@ -505,6 +509,8 @@ var anaLiseHistogramaController = $.extend(true, {
 	},
 	
 	organizarRowId : function (grid){
+		var row = {};
+		
 		// organizando os ID das linhas
 		for ( var int = 0; int < grid.tableModel.rows.length; int++) {
 			row = grid.tableModel.rows[int];

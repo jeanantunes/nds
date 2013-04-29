@@ -9,7 +9,7 @@ var histogramaPosEstudoController = $.extend(true, {
 	matrizDistribuicaoController : null,
 	
 	createInput : function createInput(id, value){
-		return '<input type="text" onkeydown="histogramaPosEstudoController.alterarFaixaAte(' + id + ', event);" value=' + value + ' />';
+		return '<input type="text" id="input' + id + '" onkeydown="histogramaPosEstudoController.alterarFaixaAte(' + id + ', event);" value=' + value + ' />';
 	},
 	
 	createImgExcluir : function createImgExcluir(rowId){
@@ -565,6 +565,8 @@ var histogramaPosEstudoController = $.extend(true, {
 			histogramaPosEstudoController.organizarRowId(faixaReparteGrid);
 			
 			faixaReparteGrid.addTableModel(faixaReparteGrid.tableModel);
+			
+			$('#input'+ (selectedRow.id + 1)).focus();
 		}
 	},
 	
