@@ -19,6 +19,7 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
+import br.com.abril.nds.dto.HistogramaPosEstudoAnaliseFaixaReparteDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RegiaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
@@ -53,6 +54,7 @@ public class HistogramaVendasController extends BaseController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroHistogramaVendas";
 	private static final String HISTOGRAMA_SESSION_ATTRIBUTE = "resultadoHistogramaVendas";
+	private String[] faixaVendaInicial = {"0-10","11-20","21-30","31-40","41-999999"};
 	
 	@Autowired
 	private Result result;
@@ -173,7 +175,7 @@ public class HistogramaVendasController extends BaseController {
 	@Post
 	@Path("/analiseHistograma")
 	public void  analiseHistograma(String edicoes,String segmento,String codigoProduto,String nomeProduto,String[] faixasVenda
-			,String labelComponente,String labelElemento,String classificacaoLabel, boolean isPracaAtendida, boolean isPracaSede){
+			,String labelComponente,String labelElemento,String classificacaoLabel){
 		String[] nrEdicoes = edicoes.split(",");
 		
 		String enumeratedList = null;
@@ -194,9 +196,15 @@ public class HistogramaVendasController extends BaseController {
 		result.include("labelElemento", labelElemento);
 		result.include("classificacaoLabel", classificacaoLabel);
 		
+		//faixa de venda
+		String[] faixaIterator = faixasVenda;
+		
+		if (faixaIterator == null || faixaIterator.length == 0) {
+			faixaIterator = faixaVendaInicial;
+		}
 		
 		//Pesquisar base de estudo e salvar em sessão
-		List<AnaliseHistogramaDTO> list = produtoEdicaoService.obterBaseEstudoHistogramaPorFaixaVenda(getFiltroSessao(),codigoProduto, faixasVenda, nrEdicoes);
+		List<AnaliseHistogramaDTO> list = produtoEdicaoService.obterBaseEstudoHistogramaPorFaixaVenda(getFiltroSessao(),codigoProduto, faixaIterator, nrEdicoes);
 	
 		session.setAttribute(HISTOGRAMA_SESSION_ATTRIBUTE, list);
 	}

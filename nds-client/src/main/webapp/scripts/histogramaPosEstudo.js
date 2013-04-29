@@ -128,8 +128,8 @@ var histogramaPosEstudoController = $.extend(true, {
 							newRow = {
 								id : rowId,
 								cell : {
-									faixaReparteDe : replaceAll(row.cell.faixaReparte.split("a")[0].replace(" ", ""),".","") + " a",
-									faixaReparteAte : createInput(rowId, replaceAll(row.cell.faixaReparte.split("a")[1].replace(" ", ""),".","")),
+									faixaReparteDe : replaceAll($(row.cell.faixaReparte).text().split("a")[0].replace(" ", ""),".","") + " a",
+									faixaReparteAte : createInput(rowId, replaceAll($(row.cell.faixaReparte).text().split("a")[1].replace(" ", ""),".","")),
 									acao : createImgExcluir(rowId)
 								}
 							};
