@@ -125,8 +125,12 @@ var lancamentosSelecionados = [];
 		                        <img src="<c:url value='images/ico_check.gif'/>"  hspace="5" border="0" />
 		                    </a>
 		                </span>
-			  			
-			  			
+		                
+		                <span class="bt_novos" >
+							<a isEdicao="true" id="linkSalvar" href="javascript:;" onclick="balanceamentoLancamento.salvar();" title="Salvar">
+								<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_salvar.gif">
+							</a>
+						</span>
 			  			
 			  			 <span class="bt_arq">
 							<!-- ARQUIVO -->

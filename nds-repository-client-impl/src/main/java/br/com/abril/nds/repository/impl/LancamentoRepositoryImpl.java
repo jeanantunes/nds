@@ -1252,6 +1252,7 @@ public class LancamentoRepositoryImpl extends
 												   StatusLancamento.CONFIRMADO.name(),
 												   StatusLancamento.BALANCEADO.name(),
 												   StatusLancamento.EXPEDIDO.name(),
+												   StatusLancamento.EM_BALANCEAMENTO_LANCAMENTO.name(),
 												   StatusLancamento.FURO.name()};
 		
 		String[] arrayStatusLancamentoDataMenorInicial = {StatusLancamento.PLANEJADO.name(),

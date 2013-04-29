@@ -36,6 +36,7 @@ import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -110,6 +111,17 @@ public class MatrizLancamentoController extends BaseController {
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = this.obterResultadoResumoLancamento(balanceamentoLancamento);
 		this.result.use(CustomJson.class).put("resultado", resultadoResumoBalanceamento).serialize();
 		
+	}
+	
+	@Post
+	@Path("/salvar")
+	public void salvar() {
+		BalanceamentoLancamentoDTO balanceamentoLancamento = 
+				(BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
+		
+		matrizLancamentoService.salvarBalanceamentoLancamento(balanceamentoLancamento.getMatrizLancamento(), getUsuarioLogado());
+		removerAtributoAlteracaoSessao();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Balanceamento da matriz de lancamento salvo com sucesso!"), Constantes.PARAM_MSGS);
 	}
 	
 	

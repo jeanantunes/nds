@@ -843,8 +843,13 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			},
 			form: $("#dialogReprogramarBalanceamento", _workspace).parents("form")			
 		});
-	};
+	},
 	
+	this.salvar = function() {
+		$.postJSON(
+			contextPath + "/matrizLancamento/salvar"
+		);
+	};
 }
 
 //@ sourceURL=balanceamentoLancamento.js

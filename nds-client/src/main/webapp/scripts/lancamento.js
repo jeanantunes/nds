@@ -402,6 +402,12 @@ var lancamentoController = $.extend(true, {
 			);
 		
 		 
+	},
+	
+	salvar : function() {
+		$.postJSON(
+			contextPath + "/devolucao/balanceamentoMatriz/salvar"
+		);
 	}
 	
 }, BaseController);

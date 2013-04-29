@@ -69,4 +69,6 @@ public interface MatrizLancamentoService {
 	
 	boolean isProdutoBalanceavel(ProdutoLancamentoDTO produtoLancamento);
 
+	void salvarBalanceamentoLancamento(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento, Usuario usuarioLogado);
+
 }
