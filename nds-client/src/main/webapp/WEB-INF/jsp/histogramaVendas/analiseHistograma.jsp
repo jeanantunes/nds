@@ -1,7 +1,6 @@
 
 <div id="analiseHistogramaContent">
 
-
 <div id="dialog-divergencia" title="Base de Estudos" style="display:none;">
 	<fieldset style="width:300px; float:left;">
   		<legend>Base Sugerida</legend>
@@ -23,7 +22,7 @@
 <div id="dialog-alterar-faixa" title="Consulta de Cotas do Histograma de Venda" style="display:none;">
 <fieldset style="width:350px; margin-top:8px;">
   <legend>Alterar Faixa de Reparte</legend>
-  <table class="faixasReparteGrid" id="faixasReparteGrid"></table>
+  <table class="faixasVendaGrid" id="faixasReparteGrid"></table>
 </fieldset>
 </div>
 
@@ -84,7 +83,7 @@
           
           <span class="bt_novos" title="Gerar Arquivo"><a href="${pageContext.request.contextPath}/distribuicao/histogramaVendas/exportar?fileType=XLS"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
     <span class="bt_novos" title="Imprimir"><a href="${pageContext.request.contextPath}/distribuicao/histogramaVendas/exportar?fileType=PDF" ><img src="images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
-          <span class="bt_novos"><a href="javascript:;" onclick="popup_histograma();"><img src="images/ico_editar.gif" alt="Alterar Faixar" hspace="5" border="0" />Alterar Faixa</a></span><!-- <span class="bt_novos"><a href="javascript:;"><img src="../images/ico_negociar.png" alt="Reabrir" hspace="5" border="0" />Reabrir</a></span>-->
+          <span class="bt_novos"><a href="javascript:;" id="alterarFaixaReparte" ><img src="images/ico_editar.gif" alt="Alterar Faixar" hspace="5" border="0" />Alterar Faixa</a></span><!-- <span class="bt_novos"><a href="javascript:;"><img src="../images/ico_negociar.png" alt="Reabrir" hspace="5" border="0" />Reabrir</a></span>-->
           <span class="bt_novos"><a href="javascript:anaLiseHistogramaController.voltarFiltro();"><img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span><br clear="all" />
 
           
