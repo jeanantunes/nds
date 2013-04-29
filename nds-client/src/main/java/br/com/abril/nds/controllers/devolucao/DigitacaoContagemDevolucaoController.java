@@ -638,17 +638,13 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
-		Date dataInicial = DateUtil.subtrairMeses(filtro.getDataInicial(), NUMERO_MESES_PESQUISA_DESATIVACAO);
+		BigInteger quantidade = edicoesFechadasService.obterTotalResultadoEdicoesFechadas(filtro.getDataInicial(), filtro.getDataFinal(), filtro.getIdFornecedor());
 		
-		Date dataFinal = DateUtil.subtrairDias(filtro.getDataInicial(), 1);
-		
-		Long quantidade = edicoesFechadasService.quantidadeResultadoEdicoesFechadas(dataInicial, dataFinal, filtro.getIdFornecedor());
-		if(quantidade == 0){
+		if( quantidade == null || BigInteger.ZERO.compareTo(quantidade) >= 0 ) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
-		
-		List<RegistroEdicoesFechadasVO> edicoesFechadasVOs = edicoesFechadasService.obterResultadoEdicoesFechadas(dataInicial, dataFinal, filtro.getIdFornecedor(), sortorder, sortname, page*rp - rp, rp);
+		List<RegistroEdicoesFechadasVO> edicoesFechadasVOs = edicoesFechadasService.obterResultadoEdicoesFechadas(filtro.getDataInicial(), filtro.getDataFinal(), filtro.getIdFornecedor(), sortorder, sortname, page*rp - rp, rp);
 		
 		
 		result.use(FlexiGridJson.class).from(edicoesFechadasVOs).total(quantidade.intValue()).page(page).serialize();
