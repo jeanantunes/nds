@@ -3414,9 +3414,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		e.adicionarCompleteEspaco("Valor total de encalhe: ( A )", valorTotalEncalhe);
 		e.quebrarLinhaEscape();
 		e.quebrarLinhaEscape();
-		
-		adicionarComposicaoCobranca(e, slipDTO.getListaComposicaoCobrancaDTO());
-		
+
 		e.adicionarCompleteEspaco("Reparte Capa", 
 			slipDTO.getValorTotalSemDesconto().setScale(2, RoundingMode.HALF_EVEN).toString());
 		e.quebrarLinhaEscape();
@@ -3430,6 +3428,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				.setScale(2, RoundingMode.HALF_EVEN).toString());
 		e.quebrarLinhaEscape();
 		e.quebrarLinhaEscape();
+		
+		adicionarComposicaoCobranca(e, slipDTO.getListaComposicaoCobrancaDTO());
 		
 		String valorTotalPagar = slipDTO.getValorTotalPagar() == null ? "0,00" : slipDTO.getValorTotalPagar().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
 		e.adicionarCompleteTraco("VALOR TOTAL A PAGAR", valorTotalPagar);
@@ -3484,16 +3484,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 			}
 
-
 			e.quebrarLinhaEscape();
 			
 			e.quebrarLinhaEscape();
-			
 		}
-		
-		
 	}
-	
 	
 	private byte[] gerarSlipPDF() {
 		
