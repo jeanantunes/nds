@@ -89,7 +89,7 @@ var anaLiseHistogramaController = $.extend(true, {
 		var cotasEsmagadasFormatado = '';
 		
 			rowCell.repTotal = formatarMilhar(rowCell.repTotal);
-			rowCell.vdaTotal = formatarMilhar(parseInt(rowCell.vdaTotal));
+			rowCell.vdaTotal = formatarMilhar(rowCell.vdaTotal);
 			
 			cotasEsmagadasFormatado = formatarMilhar($(rowCell.cotasEsmagadas).text());
 			
@@ -97,7 +97,7 @@ var anaLiseHistogramaController = $.extend(true, {
 				rowCell.cotasEsmagadas = 0;
 			}
 			 
-			rowCell.vendaEsmagadas = formatarMilhar(rowCell.vendaEsmagadas);
+			rowCell.vendaEsmagadas = floatToPrice(rowCell.vendaEsmagadas);
 			rowCell.qtdeCotasAtivas = formatarMilhar(rowCell.qtdeCotasAtivas);
 			rowCell.qtdeCotas = formatarMilhar(rowCell.qtdeCotas);
 			rowCell.qtdeCotasSemVendas = formatarMilhar(rowCell.qtdeCotasSemVendas);
@@ -225,8 +225,8 @@ var anaLiseHistogramaController = $.extend(true, {
 				
 				resultadoAnalise=data.rows;
 				
-				var idArray=["cotasAtivasCell","repartTotalCell","repMedioCell","vdaMedioCell","cotasEsmagadasCell","vdaTotalCell","vendaEsmagadasCell","encalheMedioCell","cotasProdutoCell","reparteDistribuidoCell"];
-				var valueArray=["qtdeCotasAtivas","repTotal","repMedio","vdaMedio","cotasEsmagadas","vdaTotal","vendaEsmagadas","encalheMedio","qtdeCotas","reparteDistribuido"];
+				var idArray=["cotasAtivasCell","reparteDistribuidoCell","repMedioCell","vdaMedioCell","cotasEsmagadasCell","vdaTotalCell","vendaEsmagadasCell","encalheMedioCell","cotasProdutoCell"];
+				var valueArray=["qtdeTotalCotasAtivas","repTotal","repMedio","vdaMedio","cotasEsmagadas","vdaTotal","vendaEsmagadas","encalheMedio","qtdeCotas"];
 				
 				var lastRow = $(data.rows).last()[0];
 				
@@ -259,10 +259,10 @@ var anaLiseHistogramaController = $.extend(true, {
 				var qtdeTotalCotasAtivas = parseInt(lastRow.cell.qtdeTotalCotasAtivas);
 				var qtdeCotasSemVenda = parseInt(lastRow.cell.qtdeCotasSemVenda);
 				
-				var eficVenda = parseFloat(vdaTotal/ lastRow.cell.repTotal*100).toFixed(2);
+				var eficVenda = floatToPrice(parseFloat(vdaTotal/ lastRow.cell.repTotal*100).toFixed(2));
 				$("#eficienciaDeVendaCell").text(eficVenda+"%");
 				
-				var r = parseFloat(Math.round( (qtdeCotas/qtdeTotalCotasAtivas)*100 )).toFixed(2);
+				var r = floatToPrice(parseFloat(Math.round( (qtdeCotas/qtdeTotalCotasAtivas)*100 )).toFixed(2));
 				$("#abrangenciaDistribuicaoCell").text(r+"%");
 
 				r = parseFloat(Math.round( (qtdeCotas-qtdeCotasSemVenda)/qtdeTotalCotasAtivas*100 )).toFixed(2);

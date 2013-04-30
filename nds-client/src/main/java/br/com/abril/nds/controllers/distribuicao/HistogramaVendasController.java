@@ -19,18 +19,19 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
-import br.com.abril.nds.dto.HistogramaPosEstudoAnaliseFaixaReparteDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RegiaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.EnderecoService;
+import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.RegiaoService;
@@ -76,6 +77,9 @@ public class HistogramaVendasController extends BaseController {
 	
 	@Autowired
 	private HttpServletResponse httpResponse;
+
+	@Autowired
+	private EstoqueProdutoService estoqueProdutoService;
 	
 	@Rules(Permissao.ROLE_DISTRIBUICAO_HISTOGRAMA_VENDAS)
 	public void index(){
@@ -177,6 +181,8 @@ public class HistogramaVendasController extends BaseController {
 	public void  analiseHistograma(String edicoes,String segmento,String codigoProduto,String nomeProduto,String labelComponente,String labelElemento,String classificacaoLabel){
 		String[] nrEdicoes = edicoes.split(",");
 		
+		int reparteTotalDistribuidor = 0;
+		ProdutoEdicao produtoEdicao = null;
 		String enumeratedList = null;
 		
 		if(nrEdicoes.length==1){
@@ -185,15 +191,26 @@ public class HistogramaVendasController extends BaseController {
 			enumeratedList = StringUtils.join(nrEdicoes, " - ");
 		}
 		
+		for (int j = 0; j < nrEdicoes.length; j++) {
+			produtoEdicao = this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, nrEdicoes[j]);
+			
+			reparteTotalDistribuidor += this.estoqueProdutoService.buscarEstoquePorProduto(produtoEdicao.getId()).getQtde().intValue();
+		}
+		
 		result.include("filtroUtilizado", getFiltroSessao());
 		result.include("listaEdicoes", enumeratedList);
 		result.include("segmentoLabel", segmento);
 		result.include("codigoLabel", codigoProduto);
 		result.include("nomeProduto", nomeProduto);
 		
+		
 		result.include("labelComponente", labelComponente);
 		result.include("labelElemento", labelElemento);
 		result.include("classificacaoLabel", classificacaoLabel);
+		
+		// informações do resumo do histograma (parte inferior da tela)
+		result.include("qtdCotasAtivas", "");
+		result.include("reparteTotalDistribuidor", reparteTotalDistribuidor / nrEdicoes.length);
 		
 		//Pesquisar base de estudo e salvar em sessão
 		List<AnaliseHistogramaDTO> list = produtoEdicaoService.obterBaseEstudoHistogramaPorFaixaVenda(getFiltroSessao(),codigoProduto, faixaVendaInicial, nrEdicoes);
