@@ -88,7 +88,8 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 					data,
 					function(result) {	
 						if (result) {	
-							$("#semana", fechamentoCEIntegracaoController.workspace).val(result.int);
+							var d = new Date();
+							$("#semana", fechamentoCEIntegracaoController.workspace).val(d.getFullYear() +''+ result.int);
 						}
 					}
 				);
@@ -349,6 +350,7 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 							'<span id="venda' + row.cell.idItemCeIntegracao + '">' +
 								row.cell.venda +
 							'</span>';
+
 					}
 					
 					var colunaPrecoCapa =

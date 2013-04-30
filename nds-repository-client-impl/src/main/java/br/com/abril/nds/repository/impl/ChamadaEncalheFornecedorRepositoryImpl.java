@@ -28,6 +28,10 @@ public class ChamadaEncalheFornecedorRepositoryImpl extends AbstractRepositoryMo
     public List<ChamadaEncalheFornecedor> obterChamadasEncalheFornecedor(Long idFornecedor, Integer numeroSemana, Intervalo<Date> periodo) {
         StringBuilder builder = new StringBuilder("select distinct(cef) from ChamadaEncalheFornecedor as cef ");
         builder.append("join cef.itens as item ");
+        builder.append("join item.produtoEdicao as pe ");
+        builder.append("join pe.produto as p ");
+        builder.append("join pe.produto as p ");
+        builder.append("join p.fornecedor as f ");
         Map<String, Object> parametros = new HashMap<String, Object>();
         if (numeroSemana != null) {
             builder.append("where cef.numeroSemana = :numeroSemana ");
@@ -39,7 +43,7 @@ public class ChamadaEncalheFornecedorRepositoryImpl extends AbstractRepositoryMo
             
         }
         if (idFornecedor != null) {
-            builder.append("and cef.fornecedor.id = :idFornecedor ");
+            builder.append("and f.id = :idFornecedor ");
             parametros.put("idFornecedor", idFornecedor);
         }
         Query query = getSession().createQuery(builder.toString());
