@@ -970,6 +970,15 @@ public class Fixture {
 		return tipoMovimento;
 	}
 	
+	public static TipoMovimentoEstoque tipoMovimentoSaidaMaterialPromocional() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Saida Material Promocional");
+		tipoMovimento.setIncideDivida(false);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.GRUPO_MATERIAL_PROMOCIONAL);
+		return tipoMovimento;	
+	}
+	
 	public static TipoMovimentoEstoque tipoMovimentoRestauracaoReparteCotaAusente() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
 		tipoMovimento.setAprovacaoAutomatica(true);

@@ -291,8 +291,10 @@ public enum GrupoMovimentoEstoque  {
 	
 	TRANSFERENCIA_ENTRADA_PRODUTOS_DEVOLUCAO_ENCALHE(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE),
 	
-	TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_ENCALHE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE);
+	TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_ENCALHE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE),
 
+	GRUPO_MATERIAL_PROMOCIONAL(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.MATERIAL_PROMOCIONAL);
+	
 	private OperacaoEstoque operacaoEstoque;
 	private Dominio dominio;
 	private TipoEstoque tipoEstoque;
