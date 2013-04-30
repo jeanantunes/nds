@@ -137,7 +137,7 @@ function limparInputsFiltro(input1, input2, input3, input4, input5, input6, inpu
      
      <fieldset class="classFieldset" style="width:480px!important; margin-top:10px!important;">
     	<legend>Produtos Selecionados</legend>
-        <table class="edicaoSelecionadaGrid"></table>
+        <table class="edicaoSelecionadaGridHistoricoVenda"></table>
      </fieldset>
      </div>
       <fieldset class="classFieldset" style="float:left; width:417px!important; margin-left:10px!important;">

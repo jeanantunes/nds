@@ -67,7 +67,7 @@ public class AnaliseParcialController extends BaseController {
 
     @Path("/init")
     public void init(Long id, String sortname, String sortorder, String filterSortName, Double filterSortFrom, Double filterSortTo, String elemento,
-	    Long faixaDe, Long faixaAte) {
+	    Long faixaDe, Long faixaAte,String numeroCotaStr) {
 
 	AnaliseParcialQueryDTO queryDTO = new AnaliseParcialQueryDTO();
 	queryDTO.setEstudoId(id);
@@ -79,7 +79,8 @@ public class AnaliseParcialController extends BaseController {
 	queryDTO.setElemento(elemento);
 	queryDTO.setFaixaDe(faixaDe);
 	queryDTO.setFaixaAte(faixaAte);
-
+	queryDTO.setNumeroCotaStr(numeroCotaStr);
+	
 	List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
 
 	TableModel<CellModelKeyValue<AnaliseParcialDTO>> table = monta(lista);

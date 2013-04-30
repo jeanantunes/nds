@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
@@ -160,6 +161,7 @@ public class AnaliseParcialRepositoryImpl extends
 				params.add(queryDTO.getFilterSortFrom());
 				params.add(queryDTO.getFilterSortTo());
 			}
+			
 			if (queryDTO.possuiReducaoReparte()) {
 
 			}
@@ -218,6 +220,10 @@ public class AnaliseParcialRepositoryImpl extends
 			}
 		}
 
+		if(StringUtils.isNotEmpty(queryDTO.getNumeroCotaStr())){
+			where += " and cota.numero_cota in ("+queryDTO.getNumeroCotaStr()+") ";
+		}
+		
 		where += " and ec.ESTUDO_ID = ? ";
 		params.add(queryDTO.getEstudoId());
 

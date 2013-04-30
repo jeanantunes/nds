@@ -301,7 +301,7 @@ var historicoVendaController = $.extend(true, {
 				}
 			}),
 			EdicaoSelecionadaGrid : flexGridService.GridFactory.createGrid({
-				gridName : "edicaoSelecionadaGrid",
+				gridName : "edicaoSelecionadaGridHistoricoVenda",
 				cached : true,
 				inputModel : [{
 						element : "img",
