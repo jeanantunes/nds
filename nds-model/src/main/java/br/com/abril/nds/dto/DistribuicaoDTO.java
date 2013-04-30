@@ -29,7 +29,7 @@ public class DistribuicaoDTO implements Serializable  {
 	private Boolean repPorPontoVenda;
 	private Boolean solNumAtras;
 	private Boolean recebeRecolhe;
-	private Boolean recebeComplementar;
+	private Boolean recebeComplementar = true;
 	private Boolean neImpresso;
 	private Boolean neEmail;
 	private Boolean ceImpresso;
