@@ -1,6 +1,7 @@
 package br.com.abril.nds.model.distribuicao;
 
 import java.math.BigDecimal;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,9 +11,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
 @Entity
 @Table(name = "RANKING_SEGMENTO")
@@ -31,19 +33,12 @@ public class RankingSegmento {
 	@JoinColumn(name = "TIPO_SEGMENTO_PRODUTO_ID")
 	private TipoSegmentoProduto tipoSegmentoProduto;
 	
-	@Column(name = "SEGMENTO_DESCRICAO")
-	private String descricaoSegmentoProduto;
-	
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "PRODUTO_EDICAO_ID")
-	private ProdutoEdicao produtoEdicao;
-	
 	@Column(name = "QTDE")
 	private BigDecimal quantidade;
 	
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "RANKING_SEGMENTOS_GERADOS_ID")
-	private RankingSegmentosGerados rankingSegmentosGerados;
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DATA_GERACAO_RANK")
+	private Date dataGeracaoRank;
 
 	public Long getId() {
 		return id;
@@ -69,22 +64,6 @@ public class RankingSegmento {
 		this.tipoSegmentoProduto = tipoSegmentoProduto;
 	}
 
-	public String getDescricaoSegmentoProduto() {
-		return descricaoSegmentoProduto;
-	}
-
-	public void setDescricaoSegmentoProduto(String descricaoSegmentoProduto) {
-		this.descricaoSegmentoProduto = descricaoSegmentoProduto;
-	}
-
-	public ProdutoEdicao getProdutoEdicao() {
-		return produtoEdicao;
-	}
-
-	public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
-		this.produtoEdicao = produtoEdicao;
-	}
-
 	public BigDecimal getQuantidade() {
 		return quantidade;
 	}
@@ -93,12 +72,12 @@ public class RankingSegmento {
 		this.quantidade = quantidade;
 	}
 
-	public RankingSegmentosGerados getRankingSegmentosGerados() {
-		return rankingSegmentosGerados;
+	public Date getDataGeracaoRank() {
+		return dataGeracaoRank;
 	}
 
-	public void setRankingSegmentosGerados(
-			RankingSegmentosGerados rankingSegmentosGerados) {
-		this.rankingSegmentosGerados = rankingSegmentosGerados;
+	public void setDataGeracaoRank(Date dataGeracaoRank) {
+		this.dataGeracaoRank = dataGeracaoRank;
 	}
+
 }
