@@ -57,6 +57,9 @@ public class Estudo implements Serializable {
 	@OneToMany(mappedBy = "estudo", fetch = FetchType.LAZY)
 	private Set<Lancamento> lancamentos = new HashSet<Lancamento>();
 	
+	@Column(name = "LANCAMENTO_ID")
+	private Long lancamentoID;
+	
 	@OneToMany(mappedBy = "estudo", fetch = FetchType.LAZY)
 	private Set<EstudoCota> estudoCotas = new HashSet<EstudoCota>();
 	
@@ -123,10 +126,6 @@ public class Estudo implements Serializable {
 		this.produtoEdicao = produtoEdicao;
 	}
 	
-	public Lancamento getLancamento() {
-		return lancamentos.isEmpty() ? null : lancamentos.iterator().next();
-	}
-
 	/**
 	 * @return the estudoCotas
 	 */
@@ -212,4 +211,14 @@ public class Estudo implements Serializable {
 	public void setUsuarioId(Usuario usuarioId) {
 		this.usuario = usuarioId;
 	}
+
+	public Long getLancamentoID() {
+		return lancamentoID;
+	}
+
+	public void setLancamentoID(Long lancamentoID) {
+		this.lancamentoID = lancamentoID;
+	}
+
+
 }
