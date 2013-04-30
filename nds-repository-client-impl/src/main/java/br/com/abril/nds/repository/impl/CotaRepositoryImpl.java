@@ -106,6 +106,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		super(Cota.class);
 	}
 
+	@Override
 	public Cota obterPorNumerDaCota(Integer numeroCota) {
 		
 		Query query = 
@@ -117,6 +118,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		return (Cota) query.uniqueResult();
 	}
 	
+	@Override
 	public Cota obterPorNumerDaCotaAtiva(Integer numeroCota) {
 
 		Criteria criteria = super.getSession().createCriteria(Cota.class);
@@ -129,6 +131,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		return (Cota) criteria.uniqueResult();
 	}
 	
+	@Override
 	public Cota obterPorPDV(Long idPDV) {
 
 		Criteria criteria = super.getSession().createCriteria(Cota.class);
@@ -142,6 +145,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 
 	@Deprecated // método idêntido ao obterPorNome, favor verificar a necessidade
     @SuppressWarnings("unchecked")
+	@Override
     public List<Cota> obterCotasPorNomePessoa(String nome) {
 
 	Criteria criteria = super.getSession().createCriteria(Cota.class);
@@ -155,6 +159,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     }
 
     @SuppressWarnings("unchecked")
+    @Override
     public List<Cota> obterPorNome(String nome) {
 
 	Criteria criteria = super.getSession().createCriteria(Cota.class);
@@ -171,6 +176,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	 * @see br.com.abril.nds.repository.CotaRepository#obterEnderecosPorIdCota(java.lang.Long)
 	 */
 	@SuppressWarnings("unchecked")
+	@Override
 	public List<EnderecoAssociacaoDTO> obterEnderecosPorIdCota(Long idCota) {
 
 		StringBuilder hql = new StringBuilder();
@@ -220,6 +226,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	}
 	
 	@SuppressWarnings("unchecked")
+	@Override
 	public List<CotaSuspensaoDTO> obterCotasSujeitasSuspensao(String sortOrder,
 			String sortColumn, Integer inicio, Integer rp) {
 
@@ -1040,6 +1047,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		return hql.toString();
 	}
 	
+	@Override
 	public Integer gerarSugestaoNumeroCota(){
 		
 		String hql = "select max(cota.numeroCota) from Cota cota where cota.id not in ( select h.pk.idCota from HistoricoNumeroCota h )";
@@ -2743,8 +2751,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	}
 
 	@SuppressWarnings("unchecked")
-	@Override
 	@Transactional(readOnly = true)
+	@Override
 	public List<Integer> numeroCotaExiste(TipoDistribuicaoCota tipoDistribuicaoCota, Integer... cotaIdArray) {
 
 		StringBuilder hql = new StringBuilder();

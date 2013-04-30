@@ -49,9 +49,6 @@ var histogramaVendasController = $.extend(true, {
 						data.mensagens.listaMensagens
 					);
 					
-//					$(".grids", vendaProdutoController.workspace).hide();
-//					$(".area", vendaProdutoController.workspace).hide();
-					
 					return data;
 				}
 				
@@ -162,17 +159,6 @@ var histogramaVendasController = $.extend(true, {
 			return;
 		}
 		
-		//$.getJSON(contextPath + "/distribuicao/histogramaVendas/analiseHistograma");
-		
-		var faixas = new Array();
-		
-		for ( var int = 0; int < faixasVenda.length; int++) {
-			var obj = faixasVenda[int];
-			if(obj.cell.enabled)
-				faixas.push(obj.cell.faixaReparteDe+"-"+obj.cell.faixaReparteAte);
-		}
-//		console.log(faixas);
-		
 		var labelComponente="",labelElemento="";
 		if($("#inserirComponentes").is(":checked") && $("#componente").val()!="-1" && $("#elemento").val()!="-1"){
 			labelComponente=$("#componente").children("option:selected:first").text();
@@ -183,7 +169,6 @@ var histogramaVendasController = $.extend(true, {
 		var data = {"edicoes":edicoesEscolhidas_HistogramaVenda.sort().toString(),
 				"segmento":descricaoTipoSegmento,
 				"nomeProduto":nomeProduto,
-				"faixasVenda":faixas,
 				"codigoProduto":codigoProduto_HistogramaVenda,
 				"classificacaoLabel":descricaoTipoClassificacao_histogramaVenda,
 				"labelComponente":labelComponente,
@@ -316,12 +301,14 @@ function filtroSede(){
 	$('.filtroPracaSede').show();
 	$('.filtroPracaAtendida').hide();
 	$('.filtroComponentes').hide();
+	$('#inserirComponentes').attr('checked', false);
 }
 function filtroAtendida(){
 	$('.filtroTodas').hide();
 	$('.filtroPracaSede').hide();
 	$('.filtroPracaAtendida').show();
 	$('.filtroComponentes').hide();
+	$('#inserirComponentes').attr('checked', false);
 }
 function filtroComponentes(){
 	$('.filtroTodas').hide();

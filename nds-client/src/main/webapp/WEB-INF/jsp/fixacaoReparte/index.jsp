@@ -3,6 +3,7 @@
 <script type="text/javascript" src="scripts/pesquisaCota.js"></script>
 <script type="text/javascript" src="scripts/pesquisaProduto.js"></script>
 <script type="text/javascript" src="scripts/fixacaoReparte.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 
 <script type="text/javascript">
 var pesquisaProduto = new PesquisaProduto();
@@ -156,7 +157,7 @@ function mostraIntervalo(){
             <td width="50">Cota</td>
             <td width="22"><input type="radio" name="filtroPrincipalRadio" id="radio2" value="Produto" onclick="filtroPorProduto()" /></td>
             <td width="49">Produto</td>
-            <td width="781"><table width="760" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorProduto" style="display:none;">
+            <td width="781"><table width="760" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorProduto" id="fixacaoReparte_filtroPorProduto" style="display:none;">
           <tr>
             <td width="52">Código:</td>
             <td width="86"><input type="text" name="codigoProduto" id="codigoProduto"  style="width:80px;" onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigoProduto','#nomeProduto',false,undefined,undefined )"/></td>
@@ -199,7 +200,7 @@ function mostraIntervalo(){
 		       	  	<legend>Fixação Produto</legend>
 		        		<table class="fixacaoProdutoGrid"></table>
  			            <span class="bt_novos" title="Incluir Novo"  id="btNovoProduto"><a href="javascript:;" onclick="fixacaoReparteController.novo();"><img src="images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>
-			            <span class="bt_novos" title="Adicionar em Lote" id="btAddLoteProduto"><a href="javascript:;" href="javascript:;" onclick="add_lote_prod();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
+			            <span class="bt_novos" title="Adicionar em Lote" id="btAddLoteProduto"><a href="javascript:;" href="javascript:;" onclick="fixacaoReparteController.add_lote();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
 	         	    	<span class="bt_novos" title="Gerar Arquivo" id="btGerarArquivoProduto"><a href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=produto"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 						<span class="bt_novos" title="Imprimir" id="btImprimirProduto"><a  href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=produto"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 						<span class="bt_novos" title="Cópia de Fixação" id="btCopiaMix"><a href="javascript:;" onclick="fixacaoReparteController.abrirCopiaDialog()"><img src="images/ico_negociar.png" alt="Cópia de Fixação" hspace="5" border="0" />C&oacute;pia de Fixa&ccedil;&atilde;o</a></span>
@@ -211,14 +212,13 @@ function mostraIntervalo(){
 		        
 		        	<table class="fixacaoCotaGrid"></table> 
 		             <span class="bt_novos" title="Incluir Novo" id="btNovoCota"><a href="javascript:;" onclick="fixacaoReparteController.novo();"><img src="images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>
-		             <span class="bt_novos" title="Adicionar em Lote" id="btAddLoteCota"><a href="javascript:;" onclick="add_lote();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
+		             <span class="bt_novos" title="Adicionar em Lote" id="btAddLoteCota"><a href="javascript:;" onclick="fixacaoReparteController.add_lote();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
 		             <span class="bt_novos" title="Gerar Arquivo" id="btGerarArquivoCota"><a href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=XLS&tipoExportacao=cota"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
 					<span class="bt_novos" title="Imprimir" id="btImprimirCota"><a href="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/exportar?fileType=PDF&tipoExportacao=cota"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 					<span class="bt_novos" title="Cópia de Fixação" id="btCopiaMix"><a href="javascript:;" onclick="fixacaoReparteController.abrirCopiaDialog()"><img src="images/ico_negociar.png" alt="Cópia de Mix" hspace="5" border="0" />C&oacute;pia de Fixa&ccedil;&atilde;o</a></span>
 		      </fieldset>
    		   </div>
-
-
+   		   
     </div>
     
    <!-- MODAL NOVA FIXAÇÃO --> 
@@ -296,6 +296,23 @@ function mostraIntervalo(){
 		   </fieldset>
 	</div>
 
+<!-- DIALOG  UPLOAD -->		
+	<div id="modalUploadArquivo" title="Adicionar em Lote" style="display:none;">
+	 <form id="formUploadLoteFixacao"  action="${pageContext.request.contextPath}/distribuicao/fixacaoReparte/uploadArquivoLoteFixacao"  method="post"  enctype="multipart/form-data">
+			<p>Utilize o modelo de exemplo para fazer upload para o sistema: </p>
+			<p ><span class="bt_novos" title="Download Modelo"><a href="${pageContext.request.contextPath}/modelos/modelo_fixacao_reparte.xls"><img align="center" src="images/ico_excel.png" hspace="5" border="0" />Modelo de exemplo</a></span></p>
+			<br><br><br>
+			<hr>
+			<p>Selecione um arquivo para upload:</p>
+			<br>
+			<p align="center"><input type="file" id="excelFileFixacao" name="excelFileFixacao" style="width:200px"/></p>
+	  </form>
+	</div>	
+	
+<!-- DIALOG MSG UPLOAD -->		
+	<div id="dialog-msg-upload" title="Adicionar em Lote" style="display:none;">
+	</div>
+
 <!-- DIALOG EXCLUSAO -->	
 	<div id="dialog-excluir" title="Excluir Fixação" style="display:none;">
 	<p>Confirma a exclusão desta Fixação?</p>
@@ -303,11 +320,8 @@ function mostraIntervalo(){
 
 <!-- DIALOG REPARTE -->	
 	<div id="dialog-confirma-reparte" title="Confirma Reparte PDV" style="display:none;">
-	<p>A soma dos valores dos repartes definidos está maior que o valor de reparte total. Deseja prosseguir?</p>
+	<p>A soma dos valores dos repartes definidos está diferente do valor de reparte total. Deseja prosseguir?</p>
 	</div>
-
-
-
 
 <!-- EDITAR FIXAÇÂO -->	
 	<div id="dialog-defineReparte" title="Reparte por PDV" style="display:none;">

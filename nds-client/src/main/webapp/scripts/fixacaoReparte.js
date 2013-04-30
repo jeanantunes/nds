@@ -27,7 +27,7 @@ var fixacaoReparteController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			},{
-				display : 'LanÃ§amento',
+				display : 'Lançamento',
 				name : 'dataLancamentoString',
 				width : 80,
 				sortable : true,
@@ -70,13 +70,13 @@ var fixacaoReparteController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'EdiÃ§Ã£o Inicial',
+				display : 'Edição Inicial',
 				name : 'edicaoInicial',
 				width : 70,
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'EdiÃ§Ã£o Final',
+				display : 'Edição Final',
 				name : 'edicaoFinal',
 				width : 70,
 				sortable : true,
@@ -88,7 +88,7 @@ var fixacaoReparteController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Qtde EdiÃ§Ãµes',
+				display : 'Qtde Edições',
 				name : 'qtdeEdicoes',
 				width : 70,
 				sortable : true,
@@ -100,7 +100,7 @@ var fixacaoReparteController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'UsuÃ¡rio',
+				display : 'Usuário',
 				name : 'usuario',
 				width : 80,
 				sortable : true,
@@ -118,7 +118,7 @@ var fixacaoReparteController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			},  {
-				display : 'AÃ§Ã£o',
+				display : 'Ação',
 				name : 'acao',
 				width : 50,
 				sortable : true,
@@ -138,7 +138,7 @@ var fixacaoReparteController = $.extend(true, {
 		preProcess:function(data){return fixacaoReparteController.preProcessarListaPdv(data);},
 		dataType : 'json',
 		colModel : [ {
-			display : 'CÃ³digo',
+			display : 'Código',
 			name : 'id',
 			width : 50,
 			sortable : true,
@@ -150,7 +150,7 @@ var fixacaoReparteController = $.extend(true, {
 			sortable : true,
 			align : 'left'
 		}, {
-			display : 'EndereÃ§o',
+			display : 'Endereço',
 			name : 'endereco',
 			width : 320,
 			sortable : true,
@@ -178,7 +178,7 @@ var fixacaoReparteController = $.extend(true, {
 			preProcess: function(data){return fixacaoReparteController.preProcessarResultadoConsultaFixacao(data);},			
 			dataType : 'json',
 			colModel : [ {
-				display : 'CÃ³digo',
+				display : 'Código',
 				name : 'produtoFixado',
 				width : 60,
 				sortable : true,
@@ -190,19 +190,19 @@ var fixacaoReparteController = $.extend(true, {
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'ClassificaÃ§Ã£o',
+				display : 'Classificação',
 				name : 'classificacaoProduto',
 				width : 70,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'EdiÃ§Ã£o Inicial',
+				display : 'Edição Inicial',
 				name : 'edicaoInicial',
 				width : 70,
 				sortable : true,
 				align : 'left'
 			}, {
-				display : 'EdiÃ§Ã£o Final',
+				display : 'Edição Final',
 				name : 'edicaoFinal',
 				width : 70,
 				sortable : true,
@@ -226,7 +226,7 @@ var fixacaoReparteController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'UsuÃ¡rio',
+				display : 'Usuário',
 				name : 'usuario',
 				width : 80,
 				sortable : true,
@@ -244,7 +244,7 @@ var fixacaoReparteController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			},  {
-				display : 'AÃ§Ã£o',
+				display : 'Ação',
 				name : 'acao',
 				width : 50,
 				sortable : true,
@@ -261,6 +261,24 @@ var fixacaoReparteController = $.extend(true, {
 		});
 	},
 
+	// remove itens duplicados e vazios de uma array
+	uniqArray: function(dirtyArr, keyParam) {
+		var cleanArrObj = {},
+		returnArr = [];
+
+		for ( var i=0; i < dirtyArr.length; i++ ) {
+			if(dirtyArr[i].value !== '') {
+				cleanArrObj[dirtyArr[i][keyParam]] = dirtyArr[i];
+			}
+		}
+
+		for ( key in cleanArrObj ) {
+			returnArr.push(cleanArrObj[key]);
+		}
+
+		return returnArr;
+	},
+	    
 	//funcao de pre-processamento do resultado da busca de fixacao por produto
 	//, exibindo/escondendo botoes de geracao de excel/pdf dependendo do resultado da pesquisa
 	executarPreProcessamentoFixacaoProduto : function(resultado){
@@ -347,7 +365,7 @@ var fixacaoReparteController = $.extend(true, {
 				'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' +
 				'</a>' ;
 		imgExcluir =  '<a href="javascript:;" onclick="fixacaoReparteController.excluirFixacaoProduto(' + cell.id + ');" ' +
-				' style="cursor:pointer;border:0px;margin:5px" title="Excluir FixaÃ§Ã£o">' +
+				' style="cursor:pointer;border:0px;margin:5px" title="Excluir Fixação">' +
 				'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
 				'</a>';
 
@@ -370,7 +388,7 @@ var fixacaoReparteController = $.extend(true, {
 						'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' +
 						'</a>';
 		imgExcluir = '<a href="javascript:;" onclick="fixacaoReparteController.excluirFixacaoCota(' + cell.id + ')" '  +
-						' style="cursor:pointer;border:0px;margin:5px" title="Excluir FixaÃ§Ã£o">' +
+						' style="cursor:pointer;border:0px;margin:5px" title="Excluir Fixação">' +
 						'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
 						'</a>';
 
@@ -385,8 +403,8 @@ var fixacaoReparteController = $.extend(true, {
 
 		return  components;
 	},
-
-	//exibe msg de confirmacao de fixaÃ§Ã£o produto
+	
+	//exibe msg de confirmacao de fixação produto
 	excluirFixacaoProduto:function (idFixacao){
 		$("#dialog-excluir").dialog({
 			resizable: false,
@@ -404,7 +422,7 @@ var fixacaoReparteController = $.extend(true, {
 			},
 		});
 	},
-	//exibe msg de confirmacao de fixaÃ§Ã£o cota
+	//exibe msg de confirmacao de fixação cota
 	excluirFixacaoCota:function (idFixacao){
 		$("#dialog-excluir").dialog({
 			resizable: false,
@@ -431,7 +449,7 @@ var fixacaoReparteController = $.extend(true, {
 
 	//retorna msg de erro durante exclusao de produto
 	exclusaoProdutoErro:function(result){
-		exibirMensagem("ERROR", ["Houve um erro durante a exclusÃ£o "]);
+		exibirMensagem("ERROR", ["Houve um erro durante a exclusão "]);
 	},
 
 	//retorna msg de sucesso durante exclusao de cota
@@ -443,7 +461,7 @@ var fixacaoReparteController = $.extend(true, {
 
 	//retorna msg de erro durante exclusao de cota
 	exclusaoCotaErro:function(result){
-		exibirMensagem("ERROR", ["Houve um erro durante a exclusÃ£o "]);
+		exibirMensagem("ERROR", ["Houve um erro durante a exclusão "]);
 	},
 
 	//retorna o id da fixacao. Utilizada para exclusao de fixacao
@@ -457,24 +475,25 @@ var fixacaoReparteController = $.extend(true, {
 
 	//funcao que executa chamada postJSON que busca dados da fixacao 
 	editarFixacao:function (idFixacao,qtdeReparte, numeroCota, codigoProduto){
-		var reparteTotal= qtdeReparte;
-		arrayPesquisa = [];
+		var reparteTotal= qtdeReparte,
+			arrayPesquisa = [];
+		
 		arrayPesquisa.push({
-			  name : "filtro.codigoProduto" , 
-			  value : codigoProduto
-			  });
+			name : "filtro.codigoProduto", 
+			value : codigoProduto
+		});
 		arrayPesquisa.push({
-			  name : "filtro.codigoCota" , 
-			  value : numeroCota
-			  });
+			name : "filtro.codigoCota", 
+			value : numeroCota
+		});
 
 		arrayPesquisa.push({
-			  name : "filtro.idFixacao" , 
-			  value : idFixacao
-			  });
+			name : "filtro.idFixacao", 
+			value : idFixacao
+		});
 		$.postJSON(contextPath + '/distribuicao/fixacaoReparte/editarFixacao', fixacaoReparteController.getIdSelecionado(idFixacao)
-		,		
-		function(result){
+				,		
+				function(result){
 			$("#codigoCotaModalReparte").text(result.cotaFixadaString);
 			$("#nomeCotaModalReparte").text(result.nomeCota);
 			$("#codigoProdutoModalReparte").text(result.produtoFixado);
@@ -493,54 +512,58 @@ var fixacaoReparteController = $.extend(true, {
 			open: 	fixacaoReparteController.preencherGridPdv(arrayPesquisa),
 			buttons: {
 				"Confirmar": function() {
-					var somaReparte=0;
-					  $("#pdvCotaGrid .reparteGridinput").each(function(idx, linha){
-						  if(linha.name == 'undefined'){
-							  codigos.push(0);
-						  }else{
-							  codigos.push( $(linha).val());
-							  //adiciona a lista de parametros os valores diretamente ao dto definido no parametro do metodo da controller.
-							  //Para lista, deve-se informar obrigatoriamente o indice do elemento
-							  listaPDV.push({
-								  name : "listPDV["+idx+"].codigoPdv" , 
-								  value : linha.name
-								  });
-						  }
+					var somaReparte=0,
+						listaPDV = [];
+					
+					$("#pdvCotaGrid .reparteGridinput").each(function(idx, linha){
+						if(linha.name == 'undefined'){
+							codigos.push(0);
+						}else{
+							codigos.push( $(linha).val());
+							//adiciona a lista de parametros os valores diretamente ao dto definido no parametro do metodo da controller.
+							//Para lista, deve-se informar obrigatoriamente o indice do elemento
+							listaPDV.push({
+								name : "listPDV["+idx+"].codigoPdv" , 
+								value : linha.name
+							});
+						}
 
-						  if(linha.value == 'undefined'){
-							  repartes.push(0);
-						  }else{
-							  if($(linha).val() !='undefined' || $(linha).val()!= ''){
-								  somaReparte += parseInt(linha.value);  
-							  }
-							  repartes.push($(linha).val());
-							  listaPDV.push({
-								  name : "listPDV["+idx+"].reparte" , 
-								  value : linha.value
-								  });
-						  }
+						if(linha.value == 'undefined'){
+							repartes.push(0);
+						}else{
+							if($(linha).val() !='undefined' || $(linha).val()!= ''){
+								somaReparte += parseInt(linha.value);  
+							}
+							repartes.push($(linha).val());
+							listaPDV.push({
+								name : "listPDV["+idx+"].reparte" , 
+								value : linha.value
+							});
+						}
 
-					  });
+					});
 
-					  listaPDV.push({
-						  name : "codProduto" , 
-						  value : $("#codigoProdutoModalReparte").text()
-						  });
-					  listaPDV.push({
-						  name : "codCota" , 
-						  value : $("#codigoCotaModalReparte").text()
-						  });
+					listaPDV.push({
+						name : "codProduto" , 
+						value : $("#codigoProdutoModalReparte").text()
+					});
+					listaPDV.push({
+						name : "codCota" , 
+						value : $("#codigoCotaModalReparte").text()
+					});
 
-					  listaPDV.push({
-						  name : "idFixacao" , 
-						  value : idFixacao
-						  });
-					  
-					  listaPDV.push({
-						  name : "manterFixa" , 
-						  value : $("#manterFixa").is(":checked")
-						  });
-					  
+					listaPDV.push({
+						name : "idFixacao" , 
+						value : idFixacao
+					});
+
+					listaPDV.push({
+						name : "manterFixa" , 
+						value : $("#manterFixa").is(":checked")
+					});
+
+					var uniqlistaPDV = fixacaoReparteController.uniqArray(listaPDV, 'name');
+					
 					if(somaReparte != reparteTotal) {
 						$("#dialog-confirma-reparte").dialog({
 							resizable: false,
@@ -550,12 +573,15 @@ var fixacaoReparteController = $.extend(true, {
 							buttons: {
 								"Confirmar": function() {
 									//parametros para salvar repartes pdvs
-									$.postJSON(contextPath + '/distribuicao/fixacaoReparte/salvarGridPdvReparte',  listaPDV, 
-										function(result){
-											$(".fixacaoCotaGrid").flexReload();
-											$("#dialog-defineReparte").dialog("close"); 
-										},
-										function(result){ });
+									$.postJSON(contextPath + '/distribuicao/fixacaoReparte/salvarGridPdvReparte',  uniqlistaPDV, function(result) {
+										
+										$(".fixacaoCotaGrid, .fixacaoProdutoGrid", fixacaoReparteController.workspace)
+										.filter(':visible')
+										.flexReload();
+										
+										$("#dialog-defineReparte").dialog("close"); 
+									},
+									function(result){ });
 									$(this).dialog("close");
 								},
 								"Cancelar": function() {
@@ -563,9 +589,11 @@ var fixacaoReparteController = $.extend(true, {
 								}
 							},
 						});
-						
+
 					} else {
-						$.postJSON(contextPath + '/distribuicao/fixacaoReparte/salvarGridPdvReparte', listaPDV,function(result){$("#dialog-defineReparte").dialog("close");} );
+						$.postJSON(contextPath + '/distribuicao/fixacaoReparte/salvarGridPdvReparte', uniqlistaPDV, function(result) {
+							$("#dialog-defineReparte").dialog("close");
+						});
 					}
 //					$( this ).dialog( "close" );
 //					$("#effect").show("highlight", {}, 1000, callback);
@@ -577,10 +605,9 @@ var fixacaoReparteController = $.extend(true, {
 		});
 		$('#dialog-defineReparte').bind('dialogclose', function(event) {
 //			fixacaoReparteController.limparCamposModalReparteAoFechar();
-		 });
-
-
+		});
 	},
+	
 	//funcao que obtem os valores de cada reparte e o codigo do pdv 
 	getValoresReparte:function(idFixacao){
 		var data = [];
@@ -629,9 +656,9 @@ var fixacaoReparteController = $.extend(true, {
 		return data;
 
 	},
-
-	//funcao que retorna id da fixaÃ§Ã£o a lista de fixacoes
-	getIdSelecionado: function(cell){
+	
+	//funcao que retorna id da fixação a lista de fixacoes
+	getIdSelecionado: function(idFixacao){
 		var data = [];
 		data.push({name:'filtro.idFixacao',	value: idFixacao});
 		data.push({name:'filtro.codigoCota', value: $("#codigoCota").val()});
@@ -672,8 +699,8 @@ var fixacaoReparteController = $.extend(true, {
 		}
 		return result;
 	},
-
-	//Funcao que realiza pesquisa de fixaÃ§Ãµes por produto
+	
+	//Funcao que realiza pesquisa de fixações por produto
 	pesquisarPorProduto:function(){
 		fixacaoReparteController.exibeGridProduto();
 		$(".fixacaoProdutoGrid", fixacaoReparteController.workspace).flexOptions({
@@ -685,8 +712,8 @@ var fixacaoReparteController = $.extend(true, {
 		$(".fixacaoProdutoGrid", fixacaoReparteController.workspace).flexReload();
 
 	},
-
-	//Funcao que realiza pesquisa de fixaÃ§Ãµes por cota
+	
+	//Funcao que realiza pesquisa de fixações por cota
 	pesquisarPorCota:function(){
 		fixacaoReparteController.exibeGridCota();
 		$(".fixacaoCotaGrid", fixacaoReparteController.workspace).flexOptions({
@@ -711,7 +738,7 @@ var fixacaoReparteController = $.extend(true, {
 
 
 		},
-		//Getter dos parametros necessarios para pesquisa de fixaÃ§Ã£o  por produto
+		//Getter dos parametros necessarios para pesquisa de fixação  por produto
 		getDadosProduto : function() {
 
 			var data = [];
@@ -721,8 +748,8 @@ var fixacaoReparteController = $.extend(true, {
 
 			return data;
 		},
-
-		//Getter dos parametros necessarios para pesquisa de fixaÃ§Ã£o  por cota
+		
+		//Getter dos parametros necessarios para pesquisa de fixação  por cota
 		getDadosCota : function() {
 
 			var data = [];
@@ -776,7 +803,7 @@ var fixacaoReparteController = $.extend(true, {
 
 			return data;
 		},
-		//Abre modal Nova FixaÃ§Ã£o
+		//Abre modal Nova Fixação
 		novo:function () {
 
 			if($("input:radio:checked").val() == 'Produto'){
@@ -821,7 +848,7 @@ var fixacaoReparteController = $.extend(true, {
 
 
 		},
-		//Executada em caso de sucesso durante tentativa de chamada postJSON para adicionar fixaÃ§Ã£o
+		//Executada em caso de sucesso durante tentativa de chamada postJSON para adicionar fixação
 		executarSuccessCallBack:function(result){
 			if($('#selectModal').css('display')=='inline-block'){
 				$(".fixacaoCotaGrid",fixacaoReparteController.workspace).flexReload();
@@ -845,17 +872,17 @@ var fixacaoReparteController = $.extend(true, {
 			$(".historicoGrid").html("");
 		},
 
-		//Executada em caso de erro durante tentativa de chamada postJSON para adicionar fixaÃ§Ã£o
+		//Executada em caso de erro durante tentativa de chamada postJSON para adicionar fixação
 		executarErrorCallBack:function(result){
 			if(result.mensagens.listaMensagens[0] === "Operação realizada com sucesso!<br>Status da Cota: Suspenso") {
 				fixacaoReparteController.executarSuccessCallBack(result);
 			}
 		},
-
-		// FunÃ§Ã£o que valida campos obrigatorios no modal  de nova fixaÃ§Ã£o
+		
+		// Função que valida campos obrigatorios no modal  de nova fixação
 		validaCamposVaziosNovoFixacao:function(){	
 			if($("#codigoModal").val() =="" || $("#nomeModal").val() ==""){
-				exibirMensagem("WARNING", ["Produto/nome nÃ£o informado "]);
+				exibirMensagem("WARNING", ["Produto/nome não informado "]);
 				return false;
 			}
 
@@ -866,7 +893,7 @@ var fixacaoReparteController = $.extend(true, {
 
 			if($('#radioQtdeEdicoes').is(":checked")){
 				if($("#qtdeEdicoesModal").val()==''){
-					exibirMensagem("WARNING", ["Qtde. ediÃ§Ãµes nÃ£o informado "]);
+					exibirMensagem("WARNING", ["Qtde. edições não informado "]);
 					return false;
 			}
 
@@ -881,10 +908,8 @@ var fixacaoReparteController = $.extend(true, {
 				return true;	
 
 		},
-
-
-
-		//Ao abrir o modal novo carrega e exibe dados do produto selecionado para fixaÃ§Ã£o	 
+			 
+		//Ao abrir o modal novo carrega e exibe dados do produto selecionado para fixação	 
 		exibeCodigoNomeProdutoSelecionado:function() {
 			$('#subtitulo1').text('Produto');
 			$('#subtitulo2').text('Pesquisar cota');
@@ -897,7 +922,7 @@ var fixacaoReparteController = $.extend(true, {
 			$('#spanNomeProduto').text($('#nomeProduto').val());
 
 		},
-		//Ao abrir o modal novo carrega e exibe dados da cota selecionada para fixaÃ§Ã£o
+		//Ao abrir o modal novo carrega e exibe dados da cota selecionada para fixação
 		exibeCodigoNomeCotaSelecionado:function() {
 			$('#subtitulo1').text('Cota');
 			$('#subtitulo2').text('Pesquisar Produto');
@@ -910,8 +935,8 @@ var fixacaoReparteController = $.extend(true, {
 			$('#spanNomeProduto').text($('#nomeCota').val());
 
 		},
-
-		// FunÃ§Ã£o utilizada para limpar os fields que sÃ£o preenchidos ao abrir o modal
+		
+		// Função utilizada para limpar os fields que são preenchidos ao abrir o modal
 		limparCamposAoFechar:function(){
 			$("#edicaoDestaque").text("");
 			$("#statusDestaque").text("");
@@ -926,8 +951,8 @@ var fixacaoReparteController = $.extend(true, {
 			$('#edFinalModal').val("");
 
 		},
-
-		//FunÃ§Ã£o que realiza a pesquisa que preenche os dados da grid historico produto
+		
+		//Função que realiza a pesquisa que preenche os dados da grid historico produto
 		pesquisaHistoricoPorProduto:function(){
 
 			$(".historicoGrid").flexOptions({
@@ -939,7 +964,7 @@ var fixacaoReparteController = $.extend(true, {
 
 		},
 
-		//FunÃ§Ã£o que realiza a pesquisa que preenche os dados da grid historico produto
+		//Função que realiza a pesquisa que preenche os dados da grid historico produto
 		pesquisaHistoricoPorCota:function(){
 
 			$(".historicoGrid").flexOptions({
@@ -951,8 +976,8 @@ var fixacaoReparteController = $.extend(true, {
 
 		},
 		
-//click do botao adicionar em lote		
-		add_lote:function(){
+		// click do botao adicionar em lote		
+		add_lote : function() {
 			$("#modalUploadArquivo").dialog({
 				resizable: false,
 				height:'auto',

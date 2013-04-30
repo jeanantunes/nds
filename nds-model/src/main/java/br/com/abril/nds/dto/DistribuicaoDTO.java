@@ -29,7 +29,7 @@ public class DistribuicaoDTO implements Serializable  {
 	private Boolean repPorPontoVenda;
 	private Boolean solNumAtras;
 	private Boolean recebeRecolhe;
-	private boolean recebeComplementar;
+	private Boolean recebeComplementar = true;
 	private Boolean neImpresso;
 	private Boolean neEmail;
 	private Boolean ceImpresso;
@@ -564,7 +564,7 @@ public class DistribuicaoDTO implements Serializable  {
 	 * Atribui recebeComplementar
 	 * @param recebeComplementar
 	 */
-	public void setRecebeComplementar(boolean recebeComplementar) {
+	public void setRecebeComplementar(Boolean recebeComplementar) {
 		this.recebeComplementar = recebeComplementar;
 	}
 	

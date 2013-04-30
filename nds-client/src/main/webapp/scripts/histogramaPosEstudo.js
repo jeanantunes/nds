@@ -9,7 +9,7 @@ var histogramaPosEstudoController = $.extend(true, {
 	matrizDistribuicaoController : null,
 	
 	createInput : function createInput(id, value){
-		return '<input type="text" onkeydown="histogramaPosEstudoController.alterarFaixaAte(' + id + ', event);" value=' + value + ' />';
+		return '<input type="text" id="input' + id + '" onkeydown="histogramaPosEstudoController.alterarFaixaAte(' + id + ', event);" value=' + value + ' />';
 	},
 	
 	createImgExcluir : function createImgExcluir(rowId){
@@ -133,6 +133,7 @@ var histogramaPosEstudoController = $.extend(true, {
 								cell : {
 									faixaReparteDe : parseInt(faixasArr[0]),
 									faixaReparteAte : createInput(rowId, parseInt(faixasArr[1])),
+
 									acao : createImgExcluir(rowId)
 								}
 							};
@@ -535,7 +536,9 @@ var histogramaPosEstudoController = $.extend(true, {
 	},
 	
 	alterarFaixaAte : function (rowId, event){
-		var	faixaReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid;
+		var	faixaReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid,
+			selectedRow = {},
+			nextRow = {};
 		
 		if (event.keyIdentifier == "Enter") {
 			event.cancelBubble = true;
@@ -585,13 +588,19 @@ var histogramaPosEstudoController = $.extend(true, {
 			histogramaPosEstudoController.organizarRowId(faixaReparteGrid);
 			
 			faixaReparteGrid.addTableModel(faixaReparteGrid.tableModel);
+			
+			$('#input'+ (selectedRow.id + 1)).focus();
 		}
 	},
 	
 	excluirFaixa : function (rowId, event){
-		var	faixaReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid;
+		var	faixaReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid,
 			createInput = histogramaPosEstudoController.createInput,
-			createImgExcluir = histogramaPosEstudoController.createImgExcluir;
+			createImgExcluir = histogramaPosEstudoController.createImgExcluir,
+			selectedRow = {},
+			previousRow = {},
+			nextRow = {};
+			
 
 		if (faixaReparteGrid.tableModel.rows.length > 1) {
 				

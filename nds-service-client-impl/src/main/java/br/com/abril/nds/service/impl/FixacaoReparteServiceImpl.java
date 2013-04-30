@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,13 +12,9 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.CopiaMixFixacaoDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.FixacaoReparteDTO;
-import br.com.abril.nds.dto.MixCotaDTO;
-import br.com.abril.nds.dto.MixProdutoDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoProdutoDTO;
-import br.com.abril.nds.dto.filtro.FiltroConsultaMixPorCotaDTO;
-import br.com.abril.nds.dto.filtro.FiltroConsultaMixPorProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -28,6 +23,8 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
 import br.com.abril.nds.model.distribuicao.FixacaoRepartePdv;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
@@ -41,6 +38,7 @@ import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
+import br.com.abril.nds.repository.RepartePDVRepository;
 import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FixacaoReparteService;
@@ -85,6 +83,9 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	
 	@Autowired
 	private FixacaoRepartePdvRepository fixacaoRepartePdvRepository;
+	
+	@Autowired
+	RepartePDVRepository repartePDVRepository;
 	
 	@Transactional
 	@Override
@@ -151,7 +152,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	public List<FixacaoReparteDTO> obterHistoricoLancamentoPorCota(
 			FiltroConsultaFixacaoCotaDTO filtroCota) {
 		Cota cota = cotaRepository.obterPorNumerDaCota(new Integer(filtroCota.getCota()));
-		List<FixacaoReparteDTO> resultado =null; /*estoqueProdutoCotaRepository.obterHistoricoEdicaoPorCota(cota, filtroCota.getCodigoProduto()) ;*/
+		List<FixacaoReparteDTO> resultado = estoqueProdutoCotaRepository.obterHistoricoEdicaoPorCota(cota, filtroCota.getCodigoProduto()) ;
 		return resultado; 
 	}
 	
@@ -168,7 +169,28 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		
 		fixacaoReparteRepository.adicionar(fixacaoReparte);
 		
+		fixarTudoNoPDVPrincipal(fixacaoReparte);
+		
 		return fixacaoReparte;
+	}
+
+	private void fixarTudoNoPDVPrincipal(FixacaoReparte fixacaoReparte) {
+		List<PDV> pdvs = fixacaoReparte.getCotaFixada().getPdvs();
+		
+		if (pdvs != null && pdvs.size() > 0) {
+			PDV pdv = pdvs.get(0);
+			RepartePDV repartePDV = repartePDVRepository.obterRepartePorPdv(fixacaoReparte.getId(), fixacaoReparte.getProdutoFixado().getId(), pdv.getId());
+			if(repartePDV == null) {
+				repartePDV = new RepartePDV();
+			}
+			
+			repartePDV.setFixacaoReparte(fixacaoReparte);
+			repartePDV.setPdv(pdv);
+			repartePDV.setReparte(fixacaoReparte.getQtdeExemplares().intValue());
+			repartePDV.setProduto(fixacaoReparte.getProdutoFixado());
+			
+			repartePDVRepository.merge(repartePDV);
+		}
 	}
 
 	@Override
@@ -226,7 +248,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	private void validaStatusProduto(FixacaoReparteDTO fixacaoReparteDTO, Produto produto) {
 		
 		if (fixacaoReparteDTO.getEdicaoInicial() != null && fixacaoReparteDTO.getEdicaoFinal() != null) {
-			List<ProdutoEdicao> listProdutoEdicao = null;/*produtoEdicaoRepository.listProdutoEdicaoPorCodProdutoNumEdicoes(produto.getCodigo(), fixacaoReparteDTO.getEdicaoInicial().longValue(), fixacaoReparteDTO.getEdicaoFinal().longValue());*/
+			List<ProdutoEdicao> listProdutoEdicao = produtoEdicaoRepository.listProdutoEdicaoPorCodProdutoNumEdicoes(produto.getCodigo(), fixacaoReparteDTO.getEdicaoInicial().longValue(), fixacaoReparteDTO.getEdicaoFinal().longValue());
 			for (ProdutoEdicao produtoEdicao : listProdutoEdicao) {
 				statusPermitido(new ArrayList<>(produtoEdicao.getLancamentos()).get(0).getStatus());
 			}

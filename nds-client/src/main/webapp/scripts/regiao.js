@@ -1185,8 +1185,16 @@ var regiaoController = $.extend(true, {
 							if (tipoMensagem && listaMensagens) 
 								exibirMensagem(tipoMensagem, listaMensagens);
 							
-							$(".cotasRegiaoGrid", this.workspace).flexReload();
-						});
+							regiaoController.cotasDaRegiao();
+						},
+						
+						function(result) {
+							
+							regiaoController.cotasDaRegiao();
+						}
+						
+						);
+						
 					}else{
 						var erros = new Array();
 				           erros[0] = "Nenhuma cota selecionada. Volte e selecione uma cota para adição!";
@@ -1237,8 +1245,15 @@ var regiaoController = $.extend(true, {
 							if (tipoMensagem && listaMensagens) 
 								exibirMensagem(tipoMensagem, listaMensagens);
 							
-							$(".cotasRegiaoGrid", this.workspace).flexReload();
-						});
+							regiaoController.cotasDaRegiao();
+						},
+						
+							function(result) {
+							
+								regiaoController.cotasDaRegiao();
+							}
+						
+						);
 						
 					}else{
 						var erros = new Array();
@@ -1291,7 +1306,11 @@ var regiaoController = $.extend(true, {
 						if (tipoMensagem && listaMensagens) 
 							exibirMensagem(tipoMensagem, listaMensagens);
 						
-						$(".cotasRegiaoGrid", this.workspace).flexReload();
+						regiaoController.cotasDaRegiao();
+					},
+					function(result) {
+						
+						regiaoController.cotasDaRegiao();
 					});
 				},
 				"Cancelar" : function() {
@@ -1473,8 +1492,12 @@ var regiaoController = $.extend(true, {
 								if (tipoMensagem && listaMensagens) 
 									exibirMensagem(tipoMensagem, listaMensagens);
 								
-								$(".cotasRegiaoGrid", this.workspace).flexReload();
+								regiaoController.cotasDaRegiao();
 								$("#dialog-rankingCotas").dialog("close");
+							},
+							function(result) {
+								
+								regiaoController.cotasDaRegiao();
 							});
 						}else{
 							var erros = new Array();
@@ -1683,7 +1706,14 @@ var regiaoController = $.extend(true, {
 						
 						regiaoController.cotasDaRegiao();
 						
-					});
+					},
+					
+					function(result) {
+						
+						regiaoController.cotasDaRegiao();
+					}
+					
+					);
 					
 					$( this ).dialog( "close" );
 					$("#idCotas").html("");
@@ -1852,6 +1882,21 @@ var regiaoController = $.extend(true, {
 				$('#idNumCota' + atual , regiaoController.workspace).val('');
 				$('#idNomeCota' + atual , regiaoController.workspace).val('');
 			}
+			
+			var idRegiao = $('#comboRegioes').val();
+			
+			$.postJSON(contextPath + "/distribuicao/regiao/validarRegiaoCota",
+					{cota:num, idRegiao:idRegiao}, function(result) {
+				
+				var tipoMensagem = result.tipoMensagem;
+				var listaMensagens = result.listaMensagens;
+				
+				if (tipoMensagem && listaMensagens) {
+					
+					exibirMensagem(tipoMensagem, listaMensagens);
+				}
+				
+			});
 			
 			regiaoController.gerarLinhaCota(num,nome);
 			
