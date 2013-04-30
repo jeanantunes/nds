@@ -90,7 +90,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 	public List<ProdutoEdicaoSlipDTO> obterDadosSlipProdutoEdicaoAusenteConferenciaEncalhe(
 			Long idCota,
 			Date dataOperacao,
-			boolean indFechado,
 			boolean indPostergado,
 			Set<Long> listaIdProdutoEdicao) {
 
@@ -170,7 +169,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append("	COTA.ID = :idCota AND ");
 		hql.append("	CH_ENCALHE.DATA_RECOLHIMENTO = :dataOperacao AND 	");
-		hql.append("	CH_ENCALHE_COTA.FECHADO = :indFechado AND			");
 		hql.append("	CH_ENCALHE_COTA.POSTERGADO = :indPostergado 		");
 		
 		if(listaIdProdutoEdicao!=null && !listaIdProdutoEdicao.isEmpty()) {
@@ -197,7 +195,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		query.setParameter("idCota", idCota);
 		query.setParameter("dataOperacao", dataOperacao);
-		query.setParameter("indFechado", indFechado);
 		query.setParameter("indPostergado", indPostergado);
 		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
 		

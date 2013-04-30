@@ -8,6 +8,7 @@ import java.util.Set;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
+import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.SlipDTO;
@@ -42,6 +43,16 @@ public interface ConferenciaEncalheService {
 	 * @return boolean
 	 */
 	public boolean isCotaEmiteNfe(Integer numeroCota);
+	
+	/**
+	 * Obtém lista de debito crédito relativa a cobrança 
+	 * relacionada com uma operação de encalhe.
+	 * 
+	 * @param controleConferenciaEncalheCota
+	 * 
+	 * @return List - ComposicaoCobrancaSlipDTO
+	 */
+	public List<DebitoCreditoCotaDTO> obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(ControleConferenciaEncalheCota controleConferenciaEncalheCota);
 	
 	
 	/**

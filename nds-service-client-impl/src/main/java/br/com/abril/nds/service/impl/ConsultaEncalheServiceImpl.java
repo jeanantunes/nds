@@ -22,6 +22,7 @@ import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
@@ -97,30 +98,42 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		}
 		
 		
-		
 		BigDecimal valorVendaDia = valorTotalReparte.subtract(valorTotalEncalhe); 
 		
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
+		List<DebitoCreditoCotaDTO> listaDebitoCreditoCotaDTO = new ArrayList<DebitoCreditoCotaDTO>();
 		
-		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = new ArrayList<TipoMovimentoFinanceiro>();
+		List<Long> listaIdControleConfEncalheCota = 
+				controleConferenciaEncalheCotaRepository.obterListaIdControleConferenciaEncalheCota(filtro);
 		
-		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroEnvioEncalhe);
-		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroRecebimentoReparte);
-		
-		List<DebitoCreditoCotaDTO> listaDebitoCreditoCota = movimentoFinanceiroCotaRepository.obterDebitoCreditoPorPeriodoOperacao(filtro, tiposMovimentoFinanceiroIgnorados);
+		if(listaIdControleConfEncalheCota != null && !listaIdControleConfEncalheCota.isEmpty()) {
+
+			for(Long idControleConfEncalheCota : listaIdControleConfEncalheCota) {
+				
+				ControleConferenciaEncalheCota controleConfEncalheCota = controleConferenciaEncalheCotaRepository.buscarPorId(idControleConfEncalheCota);
+				
+				if(controleConfEncalheCota != null) {
+					
+					List<DebitoCreditoCotaDTO> listDebCred = conferenciaEncalheService.obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(controleConfEncalheCota);
+				
+					if(listDebCred!= null && !listDebCred.isEmpty()) {
+						listaDebitoCreditoCotaDTO.addAll(listDebCred);
+					}
+				}
+			}
+			
+		}
 		
 		BigDecimal valorDebitoCredito = BigDecimal.ZERO;
 		
-		if (listaDebitoCreditoCota != null) {
+		if (listaDebitoCreditoCotaDTO != null) {
 			
-			for (DebitoCreditoCotaDTO debitoCreditoCotaDTO: listaDebitoCreditoCota) {
+			for (DebitoCreditoCotaDTO debitoCreditoCotaDTO: listaDebitoCreditoCotaDTO) {
 				
-				if (OperacaoFinaceira.CREDITO.equals(debitoCreditoCotaDTO.getTipoLancamento())) {
+				if (OperacaoFinaceira.DEBITO.equals(debitoCreditoCotaDTO.getTipoLancamento())) {
 					
 					valorDebitoCredito = valorDebitoCredito.add(debitoCreditoCotaDTO.getValor());
 					
-				} else if (OperacaoFinaceira.DEBITO.equals(debitoCreditoCotaDTO.getTipoLancamento())) {
+				} else if (OperacaoFinaceira.CREDITO.equals(debitoCreditoCotaDTO.getTipoLancamento())) {
 					
 					valorDebitoCredito = valorDebitoCredito.subtract(debitoCreditoCotaDTO.getValor());
 				}
@@ -133,7 +146,7 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		info.setQtdeConsultaEncalhe(qtdeConsultaEncalhe);
 		
-		info.setListaDebitoCreditoCota(carregaDebitoCreditoCotaVO(listaDebitoCreditoCota));
+		info.setListaDebitoCreditoCota(carregaDebitoCreditoCotaVO(listaDebitoCreditoCotaDTO));
 		
 		info.setValorVendaDia(valorVendaDia);
 		

@@ -90,7 +90,6 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	 * 
 	 * @param idCota
 	 * @param dataOperacao
-	 * @param indFechado
 	 * @param indPostergado
 	 * @param listaIdProdutoEdicao
 	 * 
@@ -99,7 +98,6 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	public List<ProdutoEdicaoSlipDTO> obterDadosSlipProdutoEdicaoAusenteConferenciaEncalhe(
 			Long idCota,
 			Date dataOperacao,
-			boolean indFechado,
 			boolean indPostergado,
 			Set<Long> listaIdProdutoEdicao);
 	
