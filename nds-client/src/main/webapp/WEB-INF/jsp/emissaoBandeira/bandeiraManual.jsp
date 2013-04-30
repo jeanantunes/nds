@@ -93,14 +93,15 @@
             <span class="bt_novos" title="Imprimir Bandeira"><a href="javascript:;" onclick="emissaoBandeiraController.imprimirBandeiraManual();" rel="bandeira"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir Bandeira</a></span>
 </table>
 
-<div id="dialog-pallets-bandeira-manual" title="Pallets">
-<fieldset>
-	<legend>Informe a quantidade de pallets</legend>
-    N&uacute;mero de Pallets: <input id="numeroPalletsBandeiraManual" type="text" style="width:40px; margin-left:10px; text-align:center;" />
-
-</fieldset>
-</div>
-
+<form id="form-pallets-bandeira-manual">
+	<div id="dialog-pallets-bandeira-manual" title="Pallets">
+	<fieldset>
+		<legend>Informe a quantidade de pallets</legend>
+	    N&uacute;mero de Pallets: <input id="numeroPalletsBandeiraManual" type="text" style="width:40px; margin-left:10px; text-align:center;" />
+	
+	</fieldset>
+	</div>
+</form>
 	<script type="text/javascript">
 		$(function(){
 			emissaoBandeiraController.initBandeiraManual();

@@ -1323,29 +1323,27 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	}
 	
 	public boolean isDataConfirmada(ProdutoLancamentoDTO produtoLancamentoDTO) {
-		
-		List<ProdutoLancamentoDTO> listaverificadaConfirmada = this.lancamentoRepository.verificarDataConfirmada(produtoLancamentoDTO);
-		
-		if(listaverificadaConfirmada.isEmpty()) {
-		
+
+		List<ProdutoLancamentoDTO> listaverificadaConfirmada = this.lancamentoRepository
+				.verificarDataConfirmada(produtoLancamentoDTO);
+
+		if (listaverificadaConfirmada.isEmpty()) {
+
 			return false;
-		
+
 		} else {
-			
-			for(ProdutoLancamentoDTO verificarConfirmado : listaverificadaConfirmada)
-			{
-				if(verificarConfirmado.isStatusLancamentoConfirmado()) {
-				
+
+			for (ProdutoLancamentoDTO verificarConfirmado : listaverificadaConfirmada) {
+				if (verificarConfirmado.isStatusLancamentoBalanceado()) {
+
 					return true;
-				
+
 				}
 			}
-			
+
 			return false;
-		}		
+		}
 	}
-	
-	
 	
 	/**
 	 * Monta o DTO com as informações para realização do balanceamento.
@@ -1617,32 +1615,109 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	}
 
 	@Override
-	public BalanceamentoLancamentoDTO verificarQuebraConfirmacaoDiaDeAcordoComMatriz(
-			BalanceamentoLancamentoDTO balanceamentoLancamento) {
+	@Transactional
+	public void salvarBalanceamentoLancamento(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento, Usuario usuarioLogado) {
+		if (matrizLancamento == null || matrizLancamento.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Matriz de lancamento não informada!");
+		}
 		
+		Map<Long, ProdutoLancamentoDTO> mapaLancamento = new TreeMap<Long, ProdutoLancamentoDTO>();
 		
-		Iterator<Date> dataConfirmadaIterator = balanceamentoLancamento.getDatasExpedicaoConfirmada().iterator();
+		Set<Long> idsLancamento = new TreeSet<Long>();
 		
-		while(dataConfirmadaIterator.hasNext())
-		{
-			Date dataConfirmada = dataConfirmadaIterator.next();
+		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry : matrizLancamento.entrySet()) {
+			List<ProdutoLancamentoDTO> listaProdutoLancamentoDTO = entry.getValue();
 			
-			Set<Entry<Date, List<ProdutoLancamentoDTO>>> entryset = balanceamentoLancamento.getMatrizLancamento().entrySet();
-			Iterator<Entry<Date, List<ProdutoLancamentoDTO>>> iterator =  entryset.iterator();
-			
-			while ( iterator.hasNext() )
-			{
-				Date dataGetEntry = (Date) iterator.next().getKey();
-			
-				if(dataConfirmada.equals(dataGetEntry) && (dataConfirmada != null || dataGetEntry != null))
-				{
-					dataConfirmadaIterator.remove();
-				}	
+			if (listaProdutoLancamentoDTO == null || listaProdutoLancamentoDTO.isEmpty()) {
+				continue;
 			}
 			
+			for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamentoDTO) {
+				if (!produtoLancamentoDTO.isStatusLancamentoBalanceado()) {
+					mapaLancamento.put(produtoLancamentoDTO.getIdLancamento(), produtoLancamentoDTO);
+					idsLancamento.add(produtoLancamentoDTO.getIdLancamento());
+				}
+			}
+		}
+		
+		this.atualizarLancamentos(idsLancamento, usuarioLogado, mapaLancamento, StatusLancamento.EM_BALANCEAMENTO_LANCAMENTO);
+	}
+	
+	private TreeMap<Date, List<ProdutoLancamentoDTO>> atualizarLancamentos(Set<Long> idsLancamento, Usuario usuario,
+			Map<Long, ProdutoLancamentoDTO> mapaLancamento, StatusLancamento status) {
+		
+		boolean gerarHistoricoLancamento = false;
+		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoConfirmada = new TreeMap<Date, List<ProdutoLancamentoDTO>>();
+
+		List<Lancamento> listaLancamentos = this.lancamentoRepository.obterLancamentosPorIdOrdenados(idsLancamento);
+
+		this.validarDadosAtualizacaoLancamento(idsLancamento, listaLancamentos);
+		
+		HistoricoLancamento historicoLancamento = null;
+		
+		for (Lancamento lancamento : listaLancamentos) {
+			ProdutoLancamentoDTO produtoLancamento = mapaLancamento.get(lancamento.getId());
+			Date novaData = produtoLancamento.getNovaDataLancamento();
+			
+			gerarHistoricoLancamento =!(lancamento.getStatus().equals(status));
+
+			if (produtoLancamento.isLancamentoAgrupado()) {
+				continue;
+			}
+			
+			if (lancamento.getDataLancamentoDistribuidor().compareTo(novaData) != 0) {
+				lancamento.setNumeroReprogramacoes(atualizarNumeroReprogramacoes(lancamento));
+			}
+			
+			lancamento.setDataLancamentoDistribuidor(novaData);
+			lancamento.setStatus(status);
+			lancamento.setDataStatus(new Date());
+
+			this.tratarLancamentosAgrupadosParaConfirmacao(lancamento, novaData, listaLancamentos, mapaLancamento);
+			this.montarMatrizLancamentosConfirmados(matrizLancamentoConfirmada, produtoLancamento, lancamento, novaData);
+			this.lancamentoRepository.alterar(lancamento);
+			
+			if (gerarHistoricoLancamento) {
+				historicoLancamento = new HistoricoLancamento();
+				
+				historicoLancamento.setLancamento(lancamento);
+				historicoLancamento.setTipoEdicao(TipoEdicao.ALTERACAO);
+				historicoLancamento.setStatus(lancamento.getStatus());
+				historicoLancamento.setDataEdicao(new Date());
+				historicoLancamento.setResponsavel(usuario);
+				
+				this.historicoLancamentoRepository.merge(historicoLancamento);
+			}
+		}
+
+		return matrizLancamentoConfirmada;
+	}
+	
+	@Override
+	public BalanceamentoLancamentoDTO verificarQuebraConfirmacaoDiaDeAcordoComMatriz(
+			BalanceamentoLancamentoDTO balanceamentoLancamento) {
+
+		Iterator<Date> dataConfirmadaIterator = balanceamentoLancamento
+				.getDatasExpedicaoConfirmada().iterator();
+
+		while (dataConfirmadaIterator.hasNext()) {
+			Date dataConfirmada = dataConfirmadaIterator.next();
+
+			Set<Entry<Date, List<ProdutoLancamentoDTO>>> entryset = balanceamentoLancamento
+					.getMatrizLancamento().entrySet();
+			Iterator<Entry<Date, List<ProdutoLancamentoDTO>>> iterator = entryset
+					.iterator();
+
+			while (iterator.hasNext()) {
+				Date dataGetEntry = (Date) iterator.next().getKey();
+
+				if (dataConfirmada.equals(dataGetEntry)
+						&& (dataConfirmada != null || dataGetEntry != null)) {
+					dataConfirmadaIterator.remove();
+				}
+			}
+
 		}
 		return balanceamentoLancamento;
-		
 	}
-
 }

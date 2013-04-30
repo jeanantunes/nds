@@ -1,12 +1,21 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.BandeirasDTO;
@@ -23,6 +32,7 @@ import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -33,8 +43,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		super(ChamadaEncalhe.class);
 	}
 	
-	
-	
+	@Autowired
+	private DataSource dataSource;
 	
 	public ChamadaEncalhe obterPorNumeroEdicaoEDataRecolhimento(ProdutoEdicao produtoEdicao,
 																Date dataRecolhimento,
@@ -164,42 +174,222 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 	public List<CotaEmissaoDTO> obterDadosEmissaoChamadasEncalhe(
 			FiltroEmissaoCE filtro) { 		
 
-		HashMap<String, Object> param = new HashMap<String, Object>();
+		ArrayList<Object> param = new ArrayList<Object>();
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" select ");
+		sql.append(" cota3_.NUMERO_COTA as numCota, ");
+		sql.append(" cota3_.ID as idCota, ");
+		sql.append(" case pessoa4_.TIPO  ");
+		sql.append("      when 'F' then pessoa4_.NOME "); 
+		sql.append(" 	  when 'J' then pessoa4_.RAZAO_SOCIAL  ");
+		sql.append(" end as nomeCota ");
 		
-		StringBuilder hql = new StringBuilder();
+		gerarFromWhereSQL(filtro, sql, param);
+		
+		sql.append(" group by cota3_.ID  ");
+		
+		gerarOrdenacao(filtro, sql);		
 				
-		hql.append(" select cota.numeroCota as numCota, ");
-		hql.append(" cota.id as idCota, ");
-		hql.append(" case pessoa.class ");
-		hql.append("      when 'F' then pessoa.nome ");
-		hql.append("      when 'J' then pessoa.razaoSocial end  as nomeCota,");		
-		hql.append("(").append(getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, false)).append(" ) as qtdeExemplares, ");	
-		hql.append("(").append(getSubHqlTotalQtdeValorPrevistaDaEmissaoCE(filtro, true)).append(" ) as vlrTotalCe ");	
-		
-		gerarFromWhere(filtro, hql, param);
-		
-		hql.append(" group by cota   ");
-		
-		gerarOrdenacao(filtro, hql);		
+		@SuppressWarnings("rawtypes")
+		RowMapper cotaRowMapper = new RowMapper() {
+
+			public Object mapRow(ResultSet rs, int arg1) throws SQLException {
+
+				CotaEmissaoDTO cota = new CotaEmissaoDTO();
+				cota.setNumCota(rs.getInt("numCota"));
+				cota.setIdCota(rs.getLong("idCota"));
+				cota.setNomeCota(rs.getString("nomeCota"));
 				
-		Query query =  getSession().createQuery(hql.toString());
+				return cota;
+			}
+		};
+
+		List<CotaEmissaoDTO> lista = (List<CotaEmissaoDTO>) new JdbcTemplate(dataSource).query(sql.toString(), param.toArray(), 
+			cotaRowMapper);
 		
-		for(String key : param.keySet()){
+		if(lista == null || lista.size() ==0)
+			return null;
+		
+		for(CotaEmissaoDTO dto : lista){
 			
-			if(param.get(key) instanceof List)
-				query.setParameterList(key, (List) param.get(key));
-			else					
-				query.setParameter(key, param.get(key));
-			
+			setQtdExamplaresVlrTotalCe(filtro, dto, false);
 		}
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				CotaEmissaoDTO.class));
-		
-		return query.list();
-		
+		return lista;
+	}
+
+	private void gerarFromWhereSQL(FiltroEmissaoCE filtro, StringBuilder sql, ArrayList<Object> param) {
+
+		sql.append(" from ");
+		sql.append(" CHAMADA_ENCALHE_COTA chamadaenc0_ ");
+		sql.append(" inner join ");
+		sql.append(" CHAMADA_ENCALHE chamadaenc2_ ");
+		sql.append(" on chamadaenc0_.CHAMADA_ENCALHE_ID=chamadaenc2_.ID ");
+		sql.append(" inner join ");
+		sql.append(" PRODUTO_EDICAO produtoedi5_ ");
+		sql.append(" on chamadaenc2_.PRODUTO_EDICAO_ID=produtoedi5_.ID ");
+		sql.append(" inner join ");
+		sql.append(" PRODUTO produto6_ ");
+		sql.append(" on produtoedi5_.PRODUTO_ID=produto6_.ID ");
+		sql.append(" inner join ");
+		sql.append(" PRODUTO_FORNECEDOR fornecedor7_ ");
+		sql.append(" on produto6_.ID=fornecedor7_.PRODUTO_ID ");
+		sql.append(" inner join ");
+		sql.append(" FORNECEDOR fornecedor8_ ");
+		sql.append(" on fornecedor7_.fornecedores_ID=fornecedor8_.ID ");
+		sql.append(" inner join ");
+		sql.append(" COTA cota3_ ");
+		sql.append(" on chamadaenc0_.COTA_ID=cota3_.ID ");
+		sql.append(" inner join ");
+		sql.append(" PESSOA pessoa4_ ");
+		sql.append(" on cota3_.PESSOA_ID=pessoa4_.ID ");
+		sql.append(" inner join ");
+		sql.append(" BOX box9_ ");
+		sql.append(" on cota3_.BOX_ID=box9_.ID ");
+		sql.append(" inner join ");
+		sql.append(" PDV pdvs10_ ");
+		sql.append(" on cota3_.ID=pdvs10_.COTA_ID ");
+		sql.append(" inner join ");
+		sql.append(" ROTA_PDV rotas11_ ");
+		sql.append(" on pdvs10_.ID=rotas11_.PDV_ID ");
+		sql.append(" inner join ");
+		sql.append(" ROTA rota12_ ");
+		sql.append(" on rotas11_.ROTA_ID=rota12_.ID ");
+		sql.append(" inner join ");
+		sql.append(" ROTEIRO roteiro13_ ");
+		sql.append(" on rota12_.ROTEIRO_ID=roteiro13_.ID cross ");
+		sql.append(" join ");
+		sql.append(" BOX box1_ ");
+		sql.append(" where ");
+		sql.append(" cota3_.BOX_ID=box9_.ID "); 
+        
+		setParamsFilterSqlPostergado(filtro, sql, param);
 	}
 	
+	private void setParamsFilterSql(FiltroEmissaoCE filtro, StringBuilder sql, ArrayList<Object> param) {
+		if(filtro.getDtRecolhimentoDe() != null) {
+			sql.append(" and chamadaenc2_.DATA_RECOLHIMENTO >= ? ");
+			param.add(filtro.getDtRecolhimentoDe());
+		}
+		
+		if(filtro.getDtRecolhimentoAte() != null) {
+			sql.append(" and chamadaenc2_.DATA_RECOLHIMENTO <= ? ");
+			param.add(filtro.getDtRecolhimentoAte());
+		}
+		
+		if(filtro.getNumCotaDe() != null) {
+			sql.append(" and cota3_.numero_cota >= ? ");
+			param.add(filtro.getNumCotaDe());
+		}
+		
+		if(filtro.getNumCotaAte() != null) {
+			sql.append(" and cota3_.numero_cota <= ?");
+			param.add(filtro.getNumCotaAte());
+		}
+		
+		if(filtro.getIdRoteiro() != null) {
+			sql.append(" and roteiro13_.ID <= ? ");
+			param.add(filtro.getIdRoteiro());
+		}
+				
+		if(filtro.getIdRota() != null) {
+			sql.append(" and rota12_.ID <= ? ");
+			param.add(filtro.getIdRota());
+		}
+		
+		if(filtro.getCodigoBoxDe() != null) {
+			sql.append(" and box9_.codigo >= ? ");
+			param.add(filtro.getCodigoBoxDe());
+		}
+		
+		if(filtro.getCodigoBoxAte() != null) {
+			sql.append(" and box9_.codigo <= ? ");
+			param.add(filtro.getCodigoBoxAte());
+		}
+		
+		if(filtro.getFornecedores() != null && !filtro.getFornecedores().isEmpty()) {
+			sql.append(" and fornecedor8_.ID in (?) ");
+			param.add(filtro.getFornecedores());
+		}
+	}
+	
+	private void setParamsFilterSqlPostergado(FiltroEmissaoCE filtro, StringBuilder sql, ArrayList<Object> param) {
+		setParamsFilterSql(filtro, sql, param);
+
+		sql.append(" and chamadaenc0_.POSTERGADO = ? "); 
+		param.add(false);
+	}
+	
+	private void setQtdExamplaresVlrTotalCe(FiltroEmissaoCE filtro, CotaEmissaoDTO dto, boolean postergado) {
+		CotaEmissaoDTO ret = getTotalQtdeValorPrevistaDaEmissaoCE(filtro, dto.getIdCota(), postergado);
+		if(ret != null){
+
+			if(ret.getQtdeExemplares() != null && ret.getQtdeExemplares() > -1)
+				dto.setQtdeExemplares(ret.getQtdeExemplares() == null ? new BigInteger("0") : new BigInteger(ret.getQtdeExemplares().toString()));
+			
+			if(ret.getVlrTotalCe() != null && !"".equals(ret.getVlrTotalCe()))
+				dto.setVlrTotalCe(CurrencyUtil.converterValor(ret.getVlrTotalCe()));
+		}
+	}
+
+	private CotaEmissaoDTO getTotalQtdeValorPrevistaDaEmissaoCE(FiltroEmissaoCE filtro, Long idCota, boolean postergado) {
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select ");
+		sql.append(" sum(chamadaenc14_.QTDE_PREVISTA) as qtdeExemplares, ");
+		sql.append(" sum(chamadaenc14_.QTDE_PREVISTA*produtoedi17_.PRECO_VENDA) as vlrTotalCe ");
+		sql.append(" from ");
+		sql.append(" CHAMADA_ENCALHE_COTA chamadaenc14_ ");
+		sql.append(" inner join ");
+		sql.append(" CHAMADA_ENCALHE chamadaenc15_ ");
+		sql.append(" on chamadaenc14_.CHAMADA_ENCALHE_ID=chamadaenc15_.ID ");
+		sql.append(" inner join ");
+		sql.append(" PRODUTO_EDICAO produtoedi17_ ");
+		sql.append(" on chamadaenc15_.PRODUTO_EDICAO_ID=produtoedi17_.ID ");
+		sql.append(" inner join ");
+		sql.append(" COTA cota16_ ");
+		sql.append(" on chamadaenc14_.COTA_ID=cota16_.ID ");
+		sql.append(" where ");
+		sql.append(" cota16_.ID= ? ");
+		sql.append(" and chamadaenc14_.POSTERGADO= ? ");
+		
+		ArrayList<Object> param = new ArrayList<Object>();
+		
+		param.add(idCota);
+		param.add(postergado);
+		
+		if(filtro.getDtRecolhimentoDe() != null) {
+			sql.append(" and chamadaenc15_.DATA_RECOLHIMENTO >= ? ");
+			param.add(filtro.getDtRecolhimentoDe());
+		}
+		
+		if(filtro.getDtRecolhimentoAte() != null) {
+			sql.append(" and chamadaenc15_.DATA_RECOLHIMENTO <= ? ");
+			param.add(filtro.getDtRecolhimentoAte());
+		}
+		
+		@SuppressWarnings("rawtypes")
+		RowMapper cotaRowMapper = new RowMapper() {
+			public Object mapRow(ResultSet rs, int arg1) throws SQLException {
+				CotaEmissaoDTO cota = new CotaEmissaoDTO();
+				cota.setQtdeExemplares(rs.getBigDecimal("qtdeExemplares") == null ? new BigInteger("0") : rs.getBigDecimal("qtdeExemplares").toBigInteger());
+				cota.setVlrTotalCe(rs.getBigDecimal("vlrTotalCe"));
+				return cota;
+			}
+		};
+
+		@SuppressWarnings("unchecked")
+		List<CotaEmissaoDTO> lista = (List<CotaEmissaoDTO>) new JdbcTemplate(dataSource).query(sql.toString(), param.toArray(), cotaRowMapper);
+
+		if(lista != null && lista.size() > 0)
+			return lista.get(0);
+		
+		return null;
+	}
+
+	
+
 	private void gerarFromWhere(FiltroEmissaoCE filtro, StringBuilder hql, HashMap<String, Object> param) {
 
 		hql.append(" from ChamadaEncalheCota chamEncCota, Box box ")
@@ -264,7 +454,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" and chamEncCota.postergado = :isPostergado "); 
 		param.put("isPostergado", false);
 	}
-
+	
 	private void gerarOrdenacao(FiltroEmissaoCE filtro, StringBuilder hql) {
 		
 		String sortOrder = filtro.getOrdenacao();
@@ -273,19 +463,11 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		String nome = null;
 		
 		switch(coluna) {
-			case COTA:
-				nome = " numCota ";
-				break;
 			case NOME: 
 				nome = " nomeCota ";
 				break;
-			case EXEMPLARES:
-				nome = " qtdeExemplares ";
-				break;
-			case VALOR:
-				nome = " vlrTotalCe ";
-				break;
 			default:
+				nome = " numCota ";
 				break;
 		}
 		

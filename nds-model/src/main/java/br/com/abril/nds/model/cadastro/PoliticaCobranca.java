@@ -46,6 +46,9 @@ public class PoliticaCobranca {
 	@Column(name = "FORMA_EMISSAO")
 	private FormaEmissao formaEmissao;
 	
+	@Column(name="COBRANCA_BO")
+	private boolean cobradoPeloBackoffice; 
+	
 	public Long getId() {
 		return id;
 	}
@@ -108,6 +111,14 @@ public class PoliticaCobranca {
 
 	public void setFormaEmissao(FormaEmissao formaEmissao) {
 		this.formaEmissao = formaEmissao;
+	}
+
+	public boolean isCobradoPeloBackoffice() {
+		return cobradoPeloBackoffice;
+	}
+
+	public void setCobradoPeloBackoffice(boolean cobradoPeloBackoffice) {
+		this.cobradoPeloBackoffice = cobradoPeloBackoffice;
 	}
 
 	
