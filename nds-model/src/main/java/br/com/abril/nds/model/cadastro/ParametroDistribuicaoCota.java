@@ -42,7 +42,7 @@ public class ParametroDistribuicaoCota implements Serializable {
 	private Boolean recebeRecolheParciais;
 	
 	@Column(name = "RECEBE_COMPLEMENTAR", nullable = true)
-	private Boolean recebeComplementar;
+	private Boolean recebeComplementar = true;
 	
 	@Column(name = "NOTA_ENVIO_IMPRESSO", nullable = true)
 	private Boolean notaEnvioImpresso;
