@@ -275,8 +275,8 @@ init : function() {
 			  
 		  data.push({name:"ajusteDTO.formaAjuste",  value: ajusteReparteController.getRadio()});
 		  data.push({name:"ajusteDTO.motivoAjuste",  value: ajusteReparteController.get("motivoAjuste")});
-		  data.push({name:"ajusteDTO.dataInicioCadastro",  value: ajusteReparteController.get("dataInicio")});
-		  data.push({name:"ajusteDTO.dataFimCadastro",  value: ajusteReparteController.get("dataFim")});
+		  data.push({name:"ajusteDTO.dataInicioCadastro",  value: ajusteReparteController.get("dataInicioAjusteReparte")});
+		  data.push({name:"ajusteDTO.dataFimCadastro",  value: ajusteReparteController.get("dataFimAjusteReparte")});
 		  
 			  if(ajusteReparteController.getRadio() == "AJUSTE_SEGMENTO"){
 				  this.isAjusteSegmento = true;
@@ -371,8 +371,8 @@ init : function() {
 		$("#tipoSegmento2").val("").show();
 		$("#tipoSegmento3").val("").show();
 		$("#motivoAjuste").val("");
-		$("#dataInicio").val("");
-		$("#dataFim").val("");
+		$("#dataInicioAjusteReparte").val("");
+		$("#dataFimAjusteReparte").val("");
 		
 		$('#AJUSTE_HISTORICO').attr('checked', false);
 		$('#AJUSTE_VENDA_MEDIA').attr('checked', false);
@@ -1089,13 +1089,13 @@ init : function() {
 		
 		mask : function (){
 
-			$("#dataInicio").datepicker({
+			$("#dataInicioAjusteReparte").datepicker({
 				showOn: "button",
 				buttonImage: contextPath + "/images/calendar.gif",
 				buttonImageOnly: true
 			});
 			
-			$("#dataFim").datepicker({
+			$("#dataFimAjusteReparte").datepicker({
 				showOn: "button",
 				buttonImage: contextPath + "/images/calendar.gif",
 				buttonImageOnly: true
