@@ -12,10 +12,10 @@ public class ProdutoLancamentoVO  implements Serializable {
 	
 	private Long id;
 	
-	@Export(label="Codigo", exhibitionOrder = 0)
+	@Export(label="Codigo", exhibitionOrder = 0, widthPercent = 9)
 	private String codigoProduto;
 	
-	@Export(label="Produto", exhibitionOrder = 1)
+	@Export(label="Produto", exhibitionOrder = 1, widthPercent = 21)
 	private String nomeProduto;
 	
 	@Export(label="Edição", exhibitionOrder = 2)
@@ -27,13 +27,13 @@ public class ProdutoLancamentoVO  implements Serializable {
 	@Export(label="Reparte", exhibitionOrder = 4)
 	private String repartePrevisto;
 	
-	@Export(label="Lançamento", exhibitionOrder = 5)
+	@Export(label="Lançamento", exhibitionOrder = 5, widthPercent = 10)
 	private String descricaoLancamento;
 	
-	@Export(label="Recolhimento", exhibitionOrder = 6)
+	@Export(label="Recolhimento", exhibitionOrder = 6, widthPercent = 9)
 	private String dataRecolhimentoPrevista;
 	
-	@Export(label="Total R$", exhibitionOrder = 7)
+	@Export(label="Total R$", exhibitionOrder = 7, widthPercent = 8)
 	private String valorTotal;
 	
 	@Export(label="Físico", exhibitionOrder = 8)
@@ -42,7 +42,7 @@ public class ProdutoLancamentoVO  implements Serializable {
 	@Export(label="Distribuição", exhibitionOrder = 9)
 	private String distribuicao;
 	
-	@Export(label="Previsto", exhibitionOrder = 10)
+	@Export(label="Previsto", exhibitionOrder = 10, widthPercent = 9)
 	private String dataLancamentoPrevista;
 	
 	private String novaDataLancamento;
