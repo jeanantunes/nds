@@ -3426,11 +3426,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		e.adicionarCompleteEspaco("Valor Líquido Devido", 
 				slipDTO.getValorTotalSemDesconto().subtract(slipDTO.getValorTotalDesconto())
 				.setScale(2, RoundingMode.HALF_EVEN).toString());
+		e.quebrarLinhaEscape();
+		e.quebrarLinhaEscape();
 		
 		adicionarComposicaoCobranca(e, slipDTO.getListaComposicaoCobrancaDTO());
-		
-		e.quebrarLinhaEscape();
-		e.quebrarLinhaEscape();
 		
 		String valorTotalPagar = slipDTO.getValorTotalPagar() == null ? "0,00" : slipDTO.getValorTotalPagar().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
 		e.adicionarCompleteTraco("VALOR TOTAL A PAGAR", valorTotalPagar);
