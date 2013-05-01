@@ -354,6 +354,16 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 							return result;
 						}
 
+						// esconder botões de impressão
+						if (result.rows.length === 0) {
+							$('#gerarXLSPorCota').hide();
+							$('#gerarPDFPorCota').hide();
+							
+						}else{
+							$('#gerarXLSPorCota').show();
+							$('#gerarPDFPorCota').show();
+						}
+						
 						$.each(result.rows, function(index, row) {
 							
 							var link = '<a href="javascript:;" onclick="excecaoSegmentoParciaisController.excluirExcecaoProduto('+row.cell.idExcecaoProdutoCota+');" style="cursor:pointer">' +
@@ -436,6 +446,16 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 							return result;
 						}
 
+						// esconder botões de impressão
+						if (result.rows.length === 0) {
+							$('#gerarXLSPorExcecao').hide();
+							$('#gerarPDFPorExcecao').hide();
+							
+						}else{
+							$('#gerarXLSPorExcecao').show();
+							$('#gerarPDFPorExcecao').show();
+						}
+						
 						$.each(result.rows, function(index, row) {
 							
 							var link = '<a href="javascript:;" onclick="excecaoSegmentoParciaisController.excluirExcecaoCota('+row.cell.idExcecaoProdutoCota+');" style="cursor:pointer">' +
