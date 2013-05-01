@@ -154,7 +154,7 @@ var analiseParcialController = $.extend(true,{
 		$("#baseEstudoGridParcial").flexigrid({
 			preProcess : analiseParcialController.preProcessGrid,
 			url : contextPath + '/distribuicao/analise/parcial/init',
-			params: [{name: 'id', value: _id}, {name: 'faixaDe', value: _faixaDe}, {name: 'faixaAte', value: _faixaAte}],
+			params: [{name: 'id', value: _id}, {name: 'faixaDe', value: _faixaDe}, {name: 'faixaAte', value: _faixaAte},{name:"numeroCotaStr",value:histogramaPosEstudo_cotasRepMenorVenda}],
 			dataType : 'json',
 			colModel : [ { display : 'Cota', name : 'cota', width : 33, sortable : true, align : 'left' }, 
 			             { display : 'Class.', name : 'classificacao', width : 30, sortable : true, align : 'center' }, 

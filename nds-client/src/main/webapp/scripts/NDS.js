@@ -799,5 +799,20 @@ function cloneObject(source) {
     }
 }
 
+function selectTabTitle(title){
 
+	var tabToSelect=-1;
+	$("#workspace li.ui-state-default a").each(function(idx,comp){
+		//console.log($(comp).text());
+		if($(comp).text()==title){
+			tabToSelect=idx;
+		}
+	});
+	if(tabToSelect>-1){
+		$("#workspace").tabs("select",tabToSelect);
+	}
+		
+}
+
+	
 //@ sourceURL=NDS.js

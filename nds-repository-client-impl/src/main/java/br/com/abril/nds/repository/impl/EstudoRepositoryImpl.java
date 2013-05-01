@@ -124,6 +124,7 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		sql.append("   qtdReparteMinimoSugerido, ");
 		sql.append("   abrangenciaSugerida, ");
 		sql.append("   qtdReparteMinimoEstudo, ");
+		
 		sql.append("   ( qtdCotasRecebemReparte / qtdCotasAtivas ) * 100 as abrangenciaEstudo, ");
 		sql.append("   ( qtdCotasQueVenderam  / qtdCotasRecebemReparte ) * 100 as abrangenciaDeVenda ");
 		sql.append("   FROM ");
