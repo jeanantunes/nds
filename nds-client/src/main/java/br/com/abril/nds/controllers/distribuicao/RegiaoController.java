@@ -322,7 +322,7 @@ public class RegiaoController extends BaseController {
 			
 			if(numCota == cotasCad) {
 				
-				return "A cota ["+numCota+"] já esta cadastrada, retire-a e faça uma nova inclusão.";
+				return "A cota ["+numCota+"] já está cadastrada.";
 			}
 		}
 		
@@ -383,66 +383,7 @@ public class RegiaoController extends BaseController {
 		}
 		
 		popularRegistroESalvarCota(numerosCota, idRegiao);
-//		this.validarEntradaDeVariasCotas(numerosCota, idRegiao);
-//		this.popularRegistroESalvarCotasEmLote(numerosCota, idRegiao);
-		
-//		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cotas inseridas com sucesso!"),
-//			"result").recursive().serialize();
-
 	}
-
-//	private void popularRegistroESalvarCotasEmLote(List<Integer> cotas, long idRegiao) {
-//		
-//		List<String> mensagens = new ArrayList<String>();
-//		
-//		for (int numeroCota : cotas) {
-//
-//			RegistroCotaRegiao registro = new RegistroCotaRegiao();
-//
-//			Date dataEHora = new Date();
-//			Timestamp data = new Timestamp(dataEHora.getTime());
-//
-//			registro.setRegiao(this.regiaoService.obterRegiaoPorId(idRegiao));
-//			registro.setCota(this.cotaService.obterPorNumeroDaCota(numeroCota));
-//			registro.setUsuario(this.usuarioService.getUsuarioLogado());
-//			registro.setDataAlteracao(data);
-//
-//
-//			if(registro.getCota() == null){
-//				mensagens.add("A cota ["+numeroCota+"] não existe.");
-//			}
-//			else {
-//				
-//				try {
-//				
-//					regiaoService.addCotaNaRegiao(registro);
-//				
-//				} catch (ValidacaoException e) {
-//					
-//					if (e.getMessage() != null) {
-//						
-//						mensagens.add(e.getMessage());
-//					}
-//					else {
-//						
-//						ValidacaoVO validacaoVO = e.getValidacao();
-//						
-//						if (validacaoVO != null && validacaoVO.getListaMensagens() != null && 
-//								!validacaoVO.getListaMensagens().isEmpty()) {
-//							
-//							mensagens.addAll(validacaoVO.getListaMensagens());
-//						}
-//					}
-//					
-//				}
-//			}
-//		}
-//
-//		if(!mensagens.isEmpty()){
-//			
-//			throw new ValidacaoException(TipoMensagem.WARNING, mensagens);
-//		}
-//	}
 
 	@Post
 	@Path("/buscarProduto")
@@ -661,11 +602,6 @@ public class RegiaoController extends BaseController {
 		if(filtro.getLimiteBuscaPorSegmento() == null || filtro.getLimiteBuscaPorSegmento() == 0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Informe a quantidade de Cotas.");
 		}
-
-		if(filtro.getLimiteBuscaPorSegmento() > 4) {
-			filtro.setLimiteBuscaPorSegmento(filtro.getLimiteBuscaPorSegmento() + 1);
-		}
-
 	}
 
 	private void validarEntradaRegiao(String nomeRegiao) {

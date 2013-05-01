@@ -77,7 +77,7 @@ init : function() {
 	
 	$.each(resultado.rows, function(index, row) {
 		
-		var analise = '<select name="select" id="select" style="width:140px;" onchange="analiseEstudoController.redirectToTelaAnalise('+ row.cell.numeroEstudo +',event);"> <option selected="selected">Selecione...</option> <option value="normal">Normal</option> <option value="parcial">Parcial</option>';
+		var analise = '<select name="select" id="select" style="width:140px;" onchange="analiseEstudoController.redirectToTelaAnalise('+ row.cell.numeroEstudo +',event,this);"> <option selected="selected">Selecione...</option> <option value="normal">Normal</option> <option value="parcial">Parcial</option>';
 		
 		row.cell.telaAnalise = analise;
 	});
@@ -102,11 +102,16 @@ init : function() {
 		$(".estudosGrid", this.workspace).flexReload();	
 	},
 
-	redirectToTelaAnalise : function(numeroEstudo, event){
+	redirectToTelaAnalise : function(numeroEstudo, event,cmp){
 		
 		// Obter matriz de distribuição
-		var matriz=[],
+		
+		if($(cmp).children(":selected").val()=="Selecione..."){
+			return;
+		}
+		var matriz=[], 
 			url = contextPath + "/distribuicao/analiseEstudo/obterMatrizDistribuicaoPorEstudo";
+		var dadosResumo=new Object();
 		
 		$.postJSON(
 			url,
@@ -122,6 +127,9 @@ init : function() {
 				matriz.push({name : "selecionado.edicao" , value : response.numeroEdicao});
 				matriz.push({name : "selecionado.estudo" , value : response.idEstudo});
 				matriz.push({name : "selecionado.idLancamento" , value : response.idLancamento});
+				matriz.push({name : "selecionado.reparteDistribuido" , value : response.reparte});
+				dadosResumo.reparteDistribuido=parseInt(response.reparte);
+				dadosResumo.repartePromo=parseInt(response.promo);
 //				matriz.push({name : "selecionado.lncto" , value : response.lancto});
 //				matriz.push({name : "selecionado.repDistrib" , value : response.reparte});
 //				matriz.push({name : "selecionado.sobra" , value : 0);
@@ -129,7 +137,6 @@ init : function() {
 //				matriz.push({name : "selecionado.periodicidadeProduto" , value : response.periodo});
 				matriz.push({name : "selecionado.estudoLiberado" , value : (response.liberado == "" ? false : true)});
 
-				
 				// CARREGAR TELA EMS 2022
 				$.get(
 						contextPath + '/distribuicao/histogramaPosEstudo/index', //url
@@ -139,6 +146,7 @@ init : function() {
 							$('#histogramaPosEstudoContent').html(html);
 							$('#histogramaPosEstudoContent').show();
 
+							histogramaPosEstudoController.dadosResumo = dadosResumo;
 							histogramaPosEstudoController.matrizSelecionado = matriz;
 							histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(matriz);
 							histogramaPosEstudoController.modoAnalise = $(event.target).val();
@@ -150,4 +158,5 @@ init : function() {
 	
 }, BaseController);
 //@ sourceURL=analiseEstudo.js
+
 

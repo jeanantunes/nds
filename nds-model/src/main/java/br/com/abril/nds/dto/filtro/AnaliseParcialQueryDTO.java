@@ -11,7 +11,8 @@ public class AnaliseParcialQueryDTO {
 	private String elemento;
 	private Long faixaDe;
 	private Long faixaAte;
-
+	private String numeroCotaStr;
+	
 	public long getEstudoId() {
 		return estudoId;
 	}
@@ -148,4 +149,14 @@ public class AnaliseParcialQueryDTO {
 	public void setFaixaAte(Long faixaAte) {
 	    this.faixaAte = faixaAte;
 	}
+
+	public String getNumeroCotaStr() {
+		return numeroCotaStr;
+	}
+
+	public void setNumeroCotaStr(String numeroCotaStr) {
+		this.numeroCotaStr = numeroCotaStr;
+	}
+	
+	
 }

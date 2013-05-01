@@ -11,6 +11,8 @@ function mostraDados(){
 function escondeDados(){
 	$('.detalhesDados').hide();
 	}
+	
+
 </script>
    
 
@@ -240,7 +242,7 @@ function escondeDados(){
 		</a>
 	</span>
     <span class="bt_novos">
-    	<a href="javascript:;" onclick="">
+    	<a href="javascript:;" onclick="$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));selectTabTitle('Histograma Pré Análise');">
     		<img src="${pageContext.request.contextPath}/images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />
     		Voltar
     	</a>

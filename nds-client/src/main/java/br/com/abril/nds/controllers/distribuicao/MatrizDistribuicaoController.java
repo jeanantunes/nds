@@ -124,6 +124,12 @@ public class MatrizDistribuicaoController extends BaseController {
     public void carregarProdutoEdicaoPorEstudo(BigInteger estudo) {
 
 	ProdutoDistribuicaoVO produtoDistribuicaoVO = matrizDistribuicaoService.obterProdutoDistribuicaoPorEstudo(estudo);
+	
+	if (produtoDistribuicaoVO == null) {
+		
+		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Estudo: ["+estudo+"] não encontrado."));
+	}
+	
 	result.use(Results.json()).from(produtoDistribuicaoVO, "result").recursive().serialize();
     }
 
