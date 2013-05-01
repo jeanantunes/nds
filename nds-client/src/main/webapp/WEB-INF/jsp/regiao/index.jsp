@@ -61,14 +61,6 @@ function removeProdutoEscohido(idx){
 
 		<div class="container">
 		
-	<!-- 
-	<form action="/produto" id="excluir_form">
-	<div id="dialog-excluir " title="Excluir Região">
-		<p>Confirma a exclusão desta Região?</p>
-	</div>
-	</form>
-	 -->
-	
 	<form action="/produto" id="excluir_form">
 	<div id="dialog-confirmacao" title="Inserir cota" style="display: none;">
 		<p>Confirma a inserção destas cotas na região?</p>
@@ -120,12 +112,6 @@ function removeProdutoEscohido(idx){
 		
 	</div>
 
-	<!-- 
-	<div id="dialog-detalhes" title="Visualizando Produto">
-		<img src="../capas/revista-nautica-11.jpg" width="235" height="314" />
-	</div>
-	 -->
-	
 	<!-- ADD POR N-MAIORES, ADD PRODUTOS -->
 	
 	<div id="dialog-addNMaiores" title="Adicionar Produtos"
@@ -154,11 +140,6 @@ function removeProdutoEscohido(idx){
                 			</select>
                 		</td>
 					<td width="106"><span class="bt_pesquisar"><a href="javascript:;" onclick="regiaoController.filtroNMaiores();">Pesquisar</a></span></td>					
-					<!-- 
-					<td width="31">
-						<span title="Pesquisar Produto" class="classPesquisar"><a href="javascript:;" onclick="regiaoController.filtroNMaiores();">Pesquisar</a> </span>
-					</td>
-					 -->
 				</tr>
 			</table>
 		</fieldset>
@@ -242,13 +223,13 @@ function removeProdutoEscohido(idx){
 					<tr>
 						<td width="86">Faixa de CEP:</td>
 						<td width="133">
-							<input type="text" name="textfield" id="cepInicialPart1" size="5" maxlength="5" style="width: 50px;" /> 
-							<input type="text" name="textfield3" id="cepInicialPart2" size="3" maxlength="3" style="width: 30px;" />
+							<input type="text" name="textfield" id="cepInicialPart1" onkeydown='onlyNumeric(event);' size="5" maxlength="5" style="width: 50px;" /> 
+							<input type="text" name="textfield3" id="cepInicialPart2" onkeydown='onlyNumeric(event);' size="3" maxlength="3" style="width: 30px;" />
 						</td>
 						<td width="26">Até:</td>
 						<td width="186">
-							<input type="text" name="textfield4" id="cepFinalPart1" size="5" maxlength="5" style="width: 50px;" /> 
-							<input type="text" name="textfield4" id="cepFinalPart2" size="3" maxlength="3" style="width: 30px;" /></td>
+							<input type="text" name="textfield4" id="cepFinalPart1" onkeydown='onlyNumeric(event);' size="5" maxlength="5" style="width: 50px;" /> 
+							<input type="text" name="textfield4" id="cepFinalPart2" onkeydown='onlyNumeric(event);' size="3" maxlength="3" style="width: 30px;" /></td>
 						<td width="87">
 							<span class="bt_pesquisar">
 								<a href="javascript:;" onclick="regiaoController.mostrarPorCep();">Pesquisar</a>
@@ -266,10 +247,6 @@ function removeProdutoEscohido(idx){
 						<td width="51">Segmento:</td>
 						<td width="205">
 													
-							<!-- 
-							onchange="$('.grids').toggle(); regiaoController.carregarSegmento()">
-							 -->
-													
 							<select name="comboSegmento" id="comboSegmento" style="width: 180px;">
 									<option option selected="selected">Selecione...</option>
 										<c:forEach items="${listaSegmento}" var="segmento">
@@ -280,7 +257,7 @@ function removeProdutoEscohido(idx){
 							
 						</td>
 						<td width="92">Qtde de Cotas:</td>
-						<td width="83"><input type="text" name="qtdCotas"
+						<td width="83"><input type="text" onkeydown='onlyNumeric(event);' name="qtdCotas"
 							id="qtdCotas" style="width: 80px;" />
 						</td>
 						<td width="87"><span class="bt_pesquisar"><a
@@ -291,8 +268,6 @@ function removeProdutoEscohido(idx){
 				</table>
 			</div>
 		</fieldset>
-
-		<!-- <br clear="all" /> -->
 
 		<!-- REGIAO AUTOMÁTICA - POR CEP - GRID -->
 
@@ -310,11 +285,6 @@ function removeProdutoEscohido(idx){
 					<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" />Incluir</a> 
 				</span>
 				
-				<!-- 
-				<span class="bt_novos"><a href="javascript:;" >
-					<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" hspace="5" border="0" />Cancelar</a> 
-				</span>
-				 -->
 		</fieldset>
 
 		<!-- REGIAO AUTOMÁTICA - POR N-MAIORES -->
@@ -329,7 +299,8 @@ function removeProdutoEscohido(idx){
 					src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0" />Incluir</a> </span> 
 				<span style="float: right; margin-top: 5px; margin-right: 50px;">
 					Qtde de Cotas: &nbsp;&nbsp; 
-					<input name="qtdCotasRanking" id="qtdCotasRanking" type="text" style="width: 60px;" /> 
+					<input name="qtdCotasRanking" id="qtdCotasRanking" type="text" onkeydown='onlyNumeric(event);' style="width: 60px;" /> 
+						
 						<a href="javascript:;" onclick="regiaoController.validarDadosParaRanking();">
 						<img src="${pageContext.request.contextPath}/images/ico_check.gif" border="0" /> 
 						</a> 
@@ -408,7 +379,6 @@ function removeProdutoEscohido(idx){
 		<fieldset style="width: 600px !important;">
 			<legend>Regiões Cadastradas</legend>
 			<table class="regioesCadastradasGrid">
-			<!-- <span class="bt_novos"><a href="javascript:;" onclick="addNovaRegiao();"><img src="../images/ico_add.gif" hspace="5" border="0" />Nova Região</a></span>-->
 			</table>
 		</fieldset>
 	</div>
@@ -438,37 +408,6 @@ function removeProdutoEscohido(idx){
 			<table width="500" border="0" cellpadding="2" cellspacing="1" class="filtro" id="idCotas"></table>
 		<div class="linha_separa_fields">&nbsp;</div>
 	</form>
-
-		<!-- 
-		<fieldset>
-			<legend> Dados </legend>
-			<table width="270" border="0" cellspacing="2" cellpadding="2">
-				<tr>
-					<td width="44"> <b>Tipo PDV: </b></b></td>
-					
-					<td width="44"><b>Status: </b></td>
-					
-				</tr>
-				<tr>
-					<td width="44"><b>Bairro: </b></td>
-					
-					<td width="44"><b>Cidade: </b></td>
-				</tr>
-				
-				<tr>
-					<td width="44"><b>Faturamento:  </b></td>
-					
-					<td width="44"><b>Usário: </b></td>
-				</tr>
-				
-				<tr>
-					<td width="44"><b>Data: </b></td>
-					
-					<td width="44"><b>Hora: </b></td>
-				</tr>
-			</table>
-		</fieldset>
-		 -->
 	</div>
 
 	<!-- EXCLUIR REGIAO -->
@@ -484,17 +423,6 @@ function removeProdutoEscohido(idx){
 	<div id="dialog-alterarRegiao" title="Alterar Região" style="display:none;">
 		<p>Confirma a alteração desta Região?</p>
 	</div>
-			<!-- 
-			<div id="effect" style="padding: 0 .7em;"
-				class="ui-state-highlight ui-corner-all">
-				<p>
-					<span style="float: left; margin-right: .3em;"
-						class="ui-icon ui-icon-info">
-					</span> 
-						<b>Região < evento > com < status >.</b>
-				</p>
-			</div>
-			 -->
 			
 	<!-- EDITAR REGIAO -->
 
@@ -556,8 +484,6 @@ function removeProdutoEscohido(idx){
 						</a> 
 					</span>
 
-					<!--<span class="bt_novos"><a href="javascript:;" onclick="addCotas();"><img src="../images/ico_add.gif" alt="Adicionar Cotas" hspace="5" border="0" />Adicionar Cotas</a></span>-->
-					
 					<span class="bt_novos" title="Região Automática">
 						<a href="javascript:;" onclick="regiaoController.addCotasRegAutomatica();">
 							<img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0" />
