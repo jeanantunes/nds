@@ -5,7 +5,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/histogramaVendas.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/analiseHistograma.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
-
+<script type="text/javascript" src="scripts/flexGridService.js"></script>
 
 <script language="javascript" type="text/javascript">
 

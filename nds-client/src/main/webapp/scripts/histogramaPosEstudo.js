@@ -9,7 +9,7 @@ var histogramaPosEstudoController = $.extend(true, {
 	matrizDistribuicaoController : null,
 	
 	createInput : function createInput(id, value){
-		return '<input type="text" onkeydown="histogramaPosEstudoController.alterarFaixaAte(' + id + ', event);" value=' + value + ' />';
+		return '<input type="text" id="input' + id + '" onkeydown="histogramaPosEstudoController.alterarFaixaAte(' + id + ', event);" value=' + value + ' />';
 	},
 	
 	createImgExcluir : function createImgExcluir(rowId){
@@ -128,8 +128,8 @@ var histogramaPosEstudoController = $.extend(true, {
 							newRow = {
 								id : rowId,
 								cell : {
-									faixaReparteDe : replaceAll(row.cell.faixaReparte.split("a")[0].replace(" ", ""),".","") + " a",
-									faixaReparteAte : createInput(rowId, replaceAll(row.cell.faixaReparte.split("a")[1].replace(" ", ""),".","")),
+									faixaReparteDe : replaceAll($(row.cell.faixaReparte).text().split("a")[0].replace(" ", ""),".","") + " a",
+									faixaReparteAte : createInput(rowId, replaceAll($(row.cell.faixaReparte).text().split("a")[1].replace(" ", ""),".","")),
 									acao : createImgExcluir(rowId)
 								}
 							};
@@ -513,7 +513,9 @@ var histogramaPosEstudoController = $.extend(true, {
 	},
 	
 	alterarFaixaAte : function (rowId, event){
-		var	faixaReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid;
+		var	faixaReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid,
+			selectedRow = {},
+			nextRow = {};
 		
 		if (event.keyIdentifier == "Enter") {
 			event.cancelBubble = true;
@@ -563,13 +565,19 @@ var histogramaPosEstudoController = $.extend(true, {
 			histogramaPosEstudoController.organizarRowId(faixaReparteGrid);
 			
 			faixaReparteGrid.addTableModel(faixaReparteGrid.tableModel);
+			
+			$('#input'+ (selectedRow.id + 1)).focus();
 		}
 	},
 	
 	excluirFaixa : function (rowId, event){
-		var	faixaReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid;
+		var	faixaReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid,
 			createInput = histogramaPosEstudoController.createInput,
-			createImgExcluir = histogramaPosEstudoController.createImgExcluir;
+			createImgExcluir = histogramaPosEstudoController.createImgExcluir,
+			selectedRow = {},
+			previousRow = {},
+			nextRow = {};
+			
 
 		if (faixaReparteGrid.tableModel.rows.length > 1) {
 				
