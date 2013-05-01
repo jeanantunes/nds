@@ -700,10 +700,6 @@ public class RegiaoController extends BaseController {
 
 		List<RegiaoCotaDTO> listaCotasRegiaoDTO = regiaoService.carregarCotasRegiao(filtro);
 
-		if(listaCotasRegiaoDTO.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING,"A pesquisa realizada não obteve resultado.");
-		}
-
 		FileExporter.to("Cotas_Cadastradas_Na_Região", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, null, 
 				listaCotasRegiaoDTO, RegiaoCotaDTO.class, this.httpResponse);
 

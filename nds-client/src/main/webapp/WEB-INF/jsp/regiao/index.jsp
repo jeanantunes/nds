@@ -538,7 +538,7 @@ function removeProdutoEscohido(idx){
 					
 						<!-- BOTÕES GRID PRINCIPAL -->
 						
-					<span class="bt_novos" title="Arquivo">
+					<span class="bt_novos" title="Arquivo" id="spanArquivoRegiaoCadastradas">
 						<a href="${pageContext.request.contextPath}/distribuicao/regiao/exportar?fileType=XLS">
 							<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 							
@@ -547,7 +547,7 @@ function removeProdutoEscohido(idx){
 						</a> 
 					</span> 
 					
-					<span class="bt_novos" title="Imprimir">
+					<span class="bt_novos" title="Imprimir" id="spanImprimirRegiaoCadastradas">
 						<a href="${pageContext.request.contextPath}/distribuicao/regiao/exportar?fileType=PDF">
 							<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
 							

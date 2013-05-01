@@ -395,14 +395,12 @@ var regiaoController = $.extend(true, {
 	
 	// PreProcess - .cotasRegiaoGrid
 	executarPreProcessamentoCotasDaRegiao : function (resultado){
-		if (resultado.mensagens) {
-
-			exibirMensagem(
-				resultado.mensagens.tipoMensagem, 
-				resultado.mensagens.listaMensagens
-			);
-			
-			return resultado;
+		if(!resultado.rows.length){
+			$('#spanArquivoRegiaoCadastradas').hide();
+			$('#spanImprimirRegiaoCadastradas').hide();			
+		}else {
+			$('#spanArquivoRegiaoCadastradas').show();
+			$('#spanImprimirRegiaoCadastradas').show();
 		}
 		
 		$.each(resultado.rows, function(index, row) {
