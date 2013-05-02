@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.SlipDTO;
 import br.com.abril.nds.enums.TipoDocumentoConferenciaEncalhe;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
@@ -274,6 +275,8 @@ public interface ConferenciaEncalheService {
 	public SlipDTO getSlipDTO();
 	
 	public Map<String, Object> getParametersSlip();
+	
+	public Long[] obterIdsFornecedorDoProduto(ProdutoEdicao produtoEdicao);
 	
 	public void setParamsSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip);
 }

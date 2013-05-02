@@ -11,6 +11,7 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
@@ -104,5 +105,14 @@ public interface DistribuidorService {
 	
 	boolean utilizaControleAprovacaoFaltaSobra();
 	
-	List<Date> obterDatasAposFinalizacaoPrazoRecolhimento();
+	List<Date> obterDatasAposFinalizacaoPrazoRecolhimento(Date dataRecolhimento, Long ...idsFornecedor);
+	
+	/**
+	 * Obtem o dia de recolhimento do distribuidor para a data de Conferencia divergente da data de Recolhimento prevista
+	 * @param dataConferencia
+	 * @param dataRecolhimento
+	 * @param produtoEdicao
+	 * @return Integer
+	 */
+	Integer obterDiaDeRecolhimentoDaData(Date dataConferencia, Date dataRecolhimento, ProdutoEdicao produtoEdicao);
 }
