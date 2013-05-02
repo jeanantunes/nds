@@ -677,7 +677,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		.addScalar("fornecedor")
 		.addScalar("valor")
 		.addScalar("valorComDesconto")
-		.addScalar("recolhimento")
 		.addScalar("indPossuiObservacaoConferenciaEncalhe");
 		
 		sqlquery.setResultTransformer(new AliasToBeanResultTransformer(ConsultaEncalheDTO.class));

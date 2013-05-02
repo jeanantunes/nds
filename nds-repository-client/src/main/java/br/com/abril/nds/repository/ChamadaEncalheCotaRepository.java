@@ -31,7 +31,6 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	 * @param cotaId
 	 * @param dataOperacaoDe
 	 * @param dataOperacaoAte
-	 * @param conferido
 	 * @param postergado
 	 * 
 	 * @return BigDecimal
@@ -40,7 +39,7 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 			Long cotaId, 
 			Date dataOperacaoDe,
 			Date dataOperacaoAte,
-			Boolean conferido, Boolean postergado);
+			Boolean postergado);
 	
 	
 	/**

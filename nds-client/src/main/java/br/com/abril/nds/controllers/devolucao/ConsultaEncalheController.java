@@ -541,10 +541,22 @@ public class ConsultaEncalheController extends BaseController {
 			dataMovimento		= (consultaEncalheDTO.getDataMovimento() != null) ? DateUtil.formatarDataPTBR(consultaEncalheDTO.getDataMovimento()) : "" ;
 			
 			
-			if(consultaEncalheDTO.getRecolhimento()<=0) {
-				recolhimento = DateUtil.formatarDataPTBR(consultaEncalheDTO.getDataDoRecolhimentoDistribuidor());
+			if(consultaEncalheDTO.getRecolhimento() == null || consultaEncalheDTO.getRecolhimento()<=0) {
+				
+				if(consultaEncalheDTO.getDataDoRecolhimentoDistribuidor()!=null) {
+					
+					recolhimento = DateUtil.formatarDataPTBR(consultaEncalheDTO.getDataDoRecolhimentoDistribuidor());
+					
+				} else {
+					
+					recolhimento = "";
+					
+				}
+			
 			} else {
-				recolhimento = (consultaEncalheDTO.getRecolhimento()!=null) ? (consultaEncalheDTO.getRecolhimento().toString() + SUFIXO_DIA) : "" ;
+				
+				recolhimento = consultaEncalheDTO.getRecolhimento().toString() + SUFIXO_DIA;
+				
 			}
 
 			
