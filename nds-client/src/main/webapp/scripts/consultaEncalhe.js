@@ -309,7 +309,7 @@ var ConsultaEncalhe = $.extend(true, {
 				display : 'Recolhimento',
 				name : 'recolhimento',
 				width : 80,
-				sortable : true,
+				sortable : false,
 				align : 'center'
 			}, {
 				display : 'Detalhes',
