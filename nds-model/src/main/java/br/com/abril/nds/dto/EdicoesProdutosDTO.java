@@ -28,6 +28,7 @@ public class EdicoesProdutosDTO implements Serializable {
 	private String descricaoTipoClassificacao;
 	private String codigoProduto;
 	private String descricaoTipoSegmento;
+	private Long produtoEdicaoId;
 	
 	/* Campos para grid */
 	private String dataLancamento;
@@ -128,8 +129,10 @@ public class EdicoesProdutosDTO implements Serializable {
 	public void setDescricaoTipoSegmento(String descricaoTipoSegmento) {
 		this.descricaoTipoSegmento = descricaoTipoSegmento;
 	}
-	
-	
-	
-	
+	public Long getProdutoEdicaoId() {
+	    return produtoEdicaoId;
+	}
+	public void setProdutoEdicaoId(Long produtoEdicaoId) {
+	    this.produtoEdicaoId = produtoEdicaoId;
+	}	
 }
