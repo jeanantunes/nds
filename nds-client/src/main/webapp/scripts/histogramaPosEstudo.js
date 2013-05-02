@@ -1,6 +1,7 @@
 var histogramaPosEstudoController = $.extend(true, {
 	MIN_FAIXA : 0, 
 	MAX_FAIXA : 99999999,
+	modoAnalise : 'NORMAL',
 	fieldSetValues : {},
 	matrizSelecionado : {},
 	analiseGridRowConsolidada : {},
@@ -52,7 +53,8 @@ var histogramaPosEstudoController = $.extend(true, {
 		// Analise do estudo - EMS 2031
 		$('#analiseEstudo').click(function() {
 			
-			var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo;
+			var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo +
+			    '&modoAnalise='+ histogramaPosEstudoController.modoAnalise;
 			$('#workspace').tabs('addTab', 'Análise de Estudos', urlAnalise);
 			
 			/*

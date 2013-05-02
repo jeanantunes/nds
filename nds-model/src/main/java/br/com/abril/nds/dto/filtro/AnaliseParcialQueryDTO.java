@@ -1,5 +1,9 @@
 package br.com.abril.nds.dto.filtro;
 
+import java.util.List;
+
+import br.com.abril.nds.dto.EdicoesProdutosDTO;
+
 public class AnaliseParcialQueryDTO {
 
 	private long estudoId;
@@ -11,6 +15,22 @@ public class AnaliseParcialQueryDTO {
 	private String elemento;
 	private Long faixaDe;
 	private Long faixaAte;
+	private String modoAnalise;
+	private String codigoProduto;
+	private Long numeroEdicao;
+	private List<EdicoesProdutosDTO> edicoesBase;
+
+	public List<EdicoesProdutosDTO> getEdicoesBase() {
+	    return edicoesBase;
+	}
+
+	public void setEdicoesBase(List<EdicoesProdutosDTO> edicoesBase) {
+	    this.edicoesBase = edicoesBase;
+	}
+
+	public String getElemento() {
+	    return elemento;
+	}
 
 	public long getEstudoId() {
 		return estudoId;
@@ -118,7 +138,7 @@ public class AnaliseParcialQueryDTO {
 	}
 
 	public boolean elementoIsAreaDeInfluencia() {
-		return getTipoElemento().equals("area_de_influencia");
+		return getTipoElemento().equals("area_influencia");
 	}
 
 	public boolean elementoIsDistrito() {
@@ -147,5 +167,29 @@ public class AnaliseParcialQueryDTO {
 
 	public void setFaixaAte(Long faixaAte) {
 	    this.faixaAte = faixaAte;
+	}
+
+	public String getModoAnalise() {
+	    return modoAnalise;
+	}
+
+	public void setModoAnalise(String modoAnalise) {
+	    this.modoAnalise = modoAnalise;
+	}
+
+	public String getCodigoProduto() {
+	    return codigoProduto;
+	}
+
+	public void setCodigoProduto(String codigoProduto) {
+	    this.codigoProduto = codigoProduto;
+	}
+
+	public Long getNumeroEdicao() {
+	    return numeroEdicao;
+	}
+
+	public void setNumeroEdicao(Long numeroEdicao) {
+	    this.numeroEdicao = numeroEdicao;
 	}
 }

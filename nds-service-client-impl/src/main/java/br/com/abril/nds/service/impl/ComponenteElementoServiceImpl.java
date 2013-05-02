@@ -13,24 +13,23 @@ import br.com.abril.nds.service.ComponenteElementoService;
 @Service
 public class ComponenteElementoServiceImpl implements ComponenteElementoService {
 
-	@Autowired
-	private ComponenteElementoRepository componenteElementoRepository;
+    @Autowired
+    private ComponenteElementoRepository componenteElementoRepository;
 
-	@Override
-	public List<ComponenteElementoDTO> buscaElementos(String tipo) {
-		switch (tipo) {
-		case "null": return new  ArrayList<>();
-		case "tipo_ponto_venda": return componenteElementoRepository.buscaTiposDePontoDeVena();
-		case "gerador_de_fluxo": return componenteElementoRepository.buscaGeradorDeFluxo();
-		case "bairro": return componenteElementoRepository.buscaBairros();
-		case "regiao": return componenteElementoRepository.buscaRegioes();
-		case "cotas_a_vista":  return componenteElementoRepository.buscaCotasAVista();
-		case "cotas_novas": return componenteElementoRepository.buscaCotasNovas();
-		case "area_influencia": return componenteElementoRepository.buscaAreaDeInfluencia();
-		case "distrito": return componenteElementoRepository.buscaDistritos();
-		}
-		
-		return null;
-		
+    @Override
+    public List<ComponenteElementoDTO> buscaElementos(String tipo, Long estudo) {
+	switch (tipo) {
+    	case "null":
+    	    return new ArrayList<>();
+    	case "tipo_ponto_venda": return componenteElementoRepository.buscaTiposDePontoDeVena(estudo);
+    	case "gerador_de_fluxo": return componenteElementoRepository.buscaGeradorDeFluxo(estudo);
+    	case "bairro": return componenteElementoRepository.buscaBairros(estudo);
+    	case "regiao": return componenteElementoRepository.buscaRegioes(estudo);
+    	case "cotas_a_vista": return componenteElementoRepository.buscaCotasAVista();
+    	case "cotas_novas": return componenteElementoRepository.buscaCotasNovas();
+    	case "area_influencia": return componenteElementoRepository.buscaAreaDeInfluencia(estudo);
+    	case "distrito": return componenteElementoRepository.buscaDistritos(estudo);
 	}
+	return null;
+    }
 }
