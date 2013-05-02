@@ -493,7 +493,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return false;
 	}
 	
-	private Long[] obterIdsFornecedorDoProduto(ProdutoEdicao produtoEdicao){
+	public Long[] obterIdsFornecedorDoProduto(ProdutoEdicao produtoEdicao){
 		
 		Set<Fornecedor> fornecedores = produtoEdicao.getProduto().getFornecedores();
 		
