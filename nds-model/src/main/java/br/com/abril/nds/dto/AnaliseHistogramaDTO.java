@@ -3,6 +3,7 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -46,7 +47,7 @@ public class AnaliseHistogramaDTO implements Serializable {
 	private BigInteger qtdeCotas=BigInteger.ZERO;
 	
 	@Export(label="Cotas Esmag.", alignment=Alignment.CENTER)
-	private BigDecimal cotasEsmagadas=BigDecimal.ZERO;
+	private BigInteger cotasEsmagadas=BigInteger.ZERO;
 	
 	@Export(label="Vda Esmag.", alignment=Alignment.CENTER)
 	private BigDecimal vendaEsmagadas=BigDecimal.ZERO;
@@ -59,8 +60,9 @@ public class AnaliseHistogramaDTO implements Serializable {
 	
 	private Long qtdeTotalCotasAtivas=0l;
 	
-	private String idCotaStr;
-	private String idCotasEsmagadas;
+	private String idCotaStr = "";
+	private String idCotasEsmagadas = "";
+	private int reparteTotalDistribuidor = 0;
 	
 	public String getFaixaVenda() {
 		return faixaVenda;
@@ -116,10 +118,10 @@ public class AnaliseHistogramaDTO implements Serializable {
 	public void setQtdeCotas(BigInteger qtdeCotas) {
 		this.qtdeCotas = qtdeCotas;
 	}
-	public BigDecimal getCotasEsmagadas() {
+	public BigInteger getCotasEsmagadas() {
 		return cotasEsmagadas;
 	}
-	public void setCotasEsmagadas(BigDecimal cotasEsmagadas) {
+	public void setCotasEsmagadas(BigInteger cotasEsmagadas) {
 		this.cotasEsmagadas = cotasEsmagadas;
 	}
 	public BigDecimal getVendaEsmagadas() {
@@ -142,7 +144,6 @@ public class AnaliseHistogramaDTO implements Serializable {
 		this.qtdeCotasAtivas = qtdeCotasAtivas;
 	}
 	
-	
 	public BigDecimal getQtdeCotasSemVenda() {
 		return qtdeCotasSemVenda;
 	}
@@ -157,18 +158,28 @@ public class AnaliseHistogramaDTO implements Serializable {
 		this.qtdeTotalCotasAtivas = qtdeTotalCotasAtivas;
 	}
 	
-	public void executeScaleValues(){
+	public void executeScaleValues(int qtdEdicoes){
 		
-		repTotal = (repTotal==null)?BigDecimal.ZERO: repTotal.setScale(2,BigDecimal.ROUND_FLOOR);
-		repMedio = (repMedio==null)?BigDecimal.ZERO: repMedio.setScale(2,BigDecimal.ROUND_FLOOR);
-		vdaMedio = (vdaMedio==null)?BigDecimal.ZERO: vdaMedio.setScale(2,BigDecimal.ROUND_FLOOR);
-		vdaTotal = (vdaTotal==null)?BigDecimal.ZERO: vdaTotal.setScale(2,BigDecimal.ROUND_FLOOR);
+		repTotal = (repTotal==null)?BigDecimal.ZERO: repTotal.setScale(2,BigDecimal.ROUND_FLOOR).divide(new BigDecimal(qtdEdicoes));
+		repMedio = (repMedio==null)?BigDecimal.ZERO: repMedio.setScale(2,BigDecimal.ROUND_FLOOR).divide(new BigDecimal(qtdEdicoes));
+		vdaMedio = (vdaMedio==null)?BigDecimal.ZERO: vdaMedio.setScale(2,BigDecimal.ROUND_FLOOR).divide(new BigDecimal(qtdEdicoes));
+		vdaTotal = (vdaTotal==null)?BigDecimal.ZERO: vdaTotal.setScale(2,BigDecimal.ROUND_FLOOR).divide(new BigDecimal(qtdEdicoes));
 		percVenda =	(percVenda==null)?BigDecimal.ZERO: percVenda.setScale(2,BigDecimal.ROUND_FLOOR);
-		encalheMedio = (encalheMedio==null)?BigDecimal.ZERO: encalheMedio.setScale(2,BigDecimal.ROUND_FLOOR);
+		
+		BigDecimal encalhe = repTotal.subtract(vdaTotal);
+		int qtdCotas = Integer.parseInt(this.qtdeCotas.toString());
+		BigDecimal qtdCotasDecimal = new BigDecimal(qtdCotas).setScale(2,BigDecimal.ROUND_FLOOR);
+		BigDecimal encalheMedioCalc = null;
+		
+		if (qtdCotas != 0) {
+			encalheMedioCalc = encalhe.divide(qtdCotasDecimal,2, RoundingMode.HALF_UP);
+		}
+		
+		encalheMedio = (encalheMedioCalc==null)?BigDecimal.ZERO: encalheMedioCalc;
 		partReparte = (partReparte==null)?BigDecimal.ZERO: partReparte.setScale(2,BigDecimal.ROUND_FLOOR);
 		partVenda =	(partVenda==null)?BigDecimal.ZERO: partVenda.setScale(2,BigDecimal.ROUND_FLOOR);
-		cotasEsmagadas = (cotasEsmagadas==null)?BigDecimal.ZERO: cotasEsmagadas.setScale(2,BigDecimal.ROUND_FLOOR);
-		vendaEsmagadas = (vendaEsmagadas==null)?BigDecimal.ZERO: vendaEsmagadas.setScale(2,BigDecimal.ROUND_FLOOR);
+		cotasEsmagadas = (cotasEsmagadas==null)?BigInteger.ZERO: cotasEsmagadas;
+		vendaEsmagadas = (vendaEsmagadas==null)?BigDecimal.ZERO: vendaEsmagadas.setScale(2,BigDecimal.ROUND_FLOOR).divide(new BigDecimal(qtdEdicoes));
 		qtdeCotasAtivas = (qtdeCotasAtivas==null)?BigDecimal.ZERO: qtdeCotasAtivas.setScale(2,BigDecimal.ROUND_FLOOR);
 //		reparteDistribuido = reparteDistribuido.setScale(2,BigDecimal.ROUND_FLOOR);
 		
@@ -183,12 +194,19 @@ public class AnaliseHistogramaDTO implements Serializable {
 		return idCotaStr;
 	}
 	public void setIdCotaStr(String idCotaStr) {
-		this.idCotaStr = idCotaStr;
+		this.idCotaStr = (idCotaStr == null ? "" : idCotaStr);
 	}
 	public String getIdCotasEsmagadas() {
 		return idCotasEsmagadas;
 	}
 	public void setIdCotasEsmagadas(String idCotasEsmagadas) {
-		this.idCotasEsmagadas = idCotasEsmagadas;
+		this.idCotasEsmagadas = (idCotasEsmagadas == null ? "" : idCotasEsmagadas);
 	}
+	public int getReparteTotalDistribuidor() {
+		return reparteTotalDistribuidor;
+	}
+	public void setReparteTotalDistribuidor(int reparteTotalDistribuidor) {
+		this.reparteTotalDistribuidor = reparteTotalDistribuidor;
+	}
+	
 }

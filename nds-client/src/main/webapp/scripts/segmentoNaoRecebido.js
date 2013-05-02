@@ -389,8 +389,14 @@ var segmentoNaoRecebidoController = $.extend(true,	{
 					},
 					
 					preProcessIncluirBotaoExcluirSegmento : function(resultado) {
-
+						
 						segmentoNaoRecebidoController.messagesFeedBack(resultado);
+						
+						if(!resultado.rows.length){
+							$(".grids", segmentoNaoRecebidoController.workspace).hide();
+							
+							return;
+						}
 
 						// Adicionar a imagem para exclusão da linha
 						$.each(resultado.rows, function(index, row) {

@@ -81,7 +81,7 @@
 			            </td>
 			            <td width="105">
 			            	<span class="bt_pesquisar">
-			            		<a href="javascript:;" onclick="mostrar(); segmentoNaoRecebidoController.porSegmento();">Pesquisar</a>
+			            		<a href="javascript:;" onclick="segmentoNaoRecebidoController.porSegmento();">Pesquisar</a>
 			            	</span>
 			            </td>
 			          </tr>

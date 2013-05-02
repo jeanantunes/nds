@@ -901,6 +901,9 @@ public class CotaServiceImpl implements CotaService {
 		}
 		
 		ParametroDistribuicaoCota parametro = cota.getParametroDistribuicao();
+		if (parametro != null && parametro.getRecebeComplementar() == null) {
+			parametro.setRecebeComplementar(true);
+		}
 		
 		boolean qtdePDVAutomatico = this.distribuidorService.preenchimentoAutomaticoPDV();
 				
@@ -918,9 +921,7 @@ public class CotaServiceImpl implements CotaService {
 		}
 		
 		if (parametro == null) {
-
 			dto = this.setDistribuicaoDefault(dto);
-
 			return dto;	
 		}
 		

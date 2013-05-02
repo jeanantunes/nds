@@ -68,6 +68,8 @@ public class RegiaoRepositoryImpl extends AbstractRepositoryModel<Regiao, Long> 
 		hql.append(" LEFT JOIN ranking.tipoSegmentoProduto as segmento ");
 
 		hql.append(" WHERE segmento.id = :idSegmento ");
+		hql.append(" AND pdv.caracteristicas.pontoPrincipal = true");
+		hql.append(" order by cota.numeroCota");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		

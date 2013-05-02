@@ -10,7 +10,7 @@ var histogramaPosEstudoController = $.extend(true, {
 	matrizDistribuicaoController : null,
 	
 	createInput : function createInput(id, value){
-		return '<input type="text" onkeydown="histogramaPosEstudoController.alterarFaixaAte(' + id + ', event);" value=' + value + ' />';
+		return '<input type="text" id="input' + id + '" onkeydown="histogramaPosEstudoController.alterarFaixaAte(' + id + ', event);" value=' + value + ' />';
 	},
 	
 	createImgExcluir : function createImgExcluir(rowId){
@@ -127,11 +127,15 @@ var histogramaPosEstudoController = $.extend(true, {
 							
 							rowId = parseInt(index) + 1;
 							
+							var regx = /\s{0,}[0-9]+\s{0,}a\s{0,}[0-9]+/;
+							var faixasArr = regx.exec(row.cell.faixaReparte)[0].split("a");
+							
 							newRow = {
 								id : rowId,
 								cell : {
-									faixaReparteDe : replaceAll(row.cell.faixaReparte.split("a")[0].replace(" ", ""),".","") + " a",
-									faixaReparteAte : createInput(rowId, replaceAll(row.cell.faixaReparte.split("a")[1].replace(" ", ""),".","")),
+									faixaReparteDe : parseInt(faixasArr[0]),
+									faixaReparteAte : createInput(rowId, parseInt(faixasArr[1])),
+
 									acao : createImgExcluir(rowId)
 								}
 							};
@@ -226,15 +230,27 @@ var histogramaPosEstudoController = $.extend(true, {
 							faixaAte = row.cell.faixaReparte.split("a")[1];
 							faixaReparteFormatada = histogramaPosEstudoController.formatarMilhar(parseInt(faixaDe)) + " a " + histogramaPosEstudoController.formatarMilhar(parseInt(faixaAte));
 							
-							var elemLink = '<a href="javascript:;" onclick="histogramaPosEstudoController.abrirAnaliseFaixa('+ faixaDe +', '+ faixaAte +')">'+ faixaReparteFormatada +'</a>';
-							// adicionando a linha
-							row.cell.faixaReparte = elemLink;
+							if(parseInt(row.cell.qtdCotasFormatado)>0){
+								var elemLink = '<a href="javascript:;" onclick="histogramaPosEstudoController.abrirAnaliseFaixa('+ faixaDe +', '+ faixaAte +')">'+ faixaReparteFormatada +'</a>';
+								row.cell.faixaReparte = elemLink;
+							}
+
 							
+							
+							// adicionando a linha
 							rowConsolidado.cell.reparteTotalFormatado += parseInt(row.cell.reparteTotalFormatado || 0);
 							rowConsolidado.cell.vendaNominalFormatado += parseInt(row.cell.vendaNominalFormatado || 0);
 							rowConsolidado.cell.qtdCotasFormatado += parseInt(row.cell.qtdCotas || 0);
+
+							
 							rowConsolidado.cell.qtdCotaPossuemReparteMenorVendaFormatado += parseInt(row.cell.qtdCotaPossuemReparteMenorVendaFormatado || 0);
 							rowConsolidado.cell.qtdRecebida += parseInt(row.cell.qtdRecebida || 0);
+							
+							//gerando link do rep menor vda
+							if(parseInt(row.cell.qtdCotaPossuemReparteMenorVendaFormatado)>0){
+								row.cell.qtdCotaPossuemReparteMenorVendaFormatado=
+									"<a href='javascript:;' onclick='histogramaPosEstudoController.abrirAnaliseFaixa("+faixaDe+","+faixaAte+","+key+")'>"+row.cell.qtdCotaPossuemReparteMenorVendaFormatado+"</a>";
+							}
 						});
 						
 						reparteMedioFormatado = (rowConsolidado.cell.reparteTotalFormatado / rowConsolidado.cell.qtdCotasFormatado).toFixed(2);
@@ -429,8 +445,15 @@ var histogramaPosEstudoController = $.extend(true, {
 		};
 	},
 	
-	abrirAnaliseFaixa : function(faixaDe, faixaAte) {
+	abrirAnaliseFaixa : function(faixaDe, faixaAte,idxFaixa) {
 		var url = contextPath + '/distribuicao/analise/parcial/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo +'&faixaDe='+ faixaDe +'&faixaAte='+ faixaAte;
+		
+		if(idxFaixa!=null){
+			histogramaPosEstudo_cotasRepMenorVenda  = histogramaPosEstudoController.Grids.EstudosAnaliseGrid.tableModel.rows[parseInt(idxFaixa)].cell.numeroCotasStr;
+		}else{
+			histogramaPosEstudo_cotasRepMenorVenda="";
+		}
+		console.log(histogramaPosEstudo_cotasRepMenorVenda);
 		$('#workspace').tabs('addTab', 'Análise de Estudos', url);
 	},
 	
@@ -465,12 +488,11 @@ var histogramaPosEstudoController = $.extend(true, {
 					 $('#periodoFs').html(jsonData.periodicidadeProduto);
 					 $('#parcial').val(jsonData.parcial);
 
-					 if (jsonData.estudoLiberado) {
+					 if(jsonData.estudoLiberado)
 						 $('#estudoLiberadoFs').show();
-						 $('#estudoLiberadoFs').attr('src', "images/ico_check.gif");
-					 }else {
+					 else
 						 $('#estudoLiberadoFs').hide();
-					}
+					 
 				 }
 			 }
 		);
@@ -482,10 +504,11 @@ var histogramaPosEstudoController = $.extend(true, {
 			url = contextPath + "/distribuicao/histogramaPosEstudo/carregarDadosFieldSetResumoEstudo";
 		
 		// Primeira coluna
+		console.log(histogramaPosEstudoController.dadosResumo);
 		$('#fieldSetResumoReparteTotal').html(rowConsolidada.cell.reparteTotalFormatado);
-		$('#fieldSetResumoRepartePromocional').html(parseInt(matrizSelecionada.promo || 0));
+		$('#fieldSetResumoRepartePromocional').html(parseInt(histogramaPosEstudoController.dadosResumo.repartePromo || 0));
 		$('#fieldSetResumoReservaTecnica').html(matrizSelecionada.sobra);
-		$('#fieldSetResumoReparteDistribuida').html(matrizSelecionada.repDistrib);
+		$('#fieldSetResumoReparteDistribuida').html(histogramaPosEstudoController.dadosResumo.reparteDistribuido);
 		
 		$.postJSON(
 				url,
@@ -515,7 +538,9 @@ var histogramaPosEstudoController = $.extend(true, {
 	},
 	
 	alterarFaixaAte : function (rowId, event){
-		var	faixaReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid;
+		var	faixaReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid,
+			selectedRow = {},
+			nextRow = {};
 		
 		if (event.keyIdentifier == "Enter") {
 			event.cancelBubble = true;
@@ -565,13 +590,19 @@ var histogramaPosEstudoController = $.extend(true, {
 			histogramaPosEstudoController.organizarRowId(faixaReparteGrid);
 			
 			faixaReparteGrid.addTableModel(faixaReparteGrid.tableModel);
+			
+			$('#input'+ (selectedRow.id + 1)).focus();
 		}
 	},
 	
 	excluirFaixa : function (rowId, event){
-		var	faixaReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid;
+		var	faixaReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid,
 			createInput = histogramaPosEstudoController.createInput,
-			createImgExcluir = histogramaPosEstudoController.createImgExcluir;
+			createImgExcluir = histogramaPosEstudoController.createImgExcluir,
+			selectedRow = {},
+			previousRow = {},
+			nextRow = {};
+			
 
 		if (faixaReparteGrid.tableModel.rows.length > 1) {
 				

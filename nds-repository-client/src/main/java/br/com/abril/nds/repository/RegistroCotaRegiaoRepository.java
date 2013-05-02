@@ -7,6 +7,7 @@ import br.com.abril.nds.dto.RegiaoNMaiores_CotaDTO;
 import br.com.abril.nds.dto.RegiaoNMaiores_ProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotasRegiaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroRegiaoNMaioresProdDTO;
+import br.com.abril.nds.model.distribuicao.Regiao;
 import br.com.abril.nds.model.distribuicao.RegistroCotaRegiao;
 
 public interface RegistroCotaRegiaoRepository extends Repository<RegistroCotaRegiao, Long> {
@@ -24,5 +25,9 @@ public interface RegistroCotaRegiaoRepository extends Repository<RegistroCotaReg
 	List<String> idProdEdicaoParaMontagemDoRanking (String codigoProduto, String numeroEdicao);
 	
 	List<RegiaoNMaiores_CotaDTO> filtroRanking (Integer numCota);
+
+	void removerRegistroCotaReagiaPorRegiao(Regiao regiao);
+
+	List<RegistroCotaRegiao> obterRegistroCotaReagiaPorRegiao(Regiao regiao);
 	
 }

@@ -1043,47 +1043,31 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		List<AnaliseHistogramaDTO> list = new ArrayList<AnaliseHistogramaDTO>();
 		
-		AnaliseHistogramaDTO totalGeralDTO = new AnaliseHistogramaDTO();
-		totalGeralDTO.setFaixaVenda("Total:");
+		String[] newFaixasVenda = new String[faixasVenda.length + 1];
 		
 		for (int i = 0; i < faixasVenda.length; i++) {
-			String[] faixa = faixasVenda[i].split("-");
+			newFaixasVenda[i] = faixasVenda[i];
+		}
+		
+		newFaixasVenda[faixasVenda.length] = "0-999999";
+		
+		for (int i = 0; i < newFaixasVenda.length; i++) {
+			String[] faixa = newFaixasVenda[i].split("-");
 			AnaliseHistogramaDTO obj = produtoEdicaoRepository.obterBaseEstudoHistogramaPorFaixaVenda(filtro, codigoProduto, Integer.parseInt(faixa[0]), Integer.parseInt(faixa[1]), edicoes);
-			obj.executeScaleValues();
+			obj.executeScaleValues(edicoes.length);
 			
-			totalGeralDTO.setRepTotal(totalGeralDTO.getRepTotal().add(obj.getRepTotal()).setScale(2,BigDecimal.ROUND_FLOOR));
-			totalGeralDTO.setRepMedio(totalGeralDTO.getRepMedio().add(obj.getRepMedio()).setScale(2,BigDecimal.ROUND_FLOOR));
-			totalGeralDTO.setVdaTotal(totalGeralDTO.getVdaTotal().add(obj.getVdaTotal()).setScale(2,BigDecimal.ROUND_FLOOR));
-			totalGeralDTO.setVdaMedio(totalGeralDTO.getVdaMedio().add(obj.getVdaMedio()).setScale(2,BigDecimal.ROUND_FLOOR));
-			totalGeralDTO.setPercVenda(totalGeralDTO.getPercVenda().add(obj.getPercVenda()).setScale(2,BigDecimal.ROUND_FLOOR));
-			totalGeralDTO.setEncalheMedio(totalGeralDTO.getEncalheMedio().add(obj.getEncalheMedio()).setScale(2,BigDecimal.ROUND_FLOOR));
-			totalGeralDTO.setPartReparte(totalGeralDTO.getPartReparte().add(obj.getPartReparte()).setScale(2,BigDecimal.ROUND_FLOOR));
-			totalGeralDTO.setPartVenda(totalGeralDTO.getPartVenda().add(obj.getPartVenda()).setScale(2,BigDecimal.ROUND_FLOOR));
-			totalGeralDTO.setQtdeCotas(totalGeralDTO.getQtdeCotas().add(obj.getQtdeCotas()));
-			
-			if(obj.getCotasEsmagadas()!=null){
-				totalGeralDTO.setCotasEsmagadas(totalGeralDTO.getCotasEsmagadas().add(obj.getCotasEsmagadas()).setScale(2,BigDecimal.ROUND_FLOOR));
+			if (i == newFaixasVenda.length - 1) {
+				obj.setFaixaVenda("Total:");
+				
+				obj.setQtdeTotalCotasAtivas(cotaRepository.obterQuantidadeCotas(SituacaoCadastro.ATIVO));
+				obj.setReparteDistribuido(this.movimentoEstoqueService.obterReparteDistribuidoProduto(codigoProduto));
 			}
-			
-			if(obj.getQtdeCotasSemVenda()!=null){
-				totalGeralDTO.setQtdeCotasSemVenda((totalGeralDTO.getQtdeCotasSemVenda().add(obj.getQtdeCotasSemVenda()).setScale(2,BigDecimal.ROUND_FLOOR)));
-			}
-			totalGeralDTO.setVendaEsmagadas((totalGeralDTO.getVendaEsmagadas().add(obj.getVendaEsmagadas()).setScale(2,BigDecimal.ROUND_FLOOR)));
-//			totalGeralDTO.setReparteDistribuido((totalGeralDTO.getReparteDistribuido().add(obj.getReparteDistribuido()).setScale(2,BigDecimal.ROUND_FLOOR)));
-			
-			totalGeralDTO.setQtdeCotasAtivas(totalGeralDTO.getQtdeCotasAtivas().add(obj.getQtdeCotasAtivas()));
-			
 			
 			if(obj!=null){
 				list.add(obj);
 			}
 		}
 		
-		if(list!=null && !list.isEmpty()){
-			totalGeralDTO.setQtdeTotalCotasAtivas((cotaRepository.obterQuantidadeCotas(SituacaoCadastro.ATIVO)));
-			totalGeralDTO.setReparteDistribuido(this.movimentoEstoqueService.obterReparteDistribuidoProduto(codigoProduto));
-		}
-		list.add(totalGeralDTO);  
 		return list;
 	}
 
