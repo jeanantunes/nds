@@ -3171,7 +3171,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 	@Transactional
 	public void setParamsSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip) {
-		                      
+		
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = controleConferenciaEncalheCotaRepository.buscarPorId(idControleConferenciaEncalheCota);
 		
 		if(incluirNumeroSlip || controleConferenciaEncalheCota.getNumeroSlip() == null) {
@@ -3225,10 +3225,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 			}
 			
-			dia = this.obterDiasEntreDatas(produtoEdicaoSlip) + 1;
+			ProdutoEdicao produtoEdicao =
+				this.produtoEdicaoRepository.buscarPorId(produtoEdicaoSlip.getIdProdutoEdicao());
+			
+			dia = this.distribuidorService.obterDiaDeRecolhimentoDaData(
+					produtoEdicaoSlip.getDataOperacao(), produtoEdicaoSlip.getDataRecolhimento(), produtoEdicao);
  
 			produtoEdicaoSlip.setOrdinalDiaConferenciaEncalhe(this.getDiaMesOrdinal(dia)+" DIA");
-		
+			
 		    exibeSubtotalDia = (listaProdutoEdicaoSlip.indexOf(produtoEdicaoSlip)==(listaProdutoEdicaoSlip.size()-1))||
 		    		           (dia!=this.obterDiasEntreDatas(listaProdutoEdicaoSlip.get(listaProdutoEdicaoSlip.indexOf(produtoEdicaoSlip)+1)));	
 			                     
