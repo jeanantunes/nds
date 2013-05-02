@@ -23,8 +23,8 @@ $(function(){
 </head>
 
 <body>
-	<div id="dialog-excluir" title="Excluir Segmento Não Recebido">
-		<p>Confirma a exclusão desta Ajuste de Reparte?</p>
+	<div id="dialog-excluir" title="Excluir ajuste">
+		<p>Confirma a exclusão deste ajuste?</p>
 	</div>
 	
 	<form action="/ajuste" id="excluir_form">
@@ -170,26 +170,32 @@ $(function(){
 				<tr>
 		          <td width="80"><strong>Segmentos:</strong></td>
 					
-					<td width="60" id="colSegmento1">Segmento 1:</td>
+					<tr id="tr_exibirSegmento1">
+					<td width="220" id="colSegmento1">Segmento 1:</td>
 					<td width="40">
 						<input name="exibirSegmento1" id="exibirSegmento1" type="text" style="width: 30px;" align="middle"/>
 		            <td width="25">
 		           		<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir" border="0"
-		           			 onclick = "ajusteReparteController.limparExibicaoSegmento(exibirSegmento1, tipoSegmento1, segmento1);" /></td>
-					
-					<td width="60" id="colSegmento2">Segmento 2:</td>
+		           			 onclick = "ajusteReparteController.limparExibicaoSegmento(exibirSegmento1, tipoSegmento1, segmento1, 'tr_exibirSegmento1');" /></td>
+					</tr>
+
+					<tr id="tr_exibirSegmento2">
+					<td width="220" id="colSegmento2">Segmento 2:</td>
 					<td width="40">
 						<input name="exibirSegmento2" id="exibirSegmento2" type="text" style="width: 30px;" align="middle"/>
 		            <td width="25">
 		            	<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir" border="0" 
-							 onclick = "ajusteReparteController.limparExibicaoSegmento(exibirSegmento2, tipoSegmento2, segmento2);" /></td>
-					
-					<td width="60" id="colSegmento3">Segmento 3:</td>
+							 onclick = "ajusteReparteController.limparExibicaoSegmento(exibirSegmento2, tipoSegmento2, segmento2, 'tr_exibirSegmento2');" /></td>
+					</tr>					
+
+					<tr id="tr_exibirSegmento3">
+					<td width="220" id="colSegmento3">Segmento 3:</td>
 					<td width="40">
 						<input name="exibirSegmento3" id="exibirSegmento3" type="text" style="width: 30px;" align="middle"/>
                     <td width="25">
                     	<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir" border="0"
-                    		 onclick = "ajusteReparteController.limparExibicaoSegmento(exibirSegmento3, tipoSegmento3, segmento3);" /></td>
+                    		 onclick = "ajusteReparteController.limparExibicaoSegmento(exibirSegmento3, tipoSegmento3, segmento3, 'tr_exibirSegmento3');" /></td>
+					</tr>					
                     
 				</tr>
 			</table>
@@ -283,19 +289,19 @@ $(function(){
 				<tr>
 					<td width="10"></td>
 					<td width="102"><span class="vlrPerc" >
-							<input name="ajuste_historico_input" id="AJUSTE_HISTORICO_editar_input" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoHistorico();" type="text" style="width: 25px;" />
+							<input name="ajuste_historico_input" id="AJUSTE_HISTORICO_editar_input" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoHistorico();" type="text" style="width: 10px;" />
 					</span></td>
 					
 					<td width="400"></td>
 					<td width="100">
 					<span class="vdaMedia" >
-							<input name="ajuste_venda_media_input" id="AJUSTE_VENDA_MEDIA_editar_input" value="1" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoVendaMediaEditar();" type="text" style="width: 25px;" /> 
+							<input name="ajuste_venda_media_input" id="AJUSTE_VENDA_MEDIA_editar_input" value="1" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoVendaMediaEditar();" type="text" style="width: 10px;" /> 
 					</span>
 					</td>
 					<td width="350"></td>
 					<td width="250">
 						<span class="encalheMaximo"	> 
-							<input name="ajuste_encalhe_max_input" id="AJUSTE_ENCALHE_MAX_editar_input" value="1" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoEncalheEditar();" type="text" style="width: 25px;" />  
+							<input name="ajuste_encalhe_max_input" id="AJUSTE_ENCALHE_MAX_editar_input" value="1" style="display: none;" onblur="ajusteReparteController.formatarAjusteAplicadoEncalheEditar();" type="text" style="width: 10px;" />  
 						</span>
 					</td>
 				</tr>
@@ -311,23 +317,6 @@ $(function(){
 		            <td width="25">
 		           		<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir" border="0"
 		           			 onclick = "ajusteReparteController.limparExibicaoSegmento(exibirSegmento1, tipoSegmento1, segmento1);" /></td>
-					
-					<!-- 
-					<td width="60">Segmento 2: </td>
-					<td width="40">
-						<input name="exibirSegmento2" id="exibirSegmento2Editar" type="text" style="width: 30px;" align="middle"/>
-		            <td width="25">
-		            	<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir" border="0" 
-							 onclick = "ajusteReparteController.limparExibicaoSegmento(exibirSegmento2, tipoSegmento2, segmento2);" /></td>
-					
-					<td width="60">Segmento 3: </td>
-					<td width="40">
-						<input name="exibirSegmento3" id="exibirSegmento3Editar" type="text" style="width: 30px;" align="middle"/>
-                    <td width="25">
-                    	<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir" border="0"
-                    		 onclick = "ajusteReparteController.limparExibicaoSegmento(exibirSegmento3, tipoSegmento3, segmento3);" /></td>
-					 -->
-                    
 				</tr>
 			</table>
 
@@ -367,7 +356,6 @@ $(function(){
 			<div class="grids" style="display: block;">
 
 				<div class="porSegmento" style="display: block;">
-					<!--<fieldset class="classFieldset" style="float:left; width:631px!important; margin-right:10px!important;">-->
 					<fieldset class="classFieldset">
 						<legend>Cotas em Ajuste Reparte</legend>
 
