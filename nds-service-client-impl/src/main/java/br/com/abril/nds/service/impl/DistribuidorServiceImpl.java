@@ -2,7 +2,9 @@ package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
+import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
@@ -23,6 +26,7 @@ import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
 import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
+import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -35,7 +39,10 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	private DistribuidorRepository distribuidorRepository;
 	
 	@Autowired
-	private CalendarioService calService;
+	private DistribuicaoFornecedorRepository distribuicaoFornecedorRepository; 
+	
+	@Autowired
+	private CalendarioService calendarioService;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -369,44 +376,101 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	}
 	
 	@Transactional(readOnly = true)
-	public List<Date> obterDatasAposFinalizacaoPrazoRecolhimento() {
+	public List<Date> obterDatasAposFinalizacaoPrazoRecolhimento(Date dataRecolhimento, Long ...idsFornecedor) {
 		
 		ParametrosRecolhimentoDistribuidor parametroRecolhimento = 
 				this.distribuidorRepository.parametrosRecolhimentoDistribuidor();
 		
+		List<Integer> diasSemanaDistribuidorOpera = 
+				this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(OperacaoDistribuidor.RECOLHIMENTO,idsFornecedor);
+		
 		List<Date> datas = new ArrayList<>();
 		
-		Date dataOperacao = distribuidorRepository.obterDataOperacaoDistribuidor();
+		Map<Integer,Date> mapDataRecolhimentoValida = new HashMap<>();
+		
+		mapDataRecolhimentoValida = obterDatasValidaParaRecolhimento(dataRecolhimento,diasSemanaDistribuidorOpera);
 		
 		if(parametroRecolhimento.isDiaRecolhimentoPrimeiro()){
 			
-			datas.add(DateUtil.subtrairDias(dataOperacao, 1));
+			datas.add(mapDataRecolhimentoValida.get(1));
 		}
 		
 		if(parametroRecolhimento.isDiaRecolhimentoSegundo()){
 			
-			datas.add(DateUtil.subtrairDias(dataOperacao, 2));
+			datas.add(mapDataRecolhimentoValida.get(2));
 		}
 		
 		if(parametroRecolhimento.isDiaRecolhimentoTerceiro()){
 			
-			datas.add(DateUtil.subtrairDias(dataOperacao, 3));
+			datas.add(mapDataRecolhimentoValida.get(3));
 		}
 		
 		if(parametroRecolhimento.isDiaRecolhimentoQuarto()){
 			
-			datas.add(DateUtil.subtrairDias(dataOperacao, 4));
+			datas.add(mapDataRecolhimentoValida.get(4));
 		}
 		
 		if(parametroRecolhimento.isDiaRecolhimentoQuinto()){
 			
-			datas.add(DateUtil.subtrairDias(dataOperacao, 5));
-		}
-		
-		if(datas.isEmpty()){
-			datas.add(dataOperacao);
+			datas.add(mapDataRecolhimentoValida.get(5));
 		}
 		
 		return datas;
 	}
+
+	private Map<Integer,Date> obterDatasValidaParaRecolhimento(Date dataRecolhimento,List<Integer> diasSemanaDistribuidorOpera) {
+		
+		Map<Integer,Date> mapDataRecolhimentoValida = new HashMap<>();
+		
+		Date dataRecolhimentoValida = null;
+		
+		int diasRecolhimento = 1;
+		
+		while(diasRecolhimento  <= 5){
+			
+			if(diasRecolhimento > 1){
+				
+				dataRecolhimentoValida = processarDataRecolhimento(DateUtil.adicionarDias(mapDataRecolhimentoValida.get(diasRecolhimento-1),1),diasSemanaDistribuidorOpera);
+				
+				mapDataRecolhimentoValida.put(diasRecolhimento, dataRecolhimentoValida);
+			}
+			else{
+				
+				dataRecolhimentoValida = processarDataRecolhimento(DateUtil.adicionarDias(dataRecolhimento,1),diasSemanaDistribuidorOpera);
+				
+				mapDataRecolhimentoValida.put(diasRecolhimento, dataRecolhimentoValida);
+			}
+			
+			diasRecolhimento ++ ;
+		}
+		
+		return mapDataRecolhimentoValida;
+	}
+	
+	private Date processarDataRecolhimento (Date novaData,List<Integer> diasSemanaDistribuidorOpera){
+		
+		Date dataAProcessar = obterDataValidaParaRecolhimento(novaData,diasSemanaDistribuidorOpera);
+		
+		if(dataAProcessar == null){
+			
+			dataAProcessar = processarDataRecolhimento(DateUtil.adicionarDias(novaData,1),diasSemanaDistribuidorOpera);
+		}
+		
+		return dataAProcessar;
+	}
+	
+	private Date obterDataValidaParaRecolhimento(Date novaData,List<Integer> diasSemanaDistribuidorOpera){
+		
+		int codigoDiaCorrente = DateUtil.obterDiaDaSemana(novaData);
+		
+		if( diasSemanaDistribuidorOpera.contains(codigoDiaCorrente) &&
+				!calendarioService.isFeriadoSemOperacao(novaData) &&
+				!calendarioService.isFeriadoMunicipalSemOperacao(novaData) ){
+			
+			return novaData;
+		}
+		
+		return null;	
+	}
+	
 }
