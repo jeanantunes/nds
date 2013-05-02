@@ -56,7 +56,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		$("#dataNotaFiscal", ConferenciaEncalheCont.workspace).mask("99/99/9999");
 		
-		$("#numeroCota", ConferenciaEncalheCont.workspace).keyup(function(e) {
+		$("#numeroCota", ConferenciaEncalheCont.workspace).keypress(function(e) {
 			
 			if(e.keyCode == 13 && !visibleOverlay()) {
 
@@ -584,7 +584,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					{codigoNomeProduto:codigoNomeProduto}, 
 				function(result){
 					
-					if (result[0]){
+					if (result.length > 1){
 						
 						$("#lstProdutos", ConferenciaEncalheCont.workspace).autocomplete({
 							source: result,
@@ -610,8 +610,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 									}, 
 									true, "idModalNovoEncalhe"
 								);
-							}
+							},
+							delay : 0
 						});
+						
+						$("#lstProdutos", ConferenciaEncalheCont.workspace).autocomplete("search", codigoNomeProduto);
 					}
 				}, null, true, "idModalNovoEncalhe"
 			);
