@@ -293,7 +293,13 @@ public enum GrupoMovimentoEstoque  {
 	
 	TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_ENCALHE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.DEVOLUCAO_ENCALHE),
 
-	GRUPO_MATERIAL_PROMOCIONAL(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.MATERIAL_PROMOCIONAL);
+	GRUPO_MATERIAL_PROMOCIONAL(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.MATERIAL_PROMOCIONAL),
+	
+	/**
+	 * Entrada de estoque suplementar rollout do sistema
+	 * Criado em conjunto com Cesar Marracho
+	 */
+	ENTRADA_ESTOQUE_SUPLEMENTAR(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.SUPLEMENTAR);
 	
 	private OperacaoEstoque operacaoEstoque;
 	private Dominio dominio;

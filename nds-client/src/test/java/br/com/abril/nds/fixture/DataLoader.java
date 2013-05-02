@@ -999,6 +999,8 @@ public class DataLoader {
 
 	private static Object tipoMovimentoSaidaMaterialPromocional;
 
+	private static Object tipoMovimentoEntradaEstoqueSuplementar;
+	
 	private static ConsolidadoFinanceiroCota consolidadoDividaCobrancaOriginariaNegociacao;
 
 	private static Divida dividaCobrancaOriginariaNegociacao;
@@ -6161,10 +6163,12 @@ public class DataLoader {
 
 		tipoMovimentoSaidaMaterialPromocional = Fixture.tipoMovimentoSaidaMaterialPromocional();
 
+		tipoMovimentoEntradaEstoqueSuplementar = Fixture.tipoMovimentoEntradaEstoqueSuplementar();
+		
 		save(session, tipoMovimentoVendaEncalhe,tipoMovimentoFinanceiroCompraEncalhe,tipoMovimentoEstornoVendaEncalhe,tipoMovimentoVendaEncalheSuplementar,
 					  tipoMovimentoEstornoVendaEncalheSuplementar,tipoMovimentoEstoqueCompraSuplementar,tipoMovimentoEstoqueEstornoCompraSuplementar, 
 					  tipoMovimentoEncalheAntecipado,tipoMovimentoCompraEncalhe,tipoMovimentoEstornoCompraEncalhe, tipoMovimentoEstornoCotaFuroPublicacao, tipoMovimentoEstornoFuroPublicacao,
-					  tipoMovimentoEstoqueRecebimentoJornaleiroJuramentado, tipoMovimentoEstoqueEnvioJornaleiroJuramentado, tipoMovimentoSaidaMaterialPromocional);
+					  tipoMovimentoEstoqueRecebimentoJornaleiroJuramentado, tipoMovimentoEstoqueEnvioJornaleiroJuramentado, tipoMovimentoSaidaMaterialPromocional, tipoMovimentoEntradaEstoqueSuplementar);
 
 		tipoMovimentoSuplementarCotaAusente = Fixture.tipoMovimentoSuplementarCotaAusente();
 		

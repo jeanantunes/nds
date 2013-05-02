@@ -978,6 +978,15 @@ public class Fixture {
 		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.GRUPO_MATERIAL_PROMOCIONAL);
 		return tipoMovimento;	
 	}
+
+	public static TipoMovimentoEstoque tipoMovimentoEntradaEstoqueSuplementar() {
+		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
+		tipoMovimento.setAprovacaoAutomatica(true);
+		tipoMovimento.setDescricao("Entrada Estoque Suplementar");
+		tipoMovimento.setIncideDivida(false);
+		tipoMovimento.setGrupoMovimentoEstoque(GrupoMovimentoEstoque.ENTRADA_ESTOQUE_SUPLEMENTAR);
+		return tipoMovimento;	
+	}
 	
 	public static TipoMovimentoEstoque tipoMovimentoRestauracaoReparteCotaAusente() {
 		TipoMovimentoEstoque tipoMovimento = new TipoMovimentoEstoque();
