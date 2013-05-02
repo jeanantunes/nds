@@ -14,21 +14,19 @@ import br.com.caelum.vraptor.view.Results;
 @Resource
 @Path("/componentes")
 public class ComponenteElementoController {
-	
-	@Autowired
-	private ComponenteElementoService componenteElementoService;
-	
-	private Result result;
-	
-	public ComponenteElementoController(Result result) {
-		this.result = result;
-	}
-	
-	@Path("/elementos")
-	public void buscaElementos(String tipo) {
-		List<ComponenteElementoDTO> retorno =  componenteElementoService.buscaElementos(tipo);
-		
-		result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
-	}
 
+    @Autowired
+    private ComponenteElementoService componenteElementoService;
+
+    private Result result;
+
+    public ComponenteElementoController(Result result) {
+	this.result = result;
+    }
+
+    @Path("/elementos")
+    public void buscaElementos(String tipo, Long estudo) {
+	List<ComponenteElementoDTO> retorno = componenteElementoService.buscaElementos(tipo, estudo);
+	result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
+    }
 }

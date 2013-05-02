@@ -758,7 +758,10 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	@Override
 	@Transactional(readOnly = true)
 	public ProdutoDistribuicaoVO obterMatrizDistribuicaoPorEstudo(BigInteger id) {
-		return this.distribuicaoRepository.obterMatrizDistribuicaoPorEstudo(id);
+		
+		ProdutoDistribuicaoVO obterMatrizDistribuicaoPorEstudo = this.distribuicaoRepository.obterMatrizDistribuicaoPorEstudo(id);
+		return obterMatrizDistribuicaoPorEstudo;
+		
 	}
 
 	

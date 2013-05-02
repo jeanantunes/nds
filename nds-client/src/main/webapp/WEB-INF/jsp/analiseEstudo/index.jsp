@@ -1,4 +1,4 @@
-<head>
+<!-- analiseEstudo -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
@@ -14,8 +14,6 @@ $(function(){
 	analiseEstudoController.init();
 });
 </script>
-
-</head>
 
 <div id="histogramaPosEstudoContent" />
 

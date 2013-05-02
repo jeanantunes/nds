@@ -6,6 +6,6 @@ import br.com.abril.nds.dto.ComponenteElementoDTO;
 
 public interface ComponenteElementoService {
 
-	List<ComponenteElementoDTO> buscaElementos(String tipo);
+	List<ComponenteElementoDTO> buscaElementos(String tipo, Long estudo);
 
 }
