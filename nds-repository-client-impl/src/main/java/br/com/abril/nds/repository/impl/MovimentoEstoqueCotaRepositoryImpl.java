@@ -317,7 +317,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		StringBuffer sql = new StringBuffer();
 		
-		sql.append("	SELECT COUNT(*) FROM ( ");
+		sql.append("	SELECT COUNT(1) FROM ( ");
 		
 		sql.append("	SELECT	");
 
@@ -533,7 +533,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		StringBuffer hql = new StringBuffer();
 		
-		hql.append(" SELECT COUNT(CONFERENCIA_ENCALHE_0.ID)	");
+		hql.append(" SELECT COUNT(1)	");
 		
 		hql.append(" FROM CONFERENCIA_ENCALHE CONFERENCIA_ENCALHE_0 ");
 		
@@ -850,7 +850,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		StringBuffer sql = new StringBuffer();
 
-		sql.append("	select count(*) from ( ");
+		sql.append("	select count(1) from ( ");
 		sql.append("	select distinct	");
 
 		sql.append("	COTA.NUMERO_COTA				as numeroCota,  ");
