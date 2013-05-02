@@ -43,13 +43,13 @@ var analiseHistoricoVendaController = $.extend(true, {
 							align : 'right'
 						}, {
 							display : 'REP',
-							name : 'reparteMedioFormat',
+							name : 'reparteMedio',
 							width : 35,
 							sortable : true,
 							align : 'right'
 						}, {
 							display : 'VDA',
-							name : 'vendaMediaFormat',
+							name : 'vendaMedia',
 							width : 35,
 							sortable : true,
 							align : 'right'
@@ -205,12 +205,12 @@ var analiseHistoricoVendaController = $.extend(true, {
 		
 	},
 	
-	preProcessAnaliseGrid : function montarRodape(result){
+	preProcessAnaliseGrid : function preProcessAnaliseGrid(result){
 		var rodape = {
 				qtdCota  : 0,
 				qtdPdv  :  0,
-				reparteMedio  :0,
-				vendaMedia :  0,
+				reparteMedio : 0,
+				vendaMedia : 0,
 				ed1Rep : 0,
 				ed1Venda : 0,
 				ed2Rep :  0,
@@ -234,9 +234,9 @@ var analiseHistoricoVendaController = $.extend(true, {
 			
 			rodape.qtdCota  +=  parseInt((row.cell.numeroCota ? 1 : 0));
 			rodape.qtdPdv  +=  parseInt((row.cell.qtdPdv || 0));
-			rodape.reparteMedio  +=  parseFloat((row.cell.reparteMedioFormat.replace(",",".") ||  0));
-			rodape.vendaMedia +=  parseFloat((row.cell.vendaMediaFormat.replace(",",".") ||  0));
-			rodape.ed1Rep += parseInt((row.cell.ed1Reparte ||  0));
+			rodape.reparteMedio  +=  (row.cell.reparteMedio ||  0);
+			rodape.vendaMedia +=  (row.cell.vendaMedia ||  0);
+			rodape.ed1Rep += parseInt((row.cell.ed1Reparte  ||  0));
 			rodape.ed1Venda +=  parseInt((row.cell.ed1Venda ||  0));
 			rodape.ed2Rep +=  parseInt((row.cell.ed2Reparte ||  0));
 			rodape.ed2Venda +=  parseInt((row.cell.ed2Venda ||  0));
@@ -253,8 +253,8 @@ var analiseHistoricoVendaController = $.extend(true, {
 		 html = '<td width="50" >Qtde Cotas:</td>' +
 		        '<td width="103" >' + rodape.qtdCota + '</td>' +
 		        '<td width="30" align="right">' + rodape.qtdPdv + '</td>' +
-		        '<td width="32" align="right">' + rodape.reparteMedio.toFixed(1) + '</td>' +
-		        '<td width="32" align="right">' + rodape.vendaMedia.toFixed(1) + '</td>' +
+		        '<td width="32" align="right">' + rodape.reparteMedio + '</td>' +
+		        '<td width="32" align="right">' + rodape.vendaMedia + '</td>' +
 		        '<td width="32" align="right">' + rodape.ed1Rep + '</td>' +
 		        '<td width="32" align="right">' + rodape.ed1Venda + '</td>' +
 		        '<td width="32" align="right">' + rodape.ed2Rep + '</td>' +
