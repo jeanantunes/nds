@@ -59,7 +59,6 @@ import br.com.abril.nds.sessionscoped.ConferenciaEncalheSessionScopeAttr;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
-import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.PDFUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -1871,6 +1870,7 @@ public class ConferenciaEncalheController extends BaseController {
 		conferenciaEncalheDTO.setIdProdutoEdicao(produtoEdicao.getId());
 		conferenciaEncalheDTO.setNomeProduto(produtoEdicao.getNomeProduto());
 		conferenciaEncalheDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
+		conferenciaEncalheDTO.setQtdReparte(produtoEdicao.getReparte());
 		
 		conferenciaEncalheDTO.setDesconto(produtoEdicao.getDesconto());
 		conferenciaEncalheDTO.setPrecoComDesconto(produtoEdicao.getPrecoComDesconto());

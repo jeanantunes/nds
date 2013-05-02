@@ -58,20 +58,13 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		$("#numeroCota", ConferenciaEncalheCont.workspace).keyup(function(e) {
 			
-			if (e.keyCode == 13) {
+			if(e.keyCode == 13 && !visibleOverlay()) {
 
-				if (ConferenciaEncalheCont.verificarReabertura){
-				    
-				    ConferenciaEncalheCont.pesquisarCota();
-			    }
-			    else{
-			
-			    	ConferenciaEncalheCont.verificarReabertura = true;
-		    	}
+				ConferenciaEncalheCont.pesquisarCota();
 			}
 		});
 		
-		$("#lstProdutos", ConferenciaEncalheCont.workspace).keyup(function(e){
+		$("#lstProdutos", ConferenciaEncalheCont.workspace).keypress(function(e){
 			
 			ConferenciaEncalheCont.pesquisarProdutoPorCodigoNome();
 		});
@@ -534,9 +527,13 @@ var ConferenciaEncalheCont = $.extend(true, {
 	
 	arredondarValorDebitoCredito : function(listaDebitoCredito) {
 		
-		$.each(listaDebitoCredito, function(index, value){
+		if(listaDebitoCredito){
+			
+			$.each(listaDebitoCredito, function(index, value){
 				value.cell.valor = parseFloat(value.cell.valor).toFixed(2);
-		});
+			});
+		
+		}
 		
 		return listaDebitoCredito;
 		

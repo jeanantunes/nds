@@ -104,5 +104,5 @@ public interface DistribuidorService {
 	
 	boolean utilizaControleAprovacaoFaltaSobra();
 	
-	List<Date> obterDatasAposFinalizacaoPrazoRecolhimento();
+	List<Date> obterDatasAposFinalizacaoPrazoRecolhimento(Date dataRecolhimento, Long ...idsFornecedor);
 }
