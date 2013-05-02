@@ -211,6 +211,6 @@ public class DistribuicaoFornecedorServiceImpl implements DistribuicaoFornecedor
 	@Transactional
 	public List<Integer> obterCodigosDiaDistribuicaoFornecedor(Long idFornecedor, OperacaoDistribuidor operacaoDistribuidor) {
 
-		return this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(idFornecedor, operacaoDistribuidor);
+		return this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(operacaoDistribuidor,idFornecedor);
 	}
 }

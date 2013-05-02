@@ -423,50 +423,89 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 *  
 	 * @return ChamadaEncalhe
 	 */
-	private ChamadaEncalhe validarExistenciaChamadaEncalheParaCotaProdutoEdicao(Cota cota, ProdutoEdicao produtoEdicao) {
+	private ChamadaEncalheCota validarExistenciaChamadaEncalheParaCotaProdutoEdicao(Cota cota, ProdutoEdicao produtoEdicao) {
 
 		boolean postergado = false;
 		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
+		ChamadaEncalheCota chamadaEncalheCota = null;
+		
 		if(produtoEdicao.isParcial()) {
 
+			chamadaEncalheCota = 
+					chamadaEncalheCotaRepository.obterUltimaChamaEncalheCotaParcial(cota.getNumeroCota(),produtoEdicao.getId(),postergado,dataOperacao);
 			
-			List<ChamadaEncalheCota> listaChamadaEncalheCota = chamadaEncalheCotaRepository.
-					obterListaChamaEncalheCota(cota.getNumeroCota(),produtoEdicao.getId(),postergado,dataOperacao);
-
-			if(listaChamadaEncalheCota == null || listaChamadaEncalheCota.isEmpty()) {
+			if(chamadaEncalheCota == null ) {
 				
 				validarProdutoEdicaoSemChamadaEncalheCota(cota.getId(), produtoEdicao.getId());
 				
-				return null;
-				
+				return null;	
 			}
-			
-			return listaChamadaEncalheCota.get(0).getChamadaEncalhe();
 			
 		} else {
 
-			List<Date> dataRecolhimentoReferencia = distribuidorService.obterDatasAposFinalizacaoPrazoRecolhimento();
-			
-			List<ChamadaEncalheCota> listaChamadaEncalheCota = 
-					chamadaEncalheCotaRepository.obterListaChamaEncalheCota(cota.getNumeroCota(), 
+			chamadaEncalheCota =
+					chamadaEncalheCotaRepository.obterUltimaChamaEncalheCota(cota.getNumeroCota(), 
 																			produtoEdicao.getId(), 
 																			postergado,
-																			dataOperacao,
-																			dataRecolhimentoReferencia.toArray(new Date[]{}));
-			
-			if(listaChamadaEncalheCota == null || listaChamadaEncalheCota.isEmpty()) {
+																			dataOperacao);
+			if(chamadaEncalheCota == null){
 				
 				validarProdutoEdicaoSemChamadaEncalheCota(cota.getId(), produtoEdicao.getId());
 				
 				return null;
 			}
+		
+			Date dataRecolhimento = chamadaEncalheCota.getChamadaEncalhe().getDataRecolhimento();
 			
-			return listaChamadaEncalheCota.get(0).getChamadaEncalhe();
-			
+			if(!isDataRecolhimentoValida(dataOperacao,dataRecolhimento,produtoEdicao)) {
+				
+				validarProdutoEdicaoSemChamadaEncalheCota(cota.getId(), produtoEdicao.getId());
+				
+				return null;	
+			}
 		}
 		
+		return chamadaEncalheCota;
+	}
+	
+	private boolean isDataRecolhimentoValida(Date dataOperacao,Date dataRecolhimento,ProdutoEdicao produtoEdicao){
+		
+		if(dataRecolhimento.compareTo(dataOperacao)>-1){
+			return true;
+		}
+		
+		List<Date> datasRecolhimento = 
+				distribuidorService.obterDatasAposFinalizacaoPrazoRecolhimento(dataRecolhimento,
+																			   this.obterIdsFornecedorDoProduto(produtoEdicao));
+		if(datasRecolhimento == null || datasRecolhimento.isEmpty()){
+			return false;
+		}
+		
+		for(Date item : datasRecolhimento){
+			
+			if(item.compareTo(dataOperacao)>-1){
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	public Long[] obterIdsFornecedorDoProduto(ProdutoEdicao produtoEdicao){
+		
+		Set<Fornecedor> fornecedores = produtoEdicao.getProduto().getFornecedores();
+		
+		Long[] idsFornecedor = new Long[fornecedores.size()];
+		
+		int indice = 0;
+		
+		for(Fornecedor item : fornecedores){
+			idsFornecedor[indice++] = item.getId();
+		}
+		
+		return idsFornecedor;
 	}
 	
 	/**
@@ -691,10 +730,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		
-		boolean indConferenciaEncalheReaberta = 
-				(controleConferenciaEncalheCota != null && StatusOperacao.CONCLUIDO.equals(controleConferenciaEncalheCota.getStatus()));
-		
-		carregarDadosDebitoCreditoDaCota(infoConfereciaEncalheCota, cota, dataOperacao, indConferenciaEncalheReaberta);
+		carregarDadosDebitoCreditoDaCota(infoConfereciaEncalheCota, cota, dataOperacao);
 		
 		infoConfereciaEncalheCota.setCota(cota);
 		infoConfereciaEncalheCota.setReparte(obterValorTotalReparte(numeroCota, dataOperacao));
@@ -781,15 +817,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	/**
 	 * Obtem Outros Valores
+	 * 
 	 * @param infoConfereciaEncalheCota
 	 * @param cota
 	 * @param dataOperacao
-	 * @param indConferenciaEncalheReaberta
 	 */
 	private void carregarDadosDebitoCreditoDaCota(InfoConferenciaEncalheCota infoConfereciaEncalheCota, 
 												  Cota cota,
-												  Date dataOperacao,
-												  boolean indConferenciaEncalheReaberta) {
+												  Date dataOperacao) {
 		
 		
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCompleta = new ArrayList<DebitoCreditoCotaDTO>();
@@ -1000,13 +1035,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		    Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		    
-			ChamadaEncalhe chamadaEncalhe = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
+			ChamadaEncalheCota chamadaEncalheCota = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
 			
-			if( chamadaEncalhe != null) {
+			if( chamadaEncalheCota != null) {
+				
+				ChamadaEncalhe chamadaEncalhe = chamadaEncalheCota.getChamadaEncalhe();
+				
 				Integer dia = obterQtdeDiaAposDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
 				produtoEdicaoDTO.setDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
 				produtoEdicaoDTO.setTipoChamadaEncalhe(chamadaEncalhe.getTipoChamadaEncalhe());
 				produtoEdicaoDTO.setDia(dia);
+				produtoEdicaoDTO.setReparte(chamadaEncalheCota.getQtdePrevista());
 			}
 			else{
 				
@@ -1088,13 +1127,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		    Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		    
-			ChamadaEncalhe chamadaEncalhe = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
+			ChamadaEncalheCota chamadaEncalheCota = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
 			
-			if( chamadaEncalhe != null) {
+			if( chamadaEncalheCota != null) {
+				
+				ChamadaEncalhe chamadaEncalhe = chamadaEncalheCota.getChamadaEncalhe();
+				
 				Integer dia = obterQtdeDiaAposDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
 				produtoEdicaoDTO.setDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
 				produtoEdicaoDTO.setTipoChamadaEncalhe(chamadaEncalhe.getTipoChamadaEncalhe());
 				produtoEdicaoDTO.setDia(dia);
+				produtoEdicaoDTO.setReparte(chamadaEncalheCota.getQtdePrevista());
 			}
 			else{
 				
@@ -1199,13 +1242,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		    
 		    for (ProdutoEdicao produtoEdicao : produtosEdicao) {
 		    
-				ChamadaEncalhe chamadaEncalhe = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
+				ChamadaEncalheCota chamadaEncalheCota = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
 				
-				if( chamadaEncalhe != null) {
+				if( chamadaEncalheCota != null) {
+					
+					ChamadaEncalhe chamadaEncalhe = chamadaEncalheCota.getChamadaEncalhe();
+					
 					Integer dia = obterQtdeDiaAposDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
 					produtoEdicaoDTO.setDataRecolhimentoDistribuidor(chamadaEncalhe.getDataRecolhimento());
 					produtoEdicaoDTO.setTipoChamadaEncalhe(chamadaEncalhe.getTipoChamadaEncalhe());
 					produtoEdicaoDTO.setDia(dia);
+					produtoEdicaoDTO.setReparte(chamadaEncalheCota.getQtdePrevista());
 				}
 				else{
 					
@@ -2500,8 +2547,26 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		boolean postergado = false;
 		
-		List<ChamadaEncalheCota> listaChamadaEncalheCota = 
-				chamadaEncalheCotaRepository.obterListaChamaEncalheCota(numeroCota, idProdutoEdicao, postergado,dataRecolhimentoReferencia);
+		ChamadaEncalheCota chamadaEncalheCota = 
+				chamadaEncalheCotaRepository.obterUltimaChamaEncalheCota(numeroCota, idProdutoEdicao, postergado,dataRecolhimentoReferencia);
+
+		StringBuffer errorMsg = new StringBuffer();
+		
+		if(chamadaEncalheCota==null ) {
+		
+			errorMsg.append(" Nenhum registro de chamada de encalhe para cota de nº:  ");
+			errorMsg.append(numeroCota);
+			errorMsg.append(" para o produto edição id: ");
+			errorMsg.append(idProdutoEdicao);				
+			
+			throw new IllegalStateException(errorMsg.toString());
+			
+		}
+		
+		return chamadaEncalheCota;
+
+		/*List<ChamadaEncalheCota> listaChamadaEncalheCota = 
+				chamadaEncalheCotaRepository.obterUltimaChamaEncalheCota(numeroCota, idProdutoEdicao, postergado,dataRecolhimentoReferencia);
 
 		StringBuffer errorMsg = new StringBuffer();
 
@@ -2529,7 +2594,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		
 		return listaChamadaEncalheCota.get(0);
-		
+*/		
 		
 	}
 	
@@ -3006,7 +3071,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoAusenteConferenciaEncalhe = 
 				conferenciaEncalheRepository.obterDadosSlipProdutoEdicaoAusenteConferenciaEncalhe(
-						idCota, dataOperacao, false, false, listaIdProdutoEdicaoNoEncalhe);
+						idCota, dataOperacao, false, listaIdProdutoEdicaoNoEncalhe);
 		
 		if( listaProdutoEdicaoAusenteConferenciaEncalhe != null ) {
 			listaProdutoEdicaoSlip.addAll(listaProdutoEdicaoAusenteConferenciaEncalhe);
@@ -3015,12 +3080,22 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	/**
-	 * Obtem informações dos Movimentos Financeiros que comporam a Cobrança relacionada com a Conferência de Encalhe
+	 * Obtém lista de debito crédito relativa a cobrança 
+	 * relacionada com uma operação de encalhe.
+	 * 
 	 * @param controleConferenciaEncalheCota
-	 * @return List<ComposicaoCobrancaSlipDTO>
+	 * 
+	 * @return List - ComposicaoCobrancaSlipDTO
 	 */
-	private List<ComposicaoCobrancaSlipDTO> obterListaComposicaoCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota){
+	@Transactional(readOnly=true)
+	public List<DebitoCreditoCotaDTO> obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(ControleConferenciaEncalheCota controleConferenciaEncalheCota){
 		
+		return obterListaDebitoCreditoCotaDTO(controleConferenciaEncalheCota.getCota(), controleConferenciaEncalheCota.getDataOperacao());
+
+	}
+	
+	
+	private List<DebitoCreditoCotaDTO> obterOutrosDebitoCreditoDeCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
 		
 		//Obtem os movimentos consolidados de Cobrancas relacionadas com a conferência de encalhe
 		List<MovimentoFinanceiroCota> movimentosFinanceiros = new ArrayList<MovimentoFinanceiroCota>();
@@ -3043,7 +3118,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 		for(MovimentoFinanceiroCota item : movimentosFinanceiros){
 			
-			if (!tipoMovimentoFinanceiroEnvioEncalhe.equals(item.getTipoMovimento()) && !tipoMovimentoFinanceiroRecebimentoReparte.equals(item.getTipoMovimento())){
+			if ( !tipoMovimentoFinanceiroEnvioEncalhe.getId().equals(item.getTipoMovimento().getId()) && 
+				 !tipoMovimentoFinanceiroRecebimentoReparte.getId().equals(item.getTipoMovimento().getId() )){
 			
 				dc.setDataLancamento(item.getDataCriacao());
 				dc.setDataVencimento(item.getData());
@@ -3057,6 +3133,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			}
 		}
 		
+		return listaDebitosCreditos;
+		
+	}
+	
+	/**
+	 * Obtem informações dos Movimentos Financeiros que compõe a Cobrança relacionada com a Conferência de Encalhe
+	 * @param controleConferenciaEncalheCota
+	 * @return List<ComposicaoCobrancaSlipDTO>
+	 */
+	private List<ComposicaoCobrancaSlipDTO> obterListaComposicaoCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota){
+		
+		List<DebitoCreditoCotaDTO> listaDebitosCreditos = obterOutrosDebitoCreditoDeCobranca(controleConferenciaEncalheCota);
 		
         List<ComposicaoCobrancaSlipDTO> listaComposicaoCobranca = new LinkedList<ComposicaoCobrancaSlipDTO>();
 
@@ -3426,11 +3514,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		e.adicionarCompleteEspaco("Valor Líquido Devido", 
 				slipDTO.getValorTotalSemDesconto().subtract(slipDTO.getValorTotalDesconto())
 				.setScale(2, RoundingMode.HALF_EVEN).toString());
+		e.quebrarLinhaEscape();
+		e.quebrarLinhaEscape();
 		
 		adicionarComposicaoCobranca(e, slipDTO.getListaComposicaoCobrancaDTO());
-		
-		e.quebrarLinhaEscape();
-		e.quebrarLinhaEscape();
 		
 		String valorTotalPagar = slipDTO.getValorTotalPagar() == null ? "0,00" : slipDTO.getValorTotalPagar().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
 		e.adicionarCompleteTraco("VALOR TOTAL A PAGAR", valorTotalPagar);

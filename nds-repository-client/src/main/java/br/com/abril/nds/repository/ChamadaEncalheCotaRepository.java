@@ -75,24 +75,19 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	
 	
 	/**
-	 * Obtém lista de chamada encalhe cota a partir do 
+	 * Obtém a ultima chamada encalhe cota a partir do 
 	 * numeroCota e dataRecolhimento.  
 	 * 
-	 * Se dataRecolhimento for null sera pesquisado apenas registro com 
-	 * data recolhimento iguais a dataOperacao passado por parâmetro (para produtos parciais), senão, pesquisará 
-	 * registros com dataRecolhimento maior ou igual igual data passada por parâmetro.
 	 * 
 	 * @param numeroCota
 	 * @param dataOperacao
-	 * @param dataRecolhimento
 	 * @param idProdutoEdicao
 	 * @param postergado
 	 * 
-	 * @return List - ChamadaEncalheCota
+	 * @return ChamadaEncalheCota
 	 */
-	public List<ChamadaEncalheCota> obterListaChamaEncalheCota(Integer numeroCota,Long idProdutoEdicao,
-			   												   boolean postergado,Date dataOperacao, 
-			   												   Date... dataRecolhimento);
+	public ChamadaEncalheCota obterUltimaChamaEncalheCota(Integer numeroCota,Long idProdutoEdicao,
+			   											 boolean postergado,Date dataOperacao);
 	
 	
 	/**
@@ -158,4 +153,6 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 
 	BigDecimal obterTotalDaChamaEncalheCotaSemDesconto(Integer numeroCota,
 			Date dataOperacao, Boolean conferido, Boolean postergado);
+	
+	ChamadaEncalheCota obterUltimaChamaEncalheCotaParcial(Integer numeroCota,Long idProdutoEdicao,boolean postergado,Date dataOperacao);
 }
