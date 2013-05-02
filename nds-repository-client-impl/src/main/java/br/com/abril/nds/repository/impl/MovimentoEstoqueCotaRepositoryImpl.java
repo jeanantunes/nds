@@ -2,6 +2,8 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -9,11 +11,16 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.sql.DataSource;
+
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.AbastecimentoDTO;
@@ -57,7 +64,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		super(MovimentoEstoqueCota.class);
 	}
 	
-	
+	@Autowired
+	private DataSource dataSource;
+
 	@SuppressWarnings("unchecked")
 	public List<MovimentoEstoqueCotaGenericoDTO> obterListaMovimentoEstoqueCotaDevolucaoJuramentada(Date dataOperacao) {
 		
@@ -346,29 +355,27 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		sql.append(" )	as encalhes ");
 		
-		SQLQuery sqlquery = getSession().createSQLQuery(sql.toString());
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 		
 		if(filtro.getIdCota()!=null) {
-			sqlquery.setParameter("idCota", filtro.getIdCota());
+			parameters.put("idCota", filtro.getIdCota());
 		}
 		
 		if(filtro.getIdFornecedor() != null) {
-			sqlquery.setParameter("idFornecedor", filtro.getIdFornecedor());
+			parameters.put("idFornecedor", filtro.getIdFornecedor());
 		}
 		
-		sqlquery.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+		parameters.put("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+		parameters.put("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
+		parameters.put("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
+		parameters.put("isPostergado", false);
 		
-		sqlquery.setParameter("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
+		Integer qtde = namedParameterJdbcTemplate.queryForInt(sql.toString(), parameters);
 		
-		sqlquery.setParameter("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
+		qtde = (qtde == null) ? 0 : qtde;
 		
-		sqlquery.setParameter("isPostergado", false);
-		
-		BigInteger qtde = (BigInteger) sqlquery.uniqueResult();
-		
-		qtde = (qtde == null) ? BigInteger.ZERO : qtde;
-		
-		return qtde.intValue();
+		return qtde;
 	}
 	
 	public BigDecimal obterValorTotalEncalhe(FiltroConsultaEncalheDTO filtro) {
@@ -377,7 +384,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		sql.append("	SELECT	");
 
-		sql.append("	SUM( MOVIMENTO_ESTOQUE_COTA.QTDE * COALESCE(MOVIMENTO_ESTOQUE_COTA.PRECO_COM_DESCONTO, PRODUTO_EDICAO.PRECO_VENDA, 0) ) ");
+		sql.append("	SUM( MOVIMENTO_ESTOQUE_COTA.QTDE * COALESCE(MOVIMENTO_ESTOQUE_COTA.PRECO_COM_DESCONTO, PRODUTO_EDICAO.PRECO_VENDA, 0) ) as totalEncalhe ");
 		
 		sql.append("	from	");
 		
@@ -428,28 +435,25 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			sql.append(" and FORNECEDOR.ID =  :idFornecedor ");
 		}
 
-		
-		SQLQuery sqlquery = getSession().createSQLQuery(sql.toString());
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 		
 		if(filtro.getIdCota()!=null) {
-			sqlquery.setParameter("idCota", filtro.getIdCota());
+			parameters.put("idCota", filtro.getIdCota());
 		}
 		
 		if(filtro.getIdFornecedor() != null) {
-			sqlquery.setParameter("idFornecedor", filtro.getIdFornecedor());
+			parameters.put("idFornecedor", filtro.getIdFornecedor());
 		}
 		
-		sqlquery.setParameter("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
+		parameters.put("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
+		parameters.put("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
+		parameters.put("isPostergado", false);
 		
-		sqlquery.setParameter("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
-		
-		sqlquery.setParameter("isPostergado", false);
-		
-		BigDecimal valorTotalEncalhe = (BigDecimal) sqlquery.uniqueResult();
-		
-		valorTotalEncalhe = (valorTotalEncalhe == null) ? BigDecimal.ZERO : valorTotalEncalhe;
-		
-		return valorTotalEncalhe;
+		Map<String, Object> queryForMap = namedParameterJdbcTemplate.queryForMap(sql.toString(), parameters);
+		Object totalEncalhe = queryForMap.get("totalEncalhe");
+
+		return (BigDecimal) (totalEncalhe == null ? BigDecimal.ZERO : totalEncalhe);
 	}
 	
 	public StringBuffer getFromWhereConsultaEncalhe(FiltroConsultaEncalheDTO filtro) {
@@ -574,7 +578,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		subSqlVendaProduto.append(" and vp.DATA_OPERACAO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
 		subSqlVendaProduto.append(" and vp.TIPO_VENDA_ENCALHE = :tipoVendaProduto");
 		
-		
 		StringBuffer sql = new StringBuffer();
 
 		sql.append("	select	");
@@ -663,64 +666,66 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			sql.append(orderByColumn);
 			
 			if (paginacao.getOrdenacao() != null) {
-				
 				sql.append(paginacao.getOrdenacao().toString());
-				
 			}
-			
 		}
 
-		SQLQuery sqlquery = getSession().createSQLQuery(sql.toString())
-
-		.addScalar("dataDoRecolhimentoDistribuidor")
-		.addScalar("dataMovimento")
-		.addScalar("codigoProduto")
-		.addScalar("nomeProduto")
-		.addScalar("idProdutoEdicao", StandardBasicTypes.LONG)
-		.addScalar("idFornecedor", StandardBasicTypes.LONG)
-		.addScalar("numeroEdicao", StandardBasicTypes.LONG)
-		.addScalar("precoVenda")
-		.addScalar("precoComDesconto")
-		.addScalar("reparte")
-		.addScalar("encalhe")
-		.addScalar("fornecedor")
-		.addScalar("valor")
-		.addScalar("valorComDesconto")
-		.addScalar("recolhimento")
-		.addScalar("indPossuiObservacaoConferenciaEncalhe");
-		
-		sqlquery.setResultTransformer(new AliasToBeanResultTransformer(ConsultaEncalheDTO.class));
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 		
 		if(filtro.getIdCota()!=null) {
-			sqlquery.setParameter("idCota", filtro.getIdCota());
+			parameters.put("idCota", filtro.getIdCota());
 		}
 
 		if(filtro.getIdFornecedor() != null) {
-			sqlquery.setParameter("idFornecedor", filtro.getIdFornecedor());
+			parameters.put("idFornecedor", filtro.getIdFornecedor());
 		}
 		
-		sqlquery.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
-		sqlquery.setParameter("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
-		sqlquery.setParameter("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
-		sqlquery.setParameter("isPostergado", false);
-		sqlquery.setParameter("tipoVendaProduto",TipoVendaEncalhe.ENCALHE.name());
+		parameters.put("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+		parameters.put("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
+		parameters.put("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
+		parameters.put("isPostergado", false);
+		parameters.put("tipoVendaProduto",TipoVendaEncalhe.ENCALHE.name());
 
 		if(filtro.getPaginacao()!=null) {
 			
-			if(filtro.getPaginacao().getPosicaoInicial()!=null) {
-				sqlquery.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			if(filtro.getPaginacao().getPosicaoInicial()!=null && filtro.getPaginacao().getQtdResultadosPorPagina()!=null) {
+				sql.append(" limit :posicaoInicial, :posicaoFinal");
+				parameters.put("posicaoInicial",filtro.getPaginacao().getPosicaoInicial());
+				parameters.put("posicaoFinal",filtro.getPaginacao().getQtdResultadosPorPagina());
 			}
-			
-			if(filtro.getPaginacao().getQtdResultadosPorPagina()!=null) {
-				sqlquery.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-			}
-			
 		}
 		
-		return sqlquery.list();
-		
+		@SuppressWarnings("rawtypes")
+		RowMapper cotaRowMapper = new RowMapper() {
+
+			public Object mapRow(ResultSet rs, int arg1) throws SQLException {
+
+				ConsultaEncalheDTO dto = new ConsultaEncalheDTO();
+				dto.setDataDoRecolhimentoDistribuidor(rs.getDate("dataDoRecolhimentoDistribuidor"));
+				dto.setCodigoProduto(rs.getString("codigoProduto"));
+				dto.setNomeProduto(rs.getString("nomeProduto"));
+				dto.setIdProdutoEdicao(rs.getLong("idProdutoEdicao"));
+				dto.setNumeroEdicao(rs.getLong("numeroEdicao"));
+				dto.setPrecoVenda(rs.getBigDecimal("precoVenda"));
+				dto.setPrecoComDesconto(rs.getBigDecimal("precoComDesconto"));
+//				dto.setValorComDesconto(rs.getBigDecimal("valorDesconto"));
+				dto.setValor(rs.getBigDecimal("valor"));
+				dto.setValorComDesconto(rs.getBigDecimal("valorComDesconto"));
+				dto.setRecolhimento(rs.getInt("recolhimento"));
+				dto.setReparte(rs.getBigDecimal("reparte"));
+				dto.setEncalhe(rs.getBigDecimal("encalhe"));
+				dto.setIdFornecedor(rs.getLong("idFornecedor"));
+				dto.setFornecedor(rs.getString("fornecedor"));
+				dto.setDataMovimento(rs.getDate("dataMovimento"));
+				dto.setIndPossuiObservacaoConferenciaEncalhe(rs.getString("indPossuiObservacaoConferenciaEncalhe"));
+				
+				return dto;
+			}
+		};
+
+		return (List<ConsultaEncalheDTO>) namedParameterJdbcTemplate.query(sql.toString(), parameters, cotaRowMapper);
 	}
-	
 	
 	
 	@SuppressWarnings("unchecked")

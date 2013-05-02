@@ -4,8 +4,13 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.sql.DataSource;
 
 import org.hibernate.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
@@ -26,6 +31,9 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 	private static final String REPARTE_SEM_DESCONTO = "reparteSemDesconto";
 	
 	private static final String DESCONTO = "desconto";
+	
+	@Autowired
+	private DataSource dataSource;
 
 	public ChamadaEncalheCotaRepositoryImpl() {
 		super(ChamadaEncalheCota.class);
@@ -193,22 +201,16 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(" SELECT SUM(PRODUTOS_DESCONTO.PRECO_COM_DESCONTO * PRODUTOS_DESCONTO.QTDE_PREVISTA) ");
+		sql.append(" SELECT SUM(PRODUTOS_DESCONTO.PRECO_COM_DESCONTO * PRODUTOS_DESCONTO.QTDE_PREVISTA) as precoTotalComDesconto ");
 		
 		sql.append(" FROM	");
 		
 		sql.append(" ( ");
 		
 		sql.append("  SELECT	");
-		
-		
 		sql.append("  COALESCE(MEC.PRECO_COM_DESCONTO, PROD_EDICAO.PRECO_VENDA) AS PRECO_COM_DESCONTO, ");
-		
 		sql.append("  CH_ENCALHE_COTA.QTDE_PREVISTA AS QTDE_PREVISTA  ");
-		
-		
 		sql.append("    FROM    ");
-		
 		sql.append("    CHAMADA_ENCALHE_COTA AS CH_ENCALHE_COTA 				");
 		
 		sql.append("	inner join COTA AS COTA ON 								");
@@ -256,34 +258,32 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 			sql.append(" AND CH_ENCALHE_COTA.POSTERGADO = :postergado		");
 		}
 
-		
 		sql.append("  GROUP BY PRECO_COM_DESCONTO, QTDE_PREVISTA ");
-		
 		
 		sql.append(" ) AS PRODUTOS_DESCONTO ");
 
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 		
-		Query query = this.getSession().createSQLQuery(sql.toString());
-
 		if(cotaId!=null) {
-			query.setParameter("cotaId", cotaId);
+			parameters.put("cotaId", cotaId);
 		}
 		if(conferido!=null) {
-			query.setParameter("conferido", conferido);
+			parameters.put("conferido", conferido);
 		}
 		
 		if(postergado!=null) {
-			query.setParameter("postergado", postergado);
+			parameters.put("postergado", postergado);
 		}
 		
-		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
-		
-		query.setParameter("dataOperacaoDe", dataOperacaoDe);
-		
-		query.setParameter("dataOperacaoAte", dataOperacaoAte);
-		
-		return (BigDecimal) query.uniqueResult();
-		
+		parameters.put("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+		parameters.put("dataOperacaoDe", dataOperacaoDe);
+		parameters.put("dataOperacaoAte", dataOperacaoAte);
+
+		Map<String, Object> queryForMap = namedParameterJdbcTemplate.queryForMap(sql.toString(), parameters);
+		Object precoTotalComDesconto = queryForMap.get("precoTotalComDesconto");
+
+		return (BigDecimal) (precoTotalComDesconto == null ? BigDecimal.ZERO : precoTotalComDesconto);
 	}
 	
 	@SuppressWarnings("unchecked")
