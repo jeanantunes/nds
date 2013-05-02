@@ -82,7 +82,9 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	private static final String DADOS_DOCUMENTACAO_CONF_ENCALHE_COTA = "dadosDocumentacaoConfEncalheCota";
+	
 	private static final String CONF_IMPRESSAO_ENCALHE_COTA = "configImpressaoEncalheCota";
+	
 	private static final String TIPOS_DOCUMENTO_IMPRESSAO_ENCALHE = "tipos_documento_impressao_encalhe";
 	
 	private static final String INFO_CONFERENCIA = "infoCoferencia";
@@ -1860,29 +1862,42 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		ConferenciaEncalheDTO conferenciaEncalheDTO = new ConferenciaEncalheDTO();
 		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
 		Long idTemporario = obterIdTemporario();
 		
-		conferenciaEncalheDTO.setDia(produtoEdicao.getDia());
 		conferenciaEncalheDTO.setIdConferenciaEncalhe(idTemporario);
+		
 		conferenciaEncalheDTO.setCodigo(produtoEdicao.getCodigoProduto());
+		
 		conferenciaEncalheDTO.setCodigoDeBarras(produtoEdicao.getCodigoDeBarras());
+		
 		conferenciaEncalheDTO.setCodigoSM(produtoEdicao.getSequenciaMatriz());
+		
 		conferenciaEncalheDTO.setIdProdutoEdicao(produtoEdicao.getId());
+		
 		conferenciaEncalheDTO.setNomeProduto(produtoEdicao.getNomeProduto());
+		
 		conferenciaEncalheDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
+		
 		conferenciaEncalheDTO.setQtdReparte(produtoEdicao.getReparte());
 		
 		conferenciaEncalheDTO.setDesconto(produtoEdicao.getDesconto());
+		
 		conferenciaEncalheDTO.setPrecoComDesconto(produtoEdicao.getPrecoComDesconto());
+		
 		conferenciaEncalheDTO.setPrecoCapa(produtoEdicao.getPrecoVenda());
 		
 		conferenciaEncalheDTO.setPrecoCapaInformado(produtoEdicao.getPrecoVenda());
 		
 		if (produtoEdicao.getTipoChamadaEncalhe() != null) {
+			
 			conferenciaEncalheDTO.setTipoChamadaEncalhe(produtoEdicao.getTipoChamadaEncalhe().name());
 		}
 		
 		conferenciaEncalheDTO.setDataRecolhimento(produtoEdicao.getDataRecolhimentoDistribuidor());
+		
+		conferenciaEncalheDTO.setDataConferencia(dataOperacao);
 		
 		conferenciaEncalheDTO.setParcial(produtoEdicao.isParcial());
 		
@@ -1892,12 +1907,13 @@ public class ConferenciaEncalheController extends BaseController {
 			BigInteger qtd = this.processarQtdeExemplar(produtoEdicao.getId(), conferenciaEncalheDTO, quantidade, indConferenciaContingencia);
 			
 			conferenciaEncalheDTO.setQtdExemplar(qtd);
+			
 			conferenciaEncalheDTO.setQtdInformada(qtd);
 		} else {
 			
 			conferenciaEncalheDTO.setQtdExemplar(BigInteger.ONE);
+			
 			conferenciaEncalheDTO.setQtdInformada(BigInteger.ONE);
-
 		}
 		
 		
@@ -1912,9 +1928,19 @@ public class ConferenciaEncalheController extends BaseController {
 		if (adicionarGrid){
 			
 			List<ConferenciaEncalheDTO> lista = this.getListaConferenciaEncalheFromSession();
+			
 			lista.add(conferenciaEncalheDTO);
+			
 			this.setListaConferenciaEncalheToSession(lista);
 		}
+		
+		ProdutoEdicao pe = this.produtoEdicaoService.buscarPorID(produtoEdicao.getId());
+		
+		Integer diaRecolhimento = this.distribuidorService.obterDiaDeRecolhimentoDaData(conferenciaEncalheDTO.getDataRecolhimento(), 
+				                                                            conferenciaEncalheDTO.getDataRecolhimento(), 
+				                                                            pe);
+				
+		conferenciaEncalheDTO.setDia(diaRecolhimento);
 		
 		return conferenciaEncalheDTO;
 	}
