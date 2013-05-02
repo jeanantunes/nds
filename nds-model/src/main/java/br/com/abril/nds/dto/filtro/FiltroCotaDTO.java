@@ -39,6 +39,8 @@ public class FiltroCotaDTO implements Serializable {
 	
 	private OrdemColuna ordemColuna;
 	
+	private Long cotaId;
+	
 	public FiltroCotaDTO() {}
 	
 	public FiltroCotaDTO(Integer numeroCota, String nomeCota ,String numeroCpfCnpj,
@@ -232,4 +234,14 @@ public class FiltroCotaDTO implements Serializable {
 	public void setStatus(String status) {
 		this.status = status;
 	}
+
+	public Long getCotaId() {
+		return cotaId;
+	}
+
+	public void setCotaId(Long cotaId) {
+		this.cotaId = cotaId;
+	}
+	
+	
 }
