@@ -52,13 +52,11 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" SELECT notaFiscal from NotaFiscalEntradaFornecedor notaFiscal ");		
-		hql.append("WHERE notaFiscal.statusNotaFiscal != :statusNF  ");
-		hql.append("AND cast(notaFiscal.dataEmissao as date) = :dataOperacao  ");		
+		hql.append("WHERE notaFiscal.statusNotaFiscal = :statusNF  ");		
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
-		query.setParameter("statusNF", StatusNotaFiscalEntrada.RECEBIDA);
-		query.setParameter("dataOperacao", dataOperacaoDistribuidor);
+		query.setParameter("statusNF", StatusNotaFiscalEntrada.PENDENTE_EMISAO);
 		
 		return query.list().isEmpty() ? true : false;
 	}
