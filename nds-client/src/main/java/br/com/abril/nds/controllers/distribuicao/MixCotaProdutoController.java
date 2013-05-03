@@ -204,9 +204,9 @@ public class MixCotaProdutoController extends BaseController {
 
 	@Post
 	@Path("/carregarGridHistoricoCota")
-	public void carregarGridHistoricoCota(FiltroConsultaFixacaoCotaDTO filtro,
-			String codigoProduto, String sortorder, String sortname, int page,
-			int rp) {
+	public void carregarGridHistoricoCota(FiltroConsultaFixacaoCotaDTO filtro, String codigoProduto, String sortorder, String sortname,
+			int page, int rp) {
+		
 		if (session.getAttribute(FILTRO_MIX_COTA_SESSION_ATTRIBUTE) == null) {
 			this.session.setAttribute(FILTRO_MIX_COTA_SESSION_ATTRIBUTE, filtro);
 		}
@@ -462,6 +462,11 @@ public class MixCotaProdutoController extends BaseController {
 		}
 		listMixExcel.removeAll(listCotaInconsistente);
 		
+		if (listMixExcel.isEmpty()) {
+			
+			return listCotaInconsistente;
+		}	
+		
 		//validar se o reparteMaximo é maior que o reparteMinimo
 		for (MixCotaDTO mixCotaDTO : listMixExcel) {
 			if(mixCotaDTO.getReparteMinimo().compareTo(mixCotaDTO.getReparteMaximo())==1){
@@ -469,7 +474,12 @@ public class MixCotaProdutoController extends BaseController {
 			}
 		}
 		listMixExcel.removeAll(listCotaInconsistente);
-
+		
+		if (listMixExcel.isEmpty()) {
+			
+			return listCotaInconsistente;
+		}	
+		
 		//validar se a cota existe		
 		Integer[] cotaIdArray = new Integer[listMixExcel.size()];
 		for (int i = 0; i < listMixExcel.size(); i++) {
@@ -482,21 +492,29 @@ public class MixCotaProdutoController extends BaseController {
 				listCotaInconsistente.add(mixCotaDTO);
 			}
 		}
+		
 		listMixExcel.removeAll(listCotaInconsistente);
 
-		// validar se o produto é um produtoValido
-		String[] codigoProdutoArray = new String[listMixExcel.size()];
-		for (int i = 0; i < listMixExcel.size(); i++) {
-			codigoProdutoArray[i]=listMixExcel.get(i).getCodigoProduto();
-		}
+		if (listMixExcel.isEmpty()) {
+			
+			return listCotaInconsistente;
+		}	
 		
-		List<String> verificarProdutoExiste = this.produtoService.verificarProdutoExiste(codigoProdutoArray);
-		for (MixCotaDTO mixCotaDTO : listMixExcel) {
-			if(!verificarProdutoExiste.contains(mixCotaDTO.getCodigoProduto())){
-				listCotaInconsistente.add(mixCotaDTO);
+			// validar se o produto é um produtoValido
+			String[] codigoProdutoArray = new String[listMixExcel.size()];
+			for (int i = 0; i < listMixExcel.size(); i++) {
+				codigoProdutoArray[i]=listMixExcel.get(i).getCodigoProduto();
 			}
-		}
-		listMixExcel.removeAll(listCotaInconsistente);
+			
+			List<String> verificarProdutoExiste = this.produtoService.verificarProdutoExiste(codigoProdutoArray);
+			for (MixCotaDTO mixCotaDTO : listMixExcel) {
+				if(!verificarProdutoExiste.contains(mixCotaDTO.getCodigoProduto())){
+					listCotaInconsistente.add(mixCotaDTO);
+				}
+			}
+			
+			listMixExcel.removeAll(listCotaInconsistente);
+		
 		
 		return listCotaInconsistente;
 
