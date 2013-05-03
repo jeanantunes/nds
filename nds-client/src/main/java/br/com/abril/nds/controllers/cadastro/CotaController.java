@@ -10,6 +10,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -219,9 +220,16 @@ public class CotaController extends BaseController {
 	
 	public void verificarTipoConvencional(Long idCota) {
 		
-		boolean isTipoConvencional = cotaService.isTipoCaracteristicaSegmentacaoConvencional(idCota);
+//		boolean isTipoConvencional = cotaService.obtercoisTipoCaracteristicaSegmentacaoConvencional(idCota);
+		Map<String,Object> mapResult = new HashMap<String,Object>();
+		FiltroCotaDTO fcotaDto = new FiltroCotaDTO();
+		fcotaDto.setCotaId(idCota);
+		CotaDTO cotaDTO = cotaService.obterCotas(fcotaDto).get(0);
 		
-		result.use(Results.json()).from(isTipoConvencional, "result").recursive().serialize();
+		mapResult.put("tipoDistribuicaoCota", cotaDTO.getTipoDistribuicaoCota());
+		mapResult.put("recebeComplementar", cotaDTO.isRecebeComplementar());
+		
+		result.use(Results.json()).from(mapResult, "result").recursive().serialize();
 	}
 
     private void carregarEnderecosHistoricoTitularidade(Long idCota, Long idHistorico) {

@@ -95,8 +95,8 @@
 				<br clear="all" />
 				
 				<!-- Recebe Complementar -->
-				<input id="${param.tela}recebeComplementar"  name="recebeComplementar" type="checkbox" value="" style="margin-top:9px;" />
-				<label for="recebeComplementar" style="width: 190px;">Cota Recebe Complementar</label> 
+				<input id="${param.tela}recebeComplementar"  name="recebeComplementar" type="checkbox" style="margin-top:9px;" />
+				<label for="${param.tela}recebeComplementar" style="width: 190px;">Cota Recebe Complementar</label> 
 				
     		</td>
     		<td width="10" style="width:10px;">

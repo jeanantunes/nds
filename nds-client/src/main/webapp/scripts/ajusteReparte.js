@@ -135,7 +135,11 @@ init : function() {
 			row.cell.acao = editar + excluir;
 			
 			if((row.cell.formaAjusteAplicado == "Venda Média") || (row.cell.formaAjusteAplicado == "Encalhe Máximo")){
-				resultado.rows[index].cell.ajusteAplicado = parseFloat(resultado.rows[index].cell.ajusteAplicado).toFixed(0); 
+				row.cell.ajusteAplicado = parseFloat(row.cell.ajusteAplicado).toFixed(0); 
+			}
+			
+			if((row.cell.formaAjusteAplicado == "Segmento") || (row.cell.formaAjusteAplicado == "Histórico")){
+				row.cell.ajusteAplicado = parseFloat(row.cell.ajusteAplicado).toFixed(1); 
 			}
 			
 		});
@@ -176,8 +180,6 @@ init : function() {
 		
 		var data = ajusteReparteController.getDados();
 
-		// Testar essa modificação!! 12/04 10hrs
-		
 		if (ajusteReparteController.isAjusteSegmento == true){
 			if(ajusteReparteController.get("segmento1") != ""){
 				data.push({name:"ajustes", value: ajusteReparteController.get("segmento1")});
@@ -540,7 +542,7 @@ init : function() {
 		if((result.formaAjuste == "AJUSTE_VENDA_MEDIA") || (result.formaAjuste == "AJUSTE_ENCALHE_MAX")){
 			$('#'+result.formaAjuste+'_editar_input').show().val(parseFloat(result.ajusteAplicado).toFixed(0));
 		}else{
-			$('#'+result.formaAjuste+'_editar_input').show().val(result.ajusteAplicado);
+			$('#'+result.formaAjuste+'_editar_input').show().val(parseFloat(result.ajusteAplicado).toFixed(1));
 		}
 		
 		$("#tipoSegmento1").show();
@@ -560,9 +562,8 @@ init : function() {
 		$("#dataFimEditar").val(result.dataFim);
 		
 		$("#tipoSegmento1").val(result.idSegmento);
-		$("#segmento1").val(result.ajusteAplicado);
+		$("#segmento1").val(parseFloat(result.ajusteAplicado).toFixed(1));
 		
-//		$("#tableSegmentosEditar").show();
 		$("#exibirSegmento1Editar").val(result.ajusteAplicado).disable();
 	
 		$("#segmento2").hide();
@@ -621,7 +622,6 @@ init : function() {
 			buttons: {
 				"Confirmar": function() {
 					ajusteReparteController.validarPopUpDeSegmentos();
-//					$("#tableSegmentos").show();
 					
 				},
 				"Cancelar": function() {
@@ -657,6 +657,8 @@ init : function() {
 		
 			
 		if((this.closeDialogPopUpSegmento1 == true) && (this.closeDialogPopUpSegmento2 == true) && (this.closeDialogPopUpSegmento3 == true)){
+			
+			ajusteReparteController.validarEMostrarAjustesSegmento();
 			$("#dialog-segmentos").dialog("close");
 			
 			if((ajusteReparteController.get("segmento1") != "") || (ajusteReparteController.get("segmento2") != "") || (ajusteReparteController.get("segmento3") != "")){
@@ -673,7 +675,7 @@ init : function() {
 		var segmt1 = $("#segmento1").val(),
 			segmt2 = $("#segmento2").val(),
 			segmt3 = $("#segmento3").val();
-		
+			
 			$("#exibirSegmento1").val(segmt1).disable();
 			$("#exibirSegmento2").val(segmt2).disable();
 			$("#exibirSegmento3").val(segmt3).disable();
@@ -682,10 +684,42 @@ init : function() {
 			$("#exibirSegmento1Editar").val(segmt1).disable();
 			$("#exibirSegmento2Editar").val(segmt2).disable();
 			$("#exibirSegmento3Editar").val(segmt3).disable();
+			
+			
+	},
+	
+	validarEMostrarAjustesSegmento : function validarEMostrarAjustesSegmento(){
+		
+		var seg01 = $("#tipoSegmento1 :selected").text(),
+			seg02 = $("#tipoSegmento2 :selected").text(),
+			seg03 = $("#tipoSegmento3 :selected").text();
+		
+		
+		if(seg01 !== "Selecione..."){
+			$("#tr_exibirSegmento1").show();
+			$("#colSegmento1").text(seg01+":");
+		}else{
+			$("#colSegmento1").text("Segmento1: ");
+		}
+		
+		if(seg02 !== "Selecione..."){
+			$("#tr_exibirSegmento2").show();
+			$("#colSegmento2").text(seg02+":");
+		}else{
+			$("#colSegmento2").text("Segmento2: ");
+		}
+		
+		if(seg03 !== "Selecione..."){
+			$("#tr_exibirSegmento3").show();
+			$("#colSegmento3").text(seg03+":");
+		}else{
+			$("#colSegmento3").text("Segmento3: ");
+		}
+		
 	},
 	
 	
-	limparExibicaoSegmento : function (idExibir, idtpSegmento, idSegmento){
+	limparExibicaoSegmento : function (idExibir, idtpSegmento, idSegmento, idTr){
 		
 		$("#"+idExibir.id).val("");
 		$("#"+idtpSegmento.id).val("");
@@ -693,6 +727,9 @@ init : function() {
 		
 		//dialogEditar
 		$("#"+idExibir.id+"Editar").val("");
+		
+		$("#"+idTr).hide();
+		
 	},
 	
 	validarTipoSegmento1 : function(){
