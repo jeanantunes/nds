@@ -506,9 +506,17 @@ var histogramaPosEstudoController = $.extend(true, {
 		// Primeira coluna
 		console.log(histogramaPosEstudoController.dadosResumo);
 		$('#fieldSetResumoReparteTotal').html(rowConsolidada.cell.reparteTotalFormatado);
-		$('#fieldSetResumoRepartePromocional').html(parseInt(histogramaPosEstudoController.dadosResumo.repartePromo || 0));
+		if (typeof histogramaPosEstudoController.dadosResumo !== 'undefined') {
+		    $('#fieldSetResumoRepartePromocional').html(parseInt(histogramaPosEstudoController.dadosResumo.repartePromo || 0));
+		} else {
+		    $('#fieldSetResumoRepartePromocional').html(0);
+		}
 		$('#fieldSetResumoReservaTecnica').html(matrizSelecionada.sobra);
-		$('#fieldSetResumoReparteDistribuida').html(histogramaPosEstudoController.dadosResumo.reparteDistribuido);
+		if (typeof histogramaPosEstudoController.dadosResumo !== 'undefined') {
+		    $('#fieldSetResumoReparteDistribuida').html(histogramaPosEstudoController.dadosResumo.reparteDistribuido);
+		} else {
+		    $('#fieldSetResumoReparteDistribuida').html(0);
+		}
 		
 		$.postJSON(
 				url,
