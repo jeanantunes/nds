@@ -12,7 +12,8 @@ public enum TipoEstoque {
 	JURAMENTADO("Juramentado"), 
 	DANIFICADO("Danificado"),
 	PERDA("Perda"),
-	GANHO("Ganho");
+	GANHO("Ganho"),
+	MATERIAL_PROMOCIONAL("Material Promocional");
 	
 	String descricao;
 	

@@ -120,6 +120,5 @@ public class PoliticaCobranca {
 	public void setCobradoPeloBackoffice(boolean cobradoPeloBackoffice) {
 		this.cobradoPeloBackoffice = cobradoPeloBackoffice;
 	}
-
 	
 }

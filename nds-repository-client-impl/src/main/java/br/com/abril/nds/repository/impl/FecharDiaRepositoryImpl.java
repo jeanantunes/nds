@@ -20,7 +20,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
-import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.StatusRecebimento;
 import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -52,13 +52,11 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" SELECT notaFiscal from NotaFiscalEntradaFornecedor notaFiscal ");		
-		hql.append("WHERE notaFiscal.statusNotaFiscal != :statusNF  ");
-		hql.append("AND cast(notaFiscal.dataEmissao as date) = :dataOperacao  ");		
+		hql.append(" WHERE notaFiscal.statusRecebimento = :statusRecebimentoNF  ");		
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
-		query.setParameter("statusNF", StatusNotaFiscalEntrada.RECEBIDA);
-		query.setParameter("dataOperacao", dataOperacaoDistribuidor);
+		query.setParameter("statusRecebimentoNF", StatusRecebimento.SALVO);
 		
 		return query.list().isEmpty() ? true : false;
 	}
@@ -69,16 +67,14 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" select numero as numeroNotaFiscal from NotaFiscalEntradaFornecedor notaFiscal ");		
-		hql.append("WHERE notaFiscal.statusNotaFiscal != :statusNF ");
-		hql.append("AND cast(notaFiscal.dataEmissao as date) = :dataOperacao ");
-		hql.append("GROUP BY numero");
+		hql.append(" WHERE notaFiscal.statusRecebimento = :statusRecebimentoNF  ");
+		hql.append(" GROUP BY numero");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ValidacaoRecebimentoFisicoFecharDiaDTO.class));
 		
-		query.setParameter("statusNF", StatusNotaFiscalEntrada.RECEBIDA);
-		query.setParameter("dataOperacao", dataOperacaoDistribuidor);
+		query.setParameter("statusRecebimentoNF", StatusRecebimento.SALVO);
 		
 		return query.list();
 	}

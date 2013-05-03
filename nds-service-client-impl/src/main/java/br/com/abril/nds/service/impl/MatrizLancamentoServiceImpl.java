@@ -1640,7 +1640,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			}
 		}
 		
-		this.atualizarLancamentos(idsLancamento, usuarioLogado, mapaLancamento, StatusLancamento.EM_BALANCEAMENTO_LANCAMENTO);
+		//this.atualizarLancamentos(idsLancamento, usuarioLogado, mapaLancamento, StatusLancamento.EM_BALANCEAMENTO_LANCAMENTO);
 	}
 	
 	private TreeMap<Date, List<ProdutoLancamentoDTO>> atualizarLancamentos(Set<Long> idsLancamento, Usuario usuario,

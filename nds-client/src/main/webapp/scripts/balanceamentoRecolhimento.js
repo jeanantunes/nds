@@ -968,29 +968,32 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 							
 						} else {
 							
-							$(".container").append('<div id="alertAceite">A data está fora da semana de recolhimento. Você deseja continuar?</div>');
-							
-							$("#alertAceite").dialog({
-								buttons : {
-									"Confirmar" : function() {
+							$("#alertAceite", balanceamentoRecolhimentoController.workspace).dialog({
+								resizable: false,
+								height:'auto',
+								width:400,
+								modal: true,
+								buttons: {
+									"Confirmar": function() {
 										
-										$('#alertAceite').remove();
-	
 										$.postJSON(
-											contextPath + "/devolucao/balanceamentoMatriz/reprogramarRecolhimentoUnico",
-											parametros,
-											function(result) {
-												balanceamentoRecolhimentoController.atualizarResumoBalanceamento();
-											}
-										);
-									},
-									"Cancelar" : function() {
+												contextPath + "/devolucao/balanceamentoMatriz/reprogramarRecolhimentoUnico",
+												parametros,
+												function(result) {
+													balanceamentoRecolhimentoController.atualizarResumoBalanceamento();
+												}
+											);
 										
-										$('#alertAceite').remove();
+										$(this).dialog("close");
+									},
+									"Cancelar": function() {
 										
 										balanceamentoRecolhimentoController.recolocacaoDataAntigaReprogramarRecolhimentoUnico(idRow, dataAntiga);
+										
+										$(this).dialog("close");
 									}
-								  }
+								},
+								form: $("#alertAceite", balanceamentoRecolhimentoController.workspace).parents("form")			
 							});
 						}
 				   }
