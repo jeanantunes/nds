@@ -19,6 +19,7 @@ import br.com.abril.nds.dao.DefinicaoBasesDAO;
 import br.com.abril.nds.dao.EstudoDAO;
 import br.com.abril.nds.dao.ProdutoEdicaoDAO;
 import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.enumerators.DataReferencia;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
@@ -218,6 +219,15 @@ public class EstudoAlgoritmoService {
 		if (distribuicaoVendaMedia != null) {
 			estudo.setDistribuicaoPorMultiplos(distribuicaoVendaMedia.isDistribuicaoPorMultiplo() ? 1 : 0);
 			estudo.setReparteMinimo(distribuicaoVendaMedia.getReparteMinimo());
+			LinkedList<ProdutoEdicaoEstudo> edicoesBase = new LinkedList<>();
+			for (ProdutoEdicaoDTO base : distribuicaoVendaMedia.getBases()) {
+			    ProdutoEdicaoEstudo ed = new ProdutoEdicaoEstudo();
+			    ed.getProduto().setCodigo(base.getCodigoProduto());
+			    ed.setNumeroEdicao(base.getNumeroEdicao());
+			    ed.setPeso(base.getPeso());
+			    edicoesBase.add(ed);
+			}
+			estudo.setEdicoesBase(edicoesBase);
 			if(distribuicaoVendaMedia.isDistribuicaoPorMultiplo() && distribuicaoVendaMedia.getMultiplo() != null){
 				estudo.setPacotePadrao(distribuicaoVendaMedia.getMultiplo());
 			}
