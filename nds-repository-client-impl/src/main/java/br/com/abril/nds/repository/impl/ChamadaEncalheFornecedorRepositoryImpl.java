@@ -28,6 +28,10 @@ public class ChamadaEncalheFornecedorRepositoryImpl extends AbstractRepositoryMo
     public List<ChamadaEncalheFornecedor> obterChamadasEncalheFornecedor(Long idFornecedor, Integer numeroSemana, Intervalo<Date> periodo) {
         StringBuilder builder = new StringBuilder("select distinct(cef) from ChamadaEncalheFornecedor as cef ");
         builder.append("join cef.itens as item ");
+        builder.append("join item.produtoEdicao as pe ");
+        builder.append("join pe.produto as p ");
+        builder.append("join pe.produto as p ");
+        builder.append("join p.fornecedor as f ");
         Map<String, Object> parametros = new HashMap<String, Object>();
         if (numeroSemana != null) {
             builder.append("where cef.numeroSemana = :numeroSemana ");
@@ -39,7 +43,7 @@ public class ChamadaEncalheFornecedorRepositoryImpl extends AbstractRepositoryMo
             
         }
         if (idFornecedor != null) {
-            builder.append("and cef.fornecedor.id = :idFornecedor ");
+            builder.append("and f.id = :idFornecedor ");
             parametros.put("idFornecedor", idFornecedor);
         }
         Query query = getSession().createQuery(builder.toString());
@@ -53,11 +57,20 @@ public class ChamadaEncalheFornecedorRepositoryImpl extends AbstractRepositoryMo
     	
     	StringBuilder hql = new StringBuilder();
     	
-    	hql.append(" select cef from ChamadaEncalheFornecedor as cef ");
-    	hql.append(" where cef.numeroSemana =:numeroSemana and cef.anoReferencia =:anoReferencia ");
+    	hql.append(" select cef ")
+    		.append(" from ChamadaEncalheFornecedor as cef ");
     	
-    	if(filtro.getIdFornecedor()!= null){
-    		hql.append(" and cef.fornecedor.id =:idFornecedor ");
+    	if(filtro.getIdFornecedor()!= null) {
+    		hql.append(" join fetch cef.itens itens ")
+    			.append(" join fetch itens.produtoEdicao pe ")
+    			.append(" join fetch pe.produto p ")
+    			.append(" join fetch p.fornecedores f ");
+    	}
+    	
+    	hql.append(" where cef.numeroSemana = :numeroSemana and cef.anoReferencia = :anoReferencia ");
+    	
+    	if(filtro.getIdFornecedor()!= null) {
+    		hql.append(" and f.id = :idFornecedor ");
     	}
     	
     	Query query = getSession().createQuery(hql.toString());

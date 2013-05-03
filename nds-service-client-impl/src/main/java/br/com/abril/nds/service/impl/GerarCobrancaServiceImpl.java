@@ -429,7 +429,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			BoletoDistribuidor boletoDistribuidor = 
 					boletoDistribuidorRepository.obterBoletoDistribuidorPorChamadaEncalheFornecedor(chamadaEncalheFornecedor.getId());
 			
-			if(boletoDistribuidor!=null) {
+			chamadaEncalheFornecedor.setFornecedor( chamadaEncalheFornecedor.getItens().get(0).getProdutoEdicao().getProduto().getFornecedor() );
+			
+			if(boletoDistribuidor != null) {
 				
 				Integer vias = boletoDistribuidor.getVias();
 				

@@ -189,7 +189,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 			Long cotaId, 
 			Date dataOperacaoDe,
 			Date dataOperacaoAte,
-			Boolean conferido, Boolean postergado) {
+			Boolean postergado) {
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -248,10 +248,6 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 			sql.append(" AND COTA.ID = :cotaId ");
 		}
 		
-		if(conferido!=null) {
-			sql.append(" AND	CH_ENCALHE_COTA.FECHADO = :conferido		");
-		}
-		
 		if(postergado!=null) {
 			sql.append(" AND CH_ENCALHE_COTA.POSTERGADO = :postergado		");
 		}
@@ -267,9 +263,6 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 		if(cotaId!=null) {
 			query.setParameter("cotaId", cotaId);
-		}
-		if(conferido!=null) {
-			query.setParameter("conferido", conferido);
 		}
 		
 		if(postergado!=null) {
