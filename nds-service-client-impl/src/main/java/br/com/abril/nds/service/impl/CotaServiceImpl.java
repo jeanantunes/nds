@@ -902,7 +902,11 @@ public class CotaServiceImpl implements CotaService {
 		
 		ParametroDistribuicaoCota parametro = cota.getParametroDistribuicao();
 		if (parametro != null && parametro.getRecebeComplementar() == null) {
-			parametro.setRecebeComplementar(Boolean.FALSE);
+		    if (cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)) {
+			parametro.setRecebeComplementar(false);
+		    } else {
+			parametro.setRecebeComplementar(true);
+		    }
 		}
 		
 		boolean qtdePDVAutomatico = this.distribuidorService.preenchimentoAutomaticoPDV();
