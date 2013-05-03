@@ -358,7 +358,9 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		data.push({name : "numeroEdicao", value : $('#numeroEdicao').html()});
 		
 		$.postJSON(pathTela + "/distribuicaoVendaMedia/gerarEstudo", data, function(result) {
-			$('#idEstudo').html(result.long);
+		    myWindow = window.open('', '_blank');
+                    myWindow.document.write(result.estudo);
+                    myWindow.focus();
 			exibirMensagemDialog("SUCCESS", ["Operação realizada com sucesso!"], "");
 		});
 	};
