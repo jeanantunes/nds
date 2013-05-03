@@ -90,10 +90,13 @@ public class MixCotaProdutoRepositoryImpl extends
 			
 			sql.append(" cota.numero_cota= :cota ");
 		}
+		
+		
+		
 		sql.append(" and lancamento.status='FECHADO'")
 		.append(" and cota.tipo_distribuicao_cota = :tipoCota")
 		.append(" group by produto.codigo ")
-		.append(" order by lancamento.DATA_LCTO_DISTRIBUIDOR DESC ");
+		.append(" order by produto.codigo ");
 		
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		query.setParameter("tipoCota", TipoDistribuicaoCota.ALTERNATIVO.toString());
@@ -147,7 +150,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" usuario.login as usuario, ")
 		.append(" tipo_classificacao_produto.descricao as classificacaoProduto, ")
 		.append(" round(coalesce(avg(epc.qtde_recebida),0), 0) as reparteMedio, ")
-	        .append(" round(coalesce(avg(epc.qtde_recebida - epc.qtde_devolvida),0), 0) as vendaMedia, ")
+	    .append(" round(coalesce(avg(epc.qtde_recebida - epc.qtde_devolvida),0), 0) as vendaMedia, ")
 		.append(" coalesce((select lc.reparte from lancamento lc where lc.produto_edicao_id=produto_edicao.id and lancamento.status in ('LAN�ADA','CALCULADA') limit 1),0) as ultimoReparte ")
 		.append(" FROM mix_cota_produto ") 
 		.append(" LEFT join produto on mix_cota_produto.ID_PRODUTO = produto.ID ")
@@ -169,7 +172,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		}
 		sql.append(" and cota.tipo_distribuicao_cota = :tipoCota")
 		.append(" group by cota.numero_cota ")
-		.append(" order by lancamento.DATA_LCTO_DISTRIBUIDOR DESC ");
+		.append(" order by cota.numero_cota ");
 	
 		
 		Query query = getSession().createSQLQuery(sql.toString());
@@ -200,8 +203,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		query.setParameter("idCota", idCota);
 		return query.list().size() >0;
 	}
-
-
+	
 	@Override
 	public void excluirTodos() {
 		List<MixCotaProduto> lista = this.buscarTodos();

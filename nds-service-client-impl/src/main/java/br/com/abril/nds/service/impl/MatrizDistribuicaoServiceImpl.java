@@ -481,17 +481,6 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possivel efetuar a copia.");
 		}
 		
-//		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorIdLancamento(vo.getIdLancamento());
-//		
-//		if (produtoEdicao == null) {
-//			
-//			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possivel efetuar a copia.");
-//		}
-//		
-//		estudo.setProdutoEdicao(produtoEdicao);
-//		estudoRepository.alterar(estudo);
-		
-		
 		return estudo.getId();
 	}
 	

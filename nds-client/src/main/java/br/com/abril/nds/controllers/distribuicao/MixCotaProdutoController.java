@@ -131,11 +131,6 @@ public class MixCotaProdutoController extends BaseController {
 
 		List<MixProdutoDTO> resultadoPesquisa = mixCotaProdutoService.pesquisarPorProduto(filtro);
 
-		if (resultadoPesquisa.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING,
-					"Não foram encontrados resultados para a pesquisa.");
-		}
-
 		TableModel<CellModelKeyValue<MixProdutoDTO>> tableModelProduto = montarTableModelProduto(filtro);
 
 		result.use(Results.json()).withoutRoot().from(tableModelProduto)
@@ -281,18 +276,71 @@ public class MixCotaProdutoController extends BaseController {
 		result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
 	}
 	
+	@Post
+	public void validarProduto(MixCotaProdutoDTO mixCotaProduto, String produtoId) {
+		
+		mixCotaProduto.setCodigoProduto(produtoId);
+		
+		String mensagem = mixCotaProdutoService.obterValidacaoLinha(mixCotaProduto);
+		
+		if (!StringUtils.isEmpty(mensagem)) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagem));
+		}
+		
+		result.nothing();
+	}
+	
+	@Post
+	public void validarCota(MixCotaProdutoDTO mixCotaProduto, String numeroCota) {
+		
+		mixCotaProduto.setNumeroCota(numeroCota);
+		
+		String mensagem = mixCotaProdutoService.obterValidacaoLinha(mixCotaProduto);
+		
+		if (!StringUtils.isEmpty(mensagem)) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagem));
+		}
+		
+		result.nothing();
+	}
 	
 	@Post
 	@Path("/adicionarMixProduto")
-	public void adicionarMixProduto(List<MixCotaProdutoDTO>listaNovosMixProduto,String produtoId ) {
-		mixCotaProdutoService.adicionarListaMixPorProduto(listaNovosMixProduto,produtoId);
+	public void adicionarMixProduto(List<MixCotaProdutoDTO>listaNovosMixProduto,String produtoId) {
+		
+		for (MixCotaProdutoDTO mixCotaProdutoDTO: listaNovosMixProduto) {
+			
+			mixCotaProdutoDTO.setCodigoProduto(produtoId);
+		}
+		
+		List<String> mensagens = mixCotaProdutoService.adicionarListaMixPorProduto(listaNovosMixProduto,produtoId);
+		
+		if (!mensagens.isEmpty()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
+		}
+		
 		result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
 	}
 	
 	@Post
 	@Path("/adicionarMixCota")
 	public void adicionarMixCota(List<MixCotaProdutoDTO>listaNovosMixCota, Integer cotaId){
-		mixCotaProdutoService.adicionarListaMixPorCota(listaNovosMixCota,cotaId);
+		
+		for (MixCotaProdutoDTO mixCotaProdutoDTO: listaNovosMixCota) {
+			
+			mixCotaProdutoDTO.setNumeroCota(cotaId.toString());
+		}
+		
+		List<String> mensagens = mixCotaProdutoService.adicionarListaMixPorCota(listaNovosMixCota,cotaId);
+		
+		if (!mensagens.isEmpty()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
+		}
+		
 		result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
 	}
 
@@ -386,7 +434,13 @@ public class MixCotaProdutoController extends BaseController {
 			mix.setReparteMaximo(mixCotaDTO.getReparteMaximo().longValue());
 			mixCotaProdutoDTOList.add(mix);
 		}
-		this.mixCotaProdutoService.adicionarMixEmLote(mixCotaProdutoDTOList);
+		
+		List<String> mensagens = this.mixCotaProdutoService.adicionarMixEmLote(mixCotaProdutoDTOList);
+		
+		if (!mensagens.isEmpty()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
+		}
 		
 		//salvar em sessao mixCotaDTOIconsistente para posteriormente mostrar na tela
 		session.setAttribute(COTA_IMPORT_INCONSISTENTE,mixCotaDTOInconsistente );
