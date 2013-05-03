@@ -53,6 +53,7 @@ public class DistribuicaoDTO implements Serializable  {
 	private String fimPeriodoCarencia;
 	private String nomeTermoAdesao;
 	private String nomeProcuracao;
+	private String tipoDistribuicaoCota;
 	
 	private List<ItemDTO<DescricaoTipoEntrega, String>> tiposEntrega;
 	
@@ -566,6 +567,14 @@ public class DistribuicaoDTO implements Serializable  {
 	 */
 	public void setRecebeComplementar(Boolean recebeComplementar) {
 		this.recebeComplementar = recebeComplementar;
+	}
+
+	public String getTipoDistribuicaoCota() {
+		return tipoDistribuicaoCota;
+	}
+
+	public void setTipoDistribuicaoCota(String tipoDistribuicaoCota) {
+		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
 	}
 	
 	

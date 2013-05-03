@@ -1,11 +1,14 @@
-<head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/distribuicao.js"></script>
 
 	<script type="text/javascript">
 
-		var ${param.tela} = new Distribuicao('${param.tela}');
+	var ${param.tela} = null;
+	$(function() {
+		${param.tela} = new Distribuicao('${param.tela}');
+	});
+	
 		
 	</script>
 	
@@ -15,7 +18,6 @@
 		.divProcuracaoRecebida, .divTermoAdesaoRecebido,
 		#dialogMudancaTipoEntrega { display: none; }
 	</style>
-</head>
 
 	<div id="dialogMudancaTipoEntrega" title="Mudança do Tipo de Entrega">
 				

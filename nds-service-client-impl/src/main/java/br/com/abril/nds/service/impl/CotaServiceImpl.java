@@ -964,7 +964,7 @@ public class CotaServiceImpl implements CotaService {
 		dto.setBaseCalculo(parametro.getBaseCalculo());
 		dto.setInicioPeriodoCarencia(DateUtil.formatarDataPTBR(parametro.getInicioPeriodoCarencia()));
 		dto.setFimPeriodoCarencia(DateUtil.formatarDataPTBR(parametro.getFimPeriodoCarencia()));
-		
+		dto.setTipoDistribuicaoCota(cota.getTipoDistribuicaoCota().name());
 		return dto;
 	}
 	
