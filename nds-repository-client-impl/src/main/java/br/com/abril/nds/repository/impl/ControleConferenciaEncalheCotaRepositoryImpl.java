@@ -110,7 +110,7 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		
 		sql.append("	(CHAMADA_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal) ");
 		
-		sql.append("	AND CHAMADA_ENCALHE_COTA.FECHADO = :isPostergado ");
+		sql.append("	AND CHAMADA_ENCALHE_COTA.POSTERGADO = :isPostergado ");
 		
 		if(filtro.getIdCota()!=null) {
 			sql.append(" and CHAMADA_ENCALHE_COTA.COTA_ID = :idCota  ");
