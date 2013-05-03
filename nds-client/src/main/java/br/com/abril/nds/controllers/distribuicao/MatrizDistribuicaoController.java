@@ -382,7 +382,6 @@ public class MatrizDistribuicaoController extends BaseController {
 	h.append("<tr><td>Numero Cota</td>");
 	h.append("<td>Cota Nova</td>");
 	h.append("<td>Qtde PDV</td>");
-	h.append("<td></td>");
 	h.append("<td>Soma Rep Base</td>");
 	h.append("<td>Soma Venda Base</td>");
 	h.append("<td>Qtde Ed. Base</td>");

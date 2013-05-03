@@ -37,7 +37,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
 
 	@Override
 	public void executar(EstudoTransient estudo) throws Exception {
-	    if ((estudo.getEdicoesBase() != null) || (estudo.getEdicoesBase().size() <= 0)) {
+	    if ((estudo.getEdicoesBase() == null) || (estudo.getEdicoesBase().size() == 0)) {
 		LinkedList<ProdutoEdicaoEstudo> edicoesBase = estudoAlgoritmoService.buscaEdicoesPorLancamento(estudo.getProdutoEdicaoEstudo());
 		edicoesBase = limitarEdicoesApenasSeis(edicoesBase);
 		validaApenasUmaEdicaoFechada(edicoesBase);

@@ -107,6 +107,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	    result.nothing();
 	    return;
 	}
+	session.removeAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO);
 	ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicao);
 	if (estudoId != null) {
 	    Estudo estudo = estudoRepository.buscarPorId(estudoId);
@@ -264,7 +265,6 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	h.append("<tr><td>Numero Cota</td>");
 	h.append("<td>Cota Nova</td>");
 	h.append("<td>Qtde PDV</td>");
-	h.append("<td></td>");
 	h.append("<td>Soma Rep Base</td>");
 	h.append("<td>Soma Venda Base</td>");
 	h.append("<td>Qtde Ed. Base</td>");
