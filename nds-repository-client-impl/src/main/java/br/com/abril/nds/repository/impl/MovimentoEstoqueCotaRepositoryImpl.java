@@ -700,7 +700,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				dto.setNumeroEdicao(rs.getLong("numeroEdicao"));
 				dto.setPrecoVenda(rs.getBigDecimal("precoVenda"));
 				dto.setPrecoComDesconto(rs.getBigDecimal("precoComDesconto"));
-//				dto.setValorComDesconto(rs.getBigDecimal("valorDesconto"));
 				dto.setValor(rs.getBigDecimal("valor"));
 				dto.setValorComDesconto(rs.getBigDecimal("valorComDesconto"));
 				dto.setRecolhimento(rs.getInt("recolhimento"));
