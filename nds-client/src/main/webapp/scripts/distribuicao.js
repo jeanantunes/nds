@@ -22,15 +22,15 @@ function Distribuicao(tela) {
 				function(result) {
 
 					if (result){
-						if(result.map[1][1]=='CONVENCIONAL'){
+						console.log(result);
+						if(result.tipoDistricuicao=='CONVENCIONAL'){
 							D.$('recebeComplementar').removeAttr('disabled');
-							if(result.map[0][1]==true)
+							if(result.recebeComplementar==true)
 								D.$('recebeComplementar').attr('checked','checked');
 							else
 								D.$('recebeComplementar').removeAttr('checked');
-						}else if(result.map[1][1]=='ALTERNATIVO'){
+						}else if(result.tipoDistricuicao=='ALTERNATIVO'){
 							D.$('recebeComplementar').removeAttr('checked').attr('disabled', true);
-//							D.$('recebeComplementar').;
 						}
 						
 					}
