@@ -1056,6 +1056,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			AnaliseHistogramaDTO obj = produtoEdicaoRepository.obterBaseEstudoHistogramaPorFaixaVenda(filtro, codigoProduto, Integer.parseInt(faixa[0]), Integer.parseInt(faixa[1]), edicoes);
 			obj.executeScaleValues(edicoes.length);
 			
+			
+			
+			
 			if (i == newFaixasVenda.length - 1) {
 				obj.setFaixaVenda("Total:");
 				

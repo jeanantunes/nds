@@ -190,15 +190,17 @@ var analiseHistoricoVendaController = $.extend(true, {
 		
 		analiseHistoricoVendaController.popularPopUpInformacoesCota(response.cotaDto);
 		
-		for ( var i in response.tableModel.rows) {
-			row = response.tableModel.rows[i];
-			
-			if (row.cell.principal) {
-				row.cell.principal = "<img src='images/ico_check.gif' />";
-			}else {
-				row.cell.principal = "";
+		if (response.tableModel) {
+			for ( var i in response.tableModel.rows) {
+				row = response.tableModel.rows[i];
+				
+				if (row.cell.principal) {
+					row.cell.principal = "<img src='images/ico_check.gif' />";
+				}else {
+					row.cell.principal = "";
+				}
+				
 			}
-			
 		}
 		
 		return response.tableModel;
