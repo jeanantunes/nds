@@ -247,19 +247,11 @@ public class DistribuicaoVendaMediaController extends BaseController {
     @Post
     public void gerarEstudo(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, String codigoProduto, Long numeroEdicao) throws Exception {
 	EstudoTransient estudo = null;
-	//	try {
 	ProdutoEdicaoEstudo produto = new ProdutoEdicaoEstudo(codigoProduto);
 	produto.setNumeroEdicao(numeroEdicao);
-	estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, produto, distribuicaoVendaMedia.getReparteDistribuir(),
-		this.getUsuarioLogado());
-	// result.use(Results.json()).from(, "result").serialize();
+	estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, produto, distribuicaoVendaMedia.getReparteDistribuir(), this.getUsuarioLogado());
 	String htmlEstudo = estudoToHTML(estudo);
 	result.use(Results.json()).from(htmlEstudo, "estudo").recursive().serialize();
-	//	} catch (Exception e) {
-	//	    log.error("Erro na geração do estudo.", e);
-	//	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
-	//	}
-	//	validator.onErrorForwardTo(MatrizDistribuicaoController.class).index();
     }
 
     private String estudoToHTML(EstudoTransient estudo) {
