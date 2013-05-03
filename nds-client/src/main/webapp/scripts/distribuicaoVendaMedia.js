@@ -321,6 +321,8 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 			for(var i = 0; i < T.produtoEdicaoBases.length; i++){
 				var produtoEdicao = T.produtoEdicaoBases[i];
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].id", value : produtoEdicao.id});
+				data.push({name: "distribuicaoVendaMedia.bases["+i+"].numeroEdicao", value : produtoEdicao.numeroEdicao});
+				data.push({name: "distribuicaoVendaMedia.bases["+i+"].codigoProduto", value : produtoEdicao.codigoProduto});
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].peso", value : produtoEdicao.peso});
 			}
 		}
