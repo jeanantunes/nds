@@ -39,6 +39,8 @@ public class ProdutoEdicaoSlipDTO implements Serializable {
 	
 	private String valorTotalEncalhe;
 	
+	private Integer dia;
+	
 	/**
 	 * Obtém nomeProduto
 	 *
@@ -274,6 +276,20 @@ public class ProdutoEdicaoSlipDTO implements Serializable {
 	 */
 	public void setIdChamadaEncalhe(Long idChamadaEncalhe) {
 		this.idChamadaEncalhe = idChamadaEncalhe;
+	}
+
+	/**
+	 * @return the dia
+	 */
+	public Integer getDia() {
+		return dia;
+	}
+
+	/**
+	 * @param dia the dia to set
+	 */
+	public void setDia(Integer dia) {
+		this.dia = dia;
 	}
 
 }

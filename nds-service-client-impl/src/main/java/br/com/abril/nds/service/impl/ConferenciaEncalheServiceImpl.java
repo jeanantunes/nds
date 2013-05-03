@@ -10,6 +10,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,6 +30,8 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.export.JRTextExporter;
 import net.sf.jasperreports.engine.export.JRTextExporterParameter;
 
+import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections.comparators.ComparatorChain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -2992,7 +2995,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	private String getDiaMesOrdinal(Long x){
+	private String getDiaMesOrdinal(Integer x){
 		String ord="";
 		String aux="";
 		aux = Long.toString(x);
@@ -3052,14 +3055,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	    }
 
 		return ord;
-	}
-	
-	private long obterDiasEntreDatas(ProdutoEdicaoSlipDTO produtoEdicaoSlip){
-		long d = 0;
-		if (produtoEdicaoSlip.getDataOperacao()!=null && produtoEdicaoSlip.getDataRecolhimento()!=null){
-			d = DateUtil.obterDiferencaDias(produtoEdicaoSlip.getDataOperacao(), produtoEdicaoSlip.getDataRecolhimento());
-		}
-		return d;
 	}
 	
 	@Transactional
@@ -3232,9 +3227,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		BigDecimal valorTotalDesconto = this.obterValorTotalDesconto(numeroCota, dataOperacao);
 		BigDecimal valorTotalSemDesconto = this.obterValorTotalReparteSemDesconto(numeroCota, dataOperacao);
 		
-		BigInteger qtdeTotalProdutosDia = null;
-		BigDecimal valorTotalEncalheDia = null;
-		long dia=0;
+		Integer dia=0;
+		
 		boolean exibeSubtotalDia = false;
 		
 		for(ProdutoEdicaoSlipDTO produtoEdicaoSlip : listaProdutoEdicaoSlip) {
@@ -3242,10 +3236,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
  			qtdeTotalProdutos = BigIntegerUtil.soma(qtdeTotalProdutos, produtoEdicaoSlip.getEncalhe());
 			
 			valorTotalEncalhe = BigDecimalUtil.soma(valorTotalEncalhe, produtoEdicaoSlip.getValorTotal());
-			
-			qtdeTotalProdutosDia = BigIntegerUtil.soma(qtdeTotalProdutosDia, produtoEdicaoSlip.getEncalhe());   
-				
-			valorTotalEncalheDia = BigDecimalUtil.soma(valorTotalEncalheDia, produtoEdicaoSlip.getValorTotal());
 			
 			if(produtoEdicaoSlip.getReparte() == null) {
 				
@@ -3259,22 +3249,50 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			dia = this.distribuidorService.obterDiaDeRecolhimentoDaData(
 					produtoEdicaoSlip.getDataOperacao(), produtoEdicaoSlip.getDataRecolhimento(), produtoEdicao);
  
-			produtoEdicaoSlip.setOrdinalDiaConferenciaEncalhe(this.getDiaMesOrdinal(dia)+" DIA");
+			produtoEdicaoSlip.setDia(dia);
 			
-		    exibeSubtotalDia = (listaProdutoEdicaoSlip.indexOf(produtoEdicaoSlip)==(listaProdutoEdicaoSlip.size()-1))||
-		    		           (dia!=this.obterDiasEntreDatas(listaProdutoEdicaoSlip.get(listaProdutoEdicaoSlip.indexOf(produtoEdicaoSlip)+1)));	
-			                     
-			produtoEdicaoSlip.setQtdeTotalProdutos(!exibeSubtotalDia?"": String.valueOf(qtdeTotalProdutosDia.intValue()));
- 			
-			produtoEdicaoSlip.setValorTotalEncalhe(!exibeSubtotalDia?"":CurrencyUtil.formatarValor(valorTotalEncalheDia));
- 			
- 			if(exibeSubtotalDia){
- 				qtdeTotalProdutosDia = BigInteger.ZERO;   
- 				valorTotalEncalheDia = BigDecimal.ZERO;
- 			}
-	
+			String ordinal = null;
+			
+			if (dia == 0) {
+				
+				ordinal = DateUtil.formatarDataPTBR(produtoEdicaoSlip.getDataOperacao());
+				
+			} else {
+				
+				ordinal = this.getDiaMesOrdinal(dia) + " DIA";
+			}
+			
+			produtoEdicaoSlip.setOrdinalDiaConferenciaEncalhe(ordinal);	
 		}
 		
+		this.ordenarListaPorDia(listaProdutoEdicaoSlip);
+		
+		BigInteger qtdeTotalProdutosDia = null;
+		BigDecimal valorTotalEncalheDia = null;
+		
+		for(int i = 0; i < listaProdutoEdicaoSlip.size(); i++) {
+		
+			ProdutoEdicaoSlipDTO produtoSlip = listaProdutoEdicaoSlip.get(i);
+			
+			qtdeTotalProdutosDia =
+				BigIntegerUtil.soma(qtdeTotalProdutosDia, produtoSlip.getEncalhe());   
+			
+			valorTotalEncalheDia =
+				BigDecimalUtil.soma(valorTotalEncalheDia, produtoSlip.getValorTotal());
+			
+			exibeSubtotalDia = (i == listaProdutoEdicaoSlip.size() - 1) ||
+				produtoSlip.getDia() != listaProdutoEdicaoSlip.get(i + 1).getDia();	
+            
+			if (exibeSubtotalDia) {
+			
+				produtoSlip.setQtdeTotalProdutos(String.valueOf(qtdeTotalProdutosDia.intValue()));
+				
+				produtoSlip.setValorTotalEncalhe(CurrencyUtil.formatarValor(valorTotalEncalheDia));
+				
+				qtdeTotalProdutosDia = BigInteger.ZERO;
+				valorTotalEncalheDia = BigDecimal.ZERO;
+			}
+		}
 		
 		valorTotalReparte = (valorTotalReparte == null) ? BigDecimal.ZERO : valorTotalReparte;
 		valorTotalEncalhe = (valorTotalEncalhe == null) ? BigDecimal.ZERO : valorTotalEncalhe;
@@ -3378,7 +3396,15 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		parametersSlip.put("RAZAO_SOCIAL_DISTRIBUIDOR", this.distribuidorService.obterRazaoSocialDistribuidor());
 	}
 	
+	@SuppressWarnings("unchecked")
+	private void ordenarListaPorDia(List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlip) {
 
+		ComparatorChain comparatorChain = new ComparatorChain();
+		
+		comparatorChain.addComparator(new BeanComparator("dia"));
+		
+		Collections.sort(listaProdutoEdicaoSlip, comparatorChain);
+	}
 	
 	protected String obterSlipReportPath() throws URISyntaxException {
 		
