@@ -45,7 +45,7 @@ public class VendaCrescente {
 					if (previousProdutoEdicao.getProduto().getId().equals(produtoEdicao.getProduto().getId()) && !previousProdutoEdicao.isEdicaoAberta()
 							&& !produtoEdicao.isEdicaoAberta()) {
 						if (previousProdutoEdicao.getVenda().compareTo(BigDecimal.ZERO) == 1) {
-							BigDecimal divVendaEdicao = produtoEdicao.getVenda().divide(previousProdutoEdicao.getVenda(), 15, BigDecimal.ROUND_FLOOR);
+							BigDecimal divVendaEdicao = produtoEdicao.getVenda().divide(previousProdutoEdicao.getVenda(), 4, BigDecimal.ROUND_FLOOR);
 							previousProdutoEdicao.setDivisaoVendaCrescente(divVendaEdicao);
 							Boolean boo = divVendaEdicao.compareTo(BigDecimal.ONE) == 1;
 							listDivBoolean.add(boo);

@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.dao.CotaDAO;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaDesenglobada;
 import br.com.abril.nds.model.estudo.CotaEnglobada;
@@ -66,7 +67,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 
 	estudo.setCotas(new LinkedList<>(cotasComHistoricoMap.values()));
     }
-
+    
     private void carregarFixacoes(Map<Long, CotaEstudo> cotasComHistoricoMap, EstudoTransient estudo) {
 
 	List<CotaEstudo> cotasComFixacao = cotaDAO.getCotasComFixacao(estudo.getProdutoEdicaoEstudo().getProduto().getId(), estudo
@@ -100,6 +101,9 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	}
 	if (totalEdicoes.compareTo(BigDecimal.ZERO) != 0) {
 	    cota.setVendaMediaNominal(totalVenda.divide(totalEdicoes, 0, BigDecimal.ROUND_HALF_UP));
+	}
+	if (cota.getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) {
+	    cota.setClassificacao(ClassificacaoCota.BancaSuspensa);
 	}
     }
 
