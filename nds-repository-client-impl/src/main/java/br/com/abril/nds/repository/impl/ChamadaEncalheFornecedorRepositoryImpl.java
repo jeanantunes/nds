@@ -57,11 +57,20 @@ public class ChamadaEncalheFornecedorRepositoryImpl extends AbstractRepositoryMo
     	
     	StringBuilder hql = new StringBuilder();
     	
-    	hql.append(" select cef from ChamadaEncalheFornecedor as cef ");
-    	hql.append(" where cef.numeroSemana =:numeroSemana and cef.anoReferencia =:anoReferencia ");
+    	hql.append(" select cef ")
+    		.append(" from ChamadaEncalheFornecedor as cef ");
     	
-    	if(filtro.getIdFornecedor()!= null){
-    		hql.append(" and cef.fornecedor.id =:idFornecedor ");
+    	if(filtro.getIdFornecedor()!= null) {
+    		hql.append(" join fetch cef.itens itens ")
+    			.append(" join fetch itens.produtoEdicao pe ")
+    			.append(" join fetch pe.produto p ")
+    			.append(" join fetch p.fornecedores f ");
+    	}
+    	
+    	hql.append(" where cef.numeroSemana = :numeroSemana and cef.anoReferencia = :anoReferencia ");
+    	
+    	if(filtro.getIdFornecedor()!= null) {
+    		hql.append(" and f.id = :idFornecedor ");
     	}
     	
     	Query query = getSession().createQuery(hql.toString());
