@@ -26,22 +26,28 @@ init : function() {
 		colModel : [ {
 			display : 'Número da Nota',
 			name : 'numero',
-			width : 100,
+			width : 90,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Série',
 			name : 'serie',
-			width : 50,
+			width : 30,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Nota de Envio',
 			name : 'numeroNotaEnvio',
-			width : 50,
+			width : 70,
 			sortable : true,
 			align : 'left'
 		}, {
+			display : 'Chave Acesso',
+			name : 'chaveAcesso',
+			width : 130,
+			sortable : true,
+			align : 'left'
+		},{
 			display : 'Data de Emissão',
 			name : 'dataEmissao',
 			width : 100,
@@ -62,13 +68,13 @@ init : function() {
 		}, {
 			display : 'Fornecedor',
 			name : 'razaoSocial',
-			width : 100,
+			width : 60,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Valor R$',
 			name : 'valorTotalNota',
-			width : 80,
+			width : 60,
 			sortable : true,
 			align : 'right'
 		}, {
@@ -80,7 +86,7 @@ init : function() {
 		}, {
 			display : "Ação",
 			name : 'acao',
-			width : 60,
+			width : 40,
 			sortable : false,
 			align : 'center'
 		} ],
@@ -152,6 +158,10 @@ processarResultadoConsultaNF : function (data) {
 				+ ' style="cursor:pointer;border:0px" title="Visualizar Detalhes">'
 				+ '<img src="' + contextPath + '/images/ico_detalhes.png" border="0px"/>'
 				+ '</a>';
+				
+		if(!data.rows[i].cell.chaveAcesso){
+			data.rows[i].cell.chaveAcesso="";
+		}
 	}
 
 	if ($(".grids", consultaNotasController.workspace).css('display') == 'none') {
