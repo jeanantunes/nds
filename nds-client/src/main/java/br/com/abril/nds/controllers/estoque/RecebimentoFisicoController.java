@@ -1185,8 +1185,10 @@ public class RecebimentoFisicoController extends BaseController {
 		if(Origem.INTERFACE.equals(notaFiscalEntrada.getOrigem())){
 			atualizarItensRecebimentoEmSession(itensRecebimento);
 		}
+		NotaFiscalEntrada notaFiscalFromSession = getNotaFiscalFromSession();
+		notaFiscalFromSession.setStatusRecebimento(StatusRecebimento.CONFIRMADO);
 		
-		recebimentoFisicoService.confirmarRecebimentoFisico(getUsuarioLogado(), getNotaFiscalFromSession(), getItensRecebimentoFisicoFromSession(), new Date(),false);
+		recebimentoFisicoService.confirmarRecebimentoFisico(getUsuarioLogado(), notaFiscalFromSession, getItensRecebimentoFisicoFromSession(), new Date(),false);
 		
 		List<String> msgs = new ArrayList<String>();
 		msgs.add("Itens Confirmados com Sucesso.");
