@@ -127,9 +127,9 @@ var lancamentosSelecionados = [];
 		                </span>
 		                
 		                <span class="bt_novos" >
-							<a isEdicao="true" id="linkSalvar" href="javascript:;" onclick="balanceamentoLancamento.salvar();" title="Salvar">
+							<%--a isEdicao="true" id="linkSalvar" href="javascript:;" onclick="balanceamentoLancamento.salvar();" title="Salvar">
 								<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_salvar.gif">
-							</a>
+							</a  --%>
 						</span>
 			  			
 			  			 <span class="bt_arq">
