@@ -36,6 +36,7 @@ import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.StatusRecebimento;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -733,7 +734,10 @@ public class RecebimentoFisicoController extends BaseController {
 			atualizarItensRecebimentoEmSession(itensRecebimento);
 		}
 		
-		recebimentoFisicoService.inserirDadosRecebimentoFisico(getUsuarioLogado(), getNotaFiscalFromSession(), getItensRecebimentoFisicoFromSession(), new Date());
+		NotaFiscalEntrada notaFiscalFromSession = getNotaFiscalFromSession();
+		notaFiscalFromSession.setStatusRecebimento(StatusRecebimento.SALVO);
+		
+		recebimentoFisicoService.inserirDadosRecebimentoFisico(getUsuarioLogado(), notaFiscalFromSession, getItensRecebimentoFisicoFromSession(), new Date());
 		
 		List<String> msgs = new ArrayList<String>();
 		msgs.add("Itens salvos com sucesso.");
