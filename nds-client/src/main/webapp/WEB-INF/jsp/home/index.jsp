@@ -251,7 +251,6 @@
 	$(document).ready(function() {
 		
 		$("#ajaxLoading").ajaxStart(function() {
-			$(document).keydown(function(event){event.stopPropagation();return false;});
 			$(this).fadeIn(200);
 			
 		});

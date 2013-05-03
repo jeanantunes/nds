@@ -90,7 +90,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 	public List<ProdutoEdicaoSlipDTO> obterDadosSlipProdutoEdicaoAusenteConferenciaEncalhe(
 			Long idCota,
 			Date dataOperacao,
-			boolean indFechado,
 			boolean indPostergado,
 			Set<Long> listaIdProdutoEdicao) {
 
@@ -170,7 +169,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append("	COTA.ID = :idCota AND ");
 		hql.append("	CH_ENCALHE.DATA_RECOLHIMENTO = :dataOperacao AND 	");
-		hql.append("	CH_ENCALHE_COTA.FECHADO = :indFechado AND			");
 		hql.append("	CH_ENCALHE_COTA.POSTERGADO = :indPostergado 		");
 		
 		if(listaIdProdutoEdicao!=null && !listaIdProdutoEdicao.isEmpty()) {
@@ -197,7 +195,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		query.setParameter("idCota", idCota);
 		query.setParameter("dataOperacao", dataOperacao);
-		query.setParameter("indFechado", indFechado);
 		query.setParameter("indPostergado", indPostergado);
 		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
 		
@@ -500,7 +497,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" COALESCE(MOV_ESTOQUE_COTA.PRECO_COM_DESCONTO, PROD_EDICAO.PRECO_VENDA, 0)  ");
 		hql.append(" ) AS valorTotal, ");
 		
-		hql.append(" TO_DAYS(CONTROLE_CONF_ENC_COTA.DATA_OPERACAO)-TO_DAYS(CH_ENCALHE.DATA_RECOLHIMENTO) + 1 AS dia,  ");
+		hql.append(" CONTROLE_CONF_ENC_COTA.DATA_OPERACAO AS dataConferencia,  ");
 		hql.append(" CONF_ENCALHE.OBSERVACAO AS observacao, 	");
 		hql.append(" CONF_ENCALHE.JURAMENTADA AS juramentada 	");
 
@@ -564,7 +561,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		((SQLQuery)query).addScalar("desconto");
 		((SQLQuery)query).addScalar("precoComDesconto");
 		((SQLQuery)query).addScalar("valorTotal");
-		((SQLQuery)query).addScalar("dia", StandardBasicTypes.INTEGER);
+		((SQLQuery)query).addScalar("dataConferencia");
 
 		
 		query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);

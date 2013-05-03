@@ -588,7 +588,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     	
 		Distribuidor distribuidor = distribuidorRepository.obter();		
 		
-		List<Integer> diasSemanaDistribuidorOpera = this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(null, null);
+		List<Integer> diasSemanaDistribuidorOpera = this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(null);
 		
 		if(diasSemanaDistribuidorOpera == null || diasSemanaDistribuidorOpera.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possível realizar fechamento diário. Nenhum dia da semana com operação cadastradado para o Distribuidor."); 

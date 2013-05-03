@@ -189,7 +189,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 			Long cotaId, 
 			Date dataOperacaoDe,
 			Date dataOperacaoAte,
-			Boolean conferido, Boolean postergado) {
+			Boolean postergado) {
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -248,10 +248,6 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 			sql.append(" AND COTA.ID = :cotaId ");
 		}
 		
-		if(conferido!=null) {
-			sql.append(" AND	CH_ENCALHE_COTA.FECHADO = :conferido		");
-		}
-		
 		if(postergado!=null) {
 			sql.append(" AND CH_ENCALHE_COTA.POSTERGADO = :postergado		");
 		}
@@ -267,9 +263,6 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 		if(cotaId!=null) {
 			query.setParameter("cotaId", cotaId);
-		}
-		if(conferido!=null) {
-			query.setParameter("conferido", conferido);
 		}
 		
 		if(postergado!=null) {
@@ -355,10 +348,16 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 	}
 
-	@SuppressWarnings("unchecked")
-	public List<ChamadaEncalheCota> obterListaChamaEncalheCota(Integer numeroCota,Long idProdutoEdicao,
-															   boolean postergado,Date dataOperacao, Date... dataRecolhimento) {
+	public ChamadaEncalheCota obterUltimaChamaEncalheCota(Integer numeroCota,Long idProdutoEdicao,
+														 boolean postergado,Date dataOperacao) {
 
+		return obterUltimaChamadaEncalheCota(numeroCota, idProdutoEdicao,postergado, null);
+
+	}
+
+	private ChamadaEncalheCota obterUltimaChamadaEncalheCota(Integer numeroCota, Long idProdutoEdicao, boolean postergado,
+															 Date dataOperacao) {
+		
 		StringBuilder hql = new StringBuilder();
 
 		hql.append(" select chamadaEncalheCota ");
@@ -370,37 +369,43 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		hql.append(" chamadaEncalheCota.cota.numeroCota = :numeroCota ");
 
 		hql.append(" and chamadaEncalheCota.postergado = :postergado ");
-
-		if (dataRecolhimento!= null && dataRecolhimento.length > 0) {
-			hql.append(" and (chamadaEncalheCota.chamadaEncalhe.dataRecolhimento >= :dataOperacao ");
-			hql.append(" or chamadaEncalheCota.chamadaEncalhe.dataRecolhimento IN (:dataRecolhimento ))");
-		} else {
-			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento = :dataOperacao ");
+		
+		if(dataOperacao!= null){
+			
+			hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento  = :dataOperacao ");
 		}
-
+		
 		if (idProdutoEdicao != null) {
 			hql.append(" and chamadaEncalheCota.chamadaEncalhe.produtoEdicao.id = :idProdutoEdicao ");
 		}
 
+		hql.append(" order by chamadaEncalheCota.chamadaEncalhe.dataRecolhimento desc ");
+		
 		Query query = this.getSession().createQuery(hql.toString());
 
+		query.setMaxResults(1);
+		
 		query.setParameter("numeroCota", numeroCota);
 
 		query.setParameter("postergado", postergado);
 
-		query.setParameter("dataOperacao", dataOperacao);
-		
-		if(dataRecolhimento!= null && dataRecolhimento.length > 0){
-			query.setParameterList("dataRecolhimento", dataRecolhimento);
+		if(dataOperacao!= null){
+			query.setParameter("dataOperacao", dataOperacao);
 		}
-
+		
 		if (idProdutoEdicao != null) {
 			query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		}
-
-		return query.list();
-
+		
+		return (ChamadaEncalheCota) query.uniqueResult();
 	}
+	
+	public ChamadaEncalheCota obterUltimaChamaEncalheCotaParcial(Integer numeroCota,Long idProdutoEdicao,
+			 													 boolean postergado,Date dataOperacao) {
+		
+		return obterUltimaChamadaEncalheCota(numeroCota, idProdutoEdicao, postergado, dataOperacao);
+	}
+	
 
 	public ChamadaEncalheCota buscarPorChamadaEncalheECota(
 			Long idChamadaEncalhe, Long idCota) {

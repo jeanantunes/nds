@@ -56,22 +56,15 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		$("#dataNotaFiscal", ConferenciaEncalheCont.workspace).mask("99/99/9999");
 		
-		$("#numeroCota", ConferenciaEncalheCont.workspace).keyup(function(e) {
+		$("#numeroCota", ConferenciaEncalheCont.workspace).keypress(function(e) {
 			
-			if (e.keyCode == 13) {
+			if(e.keyCode == 13 && !visibleOverlay()) {
 
-				if (ConferenciaEncalheCont.verificarReabertura){
-				    
-				    ConferenciaEncalheCont.pesquisarCota();
-			    }
-			    else{
-			
-			    	ConferenciaEncalheCont.verificarReabertura = true;
-		    	}
+				ConferenciaEncalheCont.pesquisarCota();
 			}
 		});
 		
-		$("#lstProdutos", ConferenciaEncalheCont.workspace).keyup(function(e){
+		$("#lstProdutos", ConferenciaEncalheCont.workspace).keypress(function(e){
 			
 			ConferenciaEncalheCont.pesquisarProdutoPorCodigoNome();
 		});
@@ -534,9 +527,13 @@ var ConferenciaEncalheCont = $.extend(true, {
 	
 	arredondarValorDebitoCredito : function(listaDebitoCredito) {
 		
-		$.each(listaDebitoCredito, function(index, value){
+		if(listaDebitoCredito){
+			
+			$.each(listaDebitoCredito, function(index, value){
 				value.cell.valor = parseFloat(value.cell.valor).toFixed(2);
-		});
+			});
+		
+		}
 		
 		return listaDebitoCredito;
 		
@@ -587,7 +584,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					{codigoNomeProduto:codigoNomeProduto}, 
 				function(result){
 					
-					if (result[0]){
+					if (result.length > 1){
 						
 						$("#lstProdutos", ConferenciaEncalheCont.workspace).autocomplete({
 							source: result,
@@ -613,8 +610,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 									}, 
 									true, "idModalNovoEncalhe"
 								);
-							}
+							},
+							delay : 0
 						});
+						
+						$("#lstProdutos", ConferenciaEncalheCont.workspace).autocomplete("search", codigoNomeProduto);
 					}
 				}, null, true, "idModalNovoEncalhe"
 			);
