@@ -98,6 +98,17 @@
 		</div>
 		</form>
 		
+		<form id="form-alertAceite">
+		
+			<div id="alertAceite" title="Balanceamento da Matriz de Recolhimento" style="display:none;">
+				
+				<jsp:include page="../messagesDialog.jsp" />
+				
+				<p>A data está fora da semana de recolhimento. Você deseja continuar?</p>
+			</div>
+		
+		</form>
+		
 		<form id="form-confirm-balanceamento">
 		<div id="dialog-confirm-balanceamento" title="Balanceamento" style="display:none;">
 		    
