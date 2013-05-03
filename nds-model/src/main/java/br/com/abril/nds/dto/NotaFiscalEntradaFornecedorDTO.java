@@ -34,6 +34,8 @@ public class NotaFiscalEntradaFornecedorDTO implements Serializable {
 	private String notaRecebida;
 	
 	private String razaoSocial;
+	
+	private String chaveAcesso;
 
 	public NotaFiscalEntradaFornecedorDTO(Long id, Long numero,
 			Date dataEmissao, Date dataExpedicao, String descricao,
@@ -53,7 +55,7 @@ public class NotaFiscalEntradaFornecedorDTO implements Serializable {
 	
 	public NotaFiscalEntradaFornecedorDTO(Long id, Long numero, String serie, Long numeroNotaEnvio,
 			Date dataEmissao, Date dataExpedicao, String descricao,
-			BigDecimal valorTotalNota, StatusNotaFiscalEntrada statusNotaFiscal, Date dataRecebimento, String razaoSocial) {
+			BigDecimal valorTotalNota, StatusNotaFiscalEntrada statusNotaFiscal, Date dataRecebimento, String razaoSocial,String chaveAcesso) {
 		this.id = id;
 		this.numero = (numero == null) ? "" : numero.toString();
 		this.serie = StringUtils.defaultString(serie);
@@ -67,6 +69,7 @@ public class NotaFiscalEntradaFornecedorDTO implements Serializable {
 					? DateUtil.formatarDataPTBR(dataRecebimento)
 					: " ";		
 		this.razaoSocial = StringUtils.defaultString(razaoSocial);
+		this.chaveAcesso = chaveAcesso;
 	}
 
 	public Long getId() {
@@ -148,5 +151,14 @@ public class NotaFiscalEntradaFornecedorDTO implements Serializable {
 	public void setNumeroNotaEnvio(Long numeroNotaEnvio) {
 		this.numeroNotaEnvio = numeroNotaEnvio;
 	}
+
+	public String getChaveAcesso() {
+		return chaveAcesso;
+	}
+
+	public void setChaveAcesso(String chaveAcesso) {
+		this.chaveAcesso = chaveAcesso;
+	}
+	
 	
 }
