@@ -9,9 +9,9 @@ function Distribuicao(tela) {
 
     this.inicializar = function() {
 		
-    	D.verificarTipoConvencional();
+    	  D.verificarTipoConvencional();
 		
-	},
+	},                        
     
 	this.verificarTipoConvencional = function(idCota) {
 		
@@ -21,14 +21,17 @@ function Distribuicao(tela) {
 				param,
 				function(result) {
 
-					if (result && result.boolean){
+					if (result){
+						if(result.tipoDistribuicaoCota=='CONVENCIONAL'){
+							D.$('recebeComplementar').removeAttr('disabled');
+							/*if(result.recebeComplementar==true)
+								D.$('recebeComplementar').attr('checked','checked');
+							else
+								D.$('recebeComplementar').removeAttr('checked');*/
+						}else if(result.tipoDistribuicaoCota=='ALTERNATIVO'){
+							D.$('recebeComplementar').attr('disabled', true);
+						}
 						
-						D.$('recebeComplementar').removeAttr('disabled');
-						//D.$('recebeComplementar').attr('checked','checked');
-					} else {
-					
-						//D.$('recebeComplementar').removeAttr('checked');
-						D.$('recebeComplementar').attr('disabled', true);
 					}
 				},
 				
@@ -140,6 +143,7 @@ function Distribuicao(tela) {
 		if(dto.basesCalculo)
 			D.montarComboBaseCalculo(dto.basesCalculo);
 				
+		console.log(dto);
 		$("input[name='numCotaUpload']").val(dto.numCota);
 		
 		D.set('numCota',				dto.numCota);
@@ -154,7 +158,13 @@ function Distribuicao(tela) {
 		D.set('repPorPontoVenda',	    dto.repPorPontoVenda);
 		D.set('solNumAtras',			dto.solNumAtras);
 		D.set('recebeRecolhe',			dto.recebeRecolhe);
-		D.set('recebeComplementar',		dto.recebeComplementar);
+		
+		if(dto.tipoDistribuicaoCota=='CONVENCIONAL'){
+			D.set('recebeComplementar',	dto.recebeComplementar);			
+		}else if(dto.tipoDistribuicaoCota=='ALTERNATIVO'){
+			D.set('recebeComplementar',	false);
+		}
+		
 		D.set('neImpresso',				dto.neImpresso);
 		D.set('neEmail',				dto.neEmail);
 		D.set('ceImpresso',				dto.ceImpresso);

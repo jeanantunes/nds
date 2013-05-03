@@ -21,6 +21,7 @@ public class AnaliseEstudoDTO implements Serializable {
 	private Long numeroEdicaoProduto;
 	private Integer codPeriodoProd;
 	private String descicaoTpClassifProd;
+	private boolean permiteParcial;
 	
 	private String statusEstudo = "";
 	
@@ -115,5 +116,11 @@ public class AnaliseEstudoDTO implements Serializable {
 	}
 	public void setStatusLiberadoOuGerado(Boolean statusLiberadoOuGerado) {
 		this.statusLiberadoOuGerado = statusLiberadoOuGerado;
+	}
+	public boolean isPermiteParcial() {
+	    return permiteParcial;
+	}
+	public void setPermiteParcial(boolean permiteParcial) {
+	    this.permiteParcial = permiteParcial;
 	}
 }

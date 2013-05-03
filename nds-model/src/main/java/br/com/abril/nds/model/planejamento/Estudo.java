@@ -126,6 +126,10 @@ public class Estudo implements Serializable {
 		this.produtoEdicao = produtoEdicao;
 	}
 	
+	public Lancamento getLancamento() {
+		return lancamentos.isEmpty() ? null : lancamentos.iterator().next();
+	}
+	
 	/**
 	 * @return the estudoCotas
 	 */

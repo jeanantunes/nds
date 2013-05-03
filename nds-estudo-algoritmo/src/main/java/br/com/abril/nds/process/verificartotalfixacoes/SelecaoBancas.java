@@ -47,7 +47,6 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	LinkedList<CotaEstudo> cotasComHistorico = cotaDAO.getCotasComEdicoesBase(estudo);
 
 	if (cotasComHistorico.size() == 0) {
-	    // TODO incluir as edições na msg de erro...
 	    throw new Exception("Não foram encontradas cotas com historico para estas edições de base.");
 	}
 

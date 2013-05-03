@@ -694,6 +694,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 
 		Query query = getSession().createQuery(hql.toString());
 
+		
+		if (filtro.getCotaId() != null) {
+			query.setParameter("cotaId", filtro.getCotaId());
+		}
+		
 		if (filtro.getNumeroCota() != null) {
 			query.setParameter("numeroCota", filtro.getNumeroCota());
 		}
@@ -850,7 +855,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		} else {
 
 			hql.append(
-					"SELECT cota.id as idCota, cota.numeroCota as numeroCota, ")
+					" SELECT cota.id as idCota, cota.numeroCota as numeroCota, cota.parametroDistribuicao.recebeComplementar as recebeComplementar, cota.tipoDistribuicaoCota as tipoDistribuicaoCota, ")
 					.append(" case when (pessoa.nome is not null) then ( pessoa.nome )")
 					.append(" when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )")
 					.append(" else null end as nomePessoa, ")
@@ -875,7 +880,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 
 		
 		
-		if(	filtro.getNumeroCota() != null ||
+		if(	filtro.getCotaId() != null || filtro.getNumeroCota() != null ||
 			(filtro.getNumeroCpfCnpj() != null && !filtro.getNumeroCpfCnpj().trim().isEmpty()) ||
 			(filtro.getNomeCota() != null && !filtro.getNomeCota().trim().isEmpty()) ||
 			(filtro.getLogradouro() != null && !filtro.getLogradouro().trim().isEmpty()) ||
@@ -889,12 +894,23 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		boolean indAnd = false;
 
+		if (filtro.getCotaId() != null) {
+			
+			hql.append(" cota.id = :cotaId ");
+			
+			indAnd = true;
+		}
+		
 		if (filtro.getNumeroCota() != null) {
+			if(indAnd) {
+				hql.append(" AND ");
+			}
 			
 			hql.append(" cota.numeroCota =:numeroCota ");
 			
 			indAnd = true;
 		}
+
 
 		if (filtro.getNumeroCpfCnpj() != null
 				&& !filtro.getNumeroCpfCnpj().trim().isEmpty()) {

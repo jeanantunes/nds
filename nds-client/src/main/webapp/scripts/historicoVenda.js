@@ -1,5 +1,7 @@
 var historicoVendaController = $.extend(true, {
 	
+	Grids : {},
+	
 	flexGridService : new FlexGridService(),
 	
 	errorCallBack : function errorCallBack(){
@@ -18,6 +20,7 @@ var historicoVendaController = $.extend(true, {
 		
 		// #### ASSOCIANDO OS EVENTOS NO DOM ####
 
+		
 		$("#componente").change(function(){
 			selectedItem = $("#componente").val();
 			
@@ -301,7 +304,7 @@ var historicoVendaController = $.extend(true, {
 				}
 			}),
 			EdicaoSelecionadaGrid : flexGridService.GridFactory.createGrid({
-				gridName : "edicaoSelecionadaGrid",
+				gridName : "edicaoSelecionadaGridHistoricoVenda",
 				cached : true,
 				inputModel : [{
 						element : "img",
@@ -410,6 +413,20 @@ var historicoVendaController = $.extend(true, {
 			})
 			
 		};
+		
+
+		$("input[type=radio]", historicoVendaController.workspace).change(function (){
+			
+			var grid = historicoVendaController.Grids.PesqHistoricoGrid,
+				emptyTableModel = {
+					total: 0,
+					rows : [],
+					page : 0
+				};
+			
+			grid.addTableModel(emptyTableModel);
+			
+		});
 	},
 	
 	pesquisarCotasHistorico : function pesquisarCotasPorHistorio(url){
