@@ -91,6 +91,10 @@ var lancamentosSelecionados = [];
 	<div id="popup_confirmar_exclusao_estudo" title="Excluir Estudo" style="display:none">
 		<p>Confirma a exclus&ccedil&atildeo do estudo?</p>
 	</div>
+	
+	<div id="confirmar_variaveis" title="Variáveis" style="display:none" >
+		<p>Deseja exibir as variáveis do estudo?</p>
+	</div>
 	</form>
 		
 		   	<jsp:include page="../messagesDialog.jsp">

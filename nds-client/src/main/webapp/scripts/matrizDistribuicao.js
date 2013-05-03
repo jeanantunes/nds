@@ -1316,33 +1316,53 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	};
 	
 	this.gerarEstudoAutomatico = function() {
-		var selecionado = null;
-        var maisDeUm = false;
-        $.each(T.lancamentos, function(index, lancamento) {
-                if (lancamento.selecionado) {
-                        if (selecionado != null) {
-                                selecionado = null;
-                                maisDeUm = true;
-                                return;
-                        }
-                        selecionado = lancamento;
-                }
-        });
-        if (selecionado == null) {
-                exibirMensagem("ERROR", ["Selecione um item para esta opção."]);
-                return;
-        }
-        var postData = [];
-        postData.push({name : "codigoProduto", value : selecionado.codigoProduto});
-        postData.push({name : "numeroEdicao", value : selecionado.edicao});
-        postData.push({name : "reparte", value : selecionado.repDistrib});
-        $.postJSON(pathTela + "/matrizDistribuicao/gerarEstudoAutomatico", postData,
-    			function(result) {
-        			T.estudo = result;
-        			T.carregarGrid();
-        			T.exibirMensagemSucesso();
-    			}
-    	);
+	    var selecionado = null;
+	    $.each(T.lancamentos, function(index, lancamento) {
+	        if (lancamento.selecionado) {
+	            if (selecionado != null) {
+	                selecionado = null;
+	                return;
+	            }
+	            selecionado = lancamento;
+	        }
+	    });
+	    if (selecionado == null) {
+	        exibirMensagem("ERROR", ["Selecione um item para esta opção."]);
+	        return;
+	    }
+	    var postData = [];
+	    postData.push({name : "codigoProduto", value : selecionado.codigoProduto});
+	    postData.push({name : "numeroEdicao", value : selecionado.edicao});
+	    postData.push({name : "reparte", value : selecionado.repDistrib});
+	    $.postJSON(pathTela + "/matrizDistribuicao/gerarEstudoAutomatico", postData,
+	            function(result) {
+	        T.estudo = result;
+	        T.carregarGrid();
+	        T.exibirMensagemSucesso();
+	        $('#confirmar_variaveis').dialog({
+	            resizable: false,
+	            height:'auto',
+	            width:600,
+	            modal: true,
+	            buttons: [{
+	                id: "btnConfirmarVariaveis",
+	                text: "Confirmar",
+	                click: function() {
+	                    myWindow = window.open('', '_blank');
+	                    myWindow.document.write(T.estudo.estudo);
+	                    myWindow.focus();
+	                    $(this).dialog("close");
+	                }
+	            },
+	            {id: "btnCancelarVariaveis",
+	                text: "Cancelar",
+	                click: function() {
+	                    $(this).dialog("close");
+	                }
+	            }],
+	        });
+	    }
+	    );
 	};
 
 	this.gerarEstudoManual = function() {

@@ -1,9 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -19,7 +17,6 @@ import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -373,60 +370,47 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     @Override
     public List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO) {
 	StringBuilder sql = new StringBuilder();
-	sql.append("select cota.id, ");
-	sql.append("       pe.nome, ");
-	sql.append("       cota.numero_cota, ");
-	sql.append("       ec.reparte, ");
-	sql.append("       ec.classificacao ");
+	sql.append("select cota.numero_cota numeroCota, ");
+	sql.append("       pe.nome nomeCota, ");
+	sql.append("       ec.reparte quantidade, ");
+	sql.append("       ec.classificacao motivo ");
 	sql.append("  from estudo_cota ec ");
 	sql.append("  join cota on cota.id = ec.cota_id ");
 	sql.append("  join pessoa pe on pe.id = cota.pessoa_id ");
-	sql.append(" where ec.estudo_id = :estudoId ");
-	sql.append("   and ec.reparte = 0 ");
 
-	Map<String, Object> params = new HashMap<>();
-
-	if (queryDTO.possuiCota()) {
-	    sql.append(" and cota.numero_cota = :numeroCota ");
-	    params.put("numeroCota", queryDTO.getCota());
-	}
-
-	if (queryDTO.possuiNome()) {
-	    sql.append(" and pe.nome = :nomeCota ");
-	    params.put("nomeCota", queryDTO.getNome());
-	}
+	List<Object> params = new ArrayList<>();
 
 	if (queryDTO.possuiElemento()) {
 	    if (queryDTO.elementoIsTipoPontoVenda()) {
-		sql.append(" join pdv on pdv.cota_id = cota.id and pdv.tipo_ponto_pdv_id = :tipoPDV ");
-		params.put("tipoPDV", queryDTO.getValorElemento());
+		sql.append(" join pdv on pdv.cota_id = cota.id and pdv.tipo_ponto_pdv_id = ? ");
+		params.add(queryDTO.getValorElemento());
 	    }
 	    if (queryDTO.elementoIsGeradoorDeFluxo()) {
 		sql.append(" join pdv on pdv.cota_id = cota.id ");
-		sql.append(" join gerador_fluxo_pdv gfp on gfp.pdv_id = pdv.id and gfp.tipo_gerador_fluxo_id = :geradorFluxo ");
-		params.put("geradorFluxo", queryDTO.getValorElemento());
+		sql.append(" join gerador_fluxo_pdv gfp on gfp.pdv_id = pdv.id and gfp.tipo_gerador_fluxo_id = ? ");
+		params.add(queryDTO.getValorElemento());
 	    }
 	    if (queryDTO.elementoIsBairro()) {
 		sql.append(" join pdv on pdv.cota_id = cota.id ");
 		sql.append(" join endereco_pdv on endereco_pdv.pdv_id = pdv.id");
-		sql.append(" join endereco on endereco.id = endereco_pdv.endereco_id and endereco.bairro = :bairro ");
+		sql.append(" join endereco on endereco.id = endereco_pdv.endereco_id and endereco.bairro = ? ");
 
-		params.put("bairro", queryDTO.getValorElemento());
+		params.add(queryDTO.getValorElemento());
 	    }
 	    if (queryDTO.elementoIsRegiao()) {
-		sql.append(" join registro_cota_regiao as rcr on rcr.cota_id = cota.id and rcr.regiao_id = :regiao ");
-		params.put("regiao", queryDTO.getValorElemento());
+		sql.append(" join registro_cota_regiao as rcr on rcr.cota_id = cota.id and rcr.regiao_id = ? ");
+		params.add(queryDTO.getValorElemento());
 	    }
 	    if (queryDTO.elementoIsAreaDeInfluencia()) {
-		sql.append(" join pdv on pdv.cota_id = cota.id and pdv.area_influencia_pdv_id = :areaInfluencia ");
-		params.put("areaInfluencia", queryDTO.getValorElemento());
+		sql.append(" join pdv on pdv.cota_id = cota.id and pdv.area_influencia_pdv_id = ? ");
+		params.add(queryDTO.getValorElemento());
 	    }
 	    if (queryDTO.elementoIsDistrito()) {
 		sql.append(" join pdv on pdv.cota_id = cota.id ");
 		sql.append(" join endereco_pdv on endereco_pdv.pdv_id = pdv.id ");
-		sql.append(" join endereco on endereco.id = endereco_pdv.endereco_id and endereco.uf = :uf ");
+		sql.append(" join endereco on endereco.id = endereco_pdv.endereco_id and endereco.uf = ? ");
 
-		params.put("uf", queryDTO.getValorElemento());
+		params.add(queryDTO.getValorElemento());
 	    }
 	    if (queryDTO.elementoIsCotasAVista()) {
 
@@ -435,14 +419,30 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
 	    }
 	}
+	sql.append(" where ec.estudo_id = ? ");
+	sql.append("   and ec.reparte = 0 ");
+	params.add(queryDTO.getEstudo());
 
-	Query query = getSession().createQuery(sql.toString());
-
-	List<Cota> cotas = query.list();
-	List<CotaQueNaoEntrouNoEstudoDTO> lista = query.list();
-	for (Cota cota : cotas) {
-	    lista.add(new CotaQueNaoEntrouNoEstudoDTO(cota));
+	if (queryDTO.possuiCota()) {
+	    sql.append(" and cota.numero_cota = ? ");
+	    params.add(queryDTO.getCota());
 	}
+
+	if (queryDTO.possuiNome()) {
+	    sql.append(" and pe.nome = ? ");
+	    params.add(queryDTO.getNome());
+	}
+
+	Query query = getSession().createSQLQuery(sql.toString())
+		.addScalar("numeroCota", StandardBasicTypes.LONG)
+		.addScalar("nomeCota", StandardBasicTypes.STRING)
+		.addScalar("quantidade", StandardBasicTypes.BIG_INTEGER)
+		.addScalar("motivo", StandardBasicTypes.STRING);
+	for (int i = 0; i < params.size(); i++) {
+	    query.setParameter(i, params.get(i));
+	}
+	query.setResultTransformer(new AliasToBeanResultTransformer(CotaQueNaoEntrouNoEstudoDTO.class));
+	List<CotaQueNaoEntrouNoEstudoDTO> lista = query.list();
 	return lista;
     }
 }
