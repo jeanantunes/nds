@@ -5,8 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -38,7 +38,6 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.RegiaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.ComponentesPDV;
-import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.UfEnum;
 import br.com.abril.nds.util.export.FileExporter;
@@ -210,9 +209,10 @@ public class HistogramaVendasController extends BaseController {
 		result.include("labelElemento", labelElemento);
 		result.include("classificacaoLabel", classificacaoLabel);
 		
+		NumberFormat f = NumberFormat.getNumberInstance();
 		// informações do resumo do histograma (parte inferior da tela)
-		result.include("reparteTotalDistribuidor", reparteTotalDistribuidor / nrEdicoes.length);
-		CurrencyUtil.converterValor("");
+		result.include("reparteTotalDistribuidor", f.format(reparteTotalDistribuidor / nrEdicoes.length));
+		
 		
 		
 		//Pesquisar base de estudo e salvar em sessão

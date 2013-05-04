@@ -832,7 +832,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				"sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) as venda, " +
 				"lancamento.dataRecolhimentoDistribuidor as dtRecolhimento, " +
 				"lancamento.dataLancamentoDistribuidor as dtLancamento, " +
-				"lancamento.reparte as reparte, " +
+				"sum(estoqueProdutoCota.qtdeRecebida) as reparte, " +
 				"produto.nome as nomeProduto, " +
 				"produto.codigo as codigoProduto, " +				
 				"tipoClassificacaoProduto.descricao as descricaoTipoClassificacao, " +
@@ -973,7 +973,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				
 				break;
 			case REGIAO:
-				//todo: EMS 2004
+				whereList.add(" estoqueProdutoCota.cota.id in (SELECT registro.cota.id FROM RegistroCotaRegiao as registro WHERE regiao.id = :regiaoId )");
+				parameterMap.put("regiaoId",Long.parseLong(filtro.getElemento()));
 				break;
 			default:
 				break;
