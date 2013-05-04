@@ -58,329 +58,340 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/matrizDistribuicao")
 public class MatrizDistribuicaoController extends BaseController {
 
-    Logger log = LoggerFactory.getLogger(MatrizDistribuicaoController.class);
+	Logger log = LoggerFactory.getLogger(MatrizDistribuicaoController.class);
 
-    @Autowired
-    private Result result;
+	@Autowired
+	private Result result;
 
-    @Autowired
-    private FornecedorService fornecedorService;
+	@Autowired
+	private FornecedorService fornecedorService;
 
-    @Autowired
-    private MatrizDistribuicaoService matrizDistribuicaoService;
+	@Autowired
+	private MatrizDistribuicaoService matrizDistribuicaoService;
 
-    @Autowired
-    private HttpSession session;
+	@Autowired
+	private HttpSession session;
 
-    @Autowired
-    private HttpServletResponse httpResponse;
+	@Autowired
+	private HttpServletResponse httpResponse;
 
-    @Autowired
-    private CalendarioService calendarioService;
+	@Autowired
+	private CalendarioService calendarioService;
 
-    @Autowired
-    private EstudoAlgoritmoService estudoAlgoritmoService;
+	@Autowired
+	private EstudoAlgoritmoService estudoAlgoritmoService;
 
-    @Autowired
-    private SomarEstudosService somarEstudosService;
+	@Autowired
+	private SomarEstudosService somarEstudosService;
 
-    @Autowired
-    private ParametrosDistribuidorService parametrosDistribuidorService;
+	@Autowired
+	private ParametrosDistribuidorService parametrosDistribuidorService;
 
-    private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMatrizDistribuicao";
+	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMatrizDistribuicao";
 
-    @Path("/matrizDistribuicao")
-    @Rules(Permissao.ROLE_DISTRIBUICAO_MATRIZ_DISTRIBUICAO)
-    public void index() {
+	@Path("/matrizDistribuicao")
+	@Rules(Permissao.ROLE_DISTRIBUICAO_MATRIZ_DISTRIBUICAO)
+	public void index() {
 
-	session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
 
-	List<Fornecedor> fornecedores = fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO);
-	String data = DateUtil.formatarDataPTBR(new Date());
-	result.include("data", data);
-	result.include("fornecedores", fornecedores);
-    }
-
-    @Post
-    public void obterMatrizDistribuicao(Date dataLancamento, List<Long> idsFornecedores) {
-
-	ParametrosDistribuidorVO parametrosDistribuidorVO = parametrosDistribuidorService.getParametrosDistribuidor();
-	validarDadosPesquisa(dataLancamento);
-	configurarFiltropesquisa(dataLancamento, idsFornecedores);
-	this.result.use(Results.json()).from(parametrosDistribuidorVO).recursive().serialize();
-    }
-
-    @Post
-    public void obterGridMatrizDistribuicao(String sortorder, String sortname, int page, int rp) {
-
-	FiltroDistribuicaoDTO filtro = obterFiltroSessao();
-	filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
-	TotalizadorProdutoDistribuicaoVO vo = matrizDistribuicaoService.obterMatrizDistribuicao(filtro);
-	filtro.setTotalRegistrosEncontrados(vo.getListProdutoDistribuicao().size());
-	session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
-	processarDistribuicao(vo, filtro);
-    }
-
-    @Post
-    public void carregarProdutoEdicaoPorEstudo(BigInteger estudo) {
-
-	ProdutoDistribuicaoVO produtoDistribuicaoVO = matrizDistribuicaoService.obterProdutoDistribuicaoPorEstudo(estudo);
-	
-	if (produtoDistribuicaoVO == null) {
-		
-		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Estudo: ["+estudo+"] não encontrado."));
-	}
-	
-	result.use(Results.json()).from(produtoDistribuicaoVO, "result").recursive().serialize();
-    }
-
-    @Post
-    public void confirmarCopiarProporcionalDeEstudo(CopiaProporcionalDeDistribuicaoVO copiaProporcionalDeDistribuicaoVO) {
-
-	Long idEstudo = matrizDistribuicaoService.confirmarCopiarProporcionalDeEstudo(copiaProporcionalDeDistribuicaoVO);
-	result.use(Results.json()).from(idEstudo, "result").recursive().serialize();
-    }
-
-    private void processarDistribuicao(TotalizadorProdutoDistribuicaoVO totProdDistVO, FiltroDistribuicaoDTO filtro) {
-
-	PaginacaoVO paginacao = filtro.getPaginacao();
-	List<ProdutoDistribuicaoVO> listProdutosDistrib = (totProdDistVO.isMatrizFinalizada()) ? new ArrayList<ProdutoDistribuicaoVO>()
-		: totProdDistVO.getListProdutoDistribuicao();
-	listProdutosDistrib = PaginacaoUtil.paginarEmMemoria(listProdutosDistrib, paginacao);
-	TableModel<CellModelKeyValue<ProdutoDistribuicaoVO>> tm = new TableModel<CellModelKeyValue<ProdutoDistribuicaoVO>>();
-	List<CellModelKeyValue<ProdutoDistribuicaoVO>> cells = CellModelKeyValue.toCellModelKeyValue(listProdutosDistrib);
-
-	List<Object> resultado = new ArrayList<Object>();
-	tm.setRows(cells);
-	tm.setPage(paginacao.getPaginaAtual());
-	tm.setTotal(filtro.getTotalRegistrosEncontrados());
-	resultado.add(tm);
-	resultado.add(totProdDistVO.getTotalEstudosGerados());
-	resultado.add(totProdDistVO.getTotalEstudosLiberados());
-	resultado.add(totProdDistVO.isMatrizFinalizada());
-	result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
-    }
-
-    @Post
-    public void finalizarMatrizDistribuicao(List<ProdutoDistribuicaoVO> produtosDistribuicao) {
-
-	FiltroDistribuicaoDTO filtro = obterFiltroSessao();
-
-	matrizDistribuicaoService.finalizarMatrizDistribuicao(filtro, produtosDistribuicao);
-
-	result.use(Results.json()).from(Results.nothing()).serialize();
-    }
-
-    @Post
-    public void finalizarMatrizDistribuicaoTodosItens(List<ProdutoDistribuicaoVO> produtosDistribuicao) {
-
-	FiltroDistribuicaoDTO filtro = obterFiltroSessao();
-
-	matrizDistribuicaoService.finalizarMatrizDistribuicaoTodosItens(filtro, produtosDistribuicao);
-
-	result.use(Results.json()).from(Results.nothing()).serialize();
-    }
-
-    @Post
-    public void reabrirMatrizDistribuicao(List<ProdutoDistribuicaoVO> produtosDistribuicao) {
-
-	matrizDistribuicaoService.reabrirMatrizDistribuicao(produtosDistribuicao);
-
-	result.use(Results.json()).from(Results.nothing()).serialize();
-    }
-
-    @Post
-    public void reabrirMatrizDistribuicaoTodosItens() {
-
-	FiltroDistribuicaoDTO filtro = obterFiltroSessao();
-
-	matrizDistribuicaoService.reabrirMatrizDistribuicaoTodosItens(filtro);
-
-	result.use(Results.json()).from(Results.nothing()).serialize();
-    }
-
-    @Exportable
-    public class RodapeDTO {
-	@Export(label = "Estudos gerados:")
-	private String totalEstudosGerados;
-	@Export(label = "Estudos liberados:")
-	private String totalEstudosLiberado;
-
-	public RodapeDTO(String totalGerado, String totalLiberado) {
-	    this.totalEstudosGerados = totalGerado;
-	    this.totalEstudosLiberado = totalLiberado;
-
+		List<Fornecedor> fornecedores = fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO);
+		String data = DateUtil.formatarDataPTBR(new Date());
+		result.include("data", data);
+		result.include("fornecedores", fornecedores);
 	}
 
-	public String getTotalEstudosGerados() {
-	    return totalEstudosGerados;
+	@Post
+	public void obterMatrizDistribuicao(Date dataLancamento, List<Long> idsFornecedores) {
+
+		ParametrosDistribuidorVO parametrosDistribuidorVO = parametrosDistribuidorService.getParametrosDistribuidor();
+		validarDadosPesquisa(dataLancamento);
+		configurarFiltropesquisa(dataLancamento, idsFornecedores);
+		this.result.use(Results.json()).from(parametrosDistribuidorVO).recursive().serialize();
 	}
 
-	public String getTotalEstudosLiberado() {
-	    return totalEstudosLiberado;
+	@Post
+	public void obterGridMatrizDistribuicao(String sortorder, String sortname, int page, int rp) {
+
+		FiltroDistribuicaoDTO filtro = obterFiltroSessao();
+		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+		TotalizadorProdutoDistribuicaoVO vo = matrizDistribuicaoService.obterMatrizDistribuicao(filtro);
+		filtro.setTotalRegistrosEncontrados(vo.getListProdutoDistribuicao().size());
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
+		processarDistribuicao(vo, filtro);
 	}
 
-    }
+	@Post
+	public void carregarProdutoEdicaoPorEstudo(BigInteger estudo) {
 
-    /**
-     * Exporta os dados da pesquisa.
-     * 
-     * @param fileType
-     *            - tipo de arquivo
-     * 
-     * @throws IOException
-     *             Exceção de E/S
-     */
-    @Get
-    public void exportar(FileType fileType) throws IOException {
+		ProdutoDistribuicaoVO produtoDistribuicaoVO = matrizDistribuicaoService.obterProdutoDistribuicaoPorEstudo(estudo);
 
-	FiltroDistribuicaoDTO filtro = obterFiltroSessao();
+		if (produtoDistribuicaoVO == null) {
 
-	TotalizadorProdutoDistribuicaoVO totalizadorProdutoDistribuicaoVO = matrizDistribuicaoService.obterMatrizDistribuicao(filtro);
-
-	if (totalizadorProdutoDistribuicaoVO != null && totalizadorProdutoDistribuicaoVO.getListProdutoDistribuicao() != null
-		&& !totalizadorProdutoDistribuicaoVO.getListProdutoDistribuicao().isEmpty()) {
-
-	    RodapeDTO rodapeDTO = new RodapeDTO(CurrencyUtil.formatarValor(totalizadorProdutoDistribuicaoVO.getTotalEstudosGerados()),
-		    CurrencyUtil.formatarValor(totalizadorProdutoDistribuicaoVO.getTotalEstudosLiberados()));
-
-	    FileExporter.to("matriz_distribuicao", fileType).inHTTPResponse(this.getNDSFileHeader(), filtro, rodapeDTO,
-		    totalizadorProdutoDistribuicaoVO.getListProdutoDistribuicao(), ProdutoDistribuicaoVO.class, this.httpResponse);
-	}
-
-	result.nothing();
-
-    }
-
-    /**
-     * Configura o filtro informado na tela e o armazena na sessão.
-     * 
-     * @param dataPesquisa
-     *            - data da pesquisa
-     * @param listaIdsFornecedores
-     *            - lista de identificadores de fornecedores
-     */
-    private FiltroDistribuicaoDTO configurarFiltropesquisa(Date dataPesquisa, List<Long> listaIdsFornecedores) {
-
-	FiltroDistribuicaoDTO filtro = new FiltroDistribuicaoDTO(dataPesquisa, listaIdsFornecedores);
-
-	if (listaIdsFornecedores != null && !listaIdsFornecedores.isEmpty()) {
-
-	    filtro.setNomesFornecedor(this.montarNomeFornecedores(listaIdsFornecedores));
-	}
-
-	this.session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
-
-	return filtro;
-    }
-
-    private String montarNomeFornecedores(List<Long> idsFornecedores) {
-
-	String nomeFornecedores = "";
-
-	List<Fornecedor> listaFornecedor = fornecedorService.obterFornecedoresPorId(idsFornecedores);
-
-	if (listaFornecedor != null && !listaFornecedor.isEmpty()) {
-
-	    for (Fornecedor fornecedor : listaFornecedor) {
-
-		if (!nomeFornecedores.isEmpty()) {
-
-		    nomeFornecedores += " / ";
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Estudo: [" + estudo + "] não encontrado."));
 		}
 
-		nomeFornecedores += fornecedor.getJuridica().getRazaoSocial();
-	    }
+		result.use(Results.json()).from(produtoDistribuicaoVO, "result").recursive().serialize();
 	}
 
-	return nomeFornecedores;
-    }
+	@Post
+	public void confirmarCopiarProporcionalDeEstudo(CopiaProporcionalDeDistribuicaoVO copiaProporcionalDeDistribuicaoVO) {
 
-    /**
-     * Valida os dados da pesquisa.
-     * 
-     * @param numeroSemana
-     *            - número da semana
-     * @param dataPesquisa
-     *            - data da pesquisa
-     */
-    private void validarDadosPesquisa(Date dataPesquisa) {
-
-	List<String> listaMensagens = new ArrayList<String>();
-	if (dataPesquisa == null) {
-	    listaMensagens.add("O preenchimento do campo [Data] é obrigatório!");
+		Long idEstudo = matrizDistribuicaoService.confirmarCopiarProporcionalDeEstudo(copiaProporcionalDeDistribuicaoVO);
+		
+		result.use(Results.json()).from(idEstudo, "result").recursive().serialize();
 	}
-	if (!listaMensagens.isEmpty()) {
-	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagens));
+
+	private void processarDistribuicao(TotalizadorProdutoDistribuicaoVO totProdDistVO, FiltroDistribuicaoDTO filtro) {
+
+		PaginacaoVO paginacao = filtro.getPaginacao();
+		List<ProdutoDistribuicaoVO> listProdutosDistrib = (totProdDistVO.isMatrizFinalizada()) ? 
+				new ArrayList<ProdutoDistribuicaoVO>() : totProdDistVO.getListProdutoDistribuicao();
+		listProdutosDistrib = PaginacaoUtil.paginarEmMemoria(listProdutosDistrib, paginacao);
+		TableModel<CellModelKeyValue<ProdutoDistribuicaoVO>> tm = new TableModel<CellModelKeyValue<ProdutoDistribuicaoVO>>();
+		List<CellModelKeyValue<ProdutoDistribuicaoVO>> cells = CellModelKeyValue.toCellModelKeyValue(listProdutosDistrib);
+
+		List<Object> resultado = new ArrayList<Object>();
+		tm.setRows(cells);
+		tm.setPage(paginacao.getPaginaAtual());
+		tm.setTotal(filtro.getTotalRegistrosEncontrados());
+		resultado.add(tm);
+		resultado.add(totProdDistVO.getTotalEstudosGerados());
+		resultado.add(totProdDistVO.getTotalEstudosLiberados());
+		resultado.add(totProdDistVO.isMatrizFinalizada());
+		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 	}
-    }
 
-    /**
-     * Obtém o filtro para pesquisa da sessão.
-     * 
-     * @return filtro
-     */
-    private FiltroDistribuicaoDTO obterFiltroSessao() {
+	@Post
+	public void finalizarMatrizDistribuicao(List<ProdutoDistribuicaoVO> produtosDistribuicao) {
 
-	FiltroDistribuicaoDTO filtro = (FiltroDistribuicaoDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
-	if (filtro == null) {
-	    throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
+		FiltroDistribuicaoDTO filtro = obterFiltroSessao();
+		matrizDistribuicaoService.finalizarMatrizDistribuicao(filtro, produtosDistribuicao);
+
+		result.use(Results.json()).from(Results.nothing()).serialize();
 	}
-	return filtro;
-    }
 
-    @Post
-    public void duplicarLinha(ProdutoDistribuicaoVO produtoDistribuicao) {
+	@Post
+	public void finalizarMatrizDistribuicaoTodosItens(List<ProdutoDistribuicaoVO> produtosDistribuicao) {
 
-	produtoDistribuicao.setIdUsuario(getUsuarioLogado().getId());
-	matrizDistribuicaoService.duplicarLinhas(produtoDistribuicao);
-	this.result.use(Results.json()).from(Results.nothing()).serialize();
-    }
+		FiltroDistribuicaoDTO filtro = obterFiltroSessao();
 
-    @Post
-    public void excluirEstudosSelecionados(List<ProdutoDistribuicaoVO> produtosDistribuicao) {
+		matrizDistribuicaoService.finalizarMatrizDistribuicaoTodosItens(filtro, produtosDistribuicao);
 
-	if (produtosDistribuicao == null || produtosDistribuicao.isEmpty()) {
-	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Selecione um estudo para excluir!"));
+		result.use(Results.json()).from(Results.nothing()).serialize();
 	}
-	matrizDistribuicaoService.excluirEstudos(produtosDistribuicao);
-	this.result.use(Results.json()).from(Results.nothing()).serialize();
-    }
 
-    @Post
-    public void reabrirEstudosSelecionados(List<ProdutoDistribuicaoVO> produtosDistribuicao) {
+	@Post
+	public void reabrirMatrizDistribuicao(List<ProdutoDistribuicaoVO> produtosDistribuicao) {
 
-	if (produtosDistribuicao == null || produtosDistribuicao.isEmpty()) {
-	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Selecione um ou mais estudos para ser(em) reaberto(s)!"));
+		matrizDistribuicaoService.reabrirMatrizDistribuicao(produtosDistribuicao);
+
+		result.use(Results.json()).from(Results.nothing()).serialize();
 	}
-	matrizDistribuicaoService.reabrirEstudos(produtosDistribuicao);
-	this.result.use(Results.json()).from(Results.nothing()).serialize();
-    }
 
-    @Post
-    public void gerarEstudoAutomatico(String codigoProduto, Long numeroEdicao, BigDecimal reparte) {
-	EstudoTransient estudoAutomatico;
-	try {
-	    ProdutoEdicaoEstudo produto = new ProdutoEdicaoEstudo(codigoProduto);
-	    produto.setNumeroEdicao(numeroEdicao);
-	    estudoAutomatico = estudoAlgoritmoService.gerarEstudoAutomatico(produto, reparte.toBigInteger(),
-		    this.getUsuarioLogado());
-	} catch (Exception e) {
-	    log.error("Erro na geração automatica do estudo.", e);
-	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
+	@Post
+	public void reabrirMatrizDistribuicaoTodosItens() {
+
+		FiltroDistribuicaoDTO filtro = obterFiltroSessao();
+
+		matrizDistribuicaoService.reabrirMatrizDistribuicaoTodosItens(filtro);
+
+		result.use(Results.json()).from(Results.nothing()).serialize();
 	}
-	String htmlEstudo = HTMLTableUtil.estudoToHTML(estudoAutomatico);
-	result.use(Results.json()).from(htmlEstudo, "estudo").recursive().serialize();
-    }
+
+	@Exportable
+	public class RodapeDTO {
+		@Export(label = "Estudos gerados:")
+		private String totalEstudosGerados;
+		@Export(label = "Estudos liberados:")
+		private String totalEstudosLiberado;
+
+		public RodapeDTO(String totalGerado, String totalLiberado) {
+			this.totalEstudosGerados = totalGerado;
+			this.totalEstudosLiberado = totalLiberado;
+
+		}
+
+		public String getTotalEstudosGerados() {
+			return totalEstudosGerados;
+		}
+
+		public String getTotalEstudosLiberado() {
+			return totalEstudosLiberado;
+		}
+
+	}
+
+	/**
+	 * Exporta os dados da pesquisa.
+	 * 
+	 * @param fileType - tipo de arquivo
+	 * 
+	 * @throws IOException - Exceção de E/S
+	 */
+	@Get
+	public void exportar(FileType fileType) throws IOException {
+
+		FiltroDistribuicaoDTO filtro = obterFiltroSessao();
+
+		TotalizadorProdutoDistribuicaoVO totalizadorProdutoDistribuicaoVO = matrizDistribuicaoService.obterMatrizDistribuicao(filtro);
+
+		if (totalizadorProdutoDistribuicaoVO != null && 
+				totalizadorProdutoDistribuicaoVO.getListProdutoDistribuicao() != null && 
+				!totalizadorProdutoDistribuicaoVO.getListProdutoDistribuicao().isEmpty()) {
+
+			RodapeDTO rodapeDTO = new RodapeDTO(CurrencyUtil.formatarValor(totalizadorProdutoDistribuicaoVO.getTotalEstudosGerados()),
+			CurrencyUtil.formatarValor(totalizadorProdutoDistribuicaoVO.getTotalEstudosLiberados()));
+
+			FileExporter.to("matriz_distribuicao", fileType).inHTTPResponse(
+					this.getNDSFileHeader(),
+					filtro,
+					rodapeDTO,
+					totalizadorProdutoDistribuicaoVO.getListProdutoDistribuicao(),
+					ProdutoDistribuicaoVO.class, this.httpResponse);
+		}
+
+		result.nothing();
+	}
+
+	/**
+	 * Configura o filtro informado na tela e o armazena na sessÃ£o.
+	 * 
+	 * @param dataPesquisa - data da pesquisa
+	 * @param listaIdsFornecedores - lista de identificadores de fornecedores
+	 */
+	private FiltroDistribuicaoDTO configurarFiltropesquisa(Date dataPesquisa, List<Long> listaIdsFornecedores) {
+
+		FiltroDistribuicaoDTO filtro = new FiltroDistribuicaoDTO(dataPesquisa, listaIdsFornecedores);
+
+		if (listaIdsFornecedores != null && !listaIdsFornecedores.isEmpty()) {
+
+			filtro.setNomesFornecedor(this.montarNomeFornecedores(listaIdsFornecedores));
+		}
+
+		this.session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
+
+		return filtro;
+	}
+
+	private String montarNomeFornecedores(List<Long> idsFornecedores) {
+
+		String nomeFornecedores = "";
+
+		List<Fornecedor> listaFornecedor = fornecedorService.obterFornecedoresPorId(idsFornecedores);
+
+		if (listaFornecedor != null && !listaFornecedor.isEmpty()) {
+
+			for (Fornecedor fornecedor : listaFornecedor) {
+
+				if (!nomeFornecedores.isEmpty()) {
+
+					nomeFornecedores += " / ";
+				}
+
+				nomeFornecedores += fornecedor.getJuridica().getRazaoSocial();
+			}
+		}
+
+		return nomeFornecedores;
+	}
+
+	/**
+	 * Valida os dados da pesquisa.
+	 * 
+	 * @param numeroSemana - número da semana
+	 * @param dataPesquisa - data da pesquisa
+	 */
+	private void validarDadosPesquisa(Date dataPesquisa) {
+
+		List<String> listaMensagens = new ArrayList<String>();
+		if (dataPesquisa == null) {
+			
+			listaMensagens.add("O preenchimento do campo [Data] é obrigatório!");
+		}
+		if (!listaMensagens.isEmpty()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagens));
+		}
+	}
+
+	/**
+	 * Obtem o filtro para pesquisa da sessão.
+	 * 
+	 * @return filtro
+	 */
+	private FiltroDistribuicaoDTO obterFiltroSessao() {
+
+		FiltroDistribuicaoDTO filtro = (FiltroDistribuicaoDTO) this.session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		if (filtro == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
+		}
+		return filtro;
+	}
+
+	@Post
+	public void duplicarLinha(ProdutoDistribuicaoVO produtoDistribuicao) {
+
+		produtoDistribuicao.setIdUsuario(getUsuarioLogado().getId());
+		matrizDistribuicaoService.duplicarLinhas(produtoDistribuicao);
+		this.result.use(Results.json()).from(Results.nothing()).serialize();
+	}
+
+	@Post
+	public void excluirEstudosSelecionados(List<ProdutoDistribuicaoVO> produtosDistribuicao) {
+
+		if (produtosDistribuicao == null || produtosDistribuicao.isEmpty()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Selecione um estudo para excluir!"));
+		}
+		
+		matrizDistribuicaoService.excluirEstudos(produtosDistribuicao);
+		this.result.use(Results.json()).from(Results.nothing()).serialize();
+	}
+
+	@Post
+	public void reabrirEstudosSelecionados(List<ProdutoDistribuicaoVO> produtosDistribuicao) {
+
+		if (produtosDistribuicao == null || produtosDistribuicao.isEmpty()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Selecione um ou mais estudos para ser(em) reaberto(s)!"));
+		}
+		
+		matrizDistribuicaoService.reabrirEstudos(produtosDistribuicao);
+		this.result.use(Results.json()).from(Results.nothing()).serialize();
+	}
+
+	@Post
+	public void gerarEstudoAutomatico(String codigoProduto, Long numeroEdicao, BigDecimal reparte) {
+		
+		EstudoTransient estudoAutomatico;
+		try {
+			ProdutoEdicaoEstudo produto = new ProdutoEdicaoEstudo(codigoProduto);
+			produto.setNumeroEdicao(numeroEdicao);
+			estudoAutomatico = estudoAlgoritmoService.gerarEstudoAutomatico(produto, reparte.toBigInteger(), this.getUsuarioLogado());
+		} catch (Exception e) {
+
+			log.error("Erro na geração automatica do estudo.", e);
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
+		}
+
+		String htmlEstudo = HTMLTableUtil.estudoToHTML(estudoAutomatico);
+		result.use(Results.json()).from(htmlEstudo, "estudo").recursive().serialize();
+	}
+
+	@Get
+	public void histogramaPosEstudo() {
+		
+		result.forwardTo(HistogramaPosEstudoController.class).histogramaPosEstudo();
+	}
+
 
     @Post
     public void somarEstudos(Long idEstudoBase, ProdutoDistribuicaoVO distribuicaoVO) {
-	somarEstudosService.somarEstudos(idEstudoBase, distribuicaoVO);
-	result.use(Results.json()).from(Results.nothing()).serialize();
+		somarEstudosService.somarEstudos(idEstudoBase, distribuicaoVO);
+		result.use(Results.json()).from(Results.nothing()).serialize();
     }
 
-    @Get
-    public void histogramaPosEstudo() {
-	result.forwardTo(HistogramaPosEstudoController.class).histogramaPosEstudo();
-    }
 }

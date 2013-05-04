@@ -796,6 +796,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		$('#copiarEstudo-estudo').text('');
 		$('#copiarEstudo-reparteDistribuido').text('');
 		$('#copiarEstudo-idLancamento').text('');
+		$('#copiarEstudo-estudoPesquisa').val('');
 		T.cancelarCopiaProporcionalDeEstudo();
 	},
 	
@@ -1077,6 +1078,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					$("#copiarEstudo-estudoPesquisa").attr('disabled','true');
 					$("#copiarEstudo-reparteDistribuido").text("");
 					T.atualizarGrid();
+					T.mostraTelaMatrizDistribuicao();
 				}
 			);
 	},
@@ -1111,6 +1113,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					T.exibirMensagemSucesso();
 					$('#somarEstudo-statusOperacao').text('CONCLUIDO');
 					T.atualizarGrid();
+					T.mostraTelaMatrizDistribuicao();
 				}
 			);
 	},

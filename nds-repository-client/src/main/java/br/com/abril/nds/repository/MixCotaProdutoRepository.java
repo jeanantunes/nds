@@ -21,7 +21,7 @@ public interface MixCotaProdutoRepository extends
 	public void  excluirTodos();
 	
 	public boolean existeMixCotaProdutoCadastrado(Long idProduto, Long idCota);
-
+	
 	public void removerPorIdCota(Long idCota);
 
 	public void execucaoQuartz();
