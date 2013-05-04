@@ -116,8 +116,9 @@ var analiseEstudoController = $.extend(true, {
 
         // Obter matriz de distribuição
         var matriz = [],
-        url = contextPath + "/distribuicao/analiseEstudo/obterMatrizDistribuicaoPorEstudo";
-
+        	url = contextPath + "/distribuicao/analiseEstudo/obterMatrizDistribuicaoPorEstudo",
+        	dadosResumo ={};
+        
         $.postJSON(url,
                 [{name : "id" , value : numeroEstudo}],
                 function(response){
@@ -145,6 +146,7 @@ var analiseEstudoController = $.extend(true, {
                 $('#histogramaPosEstudoContent').html(html);
                 $('#histogramaPosEstudoContent').show();
 
+                histogramaPosEstudoController.dadosResumo = dadosResumo;
                 histogramaPosEstudoController.matrizSelecionado = matriz;
                 histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(matriz);
                 histogramaPosEstudoController.modoAnalise = $(event.target).val().toUpperCase();

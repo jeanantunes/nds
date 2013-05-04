@@ -190,15 +190,17 @@ var analiseHistoricoVendaController = $.extend(true, {
 		
 		analiseHistoricoVendaController.popularPopUpInformacoesCota(response.cotaDto);
 		
-		for ( var i in response.tableModel.rows) {
-			row = response.tableModel.rows[i];
-			
-			if (row.cell.principal) {
-				row.cell.principal = "<img src='images/ico_check.gif' />";
-			}else {
-				row.cell.principal = "";
+		if (response.tableModel) {
+			for ( var i in response.tableModel.rows) {
+				row = response.tableModel.rows[i];
+				
+				if (row.cell.principal) {
+					row.cell.principal = "<img src='images/ico_check.gif' />";
+				}else {
+					row.cell.principal = "";
+				}
+				
 			}
-			
 		}
 		
 		return response.tableModel;
@@ -231,11 +233,13 @@ var analiseHistoricoVendaController = $.extend(true, {
 			// montar o link no nome da cota
 			link = '<a href="javascript:;" onclick="analiseHistoricoVendaController.popup_cotas_detalhes('+row.cell.numeroCota+');" style="cursor:pointer">'+row.cell.nomePessoa+'</a>';
 			row.cell.nomePessoa = link;
+			row.cell.reparteMedio = (row.cell.reparteMedio || 0).toFixed(0);
+			row.cell.vendaMedia = (row.cell.vendaMedia || 0).toFixed(0);
 			
 			rodape.qtdCota  +=  parseInt((row.cell.numeroCota ? 1 : 0));
 			rodape.qtdPdv  +=  parseInt((row.cell.qtdPdv || 0));
-			rodape.reparteMedio  +=  (row.cell.reparteMedio ||  0);
-			rodape.vendaMedia +=  (row.cell.vendaMedia ||  0);
+			rodape.reparteMedio  +=  parseInt((row.cell.reparteMedio ||  0));
+			rodape.vendaMedia +=  parseInt((row.cell.vendaMedia ||  0));
 			rodape.ed1Rep += parseInt((row.cell.ed1Reparte  ||  0));
 			rodape.ed1Venda +=  parseInt((row.cell.ed1Venda ||  0));
 			rodape.ed2Rep +=  parseInt((row.cell.ed2Reparte ||  0));
