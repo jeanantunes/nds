@@ -39,6 +39,7 @@ import br.com.abril.nds.service.SomarEstudosService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.HTMLTableUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -339,10 +340,10 @@ public class MatrizDistribuicaoController extends BaseController {
 	}
 
 	@Post
-	public void excluirEstudosSelecionados(
-			List<ProdutoDistribuicaoVO> produtosDistribuicao) {
+	public void excluirEstudosSelecionados(List<ProdutoDistribuicaoVO> produtosDistribuicao) {
 
 		if (produtosDistribuicao == null || produtosDistribuicao.isEmpty()) {
+			
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Selecione um estudo para excluir!"));
 		}
 		
@@ -351,8 +352,7 @@ public class MatrizDistribuicaoController extends BaseController {
 	}
 
 	@Post
-	public void reabrirEstudosSelecionados(
-			List<ProdutoDistribuicaoVO> produtosDistribuicao) {
+	public void reabrirEstudosSelecionados(List<ProdutoDistribuicaoVO> produtosDistribuicao) {
 
 		if (produtosDistribuicao == null || produtosDistribuicao.isEmpty()) {
 			
@@ -364,22 +364,23 @@ public class MatrizDistribuicaoController extends BaseController {
 	}
 
 	@Post
-	public void gerarEstudoAutomatico(String codigoProduto, Long numeroEdicao,
-			BigDecimal reparte) {
+	public void gerarEstudoAutomatico(String codigoProduto, Long numeroEdicao, BigDecimal reparte) {
+		
 		EstudoTransient estudoAutomatico;
 		try {
 			ProdutoEdicaoEstudo produto = new ProdutoEdicaoEstudo(codigoProduto);
 			produto.setNumeroEdicao(numeroEdicao);
 			estudoAutomatico = estudoAlgoritmoService.gerarEstudoAutomatico(produto, reparte.toBigInteger(), this.getUsuarioLogado());
 		} catch (Exception e) {
-			
+
 			log.error("Erro na geração automatica do estudo.", e);
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
 		}
-		
+
 		String htmlEstudo = estudoToHTML(estudoAutomatico);
 		result.use(Results.json()).from(htmlEstudo, "estudo").recursive().serialize();
 	}
+
 
 	private String estudoToHTML(EstudoTransient estudo) {
 
@@ -537,16 +538,18 @@ public class MatrizDistribuicaoController extends BaseController {
 		// return sb.toString();
 	}
 
-	@Post
-	public void somarEstudos(Long idEstudoBase, ProdutoDistribuicaoVO distribuicaoVO) {
-		
-		somarEstudosService.somarEstudos(idEstudoBase, distribuicaoVO);
-		result.use(Results.json()).from(Results.nothing()).serialize();
-	}
 
 	@Get
 	public void histogramaPosEstudo() {
 		
 		result.forwardTo(HistogramaPosEstudoController.class).histogramaPosEstudo();
 	}
+
+
+    @Post
+    public void somarEstudos(Long idEstudoBase, ProdutoDistribuicaoVO distribuicaoVO) {
+		somarEstudosService.somarEstudos(idEstudoBase, distribuicaoVO);
+		result.use(Results.json()).from(Results.nothing()).serialize();
+    }
+
 }

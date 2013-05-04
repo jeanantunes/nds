@@ -62,6 +62,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	};
 	
 	this.processarLinhaPesquisaBases = function(index, row){
+	        row.id = '<input type="hidden" id="produtoEdicaoId_'+ index +'" value="'+ row.id +'"/>';
 		row.capa = '<a onmouseover="distribuicaoVendaMedia.popup_detalhes(\''+row.codigoProduto+'\', '+row.numeroEdicao+');" onmouseout="popup_detalhes_close();" href="javascript:;"><img src="'+ pathTela +'/images/ico_detalhes.png" border="0"/></a>';
 		row.select = '<input onclick="distribuicaoVendaMedia.selecionarProdutoBasePopUp(' + index + ', this)" type="checkbox" value=""/>';
 		if(row.periodo == undefined){
@@ -320,7 +321,10 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		if(T.produtoEdicaoBases != undefined){
 			for(var i = 0; i < T.produtoEdicaoBases.length; i++){
 				var produtoEdicao = T.produtoEdicaoBases[i];
+				console.log(produtoEdicao);
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].id", value : produtoEdicao.id});
+				data.push({name: "distribuicaoVendaMedia.bases["+i+"].numeroEdicao", value : produtoEdicao.numeroEdicao});
+				data.push({name: "distribuicaoVendaMedia.bases["+i+"].codigoProduto", value : produtoEdicao.codigoProduto});
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].peso", value : produtoEdicao.peso});
 			}
 		}
