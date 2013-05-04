@@ -28,6 +28,7 @@ public class EstudoTransient extends Estudo {
 	private String statusEstudo;
 	private List<BonificacaoDTO> bonificacoes;
 	private Usuario usuario;
+	private boolean usarFixacao;
 	
 	private boolean complementarAutomatico;
 	private boolean pracaVeraneio;
@@ -38,6 +39,7 @@ public class EstudoTransient extends Estudo {
 	private Map<String, PercentualExcedenteEstudo> percentualExcedente;
 	
 	public EstudoTransient() {
+	    usarFixacao = true;
 		complementarAutomatico = true; //Default conforme documentação.
 	}
 	
@@ -158,6 +160,14 @@ public class EstudoTransient extends Estudo {
 	}
 	public void setPercentualExcedente(Map<String, PercentualExcedenteEstudo> percentualExcedente) {
 		this.percentualExcedente = percentualExcedente;
+	}
+
+	public boolean isUsarFixacao() {
+	    return usarFixacao;
+	}
+
+	public void setUsarFixacao(boolean usarFixacao) {
+	    this.usarFixacao = usarFixacao;
 	}
 
 	public Usuario getUsuario() {

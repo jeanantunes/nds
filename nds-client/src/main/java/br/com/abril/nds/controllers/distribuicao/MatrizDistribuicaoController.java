@@ -26,6 +26,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -368,18 +369,8 @@ public class MatrizDistribuicaoController extends BaseController {
 	    log.error("Erro na geração automatica do estudo.", e);
 	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
 	}
-	String htmlEstudo = estudoToHTML(estudoAutomatico);
+	String htmlEstudo = HTMLTableUtil.estudoToHTML(estudoAutomatico);
 	result.use(Results.json()).from(htmlEstudo, "estudo").recursive().serialize();
-    }
-
-    private String estudoToHTML(EstudoTransient estudoAutomatico) {
-	StringBuilder sb = new StringBuilder();
-	sb.append(HTMLTableUtil.buildHTMLTable(estudoAutomatico));
-	sb.append("<br>");
-	sb.append(HTMLTableUtil.buildHTMLTable(estudoAutomatico.getEdicoesBase()));
-	sb.append("<br>");
-	sb.append(HTMLTableUtil.buildHTMLTable(estudoAutomatico.getCotas()));
-	return sb.toString();
     }
 
     @Post
