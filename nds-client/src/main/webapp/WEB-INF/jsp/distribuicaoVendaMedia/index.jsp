@@ -1,6 +1,7 @@
 <%--
  --%>
  <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+ <!-- distribuicaoVendaMedia -->
 <script language="javascript">
 $(function() {
 		$( "#tab-distribuicao" ).tabs();
@@ -652,7 +653,7 @@ function esconde_redutor(){
         				${ estrategiaEdicao.produtoEdicao.numeroEdicao }
         			</td>
         			<td>
-        				${ estrategiaEdicao.periodo }
+        				${ estrategiaEdicao.periodoEdicao}
         			</td>
         			<td>
         				${ estrategiaEdicao.produtoEdicao.peso }
