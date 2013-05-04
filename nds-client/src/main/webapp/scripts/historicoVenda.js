@@ -417,16 +417,18 @@ var historicoVendaController = $.extend(true, {
 
 		$("input[type=radio]", historicoVendaController.workspace).change(function (){
 			
-			var grid = historicoVendaController.Grids.PesqHistoricoGrid,
-				emptyTableModel = {
-					total: 0,
-					rows : [],
-					page : 0
-				};
-			
-			grid.addTableModel(emptyTableModel);
+			historicoVendaController.limparGrids(historicoVendaController.Grids.PesqHistoricoGrid);
 			
 		});
+	},
+	
+	limparGrids : function limparGrids(grid){
+		
+		var tamanhoGrid = grid.tableModel.rows.length;
+		
+		for (var i=0; i <= tamanhoGrid; i++){
+			grid.removeRow(i);
+		}
 	},
 	
 	pesquisarCotasHistorico : function pesquisarCotasPorHistorio(url){
