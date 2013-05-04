@@ -19,6 +19,15 @@ public class AnaliseParcialQueryDTO {
 	private String codigoProduto;
 	private Long numeroEdicao;
 	private List<EdicoesProdutosDTO> edicoesBase;
+	private String numeroCotaStr;
+	
+	public String getNumeroCotaStr() {
+		return numeroCotaStr;
+	}
+
+	public void setNumeroCotaStr(String numeroCotaStr) {
+		this.numeroCotaStr = numeroCotaStr;
+	}
 
 	public List<EdicoesProdutosDTO> getEdicoesBase() {
 	    return edicoesBase;

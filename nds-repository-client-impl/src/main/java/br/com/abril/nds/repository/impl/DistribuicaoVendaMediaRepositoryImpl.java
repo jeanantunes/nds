@@ -22,7 +22,8 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
     public List<ProdutoEdicaoVendaMediaDTO> pesquisar(String codigoProduto, String nomeProduto, Long edicao) {
 
 	StringBuilder sql = new StringBuilder();
-	sql.append("select pe.numero_edicao numeroEdicao, ");
+	sql.append("select pe.id, ");
+	sql.append("       pe.numero_edicao numeroEdicao, ");
 	sql.append("       p.codigo codigoProduto, ");
 	sql.append("       p.nome nome, ");
 	sql.append("       plp.numero_periodo periodo, ");

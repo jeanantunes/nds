@@ -104,7 +104,7 @@ public class AnaliseParcialController extends BaseController {
     
     @Path("/init")
     public void init(Long id, String sortname, String sortorder, String filterSortName, Double filterSortFrom, Double filterSortTo, String elemento,
-	    Long faixaDe, Long faixaAte, List<EdicoesProdutosDTO> edicoesBase, String modoAnalise, String codigoProduto, Long numeroEdicao) {
+	    Long faixaDe, Long faixaAte, List<EdicoesProdutosDTO> edicoesBase, String modoAnalise, String codigoProduto, Long numeroEdicao,String numeroCotaStr) {
 
 	AnaliseParcialQueryDTO queryDTO = new AnaliseParcialQueryDTO();
 	queryDTO.setSortName(sortname);
@@ -115,10 +115,11 @@ public class AnaliseParcialController extends BaseController {
 	queryDTO.setElemento(elemento);
 	queryDTO.setEdicoesBase(edicoesBase);
 	queryDTO.setEstudoId(id);
+	queryDTO.setFaixaDe(faixaDe);
+	queryDTO.setFaixaAte(faixaAte);
 	queryDTO.setModoAnalise(modoAnalise);
 	queryDTO.setCodigoProduto(codigoProduto);
 	queryDTO.setNumeroEdicao(numeroEdicao);
-	queryDTO.setNumeroCotaStr(numeroCotaStr);
 	
 	List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
 
@@ -140,6 +141,7 @@ public class AnaliseParcialController extends BaseController {
 	TableModel<CellModelKeyValue<CotaQueNaoEntrouNoEstudoDTO>> table = new TableModel<>();
 	table.setRows(CellModelKeyValue.toCellModelKeyValue(new ArrayList<>(lista)));
 	table.setPage(1);
+	table.setTotal(50);
 	result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
     }
     

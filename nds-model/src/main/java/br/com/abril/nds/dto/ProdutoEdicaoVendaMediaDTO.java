@@ -11,6 +11,7 @@ public class ProdutoEdicaoVendaMediaDTO implements Serializable {
 
     private static final long serialVersionUID = -2108084689144884556L;
 
+    private BigInteger id;
     private BigInteger numeroEdicao;
     private String codigoProduto;
     private String nome;
@@ -22,6 +23,12 @@ public class ProdutoEdicaoVendaMediaDTO implements Serializable {
     private String status;
     private String classificacao;
     
+    public BigInteger getId() {
+        return id;
+    }
+    public void setId(BigInteger id) {
+        this.id = id;
+    }
     public BigInteger getNumeroEdicao() {
         return numeroEdicao;
     }

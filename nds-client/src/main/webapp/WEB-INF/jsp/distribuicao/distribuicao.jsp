@@ -1,11 +1,14 @@
-<head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/distribuicao.js"></script>
 
 	<script type="text/javascript">
 
-		var ${param.tela} = new Distribuicao('${param.tela}');
+	var ${param.tela} = null;
+	$(function() {
+		${param.tela} = new Distribuicao('${param.tela}');
+	});
+	
 		
 	</script>
 	
@@ -15,7 +18,6 @@
 		.divProcuracaoRecebida, .divTermoAdesaoRecebido,
 		#dialogMudancaTipoEntrega { display: none; }
 	</style>
-</head>
 
 	<div id="dialogMudancaTipoEntrega" title="Mudança do Tipo de Entrega">
 				
@@ -95,8 +97,8 @@
 				<br clear="all" />
 				
 				<!-- Recebe Complementar -->
-				<input id="${param.tela}recebeComplementar"  name="recebeComplementar" type="checkbox" value="" style="margin-top:9px;" />
-				<label for="recebeComplementar" style="width: 190px;">Cota Recebe Complementar</label> 
+				<input id="${param.tela}recebeComplementar"  name="recebeComplementar" type="checkbox" style="margin-top:9px;" />
+				<label for="${param.tela}recebeComplementar" style="width: 190px;">Cota Recebe Complementar</label> 
 				
     		</td>
     		<td width="10" style="width:10px;">

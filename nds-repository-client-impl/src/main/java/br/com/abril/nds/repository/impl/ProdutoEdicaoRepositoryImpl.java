@@ -1222,8 +1222,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao, ");
 		hql.append(" produto.periodicidade as periodicidade, ");
 		hql.append(" lancamento.dataLancamentoPrevista as dataLancamento, ");
-		hql.append(" sum(lancamento.reparte) as repartePrevisto, ");
-		hql.append(" sum(movimentos.qtde - coalesce(estoqueProduto.qtdeDevolucaoFornecedor, 0)) as qtdeVendas,");
+		hql.append(" sum(estoqueProduto.qtde) as repartePrevisto, ");
+		hql.append(" sum(estoqueProduto.qtde - coalesce(estoqueProduto.qtdeDevolucaoFornecedor, 0)) as qtdeVendas,");
 		hql.append(" lancamento.status as situacaoLancamento, ");
 		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa, ");
 		hql.append(" produto.tipoClassificacaoProduto as tipoClassificacaoProduto ");

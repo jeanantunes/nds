@@ -66,10 +66,11 @@ function escondeDados(){
     	</div>
 		<fieldset class="classFieldset">
 			<legend> Pesquisar </legend>
-			<input type="hidden" id="produtoEdicaoId" value="${estudoCota.estudo.produtoEdicao.id}" /> <input type="hidden" id="faixaDe"
-				value="${faixaDe}" />
+			<input type="hidden" id="produtoEdicaoId" value="${estudoCota.estudo.produtoEdicao.id}" />
+			<input type="hidden" id="faixaDe" value="${faixaDe}" />
 			<input type="hidden" id="faixaAte" value="${faixaAte}" />
 			<input type="hidden" id="numeroEdicao" value="${estudoCota.estudo.produtoEdicao.numeroEdicao}" />
+			<input type="hidden" id="estudoId" value="${estudoCota.estudo.id}" />
 			<input type="hidden" id="codigoProduto" value="${estudoCota.estudo.produtoEdicao.produto.codigo}" />
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
@@ -111,8 +112,9 @@ function escondeDados(){
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
 					<td width="84">Componente:</td>
-					<td width="188"><select id="componentes" name="componentes" style="width: 170px;"
-						onchange="analiseParcialController.selecionarElementos(this.value, 'elementos')">
+					<td width="188">
+						<select id="componentes" name="componentes" style="width: 170px;"
+						    onchange="analiseParcialController.selecionarElementos(this.value, 'elementos')">
 							<option value="null" selected="selected">Selecione...</option>
 							<option value="tipo_ponto_venda">Tipo de Ponto de Venda</option>
 							<option value="gerador_de_fluxo">Gerador de Fluxo</option>
@@ -122,7 +124,8 @@ function escondeDados(){
 							<option value="cotas_novas">Cotas Novas</option>
 							<option value="area_influencia">Área de Influência</option>
 							<option value="distrito">Distrito</option>
-					</select></td>
+						</select>
+					</td>
 					<td width="60">Elemento:</td>
 					<td width="179"><select id="elementos" name="elementos" style="width: 170px;"
 						onchange="analiseParcialController.filtrarOrdenarPor(${estudoCota.estudo.id})">
@@ -183,7 +186,7 @@ function escondeDados(){
 						<tr class="class_linha_1 paddingTotais">
 							<td width="80">Qtde Cotas:</td>
 							<td width="145" id="total_de_cotas">0</td>
-							<td width="58" align="right" id="total_reparte">0</td>
+							<td width="58" align="right" id="total_reparte_sugerido">0</td>
 							<td width="25" align="right">&nbsp;</td>
 							<td width="48" align="right" id="total_juramento">0</td>
 							<td width="57" align="right" id="total_media_venda">0</td>
@@ -209,7 +212,7 @@ function escondeDados(){
 						<tr class="class_linha_1 paddingTotais">
 							<td width="80">Qtde Cotas:</td>
 							<td width="145" id="total_de_cotas">0</td>
-							<td width="58" align="right" id="total_reparte">0</td>
+							<td width="58" align="right" id="total_reparte_sugerido">0</td>
 							<td width="25" align="right">&nbsp;</td>
 							<td width="48" align="right" id="total_juramento">0</td>
 							<td width="57" align="right" id="total_media_venda">0</td>
@@ -248,7 +251,7 @@ function escondeDados(){
 							Mudar Base de Visualização
 					</a>
 				</c:if>
-				</span>
+				</span><br/>
 				<span style="font-weight: bold; font-size: 10px;">Saldo à Distribuir:</span>
 				<span id="saldo_reparte" style="font-weight: bold; font-size: 10px;">${estudoCota.estudo.reparteDistribuir}</span>
 			</div>
@@ -265,18 +268,23 @@ function escondeDados(){
 				class="filtro">
 				<tr>
 					<td width="63">Cota:</td>
-					<td width="161"><input type="text" name="textfield"
-						id="textfield" style="width: 60px;" /></td>
+					<td width="161">
+						<input type="text" name="cotasQueNaoEntraramNoEstudo_cota" id="cotasQueNaoEntraramNoEstudo_cota" style="width: 60px;"
+						    onblur="analiseParcialController.cotasQueNaoEntraramNoEstudo();"/>
+					</td>
 					<td width="46">Nome:</td>
-					<td width="209"><input type="text" name="textfield2"
-						id="textfield2" style="width: 185px;" /></td>
+					<td width="209">
+						<input type="text" name="cotasQueNaoEntraramNoEstudo_nome" id="cotasQueNaoEntraramNoEstudo_nome" style="width: 185px;"
+						    onblur="analiseParcialController.cotasQueNaoEntraramNoEstudo();"/>
+					</td>
 				</tr>
 				<tr>
 					<td>Motivo:</td>
-					<td colspan="3"><select name="select" id="select"
-						style="width: 408px">
+					<td colspan="3">
+						<select name="cotasQueNaoEntraramNoEstudo_motivo" id="cotasQueNaoEntraramNoEstudo_motivo" style="width: 408px">
 							<option selected="selected">Todas as Cotas</option>
-					</select></td>
+						</select>
+					</td>
 				</tr>
 			</table>
 
@@ -286,13 +294,27 @@ function escondeDados(){
 			<table width="503" border="0" cellspacing="1" cellpadding="1">
 				<tr>
 					<td width="67">Componente:</td>
-					<td width="185"><select name="componenteCotasNaoSelec"
-						id="componenteCotasNaoSelec" style="width: 170px;">
-					</select></td>
+					<td width="185">
+						<select name="componenteCotasNaoSelec" id="componenteCotasNaoSelec" style="width: 170px;"
+						    onchange="analiseParcialController.selecionarElementos(this.value, 'cotasQueNaoEntraramNoEstudo_elementos')">
+							<option value="null" selected="selected">Selecione...</option>
+							<option value="tipo_ponto_venda">Tipo de Ponto de Venda</option>
+							<option value="gerador_de_fluxo">Gerador de Fluxo</option>
+							<option value="bairro">Bairro</option>
+							<option value="regiao">Região</option>
+							<option value="cotas_a_vista">Cotas A Vista</option>
+							<option value="cotas_novas">Cotas Novas</option>
+							<option value="area_influencia">Área de Influência</option>
+							<option value="distrito">Distrito</option>
+						</select>
+					</td>
 					<td width="52">Elemento:</td>
-					<td width="186"><select name="elementoCotasNaoSelec"
-						id="elementoCotasNaoSelec" style="width: 170px;">
-					</select></td>
+					<td width="186">
+						<select id="cotasQueNaoEntraramNoEstudo_elementos" name="elementoCotasNaoSelec" style="width: 170px;"
+						onchange="analiseParcialController.filtrarCotasNaoSelec(${estudoCota.estudo.id})">
+							<option selected="selected">Selecione...</option>
+						</select>
+					</td>
 				</tr>
 			</table>
 		</fieldset>

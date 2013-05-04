@@ -7,7 +7,7 @@ var analiseParcialController = $.extend(true, {
     detalheVenda : '<td align="right" class="class_linha_2">#venda</td>',
 
     detalheEdicaoVazia : '<td><a href="javascript:;" onclick="escondeDados();">' +
-        '<img src="' + contextPath + '/images/ico_excluir.gif" alt="Fechar" width="15" height="15" border="0" />' +
+        '<img src="'+ contextPath +'/images/ico_excluir.gif" alt="Fechar" width="15" height="15" border="0" />' +
         '</a></td>',
     detalheDataLancamentoVazia : '<td width="19" align="center">&nbsp;</td>',
     detalheReparteVazia : '<td align="right">&nbsp;</td>',
@@ -16,7 +16,8 @@ var analiseParcialController = $.extend(true, {
         '<td><div style="width: 70px;"><input type="text" id="codigoProduto#index" value="#codigoProduto" class="inputBaseNumero" onchange="analiseParcialController.buscarNomeProduto(#index);" /></div></td>' +
         '<td><div style="width: 180px;"><input type="text" id="nomeProduto#index" value="#nomeProduto" class="inputBaseNome" onchange="analiseParcialController.buscarCodigoProduto(#index);" /></div></td>' +
         '<td><div style="width: 70px;"><input type="text" id="numeroEdicao#index" value="#numeroEdicao" class="inputBaseNumero" onchange="analiseParcialController.validarNumeroEdicao(#index);" /></div></td>' +
-        '<td><div style="width: 60px;"></div></td></tr>',
+        '<td><div style="width: 60px;"><a href="javascript:;" onclick="analiseParcialController.subirEdicaoBase(#index);"><img src="'+ contextPath +'/images/seta_sobe#sobe_desab.gif"/></a>'+
+        '&nbsp;<a href="javascript:;" onclick="analiseParcialController.descerEdicaoBase(#index);"><img src="'+ contextPath +'/images/seta_desce#desce_desab.gif"/></a></div></td></tr>',
 
     linkNomeCota : '<a href="javascript:;" onclick="analiseParcialController.carregarDetalhesCota(#numeroCota);">#nomeCota</a>',
     edicoesBase : [],
@@ -45,7 +46,9 @@ var analiseParcialController = $.extend(true, {
                         parameters.push({name: 'edicoesBase['+ i +'].edicao', value: $('#numeroEdicao'+ i).val()});
                         parameters.push({name: 'edicoesBase['+ i +'].codigoProduto', value: $('#codigoProduto'+ i).val()});
                     }
-                    parameters.push({name: 'id', value: $('#estudoId').html()},
+                    parameters.push({name: 'id', value: $('#estudoId').val()},
+                            {name: 'numeroEdicao', value: $('#numeroEdicao').val()},
+                            {name: 'codigoProduto', value: $('#codigoProduto').val()},
                             {name: 'faixaDe', value: $('#faixaDe').val()},
                             {name: 'faixaAte', value: $('#faixaAte').val()});
                     $(this).dialog("close");
@@ -69,6 +72,8 @@ var analiseParcialController = $.extend(true, {
             row = row.replace(/#codigoProduto/g, analiseParcialController.edicoesBase[i].codigoProduto);
             row = row.replace(/#nomeProduto/g, analiseParcialController.edicoesBase[i].nomeProduto);
             row = row.replace(/#numeroEdicao/g, analiseParcialController.edicoesBase[i].numeroEdicao);
+            row = row.replace(/#sobe_desab/g, i == 0 ? '_desab' : '');
+            row = row.replace(/#desce_desab/g, i == (analiseParcialController.edicoesBase.length - 1) ? '_desab' : '');
             $("#prodCadastradosGrid").append(row);
         }
     },
@@ -157,6 +162,7 @@ var analiseParcialController = $.extend(true, {
             totalMediaVenda = 0,
             totalUltimoReparte = 0,
             quantidade = 0,
+            totalReparteSugerido = 0,
             totais = [];
         $(resultado.rows).each(function(i, row) {
             var venda = 0,
@@ -188,11 +194,15 @@ var analiseParcialController = $.extend(true, {
             if ((typeof row.cell.ultimoReparte !== 'undefined') && (row.cell.ultimoReparte !== '')) {
                 totalUltimoReparte += parseInt(row.cell.ultimoReparte, 10);
             }
+            if (!isNaN(row.cell.reparteSugerido)) {
+                totalReparteSugerido += parseInt(row.cell.reparteSugerido, 10);
+            }
             quantidade++;
         });
         $('#total_juramento').text(totalJuramento);
         $('#total_media_venda').text(totalMediaVenda);
         $('#total_ultimo_reparte').text(totalUltimoReparte);
+        $('#total_reparte_sugerido').text(totalReparteSugerido);
         $('#total_de_cotas').text(quantidade);
         for (var j = 1; j < 7; j++) {
             $('#total_reparte'+ j).text(totais[j - 1].reparte);
@@ -378,19 +388,41 @@ var analiseParcialController = $.extend(true, {
         });
 
         $('#cotasNaoSelec').flexigrid({
+            preProcess : analiseParcialController.preProcessGridNaoSelec,
             url: analiseParcialController.path +'/distribuicao/analise/parcial/cotasQueNaoEntraramNoEstudo/filtrar',
             dataType : 'json',
-            colModel : [{display: 'Cota',   name: 'cota',       width: 40,  sortable: true, align: 'left'},
-                        {display: 'Nome',   name: 'nome',       width: 160, sortable: true, align: 'left'},
+            colModel : [{display: 'Cota',   name: 'numeroCota',       width: 40,  sortable: true, align: 'left'},
+                        {display: 'Nome',   name: 'nomeCota',       width: 160, sortable: true, align: 'left'},
                         {display: 'Motivo', name: 'motivo',     width: 160, sortable: true, align: 'left'},
                         {display: 'Qtde',   name: 'quantidade', width: 60,  sortable: true, align: 'center'}],
-                        width : 490,
-                        height : 200,
-                        sortorder:'desc',
-                        sortname:'cota'
+            width : 490,
+            height : 200,
+            sortorder:'desc',
+            sortname:'cota'
         });
 
         analiseParcialController.cotasQueNaoEntraramNoEstudo();
+    },
+    
+    preProcessGridNaoSelec : function(resultado) {
+        $.each(resultado.rows, function(i, value) {
+            if (typeof value.cell.nomeCota === 'undefined') {
+                value.cell.nomeCota = '';
+            }
+            
+            value.cell.quantidade = '<input type="hidden" id="qtdeAnteriorCota'+ value.cell.numeroCota +'" value="'+ value.cell.quantidade +'"/>'+
+                '<input type="text" id="inputQuantidade'+ value.cell.numeroCota +'" style="width: 50px;" value="'+
+                value.cell.quantidade +'" onblur="analiseParcialController.atualizaQuantidadeTotal('+ value.cell.numeroCota +');" />';
+        });
+        return resultado;
+    },
+    
+    atualizaQuantidadeTotal : function(numeroCota) {
+        if (!isNaN($('#inputQuantidade'+ numeroCota).val())) {
+            var saldo = parseInt($('#saldoReparteNaoSelec').html(), 10);
+            saldo = saldo - parseInt($('#inputQuantidade'+ numeroCota).val(), 10) - parseInt($('#qtdeAnteriorCota'+ numeroCota).val(), 10);
+            $('#saldoReparteNaoSelec').html(saldo);
+        }
     },
     
     cotasQueNaoEntraramNoEstudo : function() {
@@ -401,12 +433,12 @@ var analiseParcialController = $.extend(true, {
             var elemento = $("#cotasQueNaoEntraramNoEstudo_elementos").val();
             var estudo = $("#estudoId").val();
 
-            $(".cotasEstudoGrid").flexOptions({
-                params:[{name: 'cota',     value: cota}, 
-                        {name: 'nome',     value: nome}, 
-                        {name: 'motivo',   value: motivo}, 
-                        {name: 'elemento', value: elemento}, 
-                        {name: 'estudo',   value: estudo}]
+            $("#cotasNaoSelec").flexOptions({
+                params:[{name: 'queryDTO.cota',     value: cota}, 
+                        {name: 'queryDTO.nome',     value: nome}, 
+                        {name: 'queryDTO.motivo',   value: motivo}, 
+                        {name: 'queryDTO.elemento', value: elemento}, 
+                        {name: 'queryDTO.estudo',   value: estudo}]
             }).flexReload();
         };
         $("#cotasQueNaoEntraramNoEstudo_cota").blur(filtrarCotasQueNaoEntraramNoEstudo);
@@ -425,6 +457,8 @@ var analiseParcialController = $.extend(true, {
     },
     
     exibirCotasQueNaoEntraramNoEstudo : function() {
+        $('#saldoReparteNaoSelec').html($('#saldo_reparte').html());
+
         $("#dialog-cotas-estudos").dialog({
             resizable : false,
             height : 530,
@@ -439,10 +473,12 @@ var analiseParcialController = $.extend(true, {
                 }
             }
         });
+        
+        analiseParcialController.cotasQueNaoEntraramNoEstudo();
     },
     
     selecionarElementos : function(tipo, optionsId) {
-        $.getJSON(analiseParcialController.path +"/componentes/elementos", [{name: "tipo", value: tipo}, {name: "estudo", value: $("#estudoId").html()}], function(data) {
+        $.getJSON(analiseParcialController.path +"/componentes/elementos", [{name: "tipo", value: tipo}, {name: "estudo", value: $("#estudoId").val()}], function(data) {
             var options = $("#"+ optionsId);
             options.empty();
             options.append($("<option />").val('TODOS').text('Selecione...'));
@@ -478,6 +514,42 @@ var analiseParcialController = $.extend(true, {
             event.preventDefault();
         }
         return false;
+    },
+
+    subirEdicaoBase : function(index) {
+        var temp = analiseParcialController.edicoesBase[index - 1];
+        analiseParcialController.edicoesBase[index - 1] = analiseParcialController.edicoesBase[index];
+        analiseParcialController.edicoesBase[index] = temp;
+        
+        $('#codigoProduto'+ (index - 1)).val(analiseParcialController.edicoesBase[index - 1].codigoProduto);
+        $('#nomeProduto'+ (index - 1)).val(analiseParcialController.edicoesBase[index - 1].nomeProduto);
+        $('#numeroEdicao'+ (index - 1)).val(analiseParcialController.edicoesBase[index - 1].numeroEdicao);
+        
+        $('#codigoProduto'+ index).val(analiseParcialController.edicoesBase[index].codigoProduto);
+        $('#nomeProduto'+ index).val(analiseParcialController.edicoesBase[index].nomeProduto);
+        $('#numeroEdicao'+ index).val(analiseParcialController.edicoesBase[index].numeroEdicao);
+    },
+
+    descerEdicaoBase : function(index) {
+        var temp = analiseParcialController.edicoesBase[index + 1];
+        analiseParcialController.edicoesBase[index + 1] = analiseParcialController.edicoesBase[index];
+        analiseParcialController.edicoesBase[index] = temp;
+        
+        $('#codigoProduto'+ (index + 1)).val(analiseParcialController.edicoesBase[index + 1].codigoProduto);
+        $('#nomeProduto'+ (index + 1)).val(analiseParcialController.edicoesBase[index + 1].nomeProduto);
+        $('#numeroEdicao'+ (index + 1)).val(analiseParcialController.edicoesBase[index + 1].numeroEdicao);
+        
+        $('#codigoProduto'+ index).val(analiseParcialController.edicoesBase[index].codigoProduto);
+        $('#nomeProduto'+ index).val(analiseParcialController.edicoesBase[index].nomeProduto);
+        $('#numeroEdicao'+ index).val(analiseParcialController.edicoesBase[index].numeroEdicao);
+    },
+    
+    filtrarCotasNaoSelec : function(estudo) {
+        analiseParcialController.cotasQueNaoEntraramNoEstudo();
+        if (event) {
+            event.preventDefault();
+        }
+        return false;
     }
 });
 
@@ -497,7 +569,7 @@ $("#prodCadastradosGrid").flexigrid({
     colModel : [{display: 'Código',  name: 'codigo',  width: 70,  sortable: true, align: 'left'},
                 {display: 'Produto', name: 'produto', width: 180, sortable: true, align: 'left'},
                 {display: 'Edição',  name: 'edicao',  width: 70,  sortable: true, align: 'left'},
-                {display: 'Ordenar', name: 'ordenar', width: 40,  sortable: true, align: 'left'}],
+                {display: 'Ordenar', name: 'ordenar', width: 60,  sortable: true, align: 'left'}],
                 width : 490,
                 height : 225
 });

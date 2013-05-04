@@ -10,6 +10,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -219,9 +220,30 @@ public class CotaController extends BaseController {
 	
 	public void verificarTipoConvencional(Long idCota) {
 		
-		boolean isTipoConvencional = cotaService.isTipoCaracteristicaSegmentacaoConvencional(idCota);
+		FiltroCotaDTO fcotaDto = new FiltroCotaDTO();
+		fcotaDto.setCotaId(idCota);
+		final CotaDTO cotaDTO = cotaService.obterCotas(fcotaDto).get(0);
 		
-		result.use(Results.json()).from(isTipoConvencional, "result").recursive().serialize();
+		Object r = new Object(){
+			private String tipoDistribuicaoCota=cotaDTO.getTipoDistribuicaoCota().name().toString();
+			private Boolean recebeComplementar=cotaDTO.isRecebeComplementar();
+			public String getTipoDistribuicaoCota() {
+				return tipoDistribuicaoCota;
+			}
+			public void setTipoDistribuicaoCota(String tipoDistribuicaoCota) {
+				this.tipoDistribuicaoCota = tipoDistribuicaoCota;
+			}
+			public Boolean getRecebeComplementar() {
+				return recebeComplementar;
+			}
+			public void setRecebeComplementar(Boolean recebeComplementar) {
+				this.recebeComplementar = recebeComplementar;
+			}
+			
+		};
+	
+	
+		result.use(Results.json()).from(r, "result").serialize();
 	}
 
     private void carregarEnderecosHistoricoTitularidade(Long idCota, Long idHistorico) {
@@ -1830,4 +1852,5 @@ public class CotaController extends BaseController {
 	}
 	
 }
+
 
