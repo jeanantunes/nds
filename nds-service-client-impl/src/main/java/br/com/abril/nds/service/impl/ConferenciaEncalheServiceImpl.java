@@ -14,7 +14,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -3229,7 +3228,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		Integer dia=0;
 		
-		boolean exibeSubtotalDia = false;
+		boolean exiberSubtotal = false;
 		
 		for(ProdutoEdicaoSlipDTO produtoEdicaoSlip : listaProdutoEdicaoSlip) {
 				
@@ -3267,32 +3266,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		this.ordenarListaPorDia(listaProdutoEdicaoSlip);
 		
-		BigInteger qtdeTotalProdutosDia = null;
-		BigDecimal valorTotalEncalheDia = null;
-		
-		for(int i = 0; i < listaProdutoEdicaoSlip.size(); i++) {
-		
-			ProdutoEdicaoSlipDTO produtoSlip = listaProdutoEdicaoSlip.get(i);
-			
-			qtdeTotalProdutosDia =
-				BigIntegerUtil.soma(qtdeTotalProdutosDia, produtoSlip.getEncalhe());   
-			
-			valorTotalEncalheDia =
-				BigDecimalUtil.soma(valorTotalEncalheDia, produtoSlip.getValorTotal());
-			
-			exibeSubtotalDia = (i == listaProdutoEdicaoSlip.size() - 1) ||
-				produtoSlip.getDia() != listaProdutoEdicaoSlip.get(i + 1).getDia();	
-            
-			if (exibeSubtotalDia) {
-			
-				produtoSlip.setQtdeTotalProdutos(String.valueOf(qtdeTotalProdutosDia.intValue()));
-				
-				produtoSlip.setValorTotalEncalhe(CurrencyUtil.formatarValor(valorTotalEncalheDia));
-				
-				qtdeTotalProdutosDia = BigInteger.ZERO;
-				valorTotalEncalheDia = BigDecimal.ZERO;
-			}
-		}
+		this.calcularTotaisListaSlip(listaProdutoEdicaoSlip);
 		
 		valorTotalReparte = (valorTotalReparte == null) ? BigDecimal.ZERO : valorTotalReparte;
 		valorTotalEncalhe = (valorTotalEncalhe == null) ? BigDecimal.ZERO : valorTotalEncalhe;
@@ -3395,6 +3369,36 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		parametersSlip.put("RAZAO_SOCIAL_DISTRIBUIDOR", this.distribuidorService.obterRazaoSocialDistribuidor());
 	}
+
+	private void calcularTotaisListaSlip(List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlip) {
+		
+		boolean exiberSubtotal;
+		BigInteger qtdeTotalProdutosDia = null;
+		BigDecimal valorTotalEncalheDia = null;
+		
+		for(int i = 0; i < listaProdutoEdicaoSlip.size(); i++) {
+		
+			ProdutoEdicaoSlipDTO produtoSlip = listaProdutoEdicaoSlip.get(i);
+			
+			qtdeTotalProdutosDia =
+				BigIntegerUtil.soma(qtdeTotalProdutosDia, produtoSlip.getEncalhe());   
+			
+			valorTotalEncalheDia =
+				BigDecimalUtil.soma(valorTotalEncalheDia, produtoSlip.getValorTotal());
+			
+			exiberSubtotal = this.exibirSubtotal(listaProdutoEdicaoSlip, i, produtoSlip);
+            
+			if (exiberSubtotal) {
+			
+				produtoSlip.setQtdeTotalProdutos(String.valueOf(qtdeTotalProdutosDia.intValue()));
+				
+				produtoSlip.setValorTotalEncalhe(CurrencyUtil.formatarValor(valorTotalEncalheDia));
+				
+				qtdeTotalProdutosDia = BigInteger.ZERO;
+				valorTotalEncalheDia = BigDecimal.ZERO;
+			}
+		}
+	}
 	
 	@SuppressWarnings("unchecked")
 	private void ordenarListaPorDia(List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlip) {
@@ -3491,7 +3495,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		StringBuffer sb = new StringBuffer();
 		ImpressaoMatricialUtil e = new ImpressaoMatricialUtil(sb);
-		String ultimoOrdinal = null;
+		Integer ultimoDia = null;
 		
 		e.darEspaco(1);
 		e.adicionar(this.distribuidorService.obterRazaoSocialDistribuidor());
@@ -3511,14 +3515,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		e.adicionar("----------------------------------------");
 		e.quebrarLinhaEscape();
 		
-		Iterator<ProdutoEdicaoSlipDTO> iterator = slipDTO.getListaProdutoEdicaoSlipDTO().iterator();
-		while(iterator.hasNext()){
-			ProdutoEdicaoSlipDTO itemLista = iterator.next();
+		boolean exibirSubtotal = false;
+		
+		List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlip = slipDTO.getListaProdutoEdicaoSlipDTO();
+		
+		for(int i = 0; i < listaProdutoEdicaoSlip.size(); i++) {
+		
+			ProdutoEdicaoSlipDTO itemLista = listaProdutoEdicaoSlip.get(i);
 			
-			if (!itemLista.getOrdinalDiaConferenciaEncalhe().equals(ultimoOrdinal)){
+			if (!itemLista.getDia().equals(ultimoDia)){
 			
 				this.inserirCabecalho(e, itemLista.getOrdinalDiaConferenciaEncalhe());
-				ultimoOrdinal = itemLista.getOrdinalDiaConferenciaEncalhe();
+				ultimoDia = itemLista.getDia();
 			}
 			
 			e.adicionar(itemLista.getNomeProduto() == null ? "": itemLista.getNomeProduto(), 9);e.darEspaco(1);
@@ -3529,8 +3537,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			e.adicionar(itemLista.getValorTotal() == null ? "0,00" : itemLista.getValorTotal().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString(), 8);
 			e.quebrarLinhaEscape();
 			
-			//Ultima linha
-			if(!iterator.hasNext()){
+			exibirSubtotal = this.exibirSubtotal(listaProdutoEdicaoSlip, i, itemLista);
+			
+			if(exibirSubtotal){
+				
 				e.quebrarLinhaEscape();
 				
 				String dataRecolhimentoStr = "";
@@ -3539,12 +3549,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				}
 
 				String qtdeTotalProdutos =  itemLista.getQtdeTotalProdutos() == null ? "0" : itemLista.getQtdeTotalProdutos();
-				e.adicionarCompleteEspaco("Total de Produtos do dia "+ dataRecolhimentoStr+":", qtdeTotalProdutos);
+				e.adicionarCompleteEspaco("Total Produtos do dia "+ dataRecolhimentoStr+":", qtdeTotalProdutos);
 				
 				e.quebrarLinhaEscape();
 
 				String valorTotalEncalhe = itemLista.getValorTotalEncalhe() == null ? "0" : itemLista.getValorTotalEncalhe();
-				e.adicionarCompleteEspaco("Total do Encalhe  do dia "+ dataRecolhimentoStr +":", valorTotalEncalhe);
+				e.adicionarCompleteEspaco("Total Encalhe  do dia "+ dataRecolhimentoStr +":", valorTotalEncalhe);
 				e.quebrarLinhaEscape();
 				e.quebrarLinhaEscape();
 			}
@@ -3585,6 +3595,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		String saida = sb.toString();
 		
 		return saida.getBytes();
+	}
+
+	private boolean exibirSubtotal(List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlip, int i,
+								   ProdutoEdicaoSlipDTO itemLista) {
+		
+		boolean exibirSubtotal =
+			(i == listaProdutoEdicaoSlip.size() - 1)
+				|| (itemLista.getDia() != listaProdutoEdicaoSlip.get(i + 1).getDia());
+		
+		return exibirSubtotal;
 	}
 
 	private void inserirCabecalho(ImpressaoMatricialUtil e, String ordinalDiaConferenciaEncalhe) {
