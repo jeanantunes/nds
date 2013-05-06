@@ -273,8 +273,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		parameters.put("dataOperacaoDe", dataOperacaoDe);
 		parameters.put("dataOperacaoAte", dataOperacaoAte);
 
-		Map<String, Object> queryForMap = namedParameterJdbcTemplate.queryForMap(sql.toString(), parameters);
-		Object precoTotalComDesconto = queryForMap.get("precoTotalComDesconto");
+		Object precoTotalComDesconto = namedParameterJdbcTemplate.queryForMap(sql.toString(), parameters).get("precoTotalComDesconto");
 
 		return (BigDecimal) (precoTotalComDesconto == null ? BigDecimal.ZERO : precoTotalComDesconto);
 	}
