@@ -881,7 +881,6 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 		
 		filtroPrincipalProduto = util.getFiltroByForm("filtroPrincipalProduto");
 		
-		alert($('#tipoExcecaoSegmento').is(':checked'));
 		
 		filtroPrincipalProduto.push({
 			name : "filtro.excecaoSegmento",
