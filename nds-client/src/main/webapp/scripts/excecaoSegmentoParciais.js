@@ -44,7 +44,15 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 		});
 		
 		$('#pesquisaPorExcecao').click(function (){
-			excecaoSegmentoParciaisController.porExcecao();
+			
+			if($('#codigoProdutoPrincipal').val() == '' || $('#codigoProdutoPrincipal').val() == null )
+			{
+				alert('Você ainda não escolheu um produto');
+			}
+			else
+			{
+				excecaoSegmentoParciaisController.porExcecao();
+			}	
 		});
 		
 		// FILTRO PRINCIPAL - POR COTA
@@ -85,14 +93,17 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 		
 		//FILTRO PRINCIPAL - POR PRODUTO (EXCEÇÃO)
 		$('#nomeProdutoPrincipal').keyup(function (){
+
 			autoComplete.autoCompletar("/distribuicao/excecaoSegmentoParciais/autoCompletarProduto",
 					'#codigoProdutoPrincipal','#nomeProdutoPrincipal', 2,
 					function(item) {
-						
-						if (item) {
+					
+						$('.ui-autocomplete').css('display', 'block');
+				
+						if (item != null) {				
 							$('#segmentoProdutoPrincipal').val(item.chave.nomeFantasia || item.chave.razaoSocial);
 							$('#fornecedorPrincipal').val(item.chave.tipoSegmentoProduto || "Segmento Não Informado");
-						}
+						}	
 					}
 			);
 		});
@@ -366,9 +377,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 						
 						$.each(result.rows, function(index, row) {
 							
-							var link = '<a href="javascript:;" onclick="excecaoSegmentoParciaisController.excluirExcecaoProduto('+row.cell.idExcecaoProdutoCota+');" style="cursor:pointer">' +
-					   	 				   '<img title="Excluir Exceção" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
-					   	 				   '</a>';
+							var link = '<img style="cursor:pointer" title="Excluir Exceção" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" onclick="excecaoSegmentoParciaisController.excluirExcecaoProduto('+row.cell.idExcecaoProdutoCota+');" />';
 							
 							row.cell.acao = link;
 						});
@@ -458,9 +467,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 						
 						$.each(result.rows, function(index, row) {
 							
-							var link = '<a href="javascript:;" onclick="excecaoSegmentoParciaisController.excluirExcecaoCota('+row.cell.idExcecaoProdutoCota+');" style="cursor:pointer">' +
-					   	 				   '<img title="Excluir Exceção" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
-					   	 				   '</a>';
+							var link = '<img style="cursor:pointer" title="Excluir Exceção" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" onclick="excecaoSegmentoParciaisController.excluirExcecaoCota('+row.cell.idExcecaoProdutoCota+');" />';
 							
 							row.cell.acao = link;
 						});
@@ -786,6 +793,8 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 		var params = excecaoSegmentoParciaisController.Util.getFiltroByForm('filtroPrincipalProduto'),
 			grids = excecaoSegmentoParciaisController.Grids;
 		
+		console.log(grids);
+		
 		$( "#dialog-incluirCotaNaExcecao" ).dialog({
 			resizable: false,
 			height:170,
@@ -795,7 +804,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
 
-					$("input[type=checkbox][name='cotaNaoRecebeExcecao']:checked").each(function(){
+					$("input[type=checkbox][name='cotaNaoRecebeExcecao']:checked").each(function(){	
 						params.push({
 							name : "listaNumeroCota",
 							value : this.value
@@ -806,7 +815,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 						name : "filtro.excecaoSegmento",
 						value : $('#tipoExcecaoSegmento').is(':checked')
 					});
-					
+								
 					// jQuery.post( url [, data ] [, success(data, textStatus, jqXHR) ] [, dataType ] )
 					$.postJSON(
 						excecaoSegmentoParciaisController.Url.inserirCotaNaExcecao,
@@ -839,6 +848,10 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 					         grids.CotasQueNaoRecebemExcecaoGrid.reload({
 					        	 params : params
 					         });
+					         
+					         
+					         excecaoSegmentoParciaisController.porExcecao();
+					         
 						}
 					);
 					
@@ -878,6 +891,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 	},
 	
 	porExcecao : function porExcessao(){
+		
 		$('#excecaoSegmentoParciais_porCota').hide();
 		$('#excecaoSegmentoParciais_porExcessao').show();
 		
@@ -886,6 +900,8 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 			grids = excecaoSegmentoParciaisController.Grids;
 		
 		filtroPrincipalProduto = util.getFiltroByForm("filtroPrincipalProduto");
+		
+		alert($('#tipoExcecaoSegmento').is(':checked'));
 		
 		filtroPrincipalProduto.push({
 			name : "filtro.excecaoSegmento",

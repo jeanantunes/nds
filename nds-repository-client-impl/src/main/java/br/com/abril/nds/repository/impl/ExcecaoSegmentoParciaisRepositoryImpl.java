@@ -234,7 +234,7 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends AbstractRepositoryMod
 	    hql.append(" and p.codigo = :codigoProduto");
 	    parameters.put("codigoProduto", filtro.getProdutoDto().getCodigoProduto());
 	} else if (filtro.getProdutoDto().getNomeProduto() != null && !filtro.getProdutoDto().getNomeProduto().isEmpty()) {
-	    hql.append(" p.nome = :nomeProduto");
+	    hql.append("and p.nome = :nomeProduto");
 	    parameters.put("nomeProduto", filtro.getProdutoDto().getNomeProduto());
 	}
 	hql.append(" order by numeroCota, nomePessoa");
