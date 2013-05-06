@@ -35,7 +35,7 @@ public class CotaEstudo extends Cota {
 	private BigDecimal indiceTratamentoRegional;
 	private List<CotaEstudo> equivalente;
 	private BigDecimal indiceAjusteEquivalente;
-	private Integer regiao;
+	private List<Integer> regioes;
 	private boolean nova;
 	
 	public CotaEstudo() {
@@ -200,12 +200,12 @@ public class CotaEstudo extends Cota {
 	    this.reparteFixado = reparteFixado;
 	}
 
-	public Integer getRegiao() {
-	    return regiao;
+	public List<Integer> getRegioes() {
+	    return regioes;
 	}
 
-	public void setRegiao(Integer regiao) {
-	    this.regiao = regiao;
+	public void setRegioes(List<Integer> regioes) {
+	    this.regioes = regioes;
 	}
 
 	public boolean isNova() {
@@ -219,6 +219,40 @@ public class CotaEstudo extends Cota {
 	@Override
 	public String toString() {
 		return "" + getNumeroCota() + "";
+	}
+
+	@Override
+	public int hashCode() {
+	    final int prime = 31;
+	    int result = super.hashCode();
+	    result = prime * result + ((regioes == null) ? 0 : regioes.hashCode());
+	    return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+	    if (this == obj)
+		return true;
+	    if (!super.equals(obj))
+		return false;
+	    if (getClass() != obj.getClass())
+		return false;
+	    CotaEstudo other = (CotaEstudo) obj;
+	    if (regioes == null) {
+		if (other.regioes != null) {
+		    return false;
+		}
+	    } else if (!regioes.equals(other.regioes)) {
+		return false;
+	    }
+	    if (getId() == null) {
+		if (other.getId() != null) {
+		    return false;
+		}
+	    } else if (!getId().equals(other.getId())) {
+		return false;
+	    }
+	    return true;
 	}
 
 }

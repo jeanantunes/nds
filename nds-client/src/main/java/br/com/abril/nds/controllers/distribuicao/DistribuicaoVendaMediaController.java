@@ -1,7 +1,5 @@
 package br.com.abril.nds.controllers.distribuicao;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,17 +8,18 @@ import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
+import br.com.abril.nds.dto.EstrategiaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
-import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.model.planejamento.Estrategia;
@@ -121,6 +120,10 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	    lancamento = lancamentoRepository.buscarPorIdSemEstudo(lancamentoId);
 	}
 	Estrategia estrategia = estrategiaRepository.buscarPorProdutoEdicao(produtoEdicao);
+	EstrategiaDTO estrat = new EstrategiaDTO();
+	if (estrategia != null) {
+	    BeanUtils.copyProperties(estrategia, estrat);
+	}
 
 	List<Roteiro> roteiros = roteiroRepository.buscarTodos();
 
@@ -134,7 +137,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	result.include("repDistrib", repDistrib);
 
 	result.include("lancamento", lancamento);
-	result.include("estrategia", estrategia);
+	result.include("estrategia", estrat);
 	ProdutoEdicaoDTO convertido = converterResultado(produtoEdicao, lancamento);
 	// produtoEdicaoRepository.findReparteEVenda(convertido);
 

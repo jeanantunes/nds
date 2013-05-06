@@ -51,18 +51,17 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         	hql.append(" LEFT JOIN cotaBaseCota.cotaBase as cotaBase ");
         }
         
-        hql.append(" left join cota.enderecos as cotaEndereco ");
+        hql.append(" left join cota.enderecos as cotaEndereco with cotaEndereco.principal = true ");
         hql.append(" left join cota.pessoa as pessoa ");
         hql.append(" left join cotaEndereco.endereco as endereco ");
-        hql.append(" left join cota.pdvs as pdv ");
+        hql.append(" left join cota.pdvs as pdv with pdv.caracteristicas.pontoPrincipal = true ");
         hql.append(" left join pdv.segmentacao as segmento ");
         hql.append(" left join pdv.geradorFluxoPDV as geradorFluxoPrincipalPDV ");
         hql.append(" left join geradorFluxoPrincipalPDV.principal as tipoGeradorFluxoPrincipal ");
         
         hql.append(" left join segmento.tipoPontoPDV as tipoPontoPDV ");
         hql.append(" left join segmento.areaInfluenciaPDV as areaInfluenciaPDV ");
-        hql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
-        hql.append(" and cotaEndereco.principal = true ");
+        hql.append(" where  1 = 1");
         if(semCotaBase || obterFaturamento){
         	hql.append(" and cota.numeroCota = :numeroCota ");
         }else{

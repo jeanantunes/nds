@@ -45,19 +45,18 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	LinkedList<CotaEstudo> listaE = new LinkedList<>();
 	
 	for (CotaEstudo cota : estudo.getCotas()) {
-	    if (cota.getClassificacao().in(ClassificacaoCota.BancaQueRecebemDeterminadoSegmento, ClassificacaoCota.BancaSemClassificacaoDaPublicacao,
-		    ClassificacaoCota.BancaMixSemDeterminadaPublicacao)
+	    if ((cota.getReparteCalculado().compareTo(BigInteger.ZERO) == 0)
 		    && cota.isRecebeReparteComplementar()
 		    && cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
 		if ((cota.getEdicoesRecebidas().size() == 1) && (cota.getEdicoesRecebidas().get(0).isEdicaoAberta())) {
 		    listaA.add(cota);
-		} else if (cota.getEdicoesRecebidas().size() == 0) {
+		} else if ((cota.getEdicoesRecebidas().size() == 0) && (cota.getClassificacao().equals(ClassificacaoCota.BancaSemHistorico))) {
 		    listaB.add(cota);
-		} else if (cota.getEdicoesRecebidas().size() == 1) {
+		} else if ((cota.getEdicoesRecebidas().size() == 1) && (cota.getClassificacao().equals(ClassificacaoCota.BancaComVendaZero))) {
 		    listaC.add(cota);
-		} else if (cota.getEdicoesRecebidas().size() == 2) {
+		} else if ((cota.getEdicoesRecebidas().size() == 2) && (cota.getClassificacao().equals(ClassificacaoCota.BancaComVendaZero))) {
 		    listaD.add(cota);
-		} else if (cota.getEdicoesRecebidas().size() >= 3) {
+		} else if ((cota.getEdicoesRecebidas().size() >= 3) && (cota.getClassificacao().equals(ClassificacaoCota.BancaComVendaZero))) {
 		    listaE.add(cota);
 		}
 	    }

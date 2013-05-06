@@ -40,7 +40,7 @@ public class EstudoTransient extends Estudo {
 	
 	public EstudoTransient() {
 	    usarFixacao = true;
-		complementarAutomatico = true; //Default conforme documentação.
+	    complementarAutomatico = true; //Default conforme documentação.
 	}
 	
 	public BigInteger getReparteDistribuirInicial() {

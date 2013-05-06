@@ -1,8 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
-import java.util.List;
-
-import org.hibernate.Query;
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -16,21 +15,28 @@ public class EstrategiaRepositoryImpl extends AbstractRepositoryModel<Estrategia
     public EstrategiaRepositoryImpl() {
 	super(Estrategia.class);
     }
-    
+  
     @Override
-    public Estrategia buscarPorProdutoEdicao(ProdutoEdicao produtoEdicao){
-//    	Criteria criteria = getSession().createCriteria(Estrategia.class);
-//    	criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao.getId()));
-    	String hql = "select e from Estrategia e where e.produtoEdicao = " + produtoEdicao.getId();
-    	Query query = getSession().createQuery(hql);
-//    	query.setParameter("produtoEdicao", produtoEdicao.getId());
-//    		List<Estrategia> result = criteria.list();
-		List<Estrategia> result = query.list();
-		for(Estrategia e : result){
-			return e;
-		}
-		return null;
-    	
+    public Estrategia buscarPorProdutoEdicao(ProdutoEdicao produtoEdicao) {
+	Criteria criteria = getSession().createCriteria(Estrategia.class);
+	criteria.add(Restrictions.eq("produtoEdicao.id", produtoEdicao.getId()));
+	return (Estrategia) criteria.uniqueResult();
     }
+    
+//    @Override
+//    public Estrategia buscarPorProdutoEdicao(ProdutoEdicao produtoEdicao){
+////    	Criteria criteria = getSession().createCriteria(Estrategia.class);
+////    	criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao.getId()));
+//    	String hql = "select e from Estrategia e where e.produtoEdicao = " + produtoEdicao.getId();
+//    	Query query = getSession().createQuery(hql);
+////    	query.setParameter("produtoEdicao", produtoEdicao.getId());
+////    		List<Estrategia> result = criteria.list();
+//		List<Estrategia> result = query.list();
+//		for(Estrategia e : result){
+//			return e;
+//		}
+//		return null;
+//    	
+//    }
     
 }
