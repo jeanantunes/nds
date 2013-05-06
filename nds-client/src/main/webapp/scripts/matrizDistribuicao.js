@@ -905,7 +905,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		$("#copiarEstudo-classificacao").text(selecionado.classificacao);
 		$("#copiarEstudo-dataLancto").text(selecionado.dataLancto);
 		$("#copiarEstudo-reparte").text(selecionado.reparte);
-		$("#copiarEstudo-reparteDistribuido").text(selecionado.repDistrib);
+		$("#copiarEstudo-reparteDistribuido").text(selecionado.repDistrib).formatNumber({format:"#,###", locale:"br"});
 		$("#copiarEstudo-pctPadrao").val(selecionado.pctPadrao);
 		$("#copiarEstudo-idLancamento").text(selecionado.idLancamento);
 		
@@ -983,7 +983,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 				$("#copiarEstudo-copia-nomeProduto").text(result.nomeProduto);
 				$("#copiarEstudo-copia-classificacao").text(result.classificacao);
 				$("#copiarEstudo-copia-dataLancto").text(result.dataLancto);
-				$("#copiarEstudo-copia-reparte").text(result.reparte);
+                $("#copiarEstudo-copia-reparte").text(result.reparte)
+                    .formatNumber({format:"#,###", locale:"br"});
 		  }
 		);
 	},

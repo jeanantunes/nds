@@ -2,12 +2,7 @@ package br.com.abril.nds.model.cadastro;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -1084,7 +1079,7 @@ public class Distribuidor {
 	}
 
 	public void setListClassificacaoCota(
-			List<DistribuidorClassificacaoCota> listClassificacaoCota) {
+            List<DistribuidorClassificacaoCota> listClassificacaoCota) {
 		this.listClassificacaoCota = listClassificacaoCota;
 	}
 
@@ -1101,7 +1096,7 @@ public class Distribuidor {
 	}
 
 	public void setListPercentualExcedente(
-			List<DistribuidorPercentualExcedente> listPercentualExcedente) {
+            List<DistribuidorPercentualExcedente> listPercentualExcedente) {
 		this.listPercentualExcedente = listPercentualExcedente;
 	}
 }
