@@ -1,3 +1,4 @@
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numberformatter-1.2.3.min.js"></script>
 <script>
 
 function analisar(){
@@ -10,9 +11,6 @@ function analisar(){
 	}
 }
 
-
-
-
 </script>
 
 	<div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
@@ -22,7 +20,6 @@ function analisar(){
 				<b>Box < evento > com < status >.</b></p>
 	</div>
 	
-	<span id="copiarEstudo-reparteDistribuido" style="display: none;"></span>
 	<span id="copiarEstudo-idLancamento" style="display: none;"></span>
 
 <div id="copiarEstudoTelaAnalise" />
@@ -61,7 +58,10 @@ function analisar(){
           </tr>
           <tr>
             <td><strong>Reparte:</strong></td>
-            <td colspan="3" ><span id="copiarEstudo-reparte"></span></td>
+            <td colspan="3" >
+                <span id="copiarEstudo-reparte" style="display: none;"></span>
+                <span id="copiarEstudo-reparteDistribuido"></span>
+            </td>
           </tr>
         </table>
       </fieldset>
@@ -75,7 +75,7 @@ function analisar(){
           <tr>
             <td width="107"><strong>Estudo:</strong></td>
             <td colspan="3" ><input id="copiarEstudo-estudoPesquisa" type="text" onchange="matrizDistribuicao.carregarProdutoPorEstudo()" name="textfield5" id="textfield5" style="width:100px; margin-right:5px; float:left;" />
-              <span title="Pesquisar" class="classPesquisar"><a href="../Distribuicao/informacoes_produtos_copiar.htm">&nbsp;</a></span></td>
+              <span title="Pesquisar" class="classPesquisar" onclick="matrizDistribuicao.carregarProdutoPorEstudo()"></span></td>
           </tr>
           <tr>
             <td><strong>Código:</strong></td>
