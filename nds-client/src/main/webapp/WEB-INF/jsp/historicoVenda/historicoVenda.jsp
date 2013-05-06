@@ -74,9 +74,6 @@ function limparInputsFiltro(input1, input2, input3, input4, input5, input6, inpu
 	$(input9).val("");
 	}
 
-$(function() {
-	filtroReparte();
-});
 
 </script>
 <style type="text/css">
@@ -159,7 +156,7 @@ $(function() {
         </table>
         <table width="410" border="0" cellpadding="2" cellspacing="1">
           <tr>
-            <td width="20"><input type="radio" name="filtroPor" id="radio3" value="radio" checked onclick="filtroReparte();" /></td>
+            <td width="20"><input type="radio" name="filtroPor" id="radio3" value="radio" onclick="filtroReparte();" /></td>
             <td width="87"><strong>Qtde Reparte:</strong></td>
             <td width="48"><span class="filtroQtdeReparte">Inicial:</span></td>
             <td width="62"><input type="text" onkeydown="onlyNumeric(event);" name="filtro.qtdReparteInicial" id="qtdReparteInicial" style="width:40px; text-align:center;" class="filtroQtdeReparte"  /></td>
@@ -170,7 +167,7 @@ $(function() {
           <tr>
             <td><input type="radio" name="filtroPor" id="radio4" value="radio" onclick="filtroVenda();" /></td>
             <td><strong>Qtde. Venda:</strong></td>
-            <td><span class="filtroQtdeVenda">Inicial:</span></td>
+            <td><span class="filtroQtdeVenda" >Inicial:</span></td>
             <td><input type="text" onkeydown="onlyNumeric(event);" name="filtro.qtdVendaInicial" id="qtdVendaInicial" style="width:40px; text-align:center;" class="filtroQtdeVenda"  /></td>
             <td><span class="filtroQtdeVenda">Final:</span></td>
             <td><input type="text" onkeydown="onlyNumeric(event);" name="filtro.qtdVendaFinal" id="qtdVendaFinal" style="width:40px; text-align:center;" class="filtroQtdeVenda" /></td>

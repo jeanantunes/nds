@@ -664,12 +664,12 @@ function esconde_redutor(){
         <br />
 
 
-          <p><strong>Reparte Mánimo:</strong> ${ estrategia.reparteMinimo }</p>
+          <p><strong>Reparte Mínimo:</strong> ${ estrategia.reparteMinimo }</p>
 
           <p><strong>Abrangência:</strong> ${ estrategia.abrangencia }%</p>
           
         <p><strong>Oportunidade de Venda:</strong></p>
-          <textarea cols="30" rows="6" >${ estrategia.oportunidadeVenda }</textarea>
+          <textarea cols="30" rows="6" >${estrategia.oportunidadeVenda}</textarea>
 
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>

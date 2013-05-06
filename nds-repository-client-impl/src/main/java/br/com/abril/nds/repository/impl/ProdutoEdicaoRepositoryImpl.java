@@ -832,7 +832,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				"sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) as venda, " +
 				"lancamento.dataRecolhimentoDistribuidor as dtRecolhimento, " +
 				"lancamento.dataLancamentoDistribuidor as dtLancamento, " +
-				"lancamento.reparte as reparte, " +
+				"sum(estoqueProdutoCota.qtdeRecebida) as reparte, " +
 				"produto.nome as nomeProduto, " +
 				"produto.codigo as codigoProduto, " +				
 				"tipoClassificacaoProduto.descricao as descricaoTipoClassificacao, " +
@@ -973,7 +973,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				
 				break;
 			case REGIAO:
-				//todo: EMS 2004
+				whereList.add(" estoqueProdutoCota.cota.id in (SELECT registro.cota.id FROM RegistroCotaRegiao as registro WHERE regiao.id = :regiaoId )");
+				parameterMap.put("regiaoId",Long.parseLong(filtro.getElemento()));
 				break;
 			default:
 				break;
@@ -1005,15 +1006,15 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		//Criada para EMS 2029
 		String queryStringProdutoEdicao = 
 				"select 'De "+de+" a "+ate+"' as faixaVenda," +
-				" sum(reparteTotal) as repTotal, " +
-				" sum(reparteTotal)/count(distinct COTA_ID) as repMedio, " +
-				" sum(HIST.qtde_Recebida - HIST.qtde_Devolvida) as vdaTotal, " +
-				" sum(HIST.qtde_Recebida - HIST.qtde_Devolvida)/count(distinct COTA_ID) as vdaMedio, " +
-				" (sum(HIST.qtde_Recebida - hist.qtde_Devolvida)/sum(reparteTotal))*100 as percVenda, " +
+				" sum(reparteTotal) / :qtdEdicoes as repTotal, " +
+				" (sum(reparteTotal) / :qtdEdicoes) / count(distinct COTA_ID) as repMedio, " +
+				" sum(HIST.qtde_Recebida - HIST.qtde_Devolvida) / :qtdEdicoes as vdaTotal, " +
+				" (sum(HIST.qtde_Recebida - HIST.qtde_Devolvida) / :qtdEdicoes) / count(distinct COTA_ID) as vdaMedio, " +
+				" ((sum(HIST.qtde_Recebida - hist.qtde_Devolvida) / :qtdEdicoes) / (sum(reparteTotal) / :qtdEdicoes)) * 100 as percVenda, " +
 				
 				// encalheMedio = ((rep total-vda nominal)/qte.cotas)
 				// " (sum(reparteTotal)-sum(HIST.qtde_Recebida - HIST.qtde_Devolvida))/count(HIST.COTA_ID) as encalheMedio, " +
-				" (avg(HIST.qtde_Devolvida)) as encalheMedio , " + 
+				" (avg(HIST.qtde_Devolvida) / :qtdEdicoes) as encalheMedio , " + 
 				
 				//Part Reparte – participação do reparte desta faixa de venda em relação ao reparte total da edição
 				// O valor dessa coluna é a soma de reparte das cotas que fazem parte desta faixa dividido pelo reparte total da edição.
@@ -1021,13 +1022,13 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				
 				//Part Venda - mesmo critério que Part de Reparte, porém, observando a venda. 
 				//Resumindo, é a soma de venda das cotas que fazem parte desta faixa dividido pela venda total da edição.
-				" sum(HIST.qtde_Recebida - HIST.qtde_Devolvida)/ " +
+				" sum(HIST.qtde_Recebida - HIST.qtde_Devolvida) / " +
 				//subselect para totalizar as vendas de um produto, sem filtro por cota
 				" (select sum(qtde_recebida)-sum(qtde_devolvida) from estoque_produto_cota " +
 				"	JOIN produto_edicao on produto_edicao.ID = estoque_produto_cota.PRODUTO_EDICAO_ID" +
 				"	JOIN PRODUTO ON produto_edicao.PRODUTO_ID=PRODUTO.ID" +
 				"	where produto.CODIGO = :produtoCodigo and " +
-				"	produto_Edicao.NUMERO_EDICAO in ( :nrEdicoes ))as partVenda," +
+				"	produto_Edicao.NUMERO_EDICAO in ( :nrEdicoes )) as partVenda," +
 				
 				" count(distinct COTA_ID) as qtdeCotas, " +
 				" group_concat(distinct COTA_ID) as idCotaStr, " +
@@ -1044,12 +1045,12 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				"   case when estoqueProdutoCota.QTDE_DEVOLVIDA=0 then estoqueProdutoCota.QTDE_RECEBIDA else 0 end as vdEsmag," +
 				"   case when estoqueProdutoCota.QTDE_DEVOLVIDA=estoqueProdutoCota.QTDE_RECEBIDA then 1 else 0 end as qtdeCotasSemVenda," +
 				"   case when cota2_.SITUACAO_CADASTRO='ATIVO' then 1 else 0 end as cotaAtiva," +
-				"	estoqueProdutoCota.QTDE_RECEBIDA as reparteTotal," +	
+				"	  sum(estoqueProdutoCota.QTDE_RECEBIDA) as reparteTotal," +	
 					" estoqueProdutoCota.ID as col_2_0_, " +
 					" cota2_.numero_cota as COTA_ID, " +
 					" estoqueProdutoCota.PRODUTO_EDICAO_ID as PRODUTO6_585_, " +
-					" estoqueProdutoCota.QTDE_DEVOLVIDA as QTDE_DEVOLVIDA, " +
-					" estoqueProdutoCota.QTDE_RECEBIDA as QTDE_RECEBIDA, " +
+					" sum(estoqueProdutoCota.QTDE_DEVOLVIDA) as QTDE_DEVOLVIDA, " +
+					" sum(estoqueProdutoCota.QTDE_RECEBIDA) as QTDE_RECEBIDA, " +
 					" estoqueProdutoCota.VERSAO as VERSAO585_ " +
 					
 					
@@ -1152,7 +1153,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 				break;
 			case REGIAO:
-				// todo: EMS 2004
+				
+				whereList.add(" estoqueProdutoCota.COTA_ID in (SELECT registro.cota_id FROM registro_cota_regiao as registro WHERE regiao_id = :regiaoId )");
+				parameterMap.put("regiaoId",Long.parseLong(filtro.getElemento()));
 				break;
 			default:
 				break;
@@ -1162,14 +1165,16 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		queryStringProdutoEdicao += " where " +
 									"	produto4_.CODIGO= :produtoCodigo " +
-									"	and ( produtoEdicao.NUMERO_EDICAO in ( :nrEdicoes ))" +
-									"	and estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA >= :de " +
-									"	and estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA<= :ate ";
+									"	and ( produtoEdicao.NUMERO_EDICAO in ( :nrEdicoes ))";
 		
 		if(!whereList.isEmpty()){
 			queryStringProdutoEdicao += " and "+StringUtils.join(whereList, " and ");
 			
 		}
+		
+		queryStringProdutoEdicao += " group by numero_cota " +
+									" having (sum(estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) >= :de" +  
+									" and (sum(estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) <= :ate";
 		
 		queryStringProdutoEdicao+=") as HIST";
 		
@@ -1177,6 +1182,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.setParameter("de", de);
 		query.setParameter("ate", ate);
 		query.setParameter("produtoCodigo", codigoProduto);
+		query.setParameter("qtdEdicoes", edicoes.length);
 		query.setParameterList("nrEdicoes", edicoes);
 		
 		for (String key : parameterMap.keySet()) {

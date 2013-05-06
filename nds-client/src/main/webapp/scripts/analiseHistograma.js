@@ -109,6 +109,41 @@ var anaLiseHistogramaController = $.extend(true, {
 			rowCell.percVenda = floatToPrice(rowCell.percVenda * 100);
 	},
 	
+	buildResumoEstudo : function buildResumoEstudo(lastRow){
+		
+		$("#cotasAtivasCell").text(formatarMilhar(lastRow.cell.qtdeTotalCotasAtivas || 0));
+		$("#reparteDistribuidoCell").text(formatarMilhar(lastRow.cell.repTotal || 0 ));
+		$("#repMedioCell").text(floatToPrice(lastRow.cell.repMedio || 0));
+		$("#vdaMedioCell").text(floatToPrice(lastRow.cell.vdaMedio || 0));
+		$("#cotasEsmagadasCell").text(formatarMilhar(lastRow.cell.cotasEsmagadas || 0));
+		$("#vdaTotalCell").text(formatarMilhar(lastRow.cell.vdaTotal || 0));
+		$("#vendaEsmagadasCell").text(formatarMilhar(lastRow.cell.vendaEsmagadas || 0));
+		$("#encalheMedioCell").text(floatToPrice(lastRow.cell.encalheMedio || 0));
+		$("#cotasProdutoCell").text(formatarMilhar(lastRow.cell.qtdeCotas || 0));
+		
+		
+		var vdaTotal = parseInt(lastRow.cell.vdaTotal);
+		var repTotal = parseInt(lastRow.cell.repTotal);
+		
+		var qtdeCotas = parseInt(lastRow.cell.qtdeCotas);
+		//cotas ativas da faixa de venda
+		var qtdeCotasAtivas = parseInt(lastRow.cell.qtdeCotasAtivas);
+		//total de cotas ativas 
+		var qtdeTotalCotasAtivas = parseInt(lastRow.cell.qtdeTotalCotasAtivas);
+		var qtdeCotasSemVenda = parseInt(lastRow.cell.qtdeCotasSemVenda);
+		
+		var eficVenda = floatToPrice(parseFloat(vdaTotal/ lastRow.cell.repTotal*100).toFixed(2));
+		$("#eficienciaDeVendaCell").text((eficVenda +"%").replace(".", ","));
+		
+		var r = floatToPrice(parseFloat(Math.round( (qtdeCotas/qtdeTotalCotasAtivas)*100 )).toFixed(2));
+		$("#abrangenciaDistribuicaoCell").text((r +"%").replace(".", ","));
+
+		r = parseFloat(Math.round( (qtdeCotas-qtdeCotasSemVenda)/qtdeTotalCotasAtivas*100 )).toFixed(2);
+		
+		$("#abrangenciaVendaCell").text((r +"%").replace(".", ","));
+		
+	},
+	
 	iniciarGridAnalise:function(){
 		
 		var flexGridService = new FlexGridService();
@@ -225,14 +260,9 @@ var anaLiseHistogramaController = $.extend(true, {
 				
 				resultadoAnalise=data.rows;
 				
-				var idArray=["cotasAtivasCell","reparteDistribuidoCell","repMedioCell","vdaMedioCell","cotasEsmagadasCell","vdaTotalCell","vendaEsmagadasCell","encalheMedioCell","cotasProdutoCell"];
-				var valueArray=["qtdeTotalCotasAtivas","repTotal","repMedio","vdaMedio","cotasEsmagadas","vdaTotal","vendaEsmagadas","encalheMedio","qtdeCotas"];
-				
 				var lastRow = $(data.rows).last()[0];
 				
-				for ( var i = 0; i < idArray.length; i++) {
-					$("#"+idArray[i]).text(lastRow.cell[valueArray[i]]);
-				}
+				anaLiseHistogramaController.buildResumoEstudo(lastRow);
 				
 				// Adicionar o link as cotas esmagadas
 				$.each(data.rows, function(index, row) {
@@ -249,26 +279,6 @@ var anaLiseHistogramaController = $.extend(true, {
 					anaLiseHistogramaController.formatarFaixasVenda(rowCell);
 				});
 
-				var vdaTotal = parseInt(lastRow.cell.vdaTotal);
-				var repTotal = parseInt(lastRow.cell.repTotal);
-				
-				var qtdeCotas = parseInt(lastRow.cell.qtdeCotas);
-				//cotas ativas da faixa de venda
-				var qtdeCotasAtivas = parseInt(lastRow.cell.qtdeCotasAtivas);
-				//total de cotas ativas 
-				var qtdeTotalCotasAtivas = parseInt(lastRow.cell.qtdeTotalCotasAtivas);
-				var qtdeCotasSemVenda = parseInt(lastRow.cell.qtdeCotasSemVenda);
-				
-				var eficVenda = floatToPrice(parseFloat(vdaTotal/ lastRow.cell.repTotal*100).toFixed(2));
-				$("#eficienciaDeVendaCell").text(eficVenda+"%");
-				
-				var r = floatToPrice(parseFloat(Math.round( (qtdeCotas/qtdeTotalCotasAtivas)*100 )).toFixed(2));
-				$("#abrangenciaDistribuicaoCell").text(r+"%");
-
-				r = parseFloat(Math.round( (qtdeCotas-qtdeCotasSemVenda)/qtdeTotalCotasAtivas*100 )).toFixed(2);
-				
-				$("#abrangenciaVendaCell").text(r+"%");
-				
 				return data;
 			},
 			colModel : [ {

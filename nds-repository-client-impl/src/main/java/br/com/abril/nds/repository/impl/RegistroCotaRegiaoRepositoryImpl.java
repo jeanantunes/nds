@@ -233,26 +233,22 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 			sql.append(" ( ");
 			
 			sql.append(" select ");
-			sql.append(" mec.cota_id as cota_id, ");
+			sql.append(" epc.cota_id as cota_id, ");
 			sql.append(" cotas.numero_cota as numCota, ");
 			sql.append(" cotas.situacao_cadastro as situacao, ");
 			sql.append(" coalesce(pessoaJoin.nome_fantasia, pessoaJoin.razao_social, pessoaJoin.nome, '') as nomeCota, ");
 			
-			sql.append(" case when mec.tipo_movimento_id=21 then (mec.qtde) ");
-			sql.append(" 	when mec.tipo_movimento_id=26 then (mec.qtde*-1) ");
-			sql.append(" 	else 0 end as venda_edicoes ");
+			sql.append(" epc.qtde_recebida - epc.qtde_devolvida as venda_edicoes ");
 			
-			sql.append(" from movimento_estoque_cota mec ");
-			sql.append(" join estoque_produto_cota EPC ON EPC.ID = mec.ESTOQUE_PROD_COTA_ID ");
+			sql.append(" from estoque_produto_cota EPC ");
 			sql.append(" join produto_edicao PE ON pe.ID = EPC.PRODUTO_EDICAO_ID ");
 			sql.append(" join produto P ON p.ID = PE.PRODUTO_ID ");
 			sql.append(" join cota cotas ON EPC.COTA_ID = cotas.ID ");
 			sql.append(" join pessoa pessoaJoin ON cotas.pessoa_ID = pessoaJoin.ID ");
 			
-			sql.append(" where tipo_movimento_id in (21,26) ");
-			sql.append(" and EPC.PRODUTO_EDICAO_ID in (").append(StringUtils.join(idsProdEdicaoParaMontagemRanking,",")).append(")");
+			sql.append(" where EPC.PRODUTO_EDICAO_ID in (").append(StringUtils.join(idsProdEdicaoParaMontagemRanking,",")).append(")");
 			
-			sql.append(" order by mec.cota_id ");
+			sql.append(" order by venda_edicoes desc ");
 			sql.append(" ) as q1 ");
 			
 			sql.append(" group by COTA_ID ");
