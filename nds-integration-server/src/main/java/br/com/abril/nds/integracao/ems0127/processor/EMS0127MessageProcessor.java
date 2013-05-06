@@ -94,6 +94,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 				ce.setValorTotalMargemInformado(null);
 				ce.setValorTotalCreditoApurado(null);
 				ce.setValorTotalCreditoInformado(null);
+				ce.setValorTotalVendaApurada(null);
 				ce.setValorTotalVendaInformada(null);
 				
 				for(IcdChamadaEncalheItem icei : ce.getChamadaEncalheItens()) {
