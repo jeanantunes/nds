@@ -50,6 +50,9 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	if (cotasComHistorico.size() == 0) {
 	    throw new Exception("Não foram encontradas cotas com historico para estas edições de base.");
 	}
+	
+	// tratamento para agrupar regiões, pois vieram cotas repetidas no select por estarem em mais de uma região
+	cotasComHistorico = agruparPorRegiao(cotasComHistorico);
 
 	Map<Long, CotaEstudo> cotasComHistoricoMap = new LinkedHashMap<>();
 	for (CotaEstudo cota : cotasComHistorico) {
@@ -68,6 +71,24 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	estudo.setCotas(new LinkedList<>(cotasComHistoricoMap.values()));
     }
     
+    private LinkedList<CotaEstudo> agruparPorRegiao(LinkedList<CotaEstudo> cotas) {
+	if (cotas.size() > 0) {
+	    LinkedList<CotaEstudo> novaLista = new LinkedList<CotaEstudo>();
+	    CotaEstudo temp = cotas.get(0);
+	    for (int i = 1; i < cotas.size(); i++) {
+		if (temp.equals(cotas.get(i))) {
+		    temp.getRegioes().addAll(cotas.get(i).getRegioes());
+		} else {
+		    novaLista.add(temp);
+		    temp = cotas.get(i);
+		}
+	    }
+	    return novaLista;
+	} else {
+	    return cotas;
+	}
+    }
+
     private void carregarFixacoes(Map<Long, CotaEstudo> cotasComHistoricoMap, EstudoTransient estudo) {
 
 	List<CotaEstudo> cotasComFixacao = cotaDAO.getCotasComFixacao(estudo.getProdutoEdicaoEstudo().getProduto().getId(), estudo
@@ -93,10 +114,10 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	}
 	if (!cota.getClassificacao().equals(ClassificacaoCota.CotaNova)) {
 	    if (totalReparte.compareTo(BigDecimal.ZERO) == 0 && cota.getReparteMinimo().compareTo(BigInteger.ZERO) == 0) {
-		cota.setClassificacao(ClassificacaoCota.BancaComReparteZeroMinimoZeroCotaAntiga);
+		cota.setClassificacao(ClassificacaoCota.BancaSemHistorico);
 	    }
 	    if (totalVenda.compareTo(BigDecimal.ZERO) == 0 && cota.getReparteMinimo().compareTo(BigInteger.ZERO) == 0) {
-		cota.setClassificacao(ClassificacaoCota.BancaComTotalVendaZeraMinimoZeroCotaAntiga);
+		cota.setClassificacao(ClassificacaoCota.BancaComVendaZero);
 	    }
 	}
 	if (totalEdicoes.compareTo(BigDecimal.ZERO) != 0) {

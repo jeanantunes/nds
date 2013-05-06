@@ -58,11 +58,11 @@ public enum ClassificacaoCota {
 	/**
 	 * SH
 	 */
-	BancaComReparteZeroMinimoZeroCotaAntiga("SH"),
+	BancaSemHistorico("SH"),
 	/**
 	 * VZ
 	 */
-	BancaComTotalVendaZeraMinimoZeroCotaAntiga("VZ"),
+	BancaComVendaZero("VZ"),
 	/**
 	 * MX
 	 */
