@@ -56,7 +56,7 @@ public class HistogramaVendasController extends BaseController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroHistogramaVendas";
 	private static final String HISTOGRAMA_SESSION_ATTRIBUTE = "resultadoHistogramaVendas";
-	private String[] faixaVendaInicial = {"0-10","11-20","21-30","31-40","41-999999"};
+	private String[] faixaVendaInicial = {"0-0","1-4","5-9","10-19","20-49","50-999999"};
 	
 	@Autowired
 	private Result result;

@@ -207,19 +207,30 @@ var histogramaVendasController = $.extend(true, {
 		
 		//
 		$("#componente").change(function(){
+			
+			if ($('#componente').val() !== "-1") {
 			  carregarCombo(contextPath + "/distribuicao/histogramaVendas/carregarElementos", 
 					  {"componente":$("#componente").val()},
 			            $("#elemento", this.workspace), null, null);
+			}else{
+				$('#elemento').html('');
+				$('#elemento').append("<option value='-1'>Selecione...</option>");
+			}
 		});
 	},
 	
 	getFormFiltro: function(){
-		var selector="input[type='radio'][name='filtroPor']:checked,#inserirComponentes,#componente,#elemento,#codigo,#produto,#edicao";
+		var selector = "",
+			formData = new Array();
 		
-		var formData = new Array();
+		if ($('#inserirComponentes').is(':checked')) {
+			selector = "input[type='radio'][name='filtroPor']:checked,#inserirComponentes,#componente,#elemento,#codigo,#produto,#edicao";
+		}else {
+			selector = "input[type='radio'][name='filtroPor']:checked,#codigo,#produto,#edicao";
+		}
+		
 		
 		$(selector).each(function(idx,comp){
-//			console.log("filtro."+comp.getAttribute('name')+"=="+comp.value);
 			formData.push({name:"filtro."+comp.getAttribute('name'),value:comp.value});
 		});
 		

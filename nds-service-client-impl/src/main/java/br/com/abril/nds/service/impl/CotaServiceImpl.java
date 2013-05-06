@@ -2444,7 +2444,7 @@ public class CotaServiceImpl implements CotaService {
 	public List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas) {
 		Collections.sort(listProdutoEdicaoDto);
 		
-		List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO = cotaRepository.buscarHistoricoCotas(listProdutoEdicaoDto, cotas);  
+		List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO = cotaRepository.buscarCotasComHistoricoDeVenda(listProdutoEdicaoDto, cotas);  
 		
 		for (AnaliseHistoricoDTO analiseHistoricoDTO : listAnaliseHistoricoDTO) {
 			
@@ -2515,11 +2515,35 @@ public class CotaServiceImpl implements CotaService {
 					}
 				}
 			}
+			
+			setMediaVendaEReparte(listProdutoEdicaoDto.size(), analiseHistoricoDTO);
 		}
 		
 		return listAnaliseHistoricoDTO;
 	}
 
+	private void setMediaVendaEReparte(int qtdEdicoes, AnaliseHistoricoDTO analiseHistoricoDTO){
+		Double reparteMedio = 0.0;
+		Double vendaMedia = 0.0;
+		
+		reparteMedio += Integer.parseInt(analiseHistoricoDTO.getEd1Reparte());
+		reparteMedio += Integer.parseInt(analiseHistoricoDTO.getEd2Reparte());
+		reparteMedio += Integer.parseInt(analiseHistoricoDTO.getEd3Reparte());
+		reparteMedio += Integer.parseInt(analiseHistoricoDTO.getEd4Reparte());
+		reparteMedio += Integer.parseInt(analiseHistoricoDTO.getEd5Reparte());
+		reparteMedio += Integer.parseInt(analiseHistoricoDTO.getEd6Reparte());
+		
+		vendaMedia += Integer.parseInt(analiseHistoricoDTO.getEd1Venda());
+		vendaMedia += Integer.parseInt(analiseHistoricoDTO.getEd2Venda());
+		vendaMedia += Integer.parseInt(analiseHistoricoDTO.getEd3Venda());
+		vendaMedia += Integer.parseInt(analiseHistoricoDTO.getEd4Venda());
+		vendaMedia += Integer.parseInt(analiseHistoricoDTO.getEd5Venda());
+		vendaMedia += Integer.parseInt(analiseHistoricoDTO.getEd6Venda());
+		
+		analiseHistoricoDTO.setReparteMedio(reparteMedio / qtdEdicoes);
+		analiseHistoricoDTO.setVendaMedia(vendaMedia / qtdEdicoes);
+	}
+	
 	@Transactional(readOnly = true)
 	@Override
 	public HistoricoVendaPopUpCotaDto buscarCota(Integer numero) {

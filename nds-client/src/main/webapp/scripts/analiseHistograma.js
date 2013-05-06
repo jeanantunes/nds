@@ -358,11 +358,8 @@ var anaLiseHistogramaController = $.extend(true, {
 			sortorder : "asc",
 			showTableToggleBtn : true,
 			width : 960,
-			height : 180
+			height : 240
 		});
-		
-		
-		
 	},
 	
 	executarAnaliseHistoricoVenda:function(idx, propriedade){
