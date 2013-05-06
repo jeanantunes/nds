@@ -729,6 +729,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			                      Date dataEmissao, Intervalo<Date> periodo,
 			                      List<Long> listaIdFornecedores) {
 		
+		if(idCotas == null || idCotas.size() == 0)
+			return null;
+			
 		PessoaJuridica pessoaEmitente = this.distribuidorRepository.juridica();
 		
 		List<EstudoCota> listaEstudosCotas = this.estudoCotaRepository
