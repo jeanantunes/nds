@@ -104,7 +104,7 @@ public class CotaDAO {
 		}
 
 		Map<String, Object> params = new HashMap<>();
-		params.put("ID_PRODUTO", estudo.getProdutoEdicaoEstudo().getId());
+		params.put("ID_PRODUTO", estudo.getProdutoEdicaoEstudo().getProduto().getId());
 		params.put("NUMERO_EDICAO", estudo.getProdutoEdicaoEstudo().getNumeroEdicao());
 		params.put("TIPO_SEGMENTO", estudo.getProdutoEdicaoEstudo().getTipoSegmentoProduto());
 		params.put("IDS_PRODUTOS", idsPesos.keySet());
@@ -115,13 +115,17 @@ public class CotaDAO {
 				CotaEstudo cota = new CotaEstudo();
 				cota.setId(rs.getLong("COTA_ID"));
 				cota.setNumeroCota(rs.getInt("NUMERO_COTA"));
-				cota.setQuantidadePDVs(rs.getBigDecimal("QTDE_PDVS"));
 				cota.setRecebeReparteComplementar(rs.getBoolean("RECEBE_COMPLEMENTAR"));
 				cota.setSituacaoCadastro(SituacaoCadastro.valueOf(rs.getString("SITUACAO_CADASTRO")));
-				cota.setMix(rs.getBoolean("MIX"));
-				cota.setRegiao(rs.getInt("REGIAO_ID"));
-				traduzAjusteReparte(rs, cota);
 				cota.setEdicoesRecebidas(getEdicoes(rs, idsPesos));
+				traduzAjusteReparte(rs, cota);
+				cota.setMix(rs.getBoolean("MIX"));
+				if (rs.getBigDecimal("QTDE_EXEMPLARES") != null) {
+				    cota.setReparteFixado(rs.getBigDecimal("QTDE_EXEMPLARES").toBigInteger());
+				}
+				cota.setQuantidadePDVs(rs.getBigDecimal("QTDE_PDVS"));
+				cota.setRegioes(new ArrayList<Integer>());
+				cota.getRegioes().add(rs.getInt("REGIAO_ID"));
 				return cota;
 			}
 		});

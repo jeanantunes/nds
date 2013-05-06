@@ -24,7 +24,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 @SequenceGenerator(name = "ESTRATEGIA_SEQ", initialValue = 1, allocationSize = 1)
 public class Estrategia implements Serializable {
 
-    private static final long serialVersionUID = -1961518736407632634L;
+    private static final long serialVersionUID = -7650183772911488150L;
 
     @Id
     @GeneratedValue(generator = "ESTRATEGIA_SEQ")
