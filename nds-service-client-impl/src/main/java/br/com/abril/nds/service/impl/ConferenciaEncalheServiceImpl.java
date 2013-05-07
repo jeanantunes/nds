@@ -3380,6 +3380,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 			ProdutoEdicaoSlipDTO produtoSlip = listaProdutoEdicaoSlip.get(i);
 			
+			
+			
 			qtdeTotalProdutosDia =
 				BigIntegerUtil.soma(qtdeTotalProdutosDia, produtoSlip.getEncalhe());   
 			
@@ -3548,6 +3550,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					dataRecolhimentoStr = new SimpleDateFormat("dd/MM/yyyy").format(itemLista.getDataRecolhimento());
 				}
 
+				/*
+				 * 
+				 */
+				
 				String qtdeTotalProdutos =  itemLista.getQtdeTotalProdutos() == null ? "0" : itemLista.getQtdeTotalProdutos();
 				e.adicionarCompleteEspaco("Total Produtos do dia "+ dataRecolhimentoStr+":", qtdeTotalProdutos);
 				
@@ -3557,20 +3563,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				e.adicionarCompleteEspaco("Total Encalhe  do dia "+ dataRecolhimentoStr +":", valorTotalEncalhe);
 				e.quebrarLinhaEscape();
 				e.quebrarLinhaEscape();
+				
+				
+				/*
+				 * 
+				 */
 			}
 		}
-		e.adicionar("SUB-TOTAL-------------------------------");
-		e.quebrarLinhaEscape();
 		
-		String totalProdutos = slipDTO.getTotalProdutos() == null ? "0" : slipDTO.getTotalProdutos().toString();
-		e.adicionarCompleteEspaco("Total de produtos:", totalProdutos);
-		e.quebrarLinhaEscape();
 		
-		String valorTotalEncalhe = slipDTO.getValorTotalEncalhe() == null ? "0,00" : slipDTO.getValorTotalEncalhe().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
-		e.adicionarCompleteEspaco("Valor total de encalhe: ( A )", valorTotalEncalhe);
-		e.quebrarLinhaEscape();
-		e.quebrarLinhaEscape();
-
+		
+		
+		
 		e.adicionarCompleteEspaco("Reparte Capa", 
 			slipDTO.getValorTotalSemDesconto().setScale(2, RoundingMode.HALF_EVEN).toString());
 		e.quebrarLinhaEscape();
@@ -3584,6 +3588,24 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				.setScale(2, RoundingMode.HALF_EVEN).toString());
 		e.quebrarLinhaEscape();
 		e.quebrarLinhaEscape();
+		
+		
+		
+		
+		
+		
+		e.adicionar("SUB-TOTAL-------------------------------");
+		e.quebrarLinhaEscape();
+		
+		String totalProdutos = slipDTO.getTotalProdutos() == null ? "0" : slipDTO.getTotalProdutos().toString();
+		e.adicionarCompleteEspaco("Total de produtos:", totalProdutos);
+		e.quebrarLinhaEscape();
+		
+		String valorTotalEncalhe = slipDTO.getValorTotalEncalhe() == null ? "0,00" : slipDTO.getValorTotalEncalhe().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
+		e.adicionarCompleteEspaco("Valor total de encalhe: ( A )", valorTotalEncalhe);
+		e.quebrarLinhaEscape();
+		e.quebrarLinhaEscape();
+		
 		
 		adicionarComposicaoCobranca(e, slipDTO.getListaComposicaoCobrancaDTO());
 		
