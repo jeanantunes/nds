@@ -26,7 +26,6 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -372,7 +371,6 @@ public class MatrizDistribuicaoController extends BaseController {
 			produto.setNumeroEdicao(numeroEdicao);
 			estudoAutomatico = estudoAlgoritmoService.gerarEstudoAutomatico(produto, reparte.toBigInteger(), this.getUsuarioLogado());
 		} catch (Exception e) {
-
 			log.error("Erro na geração automatica do estudo.", e);
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
 		}
