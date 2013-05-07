@@ -3,6 +3,7 @@ package br.com.abril.nds.process.verificartotalfixacoes;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -50,67 +51,65 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	if (cotasComHistorico.size() == 0) {
 	    throw new Exception("Não foram encontradas cotas com historico para estas edições de base.");
 	}
-	
-	// tratamento para agrupar regiões, pois vieram cotas repetidas no select por estarem em mais de uma região
-	cotasComHistorico = agruparPorRegiao(cotasComHistorico);
 
 	Map<Long, CotaEstudo> cotasComHistoricoMap = new LinkedHashMap<>();
 	for (CotaEstudo cota : cotasComHistorico) {
-
 	    calcularTotais(cota);
-
 	    cotasComHistoricoMap.put(cota.getId(), cota);
 	}
-
-	marcaCotasNovas(cotasComHistoricoMap);
-
-	trataCotasComEnglobacao(cotasComHistoricoMap);
-
-	carregarFixacoes(cotasComHistoricoMap, estudo);
-
-	estudo.setCotas(new LinkedList<>(cotasComHistoricoMap.values()));
-    }
-    
-    private LinkedList<CotaEstudo> agruparPorRegiao(LinkedList<CotaEstudo> cotas) {
-	if (cotas.size() > 0) {
-	    LinkedList<CotaEstudo> novaLista = new LinkedList<CotaEstudo>();
-	    CotaEstudo temp = cotas.get(0);
-	    for (int i = 1; i < cotas.size(); i++) {
-		if (temp.equals(cotas.get(i))) {
-		    temp.getRegioes().addAll(cotas.get(i).getRegioes());
-		} else {
-		    novaLista.add(temp);
-		    temp = cotas.get(i);
+	List<Long> idsCotas = new ArrayList<>();
+	for (CotaEstudo cota : cotasComHistorico) {
+	    if (cota.getClassificacao().equals(ClassificacaoCota.BancaSemHistorico)) {
+		idsCotas.add(cota.getId());
+	    }
+	    if (cota.getClassificacao().in(ClassificacaoCota.BancaComVendaZero, ClassificacaoCota.BancaSemHistorico,
+		    ClassificacaoCota.BancaSuspensa, ClassificacaoCota.ReparteFixado)) {
+		cotasComHistoricoMap.remove(cota.getId());
+		estudo.getCotasExcluidas().add(cota);
+	    }
+	}
+	if (idsCotas.size() > 0) {
+	    List<Long> numerosEdicao = new ArrayList<>();
+	    if (estudo.getProdutoEdicaoEstudo().getNumeroEdicao() > 1) {
+		numerosEdicao.add(estudo.getProdutoEdicaoEstudo().getNumeroEdicao() - 1);
+	    }
+	    if (estudo.getProdutoEdicaoEstudo().getNumeroEdicao() > 2) {
+		numerosEdicao.add(estudo.getProdutoEdicaoEstudo().getNumeroEdicao() - 2);
+	    }
+	    if (numerosEdicao.size() > 0) {
+		List<Long> cotasQueReceberam = cotaDAO.buscarCotasQueReceberamUltimaEdicaoAberta(estudo.getProdutoEdicaoEstudo().getProduto().getCodigo(), idsCotas, numerosEdicao);
+		for (CotaEstudo cota : estudo.getCotasExcluidas()) {
+		    if (cotasQueReceberam.contains(cota.getId())) {
+			cota.setRecebeuUltimaEdicaoAberta(true);
+		    }
 		}
 	    }
-	    return novaLista;
-	} else {
-	    return cotas;
 	}
-    }
-
-    private void carregarFixacoes(Map<Long, CotaEstudo> cotasComHistoricoMap, EstudoTransient estudo) {
-
-	List<CotaEstudo> cotasComFixacao = cotaDAO.getCotasComFixacao(estudo.getProdutoEdicaoEstudo().getProduto().getId(), estudo
-		.getProdutoEdicaoEstudo().getNumeroEdicao());
-	for (CotaEstudo cotaComFixacao : cotasComFixacao) {
-	    if (cotasComHistoricoMap.containsKey(cotaComFixacao.getId())) {
-		CotaEstudo cotaEstudo = cotasComHistoricoMap.get(cotaComFixacao.getId());
-		cotaEstudo.setReparteFixado(cotaComFixacao.getReparteFixado());
-		cotaEstudo.setReparteCalculado(cotaComFixacao.getReparteFixado());
-		cotaEstudo.setClassificacao(ClassificacaoCota.ReparteFixado);
-	    }
-	}
+	tratarCotasComEnglobacao(cotasComHistoricoMap);
+	estudo.setCotas(new LinkedList<>(cotasComHistoricoMap.values()));
     }
 
     private void calcularTotais(CotaEstudo cota) {
 	BigDecimal totalEdicoes = BigDecimal.ZERO;
 	BigDecimal totalVenda = BigDecimal.ZERO;
 	BigDecimal totalReparte = BigDecimal.ZERO;
+	
+	// Verificação se a cota só recebeu edições abertas e somatória delas
+	cota.setCotaSoRecebeuEdicaoAberta(true);
+	cota.setSomaReparteEdicoesAbertas(BigDecimal.ZERO);
+	
 	for (ProdutoEdicaoEstudo edicao : cota.getEdicoesRecebidas()) {
 	    totalEdicoes = totalEdicoes.add(BigDecimal.ONE);
-	    totalVenda = totalVenda.add(edicao.getVenda());
+	    totalVenda   = totalVenda.add(edicao.getVenda());
 	    totalReparte = totalReparte.add(edicao.getReparte());
+	    if (edicao.isEdicaoAberta()) {
+		cota.setSomaReparteEdicoesAbertas(cota.getSomaReparteEdicoesAbertas().add(edicao.getReparte()));
+	    } else {
+		if (cota.getVendaEdicaoMaisRecenteFechada() == null) {
+		    cota.setVendaEdicaoMaisRecenteFechada(edicao.getVenda());
+		}
+		cota.setCotaSoRecebeuEdicaoAberta(false);
+	    }
 	}
 	if (!cota.getClassificacao().equals(ClassificacaoCota.CotaNova)) {
 	    if (totalReparte.compareTo(BigDecimal.ZERO) == 0 && cota.getReparteMinimo().compareTo(BigInteger.ZERO) == 0) {
@@ -121,14 +120,19 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	    }
 	}
 	if (totalEdicoes.compareTo(BigDecimal.ZERO) != 0) {
-	    cota.setVendaMediaNominal(totalVenda.divide(totalEdicoes, 0, BigDecimal.ROUND_HALF_UP));
+	    cota.setVendaMediaNominal(totalVenda.divide(totalEdicoes, 2, BigDecimal.ROUND_HALF_UP));
+	    cota.setVendaMedia(cota.getVendaMediaNominal());
 	}
 	if (cota.getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) {
 	    cota.setClassificacao(ClassificacaoCota.BancaSuspensa);
 	}
+	if (cota.getReparteFixado() != null) {
+	    cota.setClassificacao(ClassificacaoCota.ReparteFixado);
+	    cota.setReparteCalculado(cota.getReparteFixado());
+	}
     }
 
-    private void trataCotasComEnglobacao(Map<Long, CotaEstudo> cotasComHistoricoMap) {
+    private void tratarCotasComEnglobacao(Map<Long, CotaEstudo> cotasComHistoricoMap) {
 
 	for (CotaDesenglobada cotaDesenglobada : cotaDAO.buscarCotasDesenglobadas()) {
 
@@ -160,16 +164,6 @@ public class SelecaoBancas extends ProcessoAbstrato {
 
     private boolean validaEnglobacaoComPeriodoVigente(Date dataInclusao) {
 	return LocalDate.fromDateFields(dataInclusao).plus(Years.ONE).isAfter(LocalDate.now());
-    }
-
-    private void marcaCotasNovas(Map<Long, CotaEstudo> cotasComHistoricoMap) {
-	for (CotaEstudo cotaNova : cotaDAO.getCotasBase()) {
-	    if (cotasComHistoricoMap.containsKey(cotaNova.getId())) {
-		CotaEstudo cotaEstudo = cotasComHistoricoMap.get(cotaNova.getId());
-		cotaEstudo.setNova(true);
-		cotaEstudo.setClassificacao(ClassificacaoCota.CotaNova);
-	    }
-	}
     }
 
     private void distribuiEnglobacao(BigDecimal reparteInicial, BigDecimal vendaInicial, BigDecimal porcentualEnglobacao,
@@ -209,5 +203,4 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	produtoEdicao.setVenda(BigDecimal.ZERO);
 	return produtoEdicao;
     }
-
 }

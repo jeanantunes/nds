@@ -126,9 +126,7 @@ public class EstudoAlgoritmoService {
 	estudo.setSomatoriaReparteEdicoesAbertas(BigDecimal.ZERO);
 	estudo.setTotalPDVs(BigDecimal.ZERO);
 	for (CotaEstudo cota : estudo.getCotas()) {
-	    CotaServiceEstudo.calculate(cota);
-	    if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.BancaSoComEdicaoBaseAberta,
-		    ClassificacaoCota.RedutorAutomatico)) {
+	    if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.BancaSoComEdicaoBaseAberta, ClassificacaoCota.RedutorAutomatico)) {
 		estudo.setSomatoriaVendaMedia(estudo.getSomatoriaVendaMedia().add(cota.getVendaMedia()));
 	    }
 	    if (cota.isCotaSoRecebeuEdicaoAberta()) {
@@ -282,7 +280,7 @@ public class EstudoAlgoritmoService {
 	return estudo;
     }
     
-    private String estudoToHTML(EstudoTransient estudo) {
+    public String estudoToHTML(EstudoTransient estudo) {
 	
 	StringBuilder h = new StringBuilder();
 	h.append("<html>");
