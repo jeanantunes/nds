@@ -169,28 +169,55 @@ public class DescontoRepositoryImpl extends AbstractRepositoryModel<Desconto, Lo
 
 		StringBuilder sql = new StringBuilder("");
 		
-		sql.append("SELECT coalesce(pf.nome,pf.RAZAO_SOCIAL) as fornecedor,dados.VALOR as desconto, dados.TIPO as descTipoDesconto, DATA_ALTERACAO as dataAlteracao FROM( "
-				 + " SELECT  f.ID as FORNECEDOR_ID, D.VALOR as VALOR, 'Geral' as TIPO, D.DATA_ALTERACAO FROM fornecedor f "
-				 + " JOIN DESCONTO D on (D.ID=F.DESCONTO_ID) "
-				 + " JOIN COTA_FORNECEDOR CF on (CF.FORNECEDOR_ID=F.ID) "
-				 + " WHERE CF.COTA_ID=:idCota "
-				 + " 	AND F.DESCONTO_ID is not null "
-				 + " 	and F.ID not in (SELECT h.FORNECEDOR_ID FROM historico_desconto_cota_produto_excessoes h "
-				 + " 								WHERE h.COTA_ID=:idCota AND h.PRODUTO_ID is NULL GROUP BY h.FORNECEDOR_ID) " 	
-				 + " 	UNION ALL "
-				 
-				 + " 		SELECT h.FORNECEDOR_ID, h.VALOR as VALOR, 'Específico' as TIPO, h.DATA_ALTERACAO   FROM historico_desconto_cota_produto_excessoes h "
-				 + " 		WHERE h.COTA_ID=:idCota "
-				 + " 		AND h.PRODUTO_ID is NULL "
-				 + " 		AND h.DATA_ALTERACAO=(SELECT MAX(i.DATA_ALTERACAO) FROM historico_desconto_cota_produto_excessoes i "
-				 + " 		            WHERE i.COTA_ID=:idCota "
-				 + " 		            AND i.PRODUTO_ID is NULL " 
-				 + " 		            AND i.FORNECEDOR_ID=h.FORNECEDOR_ID) "
-				 + " 		GROUP BY h.FORNECEDOR_ID) "
-				 + " 	as dados "
-				 + " 	join  FORNECEDOR f on (f.ID=dados.FORNECEDOR_ID) "
-				 + " 	join  PESSOA pf on (f.JURIDICA_ID=pf.ID) ");
-		
+		sql.append(" SELECT  ");
+		sql.append("    coalesce(pf.nome, pf.RAZAO_SOCIAL) as fornecedor, ");
+		sql.append("    dados.VALOR as desconto, ");
+		sql.append("    dados.TIPO as descTipoDesconto, ");
+		sql.append("    DATA_ALTERACAO as dataAlteracao ");
+		sql.append(" FROM ");
+		sql.append("    (SELECT  ");
+		sql.append("        f.ID as FORNECEDOR_ID, ");
+		sql.append("            D.VALOR as VALOR, ");
+		sql.append("            'Geral' as TIPO, ");
+		sql.append("            D.DATA_ALTERACAO ");
+		sql.append("    FROM ");
+		sql.append("        fornecedor f ");
+		sql.append("    JOIN DESCONTO D ON (D.ID = F.DESCONTO_ID) ");
+		sql.append("    JOIN COTA_FORNECEDOR CF ON (CF.FORNECEDOR_ID = F.ID) ");
+		sql.append("    WHERE ");
+		sql.append("        CF.COTA_ID = :idCota ");
+		sql.append("            AND F.DESCONTO_ID is not null ");
+		sql.append("            and F.ID not in (SELECT  ");
+		sql.append("                h.FORNECEDOR_ID ");
+		sql.append("            FROM ");
+		sql.append("                desconto_cota_produto_excessoes h ");
+		sql.append("            WHERE ");
+		sql.append("                h.COTA_ID = :idCota AND h.PRODUTO_ID is NULL ");
+		sql.append("            GROUP BY h.FORNECEDOR_ID) ");
+		sql.append(" UNION ALL ");
+		sql.append(" SELECT  ");
+		sql.append("        h.FORNECEDOR_ID, ");
+		sql.append("            d.VALOR as VALOR, ");
+		sql.append("            'Específico' as TIPO, ");
+		sql.append("            d.DATA_ALTERACAO ");
+		sql.append("    FROM ");
+		sql.append("        desconto_cota_produto_excessoes h ");
+		sql.append("		inner join desconto d on d.id = h.desconto_id ");
+		sql.append("    WHERE ");
+		sql.append("        h.COTA_ID = :idCota AND h.PRODUTO_ID is NULL ");
+		sql.append("            AND d.DATA_ALTERACAO = (SELECT  ");
+		sql.append("                MAX(d.DATA_ALTERACAO) ");
+		sql.append("            FROM ");
+		sql.append("                desconto_cota_produto_excessoes i inner join desconto d on d.id = i.desconto_id ");
+		sql.append("            WHERE ");
+		sql.append("                i.COTA_ID = :idCota AND i.PRODUTO_ID is NULL ");
+		sql.append("                    AND i.FORNECEDOR_ID = h.FORNECEDOR_ID) ");
+		sql.append("    GROUP BY h.FORNECEDOR_ID) as dados ");
+		sql.append("        join ");
+		sql.append("    FORNECEDOR f ON (f.ID = dados.FORNECEDOR_ID) ");
+		sql.append("        join ");
+		sql.append("    PESSOA pf ON (f.JURIDICA_ID = pf.ID) ");
+
 		sql = addOrderByMergeDescontosEspecificosEGerais(sql, sortname, sortorder);		
 		
 		Query query = getSession().createSQLQuery(sql.toString()); 

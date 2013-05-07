@@ -45,8 +45,8 @@ public abstract class Constantes {
 	public static final String COMPOSICAO_COBRANCA_CREDITO = "C";
 	
 	public static final String COMPOSICAO_COBRANCA_DEBITO = "D";
-	
-	
+
+	public static final int TAMANHO_CAMPO_PRODUTO_CONSULTA = 8;
 	
 }
 

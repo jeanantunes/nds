@@ -1253,7 +1253,7 @@ public class LancamentoRepositoryImpl extends
 		String[] arrayStatusLancamentoNoPeriodo = {StatusLancamento.PLANEJADO.name(),
 												   StatusLancamento.CONFIRMADO.name(),
 												   StatusLancamento.BALANCEADO.name(),
-												   StatusLancamento.EXPEDIDO.name(),
+												   //StatusLancamento.EXPEDIDO.name(),
 												   //StatusLancamento.EM_BALANCEAMENTO_LANCAMENTO.name(),
 												   StatusLancamento.FURO.name()};
 		

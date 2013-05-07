@@ -912,25 +912,32 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dto.setParcial(produtoEdicao.isParcial());
 			dto.setPossuiBrinde(produtoEdicao.isPossuiBrinde());
 			
-			BigDecimal percentualDesconto = BigDecimal.ZERO;
-			if(produtoEdicao.getDesconto() != null && produtoEdicao.getDesconto().doubleValue() > 0){
+			/*
+			 * Se não for INTERFACE, Verifica se obtem prioritariamente desconto da produto edicao, 
+			 * caso contrario verifica desconto da produto
+			 */
+			if(!produto.getOrigem().equals(Origem.INTERFACE)){
 				
-				percentualDesconto = produtoEdicao.getDesconto();
-				
-				if(produtoEdicao.getDescricaoDesconto() != null && !"".equals(produtoEdicao.getDescricaoDesconto())){
-					dto.setDescricaoDesconto(produtoEdicao.getDescricaoDesconto());
+				BigDecimal percentualDesconto = BigDecimal.ZERO;
+				if(produtoEdicao.getDesconto() != null && produtoEdicao.getDesconto().doubleValue() > 0){
+					
+					percentualDesconto = produtoEdicao.getDesconto();
+					
+					if(produtoEdicao.getDescricaoDesconto() != null && !"".equals(produtoEdicao.getDescricaoDesconto())){
+						dto.setDescricaoDesconto(produtoEdicao.getDescricaoDesconto());
+					}
+				}else if(produto.getDesconto() != null && produto.getDesconto().doubleValue() > 0){
+					
+					percentualDesconto = produto.getDesconto();
+					
+					if(produto.getDescricaoDesconto() != null && !"".equals(produto.getDescricaoDesconto())){
+						dto.setDescricaoDesconto(produto.getDescricaoDesconto());
+					}
 				}
-			}else if(produto.getDesconto() != null && produto.getDesconto().doubleValue() > 0){
 				
-				percentualDesconto = produto.getDesconto();
-				
-				if(produto.getDescricaoDesconto() != null && !"".equals(produto.getDescricaoDesconto())){
-					dto.setDescricaoDesconto(produto.getDescricaoDesconto());
-				}
+				dto.setDesconto(percentualDesconto);
 			}
 			
-			dto.setDesconto(percentualDesconto);
-
 			dto.setPeso(produtoEdicao.getPeso());
 			dto.setBoletimInformativo(produtoEdicao.getBoletimInformativo());
 			dto.setOrigemInterface(produtoEdicao.getOrigem().equals(br.com.abril.nds.model.Origem.INTERFACE));
