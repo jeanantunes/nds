@@ -366,7 +366,9 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append( " 0 AS valorTotal, ");
 		
 		hql.append( " COALESCE(" + subSqlPrecoComDesconto.toString() + ", PROD_EDICAO.PRECO_VENDA, 0) AS precoCapaInformado, ");
-		
+
+		hql.append( " COALESCE(" + subSqlPrecoComDesconto.toString() + ", 0) AS precoComDesconto, ");
+
 		hql.append(" PROD_EDICAO.PARCIAL AS parcial,						 ");
 		
 		hql.append(" CH_ENCALHE.DATA_RECOLHIMENTO AS dataRecolhimento,  	 ");
@@ -423,6 +425,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		((SQLQuery)query).addScalar("qtdInformada", StandardBasicTypes.BIG_INTEGER);
 		((SQLQuery)query).addScalar("precoCapaInformado", StandardBasicTypes.BIG_DECIMAL);
+		((SQLQuery)query).addScalar("precoComDesconto", StandardBasicTypes.BIG_DECIMAL);
 		((SQLQuery)query).addScalar("valorTotal", StandardBasicTypes.BIG_DECIMAL);
 		
 		((SQLQuery)query).addScalar("dataRecolhimento");
