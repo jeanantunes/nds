@@ -111,11 +111,13 @@ public class InformacoesProdutoServiceImpl implements InformacoesProdutoService 
 	}
 	
 	@Override
+	@Transactional
 	public InformacoesVendaEPerceDeVendaDTO buscarVendas(String codProduto, Long numEdicao) {
 		return infoProdutosRepo.buscarVendas(codProduto, numEdicao);
 	}
 
 	@Override
+	@Transactional
 	public BigInteger obterReparteDistribuido(String codProduto) {
 		return movimentoEstoqRepo.obterReparteDistribuidoProduto(codProduto);
 	}
