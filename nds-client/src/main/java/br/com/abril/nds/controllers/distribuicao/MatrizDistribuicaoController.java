@@ -298,7 +298,6 @@ public class MatrizDistribuicaoController extends BaseController {
 	/**
 	 * Valida os dados da pesquisa.
 	 * 
-	 * @param numeroSemana - número da semana
 	 * @param dataPesquisa - data da pesquisa
 	 */
 	private void validarDadosPesquisa(Date dataPesquisa) {

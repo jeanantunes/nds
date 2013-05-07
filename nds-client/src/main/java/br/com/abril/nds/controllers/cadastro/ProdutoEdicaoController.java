@@ -88,6 +88,7 @@ public class ProdutoEdicaoController extends BaseController {
 	@Path("/insereVendaRandomica")
 	public void insereVendaRandomica(String codigoProduto, Integer numeroEdicao) {
 	    produtoEdicaoService.insereVendaRandomica(codigoProduto, numeroEdicao);
+	    result.use(Results.json()).withoutRoot().from("OK").serialize();
 	}
 	
 	/** Traz a página inicial. */
