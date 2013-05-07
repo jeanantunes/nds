@@ -19,6 +19,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +39,8 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -1491,31 +1494,45 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	    Criteria esto = s.createCriteria(EstoqueProdutoCota.class).add(Restrictions.eq("produtoEdicao.id", produtoEdicao.getId()));
 	    List<EstoqueProdutoCota> temp = esto.list();
 	    for (EstoqueProdutoCota x : temp) {
-		BigInteger venda = BigInteger.valueOf(Math.round((Math.random() * x.getQtdeRecebida().longValue())));
-		if (prod.get(x.getProdutoEdicao().getId()) == null) {
-		    prod.put(x.getProdutoEdicao().getId(), venda);
-		} else {
-		    prod.put(x.getProdutoEdicao().getId(), prod.get(x.getProdutoEdicao().getId()).add(venda));
-		}
-		x.setQtdeDevolvida(venda);
-		s.persist(x);
+	    	BigInteger venda = BigInteger.valueOf(Math.round((Math.random() * x.getQtdeRecebida().longValue())));
+	    	if (prod.get(x.getProdutoEdicao().getId()) == null) {
+	    		prod.put(x.getProdutoEdicao().getId(), venda);
+	    	} else {
+	    		prod.put(x.getProdutoEdicao().getId(), prod.get(x.getProdutoEdicao().getId()).add(venda));
+	    	}
+	    	x.setQtdeDevolvida(venda);
+	    	s.persist(x);
+	    	
+	    	MovimentoEstoqueCota mec = (MovimentoEstoqueCota) s.createCriteria(MovimentoEstoqueCota.class)
+		    		.add(Restrictions.eq("produtoEdicao.id", produtoEdicao.getId()))
+		    		.add(Restrictions.eq("tipoMovimento.id", 21L))
+		    		.add(Restrictions.eq("cota.id", x.getCota().getId())).uniqueResult();
+	    	
+	    	MovimentoEstoqueCota mec_venda = new MovimentoEstoqueCota();
+			BeanUtils.copyProperties(mec, mec_venda, new String[] {"id", "qtde", "tipoMovimento", "listaProdutoServicos"});
+	    	mec_venda.setQtde(venda);
+	    	TipoMovimento tipoMovimento = (TipoMovimento) s.createCriteria(TipoMovimento.class).add(Restrictions.eq("id", 26L)).uniqueResult();
+	    	mec_venda.setTipoMovimento(tipoMovimento);
+	    	s.persist(mec_venda);
 	    }
-	    
+
 	    Criteria espr = s.createCriteria(EstoqueProduto.class).add(Restrictions.eq("produtoEdicao.id", produtoEdicao.getId()));
 	    List<EstoqueProduto> temp3 = espr.list();
 	    for (EstoqueProduto x : temp3) {
-		if (prod.get(x.getProdutoEdicao().getId()) != null) {
-		    x.setQtdeDevolucaoFornecedor(prod.get(x.getProdutoEdicao().getId()));
-		    s.persist(x);
-		}
+	    	if (prod.get(x.getProdutoEdicao().getId()) != null) {
+	    		x.setQtdeDevolucaoFornecedor(prod.get(x.getProdutoEdicao().getId()));
+	    		s.persist(x);
+	    	}
 	    }
-	    
+
 	    Criteria lanc = s.createCriteria(Lancamento.class).add(Restrictions.eq("produtoEdicao.id", produtoEdicao.getId()));
 	    List<Lancamento> temp2 = lanc.list();
 	    for (Lancamento x : temp2) {
-		x.setStatus(StatusLancamento.FECHADO);
-		s.persist(x);
+	    	x.setStatus(StatusLancamento.FECHADO);
+	    	s.persist(x);
 	    }
+
+	    
 	}
 
 }

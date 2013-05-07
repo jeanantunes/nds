@@ -23,11 +23,12 @@ import br.com.abril.nds.service.EstudoAlgoritmoService;
 @Component
 public class GravarReparteFinalCota extends ProcessoAbstrato {
 
-	@Autowired
-	private EstudoAlgoritmoService estudoAlgoritmoService;
+    @Autowired
+    private EstudoAlgoritmoService estudoAlgoritmoService;
 
-	@Override
-	public void executar(EstudoTransient estudo) {
-		estudoAlgoritmoService.gravarEstudo(estudo);
-	}
+    @Override
+    public void executar(EstudoTransient estudo) {
+	estudo.getCotas().addAll(estudo.getCotasExcluidas());
+	estudoAlgoritmoService.gravarEstudo(estudo);
+    }
 }

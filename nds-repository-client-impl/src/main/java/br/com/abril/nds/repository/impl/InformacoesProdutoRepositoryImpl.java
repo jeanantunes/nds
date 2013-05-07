@@ -45,7 +45,9 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" produto.percentualAbrangencia AS percentualAbrangencia, ");
 		hql.append(" lancamento.dataLancamentoPrevista AS dataLcto, ");
 		hql.append(" lancamento.dataRecolhimentoPrevista AS dataRcto, ");
-		hql.append(" estudoG.dataAlteracao AS dataAlteracao, ");
+		hql.append(" CASE ");
+		hql.append(" WHEN estudoG.dataAlteracao = null THEN estudoG.dataCadastro ");
+		hql.append(" ELSE estudoG.dataAlteracao  end AS dataAlteracao, ");
 		hql.append(" estudoG.id AS estudo, "); 
 
 		hql.append(" (select sum(estCota.reparteMinimo)    					" + 
@@ -337,7 +339,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		sql.append("where estqPC.PRODUTO_EDICAO_ID in ( ");
 		sql.append("   	    select prodEdic.ID from produto_edicao prodEdic ");
 		sql.append("      		inner join produto prod ON prodEdic.PRODUTO_ID = prod.ID ");
-		sql.append("     	where prod.CODIGO = ':COD_PRODUTO' and prodEdic.NUMERO_EDICAO = :NUM_EDICAO )");
+		sql.append("     	where prod.CODIGO = :COD_PRODUTO and prodEdic.NUMERO_EDICAO = :NUM_EDICAO )");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		

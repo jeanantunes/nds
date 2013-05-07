@@ -37,6 +37,7 @@ public class VerificarTotalFixacoes extends ProcessoAbstrato {
 		    somaFixacao.add(cota.getReparteFixado());
 		    cota.setClassificacao(ClassificacaoCota.ReparteFixado);
 		    cota.setReparteCalculado(cota.getReparteFixado());
+		    estudo.getCotasExcluidas().add(cota);
 		}
 	    }
 	    BigDecimal maximoFixacao = null;
@@ -49,5 +50,4 @@ public class VerificarTotalFixacoes extends ProcessoAbstrato {
 	    }
 	}
     }
-
 }
