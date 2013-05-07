@@ -14,19 +14,24 @@ var produtoController = $.extend(true, {
 		
 		$(".bt_arq", this.workspace).hide();
 		
+
 		$("#comboGeracaoAutomatica").enable();
+		this.tamanhoInicial = 3;
 		
 		$('#codigoProduto').change(function (){
 			produtoController.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#comboGeracaoAutomatica', false);
 		});
-		this.tamanhoInicial = 3;
 		
-		$('#produto').keyup(function (){
-			produtoController.autoCompletarPorNomeProduto('#produto', '#codigoProduto', false);
+		$('#produto', produtoController.workspace).bind({
+			keyup: function(){
+				produtoController.autoCompletarPorNomeProduto('#produto', '#codigoProduto', false);
+			},
+			blur: function(){
+				produtoController.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#comboGeracaoAutomatica', false);
+			}
 		});
-
+		
 	},
-	
 
 	aplicarMascaras : function () {
 		$("#peb", this.workspace).numeric();
@@ -76,12 +81,6 @@ var produtoController = $.extend(true, {
 					   function() { produtoController.errorCallBack(idCodigo); }, isFromModal);
 		
 		} 
-//		else {
-//		
-//			if (errorCallBack) {
-//				errorCallBack();
-//			}
-//		}
 	},
 	
 	//Auto complete por nome do produto
@@ -139,36 +138,6 @@ var produtoController = $.extend(true, {
 		$(idCodigo, produtoController.workspace).focus();
 	},
 	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
 	//Pesquisar Fornecedor
 	pesquisarProdutosSuccessCallBack:function() {
 		
@@ -176,18 +145,15 @@ var produtoController = $.extend(true, {
 
 	},
 	
-	//Pesquisar Fornecedor
 	pesquisarProdutosErrorCallBack: function() {
 			
 		produtoController.pesquisarFornecedor(produtoController.getCodigoProdutoPesquisa());
 	},
 
-	//Pesquisar Fornecedor
 	getCodigoProdutoPesquisa: function () {
 		return  {codigoProduto:$("#codigoProduto", this.workspace).val()};
 	},
 	
-	//Pesquisar Fornecedor
 	pesquisarFornecedor:function(data){
 	
 		$.postJSON(contextPath + "/devolucao/chamadaEncalheAntecipada/pesquisarFornecedor",
