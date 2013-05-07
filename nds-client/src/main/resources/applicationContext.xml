@@ -58,9 +58,9 @@
 			</props>
 		</property>
 		<!-- Descomentar abaixo para ligar o bloqueador -->
-		<!--<property name="entityInterceptor">
-    		<ref local="interceptor" />
-  		</property-->
+<!-- 		<property name="entityInterceptor"> -->
+<!--     		<ref local="interceptor" /> -->
+<!--   		</property> -->
   		
 	</bean>
 

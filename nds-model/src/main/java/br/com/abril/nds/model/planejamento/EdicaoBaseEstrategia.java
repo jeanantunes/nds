@@ -26,7 +26,8 @@ public class EdicaoBaseEstrategia implements Serializable {
     @Column(name = "ID")
     private Long id;
     
-    @Column(name = "PRODUTO_EDICAO_ID", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "PRODUTO_EDICAO_ID", nullable = false)
     private ProdutoEdicao produtoEdicao;
     
     @Column(name = "PESO", nullable = false)

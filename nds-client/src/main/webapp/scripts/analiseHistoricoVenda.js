@@ -190,15 +190,17 @@ var analiseHistoricoVendaController = $.extend(true, {
 		
 		analiseHistoricoVendaController.popularPopUpInformacoesCota(response.cotaDto);
 		
-		for ( var i in response.tableModel.rows) {
-			row = response.tableModel.rows[i];
-			
-			if (row.cell.principal) {
-				row.cell.principal = "<img src='images/ico_check.gif' />";
-			}else {
-				row.cell.principal = "";
+		if (response.tableModel) {
+			for ( var i in response.tableModel.rows) {
+				row = response.tableModel.rows[i];
+				
+				if (row.cell.principal) {
+					row.cell.principal = "<img src='images/ico_check.gif' />";
+				}else {
+					row.cell.principal = "";
+				}
+				
 			}
-			
 		}
 		
 		return response.tableModel;
@@ -206,7 +208,7 @@ var analiseHistoricoVendaController = $.extend(true, {
 	},
 	
 	preProcessAnaliseGrid : function preProcessAnaliseGrid(result){
-		var rodape = {
+		var resumo = {
 				qtdCota  : 0,
 				qtdPdv  :  0,
 				reparteMedio : 0,
@@ -232,49 +234,76 @@ var analiseHistoricoVendaController = $.extend(true, {
 			link = '<a href="javascript:;" onclick="analiseHistoricoVendaController.popup_cotas_detalhes('+row.cell.numeroCota+');" style="cursor:pointer">'+row.cell.nomePessoa+'</a>';
 			row.cell.nomePessoa = link;
 			
-			rodape.qtdCota  +=  parseInt((row.cell.numeroCota ? 1 : 0));
-			rodape.qtdPdv  +=  parseInt((row.cell.qtdPdv || 0));
-			rodape.reparteMedio  +=  (row.cell.reparteMedio ||  0);
-			rodape.vendaMedia +=  (row.cell.vendaMedia ||  0);
-			rodape.ed1Rep += parseInt((row.cell.ed1Reparte  ||  0));
-			rodape.ed1Venda +=  parseInt((row.cell.ed1Venda ||  0));
-			rodape.ed2Rep +=  parseInt((row.cell.ed2Reparte ||  0));
-			rodape.ed2Venda +=  parseInt((row.cell.ed2Venda ||  0));
-			rodape.ed3Rep +=  parseInt((row.cell.ed3Reparte ||  0));
-			rodape.ed3Venda +=  parseInt((row.cell.ed3Venda ||  0));
-			rodape.ed4Rep +=  parseInt((row.cell.ed4Reparte ||  0));
-			rodape.ed4Venda +=  parseInt((row.cell.ed4Venda ||  0));
-			rodape.ed5Rep +=  parseInt((row.cell.ed5Reparte ||  0));
-			rodape.ed5Venda +=  parseInt((row.cell.ed5Venda ||  0));
-			rodape.ed6Rep +=  parseInt((row.cell.ed6Reparte ||  0));
-			rodape.ed6Venda +=  parseInt((row.cell.ed6Venda ||  0));
+			resumo.reparteMedio  = parseFloat(resumo.reparteMedio) + parseFloat((row.cell.reparteMedio ||  0));
+			resumo.vendaMedia = parseFloat(resumo.vendaMedia) + parseFloat((row.cell.vendaMedia ||  0));
+			resumo.qtdCota  +=  parseInt((row.cell.numeroCota ? 1 : 0));
+			resumo.qtdPdv  +=  parseInt((row.cell.qtdPdv || 0));
+			resumo.ed1Rep += parseInt((row.cell.ed1Reparte  ||  0));
+			resumo.ed1Venda +=  parseInt((row.cell.ed1Venda ||  0));
+			resumo.ed2Rep +=  parseInt((row.cell.ed2Reparte ||  0));
+			resumo.ed2Venda +=  parseInt((row.cell.ed2Venda ||  0));
+			resumo.ed3Rep +=  parseInt((row.cell.ed3Reparte ||  0));
+			resumo.ed3Venda +=  parseInt((row.cell.ed3Venda ||  0));
+			resumo.ed4Rep +=  parseInt((row.cell.ed4Reparte ||  0));
+			resumo.ed4Venda +=  parseInt((row.cell.ed4Venda ||  0));
+			resumo.ed5Rep +=  parseInt((row.cell.ed5Reparte ||  0));
+			resumo.ed5Venda +=  parseInt((row.cell.ed5Venda ||  0));
+			resumo.ed6Rep +=  parseInt((row.cell.ed6Reparte ||  0));
+			resumo.ed6Venda +=  parseInt((row.cell.ed6Venda ||  0));
+			
+			row.cell.reparteMedio = (row.cell.reparteMedio || 0).toFixed(0);
+			row.cell.vendaMedia = (row.cell.vendaMedia || 0).toFixed(0);
 		}
 		
-		 html = '<td width="50" >Qtde Cotas:</td>' +
-		        '<td width="103" >' + rodape.qtdCota + '</td>' +
-		        '<td width="30" align="right">' + rodape.qtdPdv + '</td>' +
-		        '<td width="32" align="right">' + rodape.reparteMedio + '</td>' +
-		        '<td width="32" align="right">' + rodape.vendaMedia + '</td>' +
-		        '<td width="32" align="right">' + rodape.ed1Rep + '</td>' +
-		        '<td width="32" align="right">' + rodape.ed1Venda + '</td>' +
-		        '<td width="32" align="right">' + rodape.ed2Rep + '</td>' +
-		        '<td width="32" align="right">' + rodape.ed2Venda + '</td>' +
-		        '<td width="32" align="right">' + rodape.ed3Rep + '</td>' +
-		        '<td width="32" align="right">' + rodape.ed3Venda + '</span></td>' +
-		        '<td width="32" align="right">' + rodape.ed4Rep + '</td>' +
-		        '<td width="32" align="right">' + rodape.ed4Venda + '</span></td>' +
-		        '<td width="32" align="right">' + rodape.ed5Rep + '</td>' +
-		        '<td width="32" align="right">' + rodape.ed5Venda + '</span></td>' +
-		        '<td width="32" align="right">' + rodape.ed6Rep + '</td>' +
-		        '<td width="32" align="right">' + rodape.ed6Venda + '</span></td>' +
+		analiseHistoricoVendaController.calcularMediaVendaEReparteCota(resumo);
+		
+		html = '<td width="50" >Qtde Cotas:</td>' +
+		        '<td width="103" >' + resumo.qtdCota + '</td>' +
+		        '<td width="30" align="right">' + resumo.qtdPdv + '</td>' +
+		        '<td width="32" align="right">' + resumo.reparteMedio + '</td>' +
+		        '<td width="32" align="right">' + resumo.vendaMedia + '</td>' +
+		        '<td width="32" align="right">' + resumo.ed1Rep + '</td>' +
+		        '<td width="32" align="right">' + resumo.ed1Venda + '</td>' +
+		        '<td width="32" align="right">' + resumo.ed2Rep + '</td>' +
+		        '<td width="32" align="right">' + resumo.ed2Venda + '</td>' +
+		        '<td width="32" align="right">' + resumo.ed3Rep + '</td>' +
+		        '<td width="32" align="right">' + resumo.ed3Venda + '</span></td>' +
+		        '<td width="32" align="right">' + resumo.ed4Rep + '</td>' +
+		        '<td width="32" align="right">' + resumo.ed4Venda + '</span></td>' +
+		        '<td width="32" align="right">' + resumo.ed5Rep + '</td>' +
+		        '<td width="32" align="right">' + resumo.ed5Venda + '</span></td>' +
+		        '<td width="32" align="right">' + resumo.ed6Rep + '</td>' +
+		        '<td width="32" align="right">' + resumo.ed6Venda + '</span></td>' +
 		        '<td width="15" >&nbsp;</td>';
 		 
 		 $('#rodapeAnaliseHistorico').html(html);
 		 
 		 return result;
-		 
 	},
 
+	calcularMediaVendaEReparteCota : function(resumo){
+		var qtdEdicoes,
+			reparteMedio = 0,
+			vendaMedia = 0;
+
+		if (typeof edicoesEscolhidas_HistogramaVenda !== "undefined") {
+			// EMS 2029
+			 qtdEdicoes = edicoesEscolhidas_HistogramaVenda.length;
+		}else{
+			// EMS 2028
+			qtdEdicoes = historicoVendaController.Grids.EdicaoSelecionadaGrid.tableModel.rows.length;
+		}
+		
+		
+		for ( var i = 1; i <= qtdEdicoes; i++) {
+			reparteMedio += resumo['ed' + i + 'Rep'];
+			vendaMedia += resumo['ed' + i + 'Venda'];
+		}
+		
+		resumo.reparteMedio  = parseInt(reparteMedio / qtdEdicoes); 
+		resumo.vendaMedia = parseInt(vendaMedia / qtdEdicoes);
+	},
+	
 	// PopUp visulizado quando o usuário clica no nome da cota dentro do Grid Principal
 	popup_cotas_detalhes : function popup_cotas_detalhes(numeroCota) {
 		$( "#dialog-cotas-detalhes" ).dialog({

@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +56,7 @@ public class HistogramaVendasController extends BaseController {
 	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroHistogramaVendas";
 	private static final String HISTOGRAMA_SESSION_ATTRIBUTE = "resultadoHistogramaVendas";
-	private String[] faixaVendaInicial = {"0-10","11-20","21-30","31-40","41-999999"};
+	private String[] faixaVendaInicial = {"0-0","1-4","5-9","10-19","20-49","50-999999"};
 	
 	@Autowired
 	private Result result;
@@ -208,9 +209,11 @@ public class HistogramaVendasController extends BaseController {
 		result.include("labelElemento", labelElemento);
 		result.include("classificacaoLabel", classificacaoLabel);
 		
+		NumberFormat f = NumberFormat.getNumberInstance();
 		// informações do resumo do histograma (parte inferior da tela)
-		result.include("qtdCotasAtivas", "");
-		result.include("reparteTotalDistribuidor", reparteTotalDistribuidor / nrEdicoes.length);
+		result.include("reparteTotalDistribuidor", f.format(reparteTotalDistribuidor / nrEdicoes.length));
+		
+		
 		
 		//Pesquisar base de estudo e salvar em sessão
 		List<AnaliseHistogramaDTO> list = produtoEdicaoService.obterBaseEstudoHistogramaPorFaixaVenda(getFiltroSessao(),codigoProduto, faixaVendaInicial, nrEdicoes);

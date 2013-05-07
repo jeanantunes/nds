@@ -25,6 +25,8 @@ public class MixCotaProdutoDTO implements Serializable{
 	private Long reparteMinimo;
 	private Long reparteMaximo;
 	
+	private boolean itemValido; 
+	
 	List<RepartePDVDTO> repartesPDV;
 	public Long getId() {
 		return id;
@@ -122,10 +124,12 @@ public class MixCotaProdutoDTO implements Serializable{
 	public void setClassificacaoProduto(String classificacaoProduto) {
 		this.classificacaoProduto = classificacaoProduto;
 	}
-	
-
-	
-	
+	public boolean isItemValido() {
+		return itemValido;
+	}
+	public void setItemValido(boolean itemValido) {
+		this.itemValido = itemValido;
+	}
 	
 }
 
