@@ -609,33 +609,38 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	}
 
 	private String getLogradouroSemTipo(String logradouro) {
-		String rua = "RUA ";
+		
+		String rua = "RUA";
 		if (logradouro.startsWith("RUA"))
-			return logradouro.substring(rua.length());
+			return logradouro.substring(rua.length()).trim();
 
 		String avenida = "AV. ";
 		if (logradouro.startsWith(avenida))
-			return logradouro.substring(avenida.length());
+			return logradouro.substring(avenida.length()).trim();
 		
-		String praca = "PR. ";
-		if (logradouro.startsWith(praca))
-			return logradouro.substring(praca.length());
-		
-		String rodovia = "RO. ";
-		if (logradouro.startsWith(rodovia))
-			return logradouro.substring(rodovia.length());
+		String estrada = "ES. ";
+		if (logradouro.startsWith(estrada))
+			return logradouro.substring(estrada.length()).trim();
 		
 		String alameda = "AL. ";
 		if (logradouro.startsWith(alameda))
-			return logradouro.substring(alameda.length());
+			return logradouro.substring(alameda.length()).trim();
+		
+		String praca = "PR. ";
+		if (logradouro.startsWith(praca))
+			return logradouro.substring(praca.length()).trim();
+		
+		String rodovia = "RO. ";
+		if (logradouro.startsWith(rodovia))
+			return logradouro.substring(rodovia.length()).trim();
 		
 		String lagoa = "LA. ";
 		if (logradouro.startsWith(lagoa))
-			return logradouro.substring(lagoa.length());
+			return logradouro.substring(lagoa.length()).trim();
 		
 		String jardins = "JA. ";
 		if (logradouro.startsWith(jardins))
-			return logradouro.substring(jardins.length());
+			return logradouro.substring(jardins.length()).trim();
 		return logradouro;
 	}
 	
