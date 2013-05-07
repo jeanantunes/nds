@@ -70,10 +70,12 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 		DataSource ds = (DataSource) applicationContext.getBean("dataSourceIcd");
 		
 		String database = "";
+		String username = "";
 		try {
 			Connection c = ds.getConnection();
 			String[] s = c.getMetaData().getURL().split(":");
 			database = s[s.length - 1];
+			username = c.getMetaData().getUserName();
 		} catch (SQLException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -112,6 +114,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 				try {
 					ce.setTipoDocumento("EMS0127");
 					ce.setBaseDeDados(database);
+					ce.setUsuarioBaseDeDados(username);
 					cdbc = this.getCouchDBClient(ce.getCodigoDistribuidor().toString());
 					cdbc.save(ce);
 				} catch(Exception e) {
@@ -155,11 +158,11 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 		hql.append(" select distinct ce ")
 			.append("from IcdChamadaEncalhe ce join fetch ce.chamadaEncalheItens cei join fetch cei.lancamentoEdicaoPublicacao l ")
 			.append("where ce.tipoStatus in (:status) ")
-			.append("and ce.codigoDistribuidor = :distribuidor ");
+			.append("and ce.codigoDistribuidor = :distribuidor and ce.dataAnoReferencia = 2013");
 		
 		Query query = this.getSessionIcd().createQuery(hql.toString());
 		
-		query.setParameterList("status", new String[]{"A"}); //FIXME: Sérgio: deve buscar status 'A'
+		query.setParameterList("status", new String[]{"A", "F"}); //FIXME: Sérgio: deve buscar status 'A'
 		query.setParameter("distribuidor", Long.parseLong(distribuidor));
 
 		return query.list();
