@@ -13,8 +13,20 @@ var produtoController = $.extend(true, {
 		$( "#tabProduto", this.workspace).tabs();
 		
 		$(".bt_arq", this.workspace).hide();
+		
+		$("#comboGeracaoAutomatica").enable();
+		
+		$('#codigoProduto').change(function (){
+			produtoController.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#comboGeracaoAutomatica', false);
+		});
+		this.tamanhoInicial = 3;
+		
+		$('#produto').keyup(function (){
+			produtoController.autoCompletarPorNomeProduto('#produto', '#codigoProduto', false);
+		});
 
 	},
+	
 
 	aplicarMascaras : function () {
 		$("#peb", this.workspace).numeric();
@@ -42,29 +54,147 @@ var produtoController = $.extend(true, {
 	buscarValueCheckBox:function(checkName) {
 		return $("#"+checkName).is(":checked", this.workspace);
 	},
+	
+	
+	//Pesquisa por código de produto
+	pesquisarPorCodigoProduto : function(idCodigo, idProduto, idGeracao, isFromModal) {
 		
+		var codigoProduto = $(idCodigo, produtoController.workspace).attr("value");
+		
+		codigoProduto = $.trim(codigoProduto);
+		
+		$(idCodigo, produtoController.workspace).val(codigoProduto);
+		
+		$(idProduto, produtoController.workspace).val("");
+		$(idGeracao, produtoController.workspace).val("");
+		
+		if (codigoProduto && codigoProduto.length > 0) {
+			
+			$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
+					   {codigoProduto:codigoProduto},
+					   function(result) { produtoController.successCallBack(result, idProduto, idGeracao); },
+					   function() { produtoController.errorCallBack(idCodigo); }, isFromModal);
+		
+		} 
+//		else {
+//		
+//			if (errorCallBack) {
+//				errorCallBack();
+//			}
+//		}
+	},
+	
+	//Auto complete por nome do produto
+	autoCompletarPorNomeProduto : function(idProduto, idCodProduto, isFromModal) {
+		
+		var nomeProduto = $(idProduto, produtoController.workspace).attr("value");
+		
+		if (nomeProduto && nomeProduto.length > 2) {
+			$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", {nomeProduto:nomeProduto},
+					   function(result) { produtoController.exibirAutoCompletePorNome(result, idCodProduto, idProduto); },
+					   null, isFromModal);
+		}
+	},
+	
+	
+	//Exibe o auto complete no campo
+	exibirAutoCompletePorNome : function(result, idCampoCodigo, idCampoNome) {
+	
+			$(idCampoNome, produtoController.workspace).autocomplete({
+				source: result,
+				
+				select : function(event, ui) {
+					$(idCampoCodigo, produtoController.workspace).val(ui.item.chave.codigo);
+					$(idCampoNome, produtoController.workspace).val(ui.item.value);
+				},
+				focus : function(event, ui) {
+					$(idCampoCodigo, produtoController.workspace).val(ui.item.chave.codigo);
+					$(idCampoNome, produtoController.workspace).val(ui.item.value);
+				},
+				close : function(event, ui) {
+					$(idCampoCodigo, produtoController.workspace).val(ui.item.chave.codigo);
+					$(idCampoNome, produtoController.workspace).val(ui.item.value);
+				},
+				
+				minLength: produtoController.tamanhoInicial,
+				delay : 0,
+			});
+	},
+	
+	
+	successCallBack : function(result, idProduto, idGeracao, idCodigo, isFromModal) {
+		
+		$(idProduto, produtoController.workspace).val(result.nome);
+		
+		if (result.origem == "INTERFACE"){
+			$(idGeracao, produtoController.workspace).val(1).disable();
+		}else{
+			$("#comboGeracaoAutomatica").enable().val(-1);
+		}
+	},
+	
+	
+	errorCallBack : function(idCodigo) {
+		$(idCodigo, produtoController.workspace).val("");
+		$(idCodigo, produtoController.workspace).focus();
+	},
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	//Pesquisar Fornecedor
 	pesquisarProdutosSuccessCallBack:function() {
 		
 		produtoController.pesquisarFornecedor(produtoController.getCodigoProdutoPesquisa());
 
 	},
 	
+	//Pesquisar Fornecedor
 	pesquisarProdutosErrorCallBack: function() {
 			
 		produtoController.pesquisarFornecedor(produtoController.getCodigoProdutoPesquisa());
 	},
 
+	//Pesquisar Fornecedor
 	getCodigoProdutoPesquisa: function () {
 		return  {codigoProduto:$("#codigoProduto", this.workspace).val()};
 	},
 	
+	//Pesquisar Fornecedor
 	pesquisarFornecedor:function(data){
 	
 		$.postJSON(contextPath + "/devolucao/chamadaEncalheAntecipada/pesquisarFornecedor",
 				   data, this.montarComboFornecedores);
 	},
 
-	//Mostrar auto complete por nome do produto
+	//Mostrar auto complete por nome do fornecedor
 	autoCompletarPorNomeFornecedor : function(idFornecedor, isFromModal) {
 		
 		produtoController.pesquisaProduto.pesquisaRealizada = false;
