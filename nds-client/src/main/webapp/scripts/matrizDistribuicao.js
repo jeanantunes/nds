@@ -1058,7 +1058,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		var fixacao = $('#copiarEstudo-fixacao').attr("checked") == 'checked';
 		var pctPadrao = ($('#copiarEstudo-multiplos-check').attr("checked") == 'checked')?$('#copiarEstudo-pctPadrao').val():null;
-		var reparteDistribuido = $("#copiarEstudo-reparteDistribuido").text();
+		var reparteDistribuido = $("#copiarEstudo-reparteDistribuido").text().replace(/\D/g, '');
 		var idLancamento = $("#copiarEstudo-idLancamento").text();
 		
 		var data = [];
