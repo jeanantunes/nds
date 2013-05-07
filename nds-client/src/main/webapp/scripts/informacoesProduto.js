@@ -509,11 +509,7 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 	formatarCasasDecimais : function (valor, campo){
 		var valorFormatado = parseFloat(valor).toFixed(0); 
 		
-		if(campo != "#precoCapa"){
-			$(campo).val(valorFormatado).disable();
-		}else{
-			$(campo).val(valor).disable();
-		}
+		$(campo).val(valorFormatado).disable();
 	},
 	
 	detalhes_ReparteTotalEPromocional : function (codProd, numeroEdicao){
@@ -536,7 +532,7 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		
 		var repProm = "#repartePromocional";
 		informacoesProdutoController.validarCamposVazios(result.repartePromocional, repProm);
-		informacoesProdutoController.formatarCasasDecimais(result.reparteTotal, repTotal);
+		informacoesProdutoController.formatarCasasDecimais(result.repartePromocional, repProm);
 		
 	},
 	
