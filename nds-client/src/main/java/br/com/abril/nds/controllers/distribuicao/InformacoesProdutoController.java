@@ -205,18 +205,9 @@ public class InformacoesProdutoController extends BaseController {
 
 		InformacoesAbrangenciaEMinimoProdDTO informacoes = infoProdService.buscarAbrangenciaEMinimo(idEstudo);
 		
-		//Tratamento por falta de dados na tabela Estratégia. Dados vindo de outro sistema.
-		if (informacoes == null){
-			informacoes = new InformacoesAbrangenciaEMinimoProdDTO();
-			informacoes.setMinimoSugerido(new BigInteger("0"));
-		}
-		
 		BigDecimal abrang = infoProdService.buscarAbrangenciaApurada(codProduto, numEdicao);
 		
-		if (abrang == BigDecimal.ZERO || ((abrang.intValue()) == 0)){
-			informacoes.setAbrangenciaApurada(abrang);
-		}
-		
+		informacoes.setAbrangenciaApurada(abrang);
 		informacoes.setMinimoEstudoId(idEstudo);
 		
 		result.use(Results.json()).from(informacoes, "result").serialize();
@@ -238,14 +229,8 @@ public class InformacoesProdutoController extends BaseController {
 	public void buscarVendas (String codProduto, Long numEdicao){
 
 		InformacoesVendaEPerceDeVendaDTO vendas = infoProdService.buscarVendas(codProduto, numEdicao);
-		result.use(Results.json()).from(vendas, "result").serialize();
 		
-		if (vendas.getPorcentagemDeVenda() == null){
-			vendas.setPorcentagemDeVenda(new BigInteger("0"));
-		}
-		if(vendas.getTotalVenda() == null){
-			vendas.setTotalVenda(new BigInteger("0"));
-		}
+		result.use(Results.json()).from(vendas, "result").serialize();
 	}
 	
 	@Post
