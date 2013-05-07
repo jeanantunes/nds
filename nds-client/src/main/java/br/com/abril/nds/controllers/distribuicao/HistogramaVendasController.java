@@ -264,6 +264,11 @@ public class HistogramaVendasController extends BaseController {
 		
 		List<EdicoesProdutosDTO> list = produtoEdicaoService.obterHistoricoEdicoes(filtro);
 		
+		if (list==null || list.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING,
+					"Produto não possui lancamentos fechados.");
+		}
+		
 		TableModel<CellModelKeyValue<EdicoesProdutosDTO>> tableModel = new TableModel<CellModelKeyValue<EdicoesProdutosDTO>>();
 		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(list));

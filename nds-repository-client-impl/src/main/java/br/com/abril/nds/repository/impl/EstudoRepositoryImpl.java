@@ -124,12 +124,14 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		sql.append("   qtdReparteMinimoSugerido, ");
 		sql.append("   abrangenciaSugerida, ");
 		sql.append("   qtdReparteMinimoEstudo, ");
+		sql.append("   qtdRepartePromocional, ");
 		
 		sql.append("   ( qtdCotasRecebemReparte / qtdCotasAtivas ) * 100 as abrangenciaEstudo, ");
 		sql.append("   ( qtdCotasQueVenderam  / qtdCotasRecebemReparte ) * 100 as abrangenciaDeVenda ");
 		sql.append("   FROM ");
 		sql.append("   ( ");
 		sql.append("     select ");
+		sql.append("       (select REPARTE_PROMOCIONAL from estudo inner join lancamento on estudo.lancamento_id = lancamento.id where estudo.id = :estudoId ) AS qtdRepartePromocional, ");
 		sql.append("       (select count(id) from cota where SITUACAO_CADASTRO = 'ATIVO') AS qtdCotasAtivas, ");
 		sql.append("       (select count(estudo_cota.cota_id) from estudo_cota"); 
 		sql.append("        	inner join movimento_estoque_cota ON movimento_estoque_cota.ESTUDO_COTA_ID = estudo_cota.ID ");
