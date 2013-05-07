@@ -912,7 +912,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dto.setParcial(produtoEdicao.isParcial());
 			dto.setPossuiBrinde(produtoEdicao.isPossuiBrinde());
 			
-			
 			/*
 			 * Se não for INTERFACE, Verifica se obtem prioritariamente desconto da produto edicao, 
 			 * caso contrario verifica desconto da produto
