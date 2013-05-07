@@ -526,7 +526,6 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	pesquisarCota : function() {
-		
 		var data = [
 		            {name: 'numeroCota', value : $("#numeroCota", ConferenciaEncalhe.workspace).val()}, 
 		            {name: 'indObtemDadosFromBD', value : true},
