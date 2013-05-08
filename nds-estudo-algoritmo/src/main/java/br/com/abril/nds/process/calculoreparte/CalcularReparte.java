@@ -32,148 +32,147 @@ import br.com.abril.nds.process.definicaobases.DefinicaoBases;
 @Component
 public class CalcularReparte extends ProcessoAbstrato {
 
-	@Autowired
-	private MinimoMaximo minimoMaximo;
+    @Autowired
+    private MinimoMaximo minimoMaximo;
 
-	@Autowired
-	private EstudoDAO estudoDAO;
+    @Autowired
+    private EstudoDAO estudoDAO;
 
-	@Autowired
-	private GravarReparteJuramentado gravarReparteJuramentado;
+    @Autowired
+    private GravarReparteJuramentado gravarReparteJuramentado;
 
-	BigDecimal excedenteDistribuir = BigDecimal.ZERO;
-	BigDecimal percentualExcedente = BigDecimal.ZERO;
+    BigDecimal excedenteDistribuir = BigDecimal.ZERO;
 
-	@Override
-	public void executar(EstudoTransient estudo) throws Exception {
+    @Override
+    public void executar(EstudoTransient estudo) throws Exception {
 
-		// Cálculo da variável AjusteReparte
-		calcularAjusteReparte(estudo);
-		// Cálculos do percentual de excedente
-		calcularPercentualExcedente(estudo);
+	// Cálculo da variável AjusteReparte
+	calcularAjusteReparte(estudo);
+	// Cálculos do percentual de excedente
+	calcularPercentualExcedente(estudo);
 
-		minimoMaximo.executar(estudo);
+	minimoMaximo.executar(estudo);
 
-		// Ajustar reparte calculado ao pacote padrão ou simplesmente arredondar
-		// reparte calculado
-		ajustarReparteCalculado(estudo);
+	// Ajustar reparte calculado ao pacote padrão ou simplesmente arredondar
+	// reparte calculado
+	ajustarReparteCalculado(estudo);
 
-		gravarReparteJuramentado.executar(estudo);
-	}
+	gravarReparteJuramentado.executar(estudo);
+    }
 
-	public void calcularAjusteReparte(EstudoTransient estudo) {
-		BigDecimal reparteDistribuir = new BigDecimal(estudo.getReparteDistribuir());
-		if (reparteDistribuir.compareTo(estudo.getSomatoriaVendaMedia()) > 0) {
-			excedenteDistribuir = reparteDistribuir.subtract(estudo.getSomatoriaVendaMedia());
-			boolean temEdicaoBaseFechada = temEdicaoBaseFechada(estudo);
+    public void calcularAjusteReparte(EstudoTransient estudo) {
+	BigDecimal reparteDistribuir = new BigDecimal(estudo.getReparteDistribuir());
+	if (reparteDistribuir.compareTo(estudo.getSomatoriaVendaMedia()) > 0) {
+	    excedenteDistribuir = reparteDistribuir.subtract(estudo.getSomatoriaVendaMedia());
+	    boolean temEdicaoBaseFechada = temEdicaoBaseFechada(estudo);
 
-			BigInteger ajusteReparte = BigInteger.ZERO;
-			if (temEdicaoBaseFechada) {
-				// Variável AjusteReparte modificada no faq FAQF2-53
-				// AjusteReparte = Excedente * 1%
-				// ou 1 exemplar (o que for maior, desde que 1 exemplar não
-				// ultrapasse a 10% do excedente)
-				// ou 1 pacote-padrão se for distribuição por múltiplos
-				if (estudo.isDistribuicaoPorMultiplos()) {
-					ajusteReparte = estudo.getPacotePadrao();
-				} else {
-					BigDecimal percentual = BigDecimal.ZERO;
-					if (excedenteDistribuir.compareTo(BigDecimal.ZERO) > 0) {
-						percentual = BigDecimal.valueOf(100).divide(excedenteDistribuir, 2, BigDecimal.ROUND_HALF_UP);
-					}
-					if (percentual.compareTo(BigDecimal.valueOf(10)) < 0) {
-						if (BigDecimal.ONE.compareTo(excedenteDistribuir.multiply(BigDecimal.valueOf(0.01))) > 0) {
-							ajusteReparte = BigInteger.ONE;
-						} else {
-							ajusteReparte = excedenteDistribuir.multiply(BigDecimal.valueOf(0.01)).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger();
-						}
-					} else {
-						ajusteReparte = excedenteDistribuir.multiply(BigDecimal.valueOf(0.01)).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger();
-					}
-				}
-				// ExcedenteDistribuir = ExcedenteDistribuir - AjusteReparte
-				excedenteDistribuir = excedenteDistribuir.subtract(new BigDecimal(ajusteReparte));
-			}
-		}
-	}
-
-	public void calcularPercentualExcedente(EstudoTransient estudo) throws Exception {
-		// %Excedente = Excedente / SVendaMédiaFinal
-		if (estudo.getSomatoriaVendaMedia().compareTo(BigDecimal.ZERO) > 0) {
-			percentualExcedente = excedenteDistribuir.divide(estudo.getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_HALF_UP);
-		}
-
-		if (estudo.getPercentualExcedente().isEmpty()) {
-			throw new Exception("Parametros do distribuidor não preenchido, Percentual de Excedente não pode estar vazio.");
-		}
-		
-		PercentualExcedenteEstudo percentualExcedenteEstudo;
-		if (percentualExcedente.compareTo(BigDecimal.valueOf(0.60)) > 0) {
-			percentualExcedenteEstudo = estudo.getPercentualExcedente().get("DE_60_100");
-		} else if (percentualExcedente.compareTo(BigDecimal.valueOf(0.60)) <= 0
-				&& percentualExcedente.compareTo(BigDecimal.valueOf(0.30)) > 0) {
-			percentualExcedenteEstudo = estudo.getPercentualExcedente().get("DE_30_60");
+	    BigInteger ajusteReparte = BigInteger.ZERO;
+	    if (temEdicaoBaseFechada) {
+		// Variável AjusteReparte modificada no faq FAQF2-53
+		// AjusteReparte = Excedente * 1%
+		// ou 1 exemplar (o que for maior, desde que 1 exemplar não
+		// ultrapasse a 10% do excedente)
+		// ou 1 pacote-padrão se for distribuição por múltiplos
+		if (estudo.isDistribuicaoPorMultiplos()) {
+		    ajusteReparte = estudo.getPacotePadrao();
 		} else {
-			percentualExcedenteEstudo = estudo.getPercentualExcedente().get("DE_0_30");
-		}
-
-		for (CotaEstudo cota : estudo.getCotas()) {
-		    cota.setReparteMinimo(BigInteger.ZERO);
-			if (percentualExcedente.compareTo(BigDecimal.ZERO) < 0) {
-				// RepCalculadoCota = ((RepDistribuir / SVendaMédiaFinal) * VendaMédiaFinalCota) + ReparteMínimo
-				BigDecimal temp = new BigDecimal(estudo.getReparteDistribuir()).divide(estudo.getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_HALF_UP);
-				cota.setReparteCalculado(temp.multiply(cota.getVendaMedia()).toBigInteger());
-				// se o reparte mínimo for nulo, simplesmente não o adiciona
-				// deixando o cálculo conforme abaixo
-				// RepCalculadoCota = ((RepDistribuir / SVendaMédiaFinal) * VendaMédiaFinalCota)
-				if (cota.getReparteMinimo() != null) {
-					cota.setReparteCalculado(cota.getReparteCalculado().add(cota.getReparteMinimo()));
-				}
+		    BigDecimal percentual = BigDecimal.ZERO;
+		    if (excedenteDistribuir.compareTo(BigDecimal.ZERO) > 0) {
+			percentual = BigDecimal.valueOf(100).divide(excedenteDistribuir, 2, BigDecimal.ROUND_HALF_UP);
+		    }
+		    if (percentual.compareTo(BigDecimal.valueOf(10)) < 0) {
+			if (BigDecimal.ONE.compareTo(excedenteDistribuir.multiply(BigDecimal.valueOf(0.01))) > 0) {
+			    ajusteReparte = BigInteger.ONE;
 			} else {
-
-				//FIXME rever estas contas todas...
-				if (percentualExcedenteEstudo != null && percentualExcedenteEstudo.getPdv() != null && percentualExcedenteEstudo.getVenda() != null) {
-					// ExcedentePDV = ((ExcedenteDistribuir * %PropPDV) / SPDVEstudo) * PDVCota
-					BigDecimal temp = excedenteDistribuir.multiply(percentualExcedenteEstudo.getPdv().divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
-					BigDecimal excedentePDV = BigDecimal.ZERO;
-					if (estudo.getTotalPDVs().compareTo(BigDecimal.ZERO) > 0) {
-						excedentePDV = temp.divide(estudo.getTotalPDVs(), 2, BigDecimal.ROUND_HALF_UP).multiply(cota.getQuantidadePDVs());
-					}
-
-					// ExcedenteVDA = ((ExcedenteDistribuir * %PropVenda) / SVendaMédiaFinal) * VendaMédiaFinalCota
-					temp = excedenteDistribuir.multiply(percentualExcedenteEstudo.getVenda().divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
-					if (percentualExcedenteEstudo.getVenda().compareTo(BigDecimal.ZERO) > 0) {
-						temp = temp.divide(estudo.getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_FLOOR);
-					}
-					BigDecimal excedenteVenda = temp.multiply(cota.getVendaMedia());
-
-					// RepCalculadoCota = VMFCota + ExcedPDV + ExcedVda + ReparteMínimo
-					cota.setReparteCalculado(cota.getVendaMedia().add(excedentePDV).add(excedenteVenda).add(new BigDecimal(cota.getReparteMinimo())).toBigInteger());
-				}
+			    ajusteReparte = excedenteDistribuir.multiply(BigDecimal.valueOf(0.01)).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger();
 			}
+		    } else {
+			ajusteReparte = excedenteDistribuir.multiply(BigDecimal.valueOf(0.01)).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger();
+		    }
 		}
+		// ExcedenteDistribuir = ExcedenteDistribuir - AjusteReparte
+		excedenteDistribuir = excedenteDistribuir.subtract(new BigDecimal(ajusteReparte));
+		estudo.setTotalReparteAjuste(ajusteReparte);
+	    }
+	}
+    }
+
+    public void calcularPercentualExcedente(EstudoTransient estudo) throws Exception {
+	// %Excedente = Excedente / SVendaMédiaFinal
+	if (estudo.getSomatoriaVendaMedia().compareTo(BigDecimal.ZERO) > 0) {
+	    estudo.setPercentualExcedente(excedenteDistribuir.divide(estudo.getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_HALF_UP));
 	}
 
-	public void ajustarReparteCalculado(EstudoTransient estudo) {
-		if (estudo.isDistribuicaoPorMultiplos() && (estudo.getPacotePadrao() != null)) {
-			for (CotaEstudo cota : estudo.getCotas()) {
-				// RepCalculadoCota = ARRED(RepCalculadoCota /Pacote-Padrão; 0) * Pacote-Padrão
-				cota.setReparteCalculado(cota.getReparteCalculado().divide(estudo.getPacotePadrao()).multiply(estudo.getPacotePadrao()));
-			}
-		} else {
-			for (CotaEstudo cota : estudo.getCotas()) {
-				// Arredondar RepCalculado Cota pelo método inglês
-				cota.setReparteCalculado(cota.getReparteCalculado().divide(BigInteger.ONE));
-			}
-		}
+	if (estudo.getPercentualProporcaoExcedente().isEmpty()) {
+	    throw new Exception("Parametros do distribuidor não preenchido, Percentual de Excedente não pode estar vazio.");
 	}
 
-	private boolean temEdicaoBaseFechada(EstudoTransient estudo) {
-		for (ProdutoEdicaoEstudo edicao : estudo.getEdicoesBase()) {
-			if (!edicao.isEdicaoAberta()) {
-				return true;
-			}
-		}
-		return false;
+	PercentualExcedenteEstudo percentualExcedenteEstudo;
+	if (estudo.getPercentualExcedente().compareTo(BigDecimal.valueOf(0.60)) > 0) {
+	    percentualExcedenteEstudo = estudo.getPercentualProporcaoExcedente().get("DE_60_100");
+	} else if (estudo.getPercentualExcedente().compareTo(BigDecimal.valueOf(0.60)) <= 0
+		&& estudo.getPercentualExcedente().compareTo(BigDecimal.valueOf(0.30)) > 0) {
+	    percentualExcedenteEstudo = estudo.getPercentualProporcaoExcedente().get("DE_30_60");
+	} else {
+	    percentualExcedenteEstudo = estudo.getPercentualProporcaoExcedente().get("DE_0_30");
 	}
+
+	for (CotaEstudo cota : estudo.getCotas()) {
+	    cota.setReparteMinimo(BigInteger.ZERO);
+	    if (estudo.getPercentualExcedente().compareTo(BigDecimal.ZERO) < 0) {
+		// RepCalculadoCota = ((RepDistribuir / SVendaMédiaFinal) * VendaMédiaFinalCota) + ReparteMínimo
+		BigDecimal temp = new BigDecimal(estudo.getReparteDistribuir()).divide(estudo.getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_HALF_UP);
+		cota.setReparteCalculado(temp.multiply(cota.getVendaMedia()).toBigInteger(), estudo);
+		// se o reparte mínimo for nulo, simplesmente não o adiciona
+		// deixando o cálculo conforme abaixo
+		// RepCalculadoCota = ((RepDistribuir / SVendaMédiaFinal) * VendaMédiaFinalCota)
+		if (cota.getReparteMinimo() != null) {
+		    cota.setReparteCalculado(cota.getReparteCalculado().add(cota.getReparteMinimo()), estudo);
+		}
+	    } else {
+		if (percentualExcedenteEstudo != null && percentualExcedenteEstudo.getPdv() != null && percentualExcedenteEstudo.getVenda() != null) {
+		    // ExcedentePDV = ((ExcedenteDistribuir * %PropPDV) / SPDVEstudo) * PDVCota
+		    BigDecimal temp = excedenteDistribuir.multiply(percentualExcedenteEstudo.getPdv().divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
+		    BigDecimal excedentePDV = BigDecimal.ZERO;
+		    if (estudo.getTotalPDVs().compareTo(BigDecimal.ZERO) > 0) {
+			excedentePDV = temp.divide(estudo.getTotalPDVs(), 2, BigDecimal.ROUND_HALF_UP).multiply(cota.getQuantidadePDVs());
+		    }
+
+		    // ExcedenteVDA = ((ExcedenteDistribuir * %PropVenda) / SVendaMédiaFinal) * VendaMédiaFinalCota
+		    temp = excedenteDistribuir.multiply(percentualExcedenteEstudo.getVenda().divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
+		    if ((percentualExcedenteEstudo.getVenda().compareTo(BigDecimal.ZERO) > 0) &&
+			    (estudo.getSomatoriaVendaMedia().compareTo(BigDecimal.ZERO) > 0)) {
+			temp = temp.divide(estudo.getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_FLOOR);
+		    }
+		    BigDecimal excedenteVenda = temp.multiply(cota.getVendaMedia());
+
+		    // RepCalculadoCota = VMFCota + ExcedPDV + ExcedVda + ReparteMínimo
+		    cota.setReparteCalculado(cota.getVendaMedia().add(excedentePDV).add(excedenteVenda).add(new BigDecimal(cota.getReparteMinimo())).toBigInteger(), estudo);
+		}
+	    }
+	}
+    }
+
+    public void ajustarReparteCalculado(EstudoTransient estudo) {
+	if (estudo.isDistribuicaoPorMultiplos() && (estudo.getPacotePadrao() != null)) {
+	    for (CotaEstudo cota : estudo.getCotas()) {
+		// RepCalculadoCota = ARRED(RepCalculadoCota /Pacote-Padrão; 0) * Pacote-Padrão
+		cota.setReparteCalculado(cota.getReparteCalculado().divide(estudo.getPacotePadrao()).multiply(estudo.getPacotePadrao()), estudo);
+	    }
+	} else {
+	    for (CotaEstudo cota : estudo.getCotas()) {
+		// Arredondar RepCalculado Cota pelo método inglês
+		cota.setReparteCalculado(cota.getReparteCalculado().divide(BigInteger.ONE), estudo);
+	    }
+	}
+    }
+
+    private boolean temEdicaoBaseFechada(EstudoTransient estudo) {
+	for (ProdutoEdicaoEstudo edicao : estudo.getEdicoesBase()) {
+	    if (!edicao.isEdicaoAberta()) {
+		return true;
+	    }
+	}
+	return false;
+    }
 }

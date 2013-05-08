@@ -109,7 +109,7 @@ public class EstudoDAO {
 			mapPercentualExcedente.put(percentualExcedente.getEficiencia(), percentualExcedente);
 		}
 		
-		estudo.setPercentualExcedente(mapPercentualExcedente);
+		estudo.setPercentualProporcaoExcedente(mapPercentualExcedente);
 	}
 	
 	public void carregarParametrosDistribuidor(EstudoTransient estudo) {

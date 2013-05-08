@@ -391,7 +391,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		// Aba Distribuição - Grid Classificação Cota
 		List<DistribuidorClassificacaoCotaVO> listClassificacaoCotaVO = new ArrayList<>();
-		List<DistribuidorClassificacaoCota> listClassificacaoCota = distribuidor.getListClassificacaoCota();
+        List<DistribuidorClassificacaoCota> listClassificacaoCota = distribuidor.getListClassificacaoCota();
 		if (listClassificacaoCota != null) {
 			for (DistribuidorClassificacaoCota classificacaoCota : listClassificacaoCota) {
 				DistribuidorClassificacaoCotaVO classificacaoCotaVO = new DistribuidorClassificacaoCotaVO();
@@ -405,8 +405,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosDistribuidor.setListClassificacaoCota(listClassificacaoCotaVO);
 		
 		// Aba Distribuição - Grid Percentual de Excedente
-		List<DistribuidorPercentualExcedenteVO> listPercentualExcedenteVO = new ArrayList<>();
-		List<DistribuidorPercentualExcedente> listPercentualExcedente = distribuidor.getListPercentualExcedente();
+        List<DistribuidorPercentualExcedenteVO> listPercentualExcedenteVO = new ArrayList<>();
+        List<DistribuidorPercentualExcedente> listPercentualExcedente = distribuidor.getListPercentualExcedente();
 		if (listPercentualExcedente != null) {
 			for (DistribuidorPercentualExcedente percentualExcedente : listPercentualExcedente) {
 				DistribuidorPercentualExcedenteVO percentualExcedenteVO = new DistribuidorPercentualExcedenteVO();
@@ -565,7 +565,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 							.getChamadaoValorConsignado());
 			politicaChamadao.setValorConsignado(chamadaoConsignado);
 		}
-		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = null;
+		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor;
 		if (distribuidor.getParametrosRecolhimentoDistribuidor() != null) {
 			parametrosRecolhimentoDistribuidor = distribuidor.getParametrosRecolhimentoDistribuidor();
 		} else {
@@ -631,7 +631,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		parametrosDistribuidorEmissaoDocumentoSlip.setUtilizaEmail(parametrosDistribuidor.getSlipEmail());
 		parametrosDistribuidorEmissaoDocumentoSlip.setUtilizaImpressao(parametrosDistribuidor.getSlipImpressao());
 
-		List<ParametrosDistribuidorEmissaoDocumento> listaParametrosDistribuidorEmissaoDocumentos = new ArrayList<ParametrosDistribuidorEmissaoDocumento>();
+		List<ParametrosDistribuidorEmissaoDocumento> listaParametrosDistribuidorEmissaoDocumentos = new ArrayList<>();
 
 		parametrosDistribuidorEmissaoDocumentoRepository.alterarOuCriar(parametrosDistribuidorEmissaoDocumentoBoleto);
 		parametrosDistribuidorEmissaoDocumentoRepository.alterarOuCriar(parametrosDistribuidorEmissaoDocumentoBoletoSlip);
@@ -675,7 +675,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		// Condições de Contratação:
 		boolean utilizaContratoComCotas = parametrosDistribuidor.isUtilizaContratoComCotas();
 		if (utilizaContratoComCotas) {
-			ParametroContratoCota parametroContratoCota = null;
+			ParametroContratoCota parametroContratoCota;
 			if (distribuidor.getParametroContratoCota() != null) {
 				parametroContratoCota = distribuidor.getParametroContratoCota();
 			} else {
@@ -801,7 +801,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		distribuidor.setParcelamentoDividas(parametrosDistribuidor.getParcelamentoDividas());
 		
-		List<ParametrosDistribuidorFaltasSobras> listaParametrosDistribuidorFaltasSobras = new ArrayList<ParametrosDistribuidorFaltasSobras>();
+		List<ParametrosDistribuidorFaltasSobras> listaParametrosDistribuidorFaltasSobras = new ArrayList<>();
 		
 		if (parametrosDistribuidor.getFaltasSobras()) {
 			
@@ -884,9 +884,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 
 	private List<DistribuidorPercentualExcedente> gravarPercentualExcedente(
 			Distribuidor distribuidor,
-			List<DistribuidorPercentualExcedenteVO> listPercentualExcedenteVO) {
-		
-		List<DistribuidorPercentualExcedente> listPercentualExcedente = distribuidor.getListPercentualExcedente();
+            List<DistribuidorPercentualExcedenteVO> listPercentualExcedenteVO) {
+
+        List<DistribuidorPercentualExcedente> listPercentualExcedente = distribuidor.getListPercentualExcedente();
 		if (listPercentualExcedente == null) {
 			listPercentualExcedente = new ArrayList<>();
 		}
@@ -913,10 +913,10 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	}
 
 	private List<DistribuidorClassificacaoCota> gravarClassificacaoCota(
-			Distribuidor distribuidor,
-			List<DistribuidorClassificacaoCotaVO> listClassificacaoCotaVO) {
-		
-		List<DistribuidorClassificacaoCota> listClassificacaoCota = distribuidor.getListClassificacaoCota();
+            Distribuidor distribuidor,
+            List<DistribuidorClassificacaoCotaVO> listClassificacaoCotaVO) {
+
+        List<DistribuidorClassificacaoCota> listClassificacaoCota = distribuidor.getListClassificacaoCota();
 		if (listClassificacaoCota == null) {
 			listClassificacaoCota = new ArrayList<>();
 		}
@@ -1006,62 +1006,45 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	}
 	
 	private List<GrupoMovimentoFinaceiro> getGruposMovimentoFinanceiroDebitosCreditos() {
-		
-		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = 
-			Arrays.asList(GrupoMovimentoFinaceiro.DEBITO, GrupoMovimentoFinaceiro.CREDITO);
-		
-		return gruposMovimentoFinanceiro;
+
+        return Arrays.asList(GrupoMovimentoFinaceiro.DEBITO, GrupoMovimentoFinaceiro.CREDITO);
 	}
 	
 	private List<GrupoMovimentoFinaceiro> getGruposMovimentoFinanceiroNegociacao() {
-		
-		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = 
-			Arrays.asList(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
-		
-		return gruposMovimentoFinanceiro;
+
+        return Arrays.asList(GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO);
 	}
 	
+	@SuppressWarnings("unused")
 	private List<GrupoMovimentoEstoque> getGruposMovimentoEstoqueAjusteEstoque() {
-		
-		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = 
-			Arrays.asList(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DANIFICADOS,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DANIFICADOS,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DEVOLUCAO_FORNECEDOR,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_FORNECEDOR,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_RECOLHIMENTO,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_RECOLHIMENTO,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR,
-						  GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR);
-		
-		return gruposMovimentoEstoque;
+
+        return Arrays.asList(GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_LANCAMENTO,
+                      GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_LANCAMENTO,
+                      GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DANIFICADOS,
+                      GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DANIFICADOS,
+                      GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DEVOLUCAO_FORNECEDOR,
+                      GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_FORNECEDOR,
+                      GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_RECOLHIMENTO,
+                      GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_RECOLHIMENTO,
+                      GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_SUPLEMENTAR,
+                      GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_SUPLEMENTAR);
 	}
 	
 	private List<GrupoMovimentoFinaceiro> getGruposMovimentoFinanceiroPostergacaoCobranca() {
-		
-		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = 
-			Arrays.asList(GrupoMovimentoFinaceiro.POSTERGADO_CREDITO,
-						  GrupoMovimentoFinaceiro.POSTERGADO_DEBITO);
-		
-		return gruposMovimentoFinanceiro;
+
+        return Arrays.asList(GrupoMovimentoFinaceiro.POSTERGADO_CREDITO,
+                      GrupoMovimentoFinaceiro.POSTERGADO_DEBITO);
 	}
 	
 	private List<GrupoMovimentoEstoque> getGruposMovimentoEstoqueDevolucaoFornecedor() {
-		
-		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = 
-			Arrays.asList(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
-		
-		return gruposMovimentoEstoque;
+
+        return Arrays.asList(GrupoMovimentoEstoque.DEVOLUCAO_ENCALHE);
 	}
 	
 	private List<GrupoMovimentoEstoque> getGruposMovimentoEstoqueFaltasSobras() {
-		
-		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = 
-			Arrays.asList(GrupoMovimentoEstoque.FALTA_DE, GrupoMovimentoEstoque.FALTA_EM,
-						  GrupoMovimentoEstoque.SOBRA_DE, GrupoMovimentoEstoque.SOBRA_EM);
-		
-		return gruposMovimentoEstoque;
+
+        return Arrays.asList(GrupoMovimentoEstoque.FALTA_DE, GrupoMovimentoEstoque.FALTA_EM,
+                      GrupoMovimentoEstoque.SOBRA_DE, GrupoMovimentoEstoque.SOBRA_EM);
 	}
 
 	private void atualizarTiposMovimentoEstoque(ParametrosDistribuidorVO parametrosDistribuidor,
@@ -1222,9 +1205,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	 * @return boolean
 	 */
 	private boolean verificaCheckBoolean(String s) {
-		if (s.equals(CHECKED))
-			return true;
-		return false;
-	}
+        return s.equals(CHECKED);
+    }
 	
 }

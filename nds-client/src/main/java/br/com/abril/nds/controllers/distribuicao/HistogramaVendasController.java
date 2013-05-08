@@ -266,7 +266,7 @@ public class HistogramaVendasController extends BaseController {
 		
 		if (list==null || list.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,
-					"Produto não possui lancamentos fechados.");
+					"Nenhum registro encontrado.");
 		}
 		
 		TableModel<CellModelKeyValue<EdicoesProdutosDTO>> tableModel = new TableModel<CellModelKeyValue<EdicoesProdutosDTO>>();

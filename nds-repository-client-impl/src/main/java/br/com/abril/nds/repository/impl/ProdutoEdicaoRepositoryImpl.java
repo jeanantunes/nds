@@ -19,6 +19,7 @@ import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +39,8 @@ import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.movimentacao.TipoMovimento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -852,6 +855,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				" 	tipoclassi6_.DESCRICAO as classificacao, " +
 				" 	tiposegmen7_.DESCRICAO as segmento,"+
 				" 	lancamento2_.STATUS as statusLancamento, " +
+				"   estoqueProdutoCota.produto_edicao_id, " +
+				" 	estoqueProdutoCota.cota_id " +
 				
 				"FROM " +
 				 " ESTOQUE_PRODUTO_COTA estoqueProdutoCota " +
@@ -861,18 +866,18 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				 " inner join TIPO_CLASSIFICACAO_PRODUTO tipoclassi6_ on produto5_.TIPO_CLASSIFICACAO_PRODUTO_ID=tipoclassi6_.ID " +
 				 " inner join TIPO_SEGMENTO_PRODUTO tiposegmen7_ on produto5_.TIPO_SEGMENTO_PRODUTO_ID=tiposegmen7_.ID " +
 				 " inner join COTA cota2_ on estoqueProdutoCota.COTA_ID=cota2_.ID  " +
-				 " inner join BOX box4_ on cota2_.BOX_ID=box4_.ID  " +
+				 " inner join BOX box on cota2_.BOX_ID=box.ID  " +
 				 " ";
 				 
 			
 		List<String> whereList = new ArrayList<String>();
 		HashMap<String,Object> parameterMap = new HashMap<String,Object>();
 		
-		whereList.add(" lancamento.status = 'FECHADO' ");
+//		whereList.add(" lancamento2_.status = 'FECHADO' ");
 		
 		//Filtro por
 		if (StringUtils.isNotEmpty(filtro.getFiltroPor())) {
-			whereList.add(" box.tipoBox = :tipoBox ");
+			whereList.add(" box.tipo_box = :tipoBox ");
 			parameterMap.put("tipoBox",TipoBox.values()[Integer.parseInt(filtro.getFiltroPor())]);
 		}
 		
@@ -902,7 +907,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				&& filtro.getInserirComponentes().equalsIgnoreCase("checked")
 				&& !filtro.getComponente().equalsIgnoreCase("-1")) {
 
-			queryStringProdutoEdicao += " 	 left outer join PDV pdvs on cota3_.ID = pdvs.COTA_ID "; //" join cota.pdvs pdvs ";
+			queryStringProdutoEdicao += " 	 left outer join PDV pdvs on cota2_.ID = pdvs.COTA_ID "; //" join cota.pdvs pdvs ";
 
 			// JOIN'S Relacionados ao componente/elemento
 			/*
@@ -953,9 +958,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				break;
 			case GERADOR_DE_FLUXO:
 
-				queryStringProdutoEdicao += " left outer join GERADOR_FLUXO_PDV geradorFluxoPDV on cota2_.ID = geradorFluxoPDV.ID ";
+				queryStringProdutoEdicao += " left outer join GERADOR_FLUXO_PDV geradorFluxoPDV on pdvs.ID = geradorFluxoPDV.PDV_ID ";
 
-				whereList.add(" geradorFluxoPDV.id = :idGeradorFluxoPDV");
+				whereList.add(" geradorFluxoPDV.tipo_gerador_fluxo_id = :idGeradorFluxoPDV");
 				parameterMap.put("idGeradorFluxoPDV",
 						Long.parseLong(filtro.getElemento()));
 
@@ -986,10 +991,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		//Group by
 		queryStringProdutoEdicao += " ) as base " +
-									" GROUP BY produtoEdicao.numeroEdicao  " + // fecha query base
+									" GROUP BY base.numeroEdicao  " + 
 									" ORDER BY base.numeroEdicao desc ";
 		
-		Query query = this.getSession().createQuery(queryStringProdutoEdicao);
+		Query query = this.getSession().createSQLQuery(queryStringProdutoEdicao);
 
 		for (String key : parameterMap.keySet()) {
 			query.setParameter(key, parameterMap.get(key));
@@ -1042,16 +1047,16 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				//select para totalizar a qtde de cotas ativas para calculo no resumo da tela da EMS 2029
 				" from " +
 				" ( select DISTINCT " +
-				"	case when estoqueProdutoCota.QTDE_DEVOLVIDA=0 then cota2_.numero_cota else null end as cotasEsmagadas, " +
-				"   case when estoqueProdutoCota.QTDE_DEVOLVIDA=0 then estoqueProdutoCota.QTDE_RECEBIDA else 0 end as vdEsmag," +
-				"   case when estoqueProdutoCota.QTDE_DEVOLVIDA=estoqueProdutoCota.QTDE_RECEBIDA then 1 else 0 end as qtdeCotasSemVenda," +
+				"	case when (sum(estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) = 0 then cota2_.numero_cota else null end as cotasEsmagadas, " +
+				"   case when (sum(estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) = 0 then sum(estoqueProdutoCota.QTDE_RECEBIDA) / :qtdEdicoes else 0 end as vdEsmag," +
+				"   case when (sum(estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) = (sum(estoqueProdutoCota.QTDE_RECEBIDA) / :qtdEdicoes) then 1 else 0 end as qtdeCotasSemVenda," +
 				"   case when cota2_.SITUACAO_CADASTRO='ATIVO' then 1 else 0 end as cotaAtiva," +
-				"	  estoqueProdutoCota.QTDE_RECEBIDA as reparteTotal," +	
+				"	  sum(estoqueProdutoCota.QTDE_RECEBIDA) as reparteTotal," +	
 					" estoqueProdutoCota.ID as col_2_0_, " +
 					" cota2_.numero_cota as COTA_ID, " +
 					" estoqueProdutoCota.PRODUTO_EDICAO_ID as PRODUTO6_585_, " +
-					" estoqueProdutoCota.QTDE_DEVOLVIDA as QTDE_DEVOLVIDA, " +
-					" estoqueProdutoCota.QTDE_RECEBIDA as QTDE_RECEBIDA, " +
+					" sum(estoqueProdutoCota.QTDE_DEVOLVIDA) as QTDE_DEVOLVIDA, " +
+					" sum(estoqueProdutoCota.QTDE_RECEBIDA) as QTDE_RECEBIDA, " +
 					" estoqueProdutoCota.VERSAO as VERSAO585_ " +
 					
 					
@@ -1081,8 +1086,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				&& filtro.getInserirComponentes().equalsIgnoreCase("checked")
 				&& !filtro.getComponente().equalsIgnoreCase("-1")) {
 
-			queryStringProdutoEdicao += " 	 left outer join PDV pdvs on cota2_.ID = pdvs.COTA_ID "; //" join cota.pdvs pdvs ";
-
 			// JOIN'S Relacionados ao componente/elemento
 			/*
 			 * " join pdvs.segmetacao segmentacao " +
@@ -1096,8 +1099,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				/*queryStringProdutoEdicao += 
 							" join pdvs.segmentacao segmentacao "
 						  + " join segmentacao.tipoPontoPDV ";*/
-
-				whereList.add(" pdvs.TIPO_PONTO_PDV_ID = :codigoTipoPontoPDV");
+				
+				whereList.add(" estoqueProdutoCota.cota_id in (select distinct cota.id from cota inner " +
+								"join pdv on pdv.cota_id = cota.id where tipo_ponto_pdv_id = :codigoTipoPontoPDV) ");
 				parameterMap.put("codigoTipoPontoPDV",
 						Long.parseLong(filtro.getElemento()));
 
@@ -1106,38 +1110,43 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 				/*queryStringProdutoEdicao += " join pdvs.segmentacao segmentacao "
 						+ " join segmentacao.areaInfluenciaPDV ";*/
-
-				whereList
-						.add(" pdvs.AREA_INFLUENCIA_PDV_ID = :codigoAreaInfluenciaPDV");
+				whereList.add(" estoqueProdutoCota.cota_id in (select distinct cota.id from cota inner " +
+								" join pdv on pdv.cota_id = cota.id where AREA_INFLUENCIA_PDV_ID = :codigoAreaInfluenciaPDV) ");
 				parameterMap.put("codigoAreaInfluenciaPDV",
 						Long.parseLong(filtro.getElemento()));
 				break;
 
 			case BAIRRO:
+				whereList.add(
+						  " estoqueProdutoCota.cota_id in (select distinct cota.id from cota  " +
+						  " inner join pdv on pdv.cota_id = cota.id " +
+						  " left outer join ENDERECO_PDV enderecoPDV on enderecoPDV.pdv_id=pdv.id " +
+					      " left outer join ENDERECO endereco on endereco.id=enderecoPDV.endereco_id " +
+					      " WHERE enderecoPDV.principal = true and endereco.bairro = :bairroPDV ) ");
 
-				queryStringProdutoEdicao += 
-						  " left outer join ENDERECO_PDV enderecoPDV on enderecoPDV.pdv_id=pdvs.id"
-					      +" left outer join ENDERECO endereco on endereco.id=enderecoPDV.endereco_id";
-
-				whereList
-						.add(" enderecoPDV.principal = true and endereco.bairro = :bairroPDV ");
 				parameterMap.put("bairroPDV", filtro.getElemento());
 
 				break;
 			case DISTRITO:
-				queryStringProdutoEdicao += 
-									" left outer join ENDERECO_PDV enderecoPDV on enderecoPDV.pdv_id=pdvs.id"
-							      +" left outer join ENDERECO endereco on endereco.id=enderecoPDV.endereco_id";
-
-				whereList.add(" enderecoPDV.principal = true and endereco.uf = :ufSigla");
+				
+				whereList.add(
+						  " estoqueProdutoCota.cota_id in (select distinct cota.id from cota  " +
+						  " inner join pdv on pdv.cota_id = cota.id " +
+						  " left outer join ENDERECO_PDV enderecoPDV on enderecoPDV.pdv_id=pdv.id " +
+					      " left outer join ENDERECO endereco on endereco.id=enderecoPDV.endereco_id " +
+					      " WHERE enderecoPDV.principal = true and endereco.uf = :ufSigla ) ");
+				
 				parameterMap.put("ufSigla", filtro.getElemento());
 
 				break;
 			case GERADOR_DE_FLUXO:
-
-				queryStringProdutoEdicao += " left outer join GERADOR_FLUXO_PDV geradorFluxoPDV on cota2_.ID = geradorFluxoPDV.ID ";
-
-				whereList.add(" geradorFluxoPDV.id = :idGeradorFluxoPDV");
+				
+				whereList.add(
+						  " estoqueProdutoCota.cota_id in (select distinct cota.id from cota  " +
+						  " inner join pdv on pdv.cota_id = cota.id " +
+						  " left outer join GERADOR_FLUXO_PDV geradorFluxoPDV on pdv.ID = geradorFluxoPDV.pdv_id " +
+						  " where geradorFluxoPDV.tipo_gerador_fluxo_id = :idGeradorFluxoPDV) ");
+				
 				parameterMap.put("idGeradorFluxoPDV",
 						Long.parseLong(filtro.getElemento()));
 
@@ -1173,7 +1182,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			
 		}
 		
-		queryStringProdutoEdicao += " group by numero_cota, estoqueProdutoCota.produto_edicao_id " +
+		queryStringProdutoEdicao += " group by numero_cota " +
 									" having (sum(estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) >= :de" +  
 									" and (sum(estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) <= :ate";
 		
@@ -1485,31 +1494,45 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	    Criteria esto = s.createCriteria(EstoqueProdutoCota.class).add(Restrictions.eq("produtoEdicao.id", produtoEdicao.getId()));
 	    List<EstoqueProdutoCota> temp = esto.list();
 	    for (EstoqueProdutoCota x : temp) {
-		BigInteger venda = BigInteger.valueOf(Math.round((Math.random() * x.getQtdeRecebida().longValue())));
-		if (prod.get(x.getProdutoEdicao().getId()) == null) {
-		    prod.put(x.getProdutoEdicao().getId(), venda);
-		} else {
-		    prod.put(x.getProdutoEdicao().getId(), prod.get(x.getProdutoEdicao().getId()).add(venda));
-		}
-		x.setQtdeDevolvida(venda);
-		s.persist(x);
+	    	BigInteger venda = BigInteger.valueOf(Math.round((Math.random() * x.getQtdeRecebida().longValue())));
+	    	if (prod.get(x.getProdutoEdicao().getId()) == null) {
+	    		prod.put(x.getProdutoEdicao().getId(), venda);
+	    	} else {
+	    		prod.put(x.getProdutoEdicao().getId(), prod.get(x.getProdutoEdicao().getId()).add(venda));
+	    	}
+	    	x.setQtdeDevolvida(venda);
+	    	s.persist(x);
+	    	
+	    	MovimentoEstoqueCota mec = (MovimentoEstoqueCota) s.createCriteria(MovimentoEstoqueCota.class)
+		    		.add(Restrictions.eq("produtoEdicao.id", produtoEdicao.getId()))
+		    		.add(Restrictions.eq("tipoMovimento.id", 21L))
+		    		.add(Restrictions.eq("cota.id", x.getCota().getId())).uniqueResult();
+	    	
+	    	MovimentoEstoqueCota mec_venda = new MovimentoEstoqueCota();
+			BeanUtils.copyProperties(mec, mec_venda, new String[] {"id", "qtde", "tipoMovimento", "listaProdutoServicos"});
+	    	mec_venda.setQtde(venda);
+	    	TipoMovimento tipoMovimento = (TipoMovimento) s.createCriteria(TipoMovimento.class).add(Restrictions.eq("id", 26L)).uniqueResult();
+	    	mec_venda.setTipoMovimento(tipoMovimento);
+	    	s.persist(mec_venda);
 	    }
-	    
+
 	    Criteria espr = s.createCriteria(EstoqueProduto.class).add(Restrictions.eq("produtoEdicao.id", produtoEdicao.getId()));
 	    List<EstoqueProduto> temp3 = espr.list();
 	    for (EstoqueProduto x : temp3) {
-		if (prod.get(x.getProdutoEdicao().getId()) != null) {
-		    x.setQtdeDevolucaoFornecedor(prod.get(x.getProdutoEdicao().getId()));
-		    s.persist(x);
-		}
+	    	if (prod.get(x.getProdutoEdicao().getId()) != null) {
+	    		x.setQtdeDevolucaoFornecedor(prod.get(x.getProdutoEdicao().getId()));
+	    		s.persist(x);
+	    	}
 	    }
-	    
+
 	    Criteria lanc = s.createCriteria(Lancamento.class).add(Restrictions.eq("produtoEdicao.id", produtoEdicao.getId()));
 	    List<Lancamento> temp2 = lanc.list();
 	    for (Lancamento x : temp2) {
-		x.setStatus(StatusLancamento.FECHADO);
-		s.persist(x);
+	    	x.setStatus(StatusLancamento.FECHADO);
+	    	s.persist(x);
 	    }
+
+	    
 	}
 
 }
