@@ -275,7 +275,7 @@ var mixCotaProdutoController = $.extend(true, {
 		'</a>' ;
 		
 		imgExcluir = '<a href="javascript:;" onclick="mixCotaProdutoController.excluirMixCota(' + cell.id + ')" '  +
-		' style="cursor:pointer;border:0px;margin:5px" title="Excluir Fixação">' +
+		' style="cursor:pointer;border:0px;margin:5px" title="Excluir Mix">' +
 		'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
 		'</a>';
 		
@@ -396,7 +396,7 @@ var mixCotaProdutoController = $.extend(true, {
 		'</a>' ;
 		
 		imgExcluir = '<a href="javascript:;" onclick="mixCotaProdutoController.excluirMixCota(' + cell.id + ')" '  +
-		' style="cursor:pointer;border:0px;margin:5px" title="Excluir Fixação">' +
+		' style="cursor:pointer;border:0px;margin:5px" title="Excluir Mix">' +
 		'<img src="'+contextPath+'/images/ico_excluir.gif" border="0px"/>' +
 		'</a>';
 		

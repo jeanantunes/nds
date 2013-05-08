@@ -389,7 +389,8 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 				|| cota.getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO))
 				&& cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.CONVENCIONAL);
 	}
-
+	
+	@Transactional
 	@Override
 	public boolean gerarCopiafixacao(CopiaMixFixacaoDTO copiaDTO) {
 
