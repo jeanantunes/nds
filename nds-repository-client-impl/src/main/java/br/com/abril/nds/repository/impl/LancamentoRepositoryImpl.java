@@ -1712,6 +1712,7 @@ public class LancamentoRepositoryImpl extends
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public List<ProdutoLancamentoDTO> verificarDataConfirmada(ProdutoLancamentoDTO produtoLancamentoDTO) {
 		StringBuilder hql = new StringBuilder();
 		

@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -1643,7 +1642,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		//this.atualizarLancamentos(idsLancamento, usuarioLogado, mapaLancamento, StatusLancamento.EM_BALANCEAMENTO_LANCAMENTO);
 	}
 	
-	private TreeMap<Date, List<ProdutoLancamentoDTO>> atualizarLancamentos(Set<Long> idsLancamento, Usuario usuario,
+	/*private TreeMap<Date, List<ProdutoLancamentoDTO>> atualizarLancamentos(Set<Long> idsLancamento, Usuario usuario,
 			Map<Long, ProdutoLancamentoDTO> mapaLancamento, StatusLancamento status) {
 		
 		boolean gerarHistoricoLancamento = false;
@@ -1691,9 +1690,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		}
 
 		return matrizLancamentoConfirmada;
-	}
+	}*/
 	
-	@Override
+	/*@Override
 	public BalanceamentoLancamentoDTO verificarQuebraConfirmacaoDiaDeAcordoComMatriz(
 			BalanceamentoLancamentoDTO balanceamentoLancamento) {
 
@@ -1719,5 +1718,5 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 
 		}
 		return balanceamentoLancamento;
-	}
+	}*/
 }
