@@ -15,19 +15,21 @@ public class InformacoesVendaEPerceDeVendaDTO implements Serializable {
 
 	private static final long serialVersionUID = 6561927362578562028L;
 	
-	private BigInteger totalVenda;
-	private BigInteger porcentagemDeVenda;
-
-	public BigInteger getTotalVenda() {
+	private BigDecimal totalVenda;
+	private BigDecimal porcentagemDeVenda;
+	
+	public BigDecimal getTotalVenda() {
 		return totalVenda;
 	}
-	public void setTotalVenda(BigInteger totalVenda) {
+	public void setTotalVenda(BigDecimal totalVenda) {
 		this.totalVenda = totalVenda;
 	}
-	public BigInteger getPorcentagemDeVenda() {
+	public BigDecimal getPorcentagemDeVenda() {
 		return porcentagemDeVenda;
 	}
-	public void setPorcentagemDeVenda(BigInteger porcentagemDeVenda) {
+	public void setPorcentagemDeVenda(BigDecimal porcentagemDeVenda) {
 		this.porcentagemDeVenda = porcentagemDeVenda;
 	}
+
+
 }

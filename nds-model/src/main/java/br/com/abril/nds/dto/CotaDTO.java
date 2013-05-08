@@ -107,7 +107,7 @@ public class CotaDTO implements Serializable {
 	
 	private String descricaoBox;
 	
-	private boolean recebeComplementar;
+	private Boolean recebeComplementar;
 	
 	private List<TitularidadeCotaDTO> proprietarios = new ArrayList<TitularidadeCotaDTO>();
 	
@@ -670,11 +670,11 @@ public class CotaDTO implements Serializable {
 		this.percentualCotaBase = percentualCotaBase;
 	}
 
-	public boolean isRecebeComplementar() {
+	public Boolean isRecebeComplementar() {
 	    return recebeComplementar;
 	}
 
-	public void setRecebeComplementar(boolean recebeComplementar) {
+	public void setRecebeComplementar(Boolean recebeComplementar) {
 	    this.recebeComplementar = recebeComplementar;
 	}
 }

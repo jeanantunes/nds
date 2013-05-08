@@ -92,7 +92,7 @@
         <td width="98" style="border-bottom:1px solid #ccc;">Cotas Ativas:</td>
         <td width="45" style="border-bottom:1px solid #ccc;" id="cotasAtivasCell"> </td>
         <td width="117" style="border-bottom:1px solid #ccc;" >Reparte Total:</td>
-        <td width="45" style="border-bottom:1px solid #ccc;" id="repartTotalCell">  </td>
+        <td width="45" style="border-bottom:1px solid #ccc;">${reparteTotalDistribuidor}  </td>
         <td style="border-bottom:1px solid #ccc;">Abrangência Distribuição:</td>
         <td style="border-bottom:1px solid #ccc;" id="abrangenciaDistribuicaoCell"> </td>
         </tr>

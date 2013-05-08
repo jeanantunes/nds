@@ -19,7 +19,9 @@ import br.com.abril.nds.dao.DefinicaoBasesDAO;
 import br.com.abril.nds.dao.EstudoDAO;
 import br.com.abril.nds.dao.ProdutoEdicaoDAO;
 import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.enumerators.DataReferencia;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
@@ -58,211 +60,223 @@ import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;
 @Service
 public class EstudoAlgoritmoService {
 
-	private static final Logger log = LoggerFactory.getLogger(EstudoAlgoritmoService.class);
+    private static final Logger log = LoggerFactory.getLogger(EstudoAlgoritmoService.class);
 
-	@Autowired
-	private EstudoDAO estudoDAO;
+    @Autowired
+    private EstudoDAO estudoDAO;
 
-	@Autowired
-	private DefinicaoBasesDAO definicaoBasesDAO;
+    @Autowired
+    private DefinicaoBasesDAO definicaoBasesDAO;
 
-	@Autowired
-	private ProdutoEdicaoDAO produtoEdicaoDAO;
+    @Autowired
+    private ProdutoEdicaoDAO produtoEdicaoDAO;
 
-	@Autowired
-	private DefinicaoBases definicaoBases;
+    @Autowired
+    private DefinicaoBases definicaoBases;
 
-	@Autowired
-	private VerificarTotalFixacoes verificarTotalFixacoes;
+    @Autowired
+    private VerificarTotalFixacoes verificarTotalFixacoes;
 
-	@Autowired
-	private AjusteReparte ajusteReparte;
+    @Autowired
+    private AjusteReparte ajusteReparte;
 
-	@Autowired
-	private RedutorAutomatico redutorAutomatico;
+    @Autowired
+    private RedutorAutomatico redutorAutomatico;
 
-	@Autowired
-	private ReparteMinimo reparteMinimo;
+    @Autowired
+    private ReparteMinimo reparteMinimo;
 
-	@Autowired
-	private ReparteProporcional reparteProporcional;
+    @Autowired
+    private ReparteProporcional reparteProporcional;
 
-	@Autowired
-	private EncalheMaximo encalheMaximo;
+    @Autowired
+    private EncalheMaximo encalheMaximo;
 
-	@Autowired
-	private ComplementarAutomatico complementarAutomatico;
+    @Autowired
+    private ComplementarAutomatico complementarAutomatico;
 
-	@Autowired
-	private CalcularReparte calcularReparte;
+    @Autowired
+    private CalcularReparte calcularReparte;
 
-	@Autowired
-	private AjusteFinalReparte ajusteFinalReparte;
+    @Autowired
+    private AjusteFinalReparte ajusteFinalReparte;
 
-	@Autowired
-	private CorrecaoVendas correcaoVendas;
+    @Autowired
+    private CorrecaoVendas correcaoVendas;
 
-	@Autowired
-	private Medias medias;
+    @Autowired
+    private Medias medias;
 
-	@Autowired
-	private VendaMediaFinal vendaMediaFinal;
+    @Autowired
+    private VendaMediaFinal vendaMediaFinal;
 
-	@Autowired
-	private Bonificacoes bonificacoes;
+    @Autowired
+    private Bonificacoes bonificacoes;
 
-	@Autowired
-	private AjusteCota ajusteCota;
+    @Autowired
+    private AjusteCota ajusteCota;
 
-	@Autowired
-	private JornaleirosNovos jornaleirosNovos;
+    @Autowired
+    private JornaleirosNovos jornaleirosNovos;
 
-	public static void calculate(EstudoTransient estudo) {
-		// Somatória da venda média de todas as cotas e
-		// Somatória de reparte das edições abertas de todas as cotas
-		estudo.setSomatoriaVendaMedia(BigDecimal.ZERO);
-		estudo.setSomatoriaReparteEdicoesAbertas(BigDecimal.ZERO);
-		estudo.setTotalPDVs(BigDecimal.ZERO);
-		for (CotaEstudo cota : estudo.getCotas()) {
-			CotaServiceEstudo.calculate(cota);
-			if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.BancaSoComEdicaoBaseAberta,
-					ClassificacaoCota.RedutorAutomatico)) {
-				estudo.setSomatoriaVendaMedia(estudo.getSomatoriaVendaMedia().add(cota.getVendaMedia()));
-			}
-			if (cota.isCotaSoRecebeuEdicaoAberta()) {
-				estudo.setSomatoriaReparteEdicoesAbertas(estudo.getSomatoriaReparteEdicoesAbertas().add(cota.getSomaReparteEdicoesAbertas()));
-			}
-			estudo.setTotalPDVs(estudo.getTotalPDVs().add(cota.getQuantidadePDVs()));
-		}
+    public static void calculate(EstudoTransient estudo) {
+	// Somatória da venda média de todas as cotas e
+	// Somatória de reparte das edições abertas de todas as cotas
+	estudo.setSomatoriaVendaMedia(BigDecimal.ZERO);
+	estudo.setSomatoriaReparteEdicoesAbertas(BigDecimal.ZERO);
+	estudo.setTotalPDVs(BigDecimal.ZERO);
+	for (CotaEstudo cota : estudo.getCotas()) {
+	    if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.BancaSoComEdicaoBaseAberta, ClassificacaoCota.RedutorAutomatico)) {
+		estudo.setSomatoriaVendaMedia(estudo.getSomatoriaVendaMedia().add(cota.getVendaMedia()));
+	    }
+	    if (cota.isCotaSoRecebeuEdicaoAberta()) {
+		estudo.setSomatoriaReparteEdicoesAbertas(estudo.getSomatoriaReparteEdicoesAbertas().add(cota.getSomaReparteEdicoesAbertas()));
+	    }
+	    estudo.setTotalPDVs(estudo.getTotalPDVs().add(cota.getQuantidadePDVs()));
+	}
+    }
+
+    public void carregarParametros(EstudoTransient estudo) {
+	estudo.setProdutoEdicaoEstudo(produtoEdicaoDAO.getProdutoEdicaoEstudo(estudo.getProdutoEdicaoEstudo().getProduto().getCodigo(), estudo.getProdutoEdicaoEstudo().getNumeroEdicao()));
+	if (estudo.getPacotePadrao() == null) {
+	    estudo.setPacotePadrao(BigInteger.valueOf(estudo.getProdutoEdicaoEstudo().getPacotePadrao()));
+	}
+	estudo.getProdutoEdicaoEstudo().setPacotePadrao(0);
+	estudoDAO.carregarParametrosDistribuidor(estudo);
+	estudoDAO.carregarPercentuaisExcedente(estudo);
+    }
+
+    public LinkedList<ProdutoEdicaoEstudo> buscaEdicoesPorLancamento(ProdutoEdicaoEstudo edicao) {
+	log.info("Buscando edições para estudo.");
+	return definicaoBasesDAO.listaEdicoesPorLancamento(edicao);
+    }
+
+    public List<ProdutoEdicaoEstudo> buscaEdicoesAnosAnterioresVeraneio(ProdutoEdicaoEstudo edicao) throws Exception {
+	List<ProdutoEdicaoEstudo> listaEdicoesBase = definicaoBasesDAO.listaEdicoesAnosAnterioresMesmoMes(edicao);
+
+	if (!listaEdicoesBase.isEmpty()) {
+	    return listaEdicoesBase;
 	}
 
-	public void carregarParametros(EstudoTransient estudo) {
-		estudo.setProdutoEdicaoEstudo(produtoEdicaoDAO.getProdutoEdicaoEstudo(estudo.getProdutoEdicaoEstudo().getProduto().getCodigo(), estudo.getProdutoEdicaoEstudo().getNumeroEdicao()));
-		if (estudo.getPacotePadrao() == null) {
-			estudo.setPacotePadrao(BigInteger.valueOf(estudo.getProdutoEdicaoEstudo().getPacotePadrao()));
-		}
-		estudo.getProdutoEdicaoEstudo().setPacotePadrao(0);
-		estudoDAO.carregarParametrosDistribuidor(estudo);
-		estudoDAO.carregarPercentuaisExcedente(estudo);
+	listaEdicoesBase = definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(edicao, getDatasPeriodoVeraneio(edicao));
+	if (listaEdicoesBase.isEmpty()) {
+	    throw new Exception("Não foram encontradas edições de veraneio, favor inserir as bases manualmente.");
 	}
+	return listaEdicoesBase;
+    }
 
-	public LinkedList<ProdutoEdicaoEstudo> buscaEdicoesPorLancamento(ProdutoEdicaoEstudo edicao) {
-		log.info("Buscando edições para estudo.");
-		return definicaoBasesDAO.listaEdicoesPorLancamento(edicao);
-	}
+    public List<ProdutoEdicaoEstudo> buscaEdicoesAnosAnterioresSaidaVeraneio(ProdutoEdicaoEstudo edicao) {
+	return definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(edicao, getDatasPeriodoSaidaVeraneio(edicao));
+    }
 
-	public List<ProdutoEdicaoEstudo> buscaEdicoesAnosAnterioresVeraneio(ProdutoEdicaoEstudo edicao) throws Exception {
-		List<ProdutoEdicaoEstudo> listaEdicoesBase = definicaoBasesDAO.listaEdicoesAnosAnterioresMesmoMes(edicao);
+    private List<LocalDate> getDatasPeriodoVeraneio(ProdutoEdicaoEstudo edicao) {
+	List<LocalDate> periodoVeraneio = new ArrayList<LocalDate>();
+	Date dataLancamento = edicao.getDataLancamento();
+	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.DEZEMBRO_20));
+	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ZERO, DataReferencia.FEVEREIRO_15));
+	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, DataReferencia.DEZEMBRO_20));
+	periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.FEVEREIRO_15));
+	return periodoVeraneio;
+    }
 
-		if (!listaEdicoesBase.isEmpty()) {
-			return listaEdicoesBase;
-		}
+    private List<LocalDate> getDatasPeriodoSaidaVeraneio(ProdutoEdicaoEstudo edicao) {
+	List<LocalDate> periodoSaidaVeraneio = new ArrayList<LocalDate>();
+	Date dataLancamento = edicao.getDataLancamento();
+	periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.FEVEREIRO_16));
+	periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.DEZEMBRO_19));
+	periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, DataReferencia.FEVEREIRO_16));
+	periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, DataReferencia.DEZEMBRO_19));
+	return periodoSaidaVeraneio;
+    }
 
-		listaEdicoesBase = definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(edicao, getDatasPeriodoVeraneio(edicao));
-		if (listaEdicoesBase.isEmpty()) {
-			throw new Exception("Não foram encontradas edições de veraneio, favor inserir as bases manualmente.");
-		}
-		return listaEdicoesBase;
-	}
+    private LocalDate parseLocalDate(Date dataLancamento, Years anosSubtrair, DataReferencia dataReferencia) {
+	return MonthDay.parse(dataReferencia.getData()).toLocalDate(LocalDate.fromDateFields(dataLancamento).minus(anosSubtrair).getYear());
+    }
 
-	public List<ProdutoEdicaoEstudo> buscaEdicoesAnosAnterioresSaidaVeraneio(ProdutoEdicaoEstudo edicao) {
-		return definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(edicao, getDatasPeriodoSaidaVeraneio(edicao));
-	}
+    public void gravarEstudo(EstudoTransient estudo) {
+	estudoDAO.gravarEstudo(estudo);
+    }
 
-	private List<LocalDate> getDatasPeriodoVeraneio(ProdutoEdicaoEstudo edicao) {
-		List<LocalDate> periodoVeraneio = new ArrayList<LocalDate>();
-		Date dataLancamento = edicao.getDataLancamento();
-		periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.DEZEMBRO_20));
-		periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ZERO, DataReferencia.FEVEREIRO_15));
-		periodoVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, DataReferencia.DEZEMBRO_20));
-		periodoVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.FEVEREIRO_15));
-		return periodoVeraneio;
-	}
+    public EstudoTransient gerarEstudoAutomatico(ProdutoEdicaoEstudo produto, BigInteger reparte, Usuario usuario) throws Exception {
+	return gerarEstudoAutomatico(null, produto, reparte, usuario);
+    }
 
-	private List<LocalDate> getDatasPeriodoSaidaVeraneio(ProdutoEdicaoEstudo edicao) {
-		List<LocalDate> periodoSaidaVeraneio = new ArrayList<LocalDate>();
-		Date dataLancamento = edicao.getDataLancamento();
-		periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.FEVEREIRO_16));
-		periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.ONE, DataReferencia.DEZEMBRO_19));
-		periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, DataReferencia.FEVEREIRO_16));
-		periodoSaidaVeraneio.add(parseLocalDate(dataLancamento, Years.TWO, DataReferencia.DEZEMBRO_19));
-		return periodoSaidaVeraneio;
-	}
-
-	private LocalDate parseLocalDate(Date dataLancamento, Years anosSubtrair, DataReferencia dataReferencia) {
-		return MonthDay.parse(dataReferencia.getData()).toLocalDate(LocalDate.fromDateFields(dataLancamento).minus(anosSubtrair).getYear());
-	}
-
-	public void gravarEstudo(EstudoTransient estudo) {
-		estudoDAO.gravarEstudo(estudo);
-	}
-
-	public EstudoTransient gerarEstudoAutomatico(ProdutoEdicaoEstudo produto, BigInteger reparte, Usuario usuario) throws Exception {
-		return gerarEstudoAutomatico(null, produto, reparte, usuario);
-	}
-
-	public EstudoTransient gerarEstudoAutomatico(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, ProdutoEdicaoEstudo produto,
+    public EstudoTransient gerarEstudoAutomatico(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, ProdutoEdicaoEstudo produto,
 	    BigInteger reparte, Usuario usuario) throws Exception {
-		log.debug("Iniciando execução do estudo.");
-		EstudoTransient estudo = new EstudoTransient();
-		estudo.setDataCadastro(new Date());
-		estudo.setStatusEstudo("ESTUDO_FECHADO");
-		estudo.setUsuario(usuario);
-		estudo.setProdutoEdicaoEstudo(produto);
-		estudo.setReparteDistribuir(reparte);
-		estudo.setReparteDistribuirInicial(reparte);
+	log.debug("Iniciando execução do estudo.");
+	EstudoTransient estudo = new EstudoTransient();
+	estudo.setDataCadastro(new Date());
+	estudo.setStatusEstudo("ESTUDO_FECHADO");
+	estudo.setUsuario(usuario);
+	estudo.setProdutoEdicaoEstudo(produto);
+	estudo.setReparteDistribuir(reparte);
+	estudo.setReparteDistribuirInicial(reparte);
 
-		estudo.setDistribuicaoPorMultiplos(0); //valor default
-		estudo.setPacotePadrao(new BigDecimal(produto.getPacotePadrao()).toBigInteger()); //valor default
-		
-		if (distribuicaoVendaMedia != null) {
-			estudo.setDistribuicaoPorMultiplos(distribuicaoVendaMedia.isDistribuicaoPorMultiplo() ? 1 : 0);
-			estudo.setReparteMinimo(distribuicaoVendaMedia.getReparteMinimo());
-			if(distribuicaoVendaMedia.isDistribuicaoPorMultiplo() && distribuicaoVendaMedia.getMultiplo() != null){
-				estudo.setPacotePadrao(distribuicaoVendaMedia.getMultiplo());
-			}
-		}
+	estudo.setDistribuicaoPorMultiplos(0); //valor default
+	estudo.setPacotePadrao(new BigDecimal(produto.getPacotePadrao()).toBigInteger()); //valor default
 
-		// carregando parâmetros do banco de dados
-		carregarParametros(estudo);
-
-		definicaoBases.executar(estudo);
-
-		verificarTotalFixacoes.executar(estudo);
-
-		calculate(estudo);
-
-		for (CotaEstudo cota : estudo.getCotas()) {
-			ajusteCota.executar(cota);
-			
-			correcaoVendas.executar(cota);
-
-			medias.executar(cota);
-
-			vendaMediaFinal.executar(cota);
-			
-			jornaleirosNovos.executar(cota);
-		}
-		bonificacoes.executar(estudo);
-		
-		ajusteReparte.executar(estudo);
-
-		redutorAutomatico.executar(estudo);
-
-		reparteMinimo.executar(estudo);
-
-		reparteProporcional.executar(estudo);
-
-		encalheMaximo.executar(estudo);
-
-		complementarAutomatico.executar(estudo);
-
-		calcularReparte.executar(estudo);
-
-		// processo que faz os ajustes finais e grava as informações no banco de dados
-		ajusteFinalReparte.executar(estudo);
-		
-		log.debug("Execução do estudo concluída");
-		return estudo;
+	if (distribuicaoVendaMedia != null) {
+	    estudo.setBonificacoes(distribuicaoVendaMedia.getBonificacoes());
+	    estudo.setReparteDistribuir(distribuicaoVendaMedia.getReparteDistribuir());
+	    estudo.setDistribuicaoPorMultiplos(distribuicaoVendaMedia.isDistribuicaoPorMultiplo() ? 1 : 0);
+	    estudo.setReparteMinimo(distribuicaoVendaMedia.getReparteMinimo());
+	    estudo.setComplementarAutomatico(distribuicaoVendaMedia.getComplementarAutomatico());
+	    LinkedList<ProdutoEdicaoEstudo> edicoesBase = new LinkedList<>();
+	    for (ProdutoEdicaoDTO base : distribuicaoVendaMedia.getBases()) {
+		ProdutoEdicaoEstudo ed = new ProdutoEdicaoEstudo();
+		ed.setProduto(new Produto());
+		ed.setId(base.getId());
+		ed.getProduto().setCodigo(base.getCodigoProduto());
+		ed.setNumeroEdicao(base.getNumeroEdicao());
+		ed.setPeso(base.getPeso());
+		edicoesBase.add(ed);
+	    }
+	    estudo.setEdicoesBase(edicoesBase);
+	    if(distribuicaoVendaMedia.isDistribuicaoPorMultiplo() && distribuicaoVendaMedia.getMultiplo() != null){
+		estudo.setPacotePadrao(distribuicaoVendaMedia.getMultiplo());
+	    }
 	}
+
+	// carregando parâmetros do banco de dados
+	carregarParametros(estudo);
+
+	definicaoBases.executar(estudo);
+
+	verificarTotalFixacoes.executar(estudo);
+
+	calculate(estudo);
+
+	for (CotaEstudo cota : estudo.getCotas()) {
+	    ajusteCota.executar(cota);
+
+	    correcaoVendas.executar(cota);
+
+	    medias.executar(cota);
+
+	    vendaMediaFinal.executar(cota);
+
+	    jornaleirosNovos.executar(cota);
+	}
+	bonificacoes.executar(estudo);
+
+	ajusteReparte.executar(estudo);
+
+	redutorAutomatico.executar(estudo);
+
+	reparteMinimo.executar(estudo);
+
+	reparteProporcional.executar(estudo);
+
+	encalheMaximo.executar(estudo);
+
+	complementarAutomatico.executar(estudo);
+
+	calcularReparte.executar(estudo);
+
+	// processo que faz os ajustes finais e grava as informações no banco de dados
+	ajusteFinalReparte.executar(estudo);
+
+	log.debug("Execução do estudo concluída");
+	return estudo;
+    }
 }

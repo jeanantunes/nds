@@ -109,7 +109,7 @@ $(function(){
                          <td width="52">Sugerido:</td>
                         <td width="55"><input type="text" name="dataLcto5" id="sugeridoAbrang" style="width:35px; text-align:left;" /></td>
                        <td width="45">Apurada:</td>
-                        <td width="35"><input type="text" name="dataLcto2" id="apuradaAbrang" style="width:35px; text-align:left;" /></td>
+                        <td width="35"><input type="text" name="dataLcto2" id="apuradaAbrang" style="width:55px; text-align:left;" /></td>
                       </tr>
                 </table>
     	</fieldset>

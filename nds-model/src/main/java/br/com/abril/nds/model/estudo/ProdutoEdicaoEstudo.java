@@ -24,6 +24,7 @@ public class ProdutoEdicaoEstudo extends ProdutoEdicao {
     private BigDecimal venda;
     private BigDecimal indiceCorrecao;
     private BigDecimal vendaCorrigida;
+    private BigDecimal divisaoVendaCrescente;
     
     public ProdutoEdicaoEstudo() {
     	indicePeso = BigDecimal.ONE;
@@ -118,5 +119,12 @@ public class ProdutoEdicaoEstudo extends ProdutoEdicao {
 	public String toString() {
 		return "" + numeroEdicao + "";
 	}
-    
+
+	public BigDecimal getDivisaoVendaCrescente() {
+	    return divisaoVendaCrescente;
+	}
+
+	public void setDivisaoVendaCrescente(BigDecimal divisaoVendaCrescente) {
+	    this.divisaoVendaCrescente = divisaoVendaCrescente;
+	}    
 }

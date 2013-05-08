@@ -1,497 +1,594 @@
-function popup_mudar_base() {
-	// $( "#dialog:ui-dialog" ).dialog( "destroy" );
+var analiseParcialController = $.extend(true, {
 
-	$("#dialog-mudar-base").dialog({
-		resizable : false,
-		height : 470,
-		width : 550,
-		modal : true,
-		buttons : {
-			"Confirmar" : function() {
-				$(this).dialog("close");
-				$("#effect").show("highlight", {}, 1000, callback);
+    path: contextPath,
+    detalheEdicao: '<td class="class_linha_1">#numeroEdicao</td>',
+    detalheDataLancamento : '<td width="80" align="center" class="class_linha_2">#dataLancamento</td>',
+    detalheReparte : '<td align="right" class="class_linha_1">#reparte</td>',
+    detalheVenda : '<td align="right" class="class_linha_2">#venda</td>',
 
-			},
-			"Cancelar" : function() {
-				$(this).dialog("close");
-			}
-		}
-	});
-};
-function popup_cotas_estudo() {
-	// $( "#dialog:ui-dialog" ).dialog( "destroy" );
+    detalheEdicaoVazia : '<td><a href="javascript:;" onclick="escondeDados();">' +
+        '<img src="'+ contextPath +'/images/ico_excluir.gif" alt="Fechar" width="15" height="15" border="0" />' +
+        '</a></td>',
+    detalheDataLancamentoVazia : '<td width="19" align="center">&nbsp;</td>',
+    detalheReparteVazia : '<td align="right">&nbsp;</td>',
+    detalheVendaVazia : '<td align="right">&nbsp;</td>',
+    linhaEdicaoBase : '<tr id="row#index">' +
+        '<td><div style="width: 70px;"><input type="text" id="codigoProduto#index" value="#codigoProduto" class="inputBaseNumero" onchange="analiseParcialController.buscarNomeProduto(#index);" /></div></td>' +
+        '<td><div style="width: 180px;"><input type="text" id="nomeProduto#index" value="#nomeProduto" class="inputBaseNome" onchange="analiseParcialController.buscarCodigoProduto(#index);" /></div></td>' +
+        '<td><div style="width: 70px;"><input type="text" id="numeroEdicao#index" value="#numeroEdicao" class="inputBaseNumero" onchange="analiseParcialController.validarNumeroEdicao(#index);" /></div></td>' +
+        '<td><div style="width: 60px;"><a href="javascript:;" onclick="analiseParcialController.subirEdicaoBase(#index);"><img src="'+ contextPath +'/images/seta_sobe#sobe_desab.gif"/></a>'+
+        '&nbsp;<a href="javascript:;" onclick="analiseParcialController.descerEdicaoBase(#index);"><img src="'+ contextPath +'/images/seta_desce#desce_desab.gif"/></a></div></td></tr>',
 
-	$("#dialog-cotas-estudos").dialog({
-		resizable : false,
-		height : 530,
-		width : 550,
-		modal : true,
-		buttons : {
-			"Confirmar" : function() {
-				$(this).dialog("close");
-				$("#effect").show("highlight", {}, 1000, callback);
+    linkNomeCota : '<a href="javascript:;" onclick="analiseParcialController.carregarDetalhesCota(#numeroCota);">#nomeCota</a>',
+    edicoesBase : [],
+    inputReparteSugerido : '<input type="hidden" id="reparteSalvo_#numeroCota" value="#value"/>'+
+        '<input id="reparteAtual_#numeroCota" value="#value" style="width: 40px; font-weight: bold;" '+
+        'onblur="analiseParcialController.inputBlur(event, this);"/>',
 
-			},
-			"Cancelar" : function() {
-				$(this).dialog("close");
-			}
-		}
-	});
-};
+    tipoExibicao : 'NORMAL',
 
-function popup_cotas_detalhes() {
-	// $( "#dialog:ui-dialog" ).dialog( "destroy" );
+    exibirMsg: function(tipo, texto) {
+        exibirMensagem(tipo, texto);
+    },
 
-	$("#dialog-cotas-detalhes").dialog({
-		resizable : false,
-		height : 560,
-		width : 740,
-		modal : true,
-		buttons : {
-			"Fechar" : function() {
-				$(this).dialog("close");
+    mudarBaseVisualizacao : function() {
+        $("#dialog-mudar-base").dialog({
+            resizable : false,
+            height : 470,
+            width : 550,
+            modal : true,
+            buttons : {
+                "Confirmar" : function() {
+                    var parameters = [];
+                    for (var i = 0; i < 6; i++) {
+                        analiseParcialController.edicoesBase[i].codigoProduto = $('#codigoProduto'+ i).val();
+                        analiseParcialController.edicoesBase[i].numeroEdicao = $('#numeroEdicao'+ i).val();
+                        parameters.push({name: 'edicoesBase['+ i +'].edicao', value: $('#numeroEdicao'+ i).val()});
+                        parameters.push({name: 'edicoesBase['+ i +'].codigoProduto', value: $('#codigoProduto'+ i).val()});
+                    }
+                    parameters.push({name: 'id', value: $('#estudoId').val()},
+                            {name: 'numeroEdicao', value: $('#numeroEdicao').val()},
+                            {name: 'codigoProduto', value: $('#codigoProduto').val()},
+                            {name: 'faixaDe', value: $('#faixaDe').val()},
+                            {name: 'faixaAte', value: $('#faixaAte').val()});
+                    $(this).dialog("close");
+                    // atualização dos números das edições
+                    if (analiseParcialController.tipoExibicao === 'NORMAL') {
+                        for (var j = 0; j < analiseParcialController.edicoesBase.length; j++) {
+                            $('#edicao_base_'+ (j + 1)).html(analiseParcialController.edicoesBase[j].numeroEdicao);
+                        }
+                    }
+                    $("#baseEstudoGridParcial").flexOptions({params: parameters}).flexReload();
+                },
+                "Cancelar" : function() {
+                    $(this).dialog("close");
+                }
+            }
+        });
 
-			}
-		}
-	});
-};
+        $("#prodCadastradosGrid").html('');
+        for (var i = 0; i < analiseParcialController.edicoesBase.length; i++) {
+            var row = analiseParcialController.linhaEdicaoBase.replace(/#index/g, i);
+            row = row.replace(/#codigoProduto/g, analiseParcialController.edicoesBase[i].codigoProduto);
+            row = row.replace(/#nomeProduto/g, analiseParcialController.edicoesBase[i].nomeProduto);
+            row = row.replace(/#numeroEdicao/g, analiseParcialController.edicoesBase[i].numeroEdicao);
+            row = row.replace(/#sobe_desab/g, i == 0 ? '_desab' : '');
+            row = row.replace(/#desce_desab/g, i == (analiseParcialController.edicoesBase.length - 1) ? '_desab' : '');
+            $("#prodCadastradosGrid").append(row);
+        }
+    },
 
-function popup_edicoes_produto() {
-	// $( "#dialog:ui-dialog" ).dialog( "destroy" );
+    buscarNomeProduto : function(index) {
+        if ($('#codigoProduto'+ index).val() !== '') {
+            $.postJSON(analiseParcialController.path +'/produto/pesquisarPorCodigoProduto',
+                    [{name: 'codigoProduto', value: $('#codigoProduto'+ index).val()}],
+                    function(result) {
+                    $('#nomeProduto'+ index).val(result.nome);
+                    $('#numeroEdicao'+ index).val('');
+                });
+        } else {
+            analiseParcialController.exibirMsg('WARNING', ['É necessário informar um código para o produto!']);
+        }
+    },
 
-	$("#dialog-edicoes-produtos").dialog({
-		resizable : false,
-		height : 420,
-		width : 550,
-		modal : true,
-		buttons : {
-			"Confirmar" : function() {
-				$(this).dialog("close");
+    buscarCodigoProduto : function(index) {
+        if ($('#nomeProduto'+ index).val() !== '') {
+            $.postJSON(analiseParcialController.path +'/produto/pesquisarPorNomeProduto',
+                    [{name: 'nomeProduto', value: $('#nomeProduto'+ index).val()}],
+                    function(result) {
+                    $('#codigoProduto'+ index).val(result.nome);
+                    $('#numeroEdicao'+ index).val('');
+                });
+        } else {
+            analiseParcialController.exibirMsg('WARNING', ['É necessário informar um nome para o produto!']);
+        }
+    },
 
-			},
-			"Cancelar" : function() {
-				$(this).dialog("close");
-			}
-		}
-	});
-};
+    validarNumeroEdicao : function(index) {
+        if ($('#codigoProduto'+ index).val() !== '') {
+            if ($('#numeroEdicao'+ index).val() !== '') {
+                $.postJSON(analiseParcialController.path + '/produto/validarNumeroEdicao',
+                        [{name: 'codigoProduto', value: $('#codigoProduto'+ index).val()},
+                         {name: 'numeroEdicao', value: $('#numeroEdicao'+ index).val()}],
+                         null,
+                         function(result) {
+                        if (result.mensagens.listaMensagens.length > 0) {
+                            $('#numeroEdicao'+ index).val('');
+                        }
+                    });
+            } else {
+                analiseParcialController.exibirMsg('WARNING', ['É necessário informar um número de edição!']);
+            }
+        } else {
+            analiseParcialController.exibirMsg('WARNING', ['É necessário informar um código para o produto!']);
+        }
+    },
 
-function selecionarElementos(tipo,optionsId){
-	
-	$.getJSON("/nds-client/componentes/elementos",{"tipo":tipo},function(data){
-		var options = $("#"+optionsId);
-		options.empty();
-		$.each(data, function() {
-		    options.append($("<option />").val(this.tipo+"_"+this.id).text(this.value));
-		});
-		
-	});
-}
-function apresentarOpcoesOrdenarPor(opcao){
-	if(opcao === "selecione"){
-		$("#opcoesOrdenarPor").hide();
-	}else{
-		$(".label").hide();
-		$("#label_"+opcao).show();
-		$("#opcoesOrdenarPor").show();
-	}
-}
+    carregarDetalhesCota : function(numeroCota) {
+        $("#dialog-cotas-detalhes").dialog({
+            resizable : false,
+            height : 560,
+            width : 740,
+            modal : true,
+            buttons : {
+                "Fechar" : function() {
+                    $(this).dialog("close");
+                }
+            }
+        });
 
+        $("#cotasDetalhesGrid").flexOptions({ params: [{name: 'numeroCota', value: numeroCota}] }).flexReload();
+    },
 
-function filtrarOrdenarPor(estudo){
-	
-	$(".baseEstudoGrid").flexOptions({
-		params:[
-		        { 'name':'filterSortName', 'value':$("#filtroOrdenarPor").val(), }, 
-		        { 'name':'filterSortFrom', 'value':$("#ordenarPorDe").val(), }, 
-		        { 'name':'filterSortTo', 'value':$("#ordenarPorAte").val(), }, 
-		        { 'name':'id', 'value':estudo }, 
-		        { 'name':'elemento', 'value':$("#elementos :selected").val(), }
-		       ]
-	}).flexReload();
-	if(event)
-		event.preventDefault();
-	return false;
-}
+    inicializarDetalhes : function() {
+        $.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/detalhes',
+                [{name: "id", value: $('#produtoEdicaoId').val()}],
+                function(result) {
+                $.each(result.rows, function(i, el) {
+                    $('#tabelaDetalheAnalise').find('#edicoes').append(analiseParcialController.detalheEdicao.replace('#numeroEdicao', el.cell.numeroEdicao));
+                    $('#tabelaDetalheAnalise').find('#dataLancamentos').append(analiseParcialController.detalheDataLancamento.replace('#dataLancamento', el.cell.dataLancamentoFormatada));
+                    $('#tabelaDetalheAnalise').find('#repartes').append(analiseParcialController.detalheReparte.replace('#reparte', el.cell.reparte));
+                    $('#tabelaDetalheAnalise').find('#vendas').append(analiseParcialController.detalheVenda.replace('#venda', el.cell.venda));
+                });
+                $('#tabelaDetalheAnalise').find('#edicoes').append(analiseParcialController.detalheEdicaoVazia);
+                $('#tabelaDetalheAnalise').find('#dataLancamentos').append(analiseParcialController.detalheDataLancamentoVazia);
+                $('#tabelaDetalheAnalise').find('#repartes').append(analiseParcialController.detalheReparteVazia);
+                $('#tabelaDetalheAnalise').find('#vendas').append(analiseParcialController.detalheVendaVazia);
+            });
+    },
 
-var analiseParcialController = $.extend(true,{
-	
-	preProcessGrid : function(resultado) {
-		for (var i = 0; i < resultado.rows.length; i++) {
-			if (resultado.rows[i].cell.classificacao == undefined) {
-				resultado.rows[i].cell.classificacao = '';
-			}
-			if (resultado.rows[i].cell.reparte1 == 0) {
-				resultado.rows[i].cell.reparte1 = "";
-				resultado.rows[i].cell.venda1 = "";
-			}
-			if (resultado.rows[i].cell.reparte2 == 0) {
-				resultado.rows[i].cell.reparte2 = "";
-				resultado.rows[i].cell.venda2 = "";
-			}
-			if (resultado.rows[i].cell.reparte3 == 0) {
-				resultado.rows[i].cell.reparte3 = "";
-				resultado.rows[i].cell.venda3 = "";
-			}
-			if (resultado.rows[i].cell.reparte4 == 0) {
-				resultado.rows[i].cell.reparte4 = "";
-				resultado.rows[i].cell.venda4 = "";
-			}
-			if (resultado.rows[i].cell.reparte5 == 0) {
-				resultado.rows[i].cell.reparte5 = "";
-				resultado.rows[i].cell.venda5 = "";
-			}
-			if (resultado.rows[i].cell.reparte6 == 0) {
-				resultado.rows[i].cell.reparte6 = "";
-				resultado.rows[i].cell.venda6 = "";
-			}
-		};
-		return resultado;
-	},
-	
-	init:function(_id, _faixaDe, _faixaAte){
-		
-		$("#baseEstudoGridParcial").flexigrid({
-			preProcess : analiseParcialController.preProcessGrid,
-			url : contextPath + '/distribuicao/analise/parcial/init',
-			params: [{name: 'id', value: _id}, {name: 'faixaDe', value: _faixaDe}, {name: 'faixaAte', value: _faixaAte}],
-			dataType : 'json',
-			colModel : [ { display : 'Cota', name : 'cota', width : 33, sortable : true, align : 'left' }, 
-			             { display : 'Class.', name : 'classificacao', width : 30, sortable : true, align : 'center' }, 
-			             { display : 'Nome', name : 'nome', width : 100, sortable : true, align : 'left' }, 
-			             { display : 'NPDV', name : 'npdv', width : 30, sortable : true, align : 'right' }, 
-			             { display : 'Rep. Sugerido', name : 'reparteSugerido', width : 50, sortable : true, align : 'right' }, 
-			             { display : 'LEG', name : 'leg', width : 20, sortable : true, align : 'center' }, 
-			             { display : 'Juram.', name : 'juramento', width : 40, sortable : true, align : 'right' }, 
-			             { display : 'Média.VDA', name : 'mediaVenda', width : 50, sortable : true, align : 'right' }, 
-			             { display : 'Último. Reparte', name : 'ultimoReparte', width : 50, sortable : true, align : 'right' },
-			             { display : 'REP', name : 'reparte1', width : 23, sortable : true, align : 'right' }, 
-			             { display : 'VDA', name : 'venda1',   width : 23, sortable : true, align : 'right' }, 
-			             { display : 'REP', name : 'reparte2', width : 23, sortable : true, align : 'right' }, 
-			             { display : 'VDA', name : 'venda2',   width : 23, sortable : true, align : 'right' }, 
-			             { display : 'REP', name : 'reparte3', width : 23, sortable : true, align : 'right' }, 
-			             { display : 'VDA', name : 'venda3',   width : 23, sortable : true, align : 'right' }, 
-			             { display : 'REP', name : 'reparte4', width : 23, sortable : true, align : 'right' }, 
-			             { display : 'VDA', name : 'venda4',   width : 23, sortable : true, align : 'right' }, 
-			             { display : 'REP', name : 'reparte5', width : 23, sortable : true, align : 'right' }, 
-			             { display : 'VDA', name : 'venda5',   width : 23, sortable : true, align : 'right' }, 
-			             { display : 'REP', name : 'reparte6', width : 23, sortable : true, align : 'right' }, 
-			             { display : 'VDA', name : 'venda6',   width : 23, sortable : true, align : 'right' }, 
-			             { display : 'VDA', name : 'numeroEdicao1',   width : 23, sortable : true, align : 'right', hide: true },
-			             { display : 'VDA', name : 'numeroEdicao2',   width : 23, sortable : true, align : 'right', hide: true },
-			             { display : 'VDA', name : 'numeroEdicao3',   width : 23, sortable : true, align : 'right', hide: true },
-			             { display : 'VDA', name : 'numeroEdicao4',   width : 23, sortable : true, align : 'right', hide: true },
-			             { display : 'VDA', name : 'numeroEdicao5',   width : 23, sortable : true, align : 'right', hide: true },
-			             { display : 'VDA', name : 'numeroEdicao6',   width : 23, sortable : true, align : 'right', hide: true }
-			           ],
-			width : 950,
-			height : 200,
-			sortorder:'desc',
-			sortname:'reparteSugerido',
-			onSuccess:function(x){
-				addDbClickSupport(".baseEstudoGrid", "td[abbr=reparteSugerido]");
-				
-				$('#edicao_base_1').html($('td[abbr=numeroEdicao1] div').html());
-				$('#edicao_base_2').html($('td[abbr=numeroEdicao2] div').html());
-				$('#edicao_base_3').html($('td[abbr=numeroEdicao3] div').html());
-				$('#edicao_base_4').html($('td[abbr=numeroEdicao4] div').html());
-				$('#edicao_base_5').html($('td[abbr=numeroEdicao5] div').html());
-				$('#edicao_base_6').html($('td[abbr=numeroEdicao6] div').html());
-				
-				$('td[abbr^=venda]', $('.baseEstudoGrid')).each(function(i, el) {
-					$(el).css({'color': 'red', 'font-weight': 'bold'});
-				});
-				$('td[abbr^=ultimoReparte]', $('.baseEstudoGrid')).each(function(i, el) {
-					$(el).css({'font-weight': 'bold'});
-				});
-				$('td[abbr^=reparteSugerido]', $('.baseEstudoGrid')).each(function(i, el) {
-					$(el).css({'font-weight': 'bold'});
-				});
-				
-				soma("#total_juramento", "td[abbr=juramento]");
-				soma("#total_media_venda", "td[abbr=mediaVenda]");
-				soma("#total_ultimo_reparte", "td[abbr=ultimoReparte]");
-				soma("#total_reparte1", "td[abbr=reparte1]");
-				soma("#total_venda1", "td[abbr=venda1]");
-				soma("#total_reparte2", "td[abbr=reparte2]");
-				soma("#total_venda2", "td[abbr=venda2]");
-				soma("#total_reparte3", "td[abbr=reparte3]");
-				soma("#total_venda3", "td[abbr=venda3]");
-				soma("#total_reparte4", "td[abbr=reparte4]");
-				soma("#total_venda4", "td[abbr=venda4]");
-				soma("#total_reparte5", "td[abbr=reparte5]");
-				soma("#total_venda5", "td[abbr=venda5]");
-				soma("#total_reparte6", "td[abbr=reparte6]");
-				soma("#total_venda6", "td[abbr=venda6]");
-				conta("#total_de_cotas","td[abbr=cota]");
-				
-			}
-		});
-		
-		$("#liberar").click(function(event){
-			$.post("liberar",{"id":$("#estudoId").text()},function(){
-				alert("Estudo liberado com sucesso");
-			});
-			event.preventDefault();
-		});
-		
-		$(".cotasEstudoGrid").flexigrid({
-			url:"/nds-client/cotas-que-nao-entraram-no-estudo/filtrar/",
-			dataType : 'json',
-			colModel : [ 
-			             { display : 'Cota', name : 'cota', width : 40, sortable : true, align : 'left' }, 
-			             { display : 'Nome', name : 'nome', width : 160, sortable : true, align : 'left' }, 
-			             { display : 'Motivo', name : 'motivo', width : 160, sortable : true, align : 'left' }, 
-			             { display : 'Qtde', name : 'quantidade', width : 60, sortable : true, align : 'center' }
-			             ],
-			width : 490,
-			height : 200,
-			sortorder:'desc',
-			sortname:'cota',
-			
-		});
-		
-		cotasQueNaoEntraramNoEstudo();
-	}
+    somarTotais : function(resultado) {
+        var totalJuramento = 0,
+            totalMediaVenda = 0,
+            totalUltimoReparte = 0,
+            quantidade = 0,
+            totalReparteSugerido = 0,
+            totais = [];
+        $(resultado.rows).each(function(i, row) {
+            var venda = 0,
+                quantidade = 0;
+            for (var j = 1; j < 7; j++) {
+                if (typeof totais[j - 1] === 'undefined') {
+                    totais[j - 1] = {};
+                    totais[j - 1].reparte = 0;
+                    totais[j - 1].venda = 0;
+                }
+                if (!isNaN(row.cell['reparte'+ j]) && !isNaN(row.cell['venda'+ j]) &&
+                        (row.cell['reparte'+ j] !== '') && (row.cell['reparte'+ j] !== '')) {
+                    totais[j - 1].reparte += parseInt(row.cell['reparte'+ j], 10);
+                    totais[j - 1].venda += parseInt(row.cell['venda'+ j], 10);
+                    
+                    venda += parseInt(row.cell['venda'+ j], 10);
+                    quantidade++;
+                }
+            }
+            if (venda > 0) {
+                row.cell.mediaVenda = (venda / quantidade).toFixed(0);
+            }
+            if ((typeof row.cell.juramento !== 'undefined') && (row.cell.juramento !== '')) {
+                totalJuramento += parseInt(row.cell.juramento, 10);
+            }
+            if ((typeof row.cell.mediaVenda !== 'undefined') && (row.cell.mediaVenda !== '')) {
+                totalMediaVenda += parseInt(row.cell.mediaVenda, 10);
+            }
+            if ((typeof row.cell.ultimoReparte !== 'undefined') && (row.cell.ultimoReparte !== '')) {
+                totalUltimoReparte += parseInt(row.cell.ultimoReparte, 10);
+            }
+            if (!isNaN(row.cell.reparteSugerido)) {
+                totalReparteSugerido += parseInt(row.cell.reparteSugerido, 10);
+            }
+            quantidade++;
+        });
+        $('#total_juramento').text(totalJuramento);
+        $('#total_media_venda').text(totalMediaVenda);
+        $('#total_ultimo_reparte').text(totalUltimoReparte);
+        $('#total_reparte_sugerido').text(totalReparteSugerido);
+        $('#total_de_cotas').text(resultado.rows.length);
+        for (var j = 1; j < 7; j++) {
+            $('#total_reparte'+ j).text(totais[j - 1].reparte);
+            $('#total_venda'+ j).text(totais[j - 1].venda);
+        }
+    },
+    
+    carregarEdicoesBaseEstudo : function(estudoId) {
+        var edicoesJaCarregadas = false;
+        for (var i = 0; i < 6; i++) {
+            if (typeof analiseParcialController.edicoesBase[i] !== 'undefined') {
+                edicoesJaCarregadas = true;
+                break;
+            }
+        }
+        if (!edicoesJaCarregadas) {
+            $.postJSON(analiseParcialController.path +'/distribuicao/analise/parcial/carregarEdicoesBaseEstudo',
+                    [{name: 'estudoId', value: estudoId}],
+                    function(resultado) {
+                        for (var i = 0; i < resultado.edicoesBase.length; i++) {
+                            // atualização dos números das edições
+                            if (typeof resultado.edicoesBase[i] !== 'undefined') {
+                                if (analiseParcialController.tipoExibicao === 'NORMAL') {
+                                    $('#edicao_base_'+ (i + 1)).html(resultado.edicoesBase[i].edicao);
+                                }
+                                analiseParcialController.edicoesBase[i] = {};
+                                analiseParcialController.edicoesBase[i].numeroEdicao  = resultado.edicoesBase[i].edicao;
+                                analiseParcialController.edicoesBase[i].nomeProduto   = resultado.edicoesBase[i].nomeProduto;
+                                analiseParcialController.edicoesBase[i].codigoProduto = resultado.edicoesBase[i].codigoProduto;
+                            }
+                        }
+                    });
+        }
+    },
+    
+    inputBlur : function(event, input) {
+        var numeroCota = $(input).attr('id').substr($(input).attr('id').lastIndexOf('_') + 1);
+        var reparteSubtraido = parseInt($(input).val(), 10) - parseInt($('#reparteSalvo_'+ numeroCota).val(), 10);
+        if (reparteSubtraido != 0) {
+            $('#saldo_reparte').html(parseInt($('#saldo_reparte').html(), 10) - reparteSubtraido);
+            $('#leg'+ numeroCota).html($('#leg'+ numeroCota).html() +'*');
+            $.ajax({url: analiseParcialController.path +'/distribuicao/analise/parcial/mudarReparte',
+                data: {'numeroCota': numeroCota, 'estudoId': $('#estudoId').html(), 'variacaoDoReparte': reparteSubtraido},
+                success: function() { $('#reparteSalvo_'+ numeroCota).val($(input).val()); },
+                error: function() {
+                    analiseParcialController.exibirMsg('WARNING', 'Erro ao enviar novo reparte!');
+                    $('#baseEstudoGridParcial').flexReload();
+                }
+            });
+        }
+    },
+
+    preProcessGrid : function(resultado) {
+        // atualização dos valores da grid
+        for (var i = 0; i < resultado.rows.length; i++) {
+            var repSug = resultado.rows[i].cell.reparteSugerido,
+                numCota = resultado.rows[i].cell.cota;
+            var input = analiseParcialController.inputReparteSugerido.toString().replace('#numeroCota', numCota);
+            input = input.replace('#value', repSug).replace('#numeroCota', numCota).replace('#value', repSug);
+            resultado.rows[i].cell.reparteSugerido = input;
+            
+            resultado.rows[i].cell.nome = analiseParcialController.linkNomeCota.
+            replace('#nomeCota', resultado.rows[i].cell.nome).replace('#numeroCota', resultado.rows[i].cell.cota);
+
+            if (typeof resultado.rows[i].cell.classificacao === 'undefined') {
+                resultado.rows[i].cell.classificacao = '';
+            }
+            if (typeof resultado.rows[i].cell.cotaNova == true) {
+                resultado.rows[i].cell.cotaNova = resultado.rows[i].cell.cotaNova +'*';
+            }
+            if (resultado.rows[i].cell.leg !== '') {
+                resultado.rows[i].cell.leg = '<span id="leg_"'+ numCota +'>'+ resultado.rows[i].cell.leg +'</span>';
+            }
+
+            for (var j = 0; j < 6; j++) {
+                if (typeof resultado.rows[i].cell.edicoesBase[j] !== 'undefined') {
+                    if (resultado.rows[i].cell.edicoesBase[j].reparte === 0) {
+                        resultado.rows[i].cell['reparte'+ (j + 1)] = '';
+                        resultado.rows[i].cell['venda'+ (j + 1)] = '';
+                    }
+                    resultado.rows[i].cell['reparte'+ (j + 1)] = resultado.rows[i].cell.edicoesBase[j].reparte;
+                    resultado.rows[i].cell['venda'+ (j + 1)] = resultado.rows[i].cell.edicoesBase[j].venda;
+                } else {
+                    resultado.rows[i].cell['reparte'+ (j + 1)] = '';
+                    resultado.rows[i].cell['venda'+ (j + 1)] = '';
+                }
+            }
+        }
+        analiseParcialController.somarTotais(resultado);
+        return resultado;
+    },
+
+    onSuccessReloadGrid : function() {
+        $('td[abbr^=venda]', $('#baseEstudoGridParcial')).each(function(i, el) {
+            $(el).css({'color': 'red', 'font-weight': 'bold'});
+        });
+        $('td[abbr^=ultimoReparte]', $('#baseEstudoGridParcial')).each(function(i, el) {
+            $(el).css({'font-weight': 'bold'});
+        });
+        $('td[abbr^=reparteSugerido]', $('#baseEstudoGridParcial')).each(function(i, el) {
+            $(el).css({'font-weight': 'bold'});
+        });
+    },
+
+    modeloNormal : function() {
+        return [{display: 'Cota',   name: 'cota',          width: 33,  sortable: true, align: 'left'},
+         {display: 'Class.', name: 'classificacao', width: 30,  sortable: true, align: 'center'},
+         {display: 'Nome',   name: 'nome',          width: 100, sortable: true, align: 'left'},
+         {display: 'NPDV',   name: 'npdv',          width: 30,  sortable: true, align: 'right'},
+         {display: 'Rep. Sugerido', name: 'reparteSugerido', width: 50, sortable: true, align: 'right'},
+         {display: 'LEG',    name: 'leg',           width: 20, sortable: true, align: 'center'},
+         {display: 'Juram.', name: 'juramento',     width: 40, sortable: true, align: 'right'},
+         {display: 'Cota Nova', name: 'cotaNova',   width: 40, sortable: true, align: 'right', hide: true},
+         {display: 'Média.VDA', name: 'mediaVenda', width: 50, sortable: true, align: 'right'}, 
+         {display: 'Último. Reparte', name: 'ultimoReparte', width: 50, sortable: true, align: 'right'},
+         {display: 'REP', name: 'reparte1',      width: 23, sortable: true, align: 'right'},
+         {display: 'VDA', name: 'venda1',        width: 23, sortable: true, align: 'right'},
+         {display: 'REP', name: 'reparte2',      width: 23, sortable: true, align: 'right'},
+         {display: 'VDA', name: 'venda2',        width: 23, sortable: true, align: 'right'},
+         {display: 'REP', name: 'reparte3',      width: 23, sortable: true, align: 'right'},
+         {display: 'VDA', name: 'venda3',        width: 23, sortable: true, align: 'right'},
+         {display: 'REP', name: 'reparte4',      width: 23, sortable: true, align: 'right'},
+         {display: 'VDA', name: 'venda4',        width: 23, sortable: true, align: 'right'},
+         {display: 'REP', name: 'reparte5',      width: 23, sortable: true, align: 'right'},
+         {display: 'VDA', name: 'venda5',        width: 23, sortable: true, align: 'right'},
+         {display: 'REP', name: 'reparte6',      width: 23, sortable: true, align: 'right'},
+         {display: 'VDA', name: 'venda6',        width: 23, sortable: true, align: 'right'}];
+    },
+    
+    modeloParcial : function() {
+        return [{display: 'Cota',   name: 'cota',          width: 33,  sortable: true, align: 'left'},
+         {display: 'Class.', name: 'classificacao', width: 30,  sortable: true, align: 'center'},
+         {display: 'Nome',   name: 'nome',          width: 100, sortable: true, align: 'left'},
+         {display: 'NPDV',   name: 'npdv',          width: 30,  sortable: true, align: 'right'},
+         {display: 'Rep. Sugerido', name: 'reparteSugerido', width: 50, sortable: true, align: 'right'},
+         {display: 'LEG',    name: 'leg',           width: 20, sortable: true, align: 'center'},
+         {display: 'Juram.', name: 'juramento',     width: 40, sortable: true, align: 'right'},
+         {display: 'Cota Nova', name: 'cotaNova',   width: 40, sortable: true, align: 'right', hide: true},
+         {display: 'Média.VDA', name: 'mediaVenda', width: 50, sortable: true, align: 'right'}, 
+         {display: 'Último. Reparte', name: 'ultimoReparte', width: 50, sortable: true, align: 'right'},
+         {display: 'REP', name: 'reparte1',      width: 40, sortable: true, align: 'right'},
+         {display: 'VDA', name: 'venda1',        width: 40, sortable: true, align: 'right'},
+         {display: 'REP', name: 'reparte2',      width: 40, sortable: true, align: 'right'},
+         {display: 'VDA', name: 'venda2',        width: 40, sortable: true, align: 'right'},
+         {display: 'REP', name: 'reparte3',      width: 40, sortable: true, align: 'right'},
+         {display: 'VDA', name: 'venda3',        width: 40, sortable: true, align: 'right'},
+         {display: 'REP', name: 'reparte4',      width: 40, sortable: true, align: 'right'},
+         {display: 'VDA', name: 'venda4',        width: 40, sortable: true, align: 'right'}];
+    },
+    
+    init : function(_id, _faixaDe, _faixaAte, _tipoExibicao){
+
+        analiseParcialController.tipoExibicao = _tipoExibicao;
+        analiseParcialController.inicializarDetalhes();
+        analiseParcialController.carregarEdicoesBaseEstudo(_id);
+
+        var parameters = [];
+        parameters.push({name: 'id', value: _id});
+        parameters.push({name: 'faixaDe', value: _faixaDe});
+        parameters.push({name: 'faixaAte', value: _faixaAte});
+        parameters.push({name: 'codigoProduto', value: $('#codigoProduto').val()});
+        parameters.push({name: 'numeroEdicao', value: $('#numeroEdicao').val()});
+        
+        console.log(histogramaPosEstudo_cotasRepMenorVenda);
+        if(histogramaPosEstudo_cotasRepMenorVenda){
+        	parameters.push({name: "numeroCotaStr", value: histogramaPosEstudo_cotasRepMenorVenda});
+        }
+        
+        var modelo = _tipoExibicao == 'NORMAL' ? analiseParcialController.modeloNormal() : analiseParcialController.modeloParcial();
+        $('#baseEstudoGridParcial').flexigrid({
+            preProcess : analiseParcialController.preProcessGrid,
+            url : analiseParcialController.path + '/distribuicao/analise/parcial/init',
+            params: parameters,
+            dataType : 'json',
+            colModel : modelo,
+            width: 950,
+            height: 200,
+            sortorder: 'desc',
+            sortname: 'reparteSugerido',
+            onSuccess: analiseParcialController.onSuccessReloadGrid
+        });
+
+        $('#liberar').click(function(event){
+            $.post('liberar', {'id': $('#estudoId').text()},function(){
+                analiseParcialController.exibirMsg('SUCCESS', ['Estudo liberado com sucesso!']);
+            });
+            event.preventDefault();
+        });
+
+        $('#cotasNaoSelec').flexigrid({
+            preProcess : analiseParcialController.preProcessGridNaoSelec,
+            url: analiseParcialController.path +'/distribuicao/analise/parcial/cotasQueNaoEntraramNoEstudo/filtrar',
+            dataType : 'json',
+            colModel : [{display: 'Cota',   name: 'numeroCota',       width: 40,  sortable: true, align: 'left'},
+                        {display: 'Nome',   name: 'nomeCota',       width: 160, sortable: true, align: 'left'},
+                        {display: 'Motivo', name: 'motivo',     width: 160, sortable: true, align: 'left'},
+                        {display: 'Qtde',   name: 'quantidade', width: 60,  sortable: true, align: 'center'}],
+            width : 490,
+            height : 200,
+            sortorder:'desc',
+            sortname:'cota'
+        });
+
+        analiseParcialController.cotasQueNaoEntraramNoEstudo();
+    },
+    
+    preProcessGridNaoSelec : function(resultado) {
+        $.each(resultado.rows, function(i, value) {
+            if (typeof value.cell.nomeCota === 'undefined') {
+                value.cell.nomeCota = '';
+            }
+            
+            value.cell.quantidade = '<input type="hidden" id="qtdeAnteriorCota'+ value.cell.numeroCota +'" value="'+ value.cell.quantidade +'"/>'+
+                '<input type="text" id="inputQuantidade'+ value.cell.numeroCota +'" style="width: 50px;" value="'+
+                value.cell.quantidade +'" onblur="analiseParcialController.atualizaQuantidadeTotal('+ value.cell.numeroCota +');" />';
+        });
+        return resultado;
+    },
+    
+    atualizaQuantidadeTotal : function(numeroCota) {
+        if (!isNaN($('#inputQuantidade'+ numeroCota).val())) {
+            var saldo = parseInt($('#saldoReparteNaoSelec').html(), 10);
+            saldo = saldo - parseInt($('#inputQuantidade'+ numeroCota).val(), 10) - parseInt($('#qtdeAnteriorCota'+ numeroCota).val(), 10);
+            $('#saldoReparteNaoSelec').html(saldo);
+        }
+    },
+    
+    cotasQueNaoEntraramNoEstudo : function() {
+        var filtrarCotasQueNaoEntraramNoEstudo = function() {
+            var cota = $("#cotasQueNaoEntraramNoEstudo_cota").val();
+            var nome = $("#cotasQueNaoEntraramNoEstudo_nome").val();
+            var motivo = $("#cotasQueNaoEntraramNoEstudo_motivo").val();
+            var elemento = $("#cotasQueNaoEntraramNoEstudo_elementos").val();
+            var estudo = $("#estudoId").val();
+
+            $("#cotasNaoSelec").flexOptions({
+                params:[{name: 'queryDTO.cota',     value: cota}, 
+                        {name: 'queryDTO.nome',     value: nome}, 
+                        {name: 'queryDTO.motivo',   value: motivo}, 
+                        {name: 'queryDTO.elemento', value: elemento}, 
+                        {name: 'queryDTO.estudo',   value: estudo}]
+            }).flexReload();
+        };
+        $("#cotasQueNaoEntraramNoEstudo_cota").blur(filtrarCotasQueNaoEntraramNoEstudo);
+        $("#cotasQueNaoEntraramNoEstudo_nome").blur(filtrarCotasQueNaoEntraramNoEstudo);
+        $("#cotasQueNaoEntraramNoEstudo_motivo").change(filtrarCotasQueNaoEntraramNoEstudo);
+        $("#cotasQueNaoEntraramNoEstudo_elementos").change(filtrarCotasQueNaoEntraramNoEstudo);
+    },
+    
+    verCapa : function() {
+        $("#dialog-detalhes").dialog({
+            resizable: false,
+            height:'auto',
+            width:'auto',
+            modal: false
+        });
+    },
+    
+    exibirCotasQueNaoEntraramNoEstudo : function() {
+        $('#saldoReparteNaoSelec').html($('#saldo_reparte').html());
+
+        $("#dialog-cotas-estudos").dialog({
+            resizable : false,
+            height : 530,
+            width : 550,
+            modal : true,
+            buttons : {
+                "Confirmar" : function() {
+                    $(this).dialog("close");
+                },
+                "Cancelar" : function() {
+                    $(this).dialog("close");
+                }
+            }
+        });
+        
+        analiseParcialController.cotasQueNaoEntraramNoEstudo();
+    },
+    
+    selecionarElementos : function(tipo, optionsId) {
+        $.getJSON(analiseParcialController.path +"/componentes/elementos", [{name: "tipo", value: tipo}, {name: "estudo", value: $("#estudoId").val()}], function(data) {
+            var options = $("#"+ optionsId);
+            options.empty();
+            options.append($("<option />").val('TODOS').text('Selecione...'));
+            $.each(data, function() {
+                if (this.tipo === 'bairro') {
+                    options.append($("<option />").val(this.tipo +"_"+ this.value).text(this.value));
+                } else {
+                    options.append($("<option />").val(this.tipo +"_"+ this.id).text(this.value));
+                }
+            });
+        });
+    },
+
+    apresentarOpcoesOrdenarPor : function(opcao) {
+        if (opcao === "selecione") {
+            $("#opcoesOrdenarPor").hide();
+        } else {
+            $(".label").hide();
+            $("#label_"+ opcao).show();
+            $("#opcoesOrdenarPor").show();
+        }
+    },
+
+    filtrarOrdenarPor : function(estudo) {
+        $("#baseEstudoGridParcial").flexOptions({
+            params: [{name:'filterSortName', value: $("#filtroOrdenarPor").val()},
+                     {name:'filterSortFrom', value: $("#ordenarPorDe").val()},
+                     {name:'filterSortTo',   value: $("#ordenarPorAte").val()},
+                     {name:'id',             value: estudo},
+                     {name:'elemento',       value: $("#elementos :selected").val()}]
+        }).flexReload();
+        if (event) {
+            event.preventDefault();
+        }
+        return false;
+    },
+
+    subirEdicaoBase : function(index) {
+        var temp = analiseParcialController.edicoesBase[index - 1];
+        analiseParcialController.edicoesBase[index - 1] = analiseParcialController.edicoesBase[index];
+        analiseParcialController.edicoesBase[index] = temp;
+        
+        $('#codigoProduto'+ (index - 1)).val(analiseParcialController.edicoesBase[index - 1].codigoProduto);
+        $('#nomeProduto'+ (index - 1)).val(analiseParcialController.edicoesBase[index - 1].nomeProduto);
+        $('#numeroEdicao'+ (index - 1)).val(analiseParcialController.edicoesBase[index - 1].numeroEdicao);
+        
+        $('#codigoProduto'+ index).val(analiseParcialController.edicoesBase[index].codigoProduto);
+        $('#nomeProduto'+ index).val(analiseParcialController.edicoesBase[index].nomeProduto);
+        $('#numeroEdicao'+ index).val(analiseParcialController.edicoesBase[index].numeroEdicao);
+    },
+
+    descerEdicaoBase : function(index) {
+        var temp = analiseParcialController.edicoesBase[index + 1];
+        analiseParcialController.edicoesBase[index + 1] = analiseParcialController.edicoesBase[index];
+        analiseParcialController.edicoesBase[index] = temp;
+        
+        $('#codigoProduto'+ (index + 1)).val(analiseParcialController.edicoesBase[index + 1].codigoProduto);
+        $('#nomeProduto'+ (index + 1)).val(analiseParcialController.edicoesBase[index + 1].nomeProduto);
+        $('#numeroEdicao'+ (index + 1)).val(analiseParcialController.edicoesBase[index + 1].numeroEdicao);
+        
+        $('#codigoProduto'+ index).val(analiseParcialController.edicoesBase[index].codigoProduto);
+        $('#nomeProduto'+ index).val(analiseParcialController.edicoesBase[index].nomeProduto);
+        $('#numeroEdicao'+ index).val(analiseParcialController.edicoesBase[index].numeroEdicao);
+    },
+    
+    filtrarCotasNaoSelec : function(estudo) {
+        analiseParcialController.cotasQueNaoEntraramNoEstudo();
+        if (event) {
+            event.preventDefault();
+        }
+        return false;
+    }
 });
-
-function cotasQueNaoEntraramNoEstudo(){
-	var filtrarCotasQueNaoEntraramNoEstudo = function(event){
-		console.log(1);
-		var cota = $("#cotasQueNaoEntraramNoEstudo_cota").val();
-		var nome = $("#cotasQueNaoEntraramNoEstudo_nome").val();
-		var motivo = $("#cotasQueNaoEntraramNoEstudo_motivo").val();
-		var elemento = $("#cotasQueNaoEntraramNoEstudo_elementos").val();
-		var estudo = $("#estudoId").val();
-		console.log(2);
-		
-		$(".cotasEstudoGrid").flexOptions({
-			params:[
-			        { 'name':'queryDTO.cota', 'value':cota, }, 
-			        { 'name':'queryDTO.nome', 'value':nome, }, 
-			        { 'name':'queryDTO.motivo', 'value':motivo, }, 
-			        { 'name':'queryDTO.elemento', 'value':elemento }, 
-			        { 'name':'queryDTO.estudo', 'value':estudo, }
-			       ]
-		}).flexReload();
-		console.log(3);
-	};
-	$("#cotasQueNaoEntraramNoEstudo_cota").blur(filtrarCotasQueNaoEntraramNoEstudo);
-	$("#cotasQueNaoEntraramNoEstudo_nome").blur(filtrarCotasQueNaoEntraramNoEstudo);
-	$("#cotasQueNaoEntraramNoEstudo_motivo").change(filtrarCotasQueNaoEntraramNoEstudo);
-	$("#cotasQueNaoEntraramNoEstudo_elementos").change(filtrarCotasQueNaoEntraramNoEstudo);
-	console.log(filtrarCotasQueNaoEntraramNoEstudo);
-	
-}
-
-function addDbClickSupport(){
-	$(arguments[0]).find(arguments[1]).dblclick(function(event){
-		var td = $(this);
-		var html = td.html();
-		var numeroCota = td.parent().find("td[abbr=cota]").text();
-		var estudoId = $("#estudoId").text();
-		var reparteAtual = td.text();
-		$(this).html("");
-		var input = $("<input>")
-			.attr("id","reparteAtual")
-			.val(reparteAtual)
-			.css("width","40px")
-			.keyup(function(e){
-				if(e.keyCode==27){
-					$(this).val(reparteAtual);
-					$(this).blur();
-				}
-			})
-			.keypress(function(e){
-					if(e.charCode==13){
-						$(this).blur();
-					}
-			})
-			.blur(function(){
-				if(input.val()!=reparteAtual){
-					console.log(input.val())
-					$.ajax({
-						url:"mudarReparte",
-						data:{'numeroCota':numeroCota,'estudoId':estudoId,'reparte':input.val()},
-						success:function(){
-							td.html(html);
-							td.find("div").text(input.val());
-						},
-						error:function(){
-							alert("Erro ao enviar novo reparte!");
-							$(".baseEstudo2Grid").flexReload();
-						}
-					});
-				}else{
-					td.html(html);
-					td.find("div").text(input.val());
-				}
-			});
-			input.appendTo(td);
-			input.focus();
-	});
-}
-function soma(idDest, abbr){
-	var totalSugerido=0;
-	$(abbr).each(function(i,value){
-		if (!isNaN(parseFloat(value.textContent))) {
-			totalSugerido += parseFloat(value.textContent);
-		}
-	});
-	
-	var vermelho = $(idDest).find(".vermelho");
-	if(vermelho.length == 0){
-		$(idDest).text(Math.round(totalSugerido));
-	}else{
-		vermelho.text(Math.round(totalSugerido));
-	}
-}
-
-function conta(idDest, abbr){
-	var total=0;
-	$(abbr).each(function(i,value){
-		total++;
-	});
-	$(idDest).text(total);
-}
-
-
 
 $(".cotasDetalhesGrid").flexigrid({
-	url : '${pageContext.request.contextPath}/xml/cotasDetalhes-xml.xml',
-	dataType : 'xml',
-	colModel : [ {
-		display : 'Código',
-		name : 'codigo',
-		width : 40,
-		sortable : true,
-		align : 'left'
-	}, {
-		display : 'Tipo',
-		name : 'tipo',
-		width : 90,
-		sortable : true,
-		align : 'left'
-	}, {
-		display : '% Fat.',
-		name : 'percFaturamento',
-		width : 30,
-		sortable : true,
-		align : 'right'
-	}, {
-		display : 'Princ.',
-		name : 'principal',
-		width : 30,
-		sortable : true,
-		align : 'center'
-	}, {
-		display : 'Endereço',
-		name : 'endereco',
-		width : 420,
-		sortable : true,
-		align : 'left'
-	}],
-	width : 690,
-	height : 200
+    url: analiseParcialController.path +'/distribuicao/analise/parcial/carregarDetalhesCota',
+    dataType : 'json',
+    colModel : [{display: 'Código',   name: 'id',                     width: 40,  sortable: true, align: 'left'},
+                {display: 'Tipo',     name: 'descricaoTipoPontoPDV',  width: 90,  sortable: true, align: 'left'},
+                {display: '% Fat.',   name: 'porcentagemFaturamento', width: 30,  sortable: true, align: 'right'},
+                {display: 'Princ.',   name: 'principal',              width: 30,  sortable: true, align: 'center'},
+                {display: 'Endereço', name: 'endereco',               width: 420, sortable: true, align: 'left'}],
+                width : 690,
+                height : 200
 });
 
-$(".prodCadastradosGrid").flexigrid({
-	url : '${pageContext.request.contextPath}/xml/prodCadastrados-xml.xml',
-	dataType : 'xml',
-	colModel : [ {
-		display : 'Código',
-		name : 'codigo',
-		width : 70,
-		sortable : true,
-		align : 'left'
-	}, {
-		display : 'Produto',
-		name : 'produto',
-		width : 180,
-		sortable : true,
-		align : 'left'
-	}, {
-		display : 'Edição',
-		name : 'edicao',
-		width : 70,
-		sortable : true,
-		align : 'left'
-	}, {
-		display : 'Ação',
-		name : 'acao',
-		width : 50,
-		sortable : true,
-		align : 'center'
-	}, {
-		display : 'Ordenar',
-		name : 'ordenar',
-		width : 40,
-		sortable : true,
-		align : 'left'
-	}],
-	width : 490,
-	height : 240
+$("#prodCadastradosGrid").flexigrid({
+    colModel : [{display: 'Código',  name: 'codigo',  width: 70,  sortable: true, align: 'left'},
+                {display: 'Produto', name: 'produto', width: 180, sortable: true, align: 'left'},
+                {display: 'Edição',  name: 'edicao',  width: 70,  sortable: true, align: 'left'},
+                {display: 'Ordenar', name: 'ordenar', width: 60,  sortable: true, align: 'left'}],
+                width : 490,
+                height : 225
 });
+
 $(".edicaoProdCadastradosGrid").flexigrid({
-	url : '${pageContext.request.contextPath}/xml/pesqEdicao-xml.xml',
-	dataType : 'xml',
-	colModel : [ {
-		display : 'Edição',
-		name : 'edicao',
-		width : 45,
-		sortable : true,
-		align : 'left'
-	}, {
-		display : 'Data Lançamento',
-		name : 'dtLancamento',
-		width : 100,
-		sortable : true,
-		align : 'center'
-	}, {
-		display : 'Reparte',
-		name : 'reparte',
-		width : 40,
-		sortable : true,
-		align : 'right'
-	}, {
-		display : 'Venda',
-		name : 'venda',
-		width : 40,
-		sortable : true,
-		align : 'right'
-	}, {
-		display : 'Status',
-		name : 'status',
-		width : 110,
-		sortable : true,
-		align : 'left'
-	}, {
-		display : 'Capa',
-		name : 'capa',
-		width : 30,
-		sortable : true,
-		align : 'center'
-	}, {
-		display : '',
-		name : 'sel',
-		width : 30,
-		sortable : true,
-		align : 'center'
-	}],
-	width : 500,
-	height : 200
+    colModel : [{display: 'Edição',      name: 'edicao',       width: 45,  sortable: true, align: 'left'},
+                {display: 'Data Lancto', name: 'dtLancamento', width: 100, sortable: true, align: 'center'},
+                {display: 'Reparte',     name: 'reparte',      width: 40,  sortable: true, align: 'right'},
+                {display: 'Venda',       name: 'venda',        width: 40,  sortable: true, align: 'right'},
+                {display: 'Status',      name: 'status',       width: 110, sortable: true, align: 'left'},
+                {display: 'Capa',        name: 'capa',         width: 30,  sortable: true, align: 'center'},
+                {display: '',            name: 'sel',          width: 30,  sortable: true, align: 'center'}],
+                width : 500,
+                height : 200
 });
-
-function popup_detalhes() {
-	$( "#dialog-detalhes" ).dialog({
-		resizable: false,
-		height:'auto',
-		width:'auto',
-		modal: false,
-	});
-};
-function popup_detalhes_close() {
-  $("#dialog-detalhes").dialog("close");
-}
 
 //@ sourceURL=analiseParcial.js

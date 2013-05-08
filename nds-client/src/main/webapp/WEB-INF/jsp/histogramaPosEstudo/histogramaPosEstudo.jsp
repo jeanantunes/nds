@@ -1,9 +1,12 @@
-
+<!-- histogramaPosEstudo -->
 <script type="text/javascript" src="scripts/flexGridService.js"></script>
 <script type="text/javascript" src="scripts/histogramaPosEstudo.js"></script>
 <script type="text/javascript">
+
+var histogramaPosEstudo_cotasRepMenorVenda="";
 $(function(){
 	histogramaPosEstudoController.init();
+	
 });
 </script>
 
@@ -26,7 +29,7 @@ $(function(){
 		<p>Confirma a exclusão do estudo?</p>
 </div>
 
-<div id="dialog-alterar-faixa" title="Consulta de Cotas do Histograma de Venda" style="display:none;">
+<div id="dialog-alterar-faixa" title="Consulta de Cotas" style="display:none;">
 <fieldset style="width:350px; margin-top:8px;">
   <legend>Alterar Faixa de Reparte</legend>
   <table class="faixasReparteGrid"></table>
@@ -40,7 +43,7 @@ $(function(){
     <div class="container">
     
        <fieldset class="classFieldset">
-   	    <legend> Histograma Pré-Análise</legend>
+   	    <legend> Histograma Pr&eacute;-An&aacute;lise</legend>
         <table width="950" border="0" cellpadding="2" cellspacing="1">
             <tr>
               <td width="45"><strong>Código:</strong></td>
@@ -60,7 +63,7 @@ $(function(){
               <td><strong>Período:</strong></td>
               <td><span id="periodoFs"></td>
               <td><strong>Liberado:</strong></td>
-              <td><img id="estudoLiberadoFs" width="16" height="16" alt="Liberado" /></td>
+              <td><img id="estudoLiberadoFs" width="16" height="16" alt="Liberado" src="images/ico_check.gif" style="display:none"/></td>
               <td>&nbsp;<input type="hidden" id="parcial" /></td>
               <td>&nbsp;</td>
               <td>&nbsp;</td>
@@ -95,7 +98,7 @@ $(function(){
 				          <!-- <span class="bt_novos"><a href="javascript:;"><img src="images/ico_negociar.png" alt="Reabrir" hspace="5" border="0" />Reabrir</a></span>-->
 				          <span class="bt_novos"><a href="javascript:;" id="baseEstudo"><img src="images/ico_estudo_complementar.gif" alt="Divergências" hspace="5" border="0" />Base de estudo</a></span>
 				          <span class="bt_novos"><a href="javascript:;" id="excluirEstudo"><img src="images/ico_excluir.gif" alt="Excluir Estudo" hspace="5" border="0" />Excluir Estudo</a></span>
-				          <span class="bt_novos"><a href="javascript:;" id="botaoVoltarMatrizDistribuicao"><img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span><br clear="all" />
+				          <span class="bt_novos"><a href="javascript:;" onclick="$('#AnaliseEstudoMainContent,#histogramaPosEstudoContent').toggle();" id="botaoVoltarMatrizDistribuicao"><img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span><br clear="all" />
 				
 				        </td>
 				        <td width="116" style="border-bottom:1px solid #ccc;">Reparte Total:</td>
@@ -127,7 +130,7 @@ $(function(){
 				    <td style="border-bottom:1px solid #ccc;" id="fieldSetResumoAbrangenciaEstudo"></td>
 				    </tr>
 				  <tr>
-				    <td height="19" style="border-bottom:1px solid #ccc;">Reparte Distribuida:</td>
+				    <td height="19" style="border-bottom:1px solid #ccc;">Reparte Distribuido:</td>
 				    <td style="border-bottom:1px solid #ccc;" id="fieldSetResumoReparteDistribuida"></td>
 				    <td style="border-bottom:1px solid #ccc;">Rep. Médio Cota:</td>
 				    <td style="border-bottom:1px solid #ccc;" id="fieldSetResumoReparteMedioCota"></td>

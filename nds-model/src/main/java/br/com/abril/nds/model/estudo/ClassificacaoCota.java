@@ -58,11 +58,11 @@ public enum ClassificacaoCota {
 	/**
 	 * SH
 	 */
-	BancaComReparteZeroMinimoZeroCotaAntiga("SH"),
+	BancaSemHistorico("SH"),
 	/**
 	 * VZ
 	 */
-	BancaComTotalVendaZeraMinimoZeroCotaAntiga("VZ"),
+	BancaComVendaZero("VZ"),
 	/**
 	 * MX
 	 */
@@ -78,8 +78,7 @@ public enum ClassificacaoCota {
 	/**
 	 * ZZ
 	 */
-	SemClassificacao("ZZ");
-	// valor utilizado apenas para evitar problemas com "null" na classificação das cotas
+	SemClassificacao("");
 	
 	private String codigo;
 	

@@ -9,11 +9,13 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
-import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.dto.filtro.FiltroDistribuicaoDTO;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
+import br.com.abril.nds.repository.DistribuicaoRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.ItemNotaEnvioRepository;
@@ -38,6 +40,8 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 	@Autowired
 	private ItemNotaEnvioRepository itemNotaEnvioRepository;
 	
+	@Autowired
+	private DistribuicaoRepository distribuicaoRepository;
 	/**
 	 * Construtor.
 	 */
@@ -124,11 +128,14 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		sql.append("   qtdReparteMinimoSugerido, ");
 		sql.append("   abrangenciaSugerida, ");
 		sql.append("   qtdReparteMinimoEstudo, ");
+		sql.append("   qtdRepartePromocional, ");
+		
 		sql.append("   ( qtdCotasRecebemReparte / qtdCotasAtivas ) * 100 as abrangenciaEstudo, ");
 		sql.append("   ( qtdCotasQueVenderam  / qtdCotasRecebemReparte ) * 100 as abrangenciaDeVenda ");
 		sql.append("   FROM ");
 		sql.append("   ( ");
 		sql.append("     select ");
+		sql.append("       (select REPARTE_PROMOCIONAL from estudo inner join lancamento on estudo.lancamento_id = lancamento.id where estudo.id = :estudoId ) AS qtdRepartePromocional, ");
 		sql.append("       (select count(id) from cota where SITUACAO_CADASTRO = 'ATIVO') AS qtdCotasAtivas, ");
 		sql.append("       (select count(estudo_cota.cota_id) from estudo_cota"); 
 		sql.append("        	inner join movimento_estoque_cota ON movimento_estoque_cota.ESTUDO_COTA_ID = estudo_cota.ID ");
@@ -149,7 +156,17 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ResumoEstudoHistogramaPosAnaliseDTO.class));
 
-		return (ResumoEstudoHistogramaPosAnaliseDTO) query.uniqueResult();
+		
+		FiltroDistribuicaoDTO filtro = new FiltroDistribuicaoDTO();
+		filtro.setEstudoId(estudoId);
+		List<ProdutoDistribuicaoVO> obterMatrizDistribuicao = this.distribuicaoRepository.obterMatrizDistribuicao(filtro);
+		
+		ResumoEstudoHistogramaPosAnaliseDTO uniqueResult = (ResumoEstudoHistogramaPosAnaliseDTO) query.uniqueResult();
+		
+		uniqueResult.setQtdRepartePromocional(obterMatrizDistribuicao.get(0).getPromo());
+		uniqueResult.setReparteDistribuido(obterMatrizDistribuicao.get(0).getReparte().subtract(obterMatrizDistribuicao.get(0).getPromo()));
+		
+		return uniqueResult;
 	}
 	
 	

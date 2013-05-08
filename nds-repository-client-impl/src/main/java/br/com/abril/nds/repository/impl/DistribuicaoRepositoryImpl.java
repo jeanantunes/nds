@@ -40,7 +40,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" estoqueProdJuram.QTDE as juram,")
 		.append(" estoqueProd.QTDE_SUPLEMENTAR as suplem,")
 		.append(" lanc.REPARTE_PROMOCIONAL as promo,")
-		.append(" lanc.DATA_LCTO_DISTRIBUIDOR as dataLanctoSemFormatacao,")
+		.append(" lanc.DATA_LCTO_PREVISTA as dataLanctoSemFormatacao,")
 		.append(" case estudo.liberado when 1 then 'LIBERADO'")
 		.append(" else ''")
 		.append(" end as liberado,")
@@ -52,8 +52,10 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" join produto_edicao prodEdic on prodEdic.PRODUTO_ID = prod.ID")
 		.append(" left join estoque_produto estoqueProd on estoqueProd.PRODUTO_EDICAO_ID = prodEdic.ID ")
 		.append(" left join estoque_produto_cota_juramentado estoqueProdJuram on estoqueProdJuram.PRODUTO_EDICAO_ID = prodEdic.ID ")
+		
 		.append(" join lancamento lanc on lanc.PRODUTO_EDICAO_ID = prodEdic.ID")
 		.append(" left join estudo estudo on lanc.ID = estudo.LANCAMENTO_ID and estudo.produto_edicao_id = prodEdic.id ")
+			
 		.append(" left join tipo_classificacao_produto tpClassProd on prod.TIPO_CLASSIFICACAO_PRODUTO_ID = tpClassProd.ID")
 		.append(" join produto_fornecedor prodForn on prodForn.PRODUTO_ID = prod.ID")
 		.append(" join fornecedor forn on forn.ID = prodForn.fornecedores_ID")
@@ -62,8 +64,15 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" and prodEdic.ATIVO = true")
 		.append(" and lanc.status = 'BALANCEADO'")
 		.append(" and forn.SITUACAO_CADASTRO = 'ATIVO'")
-		.append(" and lanc.EXPEDICAO_ID is null")
-	 	.append(" and lanc.DATA_LCTO_PREVISTA = :dataLanctoPrev");
+		.append(" and lanc.EXPEDICAO_ID is null");
+		
+	 
+	 	if(filtro.getEstudoId()!=null){
+	 		sql.append(" and estudo.id = :estudoId");
+	 	}
+		if(filtro.getData()!=null){
+			sql.append(" and lanc.DATA_LCTO_PREVISTA = :dataLanctoPrev");
+		}
 		
 	 	if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()) {
 	 		sql.append(" and forn.id in (:idFornecedores)");
@@ -73,7 +82,14 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 	 	
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		
-		query.setParameter("dataLanctoPrev", new java.sql.Date(filtro.getData().getTime()));
+		
+		if(filtro.getEstudoId()!=null){
+			query.setParameter("estudoId",filtro.getEstudoId());
+	 	}
+		
+		if(filtro.getData()!=null){
+			query.setParameter("dataLanctoPrev", new java.sql.Date(filtro.getData().getTime()));
+		}
 		
 		if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()) {
 			
@@ -98,8 +114,8 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" prod.CODIGO as codigoProduto,")
 		.append(" prod.NOME as nomeProduto,")
 		.append(" prodEdic.NUMERO_EDICAO as numeroEdicao,")
-		.append(" lanc.DATA_LCTO_DISTRIBUIDOR as dataLanctoSemFormatacao,")
-		.append(" prodEdic.REPARTE_DISTRIBUIDO as reparte,")
+		.append(" lanc.DATA_LCTO_PREVISTA as dataLanctoSemFormatacao,")
+		.append(" estudo.QTDE_REPARTE as reparte,")
 		.append(" tpClassProd.DESCRICAO as classificacao")
 		.append(" from produto prod")
 		.append(" join produto_edicao prodEdic on prodEdic.PRODUTO_ID = prod.ID")
@@ -116,10 +132,8 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		query.setParameter("idEstudo", idEstudo);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoDistribuicaoVO.class));
-		
-		ProdutoDistribuicaoVO result = (ProdutoDistribuicaoVO)query.uniqueResult();
-		
-		return result;
+
+        return (ProdutoDistribuicaoVO)query.uniqueResult();
 	}
 
 	@Override
@@ -140,7 +154,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 			.append(" estoqueProdJuram.QTDE as juram,")
 			.append(" estoqueProd.QTDE_SUPLEMENTAR as suplem,")
 			.append(" lanc.REPARTE_PROMOCIONAL as promo,")
-			.append(" lanc.DATA_LCTO_DISTRIBUIDOR as dataLanctoSemFormatacao,")
+			.append(" lanc.DATA_LCTO_PREVISTA as dataLanctoSemFormatacao,")
 			.append(" case estudo.liberado when 1 then 'LIBERADO'")
 			.append(" else ''")
 			.append(" end as liberado,")

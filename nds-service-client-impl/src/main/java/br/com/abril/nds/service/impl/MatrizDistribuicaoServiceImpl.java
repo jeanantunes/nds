@@ -476,17 +476,10 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		if (!cotas.isEmpty()) {
 			estudo = criarCopiaDeEstudo(vo, estudo);
 		}
-		
-		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorIdLancamento(vo.getIdLancamento());
-		
-		if (produtoEdicao == null) {
+		else {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possivel efetuar a copia.");
 		}
-		
-		estudo.setProdutoEdicao(produtoEdicao);
-		estudoRepository.alterar(estudo);
-		
 		
 		return estudo.getId();
 	}
@@ -540,15 +533,19 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 			mapClassifiqReparte.put(key, reparte);
 		}
 		
+
 		return mapClassifiqReparte;
 	}
 	
-	private Estudo obterCopiaDeEstudo(Estudo estudo) {
+	private Estudo obterCopiaDeEstudo(Estudo estudo, Lancamento lancamento) {
 		
 		Estudo estudoCopia = (Estudo)SerializationUtils.clone(estudo);
 		estudoCopia.setId(null);
 		estudoCopia.setDataAlteracao(new Date());
 		estudoCopia.setEstudoCotas(new HashSet<EstudoCota>());
+		estudoCopia.setProdutoEdicao(lancamento.getProdutoEdicao());
+		estudoCopia.setDataLancamento(lancamento.getDataLancamentoPrevista());
+		estudoCopia.setLancamentoID(lancamento.getId());
 		
 		Long id = estudoRepository.adicionar(estudoCopia);
 		estudoCopia = estudoRepository.buscarPorId(id);
@@ -558,7 +555,9 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	
 	private Estudo criarCopiaDeEstudo(CopiaProporcionalDeDistribuicaoVO vo, Estudo estudo) {
 		
-		Estudo estudoCopia = obterCopiaDeEstudo(estudo);
+		Lancamento lancamento = lancamentoRepository.buscarPorId(vo.getIdLancamento());
+		
+		Estudo estudoCopia = obterCopiaDeEstudo(estudo, lancamento);
 		
 		Set<EstudoCota> set = estudo.getEstudoCotas();
 		List<EstudoCota> cotas = obterListEstudoCotas(set);
@@ -587,7 +586,15 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 			
 			repCalculado = cota.getReparte();
 			
-			if (vo.isFixacao()) {
+			if (vo.isFixacao() && (mapReparte.get("FX") != null || mapReparte.get("MM") != null)) {
+				
+				if (mapReparte.get("FX") == null) {
+					mapReparte.put("FX", BigInteger.ZERO);
+				}
+				
+				if (mapReparte.get("MM") == null) {
+					mapReparte.put("MM", BigInteger.ZERO);
+				}
 				
 				totalFixacao = mapReparte.get("FX").add(mapReparte.get("MM"));
 				
@@ -618,6 +625,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 			cota.setId(null);
 			cota.setEstudo(estudoCopia);
 			estudoCotaRepository.adicionar(cota);
+			
 		}
 		
 		BigInteger totalSoma = obterSomaReparteFinal(mapReparte, false, TipoClassificacaoEstudoCota.FX, TipoClassificacaoEstudoCota.MM);
@@ -739,7 +747,10 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	@Override
 	@Transactional(readOnly = true)
 	public ProdutoDistribuicaoVO obterMatrizDistribuicaoPorEstudo(BigInteger id) {
-		return this.distribuicaoRepository.obterMatrizDistribuicaoPorEstudo(id);
+		
+		ProdutoDistribuicaoVO obterMatrizDistribuicaoPorEstudo = this.distribuicaoRepository.obterMatrizDistribuicaoPorEstudo(id);
+		return obterMatrizDistribuicaoPorEstudo;
+		
 	}
 
 	

@@ -221,13 +221,13 @@
 </div>
 
 	<!-- DIALOG EXCLUSAO TODOS REGISTROS-->	
-	<div id="dialog-excluirTodos" title="Excluir FixaÃ§Ã£o" style="display:none;">
+	<div id="dialog-excluirTodos" title="Excluir Mix" style="display:none;">
 	<p>Confirma a exclus&atilde;o de todos os registros?</p>
 	</div>
 	
 	<!-- DIALOG EXCLUSAO -->	
-	<div id="dialog-excluir" title="Excluir FixaÃ§Ã£o" style="display:none;">
-	<p>Confirma a exclus&atilde;o desta Fixa&ccedil;&atilde;o?</p>
+	<div id="dialog-excluir" title="Excluir Mix" style="display:none;">
+	<p>Confirma a exclus&atilde;o deste Mix?</p>
 	</div>
 	
 	<!-- DIALOG REPARTE -->	
@@ -253,7 +253,7 @@
            		<td><input id="produtoModal" type="text"  style="width:80px;" class="target"></td>
            		<td><input type="text"  style="width:80px;" maxlength="5"></td>
            		<td><input type="text"  style="width:80px;" maxlength="5"></td>
-           		<td><input type="image" src="images/ico_excluir.gif" onclick="$(this).parent().parent().remove();mixCotaProdutoController.definirIdInput();" style="display:none"/></td>
+           		<td><input type="image" id="excluirLinha0" src="images/ico_excluir.gif" onclick="mixCotaProdutoController.excluirLinha($(this));" /></td>
    			</tr>
    			</tbody>
         </table>
@@ -277,7 +277,7 @@
            		<td><input id="cotaModal" type="text"  style="width:80px;" class="target"></td>
            		<td><input type="text" max="5" style="width:80px;"></td>
            		<td><input type="text" max="5" style="width:80px;"></td>
-           		<td><input type="image" src="images/ico_excluir.gif" onclick="$(this).parent().parent().remove();mixCotaProdutoController.definirIdInputProduto();" style="display:none"/></td>
+           		<td><input type="image" src="images/ico_excluir.gif" onclick="mixCotaProdutoController.excluirLinha($(this));" /></td>
    			</tr>
    			</tbody>
         </table>

@@ -22,42 +22,37 @@ import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 @Component
 public class VendaCrescente {
 
-	protected void executar(CotaEstudo cota) {
+    protected void executar(CotaEstudo cota) {
 
-		BigDecimal indiceVendaCrescente = BigDecimal.ONE;
+	BigDecimal indiceVendaCrescente = BigDecimal.ONE;
+	List<ProdutoEdicaoEstudo> listProdutoEdicao = cota.getEdicoesRecebidas();
+	List<Boolean> listDivBoolean = new ArrayList<Boolean>();
+	if (listProdutoEdicao != null && listProdutoEdicao.size() >= 4) {
 
-		List<ProdutoEdicaoEstudo> listProdutoEdicao = cota.getEdicoesRecebidas();
+	    int iProdutoEdicao = 0;
+	    while (iProdutoEdicao < listProdutoEdicao.size()) {
+		ProdutoEdicaoEstudo produtoEdicao = listProdutoEdicao.get(iProdutoEdicao);
+		ProdutoEdicaoEstudo previousProdutoEdicao = null;
+		if (iProdutoEdicao > 0) {
+		    previousProdutoEdicao = listProdutoEdicao.get(iProdutoEdicao - 1);
 
-		List<Boolean> listDivBoolean = new ArrayList<Boolean>();
-
-		if (listProdutoEdicao != null && listProdutoEdicao.size() >= 4) {
-
-			int iProdutoEdicao = 0;
-			while (iProdutoEdicao < listProdutoEdicao.size()) {
-
-				ProdutoEdicaoEstudo produtoEdicao = listProdutoEdicao.get(iProdutoEdicao);
-				ProdutoEdicaoEstudo previousProdutoEdicao = null;
-
-				if (iProdutoEdicao > 0) {
-
-					previousProdutoEdicao = listProdutoEdicao.get(iProdutoEdicao - 1);
-
-					if (previousProdutoEdicao.getProduto().getId().equals(produtoEdicao.getProduto().getId()) && !previousProdutoEdicao.isEdicaoAberta()
-							&& !produtoEdicao.isEdicaoAberta()) {
-						if (previousProdutoEdicao.getVenda().compareTo(BigDecimal.ZERO) == 1) {
-							BigDecimal divVendaEdicao = produtoEdicao.getVenda().divide(previousProdutoEdicao.getVenda(), 15, BigDecimal.ROUND_FLOOR);
-							Boolean boo = divVendaEdicao.compareTo(BigDecimal.ONE) == 1;
-							listDivBoolean.add(boo);
-						}
-					}
-				}
-				iProdutoEdicao++;
+		    if (previousProdutoEdicao.getProduto().getId().equals(produtoEdicao.getProduto().getId()) && !previousProdutoEdicao.isEdicaoAberta()
+			    && !produtoEdicao.isEdicaoAberta()) {
+			if (previousProdutoEdicao.getVenda().compareTo(BigDecimal.ZERO) == 1) {
+			    BigDecimal divVendaEdicao = produtoEdicao.getVenda().divide(previousProdutoEdicao.getVenda(), 4, BigDecimal.ROUND_FLOOR);
+			    previousProdutoEdicao.setDivisaoVendaCrescente(divVendaEdicao);
+			    Boolean boo = divVendaEdicao.compareTo(BigDecimal.ONE) == 1;
+			    listDivBoolean.add(boo);
 			}
-
-			if (!listDivBoolean.isEmpty() && !listDivBoolean.contains(Boolean.FALSE)) {
-				indiceVendaCrescente = indiceVendaCrescente.add(new BigDecimal(0.1).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR));
-			}
+		    }
 		}
-		cota.setIndiceVendaCrescente(indiceVendaCrescente);
+		iProdutoEdicao++;
+	    }
+
+	    if (!listDivBoolean.isEmpty() && !listDivBoolean.contains(Boolean.FALSE)) {
+		indiceVendaCrescente = indiceVendaCrescente.add(new BigDecimal(0.1).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR));
+	    }
 	}
+	cota.setIndiceVendaCrescente(indiceVendaCrescente);
+    }
 }

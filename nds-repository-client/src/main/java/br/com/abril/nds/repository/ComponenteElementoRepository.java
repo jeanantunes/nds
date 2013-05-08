@@ -6,20 +6,20 @@ import br.com.abril.nds.dto.ComponenteElementoDTO;
 
 public interface ComponenteElementoRepository {
 
-	List<ComponenteElementoDTO> buscaTiposDePontoDeVena();
+	List<ComponenteElementoDTO> buscaTiposDePontoDeVena(Long estudo);
 
-	List<ComponenteElementoDTO> buscaGeradorDeFluxo();
+	List<ComponenteElementoDTO> buscaGeradorDeFluxo(Long estudo);
 
-	List<ComponenteElementoDTO> buscaBairros();
+	List<ComponenteElementoDTO> buscaBairros(Long estudo);
 
-	List<ComponenteElementoDTO> buscaRegioes();
+	List<ComponenteElementoDTO> buscaRegioes(Long estudo);
 
 	List<ComponenteElementoDTO> buscaCotasAVista();
 
 	List<ComponenteElementoDTO> buscaCotasNovas();
 
-	List<ComponenteElementoDTO> buscaAreaDeInfluencia();
+	List<ComponenteElementoDTO> buscaAreaDeInfluencia(Long estudo);
 
-	List<ComponenteElementoDTO> buscaDistritos();
+	List<ComponenteElementoDTO> buscaDistritos(Long estudo);
 
 }

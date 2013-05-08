@@ -228,6 +228,14 @@
 							return result;
 						}
 
+						if (result.rows.length === 0) {
+							$('#porClassificacaoGerarXLS').hide();
+							$('#porClassificacaoGerarPDF').hide();
+						}else {
+							$('#porClassificacaoGerarXLS').show();
+							$('#porClassificacaoGerarPDF').show();
+						}
+						
 						$.each(result.rows, function(index, row) {
 							var link = '<a href="javascript:;" onclick="classificacaoNaoRecebidaController.excluirCotaDaClassificacaoNaoRecebida('+row.cell.idClassificacaoNaoRecebida+');" style="cursor:pointer">' +
 					   	 				   '<img title="Excluir Classificação" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
@@ -312,7 +320,7 @@
 
 							return result;
 						}
-
+						
 						$.each(result.rows, function(index, row) {
 							
 							var checkBox = '<input type="checkbox" name="cotaQueRecebeClassificacao" value="' + row.cell.numeroCota + '" />';
@@ -370,6 +378,14 @@
 							return result;
 						}
 
+						if (result.rows.length === 0) {
+							$('#porCotaGerarXLS').hide();
+							$('#porCotaGerarPDF').hide();
+						}else {
+							$('#porCotaGerarXLS').show();
+							$('#porCotaGerarPDF').show();
+						}
+						
 						$.each(result.rows, function(index, row) {
 							
 							var link = '<a href="javascript:;" onclick="classificacaoNaoRecebidaController.excluirClassificacaoNaoRecebidaDaCota('+row.cell.idClassificacaoNaoRecebida+');" style="cursor:pointer">' +

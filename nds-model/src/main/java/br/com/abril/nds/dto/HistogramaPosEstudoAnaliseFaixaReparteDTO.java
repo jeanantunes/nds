@@ -37,8 +37,10 @@ public class HistogramaPosEstudoAnaliseFaixaReparteDTO {
 	private String qtdCotasFormatado = "0";
 
 	// Rep Menor Vda (nome da coluna no grid)
-	private BigDecimal qtdCotaPossuemReparteMenorVenda;
+	private BigInteger qtdCotaPossuemReparteMenorVenda;
 	private String qtdCotaPossuemReparteMenorVendaFormatado = "0";
+	
+	private String numeroCotasStr = "";
 
 	public String getReparteTotalFormatado() {
 		return reparteTotalFormatado;
@@ -132,9 +134,19 @@ public class HistogramaPosEstudoAnaliseFaixaReparteDTO {
 		this.qtdCotasFormatado = String.valueOf(this.qtdCotas.intValue());
 	}
 
-	public void setQtdCotaPossuemReparteMenorVenda(BigDecimal qtdCotaPossuemReparteMenorVenda) {
-		this.qtdCotaPossuemReparteMenorVenda = qtdCotaPossuemReparteMenorVenda != null ? qtdCotaPossuemReparteMenorVenda : BigDecimal.ZERO;
+	public void setQtdCotaPossuemReparteMenorVenda(BigInteger qtdCotaPossuemReparteMenorVenda) {
+		this.qtdCotaPossuemReparteMenorVenda = qtdCotaPossuemReparteMenorVenda != null ? qtdCotaPossuemReparteMenorVenda : BigInteger.ZERO;
 		this.qtdCotaPossuemReparteMenorVendaFormatado = String.valueOf(this.qtdCotaPossuemReparteMenorVenda.intValue());
 	}
 
+	public String getNumeroCotasStr() {
+		return numeroCotasStr;
+	}
+
+	public void setNumeroCotasStr(String numeroCotasStr) {
+		this.numeroCotasStr = numeroCotasStr;
+	}
+
+	
+	
 }

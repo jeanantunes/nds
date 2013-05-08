@@ -38,6 +38,7 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		hql.append(" WHEN lancamento.status = :RECOLHIDO OR lancamento.status = :EXPEDIDO THEN lancamento.status ");
 		hql.append(" ELSE null ");
 		hql.append(" END AS statusRecolhiOuExpedido, ");
+		hql.append(" prodEdicao.parcial as permiteParcial, ");
 		hql.append(" estudo.liberado AS statusLiberadoOuGerado ");
 		
 		hql.append(" FROM Estudo estudo, Lancamento lancamento");

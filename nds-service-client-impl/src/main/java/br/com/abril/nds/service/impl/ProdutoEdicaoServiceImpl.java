@@ -1054,13 +1054,15 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		for (int i = 0; i < newFaixasVenda.length; i++) {
 			String[] faixa = newFaixasVenda[i].split("-");
 			AnaliseHistogramaDTO obj = produtoEdicaoRepository.obterBaseEstudoHistogramaPorFaixaVenda(filtro, codigoProduto, Integer.parseInt(faixa[0]), Integer.parseInt(faixa[1]), edicoes);
-			obj.executeScaleValues();
+			obj.executeScaleValues(edicoes.length);
+			
+			
+			
 			
 			if (i == newFaixasVenda.length - 1) {
 				obj.setFaixaVenda("Total:");
 				
-				obj.setReparteDistribuido(this.movimentoEstoqueService.obterReparteDistribuidoProduto(codigoProduto));
-				obj.setQtdeTotalCotasAtivas((cotaRepository.obterQuantidadeCotas(SituacaoCadastro.ATIVO)));
+				obj.setQtdeTotalCotasAtivas(cotaRepository.obterQuantidadeCotas(SituacaoCadastro.ATIVO));
 				obj.setReparteDistribuido(this.movimentoEstoqueService.obterReparteDistribuidoProduto(codigoProduto));
 			}
 			

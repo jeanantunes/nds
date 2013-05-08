@@ -31,8 +31,9 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		sql.append("	   SUM(RECEBIDO) qtdRecebida, ");
 		sql.append("	   SUM(VENDA) / SUM(REPARTE) vendaPercent, ");
 		sql.append("	   (SUM(REPARTE) - SUM(VENDA)) / COUNT(*) encalheMedio, ");
-		sql.append("       SUM(IS_REPARTE_MENOR_VENDA) qtdCotaPossuemReparteMenorVenda, ");
-		sql.append("       (SUM(REPARTE) / (SELECT REPARTE_DISTRIBUIR FROM ESTUDO WHERE ID = :ESTUDO_ID) * 100) participacaoReparte ");
+		sql.append("       COUNT(IS_REPARTE_MENOR_VENDA) qtdCotaPossuemReparteMenorVenda,  ");
+		sql.append("       (SUM(REPARTE) / (SELECT REPARTE_DISTRIBUIR FROM ESTUDO WHERE ID = :ESTUDO_ID) * 100) participacaoReparte, ");
+		sql.append("  		group_concat(IS_REPARTE_MENOR_VENDA) numeroCotasStr ");
 		sql.append("  FROM (SELECT REP.ID, ");
 		sql.append("               REP.NUMERO_COTA, ");
 		sql.append("               REP.REPARTE, ");
@@ -41,7 +42,7 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		sql.append("               EST.VENDA_MEDIA, ");
 		sql.append("               (EST.RECEBIDO / REP.REPARTE) PARTICIPACAO_REPARTE, ");
 		sql.append("               EST.QTDE_EDICOES, ");
-		sql.append("               (CASE WHEN REP.REPARTE < EST.VENDA THEN 1 ELSE 0 END) IS_REPARTE_MENOR_VENDA ");
+		sql.append("               (CASE WHEN REP.REPARTE < EST.VENDA THEN REP.NUMERO_COTA ELSE NULL END) IS_REPARTE_MENOR_VENDA ");
 		sql.append("          FROM (SELECT C.ID, ");
 		sql.append("                       C.NUMERO_COTA, ");
 		sql.append("                       EC.REPARTE ");

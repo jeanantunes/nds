@@ -694,6 +694,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 
 		Query query = getSession().createQuery(hql.toString());
 
+		
+		if (filtro.getCotaId() != null) {
+			query.setParameter("cotaId", filtro.getCotaId());
+		}
+		
 		if (filtro.getNumeroCota() != null) {
 			query.setParameter("numeroCota", filtro.getNumeroCota());
 		}
@@ -850,7 +855,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		} else {
 
 			hql.append(
-					"SELECT cota.id as idCota, cota.numeroCota as numeroCota, ")
+					" SELECT cota.id as idCota, cota.numeroCota as numeroCota, cota.parametroDistribuicao.recebeComplementar as recebeComplementar, cota.tipoDistribuicaoCota as tipoDistribuicaoCota, ")
 					.append(" case when (pessoa.nome is not null) then ( pessoa.nome )")
 					.append(" when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial )")
 					.append(" else null end as nomePessoa, ")
@@ -875,7 +880,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 
 		
 		
-		if(	filtro.getNumeroCota() != null ||
+		if(	filtro.getCotaId() != null || filtro.getNumeroCota() != null ||
 			(filtro.getNumeroCpfCnpj() != null && !filtro.getNumeroCpfCnpj().trim().isEmpty()) ||
 			(filtro.getNomeCota() != null && !filtro.getNomeCota().trim().isEmpty()) ||
 			(filtro.getLogradouro() != null && !filtro.getLogradouro().trim().isEmpty()) ||
@@ -889,12 +894,23 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		boolean indAnd = false;
 
+		if (filtro.getCotaId() != null) {
+			
+			hql.append(" cota.id = :cotaId ");
+			
+			indAnd = true;
+		}
+		
 		if (filtro.getNumeroCota() != null) {
+			if(indAnd) {
+				hql.append(" AND ");
+			}
 			
 			hql.append(" cota.numeroCota =:numeroCota ");
 			
 			indAnd = true;
 		}
+
 
 		if (filtro.getNumeroCpfCnpj() != null
 				&& !filtro.getNumeroCpfCnpj().trim().isEmpty()) {
@@ -2618,7 +2634,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas) {
+	public List<AnaliseHistoricoDTO> buscarCotasComHistoricoDeVenda(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas) {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		
 		StringBuilder hql = new StringBuilder();
@@ -2627,21 +2643,16 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		hql.append(" cota.numeroCota as numeroCota, ");
 		hql.append(" cota.situacaoCadastro as statusCota, ");
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomePessoa, ");
-		hql.append(" count(DISTINCT pdvs) as qtdPdv, ");
-		hql.append(" avg(movimentos.qtde) as reparteMedio, ");
-		hql.append(" avg(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) as vendaMedia ");
+		hql.append(" count(DISTINCT pdvs) as qtdPdv ");
 		
 		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
-		hql.append(" LEFT JOIN estoqueProdutoCota.movimentos as movimentos ");
-		hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento");
 		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
 		hql.append(" LEFT JOIN cota.pdvs as pdvs ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		
 		hql.append(" WHERE ");
-		hql.append(" tipoMovimento.id = 21 and ");
 		
 		if (listProdutoEdicaoDto != null && listProdutoEdicaoDto.size() != 0) {
 			
@@ -2711,10 +2722,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomePessoa, ");
 		hql.append(" cota.tipoDistribuicaoCota as tipoDistribuicaoCota, ");
 		hql.append(" rankingFaturamento.faturamento as faturamento, ");
-		hql.append(" max(rankingFaturamentoGerado.dataGeracao) as  dataGeracao ");
+		hql.append(" max(rankingFaturamento.dataGeracaoRank) as  dataGeracao ");
 		
 		hql.append(" FROM RankingFaturamento rankingFaturamento ");
-		hql.append(" INNER JOIN rankingFaturamento.rankingFaturamentoGerado as rankingFaturamentoGerado ");
 		hql.append(" RIGHT JOIN rankingFaturamento.cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		

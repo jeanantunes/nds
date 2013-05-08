@@ -65,7 +65,6 @@ public class MixCotaProduto {
 	@OneToMany(mappedBy="mixCotaProduto")
 	List<RepartePDV> repartesPDV;
 	
-	
 	public Long getId() {
 		return id;
 	}

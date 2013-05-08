@@ -1,10 +1,10 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
-import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.util.DateUtil;
 
@@ -15,41 +15,42 @@ public class EdicoesProdutosDTO implements Serializable {
 	 */
 	private static final long serialVersionUID = 1296064141305343451L;
 	
-	private Long edicao;
-	private PeriodicidadeProduto periodo;
-	private BigInteger venda;
+	private BigInteger edicao;
+	private String periodo;
+	private BigDecimal venda;
 	private Date dtLancamento;
 	private Date dtRecolhimento;
-	private StatusLancamento status;
+	private String status;
 	private String capa;
 	private String sel;
-	private BigInteger reparte;
+	private BigDecimal reparte;
 	private String nomeProduto;
 	private String descricaoTipoClassificacao;
 	private String codigoProduto;
 	private String descricaoTipoSegmento;
+	private Long produtoEdicaoId;
 	
 	/* Campos para grid */
 	private String dataLancamento;
 	private String dataRecolhimento;
 	
-	public Long getEdicao() {
+	public BigInteger getEdicao() {
 		return edicao;
 	}
-	public void setEdicao(Long edicao) {
+	public void setEdicao(BigInteger edicao) {
 		this.edicao = edicao;
 	}
-	public PeriodicidadeProduto getPeriodo() {
+	public String getPeriodo() {
 		return periodo;
 	}
-	public void setPeriodo(PeriodicidadeProduto periodo) {
+	public void setPeriodo(String periodo) {
 		this.periodo = periodo;
 	}
 	
-	public BigInteger getVenda() {
+	public BigDecimal getVenda() {
 		return venda;
 	}
-	public void setVenda(BigInteger venda) {
+	public void setVenda(BigDecimal venda) {
 		this.venda = venda;
 	}
 	public Date getDtLancamento() {
@@ -66,10 +67,10 @@ public class EdicoesProdutosDTO implements Serializable {
 		this.dtRecolhimento = dtRecolhimento;
 		this.dataRecolhimento = DateUtil.formatarDataPTBR(dtRecolhimento);
 	}
-	public StatusLancamento getStatus() {
+	public String getStatus() {
 		return status;
 	}
-	public void setStatus(StatusLancamento status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 	public String getCapa() {
@@ -97,10 +98,10 @@ public class EdicoesProdutosDTO implements Serializable {
 	public void setDataRecolhimento(String dataRecolhimento) {
 		this.dataRecolhimento = dataRecolhimento;
 	}
-	public BigInteger getReparte() {
+	public BigDecimal getReparte() {
 		return reparte;
 	}
-	public void setReparte(BigInteger reparte) {
+	public void setReparte(BigDecimal reparte) {
 		this.reparte = reparte;
 	}
 	public String getNomeProduto() {
@@ -128,8 +129,10 @@ public class EdicoesProdutosDTO implements Serializable {
 	public void setDescricaoTipoSegmento(String descricaoTipoSegmento) {
 		this.descricaoTipoSegmento = descricaoTipoSegmento;
 	}
-	
-	
-	
-	
+	public Long getProdutoEdicaoId() {
+	    return produtoEdicaoId;
+	}
+	public void setProdutoEdicaoId(Long produtoEdicaoId) {
+	    this.produtoEdicaoId = produtoEdicaoId;
+	}	
 }

@@ -69,7 +69,7 @@ public class RegiaoRepositoryImpl extends AbstractRepositoryModel<Regiao, Long> 
 
 		hql.append(" WHERE segmento.id = :idSegmento ");
 		hql.append(" AND pdv.caracteristicas.pontoPrincipal = true");
-		hql.append(" order by cota.numeroCota");
+		hql.append(" order by ranking.quantidade desc ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
