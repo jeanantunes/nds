@@ -955,7 +955,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		Map<Long, BigInteger> obterQtdMovimentoCotaPorTipoMovimento = movimentoEstoqueCotaRepository.obterQtdMovimentoCotaPorTipoMovimento(periodo, cota.getId(), gruposMovimentoEstoque);
 		
-		if((obterEstudoCota != null && obterEstudoCota.size() >= 0) ||
+		if((obterEstudoCota != null && obterEstudoCota.size() > 0) ||
 				(obterQtdMovimentoCotaPorTipoMovimento != null && !obterQtdMovimentoCotaPorTipoMovimento.isEmpty())){
 			return true;
 		}
