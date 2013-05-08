@@ -231,7 +231,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 			
 			parametroCobrancaDTO.setIdPolitica(politica.getId());
 			parametroCobrancaDTO.setPrincipal(politica.isPrincipal()?true:false);
-			//parametroCobrancaDTO.setCobradoPeloBackoffice(politica.isCobradoPeloBackoffice());
+			parametroCobrancaDTO.setCobradoPeloBackoffice(politica.isCobradoPeloBackoffice());
 			parametroCobrancaDTO.setAcumulaDivida(politica.isAcumulaDivida()?true:false);
 			parametroCobrancaDTO.setFormaEmissao(politica.getFormaEmissao());
 			parametroCobrancaDTO.setUnificada(politica.isUnificaCobranca()?true:false);
@@ -379,7 +379,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 			politicaCobrancaRepository.alterar(parametroCobrancaPrincipal);
 		}
 		politica.setPrincipal(parametroCobrancaDTO.isPrincipal());
-		//politica.setCobradoPeloBackoffice(parametroCobrancaDTO.isCobradoPeloBackoffice());
+		politica.setCobradoPeloBackoffice(parametroCobrancaDTO.isCobradoPeloBackoffice());
 		politica.setAcumulaDivida(parametroCobrancaDTO.isAcumulaDivida());
 		politica.setFormaEmissao(parametroCobrancaDTO.getFormaEmissao());
 		politica.setUnificaCobranca(parametroCobrancaDTO.isUnificada());
