@@ -33,7 +33,11 @@ public class FiltroDistribuicaoDTO implements Serializable {
 	private PaginacaoVO paginacao;
 	private	ColunaOrdenacao colunaOrdenacao;
 	private Integer totalRegistrosEncontrados;
+	private Long estudoId;
 	
+	public FiltroDistribuicaoDTO(){
+		
+	}
 	public FiltroDistribuicaoDTO(Date data, List<Long> idsFornecedores,
 			PaginacaoVO paginacao, String sortName) {
 		this.data = data;
@@ -135,5 +139,14 @@ public class FiltroDistribuicaoDTO implements Serializable {
 					"Coluna para ordenação não suportada:" + nomeColuna);
 		}
 	}
+
+	public Long getEstudoId() {
+		return estudoId;
+	}
+	public void setEstudoId(Long estudoId) {
+		this.estudoId = estudoId;
+	}
+
+	
 	
 }

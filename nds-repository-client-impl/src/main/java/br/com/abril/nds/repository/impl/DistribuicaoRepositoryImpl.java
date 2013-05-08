@@ -64,8 +64,15 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" and prodEdic.ATIVO = true")
 		.append(" and lanc.status = 'BALANCEADO'")
 		.append(" and forn.SITUACAO_CADASTRO = 'ATIVO'")
-		.append(" and lanc.EXPEDICAO_ID is null")
-	 	.append(" and lanc.DATA_LCTO_PREVISTA = :dataLanctoPrev");
+		.append(" and lanc.EXPEDICAO_ID is null");
+		
+	 
+	 	if(filtro.getEstudoId()!=null){
+	 		sql.append(" and estudo.id = :estudoId");
+	 	}
+		if(filtro.getData()!=null){
+			sql.append(" and lanc.DATA_LCTO_PREVISTA = :dataLanctoPrev");
+		}
 		
 	 	if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()) {
 	 		sql.append(" and forn.id in (:idFornecedores)");
@@ -75,7 +82,14 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 	 	
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		
-		query.setParameter("dataLanctoPrev", new java.sql.Date(filtro.getData().getTime()));
+		
+		if(filtro.getEstudoId()!=null){
+			query.setParameter("estudoId",filtro.getEstudoId());
+	 	}
+		
+		if(filtro.getData()!=null){
+			query.setParameter("dataLanctoPrev", new java.sql.Date(filtro.getData().getTime()));
+		}
 		
 		if (filtro.getIdsFornecedores() != null && !filtro.getIdsFornecedores().isEmpty()) {
 			

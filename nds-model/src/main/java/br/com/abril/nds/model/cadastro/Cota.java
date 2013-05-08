@@ -181,6 +181,10 @@ public class Cota implements Serializable {
 	@OneToOne(mappedBy="cota", fetch=FetchType.LAZY)
 	private CotaGarantia cotaGarantia;
 	
+	@Column(name = "RECEBE_RECOLHE_PARCIAIS", insertable=false,  updatable=false)
+	private int recebeRecolheParciais;
+	///insertable = false, updatable = false
+	
 	public Cota() {
         this.inicioAtividade = new Date();
         this.inicioTitularidade = new Date();
@@ -588,5 +592,15 @@ public class Cota implements Serializable {
 
 	public void setEstoqueProdutoCota(List<EstoqueProdutoCota> estoqueProdutoCota) {
 		this.estoqueProdutoCota = estoqueProdutoCota;
+	}
+
+
+	public int getRecebeRecolheParciais() {
+		return recebeRecolheParciais;
+	}
+
+
+	public void setRecebeRecolheParciais(int recebeRecolheParciais) {
+		this.recebeRecolheParciais = recebeRecolheParciais;
 	}
 }
