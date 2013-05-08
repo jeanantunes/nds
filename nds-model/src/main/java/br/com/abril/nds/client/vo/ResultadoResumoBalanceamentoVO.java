@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.List;
 
 import br.com.abril.nds.dto.ProdutoLancamentoCanceladoDTO;
+import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 
 public class ResultadoResumoBalanceamentoVO implements Serializable {
 
@@ -22,6 +23,8 @@ public class ResultadoResumoBalanceamentoVO implements Serializable {
 	private List<ProdutoLancamentoCanceladoDTO> listaProdutosLancamentosCancelados;
 	
 	private boolean utilizaSedeAtendida;
+	
+	private List<ProdutoRecolhimentoDTO> produtosNaoBalanceadosAposFechamentoMatriz;
 	
 	/**
 	 * Construtor padrão.
@@ -95,6 +98,15 @@ public class ResultadoResumoBalanceamentoVO implements Serializable {
 
 	public void setUtilizaSedeAtendida(boolean utilizaSedeAtendida) {
 		this.utilizaSedeAtendida = utilizaSedeAtendida;
+	}
+
+	public List<ProdutoRecolhimentoDTO> getProdutosNaoBalanceadosAposFechamentoMatriz() {
+		return produtosNaoBalanceadosAposFechamentoMatriz;
+	}
+
+	public void setProdutosNaoBalanceadosAposFechamentoMatriz(
+			List<ProdutoRecolhimentoDTO> produtosNaoBalanceadosAposFechamentoMatriz) {
+		this.produtosNaoBalanceadosAposFechamentoMatriz = produtosNaoBalanceadosAposFechamentoMatriz;
 	}
 
 }

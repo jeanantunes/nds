@@ -133,6 +133,8 @@ public class MatrizRecolhimentoController extends BaseController {
 		
 		resultadoResumoBalanceamento.setUtilizaSedeAtendida(utilizaSedeAtendida);
 		
+		resultadoResumoBalanceamento.setProdutosNaoBalanceadosAposFechamentoMatriz(balanceamentoRecolhimento.getProdutosNaoBalanceados());
+		
 		removerAtributoAlteracaoSessao();
 		
 		configurarFiltropesquisa(numeroSemana, dataPesquisa, listaIdsFornecedores);
@@ -140,7 +142,21 @@ public class MatrizRecolhimentoController extends BaseController {
 		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
 	}
 	
-	
+	@Post
+	@Path("/processarProdutosNaoBalanceadosAposConfirmacaoMatriz")
+	public void processarProdutosNaoBalanceadosAposConfirmacaoMatriz(){
+		
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
+				(BalanceamentoRecolhimentoDTO) this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
+		
+		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
+		
+		recolhimentoService.processarProdutosProximaSemanaRecolhimento(balanceamentoRecolhimento.getProdutosNaoBalanceados(),
+																	   filtro.getNumeroSemana(),
+																	   filtro.getDataPesquisa());
+		
+		this.result.use(Results.json()).from(Results.nothing()).serialize();
+	}
 	
 	private Integer tratarSemana(Integer numeroSemana, Date dataPesquisa) {
 
