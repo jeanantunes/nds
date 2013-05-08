@@ -44,7 +44,7 @@ public class FixacaoReparte {
 	@JoinColumn(name = "ID_USUARIO")
 	private Usuario usuario;
 
-	@Cascade({CascadeType.REMOVE,CascadeType.SAVE_UPDATE})
+	@Cascade({CascadeType.REMOVE,CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
 	@OneToMany(mappedBy="fixacaoReparte")
 	List<RepartePDV> repartesPDV;
 	

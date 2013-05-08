@@ -412,7 +412,6 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 			}
 					
 			try {
-//				this.mixCotaProdutoRepository.gerarCopiaMixCota(mixCotaOrigem,this.usuarioService.getUsuarioLogado());
 				fixacaoReparteRepository.gerarCopiaPorCotaFixacaoReparte(mixCotaOrigem,this.usuarioService.getUsuarioLogado());
 			} catch (Exception e) {
 				e.printStackTrace();
