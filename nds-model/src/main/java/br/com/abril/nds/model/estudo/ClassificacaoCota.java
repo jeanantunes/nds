@@ -78,8 +78,7 @@ public enum ClassificacaoCota {
 	/**
 	 * ZZ
 	 */
-	SemClassificacao("ZZ");
-	// valor utilizado apenas para evitar problemas com "null" na classificação das cotas
+	SemClassificacao("");
 	
 	private String codigo;
 	

@@ -1,18 +1,18 @@
 package br.com.abril.nds;
 
-import org.joda.time.LocalDate;
-import org.joda.time.Years;
-import org.junit.Ignore;
+import java.math.BigInteger;
+
 import org.junit.Test;
 
-@Ignore
+//@Ignore
 public class GenericTest {
 
 	@Test
 	public void test() {
-		LocalDate date = LocalDate.parse("2012-03-29");
-		date.plus(Years.ONE);
-		date.plus(Years.ONE).isAfter(LocalDate.now());
+	    BigInteger teste = BigInteger.valueOf(-4);
+	    BigInteger dois = BigInteger.valueOf(5);
+	    BigInteger resultado = dois.subtract(teste);
+	    System.out.println(resultado);
 	}
 	
 }
