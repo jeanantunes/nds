@@ -873,8 +873,6 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		List<String> whereList = new ArrayList<String>();
 		HashMap<String,Object> parameterMap = new HashMap<String,Object>();
 		
-//		whereList.add(" lancamento2_.status = 'FECHADO' ");
-		
 		//Filtro por
 		if (StringUtils.isNotEmpty(filtro.getFiltroPor())) {
 			whereList.add(" box.tipo_box = :tipoBox ");
@@ -1049,7 +1047,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				" ( select DISTINCT " +
 				"	case when (sum(estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) = 0 then cota2_.numero_cota else null end as cotasEsmagadas, " +
 				"   case when (sum(estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) = 0 then sum(estoqueProdutoCota.QTDE_RECEBIDA) / :qtdEdicoes else 0 end as vdEsmag," +
-				"   case when (sum(estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) = (sum(estoqueProdutoCota.QTDE_RECEBIDA) / :qtdEdicoes) then 1 else 0 end as qtdeCotasSemVenda," +
+				"   case when round(sum(estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) = round(sum(estoqueProdutoCota.QTDE_RECEBIDA) / :qtdEdicoes) then 1 else 0 end as qtdeCotasSemVenda," +
 				"   case when cota2_.SITUACAO_CADASTRO='ATIVO' then 1 else 0 end as cotaAtiva," +
 				"	  sum(estoqueProdutoCota.QTDE_RECEBIDA) as reparteTotal," +	
 					" estoqueProdutoCota.ID as col_2_0_, " +
@@ -1067,12 +1065,12 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 					" 	left outer join COTA cota2_ on estoqueProdutoCota.COTA_ID=cota2_.ID ";
 					 
 				 
-//			Adicionando filtro
+		// Adicionando filtro
 		
 		List<String> whereList = new ArrayList<String>();
 		HashMap<String,Object> parameterMap = new HashMap<String,Object>();
 		
-		//Filtro por
+		// Filtro por
 		if (StringUtils.isNotEmpty(filtro.getFiltroPor())) {
 			queryStringProdutoEdicao += 
 					  " left outer join BOX box on cota2_.box_id=box.id";
@@ -1183,8 +1181,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		}
 		
 		queryStringProdutoEdicao += " group by numero_cota " +
-									" having (sum(estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) >= :de" +  
-									" and (sum(estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) <= :ate";
+									" having round(sum(estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) >= :de" +  
+									" and round(sum(estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) <= :ate";
 		
 		queryStringProdutoEdicao+=") as HIST";
 		
