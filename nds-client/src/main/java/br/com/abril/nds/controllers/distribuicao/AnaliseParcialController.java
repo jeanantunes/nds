@@ -120,6 +120,7 @@ public class AnaliseParcialController extends BaseController {
 	queryDTO.setModoAnalise(modoAnalise);
 	queryDTO.setCodigoProduto(codigoProduto);
 	queryDTO.setNumeroEdicao(numeroEdicao);
+	queryDTO.setNumeroCotaStr(numeroCotaStr);
 	
 	List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
 

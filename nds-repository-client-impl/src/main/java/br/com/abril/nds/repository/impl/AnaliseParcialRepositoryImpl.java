@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -132,6 +133,10 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 	where.append(" and ec.ESTUDO_ID = ? ");
 	params.add(queryDTO.getEstudoId());
 
+	if(StringUtils.isNotEmpty(queryDTO.getNumeroCotaStr())){
+		where.append(" and c.numero_cota in ("+queryDTO.getNumeroCotaStr()+") ");
+	}
+	
 	if (queryDTO.getFaixaDe() != null) {
 	    where.append(" and ec.reparte >= ? ");
 	    params.add(queryDTO.getFaixaDe());
@@ -149,7 +154,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 	SQLQuery query = getSession().createSQLQuery(sql.toString());
 	populateQuery(query, params);
 	query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseParcialDTO.class));
-	return query.list();
+	List list = query.list();
+	return list;
     }
 
     @Override
