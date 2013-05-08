@@ -27,7 +27,7 @@ public class MinimoMaximo extends ProcessoAbstrato {
 		    throw new Exception(String.format("O reparte mínimo da cota %s está maior que o reparte máximo.", cota.getId()));
 		}
 		if (cota.getReparteCalculado().compareTo(cota.getReparteMinimo()) < 0) {
-		    cota.setReparteCalculado(cota.getReparteMinimo());
+		    cota.setReparteCalculado(cota.getReparteMinimo(), estudo);
 
 		    if (cota.isMix()) {
 			cota.setClassificacao(ClassificacaoCota.CotaMix);
@@ -35,7 +35,7 @@ public class MinimoMaximo extends ProcessoAbstrato {
 			cota.setClassificacao(ClassificacaoCota.MaximoMinimo);
 		    }
 		} else if (cota.getReparteCalculado().longValue() > cota.getReparteMaximo().longValue()) {
-		    cota.setReparteCalculado(cota.getReparteMaximo());
+		    cota.setReparteCalculado(cota.getReparteMaximo(), estudo);
 
 		    if (cota.isMix()) {
 			cota.setClassificacao(ClassificacaoCota.CotaMix);

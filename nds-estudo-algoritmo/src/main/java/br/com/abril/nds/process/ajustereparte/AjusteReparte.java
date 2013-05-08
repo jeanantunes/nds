@@ -42,7 +42,7 @@ public class AjusteReparte extends ProcessoAbstrato {
 				} else {
 					ajusteReparte = estudo.getPacotePadrao();
 				}
-				cota.setReparteCalculado(ajusteReparte.add(cota.getVendaMedia().toBigInteger()));
+				cota.setReparteCalculado(ajusteReparte.add(cota.getVendaMedia().toBigInteger()), estudo);
 				cota.setClassificacao(ClassificacaoCota.ReparteFixado);
 			}
 		}
