@@ -41,7 +41,7 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	private BigInteger venda;
 
 	@Export(label = "Abrangência", alignment=Alignment.LEFT, exhibitionOrder = 8)
-	private BigInteger percentualAbrangencia;
+	private Double percentualAbrangencia;
 	
 	@Export(label = "Data Lcto", alignment=Alignment.LEFT, exhibitionOrder = 9)
 	private String dataLcto;
@@ -148,15 +148,11 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 			this.venda = venda;
 		}
 	}
-	public BigInteger getPercentualAbrangencia() {
+	public Double getPercentualAbrangencia() {
 		return percentualAbrangencia;
 	}
-	public void setPercentualAbrangencia(BigInteger percentualAbrangencia) {
-		if ((percentualAbrangencia == null) || (percentualAbrangencia.equals(""))){
-			this.percentualAbrangencia = BigInteger.ZERO;
-		}else{
+	public void setPercentualAbrangencia(Double percentualAbrangencia) {
 			this.percentualAbrangencia = percentualAbrangencia;
-		}
 	}
 	public String getDataLcto() {
 		return dataLcto;

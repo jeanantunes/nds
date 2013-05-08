@@ -5,7 +5,7 @@ init : function() {
 	var T = this;
 	
 	$("#apuradaAbrang").mask("99.9");
-
+	
 $(".produtosInfosGrid").flexigrid({
 		preProcess : informacoesProdutoController.executarPreProcessProdutosInfosGrid,
 		dataType : 'json',
@@ -252,7 +252,7 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 			}
 
 			var percAbrang = row.cell.percentualAbrangencia;
-			if(percAbrang == 0){
+			if(percAbrang == undefined){
 				row.cell.percentualAbrangencia = "";
 			}
 			
@@ -443,9 +443,11 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		
 		var precoCapa = "#precoCapa";
 		informacoesProdutoController.validarCamposVazios(result.precoVenda, precoCapa);
+		informacoesProdutoController.formatarCasasDecimais(result.precoVenda, precoCapa);
 		
 		var pctPadrao = "#pctPadrao";
 		informacoesProdutoController.validarCamposVazios(result.pacotePadrao, pctPadrao);
+		informacoesProdutoController.formatarCasasDecimais(result.pacotePadrao, pctPadrao);
 		
 		var chamCapa = "#chamadaCapa";
 		informacoesProdutoController.validarCamposVazios(result.chamadaCapa, chamCapa);
@@ -477,15 +479,20 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		
 		var sgAbrang = "#sugeridoAbrang";
 		informacoesProdutoController.validarCamposVazios(result.abrangenciaSugerida, sgAbrang);
+		informacoesProdutoController.formatarCasasDecimais(result.abrangenciaSugerida, sgAbrang);
 
 		var apAbrang = "#apuradaAbrang"; 
 		informacoesProdutoController.validarCamposVazios(result.abrangenciaApurada, apAbrang);
+		informacoesProdutoController.formatarCasasDecimais(result.abrangenciaApurada, apAbrang);
 		
 		var sgMin = "#sugeridoMinimo";
 		informacoesProdutoController.validarCamposVazios(result.minimoSugerido, sgMin);
+		informacoesProdutoController.formatarCasasDecimais(result.minimoSugerido, sgMin);
 		
 		var estudoMin = "#estudoMinimo";
 		informacoesProdutoController.validarCamposVazios(result.minimoEstudoId, estudoMin);
+		informacoesProdutoController.formatarCasasDecimais(result.minimoEstudoId, estudoMin);
+		
 
 	},
 	
@@ -496,6 +503,13 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		}else{
 			$(campo).val(valor).disable();
 		}
+	},
+	
+	//Formata os números excluindo as casas decimais.
+	formatarCasasDecimais : function (valor, campo){
+		var valorFormatado = parseFloat(valor).toFixed(0); 
+		
+		$(campo).val(valorFormatado).disable();
 	},
 	
 	detalhes_ReparteTotalEPromocional : function (codProd, numeroEdicao){
@@ -514,9 +528,11 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		
 		var repTotal = "#reparteTotal";
 		informacoesProdutoController.validarCamposVazios(result.reparteTotal, repTotal);
+		informacoesProdutoController.formatarCasasDecimais(result.reparteTotal, repTotal);
 		
 		var repProm = "#repartePromocional";
 		informacoesProdutoController.validarCamposVazios(result.repartePromocional, repProm);
+		informacoesProdutoController.formatarCasasDecimais(result.repartePromocional, repProm);
 		
 	},
 	
@@ -534,7 +550,8 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 	dadosReparteSobra : function(result){
 		
 		var sobra = "#sobra";
-		informacoesProdutoController.validarCamposVazios(result.sobra, sobra);
+		informacoesProdutoController.validarCamposVazios(result, sobra);
+		informacoesProdutoController.formatarCasasDecimais(result, sobra);
 	},
 	
 	detalhes_ReparteDistribuido : function (codProd){
@@ -552,6 +569,7 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		
 		var repDist = "#reparteDistribuido";
 		informacoesProdutoController.validarCamposVazios(result, repDist);
+		informacoesProdutoController.formatarCasasDecimais(result, repDist);
 	},
 	
 	detalhes_venda : function (codProd, numeroEdicao){
@@ -570,9 +588,11 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		
 		var venda = "#venda";
 		informacoesProdutoController.validarCamposVazios(result.totalVenda, venda);
+		informacoesProdutoController.formatarCasasDecimais(result.totalVenda, venda);
 		
 		var porcVenda = "#porcentagemVenda";
 		informacoesProdutoController.validarCamposVazios(result.porcentagemDeVenda, porcVenda);
+		informacoesProdutoController.formatarCasasDecimais(result.porcentagemDeVenda, porcVenda);
 	},
 	
 	pop_capa : function(){

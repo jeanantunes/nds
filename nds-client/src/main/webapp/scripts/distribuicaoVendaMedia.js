@@ -165,8 +165,8 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 				var randomnumber=Math.floor(Math.random()*11);
 				
 				$("#imagemCapaEdicao")
-						.attr("src",pathTela
-										+ "/distribuicao/histogramaVendas/getCapaEdicaoJson?random="+randomnumber+"&codigoProduto="
+						.attr("src",contextPath
+										+ "/capa/getCapaEdicaoJson?/getCapaEdicaoJson?random="+randomnumber+"&codigoProduto="
 										+ codigoProduto
 										+ "&numeroEdicao="
 										+ numeroEdicao);

@@ -2,6 +2,7 @@ package br.com.abril.nds.dto.filtro;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
 import br.com.abril.nds.dto.CotaDTO;
@@ -26,7 +27,7 @@ public class FiltroHistoricoVendaDTO extends FiltroDTO {
 	private BigDecimal percentualVenda;
 	private CotaDTO cotaDto;
 	private ComponentesPDV componentesPdv;
-	private List<ProdutoEdicaoDTO> listProdutoEdicaoDTO;
+	private List<ProdutoEdicaoDTO> listProdutoEdicaoDTO = new ArrayList<>();
 	private String elemento;
 	
 	// utilizado para retorno de mensagem

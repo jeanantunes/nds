@@ -2634,7 +2634,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas) {
+	public List<AnaliseHistoricoDTO> buscarCotasComHistoricoDeVenda(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas) {
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		
 		StringBuilder hql = new StringBuilder();
@@ -2643,21 +2643,16 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		hql.append(" cota.numeroCota as numeroCota, ");
 		hql.append(" cota.situacaoCadastro as statusCota, ");
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomePessoa, ");
-		hql.append(" count(DISTINCT pdvs) as qtdPdv, ");
-		hql.append(" avg(movimentos.qtde) as reparteMedio, ");
-		hql.append(" avg(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) as vendaMedia ");
+		hql.append(" count(DISTINCT pdvs) as qtdPdv ");
 		
 		hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
-		hql.append(" LEFT JOIN estoqueProdutoCota.movimentos as movimentos ");
-		hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento");
 		hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
 		hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
 		hql.append(" LEFT JOIN cota.pdvs as pdvs ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		
 		hql.append(" WHERE ");
-		hql.append(" tipoMovimento.id = 21 and ");
 		
 		if (listProdutoEdicaoDto != null && listProdutoEdicaoDto.size() != 0) {
 			
@@ -2727,10 +2722,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomePessoa, ");
 		hql.append(" cota.tipoDistribuicaoCota as tipoDistribuicaoCota, ");
 		hql.append(" rankingFaturamento.faturamento as faturamento, ");
-		hql.append(" max(rankingFaturamentoGerado.dataGeracao) as  dataGeracao ");
+		hql.append(" max(rankingFaturamento.dataGeracaoRank) as  dataGeracao ");
 		
 		hql.append(" FROM RankingFaturamento rankingFaturamento ");
-		hql.append(" INNER JOIN rankingFaturamento.rankingFaturamentoGerado as rankingFaturamentoGerado ");
 		hql.append(" RIGHT JOIN rankingFaturamento.cota as cota ");
 		hql.append(" LEFT JOIN cota.pessoa as pessoa ");
 		

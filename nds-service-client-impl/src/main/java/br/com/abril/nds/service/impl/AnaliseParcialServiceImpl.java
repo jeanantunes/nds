@@ -60,7 +60,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 		for (AnaliseParcialDTO item : lista) {
 		    List<EdicoesProdutosDTO> temp = new ArrayList<>();
 		    for (EdicoesProdutosDTO edicao : queryDTO.getEdicoesBase()) {
-			temp.addAll(analiseParcialRepository.getEdicoesBase(new Long(item.getCota()), edicao.getEdicao(), edicao.getCodigoProduto()));
+			temp.addAll(analiseParcialRepository.getEdicoesBase(new Long(item.getCota()), edicao.getEdicao().longValue(), edicao.getCodigoProduto()));
 		    }
 		    item.setEdicoesBase(temp);
 		}

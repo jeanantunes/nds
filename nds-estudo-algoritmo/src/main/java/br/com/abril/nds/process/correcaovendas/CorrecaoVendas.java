@@ -21,50 +21,50 @@ import br.com.abril.nds.process.medias.Medias;
 @Component
 public class CorrecaoVendas {
 
-	@Autowired
-	private CorrecaoIndividual correcaoIndividual;
+    @Autowired
+    private CorrecaoIndividual correcaoIndividual;
 
-	@Autowired
-	private CorrecaoTendencia correcaoTendencia;
+    @Autowired
+    private CorrecaoTendencia correcaoTendencia;
 
-	@Autowired
-	private VendaCrescente vendaCrescente;
+    @Autowired
+    private VendaCrescente vendaCrescente;
 
-	/**
-	 * <h2>Processo: Correção de Vendas</h2>
-	 * <p><b>Recuperar as cotas armazenadas na tabela e para cada edição base por cota aplicar a regra abaixo e<br>depois armazenar os valores encontrados (vendaCorr) na
-	 * mesma tabela.</b></p>
-	 * <p>Se QtdeEdsBase > 1</p>
-	 * <p><pre>Se Edição = 1 ou Publicação <> Fascículos / Coleções</pre></p>
-	 * <p><pre>Procedure CorreçãoIndividual</pre></p>
-	 * <p><pre>Procedure Correção Tendência</pre></p>
-	 * <p><pre>Endif</pre></p>
-	 * <p>Endif</p>
-	 * <p>Se cota recebeu 4 ou mais edições-base fechadas</p>
-	 * <pre>Procedure VendaCrescente</pre>
-	 * <p>Endif</p>
-	 */
-	public void executar(CotaEstudo cota) throws Exception {
+    /**
+     * <h2>Processo: Correção de Vendas</h2>
+     * <p><b>Recuperar as cotas armazenadas na tabela e para cada edição base por cota aplicar a regra abaixo e<br>depois armazenar os valores encontrados (vendaCorr) na
+     * mesma tabela.</b></p>
+     * <p>Se QtdeEdsBase > 1</p>
+     * <p><pre>Se Edição = 1 ou Publicação <> Fascículos / Coleções</pre></p>
+     * <p><pre>Procedure CorreçãoIndividual</pre></p>
+     * <p><pre>Procedure Correção Tendência</pre></p>
+     * <p><pre>Endif</pre></p>
+     * <p>Endif</p>
+     * <p>Se cota recebeu 4 ou mais edições-base fechadas</p>
+     * <pre>Procedure VendaCrescente</pre>
+     * <p>Endif</p>
+     */
+    public void executar(CotaEstudo cota) throws Exception {
 
-		if (cota.getEdicoesRecebidas() != null && cota.getEdicoesRecebidas().size() > 1) {
+	if (cota.getEdicoesRecebidas() != null && cota.getEdicoesRecebidas().size() > 1) {
 
-			BigDecimal totalReparte = BigDecimal.ZERO;
-			BigDecimal totalVenda = BigDecimal.ZERO;
+	    BigDecimal totalReparte = BigDecimal.ZERO;
+	    BigDecimal totalVenda = BigDecimal.ZERO;
 
-			for (ProdutoEdicaoEstudo produtoEdicao : cota.getEdicoesRecebidas()) {
-				if (produtoEdicao.getNumeroEdicao().compareTo(new Long(1)) == 0 || !produtoEdicao.isColecao()) {
-					correcaoIndividual.executar(produtoEdicao);
+	    for (ProdutoEdicaoEstudo produtoEdicao : cota.getEdicoesRecebidas()) {
+		if (produtoEdicao.getNumeroEdicao().compareTo(new Long(1)) == 0 || !produtoEdicao.isColecao()) {
+		    correcaoIndividual.executar(produtoEdicao);
 
-					totalReparte = totalReparte.add(produtoEdicao.getReparte());
-					totalVenda = totalVenda.add(produtoEdicao.getVenda());
-				}
-			}
-			if (totalReparte.compareTo(BigDecimal.ZERO) == 1) {
-				correcaoTendencia.setTotalReparte(totalReparte);
-				correcaoTendencia.setTotalVenda(totalVenda);
-				correcaoTendencia.executar(cota);
-			}
+		    totalReparte = totalReparte.add(produtoEdicao.getReparte());
+		    totalVenda = totalVenda.add(produtoEdicao.getVenda());
 		}
-		vendaCrescente.executar(cota);
+	    }
+	    if (totalReparte.compareTo(BigDecimal.ZERO) == 1) {
+		correcaoTendencia.setTotalReparte(totalReparte);
+		correcaoTendencia.setTotalVenda(totalVenda);
+		correcaoTendencia.executar(cota);
+	    }
 	}
+	vendaCrescente.executar(cota);
+    }
 }

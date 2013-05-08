@@ -6,15 +6,15 @@ import java.math.BigInteger;
 public class ResumoEstudoHistogramaPosAnaliseDTO {
 
 	private BigInteger qtdCotasAtivas, 
-			qtdCotasRecebemReparte,
-			qtdCotasAdicionadasPelaComplementarAutomatica,
-			qtdReparteMinimoSugerido,
-			qtdReparteMinimoEstudo;
-	
-	private BigDecimal 
-				abrangenciaEstudo,
-				abrangenciaSugerida,
-				abrangenciaDeVenda;
+					   qtdCotasRecebemReparte,
+					   qtdCotasAdicionadasPelaComplementarAutomatica,
+					   qtdReparteMinimoSugerido,
+					   qtdReparteMinimoEstudo;
+			
+	private BigDecimal abrangenciaEstudo,
+					   abrangenciaSugerida,
+					   abrangenciaDeVenda,
+					   qtdRepartePromocional;
 	
 	public BigInteger getQtdCotasAtivas() {
 		return qtdCotasAtivas;
@@ -79,6 +79,14 @@ public class ResumoEstudoHistogramaPosAnaliseDTO {
 
 	public void setAbrangenciaDeVenda(BigDecimal abrangenciaDeVenda) {
 		this.abrangenciaDeVenda = abrangenciaDeVenda;
+	}
+
+	public BigDecimal getQtdRepartePromocional() {
+		return qtdRepartePromocional;
+	}
+
+	public void setQtdRepartePromocional(BigDecimal qtdRepartePromocional) {
+		this.qtdRepartePromocional = qtdRepartePromocional;
 	}
 	
 }
