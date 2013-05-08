@@ -4,7 +4,11 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.util.Constantes;
+import br.com.abril.nds.util.StringUtil;
 
 public class DescontoProdutoDTO implements Serializable {
 
@@ -41,7 +45,7 @@ public class DescontoProdutoDTO implements Serializable {
 	 * @param codigoProduto the codigoProduto to set
 	 */
 	public void setCodigoProduto(String codigoProduto) {
-		this.codigoProduto = codigoProduto;
+		this.codigoProduto = StringUtils.leftPad(codigoProduto, Constantes.TAMANHO_CAMPO_PRODUTO_CONSULTA, '0');
 	}
 
 	/**

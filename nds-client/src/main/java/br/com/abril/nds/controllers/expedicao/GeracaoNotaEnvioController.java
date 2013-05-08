@@ -230,9 +230,9 @@ public class GeracaoNotaEnvioController extends BaseController {
 	@Post
 	public void getArquivoNotaEnvio() {
 
-		byte[] notasGeradas = this.getNotas();
 
 		try {
+			byte[] notasGeradas = this.getNotas();
 		
 			if (notasGeradas != null) {
 				
@@ -253,7 +253,9 @@ public class GeracaoNotaEnvioController extends BaseController {
 		    	result.use(Results.nothing());
 	
 			}
-		} catch (Exception e) {
+		} catch (ValidacaoException e) {
+			result.use(Results.json()).from(e.getValidacao(), Constantes.PARAM_MSGS).recursive().serialize();
+		}catch (Exception e) {
 			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()),Constantes.PARAM_MSGS).recursive().serialize();
 		}
 	}

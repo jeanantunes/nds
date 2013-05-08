@@ -39,9 +39,9 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiaria = 
 			dadosRecolhimento.getMapaExpectativaEncalheTotalDiaria();
 		
-		Set<Date> obterDatasConfirmadas = super.obterDatasConfirmadas(dadosRecolhimento.getProdutosRecolhimento());
+		//Set<Date> obterDatasConfirmadas = super.obterDatasConfirmadas(dadosRecolhimento.getProdutosRecolhimento());
 		
-		TreeSet<Date> datasRecolhimento = super.obterDatasRecolhimento(dadosRecolhimento.getDatasRecolhimentoFornecedor(), obterDatasConfirmadas);
+		TreeSet<Date> datasRecolhimento = dadosRecolhimento.getDatasRecolhimentoFornecedor(); //super.obterDatasRecolhimento(dadosRecolhimento.getDatasRecolhimentoFornecedor(), obterDatasConfirmadas);
 		
 		Map<Date, BigDecimal> mapaExpectativaEncalheTotalDiariaOrdenado =
 			super.ordenarMapaExpectativaEncalhePorDatasRecolhimento(

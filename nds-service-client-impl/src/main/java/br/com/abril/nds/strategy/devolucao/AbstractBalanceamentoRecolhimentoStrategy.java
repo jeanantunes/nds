@@ -265,6 +265,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 					}
 				}
 				
+				
 				if (dataRecolhimentoEscolhida == null) {
 				
 					throw new RuntimeException(

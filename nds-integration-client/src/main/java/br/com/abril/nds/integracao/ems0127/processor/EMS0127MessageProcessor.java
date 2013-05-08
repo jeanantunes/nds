@@ -5,15 +5,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicReference;
 
-import javax.sql.DataSource;
-
 import org.apache.commons.lang.StringUtils;
 import org.lightcouch.CouchDbClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
@@ -54,13 +50,13 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 	@Override
 	public void processMessage(Message message) {
 		
-		message.getHeader().put(MessageHeaderProperties.FILE_NAME.getValue(), "Oracle : Icd : TH152 : icd_user");
-		
 		CouchDbClient dbClient = null;
 
 		Connection connection = null;
 		
 		EMS0127Input input = (EMS0127Input) message.getBody();
+		
+		message.getHeader().put(MessageHeaderProperties.FILE_NAME.getValue(), "Oracle : Icd : "+ input.getBaseDeDados() +" : "+ input.getUsuarioBaseDeDados());
 
 		try {	
 
@@ -171,7 +167,8 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 			if (produtoEdicao == null) {
 				this.ndsiLoggerFactory.getLogger().logError(message,
 						EventoExecucaoEnum.RELACIONAMENTO,
-						"Não foi possível incluir registro - Nenhum resultado encontrado para Produto/Edição: "
+						"Não foi possível incluir registro - Chamada de Encalhe/Item: "+ input.getCePK().getNumeroChamadaEncalhe() 
+						+ "/"+ item.getCeItemPK().getNumeroItem() +" - Nenhum resultado encontrado para Produto/Edição: "
 						+ codigoProduto + " e Edicao: " + numeroEdicao
 						+ " no cadastro de edições do Novo Distrib");
 				continue;

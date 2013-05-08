@@ -868,7 +868,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			
 			$(document.body).keydown(function(e) {
 				
-				if(keyEventEnterAux(e)){
+				if(keyEventEnterAux(e) && $(".ui-tabs-selected .classROLE_LANCAMENTO").length > 0){
 					balanceamentoLancamento.verificarBalanceamentosAlterados(balanceamentoLancamento.pesquisar);
 				}
 				

@@ -529,7 +529,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if (info != null){
 			
-			if (info.getListaConferenciaEncalhe() != null){
+			if (! info.getListaConferenciaEncalhe().isEmpty()){
 			
 				for (ConferenciaEncalheDTO conferenciaEncalheDTO : info.getListaConferenciaEncalhe()){
 					
@@ -1735,7 +1735,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if (info != null){
 			
-			if (info.getListaConferenciaEncalhe() != null) {
+			if (! info.getListaConferenciaEncalhe().isEmpty()) {
 			
 				for (ConferenciaEncalheDTO conferenciaEncalheDTO : info.getListaConferenciaEncalhe()){
 					
