@@ -23,6 +23,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
+import org.springframework.jdbc.object.SqlQuery;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
@@ -1567,6 +1568,25 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 	cri.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 	cri.add(Restrictions.eq("id", lancamentoId));
 	return (Lancamento) cri.uniqueResult();
+    }
+    
+    @Override
+	public BigInteger obterUltimoRepartePorProduto(Long produtoId) {
+    	
+    	StringBuilder sql = new StringBuilder();
+    	sql.append(" select round(sum(lc.reparte),0) ");
+    	sql.append(" from lancamento lc");
+    	sql.append(" where lc.produto_edicao_id in (");
+    	sql.append(" 		select produto_edicao.id from produto_edicao");
+    	sql.append(" 			where produto_id = :produtoId");
+    	sql.append(" 		)");
+    	sql.append(" and (lc.status = 'LANÇADA' or lc.status = 'CALCULADA')");
+
+    	SQLQuery query = getSession().createSQLQuery(sql.toString());
+    	
+    	query.setParameter("produtoId", produtoId);
+    	
+    	return (BigInteger)query.uniqueResult();
     }
 
 }
