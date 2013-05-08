@@ -571,10 +571,24 @@ var fechamentoEncalheController = $.extend(true, {
 			
 			var checkBox = '<span></span>';
 			
-			if (row.cell.acao == null || row.cell.acao == '') { 
-				checkBox = '<input isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" value="' + row.cell.idCota + '" />';	
+			if (row.cell.indPossuiChamadaEncalheCota) { 
+			
+				if(row.cell.fechado) {
+
+					checkBox = '<input isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" value="' + row.cell.idCota + '" disabled="disabled"/>';	
+					
+				
+				} else {
+
+					checkBox = '<input isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" value="' + row.cell.idCota + '" />';	
+					
+				}
+				
+			
 			} else {
-				checkBox = '<input isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" value="' + row.cell.idCota + '" disabled="disabled"/>';	
+			
+				checkBox = '<input isEdicao="true" type="checkbox" disabled="disabled" checked="checked" name="checkboxGridCotas_comDivida" id="checkboxGridCotas" value="' + row.cell.idCota + '" />';	
+			
 			}
 			
 		    row.cell.check = checkBox;
@@ -594,6 +608,11 @@ var fechamentoEncalheController = $.extend(true, {
 			cotasAusentesSelecionadas.push(parseInt($(this).val()));
 		});
 
+		$("input[type=checkbox][name='checkboxGridCotas_comDivida']:checked", fechamentoEncalheController.workspace).each(function(){
+			cotasAusentesSelecionadas.push(parseInt($(this).val()));
+		});
+
+		
 		return cotasAusentesSelecionadas;
 	},
 	
