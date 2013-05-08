@@ -171,6 +171,8 @@ public class ProdutoLancamentoDTO implements Serializable {
 	public void setStatusLancamento(String statusLancamento) {
 		
 		this.statusLancamento = statusLancamento;
+		
+		this.status = Util.getEnumByStringValue(StatusLancamento.values(), statusLancamento);
 	}
 
 	public StatusLancamento getStatus() {
@@ -490,12 +492,12 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 * @return the balanceamentoConfirmado
 	 */
 	public boolean isStatusLancamentoBalanceado() {
-		return StatusLancamento.BALANCEADO.equals(statusLancamento);
+		return StatusLancamento.BALANCEADO.equals(status);
 	}
 	
-	public boolean isStatusLancamentoConfirmado() {
-		return StatusLancamento.CONFIRMADO.equals(status);
-	}
+//	public boolean isStatusLancamentoConfirmado() {
+//		return StatusLancamento.CONFIRMADO.equals(status);
+//	}
 
 	/**
 	 * @return the distribuicao

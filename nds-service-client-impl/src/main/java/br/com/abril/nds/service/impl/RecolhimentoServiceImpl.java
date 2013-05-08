@@ -16,6 +16,7 @@ import java.util.TreeSet;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.ComparatorChain;
+import org.aspectj.weaver.bcel.AtAjAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -747,6 +748,50 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			throw new ValidacaoException(TipoMensagem.WARNING,
 				"A data de recolhimento deve ser uma data em que o distribuidor realiza operação!");
 		}
+	}
+	
+	@Transactional
+	@Override
+	public void processarProdutosProximaSemanaRecolhimento(List<ProdutoRecolhimentoDTO> produtos, Integer numeroSemana, Date dataBalanceamento){
+		
+		if(produtos == null || produtos.isEmpty()){
+			return;
+		}
+		
+		Date dataRecolhimento = this.obterDataValidaRecolhimento(numeroSemana, dataBalanceamento);
+		
+		List<Long> idLancamento = new ArrayList<>();
+		
+		for(ProdutoRecolhimentoDTO item : produtos){
+			idLancamento.add(item.getIdLancamento());
+		}
+		
+		lancamentoRepository.atualizarDataRecolhimentoDistribuidor(dataRecolhimento, idLancamento.toArray(new Long[]{}));
+	}
+	
+	private Date obterDataValidaRecolhimento(Integer numeroSemana,Date dataBalanceamento){
+		
+		Intervalo<Date> periodoRecolhimento = getPeriodoRecolhimento(++numeroSemana, dataBalanceamento);
+		
+		Date dataRecolhimento = periodoRecolhimento.getDe();
+		
+		Date dataValida = null;
+		
+		while(dataRecolhimento.compareTo(periodoRecolhimento.getAte())<=0){
+			
+			if(!lancamentoRepository.existeRecolhimentoNaoBalanceado(dataRecolhimento)){
+				dataValida = dataRecolhimento;
+				break;
+			}
+			
+			dataRecolhimento = DateUtil.adicionarDias(dataRecolhimento, 1); 
+		}		
+				
+		if(dataValida == null){
+			dataValida = obterDataValidaRecolhimento(numeroSemana, dataBalanceamento);
+		}
+		
+		return dataValida;
 	}
 	
 }

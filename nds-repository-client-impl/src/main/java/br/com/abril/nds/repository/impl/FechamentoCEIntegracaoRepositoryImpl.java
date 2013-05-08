@@ -229,7 +229,7 @@ public class FechamentoCEIntegracaoRepositoryImpl extends AbstractRepositoryMode
 		hql.append("            PROD_EDICAO.PRODUTO_ID = PROD.ID ");
 		hql.append("        ) ");
 		
-		hql.append(" INNER JOIN "); 
+		hql.append(" LEFT OUTER JOIN "); 
 		hql.append(" 	 ESTOQUE_PRODUTO ESTOQUE_PROD ");
 		hql.append(" 	 		ON ( ");
 		hql.append("			  	ESTOQUE_PROD.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");

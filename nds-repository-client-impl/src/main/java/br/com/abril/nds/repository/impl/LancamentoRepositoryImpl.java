@@ -1253,7 +1253,7 @@ public class LancamentoRepositoryImpl extends
 		String[] arrayStatusLancamentoNoPeriodo = {StatusLancamento.PLANEJADO.name(),
 												   StatusLancamento.CONFIRMADO.name(),
 												   StatusLancamento.BALANCEADO.name(),
-												   StatusLancamento.EXPEDIDO.name(),
+												   //StatusLancamento.EXPEDIDO.name(),
 												   //StatusLancamento.EM_BALANCEAMENTO_LANCAMENTO.name(),
 												   StatusLancamento.FURO.name()};
 		
@@ -1533,6 +1533,26 @@ public class LancamentoRepositoryImpl extends
 	}
 	
 	@Override
+	public Boolean existeRecolhimentoNaoBalanceado(Date dataRecolhimento) {
+		 
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT CASE WHEN COUNT(lancamento) > 0 THEN true ELSE false END ");	
+		hql.append(" FROM Lancamento lancamento ");
+		hql.append(" WHERE lancamento.dataRecolhimentoDistribuidor = :dataRecolhimento ");
+		hql.append(" AND lancamento.status IN (:statusRecolhimentoNaoBalanceado) ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameterList("statusRecolhimentoNaoBalanceado", Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO));
+		
+		query.setParameter("dataRecolhimento", dataRecolhimento);
+		
+		return (Boolean) query.uniqueResult();
+		
+	}
+	
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Lancamento> obterLancamentosDistribuidorPorPeriodo(Intervalo<Date> periodoDistribuicao) {
 		
@@ -1712,6 +1732,7 @@ public class LancamentoRepositoryImpl extends
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	public List<ProdutoLancamentoDTO> verificarDataConfirmada(ProdutoLancamentoDTO produtoLancamentoDTO) {
 		StringBuilder hql = new StringBuilder();
 		
@@ -1728,6 +1749,21 @@ public class LancamentoRepositoryImpl extends
 		List<ProdutoLancamentoDTO> resultado = query.list();
 		
 		return resultado;
+	}
+	
+	public void atualizarDataRecolhimentoDistribuidor(Date dataRecolhimento, Long... idLancamento){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" UPDATE Lancamento lan set lan.dataRecolhimentoDistribuidor =:dataRecolhimento  ");
+		hql.append(" WHERE lan.id IN (:idLancamento) ");
+				
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataRecolhimento",dataRecolhimento);
+		query.setParameterList("idLancamento", idLancamento);
+		
+		query.executeUpdate();
 	}
 	
 }

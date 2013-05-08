@@ -71,8 +71,8 @@ public interface MatrizLancamentoService {
 	
 	boolean isDataConfirmada(ProdutoLancamentoDTO produtoLancamentoDTO);
 
-	BalanceamentoLancamentoDTO verificarQuebraConfirmacaoDiaDeAcordoComMatriz(
-			BalanceamentoLancamentoDTO balanceamentoLancamento);
+//	BalanceamentoLancamentoDTO verificarQuebraConfirmacaoDiaDeAcordoComMatriz(
+//			BalanceamentoLancamentoDTO balanceamentoLancamento);
 
 	void salvarBalanceamentoLancamento(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento, Usuario usuarioLogado);
 

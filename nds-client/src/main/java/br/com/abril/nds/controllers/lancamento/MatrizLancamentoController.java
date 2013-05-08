@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
@@ -274,7 +275,7 @@ public class MatrizLancamentoController extends BaseController {
 
 		this.validarListaParaReprogramacao(produtosLancamento);
 		
-//		this.validarDataReprogramacao(produtosLancamento, novaData);
+		this.validarDataReprogramacao(produtosLancamento, novaData);
 		
 		this.atualizarMapaLancamento(produtosLancamento, novaData);
 		
@@ -302,7 +303,7 @@ public class MatrizLancamentoController extends BaseController {
 		
 		this.validarListaParaReprogramacao(produtosLancamento);
 		
-		//this.validarDataReprogramacao(produtosLancamento, novaData);
+		this.validarDataReprogramacao(produtosLancamento, novaData);
 		
 		this.atualizarMapaLancamento(produtosLancamento, novaData);
 		
@@ -391,7 +392,7 @@ public class MatrizLancamentoController extends BaseController {
 		
 		
 		
-		List<ConfirmacaoVO> confirmacoes = this.montarListaDatasConfirmacao();
+		/*List<ConfirmacaoVO> confirmacoes = this.montarListaDatasConfirmacao();
 
 		for (ConfirmacaoVO confirmacao : confirmacoes) {
 
@@ -403,7 +404,7 @@ public class MatrizLancamentoController extends BaseController {
 						"Lançamentos não podem ser reprogramados para uma data já confirmada!");
 				}
 			}
-		}		
+		}*/
 		
 		BalanceamentoLancamentoDTO balanceamentoLancamento =
 			(BalanceamentoLancamentoDTO) this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
@@ -411,6 +412,17 @@ public class MatrizLancamentoController extends BaseController {
 		if (balanceamentoLancamento == null) {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
+		}
+		
+		Set<Date> datasExpedicaoConfirmada = balanceamentoLancamento.getDatasExpedicaoConfirmada();
+		
+		for (Date dataExpedicao : datasExpedicaoConfirmada) {
+			
+			if (dataExpedicao.equals(novaData)) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING,
+					"Lançamentos não podem ser reprogramados para uma em que já houve expedição!");
+			}
 		}
 		
 		this.matrizLancamentoService.verificaDataOperacao(novaData);
@@ -1086,7 +1098,7 @@ public class MatrizLancamentoController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
 		}
 		
-		balanceamentoLancamento = matrizLancamentoService.verificarQuebraConfirmacaoDiaDeAcordoComMatriz(balanceamentoLancamento);
+//		balanceamentoLancamento = matrizLancamentoService.verificarQuebraConfirmacaoDiaDeAcordoComMatriz(balanceamentoLancamento);
 		
 		List<ConfirmacaoVO> confirmacoesVO =
 			matrizLancamentoService.obterDatasConfirmacao(balanceamentoLancamento);

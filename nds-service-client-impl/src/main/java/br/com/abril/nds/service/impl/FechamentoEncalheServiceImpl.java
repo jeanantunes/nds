@@ -346,10 +346,27 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		for (CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotaAusenteEncalhe) {
 			
-			if (cotaAusenteEncalheDTO.getFechado()) {
+			carregarDescricaoCotaAusente(cotaAusenteEncalheDTO);
+		}
+		
+		return listaCotaAusenteEncalhe;
+	}
+
+	private void carregarDescricaoCotaAusente(CotaAusenteEncalheDTO cotaAusenteEncalheDTO) {
+	
+		if(!cotaAusenteEncalheDTO.isIndPossuiChamadaEncalheCota()) {
+			
+			if (cotaAusenteEncalheDTO.isIndMFCNaoConsolidado()) {
+				cotaAusenteEncalheDTO.setAcao(" Cota com Divida ");
+			} 
+			
+		} else {
+			
+			if (cotaAusenteEncalheDTO.isFechado()) {
+				
 				cotaAusenteEncalheDTO.setAcao("Cobrado");
 				
-			} else if (cotaAusenteEncalheDTO.getPostergado()) {
+			} else if (cotaAusenteEncalheDTO.isPostergado()) {
 
 				Date dataPostergacao = 
 					this.fechamentoEncalheRepository.obterChamdasEncalhePostergadas(
@@ -357,36 +374,19 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				
 				cotaAusenteEncalheDTO.setAcao(
 					"Postergado, " + DateUtil.formatarData(dataPostergacao, "dd/MM/yyyy"));
-			}
+			} 
+			
 		}
 		
-		return listaCotaAusenteEncalhe;
+		
 	}
-
+	
+	
 	@Override
 	@Transactional(readOnly=true)
 	public Integer buscarTotalCotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao) {
 		
 		return this.fechamentoEncalheRepository.obterTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, null, null, 0, 0);
-	}
-
-	@Override
-	@Transactional(readOnly=true)
-	public int buscarQuantidadeCotasAusentes(Date dataEncalhe) {
-		
-		List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
-			this.fechamentoEncalheRepository.obterCotasAusentes(dataEncalhe, false, "asc", "numeroCota", 0, 0);
-		
-		int total = 0;
-		
-		for (CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotaAusenteEncalhe) {
-			
-			if (cotaAusenteEncalheDTO.getFechado() || cotaAusenteEncalheDTO.getPostergado()) {
-				total++;
-			}
-		}
-		
-		return total;
 	}
 	
 	private class FechamentoAscComparator implements Comparator<FechamentoFisicoLogicoDTO> {

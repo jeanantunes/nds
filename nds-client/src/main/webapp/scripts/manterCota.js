@@ -12,7 +12,7 @@ var MANTER_COTA = $.extend(true, {
     tipoCotaSelecionada:"",
     tipoCota_CPF:"FISICA",
     tipoCota_CNPJ:"JURIDICA",
-	confirmado:false,
+					confirmado:false,
     fecharModalCadastroCota:false,
     isAlteracaoTitularidade: false,
     _workspace: this.workspace,
@@ -1175,17 +1175,18 @@ var COTA_CNPJ = $.extend(true, {
         }
     },
 
-    salvarDadosBasico:function (){
-
+    salvarDadosBasico:function (){    	
         var formData = $("#formDadosBasicoCnpj", this.workspace).serializeArray();
-
         formData.push({name:"cotaDTO.idCota", value: MANTER_COTA.idCota});
         formData.push({name:"cotaDTO.alteracaoTitularidade", value: MANTER_COTA.isAlteracaoTitularidade});
-
-        var numeroCota = {name:"cotaDTO.numeroCota", value: MANTER_COTA.numeroCota};
-        if ($('#numeroCota').is(':disabled')) {
-            formData.push(numeroCota);
+        
+        if ($('#numeroCotaCNPJ').is(':disabled')) {
+        	formData.push({name:"cotaDTO.numeroCota", value: MANTER_COTA.numeroCota});
         }
+        else {
+        	formData.push({name:"cotaDTO.numeroCota", value: $('#numeroCotaCNPJ').val()});
+        }
+        	
 
         $.postJSON(contextPath + "/cadastro/cota/salvarCotaCNPJ",
             formData ,

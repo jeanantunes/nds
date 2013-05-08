@@ -991,7 +991,7 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		String nossoNumero = boleto.getNossoNumero();
 		String digitoNossoNumero = boleto.getDigitoNossoNumero();
-		BigDecimal valor = boleto.getValor();
+		BigDecimal valor = boleto.getValor() != null ? boleto.getValor().abs() : BigDecimal.ZERO;
 		Banco banco = boleto.getBanco();
 		Date dataEmissao = boleto.getDataEmissao();
 		Date dataVencimento = boleto.getDataVencimento();
