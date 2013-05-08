@@ -9,11 +9,13 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
-import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.dto.filtro.FiltroDistribuicaoDTO;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
+import br.com.abril.nds.repository.DistribuicaoRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.ItemNotaEnvioRepository;
@@ -38,6 +40,8 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 	@Autowired
 	private ItemNotaEnvioRepository itemNotaEnvioRepository;
 	
+	@Autowired
+	private DistribuicaoRepository distribuicaoRepository;
 	/**
 	 * Construtor.
 	 */
@@ -152,7 +156,17 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ResumoEstudoHistogramaPosAnaliseDTO.class));
 
-		return (ResumoEstudoHistogramaPosAnaliseDTO) query.uniqueResult();
+		
+		FiltroDistribuicaoDTO filtro = new FiltroDistribuicaoDTO();
+		filtro.setEstudoId(estudoId);
+		List<ProdutoDistribuicaoVO> obterMatrizDistribuicao = this.distribuicaoRepository.obterMatrizDistribuicao(filtro);
+		
+		ResumoEstudoHistogramaPosAnaliseDTO uniqueResult = (ResumoEstudoHistogramaPosAnaliseDTO) query.uniqueResult();
+		
+		uniqueResult.setQtdRepartePromocional(obterMatrizDistribuicao.get(0).getPromo());
+		uniqueResult.setReparteDistribuido(obterMatrizDistribuicao.get(0).getReparte().subtract(obterMatrizDistribuicao.get(0).getPromo()));
+		
+		return uniqueResult;
 	}
 	
 	

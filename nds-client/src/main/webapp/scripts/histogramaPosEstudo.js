@@ -519,7 +519,7 @@ var histogramaPosEstudoController = $.extend(true, {
 					if (typeof histogramaPosEstudoController.dadosResumo !== 'undefined') {
 					    $('#fieldSetResumoReparteDistribuida').html(histogramaPosEstudoController.dadosResumo.reparteDistribuido);
 					} else {
-					    $('#fieldSetResumoReparteDistribuida').html(0);
+					    $('#fieldSetResumoReparteDistribuida').html(response.reparteDistribuido);
 					}
 					
 					// Segunda coluna

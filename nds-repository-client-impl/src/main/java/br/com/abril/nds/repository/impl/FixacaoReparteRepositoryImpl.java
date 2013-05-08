@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
+import org.hibernate.Transaction;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -62,6 +63,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		.append(" f.edicaoFinal as edicaoFinal,")
 		.append(" f.edicaoFinal - f.edicaoInicial as edicoesAtendidas,")
 		.append(" f.cotaFixada.numeroCota as cotaFixada,")
+		.append(" f.cotaFixada.id as cotaFixadaId,")
 		.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '')  as nomeCota,")
 		.append(" f.produtoFixado.tipoClassificacaoProduto.descricao as classificacaoProduto,")
 		.append(" f.usuario.login as usuario,")
@@ -306,6 +308,14 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 	public void gerarCopiaPorProdutoFixacaoReparte(List<FixacaoReparteDTO> mixProdutoOrigem, Usuario usuarioLogado) {
 
 		for (FixacaoReparteDTO frDTO : mixProdutoOrigem) {
+			if(frDTO.getCotaFixadaId()==null){
+				throw new RuntimeException("Erro na consulta de Fixação de Repartes por produto");
+			}			
+		}
+		
+		Transaction tx = getSession().beginTransaction(); 
+		
+		for (FixacaoReparteDTO frDTO : mixProdutoOrigem) {
 			FixacaoReparte fr = new FixacaoReparte();
 			fr.setRepartesPDV(new ArrayList<RepartePDV>());
 			fr.setDataHora(GregorianCalendar.getInstance().getTime());
@@ -317,6 +327,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 			fr.setQtdeExemplares(frDTO.getQtdeExemplares());
 			
 			Cota cotaFixada = new Cota();
+		
 			cotaFixada.setId(frDTO.getCotaFixadaId());
 			
 			Produto produtoFixado = new Produto();
@@ -327,6 +338,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 			fr.setUsuario(usuarioLogado);
 			
 			List<RepartePDV> repartePdvFixacaoList = repartePDVRepository.buscarPorIdFixacao(frDTO.getId());
+			int i=0;
 			for (RepartePDV repartePDV : repartePdvFixacaoList) {
 				
 				RepartePDV newReparte = new RepartePDV();
@@ -336,30 +348,18 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 				newReparte.setProduto(produtoFixado);
 				newReparte.setReparte(repartePDV.getReparte());
 				fr.getRepartesPDV().add(newReparte);
+				
+				if(i++==3){
+					getSession().flush();
+			        getSession().clear();
+					i=0;
+				}
 			}
 			
-			adicionar(fr);
-			
-			
+			getSession().save(fr);
 		}
+		tx.commit();
 		
-		
-		
-		/*StringBuilder hql = new StringBuilder("");
-		
-		hql.append(" INSERT INTO fixacao_reparte ")
-		.append(" (DATA_HORA, ED_FINAL, ED_INICIAL, QTDE_EDICOES, QTDE_EXEMPLARES, ID_COTA, ID_PRODUTO, ID_USUARIO, MANTER_FIXA) VALUES ") ;
-		
-		List<String> valuesAppendList = new ArrayList<String>();
-		for (FixacaoReparteDTO frDTO : mixProdutoOrigem) {
-//			hql.append(" VALUES ('DATA_HORA', ED_FINAL, ED_INICIAL, QTDE_EDICOES, QTDE_EXEMPLARES, ID_COTA, ID_PRODUTO, ID_USUARIO, MANTER_FIXA); ");
-			valuesAppendList.add(" VALUES (now(), "+frDTO.getEdicaoFinal()+", "+frDTO.getEdicaoInicial()+", "+frDTO.getQtdeEdicoes()+", "+frDTO.getQtdeExemplares()+", "+frDTO.getCotaFixadaId()+", "+frDTO.getProdutoFixadoId()+", "+usuarioLogado.getId()+", "+frDTO.isManterFixa()+"); ");
-		}
-
-		hql.append(StringUtils.join(valuesAppendList,","));
-		
-		Query query = getSession().createSQLQuery(hql.toString());
-		query.executeUpdate();*/
 	}
 	
 }
