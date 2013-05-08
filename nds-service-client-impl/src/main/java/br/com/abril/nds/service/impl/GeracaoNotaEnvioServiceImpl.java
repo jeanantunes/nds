@@ -486,7 +486,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Cota " + idCota + " não encontrada!");
 		}
 		
-		IdentificacaoDestinatario destinatarioAtualizado = this.obterDestinatarioAtualizado(cota, idRota);
+		IdentificacaoDestinatario destinatarioAtualizado = this.obterDestinatarioAtualizado(cota, idRota, periodo);
 		
 		List<ItemNotaEnvio> listaItemNotaEnvio = 
 				this.processarNotasDeEnvioGeradas(cota, idRota, notasEnvio, periodo, listaIdFornecedores, listaEstudosCota,destinatarioAtualizado);
@@ -624,7 +624,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Cota " + idCota + " não encontrada!");
 		}
 		
-		IdentificacaoDestinatario destinatarioAtualizado = this.obterDestinatarioAtualizado(cota, idRota);
+		IdentificacaoDestinatario destinatarioAtualizado = this.obterDestinatarioAtualizado(cota, idRota, periodo);
+		if(destinatarioAtualizado == null)
+			return;// Caso retorne null pular próxima cota pois não encontrou endereço PDV p uma cota sem movimentoEstudo 
 		
 		List<ItemNotaEnvio>listaItemNotaEnvio = 
 				this.processarNotasDeEnvioGeradas(cota, idRota, notasEnvio, periodo, listaIdFornecedores, listaEstudosCota,destinatarioAtualizado);
@@ -675,7 +677,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		return listaItemNotaEnvio;
 	}
 	
-	private IdentificacaoDestinatario obterDestinatarioAtualizado(Cota cota, Long idRota){
+	private IdentificacaoDestinatario obterDestinatarioAtualizado(Cota cota, Long idRota, Intervalo<Date> periodo){
 		
 		PDV pdvPrincipal = this.pdvRepository.obterPDVPrincipal(cota.getId());
 
@@ -684,7 +686,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			idRota = this.getIdRotaCota(pdvPrincipal, cota);
 		}
 		
-		return this.carregaDestinatario(cota, idRota, pdvPrincipal);
+		return this.carregaDestinatario(cota, idRota, pdvPrincipal, periodo);
 	}
 	
 	/**
@@ -839,7 +841,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		return emitente;
 	}
 
-	private IdentificacaoDestinatario carregaDestinatario(Cota cota, Long idRota, PDV pdvPrincipalCota) {
+	private IdentificacaoDestinatario carregaDestinatario(Cota cota, Long idRota, PDV pdvPrincipalCota, Intervalo<Date> periodo) {
 														  IdentificacaoDestinatario destinatario = new IdentificacaoDestinatario();
 														  destinatario.setNumeroCota(cota.getNumeroCota());
 														  destinatario.setDocumento(cota.getPessoa().getDocumento());
@@ -859,8 +861,18 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 		if (enderecoPdv == null) {
 
-			throw new ValidacaoException(TipoMensagem.WARNING,
-					"Endereço do PDV principal da cota " + cota.getNumeroCota() + " não encontrado!");
+			/*
+			 * Verifica se exite movimento e estudo para a cota na data
+			 * 
+			 * Caso exista o sistema deve apresentar erro por falta de endereço PDV
+			 */
+			if(existeMovimentoEstudoCotaData(cota, periodo)){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING,
+						"Endereço do PDV principal da cota " + cota.getNumeroCota() + " não encontrado!");
+			}else{
+				return null;
+			}
 		}
 
 		try {
@@ -925,6 +937,30 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			destinatario.setDescricaoRota(rota.getDescricaoRota());
 		}
 		return destinatario;
+	}
+
+	private boolean existeMovimentoEstudoCotaData(Cota cota, Intervalo<Date> periodo) {
+		List<EstudoCota> obterEstudoCota = estudoCotaRepository.obterEstudoCota(cota.getId(), periodo.getDe(), periodo.getAte());
+		
+		GrupoMovimentoEstoque[] gruposMovimentoEstoque   = {
+			      GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO,
+			      GrupoMovimentoEstoque.FALTA_DE_COTA,
+			      GrupoMovimentoEstoque.FALTA_EM_COTA,
+			      GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE,
+			      GrupoMovimentoEstoque.SOBRA_DE_COTA,
+			      GrupoMovimentoEstoque.SOBRA_EM_COTA,
+		          GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE,
+		          GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE
+			   };
+		
+		Map<Long, BigInteger> obterQtdMovimentoCotaPorTipoMovimento = movimentoEstoqueCotaRepository.obterQtdMovimentoCotaPorTipoMovimento(periodo, cota.getId(), gruposMovimentoEstoque);
+		
+		if((obterEstudoCota != null && obterEstudoCota.size() > 0) ||
+				(obterQtdMovimentoCotaPorTipoMovimento != null && !obterQtdMovimentoCotaPorTipoMovimento.isEmpty())){
+			return true;
+		}
+		
+		return false;
 	}
 
 	private Endereco cloneEndereco(Endereco endereco)
