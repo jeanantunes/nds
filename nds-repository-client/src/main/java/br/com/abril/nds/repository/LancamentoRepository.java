@@ -342,4 +342,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
 	Lancamento buscarPorIdSemEstudo(Long lancamentoId);
 
+	public abstract BigInteger obterUltimoRepartePorProduto(Long codigoProduto);
+
 }
