@@ -341,7 +341,7 @@ var histogramaPosEstudoController = $.extend(true, {
 						rp : 15,
 						showTableToggleBtn : true,
 						width : 960,
-						height : 150
+						height : 230
 					}
 				}),
 				BaseSugeridaGrid : flexGridService.GridFactory.createGrid({
@@ -503,25 +503,24 @@ var histogramaPosEstudoController = $.extend(true, {
 			rowConsolidada = histogramaPosEstudoController.analiseGridRowConsolidada,
 			url = contextPath + "/distribuicao/histogramaPosEstudo/carregarDadosFieldSetResumoEstudo";
 		
-		// Primeira coluna
-		console.log(histogramaPosEstudoController.dadosResumo);
-		$('#fieldSetResumoReparteTotal').html(rowConsolidada.cell.reparteTotalFormatado);
-		if (typeof histogramaPosEstudoController.dadosResumo !== 'undefined') {
-		    $('#fieldSetResumoRepartePromocional').html(parseInt(histogramaPosEstudoController.dadosResumo.repartePromo || 0));
-		} else {
-		    $('#fieldSetResumoRepartePromocional').html(0);
-		}
-		$('#fieldSetResumoReservaTecnica').html(matrizSelecionada.sobra);
-		if (typeof histogramaPosEstudoController.dadosResumo !== 'undefined') {
-		    $('#fieldSetResumoReparteDistribuida').html(histogramaPosEstudoController.dadosResumo.reparteDistribuido);
-		} else {
-		    $('#fieldSetResumoReparteDistribuida').html(0);
-		}
-		
 		$.postJSON(
 				url,
 				[{name : "estudoId" , value :matrizSelecionada.estudo}],
 				function(response){
+					
+					// Primeira coluna
+					$('#fieldSetResumoReparteTotal').html(rowConsolidada.cell.reparteTotalFormatado);
+					if (typeof histogramaPosEstudoController.dadosResumo !== 'undefined') {
+					    $('#fieldSetResumoRepartePromocional').html(parseInt(histogramaPosEstudoController.dadosResumo.repartePromo || 0));
+					} else {
+					    $('#fieldSetResumoRepartePromocional').html(parseInt(response.qtdRepartePromocional));
+					}
+					$('#fieldSetResumoReservaTecnica').html(matrizSelecionada.sobra);
+					if (typeof histogramaPosEstudoController.dadosResumo !== 'undefined') {
+					    $('#fieldSetResumoReparteDistribuida').html(histogramaPosEstudoController.dadosResumo.reparteDistribuido);
+					} else {
+					    $('#fieldSetResumoReparteDistribuida').html(0);
+					}
 					
 					// Segunda coluna
 					$('#fieldSetResumoNpdvAtual').html(response.qtdCotasAtivas); // count tb cotas onde status for ativo

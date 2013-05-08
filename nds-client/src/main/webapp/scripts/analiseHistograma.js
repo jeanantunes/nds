@@ -88,7 +88,7 @@ var anaLiseHistogramaController = $.extend(true, {
 	formatarFaixasVenda : function formatarFaixasVenda(rowCell){
 		var cotasEsmagadasFormatado = '';
 		
-			rowCell.repTotal = formatarMilhar(rowCell.repTotal);
+			rowCell.repTotal = formatarMilhar(Math.round(rowCell.repTotal));
 			rowCell.vdaTotal = formatarMilhar(rowCell.vdaTotal);
 			
 			cotasEsmagadasFormatado = formatarMilhar($(rowCell.cotasEsmagadas).text());
@@ -97,7 +97,7 @@ var anaLiseHistogramaController = $.extend(true, {
 				rowCell.cotasEsmagadas = 0;
 			}
 			 
-			rowCell.vendaEsmagadas = floatToPrice(rowCell.vendaEsmagadas);
+			rowCell.vendaEsmagadas = formatarMilhar(rowCell.vendaEsmagadas);
 			rowCell.qtdeCotasAtivas = formatarMilhar(rowCell.qtdeCotasAtivas);
 			rowCell.qtdeCotas = formatarMilhar(rowCell.qtdeCotas);
 			rowCell.qtdeCotasSemVendas = formatarMilhar(rowCell.qtdeCotasSemVendas);

@@ -234,8 +234,8 @@ var analiseHistoricoVendaController = $.extend(true, {
 			link = '<a href="javascript:;" onclick="analiseHistoricoVendaController.popup_cotas_detalhes('+row.cell.numeroCota+');" style="cursor:pointer">'+row.cell.nomePessoa+'</a>';
 			row.cell.nomePessoa = link;
 			
-			resumo.reparteMedio  = parseFloat(resumo.reparteMedio) + parseFloat((row.cell.reparteMedio ||  0));
-			resumo.vendaMedia = parseFloat(resumo.vendaMedia) + parseFloat((row.cell.vendaMedia ||  0));
+			resumo.reparteMedio  = parseFloat(Math.round(resumo.reparteMedio)) + parseFloat(Math.round(row.cell.reparteMedio ||  0));
+			resumo.vendaMedia = parseFloat(Math.round(resumo.vendaMedia)) + parseFloat(Math.round(row.cell.vendaMedia ||  0));
 			resumo.qtdCota  +=  parseInt((row.cell.numeroCota ? 1 : 0));
 			resumo.qtdPdv  +=  parseInt((row.cell.qtdPdv || 0));
 			resumo.ed1Rep += parseInt((row.cell.ed1Reparte  ||  0));
@@ -300,8 +300,8 @@ var analiseHistoricoVendaController = $.extend(true, {
 			vendaMedia += resumo['ed' + i + 'Venda'];
 		}
 		
-		resumo.reparteMedio  = parseInt(reparteMedio / qtdEdicoes); 
-		resumo.vendaMedia = parseInt(vendaMedia / qtdEdicoes);
+		resumo.reparteMedio  = parseInt(Math.round(reparteMedio / qtdEdicoes)); 
+		resumo.vendaMedia = parseInt(Math.round(vendaMedia / qtdEdicoes));
 	},
 	
 	// PopUp visulizado quando o usuário clica no nome da cota dentro do Grid Principal
