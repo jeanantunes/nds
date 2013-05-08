@@ -261,7 +261,7 @@ var analiseHistoricoVendaController = $.extend(true, {
 		        '<td width="103" >' + resumo.qtdCota + '</td>' +
 		        '<td width="30" align="right">' + resumo.qtdPdv + '</td>' +
 		        '<td width="32" align="right">' + resumo.reparteMedio + '</td>' +
-		        '<td width="32" align="right">' + resumo.vendaMedia + '</td>' +
+		        '<td width="32" align="right">' + (analiseHistoricoVendaController.isFaixaZero ? 0 : resumo.vendaMedia) + '</td>' +
 		        '<td width="32" align="right">' + resumo.ed1Rep + '</td>' +
 		        '<td width="32" align="right">' + resumo.ed1Venda + '</td>' +
 		        '<td width="32" align="right">' + resumo.ed2Rep + '</td>' +
