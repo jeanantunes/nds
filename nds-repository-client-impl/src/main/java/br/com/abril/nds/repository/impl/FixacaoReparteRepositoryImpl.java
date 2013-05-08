@@ -313,7 +313,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 			}			
 		}
 		
-		Transaction tx = getSession().beginTransaction(); 
+		int i=0;
 		
 		for (FixacaoReparteDTO frDTO : mixProdutoOrigem) {
 			FixacaoReparte fr = new FixacaoReparte();
@@ -338,7 +338,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 			fr.setUsuario(usuarioLogado);
 			
 			List<RepartePDV> repartePdvFixacaoList = repartePDVRepository.buscarPorIdFixacao(frDTO.getId());
-			int i=0;
+			
 			for (RepartePDV repartePDV : repartePdvFixacaoList) {
 				
 				RepartePDV newReparte = new RepartePDV();
@@ -349,16 +349,10 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 				newReparte.setReparte(repartePDV.getReparte());
 				fr.getRepartesPDV().add(newReparte);
 				
-				if(i++==3){
-					getSession().flush();
-			        getSession().clear();
-					i=0;
-				}
 			}
 			
 			getSession().save(fr);
 		}
-		tx.commit();
 		
 	}
 	
