@@ -647,9 +647,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 					case VALOR_COM_DESCONTO:
 						orderByColumn = " valorComDesconto ";
 						break;
-					case RECOLHIMENTO:
-						orderByColumn = " recolhimento ";
-						break;
 					default:
 						break;
 				}
@@ -702,7 +699,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				dto.setPrecoComDesconto(rs.getBigDecimal("precoComDesconto"));
 				dto.setValor(rs.getBigDecimal("valor"));
 				dto.setValorComDesconto(rs.getBigDecimal("valorComDesconto"));
-				dto.setRecolhimento(rs.getInt("recolhimento"));
 				dto.setReparte(rs.getBigDecimal("reparte"));
 				dto.setEncalhe(rs.getBigDecimal("encalhe"));
 				dto.setIdFornecedor(rs.getLong("idFornecedor"));
