@@ -81,4 +81,14 @@ public interface RecolhimentoService {
 	
 	void verificaDataOperacao(Date data);
 	
+	/**
+	 * Processa os produtos que não foram confirmados em uma matriz já fechada, para proxima semana de recolhimento
+	 * 
+	 * @param produtos - produtos a serem processados 
+	 * @param numeroSemana - número da semana 
+	 * @param dataBalanceamento - data de balanceamento
+	 * 
+	 */
+	void processarProdutosProximaSemanaRecolhimento(List<ProdutoRecolhimentoDTO> produtos, Integer numeroSemana,Date dataBalanceamento);
+	
 }

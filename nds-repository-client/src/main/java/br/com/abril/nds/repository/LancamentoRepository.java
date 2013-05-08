@@ -342,4 +342,8 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
 	List<ProdutoLancamentoDTO> verificarDataConfirmada(ProdutoLancamentoDTO produtoLancamentoDTO);
 	
+	void atualizarDataRecolhimentoDistribuidor(Date dataRecolhimento, Long... idLancamento);
+	
+	Boolean existeRecolhimentoNaoBalanceado(Date dataRecolhimento);
+	
 }
