@@ -160,6 +160,7 @@ public class HTMLTableUtil {
 	int qtdeCotasSemReparte = 0;
 	int qtdeCotasComplementares = 0;
 	BigInteger totalFixacao = BigInteger.ZERO;
+	BigDecimal vendaMediaTotal = BigDecimal.ZERO;
 	for (CotaEstudo ce : estudo.getCotas()) {
 	    if (ce.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
 		qtdeCotasAtivas++;
@@ -178,6 +179,7 @@ public class HTMLTableUtil {
 	    if (ce.getClassificacao().equals(ClassificacaoCota.BancaEstudoComplementar)) {
 		qtdeCotasComplementares++;
 	    }
+	    vendaMediaTotal = vendaMediaTotal.add(ce.getVendaMedia());
 	}
 	
 	h.append("<table border='1'>");
@@ -194,7 +196,7 @@ public class HTMLTableUtil {
 
 	h.append("<tr>");
 	h.append("<td>Total Venda Média</td>");
-	h.append("<td>").append(estudo.getSomatoriaVendaMedia()).append("</td>");
+	h.append("<td>").append(vendaMediaTotal).append("</td>");
 	h.append("</tr>");
 	
 	h.append("<tr>");
@@ -210,6 +212,11 @@ public class HTMLTableUtil {
 	h.append("<tr>");
 	h.append("<td>% Excedente</td>");
 	h.append("<td>").append(estudo.getPercentualExcedente()).append("</td>");
+	h.append("</tr>");
+	
+	h.append("<tr>");
+	h.append("<td>Excedente</td>");
+	h.append("<td>").append(estudo.getExcedente()).append("</td>");
 	h.append("</tr>");
 	
 	h.append("<tr>");

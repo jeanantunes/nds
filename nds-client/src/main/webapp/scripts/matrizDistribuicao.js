@@ -1079,7 +1079,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					$("#copiarEstudo-estudoPesquisa").attr('disabled','true');
 					$("#copiarEstudo-reparteDistribuido").text("");
 					T.atualizarGrid();
-					T.mostraTelaMatrizDistribuicao();
+					//T.mostraTelaMatrizDistribuicao();
 				}
 			);
 	},

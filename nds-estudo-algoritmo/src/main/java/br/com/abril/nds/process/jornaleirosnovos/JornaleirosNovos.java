@@ -78,7 +78,9 @@ public class JornaleirosNovos {
 		BigDecimal vendaMediaCorrigidaNovo = BigDecimal.ZERO;
 		BigDecimal qtdeEquivalente = new BigDecimal(cota.getEquivalente().size());
 		vendaMediaCorrigidaNovo = totalVendaMediaCorrigidaEquivalente.divide(qtdeEquivalente, 2, BigDecimal.ROUND_FLOOR);
-		vendaMediaCorrigidaNovo = vendaMediaCorrigidaNovo.multiply(cota.getIndiceAjusteEquivalente()).divide(BigDecimal.ONE, 2, BigDecimal.ROUND_FLOOR);
+		if (cota.getIndiceAjusteEquivalente() != null) {
+		    vendaMediaCorrigidaNovo = vendaMediaCorrigidaNovo.multiply(cota.getIndiceAjusteEquivalente()).divide(BigDecimal.ONE, 2, BigDecimal.ROUND_FLOOR);
+		}
 
 		cota.setVendaMedia(vendaMediaCorrigidaNovo);
 	    }

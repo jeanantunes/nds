@@ -135,6 +135,15 @@ public class EstudoAlgoritmoService {
 	    estudo.setTotalPDVs(estudo.getTotalPDVs().add(cota.getQuantidadePDVs()));
 	}
     }
+    
+    public static void somarVendaMedia(EstudoTransient estudo) {
+	estudo.setSomatoriaVendaMedia(BigDecimal.ZERO);
+	for (CotaEstudo cota : estudo.getCotas()) {
+	    if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.BancaSoComEdicaoBaseAberta, ClassificacaoCota.RedutorAutomatico)) {
+		estudo.setSomatoriaVendaMedia(estudo.getSomatoriaVendaMedia().add(cota.getVendaMedia()));
+	    }
+	}
+    }
 
     public void carregarParametros(EstudoTransient estudo) {
 	estudo.setProdutoEdicaoEstudo(produtoEdicaoDAO.getProdutoEdicaoEstudo(estudo.getProdutoEdicaoEstudo().getProduto().getCodigo(), estudo.getProdutoEdicaoEstudo().getNumeroEdicao()));
@@ -257,6 +266,8 @@ public class EstudoAlgoritmoService {
 
 	    jornaleirosNovos.executar(cota);
 	}
+	somarVendaMedia(estudo);
+	
 	bonificacoes.executar(estudo);
 
 	ajusteReparte.executar(estudo);
