@@ -115,7 +115,7 @@
   <tr>
     <td height="19" style="border-bottom:1px solid #ccc;">Venda Esmagada:</td>
     <td style="border-bottom:1px solid #ccc;" id="vendaEsmagadasCell"> </td>
-    <td style="border-bottom:1px solid #ccc;">% Eficiência de Venda:</td>
+    <td style="border-bottom:1px solid #ccc;">Eficiência de Venda:</td>
     <td style="border-bottom:1px solid #ccc;" id="eficienciaDeVendaCell"> </td>
     <td style="border-bottom:1px solid #ccc;">Venda Média:</td>
     <td style="border-bottom:1px solid #ccc;" id="vdaMedioCell"> </td>

@@ -113,17 +113,16 @@ public class SelecaoBancas extends ProcessoAbstrato {
 		cota.setCotaSoRecebeuEdicaoAberta(false);
 	    }
 	}
-	if (!cota.getClassificacao().equals(ClassificacaoCota.CotaNova)) {
-	    if (totalReparte.compareTo(BigDecimal.ZERO) == 0 && cota.getReparteMinimo().compareTo(BigInteger.ZERO) == 0) {
-		cota.setClassificacao(ClassificacaoCota.BancaSemHistorico);
-	    }
-	    if (totalVenda.compareTo(BigDecimal.ZERO) == 0 && cota.getReparteMinimo().compareTo(BigInteger.ZERO) == 0) {
-		cota.setClassificacao(ClassificacaoCota.BancaComVendaZero);
-	    }
-	}
 	if (totalEdicoes.compareTo(BigDecimal.ZERO) != 0) {
 	    cota.setVendaMediaNominal(totalVenda.divide(totalEdicoes, 2, BigDecimal.ROUND_HALF_UP));
 	    cota.setVendaMedia(cota.getVendaMediaNominal());
+	}
+	if (!cota.getClassificacao().equals(ClassificacaoCota.CotaNova)) {
+	    if (totalReparte.compareTo(BigDecimal.ZERO) == 0 && cota.getReparteMinimo().compareTo(BigInteger.ZERO) == 0) {
+		cota.setClassificacao(ClassificacaoCota.BancaSemHistorico);
+	    } else if (totalVenda.compareTo(BigDecimal.ZERO) == 0 && cota.getReparteMinimo().compareTo(BigInteger.ZERO) == 0) {
+		cota.setClassificacao(ClassificacaoCota.BancaComVendaZero);
+	    }
 	}
 	if (cota.getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) {
 	    cota.setClassificacao(ClassificacaoCota.BancaSuspensa);

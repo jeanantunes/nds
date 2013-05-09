@@ -55,6 +55,8 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends AbstractRepositoryMod
 
 	hql.append(" FROM ExcecaoProdutoCota as excecaoProdutoCota ");
 	hql.append(" INNER JOIN excecaoProdutoCota.produto as produto ");
+		
+
 	hql.append(" INNER JOIN excecaoProdutoCota.usuario as usuario ");
 	hql.append(" INNER JOIN excecaoProdutoCota.cota as cota ");
 	hql.append(" INNER JOIN cota.pessoa as pessoa ");
@@ -67,9 +69,11 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends AbstractRepositoryMod
 	if (filtro.isExcecaoSegmento()) {
 	    parameters.put("tipoExcecao", TipoExcecao.SEGMENTO);
 	} else {
-	    parameters.put("tipoExcecao", TipoExcecao.PARCIAL);
+		parameters.put("tipoExcecao", TipoExcecao.PARCIAL);
 	}
 
+	
+	
 	if (filtroHasNumeroCota) {
 	    hql.append(" and cota.numeroCota = :numeroCota ");
 	    parameters.put("numeroCota", filtro.getCotaDto().getNumeroCota());
@@ -106,6 +110,7 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends AbstractRepositoryMod
 	hql.append("  from SegmentoNaoRecebido as s ");
 	hql.append("  join s.tipoSegmentoProduto as t ");
 	hql.append("  join t.produtos as p ");
+	
 	hql.append("  join p.fornecedores as f ");
 	hql.append("  join f.juridica as j ");
 	hql.append("  join s.cota as c ");
@@ -115,9 +120,21 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends AbstractRepositoryMod
 	hql.append("                      join ex.cota as co ");
 	hql.append("                      join co.pessoa as pes ");
 	hql.append("                     where "); // o parentese e fechado no if abaixo
+	//garante que a excecao exibida e do tipo correspondente ao da pesquisa(segmento ou parcial)
+	hql.append(" ex.tipoExcecao = :tipoExcecao "); 
+	
+	
+	
+	if (filtro.isExcecaoSegmento()) {
+		//na consulta por excecao segmento, nao deve ser exibido consulta parcial
+	    parameters.put("tipoExcecao", TipoExcecao.SEGMENTO);
+	} else {
+		//na consulta por excecao parcial, nao deve ser exibido consulta segmento
+		parameters.put("tipoExcecao", TipoExcecao.PARCIAL);
+	}
 
 	if (filtro.getCotaDto().getNumeroCota() != null && !filtro.getCotaDto().getNumeroCota().equals(0)) {
-	    hql.append(" co.numeroCota = :numeroCota ) ");
+	    hql.append(" and  co.numeroCota = :numeroCota ) ");
 	    hql.append(" and c.numeroCota = :numeroCota ");
 	    parameters.put("numeroCota", filtro.getCotaDto().getNumeroCota());
 	} else if (filtro.getCotaDto().getNomePessoa() != null && !filtro.getCotaDto().getNomePessoa().isEmpty()) {
@@ -137,6 +154,8 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends AbstractRepositoryMod
 		parameters.put("nomeProduto", filtro.getProdutoDto().getNomeProduto());
 	    }
 	}
+	
+
 	if (!consultaFiltrada) {
 	    hql.append(" and 1 = 0 ");
 	}
@@ -172,9 +191,19 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends AbstractRepositoryMod
 	hql.append("                    from ExcecaoProdutoCota as ex ");
 	hql.append("                    join ex.produto as pr ");
 	hql.append("                   where ");
-
+	//garante que a excecao exibida e do tipo correspondente ao da pesquisa(segmento ou parcial)
+	hql.append(" ex.tipoExcecao = :tipoExcecao ");
+	
+	if (filtro.isExcecaoSegmento()) {
+		//na consulta por excecao segmento, nao deve ser exibido consulta parcial
+	    parameters.put("tipoExcecao", TipoExcecao.SEGMENTO);
+	} else {
+		//na consulta por excecao parcial, nao deve ser exibido consulta segmento
+		parameters.put("tipoExcecao", TipoExcecao.PARCIAL);
+	}
+	
 	if (filtro.getProdutoDto().getCodigoProduto() != null && !filtro.getProdutoDto().getCodigoProduto().equals(0)) {
-	    hql.append(" pr.codigo = :codigoProduto ) ");
+	    hql.append(" and  pr.codigo = :codigoProduto ) ");
 	    hql.append(" and p.codigo = :codigoProduto ");
 	    parameters.put("codigoProduto", filtro.getProdutoDto().getCodigoProduto());
 	} else if (filtro.getProdutoDto().getNomeProduto() != null && !filtro.getProdutoDto().getNomeProduto().isEmpty()) {
@@ -224,10 +253,12 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends AbstractRepositoryMod
 	hql.append("  join c.pessoa as pe ");
 	hql.append(" where 1 = 1 ");
 	hql.append("   and e.tipoExcecao = :tipoExcecao ");
+	
+	
 	if (filtro.isExcecaoSegmento()) {
-	    parameters.put("tipoExcecao", TipoExcecao.SEGMENTO);
+		parameters.put("tipoExcecao", TipoExcecao.SEGMENTO);
 	} else {
-	    parameters.put("tipoExcecao", TipoExcecao.PARCIAL);
+		parameters.put("tipoExcecao", TipoExcecao.PARCIAL);
 	}
 
 	if (filtro.getProdutoDto().getCodigoProduto() != null && !filtro.getProdutoDto().getCodigoProduto().equals(0)) {

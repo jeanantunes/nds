@@ -43,7 +43,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	LinkedList<CotaEstudo> listaD = new LinkedList<>();
 	// Lista de cotas que receberam 3 ou mais edições das edições base
 	LinkedList<CotaEstudo> listaE = new LinkedList<>();
-	
+
 	for (CotaEstudo cota : estudo.getCotasExcluidas()) {
 	    if ((cota.getReparteCalculado().compareTo(BigInteger.ZERO) == 0) && cota.isRecebeReparteComplementar()
 		    && cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
@@ -69,7 +69,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
     }
 
     private void distribuirReparteComplementar(EstudoTransient estudo) {
-	BigInteger reparte = BigInteger.ONE;
+	BigInteger reparte = BigInteger.valueOf(2);
 	if (estudo.isDistribuicaoPorMultiplos()) {
 	    reparte = estudo.getPacotePadrao();
 	}
@@ -79,6 +79,16 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	    estudo.setReparteComplementar(estudo.getReparteComplementar().subtract(reparte));
 	    if (estudo.getReparteComplementar().compareTo(BigInteger.ZERO) <= 0) {
 		break;
+	    }
+	}
+	BigInteger reparteGeral = BigInteger.ONE;
+	while (estudo.getReparteComplementar().compareTo(BigInteger.ZERO) > 0) {
+	    for (CotaEstudo cota : estudo.getCotas()) {
+		cota.setReparteCalculado(cota.getReparteCalculado().add(reparteGeral));
+		estudo.setReparteComplementar(estudo.getReparteComplementar().subtract(reparte));
+		if (estudo.getReparteComplementar().compareTo(BigInteger.ZERO) <= 0) {
+		    break;
+		}
 	    }
 	}
     }
