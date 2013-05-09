@@ -1,21 +1,27 @@
 package br.com.abril.nds.controllers.distribuicao;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.DesenglobaVO;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.DesenglobacaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDesenglobacaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DesenglobacaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
@@ -43,7 +49,10 @@ public class DesenglobacaoController extends BaseController {
 	private HttpServletResponse httpResponse;
 	
 	@Autowired
-	private DesenglobacaoService service;
+	private DesenglobacaoService desenglobacaoService;
+	
+	@Autowired
+	private CotaService cotaService;
 	
 	@Rules(Permissao.ROLE_DISTRIBUICAO_DESENGLOBACAO)
 	@Path("/index")
@@ -66,7 +75,7 @@ public class DesenglobacaoController extends BaseController {
 	}
 
 	private TableModel<CellModelKeyValue<DesenglobacaoDTO>> montarCotasDesenglobadas(FiltroDesenglobacaoDTO dto) {
-		List<DesenglobacaoDTO> cotasDesenglobadas = service.obterDesenglobacaoPorCota(dto.getCotaDto().getNumeroCota().longValue());
+		List<DesenglobacaoDTO> cotasDesenglobadas = desenglobacaoService.obterDesenglobacaoPorCota(dto.getCotaDto().getNumeroCota().longValue());
 		dto.getPaginacao().setQtdResultadosTotal(cotasDesenglobadas.size());
 		
 		if (cotasDesenglobadas == null || cotasDesenglobadas.isEmpty()) {
@@ -88,8 +97,14 @@ public class DesenglobacaoController extends BaseController {
 	
 	@Post
 	@Path("/inserirEnglobacao")
-	public void inserirEnglobacao(List<DesenglobaVO> desenglobaDTO) {		
-		boolean isOk = service.inserirDesenglobacao(desenglobaDTO, super.getUsuarioLogado());
+	public void inserirEnglobacao(List<DesenglobaVO> desenglobaDTO,String alterando) {		
+		
+		boolean isOk =false;
+		if(StringUtils.isEmpty(alterando)){
+			isOk = desenglobacaoService.inserirDesenglobacao(desenglobaDTO, super.getUsuarioLogado());
+		}else{
+			isOk = desenglobacaoService.alterarDesenglobacao(desenglobaDTO, super.getUsuarioLogado());
+		}
 		if (!isOk) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Porcentagem supera o limite de 100%");
 		}
@@ -100,11 +115,50 @@ public class DesenglobacaoController extends BaseController {
 	@Path("/exportar")
 	public void exportar(FileType fileType) throws IOException {
 		FiltroDesenglobacaoDTO filtro = (FiltroDesenglobacaoDTO) session.getAttribute("filtroDesengloba");
-		List<DesenglobacaoDTO> cotasDesenglobadas = service.obterDesenglobacaoPorCota(filtro.getCotaDto().getNumeroCota().longValue());
+		List<DesenglobacaoDTO> cotasDesenglobadas = desenglobacaoService.obterDesenglobacaoPorCota(filtro.getCotaDto().getNumeroCota().longValue());
 			
 			FileExporter.to("ENGLOBACAO_DESENGLOBACAO", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, 
 					cotasDesenglobadas, DesenglobacaoDTO.class, this.httpResponse);
 			result.nothing();
 	}
+	
+	
+	@Post
+	@Path("/editarDesenglobacao")
+	public void editarDesenglobacao(Long cotaNumeroDesenglobada) {
+		
+		final List<DesenglobacaoDTO> desenglobacaoPorCotaList = desenglobacaoService.obterDesenglobacaoPorCotaDesenglobada(cotaNumeroDesenglobada);
+		Cota cotaEnglobadaBean = this.cotaService.obterPorNumeroDaCota(cotaNumeroDesenglobada.intValue());
+
+		final CotaDTO cotaDTO = new CotaDTO();
+		
+		try {
+			BeanUtils.copyProperties(cotaDTO, cotaEnglobadaBean);
+			cotaDTO.setNomePessoa(cotaEnglobadaBean.getPessoa().getNome());
+		} catch (Exception e) {
+		} 
+
+		List<Object> r = new ArrayList<Object>();
+
+		r.add(cotaDTO);
+		r.add(desenglobacaoPorCotaList);
+		
+		result.use(Results.json()).from(r,"result").recursive().serialize();
+	}
+
+	@Post
+	@Path("/excluirDesenglobacao")
+	public void excluirDesenglobacao(Long id) {
+		try {
+			this.desenglobacaoService.excluirDesenglobacao(id);
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao excluir Desenglobação");
+		}
+		
+		result.use(Results.json()).from("OK").serialize();
+	}
+	
 }
+
 
