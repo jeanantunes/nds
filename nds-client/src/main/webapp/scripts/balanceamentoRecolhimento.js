@@ -783,12 +783,20 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			null,
 			function(result) {
 				
-				balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
+				if(result.produtosNaoBalanceadosAposFechamentoMatriz
+						&& result.produtosNaoBalanceadosAposFechamentoMatriz.length > 0 ){
+					
+					balanceamentoRecolhimentoController.verificarProdutosNaoBalanceadosAposConfirmacaoMatriz(result)
+				}
+				else{
+					
+					balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
 
-				exibirMensagem(
-					'SUCCESS', 
-					[ 'Balanceamento concluído com sucesso.' ]
-				);
+					exibirMensagem(
+						'SUCCESS', 
+						[ 'Balanceamento concluído com sucesso.' ]
+					);
+				}
 			},
 			function(result) {
 				
@@ -806,12 +814,20 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			null,
 			function(result) {
 				
-				balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
-				
-				exibirMensagem(
-					'SUCCESS', 
-					[ 'Balanceamento concluído com sucesso.' ]
-				);
+				if(result.produtosNaoBalanceadosAposFechamentoMatriz
+						&& result.produtosNaoBalanceadosAposFechamentoMatriz.length > 0 ){
+					
+					balanceamentoRecolhimentoController.verificarProdutosNaoBalanceadosAposConfirmacaoMatriz(result)
+				}
+				else{
+					
+					balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
+					
+					exibirMensagem(
+						'SUCCESS', 
+						[ 'Balanceamento concluído com sucesso.' ]
+					);
+				}
 			},
 			function() {
 				
