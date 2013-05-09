@@ -23,7 +23,7 @@ public class BalanceamentoRecolhimentoDTO implements Serializable {
 
 	private BigInteger capacidadeRecolhimentoDistribuidor;
 	
-	private List<ProdutoRecolhimentoDTO> produtosNaoBalanceados;
+	private List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceados;
 	
 	/**
 	 * Construtor padrão.
@@ -61,15 +61,19 @@ public class BalanceamentoRecolhimentoDTO implements Serializable {
 		this.capacidadeRecolhimentoDistribuidor = capacidadeRecolhimentoDistribuidor;
 	}
 
-	public List<ProdutoRecolhimentoDTO> getProdutosNaoBalanceados() {
-		return produtosNaoBalanceados;
+	/**
+	 * @return the produtosRecolhimentoNaoBalanceados
+	 */
+	public List<ProdutoRecolhimentoDTO> getProdutosRecolhimentoNaoBalanceados() {
+		return produtosRecolhimentoNaoBalanceados;
 	}
 
-	public void setProdutosNaoBalanceados(
-			List<ProdutoRecolhimentoDTO> produtosNaoBalanceados) {
-		this.produtosNaoBalanceados = produtosNaoBalanceados;
+	/**
+	 * @param produtosRecolhimentoNaoBalanceados the produtosRecolhimentoNaoBalanceados to set
+	 */
+	public void setProdutosRecolhimentoNaoBalanceados(
+		List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceados) {
+		this.produtosRecolhimentoNaoBalanceados = produtosRecolhimentoNaoBalanceados;
 	}
-	
-	
 	
 }

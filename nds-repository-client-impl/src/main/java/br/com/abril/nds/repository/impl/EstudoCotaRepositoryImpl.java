@@ -50,6 +50,24 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		return (EstudoCota) query.uniqueResult();
 	}
 	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<EstudoCota> obterEstudoCota(Long idCota, Date dataDe, Date dataAte) {
+		
+		String hql = " from EstudoCota estudoCota"
+				   + " where estudoCota.cota.id = :idCota"
+				   + " and estudoCota.estudo.dataLancamento >= :dataDe"
+				   + " and estudoCota.estudo.dataLancamento <= :dataAte";
+		
+		Query query = super.getSession().createQuery(hql);
+
+		query.setParameter("idCota", idCota);
+		query.setParameter("dataDe", dataDe);
+		query.setParameter("dataAte", dataAte);
+		
+		return query.list();
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<EstudoCotaDTO> obterEstudoCotaPorDataProdutoEdicao(Date dataLancamento, Long idProdutoEdicao) {
