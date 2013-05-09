@@ -141,6 +141,8 @@ public class MixCotaProdutoController extends BaseController {
 	@Path("/pesquisarPorCota")
 	public void pesquisarPorCota(FiltroConsultaMixPorCotaDTO filtro, String sortorder, String sortname, int page, int rp) {
 		
+		long time = System.currentTimeMillis();
+		
 		if (session.getAttribute(FILTRO_MIX_COTA_SESSION_ATTRIBUTE) == null) {
 			this.session.setAttribute(FILTRO_MIX_COTA_SESSION_ATTRIBUTE, filtro);
 		}
@@ -156,9 +158,12 @@ public class MixCotaProdutoController extends BaseController {
 		}
 
 		TableModel<CellModelKeyValue<MixCotaDTO>> tableModelCota = montarTableModelCota(filtro);
-
-		result.use(Results.json()).withoutRoot().from(tableModelCota)
-				.recursive().serialize();
+		
+		time = (System.currentTimeMillis() - time);
+		
+		System.out.println("TEMPO 2:"+time);
+		
+		result.use(Results.json()).withoutRoot().from(tableModelCota).recursive().serialize();
 	}
 
 	@Post

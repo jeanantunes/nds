@@ -583,7 +583,6 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 			
 			repartDistrib = vo.getReparteDistribuido();
 			pactPadrao = vo.getPacotePadrao();
-			
 			repCalculado = cota.getReparte();
 			
 			if (vo.isFixacao() && (mapReparte.get("FX") != null || mapReparte.get("MM") != null)) {
@@ -599,24 +598,18 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 				totalFixacao = mapReparte.get("FX").add(mapReparte.get("MM"));
 				
 				if (totalFixacao.compareTo(repartDistrib) > 0) {
-					
 					throw new ValidacaoException(TipoMensagem.WARNING, "Fixação é maior que o reparte");
 				}
 				
 				repartDistrib = repartDistrib.subtract(totalFixacao);
-				
 				repFinal = obterSomaReparteFinal(mapReparte, false, TipoClassificacaoEstudoCota.FX, TipoClassificacaoEstudoCota.MM);
-				
 				indiceRepProporcional =  repartDistrib.divide(repFinal);  //repartDistrib / repFinal;
-				
 				repCalculado = obterCalculoDistribMultiplos(repCalculado, indiceRepProporcional, pactPadrao);
 				
 			} else {
 				
 				repFinal = obterSomaReparteFinal(mapReparte);
-				
 				indiceRepProporcional = repartDistrib.divide(repFinal);
-				
 				repCalculado = obterCalculoDistribMultiplos(repCalculado, indiceRepProporcional, pactPadrao);
 			}
 			
@@ -631,11 +624,9 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		BigInteger totalSoma = obterSomaReparteFinal(mapReparte, false, TipoClassificacaoEstudoCota.FX, TipoClassificacaoEstudoCota.MM);
 		
 		if (repartDistrib.compareTo(totalSoma) > 0) { 
-			
-			efetuarDistribuicaoProporcional(cotas, repartDistrib.intValue(), 1);	
+			efetuarDistribuicaoProporcional(cotas, repartDistrib.intValue(), 1);
 		}
 		else {
-			
 			efetuarDistribuicaoProporcional(cotas, repartDistrib.intValue(), -1);
 		}
 		

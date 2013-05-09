@@ -24,16 +24,6 @@ import br.com.abril.nds.process.reparteminimo.ReparteMinimo;
 @Component
 public class RedutorAutomatico extends ProcessoAbstrato {
 
-    private BigDecimal menorVenda = BigDecimal.ZERO;
-
-    public BigDecimal getMenorVenda() {
-	return menorVenda;
-    }
-
-    public void setMenorVenda(BigDecimal menorVenda) {
-	this.menorVenda = menorVenda;
-    }
-
     @Override
     public void executar(EstudoTransient estudo) {
 	calcularMenorVenda(estudo);
@@ -43,13 +33,11 @@ public class RedutorAutomatico extends ProcessoAbstrato {
     public void calcularRedutorAutomatico(EstudoTransient estudo) {
 	for (CotaEstudo cota : estudo.getCotas()) {
 	    if (cota.getVendaEdicaoMaisRecenteFechada() != null) {
-		if ((cota.getVendaMedia().compareTo(menorVenda) <= 0) && (cota.getVendaEdicaoMaisRecenteFechada().compareTo(BigDecimal.ZERO) == 0)) {
-		    cota.setReparteCalculado(BigInteger.ZERO);
+		if ((cota.getVendaMedia().compareTo(estudo.getMenorVenda()) <= 0) && (cota.getVendaEdicaoMaisRecenteFechada().compareTo(BigDecimal.ZERO) == 0)) {
+		    cota.setReparteCalculado(BigInteger.ZERO, estudo);
 		    cota.setClassificacao(ClassificacaoCota.RedutorAutomatico);
 		}
-		if (cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
-			|| cota.getClassificacao().equals(ClassificacaoCota.BancaSoComEdicaoBaseAberta)
-			|| cota.getClassificacao().equals(ClassificacaoCota.RedutorAutomatico)) {
+		if (cota.getClassificacao().equals(ClassificacaoCota.BancaSoComEdicaoBaseAberta)) {
 		    estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(cota.getReparteCalculado()));
 		}
 	    }
@@ -58,16 +46,16 @@ public class RedutorAutomatico extends ProcessoAbstrato {
 
     public void calcularMenorVenda(EstudoTransient estudo) {
 	estudo.setExcedente(new BigDecimal(estudo.getReparteDistribuir()).subtract(estudo.getSomatoriaVendaMedia()));
-	BigDecimal percentualExcedente = BigDecimal.ZERO;
+	estudo.setPercentualExcedente(BigDecimal.ZERO);
 	if (estudo.getSomatoriaVendaMedia().compareTo(BigDecimal.ZERO) > 0) {
-	    percentualExcedente = estudo.getExcedente().divide(estudo.getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_HALF_UP);
+	    estudo.setPercentualExcedente(estudo.getExcedente().divide(estudo.getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_HALF_UP));
 	}
 
-	menorVenda = BigDecimal.ZERO;
-	if ((percentualExcedente.compareTo(BigDecimal.valueOf(0.4)) > 0) && (percentualExcedente.compareTo(BigDecimal.valueOf(0.6)) < 0)) {
-	    menorVenda = BigDecimal.valueOf(0.25d);
-	} else if (percentualExcedente.compareTo(BigDecimal.valueOf(0.4)) < 0) {
-	    menorVenda = BigDecimal.valueOf(0.5d);
+	estudo.setMenorVenda(BigDecimal.ZERO);
+	if ((estudo.getPercentualExcedente().compareTo(BigDecimal.valueOf(0.4)) > 0) && (estudo.getPercentualExcedente().compareTo(BigDecimal.valueOf(0.6)) < 0)) {
+	    estudo.setMenorVenda(BigDecimal.valueOf(0.25d));
+	} else if (estudo.getPercentualExcedente().compareTo(BigDecimal.valueOf(0.4)) < 0) {
+	    estudo.setMenorVenda(BigDecimal.valueOf(0.5d));
 	}
     }
 }

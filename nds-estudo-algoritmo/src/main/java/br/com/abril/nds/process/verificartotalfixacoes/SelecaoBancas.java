@@ -47,16 +47,17 @@ public class SelecaoBancas extends ProcessoAbstrato {
     @Override
     public void executar(EstudoTransient estudo) throws Exception {
 	LinkedList<CotaEstudo> cotasComHistorico = cotaDAO.getCotasComEdicoesBase(estudo);
-
+	
 	if (cotasComHistorico.size() == 0) {
 	    throw new Exception("Não foram encontradas cotas com historico para estas edições de base.");
 	}
 
 	Map<Long, CotaEstudo> cotasComHistoricoMap = new LinkedHashMap<>();
 	for (CotaEstudo cota : cotasComHistorico) {
-	    calcularTotais(cota);
+	    calcularTotais(cota, estudo);
 	    cotasComHistoricoMap.put(cota.getId(), cota);
 	}
+	
 	List<Long> idsCotas = new ArrayList<>();
 	for (CotaEstudo cota : cotasComHistorico) {
 	    if (cota.getClassificacao().equals(ClassificacaoCota.BancaSemHistorico)) {
@@ -68,6 +69,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 		estudo.getCotasExcluidas().add(cota);
 	    }
 	}
+	
 	if (idsCotas.size() > 0) {
 	    List<Long> numerosEdicao = new ArrayList<>();
 	    if (estudo.getProdutoEdicaoEstudo().getNumeroEdicao() > 1) {
@@ -89,7 +91,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	estudo.setCotas(new LinkedList<>(cotasComHistoricoMap.values()));
     }
 
-    private void calcularTotais(CotaEstudo cota) {
+    private void calcularTotais(CotaEstudo cota, EstudoTransient estudo) {
 	BigDecimal totalEdicoes = BigDecimal.ZERO;
 	BigDecimal totalVenda = BigDecimal.ZERO;
 	BigDecimal totalReparte = BigDecimal.ZERO;
@@ -111,24 +113,23 @@ public class SelecaoBancas extends ProcessoAbstrato {
 		cota.setCotaSoRecebeuEdicaoAberta(false);
 	    }
 	}
-	if (!cota.getClassificacao().equals(ClassificacaoCota.CotaNova)) {
-	    if (totalReparte.compareTo(BigDecimal.ZERO) == 0 && cota.getReparteMinimo().compareTo(BigInteger.ZERO) == 0) {
-		cota.setClassificacao(ClassificacaoCota.BancaSemHistorico);
-	    }
-	    if (totalVenda.compareTo(BigDecimal.ZERO) == 0 && cota.getReparteMinimo().compareTo(BigInteger.ZERO) == 0) {
-		cota.setClassificacao(ClassificacaoCota.BancaComVendaZero);
-	    }
-	}
 	if (totalEdicoes.compareTo(BigDecimal.ZERO) != 0) {
 	    cota.setVendaMediaNominal(totalVenda.divide(totalEdicoes, 2, BigDecimal.ROUND_HALF_UP));
 	    cota.setVendaMedia(cota.getVendaMediaNominal());
+	}
+	if (!cota.getClassificacao().equals(ClassificacaoCota.CotaNova)) {
+	    if (totalReparte.compareTo(BigDecimal.ZERO) == 0 && cota.getReparteMinimo().compareTo(BigInteger.ZERO) == 0) {
+		cota.setClassificacao(ClassificacaoCota.BancaSemHistorico);
+	    } else if (totalVenda.compareTo(BigDecimal.ZERO) == 0 && cota.getReparteMinimo().compareTo(BigInteger.ZERO) == 0) {
+		cota.setClassificacao(ClassificacaoCota.BancaComVendaZero);
+	    }
 	}
 	if (cota.getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) {
 	    cota.setClassificacao(ClassificacaoCota.BancaSuspensa);
 	}
 	if (cota.getReparteFixado() != null) {
 	    cota.setClassificacao(ClassificacaoCota.ReparteFixado);
-	    cota.setReparteCalculado(cota.getReparteFixado());
+	    cota.setReparteCalculado(cota.getReparteFixado(), estudo);
 	}
     }
 

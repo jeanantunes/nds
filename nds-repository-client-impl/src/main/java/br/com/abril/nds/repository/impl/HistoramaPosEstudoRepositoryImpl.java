@@ -30,7 +30,7 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		sql.append("       COUNT(*) qtdCotas, ");
 		sql.append("	   SUM(RECEBIDO) qtdRecebida, ");
 		sql.append("	   SUM(VENDA) / SUM(REPARTE) vendaPercent, ");
-		sql.append("	   (SUM(REPARTE) - SUM(VENDA)) / COUNT(*) encalheMedio, ");
+		sql.append("	   (SUM(RECEBIDO) - SUM(VENDA)) / COUNT(*) encalheMedio, ");
 		sql.append("       COUNT(IS_REPARTE_MENOR_VENDA) qtdCotaPossuemReparteMenorVenda,  ");
 		sql.append("       (SUM(REPARTE) / (SELECT REPARTE_DISTRIBUIR FROM ESTUDO WHERE ID = :ESTUDO_ID) * 100) participacaoReparte, ");
 		sql.append("  		group_concat(IS_REPARTE_MENOR_VENDA) numeroCotasStr ");
@@ -51,13 +51,12 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		sql.append("                 WHERE EC.ESTUDO_ID = :ESTUDO_ID) REP ");
 		sql.append("          JOIN (SELECT C.ID, ");
 		sql.append("                       C.NUMERO_COTA, ");
-		sql.append("                       SUM(EPE.REPARTE) RECEBIDO, ");
-		sql.append("                       SUM(EPE.VENDA) VENDA, ");
-		sql.append("                       AVG(EPE.VENDA) VENDA_MEDIA, ");
+		sql.append("                       SUM(EPE.QTDE_RECEBIDA) RECEBIDO, ");
+		sql.append("                       SUM(EPE.QTDE_RECEBIDA - EPE.QTDE_DEVOLVIDA) VENDA, ");
+		sql.append("                       AVG(EPE.QTDE_RECEBIDA - EPE.QTDE_DEVOLVIDA) VENDA_MEDIA, ");
 		sql.append("                       COUNT(*) QTDE_EDICOES ");
-		sql.append("                  FROM ESTUDO_PRODUTO_EDICAO EPE ");
+		sql.append("                  FROM estoque_produto_cota EPE ");
 		sql.append("                  JOIN COTA C ON C.ID = EPE.COTA_ID ");
-		sql.append("                 WHERE EPE.ESTUDO_ID = :ESTUDO_ID ");
 		sql.append("                 GROUP BY C.ID, C.NUMERO_COTA) EST ON EST.ID = REP.ID ");
 		sql.append("         WHERE REP.REPARTE BETWEEN :DE AND :ATE) TES ");
 		

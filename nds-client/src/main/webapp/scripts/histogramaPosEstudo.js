@@ -235,8 +235,6 @@ var histogramaPosEstudoController = $.extend(true, {
 								row.cell.faixaReparte = elemLink;
 							}
 
-							
-							
 							// adicionando a linha
 							rowConsolidado.cell.reparteTotalFormatado += parseInt(row.cell.reparteTotalFormatado || 0);
 							rowConsolidado.cell.vendaNominalFormatado += parseInt(row.cell.vendaNominalFormatado || 0);
@@ -341,7 +339,7 @@ var histogramaPosEstudoController = $.extend(true, {
 						rp : 15,
 						showTableToggleBtn : true,
 						width : 960,
-						height : 150
+						height : 230
 					}
 				}),
 				BaseSugeridaGrid : flexGridService.GridFactory.createGrid({
@@ -441,7 +439,7 @@ var histogramaPosEstudoController = $.extend(true, {
 						width : 350,
 						height : 180
 					}
-				}),
+				})
 		};
 	},
 	
@@ -453,6 +451,7 @@ var histogramaPosEstudoController = $.extend(true, {
 		}else{
 			histogramaPosEstudo_cotasRepMenorVenda="";
 		}
+        console.log(idxFaixa);
 		console.log(histogramaPosEstudo_cotasRepMenorVenda);
 		$('#workspace').tabs('addTab', 'Análise de Estudos', url);
 	},
@@ -472,7 +471,7 @@ var histogramaPosEstudoController = $.extend(true, {
 					 histogramaPosEstudoController.fieldSetValues = jsonData;
 					 
 					 histogramaPosEstudoController.Grids.EstudosAnaliseGrid.reload({
-						params : [{ name : 'estudoId' , value : jsonData.estudo}],
+						params : [{ name : 'estudoId' , value : jsonData.estudo}]
 					 });
 					 
 					 $('#codigoProdutoFs').html(jsonData.codigoProduto);
@@ -503,25 +502,24 @@ var histogramaPosEstudoController = $.extend(true, {
 			rowConsolidada = histogramaPosEstudoController.analiseGridRowConsolidada,
 			url = contextPath + "/distribuicao/histogramaPosEstudo/carregarDadosFieldSetResumoEstudo";
 		
-		// Primeira coluna
-		console.log(histogramaPosEstudoController.dadosResumo);
-		$('#fieldSetResumoReparteTotal').html(rowConsolidada.cell.reparteTotalFormatado);
-		if (typeof histogramaPosEstudoController.dadosResumo !== 'undefined') {
-		    $('#fieldSetResumoRepartePromocional').html(parseInt(histogramaPosEstudoController.dadosResumo.repartePromo || 0));
-		} else {
-		    $('#fieldSetResumoRepartePromocional').html(0);
-		}
-		$('#fieldSetResumoReservaTecnica').html(matrizSelecionada.sobra);
-		if (typeof histogramaPosEstudoController.dadosResumo !== 'undefined') {
-		    $('#fieldSetResumoReparteDistribuida').html(histogramaPosEstudoController.dadosResumo.reparteDistribuido);
-		} else {
-		    $('#fieldSetResumoReparteDistribuida').html(0);
-		}
-		
 		$.postJSON(
 				url,
 				[{name : "estudoId" , value :matrizSelecionada.estudo}],
 				function(response){
+					
+					// Primeira coluna
+					$('#fieldSetResumoReparteTotal').html(rowConsolidada.cell.reparteTotalFormatado);
+					if (typeof histogramaPosEstudoController.dadosResumo !== 'undefined') {
+					    $('#fieldSetResumoRepartePromocional').html(parseInt(histogramaPosEstudoController.dadosResumo.repartePromo || 0));
+					} else {
+					    $('#fieldSetResumoRepartePromocional').html(parseInt(response.qtdRepartePromocional));
+					}
+					$('#fieldSetResumoReservaTecnica').html(matrizSelecionada.sobra);
+					if (typeof histogramaPosEstudoController.dadosResumo !== 'undefined') {
+					    $('#fieldSetResumoReparteDistribuida').html(histogramaPosEstudoController.dadosResumo.reparteDistribuido);
+					} else {
+					    $('#fieldSetResumoReparteDistribuida').html(response.reparteDistribuido);
+					}
 					
 					// Segunda coluna
 					$('#fieldSetResumoNpdvAtual').html(response.qtdCotasAtivas); // count tb cotas onde status for ativo

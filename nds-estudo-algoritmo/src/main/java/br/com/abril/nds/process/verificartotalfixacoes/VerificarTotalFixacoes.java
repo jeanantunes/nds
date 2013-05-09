@@ -6,7 +6,6 @@ import java.math.BigInteger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.process.ProcessoAbstrato;
@@ -32,12 +31,9 @@ public class VerificarTotalFixacoes extends ProcessoAbstrato {
 
 	if (estudo.isUsarFixacao()) {
 	    BigInteger somaFixacao = BigInteger.ZERO;
-	    for (CotaEstudo cota : estudo.getCotas()) {
+	    for (CotaEstudo cota : estudo.getCotasExcluidas()) {
 		if (cota.getReparteFixado() != null) {
-		    somaFixacao.add(cota.getReparteFixado());
-		    cota.setClassificacao(ClassificacaoCota.ReparteFixado);
-		    cota.setReparteCalculado(cota.getReparteFixado());
-		    estudo.getCotasExcluidas().add(cota);
+		    somaFixacao = somaFixacao.add(cota.getReparteFixado());
 		}
 	    }
 	    BigDecimal maximoFixacao = null;
@@ -48,6 +44,7 @@ public class VerificarTotalFixacoes extends ProcessoAbstrato {
 	    if ((maximoFixacao != null) && (maximoFixacao.compareTo(new BigDecimal(somaFixacao)) < 0)) {
 		throw new Exception("A soma das fixações de reparte é maior que o percentual configurado na tela de parâmetros do distribuidor.");
 	    }
+	    estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(somaFixacao));
 	}
     }
 }

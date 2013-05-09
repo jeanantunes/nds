@@ -389,7 +389,8 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 				|| cota.getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO))
 				&& cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.CONVENCIONAL);
 	}
-
+	
+	@Transactional
 	@Override
 	public boolean gerarCopiafixacao(CopiaMixFixacaoDTO copiaDTO) {
 
@@ -412,7 +413,6 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 			}
 					
 			try {
-//				this.mixCotaProdutoRepository.gerarCopiaMixCota(mixCotaOrigem,this.usuarioService.getUsuarioLogado());
 				fixacaoReparteRepository.gerarCopiaPorCotaFixacaoReparte(mixCotaOrigem,this.usuarioService.getUsuarioLogado());
 			} catch (Exception e) {
 				e.printStackTrace();

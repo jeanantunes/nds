@@ -30,6 +30,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.FixacaoRepartePdvRepository;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MixCotaProdutoRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
@@ -73,12 +74,34 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 	@Autowired
 	private RepartePDVRepository repartePDVRepository;
 	
+	@Autowired
+	private LancamentoRepository lancamentoRepository;
+	
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<MixCotaDTO> pesquisarPorCota(FiltroConsultaMixPorCotaDTO
-			filtroConsultaMixCotaDTO) {
-		return mixCotaProdutoRepository.pesquisarPorCota(filtroConsultaMixCotaDTO);
+	public List<MixCotaDTO> pesquisarPorCota(FiltroConsultaMixPorCotaDTO filtroConsultaMixCotaDTO) {
+		
+		Cota cota = cotaService.obterPorNumeroDaCota(filtroConsultaMixCotaDTO.getCota());
+		
+		boolean tipoAlternativo = cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO);
+		
+		if (!tipoAlternativo) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Cota não é do tipo Alternativo."));
+		}
+		
+		filtroConsultaMixCotaDTO.setCotaId(cota.getId());
+		
+		long time = System.currentTimeMillis();
+		
+		List<MixCotaDTO> list =  mixCotaProdutoRepository.pesquisarPorCota(filtroConsultaMixCotaDTO);
+		
+		time = (System.currentTimeMillis() - time);
+		
+		System.out.println("TEMPO 1:"+time);
+		
+		return list;
 	}
 
 	@Transactional
@@ -422,7 +445,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			mixCotaProduto.setReparteMinimo(mixCotaProdutoDTO.getReparteMinimo());
 			mixCotaProduto.setReparteMaximo(mixCotaProdutoDTO.getReparteMaximo());
 			mixCotaProduto.setUsuario(usuario);
-				
+			
 			if (mixCotaProduto.getProduto() != null || mixCotaProduto.getProduto().getId() != null) {
 				mixCotaProdutoRepository.merge(mixCotaProduto);
 			}

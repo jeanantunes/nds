@@ -37,6 +37,10 @@ public class DesenglobacaoDTO implements Serializable {
 	@Export(label = "Hora", alignment=Alignment.LEFT, exhibitionOrder = 12)
 	private String hora;
 	
+	private Long numeroCotaDesenglobada;
+	
+	private Long idDesenglobacao;
+	
 	public Long getNumeroCota() {
 		return numeroCota;
 	}
@@ -85,4 +89,19 @@ public class DesenglobacaoDTO implements Serializable {
 	public void setHora(String hora) {
 		this.hora = hora;
 	}
+	public Long getNumeroCotaDesenglobada() {
+		return numeroCotaDesenglobada;
+	}
+	public void setNumeroCotaDesenglobada(Long numeroCotaDesenglobada) {
+		this.numeroCotaDesenglobada = numeroCotaDesenglobada;
+	}
+	public Long getIdDesenglobacao() {
+		return idDesenglobacao;
+	}
+	public void setIdDesenglobacao(Long idDesenglobacao) {
+		this.idDesenglobacao = idDesenglobacao;
+	}
+
+	
+	
 }

@@ -13,6 +13,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
@@ -150,6 +152,113 @@ public class HTMLTableUtil {
 		h.append("</tr>");
 	    }
 	}
+	h.append("</table>");
+	
+	int qtdeCotasAtivas = 0;
+	int qtdeCotasSuspensas = 0;
+	int qtdeCotasComReparte = 0;
+	int qtdeCotasSemReparte = 0;
+	int qtdeCotasComplementares = 0;
+	BigInteger totalFixacao = BigInteger.ZERO;
+	BigDecimal vendaMediaTotal = BigDecimal.ZERO;
+	for (CotaEstudo ce : estudo.getCotas()) {
+	    if (ce.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
+		qtdeCotasAtivas++;
+	    }
+	    if (ce.getClassificacao().equals(ClassificacaoCota.BancaSuspensa)) {
+		qtdeCotasSuspensas++;
+	    }
+	    if (ce.getReparteCalculado().compareTo(BigInteger.ZERO) > 0) {
+		qtdeCotasComReparte++;
+	    } else {
+		qtdeCotasSemReparte++;
+	    }
+	    if (ce.getReparteFixado() != null) {
+		totalFixacao = totalFixacao.add(ce.getReparteFixado());
+	    }
+	    if (ce.getClassificacao().equals(ClassificacaoCota.BancaEstudoComplementar)) {
+		qtdeCotasComplementares++;
+	    }
+	    vendaMediaTotal = vendaMediaTotal.add(ce.getVendaMedia());
+	}
+	
+	h.append("<table border='1'>");
+	
+	h.append("<tr>");
+	h.append("<td>Total</td>");
+	h.append("<td>Valor</td>");
+	h.append("</tr>");
+	
+	h.append("<tr>");
+	h.append("<td>Sobra</td>");
+	h.append("<td>").append(estudo.getReparteDistribuir()).append("</td>");
+	h.append("</tr>");
+
+	h.append("<tr>");
+	h.append("<td>Total Venda Média</td>");
+	h.append("<td>").append(vendaMediaTotal).append("</td>");
+	h.append("</tr>");
+	
+	h.append("<tr>");
+	h.append("<td>Total Reparte Complementar</td>");
+	h.append("<td>").append(estudo.getReparteComplementarInicial()).append("</td>");
+	h.append("</tr>");
+	
+	h.append("<tr>");
+	h.append("<td>Total Reparte Ajuste</td>");
+	h.append("<td>").append(estudo.getTotalReparteAjuste()).append("</td>");
+	h.append("</tr>");
+	
+	h.append("<tr>");
+	h.append("<td>% Excedente</td>");
+	h.append("<td>").append(estudo.getPercentualExcedente()).append("</td>");
+	h.append("</tr>");
+	
+	h.append("<tr>");
+	h.append("<td>Excedente</td>");
+	h.append("<td>").append(estudo.getExcedente()).append("</td>");
+	h.append("</tr>");
+	
+	h.append("<tr>");
+	h.append("<td>Indice Redutor (Menor Venda)</td>");
+	h.append("<td>").append(estudo.getMenorVenda()).append("</td>");
+	h.append("</tr>");
+	
+	h.append("<tr>");
+	h.append("<td>Total Fixacao</td>");
+	h.append("<td>").append(totalFixacao).append("</td>");
+	h.append("</tr>");
+	
+	h.append("<tr>");
+	h.append("<td>Total Reparte A Distribuir Inicial</td>");
+	h.append("<td>").append(estudo.getReparteDistribuirInicial()).append("</td>");
+	h.append("</tr>");
+	
+	h.append("<tr>");
+	h.append("<td>Qtde Cotas Ativas</td>");
+	h.append("<td>").append(qtdeCotasAtivas).append("</td>");
+	h.append("</tr>");
+	
+	h.append("<tr>");
+	h.append("<td>Qtde Cotas Suspensas</td>");
+	h.append("<td>").append(qtdeCotasSuspensas).append("</td>");
+	h.append("</tr>");
+	
+	h.append("<tr>");
+	h.append("<td>Qtde Cotas Complementares</td>");
+	h.append("<td>").append(qtdeCotasComplementares).append("</td>");
+	h.append("</tr>");
+	
+	h.append("<tr>");
+	h.append("<td>Qtde Cotas Com Reparte</td>");
+	h.append("<td>").append(qtdeCotasComReparte).append("</td>");
+	h.append("</tr>");
+	
+	h.append("<tr>");
+	h.append("<td>Qtde Cotas Sem Reparte</td>");
+	h.append("<td>").append(qtdeCotasSemReparte).append("</td>");
+	h.append("</tr>");
+	
 	h.append("</table>");
 	h.append("</body>");
 	h.append("</html>");

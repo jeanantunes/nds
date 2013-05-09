@@ -239,25 +239,24 @@ public class CotaDAO {
 
     private List<ProdutoEdicaoEstudo> getEdicoes(ResultSet rs, Map<Long, BigDecimal> idsPesos) throws SQLException {
 	List<ProdutoEdicaoEstudo> edicoes = new ArrayList<>();
-	ProdutoEdicaoEstudo produtoEdicao = new ProdutoEdicaoEstudo();
+	if (rs.getLong("PRODUTO_ID") > 0) {
+	    ProdutoEdicaoEstudo produtoEdicao = new ProdutoEdicaoEstudo();
+	    produtoEdicao.setProduto(new Produto());
+	    produtoEdicao.getProduto().setId(rs.getLong("PRODUTO_ID"));
+	    produtoEdicao.setId(rs.getLong("PRODUTO_EDICAO_ID"));
+	    produtoEdicao.setIdLancamento(rs.getLong("LANCAMENTO_ID"));
+	    produtoEdicao.setEdicaoAberta(traduzStatus(rs.getString("STATUS")));
+	    produtoEdicao.setParcial(rs.getString("TIPO_LANCAMENTO").equalsIgnoreCase(LANCAMENTO_PARCIAL));
+	    produtoEdicao.setColecao(traduzColecionavel(rs.getString("GRUPO_PRODUTO")));
+	    produtoEdicao.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
+	    produtoEdicao.setReparte(rs.getBigDecimal("QTDE_RECEBIDA"));
+	    produtoEdicao.setVenda(rs.getBigDecimal("QTDE_VENDA"));
+	    produtoEdicao.setIndicePeso(idsPesos.get(produtoEdicao.getId()));
+	    produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
+	    produtoEdicao.getProduto().setCodigo(rs.getString("CODIGO"));
 
-	produtoEdicao.setProduto(new Produto());
-	produtoEdicao.getProduto().setId(rs.getLong("PRODUTO_ID"));
-	produtoEdicao.setId(rs.getLong("PRODUTO_EDICAO_ID"));
-	produtoEdicao.setIdLancamento(rs.getLong("LANCAMENTO_ID"));
-	produtoEdicao.setEdicaoAberta(traduzStatus(rs.getString("STATUS")));
-	produtoEdicao.setParcial(rs.getString("TIPO_LANCAMENTO").equalsIgnoreCase(LANCAMENTO_PARCIAL));
-	produtoEdicao.setColecao(traduzColecionavel(rs.getString("GRUPO_PRODUTO")));
-	produtoEdicao.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
-	produtoEdicao.setReparte(rs.getBigDecimal("QTDE_RECEBIDA"));
-	produtoEdicao.setVenda(rs.getBigDecimal("QTDE_VENDA"));
-
-	produtoEdicao.setIndicePeso(idsPesos.get(produtoEdicao.getId()));
-
-	produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
-	produtoEdicao.getProduto().setCodigo(rs.getString("CODIGO"));
-
-	edicoes.add(produtoEdicao);
+	    edicoes.add(produtoEdicao);
+	}
 	return edicoes;
     }
 

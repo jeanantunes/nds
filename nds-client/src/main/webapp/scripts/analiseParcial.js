@@ -203,7 +203,7 @@ var analiseParcialController = $.extend(true, {
         $('#total_media_venda').text(totalMediaVenda);
         $('#total_ultimo_reparte').text(totalUltimoReparte);
         $('#total_reparte_sugerido').text(totalReparteSugerido);
-        $('#total_de_cotas').text(quantidade);
+        $('#total_de_cotas').text(resultado.rows.length);
         for (var j = 1; j < 7; j++) {
             $('#total_reparte'+ j).text(totais[j - 1].reparte);
             $('#total_venda'+ j).text(totais[j - 1].venda);
@@ -365,6 +365,11 @@ var analiseParcialController = $.extend(true, {
         parameters.push({name: 'faixaAte', value: _faixaAte});
         parameters.push({name: 'codigoProduto', value: $('#codigoProduto').val()});
         parameters.push({name: 'numeroEdicao', value: $('#numeroEdicao').val()});
+        
+        console.log(histogramaPosEstudo_cotasRepMenorVenda);
+        if(histogramaPosEstudo_cotasRepMenorVenda){
+        	parameters.push({name: "numeroCotaStr", value: histogramaPosEstudo_cotasRepMenorVenda});
+        }
         
         var modelo = _tipoExibicao == 'NORMAL' ? analiseParcialController.modeloNormal() : analiseParcialController.modeloParcial();
         $('#baseEstudoGridParcial').flexigrid({

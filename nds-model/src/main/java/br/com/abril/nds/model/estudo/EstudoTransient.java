@@ -26,6 +26,7 @@ public class EstudoTransient extends Estudo {
     private BigInteger ajusteReparte;
     private BigDecimal excedente;
     private BigInteger reparteComplementar;
+    private BigInteger reparteComplementarInicial;
     private String statusEstudo;
     private List<BonificacaoDTO> bonificacoes;
     private Usuario usuario;
@@ -37,12 +38,17 @@ public class EstudoTransient extends Estudo {
     private BigDecimal percentualMaximoFixacao;
     private BigInteger vendaMediaMais;
 
-    private Map<String, PercentualExcedenteEstudo> percentualExcedente;
+    private Map<String, PercentualExcedenteEstudo> percentualProporcaoExcedente;
+    private BigDecimal percentualExcedente;
+    
+    private BigDecimal menorVenda;
+    private BigInteger totalReparteAjuste;
 
     public EstudoTransient() {
 	usarFixacao = true;
 	complementarAutomatico = true; //Default conforme documentação.
 	cotasExcluidas = new LinkedList<>();
+	percentualExcedente = BigDecimal.ZERO;
     }
 
     public BigInteger getReparteDistribuirInicial() {
@@ -157,11 +163,11 @@ public class EstudoTransient extends Estudo {
     public void setStatusEstudo(String statusEstudo) {
 	this.statusEstudo = statusEstudo;
     }
-    public Map<String, PercentualExcedenteEstudo> getPercentualExcedente() {
-	return percentualExcedente;
+    public Map<String, PercentualExcedenteEstudo> getPercentualProporcaoExcedente() {
+	return percentualProporcaoExcedente;
     }
-    public void setPercentualExcedente(Map<String, PercentualExcedenteEstudo> percentualExcedente) {
-	this.percentualExcedente = percentualExcedente;
+    public void setPercentualProporcaoExcedente(Map<String, PercentualExcedenteEstudo> percentualProporcaoExcedente) {
+	this.percentualProporcaoExcedente = percentualProporcaoExcedente;
     }
 
     public boolean isUsarFixacao() {
@@ -188,6 +194,38 @@ public class EstudoTransient extends Estudo {
 	this.cotasExcluidas = cotasExcluidas;
     }
 
+    public BigInteger getReparteComplementarInicial() {
+        return reparteComplementarInicial;
+    }
+
+    public void setReparteComplementarInicial(BigInteger reparteComplementarInicial) {
+        this.reparteComplementarInicial = reparteComplementarInicial;
+    }
+
+    public BigDecimal getPercentualExcedente() {
+        return percentualExcedente;
+    }
+
+    public void setPercentualExcedente(BigDecimal percentualExcedente) {
+        this.percentualExcedente = percentualExcedente;
+    }
+
+    public BigDecimal getMenorVenda() {
+        return menorVenda;
+    }
+
+    public void setMenorVenda(BigDecimal menorVenda) {
+        this.menorVenda = menorVenda;
+    }
+
+    public BigInteger getTotalReparteAjuste() {
+        return totalReparteAjuste;
+    }
+
+    public void setTotalReparteAjuste(BigInteger totalReparteAjuste) {
+        this.totalReparteAjuste = totalReparteAjuste;
+    }
+
     @Override
     public String toString() {
 	return "EstudoTransient [reparteDistribuirInicial="
@@ -204,6 +242,6 @@ public class EstudoTransient extends Estudo {
 		+ ", geracaoAutomatica=" + geracaoAutomatica
 		+ ", percentualMaximoFixacao=" + percentualMaximoFixacao
 		+ ", vendaMediaMais=" + vendaMediaMais
-		+ ", percentualExcedente=" + percentualExcedente.values() + "]";
+		+ ", percentualExcedente=" + percentualProporcaoExcedente.values() + "]";
     }
 }

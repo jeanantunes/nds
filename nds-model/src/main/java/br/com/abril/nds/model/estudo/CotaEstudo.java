@@ -41,13 +41,14 @@ public class CotaEstudo extends Cota {
 
     public CotaEstudo() {
 	nova = false;
+	vendaMedia = BigDecimal.ZERO;
 	indiceTratamentoRegional = BigDecimal.ONE;
 	reparteMinimo = BigInteger.ZERO;
 	reparteCalculado = BigInteger.ZERO;
-	classificacao = ClassificacaoCota.SemClassificacao;
 	indiceAjusteCota = BigDecimal.ONE;
 	indiceVendaCrescente = BigDecimal.ONE;
 	indiceTratamentoRegional = BigDecimal.ONE;
+	classificacao = ClassificacaoCota.SemClassificacao;
     }
 
     public Long getIdEstudo() {
@@ -72,6 +73,11 @@ public class CotaEstudo extends Cota {
 	return reparteCalculado;
     }
     public void setReparteCalculado(BigInteger reparteCalculado) {
+	this.reparteCalculado = reparteCalculado;
+    }
+    public void setReparteCalculado(BigInteger reparteCalculado, EstudoTransient estudo) {
+	BigInteger variacao = reparteCalculado.subtract(this.reparteCalculado);
+	estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(variacao));
 	this.reparteCalculado = reparteCalculado;
     }
     public BigInteger getReparteJuramentadoAFaturar() {
