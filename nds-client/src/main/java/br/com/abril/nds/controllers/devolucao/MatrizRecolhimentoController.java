@@ -133,7 +133,7 @@ public class MatrizRecolhimentoController extends BaseController {
 		
 		resultadoResumoBalanceamento.setUtilizaSedeAtendida(utilizaSedeAtendida);
 		
-		resultadoResumoBalanceamento.setProdutosNaoBalanceadosAposFechamentoMatriz(balanceamentoRecolhimento.getProdutosNaoBalanceados());
+		resultadoResumoBalanceamento.setProdutosNaoBalanceadosAposFechamentoMatriz(balanceamentoRecolhimento.getProdutosRecolhimentoNaoBalanceados());
 		
 		removerAtributoAlteracaoSessao();
 		
@@ -151,7 +151,7 @@ public class MatrizRecolhimentoController extends BaseController {
 		
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
 		
-		recolhimentoService.processarProdutosProximaSemanaRecolhimento(balanceamentoRecolhimento.getProdutosNaoBalanceados(),
+		recolhimentoService.processarProdutosProximaSemanaRecolhimento(balanceamentoRecolhimento.getProdutosRecolhimentoNaoBalanceados(),
 																	   filtro.getNumeroSemana(),
 																	   filtro.getDataPesquisa());
 		
@@ -283,6 +283,9 @@ public class MatrizRecolhimentoController extends BaseController {
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
 			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
 		
+		resultadoResumoBalanceamento.setProdutosNaoBalanceadosAposFechamentoMatriz(
+			balanceamentoRecolhimento.getProdutosRecolhimentoNaoBalanceados());
+		
 		removerAtributoAlteracaoSessao();
 		
 		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
@@ -306,6 +309,9 @@ public class MatrizRecolhimentoController extends BaseController {
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
 			this.obterResultadoResumoBalanceamento(balanceamentoRecolhimento);
+		
+		resultadoResumoBalanceamento.setProdutosNaoBalanceadosAposFechamentoMatriz(
+			balanceamentoRecolhimento.getProdutosRecolhimentoNaoBalanceados());
 		
 		removerAtributoAlteracaoSessao();
 		

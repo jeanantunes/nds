@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.RecolhimentoDTO;
 
@@ -25,7 +26,7 @@ public class BalanceamentoRecolhimentoValorStrategy extends AbstractBalanceament
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected TreeMap<Date, List<ProdutoRecolhimentoDTO>> gerarMatrizRecolhimentoBalanceada(RecolhimentoDTO dadosRecolhimento) {
+	protected BalanceamentoRecolhimentoDTO gerarMatrizRecolhimentoBalanceada(RecolhimentoDTO dadosRecolhimento) {
 		
 		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoBalanceada =
 			new TreeMap<Date, List<ProdutoRecolhimentoDTO>>();
@@ -41,14 +42,19 @@ public class BalanceamentoRecolhimentoValorStrategy extends AbstractBalanceament
 		
 		Integer qtdeDiasRecolhimento = datasRecolhimento.size();
 		
-		BigDecimal mediaValorTotalProdutosRecolhimento = 
-			valorTotalProdutosRecolhimento.divide(new BigDecimal(qtdeDiasRecolhimento));
+		BigDecimal mediaValorTotalProdutosRecolhimento = null;
+		
+		if (!qtdeDiasRecolhimento.equals(0)) {
+		
+			mediaValorTotalProdutosRecolhimento = 
+				valorTotalProdutosRecolhimento.divide(new BigDecimal(qtdeDiasRecolhimento));
+		}
 		
 		this.processarProdutosRecolhimentoNaoBalanceaveis(matrizRecolhimentoBalanceada, dadosRecolhimento);
 
 		TreeMap<Date, BigDecimal> mapaValorTotalProdutosRecolhimento = new TreeMap<Date, BigDecimal>();
 		
-		for(Date data:datasRecolhimento) {
+		for(Date data : datasRecolhimento) {
 			mapaValorTotalProdutosRecolhimento.put(data, BigDecimal.ZERO);
 		}
 		
@@ -60,10 +66,18 @@ public class BalanceamentoRecolhimentoValorStrategy extends AbstractBalanceament
 			matrizRecolhimentoBalanceada, mapaValorTotalProdutosRecolhimento, 
 				sobraProdutosRecolhimento, mediaValorTotalProdutosRecolhimento);
 		
-		this.alocarSobraProdutosRecolhimento(
-			matrizRecolhimentoBalanceada, mapaValorTotalProdutosRecolhimento, sobraProdutosRecolhimento);
+		if (!datasRecolhimento.isEmpty()) {
 		
-		return matrizRecolhimentoBalanceada;
+			this.alocarSobraProdutosRecolhimento(
+				matrizRecolhimentoBalanceada, mapaValorTotalProdutosRecolhimento, sobraProdutosRecolhimento);
+		}
+		
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento =
+			super.gerarBalanceamentoRecolhimentoDTO(matrizRecolhimentoBalanceada,
+													sobraProdutosRecolhimento,
+													dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor());
+		
+		return balanceamentoRecolhimento;
 	}
 	
 	/*
@@ -80,10 +94,17 @@ public class BalanceamentoRecolhimentoValorStrategy extends AbstractBalanceament
 		
 		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
 			
-			Date dataRecolhimento = produtoRecolhimento.getDataRecolhimentoPrevista();
+			Date dataRecolhimento = produtoRecolhimento.getDataRecolhimentoDistribuidor();
 			
 			Date dataBalanceamento = 
 				super.obterDataRecolhimentoPermitida(datasRecolhimento, dataRecolhimento);
+			
+			if (dataBalanceamento == null) {
+				
+				sobraProdutosRecolhimento.add(produtoRecolhimento);
+				
+				continue;
+			}
 			
 			BigDecimal valorTotalProduto = produtoRecolhimento.getValorTotal();
 			

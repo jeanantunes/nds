@@ -112,10 +112,10 @@
 		<form id="form-ProdutosNaoBalanceadosAposConfirmacaoMatriz">
 			<div id="dialogProdutosNaoBalanceadosAposConfirmacaoMatriz" title="Balanceamento da Matriz de Recolhimento" style="display:none;">
 				<jsp:include page="../messagesDialog.jsp" />
-				<p>Os seguintes produtos não puderam ser balanceados, pois todas as datas já estão confirmadas.</p>
+				<p>Os seguintes produtos não puderam ser balanceados. Todas as datas já estão confirmadas.</p>
 				<br>
 				<p><span id="descdialogProdutosNaoBalanceadosAposConfirmacaoMatriz"></span></p>
-				<p>Deseja que os produtos sejam processados na semana seguinte ?</p>   
+				<p>Deseja que os produtos sejam processados na semana seguinte?</p>   
 			</div>
 		</form>
 		

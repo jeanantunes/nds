@@ -16,7 +16,6 @@ import java.util.TreeSet;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.ComparatorChain;
-import org.aspectj.weaver.bcel.AtAjAttributes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +29,7 @@ import br.com.abril.nds.factory.devolucao.BalanceamentoRecolhimentoFactory;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -50,6 +50,8 @@ import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.CalendarioService;
+import br.com.abril.nds.service.DistribuicaoFornecedorService;
+import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -96,6 +98,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	
 	@Autowired
 	protected CalendarioService calendarioService;
+	
+	@Autowired
+	private FornecedorService fornecedorService;
+	
+	@Autowired
+	private DistribuicaoFornecedorService distribuicaoFornecedorService;
 	
 	/**
 	 * {@inheritDoc}
@@ -758,18 +766,15 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			return;
 		}
 		
-		Date dataRecolhimento = this.obterDataValidaRecolhimento(numeroSemana, dataBalanceamento);
-		
-		List<Long> idLancamento = new ArrayList<>();
-		
 		for(ProdutoRecolhimentoDTO item : produtos){
-			idLancamento.add(item.getIdLancamento());
-		}
-		
-		lancamentoRepository.atualizarDataRecolhimentoDistribuidor(dataRecolhimento, idLancamento.toArray(new Long[]{}));
+			
+			Date dataRecolhimento = this.obterDataValidaRecolhimento(numeroSemana, dataBalanceamento, item.getIdFornecedor());
+			
+			lancamentoRepository.atualizarDataRecolhimentoDistribuidor(dataRecolhimento, item.getIdLancamento());
+		}		
 	}
 	
-	private Date obterDataValidaRecolhimento(Integer numeroSemana,Date dataBalanceamento){
+	private Date obterDataValidaRecolhimento(Integer numeroSemana,Date dataBalanceamento, Long idFornecedor){
 		
 		Intervalo<Date> periodoRecolhimento = getPeriodoRecolhimento(++numeroSemana, dataBalanceamento);
 		
@@ -779,19 +784,33 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		while(dataRecolhimento.compareTo(periodoRecolhimento.getAte())<=0){
 			
-			if(!lancamentoRepository.existeRecolhimentoNaoBalanceado(dataRecolhimento)){
+			if(!lancamentoRepository.existeRecolhimentoNaoBalanceado(dataRecolhimento)
+					&& this.validarDiaRecolhimentoFornecedor(idFornecedor, dataRecolhimento)){
 				dataValida = dataRecolhimento;
 				break;
 			}
 			
-			dataRecolhimento = DateUtil.adicionarDias(dataRecolhimento, 1); 
+			dataRecolhimento = DateUtil.adicionarDias(dataRecolhimento, 1);
 		}		
 				
 		if(dataValida == null){
-			dataValida = obterDataValidaRecolhimento(numeroSemana, dataBalanceamento);
+			dataValida = obterDataValidaRecolhimento(numeroSemana, dataBalanceamento, idFornecedor);
 		}
 		
 		return dataValida;
+	}
+
+	private boolean validarDiaRecolhimentoFornecedor(Long idFornecedor, Date dataRecolhimento) {
+		
+		Fornecedor fornecedor = this.fornecedorService.obterPorId(idFornecedor);
+		
+		List<Integer> diasRecolhimentoFornecedor = 
+				this.distribuicaoFornecedorService.obterCodigosDiaDistribuicaoFornecedor(
+						fornecedor.getId(), OperacaoDistribuidor.RECOLHIMENTO);
+		
+		int codigoDiaCorrente = DateUtil.obterDiaDaSemana(dataRecolhimento);
+		
+		return diasRecolhimentoFornecedor.contains(codigoDiaCorrente);
 	}
 	
 }
