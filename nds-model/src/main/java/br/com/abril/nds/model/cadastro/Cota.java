@@ -175,14 +175,14 @@ public class Cota implements Serializable {
 	@OneToMany(mappedBy = "cota", cascade = {CascadeType.ALL})
 	private Set<HistoricoTitularidadeCota> titularesCota =new HashSet<HistoricoTitularidadeCota>();
 	
-	/**
+	/** 
 	 * Referente a garantias da cota.
 	 */
 	@OneToOne(mappedBy="cota", fetch=FetchType.LAZY)
 	private CotaGarantia cotaGarantia;
 	
 	@Column(name = "RECEBE_RECOLHE_PARCIAIS", insertable=false,  updatable=false)
-	private int recebeRecolheParciais;
+	private Integer recebeRecolheParciais;
 	///insertable = false, updatable = false
 	
 	public Cota() {
@@ -595,12 +595,12 @@ public class Cota implements Serializable {
 	}
 
 
-	public int getRecebeRecolheParciais() {
+	public Integer getRecebeRecolheParciais() {
 		return recebeRecolheParciais;
 	}
 
 
-	public void setRecebeRecolheParciais(int recebeRecolheParciais) {
+	public void setRecebeRecolheParciais(Integer recebeRecolheParciais) {
 		this.recebeRecolheParciais = recebeRecolheParciais;
 	}
 }
