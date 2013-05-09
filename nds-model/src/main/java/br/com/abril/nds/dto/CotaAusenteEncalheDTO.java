@@ -32,9 +32,14 @@ public class CotaAusenteEncalheDTO implements Serializable {
 	@Export(label = "Ação", alignment = Alignment.CENTER, exhibitionOrder = 6, widthPercent=15)
 	private String acao = "";
 
-	private Boolean fechado;
 
-	private Boolean postergado;
+	private boolean postergado;
+	
+	private boolean indPossuiChamadaEncalheCota;
+	
+	private boolean fechado; 
+	
+	private boolean indMFCNaoConsolidado;
 	
 	private Date dataEncalhe;
 	
@@ -173,32 +178,37 @@ public class CotaAusenteEncalheDTO implements Serializable {
 		this.dataEncalhe = dataEncalhe;
 	}
 
-	/**
-	 * @return the fechado
-	 */
-	public Boolean getFechado() {
-		return fechado;
-	}
-
-	/**
-	 * @param fechado the fechado to set
-	 */
-	public void setFechado(Boolean fechado) {
-		this.fechado = fechado;
-	}
-
-	/**
-	 * @return the postergado
-	 */
-	public Boolean getPostergado() {
+	public boolean isPostergado() {
 		return postergado;
 	}
 
-	/**
-	 * @param postergado the postergado to set
-	 */
-	public void setPostergado(Boolean postergado) {
+	public void setPostergado(boolean postergado) {
 		this.postergado = postergado;
 	}
+
+	public boolean isIndPossuiChamadaEncalheCota() {
+		return indPossuiChamadaEncalheCota;
+	}
+
+	public void setIndPossuiChamadaEncalheCota(boolean indPossuiChamadaEncalheCota) {
+		this.indPossuiChamadaEncalheCota = indPossuiChamadaEncalheCota;
+	}
+
+	public boolean isFechado() {
+		return fechado;
+	}
+
+	public void setFechado(boolean fechado) {
+		this.fechado = fechado;
+	}
+
+	public boolean isIndMFCNaoConsolidado() {
+		return indMFCNaoConsolidado;
+	}
+
+	public void setIndMFCNaoConsolidado(boolean indMFCNaoConsolidado) {
+		this.indMFCNaoConsolidado = indMFCNaoConsolidado;
+	}
+	
 	
 }

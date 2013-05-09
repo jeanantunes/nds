@@ -71,12 +71,70 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			balanceamentoRecolhimentoController.obterParametrosPesquisa(),
 			function(result) {
 				
-				balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
-				$('#utilizaSedeAtendida').val(result.utilizaSedeAtendida);
+				if(result.produtosNaoBalanceadosAposFechamentoMatriz
+						&& result.produtosNaoBalanceadosAposFechamentoMatriz.length > 0 ){
+					
+					balanceamentoRecolhimentoController.verificarProdutosNaoBalanceadosAposConfirmacaoMatriz(result)
+				}
+				else{
+					
+					balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
+					$('#utilizaSedeAtendida').val(result.utilizaSedeAtendida);
+				}
+
 			},
 			function() {
 				balanceamentoRecolhimentoController.showResumo(false);
 			}
+		);
+	},
+	
+	verificarProdutosNaoBalanceadosAposConfirmacaoMatriz : function(result) {
+		
+		var mensagemDialog ="<ul style='margin-left: 20px;'>" ;
+		
+		$.each(result.produtosNaoBalanceadosAposFechamentoMatriz, function(index, item) {
+			
+			mensagemDialog += "<li style='padding-bottom: 10px;'>" + item.codigoProduto +" - "+ item.nomeProduto + " - " + item.numeroEdicao + "</li>";
+	    });	
+		
+		mensagemDialog += "</ul>";
+		
+		$("#descdialogProdutosNaoBalanceadosAposConfirmacaoMatriz",balanceamentoRecolhimentoController.workspace).html(mensagemDialog);
+		
+		$("#dialogProdutosNaoBalanceadosAposConfirmacaoMatriz", balanceamentoRecolhimentoController.workspace).dialog({
+			resizable: false,
+			height:'auto',
+			width:600,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					
+					balanceamentoRecolhimentoController.processarProdutosNaoBalanceadosAposConfirmacaoMatriz(result);
+					
+					$(this).dialog("close");
+				},
+				"Cancelar": function() {
+					
+					$(this).dialog("close");
+				}
+			},
+			
+			form: $("#dialogProdutosNaoBalanceadosAposConfirmacaoMatriz", balanceamentoRecolhimentoController.workspace).parents("form")
+		});
+	},
+	
+	processarProdutosNaoBalanceadosAposConfirmacaoMatriz:function(results){
+		
+		$.postJSON(
+				contextPath + "/devolucao/balanceamentoMatriz/processarProdutosNaoBalanceadosAposConfirmacaoMatriz",
+				null,function(result){
+					balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(results);
+					$('#utilizaSedeAtendida').val(results.utilizaSedeAtendida);
+				},
+				function() {
+					balanceamentoRecolhimentoController.showResumo(false);
+				}
 		);
 	},
 	
@@ -725,12 +783,20 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			null,
 			function(result) {
 				
-				balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
+				if(result.produtosNaoBalanceadosAposFechamentoMatriz
+						&& result.produtosNaoBalanceadosAposFechamentoMatriz.length > 0 ){
+					
+					balanceamentoRecolhimentoController.verificarProdutosNaoBalanceadosAposConfirmacaoMatriz(result)
+				}
+				else{
+					
+					balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
 
-				exibirMensagem(
-					'SUCCESS', 
-					[ 'Balanceamento concluído com sucesso.' ]
-				);
+					exibirMensagem(
+						'SUCCESS', 
+						[ 'Balanceamento concluído com sucesso.' ]
+					);
+				}
 			},
 			function(result) {
 				
@@ -748,12 +814,20 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			null,
 			function(result) {
 				
-				balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
-				
-				exibirMensagem(
-					'SUCCESS', 
-					[ 'Balanceamento concluído com sucesso.' ]
-				);
+				if(result.produtosNaoBalanceadosAposFechamentoMatriz
+						&& result.produtosNaoBalanceadosAposFechamentoMatriz.length > 0 ){
+					
+					balanceamentoRecolhimentoController.verificarProdutosNaoBalanceadosAposConfirmacaoMatriz(result)
+				}
+				else{
+					
+					balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
+					
+					exibirMensagem(
+						'SUCCESS', 
+						[ 'Balanceamento concluído com sucesso.' ]
+					);
+				}
 			},
 			function() {
 				
