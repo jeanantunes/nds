@@ -293,7 +293,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		for (EstudoCota estudoCota : listaEstudoCota) {
 			
-			
 			//Verifica se Estudo ja possui itens de Nota de Envio.
 			if (estudoCota.getItemNotaEnvios()!=null && !estudoCota.getItemNotaEnvios().isEmpty()) {
 				
@@ -301,7 +300,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 				
 				continue;
 			}
-			
 			
 			ProdutoEdicao produtoEdicao = estudoCota.getEstudo().getProdutoEdicao();
 

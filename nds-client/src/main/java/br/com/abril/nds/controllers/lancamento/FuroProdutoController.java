@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -57,6 +58,8 @@ public class FuroProdutoController extends BaseController {
 	
 	@Post
 	public void pesquisar(String codigo, String produto, Long edicao, String dataLancamento) throws Exception{
+		
+		codigo = obterCodigoProdutoFormatado(codigo);
 		
 		this.validarDadosEntradaPesquisa(codigo, edicao, dataLancamento);
 		
@@ -112,6 +115,9 @@ public class FuroProdutoController extends BaseController {
 	}
 	
 	private void validarDadosEntradaPesquisa(String codigo, Long edicao, String dataLancamento) {
+		
+		codigo = obterCodigoProdutoFormatado(codigo);
+		
 		List<String> listaMensagemValidacao = new ArrayList<String>();
 		
 		if (codigo == null || codigo.isEmpty()){
@@ -172,6 +178,8 @@ public class FuroProdutoController extends BaseController {
 	public void validarFuro(String codigoProduto, Long idProdutoEdicao, String novaData, 
 			Long idLancamento) throws Exception {
 
+		codigoProduto = obterCodigoProdutoFormatado(codigoProduto);
+		
 		validarDadosEntradaConfirmarFuro(codigoProduto, idProdutoEdicao, novaData, idLancamento);
 
 		this.furoProdutoService.validarFuroProduto(codigoProduto, 
@@ -195,6 +203,8 @@ public class FuroProdutoController extends BaseController {
 	public void confirmarFuro(String codigoProduto, Long idProdutoEdicao, String novaData, 
 			Long idLancamento) throws Exception{
 		
+		codigoProduto = obterCodigoProdutoFormatado(codigoProduto);
+		
 		try {
 			this.furoProdutoService.efetuarFuroProduto(codigoProduto, 
 					idProdutoEdicao, idLancamento, 
@@ -216,6 +226,9 @@ public class FuroProdutoController extends BaseController {
 	
 	@Post
 	public void buscarNomeProduto(String codigoProduto){
+		
+		codigoProduto = obterCodigoProdutoFormatado(codigoProduto);
+		
 		String nomeProduto = this.produtoService.obterNomeProdutoPorCodigo(codigoProduto);
 		
 		if (nomeProduto == null){
@@ -253,4 +266,11 @@ public class FuroProdutoController extends BaseController {
 			throw new ValidacaoException(validacaoVO);
 		}
 	}
+	
+	private String obterCodigoProdutoFormatado(String codigoProduto) {
+
+		return StringUtils.leftPad(codigoProduto, 8, '0');
+		
+	}
+	
 }
