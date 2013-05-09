@@ -1,15 +1,15 @@
 function montarDados(){
 
-	params = new Array();
+	var params = new Array();
 	
 	params.push({name : "filtro.produtoDto.codigoProduto", value :  codigoProduto_HistogramaVenda});
 	for ( var int = 0; int < edicoesEscolhidas_HistogramaVenda.length; int++) {
 		params.push({name : "filtro.listProdutoEdicaoDTO["+int+"].numeroEdicao", value :  edicoesEscolhidas_HistogramaVenda[int]});
-		
+		params.push({name : "edicoesSelecionadas["+int+"].numeroEdicao", value :  edicoesEscolhidas_HistogramaVenda[int]});
 	}
 
 	//carregando popup superior para as edições
-	url = contextPath + "/distribuicao/historicoVenda/pesquisaProduto";
+	var url = contextPath + "/distribuicao/historicoVenda/pesquisaProduto";
 	$.post(url, params, function(data){
 		if(data){
 						anaLiseHistogramaController.tempData = data;
@@ -374,14 +374,15 @@ var anaLiseHistogramaController = $.extend(true, {
 	executarAnaliseHistoricoVenda:function(idx, propriedade){
 		var idCotaArray = resultadoAnalise[idx].cell[propriedade].split(','),
 			url = contextPath + "/distribuicao/historicoVenda/analiseHistorico",
-			params = new Array();
+			params = new Array(),
+			qtdEdicoes = edicoesEscolhidas_HistogramaVenda.length;
 		
 		//popular lista de ID de cotas
 		$.each(idCotaArray, function(index, val) {
 			params.push({name : "cotas["+index+"].numeroCota", value : val });
 		});
-
-		for ( var int = 0; int < edicoesEscolhidas_HistogramaVenda.length; int++) {
+		
+		for ( var int = 0; int < qtdEdicoes; int++) {
 			params.push({name : "listProdutoEdicaoDto["+int+"].numeroEdicao", value :  edicoesEscolhidas_HistogramaVenda[int]});
 			params.push({name : "listProdutoEdicaoDto["+int+"].codigoProduto", value :  codigoProduto_HistogramaVenda});
 		}
