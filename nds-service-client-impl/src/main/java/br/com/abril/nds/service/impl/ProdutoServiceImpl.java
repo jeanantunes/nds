@@ -18,12 +18,14 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.repository.DescontoLogisticaRepository;
 import br.com.abril.nds.repository.EditorRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.TipoProdutoRepository;
+import br.com.abril.nds.repository.TipoSegmentoProdutoRepository;
 import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
@@ -57,6 +59,9 @@ public class ProdutoServiceImpl implements ProdutoService {
 		
 	@Autowired
 	private DescontoLogisticaRepository descontoLogisticaRepository;
+	
+	@Autowired
+	private TipoSegmentoProdutoRepository segmentoRepository;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -129,11 +134,11 @@ public class ProdutoServiceImpl implements ProdutoService {
 	public List<ConsultaProdutoDTO> pesquisarProdutos(String codigo,
 			String produto, String fornecedor, String editor,
 			Long codigoTipoProduto, String sortorder, String sortname,
-			int page, int rp) {
+			int page, int rp,  Boolean isGeracaoAutomatica) {
 				
 		return this.produtoRepository.pesquisarProdutos(
 			codigo, produto, fornecedor, editor, 
-			codigoTipoProduto, sortorder, sortname, page, rp);
+			codigoTipoProduto, sortorder, sortname, page, rp, isGeracaoAutomatica);
 	}
 
 	@Override
@@ -225,6 +230,8 @@ public class ProdutoServiceImpl implements ProdutoService {
 				produtoExistente.setTributacaoFiscal(produto.getTributacaoFiscal());
 				produtoExistente.setPacotePadrao(produto.getPacotePadrao());
 				produtoExistente.setSegmentacao(produto.getSegmentacao());
+				produtoExistente.setIsGeracaoAutomatica(produto.getIsGeracaoAutomatica());
+				produtoExistente.setTipoSegmentoProduto(produto.getTipoSegmentoProduto());
 				
 				produtoExistente.setEditor(editor);
 				produtoExistente.addFornecedor(fornecedor);
@@ -324,11 +331,15 @@ public class ProdutoServiceImpl implements ProdutoService {
 			return produtoRepository.obterProdutoLikeCodigo(codigo);
 	}
 
-
-
 	@Override
 	public List<String> verificarProdutoExiste(String... codigoProduto) {
 
 		return produtoRepository.verificarProdutoExiste(codigoProduto);
+	}
+	
+	@Override
+	@Transactional
+	public List<TipoSegmentoProduto> carregarSegmentos() {
+		return segmentoRepository.buscarTodos();
 	}
 }

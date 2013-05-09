@@ -183,6 +183,9 @@ public class Produto implements Serializable {
 	@JoinColumn(name="TIPO_CLASSIFICACAO_PRODUTO_ID")
 	private TipoClassificacaoProduto tipoClassificacaoProduto;
 	
+	@Column(name = "GERACAO_AUTOMATICA", nullable = false)
+	private Boolean isGeracaoAutomatica;
+	
 	public Long getId() {
 		return id;
 	}
@@ -643,7 +646,12 @@ public class Produto implements Serializable {
 			TipoClassificacaoProduto tipoClassificacaoProduto) {
 		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
 	}
-	
-	
 
+	public Boolean getIsGeracaoAutomatica() {
+		return isGeracaoAutomatica;
+	}
+
+	public void setIsGeracaoAutomatica(Boolean isGeracaoAutomatica) {
+		this.isGeracaoAutomatica = isGeracaoAutomatica;
+	}
 }

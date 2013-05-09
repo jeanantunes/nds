@@ -27,11 +27,13 @@ import br.com.abril.nds.model.cadastro.FaixaEtaria;
 import br.com.abril.nds.model.cadastro.FormaFisica;
 import br.com.abril.nds.model.cadastro.FormatoProduto;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.TemaProduto;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -109,11 +111,11 @@ public class ProdutoController extends BaseController {
 	
 	private static List<ItemDTO<FormatoProduto,String>> listaFormatoProduto =  new ArrayList<ItemDTO<FormatoProduto,String>>();
 	
-	private static List<ItemDTO<TipoLancamento,String>> listaTipoLancamento =  new ArrayList<ItemDTO<TipoLancamento,String>>();
-	
 	private static List<ItemDTO<TemaProduto,String>> listaTemaProduto =  new ArrayList<ItemDTO<TemaProduto,String>>();
 	
 	private static List<ItemDTO<FormaFisica,String>> listaFormaFisica =  new ArrayList<ItemDTO<FormaFisica,String>>();
+	
+	private static List<ItemDTO<PeriodicidadeProduto,String>> listaPeriodicidade =  new ArrayList<ItemDTO<PeriodicidadeProduto,String>>();
 	
 	private static final String PRODUTO_MANUAL = "MANUAL";
 
@@ -439,18 +441,18 @@ public class ProdutoController extends BaseController {
 	 */
 	@Path("/pesquisarProdutos")
 	public void pesquisarProdutos(String codigo, String produto, String fornecedor, String editor,
-			Long codigoTipoProduto, String sortorder, String sortname, int page, int rp) {
+			Long codigoTipoProduto, String sortorder, String sortname, int page, int rp, Boolean isGeracaoAutomatica) {
 		
 		int startSearch = page*rp - rp;
 		
 		FiltroProdutoDTO filtroProdutoDTO = 
-				new FiltroProdutoDTO(codigo,produto,editor,fornecedor,codigoTipoProduto,sortorder,sortname);
+				new FiltroProdutoDTO(codigo,produto,editor,fornecedor,codigoTipoProduto,sortorder,sortname,isGeracaoAutomatica);
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroProdutoDTO);
 		
 		List<ConsultaProdutoDTO> listaProdutos =
 			this.produtoService.pesquisarProdutos(codigo, produto, fornecedor, editor, 
-				codigoTipoProduto, sortorder, sortname, startSearch, rp);
+				codigoTipoProduto, sortorder, sortname, startSearch, rp, isGeracaoAutomatica);
 		
 		Integer totalResultados = this.produtoService.pesquisarCountProdutos(codigo, produto, fornecedor, editor, codigoTipoProduto);
 		
@@ -520,12 +522,6 @@ public class ProdutoController extends BaseController {
 		}
 		result.include("listaFormatoProduto",listaFormatoProduto);	
 
-		listaTipoLancamento.clear();
-		for(TipoLancamento item:TipoLancamento.values()){
-			listaTipoLancamento.add(new ItemDTO<TipoLancamento,String>(item,item.getDescricao()));
-		}
-		result.include("listaTipoLancamento",listaTipoLancamento);	
-		
 		listaTemaProduto.clear();
 		for(TemaProduto item:TemaProduto.values()){
 			listaTemaProduto.add(new ItemDTO<TemaProduto,String>(item,item.getDescTemaProduto()));
@@ -537,6 +533,14 @@ public class ProdutoController extends BaseController {
 			listaFormaFisica.add(new ItemDTO<FormaFisica,String>(item,item.getDescFormaFisica()));
 		}
 		result.include("listaFormaFisica",listaFormaFisica);
+		
+		listaPeriodicidade.clear();
+		for(PeriodicidadeProduto item:PeriodicidadeProduto.values()){
+			listaPeriodicidade.add(new ItemDTO<PeriodicidadeProduto,String>(item,item.toString()));
+		}
+		result.include("listaPeriodicidade",listaPeriodicidade);
+		
+		this.carregarComboSegmento();
     }
 	
 	/**
@@ -708,7 +712,11 @@ public class ProdutoController extends BaseController {
 			if (produto.getTributacaoFiscal() == null) {
 				listaMensagens.add("O preenchimento do campo [Tributação Fiscal] é obrigatório!");
 			}
-
+			
+			if (produto.getTipoSegmentoProduto() == null) {
+				listaMensagens.add("O preenchimento do campo [Tipo Segmento] é obrigatório!");
+			}
+			
 			if (produto.getGrupoEditorial() != null && !produto.getGrupoEditorial().trim().isEmpty()) {
 				produto.setGrupoEditorial(produto.getGrupoEditorial().trim());
 			}
@@ -803,6 +811,22 @@ public class ProdutoController extends BaseController {
 	}
 	
 	/**
+	 * Popular combo lista de Segmento.
+	 */
+	private void carregarComboSegmento() {
+
+		List<ItemDTO<Long,String>> comboSegmento =  new ArrayList<ItemDTO<Long,String>>();
+
+		List<TipoSegmentoProduto> segmentos = produtoService.carregarSegmentos();
+
+		for (TipoSegmentoProduto itemSegmento : segmentos) {
+			comboSegmento.add(new ItemDTO<Long,String>(itemSegmento.getId(), itemSegmento.getDescricao()));
+		}
+
+		result.include("listaSegmentoProduto",comboSegmento );
+	}
+	
+	/**
 	 * Retorna o valor default para combo.
 	 * 
 	 * @return
@@ -822,7 +846,7 @@ public class ProdutoController extends BaseController {
 			
 			listaProdutos =
 					this.produtoService.pesquisarProdutos(filtro.getCodigo(), filtro.getNome(), filtro.getFornecedor(), filtro.getEditor(), 
-						filtro.getTipoProduto().getCodigo(), null, null, 0, 0);
+						filtro.getTipoProduto().getCodigo(), null, null, 0, 0, null);
 		}
 		
 		if (listaProdutos == null || listaProdutos.isEmpty()){
