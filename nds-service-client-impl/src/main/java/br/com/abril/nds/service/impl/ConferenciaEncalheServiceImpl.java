@@ -701,11 +701,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			for (ConferenciaEncalheDTO ceDTO : listaConferenciaEncalheDTO){
 				
-				ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(ceDTO.getIdProdutoEdicao());
-				
 				Date dataRecolhimento = ceDTO.getDataRecolhimento();
 				
-				ceDTO.setDia(this.distribuidorService.obterDiaDeRecolhimentoDaData(dataConferencia, dataRecolhimento, produtoEdicao));
+				ceDTO.setDia(this.distribuidorService.obterDiaDeRecolhimentoDaData(dataConferencia, dataRecolhimento, ceDTO.getIdProdutoEdicao()));
 			}
 		}
 	}
@@ -3242,11 +3240,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 			}
 			
-			ProdutoEdicao produtoEdicao =
-				this.produtoEdicaoRepository.buscarPorId(produtoEdicaoSlip.getIdProdutoEdicao());
-			
 			dia = this.distribuidorService.obterDiaDeRecolhimentoDaData(
-					produtoEdicaoSlip.getDataOperacao(), produtoEdicaoSlip.getDataRecolhimento(), produtoEdicao);
+					produtoEdicaoSlip.getDataOperacao(), produtoEdicaoSlip.getDataRecolhimento(), produtoEdicaoSlip.getIdProdutoEdicao());
  
 			produtoEdicaoSlip.setDia(dia);
 			
