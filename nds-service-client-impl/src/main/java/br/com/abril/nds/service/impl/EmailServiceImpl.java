@@ -171,12 +171,15 @@ public class EmailServiceImpl implements EmailService {
 		
 		mailSender.setPort(Integer.valueOf(porta.getValor()));
 		mailSender.setHost(host.getValor());
-		mailSender.setPassword(senha.getValor());
 		mailSender.setUsername(usuario.getValor());
+		mailSender.setPassword(senha.getValor());
 		mailSender.setProtocol(smtp.getValor());
 		
 		mailSender.getJavaMailProperties().setProperty("mail.smtps.auth", "true");
 		mailSender.getJavaMailProperties().setProperty("mail.smtps.starttls.enable", "true");
+		
+		mailSender.getJavaMailProperties().setProperty("mail.smtp.socketFactory.port", porta.getValor());
+		mailSender.getJavaMailProperties().setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 	}
 	
 	/**

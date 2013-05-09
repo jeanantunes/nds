@@ -286,10 +286,11 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	 * @return String
 	 */
 	private String getOrdenacaoDivida(FiltroDividaGeradaDTO filtro){
-		
-		if( !(filtro.getListaColunaOrdenacao()!= null && !filtro.getListaColunaOrdenacao().isEmpty())){
+		if(filtro.getListaColunaOrdenacao().isEmpty() && filtro.getListaColunaOrdenacao()== null   )
+		{
 			return "";
 		}
+		
 		
 		String orderByColumn = "";
 		
