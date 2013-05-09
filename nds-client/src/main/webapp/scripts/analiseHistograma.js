@@ -39,9 +39,11 @@ function montarDados(){
 						$('#analiseHistoricoPopUpVenda').html('')
 						.append('<td class="class_linha_2"><strong>Venda:</strong></td>');
 						
+						var qtdEdicoesSelecionadas = anaLiseHistogramaController.tempData.rows.length;
+						
 						// carregando popUp_analiseHistoricoVenda
-						for ( var int2 = 0; int2 < anaLiseHistogramaController.tempData.rows.length; int2++) {
-							row = anaLiseHistogramaController.tempData.rows[int2];
+						for (var int = qtdEdicoesSelecionadas - 1; int >= 0; int--) {
+							row = anaLiseHistogramaController.tempData.rows[int];
 							
 							$("#analiseHistoricoPopUpNomeProduto").append('<td class="class_linha_1">'+row.cell.nomeProduto+'</td>');
 							$("#analiseHistoricoPopUpNumeroEdicao").append('<td class="class_linha_1">'+row.cell.numeroEdicao+'</td>');
