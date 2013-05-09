@@ -36,6 +36,16 @@ public class DesenglobacaoRepositoryImpl extends AbstractRepositoryModel<Desengl
 
 	}
 	
+	public List<Desenglobacao> obterDesenglobacaoPorCotaDesenglobada(Long cotaNumero) {
+		
+		StringBuilder hql = new StringBuilder("");
+		hql.append(" from Desenglobacao d where d.desenglobaNumeroCota = :cotaNumero ");
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("cotaNumero", cotaNumero);
+		return query.list();
+
+	}
+	
 	public Float verificaPorcentagemCota(Long cotaId) {
 		return ((Number) getSession().createCriteria(Desenglobacao.class)
 				.add(Restrictions.eq("desenglobaNumeroCota", cotaId))
@@ -53,5 +63,22 @@ public class DesenglobacaoRepositoryImpl extends AbstractRepositoryModel<Desengl
 		
 		SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(cotasDesenglobadas.toArray());
 		jdbcTemplate.batchUpdate(sql, params);
+	}
+
+	@Override
+	public boolean removerPorCotaDesenglobada(Long cotaNumeroDesengloba) {
+		boolean res=Boolean.TRUE;
+		try {
+			String hql = "delete from Desenglobacao d where d.desenglobaNumeroCota= :cotaNumeroDesengloba";
+			getSession().createQuery(hql).setString("cotaNumeroDesengloba", cotaNumeroDesengloba.toString())
+					.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+			res=Boolean.FALSE;
+		}
+		
+		return res;
+		
+		
 	}
 }

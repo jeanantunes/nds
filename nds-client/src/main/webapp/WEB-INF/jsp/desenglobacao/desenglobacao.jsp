@@ -1,4 +1,3 @@
-<head>
 
 <script type="text/javascript" src="scripts/desenglobacao.js"></script>
 <script type="text/javascript" src="scripts/pesquisaCota.js"></script>
@@ -38,9 +37,7 @@
 
 
 </style>
-</head>
 
-<body>
 	<div class="corpo">
 		<br clear="all" /> <br />
 		<div class="container">
@@ -103,6 +100,7 @@
 
 	<div id="dialog-novo-desenglobacao" class="dialog" title="Englobar">
 		<form id="formInserirEnglobada">
+		<input type="hidden" name='alterando' />
 			<fieldset style="float: left; width: 600px !important; margin-bottom: 10px;">
 				<legend>Desenglobar de:</legend>
 				<table width="100%" border="0" cellspacing="2" cellpadding="2">
@@ -171,4 +169,6 @@
 			
 		</form>
 	</div>
-</body>
+<div id="dialog-excluir-desenglobacao" title="Excluir ajuste" style="display:none">
+		<p>Confirma a exclusão desta desengloba&ccedil;&atilde;o?</p>
+	</div>
