@@ -1045,8 +1045,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				//select para totalizar a qtde de cotas ativas para calculo no resumo da tela da EMS 2029
 				" from " +
 				" ( select DISTINCT " +
-				"	case when (sum(estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) = 0 then cota2_.numero_cota else null end as cotasEsmagadas, " +
-				"   case when (sum(estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) = 0 then sum(estoqueProdutoCota.QTDE_RECEBIDA) / :qtdEdicoes else 0 end as vdEsmag," +
+				"	case when (sum((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA ) / :qtdEdicoes)) between 0.5 and 1 and (sum(estoqueProdutoCota.QTDE_DEVOLVIDA / :qtdEdicoes)) = 0  then cota2_.numero_cota else null end as cotasEsmagadas, " +
+				"   case when (sum((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA ) / :qtdEdicoes)) between 0.5 and 1 and (sum(estoqueProdutoCota.QTDE_DEVOLVIDA / :qtdEdicoes)) = 0 then round(sum(estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_Devolvida) /6) else 0 end as vdEsmag," +
 				"   case when round(sum(estoqueProdutoCota.QTDE_DEVOLVIDA) / :qtdEdicoes) = round(sum(estoqueProdutoCota.QTDE_RECEBIDA) / :qtdEdicoes) then 1 else 0 end as qtdeCotasSemVenda," +
 				"   case when cota2_.SITUACAO_CADASTRO='ATIVO' then 1 else 0 end as cotaAtiva," +
 				"	  sum(estoqueProdutoCota.QTDE_RECEBIDA) as reparteTotal," +	
@@ -1251,7 +1251,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		hql.append(" WHERE ");
 		hql.append(" tipoMovimento.id = 13 and ");
-	
+
 		if (filtro.getProdutoDto() != null) {
 			if (filtro.getProdutoDto().getCodigoProduto() != null && !filtro.getProdutoDto().getCodigoProduto().equals(0)) {
 				hql.append(" produto.codigo = :codigoProduto ");
@@ -1261,6 +1261,20 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				hql.append(" produto.nome = :nomeProduto ");
 				parameters.put("nomeProduto", filtro.getProdutoDto().getNomeProduto());
 			}
+		}
+		
+		if (filtro.getListProdutoEdicaoDTO() != null && !filtro.getListProdutoEdicaoDTO().isEmpty()) {
+			hql.append(" and produtoEdicao.numeroEdicao in (");
+			
+			for (int i = 0; i < filtro.getListProdutoEdicaoDTO().size(); i++) {
+				hql.append(filtro.getListProdutoEdicaoDTO().get(i).getNumeroEdicao());	
+				
+				if (filtro.getListProdutoEdicaoDTO().size() != i + 1) {
+					hql.append(","); 
+				}
+			}
+			
+			hql.append(")");
 		}
 		
 		if (filtro.getTipoClassificacaoProdutoId() != null && filtro.getTipoClassificacaoProdutoId() > 0l) {
@@ -1273,7 +1287,12 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		} 
 		
 		hql.append(" GROUP BY produtoEdicao.numeroEdicao ");
-		hql.append(" ORDER BY produtoEdicao.numeroEdicao DESC ");
+
+		if (filtro.getListProdutoEdicaoDTO() != null && !filtro.getListProdutoEdicaoDTO().isEmpty()) {
+			hql.append(" ORDER BY produtoEdicao.numeroEdicao ");
+		}else {
+			hql.append(" ORDER BY produtoEdicao.numeroEdicao DESC ");
+		}
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		

@@ -336,5 +336,5 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	List<ProdutoEdicao> listProdutoEdicaoPorCodProdutoNumEdicoes(
 			String codigoProduto, Long numeroEdicaoInicial,
 			Long numeroEdicaoFinal);
-
+	
 }
