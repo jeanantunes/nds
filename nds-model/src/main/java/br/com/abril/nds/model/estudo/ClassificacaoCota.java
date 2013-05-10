@@ -6,88 +6,94 @@ public enum ClassificacaoCota {
 	/**
 	 * AJ
 	 */
-	Ajuste("AJ"),
+	Ajuste("AJ", "Ajuste"),
 	/**
 	 * FX
 	 */
-	ReparteFixado("FX"),
+	ReparteFixado("FX", "Reparte Fixado"),
 	/**
 	 * RD
 	 */
-	RedutorAutomatico("RD"),
+	RedutorAutomatico("RD", "Redutor Automático"),
 	/**
 	 * PR
 	 */
-	BancaSoComEdicaoBaseAberta("PR"),
+	BancaSoComEdicaoBaseAberta("PR", "Banca que só tem edição base aberta"),
 	/**
 	 * MM
 	 */
-	MaximoMinimo("MM"),
+	MaximoMinimo("MM", "Mínimo/ Máximo"),
 	/**
 	 * IN
 	 */
-	InclusaoManualCotas("IN"),
+	InclusaoManualCotas("IN", "Inclusão manual de cotas"),
 	/**
 	 * EG
 	 */
-	EnglobaDesengloba("EG"),
+	EnglobaDesengloba("EG", "Engloba/Desengloba"),
 	/**
 	 * CL
 	 */
-	BancaSemClassificacaoDaPublicacao("CL"),
+	BancaSemClassificacaoDaPublicacao("CL", "Cota não recebe essa Classificação"),
 	/**
 	 * GN
 	 */
-	BancaQueRecebemDeterminadoSegmento("GN"),
+	BancaQueRecebemDeterminadoSegmento("GN", "Cota não recebe esse Segmento"),
 	/**
 	 * S
 	 */
-	CotaNova("S"),
+	CotaNova("S", "Cota Nova"),
 	/**
 	 * SM
 	 */
-	BancaMixSemDeterminadaPublicacao("SM"),
+	BancaMixSemDeterminadaPublicacao("SM", "Publicação não está no MIX da cota"),
 	/**
 	 * SS
 	 */
-	BancaSuspensa("SS"),
+	BancaSuspensa("SS", "Cota Suspensa"),
 	/**
 	 * FR
 	 */
-	BancaForaDaRegiaoDistribuicao("FR"),
+	BancaForaDaRegiaoDistribuicao("FR", "Região não recebe publicação"),
 	/**
 	 * SH
 	 */
-	BancaSemHistorico("SH"),
+	BancaSemHistorico("SH", "Não recebeu as edições-base"),
 	/**
 	 * VZ
 	 */
-	BancaComVendaZero("VZ"),
+	BancaComVendaZero("VZ", "Sem vendas nas edições-bases"),
 	/**
 	 * MX
 	 */
-	CotaMix("MX"),
+	CotaMix("MX", "Cota de Mix"),
 	/**
 	 * CP
 	 */
-	BancaEstudoComplementar("CP"),
+	BancaEstudoComplementar("CP", "Bancas de Estudo Complementar"),
 	/**
 	 * TR
 	 */
-	BonificacaoParaCotas("TR"),
+	BonificacaoParaCotas("TR", "Bonificação para Cotas"),
 	/**
 	 * ZZ
 	 */
-	SemClassificacao("");
+	SemClassificacao("", "");
 	
 	private String codigo;
+	private String texto;
 	
-	ClassificacaoCota(String codigo) {
+	ClassificacaoCota(String codigo, String texto) {
 		this.codigo = codigo;
+		this.texto = texto;
 	}
 	
 	public String getCodigo() {
 		return codigo;
+	}
+	
+	public String getTexto() {
+	    return texto;
 	}
 	
 	public boolean notIn(ClassificacaoCota ... lista) {
