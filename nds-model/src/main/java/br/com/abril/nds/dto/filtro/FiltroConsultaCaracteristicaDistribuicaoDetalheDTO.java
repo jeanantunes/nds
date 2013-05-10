@@ -13,9 +13,9 @@ public class FiltroConsultaCaracteristicaDistribuicaoDetalheDTO extends FiltroDT
 	private String chamadaCapa;
 	private String faixaPrecoDe;
 	private String faixaPrecoAte;
-	private int opcaoFiltroPublicacao;
-	private int opcaoFiltroEditor;
-	private int opcaoFiltroChamadaCapa;
+	private boolean opcaoFiltroPublicacao;
+	private boolean opcaoFiltroEditor;
+	private boolean opcaoFiltroChamadaCapa;
 	
 	public String getCodigoProduto() {
 		return codigoProduto;
@@ -71,22 +71,22 @@ public class FiltroConsultaCaracteristicaDistribuicaoDetalheDTO extends FiltroDT
 	public void setFaixaPrecoAte(String faixaPrecoAte) {
 		this.faixaPrecoAte = faixaPrecoAte;
 	}
-	public int getOpcaoFiltroPublicacao() {
+	public boolean getOpcaoFiltroPublicacao() {
 		return opcaoFiltroPublicacao;
 	}
-	public void setOpcaoFiltroPublicacao(int opcaoFiltroPublicacao) {
+	public void setOpcaoFiltroPublicacao(boolean opcaoFiltroPublicacao) {
 		this.opcaoFiltroPublicacao = opcaoFiltroPublicacao;
 	}
-	public int getOpcaoFiltroEditor() {
+	public boolean getOpcaoFiltroEditor() {
 		return opcaoFiltroEditor;
 	}
-	public void setOpcaoFiltroEditor(int opcaoFiltroEditor) {
+	public void setOpcaoFiltroEditor(boolean opcaoFiltroEditor) {
 		this.opcaoFiltroEditor = opcaoFiltroEditor;
 	}
-	public int getOpcaoFiltroChamadaCapa() {
+	public boolean getOpcaoFiltroChamadaCapa() {
 		return opcaoFiltroChamadaCapa;
 	}
-	public void setOpcaoFiltroChamadaCapa(int opcaoFiltroChamadaCapa) {
+	public void setOpcaoFiltroChamadaCapa(boolean opcaoFiltroChamadaCapa) {
 		this.opcaoFiltroChamadaCapa = opcaoFiltroChamadaCapa;
 	}
 	
