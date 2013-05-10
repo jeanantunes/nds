@@ -78,7 +78,7 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		List<ConsultaProdutoDTO> listaProdutos = 
 			this.produtoRepository.pesquisarProdutos(
-				"1", "", "teste", "editor", 1L, "asc", "codigo", 1, 15);
+				"1", "", "teste", "editor", 1L, "asc", "codigo", 1, 15, false);
 		
 		Assert.assertNotNull(listaProdutos);
 	}
@@ -88,7 +88,7 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		List<ConsultaProdutoDTO> listaProdutos = 
 			this.produtoRepository.pesquisarProdutos(
-				"1", "produtoTeste", "teste", "editor", 1L, "asc", "codigo", 1, 15);
+				"1", "produtoTeste", "teste", "editor", 1L, "asc", "codigo", 1, 15, false);
 		
 		Assert.assertNotNull(listaProdutos);
 	}

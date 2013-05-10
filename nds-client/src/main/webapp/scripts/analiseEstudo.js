@@ -131,7 +131,7 @@ var analiseEstudoController = $.extend(true, {
             matriz.push({name: "selecionado.edicao",         value: response.numeroEdicao});
             matriz.push({name: "selecionado.estudo",         value: response.idEstudo});
             matriz.push({name: "selecionado.idLancamento",   value: response.idLancamento});
-            matriz.push({name: "selecionado.estudoLiberado", value: (response.liberado == "" ? false : true)});
+            matriz.push({name: "selecionado.estudoLiberado", value: (response.liberado != "")});
 //          matriz.push({name: "selecionado.lncto",          value: response.lancto});
 //          matriz.push({name: "selecionado.repDistrib",     value: response.reparte});
 //          matriz.push({name: "selecionado.sobra",          value: 0);
@@ -143,8 +143,7 @@ var analiseEstudoController = $.extend(true, {
                     null, // parametros
                     function(html){ // onSucessCallBack
                 $('#AnaliseEstudoMainContent').hide();
-                $('#histogramaPosEstudoContent').html(html);
-                $('#histogramaPosEstudoContent').show();
+                $('#histogramaPosEstudoContent').html(html).show();
 
                 histogramaPosEstudoController.dadosResumo = dadosResumo;
                 histogramaPosEstudoController.matrizSelecionado = matriz;
@@ -153,7 +152,7 @@ var analiseEstudoController = $.extend(true, {
             });
         }
         );
-    },
+    }
 
 }, BaseController);
 //@ sourceURL=analiseEstudo.js
