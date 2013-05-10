@@ -95,6 +95,8 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 		
 		});
 		
+		
+		 
 	},
 	
 	
@@ -128,6 +130,22 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 		
 		return resultado;
 		
+	},
+	
+	 moeda:function(z){ 
+		v = z.value; 
+		v=v.replace(/\D/g,"") // permite digitar apenas numero 
+		v=v.replace(/(\d{1})(\d{1,2})$/,"$1,$2") // coloca virgula antes dos ultimos 2 digitos 
+		z.value = v; 
+	},
+	
+	validarCamposDeAte:function(){
+		if($("#faixaDe").val() ==''|| $("#faixaAte").val()=='' || $("#faixaDe").val() == undefined || $("#faixaAte").val()==undefined){
+			return false;
+		}else{
+			return $("#faixaDe").val() > $("#faixaAte").val();
+		}
+		 
 	},
 	
 	validarBotaoExportar:function(numRegistros){
@@ -196,9 +214,9 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 	pesquisar:function(){
 	if(caracteristicaDistribuicaoController.camposVazios()){
 		exibirMensagem("WARNING",["Preencha pelo menos um campo dos filtros para realizar a pesquisa!"]);
+	}else if (caracteristicaDistribuicaoController.validarCamposDeAte()){
+		exibirMensagem("WARNING",["O campo 'De' não pode conter valores maiores que o campo 'Até'!"]);
 	}else{
-		
-			console.log("detalhe");
 			caracteristicaDistribuicaoController.exibeGridDetalhe();
 			$(".pesquisaDetalheGrid",caracteristicaDistribuicaoController.workspace).flexOptions({
 				url: contextPath + "/distribuicao/caracteristicaDistribuicao/pesquisarDetalhe",
@@ -228,21 +246,23 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 	
 	
 	getDadosFiltroPesquisaDetalhe:function(){
-		
+		var valDe=$("#faixaDe").val();
+		var valAte= $("#faixaAte").val();
 		var data = [];
 		data.push({name:'filtro.codigoProduto',	value: $("#codigoProduto").val()});
 		data.push({name:'filtro.nomeProduto', value: $("#nomeProduto").val()});
 		data.push({name:'filtro.nomeEditor',  value: $("#nomeEditor").val()});
-		data.push({name:'filtro.opcaoFiltroPublicacao', value:$('input:radio[name=radioPublicacao]:checked').val()});
-		data.push({name:'filtro.opcaoFiltroEditor', value:$('input:radio[name=radioEditor]:checked').val()});
-		data.push({name:'filtro.opcaoFiltroChamadaCapa', value:$('input:radio[name=radioChamadaCapa]:checked').val()});
+		data.push({name:'filtro.opcaoFiltroPublicacao', value:$('#checkPublicacaoExato').is(":checked")});
+		data.push({name:'filtro.opcaoFiltroEditor', value:$('#checkEditorExato').is(":checked")});
+		data.push({name:'filtro.opcaoFiltroChamadaCapa', value:$('#checkChamadaCapaExato').is(":checked")});
+		
 		
 		data.push({name:'filtro.classificacao',  value: $("#classificacao option:selected").val()});
 		data.push({name:'filtro.segmento',  value: $("#segmento option:selected").val()});
 		data.push({name:'filtro.brinde',  value: $("#brinde option:selected").val()});
-		
-		data.push({name:'filtro.precoDe',  value: $("#faixaDe").val()});
-		data.push({name:'filtro.precoAte',  value: $("#faixaAte").val()});
+		data.push({name:'filtro.chamadaCapa', value:$('#chamadaCapa').val()});
+		data.push({name:'filtro.faixaPrecoDe',  value: valDe.replace(",",".")});
+		data.push({name:'filtro.faixaPrecoAte',  value: valAte.replace(",",".")});
 		
 		return data;
 	},

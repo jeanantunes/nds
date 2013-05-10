@@ -1,16 +1,15 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8" %>  
-<script type="text/javascript" src="scripts/caracteristicaDistribuicao.js"></script>
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
-
+<head>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/caracteristicaDistribuicao.js"></script>
 <script type="text/javascript">
 $(function(){
 	caracteristicaDistribuicaoController.init();
 });
 
 </script> 
-
+</head>
 <body>
 
 <br clear="all"/>
@@ -60,27 +59,22 @@ $(function(){
 		          <tr>
 	         	   <td width="48">Produto:</td>
 		            <td width="206"><input type="text" name="nomeProduto" id="nomeProduto"  style="width:200px;" class="inputField"></input></td>
-		            <td align="right"><input type="radio" name="radioPublicacao" id="radioPublicacaoInicio" value="1" checked="checked"/></td><td><label for="radioPublicacaoInicio"> Inicia com </label></td>
-	 	            <td align="right"><input type="radio" name="radioPublicacao" id="radioPublicacaoContido" value="2"/></td><td><label for="radioPublicacaoContido"> Contem </label></td>
-	 	            <td align="right"><input type="radio" name="radioPublicacao" id="radioPublicacaoExato" value="3"/></td><td><label for="radioPublicacaoExato"> Exato</label></td>
+		            
+	 	            <td align="right"><input type="checkbox" name="checkPublicacao" id="checkPublicacaoExato"/></td><td><label for="checkPublicacaoExato"> Exato</label></td>
 		          </tr>
 		          <tr>
 		           <td width="70">Nome Editor:</td>
 		            <td width="206"><input type="text" name="nomeEditor" id="nomeEditor" style="width:200px;" class="inputField"></input></td>
-		            <td align="right"><input type="radio" name="radioEditor" id="radioEditorInicio" value="1" checked="checked"/></td><td><label for="radioEditorInicio"> Inicia com </label></td>
-	 	            <td align="right"><input type="radio" name="radioEditor" id="radioEditorContido" value="2"/></td><td><label for="radioEditorContido"> Contem </label></td>
-	 	            <td align="right"><input type="radio" name="radioEditor" id="radioEditorExato" value="3"/></td><td><label for="radioEditorExato"> Exato</label></td>
+		            <td align="right"><input type="checkbox" name="checkEditor" id="checkEditorExato" /></td><td><label for="checkEditorExato"> Exato</label></td>
 		          </tr>
 		          <tr>
 		          	<td width="148">Chamada de capa:</td>
 		             <td width="206"><input type="text" name="chamadaCapa" id="chamadaCapa" style="width:200px;" class="inputField"></input>
-		             <td align="right"><input type="radio" name="radioChamadaCapa" id="radioChamadaCapaInicio" value="1" checked="checked"/></td><td><label for="radioChamadaCapaInicio" > Inicia com </label></td>
-	 	            <td align="right"><input type="radio" name="radioChamadaCapa" id="radioChamadaCapaContido" value="2"/></td><td><label for="radioChamadaCapaContido"> Contem </label> </td>
-	 	            <td align="right"><input type="radio" name="radioChamadaCapa" id="radioChamadaCapaExato" value="3"/></td><td><label for="radioChamadaCapaExato"> Exato</label></td>
+		             <td align="right"><input type="checkbox" name="checkChamadaCapa" id="checkChamadaCapaExato" ></td><td><label for="checkChamadaCapaExato"> Exato</label></td>
 	 	          </tr>
 	 	           <tr>
 		             <td width="148" >Faixa de Preço:  </td>
-	 	             <td>De: <input type="text" name="faixaDe" id="faixaDe" onkeydown="onlyNumeric(event);" maxlength="5" style="width:50px;" class="inputField"/> Até:<input type="text" name="faixaAte" maxlength="5" id="faixaAte" onkeydown="onlyNumeric(event);"  style="width:50px;" class="inputField"/></td>
+	 	             <td>De: <input type="text" name="faixaDe" id="faixaDe" onkeyup="return caracteristicaDistribuicaoController.moeda(this);" maxlength="8" style="width:50px;" class="inputField"/> Até:<input type="text" name="faixaAte" maxlength="8" id="faixaAte" onkeyup="return caracteristicaDistribuicaoController.moeda(this);"  style="width:50px;" class="inputField"/></td>
 	 	             <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="caracteristicaDistribuicaoController.pesquisar();">Pesquisar</a></span></td>
 	 	           </tr>
 	        </table>
