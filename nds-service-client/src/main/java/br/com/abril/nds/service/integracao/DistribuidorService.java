@@ -111,8 +111,8 @@ public interface DistribuidorService {
 	 * Obtem o dia de recolhimento do distribuidor para a data de Conferencia divergente da data de Recolhimento prevista
 	 * @param dataConferencia
 	 * @param dataRecolhimento
-	 * @param produtoEdicao
+	 * @param long1
 	 * @return Integer
 	 */
-	Integer obterDiaDeRecolhimentoDaData(Date dataConferencia, Date dataRecolhimento, ProdutoEdicao produtoEdicao);
+	Integer obterDiaDeRecolhimentoDaData(Date dataConferencia, Date dataRecolhimento, Long idProdutoEdicao);
 }

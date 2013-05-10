@@ -300,7 +300,7 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(periodo) ");
+		hql.append(" select distinct periodo ");
 		
 		hql.append(getSqlFromEWherePeriodosParciais(filtro));
 		
@@ -312,7 +312,9 @@ public class PeriodoLancamentoParcialRepositoryImpl extends AbstractRepositoryMo
 			query.setParameter(key, param.get(key));
 		}	
 		
-		Long totalRegistros = (Long) query.uniqueResult();
+		List<Object> listaTotalRegistros = query.list();
+		Long totalRegistros = (long) listaTotalRegistros.size();
+		
 		
 		return (totalRegistros == null) ? 0 : totalRegistros.intValue();
 	}

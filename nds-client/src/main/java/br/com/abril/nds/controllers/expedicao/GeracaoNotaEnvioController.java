@@ -11,6 +11,8 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -54,6 +56,8 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_EXPEDICAO_GERACAO_NOTA_ENVIO)
 public class GeracaoNotaEnvioController extends BaseController {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(GeracaoNotaEnvioController.class);	
+	
 	@Autowired
 	private Result result;
 	
@@ -254,8 +258,10 @@ public class GeracaoNotaEnvioController extends BaseController {
 	
 			}
 		} catch (ValidacaoException e) {
+			LOGGER.error("Erro de validação ao gerar arquivos de notas de envio: " + e.getMessage(), e);
 			result.use(Results.json()).from(e.getValidacao(), Constantes.PARAM_MSGS).recursive().serialize();
 		}catch (Exception e) {
+			LOGGER.error("Erro genérico ao gerar arquivos de notas de envio: " + e.getMessage(), e);
 			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()),Constantes.PARAM_MSGS).recursive().serialize();
 		}
 	}

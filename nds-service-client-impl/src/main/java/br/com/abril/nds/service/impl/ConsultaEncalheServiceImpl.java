@@ -77,9 +77,7 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 			
 			if(dataRecolhimento != null && dataConferencia != null) {
 
-				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(consultaEncalhe.getIdProdutoEdicao());
-				
-				Integer dia = distribuidorService.obterDiaDeRecolhimentoDaData(dataConferencia, dataRecolhimento, produtoEdicao);
+				Integer dia = distribuidorService.obterDiaDeRecolhimentoDaData(dataConferencia, dataRecolhimento, consultaEncalhe.getIdProdutoEdicao());
 				
 				consultaEncalhe.setRecolhimento(dia);				
 			} else {
