@@ -75,9 +75,11 @@ public class HTMLTableUtil {
 		h.append(String.format(" <td>%s</td>", ce.getQuantidadePDVs()));
 		BigInteger reparte = BigInteger.ZERO;
 		BigInteger venda = BigInteger.ZERO;
-		for (ProdutoEdicaoEstudo pr : ce.getEdicoesRecebidas()) {
-		    reparte = reparte.add(pr.getReparte().toBigInteger());
-		    venda = venda.add(pr.getVenda().toBigInteger());
+		if (ce.getEdicoesRecebidas() != null) {
+		    for (ProdutoEdicaoEstudo pr : ce.getEdicoesRecebidas()) {
+			reparte = reparte.add(pr.getReparte().toBigInteger());
+			venda = venda.add(pr.getVenda().toBigInteger());
+		    }
 		}
 		h.append(String.format(" <td>%s</td>", reparte));
 		h.append(String.format(" <td>%s</td>", venda));
@@ -162,11 +164,16 @@ public class HTMLTableUtil {
 	BigInteger totalFixacao = BigInteger.ZERO;
 	BigDecimal vendaMediaTotal = BigDecimal.ZERO;
 	for (CotaEstudo ce : estudo.getCotas()) {
-	    if (ce.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
-		qtdeCotasAtivas++;
-	    }
-	    if (ce.getClassificacao().equals(ClassificacaoCota.BancaSuspensa)) {
-		qtdeCotasSuspensas++;
+	    if (ce.getSituacaoCadastro() != null) {
+		if (ce.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
+		    qtdeCotasAtivas++;
+		}
+		if (ce.getClassificacao().equals(ClassificacaoCota.BancaSuspensa)) {
+		    qtdeCotasSuspensas++;
+		}
+		if (ce.getClassificacao().equals(ClassificacaoCota.BancaEstudoComplementar)) {
+		    qtdeCotasComplementares++;
+		}
 	    }
 	    if (ce.getReparteCalculado().compareTo(BigInteger.ZERO) > 0) {
 		qtdeCotasComReparte++;
@@ -175,9 +182,6 @@ public class HTMLTableUtil {
 	    }
 	    if (ce.getReparteFixado() != null) {
 		totalFixacao = totalFixacao.add(ce.getReparteFixado());
-	    }
-	    if (ce.getClassificacao().equals(ClassificacaoCota.BancaEstudoComplementar)) {
-		qtdeCotasComplementares++;
 	    }
 	    vendaMediaTotal = vendaMediaTotal.add(ce.getVendaMedia());
 	}
