@@ -137,7 +137,7 @@
 										<tr>
 											<td>Geração Automática:</td>
 												<td style="width:100px;">
-													<input type="checkbox" id="selGeracaoAuto" name="selGeracaoAuto" style="float: left; margin-right: 25px;" />
+													<input type="checkbox" class="habilitarCampoInterface" id="selGeracaoAuto" name="selGeracaoAuto" style="float: left; margin-right: 25px;" />
 											</td>
 										<tr>
 									</table>
