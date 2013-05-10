@@ -103,7 +103,7 @@ $(function(){
 				        </td>
 				        <td width="116" style="border-bottom:1px solid #ccc;">Reparte Total:</td>
 				        <td width="41" style="border-bottom:1px solid #ccc;" id="fieldSetResumoReparteTotal"></td>
-				        <td width="86" style="border-bottom:1px solid #ccc;">NPDV Atual:</td>
+				        <td width="86" style="border-bottom:1px solid #ccc;">Cota Atual:</td>
 				        
 				        <!-- quantidade de cotas ativas na base da distribuidora -->
 				        <td width="41" style="border-bottom:1px solid #ccc;" id="fieldSetResumoNpdvAtual"></td>
@@ -114,7 +114,7 @@ $(function(){
 				  <tr>
 				    <td style="border-bottom:1px solid #ccc;">Reparte Promocional:</td>
 				    <td style="border-bottom:1px solid #ccc;" id="fieldSetResumoRepartePromocional"></td>
-				    <td style="border-bottom:1px solid #ccc;">NPDV Produto:</td>
+				    <td style="border-bottom:1px solid #ccc;">Cota Produto:</td>
 				    <td style="border-bottom:1px solid #ccc;" id="fieldSetResumoNpdvProduto"></td>
 				    <td width="73" style="border-bottom:1px solid #ccc;">Rep. Mínimo:</td>
 				    <td width="60" style="border-bottom:1px solid #ccc;" id="fieldSetResumoReparteMinimoSugerida"></td>
@@ -123,7 +123,7 @@ $(function(){
 				  <tr>
 				    <td style="border-bottom:1px solid #ccc;">Reserva Técnica:</td>
 				    <td style="border-bottom:1px solid #ccc;" id="fieldSetResumoReservaTecnica">200</td>
-				    <td style="border-bottom:1px solid #ccc;">NPDV Compl:</td>
+				    <td style="border-bottom:1px solid #ccc;">Cota Compl:</td>
 				    <td style="border-bottom:1px solid #ccc;" id="fieldSetResumoNpdvComplementar"></td>
 				    <td style="border-bottom:1px solid #ccc;">Abrangência:</td>
 				    <td style="border-bottom:1px solid #ccc;" id="fieldSetResumoAbrangenciaSugerida"></td>

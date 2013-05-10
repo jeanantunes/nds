@@ -281,11 +281,16 @@ var anaLiseHistogramaController = $.extend(true, {
 						rowCell.cotasEsmagadas="<a href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+index+",'idCotasEsmagadas');\">"+formatarMilhar(rowCell.cotasEsmagadas)+"</a>";
 					}
 					
-					if ($(rowCell.faixaVenda).text() === 'De 0 a 0') {
-//						rowCell.vdaTotal = 0;
-			    	}
-					
 					anaLiseHistogramaController.formatarFaixasVenda(rowCell);
+				});
+				
+				lastRow.cell.repTotal = 0;
+				lastRow.cell.vdaTotal = 0;
+				$.each(data.rows, function(index, row) {
+					if (lastRow.id !== row.id) {
+						lastRow.cell.repTotal += parseInt(row.cell.repTotal);
+						lastRow.cell.vdaTotal += parseInt(row.cell.vdaTotal);
+					}
 				});
 
 				return data;
