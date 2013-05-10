@@ -186,13 +186,14 @@ public class Produto implements Serializable {
 	@JoinColumn(name="TIPO_CLASSIFICACAO_PRODUTO_ID")
 	private TipoClassificacaoProduto tipoClassificacaoProduto;
 	
+	@Column(name = "GERACAO_AUTOMATICA", nullable = false)
+	private Boolean isGeracaoAutomatica;
 	
 	//@JoinColumn(name = "EDITOR_ID")
 //	@OneToMany
 //	@JoinTable(name = "PRODUTO_EDICAO")
 	@OneToMany(mappedBy = "produto")
 	private List<ProdutoEdicao> produtoEdicao;
-	
 	
 	public Long getId() {
 		return id;
@@ -663,6 +664,11 @@ public class Produto implements Serializable {
 		this.produtoEdicao = produtoEdicao;
 	}
 	
-	
+	public Boolean getIsGeracaoAutomatica() {
+		return isGeracaoAutomatica;
+	}
 
+	public void setIsGeracaoAutomatica(Boolean isGeracaoAutomatica) {
+		this.isGeracaoAutomatica = isGeracaoAutomatica;
+	}
 }

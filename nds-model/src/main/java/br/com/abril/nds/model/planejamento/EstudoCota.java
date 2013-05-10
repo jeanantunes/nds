@@ -30,21 +30,23 @@ import br.com.abril.nds.model.estoque.RateioDiferenca;
 @SequenceGenerator(name="ESTUDO_COTA_SEQ", initialValue = 1, allocationSize = 1)
 public class EstudoCota implements Serializable {
 
-	/**
-	 * Serial Version UID
-	 */
 	private static final long serialVersionUID = -2730755900853136814L;
+
 	@Id
 	@GeneratedValue(generator = "ESTUDO_COTA_SEQ")
 	@Column(name = "ID")
 	private Long id;
+
 	@Column(name = "QTDE_PREVISTA", nullable = false)
 	private BigInteger qtdePrevista;
+
 	@Column(name = "QTDE_EFETIVA", nullable = false)
 	private BigInteger qtdeEfetiva;
+
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "ESTUDO_ID")
 	private Estudo estudo;
+
 	@ManyToOne(optional = false, fetch = FetchType.LAZY)
 	@JoinColumn(name = "COTA_ID")
 	private Cota cota;
