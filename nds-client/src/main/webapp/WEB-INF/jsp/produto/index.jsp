@@ -256,6 +256,18 @@
 										</tr>
 										
 										<tr>
+											<td><strong>Tipo Lançamento:</strong></td>
+											<td>
+												<select class="habilitarCampoInterfaceSegmentacao" name="comboClassifProd" id="comboClassifProd" style="width:150px;">
+							                        <option value="">Selecione</option>
+							                        <c:forEach varStatus="counter" var="itemClassif" items="${listaClassifProduto}">
+									                    <option value="${itemClassif.key}">${itemClassif.value}</option>
+									                </c:forEach>
+							                    </select> 
+											</td>
+										</tr>
+										
+										<tr>
 											<td><strong>Tipo Segmento:</strong></td>
 											<td>
 												<select class="habilitarCampoInterfaceSegmentacao" name="comboTipoSegmento" id="comboTipoSegmento" style="width:150px;">
@@ -266,6 +278,7 @@
 							                    </select> 
 											</td>
 										</tr>
+										
 										
 										<tr>
 											<td><strong>Tema Principal:</strong></td>

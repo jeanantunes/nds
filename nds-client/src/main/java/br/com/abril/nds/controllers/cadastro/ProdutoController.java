@@ -33,9 +33,9 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.TemaProduto;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
-import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.DescontoLogisticaService;
@@ -539,6 +539,8 @@ public class ProdutoController extends BaseController {
 		result.include("listaPeriodicidade",listaPeriodicidade);
 		
 		this.carregarComboSegmento();
+		
+		this.carregarComboClassificacao();
     }
 	
 	/**
@@ -715,6 +717,10 @@ public class ProdutoController extends BaseController {
 				listaMensagens.add("O preenchimento do campo [Tipo Segmento] é obrigatório!");
 			}
 			
+			if (produto.getTipoClassificacaoProduto().getId() == null) {
+				listaMensagens.add("O preenchimento do campo [Tipo Lançamento] é obrigatório!");
+			}
+			
 			if (produto.getGrupoEditorial() != null && !produto.getGrupoEditorial().trim().isEmpty()) {
 				produto.setGrupoEditorial(produto.getGrupoEditorial().trim());
 			}
@@ -822,6 +828,22 @@ public class ProdutoController extends BaseController {
 		}
 
 		result.include("listaSegmentoProduto",comboSegmento );
+	}
+	
+	/**
+	 * Popular combo lista de Tipo classificação produto.
+	 */
+	private void carregarComboClassificacao() {
+
+		List<ItemDTO<Long,String>> comboClassificacao =  new ArrayList<ItemDTO<Long,String>>();
+
+		List<TipoClassificacaoProduto> classificacao = produtoService.carregarClassificacaoProduto();
+
+		for (TipoClassificacaoProduto itemClassif : classificacao) {
+			comboClassificacao.add(new ItemDTO<Long,String>(itemClassif.getId(), itemClassif.getDescricao()));
+		}
+
+		result.include("listaClassifProduto",comboClassificacao);
 	}
 	
 	/**

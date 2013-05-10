@@ -119,8 +119,9 @@ var produtoController = $.extend(true, {
 					
 					$(idCampoCodigo, produtoController.workspace).val(ui.item.chave.codigo);
 					$(idCampoNome, produtoController.workspace).val(ui.item.value);
-					$(idGeracao, produtoController.workspace).val(-1).disable();
+					$(idGeracao, produtoController.workspace).val(produtoController.formatarValorParaPopularCombo(result.isGeracaoAutomatica)).disable();
 					
+					produtoController.pesquisarPorCodigoProduto(idCampoCodigo, idCampoNome, idGeracao, false);
 				},
 				
 				minLength: produtoController.tamanhoInicial,
@@ -132,11 +133,23 @@ var produtoController = $.extend(true, {
 	successCallBack : function(result, idProduto, idGeracao, idCodigo, isFromModal) {
 		
 		$(idProduto, produtoController.workspace).val(result.nome);
-		$(idGeracao, produtoController.workspace).val(-1).disable();
+		$(idGeracao, produtoController.workspace).val(produtoController.formatarValorParaPopularCombo(result.isGeracaoAutomatica)).disable();
 		$(idCodigo, produtoController.workspace).val(result.id);
 		
 		$("#fornecedor", produtoController.workspace).focus();
 		
+	},
+	
+	formatarValorParaPopularCombo : function (valor){
+		
+		var valorFormatado;
+		
+		if(valor == true){
+			valorFormatado = 0;
+		}else{
+			valorFormatado = 1;
+		}
+		return valorFormatado;
 	},
 	
 	
@@ -380,6 +393,7 @@ var produtoController = $.extend(true, {
 						$("#comboFornecedoresCadastro", produtoController.workspace).val(result.codigoFornecedor);
 						$("#selGeracaoAuto", produtoController.workspace).attr('checked', result.isGeracaoAutomatica);
 						$("#comboTipoSegmento", produtoController.workspace).val(result.idTipoSegmentoProduto);
+						$("#comboClassifProd", produtoController.workspace).val(result.idTipoClassifProduto);
 
 						produtoController.habilitarDesabilitarCamposInterface(!(result.origem == "INTERFACE"));
 						
@@ -569,6 +583,7 @@ var produtoController = $.extend(true, {
 		$("#segmentacaoFaixaEtaria", this.workspace).val("");
 		$("#segmentacaoFormaFisica", this.workspace).val("");
 		$("#segmentacaoFormato", this.workspace).val("");
+		$("#comboClassifProd", this.workspace).val("");
 		$("#comboTipoSegmento", this.workspace).val("");
 		$("#segmentacaoTemaPrincipal", this.workspace).val("");
 		
@@ -601,13 +616,14 @@ var produtoController = $.extend(true, {
         			   {name:"produto.desconto",value:floatValue($("#percentualDesconto", produtoController.workspace).val())},
         			   {name:"produto.isGeracaoAutomatica",value:(produtoController.formatarCampoGeracaoAutomatica("#selGeracaoAuto"))},
         			   {name:"produto.tipoSegmentoProduto.id",value:$("#comboTipoSegmento", produtoController.workspace).val()},
+        			   {name:"produto.tipoClassificacaoProduto.id",value:$("#comboClassifProd", produtoController.workspace).val()},
         			   {name:"produto.descricaoDesconto",value:$("#tipoDescontoManual", produtoController.workspace).val()}];
  
 		$.postJSON(contextPath + "/produto/salvarProduto",  
 			   	params,
 			   	function (result) {
 
-					var tipoMensagem = result.tipoMensagem;
+			var tipoMensagem = result.tipoMensagem;
 					
 					var listaMensagens = result.listaMensagens;
 					

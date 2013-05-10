@@ -5,6 +5,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 
 /**
@@ -113,4 +114,6 @@ public interface ProdutoService {
 	List<String> verificarProdutoExiste(String...codigoProduto);
 	
 	List<TipoSegmentoProduto> carregarSegmentos();
+	
+	List<TipoClassificacaoProduto> carregarClassificacaoProduto();
 }
