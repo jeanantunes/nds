@@ -23,6 +23,7 @@ var analiseParcialController = $.extend(true, {
     edicoesBase : [],
     inputReparteSugerido : '<input type="hidden" id="reparteSalvo_#numeroCota" value="#value"/>'+
         '<input id="reparteAtual_#numeroCota" value="#value" style="width: 40px; font-weight: bold;" '+
+        'tabindex="#tab" '+
         'onblur="analiseParcialController.inputBlur(event, this);"/>',
 
     tipoExibicao : 'NORMAL',
@@ -184,6 +185,8 @@ var analiseParcialController = $.extend(true, {
             }
             if (venda > 0) {
                 row.cell.mediaVenda = (venda / quantidade).toFixed(0);
+            } else {
+                row.cell.mediaVenda = '';
             }
             if ((typeof row.cell.juramento !== 'undefined') && (row.cell.juramento !== '')) {
                 totalJuramento += parseInt(row.cell.juramento, 10);
@@ -194,8 +197,8 @@ var analiseParcialController = $.extend(true, {
             if ((typeof row.cell.ultimoReparte !== 'undefined') && (row.cell.ultimoReparte !== '')) {
                 totalUltimoReparte += parseInt(row.cell.ultimoReparte, 10);
             }
-            if (!isNaN(row.cell.reparteSugerido)) {
-                totalReparteSugerido += parseInt(row.cell.reparteSugerido, 10);
+            if (!isNaN($(row.cell.reparteSugerido).val())) {
+                totalReparteSugerido += parseInt($(row.cell.reparteSugerido).val(), 10);
             }
             quantidade++;
         });
@@ -204,6 +207,8 @@ var analiseParcialController = $.extend(true, {
         $('#total_ultimo_reparte').text(totalUltimoReparte);
         $('#total_reparte_sugerido').text(totalReparteSugerido);
         $('#total_de_cotas').text(resultado.rows.length);
+        $('#total_reparte_sugerido_cabecalho').text(totalReparteSugerido);
+ //       $('#total_de_cotas').text(quantidade);
         for (var j = 1; j < 7; j++) {
             $('#total_reparte'+ j).text(totais[j - 1].reparte);
             $('#total_venda'+ j).text(totais[j - 1].venda);
@@ -239,14 +244,20 @@ var analiseParcialController = $.extend(true, {
     },
     
     inputBlur : function(event, input) {
-        var numeroCota = $(input).attr('id').substr($(input).attr('id').lastIndexOf('_') + 1);
-        var reparteSubtraido = parseInt($(input).val(), 10) - parseInt($('#reparteSalvo_'+ numeroCota).val(), 10);
+        var numeroCota = input.id.match(/\d+/)[0];
+        var $input_reparte = $(input);
+        var $reparte_salvo = $input_reparte.prev();
+        var reparteSubtraido = parseInt(input.value, 10) - parseInt($reparte_salvo.val(), 10);
+        var $legenda = $input_reparte.parents('td').next().find('span');
         if (reparteSubtraido != 0) {
-            $('#saldo_reparte').html(parseInt($('#saldo_reparte').html(), 10) - reparteSubtraido);
-            $('#leg'+ numeroCota).html($('#leg'+ numeroCota).html() +'*');
+            $('#saldo_reparte').text(parseInt($('#saldo_reparte').text(), 10) - reparteSubtraido);
+
             $.ajax({url: analiseParcialController.path +'/distribuicao/analise/parcial/mudarReparte',
-                data: {'numeroCota': numeroCota, 'estudoId': $('#estudoId').html(), 'variacaoDoReparte': reparteSubtraido},
-                success: function() { $('#reparteSalvo_'+ numeroCota).val($(input).val()); },
+                data: {'numeroCota': numeroCota, 'estudoId': $('#estudoId').val(), 'variacaoDoReparte': reparteSubtraido},
+                success: function() {
+                    $reparte_salvo.val($input_reparte.val());
+                    $legenda.text($legenda.text() + '*');
+                },
                 error: function() {
                     analiseParcialController.exibirMsg('WARNING', 'Erro ao enviar novo reparte!');
                     $('#baseEstudoGridParcial').flexReload();
@@ -262,6 +273,7 @@ var analiseParcialController = $.extend(true, {
                 numCota = resultado.rows[i].cell.cota;
             var input = analiseParcialController.inputReparteSugerido.toString().replace('#numeroCota', numCota);
             input = input.replace('#value', repSug).replace('#numeroCota', numCota).replace('#value', repSug);
+            input = input.replace('#tab', i+1);
             resultado.rows[i].cell.reparteSugerido = input;
             
             resultado.rows[i].cell.nome = analiseParcialController.linkNomeCota.
@@ -270,11 +282,11 @@ var analiseParcialController = $.extend(true, {
             if (typeof resultado.rows[i].cell.classificacao === 'undefined') {
                 resultado.rows[i].cell.classificacao = '';
             }
-            if (typeof resultado.rows[i].cell.cotaNova == true) {
-                resultado.rows[i].cell.cotaNova = resultado.rows[i].cell.cotaNova +'*';
+            if (resultado.rows[i].cell.cotaNova == true) {
+                resultado.rows[i].cell.cota = resultado.rows[i].cell.cota +'*';
             }
             if (resultado.rows[i].cell.leg !== '') {
-                resultado.rows[i].cell.leg = '<span id="leg_"'+ numCota +'>'+ resultado.rows[i].cell.leg +'</span>';
+                resultado.rows[i].cell.leg = '<span id="leg_'+ numCota +'">'+ resultado.rows[i].cell.leg +'</span>';
             }
 
             for (var j = 0; j < 6; j++) {
@@ -314,10 +326,9 @@ var analiseParcialController = $.extend(true, {
          {display: 'NPDV',   name: 'npdv',          width: 30,  sortable: true, align: 'right'},
          {display: 'Rep. Sugerido', name: 'reparteSugerido', width: 50, sortable: true, align: 'right'},
          {display: 'LEG',    name: 'leg',           width: 20, sortable: true, align: 'center'},
-         {display: 'Juram.', name: 'juramento',     width: 40, sortable: true, align: 'right'},
          {display: 'Cota Nova', name: 'cotaNova',   width: 40, sortable: true, align: 'right', hide: true},
-         {display: 'Média.VDA', name: 'mediaVenda', width: 50, sortable: true, align: 'right'}, 
-         {display: 'Último. Reparte', name: 'ultimoReparte', width: 50, sortable: true, align: 'right'},
+         {display: 'Média.VDA', name: 'mediaVenda', width: 60, sortable: true, align: 'right'},
+         {display: 'Último. Reparte', name: 'ultimoReparte', width: 80, sortable: true, align: 'right'},
          {display: 'REP', name: 'reparte1',      width: 23, sortable: true, align: 'right'},
          {display: 'VDA', name: 'venda1',        width: 23, sortable: true, align: 'right'},
          {display: 'REP', name: 'reparte2',      width: 23, sortable: true, align: 'right'},
@@ -355,6 +366,26 @@ var analiseParcialController = $.extend(true, {
     
     init : function(_id, _faixaDe, _faixaAte, _tipoExibicao){
 
+        $('#baseEstudoGridParcial').on('blur', 'tr td input:text', function(event){
+            $('#total_reparte_sugerido')
+                .add('#total_reparte_sugerido_cabecalho')
+                .text(
+                $('#baseEstudoGridParcial tr td input:text').map(function(){
+                    return parseInt(this.value, 10);
+                }).toArray().reduce(function(a,b){
+                        return a+b;
+                    }));
+        }).on('keyup', 'tr td input:text', function(event){
+            if(event.which === 13) {
+                $(event.currentTarget)
+                    .parents('tr').next('tr')
+                    .find('input:text').focus()
+                    .select();
+            }
+        }).on('click', 'tr td input:text', function(event){
+            $(event.currentTarget).select();
+        });
+
         analiseParcialController.tipoExibicao = _tipoExibicao;
         analiseParcialController.inicializarDetalhes();
         analiseParcialController.carregarEdicoesBaseEstudo(_id);
@@ -366,7 +397,6 @@ var analiseParcialController = $.extend(true, {
         parameters.push({name: 'codigoProduto', value: $('#codigoProduto').val()});
         parameters.push({name: 'numeroEdicao', value: $('#numeroEdicao').val()});
         
-        console.log(histogramaPosEstudo_cotasRepMenorVenda);
         if(histogramaPosEstudo_cotasRepMenorVenda){
         	parameters.push({name: "numeroCotaStr", value: histogramaPosEstudo_cotasRepMenorVenda});
         }
