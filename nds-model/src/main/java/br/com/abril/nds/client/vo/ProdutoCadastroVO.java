@@ -65,6 +65,10 @@ public class ProdutoCadastroVO implements Serializable {
 	
 	private String formaFisica;
 	
+	private Boolean isGeracaoAutomatica;
+	
+	private Long idTipoSegmentoProduto;
+	
 	/**
 	 * 
 	 */
@@ -80,7 +84,7 @@ public class ProdutoCadastroVO implements Serializable {
 			String tributacaoFiscal, String classeSocial, String sexo, 
 			String faixaEtaria, String formatoProduto, 
 			String tipoLancamento, String temaPrincipal, 
-			String temaSecundario, String formaFisica,Origem origem) {
+			String temaSecundario, String formaFisica,Origem origem, Boolean isGeracaoAutomatica, Long idTipoSegmentoProduto) {
 		this.id = id;
 		this.codigo = codigo;
 		this.nome = nome;
@@ -105,6 +109,8 @@ public class ProdutoCadastroVO implements Serializable {
 		this.temaSecundario = temaSecundario;
 		this.formaFisica=formaFisica;
 		this.origem = origem;
+		this.isGeracaoAutomatica = isGeracaoAutomatica;
+		this.idTipoSegmentoProduto = idTipoSegmentoProduto;
 		
 	}
 
@@ -466,7 +472,9 @@ public class ProdutoCadastroVO implements Serializable {
 			produto.getSegmentacao()!=null?(produto.getSegmentacao().getTemaPrincipal()!=null?produto.getSegmentacao().getTemaPrincipal().name():""):"",
 			produto.getSegmentacao()!=null?(produto.getSegmentacao().getTemaSecundario()!=null?produto.getSegmentacao().getTemaSecundario().name():""):"",
 			produto.getSegmentacao()!=null?(produto.getSegmentacao().getFormaFisica()!=null?produto.getSegmentacao().getFormaFisica().name():""):"",		
-			produto.getOrigem());
+			produto.getOrigem(),
+			produto.getIsGeracaoAutomatica(),
+			produto.getTipoSegmentoProduto().getId());
 		
 		if(Origem.INTERFACE.equals(produto.getOrigem()) && produto.getDescontoLogistica()!= null){
 			produtoCadastroVO.setDesconto(CurrencyUtil.formatarValor( produto.getDescontoLogistica().getPercentualDesconto()).replace(",","."));
@@ -494,6 +502,20 @@ public class ProdutoCadastroVO implements Serializable {
 	public void setFormaFisica(String formaFisica) {
 		this.formaFisica = formaFisica;
 	}
-	
-	
+
+	public Boolean getIsGeracaoAutomatica() {
+		return isGeracaoAutomatica;
+	}
+
+	public void setIsGeracaoAutomatica(Boolean isGeracaoAutomatica) {
+		this.isGeracaoAutomatica = isGeracaoAutomatica;
+	}
+
+	public Long getIdTipoSegmentoProduto() {
+		return idTipoSegmentoProduto;
+	}
+
+	public void setIdTipoSegmentoProduto(Long idTipoSegmentoProduto) {
+		this.idTipoSegmentoProduto = idTipoSegmentoProduto;
+	}
 }

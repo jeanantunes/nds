@@ -125,17 +125,21 @@
 										<tr>									
 											<td width="120">Periodicidade: </td>
 											<td style="width:200px;">
-												<select name="comboPeriodicidade" id="comboPeriodicidade" style="width:150px;" class="habilitarCampoInterface" >
-													<option value="" selected="selected"></option>
-													<option value="SEMANAL" >Semanal</option>
-													<option value="QUINZENAL" >Quinzenal</option>
-													<option value="MENSAL" >Mensal</option>
-													<option value="TRIMESTRAL" >Trimestral</option>
-													<option value="SEMESTRAL" >Semestral</option>
-													<option value="ANUAL" >Anual</option>
-												</select>
+												
+												<select name="comboPeriodicidade" id="comboPeriodicidade" style="width:150px;"  class="habilitarCampoInterface">
+							                        <option value="">Selecione</option>
+							                        <c:forEach varStatus="counter" var="itemPeriodicidade" items="${listaPeriodicidade}">
+									                    <option value="${itemPeriodicidade.key}">${itemPeriodicidade.value}</option>
+									                </c:forEach>
 											</td>
 										</tr>
+										
+										<tr>
+											<td>Geração Automática:</td>
+												<td style="width:100px;">
+													<input type="checkbox" id="selGeracaoAuto" name="selGeracaoAuto" style="float: left; margin-right: 25px;" />
+											</td>
+										<tr>
 									</table>
 								</fieldset>
 							</td>
@@ -251,19 +255,17 @@
 											</td>
 										</tr>
 										
-										
 										<tr>
-											<td><strong>Tipo de Lan&ccedil;amento:</strong></td>
+											<td><strong>Tipo Segmento:</strong></td>
 											<td>
-												<select class="habilitarCampoInterfaceSegmentacao" name="segmentacaoTipoLancamento" id="segmentacaoTipoLancamento" style="width:150px;">
+												<select class="habilitarCampoInterfaceSegmentacao" name="comboTipoSegmento" id="comboTipoSegmento" style="width:150px;">
 							                        <option value="">Selecione</option>
-							                        <c:forEach varStatus="counter" var="itemTipoLancamento" items="${listaTipoLancamento}">
-									                    <option value="${itemTipoLancamento.key}">${itemTipoLancamento.value}</option>
+							                        <c:forEach varStatus="counter" var="itemSegmento" items="${listaSegmentoProduto}">
+									                    <option value="${itemSegmento.key}">${itemSegmento.value}</option>
 									                </c:forEach>
 							                    </select> 
 											</td>
 										</tr>
-										
 										
 										<tr>
 											<td><strong>Tema Principal:</strong></td>
@@ -276,21 +278,6 @@
 							                    </select> 
 											</td>
 										</tr>
-										
-										
-										<tr>
-											<td><strong>Tema Secundario:</strong></td>
-											<td>
-												<select class="habilitarCampoInterfaceSegmentacao" name="segmentacaoTemaSecundario" id="segmentacaoTemaSecundario" style="width:150px;">
-							                        <option value="">Selecione</option>
-							                        <c:forEach varStatus="counter" var="itemTema" items="${listaTemaProduto}">
-									                    <option value="${itemTema.key}">${itemTema.value}</option>
-									                </c:forEach>
-							                    </select> 
-											</td>
-										</tr>
-										
-										
 									</table>
 								</td>
 							</tr>
@@ -335,22 +322,11 @@
 				<td width="123" >
 			    	<input type="text" name="codigoProduto" id="codigoProduto"
 						   style="width: 80px; float: left; margin-right: 5px;" maxlength="30"/>
-						   <!-- 
-						    onchange="pesquisaProdutoCadastroProduto.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '', false,
-								   									   produtoController.pesquisarProdutosSuccessCallBack,
-								   									   produtoController.pesquisarProdutosErrorCallBack);"
-						    -->
 				</td>
 				
 				<td width="55">Produto:</td>
 				<td width="237">
-					<!-- <input type="text" name="produto" id="produto" style="width: 222px;" maxlength="255"
-					       onkeyup="pesquisaProdutoCadastroProduto.autoCompletarPorNomeProduto('#produto', false);"
-					       onblur="pesquisaProdutoCadastroProduto.pesquisarPorNomeProduto('#codigoProduto', '#produto', '#edicao', false, undefined, undefined);"/>  -->
 					<input type="text" name="produto" id="produto" style="width: 222px;" maxlength="255" />
-					<!-- 
-					onkeyup="pesquisaProdutoCadastroProduto.autoCompletarPorNomeProduto('#produto', false);"
-					 -->
 				</td>
 				<td width="99">Fornecedor:</td>
 				<td width="251">
@@ -376,7 +352,7 @@
 				</td>
 				<td>Geração Automática:</td>
 				<td style="width:100px;">
-					<select id="comboGeracaoAutomatica" style="width:57px;">
+					<select id="comboGeracaoAutomatica" style="width:65px;">
 						<option value="-1" selected="selected"></option>
 						<option value="0">Sim</option>
 						<option value="1">Não</option>
