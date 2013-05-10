@@ -45,14 +45,18 @@ public class Estudo implements Serializable {
 	@GeneratedValue(generator = "ESTUDO_SEQ")
 	@Column(name = "ID")
 	private Long id;
+
 	@Column(name = "QTDE_REPARTE", nullable = false)
 	private BigInteger qtdeReparte;
+
 	@Column(name = "DATA_LANCAMENTO", nullable = false)
 	@Temporal(TemporalType.DATE)
 	private Date dataLancamento;
+
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PRODUTO_EDICAO_ID", nullable = false)
 	private ProdutoEdicao produtoEdicao;
+
 	@NotFound(action = NotFoundAction.IGNORE)
 	@OneToMany(mappedBy = "estudo", fetch = FetchType.LAZY)
 	private Set<Lancamento> lancamentos = new HashSet<Lancamento>();

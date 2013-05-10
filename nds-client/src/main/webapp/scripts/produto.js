@@ -13,24 +13,18 @@ var produtoController = $.extend(true, {
 		$( "#tabProduto", this.workspace).tabs();
 		
 		$(".bt_arq", this.workspace).hide();
-		
 
-		$("#comboGeracaoAutomatica").enable();
+		$("#comboGeracaoAutomatica").val(-1).enable();
 		this.tamanhoInicial = 3;
 		
 		$('#codigoProduto').change(function (){
 			produtoController.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#comboGeracaoAutomatica', false);
 		});
 		
-		$('#produto', produtoController.workspace).bind({
-			keyup: function(){
+		$('#produto').keyup(function(event){
+			if (event.keyCode !== 9)
 				produtoController.autoCompletarPorNomeProduto('#produto', '#codigoProduto', false);
-			},
-			blur: function(){
-				produtoController.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#comboGeracaoAutomatica', false);
-			}
 		});
-		
 	},
 
 	aplicarMascaras : function () {
@@ -66,53 +60,67 @@ var produtoController = $.extend(true, {
 		
 		var codigoProduto = $(idCodigo, produtoController.workspace).attr("value");
 		
-		codigoProduto = $.trim(codigoProduto);
-		
-		$(idCodigo, produtoController.workspace).val(codigoProduto);
-		
-		$(idProduto, produtoController.workspace).val("");
-		$(idGeracao, produtoController.workspace).val("");
-		
-		if (codigoProduto && codigoProduto.length > 0) {
+		if (codigoProduto != ""){
+
+			codigoProduto = $.trim(codigoProduto);
 			
-			$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
-					   {codigoProduto:codigoProduto},
-					   function(result) { produtoController.successCallBack(result, idProduto, idGeracao); },
-					   function() { produtoController.errorCallBack(idCodigo); }, isFromModal);
-		
-		} 
+			$(idCodigo, produtoController.workspace).val(codigoProduto);
+			
+			$(idProduto, produtoController.workspace).val("");
+			$(idGeracao, produtoController.workspace).val(-1);
+			
+			if (codigoProduto && codigoProduto.length > 0) {
+				
+				$.postJSON(contextPath + "/produto/pesquisarPorCodigoProduto",
+						{codigoProduto:codigoProduto},
+						function(result) { produtoController.successCallBack(result, idProduto, idGeracao); },
+						function() { produtoController.errorCallBack(idCodigo); }, isFromModal);
+				
+			} 
+			
+		}else{
+			produtoController.limparCamposFiltro();
+		}
 	},
 	
 	//Auto complete por nome do produto
-	autoCompletarPorNomeProduto : function(idProduto, idCodProduto, isFromModal) {
+	autoCompletarPorNomeProduto : function(idProduto, idCodProduto, isFromModal, successCallBack) {
 		
 		var nomeProduto = $(idProduto, produtoController.workspace).attr("value");
 		
-		if (nomeProduto && nomeProduto.length > 2) {
-			$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", {nomeProduto:nomeProduto},
-					   function(result) { produtoController.exibirAutoCompletePorNome(result, idCodProduto, idProduto); },
-					   null, isFromModal);
+		var idGeracao = "#comboGeracaoAutomatica";
+		
+		if (nomeProduto != ""){
+			if (nomeProduto && nomeProduto.length > 1) {
+				$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", {nomeProduto:nomeProduto},
+						   function(result) { produtoController.exibirAutoCompletePorNome(result, idCodProduto, idProduto, idGeracao, successCallBack); },
+						   null, isFromModal);
+			}
+		}else{
+			produtoController.limparCamposFiltro();
 		}
+	},
+	
+	limparCamposFiltro : function (){
+		$("#produto", produtoController.workspace).val("");
+		$("#codigoProduto", produtoController.workspace).val("");
+		$("#comboGeracaoAutomatica", produtoController.workspace).val(-1).enable();
 	},
 	
 	
 	//Exibe o auto complete no campo
-	exibirAutoCompletePorNome : function(result, idCampoCodigo, idCampoNome) {
+	exibirAutoCompletePorNome : function(result, idCampoCodigo, idCampoNome, idGeracao, successCallBack) {
 	
 			$(idCampoNome, produtoController.workspace).autocomplete({
 				source: result,
 				
+				
 				select : function(event, ui) {
+					
 					$(idCampoCodigo, produtoController.workspace).val(ui.item.chave.codigo);
 					$(idCampoNome, produtoController.workspace).val(ui.item.value);
-				},
-				focus : function(event, ui) {
-					$(idCampoCodigo, produtoController.workspace).val(ui.item.chave.codigo);
-					$(idCampoNome, produtoController.workspace).val(ui.item.value);
-				},
-				close : function(event, ui) {
-					$(idCampoCodigo, produtoController.workspace).val(ui.item.chave.codigo);
-					$(idCampoNome, produtoController.workspace).val(ui.item.value);
+					$(idGeracao, produtoController.workspace).val(-1).disable();
+					
 				},
 				
 				minLength: produtoController.tamanhoInicial,
@@ -124,17 +132,16 @@ var produtoController = $.extend(true, {
 	successCallBack : function(result, idProduto, idGeracao, idCodigo, isFromModal) {
 		
 		$(idProduto, produtoController.workspace).val(result.nome);
+		$(idGeracao, produtoController.workspace).val(-1).disable();
+		$(idCodigo, produtoController.workspace).val(result.id);
 		
-		if (result.origem == "INTERFACE"){
-			$(idGeracao, produtoController.workspace).val(1).disable();
-		}else{
-			$("#comboGeracaoAutomatica").enable().val(-1);
-		}
+		$("#fornecedor", produtoController.workspace).focus();
+		
 	},
 	
 	
 	errorCallBack : function(idCodigo) {
-		$(idCodigo, produtoController.workspace).val("");
+		produtoController.limparCamposFiltro();
 		$(idCodigo, produtoController.workspace).focus();
 	},
 	
@@ -296,6 +303,8 @@ var produtoController = $.extend(true, {
 		var fornecedor = $("#fornecedor", this.workspace).val();
 		var editor = $("#edicao", this.workspace).val();
 		var codigoTipoProduto = $("#comboTipoProduto", this.workspace).val();
+		var isGeracaoAutomatica = produtoController.formatarCampoComboGeracaoAutomatica("#comboGeracaoAutomatica");
+		
 		
 		$(".produtosGrid", this.workspace).flexOptions({
 			url: contextPath + "/produto/pesquisarProdutos",
@@ -303,7 +312,8 @@ var produtoController = $.extend(true, {
 				     {name:'produto', value: produto },
 				     {name:'fornecedor', value: fornecedor },
 				     {name:'editor', value: editor },
-				     {name:'codigoTipoProduto', value : codigoTipoProduto}],
+				     {name:'codigoTipoProduto', value : codigoTipoProduto},
+				     {name:'isGeracaoAutomatica', value : isGeracaoAutomatica}],
 			newp: 1,
 		});
 		
@@ -368,6 +378,8 @@ var produtoController = $.extend(true, {
 						$("#subGrupoEditorial", produtoController.workspace).val(result.subGrupoEditorial);
 						$("#comboEditor", produtoController.workspace).val(result.codigoEditor);
 						$("#comboFornecedoresCadastro", produtoController.workspace).val(result.codigoFornecedor);
+						$("#selGeracaoAuto", produtoController.workspace).attr('checked', result.isGeracaoAutomatica);
+						$("#comboTipoSegmento", produtoController.workspace).val(result.idTipoSegmentoProduto);
 
 						produtoController.habilitarDesabilitarCamposInterface(!(result.origem == "INTERFACE"));
 						
@@ -377,9 +389,7 @@ var produtoController = $.extend(true, {
 						$("#segmentacaoSexo", produtoController.workspace).val(result.sexo);
 						$("#segmentacaoFaixaEtaria", produtoController.workspace).val(result.faixaEtaria);
 						$("#segmentacaoFormato", produtoController.workspace).val(result.formatoProduto);
-						$("#segmentacaoTipoLancamento", produtoController.workspace).val(result.tipoLancamento);
 						$("#segmentacaoTemaPrincipal", produtoController.workspace).val(result.temaPrincipal);
-						$("#segmentacaoTemaSecundario", produtoController.workspace).val(result.temaSecundario);
 						$("#segmentacaoFormaFisica", produtoController.workspace).val(result.formaFisica);//ainda nao carrega
 						
 						$("#percentualDesconto", produtoController.workspace).val($.formatNumber(result.desconto, {format:"###,##000.00", locale:"br"}));
@@ -478,7 +488,8 @@ var produtoController = $.extend(true, {
 	},
 	
 	novoProduto : function () {
-
+		produtoController.limparModalCadastro();
+		
 		$("#dialog-novo", this.workspace).dialog({
 			resizable: false,
 			height:550,
@@ -551,6 +562,17 @@ var produtoController = $.extend(true, {
 		$("#percentualDesconto", this.workspace).val("");
 		$("#grupoEditorial", this.workspace).val("");
 		$("#subGrupoEditorial", this.workspace).val("");
+		
+		//Field Público Alvo
+		$("#segmentacaoClasseSocial", this.workspace).val("");
+		$("#segmentacaoSexo", this.workspace).val("");
+		$("#segmentacaoFaixaEtaria", this.workspace).val("");
+		$("#segmentacaoFormaFisica", this.workspace).val("");
+		$("#segmentacaoFormato", this.workspace).val("");
+		$("#comboTipoSegmento", this.workspace).val("");
+		$("#segmentacaoTemaPrincipal", this.workspace).val("");
+		
+		$("#selGeracaoAuto", produtoController.workspace).attr('checked', false);
 	},
 	
 	salvarProduto : function() {
@@ -570,15 +592,15 @@ var produtoController = $.extend(true, {
         			   {name:"produto.segmentacao.sexo",value:$("#segmentacaoSexo", produtoController.workspace).val()},
         			   {name:"produto.segmentacao.faixaEtaria",value:$("#segmentacaoFaixaEtaria", produtoController.workspace).val()},
         			   {name:"produto.segmentacao.formatoProduto",value:$("#segmentacaoFormato", produtoController.workspace).val()},
-        			   {name:"produto.segmentacao.tipoLancamento",value:$("#segmentacaoTipoLancamento", produtoController.workspace).val()},
         			   {name:"produto.segmentacao.temaPrincipal",value:$("#segmentacaoTemaPrincipal", produtoController.workspace).val()},
-        			   {name:"produto.segmentacao.temaSecundario",value:$("#segmentacaoTemaSecundario", produtoController.workspace).val()},
         			   {name:"produto.segmentacao.formaFisica",value:$("#segmentacaoFormaFisica", produtoController.workspace).val()},
         			   {name:"codigoEditor",value:$("#comboEditor", produtoController.workspace).val()},
         			   {name:"codigoFornecedor",value:$("#comboFornecedoresCadastro", produtoController.workspace).val()},
         			   {name:"codigoTipoDesconto",value:$("#comboTipoDesconto", produtoController.workspace).val()},
         			   {name:"codigoTipoProduto",value:$("#comboTipoProdutoCadastro", produtoController.workspace).val()},
-        			   {name:"produto.desconto",value:floatValue( $("#percentualDesconto", produtoController.workspace).val())},
+        			   {name:"produto.desconto",value:floatValue($("#percentualDesconto", produtoController.workspace).val())},
+        			   {name:"produto.isGeracaoAutomatica",value:(produtoController.formatarCampoGeracaoAutomatica("#selGeracaoAuto"))},
+        			   {name:"produto.tipoSegmentoProduto.id",value:$("#comboTipoSegmento", produtoController.workspace).val()},
         			   {name:"produto.descricaoDesconto",value:$("#tipoDescontoManual", produtoController.workspace).val()}];
  
 		$.postJSON(contextPath + "/produto/salvarProduto",  
@@ -651,7 +673,34 @@ var produtoController = $.extend(true, {
 			callback();
 		}
 	},
-
+	
+	
+	formatarCampoGeracaoAutomatica : function (campo){
+		
+		var valFormatado = null;
+		
+		if($(campo).attr('checked') == "checked"){
+			valFormatado = true;
+		}else{
+			valFormatado = false;
+		}
+		return valFormatado;
+	},
+	
+	formatarCampoComboGeracaoAutomatica : function (campo){
+		
+		var valFormatado = null;
+		
+		if($(campo).val() == 0){
+			valFormatado = true;
+		}
+		if($(campo).val() == 1){
+			valFormatado = false;
+		}
+		return valFormatado;
+	},
+	
+	
 }, BaseController);
 
 //@ sourceURL=produto.js
