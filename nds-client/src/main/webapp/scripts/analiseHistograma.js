@@ -1,15 +1,15 @@
 function montarDados(){
 
-	params = new Array();
+	var params = new Array();
 	
 	params.push({name : "filtro.produtoDto.codigoProduto", value :  codigoProduto_HistogramaVenda});
 	for ( var int = 0; int < edicoesEscolhidas_HistogramaVenda.length; int++) {
 		params.push({name : "filtro.listProdutoEdicaoDTO["+int+"].numeroEdicao", value :  edicoesEscolhidas_HistogramaVenda[int]});
-		
+		params.push({name : "edicoesSelecionadas["+int+"].numeroEdicao", value :  edicoesEscolhidas_HistogramaVenda[int]});
 	}
 
 	//carregando popup superior para as edições
-	url = contextPath + "/distribuicao/historicoVenda/pesquisaProduto";
+	var url = contextPath + "/distribuicao/historicoVenda/pesquisaProduto";
 	$.post(url, params, function(data){
 		if(data){
 						anaLiseHistogramaController.tempData = data;
@@ -269,7 +269,6 @@ var anaLiseHistogramaController = $.extend(true, {
 				
 				anaLiseHistogramaController.buildResumoEstudo(lastRow);
 				
-				// Adicionar o link as cotas esmagadas
 				$.each(data.rows, function(index, row) {
 					rowCell = row.cell;
 					rowCell.partVenda =  (rowCell.vdaTotal  /lastRow.cell.vdaTotal) || 0;
@@ -281,11 +280,16 @@ var anaLiseHistogramaController = $.extend(true, {
 						rowCell.cotasEsmagadas="<a href=\"javascript:anaLiseHistogramaController.executarAnaliseHistoricoVenda("+index+",'idCotasEsmagadas');\">"+formatarMilhar(rowCell.cotasEsmagadas)+"</a>";
 					}
 					
-					if ($(rowCell.faixaVenda).text() === 'De 0 a 0') {
-//						rowCell.vdaTotal = 0;
-			    	}
-					
 					anaLiseHistogramaController.formatarFaixasVenda(rowCell);
+				});
+				
+				lastRow.cell.repTotal = 0;
+				lastRow.cell.vdaTotal = 0;
+				$.each(data.rows, function(index, row) {
+					if (lastRow.id !== row.id) {
+						lastRow.cell.repTotal += parseInt(row.cell.repTotal);
+						lastRow.cell.vdaTotal += parseInt(row.cell.vdaTotal);
+					}
 				});
 
 				return data;
@@ -374,14 +378,15 @@ var anaLiseHistogramaController = $.extend(true, {
 	executarAnaliseHistoricoVenda:function(idx, propriedade){
 		var idCotaArray = resultadoAnalise[idx].cell[propriedade].split(','),
 			url = contextPath + "/distribuicao/historicoVenda/analiseHistorico",
-			params = new Array();
+			params = new Array(),
+			qtdEdicoes = edicoesEscolhidas_HistogramaVenda.length;
 		
 		//popular lista de ID de cotas
 		$.each(idCotaArray, function(index, val) {
 			params.push({name : "cotas["+index+"].numeroCota", value : val });
 		});
-
-		for ( var int = 0; int < edicoesEscolhidas_HistogramaVenda.length; int++) {
+		
+		for ( var int = 0; int < qtdEdicoes; int++) {
 			params.push({name : "listProdutoEdicaoDto["+int+"].numeroEdicao", value :  edicoesEscolhidas_HistogramaVenda[int]});
 			params.push({name : "listProdutoEdicaoDto["+int+"].codigoProduto", value :  codigoProduto_HistogramaVenda});
 		}

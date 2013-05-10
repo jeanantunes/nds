@@ -155,9 +155,9 @@ public class EstudoAlgoritmoService {
 	estudoDAO.carregarPercentuaisExcedente(estudo);
     }
 
-    public LinkedList<ProdutoEdicaoEstudo> buscaEdicoesPorLancamento(ProdutoEdicaoEstudo edicao) {
+    public LinkedList<ProdutoEdicaoEstudo> getEdicoesBases(ProdutoEdicaoEstudo edicao) {
 	log.info("Buscando edições para estudo.");
-	return definicaoBasesDAO.listaEdicoesPorLancamento(edicao);
+	return definicaoBasesDAO.getEdicoesBases(edicao);
     }
 
     public List<ProdutoEdicaoEstudo> buscaEdicoesAnosAnterioresVeraneio(ProdutoEdicaoEstudo edicao) throws Exception {
@@ -236,6 +236,7 @@ public class EstudoAlgoritmoService {
 		ed.setProduto(new Produto());
 		ed.setId(base.getId());
 		ed.getProduto().setCodigo(base.getCodigoProduto());
+		ed.getProduto().setId(base.getId());
 		ed.setNumeroEdicao(base.getNumeroEdicao());
 		ed.setPeso(base.getPeso());
 		edicoesBase.add(ed);

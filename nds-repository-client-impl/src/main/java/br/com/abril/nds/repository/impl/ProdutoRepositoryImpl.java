@@ -120,7 +120,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 	@SuppressWarnings("unchecked")
 	public List<ConsultaProdutoDTO> pesquisarProdutos(String codigo, String produto,
 			String fornecedor, String editor, Long codigoTipoProduto,
-			String sortorder, String sortname, int page, int rp) {
+			String sortorder, String sortname, int page, int rp, Boolean isGeracaoAutomatica) {
 		
 		StringBuffer hql = new StringBuffer();
 		
@@ -152,7 +152,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 			Query query = 
 				this.getQueryBuscaProdutos(
 					hql, codigo, produto, fornecedor, 
-					editor, codigoTipoProduto, sortname, sortorder, false);
+					editor, codigoTipoProduto, sortname, sortorder, false, isGeracaoAutomatica);
 			
 			query.setResultTransformer(
 				new AliasToBeanResultTransformer(
@@ -179,7 +179,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 			Query query = 
 				this.getQueryBuscaProdutos(
 					hql, codigo, produto, fornecedor, 
-					editor, codigoTipoProduto, null, null, true);
+					editor, codigoTipoProduto, null, null, true, null);
 			
 			return ((Long) query.uniqueResult()).intValue();
 			
@@ -189,7 +189,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 	}
 	
 	private Query getQueryBuscaProdutos(StringBuffer hql, String codigo, String nome,
-			String fornecedor, String editor, Long codigoTipoProduto, String sortname, String sortorder, boolean isCount) {
+			String fornecedor, String editor, Long codigoTipoProduto, String sortname, String sortorder, boolean isCount, Boolean isGeracaoAutomatica) {
 		
 		hql.append(" from ");
 		hql.append(" Produto produto ");
@@ -227,6 +227,20 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 			
 			hql.append(auxHql);
 			hql.append(" lower( editorProd.pessoaJuridica.razaoSocial ) like :nomeEditor ");
+			auxHql = " and ";
+		}
+		
+		if (isGeracaoAutomatica != null && isGeracaoAutomatica == true) {
+			
+			hql.append(auxHql);
+			hql.append(" produto.isGeracaoAutomatica = true " );
+			auxHql = " and ";
+		}
+		
+		if (isGeracaoAutomatica != null && isGeracaoAutomatica == false) {
+			
+			hql.append(auxHql);
+			hql.append(" produto.isGeracaoAutomatica = false " );
 			auxHql = " and ";
 		}
 

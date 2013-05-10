@@ -11,4 +11,11 @@ public interface DesenglobacaoService {
 	List<DesenglobacaoDTO> obterDesenglobacaoPorCota(Long cotaId);
 	
 	boolean inserirDesenglobacao(List<DesenglobaVO> desenglobaDTO, Usuario usuario);
+	
+	public List<DesenglobacaoDTO> obterDesenglobacaoPorCotaDesenglobada(Long cotaId);
+
+	boolean alterarDesenglobacao(List<DesenglobaVO> desenglobaDTO,
+			Usuario usuarioLogado);
+
+	void excluirDesenglobacao(Long id);
 }

@@ -5,6 +5,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 
 /**
  * Interface que define serviços referentes a entidade
@@ -58,7 +59,7 @@ public interface ProdutoService {
 
 	List<ConsultaProdutoDTO> pesquisarProdutos(String codigo, String produto,
 			String fornecedor, String editor, Long codigoTipoProduto,
-			String sortorder, String sortname, int page, int rp);
+			String sortorder, String sortname, int page, int rp, Boolean isGeracaoAutomatica);
 
 	void removerProduto(Long id);
 
@@ -110,4 +111,6 @@ public interface ProdutoService {
 	List<Produto> obterProdutosBalanceadosOrdenadosNome(Date dataLancamento);
 
 	List<String> verificarProdutoExiste(String...codigoProduto);
+	
+	List<TipoSegmentoProduto> carregarSegmentos();
 }

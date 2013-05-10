@@ -46,20 +46,38 @@ public class SelecaoBancas extends ProcessoAbstrato {
 
     @Override
     public void executar(EstudoTransient estudo) throws Exception {
-	LinkedList<CotaEstudo> cotasComHistorico = cotaDAO.getCotasComEdicoesBase(estudo);
 	
-	if (cotasComHistorico.size() == 0) {
+	List<CotaEstudo> cotas = cotaDAO.getCotas(estudo);
+	List<Map<Long, CotaEstudo>> historico = new ArrayList<>();
+	for (ProdutoEdicaoEstudo edicao : estudo.getEdicoesBase()) {
+	    historico.add(cotaDAO.getHistoricoCota(edicao));
+	}
+
+	boolean existeCotaComHistorico = false;
+	for (CotaEstudo cota : cotas) {
+	    cota.setEdicoesRecebidas(new ArrayList<ProdutoEdicaoEstudo>());
+	    for (Map<Long, CotaEstudo> item : historico) {
+		if (item.get(cota.getId()) != null) {
+		    cota.getEdicoesRecebidas().addAll(item.get(cota.getId()).getEdicoesRecebidas());
+		}
+	    }
+	    if (cota.getEdicoesRecebidas().size() > 0) {
+		existeCotaComHistorico = true;
+	    }
+	}
+
+	if (!existeCotaComHistorico) {
 	    throw new Exception("Não foram encontradas cotas com historico para estas edições de base.");
 	}
 
 	Map<Long, CotaEstudo> cotasComHistoricoMap = new LinkedHashMap<>();
-	for (CotaEstudo cota : cotasComHistorico) {
+	for (CotaEstudo cota : cotas) {
 	    calcularTotais(cota, estudo);
 	    cotasComHistoricoMap.put(cota.getId(), cota);
 	}
 	
 	List<Long> idsCotas = new ArrayList<>();
-	for (CotaEstudo cota : cotasComHistorico) {
+	for (CotaEstudo cota : cotas) {
 	    if (cota.getClassificacao().equals(ClassificacaoCota.BancaSemHistorico)) {
 		idsCotas.add(cota.getId());
 	    }
