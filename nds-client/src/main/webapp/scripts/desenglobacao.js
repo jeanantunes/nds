@@ -213,7 +213,7 @@ var desenglobacaoController = $.extend(true, {
 				colModel : [ {
 					display : 'Cota',
 					name : 'numeroCota',
-					width : 60,
+					width : 40,
 					sortable : true,
 					align : 'left'
 				}, {
@@ -237,7 +237,7 @@ var desenglobacaoController = $.extend(true, {
 				}, {
 					display : 'Usuário',
 					name : 'nomeUsuario',
-					width : 160,
+					width : 110,
 					sortable : true,
 					align : 'left'
 				}, {
