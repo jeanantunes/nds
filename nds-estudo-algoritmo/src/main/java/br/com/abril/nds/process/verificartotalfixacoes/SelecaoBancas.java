@@ -1,6 +1,5 @@
 package br.com.abril.nds.process.verificartotalfixacoes;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -10,10 +9,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.beanutils.BeanUtils;
-import org.jfree.util.Log;
 import org.joda.time.LocalDate;
 import org.joda.time.Years;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -158,21 +156,23 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	    if (cotasComHistoricoMap.containsKey(cotaDesenglobada.getId())) {
 		cotasComHistoricoMap.get(cotaDesenglobada.getId()).setClassificacao(ClassificacaoCota.EnglobaDesengloba);
 
-		for (ProdutoEdicaoEstudo edicaoCotaDesenglobada : cotasComHistoricoMap.get(cotaDesenglobada.getId()).getEdicoesRecebidas()) {
-		    BigDecimal reparteInicial = edicaoCotaDesenglobada.getReparte();
-		    BigDecimal vendaInicial = edicaoCotaDesenglobada.getVenda();
+		if (cotasComHistoricoMap.get(cotaDesenglobada.getId()).getEdicoesRecebidas() != null) {
+		    for (ProdutoEdicaoEstudo edicaoCotaDesenglobada : cotasComHistoricoMap.get(cotaDesenglobada.getId()).getEdicoesRecebidas()) {
+			BigDecimal reparteInicial = edicaoCotaDesenglobada.getReparte();
+			BigDecimal vendaInicial = edicaoCotaDesenglobada.getVenda();
 
-		    for (CotaEnglobada cotaEnglobada : cotaDesenglobada.getCotasEnglobadas()) {
-			BigDecimal porcentualEnglobacao = BigDecimal.valueOf(cotaEnglobada.getPorcentualEnglobacao()).divide(BIGDECIMAL_100);
+			for (CotaEnglobada cotaEnglobada : cotaDesenglobada.getCotasEnglobadas()) {
+			    BigDecimal porcentualEnglobacao = BigDecimal.valueOf(cotaEnglobada.getPorcentualEnglobacao()).divide(BIGDECIMAL_100);
 
-			if (validaEnglobacaoComPeriodoVigente(cotaEnglobada.getDataInclusao())) {
-			    if (cotasComHistoricoMap.containsKey(cotaEnglobada.getId())) {
-				distribuiEnglobacao(reparteInicial, vendaInicial, porcentualEnglobacao, edicaoCotaDesenglobada,
-					cotasComHistoricoMap.get(cotaEnglobada.getId()));
-			    } else {
-				CotaEstudo cota = cotaDAO.getCotaById(cotaEnglobada.getId());
-				distribuiEnglobacao(reparteInicial, vendaInicial, porcentualEnglobacao, edicaoCotaDesenglobada, cota);
-				cotasComHistoricoMap.put(cota.getId(), cota);
+			    if (validaEnglobacaoComPeriodoVigente(cotaEnglobada.getDataInclusao())) {
+				if (cotasComHistoricoMap.containsKey(cotaEnglobada.getId())) {
+				    distribuiEnglobacao(reparteInicial, vendaInicial, porcentualEnglobacao, edicaoCotaDesenglobada,
+					    cotasComHistoricoMap.get(cotaEnglobada.getId()));
+				} else {
+				    CotaEstudo cota = cotaDAO.getCotaById(cotaEnglobada.getId());
+				    distribuiEnglobacao(reparteInicial, vendaInicial, porcentualEnglobacao, edicaoCotaDesenglobada, cota);
+				    cotasComHistoricoMap.put(cota.getId(), cota);
+				}
 			    }
 			}
 		    }
@@ -191,20 +191,23 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	cotaEnglobada.setClassificacao(ClassificacaoCota.EnglobaDesengloba);
 	ProdutoEdicaoEstudo edicaoCotaEnglobada = buscaEdicaoPorNumeroLancamento(edicaoCotaDesenglobada, cotaEnglobada.getEdicoesRecebidas());
 
-	BigDecimal reparteTransferir = reparteInicial.multiply(porcentualEnglobacao);
-	edicaoCotaDesenglobada.setReparte(edicaoCotaDesenglobada.getReparte().subtract(reparteTransferir));
-	edicaoCotaEnglobada.setReparte(edicaoCotaEnglobada.getReparte().add(reparteTransferir));
+	if (edicaoCotaDesenglobada != null) {
+	    BigDecimal reparteTransferir = reparteInicial.multiply(porcentualEnglobacao);
+	    edicaoCotaDesenglobada.setReparte(edicaoCotaDesenglobada.getReparte().subtract(reparteTransferir));
+	    edicaoCotaEnglobada.setReparte(edicaoCotaEnglobada.getReparte().add(reparteTransferir));
 
-	BigDecimal vendaTransferir = vendaInicial.multiply(porcentualEnglobacao);
-	edicaoCotaDesenglobada.setVenda(edicaoCotaDesenglobada.getVenda().subtract(vendaTransferir));
-	edicaoCotaEnglobada.setVenda(edicaoCotaEnglobada.getVenda().add(vendaTransferir));
-
+	    BigDecimal vendaTransferir = vendaInicial.multiply(porcentualEnglobacao);
+	    edicaoCotaDesenglobada.setVenda(edicaoCotaDesenglobada.getVenda().subtract(vendaTransferir));
+	    edicaoCotaEnglobada.setVenda(edicaoCotaEnglobada.getVenda().add(vendaTransferir));
+	}
     }
 
     private ProdutoEdicaoEstudo buscaEdicaoPorNumeroLancamento(ProdutoEdicaoEstudo edicaoCotaDesenglobada, List<ProdutoEdicaoEstudo> edicoesRecebidas) {
-	for (ProdutoEdicaoEstudo produtoEdicao : edicoesRecebidas) {
-	    if (produtoEdicao.getNumeroEdicao().equals(edicaoCotaDesenglobada.getNumeroEdicao())) {
-		return produtoEdicao;
+	if (edicoesRecebidas != null) {
+	    for (ProdutoEdicaoEstudo produtoEdicao : edicoesRecebidas) {
+		if (produtoEdicao.getNumeroEdicao().equals(edicaoCotaDesenglobada.getNumeroEdicao())) {
+		    return produtoEdicao;
+		}
 	    }
 	}
 	return atualizaListaCotaEnglobadaComEdicaoClonada(edicaoCotaDesenglobada, edicoesRecebidas);
@@ -213,11 +216,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
     private ProdutoEdicaoEstudo atualizaListaCotaEnglobadaComEdicaoClonada(ProdutoEdicaoEstudo edicaoCotaDesenglobada,
 	    List<ProdutoEdicaoEstudo> edicoesRecebidas) {
 	ProdutoEdicaoEstudo produtoEdicao = new ProdutoEdicaoEstudo();
-	try {
-	    BeanUtils.copyProperties(produtoEdicao, edicaoCotaDesenglobada);
-	} catch (IllegalAccessException | InvocationTargetException e) {
-	    Log.debug("Erro ao clonar ProdutoEdicao para CotaEnglobada", e);
-	}
+	BeanUtils.copyProperties(edicaoCotaDesenglobada, produtoEdicao);
 	produtoEdicao.setReparte(BigDecimal.ZERO);
 	produtoEdicao.setVenda(BigDecimal.ZERO);
 	return produtoEdicao;

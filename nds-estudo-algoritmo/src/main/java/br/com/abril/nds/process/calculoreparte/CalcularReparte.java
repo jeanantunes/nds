@@ -134,7 +134,7 @@ public class CalcularReparte extends ProcessoAbstrato {
 		    // ExcedentePDV = ((ExcedenteDistribuir * %PropPDV) / SPDVEstudo) * PDVCota
 		    BigDecimal temp = excedenteDistribuir.multiply(percentualExcedenteEstudo.getPdv().divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
 		    BigDecimal excedentePDV = BigDecimal.ZERO;
-		    if (estudo.getTotalPDVs().compareTo(BigDecimal.ZERO) > 0) {
+		    if (estudo.getTotalPDVs().compareTo(BigDecimal.ZERO) > 0 && cota.getQuantidadePDVs() != null) {
 			excedentePDV = temp.divide(estudo.getTotalPDVs(), 2, BigDecimal.ROUND_HALF_UP).multiply(cota.getQuantidadePDVs());
 		    }
 
