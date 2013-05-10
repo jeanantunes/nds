@@ -163,9 +163,7 @@ public class ProdutoController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código \"" + codigoProduto + "\" não encontrado!");
 			
 		} else {
-			
 			result.use(Results.json()).from(produto, "result").serialize();
-			
 		}		
 	}
 
