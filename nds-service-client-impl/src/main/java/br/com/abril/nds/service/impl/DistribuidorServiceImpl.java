@@ -31,6 +31,7 @@ import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 
@@ -49,6 +50,9 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	@Autowired
 	private ConferenciaEncalheService conferenciaEncalheService;
 
+	@Autowired
+	private ProdutoEdicaoService produtoEdicaoService;
+	
 	@Override
 	@Transactional(readOnly = true)
 	public boolean isDistribuidor(Integer codigo) {
@@ -432,7 +436,9 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public Integer obterDiaDeRecolhimentoDaData(Date dataConferencia, Date dataRecolhimento, ProdutoEdicao produtoEdicao){
+	public Integer obterDiaDeRecolhimentoDaData(Date dataConferencia, Date dataRecolhimento, Long produtoEdicaoId){
+		
+		ProdutoEdicao produtoEdicao = produtoEdicaoService.buscarPorID(produtoEdicaoId);
 		
 		if(dataRecolhimento.compareTo(dataConferencia) >= 0) {
 			

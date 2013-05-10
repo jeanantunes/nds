@@ -176,7 +176,9 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		
 		Query query = getSession().createQuery(sql.toString());
 		
-		Date dataOperacao = distribuidorService.obter().getDataOperacao();
+		// Estamos pegando a data atual do servidor devido ao fato da data de operação poder não estar compatível com a do MDC no piloto
+		//Date dataOperacao = distribuidorService.obter().getDataOperacao();
+		Date dataOperacao = new Date();
 		query.setParameter("produtoEdicao", produtoEdicao);
 		query.setDate("dataOperacao", dataOperacao);
 		
@@ -199,7 +201,9 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		
 		Query query = getSession().createQuery(sql.toString());
 		
-		Date dataOperacao = distribuidorService.obter().getDataOperacao();
+		// Estamos pegando a data atual do servidor devido ao fato da data de operação poder não estar compatível com a do MDC no piloto
+		Date dataOperacao = new Date();
+		//Date dataOperacao = distribuidorService.obter().getDataOperacao();
 		query.setParameter("produtoEdicao", produtoEdicao);
 		query.setDate("dataOperacao", dataOperacao);
 		
