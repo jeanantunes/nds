@@ -278,15 +278,15 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 			endereco.setCep(input.getCep());
 			endereco.setCidade(input.getNomeMunicipio());
 			//endereco.setLogradouro(input.getEndereco());
-			endereco.setLogradouro(logradouro);
+			endereco.setLogradouro(logradouro.toUpperCase());
 			endereco.setNumero(numero);
 			endereco.setUf(input.getSiglaUF());
 			
 			Endereco endTmp = enderecoRepository.getEnderecoSaneado(input.getCep());
 			
 			if (null != endTmp) {
-				endereco.setBairro(endTmp.getBairro());
-				endereco.setTipoLogradouro(endTmp.getTipoLogradouro());
+				endereco.setBairro(endTmp.getBairro().toUpperCase());
+				endereco.setTipoLogradouro(endTmp.getTipoLogradouro().toUpperCase());
 			}
 			
 			getSession().merge(endereco);
@@ -324,16 +324,16 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		
 		Endereco endereco = new Endereco();
 		endereco.setCep(input.getCep());
-		endereco.setCidade(input.getNomeMunicipio());
+		endereco.setCidade(input.getNomeMunicipio().toUpperCase());
 		//endereco.setLogradouro(input.getEndereco());
-		endereco.setLogradouro(logradouro);
+		endereco.setLogradouro(logradouro.toUpperCase());
 		endereco.setNumero(numero);
 		endereco.setUf(input.getSiglaUF());
 		Endereco endTmp = enderecoRepository.getEnderecoSaneado(input.getCep());
 		
 		if (null != endTmp) {
-			endereco.setBairro(endTmp.getBairro());
-			endereco.setTipoLogradouro(endTmp.getTipoLogradouro());
+			endereco.setBairro(endTmp.getBairro().toUpperCase());
+			endereco.setTipoLogradouro(endTmp.getTipoLogradouro().toUpperCase());
 		}
 
 		//endereco.setNumero(null);
