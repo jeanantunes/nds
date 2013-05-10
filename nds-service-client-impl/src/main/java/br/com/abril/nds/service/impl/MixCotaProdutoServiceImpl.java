@@ -84,6 +84,9 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		
 		Cota cota = cotaService.obterPorNumeroDaCota(filtroConsultaMixCotaDTO.getCota());
 		
+		if(cota==null)
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Digite uma cota válida."));
+		
 		boolean tipoAlternativo = cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO);
 		
 		if (!tipoAlternativo) {
