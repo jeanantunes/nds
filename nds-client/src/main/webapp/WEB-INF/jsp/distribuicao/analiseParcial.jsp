@@ -78,7 +78,9 @@ function escondeDados(){
 					<td>Produto: ${estudoCota.estudo.produtoEdicao.produto.nomeComercial}</td>
 					<td>Edição: ${estudoCota.estudo.produtoEdicao.numeroEdicao}</td>
 					<td>Estudo: <span id="estudoId">${estudoCota.estudo.id}</span></td>
-					<td>Nro. da Parcial: </td>
+                    <c:if test="${tipoExibicao != 'NORMAL'}">
+                        <td>Nro. da Parcial: </td>
+                    </c:if>
 				</tr>
             </table>
             <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
@@ -180,13 +182,13 @@ function escondeDados(){
 				<c:if test="${tipoExibicao == 'NORMAL'}">
 					<table width="950" border="0" cellspacing="2" cellpadding="2">
 						<tr class="class_linha_1 paddingTotais">
-							<td width="80">Qtde Cotas:</td>
-							<td width="145" id="total_de_cotas">0</td>
-							<td width="58" align="right" id="total_reparte_sugerido">0</td>
+							<td width="78">Qtde Cotas:</td>
+							<td width="138" id="total_de_cotas">0</td>
+							<td width="53" align="right" id="total_reparte_sugerido">0</td>
 							<td width="25" align="right">&nbsp;</td>
-							<td width="48" align="right" id="total_juramento">0</td>
-							<td width="57" align="right" id="total_media_venda">0</td>
-							<td width="56" align="right" id="total_ultimo_reparte">0</td>
+							<%--<td width="48" align="right" id="total_juramento">0</td>--%>
+							<td width="62" align="right" id="total_media_venda">0</td>
+							<td width="79" align="right" id="total_ultimo_reparte">0</td>
 							<td width="29" align="right" id="total_reparte1">0</td>
 							<td width="29" align="right" id="total_venda1"><span class="vermelho">0</span></td>
 							<td width="29" align="right" id="total_reparte2">0</td>

@@ -48,10 +48,6 @@ public class AnaliseParcialController extends BaseController {
     @Autowired
     private ProdutoEdicaoService produtoEdicaoService;
 
-    public AnaliseParcialController(Result result) {
-        this.result = result;
-    }
-
     @Path("/")
     public void index(Long id, Long faixaDe, Long faixaAte, String modoAnalise) {
 
