@@ -269,7 +269,6 @@ var anaLiseHistogramaController = $.extend(true, {
 				
 				anaLiseHistogramaController.buildResumoEstudo(lastRow);
 				
-				// Adicionar o link as cotas esmagadas
 				$.each(data.rows, function(index, row) {
 					rowCell = row.cell;
 					rowCell.partVenda =  (rowCell.vdaTotal  /lastRow.cell.vdaTotal) || 0;
