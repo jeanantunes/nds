@@ -163,9 +163,7 @@ public class ProdutoController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código \"" + codigoProduto + "\" não encontrado!");
 			
 		} else {
-			
 			result.use(Results.json()).from(produto, "result").serialize();
-			
 		}		
 	}
 
@@ -713,7 +711,7 @@ public class ProdutoController extends BaseController {
 				listaMensagens.add("O preenchimento do campo [Tributação Fiscal] é obrigatório!");
 			}
 			
-			if (produto.getTipoSegmentoProduto() == null) {
+			if (produto.getTipoSegmentoProduto().getId() == null) {
 				listaMensagens.add("O preenchimento do campo [Tipo Segmento] é obrigatório!");
 			}
 			
