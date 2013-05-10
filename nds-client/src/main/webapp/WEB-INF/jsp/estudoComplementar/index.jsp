@@ -1,13 +1,17 @@
 <div id="estudoComplementarTelaAnalise" />
 <div id="estudoComplementarContent">
 
-<head>
-
 <script type="text/javascript" src='scripts/estudoComplementar.js'></script>
 
 <script type="text/javascript">
 function informacoesProdutoShow(link){
-	$('#workspace').tabs('addTab', 'Informa&ccedil;&otilde;es do Produto', link);
+	$('#workspace').tabs({
+		  load: function( event, ui ) {
+			  if(informacoesProdutoController){
+				  informacoesProdutoController.targetRecuperarEstudo="#codigoEstudo";
+			  }
+		  }
+	}).tabs('addTab', 'Informa&ccedil;&otilde;es do Produto', link);
 }
 </script>
 
@@ -139,9 +143,7 @@ function somarDistribuicao(){
 	$('#reparteDistribuicao').val($("#reparteDistribuicao").val() - $('#reparteSobra').val());
 };
 </script>
-</head>
 
-<body>
 <div id="dialog-cancelar" title="Cancelar Operação" style="display:none;">  
     <fieldset style="width:320px!important;">
             <legend>Cancelar Operação</legend>
@@ -279,7 +281,7 @@ function somarDistribuicao(){
       <div class="linha_separa_fields">&nbsp;</div>
       
       <span class="bt_novos"><a href="javascript:$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));"><img src="${pageContext.request.contextPath}/images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
-      <span class="bt_novos"><a href="javascript:history.back(-1);"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
+      <span class="bt_novos"><a href="javascript:;" onclick="$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
       <span class="bt_novos"><a href="#" onclick="estudoComplementarController.gerarEstudoComplementar();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Gerar Estudo" hspace="5" border="0" />Gerar Estudo</a></span>
       <span class="bt_novos"><a href="javascript:;" onclick="estudoComplementarController.analisar()"><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" alt="Confirmar" hspace="5" border="0" />Análise</a></span>
         
@@ -438,5 +440,4 @@ function somarDistribuicao(){
 			height : 240
 		});
 </script>
-</body>
 
