@@ -38,9 +38,11 @@ public class CotaEstudo extends Cota {
     private List<Integer> regioes;
     private boolean nova;
     private boolean recebeuUltimaEdicaoAberta;
+    private BigInteger qtdeRanking;
 
     public CotaEstudo() {
 	nova = false;
+	vendaMedia = BigDecimal.ZERO;
 	indiceTratamentoRegional = BigDecimal.ONE;
 	reparteMinimo = BigInteger.ZERO;
 	reparteCalculado = BigInteger.ZERO;
@@ -231,6 +233,14 @@ public class CotaEstudo extends Cota {
 
     public void setRecebeuUltimaEdicaoAberta(boolean recebeuUltimaEdicaoAberta) {
         this.recebeuUltimaEdicaoAberta = recebeuUltimaEdicaoAberta;
+    }
+
+    public BigInteger getQtdeRanking() {
+        return qtdeRanking;
+    }
+
+    public void setQtdeRanking(BigInteger qtdeRanking) {
+        this.qtdeRanking = qtdeRanking;
     }
 
     @Override

@@ -44,146 +44,143 @@ public class AnaliseParcialController extends BaseController {
 
     @Autowired
     private HttpServletResponse httpResponse;
-    
+
     @Autowired
     private ProdutoEdicaoService produtoEdicaoService;
-
-    public AnaliseParcialController(Result result) {
-	this.result = result;
-    }
 
     @Path("/")
     public void index(Long id, Long faixaDe, Long faixaAte, String modoAnalise) {
 
-	EstudoCota estudo = analiseParcialService.buscarPorId(id);
-	if (modoAnalise == null) {
-	    result.include("tipoExibicao", "NORMAL");
-	} else {
-	    result.include("tipoExibicao", modoAnalise);
-	}
-	result.include("estudoCota", estudo);
-	result.include("faixaDe", faixaDe);
-	result.include("faixaAte", faixaAte);
-	result.forwardTo("/WEB-INF/jsp/distribuicao/analiseParcial.jsp");
+        EstudoCota estudo = analiseParcialService.buscarPorId(id);
+        if (modoAnalise == null) {
+            result.include("tipoExibicao", "NORMAL");
+        } else {
+            result.include("tipoExibicao", modoAnalise);
+        }
+        result.include("estudoCota", estudo);
+        result.include("faixaDe", faixaDe);
+        result.include("faixaAte", faixaAte);
+        result.forwardTo("/WEB-INF/jsp/distribuicao/analiseParcial.jsp");
     }
 
     @Path("/detalhes")
     public void detalhes(Long id) {
-	ProdutoEdicao produtoEdicao = produtoEdicaoService.buscarPorID(id);
-	List<AnaliseEstudoDetalhesDTO> lista = analiseParcialService.buscarDetalhesAnalise(produtoEdicao);
-	
-	TableModel<CellModelKeyValue<AnaliseEstudoDetalhesDTO>> table = new TableModel<>();
-	table.setRows(CellModelKeyValue.toCellModelKeyValue(lista));
-	table.setPage(1);
-	result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
+        ProdutoEdicao produtoEdicao = produtoEdicaoService.buscarPorID(id);
+        List<AnaliseEstudoDetalhesDTO> lista = analiseParcialService.buscarDetalhesAnalise(produtoEdicao);
+
+        TableModel<CellModelKeyValue<AnaliseEstudoDetalhesDTO>> table = new TableModel<>();
+        table.setRows(CellModelKeyValue.toCellModelKeyValue(lista));
+        table.setPage(1);
+        result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
     }
 
     @Path("/abrirAnaliseFaixa")
     public void abrirAnaliseFaixa(Long estudo, Long faixaDe, Long faixaAte) {
-	AnaliseParcialQueryDTO queryDTO = new AnaliseParcialQueryDTO();
-	queryDTO.setEstudoId(estudo);
+        AnaliseParcialQueryDTO queryDTO = new AnaliseParcialQueryDTO();
+        queryDTO.setEstudoId(estudo);
 
-	List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
+        List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
 
-	TableModel<CellModelKeyValue<AnaliseParcialDTO>> table = monta(lista);
-	table.setPage(1);
-	table.setTotal(50);
-	result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
-	result.forwardTo("/WEB-INF/jsp/distribuicao/analiseParcial.jsp");
+        TableModel<CellModelKeyValue<AnaliseParcialDTO>> table = monta(lista);
+        table.setPage(1);
+        table.setTotal(50);
+        result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
+        result.forwardTo("/WEB-INF/jsp/distribuicao/analiseParcial.jsp");
     }
 
     @Path("/carregarDetalhesCota")
     public void carregarDetalhesCota(Long numeroCota) {
-	List<PdvDTO> lista = analiseParcialService.carregarDetalhesCota(numeroCota);
-	
-	TableModel<CellModelKeyValue<PdvDTO>> table = new TableModel<>();
-	table.setRows(CellModelKeyValue.toCellModelKeyValue(lista));
-	table.setPage(1);
-	result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
+        List<PdvDTO> lista = analiseParcialService.carregarDetalhesCota(numeroCota);
+
+        TableModel<CellModelKeyValue<PdvDTO>> table = new TableModel<>();
+        table.setRows(CellModelKeyValue.toCellModelKeyValue(lista));
+        table.setPage(1);
+        result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
     }
-    
+
     @Path("/init")
     public void init(Long id, String sortname, String sortorder, String filterSortName, Double filterSortFrom, Double filterSortTo, String elemento,
-	    Long faixaDe, Long faixaAte, List<EdicoesProdutosDTO> edicoesBase, String modoAnalise, String codigoProduto, Long numeroEdicao,String numeroCotaStr) {
+                     Long faixaDe, Long faixaAte, List<EdicoesProdutosDTO> edicoesBase, String modoAnalise, String codigoProduto, Long numeroEdicao, String numeroCotaStr) {
 
-	AnaliseParcialQueryDTO queryDTO = new AnaliseParcialQueryDTO();
-	queryDTO.setSortName(sortname);
-	queryDTO.setSortOrder(sortorder);
-	queryDTO.setFilterSortName(filterSortName);
-	queryDTO.setFilterSortFrom(filterSortFrom);
-	queryDTO.setFilterSortTo(filterSortTo);
-	queryDTO.setElemento(elemento);
-	queryDTO.setEdicoesBase(edicoesBase);
-	queryDTO.setEstudoId(id);
-	queryDTO.setFaixaDe(faixaDe);
-	queryDTO.setFaixaAte(faixaAte);
-	queryDTO.setModoAnalise(modoAnalise);
-	queryDTO.setCodigoProduto(codigoProduto);
-	queryDTO.setNumeroEdicao(numeroEdicao);
-	
-	List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
+        AnaliseParcialQueryDTO queryDTO = new AnaliseParcialQueryDTO();
+        queryDTO.setSortName(sortname);
+        queryDTO.setSortOrder(sortorder);
+        queryDTO.setFilterSortName(filterSortName);
+        queryDTO.setFilterSortFrom(filterSortFrom);
+        queryDTO.setFilterSortTo(filterSortTo);
+        queryDTO.setElemento(elemento);
+        queryDTO.setEdicoesBase(edicoesBase);
+        queryDTO.setEstudoId(id);
+        queryDTO.setFaixaDe(faixaDe);
+        queryDTO.setFaixaAte(faixaAte);
+        queryDTO.setModoAnalise(modoAnalise);
+        queryDTO.setCodigoProduto(codigoProduto);
+        queryDTO.setNumeroEdicao(numeroEdicao);
+        queryDTO.setNumeroCotaStr(numeroCotaStr);
 
-	TableModel<CellModelKeyValue<AnaliseParcialDTO>> table = monta(lista);
-	table.setPage(1);
-	table.setTotal(50);
-	result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
+        List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
+
+        TableModel<CellModelKeyValue<AnaliseParcialDTO>> table = monta(lista);
+        table.setPage(1);
+        table.setTotal(50);
+        result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
     }
 
     @Path("/cotasQueNaoEntraramNoEstudo/filtrar")
     public void filtrar(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO) {
 
-	List<CotaQueNaoEntrouNoEstudoDTO> lista = new ArrayList<>();
+        List<CotaQueNaoEntrouNoEstudoDTO> lista = new ArrayList<>();
 
-	if (queryDTO.getEstudo() != null && queryDTO.getEstudo() > 0) {
-	    lista = analiseParcialService.buscarCotasQueNaoEntraramNoEstudo(queryDTO);
-	}
+        if (queryDTO.getEstudo() != null && queryDTO.getEstudo() > 0) {
+            lista = analiseParcialService.buscarCotasQueNaoEntraramNoEstudo(queryDTO);
+        }
 
-	TableModel<CellModelKeyValue<CotaQueNaoEntrouNoEstudoDTO>> table = new TableModel<>();
-	table.setRows(CellModelKeyValue.toCellModelKeyValue(new ArrayList<>(lista)));
-	table.setPage(1);
-	table.setTotal(50);
-	result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
+        TableModel<CellModelKeyValue<CotaQueNaoEntrouNoEstudoDTO>> table = new TableModel<>();
+        table.setRows(CellModelKeyValue.toCellModelKeyValue(new ArrayList<>(lista)));
+        table.setPage(1);
+        table.setTotal(50);
+        result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
     }
-    
+
     @Path("/carregarEdicoesBaseEstudo")
     public void carregarEdicoesBaseEstudo(Long estudoId) {
-	result.use(Results.json()).from(analiseParcialService.carregarEdicoesBaseEstudo(estudoId), "edicoesBase").recursive().serialize();
+        result.use(Results.json()).from(analiseParcialService.carregarEdicoesBaseEstudo(estudoId), "edicoesBase").recursive().serialize();
     }
 
     @Path("/mudarReparte")
     public void mudarReparte(Long numeroCota, Long estudoId, Long variacaoDoReparte) {
-	analiseParcialService.atualizaReparte(estudoId, numeroCota, variacaoDoReparte);
-	result.nothing();
+        analiseParcialService.atualizaReparte(estudoId, numeroCota, variacaoDoReparte);
+        result.nothing();
     }
 
     @Path("/liberar")
     public void liberar(Long id) {
-	analiseParcialService.liberar(id);
-	result.nothing();
+        analiseParcialService.liberar(id);
+        result.nothing();
     }
 
     private TableModel<CellModelKeyValue<AnaliseParcialDTO>> monta(List<AnaliseParcialDTO> lista) {
-	TableModel<CellModelKeyValue<AnaliseParcialDTO>> table = new TableModel<>();
-	table.setRows(CellModelKeyValue.toCellModelKeyValue(new ArrayList<>(lista)));
-	return table;
+        TableModel<CellModelKeyValue<AnaliseParcialDTO>> table = new TableModel<>();
+        table.setRows(CellModelKeyValue.toCellModelKeyValue(new ArrayList<>(lista)));
+        return table;
     }
 
     @Get("/exportar")
     public void exportar(FileType fileType, Long id) throws IOException {
 
-	AnaliseParcialQueryDTO queryDTO = new AnaliseParcialQueryDTO();
-	queryDTO.setEstudoId(id);
+        AnaliseParcialQueryDTO queryDTO = new AnaliseParcialQueryDTO();
+        queryDTO.setEstudoId(id);
 
-	List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
+        List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
 
-	if (lista.isEmpty()) {
-	    throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
-	}
+        if (lista.isEmpty()) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
+        }
 
-	FileExporter.to("AJUSTE_REPARTE", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, lista, AnaliseParcialDTO.class,
-		this.httpResponse);
+        FileExporter.to("AJUSTE_REPARTE", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, lista, AnaliseParcialDTO.class,
+                this.httpResponse);
 
-	result.nothing();
+        result.nothing();
     }
 
 }

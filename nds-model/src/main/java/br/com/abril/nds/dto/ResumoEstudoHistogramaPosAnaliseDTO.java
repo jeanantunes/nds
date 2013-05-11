@@ -14,7 +14,9 @@ public class ResumoEstudoHistogramaPosAnaliseDTO {
 	private BigDecimal abrangenciaEstudo,
 					   abrangenciaSugerida,
 					   abrangenciaDeVenda,
-					   qtdRepartePromocional;
+					   qtdRepartePromocional,
+					   reservaTecnica,
+					   reparteDistribuido;
 	
 	public BigInteger getQtdCotasAtivas() {
 		return qtdCotasAtivas;
@@ -88,5 +90,22 @@ public class ResumoEstudoHistogramaPosAnaliseDTO {
 	public void setQtdRepartePromocional(BigDecimal qtdRepartePromocional) {
 		this.qtdRepartePromocional = qtdRepartePromocional;
 	}
+
+	public BigDecimal getReservaTecnica() {
+		return reservaTecnica;
+	}
+
+	public void setReservaTecnica(BigDecimal reservaTecnica) {
+		this.reservaTecnica = reservaTecnica;
+	}
+
+	public BigDecimal getReparteDistribuido() {
+		return reparteDistribuido;
+	}
+
+	public void setReparteDistribuido(BigDecimal reparteDistribuido) {
+		this.reparteDistribuido = reparteDistribuido;
+	}
+
 	
 }

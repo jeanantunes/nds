@@ -5,6 +5,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -16,8 +17,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -182,6 +185,15 @@ public class Produto implements Serializable {
 	@OneToOne(fetch=FetchType.EAGER, optional=true)
 	@JoinColumn(name="TIPO_CLASSIFICACAO_PRODUTO_ID")
 	private TipoClassificacaoProduto tipoClassificacaoProduto;
+	
+	@Column(name = "GERACAO_AUTOMATICA", nullable = false)
+	private Boolean isGeracaoAutomatica;
+	
+	//@JoinColumn(name = "EDITOR_ID")
+//	@OneToMany
+//	@JoinTable(name = "PRODUTO_EDICAO")
+	@OneToMany(mappedBy = "produto")
+	private List<ProdutoEdicao> produtoEdicao;
 	
 	public Long getId() {
 		return id;
@@ -643,7 +655,20 @@ public class Produto implements Serializable {
 			TipoClassificacaoProduto tipoClassificacaoProduto) {
 		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
 	}
-	
-	
 
+	public List<ProdutoEdicao> getProdutoEdicao() {
+		return produtoEdicao;
+	}
+
+	public void setProdutoEdicao(List<ProdutoEdicao> produtoEdicao) {
+		this.produtoEdicao = produtoEdicao;
+	}
+	
+	public Boolean getIsGeracaoAutomatica() {
+		return isGeracaoAutomatica;
+	}
+
+	public void setIsGeracaoAutomatica(Boolean isGeracaoAutomatica) {
+		this.isGeracaoAutomatica = isGeracaoAutomatica;
+	}
 }

@@ -28,10 +28,25 @@ public class DesenglobacaoRepositoryImpl extends AbstractRepositoryModel<Desengl
 	@Override
 	public List<Desenglobacao> obterDesenglobacaoPorCota(Long cotaId) {
 		
-		StringBuilder hql = new StringBuilder("");
-		hql.append(" from Desenglobacao d where d.englobadaNumeroCota = :cotaId ");
+		StringBuilder hql = new StringBuilder(" from Desenglobacao d ");
+				
+		if(cotaId!=null){
+			hql.append("where d.englobadaNumeroCota = :cotaId ");
+		}
 		Query query = getSession().createQuery(hql.toString());
-		query.setParameter("cotaId", cotaId);
+		if(cotaId!=null){
+			query.setParameter("cotaId", cotaId);			
+		}
+		return query.list();
+
+	}
+	
+	public List<Desenglobacao> obterDesenglobacaoPorCotaDesenglobada(Long cotaNumero) {
+		
+		StringBuilder hql = new StringBuilder("");
+		hql.append(" from Desenglobacao d where d.desenglobaNumeroCota = :cotaNumero ");
+		Query query = getSession().createQuery(hql.toString());
+		query.setParameter("cotaNumero", cotaNumero);
 		return query.list();
 
 	}
@@ -53,5 +68,22 @@ public class DesenglobacaoRepositoryImpl extends AbstractRepositoryModel<Desengl
 		
 		SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(cotasDesenglobadas.toArray());
 		jdbcTemplate.batchUpdate(sql, params);
+	}
+
+	@Override
+	public boolean removerPorCotaDesenglobada(Long cotaNumeroDesengloba) {
+		boolean res=Boolean.TRUE;
+		try {
+			String hql = "delete from Desenglobacao d where d.desenglobaNumeroCota= :cotaNumeroDesengloba";
+			getSession().createQuery(hql).setString("cotaNumeroDesengloba", cotaNumeroDesengloba.toString())
+					.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+			res=Boolean.FALSE;
+		}
+		
+		return res;
+		
+		
 	}
 }

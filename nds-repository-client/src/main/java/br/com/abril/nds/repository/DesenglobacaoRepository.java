@@ -11,4 +11,8 @@ public interface DesenglobacaoRepository extends Repository<Desenglobacao, Long>
 	void inserirCotasDesenglobadas(final List<Desenglobacao> cotasDesenglobadas);
 	
 	Float verificaPorcentagemCota(Long cotaId);
+	
+	public List<Desenglobacao> obterDesenglobacaoPorCotaDesenglobada(Long cotaNumero);
+
+	boolean removerPorCotaDesenglobada(Long cotaNumeroDesengloba);
 }

@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -38,7 +39,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 	sql.append("select distinct ");
 	sql.append("       c.numero_cota cota, ");
 	sql.append("       c.classificacao_espectativa_faturamento classificacao, ");
-	sql.append("       ifnull(pes.nome, '') nome, ");
+	sql.append("       coalesce(pes.nome, pes.razao_social, pes.nome_fantasia, '') nome, ");
 	sql.append("       pdv.quantidade npdv, ");
 	sql.append("       ec.reparte reparteSugerido, ");
 	sql.append("       ec.classificacao leg, ");
@@ -132,6 +133,10 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 	where.append(" and ec.ESTUDO_ID = ? ");
 	params.add(queryDTO.getEstudoId());
 
+	if(StringUtils.isNotEmpty(queryDTO.getNumeroCotaStr())){
+		where.append(" and c.numero_cota in ("+queryDTO.getNumeroCotaStr()+") ");
+	}
+	
 	if (queryDTO.getFaixaDe() != null) {
 	    where.append(" and ec.reparte >= ? ");
 	    params.add(queryDTO.getFaixaDe());
@@ -149,7 +154,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 	SQLQuery query = getSession().createSQLQuery(sql.toString());
 	populateQuery(query, params);
 	query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseParcialDTO.class));
-	return query.list();
+	List list = query.list();
+	return list;
     }
 
     @Override
@@ -170,7 +176,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 		.addScalar("produtoEdicaoId", StandardBasicTypes.LONG)
 		.addScalar("codigoProduto", StandardBasicTypes.STRING)
 		.addScalar("nomeProduto", StandardBasicTypes.STRING)
-		.addScalar("edicao", StandardBasicTypes.LONG);
+		.addScalar("edicao", StandardBasicTypes.BIG_INTEGER);
 	query.setParameter("estudoId", estudoId);
 	query.setResultTransformer(new AliasToBeanResultTransformer(EdicoesProdutosDTO.class));
 
@@ -198,9 +204,9 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 		.addScalar("produtoEdicaoId", StandardBasicTypes.LONG)
 		.addScalar("codigoProduto", StandardBasicTypes.STRING)
 		.addScalar("nomeProduto", StandardBasicTypes.STRING)
-		.addScalar("edicao", StandardBasicTypes.LONG)
-		.addScalar("reparte", StandardBasicTypes.BIG_INTEGER)
-		.addScalar("venda", StandardBasicTypes.BIG_INTEGER);
+		.addScalar("edicao", StandardBasicTypes.BIG_INTEGER)
+		.addScalar("reparte", StandardBasicTypes.BIG_DECIMAL)
+		.addScalar("venda", StandardBasicTypes.BIG_DECIMAL);
 
 	query.setParameter("numeroCota", numeroCota);
 	query.setParameter("numeroEdicao", numeroEdicao);

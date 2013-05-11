@@ -1,6 +1,8 @@
 package br.com.abril.nds.process.ajustefinalreparte;
 
 import java.math.BigInteger;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 
 import org.springframework.stereotype.Component;
@@ -33,6 +35,19 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
     }
 
     private void ordenarLista(EstudoTransient estudo) {
+	Collections.sort(estudo.getCotasExcluidas(), new Comparator<CotaEstudo>() {
+
+	    @Override
+	    public int compare(CotaEstudo cota1, CotaEstudo cota2) {
+		if (cota1 == null || cota1.getQtdeRanking() == null) {
+		    return -1;
+		}
+		if (cota2 == null || cota2.getQtdeRanking() == null) {
+		    return 1;
+		}
+		return cota1.getQtdeRanking().compareTo(cota2.getQtdeRanking());
+	    }
+	});
 	// Lista de cotas que não receberam as edições-base, porém receberam a edição aberta
 	LinkedList<CotaEstudo> listaA = new LinkedList<>();
 	// Lista de cotas que não receberam as edições-base
@@ -43,7 +58,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	LinkedList<CotaEstudo> listaD = new LinkedList<>();
 	// Lista de cotas que receberam 3 ou mais edições das edições base
 	LinkedList<CotaEstudo> listaE = new LinkedList<>();
-	
+
 	for (CotaEstudo cota : estudo.getCotasExcluidas()) {
 	    if ((cota.getReparteCalculado().compareTo(BigInteger.ZERO) == 0) && cota.isRecebeReparteComplementar()
 		    && cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
@@ -69,7 +84,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
     }
 
     private void distribuirReparteComplementar(EstudoTransient estudo) {
-	BigInteger reparte = BigInteger.ONE;
+	BigInteger reparte = BigInteger.valueOf(2);
 	if (estudo.isDistribuicaoPorMultiplos()) {
 	    reparte = estudo.getPacotePadrao();
 	}
@@ -79,6 +94,16 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	    estudo.setReparteComplementar(estudo.getReparteComplementar().subtract(reparte));
 	    if (estudo.getReparteComplementar().compareTo(BigInteger.ZERO) <= 0) {
 		break;
+	    }
+	}
+	BigInteger reparteGeral = BigInteger.ONE;
+	while (estudo.getReparteComplementar().compareTo(BigInteger.ZERO) > 0) {
+	    for (CotaEstudo cota : estudo.getCotas()) {
+		cota.setReparteCalculado(cota.getReparteCalculado().add(reparteGeral));
+		estudo.setReparteComplementar(estudo.getReparteComplementar().subtract(reparte));
+		if (estudo.getReparteComplementar().compareTo(BigInteger.ZERO) <= 0) {
+		    break;
+		}
 	    }
 	}
     }

@@ -97,27 +97,16 @@ var desenglobacaoController = $.extend(true, {
 			
 			var indexInput = $('#tableCotasEnglobadas tr').length;
 			
-			var html = '<tr>';
-			html+= "<td><input type='text' name='desenglobaDTO["+indexInput+"].englobadaNumeroCota' value='"+ $('#inserirEnglobadaNumeroCota').val() +"' style='width: 30px;' class='filtroDefaultCota'></td>";
-			html+= "<td style='width: 450px;'><input type='text' name='desenglobaDTO["+indexInput+"].englobadaNomePessoa' value='"+ $('#inserirEnglobadaNomePessoa').val() +"' style='width: 400px;' class='filtroDefaultPessoa'></td>";
-			html+= "<td><input type='text' name='desenglobaDTO["+indexInput+"].englobadaPorcentagemCota' value='"+ $('#inserirEnglobadaPorcentagemCota').val() +"' style='width: 30px;'></td>";
-			html+= '</tr>';
 			
-			if (indexInput != 0) {
-				html+= "<input type='hidden' name='desenglobaDTO["+indexInput+"].desenglobaNumeroCota' value='"+$('#filtroDesenglobaNumeroCota').val()+"'>";
-				html+= "<input type='hidden' name='desenglobaDTO["+indexInput+"].desenglobaNomePessoa' value='"+$('#filtroDesenglobaNomePessoa').val()+"'>";
-			}
-			
-			$('#tableCotasEnglobadas').append(html);
+			desenglobacaoController.adicionarCotaEnglobada(indexInput,$('#inserirEnglobadaNumeroCota').val(),$('#inserirEnglobadaNomePessoa').val(),$('#inserirEnglobadaPorcentagemCota').val(),
+					$('#filtroDesenglobaNumeroCota').val(),$('#filtroDesenglobaNomePessoa').val());
 			
 			clearFormEnglobada();
 			indexInput++;
 		});
 		
 		function clearFormEnglobada() {
-			$('#inserirEnglobadaNumeroCota').val('');
-			$('#inserirEnglobadaNomePessoa').val('');
-			$('#inserirEnglobadaPorcentagemCota').val('');
+			$('#inserirEnglobadaNumeroCota,#inserirEnglobadaNomePessoa,#inserirEnglobadaPorcentagemCota').val('');
 		}
 
 	desenglobacaoController.Url = {},
@@ -206,16 +195,12 @@ var desenglobacaoController = $.extend(true, {
 						return result;
 					}
 					desenglobacaoController.listaDesenglobacaoLength = result.rows.length;
-					$.each(
-						result.rows,
-							function(index,
-									row) {
+					$.each(result.rows,	function(index,	row) {
 								// onclick="desenglobacaoController.excluirExcecaoProduto('+row.cell.idExcecaoProdutoCota+');"
-								var link = '<a href="javascript:;" style="cursor:pointer">'
-										+ '<img title="Excluir Exceção" src="'
-										+ contextPath
-										+ '/images/ico_editar.gif" hspace="5" border="0px" />'
+								var link = '<a href="javascript:;" style="cursor:pointer" onclick="desenglobacaoController.acaoEditar('+row.cell.numeroCotaDesenglobada+');">'
+										+ '<img title="detalhe" src="'	+ contextPath + '/images/ico_editar.gif" hspace="5" border="0px" />'
 										+ '</a>';
+								link+="<input type='image' src='"+contextPath+"/images/ico_excluir.gif' onclick='desenglobacaoController.acaoExcluir("+row.cell.idDesenglobacao+");' alt='Excluir'/>";		
 
 								row.cell.acao = link;
 							});
@@ -228,7 +213,7 @@ var desenglobacaoController = $.extend(true, {
 				colModel : [ {
 					display : 'Cota',
 					name : 'numeroCota',
-					width : 60,
+					width : 40,
 					sortable : true,
 					align : 'left'
 				}, {
@@ -252,7 +237,7 @@ var desenglobacaoController = $.extend(true, {
 				}, {
 					display : 'Usuário',
 					name : 'nomeUsuario',
-					width : 160,
+					width : 110,
 					sortable : true,
 					align : 'left'
 				}, {
@@ -264,6 +249,13 @@ var desenglobacaoController = $.extend(true, {
 				}, {
 					display : 'Hora',
 					name : 'hora',
+					width : 50,
+					sortable : true,
+					align : 'center'
+				},
+				{
+					display : 'Ação',
+					name : 'acao',
 					width : 50,
 					sortable : true,
 					align : 'center'
@@ -279,6 +271,9 @@ var desenglobacaoController = $.extend(true, {
 			})
 		}
 		};
+	
+	
+	$('#pesquisaPorCota').click();
 	},
 	
 	porCota : function() {
@@ -293,7 +288,10 @@ var desenglobacaoController = $.extend(true, {
 	},
 	
 	novaEnglobacao : function(listaEnglobadas){
-		var formData = $("#formInserirEnglobada").serialize();		
+		
+		$("#formInserirEnglobada input[name='alterando'][type='hidden']").val(desenglobacaoController.res);
+		var formData = $("#formInserirEnglobada").serialize();	
+		
         $.post(contextPath + "/distribuicao/desenglobacao/inserirEnglobacao", formData, function(result) {
 			
         	if (result.mensagens) {
@@ -310,19 +308,45 @@ var desenglobacaoController = $.extend(true, {
     			params : filtroPrincipalCota,
     		});
         });
+        
     },
-    
-    popup: function popup() {
+    popup: function popup(alterando) {
+    	
+    	desenglobacaoController.res=alterando;
     	
     	$('#tableCotasEnglobadas').empty();
-    	$('#filtroDesenglobaNumeroCota').val('');
-    	$('#filtroDesenglobaNomePessoa').val('');
+    	$('#filtroDesenglobaNumeroCota,#filtroDesenglobaNomePessoa').val('');
     	
 		$("#dialog-novo-desenglobacao").dialog({
 			resizable: false,
 			height:500,
 			width:650,
 			modal: true,
+			open:function(){
+				if(alterando){
+					$.post(contextPath + "/distribuicao/desenglobacao/editarDesenglobacao", [{name:'cotaNumeroDesenglobada',	value: alterando}], function(res) {
+						if(res){
+//							desenglobacaoController.res=res;
+							if(res){
+//								console.log(result);
+								result=res.result;
+								var cotaDesenglobada = result[0];
+								var cotasEnglobadasArray = result[1];
+								$("#filtroDesenglobaNumeroCota").val(cotaDesenglobada.numeroCota);
+//								console.log(cotaDesenglobada.nomePessoa);
+								$("#filtroDesenglobaNomePessoa").val(cotaDesenglobada.nomePessoa);
+								
+								for ( var int = 0; int < cotasEnglobadasArray.length; int++) {
+									cota = cotasEnglobadasArray[int];
+									desenglobacaoController.adicionarCotaEnglobada(int,cota.numeroCota,cota.nomeCota,cota.porcentagemCota,
+											cotaDesenglobada.numeroCota,cotaDesenglobada.nomePessoa);
+								}
+								
+							}
+						}
+					});
+				}
+			},
 			buttons: {
 				"Confirmar": function() {
 					$("#effect").show("highlight", {}, 1000, callback);
@@ -337,6 +361,65 @@ var desenglobacaoController = $.extend(true, {
 		});
 	},
 	
+	acaoEditar:function(idx){
+		this.popup(idx);
+	},
+	acaoExcluir:function(idDesenglobacao){
+		$("#dialog-excluir-desenglobacao").dialog({
+			resizable: false,
+			draggable: false,
+			height:170,
+			width:380,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+
+					$.postJSON(contextPath + "/distribuicao/desenglobacao/excluirDesenglobacao", 
+							{id:idDesenglobacao},
+							function(result) {
+									console.log(result);
+								desenglobacaoController.ex=result;
+								if(result.mensagens){
+									exibirMensagem(result.mensagens.tipoMensagem,result.mensagens.listaMensagens);
+									return;
+								}
+
+								desenglobacaoController.Grids.EnglobadosGrid.reload({
+					    			dataType : 'json',
+					    			params : desenglobacaoController.Util.getFiltroByForm("filtroPrincipal"),
+					    		});
+								$("#dialog-excluir-desenglobacao").dialog("close");
+								return;
+							   },
+							   null,
+							   true
+					);
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+		
+	},
+	
+	adicionarCotaEnglobada:function(indexInput,inserirEnglobadaNumeroCota,inserirEnglobadaNomePessoa,inserirEnglobadaPorcentagemCota,
+			filtroDesenglobaNumeroCota,filtroDesenglobaNomePessoa){
+		
+		var html = '<tr>';
+		html+= "<td><input type='text' name='desenglobaDTO["+indexInput+"].englobadaNumeroCota' value='"+ inserirEnglobadaNumeroCota +"' style='width: 30px;' class='filtroDefaultCota'></td>";
+		html+= "<td style='width: 450px;'><input type='text' name='desenglobaDTO["+indexInput+"].englobadaNomePessoa' value='"+ inserirEnglobadaNomePessoa +"' style='width: 400px;' class='filtroDefaultPessoa'></td>";
+		html+= "<td><input type='text' name='desenglobaDTO["+indexInput+"].englobadaPorcentagemCota' value='"+ inserirEnglobadaPorcentagemCota +"' style='width: 30px;'></td>";
+		html+= '</tr>';
+		
+		if (indexInput != 0) {
+			html+= "<input type='hidden' name='desenglobaDTO["+indexInput+"].desenglobaNumeroCota' value='"+filtroDesenglobaNumeroCota+"'>";
+			html+= "<input type='hidden' name='desenglobaDTO["+indexInput+"].desenglobaNomePessoa' value='"+filtroDesenglobaNomePessoa+"'>";
+		}
+		
+		$('#tableCotasEnglobadas').append(html);
+		
+	},
 	//guarda resultado da pesquisa de desenglobacao
 	listaDesenglobacaoLength: 0,
 	

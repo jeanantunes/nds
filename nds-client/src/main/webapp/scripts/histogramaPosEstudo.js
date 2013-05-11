@@ -235,8 +235,6 @@ var histogramaPosEstudoController = $.extend(true, {
 								row.cell.faixaReparte = elemLink;
 							}
 
-							
-							
 							// adicionando a linha
 							rowConsolidado.cell.reparteTotalFormatado += parseInt(row.cell.reparteTotalFormatado || 0);
 							rowConsolidado.cell.vendaNominalFormatado += parseInt(row.cell.vendaNominalFormatado || 0);
@@ -441,7 +439,7 @@ var histogramaPosEstudoController = $.extend(true, {
 						width : 350,
 						height : 180
 					}
-				}),
+				})
 		};
 	},
 	
@@ -453,6 +451,7 @@ var histogramaPosEstudoController = $.extend(true, {
 		}else{
 			histogramaPosEstudo_cotasRepMenorVenda="";
 		}
+        console.log(idxFaixa);
 		console.log(histogramaPosEstudo_cotasRepMenorVenda);
 		$('#workspace').tabs('addTab', 'Análise de Estudos', url);
 	},
@@ -472,7 +471,7 @@ var histogramaPosEstudoController = $.extend(true, {
 					 histogramaPosEstudoController.fieldSetValues = jsonData;
 					 
 					 histogramaPosEstudoController.Grids.EstudosAnaliseGrid.reload({
-						params : [{ name : 'estudoId' , value : jsonData.estudo}],
+						params : [{ name : 'estudoId' , value : jsonData.estudo}]
 					 });
 					 
 					 $('#codigoProdutoFs').html(jsonData.codigoProduto);
@@ -519,7 +518,7 @@ var histogramaPosEstudoController = $.extend(true, {
 					if (typeof histogramaPosEstudoController.dadosResumo !== 'undefined') {
 					    $('#fieldSetResumoReparteDistribuida').html(histogramaPosEstudoController.dadosResumo.reparteDistribuido);
 					} else {
-					    $('#fieldSetResumoReparteDistribuida').html(0);
+					    $('#fieldSetResumoReparteDistribuida').html(response.reparteDistribuido);
 					}
 					
 					// Segunda coluna

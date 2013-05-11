@@ -33,12 +33,11 @@ public class DefinicaoBasesDAO {
 	@Value("#{query_estudo.queryLancamentosAnosAnterioresVeraneio}")
 	private String queryLancamentosAnosAnterioresVeraneio;
 
-	private static final String LANCAMENTO_PARCIAL = "PARCIAL";
 	private static final String PRODUTO_COLECIONAVEL = "COLECIONAVEL";
 	private static final String STATUS_FECHADO = "FECHADO";
 	private static final String STATUS_RECOLHIDO = "RECOLHIDO";
 
-	public LinkedList<ProdutoEdicaoEstudo> listaEdicoesPorLancamento(ProdutoEdicaoEstudo edicao) {
+	public LinkedList<ProdutoEdicaoEstudo> getEdicoesBases(ProdutoEdicaoEstudo edicao) {
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("CODIGO_PRODUTO", edicao.getProduto().getCodigo());
@@ -87,9 +86,11 @@ public class DefinicaoBasesDAO {
 		produtoEdicao.setEdicaoAberta(traduzStatus(rs.getString("STATUS")));
 		produtoEdicao.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
 		produtoEdicao.setColecao(traduzColecionavel(rs.getString("GRUPO_PRODUTO")));
-		produtoEdicao.setParcial(rs.getString("TIPO_LANCAMENTO").equalsIgnoreCase(LANCAMENTO_PARCIAL));
+		produtoEdicao.setParcial(rs.getBoolean("PARCIAL"));
+		produtoEdicao.setPeriodo(rs.getInt("NUMERO_PERIODO"));
 		produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
 		produtoEdicao.setProduto(new Produto());
+		produtoEdicao.getProduto().setId(rs.getLong("PRODUTO_ID"));
 		produtoEdicao.getProduto().setCodigo(rs.getString("CODIGO"));
 
 		return produtoEdicao;

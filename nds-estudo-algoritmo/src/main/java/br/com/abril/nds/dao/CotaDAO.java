@@ -50,6 +50,15 @@ public class CotaDAO {
     
     @Value("#{query_estudo.queryCotaRecebeuEdicaoAberta}")
     private String queryCotaRecebeuEdicaoAberta;
+    
+    @Value("#{query_estudo.queryHistoricoCota}")
+    private String queryHistoricoCota;
+    
+    @Value("#{query_estudo.queryCotas}")
+    private String queryCotas;
+    
+    @Value("#{query_estudo.queryHistoricoCotaParcial}")
+    private String queryHistoricoCotaParcial;
 
     private static final String LANCAMENTO_PARCIAL = "PARCIAL";
     private static final String PRODUTO_COLECIONAVEL = "COLECIONAVEL";
@@ -209,6 +218,80 @@ public class CotaDAO {
 	    }
 	}
     }
+    
+    public List<CotaEstudo> getCotas(EstudoTransient estudo) {
+	Map<String, Object> params = new HashMap<>();
+	params.put("tipo_segmento_produto_id", estudo.getProdutoEdicaoEstudo().getTipoSegmentoProduto().getId());
+	params.put("produto_id", estudo.getProdutoEdicaoEstudo().getProduto().getId());
+	params.put("numero_edicao", estudo.getProdutoEdicaoEstudo().getNumeroEdicao());
+	return jdbcTemplate.query(queryCotas, params, new RowMapper<CotaEstudo>() {
+
+	    @Override
+	    public CotaEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {
+		CotaEstudo cota = new CotaEstudo();
+		cota.setId(rs.getLong("COTA_ID"));
+		cota.setNumeroCota(rs.getInt("NUMERO_COTA"));
+		cota.setRecebeReparteComplementar(rs.getBoolean("RECEBE_COMPLEMENTAR"));
+		cota.setQuantidadePDVs(rs.getBigDecimal("QTDE_PDVS"));
+		cota.setSituacaoCadastro(SituacaoCadastro.valueOf(rs.getString("SITUACAO_CADASTRO")));
+		cota.setMix(rs.getBoolean("MIX"));
+		traduzAjusteReparte(rs, cota);
+		if (rs.getBigDecimal("QTDE_RANKING") != null) {
+		    cota.setQtdeRanking(rs.getBigDecimal("QTDE_RANKING").toBigInteger());
+		}
+		if (rs.getBigDecimal("REPARTE_MAX") != null) {
+		    cota.setReparteMaximo(rs.getBigDecimal("REPARTE_MAX").toBigInteger());
+		}
+		if (rs.getBigDecimal("REPARTE_MIN") != null) {
+		    cota.setReparteMinimo(rs.getBigDecimal("REPARTE_MIN").toBigInteger());
+		}
+		if (rs.getBigDecimal("REPARTE_FIXADO") != null) {
+		    cota.setReparteFixado(rs.getBigDecimal("REPARTE_FIXADO").toBigInteger());
+		}
+		cota.setRegioes(new ArrayList<Integer>());
+		if (rs.getInt("REGIAO_ID") != 0) {
+		    cota.getRegioes().add(rs.getInt("REGIAO_ID"));
+		}
+		if (rs.getLong("COTA_BASE_ID") != 0) {
+		    cota.setNova(true);
+		    cota.setClassificacao(ClassificacaoCota.CotaNova);
+		}
+		return cota;
+	    }
+	});
+    }
+    
+    public Map<Long, CotaEstudo> getHistoricoCota(final ProdutoEdicaoEstudo edicao) {
+	Map<String, Object> params = new HashMap<>();
+	params.put("produto_edicao_id", edicao.getId());
+	List<CotaEstudo> historicoCotas = jdbcTemplate.query(edicao.isParcial() ? queryHistoricoCotaParcial : queryHistoricoCota, params, new RowMapper<CotaEstudo>() {
+	    @Override
+	    public CotaEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {
+		CotaEstudo cota = new CotaEstudo();
+		cota.setId(rs.getLong("cota_id"));
+		cota.setEdicoesRecebidas(new ArrayList<ProdutoEdicaoEstudo>());
+		ProdutoEdicaoEstudo pe = new ProdutoEdicaoEstudo();
+		pe.setVenda(rs.getBigDecimal("venda"));
+		pe.setReparte(rs.getBigDecimal("reparte"));
+		// copia dos atributos da edicao base
+		pe.setId(edicao.getId());
+		pe.setProduto(edicao.getProduto());
+		pe.setEdicaoAberta(edicao.isEdicaoAberta());
+		pe.setParcial(edicao.isParcial());
+		pe.setColecao(edicao.isColecao());
+		pe.setIndicePeso(edicao.getIndicePeso());
+		pe.setNumeroEdicao(edicao.getNumeroEdicao());
+		
+		cota.getEdicoesRecebidas().add(pe);
+		return cota;
+	    }
+	});
+	Map<Long, CotaEstudo> retorno = new HashMap<>();
+	for (CotaEstudo cota : historicoCotas) {
+	    retorno.put(cota.getId(), cota);
+	}
+	return retorno;
+    }
 
     private LinkedList<CotaEstudo> agrupaCotas(LinkedList<CotaEstudo> lista) {
 	if (lista.size() > 0) {
@@ -239,25 +322,24 @@ public class CotaDAO {
 
     private List<ProdutoEdicaoEstudo> getEdicoes(ResultSet rs, Map<Long, BigDecimal> idsPesos) throws SQLException {
 	List<ProdutoEdicaoEstudo> edicoes = new ArrayList<>();
-	ProdutoEdicaoEstudo produtoEdicao = new ProdutoEdicaoEstudo();
+	if (rs.getLong("PRODUTO_ID") > 0) {
+	    ProdutoEdicaoEstudo produtoEdicao = new ProdutoEdicaoEstudo();
+	    produtoEdicao.setProduto(new Produto());
+	    produtoEdicao.getProduto().setId(rs.getLong("PRODUTO_ID"));
+	    produtoEdicao.setId(rs.getLong("PRODUTO_EDICAO_ID"));
+	    produtoEdicao.setIdLancamento(rs.getLong("LANCAMENTO_ID"));
+	    produtoEdicao.setEdicaoAberta(traduzStatus(rs.getString("STATUS")));
+	    produtoEdicao.setParcial(rs.getString("TIPO_LANCAMENTO").equalsIgnoreCase(LANCAMENTO_PARCIAL));
+	    produtoEdicao.setColecao(traduzColecionavel(rs.getString("GRUPO_PRODUTO")));
+	    produtoEdicao.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
+	    produtoEdicao.setReparte(rs.getBigDecimal("QTDE_RECEBIDA"));
+	    produtoEdicao.setVenda(rs.getBigDecimal("QTDE_VENDA"));
+	    produtoEdicao.setIndicePeso(idsPesos.get(produtoEdicao.getId()));
+	    produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
+	    produtoEdicao.getProduto().setCodigo(rs.getString("CODIGO"));
 
-	produtoEdicao.setProduto(new Produto());
-	produtoEdicao.getProduto().setId(rs.getLong("PRODUTO_ID"));
-	produtoEdicao.setId(rs.getLong("PRODUTO_EDICAO_ID"));
-	produtoEdicao.setIdLancamento(rs.getLong("LANCAMENTO_ID"));
-	produtoEdicao.setEdicaoAberta(traduzStatus(rs.getString("STATUS")));
-	produtoEdicao.setParcial(rs.getString("TIPO_LANCAMENTO").equalsIgnoreCase(LANCAMENTO_PARCIAL));
-	produtoEdicao.setColecao(traduzColecionavel(rs.getString("GRUPO_PRODUTO")));
-	produtoEdicao.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
-	produtoEdicao.setReparte(rs.getBigDecimal("QTDE_RECEBIDA"));
-	produtoEdicao.setVenda(rs.getBigDecimal("QTDE_VENDA"));
-
-	produtoEdicao.setIndicePeso(idsPesos.get(produtoEdicao.getId()));
-
-	produtoEdicao.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
-	produtoEdicao.getProduto().setCodigo(rs.getString("CODIGO"));
-
-	edicoes.add(produtoEdicao);
+	    edicoes.add(produtoEdicao);
+	}
 	return edicoes;
     }
 

@@ -9,11 +9,13 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
-import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.dto.filtro.FiltroDistribuicaoDTO;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
+import br.com.abril.nds.repository.DistribuicaoRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.ItemNotaEnvioRepository;
@@ -38,6 +40,8 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 	@Autowired
 	private ItemNotaEnvioRepository itemNotaEnvioRepository;
 	
+	@Autowired
+	private DistribuicaoRepository distribuicaoRepository;
 	/**
 	 * Construtor.
 	 */
@@ -138,8 +142,8 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		sql.append(" 				where ESTUDO_ID = :estudoId) AS qtdCotasRecebemReparte, ");
 		sql.append("       (select count(id) from estudo_cota where CLASSIFICACAO in ('CP') and estudo_id = :estudoId ) as qtdCotasAdicionadasPelaComplementarAutomatica, ");
 		sql.append(" 		ifnull((select distinct estudo.REPARTE_DISTRIBUIR from estudo where id = :estudoId ),0) as qtdReparteMinimoEstudo, ");
-		sql.append("		(select REPARTE_MINIMO from estrategia join estudo on estudo.PRODUTO_EDICAO_ID = estrategia.PRODUTO_EDICAO_ID where estudo.ID = @estudoId) as qtdReparteMinimoSugerido, ");
-		sql.append("		(select ABRANGENCIA from estrategia join estudo on estudo.PRODUTO_EDICAO_ID = estrategia.PRODUTO_EDICAO_ID where estudo.ID = @estudoId) as abrangenciaSugerida, ");
+		sql.append("		(select REPARTE_MINIMO from estrategia join estudo on estudo.PRODUTO_EDICAO_ID = estrategia.PRODUTO_EDICAO_ID where estudo.ID = :estudoId) as qtdReparteMinimoSugerido, ");
+		sql.append("		(select ABRANGENCIA from estrategia join estudo on estudo.PRODUTO_EDICAO_ID = estrategia.PRODUTO_EDICAO_ID where estudo.ID = :estudoId) as abrangenciaSugerida, ");
 		sql.append(" 		(select sum(case when qtde_recebida - qtde_devolvida > 0 then 1 else 0 end) from estoque_produto_cota ");
 		sql.append(" 		 inner join produto_edicao on estoque_produto_cota.produto_edicao_id = produto_edicao.id");
 		sql.append(" 		 where estoque_produto_cota.produto_edicao_id = (select produto_edicao_id from estudo where id = :estudoId)");
@@ -152,7 +156,17 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ResumoEstudoHistogramaPosAnaliseDTO.class));
 
-		return (ResumoEstudoHistogramaPosAnaliseDTO) query.uniqueResult();
+		
+		FiltroDistribuicaoDTO filtro = new FiltroDistribuicaoDTO();
+		filtro.setEstudoId(estudoId);
+		List<ProdutoDistribuicaoVO> obterMatrizDistribuicao = this.distribuicaoRepository.obterMatrizDistribuicao(filtro);
+		
+		ResumoEstudoHistogramaPosAnaliseDTO uniqueResult = (ResumoEstudoHistogramaPosAnaliseDTO) query.uniqueResult();
+		
+		uniqueResult.setQtdRepartePromocional(obterMatrizDistribuicao.get(0).getPromo());
+		uniqueResult.setReparteDistribuido(obterMatrizDistribuicao.get(0).getReparte().subtract(obterMatrizDistribuicao.get(0).getPromo()));
+		
+		return uniqueResult;
 	}
 	
 	
@@ -160,6 +174,8 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 	public void remover(Estudo estudo) {
 		
 		Long idEstudo = estudo.getId();
+		estudo.setProdutoEdicao(null);
+		alterar(estudo);
 		
 		movimentoEstoqueCotaRepository.removerMovimentoEstoqueCotaPorEstudo(idEstudo);
 		itemNotaEnvioRepository.removerItemNotaEnvioPorEstudo(idEstudo);

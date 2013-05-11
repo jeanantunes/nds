@@ -1,15 +1,15 @@
 function montarDados(){
 
-	params = new Array();
+	var params = new Array();
 	
 	params.push({name : "filtro.produtoDto.codigoProduto", value :  codigoProduto_HistogramaVenda});
 	for ( var int = 0; int < edicoesEscolhidas_HistogramaVenda.length; int++) {
 		params.push({name : "filtro.listProdutoEdicaoDTO["+int+"].numeroEdicao", value :  edicoesEscolhidas_HistogramaVenda[int]});
-		
+		params.push({name : "edicoesSelecionadas["+int+"].numeroEdicao", value :  edicoesEscolhidas_HistogramaVenda[int]});
 	}
 
 	//carregando popup superior para as edições
-	url = contextPath + "/distribuicao/historicoVenda/pesquisaProduto";
+	var url = contextPath + "/distribuicao/historicoVenda/pesquisaProduto";
 	$.post(url, params, function(data){
 		if(data){
 						anaLiseHistogramaController.tempData = data;
@@ -89,7 +89,7 @@ var anaLiseHistogramaController = $.extend(true, {
 		var cotasEsmagadasFormatado = '';
 		
 			rowCell.repTotal = formatarMilhar(Math.round(rowCell.repTotal));
-			rowCell.vdaTotal = formatarMilhar(rowCell.vdaTotal);
+			rowCell.vdaTotal = formatarMilhar(Math.round(rowCell.vdaTotal));
 			
 			cotasEsmagadasFormatado = formatarMilhar($(rowCell.cotasEsmagadas).text());
 			
@@ -130,15 +130,16 @@ var anaLiseHistogramaController = $.extend(true, {
 		var qtdeCotasAtivas = parseInt(lastRow.cell.qtdeCotasAtivas);
 		//total de cotas ativas 
 		var qtdeTotalCotasAtivas = parseInt(lastRow.cell.qtdeTotalCotasAtivas);
+		
 		var qtdeCotasSemVenda = parseInt(lastRow.cell.qtdeCotasSemVenda);
 		
 		var eficVenda = floatToPrice(parseFloat(vdaTotal/ lastRow.cell.repTotal*100).toFixed(2));
 		$("#eficienciaDeVendaCell").text((eficVenda +"%").replace(".", ","));
 		
-		var r = floatToPrice(parseFloat(Math.round( (qtdeCotas/qtdeTotalCotasAtivas)*100 )).toFixed(2));
+		var r = floatToPrice(parseFloat((qtdeCotas/qtdeTotalCotasAtivas)*100 ).toFixed(2));
 		$("#abrangenciaDistribuicaoCell").text((r +"%").replace(".", ","));
 
-		r = parseFloat(Math.round( (qtdeCotas-qtdeCotasSemVenda)/qtdeTotalCotasAtivas*100 )).toFixed(2);
+		r = parseFloat( (qtdeCotas-qtdeCotasSemVenda)/qtdeTotalCotasAtivas*100 ).toFixed(2);
 		
 		$("#abrangenciaVendaCell").text((r +"%").replace(".", ","));
 		
@@ -262,9 +263,12 @@ var anaLiseHistogramaController = $.extend(true, {
 				
 				var lastRow = $(data.rows).last()[0];
 				
+				if (data.rows[0].cell.faixaVenda === 'De 0 a 0') {
+					lastRow.cell.qtdeCotasSemVenda = data.rows[0].cell.qtdeCotas;
+		    	}
+				
 				anaLiseHistogramaController.buildResumoEstudo(lastRow);
 				
-				// Adicionar o link as cotas esmagadas
 				$.each(data.rows, function(index, row) {
 					rowCell = row.cell;
 					rowCell.partVenda =  (rowCell.vdaTotal  /lastRow.cell.vdaTotal) || 0;
@@ -277,6 +281,15 @@ var anaLiseHistogramaController = $.extend(true, {
 					}
 					
 					anaLiseHistogramaController.formatarFaixasVenda(rowCell);
+				});
+				
+				lastRow.cell.repTotal = 0;
+				lastRow.cell.vdaTotal = 0;
+				$.each(data.rows, function(index, row) {
+					if (lastRow.id !== row.id) {
+						lastRow.cell.repTotal += parseInt(row.cell.repTotal);
+						lastRow.cell.vdaTotal += parseInt(row.cell.vdaTotal);
+					}
 				});
 
 				return data;
@@ -363,34 +376,31 @@ var anaLiseHistogramaController = $.extend(true, {
 	},
 	
 	executarAnaliseHistoricoVenda:function(idx, propriedade){
-		var idCotaArray = resultadoAnalise[idx].cell[propriedade].split(',');
-		
-		
-		url = contextPath + "/distribuicao/historicoVenda/analiseHistorico";
-
-		var params = new Array();
+		var idCotaArray = resultadoAnalise[idx].cell[propriedade].split(','),
+			url = contextPath + "/distribuicao/historicoVenda/analiseHistorico",
+			params = new Array(),
+			qtdEdicoes = edicoesEscolhidas_HistogramaVenda.length;
 		
 		//popular lista de ID de cotas
 		$.each(idCotaArray, function(index, val) {
 			params.push({name : "cotas["+index+"].numeroCota", value : val });
 		});
 		
-		//
-		
-		for ( var int = 0; int < edicoesEscolhidas_HistogramaVenda.length; int++) {
+		for ( var int = 0; int < qtdEdicoes; int++) {
 			params.push({name : "listProdutoEdicaoDto["+int+"].numeroEdicao", value :  edicoesEscolhidas_HistogramaVenda[int]});
 			params.push({name : "listProdutoEdicaoDto["+int+"].codigoProduto", value :  codigoProduto_HistogramaVenda});
-			
 		}
 		
 		$.post(url, params, function(data){
 		      if(data){
-		    	  
-		    	  
 		    	  $("#analiseHistogramaVendasContent").hide();
 		    	  $("#analiseHistoricoVendasContent").html(data).show();
 		    	  montarDados();
 		    	  analiseHistoricoVendaController.Grids.BaseHistoricoGrid.reload();
+		    	  
+		    	  if ($(resultadoAnalise[idx].cell.faixaVenda).text() === 'De 0 a 0') {
+		    		  analiseHistoricoVendaController.isFaixaZero = true;
+		    	  }
 		      }
 		});
 		

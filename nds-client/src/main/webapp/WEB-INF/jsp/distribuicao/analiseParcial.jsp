@@ -74,26 +74,27 @@ function escondeDados(){
 			<input type="hidden" id="codigoProduto" value="${estudoCota.estudo.produtoEdicao.produto.codigo}" />
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
-					<td width="51">Código:</td>
-					<td width="65">${estudoCota.estudo.produtoEdicao.produto.codigo}</td>
-					<td width="54">Produto:</td>
-					<td width="210">${estudoCota.estudo.produtoEdicao.produto.nomeComercial}</td>
-					<td width="45">Edição:</td>
-					<td width="140">${estudoCota.estudo.produtoEdicao.numeroEdicao}</td>
-					<td width="45">Estudo:</td>
-					<td width="141"><span id="estudoId">${estudoCota.estudo.id}</span></td>
-					<td width="83">Nro. da Parcial:</td>
-					<td width="65"></td>
+					<td>Código: ${estudoCota.estudo.produtoEdicao.produto.codigo}</td>
+					<td>Produto: ${estudoCota.estudo.produtoEdicao.produto.nomeComercial}</td>
+					<td>Edição: ${estudoCota.estudo.produtoEdicao.numeroEdicao}</td>
+					<td>Estudo: <span id="estudoId">${estudoCota.estudo.id}</span></td>
+                    <c:if test="${tipoExibicao != 'NORMAL'}">
+                        <td>Nro. da Parcial: </td>
+                    </c:if>
 				</tr>
-			</table>
-			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+            </table>
+            <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+                <tr>
+                    <td>Status do Estudo: ${estudoCota.estudo.status}</td>
+                    <td>Reparte Distribuido: <span id="total_reparte_sugerido_cabecalho"></span></td>
+                </tr>
+            </table>
+            <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
-					<td width="75">Classificação:</td>
-					<td width="91">${estudoCota.estudo.produtoEdicao.produto.tipoClassificacaoProduto.descricao}</td>
-					<td width="60">Segmento:</td>
-					<td width="86">${estudoCota.estudo.produtoEdicao.produto.tipoSegmentoProduto.descricao}</td>
-					<td width="78">Ordenar por:</td>
-					<td width="143"><select name="select5" id="filtroOrdenarPor" style="width: 138px;"
+					<td>Classificação: ${estudoCota.estudo.produtoEdicao.produto.tipoClassificacaoProduto.descricao}</td>
+					<td>Segmento: ${estudoCota.estudo.produtoEdicao.produto.tipoSegmentoProduto.descricao}</td>
+					<td>Ordenar por:</td>
+					<td><select name="select5" id="filtroOrdenarPor" style="width: 138px;"
 						onchange="analiseParcialController.apresentarOpcoesOrdenarPor(this.value);">
 							<option selected="selected" value="selecione">Selecione...</option>
 							<option value="reparte">Reparte</option>
@@ -101,18 +102,15 @@ function escondeDados(){
 							<option value="percentual_de_venda">% de Venda</option>
 							<option value="reducao_de_reparte">R de Reparte</option>
 					</select></td>
-					<td width="55">Reparte:</td>
-					<td width="49"><input type="text" name="textfield6" id="textfield6" style="width: 40px;" /></td>
-					<td width="72">Abrangência:</td>
-					<td width="32">${estudoCota.estudo.produtoEdicao.produto.percentualAbrangencia}</td>
-					<td width="84">Pacote Padrão:</td>
-					<td width="64"><input type="text" name="textfield6" id="textfield7" style="width: 30px;" /></td>
+					<td>Reparte: <input type="text" name="textfield6" id="textfield6" style="width: 40px;" /></td>
+					<td>Abrangência: ${estudoCota.estudo.produtoEdicao.produto.percentualAbrangencia}</td>
+					<td>Pacote Padrão: <input type="text" name="textfield6" id="textfield7" style="width: 30px;" /></td>
 				</tr>
-			</table>
-			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+            </table>
+            <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
-					<td width="84">Componente:</td>
-					<td width="188">
+					<td>Componente:</td>
+					<td>
 						<select id="componentes" name="componentes" style="width: 170px;"
 						    onchange="analiseParcialController.selecionarElementos(this.value, 'elementos')">
 							<option value="null" selected="selected">Selecione...</option>
@@ -126,12 +124,12 @@ function escondeDados(){
 							<option value="distrito">Distrito</option>
 						</select>
 					</td>
-					<td width="60">Elemento:</td>
-					<td width="179"><select id="elementos" name="elementos" style="width: 170px;"
+					<td>Elemento:</td>
+					<td><select id="elementos" name="elementos" style="width: 170px;"
 						onchange="analiseParcialController.filtrarOrdenarPor(${estudoCota.estudo.id})">
 							<option selected="selected">Selecione...</option>
 					</select></td>
-					<td width="271"><span id="opcoesOrdenarPor" style="display: none;" class="label"> <span id="label_reparte"
+					<td><span id="opcoesOrdenarPor" style="display: none;" class="label"> <span id="label_reparte"
 							style="display: none;" class="label"> Reparte: </span> <span id="label_reducao_de_reparte" style="display: none;"
 							class="label"> % Dê: </span> <span id="label_ranking" style="display: none;" class="label"> Ranking: </span> <span
 							id="label_percentual_de_venda" style="display: none;" class="label"> % Venda: </span> <input id="ordenarPorDe" type="text"
@@ -140,9 +138,9 @@ function escondeDados(){
 								src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Confirmar" border="0" />
 						</a>
 					</span></td>
-					<td width="35" align="center"><a href="javascript:;" onclick="mostraDados();"><img
+					<td align="center"><a href="javascript:;" onclick="mostraDados();"><img
 							src="${pageContext.request.contextPath}/images/ico_boletos.gif" title="Exibir Detalhes" width="19" height="15" border="0" /></a></td>
-					<td width="97"><span class="bt_novos"> <a href="javascript:;" onclick="analiseParcialController.verCapa();">
+					<td><span class="bt_novos"> <a href="javascript:;" onclick="analiseParcialController.verCapa();">
 								<img src="${pageContext.request.contextPath}/images/ico_detalhes.png" alt="Ver Capa" hspace="5" border="0" /> Ver Capa
 						</a>
 					</span></td>
@@ -184,13 +182,13 @@ function escondeDados(){
 				<c:if test="${tipoExibicao == 'NORMAL'}">
 					<table width="950" border="0" cellspacing="2" cellpadding="2">
 						<tr class="class_linha_1 paddingTotais">
-							<td width="80">Qtde Cotas:</td>
-							<td width="145" id="total_de_cotas">0</td>
-							<td width="58" align="right" id="total_reparte_sugerido">0</td>
+							<td width="78">Qtde Cotas:</td>
+							<td width="138" id="total_de_cotas">0</td>
+							<td width="53" align="right" id="total_reparte_sugerido">0</td>
 							<td width="25" align="right">&nbsp;</td>
-							<td width="48" align="right" id="total_juramento">0</td>
-							<td width="57" align="right" id="total_media_venda">0</td>
-							<td width="56" align="right" id="total_ultimo_reparte">0</td>
+							<%--<td width="48" align="right" id="total_juramento">0</td>--%>
+							<td width="62" align="right" id="total_media_venda">0</td>
+							<td width="79" align="right" id="total_ultimo_reparte">0</td>
 							<td width="29" align="right" id="total_reparte1">0</td>
 							<td width="29" align="right" id="total_venda1"><span class="vermelho">0</span></td>
 							<td width="29" align="right" id="total_reparte2">0</td>
