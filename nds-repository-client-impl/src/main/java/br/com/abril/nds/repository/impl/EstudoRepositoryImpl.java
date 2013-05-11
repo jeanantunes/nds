@@ -120,35 +120,40 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 	@Override
 	public ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long estudoId) {
 		StringBuilder sql = new StringBuilder();
-		
-		sql.append(" select ");
+		sql.append(" SELECT ");
+		sql.append("   qtdReparteDistribuidor, ");
+		sql.append("   qtdRepartePromocional, ");
+		sql.append("   qtdSobraEstudo, ");
+		sql.append("   qtdReparteDistribuidoEstudo, ");
 		sql.append("   qtdCotasAtivas, ");
 		sql.append("   qtdCotasRecebemReparte, ");
 		sql.append("   qtdCotasAdicionadasPelaComplementarAutomatica, ");
 		sql.append("   qtdReparteMinimoSugerido, ");
+		sql.append("   (qtdReparteDistribuidoEstudo / qtdCotasRecebemReparte) as reparteMedioCota, ");
 		sql.append("   abrangenciaSugerida, ");
 		sql.append("   qtdReparteMinimoEstudo, ");
-		sql.append("   qtdRepartePromocional, ");
-		
-		sql.append("   ( qtdCotasRecebemReparte / qtdCotasAtivas ) * 100 as abrangenciaEstudo, ");
-		sql.append("   ( qtdCotasQueVenderam  / qtdCotasRecebemReparte ) * 100 as abrangenciaDeVenda ");
+		sql.append("   ( qtdCotasRecebemReparte / qtdCotasAtivas ) * 100 AS abrangenciaEstudo, ");
+		sql.append("   ( qtdCotasQueVenderam  / qtdCotasRecebemReparte ) * 100 AS abrangenciaDeVenda ");
+
 		sql.append("   FROM ");
 		sql.append("   ( ");
-		sql.append("     select ");
-		sql.append("       (select REPARTE_PROMOCIONAL from estudo inner join lancamento on estudo.lancamento_id = lancamento.id where estudo.id = :estudoId ) AS qtdRepartePromocional, ");
-		sql.append("       (select count(id) from cota where SITUACAO_CADASTRO = 'ATIVO') AS qtdCotasAtivas, ");
-		sql.append("       (select count(estudo_cota.cota_id) from estudo_cota"); 
-		sql.append("        	inner join movimento_estoque_cota ON movimento_estoque_cota.ESTUDO_COTA_ID = estudo_cota.ID ");
-		sql.append(" 				where ESTUDO_ID = :estudoId) AS qtdCotasRecebemReparte, ");
-		sql.append("       (select count(id) from estudo_cota where CLASSIFICACAO in ('CP') and estudo_id = :estudoId ) as qtdCotasAdicionadasPelaComplementarAutomatica, ");
-		sql.append(" 		ifnull((select distinct estudo.REPARTE_DISTRIBUIR from estudo where id = :estudoId ),0) as qtdReparteMinimoEstudo, ");
-		sql.append("		(select REPARTE_MINIMO from estrategia join estudo on estudo.PRODUTO_EDICAO_ID = estrategia.PRODUTO_EDICAO_ID where estudo.ID = :estudoId) as qtdReparteMinimoSugerido, ");
-		sql.append("		(select ABRANGENCIA from estrategia join estudo on estudo.PRODUTO_EDICAO_ID = estrategia.PRODUTO_EDICAO_ID where estudo.ID = :estudoId) as abrangenciaSugerida, ");
-		sql.append(" 		(select sum(case when qtde_recebida - qtde_devolvida > 0 then 1 else 0 end) from estoque_produto_cota ");
-		sql.append(" 		 inner join produto_edicao on estoque_produto_cota.produto_edicao_id = produto_edicao.id");
-		sql.append(" 		 where estoque_produto_cota.produto_edicao_id = (select produto_edicao_id from estudo where id = :estudoId)");
-		sql.append(" 		 and estoque_produto_cota.COTA_ID in (select cota_id from estudo_cota where estudo_id = :estudoId)) as qtdCotasQueVenderam");
-		sql.append("   ) as base ");
+		sql.append("     SELECT ");
+		sql.append("       (SELECT lancamento.reparte FROM estudo INNER JOIN lancamento ON estudo.lancamento_id = lancamento.id WHERE estudo.id = :estudoId ) AS qtdReparteDistribuidor, ");
+		sql.append("       (SELECT reparte_promocional FROM estudo INNER JOIN lancamento ON estudo.lancamento_id = lancamento.id WHERE estudo.id = :estudoId ) AS qtdRepartePromocional, ");
+		sql.append("       (SELECT sobra FROM estudo WHERE estudo.id = :estudoId ) AS qtdSobraEstudo, ");
+		sql.append("       (SELECT reparte_distribuir FROM estudo WHERE estudo.id = :estudoId ) AS qtdReparteDistribuidoEstudo, ");
+		sql.append("       (SELECT count(id) FROM cota WHERE SITUACAO_CADASTRO = 'ATIVO') AS qtdCotasAtivas, ");
+		sql.append("       (SELECT count(estudo_cota.cota_id) FROM estudo_cota"); 
+//		sql.append("        	INNER JOIN movimento_estoque_cota ON movimento_estoque_cota.estudo_cota_id = estudo_cota.ID ");
+		sql.append(" 				WHERE ESTUDO_ID = :estudoId) AS qtdCotasRecebemReparte, ");
+		sql.append("       (SELECT COUNT(id) FROM estudo_cota WHERE classificacao IN ('CP') and estudo_id = :estudoId ) AS qtdCotasAdicionadasPelaComplementarAutomatica, ");
+		sql.append(" 	   IFNULL((SELECT MIN(reparte) FROM estudo_cota WHERE estudo_id = :estudoId ),0) AS qtdReparteMinimoEstudo, ");
+		sql.append("	   (SELECT reparte_minimo FROM estrategia JOIN estudo ON estudo.PRODUTO_EDICAO_ID = estrategia.PRODUTO_EDICAO_ID WHERE estudo.ID = :estudoId) AS qtdReparteMinimoSugerido, ");
+		sql.append("	   (SELECT abrangencia FROM estrategia JOIN estudo ON estudo.PRODUTO_EDICAO_ID = estrategia.PRODUTO_EDICAO_ID WHERE estudo.ID = :estudoId) AS abrangenciaSugerida, ");
+		sql.append(" 	   (SELECT COUNT( DISTINCT (CASE WHEN qtde_recebida - qtde_devolvida > 0 THEN cota_id ELSE null END)) FROM estoque_produto_cota");
+		sql.append(" 		 	WHERE estoque_produto_cota.produto_edicao_id IN (SELECT produto_edicao_id FROM estudo_produto_edicao_base WHERE estudo_id = :estudoId)");
+		sql.append(" 		 	AND estoque_produto_cota.cota_id IN (SELECT cota_id FROM ESTUDO_COTA WHERE estudo_id = :estudoId)) AS qtdCotasQueVenderam");
+		sql.append("   ) AS base ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
 		
@@ -157,14 +162,14 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		query.setResultTransformer(new AliasToBeanResultTransformer(ResumoEstudoHistogramaPosAnaliseDTO.class));
 
 		
-		FiltroDistribuicaoDTO filtro = new FiltroDistribuicaoDTO();
-		filtro.setEstudoId(estudoId);
-		List<ProdutoDistribuicaoVO> obterMatrizDistribuicao = this.distribuicaoRepository.obterMatrizDistribuicao(filtro);
+//		FiltroDistribuicaoDTO filtro = new FiltroDistribuicaoDTO();
+//		filtro.setEstudoId(estudoId);
+//		List<ProdutoDistribuicaoVO> obterMatrizDistribuicao = this.distribuicaoRepository.obterMatrizDistribuicao(filtro);
 		
 		ResumoEstudoHistogramaPosAnaliseDTO uniqueResult = (ResumoEstudoHistogramaPosAnaliseDTO) query.uniqueResult();
 		
-		uniqueResult.setQtdRepartePromocional(obterMatrizDistribuicao.get(0).getPromo());
-		uniqueResult.setReparteDistribuido(obterMatrizDistribuicao.get(0).getReparte().subtract(obterMatrizDistribuicao.get(0).getPromo()));
+//		uniqueResult.setQtdRepartePromocional(obterMatrizDistribuicao.get(0).getPromo());
+//		uniqueResult.setReparteDistribuido(obterMatrizDistribuicao.get(0).getReparte().subtract(obterMatrizDistribuicao.get(0).getPromo()));
 		
 		return uniqueResult;
 	}

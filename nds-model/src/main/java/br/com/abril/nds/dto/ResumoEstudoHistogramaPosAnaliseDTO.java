@@ -5,19 +5,40 @@ import java.math.BigInteger;
 
 public class ResumoEstudoHistogramaPosAnaliseDTO {
 
-	private BigInteger qtdCotasAtivas, 
+	private BigInteger 
+					   qtdSobraEstudo,
+					   qtdCotasAtivas, 
 					   qtdCotasRecebemReparte,
 					   qtdCotasAdicionadasPelaComplementarAutomatica,
 					   qtdReparteMinimoSugerido,
+					   qtdReparteDistribuidoEstudo,
 					   qtdReparteMinimoEstudo;
 			
 	private BigDecimal abrangenciaEstudo,
 					   abrangenciaSugerida,
 					   abrangenciaDeVenda,
 					   qtdRepartePromocional,
-					   reservaTecnica,
-					   reparteDistribuido;
-	
+					   reparteDistribuido,
+					   reparteMedioCota,
+					   qtdReparteDistribuidor;
+
+	public BigDecimal getQtdReparteDistribuidor() {
+		return qtdReparteDistribuidor;
+	}
+
+	public void setQtdReparteDistribuidor(BigDecimal qtdReparteDistribuidor) {
+		this.qtdReparteDistribuidor = qtdReparteDistribuidor;
+	}
+
+	public BigInteger getQtdReparteDistribuidoEstudo() {
+		return qtdReparteDistribuidoEstudo;
+	}
+
+	public void setQtdReparteDistribuidoEstudo(
+			BigInteger qtdReparteDistribuidoEstudo) {
+		this.qtdReparteDistribuidoEstudo = qtdReparteDistribuidoEstudo;
+	}
+
 	public BigInteger getQtdCotasAtivas() {
 		return qtdCotasAtivas;
 	}
@@ -91,12 +112,12 @@ public class ResumoEstudoHistogramaPosAnaliseDTO {
 		this.qtdRepartePromocional = qtdRepartePromocional;
 	}
 
-	public BigDecimal getReservaTecnica() {
-		return reservaTecnica;
+	public BigInteger getQtdSobraEstudo() {
+		return qtdSobraEstudo;
 	}
 
-	public void setReservaTecnica(BigDecimal reservaTecnica) {
-		this.reservaTecnica = reservaTecnica;
+	public void setQtdSobraEstudo(BigInteger qtdSobraEstudo) {
+		this.qtdSobraEstudo = qtdSobraEstudo;
 	}
 
 	public BigDecimal getReparteDistribuido() {
@@ -107,5 +128,12 @@ public class ResumoEstudoHistogramaPosAnaliseDTO {
 		this.reparteDistribuido = reparteDistribuido;
 	}
 
+	public BigDecimal getEncalheMedioCota() {
+		return reparteMedioCota;
+	}
+
+	public void setEncalheMedioCota(BigDecimal encalheMedioCota) {
+		this.reparteMedioCota = encalheMedioCota;
+	}
 	
 }
