@@ -89,11 +89,11 @@ var estudoComplementarController =$.extend(true,  {
 	         
 	         success: function(data){	
 	        	  if(data.mensagens.tipoMensagem == "ERROR"){
-	 	             alert("Nenhum resultado encontrado");
+	        		  		exibirMensagem("WARNING", ["Nenhum resultado encontrado"]);
 	 	             }
 	 	             else{
 	 	     			$('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
-	 	                    alert("Estudo Complementar Gerado");
+	 	     				exibirMensagem("SUCCESS", ["Estudo Complementar Gerado"]);
 	 	             }
 	        	 
 
@@ -121,18 +121,18 @@ consultarEstudo:function (obj) {
 		
 		success: function(json){
 			$('#idEstudoComplementar').html(json.baseEstudoVO.idEstudoComplementar); 
-			$('#idProduto').html(json.baseEstudoVO.idProduto); 
+			$('#idProduto').html(json.baseEstudoVO.codigoProduto); 
 			$('#nomeProduto').html(json.baseEstudoVO.nomeProduto);
 			
-			$('#numeroEdicao').html(json.baseEstudoVO.idEdicao);
+			$('#numeroEdicao').html(json.baseEstudoVO.numeroEdicao);
 			$('#nomeClassificacao').html(json.baseEstudoVO.nomeClassificacao);
-			$('#publicacao').html(json.baseEstudoVO.idPublicacao);
+			$('#publicacao').html(json.baseEstudoVO.codigoProduto);
 			$('#publicacaoNomeProduto').html(json.baseEstudoVO.nomeProduto);
-			$('#publicacaoEdicao').html(json.baseEstudoVO.idEdicao);
+			$('#publicacaoEdicao').html(json.baseEstudoVO.numeroEdicao);
 			$('#publicacaoPEB').html(json.baseEstudoVO.idPEB);
 			$('#publicacaoNomeFornecedor').html(json.baseEstudoVO.nomeFornecedor);
 			$('#publicacaoDataLncto').html(json.baseEstudoVO.dataLncto);
-			$('#publicacaoDataRclto').html(json.baseEstudoVO.DataRclto);
+			$('#publicacaoDataRclto').html(json.baseEstudoVO.dataRclto);
 			$('#publicacaoClassificacao').html(json.baseEstudoVO.nomeClassificacao);
 			$('#reparteLancamento').val(json.baseEstudoVO.reparteLancamento);
 			$('#reparteDistribuicao').val(json.baseEstudoVO.reparteLancamento);

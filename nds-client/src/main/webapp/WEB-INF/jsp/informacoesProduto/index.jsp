@@ -1,4 +1,3 @@
-<head>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/NDS.js"></script>
@@ -25,10 +24,6 @@ $(function(){
     padding: 0.45em 0.4em!important;
 }
 </style>
-
-</head>
-
-<body>
 
 <div class="container">
     
@@ -205,4 +200,3 @@ $(function(){
   </tr>
 </table>
 </div>
-</body>
