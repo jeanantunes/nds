@@ -122,7 +122,7 @@ $(function(){
 				    </tr>
 				  <tr>
 				    <td style="border-bottom:1px solid #ccc;">Reserva Técnica:</td>
-				    <td style="border-bottom:1px solid #ccc;" id="fieldSetResumoReservaTecnica">200</td>
+				    <td style="border-bottom:1px solid #ccc;" id="fieldSetResumoReservaTecnica"></td>
 				    <td style="border-bottom:1px solid #ccc;">Cota Compl:</td>
 				    <td style="border-bottom:1px solid #ccc;" id="fieldSetResumoNpdvComplementar"></td>
 				    <td style="border-bottom:1px solid #ccc;">Abrangência:</td>
