@@ -3,10 +3,12 @@ package br.com.abril.nds.dto;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 public class HistogramaPosEstudoAnaliseFaixaReparteDTO {
 
 	private DecimalFormat decimalFormat = new DecimalFormat("0.00");
+	private NumberFormat milharFormat = NumberFormat.getNumberInstance();  
 	
 	private String faixaReparte;
 

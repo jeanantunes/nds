@@ -1287,12 +1287,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		} 
 		
 		hql.append(" GROUP BY produtoEdicao.numeroEdicao ");
-
-		if (filtro.getListProdutoEdicaoDTO() != null && !filtro.getListProdutoEdicaoDTO().isEmpty()) {
-			hql.append(" ORDER BY produtoEdicao.numeroEdicao ");
-		}else {
-			hql.append(" ORDER BY produtoEdicao.numeroEdicao DESC ");
-		}
+		hql.append(" ORDER BY produtoEdicao.numeroEdicao DESC ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
