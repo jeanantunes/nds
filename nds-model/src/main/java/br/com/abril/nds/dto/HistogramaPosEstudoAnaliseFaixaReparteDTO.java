@@ -3,12 +3,10 @@ package br.com.abril.nds.dto;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 
 public class HistogramaPosEstudoAnaliseFaixaReparteDTO {
 
 	private DecimalFormat decimalFormat = new DecimalFormat("0.00");
-	private NumberFormat milharFormat = NumberFormat.getNumberInstance();  
 	
 	private String faixaReparte;
 
@@ -20,7 +18,7 @@ public class HistogramaPosEstudoAnaliseFaixaReparteDTO {
 	private BigDecimal reparteMedio;
 	private String reparteMedioFormatado = "0";
 
-	private BigDecimal vendaNominal; // venda total
+	private BigDecimal vendaNominal;
 	private String vendaNominalFormatado = "0";
 
 	private BigDecimal vendaMedia;
