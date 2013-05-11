@@ -476,47 +476,52 @@ var histogramaPosEstudoController = $.extend(true, {
 	},
 	
 	popularFieldsetResumoEstudo : function (){
-		var matrizSelecionada = histogramaPosEstudoController.matrizSelecionado,
-			rowConsolidada = histogramaPosEstudoController.analiseGridRowConsolidada,
-			url = contextPath + "/distribuicao/histogramaPosEstudo/carregarDadosFieldSetResumoEstudo";
-		
+//		var matrizSelecionada = histogramaPosEstudoController.matrizSelecionado,
+//			rowConsolidada = $(histogramaPosEstudoController.Grids.EstudosAnaliseGrid.tableModel.rows).last()[0], 
+			var url = contextPath + "/distribuicao/histogramaPosEstudo/carregarDadosFieldSetResumoEstudo",
+				estudoId = $('#codigoEstudoFs').text();
+			
 		$.postJSON(
 				url,
-				[{name : "estudoId" , value :matrizSelecionada.estudo}],
+				[{name : "estudoId" , value : estudoId}],
 				function(response){
 					
 					// Primeira coluna
-					$('#fieldSetResumoReparteTotal').html(rowConsolidada.cell.reparteTotalFormatado);
-					if (typeof histogramaPosEstudoController.dadosResumo !== 'undefined') {
-					    $('#fieldSetResumoRepartePromocional').html(parseInt(histogramaPosEstudoController.dadosResumo.repartePromo || 0));
-					} else {
-					    $('#fieldSetResumoRepartePromocional').html(parseInt(response.qtdRepartePromocional));
-					}
-					$('#fieldSetResumoReservaTecnica').html(matrizSelecionada.sobra);
-					if (typeof histogramaPosEstudoController.dadosResumo !== 'undefined') {
-					    $('#fieldSetResumoReparteDistribuida').html(histogramaPosEstudoController.dadosResumo.reparteDistribuido);
-					} else {
-					    $('#fieldSetResumoReparteDistribuida').html(response.reparteDistribuido);
-					}
+					$('#fieldSetResumoReparteTotal').html(formatarMilhar(response.qtdReparteDistribuidor || 0));
+					$('#fieldSetResumoRepartePromocional').html(formatarMilhar(response.qtdRepartePromocional || 0));
+					$('#fieldSetResumoReservaTecnica').html(formatarMilhar(response.qtdSobraEstudo || 0));
+					$('#fieldSetResumoReparteDistribuida').html(formatarMilhar(response.qtdReparteDistribuidoEstudo || 0));
 					
-					// Segunda coluna
+					// Segunda Coluna
+					$('#fieldSetResumoReparteMedioCota').html(floatToPrice(parseFloat(response.reparteMedioCota || 0).toFixed(2))); // quantidade de exemplares que cada cota irá receber na média
 					$('#fieldSetResumoNpdvAtual').html(response.qtdCotasAtivas); // count tb cotas onde status for ativo
-					
 					$('#fieldSetResumoNpdvProduto').html(response.qtdCotasRecebemReparte); // quantidade de cotas que irão receber reparte (fazem parte do estudo)
-					
 					// quantidade de cotas que foram adicionadas no estudo pela “complementar automática”; segundo o Jhonis é "CP" no campo classificação na tb estudo_cota
 					$('#fieldSetResumoNpdvComplementar').html(response.qtdCotasAdicionadasPelaComplementarAutomatica || 0); 
 					
-					$('#fieldSetResumoReparteMedioCota').html((parseInt(matrizSelecionada.repDistrib) / parseInt(response.qtdCotasRecebemReparte)) || 0 ); // quantidade de exemplares que cada cota irá receber na média 
-					
 					// Terceira coluna
-					$('#fieldSetResumoReparteMinimoSugerida').html(response.qtdReparteMinimoSugerido || 0);
-					$('#fieldSetResumoReparteMinimoEstudo').html(response.qtdReparteMinimoEstudo);
-					
+					$('#fieldSetResumoReparteMinimoSugerida').html(formatarMilhar(response.qtdReparteMinimoSugerido || 0));
+					$('#fieldSetResumoReparteMinimoEstudo').html(formatarMilhar(response.qtdReparteMinimoEstudo || 0));
 					$('#fieldSetResumoAbrangenciaSugerida').html(response.abrangenciaSugerida || 0);
-					$('#fieldSetResumoAbrangenciaEstudo').html((response.abrangenciaEstudo * 100).toFixed(2));
+					$('#fieldSetResumoAbrangenciaEstudo').html(floatToPrice(parseFloat(response.abrangenciaEstudo || 0).toFixed(2)));
 					
-					$('#fieldSetResumoAbrangenciaVendaPercent').html('Abrangência de Venda:&nbsp;&nbsp;' + (parseFloat(response.abrangenciaDeVenda) || 0 ).toFixed(2) + '% ');
+					$('#fieldSetResumoAbrangenciaVendaPercent').html('Abrangência de Venda:&nbsp;&nbsp;' + floatToPrice((parseFloat(response.abrangenciaDeVenda) || 0 ).toFixed(2)) + '% ');
+					
+//					if (typeof histogramaPosEstudoController.dadosResumo !== 'undefined') {
+//					    $('#fieldSetResumoRepartePromocional').html(parseInt(histogramaPosEstudoController.dadosResumo.repartePromo || 0));
+//					} else {
+//					    $('#fieldSetResumoRepartePromocional').html(parseInt(response.qtdRepartePromocional));
+//					}
+					
+//					if (typeof histogramaPosEstudoController.dadosResumo !== 'undefined') {
+//					    $('#fieldSetResumoReparteDistribuida').html(histogramaPosEstudoController.dadosResumo.reparteDistribuido);
+//					} else {
+//					    $('#fieldSetResumoReparteDistribuida').html(response.reparteDistribuido);
+//					}
+					
+					
+//					$('#fieldSetResumoReparteMedioCota').html((parseInt(matrizSelecionada.repDistrib) / parseInt(response.qtdCotasRecebemReparte)) || 0 ); // quantidade de exemplares que cada cota irá receber na média 
+					
 				}
 		);
 	},
