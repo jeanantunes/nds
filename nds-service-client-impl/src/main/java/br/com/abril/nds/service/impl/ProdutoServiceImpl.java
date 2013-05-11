@@ -18,12 +18,14 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoProduto;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.repository.DescontoLogisticaRepository;
 import br.com.abril.nds.repository.EditorRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
+import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
 import br.com.abril.nds.repository.TipoProdutoRepository;
 import br.com.abril.nds.repository.TipoSegmentoProdutoRepository;
 import br.com.abril.nds.service.EstoqueProdutoService;
@@ -35,7 +37,7 @@ import br.com.abril.nds.service.ProdutoService;
  * {@link br.com.abril.nds.model.cadastro.Produto}
  * 
  * @author Discover Technology
- */
+ */ 
 @Service
 public class ProdutoServiceImpl implements ProdutoService {
 
@@ -62,6 +64,9 @@ public class ProdutoServiceImpl implements ProdutoService {
 	
 	@Autowired
 	private TipoSegmentoProdutoRepository segmentoRepository;
+	
+	@Autowired
+	private TipoClassificacaoProdutoRepository tipoClassRepo;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -145,9 +150,9 @@ public class ProdutoServiceImpl implements ProdutoService {
 	@Transactional(readOnly=true)
 	public Integer pesquisarCountProdutos(String codigo,
 			String produto, String fornecedor, String editor,
-			Long codigoTipoProduto) {
+			Long codigoTipoProduto, Boolean isGeracaoAutomatica) {
 				
-		return this.produtoRepository.pesquisarCountProdutos(codigo, produto, fornecedor, editor, codigoTipoProduto);
+		return this.produtoRepository.pesquisarCountProdutos(codigo, produto, fornecedor, editor, codigoTipoProduto, isGeracaoAutomatica);
 	}
 
 	@Override
@@ -232,6 +237,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 				produtoExistente.setSegmentacao(produto.getSegmentacao());
 				produtoExistente.setIsGeracaoAutomatica(produto.getIsGeracaoAutomatica());
 				produtoExistente.setTipoSegmentoProduto(produto.getTipoSegmentoProduto());
+				produtoExistente.setTipoClassificacaoProduto(produto.getTipoClassificacaoProduto());
 				
 				produtoExistente.setEditor(editor);
 				produtoExistente.addFornecedor(fornecedor);
@@ -292,6 +298,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 	 * @see br.com.abril.nds.service.ProdutoService#obterProdutosPelosIds(java.util.List)
 	 */
 	@Override
+	@Transactional
 	public List<Produto> obterProdutosPelosIds(List<Long> idsProdutos) {
 		
 		List<Produto> listaProdutos = new ArrayList<Produto>();
@@ -332,6 +339,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 	}
 
 	@Override
+	@Transactional
 	public List<String> verificarProdutoExiste(String... codigoProduto) {
 
 		return produtoRepository.verificarProdutoExiste(codigoProduto);
@@ -342,4 +350,11 @@ public class ProdutoServiceImpl implements ProdutoService {
 	public List<TipoSegmentoProduto> carregarSegmentos() {
 		return segmentoRepository.buscarTodos();
 	}
+
+	@Override
+	@Transactional
+	public List<TipoClassificacaoProduto> carregarClassificacaoProduto() {
+		return tipoClassRepo.buscarTodos();
+	}
+	
 }

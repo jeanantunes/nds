@@ -7,6 +7,7 @@ import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.util.CurrencyUtil;
 
 public class ProdutoCadastroVO implements Serializable {
@@ -51,11 +52,7 @@ public class ProdutoCadastroVO implements Serializable {
 	
 	private String formatoProduto;
 	
-	private String tipoLancamento;
-	
-	private String temaPrincipal;
-	
-	private String temaSecundario;
+//	private String temaPrincipal;
 	
 	private Origem origem;
 	
@@ -69,9 +66,8 @@ public class ProdutoCadastroVO implements Serializable {
 	
 	private Long idTipoSegmentoProduto;
 	
-	/**
-	 * 
-	 */
+	private Long idTipoClassifProduto;
+	
 	public ProdutoCadastroVO() {
 		
 	}
@@ -83,8 +79,13 @@ public class ProdutoCadastroVO implements Serializable {
 			String grupoEditorial, String subGrupoEditorial,
 			String tributacaoFiscal, String classeSocial, String sexo, 
 			String faixaEtaria, String formatoProduto, 
-			String tipoLancamento, String temaPrincipal, 
-			String temaSecundario, String formaFisica,Origem origem, Boolean isGeracaoAutomatica, Long idTipoSegmentoProduto) {
+//			String temaPrincipal, 
+			String formaFisica, 
+			Long idTipoSegmentoProduto, 
+			Origem origem, 
+			Boolean isGeracaoAutomatica,
+			Long idTipoClassifProduto) {
+		
 		this.id = id;
 		this.codigo = codigo;
 		this.nome = nome;
@@ -104,16 +105,63 @@ public class ProdutoCadastroVO implements Serializable {
 		this.sexo = sexo;
 		this.faixaEtaria = faixaEtaria;
 		this.formatoProduto = formatoProduto;
-		this.tipoLancamento = tipoLancamento;
-		this.temaPrincipal = temaPrincipal;
-		this.temaSecundario = temaSecundario;
+//		this.temaPrincipal = temaPrincipal;
 		this.formaFisica=formaFisica;
+		this.idTipoSegmentoProduto = idTipoSegmentoProduto;
 		this.origem = origem;
 		this.isGeracaoAutomatica = isGeracaoAutomatica;
-		this.idTipoSegmentoProduto = idTipoSegmentoProduto;
-		
+		this.idTipoClassifProduto = idTipoClassifProduto;
 	}
 
+	public static ProdutoCadastroVO parseProdutoToProdutoCadastroVO(Produto produto) {
+
+		if (produto == null) {
+			throw new RuntimeException("Produto não pode ser nulo!");
+		}
+		
+		FormaComercializacao formaComercializacao = produto.getFormaComercializacao();
+		
+		PeriodicidadeProduto periodicidade = produto.getPeriodicidade();
+		
+		TributacaoFiscal tributacaoFiscal = produto.getTributacaoFiscal();
+		
+		long codigoTipoDesconto = produto.getDescontoLogistica() != null ? 
+				produto.getDescontoLogistica().getTipoDesconto().longValue() : 0L;
+		ProdutoCadastroVO produtoCadastroVO = new ProdutoCadastroVO(
+			produto.getId(), 
+			produto.getCodigo(), 
+			produto.getNome(), 
+			(produto.getFornecedor()!=null)?produto.getFornecedor().getId():null, 
+			produto.getEditor()!=null?produto.getEditor().getId():0, 
+			produto.getSlogan(), 
+			produto.getTipoProduto().getId(), 
+			formaComercializacao != null ? formaComercializacao.name() : "", 
+			produto.getPeb(), 
+			produto.getPacotePadrao(), codigoTipoDesconto, periodicidade != null ? periodicidade.toString() : "", 
+			produto.getGrupoEditorial(), produto.getSubGrupoEditorial(), tributacaoFiscal != null ? tributacaoFiscal.toString() : "",
+			produto.getSegmentacao()!=null?(produto.getSegmentacao().getClasseSocial()!=null?produto.getSegmentacao().getClasseSocial().name():""):"",
+			produto.getSegmentacao()!=null?(produto.getSegmentacao().getSexo()!=null?produto.getSegmentacao().getSexo().name():""):"",
+			produto.getSegmentacao()!=null?(produto.getSegmentacao().getFaixaEtaria()!=null?produto.getSegmentacao().getFaixaEtaria().name():""):"",
+			produto.getSegmentacao()!=null?(produto.getSegmentacao().getFormatoProduto()!=null?produto.getSegmentacao().getFormatoProduto().name():""):"",
+//			produto.getSegmentacao()!=null?(produto.getSegmentacao().getTemaPrincipal()!=null?produto.getSegmentacao().getTemaPrincipal().name():""):"",
+			produto.getSegmentacao()!=null?(produto.getSegmentacao().getFormaFisica()!=null?produto.getSegmentacao().getFormaFisica().name():""):"",											
+			(produto.getTipoSegmentoProduto()!=null)?produto.getTipoSegmentoProduto().getId():null,
+			produto.getOrigem(),
+			produto.getIsGeracaoAutomatica(),
+			(produto.getTipoClassificacaoProduto()!=null)?produto.getTipoClassificacaoProduto().getId():null
+			);
+		
+		if(Origem.INTERFACE.equals(produto.getOrigem()) && produto.getDescontoLogistica()!= null){
+			produtoCadastroVO.setDesconto(CurrencyUtil.formatarValor( produto.getDescontoLogistica().getPercentualDesconto()).replace(",","."));
+			
+		}else if(produto.getDesconto()!= null){
+			produtoCadastroVO.setDesconto(CurrencyUtil.formatarValor(produto.getDesconto()).replace(",","."));
+			produtoCadastroVO.setDescricaoDescontoManual(produto.getDescricaoDesconto());
+		}
+		
+		return produtoCadastroVO;
+	}
+	
 	/**
 	 * @return the id
 	 */
@@ -380,48 +428,20 @@ public class ProdutoCadastroVO implements Serializable {
 		this.formatoProduto = formatoProduto;
 	}
 
-	/**
-	 * @return the tipoLancamento
-	 */
-	public String getTipoLancamento() {
-		return tipoLancamento;
-	}
+//	/**
+//	 * @return the temaPrincipal
+//	 */
+//	public String getTemaPrincipal() {
+//		return temaPrincipal;
+//	}
+//
+//	/**
+//	 * @param temaPrincipal the temaPrincipal to set
+//	 */
+//	public void setTemaPrincipal(String temaPrincipal) {
+//		this.temaPrincipal = temaPrincipal;
+//	}
 
-	/**
-	 * @param tipoLancamento the tipoLancamento to set
-	 */
-	public void setTipoLancamento(String tipoLancamento) {
-		this.tipoLancamento = tipoLancamento;
-	}
-
-	/**
-	 * @return the temaPrincipal
-	 */
-	public String getTemaPrincipal() {
-		return temaPrincipal;
-	}
-
-	/**
-	 * @param temaPrincipal the temaPrincipal to set
-	 */
-	public void setTemaPrincipal(String temaPrincipal) {
-		this.temaPrincipal = temaPrincipal;
-	}
-
-	/**
-	 * @return the temaSecundario
-	 */
-	public String getTemaSecundario() {
-		return temaSecundario;
-	}
-
-	/**
-	 * @param temaSecundario the temaSecundario to set
-	 */
-	public void setTemaSecundario(String temaSecundario) {
-		this.temaSecundario = temaSecundario;
-	}
-	
 	public Origem getOrigem() {
 		return origem;
 	}
@@ -436,55 +456,6 @@ public class ProdutoCadastroVO implements Serializable {
 
 	public void setDesconto(String desconto) {
 		this.desconto = desconto;
-	}
-
-	public static ProdutoCadastroVO parseProdutoToProdutoCadastroVO(Produto produto) {
-
-		if (produto == null) {
-			throw new RuntimeException("Produto não pode ser nulo!");
-		}
-		
-		FormaComercializacao formaComercializacao = produto.getFormaComercializacao();
-		
-		PeriodicidadeProduto periodicidade = produto.getPeriodicidade();
-		
-		TributacaoFiscal tributacaoFiscal = produto.getTributacaoFiscal();
-		
-		long codigoTipoDesconto = produto.getDescontoLogistica() != null ? 
-				produto.getDescontoLogistica().getTipoDesconto().longValue() : 0L;
-		ProdutoCadastroVO produtoCadastroVO = new ProdutoCadastroVO(
-			produto.getId(), 
-			produto.getCodigo(), 
-			produto.getNome(), 
-			(produto.getFornecedor()!=null)?produto.getFornecedor().getId():null, 
-			produto.getEditor()!=null?produto.getEditor().getId():0, 
-			produto.getSlogan(), 
-			produto.getTipoProduto().getId(), 
-			formaComercializacao != null ? formaComercializacao.name() : "", 
-			produto.getPeb(), 
-			produto.getPacotePadrao(), codigoTipoDesconto, periodicidade != null ? periodicidade.toString() : "", 
-			produto.getGrupoEditorial(), produto.getSubGrupoEditorial(), tributacaoFiscal != null ? tributacaoFiscal.toString() : "",
-			produto.getSegmentacao()!=null?(produto.getSegmentacao().getClasseSocial()!=null?produto.getSegmentacao().getClasseSocial().name():""):"",
-			produto.getSegmentacao()!=null?(produto.getSegmentacao().getSexo()!=null?produto.getSegmentacao().getSexo().name():""):"",
-			produto.getSegmentacao()!=null?(produto.getSegmentacao().getFaixaEtaria()!=null?produto.getSegmentacao().getFaixaEtaria().name():""):"",
-			produto.getSegmentacao()!=null?(produto.getSegmentacao().getFormatoProduto()!=null?produto.getSegmentacao().getFormatoProduto().name():""):"",
-			produto.getSegmentacao()!=null?(produto.getSegmentacao().getTipoLancamento()!=null?produto.getSegmentacao().getTipoLancamento().name():""):"",
-			produto.getSegmentacao()!=null?(produto.getSegmentacao().getTemaPrincipal()!=null?produto.getSegmentacao().getTemaPrincipal().name():""):"",
-			produto.getSegmentacao()!=null?(produto.getSegmentacao().getTemaSecundario()!=null?produto.getSegmentacao().getTemaSecundario().name():""):"",
-			produto.getSegmentacao()!=null?(produto.getSegmentacao().getFormaFisica()!=null?produto.getSegmentacao().getFormaFisica().name():""):"",		
-			produto.getOrigem(),
-			produto.getIsGeracaoAutomatica(),
-			produto.getTipoSegmentoProduto().getId());
-		
-		if(Origem.INTERFACE.equals(produto.getOrigem()) && produto.getDescontoLogistica()!= null){
-			produtoCadastroVO.setDesconto(CurrencyUtil.formatarValor( produto.getDescontoLogistica().getPercentualDesconto()).replace(",","."));
-			
-		}else if(produto.getDesconto()!= null){
-			produtoCadastroVO.setDesconto(CurrencyUtil.formatarValor(produto.getDesconto()).replace(",","."));
-			produtoCadastroVO.setDescricaoDescontoManual(produto.getDescricaoDesconto());
-		}
-		
-		return produtoCadastroVO;
 	}
 
 	public String getDescricaoDescontoManual() {
@@ -517,5 +488,13 @@ public class ProdutoCadastroVO implements Serializable {
 
 	public void setIdTipoSegmentoProduto(Long idTipoSegmentoProduto) {
 		this.idTipoSegmentoProduto = idTipoSegmentoProduto;
+	}
+
+	public Long getIdTipoClassifProduto() {
+		return idTipoClassifProduto;
+	}
+
+	public void setIdTipoClassifProduto(Long idTipoClassifProduto) {
+		this.idTipoClassifProduto = idTipoClassifProduto;
 	}
 }
