@@ -28,10 +28,15 @@ public class DesenglobacaoRepositoryImpl extends AbstractRepositoryModel<Desengl
 	@Override
 	public List<Desenglobacao> obterDesenglobacaoPorCota(Long cotaId) {
 		
-		StringBuilder hql = new StringBuilder("");
-		hql.append(" from Desenglobacao d where d.englobadaNumeroCota = :cotaId ");
+		StringBuilder hql = new StringBuilder(" from Desenglobacao d ");
+				
+		if(cotaId!=null){
+			hql.append("where d.englobadaNumeroCota = :cotaId ");
+		}
 		Query query = getSession().createQuery(hql.toString());
-		query.setParameter("cotaId", cotaId);
+		if(cotaId!=null){
+			query.setParameter("cotaId", cotaId);			
+		}
 		return query.list();
 
 	}

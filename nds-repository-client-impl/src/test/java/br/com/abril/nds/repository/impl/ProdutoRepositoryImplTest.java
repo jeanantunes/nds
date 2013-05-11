@@ -98,7 +98,7 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		String produto = "produtoTeste";
 		
-		produtoRepository.pesquisarCountProdutos(null, produto, null, null, null);
+		produtoRepository.pesquisarCountProdutos(null, produto, null, null, null, null);
 	}
 	
 	@Test
@@ -106,7 +106,7 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		String fornecedor = "fornecedorTeste";
 		
-		produtoRepository.pesquisarCountProdutos(null, null, fornecedor, null, null);
+		produtoRepository.pesquisarCountProdutos(null, null, fornecedor, null, null, null);
 	}
 	
 	@Test
@@ -114,7 +114,7 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		String editor = "editorTeste";
 		
-		produtoRepository.pesquisarCountProdutos(null, null, null, editor, null);
+		produtoRepository.pesquisarCountProdutos(null, null, null, editor, null, null);
 	}
 	
 	@Test
@@ -122,7 +122,7 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		Long codTipoproduto = 1L;
 		
-		produtoRepository.pesquisarCountProdutos(null, null, null, null, codTipoproduto);
+		produtoRepository.pesquisarCountProdutos(null, null, null, null, codTipoproduto, null);
 	}
 	
 	@Test

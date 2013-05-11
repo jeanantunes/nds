@@ -322,12 +322,15 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 	
 	recuperarNumeroEstudo: function(numeroEstudo){
 		
+		
 		if($("#codigoEstudo").val()==undefined && $(".pesquisaEstudo").val() == undefined){
 			
 			return;
 		}
 		
-		if ($(".pesquisaEstudo").val() != undefined) {
+		if(informacoesProdutoController.targetRecuperarEstudo){
+			$(informacoesProdutoController.targetRecuperarEstudo).val(numeroEstudo).blur();
+		}else if ($(".pesquisaEstudo").val() != undefined) {
 			
 			$(".pesquisaEstudo").trigger(jQuery.Event("change"));
 			$(".pesquisaEstudo").val(numeroEstudo);

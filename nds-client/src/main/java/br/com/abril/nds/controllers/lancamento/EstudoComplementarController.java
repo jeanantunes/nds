@@ -69,7 +69,8 @@ public class EstudoComplementarController  extends BaseController{
 		baseEstudo.setDataLncto(estudo.getDataLncto());
 		baseEstudo.setDataRclto(estudo.getDataRclto());
 		baseEstudo.setReparteLancamento(estudo.getQtdeReparte());
-
+		baseEstudo.setNumeroEdicao(estudo.getNumeroEdicao());
+		baseEstudo.setCodigoProduto(estudo.getCodigoProduto());
 		
 		
 		result.use(json()).from(baseEstudo).serialize();		

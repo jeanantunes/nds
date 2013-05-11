@@ -185,7 +185,7 @@
 				</td>
 				
 				<td style="vertical-align: top;" >
-					<fieldset style="width:385px!important; margin:0 auto!important 10px auto!important; height: 230px;" id="fieldSegmentacao">
+					<fieldset style="width:385px!important; margin:0 auto!important 10px auto!important; height: 210px;" id="fieldSegmentacao">
 						<legend>P&uacute;blico-Alvo</legend>
 						<table width="380" border="0" cellspacing="1" cellpadding="1">
 							<tr>
@@ -256,6 +256,18 @@
 										</tr>
 										
 										<tr>
+											<td><strong>Tipo Lançamento:</strong></td>
+											<td>
+												<select class="habilitarCampoInterfaceSegmentacao" name="comboClassifProd" id="comboClassifProd" style="width:150px;">
+							                        <option value="">Selecione</option>
+							                        <c:forEach varStatus="counter" var="itemClassif" items="${listaClassifProduto}">
+									                    <option value="${itemClassif.key}">${itemClassif.value}</option>
+									                </c:forEach>
+							                    </select> 
+											</td>
+										</tr>
+										
+										<tr>
 											<td><strong>Tipo Segmento:</strong></td>
 											<td>
 												<select class="habilitarCampoInterfaceSegmentacao" name="comboTipoSegmento" id="comboTipoSegmento" style="width:150px;">
@@ -267,6 +279,7 @@
 											</td>
 										</tr>
 										
+										<!-- 
 										<tr>
 											<td><strong>Tema Principal:</strong></td>
 											<td>
@@ -277,6 +290,7 @@
 									                </c:forEach>
 							                    </select> 
 											</td>
+										 -->
 										</tr>
 									</table>
 								</td>

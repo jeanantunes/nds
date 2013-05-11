@@ -132,7 +132,9 @@ public class EstudoAlgoritmoService {
 	    if (cota.isCotaSoRecebeuEdicaoAberta()) {
 		estudo.setSomatoriaReparteEdicoesAbertas(estudo.getSomatoriaReparteEdicoesAbertas().add(cota.getSomaReparteEdicoesAbertas()));
 	    }
-	    estudo.setTotalPDVs(estudo.getTotalPDVs().add(cota.getQuantidadePDVs()));
+	    if (cota.getQuantidadePDVs() != null) {
+		estudo.setTotalPDVs(estudo.getTotalPDVs().add(cota.getQuantidadePDVs()));
+	    }
 	}
     }
     

@@ -271,6 +271,9 @@ var desenglobacaoController = $.extend(true, {
 			})
 		}
 		};
+	
+	
+	$('#pesquisaPorCota').click();
 	},
 	
 	porCota : function() {
