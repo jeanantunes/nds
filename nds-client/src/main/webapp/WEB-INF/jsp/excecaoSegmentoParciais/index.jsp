@@ -146,7 +146,7 @@ function incluirSegmento() {
       
       <div class="porExcessao" id="excecaoSegmentoParciais_porExcessao" style="display:none;">
       <fieldset class="classFieldset" style="float:left; width:585px!important; margin-right:10px!important;">
-       	  <legend>Cotas que Recebem a Publicação</legend>
+       	  <legend>Cotas que Recebem a PublicaÃ§Ã£o</legend>
         
         	<table class="excessaoNaoRecebidaGrid"></table>
              <span class="bt_novos" title="Gerar Arquivo"><a id="gerarXLSPorExcecao"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
@@ -155,7 +155,7 @@ function incluirSegmento() {
         
       </fieldset>
        <fieldset class="classFieldset" style="float:left; width:330px!important;">
-       	  <legend>Cotas que Não Recebem o Segmento</legend>
+       	  <legend>Cotas que NÃ£o Recebem o Segmento</legend>
        	  <table width="276" border="0" cellpadding="2" cellspacing="1" class="filtro">
        	    <tr>
        	      <td width="33">Cota:</td>
