@@ -37,7 +37,7 @@ import br.com.abril.nds.service.ProdutoService;
  * {@link br.com.abril.nds.model.cadastro.Produto}
  * 
  * @author Discover Technology
- */
+ */ 
 @Service
 public class ProdutoServiceImpl implements ProdutoService {
 
@@ -150,9 +150,9 @@ public class ProdutoServiceImpl implements ProdutoService {
 	@Transactional(readOnly=true)
 	public Integer pesquisarCountProdutos(String codigo,
 			String produto, String fornecedor, String editor,
-			Long codigoTipoProduto) {
+			Long codigoTipoProduto, Boolean isGeracaoAutomatica) {
 				
-		return this.produtoRepository.pesquisarCountProdutos(codigo, produto, fornecedor, editor, codigoTipoProduto);
+		return this.produtoRepository.pesquisarCountProdutos(codigo, produto, fornecedor, editor, codigoTipoProduto, isGeracaoAutomatica);
 	}
 
 	@Override
@@ -298,6 +298,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 	 * @see br.com.abril.nds.service.ProdutoService#obterProdutosPelosIds(java.util.List)
 	 */
 	@Override
+	@Transactional
 	public List<Produto> obterProdutosPelosIds(List<Long> idsProdutos) {
 		
 		List<Produto> listaProdutos = new ArrayList<Produto>();
@@ -338,6 +339,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 	}
 
 	@Override
+	@Transactional
 	public List<String> verificarProdutoExiste(String... codigoProduto) {
 
 		return produtoRepository.verificarProdutoExiste(codigoProduto);
@@ -350,11 +352,9 @@ public class ProdutoServiceImpl implements ProdutoService {
 	}
 
 	@Override
+	@Transactional
 	public List<TipoClassificacaoProduto> carregarClassificacaoProduto() {
 		return tipoClassRepo.buscarTodos();
 	}
-	
-	
-	
 	
 }

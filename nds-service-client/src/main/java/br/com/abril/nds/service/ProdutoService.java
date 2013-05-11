@@ -65,7 +65,7 @@ public interface ProdutoService {
 	void removerProduto(Long id);
 
 	Integer pesquisarCountProdutos(String codigo, String produto,
-			String fornecedor, String editor, Long codigoTipoProduto);
+			String fornecedor, String editor, Long codigoTipoProduto, Boolean isGeracaoAutomatica);
 	
 	/**
 	 * Verifica se o Produto está em estoque

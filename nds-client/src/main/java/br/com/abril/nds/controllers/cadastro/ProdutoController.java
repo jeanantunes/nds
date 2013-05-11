@@ -67,7 +67,8 @@ import br.com.caelum.vraptor.view.Results;
 @Resource
 @Path("/produto")
 public class ProdutoController extends BaseController {
-
+	
+	@Autowired
 	private Result result;
 	
 	@Autowired
@@ -452,7 +453,7 @@ public class ProdutoController extends BaseController {
 			this.produtoService.pesquisarProdutos(codigo, produto, fornecedor, editor, 
 				codigoTipoProduto, sortorder, sortname, startSearch, rp, isGeracaoAutomatica);
 		
-		Integer totalResultados = this.produtoService.pesquisarCountProdutos(codigo, produto, fornecedor, editor, codigoTipoProduto);
+		Integer totalResultados = this.produtoService.pesquisarCountProdutos(codigo, produto, fornecedor, editor, codigoTipoProduto, isGeracaoAutomatica);
 		
 		this.result.use(FlexiGridJson.class).from(listaProdutos).total(totalResultados).page(page).serialize();
 	}

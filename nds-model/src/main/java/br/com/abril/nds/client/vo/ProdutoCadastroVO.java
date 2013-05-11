@@ -52,7 +52,7 @@ public class ProdutoCadastroVO implements Serializable {
 	
 	private String formatoProduto;
 	
-	private String temaPrincipal;
+//	private String temaPrincipal;
 	
 	private Origem origem;
 	
@@ -79,7 +79,8 @@ public class ProdutoCadastroVO implements Serializable {
 			String grupoEditorial, String subGrupoEditorial,
 			String tributacaoFiscal, String classeSocial, String sexo, 
 			String faixaEtaria, String formatoProduto, 
-			String temaPrincipal, String formaFisica, 
+//			String temaPrincipal, 
+			String formaFisica, 
 			Long idTipoSegmentoProduto, 
 			Origem origem, 
 			Boolean isGeracaoAutomatica,
@@ -104,7 +105,7 @@ public class ProdutoCadastroVO implements Serializable {
 		this.sexo = sexo;
 		this.faixaEtaria = faixaEtaria;
 		this.formatoProduto = formatoProduto;
-		this.temaPrincipal = temaPrincipal;
+//		this.temaPrincipal = temaPrincipal;
 		this.formaFisica=formaFisica;
 		this.idTipoSegmentoProduto = idTipoSegmentoProduto;
 		this.origem = origem;
@@ -142,7 +143,7 @@ public class ProdutoCadastroVO implements Serializable {
 			produto.getSegmentacao()!=null?(produto.getSegmentacao().getSexo()!=null?produto.getSegmentacao().getSexo().name():""):"",
 			produto.getSegmentacao()!=null?(produto.getSegmentacao().getFaixaEtaria()!=null?produto.getSegmentacao().getFaixaEtaria().name():""):"",
 			produto.getSegmentacao()!=null?(produto.getSegmentacao().getFormatoProduto()!=null?produto.getSegmentacao().getFormatoProduto().name():""):"",
-			produto.getSegmentacao()!=null?(produto.getSegmentacao().getTemaPrincipal()!=null?produto.getSegmentacao().getTemaPrincipal().name():""):"",
+//			produto.getSegmentacao()!=null?(produto.getSegmentacao().getTemaPrincipal()!=null?produto.getSegmentacao().getTemaPrincipal().name():""):"",
 			produto.getSegmentacao()!=null?(produto.getSegmentacao().getFormaFisica()!=null?produto.getSegmentacao().getFormaFisica().name():""):"",											
 			(produto.getTipoSegmentoProduto()!=null)?produto.getTipoSegmentoProduto().getId():null,
 			produto.getOrigem(),
@@ -427,19 +428,19 @@ public class ProdutoCadastroVO implements Serializable {
 		this.formatoProduto = formatoProduto;
 	}
 
-	/**
-	 * @return the temaPrincipal
-	 */
-	public String getTemaPrincipal() {
-		return temaPrincipal;
-	}
-
-	/**
-	 * @param temaPrincipal the temaPrincipal to set
-	 */
-	public void setTemaPrincipal(String temaPrincipal) {
-		this.temaPrincipal = temaPrincipal;
-	}
+//	/**
+//	 * @return the temaPrincipal
+//	 */
+//	public String getTemaPrincipal() {
+//		return temaPrincipal;
+//	}
+//
+//	/**
+//	 * @param temaPrincipal the temaPrincipal to set
+//	 */
+//	public void setTemaPrincipal(String temaPrincipal) {
+//		this.temaPrincipal = temaPrincipal;
+//	}
 
 	public Origem getOrigem() {
 		return origem;
