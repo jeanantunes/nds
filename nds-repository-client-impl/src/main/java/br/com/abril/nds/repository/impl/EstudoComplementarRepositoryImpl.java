@@ -47,15 +47,15 @@ public class EstudoComplementarRepositoryImpl extends AbstractRepositoryModel<Es
 		
 		if (estudoComplementarVO.getTipoSelecao()==1){
 			
-			sqlTipoSelecao.append( "Select ranking_segmento.COTA_ID FROM ranking_segmento ");
-			sqlTipoSelecao.append( "                  where ranking_segmento.RANKING_SEGMENTO_GERADOS_ID = (select max(ranking_segmento_gerados.id)  from ranking_segmento_gerados) ");
+			sqlTipoSelecao.append( " Select distinct ranking_segmento.COTA_ID FROM ranking_segmento ");
+			sqlTipoSelecao.append( "                  where (select max(ranking_segmento.data_geracao_rank)  from ranking_segmento) ");
 			
 			
 		}
 		
 		if (estudoComplementarVO.getTipoSelecao()==2){
-			sqlTipoSelecao.append( "Select ranking_faturamento.COTA_ID FROM ranking_faturamento ");
-			sqlTipoSelecao.append( "                  where ranking_faturamento.RANKING_FATURAMENTO_GERADOS_ID = (select max(ranking_faturamento_gerados.id)  from ranking_faturamento_gerados) ");
+			sqlTipoSelecao.append( " Select distinct ranking_faturamento.COTA_ID FROM ranking_faturamento ");
+			sqlTipoSelecao.append( "                  where (select max(ranking_faturamento.data_geracao_rank)  from ranking_faturamento) ");
 			
 			
 		}

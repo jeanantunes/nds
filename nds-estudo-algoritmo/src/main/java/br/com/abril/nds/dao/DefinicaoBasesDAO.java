@@ -33,7 +33,6 @@ public class DefinicaoBasesDAO {
 	@Value("#{query_estudo.queryLancamentosAnosAnterioresVeraneio}")
 	private String queryLancamentosAnosAnterioresVeraneio;
 
-	private static final String LANCAMENTO_PARCIAL = "PARCIAL";
 	private static final String PRODUTO_COLECIONAVEL = "COLECIONAVEL";
 	private static final String STATUS_FECHADO = "FECHADO";
 	private static final String STATUS_RECOLHIDO = "RECOLHIDO";

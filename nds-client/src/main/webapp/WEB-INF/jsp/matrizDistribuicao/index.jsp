@@ -1,4 +1,3 @@
-<head>
 <style>
 .linkDisabled {
 	cursor: default;
@@ -81,9 +80,7 @@ var lancamentosSelecionados = [];
 
 </style>
 
-</head>
 
-<body>
 
 <div id="telasAuxiliaresContent"/>
 <div id="matrizDistribuicaoContent">
@@ -130,7 +127,7 @@ var lancamentosSelecionados = [];
 			   	        <td width="30" align="center">&nbsp;</td>
 			   	        <td ><span class="bt_novos" title="Pesquisar">   
 						<!-- Pesquisar -->
-							<a id="linkPesquisar" href="javascript:;" onclick="matrizDistribuicao.pesquisar();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span>
+							<input type='image' id="linkPesquisar" onclick="matrizDistribuicao.pesquisar();" src="${pageContext.request.contextPath}/images/ico_pesquisar.png"/>
 					</td>
 		          </tr>
 		        </table>
@@ -217,7 +214,7 @@ var lancamentosSelecionados = [];
 							</td>
 							<td>
 								<span class="bt_novos" title="Imprimir">
-									<a id="linkImprimir" href="${pageContext.request.contextPath}/matrizLancamento/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+									<a id="linkImprimir" href="${pageContext.request.contextPath}/matrizDistribuicao/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
 								    	<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" >Imprimir</img>
 							    	</a>
 								</span>
@@ -351,4 +348,3 @@ var lancamentosSelecionados = [];
 		</div>
 		</form>
 </div>
-</body>

@@ -304,12 +304,13 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		ProdutoEdicao produtoEdicao = lancamento.getProdutoEdicao();
 		
 		lancamentoRepository.remover(lancamento);
-		produtoEdicaoRepository.remover(produtoEdicao);
 	}
 	
 	@Override
 	@Transactional
 	public void finalizarMatrizDistribuicao(FiltroDistribuicaoDTO filtro, List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
+		 
+		
 		
 		List<ProdutoDistribuicaoVO> listDistrib = produtoDistribuicaoVOs;
 		

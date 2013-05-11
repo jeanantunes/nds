@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.EstudoComplementarVO;
 import br.com.abril.nds.dto.EstudoComplementarDTO;
+import br.com.abril.nds.dto.InformacoesProdutoDTO;
+import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -19,6 +21,7 @@ import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.repository.EstudoComplementarRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
+import br.com.abril.nds.repository.InformacoesProdutoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.EstudoComplementarService;
@@ -43,6 +46,8 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
     @Autowired
     EstudoComplementarRepository estudoComplementarRepository;
 
+    @Autowired
+    InformacoesProdutoRepository informacoesProdutoRepository;
     
 	@Override
 	@Transactional(readOnly = true)
@@ -58,17 +63,23 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 		
 //	    Produto produto = produtoRepository.buscarPorId(pe.getId());
 	    
-	   
 	    
+		FiltroInformacoesProdutoDTO dto = new FiltroInformacoesProdutoDTO();
+		dto.setCodProduto(pe.getProduto().getCodigo());
+		dto.setNumeroEdicao(pe.getNumeroEdicao());
+		dto.setNomeProduto(pe.getProduto().getNome());
+		
+		List<InformacoesProdutoDTO> buscarProdutos = informacoesProdutoRepository.buscarProdutos(dto);
+		
 		EstudoComplementarDTO estudoComplDto = new EstudoComplementarDTO();
-		
-		
 		
 		estudoComplDto.setIdEstudo(estudo.getId());
 		estudoComplDto.setIdEstudoComplementar(estudoComplementarRepository.gerarNumeroEstudoComplementar());
 		estudoComplDto.setIdProduto(pe.getProduto().getId());
 		estudoComplDto.setNomeProduto(pe.getProduto().getNome());
 		estudoComplDto.setIdEdicao(pe.getId());
+		estudoComplDto.setNumeroEdicao(pe.getNumeroEdicao());
+		estudoComplDto.setCodigoProduto(pe.getProduto().getCodigo());
 		estudoComplDto.setNomeClassificacao(pe.getProduto().getTipoClassificacaoProduto().getDescricao()==null?"":pe.getProduto().getTipoClassificacaoProduto().getDescricao()); 
 		estudoComplDto.setIdPublicacao(pe.getNumeroEdicao());
 		estudoComplDto.setIdPEB(pe.getProduto().getPeb());
@@ -78,11 +89,10 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 		
 	   
 	    estudoComplDto.setQtdeReparte (estudo.getQtdeReparte());
-		String dataLancamento = new SimpleDateFormat("dd/MM/yyyy").format(estudo.getDataLancamento());  
-		estudoComplDto.setDataLncto(dataLancamento);
+		String dataLancamento = new SimpleDateFormat("dd/MM/yyyy").format(estudo.getDataLancamento());
 		
-		//estudoComplDto.setDataRclto(estudo.getLancamento().getDataRecolhimentoDistribuidor().toString());
-
+		estudoComplDto.setDataLncto(dataLancamento);
+		estudoComplDto.setDataRclto(buscarProdutos.get(0).getDataRcto());
 		
 		return estudoComplDto;
 	}
@@ -110,6 +120,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 		estudo1.setDataCadastro(estudo.getDataCadastro());
 		estudo1.setDataLancamento(estudo.getDataLancamento());
 		estudo1.setProdutoEdicao(estudo.getProdutoEdicao());
+		
 		estudo1.setQtdeReparte(estudo.getQtdeReparte());
 		estudo1.setStatus(estudo.getStatus());
 

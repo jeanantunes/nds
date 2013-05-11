@@ -91,13 +91,17 @@ public class CaracteristicaDistribuicaoDTO implements Serializable{
 		return nomeEditor;
 	}
 	public void setNomeEditor(String nomeEditor) {
-		this.nomeEditor = nomeEditor;
+		if(nomeEditor==null){
+			this.nomeEditor="";
+		}else{
+			this.nomeEditor = nomeEditor;
+		}
 	}
 	public String getChamadaCapa() {
 		return chamadaCapa;
 	}
 	public void setChamadaCapa(String chamadaCapa) {
-		if(this.chamadaCapa==null){
+		if(chamadaCapa==null){
 			this.chamadaCapa="";
 		}else{
 			this.chamadaCapa = chamadaCapa;

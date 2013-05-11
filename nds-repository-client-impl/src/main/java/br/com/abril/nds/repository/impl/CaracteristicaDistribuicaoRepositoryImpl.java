@@ -94,7 +94,7 @@ public class CaracteristicaDistribuicaoRepositoryImpl   implements
 			sql.append(" and upper(bri.DESCRICAO_BRINDE) = upper('").append(filtro.getBrinde()).append("')");
 		}
 		if(filtro.getFaixaPrecoDe()!=null && filtro.getFaixaPrecoDe()!=""){
-			sql.append(" and ped.PRECO_VENDA >" ).append(filtro.getFaixaPrecoDe()).append("");
+			sql.append(" and ped.PRECO_VENDA >=" ).append(filtro.getFaixaPrecoDe()).append("");
 		}
 		if(filtro.getFaixaPrecoAte()!=null && filtro.getFaixaPrecoAte()!=""){
 			sql.append(" and ped.PRECO_VENDA <=" ).append(filtro.getFaixaPrecoAte()).append("");
@@ -103,54 +103,39 @@ public class CaracteristicaDistribuicaoRepositoryImpl   implements
 		
 		//tipo pesquisa publicacao
 		if(filtro.getNomeProduto() !=null && filtro.getNomeProduto()!=""){
-				switch (filtro.getOpcaoFiltroPublicacao()) {
-				case 1:
-					sql.append(" and upper(pro.nome) like ").append(" upper ('").append(filtro.getNomeProduto()).append("%')"); //inicia com
-					break;
-				case 2:
-					sql.append(" and upper(pro.nome) like ").append(" upper ('%").append(filtro.getNomeProduto()).append("%')");//contem
-					break;
-				case 3:
+				if(filtro.getOpcaoFiltroPublicacao()){
+					//exato
 					sql.append(" and upper(pro.nome) = ").append(" upper ('").append(filtro.getNomeProduto()).append("')");//exato
-					break;
+				}else{
+					//contem
+					sql.append(" and upper(pro.nome) like ").append(" upper ('%").append(filtro.getNomeProduto()).append("%')");//contem
 				}
+				
 		}	
 		//tipo pesquisa editor
 		if(filtro.getNomeEditor()!=null && filtro.getNomeEditor()!="")	{	
-				switch (filtro.getOpcaoFiltroEditor()) {
-				case 1:
-					//inicia com
-					sql.append(" and upper(pes2.NOME_FANTASIA) like").append(" upper('").append(filtro.getNomeEditor()).append("%')");
-					break;
-				case 2:
-					//contem
-					sql.append(" and upper(pes2.NOME_FANTASIA) like").append(" upper('%").append(filtro.getNomeEditor()).append("%')");
-					break;
-				case 3:
+				if(filtro.getOpcaoFiltroEditor()){
 					//exato
 					sql.append(" and upper(pes2.NOME_FANTASIA) =").append(" upper('").append(filtro.getNomeEditor()).append("')");
-					break;
+				}else{
+					//contem
+					sql.append(" and upper(pes2.NOME_FANTASIA) like").append(" upper('%").append(filtro.getNomeEditor()).append("%')");
 				}
+			
 		}		
 		
 		//chamada de capa
 		if(filtro.getChamadaCapa()!=null && filtro.getChamadaCapa()!=""){
-				switch (filtro.getOpcaoFiltroChamadaCapa()) {
-				case 1:
-					//inicia com
-					sql.append(" and upper(pes2.NOME_FANTASIA) like").append(" upper('").append(filtro.getChamadaCapa()).append("%')");
-					break;
-				case 2:
-					//contem
-					sql.append(" and upper(pes2.NOME_FANTASIA) like").append(" upper('%").append(filtro.getChamadaCapa()).append("%')");
-					break;
-				case 3:
+				if(filtro.getOpcaoFiltroChamadaCapa()){
 					//exato
-					sql.append(" and upper(pes2.NOME_FANTASIA) =").append(" upper('").append(filtro.getChamadaCapa()).append("')");
-					break;
+					sql.append(" and upper(ped.CHAMADA_CAPA) =").append(" upper('").append(filtro.getChamadaCapa()).append("')");
+				}else{
+					//contem
+					sql.append(" and upper(ped.CHAMADA_CAPA) like").append(" upper('%").append(filtro.getChamadaCapa()).append("%')");
 				}
+				
 		}
-				sql.append(" order by pro.nome asc, ped.NUMERO_EDICAO desc ");
+				sql.append(" order by pro.nome ASC, ped.NUMERO_EDICAO DESC ");
 				Query  query = getSession().createSQLQuery(sql.toString()); 
 				 query.setResultTransformer(new AliasToBeanResultTransformer(CaracteristicaDistribuicaoDTO.class));
 				 configurarPaginacaoPesquisaDetalhe(filtro,query);

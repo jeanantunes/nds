@@ -24,105 +24,107 @@ import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 @Repository
 public class EstudoDAO {
 
-	@Autowired
-	private NamedParameterJdbcTemplate jdbcTemplate;
+    @Autowired
+    private NamedParameterJdbcTemplate jdbcTemplate;
 
-	@Value("#{query_estudo.insertEstudo}")
-	private String insertEstudo;
+    @Value("#{query_estudo.insertEstudo}")
+    private String insertEstudo;
 
-	@Value("#{query_estudo.insertEstudoCotas}")
-	private String insertEstudoCotas;
+    @Value("#{query_estudo.insertEstudoCotas}")
+    private String insertEstudoCotas;
 
-	@Value("#{query_estudo.insertProdutoEdicao}")
-	private String insertProdutoEdicao;
+    @Value("#{query_estudo.insertProdutoEdicao}")
+    private String insertProdutoEdicao;
 
-	@Value("#{query_estudo.insertProdutoEdicaoBase}")
-	private String insertProdutoEdicaoBase;
-	
-	@Value("#{query_estudo.queryParametrosDistribuidor}")
-	private String queryParametrosDistribuidor;
+    @Value("#{query_estudo.insertProdutoEdicaoBase}")
+    private String insertProdutoEdicaoBase;
 
-	@Value("#{query_estudo.queryPercentuaisExcedentes}")
-	private String queryPercentuaisExcedentes;
+    @Value("#{query_estudo.queryParametrosDistribuidor}")
+    private String queryParametrosDistribuidor;
 
-	public void gravarEstudo(EstudoTransient estudo) {
-		List<EstudoTransient> estudos = new ArrayList<>();
-		estudos.add(estudo);
-		Long estudoId = null;
-		try {
-			KeyHolder keyHolder = new GeneratedKeyHolder();
-			SqlParameterSource paramSource = new BeanPropertySqlParameterSource(estudo);
-			jdbcTemplate.update(insertEstudo, paramSource, keyHolder);
-			estudoId = keyHolder.getKey().longValue();
-			estudo.setId(estudoId);
-		} catch (Exception e) {
-			e.printStackTrace();
+    @Value("#{query_estudo.queryPercentuaisExcedentes}")
+    private String queryPercentuaisExcedentes;
+
+    public void gravarEstudo(EstudoTransient estudo) {
+	List<EstudoTransient> estudos = new ArrayList<>();
+	estudos.add(estudo);
+	Long estudoId = null;
+	try {
+	    KeyHolder keyHolder = new GeneratedKeyHolder();
+	    SqlParameterSource paramSource = new BeanPropertySqlParameterSource(estudo);
+	    jdbcTemplate.update(insertEstudo, paramSource, keyHolder);
+	    estudoId = keyHolder.getKey().longValue();
+	    estudo.setId(estudoId);
+	} catch (Exception e) {
+	    e.printStackTrace();
+	}
+
+	if (estudoId != null) {
+	    List<ProdutoEdicaoEstudo> listaProdutoEdicao = new ArrayList<>();
+	    for (CotaEstudo cota : estudo.getCotas()) {
+		cota.setIdEstudo(estudoId);
+		if (cota.getEdicoesRecebidas() != null) {
+		    for (ProdutoEdicaoEstudo produto : cota.getEdicoesRecebidas()) {
+			produto.setIdEstudo(estudoId);
+			produto.setIdCota(cota.getId());
+			listaProdutoEdicao.add(produto);
+		    }
 		}
+	    }
+	    gravarCotas(estudo.getCotas());
 
-		if (estudoId != null) {
-			List<ProdutoEdicaoEstudo> listaProdutoEdicao = new ArrayList<>();
-			for (CotaEstudo cota : estudo.getCotas()) {
-				cota.setIdEstudo(estudoId);
-				for (ProdutoEdicaoEstudo produto : cota.getEdicoesRecebidas()) {
-					produto.setIdEstudo(estudoId);
-					produto.setIdCota(cota.getId());
-					listaProdutoEdicao.add(produto);
-				}
-			}
-			gravarCotas(estudo.getCotas());
+	    for (ProdutoEdicaoEstudo prod : estudo.getEdicoesBase()) {
+		prod.setIdEstudo(estudoId);
+	    }
+	    gravarProdutoEdicaoBase(estudo.getEdicoesBase());
+	    gravarProdutoEdicao(listaProdutoEdicao);
+	}
+    }
 
-			for (ProdutoEdicaoEstudo prod : estudo.getEdicoesBase()) {
-				prod.setIdEstudo(estudoId);
-			}
-			gravarProdutoEdicaoBase(estudo.getEdicoesBase());
-			gravarProdutoEdicao(listaProdutoEdicao);
-		}
+    public void gravarCotas(final List<CotaEstudo> cotas) {
+	SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(cotas.toArray());
+	jdbcTemplate.batchUpdate(insertEstudoCotas, batch);
+    }
+
+    public void gravarProdutoEdicao(List<ProdutoEdicaoEstudo> produtosEdicao) {
+	SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(produtosEdicao.toArray());
+	jdbcTemplate.batchUpdate(insertProdutoEdicao, batch);
+    }
+
+    public void gravarProdutoEdicaoBase(List<ProdutoEdicaoEstudo> produtosEdicaoBase) {
+	SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(produtosEdicaoBase.toArray());
+	jdbcTemplate.batchUpdate(insertProdutoEdicaoBase, batch);
+    }
+
+    public void carregarPercentuaisExcedente(EstudoTransient estudo) {
+
+	SqlRowSet rs = jdbcTemplate.queryForRowSet(queryPercentuaisExcedentes, new HashMap<String, Object>());
+
+	Map<String, PercentualExcedenteEstudo> mapPercentualExcedente = new HashMap<>();
+
+	while (rs.next()) {
+	    PercentualExcedenteEstudo percentualExcedente = new PercentualExcedenteEstudo();
+	    percentualExcedente.setEficiencia(rs.getString("EFICIENCIA"));
+	    percentualExcedente.setPdv(rs.getBigDecimal("PDV"));
+	    percentualExcedente.setVenda(rs.getBigDecimal("VENDA"));
+
+	    mapPercentualExcedente.put(percentualExcedente.getEficiencia(), percentualExcedente);
 	}
 
-	public void gravarCotas(final List<CotaEstudo> cotas) {
-		SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(cotas.toArray());
-		jdbcTemplate.batchUpdate(insertEstudoCotas, batch);
-	}
+	estudo.setPercentualProporcaoExcedente(mapPercentualExcedente);
+    }
 
-	public void gravarProdutoEdicao(List<ProdutoEdicaoEstudo> produtosEdicao) {
-		SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(produtosEdicao.toArray());
-		jdbcTemplate.batchUpdate(insertProdutoEdicao, batch);
-	}
+    public void carregarParametrosDistribuidor(EstudoTransient estudo) {
 
-	public void gravarProdutoEdicaoBase(List<ProdutoEdicaoEstudo> produtosEdicaoBase) {
-		SqlParameterSource[] batch = SqlParameterSourceUtils.createBatch(produtosEdicaoBase.toArray());
-		jdbcTemplate.batchUpdate(insertProdutoEdicaoBase, batch);
-	}
+	SqlRowSet rs = jdbcTemplate.queryForRowSet(queryParametrosDistribuidor, new HashMap<String, Object>());
 
-	public void carregarPercentuaisExcedente(EstudoTransient estudo) {
-		
-		SqlRowSet rs = jdbcTemplate.queryForRowSet(queryPercentuaisExcedentes, new HashMap<String, Object>());
-		
-		Map<String, PercentualExcedenteEstudo> mapPercentualExcedente = new HashMap<>();
-		
-		while (rs.next()) {
-			PercentualExcedenteEstudo percentualExcedente = new PercentualExcedenteEstudo();
-			percentualExcedente.setEficiencia(rs.getString("EFICIENCIA"));
-			percentualExcedente.setPdv(rs.getBigDecimal("PDV"));
-			percentualExcedente.setVenda(rs.getBigDecimal("VENDA"));
-			
-			mapPercentualExcedente.put(percentualExcedente.getEficiencia(), percentualExcedente);
-		}
-		
-		estudo.setPercentualProporcaoExcedente(mapPercentualExcedente);
+	while(rs.next()) {
+	    estudo.setComplementarAutomatico(rs.getBoolean("COMPLEMENTAR_AUTOMATICO"));
+	    estudo.setGeracaoAutomatica(rs.getBoolean("GERACAO_AUTOMATICA_ESTUDO"));
+	    estudo.setPercentualMaximoFixacao(rs.getBigDecimal("PERCENTUAL_MAXIMO_FIXACAO"));
+	    estudo.setPracaVeraneio(rs.getBoolean("PRACA_VERANEIO"));
+	    estudo.setVendaMediaMais(rs.getBigDecimal("VENDA_MEDIA_MAIS").toBigInteger());
+
 	}
-	
-	public void carregarParametrosDistribuidor(EstudoTransient estudo) {
-		
-		SqlRowSet rs = jdbcTemplate.queryForRowSet(queryParametrosDistribuidor, new HashMap<String, Object>());
-		
-		while(rs.next()) {
-			estudo.setComplementarAutomatico(rs.getBoolean("COMPLEMENTAR_AUTOMATICO"));
-			estudo.setGeracaoAutomatica(rs.getBoolean("GERACAO_AUTOMATICA_ESTUDO"));
-			estudo.setPercentualMaximoFixacao(rs.getBigDecimal("PERCENTUAL_MAXIMO_FIXACAO"));
-			estudo.setPracaVeraneio(rs.getBoolean("PRACA_VERANEIO"));
-			estudo.setVendaMediaMais(rs.getBigDecimal("VENDA_MEDIA_MAIS").toBigInteger());
-			
-		}
-	}
+    }
 }

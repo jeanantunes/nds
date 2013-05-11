@@ -12,7 +12,7 @@ public class FiltroInformacoesProdutoDTO extends FiltroDTO implements Serializab
 	private String codProduto;
 	private String nomeProduto;
 	private Long idTipoClassificacaoProd;
-
+	private Long numeroEdicao;
 	
 	public String getCodProduto() {
 		return codProduto;
@@ -33,4 +33,12 @@ public class FiltroInformacoesProdutoDTO extends FiltroDTO implements Serializab
 	public void setIdTipoClassificacaoProd(Long idTipoClassificacaoProd) {
 		this.idTipoClassificacaoProd = idTipoClassificacaoProd;
 	}
+	public Long getNumeroEdicao() {
+		return numeroEdicao;
+	}
+	public void setNumeroEdicao(Long numeroEdicao) {
+		this.numeroEdicao = numeroEdicao;
+	}
+	
+	
 }

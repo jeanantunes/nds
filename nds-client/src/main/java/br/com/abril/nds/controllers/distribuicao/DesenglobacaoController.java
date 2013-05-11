@@ -63,7 +63,6 @@ public class DesenglobacaoController extends BaseController {
 	@Post
 	public void pesquisaPrincipal(FiltroDesenglobacaoDTO filtro, String sortorder, String sortname, int page, int rp ){
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
-		validarFiltroDesenglobacao(filtro);
 		session.setAttribute("filtroDesengloba", filtro);
 		
 		TableModel<CellModelKeyValue<DesenglobacaoDTO>> tableModel = montarCotasDesenglobadas(filtro);
@@ -75,7 +74,13 @@ public class DesenglobacaoController extends BaseController {
 	}
 
 	private TableModel<CellModelKeyValue<DesenglobacaoDTO>> montarCotasDesenglobadas(FiltroDesenglobacaoDTO dto) {
-		List<DesenglobacaoDTO> cotasDesenglobadas = desenglobacaoService.obterDesenglobacaoPorCota(dto.getCotaDto().getNumeroCota().longValue());
+		
+		Long longValue = null;
+		if(dto.getCotaDto().getNumeroCota()!=null){
+			longValue = dto.getCotaDto().getNumeroCota().longValue();
+		}
+		
+		List<DesenglobacaoDTO> cotasDesenglobadas = desenglobacaoService.obterDesenglobacaoPorCota(longValue);
 		dto.getPaginacao().setQtdResultadosTotal(cotasDesenglobadas.size());
 		
 		if (cotasDesenglobadas == null || cotasDesenglobadas.isEmpty()) {
