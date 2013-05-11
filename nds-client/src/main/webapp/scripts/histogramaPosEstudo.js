@@ -160,9 +160,10 @@ var histogramaPosEstudoController = $.extend(true, {
 					"Confirmar": function () {
 						$( this ).dialog( "close" );
 						
-						var faixasReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid;
-						
-						faixasReparte = [];
+						var faixasReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid,
+							faixasReparte = [],
+							row = {},
+							faixa;
 						
 						faixasReparte.push({
 								name : "estudoId",
@@ -172,7 +173,11 @@ var histogramaPosEstudoController = $.extend(true, {
 						for ( var int = 0; int < faixasReparteGrid.tableModel.rows.length; int++) {
 							row = faixasReparteGrid.tableModel.rows[int];
 							
-							faixa = row.cell.faixaReparteDe.replace(" a","-") + $(row.cell.faixaReparteAte).val();
+							if (row.id === 1 ) {
+								faixa = row.cell.faixaReparteDe + "-" + $(row.cell.faixaReparteAte).val();
+							}else{
+								faixa = row.cell.faixaReparteDe.replace(" a","-") + $(row.cell.faixaReparteAte).val();
+							}
 							
 							faixasReparte.push({
 								name : "faixasReparte",
