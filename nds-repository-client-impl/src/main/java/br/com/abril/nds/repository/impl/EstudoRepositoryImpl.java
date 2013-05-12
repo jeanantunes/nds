@@ -123,7 +123,7 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		sql.append(" SELECT ");
 		sql.append("   qtdReparteDistribuidor, ");
 		sql.append("   qtdRepartePromocional, ");
-		sql.append("   qtdSobraEstudo, ");
+		sql.append("   (qtdReparteDistribuidor - qtdRepartePromocional - qtdReparteDistribuidoEstudo) as qtdSobraEstudo, ");
 		sql.append("   qtdReparteDistribuidoEstudo, ");
 		sql.append("   qtdCotasAtivas, ");
 		sql.append("   qtdCotasRecebemReparte, ");
@@ -140,11 +140,10 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		sql.append("     SELECT ");
 		sql.append("       (SELECT lancamento.reparte FROM estudo INNER JOIN lancamento ON estudo.lancamento_id = lancamento.id WHERE estudo.id = :estudoId ) AS qtdReparteDistribuidor, ");
 		sql.append("       (SELECT reparte_promocional FROM estudo INNER JOIN lancamento ON estudo.lancamento_id = lancamento.id WHERE estudo.id = :estudoId ) AS qtdRepartePromocional, ");
-		sql.append("       (SELECT sobra FROM estudo WHERE estudo.id = :estudoId ) AS qtdSobraEstudo, ");
-		sql.append("       (SELECT reparte_distribuir FROM estudo WHERE estudo.id = :estudoId ) AS qtdReparteDistribuidoEstudo, ");
+//		sql.append("       (SELECT sobra FROM estudo WHERE estudo.id = :estudoId ) AS qtdSobraEstudo, ");
+		sql.append("       (SELECT sum(reparte) FROM estudo_cota WHERE estudo_id = :estudoId ) AS qtdReparteDistribuidoEstudo, ");
 		sql.append("       (SELECT count(id) FROM cota WHERE SITUACAO_CADASTRO = 'ATIVO') AS qtdCotasAtivas, ");
-		sql.append("       (SELECT count(estudo_cota.cota_id) FROM estudo_cota"); 
-//		sql.append("        	INNER JOIN movimento_estoque_cota ON movimento_estoque_cota.estudo_cota_id = estudo_cota.ID ");
+		sql.append("       (SELECT count(DISTINCT estudo_cota.cota_id) FROM estudo_cota"); 
 		sql.append(" 				WHERE ESTUDO_ID = :estudoId) AS qtdCotasRecebemReparte, ");
 		sql.append("       (SELECT COUNT(id) FROM estudo_cota WHERE classificacao IN ('CP') and estudo_id = :estudoId ) AS qtdCotasAdicionadasPelaComplementarAutomatica, ");
 		sql.append(" 	   IFNULL((SELECT MIN(reparte) FROM estudo_cota WHERE estudo_id = :estudoId ),0) AS qtdReparteMinimoEstudo, ");
