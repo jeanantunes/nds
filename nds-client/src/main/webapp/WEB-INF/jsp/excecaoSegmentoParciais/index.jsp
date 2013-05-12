@@ -90,9 +90,9 @@ function incluirSegmento() {
    	    
 	        <table width="950" border="0" cellspacing="2" cellpadding="2" class="filtro">
 	          <tr>
-	            <td width="20"><input type="radio" name="tipoExcecao" id="tipoExcecaoSegmento" checked="checked" /></td>
+	            <td width="20"><input type="radio" name="tipoExcecao" id="tipoExcecaoSegmento" checked="checked" class="pesquisaPorSegmento"/></td>
 	            <td width="188">Por Exceção Segmento Cota</td> 
-	            <td width="20"><input type="radio" name="tipoExcecao" id="tipoExcecaoSegmento" /></td>
+	            <td width="20"><input type="radio" name="tipoExcecao" id="tipoExcecaoSegmento" class="pesquisaPorParcial"/></td>
 	            <td width="696">Por Exceção de Parciais</td>
 	          </tr>
 	        </table>
@@ -146,7 +146,7 @@ function incluirSegmento() {
       
       <div class="porExcessao" id="excecaoSegmentoParciais_porExcessao" style="display:none;">
       <fieldset class="classFieldset" style="float:left; width:585px!important; margin-right:10px!important;">
-       	  <legend>Cotas que recebem Publicação Parcial</legend>
+       	  <legend id="legendPorExcecaoRecebe"></legend>
         
         	<table class="excessaoNaoRecebidaGrid"></table>
              <span class="bt_novos" title="Gerar Arquivo"><a id="gerarXLSPorExcecao"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
@@ -155,7 +155,7 @@ function incluirSegmento() {
         
       </fieldset>
        <fieldset class="classFieldset" style="float:left; width:330px!important;">
-       	  <legend>Cotas que não recebem Publicação Parcial</legend>
+       	  <legend id="legendPorExcecaoNaoRecebe"></legend>
        	  <table width="276" border="0" cellpadding="2" cellspacing="1" class="filtro">
        	    <tr>
        	      <td width="33">Cota:</td>
@@ -179,7 +179,7 @@ function incluirSegmento() {
       
       <div class="porCota" id="excecaoSegmentoParciais_porCota" style="display:none;">
       <fieldset class="classFieldset" style="float:left; width:510px!important; margin-right:10px!important;">
-       	  <legend>Produtos Parciais Recebidos</legend>
+       	  <legend id="legendPorCotaRecebe"></legend>
         
         	<table class="excessaoCotaGrid" ></table>
              <span class="bt_novos" title="Gerar Arquivo"><a id="gerarXLSPorCota"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
@@ -189,7 +189,7 @@ function incluirSegmento() {
       </fieldset>
       
       <fieldset class="classFieldset" style="float:left; width:430px!important;">
-       	  <legend>Produtos Parciais não Recebidos</legend>
+       	  <legend id="legendPorCotaNaoRecebe"></legend>
        	  <table width="312" border="0" cellpadding="2" cellspacing="1" class="filtro">
        	    <tr>
        	      <td width="45">
