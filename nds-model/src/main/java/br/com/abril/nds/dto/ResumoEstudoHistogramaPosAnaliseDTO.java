@@ -6,18 +6,19 @@ import java.math.BigInteger;
 public class ResumoEstudoHistogramaPosAnaliseDTO {
 
 	private BigInteger 
-					   qtdSobraEstudo,
 					   qtdCotasAtivas, 
 					   qtdCotasRecebemReparte,
 					   qtdCotasAdicionadasPelaComplementarAutomatica,
 					   qtdReparteMinimoSugerido,
-					   qtdReparteDistribuidoEstudo,
 					   qtdReparteMinimoEstudo;
 			
-	private BigDecimal abrangenciaEstudo,
+	private BigDecimal 
+					   abrangenciaEstudo,
+					   qtdSobraEstudo,
 					   abrangenciaSugerida,
 					   abrangenciaDeVenda,
 					   qtdRepartePromocional,
+					   qtdReparteDistribuidoEstudo,
 					   reparteDistribuido,
 					   reparteMedioCota,
 					   qtdReparteDistribuidor;
@@ -30,12 +31,12 @@ public class ResumoEstudoHistogramaPosAnaliseDTO {
 		this.qtdReparteDistribuidor = qtdReparteDistribuidor;
 	}
 
-	public BigInteger getQtdReparteDistribuidoEstudo() {
+	public BigDecimal getQtdReparteDistribuidoEstudo() {
 		return qtdReparteDistribuidoEstudo;
 	}
 
 	public void setQtdReparteDistribuidoEstudo(
-			BigInteger qtdReparteDistribuidoEstudo) {
+			BigDecimal qtdReparteDistribuidoEstudo) {
 		this.qtdReparteDistribuidoEstudo = qtdReparteDistribuidoEstudo;
 	}
 
@@ -112,11 +113,11 @@ public class ResumoEstudoHistogramaPosAnaliseDTO {
 		this.qtdRepartePromocional = qtdRepartePromocional;
 	}
 
-	public BigInteger getQtdSobraEstudo() {
+	public BigDecimal getQtdSobraEstudo() {
 		return qtdSobraEstudo;
 	}
 
-	public void setQtdSobraEstudo(BigInteger qtdSobraEstudo) {
+	public void setQtdSobraEstudo(BigDecimal qtdSobraEstudo) {
 		this.qtdSobraEstudo = qtdSobraEstudo;
 	}
 
