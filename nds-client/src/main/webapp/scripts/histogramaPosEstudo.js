@@ -43,6 +43,18 @@ var histogramaPosEstudoController = $.extend(true, {
 		return ret;	
 	},
 	
+	formatarColunasGrid : function formatarColunasGrid(rowCell){
+		rowCell.reparteTotalFormatado = formatarMilhar(Math.round(rowCell.reparteTotalFormatado));
+		rowCell.vendaNominalFormatado = formatarMilhar(Math.round(rowCell.vendaNominalFormatado));
+		rowCell.qtdCotasFormatado = formatarMilhar(rowCell.qtdCotasFormatado);
+		rowCell.qtdCotaPossuemReparteMenorVendaFormatado = formatarMilhar(rowCell.qtdCotaPossuemReparteMenorVendaFormatado);
+		rowCell.encalheMedioFormatado = floatToPrice(rowCell.encalheMedioFormatado);
+		rowCell.participacaoReparteFormatado = floatToPrice(rowCell.participacaoReparteFormatado);
+		rowCell.reparteMedioFormatado = floatToPrice(rowCell.reparteMedioFormatado);
+		rowCell.vendaMediaFormatado = floatToPrice(rowCell.vendaMediaFormatado);
+		rowCell.vendaPercentFormatado = floatToPrice(rowCell.vendaPercentFormatado);
+	},
+	
 	init : function () {
 
 		var flexGridService = new FlexGridService();
@@ -148,9 +160,10 @@ var histogramaPosEstudoController = $.extend(true, {
 					"Confirmar": function () {
 						$( this ).dialog( "close" );
 						
-						var faixasReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid;
-						
-						faixasReparte = [];
+						var faixasReparteGrid = histogramaPosEstudoController.Grids.FaixasReparteGrid,
+							faixasReparte = [],
+							row = {},
+							faixa;
 						
 						faixasReparte.push({
 								name : "estudoId",
@@ -160,7 +173,11 @@ var histogramaPosEstudoController = $.extend(true, {
 						for ( var int = 0; int < faixasReparteGrid.tableModel.rows.length; int++) {
 							row = faixasReparteGrid.tableModel.rows[int];
 							
-							faixa = row.cell.faixaReparteDe.replace(" a","-") + $(row.cell.faixaReparteAte).val();
+							if (row.id === 1 ) {
+								faixa = row.cell.faixaReparteDe + "-" + $(row.cell.faixaReparteAte).val();
+							}else{
+								faixa = row.cell.faixaReparteDe.replace(" a","-") + $(row.cell.faixaReparteAte).val();
+							}
 							
 							faixasReparte.push({
 								name : "faixasReparte",
@@ -202,70 +219,36 @@ var histogramaPosEstudoController = $.extend(true, {
 					gridName : "estudosAnaliseGrid",
 					url : contextPath + "/distribuicao/histogramaPosEstudo/carregarGridAnalise",
 					onSuccess : histogramaPosEstudoController.popularFieldsetResumoEstudo,
-					// BaseEstudoAnaliseFaixaReparteDTO.java utilizado na resposta(response) do servidor
+					// HistogramaPosEstudoAnaliseFaixaReparteDTO.java utilizado na resposta(response) do servidor
 					preProcess : function(response){
+						var rowConsolidada = $(response.rows).last()[0];
+						rowConsolidada.cell.faixaReparte = "Total:";
 						
 						histogramaPosEstudoController.Grids.EstudosAnaliseGrid.tableModel = response;
 						
-						var rowConsolidado = {
-								id : 6,
-								cell : {
-									faixaReparte : "Total",
-									qtdRecebida : 0,
-									reparteTotalFormatado : 0,
-									reparteMedioFormatado : 0,
-									vendaNominalFormatado : 0,
-									vendaMediaFormatado : 0,
-									vendaPercentFormatado : 0,
-									encalheMedioFormatado : 0,
-									participacaoReparteFormatado : 0,
-									qtdCotasFormatado : 0,
-									qtdCotaPossuemReparteMenorVendaFormatado : 0
-								}
-						};
-						
 						$.each( response.rows, function( key, row ) {
-							// formatando faixaDeReparte com milhar
-							faixaDe = row.cell.faixaReparte.split("a")[0];
-							faixaAte = row.cell.faixaReparte.split("a")[1];
-							faixaReparteFormatada = histogramaPosEstudoController.formatarMilhar(parseInt(faixaDe)) + " a " + histogramaPosEstudoController.formatarMilhar(parseInt(faixaAte));
+							histogramaPosEstudoController.formatarColunasGrid(row.cell);
 							
-							if(parseInt(row.cell.qtdCotasFormatado)>0){
-								var elemLink = '<a href="javascript:;" onclick="histogramaPosEstudoController.abrirAnaliseFaixa('+ faixaDe +', '+ faixaAte +')">'+ faixaReparteFormatada +'</a>';
-								row.cell.faixaReparte = elemLink;
-							}
-
-							// adicionando a linha
-							rowConsolidado.cell.reparteTotalFormatado += parseInt(row.cell.reparteTotalFormatado || 0);
-							rowConsolidado.cell.vendaNominalFormatado += parseInt(row.cell.vendaNominalFormatado || 0);
-							rowConsolidado.cell.qtdCotasFormatado += parseInt(row.cell.qtdCotas || 0);
-
-							
-							rowConsolidado.cell.qtdCotaPossuemReparteMenorVendaFormatado += parseInt(row.cell.qtdCotaPossuemReparteMenorVendaFormatado || 0);
-							rowConsolidado.cell.qtdRecebida += parseInt(row.cell.qtdRecebida || 0);
-							
-							//gerando link do rep menor vda
-							if(parseInt(row.cell.qtdCotaPossuemReparteMenorVendaFormatado)>0){
-								row.cell.qtdCotaPossuemReparteMenorVendaFormatado=
-									"<a href='javascript:;' onclick='histogramaPosEstudoController.abrirAnaliseFaixa("+faixaDe+","+faixaAte+","+key+")'>"+row.cell.qtdCotaPossuemReparteMenorVendaFormatado+"</a>";
+							if (rowConsolidada.id !== row.id) {
+								// formatando faixaDeReparte com milhar
+								faixaDe = row.cell.faixaReparte.split("a")[0];
+								faixaAte = row.cell.faixaReparte.split("a")[1];
+								faixaReparteFormatada = histogramaPosEstudoController.formatarMilhar(parseInt(faixaDe)) + " a " + histogramaPosEstudoController.formatarMilhar(parseInt(faixaAte));
+								
+								if(parseInt(row.cell.qtdCotasFormatado)>0){
+									var elemLink = '<a href="javascript:;" onclick="histogramaPosEstudoController.abrirAnaliseFaixa('+ faixaDe +', '+ faixaAte +')">'+ faixaReparteFormatada +'</a>';
+									row.cell.faixaReparte = elemLink;
+								}
+								
+								//gerando link do rep menor vda
+								if(parseInt(row.cell.qtdCotaPossuemReparteMenorVendaFormatado)>0){
+									row.cell.qtdCotaPossuemReparteMenorVendaFormatado=
+										"<a href='javascript:;' onclick='histogramaPosEstudoController.abrirAnaliseFaixa("+faixaDe+","+faixaAte+","+key+")'>"+row.cell.qtdCotaPossuemReparteMenorVendaFormatado+"</a>";
+								}
 							}
 						});
 						
-						reparteMedioFormatado = (rowConsolidado.cell.reparteTotalFormatado / rowConsolidado.cell.qtdCotasFormatado).toFixed(2);
-						vendaMediaFormatada = (rowConsolidado.cell.vendaNominalFormatado / rowConsolidado.cell.qtdCotasFormatado).toFixed(2);
-						vendaPercentFormatado = ((rowConsolidado.cell.vendaNominalFormatado / rowConsolidado.cell.reparteTotalFormatado) * 100).toFixed(2).toString().replace('.', ',');
-						encalheMedioFormatado = ((rowConsolidado.cell.reparteTotalFormatado - rowConsolidado.cell.vendaNominalFormatado) / rowConsolidado.cell.qtdCotasFormatado).toFixed(2);
-						participacaoReparteFormatado = ((rowConsolidado.cell.qtdRecebida / rowConsolidado.cell.reparteTotalFormatado) * 100).toFixed(2).toString().replace('.', ',');
-						
-						rowConsolidado.cell.reparteMedioFormatado = !isNaN(reparteMedioFormatado) ? reparteMedioFormatado : "0,00";
-						rowConsolidado.cell.vendaMediaFormatado = !isNaN(vendaMediaFormatada) ? vendaMediaFormatada : "0,00";
-						rowConsolidado.cell.vendaPercentFormatado = vendaPercentFormatado != "NaN" ? vendaPercentFormatado : "0,00";
-						rowConsolidado.cell.encalheMedioFormatado = !isNaN(encalheMedioFormatado)  ? encalheMedioFormatado : "0,00";
-						rowConsolidado.cell.participacaoReparteFormatado = participacaoReparteFormatado != "NaN"  ? participacaoReparteFormatado : "0,00";
-						
-						histogramaPosEstudoController.analiseGridRowConsolidada = rowConsolidado;
-						
-						response.rows.push(rowConsolidado);
+						histogramaPosEstudoController.analiseGridRowConsolidada = rowConsolidada;
 						
 						return response;
 					},
@@ -498,47 +481,52 @@ var histogramaPosEstudoController = $.extend(true, {
 	},
 	
 	popularFieldsetResumoEstudo : function (){
-		var matrizSelecionada = histogramaPosEstudoController.matrizSelecionado,
-			rowConsolidada = histogramaPosEstudoController.analiseGridRowConsolidada,
-			url = contextPath + "/distribuicao/histogramaPosEstudo/carregarDadosFieldSetResumoEstudo";
-		
+//		var matrizSelecionada = histogramaPosEstudoController.matrizSelecionado,
+//			rowConsolidada = $(histogramaPosEstudoController.Grids.EstudosAnaliseGrid.tableModel.rows).last()[0], 
+			var url = contextPath + "/distribuicao/histogramaPosEstudo/carregarDadosFieldSetResumoEstudo",
+				estudoId = $('#codigoEstudoFs').text();
+			
 		$.postJSON(
 				url,
-				[{name : "estudoId" , value :matrizSelecionada.estudo}],
+				[{name : "estudoId" , value : estudoId}],
 				function(response){
 					
 					// Primeira coluna
-					$('#fieldSetResumoReparteTotal').html(rowConsolidada.cell.reparteTotalFormatado);
-					if (typeof histogramaPosEstudoController.dadosResumo !== 'undefined') {
-					    $('#fieldSetResumoRepartePromocional').html(parseInt(histogramaPosEstudoController.dadosResumo.repartePromo || 0));
-					} else {
-					    $('#fieldSetResumoRepartePromocional').html(parseInt(response.qtdRepartePromocional));
-					}
-					$('#fieldSetResumoReservaTecnica').html(matrizSelecionada.sobra);
-					if (typeof histogramaPosEstudoController.dadosResumo !== 'undefined') {
-					    $('#fieldSetResumoReparteDistribuida').html(histogramaPosEstudoController.dadosResumo.reparteDistribuido);
-					} else {
-					    $('#fieldSetResumoReparteDistribuida').html(response.reparteDistribuido);
-					}
+					$('#fieldSetResumoReparteTotal').html(formatarMilhar(response.qtdReparteDistribuidor || 0));
+					$('#fieldSetResumoRepartePromocional').html(formatarMilhar(response.qtdRepartePromocional || 0));
+					$('#fieldSetResumoReservaTecnica').html(formatarMilhar(response.qtdSobraEstudo || 0));
+					$('#fieldSetResumoReparteDistribuida').html(formatarMilhar(response.qtdReparteDistribuidoEstudo || 0));
 					
-					// Segunda coluna
+					// Segunda Coluna
+					$('#fieldSetResumoReparteMedioCota').html(floatToPrice(parseFloat(response.reparteMedioCota || 0).toFixed(2))); // quantidade de exemplares que cada cota irá receber na média
 					$('#fieldSetResumoNpdvAtual').html(response.qtdCotasAtivas); // count tb cotas onde status for ativo
-					
 					$('#fieldSetResumoNpdvProduto').html(response.qtdCotasRecebemReparte); // quantidade de cotas que irão receber reparte (fazem parte do estudo)
-					
 					// quantidade de cotas que foram adicionadas no estudo pela “complementar automática”; segundo o Jhonis é "CP" no campo classificação na tb estudo_cota
 					$('#fieldSetResumoNpdvComplementar').html(response.qtdCotasAdicionadasPelaComplementarAutomatica || 0); 
 					
-					$('#fieldSetResumoReparteMedioCota').html((parseInt(matrizSelecionada.repDistrib) / parseInt(response.qtdCotasRecebemReparte)) || 0 ); // quantidade de exemplares que cada cota irá receber na média 
-					
 					// Terceira coluna
-					$('#fieldSetResumoReparteMinimoSugerida').html(response.qtdReparteMinimoSugerido || 0);
-					$('#fieldSetResumoReparteMinimoEstudo').html(response.qtdReparteMinimoEstudo);
-					
+					$('#fieldSetResumoReparteMinimoSugerida').html(formatarMilhar(response.qtdReparteMinimoSugerido || 0));
+					$('#fieldSetResumoReparteMinimoEstudo').html(formatarMilhar(response.qtdReparteMinimoEstudo || 0));
 					$('#fieldSetResumoAbrangenciaSugerida').html(response.abrangenciaSugerida || 0);
-					$('#fieldSetResumoAbrangenciaEstudo').html((response.abrangenciaEstudo * 100).toFixed(2));
+					$('#fieldSetResumoAbrangenciaEstudo').html(floatToPrice(parseFloat(response.abrangenciaEstudo || 0).toFixed(2)));
 					
-					$('#fieldSetResumoAbrangenciaVendaPercent').html('Abrangência de Venda:&nbsp;&nbsp;' + (parseFloat(response.abrangenciaDeVenda) || 0 ).toFixed(2) + '% ');
+					$('#fieldSetResumoAbrangenciaVendaPercent').html('Abrangência de Venda:&nbsp;&nbsp;' + floatToPrice((parseFloat(response.abrangenciaDeVenda) || 0 ).toFixed(2)) + '% ');
+					
+//					if (typeof histogramaPosEstudoController.dadosResumo !== 'undefined') {
+//					    $('#fieldSetResumoRepartePromocional').html(parseInt(histogramaPosEstudoController.dadosResumo.repartePromo || 0));
+//					} else {
+//					    $('#fieldSetResumoRepartePromocional').html(parseInt(response.qtdRepartePromocional));
+//					}
+					
+//					if (typeof histogramaPosEstudoController.dadosResumo !== 'undefined') {
+//					    $('#fieldSetResumoReparteDistribuida').html(histogramaPosEstudoController.dadosResumo.reparteDistribuido);
+//					} else {
+//					    $('#fieldSetResumoReparteDistribuida').html(response.reparteDistribuido);
+//					}
+					
+					
+//					$('#fieldSetResumoReparteMedioCota').html((parseInt(matrizSelecionada.repDistrib) / parseInt(response.qtdCotasRecebemReparte)) || 0 ); // quantidade de exemplares que cada cota irá receber na média 
+					
 				}
 		);
 	},
