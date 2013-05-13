@@ -317,7 +317,7 @@ public class CotaServiceImpl implements CotaService {
 	 * @see br.com.abril.nds.service.CotaService#obterPorId(java.lang.Long)
 	 */
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public Cota obterPorId(Long idCota) {
 
 		if (idCota == null) {
@@ -334,7 +334,7 @@ public class CotaServiceImpl implements CotaService {
 	 * {@inheritDoc}
 	 */
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public EnderecoCota obterEnderecoPrincipal(long idCota) {
 
 		return this.cotaRepository.obterEnderecoPrincipal(idCota);
@@ -679,7 +679,7 @@ public class CotaServiceImpl implements CotaService {
 		}
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota) {	
 		return cobrancaRepository.obterCobrancasDaCotaEmAberto(idCota);
 	}
@@ -765,7 +765,7 @@ public class CotaServiceImpl implements CotaService {
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<CotaSuspensaoDTO> obterDTOCotasSujeitasSuspensao(String sortOrder, String sortColumn, Integer inicio, Integer rp) {
 		
 		List<CotaSuspensaoDTO> lista = cotaRepository.obterCotasSujeitasSuspensao(sortOrder,sortColumn, inicio, rp);
@@ -780,13 +780,13 @@ public class CotaServiceImpl implements CotaService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public Long obterTotalCotasSujeitasSuspensao() {
 		return cotaRepository.obterTotalCotasSujeitasSuspensao();
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public String obterNomeResponsavelPorNumeroDaCota(Integer numeroCota){
 		
 		if (numeroCota == null){
@@ -817,7 +817,7 @@ public class CotaServiceImpl implements CotaService {
 	 * @see br.com.abril.nds.service.CotaService#obterCotaPDVPorNumeroDaCota(java.lang.Integer)
 	 */
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public Cota obterCotaPDVPorNumeroDaCota(Integer numeroCota) {
 		return this.cotaRepository.obterCotaPDVPorNumeroDaCota(numeroCota);
 	}
@@ -887,7 +887,7 @@ public class CotaServiceImpl implements CotaService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public DistribuicaoDTO obterDadosDistribuicaoCota(Long idCota) {
 		
 		if(idCota == null) {
@@ -1931,7 +1931,7 @@ public class CotaServiceImpl implements CotaService {
 	 * @see br.com.abril.nds.service.CotaService#obterCotasEntre(br.com.abril.nds.util.Intervalo, br.com.abril.nds.util.Intervalo, br.com.abril.nds.model.cadastro.SituacaoCadastro)
 	 */
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public List<Cota> obterCotasEntre(Intervalo<Integer> intervaloCota,
 			Intervalo<Integer> intervaloBox, SituacaoCadastro situacao) {
 		
