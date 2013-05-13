@@ -75,12 +75,12 @@ public enum GrupoMovimentoEstoque  {
 	/**
 	 * Perda em pacote distribuidor
 	 */
-	PERDA_EM(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.PERDA),
+	PERDA_EM(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.PERDA),
 	
 	/**
 	 * Perda de pacote distribuidor
 	 */
-	PERDA_DE(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.PERDA),
+	PERDA_DE(OperacaoEstoque.SAIDA, Dominio.DISTRIBUIDOR, TipoEstoque.PERDA),
 	
 	/**
 	 * Sobra de pacote distribuidor
