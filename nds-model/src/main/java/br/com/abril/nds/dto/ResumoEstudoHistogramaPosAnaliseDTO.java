@@ -5,19 +5,41 @@ import java.math.BigInteger;
 
 public class ResumoEstudoHistogramaPosAnaliseDTO {
 
-	private BigInteger qtdCotasAtivas, 
+	private BigInteger 
+					   qtdCotasAtivas, 
 					   qtdCotasRecebemReparte,
 					   qtdCotasAdicionadasPelaComplementarAutomatica,
 					   qtdReparteMinimoSugerido,
 					   qtdReparteMinimoEstudo;
 			
-	private BigDecimal abrangenciaEstudo,
+	private BigDecimal 
+					   abrangenciaEstudo,
+					   qtdSobraEstudo,
 					   abrangenciaSugerida,
 					   abrangenciaDeVenda,
 					   qtdRepartePromocional,
-					   reservaTecnica,
-					   reparteDistribuido;
-	
+					   qtdReparteDistribuidoEstudo,
+					   reparteDistribuido,
+					   reparteMedioCota,
+					   qtdReparteDistribuidor;
+
+	public BigDecimal getQtdReparteDistribuidor() {
+		return qtdReparteDistribuidor;
+	}
+
+	public void setQtdReparteDistribuidor(BigDecimal qtdReparteDistribuidor) {
+		this.qtdReparteDistribuidor = qtdReparteDistribuidor;
+	}
+
+	public BigDecimal getQtdReparteDistribuidoEstudo() {
+		return qtdReparteDistribuidoEstudo;
+	}
+
+	public void setQtdReparteDistribuidoEstudo(
+			BigDecimal qtdReparteDistribuidoEstudo) {
+		this.qtdReparteDistribuidoEstudo = qtdReparteDistribuidoEstudo;
+	}
+
 	public BigInteger getQtdCotasAtivas() {
 		return qtdCotasAtivas;
 	}
@@ -91,12 +113,12 @@ public class ResumoEstudoHistogramaPosAnaliseDTO {
 		this.qtdRepartePromocional = qtdRepartePromocional;
 	}
 
-	public BigDecimal getReservaTecnica() {
-		return reservaTecnica;
+	public BigDecimal getQtdSobraEstudo() {
+		return qtdSobraEstudo;
 	}
 
-	public void setReservaTecnica(BigDecimal reservaTecnica) {
-		this.reservaTecnica = reservaTecnica;
+	public void setQtdSobraEstudo(BigDecimal qtdSobraEstudo) {
+		this.qtdSobraEstudo = qtdSobraEstudo;
 	}
 
 	public BigDecimal getReparteDistribuido() {
@@ -107,5 +129,12 @@ public class ResumoEstudoHistogramaPosAnaliseDTO {
 		this.reparteDistribuido = reparteDistribuido;
 	}
 
+	public BigDecimal getEncalheMedioCota() {
+		return reparteMedioCota;
+	}
+
+	public void setEncalheMedioCota(BigDecimal encalheMedioCota) {
+		this.reparteMedioCota = encalheMedioCota;
+	}
 	
 }

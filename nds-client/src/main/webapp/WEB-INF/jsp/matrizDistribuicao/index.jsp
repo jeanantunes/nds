@@ -127,7 +127,7 @@ var lancamentosSelecionados = [];
 			   	        <td width="30" align="center">&nbsp;</td>
 			   	        <td ><span class="bt_novos" title="Pesquisar">   
 						<!-- Pesquisar -->
-							<a id="linkPesquisar" href="javascript:;" onclick="matrizDistribuicao.pesquisar();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span>
+							<input type='image' id="linkPesquisar" onclick="matrizDistribuicao.pesquisar();" src="${pageContext.request.contextPath}/images/ico_pesquisar.png"/>
 					</td>
 		          </tr>
 		        </table>

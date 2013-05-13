@@ -121,6 +121,10 @@ public class HistogramaPosEstudoController extends BaseController{
 			base.add(baseEstudoAnaliseFaixaReparteDTO);
 		}
 		
+		// última faixa
+		HistogramaPosEstudoAnaliseFaixaReparteDTO baseEstudoAnaliseFaixaReparteDTO = histogramaPosEstudoFaixaReparteService.obterHistogramaPosEstudo(0, 999999999, estudoId);
+		base.add(baseEstudoAnaliseFaixaReparteDTO);
+		
 		TableModel<CellModelKeyValue<HistogramaPosEstudoAnaliseFaixaReparteDTO>> tableModel = new TableModel<>();
 		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(base));

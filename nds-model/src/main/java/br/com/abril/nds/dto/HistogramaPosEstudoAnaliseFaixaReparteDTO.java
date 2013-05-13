@@ -18,7 +18,7 @@ public class HistogramaPosEstudoAnaliseFaixaReparteDTO {
 	private BigDecimal reparteMedio;
 	private String reparteMedioFormatado = "0";
 
-	private BigDecimal vendaNominal; // venda total
+	private BigDecimal vendaNominal;
 	private String vendaNominalFormatado = "0";
 
 	private BigDecimal vendaMedia;

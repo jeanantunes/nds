@@ -812,10 +812,6 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		$("#dialog-informacoes-produto", _workspace).show();
 	},
 	
-	this.getEstudoCopiarEstudo = function getEstudoCopiarEstudo(){
-		return 83531;
-	},
-	
 	this.redirectToTelaAnalise = function redirectToTelaAnalise(divToHide, divToShow, estudo){
 		
 		//TODO As telas de analise estão com erro, validar este direcionamento após correções.

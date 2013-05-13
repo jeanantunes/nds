@@ -5,6 +5,8 @@ var produtoController = $.extend(true, {
 	
 	inicializar : function (pesquisaProduto) {
 		
+		var valorComboGerAuto = null;
+		
 		produtoController.aplicarMascaras();
 		
 		produtoController.pesquisaProduto = pesquisaProduto;
@@ -119,8 +121,9 @@ var produtoController = $.extend(true, {
 					
 					$(idCampoCodigo, produtoController.workspace).val(ui.item.chave.codigo);
 					$(idCampoNome, produtoController.workspace).val(ui.item.value);
-					$(idGeracao, produtoController.workspace).val(-1).disable();
+					$(idGeracao, produtoController.workspace).val(produtoController.formatarValorParaPopularCombo(result.isGeracaoAutomatica)).disable();
 					
+					produtoController.pesquisarPorCodigoProduto(idCampoCodigo, idCampoNome, idGeracao, false);
 				},
 				
 				minLength: produtoController.tamanhoInicial,
@@ -132,11 +135,23 @@ var produtoController = $.extend(true, {
 	successCallBack : function(result, idProduto, idGeracao, idCodigo, isFromModal) {
 		
 		$(idProduto, produtoController.workspace).val(result.nome);
-		$(idGeracao, produtoController.workspace).val(-1).disable();
+		$(idGeracao, produtoController.workspace).val(produtoController.formatarValorParaPopularCombo(result.isGeracaoAutomatica)).disable();
 		$(idCodigo, produtoController.workspace).val(result.id);
 		
 		$("#fornecedor", produtoController.workspace).focus();
 		
+	},
+	
+	formatarValorParaPopularCombo : function (valor){
+		
+		var valorFormatado;
+		
+		if(valor == true){
+			valorFormatado = 0;
+		}else{
+			valorFormatado = 1;
+		}
+		return valorFormatado;
 	},
 	
 	
@@ -330,8 +345,10 @@ var produtoController = $.extend(true, {
 			title:"Edição de Produto",
 			buttons: {
 				"Confirmar": function() {
-
 					produtoController.salvarProduto();
+					
+					produtoController.atualizarValorComboGeraAutomatica();
+					
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -354,6 +371,25 @@ var produtoController = $.extend(true, {
 		$("#codigoProdutoCadastro", this.workspace).disable();
 	},
 	
+	atualizarValorComboGeraAutomatica : function(){
+	
+		var valorAtual;
+		
+		if(($("#produto").val() != "") && ($("#codigoProduto").val() != "")){
+			if(produtoController.valorComboGerAuto != null){
+				
+				if(produtoController.valorComboGerAuto == true){
+					valorAtual = 0;
+				}else{
+					valorAtual = 1;
+				}
+				$("#comboGeracaoAutomatica").val(valorAtual).disable();
+			}
+		}
+		
+		
+		
+	},
 	habilitarDesabilitarCamposInterface : function(habilitar) {
 		
 		$(".habilitarCampoInterface", produtoController.workspace).attr('disabled',!habilitar);
@@ -380,6 +416,7 @@ var produtoController = $.extend(true, {
 						$("#comboFornecedoresCadastro", produtoController.workspace).val(result.codigoFornecedor);
 						$("#selGeracaoAuto", produtoController.workspace).attr('checked', result.isGeracaoAutomatica);
 						$("#comboTipoSegmento", produtoController.workspace).val(result.idTipoSegmentoProduto);
+						$("#comboClassifProd", produtoController.workspace).val(result.idTipoClassifProduto);
 
 						produtoController.habilitarDesabilitarCamposInterface(!(result.origem == "INTERFACE"));
 						
@@ -389,7 +426,7 @@ var produtoController = $.extend(true, {
 						$("#segmentacaoSexo", produtoController.workspace).val(result.sexo);
 						$("#segmentacaoFaixaEtaria", produtoController.workspace).val(result.faixaEtaria);
 						$("#segmentacaoFormato", produtoController.workspace).val(result.formatoProduto);
-						$("#segmentacaoTemaPrincipal", produtoController.workspace).val(result.temaPrincipal);
+//						$("#segmentacaoTemaPrincipal", produtoController.workspace).val(result.temaPrincipal);
 						$("#segmentacaoFormaFisica", produtoController.workspace).val(result.formaFisica);//ainda nao carrega
 						
 						$("#percentualDesconto", produtoController.workspace).val($.formatNumber(result.desconto, {format:"###,##000.00", locale:"br"}));
@@ -569,14 +606,17 @@ var produtoController = $.extend(true, {
 		$("#segmentacaoFaixaEtaria", this.workspace).val("");
 		$("#segmentacaoFormaFisica", this.workspace).val("");
 		$("#segmentacaoFormato", this.workspace).val("");
+		$("#comboClassifProd", this.workspace).val("");
 		$("#comboTipoSegmento", this.workspace).val("");
-		$("#segmentacaoTemaPrincipal", this.workspace).val("");
+//		$("#segmentacaoTemaPrincipal", this.workspace).val("");
 		
 		$("#selGeracaoAuto", produtoController.workspace).attr('checked', false);
 	},
 	
 	salvarProduto : function() {
 
+		produtoController.valorComboGerAuto = produtoController.formatarCampoGeracaoAutomatica("#selGeracaoAuto");
+		
 		 var params = [{name:"produto.id",value:$("#idProduto", produtoController.workspace).val()},
         			   {name:"produto.codigo",value:$("#codigoProdutoCadastro", produtoController.workspace).val()},
         			   {name:"produto.nome",value:$("#nomeProduto", produtoController.workspace).val()},
@@ -592,7 +632,7 @@ var produtoController = $.extend(true, {
         			   {name:"produto.segmentacao.sexo",value:$("#segmentacaoSexo", produtoController.workspace).val()},
         			   {name:"produto.segmentacao.faixaEtaria",value:$("#segmentacaoFaixaEtaria", produtoController.workspace).val()},
         			   {name:"produto.segmentacao.formatoProduto",value:$("#segmentacaoFormato", produtoController.workspace).val()},
-        			   {name:"produto.segmentacao.temaPrincipal",value:$("#segmentacaoTemaPrincipal", produtoController.workspace).val()},
+//        			   {name:"produto.segmentacao.temaPrincipal",value:$("#segmentacaoTemaPrincipal", produtoController.workspace).val()},
         			   {name:"produto.segmentacao.formaFisica",value:$("#segmentacaoFormaFisica", produtoController.workspace).val()},
         			   {name:"codigoEditor",value:$("#comboEditor", produtoController.workspace).val()},
         			   {name:"codigoFornecedor",value:$("#comboFornecedoresCadastro", produtoController.workspace).val()},
@@ -600,14 +640,20 @@ var produtoController = $.extend(true, {
         			   {name:"codigoTipoProduto",value:$("#comboTipoProdutoCadastro", produtoController.workspace).val()},
         			   {name:"produto.desconto",value:floatValue($("#percentualDesconto", produtoController.workspace).val())},
         			   {name:"produto.isGeracaoAutomatica",value:(produtoController.formatarCampoGeracaoAutomatica("#selGeracaoAuto"))},
+
         			   {name:"produto.tipoSegmentoProduto.id",value:$("#comboTipoSegmento", produtoController.workspace).val()},
+        			   {name:"produto.tipoSegmentoProduto.descricao",value:$("#comboTipoSegmento :checked", produtoController.workspace).text()},
+        			 
+        			   {name:"produto.tipoClassificacaoProduto.id",value:$("#comboClassifProd", produtoController.workspace).val()},
+        			   {name:"produto.tipoClassificacaoProduto.descricao",value:$("#comboClassifProd :checked", produtoController.workspace).text()},
+        			   
         			   {name:"produto.descricaoDesconto",value:$("#tipoDescontoManual", produtoController.workspace).val()}];
  
 		$.postJSON(contextPath + "/produto/salvarProduto",  
 			   	params,
 			   	function (result) {
 
-					var tipoMensagem = result.tipoMensagem;
+			var tipoMensagem = result.tipoMensagem;
 					
 					var listaMensagens = result.listaMensagens;
 					
@@ -620,7 +666,8 @@ var produtoController = $.extend(true, {
 
 						$("#dialog-novo", this.workspace).dialog( "close" );
 
-						$(".produtosGrid", this.workspace).flexReload();
+						//$(".produtosGrid", this.workspace).flexReload();
+						produtoController.pesquisar();
 					}
 					
 				},

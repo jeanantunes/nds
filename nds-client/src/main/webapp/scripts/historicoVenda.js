@@ -159,10 +159,12 @@ var historicoVendaController = $.extend(true, {
 			    	  // tr venda
 			    	  $('#analiseHistoricoPopUpVenda').html('');
 			    	  $('#analiseHistoricoPopUpVenda').append('<td class="class_linha_2"><strong>Venda:</strong></td>');
+
+			    	  var qtdEdicoesSelecionadas = grids.EdicaoSelecionadaGrid.tableModel.rows.length;
 			    	  
 			    	  // carregando popUp_analiseHistoricoVenda
-			    	  for ( var i in grids.EdicaoSelecionadaGrid.tableModel.rows) {
-			    		  row = grids.EdicaoSelecionadaGrid.tableModel.rows[i];
+			    	  for (var int = qtdEdicoesSelecionadas - 1; int >= 0; int--) {
+			    		  row = grids.EdicaoSelecionadaGrid.tableModel.rows[int];
 			    		  
 			    	      $('#analiseHistoricoPopUpNomeProduto').append('<td align="center" class="class_linha_1">'+row.cell.nomeProduto+'</td>');
 			    	      $('#analiseHistoricoPopUpNumeroEdicao').append('<td align="center" class="class_linha_1">'+row.cell.numeroEdicao+'</td>');

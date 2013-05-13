@@ -73,6 +73,10 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		
 		hql.append(" WHERE produto.codigo = :COD_PRODUTO ");
 		hql.append(" AND produto.nome = :NOME_PRODUTO ");
+		
+		if(filtro.getNumeroEdicao()!=null){
+			hql.append(" AND prodEdicao.numeroEdicao = :NUMERO_EDICAO ");
+		}
 		hql.append(this.getSqlWhereBuscarProdutos(filtro));
 		
 		hql.append(" ORDER BY numeroEdicao desc ");
@@ -81,6 +85,10 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		
 		query.setParameter("COD_PRODUTO", filtro.getCodProduto());
 		query.setParameter("NOME_PRODUTO", filtro.getNomeProduto());
+		
+		if(filtro.getNumeroEdicao()!=null){
+			query.setParameter("NUMERO_EDICAO", filtro.getNumeroEdicao());
+		}
 		this.paramsDinamicosBuscarProdutos(query, filtro);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(InformacoesProdutoDTO.class));
@@ -223,6 +231,8 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 	private void configurarPaginacao(FiltroInformacoesProdutoDTO filtro, Query query) {
 		
 		PaginacaoVO paginacao = filtro.getPaginacao();
+		
+		if(paginacao==null)return;
 		
 		if (paginacao.getQtdResultadosTotal().equals(0)) {
 			paginacao.setQtdResultadosTotal(query.list().size());
