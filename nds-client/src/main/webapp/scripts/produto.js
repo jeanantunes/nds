@@ -5,6 +5,8 @@ var produtoController = $.extend(true, {
 	
 	inicializar : function (pesquisaProduto) {
 		
+		var valorComboGerAuto = null;
+		
 		produtoController.aplicarMascaras();
 		
 		produtoController.pesquisaProduto = pesquisaProduto;
@@ -343,8 +345,10 @@ var produtoController = $.extend(true, {
 			title:"Edição de Produto",
 			buttons: {
 				"Confirmar": function() {
-
 					produtoController.salvarProduto();
+					
+					produtoController.atualizarValorComboGeraAutomatica();
+					
 				},
 				"Cancelar": function() {
 					$( this ).dialog( "close" );
@@ -367,6 +371,25 @@ var produtoController = $.extend(true, {
 		$("#codigoProdutoCadastro", this.workspace).disable();
 	},
 	
+	atualizarValorComboGeraAutomatica : function(){
+	
+		var valorAtual;
+		
+		if(($("#produto").val() != "") && ($("#codigoProduto").val() != "")){
+			if(produtoController.valorComboGerAuto != null){
+				
+				if(produtoController.valorComboGerAuto == true){
+					valorAtual = 0;
+				}else{
+					valorAtual = 1;
+				}
+				$("#comboGeracaoAutomatica").val(valorAtual).disable();
+			}
+		}
+		
+		
+		
+	},
 	habilitarDesabilitarCamposInterface : function(habilitar) {
 		
 		$(".habilitarCampoInterface", produtoController.workspace).attr('disabled',!habilitar);
@@ -592,6 +615,8 @@ var produtoController = $.extend(true, {
 	
 	salvarProduto : function() {
 
+		produtoController.valorComboGerAuto = produtoController.formatarCampoGeracaoAutomatica("#selGeracaoAuto");
+		
 		 var params = [{name:"produto.id",value:$("#idProduto", produtoController.workspace).val()},
         			   {name:"produto.codigo",value:$("#codigoProdutoCadastro", produtoController.workspace).val()},
         			   {name:"produto.nome",value:$("#nomeProduto", produtoController.workspace).val()},
@@ -641,7 +666,8 @@ var produtoController = $.extend(true, {
 
 						$("#dialog-novo", this.workspace).dialog( "close" );
 
-						$(".produtosGrid", this.workspace).flexReload();
+						//$(".produtosGrid", this.workspace).flexReload();
+						produtoController.pesquisar();
 					}
 					
 				},
