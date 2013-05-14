@@ -107,6 +107,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Cota obterPorNumerDaCota(Integer numeroCota) {
 		
 		Query query = 
@@ -119,6 +120,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public Cota obterPorNumerDaCotaAtiva(Integer numeroCota) {
 
 		Criteria criteria = super.getSession().createCriteria(Cota.class);
@@ -132,6 +134,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public Cota obterPorPDV(Long idPDV) {
 
 		Criteria criteria = super.getSession().createCriteria(Cota.class);
@@ -2186,10 +2189,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	}	
     
     @Override
+    @Transactional(readOnly = true)
     public Cota buscarCotaPorID(Long idCota) {
     	
     	String queryString = " select cota from Cota cota "
-				   + " join fetch cota.fornecedores fornecedores "
+				   + " join cota.fornecedores fornecedores "
 				   + " where cota.id = :idCota ";
 
 		Query query = this.getSession().createQuery(queryString);

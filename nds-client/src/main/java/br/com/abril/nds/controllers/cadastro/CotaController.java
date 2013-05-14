@@ -401,6 +401,7 @@ public class CotaController extends BaseController {
 				cotaVO.setStatus(cota.getSituacaoCadastro().toString());
 
 			}
+			cotaVO.setTipoDistribuicaoCota(cota.getTipoDistribuicaoCota().toString());
 
 			this.result.use(Results.json()).from(cotaVO, "result").recursive().serialize();
 		}		
@@ -493,7 +494,8 @@ public class CotaController extends BaseController {
 		    
 		    CotaVO cotaVO = new CotaVO(cota.getNumeroCota(), nomeExibicao);
 		    if (cota.getSituacaoCadastro() != null) {
-		    	cotaVO.setStatus(cota.getSituacaoCadastro().toString());	
+		    	cotaVO.setStatus(cota.getSituacaoCadastro().toString());
+		    	cotaVO.setTipoDistribuicaoCota(cota.getTipoDistribuicaoCota().toString());
 			}
 		    
 		    cotasVO.add(cotaVO);

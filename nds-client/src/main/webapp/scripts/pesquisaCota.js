@@ -5,7 +5,8 @@ function PesquisaCota(workspace) {
 	this.workspace = workspace;
 		
 	//Pesquisa por número da cota
-	this.pesquisarPorNumeroCota = function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack) {
+	this.pesquisarPorNumeroCota = function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack,checkValidateResult) {
+		
 		
 		var numeroCota = $(idCampoNumeroCota, pesquisaCota.workspace).val();
 
@@ -17,7 +18,15 @@ function PesquisaCota(workspace) {
 			
 			$.postJSON(contextPath + "/cadastro/cota/pesquisarPorNumero",
 					{numeroCota:numeroCota},
-				function(result) { 
+				function(result) {
+						//metodo validateResult pode ser sobrescrito por outro arquivo *.js para tratar negocialmente a cota pesquisada
+						if(checkValidateResult && pesquisaCota.validateResult){
+							var msgArray = pesquisaCota.validateResult(result);
+							if(msgArray && msgArray.length>0){
+								exibirMensagem("WARNING", msgArray);
+							}
+							
+						}
 					pesquisaCota.pesquisarPorNumeroSuccessCallBack(result, idCampoNomeCota, successCallBack); 
 				},
 				function() {
@@ -130,7 +139,8 @@ function PesquisaCota(workspace) {
 			},
 			close : function(event, ui) {
 				pesquisaCota.descricaoAtribuida = true;
-				pesquisaCota.numeroCotaSelecionada = ui.item.chave.numero;
+				if(ui.item)
+					pesquisaCota.numeroCotaSelecionada = ui.item.chave.numero;
 			},
 			select : function(event, ui) {
 				pesquisaCota.descricaoAtribuida = true;
@@ -142,8 +152,9 @@ function PesquisaCota(workspace) {
 	},
 	
 	//Pesquisar por nome da cota
-	this.pesquisarPorNomeCota = function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack) {
+	this.pesquisarPorNomeCota = function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack,checkValidateResult) {
 		
+		console.log("pesquisarPorNomeCota:: "+checkValidateResult);
 		setTimeout(function() { clearInterval(pesquisaCota.intervalo); }, 10 * 1000);
 		
 		pesquisaCota.intervalo = $().interval(function() {
@@ -157,14 +168,14 @@ function PesquisaCota(workspace) {
 					return;
 				}
 				
-				pesquisaCota.pesquisarPorNomeCotaAposIntervalo(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack);
+				pesquisaCota.pesquisarPorNomeCotaAposIntervalo(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack,checkValidateResult);
 			}
 			
 		}, 100);
 	},
 	
 	//Pesquisa por nome da cota após o intervalo
-	this.pesquisarPorNomeCotaAposIntervalo = function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack) {
+	this.pesquisarPorNomeCotaAposIntervalo = function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack,checkValidateResult) {
 		
 		clearInterval(pesquisaCota.intervalo);
 		
@@ -179,13 +190,29 @@ function PesquisaCota(workspace) {
 				contextPath + "/cadastro/cota/pesquisarPorNome", 
 				{nomeCota:nomeCota},
 				function(result) {
-					
+
 					if (result.length > 1){
 
 						if (pesquisaCota.numeroCotaSelecionada){
 							
 							pesquisaCota.pesquisaRealizada = true;
+							
 							$(idCampoNumeroCota, pesquisaCota.workspace).val(pesquisaCota.numeroCotaSelecionada);
+						}
+					}
+					else if(result.numero){
+						
+						pesquisaCota.pesquisaRealizada = true;
+						
+						$(idCampoNumeroCota, pesquisaCota.workspace).val(pesquisaCota.numeroCotaSelecionada);
+						
+						//metodo validateResult pode ser sobrescrito por outro arquivo *.js para tratar negocialmente a cota pesquisada
+						if(checkValidateResult && pesquisaCota.validateResult){
+							var msgArray = pesquisaCota.validateResult(result);
+							if(msgArray && msgArray.length>0){
+								exibirMensagem("WARNING", msgArray);
+							}
+							
 						}
 					}
 					else{
@@ -249,6 +276,14 @@ function PesquisaCota(workspace) {
 				isFromModal
 			);
 		}
+	};
+	
+	this.obterTipoDistribuicaoPorNumeroCota = function(numeroCota) {
+		
+		var tipoDistribuicaoCota='';
+		
+		
+		return tipoDistribuicaoCota;
 	};
 	
 }
