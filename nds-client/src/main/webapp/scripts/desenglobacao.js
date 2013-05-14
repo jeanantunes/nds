@@ -1,12 +1,9 @@
 var desenglobacaoController = $.extend(true, {
 
-    errorCallBack : function errorCallBack(){
-        $('#statusCota').val('');
-        $('#filtroPrincipalNumeroCota').val('');
-        $('#filtroPrincipalNomePessoa').val('');
+	pesquisaCota:null,    
+	errorCallBack : function errorCallBack(){
+		$('#filtroDesenglobaNomePessoa,#statusCota,#filtroPrincipalNumeroCota,#filtroPrincipalNomePessoa,#filtroDesenglobaNumeroCota').val('');        
 
-        $('#filtroDesenglobaNumeroCota').val('');
-        $('#filtroDesenglobaNomePessoa').val('');
     },
 
     sucessCallBack : function errorCallBack(result){
@@ -18,19 +15,30 @@ var desenglobacaoController = $.extend(true, {
     init : function() {
 
         // ###### INICIO FILTRO DA TELA PRINCIPAL ######
-
+		
+		if(desenglobacaoController.pesquisaCota){
+			desenglobacaoController.pesquisaCota.validateResult=function(result){
+				var msgArray =[];
+				if(result.tipoDistribuicaoCota!='Alternativo' && result.tipoDistribuicaoCota!='Convencional'){
+					msgArray.push("Cota pesquisada dever ser do tipo Alternativo ou Convencional.");
+				}else if(result.tipoDistribuicaoCota=='Alternativo'){
+					msgArray.push("Cota do tipo Alternativo, atualizar Mix.");
+				}
+				return msgArray;
+			};
+		}
         // FILTRO PRINCIPAL - POR COTA
         $('#filtroPrincipalNumeroCota').change(function (){
-            pesquisaCota.pesquisarPorNumeroCota('#filtroPrincipalNumeroCota','#filtroPrincipalNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack);
+            desenglobacaoController.pesquisaCota.pesquisarPorNumeroCota('#filtroPrincipalNumeroCota','#filtroPrincipalNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack);
         });
 
         $('#filtroPrincipalNomePessoa').keyup(function (){
-            pesquisaCota.autoCompletarPorNome('#filtroPrincipalNomePessoa');
+            desenglobacaoController.pesquisaCota.autoCompletarPorNome('#filtroPrincipalNomePessoa');
         });
 
         //pesquisarPorNomeCota
         $('#filtroPrincipalNomePessoa').blur(function (){
-            pesquisaCota.pesquisarPorNomeCota('#filtroPrincipalNumeroCota','#filtroPrincipalNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack);
+            desenglobacaoController.pesquisaCota.pesquisarPorNomeCota('#filtroPrincipalNumeroCota','#filtroPrincipalNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack);
         });
 
         //###### FIM FILTRO DA TELA PRINCIPAL ######
@@ -43,16 +51,16 @@ var desenglobacaoController = $.extend(true, {
         //FILTRO DA TELA DE DESENGLOBACAO
         // FILTRO POR COTA
         $('#filtroDesenglobaNumeroCota').change(function (){
-            pesquisaCota.pesquisarPorNumeroCota('#filtroDesenglobaNumeroCota','#filtroDesenglobaNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack);
+            desenglobacaoController.pesquisaCota.pesquisarPorNumeroCota('#filtroDesenglobaNumeroCota','#filtroDesenglobaNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack,true);
         });
 
         $('#filtroDesenglobaNomePessoa').keyup(function (){
-            pesquisaCota.autoCompletarPorNome('#filtroDesenglobaNomePessoa');
+            desenglobacaoController.pesquisaCota.autoCompletarPorNome('#filtroDesenglobaNomePessoa');
         });
 
         //FILTRO POR NOME
         $('#filtroDesenglobaNomePessoa').blur(function (){
-            pesquisaCota.pesquisarPorNomeCota('#filtroDesenglobaNumeroCota','#filtroDesenglobaNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack);
+            desenglobacaoController.pesquisaCota.pesquisarPorNomeCota('#filtroDesenglobaNumeroCota','#filtroDesenglobaNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack,true);
         });
 
 
@@ -60,16 +68,16 @@ var desenglobacaoController = $.extend(true, {
         //FILTRO POPUP INSERIR COTA
         // FILTRO POR COTA
         $('#inserirEnglobadaNumeroCota').change(function (){
-            pesquisaCota.pesquisarPorNumeroCota('#inserirEnglobadaNumeroCota','#inserirEnglobadaNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack);
+            desenglobacaoController.pesquisaCota.pesquisarPorNumeroCota('#inserirEnglobadaNumeroCota','#inserirEnglobadaNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack,true);
         });
 
         $('#inserirEnglobadaNomePessoa').keyup(function (){
-            pesquisaCota.autoCompletarPorNome('#inserirEnglobadaNomePessoa');
+            desenglobacaoController.pesquisaCota.autoCompletarPorNome('#inserirEnglobadaNomePessoa');
         });
 
         //FILTRO POR NOME
         $('#inserirEnglobadaNomePessoa').blur(function (){
-            pesquisaCota.pesquisarPorNomeCota('#inserirEnglobadaNumeroCota','#inserirEnglobadaNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack);
+            desenglobacaoController.pesquisaCota.pesquisarPorNomeCota('#inserirEnglobadaNumeroCota','#inserirEnglobadaNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack,true);
         });
 
         //###### FIM FILTRO DA POPUP INSERT ######
@@ -272,8 +280,6 @@ var desenglobacaoController = $.extend(true, {
                 }
         };
 
-
-        $('#pesquisaPorCota').click();
     },
 
     porCota : function() {
@@ -315,7 +321,7 @@ var desenglobacaoController = $.extend(true, {
         desenglobacaoController.res=alterando;
 
         $('#tableCotasEnglobadas').empty();
-        $('#filtroDesenglobaNumeroCota,#filtroDesenglobaNomePessoa').val('');
+        $('#filtroDesenglobaNumeroCota,#filtroDesenglobaNomePessoa,#inserirEnglobadaNumeroCota,#inserirEnglobadaNomePessoa').val('');
 
         $("#dialog-novo-desenglobacao").dialog({
             resizable: false,
