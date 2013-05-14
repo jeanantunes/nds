@@ -868,6 +868,13 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 		$('#excecaoSegmentoParciais_porCota').show();
 		$('#excecaoSegmentoParciais_porExcessao').hide();
 		
+		if($(".pesquisaPorSegmento").is(":checked")){
+			excecaoSegmentoParciaisController.alteraLegendResultadoSegmento();
+		}else if($(".pesquisaPorParcial").is(":checked")){
+			excecaoSegmentoParciaisController.alteraLegendResultadoParcial();
+		}
+	
+		
 		var filtroPrincipalCota = [],
 			util = excecaoSegmentoParciaisController.Util,
 			grids = excecaoSegmentoParciaisController.Grids;
@@ -894,6 +901,13 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 		
 		$('#excecaoSegmentoParciais_porCota').hide();
 		$('#excecaoSegmentoParciais_porExcessao').show();
+		
+		
+		if($(".pesquisaPorSegmento").is(":checked")){
+			excecaoSegmentoParciaisController.alteraLegendResultadoSegmento();
+		}else if($(".pesquisaPorParcial").is(":checked")){
+			excecaoSegmentoParciaisController.alteraLegendResultadoParcial();
+		}
 		
 		var filtroPrincipalProduto = [],
 			util = excecaoSegmentoParciaisController.Util,
@@ -1143,6 +1157,23 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 	    $('#segmentoProdutoPrincipal').val('');
 	    $('#radio').check();
 	    excecaoSegmentoParciaisController.filtroPorCota();
+	},
+	alteraLegendResultadoSegmento:function(){
+		$("#legendPorCotaRecebe").text("Produtos Recebidos");
+		$("#legendPorCotaNaoRecebe").text("Produtos não Recebidos");
+		
+		$("#legendPorExcecaoRecebe").text("Cotas que recebem o segmento");
+		$("#legendPorExcecaoNaoRecebe").text("Cotas que não recebem o segmento");
+		
+		
+	},
+	alteraLegendResultadoParcial:function(){
+		
+		$("#legendPorCotaRecebe").text("Produtos Parciais Recebidos");
+		$("#legendPorCotaNaoRecebe").text("Produtos Parciais não Recebidos");
+		
+		$("#legendPorExcecaoRecebe").text("Cotas que recebem Publicação parcial");
+		$("#legendPorExcecaoNaoRecebe").text("Cotas que não recebem Publicação parcial");
 	}
 	
 }, BaseController);

@@ -170,7 +170,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 
 	@Override
 	public Integer pesquisarCountProdutos(String codigo, String produto,
-			String fornecedor, String editor, Long codigoTipoProduto) {
+			String fornecedor, String editor, Long codigoTipoProduto, Boolean isGeracaoAutomatica) {
 		
 		StringBuffer hql = new StringBuffer(" select count(distinct produto.id) ");
 		
@@ -179,7 +179,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 			Query query = 
 				this.getQueryBuscaProdutos(
 					hql, codigo, produto, fornecedor, 
-					editor, codigoTipoProduto, null, null, true, null);
+					editor, codigoTipoProduto, null, null, true, isGeracaoAutomatica);
 			
 			return ((Long) query.uniqueResult()).intValue();
 			

@@ -60,7 +60,7 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 			Long codigoTipoProduto, String sortorder, String sortname, int page, int rp, Boolean isGeracaoAutomatica);
 
 	Integer pesquisarCountProdutos(String codigo, String produto,
-			String fornecedor, String editor, Long codigoTipoProduto);
+			String fornecedor, String editor, Long codigoTipoProduto, Boolean isGeracaoAutomatica);
 
 	Produto obterProdutoPorID(Long id);
 	

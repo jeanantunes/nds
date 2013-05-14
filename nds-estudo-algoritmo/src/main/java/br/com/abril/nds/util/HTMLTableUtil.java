@@ -168,7 +168,7 @@ public class HTMLTableUtil {
 		if (ce.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
 		    qtdeCotasAtivas++;
 		}
-		if (ce.getClassificacao().equals(ClassificacaoCota.BancaSuspensa)) {
+		if (ce.getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) {
 		    qtdeCotasSuspensas++;
 		}
 		if (ce.getClassificacao().equals(ClassificacaoCota.BancaEstudoComplementar)) {
