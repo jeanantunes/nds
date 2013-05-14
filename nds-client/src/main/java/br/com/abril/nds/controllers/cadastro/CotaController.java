@@ -401,6 +401,7 @@ public class CotaController extends BaseController {
 				cotaVO.setStatus(cota.getSituacaoCadastro().toString());
 
 			}
+			cotaVO.setTipoDistribuicaoCota(cota.getTipoDistribuicaoCota().toString());
 
 			this.result.use(Results.json()).from(cotaVO, "result").recursive().serialize();
 		}		

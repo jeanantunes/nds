@@ -5,9 +5,8 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/NDS.js"></script>
 <script type="text/javascript">
 
-	var	pesquisaCota = new PesquisaCota();
-
 	$(function() {
+		desenglobacaoController.pesquisaCota = new PesquisaCota();
 		desenglobacaoController.init();
 	});
 	

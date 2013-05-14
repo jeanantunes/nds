@@ -5,7 +5,8 @@ function PesquisaCota(workspace) {
 	this.workspace = workspace;
 		
 	//Pesquisa por número da cota
-	this.pesquisarPorNumeroCota = function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack) {
+	this.pesquisarPorNumeroCota = function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack,checkValidateResult) {
+		
 		
 		var numeroCota = $(idCampoNumeroCota, pesquisaCota.workspace).val();
 
@@ -17,7 +18,17 @@ function PesquisaCota(workspace) {
 			
 			$.postJSON(contextPath + "/cadastro/cota/pesquisarPorNumero",
 					{numeroCota:numeroCota},
-				function(result) { 
+				function(result) {
+						//metodo validateResult pode ser sobrescrito por outro arquivo *.js para tratar negocialmente a cota pesquisada
+						console.log(result);
+						if(checkValidateResult && pesquisaCota.validateResult){
+							var msgArray = pesquisaCota.validateResult(result);
+							if(msgArray && msgArray.length>0){
+								exibirMensagem("WARNING", msgArray);
+								return;
+							}
+							
+						}
 					pesquisaCota.pesquisarPorNumeroSuccessCallBack(result, idCampoNomeCota, successCallBack); 
 				},
 				function() {
@@ -249,6 +260,14 @@ function PesquisaCota(workspace) {
 				isFromModal
 			);
 		}
+	};
+	
+	this.obterTipoDistribuicaoPorNumeroCota = function(numeroCota) {
+		
+		var tipoDistribuicaoCota='';
+		
+		
+		return tipoDistribuicaoCota;
 	};
 	
 }
