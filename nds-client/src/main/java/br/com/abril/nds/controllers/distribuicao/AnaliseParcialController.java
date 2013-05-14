@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import br.com.caelum.vraptor.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.BaseController;
@@ -26,15 +27,14 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.caelum.vraptor.Get;
-import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
-import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/distribuicao/analise/parcial")
 public class AnaliseParcialController extends BaseController {
+
+    @Autowired
+    private Validator validator;
 
     @Autowired
     private Result result;
@@ -123,6 +123,7 @@ public class AnaliseParcialController extends BaseController {
         TableModel<CellModelKeyValue<AnaliseParcialDTO>> table = monta(lista);
         table.setPage(1);
         table.setTotal(50);
+        validator.onErrorUse(Results.json()).withoutRoot().from(table).recursive().serialize();
         result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
     }
 
