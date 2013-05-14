@@ -173,9 +173,6 @@ function somarDistribuicao(){
 
 
 <div class="corpo">
-  <div class="header">
-  	
-  </div>
   <div class="bg_menu">
 
     <br clear="all"/>
