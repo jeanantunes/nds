@@ -112,7 +112,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		
 		 if (obterQuantidadeDeLancamentosProdutoEdicaoDuplicados(prodDistribVO) > MAX_DUPLICACOES_PERMITIDA) {
 			 
-			 throw new ValidacaoException(TipoMensagem.WARNING, "Não é permitido mais do que " + MAX_DUPLICACOES_PERMITIDA + " duplicações.s");
+			 throw new ValidacaoException(TipoMensagem.WARNING, "Não é permitido mais do que " + MAX_DUPLICACOES_PERMITIDA + " duplicações");
 		 }
 		 
 		 Long idLancamento = prodDistribVO.getIdLancamento().longValue();
@@ -121,13 +121,12 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		 
 		 Lancamento lancamentoCopy = cloneLancamento(lancamento);
 		 
-		 ProdutoEdicao produtoEdicaoCopy = cloneProdutoEdicao(lancamentoCopy.getProdutoEdicao());
+		 //ProdutoEdicao produtoEdicaoCopy = cloneProdutoEdicao(lancamentoCopy.getProdutoEdicao());
 		 
-		 lancamentoCopy.setProdutoEdicao(produtoEdicaoCopy);
+		 //lancamentoCopy.setProdutoEdicao(produtoEdicaoCopy);
 		 idLancamento = lancamentoRepository.adicionar(lancamentoCopy);
 		 
 		 gravarHistoricoLancamento(prodDistribVO.getIdUsuario().longValue(), lancamentoCopy);
-		 System.out.println(idLancamento);
 	}
 	
 	
@@ -268,32 +267,46 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 			
 			if (idLancamento != null && obterQuantidadeDeLancamentosProdutoEdicaoDuplicados(vo) > 1) {
 				
+			   if (vo.getIdEstudo() != null && vo.getIdEstudo().intValue() > 0) {
+					 removeEstudo(vo.getIdEstudo().longValue());
+			   }
+				
 				excluirLinhaDuplicada(idLancamento.longValue());
 			}
 			else if (vo.getIdEstudo() != null && vo.getIdEstudo().intValue() > 0) {
 				
-				Estudo estudo = estudoRepository.buscarPorId(vo.getIdEstudo().longValue());
-				if (!estudo.isLiberado()) {
-				    for (EstudoCota ec : estudo.getEstudoCotas()) {
-					estudoCotaRepository.remover(ec);
-				    }
-				    List<Lancamento> lancamentos = lancamentoRepository.obterPorEstudo(estudo);
-				    for (Lancamento l : lancamentos) {
-					l.setEstudo(null);
-					lancamentoRepository.alterar(l);
-				    }
-				    for (Lancamento l : estudo.getLancamentos()) {
-					l.setEstudo(null);
-					lancamentoRepository.alterar(l);
-				    }
-				    estudo.setLancamentos(null);
-				    estudoRepository.remover(estudo);
-				} else {
-				    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Este estudo já foi liberado, não é permitido excluí-lo!"));
-				}
+				removeEstudo(vo.getIdEstudo().longValue());
+				
 			} else {
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não existe estudo para o produto selecionado!"));
 			}
+		}
+	}
+	
+	private void removeEstudo(Long idEstudo) {
+		
+		Estudo estudo = estudoRepository.buscarPorId(idEstudo);
+		if (!estudo.isLiberado()) {
+		    for (EstudoCota ec : estudo.getEstudoCotas()) {
+		    	estudoCotaRepository.remover(ec);
+		    }
+		    
+		    List<Lancamento> lancamentos = lancamentoRepository.obterPorEstudo(estudo);
+		    for (Lancamento l : lancamentos) {
+				l.setEstudo(null);
+				lancamentoRepository.alterar(l);
+		    }
+		    
+		    for (Lancamento l : estudo.getLancamentos()) {
+				l.setEstudo(null);
+				lancamentoRepository.alterar(l);
+		    }
+		    
+		    estudo.setLancamentos(null);
+		    estudoRepository.remover(estudo);
+		    
+		} else {
+		    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Este estudo já foi liberado, não é permitido excluí-lo!"));
 		}
 	}
 	
@@ -301,7 +314,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		
 		Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);
 		
-		ProdutoEdicao produtoEdicao = lancamento.getProdutoEdicao();
+		//ProdutoEdicao produtoEdicao = lancamento.getProdutoEdicao();
 		
 		lancamentoRepository.remover(lancamento);
 	}
