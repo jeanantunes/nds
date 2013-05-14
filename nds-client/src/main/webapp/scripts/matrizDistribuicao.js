@@ -158,7 +158,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			 var css = $(id, _workspace).attr('class');
 			 var trTochange = "#row" + (index + 1);
 			 
-			 if (index < T.lancamentos.length - 1) {
+			 if (index < T.lancamentos.length) {
 				 
 				 if (codigo == T.lancamentos[index].codigoProduto &&  edicao == T.lancamentos[index].edicao) {
 					 
@@ -166,7 +166,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 						 $($(trTochange).children()[i]).html("");
 					 }
 					 
-					 if (css == undefined) {
+					 if (css == undefined || css == "") {
 					 	 $(trTochange, _workspace).removeClass("gridLinha");
 					 }
 					 else {
@@ -177,13 +177,13 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					 
 					 trTochange = "#row" + (index + 2);
 						 
-					 if (css == undefined) {
+					 if (css == undefined || css == "") {
 						 $(trTochange, _workspace).addClass("gridLinha");
 					 }
 					 else {
 						$(trTochange, _workspace).removeClass("gridLinha");
 					 }
-						 
+					 
 				 }
 				 
 			 }
