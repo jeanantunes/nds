@@ -26,7 +26,6 @@ public class TipoMovimentoEstoqueRepositoryImpl extends AbstractRepositoryModel<
 		criteria.add(Restrictions.eq("operacaoEstoque", grupoMovimentoEstoque.getOperacaoEstoque()));
 		criteria.add(Restrictions.eq("grupoMovimentoEstoque", grupoMovimentoEstoque));
 		
-		
 		criteria.setMaxResults(1);
 		
 		return (TipoMovimentoEstoque) criteria.uniqueResult();
