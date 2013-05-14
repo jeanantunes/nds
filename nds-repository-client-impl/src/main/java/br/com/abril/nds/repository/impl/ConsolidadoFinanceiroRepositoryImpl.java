@@ -1408,11 +1408,17 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 	@Override
 	public Date obterDataAnteriorImediataPostergacao(ConsolidadoFinanceiroCota consolidadoFinanceiroCota) {
 		
-		String hql = " select max(cfc.dataConsolidado) " +
+		// Comentado para demonstrar o valor "outros" na conferência de encalhe mesmo que a dívida já tenha gerado cobrança
+		/*String hql = " select max(cfc.dataConsolidado) " +
 					 " from ConsolidadoFinanceiroCota cfc " +
 					 " where cfc.dataConsolidado < :dataConsolidado " +
 					 " and cfc.cota = :cotaConsolidado " +
-					 " and (select count(cob.id) from Cobranca cob where cob.cota = cfc.cota) = 0";	
+					 " and (select count(cob.id) from Cobranca cob where cob.cota = cfc.cota) = 0";*/	
+		
+		String hql = " select max(cfc.dataConsolidado) " +
+				 " from ConsolidadoFinanceiroCota cfc " +
+				 " where cfc.dataConsolidado < :dataConsolidado " +
+				 " and cfc.cota = :cotaConsolidado ";
 		
 		Query query = this.getSession().createQuery(hql);
 		
