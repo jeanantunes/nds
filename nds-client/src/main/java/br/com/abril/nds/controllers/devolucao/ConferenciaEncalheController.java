@@ -358,7 +358,7 @@ public class ConferenciaEncalheController extends BaseController {
 			
 		} catch (ConferenciaEncalheExistenteException e) {
 
-			LOGGER.error("Erro Conferencia Encalhe Existente: " + e.getMessage(), e);
+			//LOGGER.error("Erro Conferencia Encalhe Existente: " + e.getMessage(), e);
 			
 			this.result.use(CustomMapJson.class)
 			.put("IND_COTA_RECOLHE_NA_DATA", "S")
