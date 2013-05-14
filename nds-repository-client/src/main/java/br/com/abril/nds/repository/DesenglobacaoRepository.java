@@ -4,15 +4,15 @@ import java.util.List;
 
 import br.com.abril.nds.model.distribuicao.Desenglobacao;
 
-public interface DesenglobacaoRepository extends Repository<Desenglobacao, Long>{
+public interface DesenglobacaoRepository extends Repository<Desenglobacao, Long> {
 
-    	List<Desenglobacao> obterDesenglobacaoPorCota(Long cotaId);
+    	List<Desenglobacao> obterDesenglobacaoPorCota(Integer numeroCota);
 	
 	void inserirCotasDesenglobadas(final List<Desenglobacao> cotasDesenglobadas);
 	
-	Float verificaPorcentagemCota(Long cotaId);
+	Float verificaPorcentagemCota(Long idCota);
 	
-	public List<Desenglobacao> obterDesenglobacaoPorCotaDesenglobada(Long cotaNumero);
+	public List<Desenglobacao> obterDesenglobacaoPorCotaDesenglobada(Integer numeroCota);
 
-	boolean removerPorCotaDesenglobada(Long cotaNumeroDesengloba);
+	boolean removerPorCotaDesenglobada(Long idCota);
 }
