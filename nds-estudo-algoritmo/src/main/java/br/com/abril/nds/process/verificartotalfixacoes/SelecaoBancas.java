@@ -69,21 +69,25 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	}
 
 	Map<Long, CotaEstudo> cotasComHistoricoMap = new LinkedHashMap<>();
+	
 	for (CotaEstudo cota : cotas) {
 	    calcularTotais(cota, estudo);
 	    cotasComHistoricoMap.put(cota.getId(), cota);
 	}
+	tratarCotasComEnglobacao(cotasComHistoricoMap);
 	
 	List<Long> idsCotas = new ArrayList<>();
-	for (CotaEstudo cota : cotas) {
+	for (CotaEstudo cota : cotasComHistoricoMap.values()) {
 	    if (cota.getClassificacao().equals(ClassificacaoCota.BancaSemHistorico)) {
 		idsCotas.add(cota.getId());
 	    }
 	    if (cota.getClassificacao().in(ClassificacaoCota.BancaComVendaZero, ClassificacaoCota.BancaSemHistorico,
 		    ClassificacaoCota.BancaSuspensa, ClassificacaoCota.ReparteFixado)) {
-		cotasComHistoricoMap.remove(cota.getId());
 		estudo.getCotasExcluidas().add(cota);
 	    }
+	}
+	for (CotaEstudo cota : estudo.getCotasExcluidas()) {
+	    cotasComHistoricoMap.remove(cota.getId());
 	}
 	
 	if (idsCotas.size() > 0) {
@@ -103,7 +107,6 @@ public class SelecaoBancas extends ProcessoAbstrato {
 		}
 	    }
 	}
-	tratarCotasComEnglobacao(cotasComHistoricoMap);
 	estudo.setCotas(new LinkedList<>(cotasComHistoricoMap.values()));
     }
 
