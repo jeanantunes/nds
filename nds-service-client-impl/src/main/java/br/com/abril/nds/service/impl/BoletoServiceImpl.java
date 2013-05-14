@@ -1022,7 +1022,8 @@ public class BoletoServiceImpl implements BoletoService {
 				pessoaCedente, 
 				pessoaSacado, 
 				endereco, 
-				boleto.getTipoCobranca());
+				boleto.getTipoCobranca(),
+				boleto.getCota().getNumeroCota());
 		
 	}
 	
@@ -1061,7 +1062,8 @@ public class BoletoServiceImpl implements BoletoService {
 				pessoaCedente, 
 				pessoaSacado, 
 				endereco,
-				boleto.getTipoCobranca()
+				boleto.getTipoCobranca(),
+				null
 				);
 		
 	}
@@ -1069,6 +1071,7 @@ public class BoletoServiceImpl implements BoletoService {
 	
 	/**
 	 * Método responsável por gerar corpo do boleto com os atributos definidos
+	 * @param numeroCota 
 	 * @param boleto
 	 * @return GeradorBoleto: corpo do boleto carregado
 	 */
@@ -1082,7 +1085,7 @@ public class BoletoServiceImpl implements BoletoService {
 			Pessoa pessoaCedente, 
 			Pessoa pessoaSacado,
 			Endereco enderecoSacado,
-			TipoCobranca tipoCobranca
+			TipoCobranca tipoCobranca, Integer numeroCota
 			
 			){
 
@@ -1125,7 +1128,13 @@ public class BoletoServiceImpl implements BoletoService {
 			nomeSacado = ((PessoaJuridica) pessoaSacado).getRazaoSocial();
 			documentoSacado = ((PessoaJuridica) pessoaSacado).getCnpj();
 		}
-		corpoBoleto.setSacadoNome(nomeSacado);          
+		
+		if(numeroCota != null && numeroCota >0){
+			corpoBoleto.setSacadoNome(numeroCota + " - "+ nomeSacado);
+		}else{
+			corpoBoleto.setSacadoNome(nomeSacado);
+		}
+		          
 		corpoBoleto.setSacadoDocumento(documentoSacado); 
 
 		
