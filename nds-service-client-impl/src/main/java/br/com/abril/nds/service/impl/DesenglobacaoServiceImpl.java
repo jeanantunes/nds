@@ -4,12 +4,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.commons.beanutils.BeanUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.client.vo.DesenglobaVO;
 import br.com.abril.nds.dto.DesenglobacaoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -35,53 +34,42 @@ public class DesenglobacaoServiceImpl implements DesenglobacaoService {
     private CotaRepository cotaRepository;
 
     @Override
-    public List<DesenglobacaoDTO> obterDesenglobacaoPorCota(Long cotaId) {
+    public List<DesenglobacaoDTO> obterDesenglobacaoPorCota(Integer numeroCota) {
 	List<DesenglobacaoDTO> dtoList = new ArrayList<DesenglobacaoDTO>();
-	List<Desenglobacao> desenglobaList = desenglobacaoRepository.obterDesenglobacaoPorCota(cotaId);
+	List<Desenglobacao> desenglobaList = desenglobacaoRepository.obterDesenglobacaoPorCota(numeroCota);
 
 	for (Desenglobacao desenglobacao : desenglobaList) {
-	    DesenglobacaoDTO dto = copyToDTO(desenglobacao, false);
+	    DesenglobacaoDTO dto = copyToDTO(desenglobacao);
 
 	    dtoList.add(dto);
 	}
 	return dtoList;
     }
 
-    private DesenglobacaoDTO copyToDTO(Desenglobacao desenglobacao, boolean inverterNumeroCota) {
+    private DesenglobacaoDTO copyToDTO(Desenglobacao desenglobacao) {
 	DesenglobacaoDTO dto = new DesenglobacaoDTO();
-	if (inverterNumeroCota) {
-	    Cota cotaEnglobada = cotaRepository.buscarCotaPorID(desenglobacao.getEnglobadaNumeroCota());
-	    if (cotaEnglobada != null) {
-		dto.setNumeroCota(new Long(cotaEnglobada.getNumeroCota()));
-	    }
-	} else {
-	    dto.setNumeroCota(desenglobacao.getEnglobadaNumeroCota());
-	}
-	dto.setNomeCota(desenglobacao.getEnglobadaNomePessoa());
+	dto.setNumeroCotaEnglobada(desenglobacao.getCotaEnglobada().getNumeroCota());
+	dto.setIdCotaEnglobada(desenglobacao.getCotaEnglobada().getId());
+	dto.setNomeCotaEnglobada(desenglobacao.getCotaEnglobada().getPessoa().getNome());
 	dto.setNomePDV(desenglobacao.getTipoPDV().getDescricao());
-	dto.setPorcentagemCota(desenglobacao.getEnglobadaPorcentagemCota());
+	dto.setPorcentagemCota(desenglobacao.getPorcentagemCota());
 	dto.setNomeUsuario(desenglobacao.getResponsavel().getNome());
 	dto.setDataAlteracao(desenglobacao.getDataAlteracao());
 	dto.setHora(DateUtil.formatarHoraMinuto(desenglobacao.getDataAlteracao()));
-	if (inverterNumeroCota) {
-	    Cota cotaDesenglobada = cotaRepository.buscarCotaPorID(desenglobacao.getDesenglobaNumeroCota());
-	    if (cotaDesenglobada != null) {
-		dto.setNumeroCotaDesenglobada(new Long(cotaDesenglobada.getNumeroCota()));
-	    }
-	} else {
-	    dto.setNumeroCotaDesenglobada(desenglobacao.getDesenglobaNumeroCota());
-	}
+	dto.setNumeroCotaDesenglobada(desenglobacao.getCotaDesenglobada().getNumeroCota());
+	dto.setIdCotaDesenglobada(desenglobacao.getCotaDesenglobada().getId());
+	dto.setNomeCotaDesenglobada(desenglobacao.getCotaDesenglobada().getPessoa().getNome());
 	dto.setIdDesenglobacao(desenglobacao.getId());
 	return dto;
     }
 
     @Override
-    public List<DesenglobacaoDTO> obterDesenglobacaoPorCotaDesenglobada(Long cotaNumero) {
+    public List<DesenglobacaoDTO> obterDesenglobacaoPorCotaDesenglobada(Integer numeroCota) {
 	List<DesenglobacaoDTO> dtoList = new ArrayList<DesenglobacaoDTO>();
-	List<Desenglobacao> desenglobaList = desenglobacaoRepository.obterDesenglobacaoPorCotaDesenglobada(cotaNumero);
+	List<Desenglobacao> desenglobaList = desenglobacaoRepository.obterDesenglobacaoPorCotaDesenglobada(numeroCota);
 
 	for (Desenglobacao desenglobacao : desenglobaList) {
-	    DesenglobacaoDTO dto = copyToDTO(desenglobacao, true);
+	    DesenglobacaoDTO dto = copyToDTO(desenglobacao);
 	    dtoList.add(dto);
 	}
 	return dtoList;
@@ -89,7 +77,7 @@ public class DesenglobacaoServiceImpl implements DesenglobacaoService {
 
     @Override
     @Transactional
-    public boolean inserirDesenglobacao(List<DesenglobaVO> desenglobaDTO, Usuario usuario) {
+    public boolean inserirDesenglobacao(List<DesenglobacaoDTO> desenglobaDTO, Usuario usuario) {
 
 	List<Desenglobacao> desenglobada = new ArrayList<Desenglobacao>();
 
@@ -99,25 +87,27 @@ public class DesenglobacaoServiceImpl implements DesenglobacaoService {
 	}
 
 	try {
-
-	    for (DesenglobaVO origem : desenglobaDTO) {
-		Desenglobacao destino = new Desenglobacao();
-		BeanUtils.copyProperties(destino, origem);
-		trataEnglobacao(destino, usuario);
-		desenglobada.add(destino);
+	    if (desenglobaDTO.size() > 0) {
+		Cota cotaDesenglobada = cotaRepository.obterPorNumerDaCota(desenglobaDTO.get(0).getNumeroCotaDesenglobada());
+		for (DesenglobacaoDTO origem : desenglobaDTO) {
+		    Desenglobacao destino = new Desenglobacao();
+		    BeanUtils.copyProperties(origem, destino);
+		    Cota cotaEnglobada = cotaRepository.obterPorNumerDaCota(origem.getNumeroCotaEnglobada());
+		    destino.setCotaEnglobada(cotaEnglobada);
+		    destino.setCotaDesenglobada(cotaDesenglobada);
+		    trataEnglobacao(destino, usuario);
+		    desenglobada.add(destino);
+		}
 	    }
-
 	    desenglobacaoRepository.inserirCotasDesenglobadas(desenglobada);
-
 	} catch (Exception e) {
 	    e.printStackTrace();
 	}
-
 	return true;
     }
 
     private void trataEnglobacao(Desenglobacao destino, Usuario usuario) {
-	PDV pdv = this.pdvRepository.obterPDVPrincipal(destino.getEnglobadaNumeroCota());
+	PDV pdv = this.pdvRepository.obterPDVPrincipal(destino.getCotaEnglobada().getId());
 	if (pdv.getSegmentacao().getTipoPontoPDV() == null) {
 	    TipoPontoPDV pontoPDV = new TipoPontoPDV();
 	    pontoPDV.setId(4L);
@@ -131,7 +121,7 @@ public class DesenglobacaoServiceImpl implements DesenglobacaoService {
 	destino.setDataAlteracao(new Date());
     }
 
-    private boolean verificaPorcentagemCota(List<DesenglobaVO> desenglobaDTO) {
+    private boolean verificaPorcentagemCota(List<DesenglobacaoDTO> desenglobaDTO) {
 	float somatoriaPorcentagemEnglobada = 0;
 	float porcentagemCota = 0;
 
@@ -144,8 +134,8 @@ public class DesenglobacaoServiceImpl implements DesenglobacaoService {
 
 			somatoriaPorcentagemEnglobada += desenglobaVO.getEnglobadaPorcentagemCota();
 		}*/
-	for (DesenglobaVO desenglobaVO : desenglobaDTO) {
-	    somatoriaPorcentagemEnglobada += desenglobaVO.getEnglobadaPorcentagemCota();
+	for (DesenglobacaoDTO desenglobaVO : desenglobaDTO) {
+	    somatoriaPorcentagemEnglobada += desenglobaVO.getPorcentagemCota();
 	}
 	//		if ((porcentagemCota + somatoriaPorcentagemEnglobada) > 100) {
 	if ((somatoriaPorcentagemEnglobada) > 100) {
@@ -157,14 +147,14 @@ public class DesenglobacaoServiceImpl implements DesenglobacaoService {
 
     @Transactional
     @Override
-    public boolean alterarDesenglobacao(List<DesenglobaVO> desenglobaDTO, Usuario usuarioLogado) {
+    public boolean alterarDesenglobacao(List<DesenglobacaoDTO> desenglobaDTO, Usuario usuarioLogado) {
 
 	boolean isOk = verificaPorcentagemCota(desenglobaDTO);
 	if (!isOk) {
 	    return false;
 	}
 
-	boolean res = desenglobacaoRepository.removerPorCotaDesenglobada(new Long(desenglobaDTO.get(0).getDesenglobaNumeroCota()));
+	boolean res = desenglobacaoRepository.removerPorCotaDesenglobada(new Long(desenglobaDTO.get(0).getNumeroCotaDesenglobada()));
 	if(res){
 	    res = inserirDesenglobacao(desenglobaDTO, usuarioLogado);
 	}

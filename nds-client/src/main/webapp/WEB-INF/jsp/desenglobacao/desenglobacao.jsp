@@ -117,11 +117,6 @@
 						<td>
 							<input type="text" name="desenglobaDTO[0].desenglobaNomePessoa" id="filtroDesenglobaNomePessoa" style="width: 200px;" />
 						</td>
-						<td>
-							<span class="classPesquisar">
-								<a href="javascript:;">&nbsp;</a>
-							</span>
-						</td>
 					</tr>
 				</table>
 			</fieldset>
