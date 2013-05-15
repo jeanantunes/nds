@@ -1,11 +1,16 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.sql.DataSource;
 
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
-import org.hibernate.type.StandardBasicTypes;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
@@ -18,6 +23,9 @@ import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		AbstractRepositoryModel<ControleConferenciaEncalheCota, Long> implements ControleConferenciaEncalheCotaRepository {
 
+	@Autowired
+	private DataSource dataSource;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -120,21 +128,22 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 			sql.append(" and FORNECEDOR.ID =  :idFornecedor ");
 		}
 
-		SQLQuery sqlquery = getSession().createSQLQuery(sql.toString()).addScalar("idControle", StandardBasicTypes.LONG);
-		
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+
 		if(filtro.getIdCota()!=null) {
-			sqlquery.setParameter("idCota", filtro.getIdCota());
+			parameters.put("idCota", filtro.getIdCota());
 		}
 
 		if(filtro.getIdFornecedor() != null) {
-			sqlquery.setParameter("idFornecedor", filtro.getIdFornecedor());
+			parameters.put("idFornecedor", filtro.getIdFornecedor());
 		}
 		
-		sqlquery.setParameter("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
-		sqlquery.setParameter("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
-		sqlquery.setParameter("isPostergado", false);
+		parameters.put("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
+		parameters.put("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
+		parameters.put("isPostergado", false);
 		
-		return sqlquery.list();
+		return namedParameterJdbcTemplate.queryForList(sql.toString(), parameters, Long.class);
 		
 	}
 
