@@ -1,4 +1,4 @@
-function AutoCompleteController(workspace) {
+function AutoCompleteCampos(workspace) {
 
 	var autoComplete = this;
 	

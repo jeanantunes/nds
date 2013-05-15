@@ -2,15 +2,12 @@ package br.com.abril.nds.process.calculoreparte;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Collections;
-import java.util.Comparator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.dao.MovimentoEstoqueCotaDAO;
 import br.com.abril.nds.dao.ProdutoEdicaoDAO;
-import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
@@ -75,59 +72,6 @@ public class GravarReparteJuramentado extends ProcessoAbstrato {
 			}
 		    }
 		}
-	    }
-	}
-	// this.fimProcesso();
-    }
-
-    public void fimProcesso(EstudoTransient estudo) {
-	// Fim do sub processo
-	// Se houver saldo no reparte total distribuido, não considerando-se o total de reparte juramentado:
-	// Indice de Sobra ou Falta = ( 'sum'ReparteCalculado Cota / ReparteCalculado) * ReparteCalculado Cota (não
-
-	BigInteger sumReparteCalculadoCota = BigInteger.ZERO;
-	for (CotaEstudo cota : estudo.getCotas()) {
-	    sumReparteCalculadoCota = sumReparteCalculadoCota.add(cota.getReparteCalculado());
-	}
-
-	Comparator<CotaEstudo> orderCotaDesc = new Comparator<CotaEstudo>() {
-	    @Override
-	    public int compare(CotaEstudo c1, CotaEstudo c2) {
-		return c2.getReparteCalculado().compareTo(c1.getReparteCalculado());
-	    }
-	};
-
-	Collections.sort(estudo.getCotas(), orderCotaDesc);
-
-	if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) == -1 || estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) == 0) {
-	    return;
-	}
-
-	Collections.sort(estudo.getCotas(), orderCotaDesc);
-
-	for (CotaEstudo cota : estudo.getCotas()) {
-
-	    if (!cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado) && !cota.getClassificacao().equals(ClassificacaoCota.MaximoMinimo)) {
-
-		BigInteger indicedeSobraouFalta = sumReparteCalculadoCota.divide(estudo.getReparteDistribuir()).multiply(
-			cota.getReparteCalculado());
-
-		// Se ainda houver saldo, subtrair ou somar 1 exemplar por cota do maior para o menor reparte
-		// (exceto repartes fixados (FX), quantidades MAXIMAS E MINIMAS (MM)
-		// e bancas com MIX (MX)).
-
-		if (!cota.getClassificacao().equals(ClassificacaoCota.ReparteFixado)
-			&& !cota.getClassificacao().equals(ClassificacaoCota.MaximoMinimo)
-			&& !cota.getClassificacao().equals(ClassificacaoCota.BancaMixSemDeterminadaPublicacao)) {
-
-		    if (indicedeSobraouFalta.compareTo(BigInteger.ZERO) == 1)
-			cota.setReparteCalculado(cota.getReparteCalculado().add(BigInteger.ONE), estudo);
-		    else if (indicedeSobraouFalta.compareTo(BigInteger.ZERO) == -1)
-			cota.setReparteCalculado(cota.getReparteCalculado().subtract(BigInteger.ONE), estudo);
-		}
-
-		else if (indicedeSobraouFalta.compareTo(BigInteger.ZERO) == -1)
-		    cota.setReparteCalculado(cota.getReparteCalculado().add(BigInteger.ONE), estudo);
 	    }
 	}
     }
