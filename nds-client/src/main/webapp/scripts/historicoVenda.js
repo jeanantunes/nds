@@ -15,7 +15,7 @@ var historicoVendaController = $.extend(true, {
 		var flexGridService = new FlexGridService(),
 			pesquisaCota = new PesquisaCota(),
 			pesquisaProduto = new PesquisaProduto(),
-			autoComp = new AutoCompleteController(historicoVendaController.workspace);
+			autoComp = new AutoCompleteCampos(historicoVendaController.workspace);
 		
 		
 		// #### ASSOCIANDO OS EVENTOS NO DOM ####

@@ -27,7 +27,8 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 	init : function() {
 		
 		var autoComplete = new AutoCompleteController(excecaoSegmentoParciaisController.workspace);
-	
+		
+		
 		// #### ASSOCIANDO OS EVENTOS NO DOM ####
 		// PESQUISAS PRINCIPAIS
 		
@@ -62,6 +63,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 		
 		$('#nomeCotaFiltroPrincipal').keyup(function (){
 			autoComplete.autoCompletar("/cadastro/cota/autoCompletarPorNomeAutoComplete",'#numeroCotaFiltroPrincipal','#nomeCotaFiltroPrincipal');
+//			autoCompleteTeste.autoCompletarPorCodigo("/cadastro/cota/autoCompletarPorNomeAutoComplete",'#numeroCotaFiltroPrincipal','#nomeCotaFiltroPrincipal');
 		});
 		
 		autoComplete.limparCampoOnChange('#nomeCotaFiltroPrincipal', new Array('#numeroCotaFiltroPrincipal'));
@@ -98,8 +100,6 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 					'#codigoProdutoPrincipal','#nomeProdutoPrincipal', 2,
 					function(item) {
 					
-						$('.ui-autocomplete').css('display', 'block');
-				
 						if (item != null) {				
 							$('#segmentoProdutoPrincipal').val(item.chave.nomeFantasia || item.chave.razaoSocial);
 							$('#fornecedorPrincipal').val(item.chave.tipoSegmentoProduto || "Segmento Não Informado");
@@ -656,7 +656,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 					        	 params : params
 					         });
 				        	 
-					         grids.ProdutosNaoRecebidosGrid.reload();
+					         $("#nomeCotaFiltroPrincipal", excecaoSegmentoParciaisController.workspace).focus();
 						}
 					);
 				},
@@ -707,7 +707,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 					        	 params : params
 					         });
 				        	 
-					         grids.CotasQueNaoRecebemExcecaoGrid.reload();
+					         $("#nomeProdutoPrincipal", excecaoSegmentoParciaisController.workspace).focus();
 						}
 					);
 				},
@@ -768,14 +768,13 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 					        	 value : true
 					         });
 					         
-//					         grids.ProdutosNaoRecebidosGrid.reload({
-//					        	 params : params
-//					         });
 					         $('.excessaoBGrid').find('[id^=row]').remove();
 					         
 					         grids.ProdutosRecebidosGrid.reload({
 					        	 params : params
 					         });
+					         
+					         $("#nomeCotaFiltroPrincipal", excecaoSegmentoParciaisController.workspace).focus();
 						}
 					);
 					
@@ -840,15 +839,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 					        	 value : true
 					         });
 					         
-//					         grids.CotasQueRecebemExcecaoGrid.reload({
-//					        	 params : params
-//					         });
 					         $('.excessaoGrid').find('[id^=row]').remove();
-					         
-					         grids.CotasQueNaoRecebemExcecaoGrid.reload({
-					        	 params : params
-					         });
-					         
 					         
 					         excecaoSegmentoParciaisController.porExcecao();
 					         
@@ -921,11 +912,15 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 			value : $('#tipoExcecaoSegmento').is(':checked')
 		});
 		
+		
 		grids.CotasQueRecebemExcecaoGrid.reload({
 			dataType : 'json',
 			params : filtroPrincipalProduto
 		});
-		// comentado para não carregar a grid da direita automaticamente
+		
+		$("#nomeProdutoPrincipal", excecaoSegmentoParciaisController.workspace).focus();
+		
+// comentado para não carregar a grid da direita automaticamente
 //		grids.CotasQueNaoRecebemExcecaoGrid.reload({
 //			dataType : 'json',
 //			params : filtroPrincipalProduto
@@ -995,6 +990,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 						dataType : 'json',
 						params : returnFromController
 			});
+			
 	},
 	
 	// Produtos não Recebidos - Secundário
