@@ -2194,7 +2194,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @param dataOperacao
 	 * @param indConferenciaContingencia
 	 */
-	@Transactional
+	@Transactional(readOnly=true)
 	public void validarQtdeEncalheExcedeQtdeReparte(
 			ConferenciaEncalheDTO conferenciaEncalhe,
 			Integer numeroCota, 

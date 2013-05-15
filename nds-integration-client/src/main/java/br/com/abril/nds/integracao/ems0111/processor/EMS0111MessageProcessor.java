@@ -135,7 +135,11 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			// Cálcular data de recolhimento
 			Calendar calRecolhimento = Calendar.getInstance();
 			calRecolhimento.setTime(input.getDataLancamento());
-			calRecolhimento.add(Calendar.DAY_OF_MONTH, produtoEdicao.getPeb());
+			int peb = produtoEdicao.getPeb() == 0 ? produtoEdicao.getProduto().getPeb() : produtoEdicao.getPeb();
+			if (peb == 0) {
+				peb = 10;
+			}
+			calRecolhimento.add(Calendar.DAY_OF_MONTH, peb);
 			final Date dataRecolhimento = calRecolhimento.getTime();
 
 			// Data da Operação do sistema:
