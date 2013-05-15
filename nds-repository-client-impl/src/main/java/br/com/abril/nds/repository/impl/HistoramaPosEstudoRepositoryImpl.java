@@ -6,12 +6,12 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.HistogramaPosEstudoAnaliseFaixaReparteDTO;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
-import br.com.abril.nds.repository.HistoramaPosEstudoRepository;
+import br.com.abril.nds.repository.HistogramaPosEstudoRepository;
 
 @SuppressWarnings("rawtypes")
 @Repository
 public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel implements
-		HistoramaPosEstudoRepository  {
+		HistogramaPosEstudoRepository  {
 
 	@SuppressWarnings("unchecked")
 	public HistoramaPosEstudoRepositoryImpl(){
@@ -25,24 +25,22 @@ public class HistoramaPosEstudoRepositoryImpl extends AbstractRepositoryModel im
 		sql.append("SELECT '").append(faixaDe).append(" a ").append(faixaAte).append("' faixaReparte, ");
 		sql.append("       SUM(REPARTE) reparteTotal, ");
 		sql.append("	   AVG(REPARTE) reparteMedio, ");
-		sql.append("       SUM(VENDA) vendaNominal, ");
-		sql.append("	   SUM(VENDA) / COUNT(*) vendaMedia, ");
+		sql.append("       SUM(VENDA_MEDIA) vendaNominal, ");
+		sql.append("	   SUM(VENDA_MEDIA) / COUNT(DISTINCT NUMERO_COTA) vendaMedia, ");
 		sql.append("       COUNT(DISTINCT NUMERO_COTA) qtdCotas, ");
 		sql.append("	   SUM(RECEBIDO) qtdRecebida, ");
-		sql.append("	   (SUM(VENDA) / SUM(REPARTE)) * 100 vendaPercent, ");
-		sql.append("	   (SUM(REPARTE) - SUM(VENDA)) / COUNT(*) encalheMedio, ");
+		sql.append("	   (SUM(VENDA_MEDIA) / SUM(REPARTE)) * 100 vendaPercent, ");
+		sql.append("	   (SUM(REPARTE) - SUM(VENDA_MEDIA)) / COUNT(*) encalheMedio, ");
 		sql.append("       COUNT(IS_REPARTE_MENOR_VENDA) qtdCotaPossuemReparteMenorVenda,  ");
-		sql.append("       (SUM(REPARTE) / (SELECT REPARTE_DISTRIBUIR FROM ESTUDO WHERE ID = :ESTUDO_ID) * 100) participacaoReparte, ");
+		sql.append("       (SUM(REPARTE) / (SELECT SUM(REPARTE) FROM ESTUDO_COTA WHERE ESTUDO_ID = :ESTUDO_ID) * 100) participacaoReparte, ");
 		sql.append("  		group_concat(IS_REPARTE_MENOR_VENDA) numeroCotasStr ");
 		sql.append("  FROM (SELECT REP.ID, ");
 		sql.append("               REP.NUMERO_COTA, ");
 		sql.append("               SUM(REP.REPARTE) REPARTE, ");
 		sql.append("               SUM(EST.RECEBIDO) AS RECEBIDO, ");
-		sql.append("               SUM(EST.VENDA) AS VENDA, ");
-//		sql.append("               EST.VENDA_MEDIA, ");
-//		sql.append("               (EST.RECEBIDO / REP.REPARTE) PARTICIPACAO_REPARTE, ");
+		sql.append("               SUM(EST.VENDA_MEDIA) AS VENDA_MEDIA, ");
 		sql.append("               EST.QTDE_EDICOES, ");
-		sql.append("               (CASE WHEN REP.REPARTE < EST.VENDA THEN REP.NUMERO_COTA ELSE NULL END) IS_REPARTE_MENOR_VENDA ");
+		sql.append("               (CASE WHEN SUM(REP.REPARTE) < SUM(VENDA_MEDIA) THEN REP.NUMERO_COTA ELSE NULL END) IS_REPARTE_MENOR_VENDA ");
 		sql.append("          FROM (SELECT C.ID, ");
 		sql.append("                       C.NUMERO_COTA, ");
 		sql.append("                       EC.REPARTE ");

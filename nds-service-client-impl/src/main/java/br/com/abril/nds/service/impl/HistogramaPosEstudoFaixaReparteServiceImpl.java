@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.HistogramaPosEstudoAnaliseFaixaReparteDTO;
-import br.com.abril.nds.repository.HistoramaPosEstudoRepository;
+import br.com.abril.nds.repository.HistogramaPosEstudoRepository;
 import br.com.abril.nds.service.HistogramaPosEstudoFaixaReparteService;
 
 @Service
@@ -13,12 +13,12 @@ public class HistogramaPosEstudoFaixaReparteServiceImpl implements
 		HistogramaPosEstudoFaixaReparteService {
 
 	@Autowired
-	private HistoramaPosEstudoRepository historamaPosEstudoRepository;
+	private HistogramaPosEstudoRepository histogramaPosEstudoRepository;
 	
 	@Transactional(readOnly = true)
 	@Override
 	public HistogramaPosEstudoAnaliseFaixaReparteDTO obterHistogramaPosEstudo(int faixaDe, int faixaAte, Integer estudoId) {
-		return historamaPosEstudoRepository.obterHistogramaPosEstudo(faixaDe, faixaAte, estudoId);
+		return histogramaPosEstudoRepository.obterHistogramaPosEstudo(faixaDe, faixaAte, estudoId);
 	}
 
 }
