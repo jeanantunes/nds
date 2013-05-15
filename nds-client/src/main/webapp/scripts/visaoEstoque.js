@@ -10,6 +10,7 @@ var visaoEstoqueController = $.extend(true, {
 			buttonImage: contextPath + "/images/calendar.gif",
 			buttonImageOnly: true
 		});
+		$(".input-date").mask("99/99/9999");
 		
 		$("#btnPesquisarVisaoEstoque", this.workspace).click(function() {
 			visaoEstoqueController.pesquisar();
