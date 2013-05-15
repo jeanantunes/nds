@@ -1,16 +1,26 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.sql.DataSource;
 
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.CotaFaturamentoDTO;
 import br.com.abril.nds.dto.CotaTransportadorDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
@@ -37,6 +47,9 @@ import br.com.abril.nds.vo.PaginacaoVO;
 public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryModel<MovimentoFinanceiroCota, Long> 
 												   implements MovimentoFinanceiroCotaRepository {
 
+	@Autowired
+	private DataSource dataSource;
+	
 	public MovimentoFinanceiroCotaRepositoryImpl() {
 		super(MovimentoFinanceiroCota.class);
 	}
@@ -46,49 +59,66 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 		StringBuilder sql = new StringBuilder("");
 		
-		sql.append(" SELECT  ");
-		
-		sql.append(" SUM(MFC.VALOR  + PN.ENCARGOS ) AS valor,    	");
-		sql.append(" PN.DATA_VENCIMENTO AS dataVencimento,    		");
-		sql.append(" MFC.DATA as dataLancamento                    ");
-		
-		sql.append(" FROM  PARCELA_NEGOCIACAO PN                                     ");
-		
-		sql.append(" INNER JOIN NEGOCIACAO N ON (                                    ");
-		sql.append(" 	N.ID = PN.NEGOCIACAO_ID                                      ");
-		sql.append(" )                                                               ");
-		
-		sql.append(" INNER JOIN MOVIMENTO_FINANCEIRO_COTA MFC ON (                   ");
-		sql.append(" 	PN.MOVIMENTO_FINANCEIRO_ID = MFC.ID                          ");
-		sql.append(" )                                                               ");
+		sql.append("    SELECT ");
+		sql.append("        SUM(MFC.VALOR  + PN.ENCARGOS ) AS valor, ");
+		sql.append("        PN.DATA_VENCIMENTO AS dataVencimento, ");
+		sql.append("        MFC.DATA as dataLancamento ");
+		sql.append("    FROM ");
+		sql.append("        PARCELA_NEGOCIACAO PN");
+		sql.append("    INNER JOIN ");
+		sql.append("        NEGOCIACAO N  ");
+		sql.append("   ON ( ");
+		sql.append("       N.ID = PN.NEGOCIACAO_ID ");
+		sql.append("   )  ");
+		sql.append("    INNER JOIN ");
+		sql.append("        MOVIMENTO_FINANCEIRO_COTA MFC  ");
+		sql.append("   ON ( ");
+		sql.append("       PN.MOVIMENTO_FINANCEIRO_ID = MFC.ID       ");
+		sql.append("   )  ");
+		sql.append("    INNER JOIN ");
+		sql.append("        COTA  ");
+		sql.append("   ON ( ");
+		sql.append("       COTA.ID = MFC.COTA_ID   ");
+		sql.append("   )  ");
+		sql.append("    LEFT JOIN ");
+		sql.append("        CONSOLIDADO_MVTO_FINANCEIRO_COTA CMFC  ");
+		sql.append("   ON ( ");
+		sql.append("       CMFC.MVTO_FINANCEIRO_COTA_ID = MFC.ID     ");
+		sql.append("   )  ");
+		sql.append("    LEFT JOIN ");
+		sql.append("        CONSOLIDADO_FINANCEIRO_COTA CFC  ");
+		sql.append("   ON ( ");
+		sql.append("       CFC.ID = CMFC.CONSOLIDADO_FINANCEIRO_ID   ");
+		sql.append("   )  ");
+		sql.append("    WHERE ");
+		sql.append("        N.NEGOCIACAO_AVULSA = false  ");
+		sql.append("        AND       COTA.NUMERO_COTA = :numeroCota  ");
+		sql.append("        AND    CFC.ID IS NULL");
+		sql.append("    GROUP BY ");
+		sql.append("        PN.ID, ");
+		sql.append("        MFC.ID ");
+			
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 
-		sql.append(" INNER JOIN COTA ON (                    						 ");
-		sql.append(" 	COTA.ID = MFC.COTA_ID                           			 ");
-		sql.append(" )                                                               ");
+		parameters.put("numeroCota", numeroCota);
+		
+		@SuppressWarnings("rawtypes")
+		RowMapper cotaRowMapper = new RowMapper() {
 
-		sql.append(" LEFT JOIN CONSOLIDADO_MVTO_FINANCEIRO_COTA CMFC ON (            ");
-		sql.append(" 	CMFC.MVTO_FINANCEIRO_COTA_ID = MFC.ID                        ");
-		sql.append(" )                                                               ");
-		
-		sql.append(" LEFT JOIN CONSOLIDADO_FINANCEIRO_COTA CFC ON (                  ");
-		sql.append(" 	CFC.ID = CMFC.CONSOLIDADO_FINANCEIRO_ID                      ");
-		sql.append(" )                                                               ");
-		
-		sql.append(" WHERE                                                           ");
-		
-		sql.append(" N.NEGOCIACAO_AVULSA = false AND     	");
-		sql.append(" COTA.NUMERO_COTA = :numeroCota AND  	");
-		sql.append(" CFC.ID IS NULL							");
-		sql.append(" GROUP BY PN.ID, MFC.ID                 ");
-		
-		
-		Query query = getSession().createSQLQuery(sql.toString());
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCotaDTO.class));
-		
-		query.setParameter("numeroCota", numeroCota);
-		
-		return query.list();
+			public Object mapRow(ResultSet rs, int arg1) throws SQLException {
+
+				DebitoCreditoCotaDTO dto = new DebitoCreditoCotaDTO();
+				
+				dto.setValor(rs.getBigDecimal("valor"));
+				dto.setDataVencimento(rs.getDate("dataVencimento"));
+				dto.setDataLancamento(rs.getDate("dataLancamento"));
+				
+				return dto;
+			}
+		};
+
+		return (List<DebitoCreditoCotaDTO>) namedParameterJdbcTemplate.query(sql.toString(), parameters, cotaRowMapper);
 		
 	}
 	
@@ -133,63 +163,103 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	@SuppressWarnings("unchecked")
 	public List<DebitoCreditoCotaDTO> obterDebitoCreditoCotaDataOperacao(Integer numeroCota, Date dataOperacao, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados){
 		
-		StringBuilder hql = new StringBuilder(" select ");
+		StringBuilder sql = new StringBuilder();
 		
-		hql.append(" mfc.tipoMovimento.operacaoFinaceira as tipoLancamento, ");
-		
-		hql.append(" mfc.tipoMovimento.descricao as tipoMovimento, ");
-		
-		hql.append(" mfc.valor as valor, ");
-		
-		hql.append(" mfc.data as dataLancamento, ");
-		
-		hql.append(" mfc.observacao as observacoes");
-		
-		hql.append(" from MovimentoFinanceiroCota mfc ");
-		   
-		hql.append(" where ");
-		
-		hql.append(" mfc.data = :dataOperacao and ");
-		
-		hql.append(" mfc.status = :statusAprovado and ");
-		
-		hql.append(" mfc.cota.numeroCota = :numeroCota ");
+		sql.append("select ");
+		sql.append("	tipomovime1_.OPERACAO_FINANCEIRA, ");
+		sql.append("	tipomovime1_.DESCRICAO, ");
+		sql.append("	movimentof0_.VALOR, ");
+		sql.append("	movimentof0_.DATA as DATALANCAMENTO, ");
+		sql.append("	movimentof0_.OBSERVACAO ");
+		sql.append(" from ");
+		sql.append("	MOVIMENTO_FINANCEIRO_COTA movimentof0_, ");
+		sql.append("	TIPO_MOVIMENTO tipomovime1_ cross  ");
+		sql.append(" join ");
+		sql.append("	COTA cota3_  ");
+		sql.append(" where ");
+		sql.append("	movimentof0_.TIPO_MOVIMENTO_ID=tipomovime1_.ID  ");
+		sql.append("	and movimentof0_.COTA_ID=cota3_.ID  ");
+		sql.append("	and movimentof0_.DATA=:dataOperacao  ");
+		sql.append("	and movimentof0_.STATUS= :statusAprovado  ");
+		sql.append("	and cota3_.NUMERO_COTA= :numeroCota  ");
 		
 		if(tiposMovimentoFinanceiroIgnorados!=null && !tiposMovimentoFinanceiroIgnorados.isEmpty()) {
-			hql.append(" and mfc.tipoMovimento not in (:tiposMovimentoFinanceiroIgnorados) ");
+			
+			sql.append("	and ( ");
+			sql.append("		movimentof0_.TIPO_MOVIMENTO_ID not in  ( ");
+			sql.append("			:tiposMovimentoFinanceiroIgnorados ");
+			sql.append("		) ");
+			sql.append("	)  ");
 		}
 		
-		hql.append(" and mfc.id not in ");
+		sql.append("	and ( ");
+		sql.append("		movimentof0_.ID not in  ( ");
+		sql.append("			select ");
+		sql.append("				distinct movimentof6_.ID  ");
+		sql.append("			from ");
+		sql.append("				CONSOLIDADO_FINANCEIRO_COTA consolidad4_  ");
+		sql.append("			inner join ");
+		sql.append("				CONSOLIDADO_MVTO_FINANCEIRO_COTA movimentos5_  ");
+		sql.append("					on consolidad4_.ID=movimentos5_.CONSOLIDADO_FINANCEIRO_ID  ");
+		sql.append("			inner join ");
+		sql.append("				MOVIMENTO_FINANCEIRO_COTA movimentof6_  ");
+		sql.append("					on movimentos5_.MVTO_FINANCEIRO_COTA_ID=movimentof6_.ID cross  ");
+		sql.append("			join ");
+		sql.append("				COTA cota7_  ");
+		sql.append("			where ");
+		sql.append("				consolidad4_.COTA_ID=cota7_.ID  ");
+		sql.append("				and cota7_.NUMERO_COTA= :numeroCota ");
+		sql.append("		) ");
+		sql.append("	)  ");
+		sql.append(" order by ");
+		sql.append("	movimentof0_.DATA ");
 		
-		hql.append(" (   ");
-		
-		hql.append(" select distinct(movimentos.id) ");
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 
-		hql.append(" from ConsolidadoFinanceiroCota c join c.movimentos movimentos ");
-		
-		hql.append(" where ");
-		
-		hql.append(" c.cota.numeroCota = :numeroCota  ");
-		
-		hql.append(" ) ");
-		
-		hql.append(" order by mfc.data ");
-		
-		Query query = this.getSession().createQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCotaDTO.class));
-		
-		query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
-		
-		query.setParameter("numeroCota", numeroCota);
-		
-		query.setParameter("dataOperacao", dataOperacao);
+		parameters.put("statusAprovado", StatusAprovacao.APROVADO);
+		parameters.put("numeroCota", numeroCota);
+		parameters.put("dataOperacao", dataOperacao);
 		
 		if(tiposMovimentoFinanceiroIgnorados!=null && !tiposMovimentoFinanceiroIgnorados.isEmpty()) {
-			query.setParameterList("tiposMovimentoFinanceiroIgnorados", tiposMovimentoFinanceiroIgnorados);
+			parameters.put("tiposMovimentoFinanceiroIgnorados", getListaTiposMovimentoFinanceiroIgnorados(tiposMovimentoFinanceiroIgnorados));
 		}
 		
-		return query.list();
+		@SuppressWarnings("rawtypes")
+		RowMapper cotaRowMapper = new RowMapper() {
+
+			public Object mapRow(ResultSet rs, int arg1) throws SQLException {
+
+				DebitoCreditoCotaDTO dto = new DebitoCreditoCotaDTO();
+
+				String tipoLancamento = rs.getString("OPERACAO_FINANCEIRA");
+				if(tipoLancamento !=null && !"".equals(tipoLancamento)){
+					dto.setTipoLancamento(OperacaoFinaceira.valueOf(tipoLancamento));
+				}
+				
+				dto.setTipoMovimento(rs.getString("DESCRICAO"));
+				dto.setValor(rs.getBigDecimal("VALOR"));
+				dto.setDataLancamento(rs.getDate("DATALANCAMENTO"));
+				dto.setObservacoes(rs.getString("OBSERVACAO"));
+				
+				return dto;
+			}
+		};
+		
+		return (List<DebitoCreditoCotaDTO>) namedParameterJdbcTemplate.query(sql.toString(), parameters, cotaRowMapper);
+		
 	}
 	
+	private List<Long> getListaTiposMovimentoFinanceiroIgnorados(
+			List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados) {
+		ArrayList<Long> ret = new ArrayList<Long>();
+		for(TipoMovimentoFinanceiro tipo : tiposMovimentoFinanceiroIgnorados){
+			ret.add(tipo.getId());
+		}
+		
+		return ret;
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<DebitoCreditoCotaDTO> obterDebitoCreditoSumarizadosParaCotaDataOperacao(Integer numeroCota, Date dataOperacao, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados){
 		

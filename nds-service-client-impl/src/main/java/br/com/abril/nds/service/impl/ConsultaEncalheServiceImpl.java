@@ -117,16 +117,6 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		valorTotalEncalhe = movimentoEstoqueCotaRepository.obterValorTotalEncalhe(filtro);
 		
-		
-		if(valorTotalEncalhe == null) {
-			valorTotalEncalhe = BigDecimal.ZERO;
-		}
-		
-		if(valorTotalReparte == null) {
-			valorTotalReparte = BigDecimal.ZERO;
-		}
-		
-		
 		BigDecimal valorVendaDia = valorTotalReparte.subtract(valorTotalEncalhe); 
 		
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCotaDTO = new ArrayList<DebitoCreditoCotaDTO>();
