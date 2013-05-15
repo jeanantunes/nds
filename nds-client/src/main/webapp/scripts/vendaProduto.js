@@ -10,7 +10,7 @@ var vendaProdutoController = $.extend(true, {
 		
 		var workSpace = vendaProdutoController.workspace;
 
-		var autoComp = new AutoCompleteController(workSpace);
+		var autoComp = new AutoCompleteCampos(workSpace);
 		
 		$('#codigo', workSpace).bind({
 			keyup: function(){

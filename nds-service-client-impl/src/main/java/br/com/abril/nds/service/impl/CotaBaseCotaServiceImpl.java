@@ -26,15 +26,21 @@ public class CotaBaseCotaServiceImpl implements CotaBaseCotaService {
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public Long verificarExistenciaCotaBaseCota(Cota cota) {		 
 		return this.cotaBaseCotaRepository.verificarExistenciaCotaBaseCota(cota);
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
+	public boolean isCotaBaseAtiva(CotaBase cotaBase, Integer[] numerosDeCotasBase) {		 
+		return this.cotaBaseCotaRepository.isCotaBaseAtiva(cotaBase, numerosDeCotasBase);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
 	public boolean isCotaBaseAtiva(CotaBase cotaBase) {		 
-		return this.cotaBaseCotaRepository.isCotaBaseAtiva(cotaBase);
+		return this.cotaBaseCotaRepository.isCotaBaseAtiva(cotaBase, null);
 	}
 
 	@Override
@@ -47,17 +53,17 @@ public class CotaBaseCotaServiceImpl implements CotaBaseCotaService {
 		
 		CotaBaseCota cotaBaseCotaExluida = new CotaBaseCota();
 		cotaBaseCotaExluida.setCota(cotaParaDesativar);
-		cotaBaseCotaExluida.setCotaBase(cotaBase);
 		cotaBaseCotaExluida.setDtFimVigencia(new Date());
 		cotaBaseCotaExluida.setCotaBase(cotaBase);
 		cotaBaseCotaExluida.setTipoAlteracao(TipoAlteracao.EXCLUSAO);
+		cotaBaseCotaExluida.setAtivo(false);
 		cotaBaseCotaRepository.adicionar(cotaBaseCotaExluida);
 		
 		
 	}
 
 	@Override
-	@Transactional
+	@Transactional(readOnly = true)
 	public Long quantidadesDeCotasAtivas(CotaBase cotaBase) {		 
 		return this.cotaBaseCotaRepository.quantidadesDeCotasAtivas(cotaBase);
 	}

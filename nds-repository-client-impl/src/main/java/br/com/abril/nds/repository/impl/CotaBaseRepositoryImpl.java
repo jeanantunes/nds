@@ -127,7 +127,6 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" left join segmento.tipoPontoPDV as tipoPontoPDV ");
         hql.append(" left join segmento.areaInfluenciaPDV as areaInfluenciaPDV ");
         hql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
-        hql.append(" and cotaEndereco.principal = true ");
         if(dto == null){
         	hql.append(" and cotaBaseCota.ativo = true ");        	
         	hql.append(" and cotaBase.id = :idCotaBase ");        	
@@ -138,6 +137,8 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         }else{
         	hql.append(" GROUP BY cota.id");        	
         }
+        
+        hql.append(" order by numeroCota");
         
         Query query =  getSession().createQuery(hql.toString());
         
@@ -207,7 +208,6 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" left join segmento.areaInfluenciaPDV as areaInfluenciaPDV ");
         
         hql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
-        hql.append(" and cotaEndereco.principal = true ");
        	hql.append(" and cotaBase.id = :idCotaNova ");        	
         
         hql.append(" group by cota.id ");
@@ -274,7 +274,6 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" left join segmento.tipoPontoPDV as tipoPontoPDV ");
         hql.append(" left join segmento.areaInfluenciaPDV as areaInfluenciaPDV ");
         hql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
-        hql.append(" and cotaEndereco.principal = true ");        
         hql.append(" and cotaBase.id = :idCotaBase ");
         
         
@@ -328,11 +327,18 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" left join segmento.tipoPontoPDV as tipoPontoPDV ");
         hql.append(" left join segmento.areaInfluenciaPDV as areaInfluenciaPDV ");
         hql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
-        hql.append(" and cotaEndereco.principal = true ");        
         
-        hql.append(" GROUP BY cotaBase.id");
+        if (dto.getNumeroCota() != null) {
+        	hql.append(" and cota.numeroCota = :numeroCota");
+        }
+        
+        hql.append(" GROUP BY cota.id");
         
         Query query =  getSession().createQuery(hql.toString());
+        
+        if (dto.getNumeroCota() != null) {
+        	query.setParameter("numeroCota", dto.getNumeroCota());
+        }
         
         query.setResultTransformer(new AliasToBeanResultTransformer(CotaBaseDTO.class));
         
