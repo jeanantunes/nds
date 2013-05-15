@@ -16,14 +16,14 @@ var produtoController = $.extend(true, {
 		
 		$(".bt_arq", this.workspace).hide();
 
-		$("#comboGeracaoAutomatica").val(-1).enable();
+		$("#comboGeracaoAutomatica", produtoController.workspace).val(-1).enable();
 		this.tamanhoInicial = 3;
 		
-		$('#codigoProduto').change(function (){
+		$('#codigoProduto', produtoController.workspace).change(function (){
 			produtoController.pesquisarPorCodigoProduto('#codigoProduto', '#produto', '#comboGeracaoAutomatica', false);
 		});
 		
-		$('#produto').keyup(function(event){
+		$('#produto', produtoController.workspace).keyup(function(event){
 			if (event.keyCode !== 9)
 				produtoController.autoCompletarPorNomeProduto('#produto', '#codigoProduto', false);
 		});
