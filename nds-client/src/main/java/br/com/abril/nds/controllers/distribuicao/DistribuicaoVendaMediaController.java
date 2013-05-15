@@ -19,7 +19,9 @@ import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Roteiro;
+import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
+import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.model.planejamento.Estrategia;
@@ -27,6 +29,7 @@ import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
+import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstrategiaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
@@ -34,6 +37,7 @@ import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.RoteiroRepository;
+import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.EstudoAlgoritmoService;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.HTMLTableUtil;
@@ -87,6 +91,9 @@ public class DistribuicaoVendaMediaController extends BaseController {
     private RoteiroRepository roteiroRepository;
 
     @Autowired
+    private EstoqueProdutoService estoqueProdutoService;
+    
+    @Autowired
     private EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
 
     @Autowired
@@ -99,49 +106,79 @@ public class DistribuicaoVendaMediaController extends BaseController {
     private EstudoAlgoritmoService estudoAlgoritmoService;
 
     @Path("index")
-    @Post
-    @Transactional(readOnly = true)
     public void index(String codigoProduto, Long edicao, Long estudoId, Long lancamentoId, String juramentado, String suplementar,
 	    String lancado, String promocional, String sobra, Long repDistrib) {
-	if (codigoProduto == null) {
-	    result.nothing();
-	    return;
-	}
-	session.removeAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO);
-	ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicao);
-	if (estudoId != null) {
-	    Estudo estudo = estudoRepository.buscarPorId(estudoId);
-	    result.include("estudo", estudo);
-	}
-	Lancamento lancamento = null;
-	if (lancamentoId == null) {
-	    lancamento = findLancamentoBalanceado(produtoEdicao);
-	} else {
-	    lancamento = lancamentoRepository.buscarPorIdSemEstudo(lancamentoId);
-	}
-	Estrategia estrategia = estrategiaRepository.buscarPorProdutoEdicao(produtoEdicao);
-	EstrategiaDTO estrat = new EstrategiaDTO();
-	if (estrategia != null) {
-	    BeanUtils.copyProperties(estrategia, estrat);
-	}
-
-	List<Roteiro> roteiros = roteiroRepository.buscarTodos();
-
-	result.include("componentes", ComponentesPDV.values());
-	result.include("roteiros", roteiros);
-	result.include("juramentado", juramentado);
-	result.include("suplementar", suplementar);
-	result.include("lancado", lancado);
-	result.include("promocional", promocional);
-	result.include("sobra", sobra);
-	result.include("repDistrib", repDistrib);
-
-	result.include("lancamento", lancamento);
-	result.include("estrategia", estrat);
-	ProdutoEdicaoDTO convertido = converterResultado(produtoEdicao, lancamento);
-	// produtoEdicaoRepository.findReparteEVenda(convertido);
-
-	result.include("produtoEdicao", convertido);
+		
+    	Estudo estudo = null;
+    	
+    	if (estudoId == null || estudoId == 0l) {
+		    result.nothing();
+		    return;
+		}else {
+			estudo = estudoRepository.buscarPorId(estudoId);
+			result.include("estudo", estudo);
+		}
+    	
+		session.removeAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO);
+		
+		ProdutoEdicao produtoEdicao = estudo.getProdutoEdicao();
+		EstoqueProduto estoqueProdutoEdicao = estoqueProdutoService.buscarEstoquePorProduto(produtoEdicao.getId());
+		
+		Lancamento lancamento = null;
+		if (lancamentoId == null) {
+		    lancamento = findLancamentoBalanceado(produtoEdicao);
+		} else {
+		    lancamento = lancamentoRepository.buscarPorIdSemEstudo(lancamentoId);
+		}
+		Estrategia estrategia = estrategiaRepository.buscarPorProdutoEdicao(produtoEdicao);
+		EstrategiaDTO estrat = new EstrategiaDTO();
+		if (estrategia != null) {
+		    BeanUtils.copyProperties(estrategia, estrat);
+		}
+	
+		List<Roteiro> roteiros = roteiroRepository.buscarTodos();
+	
+		result.include("componentes", ComponentesPDV.values());
+		result.include("roteiros", roteiros);
+		result.include("juramentado", juramentado);
+		
+		if (estoqueProdutoEdicao != null) {
+			result.include("suplementar", estoqueProdutoEdicao.getQtdeSuplementar());
+		}else {
+			result.include("suplementar", suplementar);
+		}
+		
+		if (lancado != null) {
+			result.include("lancado", lancado);
+		}else {
+			result.include("lancado", lancamento.getReparte());
+		}
+		
+		if (promocional != null) {
+			result.include("promocional", promocional);	
+		}else {
+			result.include("promocional", lancamento.getRepartePromocional());
+		}
+		
+		if (sobra != null) {
+			result.include("sobra", sobra);
+		}else {
+			result.include("sobra", estudo.getSobra());
+		}
+		
+		if (repDistrib != null) {
+			result.include("repDistrib", repDistrib);
+		}else {
+			result.include("repDistrib", estudo.getReparteDistribuir() );
+		}
+		
+	
+		result.include("lancamento", lancamento);
+		result.include("estrategia", estrat);
+		ProdutoEdicaoDTO convertido = converterResultado(produtoEdicao, lancamento);
+		// produtoEdicaoRepository.findReparteEVenda(convertido);
+	
+		result.include("produtoEdicao", convertido);
     }
 
     @Path("pesquisarProdutosEdicao")

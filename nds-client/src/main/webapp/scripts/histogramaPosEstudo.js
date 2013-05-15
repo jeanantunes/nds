@@ -48,11 +48,11 @@ var histogramaPosEstudoController = $.extend(true, {
 		rowCell.vendaNominalFormatado = formatarMilhar(Math.round(rowCell.vendaNominalFormatado));
 		rowCell.qtdCotasFormatado = formatarMilhar(rowCell.qtdCotasFormatado);
 		rowCell.qtdCotaPossuemReparteMenorVendaFormatado = formatarMilhar(rowCell.qtdCotaPossuemReparteMenorVendaFormatado);
-		rowCell.encalheMedioFormatado = floatToPrice(rowCell.encalheMedioFormatado);
-		rowCell.participacaoReparteFormatado = floatToPrice(rowCell.participacaoReparteFormatado);
-		rowCell.reparteMedioFormatado = floatToPrice(rowCell.reparteMedioFormatado);
-		rowCell.vendaMediaFormatado = floatToPrice(rowCell.vendaMediaFormatado);
-		rowCell.vendaPercentFormatado = floatToPrice(rowCell.vendaPercentFormatado);
+		rowCell.encalheMedioFormatado = floatToPrice(rowCell.encalheMedioFormatado / 100);
+		rowCell.participacaoReparteFormatado = floatToPrice(rowCell.participacaoReparteFormatado / 100);
+		rowCell.reparteMedioFormatado = floatToPrice(rowCell.reparteMedioFormatado / 100);
+		rowCell.vendaMediaFormatado = floatToPrice(rowCell.vendaMediaFormatado / 100);
+		rowCell.vendaPercentFormatado = floatToPrice(rowCell.vendaPercentFormatado / 100);
 	},
 	
 	init : function () {
@@ -219,7 +219,6 @@ var histogramaPosEstudoController = $.extend(true, {
 					gridName : "estudosAnaliseGrid",
 					url : contextPath + "/distribuicao/histogramaPosEstudo/carregarGridAnalise",
 					onSuccess : histogramaPosEstudoController.popularFieldsetResumoEstudo,
-					// HistogramaPosEstudoAnaliseFaixaReparteDTO.java utilizado na resposta(response) do servidor
 					preProcess : function(response){
 						var rowConsolidada = $(response.rows).last()[0];
 						rowConsolidada.cell.faixaReparte = "Total:";
@@ -481,10 +480,8 @@ var histogramaPosEstudoController = $.extend(true, {
 	},
 	
 	popularFieldsetResumoEstudo : function (){
-//		var matrizSelecionada = histogramaPosEstudoController.matrizSelecionado,
-//			rowConsolidada = $(histogramaPosEstudoController.Grids.EstudosAnaliseGrid.tableModel.rows).last()[0], 
-			var url = contextPath + "/distribuicao/histogramaPosEstudo/carregarDadosFieldSetResumoEstudo",
-				estudoId = $('#codigoEstudoFs').text();
+		var url = contextPath + "/distribuicao/histogramaPosEstudo/carregarDadosFieldSetResumoEstudo",
+			estudoId = $('#codigoEstudoFs').text();
 			
 		$.postJSON(
 				url,
@@ -499,34 +496,19 @@ var histogramaPosEstudoController = $.extend(true, {
 					
 					// Segunda Coluna
 					$('#fieldSetResumoReparteMedioCota').html(floatToPrice(parseFloat(response.reparteMedioCota || 0).toFixed(2))); // quantidade de exemplares que cada cota irá receber na média
-					$('#fieldSetResumoNpdvAtual').html(response.qtdCotasAtivas); // count tb cotas onde status for ativo
-					$('#fieldSetResumoNpdvProduto').html(response.qtdCotasRecebemReparte); // quantidade de cotas que irão receber reparte (fazem parte do estudo)
+					$('#fieldSetResumoNpdvAtual').html(formatarMilhar(response.qtdCotasAtivas || 0)); // count tb cotas onde status for ativo
+					$('#fieldSetResumoNpdvProduto').html(formatarMilhar(response.qtdCotasRecebemReparte || 0)); // quantidade de cotas que irão receber reparte (fazem parte do estudo)
+					
 					// quantidade de cotas que foram adicionadas no estudo pela “complementar automática”; segundo o Jhonis é "CP" no campo classificação na tb estudo_cota
-					$('#fieldSetResumoNpdvComplementar').html(response.qtdCotasAdicionadasPelaComplementarAutomatica || 0); 
+					$('#fieldSetResumoNpdvComplementar').html(formatarMilhar(response.qtdCotasAdicionadasPelaComplementarAutomatica || 0)); 
 					
 					// Terceira coluna
 					$('#fieldSetResumoReparteMinimoSugerida').html(formatarMilhar(response.qtdReparteMinimoSugerido || 0));
 					$('#fieldSetResumoReparteMinimoEstudo').html(formatarMilhar(response.qtdReparteMinimoEstudo || 0));
-					$('#fieldSetResumoAbrangenciaSugerida').html(response.abrangenciaSugerida || 0);
-					$('#fieldSetResumoAbrangenciaEstudo').html(floatToPrice(parseFloat(response.abrangenciaEstudo || 0).toFixed(2)));
+					$('#fieldSetResumoAbrangenciaSugerida').html(floatToPrice(parseFloat(response.abrangenciaSugerida || 0.00).toFixed(2)) + '% ');
+					$('#fieldSetResumoAbrangenciaEstudo').html(floatToPrice(parseFloat(response.abrangenciaEstudo || 0.00).toFixed(2)) + '% ');
 					
 					$('#fieldSetResumoAbrangenciaVendaPercent').html('Abrangência de Venda:&nbsp;&nbsp;' + floatToPrice((parseFloat(response.abrangenciaDeVenda) || 0 ).toFixed(2)) + '% ');
-					
-//					if (typeof histogramaPosEstudoController.dadosResumo !== 'undefined') {
-//					    $('#fieldSetResumoRepartePromocional').html(parseInt(histogramaPosEstudoController.dadosResumo.repartePromo || 0));
-//					} else {
-//					    $('#fieldSetResumoRepartePromocional').html(parseInt(response.qtdRepartePromocional));
-//					}
-					
-//					if (typeof histogramaPosEstudoController.dadosResumo !== 'undefined') {
-//					    $('#fieldSetResumoReparteDistribuida').html(histogramaPosEstudoController.dadosResumo.reparteDistribuido);
-//					} else {
-//					    $('#fieldSetResumoReparteDistribuida').html(response.reparteDistribuido);
-//					}
-					
-					
-//					$('#fieldSetResumoReparteMedioCota').html((parseInt(matrizSelecionada.repDistrib) / parseInt(response.qtdCotasRecebemReparte)) || 0 ); // quantidade de exemplares que cada cota irá receber na média 
-					
 				}
 		);
 	},
@@ -665,29 +647,10 @@ var histogramaPosEstudoController = $.extend(true, {
 	},
 	
 	recalcularEstudo : function (){
-		var data = [],
-			matrizSelecionado = histogramaPosEstudoController.matrizSelecionado;
-		
-		data.push({name: "edicao", value: matrizSelecionado.edicao});
-		data.push({name: "estudoId", value: matrizSelecionado.estudo});
-		data.push({name: "lancamentoId", value: matrizSelecionado.idLancamento});
-		data.push({name: "codigoProduto", value: matrizSelecionado.codigoProduto});
-		
-		data.push({name: "juramentado", value: matrizSelecionado.juram || 0});
-		data.push({name: "suplementar", value: matrizSelecionado.suplem || 0});
-		data.push({name: "lancado", value: matrizSelecionado.lancto || 0});
-		data.push({name: "promocional", value: matrizSelecionado.promo || 0});
-		data.push({name: "sobra", value: matrizSelecionado.sobra || 0});
-		$.post(contextPath + "/distribuicaoVendaMedia/index", data, function(response) {
-			$('#matrizDistribuicaoContent').hide();
-			$('#telasAuxiliaresContent').html(response);
-			$('#telasAuxiliaresContent').show();
-		});
+		var urlAnalise = contextPath + '/distribuicaoVendaMedia/index?estudoId=' + $('#codigoEstudoFs').text();
+	    
+		$('#workspace').tabs('addTab', 'Distribuição Venda Média', urlAnalise);
 	},
 	
-	analise : function() {
-		
-	}
-
 }, BaseController);
 //@ sourceURL=histogramaPosEstudo.js
