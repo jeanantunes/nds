@@ -64,7 +64,7 @@ public class CotaDAO {
 
     private Map<Long, BigDecimal> idsPesos = new HashMap<>();
 
-    public CotaEstudo getIndiceAjusteCotaEquivalenteByCota(CotaEstudo cota) {
+    public List<CotaEstudo> getIndiceAjusteCotaEquivalenteByCota(CotaEstudo cota) {
 
 	List<CotaEstudo> listEquivalente = new ArrayList<CotaEstudo>();
 	try {
@@ -82,11 +82,10 @@ public class CotaDAO {
 		    return temp;
 		}
 	    });
-	    cota.setEquivalente(listEquivalente);
 	} catch (Exception ex) {
 	    ex.printStackTrace();
 	}
-	return cota;
+	return listEquivalente;
     }
 
     public List<CotaEstudo> getCotaWithEstoqueProdutoCota() {
@@ -217,6 +216,10 @@ public class CotaDAO {
 	    } else {
 		cota.setAjusteReparte(rs.getBigDecimal("AJUSTE_APLICADO"));
 	    }
+	    cota.setClassificacao(ClassificacaoCota.Ajuste);
+	}
+	if (cota.getAjusteReparte() == null || cota.getAjusteReparte().compareTo(BigDecimal.ONE) == -1) {
+	    cota.setIndiceAjusteCota(BigDecimal.ONE);
 	}
     }
     
