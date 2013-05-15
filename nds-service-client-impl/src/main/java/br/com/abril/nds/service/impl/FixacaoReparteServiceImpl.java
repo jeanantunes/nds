@@ -246,14 +246,16 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	}
 
 	private void validaStatusProduto(FixacaoReparteDTO fixacaoReparteDTO, Produto produto) {
-		
-		if (fixacaoReparteDTO.getEdicaoInicial() != null && fixacaoReparteDTO.getEdicaoFinal() != null) {
-			List<ProdutoEdicao> listProdutoEdicao = produtoEdicaoRepository.listProdutoEdicaoPorCodProdutoNumEdicoes(produto.getCodigo(), fixacaoReparteDTO.getEdicaoInicial().longValue(), fixacaoReparteDTO.getEdicaoFinal().longValue());
-			for (ProdutoEdicao produtoEdicao : listProdutoEdicao) {
-				statusPermitido(new ArrayList<>(produtoEdicao.getLancamentos()).get(0).getStatus());
-			}
+
+	    if (fixacaoReparteDTO.getEdicaoInicial() != null && fixacaoReparteDTO.getEdicaoFinal() != null) {
+		List<ProdutoEdicao> listProdutoEdicao = produtoEdicaoRepository.listProdutoEdicaoPorCodProdutoNumEdicoes(produto.getCodigo(), fixacaoReparteDTO.getEdicaoInicial().longValue(), fixacaoReparteDTO.getEdicaoFinal().longValue());
+		for (ProdutoEdicao produtoEdicao : listProdutoEdicao) {
+		    if (produtoEdicao.getLancamentos().size() > 0) {
+			statusPermitido(new ArrayList<>(produtoEdicao.getLancamentos()).get(0).getStatus());
+		    }
 		}
-		
+	    }
+
 	}
 
 	private void statusPermitido(StatusLancamento status) {

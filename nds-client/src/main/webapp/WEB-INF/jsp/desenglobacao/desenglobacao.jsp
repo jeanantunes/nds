@@ -5,9 +5,8 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/NDS.js"></script>
 <script type="text/javascript">
 
-	var	pesquisaCota = new PesquisaCota();
-
 	$(function() {
+		desenglobacaoController.pesquisaCota = new PesquisaCota();
 		desenglobacaoController.init();
 	});
 	
@@ -116,11 +115,6 @@
 						</td>
 						<td>
 							<input type="text" name="desenglobaDTO[0].desenglobaNomePessoa" id="filtroDesenglobaNomePessoa" style="width: 200px;" />
-						</td>
-						<td>
-							<span class="classPesquisar">
-								<a href="javascript:;">&nbsp;</a>
-							</span>
 						</td>
 					</tr>
 				</table>

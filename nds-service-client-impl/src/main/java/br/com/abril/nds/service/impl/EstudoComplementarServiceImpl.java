@@ -92,7 +92,9 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 		String dataLancamento = new SimpleDateFormat("dd/MM/yyyy").format(estudo.getDataLancamento());
 		
 		estudoComplDto.setDataLncto(dataLancamento);
-		estudoComplDto.setDataRclto(buscarProdutos.get(0).getDataRcto());
+		if(buscarProdutos!=null && !buscarProdutos.isEmpty()){
+			estudoComplDto.setDataRclto(buscarProdutos.get(0).getDataRcto());
+		}
 		
 		return estudoComplDto;
 	}

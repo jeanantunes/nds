@@ -49,7 +49,8 @@
 			onSuccess: false,
 			onError: false,
 			onSubmit: false, //using a custom populate function
-			disableSelect: false
+			disableSelect: false,
+            colMove: true // permite reordenar as colunas
 		}, p);
 		$(t).show() //show if hidden
 			.attr({
@@ -454,11 +455,13 @@
 				$('.sasc', this.hDiv).removeClass('sasc');
 				$('div', th).addClass('s' + p.sortorder);
 				p.sortname = $(th).attr('abbr');
-				if (p.onChangeSort) {
-					p.onChangeSort(p.sortname, p.sortorder);
-				} 
-				this.populate();
-				
+                var repopulate = true;
+                if (p.onChangeSort) {
+					repopulate = p.onChangeSort(p.sortname, p.sortorder);
+				}
+                if (repopulate) {
+                    this.populate();
+                }
 			},
 			buildpager: function () { //rebuild pager based on new properties
 				$('.pcontrol input', this.pDiv).val(p.page);
@@ -839,7 +842,9 @@
 			});
 			thdiv.innerHTML = this.innerHTML;
 			$(this).empty().append(thdiv).removeAttr('width').mousedown(function (e) {
-				g.dragStart('colMove', e, this);
+                if(p.colMove) {
+                    g.dragStart('colMove', e, this);
+                }
 			}).hover(function () {
 				if (!g.colresize && !$(this).hasClass('thMove') && !g.colCopy) {
 					$(this).addClass('thOver');

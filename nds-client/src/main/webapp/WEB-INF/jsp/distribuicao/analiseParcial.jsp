@@ -1,3 +1,4 @@
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.tinysort.min.js"></script>
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/analiseParcial.js"></script>
 <script language="javascript" type="text/javascript">
 $(function() {   
@@ -31,6 +32,7 @@ function escondeDados(){
 .inputBaseNome{width: 170px;}
 .paddingTotais td {padding-right: 3px;}
 .bt_novos{width: 0px;}
+.asterisco:after {content: '*';}
 </style>
 
 </head>
@@ -77,7 +79,7 @@ function escondeDados(){
 					<td>Código: ${estudoCota.estudo.produtoEdicao.produto.codigo}</td>
 					<td>Produto: ${estudoCota.estudo.produtoEdicao.produto.nomeComercial}</td>
 					<td>Edição: ${estudoCota.estudo.produtoEdicao.numeroEdicao}</td>
-					<td>Estudo: <span id="estudoId">${estudoCota.estudo.id}</span></td>
+					<td>Estudo: ${estudoCota.estudo.id}</td>
                     <c:if test="${tipoExibicao != 'NORMAL'}">
                         <td>Nro. da Parcial: </td>
                     </c:if>
@@ -87,6 +89,7 @@ function escondeDados(){
                 <tr>
                     <td>Status do Estudo: ${estudoCota.estudo.status}</td>
                     <td>Reparte Distribuido: <span id="total_reparte_sugerido_cabecalho"></span></td>
+                    <td>Pacote Padrão: ${estudoCota.estudo.pacotePadrao}</td>
                 </tr>
             </table>
             <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
@@ -102,9 +105,8 @@ function escondeDados(){
 							<option value="percentual_de_venda">% de Venda</option>
 							<option value="reducao_de_reparte">R de Reparte</option>
 					</select></td>
-					<td>Reparte: <input type="text" name="textfield6" id="textfield6" style="width: 40px;" /></td>
+					<%--<td>Reparte: <input type="text" name="textfield6" id="textfield6" style="width: 40px;" /></td>--%>
 					<td>Abrangência: ${estudoCota.estudo.produtoEdicao.produto.percentualAbrangencia}</td>
-					<td>Pacote Padrão: <input type="text" name="textfield6" id="textfield7" style="width: 30px;" /></td>
 				</tr>
             </table>
             <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
@@ -134,7 +136,7 @@ function escondeDados(){
 							class="label"> % Dê: </span> <span id="label_ranking" style="display: none;" class="label"> Ranking: </span> <span
 							id="label_percentual_de_venda" style="display: none;" class="label"> % Venda: </span> <input id="ordenarPorDe" type="text"
 							style="width: 60px;" /> Até <input id="ordenarPorAte" type="text" style="width: 60px;" /> Exs. <a
-							href="javascript:filtrarOrdenarPor(${estudoCota.estudo.id});"> <img
+							href="javascript:analiseParcialController.filtrarOrdenarPor(${estudoCota.estudo.id});"> <img
 								src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Confirmar" border="0" />
 						</a>
 					</span></td>
@@ -151,32 +153,6 @@ function escondeDados(){
 		<fieldset class="classFieldset">
 			<legend>Base de Estudo / Análise</legend>
 			<div class="grids" style="display: block;">
-				<c:if test="${tipoExibicao == 'NORMAL'}">
-					<table width="950" border="0" cellspacing="2" cellpadding="2">
-						<tr>
-							<td width="505" align="right"><strong>Edições Base:</strong></td>
-							<td width="67" align="center" class="header_table" id="edicao_base_1">1</td>
-							<td width="67" align="center" class="header_table" id="edicao_base_2">2</td>
-							<td width="67" align="center" class="header_table" id="edicao_base_3">3</td>
-							<td width="67" align="center" class="header_table" id="edicao_base_4">4</td>
-							<td width="67" align="center" class="header_table" id="edicao_base_5">5</td>
-							<td width="67" align="center" class="header_table" id="edicao_base_6">6</td>
-							<td width="13" align="center">&nbsp;</td>
-						</tr>
-					</table>
-				</c:if>
-				<c:if test="${tipoExibicao == 'PARCIAL'}">
-					<table width="950" border="0" cellspacing="2" cellpadding="2">
-						<tr>
-							<td width="505" align="right"><strong>Edições Base:</strong></td>
-							<td width="103" align="center" class="header_table" id="edicao_base_1">3ª Parcial</td>
-							<td width="100" align="center" class="header_table" id="edicao_base_2">2ª Parcial</td>
-							<td width="100" align="center" class="header_table" id="edicao_base_3">1ª Parcial</td>
-							<td width="100" align="center" class="header_table" id="edicao_base_4">Acumulado</td>
-							<td width="20" align="center">&nbsp;</td>
-						</tr>
-					</table>
-				</c:if>
 				<table class="baseEstudoGrid" id="baseEstudoGridParcial"></table>
 
 				<c:if test="${tipoExibicao == 'NORMAL'}">
@@ -190,17 +166,17 @@ function escondeDados(){
 							<td width="62" align="right" id="total_media_venda">0</td>
 							<td width="79" align="right" id="total_ultimo_reparte">0</td>
 							<td width="29" align="right" id="total_reparte1">0</td>
-							<td width="29" align="right" id="total_venda1"><span class="vermelho">0</span></td>
+							<td width="29" align="right" id="total_venda1" class="vermelho">0</td>
 							<td width="29" align="right" id="total_reparte2">0</td>
-							<td width="29" align="right" id="total_venda2"><span class="vermelho">0</span></td>
+							<td width="29" align="right" id="total_venda2" class="vermelho">0</td>
 							<td width="29" align="right" id="total_reparte3">0</td>
-							<td width="29" align="right" id="total_venda3"><span class="vermelho">0</span></td>
+							<td width="29" align="right" id="total_venda3" class="vermelho">0</td>
 							<td width="29" align="right" id="total_reparte4">0</td>
-							<td width="29" align="right" id="total_venda4"><span class="vermelho">0</span></td>
+							<td width="29" align="right" id="total_venda4" class="vermelho">0</td>
 							<td width="29" align="right" id="total_reparte5">0</td>
-							<td width="29" align="right" id="total_venda5"><span class="vermelho">0</span></td>
+							<td width="29" align="right" id="total_venda5" class="vermelho">0</td>
 							<td width="29" align="right" id="total_reparte6">0</td>
-							<td width="29" align="right" id="total_venda6"><span class="vermelho">0</span></td>
+							<td width="29" align="right" id="total_venda6" class="vermelho">0</td>
 							<td width="10" align="right">&nbsp;</td>
 						</tr>
 					</table>
@@ -216,21 +192,21 @@ function escondeDados(){
 							<td width="57" align="right" id="total_media_venda">0</td>
 							<td width="56" align="right" id="total_ultimo_reparte">0</td>
 							<td width="46" align="right" id="total_reparte1">0</td>
-							<td width="46" align="right" id="total_venda1"><span class="vermelho">0</span></td>
+							<td width="46" align="right" id="total_venda1" class="vermelho">0</td>
 							<td width="46" align="right" id="total_reparte2">0</td>
-							<td width="46" align="right" id="total_venda2"><span class="vermelho">0</span></td>
+							<td width="46" align="right" id="total_venda2" class="vermelho">0</td>
 							<td width="46" align="right" id="total_reparte3">0</td>
-							<td width="46" align="right" id="total_venda3"><span class="vermelho">0</span></td>
+							<td width="46" align="right" id="total_venda3" class="vermelho">0</td>
 							<td width="46" align="right" id="total_reparte4">0</td>
-							<td width="46" align="right" id="total_venda4"><span class="vermelho">0</span></td>
+							<td width="46" align="right" id="total_venda4" class="vermelho">0</td>
 							<td width="15" align="right">&nbsp;</td>
 						</tr>
 					</table>
 				</c:if>
-				<span class="bt_novos" title="Imprimir"> <a href="exportar?fileType=PDF&id=${estudoCota.estudo.id}"> <img
+				<span class="bt_novos" title="Imprimir"> <a href="${pageContext.request.contextPath}/distribuicao/analise/parcial/exportar?fileType=PDF&id=${estudoCota.estudo.id}"> <img
 						src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /> Imprimir
 				</a>
-				</span> <span class="bt_novos" title="Gerar Arquivo"> <a href="exportar?fileType=XLS&id=${estudoCota.estudo.id}"> <img
+				</span> <span class="bt_novos" title="Gerar Arquivo"> <a href="${pageContext.request.contextPath}/distribuicao/analise/parcial/exportar?fileType=XLS&id=${estudoCota.estudo.id}"> <img
 						src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /> Arquivo
 				</a>
 				</span> <span class="bt_novos"> <a href="javascript:return false;" id="liberar"> <img
