@@ -33,7 +33,6 @@ public class CotaEstudo extends Cota {
     private BigDecimal indiceAjusteCota;
     private BigDecimal indiceVendaCrescente;
     private BigDecimal indiceTratamentoRegional;
-    private List<CotaEstudo> equivalente;
     private BigDecimal indiceAjusteEquivalente;
     private List<Integer> regioes;
     private boolean nova;
@@ -189,12 +188,6 @@ public class CotaEstudo extends Cota {
     }
     public void setIndiceTratamentoRegional(BigDecimal indiceTratamentoRegional) {
 	this.indiceTratamentoRegional = indiceTratamentoRegional;
-    }
-    public List<CotaEstudo> getEquivalente() {
-	return equivalente;
-    }
-    public void setEquivalente(List<CotaEstudo> equivalente) {
-	this.equivalente = equivalente;
     }
     public BigDecimal getIndiceAjusteEquivalente() {
 	return indiceAjusteEquivalente;

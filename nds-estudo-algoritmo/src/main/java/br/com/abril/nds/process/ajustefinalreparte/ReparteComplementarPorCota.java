@@ -92,16 +92,19 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	    cota.setReparteCalculado(cota.getReparteCalculado().add(reparte));
 	    cota.setClassificacao(ClassificacaoCota.BancaEstudoComplementar);
 	    estudo.setReparteComplementar(estudo.getReparteComplementar().subtract(reparte));
-	    if (estudo.getReparteComplementar().compareTo(BigInteger.ZERO) <= 0) {
+	    if (estudo.getReparteComplementar().compareTo(reparte) < 0) {
 		break;
 	    }
 	}
 	BigInteger reparteGeral = BigInteger.ONE;
-	while (estudo.getReparteComplementar().compareTo(BigInteger.ZERO) > 0) {
+	if (estudo.isDistribuicaoPorMultiplos()) {
+	    reparteGeral = reparte;
+	}
+	while (estudo.getReparteComplementar().compareTo(reparteGeral) >= 0) {
 	    for (CotaEstudo cota : estudo.getCotas()) {
 		cota.setReparteCalculado(cota.getReparteCalculado().add(reparteGeral));
-		estudo.setReparteComplementar(estudo.getReparteComplementar().subtract(reparte));
-		if (estudo.getReparteComplementar().compareTo(BigInteger.ZERO) <= 0) {
+		estudo.setReparteComplementar(estudo.getReparteComplementar().subtract(reparteGeral));
+		if (estudo.getReparteComplementar().compareTo(reparteGeral) < 0) {
 		    break;
 		}
 	    }

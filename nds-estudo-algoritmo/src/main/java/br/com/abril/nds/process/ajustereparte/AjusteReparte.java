@@ -29,22 +29,22 @@ import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
 @Component
 public class AjusteReparte extends ProcessoAbstrato {
 
-	@Override
-	public void executar(EstudoTransient estudo) throws Exception {
-		if ((estudo == null) || (estudo.getCotas() == null)) {
-			throw new Exception("Houve um erro durante a execução do processo Ajuste de Reparte. Erro: objeto Estudo nulo.");
-		}
-		for (CotaEstudo cota : estudo.getCotas()) {
-			if ((cota.getVendaMediaMaisN() != null) && (estudo.getPacotePadrao() != null) && (cota.getVendaMediaMaisN().compareTo(BigInteger.ZERO) > 0)) {
-				BigInteger ajusteReparte = BigInteger.ZERO;
-				if (cota.getVendaMediaMaisN().compareTo(estudo.getPacotePadrao()) > 0) {
-					ajusteReparte = cota.getVendaMediaMaisN();
-				} else {
-					ajusteReparte = estudo.getPacotePadrao();
-				}
-				cota.setReparteCalculado(ajusteReparte.add(cota.getVendaMedia().toBigInteger()), estudo);
-				cota.setClassificacao(ClassificacaoCota.ReparteFixado);
-			}
-		}
+    @Override
+    public void executar(EstudoTransient estudo) throws Exception {
+	if ((estudo == null) || (estudo.getCotas() == null)) {
+	    throw new Exception("Houve um erro durante a execução do processo Ajuste de Reparte. Erro: objeto Estudo nulo.");
 	}
+	for (CotaEstudo cota : estudo.getCotas()) {
+	    if ((cota.getVendaMediaMaisN() != null) && (estudo.getPacotePadrao() != null) && (cota.getVendaMediaMaisN().compareTo(BigInteger.ZERO) > 0)) {
+		BigInteger ajusteReparte = BigInteger.ZERO;
+		if (cota.getVendaMediaMaisN().compareTo(estudo.getPacotePadrao()) > 0) {
+		    ajusteReparte = cota.getVendaMediaMaisN();
+		} else {
+		    ajusteReparte = estudo.getPacotePadrao();
+		}
+		cota.setReparteCalculado(ajusteReparte.add(cota.getVendaMedia().toBigInteger()), estudo);
+		cota.setClassificacao(ClassificacaoCota.ReparteFixado);
+	    }
+	}
+    }
 }

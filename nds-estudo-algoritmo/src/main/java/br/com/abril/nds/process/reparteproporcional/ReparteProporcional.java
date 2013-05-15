@@ -1,7 +1,6 @@
 package br.com.abril.nds.process.reparteproporcional;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 import org.springframework.stereotype.Component;
 
@@ -36,7 +35,6 @@ public class ReparteProporcional extends ProcessoAbstrato {
 		break;
 	    }
 	}
-	BigInteger somaReparteProporcional = BigInteger.ZERO;
 	BigDecimal indiceReparteEdicoesAbertas = BigDecimal.ZERO;
 	if (estudo.getEdicoesBase().size() > 1 && estudo.getSomatoriaReparteEdicoesAbertas().compareTo(BigDecimal.ZERO) > 0) {
 	    // ÍndiceRepAberta =  RepDistribInicial / ΣRepEdiçãoAberta
@@ -50,9 +48,7 @@ public class ReparteProporcional extends ProcessoAbstrato {
 		// RepCalculadoCota = ARRED(RepEdiçãoAbertaCota * ÍndiceRepAberta; 0)
 		BigDecimal repCalculado = cota.getSomaReparteEdicoesAbertas().multiply(indiceReparteEdicoesAbertas);
 		cota.setReparteCalculado(repCalculado.divide(BigDecimal.ONE, 0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
-
 		cota.setClassificacao(ClassificacaoCota.BancaSoComEdicaoBaseAberta);
-		somaReparteProporcional = somaReparteProporcional.add(cota.getReparteCalculado());
 	    }
 	}
     }
