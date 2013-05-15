@@ -7,6 +7,7 @@ public class CotasQueNaoEntraramNoEstudoQueryDTO {
     private String nome;
     private String motivo;
     private String elemento;
+    private Long tipoSegmentoProduto;
 
     public Long getEstudo() {
 	return estudo;
@@ -106,4 +107,11 @@ public class CotasQueNaoEntraramNoEstudoQueryDTO {
 	return "";
     }
 
+    public Long getTipoSegmentoProduto() {
+        return tipoSegmentoProduto;
+    }
+
+    public void setTipoSegmentoProduto(Long tipoSegmentoProduto) {
+        this.tipoSegmentoProduto = tipoSegmentoProduto;
+    }
 }
