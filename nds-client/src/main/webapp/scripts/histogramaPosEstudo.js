@@ -48,11 +48,11 @@ var histogramaPosEstudoController = $.extend(true, {
 		rowCell.vendaNominalFormatado = formatarMilhar(Math.round(rowCell.vendaNominalFormatado));
 		rowCell.qtdCotasFormatado = formatarMilhar(rowCell.qtdCotasFormatado);
 		rowCell.qtdCotaPossuemReparteMenorVendaFormatado = formatarMilhar(rowCell.qtdCotaPossuemReparteMenorVendaFormatado);
-		rowCell.encalheMedioFormatado = floatToPrice(rowCell.encalheMedioFormatado);
-		rowCell.participacaoReparteFormatado = floatToPrice(rowCell.participacaoReparteFormatado);
-		rowCell.reparteMedioFormatado = floatToPrice(rowCell.reparteMedioFormatado);
-		rowCell.vendaMediaFormatado = floatToPrice(rowCell.vendaMediaFormatado);
-		rowCell.vendaPercentFormatado = floatToPrice(rowCell.vendaPercentFormatado);
+		rowCell.encalheMedioFormatado = floatToPrice(rowCell.encalheMedioFormatado / 100);
+		rowCell.participacaoReparteFormatado = floatToPrice(rowCell.participacaoReparteFormatado / 100);
+		rowCell.reparteMedioFormatado = floatToPrice(rowCell.reparteMedioFormatado / 100);
+		rowCell.vendaMediaFormatado = floatToPrice(rowCell.vendaMediaFormatado / 100);
+		rowCell.vendaPercentFormatado = floatToPrice(rowCell.vendaPercentFormatado / 100);
 	},
 	
 	init : function () {
