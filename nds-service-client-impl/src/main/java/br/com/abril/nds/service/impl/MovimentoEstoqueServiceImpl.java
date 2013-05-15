@@ -489,9 +489,11 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					
 					BigInteger qtdePerda = estoqueProduto.getQtdePerda() == null ? BigInteger.ZERO : estoqueProduto.getQtdePerda();
 					
-					novaQuantidade = qtdePerda.subtract(movimentoEstoque.getQtde()).multiply(new BigInteger("-1"));
-					 
-					estoqueProduto.setQtdePerda(novaQuantidade);
+					qtdePerda = qtdePerda.add( movimentoEstoque.getQtde() );
+					novaQuantidade = estoqueProduto.getQtde().subtract(movimentoEstoque.getQtde());
+					
+					estoqueProduto.setQtdePerda(qtdePerda);
+					estoqueProduto.setQtde(novaQuantidade);
 	
 					break;
 					 
@@ -499,12 +501,13 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					
 					BigInteger qtdeGanho = estoqueProduto.getQtdeGanho() == null ? BigInteger.ZERO : estoqueProduto.getQtdeGanho();
 					
-					novaQuantidade = isOperacaoEntrada ? qtdeGanho.add(movimentoEstoque.getQtde()) :
-														 qtdeGanho.subtract(movimentoEstoque.getQtde());
+					qtdeGanho = qtdeGanho.add(movimentoEstoque.getQtde());
+					novaQuantidade = estoqueProduto.getQtde().add(movimentoEstoque.getQtde());									 
 					 
-					 estoqueProduto.setQtdeGanho(novaQuantidade);
+					estoqueProduto.setQtdeGanho(qtdeGanho);
+					estoqueProduto.setQtde(novaQuantidade);
 	
-					 break;
+					break;
 					
 				default:
 	
@@ -530,9 +533,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				
 			} else {
 				
-				if(estoqueProduto != null && estoqueProduto.getVersao() == null)
-					estoqueProduto.setVersao(1L);
-				
 				this.estoqueProdutoRespository.merge(estoqueProduto);
 				
 				return estoqueProduto.getId();
@@ -542,11 +542,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		return null;
 	}
 
-	
-	private void subtrairDevolucaoFornecedorDosEstoques() {
-		
-	}
-	
 	private BigInteger subtrairDoEstoque(BigInteger qtdeEstoque, BigInteger qtdeSubtrairDoEstoque) {
 		
 		if( BigInteger.ZERO.compareTo(qtdeEstoque) >= 0 ) {
