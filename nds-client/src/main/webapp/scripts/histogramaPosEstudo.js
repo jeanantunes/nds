@@ -219,7 +219,6 @@ var histogramaPosEstudoController = $.extend(true, {
 					gridName : "estudosAnaliseGrid",
 					url : contextPath + "/distribuicao/histogramaPosEstudo/carregarGridAnalise",
 					onSuccess : histogramaPosEstudoController.popularFieldsetResumoEstudo,
-					// HistogramaPosEstudoAnaliseFaixaReparteDTO.java utilizado na resposta(response) do servidor
 					preProcess : function(response){
 						var rowConsolidada = $(response.rows).last()[0];
 						rowConsolidada.cell.faixaReparte = "Total:";
