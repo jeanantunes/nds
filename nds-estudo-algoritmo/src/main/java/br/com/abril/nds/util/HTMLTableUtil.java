@@ -210,7 +210,7 @@ public class HTMLTableUtil {
 	
 	h.append("<tr>");
 	h.append("<td>Total Reparte Ajuste</td>");
-	h.append("<td>").append(estudo.getTotalReparteAjuste()).append("</td>");
+	h.append("<td>").append(estudo.getReservaAjusteInicial()).append("</td>");
 	h.append("</tr>");
 	
 	h.append("<tr>");
