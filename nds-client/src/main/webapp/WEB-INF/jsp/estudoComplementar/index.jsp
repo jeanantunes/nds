@@ -201,7 +201,7 @@ function somarDistribuicao(){
               <td width="42"><strong>Código:</strong></td>
               <td width="42" id="idProduto"></td>
               <td width="47"><strong>Produto:</strong></td>
-              <td width="158" id="nomeProduto"></td>
+              <td width="158" id="nomeProdutoLabel"></td>
               <td width="38"><strong>Edição:</strong></td>
               <td width="28" id="numeroEdicao"></td>
               <td width="77"><strong>Classificação:</strong></td>
