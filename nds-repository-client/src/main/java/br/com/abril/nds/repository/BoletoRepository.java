@@ -194,4 +194,6 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 
 	List<Boleto> obterBoletosNaoPagos(Date data);
 	
+	Long verificaEnvioDeEmail(Boleto boleto);
+	
 }
