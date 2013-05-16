@@ -475,6 +475,14 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		
 	}
 	
+	private void validarCopiaProporcionalDeDistribuicao(Estudo estudo) {
+		
+		if (estudo.getEstudoCotas() == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi possivel efetuar a copia. Não há cotas.");
+		}
+	}
+	
 	
 	@Override
 	@Transactional
@@ -483,6 +491,8 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		validarCopiaProporcionalDeDistribuicao(vo);
 		
 		Estudo estudo = estudoRepository.obterEstudoECotasPorIdEstudo(vo.getIdEstudo());
+		
+		validarCopiaProporcionalDeDistribuicao(estudo);
 		
 		Set<EstudoCota> set = estudo.getEstudoCotas();
 		List<EstudoCota> cotas = obterListEstudoCotas(set);
