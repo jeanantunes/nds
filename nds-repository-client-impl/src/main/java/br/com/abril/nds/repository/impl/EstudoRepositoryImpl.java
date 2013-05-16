@@ -133,18 +133,17 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		sql.append("   abrangenciaSugerida, ");
 		sql.append("   qtdReparteMinimoEstudo, ");
 		sql.append("   ( qtdCotasRecebemReparte / qtdCotasAtivas ) * 100 AS abrangenciaEstudo, ");
-		sql.append("   ( qtdCotasQueVenderam  / qtdCotasRecebemReparte ) * 100 AS abrangenciaDeVenda ");
+		sql.append("   ( qtdCotasQueVenderam  / qtdCotasAtivas ) * 100 AS abrangenciaDeVenda ");
 
 		sql.append("   FROM ");
 		sql.append("   ( ");
 		sql.append("     SELECT ");
 		sql.append("       (SELECT lancamento.reparte FROM estudo INNER JOIN lancamento ON estudo.lancamento_id = lancamento.id WHERE estudo.id = :estudoId ) AS qtdReparteDistribuidor, ");
 		sql.append("       (SELECT reparte_promocional FROM estudo INNER JOIN lancamento ON estudo.lancamento_id = lancamento.id WHERE estudo.id = :estudoId ) AS qtdRepartePromocional, ");
-//		sql.append("       (SELECT sobra FROM estudo WHERE estudo.id = :estudoId ) AS qtdSobraEstudo, ");
 		sql.append("       (SELECT sum(reparte) FROM estudo_cota WHERE estudo_id = :estudoId ) AS qtdReparteDistribuidoEstudo, ");
 		sql.append("       (SELECT count(id) FROM cota WHERE SITUACAO_CADASTRO = 'ATIVO') AS qtdCotasAtivas, ");
 		sql.append("       (SELECT count(DISTINCT estudo_cota.cota_id) FROM estudo_cota"); 
-		sql.append(" 				WHERE ESTUDO_ID = :estudoId) AS qtdCotasRecebemReparte, ");
+		sql.append(" 				WHERE ESTUDO_ID = :estudoId AND reparte IS NOT NULL) AS qtdCotasRecebemReparte, ");
 		sql.append("       (SELECT COUNT(id) FROM estudo_cota WHERE classificacao IN ('CP') and estudo_id = :estudoId ) AS qtdCotasAdicionadasPelaComplementarAutomatica, ");
 		sql.append(" 	   IFNULL((SELECT MIN(reparte) FROM estudo_cota WHERE estudo_id = :estudoId ),0) AS qtdReparteMinimoEstudo, ");
 		sql.append("	   (SELECT reparte_minimo FROM estrategia JOIN estudo ON estudo.PRODUTO_EDICAO_ID = estrategia.PRODUTO_EDICAO_ID WHERE estudo.ID = :estudoId) AS qtdReparteMinimoSugerido, ");

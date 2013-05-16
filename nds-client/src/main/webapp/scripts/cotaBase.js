@@ -20,7 +20,8 @@ var cotaBaseController = $.extend(true, {
 			height : 200
 		});
 		
-	$(".consultaEquivalentesDetalheGrid").flexigrid({			
+	$(".consultaEquivalentesDetalheGrid").flexigrid({
+		preProcess: cotaBaseController.executarPreProcessamentoDetalhesGrid,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Indíce',
@@ -264,6 +265,16 @@ var cotaBaseController = $.extend(true, {
 	});
 	},
 	
+	executarPreProcessamentoDetalhesGrid : function(resultado){
+		if(resultado.rows.length == 0){
+			$("#botoesImprimirDoPopUpDetalhe").hide();
+		}else{
+			$("#botoesImprimirDoPopUpDetalhe").show();
+		}
+		
+		return resultado;
+	},
+	
 	executarPreProcessamentoGridPesquisaGeral : function(resultado){
 		
 		if (resultado.mensagens) {
@@ -437,17 +448,16 @@ var cotaBaseController = $.extend(true, {
 					
 					cotaBaseController.atribuirDadosCota(result,index);						
  					
- 				}, function(result){
-					
+ 				}, function(result){					
 					//Verifica mensagens de erro do retorno da chamada ao controller.
 					if (result.mensagens) {
-
 						exibirMensagemDialog(
 								result.mensagens.tipoMensagem, 
 								result.mensagens.listaMensagens,""
 						);
 						
-					}
+					}					
+					$("#numeroCotaGrid"+index).val("");					
 				}, true,null
 		);
 	},

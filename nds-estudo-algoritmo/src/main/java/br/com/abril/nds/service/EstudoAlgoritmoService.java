@@ -27,7 +27,6 @@ import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.process.ajustecota.AjusteCota;
 import br.com.abril.nds.process.ajustefinalreparte.AjusteFinalReparte;
 import br.com.abril.nds.process.ajustereparte.AjusteReparte;
 import br.com.abril.nds.process.bonificacoes.Bonificacoes;
@@ -112,9 +111,6 @@ public class EstudoAlgoritmoService {
 
     @Autowired
     private Bonificacoes bonificacoes;
-
-    @Autowired
-    private AjusteCota ajusteCota;
 
     @Autowired
     private JornaleirosNovos jornaleirosNovos;
@@ -259,16 +255,14 @@ public class EstudoAlgoritmoService {
 	calculate(estudo);
 
 	for (CotaEstudo cota : estudo.getCotas()) {
-	    ajusteCota.executar(cota);
-
 	    correcaoVendas.executar(cota);
 
 	    medias.executar(cota);
 
 	    vendaMediaFinal.executar(cota);
-
-	    jornaleirosNovos.executar(cota);
 	}
+	jornaleirosNovos.executar(estudo);
+	
 	somarVendaMedia(estudo);
 	
 	bonificacoes.executar(estudo);

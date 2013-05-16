@@ -263,7 +263,7 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 	
 	@Post
 	public void autoCompletarPorNomeCotaQueNaoRecebeExcecao(FiltroExcecaoSegmentoParciaisDTO filtro){
-		List<CotaQueNaoRecebeExcecaoDTO> listaCotaQueNaoRecebeExcecaoDTO = this.excecaoSegmentoParciaisService.obterCotasQueNaoRecebemExcecaoPorProduto(filtro);
+		List<CotaQueNaoRecebeExcecaoDTO> listaCotaQueNaoRecebeExcecaoDTO = this.excecaoSegmentoParciaisService.autoCompletarPorNomeCotaQueNaoRecebeExcecao(filtro);
 		
 		List<ItemAutoComplete> listaCotaQueNaoRecebeExcecaoDTOAutoComplete = new ArrayList<ItemAutoComplete>();
 		

@@ -117,17 +117,18 @@ $(function(){
    		<legend>Nome: <div id="nomeCotaDetalhe"></div></legend>
     	<table class="consultaEquivalentesDetalheGrid" id="consultaEquivalentesDetalheGrid" ></table>
 	</fieldset>
-	
-	<span class="bt_novos" title="Gerar Arquivo">
-			<a href="${pageContext.request.contextPath}/cadastro/cotaBase/exportar?fileType=XLS&tipoDeLista=pesquisaDetalhes">
-			    <img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo
-			</a>
+	<div id="botoesImprimirDoPopUpDetalhe">
+		<span class="bt_novos" title="Gerar Arquivo">
+				<a href="${pageContext.request.contextPath}/cadastro/cotaBase/exportar?fileType=XLS&tipoDeLista=pesquisaDetalhes">
+				    <img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />Arquivo
+				</a>
 		</span>
 		<span class="bt_novos" title="Imprimir">
-			<a href="${pageContext.request.contextPath}/cadastro/cotaBase/exportar?fileType=PDF&tipoDeLista=pesquisaDetalhes">
-				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir
-			</a>
-	</span>
+				<a href="${pageContext.request.contextPath}/cadastro/cotaBase/exportar?fileType=PDF&tipoDeLista=pesquisaDetalhes">
+					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir
+				</a>
+		</span>
+	</div>
 </div>
 
 <div id="dialog-segmentos" title="Segmentos não recebidos" style="display:none;">

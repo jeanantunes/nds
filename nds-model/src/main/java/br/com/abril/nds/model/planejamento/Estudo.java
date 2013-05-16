@@ -90,6 +90,9 @@ public class Estudo implements Serializable {
 	@Column(name = "REPARTE_DISTRIBUIR")
 	private BigInteger reparteDistribuir;
 	
+	@Column(name = "SOBRA")
+	private BigInteger sobra;
+	
 	@Column(name = "DISTRIBUICAO_POR_MULTIPLOS")
 	private Integer distribuicaoPorMultiplos; //TODO no estudo usa boolean, verificar alteração
 	
@@ -230,5 +233,12 @@ public class Estudo implements Serializable {
 		this.lancamentoID = lancamentoID;
 	}
 
+	public BigInteger getSobra() {
+		return sobra;
+	}
+
+	public void setSobra(BigInteger sobra) {
+		this.sobra = sobra;
+	}
 
 }

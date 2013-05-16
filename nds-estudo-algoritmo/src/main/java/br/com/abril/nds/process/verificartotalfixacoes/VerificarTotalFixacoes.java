@@ -44,7 +44,6 @@ public class VerificarTotalFixacoes extends ProcessoAbstrato {
 	    if ((maximoFixacao != null) && (maximoFixacao.compareTo(new BigDecimal(somaFixacao)) < 0)) {
 		throw new Exception("A soma das fixações de reparte é maior que o percentual configurado na tela de parâmetros do distribuidor.");
 	    }
-	    estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(somaFixacao));
 	}
     }
 }
