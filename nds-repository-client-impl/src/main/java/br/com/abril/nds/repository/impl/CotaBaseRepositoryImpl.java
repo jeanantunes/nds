@@ -156,7 +156,7 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
 	}
 
 	@Override
-	public CotaBase obterCotaNova(Integer numeroCotaNova) {
+	public CotaBase obterCotaNova(Integer numeroCotaNova, Boolean ativo) {
 		
 		StringBuilder hql = new StringBuilder();
         
@@ -165,8 +165,12 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" FROM CotaBaseCota as cotaBaseCota");
         hql.append(" JOIN cotaBaseCota.cotaBase as cotaBase");
        
-        hql.append(" WHERE cotaBaseCota.ativo = true ");
-        hql.append(" AND cotaBase.cota.numeroCota = :numeroCotaNova ");
+        if(ativo){
+        	hql.append(" WHERE cotaBaseCota.ativo = true ");        	
+        	hql.append(" AND cotaBase.cota.numeroCota = :numeroCotaNova ");
+        }else{
+        	hql.append(" WHERE cotaBase.cota.numeroCota = :numeroCotaNova ");
+        }
         
         hql.append(" GROUP BY cotaBase.cota.id ");
         
@@ -327,11 +331,18 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" left join segmento.tipoPontoPDV as tipoPontoPDV ");
         hql.append(" left join segmento.areaInfluenciaPDV as areaInfluenciaPDV ");
         hql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
-        hql.append(" and cota.numeroCota = :numeroCota");
+        
+        if (dto.getNumeroCota() != null) {
+        	hql.append(" and cota.numeroCota = :numeroCota");
+        }
+        
         hql.append(" GROUP BY cota.id");
         
         Query query =  getSession().createQuery(hql.toString());
-        query.setParameter("numeroCota", dto.getNumeroCota());
+        
+        if (dto.getNumeroCota() != null) {
+        	query.setParameter("numeroCota", dto.getNumeroCota());
+        }
         
         query.setResultTransformer(new AliasToBeanResultTransformer(CotaBaseDTO.class));
         

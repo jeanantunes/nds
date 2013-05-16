@@ -14,6 +14,8 @@ import br.com.abril.nds.client.vo.estudocomplementar.BaseEstudoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.EstudoComplementarDTO;
 import br.com.abril.nds.dto.EstudoCotaDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.EstudoComplementarService;
 import br.com.abril.nds.util.DateUtil;

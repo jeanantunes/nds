@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.planejamento;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -32,7 +33,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 @Entity
 @Table(name = "LANCAMENTO_PARCIAL")
 @SequenceGenerator(name = "LANCAMENTO_PARCIAL_SEQ", initialValue = 1, allocationSize = 1)
-public class LancamentoParcial {
+public class LancamentoParcial implements Serializable{
 	
 	@Id
 	@GeneratedValue(generator = "LANCAMENTO_PARCIAL_SEQ")

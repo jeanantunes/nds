@@ -173,9 +173,6 @@ function somarDistribuicao(){
 
 
 <div class="corpo">
-  <div class="header">
-  	
-  </div>
   <div class="bg_menu">
 
     <br clear="all"/>
@@ -204,7 +201,7 @@ function somarDistribuicao(){
               <td width="42"><strong>Código:</strong></td>
               <td width="42" id="idProduto"></td>
               <td width="47"><strong>Produto:</strong></td>
-              <td width="158" id="nomeProduto"></td>
+              <td width="158" id="nomeProdutoLabel"></td>
               <td width="38"><strong>Edição:</strong></td>
               <td width="28" id="numeroEdicao"></td>
               <td width="77"><strong>Classificação:</strong></td>
@@ -281,7 +278,7 @@ function somarDistribuicao(){
       <div class="linha_separa_fields">&nbsp;</div>
       
       <span class="bt_novos"><a href="javascript:$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));"><img src="${pageContext.request.contextPath}/images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
-      <span class="bt_novos"><a href="javascript:;" onclick="$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
+      <span class="bt_novos"><a href="javascript:;" onclick="$('#codigoEstudo').val('').blur();"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
       <span class="bt_novos"><a href="#" onclick="estudoComplementarController.gerarEstudoComplementar();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Gerar Estudo" hspace="5" border="0" />Gerar Estudo</a></span>
       <span class="bt_novos"><a href="javascript:;" onclick="estudoComplementarController.analisar()"><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" alt="Confirmar" hspace="5" border="0" />Análise</a></span>
         

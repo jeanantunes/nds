@@ -5,10 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +64,7 @@ public class CotaDAO {
 
     private Map<Long, BigDecimal> idsPesos = new HashMap<>();
 
-    public CotaEstudo getIndiceAjusteCotaEquivalenteByCota(CotaEstudo cota) {
+    public List<CotaEstudo> getIndiceAjusteCotaEquivalenteByCota(CotaEstudo cota) {
 
 	List<CotaEstudo> listEquivalente = new ArrayList<CotaEstudo>();
 	try {
@@ -84,11 +82,10 @@ public class CotaDAO {
 		    return temp;
 		}
 	    });
-	    cota.setEquivalente(listEquivalente);
 	} catch (Exception ex) {
 	    ex.printStackTrace();
 	}
-	return cota;
+	return listEquivalente;
     }
 
     public List<CotaEstudo> getCotaWithEstoqueProdutoCota() {
@@ -150,7 +147,7 @@ public class CotaDAO {
 	for (CotaEstudo cota : temp) {
 	    returnListCota.add(cota);
 	}
-	returnListCota = agrupaCotas(returnListCota);
+//	returnListCota = agrupaCotas(returnListCota);
 	return returnListCota;
     }
 
@@ -179,20 +176,23 @@ public class CotaDAO {
 		cotaEnglobada.setId(rs.getLong("COTA_ID_ENGLOBADA"));
 		cotaEnglobada.setPorcentualEnglobacao(rs.getInt("PORCENTAGEM_COTA_ENGLOBADA"));
 		cotaEnglobada.setDataInclusao(rs.getDate("DATA_ALTERACAO"));
-		cotaDesenglobada.setCotasEnglobadas(Arrays.asList(cotaEnglobada));
+		cotaDesenglobada.setCotasEnglobadas(new ArrayList<>(Arrays.asList(cotaEnglobada)));
 		return cotaDesenglobada;
 	    }
 	});
 
-	return agrupaCotasDesenglobadas(cotasDesenglobadas);
+	return agrupaCotasDesenglobadas(new ArrayList<CotaDesenglobada>(cotasDesenglobadas));
     }
 
-    private List<CotaDesenglobada> agrupaCotasDesenglobadas(List<CotaDesenglobada> cotasDesenglobadas) {
+    private List<CotaDesenglobada> agrupaCotasDesenglobadas(ArrayList<CotaDesenglobada> cotasDesenglobadas) {
 	if (cotasDesenglobadas.size() > 0) {
 	    List<CotaDesenglobada> novaLista = new ArrayList<>();
 	    CotaDesenglobada temp = cotasDesenglobadas.get(0);
 	    for (int i = 1; i < cotasDesenglobadas.size(); i++) {
-		if (temp.equals(cotasDesenglobadas.get(i))) {
+		if (temp.getId().equals(cotasDesenglobadas.get(i).getId())) {
+		    if (temp.getCotasEnglobadas() == null) {
+			temp.setCotasEnglobadas(new ArrayList<CotaEnglobada>());
+		    }
 		    temp.getCotasEnglobadas().addAll(cotasDesenglobadas.get(i).getCotasEnglobadas());
 		} else {
 		    novaLista.add(temp);
@@ -216,6 +216,10 @@ public class CotaDAO {
 	    } else {
 		cota.setAjusteReparte(rs.getBigDecimal("AJUSTE_APLICADO"));
 	    }
+	    cota.setClassificacao(ClassificacaoCota.Ajuste);
+	}
+	if (cota.getAjusteReparte() == null || cota.getAjusteReparte().compareTo(BigDecimal.ONE) == -1) {
+	    cota.setIndiceAjusteCota(BigDecimal.ONE);
 	}
     }
     
@@ -224,7 +228,7 @@ public class CotaDAO {
 	params.put("tipo_segmento_produto_id", estudo.getProdutoEdicaoEstudo().getTipoSegmentoProduto().getId());
 	params.put("produto_id", estudo.getProdutoEdicaoEstudo().getProduto().getId());
 	params.put("numero_edicao", estudo.getProdutoEdicaoEstudo().getNumeroEdicao());
-	return jdbcTemplate.query(queryCotas, params, new RowMapper<CotaEstudo>() {
+	List<CotaEstudo> retorno = jdbcTemplate.query(queryCotas, params, new RowMapper<CotaEstudo>() {
 
 	    @Override
 	    public CotaEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -259,6 +263,8 @@ public class CotaDAO {
 		return cota;
 	    }
 	});
+	retorno = agrupaCotas(retorno);
+	return retorno;
     }
     
     public Map<Long, CotaEstudo> getHistoricoCota(final ProdutoEdicaoEstudo edicao) {
@@ -293,31 +299,47 @@ public class CotaDAO {
 	return retorno;
     }
 
-    private LinkedList<CotaEstudo> agrupaCotas(LinkedList<CotaEstudo> lista) {
+    private List<CotaEstudo> agrupaCotas(List<CotaEstudo> lista) {
 	if (lista.size() > 0) {
-	    LinkedHashMap<Long, CotaEstudo> novaLista = new LinkedHashMap<>();
+	    List<CotaEstudo> novaLista = new ArrayList<>();
 	    CotaEstudo temp = lista.get(0);
 	    for (int i = 1; i < lista.size(); i++) {
 		if (temp.getId().equals(lista.get(i).getId())) {
-		    if (Collections.disjoint(temp.getEdicoesRecebidas(), lista.get(i).getEdicoesRecebidas())) {
-			temp.getEdicoesRecebidas().addAll(lista.get(i).getEdicoesRecebidas());
-		    }
+		    temp.getRegioes().addAll(lista.get(i).getRegioes());
 		} else {
-		    novaLista.put(temp.getId(), temp);
+		    novaLista.add(temp);
 		    temp = lista.get(i);
 		}
 	    }
-	    novaLista.put(temp.getId(), temp);
-	    
-	    for (int i = 1; i < lista.size(); i++) {
-		if (Collections.disjoint(novaLista.get(lista.get(i).getId()).getRegioes(), lista.get(i).getRegioes())) {
-		    novaLista.get(lista.get(i).getId()).getRegioes().addAll(lista.get(i).getRegioes());
-		}
-	    }
-	    return new LinkedList<CotaEstudo>(novaLista.values());
+	    novaLista.add(temp);
+	    return novaLista;
 	} else {
 	    return lista;
 	}
+//	if (lista.size() > 0) {
+//	    LinkedHashMap<Long, CotaEstudo> novaLista = new LinkedHashMap<>();
+//	    CotaEstudo temp = lista.get(0);
+//	    for (int i = 1; i < lista.size(); i++) {
+//		if (temp.getId().equals(lista.get(i).getId())) {
+//		    if (Collections.disjoint(temp.getEdicoesRecebidas(), lista.get(i).getEdicoesRecebidas())) {
+//			temp.getEdicoesRecebidas().addAll(lista.get(i).getEdicoesRecebidas());
+//		    }
+//		} else {
+//		    novaLista.put(temp.getId(), temp);
+//		    temp = lista.get(i);
+//		}
+//	    }
+//	    novaLista.put(temp.getId(), temp);
+//	    
+//	    for (int i = 1; i < lista.size(); i++) {
+//		if (Collections.disjoint(novaLista.get(lista.get(i).getId()).getRegioes(), lista.get(i).getRegioes())) {
+//		    novaLista.get(lista.get(i).getId()).getRegioes().addAll(lista.get(i).getRegioes());
+//		}
+//	    }
+//	    return new ArrayList<CotaEstudo>(novaLista.values());
+//	} else {
+//	    return lista;
+//	}
     }
 
     private List<ProdutoEdicaoEstudo> getEdicoes(ResultSet rs, Map<Long, BigDecimal> idsPesos) throws SQLException {

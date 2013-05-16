@@ -9,7 +9,6 @@ import br.com.abril.nds.dto.BonificacaoDTO;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.process.ProcessoAbstrato;
-import br.com.abril.nds.process.ajustecota.AjusteCota;
 import br.com.abril.nds.process.medias.Medias;
 import br.com.abril.nds.util.ComponentesPDV;
 
@@ -25,29 +24,29 @@ import br.com.abril.nds.util.ComponentesPDV;
 @Component
 public class Bonificacoes extends ProcessoAbstrato {
 
-	@Override
-	public void executar(EstudoTransient estudo) {
+    @Override
+    public void executar(EstudoTransient estudo) {
 
-		if ((estudo.getBonificacoes() != null) && (!estudo.getBonificacoes().isEmpty())) {
-			for (BonificacaoDTO bonificacao : estudo.getBonificacoes()) {
-				for (CotaEstudo cota : estudo.getCotas()) {
-					if ((bonificacao.getComponente().equals(ComponentesPDV.REGIAO)) && (cota.getRegioes().contains(bonificacao.getElemento()))) {
-						if (bonificacao.getBonificacaoBigDecimal().compareTo(BigDecimal.ZERO) > 0) {
-							BigDecimal indiceBonificacao = BigDecimal.valueOf(100).add(bonificacao.getBonificacaoBigDecimal()).divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
-							if (indiceBonificacao.compareTo(BigDecimal.ONE) > 0) {
-								cota.setIndiceTratamentoRegional(BigDecimal.ONE);
-							} else {
-								cota.setIndiceTratamentoRegional(indiceBonificacao);
-							}
-						}
-						if ((bonificacao.getReparteMinimoBigInteger().compareTo(BigInteger.ZERO) > 0) && (!bonificacao.isTodasAsCotas())) {
-							if (bonificacao.getReparteMinimoBigInteger().compareTo(cota.getReparteMinimo()) > 0) {
-								cota.setReparteMinimo(bonificacao.getReparteMinimoBigInteger());
-							}
-						}
-					}
-				}
+	if ((estudo.getBonificacoes() != null) && (!estudo.getBonificacoes().isEmpty())) {
+	    for (BonificacaoDTO bonificacao : estudo.getBonificacoes()) {
+		for (CotaEstudo cota : estudo.getCotas()) {
+		    if ((bonificacao.getComponente().equals(ComponentesPDV.REGIAO)) && (cota.getRegioes().contains(bonificacao.getElemento()))) {
+			if (bonificacao.getBonificacaoBigDecimal().compareTo(BigDecimal.ZERO) > 0) {
+			    BigDecimal indiceBonificacao = BigDecimal.valueOf(100).add(bonificacao.getBonificacaoBigDecimal()).divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+			    if (indiceBonificacao.compareTo(BigDecimal.ONE) > 0) {
+				cota.setIndiceTratamentoRegional(BigDecimal.ONE);
+			    } else {
+				cota.setIndiceTratamentoRegional(indiceBonificacao);
+			    }
 			}
+			if ((bonificacao.getReparteMinimoBigInteger().compareTo(BigInteger.ZERO) > 0) && (!bonificacao.isTodasAsCotas())) {
+			    if (bonificacao.getReparteMinimoBigInteger().compareTo(cota.getReparteMinimo()) > 0) {
+				cota.setReparteMinimo(bonificacao.getReparteMinimoBigInteger());
+			    }
+			}
+		    }
 		}
+	    }
 	}
+    }
 }

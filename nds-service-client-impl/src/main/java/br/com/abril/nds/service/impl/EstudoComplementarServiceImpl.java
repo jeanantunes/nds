@@ -25,54 +25,53 @@ import br.com.abril.nds.repository.InformacoesProdutoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.EstudoComplementarService;
+import br.com.caelum.vraptor.view.Results;
 
 
 @Service
 public class EstudoComplementarServiceImpl implements EstudoComplementarService {
 
-	@Autowired
-	EstudoRepository estudoRepository;
-	
-	@Autowired
-	ProdutoRepository produtoRepository;
-	
-	@Autowired
-	ProdutoEdicaoRepository produtoEdicaoRepository;
-	
+    @Autowired
+    EstudoRepository estudoRepository;
+
+    @Autowired
+    ProdutoRepository produtoRepository;
+
+    @Autowired
+    ProdutoEdicaoRepository produtoEdicaoRepository;
+
 
     @Autowired
     EstudoCotaRepository estudoCotaRepository;
-    
+
     @Autowired
     EstudoComplementarRepository estudoComplementarRepository;
 
     @Autowired
     InformacoesProdutoRepository informacoesProdutoRepository;
-    
-	@Override
-	@Transactional(readOnly = true)
-	public EstudoComplementarDTO obterEstudoComplementarPorIdEstudoBase(
-			long idEstudoBase) {
-		// TODO Auto-generated method stub
-		
-		Estudo estudo = estudoRepository.buscarPorId(idEstudoBase);
 
+    @Override
+    @Transactional(readOnly = true)
+    public EstudoComplementarDTO obterEstudoComplementarPorIdEstudoBase(
+	    long idEstudoBase) {
+    	EstudoComplementarDTO estudoComplDto = null;
+		Estudo estudo = estudoRepository.buscarPorId(idEstudoBase);
+	
+		if (estudo == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Estudo " + idEstudoBase + " não encontrado.");
+		}
 		
 		ProdutoEdicao  pe = produtoEdicaoRepository.buscarPorId(estudo.getProdutoEdicao().getId());
-		
-		
-//	    Produto produto = produtoRepository.buscarPorId(pe.getId());
-	    
-	    
+	
 		FiltroInformacoesProdutoDTO dto = new FiltroInformacoesProdutoDTO();
 		dto.setCodProduto(pe.getProduto().getCodigo());
 		dto.setNumeroEdicao(pe.getNumeroEdicao());
 		dto.setNomeProduto(pe.getProduto().getNome());
-		
+	
 		List<InformacoesProdutoDTO> buscarProdutos = informacoesProdutoRepository.buscarProdutos(dto);
-		
-		EstudoComplementarDTO estudoComplDto = new EstudoComplementarDTO();
-		
+	
+		estudoComplDto = new EstudoComplementarDTO();
+	
 		estudoComplDto.setIdEstudo(estudo.getId());
 		estudoComplDto.setIdEstudoComplementar(estudoComplementarRepository.gerarNumeroEstudoComplementar());
 		estudoComplDto.setIdProduto(pe.getProduto().getId());
@@ -84,118 +83,105 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 		estudoComplDto.setIdPublicacao(pe.getNumeroEdicao());
 		estudoComplDto.setIdPEB(pe.getProduto().getPeb());
 		estudoComplDto.setNomeFornecedor( pe.getProduto().getFornecedor().getJuridica().getNomeFantasia()==null?"":pe.getProduto().getFornecedor().getJuridica().getNomeFantasia());
-		
-	    pe.getLancamentos().iterator().next().getDataRecolhimentoDistribuidor();
-		
-	   
-	    estudoComplDto.setQtdeReparte (estudo.getQtdeReparte());
+	
+		pe.getLancamentos().iterator().next().getDataRecolhimentoDistribuidor();
+	
+	
+		estudoComplDto.setQtdeReparte (estudo.getQtdeReparte());
 		String dataLancamento = new SimpleDateFormat("dd/MM/yyyy").format(estudo.getDataLancamento());
-		
+	
 		estudoComplDto.setDataLncto(dataLancamento);
-		estudoComplDto.setDataRclto(buscarProdutos.get(0).getDataRcto());
+		if(buscarProdutos!=null && !buscarProdutos.isEmpty()){
+		    estudoComplDto.setDataRclto(buscarProdutos.get(0).getDataRcto());
+		}
 		
 		return estudoComplDto;
-	}
+    }
 
-	@Transactional
-	@Override
-	public boolean gerarEstudoComplementar(EstudoComplementarVO estudoComplementarVO) {
-		
-		
+    @Transactional
+    @Override
+    public boolean gerarEstudoComplementar(EstudoComplementarVO estudoComplementarVO) {
 		List<EstudoCota> estudoCotas =  selecionarBancas(estudoComplementarVO);
-		
+	
 		if (estudoCotas.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Nenhum registro encontrado.");
+		    throw new ValidacaoException(TipoMensagem.ERROR, "Nenhum registro encontrado.");
 		}
-			
-		
+	
 		BigInteger qtdReparte = BigInteger.valueOf(estudoComplementarVO.getReparteCota());
 		BigInteger qtdDistribuido = BigInteger.valueOf(estudoComplementarVO.getReparteDistribuicao());
-
-		
+	
+	
 		Estudo estudo = estudoRepository.buscarPorId(estudoComplementarVO.getCodigoEstudo());
-		
+	
 		Estudo estudo1 = new Estudo();
 		estudo1.setDataAlteracao(estudo.getDataAlteracao());
 		estudo1.setDataCadastro(estudo.getDataCadastro());
 		estudo1.setDataLancamento(estudo.getDataLancamento());
 		estudo1.setProdutoEdicao(estudo.getProdutoEdicao());
-		
+	
 		estudo1.setQtdeReparte(estudo.getQtdeReparte());
 		estudo1.setStatus(estudo.getStatus());
-
+	
 		// Gera Novo Estudo
 		long NumeroEstudo = estudoRepository.adicionar(estudo1);
 		estudo1.setId(NumeroEstudo);
-		
+	
 		List<EstudoCota> estudoCotaNovo = new ArrayList<EstudoCota>();
 		for(EstudoCota estudoCota: estudoCotas){
-			EstudoCota ec = new EstudoCota();
-			ec.setClassificacao(estudoCota.getClassificacao());
-			ec.setCota(estudoCota.getCota());
-			ec.setQtdeEfetiva(estudoCota.getQtdeEfetiva());
-			ec.setQtdePrevista(estudoCota.getQtdeEfetiva());
-			estudoCotaNovo.add(ec);
-			
+		    EstudoCota ec = new EstudoCota();
+		    ec.setClassificacao(estudoCota.getClassificacao());
+		    ec.setCota(estudoCota.getCota());
+		    ec.setQtdeEfetiva(estudoCota.getQtdeEfetiva());
+		    ec.setQtdePrevista(estudoCota.getQtdeEfetiva());
+		    estudoCotaNovo.add(ec);
+	
 		}
-		
-		
-		
-		
-		
-		
-		
-		
+	
 		boolean primeiraVez=true;
 		while (qtdDistribuido.compareTo(BigInteger.ZERO)>0 ){
-			for(int i=0; i<estudoCotaNovo.size();i++ ){
-				
-				EstudoCota estudoCota = estudoCotaNovo.get(i);
-				if(primeiraVez){
-					estudoCota.setQtdeEfetiva(BigInteger.ZERO);
-				}
-				
-				estudoCota.setQtdeEfetiva(qtdReparte.add(estudoCota.getQtdeEfetiva()));
-				
-				estudoCota.setClassificacao("CP");
-				estudoCotaNovo.set(i, estudoCota);
-				qtdDistribuido = qtdDistribuido.subtract(qtdReparte);
-				
-				if(qtdDistribuido.compareTo(BigInteger.ZERO)<=0 ){
-					break;
-				}
-				
+		    for(int i=0; i<estudoCotaNovo.size();i++ ){
+	
+			EstudoCota estudoCota = estudoCotaNovo.get(i);
+			if(primeiraVez){
+			    estudoCota.setQtdeEfetiva(BigInteger.ZERO);
 			}
-			primeiraVez=false;
+	
+			estudoCota.setQtdeEfetiva(qtdReparte.add(estudoCota.getQtdeEfetiva()));
+	
+			estudoCota.setClassificacao("CP");
+			estudoCotaNovo.set(i, estudoCota);
+			qtdDistribuido = qtdDistribuido.subtract(qtdReparte);
+	
+			if(qtdDistribuido.compareTo(BigInteger.ZERO)<=0 ){
+			    break;
+			}
+	
+		    }
+		    primeiraVez=false;
 		}
-		
+	
 		for(EstudoCota estcota: estudoCotaNovo){
-			EstudoCota ec1 =new EstudoCota();
-			String classificacao = estcota.getClassificacao();
-			ec1.setClassificacao(classificacao);
-			ec1.setCota(estcota.getCota());
-			ec1.setEstudo(estudo1);
-			ec1.setQtdeEfetiva(estcota.getQtdeEfetiva());
-			ec1.setQtdePrevista(BigInteger.TEN);
-			
-			estudoCotaRepository.adicionar(ec1);	
+		    EstudoCota ec1 =new EstudoCota();
+		    String classificacao = estcota.getClassificacao();
+		    ec1.setClassificacao(classificacao);
+		    ec1.setCota(estcota.getCota());
+		    ec1.setEstudo(estudo1);
+		    ec1.setQtdeEfetiva(estcota.getQtdeEfetiva());
+		    ec1.setQtdePrevista(BigInteger.TEN);
+	
+		    estudoCotaRepository.adicionar(ec1);	
 		}
-		
+	
 		return true;
-				
-	}
 
-	private List<EstudoCota> selecionarBancas(EstudoComplementarVO estudoComplementarVO) {
-		return estudoComplementarRepository.selecionarBancas(estudoComplementarVO);
-		
-	}
+    }
 
+    private List<EstudoCota> selecionarBancas(EstudoComplementarVO estudoComplementarVO) {
+    	return estudoComplementarRepository.selecionarBancas(estudoComplementarVO);
+    }
 
-	@Override
-	public Long gerarNumeroEstudoComplementar() {
-		
-		return estudoComplementarRepository.gerarNumeroEstudoComplementar();
-	}
-
-
+    @Override
+    public Long gerarNumeroEstudoComplementar() {
+    	return estudoComplementarRepository.gerarNumeroEstudoComplementar();
+    }
 }

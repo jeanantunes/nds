@@ -37,9 +37,6 @@ public class RedutorAutomatico extends ProcessoAbstrato {
 		    cota.setReparteCalculado(BigInteger.ZERO, estudo);
 		    cota.setClassificacao(ClassificacaoCota.RedutorAutomatico);
 		}
-		if (cota.getClassificacao().equals(ClassificacaoCota.BancaSoComEdicaoBaseAberta)) {
-		    estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(cota.getReparteCalculado()));
-		}
 	    }
 	}
     }

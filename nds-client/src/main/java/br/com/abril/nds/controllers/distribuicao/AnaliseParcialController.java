@@ -6,6 +6,9 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import br.com.abril.nds.model.estudo.ClassificacaoCota;
+import br.com.abril.nds.vo.ValidacaoVO;
+import br.com.caelum.vraptor.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.BaseController;
@@ -26,15 +29,14 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
-import br.com.caelum.vraptor.Get;
-import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Resource;
-import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
 
 @Resource
 @Path("/distribuicao/analise/parcial")
 public class AnaliseParcialController extends BaseController {
+
+    @Autowired
+    private Validator validator;
 
     @Autowired
     private Result result;
@@ -60,6 +62,7 @@ public class AnaliseParcialController extends BaseController {
         result.include("estudoCota", estudo);
         result.include("faixaDe", faixaDe);
         result.include("faixaAte", faixaAte);
+        result.include("classificacaoCotaList", ClassificacaoCota.values());
         result.forwardTo("/WEB-INF/jsp/distribuicao/analiseParcial.jsp");
     }
 
@@ -123,6 +126,7 @@ public class AnaliseParcialController extends BaseController {
         TableModel<CellModelKeyValue<AnaliseParcialDTO>> table = monta(lista);
         table.setPage(1);
         table.setTotal(50);
+        validator.onErrorUse(Results.json()).withoutRoot().from(table).recursive().serialize();
         result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
     }
 
@@ -151,6 +155,16 @@ public class AnaliseParcialController extends BaseController {
     public void mudarReparte(Long numeroCota, Long estudoId, Long variacaoDoReparte) {
         analiseParcialService.atualizaReparte(estudoId, numeroCota, variacaoDoReparte);
         result.nothing();
+    }
+
+    @Post("/mudarReparteLote")
+    public void mudarReparteLote(Long estudoId, List<CotaQueNaoEntrouNoEstudoDTO> cotas) {
+
+        for (CotaQueNaoEntrouNoEstudoDTO cota : cotas) {
+            analiseParcialService.atualizaReparte(estudoId, cota.getNumeroCota(), cota.getQuantidade().longValue());
+        }
+
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso.")).recursive().serialize();
     }
 
     @Path("/liberar")
