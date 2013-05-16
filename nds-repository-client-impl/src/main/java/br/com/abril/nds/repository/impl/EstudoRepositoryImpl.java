@@ -178,8 +178,8 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 	public void remover(Estudo estudo) {
 		
 		Long idEstudo = estudo.getId();
-		estudo.setProdutoEdicao(null);
-		alterar(estudo);
+//		estudo.setProdutoEdicao(null);
+//		alterar(estudo);
 		
 		movimentoEstoqueCotaRepository.removerMovimentoEstoqueCotaPorEstudo(idEstudo);
 		itemNotaEnvioRepository.removerItemNotaEnvioPorEstudo(idEstudo);
