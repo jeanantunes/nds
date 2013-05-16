@@ -14,13 +14,17 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 @Service
 public class RoteiroServiceImpl implements RoteiroService {
 
-	@Autowired
-	RoteiroRepository roteiroRepository;
-	
-	@Override
-	@Transactional(readOnly = true)
-	public List<Roteiro> obterRoteiros() {
-		return roteiroRepository.buscarRoteiro("descricaoRoteiro", Ordenacao.ASC);
-	}
+    @Autowired
+    RoteiroRepository roteiroRepository;
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<Roteiro> obterRoteiros() {
+	return roteiroRepository.buscarRoteiro("descricaoRoteiro", Ordenacao.ASC);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Roteiro> buscarTodos() {
+	return roteiroRepository.buscarTodos();
+    }
 }

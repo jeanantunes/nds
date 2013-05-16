@@ -5,24 +5,26 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 //	var _workspace = workspace;
 	
 	this.confirmarProdutosEdicaoBasePopup = function(){
-		var data = [];
-		$.each(T.produtoEdicaoPesquisaBases, function(index, item){
-			if(item.selecionado){
-				data.push({name :"indexes", value: index});
-			}
-		});
-		
-		$.postJSON(
-				pathTela + "/distribuicaoVendaMedia/adicionarProdutoEdicaoABase", 
-				data,
-				function(result) {
-					T.produtoEdicaoBases = result;
-					T.preencherGridBases(result);
-				},
-				function(){
-					exibirMensagem("ERROR", ["Erro ao processar a pesquisa. Tente novamente mais tarde."]);
-				}
-			);
+	    var data = [];
+	    if (typeof T.produtoEdicaoPesquisaBases !== 'undefined') {
+	        $.each(T.produtoEdicaoPesquisaBases, function(index, item){
+	            if(item.selecionado){
+	                data.push({name :"indexes", value: index});
+	            }
+	        });
+	    }
+
+	    $.postJSON(
+	            pathTela + "/distribuicaoVendaMedia/adicionarProdutoEdicaoABase", 
+	            data,
+	            function(result) {
+	                T.produtoEdicaoBases = result;
+	                T.preencherGridBases(result);
+	            },
+	            function(){
+	                exibirMensagem("ERROR", ["Erro ao processar a pesquisa. Tente novamente mais tarde."]);
+	            }
+	    );
 	};
 	
 	this.preencherGridBases = function(resultado){
