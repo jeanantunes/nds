@@ -1,9 +1,6 @@
 
 var estudoComplementarController =$.extend(true,  {
 	
-
-	
-	
 	gerarEstudoComplementar:function(){
 
 		
@@ -122,7 +119,7 @@ consultarEstudo:function (obj) {
 		success: function(json){
 			$('#idEstudoComplementar').html(json.baseEstudoVO.idEstudoComplementar); 
 			$('#idProduto').html(json.baseEstudoVO.codigoProduto); 
-			$('#nomeProduto').html(json.baseEstudoVO.nomeProduto);
+			$('#nomeProdutoLabel').html(json.baseEstudoVO.nomeProduto);
 			
 			$('#numeroEdicao').html(json.baseEstudoVO.numeroEdicao);
 			$('#nomeClassificacao').html(json.baseEstudoVO.nomeClassificacao);
@@ -147,8 +144,8 @@ consultarEstudo:function (obj) {
     else{
 
 		$('#idEstudoComplementar').html(""); 
-		$('#idProduto').html(""); 
-		$('#nomeProduto').html("");
+		$('#idProduto').text(""); 
+		$('#nomeProdutoLabel').text("");
 		
 		$('#numeroEdicao').html("");
 		$('#nomeClassificacao').html("");
