@@ -245,8 +245,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		lancamento.setDataRecolhimentoPrevista(cal.getTime());		
 
 		//defaults
-		lancamento.setDataStatus(new Date());
-		lancamento.setNumeroReprogramacoes(null);		
+		lancamento.setDataStatus(new Date());	
 		lancamento.setReparte(BigInteger.valueOf(0));
 
 		this.getSession().persist(lancamento);

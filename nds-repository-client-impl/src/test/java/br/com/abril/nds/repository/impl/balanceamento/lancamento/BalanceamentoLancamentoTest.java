@@ -394,7 +394,7 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 		montarParametrosConsulta();
 		
 		List<ProdutoLancamentoDTO> produtosLancamento =
-			lancamentoRepository.obterBalanceamentoLancamento(periodoLancamento, fornecedores);
+			lancamentoRepository.obterBalanceamentoLancamento(periodoLancamento, fornecedores, new Date());
 
 		Assert.assertEquals(lancamentos.size(), produtosLancamento.size());
 
@@ -402,14 +402,6 @@ public class BalanceamentoLancamentoTest extends AbstractRepositoryImplTest {
 			getProdutoLancamento(produtosLancamento, lancamentoVeja.getId());
 		
 		ProdutoLancamentoDTO produtoRecolhimentoQuatroRodas = produtosLancamento.get(2);
-		
-		ProdutoLancamentoDTO produtoRecolhimentoCromoReiLeao = produtosLancamento.get(5);
-		
-		Assert.assertTrue(produtoRecolhimentoVeja.isPossuiRecebimentoFisico());
-		
-		Assert.assertTrue(produtoRecolhimentoQuatroRodas.isPossuiRecebimentoFisico());
-		
-		Assert.assertFalse(produtoRecolhimentoCromoReiLeao.isPossuiRecebimentoFisico());
 		
 		boolean ordenacaoPorDataCorreta =
 			!DateUtil.isDataInicialMaiorDataFinal(produtoRecolhimentoVeja.getDataLancamentoDistribuidor(), 

@@ -209,11 +209,12 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 *            - período de distribuição
 	 * @param fornecedores
 	 *            - fornecedores
+	 * @param dataOperacao - data de operação
 	 * 
 	 * @return lista de produtos do balanceamento do lançamento
 	 */
 	List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(
-			Intervalo<Date> periodoDistribuicao, List<Long> fornecedores);
+			Intervalo<Date> periodoDistribuicao, List<Long> fornecedores, Date dataOperacao);
 
 	/**
 	 * Burca último balançeamento de lançamento realizado no dia
