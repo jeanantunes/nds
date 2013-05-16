@@ -3,7 +3,9 @@ package br.com.abril.nds.service.impl;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.EstudoComplementarRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
@@ -25,7 +28,6 @@ import br.com.abril.nds.repository.InformacoesProdutoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.EstudoComplementarService;
-import br.com.caelum.vraptor.view.Results;
 
 
 @Service
@@ -84,11 +86,23 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 		estudoComplDto.setIdPEB(pe.getProduto().getPeb());
 		estudoComplDto.setNomeFornecedor( pe.getProduto().getFornecedor().getJuridica().getNomeFantasia()==null?"":pe.getProduto().getFornecedor().getJuridica().getNomeFantasia());
 	
-		pe.getLancamentos().iterator().next().getDataRecolhimentoDistribuidor();
+		Set<Lancamento> lancamentos = pe.getLancamentos();
+		
+		if (lancamentos == null || lancamentos.size() == 0) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não existem lançamentos para a edição " + pe.toString());
+		}
+		
+		lancamentos.iterator().next().getDataRecolhimentoDistribuidor();
 	
 	
 		estudoComplDto.setQtdeReparte (estudo.getQtdeReparte());
-		String dataLancamento = new SimpleDateFormat("dd/MM/yyyy").format(estudo.getDataLancamento());
+		
+		Date dtLancamento = estudo.getDataLancamento();
+		String dataLancamento = "";
+		
+		if (dtLancamento != null) {
+			dataLancamento = new SimpleDateFormat("dd/MM/yyyy").format(dtLancamento);
+		}
 	
 		estudoComplDto.setDataLncto(dataLancamento);
 		if(buscarProdutos!=null && !buscarProdutos.isEmpty()){
