@@ -144,8 +144,10 @@ var consultaBoletosController = $.extend(true, {
 		        	 linkImpressao = '<a isEdicao="true" href="javascript:;" onclick="consultaBoletosController.imprimeBoleto(\'' + row.cell[0] + '\');" style="cursor:pointer">' +
 				 					 '<img src="' + contextPath + '/images/ico_impressora.gif" hspace="5" border="0px" title="Imprime boleto" />' +
 				 					 '</a>';
-			         			 		
-		        	 if(row.cell[8] == true)
+		        	 
+		        	 
+		        	 
+		        	 if(row.cell[8] == 'true')
 		        	 {
 		        		 linkEmail = '<a isEdicao="true" href="javascript:;" onclick="consultaBoletosController.enviaBoleto(\'' + row.cell[0] + '\');" style="cursor:pointer">' +
 	                     '<img src="' + contextPath + '/images/ico_email.png" hspace="5" border="0px" title="Envia boleto por e-mail" />' +

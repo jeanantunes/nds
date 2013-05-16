@@ -712,14 +712,11 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 						"from Cobranca as cobranca join " +
 						"cobranca.cota as cota join " +
 						"cota.parametroCobranca as parametro_cobranca_cota join " +
-						"parametro_cobranca_cota.formasCobrancaCota as forma_cobranca join " +
-						"forma_cobranca.politicaCobranca as politica_cobranca " +
+						"parametro_cobranca_cota.formasCobrancaCota as forma_cobranca " +
 						"where " + 
 						"forma_cobranca.recebeCobrancaEmail = true " +
 						"and " +
-						"politica_cobranca.principal= true " +
-						"and " +
-						"politica_cobranca.ativo= true " +
+						"forma_cobranca.ativa= true " +
 						"and " +
 						"cota.id = :cotaId " +
 						"and " +
@@ -728,7 +725,8 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("cotaId", boleto.getCota().getId().longValue());
 		query.setParameter("cobrancaId", boleto.getId());
-	    return  (Long) query.uniqueResult();
+	    
+		return  (Long) query.uniqueResult();
 
 	}
 }
