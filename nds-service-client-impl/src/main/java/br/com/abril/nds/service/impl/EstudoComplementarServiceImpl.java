@@ -118,7 +118,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 		List<EstudoCota> estudoCotas =  selecionarBancas(estudoComplementarVO);
 	
 		if (estudoCotas.isEmpty()){
-		    throw new ValidacaoException(TipoMensagem.ERROR, "Nenhum registro encontrado.");
+		    throw new ValidacaoException(TipoMensagem.ERROR, "Nenhuma cota foi encontrada nos parâmetros para gerar o estudo complementar.");
 		}
 	
 		BigInteger qtdReparte = BigInteger.valueOf(estudoComplementarVO.getReparteCota());
