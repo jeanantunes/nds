@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.CaracteristicaDistribuicaoDTO;
+import br.com.abril.nds.dto.CaracteristicaDistribuicaoSimplesDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaCaracteristicaDistribuicaoDetalheDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaCaracteristicaDistribuicaoSimplesDTO;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.repository.CaracteristicaDistribuicaoRepository;
 import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
@@ -38,6 +40,16 @@ public class CaracteristicaDistribuicaoServiceImpl implements
 			FiltroConsultaCaracteristicaDistribuicaoDetalheDTO filtro) {
 		return claDistribuicaoRepository.obterCaracteristicaDistribuicaoDetalhe(filtro);
 		
+	}
+
+
+
+	
+	@Override
+	@Transactional
+	public List<CaracteristicaDistribuicaoSimplesDTO> buscarComFiltroSimples(
+			FiltroConsultaCaracteristicaDistribuicaoSimplesDTO filtro) {
+		return claDistribuicaoRepository.obterCaracteristicaDistribuicaoSimples(filtro);
 	}
 	
 }

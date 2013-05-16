@@ -10,8 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CaracteristicaDistribuicaoDTO;
-import br.com.abril.nds.dto.filtro.FiltroConsultaCaracteristicaDistribuicaoDTO;
+import br.com.abril.nds.dto.CaracteristicaDistribuicaoSimplesDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaCaracteristicaDistribuicaoDetalheDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaCaracteristicaDistribuicaoSimplesDTO;
 import br.com.abril.nds.repository.CaracteristicaDistribuicaoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -33,9 +34,9 @@ public class CaracteristicaDistribuicaoRepositoryImpl   implements
 		return sessionFactory.openSession();
 	}
 	
-	private void configurarPaginacaoPesquisaSimples(FiltroConsultaCaracteristicaDistribuicaoDTO dto, Query query) {
+	private void configurarPaginacaoPesquisaSimples(FiltroConsultaCaracteristicaDistribuicaoSimplesDTO filtro, Query query) {
 
-		  PaginacaoVO paginacao = dto.getPaginacao();
+		  PaginacaoVO paginacao = filtro.getPaginacao();
 		  
 		  if(paginacao!=null){
 			  if (paginacao.getQtdResultadosTotal().equals(0)) {
@@ -51,6 +52,9 @@ public class CaracteristicaDistribuicaoRepositoryImpl   implements
 		   query.setFirstResult(paginacao.getPosicaoInicial());
 		  }
 	 }
+	
+	
+	
 
 	@Override
 	public List<CaracteristicaDistribuicaoDTO> obterCaracteristicaDistribuicaoDetalhe(
@@ -160,5 +164,57 @@ public class CaracteristicaDistribuicaoRepositoryImpl   implements
 		  }
 		
 	}
+	
+	
+	
+
+	@Override
+	public List<CaracteristicaDistribuicaoSimplesDTO> obterCaracteristicaDistribuicaoSimples(FiltroConsultaCaracteristicaDistribuicaoSimplesDTO filtro) {
+		
+		StringBuilder sql = new StringBuilder("");
+		sql.append(" select distinct ") 
+		.append(" pro.codigo as 'codigoProduto', ")
+		.append(" pro.nome as 'nomeProduto', ")
+		.append(" pes2.NOME_FANTASIA as 'nomeEditor' ")
+		.append(" from produto pro ")
+		
+		.append(" left join produto_edicao ped on pro.ID = ped.PRODUTO_ID ")
+		.append(" left join editor edi on edi.id = pro.editor_id ")
+		.append(" left join pessoa pes2 on pes2.id = edi.JURIDICA_ID ")
+		.append(" where  1=1 ");
+		
+		if(filtro.getCodigoProduto() !=null && filtro.getCodigoProduto() != ""){
+			sql.append(" and pro.codigo = " ).append(filtro.getCodigoProduto());
+		}
+		
+		//tipo pesquisa publicacao
+		if(filtro.getNomeProduto() !=null && filtro.getNomeProduto()!=""){
+				if(filtro.isOpcaoFiltroPublicacao()){
+					//exato
+					sql.append(" and upper(pro.nome) = ").append(" upper ('").append(filtro.getNomeProduto()).append("')");//exato
+				}else{
+					//contem
+					sql.append(" and upper(pro.nome) like ").append(" upper ('%").append(filtro.getNomeProduto()).append("%')");//contem
+				}
+				
+		}
+		//tipo pesquisa editor
+		if(filtro.getNomeEditor()!=null && filtro.getNomeEditor()!="")	{	
+				if(filtro.isOpcaoFiltroEditor()){
+					//exato
+					sql.append(" and upper(pes2.NOME_FANTASIA) =").append(" upper('").append(filtro.getNomeEditor()).append("')");
+				}else{
+					//contem
+					sql.append(" and upper(pes2.NOME_FANTASIA) like").append(" upper('%").append(filtro.getNomeEditor()).append("%')");
+				}
+			
+		}				
+		
+		Query  query = getSession().createSQLQuery(sql.toString()); 
+		 query.setResultTransformer(new AliasToBeanResultTransformer(CaracteristicaDistribuicaoSimplesDTO.class));
+		 configurarPaginacaoPesquisaSimples(filtro,query);
+		return query.list();
+	}
+	
 
 }

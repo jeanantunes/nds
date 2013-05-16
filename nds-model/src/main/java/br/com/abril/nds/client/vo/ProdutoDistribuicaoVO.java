@@ -71,6 +71,8 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	
 	private Long idUsuario;
 	
+	private Boolean estudoLiberado;
+	
 	
 	public BigInteger getIdLancamento() {
 		return idLancamento;
@@ -304,5 +306,14 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 		
 		return 1;
 	}
+
+	public Boolean getEstudoLiberado() {
+		return estudoLiberado;
+	}
+
+	public void setEstudoLiberado(Boolean estudoLiberado) {
+		this.estudoLiberado = estudoLiberado;
+	}
+
 	
 }

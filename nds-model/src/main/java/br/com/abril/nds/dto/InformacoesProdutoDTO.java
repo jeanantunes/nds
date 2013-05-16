@@ -72,7 +72,9 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	private String dataInser;
 	private Usuario usuario;
 	private String codProduto;
-		
+	private String tipoClassificacaoProdutoDescricao;
+	private Boolean estudoLiberado;
+	
 	public String getNomeUsuario() {
 		return nomeUsuario;
 	}
@@ -214,4 +216,32 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	public void setCodProduto(String codProduto) {
 		this.codProduto = codProduto;
 	}
+
+	public String getTipoClassificacaoProdutoDescricao() {
+		return tipoClassificacaoProdutoDescricao;
+	}
+
+	public void setTipoClassificacaoProdutoDescricao(
+			String tipoClassificacaoProdutoDescricao) {
+		this.tipoClassificacaoProdutoDescricao = tipoClassificacaoProdutoDescricao;
+	}
+
+	public String getNomeProduto() {
+		return nomeProduto;
+	}
+
+	public void setNomeProduto(String nomeProduto) {
+		this.nomeProduto = nomeProduto;
+	}
+
+	public Boolean getEstudoLiberado() {
+		return estudoLiberado;
+	}
+
+	public void setEstudoLiberado(Boolean estudoLiberado) {
+		this.estudoLiberado = estudoLiberado;
+	}
+
+	
+	
 }

@@ -329,7 +329,14 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		}
 		
 		if(informacoesProdutoController.targetRecuperarEstudo){
-			$(informacoesProdutoController.targetRecuperarEstudo).val(numeroEstudo).blur();
+			
+			$(informacoesProdutoController.targetRecuperarEstudo).val(numeroEstudo);
+			if(informacoesProdutoController.methodEval){
+				window.eval('$(informacoesProdutoController.targetRecuperarEstudo).'+informacoesProdutoController.methodEval+'();');
+			}else{
+				$(informacoesProdutoController.targetRecuperarEstudo).blur();
+				
+			}
 		}else if ($(".pesquisaEstudo").val() != undefined) {
 			
 			$(".pesquisaEstudo").trigger(jQuery.Event("change"));
