@@ -22,7 +22,7 @@ var analiseParcialController = $.extend(true, {
     linkNomeCota : '<a href="javascript:;" onclick="analiseParcialController.carregarDetalhesCota(#numeroCota);">#nomeCota</a>',
     edicoesBase : [],
     inputReparteSugerido : '<input type="hidden" id="reparteSalvo_#numeroCota" value="#value"/>'+
-        '<input id="reparteAtual_#numeroCota" value="#value" style="width: 40px; font-weight: bold;" '+
+        '<input id="reparteAtual_#numeroCota" value="#value" class="reparteSugerido" '+
         'tabindex="#tab" '+
         'onblur="analiseParcialController.inputBlur(event, this);"/>',
 
@@ -497,7 +497,7 @@ var analiseParcialController = $.extend(true, {
 
         $('#cotasNaoSelec').flexigrid({
             preProcess : analiseParcialController.preProcessGridNaoSelec,
-            url: analiseParcialController.path +'/distribuicao/analise/parcial/cotasQueNaoEntraramNoEstudo/filtrar',
+            url: analiseParcialController.path + '/distribuicao/analise/parcial/cotasQueNaoEntraramNoEstudo/filtrar',
             dataType : 'json',
             colModel : [{display: 'Cota',   name: 'numeroCota',       width: 40,  sortable: true, align: 'left'},
                         {display: 'Nome',   name: 'nomeCota',       width: 160, sortable: true, align: 'left'},
@@ -517,19 +517,21 @@ var analiseParcialController = $.extend(true, {
             if (typeof value.cell.nomeCota === 'undefined') {
                 value.cell.nomeCota = '';
             }
-            
-            value.cell.quantidade = '<input type="hidden" id="qtdeAnteriorCota'+ value.cell.numeroCota +'" value="'+ value.cell.quantidade +'"/>'+
-                '<input type="text" id="inputQuantidade'+ value.cell.numeroCota +'" style="width: 50px;" value="'+
-                value.cell.quantidade +'" onblur="analiseParcialController.atualizaQuantidadeTotal('+ value.cell.numeroCota +');" />';
+
+            value.cell.quantidade = '<input type="text" id="inputQuantidade'+ value.cell.numeroCota +'" style="width: 50px;" value="'+
+                value.cell.quantidade +'" onblur="analiseParcialController.atualizaQuantidadeTotal('+ value.cell.numeroCota +');" ' +
+                ' numeroCota="'+ value.cell.numeroCota +'" />';
         });
         return resultado;
     },
     
     atualizaQuantidadeTotal : function(numeroCota) {
-        if (!isNaN($('#inputQuantidade'+ numeroCota).val())) {
-            var saldo = parseInt($('#saldoReparteNaoSelec').html(), 10);
-            saldo = saldo - parseInt($('#inputQuantidade'+ numeroCota).val(), 10) - parseInt($('#qtdeAnteriorCota'+ numeroCota).val(), 10);
-            $('#saldoReparteNaoSelec').html(saldo);
+        var $quantidade = $('#inputQuantidade' + numeroCota);
+        if (!isNaN($quantidade.val())) {
+            var $saldoReparteNaoSelec = $('#saldoReparteNaoSelec');
+            var saldo = parseInt($saldoReparteNaoSelec.html(), 10);
+            saldo = saldo - parseInt($quantidade.val(), 10);
+            $saldoReparteNaoSelec.html(saldo);
         }
     },
     
@@ -540,13 +542,15 @@ var analiseParcialController = $.extend(true, {
             var motivo = $("#cotasQueNaoEntraramNoEstudo_motivo").val();
             var elemento = $("#cotasQueNaoEntraramNoEstudo_elementos").val();
             var estudo = $("#estudoId").val();
+            var tipoSegmentoProduto = $("#tipoSegmentoProduto").val();
 
             $("#cotasNaoSelec").flexOptions({
                 params:[{name: 'queryDTO.cota',     value: cota}, 
                         {name: 'queryDTO.nome',     value: nome}, 
                         {name: 'queryDTO.motivo',   value: motivo}, 
                         {name: 'queryDTO.elemento', value: elemento}, 
-                        {name: 'queryDTO.estudo',   value: estudo}]
+                        {name: 'queryDTO.estudo',   value: estudo},
+                        {name: 'queryDTO.tipoSegmentoProduto',   value: tipoSegmentoProduto}]
             }).flexReload();
         };
         $("#cotasQueNaoEntraramNoEstudo_cota").blur(filtrarCotasQueNaoEntraramNoEstudo);
@@ -563,7 +567,23 @@ var analiseParcialController = $.extend(true, {
             modal: false
         });
     },
-    
+
+    getCotasComReparte: function () {
+        var data = [];
+        var estudoId = $("#estudoId").val();
+
+        data.push({name: 'estudoId', value: estudoId});
+
+        $("#cotasNaoSelec tr td input").each(function (key, value) {
+            if (value.value > 0) {
+                data.push({name: 'cotas[' + key + '].numeroCota', value: value.id.replace(/\D/g, '')});
+                data.push({name: 'cotas[' + key + '].quantidade', value: value.value});
+            }
+        });
+
+        return data;
+    },
+
     exibirCotasQueNaoEntraramNoEstudo : function() {
         $('#saldoReparteNaoSelec').html($('#saldo_reparte').html());
 
@@ -577,7 +597,12 @@ var analiseParcialController = $.extend(true, {
             buttons : {
                 "Confirmar" : function() {
                     $(this).dialog("close");
-                    $('#baseEstudoGridParcial').flexReload();
+                    $.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/mudarReparteLote',
+                        analiseParcialController.getCotasComReparte(),
+                        function(){
+                            $('#baseEstudoGridParcial').flexReload();
+                            $('#saldo_reparte').text($('#saldoReparteNaoSelec').text());
+                    });
                 },
                 "Cancelar" : function() {
                     $(this).dialog("close");
