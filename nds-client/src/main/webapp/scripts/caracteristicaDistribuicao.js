@@ -1,5 +1,5 @@
 var caracteristicaDistribuicaoController = $.extend(true, {
-	
+
 	init : function() {
 		
 		$("#pesquisaDetalheGrid",caracteristicaDistribuicaoController.workspace).flexigrid({
@@ -95,13 +95,148 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 		
 		});
 		
+		$("#pesquisaSimplesGrid",caracteristicaDistribuicaoController.workspace).flexigrid({
+			preProcess: function(data){return caracteristicaDistribuicaoController.preProcessPesquisaSimplesGrid(data);},
+			dataType : 'json',
+			colModel : [ {
+				display : 'Código',
+				name : 'codigoProduto',
+				width : 100,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Produto',
+				name : 'nomeProduto',
+				width : 300,
+				sortable : true,
+				align : 'center'
+			},{
+				display : 'Editor',
+				name : 'nomeEditor',
+				width : 300,
+				sortable : true,
+				align : 'center'
+			},{
+				display : 'Ação',
+				name : 'acao',
+				width : 100,
+				sortable : true,
+				align : 'center'
+			}],
+			width : 900,
+			height : 200,
+			sortname : "nomeProduto",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true
+		
+		});
+		
+		
+		
+		$("#pesquisaDetalheGridModal",caracteristicaDistribuicaoController.workspace).flexigrid({
+			preProcess: function(data){return caracteristicaDistribuicaoController.preProcessPesquisaDetalheGridModal(data);},
+			dataType : 'json',
+			colModel : [ {
+				display : 'Código',
+				name : 'codigoProduto',
+				width : 65,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Produto',
+				name : 'nomeProduto',
+				width : 110,
+				sortable : true,
+				align : 'center'
+			},{
+				display : 'Editor',
+				name : 'nomeEditor',
+				width : 60,
+				sortable : true,
+				align : 'center'
+			},{
+				display : 'Edição',
+				name : 'numeroEdicao',
+				width : 40,
+				sortable : true,
+				align : 'center'
+			},{
+				display : 'Preço de Capa',
+				name : 'precoCapa',
+				width : 80,
+				sortable : true,
+				align : 'center'
+			},{
+				display : 'Classificação',
+				name : 'classificacao',
+				width : 80,
+				sortable : true,
+				align : 'center'
+			},{
+				display : 'Segmento',
+				name : 'segmento',
+				width : 100,
+				sortable : true,
+				align : 'center'
+			},{
+				display : 'Lancamento',
+				name : 'dataLancamentoString',
+				width : 70,
+				sortable : true,
+				align : 'center'
+			},{
+				display : 'Recolhimento',
+				name : 'dataRecolhimentoString',
+				width : 70,
+				sortable : true,
+				align : 'center'
+			},{
+				display : 'Reparte',
+				name : 'reparteString',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			},{
+				display : 'Venda',
+				name : 'vendaString',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			},{
+				display : 'Chamada de Capa',
+				name : 'chamadaCapa',
+				width : 100,
+				sortable : true,
+				align : 'center'
+			},{
+				display : 'Capa',
+				name : 'acao',
+				width : 50,
+				sortable : true,
+				align : 'center'
+			}],
+			width : 1100,
+			height : 200,
+			sortname : "nomeProduto",
+			sortorder : "asc",
+			usepager : true,
+			useRp : true,
+			rp : 15,
+			showTableToggleBtn : true
+		
+		});
+		
+		
 		
 		 
 	},
 	
 	
-	preProcessPesquisaDetalheGrid:function(resultado){
-		caracteristicaDistribuicaoController.validarBotaoExportar(resultado.rows);
+	preProcessPesquisaSimplesGrid:function(resultado){
+		caracteristicaDistribuicaoController.validarBotaoExportarSimples(resultado.rows);
 		if (resultado.mensagens) {
 
 			exibirMensagem(
@@ -112,8 +247,7 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 		}
 		
 		$.each(resultado.rows, function(index, row) {
-			
-			var capa= "<a onclick='caracteristicaDistribuicaoController.popup_detalhes("+row.cell.codigoProduto+ "," +row.cell.numeroEdicao + ");'  href='javascript:void(0);'><img src='images/ico_detalhes.png'></a>";
+			var capa ="<input type='image' src='images/ico_detalhes.png' onclick='caracteristicaDistribuicaoController.exibirDetalhesPesquisaModal(\""+row.cell.codigoProduto+"\",\""+row.cell.nomeProduto+"\");' />";
 
 			row.cell.acao=capa;
 			if(row.cell.reparteString){
@@ -132,10 +266,113 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 		
 	},
 	
+	preProcessPesquisaDetalheGridModal:function(resultado){
+		caracteristicaDistribuicaoController.validarBotaoExportarDetalhe(resultado.rows);
+		if (resultado.mensagens) {
+
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			return resultado;
+		}
+		
+		$.each(resultado.rows, function(index, row) {
+			
+			var capa ="<input type='image' src='images/ico_detalhes.png' onclick='caracteristicaDistribuicaoController.popup_detalhes(\""+row.cell.codigoProduto+ "\" ," +row.cell.numeroEdicao +");' />";
+//			var capa= "<a onclick='caracteristicaDistribuicaoController.popup_detalhes("+row.cell.codigoProduto+ "," +row.cell.numeroEdicao +");'  href='javascript:void(0);'><img src='images/ico_detalhes.png'></a>";
+			row.cell.acao=capa;
+			if(row.cell.reparteString){
+				row.cell.reparteString = parseFloat(row.cell.reparteString).toFixed(2);
+			}
+			if(row.cell.vendaString){
+				row.cell.vendaString = parseFloat(row.cell.vendaString).toFixed(2);
+			}
+			if(row.cell.precoCapa){
+				row.cell.precoCapa = parseFloat(row.cell.precoCapa).toFixed(2);
+			};
+			
+		});
+		
+		return resultado;
+		
+	},
+	
+	exibirDetalhesPesquisaModal:function(codProduto , nomeProduto){
+		var data = [];
+		data.push({name:'filtro.codigoProduto',	value: codProduto});
+		data.push({name:'filtro.nomeProduto',	value: nomeProduto});
+		
+		$("#modal-pesquisa-detalhe").dialog({
+			resizable: false,
+			height:'350',
+			width:'1150',
+			modal: false,
+			open: caracteristicaDistribuicaoController.atualizarGridModal(data),
+			close:function(){
+				var clearData = {
+			            total: 0,    
+			            page:1,
+			            rows: []
+			    };
+				$("#pesquisaDetalheGridModal").flexAddData(clearData);
+				
+			}
+			
+			 
+		});
+		
+	},
+	
+	atualizarGridModal:function(data){
+		
+		$(".pesquisaDetalheGridModal").flexOptions({
+			url: contextPath + "/distribuicao/caracteristicaDistribuicao/pesquisarDetalhe",
+			dataType : 'json',
+			params: data
+		});
+		$(".pesquisaDetalheGridModal").flexReload();
+		
+		
+		caracteristicaDistribuicaoController.exibeGridDetalheModal();
+	},
+	
+	preProcessPesquisaDetalheGrid:function(resultado){
+		caracteristicaDistribuicaoController.validarBotaoExportarDetalhe(resultado.rows);
+		if (resultado.mensagens) {
+
+			exibirMensagem(
+				resultado.mensagens.tipoMensagem, 
+				resultado.mensagens.listaMensagens
+			);
+			return resultado;
+		}
+		
+		$.each(resultado.rows, function(index, row) {
+			
+			var capa= "<a onclick='caracteristicaDistribuicaoController.popup_detalhes("+row.cell.codigoProduto+ "," +row.cell.numeroEdicao +");'  href='javascript:void(0);'><img src='images/ico_detalhes.png'></a>";
+
+			row.cell.acao=capa;
+			if(row.cell.reparteString){
+				row.cell.reparteString = parseFloat(row.cell.reparteString).toFixed(2);
+			}
+			if(row.cell.vendaString){
+				row.cell.vendaString = parseFloat(row.cell.vendaString).toFixed(2);
+			}
+			if(row.cell.precoCapa){
+				row.cell.precoCapa = parseFloat(row.cell.precoCapa).toFixed(2);
+			};
+			
+		});
+		
+		return resultado;
+		
+	},
+	
 	 moeda:function(z){ 
 		v = z.value; 
-		v=v.replace(/\D/g,"") // permite digitar apenas numero 
-		v=v.replace(/(\d{1})(\d{1,2})$/,"$1,$2") // coloca virgula antes dos ultimos 2 digitos 
+		v=v.replace(/\D/g,""); // permite digitar apenas numero 
+		v=v.replace(/(\d{1})(\d{1,2})$/,"$1,$2"); // coloca virgula antes dos ultimos 2 digitos 
 		z.value = v; 
 	},
 	
@@ -148,19 +385,34 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 		 
 	},
 	
-	validarBotaoExportar:function(numRegistros){
+	validarBotaoExportarSimples:function(numRegistros){
 		if(numRegistros == 0){
-			$("#linkGerarArquivoCaracDist").attr("href","#");
-			$("#linkGerarArquivoCaracDist").attr("onclick","caracteristicaDistribuicaoController.exibeMsgValidacaoExportarErro()");
-			$("#linkImprimirCaracDist").attr("href","#");
-			$("#linkImprimirCaracDist").attr("onclick","caracteristicaDistribuicaoController.exibeMsgValidacaoExportarErro()");
+			$("#linkGerarSimples").attr("href","#");
+			$("#linkGerarSimples").attr("onclick","caracteristicaDistribuicaoController.exibeMsgValidacaoExportarErro()");
+			$("#linkImprimirSimples").attr("href","#");
+			$("#linkImprimirSimples").attr("onclick","caracteristicaDistribuicaoController.exibeMsgValidacaoExportarErro()");
 		}else{
-			$("#linkGerarArquivoCaracDist").attr("href", contextPath+"/distribuicao/caracteristicaDistribuicao/exportar?fileType=XLS");
-			$("#linkGerarArquivoCaracDist").attr("onclick", "javascript:void(0)");
-			$("#linkImprimirCaracDist").attr("href",contextPath+"/distribuicao/caracteristicaDistribuicao/exportar?fileType=PDF");
-			$("#linkImprimirCaracDist").attr("onclick","javascript:void(0)");
+			$("#linkGerarSimples").attr("href", contextPath+"/distribuicao/caracteristicaDistribuicao/exportarSimples?fileType=XLS");
+			$("#linkGerarSimples").attr("onclick", "javascript:void(0)");
+			$("#linkImprimirSimples").attr("href",contextPath+"/distribuicao/caracteristicaDistribuicao/exportarSimples?fileType=PDF");
+			$("#linkImprimirSimples").attr("onclick","javascript:void(0)");
 		}
 	},
+	
+	validarBotaoExportarDetalhe:function(numRegistros){
+		if(numRegistros == 0){
+			$("#linkGerarDetalhe").attr("href","#");
+			$("#linkGerarDetalhe").attr("onclick","caracteristicaDistribuicaoController.exibeMsgValidacaoExportarErro()");
+			$("#linkImprimirDetalhe").attr("href","#");
+			$("#linkImprimirDetalhe").attr("onclick","caracteristicaDistribuicaoController.exibeMsgValidacaoExportarErro()");
+		}else{
+			$("#linkGerarDetalhe").attr("href", contextPath+"/distribuicao/caracteristicaDistribuicao/exportarDetalhe?fileType=XLS");
+			$("#linkGerarDetalhe").attr("onclick", "javascript:void(0)");
+			$("#linkImprimirDetalhe").attr("href",contextPath+"/distribuicao/caracteristicaDistribuicao/exportarDetalhe?fileType=PDF");
+			$("#linkImprimirDetalhe").attr("onclick","javascript:void(0)");
+		}
+	},
+	
 	
 	exibeMsgValidacaoExportarErro:function(){
 		exibirMensagem("WARNING",["Não há registros a serem exportados!"]);
@@ -170,10 +422,18 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 		var params = [];
 		params.push({name:'codigoProduto',	value: codProduto});
 		params.push({name:'numeroEdicao', value: numeroEdicao});
-		$.postJSON(contextPath + '/distribuicao/caracteristicaDistribuicao/exibirCapa',params);
+		$.postJSON(contextPath + '/distribuicao/caracteristicaDistribuicao/pesquisarDetalhe',params);
+	},
+	
+	
+
+	 popup_detalhes_close:function() {
+	  $( "#dialog-detalhes" ).dialog( "close" );
+	  
 	},
 	
 	popup_detalhes:function(codigoProduto,numeroEdicao) {
+		console.log(codigoProduto+","+numeroEdicao);
 		$( "#dialog-detalhes" ).dialog({
 			resizable: false,
 			height:'auto',
@@ -190,9 +450,7 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 				
 				var randomnumber=Math.floor(Math.random()*11);
 				
-				$("#imagemCapaEdicao")
-						.attr("src",contextPath
-								
+				$("#imagemCapaEdicao").attr("src",contextPath
 										+ "/capa/getCapaEdicaoJson?random="+randomnumber+"&codigoProduto="
 										+ codigoProduto
 										+ "&numeroEdicao="
@@ -201,33 +459,58 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 			close:function(event, ui){
 				$("#imagemCapaEdicao").removeAttr("src").hide();
 				$("#loadingCapa").show();
-				
 			}
 		});
 	},
-
-	 popup_detalhes_close:function() {
-	  $( "#dialog-detalhes" ).dialog( "close" );
-	  
-	},
+	
 	
 	pesquisar:function(){
-	if(caracteristicaDistribuicaoController.camposVazios()){
-		exibirMensagem("WARNING",["Preencha pelo menos um campo dos filtros para realizar a pesquisa!"]);
-	}else if (caracteristicaDistribuicaoController.validarCamposDeAte()){
-		exibirMensagem("WARNING",["O campo 'De' não pode conter valores maiores que o campo 'Até'!"]);
-	}else{
-			caracteristicaDistribuicaoController.exibeGridDetalhe();
-			$(".pesquisaDetalheGrid",caracteristicaDistribuicaoController.workspace).flexOptions({
-				url: contextPath + "/distribuicao/caracteristicaDistribuicao/pesquisarDetalhe",
-				dataType : 'json',
-				params: caracteristicaDistribuicaoController.getDadosFiltroPesquisaDetalhe()
-			});
+		
+		if(caracteristicaDistribuicaoController.isSimples()){
+			caracteristicaDistribuicaoController.pesquisarSimples();
+		
+		}else{
+			caracteristicaDistribuicaoController.pesquisarDetalhe();
+		
+		}
+	},
+	
+	pesquisarDetalhe:function(){
+		if(caracteristicaDistribuicaoController.camposVazios()){
+			exibirMensagem("WARNING",["Preencha pelo menos um campo dos filtros para realizar a pesquisa!"]);
+		}else if (caracteristicaDistribuicaoController.validarCamposDeAte()){
+			exibirMensagem("WARNING",["O campo 'De' não pode conter valores maiores que o campo 'Até'!"]);
+		}else{
+				caracteristicaDistribuicaoController.exibeGridDetalhe();
+				$(".pesquisaDetalheGrid",caracteristicaDistribuicaoController.workspace).flexOptions({
+					url: contextPath + "/distribuicao/caracteristicaDistribuicao/pesquisarDetalhe",
+					dataType : 'json',
+					params: caracteristicaDistribuicaoController.getDadosFiltroPesquisaDetalhe()
+				});
+				
+				$("#divPesquisaSimplesGrid").hide();
+				$(".pesquisaDetalheGrid",caracteristicaDistribuicaoController.workspace).flexReload();
+		}
+		
+	},
+	
+	pesquisarSimples:function(){
+		if(caracteristicaDistribuicaoController.camposVazios()){
+			exibirMensagem("WARNING",["Preencha pelo menos um campo dos filtros para realizar a pesquisa!"]);
+		}else if (caracteristicaDistribuicaoController.validarCamposDeAte()){
+			exibirMensagem("WARNING",["O campo 'De' não pode conter valores maiores que o campo 'Até'!"]);
+		}else{
+				caracteristicaDistribuicaoController.exibeGridSimples();
+				$(".pesquisaSimplesGrid",caracteristicaDistribuicaoController.workspace).flexOptions({
+					url: contextPath + "/distribuicao/caracteristicaDistribuicao/pesquisarSimples",
+					dataType : 'json',
+					params: caracteristicaDistribuicaoController.getDadosFiltroPesquisaDetalhe()
+				});
+				
+				$("#divPesquisaDetalheGrid").hide();
+				$(".pesquisaSimplesGrid",caracteristicaDistribuicaoController.workspace).flexReload();
+		}
 			
-			$(".pesquisaDetalheGrid",caracteristicaDistribuicaoController.workspace).flexReload();
-		
-	}
-		
 	},
 	
 	camposVazios:function(){
@@ -244,6 +527,23 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 		return (codigoVazio && produtoVazio && classificacaoVazio && nomeEditorVazio &&  segmentoVazio && brindeVazio && faixaDeVazio && faixaAteVazio && chamadaCapaVazio);
 	},
 	
+	
+	isSimples:function(){
+		var codigoPreenchido = $("#codigoProduto").val().length >0;
+		var produtoPreenchido = $("#nomeProduto").val().length>0;
+		var nomeEditorPreenchido = $("#nomeEditor").val().length>0;
+		var segmentoVazio =  $("#segmento").val()=="";
+		var brindeVazio = $("#brinde").val()=="";
+		var classificacaoVazio =  $("#classificacao").val()=="";
+		var chamadaCapaVazio = $("#chamadaCapa").val()==""; 
+		var faixaDeVazio=$("#faixaDe").val()=="";
+		var faixaAteVazio=$("#faixaAte").val()=="";
+		
+		var outrosCamposVazios =classificacaoVazio  &&  segmentoVazio && brindeVazio && faixaDeVazio && faixaAteVazio && chamadaCapaVazio;
+		
+		return (outrosCamposVazios &&(codigoPreenchido || produtoPreenchido ||nomeEditorPreenchido) );
+	},
+
 	
 	getDadosFiltroPesquisaDetalhe:function(){
 		var valDe=$("#faixaDe").val();
@@ -267,17 +567,24 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 		return data;
 	},
 	
-	
+	exibeGridSimples:function(){
+		$('#divPesquisaSimplesGrid').show();
+		
+	},
+	escondeGridSimples:function(){
+		$("#divPesquisaSimplesGrid").hide();
+		
+	},
 	exibeGridDetalhe:function(){
 		$('#divPesquisaDetalheGrid').show();
-		$('#grid1').show();
 	},
 	escondeGridDetalhe:function(){
 		
 		$('#divPesquisaDetalheGrid').hide();
-		$('#grid2').show();
+	},
+	exibeGridDetalheModal:function(){
+		$('#divPesquisaDetalheModal').show();
 	}
 
-	
 }, BaseController);
 //@ sourceURL=caracteristicaDistribuicao.js
