@@ -303,7 +303,9 @@ public class CotaBaseController extends BaseController {
 		
 		FiltroCotaBaseDTO filtro = this.cotaBaseService.obterDadosFiltro(cotaBase, true, true, numeroCota);
 		
-		if(filtroPrincipal.getNumeroCota().equals(filtro.getNumeroCota()) ){
+		if(filtro == null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não pode ser adicionada!");
+		}else if(filtroPrincipal.getNumeroCota().equals(filtro.getNumeroCota()) ){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + filtro.getNumeroCota() + "\" não pode ser adicionada!");
 		}else{
 			this.result.use(Results.json()).from(filtro, "result").recursive().serialize();			
@@ -319,8 +321,6 @@ public class CotaBaseController extends BaseController {
 		CotaBase cotaBase = this.cotaBaseService.obterCotaNova(numeroCotaNova, true);
 		
 		Cota cotaParaDesativar = this.cotaService.obterPorId(idCotaBase);
-		
-//		Long qtdDeCotasBaseAtivas = this.cotaBaseCotaService.quantidadesDeCotasAtivas(cotaBase);		
 		
 		cotaBaseCotaService.desativarCotaBase(cotaBase, cotaParaDesativar);			
 		
@@ -438,7 +438,12 @@ public class CotaBaseController extends BaseController {
 		
 		int cont = 0;
 		for(CotaBaseDTO dto : listaDetalheCota){
-			Double indice = Double.parseDouble(dto.getIndiceAjuste().replace(',', '.') );
+			Double indice = null;
+			if(dto.getIndiceAjuste() == null){
+				indice = 0.0;
+			}else{
+				indice = Double.parseDouble(dto.getIndiceAjuste().replace(',', '.') );				
+			}
 			if(cont == 0){
 				dtoParaVisao.setEquivalente01(dto.getNumeroCota() + " - " + dto.getNomeCota());			
 			}else if(cont == 1){
