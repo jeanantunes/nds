@@ -70,59 +70,60 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
             }
 
             if (queryDTO.possuiOrdenacaoRanking()) {
-                sql.append(" left join ranking_segmento ranking on ranking.cota_id = cota.id ");
+                sql.append(" left join ranking_segmento ranking on ranking.cota_id = c.id ");
                 where.append(" and ranking.qtde between ? and ? ");
                 params.add(queryDTO.getFilterSortFrom());
                 params.add(queryDTO.getFilterSortTo());
             }
             if (queryDTO.possuiPercentualDeVenda()) {
-                sql.append(" left join estoque_produto_cota epc on estoque_produto_cota.cota_id=ec.cota_id and estoque_produto_cota.produto_edicao_id=estudo.produto_edicao_id ");
-                where.append(" and (((epc.qtde_recebida-epc.qtde_devolvida)*100)/epc.qtde_recebida) between ? and ?");
+                sql.append(" left join estoque_produto_cota epc on epc.cota_id = ec.cota_id and epc.produto_edicao_id = e.produto_edicao_id ");
+                where.append(" and (((epc.qtde_recebida - epc.qtde_devolvida)*100)/epc.qtde_recebida) between ? and ?");
                 params.add(queryDTO.getFilterSortFrom());
                 params.add(queryDTO.getFilterSortTo());
             }
             if (queryDTO.possuiReducaoReparte()) {
-
+                //TODO
             }
         }
 
         if (queryDTO.possuiElemento()) {
             if (queryDTO.elementoIsTipoPontoVenda()) {
-                sql.append(" join pdv on pdv.cota_id = cota.id and pdv.tipo_ponto_pdv_id = ? ");
+                sql.append(" join pdv on pdv.cota_id = c.id and pdv.tipo_ponto_pdv_id = ? ");
                 params.add(queryDTO.getValorElemento());
             }
             if (queryDTO.elementoIsGeradoorDeFluxo()) {
-                sql.append(" join pdv on pdv.cota_id = cota.id ");
+                sql.append(" join pdv on pdv.cota_id = c.id ");
                 sql.append(" join gerador_fluxo_pdv gfp on gfp.pdv_id = pdv.id and gfp.tipo_gerador_fluxo_id = ? ");
                 params.add(queryDTO.getValorElemento());
             }
             if (queryDTO.elementoIsBairro()) {
-                sql.append(" join pdv on pdv.cota_id = cota.id ");
+                sql.append(" join pdv on pdv.cota_id = c.id ");
                 sql.append(" join endereco_pdv on endereco_pdv.pdv_id = pdv.id");
                 sql.append(" join endereco on endereco.id = endereco_pdv.endereco_id and endereco.bairro = ? ");
 
                 params.add(queryDTO.getValorElemento());
             }
             if (queryDTO.elementoIsRegiao()) {
-                sql.append(" join registro_cota_regiao as rcr on rcr.cota_id = cota.id and rcr.regiao_id = ? ");
+                sql.append(" join registro_cota_regiao as rcr on rcr.cota_id = c.id and rcr.regiao_id = ? ");
                 params.add(queryDTO.getValorElemento());
             }
             if (queryDTO.elementoIsAreaDeInfluencia()) {
-                sql.append(" join pdv on pdv.cota_id = cota.id and pdv.area_influencia_pdv_id = ? ");
+                sql.append(" join pdv on pdv.cota_id = c.id and pdv.area_influencia_pdv_id = ? ");
                 params.add(queryDTO.getValorElemento());
             }
             if (queryDTO.elementoIsDistrito()) {
-                sql.append(" join pdv on pdv.cota_id = cota.id ");
+                sql.append(" join pdv on pdv.cota_id = c.id ");
                 sql.append(" join endereco_pdv on endereco_pdv.pdv_id = pdv.id ");
                 sql.append(" join endereco on endereco.id = endereco_pdv.endereco_id and endereco.uf = ? ");
 
                 params.add(queryDTO.getValorElemento());
             }
             if (queryDTO.elementoIsCotasAVista()) {
-
+                //TODO
             }
             if (queryDTO.elementoIsCotasNovas()) {
-
+                where.append(" ec.cota_nova = ? ");
+                params.add(queryDTO.getValorElemento());
             }
         }
 
@@ -362,6 +363,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO) {
         StringBuilder sql = new StringBuilder();
         sql.append("select cota.numero_cota numeroCota, ");
@@ -371,8 +373,11 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("  from estudo_cota ec ");
         sql.append("  join cota on cota.id = ec.cota_id ");
         sql.append("  join pessoa pe on pe.id = cota.pessoa_id ");
+        sql.append("  join ranking_segmento rks on rks.cota_id = cota.id ");
+        sql.append("     and rks.tipo_segmento_produto_id = ? ");
 
         List<Object> params = new ArrayList<>();
+        params.add(queryDTO.getTipoSegmentoProduto());
 
         if (queryDTO.possuiElemento()) {
             if (queryDTO.elementoIsTipoPontoVenda()) {
@@ -427,16 +432,25 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
             params.add(queryDTO.getNome());
         }
 
+        if (queryDTO.getMotivo() != null && !queryDTO.getMotivo().equals("TODOS")) {
+            sql.append(" and ec.classificacao = ? ");
+            params.add(queryDTO.getMotivo());
+        }
+
+        sql.append(" order by rks.qtde desc");
+
         Query query = getSession().createSQLQuery(sql.toString())
                 .addScalar("numeroCota", StandardBasicTypes.LONG)
                 .addScalar("nomeCota", StandardBasicTypes.STRING)
                 .addScalar("quantidade", StandardBasicTypes.BIG_INTEGER)
                 .addScalar("motivo", StandardBasicTypes.STRING);
+
         for (int i = 0; i < params.size(); i++) {
             query.setParameter(i, params.get(i));
         }
+
         query.setResultTransformer(new AliasToBeanResultTransformer(CotaQueNaoEntrouNoEstudoDTO.class));
-        List<CotaQueNaoEntrouNoEstudoDTO> lista = query.list();
-        return lista;
+
+        return query.list();
     }
 }

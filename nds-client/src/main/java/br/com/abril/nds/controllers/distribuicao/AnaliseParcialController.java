@@ -6,6 +6,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import br.com.abril.nds.model.estudo.ClassificacaoCota;
+import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -60,6 +62,7 @@ public class AnaliseParcialController extends BaseController {
         result.include("estudoCota", estudo);
         result.include("faixaDe", faixaDe);
         result.include("faixaAte", faixaAte);
+        result.include("classificacaoCotaList", ClassificacaoCota.values());
         result.forwardTo("/WEB-INF/jsp/distribuicao/analiseParcial.jsp");
     }
 
@@ -152,6 +155,16 @@ public class AnaliseParcialController extends BaseController {
     public void mudarReparte(Long numeroCota, Long estudoId, Long variacaoDoReparte) {
         analiseParcialService.atualizaReparte(estudoId, numeroCota, variacaoDoReparte);
         result.nothing();
+    }
+
+    @Post("/mudarReparteLote")
+    public void mudarReparteLote(Long estudoId, List<CotaQueNaoEntrouNoEstudoDTO> cotas) {
+
+        for (CotaQueNaoEntrouNoEstudoDTO cota : cotas) {
+            analiseParcialService.atualizaReparte(estudoId, cota.getNumeroCota(), cota.getQuantidade().longValue());
+        }
+
+        result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso.")).recursive().serialize();
     }
 
     @Path("/liberar")
