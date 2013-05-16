@@ -802,7 +802,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	this.inicializarTelaSomarEstudos = function() {
 		$('#somarEstudo-estudo').text('');
-		$('#somarEstudo-operacaoConcluida').text('');
+		$('#somarEstudo-operacaoConcluida,#somarEstudo-statusOperacao').empty();
+		
 		T.cancelarSomarEstudos();
 	},
 	
