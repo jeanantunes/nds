@@ -94,21 +94,27 @@ $(function(){
 		      <fieldset class="classFieldset">
 		       	  <legend>Pesquisa</legend>
 		        	<table id="pesquisaSimplesGrid" class="pesquisaSimplesGrid"></table> 
-		             <span class="bt_novos" title="Gerar Arquivo" id="btGerarArquivoCota"><a href="${pageContext.request.contextPath}/distribuicao/caracteristicaDistribuicao/exportar?fileType=XLS&tipoExportacao=cota"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-					<span class="bt_novos" title="Imprimir" id="btImprimirCota"><a href="${pageContext.request.contextPath}/distribuicao/caracteristicaDistribuicao/exportar?fileType=PDF&tipoExportacao=cota"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+		             <span class="bt_novos" title="Gerar Arquivo" id="btGerarArquivoCota"><a id="linkGerarSimples" href="${pageContext.request.contextPath}/distribuicao/caracteristicaDistribuicao/exportarSimples?fileType=XLS&tipoExportacao=cota"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+					<span class="bt_novos" title="Imprimir" id="btImprimirCota"><a id="linkImprimirSimples" href="${pageContext.request.contextPath}/distribuicao/caracteristicaDistribuicao/exportarSimples?fileType=PDF&tipoExportacao=cota"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
 		      </fieldset>
    		   </div>
    		   
-   		    <div id="divPesquisaDetalheGrid"  style="display:none;">
-		      <fieldset class="classFieldset">
+   			    <div id="divPesquisaDetalheGrid"  style="display:none;">
+			      <fieldset class="classFieldset">
 		       	  <legend>Pesquisa</legend>
-		        
 		        	<table id="pesquisaDetalheGrid" class="pesquisaDetalheGrid"></table> 
-		             <span class="bt_novos" title="Gerar Arquivo" id="btGerarArquivoCaracDist"><a id="linkGerarArquivoCaracDist" href="${pageContext.request.contextPath}/distribuicao/caracteristicaDistribuicao/exportar?fileType=XLS&tipoExportacao=cota"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-					<span class="bt_novos" title="Imprimir" id="btImprimirCaracDist"><a id="linkImprimirCaracDist" href="${pageContext.request.contextPath}/distribuicao/caracteristicaDistribuicao/exportar?fileType=PDF&tipoExportacao=cota"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
-		      </fieldset>
-   		   </div>
+		             <span class="bt_novos" title="Gerar Arquivo" id="btGerarArquivoCaracDist"><a id="linkGerarDetalhe" href="${pageContext.request.contextPath}/distribuicao/caracteristicaDistribuicao/exportarDetalhe?fileType=XLS&tipoExportacao=cota"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+					<span class="bt_novos" title="Imprimir" id="btImprimirCaracDist"><a id="linkImprimirDetalhe" href="${pageContext.request.contextPath}/distribuicao/caracteristicaDistribuicao/exportarDetalhe?fileType=PDF&tipoExportacao=cota"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+		      	</fieldset>
+	   		   </div>
    		   
+  		     <div id="modal-pesquisa-detalhe"  style="display:none;" title="Detalhes do Produto">
+	   		     <div id="divPesquisaDetalheModal"  style="display:none;">
+		   		    <table id="pesquisaDetalheGridModal" class="pesquisaDetalheGridModal"></table>
+		   		    <span class="bt_novos" title="Gerar Arquivo" id="btGerarArquivoCaracDistModal"><a id="linkGerarModal" href="${pageContext.request.contextPath}/distribuicao/caracteristicaDistribuicao/exportarDetalhe?fileType=XLS&tipoExportacao=cota"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
+					<span class="bt_novos" title="Imprimir" id="btImprimirCaracDistModal"><a id="linkImprimirModal" href="${pageContext.request.contextPath}/distribuicao/caracteristicaDistribuicao/exportarDetalhe?fileType=PDF&tipoExportacao=cota"><img src="images/ico_impressora.gif" hspace="5" border="0" />Imprimir</a></span>
+				</div>
+   		     </div>
    		  
     </div>
     
