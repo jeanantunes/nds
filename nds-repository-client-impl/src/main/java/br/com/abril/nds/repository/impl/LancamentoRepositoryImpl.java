@@ -1062,14 +1062,15 @@ public class LancamentoRepositoryImpl extends
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(Intervalo<Date> periodoDistribuicao,
-																   List<Long> fornecedores) {
+																   List<Long> fornecedores, Date dataOperacao) {
 
 		String sql = this.montarConsultaBalanceamentoLancamentoAnalitico()
 				   + " order by dataLancamentoDistribuidor ";
 		
 		Query query = this.getQueryBalanceamentoRecolhimento(periodoDistribuicao,
 															 fornecedores,
-															 sql);
+															 sql,
+															 dataOperacao);
 
 		return query.list();
 	}
@@ -1095,8 +1096,6 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" lancamento.REPARTE ");
 		sql.append(" end, 0) as repartePrevisto, ");
 		
-		sql.append(" lancamento.NUMERO_REPROGRAMACOES as numeroReprogramacoes, ");
-		
 		sql.append(" coalesce( ");
 		sql.append(" case when tipoProduto.GRUPO_PRODUTO = :grupoCromo then ");
 		sql.append(" (lancamento.REPARTE / produtoEdicao.PACOTE_PADRAO) * produtoEdicao.PRECO_VENDA ");
@@ -1112,37 +1111,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" produto.NOME as nomeProduto, ");
 		sql.append(" produto.PERIODICIDADE as periodicidadeProduto, ");
 		
-		sql.append(" (coalesce(estoqueProduto.QTDE,0)) ");
-		
-		/*
-		sql.append(" 	select sum(itemRecebFisico.QTDE_FISICO) ");
-		sql.append(" 		from RECEBIMENTO_FISICO recebimentoFisico ");
-		sql.append(" 		inner join ");
-		sql.append(" 			ITEM_RECEB_FISICO itemRecebFisico ");
-		sql.append(" 			on recebimentoFisico.ID = itemRecebFisico.RECEBIMENTO_FISICO_ID ");
-		sql.append(" 		inner join ");
-		sql.append(" 			LANCAMENTO_ITEM_RECEB_FISICO lancamentoItemRecebFisico ");
-		sql.append(" 			on itemRecebFisico.ID = lancamentoItemRecebFisico.RECEBIMENTOS_ID ");
-		sql.append(" 		where lancamentoItemRecebFisico.LANCAMENTO_ID = lancamento.ID ");
-		*/
-		sql.append(" as reparteFisico, ");
-		
-		sql.append(" case when ( ");
-		sql.append(" 	select recebimentoFisico.ID ");
-		sql.append(" 		from RECEBIMENTO_FISICO recebimentoFisico ");
-		sql.append(" 		inner join ");
-		sql.append(" 			ITEM_RECEB_FISICO itemRecebFisico ");
-		sql.append(" 			on recebimentoFisico.ID = itemRecebFisico.RECEBIMENTO_FISICO_ID ");
-		sql.append(" 		inner join ");
-		sql.append(" 			LANCAMENTO_ITEM_RECEB_FISICO lancamentoItemRecebFisico ");
-		sql.append(" 			on itemRecebFisico.ID = lancamentoItemRecebFisico.RECEBIMENTOS_ID ");
-		sql.append(" 		where lancamentoItemRecebFisico.LANCAMENTO_ID = lancamento.ID ");
-		sql.append(" 		limit 1 ");
-		sql.append(" 	) is not null then ");
-		sql.append(" 	true ");
-		sql.append(" else ");
-		sql.append(" 	false ");
-		sql.append(" end as possuiRecebimentoFisico, ");
+		sql.append(" (coalesce(estoqueProduto.QTDE,0)) as reparteFisico, ");
 		
 		sql.append(" case when ( ");
 		sql.append(" 	select furoProduto.ID ");
@@ -1191,6 +1160,9 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" left join ");
 		sql.append(" LANCAMENTO_PARCIAL lancamentoParcial ");
 		sql.append(" on lancamentoParcial.ID = periodoLancamentoParcial.LANCAMENTO_PARCIAL_ID ");
+		sql.append(" left join ");
+		sql.append(" EXPEDICAO expedicao ");
+		sql.append(" ON lancamento.EXPEDICAO_ID = expedicao.ID ");
 		
 		sql.append(" where ");
 		
@@ -1203,10 +1175,19 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" ) is not null ");
 		
 		sql.append(" and ( ");
-		sql.append("	(lancamento.DATA_LCTO_DISTRIBUIDOR between :periodoInicial and :periodoFinal ");
-		sql.append("		and  UPPER(lancamento.STATUS) in ( :statusLancamentoNoPeriodo )) ");
-		sql.append(" 	or (lancamento.DATA_LCTO_DISTRIBUIDOR < :periodoInicial ");
-		sql.append("		and UPPER(lancamento.STATUS) in ( :statusLancamentoDataMenorInicial )) "); 
+		sql.append("     ( ");
+		sql.append(" 		lancamento.DATA_LCTO_DISTRIBUIDOR <= :periodoFinal ");
+		sql.append(" 		AND lancamento.STATUS in (:statusLancamentoDataMenorFinal) ");
+		sql.append(" 	) ");
+		sql.append(" 	OR ( ");
+		sql.append(" 		lancamento.DATA_LCTO_DISTRIBUIDOR between :periodoInicial and :periodoFinal ");
+		sql.append(" 		AND lancamento.STATUS = :statusLancamentoBalanceado ");
+		sql.append(" 	) ");
+		sql.append(" 	OR ( ");
+		sql.append(" 		lancamento.DATA_LCTO_DISTRIBUIDOR between :periodoInicial and :periodoFinal ");
+		sql.append(" 		AND lancamento.STATUS = :statusLancamentoExpedido ");
+		sql.append(" 		AND DATE_FORMAT(expedicao.DATA_EXPEDICAO, '%Y-%m-%d') = :dataOperacao ");
+		sql.append(" 	) ");
 		sql.append(" ) ");
 		
 		return sql.toString();
@@ -1214,7 +1195,8 @@ public class LancamentoRepositoryImpl extends
 	
 	private Query getQueryBalanceamentoRecolhimento(Intervalo<Date> periodoDistribuicao,
 											        List<Long> fornecedores,
-											        String sql) {
+											        String sql,
+											        Date dataOperacao) {
 
 		Query query = getSession().createSQLQuery(sql).addScalar("parcial")
 			.addScalar("statusLancamento")
@@ -1224,7 +1206,6 @@ public class LancamentoRepositoryImpl extends
 			.addScalar("novaDataLancamento")
 			.addScalar("dataRecolhimentoPrevista")
 			.addScalar("repartePrevisto", StandardBasicTypes.BIG_INTEGER)
-			.addScalar("numeroReprogramacoes", StandardBasicTypes.INTEGER)
 			.addScalar("reparteFisico", StandardBasicTypes.BIG_INTEGER)
 			.addScalar("valorTotal")
 			.addScalar("idProdutoEdicao", StandardBasicTypes.LONG)
@@ -1234,12 +1215,11 @@ public class LancamentoRepositoryImpl extends
 			.addScalar("codigoProduto")
 			.addScalar("nomeProduto")
 			.addScalar("periodicidadeProduto")
-			.addScalar("possuiRecebimentoFisico", StandardBasicTypes.BOOLEAN)
 			.addScalar("possuiFuro", StandardBasicTypes.BOOLEAN)
 			.addScalar("alteradoInteface", StandardBasicTypes.BOOLEAN)
 			.addScalar("distribuicao", StandardBasicTypes.BIG_INTEGER);
 		
-		this.aplicarParametros(query, periodoDistribuicao, fornecedores);
+		this.aplicarParametros(query, periodoDistribuicao, fornecedores, dataOperacao);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoLancamentoDTO.class));
 
@@ -1248,28 +1228,22 @@ public class LancamentoRepositoryImpl extends
 	
 	private void aplicarParametros(Query query,
 								   Intervalo<Date> periodoDistribuicao,
-								   List<Long> fornecedores) {
+								   List<Long> fornecedores, Date dataOperacao) {
 		
-		String[] arrayStatusLancamentoNoPeriodo = {StatusLancamento.PLANEJADO.name(),
-												   StatusLancamento.CONFIRMADO.name(),
-												   StatusLancamento.BALANCEADO.name(),
-												   //StatusLancamento.EXPEDIDO.name(),
-												   //StatusLancamento.EM_BALANCEAMENTO_LANCAMENTO.name(),
-												   StatusLancamento.FURO.name()};
+		String[] arrayStatusLancamentoDataMenorFinal = {StatusLancamento.PLANEJADO.name(),
+				  										StatusLancamento.CONFIRMADO.name(),
+				  										StatusLancamento.FURO.name(),
+				  										StatusLancamento.EM_BALANCEAMENTO.name()};
 		
-		String[] arrayStatusLancamentoDataMenorInicial = {StatusLancamento.PLANEJADO.name(),
-				  										  StatusLancamento.CONFIRMADO.name(),
-				  										  StatusLancamento.FURO.name()};
-		
-		List<String> statusLancamentoNoPeriodo = Arrays.asList(arrayStatusLancamentoNoPeriodo);
-		
-		List<String> statusLancamentoDataMenorInicial = Arrays.asList(arrayStatusLancamentoDataMenorInicial);
+		List<String> statusLancamentoDataMenorFinal = Arrays.asList(arrayStatusLancamentoDataMenorFinal);
 		
 		query.setParameterList("idsFornecedores", fornecedores);
 		query.setParameter("periodoInicial", periodoDistribuicao.getDe());
 		query.setParameter("periodoFinal", periodoDistribuicao.getAte());
-		query.setParameterList("statusLancamentoNoPeriodo", statusLancamentoNoPeriodo);
-		query.setParameterList("statusLancamentoDataMenorInicial", statusLancamentoDataMenorInicial);
+		query.setParameter("dataOperacao", dataOperacao);
+		query.setParameterList("statusLancamentoDataMenorFinal", statusLancamentoDataMenorFinal);
+		query.setParameter("statusLancamentoBalanceado", StatusLancamento.BALANCEADO.name());
+		query.setParameter("statusLancamentoExpedido", StatusLancamento.EXPEDIDO.name());
 		query.setParameter("grupoCromo", GrupoProduto.CROMO.toString());
 	}
 

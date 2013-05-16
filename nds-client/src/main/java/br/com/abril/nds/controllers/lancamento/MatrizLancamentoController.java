@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,6 @@ import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
@@ -123,14 +123,36 @@ public class MatrizLancamentoController extends BaseController {
 	@Post
 	@Path("/salvar")
 	public void salvar() {
-		BalanceamentoLancamentoDTO balanceamentoLancamento = 
-				(BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
 		
-		matrizLancamentoService.salvarBalanceamentoLancamento(balanceamentoLancamento.getMatrizLancamento(), getUsuarioLogado());
-		removerAtributoAlteracaoSessao();
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Balanceamento da matriz de lancamento salvo com sucesso!"), Constantes.PARAM_MSGS);
-	}
+		BalanceamentoLancamentoDTO balanceamentoLancamento = 
+			(BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
+		
+		if (balanceamentoLancamento == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
+		}
 	
+		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoSessao =
+			balanceamentoLancamento.getMatrizLancamento();
+		
+		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento =
+			this.cloneObject(matrizLancamentoSessao);
+		
+		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno =
+			this.matrizLancamentoService.salvarMatrizLancamento(matrizLancamento, getUsuarioLogado());
+		
+		matrizLancamento =
+			this.atualizarMatizComProdutosConfirmados(matrizLancamento, matrizLancamentoRetorno);
+		
+		balanceamentoLancamento.setMatrizLancamento(matrizLancamento);
+		
+		this.session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO, balanceamentoLancamento);
+		
+		this.removerAtributoAlteracaoSessao();
+		
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
+			"Balanceamento da matriz de lancamento salvo com sucesso!"), "result").recursive().serialize();
+	}
 	
 	@Post
 	public void obterGridMatrizLancamento(String sortorder, String sortname, int page, int rp) {
@@ -141,13 +163,16 @@ public class MatrizLancamentoController extends BaseController {
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 		
-		filtro.setTotalRegistrosEncontrados(listaProdutoBalanceamento.size());
+		List<ProdutoLancamentoDTO> listaProdutoBalanceamentoNaoAgrupados =
+			this.obterListaLancamentosDTONaoAgrupados(listaProdutoBalanceamento);
+		
+		filtro.setTotalRegistrosEncontrados(listaProdutoBalanceamentoNaoAgrupados.size());
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
 		
-		if (listaProdutoBalanceamento != null && !listaProdutoBalanceamento.isEmpty()) {	
+		if (listaProdutoBalanceamentoNaoAgrupados != null && !listaProdutoBalanceamentoNaoAgrupados.isEmpty()) {	
 			
-			processarBalanceamento(listaProdutoBalanceamento, filtro);
+			processarBalanceamento(listaProdutoBalanceamentoNaoAgrupados, filtro);
 			
 		} else {
 			
@@ -155,6 +180,16 @@ public class MatrizLancamentoController extends BaseController {
 		}
 	}
 	
+	private List<ProdutoLancamentoDTO> obterListaLancamentosDTONaoAgrupados(List<ProdutoLancamentoDTO> listaProdutoBalanceamento) {
+
+		List<ProdutoLancamentoDTO> listaProdutoBalanceamentoClone = 
+			this.cloneObject(listaProdutoBalanceamento);
+		
+		this.removerProdutosAgrupados(listaProdutoBalanceamentoClone);
+		
+		return listaProdutoBalanceamentoClone;
+	}
+
 	private List<ProdutoLancamentoDTO> getProdutoLancamentoDTOFromMatrizSessao() {
 		
 		BalanceamentoLancamentoDTO balanceamentoLancamento = 
@@ -167,17 +202,11 @@ public class MatrizLancamentoController extends BaseController {
 
 		List<ProdutoLancamentoDTO> listaProdutoBalanceamento =
 			new ArrayList<ProdutoLancamentoDTO>();
-		
-		for (Map.Entry<Date,List<ProdutoLancamentoDTO>> entry
-				: balanceamentoLancamento.getMatrizLancamento().entrySet()) {
-		
-			for (ProdutoLancamentoDTO produtoLancamento : entry.getValue()) {
-				
-				if (!produtoLancamento.isLancamentoAgrupado()) {
-					
-					listaProdutoBalanceamento.add(produtoLancamento);
-				}
-			}	
+	
+		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry :
+				balanceamentoLancamento.getMatrizLancamento().entrySet()) {
+			
+			listaProdutoBalanceamento.addAll(entry.getValue());
 		}
 		
 		return listaProdutoBalanceamento;
@@ -204,14 +233,14 @@ public class MatrizLancamentoController extends BaseController {
 			balanceamentoLancamento.getMatrizLancamento();
 		
 		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento =
-			this.clonarMapaLancamento(matrizLancamentoSessao);
+			this.cloneObject(matrizLancamentoSessao);
 		
-		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoConfirmada =
+		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno =
 			matrizLancamentoService.confirmarMatrizLancamento(matrizLancamento,
 															  datasConfirmadas, getUsuarioLogado());
 		
 		matrizLancamento =
-			this.atualizarMatizComProdutosConfirmados(matrizLancamento, matrizLancamentoConfirmada);
+			this.atualizarMatizComProdutosConfirmados(matrizLancamento, matrizLancamentoRetorno);
 		
 		balanceamentoLancamento.setMatrizLancamento(matrizLancamento);
 		
@@ -265,14 +294,24 @@ public class MatrizLancamentoController extends BaseController {
 	@Post
 	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void reprogramarLancamentosSelecionados(List<ProdutoLancamentoVO> produtosLancamento,
-												   String novaDataFormatada) {
+												   String novaDataFormatada, boolean selecionarTodos) {
 		
 		this.validarDadosReprogramar(novaDataFormatada);
 		
 		adicionarAtributoAlteracaoSessao();
 		
 		Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
-
+		
+		if (selecionarTodos) {
+			
+			List<ProdutoLancamentoDTO> produtosLancamentoDTO =
+				this.getProdutoLancamentoDTOFromMatrizSessao();
+		
+			this.removerProdutosConfirmados(produtosLancamentoDTO);
+			
+			produtosLancamento = this.getProdutosLancamentoVO(produtosLancamentoDTO);
+		}
+		
 		this.validarListaParaReprogramacao(produtosLancamento);
 		
 		this.validarDataReprogramacao(produtosLancamento, novaData);
@@ -282,6 +321,36 @@ public class MatrizLancamentoController extends BaseController {
 		this.result.use(Results.json()).from(Results.nothing()).serialize();
 	}
 	
+	private void removerProdutosConfirmados(List<ProdutoLancamentoDTO> produtosLancamento) {
+		
+		Iterator<ProdutoLancamentoDTO> iterator = produtosLancamento.iterator();
+		
+		while (iterator.hasNext()) {
+			
+			ProdutoLancamentoDTO produtoLancamento = iterator.next();
+			
+			if (this.matrizLancamentoService.isProdutoConfirmado(produtoLancamento)) {
+				
+				iterator.remove();
+			}
+		}
+	}
+	
+	private void removerProdutosAgrupados(List<ProdutoLancamentoDTO> produtosLancamento) {
+		
+		Iterator<ProdutoLancamentoDTO> iterator = produtosLancamento.iterator();
+		
+		while (iterator.hasNext()) {
+			
+			ProdutoLancamentoDTO produtoLancamento = iterator.next();
+			
+			if (produtoLancamento.isLancamentoAgrupado()) {
+				
+				iterator.remove();
+			}
+		}
+	}
+
 	@Post
 	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void reprogramarLancamentoUnico(ProdutoLancamentoVO produtoLancamento) {
@@ -311,26 +380,26 @@ public class MatrizLancamentoController extends BaseController {
 	}
 	
 	/**
-	 * Método que atualiza a matriz de lançamento de acordo com os produtos confirmados
+	 * Método que atualiza a matriz de lançamento de acordo com os produtos da matriz de retorno
 	 * 
 	 * @param matrizLancamento - matriz de lançamento
-	 * @param matrizLancamentoConfirmada - matriz de lançamento confirmada
+	 * @param matrizLancamentoRetorno - matriz de lançamento de retorno
 	 * 
 	 * @return matriz atualizada
 	 */
 	private TreeMap<Date, List<ProdutoLancamentoDTO>> atualizarMatizComProdutosConfirmados(
 								TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
-								TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoConfirmada) {
+								TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno) {
 		
 		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry
-				: matrizLancamentoConfirmada.entrySet()) {
+				: matrizLancamentoRetorno.entrySet()) {
 			
 			Date novaData = entry.getKey();
 			
-			List<ProdutoLancamentoDTO> produtosLancamentoConfirmados =
-					matrizLancamentoConfirmada.get(novaData);
+			List<ProdutoLancamentoDTO> produtosLancamentoRetorno =
+					matrizLancamentoRetorno.get(novaData);
 			
-			matrizLancamento.put(novaData, produtosLancamentoConfirmados);
+			matrizLancamento.put(novaData, produtosLancamentoRetorno);
 		}
 		
 		return matrizLancamento;
@@ -389,22 +458,6 @@ public class MatrizLancamentoController extends BaseController {
 	 * @param novaData - nova data de recolhimento
 	 */
 	private void validarDataReprogramacao(List<ProdutoLancamentoVO> produtosLancamento, Date novaData) {
-		
-		
-		
-		/*List<ConfirmacaoVO> confirmacoes = this.montarListaDatasConfirmacao();
-
-		for (ConfirmacaoVO confirmacao : confirmacoes) {
-
-			if (DateUtil.parseDataPTBR(confirmacao.getMensagem()).equals(novaData)) {
-
-				if (confirmacao.isConfirmado()) {
-
-					throw new ValidacaoException(TipoMensagem.WARNING,
-						"Lançamentos não podem ser reprogramados para uma data já confirmada!");
-				}
-			}
-		}*/
 		
 		BalanceamentoLancamentoDTO balanceamentoLancamento =
 			(BalanceamentoLancamentoDTO) this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
@@ -518,22 +571,16 @@ public class MatrizLancamentoController extends BaseController {
 			balanceamentoLancamentoSessao.getMatrizLancamento();
 		
 		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento =
-			this.clonarMapaLancamento(matrizLancamentoSessao);
+			this.cloneObject(matrizLancamentoSessao);
 		
-		List<ProdutoLancamentoDTO> listaProdutoLancamentoRemover =
-			new ArrayList<ProdutoLancamentoDTO>();
-		
-		List<ProdutoLancamentoDTO> listaProdutoLancamentoAdicionar =
+		List<ProdutoLancamentoDTO> listaProdutoLancamentoAlterar =
 			new ArrayList<ProdutoLancamentoDTO>();
 		
 		this.montarListasParaAlteracaoMapa(produtosLancamento,
-									  	   matrizLancamento,
-									  	   listaProdutoLancamentoAdicionar,
-									  	   listaProdutoLancamentoRemover);
+										   listaProdutoLancamentoAlterar);
 		
 		this.removerEAdicionarMapa(matrizLancamento,
-							  	   listaProdutoLancamentoAdicionar,
-							  	   listaProdutoLancamentoRemover,
+							  	   listaProdutoLancamentoAlterar,
 							  	   novaData);
 		
 		balanceamentoLancamentoSessao.setMatrizLancamento(matrizLancamento);
@@ -543,47 +590,37 @@ public class MatrizLancamentoController extends BaseController {
 	}
 	
 	/**
-	 * Cria uma cópia do mapa da matriz de lançamento.
+	 * Cria uma cópia do objeto informado.
 	 * Isso é necessário pois se houver alterações na cópia,
-	 * não altera os valores do mapa original por referência.
+	 * não altera os valores do objeto original por referência.
 	 * 
-	 * @param matrizLancamentoSessao - matriz de lançamento da sesão
+	 * @param object - objeto a ser clonado
 	 * 
-	 * @return cópia do mapa da matriz de lançamento
+	 * @return objeto clonado
 	 */
 	@SuppressWarnings("unchecked")
-	private TreeMap<Date, List<ProdutoLancamentoDTO>> clonarMapaLancamento(
-								Map<Date, List<ProdutoLancamentoDTO>> matrizLancamentoSessao) {
+	private <T extends Object> T cloneObject(T object) {
 		
-		byte[] mapSerialized =
-			SerializationUtils.serialize(matrizLancamentoSessao);
+		byte[] serialized =
+			SerializationUtils.serialize(object);
 
-		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento =
-			(TreeMap<Date, List<ProdutoLancamentoDTO>>) SerializationUtils.deserialize(mapSerialized);
+		T objectCloned =
+			(T) SerializationUtils.deserialize(serialized);
 		
-		return matrizLancamento;
+		return objectCloned;
 	}
 	
 	/**
 	 * Monta as listas para alteração do mapa da matriz de lançamento
 	 * 
 	 * @param produtosLancamento - lista de produtos de lançamento
-	 * @param matrizLancamento - matriz de lançamento
-	 * @param listaProdutoLancamentoAdicionar - lista de produtos que serão adicionados
-	 * @param listaProdutoLancamentoRemover - lista de produtos que serão removidos
+	 * @param listaProdutoLancamentoAlterar - lista de produtos que serão alterados
 	 */
-	private void montarListasParaAlteracaoMapa(List<ProdutoLancamentoVO> produtosLancamento,
-											   Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,   									 
-											   List<ProdutoLancamentoDTO> listaProdutoLancamentoAdicionar,
-											   List<ProdutoLancamentoDTO> listaProdutoLancamentoRemover) {
+	private void montarListasParaAlteracaoMapa(List<ProdutoLancamentoVO> produtosLancamento,									 
+											   List<ProdutoLancamentoDTO> listaProdutoLancamentoAlterar) {
 		
 		List<ProdutoLancamentoDTO> listaProdutoLancamentoSessao =
-			new ArrayList<ProdutoLancamentoDTO>();
-		
-		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry : matrizLancamento.entrySet()) {
-			
-			listaProdutoLancamentoSessao.addAll(entry.getValue());
-		}
+			this.getProdutoLancamentoDTOFromMatrizSessao();
 		
 		for (ProdutoLancamentoVO produtoLancamento : produtosLancamento) {
 			
@@ -592,18 +629,14 @@ public class MatrizLancamentoController extends BaseController {
 				if (produtoLancamentoDTO.getIdLancamento().equals(
 						Long.valueOf(produtoLancamento.getId()))) {
 					
-					listaProdutoLancamentoRemover.add(produtoLancamentoDTO);
-					
-					listaProdutoLancamentoAdicionar.add(produtoLancamentoDTO);
+					listaProdutoLancamentoAlterar.add(produtoLancamentoDTO);
 					
 					List<ProdutoLancamentoDTO> produtosLancamentoAgrupados =
 							produtoLancamentoDTO.getProdutosLancamentoAgrupados();
 					
 					if (!produtosLancamentoAgrupados.isEmpty()) {
 						
-						listaProdutoLancamentoRemover.addAll(produtosLancamentoAgrupados);
-						
-						listaProdutoLancamentoAdicionar.addAll(produtosLancamentoAgrupados);
+						listaProdutoLancamentoAlterar.addAll(produtosLancamentoAgrupados);
 					}
 					
 					break;
@@ -616,17 +649,15 @@ public class MatrizLancamentoController extends BaseController {
 	 * Remove e adiona os produtos no mapa da matriz de lançamento.
 	 * 
 	 * @param matrizLancamento - mapa da matriz de lançamento
-	 * @param listaProdutoLancamentoAdicionar - lista de produtos que serão adicionados
-	 * @param listaProdutoLancamentoRemover - lista de produtos que serão removidos
+	 * @param listaProdutoLancamentoAlterar - lista de produtos que serão alterados
 	 * @param novaData - nova data de lançamento
 	 */
 	private void removerEAdicionarMapa(Map<Date, List<ProdutoLancamentoDTO>> matrizLancamento,   									 
-		     						   List<ProdutoLancamentoDTO> listaProdutoLancamentoAdicionar,
-		     						   List<ProdutoLancamentoDTO> listaProdutoLancamentoRemover,
+		     						   List<ProdutoLancamentoDTO> listaProdutoLancamentoAlterar,
 		     						   Date novaData) {
 		
 		//Remover do mapa
-		for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamentoRemover) {
+		for (ProdutoLancamentoDTO produtoLancamentoDTO : listaProdutoLancamentoAlterar) {
 		
 			List<ProdutoLancamentoDTO> produtosLancamentoDTO =
 				matrizLancamento.get(produtoLancamentoDTO.getNovaDataLancamento());
@@ -644,49 +675,30 @@ public class MatrizLancamentoController extends BaseController {
 			}
 		}
 		
-		//Adicionar no mapa		
-		for (ProdutoLancamentoDTO produtoLancamentoAdicionar : listaProdutoLancamentoAdicionar) {
+		//Adicionar no mapa
+		for (ProdutoLancamentoDTO produtoLancamentoAdicionar : listaProdutoLancamentoAlterar) {
 			
-			if (this.matrizLancamentoService.isProdutoBalanceavel(produtoLancamentoAdicionar)) {
+			List<ProdutoLancamentoDTO> produtosLancamento = matrizLancamento.get(novaData);
+			
+			if (produtosLancamento == null) {
 				
-				List<ProdutoLancamentoDTO> produtosLancamento = matrizLancamento.get(novaData);
-				
-				if (produtosLancamento == null) {
-					
-					produtosLancamento = new ArrayList<ProdutoLancamentoDTO>();
-				}
-				
-				produtoLancamentoAdicionar.setNovaDataLancamento(novaData);
-				
-				matrizLancamentoService.tratarAgrupamentoPorProdutoDataLcto(
-					produtoLancamentoAdicionar, produtosLancamento);
-				
-				produtosLancamento.add(produtoLancamentoAdicionar);
-				
-				matrizLancamento.put(novaData, produtosLancamento);
-				
-			} else {
-				
-				Date dataAntiga = produtoLancamentoAdicionar.getNovaDataLancamento();
-				
-				List<ProdutoLancamentoDTO> listaProdutoLancamentoDTO =
-					matrizLancamento.get(dataAntiga);
-				
-				if (listaProdutoLancamentoDTO == null) {
-					
-					listaProdutoLancamentoDTO = new ArrayList<ProdutoLancamentoDTO>();
-				}
-				
-				listaProdutoLancamentoDTO.add(produtoLancamentoAdicionar);
-				
-				matrizLancamento.put(dataAntiga, listaProdutoLancamentoDTO);
+				produtosLancamento = new ArrayList<ProdutoLancamentoDTO>();
 			}
+			
+			produtoLancamentoAdicionar.setNovaDataLancamento(novaData);
+			
+			matrizLancamentoService.tratarAgrupamentoPorProdutoDataLcto(
+				produtoLancamentoAdicionar, produtosLancamento);
+			
+			produtosLancamento.add(produtoLancamentoAdicionar);
+			
+			matrizLancamento.put(novaData, produtosLancamento);
 		}
 	}
 	
 	private void processarBalanceamento(List<ProdutoLancamentoDTO> listaProdutoLancamento,
 										FiltroLancamentoDTO filtro) {
-
+		
 		PaginacaoVO paginacao = filtro.getPaginacao();
 		
 		listaProdutoLancamento =
@@ -743,7 +755,6 @@ public class MatrizLancamentoController extends BaseController {
 	private ProdutoLancamentoVO getVoProdutoBalanceamento(
 			ProdutoLancamentoDTO produtoLancamentoDTO) {
 
-		
 		ProdutoLancamentoVO produtoBalanceamentoVO = new ProdutoLancamentoVO();
 		
 		produtoBalanceamentoVO.setCodigoProduto(produtoLancamentoDTO.getCodigoProduto());
@@ -782,21 +793,18 @@ public class MatrizLancamentoController extends BaseController {
 		}
 		
 		produtoBalanceamentoVO.setBloquearData(
-			!this.matrizLancamentoService.isProdutoBalanceavel(produtoLancamentoDTO));
+			this.matrizLancamentoService.isProdutoConfirmado(produtoLancamentoDTO));
 		
 		produtoBalanceamentoVO.setIdProdutoEdicao(produtoLancamentoDTO.getIdProdutoEdicao());
 		
 		produtoBalanceamentoVO.setPossuiFuro(produtoLancamentoDTO.isPossuiFuro());
 		
-		//verificar regra de negócio
+		String reparteFisico = produtoBalanceamentoVO.getReparteFisico();
+		String distribuicao = produtoBalanceamentoVO.getDistribuicao();
 		
-//		produtoBalanceamentoVO.setDestacarLinha(
-//			!produtoLancamentoDTO.isPossuiRecebimentoFisico()
-//				|| produtoLancamentoDTO.isAlteradoInteface());
-		
-		
-		if((produtoBalanceamentoVO.getReparteFisico().equals("0") || produtoBalanceamentoVO.getReparteFisico().equals("")) || (produtoBalanceamentoVO.getDistribuicao().equals("0") || produtoBalanceamentoVO.getDistribuicao().equals("")) )
-		{
+		if(reparteFisico.equals("0") || reparteFisico.equals("")
+				|| distribuicao.equals("0") || distribuicao.equals("")) {
+			
 			produtoBalanceamentoVO.setDestacarLinha(true);
 		}
 				
@@ -1097,8 +1105,6 @@ public class MatrizLancamentoController extends BaseController {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
 		}
-		
-//		balanceamentoLancamento = matrizLancamentoService.verificarQuebraConfirmacaoDiaDeAcordoComMatriz(balanceamentoLancamento);
 		
 		List<ConfirmacaoVO> confirmacoesVO =
 			matrizLancamentoService.obterDatasConfirmacao(balanceamentoLancamento);

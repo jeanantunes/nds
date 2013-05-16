@@ -200,7 +200,6 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		
 		lancamento.setDataLancamentoDistribuidor(novaData);
 		lancamento.setStatus(StatusLancamento.FURO);
-		lancamento.setNumeroReprogramacoes(this.atualizarNumeroReprogramacoes(lancamento));
 		lancamento.setExpedicao(null);
 		
 		FuroProduto furoProduto = new FuroProduto();
@@ -225,20 +224,6 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		this.lancamentoRepository.alterar(lancamento);
 		
 		this.historicoLancamentoRepository.adicionar(historicoLancamento);
-	}
-	
-	private Integer atualizarNumeroReprogramacoes(Lancamento lancamento) {
-		
-		Integer numeroReprogramacoes = lancamento.getNumeroReprogramacoes();
-		
-		if (numeroReprogramacoes == null) {
-			
-			numeroReprogramacoes = 0;
-		}
-		
-		numeroReprogramacoes++;
-		
-		return numeroReprogramacoes;
 	}
 	
 }

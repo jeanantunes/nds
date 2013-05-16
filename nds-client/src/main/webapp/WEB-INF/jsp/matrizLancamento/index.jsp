@@ -77,7 +77,7 @@ var lancamentosSelecionados = [];
 <form id="formVoltarConfiguracaoInicial">
 <div id="dialogVoltarConfiguracaoInicial" title="Balanceamento da Matriz de Lançamento" style="display:none">
 			
-			<p>Ao voltar a configuração inicial, você perdará os dados confirmados. Deseja prosseguir?</p>
+			<p>Ao voltar a configuração inicial, você perdará os dados salvos. Deseja prosseguir?</p>
 			   
 </div>
 </form>
@@ -126,10 +126,10 @@ var lancamentosSelecionados = [];
 		                    </a>
 		                </span>
 		                
-		                <span class="bt_novos" >
-							<%--a isEdicao="true" id="linkSalvar" href="javascript:;" onclick="balanceamentoLancamento.salvar();" title="Salvar">
-								<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_salvar.gif">
-							</a  --%>
+		                <span class="bt_novos" style="display: none;">
+							<a isEdicao="true" id="linkSalvar" href="javascript:;" onclick="balanceamentoLancamento.salvar();" title="Salvar">
+								<img src="<c:url value='images/ico_salvar.gif'/>"  hspace="5" border="0" />
+							</a>
 						</span>
 			  			
 			  			 <span class="bt_arq">
