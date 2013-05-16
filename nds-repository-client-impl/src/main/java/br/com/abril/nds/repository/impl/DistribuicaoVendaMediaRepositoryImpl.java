@@ -5,6 +5,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -19,6 +20,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ProdutoEdicaoVendaMediaDTO> pesquisar(String codigoProduto, String nomeProduto, Long edicao) {
 
 	StringBuilder sql = new StringBuilder();
