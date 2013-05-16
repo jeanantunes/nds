@@ -1,9 +1,6 @@
 
 var estudoComplementarController =$.extend(true,  {
 	
-
-	
-	
 	gerarEstudoComplementar:function(){
 
 		
