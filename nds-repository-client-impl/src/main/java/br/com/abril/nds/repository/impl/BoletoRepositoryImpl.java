@@ -703,4 +703,32 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		return query.list();
 	}
+
+
+	public Long verificaEnvioDeEmail(Boleto boleto) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append("select count(forma_cobranca.recebeCobrancaEmail) " +
+						"from Cobranca as cobranca join " +
+						"cobranca.cota as cota join " +
+						"cota.parametroCobranca as parametro_cobranca_cota join " +
+						"parametro_cobranca_cota.formasCobrancaCota as forma_cobranca join " +
+						"forma_cobranca.politicaCobranca as politica_cobranca " +
+						"where " + 
+						"forma_cobranca.recebeCobrancaEmail = true " +
+						"and " +
+						"politica_cobranca.principal= true " +
+						"and " +
+						"politica_cobranca.ativo= true " +
+						"and " +
+						"cota.id = :cotaId " +
+						"and " +
+						"cobranca.id = :cobrancaId");
+						
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("cotaId", boleto.getCota().getId().longValue());
+		query.setParameter("cobrancaId", boleto.getId());
+	    return  (Long) query.uniqueResult();
+
+	}
 }
