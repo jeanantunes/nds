@@ -21,7 +21,9 @@ import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.client.vo.TotalizadorProdutoDistribuicaoVO;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dto.InformacoesProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDistribuicaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
@@ -32,6 +34,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.EstudoAlgoritmoService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.InformacoesProdutoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.SomarEstudosService;
@@ -88,6 +91,10 @@ public class MatrizDistribuicaoController extends BaseController {
 
     private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMatrizDistribuicao";
 
+	@Autowired
+	private InformacoesProdutoService infoProdService;
+	
+
     @Path("/matrizDistribuicao")
     @Rules(Permissao.ROLE_DISTRIBUICAO_MATRIZ_DISTRIBUICAO)
     public void index() {
@@ -121,18 +128,33 @@ public class MatrizDistribuicaoController extends BaseController {
     }
 
     @Post
-    public void carregarProdutoEdicaoPorEstudo(BigInteger estudo) {
+	public void carregarProdutoEdicaoPorEstudo(BigInteger estudo) {
 
-	ProdutoDistribuicaoVO produtoDistribuicaoVO = matrizDistribuicaoService.obterProdutoDistribuicaoPorEstudo(estudo);
+		FiltroInformacoesProdutoDTO filtro = new FiltroInformacoesProdutoDTO();
+		filtro.setNumeroEstudo(estudo.longValue());
+		List<InformacoesProdutoDTO> buscarProduto = this.infoProdService.buscarProduto(filtro);
+		
+//		ProdutoDistribuicaoVO produtoDistribuicaoVO = matrizDistribuicaoService.obterProdutoDistribuicaoPorEstudo(estudo);
+		
+		
+		if (buscarProduto == null || buscarProduto.isEmpty()) {
 
-	if (produtoDistribuicaoVO == null) {
-
-	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Estudo: [" + estudo + "] não encontrado."));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Estudo: [" + estudo + "] não encontrado."));
+		}
+		
+		
+		InformacoesProdutoDTO infoDTO = buscarProduto.get(0);
+		ProdutoDistribuicaoVO produtoDistribuicaoVO = new ProdutoDistribuicaoVO();
+		produtoDistribuicaoVO.setCodigoProduto(infoDTO.getCodProduto());
+		produtoDistribuicaoVO.setNomeProduto(infoDTO.getNomeProduto());
+		produtoDistribuicaoVO.setNumeroEdicao(new BigInteger(infoDTO.getNumeroEdicao().toString()));
+		produtoDistribuicaoVO.setClassificacao(infoDTO.getTipoClassificacaoProdutoDescricao());
+		produtoDistribuicaoVO.setDataLancto(infoDTO.getDataLcto());
+		produtoDistribuicaoVO.setReparte(new BigDecimal(infoDTO.getReparteDistribuido()));
+		produtoDistribuicaoVO.setEstudoLiberado(infoDTO.getEstudoLiberado());
+		
+		result.use(Results.json()).from(produtoDistribuicaoVO, "result").recursive().serialize();
 	}
-
-	result.use(Results.json()).from(produtoDistribuicaoVO, "result").recursive().serialize();
-    }
-
     @Post
     public void confirmarCopiarProporcionalDeEstudo(CopiaProporcionalDeDistribuicaoVO copiaProporcionalDeDistribuicaoVO) {
 

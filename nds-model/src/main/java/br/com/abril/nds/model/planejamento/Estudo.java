@@ -22,6 +22,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
@@ -53,8 +55,8 @@ public class Estudo implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date dataLancamento;
 
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "PRODUTO_EDICAO_ID", nullable = false)
+	@ManyToOne
+	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
 
 	@NotFound(action = NotFoundAction.IGNORE)

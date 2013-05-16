@@ -475,6 +475,14 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		
 	}
 	
+	private void validarCopiaProporcionalDeDistribuicao(Estudo estudo) {
+		
+		if (estudo.getEstudoCotas() == null) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi possivel efetuar a copia. Não há cotas.");
+		}
+	}
+	
 	
 	@Override
 	@Transactional
@@ -483,6 +491,8 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		validarCopiaProporcionalDeDistribuicao(vo);
 		
 		Estudo estudo = estudoRepository.obterEstudoECotasPorIdEstudo(vo.getIdEstudo());
+		
+		validarCopiaProporcionalDeDistribuicao(estudo);
 		
 		Set<EstudoCota> set = estudo.getEstudoCotas();
 		List<EstudoCota> cotas = obterListEstudoCotas(set);
@@ -617,13 +627,25 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 				
 				repartDistrib = repartDistrib.subtract(totalFixacao);
 				repFinal = obterSomaReparteFinal(mapReparte, false, TipoClassificacaoEstudoCota.FX, TipoClassificacaoEstudoCota.MM);
-				indiceRepProporcional =  repartDistrib.divide(repFinal);  //repartDistrib / repFinal;
+				
+				if (repFinal.intValue() <= 0) {
+					throw new ValidacaoException(TipoMensagem.WARNING, "Soma de reparte final inválido, impossível efetuar o cálculo de índice de reparte proporcional.");
+				}else{
+					indiceRepProporcional =  repartDistrib.divide(repFinal);  //repartDistrib / repFinal;
+				}
+				
 				repCalculado = obterCalculoDistribMultiplos(repCalculado, indiceRepProporcional, pactPadrao);
 				
 			} else {
 				
 				repFinal = obterSomaReparteFinal(mapReparte);
-				indiceRepProporcional = repartDistrib.divide(repFinal);
+				
+				if (repFinal.intValue() <= 0) {
+					throw new ValidacaoException(TipoMensagem.WARNING, "Soma de reparte final inválido, impossível efetuar o cálculo de índice de reparte proporcional.");
+				}else{
+					indiceRepProporcional = repartDistrib.divide(repFinal);
+				}
+				
 				repCalculado = obterCalculoDistribMultiplos(repCalculado, indiceRepProporcional, pactPadrao);
 			}
 			
