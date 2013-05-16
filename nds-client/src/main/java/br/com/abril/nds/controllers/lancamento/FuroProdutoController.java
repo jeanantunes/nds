@@ -1,11 +1,14 @@
 package br.com.abril.nds.controllers.lancamento;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.mockito.internal.matchers.CompareTo;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -18,6 +21,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FuroProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -43,7 +47,10 @@ public class FuroProdutoController extends BaseController {
 	
 	@Autowired
 	private ProdutoService produtoService;
-	
+
+	@Autowired
+	private DistribuidorService distribuidorService;
+
 	private Result result;
 	
 	public FuroProdutoController(Result result){
@@ -132,6 +139,17 @@ public class FuroProdutoController extends BaseController {
 			listaMensagemValidacao.add("Data Lançamento é obrigatório.");
 		} else if (!DateUtil.isValidDatePTBR(dataLancamento)){
 			listaMensagemValidacao.add("Valor inválido: Data Lançamento.");
+		}
+
+		DateFormat df = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
+		
+		// Não permite que a data de lançamento seja menor que a data de operação na pesquisa (conforme solicitado pelo Rodrigo Winter na trac 586)
+		try {
+			if (df.parse(dataLancamento).before(distribuidorService.obter().getDataOperacao())) {
+				listaMensagemValidacao.add("Data de lançamento não pode ser menor que a data de operação.");
+			}
+		} catch (ParseException e) {
+			listaMensagemValidacao.add("Erro ao converter a data de lançamento: " + df.format(dataLancamento) + ".");
 		}
 		
 		if (!listaMensagemValidacao.isEmpty()){
