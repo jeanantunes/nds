@@ -39,8 +39,8 @@ public class CotaBaseServiceImpl implements CotaBaseService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public CotaBase obterCotaNova(Integer numeroCotaNova) {		
-		return this.cotaBaseRepository.obterCotaNova(numeroCotaNova);
+	public CotaBase obterCotaNova(Integer numeroCotaNova, Boolean ativo) {		
+		return this.cotaBaseRepository.obterCotaNova(numeroCotaNova, ativo);
 	}
 
 	@Override

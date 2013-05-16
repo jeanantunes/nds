@@ -116,7 +116,8 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends AbstractRepositoryMod
 		hql.append(" 	(select distinct prod.id from ExcecaoProdutoCota e  ");
 		hql.append(" 		JOIN e.produto prod ");
 		hql.append(" 		JOIN e.cota cotaJoin ");
-		hql.append(" 	where e.tipoExcecao = 'PARCIAL' " );
+		
+		hql.append(" 	where e.tipoExcecao = :tipoExcecao " );
 		
 		if (filtro.getCotaDto() != null) {
 		hql.append(" 	and cotaJoin.numeroCota = :numCota ");
@@ -130,6 +131,11 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends AbstractRepositoryMod
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
+		if (filtro.isExcecaoSegmento()) {
+			query.setParameter("tipoExcecao", TipoExcecao.SEGMENTO);
+		} else {
+			query.setParameter("tipoExcecao", TipoExcecao.PARCIAL);
+		}
 		if (filtro.getProdutoDto() != null) {	
 		query.setParameter("codProduto", filtro.getProdutoDto().getCodigoProduto());
 		}
@@ -137,6 +143,7 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends AbstractRepositoryMod
 		if (filtro.getCotaDto() != null) {
 			query.setParameter("numCota", filtro.getCotaDto().getNumeroCota());
 			}
+		
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoNaoRecebidoDTO.class));
 		
@@ -165,7 +172,7 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends AbstractRepositoryMod
 		hql.append(" (select cotaJoin.id from ExcecaoProdutoCota e  ");
 		hql.append(" JOIN e.produto prod ");
 		hql.append(" JOIN e.cota cotaJoin ");
-		hql.append(" where e.tipoExcecao = 'PARCIAL' " );
+		hql.append(" where e.tipoExcecao = :tipoExcecao " );
 		hql.append(" and prod.codigo = :codProduto ");
 		hql.append(" ) ");
 
@@ -177,11 +184,18 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends AbstractRepositoryMod
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
+		if (filtro.isExcecaoSegmento()) {
+			query.setParameter("tipoExcecao", TipoExcecao.SEGMENTO);
+		} else {
+			query.setParameter("tipoExcecao", TipoExcecao.PARCIAL);
+		}
 		query.setParameter("codProduto", filtro.getProdutoDto().getCodigoProduto());
 		
 		if (filtro.getCotaDto() != null) {
 		query.setParameter("numCota", filtro.getCotaDto().getNumeroCota());
 		}
+		
+		
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaQueNaoRecebeExcecaoDTO.class));
 		
 		configurarPaginacao(filtro, query);

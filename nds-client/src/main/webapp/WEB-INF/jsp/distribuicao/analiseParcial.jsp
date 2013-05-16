@@ -1,7 +1,7 @@
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.tinysort.min.js"></script>
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/analiseParcial.js"></script>
 <script language="javascript" type="text/javascript">
-$(function() {   
+$(function() {
     $('.legendas').tipsy({gravity: $.fn.tipsy.autoNS});
   });
 
@@ -11,7 +11,7 @@ function mostraDados(){
 function escondeDados(){
 	$('.detalhesDados').hide();
 	}
-	
+
 
 </script>
 
@@ -32,7 +32,16 @@ function escondeDados(){
 .inputBaseNome{width: 170px;}
 .paddingTotais td {padding-right: 3px;}
 .bt_novos{width: 0px;}
-.asterisco:after {content: '*';}
+.asterisco:after {
+    content: " *";
+    font-size: 150%;
+    font-weight: bold;
+}
+.reparteSugerido {
+    width: 40px;
+    font-weight: bold;
+    text-align: right;
+}
 </style>
 
 </head>
@@ -40,16 +49,16 @@ function escondeDados(){
 <body>
     <br clear="all"/>
     <br />
-   
+
     <div class="container">
-    
-     <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all"> 
+
+     <div id="effect" style="padding: 0 .7em;" class="ui-state-highlight ui-corner-all">
 				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
                 <span class="ui-state-default ui-corner-all" style="float:right;">
                 <a href="javascript:;" class="ui-icon ui-icon-close">&nbsp;</a></span>
 				<b>Base de Estudo < evento > com < status >.</b></p>
 	</div>
-    
+
     	<div class="detalhesDados">
     	  <table width="976" border="0" cellpadding="2" cellspacing="2" class="dadosTab" id="tabelaDetalheAnalise">
     	    <tr id="edicoes">
@@ -74,6 +83,7 @@ function escondeDados(){
 			<input type="hidden" id="numeroEdicao" value="${estudoCota.estudo.produtoEdicao.numeroEdicao}" />
 			<input type="hidden" id="estudoId" value="${estudoCota.estudo.id}" />
 			<input type="hidden" id="codigoProduto" value="${estudoCota.estudo.produtoEdicao.produto.codigo}" />
+			<input type="hidden" id="tipoSegmentoProduto" value="${estudoCota.estudo.produtoEdicao.produto.tipoSegmentoProduto.id}" />
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
 					<td>Código: ${estudoCota.estudo.produtoEdicao.produto.codigo}</td>
@@ -99,7 +109,7 @@ function escondeDados(){
 					<td>Ordenar por:</td>
 					<td><select name="select5" id="filtroOrdenarPor" style="width: 138px;"
 						onchange="analiseParcialController.apresentarOpcoesOrdenarPor(this.value);">
-							<option selected="selected" value="selecione">Selecione...</option>
+							<option value="" selected="selected">Selecione...</option>
 							<option value="reparte">Reparte</option>
 							<option value="ranking">Ranking</option>
 							<option value="percentual_de_venda">% de Venda</option>
@@ -115,7 +125,7 @@ function escondeDados(){
 					<td>
 						<select id="componentes" name="componentes" style="width: 170px;"
 						    onchange="analiseParcialController.selecionarElementos(this.value, 'elementos')">
-							<option value="null" selected="selected">Selecione...</option>
+							<option value="" selected="selected">Selecione...</option>
 							<option value="tipo_ponto_venda">Tipo de Ponto de Venda</option>
 							<option value="gerador_de_fluxo">Gerador de Fluxo</option>
 							<option value="bairro">Bairro</option>
@@ -129,7 +139,7 @@ function escondeDados(){
 					<td>Elemento:</td>
 					<td><select id="elementos" name="elementos" style="width: 170px;"
 						onchange="analiseParcialController.filtrarOrdenarPor(${estudoCota.estudo.id})">
-							<option selected="selected">Selecione...</option>
+							<option value="" selected="selected">Selecione...</option>
 					</select></td>
 					<td><span id="opcoesOrdenarPor" style="display: none;" class="label"> <span id="label_reparte"
 							style="display: none;" class="label"> Reparte: </span> <span id="label_reducao_de_reparte" style="display: none;"
@@ -256,7 +266,12 @@ function escondeDados(){
 					<td>Motivo:</td>
 					<td colspan="3">
 						<select name="cotasQueNaoEntraramNoEstudo_motivo" id="cotasQueNaoEntraramNoEstudo_motivo" style="width: 408px">
-							<option selected="selected">Todas as Cotas</option>
+							<option value="TODOS" selected="selected">Todas as Cotas</option>
+                            <c:forEach items="${classificacaoCotaList}" var="classificacaoCota">
+                                <c:if test="${classificacaoCota.codigo ne ''}">
+                                    <option value="<c:out value="${classificacaoCota.codigo}"/>"><c:out value="${classificacaoCota.texto}"/></option>
+                                </c:if>
+                            </c:forEach>
 						</select>
 					</td>
 				</tr>
@@ -271,7 +286,7 @@ function escondeDados(){
 					<td width="185">
 						<select name="componenteCotasNaoSelec" id="componenteCotasNaoSelec" style="width: 170px;"
 						    onchange="analiseParcialController.selecionarElementos(this.value, 'cotasQueNaoEntraramNoEstudo_elementos')">
-							<option value="null" selected="selected">Selecione...</option>
+							<option value="" selected="selected">Selecione...</option>
 							<option value="tipo_ponto_venda">Tipo de Ponto de Venda</option>
 							<option value="gerador_de_fluxo">Gerador de Fluxo</option>
 							<option value="bairro">Bairro</option>
@@ -286,7 +301,7 @@ function escondeDados(){
 					<td width="186">
 						<select id="cotasQueNaoEntraramNoEstudo_elementos" name="elementoCotasNaoSelec" style="width: 170px;"
 						onchange="analiseParcialController.filtrarCotasNaoSelec(${estudoCota.estudo.id})">
-							<option selected="selected">Selecione...</option>
+							<option value="" selected="selected">Selecione...</option>
 						</select>
 					</td>
 				</tr>
@@ -389,14 +404,14 @@ function escondeDados(){
 			</table>
 		</fieldset>
 	</div>
-	
+
 	<div id="dialog-detalhes" title="Capa">
 		<img src="${pageContext.request.contextPath}/capa/getCapaEdicaoJson?codigoProduto=${estudoCota.estudo.produtoEdicao.produto.codigo}&numeroEdicao=${estudoCota.estudo.produtoEdicao.numeroEdicao}" width="235" height="314" />
 	</div>
 
 	<script type="text/javascript">
 		 $(function(){
-			analiseParcialController.init('${estudoCota.estudo.id}', '${faixaDe}', '${faixaAte}', '${tipoExibicao}'); 
+			analiseParcialController.init('${estudoCota.estudo.id}', '${faixaDe}', '${faixaAte}', '${tipoExibicao}');
 		 });
  	</script>
   </body>
