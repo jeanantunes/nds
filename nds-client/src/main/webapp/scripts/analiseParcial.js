@@ -154,7 +154,7 @@ var analiseParcialController = $.extend(true, {
 
     somarTotais : function(resultado) {
         var totalJuramento = 0,
-            totalMediaVenda = 0,
+//            totalMediaVenda = 0,
             totalUltimoReparte = 0,
             quantidade = 0,
             totalReparteSugerido = 0,
@@ -178,17 +178,17 @@ var analiseParcialController = $.extend(true, {
                     quantidade++;
                 }
             }
-            if (venda > 0) {
-                cell.mediaVenda = (venda / quantidade).toFixed(0);
-            } else {
-                cell.mediaVenda = '';
-            }
+//            if (venda > 0) {
+//                cell.mediaVenda = (venda / quantidade).toFixed(0);
+//            } else {
+//                cell.mediaVenda = '';
+//            }
             if ((typeof cell.juramento !== 'undefined') && (cell.juramento !== '')) {
                 totalJuramento += parseInt(cell.juramento, 10);
             }
-            if ((typeof cell.mediaVenda !== 'undefined') && (cell.mediaVenda !== '')) {
-                totalMediaVenda += parseInt(cell.mediaVenda, 10);
-            }
+//            if ((typeof cell.mediaVenda !== 'undefined') && (cell.mediaVenda !== '')) {
+//                totalMediaVenda += parseInt(cell.mediaVenda, 10);
+//            }
             if ((typeof cell.ultimoReparte !== 'undefined') && (cell.ultimoReparte !== '')) {
                 totalUltimoReparte += parseInt(cell.ultimoReparte, 10);
             }
@@ -198,7 +198,7 @@ var analiseParcialController = $.extend(true, {
             quantidade++;
         });
         $('#total_juramento').text(totalJuramento);
-        $('#total_media_venda').text(totalMediaVenda);
+//        $('#total_media_venda').text(totalMediaVenda);
         $('#total_ultimo_reparte').text(totalUltimoReparte);
         $('#total_reparte_sugerido').text(totalReparteSugerido);
         $('#total_de_cotas').text(resultado.rows.length);
@@ -359,14 +359,14 @@ var analiseParcialController = $.extend(true, {
     },
 
     modeloNormal : function() {
-        return [{display: 'Cota',   name: 'cota',          width: 33,  sortable: true, align: 'left'},
+        return [{display: 'Cota',   name: 'cota',          width: 33,  sortable: true, align: 'right'},
          {display: 'Class.', name: 'classificacao', width: 30,  sortable: true, align: 'center'},
          {display: 'Nome',   name: 'nome',          width: 100, sortable: true, align: 'left'},
          {display: 'NPDV',   name: 'npdv',          width: 30,  sortable: true, align: 'right'},
          {display: 'Rep. Sugerido', name: 'reparteSugerido', width: 50, sortable: true, align: 'right'},
          {display: 'LEG',    name: 'leg',           width: 20, sortable: true, align: 'center'},
          {display: 'Cota Nova', name: 'cotaNova',   width: 40, sortable: true, align: 'right', hide: true},
-         {display: 'Média.VDA', name: 'mediaVenda', width: 60, sortable: true, align: 'right'},
+//         {display: 'Média.VDA', name: 'mediaVenda', width: 60, sortable: true, align: 'right'},
          {display: 'Último. Reparte', name: 'ultimoReparte', width: 80, sortable: true, align: 'right'},
          {display: 'REP', name: 'reparte1',      width: 23, sortable: true, align: 'right'},
          {display: 'VDA', name: 'venda1',        width: 23, sortable: true, align: 'right'},
@@ -383,7 +383,7 @@ var analiseParcialController = $.extend(true, {
     },
     
     modeloParcial : function() {
-        return [{display: 'Cota',   name: 'cota',          width: 33,  sortable: true, align: 'left'},
+        return [{display: 'Cota',   name: 'cota',          width: 33,  sortable: true, align: 'right'},
          {display: 'Class.', name: 'classificacao', width: 30,  sortable: true, align: 'center'},
          {display: 'Nome',   name: 'nome',          width: 100, sortable: true, align: 'left'},
          {display: 'NPDV',   name: 'npdv',          width: 30,  sortable: true, align: 'right'},
@@ -391,7 +391,7 @@ var analiseParcialController = $.extend(true, {
          {display: 'LEG',    name: 'leg',           width: 20, sortable: true, align: 'center'},
          {display: 'Juram.', name: 'juramento',     width: 40, sortable: true, align: 'right'},
          {display: 'Cota Nova', name: 'cotaNova',   width: 40, sortable: true, align: 'right', hide: true},
-         {display: 'Média.VDA', name: 'mediaVenda', width: 50, sortable: true, align: 'right'}, 
+//         {display: 'Média.VDA', name: 'mediaVenda', width: 50, sortable: true, align: 'right'},
          {display: 'Último. Reparte', name: 'ultimoReparte', width: 50, sortable: true, align: 'right'},
          {display: 'REP', name: 'reparte1',      width: 40, sortable: true, align: 'right'},
          {display: 'VDA', name: 'venda1',        width: 40, sortable: true, align: 'right'},

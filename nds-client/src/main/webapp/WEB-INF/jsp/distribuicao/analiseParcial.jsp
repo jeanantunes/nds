@@ -173,7 +173,7 @@ function escondeDados(){
 							<td width="53" align="right" id="total_reparte_sugerido">0</td>
 							<td width="25" align="right">&nbsp;</td>
 							<%--<td width="48" align="right" id="total_juramento">0</td>--%>
-							<td width="62" align="right" id="total_media_venda">0</td>
+							<%--<td width="62" align="right" id="total_media_venda">0</td>--%>
 							<td width="79" align="right" id="total_ultimo_reparte">0</td>
 							<td width="29" align="right" id="total_reparte1">0</td>
 							<td width="29" align="right" id="total_venda1" class="vermelho">0</td>
@@ -199,7 +199,7 @@ function escondeDados(){
 							<td width="58" align="right" id="total_reparte_sugerido">0</td>
 							<td width="25" align="right">&nbsp;</td>
 							<td width="48" align="right" id="total_juramento">0</td>
-							<td width="57" align="right" id="total_media_venda">0</td>
+							<%--<td width="57" align="right" id="total_media_venda">0</td>--%>
 							<td width="56" align="right" id="total_ultimo_reparte">0</td>
 							<td width="46" align="right" id="total_reparte1">0</td>
 							<td width="46" align="right" id="total_venda1" class="vermelho">0</td>
