@@ -60,7 +60,7 @@ public class JornaleirosNovos {
 			    qtde = qtde.add(BigDecimal.ONE);
 			}
 		    }
-		    cota.setVendaMedia(somaVendaMediaEquiv.divide(qtde, 0, BigDecimal.ROUND_FLOOR).multiply(cota.getIndiceAjusteEquivalente()));
+		    cota.setVendaMedia(somaVendaMediaEquiv.divide(qtde, 0, BigDecimal.ROUND_HALF_UP).multiply(cota.getIndiceAjusteEquivalente()));
 		}
 
 
@@ -89,9 +89,9 @@ public class JornaleirosNovos {
 //
 //		    BigDecimal vendaMediaCorrigidaNovo = BigDecimal.ZERO;
 //		    BigDecimal qtdeEquivalente = new BigDecimal(cota.getEquivalente().size());
-//		    vendaMediaCorrigidaNovo = totalVendaMediaCorrigidaEquivalente.divide(qtdeEquivalente, 2, BigDecimal.ROUND_FLOOR);
+//		    vendaMediaCorrigidaNovo = totalVendaMediaCorrigidaEquivalente.divide(qtdeEquivalente, 2, BigDecimal.ROUND_HALF_UP);
 //		    if (cota.getIndiceAjusteEquivalente() != null) {
-//			vendaMediaCorrigidaNovo = vendaMediaCorrigidaNovo.multiply(cota.getIndiceAjusteEquivalente()).divide(BigDecimal.ONE, 2, BigDecimal.ROUND_FLOOR);
+//			vendaMediaCorrigidaNovo = vendaMediaCorrigidaNovo.multiply(cota.getIndiceAjusteEquivalente()).divide(BigDecimal.ONE, 2, BigDecimal.ROUND_HALF_UP);
 //		    }
 //
 //		    cota.setVendaMedia(vendaMediaCorrigidaNovo);

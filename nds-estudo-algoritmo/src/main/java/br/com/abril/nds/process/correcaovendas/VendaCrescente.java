@@ -39,7 +39,7 @@ public class VendaCrescente {
 		    if (previousProdutoEdicao.getProduto().getId().equals(produtoEdicao.getProduto().getId()) && !previousProdutoEdicao.isEdicaoAberta()
 			    && !produtoEdicao.isEdicaoAberta()) {
 			if (previousProdutoEdicao.getVenda().compareTo(BigDecimal.ZERO) == 1) {
-			    BigDecimal divVendaEdicao = produtoEdicao.getVenda().divide(previousProdutoEdicao.getVenda(), 4, BigDecimal.ROUND_FLOOR);
+			    BigDecimal divVendaEdicao = produtoEdicao.getVenda().divide(previousProdutoEdicao.getVenda(), 4, BigDecimal.ROUND_HALF_UP);
 			    previousProdutoEdicao.setDivisaoVendaCrescente(divVendaEdicao);
 			    Boolean boo = divVendaEdicao.compareTo(BigDecimal.ONE) == 1;
 			    listDivBoolean.add(boo);
@@ -50,7 +50,7 @@ public class VendaCrescente {
 	    }
 
 	    if (!listDivBoolean.isEmpty() && !listDivBoolean.contains(Boolean.FALSE)) {
-		indiceVendaCrescente = indiceVendaCrescente.add(new BigDecimal(0.1).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR));
+		indiceVendaCrescente = indiceVendaCrescente.add(new BigDecimal(0.1).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_HALF_UP));
 	    }
 	}
 	cota.setIndiceVendaCrescente(indiceVendaCrescente);
