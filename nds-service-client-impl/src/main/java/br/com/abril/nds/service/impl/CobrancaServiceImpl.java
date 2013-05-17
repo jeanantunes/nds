@@ -102,7 +102,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 	@Override
 	@Transactional(propagation=Propagation.SUPPORTS)
 	public BigDecimal calcularJuros(Banco banco, Long idCota,
-									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros) {
+									BigDecimal valorDivida, Date dataVencimento, Date dataCalculoJuros) {
 
 		
 		//TODO: JUROS E MULTA - VERIFICAR NA COBRANÇA (POSSIVEL ALTERAÇÃO NO MODELO) - FALAR COM CÉSAR
@@ -135,14 +135,14 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 		if (BigDecimal.ZERO.compareTo(taxaJurosMensal) == 0){
 			
-			return valor;
+			return valorDivida;
 		}
 
 		long quantidadeDias = DateUtil.obterDiferencaDias(dataVencimento, dataCalculoJuros);
 
 		BigDecimal taxaJurosDiaria = MathUtil.divide(taxaJurosMensal, new BigDecimal(30));
 
-		valorCalculadoJuros = valor.multiply(MathUtil.divide(taxaJurosDiaria, new BigDecimal(100)));
+		valorCalculadoJuros = valorDivida.multiply(MathUtil.divide(taxaJurosDiaria, new BigDecimal(100)));
 
 		return valorCalculadoJuros.multiply(new BigDecimal(quantidadeDias));
 	}
