@@ -74,6 +74,7 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	private String codProduto;
 	private String tipoClassificacaoProdutoDescricao;
 	private Boolean estudoLiberado;
+	private BigInteger qtdeReparteEstudo;
 	
 	public String getNomeUsuario() {
 		return nomeUsuario;
@@ -240,6 +241,14 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 
 	public void setEstudoLiberado(Boolean estudoLiberado) {
 		this.estudoLiberado = estudoLiberado;
+	}
+
+	public BigInteger getQtdeReparteEstudo() {
+		return qtdeReparteEstudo;
+	}
+
+	public void setQtdeReparteEstudo(BigInteger qtdeReparteEstudo) {
+		this.qtdeReparteEstudo = qtdeReparteEstudo;
 	}
 
 	

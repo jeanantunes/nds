@@ -54,6 +54,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" ELSE estudoG.dataAlteracao  end AS dataAlteracao, ");
 		hql.append(" estudoG.id AS estudo, ");
 		hql.append(" estudoG.liberado AS estudoLiberado, ");
+		hql.append(" estudoG.qtdeReparte AS qtdeReparteEstudo, ");
 
 		hql.append(" (select sum(estCota.reparteMinimo)    					" + 
 				   "	from EstudoCota estCota  							" +
@@ -72,12 +73,14 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		
 		hql.append(" left join prodEdicao.produto AS produto ");
 		hql.append(" left join prodEdicao.lancamentos AS lancamento ");
-		hql.append(" left join produto.algoritmo AS algortm ");
+		hql.append(" left join produto.algoritmo AS algortm, ");
 //		hql.append(" inner join produto.tipoClassificacaoProduto ");
-		hql.append(" INNER join lancamento.estudo AS estudoG ");
+		// hql.append(" left join prodEdicao.estudo AS estudoG ");
+		hql.append(" Estudo as estudoG ");
+		hql.append(" left join estudoG.produtoEdicao ");
 		hql.append(" left join estudoG.usuario as usuarioEstudo ");
-		
 		hql.append(" WHERE ");
+		hql.append(" estudoG.produtoEdicao = prodEdicao ");
 		
 		List<String> whereClauseList = new ArrayList<>();
 		
@@ -100,8 +103,13 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 			whereClauseList.add(" produto.tipoClassificacaoProduto.id = :ID_CLASSIFICACAO ");
 		}
 		
+		if(!whereClauseList.isEmpty()){
+			hql.append(" AND ");
+		}
+		
 		hql.append(StringUtils.join(whereClauseList, " AND "));
 		
+		hql.append(" group BY estudoG.id ");
 		hql.append(" ORDER BY numeroEdicao desc ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
