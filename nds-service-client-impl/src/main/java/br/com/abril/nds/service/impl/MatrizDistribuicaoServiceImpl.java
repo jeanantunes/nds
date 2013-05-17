@@ -628,11 +628,10 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 				repFinal = obterSomaReparteFinal(mapReparte, false, TipoClassificacaoEstudoCota.FX, TipoClassificacaoEstudoCota.MM);
 				
 				if (repFinal.intValue() <= 0) {
-					throw new ValidacaoException(TipoMensagem.WARNING, "Soma de reparte final inválido, impossível efetuar o cálculo de índice de reparte proporcional.");
-				}else{
-					indiceRepProporcional =  repartDistrib.divide(repFinal);  //repartDistrib / repFinal;
+					repFinal = BigInteger.ONE;
 				}
 				
+				indiceRepProporcional =  repartDistrib.divide(repFinal);  //repartDistrib / repFinal;
 				repCalculado = obterCalculoDistribMultiplos(repCalculado, indiceRepProporcional, pactPadrao);
 				
 			} else {
@@ -640,11 +639,10 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 				repFinal = obterSomaReparteFinal(mapReparte);
 				
 				if (repFinal.intValue() <= 0) {
-					throw new ValidacaoException(TipoMensagem.WARNING, "Soma de reparte final inválido, impossível efetuar o cálculo de índice de reparte proporcional.");
-				}else{
-					indiceRepProporcional = repartDistrib.divide(repFinal);
+					repFinal = BigInteger.ONE;
 				}
 				
+				indiceRepProporcional = repartDistrib.divide(repFinal); //repartDistrib / repFinal;
 				repCalculado = obterCalculoDistribMultiplos(repCalculado, indiceRepProporcional, pactPadrao);
 			}
 			
