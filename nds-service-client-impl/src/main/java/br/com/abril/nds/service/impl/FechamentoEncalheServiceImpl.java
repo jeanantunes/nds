@@ -750,30 +750,36 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 				TipoNotaFiscal tipoNotaFiscal = obterTipoNotaFiscal(listaTipoNotaFiscal, cota);
 				
-				List<ItemNotaFiscalSaida> listItemNotaFiscal = 
-						this.notaFiscalService.obterItensNotaFiscalPor(
-								parametrosRecolhimentoDistribuidor,
-								cota, null, null, null, tipoNotaFiscal);
+				if (tipoNotaFiscal != null) {
 				
-				if (listItemNotaFiscal == null || listItemNotaFiscal.isEmpty()) 
-					continue;
+					List<ItemNotaFiscalSaida> listItemNotaFiscal = 
+							this.notaFiscalService.obterItensNotaFiscalPor(
+									parametrosRecolhimentoDistribuidor,
+									cota, null, null, null, tipoNotaFiscal);
+					
+					if (listItemNotaFiscal == null || listItemNotaFiscal.isEmpty()) 
+						continue;
+					
+					List<NotaFiscalReferenciada> listaNotasFiscaisReferenciadas = this.notaFiscalService.obterNotasReferenciadas(listItemNotaFiscal);
+					
+					InformacaoTransporte transporte = this.notaFiscalService.obterTransporte(cota.getId());
+					
+					Set<Processo> processos = new HashSet<Processo>();
+					processos.add(Processo.GERACAO_NF_E);
+					
+					Long idNotaFiscal = this.notaFiscalService.emitiNotaFiscal(tipoNotaFiscal.getId(), dataEncalhe, cota, 
+							listItemNotaFiscal, transporte, null, listaNotasFiscaisReferenciadas, processos, null);
 				
-				List<NotaFiscalReferenciada> listaNotasFiscaisReferenciadas = this.notaFiscalService.obterNotasReferenciadas(listItemNotaFiscal);
+					NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(idNotaFiscal);
+
+					this.produtoServicoRepository.atualizarProdutosQuePossuemNota(notaFiscal.getProdutosServicos(), listItemNotaFiscal);
 				
-				InformacaoTransporte transporte = this.notaFiscalService.obterTransporte(cota.getId());
+				}
 				
-				Set<Processo> processos = new HashSet<Processo>();
-				processos.add(Processo.GERACAO_NF_E);
-				
-				Long idNotaFiscal = this.notaFiscalService.emitiNotaFiscal(tipoNotaFiscal.getId(), dataEncalhe, cota, 
-						listItemNotaFiscal, transporte, null, listaNotasFiscaisReferenciadas, processos, null);
-				
-				NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(idNotaFiscal);
-				
-				this.produtoServicoRepository.atualizarProdutosQuePossuemNota(notaFiscal.getProdutosServicos(), listItemNotaFiscal);
-				
+			} catch (ValidacaoException e) {
+				throw e;
 			} catch (Exception exception) {
-				LOGGER.warn(exception.getLocalizedMessage(), exception);
+				LOGGER.error(exception.getLocalizedMessage(), exception);
 				continue;
 			}
 		}
