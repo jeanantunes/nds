@@ -70,6 +70,9 @@ var estudoComplementarController =$.extend(true,  {
 			alert("Sobra negativa!!");
 			return
 		}
+		
+		var matrizSelecionado = matrizDistribuicao.lancamentoSelecionadoParaComplementar;
+		
 		var dados = [];
 	                  
 	                  dados.push({name:"parametros.reparteCota",         value: reparteCota});
@@ -78,6 +81,8 @@ var estudoComplementarController =$.extend(true,  {
 	                  dados.push({name:"parametros.reparteLancamento",   value: reparteLancamento});
 	                  dados.push({name:"parametros.reparteSobra",        value: reparteSobra});
 	                  dados.push({name:"parametros.tipoSelecao",         value: tipoSelecao});
+	                  dados.push({name:"parametros.idLancamento",        	 value: matrizSelecionado.idLancamento});
+	                  dados.push({name:"parametros.idEstudoComplementar",         value: $('#idEstudoComplementar').text()});
 	      					           
 		 $.ajax({
 			 url:  'lancamento/gerarEstudo',

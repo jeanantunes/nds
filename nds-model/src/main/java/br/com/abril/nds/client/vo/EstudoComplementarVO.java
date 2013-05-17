@@ -9,6 +9,8 @@ public class EstudoComplementarVO {
     int  reparteSobra;
     long codigoEstudo;
     int  tipoSelecao;
+    long idEstudoComplementar;
+    long idLancamento;
     
 	public int getReparteCota() {
 		return reparteCota;
@@ -46,5 +48,17 @@ public class EstudoComplementarVO {
 	public void setTipoSelecao(int tipoSelecao) {
 		this.tipoSelecao = tipoSelecao;
 	}
-    
+	public long getIdEstudoComplementar() {
+		return idEstudoComplementar;
+	}
+	public void setIdEstudoComplementar(long idEstudoComplementar) {
+		this.idEstudoComplementar = idEstudoComplementar;
+	}
+	public long getIdLancamento() {
+		return idLancamento;
+	}
+	public void setIdLancamento(long idLancamento) {
+		this.idLancamento = idLancamento;
+	}
+
 }

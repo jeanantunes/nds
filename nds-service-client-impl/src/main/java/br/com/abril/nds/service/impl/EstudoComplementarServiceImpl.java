@@ -132,7 +132,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 		estudo1.setDataCadastro(estudo.getDataCadastro());
 		estudo1.setDataLancamento(estudo.getDataLancamento());
 		estudo1.setProdutoEdicao(estudo.getProdutoEdicao());
-	
+		estudo1.setLiberado(false);
 		estudo1.setQtdeReparte(estudo.getQtdeReparte());
 		estudo1.setStatus(estudo.getStatus());
 	
@@ -147,6 +147,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 		    ec.setCota(estudoCota.getCota());
 		    ec.setQtdeEfetiva(estudoCota.getQtdeEfetiva());
 		    ec.setQtdePrevista(estudoCota.getQtdeEfetiva());
+		    ec.setReparte(qtdReparte);
 		    estudoCotaNovo.add(ec);
 	
 		}
@@ -180,6 +181,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 		    ec1.setClassificacao(classificacao);
 		    ec1.setCota(estcota.getCota());
 		    ec1.setEstudo(estudo1);
+		    ec1.setReparte(qtdReparte);
 		    ec1.setQtdeEfetiva(estcota.getQtdeEfetiva());
 		    ec1.setQtdePrevista(BigInteger.TEN);
 	
