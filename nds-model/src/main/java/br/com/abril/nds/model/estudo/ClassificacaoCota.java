@@ -16,6 +16,10 @@ public enum ClassificacaoCota {
 	 */
 	RedutorAutomatico("RD", "Redutor Automático"),
 	/**
+	 * 
+	 */
+	CotaNaoRecebeSegmento("SN", "Cota não recebe segmento"),
+	/**
 	 * PR
 	 */
 	BancaSoComEdicaoBaseAberta("PR", "Banca que só tem edição base aberta"),
