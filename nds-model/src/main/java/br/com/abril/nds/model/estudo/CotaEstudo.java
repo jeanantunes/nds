@@ -76,9 +76,15 @@ public class CotaEstudo extends Cota {
 	this.reparteCalculado = reparteCalculado;
     }
     public void setReparteCalculado(BigInteger reparteCalculado, EstudoTransient estudo) {
-	BigInteger variacao = reparteCalculado.subtract(this.reparteCalculado);
-	estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(variacao));
-	this.reparteCalculado = reparteCalculado;
+	if (reparteMaximo != null && reparteCalculado.compareTo(reparteMaximo) > 0) {
+	    reparteCalculado = reparteMaximo;
+	} else if (reparteCalculado.compareTo(reparteMinimo) < 0) {
+	    reparteCalculado = reparteMinimo;
+	} else {
+	    BigInteger variacao = reparteCalculado.subtract(this.reparteCalculado);
+	    estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(variacao));
+	    this.reparteCalculado = reparteCalculado;
+	}
     }
     public BigInteger getReparteJuramentadoAFaturar() {
 	return reparteJuramentadoAFaturar;
