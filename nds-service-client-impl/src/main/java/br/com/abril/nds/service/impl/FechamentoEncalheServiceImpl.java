@@ -27,6 +27,7 @@ import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.EnvioEmailException;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
@@ -457,6 +458,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				realizarCobrancaCotas(dataOperacao, usuario, null, cota);
 			} catch (GerarCobrancaValidacaoException e) {
 				ex = e;
+			} catch(EnvioEmailException e) {
+				// Caso não tenha e-mail, simplesmente não envia o e-mail e prossegue
+				continue;
 			}
 		}
 		
@@ -470,12 +474,15 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED, 
-		noRollbackFor={GerarCobrancaValidacaoException.class, AutenticacaoEmailException.class})
+		noRollbackFor={GerarCobrancaValidacaoException.class, AutenticacaoEmailException.class, EnvioEmailException.class})
 	public void realizarCobrancaCotas(Date dataOperacao, Usuario usuario, 
-			List<CotaAusenteEncalheDTO> listaCotasAusentes, Cota cotaAusente) throws GerarCobrancaValidacaoException {
+			List<CotaAusenteEncalheDTO> listaCotasAusentes, Cota cotaAusente) throws GerarCobrancaValidacaoException, EnvioEmailException {
 
 		ValidacaoVO validacaoVO = new ValidacaoVO();
-		
+
+		ValidacaoVO validacaoEmails = new ValidacaoVO();
+		validacaoEmails.setListaMensagens(new ArrayList<String>());
+
 		if (cotaAusente != null){
 			
 			listaCotasAusentes = new ArrayList<>();
@@ -527,7 +534,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 							validacaoVO.setListaMensagens(new ArrayList<String>());
 						}
 						
-						validacaoVO.getListaMensagens().add(
+						validacaoEmails.getListaMensagens().add(
 								"A cota "+ cota.getNumeroCota() +" não possui email cadastrado");
 					} else {
 					
@@ -539,6 +546,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 								validacaoVO.setListaMensagens(new ArrayList<String>());
 							}
 							
+							// Caso dê erro para enviar o e-mail, mostra uma mensagem na tela
 							validacaoVO.getListaMensagens().add("Erro ao enviar e-mail para cota " + 
 									cota.getNumeroCota() + ", " +
 									e.getMessage());
@@ -592,6 +600,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 			
 			
+		}
+
+		if (validacaoEmails.getListaMensagens() != null && !validacaoEmails.getListaMensagens().isEmpty()) {
+			throw new EnvioEmailException();
 		}
 		
 		if (validacaoVO.getListaMensagens() != null && !validacaoVO.getListaMensagens().isEmpty()){
