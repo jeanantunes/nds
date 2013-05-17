@@ -74,7 +74,7 @@ function analisar(){
         <table width="347" border="0" cellspacing="2" cellpadding="2" >
           <tr>
             <td width="107"><strong>Estudo:</strong></td>
-            <td colspan="3" ><input id="copiarEstudo-estudoPesquisa" type="text" name="textfield5" id="textfield5" style="width:100px; margin-right:5px; float:left;" />
+            <td colspan="3" ><input id="copiarEstudo-estudoPesquisa" type="text" name="textfield5" id="textfield5" onkeydown='onlyNumeric(event);' style="width:100px; margin-right:5px; float:left;" />
               <span title="Pesquisar" class="classPesquisar" onclick="matrizDistribuicao.carregarProdutoPorEstudo()" style="cursor: pointer;"></span></td>
           </tr>
           <tr>

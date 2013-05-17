@@ -478,11 +478,10 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	private void validarCopiaProporcionalDeDistribuicao(Estudo estudo) {
 		
 		if ((estudo == null) || (estudo.getEstudoCotas() == null)) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi possível efetuar a cópia. Não há cotas que receberam reparte .");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi possível efetuar a cópia. Estudo inexistente ou não há cotas que receberam reparte.");
 		}
 	}
-	
-	
+		
 	@Override
 	@Transactional
 	public Long confirmarCopiarProporcionalDeEstudo(CopiaProporcionalDeDistribuicaoVO vo) {
