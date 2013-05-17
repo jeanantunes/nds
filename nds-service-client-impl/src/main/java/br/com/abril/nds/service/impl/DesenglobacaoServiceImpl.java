@@ -40,7 +40,8 @@ public class DesenglobacaoServiceImpl implements DesenglobacaoService {
 
 	for (Desenglobacao desenglobacao : desenglobaList) {
 	    DesenglobacaoDTO dto = copyToDTO(desenglobacao);
-
+	    dto.setIdCotaDesenglobada(desenglobacao.getCotaDesenglobada().getId());
+	    dto.setIdCotaEnglobada(desenglobacao.getCotaEnglobada().getId());
 	    dtoList.add(dto);
 	}
 	return dtoList;
@@ -70,6 +71,9 @@ public class DesenglobacaoServiceImpl implements DesenglobacaoService {
 
 	for (Desenglobacao desenglobacao : desenglobaList) {
 	    DesenglobacaoDTO dto = copyToDTO(desenglobacao);
+	    dto.setIdCotaDesenglobada(desenglobacao.getCotaDesenglobada().getId());
+	    dto.setIdCotaEnglobada(desenglobacao.getCotaEnglobada().getId());
+	    
 	    dtoList.add(dto);
 	}
 	return dtoList;
