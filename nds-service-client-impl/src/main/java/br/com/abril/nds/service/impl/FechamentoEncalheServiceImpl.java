@@ -750,7 +750,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 				TipoNotaFiscal tipoNotaFiscal = obterTipoNotaFiscal(listaTipoNotaFiscal, cota);
 				
-				if (tipoNotaFiscal == null) {
+				if (tipoNotaFiscal != null) {
 				
 					List<ItemNotaFiscalSaida> listItemNotaFiscal = 
 							this.notaFiscalService.obterItensNotaFiscalPor(
