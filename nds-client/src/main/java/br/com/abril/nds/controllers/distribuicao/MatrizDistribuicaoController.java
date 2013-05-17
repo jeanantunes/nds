@@ -4,12 +4,15 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,13 +90,14 @@ public class MatrizDistribuicaoController extends BaseController {
 	private ParametrosDistribuidorService parametrosDistribuidorService;
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMatrizDistribuicao";
+	private static final String MAP_DE_DUPLICACOES = "MAP_DE_DUPLICACOES";
 
 	@Path("/matrizDistribuicao")
 	@Rules(Permissao.ROLE_DISTRIBUICAO_MATRIZ_DISTRIBUICAO)
 	public void index() {
 
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, null);
-
+		
 		List<Fornecedor> fornecedores = fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO);
 		String data = DateUtil.formatarDataPTBR(new Date());
 		result.include("data", data);
@@ -332,8 +336,22 @@ public class MatrizDistribuicaoController extends BaseController {
 	@Post
 	public void duplicarLinha(ProdutoDistribuicaoVO produtoDistribuicao) {
 
-		produtoDistribuicao.setIdUsuario(getUsuarioLogado().getId());
-		matrizDistribuicaoService.duplicarLinhas(produtoDistribuicao);
+		FiltroDistribuicaoDTO filtro = obterFiltroSessao();
+
+		TotalizadorProdutoDistribuicaoVO totalizadorProdutoDistribuicaoVO = matrizDistribuicaoService.obterMatrizDistribuicao(filtro);
+		
+		List<ProdutoDistribuicaoVO> list = totalizadorProdutoDistribuicaoVO.getListProdutoDistribuicao();
+		
+		int index = Collections.binarySearch(list, produtoDistribuicao);
+		
+		ProdutoDistribuicaoVO distribuicaoVOCopia = (ProdutoDistribuicaoVO)SerializationUtils.clone(list.get(index));
+		
+		Map <Long,List>map = (Map <Long,List>)session.getAttribute(MAP_DE_DUPLICACOES);
+		
+		
+		
+//		produtoDistribuicao.setIdUsuario(getUsuarioLogado().getId());
+//		matrizDistribuicaoService.duplicarLinhas(produtoDistribuicao);
 		this.result.use(Results.json()).from(Results.nothing()).serialize();
 	}
 

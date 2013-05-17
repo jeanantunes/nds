@@ -6,6 +6,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	var T = this;
 	
 	var opcoesAberto = false;
+	var MAX_DUPLICACOES_PERMITIDA = 3;
 	
 	this.instancia = descInstancia;
 	this.lancamentos = [];
@@ -242,7 +243,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		T.formataCampos(row);
 		
-		var repDist = (row.cell.reparte - row.cell.promo); 
+		var repDist = (row.cell.repDistrib != null && row.cell.repDistrib > 0)? row.cell.repDistrib : (row.cell.reparte - row.cell.promo); 
 		
 		row.cell.sobra = '<span id="sobra'+i+'">0</span>';
 		row.cell.repDistrib = T.gerarInputRepDistrib(repDist, i);
@@ -748,6 +749,40 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			return;
 		}
 		
+		var index = T.obterUnicoIndiceSelecionado();
+		var indexRow = index + 1;
+		
+		var qtdClone = 1;
+		
+		while ($('#row'+indexRow+'clone'+qtdClone).size() > 0) {
+			
+			if (qtdClone > 3) {
+				
+				exibirMensagem("WARNING", ["Não é permitido mais do que " + MAX_DUPLICACOES_PERMITIDA + " duplicações"]);
+				return;
+			}
+			
+			qtdClone++;
+		}
+		
+		var rowOriginal = $('#row'+indexRow);
+		var rowClone = $(rowOriginal).clone();
+		
+		$(rowClone).attr('id','row'+indexRow+'clone'+qtdClone);
+		$(rowClone).find('#inputRepDistrib' + index).attr('id','inputRepDistrib' + index + 'clone' + qtdClone);
+		$(rowClone).find('#sobra' + index).attr('id','sobra' + index + 'clone' + qtdClone);
+		$('#sobra'+index+'clone'+qtdClone).text('0');
+		
+		for (var i=0; i < 12; i++) {
+			 $($(rowClone).children()[i]).html("");
+		}
+		
+		$($(rowClone).children()[15]).html("");
+		
+		$(rowOriginal).after(rowClone);
+		$('#row'+indexRow+' input[type="checkbox"]').uncheck();
+		
+		/*
 		var selecionado = T.obterUnicoItemMarcado();
 		
 		var data = [];
@@ -765,6 +800,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		}
 			);
 		
+		
+		*/
 	},
 	
 	this.mostraTelaMatrizDistribuicao = function() {
