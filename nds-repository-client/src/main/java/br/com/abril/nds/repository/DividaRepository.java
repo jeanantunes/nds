@@ -154,4 +154,7 @@ public interface DividaRepository extends Repository<Divida, Long>{
      * @return quantidade de dívidas a vencer após determinada data
      */
     long contarDividasVencerApos(Date data);
+    
+    Long verificarEnvioDeEmail(GeraDividaDTO dividaGerada);
+    
 }

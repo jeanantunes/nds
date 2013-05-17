@@ -63,7 +63,23 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 	@Override
 	public List<GeraDividaDTO> obterDividasGeradas(FiltroDividaGeradaDTO filtro) {
 	
-		return dividaRepository.obterDividasGeradas(filtro);
+		List<GeraDividaDTO> dividasGeradas = dividaRepository.obterDividasGeradas(filtro);
+		
+		for(GeraDividaDTO umaDividaGerada : dividasGeradas)
+		{
+			Long retornoDeEnvioDeEmail = dividaRepository.verificarEnvioDeEmail(umaDividaGerada);
+			
+			if(retornoDeEnvioDeEmail.intValue() == 0)
+			{
+				umaDividaGerada.setSuportaEmail(false);
+			}
+			else
+			{
+				umaDividaGerada.setSuportaEmail(true);
+			}
+		}
+			
+		return dividasGeradas;
 	}
 	
 	@Transactional(readOnly=true)
