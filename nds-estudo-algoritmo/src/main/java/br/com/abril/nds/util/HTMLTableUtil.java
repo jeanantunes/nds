@@ -68,7 +68,7 @@ public class HTMLTableUtil {
 	h.append("</tr>");
 
 	for (CotaEstudo ce : estudo.getCotas()) {
-	    if (ce.getReparteCalculado().compareTo(BigInteger.ZERO) > 0) {
+	    if (ce.getReparteCalculado() != null && ce.getReparteCalculado().compareTo(BigInteger.ZERO) > 0) {
 		h.append("	<tr>");
 		h.append(String.format(" <td>%s</td>", ce.getNumeroCota()));
 		h.append(String.format(" <td>%s</td>", ce.isNova()));
@@ -147,7 +147,7 @@ public class HTMLTableUtil {
 	h.append("<td>Classificacao</td>");
 	h.append("</tr>");
 	for (CotaEstudo ce : estudo.getCotas()) {
-	    if (ce.getReparteCalculado().compareTo(BigInteger.ZERO) == 0) {
+	    if (ce.getReparteCalculado() == null || ce.getReparteCalculado().compareTo(BigInteger.ZERO) == 0) {
 		h.append("<tr>");
 		h.append(String.format("<td>%s</td>", ce.getNumeroCota()));
 		h.append(String.format("<td>%s</td>", ce.getClassificacao()));
@@ -175,7 +175,7 @@ public class HTMLTableUtil {
 		    qtdeCotasComplementares++;
 		}
 	    }
-	    if (ce.getReparteCalculado().compareTo(BigInteger.ZERO) > 0) {
+	    if (ce.getReparteCalculado() != null && ce.getReparteCalculado().compareTo(BigInteger.ZERO) > 0) {
 		qtdeCotasComReparte++;
 	    } else {
 		qtdeCotasSemReparte++;

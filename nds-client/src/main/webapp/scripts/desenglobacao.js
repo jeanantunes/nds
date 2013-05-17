@@ -414,13 +414,15 @@ var desenglobacaoController = $.extend(true, {
         var html = '<tr>';
         html+= "<td><input type='text' name='desenglobaDTO["+indexInput+"].numeroCotaEnglobada' value='"+ inserirEnglobadaNumeroCota +"' style='width: 30px;' class='filtroDefaultCota'></td>";
         html+= "<td style='width: 450px;'><input type='text' name='desenglobaDTO["+indexInput+"].nomeCotaEnglobada' value='"+ inserirEnglobadaNomePessoa +"' style='width: 400px;' class='filtroDefaultPessoa'></td>";
-        html+= "<td><input type='text' name='desenglobaDTO["+indexInput+"].porcentagemCota' value='"+ inserirEnglobadaPorcentagemCota +"' style='width: 30px;'></td>";
-        html+= '</tr>';
+        html+= "<td><input type='text' name='desenglobaDTO["+indexInput+"].porcentagemCota' value='"+ inserirEnglobadaPorcentagemCota +"' style='width: 30px;'>";
 
-        if (indexInput != 0) {
-            html+= "<input type='hidden' name='desenglobaDTO["+indexInput+"].numeroCotaDesenglobada' value='"+filtroDesenglobaNumeroCota+"'>";
-            html+= "<input type='hidden' name='desenglobaDTO["+indexInput+"].nomeCotaDesenglobada' value='"+filtroDesenglobaNomePessoa+"'>";
+        if (indexInput > -1) {
+        	html+= "<input type='hidden' name='desenglobaDTO["+indexInput+"].numeroCotaDesenglobada' value='"+filtroDesenglobaNumeroCota+"'>";
+        	html+= "<input type='hidden' name='desenglobaDTO["+indexInput+"].nomeCotaDesenglobada' value='"+filtroDesenglobaNomePessoa+"'>";
         }
+        
+        html+="</td>";
+        html+= '</tr>';
 
         $('#tableCotasEnglobadas').append(html);
 

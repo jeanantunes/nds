@@ -152,6 +152,8 @@ public class MatrizDistribuicaoController extends BaseController {
 		produtoDistribuicaoVO.setDataLancto(infoDTO.getDataLcto());
 		produtoDistribuicaoVO.setReparte(new BigDecimal(infoDTO.getReparteDistribuido()));
 		produtoDistribuicaoVO.setEstudoLiberado(infoDTO.getEstudoLiberado());
+		produtoDistribuicaoVO.setQtdeReparteEstudo(infoDTO.getQtdeReparteEstudo());
+		
 		
 		result.use(Results.json()).from(produtoDistribuicaoVO, "result").recursive().serialize();
 	}

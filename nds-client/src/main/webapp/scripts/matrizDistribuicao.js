@@ -242,7 +242,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		T.formataCampos(row);
 		
-		var repDist = (row.cell.reparte - row.cell.promo); 
+		var repDist = (row.cell.repDistrib != null && row.cell.repDistrib > 0)? row.cell.repDistrib : (row.cell.reparte - row.cell.promo); 
 		
 		row.cell.sobra = '<span id="sobra'+i+'">0</span>';
 		row.cell.repDistrib = T.gerarInputRepDistrib(repDist, i);
@@ -924,7 +924,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		$("#somarEstudo-nomeProduto").text(selecionado.nomeProduto);
 		$("#somarEstudo-classificacao").text(selecionado.classificacao);
 		$("#somarEstudo-dataLancto").text(selecionado.dataLancto);
-		$("#somarEstudo-reparte").text(selecionado.reparte);
+		$("#somarEstudo-reparte").text(selecionado.repDistrib);
 		$("#somarEstudo-idLancamento").text(selecionado.idLancamento);
 		
 	},
@@ -999,9 +999,9 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			var data = [];
 			
 			var codEstudo = $("#somarEstudo-estudoPesquisa").val();
-			console.log($("#somarEstudo-estudoPesquisa").val());
-			console.log($("#somarEstudo-estudo").text().trim());
+
 			if(codEstudo==$("#somarEstudo-estudo").text().trim()){
+				T.cancelarSomarEstudos();
 				exibirMensagem("WARNING",["Estudo original não pode ser igual ao da soma."]);
 				return;
 			}
@@ -1026,7 +1026,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					$("#somarEstudo-somado-nomeProduto").text(result.nomeProduto);
 					$("#somarEstudo-somado-classificacao").text(result.classificacao);
 					$("#somarEstudo-somado-dataLancto").text(result.dataLancto);
-					$("#somarEstudo-somado-reparte").text(result.reparte);
+					$("#somarEstudo-somado-reparte").text(result.qtdeReparteEstudo);
 			  }
 			);
 		},
