@@ -84,14 +84,16 @@ var estudoComplementarController =$.extend(true,  {
 			 data:  dados ,
 	         type: "POST",
 	         
-	         success: function(data){	
-	        	  if(data.mensagens.tipoMensagem == "ERROR"){
-	        		  		exibirMensagem("WARNING", ["Nenhum resultado encontrado"]);
-	 	             }
-	 	             else{
-	 	     			$('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
-	 	     				exibirMensagem("SUCCESS", ["Estudo Complementar Gerado"]);
-	 	             }
+	         success: function(data){
+	        	 
+	        	 if (data) {
+	        		 if(data.mensagens.tipoMensagem == "ERROR"){
+	        			 exibirMensagem("WARNING", ["Nenhum resultado encontrado"]);
+	        		 }
+	        	 }else{
+	        		 $('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
+	        		 exibirMensagem("SUCCESS", ["Estudo Complementar Gerado"]);
+ 	             }
 	        	 
 
 	         
@@ -156,6 +158,11 @@ consultarEstudo:function (obj) {
 		$('#publicacaoDataLncto').html("");
 		$('#publicacaoDataRclto').html("");
 		$('#publicacaoClassificacao').html("");
+		$('#reparteDistribuicao').val("");
+		$('#reparteLancamento').val("");
+		$('#tipoSelecao').val('selected');
+		$('#reparteCota').val(2);
+		
     }
 },
 

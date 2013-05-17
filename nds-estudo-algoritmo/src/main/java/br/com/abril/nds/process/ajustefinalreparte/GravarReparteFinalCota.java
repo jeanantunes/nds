@@ -1,8 +1,12 @@
 package br.com.abril.nds.process.ajustefinalreparte;
 
+import java.math.BigDecimal;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.model.estudo.ClassificacaoCota;
+import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.calculoreparte.CalcularReparte;
@@ -29,6 +33,11 @@ public class GravarReparteFinalCota extends ProcessoAbstrato {
     @Override
     public void executar(EstudoTransient estudo) {
 	estudo.getCotas().addAll(estudo.getCotasExcluidas());
+	for (CotaEstudo cota : estudo.getCotas()) {
+	    if (cota.getClassificacao().equals(ClassificacaoCota.CotaNova) && cota.getReparteCalculado().equals(BigDecimal.ZERO)) {
+		cota.setReparteCalculado(null);
+	    }
+	}
 	estudoAlgoritmoService.gravarEstudo(estudo);
     }
 }
