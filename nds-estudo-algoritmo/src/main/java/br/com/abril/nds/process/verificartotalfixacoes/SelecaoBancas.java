@@ -82,7 +82,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 		idsCotas.add(cota.getId());
 	    }
 	    if (cota.getClassificacao().in(ClassificacaoCota.BancaComVendaZero, ClassificacaoCota.BancaSemHistorico,
-		    ClassificacaoCota.BancaSuspensa, ClassificacaoCota.ReparteFixado)) {
+		    ClassificacaoCota.BancaSuspensa, ClassificacaoCota.ReparteFixado, ClassificacaoCota.CotaNaoRecebeSegmento)) {
 		estudo.getCotasExcluidas().add(cota);
 	    }
 	}

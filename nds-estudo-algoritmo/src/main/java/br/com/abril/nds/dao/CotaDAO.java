@@ -256,6 +256,12 @@ public class CotaDAO {
 		if (rs.getInt("REGIAO_ID") != 0) {
 		    cota.getRegioes().add(rs.getInt("REGIAO_ID"));
 		}
+		if (rs.getBoolean("COTA_NAO_RECEBE_SEGMENTO")) {
+		    cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeSegmento);
+		}
+		if (rs.getBoolean("COTA_EXCECAO_SEGMENTO")) {
+		    cota.setClassificacao(ClassificacaoCota.BancaQueRecebemDeterminadoSegmento);
+		}
 		if (rs.getLong("COTA_BASE_ID") != 0) {
 		    cota.setNova(true);
 		    cota.setClassificacao(ClassificacaoCota.CotaNova);
