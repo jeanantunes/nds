@@ -316,7 +316,8 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			
 			if(isNewSearch) {
 				session.setAttribute("selecionados", null);
-				session.setAttribute("ultimaPesquisa", ultimaPesquisa);				
+				session.setAttribute("ultimaPesquisa", ultimaPesquisa);
+				page = 1;
 			}			
 			
 			List<String> mensagens = new ArrayList<String>();
