@@ -6,7 +6,6 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	var T = this;
 	
 	var opcoesAberto = false;
-	var MAX_DUPLICACOES_PERMITIDA = 3;
 	
 	this.instancia = descInstancia;
 	this.lancamentos = [];
@@ -142,60 +141,116 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			 var index = i + 1;
 			 var id = '#row' + index;
 			 
-			 if (i % 2 == 0) {
+			 $(id).removeClass("erow");
+			 
+			 if (T.lancamentos[i].idCopia != null) {
+				 
+				 for (var j=0; j < 12; j++) {
+					 $($(id).children()[j]).html("");
+				 }
+			 }
+			 
+			 if (T.lancamentos[i].idRow % 2 == 0) {
 				 $(id, _workspace).addClass("gridLinha");
 			 }
 			 
-		});	 
-		
-		$(T.lancamentos).each(function(i,lancamento){
-			 var index = i + 1;
-			 var id = '#row' + index;	
-			 $(id, _workspace).children("td").removeClass("sorted");
-			 $(id, _workspace).removeClass("erow");
-			 
-			 var codigo = T.lancamentos[i].codigoProduto;
-			 var edicao = T.lancamentos[i].edicao;
-			 var css = $(id, _workspace).attr('class');
-			 var trTochange = "#row" + (index + 1);
-			 
-			 if (index < T.lancamentos.length) {
-				 
-				 if (codigo == T.lancamentos[index].codigoProduto &&  edicao == T.lancamentos[index].edicao) {
-					 
-					 for (var i=0; i < 12; i++) {
-						 $($(trTochange).children()[i]).html("");
-					 }
-					 
-					 if (css == undefined || css == "") {
-					 	 $(trTochange, _workspace).removeClass("gridLinha");
-					 }
-					 else {
-						 $(trTochange, _workspace).addClass("gridLinha");
-					 }
-					 
-					 css = $(trTochange, _workspace).attr('class');
-					 
-					 trTochange = "#row" + (index + 2);
-						 
-					 if (css == undefined || css == "") {
-						 $(trTochange, _workspace).addClass("gridLinha");
-					 }
-					 else {
-						$(trTochange, _workspace).removeClass("gridLinha");
-					 }
-					 
-				 }
-				 
-			 }
-			 
-			 $("#inputRepDistrib" + i, _workspace).removeAttr('disabled');
-			 if (lancamento.dataFinMatDistrib != undefined) {
-				 
-				 T.finalizaItem(i);
-			 }
-			 
+			 $("#inputRepDistrib" + i).removeAttr('disabled');
+				if (T.lancamentos[i].dataFinMatDistrib != undefined) {
+					T.finalizaItem(i);
+			 }				 
 		});
+		
+//		var linhasOrigemCopia = [];
+//		var indexOrgCopia = 0;
+//		
+//		for (var i=0; i < T.lancamentos.length - 1; i++) {
+//			
+//			var index = i + 1;
+//			
+//			if (T.lancamentos[i].idCopia == null && (T.lancamentos[i].idLancamento == T.lancamentos[index].idLancamento)) {
+//				 
+//				linhasOrigemCopia[indexOrgCopia++] = T.lancamentos[i].idLancamento;
+//			 }
+//			
+//			$("#inputRepDistrib" + i).removeAttr('disabled');
+//			if (T.lancamentos[i].dataFinMatDistrib != undefined) {
+//				 
+//				T.finalizaItem(i);
+//			}
+//			 
+//		}
+//		
+//		for (var j=0; j < linhasOrigemCopia.length; j++) {
+//			
+//			for (var i=0; i < T.lancamentos.length; i++) {
+//		  
+//				if (T.lancamentos[i].idCopia != null && (T.lancamentos[i].idLancamento == linhasOrigemCopia[j])) {
+//					
+//					var css = $('#row'+(j + 1)).attr('class');
+//					
+//					if (css == null || css == undefined || css == "") {
+//						$('#row'+(i + 1)).removeClass("gridLinha");
+//					 }
+//					 else {
+//						 $('#row'+(i + 1)).addClass("gridLinha");
+//					 }
+//					
+//					for (var c=0; c < 12; c++) {
+//						$($('#row'+(i + 1)).children()[c]).html("");
+//					 }
+//					
+//					break;
+//				}
+//			}
+//		}
+		
+//		$(T.lancamentos).each(function(i,lancamento){
+//			 var index = i + 1;
+//			 var id = '#row' + index;	
+//			 $(id, _workspace).removeClass("erow");
+//			 
+//			 var codigo = T.lancamentos[i].codigoProduto;
+//			 var edicao = T.lancamentos[i].edicao;
+//			 var css = $(id, _workspace).attr('class');
+//			 var trTochange = "#row" + (index + 1);
+//			 
+//			 if (index < T.lancamentos.length) {
+//				 
+//				 if (codigo == T.lancamentos[index].codigoProduto &&  edicao == T.lancamentos[index].edicao) {
+//					 
+//					 for (var i=0; i < 12; i++) {
+//						 $($(trTochange).children()[i]).html("");
+//					 }
+//					 
+//					 if (css == undefined || css == "") {
+//					 	 $(trTochange, _workspace).removeClass("gridLinha");
+//					 }
+//					 else {
+//						 $(trTochange, _workspace).addClass("gridLinha");
+//					 }
+//					 
+//					 css = $(trTochange, _workspace).attr('class');
+//					 
+//					 trTochange = "#row" + (index + 2);
+//						 
+//					 if (css == undefined || css == "") {
+//						 $(trTochange, _workspace).addClass("gridLinha");
+//					 }
+//					 else {
+//						$(trTochange, _workspace).removeClass("gridLinha");
+//					 }
+//					 
+//				 }
+//				 
+//			 }
+//			 
+//			 $("#inputRepDistrib" + i, _workspace).removeAttr('disabled');
+//			 if (lancamento.dataFinMatDistrib != undefined) {
+//				 
+//				 T.finalizaItem(i);
+//			 }
+//			 
+//		});
 		
 	},
 		
@@ -253,6 +308,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		row.cell.suplem = parseInt(row.cell.suplem, 10);
 		
 		T.lancamentos.push({
+					idRow 		 : row.cell.idRow, 
 					idLancamento : row.cell.idLancamento,
 					estudo : row.cell.idEstudo,
 					lancto : row.cell.reparte,
@@ -270,7 +326,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					reparte : row.cell.reparte,
 					pctPadrao : row.cell.pctPadrao,
 					liberado : liberado,
-					dataFinMatDistrib : row.cell.dataFinMatDistrib
+					dataFinMatDistrib : row.cell.dataFinMatDistrib,
+					idCopia : row.cell.idCopia
 		});
 		
 	},
@@ -498,10 +555,15 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		$.each(T.lancamentos, function(index, lancamento){
 			if(lancamento.selecionado) {
-				data.push({name: 'produtosDistribuicao[' + index + '].idEstudo',  value: lancamento.estudo});
-				data.push({name: 'produtosDistribuicao[' + index + '].idLancamento',  	  value: lancamento.idLancamento});
-				data.push({name: 'produtosDistribuicao[' + index + '].numeroEdicao',  	  value: lancamento.edicao});
-				data.push({name: 'produtosDistribuicao[' + index + '].codigoProduto',  	  value: lancamento.codigoProduto});
+				data.push({name: 'produtosDistribuicao[' + index + '].idEstudo',  		value: lancamento.estudo});
+				data.push({name: 'produtosDistribuicao[' + index + '].idLancamento',  	value: lancamento.idLancamento});
+				data.push({name: 'produtosDistribuicao[' + index + '].numeroEdicao',  	value: lancamento.edicao});
+				data.push({name: 'produtosDistribuicao[' + index + '].codigoProduto',  	value: lancamento.codigoProduto});
+				
+				if (lancamento.idCopia != null) {
+					
+					data.push({name: 'produtosDistribuicao[' + index + '].idCopia',  	    value: lancamento.idCopia});
+				}
 			}
 		});
 		
@@ -745,63 +807,22 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	this.confirmaDuplicaoLinha = function() {
 		
-		if(!T.validarMarcacaoUnicoItem()) {
-			return;
-		}
-		
-		var index = T.obterUnicoIndiceSelecionado();
-		var indexRow = index + 1;
-		
-		var qtdClone = 1;
-		
-		while ($('#row'+indexRow+'clone'+qtdClone).size() > 0) {
-			
-			if (qtdClone > 3) {
-				
-				exibirMensagem("WARNING", ["Não é permitido mais do que " + MAX_DUPLICACOES_PERMITIDA + " duplicações"]);
-				return;
-			}
-			
-			qtdClone++;
-		}
-		
-		var rowOriginal = $('#row'+indexRow);
-		var rowClone = $(rowOriginal).clone();
-		
-		$(rowClone).attr('id','row'+indexRow+'clone'+qtdClone);
-		$(rowClone).find('#inputRepDistrib' + index).attr('id','inputRepDistrib' + index + 'clone' + qtdClone);
-		$(rowClone).find('#sobra' + index).attr('id','sobra' + index + 'clone' + qtdClone);
-		$('#sobra'+index+'clone'+qtdClone).text('0');
-		
-		for (var i=0; i < 12; i++) {
-			 $($(rowClone).children()[i]).html("");
-		}
-		
-		$($(rowClone).children()[15]).html("");
-		
-		$(rowOriginal).after(rowClone);
-		$('#row'+indexRow+' input[type="checkbox"]').uncheck();
-		
-		/*
 		var selecionado = T.obterUnicoItemMarcado();
 		
 		var data = [];
 		
 		data.push({name: 'produtoDistribuicao.idLancamento',  	  value: selecionado.idLancamento});
-		data.push({name: 'produtoDistribuicao.numeroEdicao',  	  value: selecionado.edicao});
-		data.push({name: 'produtoDistribuicao.codigoProduto',  	  value: selecionado.codigoProduto});
-		
+//		data.push({name: 'produtoDistribuicao.numeroEdicao',  	  value: selecionado.edicao});
+//		data.push({name: 'produtoDistribuicao.codigoProduto',  	  value: selecionado.codigoProduto});
 		
 		$.postJSON(pathTela + "/matrizDistribuicao/duplicarLinha", data,
 				function(result){
 					T.checkUncheckLancamentos(false);
 					T.carregarGrid();
 					T.exibirMensagemSucesso();
-		}
-			);
+		});
 		
 		
-		*/
 	},
 	
 	this.mostraTelaMatrizDistribuicao = function() {
@@ -1371,6 +1392,14 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	    postData.push({name : "codigoProduto", value : selecionado.codigoProduto});
 	    postData.push({name : "numeroEdicao", value : selecionado.edicao});
 	    postData.push({name : "reparte", value : selecionado.repDistrib});
+	    
+	    if (selecionado.idCopia != null) {
+	    	
+	    	postData.push({name : "idLancamento", value : selecionado.idLancamento});
+	    	postData.push({name : "idCopia", value : selecionado.idCopia});
+	    }
+	    
+	    
 	    $.postJSON(pathTela + "/matrizDistribuicao/gerarEstudoAutomatico", postData,
 	            function(result) {
 	        T.estudo = result;
@@ -1427,6 +1456,9 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		params += '&produto.dataLancto='+ selecionado.dataLancto;
 		params += '&produto.reparte='+ selecionado.repDistrib;
         params += '&produto.idProdutoEdicao='+ selecionado.idProdutoEdicao;
+        params += '&produtoDistribuicaoVO.idLancamento='+ selecionado.idLancamento;
+        params += '&produtoDistribuicaoVO.idCopia='+ selecionado.idCopia;
+        
 		$('#workspace').tabs('addTab', 'Distribuição Manual', pathTela +'/distribuicaoManual/?'+ params);
 		T.esconderOpcoes();
 	};
@@ -1459,6 +1491,12 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		postData.push({name : "promocional", value : selecionado.promo});
 		postData.push({name : "sobra", value : selecionado.sobra});
 		postData.push({name : "repDistrib", value : selecionado.repDistrib});
+		
+		if(selecionado.idCopia != null) {
+			
+			postData.push({name : "produtoDistribuicaoVO.idLancamento", value : selecionado.idLancamento});
+			postData.push({name : "produtoDistribuicaoVO.idCopia", 	    value : selecionado.idCopia});
+		}
 		
 		var temp = $('#workspace').tabs( "option", "ajaxOptions");
 		$('#workspace').tabs( "option", "ajaxOptions", { data: postData, type: 'POST' } );

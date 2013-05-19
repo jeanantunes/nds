@@ -5,9 +5,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -90,7 +90,8 @@ public class MatrizDistribuicaoController extends BaseController {
 	private ParametrosDistribuidorService parametrosDistribuidorService;
 
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMatrizDistribuicao";
-	private static final String MAP_DE_DUPLICACOES = "MAP_DE_DUPLICACOES";
+	private static final String LISTA_DE_DUPLICACOES = "LISTA_DE_DUPLICACOES";
+	private static final int MAX_DUPLICACOES_PERMITIDAS = 3;
 
 	@Path("/matrizDistribuicao")
 	@Rules(Permissao.ROLE_DISTRIBUICAO_MATRIZ_DISTRIBUICAO)
@@ -104,6 +105,12 @@ public class MatrizDistribuicaoController extends BaseController {
 		result.include("fornecedores", fornecedores);
 	}
 
+	@SuppressWarnings("unchecked")
+	private List<ProdutoDistribuicaoVO> obterListaDeItensDuplicadosNaSessao() {
+		
+		return (List<ProdutoDistribuicaoVO>)session.getAttribute(LISTA_DE_DUPLICACOES);
+	}
+	
 	@Post
 	public void obterMatrizDistribuicao(Date dataLancamento, List<Long> idsFornecedores) {
 
@@ -113,12 +120,44 @@ public class MatrizDistribuicaoController extends BaseController {
 		this.result.use(Results.json()).from(parametrosDistribuidorVO).recursive().serialize();
 	}
 
+	private void preparaItensParaVisualizacaoMatrizDistribuicao(List<ProdutoDistribuicaoVO> itens) {
+		
+		for (int i=0; i < itens.size(); i++) {
+			itens.get(i).setIdRow(i);
+		}
+	}
+	
 	@Post
 	public void obterGridMatrizDistribuicao(String sortorder, String sortname, int page, int rp) {
-
+		
 		FiltroDistribuicaoDTO filtro = obterFiltroSessao();
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		TotalizadorProdutoDistribuicaoVO vo = matrizDistribuicaoService.obterMatrizDistribuicao(filtro);
+		
+		preparaItensParaVisualizacaoMatrizDistribuicao(vo.getListProdutoDistribuicao());
+		
+		List<ProdutoDistribuicaoVO> listCopias = obterListaDeItensDuplicadosNaSessao();
+		
+		if (listCopias != null && !listCopias.isEmpty()) {
+			
+			List<ProdutoDistribuicaoVO> newList = new ArrayList<ProdutoDistribuicaoVO>();
+			
+			for (ProdutoDistribuicaoVO distribuicaoVO:vo.getListProdutoDistribuicao()) {
+				
+				newList.add(distribuicaoVO);
+				
+				for (ProdutoDistribuicaoVO distribuicaoVOCopia:listCopias) {
+					
+					if (distribuicaoVO.getIdLancamento().equals(distribuicaoVOCopia.getIdLancamento())) {
+						
+						newList.add(distribuicaoVOCopia);
+					}
+				}
+			}
+		
+			vo.setListProdutoDistribuicao(newList);
+ 		}
+		
 		filtro.setTotalRegistrosEncontrados(vo.getListProdutoDistribuicao().size());
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
 		processarDistribuicao(vo, filtro);
@@ -342,17 +381,80 @@ public class MatrizDistribuicaoController extends BaseController {
 		
 		List<ProdutoDistribuicaoVO> list = totalizadorProdutoDistribuicaoVO.getListProdutoDistribuicao();
 		
-		int index = Collections.binarySearch(list, produtoDistribuicao);
+		preparaItensParaVisualizacaoMatrizDistribuicao(list);
+		
+		Comparator<ProdutoDistribuicaoVO> comparator = new Comparator<ProdutoDistribuicaoVO>() {
+			
+			@Override
+			public int compare(ProdutoDistribuicaoVO o1, ProdutoDistribuicaoVO o2) {
+				
+				return o1.getIdLancamento().compareTo(o2.getIdLancamento());
+			}
+		};
+		
+		Collections.sort(list, comparator);
+		
+		int index = Collections.binarySearch(list, produtoDistribuicao, comparator);
 		
 		ProdutoDistribuicaoVO distribuicaoVOCopia = (ProdutoDistribuicaoVO)SerializationUtils.clone(list.get(index));
+		distribuicaoVOCopia.setIdEstudo(null);
 		
-		Map <Long,List>map = (Map <Long,List>)session.getAttribute(MAP_DE_DUPLICACOES);
+		List<ProdutoDistribuicaoVO> listProdutoDistribuicaoVO = obterListaDeItensDuplicadosNaSessao();
 		
+		if (listProdutoDistribuicaoVO == null) {
+			
+			listProdutoDistribuicaoVO = new ArrayList<ProdutoDistribuicaoVO>();
+		}
+	
+		int qtdDuplicacoes = 1;
 		
+		for(ProdutoDistribuicaoVO distribVO:listProdutoDistribuicaoVO) {
+			
+			if (distribVO.getIdLancamento().equals(distribuicaoVOCopia.getIdLancamento())) {
+				
+				qtdDuplicacoes++;
+				
+				if (qtdDuplicacoes > MAX_DUPLICACOES_PERMITIDAS) {
+					
+					throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não é permitido mais do que " + MAX_DUPLICACOES_PERMITIDAS + " duplicações"));
+				}
+			}
+		}
+		
+		distribuicaoVOCopia.setIdCopia(qtdDuplicacoes);
+		
+		listProdutoDistribuicaoVO.add(distribuicaoVOCopia);
+		
+		session.setAttribute(LISTA_DE_DUPLICACOES, listProdutoDistribuicaoVO);
 		
 //		produtoDistribuicao.setIdUsuario(getUsuarioLogado().getId());
 //		matrizDistribuicaoService.duplicarLinhas(produtoDistribuicao);
 		this.result.use(Results.json()).from(Results.nothing()).serialize();
+	}
+	
+	public void removeItemListaDeItensDuplicadosNaSessao(BigInteger idLancamento, Integer idCopia) {
+		
+		if (idCopia != null) {
+			
+			List<ProdutoDistribuicaoVO> distribuicaoVOs = obterListaDeItensDuplicadosNaSessao();
+			
+			if (distribuicaoVOs != null) {
+				
+				ProdutoDistribuicaoVO produtoDistribuicaoVO = null;
+				int i = 0;
+				
+				for (ProdutoDistribuicaoVO distribuicaoVO:distribuicaoVOs) {
+					
+					if (distribuicaoVO.getIdLancamento().equals(idLancamento) && distribuicaoVO.getIdCopia().equals(idCopia)) {
+						
+						produtoDistribuicaoVO = distribuicaoVO;
+						break;
+					}
+				}
+				
+				distribuicaoVOs.remove(produtoDistribuicaoVO);
+			}
+		}
 	}
 
 	@Post
@@ -364,6 +466,12 @@ public class MatrizDistribuicaoController extends BaseController {
 		}
 		
 		matrizDistribuicaoService.excluirEstudos(produtosDistribuicao);
+		
+		for (ProdutoDistribuicaoVO distribuicaoVO:produtosDistribuicao) {
+			
+			removeItemListaDeItensDuplicadosNaSessao(distribuicaoVO.getIdLancamento(), distribuicaoVO.getIdCopia());
+		}
+		
 		this.result.use(Results.json()).from(Results.nothing()).serialize();
 	}
 
@@ -380,7 +488,7 @@ public class MatrizDistribuicaoController extends BaseController {
 	}
 
 	@Post
-	public void gerarEstudoAutomatico(String codigoProduto, Long numeroEdicao, BigDecimal reparte) {
+	public void gerarEstudoAutomatico(String codigoProduto, Long numeroEdicao, BigDecimal reparte, BigInteger idLancamento, Integer idCopia) {
 		
 		EstudoTransient estudoAutomatico;
 		try {
@@ -391,6 +499,8 @@ public class MatrizDistribuicaoController extends BaseController {
 			log.error("Erro na geração automatica do estudo.", e);
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
 		}
+		
+		removeItemListaDeItensDuplicadosNaSessao(idLancamento, idCopia);
 
 		String htmlEstudo = HTMLTableUtil.estudoToHTML(estudoAutomatico);
 		result.use(Results.json()).from(htmlEstudo, "estudo").recursive().serialize();
@@ -409,4 +519,13 @@ public class MatrizDistribuicaoController extends BaseController {
 		result.use(Results.json()).from(Results.nothing()).serialize();
     }
 
+	public HttpSession getSession() {
+		return session;
+	}
+
+	public void setSession(HttpSession session) {
+		this.session = session;
+	}
+
+    
 }

@@ -12,6 +12,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
 import br.com.abril.nds.dto.EstrategiaDTO;
@@ -102,7 +103,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
     @Post
     @Transactional(readOnly = true)
     public void index(String codigoProduto, Long edicao, Long estudoId, Long lancamentoId, String juramentado, String suplementar,
-	    String lancado, String promocional, String sobra, Long repDistrib) {
+	    String lancado, String promocional, String sobra, Long repDistrib, ProdutoDistribuicaoVO produtoDistribuicaoVO) {
 	if (codigoProduto == null) {
 	    result.nothing();
 	    return;
@@ -142,6 +143,10 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	// produtoEdicaoRepository.findReparteEVenda(convertido);
 
 	result.include("produtoEdicao", convertido);
+	
+	
+	session.setAttribute(ProdutoDistribuicaoVO.class.getName(), produtoDistribuicaoVO);
+	
     }
 
     @Path("pesquisarProdutosEdicao")
@@ -257,8 +262,20 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, produto, distribuicaoVendaMedia.getReparteDistribuir(), this.getUsuarioLogado());
 	String htmlEstudo = HTMLTableUtil.estudoToHTML(estudo);
 	result.use(Results.json()).from(htmlEstudo, "estudo").recursive().serialize();
+    
+	removeItensDuplicadosMatrizDistribuicao();
+    
     }
-
+    
+    private void removeItensDuplicadosMatrizDistribuicao() {
+    	
+    	ProdutoDistribuicaoVO vo = (ProdutoDistribuicaoVO)session.getAttribute(ProdutoDistribuicaoVO.class.getName());
+    	MatrizDistribuicaoController matrizDistribuicaoController = new MatrizDistribuicaoController();
+    	matrizDistribuicaoController.setSession(session);
+    	matrizDistribuicaoController.removeItemListaDeItensDuplicadosNaSessao(vo.getIdLancamento(), vo.getIdCopia());
+		session.removeAttribute(ProdutoDistribuicaoVO.class.getName());
+    }
+    
     public HttpSession getSession() {
 	return session;
     }
