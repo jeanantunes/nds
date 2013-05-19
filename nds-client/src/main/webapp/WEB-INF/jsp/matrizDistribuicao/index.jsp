@@ -37,7 +37,14 @@ function showTab(link, title) {
 }
 
 function estudoComplementarShow(link){
-	$('#workspace').tabs('addTab', 'Estudo Complementar', link);
+	
+	$.each(matrizDistribuicao.lancamentos, function(index, lancamento){
+		if(lancamento.selecionado) {
+			matrizDistribuicao.lancamentoSelecionadoParaComplementar = lancamento;
+		}
+	});
+	
+	matrizDistribuicao.validarMarcacaoUnicoItem() && $('#workspace').tabs('addTab', 'Estudo Complementar', link);
 }
 
 var pathTela = "${pageContext.request.contextPath}";
