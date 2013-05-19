@@ -165,7 +165,7 @@ function mostraIntervalo(){
             <td width="206"><input type="text" name="nomeProduto" id="nomeProduto" onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#nomeProduto');" style="width:200px;"/></td>
             <td width="75">Classificação:</td>
             <td width="167">
-            	<select name="select" id="select" style="width:160px;">
+            	<select name="select" id="classificacaoFiltro" style="width:160px;">
 			            <c:forEach items="${classificacao}" var="tipoProduto">
 							<option value="<c:out value="${tipoProduto.id}"/>" ${tipoProduto.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoProduto.descricao}"/></option>
 						</c:forEach>
