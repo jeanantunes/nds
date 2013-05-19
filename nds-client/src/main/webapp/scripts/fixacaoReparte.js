@@ -4,6 +4,7 @@ var codigos =  [],
 
 var fixacaoReparteController = $.extend(true, {
 //Grid de historico de edicoes 	
+    wsp : function() { return fixacaoReparteController.workspace; },
 	init : function() {
 		$(".historicoGrid",fixacaoReparteController.workspace).flexigrid({
 			preProcess: fixacaoReparteController.preProcessHistoricoGrid,
@@ -742,9 +743,9 @@ var fixacaoReparteController = $.extend(true, {
 		getDadosProduto : function() {
 
 			var data = [];
-			data.push({name:'filtro.codigoProduto',	value: $("#codigoProduto").val()});
-			data.push({name:'filtro.nomeProduto',	value: $("#nomeProduto").val()});
-			data.push({name:'filtro.classificacaoProduto',	value: $("select['select'] option:selected").html()});
+			data.push({name:'filtro.codigoProduto',	value: $("#codigoProduto", fixacaoReparteController.wsp).val()});
+			data.push({name:'filtro.nomeProduto',	value: $("#nomeProduto", fixacaoReparteController.wsp).val()});
+			data.push({name:'filtro.classificacaoProduto',	value: $("#classificacaoFiltro option:selected", fixacaoReparteController.wsp).html()});
 
 			return data;
 		},

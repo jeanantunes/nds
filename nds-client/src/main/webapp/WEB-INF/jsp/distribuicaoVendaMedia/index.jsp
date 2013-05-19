@@ -18,7 +18,7 @@ function popup_novo() {
 	$("#produtoPesquisaBases").val("");
 	$("#edicaoPesquisaBases").val("");
 	distribuicaoVendaMedia.produtoEdicaoPesquisaBases = [];
-	$( "#dialog-novo" ).dialog({
+	$( "#dialog-edicoes-base" ).dialog({
 		resizable: false,
 		height:420,
 		width:600,
@@ -243,7 +243,7 @@ function esconde_redutor(){
     </fieldset>
 </div>
 
-<div id="dialog-novo" title="Pesquisar Edições de Produto" style="margin-right: 0px; padding-right: 0px;">  
+<div id="dialog-edicoes-base" title="Pesquisar Edições de Produto" style="display: none; margin-right: 0px; padding-right: 0px;">  
 <fieldset style="width:560px!important;">
     <legend>Pesquisar Produto</legend>
         

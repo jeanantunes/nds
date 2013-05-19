@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.dao.CotaDAO;
 import br.com.abril.nds.dao.ProdutoEdicaoDAO;
+import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
@@ -38,11 +39,9 @@ public class JornaleirosNovos {
 	for (CotaEstudo cota : estudo.getCotas()) {
 	    mapCotas.put(cota.getId(), cota);
 	}
-	for (CotaEstudo cota : estudo.getCotasExcluidas()) {
-	    mapCotas.put(cota.getId(), cota);
-	}
 	for (CotaEstudo cota : estudo.getCotas()) {
-	    if (cota.isNova() && cota.getEdicoesRecebidas() != null && cota.getEdicoesRecebidas().size() <= 3) {
+	    if (cota.getClassificacao().equals(ClassificacaoCota.CotaNova) && cota.getEdicoesRecebidas() != null
+		    && cota.getEdicoesRecebidas().size() <= 3) {
 		List<CotaEstudo> equivalentes = cotaDAO.getIndiceAjusteCotaEquivalenteByCota(cota);
 
 		if ((equivalentes != null) && (equivalentes.size() > 0)) {
@@ -60,7 +59,9 @@ public class JornaleirosNovos {
 			    qtde = qtde.add(BigDecimal.ONE);
 			}
 		    }
-		    cota.setVendaMedia(somaVendaMediaEquiv.divide(qtde, 0, BigDecimal.ROUND_HALF_UP).multiply(cota.getIndiceAjusteEquivalente()));
+		    if (qtde.compareTo(BigDecimal.ZERO) > 0) {
+			cota.setVendaMedia(somaVendaMediaEquiv.divide(qtde, 2, BigDecimal.ROUND_HALF_UP).multiply(cota.getIndiceAjusteEquivalente()));
+		    }
 		}
 
 
