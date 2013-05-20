@@ -36,7 +36,7 @@ import br.com.caelum.vraptor.view.Results;
 @Resource
 public class HistogramaPosEstudoController extends BaseController{
 	
-	private String[] faixaReparteInicial = {"0-10","11-20","21-50","51-90","91-99999999"}; 
+	private String[] faixaReparteInicial = {"0-4","5-9","10-19","20-49","50-9999999"}; 
 	
 	@Autowired
 	private Result result;
@@ -80,6 +80,10 @@ public class HistogramaPosEstudoController extends BaseController{
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(selecionado.getCodigoProduto(), selecionado.getEdicao());
 		selecionado.setParcial(produtoEdicao.isParcial());
+
+		if (produtoEdicao.isParcial()) {
+			selecionado.setPeriodicidadeProduto(produto.getPeriodicidade().getOrdem());
+		}
 		
 		TipoSegmentoProduto segmento = produto.getTipoSegmentoProduto();
 		TipoSegmentoProdutoDTO segmentoDTO = new TipoSegmentoProdutoDTO();
@@ -87,7 +91,6 @@ public class HistogramaPosEstudoController extends BaseController{
 		segmentoDTO.setDescricao(segmento.getDescricao());
 		
 		selecionado.setTipoSegmentoProduto(segmentoDTO);
-		selecionado.setPeriodicidadeProduto(produto.getPeriodicidade().getOrdem());
 		if (estudo != null && estudo.isLiberado()) {
 			selecionado.setEstudoLiberado(Boolean.TRUE);
 		} else {

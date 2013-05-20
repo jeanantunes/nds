@@ -101,12 +101,12 @@ public class CorrecaoTendencia {
 			BigDecimal percentualVenda = this.totalVenda.divide(this.totalReparte, 4, BigDecimal.ROUND_HALF_UP);
 
 			if (percentualVenda.compareTo(BigDecimal.ONE) == 0) {
-				indiceCorrecaoTendencia = indiceCorrecaoTendencia.add(new BigDecimal(0.2).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR));
+				indiceCorrecaoTendencia = indiceCorrecaoTendencia.add(new BigDecimal(0.2).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_HALF_UP));
 			} else {
-				BigDecimal decimalCompare = new BigDecimal(0.9).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR);
+				BigDecimal decimalCompare = new BigDecimal(0.9).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_HALF_UP);
 
 				if (percentualVenda.compareTo(decimalCompare) >= 0) {
-					indiceCorrecaoTendencia = indiceCorrecaoTendencia.add(new BigDecimal(0.1).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR));
+					indiceCorrecaoTendencia = indiceCorrecaoTendencia.add(new BigDecimal(0.1).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_HALF_UP));
 				}
 			}
 		}

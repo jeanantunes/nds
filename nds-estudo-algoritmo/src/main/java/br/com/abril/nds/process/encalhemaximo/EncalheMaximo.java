@@ -40,7 +40,7 @@ public class EncalheMaximo extends ProcessoAbstrato {
 		    // VENDA_MEDIA / ((100 - PERCENTUAL_ENCALHE_COTA) / 100)
 		    BigDecimal percentual = BigDecimal.valueOf(100).subtract(cota.getPercentualEncalheMaximo())
 			    .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
-		    cota.setReparteCalculado(BigInteger.valueOf(cota.getVendaMedia().divide(percentual, 0, BigDecimal.ROUND_HALF_UP).longValue()), estudo);
+		    cota.setReparteCalculado(cota.getVendaMedia().divide(percentual, 0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
 		}
 	    }
 	}

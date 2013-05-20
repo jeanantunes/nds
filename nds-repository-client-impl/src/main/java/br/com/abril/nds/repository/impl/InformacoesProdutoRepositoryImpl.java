@@ -2,8 +2,10 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -43,12 +45,16 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" lancamento.tipoLancamento AS status, ");
 		hql.append(" prodEdicao.reparteDistribuido AS reparteDistribuido, ");
 		hql.append(" produto.percentualAbrangencia AS percentualAbrangencia, ");
+		hql.append(" (select t.descricao from TipoClassificacaoProduto t where t.id=produto.tipoClassificacaoProduto.id) as tipoClassificacaoProdutoDescricao, ");
+		
 		hql.append(" lancamento.dataLancamentoPrevista AS dataLcto, ");
 		hql.append(" lancamento.dataRecolhimentoPrevista AS dataRcto, ");
 		hql.append(" CASE ");
 		hql.append(" WHEN estudoG.dataAlteracao = null THEN estudoG.dataCadastro ");
 		hql.append(" ELSE estudoG.dataAlteracao  end AS dataAlteracao, ");
-		hql.append(" estudoG.id AS estudo, "); 
+		hql.append(" estudoG.id AS estudo, ");
+		hql.append(" estudoG.liberado AS estudoLiberado, ");
+		hql.append(" estudoG.qtdeReparte AS qtdeReparteEstudo, ");
 
 		hql.append(" (select sum(estCota.reparteMinimo)    					" + 
 				   "	from EstudoCota estCota  							" +
@@ -67,29 +73,65 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		
 		hql.append(" left join prodEdicao.produto AS produto ");
 		hql.append(" left join prodEdicao.lancamentos AS lancamento ");
-		hql.append(" left join produto.algoritmo AS algortm ");
-		hql.append(" INNER join lancamento.estudo AS estudoG ");
+		hql.append(" left join produto.algoritmo AS algortm, ");
+//		hql.append(" inner join produto.tipoClassificacaoProduto ");
+		// hql.append(" left join prodEdicao.estudo AS estudoG ");
+		hql.append(" Estudo as estudoG ");
+		hql.append(" left join estudoG.produtoEdicao ");
 		hql.append(" left join estudoG.usuario as usuarioEstudo ");
+		hql.append(" WHERE ");
+		hql.append(" estudoG.produtoEdicao = prodEdicao ");
 		
-		hql.append(" WHERE produto.codigo = :COD_PRODUTO ");
-		hql.append(" AND produto.nome = :NOME_PRODUTO ");
+		List<String> whereClauseList = new ArrayList<>();
+		
+		if(StringUtils.isNotEmpty(filtro.getCodProduto())){
+			whereClauseList.add(" produto.codigo = :COD_PRODUTO ");
+		}
+		
+		if(StringUtils.isNotEmpty(filtro.getNomeProduto()))
+			whereClauseList.add(" produto.nome = :NOME_PRODUTO ");
 		
 		if(filtro.getNumeroEdicao()!=null){
-			hql.append(" AND prodEdicao.numeroEdicao = :NUMERO_EDICAO ");
+			whereClauseList.add(" prodEdicao.numeroEdicao = :NUMERO_EDICAO ");
 		}
-		hql.append(this.getSqlWhereBuscarProdutos(filtro));
 		
+		if(filtro.getNumeroEstudo()!=null){
+			whereClauseList.add(" estudoG.id = :numero_estudo ");
+		}
+		
+		if(filtro.getIdTipoClassificacaoProd() !=null && filtro.getIdTipoClassificacaoProd() > 0){
+			whereClauseList.add(" produto.tipoClassificacaoProduto.id = :ID_CLASSIFICACAO ");
+		}
+		
+		if(!whereClauseList.isEmpty()){
+			hql.append(" AND ");
+		}
+		
+		hql.append(StringUtils.join(whereClauseList, " AND "));
+		
+		hql.append(" group BY estudoG.id ");
 		hql.append(" ORDER BY numeroEdicao desc ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
+
 		
-		query.setParameter("COD_PRODUTO", filtro.getCodProduto());
-		query.setParameter("NOME_PRODUTO", filtro.getNomeProduto());
+		if(filtro.getCodProduto()!=null){
+			query.setParameter("COD_PRODUTO", filtro.getCodProduto());
+		}
+		if(filtro.getNomeProduto()!=null){
+			query.setParameter("NOME_PRODUTO", filtro.getNomeProduto());
+		}
 		
 		if(filtro.getNumeroEdicao()!=null){
 			query.setParameter("NUMERO_EDICAO", filtro.getNumeroEdicao());
 		}
-		this.paramsDinamicosBuscarProdutos(query, filtro);
+		if(filtro.getNumeroEstudo()!=null){
+			query.setParameter("numero_estudo", filtro.getNumeroEstudo());
+		}
+		
+		if(filtro.getIdTipoClassificacaoProd() !=null && filtro.getIdTipoClassificacaoProd() > 0){
+			query.setParameter("ID_CLASSIFICACAO", filtro.getIdTipoClassificacaoProd());
+		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(InformacoesProdutoDTO.class));
 		

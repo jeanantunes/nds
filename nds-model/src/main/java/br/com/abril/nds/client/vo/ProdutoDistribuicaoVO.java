@@ -76,6 +76,10 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	//Usado para controlar cor sim cor não entre linhas originais e copias
 	//Na matriz de distribuição
 	private Integer idRow;
+
+	private Boolean estudoLiberado;
+	
+	private BigInteger qtdeReparteEstudo;
 	
 	public BigInteger getIdLancamento() {
 		return idLancamento;
@@ -324,6 +328,22 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 
 	public void setIdRow(Integer idRow) {
 		this.idRow = idRow;
+	}
+
+	public Boolean getEstudoLiberado() {
+		return estudoLiberado;
+	}
+
+	public void setEstudoLiberado(Boolean estudoLiberado) {
+		this.estudoLiberado = estudoLiberado;
+	}
+
+	public BigInteger getQtdeReparteEstudo() {
+		return qtdeReparteEstudo;
+	}
+
+	public void setQtdeReparteEstudo(BigInteger qtdeReparteEstudo) {
+		this.qtdeReparteEstudo = qtdeReparteEstudo;
 	}
 
 }

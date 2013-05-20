@@ -53,8 +53,8 @@ public class Estudo implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date dataLancamento;
 
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "PRODUTO_EDICAO_ID", nullable = false)
+	@ManyToOne
+	@JoinColumn(name = "PRODUTO_EDICAO_ID")
 	private ProdutoEdicao produtoEdicao;
 
 	@NotFound(action = NotFoundAction.IGNORE)
@@ -87,6 +87,9 @@ public class Estudo implements Serializable {
 	
 	@Column(name = "REPARTE_DISTRIBUIR")
 	private BigInteger reparteDistribuir;
+	
+	@Column(name = "SOBRA")
+	private BigInteger sobra;
 	
 	@Column(name = "DISTRIBUICAO_POR_MULTIPLOS")
 	private Integer distribuicaoPorMultiplos; //TODO no estudo usa boolean, verificar alteração
@@ -228,5 +231,12 @@ public class Estudo implements Serializable {
 		this.lancamentoID = lancamentoID;
 	}
 
+	public BigInteger getSobra() {
+		return sobra;
+	}
+
+	public void setSobra(BigInteger sobra) {
+		this.sobra = sobra;
+	}
 
 }

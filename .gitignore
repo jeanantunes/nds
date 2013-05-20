@@ -24,3 +24,4 @@ node_modules
 /nds-server/WebContent/
 nds-client/src/main/webapp/temp/
 integracao.sh
+nds-client/src/main/java/br/com/abril/nds/testeLocal/

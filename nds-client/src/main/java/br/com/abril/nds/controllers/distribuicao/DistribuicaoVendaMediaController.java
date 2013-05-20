@@ -6,8 +6,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,22 +18,24 @@ import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Roteiro;
+import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
+import br.com.abril.nds.model.planejamento.EdicaoBaseEstrategia;
 import br.com.abril.nds.model.planejamento.Estrategia;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.process.definicaobases.DefinicaoBases;
 import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
-import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
-import br.com.abril.nds.repository.EstrategiaRepository;
-import br.com.abril.nds.repository.EstudoRepository;
-import br.com.abril.nds.repository.LancamentoRepository;
-import br.com.abril.nds.repository.ProdutoEdicaoRepository;
-import br.com.abril.nds.repository.ProdutoRepository;
-import br.com.abril.nds.repository.RoteiroRepository;
+import br.com.abril.nds.service.EstoqueProdutoService;
+import br.com.abril.nds.service.EstrategiaService;
 import br.com.abril.nds.service.EstudoAlgoritmoService;
+import br.com.abril.nds.service.EstudoService;
+import br.com.abril.nds.service.LancamentoService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.RoteiroService;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.HTMLTableUtil;
 import br.com.caelum.vraptor.Path;
@@ -54,8 +54,6 @@ import br.com.caelum.vraptor.view.Results;
 @Resource
 public class DistribuicaoVendaMediaController extends BaseController {
 
-    private static final Logger log = LoggerFactory.getLogger(DistribuicaoVendaMediaController.class);
-
     public static final String SELECIONADOS_PRODUTO_EDICAO_BASE = "selecionados-produto-edicao-base";
 
     public static final String RESULTADO_PESQUISA_PRODUTO_EDICAO = "resultado-pesquisa-produto-edicao";
@@ -73,25 +71,22 @@ public class DistribuicaoVendaMediaController extends BaseController {
     private HttpServletResponse httpResponse;
 
     @Autowired
-    private ProdutoRepository produtoRepository;
+    private ProdutoEdicaoService produtoEdicaoService;
 
     @Autowired
-    private ProdutoEdicaoRepository produtoEdicaoRepository;
+    private EstudoService estudoService;
 
     @Autowired
-    private EstudoRepository estudoRepository;
+    private LancamentoService lancamentoService;
 
     @Autowired
-    private LancamentoRepository lancamentoRepository;
+    private RoteiroService roteiroService;
 
     @Autowired
-    private RoteiroRepository roteiroRepository;
+    private EstoqueProdutoService estoqueProdutoService;
 
     @Autowired
-    private EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
-
-    @Autowired
-    private EstrategiaRepository estrategiaRepository;
+    private EstrategiaService estrategiaService;
 
     @Autowired
     private DistribuicaoVendaMediaRepository distribuicaoVendaMediaRepository;
@@ -99,43 +94,98 @@ public class DistribuicaoVendaMediaController extends BaseController {
     @Autowired
     private EstudoAlgoritmoService estudoAlgoritmoService;
 
+    @Autowired
+    private DefinicaoBases definicaoBases;
+
     @Path("index")
-    @Post
-    @Transactional(readOnly = true)
     public void index(String codigoProduto, Long edicao, Long estudoId, Long lancamentoId, String juramentado, String suplementar,
 	    String lancado, String promocional, String sobra, Long repDistrib, ProdutoDistribuicaoVO produtoDistribuicaoVO) {
-	if (codigoProduto == null) {
-	    result.nothing();
-	    return;
-	}
-	session.removeAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO);
-	ProdutoEdicao produtoEdicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicao);
-	if (estudoId != null) {
-	    Estudo estudo = estudoRepository.buscarPorId(estudoId);
+
+	Estudo estudo = null;
+	ProdutoEdicao produtoEdicao = null;
+
+	if (estudoId != null && estudoId != 0l) {
+	    estudo = estudoService.obterEstudo(estudoId);
 	    result.include("estudo", estudo);
+	    produtoEdicao = estudo.getProdutoEdicao();
+	} else {
+	    produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicao.toString());
 	}
+
+	session.setAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO, null);
+	session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, null);
+
+	EstoqueProduto estoqueProdutoEdicao = estoqueProdutoService.buscarEstoquePorProduto(produtoEdicao.getId());
+
 	Lancamento lancamento = null;
 	if (lancamentoId == null) {
 	    lancamento = findLancamentoBalanceado(produtoEdicao);
 	} else {
-	    lancamento = lancamentoRepository.buscarPorIdSemEstudo(lancamentoId);
+	    lancamento = lancamentoService.obterLancamentoNaMesmaSessao(lancamentoId);
 	}
-	Estrategia estrategia = estrategiaRepository.buscarPorProdutoEdicao(produtoEdicao);
+	List<ProdutoEdicaoVendaMediaDTO> selecionados = new ArrayList<>();
+	Estrategia estrategia = estrategiaService.buscarPorProdutoEdicao(produtoEdicao);
 	EstrategiaDTO estrat = new EstrategiaDTO();
 	if (estrategia != null) {
 	    BeanUtils.copyProperties(estrategia, estrat);
-	}
 
-	List<Roteiro> roteiros = roteiroRepository.buscarTodos();
+	    for (EdicaoBaseEstrategia base : estrategia.getBasesEstrategia()) {
+		selecionados.addAll(distribuicaoVendaMediaRepository.pesquisar(base.getProdutoEdicao().getProduto().getCodigo(), null, base
+			.getProdutoEdicao().getNumeroEdicao()));
+	    }
+	} else {
+	    EstudoTransient estudoTemp = new EstudoTransient();
+	    ProdutoEdicaoEstudo prod = new ProdutoEdicaoEstudo(codigoProduto);
+	    prod.setNumeroEdicao(edicao);
+	    estudoTemp.setProdutoEdicaoEstudo(prod);
+	    try {
+		definicaoBases.executar(estudoTemp);
+
+		for (ProdutoEdicaoEstudo base : estudoTemp.getEdicoesBase()) {
+		    selecionados.addAll(distribuicaoVendaMediaRepository.pesquisar(base.getProduto().getCodigo(), null, base.getNumeroEdicao()));
+		}
+	    } catch (Exception e) {
+		System.out.println("erro: "+ e.getMessage());
+	    }
+	}
+	session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, selecionados);
+
+	List<Roteiro> roteiros = roteiroService.buscarTodos();
 
 	result.include("componentes", ComponentesPDV.values());
 	result.include("roteiros", roteiros);
 	result.include("juramentado", juramentado);
-	result.include("suplementar", suplementar);
-	result.include("lancado", lancado);
-	result.include("promocional", promocional);
-	result.include("sobra", sobra);
-	result.include("repDistrib", repDistrib);
+
+	if (estoqueProdutoEdicao != null) {
+	    result.include("suplementar", estoqueProdutoEdicao.getQtdeSuplementar());
+	} else {
+	    result.include("suplementar", suplementar);
+	}
+
+	if (lancado != null) {
+	    result.include("lancado", lancado);
+	} else {
+	    result.include("lancado", lancamento.getReparte());
+	}
+
+	if (promocional != null) {
+	    result.include("promocional", promocional);	
+	} else {
+	    result.include("promocional", lancamento.getRepartePromocional());
+	}
+
+	if (sobra != null) {
+	    result.include("sobra", sobra);
+	} else {
+	    result.include("sobra", estudo.getSobra());
+	}
+
+	if (repDistrib != null) {
+	    result.include("repDistrib", repDistrib);
+	} else {
+	    result.include("repDistrib", estudo.getReparteDistribuir());
+	}
+
 
 	result.include("lancamento", lancamento);
 	result.include("estrategia", estrat);
@@ -243,10 +293,12 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	    selecionados = new ArrayList<ProdutoEdicaoVendaMediaDTO>();
 	}
 
-	for (Integer index : indexes) {
-	    ProdutoEdicaoVendaMediaDTO produtoEdicao = resultadoPesquisa.get(index);
-	    if (!selecionados.contains(produtoEdicao)) {
-		selecionados.add(produtoEdicao);
+	if (indexes != null) {
+	    for (Integer index : indexes) {
+		ProdutoEdicaoVendaMediaDTO produtoEdicao = resultadoPesquisa.get(index);
+		if (!selecionados.contains(produtoEdicao)) {
+		    selecionados.add(produtoEdicao);
+		}
 	    }
 	}
 	session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, selecionados);

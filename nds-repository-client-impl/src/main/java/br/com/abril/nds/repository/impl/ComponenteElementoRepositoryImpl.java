@@ -129,9 +129,10 @@ public class ComponenteElementoRepositoryImpl implements ComponenteElementoRepos
 
     @Override
     public List<ComponenteElementoDTO> buscaCotasNovas() {
-	List<ComponenteElementoDTO> retorno = new ArrayList<>();
-	// TODO
-	return retorno;
+        List<ComponenteElementoDTO> retorno = new ArrayList<>();
+        retorno.add(new ComponenteElementoDTO("cotas_novas", 0, "Sim"));
+        retorno.add(new ComponenteElementoDTO("cotas_novas", 1, "Não"));
+        return retorno;
     }
 
     @Override

@@ -5,6 +5,7 @@
 <script language="javascript">
 $(function() {
 		$( "#tab-distribuicao" ).tabs();
+		distribuicaoVendaMedia.confirmarProdutosEdicaoBasePopup();
 	});
 function popup_novo() {
 	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -250,13 +251,13 @@ function esconde_redutor(){
           <tr>
             <td width="43">Código:</td>
             <td width="78">
-            	<input type="text" name="textfield" id="codigoPesquisaBases" style="width:60px;"
+            	<input type="text" id="codigoPesquisaBases" style="width:60px;"
             	 	onblur="if(this.value.length > 7) pesquisaProduto.pesquisarPorCodigoProduto('#codigoPesquisaBases', '#produtoPesquisaBases', {}, true, undefined, distribuicaoVendaMedia.errorCallBack);"
             	 	/>
             </td>
             <td width="48">Produto:</td>
             <td width="184">
-            	<input type="text" name="textfield2" id="produtoPesquisaBases" style="width:160px;" 
+            	<input type="text" id="produtoPesquisaBases" style="width:160px;" 
             		onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#produtoPesquisaBases', true);" 
                 	 onblur="pesquisaProduto.pesquisarPorNomeProduto('#codigoPesquisaBases', '#produtoPesquisaBases', {}, true, undefined, distribuicaoVendaMedia.errorCallBack);"
             		/>

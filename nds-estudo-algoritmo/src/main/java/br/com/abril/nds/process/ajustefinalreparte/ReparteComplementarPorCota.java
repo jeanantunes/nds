@@ -26,10 +26,11 @@ import br.com.abril.nds.process.calculoreparte.CalcularReparte;
 @Component
 public class ReparteComplementarPorCota extends ProcessoAbstrato {
 
-    LinkedList<CotaEstudo> listaOrdenada = new LinkedList<>();
+    LinkedList<CotaEstudo> listaOrdenada;
 
     @Override
     public void executar(EstudoTransient estudo) throws Exception {
+	listaOrdenada = new LinkedList<>();
 	ordenarLista(estudo);
 	distribuirReparteComplementar(estudo);
     }
@@ -89,20 +90,35 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	    reparte = estudo.getPacotePadrao();
 	}
 	for (CotaEstudo cota : listaOrdenada) {
-	    cota.setReparteCalculado(cota.getReparteCalculado().add(reparte));
-	    cota.setClassificacao(ClassificacaoCota.BancaEstudoComplementar);
-	    estudo.setReparteComplementar(estudo.getReparteComplementar().subtract(reparte));
-	    if (estudo.getReparteComplementar().compareTo(BigInteger.ZERO) <= 0) {
-		break;
+	    if (cota.getReparteMaximo() != null && cota.getReparteCalculado().compareTo(cota.getReparteMaximo()) > 0) {
+		cota.setReparteCalculado(cota.getReparteMaximo());
+	    } else if (cota.getReparteCalculado().compareTo(cota.getReparteMinimo()) < 0) {
+		cota.setReparteCalculado(cota.getReparteMinimo());
+	    } else {
+		cota.setReparteCalculado(cota.getReparteCalculado().add(reparte));
+		cota.setClassificacao(ClassificacaoCota.BancaEstudoComplementar);
+		estudo.setReparteComplementar(estudo.getReparteComplementar().subtract(reparte));
+		if (estudo.getReparteComplementar().compareTo(reparte) < 0) {
+		    break;
+		}
 	    }
 	}
 	BigInteger reparteGeral = BigInteger.ONE;
-	while (estudo.getReparteComplementar().compareTo(BigInteger.ZERO) > 0) {
+	if (estudo.isDistribuicaoPorMultiplos()) {
+	    reparteGeral = reparte;
+	}
+	while (estudo.getReparteComplementar().compareTo(reparteGeral) >= 0) {
 	    for (CotaEstudo cota : estudo.getCotas()) {
-		cota.setReparteCalculado(cota.getReparteCalculado().add(reparteGeral));
-		estudo.setReparteComplementar(estudo.getReparteComplementar().subtract(reparte));
-		if (estudo.getReparteComplementar().compareTo(BigInteger.ZERO) <= 0) {
-		    break;
+		if (cota.getReparteMaximo() != null && cota.getReparteCalculado().compareTo(cota.getReparteMaximo()) > 0) {
+		    cota.setReparteCalculado(cota.getReparteMaximo());
+		} else if (cota.getReparteCalculado().compareTo(cota.getReparteMinimo()) < 0) {
+		    cota.setReparteCalculado(cota.getReparteMinimo());
+		} else {
+		    cota.setReparteCalculado(cota.getReparteCalculado().add(reparteGeral));
+		    estudo.setReparteComplementar(estudo.getReparteComplementar().subtract(reparteGeral));
+		    if (estudo.getReparteComplementar().compareTo(reparteGeral) < 0) {
+			break;
+		    }
 		}
 	    }
 	}

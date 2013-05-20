@@ -460,7 +460,13 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		
 	}
 	
-	
+	private void validarCopiaProporcionalDeDistribuicao(Estudo estudo) {
+		
+		if ((estudo == null) || (estudo.getEstudoCotas() == null)) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi possível efetuar a cópia. Estudo inexistente ou não há cotas que receberam reparte.");
+		}
+	}
+		
 	@Override
 	@Transactional
 	public Long confirmarCopiarProporcionalDeEstudo(CopiaProporcionalDeDistribuicaoVO vo) {
@@ -468,6 +474,8 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		validarCopiaProporcionalDeDistribuicao(vo);
 		
 		Estudo estudo = estudoRepository.obterEstudoECotasPorIdEstudo(vo.getIdEstudo());
+		
+		validarCopiaProporcionalDeDistribuicao(estudo);
 		
 		Set<EstudoCota> set = estudo.getEstudoCotas();
 		List<EstudoCota> cotas = obterListEstudoCotas(set);
@@ -602,13 +610,23 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 				
 				repartDistrib = repartDistrib.subtract(totalFixacao);
 				repFinal = obterSomaReparteFinal(mapReparte, false, TipoClassificacaoEstudoCota.FX, TipoClassificacaoEstudoCota.MM);
+				
+				if (repFinal.intValue() <= 0) {
+					repFinal = BigInteger.ONE;
+				}
+				
 				indiceRepProporcional =  repartDistrib.divide(repFinal);  //repartDistrib / repFinal;
 				repCalculado = obterCalculoDistribMultiplos(repCalculado, indiceRepProporcional, pactPadrao);
 				
 			} else {
 				
 				repFinal = obterSomaReparteFinal(mapReparte);
-				indiceRepProporcional = repartDistrib.divide(repFinal);
+				
+				if (repFinal.intValue() <= 0) {
+					repFinal = BigInteger.ONE;
+				}
+				
+				indiceRepProporcional = repartDistrib.divide(repFinal); //repartDistrib / repFinal;
 				repCalculado = obterCalculoDistribMultiplos(repCalculado, indiceRepProporcional, pactPadrao);
 			}
 			

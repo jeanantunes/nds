@@ -1,6 +1,8 @@
 package br.com.abril.nds.process.jornaleirosnovos;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -8,10 +10,7 @@ import org.springframework.stereotype.Component;
 import br.com.abril.nds.dao.CotaDAO;
 import br.com.abril.nds.dao.ProdutoEdicaoDAO;
 import br.com.abril.nds.model.estudo.CotaEstudo;
-import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
-import br.com.abril.nds.process.ajustecota.AjusteCota;
-import br.com.abril.nds.process.correcaovendas.CorrecaoIndividual;
-import br.com.abril.nds.process.medias.Medias;
+import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
 
 /**
@@ -32,58 +31,71 @@ public class JornaleirosNovos {
     @Autowired
     private ProdutoEdicaoDAO produtoEdicaoDAO;
 
-    @Autowired
-    private Medias medias;
 
-    @Autowired
-    private CorrecaoIndividual correcaoIndividual;
+    public void executar(EstudoTransient estudo) throws Exception {
 
-    public void executar(CotaEstudo cota) throws Exception {
+	HashMap<Long, CotaEstudo> mapCotas = new HashMap<>();
+	for (CotaEstudo cota : estudo.getCotas()) {
+	    mapCotas.put(cota.getId(), cota);
+	}
+	for (CotaEstudo cota : estudo.getCotasExcluidas()) {
+	    mapCotas.put(cota.getId(), cota);
+	}
+	for (CotaEstudo cota : estudo.getCotas()) {
+	    if (cota.isNova() && cota.getEdicoesRecebidas() != null && cota.getEdicoesRecebidas().size() <= 3) {
+		List<CotaEstudo> equivalentes = cotaDAO.getIndiceAjusteCotaEquivalenteByCota(cota);
 
-	cota = cotaDAO.getIndiceAjusteCotaEquivalenteByCota(cota);
-
-	if ((cota.getEquivalente() != null) && (cota.getEquivalente().size() > 0)) {
-	    cota.setIndiceAjusteEquivalente(cota.getEquivalente().get(0).getIndiceAjusteEquivalente());
-	} 
-	if (cota.isNova() && cota.getEdicoesRecebidas() != null && cota.getEdicoesRecebidas().size() <= 3) {
-	    
-	    BigDecimal totalVendaMediaCorrigidaEquivalente = BigDecimal.ZERO;
-	    for (ProdutoEdicaoEstudo produtoEdicao : cota.getEdicoesRecebidas()) {
-		if (produtoEdicao.getNumeroEdicao().compareTo(new Long(1)) == 0 || !produtoEdicao.isColecao()) {
-		    int iEquivalente = 0;
-		    
-		    while (iEquivalente < cota.getEquivalente().size()) {
-			CotaEstudo cotaEquivalente = cota.getEquivalente().get(iEquivalente);
-			cotaEquivalente.setEdicoesRecebidas(produtoEdicaoDAO.getEdicaoRecebidas(cotaEquivalente, produtoEdicao));
-			if (cotaEquivalente.getEdicoesRecebidas() != null && !cotaEquivalente.getEdicoesRecebidas().isEmpty()) {
-			    int iProdutoEdicaoEquivalente = 0;
-			    
-			    while (iProdutoEdicaoEquivalente < cotaEquivalente.getEdicoesRecebidas().size()) {
-				ProdutoEdicaoEstudo produtoEdicaoEquivalente = cotaEquivalente.getEdicoesRecebidas().get(iProdutoEdicaoEquivalente);
-				correcaoIndividual.executar(produtoEdicaoEquivalente);
-				iProdutoEdicaoEquivalente++;
-			    }
-			    medias.executar(cotaEquivalente);
-			    BigDecimal vendaMediaCorrigidaEquivalente = cotaEquivalente.getVendaMedia();
-			    if (vendaMediaCorrigidaEquivalente.compareTo(BigDecimal.ZERO) == 1)
-				totalVendaMediaCorrigidaEquivalente = totalVendaMediaCorrigidaEquivalente.add(vendaMediaCorrigidaEquivalente);
-			}
-			iEquivalente++;
+		if ((equivalentes != null) && (equivalentes.size() > 0)) {
+		    if (equivalentes.get(0).getIndiceAjusteEquivalente() == null) {
+			cota.setIndiceAjusteEquivalente(BigDecimal.ONE);
+		    } else {
+			cota.setIndiceAjusteEquivalente(equivalentes.get(0).getIndiceAjusteEquivalente());
 		    }
+
+		    BigDecimal somaVendaMediaEquiv = BigDecimal.ZERO;
+		    BigDecimal qtde = BigDecimal.ZERO;
+		    for (CotaEstudo equiv : equivalentes) {
+			if (mapCotas.get(equiv.getId()) != null) {
+			    somaVendaMediaEquiv = somaVendaMediaEquiv.add(mapCotas.get(equiv.getId()).getVendaMedia());
+			    qtde = qtde.add(BigDecimal.ONE);
+			}
+		    }
+		    cota.setVendaMedia(somaVendaMediaEquiv.divide(qtde, 0, BigDecimal.ROUND_HALF_UP).multiply(cota.getIndiceAjusteEquivalente()));
 		}
-	    }
 
-	    if (totalVendaMediaCorrigidaEquivalente.compareTo(BigDecimal.ZERO) == 1) {
 
-		BigDecimal vendaMediaCorrigidaNovo = BigDecimal.ZERO;
-		BigDecimal qtdeEquivalente = new BigDecimal(cota.getEquivalente().size());
-		vendaMediaCorrigidaNovo = totalVendaMediaCorrigidaEquivalente.divide(qtdeEquivalente, 2, BigDecimal.ROUND_FLOOR);
-		if (cota.getIndiceAjusteEquivalente() != null) {
-		    vendaMediaCorrigidaNovo = vendaMediaCorrigidaNovo.multiply(cota.getIndiceAjusteEquivalente()).divide(BigDecimal.ONE, 2, BigDecimal.ROUND_FLOOR);
+
+		
+//		BigDecimal totalVendaMediaCorrigidaEquivalente = BigDecimal.ZERO;
+//		for (ProdutoEdicaoEstudo produtoEdicao : cota.getEdicoesRecebidas()) {
+//		    if (produtoEdicao.getNumeroEdicao().compareTo(new Long(1)) == 0 || !produtoEdicao.isColecao()) {
+//			for (CotaEstudo cotaEquivalente : cota.getEquivalente()) {
+//			    mapCotas.get()
+//			    cotaEquivalente.setEdicoesRecebidas(produtoEdicaoDAO.getEdicaoRecebidas(cotaEquivalente, produtoEdicao));
+//			    if (cotaEquivalente.getEdicoesRecebidas() != null && !cotaEquivalente.getEdicoesRecebidas().isEmpty()) {
+//				for (ProdutoEdicaoEstudo produtoEdicaoEquivalente : cotaEquivalente.getEdicoesRecebidas()) {
+//				    correcaoIndividual.executar(produtoEdicaoEquivalente);
+//				}
+//				medias.executar(cotaEquivalente);
+//				BigDecimal vendaMediaCorrigidaEquivalente = cotaEquivalente.getVendaMedia();
+//				if (vendaMediaCorrigidaEquivalente.compareTo(BigDecimal.ZERO) == 1)
+//				    totalVendaMediaCorrigidaEquivalente = totalVendaMediaCorrigidaEquivalente.add(vendaMediaCorrigidaEquivalente);
+//			    }
+//			}
+//		    }
+//		}
+//
+//		if (totalVendaMediaCorrigidaEquivalente.compareTo(BigDecimal.ZERO) == 1) {
+//
+//		    BigDecimal vendaMediaCorrigidaNovo = BigDecimal.ZERO;
+//		    BigDecimal qtdeEquivalente = new BigDecimal(cota.getEquivalente().size());
+//		    vendaMediaCorrigidaNovo = totalVendaMediaCorrigidaEquivalente.divide(qtdeEquivalente, 2, BigDecimal.ROUND_HALF_UP);
+//		    if (cota.getIndiceAjusteEquivalente() != null) {
+//			vendaMediaCorrigidaNovo = vendaMediaCorrigidaNovo.multiply(cota.getIndiceAjusteEquivalente()).divide(BigDecimal.ONE, 2, BigDecimal.ROUND_HALF_UP);
+//		    }
+//
+//		    cota.setVendaMedia(vendaMediaCorrigidaNovo);
 		}
-
-		cota.setVendaMedia(vendaMediaCorrigidaNovo);
 	    }
 	}
     }
-}

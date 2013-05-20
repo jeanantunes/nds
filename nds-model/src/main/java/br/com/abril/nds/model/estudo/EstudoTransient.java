@@ -23,7 +23,6 @@ public class EstudoTransient extends Estudo {
     private BigDecimal somatoriaVendaMedia;
     private BigDecimal somatoriaReparteEdicoesAbertas;
     private BigDecimal totalPDVs;
-    private BigInteger ajusteReparte;
     private BigDecimal excedente;
     private BigInteger reparteComplementar;
     private BigInteger reparteComplementarInicial;
@@ -42,7 +41,8 @@ public class EstudoTransient extends Estudo {
     private BigDecimal percentualExcedente;
     
     private BigDecimal menorVenda;
-    private BigInteger totalReparteAjuste;
+    private BigInteger reservaAjuste;
+    private BigInteger reservaAjusteInicial;
 
     public EstudoTransient() {
 	usarFixacao = true;
@@ -111,12 +111,6 @@ public class EstudoTransient extends Estudo {
     }
     public void setPracaVeraneio(boolean pracaVeraneio) {
 	this.pracaVeraneio = pracaVeraneio;
-    }
-    public BigInteger getAjusteReparte() {
-	return ajusteReparte;
-    }
-    public void setAjusteReparte(BigInteger ajusteReparte) {
-	this.ajusteReparte = ajusteReparte;
     }
     public BigDecimal getExcedente() {
 	return excedente;
@@ -218,12 +212,20 @@ public class EstudoTransient extends Estudo {
         this.menorVenda = menorVenda;
     }
 
-    public BigInteger getTotalReparteAjuste() {
-        return totalReparteAjuste;
+    public BigInteger getReservaAjuste() {
+        return reservaAjuste;
     }
 
-    public void setTotalReparteAjuste(BigInteger totalReparteAjuste) {
-        this.totalReparteAjuste = totalReparteAjuste;
+    public void setReservaAjuste(BigInteger reservaAjuste) {
+        this.reservaAjuste = reservaAjuste;
+    }
+
+    public BigInteger getReservaAjusteInicial() {
+        return reservaAjusteInicial;
+    }
+
+    public void setReservaAjusteInicial(BigInteger reservaAjusteInicial) {
+        this.reservaAjusteInicial = reservaAjusteInicial;
     }
 
     @Override
@@ -234,8 +236,7 @@ public class EstudoTransient extends Estudo {
 		+ ", reparteMinimo=" + reparteMinimo + ", somatoriaVendaMedia="
 		+ somatoriaVendaMedia + ", somatoriaReparteEdicoesAbertas="
 		+ somatoriaReparteEdicoesAbertas + ", totalPDVs=" + totalPDVs
-		+ ", ajusteReparte=" + ajusteReparte + ", excedente="
-		+ excedente + ", reparteComplementar=" + reparteComplementar
+		+ ", excedente=" + excedente + ", reparteComplementar=" + reparteComplementar
 		+ ", statusEstudo=" + statusEstudo + ", bonificacoes="
 		+ bonificacoes + ", complementarAutomatico="
 		+ complementarAutomatico + ", pracaVeraneio=" + pracaVeraneio

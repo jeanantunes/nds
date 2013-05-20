@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 
 import br.com.abril.nds.util.export.Exportable;
 
@@ -13,6 +14,8 @@ public class FiltroInformacoesProdutoDTO extends FiltroDTO implements Serializab
 	private String nomeProduto;
 	private Long idTipoClassificacaoProd;
 	private Long numeroEdicao;
+	private Long numeroEstudo;
+	
 	
 	public String getCodProduto() {
 		return codProduto;
@@ -39,6 +42,13 @@ public class FiltroInformacoesProdutoDTO extends FiltroDTO implements Serializab
 	public void setNumeroEdicao(Long numeroEdicao) {
 		this.numeroEdicao = numeroEdicao;
 	}
+	public Long getNumeroEstudo() {
+		return numeroEstudo;
+	}
+	public void setNumeroEstudo(Long numeroEstudo) {
+		this.numeroEstudo = numeroEstudo;
+	}
 	
+
 	
 }

@@ -34,21 +34,21 @@ public class CorrecaoIndividual {
 	BigDecimal indiceCorrecao = BigDecimal.ONE;
 
 	if (produtoEdicao.getVenda().compareTo(BigDecimal.ZERO) == 1) {
-	    BigDecimal percentualVenda = produtoEdicao.getVenda().divide(produtoEdicao.getReparte(), 1, BigDecimal.ROUND_FLOOR);
+	    BigDecimal percentualVenda = produtoEdicao.getVenda().divide(produtoEdicao.getReparte(), 1, BigDecimal.ROUND_HALF_UP);
 
 	    if (percentualVenda.compareTo(BigDecimal.ONE) == 0) {
-		indiceCorrecao = indiceCorrecao.add(BigDecimal.valueOf(0.2).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR));
+		indiceCorrecao = indiceCorrecao.add(BigDecimal.valueOf(0.2).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_HALF_UP));
 	    } else {
 
-		BigDecimal decimalCompare = BigDecimal.valueOf(0.9).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR);
+		BigDecimal decimalCompare = BigDecimal.valueOf(0.9).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_HALF_UP);
 
 		if (percentualVenda.compareTo(decimalCompare) >= 0) {
-		    indiceCorrecao = indiceCorrecao.add(BigDecimal.valueOf(0.1).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR));
+		    indiceCorrecao = indiceCorrecao.add(BigDecimal.valueOf(0.1).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_HALF_UP));
 		}
 	    }
 	}
 	produtoEdicao.setIndiceCorrecao(indiceCorrecao);
-	produtoEdicao.setVendaCorrigida(produtoEdicao.getVenda().multiply(indiceCorrecao).divide(BigDecimal.ONE, 2, BigDecimal.ROUND_FLOOR));
+	produtoEdicao.setVendaCorrigida(produtoEdicao.getVenda().multiply(indiceCorrecao).divide(BigDecimal.ONE, 2, BigDecimal.ROUND_HALF_UP));
     }
 
 }

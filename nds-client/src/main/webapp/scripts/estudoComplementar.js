@@ -1,9 +1,6 @@
 
 var estudoComplementarController =$.extend(true,  {
 	
-
-	
-	
 	gerarEstudoComplementar:function(){
 
 		
@@ -73,6 +70,9 @@ var estudoComplementarController =$.extend(true,  {
 			alert("Sobra negativa!!");
 			return
 		}
+		
+		var matrizSelecionado = matrizDistribuicao.lancamentoSelecionadoParaComplementar;
+		
 		var dados = [];
 	                  
 	                  dados.push({name:"parametros.reparteCota",         value: reparteCota});
@@ -81,20 +81,24 @@ var estudoComplementarController =$.extend(true,  {
 	                  dados.push({name:"parametros.reparteLancamento",   value: reparteLancamento});
 	                  dados.push({name:"parametros.reparteSobra",        value: reparteSobra});
 	                  dados.push({name:"parametros.tipoSelecao",         value: tipoSelecao});
+	                  dados.push({name:"parametros.idLancamento",        	 value: matrizSelecionado.idLancamento});
+	                  dados.push({name:"parametros.idEstudoComplementar",         value: $('#idEstudoComplementar').text()});
 	      					           
 		 $.ajax({
 			 url:  'lancamento/gerarEstudo',
 			 data:  dados ,
 	         type: "POST",
 	         
-	         success: function(data){	
-	        	  if(data.mensagens.tipoMensagem == "ERROR"){
-	        		  		exibirMensagem("WARNING", ["Nenhum resultado encontrado"]);
-	 	             }
-	 	             else{
-	 	     			$('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
-	 	     				exibirMensagem("SUCCESS", ["Estudo Complementar Gerado"]);
-	 	             }
+	         success: function(data){
+	        	 
+	        	 if (data) {
+	        		 if(data.mensagens.tipoMensagem == "ERROR"){
+	        			 exibirMensagem("WARNING", ["Nenhum resultado encontrado"]);
+	        		 }
+	        	 }else{
+	        		 $('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
+	        		 exibirMensagem("SUCCESS", ["Estudo Complementar Gerado"]);
+ 	             }
 	        	 
 
 	         
@@ -120,35 +124,34 @@ consultarEstudo:function (obj) {
 		url: 'lancamento/pesquisaEstudoBase/' + codigoEstudo ,
 		
 		success: function(json){
-			$('#idEstudoComplementar').html(json.baseEstudoVO.idEstudoComplementar); 
-			$('#idProduto').html(json.baseEstudoVO.codigoProduto); 
-			$('#nomeProduto').html(json.baseEstudoVO.nomeProduto);
-			
-			$('#numeroEdicao').html(json.baseEstudoVO.numeroEdicao);
-			$('#nomeClassificacao').html(json.baseEstudoVO.nomeClassificacao);
-			$('#publicacao').html(json.baseEstudoVO.codigoProduto);
-			$('#publicacaoNomeProduto').html(json.baseEstudoVO.nomeProduto);
-			$('#publicacaoEdicao').html(json.baseEstudoVO.numeroEdicao);
-			$('#publicacaoPEB').html(json.baseEstudoVO.idPEB);
-			$('#publicacaoNomeFornecedor').html(json.baseEstudoVO.nomeFornecedor);
-			$('#publicacaoDataLncto').html(json.baseEstudoVO.dataLncto);
-			$('#publicacaoDataRclto').html(json.baseEstudoVO.dataRclto);
-			$('#publicacaoClassificacao').html(json.baseEstudoVO.nomeClassificacao);
-			$('#reparteLancamento').val(json.baseEstudoVO.reparteLancamento);
-			$('#reparteDistribuicao').val(json.baseEstudoVO.reparteLancamento);
-			
-		}
+				if (json.mensagens) {
+					exibirMensagem(json.mensagens.tipoMensagem, json.mensagens.listaMensagens);
+				}else{
+					$('#idEstudoComplementar').html(json.baseEstudoVO.idEstudoComplementar); 
+					$('#idProduto').html(json.baseEstudoVO.codigoProduto); 
+					$('#nomeProdutoLabel').html(json.baseEstudoVO.nomeProduto);
+					
+					$('#numeroEdicao').html(json.baseEstudoVO.numeroEdicao);
+					$('#nomeClassificacao').html(json.baseEstudoVO.nomeClassificacao);
+					$('#publicacao').html(json.baseEstudoVO.codigoProduto);
+					$('#publicacaoNomeProduto').html(json.baseEstudoVO.nomeProduto);
+					$('#publicacaoEdicao').html(json.baseEstudoVO.numeroEdicao);
+					$('#publicacaoPEB').html(json.baseEstudoVO.idPEB);
+					$('#publicacaoNomeFornecedor').html(json.baseEstudoVO.nomeFornecedor);
+					$('#publicacaoDataLncto').html(json.baseEstudoVO.dataLncto);
+					$('#publicacaoDataRclto').html(json.baseEstudoVO.dataRclto);
+					$('#publicacaoClassificacao').html(json.baseEstudoVO.nomeClassificacao);
+					$('#reparteLancamento').val(json.baseEstudoVO.reparteLancamento);
+					$('#reparteDistribuicao').val(json.baseEstudoVO.reparteLancamento);
+				}
+			}
 		});
-		
-	
-
-		
     }
     else{
 
 		$('#idEstudoComplementar').html(""); 
 		$('#idProduto').html(""); 
-		$('#nomeProduto').html("");
+		$('#nomeProdutoLabel').html("");
 		
 		$('#numeroEdicao').html("");
 		$('#nomeClassificacao').html("");
@@ -160,6 +163,11 @@ consultarEstudo:function (obj) {
 		$('#publicacaoDataLncto').html("");
 		$('#publicacaoDataRclto').html("");
 		$('#publicacaoClassificacao').html("");
+		$('#reparteDistribuicao').val("");
+		$('#reparteLancamento').val("");
+		$('#tipoSelecao').val('selected');
+		$('#reparteCota').val(2);
+		
     }
 },
 

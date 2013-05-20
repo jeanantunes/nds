@@ -860,12 +860,21 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	this.inicializarTelaSomarEstudos = function() {
 		$('#somarEstudo-estudo').text('');
-		$('#somarEstudo-operacaoConcluida').text('');
+		$('#somarEstudo-operacaoConcluida,#somarEstudo-statusOperacao').empty();
+		
 		T.cancelarSomarEstudos();
 	},
 	
 	this.pesquisarProdutos = function() {
-		$('#workspace').tabs('addTab', "Informações do Produto", contextPath + "/distribuicao/informacoesProduto/");
+		$('#workspace')
+		.tabs({
+		  load: function( event, ui ) {
+			  if(informacoesProdutoController){
+				  informacoesProdutoController.targetRecuperarEstudo="#somarEstudo-estudoPesquisa";
+				  informacoesProdutoController.methodEval='change';
+			  }
+		  }
+		}).tabs('addTab', "Informações do Produto", contextPath + "/distribuicao/informacoesProduto/");
 		$( "#tabsNovoEntregador", this.workspace ).tabs();
 		$("#dialog-informacoes-produto", _workspace).show();
 	},
@@ -962,6 +971,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		$("#copiarEstudo-reparteDistribuido").text(selecionado.repDistrib).formatNumber({format:"#,###", locale:"br"});
 		$("#copiarEstudo-pctPadrao").val(selecionado.pctPadrao);
 		$("#copiarEstudo-idLancamento").text(selecionado.idLancamento);
+		$('#copiarEstudo-idCopia').text(selecionado.idCopia);
 		
 	},
 	
@@ -973,7 +983,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		$("#somarEstudo-nomeProduto").text(selecionado.nomeProduto);
 		$("#somarEstudo-classificacao").text(selecionado.classificacao);
 		$("#somarEstudo-dataLancto").text(selecionado.dataLancto);
-		$("#somarEstudo-reparte").text(selecionado.reparte);
+		$("#somarEstudo-reparte").text(selecionado.repDistrib);
 		$("#somarEstudo-idLancamento").text(selecionado.idLancamento);
 		
 	},
@@ -1048,20 +1058,54 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			var data = [];
 			
 			var codEstudo = $("#somarEstudo-estudoPesquisa").val();
-			
+
+			if(codEstudo==$("#somarEstudo-estudo").text().trim()){
+				T.cancelarSomarEstudos();
+				exibirMensagem("WARNING",["Estudo original não pode ser igual ao da soma."]);
+				return;
+			}
 			data.push({name: 'estudo',  value: codEstudo});
 			
 			$.postJSON(pathTela + "/matrizDistribuicao/carregarProdutoEdicaoPorEstudo", data,
 				function(result) {
-				    
+			
+				if(!result.codigoProduto){
+					T.cancelarSomarEstudos();
+					exibirMensagem("WARNING", ["Estudo não encontrado"]);
+					return;
+				}
+					var msgArray = validarEstudoAserSomado(result);
+					if(msgArray && msgArray.length>0){
+						T.cancelarSomarEstudos();
+						exibirMensagem("WARNING", msgArray);
+						return 
+					}
 					$("#somarEstudo-somado-codigoProduto").text(result.codigoProduto);
 					$("#somarEstudo-somado-edicao").text(result.numeroEdicao);
 					$("#somarEstudo-somado-nomeProduto").text(result.nomeProduto);
 					$("#somarEstudo-somado-classificacao").text(result.classificacao);
 					$("#somarEstudo-somado-dataLancto").text(result.dataLancto);
-					$("#somarEstudo-somado-reparte").text(result.reparte);
+					$("#somarEstudo-somado-reparte").text(result.qtdeReparteEstudo);
 			  }
 			);
+		},
+	
+		validarEstudoAserSomado=function(result){
+			var msgArray =[];
+			if(result.estudoLiberado){
+				msgArray.push("Estudo a ser somado já liberado!");
+			}
+			if($("#somarEstudo-codigoProduto").text().trim()!=result.codigoProduto){
+				msgArray.push("Estudo a ser somado com código produto diferente.");
+			}
+			if($("#somarEstudo-nomeProduto").text().trim()!=result.nomeProduto){
+				msgArray.push("Estudo a ser somado com produto diferente.");
+			}
+			if($("#somarEstudo-edicao").text().trim()!=result.numeroEdicao){
+				msgArray.push("Estudo a ser somado com edição diferente.");
+			}
+			
+			return msgArray;
 		},
 	
 	this.cancelarCopiaProporcionalDeEstudo = function() {
@@ -1087,12 +1131,15 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.cancelarSomarEstudos = function() {
 		
 		$("#somarEstudo-estudoPesquisa").val("");
-		$("#somarEstudo-somado-codigoProduto").text("");
-		$("#somarEstudo-somado-edicao").text("");
-		$("#somarEstudo-somado-nomeProduto").text("");
-		$("#somarEstudo-somado-classificacao").text("");
-		$("#somarEstudo-somado-dataLancto").text("");
-		$("#somarEstudo-somado-reparte").text("");
+		$("#somarEstudo-somado-codigoProduto," +
+				"#somarEstudo-somado-edicao," +
+				"#somarEstudo-somado-edicao," +
+				"#somarEstudo-somado-edicao," +
+				"#somarEstudo-somado-nomeProduto," +
+				"#somarEstudo-somado-classificacao," +
+				"#somarEstudo-somado-dataLancto," +
+				"#somarEstudo-somado-reparte").text("");
+		
 		$("#somarEstudo-somado-estudoPesquisa").removeAttr("disabled");
 	},
 	
@@ -1114,6 +1161,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		var pctPadrao = ($('#copiarEstudo-multiplos-check').attr("checked") == 'checked')?$('#copiarEstudo-pctPadrao').val():null;
 		var reparteDistribuido = $("#copiarEstudo-reparteDistribuido").text().replace(/\D/g, '');
 		var idLancamento = $("#copiarEstudo-idLancamento").text();
+		var idCopia = $("#copiarEstudo-idCopia").text();
 		
 		var data = [];
 		
@@ -1121,6 +1169,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		data.push({name: 'copiaProporcionalDeDistribuicaoVO.idEstudo', 			 value: estudo});
 		data.push({name: 'copiaProporcionalDeDistribuicaoVO.fixacao', 			 value: fixacao});
 		data.push({name: 'copiaProporcionalDeDistribuicaoVO.reparteDistribuido', value: reparteDistribuido});
+		data.push({name: 'copiaProporcionalDeDistribuicaoVO.idCopia', 			 value: idCopia});
 		
 		if (pctPadrao != null) {
 			data.push({name: 'copiaProporcionalDeDistribuicaoVO.pacotePadrao', value: pctPadrao});
@@ -1333,6 +1382,17 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
             $('.setaMuda').attr('src', contextPath + '/images/p7PM_dark_south.gif');
          }, 2000);
 	};
+	
+	this.analisarCopiaProporcional = function() {
+		//testa se registro selecionado possui estudo gerado
+		if ($('#copiarEstudo-estudo').html() == null || $('#copiarEstudo-estudo').html() == "") {
+			exibirMensagem("WARNING",["Favor gerar um estudo."]);
+			return;
+		} else {
+			// Deve ir direto para EMS 2031
+			T.redirectToTelaAnalise('#dialog-copiar-estudo','#telaAnalise', $('#copiarEstudo-estudo').html());
+		}
+	},
 	
 	this.analise = function(){
 		//testa se registro foi selecionado

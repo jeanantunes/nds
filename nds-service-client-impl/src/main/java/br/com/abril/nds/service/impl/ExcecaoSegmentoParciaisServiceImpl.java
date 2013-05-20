@@ -59,4 +59,10 @@ public class ExcecaoSegmentoParciaisServiceImpl implements ExcecaoSegmentoParcia
 	public List<CotaQueNaoRecebeExcecaoDTO> obterCotasQueNaoRecebemExcecaoPorProduto(FiltroExcecaoSegmentoParciaisDTO filtro) {
 		return excecaoSegmentoParciaisRepository.obterCotasQueNaoRecebemExcecaoPorProduto(filtro);
 	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public List<CotaQueNaoRecebeExcecaoDTO> autoCompletarPorNomeCotaQueNaoRecebeExcecao(FiltroExcecaoSegmentoParciaisDTO filtro) {
+		return excecaoSegmentoParciaisRepository.autoCompletarPorNomeCotaQueNaoRecebeExcecao(filtro);
+	}
 }
