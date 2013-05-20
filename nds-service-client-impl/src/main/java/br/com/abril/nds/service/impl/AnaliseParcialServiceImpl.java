@@ -1,8 +1,11 @@
 package br.com.abril.nds.service.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
-import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -18,6 +21,7 @@ import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.repository.AnaliseParcialRepository;
 import br.com.abril.nds.repository.EstudoRepository;
@@ -70,14 +74,16 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                     idsProdutoEdicao.add(edicao.getProdutoEdicaoId());
                 }
                 item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>());
-                edicoesComVenda.addAll(analiseParcialRepository.getEdicoesBase(new Long(item.getCota()), idsProdutoEdicao));
-                for (EdicoesProdutosDTO edicao : queryDTO.getEdicoesBase()) {
-                    for (EdicoesProdutosDTO ed : edicoesComVenda) {
-                        if (ed.getProdutoEdicaoId().equals(edicao.getProdutoEdicaoId())) {
-                            BeanUtils.copyProperties(edicao, ed, new String[] {"reparte", "venda"});
-                            item.getEdicoesBase().add(ed);
-                        }
-                    }
+                if(idsProdutoEdicao.size() > 0){
+                	edicoesComVenda.addAll(analiseParcialRepository.getEdicoesBase(new Long(item.getCota()), idsProdutoEdicao));
+                	for (EdicoesProdutosDTO edicao : queryDTO.getEdicoesBase()) {
+                		for (EdicoesProdutosDTO ed : edicoesComVenda) {
+                			if (ed.getProdutoEdicaoId().equals(edicao.getProdutoEdicaoId())) {
+                				BeanUtils.copyProperties(edicao, ed, new String[] {"reparte", "venda"});
+                				item.getEdicoesBase().add(ed);
+                			}
+                		}
+                	}                	
                 }
             }
         }

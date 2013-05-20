@@ -11,6 +11,7 @@ public class EstudoComplementarVO {
     int  tipoSelecao;
     long idEstudoComplementar;
     long idLancamento;
+    long idProdutoEdicao;
     
 	public int getReparteCota() {
 		return reparteCota;
@@ -59,6 +60,12 @@ public class EstudoComplementarVO {
 	}
 	public void setIdLancamento(long idLancamento) {
 		this.idLancamento = idLancamento;
+	}
+	public long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+	public void setIdProdutoEdicao(long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
 	}
 
 }

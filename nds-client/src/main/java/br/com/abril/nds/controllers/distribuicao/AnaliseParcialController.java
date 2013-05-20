@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -49,6 +50,9 @@ public class AnaliseParcialController extends BaseController {
 
     @Autowired
     private ProdutoEdicaoService produtoEdicaoService;
+    
+    @Autowired
+	private HttpSession session;
 
     @Path("/")
     public void index(Long id, Long faixaDe, Long faixaAte, String modoAnalise) {
@@ -56,8 +60,10 @@ public class AnaliseParcialController extends BaseController {
         EstudoCota estudo = analiseParcialService.buscarPorId(id);
         if (modoAnalise == null) {
             result.include("tipoExibicao", "NORMAL");
+            session.setAttribute("modoAnalise", "NORMAL");
         } else {
             result.include("tipoExibicao", modoAnalise);
+            session.setAttribute("modoAnalise", modoAnalise);
         }
         result.include("estudoCota", estudo);
         result.include("faixaDe", faixaDe);
@@ -116,7 +122,7 @@ public class AnaliseParcialController extends BaseController {
         queryDTO.setEstudoId(id);
         queryDTO.setFaixaDe(faixaDe);
         queryDTO.setFaixaAte(faixaAte);
-        queryDTO.setModoAnalise(modoAnalise);
+        queryDTO.setModoAnalise(session.getAttribute("modoAnalise").toString());
         queryDTO.setCodigoProduto(codigoProduto);
         queryDTO.setNumeroEdicao(numeroEdicao);
         queryDTO.setNumeroCotaStr(numeroCotaStr);
