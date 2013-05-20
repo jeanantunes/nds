@@ -83,6 +83,7 @@ var estudoComplementarController =$.extend(true,  {
 	                  dados.push({name:"parametros.tipoSelecao",         value: tipoSelecao});
 	                  dados.push({name:"parametros.idLancamento",        	 value: matrizSelecionado.idLancamento});
 	                  dados.push({name:"parametros.idEstudoComplementar",         value: $('#idEstudoComplementar').text()});
+	                  dados.push({name:"parametros.idProdutoEdicao",         value: matrizSelecionado.idProdutoEdicao});
 	      					           
 		 $.ajax({
 			 url:  'lancamento/gerarEstudo',

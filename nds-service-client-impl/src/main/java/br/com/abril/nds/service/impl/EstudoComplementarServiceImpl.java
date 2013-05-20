@@ -130,7 +130,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 		estudo1.setDataAlteracao(estudo.getDataAlteracao());
 		estudo1.setDataCadastro(estudo.getDataCadastro());
 		estudo1.setDataLancamento(estudo.getDataLancamento());
-		estudo1.setProdutoEdicao(estudo.getProdutoEdicao());
+		estudo1.setProdutoEdicao(new ProdutoEdicao(estudoComplementarVO.getIdProdutoEdicao()));
 		estudo1.setLiberado(false);
 		estudo1.setQtdeReparte(estudo.getQtdeReparte());
 		estudo1.setReparteDistribuir(qtdDistribuido);
