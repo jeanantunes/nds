@@ -880,15 +880,19 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	},
 	
 	this.redirectToTelaAnalise = function redirectToTelaAnalise(divToHide, divToShow, estudo){
+
+		var matrizSelecionado_estudo =null;
 		
-		//TODO As telas de analise estão com erro, validar este direcionamento após correções.
-		var urlAnalise;
-		if ($('#parcial').val() === 'true') {
-			urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + histogramaPosEstudoController.matrizSelecionado.estudo;
-		} else {
-			urlAnalise = contextPath + '/lancamento/analise/normal/?id=' + estudo;
+		if(typeof(histogramaPosEstudoController)!="undefined"){
+			matrizSelecionado_estudo = histogramaPosEstudoController.matrizSelecionado.estudo;
 		}
 		
+        var idEstudo =  matrizSelecionado_estudo || estudo;
+        var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + idEstudo;
+        if ($('#parcial').val() === 'true') {
+			urlAnalise += '&modoAnalise=PARCIAL';
+		}
+
 		$.get(
 				urlAnalise,
 				null, // parametros
@@ -903,9 +907,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			});
 		
 	},
-	
-	
-	
+
 	this.somarEstudos = function() {
 		
 		T.esconderOpcoes();

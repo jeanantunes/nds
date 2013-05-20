@@ -23,7 +23,7 @@ var analiseParcialController = $.extend(true, {
     edicoesBase : [],
     inputReparteSugerido : '<input type="hidden" id="reparteSalvo_#numeroCota" value="#value"/>'+
         '<input id="reparteAtual_#numeroCota" value="#value" class="reparteSugerido" '+
-        'tabindex="#tab" '+
+//        'tabindex="#tab" '+
         'onblur="analiseParcialController.inputBlur(event, this);"/>',
 
     tipoExibicao : 'NORMAL',
@@ -154,7 +154,7 @@ var analiseParcialController = $.extend(true, {
 
     somarTotais : function(resultado) {
         var totalJuramento = 0,
-            totalMediaVenda = 0,
+//            totalMediaVenda = 0,
             totalUltimoReparte = 0,
             quantidade = 0,
             totalReparteSugerido = 0,
@@ -178,17 +178,17 @@ var analiseParcialController = $.extend(true, {
                     quantidade++;
                 }
             }
-            if (venda > 0) {
-                cell.mediaVenda = (venda / quantidade).toFixed(0);
-            } else {
-                cell.mediaVenda = '';
-            }
+//            if (venda > 0) {
+//                cell.mediaVenda = (venda / quantidade).toFixed(0);
+//            } else {
+//                cell.mediaVenda = '';
+//            }
             if ((typeof cell.juramento !== 'undefined') && (cell.juramento !== '')) {
                 totalJuramento += parseInt(cell.juramento, 10);
             }
-            if ((typeof cell.mediaVenda !== 'undefined') && (cell.mediaVenda !== '')) {
-                totalMediaVenda += parseInt(cell.mediaVenda, 10);
-            }
+//            if ((typeof cell.mediaVenda !== 'undefined') && (cell.mediaVenda !== '')) {
+//                totalMediaVenda += parseInt(cell.mediaVenda, 10);
+//            }
             if ((typeof cell.ultimoReparte !== 'undefined') && (cell.ultimoReparte !== '')) {
                 totalUltimoReparte += parseInt(cell.ultimoReparte, 10);
             }
@@ -198,7 +198,7 @@ var analiseParcialController = $.extend(true, {
             quantidade++;
         });
         $('#total_juramento').text(totalJuramento);
-        $('#total_media_venda').text(totalMediaVenda);
+//        $('#total_media_venda').text(totalMediaVenda);
         $('#total_ultimo_reparte').text(totalUltimoReparte);
         $('#total_reparte_sugerido').text(totalReparteSugerido);
         $('#total_de_cotas').text(resultado.rows.length);
@@ -249,7 +249,7 @@ var analiseParcialController = $.extend(true, {
             }
 
             if (analiseParcialController.tipoExibicao === 'NORMAL') {
-                $header.prepend($('<tr>').append($('<th colspan="8" style="border-bottom: 1px solid #DDDDDD;">')
+                $header.prepend($('<tr>').append($('<th colspan="7" style="border-bottom: 1px solid #DDDDDD;">')
                     .append('<div style="text-align: right;">Edições Base:</div>')));
                 $.each(analiseParcialController.edicoesBase, function(key, value) {
                     if(value){
@@ -260,7 +260,7 @@ var analiseParcialController = $.extend(true, {
             } else {
                 $header.prepend(
                     $('<tr>')
-                        .append($('<th colspan="8" style="border-bottom: 1px solid #DDDDDD;">')
+                        .append($('<th colspan="7" style="border-bottom: 1px solid #DDDDDD;">')
                             .append('<div style="text-align: right;">Edições Base:</div>'))
                         .append($('<th colspan="2">').append($('<div style="text-align: center;">').append('3ª Parcial')))
                         .append($('<th colspan="2">').append($('<div style="text-align: center;">').append('2ª Parcial')))
@@ -310,7 +310,7 @@ var analiseParcialController = $.extend(true, {
                 numCota = cell.cota;
             var input = analiseParcialController.inputReparteSugerido.toString().replace('#numeroCota', numCota);
             input = input.replace('#value', repSug).replace('#numeroCota', numCota).replace('#value', repSug);
-            input = input.replace('#tab', i+1);
+//            input = input.replace('#tab', i+1);
             cell.reparteSugerido = input;
             
             cell.nome = analiseParcialController.linkNomeCota.
@@ -359,14 +359,14 @@ var analiseParcialController = $.extend(true, {
     },
 
     modeloNormal : function() {
-        return [{display: 'Cota',   name: 'cota',          width: 33,  sortable: true, align: 'left'},
+        return [{display: 'Cota',   name: 'cota',          width: 33,  sortable: true, align: 'right'},
          {display: 'Class.', name: 'classificacao', width: 30,  sortable: true, align: 'center'},
          {display: 'Nome',   name: 'nome',          width: 100, sortable: true, align: 'left'},
          {display: 'NPDV',   name: 'npdv',          width: 30,  sortable: true, align: 'right'},
          {display: 'Rep. Sugerido', name: 'reparteSugerido', width: 50, sortable: true, align: 'right'},
          {display: 'LEG',    name: 'leg',           width: 20, sortable: true, align: 'center'},
          {display: 'Cota Nova', name: 'cotaNova',   width: 40, sortable: true, align: 'right', hide: true},
-         {display: 'Média.VDA', name: 'mediaVenda', width: 60, sortable: true, align: 'right'},
+//         {display: 'Média.VDA', name: 'mediaVenda', width: 60, sortable: true, align: 'right'},
          {display: 'Último. Reparte', name: 'ultimoReparte', width: 80, sortable: true, align: 'right'},
          {display: 'REP', name: 'reparte1',      width: 23, sortable: true, align: 'right'},
          {display: 'VDA', name: 'venda1',        width: 23, sortable: true, align: 'right'},
@@ -383,7 +383,7 @@ var analiseParcialController = $.extend(true, {
     },
     
     modeloParcial : function() {
-        return [{display: 'Cota',   name: 'cota',          width: 33,  sortable: true, align: 'left'},
+        return [{display: 'Cota',   name: 'cota',          width: 33,  sortable: true, align: 'right'},
          {display: 'Class.', name: 'classificacao', width: 30,  sortable: true, align: 'center'},
          {display: 'Nome',   name: 'nome',          width: 100, sortable: true, align: 'left'},
          {display: 'NPDV',   name: 'npdv',          width: 30,  sortable: true, align: 'right'},
@@ -391,7 +391,7 @@ var analiseParcialController = $.extend(true, {
          {display: 'LEG',    name: 'leg',           width: 20, sortable: true, align: 'center'},
          {display: 'Juram.', name: 'juramento',     width: 40, sortable: true, align: 'right'},
          {display: 'Cota Nova', name: 'cotaNova',   width: 40, sortable: true, align: 'right', hide: true},
-         {display: 'Média.VDA', name: 'mediaVenda', width: 50, sortable: true, align: 'right'}, 
+//         {display: 'Média.VDA', name: 'mediaVenda', width: 50, sortable: true, align: 'right'},
          {display: 'Último. Reparte', name: 'ultimoReparte', width: 50, sortable: true, align: 'right'},
          {display: 'REP', name: 'reparte1',      width: 40, sortable: true, align: 'right'},
          {display: 'VDA', name: 'venda1',        width: 40, sortable: true, align: 'right'},
@@ -435,7 +435,7 @@ var analiseParcialController = $.extend(true, {
                         return a+b;
                     }));
         }).on('keyup', 'tr td input:text', function(event){
-            if(event.which === 13) {
+            if(event.which === 13 || event.which === 9) {
                 $(event.currentTarget)
                     .parents('tr').next('tr')
                     .find('input:text').focus()
@@ -456,7 +456,7 @@ var analiseParcialController = $.extend(true, {
         parameters.push({name: 'codigoProduto', value: $('#codigoProduto').val()});
         parameters.push({name: 'numeroEdicao', value: $('#numeroEdicao').val()});
         
-        if(histogramaPosEstudo_cotasRepMenorVenda){
+        if(typeof(histogramaPosEstudo_cotasRepMenorVenda)!="undefined"){
         	parameters.push({name: "numeroCotaStr", value: histogramaPosEstudo_cotasRepMenorVenda});
         }
 
@@ -690,6 +690,7 @@ var analiseParcialController = $.extend(true, {
 $(".cotasDetalhesGrid").flexigrid({
     url: analiseParcialController.path +'/distribuicao/analise/parcial/carregarDetalhesCota',
     dataType : 'json',
+    autoload: false,
     colModel : [{display: 'Código',   name: 'id',                     width: 40,  sortable: true, align: 'left'},
                 {display: 'Tipo',     name: 'descricaoTipoPontoPDV',  width: 90,  sortable: true, align: 'left'},
                 {display: '% Fat.',   name: 'porcentagemFaturamento', width: 30,  sortable: true, align: 'right'},
