@@ -881,7 +881,13 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	this.redirectToTelaAnalise = function redirectToTelaAnalise(divToHide, divToShow, estudo){
 
-        var idEstudo = histogramaPosEstudoController.matrizSelecionado.estudo || estudo;
+		var matrizSelecionado_estudo =null;
+		
+		if(typeof(histogramaPosEstudoController)!="undefined"){
+			matrizSelecionado_estudo = histogramaPosEstudoController.matrizSelecionado.estudo;
+		}
+		
+        var idEstudo =  matrizSelecionado_estudo || estudo;
         var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + idEstudo;
         if ($('#parcial').val() === 'true') {
 			urlAnalise += '&modoAnalise=PARCIAL';

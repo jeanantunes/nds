@@ -456,7 +456,7 @@ var analiseParcialController = $.extend(true, {
         parameters.push({name: 'codigoProduto', value: $('#codigoProduto').val()});
         parameters.push({name: 'numeroEdicao', value: $('#numeroEdicao').val()});
         
-        if(histogramaPosEstudo_cotasRepMenorVenda){
+        if(typeof(histogramaPosEstudo_cotasRepMenorVenda)!="undefined"){
         	parameters.push({name: "numeroCotaStr", value: histogramaPosEstudo_cotasRepMenorVenda});
         }
 
