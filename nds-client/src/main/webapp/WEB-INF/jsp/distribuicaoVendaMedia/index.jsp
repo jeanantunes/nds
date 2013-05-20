@@ -21,7 +21,7 @@ function popup_novo() {
 	$( "#dialog-edicoes-base" ).dialog({
 		resizable: false,
 		height:420,
-		width:600,
+		width:800,
 		modal: true,
 		buttons: {
 			"Confirmar": function() {
@@ -264,8 +264,23 @@ function esconde_redutor(){
             </td>
             <td width="42">Edição:</td>
             <td width="62"><input type="text" name="textfield3" id="edicaoPesquisaBases" style="width:60px;" /></td>
-            <td width="52"><span class="classPesquisar"><a href="javascript:;" onclick="distribuicaoVendaMedia.pesquisarBases('${pageContext.request.contextPath}')">&nbsp;</a></span></td>
-          </tr>
+            </tr>
+          	<tr>
+	          	<td width="76">Classifica&ccedil;&atilde;o:</td>
+	            <td colspan="3">
+		        <select name="filtro.idTipoClassificacaoProduto" id="selectClassificacao" style="width:200px;">
+			        <option selected="selected">Selecione...</option>
+			        <c:forEach items="${listaTipoClassificacao}" var="tipoClassificacao">
+			            <option value="${tipoClassificacao.key}">${tipoClassificacao.value}</option>
+			        </c:forEach>
+		        </select>
+		        </td>
+	          	<td>
+	          		<span class="classPesquisar">
+	          			<a href="javascript:;" onclick="distribuicaoVendaMedia.pesquisarBases('${pageContext.request.contextPath}')">&nbsp;</a>
+	          		</span>
+	          	</td>
+          	</tr>
         </table>
 
     </fieldset>
