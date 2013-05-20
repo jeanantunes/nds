@@ -23,7 +23,7 @@ var analiseParcialController = $.extend(true, {
     edicoesBase : [],
     inputReparteSugerido : '<input type="hidden" id="reparteSalvo_#numeroCota" value="#value"/>'+
         '<input id="reparteAtual_#numeroCota" value="#value" class="reparteSugerido" '+
-        'tabindex="#tab" '+
+//        'tabindex="#tab" '+
         'onblur="analiseParcialController.inputBlur(event, this);"/>',
 
     tipoExibicao : 'NORMAL',
@@ -249,7 +249,7 @@ var analiseParcialController = $.extend(true, {
             }
 
             if (analiseParcialController.tipoExibicao === 'NORMAL') {
-                $header.prepend($('<tr>').append($('<th colspan="8" style="border-bottom: 1px solid #DDDDDD;">')
+                $header.prepend($('<tr>').append($('<th colspan="7" style="border-bottom: 1px solid #DDDDDD;">')
                     .append('<div style="text-align: right;">Edições Base:</div>')));
                 $.each(analiseParcialController.edicoesBase, function(key, value) {
                     if(value){
@@ -260,7 +260,7 @@ var analiseParcialController = $.extend(true, {
             } else {
                 $header.prepend(
                     $('<tr>')
-                        .append($('<th colspan="8" style="border-bottom: 1px solid #DDDDDD;">')
+                        .append($('<th colspan="7" style="border-bottom: 1px solid #DDDDDD;">')
                             .append('<div style="text-align: right;">Edições Base:</div>'))
                         .append($('<th colspan="2">').append($('<div style="text-align: center;">').append('3ª Parcial')))
                         .append($('<th colspan="2">').append($('<div style="text-align: center;">').append('2ª Parcial')))
@@ -310,7 +310,7 @@ var analiseParcialController = $.extend(true, {
                 numCota = cell.cota;
             var input = analiseParcialController.inputReparteSugerido.toString().replace('#numeroCota', numCota);
             input = input.replace('#value', repSug).replace('#numeroCota', numCota).replace('#value', repSug);
-            input = input.replace('#tab', i+1);
+//            input = input.replace('#tab', i+1);
             cell.reparteSugerido = input;
             
             cell.nome = analiseParcialController.linkNomeCota.
@@ -435,7 +435,7 @@ var analiseParcialController = $.extend(true, {
                         return a+b;
                     }));
         }).on('keyup', 'tr td input:text', function(event){
-            if(event.which === 13) {
+            if(event.which === 13 || event.which === 9) {
                 $(event.currentTarget)
                     .parents('tr').next('tr')
                     .find('input:text').focus()
@@ -690,6 +690,7 @@ var analiseParcialController = $.extend(true, {
 $(".cotasDetalhesGrid").flexigrid({
     url: analiseParcialController.path +'/distribuicao/analise/parcial/carregarDetalhesCota',
     dataType : 'json',
+    autoload: false,
     colModel : [{display: 'Código',   name: 'id',                     width: 40,  sortable: true, align: 'left'},
                 {display: 'Tipo',     name: 'descricaoTipoPontoPDV',  width: 90,  sortable: true, align: 'left'},
                 {display: '% Fat.',   name: 'porcentagemFaturamento', width: 30,  sortable: true, align: 'right'},

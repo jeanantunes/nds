@@ -97,16 +97,16 @@ function escondeDados(){
             </table>
             <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
                 <tr>
-                    <td>Status do Estudo: ${estudoCota.estudo.status}</td>
+                    <td>Status do Estudo: <span id="status_estudo">${estudoCota.estudo.isLiberado()?'Liberado':'Não Liberado'}</span></td>
                     <td>Reparte Distribuido: <span id="total_reparte_sugerido_cabecalho"></span></td>
-                    <td>Pacote Padrão: ${estudoCota.estudo.pacotePadrao}</td>
+                    <td>Pacote Padrão: ${estudoCota.estudo.produtoEdicao.pacotePadrao}</td>
                 </tr>
             </table>
             <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
 					<td>Classificação: ${estudoCota.estudo.produtoEdicao.produto.tipoClassificacaoProduto.descricao}</td>
 					<td>Segmento: ${estudoCota.estudo.produtoEdicao.produto.tipoSegmentoProduto.descricao}</td>
-					<td>Ordenar por:</td>
+					<td>Filtrar por:</td>
 					<td><select name="select5" id="filtroOrdenarPor" style="width: 138px;"
 						onchange="analiseParcialController.apresentarOpcoesOrdenarPor(this.value);">
 							<option value="" selected="selected">Selecione...</option>
