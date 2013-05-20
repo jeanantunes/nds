@@ -34,7 +34,7 @@ public class MinimoMaximo extends ProcessoAbstrato {
 		    } else {
 			cota.setClassificacao(ClassificacaoCota.MaximoMinimo);
 		    }
-		} else if (cota.getReparteCalculado().longValue() > cota.getReparteMaximo().longValue()) {
+		} else if (cota.getReparteCalculado().compareTo(cota.getReparteMaximo()) > 0) {
 		    cota.setReparteCalculado(cota.getReparteMaximo(), estudo);
 
 		    if (cota.isMix()) {
