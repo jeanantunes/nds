@@ -118,12 +118,11 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 		List<EstudoCota> estudoCotas =  selecionarBancas(estudoComplementarVO);
 	
 		if (estudoCotas.isEmpty()){
-		    throw new ValidacaoException(TipoMensagem.ERROR, "Nenhuma cota foi encontrada nos parâmetros para gerar o estudo complementar.");
+		    throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota foi encontrada nos parâmetros para gerar o estudo complementar.");
 		}
 	
 		BigInteger qtdReparte = BigInteger.valueOf(estudoComplementarVO.getReparteCota());
 		BigInteger qtdDistribuido = BigInteger.valueOf(estudoComplementarVO.getReparteDistribuicao());
-	
 	
 		Estudo estudo = estudoRepository.buscarPorId(estudoComplementarVO.getCodigoEstudo());
 	
@@ -134,6 +133,8 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 		estudo1.setProdutoEdicao(estudo.getProdutoEdicao());
 		estudo1.setLiberado(false);
 		estudo1.setQtdeReparte(estudo.getQtdeReparte());
+		estudo1.setReparteDistribuir(qtdDistribuido);
+		estudo1.setSobra(estudo1.getQtdeReparte().subtract(estudo1.getReparteDistribuir()));
 		estudo1.setStatus(estudo.getStatus());
 	
 		// Gera Novo Estudo
@@ -147,32 +148,46 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 		    ec.setCota(estudoCota.getCota());
 		    ec.setQtdeEfetiva(estudoCota.getQtdeEfetiva());
 		    ec.setQtdePrevista(estudoCota.getQtdeEfetiva());
-		    ec.setReparte(qtdReparte);
+		    ec.setReparte(estudoCota.getQtdeEfetiva());
 		    estudoCotaNovo.add(ec);
-	
 		}
 	
 		boolean primeiraVez=true;
-		while (qtdDistribuido.compareTo(BigInteger.ZERO)>0 ){
-		    for(int i=0; i<estudoCotaNovo.size();i++ ){
-	
-			EstudoCota estudoCota = estudoCotaNovo.get(i);
-			if(primeiraVez){
-			    estudoCota.setQtdeEfetiva(BigInteger.ZERO);
+		while ( qtdDistribuido.compareTo(BigInteger.ZERO) > 0 ){
+			
+			if (primeiraVez) {
+				for( int i=0; i < estudoCotaNovo.size(); i++ ){
+					
+					EstudoCota estudoCota = estudoCotaNovo.get(i);
+					if(primeiraVez){
+						estudoCota.setQtdeEfetiva(BigInteger.ZERO);
+					}
+					
+					estudoCota.setQtdeEfetiva(qtdReparte.add(estudoCota.getQtdeEfetiva()));
+					
+					estudoCota.setClassificacao("CP");
+					estudoCotaNovo.set(i, estudoCota);
+					qtdDistribuido = qtdDistribuido.subtract(qtdReparte);
+					
+					if(qtdDistribuido.compareTo(BigInteger.ZERO)<=0 ){
+						break;
+					}
+				}
+			}else{
+				for( int i=0; i < estudoCotaNovo.size(); i++ ){
+					EstudoCota estudoCota = estudoCotaNovo.get(i);
+					
+					estudoCota.setQtdeEfetiva(estudoCota.getQtdeEfetiva().add(BigInteger.valueOf(1l)));
+					qtdDistribuido = qtdDistribuido.subtract(BigInteger.valueOf(1l));
+					
+					if(qtdDistribuido.compareTo(BigInteger.ZERO)<=0 ){
+						break;
+					}
+				}
 			}
-	
-			estudoCota.setQtdeEfetiva(qtdReparte.add(estudoCota.getQtdeEfetiva()));
-	
-			estudoCota.setClassificacao("CP");
-			estudoCotaNovo.set(i, estudoCota);
-			qtdDistribuido = qtdDistribuido.subtract(qtdReparte);
-	
-			if(qtdDistribuido.compareTo(BigInteger.ZERO)<=0 ){
-			    break;
-			}
-	
-		    }
+			
 		    primeiraVez=false;
+		    
 		}
 	
 		for(EstudoCota estcota: estudoCotaNovo){
@@ -181,7 +196,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 		    ec1.setClassificacao(classificacao);
 		    ec1.setCota(estcota.getCota());
 		    ec1.setEstudo(estudo1);
-		    ec1.setReparte(qtdReparte);
+		    ec1.setReparte(estcota.getQtdeEfetiva());
 		    ec1.setQtdeEfetiva(estcota.getQtdeEfetiva());
 		    ec1.setQtdePrevista(BigInteger.TEN);
 	
