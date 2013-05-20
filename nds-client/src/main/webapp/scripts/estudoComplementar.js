@@ -90,26 +90,14 @@ var estudoComplementarController =$.extend(true,  {
 	         type: "POST",
 	         
 	         success: function(data){
-	        	 
-	        	 if (data) {
-	        		 if(data.mensagens.tipoMensagem == "ERROR"){
-	        			 exibirMensagem("WARNING", ["Nenhum resultado encontrado"]);
-	        		 }
-	        	 }else{
-	        		 $('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
-	        		 exibirMensagem("SUCCESS", ["Estudo Complementar Gerado"]);
- 	             }
-	        	 
-
-	         
-	         }
-	           
-	         
+		        	 if (data) {
+	        			 exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+		        	 }else{
+		        		 $('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
+		        		 exibirMensagem("SUCCESS", ["Estudo Complementar Gerado"]);
+	 	             }
+		         }
 	         });
-		
-	      					
-
-		
 	},
 
 	
