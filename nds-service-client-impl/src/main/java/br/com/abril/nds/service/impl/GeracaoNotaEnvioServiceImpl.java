@@ -95,6 +95,10 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	
 	@Autowired
 	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
+	
+	// Trava para evitar duplicidade ao gerar notas de envio por mais de um usuario simultaneamente
+	// O HashMap suporta os mais detalhes e pode ser usado futuramente para restricoes mais finas
+	private static final Map<String, Object> TRAVA_GERACAO_NE = new HashMap<>();
 
 	@Transactional
 	public List<ConsultaNotaEnvioDTO> busca(FiltroConsultaNotaEnvioDTO filtro) {
@@ -988,17 +992,23 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	@Transactional
 	public List<NotaEnvio> gerarNotasEnvio(FiltroConsultaNotaEnvioDTO filtro,
 			List<Long> idCotasSuspensasAusentes) {
-
+		
 		List<NotaEnvio> listaNotaEnvio = new ArrayList<NotaEnvio>();
 		List<SituacaoCadastro> situacoesCadastro = new ArrayList<SituacaoCadastro>();
 		situacoesCadastro.add(SituacaoCadastro.ATIVO);
 		situacoesCadastro.add(SituacaoCadastro.SUSPENSO);
 
+		if(TRAVA_GERACAO_NE != null && TRAVA_GERACAO_NE.get("neCotasSendoGeradas") != null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Notas de envio sendo geradas, tente novamente mais tarde.");
+		}
+		
+		TRAVA_GERACAO_NE.put("neCotasSendoGeradas", true);
+		
 		List<Long> listaIdCotas = this.cotaRepository.obterIdCotasEntre(
 				filtro.getIntervaloCota(), filtro.getIntervaloBox(),
 				situacoesCadastro, filtro.getIdRoteiro(), filtro.getIdRota(),
 				null, null, null, null);
-
+		
 		if (idCotasSuspensasAusentes != null) {
 			listaIdCotas.addAll(idCotasSuspensasAusentes);
 		}
@@ -1009,6 +1019,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 				null, null, filtro.getDataEmissao(),
 				filtro.getIntervaloMovimento(), filtro.getIdFornecedores());
 
+		TRAVA_GERACAO_NE.remove("neCotasSendoGeradas");
+		
 		return listaNotaEnvio;
 	}
 
