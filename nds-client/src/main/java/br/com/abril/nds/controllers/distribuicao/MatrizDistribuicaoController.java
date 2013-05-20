@@ -540,6 +540,14 @@ public class MatrizDistribuicaoController extends BaseController {
 		result.forwardTo(HistogramaPosEstudoController.class).histogramaPosEstudo();
 	}
 
+	@Post
+	public void verificarCoincidenciaEntreCotas(Long estudoBase,Long estudoSomado){
+		
+		Boolean existeCoincidencia = somarEstudosService.verificarCoincidenciaEntreCotas(estudoBase,estudoSomado);
+		
+		result.use(Results.json()).from((existeCoincidencia!=null)?existeCoincidencia:Boolean.FALSE).serialize();
+		
+	}
 
     @Post
     public void somarEstudos(Long idEstudoBase, ProdutoDistribuicaoVO distribuicaoVO) {
