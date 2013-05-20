@@ -6,12 +6,21 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	
 	this.confirmarProdutosEdicaoBasePopup = function(){
 	    var data = [];
+	    
+	    var qtdSelecionados = 0;
+	    
 	    if (typeof T.produtoEdicaoPesquisaBases !== 'undefined') {
 	        $.each(T.produtoEdicaoPesquisaBases, function(index, item){
 	            if(item.selecionado){
 	                data.push({name :"indexes", value: index});
+	                qtdSelecionados++;
 	            }
 	        });
+	    }
+	    
+	    if (qtdSelecionados > 6) {
+	    	 exibirMensagem("WARNING", ["Não pode ter mais do que 6 bases selecionadas."]);
+	    	 return;
 	    }
 
 	    $.postJSON(
@@ -129,9 +138,13 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		var codigo = $("#codigoPesquisaBases").val();
 		var produto = $("#produtoPesquisaBases").val();
 		var edicao = $("#edicaoPesquisaBases").val();
+		var classificacao = $("#selectClassificacao").val();
+		
 		data.push({name:"codigo", value:codigo});
 		data.push({name:"nome", value:produto});
 		data.push({name:"edicao", value:edicao});
+		data.push({name:"classificacao", value:classificacao});
+		
 		$.postJSON(
 				url + "/distribuicaoVendaMedia/pesquisarProdutosEdicao", 
 					data,

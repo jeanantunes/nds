@@ -1189,7 +1189,22 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			);
 	},
 	
-	
+	this.executarSomaDeEstudos=function(estudoPesquisa,estudo,codigoProduto){
+		var data = [];
+		
+		data.push({name: 'idEstudoBase', 	     								 value: estudoPesquisa});
+		data.push({name: 'distribuicaoVO.idEstudo', 			 				 value: estudo});
+		data.push({name: 'distribuicaoVO.codigoProduto', 			 			 value: codigoProduto});
+		
+		$.postJSON(pathTela + "/matrizDistribuicao/somarEstudos", data,
+				function(result){
+					T.exibirMensagemSucesso();
+					$('#somarEstudo-statusOperacao').text('CONCLUIDO');
+					T.atualizarGrid();
+					T.mostraTelaMatrizDistribuicao();
+				}
+			);
+	},
 	this.confirmarSomaDeEstudos = function() {
 		
 		var estudoPesquisa = $("#somarEstudo-estudoPesquisa").val();
@@ -1210,18 +1225,44 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		var data = [];
 		
-		data.push({name: 'idEstudoBase', 	     								 value: estudoPesquisa});
-		data.push({name: 'distribuicaoVO.idEstudo', 			 				 value: estudo});
-		data.push({name: 'distribuicaoVO.codigoProduto', 			 			 value: codigoProduto});
+		data.push({name: 'estudoBase', 	     								 value: estudo});
+		data.push({name: 'estudoSomado', 			 				 value: estudoPesquisa});
 		
-		$.postJSON(pathTela + "/matrizDistribuicao/somarEstudos", data,
+		$.postJSON(pathTela + "/matrizDistribuicao/verificarCoincidenciaEntreCotas", data,
 				function(result){
-					T.exibirMensagemSucesso();
-					$('#somarEstudo-statusOperacao').text('CONCLUIDO');
-					T.atualizarGrid();
-					T.mostraTelaMatrizDistribuicao();
+
+					if(result.boolean){
+						$("#dialog-confirm-coincidencia-cotas").dialog({
+							resizable: false,
+							height:'auto',
+							width:400,
+							modal: true,
+							buttons: [ {
+							    	text: "Sim",
+							    	click: function() {
+							    		$(this).dialog("close");
+							    		T.executarSomaDeEstudos(estudoPesquisa,estudo,codigoProduto);
+							    	}
+							    },
+							    {
+							    	id: "selecaoLancamentosBtnCancelar",
+							    	text: "Não",
+							    	click: function() {
+							    		$(this).dialog("close");
+							    	}
+							} ],
+						});
+					}else{
+						T.executarSomaDeEstudos(estudoPesquisa,estudo,codigoProduto);
+					}
+		
 				}
 			);
+		
+		
+	
+		
+		
 	},
 	
 	this.inicializar = function() {

@@ -22,6 +22,13 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
     @Override
     @Transactional(readOnly = true)
     public List<ProdutoEdicaoVendaMediaDTO> pesquisar(String codigoProduto, String nomeProduto, Long edicao) {
+    	
+    	return pesquisar(codigoProduto, nomeProduto, edicao, null);
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProdutoEdicaoVendaMediaDTO> pesquisar(String codigoProduto, String nomeProduto, Long edicao, Long classificacao) {
 
 	StringBuilder sql = new StringBuilder();
 	sql.append("select pe.id, ");
@@ -52,6 +59,10 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 	if (nomeProduto != null) {
 	    sql.append("   and p.nome = :nome_produto ");
 	}
+	if (classificacao != null) {
+		sql.append("   and tcp.id = :classificacao ");
+	}
+	
 	sql.append(" group by pe.numero_edicao, pe.id ");
 	sql.append(" order by pe.numero_edicao desc ");
 	
@@ -65,6 +76,10 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 	if (nomeProduto != null) {
 	    query.setString("nome_produto", nomeProduto);
 	}
+	if (classificacao != null) {
+	    query.setLong("classificacao", classificacao);
+	}
+	
 	query.setResultTransformer(Transformers.aliasToBean(ProdutoEdicaoVendaMediaDTO.class));
 	return query.list();
     }
