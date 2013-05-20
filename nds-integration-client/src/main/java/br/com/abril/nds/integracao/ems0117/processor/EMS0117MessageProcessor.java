@@ -65,11 +65,11 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 		// Obter Box
 		sql.append("FROM Box b ");
-		sql.append("WHERE ");
-		sql.append("     b.codigo = :codigo ");
+		sql.append("WHERE b.codigo = :codigo ");
 		Query query = getSession().createQuery(sql.toString());
 		query.setParameter("codigo", Integer.valueOf( input.getCodBox().toString() ));
 		Box box = (Box) query.uniqueResult();
+		
 		if (null == box) {
 			// Não encontrou a Box. Realizar Log
 			// Passar para a próxima linha
@@ -129,7 +129,8 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 				pessoa = pessoaFis;
 
 			} else {
-//Não Precisa iterar, isso eh uma busca por uma unique 
+				
+				//Não Precisa iterar, isso eh uma busca por uma unique 
 				for (PessoaFisica pessoaFis2 : pessoas) {
 
 					if (pessoaFis2.getCpf().equals(input.getCpf())) {
@@ -228,30 +229,37 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			// ParametroCobrancaCota - Realizado em conjunto com Cesar Pop Punk
 			ParametroCobrancaCota parametroCobrancaCota = new ParametroCobrancaCota();
 			parametroCobrancaCota.setCota(cota);
+			
 			if (input.getCondPrazoPagamento().equals("S")) {
+				
 				parametroCobrancaCota.setTipoCota(TipoCota.CONSIGNADO);
+				
 			} else {
+				
 				parametroCobrancaCota.setTipoCota(TipoCota.A_VISTA);
+				
 			}
+			
 			getSession().persist(parametroCobrancaCota);
 			
 			if (!input.getEndereco().isEmpty()
 					&& !".".equals(input.getEndereco())) {
+				
 				Endereco endereco = null;
-//				Endereco endereco = getEnderecoSaneado(input.getCep());
-//				if (null == endereco ) {
-					endereco = new Endereco();
-					endereco.setCep(input.getCep());
-					endereco.setCidade(input.getMunicipio());
-					endereco.setLogradouro(input.getEndereco());
-					endereco.setUf(input.getSiglaUF());
-					endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
-					Endereco endTmp = enderecoRepository.getEnderecoSaneado(input.getCep());
-					if (null != endTmp) {
-						endereco.setBairro(endTmp.getBairro());
-						endereco.setTipoLogradouro(endTmp.getTipoLogradouro());
-					}
-//				}
+
+				endereco = new Endereco();
+				endereco.setCep(input.getCep());
+				endereco.setCidade(input.getMunicipio());
+				endereco.setLogradouro(input.getEndereco());
+				endereco.setUf(input.getSiglaUF());
+				endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
+				Endereco endTmp = enderecoRepository.getEnderecoSaneado(input.getCep());
+				
+				if (null != endTmp) {
+					endereco.setBairro(endTmp.getBairro());
+					endereco.setTipoLogradouro(endTmp.getTipoLogradouro());
+				}
+
 				endereco.setNumero(input.getNumLogradouro());
 				getSession().persist(endereco);
 
@@ -327,85 +335,14 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			
 				if (cota.getEnderecos().isEmpty()) {
 
-//					endereco = getEnderecoSaneado(input.getCep());
-//					if (null == endereco ) {
-						endereco = new Endereco();
-						endereco.setCep(input.getCep());
-						endereco.setCidade(input.getMunicipio());
-						endereco.setLogradouro(input.getEndereco());
-						endereco.setUf(input.getSiglaUF());
-						endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
-						Endereco endTmp = enderecoRepository.getEnderecoSaneado(input.getCep());
-						if (null != endTmp) {
-							endereco.setBairro(endTmp.getBairro());
-							endereco.setTipoLogradouro(endTmp.getTipoLogradouro());
-						}						
-//					}
-					endereco.setNumero(input.getNumLogradouro());
-					getSession().persist(endereco);
-
-					enderecoCota = new EnderecoCota();
-					enderecoCota.setPrincipal(true);
-					enderecoCota.setTipoEndereco(TipoEndereco.COMERCIAL);
-					enderecoCota.setEndereco(endereco);
-					enderecoCota.setCota(cota);
-					getSession().persist(enderecoCota);
-					
+					persistirEnderecoCotaSemEndereco(input, cota);
 
 				} else {
 
-					for (EnderecoCota enderecoCota2 : cota.getEnderecos()) {
-
-						enderecoCota = enderecoCota2;
-
-						
-						// Verifica EnderecoCota
-						sql = new StringBuilder();
-						sql.append("SELECT ec  ");
-						sql.append("FROM EnderecoCota ec ");
-						sql.append("JOIN FETCH ec.endereco ed  ");
-						sql.append("WHERE ");
-						sql.append("     ec.cota = :numeroCota ");
-						sql.append(" AND    ed.logradouro = :logradouro ");
-						query = getSession().createQuery(sql.toString());
-						query.setParameter("numeroCota", cota);
-						query.setParameter("logradouro", input.getEndereco());
-
-						List<Endereco> enderecos = (List<Endereco>) query
-								.list();
-
-						if (enderecos.isEmpty()) {
-
-//								endereco = getEnderecoSaneado(input.getCep());
-//								if (null == endereco ) {
-								endereco = new Endereco();
-								endereco.setCep(input.getCep());
-								endereco.setCidade(input.getMunicipio());
-								endereco.setLogradouro(input.getEndereco());
-								endereco.setUf(input.getSiglaUF());
-								endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
-								Endereco endTmp = enderecoRepository.getEnderecoSaneado(input.getCep());
-								if (null != endTmp) {
-									endereco.setBairro(endTmp.getBairro());
-									endereco.setTipoLogradouro(endTmp.getTipoLogradouro());
-								}									
-//								}
-							endereco.setNumero(input.getNumLogradouro());
-
-							getSession().persist(endereco);
-
-							EnderecoCota endCota = new EnderecoCota();
-							endCota.setTipoEndereco(TipoEndereco.COMERCIAL);
-							endCota.setEndereco(endereco);
-							endCota.setCota(cota);
-							
-							getSession().persist(endCota);
-							
-						} 
-					
-					}
+					atualizarEnderecoExistenteCota(input, cota);
 
 				}
+				
 			} else {
 
 				ndsiLoggerFactory.getLogger().logWarning(
@@ -422,9 +359,8 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 				sql.append("SELECT tc  ");
 				sql.append("FROM TelefoneCota tc ");
 				sql.append("JOIN FETCH tc.telefone t  ");
-				sql.append("WHERE ");
-				sql.append("     tc.cota = :numeroCota ");
-				sql.append(" AND    t.numero = :numeroTelefone ");
+				sql.append("WHERE tc.cota = :numeroCota ");
+				sql.append("AND t.numero = :numeroTelefone ");
 				query = getSession().createQuery(sql.toString());
 				query.setParameter("numeroCota", cota);
 				query.setParameter("numeroTelefone", input.getTelefone());
@@ -460,8 +396,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 							sql = new StringBuilder();
 							sql.append("SELECT tel ");
 							sql.append("FROM Telefone tel ");
-							sql.append("WHERE ");
-							sql.append("     tel.numero = :numero ");
+							sql.append("WHERE tel.numero = :numero ");
 							query = getSession().createQuery(sql.toString());
 							query.setParameter("numero", input.getTelefone());
 
@@ -513,6 +448,99 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 		}
 	}
 
+	private void atualizarEnderecoExistenteCota(EMS0117Input input, Cota cota) {
+		
+		StringBuilder sql;
+		
+		Query query;
+		
+		Endereco endereco;
+		
+		EnderecoCota enderecoCota;
+		
+		for (EnderecoCota ec2 : cota.getEnderecos()) {
+
+			enderecoCota = ec2;
+
+			String logradouro = ""; 
+			
+			if(enderecoCota.getEndereco() != null && enderecoCota.getEndereco().getLogradouro() != null) {
+				logradouro = getLogradouroSemTipo(enderecoCota.getEndereco().getLogradouro().split(",")[0].trim());
+			}
+			
+			// Verifica EnderecoCota
+			sql = new StringBuilder();
+			sql.append("SELECT ec ");
+			sql.append("FROM EnderecoCota ec ");
+			sql.append("JOIN FETCH ec.endereco ed ");
+			sql.append("WHERE ec.cota = :numeroCota ");
+			sql.append("AND ed.logradouro = :logradouro ");
+			query = getSession().createQuery(sql.toString());
+			query.setParameter("numeroCota", cota);
+			query.setParameter("logradouro", logradouro);
+
+			List<Endereco> enderecos = (List<Endereco>) query.list();
+
+			if (enderecos.isEmpty()) {
+
+				endereco = new Endereco();
+				endereco.setCep(input.getCep());
+				endereco.setCidade(input.getMunicipio() != null ? input.getMunicipio().toUpperCase() : input.getMunicipio());
+				endereco.setLogradouro(logradouro != null ? logradouro.toUpperCase() : logradouro);
+				endereco.setUf(input.getSiglaUF());
+				endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
+				Endereco endTmp = enderecoRepository.getEnderecoSaneado(input.getCep());
+				
+				if (null != endTmp) {
+					endereco.setBairro(endTmp.getBairro() != null ? endTmp.getBairro().toUpperCase() : endTmp.getBairro());
+					endereco.setTipoLogradouro(endTmp.getTipoLogradouro() != null ? endTmp.getTipoLogradouro().toUpperCase() : endTmp.getTipoLogradouro());
+				}									
+
+				endereco.setNumero(input.getNumLogradouro());
+
+				getSession().persist(endereco);
+
+				EnderecoCota endCota = new EnderecoCota();
+				endCota.setTipoEndereco(TipoEndereco.COMERCIAL);
+				endCota.setEndereco(endereco);
+				endCota.setCota(cota);
+				
+				getSession().persist(endCota);
+				
+			} 
+		
+		}
+	}
+
+	private void persistirEnderecoCotaSemEndereco(EMS0117Input input, Cota cota) {
+		Endereco endereco;
+		EnderecoCota enderecoCota;
+		String logradouro = getLogradouroSemTipo(input.getEndereco().split(",")[0].trim());
+		
+		endereco = new Endereco();
+		endereco.setCep(input.getCep());
+		endereco.setCidade(input.getMunicipio() != null ? input.getMunicipio().toUpperCase() : input.getMunicipio());
+		endereco.setLogradouro(logradouro != null ? logradouro.toUpperCase() : logradouro);
+		endereco.setUf(input.getSiglaUF());
+		endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
+		Endereco endTmp = enderecoRepository.getEnderecoSaneado(input.getCep());
+		
+		if (null != endTmp) {
+			endereco.setBairro(endTmp.getBairro() != null ? endTmp.getBairro().toUpperCase() : endTmp.getBairro());
+			endereco.setTipoLogradouro(endTmp.getTipoLogradouro() != null ? endTmp.getTipoLogradouro().toUpperCase() : endTmp.getTipoLogradouro());
+		}						
+
+		endereco.setNumero(input.getNumLogradouro());
+		getSession().persist(endereco);
+
+		enderecoCota = new EnderecoCota();
+		enderecoCota.setPrincipal(true);
+		enderecoCota.setTipoEndereco(TipoEndereco.COMERCIAL);
+		enderecoCota.setEndereco(endereco);
+		enderecoCota.setCota(cota);
+		getSession().persist(enderecoCota);
+	}
+
 	private void setSituacaoCadastro(EMS0117Input input, Cota cota) {
 		if ("1".equals(input.getSituacaoCota())) {
 			cota.setSituacaoCadastro(SituacaoCadastro.ATIVO);
@@ -526,6 +554,42 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 		} else if ("4".equals(input.getSituacaoCota())) {
 			cota.setSituacaoCadastro(SituacaoCadastro.INATIVO);
 		}
+	}
+	
+	private String getLogradouroSemTipo(String logradouro) {
+		
+		String rua = "RUA";
+		if (logradouro.startsWith("RUA"))
+			return logradouro.substring(rua.length()).trim();
+
+		String avenida = "AV. ";
+		if (logradouro.startsWith(avenida))
+			return logradouro.substring(avenida.length()).trim();
+		
+		String estrada = "ES. ";
+		if (logradouro.startsWith(estrada))
+			return logradouro.substring(estrada.length()).trim();
+		
+		String alameda = "AL. ";
+		if (logradouro.startsWith(alameda))
+			return logradouro.substring(alameda.length()).trim();
+		
+		String praca = "PR. ";
+		if (logradouro.startsWith(praca))
+			return logradouro.substring(praca.length()).trim();
+		
+		String rodovia = "RO. ";
+		if (logradouro.startsWith(rodovia))
+			return logradouro.substring(rodovia.length()).trim();
+		
+		String lagoa = "LA. ";
+		if (logradouro.startsWith(lagoa))
+			return logradouro.substring(lagoa.length()).trim();
+		
+		String jardins = "JA. ";
+		if (logradouro.startsWith(jardins))
+			return logradouro.substring(jardins.length()).trim();
+		return logradouro;
 	}
 
 	@Override
