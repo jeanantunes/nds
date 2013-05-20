@@ -249,17 +249,13 @@ public class CotaDAO {
 		    cota.setQtdeRanking(rs.getBigDecimal("QTDE_RANKING").toBigInteger());
 		}
 		if (rs.getBigDecimal("REPARTE_MAX") != null) {
-		    cota.setReparteMaximo(rs.getBigDecimal("REPARTE_MAX").toBigInteger());
+		    cota.setIntervaloMaximo(rs.getBigDecimal("REPARTE_MAX").toBigInteger());
 		}
 		if (rs.getBigDecimal("REPARTE_MIN") != null) {
-		    cota.setReparteMinimo(rs.getBigDecimal("REPARTE_MIN").toBigInteger());
+		    cota.setIntervaloMinimo(rs.getBigDecimal("REPARTE_MIN").toBigInteger());
 		}
 		if (rs.getBigDecimal("REPARTE_FIXADO") != null) {
 		    cota.setReparteFixado(rs.getBigDecimal("REPARTE_FIXADO").toBigInteger());
-		}
-		cota.setRegioes(new ArrayList<Integer>());
-		if (rs.getInt("REGIAO_ID") != 0) {
-		    cota.getRegioes().add(rs.getInt("REGIAO_ID"));
 		}
 		if (rs.getBoolean("COTA_NAO_RECEBE_SEGMENTO")) {
 		    cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeSegmento);
@@ -277,7 +273,6 @@ public class CotaDAO {
 		return cota;
 	    }
 	});
-	retorno = agrupaCotas(retorno);
 	return retorno;
     }
     
@@ -312,48 +307,10 @@ public class CotaDAO {
 	}
 	return retorno;
     }
-
-    private List<CotaEstudo> agrupaCotas(List<CotaEstudo> lista) {
-	if (lista.size() > 0) {
-	    List<CotaEstudo> novaLista = new ArrayList<>();
-	    CotaEstudo temp = lista.get(0);
-	    for (int i = 1; i < lista.size(); i++) {
-		if (temp.getId().equals(lista.get(i).getId())) {
-		    temp.getRegioes().addAll(lista.get(i).getRegioes());
-		} else {
-		    novaLista.add(temp);
-		    temp = lista.get(i);
-		}
-	    }
-	    novaLista.add(temp);
-	    return novaLista;
-	} else {
-	    return lista;
-	}
-//	if (lista.size() > 0) {
-//	    LinkedHashMap<Long, CotaEstudo> novaLista = new LinkedHashMap<>();
-//	    CotaEstudo temp = lista.get(0);
-//	    for (int i = 1; i < lista.size(); i++) {
-//		if (temp.getId().equals(lista.get(i).getId())) {
-//		    if (Collections.disjoint(temp.getEdicoesRecebidas(), lista.get(i).getEdicoesRecebidas())) {
-//			temp.getEdicoesRecebidas().addAll(lista.get(i).getEdicoesRecebidas());
-//		    }
-//		} else {
-//		    novaLista.put(temp.getId(), temp);
-//		    temp = lista.get(i);
-//		}
-//	    }
-//	    novaLista.put(temp.getId(), temp);
-//	    
-//	    for (int i = 1; i < lista.size(); i++) {
-//		if (Collections.disjoint(novaLista.get(lista.get(i).getId()).getRegioes(), lista.get(i).getRegioes())) {
-//		    novaLista.get(lista.get(i).getId()).getRegioes().addAll(lista.get(i).getRegioes());
-//		}
-//	    }
-//	    return new ArrayList<CotaEstudo>(novaLista.values());
-//	} else {
-//	    return lista;
-//	}
+    
+    public List<CotaEstudo> getComponentesCota(EstudoTransient estudo) {
+	
+	return null;
     }
 
     private List<ProdutoEdicaoEstudo> getEdicoes(ResultSet rs, Map<Long, BigDecimal> idsPesos) throws SQLException {

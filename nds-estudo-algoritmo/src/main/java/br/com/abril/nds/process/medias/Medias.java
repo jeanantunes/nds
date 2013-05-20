@@ -54,6 +54,7 @@ public class Medias {
 	    }
 	}
 	if ((vendaMediaCorrigida != null) && (vendaMediaCorrigida.compareTo(BigDecimal.ZERO) > 0)) {
+	    cota.setVendaMediaCorrigida(vendaMediaCorrigida); // utilizada apenas como controle no resumo final
 	    cota.setVendaMedia(vendaMediaCorrigida);
 	}
     }

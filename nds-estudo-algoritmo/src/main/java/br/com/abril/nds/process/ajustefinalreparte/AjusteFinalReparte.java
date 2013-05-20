@@ -55,10 +55,10 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 				    ClassificacaoCota.MaximoMinimo, ClassificacaoCota.CotaMix,
 				    ClassificacaoCota.RedutorAutomatico, ClassificacaoCota.BancaSoComEdicaoBaseAberta))) {
 			// RepCalculado Cota = RepCalculado Cota + 1
-			if (cota.getReparteMaximo() != null && cota.getReparteCalculado().compareTo(cota.getReparteMaximo()) > 0) {
-			    cota.setReparteCalculado(cota.getReparteMaximo());
-			} else if (cota.getReparteCalculado().compareTo(cota.getReparteMinimo()) < 0) {
-			    cota.setReparteCalculado(cota.getReparteMinimo());
+			if (cota.getIntervaloMaximo() != null && cota.getReparteCalculado().compareTo(cota.getIntervaloMaximo()) > 0) {
+			    cota.setReparteCalculado(cota.getIntervaloMaximo());
+			} else if (cota.getReparteCalculado().compareTo(cota.getIntervaloMinimo()) < 0) {
+			    cota.setReparteCalculado(cota.getIntervaloMinimo());
 			} else {
 			    cota.setReparteCalculado(cota.getReparteCalculado().add(BigInteger.ONE));
 
@@ -86,10 +86,10 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 
 		for (CotaEstudo cota : estudo.getCotas()) {
 		    if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo, ClassificacaoCota.CotaMix)) {
-			if (cota.getReparteMaximo() != null && cota.getReparteCalculado().compareTo(cota.getReparteMaximo()) > 0) {
-			    cota.setReparteCalculado(cota.getReparteMaximo());
-			} else if (cota.getReparteCalculado().compareTo(cota.getReparteMinimo()) < 0) {
-			    cota.setReparteCalculado(cota.getReparteMinimo());
+			if (cota.getIntervaloMaximo() != null && cota.getReparteCalculado().compareTo(cota.getIntervaloMaximo()) > 0) {
+			    cota.setReparteCalculado(cota.getIntervaloMaximo());
+			} else if (cota.getReparteCalculado().compareTo(cota.getIntervaloMinimo()) < 0) {
+			    cota.setReparteCalculado(cota.getIntervaloMinimo());
 			} else {
 			    cota.setReparteCalculado(cota.getReparteCalculado().add(BigInteger.ONE));
 			    estudo.setReservaAjuste(estudo.getReservaAjuste().subtract(BigInteger.ONE));
