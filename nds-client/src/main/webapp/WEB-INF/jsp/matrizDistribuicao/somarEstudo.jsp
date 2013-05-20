@@ -3,7 +3,7 @@
 function analisar() {
 	//testa se registro selecionado possui estudo gerado
 	if ($('#somarEstudo-estudo').html() == null || $('#somarEstudo-estudo').html() == "") {
-		exibirMensagem("WARNING",["Gere o estudo antes de fazer a an�lise."]);
+		exibirMensagem("WARNING",["Gere o estudo antes de fazer a análise."]);
 		return;
 	} else {
 		// Deve ir direto para EMS 2031
