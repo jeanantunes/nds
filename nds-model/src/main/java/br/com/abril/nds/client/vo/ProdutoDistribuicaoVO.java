@@ -71,6 +71,12 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	
 	private Long idUsuario;
 	
+	private Integer idCopia;
+	
+	//Usado para controlar cor sim cor não entre linhas originais e copias
+	//Na matriz de distribuição
+	private Integer idRow;
+
 	private Boolean estudoLiberado;
 	
 	private BigInteger qtdeReparteEstudo;
@@ -300,12 +306,28 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 					return this.getIdLancamento().compareTo(prodDistribVO.getIdLancamento());
 				}
 		}
-		else if (prodDistribVO.isItemFinalizado() || prodDistribVO.getLiberado().equals(StatusEstudo.LIBERADO.name())) {
+		else if (prodDistribVO.isItemFinalizado() || (prodDistribVO.getLiberado() != null && prodDistribVO.getLiberado().equals(StatusEstudo.LIBERADO.name()))) {
 			
 			return -1;
 		}
 		
 		return 1;
+	}
+
+	public Integer getIdCopia() {
+		return idCopia;
+	}
+
+	public void setIdCopia(Integer idCopia) {
+		this.idCopia = idCopia;
+	}
+
+	public Integer getIdRow() {
+		return idRow;
+	}
+
+	public void setIdRow(Integer idRow) {
+		this.idRow = idRow;
 	}
 
 	public Boolean getEstudoLiberado() {
@@ -324,5 +346,4 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 		this.qtdeReparteEstudo = qtdeReparteEstudo;
 	}
 
-	
 }

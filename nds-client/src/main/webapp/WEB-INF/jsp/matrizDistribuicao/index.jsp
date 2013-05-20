@@ -88,7 +88,7 @@ var lancamentosSelecionados = [];
 </style>
 
 
-
+<div id="telaAnalise" />
 <div id="telasAuxiliaresContent"/>
 <div id="matrizDistribuicaoContent">
 	<form id="form_exclusao_estudo">

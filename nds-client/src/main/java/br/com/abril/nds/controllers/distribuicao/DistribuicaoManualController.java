@@ -5,9 +5,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -20,7 +20,6 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
-import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EstudoService;
@@ -52,9 +51,13 @@ public class DistribuicaoManualController extends BaseController {
     @Autowired
     private LancamentoService lancamentoService;
     
+	@Autowired
+	private HttpSession session;
+    
     @Path("/")
-    public void index(ProdutoDistribuicaoVO produto) {
+    public void index(ProdutoDistribuicaoVO produto, ProdutoDistribuicaoVO produtoDistribuicaoVO) {
     	result.include("produto", produto);
+    	session.setAttribute(ProdutoDistribuicaoVO.class.getName(), produtoDistribuicaoVO);
     }
     
     @Post
@@ -111,6 +114,18 @@ public class DistribuicaoManualController extends BaseController {
 		}
 		estudoService.gravarEstudo(estudo);
 		estudoService.setIdLancamentoNoEstudo(estudoDTO.getLancamentoId(), estudo.getId());
+		
+		removeItensDuplicadosMatrizDistribuicao();
+		
 		result.use(Results.json()).from(estudo.getId(), "result").serialize();
+    }
+    
+    private void removeItensDuplicadosMatrizDistribuicao() {
+    	
+    	ProdutoDistribuicaoVO vo = (ProdutoDistribuicaoVO)session.getAttribute(ProdutoDistribuicaoVO.class.getName());
+    	MatrizDistribuicaoController matrizDistribuicaoController = new MatrizDistribuicaoController();
+    	matrizDistribuicaoController.setSession(session);
+    	matrizDistribuicaoController.removeItemListaDeItensDuplicadosNaSessao(vo.getIdLancamento(), vo.getIdCopia());
+		session.removeAttribute(ProdutoDistribuicaoVO.class.getName());
     }
 }
