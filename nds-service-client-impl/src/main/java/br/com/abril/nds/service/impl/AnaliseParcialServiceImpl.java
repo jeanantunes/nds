@@ -70,14 +70,16 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                     idsProdutoEdicao.add(edicao.getProdutoEdicaoId());
                 }
                 item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>());
-                edicoesComVenda.addAll(analiseParcialRepository.getEdicoesBase(new Long(item.getCota()), idsProdutoEdicao));
-                for (EdicoesProdutosDTO edicao : queryDTO.getEdicoesBase()) {
-                    for (EdicoesProdutosDTO ed : edicoesComVenda) {
-                        if (ed.getProdutoEdicaoId().equals(edicao.getProdutoEdicaoId())) {
-                            BeanUtils.copyProperties(edicao, ed, new String[] {"reparte", "venda"});
-                            item.getEdicoesBase().add(ed);
-                        }
-                    }
+                if (idsProdutoEdicao.size() > 0) {
+	                edicoesComVenda.addAll(analiseParcialRepository.getEdicoesBase(new Long(item.getCota()), idsProdutoEdicao));
+	                for (EdicoesProdutosDTO edicao : queryDTO.getEdicoesBase()) {
+	                    for (EdicoesProdutosDTO ed : edicoesComVenda) {
+	                        if (ed.getProdutoEdicaoId().equals(edicao.getProdutoEdicaoId())) {
+	                            BeanUtils.copyProperties(edicao, ed, new String[] {"reparte", "venda"});
+	                            item.getEdicoesBase().add(ed);
+	                        }
+	                    }
+	                }
                 }
             }
         }
