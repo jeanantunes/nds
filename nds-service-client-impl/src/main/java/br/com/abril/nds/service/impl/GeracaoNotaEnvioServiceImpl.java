@@ -999,7 +999,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		situacoesCadastro.add(SituacaoCadastro.SUSPENSO);
 
 		if(TRAVA_GERACAO_NE != null && TRAVA_GERACAO_NE.get("neCotasSendoGeradas") != null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Notas de envio sendo geradas, tente novamente mais tarde.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Notas de envio sendo geradas por outro usuário, tente novamente mais tarde.");
 		}
 		
 		TRAVA_GERACAO_NE.put("neCotasSendoGeradas", true);
