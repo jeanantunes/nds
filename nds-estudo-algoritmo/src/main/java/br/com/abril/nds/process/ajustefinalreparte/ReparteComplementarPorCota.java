@@ -90,10 +90,10 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	    reparte = estudo.getPacotePadrao();
 	}
 	for (CotaEstudo cota : listaOrdenada) {
-	    if (cota.getReparteMaximo() != null && cota.getReparteCalculado().compareTo(cota.getReparteMaximo()) > 0) {
-		cota.setReparteCalculado(cota.getReparteMaximo());
-	    } else if (cota.getReparteCalculado().compareTo(cota.getReparteMinimo()) < 0) {
-		cota.setReparteCalculado(cota.getReparteMinimo());
+	    if (cota.getIntervaloMaximo() != null && cota.getReparteCalculado().compareTo(cota.getIntervaloMaximo()) > 0) {
+		cota.setReparteCalculado(cota.getIntervaloMaximo());
+	    } else if (cota.getReparteCalculado().compareTo(cota.getIntervaloMinimo()) < 0) {
+		cota.setReparteCalculado(cota.getIntervaloMinimo());
 	    } else {
 		cota.setReparteCalculado(cota.getReparteCalculado().add(reparte));
 		cota.setClassificacao(ClassificacaoCota.BancaEstudoComplementar);
@@ -109,10 +109,10 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	}
 	while (estudo.getReparteComplementar().compareTo(reparteGeral) >= 0) {
 	    for (CotaEstudo cota : estudo.getCotas()) {
-		if (cota.getReparteMaximo() != null && cota.getReparteCalculado().compareTo(cota.getReparteMaximo()) > 0) {
-		    cota.setReparteCalculado(cota.getReparteMaximo());
-		} else if (cota.getReparteCalculado().compareTo(cota.getReparteMinimo()) < 0) {
-		    cota.setReparteCalculado(cota.getReparteMinimo());
+		if (cota.getIntervaloMaximo() != null && cota.getReparteCalculado().compareTo(cota.getIntervaloMaximo()) > 0) {
+		    cota.setReparteCalculado(cota.getIntervaloMaximo());
+		} else if (cota.getReparteCalculado().compareTo(cota.getIntervaloMinimo()) < 0) {
+		    cota.setReparteCalculado(cota.getIntervaloMinimo());
 		} else {
 		    cota.setReparteCalculado(cota.getReparteCalculado().add(reparteGeral));
 		    estudo.setReparteComplementar(estudo.getReparteComplementar().subtract(reparteGeral));

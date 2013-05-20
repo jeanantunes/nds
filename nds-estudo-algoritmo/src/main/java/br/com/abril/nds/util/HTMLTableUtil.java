@@ -110,7 +110,7 @@ public class HTMLTableUtil {
 		h.append(String.format(" <td>%s</td>", menorVenda.getVenda()));
 		h.append(String.format(" <td>%s</td>", menorVenda.getIndicePeso()));
 		h.append(String.format(" <td>%s</td>", ce.getVendaMediaNominal()));
-		h.append(String.format(" <td>%s</td>", ce.getVendaMedia()));
+		h.append(String.format(" <td>%s</td>", ce.getVendaMediaCorrigida()));
 
 		for (int i = 0; i < 5; i++) {
 		    if (i < ce.getEdicoesRecebidas().size()) {

@@ -132,8 +132,8 @@ public class CalcularReparte extends ProcessoAbstrato {
 		// se o reparte mínimo for nulo, simplesmente não o adiciona
 		// deixando o cálculo conforme abaixo
 		// RepCalculadoCota = ((RepDistribuir / SVendaMédiaFinal) * VendaMédiaFinalCota)
-		if (cota.getReparteMinimo() != null) {
-		    cota.setReparteCalculado(cota.getReparteCalculado().add(cota.getReparteMinimo()), estudo);
+		if (estudo.getReparteMinimo() != null) {
+		    cota.setReparteCalculado(cota.getReparteCalculado().add(cota.getReparteMinimo()));
 		}
 	    } else {
 		if (percentualExcedenteEstudo != null && percentualExcedenteEstudo.getPdv() != null && percentualExcedenteEstudo.getVenda() != null) {
@@ -154,8 +154,8 @@ public class CalcularReparte extends ProcessoAbstrato {
 
 		    // RepCalculadoCota = VMFCota + ExcedPDV + ExcedVda + ReparteMínimo
 		    cota.setReparteCalculado(cota.getVendaMedia().add(excedentePDV).add(excedenteVenda).toBigInteger(), estudo);
-		    if (cota.getReparteMinimo() != null) {
-			cota.setReparteCalculado(cota.getReparteCalculado().add(cota.getReparteMinimo()), estudo);
+		    if (estudo.getReparteMinimo() != null) {
+			cota.setReparteCalculado(cota.getReparteCalculado().add(cota.getReparteMinimo()));
 		    }
 		}
 	    }

@@ -745,7 +745,7 @@ var fixacaoReparteController = $.extend(true, {
 			var data = [];
 			data.push({name:'filtro.codigoProduto',	value: $("#codigoProduto", fixacaoReparteController.wsp).val()});
 			data.push({name:'filtro.nomeProduto',	value: $("#nomeProduto", fixacaoReparteController.wsp).val()});
-			data.push({name:'filtro.classificacaoProduto',	value: $("#classificacaoFiltro option:selected", fixacaoReparteController.wsp).html()});
+			data.push({name:'filtro.classificacaoProduto',	value: $("#filtroClassificacaoFixacao option:selected", fixacaoReparteController.wsp).html()});
 
 			return data;
 		},

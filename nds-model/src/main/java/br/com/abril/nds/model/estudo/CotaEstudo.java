@@ -16,9 +16,11 @@ public class CotaEstudo extends Cota {
     private BigInteger reparteCalculado;
     private BigInteger reparteJuramentadoAFaturar;
     private BigInteger reparteMinimo;
-    private BigInteger reparteMaximo;
+    private BigInteger intervaloMinimo;
+    private BigInteger intervaloMaximo;
     private BigInteger reparteFixado;
     private BigDecimal vendaMedia;
+    private BigDecimal vendaMediaCorrigida;
     private BigDecimal vendaMediaNominal;
     private BigDecimal vendaEdicaoMaisRecenteFechada;
     private boolean cotaSoRecebeuEdicaoAberta;
@@ -44,6 +46,7 @@ public class CotaEstudo extends Cota {
 	vendaMedia = BigDecimal.ZERO;
 	indiceTratamentoRegional = BigDecimal.ONE;
 	reparteMinimo = BigInteger.ZERO;
+	intervaloMinimo = BigInteger.ZERO;
 	reparteCalculado = BigInteger.ZERO;
 	indiceAjusteCota = BigDecimal.ONE;
 	indiceVendaCrescente = BigDecimal.ONE;
@@ -76,10 +79,10 @@ public class CotaEstudo extends Cota {
 	this.reparteCalculado = reparteCalculado;
     }
     public void setReparteCalculado(BigInteger reparteCalculado, EstudoTransient estudo) {
-	if (reparteMaximo != null && reparteCalculado.compareTo(reparteMaximo) > 0) {
-	    reparteCalculado = reparteMaximo;
-	} else if (reparteCalculado.compareTo(reparteMinimo) < 0) {
-	    reparteCalculado = reparteMinimo;
+	if (intervaloMaximo != null && reparteCalculado.compareTo(intervaloMaximo) > 0) {
+	    reparteCalculado = intervaloMaximo;
+	} else if (reparteCalculado.compareTo(intervaloMinimo) < 0) {
+	    reparteCalculado = intervaloMinimo;
 	} else {
 	    BigInteger variacao = reparteCalculado.subtract(this.reparteCalculado);
 	    estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(variacao));
@@ -98,12 +101,22 @@ public class CotaEstudo extends Cota {
     public void setReparteMinimo(BigInteger reparteMinimo) {
 	this.reparteMinimo = reparteMinimo;
     }
-    public BigInteger getReparteMaximo() {
-	return reparteMaximo;
+    public BigInteger getIntervaloMinimo() {
+        return intervaloMinimo;
     }
-    public void setReparteMaximo(BigInteger reparteMaximo) {
-	this.reparteMaximo = reparteMaximo;
+
+    public void setIntervaloMinimo(BigInteger intervaloMinimo) {
+        this.intervaloMinimo = intervaloMinimo;
     }
+
+    public BigInteger getIntervaloMaximo() {
+        return intervaloMaximo;
+    }
+
+    public void setIntervaloMaximo(BigInteger intervaloMaximo) {
+        this.intervaloMaximo = intervaloMaximo;
+    }
+
     public BigDecimal getVendaMedia() {
 	return vendaMedia;
     }
@@ -240,6 +253,14 @@ public class CotaEstudo extends Cota {
 
     public void setQtdeRanking(BigInteger qtdeRanking) {
         this.qtdeRanking = qtdeRanking;
+    }
+
+    public BigDecimal getVendaMediaCorrigida() {
+        return vendaMediaCorrigida;
+    }
+
+    public void setVendaMediaCorrigida(BigDecimal vendaMediaCorrigida) {
+        this.vendaMediaCorrigida = vendaMediaCorrigida;
     }
 
     @Override
