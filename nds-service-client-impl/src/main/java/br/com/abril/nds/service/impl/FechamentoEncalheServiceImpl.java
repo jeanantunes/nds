@@ -27,7 +27,6 @@ import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
-import br.com.abril.nds.exception.EnvioEmailException;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
@@ -458,9 +457,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				realizarCobrancaCotas(dataOperacao, usuario, null, cota);
 			} catch (GerarCobrancaValidacaoException e) {
 				ex = e;
-			} catch(EnvioEmailException e) {
-				// Caso não tenha e-mail, simplesmente não envia o e-mail e prossegue
-				continue;
 			}
 		}
 		
@@ -474,9 +470,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED, 
-		noRollbackFor={GerarCobrancaValidacaoException.class, AutenticacaoEmailException.class, EnvioEmailException.class})
+		noRollbackFor={GerarCobrancaValidacaoException.class, AutenticacaoEmailException.class})
 	public void realizarCobrancaCotas(Date dataOperacao, Usuario usuario, 
-			List<CotaAusenteEncalheDTO> listaCotasAusentes, Cota cotaAusente) throws GerarCobrancaValidacaoException, EnvioEmailException {
+			List<CotaAusenteEncalheDTO> listaCotasAusentes, Cota cotaAusente) throws GerarCobrancaValidacaoException {
 
 		ValidacaoVO validacaoVO = new ValidacaoVO();
 
@@ -547,7 +543,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 							}
 							
 							// Caso dê erro para enviar o e-mail, mostra uma mensagem na tela
-							validacaoVO.getListaMensagens().add("Erro ao enviar e-mail para cota " + 
+							// Não mostramos mais este erro na tela
+							validacaoEmails.getListaMensagens().add("Erro ao enviar e-mail para cota " + 
 									cota.getNumeroCota() + ", " +
 									e.getMessage());
 						}
@@ -602,9 +599,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 		}
 
-		if (validacaoEmails.getListaMensagens() != null && !validacaoEmails.getListaMensagens().isEmpty()) {
-			throw new EnvioEmailException();
-		}
+		// Se um dia precisar tratar as mensagens de erro de e-mail, elas estão nesta lista
+		/*if (validacaoEmails.getListaMensagens() != null && !validacaoEmails.getListaMensagens().isEmpty()) {
+		}*/
 		
 		if (validacaoVO.getListaMensagens() != null && !validacaoVO.getListaMensagens().isEmpty()){
 			
