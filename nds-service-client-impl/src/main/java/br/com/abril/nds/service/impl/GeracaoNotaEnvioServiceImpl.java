@@ -1004,20 +1004,25 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		TRAVA_GERACAO_NE.put("neCotasSendoGeradas", true);
 		
-		List<Long> listaIdCotas = this.cotaRepository.obterIdCotasEntre(
-				filtro.getIntervaloCota(), filtro.getIntervaloBox(),
-				situacoesCadastro, filtro.getIdRoteiro(), filtro.getIdRota(),
-				null, null, null, null);
-		
-		if (idCotasSuspensasAusentes != null) {
-			listaIdCotas.addAll(idCotasSuspensasAusentes);
+		try {
+			List<Long> listaIdCotas = this.cotaRepository.obterIdCotasEntre(
+					filtro.getIntervaloCota(), filtro.getIntervaloBox(),
+					situacoesCadastro, filtro.getIdRoteiro(), filtro.getIdRota(),
+					null, null, null, null);
+			
+			if (idCotasSuspensasAusentes != null) {
+				listaIdCotas.addAll(idCotasSuspensasAusentes);
+			}
+	
+			validarRoteirizacaoCota(filtro, listaIdCotas);
+			
+			listaNotaEnvio = this.gerar(listaIdCotas, filtro.getIdRota(), null,
+					null, null, filtro.getDataEmissao(),
+					filtro.getIntervaloMovimento(), filtro.getIdFornecedores());
+		} catch (Exception e) {
+			TRAVA_GERACAO_NE.remove("neCotasSendoGeradas");
+			throw e;
 		}
-
-		validarRoteirizacaoCota(filtro, listaIdCotas);
-		
-		listaNotaEnvio = this.gerar(listaIdCotas, filtro.getIdRota(), null,
-				null, null, filtro.getDataEmissao(),
-				filtro.getIntervaloMovimento(), filtro.getIdFornecedores());
 
 		TRAVA_GERACAO_NE.remove("neCotasSendoGeradas");
 		
