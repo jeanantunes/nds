@@ -21,6 +21,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoAjusteReparte;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaDesenglobada;
 import br.com.abril.nds.model.estudo.CotaEnglobada;
@@ -220,6 +221,9 @@ public class CotaDAO {
 	}
 	if (cota.getAjusteReparte() == null || cota.getAjusteReparte().compareTo(BigDecimal.ONE) == -1) {
 	    cota.setIndiceAjusteCota(BigDecimal.ONE);
+	} else {
+	    cota.setIndiceAjusteCota(cota.getAjusteReparte());
+	    cota.setClassificacao(ClassificacaoCota.Ajuste);
 	}
     }
     
@@ -239,6 +243,7 @@ public class CotaDAO {
 		cota.setQuantidadePDVs(rs.getBigDecimal("QTDE_PDVS"));
 		cota.setSituacaoCadastro(SituacaoCadastro.valueOf(rs.getString("SITUACAO_CADASTRO")));
 		cota.setMix(rs.getBoolean("MIX"));
+		cota.setTipoDistribuicaoCota(TipoDistribuicaoCota.valueOf(rs.getString("TIPO_DISTRIBUICAO_COTA")));
 		traduzAjusteReparte(rs, cota);
 		if (rs.getBigDecimal("QTDE_RANKING") != null) {
 		    cota.setQtdeRanking(rs.getBigDecimal("QTDE_RANKING").toBigInteger());
@@ -255,6 +260,15 @@ public class CotaDAO {
 		cota.setRegioes(new ArrayList<Integer>());
 		if (rs.getInt("REGIAO_ID") != 0) {
 		    cota.getRegioes().add(rs.getInt("REGIAO_ID"));
+		}
+		if (rs.getBoolean("COTA_NAO_RECEBE_SEGMENTO")) {
+		    cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeSegmento);
+		}
+		if (rs.getBoolean("COTA_EXCECAO_SEGMENTO")) {
+		    cota.setClassificacao(ClassificacaoCota.BancaQueRecebemDeterminadoSegmento);
+		}
+		if (rs.getBoolean("COTA_NAO_RECEBE_CLASSIFICACAO")) {
+		    cota.setClassificacao(ClassificacaoCota.BancaSemClassificacaoDaPublicacao);
 		}
 		if (rs.getLong("COTA_BASE_ID") != 0) {
 		    cota.setNova(true);

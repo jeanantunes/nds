@@ -63,7 +63,7 @@ public class ReparteMinimo extends ProcessoAbstrato {
 		}
 	    }
 	    // RepDistribuir = RepDistribuir - ΣReparteParaMínimo
-	    estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(BigInteger.valueOf(somatoriaReparteMinimo.longValue())));
+	    estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(somatoriaReparteMinimo));
 	}
     }
 }

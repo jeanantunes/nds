@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.dao.CotaDAO;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaDesenglobada;
 import br.com.abril.nds.model.estudo.CotaEnglobada;
@@ -71,6 +72,9 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	Map<Long, CotaEstudo> cotasComHistoricoMap = new LinkedHashMap<>();
 	
 	for (CotaEstudo cota : cotas) {
+	    if (cota.getClassificacao().equals(ClassificacaoCota.CotaNova) && cota.getEdicoesRecebidas().size() >= 3) {
+		cota.setClassificacao(ClassificacaoCota.SemClassificacao);
+	    }
 	    calcularTotais(cota, estudo);
 	    cotasComHistoricoMap.put(cota.getId(), cota);
 	}
@@ -82,7 +86,8 @@ public class SelecaoBancas extends ProcessoAbstrato {
 		idsCotas.add(cota.getId());
 	    }
 	    if (cota.getClassificacao().in(ClassificacaoCota.BancaComVendaZero, ClassificacaoCota.BancaSemHistorico,
-		    ClassificacaoCota.BancaSuspensa, ClassificacaoCota.ReparteFixado)) {
+		    ClassificacaoCota.BancaSuspensa, ClassificacaoCota.ReparteFixado, ClassificacaoCota.CotaNaoRecebeSegmento,
+		    ClassificacaoCota.BancaSemClassificacaoDaPublicacao, ClassificacaoCota.BancaMixSemDeterminadaPublicacao)) {
 		estudo.getCotasExcluidas().add(cota);
 	    }
 	}
@@ -135,6 +140,9 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	if (totalEdicoes.compareTo(BigDecimal.ZERO) != 0) {
 	    cota.setVendaMediaNominal(totalVenda.divide(totalEdicoes, 2, BigDecimal.ROUND_HALF_UP));
 	    cota.setVendaMedia(cota.getVendaMediaNominal());
+	}
+	if (!cota.isMix() && cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)) {
+	    cota.setClassificacao(ClassificacaoCota.BancaMixSemDeterminadaPublicacao);
 	}
 	if (!cota.getClassificacao().equals(ClassificacaoCota.CotaNova)) {
 	    if (totalReparte.compareTo(BigDecimal.ZERO) == 0 && cota.getReparteMinimo().compareTo(BigInteger.ZERO) == 0) {

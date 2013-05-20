@@ -26,7 +26,7 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" SELECT ");
+		hql.append(" SELECT distinct");
 		hql.append(" estudo.id AS numeroEstudo, ");
 		hql.append(" prodEdicao.numeroEdicao AS numeroEdicaoProduto, ");
 		hql.append(" produto.codigo AS codigoProduto, ");

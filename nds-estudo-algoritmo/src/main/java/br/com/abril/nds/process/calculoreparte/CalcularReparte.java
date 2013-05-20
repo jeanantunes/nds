@@ -125,7 +125,6 @@ public class CalcularReparte extends ProcessoAbstrato {
 	}
 
 	for (CotaEstudo cota : estudo.getCotas()) {
-	    cota.setReparteMinimo(BigInteger.ZERO);
 	    if (estudo.getPercentualExcedente().compareTo(BigDecimal.ZERO) < 0) {
 		// RepCalculadoCota = ((RepDistribuir / SVendaMédiaFinal) * VendaMédiaFinalCota) + ReparteMínimo
 		BigDecimal temp = new BigDecimal(estudo.getReparteDistribuir()).divide(estudo.getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_HALF_UP);
@@ -149,12 +148,15 @@ public class CalcularReparte extends ProcessoAbstrato {
 		    temp = excedenteDistribuir.multiply(percentualExcedenteEstudo.getVenda().divide(BigDecimal.valueOf(100), 4, BigDecimal.ROUND_HALF_UP));
 		    if ((percentualExcedenteEstudo.getVenda().compareTo(BigDecimal.ZERO) > 0) &&
 			    (estudo.getSomatoriaVendaMedia().compareTo(BigDecimal.ZERO) > 0)) {
-			temp = temp.divide(estudo.getSomatoriaVendaMedia(), 4, BigDecimal.ROUND_FLOOR);
+			temp = temp.divide(estudo.getSomatoriaVendaMedia(), 4, BigDecimal.ROUND_HALF_UP);
 		    }
 		    BigDecimal excedenteVenda = temp.multiply(cota.getVendaMedia());
 
 		    // RepCalculadoCota = VMFCota + ExcedPDV + ExcedVda + ReparteMínimo
-		    cota.setReparteCalculado(cota.getVendaMedia().add(excedentePDV).add(excedenteVenda).add(new BigDecimal(cota.getReparteMinimo())).toBigInteger(), estudo);
+		    cota.setReparteCalculado(cota.getVendaMedia().add(excedentePDV).add(excedenteVenda).toBigInteger(), estudo);
+		    if (cota.getReparteMinimo() != null) {
+			cota.setReparteCalculado(cota.getReparteCalculado().add(cota.getReparteMinimo()), estudo);
+		    }
 		}
 	    }
 	}

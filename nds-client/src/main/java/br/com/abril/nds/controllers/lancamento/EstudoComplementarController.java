@@ -14,10 +14,9 @@ import br.com.abril.nds.client.vo.estudocomplementar.BaseEstudoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.EstudoComplementarDTO;
 import br.com.abril.nds.dto.EstudoCotaDTO;
-import br.com.abril.nds.enums.TipoMensagem;
-import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.EstudoComplementarService;
+import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -34,14 +33,14 @@ public class EstudoComplementarController  extends BaseController{
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
-	
 	@Autowired
 	private CalendarioService calendarioService;
 	
 	@Autowired
 	private EstudoComplementarService estudoComplementarService;
 	
-
+	@Autowired
+    private EstudoService estudoService;
 	
 	@Path("/estudoComplementar")
 	public void index() {
@@ -49,8 +48,6 @@ public class EstudoComplementarController  extends BaseController{
 		String data = DateUtil.formatarDataPTBR(new Date());
 		result.include("data", data);
 	}
-	
-	
 	
 	@Path("/pesquisaEstudoBase/{estudoBase.id}")
 	public void pesquisaEstudoBase(EstudoCotaDTO estudoBase){
@@ -84,7 +81,9 @@ public class EstudoComplementarController  extends BaseController{
 		System.out.println( "----->" + parametros.getCodigoEstudo());
 		System.out.println( "----->" + parametros.getReparteCota());
 		System.out.println( "----->" + parametros.getTipoSelecao());
-		if(estudoComplementarService.gerarEstudoComplementar(parametros))
+		if(estudoComplementarService.gerarEstudoComplementar(parametros)){
+			estudoService.setIdLancamentoNoEstudo(parametros.getIdLancamento(), parametros.getIdEstudoComplementar());
+		}
 			
 		result.nothing();
 		

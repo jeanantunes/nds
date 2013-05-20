@@ -44,13 +44,13 @@ public class Medias {
 
 	if (totalPeso.compareTo(BigDecimal.ONE) == 1) {
 	    if (cota.getEdicoesRecebidas().size() < 3) {
-		vendaMediaCorrigida = totalVendaMultiplyPeso.divide(totalPeso, 2, BigDecimal.ROUND_FLOOR);
+		vendaMediaCorrigida = totalVendaMultiplyPeso.divide(totalPeso, 2, BigDecimal.ROUND_HALF_UP);
 	    } else {
 		BigDecimal menorValor = treeVendaPeso.firstEntry().getKey();
 		BigDecimal menorPeso = treeVendaPeso.firstEntry().getValue();
 		BigDecimal menorMultiply = menorValor.multiply(menorPeso);
 
-		vendaMediaCorrigida = totalVendaMultiplyPeso.subtract(menorMultiply).divide(totalPeso.subtract(menorPeso), 2, BigDecimal.ROUND_FLOOR);
+		vendaMediaCorrigida = totalVendaMultiplyPeso.subtract(menorMultiply).divide(totalPeso.subtract(menorPeso), 2, BigDecimal.ROUND_HALF_UP);
 	    }
 	}
 	if ((vendaMediaCorrigida != null) && (vendaMediaCorrigida.compareTo(BigDecimal.ZERO) > 0)) {

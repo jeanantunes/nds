@@ -265,13 +265,13 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 			
 			BigInteger idLancamento = vo.getIdLancamento();
 			
-			if (idLancamento != null && obterQuantidadeDeLancamentosProdutoEdicaoDuplicados(vo) > 1) {
+			if (idLancamento != null && vo.getIdCopia() != null) {
 				
 			   if (vo.getIdEstudo() != null && vo.getIdEstudo().intValue() > 0) {
 					 removeEstudo(vo.getIdEstudo().longValue());
 			   }
 				
-				excluirLinhaDuplicada(idLancamento.longValue());
+				//excluirLinhaDuplicada(idLancamento.longValue());
 			}
 			else if (vo.getIdEstudo() != null && vo.getIdEstudo().intValue() > 0) {
 				
@@ -287,22 +287,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		
 		Estudo estudo = estudoRepository.buscarPorId(idEstudo);
 		if (!estudo.isLiberado()) {
-		    for (EstudoCota ec : estudo.getEstudoCotas()) {
-		    	estudoCotaRepository.remover(ec);
-		    }
-		    
-		    List<Lancamento> lancamentos = lancamentoRepository.obterPorEstudo(estudo);
-		    for (Lancamento l : lancamentos) {
-				l.setEstudo(null);
-				lancamentoRepository.alterar(l);
-		    }
-		    
-		    for (Lancamento l : estudo.getLancamentos()) {
-				l.setEstudo(null);
-				lancamentoRepository.alterar(l);
-		    }
-		    
-		    estudo.setLancamentos(null);
+
 		    estudoRepository.remover(estudo);
 		    
 		} else {

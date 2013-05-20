@@ -108,6 +108,9 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 				estudoCotaRepository.alterar(estudoCota);
 			}
 			
+			if(estudo.getQtdeReparte()!=null && estudoBase.getQtdeReparte()!=null){
+				estudo.setQtdeReparte(estudo.getQtdeReparte().add(estudoBase.getQtdeReparte()));				
+			}
 			estudoRepository.alterar(estudo);
 			estudoRepository.remover(estudoBase);
 		}
