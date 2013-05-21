@@ -23,7 +23,6 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
-import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.model.planejamento.EdicaoBaseEstrategia;
@@ -197,11 +196,9 @@ public class DistribuicaoVendaMediaController extends BaseController {
 		    result.include("repDistrib", estudo.getReparteDistribuir());
 		}
 	
-	
 		result.include("lancamento", lancamento);
 		result.include("estrategia", estrat);
 		ProdutoEdicaoDTO convertido = converterResultado(produtoEdicao, lancamento);
-		// produtoEdicaoRepository.findReparteEVenda(convertido);
 	
 		result.include("produtoEdicao", convertido);
 		
