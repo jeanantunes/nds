@@ -81,7 +81,7 @@ public class CalcularReparte extends ProcessoAbstrato {
 		// ou 1 exemplar (o que for maior, desde que 1 exemplar não
 		// ultrapasse a 10% do excedente)
 		// ou 1 pacote-padrão se for distribuição por múltiplos
-		
+
 		// Calculo 1 - Pacote padrao
 		BigInteger calculo1 = BigInteger.ZERO;
 		if (estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null) {
@@ -103,7 +103,7 @@ public class CalcularReparte extends ProcessoAbstrato {
 		reservaAjuste = calculo1.max(calculo2);
 		reservaAjuste = reservaAjuste.max(calculo3);
 		reservaAjuste = EstudoAlgoritmoService.arredondarPacotePadrao(estudo, reservaAjuste);
-		
+
 		// ExcedenteDistribuir = ExcedenteDistribuir - AjusteReparte
 		excedenteDistribuir = excedenteDistribuir.subtract(new BigDecimal(reservaAjuste));
 		estudo.setReservaAjuste(reservaAjuste);
@@ -241,7 +241,7 @@ public class CalcularReparte extends ProcessoAbstrato {
 		}
 	    }
 	}
-	
+
 	if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) != 0) {
 	    // Se ainda houver saldo, subtrair ou somar 1 exemplar por cota do maior para o menor reparte
 	    // (exceto repartes fixados (FX), quantidades MAXIMAS E MINIMAS (MM)
@@ -250,25 +250,31 @@ public class CalcularReparte extends ProcessoAbstrato {
 		if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) == 0) {
 		    break;
 		}
-		if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) == 1 &&
-			estudo.getReparteDistribuir().compareTo(reparteSobra) >= 0) {
-		    cota.setReparteCalculado(cota.getReparteCalculado().add(reparteSobra), estudo);
-		} else if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) == -1 &&
-			estudo.getReparteDistribuir().compareTo(reparteSobra.multiply(BigInteger.valueOf(-1))) <= 0) {
-		    cota.setReparteCalculado(cota.getReparteCalculado().subtract(reparteSobra), estudo);
+		if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
+			ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix)) {
+		    if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) == 1 &&
+			    estudo.getReparteDistribuir().compareTo(reparteSobra) >= 0) {
+			cota.setReparteCalculado(cota.getReparteCalculado().add(reparteSobra), estudo);
+		    } else if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) == -1 &&
+			    estudo.getReparteDistribuir().compareTo(reparteSobra.multiply(BigInteger.valueOf(-1))) <= 0) {
+			cota.setReparteCalculado(cota.getReparteCalculado().subtract(reparteSobra), estudo);
+		    }
 		}
 	    }
 	}
-	
+
 	// se o reparte a distribuir for menor que o pacote padrao ele sera distribuido para a primeira cota
 	if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) != 0) {
 	    for (CotaEstudo cota : cotas) {
-		if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) == 1 &&
-			estudo.getReparteDistribuir().compareTo(reparteSobra) > 0) {
-		    cota.setReparteCalculado(cota.getReparteCalculado().add(estudo.getReparteDistribuir()), estudo);
-		} else if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) == -1 &&
-			estudo.getReparteDistribuir().compareTo(reparteSobra.multiply(BigInteger.valueOf(-1))) < 0) {
-		    cota.setReparteCalculado(cota.getReparteCalculado().subtract(estudo.getReparteDistribuir()), estudo);
+		if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
+			ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix)) {
+		    if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) == 1 &&
+			    estudo.getReparteDistribuir().compareTo(reparteSobra) > 0) {
+			cota.setReparteCalculado(cota.getReparteCalculado().add(estudo.getReparteDistribuir()), estudo);
+		    } else if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) == -1 &&
+			    estudo.getReparteDistribuir().compareTo(reparteSobra.multiply(BigInteger.valueOf(-1))) < 0) {
+			cota.setReparteCalculado(cota.getReparteCalculado().subtract(estudo.getReparteDistribuir()), estudo);
+		    }
 		}
 	    }
 	}
