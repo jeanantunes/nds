@@ -298,9 +298,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	};
 	
 	this.confirmarSelecaoBonificacao = function(){
-		var count,
-			listaBonificacoes = [];
-		
+		var listaBonificacoes = [];
 		
 		if(T.bonificacaoSelecionados == undefined){
 			T.bonificacaoSelecionados = [];
@@ -324,7 +322,6 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 							todasAsCotas : false,
 							acao : '<a onclick="popup_excluir_bonificacao('+T.bonificacaoSelecionados.length+');" href="javascript:;"><img src="images/ico_excluir.gif" border="0"/></a>',
 					};
-
 					
 					listaBonificacoes.push(bonificacao);
 					
