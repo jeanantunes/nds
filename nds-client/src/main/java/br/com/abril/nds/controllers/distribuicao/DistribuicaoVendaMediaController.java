@@ -321,8 +321,8 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	for (int i = 0; i < distribuicaoVendaMedia.getBases().size(); i++) {
 	    ProdutoEdicaoDTO produtoEdicaoDTO = distribuicaoVendaMedia.getBases().get(i);
 
-	    if (produtoEdicaoDTO.getSituacaoLancamento() != StatusLancamento.FECHADO) {
-//		qtdEdicoesAbertas++;
+	    if (!produtoEdicaoDTO.getStatusLancamento().equals(StatusLancamento.FECHADO.toString())) {
+		qtdEdicoesAbertas++;
 	    }
 	}
 

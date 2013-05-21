@@ -470,7 +470,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].numeroEdicao", value : produtoEdicao.numeroEdicao});
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].codigoProduto", value : produtoEdicao.codigoProduto});
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].peso", value : produtoEdicao.peso});
-				data.push({name: "distribuicaoVendaMedia.bases["+i+"].situacaoLancamento", value : produtoEdicao.status});
+				data.push({name: "distribuicaoVendaMedia.bases["+i+"].statusLancamento", value : produtoEdicao.status});
 			}
 		}
 		
