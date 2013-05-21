@@ -2,8 +2,22 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	
 	var url = pathTela;
 	var T = this;
-//	var _workspace = workspace;
 	
+	this.removerDuplicados = function eliminateDuplicates(arr) {
+		  var i,
+	      len=arr.length,
+	      out=[],
+	      obj={};
+	 
+	  for (i=0;i<len;i++) {
+	    obj[arr[i]]=0;
+	  }
+	  for (i in obj) {
+	    out.push(i);
+	  }
+	  return out;
+	},
+
 	this.confirmarProdutosEdicaoBasePopup = function(){
 	    var data = [];
 	    
@@ -62,6 +76,8 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		}
 		if(row.venda == undefined){
 			row.venda = '';
+		}else {
+			row.percentualVenda = floatToPrice(row.percentualVenda);
 		}
 		if(row.percentualVenda == undefined){
 			row.percentualVenda = '';
@@ -87,6 +103,8 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		}
 		if(row.percentualVenda == undefined){
 			row.percentualVenda = '';
+		}else {
+			row.percentualVenda = floatToPrice(row.percentualVenda);
 		}
 		if(row.statusSituacao == undefined){
 			row.statusSituacao = '';
@@ -240,7 +258,26 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	};
 	
 	this.selecionarElementoBonificacao = function(index, checkbox){
+		var count = 0;
 		T.elementosBonificacao[index].selecionado = checkbox.checked;
+		T.elementosBonificacao[index].checkBox = checkbox;
+		
+		T.elementosBonificacao.forEach(function(element){
+			if (element.selecionado) 
+				count++;
+		});
+		
+		if (count > 3) {
+			exibirMensagemDialog("WARNING", ["Não é possível adicionar mais que 3 elementos"], "");
+			checkbox.checked = false;
+			
+			T.elementosBonificacao[index].selecionado = checkbox.checked;
+			T.elementosBonificacao[index].checkBox = checkbox;
+		}
+		
+		
+		
+		
 	};
 	
 	this.processarLinhaElemento = function(index, row){
@@ -261,9 +298,12 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	};
 	
 	this.confirmarSelecaoBonificacao = function(){
+		var listaBonificacoes = [];
+		
 		if(T.bonificacaoSelecionados == undefined){
 			T.bonificacaoSelecionados = [];
 		}
+		
 		for(var i = 0; i < T.elementosBonificacao.length; i++){
 			var elemento = T.elementosBonificacao[i];
 			if(elemento.selecionado){
@@ -282,25 +322,89 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 							todasAsCotas : false,
 							acao : '<a onclick="popup_excluir_bonificacao('+T.bonificacaoSelecionados.length+');" href="javascript:;"><img src="images/ico_excluir.gif" border="0"/></a>',
 					};
-					T.bonificacaoSelecionados.push(bonificacao);
+					
+					listaBonificacoes.push(bonificacao);
+					
 				}
 			}
 		}
 		
+		var iguais = 0,
+			diferentes = 0,
+			totalBonificacoes = [],
+			totalComponentesUsados = [];
+			
+		listaBonificacoes.forEach(function(novaBonificacao){
+			totalBonificacoes.push(novaBonificacao);
+		});
+		
+		T.bonificacaoSelecionados.forEach(function(bonificacao){
+			totalBonificacoes.push(bonificacao);
+		});
+		
+		totalBonificacoes.forEach(function(novaBonificacao){
+			totalComponentesUsados.push(novaBonificacao.componente.enumValue);
+		});
+		
+		for ( var int = 0; int < totalBonificacoes.length; int++) {
+			iguais = 0;
+			var novaBonificacao = totalBonificacoes[int];
+			
+			totalBonificacoes.forEach(function(bonificacao){
+				if(novaBonificacao.componente.enumValue === bonificacao.componente.enumValue) {
+					iguais++;
+				}
+			});
+			
+			if (iguais > 3) {
+				break;
+			}
+		}
+		
+		totalComponentesUsados = T.removerDuplicados(totalComponentesUsados);
+		
+		totalComponentesUsados.forEach(function(componente1){
+			diferentes = 0;
+			totalComponentesUsados.forEach(function(componente2){
+				if (componente1 !== componente2) {
+					diferentes++;
+				}
+			});
+		});
+		
+		
+		if (iguais > 3) {
+			exibirMensagemDialog("WARNING", ["Não foi possível inserir esse(s) iten(s). Um componente não pode ter mais que 3 elementos."], "");
+			return;
+		}else if ((diferentes+1) > 3) {
+			exibirMensagemDialog("WARNING", ["Não é possível adicionar mais que 3 Componentes."], "");
+			return;
+		}else {
+			T.bonificacaoSelecionados = totalBonificacoes;
+		}
+
 		$("#elemento1Grid").flexAddData({
 			rows : toFlexiGridObject(T.bonificacaoSelecionados),
 			page : 1,
 			total : 1
 		});
 		
-		$.each($(".bonificacaoElementoInput"), function(index, input){ 
-			input.checked = false;
+		T.bonificacaoSelecionados.forEach(function(element){ 
+			if (element.elemento.checkBox.checked) {
+				element.elemento.checkBox.checked = false;
+				element.elemento.selecionado = false;
+			}
 		});
 		
 	};
 	
 	this.removerBonificacao = function(index){
-		T.bonificacaoSelecionados.splice(index, 1);
+		if (T.bonificacaoSelecionados.length === 1) {
+			T.bonificacaoSelecionados.shift();
+		}else{
+			T.bonificacaoSelecionados.splice(index, 1);
+		}
+		
 		$("#elemento1Grid").flexAddData({
 			rows : toFlexiGridObject(T.bonificacaoSelecionados),
 			page : 1,
@@ -324,6 +428,32 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		
 	};
 	
+	this.verificacoesGerar = function(){
+		if(T.produtoEdicaoBases != undefined && T.produtoEdicaoBases.length === 1){
+			distribuicaoVendaMedia.alertaUmaEdicaoBase();
+		}else{
+			distribuicaoVendaMedia.gerar();
+		}
+	};
+	
+	this.alertaUmaEdicaoBase = function(){
+		$( "#dialog-edicoesbase" ).dialog({
+			resizable: false,
+			height:'auto',
+			width:380,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					distribuicaoVendaMedia.gerar();
+					$( this ).dialog( "close" );
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
+	};
+	
 	this.gerar = function(){
 		var data = [];
 		
@@ -336,11 +466,11 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		if(T.produtoEdicaoBases != undefined){
 			for(var i = 0; i < T.produtoEdicaoBases.length; i++){
 				var produtoEdicao = T.produtoEdicaoBases[i];
-				console.log(produtoEdicao);
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].id", value : produtoEdicao.id});
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].numeroEdicao", value : produtoEdicao.numeroEdicao});
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].codigoProduto", value : produtoEdicao.codigoProduto});
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].peso", value : produtoEdicao.peso});
+				data.push({name: "distribuicaoVendaMedia.bases["+i+"].situacaoLancamento", value : produtoEdicao.status});
 			}
 		}
 		
