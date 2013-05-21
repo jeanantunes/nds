@@ -221,7 +221,13 @@ function esconde_redutor(){
     </fieldset>
 </div>
 
+<div id="dialog-edicoesbase" title="Alerta" style="display:none;">  
+    <fieldset style="width:320px!important;">
+            <p>Existe apenas uma edição base. Deseja continuar?</p>
+    </fieldset>
+</div>
 
+<!-- T.produtoEdicaoBases.length -->
 <div id="dialog-detalhes" title="Visualizando Produto" style="margin-right:0px!important; float:right!important;">
 	
 	<img src="images/loading.gif" id="loadingCapa"/>
@@ -418,10 +424,8 @@ function esconde_redutor(){
                	    </table>
                   </fieldset>
                     <br clear="all" />
-                    <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.cancelar()"><img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
-                     <span class="bt_novos"><a href="javascript:;" onclick="popup_cancelar();"><img src="images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
-                                       
-                     <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.gerar()"><img src="images/ico_check.gif" alt="Gerar" hspace="5" border="0" />Gerar</a></span>
+                     <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.cancelar()"><img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
+                     <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.verificacoesGerar()"><img src="images/ico_check.gif" alt="Gerar" hspace="5" border="0" />Gerar</a></span>
                      <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.analise()"><img src="images/ico_copia_distrib.gif" alt="Analisar" hspace="5" border="0" />Analisar</a></span>
                 </div>
                 <div id="tab-distribuicao-2" class="distribuicaoVendaMedia-tab">
@@ -446,13 +450,7 @@ function esconde_redutor(){
 
                     </fieldset>
                     <br clear="all" />
-                    
-                    <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.cancelar()"><img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
-
-                    <span class="bt_novos"><a href="javascript:;" onclick="popup_cancelar();"><img src="images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
-                    
-                   
-                <span class="bt_novos"><a href="javascript:;" onclick="popup_excluir();"><img src="images/ico_excluir.gif" hspace="5" alt="Cancelar" border="0" />Excluir</a></span>
+	                <span class="bt_novos"><a href="javascript:;" onclick="popup_excluir();"><img src="images/ico_excluir.gif" hspace="5" alt="Cancelar" border="0" />Excluir</a></span>
                 
                 </div>
                 
@@ -498,7 +496,12 @@ function esconde_redutor(){
             </td>
             </tr>
     </table>
-    <span class="bt_novos" style="float:right!important; margin-right:20px;"><a href="javascript:;" onclick="distribuicaoVendaMedia.confirmarSelecaoBonificacao();"><img src="images/ico_add.gif" alt="Confirmar Seleção" hspace="5" border="0" />Confirmar Seleção</a></span>
+    <span class="bt_novos" style="float:right!important; margin-right:20px;">
+    	<a href="javascript:;" onclick="distribuicaoVendaMedia.confirmarSelecaoBonificacao();">
+    		<img src="images/ico_add.gif" alt="Confirmar Seleção" hspace="5" border="0" />
+    			Confirmar Seleção
+    	</a>
+    </span>
     <br />
 
     <table width="590" border="0" cellspacing="2" cellpadding="2">
@@ -510,9 +513,6 @@ function esconde_redutor(){
     </table>                 
 <br clear="all" />
 </fieldset>
-                    <br clear="all" />
-                    <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.cancelar()"><img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
-                    <span class="bt_novos"><a href="javascript:;" onclick="popup_cancelar();"><img src="images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span><span class="bt_novos"><a href="javascript:;"><img src="images/ico_salvar.gif" alt="Salvar" hspace="5" border="0" />Salvar</a></span>
                 <br clear="all" />
 
                 </div>
@@ -633,9 +633,6 @@ function esconde_redutor(){
                     </table>
                         
                     </fieldset>
-                    <br clear="all" />
-                    <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.cancelar()"><img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
-                <span class="bt_novos"><a href="javascript:;" onclick="popup_cancelar();"><img 	src="images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
                 </div>
                 <br clear="all" />
 

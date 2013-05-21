@@ -3,10 +3,10 @@ var estudoComplementarController =$.extend(true,  {
 	
 	gerarEstudoComplementar:function(){
 
-		
-		var codigoEstudo = $('#codigoEstudo').val(); 
-		var reparteSobra = $('#reparteSobra').val();
-		var tipoSelecao  =  $('#tipoSelecao :selected').val();
+		var codigoEstudo = $('#codigoEstudo').val(), 
+			reparteSobra = $('#reparteSobra').val(),
+			tipoSelecao  =  $('#tipoSelecao :selected').val(),
+			isMultiplo = false;
 		
 		if (tipoSelecao==0){
 			alert("Favor Selecionar Tipo Base");
@@ -32,13 +32,15 @@ var estudoComplementarController =$.extend(true,  {
 				exibirMensagem("WARNING", ["Favor informar valor de reparte por Cota"]);
 				return;
 			}
+		}else {
+			reparteCota = $('#distrMult').val();
+			isMultiplo = true;
 		}
 		
 		if ($('#reparteLancamento').val()<0){
 			alert("Reparte Lancamento negativo!!");
 			return
 		}
-
 		
 		if ($('#reparteLancamento').val()=="" || $('#reparteLancamento').val()==0){
 
@@ -84,6 +86,7 @@ var estudoComplementarController =$.extend(true,  {
 	                  dados.push({name:"parametros.idLancamento",        	 value: matrizSelecionado.idLancamento});
 	                  dados.push({name:"parametros.idEstudoComplementar",         value: $('#idEstudoComplementar').text()});
 	                  dados.push({name:"parametros.idProdutoEdicao",         value: matrizSelecionado.idProdutoEdicao});
+	                  dados.push({name:"parametros.multiplo",         value: isMultiplo});
 	      					           
 		 $.ajax({
 			 url:  'lancamento/gerarEstudo',
