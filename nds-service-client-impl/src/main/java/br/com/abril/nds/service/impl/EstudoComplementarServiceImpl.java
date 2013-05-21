@@ -155,7 +155,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 		boolean primeiraVez=true;
 		while ( qtdDistribuido.compareTo(BigInteger.ZERO) > 0 ){
 			
-			if (primeiraVez) {
+			if (primeiraVez || estudoComplementarVO.isMultiplo()) {
 				for( int i=0; i < estudoCotaNovo.size(); i++ ){
 					
 					EstudoCota estudoCota = estudoCotaNovo.get(i);
