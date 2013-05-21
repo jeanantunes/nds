@@ -47,7 +47,7 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 		// Se Repcalculado < Venda (Última edição fechada, sem correção)
 		// Se Cota <> FX / MM / MX / RD / PR
 		if (estudo.getReservaAjuste().compareTo(BigInteger.ZERO) == 1 &&
-			(cota.getReparteCalculado().compareTo(cota.getVendaEdicaoMaisRecenteFechada()) < 0) &&
+			(cota.getVendaEdicaoMaisRecenteFechada() != null && cota.getReparteCalculado().compareTo(cota.getVendaEdicaoMaisRecenteFechada()) < 0) &&
 			(cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado,
 				ClassificacaoCota.MaximoMinimo, ClassificacaoCota.CotaMix,
 				ClassificacaoCota.RedutorAutomatico, ClassificacaoCota.BancaSoComEdicaoBaseAberta))) {
@@ -63,7 +63,7 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 	    if (estudo.getReservaAjuste().compareTo(BigInteger.ZERO) == 1) {
 		for (CotaEstudo cota : estudo.getCotas()) {
 		    if (estudo.getReservaAjuste().compareTo(BigInteger.ZERO) == 1 &&
-				(cota.getReparteCalculado().compareTo(cota.getVendaEdicaoMaisRecenteFechada()) == 0) &&
+				(cota.getVendaEdicaoMaisRecenteFechada() != null && cota.getReparteCalculado().compareTo(cota.getVendaEdicaoMaisRecenteFechada()) == 0) &&
 			    cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo, ClassificacaoCota.CotaMix)) {
 
 			setReparteCota(cota, estudo);
