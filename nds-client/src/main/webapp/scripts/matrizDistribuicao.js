@@ -1049,7 +1049,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 				$("#copiarEstudo-copia-nomeProduto").text(result.nomeProduto);
 				$("#copiarEstudo-copia-classificacao").text(result.classificacao);
 				$("#copiarEstudo-copia-dataLancto").text(result.dataLancto);
-                $("#copiarEstudo-copia-reparte").text(result.reparte)
+                $("#copiarEstudo-copia-reparte").text(result.qtdeReparteEstudo)
                     .formatNumber({format:"#,###", locale:"br"});
 		  }
 		);
@@ -1182,7 +1182,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					T.exibirMensagemSucesso();
 					$("#copiarEstudo-estudo").text(result.long);
 					$("#copiarEstudo-estudoPesquisa").attr('disabled','true');
-					$("#copiarEstudo-reparteDistribuido").text("");
+//					$("#copiarEstudo-reparteDistribuido").text("");
 					T.atualizarGrid();
 					//T.mostraTelaMatrizDistribuicao();
 				}
