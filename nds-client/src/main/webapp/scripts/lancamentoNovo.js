@@ -266,6 +266,7 @@ var lancamentoNovoController = $.extend(true, {
 	},
 	
 	carregarEdicaoDirecionamentoCota:function(result){
+		lancamentoNovoController.limparCotas();
 		
 		lancamentoNovoController.carregarDiferencaProduto(result.diferenca);
 		
