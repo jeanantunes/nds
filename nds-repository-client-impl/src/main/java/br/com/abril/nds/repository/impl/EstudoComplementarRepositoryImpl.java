@@ -65,19 +65,15 @@ public class EstudoComplementarRepositoryImpl extends AbstractRepositoryModel<Es
 		sqlStmt.append( "select distinct ec.* from ");
 		sqlStmt.append( "             produto_edicao     pe, "); 
 		sqlStmt.append( "		      estudo_cota        ec, ");
-		sqlStmt.append( "             produto_fornecedor pf, "); 
-		sqlStmt.append( "             cota_fornecedor    cf, ");
 		sqlStmt.append( "             cota               co  ");
 
 		sqlStmt.append( " where  "); 
-		sqlStmt.append( "      pe.PRODUTO_ID = pf.PRODUTO_ID ");
-		sqlStmt.append( "  and ec.COTA_ID    = cf.COTA_ID ");
-		sqlStmt.append( "  and ec.COTA_ID    = co.ID      ");
+		sqlStmt.append( "  ec.COTA_ID    = co.ID      ");
 		sqlStmt.append( "  and co.id in (:tipoSelecao ) ");
 		sqlStmt.append( "  and (ec.REPARTE=0 or ec.REPARTE is null) ");
 		sqlStmt.append( "  and ec.ESTUDO_ID             = :estudoId ");
 		sqlStmt.append( "  and co.SITUACAO_CADASTRO   = 'ATIVO' ");
-		sqlStmt.append( "  and ec.CLASSIFICACAO  in ('CL', 'GN', 'SM','SH') ");
+		sqlStmt.append( "  and ec.CLASSIFICACAO  = 'SH' ");
 		sqlStmt.append( "  and 0 = (select count(epe.PRODUTO_EDICAO_ID) soma from estudo_produto_edicao_base epe where epe.PRODUTO_EDICAO_ID  = pe.id ) "); 
 		
 		sqlStmt.append( " union ");
@@ -85,38 +81,30 @@ public class EstudoComplementarRepositoryImpl extends AbstractRepositoryModel<Es
 		sqlStmt.append( "select distinct ec.* from ");
 		sqlStmt.append( "             produto_edicao     pe, "); 
 		sqlStmt.append( "		      estudo_cota        ec, ");
-		sqlStmt.append( "             produto_fornecedor pf, "); 
-		sqlStmt.append( "             cota_fornecedor    cf, ");
 		sqlStmt.append( "             cota               co  ");
 
 		sqlStmt.append( " where  "); 
-		sqlStmt.append( "      pe.PRODUTO_ID = pf.PRODUTO_ID ");
-		sqlStmt.append( "  and ec.COTA_ID    = cf.COTA_ID ");
-		sqlStmt.append( "  and ec.COTA_ID    = co.ID      ");
+		sqlStmt.append( "  ec.COTA_ID    = co.ID      ");
 		sqlStmt.append( "  and co.id in (:tipoSelecao ) ");
 		sqlStmt.append( "  and (ec.REPARTE=0 or ec.REPARTE is null) ");
 		sqlStmt.append( "  and ec.ESTUDO_ID             = :estudoId ");
 		sqlStmt.append( "  and co.SITUACAO_CADASTRO   = 'ATIVO' ");
-		sqlStmt.append( "  and ec.CLASSIFICACAO  in ('CL', 'GN', 'SM','SH') ");
+		sqlStmt.append( "  and ec.CLASSIFICACAO  = 'VZ' ");
 		sqlStmt.append( "  and 1 = (select count(epe.PRODUTO_EDICAO_ID) soma from estudo_produto_edicao_base epe where epe.PRODUTO_EDICAO_ID  = pe.id ) "); 
 		    
 		sqlStmt.append( " union ");
 		sqlStmt.append( "select distinct ec.* from ");
 		sqlStmt.append( "             produto_edicao     pe, "); 
 		sqlStmt.append( "		      estudo_cota        ec, ");
-		sqlStmt.append( "             produto_fornecedor pf, "); 
-		sqlStmt.append( "             cota_fornecedor    cf, ");
 		sqlStmt.append( "             cota               co  ");
 
 		sqlStmt.append( " where  "); 
-		sqlStmt.append( "      pe.PRODUTO_ID = pf.PRODUTO_ID ");
-		sqlStmt.append( "  and ec.COTA_ID    = cf.COTA_ID ");
-		sqlStmt.append( "  and ec.COTA_ID    = co.ID      ");
+		sqlStmt.append( "  ec.COTA_ID    = co.ID      ");
 		sqlStmt.append( "  and co.id in (:tipoSelecao ) ");
 		sqlStmt.append( "  and (ec.REPARTE=0 or ec.REPARTE is null) ");
 		sqlStmt.append( "  and ec.ESTUDO_ID             = :estudoId ");
 		sqlStmt.append( "  and co.SITUACAO_CADASTRO   = 'ATIVO' ");
-		sqlStmt.append( "  and ec.CLASSIFICACAO  in ('CL', 'GN', 'SM','SH') ");
+		sqlStmt.append( "  and ec.CLASSIFICACAO = 'VZ' ");
 		sqlStmt.append( "  and 2 = (select count(epe.PRODUTO_EDICAO_ID) soma from estudo_produto_edicao_base epe where epe.PRODUTO_EDICAO_ID  = pe.id ) "); 
 		
 		    
@@ -125,19 +113,15 @@ public class EstudoComplementarRepositoryImpl extends AbstractRepositoryModel<Es
 		sqlStmt.append( "select distinct ec.* from ");
 		sqlStmt.append( "             produto_edicao     pe, "); 
 		sqlStmt.append( "		      estudo_cota        ec, ");
-		sqlStmt.append( "             produto_fornecedor pf, "); 
-		sqlStmt.append( "             cota_fornecedor    cf, ");
 		sqlStmt.append( "             cota               co  ");
 
 		sqlStmt.append( " where  "); 
-		sqlStmt.append( "      pe.PRODUTO_ID = pf.PRODUTO_ID ");
-		sqlStmt.append( "  and ec.COTA_ID    = cf.COTA_ID ");
-		sqlStmt.append( "  and ec.COTA_ID    = co.ID      ");
+		sqlStmt.append( "  ec.COTA_ID    = co.ID      ");
 		sqlStmt.append( "  and co.id in (:tipoSelecao ) ");
 		sqlStmt.append( "  and (ec.REPARTE=0 or ec.REPARTE is null) ");
 		sqlStmt.append( "  and ec.ESTUDO_ID             = :estudoId ");
 		sqlStmt.append( "  and co.SITUACAO_CADASTRO   = 'ATIVO' ");
-		sqlStmt.append( "  and ec.CLASSIFICACAO  in ('CL', 'GN', 'SM','SH') ");
+		sqlStmt.append( "  and ec.CLASSIFICACAO = 'VZ' ");
 		sqlStmt.append( "  and 3 = (select count(epe.PRODUTO_EDICAO_ID) soma from estudo_produto_edicao_base epe where epe.PRODUTO_EDICAO_ID  = pe.id ) "); 
 		
 		

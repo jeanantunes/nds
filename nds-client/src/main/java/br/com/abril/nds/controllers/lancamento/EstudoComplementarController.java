@@ -71,7 +71,6 @@ public class EstudoComplementarController  extends BaseController{
 		baseEstudo.setNumeroEdicao(estudo.getNumeroEdicao());
 		baseEstudo.setCodigoProduto(estudo.getCodigoProduto());
 		
-		
 		result.use(json()).from(baseEstudo).serialize();		
 	}
 
