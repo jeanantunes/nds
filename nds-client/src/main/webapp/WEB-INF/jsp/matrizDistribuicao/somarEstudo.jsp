@@ -116,4 +116,8 @@ function analisar() {
 
     
     </div>
+    
+    <div id="dialog-confirm-coincidencia-cotas" title="Confirmar Coincid&ecirc;ncia de cotas" style="display:none;">
+						H&aacute; coincid&ecirc;ncia de cotas entre os estudos. Deseja continuar?
+			</div>
 </div>

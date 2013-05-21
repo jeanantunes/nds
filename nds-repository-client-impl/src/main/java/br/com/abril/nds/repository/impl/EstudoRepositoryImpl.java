@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -9,10 +10,8 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
-import br.com.abril.nds.dto.filtro.FiltroDistribuicaoDTO;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DistribuicaoRepository;
@@ -246,16 +245,24 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		
 		query.executeUpdate();
 	}
+
+	
+	@Override
+	public Long countDeCotasEntreEstudos(Long estudoBase, Long estudoSomado) {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(*) from estudo_cota ec where ec.ESTUDO_ID=")
+				.append( estudoBase.toString()) 
+				.append(" and ec.COTA_ID in (  ")
+			.append(" 	select ec2.COTA_ID from estudo_cota ec2 where ec2.ESTUDO_ID = ")
+					.append( estudoSomado.toString())	 
+					.append( ")" );
+		
+		Query query =	this.getSession().createSQLQuery(hql.toString());
+		
+		BigInteger count = (BigInteger) query.uniqueResult();
+		
+		return count.longValue();
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
 
