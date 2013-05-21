@@ -33,7 +33,7 @@ public class RedutorAutomatico extends ProcessoAbstrato {
     public void calcularRedutorAutomatico(EstudoTransient estudo) {
 	for (CotaEstudo cota : estudo.getCotas()) {
 	    if (cota.getVendaEdicaoMaisRecenteFechada() != null) {
-		if ((cota.getVendaMedia().compareTo(estudo.getMenorVenda()) <= 0) && (cota.getVendaEdicaoMaisRecenteFechada().compareTo(BigDecimal.ZERO) == 0)) {
+		if ((cota.getVendaMedia().compareTo(estudo.getMenorVenda()) <= 0) && (cota.getVendaEdicaoMaisRecenteFechada().compareTo(BigInteger.ZERO) == 0)) {
 		    cota.setReparteCalculado(BigInteger.ZERO, estudo);
 		    cota.setClassificacao(ClassificacaoCota.RedutorAutomatico);
 		}

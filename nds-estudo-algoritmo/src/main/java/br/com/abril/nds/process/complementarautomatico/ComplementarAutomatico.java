@@ -12,6 +12,7 @@ import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.ajustefinalreparte.ReparteComplementarPorCota;
 import br.com.abril.nds.process.calculoreparte.CalcularReparte;
 import br.com.abril.nds.process.encalhemaximo.EncalheMaximo;
+import br.com.abril.nds.service.EstudoAlgoritmoService;
 
 /**
  * Este processo tem como objetivo calcular o reparteComplementar que será
@@ -93,6 +94,9 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
 		    estudo.setReparteComplementar(calculo1.max(calculo2).toBigInteger());
 		    estudo.setReparteComplementar(new BigDecimal(estudo.getReparteComplementar()).max(calculo3).toBigInteger());
 		}
+		// se for distribuicao por multiplos, faz arredondamento para o pacote padrao
+		estudo.setReparteComplementar(EstudoAlgoritmoService.arredondarPacotePadrao(estudo, estudo.getReparteComplementar()));
+
 		estudo.setReparteComplementarInicial(estudo.getReparteComplementar());
 		estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(estudo.getReparteComplementar()));
 	    }

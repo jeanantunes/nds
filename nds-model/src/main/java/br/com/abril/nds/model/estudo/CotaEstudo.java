@@ -22,7 +22,7 @@ public class CotaEstudo extends Cota {
     private BigDecimal vendaMedia;
     private BigDecimal vendaMediaCorrigida;
     private BigDecimal vendaMediaNominal;
-    private BigDecimal vendaEdicaoMaisRecenteFechada;
+    private BigInteger vendaEdicaoMaisRecenteFechada;
     private boolean cotaSoRecebeuEdicaoAberta;
     private BigDecimal somaReparteEdicoesAbertas;
     private BigDecimal indiceCorrecaoTendencia;
@@ -129,11 +129,10 @@ public class CotaEstudo extends Cota {
     public void setVendaMediaNominal(BigDecimal vendaMediaNominal) {
 	this.vendaMediaNominal = vendaMediaNominal;
     }
-    public BigDecimal getVendaEdicaoMaisRecenteFechada() {
+    public BigInteger getVendaEdicaoMaisRecenteFechada() {
 	return vendaEdicaoMaisRecenteFechada;
     }
-    public void setVendaEdicaoMaisRecenteFechada(
-	    BigDecimal vendaEdicaoMaisRecenteFechada) {
+    public void setVendaEdicaoMaisRecenteFechada(BigInteger vendaEdicaoMaisRecenteFechada) {
 	this.vendaEdicaoMaisRecenteFechada = vendaEdicaoMaisRecenteFechada;
     }
     public boolean isCotaSoRecebeuEdicaoAberta() {
