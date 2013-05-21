@@ -111,6 +111,16 @@ public class LancamentoServiceImpl implements LancamentoService {
 		
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		
+		// Conforme solicitado pelo Cesar, caso não encontre preço de venda utiliza o preço previsto
+		String preco = "";
+		if (lancamento.getProdutoEdicao().getPrecoVenda() != null) {
+			preco = lancamento.getProdutoEdicao().getPrecoVenda().setScale(2, RoundingMode.HALF_EVEN).toString().replace(".", ",");
+		} else if (lancamento.getProdutoEdicao().getPrecoPrevisto() != null) {
+			preco = lancamento.getProdutoEdicao().getPrecoPrevisto().setScale(2, RoundingMode.HALF_EVEN).toString().replace(".", ",");
+		} else {
+			throw new ValidacaoException(TipoMensagem.ERROR, "Produto sem preço de venda e preco previsto. Codigo: " + lancamento.getProdutoEdicao().getProduto().getCodigo() + ", Edicao: " + lancamento.getProdutoEdicao().getProduto().getNome());
+		}
+		
 		LancamentoNaoExpedidoDTO dto = new LancamentoNaoExpedidoDTO(
 				lancamento.getId(), 
 				maisRecente==null?"":sdf.format(maisRecente), 
@@ -118,7 +128,7 @@ public class LancamentoServiceImpl implements LancamentoService {
 				lancamento.getProdutoEdicao().getProduto().getNome(), 
 				lancamento.getProdutoEdicao().getNumeroEdicao(), 
 				lancamento.getProdutoEdicao().getProduto().getTipoProduto().getDescricao(), 
-				lancamento.getProdutoEdicao().getPrecoVenda().setScale(2, RoundingMode.HALF_EVEN).toString().replace(".", ","), 
+				preco, 
 				lancamento.getProdutoEdicao().getPacotePadrao(), 
 				lancamento.getReparte().intValue(), 
 				sdf.format(lancamento.getDataRecolhimentoPrevista()), 

@@ -17,10 +17,10 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.CotaFaturamentoDTO;
 import br.com.abril.nds.dto.CotaTransportadorDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
@@ -179,9 +179,9 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		sql.append(" where ");
 		sql.append("	movimentof0_.TIPO_MOVIMENTO_ID=tipomovime1_.ID  ");
 		sql.append("	and movimentof0_.COTA_ID=cota3_.ID  ");
-		sql.append("	and movimentof0_.DATA=:dataOperacao  ");
-		sql.append("	and movimentof0_.STATUS= :statusAprovado  ");
-		sql.append("	and cota3_.NUMERO_COTA= :numeroCota  ");
+		sql.append("	and movimentof0_.DATA = :dataOperacao  ");
+		sql.append("	and movimentof0_.STATUS = :statusAprovado  ");
+		sql.append("	and cota3_.NUMERO_COTA = :numeroCota  ");
 		
 		if(tiposMovimentoFinanceiroIgnorados!=null && !tiposMovimentoFinanceiroIgnorados.isEmpty()) {
 			
@@ -208,7 +208,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		sql.append("				COTA cota7_  ");
 		sql.append("			where ");
 		sql.append("				consolidad4_.COTA_ID=cota7_.ID  ");
-		sql.append("				and cota7_.NUMERO_COTA= :numeroCota ");
+		sql.append("				and cota7_.NUMERO_COTA = :numeroCota ");
 		sql.append("		) ");
 		sql.append("	)  ");
 		sql.append(" order by ");
@@ -216,8 +216,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
-
-		parameters.put("statusAprovado", StatusAprovacao.APROVADO);
+		
+		parameters.put("statusAprovado", StatusAprovacao.APROVADO.name());
 		parameters.put("numeroCota", numeroCota);
 		parameters.put("dataOperacao", dataOperacao);
 		
