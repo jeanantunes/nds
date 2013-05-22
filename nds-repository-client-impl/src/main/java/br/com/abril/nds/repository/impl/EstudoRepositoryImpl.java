@@ -1,11 +1,15 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.model.planejamento.EstudoCota;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -19,6 +23,7 @@ import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.ItemNotaEnvioRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Classe de implementação referente ao acesso a dados da entidade 
@@ -264,5 +269,14 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		
 		return count.longValue();
 	}
-}
 
+    @Override
+    @Transactional(readOnly = true)
+    public int obterCotasComRepartePorIdEstudo(Long estudoId) {
+        return ((Number) this.getSession().createCriteria(EstudoCota.class)
+                .add(Restrictions.eq("estudo.id", estudoId))
+                .add(Restrictions.gt("reparte", BigInteger.ZERO))
+                .setProjection(Projections.rowCount())
+                .uniqueResult()).intValue();
+    }
+}

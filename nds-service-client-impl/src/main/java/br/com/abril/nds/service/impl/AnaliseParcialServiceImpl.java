@@ -1,11 +1,10 @@
 package br.com.abril.nds.service.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.*;
 
+import br.com.abril.nds.repository.CotaRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -36,6 +35,9 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Autowired
     private EstudoRepository estudoRepository;
 
+    @Autowired
+    private CotaRepository cotaRepository;
+
     private static final Logger log = LoggerFactory.getLogger(AnaliseParcialServiceImpl.class);
     private Map<String, String> mapClassificacaoCota;
 
@@ -49,7 +51,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 
     @Override
     public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId) {
-        return analiseParcialRepository.carregarEdicoesBaseEstudo(estudoId);
+        return analiseParcialRepository.carregarEdicoesBaseEstudo(estudoId, true);
     }
 
     @Override
@@ -57,17 +59,19 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         List<AnaliseParcialDTO> lista = analiseParcialRepository.buscaAnaliseParcialPorEstudo(queryDTO);
         if (queryDTO.getModoAnalise() != null && queryDTO.getModoAnalise().equalsIgnoreCase("PARCIAL")) {
             for (AnaliseParcialDTO item : lista) {
+                item.setDescricaoLegenda(traduzClassificacaoCota(item.getLeg()));
                 List<EdicoesProdutosDTO> temp = new ArrayList<>();
                 for (int i = 0; i < 3; i++) {
-                    temp.addAll(analiseParcialRepository.getEdicoesBaseParciais(new Long(item.getCota()), queryDTO.getNumeroEdicao(), queryDTO.getCodigoProduto(), new Long(i)));
+                    temp.addAll(analiseParcialRepository.getEdicoesBaseParciais((long) item.getCota(), queryDTO.getNumeroEdicao(), queryDTO.getCodigoProduto(), (long) i));
                 }
                 item.setEdicoesBase(temp);
             }
         } else {
             if (queryDTO.getEdicoesBase() == null) {
-                queryDTO.setEdicoesBase(analiseParcialRepository.carregarEdicoesBaseEstudo(new Long(queryDTO.getEstudoId())));
+                queryDTO.setEdicoesBase(analiseParcialRepository.carregarEdicoesBaseEstudo(queryDTO.getEstudoId(), true));
             }
             for (AnaliseParcialDTO item : lista) {
+                item.setDescricaoLegenda(traduzClassificacaoCota(item.getLeg()));
                 List<Long> idsProdutoEdicao = new ArrayList<>();
                 List<EdicoesProdutosDTO> edicoesComVenda = new ArrayList<>();
                 for (EdicoesProdutosDTO edicao : queryDTO.getEdicoesBase()) {
@@ -115,12 +119,21 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     public List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO) {
         List<CotaQueNaoEntrouNoEstudoDTO> cotaQueNaoEntrouNoEstudoDTOList = analiseParcialRepository.buscarCotasQueNaoEntraramNoEstudo(queryDTO);
         for (CotaQueNaoEntrouNoEstudoDTO cotaQueNaoEntrouNoEstudoDTO : cotaQueNaoEntrouNoEstudoDTOList) {
-            cotaQueNaoEntrouNoEstudoDTO.setMotivo(traduzMotivo(cotaQueNaoEntrouNoEstudoDTO.getMotivo()));
+            cotaQueNaoEntrouNoEstudoDTO.setMotivo(traduzClassificacaoCota(cotaQueNaoEntrouNoEstudoDTO.getMotivo()));
         }
         return cotaQueNaoEntrouNoEstudoDTOList;
     }
 
-    private String traduzMotivo(String motivo) {
+    @Override
+    public BigDecimal calcularPercentualAbrangencia(Long estudoId) {
+        int cotasAtivas = cotaRepository.obterCotasAtivas();
+        int cotasComReparte = estudoRepository.obterCotasComRepartePorIdEstudo(estudoId);
+        return cotasAtivas == 0 ? BigDecimal.ZERO : BigDecimal.valueOf(cotasComReparte)
+                .divide(BigDecimal.valueOf(cotasAtivas)).multiply(BigDecimal.valueOf(100))
+                .divide(BigDecimal.ONE, 2, RoundingMode.HALF_UP);
+    }
+
+    private String traduzClassificacaoCota(String motivo) {
         if (mapClassificacaoCota == null) {
             populaMapClassificacaoCota();
         }
