@@ -12,7 +12,6 @@ import br.com.abril.nds.dto.CotaQueNaoRecebeExcecaoDTO;
 import br.com.abril.nds.dto.CotaQueRecebeExcecaoDTO;
 import br.com.abril.nds.dto.ProdutoNaoRecebidoDTO;
 import br.com.abril.nds.dto.ProdutoRecebidoDTO;
-import br.com.abril.nds.dto.RegiaoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.dto.filtro.FiltroExcecaoSegmentoParciaisDTO;
 import br.com.abril.nds.model.distribuicao.ExcecaoProdutoCota;
@@ -166,8 +165,14 @@ public class ExcecaoSegmentoParciaisRepositoryImpl extends AbstractRepositoryMod
 		
 		hql.append(" JOIN cota.pdvs as pdv ");
 		hql.append(" JOIN cota.pessoa as pessoa ");
-		
-		hql.append(" WHERE cota.recebeRecolheParciais = 0 ");
+		if (!filtro.isExcecaoSegmento()) {
+		    hql.append(" WHERE cota.recebeRecolheParciais = 0 ");
+		} else {
+		    hql.append(" WHERE cota.id in ");
+		    hql.append(" (select cotaJoin.id from SegmentoNaoRecebido s ");
+		    hql.append(" join s.cota cotaJoin join s.tipoSegmentoProduto t ");
+		    hql.append(" join t.produtos p with p.codigo = :codProduto) ");
+		}
 		hql.append(" and cota.id not in ");
 		hql.append(" (select cotaJoin.id from ExcecaoProdutoCota e  ");
 		hql.append(" JOIN e.produto prod ");

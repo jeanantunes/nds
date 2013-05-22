@@ -33,6 +33,8 @@ $(document).ready(function () {
             }
         }
     });
+
+    estudoComplementarController.consultarEstudo($('#codigoEstudo'));
 });
 
 
@@ -189,10 +191,12 @@ function somarDistribuicao(){
     	
       <fieldset class="classFieldset">
    	    <legend>Estudo Complementar</legend>
+   	    <input type="hidden" id="idLancamento" value="${idLancamento}" />
+   	    <input type="hidden" id="idProdutoEdicao" value="${idProdutoEdicao}" />
    	    <table width="950" border="0" cellspacing="2" cellpadding="2">
           <tr>
               <td width="78"><strong>Estudo Base:</strong></td>
-              <td width="102"><input type="text" name="codigoEstudo" id="codigoEstudo" style="width:70px; margin-right:5px; float:left;" maxlength="8" onblur="estudoComplementarController.consultarEstudo(this);"/>
+              <td width="102"><input type="text" name="codigoEstudo" id="codigoEstudo" style="width:70px; margin-right:5px; float:left;" maxlength="8" value="${estudoId}" onblur="estudoComplementarController.consultarEstudo(this);"/>
                 <span class="classPesquisar"><a href= "javascript:;" onclick="informacoesProdutoShow('${pageContext.request.contextPath}/distribuicao/informacoesProduto')">&nbsp;</a></span></td>
               <td width="130"><strong>Estudo Complementar:</strong></td>
               <td width="64" id="idEstudoComplementar">
@@ -247,8 +251,8 @@ function somarDistribuicao(){
                 <td width="62">Tipo Base:</td>
                 <td width="180" ><select name="tipoSelecao" id="tipoSelecao" style="width:160px;">
                   <option selected="selected" value="0">Selecione...</option>
-                  <option  value="1">Ranking Segmento</option>
-                  <option value="2">Ranking Faturamento</option>
+                  <option  value="RANKING_SEGMENTO">Ranking Segmento</option>
+                  <option value="RANKING_FATURAMENTO">Ranking Faturamento</option>
                 </select></td>
                 <td width="106">Reparte por Cota:</td>
                 <td width="78"><input name="reparteCota" type="text" id="reparteCota" style="width:60px; text-align:center;" value="2" /></td>

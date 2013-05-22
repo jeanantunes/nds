@@ -7,11 +7,5 @@ public interface EstudoComplementarService {
 	
 	public EstudoComplementarDTO obterEstudoComplementarPorIdEstudoBase(long idEstudoBase);
 	
-	public Long gerarNumeroEstudoComplementar();
-	
 	public boolean gerarEstudoComplementar(EstudoComplementarVO parametros);
-
-	
-	
-
 }
