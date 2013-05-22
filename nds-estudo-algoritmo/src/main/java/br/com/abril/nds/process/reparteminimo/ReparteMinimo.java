@@ -45,6 +45,10 @@ public class ReparteMinimo extends ProcessoAbstrato {
 	    } else {
 		reparteMinimo = cota.getReparteMinimo();
 	    }
+	    if (cota.getIntervaloMinimo() != null && cota.getIntervaloMinimo().compareTo(reparteMinimo) > 0) {
+		reparteMinimo = cota.getIntervaloMinimo();
+	    }
+	    
 	    cota.setReparteMinimo(reparteMinimo);
 	    somatoriaReparteMinimo = somatoriaReparteMinimo.add(reparteMinimo);
 	}
