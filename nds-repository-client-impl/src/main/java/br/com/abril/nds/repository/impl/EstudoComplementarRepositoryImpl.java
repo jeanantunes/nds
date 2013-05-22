@@ -48,7 +48,7 @@ public class EstudoComplementarRepositoryImpl extends AbstractRepositoryModel<Es
 		if (estudoComplementarVO.getTipoSelecao()==1){
 			
 			sqlTipoSelecao.append( " Select distinct ranking_segmento.COTA_ID FROM ranking_segmento ");
-			sqlTipoSelecao.append( "                  where (select max(ranking_segmento.data_geracao_rank)  from ranking_segmento) order by qtde ");
+			sqlTipoSelecao.append( "                  where (select max(ranking_segmento.data_geracao_rank)  from ranking_segmento) order by qtde desc");
 			
 			
 		}

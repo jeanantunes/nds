@@ -27,7 +27,7 @@ public class DistribuicaoVendaMediaDTO {
 	private Boolean complementarAutomatico;
 	private Boolean cotasAVista;
 	private ComponentesPDV excecaoDeBancasComponente;
-	private String excecaoDeBancasElemento;
+	private List<String> excecaoDeBancas = new ArrayList<>();
 	
 	public BigInteger getReparteDistribuir() {
 		return reparteDistribuir;
@@ -119,12 +119,15 @@ public class DistribuicaoVendaMediaDTO {
 	public void setExcecaoDeBancasComponente(ComponentesPDV excecaoDeBancasComponente) {
 		this.excecaoDeBancasComponente = excecaoDeBancasComponente;
 	}
-	public String getExcecaoDeBancasElemento() {
-		return excecaoDeBancasElemento;
+
+	public List<String> getExcecaoDeBancas() {
+		return excecaoDeBancas;
 	}
-	public void setExcecaoDeBancasElemento(String excecaoDeBancasElemento) {
-		this.excecaoDeBancasElemento = excecaoDeBancasElemento;
+	
+	public void setExcecaoDeBancas(List<String> excecaoDeBancas) {
+		this.excecaoDeBancas = excecaoDeBancas;
 	}
+
 	@Override
 	public String toString() {
 		return "DistribuicaoVendaMediaDTO [reparteDistribuir="
@@ -138,7 +141,7 @@ public class DistribuicaoVendaMediaDTO {
 				+ roteiroEntregaId + ", complementarAutomatico="
 				+ complementarAutomatico + ", cotasAVista=" + cotasAVista
 				+ ", excecaoDeBancasComponente=" + excecaoDeBancasComponente
-				+ ", excecaoDeBancasElemento=" + excecaoDeBancasElemento + "]";
+				+ ", excecaoDeBancasElemento=" + excecaoDeBancas + "]";
 	}
 	public BigInteger getMultiplo() {
 		return multiplo;
