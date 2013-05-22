@@ -322,7 +322,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 		    ProdutoEdicaoDTO produtoEdicaoDTO = distribuicaoVendaMedia.getBases().get(i);
 	
 		    if (!produtoEdicaoDTO.getStatus().equals("FECHADO")) {
-			qtdEdicoesAbertas++;
+		    	qtdEdicoesAbertas++;
 		    }
 		}
 	
@@ -336,9 +336,9 @@ public class DistribuicaoVendaMediaController extends BaseController {
 		String htmlEstudo = HTMLTableUtil.estudoToHTML(estudo);
 		
 		List<Object> response = new ArrayList<>();
-		response.add(estudo.getId());
-		response.add(estudo.getStatusEstudo());
 		response.add(htmlEstudo);
+		response.add(estudo.getId());
+		response.add(estudo.isLiberado() == null ? false : true);
 		result.use(Results.json()).from(response).recursive().serialize();
 	
 		removeItensDuplicadosMatrizDistribuicao();
