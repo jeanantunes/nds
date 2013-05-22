@@ -43,6 +43,7 @@ public class CotaEstudo extends Cota {
 
     public CotaEstudo() {
 	nova = false;
+	mix = false;
 	vendaMedia = BigDecimal.ZERO;
 	indiceTratamentoRegional = BigDecimal.ONE;
 	reparteMinimo = BigInteger.ZERO;

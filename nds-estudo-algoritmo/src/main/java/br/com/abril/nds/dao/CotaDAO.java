@@ -270,6 +270,9 @@ public class CotaDAO {
 		    cota.setNova(true);
 		    cota.setClassificacao(ClassificacaoCota.CotaNova);
 		}
+		if (cota.isMix()) {
+		    cota.setClassificacao(ClassificacaoCota.CotaMix);
+		}
 		return cota;
 	    }
 	});
