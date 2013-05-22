@@ -526,11 +526,13 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		
 		$.postJSON(pathTela + "/distribuicaoVendaMedia/gerarEstudo", data, function(result) {
 		    myWindow = window.open('', '_blank');
-            myWindow.document.write(result.list[2]);
+            myWindow.document.write(result.list[0]);
             myWindow.focus();
             
-            $('#idEstudo').text(result.list[0]);
-            $('#idStatusEstudo').text(result.list[1]);
+            var isLiberado = result.list[2];
+            	
+            $('#idEstudo').text(result.list[1]);
+            $('#idStatusEstudo').text(isLiberado === true ? "Liberado" : "Gerado");
                     
 			exibirMensagemDialog("SUCCESS", ["Operação realizada com sucesso!"], "");
 		});
