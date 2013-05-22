@@ -61,8 +61,8 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
 		    // Calculo1 = ExcedenteAmais * (1 – (((0,5 * %Abrangência) + 50) / 100))
 		    BigDecimal calculo1 = BigDecimal.valueOf(0.5).multiply(percentualAbrangencia).add(BigDecimal.valueOf(50));
 		    calculo1 = excedenteAMais.multiply(BigDecimal.ONE.subtract(calculo1.divide(BigDecimal.valueOf(100), 3, BigDecimal.ROUND_HALF_UP)));
-		    // Calculo2 = 2% do ExcedenteAMais
-		    BigDecimal calculo2 = excedenteAMais.multiply(BigDecimal.valueOf(0.02));
+		    // Calculo2 = 2% do Excedente
+		    BigDecimal calculo2 = estudo.getExcedente().multiply(BigDecimal.valueOf(0.02));
 		    BigDecimal calculo3 = BigDecimal.ZERO;
 		    BigDecimal calculo4 = BigDecimal.ZERO;
 		    // Calculo3 = pacote padrao
