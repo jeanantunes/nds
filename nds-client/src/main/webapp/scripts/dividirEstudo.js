@@ -6,6 +6,7 @@ var dividirEstudo = $.extend(true, {
 	var codigoProduto = $('#codigoProduto', this.workspace);
 	var nomeProduto = $('#nomeProduto', this.workspace);
 	var edicaoProduto = $('#edicaoProduto', this.workspace);
+	var classificacao = $('#classificacao', this.workspace);
 	var dataDistribuicao = $('#dataDistribuicao', this.workspace);
 	var percentualDivisaoPrimeiroEstudo = $('#percentualDivisaoPrimeiroEstudo', this.workspace);
 	var percentualDivisaoSegundoEstudo = $('#percentualDivisaoSegundoEstudo', this.workspace);
@@ -32,6 +33,11 @@ var dividirEstudo = $.extend(true, {
 			$(nomeProduto).val(estudo.nomeProduto);
 			$(edicaoProduto).val(estudo.edicao);
 //			$(dataDistribuicao).val($("#datepickerDe").val());
+//			$(dataDistribuicao).val(estudo.dataLancto);
+			$(classificacao).val(estudo.classificacao);
+			
+			
+			
 		}
     },
 
@@ -222,7 +228,7 @@ var dividirEstudo = $.extend(true, {
 
 	$.postJSON('dividirEstudo/confirmar', dados, function(response) {
 	    $('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
-	    var pathTela = "/nds-client";
+	    var pathTela = "/nds-client-f2";
 	    var matrizDistribuicao = new MatrizDistribuicao(pathTela, "matrizDistribuicao", BaseController.workspace);
 	    matrizDistribuicao.pesquisar();
 	}, function() {
@@ -355,3 +361,4 @@ var dividirEstudo = $.extend(true, {
     }
 }, BaseController);
 
+//@ sourceURL=dividirEstudo.js

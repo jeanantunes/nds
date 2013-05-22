@@ -2,6 +2,9 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.Date;
+
+import br.com.abril.nds.util.DateUtil;
 
 public class DivisaoEstudoDTO implements Serializable {
 
@@ -24,6 +27,7 @@ public class DivisaoEstudoDTO implements Serializable {
     private BigInteger reparteSegundoEstudo;
     private String dataLancamentoPrimeiroEstudo;
     private String dataLancamentoSegundoEstudo;
+    private Date dataDistribuicaoParaPesquisa;
 
     public Long getNumeroEstudoOriginal() {
 	return numeroEstudoOriginal;
@@ -137,4 +141,11 @@ public class DivisaoEstudoDTO implements Serializable {
 	this.dataLancamentoSegundoEstudo = dataLancamentoSegundoEstudo;
     }
 
+	public Date getDataDistribuicaoParaPesquisa() {
+		return dataDistribuicaoParaPesquisa;
+	}
+
+	public void setDataDistribuicaoParaPesquisa(String data) {
+		this.dataDistribuicaoParaPesquisa = DateUtil.parseDataPTBR(data);
+	}
 }

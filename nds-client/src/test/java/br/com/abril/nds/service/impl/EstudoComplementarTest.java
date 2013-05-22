@@ -37,7 +37,7 @@ public class EstudoComplementarTest {
 		parametros.setReparteCota(0);
 		parametros.setReparteLancamento(0);
 		parametros.setReparteSobra(0);
-		parametros.setTipoSelecao(1);
+		parametros.setTipoSelecao("");
 		
 		EstudoComplementarServiceImpl  eCompl = mock(EstudoComplementarServiceImpl.class);
 		eCompl.gerarEstudoComplementar(parametros);

@@ -74,13 +74,15 @@ public class DividirEstudoController extends BaseController {
 
 	Integer iPercentualDivisaoPrimeiroEstudo = divisaoEstudo.getPercentualDivisaoPrimeiroEstudo();
 	Integer iPercentualDivisaoSegundoEstudo = divisaoEstudo.getPercentualDivisaoSegundoEstudo();
+	divisaoEstudo.setDataDistribuicaoParaPesquisa(divisaoEstudo.getDataDistribuicao());
 
 	if (iPercentualDivisaoPrimeiroEstudo != null && iPercentualDivisaoSegundoEstudo != null) {
 
 	    BigDecimal percentualDivisaoPrimeiroEstudo = new BigDecimal(iPercentualDivisaoPrimeiroEstudo.toString());
 	    BigDecimal percentualDivisaoSegundoEstudo = new BigDecimal(iPercentualDivisaoSegundoEstudo.toString());
 
-	    BigDecimal somaPercentual = percentualDivisaoPrimeiroEstudo.add(percentualDivisaoSegundoEstudo).add(percentualDivisaoEstudoOriginal);
+//	    BigDecimal somaPercentual = percentualDivisaoPrimeiroEstudo.add(percentualDivisaoSegundoEstudo).add(percentualDivisaoEstudoOriginal);
+	    BigDecimal somaPercentual = percentualDivisaoPrimeiroEstudo.add(percentualDivisaoSegundoEstudo);
 	    BigDecimal cem = BigDecimal.TEN.multiply(BigDecimal.TEN);
 
 	    if (somaPercentual.compareTo(cem) != 0) {
@@ -161,21 +163,23 @@ public class DividirEstudoController extends BaseController {
 
 	String dataLancamentoPrimeiroEstudo = divisaoEstudo.getDataLancamentoPrimeiroEstudo();
 	String dataLancamentoSegundoEstudo = divisaoEstudo.getDataLancamentoSegundoEstudo();
-
+	divisaoEstudo.setDataDistribuicaoParaPesquisa(divisaoEstudo.getDataDistribuicao());
+	
 	if (dataLancamentoSegundoEstudo != null && !dataLancamentoSegundoEstudo.equalsIgnoreCase("")) {
 
 	    if (!dataLancamentoSegundoEstudo.equalsIgnoreCase(dataLancamentoPrimeiroEstudo)) {
 
 		Estudo estudoOriginal = estudoService.obterEstudoByEstudoOriginalFromDivisaoEstudo(divisaoEstudo);
 
-		Estudo primeiroEstudo = (Estudo) SerializationUtils.clone(estudoOriginal);
+		Estudo primeiroEstudo = (Estudo)SerializationUtils.clone(estudoOriginal);
 		primeiroEstudo.setId(null);
 		primeiroEstudo.setReparteDistribuir(divisaoEstudo.getRepartePrimeiroEstudo());
 		primeiroEstudo.setDataLancamento(DateUtil.parseData(dataLancamentoPrimeiroEstudo, Constantes.DATE_PATTERN_PT_BR));
  
 		Estudo segundoEstudo = (Estudo) SerializationUtils.clone(estudoOriginal);
 		segundoEstudo.setId(null);
-		segundoEstudo.setReparteDistribuir(divisaoEstudo.getRepartePrimeiroEstudo());
+//		segundoEstudo.setReparteDistribuir(divisaoEstudo.getRepartePrimeiroEstudo());
+		segundoEstudo.setReparteDistribuir(divisaoEstudo.getReparteSegundoEstudo());
 		segundoEstudo.setDataLancamento(DateUtil.parseData(dataLancamentoSegundoEstudo, Constantes.DATE_PATTERN_PT_BR));
 
 		List<Estudo> listEstudo = new ArrayList<Estudo>();
