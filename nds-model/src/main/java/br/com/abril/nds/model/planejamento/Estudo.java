@@ -22,6 +22,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.UniqueConstraint;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
@@ -64,6 +66,7 @@ public class Estudo implements Serializable {
 	@Column(name = "LANCAMENTO_ID")
 	private Long lancamentoID;
 	
+	@Cascade(value=CascadeType.SAVE_UPDATE)
 	@OneToMany(mappedBy = "estudo", fetch = FetchType.LAZY)
 	private Set<EstudoCota> estudoCotas = new HashSet<EstudoCota>();
 	

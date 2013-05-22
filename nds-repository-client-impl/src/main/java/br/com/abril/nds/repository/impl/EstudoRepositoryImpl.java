@@ -213,7 +213,8 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 	query.setParameter("codigoProduto", divisaoEstudoVO.getCodigoProduto());
 	query.setParameter("nomeProduto", divisaoEstudoVO.getNomeProduto());
 	query.setParameter("numeroEdicao", divisaoEstudoVO.getEdicaoProduto());
-	query.setParameter("dataDistribuicao", divisaoEstudoVO.getDataDistribuicao());
+	query.setParameter("dataDistribuicao", divisaoEstudoVO.getDataDistribuicaoParaPesquisa());
+//	query.setParameter("dataDistribuicao", divisaoEstudoVO.getDataDistribuicao());
 
 	Estudo estudo = (Estudo) query.uniqueResult();
 
