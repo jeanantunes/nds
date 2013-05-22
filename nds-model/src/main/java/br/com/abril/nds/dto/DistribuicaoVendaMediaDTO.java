@@ -10,7 +10,7 @@ public class DistribuicaoVendaMediaDTO {
 	
 	private BigInteger reparteDistribuir;
 	private BigInteger reparteMinimo;
-	private Boolean usarFixacao;
+	private boolean usarFixacao;
 	private Boolean distribuicaoPorMultiplo;
 	private BigInteger multiplo;
 	
@@ -41,10 +41,10 @@ public class DistribuicaoVendaMediaDTO {
 	public void setReparteMinimo(BigInteger reparteMinimo) {
 		this.reparteMinimo = reparteMinimo;
 	}
-	public Boolean getUsarFixacao() {
+	public boolean isUsarFixacao() {
 		return usarFixacao;
 	}
-	public void setUsarFixacao(Boolean usarFixacao) {
+	public void setUsarFixacao(boolean usarFixacao) {
 		this.usarFixacao = usarFixacao;
 	}
 	public Boolean isDistribuicaoPorMultiplo() {

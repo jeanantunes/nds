@@ -446,7 +446,7 @@ function esconde_redutor(){
                    	    <tr>
                    	      <td align="right"><input type="checkbox" name="checkbox3" id="distribuicaoPorMultiplo" onclick="$('.distrMult').toggle();" /></td>
                    	      <td width="120">Distribuição por multiplo</td>
-                   	      <td width="44"><input type="text" class="distrMult" style="width:40px; text-align:center; display:none;" id="multiplo" value="10" readonly="readonly" /></td>
+                   	      <td width="44"><input type="text" class="distrMult" style="width:40px; text-align:center; display:none;" id="multiplo" value="10" /></td>
                	        </tr>
                	    </table>
                   </fieldset>
