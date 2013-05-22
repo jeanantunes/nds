@@ -270,7 +270,7 @@ function montarComboBoxUnicaOpcao(value, label, element) {
         $(element).html(newOption(value, label));
 }
 
-function carregarCombo(url, params, element, selected, idDialog ){
+function carregarCombo(url, params, element, selected, idDialog, callback){
     $.postJSON(url, params,
         function(result){
             var combo =  montarComboBox(result, false);
@@ -281,6 +281,11 @@ function carregarCombo(url, params, element, selected, idDialog ){
             } else {
                 $(element).val('-1');
             }
+            
+            if (callback) {
+				callback();
+			}
+            
         },null,true, idDialog);
 }
 
@@ -502,3 +507,4 @@ function addTabWithPost(tabs, label, postResponse, blankPath) {
 	tabs.tabs({load : function( event, ui ) { $('#'+ ui.panel.id).html(postResponse); }});
 	tabs.tabs('addTab', label, blankPath);
 }
+//@ sourceURL=utils.js

@@ -30,23 +30,34 @@ function escondeDados(){
 .detalhesDados{position:absolute; display:none; background:#fff; border:1px solid #ccc; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); }
 .inputBaseNumero{width: 60px;}
 .inputBaseNome{width: 170px;}
-.paddingTotais td {padding-right: 3px;}
+table.filtro td span {font-weight: normal;}
+.tableTotais {margin: 1px 0 3px; border: 1px solid white; border-collapse: collapse;}
+.paddingTotais td {padding: 0 3px; text-align: right; width: 35px; border: 1px solid white;}
+.paddingTotais td:nth-child(1) {text-align: left; width: 82px;}
+.paddingTotais td:nth-child(2) {text-align: left; width: 197px;}
+.paddingTotais td:nth-child(3) {width: 55px;}
+.paddingTotais td:nth-child(4) {width: 56px;}
+.paddingTotais td:nth-child(5) {width: 24px;}
 .bt_novos{width: 0px;}
 .asterisco:after {
-    content: " *";
+    content: "*";
     font-size: 150%;
     font-weight: bold;
+    position: absolute;
+    left: 43px;
 }
 .reparteSugerido {
     width: 40px;
     font-weight: bold;
     text-align: right;
 }
+#baseEstudoGridParcial td[abbr^="venda"] {color: red;}
+#baseEstudoGridParcial td[abbr^="venda"],
+#baseEstudoGridParcial td[abbr^="ultimoReparte"],
+#baseEstudoGridParcial td[abbr^="reparteSugerido"] {font-weight: bold;}
+
 </style>
 
-</head>
-
-<body>
     <br clear="all"/>
     <br />
 
@@ -86,10 +97,10 @@ function escondeDados(){
 			<input type="hidden" id="tipoSegmentoProduto" value="${estudoCota.estudo.produtoEdicao.produto.tipoSegmentoProduto.id}" />
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
-					<td>Código: ${estudoCota.estudo.produtoEdicao.produto.codigo}</td>
-					<td>Produto: ${estudoCota.estudo.produtoEdicao.produto.nomeComercial}</td>
-					<td>Edição: ${estudoCota.estudo.produtoEdicao.numeroEdicao}</td>
-					<td>Estudo: ${estudoCota.estudo.id}</td>
+					<td>Código: <span>${estudoCota.estudo.produtoEdicao.produto.codigo}</span></td>
+					<td>Produto: <span>${estudoCota.estudo.produtoEdicao.produto.nomeComercial}</span></td>
+					<td>Edição: <span>${estudoCota.estudo.produtoEdicao.numeroEdicao}</span></td>
+					<td>Estudo: <span>${estudoCota.estudo.id}</span></td>
                     <c:if test="${tipoExibicao != 'NORMAL'}">
                         <td>Nro. da Parcial: </td>
                     </c:if>
@@ -98,14 +109,15 @@ function escondeDados(){
             <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
                 <tr>
                     <td>Status do Estudo: <span id="status_estudo">${estudoCota.estudo.isLiberado()?'Liberado':'Não Liberado'}</span></td>
+                    <td>Data de Lancamento: <span><fmt:formatDate value="${estudoCota.estudo.dataLancamento}" /></span></td>
                     <td>Reparte Distribuido: <span id="total_reparte_sugerido_cabecalho"></span></td>
-                    <td>Pacote Padrão: ${estudoCota.estudo.produtoEdicao.pacotePadrao}</td>
+                    <td>Pacote Padrão: <span>${estudoCota.estudo.produtoEdicao.pacotePadrao}</span></td>
                 </tr>
             </table>
             <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
-					<td>Classificação: ${estudoCota.estudo.produtoEdicao.produto.tipoClassificacaoProduto.descricao}</td>
-					<td>Segmento: ${estudoCota.estudo.produtoEdicao.produto.tipoSegmentoProduto.descricao}</td>
+					<td>Classificação: <span>${estudoCota.estudo.produtoEdicao.produto.tipoClassificacaoProduto.descricao}</span></td>
+					<td>Segmento: <span>${estudoCota.estudo.produtoEdicao.produto.tipoSegmentoProduto.descricao}</span></td>
 					<td>Filtrar por:</td>
 					<td><select name="select5" id="filtroOrdenarPor" style="width: 138px;"
 						onchange="analiseParcialController.apresentarOpcoesOrdenarPor(this.value);">
@@ -116,7 +128,7 @@ function escondeDados(){
 							<option value="reducao_de_reparte">R de Reparte</option>
 					</select></td>
 					<%--<td>Reparte: <input type="text" name="textfield6" id="textfield6" style="width: 40px;" /></td>--%>
-					<td>Abrangência: ${estudoCota.estudo.produtoEdicao.produto.percentualAbrangencia}</td>
+					<td>Abrangência: <span id="abrangencia"></span></td>
 				</tr>
             </table>
             <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
@@ -166,33 +178,32 @@ function escondeDados(){
 				<table class="baseEstudoGrid" id="baseEstudoGridParcial"></table>
 
 				<c:if test="${tipoExibicao == 'NORMAL'}">
-					<table width="950" border="0" cellspacing="2" cellpadding="2">
+					<table border="0" cellspacing="0" cellpadding="0" class="tableTotais">
 						<tr class="class_linha_1 paddingTotais">
-							<td width="78">Qtde Cotas:</td>
-							<td width="138" id="total_de_cotas">0</td>
-							<td width="53" align="right" id="total_reparte_sugerido">0</td>
-							<td width="25" align="right">&nbsp;</td>
-							<%--<td width="48" align="right" id="total_juramento">0</td>--%>
-							<%--<td width="62" align="right" id="total_media_venda">0</td>--%>
-							<td width="79" align="right" id="total_ultimo_reparte">0</td>
-							<td width="29" align="right" id="total_reparte1">0</td>
-							<td width="29" align="right" id="total_venda1" class="vermelho">0</td>
-							<td width="29" align="right" id="total_reparte2">0</td>
-							<td width="29" align="right" id="total_venda2" class="vermelho">0</td>
-							<td width="29" align="right" id="total_reparte3">0</td>
-							<td width="29" align="right" id="total_venda3" class="vermelho">0</td>
-							<td width="29" align="right" id="total_reparte4">0</td>
-							<td width="29" align="right" id="total_venda4" class="vermelho">0</td>
-							<td width="29" align="right" id="total_reparte5">0</td>
-							<td width="29" align="right" id="total_venda5" class="vermelho">0</td>
-							<td width="29" align="right" id="total_reparte6">0</td>
-							<td width="29" align="right" id="total_venda6" class="vermelho">0</td>
-							<td width="10" align="right">&nbsp;</td>
+							<td>Qtde Cotas:</td>
+							<td id="total_de_cotas">0</td>
+                            <td id="total_ultimo_reparte">0</td>
+                            <td id="total_reparte_sugerido">0</td>
+                            <td>&nbsp;</td><%-- Legenda --%>
+                        <%--<td id="total_juramento">0</td>--%>
+                        <%--<td width="62" align="right" id="total_media_venda">0</td>--%>
+							<td id="total_reparte1">0</td>
+							<td id="total_venda1" class="vermelho">0</td>
+							<td id="total_reparte2">0</td>
+							<td id="total_venda2" class="vermelho">0</td>
+							<td id="total_reparte3">0</td>
+							<td id="total_venda3" class="vermelho">0</td>
+							<td id="total_reparte4">0</td>
+							<td id="total_venda4" class="vermelho">0</td>
+							<td id="total_reparte5">0</td>
+							<td id="total_venda5" class="vermelho">0</td>
+							<td id="total_reparte6">0</td>
+							<td id="total_venda6" class="vermelho">0</td>
 						</tr>
 					</table>
 				</c:if>
 				<c:if test="${tipoExibicao == 'PARCIAL'}">
-					<table width="950" border="0" cellspacing="2" cellpadding="2">
+					<table border="0" cellspacing="0" cellpadding="0" class="tableTotais">
 						<tr class="class_linha_1 paddingTotais">
 							<td width="80">Qtde Cotas:</td>
 							<td width="145" id="total_de_cotas">0</td>
@@ -405,7 +416,57 @@ function escondeDados(){
 		</fieldset>
 	</div>
 
-	<div id="dialog-detalhes" title="Capa">
+    <div id="dialog-defineReparte" title="Define Reparte por PDV" style="display:none;">
+        <fieldset style="width:605px !important;">
+            <legend>Dados da Cota</legend>
+            <table width="500" border="0" cellspacing="1" cellpadding="1">
+                <tr>
+                    <td width="42"><strong>Cota:</strong></td>
+                    <td width="92">1223</td>
+                    <td width="44"><strong>Nome:</strong></td>
+                    <td width="155">Antonio José da Silva</td>
+                    <td width="151">&nbsp;</td>
+                </tr>
+            </table>
+
+        </fieldset>
+        <br clear="all" />
+        <fieldset style="width:605px !important; margin-top:10px;">
+            <legend>Dados do Produto</legend>
+            <table width="500" border="0" cellspacing="1" cellpadding="1">
+                <tr>
+                    <td width="42"><strong>Código:</strong></td>
+                    <td width="92">0564</td>
+                    <td width="44"><strong>Produto:</strong></td>
+                    <td width="155">Tauros</td>
+                    <td width="44"><strong>Classificação:</strong></td>
+                    <td width="155">Relançamento</td>
+                </tr>
+            </table>
+
+        </fieldset>
+        <br clear="all" />
+        <fieldset style="width:605px !important; margin-top:10px;">
+            <legend>PDV da Cota</legend>
+            <table class="pdvCotaGrid"></table>
+            <table width="600" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                    <td width="312">&nbsp;
+                    </td>
+                    <td width="174">&nbsp;</td>
+                    <td width="71" align="center">999.999</td>
+                    <td width="43">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td colspan="3" align="right">Manter Fixa&nbsp; </td>
+                    <td><input name="input2" type="checkbox" value="" /></td>
+                </tr>
+            </table>
+        </fieldset>
+
+    </div>
+
+    <div id="dialog-detalhes" title="Capa">
 		<img src="${pageContext.request.contextPath}/capa/getCapaEdicaoJson?codigoProduto=${estudoCota.estudo.produtoEdicao.produto.codigo}&numeroEdicao=${estudoCota.estudo.produtoEdicao.numeroEdicao}" width="235" height="314" />
 	</div>
 
@@ -414,5 +475,3 @@ function escondeDados(){
 			analiseParcialController.init('${estudoCota.estudo.id}', '${faixaDe}', '${faixaAte}', '${tipoExibicao}');
 		 });
  	</script>
-  </body>
-</html>

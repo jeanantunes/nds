@@ -1,7 +1,5 @@
 package br.com.abril.nds.process.vendamediafinal;
 
-import java.math.BigDecimal;
-
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.model.estudo.CotaEstudo;
@@ -20,21 +18,18 @@ import br.com.abril.nds.process.jornaleirosnovos.JornaleirosNovos;
 @Component
 public class VendaMediaFinal {
 
-	private BigDecimal value = BigDecimal.ZERO;
+    public void executar(CotaEstudo cota) {
 
-	public void executar(CotaEstudo cota) {
-
-		BigDecimal vendaMedia = cota.getVendaMedia();
-		BigDecimal indiceAjusteCota = cota.getIndiceAjusteCota();
-		BigDecimal indiceVendaCrescente = cota.getIndiceVendaCrescente();
-		BigDecimal indiceTratamentoReginal = cota.getIndiceTratamentoRegional();
-		if (vendaMedia != null && indiceAjusteCota != null && indiceVendaCrescente != null && indiceTratamentoReginal != null) {
-			value = cota.getVendaMedia().multiply(cota.getIndiceAjusteCota()).multiply(cota.getIndiceVendaCrescente()).multiply(cota.getIndiceTratamentoRegional());
-		}
+	if (cota.getVendaMedia() != null) {
+	    if (cota.getIndiceAjusteCota() != null) {
+		cota.setVendaMedia(cota.getVendaMedia().multiply(cota.getIndiceAjusteCota()));
+	    }
+	    if (cota.getIndiceVendaCrescente() != null) {
+		cota.setVendaMedia(cota.getVendaMedia().multiply(cota.getIndiceVendaCrescente()));
+	    }
+	    if (cota.getIndiceTratamentoRegional() != null) {
+		cota.setVendaMedia(cota.getVendaMedia().multiply(cota.getIndiceTratamentoRegional()));
+	    }
 	}
-
-	public BigDecimal getValue() {
-		return value;
-	}
-
+    }
 }

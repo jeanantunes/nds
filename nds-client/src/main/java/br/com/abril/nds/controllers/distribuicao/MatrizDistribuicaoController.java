@@ -172,6 +172,10 @@ public class MatrizDistribuicaoController extends BaseController {
 	@Post
 	public void carregarProdutoEdicaoPorEstudo(BigInteger estudo) {
 
+		if (estudo == null ) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Digite um número de estudo."));
+		}
+		
 		FiltroInformacoesProdutoDTO filtro = new FiltroInformacoesProdutoDTO();
 		filtro.setNumeroEstudo(estudo.longValue());
 		List<InformacoesProdutoDTO> buscarProduto = this.infoProdService.buscarProduto(filtro);
@@ -181,7 +185,7 @@ public class MatrizDistribuicaoController extends BaseController {
 		
 		if (buscarProduto == null || buscarProduto.isEmpty()) {
 
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Estudo: [" + estudo + "] nÃ£o encontrado."));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Estudo: [" + estudo + "] não encontrado."));
 		}
 		
 		
@@ -540,6 +544,14 @@ public class MatrizDistribuicaoController extends BaseController {
 		result.forwardTo(HistogramaPosEstudoController.class).histogramaPosEstudo();
 	}
 
+	@Post
+	public void verificarCoincidenciaEntreCotas(Long estudoBase,Long estudoSomado){
+		
+		Boolean existeCoincidencia = somarEstudosService.verificarCoincidenciaEntreCotas(estudoBase,estudoSomado);
+		
+		result.use(Results.json()).from((existeCoincidencia!=null)?existeCoincidencia:Boolean.FALSE).serialize();
+		
+	}
 
     @Post
     public void somarEstudos(Long idEstudoBase, ProdutoDistribuicaoVO distribuicaoVO) {

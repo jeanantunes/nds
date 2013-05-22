@@ -22,6 +22,13 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
     @Override
     @Transactional(readOnly = true)
     public List<ProdutoEdicaoVendaMediaDTO> pesquisar(String codigoProduto, String nomeProduto, Long edicao) {
+    	
+    	return pesquisar(codigoProduto, nomeProduto, edicao, null);
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProdutoEdicaoVendaMediaDTO> pesquisar(String codigoProduto, String nomeProduto, Long edicao, Long classificacao) {
 
 	StringBuilder sql = new StringBuilder();
 	sql.append("select pe.id, ");
@@ -32,7 +39,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 	sql.append("       l.data_lcto_distribuidor dataLancamento, ");
 	sql.append("       round(sum(epc.qtde_recebida), 0) reparte, ");
 	sql.append("       round((sum(epc.qtde_recebida) - sum(epc.qtde_devolvida)), 0) venda, ");
-	sql.append("       round((sum(epc.qtde_recebida) - sum(epc.qtde_devolvida)) / sum(epc.qtde_recebida), 1) percentualVenda, ");
+	sql.append("       round(sum(epc.qtde_recebida) - sum(epc.qtde_devolvida)) / sum(epc.qtde_recebida) * 100 percentualVenda, ");
 	sql.append("       l.status status, ");
 	sql.append("       tcp.descricao classificacao ");
 	sql.append("  from lancamento l ");
@@ -52,6 +59,10 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 	if (nomeProduto != null) {
 	    sql.append("   and p.nome = :nome_produto ");
 	}
+	if (classificacao != null) {
+		sql.append("   and tcp.id = :classificacao ");
+	}
+	
 	sql.append(" group by pe.numero_edicao, pe.id ");
 	sql.append(" order by pe.numero_edicao desc ");
 	
@@ -65,6 +76,10 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 	if (nomeProduto != null) {
 	    query.setString("nome_produto", nomeProduto);
 	}
+	if (classificacao != null) {
+	    query.setLong("classificacao", classificacao);
+	}
+	
 	query.setResultTransformer(Transformers.aliasToBean(ProdutoEdicaoVendaMediaDTO.class));
 	return query.list();
     }

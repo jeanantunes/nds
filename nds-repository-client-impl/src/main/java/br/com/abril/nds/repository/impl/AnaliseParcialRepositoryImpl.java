@@ -157,7 +157,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
     @Override
     @Transactional(readOnly = true)
-    public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId) {
+    public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId, boolean edicaoMaisRecente) {
+
         StringBuilder sql = new StringBuilder();
         sql.append("select distinct ");
         sql.append("       pe.id produtoEdicaoId, ");
@@ -167,7 +168,10 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("  from estudo_produto_edicao_base epe ");
         sql.append("  join produto_edicao pe on pe.id = epe.produto_edicao_id ");
         sql.append("  join produto p on p.id = pe.produto_id ");
+        sql.append("  join lancamento l on l.produto_edicao_id = pe.id ");
         sql.append(" where epe.estudo_id = :estudoId ");
+        sql.append("  order by l.data_lcto_distribuidor ").append(edicaoMaisRecente?"desc ":"asc ");
+        sql.append("  , pe.numero_edicao ").append(edicaoMaisRecente?"desc ":"asc ");
 
         Query query = getSession().createSQLQuery(sql.toString())
                 .addScalar("produtoEdicaoId", StandardBasicTypes.LONG)
@@ -344,10 +348,10 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("       pdv.ponto_principal principal, ");
         sql.append("       concat(e.logradouro, ', ', e.numero, ' - ', e.bairro, ' - ', e.cep, ' - ', e.cidade, ' - ', e.uf) endereco ");
         sql.append("  from pdv ");
-        sql.append("  join cota c on c.id = pdv.cota_id ");
-        sql.append("  join endereco_pdv ep on ep.pdv_id = pdv.id ");
-        sql.append("  join endereco e on e.id = ep.endereco_id ");
-        sql.append("  join tipo_ponto_pdv t on t.id = pdv.tipo_ponto_pdv_id ");
+        sql.append("  left join cota c on c.id = pdv.cota_id ");
+        sql.append("  left join endereco_pdv ep on ep.pdv_id = pdv.id ");
+        sql.append("  left join endereco e on e.id = ep.endereco_id ");
+        sql.append("  left join tipo_ponto_pdv t on t.id = pdv.tipo_ponto_pdv_id ");
         sql.append(" where c.numero_cota = :numeroCota ");
 
         Query query = getSession().createSQLQuery(sql.toString())

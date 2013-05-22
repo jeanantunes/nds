@@ -29,7 +29,7 @@
                 <td width="24%"><input type="text" name="nomeProduto" id="nomeProdutoMix" onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#'+this.id);" style="width:200px;"/></td>
                 <td width="11%">Classifica&ccedil;&atilde;o:</td>
                 <td width="25%">
-	                <select name="select" id="select" style="width:160px;">
+	                <select name="select" id="filtroClassificacaoMix" style="width:160px;">
 				            <c:forEach items="${classificacao}" var="tipoProduto">
 								<option value="<c:out value="${tipoProduto.descricao}"/>" ${tipoProduto.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoProduto.descricao}"/></option>
 							</c:forEach>

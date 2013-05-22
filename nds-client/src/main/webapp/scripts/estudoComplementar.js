@@ -1,12 +1,12 @@
 
 var estudoComplementarController =$.extend(true,  {
 	
-	gerarEstudoComplementar:function(){
+	gerarEstudoComplementar : function(){
 
-		
-		var codigoEstudo = $('#codigoEstudo').val(); 
-		var reparteSobra = $('#reparteSobra').val();
-		var tipoSelecao  =  $('#tipoSelecao :selected').val();
+		var codigoEstudo = $('#codigoEstudo').val(), 
+			reparteSobra = $('#reparteSobra').val(),
+			tipoSelecao  =  $('#tipoSelecao :selected').val(),
+			isMultiplo = false;
 		
 		if (tipoSelecao==0){
 			alert("Favor Selecionar Tipo Base");
@@ -32,13 +32,15 @@ var estudoComplementarController =$.extend(true,  {
 				exibirMensagem("WARNING", ["Favor informar valor de reparte por Cota"]);
 				return;
 			}
+		}else {
+			reparteCota = $('#distrMult').val();
+			isMultiplo = true;
 		}
 		
 		if ($('#reparteLancamento').val()<0){
 			alert("Reparte Lancamento negativo!!");
 			return
 		}
-
 		
 		if ($('#reparteLancamento').val()=="" || $('#reparteLancamento').val()==0){
 
@@ -71,18 +73,16 @@ var estudoComplementarController =$.extend(true,  {
 			return
 		}
 		
-		var matrizSelecionado = matrizDistribuicao.lancamentoSelecionadoParaComplementar;
-		
 		var dados = [];
-	                  
-	                  dados.push({name:"parametros.reparteCota",         value: reparteCota});
-	                  dados.push({name:"parametros.codigoEstudo",        value: codigoEstudo});
-	                  dados.push({name:"parametros.reparteDistribuicao", value: reparteDistribuicao});
-	                  dados.push({name:"parametros.reparteLancamento",   value: reparteLancamento});
-	                  dados.push({name:"parametros.reparteSobra",        value: reparteSobra});
-	                  dados.push({name:"parametros.tipoSelecao",         value: tipoSelecao});
-	                  dados.push({name:"parametros.idLancamento",        	 value: matrizSelecionado.idLancamento});
-	                  dados.push({name:"parametros.idEstudoComplementar",         value: $('#idEstudoComplementar').text()});
+	                  dados.push({name:"parametros.reparteCota",          value: reparteCota});
+	                  dados.push({name:"parametros.codigoEstudo",         value: codigoEstudo});
+	                  dados.push({name:"parametros.reparteDistribuicao",  value: reparteDistribuicao});
+	                  dados.push({name:"parametros.reparteLancamento",    value: reparteLancamento});
+	                  dados.push({name:"parametros.reparteSobra",         value: reparteSobra});
+	                  dados.push({name:"parametros.tipoSelecao",          value: tipoSelecao});
+	                  dados.push({name:"parametros.idLancamento",         value: $('#idLancamento').val()});
+	                  dados.push({name:"parametros.idProdutoEdicao",      value: $('#idProdutoEdicao').val()});
+	                  dados.push({name:"parametros.multiplo",             value: isMultiplo});
 	      					           
 		 $.ajax({
 			 url:  'lancamento/gerarEstudo',
@@ -115,7 +115,7 @@ consultarEstudo:function (obj) {
 				if (json.mensagens) {
 					exibirMensagem(json.mensagens.tipoMensagem, json.mensagens.listaMensagens);
 				}else{
-					$('#idEstudoComplementar').html(json.baseEstudoVO.idEstudoComplementar); 
+					$('#idEstudoComplementar').html(''); 
 					$('#idProduto').html(json.baseEstudoVO.codigoProduto); 
 					$('#nomeProdutoLabel').html(json.baseEstudoVO.nomeProduto);
 					

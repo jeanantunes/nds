@@ -22,20 +22,20 @@ public class MinimoMaximo extends ProcessoAbstrato {
     public void executar(EstudoTransient estudo) throws Exception {
 
 	for (CotaEstudo cota : estudo.getCotas()) {
-	    if ((cota.getReparteMinimo() != null) && (cota.getReparteMaximo() != null)) {
-		if (cota.getReparteMinimo().compareTo(cota.getReparteMaximo()) > 0) {
+	    if ((cota.getIntervaloMinimo() != null) && (cota.getIntervaloMaximo() != null)) {
+		if (cota.getIntervaloMinimo().compareTo(cota.getIntervaloMaximo()) > 0) {
 		    throw new Exception(String.format("O reparte mínimo da cota %s está maior que o reparte máximo.", cota.getId()));
 		}
-		if (cota.getReparteCalculado().compareTo(cota.getReparteMinimo()) < 0) {
-		    cota.setReparteCalculado(cota.getReparteMinimo(), estudo);
+		if (cota.getReparteCalculado().compareTo(cota.getIntervaloMinimo()) < 0) {
+		    cota.setReparteCalculado(cota.getIntervaloMinimo(), estudo);
 
 		    if (cota.isMix()) {
 			cota.setClassificacao(ClassificacaoCota.CotaMix);
 		    } else {
 			cota.setClassificacao(ClassificacaoCota.MaximoMinimo);
 		    }
-		} else if (cota.getReparteCalculado().compareTo(cota.getReparteMaximo()) > 0) {
-		    cota.setReparteCalculado(cota.getReparteMaximo(), estudo);
+		} else if (cota.getReparteCalculado().compareTo(cota.getIntervaloMaximo()) > 0) {
+		    cota.setReparteCalculado(cota.getIntervaloMaximo(), estudo);
 
 		    if (cota.isMix()) {
 			cota.setClassificacao(ClassificacaoCota.CotaMix);

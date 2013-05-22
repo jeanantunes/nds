@@ -26,68 +26,64 @@ import br.com.caelum.vraptor.Result;
 @Resource
 @Path("/lancamento")
 public class EstudoComplementarController  extends BaseController{
-	
-	@Autowired
-	private Result result;
-	
-	@Autowired
-	private HttpServletResponse httpResponse;
-	
-	@Autowired
-	private CalendarioService calendarioService;
-	
-	@Autowired
-	private EstudoComplementarService estudoComplementarService;
-	
-	@Autowired
+
+    @Autowired
+    private Result result;
+
+    @Autowired
+    private HttpServletResponse httpResponse;
+
+    @Autowired
+    private CalendarioService calendarioService;
+
+    @Autowired
+    private EstudoComplementarService estudoComplementarService;
+
+    @Autowired
     private EstudoService estudoService;
-	
-	@Path("/estudoComplementar")
-	public void index() {
-		
-		String data = DateUtil.formatarDataPTBR(new Date());
-		result.include("data", data);
-	}
-	
-	@Path("/pesquisaEstudoBase/{estudoBase.id}")
-	public void pesquisaEstudoBase(EstudoCotaDTO estudoBase){
-	
-		EstudoComplementarDTO estudo = estudoComplementarService.obterEstudoComplementarPorIdEstudoBase(estudoBase.getId());
-		BaseEstudoVO baseEstudo = new BaseEstudoVO();
-		
-		baseEstudo.setIdEstudo(estudo.getIdEstudo());
-		baseEstudo.setIdEstudoComplementar(estudo.getIdEstudoComplementar());
-		baseEstudo.setIdProduto(estudo.getIdProduto());
-		baseEstudo.setNomeProduto(estudo.getNomeProduto());
-		
-		baseEstudo.setIdEdicao(estudo.getIdEdicao());
-		baseEstudo.setNomeClassificacao(estudo.getNomeClassificacao());
-		baseEstudo.setIdPublicacao(estudo.getIdPublicacao());
-		baseEstudo.setIdPEB(estudo.getIdPEB());
-		baseEstudo.setNomeFornecedor(estudo.getNomeFornecedor());
-		baseEstudo.setDataLncto(estudo.getDataLncto());
-		baseEstudo.setDataRclto(estudo.getDataRclto());
-		baseEstudo.setReparteLancamento(estudo.getQtdeReparte());
-		baseEstudo.setNumeroEdicao(estudo.getNumeroEdicao());
-		baseEstudo.setCodigoProduto(estudo.getCodigoProduto());
-		
-		
-		result.use(json()).from(baseEstudo).serialize();		
+
+    @Path("/estudoComplementar")
+    public void index(Long estudoId, Long idProdutoEdicao, Long idLancamento) {
+
+	String data = DateUtil.formatarDataPTBR(new Date());
+	result.include("data", data);
+	result.include("estudoId", estudoId);
+	result.include("idProdutoEdicao", idProdutoEdicao);
+	result.include("idLancamento", idLancamento);
+    }
+
+    @Path("/pesquisaEstudoBase/{estudoBase.id}")
+    public void pesquisaEstudoBase(EstudoCotaDTO estudoBase){
+
+	EstudoComplementarDTO estudo = estudoComplementarService.obterEstudoComplementarPorIdEstudoBase(estudoBase.getId());
+	BaseEstudoVO baseEstudo = new BaseEstudoVO();
+
+	baseEstudo.setIdEstudo(estudo.getIdEstudo());
+	baseEstudo.setIdEstudoComplementar(estudo.getIdEstudoComplementar());
+	baseEstudo.setIdProduto(estudo.getIdProduto());
+	baseEstudo.setNomeProduto(estudo.getNomeProduto());
+
+	baseEstudo.setIdEdicao(estudo.getIdEdicao());
+	baseEstudo.setNomeClassificacao(estudo.getNomeClassificacao());
+	baseEstudo.setIdPublicacao(estudo.getIdPublicacao());
+	baseEstudo.setIdPEB(estudo.getIdPEB());
+	baseEstudo.setNomeFornecedor(estudo.getNomeFornecedor());
+	baseEstudo.setDataLncto(estudo.getDataLncto());
+	baseEstudo.setDataRclto(estudo.getDataRclto());
+	baseEstudo.setReparteLancamento(estudo.getQtdeReparte());
+	baseEstudo.setNumeroEdicao(estudo.getNumeroEdicao());
+	baseEstudo.setCodigoProduto(estudo.getCodigoProduto());
+
+	result.use(json()).from(baseEstudo).serialize();		
+    }
+
+    @Path("/gerarEstudo")
+    @Post
+    public void gerarEstudo(EstudoComplementarVO parametros){
+	if(estudoComplementarService.gerarEstudoComplementar(parametros)){
+	    estudoService.setIdLancamentoNoEstudo(parametros.getIdLancamento(), parametros.getIdEstudoComplementar());
 	}
 
-	@Path("/gerarEstudo")
-	@Post
-	public void gerarEstudo(EstudoComplementarVO parametros){
-		System.out.println( "----->" + parametros.getCodigoEstudo());
-		System.out.println( "----->" + parametros.getReparteCota());
-		System.out.println( "----->" + parametros.getTipoSelecao());
-		if(estudoComplementarService.gerarEstudoComplementar(parametros)){
-			estudoService.setIdLancamentoNoEstudo(parametros.getIdLancamento(), parametros.getIdEstudoComplementar());
-		}
-			
-		result.nothing();
-		
-	}
-	
+	result.nothing();
+    }
 }
-
