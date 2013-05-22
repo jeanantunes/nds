@@ -22,7 +22,7 @@ public class CotaEstudo extends Cota {
     private BigDecimal vendaMedia;
     private BigDecimal vendaMediaCorrigida;
     private BigDecimal vendaMediaNominal;
-    private BigDecimal vendaEdicaoMaisRecenteFechada;
+    private BigInteger vendaEdicaoMaisRecenteFechada;
     private boolean cotaSoRecebeuEdicaoAberta;
     private BigDecimal somaReparteEdicoesAbertas;
     private BigDecimal indiceCorrecaoTendencia;
@@ -79,15 +79,24 @@ public class CotaEstudo extends Cota {
 	this.reparteCalculado = reparteCalculado;
     }
     public void setReparteCalculado(BigInteger reparteCalculado, EstudoTransient estudo) {
+	boolean minimoMaximo = false;
 	if (intervaloMaximo != null && reparteCalculado.compareTo(intervaloMaximo) > 0) {
 	    reparteCalculado = intervaloMaximo;
+	    minimoMaximo = true;
 	} else if (reparteCalculado.compareTo(intervaloMinimo) < 0) {
 	    reparteCalculado = intervaloMinimo;
-	} else {
-	    BigInteger variacao = reparteCalculado.subtract(this.reparteCalculado);
-	    estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(variacao));
-	    this.reparteCalculado = reparteCalculado;
+	    minimoMaximo = true;
 	}
+	if (minimoMaximo) {
+	    if (mix) {
+		classificacao = ClassificacaoCota.CotaMix;
+	    } else {
+		classificacao = ClassificacaoCota.MaximoMinimo;
+	    }
+	}
+	BigInteger variacao = reparteCalculado.subtract(this.reparteCalculado);
+	estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(variacao));
+	this.reparteCalculado = reparteCalculado;
     }
     public BigInteger getReparteJuramentadoAFaturar() {
 	return reparteJuramentadoAFaturar;
@@ -129,11 +138,10 @@ public class CotaEstudo extends Cota {
     public void setVendaMediaNominal(BigDecimal vendaMediaNominal) {
 	this.vendaMediaNominal = vendaMediaNominal;
     }
-    public BigDecimal getVendaEdicaoMaisRecenteFechada() {
+    public BigInteger getVendaEdicaoMaisRecenteFechada() {
 	return vendaEdicaoMaisRecenteFechada;
     }
-    public void setVendaEdicaoMaisRecenteFechada(
-	    BigDecimal vendaEdicaoMaisRecenteFechada) {
+    public void setVendaEdicaoMaisRecenteFechada(BigInteger vendaEdicaoMaisRecenteFechada) {
 	this.vendaEdicaoMaisRecenteFechada = vendaEdicaoMaisRecenteFechada;
     }
     public boolean isCotaSoRecebeuEdicaoAberta() {
