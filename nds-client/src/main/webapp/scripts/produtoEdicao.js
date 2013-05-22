@@ -418,24 +418,42 @@ var produtoEdicaoController =$.extend(true,  {
 			preProcess: produtoEdicaoController.executarPreProcessamentoLancamentosPeriodo,
 			dataType : 'json',
 			colModel : [ { 
-				display : 'Lançamento',
+				display : 'Lançamento Previsto',
 				name : 'dataLancamentoPrevista',
-				width : 80,
+				width : 120,
+				sortable : true,
+				align : 'center'
+			},{ 
+				display : 'Lançamento Real',
+				name : 'dataLancamentoDistribuidor',
+				width : 100,
 				sortable : true,
 				align : 'center'
 			},{
-				display : 'Recolhimento',
+				display : 'Recolhimento Previsto',
 				name : 'dataRecolhimentoPrevista',
-				width : 80,
+				width : 120,
 				sortable : true,
 				align : 'center'
-			} ],
+			},{
+				display : 'Recolhimento Real',
+				name : 'dataRecolhimentoDistribuidor',
+				width : 100,
+				sortable : true,
+				align : 'center'
+			},{
+				display : 'Status',
+				name : 'statusLancamento',
+				width : 180,
+				sortable : false,
+				align : 'center'
+			}  ],
 			sortname : "dataLancamentoPrevista",
 			sortorder : "asc",
 			usepager : false,
 			useRp : false,
 			showTableToggleBtn : false,
-			width : 200,
+			width : 700,
 			height : 250
 		});
 		
@@ -851,8 +869,8 @@ var produtoEdicaoController =$.extend(true,  {
 
 		$( "#dialog-produto-edicao-periodos-lancamentos" ).dialog({
 			resizable: true,
+			width:720,
 			height:380,
-			width:225,
 			modal: true,
 			buttons: {
 				"Fechar": function() {
