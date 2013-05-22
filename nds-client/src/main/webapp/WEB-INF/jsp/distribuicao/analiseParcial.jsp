@@ -58,9 +58,6 @@ table.filtro td span {font-weight: normal;}
 
 </style>
 
-</head>
-
-<body>
     <br clear="all"/>
     <br />
 
@@ -478,5 +475,3 @@ table.filtro td span {font-weight: normal;}
 			analiseParcialController.init('${estudoCota.estudo.id}', '${faixaDe}', '${faixaAte}', '${tipoExibicao}');
 		 });
  	</script>
-  </body>
-</html>
