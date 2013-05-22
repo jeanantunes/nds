@@ -2830,4 +2830,13 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		return (TipoDistribuicaoCota)q.uniqueResult();
 	}
+
+    @Override
+    @Transactional(readOnly = true)
+    public int obterCotasAtivas() {
+        return ((Number) this.getSession().createCriteria(Cota.class)
+                .add(Restrictions.eq("situacaoCadastro", SituacaoCadastro.ATIVO))
+                .setProjection(Projections.rowCount())
+                .uniqueResult()).intValue();
+    }
 }

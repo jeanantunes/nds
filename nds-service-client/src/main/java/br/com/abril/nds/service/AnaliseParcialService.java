@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.dto.AnaliseEstudoDetalhesDTO;
@@ -23,4 +24,6 @@ public interface AnaliseParcialService {
 	List<PdvDTO> carregarDetalhesCota(Long numeroCota);
 	
 	List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO);
+
+    BigDecimal calcularPercentualAbrangencia(Long estudoId);
 }

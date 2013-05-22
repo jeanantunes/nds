@@ -381,5 +381,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	Cota obterCotaComBaseReferencia(Long idCota);
 
 	TipoDistribuicaoCota obterTipoDistribuicaoCotaPorNumeroCota(Integer numeroCota);
-	
+
+    int obterCotasAtivas();
 }
