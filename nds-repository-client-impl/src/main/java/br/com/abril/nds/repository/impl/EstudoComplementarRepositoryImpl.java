@@ -1,148 +1,78 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.LinkedList;
 import java.util.List;
 
-import br.com.abril.nds.client.vo.EstudoComplementarVO;
-import br.com.abril.nds.model.planejamento.EstudoCota;
-import br.com.abril.nds.repository.EstudoComplementarRepository;
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-
+import br.com.abril.nds.client.vo.EstudoComplementarVO;
+import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
+import br.com.abril.nds.repository.EstudoComplementarRepository;
 
-@Transactional
 @Repository
-public class EstudoComplementarRepositoryImpl extends AbstractRepositoryModel<EstudoCota, Long>implements
-		EstudoComplementarRepository {
+public class EstudoComplementarRepositoryImpl extends AbstractRepositoryModel<EstudoCota, Long> implements EstudoComplementarRepository {
 
-	public EstudoComplementarRepositoryImpl() {
-		super(EstudoCota.class);
-		// TODO Auto-generated constructor stub
-	}
+    public EstudoComplementarRepositoryImpl() {
+	super(EstudoCota.class);
+    }
 
-	@Override
-	public List<EstudoCota> selecionarBancas(EstudoComplementarVO estudoComplementarVO) {
-		
-		String bancas = montaSQL(estudoComplementarVO);
-		Query query = super.getSession()
-				            .createSQLQuery(bancas)
-		
-				            .addEntity(EstudoCota.class);
-		
-		       query.setParameter("estudoId", estudoComplementarVO.getCodigoEstudo());
-		       //query.setParameter("reparte", estudoComplementarVO.getReparteLancamento());
-				
-			
-				
-				List result = query.list();		
-				return result;
-	}
+    @Override
+    @Transactional(readOnly = true)
+    public LinkedList<EstudoCota> selecionarBancas(EstudoComplementarVO estudoComplementarVO) {
 
-	private String montaSQL(EstudoComplementarVO estudoComplementarVO) {
+	LinkedList<EstudoCota> lista = new LinkedList<>();
 	
-		StringBuilder sqlStmt = new StringBuilder();
-		StringBuilder sqlTipoSelecao = new StringBuilder();
-		
-		if (estudoComplementarVO.getTipoSelecao()==1){
-			
-			sqlTipoSelecao.append( " Select distinct ranking_segmento.COTA_ID FROM ranking_segmento ");
-			sqlTipoSelecao.append( "                  where (select max(ranking_segmento.data_geracao_rank)  from ranking_segmento) order by qtde desc");
-			
-			
-		}
-		
-		if (estudoComplementarVO.getTipoSelecao()==2){
-			sqlTipoSelecao.append( " Select distinct ranking_faturamento.COTA_ID FROM ranking_faturamento ");
-			sqlTipoSelecao.append( "                  where (select max(ranking_faturamento.data_geracao_rank)  from ranking_faturamento) order by faturamento desc ");
-			
-			
-		}
-		
-		//-- SELEÇÃO DAS BANCAS E DISTRIBUIÇÃO DO ESTUDO COMPLEMENTAR
-
-		sqlStmt.append( "select distinct ec.* from ");
-		sqlStmt.append( "             produto_edicao     pe, "); 
-		sqlStmt.append( "		      estudo_cota        ec, ");
-		sqlStmt.append( "             cota               co  ");
-
-		sqlStmt.append( " where  "); 
-		sqlStmt.append( "  ec.COTA_ID    = co.ID      ");
-		sqlStmt.append( "  and co.id in (:tipoSelecao ) ");
-		sqlStmt.append( "  and (ec.REPARTE=0 or ec.REPARTE is null) ");
-		sqlStmt.append( "  and ec.ESTUDO_ID             = :estudoId ");
-		sqlStmt.append( "  and co.SITUACAO_CADASTRO   = 'ATIVO' ");
-		sqlStmt.append( "  and ec.CLASSIFICACAO  = 'SH' ");
-		sqlStmt.append( "  and 0 = (select count(epe.PRODUTO_EDICAO_ID) soma from estudo_produto_edicao_base epe where epe.PRODUTO_EDICAO_ID  = pe.id ) "); 
-		
-		sqlStmt.append( " union ");
-
-		sqlStmt.append( "select distinct ec.* from ");
-		sqlStmt.append( "             produto_edicao     pe, "); 
-		sqlStmt.append( "		      estudo_cota        ec, ");
-		sqlStmt.append( "             cota               co  ");
-
-		sqlStmt.append( " where  "); 
-		sqlStmt.append( "  ec.COTA_ID    = co.ID      ");
-		sqlStmt.append( "  and co.id in (:tipoSelecao ) ");
-		sqlStmt.append( "  and (ec.REPARTE=0 or ec.REPARTE is null) ");
-		sqlStmt.append( "  and ec.ESTUDO_ID             = :estudoId ");
-		sqlStmt.append( "  and co.SITUACAO_CADASTRO   = 'ATIVO' ");
-		sqlStmt.append( "  and ec.CLASSIFICACAO  = 'VZ' ");
-		sqlStmt.append( "  and 1 = (select count(epe.PRODUTO_EDICAO_ID) soma from estudo_produto_edicao_base epe where epe.PRODUTO_EDICAO_ID  = pe.id ) "); 
-		    
-		sqlStmt.append( " union ");
-		sqlStmt.append( "select distinct ec.* from ");
-		sqlStmt.append( "             produto_edicao     pe, "); 
-		sqlStmt.append( "		      estudo_cota        ec, ");
-		sqlStmt.append( "             cota               co  ");
-
-		sqlStmt.append( " where  "); 
-		sqlStmt.append( "  ec.COTA_ID    = co.ID      ");
-		sqlStmt.append( "  and co.id in (:tipoSelecao ) ");
-		sqlStmt.append( "  and (ec.REPARTE=0 or ec.REPARTE is null) ");
-		sqlStmt.append( "  and ec.ESTUDO_ID             = :estudoId ");
-		sqlStmt.append( "  and co.SITUACAO_CADASTRO   = 'ATIVO' ");
-		sqlStmt.append( "  and ec.CLASSIFICACAO = 'VZ' ");
-		sqlStmt.append( "  and 2 = (select count(epe.PRODUTO_EDICAO_ID) soma from estudo_produto_edicao_base epe where epe.PRODUTO_EDICAO_ID  = pe.id ) "); 
-		
-		    
-		sqlStmt.append( " union ");
-
-		sqlStmt.append( "select distinct ec.* from ");
-		sqlStmt.append( "             produto_edicao     pe, "); 
-		sqlStmt.append( "		      estudo_cota        ec, ");
-		sqlStmt.append( "             cota               co  ");
-
-		sqlStmt.append( " where  "); 
-		sqlStmt.append( "  ec.COTA_ID    = co.ID      ");
-		sqlStmt.append( "  and co.id in (:tipoSelecao ) ");
-		sqlStmt.append( "  and (ec.REPARTE=0 or ec.REPARTE is null) ");
-		sqlStmt.append( "  and ec.ESTUDO_ID             = :estudoId ");
-		sqlStmt.append( "  and co.SITUACAO_CADASTRO   = 'ATIVO' ");
-		sqlStmt.append( "  and ec.CLASSIFICACAO = 'VZ' ");
-		sqlStmt.append( "  and 3 = (select count(epe.PRODUTO_EDICAO_ID) soma from estudo_produto_edicao_base epe where epe.PRODUTO_EDICAO_ID  = pe.id ) "); 
-		
-		
-		System.out.println("--------->>" + sqlStmt.toString().replaceAll(":tipoSelecao", sqlTipoSelecao.toString()));
-		
-		return sqlStmt.toString().replaceAll(":tipoSelecao", sqlTipoSelecao.toString());
-		
-		 
-		
-		
+	for (int i = 0; i < 4; i++) {
+	    StringBuilder sql = new StringBuilder();
+	    sql.append("select distinct ec.* ");
+	    sql.append("  from estudo_cota ec ");
+	    sql.append("  join cota c on c.id = ec.cota_id and c.situacao_cadastro = 'ATIVO' ");
+	    if (estudoComplementarVO.getTipoSelecao().equals("RANKING_FATURAMENTO")) {
+		sql.append("  join ranking_faturamento rs on rs.cota_id = c.id ");
+		sql.append("   and rs.data_geracao_rank = (select max(r.data_geracao_rank) from ranking_faturamento r) ");
+	    } else {
+		sql.append("  join estudo e on e.id = ec.estudo_id ");
+		sql.append("  join produto_edicao pe on pe.id = e.produto_edicao_id ");
+		sql.append("  join produto p on p.id = pe.produto_id ");
+		sql.append("  join ranking_segmento rs on rs.cota_id = c.id ");
+		sql.append("   and rs.data_geracao_rank = (select max(r.data_geracao_rank) from ranking_segmento r) ");
+		sql.append("   and rs.tipo_segmento_produto_id = p.tipo_segmento_produto_id ");
+	    }
+	    sql.append(" where (ec.reparte = 0 or ec.reparte is null) ");
+	    sql.append("   and ec.estudo_id = :estudoId ");
+	    sql.append("   and ec.classificacao = ");
+	    if (i == 0) {
+		sql.append(" 'SH' ");
+	    } else {
+		sql.append(" 'VZ' ");
+	    }
+	    sql.append("   and ");
+	    sql.append(i);
+	    if (i < 3) {
+		sql.append(" = ");
+	    } else {
+		sql.append(" >= ");
+	    }
+	    sql.append(" (select count(epe.produto_edicao_id) soma ");
+	    sql.append("              from estudo_produto_edicao epe ");
+	    sql.append("             where epe.cota_id = c.id ");
+	    sql.append("               and epe.estudo_id = ec.estudo_id) ");
+	    if (estudoComplementarVO.getTipoSelecao().equals("RANKING_FATURAMENTO")) {
+		sql.append(" order by rs.faturamento desc ");
+	    } else {
+		sql.append(" order by rs.qtde desc ");
+	    }
+	    
+	    Query query = super.getSession().createSQLQuery(sql.toString()).addEntity(EstudoCota.class);
+	    query.setParameter("estudoId", estudoComplementarVO.getCodigoEstudo());
+	    List<EstudoCota> temp = query.list();
+	    if (temp != null) {
+		lista.addAll(new LinkedList<EstudoCota>(temp));
+	    }
 	}
-
-	@Override
-	public long gerarNumeroEstudoComplementar() {
-		
-		String queryString = "select max(id) from Estudo";
-		Query query = super.getSession().createQuery(queryString );
-		
-		Long max = (Long) query.list().get(0);  
-		
-		return max+1;
-	}
-
+	return lista;
+    }
 }

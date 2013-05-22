@@ -91,7 +91,7 @@ function incluirSegmento() {
 	        <table width="950" border="0" cellspacing="2" cellpadding="2" class="filtro">
 	          <tr>
 	            <td width="20"><input type="radio" name="tipoExcecao" id="tipoExcecaoSegmento" checked="checked" class="pesquisaPorSegmento"/></td>
-	            <td width="188">Por Exceção Segmento Cota</td> 
+	            <td width="188">Por Exceção Segmento</td> 
 	            <td width="20"><input type="radio" name="tipoExcecao" id="tipoExcecaoSegmento" class="pesquisaPorParcial"/></td>
 	            <td width="696">Por Exceção de Parciais</td>
 	          </tr>

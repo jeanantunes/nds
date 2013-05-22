@@ -2,13 +2,12 @@ package br.com.abril.nds.client.vo;
 
 public class EstudoComplementarVO {
 
-
-	int  reparteCota;
+    int  reparteCota;
     int  reparteDistribuicao;
     int  reparteLancamento;
     int  reparteSobra;
     long codigoEstudo;
-    int  tipoSelecao;
+    String tipoSelecao;
     long idEstudoComplementar;
     long idLancamento;
     long idProdutoEdicao;
@@ -44,10 +43,10 @@ public class EstudoComplementarVO {
 	public void setReparteSobra(int reparteSobra) {
 		this.reparteSobra = reparteSobra;
 	}
-	public int getTipoSelecao() {
+	public String getTipoSelecao() {
 		return tipoSelecao;
 	}
-	public void setTipoSelecao(int tipoSelecao) {
+	public void setTipoSelecao(String tipoSelecao) {
 		this.tipoSelecao = tipoSelecao;
 	}
 	public long getIdEstudoComplementar() {

@@ -1436,7 +1436,38 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			T.redirectToTelaAnalise('#dialog-copiar-estudo','#telaAnalise', $('#copiarEstudo-estudo').html());
 		}
 	},
-	
+
+	this.estudoComplementarShow = function() {
+
+	    var selecionado = null;
+	    var maisDeUm = false;
+	    $.each(T.lancamentos, function(index, lancamento) {
+	        if (lancamento.selecionado) {
+	            if (selecionado != null) {
+	                selecionado = null;
+	                maisDeUm = true;
+	                return;
+	            }
+	            selecionado = lancamento;
+	        }
+	    });
+	    if (selecionado == null) {
+	        exibirMensagem("ERROR", ["Selecione "+ (maisDeUm ? "apenas" : "") +" um item para esta opção."]);
+	        return;
+	    }
+	    var postData = [];
+	    postData.push({name: "estudoId",        value: selecionado.estudo});
+	    postData.push({name: "idProdutoEdicao", value: selecionado.idProdutoEdicao});
+	    postData.push({name: "idLancamento",    value: selecionado.idLancamento});
+
+	    var temp = $('#workspace').tabs( "option", "ajaxOptions");
+	    $('#workspace').tabs( "option", "ajaxOptions", { data: postData, type: 'POST' } );
+	    $('#workspace').tabs('addTab', 'Distribuição Venda Média', pathTela + '/lancamento/estudoComplementar');
+	    $('#workspace').tabs( "option", "ajaxOptions", temp );
+
+	    T.esconderOpcoes();
+	}
+
 	this.analise = function(){
 		//testa se registro foi selecionado
 		if (T.validarMarcacaoUnicoItem()) {
