@@ -310,33 +310,38 @@ public class DistribuicaoVendaMediaController extends BaseController {
     @Path("gerarEstudo")
     @Post
     public void gerarEstudo(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, String codigoProduto, Long numeroEdicao) throws Exception {
-	EstudoTransient estudo = null;
-	int qtdEdicoesAbertas = 0;
-
-	if (distribuicaoVendaMedia.getBases().size() > QTD_MAX_PRODUTO_EDICAO) {
-
-	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não pode ter mais do que "+QTD_MAX_PRODUTO_EDICAO+" bases."));
-	}
-
-	for (int i = 0; i < distribuicaoVendaMedia.getBases().size(); i++) {
-	    ProdutoEdicaoDTO produtoEdicaoDTO = distribuicaoVendaMedia.getBases().get(i);
-
-	    if (!produtoEdicaoDTO.getStatus().equals("FECHADO")) {
-		qtdEdicoesAbertas++;
-	    }
-	}
-
-	if (qtdEdicoesAbertas > 1) {
-	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não é possível utilizar mais que uma edição base aberta."));
-	}
-
-	ProdutoEdicaoEstudo produto = new ProdutoEdicaoEstudo(codigoProduto);
-	produto.setNumeroEdicao(numeroEdicao);
-	estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, produto, distribuicaoVendaMedia.getReparteDistribuir(), this.getUsuarioLogado());
-	String htmlEstudo = HTMLTableUtil.estudoToHTML(estudo);
-	result.use(Results.json()).from(htmlEstudo, "estudo").recursive().serialize();
-
-	removeItensDuplicadosMatrizDistribuicao();
+		EstudoTransient estudo = null;
+		int qtdEdicoesAbertas = 0;
+	
+		if (distribuicaoVendaMedia.getBases().size() > QTD_MAX_PRODUTO_EDICAO) {
+	
+		    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não pode ter mais do que "+QTD_MAX_PRODUTO_EDICAO+" bases."));
+		}
+	
+		for (int i = 0; i < distribuicaoVendaMedia.getBases().size(); i++) {
+		    ProdutoEdicaoDTO produtoEdicaoDTO = distribuicaoVendaMedia.getBases().get(i);
+	
+		    if (!produtoEdicaoDTO.getStatus().equals("FECHADO")) {
+			qtdEdicoesAbertas++;
+		    }
+		}
+	
+		if (qtdEdicoesAbertas > 1) {
+		    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não é possível utilizar mais que uma edição base aberta."));
+		}
+	
+		ProdutoEdicaoEstudo produto = new ProdutoEdicaoEstudo(codigoProduto);
+		produto.setNumeroEdicao(numeroEdicao);
+		estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, produto, distribuicaoVendaMedia.getReparteDistribuir(), this.getUsuarioLogado());
+		String htmlEstudo = HTMLTableUtil.estudoToHTML(estudo);
+		
+		List<Object> response = new ArrayList<>();
+		response.add(estudo.getId());
+		response.add(estudo.getStatusEstudo());
+		response.add(htmlEstudo);
+		result.use(Results.json()).from(response).recursive().serialize();
+	
+		removeItensDuplicadosMatrizDistribuicao();
 
     }
 

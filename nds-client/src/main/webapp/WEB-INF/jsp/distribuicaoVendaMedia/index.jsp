@@ -6,6 +6,11 @@
 $(function() {
 		$( "#tab-distribuicao" ).tabs();
 		distribuicaoVendaMedia.confirmarProdutosEdicaoBasePopup();
+		$('#componenteInformacoesComplementares').change(function(){
+			distribuicaoVendaMedia.selectElementoRegiaoDistribuicao('componenteInformacoesComplementares', 'elementoInformacoesComplementares1');
+			distribuicaoVendaMedia.selectElementoRegiaoDistribuicao('componenteInformacoesComplementares', 'elementoInformacoesComplementares2');
+			distribuicaoVendaMedia.selectElementoRegiaoDistribuicao('componenteInformacoesComplementares', 'elementoInformacoesComplementares3');
+		});
 	});
 function popup_novo() {
 	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -86,7 +91,7 @@ function popup_excluir() {
 			"Confirmar": function() {
 				distribuicaoVendaMedia.removerProdutoEdicaoDaBase();
 				$( this ).dialog( "close" );
-				$("#effect").show("highlight", {}, 1000, callback);				
+				$("#effect").show("highlight", {}, 1000, callback);
 			},
 			"Cancelar": function() {
 				$( this ).dialog( "close" );
@@ -115,7 +120,7 @@ function popup_pesqRegiao() {
 	});
 };
 
-function popup_detalhes() {
+/* function popup_detalhes() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-detalhes" ).dialog({
@@ -124,12 +129,12 @@ function popup_detalhes() {
 			width:'auto',
 			modal: false,
 		});
-	};
+	};*/
 function popup_detalhes_close() {
 	  $( "#dialog-detalhes" ).dialog( "close" );
 	  
 	  
-	  }
+	  } 
 function nenhuma(){
 	$('#selRegiao').hide();
 	$('#qtdeBancas').hide();
@@ -158,14 +163,37 @@ function mostra_regiao(){
 	$('#lstExcecao').hide();
 	}
 function mostra_qtdeBancas(){
+	
+	if(distribuicaoVendaMedia.produtoEdicaoBases != undefined && distribuicaoVendaMedia.produtoEdicaoBases.length === 0){
+		exibirMensagemDialog('WARNING',  ['Não existe base para informar abrangência.']);
+		$('#qtdeBancas').hide();
+		$('#selRegiao').hide();
+		$('#rrGeral').hide();
+		$('#rrSegmento').hide();
+		$('#historico').hide();
+		$('#lstComponentes').hide();
+		$('#lstExcecao').hide();
+	}else{
+		$('#selRegiao').hide();
+		$('#qtdeBancas').show();
+		$('#rrGeral').hide();
+		$('#rrSegmento').hide();
+		$('#historico').hide();
+		$('#lstComponentes').hide();
+		$('#lstExcecao').hide();
+	}
+	
+}
+	
+function mostrarTodasCotas(){
 	$('#selRegiao').hide();
-	$('#qtdeBancas').show();
+	$('#qtdeBancas').hide();
 	$('#rrGeral').hide();
 	$('#rrSegmento').hide();
 	$('#historico').hide();
 	$('#lstComponentes').hide();
 	$('#lstExcecao').hide();
-	}
+}
 function mostraComponentes(){
 	$('#selRegiao').hide();
 	$('#qtdeBancas').hide();
@@ -258,7 +286,7 @@ function esconde_redutor(){
             <td width="43">Código:</td>
             <td width="78">
             	<input type="text" id="codigoPesquisaBases" style="width:60px;"
-            	 	onblur="if(this.value.length > 7) pesquisaProduto.pesquisarPorCodigoProduto('#codigoPesquisaBases', '#produtoPesquisaBases', {}, true, undefined, distribuicaoVendaMedia.errorCallBack);"
+            	 	onchange="if(this.value.length > 7) pesquisaProduto.pesquisarPorCodigoProduto('#codigoPesquisaBases', '#produtoPesquisaBases', {}, true, undefined, distribuicaoVendaMedia.errorCallBack);"
             	 	/>
             </td>
             <td width="48">Produto:</td>
@@ -302,8 +330,7 @@ function esconde_redutor(){
 
 
 
-
-<div >
+<div>
   
   
     <br clear="all"/>
@@ -380,7 +407,7 @@ function esconde_redutor(){
                    	  <table width="270" border="0" cellspacing="2" cellpadding="2">
                         <tr class="class_linha_1">
                           <td width="99"><strong>Status do Estudo:</strong></td>
-                          <td width="157"><strong>${estudo.status.descricao}</strong></td>
+                          <td width="157"><strong id="idStatusEstudo">${estudo.status.descricao}</strong></td>
                         </tr>
                       </table>
                    	  <table width="275" border="0" cellspacing="2" cellpadding="2">
@@ -426,7 +453,7 @@ function esconde_redutor(){
                     <br clear="all" />
                      <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.cancelar()"><img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
                      <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.verificacoesGerar()"><img src="images/ico_check.gif" alt="Gerar" hspace="5" border="0" />Gerar</a></span>
-                     <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.analise()"><img src="images/ico_copia_distrib.gif" alt="Analisar" hspace="5" border="0" />Analisar</a></span>
+                     <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.redirectToTelaAnalise()"><img src="images/ico_copia_distrib.gif" alt="Analisar" hspace="5" border="0" />Analisar</a></span>
                 </div>
                 <div id="tab-distribuicao-2" class="distribuicaoVendaMedia-tab">
                	  <fieldset style="width:600px!important;">
@@ -437,6 +464,8 @@ function esconde_redutor(){
                    	      <td width="56">${ produtoEdicao.codigoProduto }</td>
                    	      <td width="41">Produto:</td>
                    	      <td width="226">${ produtoEdicao.nomeProduto }</td>
+                          <td>Classificação:</td>
+                          <td width="156">${ produtoEdicao.classificacao }</td>
                    	      <td width="35">Edição:</td>
                    	      <td width="83">${ produtoEdicao.numeroEdicao }</td>
                    	      <td width="79"><span class="bt_novos"><a href="javascript:;" onclick="popup_novo();"><img src="images/ico_salvar.gif" alt="Liberar" hspace="5" border="0" />Novo</a></span></td>
@@ -463,6 +492,8 @@ function esconde_redutor(){
                    	    <td width="60">${ produtoEdicao.codigoProduto }</td>
                    	    <td width="42">Produto:</td>
                    	    <td width="235">${ produtoEdicao.nomeComercial }</td>
+                   	    <td>Classificação:</td>
+                        <td width="156">${ produtoEdicao.classificacao }</td>
                    	    <td width="35">Edição:</td>
                    	    <td width="66">${ produtoEdicao.numeroEdicao }</td>
                    	    <td width="69">&nbsp;</td>
@@ -526,6 +557,8 @@ function esconde_redutor(){
                    	    <td width="60">${ produtoEdicao.codigoProduto }</td>
                    	    <td width="42">Produto:</td>
                    	    <td width="235">${ produtoEdicao.nomeComercial }</td>
+                   	    <td>Classificação:</td>
+                        <td width="156">${ produtoEdicao.classificacao }</td>
                    	    <td width="35">Edição:</td>
                    	    <td width="66">${ produtoEdicao.numeroEdicao }</td>
                    	    <td width="69">&nbsp;</td>
@@ -538,7 +571,7 @@ function esconde_redutor(){
                		<legend>Região</legend>
                         <table width="600" border="0" cellspacing="2" cellpadding="2">
                           <tr>
-                            <td width="20"><input name="regiao" type="radio" id="RDtodasAsCotas" value="radio" checked="checked"  /></td>
+                            <td width="20"><input name="regiao" type="radio" id="RDtodasAsCotas" value="radio" onclick="mostrarTodasCotas();" checked="checked"  /></td>
                             <td width="85">Todas as Cotas</td>
                             <td width="475">&nbsp;</td>
                           </tr>
@@ -614,7 +647,7 @@ function esconde_redutor(){
                    <tr>
                      <td width="156">
 	                     <select name="componenteInformacoesComplementares" id="componenteInformacoesComplementares"
-	                     	onchange="distribuicaoVendaMedia.selectElementoRegiaoDistribuicao('componenteInformacoesComplementares', 'elementoInformacoesComplementares')"  
+	                     	onchange="distribuicaoVendaMedia.selectElementoRegiaoDistribuicao('componenteInformacoesComplementares', 'elementoInformacoesComplementares1')"  
 	                     	style="width:110px;" class="filtroComponentes">
 	                  		<option selected="selected">Selecione...</option>
 		                    <c:forEach items="${componentes}" var="componente" varStatus="idx">
@@ -624,8 +657,21 @@ function esconde_redutor(){
                      </td>
                      <td width="51">Elemento:</td>
                      <td width="152">
-                     	<select name="elementoInformacoesComplementares" id="elementoInformacoesComplementares" style="width:150px;">
-                     	</select>
+	                    <select 
+	                    	name="elementoInformacoesComplementares" 
+	                    	id="elementoInformacoesComplementares1" 
+	                    	style="width:150px;">
+	                    </select>
+ 	                    <select 
+ 	                    	name="elementoInformacoesComplementares" 
+ 	                    	id="elementoInformacoesComplementares2" 
+ 	                    	style="width:150px; ">
+ 	                    </select>
+                       	<select 
+                       		name="elementoInformacoesComplementares" 
+                       		id="elementoInformacoesComplementares3" 
+                       		style="width:150px;">
+                       	</select>
                      </td>
                    </tr>
                  </table></td>
