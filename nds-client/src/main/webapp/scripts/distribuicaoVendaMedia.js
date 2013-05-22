@@ -2,6 +2,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	
 	var url = pathTela;
 	var T = this;
+	this.workspace = workspace;
 	
 	this.removerDuplicados = function eliminateDuplicates(arr) {
 		  var i,
@@ -133,6 +134,9 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 				function(result) {
 					T.produtoEdicaoBases = result;
 					T.preencherGridBases(result);
+					if(T.produtoEdicaoBases != undefined && T.produtoEdicaoBases.length === 0){
+						$('#qtdeBancas').hide();
+					}
 				},
 				function(){
 					exibirMensagem("ERROR", ["Erro ao excluir itens da lista. Tente novamente mais tarde."]);
@@ -186,6 +190,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 			width:'auto',
 			modal: false,
 			escondeHeader: false,
+			position: { my: "left", at: "right", of: event.target },
 			open : function(event, ui) {
 				
 				$("#imagemCapaEdicao").one('load', function() {
@@ -213,16 +218,17 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		});
 	};
 	
-	this.selectElementoRegiaoDistribuicao = function(select, elementoSelect){
-		selectedItem = $("#" + select).val();
+	this.selectElementoRegiaoDistribuicao = function(select, elementoSelect, callback){
+		var selectedItem = $("#" + select).val();
 		
 		if(selectedItem != 'Selecione...'){
 			carregarCombo(pathTela + "/distribuicao/historicoVenda/carregarElementos", 
 				  {"componente":selectedItem},
-		            $("#" + elementoSelect, T._workspace), null, null);
+		            $("#" + elementoSelect, T._workspace), null, null, callback);
 		} else {
 			$('#' + elementoSelect).html('');
 			$('#' + elementoSelect).append("<option value='-1'>Selecione...</option>");
+		   
 		}
 	};
 	
@@ -500,7 +506,19 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		data.push({name : "distribuicaoVendaMedia.cotasAVista", value : $("#distribuicaoPorMultiplo")[0].checked });
 		if($("#RDExcecaoBancas")[0].checked){
 			data.push({name : "distribuicaoVendaMedia.excecaoDeBancasComponente", value : $("#componenteInformacoesComplementares").val() });
-			data.push({name : "distribuicaoVendaMedia.excecaoDeBancasElemento", value : $("#elementoInformacoesComplementares").val() });
+			
+			var excecao1 = $("#elementoInformacoesComplementares1").val(),
+				excecao2 = $("#elementoInformacoesComplementares2").val(),
+				excecao3 = $("#elementoInformacoesComplementares3").val();
+			
+			if (excecao1 === excecao2 || excecao1 === excecao3 || excecao2 === excecao3) {
+				exibirMensagemDialog("WARNING", ["Favor selecionar diferentes elementos."], "");
+				return;
+			}
+			
+			data.push({name : "distribuicaoVendaMedia.excecaoDeBancas[0]", value : excecao1 });
+			data.push({name : "distribuicaoVendaMedia.excecaoDeBancas[1]", value : excecao2 });
+			data.push({name : "distribuicaoVendaMedia.excecaoDeBancas[2]", value : excecao3 });
 		}
 		
 		data.push({name : "codigoProduto", value : $('#codigoProduto').text()});
@@ -508,8 +526,14 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		
 		$.postJSON(pathTela + "/distribuicaoVendaMedia/gerarEstudo", data, function(result) {
 		    myWindow = window.open('', '_blank');
-                    myWindow.document.write(result.estudo);
-                    myWindow.focus();
+            myWindow.document.write(result.list[0]);
+            myWindow.focus();
+            
+            var isLiberado = result.list[2];
+            	
+            $('#idEstudo').text(result.list[1]);
+            $('#idStatusEstudo').text(isLiberado === true ? "Liberado" : "Gerado");
+                    
 			exibirMensagemDialog("SUCCESS", ["Operação realizada com sucesso!"], "");
 		});
 	};
@@ -520,6 +544,42 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		$("a[href='"+pathTela+"/matrizDistribuicao']").click();
 	};
 	
+	this.redirectToTelaAnalise = function(){
+
+        // Obter matriz de distribuição
+        var matriz = [],
+        	url = contextPath + "/distribuicao/analiseEstudo/obterMatrizDistribuicaoPorEstudo",
+        	dadosResumo = {},
+        	numeroEstudo = $('#idEstudo').text();
+        
+        $.postJSON(url,
+                [{name : "id" , value : numeroEstudo}],
+                function(response){
+	            // CALLBACK
+	            // ONSUCESS
+	            matriz.push({name: "selecionado.classificacao",  value: response.classificacao});
+	            matriz.push({name: "selecionado.nomeProduto",    value: response.nomeProduto});
+	            matriz.push({name: "selecionado.codigoProduto",  value: response.codigoProduto});
+	            matriz.push({name: "selecionado.dataLcto",       value: response.dataLancto});
+	            matriz.push({name: "selecionado.edicao",         value: response.numeroEdicao});
+	            matriz.push({name: "selecionado.estudo",         value: response.idEstudo});
+	            matriz.push({name: "selecionado.idLancamento",   value: response.idLancamento});
+	            matriz.push({name: "selecionado.estudoLiberado", value: (response.liberado != "")});
+	            
+	            $('#workspace').tabs({load : function(event, ui) {
+					
+	            	histogramaPosEstudoController.dadosResumo = dadosResumo;
+	            	histogramaPosEstudoController.matrizSelecionado = matriz;
+	            	histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(matriz);
+	            	histogramaPosEstudoController.modoAnalise = 'NORMAL';
+					
+					$('#workspace').tabs({load : function(event, ui) {}});
+				}});
+				
+				$('#workspace').tabs('addTab', 'Histograma Pré Análise', contextPath + '/matrizDistribuicao/histogramaPosEstudo');
+        	}
+        );
+    };
 };
 
 //@ sourceURL=distribuicaoVendaMedia.js
