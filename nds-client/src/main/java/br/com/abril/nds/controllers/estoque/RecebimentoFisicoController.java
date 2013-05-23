@@ -1386,13 +1386,16 @@ public class RecebimentoFisicoController extends BaseController {
 	@Path("/validarValorTotalNotaFiscal")
 	public void validarValorTotalNotaFiscal(CabecalhoNotaDTO nota, List<RecebimentoFisicoDTO> itens) {
 		
+		this.validaItensNota(itens);
+		
 		BigDecimal valorInformadoNotaFiscal = CurrencyUtil.converterValor(nota.getValorTotal());
 				
 		BigDecimal totalItem = BigDecimal.ZERO;
 		
 		for (RecebimentoFisicoDTO recebimento : itens) {
-		    
+			
 			totalItem = totalItem.add(recebimento.getValorTotal());
+			
 	    }
 		
 		if (totalItem.compareTo(valorInformadoNotaFiscal) != 0) {

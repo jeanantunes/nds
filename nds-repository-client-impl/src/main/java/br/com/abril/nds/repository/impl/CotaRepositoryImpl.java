@@ -1786,9 +1786,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		+ "	            on cota_.PESSOA_ID=pessoa_cota_.ID  "
 		+ "		inner join NOTA_ENVIO_ITEM nei " 
         + "    			on nei.ESTUDO_COTA_ID=ec_.ID "
-		+ "	   	where "
-		+ "	        lancamento_.STATUS in (:status) "
-		+ "		and pdv_.ponto_principal = :principal ");
+		+ "	   	where 1=1 "
+		+ "		and pdv_.ponto_principal = :principal "); //		+ "	        lancamento_.STATUS in (:status) "
 		
 		if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
 			sql.append(
@@ -1895,7 +1894,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 				+ "		left outer join NOTA_ENVIO_ITEM nei " 
 		        + "    			on nei.ESTUDO_COTA_ID=ec_.ID "
 				+ "	   	where "
-				+ "	        lancamento_.STATUS in (:status)  "
+				+ "	        lancamento_.STATUS not in (:status)  "
 				+ "    	and  nei.estudo_cota_id is null "
 				+ "		and pdv_.ponto_principal = :principal ");
 				
@@ -1948,7 +1947,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			FiltroConsultaNotaEnvioDTO filtro, Query query, boolean isCount) {
 		
 		query.setParameter("principal", true);
-		query.setParameterList("status", new String[]{StatusLancamento.BALANCEADO.name(), StatusLancamento.EXPEDIDO.name()});
+		query.setParameterList("status", new String[]{StatusLancamento.CONFIRMADO.name(), StatusLancamento.EM_BALANCEAMENTO.name()});
 		//query.setParameter("movimentoReparteCotaAusente", GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
 		
 		if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
