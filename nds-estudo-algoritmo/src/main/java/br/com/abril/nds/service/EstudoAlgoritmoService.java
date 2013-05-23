@@ -199,6 +199,14 @@ public class EstudoAlgoritmoService {
     private LocalDate parseLocalDate(Date dataLancamento, Years anosSubtrair, DataReferencia dataReferencia) {
 	return MonthDay.parse(dataReferencia.getData()).toLocalDate(LocalDate.fromDateFields(dataLancamento).minus(anosSubtrair).getYear());
     }
+    
+    public static BigInteger arredondarPacotePadrao(EstudoTransient estudo, BigInteger reparte) {
+	if (reparte != null && estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null) {
+	    return new BigDecimal(reparte).divide(new BigDecimal(estudo.getPacotePadrao()), 0, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(estudo.getPacotePadrao())).toBigInteger();
+	} else {
+	    return reparte;
+	}
+    }
 
     public void gravarEstudo(EstudoTransient estudo) {
 	estudoDAO.gravarEstudo(estudo);
@@ -231,6 +239,7 @@ public class EstudoAlgoritmoService {
 	    estudo.setDistribuicaoPorMultiplos(distribuicaoVendaMedia.isDistribuicaoPorMultiplo() ? 1 : 0);
 	    estudo.setReparteMinimo(distribuicaoVendaMedia.getReparteMinimo());
 	    estudo.setComplementarAutomatico(distribuicaoVendaMedia.getComplementarAutomatico());
+	    estudo.setUsarFixacao(distribuicaoVendaMedia.isUsarFixacao());
 	    LinkedList<ProdutoEdicaoEstudo> edicoesBase = new LinkedList<>();
 	    for (ProdutoEdicaoDTO base : distribuicaoVendaMedia.getBases()) {
 		ProdutoEdicaoEstudo ed = new ProdutoEdicaoEstudo();

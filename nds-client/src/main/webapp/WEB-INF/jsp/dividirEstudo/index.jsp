@@ -71,13 +71,11 @@
 									<td><input type="text" name="edicaoProduto"
 										id="edicaoProduto" style="width: 100px;" /></td>
 								</tr>
-								<%--
 								<tr>
 									<td>Classifica&ccedil;&atilde;o:</td>
 									<td><input type="text" name="classificacao" id="classificacao"
 										style="width: 200px;" /></td>
 								</tr>
-								 --%>
 								<tr>
 									<td>Data Distribui&ccedil;&atilde;o:</td>
 									<td><input type="text" name="dataDistribuicao"

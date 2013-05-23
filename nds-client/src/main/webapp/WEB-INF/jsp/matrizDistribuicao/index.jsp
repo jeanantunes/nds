@@ -36,17 +36,6 @@ function showTab(link, title) {
 	$('#workspace').tabs('addTab', title, link);
 }
 
-function estudoComplementarShow(link){
-	
-	$.each(matrizDistribuicao.lancamentos, function(index, lancamento){
-		if(lancamento.selecionado) {
-			matrizDistribuicao.lancamentoSelecionadoParaComplementar = lancamento;
-		}
-	});
-	
-	matrizDistribuicao.validarMarcacaoUnicoItem() && $('#workspace').tabs('addTab', 'Estudo Complementar', link);
-}
-
 var pathTela = "${pageContext.request.contextPath}";
 
 var matrizDistribuicao = new MatrizDistribuicao(pathTela, "matrizDistribuicao", BaseController.workspace);
@@ -168,7 +157,7 @@ var lancamentosSelecionados = [];
 									               <li><a href="javascript:;" onclick="matrizDistribuicao.gerarEstudoManual();"><img src="${pageContext.request.contextPath}/images/ico_estudo_manual.gif" border="0"/>Distribuição Manual</a></li>
 									               <li><a href="javascript:;" onclick="matrizDistribuicao.somarEstudos();"><img src="${pageContext.request.contextPath}/images/ico_soma_estudos.gif" border="0"/>Somar Estudos</a></li>
 									               <li><a href="javascript:;" onclick="matrizDistribuicao.dividirEstudo();"><img src="${pageContext.request.contextPath}/images/ico_dividir_estudos.gif" border="0"/>Dividir Estudo</a></li>
-									               <li><a href="javascript:;" onclick="estudoComplementarShow('${pageContext.request.contextPath}/lancamento/estudoComplementar')" ><img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" border="0"/>Estudo Complementar</a></li>
+									               <li><a href="javascript:;" onclick="matrizDistribuicao.estudoComplementarShow();" ><img src="${pageContext.request.contextPath}/images/ico_estudo_complementar.gif" border="0"/>Estudo Complementar</a></li>
 									               <li><a href="javascript:;" onclick="matrizDistribuicao.copiarProporcionalDeEstudo();"><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" border="0"/>Cópia Proporcional de Estudo</a></li>
 								           </ul>
           							 	</div>

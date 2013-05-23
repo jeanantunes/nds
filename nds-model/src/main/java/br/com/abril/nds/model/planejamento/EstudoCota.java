@@ -37,7 +37,7 @@ public class EstudoCota implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 
-	@Column(name = "QTDE_PREVISTA", nullable = false)
+	@Column(name = "QTDE_PREVISTA", nullable = true)
 	private BigInteger qtdePrevista;
 
 	@Column(name = "QTDE_EFETIVA", nullable = false)

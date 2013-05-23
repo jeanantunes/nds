@@ -42,6 +42,15 @@ public class AnaliseParcialDTO implements Serializable {
     private BigDecimal ultimoReparte;
     
     private boolean cotaNova;
+    private String descricaoLegenda;
+
+    public String getDescricaoLegenda() {
+        return descricaoLegenda;
+    }
+
+    public void setDescricaoLegenda(String descricaoLegenda) {
+        this.descricaoLegenda = descricaoLegenda;
+    }
 
     private List<EdicoesProdutosDTO> edicoesBase;
 

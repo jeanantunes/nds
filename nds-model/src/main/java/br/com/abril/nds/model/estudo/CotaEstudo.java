@@ -2,7 +2,9 @@ package br.com.abril.nds.model.estudo;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.model.cadastro.Cota;
 
@@ -16,11 +18,13 @@ public class CotaEstudo extends Cota {
     private BigInteger reparteCalculado;
     private BigInteger reparteJuramentadoAFaturar;
     private BigInteger reparteMinimo;
-    private BigInteger reparteMaximo;
+    private BigInteger intervaloMinimo;
+    private BigInteger intervaloMaximo;
     private BigInteger reparteFixado;
     private BigDecimal vendaMedia;
+    private BigDecimal vendaMediaCorrigida;
     private BigDecimal vendaMediaNominal;
-    private BigDecimal vendaEdicaoMaisRecenteFechada;
+    private BigInteger vendaEdicaoMaisRecenteFechada;
     private boolean cotaSoRecebeuEdicaoAberta;
     private BigDecimal somaReparteEdicoesAbertas;
     private BigDecimal indiceCorrecaoTendencia;
@@ -34,21 +38,40 @@ public class CotaEstudo extends Cota {
     private BigDecimal indiceVendaCrescente;
     private BigDecimal indiceTratamentoRegional;
     private BigDecimal indiceAjusteEquivalente;
-    private List<Integer> regioes;
+    private BigDecimal menorVenda;
+    private BigDecimal pesoMenorVenda;
     private boolean nova;
     private boolean recebeuUltimaEdicaoAberta;
     private BigInteger qtdeRanking;
+    // informacoes referentes à selecao de componentes
+    private Set<Integer> tiposPontoPdv;
+    private Set<Integer> tiposGeradorFluxo;
+    private Set<String> bairros;
+    private Set<Integer> regioes;
+    private Set<String> tiposCota; // consignado ou a vista
+    private Set<Integer> areasInfluenciaPdv;
+    private Set<String> estados;
 
     public CotaEstudo() {
 	nova = false;
+	mix = false;
 	vendaMedia = BigDecimal.ZERO;
 	indiceTratamentoRegional = BigDecimal.ONE;
 	reparteMinimo = BigInteger.ZERO;
+	intervaloMinimo = BigInteger.ZERO;
 	reparteCalculado = BigInteger.ZERO;
 	indiceAjusteCota = BigDecimal.ONE;
 	indiceVendaCrescente = BigDecimal.ONE;
 	indiceTratamentoRegional = BigDecimal.ONE;
 	classificacao = ClassificacaoCota.SemClassificacao;
+
+	tiposPontoPdv = new HashSet<>();
+	tiposGeradorFluxo = new HashSet<>();
+	bairros = new HashSet<>();
+	regioes = new HashSet<>();
+	tiposCota = new HashSet<>();
+	areasInfluenciaPdv = new HashSet<>();
+	estados = new HashSet<>();
     }
 
     public Long getIdEstudo() {
@@ -76,15 +99,24 @@ public class CotaEstudo extends Cota {
 	this.reparteCalculado = reparteCalculado;
     }
     public void setReparteCalculado(BigInteger reparteCalculado, EstudoTransient estudo) {
-	if (reparteMaximo != null && reparteCalculado.compareTo(reparteMaximo) > 0) {
-	    reparteCalculado = reparteMaximo;
-	} else if (reparteCalculado.compareTo(reparteMinimo) < 0) {
-	    reparteCalculado = reparteMinimo;
-	} else {
-	    BigInteger variacao = reparteCalculado.subtract(this.reparteCalculado);
-	    estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(variacao));
-	    this.reparteCalculado = reparteCalculado;
+	boolean minimoMaximo = false;
+	if (intervaloMaximo != null && reparteCalculado.compareTo(intervaloMaximo) > 0) {
+	    reparteCalculado = intervaloMaximo;
+	    minimoMaximo = true;
+	} else if (reparteCalculado.compareTo(intervaloMinimo) < 0) {
+	    reparteCalculado = intervaloMinimo;
+	    minimoMaximo = true;
 	}
+	if (minimoMaximo) {
+	    if (mix) {
+		classificacao = ClassificacaoCota.CotaMix;
+	    } else {
+		classificacao = ClassificacaoCota.MaximoMinimo;
+	    }
+	}
+	BigInteger variacao = reparteCalculado.subtract(this.reparteCalculado);
+	estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(variacao));
+	this.reparteCalculado = reparteCalculado;
     }
     public BigInteger getReparteJuramentadoAFaturar() {
 	return reparteJuramentadoAFaturar;
@@ -98,12 +130,22 @@ public class CotaEstudo extends Cota {
     public void setReparteMinimo(BigInteger reparteMinimo) {
 	this.reparteMinimo = reparteMinimo;
     }
-    public BigInteger getReparteMaximo() {
-	return reparteMaximo;
+    public BigInteger getIntervaloMinimo() {
+	return intervaloMinimo;
     }
-    public void setReparteMaximo(BigInteger reparteMaximo) {
-	this.reparteMaximo = reparteMaximo;
+
+    public void setIntervaloMinimo(BigInteger intervaloMinimo) {
+	this.intervaloMinimo = intervaloMinimo;
     }
+
+    public BigInteger getIntervaloMaximo() {
+	return intervaloMaximo;
+    }
+
+    public void setIntervaloMaximo(BigInteger intervaloMaximo) {
+	this.intervaloMaximo = intervaloMaximo;
+    }
+
     public BigDecimal getVendaMedia() {
 	return vendaMedia;
     }
@@ -116,11 +158,10 @@ public class CotaEstudo extends Cota {
     public void setVendaMediaNominal(BigDecimal vendaMediaNominal) {
 	this.vendaMediaNominal = vendaMediaNominal;
     }
-    public BigDecimal getVendaEdicaoMaisRecenteFechada() {
+    public BigInteger getVendaEdicaoMaisRecenteFechada() {
 	return vendaEdicaoMaisRecenteFechada;
     }
-    public void setVendaEdicaoMaisRecenteFechada(
-	    BigDecimal vendaEdicaoMaisRecenteFechada) {
+    public void setVendaEdicaoMaisRecenteFechada(BigInteger vendaEdicaoMaisRecenteFechada) {
 	this.vendaEdicaoMaisRecenteFechada = vendaEdicaoMaisRecenteFechada;
     }
     public boolean isCotaSoRecebeuEdicaoAberta() {
@@ -210,14 +251,6 @@ public class CotaEstudo extends Cota {
 	this.reparteFixado = reparteFixado;
     }
 
-    public List<Integer> getRegioes() {
-	return regioes;
-    }
-
-    public void setRegioes(List<Integer> regioes) {
-	this.regioes = regioes;
-    }
-
     public boolean isNova() {
 	return nova;
     }
@@ -227,24 +260,104 @@ public class CotaEstudo extends Cota {
     }
 
     public boolean isRecebeuUltimaEdicaoAberta() {
-        return recebeuUltimaEdicaoAberta;
+	return recebeuUltimaEdicaoAberta;
     }
 
     public void setRecebeuUltimaEdicaoAberta(boolean recebeuUltimaEdicaoAberta) {
-        this.recebeuUltimaEdicaoAberta = recebeuUltimaEdicaoAberta;
+	this.recebeuUltimaEdicaoAberta = recebeuUltimaEdicaoAberta;
     }
 
     public BigInteger getQtdeRanking() {
-        return qtdeRanking;
+	return qtdeRanking;
     }
 
     public void setQtdeRanking(BigInteger qtdeRanking) {
-        this.qtdeRanking = qtdeRanking;
+	this.qtdeRanking = qtdeRanking;
+    }
+
+    public BigDecimal getVendaMediaCorrigida() {
+	return vendaMediaCorrigida;
+    }
+
+    public void setVendaMediaCorrigida(BigDecimal vendaMediaCorrigida) {
+	this.vendaMediaCorrigida = vendaMediaCorrigida;
+    }
+
+    public Set<Integer> getTiposPontoPdv() {
+        return tiposPontoPdv;
+    }
+
+    public void setTiposPontoPdv(Set<Integer> tiposPontoPdv) {
+        this.tiposPontoPdv = tiposPontoPdv;
+    }
+
+    public Set<Integer> getTiposGeradorFluxo() {
+        return tiposGeradorFluxo;
+    }
+
+    public void setTiposGeradorFluxo(Set<Integer> tiposGeradorFluxo) {
+        this.tiposGeradorFluxo = tiposGeradorFluxo;
+    }
+
+    public Set<String> getBairros() {
+        return bairros;
+    }
+
+    public void setBairros(Set<String> bairros) {
+        this.bairros = bairros;
+    }
+
+    public Set<Integer> getRegioes() {
+        return regioes;
+    }
+
+    public void setRegioes(Set<Integer> regioes) {
+        this.regioes = regioes;
+    }
+
+    public Set<String> getTiposCota() {
+        return tiposCota;
+    }
+
+    public void setTiposCota(Set<String> tiposCota) {
+        this.tiposCota = tiposCota;
+    }
+
+    public Set<Integer> getAreasInfluenciaPdv() {
+        return areasInfluenciaPdv;
+    }
+
+    public void setAreasInfluenciaPdv(Set<Integer> areasInfluenciaPdv) {
+        this.areasInfluenciaPdv = areasInfluenciaPdv;
+    }
+
+    public Set<String> getEstados() {
+        return estados;
+    }
+
+    public void setEstados(Set<String> estados) {
+        this.estados = estados;
     }
 
     @Override
     public String toString() {
 	return "" + getNumeroCota() + "";
+    }
+
+    public BigDecimal getMenorVenda() {
+        return menorVenda;
+    }
+
+    public void setMenorVenda(BigDecimal menorVenda) {
+        this.menorVenda = menorVenda;
+    }
+
+    public BigDecimal getPesoMenorVenda() {
+        return pesoMenorVenda;
+    }
+
+    public void setPesoMenorVenda(BigDecimal pesoMenorVenda) {
+        this.pesoMenorVenda = pesoMenorVenda;
     }
 
     @Override

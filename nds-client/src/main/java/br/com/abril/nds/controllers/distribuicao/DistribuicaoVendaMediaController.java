@@ -23,7 +23,6 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
-import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.model.planejamento.EdicaoBaseEstrategia;
@@ -102,10 +101,10 @@ public class DistribuicaoVendaMediaController extends BaseController {
 
     @Autowired
     private DefinicaoBases definicaoBases;
-    
+
     @Autowired
     private TipoClassificacaoProdutoService tipoClassificacaoProdutoService;
-    
+
     private static final int QTD_MAX_PRODUTO_EDICAO = 6;
 
     @Path("index")
@@ -197,18 +196,16 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	    result.include("repDistrib", estudo.getReparteDistribuir());
 	}
 
-
 	result.include("lancamento", lancamento);
 	result.include("estrategia", estrat);
 	ProdutoEdicaoDTO convertido = converterResultado(produtoEdicao, lancamento);
-	// produtoEdicaoRepository.findReparteEVenda(convertido);
 
 	result.include("produtoEdicao", convertido);
-	
+
 	carregarComboClassificacao();
-	
+
 	session.setAttribute(ProdutoDistribuicaoVO.class.getName(), produtoDistribuicaoVO);
-	
+
     }
 
     @Path("pesquisarProdutosEdicao")
@@ -227,8 +224,6 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	    ProdutoEdicaoDTO dto = converterResultado(produtoEdicao, null);
 	    convertido.add(dto);
 	}
-
-	// produtoEdicaoRepository.findReparteEVenda(convertido);
 
 	return convertido;
     }
@@ -267,11 +262,6 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	}
 
 	return dto;
-    }
-
-    @SuppressWarnings("unused")
-    private EstoqueProdutoCota findEstoqueProdutoCota(ProdutoEdicao produtoEdicao) {
-	return null;
     }
 
     private Lancamento findLancamentoBalanceado(ProdutoEdicao produtoEdicao) {
@@ -320,23 +310,41 @@ public class DistribuicaoVendaMediaController extends BaseController {
     @Path("gerarEstudo")
     @Post
     public void gerarEstudo(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, String codigoProduto, Long numeroEdicao) throws Exception {
-	EstudoTransient estudo = null;
+		EstudoTransient estudo = null;
+		int qtdEdicoesAbertas = 0;
 	
-	if (distribuicaoVendaMedia.getBases().size() > QTD_MAX_PRODUTO_EDICAO) {
+		if (distribuicaoVendaMedia.getBases().size() > QTD_MAX_PRODUTO_EDICAO) {
+	
+		    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não pode ter mais do que "+QTD_MAX_PRODUTO_EDICAO+" bases."));
+		}
+	
+		for (int i = 0; i < distribuicaoVendaMedia.getBases().size(); i++) {
+		    ProdutoEdicaoDTO produtoEdicaoDTO = distribuicaoVendaMedia.getBases().get(i);
+	
+		    if (!produtoEdicaoDTO.getStatus().equals("FECHADO")) {
+		    	qtdEdicoesAbertas++;
+		    }
+		}
+	
+		if (qtdEdicoesAbertas > 1) {
+		    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não é possível utilizar mais que uma edição base aberta."));
+		}
+	
+		ProdutoEdicaoEstudo produto = new ProdutoEdicaoEstudo(codigoProduto);
+		produto.setNumeroEdicao(numeroEdicao);
+		estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, produto, distribuicaoVendaMedia.getReparteDistribuir(), this.getUsuarioLogado());
+		String htmlEstudo = HTMLTableUtil.estudoToHTML(estudo);
 		
-		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não pode ter mais do que "+QTD_MAX_PRODUTO_EDICAO+" bases."));
-	}
+		List<Object> response = new ArrayList<>();
+		response.add(htmlEstudo);
+		response.add(estudo.getId());
+		response.add(estudo.isLiberado() == null ? false : true);
+		result.use(Results.json()).from(response).recursive().serialize();
 	
-	ProdutoEdicaoEstudo produto = new ProdutoEdicaoEstudo(codigoProduto);
-	produto.setNumeroEdicao(numeroEdicao);
-	estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, produto, distribuicaoVendaMedia.getReparteDistribuir(), this.getUsuarioLogado());
-	String htmlEstudo = HTMLTableUtil.estudoToHTML(estudo);
-	result.use(Results.json()).from(htmlEstudo, "estudo").recursive().serialize();
-    
-	removeItensDuplicadosMatrizDistribuicao();
-    
+		removeItensDuplicadosMatrizDistribuicao();
+
     }
-    
+
     private void removeItensDuplicadosMatrizDistribuicao() {
     	
     	ProdutoDistribuicaoVO vo = (ProdutoDistribuicaoVO)session.getAttribute(ProdutoDistribuicaoVO.class.getName());
@@ -348,7 +356,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
     		session.removeAttribute(ProdutoDistribuicaoVO.class.getName());
     	}
     }
-    
+
     public HttpSession getSession() {
 	return session;
     }
@@ -356,21 +364,21 @@ public class DistribuicaoVendaMediaController extends BaseController {
     public void setSession(HttpSession session) {
 	this.session = session;
     }
-    
-    
+
+
     private void carregarComboClassificacao() {
 
-		List<TipoClassificacaoProduto> listaTipoClassificacaoProduto = tipoClassificacaoProdutoService.obterTodos();
+	List<TipoClassificacaoProduto> listaTipoClassificacaoProduto = tipoClassificacaoProdutoService.obterTodos();
 
-		List<ItemDTO<Long, String>> listaTipoClassificacaoProdutoCombo = new ArrayList<ItemDTO<Long, String>>();
+	List<ItemDTO<Long, String>> listaTipoClassificacaoProdutoCombo = new ArrayList<ItemDTO<Long, String>>();
 
-		for (TipoClassificacaoProduto tipoClassificacaoProduto : listaTipoClassificacaoProduto) {
+	for (TipoClassificacaoProduto tipoClassificacaoProduto : listaTipoClassificacaoProduto) {
 
-			// Preenchendo a lista que irá representar o combobox de área de
-			// influência na view
-			listaTipoClassificacaoProdutoCombo.add(new ItemDTO<Long, String>(tipoClassificacaoProduto.getId(), tipoClassificacaoProduto.getDescricao()));
-		}
-
-		result.include("listaTipoClassificacao", listaTipoClassificacaoProdutoCombo);
+	    // Preenchendo a lista que irá representar o combobox de área de
+	    // influência na view
+	    listaTipoClassificacaoProdutoCombo.add(new ItemDTO<Long, String>(tipoClassificacaoProduto.getId(), tipoClassificacaoProduto.getDescricao()));
 	}
+
+	result.include("listaTipoClassificacao", listaTipoClassificacaoProdutoCombo);
+    }
 }

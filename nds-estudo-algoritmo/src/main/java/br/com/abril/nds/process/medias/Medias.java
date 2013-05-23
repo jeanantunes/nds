@@ -49,11 +49,15 @@ public class Medias {
 		BigDecimal menorValor = treeVendaPeso.firstEntry().getKey();
 		BigDecimal menorPeso = treeVendaPeso.firstEntry().getValue();
 		BigDecimal menorMultiply = menorValor.multiply(menorPeso);
+		
+		cota.setMenorVenda(menorValor);
+		cota.setPesoMenorVenda(menorPeso);
 
 		vendaMediaCorrigida = totalVendaMultiplyPeso.subtract(menorMultiply).divide(totalPeso.subtract(menorPeso), 2, BigDecimal.ROUND_HALF_UP);
 	    }
 	}
 	if ((vendaMediaCorrigida != null) && (vendaMediaCorrigida.compareTo(BigDecimal.ZERO) > 0)) {
+	    cota.setVendaMediaCorrigida(vendaMediaCorrigida); // utilizada apenas como controle no resumo final
 	    cota.setVendaMedia(vendaMediaCorrigida);
 	}
     }

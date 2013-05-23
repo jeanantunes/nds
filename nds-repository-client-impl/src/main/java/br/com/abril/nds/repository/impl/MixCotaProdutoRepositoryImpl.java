@@ -151,7 +151,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" usuario.login as usuario, ")
 		.append(" tipo_classificacao_produto.descricao as classificacaoProduto, ")
 		.append(" round(coalesce(avg(epc.qtde_recebida),0), 0) as reparteMedio, ")
-	    .append(" round(coalesce(avg(epc.qtde_recebida - epc.qtde_devolvida),0), 0) as vendaMedia, ")
+		.append(" round(coalesce(avg(epc.qtde_recebida - epc.qtde_devolvida),0), 0) as vendaMedia, ")
 		.append(" coalesce((select round(lc.reparte,0) from lancamento lc where lc.produto_edicao_id=produto_edicao.id and lancamento.status in ('LAN�ADA','CALCULADA') limit 1),0) as ultimoReparte ")
 		.append(" FROM mix_cota_produto ") 
 		.append(" LEFT join produto on mix_cota_produto.ID_PRODUTO = produto.ID ")
@@ -159,6 +159,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" LEFT join lancamento on lancamento.PRODUTO_EDICAO_ID = produto_edicao.ID")
 		.append(" LEFT join cota on mix_cota_produto.ID_COTA = cota.ID ")
 		.append(" LEFT join estoque_produto_cota epc on epc.cota_id = cota.id ")
+		.append(" and epc.produto_edicao_id in (select id from produto_edicao where produto_id = (produto.id)) ")
 		.append(" LEFT join tipo_classificacao_produto ON tipo_classificacao_produto.ID = produto.TIPO_CLASSIFICACAO_PRODUTO_ID ")
 		.append(" LEFT join usuario on usuario.ID = mix_cota_produto.ID_USUARIO ")
 		.append(" LEFT join pessoa on cota.pessoa_id = pessoa.id ")
@@ -172,7 +173,6 @@ public class MixCotaProdutoRepositoryImpl extends
 			sql.append(" and upper(tipo_classificacao_produto.descricao) = upper(:classificacaoProduto)");
 		}
 		sql.append(" and cota.tipo_distribuicao_cota = :tipoCota")
-		.append(" and epc.produto_edicao_id in (select id from produto_edicao where produto_id = (produto.id)) ")
 		.append(" group by cota.numero_cota ")
 		.append(" order by cota.numero_cota ");
 	

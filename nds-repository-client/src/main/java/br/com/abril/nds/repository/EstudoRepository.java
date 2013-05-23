@@ -31,4 +31,8 @@ public interface EstudoRepository extends Repository<Estudo, Long> {
 	public Long obterMaxId();
 	
 	public void setIdLancamentoNoEstudo(Long idLancamento, Long idEstudo);
+
+	public Long countDeCotasEntreEstudos(Long estudoBase, Long estudoSomado);
+
+    int obterCotasComRepartePorIdEstudo(Long estudoId);
 }

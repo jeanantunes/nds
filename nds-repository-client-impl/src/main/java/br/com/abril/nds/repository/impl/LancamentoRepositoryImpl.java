@@ -23,7 +23,6 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
-import org.springframework.jdbc.object.SqlQuery;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
@@ -1547,17 +1546,13 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 
 	StringBuilder sQuery = new StringBuilder();
 
-	sQuery.append(" SELECT * FROM LANCAMENTO L ");
-	sQuery.append(" INNER JOIN ESTUDO E ON ( E.PRODUTO_EDICAO_ID = L.PRODUTO_EDICAO_ID AND E.DATA_LANCAMENTO = L.DATA_LCTO_PREVISTA AND E.LANCAMENTO_ID = L.ID AND E.ID = :estudoId ) ");
-
-	// sQuery.append(" FROM Lancamento lancamento ");
-	// sQuery.append(" INNER JOIN lancamento.estudo estudo ");
-	// // sQuery.append(" WHERE lancamento.estudo.id = (select estudo.id from Estudo estudo where estudo.id = :estudoId) ");
-
+	sQuery.append(" select * from Lancamento l ");
+	sQuery.append(" where l.id = :idLancamento");
+	
 	SQLQuery query = getSession().createSQLQuery(sQuery.toString()).addEntity("lancamento", Lancamento.class);
-
-	query.setParameter("estudoId", estudo.getId());
-
+	
+	query.setParameter("idLancamento", estudo.getLancamentoID());
+	
 	return query.list();
     }
 

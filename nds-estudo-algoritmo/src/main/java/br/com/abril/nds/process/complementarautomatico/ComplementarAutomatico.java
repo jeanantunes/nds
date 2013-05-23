@@ -12,6 +12,7 @@ import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.ajustefinalreparte.ReparteComplementarPorCota;
 import br.com.abril.nds.process.calculoreparte.CalcularReparte;
 import br.com.abril.nds.process.encalhemaximo.EncalheMaximo;
+import br.com.abril.nds.service.EstudoAlgoritmoService;
 
 /**
  * Este processo tem como objetivo calcular o reparteComplementar que será
@@ -60,8 +61,8 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
 		    // Calculo1 = ExcedenteAmais * (1 – (((0,5 * %Abrangência) + 50) / 100))
 		    BigDecimal calculo1 = BigDecimal.valueOf(0.5).multiply(percentualAbrangencia).add(BigDecimal.valueOf(50));
 		    calculo1 = excedenteAMais.multiply(BigDecimal.ONE.subtract(calculo1.divide(BigDecimal.valueOf(100), 3, BigDecimal.ROUND_HALF_UP)));
-		    // Calculo2 = 2% do ExcedenteAMais
-		    BigDecimal calculo2 = excedenteAMais.multiply(BigDecimal.valueOf(0.02));
+		    // Calculo2 = 2% do Excedente
+		    BigDecimal calculo2 = estudo.getExcedente().multiply(BigDecimal.valueOf(0.02));
 		    BigDecimal calculo3 = BigDecimal.ZERO;
 		    BigDecimal calculo4 = BigDecimal.ZERO;
 		    // Calculo3 = pacote padrao
@@ -93,6 +94,9 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
 		    estudo.setReparteComplementar(calculo1.max(calculo2).toBigInteger());
 		    estudo.setReparteComplementar(new BigDecimal(estudo.getReparteComplementar()).max(calculo3).toBigInteger());
 		}
+		// se for distribuicao por multiplos, faz arredondamento para o pacote padrao
+		estudo.setReparteComplementar(EstudoAlgoritmoService.arredondarPacotePadrao(estudo, estudo.getReparteComplementar()));
+
 		estudo.setReparteComplementarInicial(estudo.getReparteComplementar());
 		estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(estudo.getReparteComplementar()));
 	    }

@@ -29,6 +29,7 @@ import javax.persistence.UniqueConstraint;
 
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
+import org.hibernate.annotations.Where;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
@@ -113,17 +114,20 @@ public class Lancamento implements Serializable {
 	@Column(name = "SEQUENCIA_MATRIZ", nullable = true)
 	private Integer sequenciaMatriz;
 	
-	@NotFound(action = NotFoundAction.IGNORE)
-	@ManyToOne(cascade = {CascadeType.ALL})
+	
+	@ManyToOne(cascade = {CascadeType.ALL},fetch = FetchType.LAZY)
 	@JoinColumns({
 		@JoinColumn(name = "PRODUTO_EDICAO_ID", referencedColumnName = "PRODUTO_EDICAO_ID", insertable = false, updatable = false),
-		@JoinColumn(name = "DATA_LCTO_PREVISTA", referencedColumnName = "DATA_LANCAMENTO", insertable = false, updatable = false) })
+		@JoinColumn(name = "DATA_LCTO_PREVISTA", referencedColumnName = "DATA_LANCAMENTO", insertable = false, updatable = false)})
+	/*@JoinColumns({
+		@JoinColumn(name = "ID", referencedColumnName = "LANCAMENTO_ID", insertable = false, updatable = false)})*/
 	private Estudo estudo;
 	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "EXPEDICAO_ID")
 	private Expedicao expedicao;
 	
+	@NotFound(action = NotFoundAction.IGNORE)
 	@OneToOne(mappedBy="lancamento",cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
 	private PeriodoLancamentoParcial periodoLancamentoParcial;
 

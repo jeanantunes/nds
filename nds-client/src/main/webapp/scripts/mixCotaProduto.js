@@ -1034,7 +1034,7 @@ var mixCotaProdutoController = $.extend(true, {
 			var data = [];
 			data.push({name:'filtro.codigoProduto',	value: $("#codigoProdutoMix").val()});
 			data.push({name:'filtro.nomeProduto',	value: $("#nomeProdutoMix").val()});
-			data.push({name:'filtro.classificacaoProduto',	value: $("select['select'] option:selected").val()});
+			data.push({name:'filtro.classificacaoProduto',	value: $("#filtroClassificacaoMix option:selected").val()});
 			
 			return data;
 		},

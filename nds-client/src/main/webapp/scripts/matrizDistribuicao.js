@@ -1051,7 +1051,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 				$("#copiarEstudo-copia-nomeProduto").text(result.nomeProduto);
 				$("#copiarEstudo-copia-classificacao").text(result.classificacao);
 				$("#copiarEstudo-copia-dataLancto").text(result.dataLancto);
-                $("#copiarEstudo-copia-reparte").text(result.reparte)
+                $("#copiarEstudo-copia-reparte").text(result.qtdeReparteEstudo)
                     .formatNumber({format:"#,###", locale:"br"});
 		  }
 		);
@@ -1185,14 +1185,29 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					T.exibirMensagemSucesso();
 					$("#copiarEstudo-estudo").text(result.long);
 					$("#copiarEstudo-estudoPesquisa").attr('disabled','true');
-					$("#copiarEstudo-reparteDistribuido").text("");
+//					$("#copiarEstudo-reparteDistribuido").text("");
 					T.atualizarGrid();
 					//T.mostraTelaMatrizDistribuicao();
 				}
 			);
 	},
 	
-	
+	this.executarSomaDeEstudos=function(estudoPesquisa,estudo,codigoProduto){
+		var data = [];
+		
+		data.push({name: 'idEstudoBase', 	     								 value: estudoPesquisa});
+		data.push({name: 'distribuicaoVO.idEstudo', 			 				 value: estudo});
+		data.push({name: 'distribuicaoVO.codigoProduto', 			 			 value: codigoProduto});
+		
+		$.postJSON(pathTela + "/matrizDistribuicao/somarEstudos", data,
+				function(result){
+					T.exibirMensagemSucesso();
+					$('#somarEstudo-statusOperacao').text('CONCLUIDO');
+					T.atualizarGrid();
+					T.mostraTelaMatrizDistribuicao();
+				}
+			);
+	},
 	this.confirmarSomaDeEstudos = function() {
 		
 		var estudoPesquisa = $("#somarEstudo-estudoPesquisa").val();
@@ -1213,18 +1228,44 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		var data = [];
 		
-		data.push({name: 'idEstudoBase', 	     								 value: estudoPesquisa});
-		data.push({name: 'distribuicaoVO.idEstudo', 			 				 value: estudo});
-		data.push({name: 'distribuicaoVO.codigoProduto', 			 			 value: codigoProduto});
+		data.push({name: 'estudoBase', 	     								 value: estudo});
+		data.push({name: 'estudoSomado', 			 				 value: estudoPesquisa});
 		
-		$.postJSON(pathTela + "/matrizDistribuicao/somarEstudos", data,
+		$.postJSON(pathTela + "/matrizDistribuicao/verificarCoincidenciaEntreCotas", data,
 				function(result){
-					T.exibirMensagemSucesso();
-					$('#somarEstudo-statusOperacao').text('CONCLUIDO');
-					T.atualizarGrid();
-					T.mostraTelaMatrizDistribuicao();
+
+					if(result.boolean){
+						$("#dialog-confirm-coincidencia-cotas").dialog({
+							resizable: false,
+							height:'auto',
+							width:400,
+							modal: true,
+							buttons: [ {
+							    	text: "Sim",
+							    	click: function() {
+							    		$(this).dialog("close");
+							    		T.executarSomaDeEstudos(estudoPesquisa,estudo,codigoProduto);
+							    	}
+							    },
+							    {
+							    	id: "selecaoLancamentosBtnCancelar",
+							    	text: "Não",
+							    	click: function() {
+							    		$(this).dialog("close");
+							    	}
+							} ],
+						});
+					}else{
+						T.executarSomaDeEstudos(estudoPesquisa,estudo,codigoProduto);
+					}
+		
 				}
 			);
+		
+		
+	
+		
+		
 	},
 	
 	this.inicializar = function() {
@@ -1398,7 +1439,38 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 			T.redirectToTelaAnalise('#dialog-copiar-estudo','#telaAnalise', $('#copiarEstudo-estudo').html());
 		}
 	},
-	
+
+	this.estudoComplementarShow = function() {
+
+	    var selecionado = null;
+	    var maisDeUm = false;
+	    $.each(T.lancamentos, function(index, lancamento) {
+	        if (lancamento.selecionado) {
+	            if (selecionado != null) {
+	                selecionado = null;
+	                maisDeUm = true;
+	                return;
+	            }
+	            selecionado = lancamento;
+	        }
+	    });
+	    if (selecionado == null) {
+	        exibirMensagem("ERROR", ["Selecione "+ (maisDeUm ? "apenas" : "") +" um item para esta opção."]);
+	        return;
+	    }
+	    var postData = [];
+	    postData.push({name: "estudoId",        value: selecionado.estudo});
+	    postData.push({name: "idProdutoEdicao", value: selecionado.idProdutoEdicao});
+	    postData.push({name: "idLancamento",    value: selecionado.idLancamento});
+
+	    var temp = $('#workspace').tabs( "option", "ajaxOptions");
+	    $('#workspace').tabs( "option", "ajaxOptions", { data: postData, type: 'POST' } );
+	    $('#workspace').tabs('addTab', 'Distribuição Venda Média', pathTela + '/lancamento/estudoComplementar');
+	    $('#workspace').tabs( "option", "ajaxOptions", temp );
+
+	    T.esconderOpcoes();
+	}
+
 	this.analise = function(){
 		//testa se registro foi selecionado
 		if (T.validarMarcacaoUnicoItem()) {

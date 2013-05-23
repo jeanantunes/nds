@@ -25,6 +25,7 @@ import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
+import br.com.abril.nds.service.EstudoAlgoritmoService;
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre as cotas encontradas para o perfil definido no
@@ -47,6 +48,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
     public void executar(EstudoTransient estudo) throws Exception {
 	
 	List<CotaEstudo> cotas = cotaDAO.getCotas(estudo);
+	cotaDAO.getComponentesCota(cotas);
 	List<Map<Long, CotaEstudo>> historico = new ArrayList<>();
 	for (ProdutoEdicaoEstudo edicao : estudo.getEdicoesBase()) {
 	    historico.add(cotaDAO.getHistoricoCota(edicao));
@@ -132,7 +134,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 		cota.setSomaReparteEdicoesAbertas(cota.getSomaReparteEdicoesAbertas().add(edicao.getReparte()));
 	    } else {
 		if (cota.getVendaEdicaoMaisRecenteFechada() == null) {
-		    cota.setVendaEdicaoMaisRecenteFechada(edicao.getVenda());
+		    cota.setVendaEdicaoMaisRecenteFechada(edicao.getVenda().toBigInteger());
 		}
 		cota.setCotaSoRecebeuEdicaoAberta(false);
 	    }
@@ -154,8 +156,11 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	if (cota.getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) {
 	    cota.setClassificacao(ClassificacaoCota.BancaSuspensa);
 	}
-	if (cota.getReparteFixado() != null) {
+	cota.setIntervaloMaximo(EstudoAlgoritmoService.arredondarPacotePadrao(estudo, cota.getIntervaloMaximo()));
+	cota.setIntervaloMinimo(EstudoAlgoritmoService.arredondarPacotePadrao(estudo, cota.getIntervaloMinimo()));
+	if (estudo.isUsarFixacao() && cota.getReparteFixado() != null) {
 	    cota.setClassificacao(ClassificacaoCota.ReparteFixado);
+	    cota.setReparteFixado(EstudoAlgoritmoService.arredondarPacotePadrao(estudo, cota.getReparteFixado()));
 	    cota.setReparteCalculado(cota.getReparteFixado(), estudo);
 	}
     }

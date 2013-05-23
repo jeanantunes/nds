@@ -26,44 +26,47 @@ public class ReparteMinimo extends ProcessoAbstrato {
 
     @Override
     public void executar(EstudoTransient estudo) throws Exception {
-	if (estudo.isDistribuicaoPorMultiplos() && (estudo.getPacotePadrao() != null)) {
-	    BigInteger somatoriaReparteMinimo = BigInteger.ZERO;
-	    for (CotaEstudo cota : estudo.getCotas()) {
-		BigInteger reparteMinimo = null;
-		if (cota.getReparteMinimo().compareTo(estudo.getReparteMinimo()) > 0) {
-		    reparteMinimo = cota.getReparteMinimo();
-		} else {
-		    reparteMinimo = estudo.getReparteMinimo();
-		}
-		// variável usada apenas para facilitar leitura
-		BigInteger pacPadrao = estudo.getPacotePadrao();
-		if (estudo.getPacotePadrao().compareTo(BigInteger.ZERO) > 0) {
-		    reparteMinimo = reparteMinimo.divide(pacPadrao).multiply(pacPadrao);
-		}
-		if (reparteMinimo.compareTo(BigInteger.ZERO) == 0) {
-		    reparteMinimo = pacPadrao;
-		}
-		if (cota.getReparteMinimo().compareTo(reparteMinimo) < 0) {
-		    cota.setReparteMinimo(reparteMinimo);
-		}
-		somatoriaReparteMinimo = somatoriaReparteMinimo.add(cota.getReparteMinimo());
+	BigInteger somatoriaReparteMinimo = BigInteger.ZERO;
+	for (CotaEstudo cota : estudo.getCotas()) {
+	    BigInteger reparteMinimo = BigInteger.ZERO;
+	    if (estudo.getReparteMinimo() != null) {
+		reparteMinimo = estudo.getReparteMinimo();
 	    }
-	    if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) > 0) {
-		if (new BigDecimal(somatoriaReparteMinimo).divide(new BigDecimal(estudo.getReparteDistribuir()), 2, BigDecimal.ROUND_HALF_UP)
-			.compareTo(BigDecimal.valueOf(0.75)) > 0) {
-		    throw new Exception(
-			    "O estudo não pode ser concluído pois o percentual do reparte mínimo é maior que 75% do reparte total à distribuir.\n"
-				    + "Desmarque a opção de reparte mínimo ou escolha uma quantidade menor.");
-		    // A EMS 2050 descrevia que ao ocorrer esse erro deveria ser
-		    // exibida uma tela para o usuário e após isso o cáculo
-		    // prosseguir por motivos de estrutura esse cálculo não
-		    // consegue disparar a
-		    // exibição de uma tela, portanto, essa funcionalidade não
-		    // foi implementada.
+	    
+	    if (estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null) {
+		if (estudo.getPacotePadrao().compareTo(reparteMinimo) > 0) {
+		    reparteMinimo = reparteMinimo.divide(estudo.getPacotePadrao()).multiply(estudo.getPacotePadrao());
 		}
 	    }
-	    // RepDistribuir = RepDistribuir - ΣReparteParaMínimo
-	    estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(somatoriaReparteMinimo));
+	    
+	    // verifica se o reparte mínimo do estudo é maior que o da cota
+	    if (estudo.getReparteMinimo() != null && estudo.getReparteMinimo().compareTo(cota.getReparteMinimo()) > 0) {
+		reparteMinimo = estudo.getReparteMinimo();
+	    } else {
+		reparteMinimo = cota.getReparteMinimo();
+	    }
+	    if (cota.getIntervaloMinimo() != null && cota.getIntervaloMinimo().compareTo(reparteMinimo) > 0) {
+		reparteMinimo = cota.getIntervaloMinimo();
+	    }
+	    
+	    cota.setReparteMinimo(reparteMinimo);
+	    somatoriaReparteMinimo = somatoriaReparteMinimo.add(reparteMinimo);
 	}
+	if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) > 0) {
+	    if (new BigDecimal(somatoriaReparteMinimo).divide(new BigDecimal(estudo.getReparteDistribuir()), 2, BigDecimal.ROUND_HALF_UP)
+		    .compareTo(BigDecimal.valueOf(0.75)) > 0) {
+		throw new Exception(
+			"O estudo não pode ser concluído pois o percentual do reparte mínimo é maior que 75% do reparte total à distribuir.\n"
+				+ "Desmarque a opção de reparte mínimo ou escolha uma quantidade menor.");
+		// A EMS 2050 descrevia que ao ocorrer esse erro deveria ser
+		// exibida uma tela para o usuário e após isso o cáculo
+		// prosseguir por motivos de estrutura esse cálculo não
+		// consegue disparar a
+		// exibição de uma tela, portanto, essa funcionalidade não
+		// foi implementada.
+	    }
+	}
+	// RepDistribuir = RepDistribuir - ΣReparteParaMínimo
+	estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(somatoriaReparteMinimo));
     }
 }

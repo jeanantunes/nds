@@ -19,12 +19,14 @@ var analiseParcialController = $.extend(true, {
         '<td><div style="width: 60px;"><a href="javascript:;" onclick="analiseParcialController.subirEdicaoBase(#index);"><img src="'+ contextPath +'/images/seta_sobe#sobe_desab.gif"/></a>'+
         '&nbsp;<a href="javascript:;" onclick="analiseParcialController.descerEdicaoBase(#index);"><img src="'+ contextPath +'/images/seta_desce#desce_desab.gif"/></a></div></td></tr>',
 
-    linkNomeCota : '<a href="javascript:;" onclick="analiseParcialController.carregarDetalhesCota(#numeroCota);">#nomeCota</a>',
+    //linkNomeCota : '<a tabindex="-1" href="javascript:;" onclick="analiseParcialController.carregarDetalhesCota(#numeroCota);">#nomeCota</a>',
+    linkNomeCota : '<a tabindex="-1" class="linkNomeCota" numeroCota="#numeroCota" >#nomeCota</a>',
     edicoesBase : [],
-    inputReparteSugerido : '<input type="hidden" id="reparteSalvo_#numeroCota" value="#value"/>'+
+    inputReparteSugerido_old : '<input type="hidden" id="reparteSalvo_#numeroCota" value="#value"/>'+
         '<input id="reparteAtual_#numeroCota" value="#value" class="reparteSugerido" '+
-//        'tabindex="#tab" '+
-        'onblur="analiseParcialController.inputBlur(event, this);"/>',
+        'onblur="analiseParcialController.atualizaReparte(event, this);"/>',
+
+    inputReparteSugerido: '<input reparteInicial="#value" reparteAtual="#value" numeroCota="#numeroCota" value="#value" class="reparteSugerido" />',
 
     tipoExibicao : 'NORMAL',
 
@@ -42,10 +44,12 @@ var analiseParcialController = $.extend(true, {
                 "Confirmar" : function() {
                     var parameters = [];
                     for (var i = 0; i < 6; i++) {
-                        analiseParcialController.edicoesBase[i].codigoProduto = $('#codigoProduto'+ i).val();
-                        analiseParcialController.edicoesBase[i].numeroEdicao = $('#numeroEdicao'+ i).val();
-                        parameters.push({name: 'edicoesBase['+ i +'].edicao', value: $('#numeroEdicao'+ i).val()});
-                        parameters.push({name: 'edicoesBase['+ i +'].codigoProduto', value: $('#codigoProduto'+ i).val()});
+                        if (typeof analiseParcialController.edicoesBase[i] !== 'undefined') {
+                            analiseParcialController.edicoesBase[i].codigoProduto = $('#codigoProduto'+ i).val();
+                            analiseParcialController.edicoesBase[i].edicao = $('#numeroEdicao'+ i).val();
+                            parameters.push({name: 'edicoesBase['+ i +'].edicao', value: $('#numeroEdicao'+ i).val()});
+                            parameters.push({name: 'edicoesBase['+ i +'].codigoProduto', value: $('#codigoProduto'+ i).val()});
+                        }
                     }
                     parameters.push({name: 'id', value: $('#estudoId').val()},
                             {name: 'numeroEdicao', value: $('#numeroEdicao').val()},
@@ -66,7 +70,7 @@ var analiseParcialController = $.extend(true, {
             var row = analiseParcialController.linhaEdicaoBase.replace(/#index/g, i);
             row = row.replace(/#codigoProduto/g, analiseParcialController.edicoesBase[i].codigoProduto);
             row = row.replace(/#nomeProduto/g, analiseParcialController.edicoesBase[i].nomeProduto);
-            row = row.replace(/#numeroEdicao/g, analiseParcialController.edicoesBase[i].numeroEdicao);
+            row = row.replace(/#numeroEdicao/g, analiseParcialController.edicoesBase[i].edicao);
             row = row.replace(/#sobe_desab/g, i == 0 ? '_desab' : '');
             row = row.replace(/#desce_desab/g, i == (analiseParcialController.edicoesBase.length - 1) ? '_desab' : '');
             $("#prodCadastradosGrid").append(row);
@@ -202,7 +206,12 @@ var analiseParcialController = $.extend(true, {
         $('#total_ultimo_reparte').text(totalUltimoReparte);
         $('#total_reparte_sugerido').text(totalReparteSugerido);
         $('#total_de_cotas').text(resultado.rows.length);
-        $('#total_reparte_sugerido_cabecalho').text(totalReparteSugerido);
+
+        //TODO melhorar este trecho
+        var $totalReparteSugeridoCabecalho = $('#total_reparte_sugerido_cabecalho');
+        if ($totalReparteSugeridoCabecalho.text() === '') {
+            $totalReparteSugeridoCabecalho.text(totalReparteSugerido);
+        }
 
         if (resultado.rows.length > 0) {
             for (var j = 1; j < 7; j++) {
@@ -227,13 +236,9 @@ var analiseParcialController = $.extend(true, {
                         for (var i = 0; i < resultado.edicoesBase.length; i++) {
                             // atualização dos números das edições
                             if (typeof resultado.edicoesBase[i] !== 'undefined') {
-                                analiseParcialController.edicoesBase[i] = {};
-                                analiseParcialController.edicoesBase[i].numeroEdicao  = resultado.edicoesBase[i].edicao;
-                                analiseParcialController.edicoesBase[i].nomeProduto   = resultado.edicoesBase[i].nomeProduto;
-                                analiseParcialController.edicoesBase[i].codigoProduto = resultado.edicoesBase[i].codigoProduto;
+                                analiseParcialController.edicoesBase[i] = resultado.edicoesBase[i];
                             }
                         }
-
                     });
         }
     },
@@ -254,7 +259,7 @@ var analiseParcialController = $.extend(true, {
                 $.each(analiseParcialController.edicoesBase, function(key, value) {
                     if(value){
                         $header.find('tr').first().append($('<th colspan="2">').append($('<div style="text-align: center;">')
-                            .append(value.numeroEdicao)))
+                            .append(value.edicao)))
                     }
                 });
             } else {
@@ -271,11 +276,12 @@ var analiseParcialController = $.extend(true, {
         }, 0);
     },
 
-    inputBlur : function(event, input) {
-        var numeroCota = input.id.match(/\d+/)[0];
+    atualizaReparte : function(input) {
         var $input_reparte = $(input);
-        var $reparte_salvo = $input_reparte.prev();
-        var reparteSubtraido = parseInt(input.value, 10) - parseInt($reparte_salvo.val(), 10);
+        var numeroCota = $input_reparte.attr('numeroCota');
+        var reparteDigitado = $input_reparte.val();
+        var reparteAtual = $input_reparte.attr('reparteAtual');
+        var reparteSubtraido = parseInt(reparteDigitado, 10) - parseInt(reparteAtual, 10);
         var $legenda = $input_reparte.parents('td').next().find('div');
         if (reparteSubtraido != 0) {
             $('#saldo_reparte').text(parseInt($('#saldo_reparte').text(), 10) - reparteSubtraido);
@@ -283,18 +289,25 @@ var analiseParcialController = $.extend(true, {
             $.ajax({url: analiseParcialController.path +'/distribuicao/analise/parcial/mudarReparte',
                 data: {'numeroCota': numeroCota, 'estudoId': $('#estudoId').val(), 'variacaoDoReparte': reparteSubtraido},
                 success: function() {
-                    $reparte_salvo.val($input_reparte.val());
-                    $legenda.addClass('asterisco');
+                    $input_reparte.attr('reparteAtual', reparteDigitado);
+                    if (reparteDigitado === $input_reparte.attr('reparteInicial')) {
+                        $legenda.removeClass('asterisco');
+                    } else {
+                        $legenda.addClass('asterisco');
+                    }
                 },
                 error: function() {
-                    analiseParcialController.exibirMsg('WARNING', 'Erro ao enviar novo reparte!');
-                    $('#baseEstudoGridParcial').flexReload();
+                    analiseParcialController.exibirMsg('WARNING', ['Erro ao enviar novo reparte!']);
+//                    $('#baseEstudoGridParcial').flexReload();
                 }
             });
         }
     },
 
     preProcessGrid : function(resultado) {
+
+        console.log('resultado do init', resultado);
+
         var $header = $('table#baseEstudoGridParcial')
             .parents('div.flexigrid')
             .find('thead:visible');
@@ -308,13 +321,13 @@ var analiseParcialController = $.extend(true, {
             var cell = resultado.rows[i].cell;
             var repSug = cell.reparteSugerido,
                 numCota = cell.cota;
-            var input = analiseParcialController.inputReparteSugerido.toString().replace('#numeroCota', numCota);
-            input = input.replace('#value', repSug).replace('#numeroCota', numCota).replace('#value', repSug);
-//            input = input.replace('#tab', i+1);
+            var input = analiseParcialController.inputReparteSugerido.toString()
+                            .replace(/#numeroCota/g, numCota)
+                            .replace(/#value/g, repSug);
             cell.reparteSugerido = input;
             
-            cell.nome = analiseParcialController.linkNomeCota.
-            replace('#nomeCota', cell.nome).replace('#numeroCota', cell.cota);
+            cell.nome = analiseParcialController.linkNomeCota.replace('#nomeCota', cell.nome)
+                            .replace('#numeroCota', cell.cota);
 
             if (typeof cell.classificacao === 'undefined') {
                 cell.classificacao = '';
@@ -322,8 +335,11 @@ var analiseParcialController = $.extend(true, {
             if (cell.cotaNova == true) {
                 cell.cota += '<span class="asterisco"></span>';
             }
+            if (cell.npdv > 1) {
+                cell.npdv = '<a class=".editaRepartePorPDV" cota="'+ numCota +'">'+ cell.npdv +'</a>';
+            }
             if (cell.leg !== '') {
-                cell.leg = '<span id="leg_'+ numCota +'">'+ cell.leg +'</span>';
+                cell.leg = '<span class="legendas" id="leg_'+ numCota +'" title="'+ cell.descricaoLegenda +'">'+ cell.leg +'</span>';
             }
 
             for (var j = 0; j < 6; j++) {
@@ -344,63 +360,68 @@ var analiseParcialController = $.extend(true, {
         return resultado;
     },
 
-    onSuccessReloadGrid : function() {
-        $('td[abbr^=venda]', $('#baseEstudoGridParcial')).each(function(i, el) {
-            $(el).css({'color': 'red', 'font-weight': 'bold'});
-        });
-        $('td[abbr^=ultimoReparte]', $('#baseEstudoGridParcial')).each(function(i, el) {
-            $(el).css({'font-weight': 'bold'});
-        });
-        $('td[abbr^=reparteSugerido]', $('#baseEstudoGridParcial')).each(function(i, el) {
-            $(el).css({'font-weight': 'bold'});
-        });
+    atualizaAbrangencia: function () {
+        $.post(
+            analiseParcialController.path + '/distribuicao/analise/parcial/percentualAbrangencia',
+            [{name: 'estudoId', value: $('#estudoId').val()}],
+            function (result) {
+                $('#abrangencia').text(result);
+            }
+        );
+    },
 
+    onSuccessReloadGrid : function() {
         analiseParcialController.atualizaEdicoesBaseHeader();
+        analiseParcialController.atualizaAbrangencia();
     },
 
     modeloNormal : function() {
-        return [{display: 'Cota',   name: 'cota',          width: 33,  sortable: true, align: 'right'},
-         {display: 'Class.', name: 'classificacao', width: 30,  sortable: true, align: 'center'},
-         {display: 'Nome',   name: 'nome',          width: 100, sortable: true, align: 'left'},
-         {display: 'NPDV',   name: 'npdv',          width: 30,  sortable: true, align: 'right'},
-         {display: 'Rep. Sugerido', name: 'reparteSugerido', width: 50, sortable: true, align: 'right'},
-         {display: 'LEG',    name: 'leg',           width: 20, sortable: true, align: 'center'},
-         {display: 'Cota Nova', name: 'cotaNova',   width: 40, sortable: true, align: 'right', hide: true},
-//         {display: 'Média.VDA', name: 'mediaVenda', width: 60, sortable: true, align: 'right'},
-         {display: 'Último. Reparte', name: 'ultimoReparte', width: 80, sortable: true, align: 'right'},
-         {display: 'REP', name: 'reparte1',      width: 23, sortable: true, align: 'right'},
-         {display: 'VDA', name: 'venda1',        width: 23, sortable: true, align: 'right'},
-         {display: 'REP', name: 'reparte2',      width: 23, sortable: true, align: 'right'},
-         {display: 'VDA', name: 'venda2',        width: 23, sortable: true, align: 'right'},
-         {display: 'REP', name: 'reparte3',      width: 23, sortable: true, align: 'right'},
-         {display: 'VDA', name: 'venda3',        width: 23, sortable: true, align: 'right'},
-         {display: 'REP', name: 'reparte4',      width: 23, sortable: true, align: 'right'},
-         {display: 'VDA', name: 'venda4',        width: 23, sortable: true, align: 'right'},
-         {display: 'REP', name: 'reparte5',      width: 23, sortable: true, align: 'right'},
-         {display: 'VDA', name: 'venda5',        width: 23, sortable: true, align: 'right'},
-         {display: 'REP', name: 'reparte6',      width: 23, sortable: true, align: 'right'},
-         {display: 'VDA', name: 'venda6',        width: 23, sortable: true, align: 'right'}];
+        return [
+            {display: 'Cota',       name: 'cota',               width: 35, sortable: true, align: 'right'},
+            {display: 'Cota Nova',  name: 'cotaNova',           width: 1,  hide: true},
+            {display: 'Class.',     name: 'classificacao',      width: 30, sortable: true, align: 'center'},
+            {display: 'Nome',       name: 'nome',               width: 150,sortable: true, align: 'left'},
+            {display: 'NPDV',       name: 'npdv',               width: 30, sortable: true, align: 'right'},
+            {display: 'Últ. Rep.',  name: 'ultimoReparte',      width: 50, sortable: true, align: 'right'},
+            {display: 'Rep. Sug.',  name: 'reparteSugerido',    width: 50, sortable: true, align: 'right'},
+            {display: 'LEG',        name: 'leg',                width: 20, sortable: true, align: 'center'},
+            {display: 'Desc Leg',   name: 'descricaoLegenda',   width: 1,  hide: true},
+//          {display: 'Média.VDA',  name: 'mediaVenda',         width: 60, sortable: true, align: 'right'},
+            {display: 'REP',        name: 'reparte1',           width: 30, sortable: true, align: 'right'},
+            {display: 'VDA',        name: 'venda1',             width: 30, sortable: true, align: 'right'},
+            {display: 'REP',        name: 'reparte2',           width: 30, sortable: true, align: 'right'},
+            {display: 'VDA',        name: 'venda2',             width: 30, sortable: true, align: 'right'},
+            {display: 'REP',        name: 'reparte3',           width: 30, sortable: true, align: 'right'},
+            {display: 'VDA',        name: 'venda3',             width: 30, sortable: true, align: 'right'},
+            {display: 'REP',        name: 'reparte4',           width: 30, sortable: true, align: 'right'},
+            {display: 'VDA',        name: 'venda4',             width: 30, sortable: true, align: 'right'},
+            {display: 'REP',        name: 'reparte5',           width: 30, sortable: true, align: 'right'},
+            {display: 'VDA',        name: 'venda5',             width: 30, sortable: true, align: 'right'},
+            {display: 'REP',        name: 'reparte6',           width: 30, sortable: true, align: 'right'},
+            {display: 'VDA',        name: 'venda6',             width: 30, sortable: true, align: 'right'}];
     },
     
     modeloParcial : function() {
-        return [{display: 'Cota',   name: 'cota',          width: 33,  sortable: true, align: 'right'},
-         {display: 'Class.', name: 'classificacao', width: 30,  sortable: true, align: 'center'},
-         {display: 'Nome',   name: 'nome',          width: 100, sortable: true, align: 'left'},
-         {display: 'NPDV',   name: 'npdv',          width: 30,  sortable: true, align: 'right'},
-         {display: 'Rep. Sugerido', name: 'reparteSugerido', width: 50, sortable: true, align: 'right'},
-         {display: 'LEG',    name: 'leg',           width: 20, sortable: true, align: 'center'},
-         {display: 'Juram.', name: 'juramento',     width: 40, sortable: true, align: 'right'},
-         {display: 'Cota Nova', name: 'cotaNova',   width: 40, sortable: true, align: 'right', hide: true},
-//         {display: 'Média.VDA', name: 'mediaVenda', width: 50, sortable: true, align: 'right'},
-         {display: 'Último. Reparte', name: 'ultimoReparte', width: 50, sortable: true, align: 'right'},
-         {display: 'REP', name: 'reparte1',      width: 40, sortable: true, align: 'right'},
-         {display: 'VDA', name: 'venda1',        width: 40, sortable: true, align: 'right'},
-         {display: 'REP', name: 'reparte2',      width: 40, sortable: true, align: 'right'},
-         {display: 'VDA', name: 'venda2',        width: 40, sortable: true, align: 'right'},
-         {display: 'REP', name: 'reparte3',      width: 40, sortable: true, align: 'right'},
-         {display: 'VDA', name: 'venda3',        width: 40, sortable: true, align: 'right'},
-         {display: 'REP', name: 'reparte4',      width: 40, sortable: true, align: 'right'},
-         {display: 'VDA', name: 'venda4',        width: 40, sortable: true, align: 'right'}];
+        return [
+            {display: 'Cota',       name: 'cota',               width: 35, sortable: true, align: 'right'},
+            {display: 'Cota Nova',  name: 'cotaNova',           width: 40, sortable: true, hide: true},
+            {display: 'Class.',     name: 'classificacao',      width: 30, sortable: true, align: 'center'},
+            {display: 'Nome',       name: 'nome',               width: 150,sortable: true, align: 'left'},
+            {display: 'NPDV',       name: 'npdv',               width: 30, sortable: true, align: 'right'},
+            {display: 'Últ. Rep.',  name: 'ultimoReparte',      width: 50, sortable: true, align: 'right'},
+            {display: 'Rep. Sug.',  name: 'reparteSugerido',    width: 50, sortable: true, align: 'right'},
+            {display: 'LEG',        name: 'leg',                width: 20, sortable: true, align: 'center'},
+            {display: 'Desc Leg',   name: 'descricaoLegenda',   width: 1,  sortable: false, hide: true},
+            {display: 'Juram.',     name: 'juramento',          width: 40, sortable: true, align: 'right'},
+//          {display: 'Média.VDA',  name: 'mediaVenda',         width: 50, sortable: true, align: 'right'},
+            {display: 'REP',        name: 'reparte1',           width: 40, sortable: true, align: 'right'},
+            {display: 'VDA',        name: 'venda1',             width: 40, sortable: true, align: 'right'},
+            {display: 'REP',        name: 'reparte2',           width: 40, sortable: true, align: 'right'},
+            {display: 'VDA',        name: 'venda2',             width: 40, sortable: true, align: 'right'},
+            {display: 'REP',        name: 'reparte3',           width: 40, sortable: true, align: 'right'},
+            {display: 'VDA',        name: 'venda3',             width: 40, sortable: true, align: 'right'},
+            {display: 'REP',        name: 'reparte4',           width: 40, sortable: true, align: 'right'},
+            {display: 'VDA',        name: 'venda4',             width: 40, sortable: true, align: 'right'}];
     },
 
     sortGrid : function (sortname, sortorder) {
@@ -425,9 +446,13 @@ var analiseParcialController = $.extend(true, {
 
     init : function(_id, _faixaDe, _faixaAte, _tipoExibicao){
 
-        $('#baseEstudoGridParcial').on('blur', 'tr td input:text', function(event){
+        $('#baseEstudoGridParcial')
+        .on('blur', 'tr td input:text', function(event){
+
+            analiseParcialController.atualizaReparte(this);
+
             $('#total_reparte_sugerido')
-                .add('#total_reparte_sugerido_cabecalho')
+//                .add('#total_reparte_sugerido_cabecalho')
                 .text(
                 $('#baseEstudoGridParcial tr td input:text').map(function(){
                     return parseInt(this.value, 10);
@@ -443,11 +468,17 @@ var analiseParcialController = $.extend(true, {
             }
         }).on('click', 'tr td input:text', function(event){
             $(event.currentTarget).select();
+        }).on('click', '.editaRepartePorPDV', function(event){
+                event.preventDefault();
+                this.cota
+                $(event.currentTarget).select();
+        }).on('click', 'a.linkNomeCota', function(event) {
+                event.preventDefault();
+                analiseParcialController.carregarDetalhesCota($(this).attr('numeroCota'));
         });
 
         analiseParcialController.tipoExibicao = _tipoExibicao;
         analiseParcialController.inicializarDetalhes();
-        analiseParcialController.carregarEdicoesBaseEstudo(_id);
 
         var parameters = [];
         parameters.push({name: 'id', value: _id});
@@ -467,7 +498,7 @@ var analiseParcialController = $.extend(true, {
             params: parameters,
             dataType : 'json',
             colModel : modelo,
-            width: 950,
+            width: 980,
             height: 200,
             colMove: false,
             showToggleBtn: false,
@@ -476,6 +507,8 @@ var analiseParcialController = $.extend(true, {
             onChangeSort: analiseParcialController.sortGrid,
             onSuccess: analiseParcialController.onSuccessReloadGrid
         });
+
+        analiseParcialController.carregarEdicoesBaseEstudo(_id);
 
         /*analiseParcialController.tempo = new Date();
         $.ajax({
@@ -490,6 +523,7 @@ var analiseParcialController = $.extend(true, {
 
         $('#liberar').click(function(event){
             $.post(analiseParcialController.path +'/distribuicao/analise/parcial/liberar', {'id': $('#estudoId').val()},function(){
+                $('#status_estudo').text('Liberado');
                 analiseParcialController.exibirMsg('SUCCESS', ['Estudo liberado com sucesso!']);
             });
             event.preventDefault();
@@ -499,8 +533,8 @@ var analiseParcialController = $.extend(true, {
             preProcess : analiseParcialController.preProcessGridNaoSelec,
             url: analiseParcialController.path + '/distribuicao/analise/parcial/cotasQueNaoEntraramNoEstudo/filtrar',
             dataType : 'json',
-            colModel : [{display: 'Cota',   name: 'numeroCota',       width: 40,  sortable: true, align: 'left'},
-                        {display: 'Nome',   name: 'nomeCota',       width: 160, sortable: true, align: 'left'},
+            colModel : [{display: 'Cota',   name: 'numeroCota', width: 40,  sortable: true, align: 'left'},
+                        {display: 'Nome',   name: 'nomeCota',   width: 160, sortable: true, align: 'left'},
                         {display: 'Motivo', name: 'motivo',     width: 160, sortable: true, align: 'left'},
                         {display: 'Qtde',   name: 'quantidade', width: 60,  sortable: true, align: 'center'}],
             width : 490,
@@ -657,11 +691,11 @@ var analiseParcialController = $.extend(true, {
         
         $('#codigoProduto'+ (index - 1)).val(analiseParcialController.edicoesBase[index - 1].codigoProduto);
         $('#nomeProduto'+ (index - 1)).val(analiseParcialController.edicoesBase[index - 1].nomeProduto);
-        $('#numeroEdicao'+ (index - 1)).val(analiseParcialController.edicoesBase[index - 1].numeroEdicao);
+        $('#numeroEdicao'+ (index - 1)).val(analiseParcialController.edicoesBase[index - 1].edicao);
         
         $('#codigoProduto'+ index).val(analiseParcialController.edicoesBase[index].codigoProduto);
         $('#nomeProduto'+ index).val(analiseParcialController.edicoesBase[index].nomeProduto);
-        $('#numeroEdicao'+ index).val(analiseParcialController.edicoesBase[index].numeroEdicao);
+        $('#numeroEdicao'+ index).val(analiseParcialController.edicoesBase[index].edicao);
     },
 
     descerEdicaoBase : function(index) {
@@ -671,11 +705,11 @@ var analiseParcialController = $.extend(true, {
         
         $('#codigoProduto'+ (index + 1)).val(analiseParcialController.edicoesBase[index + 1].codigoProduto);
         $('#nomeProduto'+ (index + 1)).val(analiseParcialController.edicoesBase[index + 1].nomeProduto);
-        $('#numeroEdicao'+ (index + 1)).val(analiseParcialController.edicoesBase[index + 1].numeroEdicao);
+        $('#numeroEdicao'+ (index + 1)).val(analiseParcialController.edicoesBase[index + 1].edicao);
         
         $('#codigoProduto'+ index).val(analiseParcialController.edicoesBase[index].codigoProduto);
         $('#nomeProduto'+ index).val(analiseParcialController.edicoesBase[index].nomeProduto);
-        $('#numeroEdicao'+ index).val(analiseParcialController.edicoesBase[index].numeroEdicao);
+        $('#numeroEdicao'+ index).val(analiseParcialController.edicoesBase[index].edicao);
     },
     
     filtrarCotasNaoSelec : function(estudo) {
@@ -692,7 +726,7 @@ $(".cotasDetalhesGrid").flexigrid({
     dataType : 'json',
     autoload: false,
     colModel : [{display: 'Código',   name: 'id',                     width: 40,  sortable: true, align: 'left'},
-                {display: 'Tipo',     name: 'descricaoTipoPontoPDV',  width: 90,  sortable: true, align: 'left'},
+                {display: 'Tipo',     name: 'tipoPontoPDV',           width: 90,  sortable: true, align: 'left'},
                 {display: '% Fat.',   name: 'porcentagemFaturamento', width: 30,  sortable: true, align: 'right'},
                 {display: 'Princ.',   name: 'principal',              width: 30,  sortable: true, align: 'center'},
                 {display: 'Endereço', name: 'endereco',               width: 420, sortable: true, align: 'left'}],

@@ -1,18 +1,21 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.model.planejamento.EstudoCota;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
-import br.com.abril.nds.dto.filtro.FiltroDistribuicaoDTO;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DistribuicaoRepository;
@@ -20,6 +23,7 @@ import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.ItemNotaEnvioRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Classe de implementação referente ao acesso a dados da entidade 
@@ -213,7 +217,8 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 	query.setParameter("codigoProduto", divisaoEstudoVO.getCodigoProduto());
 	query.setParameter("nomeProduto", divisaoEstudoVO.getNomeProduto());
 	query.setParameter("numeroEdicao", divisaoEstudoVO.getEdicaoProduto());
-	query.setParameter("dataDistribuicao", divisaoEstudoVO.getDataDistribuicao());
+	query.setParameter("dataDistribuicao", divisaoEstudoVO.getDataDistribuicaoParaPesquisa());
+//	query.setParameter("dataDistribuicao", divisaoEstudoVO.getDataDistribuicao());
 
 	Estudo estudo = (Estudo) query.uniqueResult();
 
@@ -246,16 +251,33 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		
 		query.executeUpdate();
 	}
+
+	
+	@Override
+	public Long countDeCotasEntreEstudos(Long estudoBase, Long estudoSomado) {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select count(*) from estudo_cota ec where ec.ESTUDO_ID=")
+				.append( estudoBase.toString()) 
+				.append(" and ec.COTA_ID in (  ")
+			.append(" 	select ec2.COTA_ID from estudo_cota ec2 where ec2.ESTUDO_ID = ")
+					.append( estudoSomado.toString())	 
+					.append( ")" );
+		
+		Query query =	this.getSession().createSQLQuery(hql.toString());
+		
+		BigInteger count = (BigInteger) query.uniqueResult();
+		
+		return count.longValue();
+	}
+
+    @Override
+    @Transactional(readOnly = true)
+    public int obterCotasComRepartePorIdEstudo(Long estudoId) {
+        return ((Number) this.getSession().createCriteria(EstudoCota.class)
+                .add(Restrictions.eq("estudo.id", estudoId))
+                .add(Restrictions.gt("reparte", BigInteger.ZERO))
+                .setProjection(Projections.rowCount())
+                .uniqueResult()).intValue();
+    }
 }
-
-
-
-
-
-
-
-
-
-
-
-

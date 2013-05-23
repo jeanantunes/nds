@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.distribuicao;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,7 +105,13 @@ public class AnaliseParcialController extends BaseController {
         TableModel<CellModelKeyValue<PdvDTO>> table = new TableModel<>();
         table.setRows(CellModelKeyValue.toCellModelKeyValue(lista));
         table.setPage(1);
+        table.setTotal(lista.size());
         result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
+    }
+
+    public void percentualAbrangencia(Long estudoId) {
+        BigDecimal percentualAbrangencia = analiseParcialService.calcularPercentualAbrangencia(estudoId);
+        result.use(Results.json()).withoutRoot().from(percentualAbrangencia).serialize();
     }
 
     @Path("/init")

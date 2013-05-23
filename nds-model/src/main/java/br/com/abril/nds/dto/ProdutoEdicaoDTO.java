@@ -61,6 +61,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private String statusLancamento;
 	private String statusSituacao;
 	private String temBrinde;
+	private String status;
 	
 	// Campos para cadastrar uma nova Edição:
 	// codigoProduto;
@@ -846,8 +847,13 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 
 	public void setTipoClassificacaoProduto(TipoClassificacaoProduto tipoClassificacaoProduto) {
 		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
-	}  
+	}
 
-	
-	
+	public String getStatus() {
+	    return status;
+	}
+
+	public void setStatus(String status) {
+	    this.status = status;
+	}
 }

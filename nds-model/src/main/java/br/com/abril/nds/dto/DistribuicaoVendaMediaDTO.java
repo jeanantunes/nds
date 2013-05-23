@@ -10,7 +10,7 @@ public class DistribuicaoVendaMediaDTO {
 	
 	private BigInteger reparteDistribuir;
 	private BigInteger reparteMinimo;
-	private Boolean usarFixacao;
+	private boolean usarFixacao;
 	private Boolean distribuicaoPorMultiplo;
 	private BigInteger multiplo;
 	
@@ -27,7 +27,7 @@ public class DistribuicaoVendaMediaDTO {
 	private Boolean complementarAutomatico;
 	private Boolean cotasAVista;
 	private ComponentesPDV excecaoDeBancasComponente;
-	private String excecaoDeBancasElemento;
+	private List<String> excecaoDeBancas = new ArrayList<>();
 	
 	public BigInteger getReparteDistribuir() {
 		return reparteDistribuir;
@@ -41,10 +41,10 @@ public class DistribuicaoVendaMediaDTO {
 	public void setReparteMinimo(BigInteger reparteMinimo) {
 		this.reparteMinimo = reparteMinimo;
 	}
-	public Boolean getUsarFixacao() {
+	public boolean isUsarFixacao() {
 		return usarFixacao;
 	}
-	public void setUsarFixacao(Boolean usarFixacao) {
+	public void setUsarFixacao(boolean usarFixacao) {
 		this.usarFixacao = usarFixacao;
 	}
 	public Boolean isDistribuicaoPorMultiplo() {
@@ -119,12 +119,15 @@ public class DistribuicaoVendaMediaDTO {
 	public void setExcecaoDeBancasComponente(ComponentesPDV excecaoDeBancasComponente) {
 		this.excecaoDeBancasComponente = excecaoDeBancasComponente;
 	}
-	public String getExcecaoDeBancasElemento() {
-		return excecaoDeBancasElemento;
+
+	public List<String> getExcecaoDeBancas() {
+		return excecaoDeBancas;
 	}
-	public void setExcecaoDeBancasElemento(String excecaoDeBancasElemento) {
-		this.excecaoDeBancasElemento = excecaoDeBancasElemento;
+	
+	public void setExcecaoDeBancas(List<String> excecaoDeBancas) {
+		this.excecaoDeBancas = excecaoDeBancas;
 	}
+
 	@Override
 	public String toString() {
 		return "DistribuicaoVendaMediaDTO [reparteDistribuir="
@@ -138,7 +141,7 @@ public class DistribuicaoVendaMediaDTO {
 				+ roteiroEntregaId + ", complementarAutomatico="
 				+ complementarAutomatico + ", cotasAVista=" + cotasAVista
 				+ ", excecaoDeBancasComponente=" + excecaoDeBancasComponente
-				+ ", excecaoDeBancasElemento=" + excecaoDeBancasElemento + "]";
+				+ ", excecaoDeBancasElemento=" + excecaoDeBancas + "]";
 	}
 	public BigInteger getMultiplo() {
 		return multiplo;
