@@ -416,23 +416,27 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 				
 		var data = [];
-		var todos = $('#selTodos', _workspace);
+		
+		var inputSelecionarTodos = $('#selTodos', _workspace).attr("checked");
 		
 		data.push({name: 'novaDataFormatada', value: $("#novaDataLancamento", _workspace).val()});
-		if(todos.attr("checked") == 'checked'){
-			data.push({name: 'selTodos', value: true});
-		} else {
-			data.push({name: 'selTodos', value: false});
-		}
 		
-		$.each(T.lancamentos, function(index, lancamento){
-			if(lancamento.selecionado == true) {
-				data.push({name: 'produtosLancamento[' + index + '].id', 			   		   value: lancamento.id});
-				data.push({name: 'produtosLancamento[' + index + '].nomeProduto', 	   		   value: lancamento.nomeProduto});
-				data.push({name: 'produtosLancamento[' + index + '].numeroEdicao', 	   		   value: lancamento.numeroEdicao});
-				data.push({name: 'produtosLancamento[' + index + '].dataRecolhimentoPrevista', value: lancamento.dataRecolhimentoPrevista});
-			}
-		});
+		var selecionarTodos = inputSelecionarTodos == 'checked';
+		
+		data.push({name: 'selecionarTodos', value: selecionarTodos});
+		
+		if (!selecionarTodos) {
+			
+			$.each(T.lancamentos, function(index, lancamento) {
+				
+				if(lancamento.selecionado == true) {
+					data.push({name: 'produtosLancamento[' + index + '].id', 			   		   value: lancamento.id});
+					data.push({name: 'produtosLancamento[' + index + '].nomeProduto', 	   		   value: lancamento.nomeProduto});
+					data.push({name: 'produtosLancamento[' + index + '].numeroEdicao', 	   		   value: lancamento.numeroEdicao});
+					data.push({name: 'produtosLancamento[' + index + '].dataRecolhimentoPrevista', value: lancamento.dataRecolhimentoPrevista});
+				}
+			});
+		}
 		
 		$.postJSON(
 				pathTela + "/matrizLancamento/reprogramarLancamentosSelecionados",
@@ -668,7 +672,12 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	},
 	
 	this.bloquearDesbloquearData = function(row) {
-			
+		
+		if (row.disabled) {
+		    
+		    return;
+		}
+		
 		var checado = row.checked;
 		
 		var input = $(row.parentElement.parentElement.parentElement).find("input[type='text']");
@@ -980,7 +989,23 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	
 	this.salvar = function() {
 		$.postJSON(
-			contextPath + "/matrizLancamento/salvar"
+			pathTela + "/matrizLancamento/salvar",
+			null,
+			function(mensagens) {
+			   
+			   if (mensagens){
+				   
+				   var tipoMensagem = mensagens.tipoMensagem;
+				   var listaMensagens = mensagens.listaMensagens;
+				   
+				   if (tipoMensagem && listaMensagens) {
+				       exibirMensagem(tipoMensagem, listaMensagens);
+			       }
+        	   }
+			   
+			   T.atualizarResumoBalanceamento();
+			   T.checkUncheckLancamentos(false);
+            }
 		);
 	};
 }

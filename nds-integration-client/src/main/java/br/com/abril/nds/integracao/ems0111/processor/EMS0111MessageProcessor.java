@@ -176,8 +176,6 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			
 			lancamento.setRecebimentos(null);// default
 			
-			lancamento.setNumeroReprogramacoes(null);// confirmado
-			
 			lancamento.setSequenciaMatriz(null);// confirmado				
 
 			// EFETIVAR INSERCAO NA BASE
