@@ -1548,12 +1548,28 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 
 	StringBuilder sQuery = new StringBuilder();
 
-	sQuery.append(" select * from Lancamento l ");
-	sQuery.append(" where l.id = :idLancamento");
+	/*
+	 * select * from Lancamento l
+
+  left join estudo
+  on estudo.ID = 83914
+	where l.id = 90269;
+	 */
 	
-	SQLQuery query = getSession().createSQLQuery(sQuery.toString()).addEntity("lancamento", Lancamento.class);
+	sQuery.append(" select l from Lancamento l,Estudo e  ");
+//	sQuery.append(" inner join Estudo ");
+//	sQuery.append(" on estudo.ID = :idEstudo ");
+	sQuery.append(" where e.id= :idEstudo ");
+	sQuery.append(" and e.produtoEdicao.id = l.produtoEdicao.id  ");
+//	sQuery.append(" and e.dataLancamento = l.dataLancamentoPrevista  ");
+	sQuery.append(" and e.lancamentoID = l.id  ");
 	
-	query.setParameter("idLancamento", estudo.getLancamentoID());
+	Query query = getSession().createQuery(sQuery.toString());
+	
+//	SQLQuery query = getSession().createSQLQuery(sQuery.toString()).addEntity("lancamento", Lancamento.class);
+	
+//	query.setParameter("idLancamento", estudo.getLancamentoID());
+	query.setParameter("idEstudo", estudo.getId());
 	
 	return query.list();
     }

@@ -184,9 +184,9 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 //		estudo.setProdutoEdicao(null);
 //		alterar(estudo);
 		
-		movimentoEstoqueCotaRepository.removerMovimentoEstoqueCotaPorEstudo(idEstudo);
+		/*movimentoEstoqueCotaRepository.removerMovimentoEstoqueCotaPorEstudo(idEstudo);
 		itemNotaEnvioRepository.removerItemNotaEnvioPorEstudo(idEstudo);
-		estudoCotaRepository.removerEstudoCotaPorEstudo(idEstudo);
+		estudoCotaRepository.removerEstudoCotaPorEstudo(idEstudo);*/
 		
 		Query queryBases = getSession().createSQLQuery("DELETE FROM ESTUDO_PRODUTO_EDICAO_BASE WHERE ESTUDO_ID = :ESTUDO_ID ");
 		queryBases.setLong("ESTUDO_ID", estudo.getId());
