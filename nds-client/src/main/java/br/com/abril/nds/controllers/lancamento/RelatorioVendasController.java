@@ -1,6 +1,8 @@
 package br.com.abril.nds.controllers.lancamento;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -176,7 +178,7 @@ public class RelatorioVendasController extends BaseController {
 			exportacao.add(new RegistroCurvaABCExportacaoDistribuidorVO(item));
 		}
 		
-		ResultadoCurvaABCDistribuidor resultadoTotal = relatorioVendasService.obterCurvaABCDistribuidorTotal(filtroSessao);
+		ResultadoCurvaABCDistribuidor resultadoTotal = this.obterTotaisCurvaABCDistribuidor(lista);
 		
 		String nomeArquivo = "";
 		
@@ -457,9 +459,10 @@ public class RelatorioVendasController extends BaseController {
 
 		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
 
-		FiltroCurvaABCDistribuidorDTO filtro = carregarFiltroPesquisaDistribuidor(sdf.parse(dataDe), sdf.parse(dataAte), codigoFornecedor,
-				codigoProduto, nomeProduto, edicaoProduto, codigoEditor,
-				codigoCota, nomeCota, municipio, sortorder, sortname, page, rp);
+		FiltroCurvaABCDistribuidorDTO filtro =
+			this.carregarFiltroPesquisaDistribuidor(sdf.parse(dataDe), sdf.parse(dataAte), codigoFornecedor,
+											   	 	codigoProduto, nomeProduto, edicaoProduto, codigoEditor,
+											   	 	codigoCota, nomeCota, municipio, sortorder, sortname, page, rp);
 		
 		filtro.setTipoConsultaCurvaABC(tipoConsulta);
 
@@ -485,20 +488,45 @@ public class RelatorioVendasController extends BaseController {
 
 			int qtdeTotalRegistros = resultadoCurvaABCDistribuidor.size();
 
-			List<RegistroCurvaABCDistribuidorVO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(resultadoCurvaABCDistribuidor, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
+			List<RegistroCurvaABCDistribuidorVO> resultadoPaginado =
+				PaginacaoUtil.paginarEOrdenarEmMemoria(
+					resultadoCurvaABCDistribuidor, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
 
-			TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>> tableModel = new TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>>();
+			TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>> tableModel =
+				new TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>>();
 
 			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
 			tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(qtdeTotalRegistros);
-
-			ResultadoCurvaABCDistribuidor resultado = relatorioVendasService.obterCurvaABCDistribuidorTotal(filtro);
+			
+			ResultadoCurvaABCDistribuidor resultado =
+				this.obterTotaisCurvaABCDistribuidor(resultadoCurvaABCDistribuidor);
+			
 			resultado.setTableModel(tableModel);
 			
 			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 
 		}
+	}
+
+	private ResultadoCurvaABCDistribuidor obterTotaisCurvaABCDistribuidor(
+							List<RegistroCurvaABCDistribuidorVO> listaCurvaABCDistribuidor) {
+
+		ResultadoCurvaABCDistribuidor resultadoCurvaABCDistribuidor = new ResultadoCurvaABCDistribuidor();
+		
+		BigInteger totalVendaExemplares = BigInteger.ZERO;
+		BigDecimal totalFaturamento = BigDecimal.ZERO;
+		
+		for (RegistroCurvaABCDistribuidorVO registroCurvaABCDistribuidor : listaCurvaABCDistribuidor) {
+			
+			totalVendaExemplares = totalVendaExemplares.add(registroCurvaABCDistribuidor.getVendaExemplares());
+			totalFaturamento = totalFaturamento.add(registroCurvaABCDistribuidor.getFaturamentoCapa());
+		}
+		
+		resultadoCurvaABCDistribuidor.setTotalVendaExemplares(totalVendaExemplares);
+		resultadoCurvaABCDistribuidor.setTotalFaturamento(totalFaturamento);
+		
+		return resultadoCurvaABCDistribuidor;
 	}
 
 	/**
