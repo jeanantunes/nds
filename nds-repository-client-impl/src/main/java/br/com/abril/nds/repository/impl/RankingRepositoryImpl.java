@@ -111,6 +111,7 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		.append("    order by valor desc ");
 		
 		SQLQuery query  = getSession().createSQLQuery(sql.toString());
+		
 		query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
 		query.addScalar("valor");
 		
@@ -130,6 +131,37 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		return mapRanking;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public Map<Long, Long> obterRankingProdutoDistribuidor() {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("  	select  consolidado.COTA_ID as idCota, sum(consolidado.VALOR_TOTAL_VENDA_COM_DESCONTO) as valor ")
+		
+		.append("    from VIEW_CONSOLIDADO_MOVIMENTO_ESTOQUE_COTA consolidado  ")
+	
+		.append("    group by consolidado.COTA_ID ")
+	
+		.append("    order by valor desc ");
+		
+		SQLQuery query  = getSession().createSQLQuery(sql.toString());
+		
+		query.addScalar("idCota", StandardBasicTypes.LONG);
+		query.addScalar("valor");
+		
+		Map<Long, Long> mapRanking = new HashMap<>();
+		
+		List<Object[]> resultList = query.list();
+		
+		long i = 1;
+		
+		for (Object[] result : resultList) {
+			
+			mapRanking.put((long) result[0], i++);
+		}
+		
+		return mapRanking;
+	}
 	
 	public Long obterRankingCotaDistribuidor(Long idCota){
 		
