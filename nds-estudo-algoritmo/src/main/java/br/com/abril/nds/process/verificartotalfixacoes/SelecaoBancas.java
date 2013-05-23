@@ -48,6 +48,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
     public void executar(EstudoTransient estudo) throws Exception {
 	
 	List<CotaEstudo> cotas = cotaDAO.getCotas(estudo);
+	cotaDAO.getComponentesCota(cotas);
 	List<Map<Long, CotaEstudo>> historico = new ArrayList<>();
 	for (ProdutoEdicaoEstudo edicao : estudo.getEdicoesBase()) {
 	    historico.add(cotaDAO.getHistoricoCota(edicao));
