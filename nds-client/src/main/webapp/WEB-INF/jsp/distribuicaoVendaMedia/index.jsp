@@ -968,7 +968,13 @@ $(".dadosBasesGrid").flexigrid({
 		width : 35,
 		sortable : true,
 		align : 'left'
-	}, {
+	},{
+		display : 'Classificação',
+		name : 'classificacao',
+		width : 70,
+		sortable : true,
+		align : 'left'
+	},{
 		display : 'Período',
 		name : 'periodo',
 		width : 50,
