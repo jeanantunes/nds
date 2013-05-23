@@ -1,6 +1,7 @@
 
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -312,4 +313,21 @@ public class MixCotaProdutoRepositoryImpl extends
 			.uniqueResult();
 		}
 		
+		
+		@Override
+		public BigInteger obterSomaReparteMinimoPorProdutoUsuario(Long produtoId, Long idUsuario) {
+			
+			StringBuilder hql = new StringBuilder();
+			
+			hql.append(" select sum(reparteMinimo) from MixCotaProduto");
+			hql.append(" where produto.id = :produtoId");
+			hql.append(" and usuario.id = :idUsuario");
+			
+			Query query = getSession().createQuery(hql.toString());
+			
+			query.setParameter("produtoId", produtoId);
+			query.setParameter("idUsuario", idUsuario);
+			
+			return (BigInteger)query.uniqueResult();
+		}
 }

@@ -78,12 +78,12 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 	public void liberarEstudo(List<Long> listIdEstudos, boolean liberado) {
 		
 		StringBuilder hql = new StringBuilder("update Estudo set");
-		hql.append(" status = :statusEstudo")
+		hql.append(" liberado = :statusEstudo")
 		   .append(" where id in (:listIdEstudos)");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 
-		query.setParameter("statusEstudo", (liberado)?1:0);
+		query.setParameter("statusEstudo", liberado);
 		
 		query.setParameterList("listIdEstudos", listIdEstudos);
 		

@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import br.com.abril.nds.dto.MixCotaDTO;
@@ -28,8 +29,9 @@ public interface MixCotaProdutoRepository extends
 
 	public void gerarCopiaMixCota(List<MixCotaDTO> mixCotaOrigem,Usuario usuario);
 
-	public void gerarCopiaMixProduto(List<MixProdutoDTO> mixProdutoOrigem,
-			Usuario usuarioLogado);
+	public void gerarCopiaMixProduto(List<MixProdutoDTO> mixProdutoOrigem, Usuario usuarioLogado);
 	
 	public MixCotaProduto obterMixPorCotaProduto(Long cotaId, Long produtoId);
+
+	public BigInteger obterSomaReparteMinimoPorProdutoUsuario(Long produtoId, Long idUsuario);
 }
