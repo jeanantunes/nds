@@ -522,4 +522,9 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 				&& mixCotaProdutoDTO.getReparteMinimo() != null
 				&& mixCotaProdutoDTO.getReparteMaximo() != null;
 	}
+	
+	public BigInteger obterSomaReparteMinimoPorProdutoUsuario(Long produtoId, Long idUsuario) {
+		
+		return mixCotaProdutoRepository.obterSomaReparteMinimoPorProdutoUsuario(produtoId, idUsuario);
+	}
 }

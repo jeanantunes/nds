@@ -347,12 +347,15 @@ public class DistribuicaoVendaMediaController extends BaseController {
     }
 
     private void removeItensDuplicadosMatrizDistribuicao() {
-
-	ProdutoDistribuicaoVO vo = (ProdutoDistribuicaoVO)session.getAttribute(ProdutoDistribuicaoVO.class.getName());
-	MatrizDistribuicaoController matrizDistribuicaoController = new MatrizDistribuicaoController();
-	matrizDistribuicaoController.setSession(session);
-	matrizDistribuicaoController.removeItemListaDeItensDuplicadosNaSessao(vo.getIdLancamento(), vo.getIdCopia());
-	session.removeAttribute(ProdutoDistribuicaoVO.class.getName());
+    	
+    	ProdutoDistribuicaoVO vo = (ProdutoDistribuicaoVO)session.getAttribute(ProdutoDistribuicaoVO.class.getName());
+    	if (vo != null) {
+    		
+    		MatrizDistribuicaoController matrizDistribuicaoController = new MatrizDistribuicaoController();
+        	matrizDistribuicaoController.setSession(session);
+        	matrizDistribuicaoController.removeItemListaDeItensDuplicadosNaSessao(vo.getIdLancamento(), vo.getIdCopia());
+    		session.removeAttribute(ProdutoDistribuicaoVO.class.getName());
+    	}
     }
 
     public HttpSession getSession() {
