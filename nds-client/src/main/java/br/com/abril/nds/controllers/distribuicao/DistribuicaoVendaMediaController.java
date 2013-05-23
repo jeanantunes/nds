@@ -131,6 +131,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	if (lancamentoId == null) {
 	    lancamento = findLancamentoBalanceado(produtoEdicao);
 	} else {
+		
 	    lancamento = lancamentoService.obterLancamentoNaMesmaSessao(lancamentoId);
 	}
 	List<ProdutoEdicaoVendaMediaDTO> selecionados = new ArrayList<>();
