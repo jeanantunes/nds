@@ -562,7 +562,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	
 	private Estudo criarCopiaDeEstudo(CopiaProporcionalDeDistribuicaoVO vo, Estudo estudo) {
 		
-		Lancamento lancamento = lancamentoRepository.buscarPorId(vo.getIdLancamento());
+		Lancamento lancamento = lancamentoRepository.buscarPorIdSemEstudo(vo.getIdLancamento());
 		
 		Estudo estudoCopia = obterCopiaDeEstudo(estudo, lancamento);
 		
