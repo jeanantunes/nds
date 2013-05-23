@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.distribuicao;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -11,8 +12,10 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.ValidationException;
 
 import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,16 +33,19 @@ import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.process.definicaobases.DefinicaoBases;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.EstudoAlgoritmoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.InformacoesProdutoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.SomarEstudosService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -95,6 +101,12 @@ public class MatrizDistribuicaoController extends BaseController {
 	@Autowired
 	private InformacoesProdutoService infoProdService; 
 	
+	@Autowired
+	private DefinicaoBases definicaoBases;
+	
+	@Autowired
+	private ProdutoService produtoService;
+	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroMatrizDistribuicao";
 	private static final String LISTA_DE_DUPLICACOES = "LISTA_DE_DUPLICACOES";
 	private static final int MAX_DUPLICACOES_PERMITIDAS = 3;
@@ -128,9 +140,32 @@ public class MatrizDistribuicaoController extends BaseController {
 
 	private void preparaItensParaVisualizacaoMatrizDistribuicao(List<ProdutoDistribuicaoVO> itens) {
 		
+		Collections.sort(itens);
+		
+		int idRow = 0;
+		
 		for (int i=0; i < itens.size(); i++) {
-			itens.get(i).setIdRow(i);
+			
+			int idCopia = 1;
+			
+			if (itens.get(i).getIdRow() == null) {
+				
+				itens.get(i).setIdRow(idRow++);
+			}
+			
+			for (int j=i+1; j < itens.size()-1; j++) {
+				
+				if (itens.get(i).getIdCopia() == null && 
+					(itens.get(i).getCodigoProduto().equals(itens.get(j).getCodigoProduto()) && 
+					 itens.get(i).getNumeroEdicao().equals(itens.get(j).getNumeroEdicao()))) {
+					
+					itens.get(j).setIdCopia(idCopia++);
+					itens.get(j).setIdRow(itens.get(i).getIdRow());
+				}
+			}
 		}
+		
+		Collections.sort(itens);
 	}
 	
 	@Post
@@ -140,11 +175,15 @@ public class MatrizDistribuicaoController extends BaseController {
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		TotalizadorProdutoDistribuicaoVO vo = matrizDistribuicaoService.obterMatrizDistribuicao(filtro);
 		
-		preparaItensParaVisualizacaoMatrizDistribuicao(vo.getListProdutoDistribuicao());
+		List<ProdutoDistribuicaoVO> listSession = obterListaDeItensDuplicadosNaSessao();
 		
-		List<ProdutoDistribuicaoVO> listCopias = obterListaDeItensDuplicadosNaSessao();
-		
-		if (listCopias != null && !listCopias.isEmpty()) {
+		if (listSession != null && !listSession.isEmpty()) {
+			
+			List<ProdutoDistribuicaoVO> listCopia = new ArrayList<ProdutoDistribuicaoVO>();
+			
+			for (ProdutoDistribuicaoVO itemSession:listSession) {
+				listCopia.add(itemSession);
+			}
 			
 			List<ProdutoDistribuicaoVO> newList = new ArrayList<ProdutoDistribuicaoVO>();
 			
@@ -152,17 +191,27 @@ public class MatrizDistribuicaoController extends BaseController {
 				
 				newList.add(distribuicaoVO);
 				
-				for (ProdutoDistribuicaoVO distribuicaoVOCopia:listCopias) {
+				if (!listCopia.isEmpty()) {
 					
-					if (distribuicaoVO.getIdLancamento().equals(distribuicaoVOCopia.getIdLancamento())) {
+					for (int i=0; i < listSession.size(); i++) {
 						
-						newList.add(distribuicaoVOCopia);
+						ProdutoDistribuicaoVO distribuicaoVOCopia = listSession.get(i);
+						
+						if (distribuicaoVO.getCodigoProduto().equals(distribuicaoVOCopia.getCodigoProduto()) &&
+								distribuicaoVO.getNumeroEdicao().equals(distribuicaoVOCopia.getNumeroEdicao())) {
+							
+							if (listCopia.remove(distribuicaoVOCopia)) {
+								newList.add(distribuicaoVOCopia);
+							}
+						}
 					}
 				}
 			}
 		
 			vo.setListProdutoDistribuicao(newList);
  		}
+		
+		preparaItensParaVisualizacaoMatrizDistribuicao(vo.getListProdutoDistribuicao());
 		
 		filtro.setTotalRegistrosEncontrados(vo.getListProdutoDistribuicao().size());
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
@@ -403,6 +452,11 @@ public class MatrizDistribuicaoController extends BaseController {
 	@Post
 	public void duplicarLinha(ProdutoDistribuicaoVO produtoDistribuicao) {
 
+		if (Boolean.valueOf(produtoDistribuicao.getLiberado())) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não é permitido duplicar linha de um estudo liberado."));
+		}
+		
 		FiltroDistribuicaoDTO filtro = obterFiltroSessao();
 
 		TotalizadorProdutoDistribuicaoVO totalizadorProdutoDistribuicaoVO = matrizDistribuicaoService.obterMatrizDistribuicao(filtro);
@@ -462,14 +516,15 @@ public class MatrizDistribuicaoController extends BaseController {
 	
 	public void removeItemListaDeItensDuplicadosNaSessao(BigInteger idLancamento, Integer idCopia) {
 		
+		List<ProdutoDistribuicaoVO> distribuicaoVOs =  null;
+		
 		if (idCopia != null) {
 			
-			List<ProdutoDistribuicaoVO> distribuicaoVOs = obterListaDeItensDuplicadosNaSessao();
+			distribuicaoVOs = obterListaDeItensDuplicadosNaSessao();
 			
 			if (distribuicaoVOs != null) {
 				
 				ProdutoDistribuicaoVO produtoDistribuicaoVO = null;
-				int i = 0;
 				
 				for (ProdutoDistribuicaoVO distribuicaoVO:distribuicaoVOs) {
 					
@@ -493,6 +548,11 @@ public class MatrizDistribuicaoController extends BaseController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Selecione um estudo para excluir!"));
 		}
 		
+		if (produtosDistribuicao.size() > 1) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não pode haver mais de um estudo marcado para a exclusão."));
+		}
+		
 		matrizDistribuicaoService.excluirEstudos(produtosDistribuicao);
 		
 		for (ProdutoDistribuicaoVO distribuicaoVO:produtosDistribuicao) {
@@ -514,25 +574,75 @@ public class MatrizDistribuicaoController extends BaseController {
 		matrizDistribuicaoService.reabrirEstudos(produtosDistribuicao);
 		this.result.use(Results.json()).from(Results.nothing()).serialize();
 	}
+	
+	private boolean validarEdicaoBase(ProdutoDistribuicaoVO produtoDistribuicaoVO, List<ProdutoDistribuicaoVO> umaEdicaoBase) throws Exception {
+		
+		 	EstudoTransient estudoTemp = new EstudoTransient();
+		    ProdutoEdicaoEstudo prod = new ProdutoEdicaoEstudo(produtoDistribuicaoVO.getCodigoProduto());
+		    prod.setNumeroEdicao(produtoDistribuicaoVO.getNumeroEdicao().longValue());
+		    estudoTemp.setProdutoEdicaoEstudo(prod);
+			
+		    definicaoBases.executar(estudoTemp);
+		    
+		    boolean addEdicaoBase = estudoTemp.getEdicoesBase().size() == 1;
+		    
+			if(addEdicaoBase) {
+				
+				umaEdicaoBase.add(produtoDistribuicaoVO);
+				return false;
+			}
+		   
+		return true;	
+	}
 
 	@Post
-	public void gerarEstudoAutomatico(String codigoProduto, Long numeroEdicao, BigDecimal reparte, BigInteger idLancamento, Integer idCopia) {
+	public void gerarEstudoAutomatico(List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs, boolean confirmaUmaEdicaoBase) {
 		
-		EstudoTransient estudoAutomatico;
-		try {
-			ProdutoEdicaoEstudo produto = new ProdutoEdicaoEstudo(codigoProduto);
-			produto.setNumeroEdicao(numeroEdicao);
-			estudoAutomatico = estudoAlgoritmoService.gerarEstudoAutomatico(produto, reparte.toBigInteger(), this.getUsuarioLogado());
-		} catch (Exception e) {
-			log.error("Erro na geração automatica do estudo.", e);
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()));
+		EstudoTransient estudoAutomatico = null;
+		
+		List<String> htmlEstudo 	 = new ArrayList<String>();
+		List<String> msgErro    	 = new ArrayList<String>();
+		List<ProdutoDistribuicaoVO> umaEdicaoBase = new ArrayList<ProdutoDistribuicaoVO>();
+		
+		for (int i = 0; i < produtoDistribuicaoVOs.size(); i++) {
+			
+			ProdutoDistribuicaoVO produtoDistribuicaoVO = produtoDistribuicaoVOs.get(i);
+			
+			try {
+				
+				if (confirmaUmaEdicaoBase || validarEdicaoBase(produtoDistribuicaoVO, umaEdicaoBase)) {
+					
+					validarGeracaoAutomatica(produtoDistribuicaoVO);
+					
+					ProdutoEdicaoEstudo produto = new ProdutoEdicaoEstudo(produtoDistribuicaoVO.getCodigoProduto());
+					produto.setNumeroEdicao(produtoDistribuicaoVO.getNumeroEdicao().longValue());
+					estudoAutomatico = estudoAlgoritmoService.gerarEstudoAutomatico(produto, produtoDistribuicaoVO.getRepDistrib(), this.getUsuarioLogado());
+					removeItemListaDeItensDuplicadosNaSessao(produtoDistribuicaoVO.getIdLancamento(), produtoDistribuicaoVO.getIdCopia());
+					htmlEstudo.add(HTMLTableUtil.estudoToHTML(estudoAutomatico));
+				}
+				
+			} catch (ValidacaoException e) {
+				log.error("Erro na geração automatica do estudo.", e);
+				msgErro.addAll(e.getValidacao().getListaMensagens());
+			} catch (Exception e) {
+				log.error("Erro na geração automatica do estudo.", e);
+				msgErro.add("Erro na geração do estudo:" + produtoDistribuicaoVO.getNumeroEdicao());
+			}
 		}
 		
-		removeItemListaDeItensDuplicadosNaSessao(idLancamento, idCopia);
-
-		String htmlEstudo = HTMLTableUtil.estudoToHTML(estudoAutomatico);
-		result.use(Results.json()).from(htmlEstudo, "estudo").recursive().serialize();
+		result.use(Results.json()).from(new Object[]{htmlEstudo,msgErro,umaEdicaoBase}, "estudo").recursive().serialize();
 	}
+	
+	private void validarGeracaoAutomatica(ProdutoDistribuicaoVO produtoDistribuicaoVO) {
+		
+		Produto produto = produtoService.obterProdutoPorCodigo(produtoDistribuicaoVO.getCodigoProduto());
+	
+		if (!produto.getIsGeracaoAutomatica()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,"Produto "+produto.getCodigo()+" não pode ser gerado pela geração automatica");
+		}
+	}
+	
 
 	@Get
 	public void histogramaPosEstudo() {

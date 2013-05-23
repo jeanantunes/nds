@@ -22,6 +22,10 @@ public class CopiaProporcionalDeDistribuicaoVO  implements Serializable {
 	
 	private Integer idCopia;
 	
+	private String codigoProduto;
+	
+	private BigInteger numeroEdicao;
+	
 	public CopiaProporcionalDeDistribuicaoVO(Long idEstudo, boolean fixacao, BigInteger pacotePadrao, BigInteger reparteDistribuido) {
 		
 		this.pacotePadrao = pacotePadrao;
@@ -92,6 +96,22 @@ public class CopiaProporcionalDeDistribuicaoVO  implements Serializable {
 
 	public void setIdCopia(Integer idCopia) {
 		this.idCopia = idCopia;
+	}
+
+	public String getCodigoProduto() {
+		return codigoProduto;
+	}
+
+	public void setCodigoProduto(String codigoProduto) {
+		this.codigoProduto = codigoProduto;
+	}
+
+	public BigInteger getNumeroEdicao() {
+		return numeroEdicao;
+	}
+
+	public void setNumeroEdicao(BigInteger numeroEdicao) {
+		this.numeroEdicao = numeroEdicao;
 	}
 	
 }
