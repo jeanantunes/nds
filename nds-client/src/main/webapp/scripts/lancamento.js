@@ -170,6 +170,33 @@ var lancamentoController = $.extend(true, {
 		
 		$("#dialogConfirmacaoPerdaDados", lancamentoController.workspace).show();
 	},
+	
+	verificarAlteracoesLancamentoFaltasSobrasParaFecharAba : function(self, index) {
+		
+		if(lancamentoNovoController.houveAlteracaoLancamentos){
+			
+			$("#dialogConfirmacaoPerdaDados", lancamentoController.workspace).dialog({
+				resizable: false,
+				height:'auto',
+				width:300,
+				modal: true,
+				buttons: 
+				{
+					"Confirmar": function() {
+						$(this).dialog("close");
+						$(self).tabs("remove", index);
+						lancamentoNovoController.houveAlteracaoLancamentos = false;
+						
+					}, "Cancelar": function() {
+						$(this).dialog("close");
+					}
+				},
+				form: $("#dialogConfirmacaoPerdaDados", this.workspace).parents("form")
+			});
+		}else{
+			$(self).tabs("remove", index);
+		}
+	},
 
 	popupExclusaoDiferenca : function(idDiferenca) {
 
@@ -218,7 +245,6 @@ var lancamentoController = $.extend(true, {
 			buttons: 
 			{
 				"Confirmar": function() {
-					
 					$.postJSON(
 						contextPath + "/estoque/diferenca/confirmarLancamentos", 
 						null,
@@ -231,7 +257,6 @@ var lancamentoController = $.extend(true, {
 					$(this).dialog("close");
 				
 				}, "Cancelar": function() {
-					
 					$(this).dialog("close");
 				}
 			},
@@ -259,7 +284,8 @@ var lancamentoController = $.extend(true, {
 							lancamentoController.inicializar();
 						}
 					);
-
+					
+					lancamentoNovoController.houveAlteracaoLancamentos = false;
 					$(this).dialog("close");
 				
 				}, "Cancelar": function() {

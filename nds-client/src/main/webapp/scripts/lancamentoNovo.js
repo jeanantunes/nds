@@ -5,6 +5,7 @@ var lancamentoNovoController = $.extend(true, {
 	idDiferenca:null,
 	redirecionarProdutosEstoque:false,
 	tipoEstoqueSelecionado:null,
+	houveAlteracaoLancamentos:false,
 
 	init : function () {
 		$("#dateNotaEnvio", lancamentoNovoController.workspace).datepicker({
@@ -402,10 +403,13 @@ var lancamentoNovoController = $.extend(true, {
 					
 					lancamentoNovoController.processarNovaDiferenca();
 					
+					lancamentoNovoController.houveAlteracaoLancamentos = true;
 				},
 				"Cancelar": function() {
 					$("#gridNovasDiferencas", lancamentoNovoController.workspace).flexAddData({rows:[]});
 					$(this).dialog("close");
+					
+					lancamentoNovoController.houveAlteracaoLancamentos = false;
 				}
 			},
 			beforeClose: function() {
@@ -1215,7 +1219,6 @@ var lancamentoNovoController = $.extend(true, {
 			buttons: 
 			{
 				"Confirmar": function() {
-					
 					lancamentoNovoController.redirecionarProdutosEstoque = true;
 					lancamentoNovoController.cadastrarNovasDiferencas(isBotaoIncluirNovo);
 					
