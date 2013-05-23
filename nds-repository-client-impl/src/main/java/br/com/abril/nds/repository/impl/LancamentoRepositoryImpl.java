@@ -23,11 +23,9 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
-import org.springframework.jdbc.object.SqlQuery;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
-import br.com.abril.nds.dto.InfoProdutosItemRegiaoEspecificaDTO;
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
