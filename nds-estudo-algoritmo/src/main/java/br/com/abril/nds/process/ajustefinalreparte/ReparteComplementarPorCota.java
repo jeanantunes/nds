@@ -89,6 +89,9 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	if (estudo.isDistribuicaoPorMultiplos()) {
 	    reparte = estudo.getPacotePadrao();
 	}
+	if (estudo.getReparteMinimo() != null && estudo.getReparteMinimo().compareTo(reparte) > 0) {
+	    reparte = estudo.getReparteMinimo();
+	}
 	for (CotaEstudo cota : listaOrdenada) {
 	    if (cota.getIntervaloMaximo() != null && cota.getReparteCalculado().compareTo(cota.getIntervaloMaximo()) > 0) {
 		cota.setReparteCalculado(cota.getIntervaloMaximo());

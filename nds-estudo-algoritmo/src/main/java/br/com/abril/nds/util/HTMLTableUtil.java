@@ -95,20 +95,15 @@ public class HTMLTableUtil {
 			h.append(" <td></td>");    
 		    }
 		}
-		ProdutoEdicaoEstudo menorVenda = new ProdutoEdicaoEstudo();
-		menorVenda.setVenda(BigDecimal.ZERO);
 		for (int i = 0; i < 6; i++) {
 		    if (i < ce.getEdicoesRecebidas().size()) {
 			h.append(String.format(" <td>%s</td>", ce.getEdicoesRecebidas().get(i).getVendaCorrigida()));
-			if ((menorVenda.getVenda().compareTo(BigDecimal.ZERO) == 0) || (ce.getEdicoesRecebidas().get(i).getVenda().compareTo(menorVenda.getVenda()) < 0)) {
-			    menorVenda = ce.getEdicoesRecebidas().get(i);
-			}
 		    } else {
 			h.append(" <td></td>");
 		    }
 		}
-		h.append(String.format(" <td>%s</td>", menorVenda.getVenda()));
-		h.append(String.format(" <td>%s</td>", menorVenda.getIndicePeso()));
+		h.append(String.format(" <td>%s</td>", ce.getMenorVenda()));
+		h.append(String.format(" <td>%s</td>", ce.getPesoMenorVenda()));
 		h.append(String.format(" <td>%s</td>", ce.getVendaMediaNominal()));
 		h.append(String.format(" <td>%s</td>", ce.getVendaMediaCorrigida()));
 
