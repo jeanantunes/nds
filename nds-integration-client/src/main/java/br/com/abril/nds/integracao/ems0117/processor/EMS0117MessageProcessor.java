@@ -465,7 +465,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			String logradouro = ""; 
 			
 			if(enderecoCota.getEndereco() != null && enderecoCota.getEndereco().getLogradouro() != null) {
-				logradouro = getLogradouroSemTipo(enderecoCota.getEndereco().getLogradouro().split(",")[0].trim());
+				logradouro = getLogradouroSemTipo(enderecoCota.getEndereco().getLogradouro().split(",")[0].trim()).toUpperCase();
 			}
 			
 			// Verifica EnderecoCota
