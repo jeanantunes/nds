@@ -432,8 +432,6 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	@Transactional(readOnly = true)
 	public FormaCobranca obterFormaCobrancaPrincipalDistribuidor() {
 		
-		FormaCobranca formaCobranca = this.formaCobrancaRepository.obterFormaCobranca();
-
-		return formaCobranca;
+		return this.formaCobrancaRepository.obterFormaCobranca();
 	}
 }

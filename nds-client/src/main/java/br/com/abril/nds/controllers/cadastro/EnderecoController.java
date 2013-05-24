@@ -770,7 +770,7 @@ public class EnderecoController extends BaseController {
 		return new CellModel(
 				enderecoAssociacao.getId().intValue(),
 				enderecoAssociacao.getTipoEndereco() == null ? "": enderecoAssociacao.getTipoEndereco().getTipoEndereco(),
-				enderecoAssociacao.getEndereco().getTipoLogradouro() + " " + enderecoAssociacao.getEndereco().getLogradouro() 
+				(enderecoAssociacao.getEndereco().getTipoLogradouro() != null ? enderecoAssociacao.getEndereco().getTipoLogradouro() : "" )+ " " + enderecoAssociacao.getEndereco().getLogradouro() 
 					+ ", nº: " + enderecoAssociacao.getEndereco().getNumero(), 
 				enderecoAssociacao.getEndereco().getBairro(),
 				Util.adicionarMascaraCEP(enderecoAssociacao.getEndereco().getCep()), 

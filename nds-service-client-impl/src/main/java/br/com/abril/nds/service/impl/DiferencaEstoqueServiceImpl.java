@@ -599,10 +599,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				
 				rateioDiferenca = new RateioDiferenca();
 				
-				Cota cota = this.cotaRepository.obterPorNumerDaCota(rateioCotaVO.getNumeroCota());
-				
-				rateioDiferenca.setCota(cota);
-				
 				EstudoCota estudoCota = 
 						this.estudoCotaRepository.obterEstudoCotaDeLancamentoComEstudoFechado(
 								this.distribuidorService.obterDataOperacaoDistribuidor(),
@@ -613,6 +609,8 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				
 				rateioDiferenca.setDiferenca(diferenca);
 			}
+			Cota cota = this.cotaRepository.obterPorNumerDaCota(rateioCotaVO.getNumeroCota());
+			rateioDiferenca.setCota(cota);
 			
 			rateioDiferenca.setQtde(rateioCotaVO.getQuantidade());
 			

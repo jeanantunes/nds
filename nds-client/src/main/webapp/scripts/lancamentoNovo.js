@@ -124,6 +124,7 @@ var lancamentoNovoController = $.extend(true, {
 		
 		$(".trCotas", lancamentoNovoController.workspace).remove();
 		$("#cotaInput1", lancamentoNovoController.workspace).val("");
+		$('#rateioIDInputHidden1', lancamentoNovoController.workspace).val("");
 		$("#nomeInput1", lancamentoNovoController.workspace).val("");
 		$("#reparteText1", lancamentoNovoController.workspace).text("");
 		$("#diferencaInput1", lancamentoNovoController.workspace).val("");
@@ -266,6 +267,7 @@ var lancamentoNovoController = $.extend(true, {
 	},
 	
 	carregarEdicaoDirecionamentoCota:function(result){
+		lancamentoNovoController.limparCotas();
 		
 		lancamentoNovoController.carregarDiferencaProduto(result.diferenca);
 		
