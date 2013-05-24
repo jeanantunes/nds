@@ -1899,7 +1899,7 @@ public class CotaServiceImpl implements CotaService {
 		Cota cota = cotaRepository.obterPorNumerDaCota(filtroCurvaABCCotaDTO.getCodigoCota());
 		
 		Map<Long, Long> mapRanking =
-			rankingRepository.obterRankingProdutoCota(cota.getId());
+			rankingRepository.obterRankingProdutoPorCota(cota.getId());
 		
 		if(!lista.isEmpty()){
 			

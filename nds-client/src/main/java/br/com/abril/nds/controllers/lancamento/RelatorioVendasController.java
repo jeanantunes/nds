@@ -469,7 +469,16 @@ public class RelatorioVendasController extends BaseController {
 
 		List<RegistroCurvaABCDistribuidorVO> resultadoCurvaABCDistribuidor = null;
 		try {
-			resultadoCurvaABCDistribuidor = relatorioVendasService.obterCurvaABCDistribuidor(filtro);
+			
+			if (tipoConsulta == TipoConsultaCurvaABC.DISTRIBUIDOR) {
+				
+				resultadoCurvaABCDistribuidor = relatorioVendasService.obterCurvaABCDistribuidor(filtro);
+				
+			} else {
+				
+				resultadoCurvaABCDistribuidor = relatorioVendasService.obterCurvaABCProduto(filtro);
+			}
+			
 		} catch (Exception e) {
 
 			if (e instanceof ValidacaoException) {

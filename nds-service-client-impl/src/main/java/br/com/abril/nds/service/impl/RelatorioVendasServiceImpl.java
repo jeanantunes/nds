@@ -36,13 +36,13 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		List<RegistroCurvaABCDistribuidorVO> lista =
 			this.relatorioVendasRepository.obterCurvaABCDistribuidor(filtroCurvaABCDistribuidorDTO);
 		
-		Map<Long, Long> mapRanking =
-			this.rankingRepository.obterRankingProdutoDistribuidor();
+		Map<Long, Long> mapRankingCota =
+			this.rankingRepository.obterRankingCota();
 		
 		if(!lista.isEmpty()){
 			
 			for(RegistroCurvaABCDistribuidorVO dto : lista){
-				dto.setRkCota(mapRanking.get(dto.getIdCota()));
+				dto.setRkCota(mapRankingCota.get(dto.getIdCota()));
 			}
 		}
 	
@@ -56,17 +56,81 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		List<RegistroCurvaABCEditorVO> lista = 
 			this.relatorioVendasRepository.obterCurvaABCEditor(filtroCurvaABCEditorDTO);
 		
-		Map<Long, Long> mapRanking =
-			this.rankingRepository.obterRankingProdutoEditor();
+		Map<Long, Long> mapRankingEditor =
+			this.rankingRepository.obterRankingEditor();
 		
 		if(!lista.isEmpty()){
 			
 			for(RegistroCurvaABCEditorVO dto : lista){
-				dto.setRkEditor(mapRanking.get(dto.getCodigoEditor()));
+				dto.setRkEditor(mapRankingEditor.get(dto.getCodigoEditor()));
 			}
 		}
 		
 		return this.complementarCurvaABCEditor(lista, filtroCurvaABCEditorDTO);
+	}
+	
+	@Override
+	@Transactional
+	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCProduto(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO) {
+		
+		List<RegistroCurvaABCDistribuidorVO> lista =
+			this.relatorioVendasRepository.obterCurvaABCDistribuidor(filtroCurvaABCDistribuidorDTO);
+		
+		Map<Long, Long> mapRankingProdutoPorProduto =
+			this.rankingRepository.obterRankingProdutoPorProduto(null);
+		
+		Map<Long, Long> mapRankingCotaPorProduto =
+			this.rankingRepository.obterRankingCotaPorProduto(null);
+		
+		if(!lista.isEmpty()){
+			
+			for(RegistroCurvaABCDistribuidorVO dto : lista){
+				
+				//TODO:
+				dto.setRkProduto(mapRankingProdutoPorProduto.get(null));
+				dto.setRkCota(mapRankingCotaPorProduto.get(dto.getIdCota()));
+			}
+		}
+	
+		return obterParticipacaoCurvaABCDistribuidor(lista);
+	}
+	
+	/**
+	 * Obtéma a porcentagem de participação e participação acumulada no resultado da consulta.
+	 */
+	private List<RegistroCurvaABCDistribuidorVO> obterParticipacaoCurvaABCDistribuidor(List<RegistroCurvaABCDistribuidorVO> lista) {
+
+		BigDecimal participacaoTotal = BigDecimal.ZERO;
+		
+		if (lista==null) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhum registro foi encontrado"));
+		}
+		
+		// Soma todos os valores de participacao
+		for (RegistroCurvaABCDistribuidorVO registro : lista) {
+			if (registro.getFaturamentoCapa()!=null) {
+				participacaoTotal = participacaoTotal.add(registro.getFaturamentoCapa());
+			}
+		}
+
+		BigDecimal participacaoRegistro = BigDecimal.ZERO;
+		BigDecimal participacaoAcumulada = BigDecimal.ZERO;
+		
+		// Verifica o percentual dos valores em relação ao total de participacao
+		for (RegistroCurvaABCDistribuidorVO registro : lista) {
+			
+			// Partipacao do registro em relacao a participacao total no periodo
+			if ( participacaoTotal.doubleValue() != 0 ) {
+				participacaoRegistro = new BigDecimal((registro.getFaturamentoCapa().doubleValue()*100)/participacaoTotal.doubleValue());
+			}
+			
+			participacaoAcumulada = participacaoAcumulada.add(participacaoRegistro);
+			
+			registro.setParticipacao(participacaoRegistro);
+			registro.setParticipacaoAcumulada(participacaoAcumulada);
+		}
+
+		return lista;
 	}
 	
 	/**
@@ -123,44 +187,6 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 			registro.setParticipacaoAcumulada(participacaoAcumulada);
 			registro.setDataDe(filtro.getDataDe());
 			registro.setDataAte(filtro.getDataAte());
-		}
-
-		return lista;
-	}
-	
-	/**
-	 * Obtéma a porcentagem de participação e participação acumulada no resultado da consulta.
-	 */
-	private List<RegistroCurvaABCDistribuidorVO> obterParticipacaoCurvaABCDistribuidor(List<RegistroCurvaABCDistribuidorVO> lista) {
-
-		BigDecimal participacaoTotal = BigDecimal.ZERO;
-		
-		if (lista==null) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhum registro foi encontrado"));
-		}
-		
-		// Soma todos os valores de participacao
-		for (RegistroCurvaABCDistribuidorVO registro : lista) {
-			if (registro.getFaturamentoCapa()!=null) {
-				participacaoTotal = participacaoTotal.add(registro.getFaturamentoCapa());
-			}
-		}
-
-		BigDecimal participacaoRegistro = BigDecimal.ZERO;
-		BigDecimal participacaoAcumulada = BigDecimal.ZERO;
-		
-		// Verifica o percentual dos valores em relação ao total de participacao
-		for (RegistroCurvaABCDistribuidorVO registro : lista) {
-			
-			// Partipacao do registro em relacao a participacao total no periodo
-			if ( participacaoTotal.doubleValue() != 0 ) {
-				participacaoRegistro = new BigDecimal((registro.getFaturamentoCapa().doubleValue()*100)/participacaoTotal.doubleValue());
-			}
-			
-			participacaoAcumulada = participacaoAcumulada.add(participacaoRegistro);
-			
-			registro.setParticipacao(participacaoRegistro);
-			registro.setParticipacaoAcumulada(participacaoAcumulada);
 		}
 
 		return lista;

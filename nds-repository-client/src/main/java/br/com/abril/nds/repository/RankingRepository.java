@@ -29,11 +29,15 @@ public interface RankingRepository {
 	 */
 	Long obterRankingCota(Long idProduto,Long idCota);
 	
-	Map<Long, Long> obterRankingProdutoCota(Long idCota);
+	Map<Long, Long> obterRankingProdutoPorCota(Long idCota);
 	
-	Map<Long, Long> obterRankingProdutoDistribuidor();
+	Map<Long, Long> obterRankingCota();
 	
-	Map<Long, Long> obterRankingProdutoEditor();
+	Map<Long, Long> obterRankingEditor();
+	
+	Map<Long, Long> obterRankingProdutoPorProduto(Long idProdutoEdicao);
+	
+	Map<Long, Long> obterRankingCotaPorProduto(Long idProdutoEdicao);
 	
 	Long obterRankingCotaDistribuidor(Long idCota);
 	
