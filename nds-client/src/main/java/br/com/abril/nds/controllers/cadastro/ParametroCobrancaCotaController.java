@@ -382,44 +382,9 @@ public class ParametroCobrancaCotaController extends BaseController {
 	    result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parametros de Cobrança Cadastrados."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
 
+		
 	private void inserirFormaCobrancaDoDistribuidorNaCota(ParametroCobrancaCotaDTO parametroCobranca){
-		FormaCobrancaDTO formaCobrancaDTO = new FormaCobrancaDTO();
-		FormaCobranca formaCobrancaDistribuidor = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
-
-		formaCobrancaDTO.setIdCota(parametroCobranca.getIdCota());
-		formaCobrancaDTO.setIdParametroCobranca(parametroCobranca.getIdParametroCobranca());
-		formaCobrancaDTO.setTipoCobranca(formaCobrancaDistribuidor.getTipoCobranca());
-		formaCobrancaDTO.setRecebeEmail(formaCobrancaDistribuidor.isRecebeCobrancaEmail());
-		
-		Banco bancoCadastrado = formaCobrancaDistribuidor.getBanco();
-		
-		if (bancoCadastrado != null) {
-			formaCobrancaDTO.setIdBanco(bancoCadastrado.getId());
-			formaCobrancaDTO.setNumBanco(bancoCadastrado.getNumeroBanco());
-			formaCobrancaDTO.setNomeBanco(bancoCadastrado.getNome());
-			formaCobrancaDTO.setAgencia(bancoCadastrado.getAgencia());
-			formaCobrancaDTO.setAgenciaDigito(bancoCadastrado.getDvAgencia());
-			formaCobrancaDTO.setConta(bancoCadastrado.getConta());
-			formaCobrancaDTO.setContaDigito(bancoCadastrado.getDvConta());
-		}
-		
-		if (formaCobrancaDistribuidor.getConcentracaoCobrancaCota() != null) {
-			formaCobrancaDTO.setConcentracaoCobrancaCota(formaCobrancaDistribuidor.getConcentracaoCobrancaCota());
-		}
-		
-		if (formaCobrancaDistribuidor.getDiasDoMes() != null) {
-			formaCobrancaDTO.setDiasDoMes(formaCobrancaDistribuidor.getDiasDoMes());
-		}
-		
-		if (formaCobrancaDistribuidor.getTipoFormaCobranca() != null) {
-			formaCobrancaDTO.setTipoFormaCobranca(formaCobrancaDistribuidor.getTipoFormaCobranca());
-		}
-		
-		if (formaCobrancaDistribuidor.getFornecedores() != null) {
-			formaCobrancaDTO.setFornecedores(formaCobrancaDistribuidor.getFornecedores());
-		}
-		
-		this.parametroCobrancaCotaService.postarFormaCobranca(formaCobrancaDTO);
+		parametroCobrancaCotaService.inserirFormaCobrancaDoDistribuidorNaCota(parametroCobranca);
 		
 	}
 
