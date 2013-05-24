@@ -90,7 +90,6 @@ import br.com.abril.nds.model.fiscal.ParametroEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
-import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
@@ -2678,7 +2677,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			ctrlConfEncalheCota.setCota(cota);
 			ctrlConfEncalheCota.setDataOperacao(dataOperacaoDistribuidor);
 			ctrlConfEncalheCota.setStatus(statusOperacao);
-			ctrlConfEncalheCota.setControleConferenciaEncalhe(obterControleConferenciaEncalhe(dataOperacaoDistribuidor));
+
+			//Método não pode haver concorrência
+			synchronized (this) {
+				ctrlConfEncalheCota.setControleConferenciaEncalhe(parametrosDistribuidorService.obterControleConferenciaEncalhe(dataOperacaoDistribuidor));
+			}
+			
 			ctrlConfEncalheCota.setDataFim(dataFinalizacao);
 			
 			controleConferenciaEncalheCotaRepository.adicionar(ctrlConfEncalheCota);
@@ -2687,33 +2691,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 	}
 	
-	/**
-	 * Obtém o ControleConferenciaEncalhe referente a dataOperacao atual.
-	 * 
-	 * @param dataOperacao
-	 * 
-	 * @return ControleConferenciaEncalhe
-	 */
-	private ControleConferenciaEncalhe obterControleConferenciaEncalhe(Date dataOperacao) {
-		
-		ControleConferenciaEncalhe controleConferenciaEncalhe = controleConferenciaEncalheRepository.obterControleConferenciaEncalhe(dataOperacao);
-		
-		if(controleConferenciaEncalhe == null) {
-			
-			controleConferenciaEncalhe = new ControleConferenciaEncalhe();
-			
-			controleConferenciaEncalhe.setData(dataOperacao);
-			
-			controleConferenciaEncalhe.setStatus(StatusOperacao.EM_ANDAMENTO);
-			
-			controleConferenciaEncalheRepository.adicionar(controleConferenciaEncalhe);
-			
-		}
-		
-		return controleConferenciaEncalhe;
-		
-	}
-
 	/**
 	 * Atualiza o registro de MovimentoEstoqueCota assim como o 
 	 * EstoqueProdutoCota relativo ao mesmo.
