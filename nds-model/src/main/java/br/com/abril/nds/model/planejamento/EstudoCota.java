@@ -15,6 +15,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -60,9 +64,11 @@ public class EstudoCota implements Serializable {
 	@OneToMany(mappedBy = "estudoCota", fetch = FetchType.LAZY)
 	private Set<RateioDiferenca> rateiosDiferenca = new HashSet<RateioDiferenca>();
 	
+	@Cascade(value={CascadeType.DELETE})
 	@OneToMany(mappedBy = "estudoCota", fetch = FetchType.LAZY)
 	private List<MovimentoEstoqueCota> movimentosEstoqueCota; 
 	
+	@Cascade(value={CascadeType.DELETE})
 	@OneToMany(mappedBy = "estudoCota", fetch = FetchType.LAZY)
 	private List<ItemNotaEnvio> itemNotaEnvios;
 	

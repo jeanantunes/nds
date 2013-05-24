@@ -324,6 +324,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					nomeProduto : row.cell.nomeProduto,
 					classificacao : row.cell.classificacao,
 					dataLancto : row.cell.dataLancto,
+					dataLancamentoEstudoFormatado : row.cell.dataLancamentoEstudoFormatado,
 					reparte : row.cell.reparte,
 					pctPadrao : row.cell.pctPadrao,
 					liberado : liberado,

@@ -26,6 +26,7 @@ var dividirEstudo = $.extend(true, {
 	quantidadeReparte.numeric();
 	
 	
+	console.log("typeof(matrizDistribuicao):::"+typeof(matrizDistribuicao));
 		if(typeof(matrizDistribuicao)=="object"){
 			var estudo = estudoParaDivisao;
 			$(codigoProduto).val(estudo.codigoProduto);
@@ -33,7 +34,7 @@ var dividirEstudo = $.extend(true, {
 			$(nomeProduto).val(estudo.nomeProduto);
 			$(edicaoProduto).val(estudo.edicao);
 //			$(dataDistribuicao).val($("#datepickerDe").val());
-//			$(dataDistribuicao).val(estudo.dataLancto);
+			$(dataDistribuicao).val(estudo.dataLancamentoEstudoFormatado);
 			$(classificacao).val(estudo.classificacao);
 			
 			
@@ -228,9 +229,13 @@ var dividirEstudo = $.extend(true, {
 
 	$.postJSON('dividirEstudo/confirmar', dados, function(response) {
 	    $('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
-	    var pathTela = "/nds-client-f2";
-	    var matrizDistribuicao = new MatrizDistribuicao(pathTela, "matrizDistribuicao", BaseController.workspace);
-	    matrizDistribuicao.pesquisar();
+//	    var pathTela = "/nds-client-f2";
+	    if(typeof(matrizDistribuicao)=="object"){
+//	    	var matrizDistribuicao = new MatrizDistribuicao(pathTela, "matrizDistribuicao", BaseController.workspace);
+	    	console.log("pesquisando retorno da divisão")
+	    	matrizDistribuicao.pesquisar();
+	    	
+	    }
 	}, function() {
 	});
     },

@@ -161,6 +161,7 @@ public class EstudoServiceImpl implements EstudoService {
 
 	    List<EstudoCota> listEstudoCota = this.estudoCotaRepository.obterEstudoCotaPorEstudo(estudoOriginal);
 	    List<Lancamento> listLancamento = this.lancamentoRepository.obterPorEstudo(estudoOriginal);
+//	    List<Lancamento> listLancamento = this.lancamentoRepository.buscarPorIdSemEstudo(estudoOriginal.getLancamentoID());
 
 	    int iEstudo = 0;
 	    while (iEstudo < listEstudo.size()) {
@@ -205,6 +206,7 @@ public class EstudoServiceImpl implements EstudoService {
 		iEstudo++;
 	    }
 	}
+//	estudoRepository.removerPorId(estudoOriginal.getId());
 
 	return listIdEstudoAdicionado;
     }
