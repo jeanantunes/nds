@@ -298,10 +298,12 @@ public class HistoricoVendaController extends BaseController {
 			}
 			break;
 		case COTAS_A_VISTA:
-			
+		    resultList.add(new ItemDTO("CONSIGNADO", "Consignado"));
+		    resultList.add(new ItemDTO("COTAS_A_VISTA", "Cotas à Vista"));
 			break;
 		case COTAS_NOVAS_RETIVADAS :
-			
+		    resultList.add(new ItemDTO(1, "Sim"));
+		    resultList.add(new ItemDTO(0, "Não"));
 			break;
 		case REGIAO:
 			for (RegiaoDTO regiao : regiaoService.buscarRegiao()) {

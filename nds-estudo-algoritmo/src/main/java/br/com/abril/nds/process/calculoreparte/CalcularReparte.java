@@ -206,7 +206,7 @@ public class CalcularReparte extends ProcessoAbstrato {
 	BigInteger sumReparteCalculadoCota = BigInteger.ZERO;
 	for (CotaEstudo cota : cotas) {
 	    if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
-		    ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix)) {
+		    ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix, ClassificacaoCota.BancaSuspensa)) {
 		sumReparteCalculadoCota = sumReparteCalculadoCota.add(cota.getReparteCalculado());
 	    }
 	}
@@ -228,7 +228,7 @@ public class CalcularReparte extends ProcessoAbstrato {
 		break;
 	    }
 	    if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
-		    ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix)) {
+		    ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix, ClassificacaoCota.BancaSuspensa)) {
 		if (estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null) {
 		    BigDecimal temp = new BigDecimal(cota.getReparteCalculado()).multiply(new BigDecimal(indicedeSobraouFalta));
 		    // divisao usada para arredondar valor
@@ -251,7 +251,7 @@ public class CalcularReparte extends ProcessoAbstrato {
 		    break;
 		}
 		if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
-			ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix)) {
+			ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix, ClassificacaoCota.BancaSuspensa)) {
 		    if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) == 1 &&
 			    estudo.getReparteDistribuir().compareTo(reparteSobra) >= 0) {
 			cota.setReparteCalculado(cota.getReparteCalculado().add(reparteSobra), estudo);
@@ -267,7 +267,7 @@ public class CalcularReparte extends ProcessoAbstrato {
 	if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) != 0) {
 	    for (CotaEstudo cota : cotas) {
 		if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
-			ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix)) {
+			ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix, ClassificacaoCota.BancaSuspensa)) {
 		    if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) == 1 &&
 			    estudo.getReparteDistribuir().compareTo(reparteSobra) > 0) {
 			cota.setReparteCalculado(cota.getReparteCalculado().add(estudo.getReparteDistribuir()), estudo);
