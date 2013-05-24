@@ -300,7 +300,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		var repDist = (row.cell.repDistrib != null && row.cell.repDistrib > 0)? row.cell.repDistrib : (row.cell.reparte - row.cell.promo); 
 		
-		row.cell.sobra = '<span id="sobra'+i+'">0</span>';
+		row.cell.sobra = (row.cell.idEstudo == null || row.cell.idEstudo == "")?'<span id="sobra'+i+'">0</span>':
+			'<span id="sobra'+i+'">'+(row.cell.reparte - row.cell.promo - row.cell.repDistrib)+'</span>';
 		row.cell.repDistrib = T.gerarInputRepDistrib(repDist, i);
 		row.cell.reparte = parseInt(row.cell.reparte, 10);
 		row.cell.promo = parseInt(row.cell.promo, 10);
@@ -811,9 +812,10 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		var data = [];
 		
-		data.push({name: 'produtoDistribuicao.idLancamento',  	  value: selecionado.idLancamento});
-//		data.push({name: 'produtoDistribuicao.numeroEdicao',  	  value: selecionado.edicao});
-//		data.push({name: 'produtoDistribuicao.codigoProduto',  	  value: selecionado.codigoProduto});
+		data.push({name: 'produtoDistribuicao.idLancamento',  value: selecionado.idLancamento});
+		data.push({name: 'produtoDistribuicao.liberado',  	  value: selecionado.liberado});
+//		data.push({name: 'produtoDistribuicao.numeroEdicao',  value: selecionado.edicao});
+//		data.push({name: 'produtoDistribuicao.codigoProduto', value: selecionado.codigoProduto});
 		
 		$.postJSON(pathTela + "/matrizDistribuicao/duplicarLinha", data,
 				function(result){
@@ -1173,6 +1175,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		data.push({name: 'copiaProporcionalDeDistribuicaoVO.reparteDistribuido', value: reparteDistribuido});
 		data.push({name: 'copiaProporcionalDeDistribuicaoVO.idCopia', 			 value: idCopia});
 		
+		
 		if (pctPadrao != null) {
 			data.push({name: 'copiaProporcionalDeDistribuicaoVO.pacotePadrao', value: pctPadrao});
 		}
@@ -1508,37 +1511,70 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	};
 	
 	this.gerarEstudoAutomatico = function() {
-	    var selecionado = null;
+	    
+	    if (T.obeterQuantosItensMarcados() == 0) {
+	    	 exibirMensagem("ERROR", ["Selecione um item para esta opção."]);
+		     return;
+	    }
+	    
+	    var postData = [];
+	    
 	    $.each(T.lancamentos, function(index, lancamento) {
 	        if (lancamento.selecionado) {
-	            if (selecionado != null) {
-	                selecionado = null;
-	                return;
-	            }
-	            selecionado = lancamento;
+	           
+	        	postData.push({name : "produtoDistribuicaoVOs["+index+"].idLancamento", value : lancamento.idLancamento});
+	            postData.push({name : "produtoDistribuicaoVOs["+index+"].codigoProduto", value : lancamento.codigoProduto});
+	    	    postData.push({name : "produtoDistribuicaoVOs["+index+"].numeroEdicao",  value : lancamento.edicao});
+	    	    postData.push({name : "produtoDistribuicaoVOs["+index+"].repDistrib", 	 value : lancamento.repDistrib});
+	    	    
+	    	    if (lancamento.idCopia != null) {
+	    	    	
+	    	    	postData.push({name : "produtoDistribuicaoVOs["+index+"].lancamento", value : lancamento.idLancamento});
+	    	    	postData.push({name : "produtoDistribuicaoVOs["+index+"].idCopia", 	  value : lancamento.idCopia});
+	    	    }
 	        }
 	    });
-	    if (selecionado == null) {
-	        exibirMensagem("ERROR", ["Selecione um item para esta opção."]);
-	        return;
-	    }
-	    var postData = [];
-	    postData.push({name : "codigoProduto", value : selecionado.codigoProduto});
-	    postData.push({name : "numeroEdicao", value : selecionado.edicao});
-	    postData.push({name : "reparte", value : selecionado.repDistrib});
 	    
-	    if (selecionado.idCopia != null) {
-	    	
-	    	postData.push({name : "idLancamento", value : selecionado.idLancamento});
-	    	postData.push({name : "idCopia", value : selecionado.idCopia});
-	    }
-	    
-	    
-	    $.postJSON(pathTela + "/matrizDistribuicao/gerarEstudoAutomatico", postData,
+	    T.postGeracaoEstudoAutomatico(postData, false);
+	};
+	
+	
+	this.postGeracaoEstudoAutomatico = function(postData, confirmaUmaEdicaoBase) {
+		
+		postData.push({name : "confirmaUmaEdicaoBase", 	 value : confirmaUmaEdicaoBase});
+		
+		$.postJSON(pathTela + "/matrizDistribuicao/gerarEstudoAutomatico", postData,
 	            function(result) {
 	        T.estudo = result;
 	        T.carregarGrid();
-	        T.exibirMensagemSucesso();
+	        
+	        if(T.estudo.estudo[1].length > 0) {
+	        	
+	        	var msgGeral = "";
+	        	
+	        	 $.each(T.estudo.estudo[1], function(index, mensagem) {
+	        		
+	        			msgGeral += mensagem + "<br/>";
+	        	 });
+	        	 
+	        	 exibirMensagem("WARNING", [msgGeral]);
+	        }
+	        else if(T.estudo.estudo[2].length == 0) {
+	        	
+	        	T.exibirMensagemSucesso();
+	        }
+	        
+	        if (T.estudo.estudo[2].length > 0) {
+        		
+        		T.confirmarUmaEdicaoBase(T.estudo.estudo[2]);
+        		return;
+        	}
+	        
+	        if(T.estudo.estudo[0].length == 0 && T.estudo.estudo[2].length == 0) {
+	        	
+	        	return;
+	        }
+	        
 	        $('#confirmar_variaveis').dialog({
 	            resizable: false,
 	            height:'auto',
@@ -1548,9 +1584,17 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	                id: "btnConfirmarVariaveis",
 	                text: "Confirmar",
 	                click: function() {
-	                    myWindow = window.open('', '_blank');
-	                    myWindow.document.write(T.estudo.estudo);
-	                    myWindow.focus();
+	                	
+	                	if (T.estudo.estudo[0].length > 0) {
+	                		
+	                		$.each(T.estudo.estudo[0], function(index, htmlEstudo) {
+	                			
+	                			myWindow = window.open('', '_blank');
+	     	                    myWindow.document.write(htmlEstudo);
+	     	                    myWindow.focus();
+	                		});
+	                	}
+	                   
 	                    $(this).dialog("close");
 	                }
 	            },
@@ -1563,7 +1607,58 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	        });
 	    }
 	    );
-	};
+	},
+	
+	this.confirmarUmaEdicaoBase = function(edicoesBase) {
+		
+		var msg = "O(s) seguinte(s) produto(s) tem apenas 1 edição base, confirma a geração de estudo? </br>";
+			
+	   $.each(edicoesBase, function(index, edicaoBase) {
+   	           
+		   msg += "[" + edicaoBase.codigoProduto + "] </br>";
+  	           
+  	    });	
+		
+		$('#confirmar_uma_edicao_base').html("<p>"+msg+"</p>");
+		
+		$('#confirmar_uma_edicao_base').dialog({
+            resizable: false,
+            height:'auto',
+            width:600,
+            modal: true,
+            buttons: [{
+                id: "btnConfirmarUmaEdicaoBase",
+                text: "Confirmar",
+                click: function() {
+                	
+                	var postData = [];
+             	    
+             	    $.each(edicoesBase, function(index, edicaoBase) {
+             	           
+             	            postData.push({name : "produtoDistribuicaoVOs["+index+"].codigoProduto", value : edicaoBase.codigoProduto});
+             	    	    postData.push({name : "produtoDistribuicaoVOs["+index+"].numeroEdicao",  value : edicaoBase.edicao});
+             	    	    postData.push({name : "produtoDistribuicaoVOs["+index+"].repDistrib", 	 value : edicaoBase.repDistrib});
+             	    	    
+             	    	    if (edicaoBase.idCopia != null) {
+             	    	    	
+             	    	    	postData.push({name : "produtoDistribuicaoVOs["+index+"].lancamento", value : edicaoBase.idLancamento});
+             	    	    	postData.push({name : "produtoDistribuicaoVOs["+index+"].idCopia", 	  value : edicaoBase.idCopia});
+             	    	    }
+             	    });
+             	    
+             	   T.postGeracaoEstudoAutomatico(postData, true);
+             	    
+                    $(this).dialog("close");
+                }
+            },
+            {id: "btnCancelarVariaveis",
+                text: "Cancelar",
+                click: function() {
+                    $(this).dialog("close");
+                }
+            }],
+        });
+	},
 
 	this.gerarEstudoManual = function() {
 		var selecionado = null;

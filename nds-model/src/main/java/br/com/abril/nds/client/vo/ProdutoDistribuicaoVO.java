@@ -6,6 +6,8 @@ import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
+
 import br.com.abril.nds.model.planejamento.StatusEstudo;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -284,34 +286,45 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 		if (getClass() != obj.getClass())
 			return false;
 		ProdutoDistribuicaoVO other = (ProdutoDistribuicaoVO) obj;
-		if (idLancamento == null) {
-			if (other.idLancamento != null)
-				return false;
-		} else if (!idLancamento.equals(other.idLancamento))
-			return false;
-		return true;
+		
+		boolean equal = (this.getIdLancamento().equals(other.getIdLancamento()) &&
+		 this.getCodigoProduto().equals(other.getCodigoProduto()) &&
+		 this.getNumeroEdicao().equals(other.getNumeroEdicao())) &&
+		 ((this.getIdCopia() == null && other.getIdCopia() == null) || (this.getIdCopia().equals(other.getIdCopia())));
+		
+
+	   return equal;
 	}
 
+	
+	private Long getComparatorHash(ProdutoDistribuicaoVO prodDistribVO) {
+		
+		long hash = 0l;
+		
+		hash += (prodDistribVO.getNomeProduto().length() * 100);
+		
+		if (prodDistribVO.getIdEstudo() != null) {
+			
+			hash += (prodDistribVO.getIdEstudo().longValue() * 1000);
+			
+			if (!StringUtils.isEmpty(prodDistribVO.getLiberado())) {
+				
+				hash *= 10000l;
+			}
+		}
+				
+		if (prodDistribVO.getIdCopia() != null) {
+			
+			hash += (10 + (prodDistribVO.getIdCopia() * 10));
+		}
+		
+		return hash;
+	}
+	
 	@Override
 	public int compareTo(ProdutoDistribuicaoVO prodDistribVO) {
 		
-		if (this.getCodigoProduto().equals(prodDistribVO.getCodigoProduto()) && 
-				this.getNumeroEdicao().equals(prodDistribVO.getNumeroEdicao())) {
-				
-				if (prodDistribVO.getIdEstudo() == null) {
-					return -1;
-				}
-				else {
-					
-					return this.getIdLancamento().compareTo(prodDistribVO.getIdLancamento());
-				}
-		}
-		else if (prodDistribVO.isItemFinalizado() || (prodDistribVO.getLiberado() != null && prodDistribVO.getLiberado().equals(StatusEstudo.LIBERADO.name()))) {
-			
-			return -1;
-		}
-		
-		return 1;
+		return getComparatorHash(this).compareTo(getComparatorHash(prodDistribVO));
 	}
 
 	public Integer getIdCopia() {

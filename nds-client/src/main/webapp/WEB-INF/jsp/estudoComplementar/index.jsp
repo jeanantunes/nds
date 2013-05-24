@@ -34,7 +34,12 @@ $(document).ready(function () {
         }
     });
 
-    estudoComplementarController.consultarEstudo($('#codigoEstudo'));
+    var estudoValue = $('#codigoEstudo').val();
+    
+    if (estudoValue) {
+	    estudoComplementarController.consultarEstudo($('#codigoEstudo'));
+	}
+    
 });
 
 

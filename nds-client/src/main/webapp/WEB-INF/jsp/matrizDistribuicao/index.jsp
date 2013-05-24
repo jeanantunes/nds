@@ -88,6 +88,10 @@ var lancamentosSelecionados = [];
 	<div id="confirmar_variaveis" title="Variáveis" style="display:none" >
 		<p>Deseja exibir as variáveis do estudo?</p>
 	</div>
+	
+	<div id="confirmar_uma_edicao_base" title="Uma edi&ccedil&atildeo base" style="display:none" >
+	</div>
+	
 	</form>
 		
 		   	<jsp:include page="../messagesDialog.jsp">
