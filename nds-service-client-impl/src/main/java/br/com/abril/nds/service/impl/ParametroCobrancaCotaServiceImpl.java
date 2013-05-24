@@ -1072,9 +1072,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		formaCobrancaDTO.setConcentracaoPagto(formasCobrancaCota.get(0).getConcentracaoPagto());		
 		
 		
-		//this.setarDiasDaSemana(formaCobrancaDTO, formaCobrancaDTO.getIdCota());
-		
-		if (formaCobrancaDistribuidor.getConcentracaoCobrancaCota() != null) {
+		if (formaCobrancaDistribuidor.getConcentracaoCobrancaCota() != null && ! formaCobrancaDistribuidor.getConcentracaoCobrancaCota().isEmpty()) {
 			formaCobrancaDTO.setConcentracaoCobrancaCota(formaCobrancaDistribuidor.getConcentracaoCobrancaCota());
 		}
 		
@@ -1093,47 +1091,4 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		this.postarFormaCobranca(formaCobrancaDTO);
 		
 	}
-	
-	private void setarDiasDaSemana(FormaCobrancaDTO formaCobrancaDTO, Long idCota) {
-		
-		   List<FormaCobrancaDTO> listaFormaCobrancaDTO = this.obterDadosFormasCobrancaPorCota(idCota);
-		   
-		   for(FormaCobrancaDTO verificacaoDiasDaSemana : listaFormaCobrancaDTO)
-		   {
-			   String[] arrayConcentracaoPagto = verificacaoDiasDaSemana.getConcentracaoPagto().split("/");
-			   
-			   for(int i = 0; i < arrayConcentracaoPagto.length; i++)
-			   {
-				   if(arrayConcentracaoPagto[i].equals("Domingo"))
-				   {
-					   formaCobrancaDTO.setDomingo(true); 
-				   }
-				   if(arrayConcentracaoPagto[i].equals("Segunda"))
-				   {
-					   formaCobrancaDTO.setSegunda(true); 
-				   }
-				   if(arrayConcentracaoPagto[i].equals("Terça"))
-				   {
-					   formaCobrancaDTO.setTerca(true); 
-				   }
-				   if(arrayConcentracaoPagto[i].equals("Quarta"))
-				   {
-					   formaCobrancaDTO.setQuarta(true); 
-				   }
-				   if(arrayConcentracaoPagto[i].equals("Quinta"))
-				   {
-					   formaCobrancaDTO.setQuinta(true); 
-				   }
-				   if(arrayConcentracaoPagto[i].equals("Sexta"))
-				   {
-					   formaCobrancaDTO.setSexta(true); 
-				   }
-				   if(arrayConcentracaoPagto[i].equals("Sábado"))
-				   {
-					   formaCobrancaDTO.setSabado(true); 
-				   }
-			   }
-		   }
-		}
-	
 }
