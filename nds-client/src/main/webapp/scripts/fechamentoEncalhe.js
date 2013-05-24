@@ -439,7 +439,7 @@ var fechamentoEncalheController = $.extend(true, {
 								
 								exibirMensagem(tipoMensagem, listaMensagens);
 								
-								_this.dialog("destroy");
+								_this.dialog("close");
 								
 								return;
 								
@@ -458,7 +458,7 @@ var fechamentoEncalheController = $.extend(true, {
 							
 							fechamentoEncalheController.pesquisar();
 							
-							_this.dialog("destroy");
+							_this.dialog("close");
 						},
 					  	null,
 					   	false
