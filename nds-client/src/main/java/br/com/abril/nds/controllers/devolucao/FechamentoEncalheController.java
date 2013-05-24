@@ -372,7 +372,7 @@ public class FechamentoEncalheController extends BaseController {
 		filtro.setBoxId(boxId);
 		
 		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.buscarFechamentoEncalhe(
-				filtro, sortorder, this.resolveSort(sortname), page, rp);
+				filtro, sortorder, this.resolveSort(sortname), null, null);
 		
 		if (listaEncalhe != null && !listaEncalhe.isEmpty()) {
 		
