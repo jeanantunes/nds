@@ -8,7 +8,6 @@ import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
 
-import br.com.abril.nds.model.planejamento.StatusEstudo;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -74,6 +73,10 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	private Long idUsuario;
 	
 	private Integer idCopia;
+	
+	private Date dataLancamentoEstudo;
+	
+	private String dataLancamentoEstudoFormatado;
 	
 	//Usado para controlar cor sim cor não entre linhas originais e copias
 	//Na matriz de distribuição
@@ -359,4 +362,22 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 		this.qtdeReparteEstudo = qtdeReparteEstudo;
 	}
 
+	public Date getDataLancamentoEstudo() {
+		return dataLancamentoEstudo;
+	}
+
+	public void setDataLancamentoEstudo(Date dataLancamentoEstudo) {
+		this.dataLancamentoEstudo = dataLancamentoEstudo;
+		if(dataLancamentoEstudo!=null)
+			this.dataLancamentoEstudoFormatado = new SimpleDateFormat("dd/MM/yyyy").format(dataLancamentoEstudo);
+	}
+
+	public String getDataLancamentoEstudoFormatado() {
+		return dataLancamentoEstudoFormatado;
+	}
+
+	public void setDataLancamentoEstudoFormatado(String dataLancamentoEstudoFormatado) {
+		this.dataLancamentoEstudoFormatado = dataLancamentoEstudoFormatado;
+	}
+	
 }

@@ -206,18 +206,18 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 
 	hql.append(" from Estudo estudo ");
 	hql.append(" where estudo.id = :numeroEstudoOriginal ");
-	hql.append(" and estudo.produtoEdicao.produto.codigo = :codigoProduto ");
+/*	hql.append(" and estudo.produtoEdicao.produto.codigo = :codigoProduto ");
 	hql.append(" and estudo.produtoEdicao.produto.nome = :nomeProduto ");
 	hql.append(" and estudo.produtoEdicao.numeroEdicao = :numeroEdicao ");
 	hql.append(" and estudo.dataLancamento = :dataDistribuicao ");
-
+*/
 	Query query = getSession().createQuery(hql.toString());
 
 	query.setParameter("numeroEstudoOriginal", divisaoEstudoVO.getNumeroEstudoOriginal());
-	query.setParameter("codigoProduto", divisaoEstudoVO.getCodigoProduto());
+	/*query.setParameter("codigoProduto", divisaoEstudoVO.getCodigoProduto());
 	query.setParameter("nomeProduto", divisaoEstudoVO.getNomeProduto());
 	query.setParameter("numeroEdicao", divisaoEstudoVO.getEdicaoProduto());
-	query.setParameter("dataDistribuicao", divisaoEstudoVO.getDataDistribuicaoParaPesquisa());
+	query.setParameter("dataDistribuicao", divisaoEstudoVO.getDataDistribuicaoParaPesquisa());*/
 //	query.setParameter("dataDistribuicao", divisaoEstudoVO.getDataDistribuicao());
 
 	Estudo estudo = (Estudo) query.uniqueResult();
