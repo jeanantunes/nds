@@ -4,11 +4,16 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-import br.com.abril.nds.model.planejamento.StatusEstudo;
+import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -82,6 +87,28 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	private Boolean estudoLiberado;
 	
 	private BigInteger qtdeReparteEstudo;
+	
+	private List<ProdutoDistribuicaoVO> produtoDistribuicoesDuplicados =  new ArrayList<ProdutoDistribuicaoVO>();
+	
+	private TableModel<CellModelKeyValue<ProdutoDistribuicaoVO>> tmDuplicados = new TableModel<CellModelKeyValue<ProdutoDistribuicaoVO>>();
+	
+	public ProdutoDistribuicaoVO() {
+		
+		tmDuplicados.setRows(new ArrayList<CellModelKeyValue<ProdutoDistribuicaoVO>>());
+	}
+	
+	
+	public void addItemDuplicado(ProdutoDistribuicaoVO produtoDistribuicaoVO, Integer row) {
+		
+		produtoDistribuicoesDuplicados.add(produtoDistribuicaoVO);
+		
+		int index = 0; 
+		
+		for (ProdutoDistribuicaoVO pdVO: produtoDistribuicoesDuplicados) {
+			pdVO.setIdCopia(index++);
+			pdVO.setIdRow(row);
+		}
+	}
 	
 	public BigInteger getIdLancamento() {
 		return idLancamento;
@@ -290,8 +317,8 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 		boolean equal = (this.getIdLancamento().equals(other.getIdLancamento()) &&
 		 this.getCodigoProduto().equals(other.getCodigoProduto()) &&
 		 this.getNumeroEdicao().equals(other.getNumeroEdicao())) &&
-		 ((this.getIdCopia() == null && other.getIdCopia() == null) || (this.getIdCopia().equals(other.getIdCopia())));
-		
+		 ((this.getIdCopia() == null && other.getIdCopia() == null) || 
+		  (this.getIdCopia() != null && this.getIdCopia().equals(other.getIdCopia())));
 
 	   return equal;
 	}
@@ -313,10 +340,10 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 			}
 		}
 				
-		if (prodDistribVO.getIdCopia() != null) {
-			
-			hash += (10 + (prodDistribVO.getIdCopia() * 10));
-		}
+//		if (prodDistribVO.getIdCopia() != null) {
+//			
+//			hash += (10 + (prodDistribVO.getIdCopia() * 10));
+//		}
 		
 		return hash;
 	}
@@ -359,4 +386,24 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 		this.qtdeReparteEstudo = qtdeReparteEstudo;
 	}
 
+	public TableModel<CellModelKeyValue<ProdutoDistribuicaoVO>> getTmDuplicados() {
+		return tmDuplicados;
+	}
+
+	public void setTmDuplicados(
+			TableModel<CellModelKeyValue<ProdutoDistribuicaoVO>> tmDuplicados) {
+		this.tmDuplicados = tmDuplicados;
+	}
+
+
+	public List<ProdutoDistribuicaoVO> getProdutoDistribuicoesDuplicados() {
+		return produtoDistribuicoesDuplicados;
+	}
+
+
+	public void setProdutoDistribuicoesDuplicados(
+			List<ProdutoDistribuicaoVO> produtoDistribuicoesDuplicados) {
+		this.produtoDistribuicoesDuplicados = produtoDistribuicoesDuplicados;
+	}
+	
 }

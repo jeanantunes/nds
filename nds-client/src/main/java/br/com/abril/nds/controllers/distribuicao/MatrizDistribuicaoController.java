@@ -138,15 +138,15 @@ public class MatrizDistribuicaoController extends BaseController {
 		this.result.use(Results.json()).from(parametrosDistribuidorVO).recursive().serialize();
 	}
 
-	private void preparaItensParaVisualizacaoMatrizDistribuicao(List<ProdutoDistribuicaoVO> itens) {
-		
-		Collections.sort(itens);
+	private List<ProdutoDistribuicaoVO> preparaItensParaVisualizacaoMatrizDistribuicao(List<ProdutoDistribuicaoVO> itens) {
 		
 		int idRow = 0;
 		
+		List<ProdutoDistribuicaoVO> itensToRemove = new ArrayList<ProdutoDistribuicaoVO>(); 
+		
 		for (int i=0; i < itens.size(); i++) {
 			
-			int idCopia = 1;
+			//int idCopia = 1;
 			
 			if (itens.get(i).getIdRow() == null) {
 				
@@ -159,13 +159,38 @@ public class MatrizDistribuicaoController extends BaseController {
 					(itens.get(i).getCodigoProduto().equals(itens.get(j).getCodigoProduto()) && 
 					 itens.get(i).getNumeroEdicao().equals(itens.get(j).getNumeroEdicao()))) {
 					
-					itens.get(j).setIdCopia(idCopia++);
-					itens.get(j).setIdRow(itens.get(i).getIdRow());
+					//itens.get(j).setIdCopia(idCopia++);
+					//itens.get(j).setIdRow(itens.get(i).getIdRow());
+					itens.get(i).addItemDuplicado(itens.get(j), itens.get(i).getIdRow());
+					itensToRemove.add(itens.get(j));
 				}
 			}
 		}
 		
-		Collections.sort(itens);
+		itens.removeAll(itensToRemove);
+		
+		List<ProdutoDistribuicaoVO> newItens = new ArrayList<ProdutoDistribuicaoVO>(); 
+		
+		Comparator<ProdutoDistribuicaoVO> cCopias = new Comparator<ProdutoDistribuicaoVO>() {
+			
+			@Override
+			public int compare(ProdutoDistribuicaoVO p1, ProdutoDistribuicaoVO p2) {
+				return p1.compareTo(p2);
+			}
+		};
+		
+		for (int i=0; i < itens.size(); i++) {
+			
+			newItens.add(itens.get(i));
+			
+			if (!itens.get(i).getProdutoDistribuicoesDuplicados().isEmpty()) {
+				
+				Collections.sort(itens.get(i).getProdutoDistribuicoesDuplicados(), cCopias);
+				newItens.addAll(itens.get(i).getProdutoDistribuicoesDuplicados());
+			}
+		}
+		
+		return newItens;
 	}
 	
 	@Post
@@ -174,6 +199,8 @@ public class MatrizDistribuicaoController extends BaseController {
 		FiltroDistribuicaoDTO filtro = obterFiltroSessao();
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		TotalizadorProdutoDistribuicaoVO vo = matrizDistribuicaoService.obterMatrizDistribuicao(filtro);
+		
+		Collections.sort(vo.getListProdutoDistribuicao());
 		
 		List<ProdutoDistribuicaoVO> listSession = obterListaDeItensDuplicadosNaSessao();
 		
@@ -211,7 +238,7 @@ public class MatrizDistribuicaoController extends BaseController {
 			vo.setListProdutoDistribuicao(newList);
  		}
 		
-		preparaItensParaVisualizacaoMatrizDistribuicao(vo.getListProdutoDistribuicao());
+		vo.setListProdutoDistribuicao(preparaItensParaVisualizacaoMatrizDistribuicao(vo.getListProdutoDistribuicao()));
 		
 		filtro.setTotalRegistrosEncontrados(vo.getListProdutoDistribuicao().size());
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
@@ -467,7 +494,7 @@ public class MatrizDistribuicaoController extends BaseController {
 		
 		List<ProdutoDistribuicaoVO> list = totalizadorProdutoDistribuicaoVO.getListProdutoDistribuicao();
 		
-		preparaItensParaVisualizacaoMatrizDistribuicao(list);
+		//preparaItensParaVisualizacaoMatrizDistribuicao(list);
 		
 		Comparator<ProdutoDistribuicaoVO> comparator = new Comparator<ProdutoDistribuicaoVO>() {
 			

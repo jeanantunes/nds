@@ -331,6 +331,31 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					idCopia : row.cell.idCopia
 		});
 		
+		
+//		
+//		if (row.cell.produtoDistribuicoesDuplicados.length > 0) {
+//			
+//			$.each(row.cell.produtoDistribuicoesDuplicados, function(index, lancamentoCopia){
+//				
+//				lancamentoCopia.idRow = row.cell.idRow;
+//				T.lancamentos.push(lancamentoCopia);
+//				
+//				var idRow = '#row'+i+1;
+//				var clone = $(idRow).clone();
+//				$(idRow).after(clone);
+//				var idRowClone = idRow+'Clone'+index;
+//				$(clone).attr('id',idRowClone);
+//				
+//				for (var j=0; j < 12; j++) {
+//					 $($(idRowClone).children()[j]).html("");
+//				}
+//				
+//				 $($(idRowClone).children()[12]).html(row.cell.sobra);
+//				 $($(idRowClone).children()[13]).html(row.cell.sobra);
+//				 $($(idRowClone).children()[12]).html(row.cell.sobra);
+//			});
+//		}
+		
 	},
 	
 	this.formataCampos = function(row) {
@@ -400,7 +425,6 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		return '<input id="inputRepDistrib' + index + '" onchange="' + T.instancia + '.alterarReparte(this,\'' + index + '\');" type="text" name="repDistrib" style="width:60px; float:left;" value="' + valor + '" />'; 
 		
 	},
-	
 
 	this.obeterQuantosItensMarcados = function() {
 		return $('input[name=checkgroup]:checked', _workspace).size();
@@ -873,6 +897,20 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		  load: function( event, ui ) {
 			  if(informacoesProdutoController){
 				  informacoesProdutoController.targetRecuperarEstudo="#somarEstudo-estudoPesquisa";
+				  informacoesProdutoController.methodEval='change';
+			  }
+		  }
+		}).tabs('addTab', "Informações do Produto", contextPath + "/distribuicao/informacoesProduto/");
+		$( "#tabsNovoEntregador", this.workspace ).tabs();
+		$("#dialog-informacoes-produto", _workspace).show();
+	},
+	
+	this.pesquisarProdutosCopiaProporcional = function() {
+		$('#workspace')
+		.tabs({
+		  load: function( event, ui ) {
+			  if(informacoesProdutoController){
+				  informacoesProdutoController.targetRecuperarEstudo="#copiarEstudo-estudoPesquisa";
 				  informacoesProdutoController.methodEval='change';
 			  }
 		  }
