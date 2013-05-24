@@ -929,6 +929,7 @@ var fechamentoEncalheController = $.extend(true, {
 				} else {
 					
 					fechamentoEncalheController.verificarEncerrarOperacaoEncalhe();
+					
 				}
 			},
 		  	null,
