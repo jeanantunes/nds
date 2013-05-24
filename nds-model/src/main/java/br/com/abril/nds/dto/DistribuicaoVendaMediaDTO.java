@@ -25,7 +25,7 @@ public class DistribuicaoVendaMediaDTO {
 	
 	private Long roteiroEntregaId;
 	private Boolean complementarAutomatico;
-	private Boolean cotasAVista;
+	private boolean cotasAVista;
 	private ComponentesPDV excecaoDeBancasComponente;
 	private List<String> excecaoDeBancas = new ArrayList<>();
 	
@@ -107,10 +107,10 @@ public class DistribuicaoVendaMediaDTO {
 	public void setComplementarAutomatico(Boolean complementarAutomatico) {
 		this.complementarAutomatico = complementarAutomatico;
 	}
-	public Boolean getCotasAVista() {
+	public boolean isCotasAVista() {
 		return cotasAVista;
 	}
-	public void setCotasAVista(Boolean cotasAVista) {
+	public void setCotasAVista(boolean cotasAVista) {
 		this.cotasAVista = cotasAVista;
 	}
 	public ComponentesPDV getExcecaoDeBancasComponente() {

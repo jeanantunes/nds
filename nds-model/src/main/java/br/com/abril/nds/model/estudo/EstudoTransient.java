@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import br.com.abril.nds.dto.BonificacaoDTO;
+import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -43,6 +44,7 @@ public class EstudoTransient extends Estudo {
     private BigDecimal menorVenda;
     private BigInteger reservaAjuste;
     private BigInteger reservaAjusteInicial;
+    private DistribuicaoVendaMediaDTO distribuicaoVendaMediaDTO;
 
     public EstudoTransient() {
 	usarFixacao = true;
@@ -226,6 +228,14 @@ public class EstudoTransient extends Estudo {
 
     public void setReservaAjusteInicial(BigInteger reservaAjusteInicial) {
         this.reservaAjusteInicial = reservaAjusteInicial;
+    }
+
+    public DistribuicaoVendaMediaDTO getDistribuicaoVendaMediaDTO() {
+        return distribuicaoVendaMediaDTO;
+    }
+
+    public void setDistribuicaoVendaMediaDTO(DistribuicaoVendaMediaDTO distribuicaoVendaMediaDTO) {
+        this.distribuicaoVendaMediaDTO = distribuicaoVendaMediaDTO;
     }
 
     @Override

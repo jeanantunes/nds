@@ -237,6 +237,7 @@ public class EstudoAlgoritmoService {
 	    estudo.setReparteMinimo(distribuicaoVendaMedia.getReparteMinimo());
 	    estudo.setComplementarAutomatico(distribuicaoVendaMedia.getComplementarAutomatico());
 	    estudo.setUsarFixacao(distribuicaoVendaMedia.isUsarFixacao());
+	    estudo.setDistribuicaoVendaMediaDTO(distribuicaoVendaMedia);
 	    LinkedList<ProdutoEdicaoEstudo> edicoesBase = new LinkedList<>();
 	    for (ProdutoEdicaoDTO base : distribuicaoVendaMedia.getBases()) {
 		ProdutoEdicaoEstudo ed = new ProdutoEdicaoEstudo();

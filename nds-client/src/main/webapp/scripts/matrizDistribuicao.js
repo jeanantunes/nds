@@ -1462,11 +1462,11 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 
 	    var temp = $('#workspace').tabs( "option", "ajaxOptions");
 	    $('#workspace').tabs( "option", "ajaxOptions", { data: postData, type: 'POST' } );
-	    $('#workspace').tabs('addTab', 'Distribuição Venda Média', pathTela + '/lancamento/estudoComplementar');
+	    $('#workspace').tabs('addTab', 'Estudo Complementar', pathTela + '/lancamento/estudoComplementar');
 	    $('#workspace').tabs( "option", "ajaxOptions", temp );
 
 	    T.esconderOpcoes();
-	}
+	};
 
 	this.analise = function(){
 		//testa se registro foi selecionado
