@@ -193,4 +193,6 @@ public interface ParametroCobrancaCotaService {
 	void alterarParametro(ParametroCobrancaCota parametroCobrancaCota);
 	
 	List<BigDecimal> comboValoresMinimos();
+	
+	void inserirFormaCobrancaDoDistribuidorNaCota(ParametroCobrancaCotaDTO parametroCobranca);
 }
