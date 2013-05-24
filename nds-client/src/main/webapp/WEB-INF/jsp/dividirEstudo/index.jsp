@@ -2,11 +2,6 @@
 <div id="dividirEstudoTelaAnalise" />
 <div id="dividirEstudoContent">
 
-<head>
-
-<style>
-</style>
-
 <script type="text/javascript" src='scripts/dividirEstudo.js'></script>
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/scripts/matrizDistribuicao.js"></script>
@@ -32,9 +27,7 @@
 		});
     });
 </script>
-</head>
 
-<body>
 
 	<br clear="all" />
 	<br />
@@ -53,32 +46,32 @@
 								<tr>
 									<td width="97">Estudo:</td>
 									<td width="257"><input type="text"
-										name="numeroEstudoOriginal" id="numeroEstudoOriginal"
+										name="numeroEstudoOriginal" id="numeroEstudoOriginal" readonly="readonly"
 										style="width: 100px;" /></td>
 								</tr>
 								<tr>
 									<td>C&oacute;digo:</td>
-									<td><input type="text" name="codigoProduto"
+									<td><input type="text" name="codigoProduto" readonly="readonly"
 										id="codigoProduto" style="width: 100px;" /></td>
 								</tr>
 								<tr>
 									<td>Produto:</td>
-									<td><input type="text" name="nomeProduto" id="nomeProduto"
+									<td><input type="text" name="nomeProduto" id="nomeProduto" readonly="readonly"
 										style="width: 200px;" /></td>
 								</tr>
 								<tr>
 									<td>Edi&ccedil;&atilde;o:</td>
-									<td><input type="text" name="edicaoProduto"
+									<td><input type="text" name="edicaoProduto" readonly="readonly"
 										id="edicaoProduto" style="width: 100px;" /></td>
 								</tr>
 								<tr>
 									<td>Classifica&ccedil;&atilde;o:</td>
-									<td><input type="text" name="classificacao" id="classificacao"
+									<td><input type="text" name="classificacao" id="classificacao" readonly="readonly"
 										style="width: 200px;" /></td>
 								</tr>
 								<tr>
 									<td>Data Distribui&ccedil;&atilde;o:</td>
-									<td><input type="text" name="dataDistribuicao"
+									<td><input type="text" name="dataDistribuicao" readonly="readonly"
 										id="dataDistribuicao" style="width: 80px;" /></td>
 								</tr>
 								<tr>
@@ -109,7 +102,7 @@
 												<input type="text"
 													name="quantidadeReparte" id="quantidadeReparte"
 													style="width: 40px;"
-													onchange="dividirEstudo.gerarDivisao();" /> exs</td>
+													onblur="dividirEstudo.gerarDivisao();" /> exs</td>
 											</tr>
 										</table></td>
 								</tr>
@@ -191,6 +184,4 @@
 
 	</div>
 
-
-</body>
 </div>

@@ -12,8 +12,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-import br.com.abril.nds.util.CellModelKeyValue;
-import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -80,6 +78,10 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	
 	private Integer idCopia;
 	
+	private Date dataLancamentoEstudo;
+	
+	private String dataLancamentoEstudoFormatado;
+	
 	//Usado para controlar cor sim cor não entre linhas originais e copias
 	//Na matriz de distribuição
 	private Integer idRow;
@@ -89,13 +91,6 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	private BigInteger qtdeReparteEstudo;
 	
 	private List<ProdutoDistribuicaoVO> produtoDistribuicoesDuplicados =  new ArrayList<ProdutoDistribuicaoVO>();
-	
-	private TableModel<CellModelKeyValue<ProdutoDistribuicaoVO>> tmDuplicados = new TableModel<CellModelKeyValue<ProdutoDistribuicaoVO>>();
-	
-	public ProdutoDistribuicaoVO() {
-		
-		tmDuplicados.setRows(new ArrayList<CellModelKeyValue<ProdutoDistribuicaoVO>>());
-	}
 	
 	
 	public void addItemDuplicado(ProdutoDistribuicaoVO produtoDistribuicaoVO, Integer row) {
@@ -386,16 +381,6 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 		this.qtdeReparteEstudo = qtdeReparteEstudo;
 	}
 
-	public TableModel<CellModelKeyValue<ProdutoDistribuicaoVO>> getTmDuplicados() {
-		return tmDuplicados;
-	}
-
-	public void setTmDuplicados(
-			TableModel<CellModelKeyValue<ProdutoDistribuicaoVO>> tmDuplicados) {
-		this.tmDuplicados = tmDuplicados;
-	}
-
-
 	public List<ProdutoDistribuicaoVO> getProdutoDistribuicoesDuplicados() {
 		return produtoDistribuicoesDuplicados;
 	}
@@ -404,6 +389,24 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	public void setProdutoDistribuicoesDuplicados(
 			List<ProdutoDistribuicaoVO> produtoDistribuicoesDuplicados) {
 		this.produtoDistribuicoesDuplicados = produtoDistribuicoesDuplicados;
+	}
+	
+	public Date getDataLancamentoEstudo() {
+		return dataLancamentoEstudo;
+	}
+
+	public void setDataLancamentoEstudo(Date dataLancamentoEstudo) {
+		this.dataLancamentoEstudo = dataLancamentoEstudo;
+		if(dataLancamentoEstudo!=null)
+			this.dataLancamentoEstudoFormatado = new SimpleDateFormat("dd/MM/yyyy").format(dataLancamentoEstudo);
+	}
+
+	public String getDataLancamentoEstudoFormatado() {
+		return dataLancamentoEstudoFormatado;
+	}
+
+	public void setDataLancamentoEstudoFormatado(String dataLancamentoEstudoFormatado) {
+		this.dataLancamentoEstudoFormatado = dataLancamentoEstudoFormatado;
 	}
 	
 }

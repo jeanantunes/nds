@@ -2,8 +2,12 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.BeanUtils;
@@ -134,46 +138,60 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 
 	// Gera Novo Estudo
 	estudoRepository.adicionar(estudo1);
+	
+	List<EstudoCota> cotas = new ArrayList<>();
 
-	boolean primeiraVez = true;
-	while (qtdDistribuido.compareTo(BigInteger.ZERO) > 0) {
+	for (EstudoCota cota : estudoCotas) {
+	    EstudoCota nova = new EstudoCota();
+	    BeanUtils.copyProperties(cota, nova, new String[] {"id", "rateiosDiferenca", "movimentosEstoqueCota", "itemNotaEnvios"});
+	    nova.setReparte(nova.getQtdeEfetiva());
+	    nova.setEstudo(estudo1);
+	    nova.setQtdeEfetiva(qtdReparte);
+	    nova.setClassificacao("CP");
+	    cotas.add(nova);
+	    
+	    qtdDistribuido = qtdDistribuido.subtract(qtdReparte);
 
-	    if (primeiraVez || estudoComplementarVO.isMultiplo()) {
-		for (EstudoCota estudoCota : estudoCotas) {
-		    if(primeiraVez){
-			estudoCota.setQtdeEfetiva(BigInteger.ZERO);
-		    }
+	    if (qtdDistribuido.compareTo(qtdReparte) <= 0) {
+		break;
+	    }
+	}
+	
+	// reordenando de acordo com o ranking
+	cotas = ordenarCotas(cotas, estudoComplementarVO);
+	if (!estudoComplementarVO.isMultiplo()) {
+	    qtdReparte = BigInteger.ONE;
+	} 
+	while (qtdDistribuido.compareTo(qtdReparte) > 0) {
+	    for (EstudoCota cota : cotas) {
+		cota.setQtdeEfetiva(cota.getQtdeEfetiva().add(qtdReparte));
+		qtdDistribuido = qtdDistribuido.subtract(qtdReparte);
 
-		    estudoCota.setQtdeEfetiva(qtdReparte.add(estudoCota.getQtdeEfetiva()));
-
-		    estudoCota.setClassificacao("CP");
-		    qtdDistribuido = qtdDistribuido.subtract(qtdReparte);
-
-		    if(qtdDistribuido.compareTo(BigInteger.ZERO)<=0 ){
-			break;
-		    }
-		}
-	    } else {
-		for (EstudoCota estudoCota : estudoCotas) {
-		    estudoCota.setQtdeEfetiva(estudoCota.getQtdeEfetiva().add(BigInteger.valueOf(1l)));
-		    qtdDistribuido = qtdDistribuido.subtract(BigInteger.valueOf(1l));
-
-		    if (qtdDistribuido.compareTo(BigInteger.ZERO) <= 0) {
-			break;
-		    }
+		if (qtdDistribuido.compareTo(qtdReparte) <= 0) {
+		    break;
 		}
 	    }
-	    primeiraVez=false;
 	}
 
-	for(EstudoCota estCota: estudoCotas){
-	    EstudoCota novo = new EstudoCota();
-	    BeanUtils.copyProperties(estCota, novo, new String[] {"id", "rateiosDiferenca", "movimentosEstoqueCota", "itemNotaEnvios"});
-	    novo.setReparte(novo.getQtdeEfetiva());
-	    novo.setEstudo(estudo1);
-	    estudoCotaRepository.adicionar(novo);	
+	for (EstudoCota cota : cotas) {
+	    cota.setReparte(cota.getQtdeEfetiva());
+	    estudoCotaRepository.adicionar(cota);	
 	}
 	return true;
+    }
+
+    private List<EstudoCota> ordenarCotas(List<EstudoCota> estudoCotas, EstudoComplementarVO estudoComplementarVO) {
+	Map<Long, EstudoCota> mapCotas = new HashMap<>();
+	for (EstudoCota cota : estudoCotas) {
+	    mapCotas.put(cota.getCota().getId(), cota);
+	}
+	LinkedList<EstudoCota> cotasOrdenadas = new LinkedList<>(estudoComplementarRepository.getCotasOrdenadas(estudoComplementarVO));
+	LinkedList<EstudoCota> retorno = new LinkedList<>();
+	
+	for (EstudoCota cota : cotasOrdenadas) {
+	    retorno.add(mapCotas.get(cota.getCota().getId()));
+	}
+	return retorno;
     }
 
     private List<EstudoCota> selecionarBancas(EstudoComplementarVO estudoComplementarVO) {

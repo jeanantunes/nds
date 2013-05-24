@@ -45,6 +45,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" else ''")
 		.append(" end as liberado,")
 		.append(" estudo.ID as idEstudo,")
+		.append(" estudo.data_lancamento as dataLancamentoEstudo,")
 		.append(" lanc.REPARTE as reparte,")
 		.append(" lanc.DATA_FIN_MAT_DISTRIB as dataFinMatDistrib,")
 		.append(" lanc.REPARTE as lancto,")
