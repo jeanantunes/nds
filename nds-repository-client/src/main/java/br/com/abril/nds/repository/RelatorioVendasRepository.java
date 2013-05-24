@@ -3,10 +3,14 @@ package br.com.abril.nds.repository;
 import java.util.List;
 
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
+import br.com.abril.nds.client.vo.RegistroCurvaABCEditorVO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
+import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
 
 public interface RelatorioVendasRepository {
 
-	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO);
+	List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO);
 
+	List<RegistroCurvaABCEditorVO> obterCurvaABCEditor(FiltroCurvaABCEditorDTO filtro);
+	
 }

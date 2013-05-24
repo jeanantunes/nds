@@ -163,6 +163,38 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		return mapRanking;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public Map<Long, Long> obterRankingProdutoEditor() {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("  	select  consolidado.EDITOR_ID as idEditor, sum(consolidado.VALOR_TOTAL_VENDA_COM_DESCONTO) as valor ")
+		
+		.append("    from VIEW_CONSOLIDADO_MOVIMENTO_ESTOQUE_COTA consolidado  ")
+	
+		.append("    group by consolidado.EDITOR_ID ")
+	
+		.append("    order by valor desc ");
+		
+		SQLQuery query  = getSession().createSQLQuery(sql.toString());
+		
+		query.addScalar("idEditor", StandardBasicTypes.LONG);
+		query.addScalar("valor");
+		
+		Map<Long, Long> mapRanking = new HashMap<>();
+		
+		List<Object[]> resultList = query.list();
+		
+		long i = 1;
+		
+		for (Object[] result : resultList) {
+			
+			mapRanking.put((long) result[0], i++);
+		}
+		
+		return mapRanking;
+	}
+	
 	public Long obterRankingCotaDistribuidor(Long idCota){
 		
 		StringBuilder sql = new StringBuilder();
