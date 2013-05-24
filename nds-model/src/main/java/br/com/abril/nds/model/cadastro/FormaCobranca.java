@@ -85,7 +85,7 @@ public class FormaCobranca implements Serializable {
 	@OneToOne(mappedBy="formaCobranca")
 	private PoliticaCobranca politicaCobranca;
 	
-	@ManyToMany(fetch = FetchType.EAGER)  
+	@ManyToMany  
 	@JoinTable(name = "FORMA_COBRANCA_FORNECEDOR", joinColumns = {@JoinColumn(name = "FORMA_COBRANCA_ID")}, 
 	inverseJoinColumns = {@JoinColumn(name = "FORNECEDOR_ID")})
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
