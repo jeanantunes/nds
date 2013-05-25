@@ -532,7 +532,14 @@ var ConferenciaEncalheCont = $.extend(true, {
 			
 			$.each(listaDebitoCredito, function(index, value){
 				value.cell.valor = parseFloat(value.cell.valor).toFixed(2);
-				value.cell.dataLancamento = value.cell.dataLancamento.substr(8, 2) +'/'+ value.cell.dataLancamento.substr(5, 2)+'/'+ value.cell.dataLancamento.substr(0, 4);
+				
+				var strDataArr;
+				if(value.cell.dataLancamento.indexOf('-') > -1) {
+					strDataArr = value.cell.dataLancamento.split('-');
+				
+					value.cell.dataLancamento = strDataArr[2] +'/'+ strDataArr[1] +'/'+ strDataArr[0];
+				}
+								
 			});
 		
 		}
