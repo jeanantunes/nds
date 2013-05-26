@@ -162,6 +162,8 @@
 									
 									if (url.indexOf("/devolucao/conferenciaEncalhe/") >= 0) {
 										$span = $($span).addClass("conferencia_encalhe");
+									}else if (url.indexOf("/estoque/diferenca/lancamento") >= 0) {
+										$span = $($span).addClass("lancamento_faltas_sobras");
 									}
 									
 									$('a:contains(' + title + ')', ulTabs).last().parent().prepend($span);
@@ -183,14 +185,24 @@
 											if (index > -1) {
 												
 												var indAbaConferenciaEncalhe = $(this).parent().find('.conferencia_encalhe').index() > -1;
+												var indAbaLancamentoFaltasSobras = $(this).parent().find('.lancamento_faltas_sobras').index() > -1;
 												
 												if(indAbaConferenciaEncalhe) {
 													
+
 													if((typeof(ConferenciaEncalhe)  == 'undefined') || ConferenciaEncalhe == null) {
 														return;
 													}
 													
 													ConferenciaEncalhe.verificarAlteracoesConferenciaEncalheParaFecharAba(self, index);
+													
+												}else if(indAbaLancamentoFaltasSobras) {
+													
+													if((typeof(lancamentoController)  == 'undefined') || lancamentoController == null) {
+														return;
+													}
+													
+													lancamentoController.verificarAlteracoesLancamentoFaltasSobrasParaFecharAba(self, index);
 													
 												} else {
 													
@@ -251,7 +263,6 @@
 	$(document).ready(function() {
 		
 		$("#ajaxLoading").ajaxStart(function() {
-			$(document).keydown(function(event){event.stopPropagation();return false;});
 			$(this).fadeIn(200);
 			
 		});

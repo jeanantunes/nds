@@ -13,7 +13,7 @@ var diferencaEstoqueController = $.extend(true, {
 		
 		$('input[id^="data"]', diferencaEstoqueController.workspace).mask("99/99/9999");
 		
-		$("#produto", diferencaEstoqueController.workspace).autocomplete({source: ""});
+		$("#produto", diferencaEstoqueController.workspace).autocomplete({source: []});
 
 		$(".consultaFaltasSobrasGrid", diferencaEstoqueController.workspace).flexigrid({
 			preProcess: diferencaEstoqueController.executarPreProcessamento,

@@ -14,6 +14,7 @@ import java.util.TreeSet;
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.ComparatorChain;
 
+import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.RecolhimentoDTO;
 
@@ -29,7 +30,7 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 	 * {@inheritDoc}
 	 */
 	@Override
-	protected TreeMap<Date, List<ProdutoRecolhimentoDTO>> gerarMatrizRecolhimentoBalanceada(RecolhimentoDTO dadosRecolhimento) {
+	protected BalanceamentoRecolhimentoDTO gerarMatrizRecolhimentoBalanceada(RecolhimentoDTO dadosRecolhimento) {
 		
 		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoBalanceada =
 			new TreeMap<Date, List<ProdutoRecolhimentoDTO>>();
@@ -68,11 +69,20 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 			}
 		}
 		
-		this.gerenciarProdutosRecolhimentoNaoBalanceados(
-			matrizRecolhimentoBalanceada, todosProdutosRecolhimentoNaoBalanceados,
-			datasRecolhimento, dadosRecolhimento);
+		if (!datasRecolhimento.isEmpty()) {
 		
-		return matrizRecolhimentoBalanceada;
+			this.gerenciarProdutosRecolhimentoNaoBalanceados(
+				matrizRecolhimentoBalanceada, todosProdutosRecolhimentoNaoBalanceados,
+				datasRecolhimento, dadosRecolhimento);
+		}
+		
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento =
+			super.gerarBalanceamentoRecolhimentoDTO(matrizRecolhimentoBalanceada,
+													todosProdutosRecolhimentoNaoBalanceados,
+													dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor());
+			
+		
+		return balanceamentoRecolhimento;
 	}
 	
 	/*
@@ -139,16 +149,21 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceados = null;
 
-		List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaData = matrizRecolhimentoBalanceada.get(dataBalanceamento);
-
 		BigInteger capacidadeManuseio = dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor();
 
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoBalanceaveis = 
 			super.obterProdutosRecolhimentoBalanceaveisPorData(
 				dadosRecolhimento, dataRecolhimentoPrevista);
 
+		if (dataBalanceamento == null) {
+			
+			return produtosRecolhimentoBalanceaveis;
+		}
+		
+		List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaData = matrizRecolhimentoBalanceada.get(dataBalanceamento);
+		
 		BigDecimal expectativaEncalheTotalAtualNaData = super.obterExpectativaEncalheTotal(produtosRecolhimentoNaData);
-
+		
 		BigDecimal excessoExpectativaEncalhe = 
 			super.calcularExcessoExpectativaEncalhe(
 				expectativaEncalheTotalAtualNaData, capacidadeManuseio, expectativaEncalheABalancear);
@@ -177,6 +192,8 @@ public class BalanceamentoRecolhimentoAutomaticoStrategy extends AbstractBalance
 															 List<ProdutoRecolhimentoDTO> produtosRecolhimentoBalanceaveis,
 															 TreeSet<Date> datasRecolhimento,
 															 RecolhimentoDTO dadosRecolhimento) {
+		
+		//TODO: tratar produtos
 		
 		BigInteger capacidadeRecolhimentoExcedente =
 			this.obterCapacidadeRecolhimentoExcedente(

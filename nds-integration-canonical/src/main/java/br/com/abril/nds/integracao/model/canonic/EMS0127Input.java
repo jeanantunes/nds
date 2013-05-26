@@ -22,6 +22,10 @@ public class EMS0127Input extends IntegracaoDocumentMaster<EMS0127InputItem> imp
 	
 	private String tipoDocumento;
 	
+	private String baseDeDados;
+	
+	private String usuarioBaseDeDados;
+	
 	private Date dataEmissao;
 	
 	private Integer dataAnoReferencia;
@@ -34,7 +38,7 @@ public class EMS0127Input extends IntegracaoDocumentMaster<EMS0127InputItem> imp
 	
 	private Integer numeroSemanaReferencia;
 	
-	private Long nuemroControle;
+	private Long numeroControle;
 	
 	private Date dataLimiteRecebimento;
 	
@@ -86,6 +90,22 @@ public class EMS0127Input extends IntegracaoDocumentMaster<EMS0127InputItem> imp
 		this.tipoDocumento = tipoDocumento;
 	}
 
+	public String getBaseDeDados() {
+		return baseDeDados;
+	}
+
+	public void setBaseDeDados(String baseDeDados) {
+		this.baseDeDados = baseDeDados;
+	}
+
+	public String getUsuarioBaseDeDados() {
+		return usuarioBaseDeDados;
+	}
+
+	public void setUsuarioBaseDeDados(String usuarioBaseDeDados) {
+		this.usuarioBaseDeDados = usuarioBaseDeDados;
+	}
+
 	public Date getDataEmissao() {
 		return dataEmissao;
 	}
@@ -134,12 +154,12 @@ public class EMS0127Input extends IntegracaoDocumentMaster<EMS0127InputItem> imp
 		this.numeroSemanaReferencia = numeroSemanaReferencia;
 	}
 
-	public Long getNuemroControle() {
-		return nuemroControle;
+	public Long getNumeroControle() {
+		return numeroControle;
 	}
 
-	public void setNuemroControle(Long nuemroControle) {
-		this.nuemroControle = nuemroControle;
+	public void setNumeroControle(Long numeroControle) {
+		this.numeroControle = numeroControle;
 	}
 
 	public Date getDataLimiteRecebimento() {

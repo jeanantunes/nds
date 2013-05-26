@@ -71,12 +71,70 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			balanceamentoRecolhimentoController.obterParametrosPesquisa(),
 			function(result) {
 				
-				balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
-				$('#utilizaSedeAtendida').val(result.utilizaSedeAtendida);
+				if(result.produtosNaoBalanceadosAposFechamentoMatriz
+						&& result.produtosNaoBalanceadosAposFechamentoMatriz.length > 0 ){
+					
+					balanceamentoRecolhimentoController.verificarProdutosNaoBalanceadosAposConfirmacaoMatriz(result)
+				}
+				else{
+					
+					balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
+					$('#utilizaSedeAtendida').val(result.utilizaSedeAtendida);
+				}
+
 			},
 			function() {
 				balanceamentoRecolhimentoController.showResumo(false);
 			}
+		);
+	},
+	
+	verificarProdutosNaoBalanceadosAposConfirmacaoMatriz : function(result) {
+		
+		var mensagemDialog ="<ul style='margin-left: 20px;'>" ;
+		
+		$.each(result.produtosNaoBalanceadosAposFechamentoMatriz, function(index, item) {
+			
+			mensagemDialog += "<li style='padding-bottom: 10px;'>" + item.codigoProduto +" - "+ item.nomeProduto + " - " + item.numeroEdicao + "</li>";
+	    });	
+		
+		mensagemDialog += "</ul>";
+		
+		$("#descdialogProdutosNaoBalanceadosAposConfirmacaoMatriz",balanceamentoRecolhimentoController.workspace).html(mensagemDialog);
+		
+		$("#dialogProdutosNaoBalanceadosAposConfirmacaoMatriz", balanceamentoRecolhimentoController.workspace).dialog({
+			resizable: false,
+			height:'auto',
+			width:600,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					
+					balanceamentoRecolhimentoController.processarProdutosNaoBalanceadosAposConfirmacaoMatriz(result);
+					
+					$(this).dialog("close");
+				},
+				"Cancelar": function() {
+					
+					$(this).dialog("close");
+				}
+			},
+			
+			form: $("#dialogProdutosNaoBalanceadosAposConfirmacaoMatriz", balanceamentoRecolhimentoController.workspace).parents("form")
+		});
+	},
+	
+	processarProdutosNaoBalanceadosAposConfirmacaoMatriz:function(results){
+		
+		$.postJSON(
+				contextPath + "/devolucao/balanceamentoMatriz/processarProdutosNaoBalanceadosAposConfirmacaoMatriz",
+				null,function(result){
+					balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(results);
+					$('#utilizaSedeAtendida').val(results.utilizaSedeAtendida);
+				},
+				function() {
+					balanceamentoRecolhimentoController.showResumo(false);
+				}
 		);
 	},
 	
@@ -725,12 +783,20 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			null,
 			function(result) {
 				
-				balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
+				if(result.produtosNaoBalanceadosAposFechamentoMatriz
+						&& result.produtosNaoBalanceadosAposFechamentoMatriz.length > 0 ){
+					
+					balanceamentoRecolhimentoController.verificarProdutosNaoBalanceadosAposConfirmacaoMatriz(result)
+				}
+				else{
+					
+					balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
 
-				exibirMensagem(
-					'SUCCESS', 
-					[ 'Balanceamento concluído com sucesso.' ]
-				);
+					exibirMensagem(
+						'SUCCESS', 
+						[ 'Balanceamento concluído com sucesso.' ]
+					);
+				}
 			},
 			function(result) {
 				
@@ -748,12 +814,20 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			null,
 			function(result) {
 				
-				balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
-				
-				exibirMensagem(
-					'SUCCESS', 
-					[ 'Balanceamento concluído com sucesso.' ]
-				);
+				if(result.produtosNaoBalanceadosAposFechamentoMatriz
+						&& result.produtosNaoBalanceadosAposFechamentoMatriz.length > 0 ){
+					
+					balanceamentoRecolhimentoController.verificarProdutosNaoBalanceadosAposConfirmacaoMatriz(result)
+				}
+				else{
+					
+					balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
+					
+					exibirMensagem(
+						'SUCCESS', 
+						[ 'Balanceamento concluído com sucesso.' ]
+					);
+				}
 			},
 			function() {
 				
@@ -894,18 +968,9 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	
 	reprogramarRecolhimentoUnico : function(idRow, boolean) {
 		
-		var dataBoxResumo = null;
-		$('.box_resumo label', balanceamentoRecolhimentoController.workspace).each(function(key, value){
-			var dataSplit = $(value).text().split('/');
-			
-			dataBoxResumo = new Date(dataSplit[2],dataSplit[1], dataSplit[0]);
-		});
-		
-		
 		var linhasDaGrid = $('.balanceamentoGrid tr', balanceamentoRecolhimentoController.workspace);
 		
 		var linhaSelecionada = null;
-		
 		
 		$.each(linhasDaGrid, function(index, value) {
 			
@@ -918,50 +983,95 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			if (idLancamento == idRow) {
 				
 				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 15, "novaData");
+				
 				var idFornecedor = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 15, "hiddenIdFornecedor");
 				
 				var novaDataSplit = novaData.split('/');
 					
-				novaDataFormatoDate = new Date(novaDataSplit[2], novaDataSplit[1], novaDataSplit[0]);
+				novaDataFormatoDate = new Date(novaDataSplit[2], novaDataSplit[1] - 1, novaDataSplit[0]);
 
-				if(novaDataFormatoDate > dataBoxResumo)
-				{
-					var dataAntiga = $("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val();
+				var dataAntiga = $("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val();
+				
+				var anoSemanaNumero = 
+					$("#numeroSemana", balanceamentoRecolhimentoController.workspace).val();
+				
+				var numeroSemana = '';
+				
+				if (anoSemanaNumero && anoSemanaNumero.length>=5) {
 					
-					$(".container").append('<div id="alertAceite">A data está fora da semana de recolhimento. Você deseja continuar?</div>');
-					
-					$("#alertAceite").dialog({
-						buttons : {
-					        "Confirmar" : function() {
-					        	$('#alertAceite').remove();
-					        	boolean = true;
-					   		
-					        	linhaSelecionada = {idFornecedor:idFornecedor,idLancamento:idLancamento,novaData:novaData,aceiteDataNova:boolean};
-					        	
-					    		var param = {dataAntigaFormatada:dataAntiga};
-					    		if(linhaSelecionada){
-					    			param =  serializeObjectToPost('produtoRecolhimento', linhaSelecionada,param);
-					    		}
-					    		
-					    		$.postJSON(contextPath + "/devolucao/balanceamentoMatriz/reprogramarRecolhimentoUnico",param,
-					    				   function(result) {
-					    				   		balanceamentoRecolhimentoController.atualizarResumoBalanceamento();
-					    				   },
-					    				   function() {
-					    				   }
-					    		);
-					        },
-					        "Cancelar" : function() {
-					        	$('#alertAceite').remove();
-					        	balanceamentoRecolhimentoController.recolocacaoDataAntigaReprogramarRecolhimentoUnico(idRow, dataAntiga);
-					        }
-					      }
-					    });
-				   	
-				   	$("#alertAceite").dialog("open");
-					
-					
-				}	
+					numeroSemana = anoSemanaNumero.substr(4);
+				}
+				
+				var parametros = new Array();
+				
+				parametros.push({name:'numeroSemana', value:numeroSemana });
+				parametros.push({name:'novaDataBalanceamentoFormatada', value:novaData });
+				parametros.push({name:'dataBalanceamentoFormatada', value:dataAntiga });
+				
+				$.postJSON(
+					contextPath + "/devolucao/balanceamentoMatriz/validarReprogramacaoDeDataNaSemana",
+					parametros,
+					function(result) {
+						
+						var dataValida = result;
+						
+						linhaSelecionada = {
+							idFornecedor: idFornecedor,
+							idLancamento: idLancamento,
+							novaData: novaData
+						};
+						
+						var parametros = {dataAntigaFormatada: dataAntiga};
+						
+						if (linhaSelecionada) {
+							
+							parametros =  
+								serializeObjectToPost(
+									'produtoRecolhimento', linhaSelecionada, parametros);
+						}
+						
+						if (dataValida) {
+							
+							$.postJSON(
+								contextPath + "/devolucao/balanceamentoMatriz/reprogramarRecolhimentoUnico",
+								parametros,
+								function(result) {
+									balanceamentoRecolhimentoController.atualizarResumoBalanceamento();
+								}
+							);
+							
+						} else {
+							
+							$("#alertAceite", balanceamentoRecolhimentoController.workspace).dialog({
+								resizable: false,
+								height:'auto',
+								width:400,
+								modal: true,
+								buttons: {
+									"Confirmar": function() {
+										
+										$.postJSON(
+												contextPath + "/devolucao/balanceamentoMatriz/reprogramarRecolhimentoUnico",
+												parametros,
+												function(result) {
+													balanceamentoRecolhimentoController.atualizarResumoBalanceamento();
+												}
+											);
+										
+										$(this).dialog("close");
+									},
+									"Cancelar": function() {
+										
+										balanceamentoRecolhimentoController.recolocacaoDataAntigaReprogramarRecolhimentoUnico(idRow, dataAntiga);
+										
+										$(this).dialog("close");
+									}
+								},
+								form: $("#alertAceite", balanceamentoRecolhimentoController.workspace).parents("form")			
+							});
+						}
+				   }
+				);
 			}
 		});
 	},

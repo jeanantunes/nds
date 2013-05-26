@@ -52,6 +52,8 @@ public class ConferenciaEncalheDTO implements Serializable {
 	
 	private Date dataRecolhimento;
 	
+	private Date dataConferencia;
+	
 	private Integer codigoSM;
 	
 	private String codigo;
@@ -118,6 +120,14 @@ public class ConferenciaEncalheDTO implements Serializable {
 
 	public void setDataRecolhimento(Date dataRecolhimento) {
 		this.dataRecolhimento = dataRecolhimento;
+	}
+
+	public Date getDataConferencia() {
+		return dataConferencia;
+	}
+
+	public void setDataConferencia(Date dataConferencia) {
+		this.dataConferencia = dataConferencia;
 	}
 
 	public Integer getCodigoSM() {

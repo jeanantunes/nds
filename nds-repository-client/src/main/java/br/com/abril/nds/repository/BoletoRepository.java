@@ -191,5 +191,9 @@ public interface BoletoRepository extends Repository<Boleto,Long> {
 	 * @return List<Boleto>
 	 */
 	List<Boleto> obterBoletosGeradosNaDataOperacaoDistribuidor(Date dataOperacao);
+
+	List<Boleto> obterBoletosNaoPagos(Date data);
+	
+	Long verificaEnvioDeEmail(Boleto boleto);
 	
 }

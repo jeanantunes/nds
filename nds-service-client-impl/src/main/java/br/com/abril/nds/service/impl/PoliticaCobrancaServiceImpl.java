@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -230,6 +231,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 			
 			parametroCobrancaDTO.setIdPolitica(politica.getId());
 			parametroCobrancaDTO.setPrincipal(politica.isPrincipal()?true:false);
+			parametroCobrancaDTO.setCobradoPeloBackoffice(politica.isCobradoPeloBackoffice());
 			parametroCobrancaDTO.setAcumulaDivida(politica.isAcumulaDivida()?true:false);
 			parametroCobrancaDTO.setFormaEmissao(politica.getFormaEmissao());
 			parametroCobrancaDTO.setUnificada(politica.isUnificaCobranca()?true:false);
@@ -247,7 +249,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 				parametroCobrancaDTO.setTipoFormaCobranca(formaCobranca.getTipoFormaCobranca());
 				parametroCobrancaDTO.setEnvioEmail(formaCobranca.isRecebeCobrancaEmail()?true:false);
 				parametroCobrancaDTO.setVencimentoDiaUtil(formaCobranca.isVencimentoDiaUtil()?true:false);
-				parametroCobrancaDTO.setValorMinimo(formaCobranca.getValorMinimoEmissao().setScale(2, RoundingMode.HALF_UP));
+				parametroCobrancaDTO.setValorMinimo(formaCobranca.getValorMinimoEmissao()!=null?formaCobranca.getValorMinimoEmissao().setScale(2, RoundingMode.HALF_UP):BigDecimal.ZERO);
 				parametroCobrancaDTO.setFormaCobrancaBoleto(formaCobranca.getFormaCobrancaBoleto());
 				
 				
@@ -377,6 +379,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 			politicaCobrancaRepository.alterar(parametroCobrancaPrincipal);
 		}
 		politica.setPrincipal(parametroCobrancaDTO.isPrincipal());
+		politica.setCobradoPeloBackoffice(parametroCobrancaDTO.isCobradoPeloBackoffice());
 		politica.setAcumulaDivida(parametroCobrancaDTO.isAcumulaDivida());
 		politica.setFormaEmissao(parametroCobrancaDTO.getFormaEmissao());
 		politica.setUnificaCobranca(parametroCobrancaDTO.isUnificada());

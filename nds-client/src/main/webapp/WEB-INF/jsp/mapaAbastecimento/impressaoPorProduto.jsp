@@ -70,27 +70,30 @@ function imprimir(){
       
     </table></td>
     <td width="20">&nbsp;&nbsp;&nbsp;</td>
-    <td width="390" valign="top">
     
-    <table width="390" border="0" align="right" cellpadding="0" cellspacing="0" class="relatorios" style="margin-top:5px;">
-      <tr class="class_linha_3">
-        <td width="174" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Publicação</strong></td>
-        <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>Edição</strong></td>
-        <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>SM</strong></td>
-        <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Total</strong></td>
-      </tr>
-        <c:forEach items="${mapa.produtos}" var="produto" varStatus="statusProduto" begin="${mapa.produtos.size()%2==0?mapa.produtos.size()/2:(mapa.produtos.size()/2)+1}" >
-      
-      <tr class="class_linha_${statusProduto.index%2==0?1:2}">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.nomeProduto}</td>
-        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.numeroEdicao}</td>
-        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>${produto.value.sm}</strong></td>
-        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.total}</td>
-      </tr>
-      
-      </c:forEach>
-      
-    </table></td>
+    <c:if test="${(mapa.produtos.size()/2) >= 1}">
+    
+	    <td width="390" valign="top">
+	    
+		    <table width="390" border="0" align="right" cellpadding="0" cellspacing="0" class="relatorios" style="margin-top:5px;">
+		      <tr class="class_linha_3">
+		        <td width="174" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Publicação</strong></td>
+		        <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>Edição</strong></td>
+		        <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>SM</strong></td>
+		        <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Total</strong></td>
+		      </tr>
+		        <c:forEach items="${mapa.produtos}" var="produto" varStatus="statusProduto" begin="${mapa.produtos.size()%2==0?mapa.produtos.size()/2:(mapa.produtos.size()/2)+1}" >
+		      
+		      <tr class="class_linha_${statusProduto.index%2==0?1:2}">
+		        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.nomeProduto}</td>
+		        <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.numeroEdicao}</td>
+		        <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>${produto.value.sm}</strong></td>
+		        <td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.total}</td>
+		      </tr>	      
+		      </c:forEach>
+		    </table>
+	    </td>
+    </c:if>
   </tr>
 </table>
 </body>

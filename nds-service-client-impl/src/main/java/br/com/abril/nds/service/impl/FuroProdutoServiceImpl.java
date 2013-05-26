@@ -157,7 +157,7 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		
 		Lancamento lancamento = this.lancamentoRepository.buscarPorId(idLancamento);
 		
-		if (this.distribuidorService.regimeEspecial()) {
+		/*if (this.distribuidorService.regimeEspecial()) {
 			
 			List<ItemNotaEnvio> itensNotaEnvio = 
 				this.itemNovaEnvioRepository.obterItemNotaEnvio(idLancamento);
@@ -166,7 +166,7 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 				
 				this.itemNovaEnvioRepository.remover(itemNotaEnvio);
 			}
-		}
+		}*/
 		
 		if (this.verificarProdutoExpedido(idLancamento)) {
 			
@@ -178,21 +178,21 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 			
 			// Geração de movimentação de estoque por cota / movimentação de estoque / estoque / estoque cota
 			movimentoEstoqueService.gerarMovimentoEstoqueFuroPublicacao(lancamento, idUsuario);
-			
+						
 		}
 		
 		// Ao furar um produto com nota de envio emitida, o item da nota eh removido
-		if (lancamento.getEstudo()!=null){
+		if (lancamento.getEstudo() != null) {
 			
 			for(EstudoCota ec : lancamento.getEstudo().getEstudoCotas()) {
 				
-				if (lancamento.getEstudo().getEstudoCotas()!=null && !lancamento.getEstudo().getEstudoCotas().isEmpty()){
+				if (lancamento.getEstudo().getEstudoCotas() != null && !lancamento.getEstudo().getEstudoCotas().isEmpty()) {
 					
-					for(ItemNotaEnvio item : ec.getItemNotaEnvios()){
+					for(ItemNotaEnvio item : ec.getItemNotaEnvios()) {
 						
 						item.setEstudoCota(null);
 						
-						itemNovaEnvioRepository.alterar(item);
+						itemNovaEnvioRepository.merge(item);
 					}
 				}
 			}

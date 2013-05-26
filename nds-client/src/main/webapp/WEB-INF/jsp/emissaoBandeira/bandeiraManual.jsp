@@ -11,8 +11,8 @@
 
 <table width="920" border="0" align="center" cellpadding="3" cellspacing="0" style="margin-top:5px;">
   <tr>
-    <td width="121" height="21" align="left" valign="middle"><img src="${pageContext.request.contextPath}/images/logo_sistema.png" width="110" height="70" alt="Treelog" /></td>
-    <td width="486" align="center" valign="middle" style="border-top:1px solid #ccc;border-left:1px solid #ccc;border-right:1px solid #ccc;border-bottom:1px solid #ccc;;"><input id="tipoOperacaoBandeiraManual" type="text" style="width:480px; font-size:60px; height:60px; font-weight:bold;" /></td>
+    <td width="121" height="21" align="left" valign="middle"><img src="${pageContext.request.contextPath}/devolucao/emissaoBandeira/obterLogoDistribuidor" width="110" height="70" alt="Treelog" /></td>
+    <td width="486" align="center" valign="middle" style="border-top:1px solid #ccc;border-left:1px solid #ccc;border-right:1px solid #ccc;border-bottom:1px solid #ccc;;"><input id="tipoOperacaoBandeiraManual" type="text" style="width:480px; font-size:50px; height:60px; font-weight:bold;" /></td>
     <td width="82" align="right" valign="middle" style="border-top:1px solid #ccc;border-bottom:1px solid #ccc;"><h3>SEMANA</h3></td>
     <td width="187" align="center" valign="middle"style="border-top:1px solid #ccc;border-right:1px solid #ccc;border-bottom:1px solid #ccc;"><input id="semanaBandeiraManual" type="text" maxlength="3"  style="width:180px; font-size:60px; height:60px; font-weight:bold;" /></td>
   </tr>
@@ -55,7 +55,7 @@
     <td colspan="3" align="center"><table width="100%" border="0" cellpadding="2" cellspacing="0" style="height:90px; color:#000;" bgcolor="#000000">
       <tr>
         <td width="27" align="center" valign="middle" style="border-left:1px solid #000;"><img src="${pageContext.request.contextPath}/images/tit_destino.png" width="14" height="73" alt="Destino" /></td>
-        <td width="881" align="left"><input id="destinoBandeiraManual" type="text" style="width:870px; font-size:70px; height:60px; font-weight:bold;" /></td>
+        <td width="881" align="left"><input id="destinoBandeiraManual" type="text" style="width:870px; font-size:50px; height:60px; font-weight:bold;" /></td>
       </tr>
     </table></td>
   </tr>
@@ -68,7 +68,7 @@
     <td align="left"><table width="605" border="0" align="left" cellpadding="0" cellspacing="0" style="height:90px; color:#000;" >
       <tr>
         <td width="25" align="center" valign="middle" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><img src="${pageContext.request.contextPath}/images/tit_canal.png" width="14" height="73" alt="Destino" /></td>
-        <td width="497" align="left" style="border-top:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;line-height:30px;"><input id="canalBandeiraManual" type="text" style="width:560px; font-size:70px; height:60px; font-weight:bold;" /></td>
+        <td width="497" align="left" style="border-top:1px solid #000;border-right:1px solid #000;border-bottom:1px solid #000;line-height:30px;"><input id="canalBandeiraManual" type="text" style="width:560px; font-size:50px; height:60px; font-weight:bold;" /></td>
       </tr>
     </table></td>
     <td align="center">&nbsp;</td>
@@ -93,14 +93,15 @@
             <span class="bt_novos" title="Imprimir Bandeira"><a href="javascript:;" onclick="emissaoBandeiraController.imprimirBandeiraManual();" rel="bandeira"><img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />Imprimir Bandeira</a></span>
 </table>
 
-<div id="dialog-pallets-bandeira-manual" title="Pallets">
-<fieldset>
-	<legend>Informe a quantidade de pallets</legend>
-    N&uacute;mero de Pallets: <input id="numeroPalletsBandeiraManual" type="text" style="width:40px; margin-left:10px; text-align:center;" />
-
-</fieldset>
-</div>
-
+<form id="form-pallets-bandeira-manual">
+	<div id="dialog-pallets-bandeira-manual" title="Pallets">
+	<fieldset>
+		<legend>Informe a quantidade de pallets</legend>
+	    N&uacute;mero de Pallets: <input id="numeroPalletsBandeiraManual" type="text" style="width:40px; margin-left:10px; text-align:center;" />
+	
+	</fieldset>
+	</div>
+</form>
 	<script type="text/javascript">
 		$(function(){
 			emissaoBandeiraController.initBandeiraManual();

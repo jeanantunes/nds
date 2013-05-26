@@ -50,5 +50,5 @@ public interface DistribuicaoFornecedorRepository extends Repository<Distribuica
 	 * @return {@link List<Integer>}
 	 * 
 	 */
-	List<Integer> obterCodigosDiaDistribuicaoFornecedor(Long idFornecedor, OperacaoDistribuidor operacaoDistribuidor);
+	List<Integer> obterCodigosDiaDistribuicaoFornecedor(OperacaoDistribuidor operacaoDistribuidor, Long ...idFornecedor);
 }

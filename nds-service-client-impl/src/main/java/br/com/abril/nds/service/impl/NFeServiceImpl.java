@@ -17,6 +17,8 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,6 +64,8 @@ import br.com.abril.nds.service.ParametrosDistribuidorService;
 @Service
 public class NFeServiceImpl implements NFeService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(NFeServiceImpl.class);
+	
 	@Autowired
 	protected NotaFiscalRepository notaFiscalRepository;
 	
@@ -142,7 +146,7 @@ public class NFeServiceImpl implements NFeService {
 			return gerarDocumentoIreportNE(listaNEWrapper, false);
 
 		} catch(Exception e) {
-			
+			LOGGER.error("Falha na geração dos arquivos NE!"+ e.getMessage(), e);
 			throw new RuntimeException("Falha na geração dos arquivos NE!", e);
 		}
 	}

@@ -36,6 +36,7 @@ import br.com.abril.nds.model.fiscal.NotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
+import br.com.abril.nds.model.fiscal.StatusRecebimento;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -733,7 +734,10 @@ public class RecebimentoFisicoController extends BaseController {
 			atualizarItensRecebimentoEmSession(itensRecebimento);
 		}
 		
-		recebimentoFisicoService.inserirDadosRecebimentoFisico(getUsuarioLogado(), getNotaFiscalFromSession(), getItensRecebimentoFisicoFromSession(), new Date());
+		NotaFiscalEntrada notaFiscalFromSession = getNotaFiscalFromSession();
+		notaFiscalFromSession.setStatusRecebimento(StatusRecebimento.SALVO);
+		
+		recebimentoFisicoService.inserirDadosRecebimentoFisico(getUsuarioLogado(), notaFiscalFromSession, getItensRecebimentoFisicoFromSession(), new Date());
 		
 		List<String> msgs = new ArrayList<String>();
 		msgs.add("Itens salvos com sucesso.");
@@ -1181,8 +1185,10 @@ public class RecebimentoFisicoController extends BaseController {
 		if(Origem.INTERFACE.equals(notaFiscalEntrada.getOrigem())){
 			atualizarItensRecebimentoEmSession(itensRecebimento);
 		}
+		NotaFiscalEntrada notaFiscalFromSession = getNotaFiscalFromSession();
+		notaFiscalFromSession.setStatusRecebimento(StatusRecebimento.CONFIRMADO);
 		
-		recebimentoFisicoService.confirmarRecebimentoFisico(getUsuarioLogado(), getNotaFiscalFromSession(), getItensRecebimentoFisicoFromSession(), new Date(),false);
+		recebimentoFisicoService.confirmarRecebimentoFisico(getUsuarioLogado(), notaFiscalFromSession, getItensRecebimentoFisicoFromSession(), new Date(),false);
 		
 		List<String> msgs = new ArrayList<String>();
 		msgs.add("Itens Confirmados com Sucesso.");
@@ -1380,13 +1386,16 @@ public class RecebimentoFisicoController extends BaseController {
 	@Path("/validarValorTotalNotaFiscal")
 	public void validarValorTotalNotaFiscal(CabecalhoNotaDTO nota, List<RecebimentoFisicoDTO> itens) {
 		
+		this.validaItensNota(itens);
+		
 		BigDecimal valorInformadoNotaFiscal = CurrencyUtil.converterValor(nota.getValorTotal());
 				
 		BigDecimal totalItem = BigDecimal.ZERO;
 		
 		for (RecebimentoFisicoDTO recebimento : itens) {
-		    
+			
 			totalItem = totalItem.add(recebimento.getValorTotal());
+			
 	    }
 		
 		if (totalItem.compareTo(valorInformadoNotaFiscal) != 0) {

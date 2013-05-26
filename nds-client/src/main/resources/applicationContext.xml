@@ -55,7 +55,6 @@
 				<prop key="hibernate.connection.characterEncoding">UTF-8</prop>
 				<prop key="hibernate.connection.zeroDateTimeBehavior">convertToNull</prop>
 				
-				
 				<!-- CACHE -->
 				
 				<prop key="hibernate.cache.use_second_level_cache">true</prop>

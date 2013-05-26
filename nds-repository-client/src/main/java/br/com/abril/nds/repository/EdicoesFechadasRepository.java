@@ -14,8 +14,6 @@ import br.com.abril.nds.model.estoque.MovimentoEstoque;
  */
 public interface EdicoesFechadasRepository extends Repository<MovimentoEstoque, Long> {
 
-
-
 	/**
 	 * Retorna a lista de edições fechadas filtrada pelo código do fornecedor em um período de datas
 	 * @param dataDe
@@ -41,8 +39,5 @@ public interface EdicoesFechadasRepository extends Repository<MovimentoEstoque, 
 	public BigInteger obterResultadoTotalEdicoesFechadas(Date dataDe, Date dateAte, Long idFornecedor);
 
 
-
-	public abstract Long quantidadeResultadoEdicoesFechadas(Date dataDe,
-			Date dataAte, Long idFornecedor);
 
 }

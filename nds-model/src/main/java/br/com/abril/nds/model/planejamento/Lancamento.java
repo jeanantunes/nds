@@ -391,5 +391,4 @@ public class Lancamento implements Serializable {
 	public void setDataFinMatDistrib(Date dataFinMatDistrib) {
 		this.dataFinMatDistrib = dataFinMatDistrib;
 	}
-	
 }

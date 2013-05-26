@@ -72,7 +72,8 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 		TIPO_NOTA("descricao"),
 		FORNECEDOR("razaoSocial"),
 		VALOR("valorTotalNota"),
-		NOTA_RECEBIDA("notaRecebida");		
+		NOTA_RECEBIDA("notaRecebida"), 
+		CHAVE_ACESSO("chaveAcesso");		
 
 		private String nomeColuna;
 		

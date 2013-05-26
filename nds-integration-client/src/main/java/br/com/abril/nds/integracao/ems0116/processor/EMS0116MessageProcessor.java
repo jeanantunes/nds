@@ -261,32 +261,33 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		for (EnderecoPDV item : enderecosPDV) {
 
 			//if(item.getEndereco().getLogradouro().equals(input.getEndereco())){
-			if(item.getEndereco().getLogradouro().equals(logradouro) &&
+			if(item.getEndereco().getLogradouro().equalsIgnoreCase(logradouro) &&
 			   item.getEndereco().getNumero().equals(numero)){
 				enderecoPDV = item;
 				break;
 			}
 		}
 		
-		if(enderecoPDV == null){
+		if(enderecoPDV == null) {
+			
 			enderecoPDV = incluirNovoEnderecoPDV(input, pdv);
-		}
-		else{
+			
+		} else {
 			
 			Endereco endereco = enderecoPDV.getEndereco();
 			
 			endereco.setCep(input.getCep());
-			endereco.setCidade(input.getNomeMunicipio());
+			endereco.setCidade((input.getNomeMunicipio() != null ? input.getNomeMunicipio().toUpperCase() : input.getNomeMunicipio()));
 			//endereco.setLogradouro(input.getEndereco());
-			endereco.setLogradouro(logradouro);
+			endereco.setLogradouro((logradouro != null ? logradouro.toUpperCase() : logradouro));
 			endereco.setNumero(numero);
 			endereco.setUf(input.getSiglaUF());
 			
 			Endereco endTmp = enderecoRepository.getEnderecoSaneado(input.getCep());
 			
 			if (null != endTmp) {
-				endereco.setBairro(endTmp.getBairro());
-				endereco.setTipoLogradouro(endTmp.getTipoLogradouro());
+				endereco.setBairro((endTmp.getBairro() != null ? endTmp.getBairro().toUpperCase() : endTmp.getBairro()));
+				endereco.setTipoLogradouro((endTmp.getTipoLogradouro() != null ? endTmp.getTipoLogradouro().toUpperCase() : endTmp.getTipoLogradouro()));
 			}
 			
 			getSession().merge(endereco);
@@ -295,7 +296,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		ndsiLoggerFactory.getLogger().logInfo(
 							message,
 							EventoExecucaoEnum.INF_DADO_ALTERADO,
-							"Atualizacao do  Endereco PDV "
+							"Atualizacao do Endereco PDV "
 									+ enderecoPDV.getId());
 			
 	}
@@ -324,16 +325,16 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		
 		Endereco endereco = new Endereco();
 		endereco.setCep(input.getCep());
-		endereco.setCidade(input.getNomeMunicipio());
+		endereco.setCidade((input.getNomeMunicipio() != null ? input.getNomeMunicipio().toUpperCase() : input.getNomeMunicipio()));
 		//endereco.setLogradouro(input.getEndereco());
-		endereco.setLogradouro(logradouro);
+		endereco.setLogradouro((logradouro != null ? logradouro.toUpperCase() : logradouro));
 		endereco.setNumero(numero);
 		endereco.setUf(input.getSiglaUF());
 		Endereco endTmp = enderecoRepository.getEnderecoSaneado(input.getCep());
 		
 		if (null != endTmp) {
-			endereco.setBairro(endTmp.getBairro());
-			endereco.setTipoLogradouro(endTmp.getTipoLogradouro());
+			endereco.setBairro((endTmp.getBairro() != null ? endTmp.getBairro().toUpperCase() : endTmp.getBairro()));
+			endereco.setTipoLogradouro((endTmp.getTipoLogradouro() != null ? endTmp.getTipoLogradouro().toUpperCase() : endTmp.getTipoLogradouro()));
 		}
 
 		//endereco.setNumero(null);
@@ -609,33 +610,38 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	}
 
 	private String getLogradouroSemTipo(String logradouro) {
-		String rua = "RUA ";
+		
+		String rua = "RUA";
 		if (logradouro.startsWith("RUA"))
-			return logradouro.substring(rua.length());
+			return logradouro.substring(rua.length()).trim();
 
 		String avenida = "AV. ";
 		if (logradouro.startsWith(avenida))
-			return logradouro.substring(avenida.length());
+			return logradouro.substring(avenida.length()).trim();
 		
-		String praca = "PR. ";
-		if (logradouro.startsWith(praca))
-			return logradouro.substring(praca.length());
-		
-		String rodovia = "RO. ";
-		if (logradouro.startsWith(rodovia))
-			return logradouro.substring(rodovia.length());
+		String estrada = "ES. ";
+		if (logradouro.startsWith(estrada))
+			return logradouro.substring(estrada.length()).trim();
 		
 		String alameda = "AL. ";
 		if (logradouro.startsWith(alameda))
-			return logradouro.substring(alameda.length());
+			return logradouro.substring(alameda.length()).trim();
+		
+		String praca = "PR. ";
+		if (logradouro.startsWith(praca))
+			return logradouro.substring(praca.length()).trim();
+		
+		String rodovia = "RO. ";
+		if (logradouro.startsWith(rodovia))
+			return logradouro.substring(rodovia.length()).trim();
 		
 		String lagoa = "LA. ";
 		if (logradouro.startsWith(lagoa))
-			return logradouro.substring(lagoa.length());
+			return logradouro.substring(lagoa.length()).trim();
 		
 		String jardins = "JA. ";
 		if (logradouro.startsWith(jardins))
-			return logradouro.substring(jardins.length());
+			return logradouro.substring(jardins.length()).trim();
 		return logradouro;
 	}
 	

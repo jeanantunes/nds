@@ -19,9 +19,8 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDetalheDTO;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
-import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
-import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
@@ -30,6 +29,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ConsultaEncalheService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.PDFUtil;
@@ -59,6 +59,35 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 	@Autowired
 	private ChamadaEncalheCotaRepository chamadaEncalheCotaRepository;
 	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	
+	private void carregarDiaRecolhimento(List<ConsultaEncalheDTO> listaConsultaEncalhe) {
+		
+		if(listaConsultaEncalhe == null || listaConsultaEncalhe.isEmpty()) {
+			return;
+		}
+		
+		for(ConsultaEncalheDTO consultaEncalhe : listaConsultaEncalhe) {
+			
+			Date dataConferencia = consultaEncalhe.getDataMovimento();
+			
+			Date dataRecolhimento = consultaEncalhe.getDataDoRecolhimentoDistribuidor();
+			
+			if(dataRecolhimento != null && dataConferencia != null) {
+
+				Integer dia = distribuidorService.obterDiaDeRecolhimentoDaData(dataConferencia, dataRecolhimento, consultaEncalhe.getIdProdutoEdicao());
+				
+				consultaEncalhe.setRecolhimento(dia);				
+			} else {
+				
+				consultaEncalhe.setRecolhimento(0);
+			}
+			
+		}
+		
+	}
 	
 	
 	/*
@@ -72,6 +101,8 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		List<ConsultaEncalheDTO> listaConsultaEncalhe = movimentoEstoqueCotaRepository.obterListaConsultaEncalhe(filtro);
 		
+		carregarDiaRecolhimento(listaConsultaEncalhe);
+		
 		Integer qtdeConsultaEncalhe = movimentoEstoqueCotaRepository.obterQtdeConsultaEncalhe(filtro);
 		
 		BigDecimal valorTotalReparte = BigDecimal.ZERO;
@@ -82,45 +113,46 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 				chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCotaNoPeriodo(
 						filtro.getIdCota(), 
 						filtro.getDataRecolhimentoInicial(), 
-						filtro.getDataRecolhimentoFinal(), 
-						false, false);
+						filtro.getDataRecolhimentoFinal(), false);
 		
 		valorTotalEncalhe = movimentoEstoqueCotaRepository.obterValorTotalEncalhe(filtro);
 		
-		
-		if(valorTotalEncalhe == null) {
-			valorTotalEncalhe = BigDecimal.ZERO;
-		}
-		
-		if(valorTotalReparte == null) {
-			valorTotalReparte = BigDecimal.ZERO;
-		}
-		
-		
-		
 		BigDecimal valorVendaDia = valorTotalReparte.subtract(valorTotalEncalhe); 
 		
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
+		List<DebitoCreditoCotaDTO> listaDebitoCreditoCotaDTO = new ArrayList<DebitoCreditoCotaDTO>();
 		
-		List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados = new ArrayList<TipoMovimentoFinanceiro>();
+		List<Long> listaIdControleConfEncalheCota = 
+				controleConferenciaEncalheCotaRepository.obterListaIdControleConferenciaEncalheCota(filtro);
 		
-		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroEnvioEncalhe);
-		tiposMovimentoFinanceiroIgnorados.add(tipoMovimentoFinanceiroRecebimentoReparte);
-		
-		List<DebitoCreditoCotaDTO> listaDebitoCreditoCota = movimentoFinanceiroCotaRepository.obterDebitoCreditoPorPeriodoOperacao(filtro, tiposMovimentoFinanceiroIgnorados);
+		if(listaIdControleConfEncalheCota != null && !listaIdControleConfEncalheCota.isEmpty()) {
+
+			for(Long idControleConfEncalheCota : listaIdControleConfEncalheCota) {
+				
+				ControleConferenciaEncalheCota controleConfEncalheCota = controleConferenciaEncalheCotaRepository.buscarPorId(idControleConfEncalheCota);
+				
+				if(controleConfEncalheCota != null) {
+					
+					List<DebitoCreditoCotaDTO> listDebCred = conferenciaEncalheService.obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(controleConfEncalheCota);
+				
+					if(listDebCred!= null && !listDebCred.isEmpty()) {
+						listaDebitoCreditoCotaDTO.addAll(listDebCred);
+					}
+				}
+			}
+			
+		}
 		
 		BigDecimal valorDebitoCredito = BigDecimal.ZERO;
 		
-		if (listaDebitoCreditoCota != null) {
+		if (listaDebitoCreditoCotaDTO != null) {
 			
-			for (DebitoCreditoCotaDTO debitoCreditoCotaDTO: listaDebitoCreditoCota) {
+			for (DebitoCreditoCotaDTO debitoCreditoCotaDTO: listaDebitoCreditoCotaDTO) {
 				
-				if (OperacaoFinaceira.CREDITO.equals(debitoCreditoCotaDTO.getTipoLancamento())) {
+				if (OperacaoFinaceira.DEBITO.equals(debitoCreditoCotaDTO.getTipoLancamento())) {
 					
 					valorDebitoCredito = valorDebitoCredito.add(debitoCreditoCotaDTO.getValor());
 					
-				} else if (OperacaoFinaceira.DEBITO.equals(debitoCreditoCotaDTO.getTipoLancamento())) {
+				} else if (OperacaoFinaceira.CREDITO.equals(debitoCreditoCotaDTO.getTipoLancamento())) {
 					
 					valorDebitoCredito = valorDebitoCredito.subtract(debitoCreditoCotaDTO.getValor());
 				}
@@ -133,7 +165,7 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		info.setQtdeConsultaEncalhe(qtdeConsultaEncalhe);
 		
-		info.setListaDebitoCreditoCota(carregaDebitoCreditoCotaVO(listaDebitoCreditoCota));
+		info.setListaDebitoCreditoCota(carregaDebitoCreditoCotaVO(listaDebitoCreditoCotaDTO));
 		
 		info.setValorVendaDia(valorVendaDia);
 		

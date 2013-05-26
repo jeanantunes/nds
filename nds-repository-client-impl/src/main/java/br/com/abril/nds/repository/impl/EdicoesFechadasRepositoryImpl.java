@@ -139,40 +139,4 @@ StringBuilder hql = new StringBuilder();
 		return query.list();
 	}
 	
-	
-	@Override
-	public Long quantidadeResultadoEdicoesFechadas(Date dataDe, Date dataAte, Long idFornecedor){
-		
-		StringBuilder hql = new StringBuilder();
-
-		hql.append(" SELECT produtoEdicao.id ");
-
-		hql.append(" FROM FechamentoEncalhe AS fechamentoEncalhe ")
-				.append(" inner JOIN fechamentoEncalhe.fechamentoEncalhePK.produtoEdicao AS produtoEdicao ")
-				.append(" inner JOIN produtoEdicao.produto AS produto ")
-				.append(" inner JOIN produto.fornecedores AS fornecedores ")
-				.append(" inner JOIN fornecedores.juridica AS juridica ");
-		hql.append(" WHERE ( fechamentoEncalhe.fechamentoEncalhePK.dataEncalhe BETWEEN :dataDe AND :dataAte ) ");
-
-		if (idFornecedor != null) {
-			hql.append(" AND fornecedores.id = :idFornecedor ");
-		}
-
-		hql.append(" GROUP BY produtoEdicao.id ");
-
-		Query query = this.getSession().createQuery(hql.toString());
-
-		query.setParameter("dataDe", dataDe);
-		query.setParameter("dataAte", dataAte);
-
-		if (idFornecedor != null) {
-			query.setParameter("idFornecedor", idFornecedor);
-		}
-
-		Integer quantidade = query.list().size();
-		
-		return quantidade.longValue();
-		
-	}
-
 }

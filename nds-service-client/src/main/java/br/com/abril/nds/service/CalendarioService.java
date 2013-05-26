@@ -166,5 +166,12 @@ public interface CalendarioService {
 	public enum TipoPesquisaFeriado {
 		FERIADO_MENSAL, FERIADO_ANUAL;
 	}
+	
+    /**
+     * Obtem a proxima data com dia util, considerando Feriados, Sabados e Domingos
+     * @param data
+     * @return Date
+     */
+	Date obterProximaDataDiaUtil(Date data);
 
 }

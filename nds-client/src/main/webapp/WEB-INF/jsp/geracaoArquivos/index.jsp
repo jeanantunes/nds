@@ -15,13 +15,14 @@ $(function(){
 	geracaoArquivos = $.extend(true, new GeracaoArquivos(),  BaseController);
 	
 });
+
 </script>
 <form>
 
     <div class="areaBts">
 		<div class="area">
 		    <span class="bt_novos"
-			    title="Confirmar"><a id="btnGerar" href="javascript:;" onclick="mostrar();" rel="tipsy"><img
+			    title="Confirmar"><a id="btnGerar" href="javascript:;" rel="tipsy"><img
 					border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif"></a>
 			</span>
 		</div>
@@ -36,10 +37,11 @@ $(function(){
 		<tr>
 			<td width="99">Tipo de Arquivo:</td>
 			<td width="206"><select name="tipoArquivo" id="tipoArquivo"
-				style="width: 150px;" onchange="opcaoGerarArq(this.value);">
+				style="width: 150px;">
 					<option value="">Selecione...</option>
 					<option value="REPARTE">Reparte</option>
 					<option value="ENCALHE" selected="selected">Encalhe</option>
+					<option value="PICKING" selected="selected">Picking</option>
 			</select></td>
 			<td width="105">
 				<div id="dtLancto" style="display: none;">Data Lançamento:</div>
@@ -59,8 +61,8 @@ $(function(){
 
 <div class="linha_separa_fields">&nbsp;</div>
 
-<fieldset class="grids classFieldset"
-	style="">
+<fieldset id="resultado" class="grids classFieldset"
+	style="display: none">
 	<legend>Arquivos Gerados</legend>
 	<h2>Quantidade de Arquivos Gerados:&nbsp;<spam id="qtdArquivosGerados">0</spam></h2>
 

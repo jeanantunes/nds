@@ -491,8 +491,11 @@ public class ProdutoEdicaoController extends BaseController {
 		
 		for (Lancamento lancamento : lancamentoService.obterLancamentosEdicao(produtoEdicaoId, sortorder, sortname)) {
 			PeriodoLancamentosProdutoEdicaoVO periodoLancamento = new PeriodoLancamentosProdutoEdicaoVO();
+			periodoLancamento.setDataLancamentoDistribuidor(lancamento.getDataLancamentoDistribuidor());
 			periodoLancamento.setDataLancamentoPrevista(lancamento.getDataLancamentoPrevista());
+			periodoLancamento.setDataRecolhimentoDistribuidor(lancamento.getDataRecolhimentoDistribuidor());
 			periodoLancamento.setDataRecolhimentoPrevista(lancamento.getDataRecolhimentoPrevista());
+			periodoLancamento.setStatusLancamento(lancamento.getStatus().getDescricao());
 			listaPeriodosLancamentos.add(periodoLancamento); 
 		}
 		

@@ -81,6 +81,7 @@ public class VisaoEstoqueController extends BaseController {
 	
 	@Path("/pesquisar.json")
 	public void pesquisar(FiltroConsultaVisaoEstoque filtro) {
+		tratarErro(validarDadosConsulta(filtro));
 		
 		this.atualizarDataMovimentacao(filtro);
 		
@@ -214,7 +215,6 @@ public class VisaoEstoqueController extends BaseController {
 		result.use(Results.nothing());
 	}
 	
-	
 	@Path("/gerarDadosConferenciaCega")
 	public void gerarDadosConferenciaCega(FiltroConsultaVisaoEstoque filtro) throws IOException {
 		
@@ -267,5 +267,34 @@ public class VisaoEstoqueController extends BaseController {
 			filtro.setDataMovimentacao(dataOperacao);
 		}
 	}
+
+	private List<String> validarDadosConsulta(FiltroConsultaVisaoEstoque filtro){
+		
+		List<String> mensagens = new ArrayList<String>();
+		if(filtro != null && filtro.getDataMovimentacaoStr() != null && !"".equals(filtro.getDataMovimentacaoStr())){
+			
+			if (!DateUtil.isValidDate(filtro.getDataMovimentacaoStr(), "dd/MM/yyyy")) {
+				
+				mensagens.add("O campo Data Movimento de é inválido");
+			}else{
+				filtro.setDataMovimentacao(DateUtil.parseDataPTBR(filtro.getDataMovimentacaoStr()));
+			}
+		}
+		
+		return mensagens;
+	}
 	
+	private void tratarErro(List<String> mensagensErro){
+		
+		ValidacaoVO validacao = new ValidacaoVO();
+		
+		validacao.setTipoMensagem(TipoMensagem.ERROR);
+		
+		if(!mensagensErro.isEmpty()){
+			
+			validacao.setListaMensagens(mensagensErro);
+			
+			throw new ValidacaoException(validacao);
+		}
+	}
 }

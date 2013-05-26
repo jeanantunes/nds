@@ -429,7 +429,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			BoletoDistribuidor boletoDistribuidor = 
 					boletoDistribuidorRepository.obterBoletoDistribuidorPorChamadaEncalheFornecedor(chamadaEncalheFornecedor.getId());
 			
-			if(boletoDistribuidor!=null) {
+			chamadaEncalheFornecedor.setFornecedor( chamadaEncalheFornecedor.getItens().get(0).getProdutoEdicao().getProduto().getFornecedor() );
+			
+			if(boletoDistribuidor != null) {
 				
 				Integer vias = boletoDistribuidor.getVias();
 				
@@ -521,9 +523,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		consolidadoFinanceiroCota.setCota(cota);
 		consolidadoFinanceiroCota.setDataConsolidado(dataOperacao);
 		consolidadoFinanceiroCota.setMovimentos(movimentos);
-		consolidadoFinanceiroCota.setPendente(
-			this.obterValorPendenteCobrancaConsolidado(cota.getNumeroCota())
-		);
 		
 		BigDecimal vlMovFinanDebitoCredito = BigDecimal.ZERO;
 		BigDecimal vlMovFinanEncalhe = BigDecimal.ZERO;
@@ -531,6 +530,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		BigDecimal vlMovFinanVendaEncalhe = BigDecimal.ZERO;
 		BigDecimal vlMovPostergado = BigDecimal.ZERO;
 		BigDecimal vlMovConsignado = BigDecimal.ZERO;
+		BigDecimal vlMovPendente = BigDecimal.ZERO;
 
 		for (MovimentoFinanceiroCota movimentoFinanceiroCota : movimentos){
 			
@@ -580,6 +580,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					vlMovPostergado = 
 							this.adicionarValor(vlMovPostergado, movimentoFinanceiroCota);
 				break;
+				case PENDENTE:
+					vlMovPendente =
+						this.adicionarValor(vlMovPendente, movimentoFinanceiroCota);
+				break;
 			}
 		}
 		
@@ -590,7 +594,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				.add(vlMovFinanVendaEncalhe)
 				.add(vlMovFinanDebitoCredito)
 				.add(vlMovFinanEncargos)
-				.subtract(consolidadoFinanceiroCota.getPendente()!=null?consolidadoFinanceiroCota.getPendente():BigDecimal.ZERO);
+				.add(vlMovPendente);
 		
 		consolidadoFinanceiroCota.setTotal(vlMovFinanTotal);
 		consolidadoFinanceiroCota.setDebitoCredito(vlMovFinanDebitoCredito);
@@ -599,6 +603,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		consolidadoFinanceiroCota.setVendaEncalhe(vlMovFinanVendaEncalhe.abs());
 		consolidadoFinanceiroCota.setValorPostergado(vlMovPostergado);
 		consolidadoFinanceiroCota.setConsignado(vlMovConsignado.abs());
+		consolidadoFinanceiroCota.setPendente(vlMovPendente.abs());
 		
 		//insere postergado pois não encontrou forma de cobrança
 		if (formaCobrancaPrincipal == null){
@@ -731,6 +736,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			novaDivida.setResponsavel(usuario);
 			novaDivida.setOrigemNegociacao(false);
 			
+			/*
+			 * 
+			 * Código comentado por solicitação do Cesar, funcionalidade feita no momento da Baixa Financeira.
+			 * 16/05/2013 - Trac 581
+			 * 
 			BigDecimal valorCalculadoJuros = BigDecimal.ZERO;
 			
 			boolean isAcumulaDivida = 
@@ -768,7 +778,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 							this.cobrancaService.calcularJuros(
 									null,
 									cota.getId(),
-									vlMovFinanTotal.add(divida.getValor()).add(valorMulta.abs()),
+									divida.getValor().abs(),
 									divida.getCobranca().getDataVencimento(),
 									dataOperacao);
 
@@ -782,13 +792,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					historicoAcumuloDivida.setResponsavel(usuario);
 					historicoAcumuloDivida.setStatus(StatusInadimplencia.ATIVA);
 
-					novaDivida.setValor(vlMovFinanTotal.add(valorCalculadoJuros.abs()));
+					novaDivida.setValor(vlMovFinanTotal.abs().add(valorCalculadoJuros.abs()));
 				}
 
 			} else {
 				consolidadoFinanceiroCota.getTotal().subtract(consolidadoFinanceiroCota.getPendente().abs());
 				consolidadoFinanceiroCota.setPendente(BigDecimal.ZERO);
-			}
+			}*/
 
 		} else if (vlMovFinanTotal.compareTo(valorMinino) != 0) {
 
@@ -899,7 +909,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		Calendar diaPostergado = Calendar.getInstance();
 		diaPostergado.setTime(dataOperacao);
 		diaPostergado.add(Calendar.DAY_OF_MONTH, qtdDiasNovaCobranca);
-		
+	
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = null;
 		if (vlMovFinanTotal.compareTo(BigDecimal.ZERO) > 0){
 			
@@ -939,8 +949,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		if (vlMovFinanTotal != null && vlMovFinanTotal.compareTo(BigDecimal.ZERO) != 0){
 			
+			Date data = this.calendarioService.obterProximaDataDiaUtil(diaPostergado.getTime());
+			
 			movimentoFinanceiroCota = new MovimentoFinanceiroCota();
-			movimentoFinanceiroCota.setData(diaPostergado.getTime());
+			movimentoFinanceiroCota.setData(data);
 			movimentoFinanceiroCota.setDataCriacao(dataOperacao);
 			movimentoFinanceiroCota.setUsuario(usuario);
 			movimentoFinanceiroCota.setValor(vlMovFinanTotal.abs());
@@ -1045,19 +1057,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					idCota,
 					listaPostergados,
 					dataOperacao);
-	}
-	
-	/**
-	 * 
-	 * Retorna o valor de cobrança em aberto que a cota não pagou até a presente data de geração do novo consolidado em questão.
-	 * 
-	 * @param numeroCota - número da cota
-	 * 
-	 * @return BigDecimal - valor pendente de cobrança do sonsolidado
-	 */
-	private BigDecimal obterValorPendenteCobrancaConsolidado(Integer numeroCota){
-		
-		return cobrancaRepository.obterValorCobrancaNaoPagoDaCota(numeroCota);
 	}
 	
 	private BigDecimal adicionarValor(BigDecimal valor, MovimentoFinanceiroCota movimentoFinanceiroCota){

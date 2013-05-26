@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
 
+import br.com.abril.nds.model.planejamento.StatusLancamento;
+
 public class LancamentoDTO implements Serializable {
 
 	private static final long serialVersionUID = 2186060384671120600L;
@@ -13,6 +15,7 @@ public class LancamentoDTO implements Serializable {
 	private Date dataPrevista;
 	private Date dataDistribuidor;
 	private BigInteger reparte;
+	private StatusLancamento statusLancamento;
 	
 	public Long getId() {
 		return id;
@@ -50,6 +53,11 @@ public class LancamentoDTO implements Serializable {
 	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte;
 	}
-
+	public StatusLancamento getStatusLancamento() {
+		return statusLancamento;
+	}
+	public void setStatusLancamento(StatusLancamento statusLancamento) {
+		this.statusLancamento = statusLancamento;
+	}
 	
 }

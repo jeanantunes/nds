@@ -10,6 +10,7 @@ var visaoEstoqueController = $.extend(true, {
 			buttonImage: contextPath + "/images/calendar.gif",
 			buttonImageOnly: true
 		});
+		$(".input-date").mask("99/99/9999");
 		
 		$("#btnPesquisarVisaoEstoque", this.workspace).click(function() {
 			visaoEstoqueController.pesquisar();
@@ -27,11 +28,18 @@ var visaoEstoqueController = $.extend(true, {
 	
 	
 	pesquisar : function() {
-		
-		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
+
+		var formData = [
+		        {name:'filtro.tipoEstoque', value: $("#visaoEstoque_filtro_tipoEstoque", this.workspace).val()},
+		        {name:'filtro.tipoEstoqueSelecionado', value: $("#visaoEstoque_filtro_tipoEstoqueSelecionado", this.workspace).val()},
+		        {name:'filtro.dataMovimentacaoStr', value: $("#visaoEstoque_filtro_dataMovimentacao", this.workspace).val()},
+		        {name:'filtro.idFornecedor', value: $("#visaoEstoque_filtro_idFornecedor", this.workspace).val()}
+		];
 		
 		$(".visaoEstoqueGrid", this.workspace).flexOptions({
-			url : this.path + 'pesquisar.json?' + params, 
+			
+			url : this.path + 'pesquisar.json',
+			params: formData,
 			preProcess : visaoEstoqueController.montaColunaAcao,
 			newp : 1
 		});

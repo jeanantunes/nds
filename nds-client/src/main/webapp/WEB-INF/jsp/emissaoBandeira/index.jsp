@@ -44,17 +44,15 @@
     <br/>
     <br/>
 
-<form action="" method="get" id="form1" name="form1">
-
-
-<div id="dialog-pallets" title="Pallets">
-<fieldset>
-	<legend>Informe a quantidade de pallets</legend>
-    N&uacute;mero de Pallets: <input id="numeroPallets" type="text" style="width:40px; margin-left:10px; text-align:center;" />
-
-</fieldset>
-</div>
-
+<form id="form-dialog-pallets">
+	<div id="dialog-pallets" title="Pallets">
+	<fieldset>
+		<legend>Informe a quantidade de pallets</legend>
+	    N&uacute;mero de Pallets: <input id="numeroPallets" type="text" style="width:40px; margin-left:10px; text-align:center;" />
+	
+	</fieldset>
+	</div>
+</form>
 
 
 <div id="dialog-pesq-editor" title="Selecionar Editor">
@@ -114,8 +112,7 @@
 
     
     </div>
-</div> 
-</form>
+</div>
 </body>
 	
 	<script type="text/javascript">

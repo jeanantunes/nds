@@ -30,7 +30,6 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.service.ConsultaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
@@ -542,10 +541,22 @@ public class ConsultaEncalheController extends BaseController {
 			dataMovimento		= (consultaEncalheDTO.getDataMovimento() != null) ? DateUtil.formatarDataPTBR(consultaEncalheDTO.getDataMovimento()) : "" ;
 			
 			
-			if(consultaEncalheDTO.getRecolhimento()<=0) {
-				recolhimento = DateUtil.formatarDataPTBR(consultaEncalheDTO.getDataDoRecolhimentoDistribuidor());
+			if(consultaEncalheDTO.getRecolhimento() == null || consultaEncalheDTO.getRecolhimento()<=0) {
+				
+				if(consultaEncalheDTO.getDataDoRecolhimentoDistribuidor()!=null) {
+					
+					recolhimento = DateUtil.formatarDataPTBR(consultaEncalheDTO.getDataDoRecolhimentoDistribuidor());
+					
+				} else {
+					
+					recolhimento = "";
+					
+				}
+			
 			} else {
-				recolhimento = (consultaEncalheDTO.getRecolhimento()!=null) ? (consultaEncalheDTO.getRecolhimento().toString() + SUFIXO_DIA) : "" ;
+				
+				recolhimento = consultaEncalheDTO.getRecolhimento().toString() + SUFIXO_DIA;
+				
 			}
 
 			

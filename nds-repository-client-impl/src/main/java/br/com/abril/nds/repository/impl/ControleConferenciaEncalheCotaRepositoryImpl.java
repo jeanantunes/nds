@@ -1,11 +1,16 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.sql.DataSource;
 
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
-import org.hibernate.type.StandardBasicTypes;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
@@ -18,6 +23,9 @@ import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		AbstractRepositoryModel<ControleConferenciaEncalheCota, Long> implements ControleConferenciaEncalheCotaRepository {
 
+	@Autowired
+	private DataSource dataSource;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -110,6 +118,75 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		
 		sql.append("	(CHAMADA_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal) ");
 		
+		sql.append("	AND CHAMADA_ENCALHE_COTA.POSTERGADO = :isPostergado ");
+		
+		if(filtro.getIdCota()!=null) {
+			sql.append(" and CHAMADA_ENCALHE_COTA.COTA_ID = :idCota  ");
+		}
+		
+		if(filtro.getIdFornecedor() != null) {
+			sql.append(" and FORNECEDOR.ID =  :idFornecedor ");
+		}
+
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+
+		if(filtro.getIdCota()!=null) {
+			parameters.put("idCota", filtro.getIdCota());
+		}
+
+		if(filtro.getIdFornecedor() != null) {
+			parameters.put("idFornecedor", filtro.getIdFornecedor());
+		}
+		
+		parameters.put("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
+		parameters.put("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
+		parameters.put("isPostergado", false);
+		
+		return namedParameterJdbcTemplate.queryForList(sql.toString(), parameters, Long.class);
+		
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	public List<ControleConferenciaEncalheCota> obterControleConferenciaEncalheCotaPorFiltro(FiltroConsultaEncalheDTO filtro) {
+				
+		StringBuffer sql = new StringBuffer();
+
+		sql.append("	select	");
+
+		sql.append("	CONTROLE_CONF_ENC_COTA ");
+		
+		sql.append("	from	");
+
+		sql.append("	CHAMADA_ENCALHE  ");
+		
+		sql.append("	inner join CHAMADA_ENCALHE_COTA on ");
+		sql.append("	( CHAMADA_ENCALHE.ID = CHAMADA_ENCALHE_COTA.CHAMADA_ENCALHE_ID ) ");
+ 		
+		sql.append("	inner join PRODUTO_EDICAO on ");
+		sql.append("	( PRODUTO_EDICAO.ID = CHAMADA_ENCALHE.PRODUTO_EDICAO_ID ) ");
+		
+		sql.append("	inner join PRODUTO on ");
+		sql.append("	( PRODUTO_EDICAO.PRODUTO_ID = PRODUTO.ID ) ");
+		
+		sql.append("	inner join PRODUTO_FORNECEDOR on ");
+		sql.append("	( PRODUTO_FORNECEDOR.PRODUTO_ID = PRODUTO.ID ) ");
+		
+		sql.append("	inner join FORNECEDOR on ");
+		sql.append("	( PRODUTO_FORNECEDOR.FORNECEDORES_ID = FORNECEDOR.ID ) ");
+		
+		sql.append("	inner join PESSOA on                   	");
+		sql.append("	( PESSOA.ID = FORNECEDOR.JURIDICA_ID )	");
+		
+		sql.append("	inner join CONTROLE_CONFERENCIA_ENCALHE_COTA CONTROLE_CONF_ENC_COTA on ");
+		sql.append("	( CONTROLE_CONF_ENC_COTA.DATA_OPERACAO = CHAMADA_ENCALHE.DATA_RECOLHIMENTO 	");
+		sql.append("	AND  CONTROLE_CONF_ENC_COTA.COTA_ID = CHAMADA_ENCALHE_COTA.COTA_ID ) ");
+		
+		sql.append("	where	");
+		
+		sql.append("	(CHAMADA_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal) ");
+		
 		sql.append("	AND CHAMADA_ENCALHE_COTA.FECHADO = :isPostergado ");
 		
 		if(filtro.getIdCota()!=null) {
@@ -120,7 +197,7 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 			sql.append(" and FORNECEDOR.ID =  :idFornecedor ");
 		}
 
-		SQLQuery sqlquery = getSession().createSQLQuery(sql.toString()).addScalar("idControle", StandardBasicTypes.LONG);
+		SQLQuery sqlquery = getSession().createSQLQuery(sql.toString());
 		
 		if(filtro.getIdCota()!=null) {
 			sqlquery.setParameter("idCota", filtro.getIdCota());
@@ -135,51 +212,6 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		sqlquery.setParameter("isPostergado", false);
 		
 		return sqlquery.list();
-		
-	}
-
-	
-	@SuppressWarnings("unchecked")
-	public List<ControleConferenciaEncalheCota> obterControleConferenciaEncalheCotaPorFiltro(FiltroConsultaEncalheDTO filtro) {
-				
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select ");
-		
-		hql.append(" distinct controleConferenciaEncalheCota ");
-		
-		hql.append(" from ControleConferenciaEncalheCota controleConferenciaEncalheCota	");
-		
-		hql.append(" join conferencia.movimentoEstoqueCota movimentoEstoqueCota ");
-		hql.append(" join movimentoEstoqueCota.produtoEdicao.produto.fornecedores fornecedor ");
-		hql.append(" join conferencia.movimentoEstoqueCota.cota cota ");
-
-		hql.append(" where	");
-		
-		hql.append(" movimentoEstoqueCota.data between :dataRecolhimentoInicial and :dataRecolhimentoFinal ");		
-
-		if (filtro.getIdCota() != null) {
-			hql.append(" and cota.id = :idCota ");		
-		}
-		
-		if (filtro.getIdFornecedor() != null) {
-			hql.append(" and fornecedor.id = :idFornecedor ");		
-		}
-		
-		Query query =  this.getSession().createQuery(hql.toString());
-		
-		query.setParameter("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
-		query.setParameter("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
-		
-		if (filtro.getIdCota() != null) {
-			query.setParameter("idCota", filtro.getIdCota());
-		}
-
-		if (filtro.getIdFornecedor() != null) {
-			query.setParameter("idFornecedor", filtro.getIdFornecedor());
-		}
-		
-		return query.list();
 	}
 	
 	

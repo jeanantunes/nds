@@ -661,7 +661,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		if (enderecoCota == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR,
-					"Endereço principal da cota " + cota.getId() + " não encontrada!");
+					"Endereço principal da cota " + cota.getNumeroCota() + " não encontrada!");
 		}
 
 		try {

@@ -8,12 +8,14 @@ import java.util.Set;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
+import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.InfoConferenciaEncalheCota;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.SlipDTO;
 import br.com.abril.nds.enums.TipoDocumentoConferenciaEncalhe;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
@@ -42,6 +44,16 @@ public interface ConferenciaEncalheService {
 	 * @return boolean
 	 */
 	public boolean isCotaEmiteNfe(Integer numeroCota);
+	
+	/**
+	 * Obtém lista de debito crédito relativa a cobrança 
+	 * relacionada com uma operação de encalhe.
+	 * 
+	 * @param controleConferenciaEncalheCota
+	 * 
+	 * @return List - ComposicaoCobrancaSlipDTO
+	 */
+	public List<DebitoCreditoCotaDTO> obterDebitoCreditoDeCobrancaPorOperacaoEncalhe(ControleConferenciaEncalheCota controleConferenciaEncalheCota);
 	
 	
 	/**
@@ -263,6 +275,8 @@ public interface ConferenciaEncalheService {
 	public SlipDTO getSlipDTO();
 	
 	public Map<String, Object> getParametersSlip();
+	
+	public Long[] obterIdsFornecedorDoProduto(ProdutoEdicao produtoEdicao);
 	
 	public void setParamsSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip);
 }

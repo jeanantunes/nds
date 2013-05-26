@@ -225,6 +225,8 @@ var ConferenciaEncalhe = $.extend(true, {
 		    }else if (event.keyCode == 37) {//"<"
 		    	$('#qtdeExemplar', ConferenciaEncalhe.workspace).focus();
 		    	setTimeout (function () {$('#qtdeExemplar', ConferenciaEncalhe.workspace).select();}, 1);
+		    }else if (event.keyCode == 27){
+		    	$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).val("");
 		    }
 		});
 		
@@ -524,7 +526,6 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 	
 	pesquisarCota : function() {
-		
 		var data = [
 		            {name: 'numeroCota', value : $("#numeroCota", ConferenciaEncalhe.workspace).val()}, 
 		            {name: 'indObtemDadosFromBD', value : true},
@@ -848,7 +849,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		}
 		
 		$(".outrosVlrsGrid", ConferenciaEncalhe.workspace).flexAddData({
-			page: result.listaDebitoCredito.page, total: result.listaDebitoCredito.total, rows: result.listaDebitoCredito.rows
+			page: result.listaDebitoCredito.page, total: result.listaDebitoCredito.total, rows: ConferenciaEncalhe.formatarDadosDebitoCredito(result.listaDebitoCredito.rows)
 		});
 		
 		$("#totalReparte", ConferenciaEncalhe.workspace).text(parseFloat(result.reparte).toFixed(2));
@@ -877,6 +878,25 @@ var ConferenciaEncalhe = $.extend(true, {
 		}
 		
 		bloquearItensEdicao(ConferenciaEncalhe.workspace);
+	},
+	
+	
+	formatarDadosDebitoCredito : function(listaDebitoCredito) {
+		
+		$.each(listaDebitoCredito, function(index, value){
+			value.cell.valor = parseFloat(value.cell.valor).toFixed(2);
+			
+			var strDataArr;
+			if(value.cell.dataLancamento.indexOf('-') > -1) {
+				strDataArr = value.cell.dataLancamento.split('-');
+			
+				value.cell.dataLancamento = strDataArr[2] +'/'+ strDataArr[1] +'/'+ strDataArr[0];
+			}
+			
+		});
+		
+		return listaDebitoCredito;
+		
 	},
 	
 	gerarDocumentosConferenciaEncalhe : function(tiposDocumento) {
@@ -1305,15 +1325,22 @@ var ConferenciaEncalhe = $.extend(true, {
 			function(result){
 				
 				ConferenciaEncalhe.preProcessarConsultaConferenciaEncalhe(result);	
+				
+                ConferenciaEncalhe.limparDadosProduto();
+				
+				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+				
+				$("#qtdeExemplar", ConferenciaEncalhe.workspace).val(1);
 			},
-			null	
+			function(){
+				
+				ConferenciaEncalhe.limparDadosProduto();
+				
+				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+				
+				$("#qtdeExemplar", ConferenciaEncalhe.workspace).val(1);
+			}	
 		);
-		
-		ConferenciaEncalhe.limparDadosProduto();
-		
-		focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
-		
-		$("#qtdeExemplar", ConferenciaEncalhe.workspace).val(1);
 	},
 
 	limparDadosProduto : function(){
@@ -1428,6 +1455,7 @@ var ConferenciaEncalhe = $.extend(true, {
 			}, close : function(){
 				
 				ConferenciaEncalhe.modalAberta = false;
+				
 				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
 			},
 			form: $("#dialog-notaFiscal", this.workspace).parents("form")
@@ -1642,6 +1670,8 @@ var ConferenciaEncalhe = $.extend(true, {
 				$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete({});
 					
 				$('#cod_barras_conf_encalhe', ConferenciaEncalhe.workspace).val("");
+				
+				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
 			}
 		);
 	},
@@ -1678,6 +1708,8 @@ var ConferenciaEncalhe = $.extend(true, {
 				function(){
 					
 					$('#sm', ConferenciaEncalhe.workspace).val("");
+					
+					$('#sm', ConferenciaEncalhe.workspace).focus();
 				}, 
 				false, 
 				"idTelaConferenciaEncalhe"

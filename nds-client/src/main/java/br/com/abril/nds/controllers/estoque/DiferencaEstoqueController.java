@@ -21,6 +21,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.ComparatorChain;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -2485,6 +2486,8 @@ public class DiferencaEstoqueController extends BaseController {
 	@Post
 	@Path("/lancamento/rateio/buscarPrecoProdutoEdicao")
 	public void buscarPrecoProdutoEdicao(String codigoProduto, Long numeroEdicao){
+		
+		codigoProduto = StringUtils.leftPad(codigoProduto, 8, '0');
 		
 		if(numeroEdicao == null)
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Número da Edição não informado."));

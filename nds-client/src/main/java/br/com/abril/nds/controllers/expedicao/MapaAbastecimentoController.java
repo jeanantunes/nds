@@ -240,6 +240,11 @@ public class MapaAbastecimentoController extends BaseController {
 	}
 
 	private void validarFiltroPesquisa(FiltroMapaAbastecimentoDTO filtro) {
+		
+		if(filtro == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Parâmetros de consulta inválidos.");
+		}
+		
 		if(filtro.getTipoConsulta() == null)
 			throw new ValidacaoException(TipoMensagem.WARNING, " 'Tipo de consulta' deve ser selecionado.");
 				
@@ -350,6 +355,8 @@ public class MapaAbastecimentoController extends BaseController {
 	public void imprimirMapaAbastecimento() throws IllegalAccessException, InstantiationException, InvocationTargetException, NoSuchMethodException {
 
 		FiltroMapaAbastecimentoDTO filtro = (FiltroMapaAbastecimentoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		validarFiltroPesquisa(filtro);
 		
 		if(filtro == null) {	
 			result.forwardTo(MapaAbastecimentoController.class).impressaoFalha("Nenhuma pesquisa foi realizada.");

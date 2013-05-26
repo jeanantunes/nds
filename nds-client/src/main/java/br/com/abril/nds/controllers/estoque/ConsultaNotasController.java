@@ -254,6 +254,8 @@ public class ConsultaNotasController extends BaseController {
 			consultaNotaFiscalVO.setNumeroNota( Long.parseLong(notaFiscal.getNumero()) );
 			consultaNotaFiscalVO.setTipoNotaFiscal(notaFiscal.getDescricao());
 			consultaNotaFiscalVO.setValor(notaFiscal.getValorTotalNota());
+			consultaNotaFiscalVO.setSerie(notaFiscal.getSerie());
+			consultaNotaFiscalVO.setNotaEnvio(notaFiscal.getNumeroNotaEnvio());
 			
 			listaConsultasNF.add(consultaNotaFiscalVO);
 		}

@@ -37,6 +37,7 @@ public class FiltroConsultaBoletosCotaDTO implements Serializable {
 	
 	private OrdenacaoColunaBoletos ordenacaoColuna;
 	
+	
 	/**
 	 * Construtor padrão.
 	 */

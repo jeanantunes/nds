@@ -14,6 +14,10 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 	
 	private Long idFornecedor;
 	
+	private Long idItemChamadaEncalheFornecedor;
+	
+	private Long idChamadaEncalheFornecedor;
+	
 	private String semana;
 	
 	private PaginacaoVO paginacao;
@@ -61,6 +65,22 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 
 	public void setIdFornecedor(Long idFornecedor) {
 		this.idFornecedor = idFornecedor;
+	}
+
+	public Long getIdItemChamadaEncalheFornecedor() {
+		return idItemChamadaEncalheFornecedor;
+	}
+
+	public void setIdItemChamadaEncalheFornecedor(Long idItemChamadaEncalheFornecedor) {
+		this.idItemChamadaEncalheFornecedor = idItemChamadaEncalheFornecedor;
+	}
+
+	public Long getIdChamadaEncalheFornecedor() {
+		return idChamadaEncalheFornecedor;
+	}
+
+	public void setIdChamadaEncalheFornecedor(Long idChamadaEncalheFornecedor) {
+		this.idChamadaEncalheFornecedor = idChamadaEncalheFornecedor;
 	}
 
 	public String getSemana() {

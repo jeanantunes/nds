@@ -70,7 +70,9 @@ public enum GrupoMovimentoFinaceiro {
 	/**
 	 * Venda total de reparte
 	 */
-	VENDA_TOTAL(OperacaoFinaceira.DEBITO);
+	VENDA_TOTAL(OperacaoFinaceira.DEBITO),
+	
+	PENDENTE(OperacaoFinaceira.DEBITO);
 	
 	
 	private OperacaoFinaceira operacaoFinaceira;

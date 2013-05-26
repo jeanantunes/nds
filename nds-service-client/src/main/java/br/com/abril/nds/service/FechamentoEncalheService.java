@@ -45,8 +45,6 @@ public interface FechamentoEncalheService {
 	
 	void removeFechamentoDetalhado(FiltroFechamentoEncalheDTO filtro);
 	
-	int buscarQuantidadeCotasAusentes(Date dataEncalhe);
-	
 	ControleFechamentoEncalhe buscaControleFechamentoEncalhePorData(Date dataFechamentoEncalhe);
 
 	Date buscaDataUltimoControleFechamentoEncalhe();

@@ -81,7 +81,7 @@ var vendaProdutoController = $.extend(true, {
 				align : 'center'
 			}],
 			sortname : "numEdicao",
-			sortorder : "asc",
+			sortorder : "desc",
 			usepager : true,
 			useRp : true,
 			rp : 15,

@@ -3,8 +3,10 @@ package br.com.abril.nds.controllers.lancamento;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -17,6 +19,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.FuroProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -42,7 +45,10 @@ public class FuroProdutoController extends BaseController {
 	
 	@Autowired
 	private ProdutoService produtoService;
-	
+
+	@Autowired
+	private DistribuidorService distribuidorService;
+
 	private Result result;
 	
 	public FuroProdutoController(Result result){
@@ -57,6 +63,8 @@ public class FuroProdutoController extends BaseController {
 	
 	@Post
 	public void pesquisar(String codigo, String produto, Long edicao, String dataLancamento) throws Exception{
+		
+		codigo = obterCodigoProdutoFormatado(codigo);
 		
 		this.validarDadosEntradaPesquisa(codigo, edicao, dataLancamento);
 		
@@ -112,24 +120,48 @@ public class FuroProdutoController extends BaseController {
 	}
 	
 	private void validarDadosEntradaPesquisa(String codigo, Long edicao, String dataLancamento) {
+		
+		codigo = obterCodigoProdutoFormatado(codigo);
+		
 		List<String> listaMensagemValidacao = new ArrayList<String>();
 		
-		if (codigo == null || codigo.isEmpty()){
+		if (codigo == null || codigo.isEmpty()) {
+			
 			listaMensagemValidacao.add("Código é obrigatório.");
 		}
 		
-		if (edicao == null){
+		if (edicao == null) {
+			
 			listaMensagemValidacao.add("Edição é obrigatório.");
 		}
 		
-		if (dataLancamento == null || dataLancamento.isEmpty()){
+		if (dataLancamento == null || dataLancamento.isEmpty()) {
+			
 			listaMensagemValidacao.add("Data Lançamento é obrigatório.");
-		} else if (!DateUtil.isValidDatePTBR(dataLancamento)){
+			
+		} else if (!DateUtil.isValidDatePTBR(dataLancamento)) {
+			
 			listaMensagemValidacao.add("Valor inválido: Data Lançamento.");
 		}
+
+		if (dataLancamento != null) {
 		
-		if (!listaMensagemValidacao.isEmpty()){
-			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, listaMensagemValidacao);
+			Date data = DateUtil.parseDataPTBR(dataLancamento);
+			
+			// Não permite que a data de lançamento seja menor que a data de operação 
+			//na pesquisa (conforme solicitado pelo Rodrigo Winter na trac 586)
+			if (data.before(distribuidorService.obter().getDataOperacao())) {
+				
+				listaMensagemValidacao.add(
+					"Data de lançamento não pode ser menor que a data de operação.");
+			}
+		}
+		
+		if (!listaMensagemValidacao.isEmpty()) {
+			
+			ValidacaoVO validacaoVO = 
+				new ValidacaoVO(TipoMensagem.ERROR, listaMensagemValidacao);
+			
 			throw new ValidacaoException(validacaoVO);
 		}
 	}
@@ -172,6 +204,8 @@ public class FuroProdutoController extends BaseController {
 	public void validarFuro(String codigoProduto, Long idProdutoEdicao, String novaData, 
 			Long idLancamento) throws Exception {
 
+		codigoProduto = obterCodigoProdutoFormatado(codigoProduto);
+		
 		validarDadosEntradaConfirmarFuro(codigoProduto, idProdutoEdicao, novaData, idLancamento);
 
 		this.furoProdutoService.validarFuroProduto(codigoProduto, 
@@ -195,6 +229,8 @@ public class FuroProdutoController extends BaseController {
 	public void confirmarFuro(String codigoProduto, Long idProdutoEdicao, String novaData, 
 			Long idLancamento) throws Exception{
 		
+		codigoProduto = obterCodigoProdutoFormatado(codigoProduto);
+		
 		try {
 			this.furoProdutoService.efetuarFuroProduto(codigoProduto, 
 					idProdutoEdicao, idLancamento, 
@@ -216,6 +252,9 @@ public class FuroProdutoController extends BaseController {
 	
 	@Post
 	public void buscarNomeProduto(String codigoProduto){
+		
+		codigoProduto = obterCodigoProdutoFormatado(codigoProduto);
+		
 		String nomeProduto = this.produtoService.obterNomeProdutoPorCodigo(codigoProduto);
 		
 		if (nomeProduto == null){
@@ -253,4 +292,11 @@ public class FuroProdutoController extends BaseController {
 			throw new ValidacaoException(validacaoVO);
 		}
 	}
+	
+	private String obterCodigoProdutoFormatado(String codigoProduto) {
+
+		return StringUtils.leftPad(codigoProduto, 8, '0');
+		
+	}
+	
 }

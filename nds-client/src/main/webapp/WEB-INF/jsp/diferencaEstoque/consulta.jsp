@@ -68,9 +68,6 @@
 						   onchange="pesquisaProdutoConsultaFaltasSobras.pesquisarPorCodigoProduto('#codigo', '#produto', '#edicao', false,
 								   									   diferencaEstoqueController.pesquisarProdutosSuccessCallBack,
 								   									   diferencaEstoqueController.pesquisarProdutosErrorCallBack);" />
-					<span class="classPesquisar" title="Pesquisar Produto">
-      					<a href="javascript:;">&nbsp;</a>
-      				</span>
     			</td>
     			<td width="48">Produto:</td>
     			<td width="282">
@@ -95,9 +92,6 @@
     			<td colspan="3">
     				<input type="text"  name="numeroCota" id="numeroCota"  style="width:80px; float:left;margin-right:5px;"
     					onchange="pesquisaCotaFaltasSobras.pesquisarPorNumeroCota('#numeroCota', '#descricaoCota');">
-      				<span class="classPesquisar" title="Pesquisar Produto">
-      					<a href="javascript:;">&nbsp;</a>
-      				</span>
       			</td>
     			<td>Nome:</td>
     			<td>

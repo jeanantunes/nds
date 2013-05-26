@@ -285,8 +285,8 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 														   boolean validarTransfEstoqueDiferenca) {
 
 		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, 
-																		tipoMovimentoEstoque,null, null, 
-																		false,isMovimentoDiferencaAutomatica, validarTransfEstoqueDiferenca);
+																		tipoMovimentoEstoque, null, null, 
+																		false, isMovimentoDiferencaAutomatica, validarTransfEstoqueDiferenca);
 		return movimentoEstoque;
 	}
 
@@ -489,10 +489,11 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					
 					BigInteger qtdePerda = estoqueProduto.getQtdePerda() == null ? BigInteger.ZERO : estoqueProduto.getQtdePerda();
 					
-					novaQuantidade = isOperacaoEntrada ? qtdePerda.add(movimentoEstoque.getQtde()) :
-						 								 qtdePerda.subtract(movimentoEstoque.getQtde());
-					 
-					estoqueProduto.setQtdePerda(novaQuantidade);
+					qtdePerda = qtdePerda.add( movimentoEstoque.getQtde() );
+					novaQuantidade = estoqueProduto.getQtde().subtract(movimentoEstoque.getQtde());
+					
+					estoqueProduto.setQtdePerda(qtdePerda);
+					estoqueProduto.setQtde(novaQuantidade);
 	
 					break;
 					 
@@ -500,12 +501,13 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					
 					BigInteger qtdeGanho = estoqueProduto.getQtdeGanho() == null ? BigInteger.ZERO : estoqueProduto.getQtdeGanho();
 					
-					novaQuantidade = isOperacaoEntrada ? qtdeGanho.add(movimentoEstoque.getQtde()) :
-														 qtdeGanho.subtract(movimentoEstoque.getQtde());
+					qtdeGanho = qtdeGanho.add(movimentoEstoque.getQtde());
+					novaQuantidade = estoqueProduto.getQtde().add(movimentoEstoque.getQtde());									 
 					 
-					 estoqueProduto.setQtdeGanho(novaQuantidade);
+					estoqueProduto.setQtdeGanho(qtdeGanho);
+					estoqueProduto.setQtde(novaQuantidade);
 	
-					 break;
+					break;
 					
 				default:
 	
@@ -531,7 +533,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				
 			} else {
 				
-				this.estoqueProdutoRespository.alterar(estoqueProduto);
+				this.estoqueProdutoRespository.merge(estoqueProduto);
 				
 				return estoqueProduto.getId();
 			}
@@ -540,11 +542,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		return null;
 	}
 
-	
-	private void subtrairDevolucaoFornecedorDosEstoques() {
-		
-	}
-	
 	private BigInteger subtrairDoEstoque(BigInteger qtdeEstoque, BigInteger qtdeSubtrairDoEstoque) {
 		
 		if( BigInteger.ZERO.compareTo(qtdeEstoque) >= 0 ) {

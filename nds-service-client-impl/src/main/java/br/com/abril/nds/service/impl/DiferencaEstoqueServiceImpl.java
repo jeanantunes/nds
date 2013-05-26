@@ -199,7 +199,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 											   TipoEstoque tipoEstoque, 
 											   StatusAprovacao statusAprovacao) {
 		
-		diferenca = processarDiferenca(diferenca, tipoEstoque, StatusConfirmacao.CONFIRMADO);
+		processarDiferenca(diferenca, tipoEstoque, StatusConfirmacao.CONFIRMADO);
 		
 		this.confirmarLancamentosDiferenca(Arrays.asList(diferenca), statusAprovacao,true);
 		
@@ -426,6 +426,8 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			diferenca = this.diferencaEstoqueRepository.merge(diferenca);
 					
 			this.processarTransferenciaEstoque(diferenca,usuario.getId());
+			
+			diferencaEstoqueRepository.flush();
 		}
 	}
 	
@@ -597,10 +599,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				
 				rateioDiferenca = new RateioDiferenca();
 				
-				Cota cota = this.cotaRepository.obterPorNumerDaCota(rateioCotaVO.getNumeroCota());
-				
-				rateioDiferenca.setCota(cota);
-				
 				EstudoCota estudoCota = 
 						this.estudoCotaRepository.obterEstudoCotaDeLancamentoComEstudoFechado(
 								this.distribuidorService.obterDataOperacaoDistribuidor(),
@@ -611,6 +609,8 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				
 				rateioDiferenca.setDiferenca(diferenca);
 			}
+			Cota cota = this.cotaRepository.obterPorNumerDaCota(rateioCotaVO.getNumeroCota());
+			rateioDiferenca.setCota(cota);
 			
 			rateioDiferenca.setQtde(rateioCotaVO.getQuantidade());
 			
@@ -832,9 +832,12 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
 				diferenca.getTipoDiferenca().getTipoMovimentoEstoque());
 		
+		if(tipoMovimentoEstoque == null)
+			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de Movimento de Estoque não encontrado.");
+		
 		return this.movimentoEstoqueService.gerarMovimentoEstoqueDiferenca(
 			diferenca.getProdutoEdicao().getId(), idUsuario,
-				diferenca.getQtde(), tipoMovimentoEstoque,isAprovacaoAutomatica, validarTransfEstoqueDiferenca);
+				diferenca.getQtde(), tipoMovimentoEstoque, isAprovacaoAutomatica, validarTransfEstoqueDiferenca);
 	}
 	
 	/*

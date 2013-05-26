@@ -27,6 +27,8 @@ public interface EstudoCotaRepository extends Repository<EstudoCota, Long> {
 	 */
 	EstudoCota obterEstudoCota(Integer numeroCota, Date dataReferencia);
 	
+	List<EstudoCota> obterEstudoCota(Long isCota, Date dataDe, Date dataAte);
+	
 	List<EstudoCotaDTO> obterEstudoCotaPorDataProdutoEdicao(Date dataLancamento, Long idProdutoEdicao);
 	
 	EstudoCota obterEstudoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota);

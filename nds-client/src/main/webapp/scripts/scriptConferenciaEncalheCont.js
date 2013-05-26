@@ -12,7 +12,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			dataType : 'json',
 			colModel : [ {
 				display : 'Data',
-				name : 'data',
+				name : 'dataLancamento',
 				width : 100,
 				sortable : false,
 				align : 'left'
@@ -56,22 +56,15 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		$("#dataNotaFiscal", ConferenciaEncalheCont.workspace).mask("99/99/9999");
 		
-		$("#numeroCota", ConferenciaEncalheCont.workspace).keyup(function(e) {
+		$("#numeroCota", ConferenciaEncalheCont.workspace).keypress(function(e) {
 			
-			if (e.keyCode == 13) {
+			if(e.keyCode == 13 && !visibleOverlay()) {
 
-				if (ConferenciaEncalheCont.verificarReabertura){
-				    
-				    ConferenciaEncalheCont.pesquisarCota();
-			    }
-			    else{
-			
-			    	ConferenciaEncalheCont.verificarReabertura = true;
-		    	}
+				ConferenciaEncalheCont.pesquisarCota();
 			}
 		});
 		
-		$("#lstProdutos", ConferenciaEncalheCont.workspace).keyup(function(e){
+		$("#lstProdutos", ConferenciaEncalheCont.workspace).keypress(function(e){
 			
 			ConferenciaEncalheCont.pesquisarProdutoPorCodigoNome();
 		});
@@ -460,7 +453,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					innerTable += "<td style='text-align: right;' nowrap='nowrap'>" + parseFloat(value.precoCapa).toFixed(2) + "</td>";
 					
-					innerTable += "<td style='text-align: right;' nowrap='nowrap'>" + parseFloat(value.desconto).toFixed(2) + "</td>";
+					//innerTable += "<td style='text-align: right;' nowrap='nowrap'>" + parseFloat(value.desconto).toFixed(2) + "</td>";
+					innerTable += "<td style='text-align: right;' nowrap='nowrap'>" + parseFloat(value.precoComDesconto).toFixed(2) + "</td>";
 					
 					var valorExemplares = parseInt(value.qtdExemplar);
 					
@@ -516,7 +510,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		}
 		
 		$(".outrosVlrsGrid", ConferenciaEncalheCont.workspace).flexAddData({
-			page: result.listaDebitoCredito.page, total: result.listaDebitoCredito.total, rows: result.listaDebitoCredito.rows
+			page: result.listaDebitoCredito.page, total: result.listaDebitoCredito.total, rows: ConferenciaEncalheCont.formatarDadosDebitoCredito(result.listaDebitoCredito.rows)
 		});
 		
 		$("#totalReparte", ConferenciaEncalheCont.workspace).text(parseFloat(result.reparte).toFixed(2));
@@ -530,6 +524,28 @@ var ConferenciaEncalheCont = $.extend(true, {
 		$("#statusCota", ConferenciaEncalheCont.workspace).text(result.situacao);
 		
 		focusSelectRefField($("[name=inputValorExemplares]", ConferenciaEncalhe.workspace).first());
+	},
+	
+	formatarDadosDebitoCredito : function(listaDebitoCredito) {
+		
+		if(listaDebitoCredito){
+			
+			$.each(listaDebitoCredito, function(index, value){
+				value.cell.valor = parseFloat(value.cell.valor).toFixed(2);
+				
+				var strDataArr;
+				if(value.cell.dataLancamento.indexOf('-') > -1) {
+					strDataArr = value.cell.dataLancamento.split('-');
+				
+					value.cell.dataLancamento = strDataArr[2] +'/'+ strDataArr[1] +'/'+ strDataArr[0];
+				}
+								
+			});
+		
+		}
+		
+		return listaDebitoCredito;
+		
 	},
 	
 	atualizarValores: function(index, valorReal) {
@@ -577,7 +593,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					{codigoNomeProduto:codigoNomeProduto}, 
 				function(result){
 					
-					if (result[0]){
+					if (result.length > 1){
 						
 						$("#lstProdutos", ConferenciaEncalheCont.workspace).autocomplete({
 							source: result,
@@ -603,8 +619,11 @@ var ConferenciaEncalheCont = $.extend(true, {
 									}, 
 									true, "idModalNovoEncalhe"
 								);
-							}
+							},
+							delay : 0
 						});
+						
+						$("#lstProdutos", ConferenciaEncalheCont.workspace).autocomplete("search", codigoNomeProduto);
 					}
 				}, null, true, "idModalNovoEncalhe"
 			);

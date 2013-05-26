@@ -5,8 +5,8 @@ import java.io.Serializable;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.util.export.Export;
-import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.util.export.Export.Alignment;
+import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
 public class VendaEncalheVO implements Serializable {
@@ -18,37 +18,37 @@ public class VendaEncalheVO implements Serializable {
 	
 	private Long idVenda;
 
-	@Export(label = "Data", alignment = Alignment.LEFT)
+	@Export(label = "Data", alignment = Alignment.LEFT,widthPercent=9)
 	private String dataVenda;
 	
-	@Export(label = "Cota", alignment = Alignment.LEFT)
+	@Export(label = "Cota", alignment = Alignment.LEFT,widthPercent=5)
 	private String numeroCota;
 	
-	@Export(label = "Nome", alignment = Alignment.LEFT)
+	@Export(label = "Nome", alignment = Alignment.LEFT,widthPercent=16)
 	private String nomeCota;
 	
-	@Export(label = "Código", alignment = Alignment.LEFT)
+	@Export(label = "Código", alignment = Alignment.LEFT,widthPercent=8)
 	private String codigoProduto;
 	
-	@Export(label = "Produto", alignment = Alignment.LEFT)
+	@Export(label = "Produto", alignment = Alignment.LEFT,widthPercent=15)
 	private String nomeProduto;
 	
-	@Export(label = "Edição", alignment = Alignment.CENTER)
+	@Export(label = "Edição", alignment = Alignment.CENTER,widthPercent=5)
 	private String numeroEdicao;
 	
-	@Export(label = "Quantidade", alignment = Alignment.CENTER)
+	@Export(label = "Quantidade", alignment = Alignment.CENTER,widthPercent=8)
 	private String qntProduto;
 	
-	@Export(label = "Preço Desc. R$", alignment = Alignment.RIGHT)
+	@Export(label = "Preço Desc. R$", alignment = Alignment.RIGHT,widthPercent=6)
 	private String precoDesconto;
 	
-	@Export(label = "Total R$", alignment = Alignment.RIGHT)
+	@Export(label = "Total R$", alignment = Alignment.RIGHT,widthPercent=7)
 	private String valoTotalProduto;
 
-	@Export(label = "Tipo Venda", alignment = Alignment.CENTER)
+	@Export(label = "Tipo Venda", alignment = Alignment.CENTER,widthPercent=10)
 	private String tipoVendaEncalhe;
 
-	@Export(label = "Usuário", alignment = Alignment.LEFT)
+	@Export(label = "Usuário", alignment = Alignment.LEFT,widthPercent=11)
 	private String nomeUsuario;
 	
 	private String formaVenda;

@@ -98,8 +98,7 @@ var consultaBoletosController = $.extend(true, {
 	mostrarGridConsulta : function() {
 		
 		/*PASSAGEM DE PARAMETROS*/
-		$(".boletosCotaGrid", consultaBoletosController.workspace).flexOptions({
-			
+		$(".boletosCotaGrid", consultaBoletosController.workspace).flexOptions({	
 			/*METODO QUE RECEBERA OS PARAMETROS*/
 			url: contextPath + "/financeiro/boletos/consultaBoletos",
 			params: [
@@ -139,17 +138,28 @@ var consultaBoletosController = $.extend(true, {
 		
 		$.each(dadosPesquisa.rows, 
 				function(index, row) {
-
 			         var linkEmail='';
 			         var linkImpressao='';
 			         
 		        	 linkImpressao = '<a isEdicao="true" href="javascript:;" onclick="consultaBoletosController.imprimeBoleto(\'' + row.cell[0] + '\');" style="cursor:pointer">' +
 				 					 '<img src="' + contextPath + '/images/ico_impressora.gif" hspace="5" border="0px" title="Imprime boleto" />' +
 				 					 '</a>';
-			         			 					     
-			         linkEmail = '<a isEdicao="true" href="javascript:;" onclick="consultaBoletosController.enviaBoleto(\'' + row.cell[0] + '\');" style="cursor:pointer">' +
-			                     '<img src="' + contextPath + '/images/ico_email.png" hspace="5" border="0px" title="Envia boleto por e-mail" />' +
- 					             '</a>';		 					 
+		        	 
+		        	 
+		        	 
+		        	 if(row.cell[8] == 'true')
+		        	 {
+		        		 linkEmail = '<a isEdicao="true" href="javascript:;" onclick="consultaBoletosController.enviaBoleto(\'' + row.cell[0] + '\');" style="cursor:pointer">' +
+	                     '<img src="' + contextPath + '/images/ico_email.png" hspace="5" border="0px" title="Envia boleto por e-mail" />' +
+				             '</a>';
+		        	 }
+		        	 else
+		        	 {
+		        		 linkEmail = '<img border="0px" hspace="5" style="opacity:0.4; filter:alpha(opacity=40)"' +
+		        		 'title="Divida não tem suporte para Envio de Arquivo por E-Mail" '+ 
+		        		 'src="' + contextPath + '/images/ico_email.png">';
+		        	 } 
+			         		 					 
 									
 				     row.cell[8] = linkImpressao + linkEmail;
 		         }

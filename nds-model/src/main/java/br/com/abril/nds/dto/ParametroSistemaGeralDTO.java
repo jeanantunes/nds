@@ -87,20 +87,75 @@ public class ParametroSistemaGeralDTO implements Serializable {
 		this.params.put(TipoParametroSistema.FREQUENCIA_EXPURGO,qntMeses);
 	}
 	
+	/**
+	 * @param emailUsuario
+	 *            the email to set
+	 */
+	public void setEmailUsuario(String emailUsuario) {
+		this.params.put(TipoParametroSistema.EMAIL_USUARIO, emailUsuario);
+	}
 
 	/**
-	 * @return the email
+	 * @return the emailUsuario
 	 */
-	public String getEmail() {
+	public String getEmailUsuario() {
 		return this.getParametroSistemaString(TipoParametroSistema.EMAIL_USUARIO);
 	}
 
 	/**
-	 * @param email
-	 *            the email to set
+	 * @param host
 	 */
-	public void setEmail(String email) {
-		this.params.put(TipoParametroSistema.EMAIL_USUARIO, email);
+	public void setHost(String host) {
+		this.params.put(TipoParametroSistema.EMAIL_HOST, host);
+	}
+	
+	/**
+	 * @return the host
+	 */
+	public String getHost() {
+		return this.getParametroSistemaString(TipoParametroSistema.EMAIL_HOST);
+	}
+	
+	/**
+	 * @param protocolo
+	 */
+	public void setProtocolo(String protocolo) {
+		this.params.put(TipoParametroSistema.EMAIL_PROTOCOLO, protocolo);
+	}
+	
+	/**
+	 * @return the protocolo
+	 */
+	public String getProtocolo() {
+		return this.getParametroSistemaString(TipoParametroSistema.EMAIL_PROTOCOLO);
+	}
+	
+	/**
+	 * @param porta
+	 */
+	public void setPorta(String porta) {
+		this.params.put(TipoParametroSistema.EMAIL_PORTA, porta);
+	}
+	
+	/**
+	 * @return the porta
+	 */
+	public String getPorta() {
+		return this.getParametroSistemaString(TipoParametroSistema.EMAIL_PORTA);
+	}
+	
+	/**
+	 * @param senha
+	 */
+	public void setSenha(String senha) {
+		this.params.put(TipoParametroSistema.EMAIL_SENHA, senha);
+	}
+	
+	/**
+	 * @return the senha
+	 */
+	public String getSenha() {
+		return this.getParametroSistemaString(TipoParametroSistema.EMAIL_SENHA);
 	}
 
 	/**

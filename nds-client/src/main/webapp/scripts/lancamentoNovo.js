@@ -5,6 +5,7 @@ var lancamentoNovoController = $.extend(true, {
 	idDiferenca:null,
 	redirecionarProdutosEstoque:false,
 	tipoEstoqueSelecionado:null,
+	houveAlteracaoLancamentos:false,
 
 	init : function () {
 		$("#dateNotaEnvio", lancamentoNovoController.workspace).datepicker({
@@ -123,6 +124,7 @@ var lancamentoNovoController = $.extend(true, {
 		
 		$(".trCotas", lancamentoNovoController.workspace).remove();
 		$("#cotaInput1", lancamentoNovoController.workspace).val("");
+		$('#rateioIDInputHidden1', lancamentoNovoController.workspace).val("");
 		$("#nomeInput1", lancamentoNovoController.workspace).val("");
 		$("#reparteText1", lancamentoNovoController.workspace).text("");
 		$("#diferencaInput1", lancamentoNovoController.workspace).val("");
@@ -265,6 +267,7 @@ var lancamentoNovoController = $.extend(true, {
 	},
 	
 	carregarEdicaoDirecionamentoCota:function(result){
+		lancamentoNovoController.limparCotas();
 		
 		lancamentoNovoController.carregarDiferencaProduto(result.diferenca);
 		
@@ -402,10 +405,13 @@ var lancamentoNovoController = $.extend(true, {
 					
 					lancamentoNovoController.processarNovaDiferenca();
 					
+					lancamentoNovoController.houveAlteracaoLancamentos = true;
 				},
 				"Cancelar": function() {
 					$("#gridNovasDiferencas", lancamentoNovoController.workspace).flexAddData({rows:[]});
 					$(this).dialog("close");
+					
+					lancamentoNovoController.houveAlteracaoLancamentos = false;
 				}
 			},
 			beforeClose: function() {
@@ -1215,7 +1221,6 @@ var lancamentoNovoController = $.extend(true, {
 			buttons: 
 			{
 				"Confirmar": function() {
-					
 					lancamentoNovoController.redirecionarProdutosEstoque = true;
 					lancamentoNovoController.cadastrarNovasDiferencas(isBotaoIncluirNovo);
 					

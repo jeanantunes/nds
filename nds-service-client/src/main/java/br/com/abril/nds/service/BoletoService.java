@@ -165,4 +165,6 @@ public interface BoletoService {
 	 */
 	public Long obterQuantidadeTotalBancario(FiltroDetalheBaixaBoletoDTO filtro);
 
+	public List<Boleto> verificaEnvioDeEmail(List<Boleto> boletos);
+
 }
