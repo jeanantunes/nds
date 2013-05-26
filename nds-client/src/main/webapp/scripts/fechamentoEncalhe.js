@@ -4,7 +4,7 @@ var fechamentoEncalheController = $.extend(true, {
 	vFornecedorId : '',
 	vBoxId : '',
 	isFechamento : false,
-
+	
 	init : function() {
 		$("#datepickerDe", fechamentoEncalheController.workspace).datepicker({
 			showOn: "button",
@@ -203,9 +203,9 @@ var fechamentoEncalheController = $.extend(true, {
 		vFornecedorId = $('#selectFornecedor', fechamentoEncalheController.workspace).val();
 		vBoxId = $('#selectBoxEncalhe', fechamentoEncalheController.workspace).val();
 	},
-	
 	preprocessamentoGridFechamento : function(resultado) {
 		
+		console.log(resultado);
 		if (typeof resultado.mensagens == "object") {
             exibirMensagemDialog(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens, "");
             return;
@@ -225,9 +225,16 @@ var fechamentoEncalheController = $.extend(true, {
 			}
 			
 			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
-			row.cell.fisico = '<input isEdicao="true" type="text" onkeypress="fechamentoEncalheController.nextInputExemplares('+index+',window.event);" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" value="' + valorFisico + '" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ')" ' + fechado + '/>';
-		
-			row.cell.replicar = '<input isEdicao="true" type="checkbox"  id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index + ');"' + fechado+ '/>';
+			row.cell.fisico = '<input class="" isEdicao="true" type="text" onkeypress="fechamentoEncalheController.nextInputExemplares('+index+',window.event);" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" value="' + valorFisico + '" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ')" ' + fechado + '/>';
+
+			if($('#sel').attr('checked')==true || row.cell.replicar == 'true')
+			{
+				row.cell.replicar = '<input isEdicao="true" type="checkbox"  id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index + ');"' + fechado+ ' checked />';
+			}	
+			else
+			{
+				row.cell.replicar = '<input isEdicao="true" type="checkbox"  id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index + ');"' + fechado+ '/>';
+			}	
 			
 			if (fechado != '') {
 				$('.divBotoesPrincipais', fechamentoEncalheController.workspace).hide();
@@ -240,7 +247,7 @@ var fechamentoEncalheController = $.extend(true, {
 	replicarTodos : function(replicar) {
 	
 		var tabela = $('.fechamentoGrid', fechamentoEncalheController.workspace).get(0);
-		for (i = 0; i<tabela.rows.length; i++) {
+		for (var i = 0; i<tabela.rows.length; i++) {
 			if (replicar){
 			
 				fechamentoEncalheController.replicarItem(i);
@@ -294,7 +301,9 @@ var fechamentoEncalheController = $.extend(true, {
 	},
 	
 	checkAll:function(input){
-			
+		
+		// dom do botao de todos
+		
 		checkAll(input,"checkgroupFechamento");
 		
 		fechamentoEncalheController.replicarTodos(input.checked);
@@ -844,7 +853,7 @@ var fechamentoEncalheController = $.extend(true, {
 				'boxId' :  $('#selectBoxEncalhe', fechamentoEncalheController.workspace).val()
 		    },
 			function (result) {
-
+		    	
 				var tipoMensagem = result.tipoMensagem;
 				var listaMensagens = result.listaMensagens;
 				
@@ -867,6 +876,7 @@ var fechamentoEncalheController = $.extend(true, {
 	},
 
 	popup_mensagem_consistencia_dados : function() {
+		
 		$( "#dialog-mensagem-consistencia-dados", fechamentoEncalheController.workspace ).dialog({
 			resizable: false,
 			height:'auto',
@@ -890,6 +900,24 @@ var fechamentoEncalheController = $.extend(true, {
 	},
 	
 	 populaParamentrosFechamentoEncalheInformados : function(){
+		 
+		linhasTabela = [];
+		$('.fechamentoGrid', fechamentoEncalheController.workspace).find('tr').each(function(){
+			var codigo = $(this).children('td[abbr="codigo"]').children('div').html().toString();
+			var produtoEdicao = $(this).children('td[abbr="edicao"]').children('div').html().toString();
+			var fisico = $(this).children('td').children('div').children('input[name=fisico]').val().toString();
+			var checkbox = $(this).children('td').children('div').children('input[name=checkgroupFechamento]:checked').val() == "on" ? true : false;
+			var envioController = {
+				"codigo"  		: 	codigo,
+				"produtoEdicao" : 	produtoEdicao,
+				"fisico"		:	fisico,
+				"checkbox" 		: 	checkbox
+			};			
+			$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/enviarGridAnteriorParaSession", envioController, function() {
+				  console.log( "success" );
+			});
+		});
+		 
 		 
 		 var data = new Array();
 		 

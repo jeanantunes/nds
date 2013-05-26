@@ -25,6 +25,7 @@ import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
+import br.com.abril.nds.dto.fechamentoencalhe.GridFechamentoEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
@@ -84,7 +85,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
 public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(FechamentoEncalheServiceImpl.class);
-	
+		
 	@Autowired
 	private FechamentoEncalheRepository fechamentoEncalheRepository;
 	
@@ -1087,5 +1088,52 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	public Boolean buscaControleFechamentoEncalhe(Date data){
 		
 		return this.fechamentoEncalheRepository.buscaControleFechamentoEncalhe(data);
+	}
+
+	@Override
+	public List<FechamentoFisicoLogicoDTO> ajustarGrids(List<FechamentoFisicoLogicoDTO> listaEncalhe,
+											List<GridFechamentoEncalheDTO> listaDeGrid) {
+		
+		if(listaDeGrid == null || listaDeGrid.isEmpty())
+		{
+			return listaEncalhe;
+		}
+		else
+		{
+			for(GridFechamentoEncalheDTO linhaGrid : listaDeGrid)
+			{
+				for(FechamentoFisicoLogicoDTO encalhe : listaEncalhe)
+				{
+					if(encalhe.getCodigo().equals(linhaGrid.getCodigo().toString()))
+					{
+						if(linhaGrid.isCheckbox())
+						{
+							encalhe.setFisico(linhaGrid.getFisico());
+						}
+						encalhe.setReplicar(new Boolean(linhaGrid.isCheckbox()).toString());
+					}
+				}
+			}
+			return listaEncalhe;
+		}
+	}
+
+	@Override
+	public List<FechamentoFisicoLogicoDTO> listaDeGridParaFechamentoFisico(
+			List<GridFechamentoEncalheDTO> listaDeGrid) {
+
+		ArrayList<FechamentoFisicoLogicoDTO> listaFrinalizada = new ArrayList<FechamentoFisicoLogicoDTO>();
+		for(GridFechamentoEncalheDTO linha : listaDeGrid)
+		{
+			if(linha.getFisico() != null)
+			{
+				FechamentoFisicoLogicoDTO fechamentoFisicoLogico = new FechamentoFisicoLogicoDTO();
+				fechamentoFisicoLogico.setCodigo(linha.getCodigo().toString());
+				fechamentoFisicoLogico.setProdutoEdicao(linha.getProdutoEdicao());
+				fechamentoFisicoLogico.setFisico(linha.getFisico());
+				listaFrinalizada.add(fechamentoFisicoLogico);
+			}
+		}
+		return listaFrinalizada;
 	}
 }
