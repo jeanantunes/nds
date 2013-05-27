@@ -1092,7 +1092,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 	@Override
 	public List<FechamentoFisicoLogicoDTO> ajustarGrids(List<FechamentoFisicoLogicoDTO> listaEncalhe,
-											List<GridFechamentoEncalheDTO> listaDeGrid) {
+											List<FechamentoFisicoLogicoDTO> listaDeGrid) {
 		
 		if(listaDeGrid == null || listaDeGrid.isEmpty())
 		{
@@ -1100,17 +1100,18 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 		else
 		{
-			for(GridFechamentoEncalheDTO linhaGrid : listaDeGrid)
+			for(FechamentoFisicoLogicoDTO linhaGrid : listaDeGrid)
 			{
 				for(FechamentoFisicoLogicoDTO encalhe : listaEncalhe)
 				{
-					if(encalhe.getCodigo().equals(linhaGrid.getCodigo().toString()))
-					{
-						if(linhaGrid.isCheckbox())
+					if(encalhe.getCodigo().equals(linhaGrid.getCodigo()))
+					{	
+						encalhe.setReplicar(linhaGrid.getReplicar());
+						
+						if(linhaGrid.getFisico() != null)
 						{
 							encalhe.setFisico(linhaGrid.getFisico());
 						}
-						encalhe.setReplicar(new Boolean(linhaGrid.isCheckbox()).toString());
 					}
 				}
 			}
@@ -1118,22 +1119,35 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 	}
 
+	
 	@Override
-	public List<FechamentoFisicoLogicoDTO> listaDeGridParaFechamentoFisico(
-			List<GridFechamentoEncalheDTO> listaDeGrid) {
-
-		ArrayList<FechamentoFisicoLogicoDTO> listaFrinalizada = new ArrayList<FechamentoFisicoLogicoDTO>();
-		for(GridFechamentoEncalheDTO linha : listaDeGrid)
+	public List<GridFechamentoEncalheDTO> listaEncalheTotalParaGrid(
+			List<FechamentoFisicoLogicoDTO> listaEncalheSessao) {
+		
+		List<GridFechamentoEncalheDTO> listaGrid = new ArrayList<GridFechamentoEncalheDTO>();
+		for(FechamentoFisicoLogicoDTO encalhe : listaEncalheSessao)
 		{
-			if(linha.getFisico() != null)
-			{
-				FechamentoFisicoLogicoDTO fechamentoFisicoLogico = new FechamentoFisicoLogicoDTO();
-				fechamentoFisicoLogico.setCodigo(linha.getCodigo().toString());
-				fechamentoFisicoLogico.setProdutoEdicao(linha.getProdutoEdicao());
-				fechamentoFisicoLogico.setFisico(linha.getFisico());
-				listaFrinalizada.add(fechamentoFisicoLogico);
-			}
+			GridFechamentoEncalheDTO gridFechamento = new GridFechamentoEncalheDTO();
+			gridFechamento.setCodigo(Long.parseLong(encalhe.getCodigo()));
+			gridFechamento.setFisico(encalhe.getFisico());
+			listaGrid.add(gridFechamento);
 		}
-		return listaFrinalizada;
+		return listaGrid;
+	}
+
+	@Override
+	public List<FechamentoFisicoLogicoDTO> verificarListaDaSessao(
+			List<FechamentoFisicoLogicoDTO> listaEncalheSession, FiltroFechamentoEncalheDTO filtro, String sortname, String sortorder) {
+		
+		if(listaEncalheSession == null || listaEncalheSession.isEmpty())
+		{
+			if (sortname.endsWith("Formatado")) {
+				sortname = sortname.substring(0, sortname.indexOf("Formatado"));
+			}
+			
+			listaEncalheSession = this.buscarFechamentoEncalhe(filtro, sortorder, sortname, null, null);
+		}
+	
+		return listaEncalheSession;
 	}
 }

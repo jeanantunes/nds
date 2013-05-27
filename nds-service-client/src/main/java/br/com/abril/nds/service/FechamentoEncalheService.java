@@ -70,11 +70,14 @@ public interface FechamentoEncalheService {
 
 	public abstract void realizarCobrancaCotas(Date dataOperacao, Usuario usuario,
 			List<CotaAusenteEncalheDTO> listaCotasAusentes, Cota cotaAusente) throws GerarCobrancaValidacaoException;
-	
-	
-	public List<FechamentoFisicoLogicoDTO> ajustarGrids(List<FechamentoFisicoLogicoDTO> listaEncalhe,
-																List<GridFechamentoEncalheDTO> listaDeGrid);
 
-	public List<FechamentoFisicoLogicoDTO> listaDeGridParaFechamentoFisico(
-			List<GridFechamentoEncalheDTO> listaDeGrid);
+	public List<GridFechamentoEncalheDTO> listaEncalheTotalParaGrid(
+			List<FechamentoFisicoLogicoDTO> listaEncalheSessao);
+
+	public List<FechamentoFisicoLogicoDTO> verificarListaDaSessao(
+			List<FechamentoFisicoLogicoDTO> listaEncalheSession, FiltroFechamentoEncalheDTO filtro, String sortname, String sortorder);
+
+	List<FechamentoFisicoLogicoDTO> ajustarGrids(
+			List<FechamentoFisicoLogicoDTO> listaEncalhe,
+			List<FechamentoFisicoLogicoDTO> listaEncalheSession);
 }
