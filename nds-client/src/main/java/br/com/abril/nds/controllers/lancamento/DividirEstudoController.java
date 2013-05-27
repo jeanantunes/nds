@@ -172,14 +172,16 @@ public class DividirEstudoController extends BaseController {
 		Estudo estudoOriginal = estudoService.obterEstudoByEstudoOriginalFromDivisaoEstudo(divisaoEstudo);
 
 		Estudo primeiroEstudo = (Estudo)SerializationUtils.clone(estudoOriginal);
-		primeiroEstudo.setId(null);
-		primeiroEstudo.setReparteDistribuir(divisaoEstudo.getRepartePrimeiroEstudo());
+		primeiroEstudo.setId(divisaoEstudo.getNumeroPrimeiroEstudo());
+//		primeiroEstudo.setReparteDistribuir(divisaoEstudo.getRepartePrimeiroEstudo());
+		primeiroEstudo.setQtdeReparte(divisaoEstudo.getRepartePrimeiroEstudo());
 		primeiroEstudo.setDataLancamento(DateUtil.parseData(dataLancamentoPrimeiroEstudo, Constantes.DATE_PATTERN_PT_BR));
  
 		Estudo segundoEstudo = (Estudo) SerializationUtils.clone(estudoOriginal);
-		segundoEstudo.setId(null);
+		segundoEstudo.setId(divisaoEstudo.getNumeroSegundoEstudo());
 //		segundoEstudo.setReparteDistribuir(divisaoEstudo.getRepartePrimeiroEstudo());
-		segundoEstudo.setReparteDistribuir(divisaoEstudo.getReparteSegundoEstudo());
+//		segundoEstudo.setReparteDistribuir(divisaoEstudo.getReparteSegundoEstudo());
+		segundoEstudo.setQtdeReparte(divisaoEstudo.getReparteSegundoEstudo());
 		segundoEstudo.setDataLancamento(DateUtil.parseData(dataLancamentoSegundoEstudo, Constantes.DATE_PATTERN_PT_BR));
 
 		List<Estudo> listEstudo = new ArrayList<Estudo>();

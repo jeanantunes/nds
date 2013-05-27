@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -26,6 +28,8 @@ import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.service.EstudoService;
+import br.com.abril.nds.service.LancamentoService;
+import br.com.abril.nds.util.DateUtil;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -45,6 +49,9 @@ public class EstudoServiceImpl implements EstudoService {
 
     @Autowired
     private LancamentoRepository lancamentoRepository;
+    
+    @Autowired
+    private LancamentoService lancamentoService;
 
 	@Transactional(readOnly = true)
 	public Estudo obterEstudoDoLancamentoPorDataProdutoEdicao(Date dataReferencia, Long idProdutoEdicao) {
@@ -151,65 +158,81 @@ public class EstudoServiceImpl implements EstudoService {
     }
 
     @Transactional
-    public List<Long> salvarDivisao(Estudo estudoOriginal, List<Estudo> listEstudo) {
+	public List<Long> salvarDivisao(Estudo estudoOriginal,List<Estudo> listEstudo) {
 
-	List<Long> listIdEstudoAdicionado = null;
+		List<Long> listIdEstudoAdicionado = null;
 
-	if (listEstudo != null && !listEstudo.isEmpty()) {
+		Estudo obterEstudo = this.obterEstudo(listEstudo.get(0).getId());
+		Estudo obterEstudo2 = this.obterEstudo(listEstudo.get(1).getId());
+		
+		if(obterEstudo!=null && obterEstudo2!=null ){
+			throw new ValidacaoException(TipoMensagem.WARNING, " Número dos estudo gerados já estão sendo utilizados.");
+		}
+		
+		if (listEstudo != null && !listEstudo.isEmpty()) {
 
-	    listIdEstudoAdicionado = new ArrayList<Long>();
+			// 2 estudo para ser salvo
+			Estudo segundoEstudo = listEstudo.get(1);
 
-	    List<EstudoCota> listEstudoCota = this.estudoCotaRepository.obterEstudoCotaPorEstudo(estudoOriginal);
-	    List<Lancamento> listLancamento = this.lancamentoRepository.obterPorEstudo(estudoOriginal);
-//	    List<Lancamento> listLancamento = this.lancamentoRepository.buscarPorIdSemEstudo(estudoOriginal.getLancamentoID());
+			// verificando existencia de lancamentos na data de lancamento
+			// informada em tela para produto_edicao do estudo original
+			Lancamento lancamentoSegundoEstudo = this.lancamentoRepository
+					.buscarPorDataLancamentoProdutoEdicao(segundoEstudo
+							.getDataLancamento(), segundoEstudo
+							.getProdutoEdicao().getId());
 
-	    int iEstudo = 0;
-	    while (iEstudo < listEstudo.size()) {
+			if(lancamentoSegundoEstudo==null){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados lançamentos para data "+DateUtil.formatarDataPTBR(segundoEstudo.getDataLancamento()));
+			}
+			
+			listIdEstudoAdicionado = new ArrayList<Long>();
 
-		Estudo estudo = listEstudo.get(iEstudo);
+			List<EstudoCota> listEstudoCota = this.estudoCotaRepository
+					.obterEstudoCotaPorEstudo(estudoOriginal);
 
-		Set<Lancamento> setLancamento = new HashSet<Lancamento>();
-		Set<EstudoCota> setEstudoCota = new HashSet<EstudoCota>();
+			int iEstudo = 0;
 
-		int iEstudoCota = 0;
-		while (iEstudoCota < listEstudoCota.size()) {
+			for (Estudo estudo : listEstudo) {
 
-		    EstudoCota estudoCota = (EstudoCota) SerializationUtils.clone(listEstudoCota.get(iEstudoCota));
-		    estudoCota.setId(null);
-		    estudoCota.setEstudo(estudo);
+				estudo.setDataLancamento(null);
+				Set<EstudoCota> setEstudoCota = new HashSet<EstudoCota>();
 
-		    setEstudoCota.add(estudoCota);
+				int iEstudoCota = 0;
+				while (iEstudoCota < listEstudoCota.size()) {
 
-		    iEstudoCota++;
+					EstudoCota estudoCota = (EstudoCota) SerializationUtils.clone(listEstudoCota.get(iEstudoCota));
+					estudoCota.setId(null);
+					estudoCota.setEstudo(estudo);
+					setEstudoCota.add(estudoCota);
+
+					iEstudoCota++;
+				}
+
+				estudo.setEstudoCotas(setEstudoCota);
+
+				// Estudo 1 possui o mesmo lancamentoID do estudo original
+				if (iEstudo == 0) {
+					Lancamento lanc = this.lancamentoRepository.buscarPorId(estudoOriginal.getLancamentoID());
+					estudo.setLancamentoID(lanc.getId());
+				}
+				else{
+					estudo.setLancamentoID(lancamentoSegundoEstudo.getId());
+				}
+				
+				
+				
+				this.estudoRepository.adicionar(estudo);
+				listIdEstudoAdicionado.add(estudo.getId());
+
+				iEstudo++;
+
+			}
+
 		}
 
-		estudo.setEstudoCotas(setEstudoCota);
-
-		int iLancamento = 0;
-		while (iLancamento < listLancamento.size()) {
-
-		    Lancamento lancamento = (Lancamento) SerializationUtils.clone(listLancamento.get(iLancamento));
-		    lancamento.setId(null);
-		    lancamento.setEstudo(estudo);
-
-		    setLancamento.add(lancamento);
-
-		    iLancamento++;
-		}
-
-		estudo.setLancamentos(setLancamento);
-
-		Long idEstudo = this.estudoRepository.adicionar(estudo);
-
-		listIdEstudoAdicionado.add(idEstudo);
-
-		iEstudo++;
-	    }
+		return listIdEstudoAdicionado;
 	}
-//	estudoRepository.removerPorId(estudoOriginal.getId());
 
-	return listIdEstudoAdicionado;
-    }
 
 	@Override
 	@Transactional
