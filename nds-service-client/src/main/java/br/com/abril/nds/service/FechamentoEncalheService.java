@@ -8,6 +8,7 @@ import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
+import br.com.abril.nds.dto.fechamentoencalhe.GridFechamentoEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -69,4 +70,14 @@ public interface FechamentoEncalheService {
 
 	public abstract void realizarCobrancaCotas(Date dataOperacao, Usuario usuario,
 			List<CotaAusenteEncalheDTO> listaCotasAusentes, Cota cotaAusente) throws GerarCobrancaValidacaoException;
+
+	public List<GridFechamentoEncalheDTO> listaEncalheTotalParaGrid(
+			List<FechamentoFisicoLogicoDTO> listaEncalheSessao);
+
+	public List<FechamentoFisicoLogicoDTO> verificarListaDaSessao(
+			List<FechamentoFisicoLogicoDTO> listaEncalheSession, FiltroFechamentoEncalheDTO filtro, String sortname, String sortorder);
+
+	List<FechamentoFisicoLogicoDTO> ajustarGrids(
+			List<FechamentoFisicoLogicoDTO> listaEncalhe,
+			List<FechamentoFisicoLogicoDTO> listaEncalheSession);
 }
