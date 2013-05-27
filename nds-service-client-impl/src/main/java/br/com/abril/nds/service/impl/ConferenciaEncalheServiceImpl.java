@@ -3184,7 +3184,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = controleConferenciaEncalheCotaRepository.buscarPorId(idControleConferenciaEncalheCota);
 		
-		if(incluirNumeroSlip || controleConferenciaEncalheCota.getNumeroSlip() == null) {
+		if(incluirNumeroSlip || controleConferenciaEncalheCota.getNumeroSlip() == null || controleConferenciaEncalheCota.getNumeroSlip() < 1) {
 			controleConferenciaEncalheCota.setNumeroSlip(controleNumeracaoSlipService.obterProximoNumeroSlip(TipoSlip.SLIP_CONFERENCIA_ENCALHE));
 			controleConferenciaEncalheCotaRepository.alterar(controleConferenciaEncalheCota);
 		}
@@ -3215,8 +3215,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		BigDecimal valorTotalSemDesconto = this.obterValorTotalReparteSemDesconto(numeroCota, dataOperacao);
 		
 		Integer dia=0;
-		
-		boolean exiberSubtotal = false;
 		
 		for(ProdutoEdicaoSlipDTO produtoEdicaoSlip : listaProdutoEdicaoSlip) {
 				
@@ -3276,7 +3274,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		slipDTO.setValorSlip(valorTotalReparte.subtract(valorTotalEncalhe));           
 		
 		slipDTO.setValorTotalPagar(valorTotalPagar); 
-		slipDTO.setNumSlip(null);                 
+		slipDTO.setNumSlip(numeroSlip);                 
 		slipDTO.setListaProdutoEdicaoSlipDTO(listaProdutoEdicaoSlip);
 		
 		BigDecimal pagamentoPendente = slipDTO.getValorTotalPagar().compareTo(valorVenda)>0?slipDTO.getValorTotalPagar().subtract(valorVenda):BigDecimal.ZERO;
@@ -3309,8 +3307,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		}
 		
-
-		List<ComposicaoCobrancaSlipDTO> listaComposicaoCobranca = this.obterListaComposicaoCobranca(controleConferenciaEncalheCota);
+		
+		List<ComposicaoCobrancaSlipDTO> listaComposicaoCobranca = getListaComposicaoCobrancaDTO(slipDTO.getNumeroCota());
+		slipDTO.setListaComposicaoCobrancaDTO(listaComposicaoCobranca);
 		
 		parametersSlip.put("LISTA_COMPOSICAO_COBRANCA",listaComposicaoCobranca);
 		
@@ -3331,10 +3330,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 
 		
-		totalComposicao = totalComposicao.add(slipDTO.getValorSlip());
+		totalComposicao = totalComposicao.abs().add(slipDTO.getValorSlip());
 
 		
-		BigDecimal totalPagar = listaComposicaoCobranca.isEmpty() ? valorTotalPagar: totalComposicao;
+		BigDecimal totalPagar = totalComposicao;
 		
 		slipDTO.setValorTotalPagar(totalPagar);
 
@@ -3503,8 +3502,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlip = slipDTO.getListaProdutoEdicaoSlipDTO();
 		
 		for(int i = 0; i < listaProdutoEdicaoSlip.size(); i++) {
-		
+			
+			
 			ProdutoEdicaoSlipDTO itemLista = listaProdutoEdicaoSlip.get(i);
+			
+			//Deve imprimir linha apenas caso haja ENCALHE
+			if(itemLista.getEncalhe() == null || itemLista.getEncalhe().intValue() < 1)
+				continue;
 			
 			if (!itemLista.getDia().equals(ultimoDia)){
 			
@@ -3564,16 +3568,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			slipDTO.getValorTotalDesconto().setScale(2, RoundingMode.HALF_EVEN).toString());
 		e.quebrarLinhaEscape();
 		
-		e.adicionarCompleteEspaco("Valor Líquido Devido", 
-				slipDTO.getValorTotalSemDesconto().subtract(slipDTO.getValorTotalDesconto())
+		e.adicionarCompleteEspaco("Valor Liquido Devido (B) ", slipDTO.getValorTotalSemDesconto().subtract(slipDTO.getValorTotalDesconto())
 				.setScale(2, RoundingMode.HALF_EVEN).toString());
 		e.quebrarLinhaEscape();
 		e.quebrarLinhaEscape();
-		
-		
-		
-		
-		
 		
 		e.adicionar("SUB-TOTAL-------------------------------");
 		e.quebrarLinhaEscape();
@@ -3587,8 +3585,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		e.quebrarLinhaEscape();
 		e.quebrarLinhaEscape();
 	
-		
-		this.adicionarComposicaoCobranca(e, slipDTO.getNumeroCota());
+		this.adicionarComposicaoCobranca(e, slipDTO.getListaComposicaoCobrancaDTO());
 		
 		String valorTotalPagar = slipDTO.getValorTotalPagar() == null ? "0,00" : slipDTO.getValorTotalPagar().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
 		
@@ -3633,7 +3630,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		e.quebrarLinhaEscape();
 	}
 
-	private void adicionarComposicaoCobranca(ImpressaoMatricialUtil e, Integer numeroCota) {
+	private void adicionarComposicaoCobranca(ImpressaoMatricialUtil e, List<ComposicaoCobrancaSlipDTO> listaComposicaoCobrancaDTO) {
 
 		e.adicionar("COMPOSICAO COBRANCA---------------------");
 
@@ -3644,7 +3641,25 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		e.adicionarCompleteEspaco("Valor SLIP do dia: ( B - A ) D", valorSlip);
 
 		e.quebrarLinhaEscape();
+		
+		if(listaComposicaoCobrancaDTO != null){
 			
+			for(ComposicaoCobrancaSlipDTO composicao : listaComposicaoCobrancaDTO) 
+			{
+				String descricao = composicao.getDescricao();
+				String valor = (composicao.getValor() == null) ? "0,00" : composicao.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
+				String operacaoFinanceira = (composicao.getOperacaoFinanceira() == null) ? "" : composicao.getOperacaoFinanceira();
+				e.adicionarCompleteEspaco(descricao + ": " + operacaoFinanceira, valor);
+				e.quebrarLinhaEscape();
+			}
+		}
+		
+		e.quebrarLinhaEscape();
+		e.quebrarLinhaEscape();
+	}
+
+	private List<ComposicaoCobrancaSlipDTO> getListaComposicaoCobrancaDTO(
+			Integer numeroCota) {
 		InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota = obterInfoConferenciaEncalheCota(numeroCota, true);
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCota = obterInfoConferenciaEncalheCota.getListaDebitoCreditoCota();
 		
@@ -3658,18 +3673,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			listaComposicaoCobrancaDTO.add(composicaoAcertoDeValoresNaoRetornados);
 		}
-		
-		
-		for(ComposicaoCobrancaSlipDTO composicao : listaComposicaoCobrancaDTO) 
-		{
-			String descricao = composicao.getDescricao();
-			String valor = (composicao.getValor() == null) ? "0,00" : composicao.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
-			String operacaoFinanceira = (composicao.getOperacaoFinanceira() == null) ? "" : composicao.getOperacaoFinanceira();
-			e.adicionarCompleteEspaco(descricao + ": " + operacaoFinanceira, valor);
-			e.quebrarLinhaEscape();
-		}
-		e.quebrarLinhaEscape();
-		e.quebrarLinhaEscape();
+		return listaComposicaoCobrancaDTO;
 	}
 	
 	private byte[] gerarSlipPDF() {
