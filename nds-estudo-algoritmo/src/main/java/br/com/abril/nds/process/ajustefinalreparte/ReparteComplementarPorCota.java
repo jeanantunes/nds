@@ -31,8 +31,10 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
     @Override
     public void executar(EstudoTransient estudo) throws Exception {
 	listaOrdenada = new LinkedList<>();
-	ordenarLista(estudo);
-	distribuirReparteComplementar(estudo);
+	if (estudo.getReparteComplementar().compareTo(BigInteger.ZERO) > 0) {
+	    ordenarLista(estudo);
+	    distribuirReparteComplementar(estudo);
+	}
     }
 
     private void ordenarLista(EstudoTransient estudo) {
