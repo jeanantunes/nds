@@ -114,6 +114,7 @@ public class Lancamento implements Serializable {
 	private Integer sequenciaMatriz;
 	
 	
+	@NotFound(action = NotFoundAction.IGNORE)
 	@ManyToOne(cascade = {CascadeType.ALL},fetch = FetchType.LAZY)
 	@JoinColumns({
 		@JoinColumn(name = "PRODUTO_EDICAO_ID", referencedColumnName = "PRODUTO_EDICAO_ID", insertable = false, updatable = false),

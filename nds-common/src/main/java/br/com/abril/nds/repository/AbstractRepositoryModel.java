@@ -32,6 +32,10 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 		return (K) getSession().save(entity);		
 	}
 	
+	public void saveOrUpdate(T entity) {
+		getSession().saveOrUpdate(entity);		
+	}
+	
 	public void remover(T entity) {
 		getSession().delete(entity);
 		getSession().flush();

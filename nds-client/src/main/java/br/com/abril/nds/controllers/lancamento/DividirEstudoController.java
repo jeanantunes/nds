@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.BaseController;
@@ -172,14 +173,16 @@ public class DividirEstudoController extends BaseController {
 		Estudo estudoOriginal = estudoService.obterEstudoByEstudoOriginalFromDivisaoEstudo(divisaoEstudo);
 
 		Estudo primeiroEstudo = (Estudo)SerializationUtils.clone(estudoOriginal);
-		primeiroEstudo.setId(null);
-		primeiroEstudo.setReparteDistribuir(divisaoEstudo.getRepartePrimeiroEstudo());
+		primeiroEstudo.setId(divisaoEstudo.getNumeroPrimeiroEstudo());
+//		primeiroEstudo.setReparteDistribuir(divisaoEstudo.getRepartePrimeiroEstudo());
+		primeiroEstudo.setQtdeReparte(divisaoEstudo.getRepartePrimeiroEstudo());
 		primeiroEstudo.setDataLancamento(DateUtil.parseData(dataLancamentoPrimeiroEstudo, Constantes.DATE_PATTERN_PT_BR));
  
 		Estudo segundoEstudo = (Estudo) SerializationUtils.clone(estudoOriginal);
-		segundoEstudo.setId(null);
+		segundoEstudo.setId(divisaoEstudo.getNumeroSegundoEstudo());
 //		segundoEstudo.setReparteDistribuir(divisaoEstudo.getRepartePrimeiroEstudo());
-		segundoEstudo.setReparteDistribuir(divisaoEstudo.getReparteSegundoEstudo());
+//		segundoEstudo.setReparteDistribuir(divisaoEstudo.getReparteSegundoEstudo());
+		segundoEstudo.setQtdeReparte(divisaoEstudo.getReparteSegundoEstudo());
 		segundoEstudo.setDataLancamento(DateUtil.parseData(dataLancamentoSegundoEstudo, Constantes.DATE_PATTERN_PT_BR));
 
 		List<Estudo> listEstudo = new ArrayList<Estudo>();
@@ -188,14 +191,9 @@ public class DividirEstudoController extends BaseController {
 
 		List<Long> listIdEstudoAdiconado = this.estudoService.salvarDivisao(estudoOriginal, listEstudo);
 
-		mensagensValidacao.add("Estudo dividido com sucesso! Os número(s) gerado(s) foram : ");
+		mensagensValidacao.add("Estudo dividido com sucesso! Os número(s) gerado(s) foram : "+StringUtils.join(listIdEstudoAdiconado," - "));
 
-		int i = 0;
-		while (i < listIdEstudoAdiconado.size()) {
-		    mensagensValidacao.add(" " + listIdEstudoAdiconado.get(i));
-		    i++;
-		}
-
+		
 		tipoMensagem = TipoMensagem.SUCCESS;
 
 		// this.result.use(Results.json()).from(Results.nothing()).serialize();

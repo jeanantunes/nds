@@ -344,4 +344,5 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 
 	public abstract BigInteger obterUltimoRepartePorProduto(Long codigoProduto);
 
+	public Lancamento buscarPorDataLancamentoProdutoEdicao(Date dtLancamento, Long produtoEdicaoId );
 }

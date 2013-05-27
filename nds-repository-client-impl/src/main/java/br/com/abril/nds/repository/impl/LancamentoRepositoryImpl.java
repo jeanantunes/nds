@@ -1598,4 +1598,18 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
     	return (BigInteger)query.uniqueResult();
     }
 
+	@Override
+	public Lancamento buscarPorDataLancamentoProdutoEdicao(Date dtLancamento,Long produtoEdicaoId) {
+		StringBuilder sql = new StringBuilder();
+    	
+		sql.append("from Lancamento l where l.dataLancamentoPrevista=:dtLancamento and l.produtoEdicao.id=:produtoEdicaoId");
+
+    	Query query = getSession().createQuery(sql.toString());
+    	
+    	query.setParameter("dtLancamento", dtLancamento);
+    	query.setParameter("produtoEdicaoId", produtoEdicaoId);
+    	
+    	return (Lancamento)query.uniqueResult();
+	}
+
 }
