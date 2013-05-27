@@ -706,7 +706,13 @@ public class MatrizLancamentoController extends BaseController {
 		List<Object> resultado = new ArrayList<Object>();
 		
 		tm.setRows(cells);
-		tm.setPage(paginacao.getPaginaAtual());
+		
+		if((paginacao.getPaginaAtual() * paginacao.getQtdResultadosPorPagina()) > filtro.getTotalRegistrosEncontrados()) {
+			tm.setPage(1);
+		} else {
+			tm.setPage(paginacao.getPaginaAtual());
+		}		
+		
 		tm.setTotal(filtro.getTotalRegistrosEncontrados());
 
 		resultado.add(tm);

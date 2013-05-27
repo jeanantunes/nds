@@ -1,10 +1,9 @@
 package br.com.abril.nds.controllers.lancamento;
 
 import java.io.File;
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -126,33 +125,43 @@ public class FuroProdutoController extends BaseController {
 		
 		List<String> listaMensagemValidacao = new ArrayList<String>();
 		
-		if (codigo == null || codigo.isEmpty()){
+		if (codigo == null || codigo.isEmpty()) {
+			
 			listaMensagemValidacao.add("Código é obrigatório.");
 		}
 		
-		if (edicao == null){
+		if (edicao == null) {
+			
 			listaMensagemValidacao.add("Edição é obrigatório.");
 		}
 		
-		if (dataLancamento == null || dataLancamento.isEmpty()){
+		if (dataLancamento == null || dataLancamento.isEmpty()) {
+			
 			listaMensagemValidacao.add("Data Lançamento é obrigatório.");
-		} else if (!DateUtil.isValidDatePTBR(dataLancamento)){
+			
+		} else if (!DateUtil.isValidDatePTBR(dataLancamento)) {
+			
 			listaMensagemValidacao.add("Valor inválido: Data Lançamento.");
 		}
 
-		DateFormat df = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
+		if (dataLancamento != null) {
 		
-		// Não permite que a data de lançamento seja menor que a data de operação na pesquisa (conforme solicitado pelo Rodrigo Winter na trac 586)
-		try {
-			if (df.parse(dataLancamento).before(distribuidorService.obter().getDataOperacao())) {
-				listaMensagemValidacao.add("Data de lançamento não pode ser menor que a data de operação.");
+			Date data = DateUtil.parseDataPTBR(dataLancamento);
+			
+			// Não permite que a data de lançamento seja menor que a data de operação 
+			//na pesquisa (conforme solicitado pelo Rodrigo Winter na trac 586)
+			if (data.before(distribuidorService.obter().getDataOperacao())) {
+				
+				listaMensagemValidacao.add(
+					"Data de lançamento não pode ser menor que a data de operação.");
 			}
-		} catch (ParseException e) {
-			listaMensagemValidacao.add("Erro ao converter a data de lançamento: " + df.format(dataLancamento) + ".");
 		}
 		
-		if (!listaMensagemValidacao.isEmpty()){
-			ValidacaoVO validacaoVO = new ValidacaoVO(TipoMensagem.ERROR, listaMensagemValidacao);
+		if (!listaMensagemValidacao.isEmpty()) {
+			
+			ValidacaoVO validacaoVO = 
+				new ValidacaoVO(TipoMensagem.ERROR, listaMensagemValidacao);
+			
 			throw new ValidacaoException(validacaoVO);
 		}
 	}

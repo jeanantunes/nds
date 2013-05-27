@@ -1,6 +1,7 @@
 package br.com.abril.nds.integracao.ems0136.processor;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -132,6 +133,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		 * Caso não exista, irá criar um novo Lançamento Parcial.
 		 */
 		Criteria criteria = getSession().createCriteria(LancamentoParcial.class);
+		criteria.setFetchMode("periodos", FetchMode.JOIN);
 		criteria.add(Restrictions.eq("produtoEdicao", produtoEdicao));
 		
 		LancamentoParcial parcial = (LancamentoParcial) criteria.uniqueResult();
@@ -217,35 +219,7 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		// Resgata todos os itens recebimentos fisicos para armazenar no novo lancamento
 		List<ItemRecebimentoFisico> itens = obtemItensRecebimentosFisicos(lancamentoParcial, dataOperacao);
 		
-		/*getSession().flush();
-		getSession().clear();
-		Set<ItemRecebimentoFisico> itens = new HashSet<ItemRecebimentoFisico>();
-		for (PeriodoLancamentoParcial periodo : lancamentoParcial.getPeriodos()) {
-			if (periodo.getLancamento() != null) {
-				for (ItemRecebimentoFisico item : periodo.getLancamento().getRecebimentos()) {
-					itens.add(item);
-				}
-			}
-		}*/
-
-		/* 
-		 * Exclui todos os Períodos que não foram gerados hoje (== DataOperacao)
-		 */
-		StringBuilder hql = new StringBuilder();
-		hql.append("DELETE FROM PeriodoLancamentoParcial p ");
-		hql.append(" WHERE p.lancamentoParcial = :lancamentoParcial ");
-		hql.append("   AND (p.dataCriacao <> :dataOperacao ");
-		hql.append("    OR p.dataCriacao IS NULL)");
-		
-		Query query = getSession().createQuery(hql.toString());
-		query.setDate("dataOperacao", dataOperacao);
-		query.setParameter("lancamentoParcial", lancamentoParcial);
-		query.executeUpdate();
-		
-		// Executa as exclusões e limpa a sessão.
-		getSession().flush();
-		getSession().clear();
-
+		this.excluirPeriodoLancamentoParcial(lancamentoParcial, dataOperacao);
 		
 		Integer numeroPeriodo = input.getNumeroPeriodo();
 		
@@ -279,9 +253,127 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 			this.getSession().update(pParcial);
 		}
 		
+		this.excluirLancamentosSemVinculosDePeriodoLancamento(lancamentoParcial, dataOperacao);
+		
 		return pParcial;
 	}
 
+	/**
+	 * Exclui os periodos de lançamentos parciais vinculados aos lançamentos parciais para inserção de novos
+	 * @param lancamentoParcial
+	 * @param dataOperacao
+	 */
+	private void excluirPeriodoLancamentoParcial(LancamentoParcial lancamentoParcial,
+			Date dataOperacao) {
+		/* 
+		 * Exclui todos os Períodos que não foram gerados hoje (== DataOperacao)
+		 */
+		StringBuilder hql = new StringBuilder();
+		hql.append("DELETE FROM PeriodoLancamentoParcial p ");
+		hql.append(" WHERE p.lancamentoParcial = :lancamentoParcial ");
+		hql.append("   AND (p.dataCriacao <> :dataOperacao ");
+		hql.append("    OR p.dataCriacao IS NULL)");
+		
+		Query query = getSession().createQuery(hql.toString());
+		query.setDate("dataOperacao", dataOperacao);
+		query.setParameter("lancamentoParcial", lancamentoParcial);
+		query.executeUpdate();
+		
+		// Executa as exclusões e limpa a sessão.
+		getSession().flush();
+		getSession().clear();
+	}
+
+	/**
+	 * Exclui os lançamentos e históricos de lançamentos sem vinculos com periodos de lançamentos de lançamentos parciais
+	 * @param lancamentoParcial
+	 * @param dataOperacao
+	 */
+	private void excluirLancamentosSemVinculosDePeriodoLancamento(
+			LancamentoParcial lancamentoParcial, Date dataOperacao) {
+		
+		// Obtém os lançamentos vinculados aos PeriodoLancamentoParcials gerados
+		List<Lancamento> lancamentosVinculados = new ArrayList<Lancamento>();
+		for (PeriodoLancamentoParcial periodoLancamentoParcial : lancamentoParcial.getPeriodos()) {
+			lancamentosVinculados.add(periodoLancamentoParcial.getLancamento());
+		}
+		
+		/*StringBuilder hqlListarLancamentosComItens = new StringBuilder();
+		hqlListarLancamentosComItens.append("SELECT l.recebimentos FROM Lancamento l ");
+		hqlListarLancamentosComItens.append(" WHERE l.status IN ('PLANEJADO', 'CONFIRMADO') ");
+		hqlListarLancamentosComItens.append("   AND l.produtoEdicao = :produtoEdicao ");
+		hqlListarLancamentosComItens.append("   AND l NOT IN (:lancamentosVinculados)");		
+		hqlListarLancamentosComItens.append(" GROUP BY 1");*/		
+		
+		StringBuilder hqlListarLancamentosComItens = new StringBuilder();
+		hqlListarLancamentosComItens.append("SELECT l FROM Lancamento l ");
+		hqlListarLancamentosComItens.append(" INNER JOIN l.recebimentos r ");
+		hqlListarLancamentosComItens.append(" WHERE l.status IN ('PLANEJADO', 'CONFIRMADO') ");
+		hqlListarLancamentosComItens.append("   AND l.produtoEdicao = :produtoEdicao ");
+		hqlListarLancamentosComItens.append("   AND l NOT IN (:lancamentosVinculados)");		
+		hqlListarLancamentosComItens.append(" GROUP BY 1");		
+		
+		Query queryListarLancamentosComItens = getSession().createQuery(hqlListarLancamentosComItens.toString());
+		queryListarLancamentosComItens.setParameter("produtoEdicao", lancamentoParcial.getProdutoEdicao());
+		queryListarLancamentosComItens.setParameterList("lancamentosVinculados", lancamentosVinculados);
+		List<Lancamento> listaLancamentosComItens = queryListarLancamentosComItens.list();
+		
+		// Caso tenha recebimento físico, não apaga os lançamentos 
+		/*if (!listaLancamentosComItens.isEmpty()) {
+			return;
+		}*/
+		
+		/*
+		 * Exclui os históricos de lançamentos QUE NÃO ESTÃO vinculados aos periodos de lançamento parcial
+		 */
+		StringBuilder hqlExclusaoHistoricoLancamento = new StringBuilder();
+		hqlExclusaoHistoricoLancamento.append("DELETE FROM HistoricoLancamento hl ");
+		hqlExclusaoHistoricoLancamento.append(" WHERE hl.lancamento IN (select l FROM Lancamento l ");
+		hqlExclusaoHistoricoLancamento.append(" 					     WHERE l.status IN ('PLANEJADO', 'CONFIRMADO') ");
+		hqlExclusaoHistoricoLancamento.append(" 					     AND l NOT IN (:lancamentosVinculados) ");
+		if (!listaLancamentosComItens.isEmpty()) {
+			hqlExclusaoHistoricoLancamento.append(" 					     AND l NOT IN (:listaLancamentosComItens) ");
+		}
+		hqlExclusaoHistoricoLancamento.append(" 					     AND l.produtoEdicao = :produtoEdicao) ");		
+		
+		Query queryExclusaoHistoricoLancamento = getSession().createQuery(hqlExclusaoHistoricoLancamento.toString());
+		queryExclusaoHistoricoLancamento.setParameterList("lancamentosVinculados", lancamentosVinculados);
+		if (!listaLancamentosComItens.isEmpty()) {
+			queryExclusaoHistoricoLancamento.setParameterList("listaLancamentosComItens", listaLancamentosComItens);
+		}
+		queryExclusaoHistoricoLancamento.setParameter("produtoEdicao", lancamentoParcial.getProdutoEdicao());
+		queryExclusaoHistoricoLancamento.executeUpdate();
+		
+		// Executa as exclusões e limpa a sessão.
+		getSession().flush();
+		getSession().clear();	
+		
+		/*
+		 * Exclui os lançamentos QUE NÃO ESTÃO vinculados aos periodos de lançamento parcial
+		 */
+		StringBuilder hqlExclusaoLancamento = new StringBuilder();
+		hqlExclusaoLancamento.append("DELETE FROM Lancamento l ");
+		hqlExclusaoLancamento.append("      WHERE l.status IN ('PLANEJADO', 'CONFIRMADO') ");
+		hqlExclusaoLancamento.append(" 		  AND l NOT IN (:lancamentosVinculados) ");		
+		if (!listaLancamentosComItens.isEmpty()) {
+			hqlExclusaoLancamento.append(" 		  AND l NOT IN (:listaLancamentosComItens) ");
+		}
+		hqlExclusaoLancamento.append(" 		  AND l.produtoEdicao = :produtoEdicao ");
+		
+		Query queryExclusaoLancamento = getSession().createQuery(hqlExclusaoLancamento.toString());
+		queryExclusaoLancamento.setParameterList("lancamentosVinculados", lancamentosVinculados);
+		if (!listaLancamentosComItens.isEmpty()) {
+			queryExclusaoLancamento.setParameterList("listaLancamentosComItens", listaLancamentosComItens);
+		}
+		queryExclusaoLancamento.setParameter("produtoEdicao", lancamentoParcial.getProdutoEdicao());
+		queryExclusaoLancamento.executeUpdate();
+		
+		// Executa as exclusões e limpa a sessão.
+		getSession().flush();
+		getSession().clear();	
+	}
+
+	
 	private List<ItemRecebimentoFisico> obtemItensRecebimentosFisicos(
 			LancamentoParcial lancamentoParcial, Date dataOperacao) {
 		StringBuilder hql = new StringBuilder();

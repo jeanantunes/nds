@@ -737,6 +737,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			novaDivida.setOrigemNegociacao(false);
 			
 			/*
+			 * 
+			 * Código comentado por solicitação do Cesar, funcionalidade feita no momento da Baixa Financeira.
+			 * 16/05/2013 - Trac 581
+			 * 
 			BigDecimal valorCalculadoJuros = BigDecimal.ZERO;
 			
 			boolean isAcumulaDivida = 
