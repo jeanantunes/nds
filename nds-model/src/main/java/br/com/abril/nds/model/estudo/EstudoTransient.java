@@ -25,6 +25,7 @@ public class EstudoTransient extends Estudo {
     private BigDecimal somatoriaReparteEdicoesAbertas;
     private BigDecimal totalPDVs;
     private BigDecimal excedente;
+    private BigDecimal excedenteDistribuir;
     private BigInteger reparteComplementar;
     private BigInteger reparteComplementarInicial;
     private String statusEstudo;
@@ -47,6 +48,7 @@ public class EstudoTransient extends Estudo {
     private DistribuicaoVendaMediaDTO distribuicaoVendaMediaDTO;
 
     public EstudoTransient() {
+	excedenteDistribuir = BigDecimal.ZERO;
 	usarFixacao = true;
 	complementarAutomatico = true; //Default conforme documentação.
 	cotasExcluidas = new LinkedList<>();
@@ -236,6 +238,14 @@ public class EstudoTransient extends Estudo {
 
     public void setDistribuicaoVendaMediaDTO(DistribuicaoVendaMediaDTO distribuicaoVendaMediaDTO) {
         this.distribuicaoVendaMediaDTO = distribuicaoVendaMediaDTO;
+    }
+
+    public BigDecimal getExcedenteDistribuir() {
+        return excedenteDistribuir;
+    }
+
+    public void setExcedenteDistribuir(BigDecimal excedenteDistribuir) {
+        this.excedenteDistribuir = excedenteDistribuir;
     }
 
     @Override

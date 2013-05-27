@@ -60,9 +60,7 @@ public class CorrecaoVendas {
 		}
 	    }
 	    if (totalReparte.compareTo(BigDecimal.ZERO) == 1) {
-		correcaoTendencia.setTotalReparte(totalReparte);
-		correcaoTendencia.setTotalVenda(totalVenda);
-		correcaoTendencia.executar(cota);
+		correcaoTendencia.executar(cota, totalReparte, totalVenda);
 	    }
 	}
 	vendaCrescente.executar(cota);
