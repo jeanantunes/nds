@@ -61,13 +61,13 @@ public class EstudoServiceImpl implements EstudoService {
 	@Override
 	@Transactional
 	public void gravarEstudo(Estudo estudo) {
-		estudoRepository.adicionar(estudo);
 	    
 	    for (EstudoCota estudoCota : estudo.getEstudoCotas()) {
 			estudoCota.setEstudo(estudo);
-			estudoCotaRepository.adicionar(estudoCota);
+			//estudoCotaRepository.adicionar(estudoCota);
 	    }
 	    
+	    estudoRepository.adicionar(estudo);
 	}
 
 	@Override
