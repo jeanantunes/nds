@@ -240,8 +240,9 @@ public class RelatorioVendasController extends BaseController {
 			}
 		}
 		
-		List<RegistroCurvaABCCotaDTO> lista = cotaService.obterCurvaABCCota(filtroSessao);
-		ResultadoCurvaABCCotaDTO resultadoTotal = cotaService.obterCurvaABCCotaTotal(filtroSessao);
+		List<RegistroCurvaABCCotaDTO> lista = this.relatorioVendasService.obterCurvaABCCota(filtroSessao);
+		
+		ResultadoCurvaABCCotaDTO resultadoTotal = this.obterTotaisCurvaABCCota(lista);
 		
 		FileExporter.to("relatorio-vendas-curva-abc-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultadoTotal, lista, RegistroCurvaABCCotaDTO.class, this.httpServletResponse);
 		
@@ -771,7 +772,7 @@ public class RelatorioVendasController extends BaseController {
 
 		List<RegistroCurvaABCCotaDTO> resultadoCurvaABCCota = null;
 		try {
-			resultadoCurvaABCCota = cotaService.obterCurvaABCCota(filtroCurvaABCCotaDTO);
+			resultadoCurvaABCCota = this.relatorioVendasService.obterCurvaABCCota(filtroCurvaABCCotaDTO);
 		} catch (Exception e) {
 
 			if (e instanceof ValidacaoException) {
@@ -797,13 +798,36 @@ public class RelatorioVendasController extends BaseController {
 			tableModel.setPage(filtroCurvaABCCotaDTO.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(qtdeTotalRegistros);
 			
-			ResultadoCurvaABCCotaDTO resultado = cotaService.obterCurvaABCCotaTotal(filtroCurvaABCCotaDTO);
+			ResultadoCurvaABCCotaDTO resultado = this.obterTotaisCurvaABCCota(resultadoCurvaABCCota);
 			resultado.setTableModel(tableModel);
 			
 			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 			
 		}
 		
+	}
+	
+	private ResultadoCurvaABCCotaDTO obterTotaisCurvaABCCota(
+										List<RegistroCurvaABCCotaDTO> listaCurvaABCCota) {
+
+		ResultadoCurvaABCCotaDTO resultadoCurvaABCDistribuidor = new ResultadoCurvaABCCotaDTO();
+
+		BigInteger totalVendaExemplares = BigInteger.ZERO;
+		BigDecimal totalFaturamento = BigDecimal.ZERO;
+
+		for (RegistroCurvaABCCotaDTO registroCurvaABCDistribuidor : listaCurvaABCCota) {
+
+			totalVendaExemplares =
+				totalVendaExemplares.add(registroCurvaABCDistribuidor.getVendaExemplares());
+			
+			totalFaturamento =
+				totalFaturamento.add(registroCurvaABCDistribuidor.getFaturamento());
+		}
+
+		resultadoCurvaABCDistribuidor.setTotalVendaExemplares(totalVendaExemplares);
+		resultadoCurvaABCDistribuidor.setTotalFaturamento(totalFaturamento);
+
+		return resultadoCurvaABCDistribuidor;
 	}
 
 	/**

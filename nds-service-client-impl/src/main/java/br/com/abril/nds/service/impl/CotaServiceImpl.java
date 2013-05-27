@@ -40,8 +40,6 @@ import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProcuracaoImpressaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
-import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
-import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.dto.TermoAdesaoDTO;
@@ -49,7 +47,6 @@ import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.TitularidadeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
-import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -1882,33 +1879,6 @@ public class CotaServiceImpl implements CotaService {
 	@Override
 	public void alterarCota(Cota cota) {
 		this.cotaRepository.alterar(cota);
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public ResultadoCurvaABCCotaDTO obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
-		return cotaRepository.obterCurvaABCCotaTotal(filtroCurvaABCCotaDTO);
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public List<RegistroCurvaABCCotaDTO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
-		
-		List<RegistroCurvaABCCotaDTO> lista = cotaRepository.obterCurvaABCCota(filtroCurvaABCCotaDTO);
-		
-		Cota cota = cotaRepository.obterPorNumerDaCota(filtroCurvaABCCotaDTO.getCodigoCota());
-		
-		Map<Long, Long> mapRanking =
-			rankingRepository.obterRankingProdutoPorCota(cota.getId());
-		
-		if(!lista.isEmpty()){
-			
-			for(RegistroCurvaABCCotaDTO dto : lista){
-				dto.setRkProduto(mapRanking.get(dto.getIdProdutoEdicao()));
-			}
-		}
-		
-		return lista;
 	}
 
 	/* (non-Javadoc)

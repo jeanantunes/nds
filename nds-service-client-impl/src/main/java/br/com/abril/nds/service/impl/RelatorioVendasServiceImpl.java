@@ -11,11 +11,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
 import br.com.abril.nds.client.vo.RegistroCurvaABCEditorVO;
+import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.RankingRepository;
 import br.com.abril.nds.repository.RelatorioVendasRepository;
@@ -34,6 +38,9 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 	@Autowired
 	private ProdutoRepository produtoRepository;
 
+	@Autowired
+	private CotaRepository cotaRepository;
+	
 	@Override
 	@Transactional
 	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO) {
@@ -51,7 +58,7 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 			}
 		}
 	
-		return obterParticipacaoCurvaABCDistribuidor(lista);
+		return this.obterParticipacaoCurvaABCDistribuidor(lista);
 	}
 	
 	@Override
@@ -99,7 +106,29 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 			}
 		}
 	
-		return obterParticipacaoCurvaABCDistribuidor(lista);
+		return this.obterParticipacaoCurvaABCDistribuidor(lista);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<RegistroCurvaABCCotaDTO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
+		
+		List<RegistroCurvaABCCotaDTO> lista =
+			this.relatorioVendasRepository.obterCurvaABCCota(filtroCurvaABCCotaDTO);
+		
+		Cota cota = this.cotaRepository.obterPorNumerDaCota(filtroCurvaABCCotaDTO.getCodigoCota());
+		
+		Map<Long, Long> mapRanking =
+			this.rankingRepository.obterRankingProdutoPorCota(cota.getId());
+		
+		if(!lista.isEmpty()){
+			
+			for(RegistroCurvaABCCotaDTO dto : lista){
+				dto.setRkProduto(mapRanking.get(dto.getIdProdutoEdicao()));
+			}
+		}
+		
+		return this.obterParticipacaoCurvaABCCota(lista);
 	}
 	
 	/**
@@ -194,6 +223,41 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 			registro.setParticipacaoAcumulada(participacaoAcumulada);
 			registro.setDataDe(filtro.getDataDe());
 			registro.setDataAte(filtro.getDataAte());
+		}
+
+		return lista;
+	}
+	
+	private List<RegistroCurvaABCCotaDTO> obterParticipacaoCurvaABCCota(List<RegistroCurvaABCCotaDTO> lista) {
+
+		BigDecimal participacaoTotal = BigDecimal.ZERO;
+		
+		if (lista==null) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhum registro foi encontrado"));
+		}
+		
+		// Soma todos os valores de participacao
+		for (RegistroCurvaABCCotaDTO registro : lista) {
+			if (registro.getFaturamento()!=null) {
+				participacaoTotal = participacaoTotal.add(registro.getFaturamento());
+			}
+		}
+
+		BigDecimal participacaoRegistro = BigDecimal.ZERO;
+		BigDecimal participacaoAcumulada = BigDecimal.ZERO;
+		
+		// Verifica o percentual dos valores em relação ao total de participacao
+		for (RegistroCurvaABCCotaDTO registro : lista) {
+			
+			// Partipacao do registro em relacao a participacao total no periodo
+			if ( participacaoTotal.doubleValue() != 0 ) {
+				participacaoRegistro = new BigDecimal((registro.getFaturamento().doubleValue()*100)/participacaoTotal.doubleValue());
+			}
+			
+			participacaoAcumulada = participacaoAcumulada.add(participacaoRegistro);
+			
+			registro.setParticipacao(participacaoRegistro);
+			registro.setParticipacaoAcumulada(participacaoAcumulada);
 		}
 
 		return lista;
