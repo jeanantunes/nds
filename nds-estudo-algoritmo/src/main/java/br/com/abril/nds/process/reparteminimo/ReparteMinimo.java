@@ -5,11 +5,14 @@ import java.math.BigInteger;
 
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.redutorautomatico.RedutorAutomatico;
 import br.com.abril.nds.process.reparteproporcional.ReparteProporcional;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
  * Processo que faz o ajuste do Reparte Mínimo para as cotas de acordo com os parâmetros do setup, com o pacote padrão e com a
@@ -52,9 +55,9 @@ public class ReparteMinimo extends ProcessoAbstrato {
 	if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) > 0) {
 	    if (new BigDecimal(somatoriaReparteMinimo).divide(new BigDecimal(estudo.getReparteDistribuir()), 2, BigDecimal.ROUND_HALF_UP)
 		    .compareTo(BigDecimal.valueOf(0.75)) > 0) {
-		throw new Exception(
+		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, 
 			"O estudo não pode ser concluído pois o percentual do reparte mínimo é maior que 75% do reparte total à distribuir.\n"
-				+ "Desmarque a opção de reparte mínimo ou escolha uma quantidade menor.");
+				+ "Desmarque a opção de reparte mínimo ou escolha uma quantidade menor."));
 		// A EMS 2050 descrevia que ao ocorrer esse erro deveria ser
 		// exibida uma tela para o usuário e após isso o cáculo
 		// prosseguir por motivos de estrutura esse cálculo não

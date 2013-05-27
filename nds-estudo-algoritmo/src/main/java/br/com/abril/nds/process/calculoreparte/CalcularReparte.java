@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.dao.EstudoDAO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
@@ -22,6 +24,7 @@ import br.com.abril.nds.process.ajustefinalreparte.GravarReparteFinalCota;
 import br.com.abril.nds.process.ajustefinalreparte.ReparteComplementarPorCota;
 import br.com.abril.nds.process.definicaobases.DefinicaoBases;
 import br.com.abril.nds.service.EstudoAlgoritmoService;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre
@@ -120,7 +123,7 @@ public class CalcularReparte extends ProcessoAbstrato {
 	}
 
 	if (estudo.getPercentualProporcaoExcedente().isEmpty()) {
-	    throw new Exception("Parametros do distribuidor não preenchido, Percentual de Excedente não pode estar vazio.");
+	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Parametros do distribuidor não preenchido, Percentual de Excedente não pode estar vazio."));
 	}
 
 	PercentualExcedenteEstudo percentualExcedenteEstudo;
@@ -214,7 +217,7 @@ public class CalcularReparte extends ProcessoAbstrato {
 	    reparteSobra = estudo.getPacotePadrao();
 	}
 	// indice que sera aplicado para todas as cotas na distribuicao da sobra
-	BigInteger indicedeSobraouFalta = estudo.getReparteDistribuirInicial().divide(sumReparteCalculadoCota);
+	BigDecimal indicedeSobraouFalta = new BigDecimal(estudo.getReparteDistribuirInicial()).divide(new BigDecimal(sumReparteCalculadoCota), 3, BigDecimal.ROUND_HALF_UP);
 
 	Collections.sort(cotas, new Comparator<CotaEstudo>() {
 	    @Override
@@ -230,12 +233,12 @@ public class CalcularReparte extends ProcessoAbstrato {
 	    if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
 		    ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix, ClassificacaoCota.BancaSuspensa)) {
 		if (estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null) {
-		    BigDecimal temp = new BigDecimal(cota.getReparteCalculado()).multiply(new BigDecimal(indicedeSobraouFalta));
+		    BigDecimal temp = new BigDecimal(cota.getReparteCalculado()).multiply(indicedeSobraouFalta);
 		    // divisao usada para arredondar valor
 		    BigInteger inteiro = temp.divide(BigDecimal.ONE, 0, BigDecimal.ROUND_HALF_UP).toBigInteger();
 		    cota.setReparteCalculado(EstudoAlgoritmoService.arredondarPacotePadrao(estudo, inteiro), estudo);
 		} else {
-		    BigDecimal temp = new BigDecimal(cota.getReparteCalculado()).multiply(new BigDecimal(indicedeSobraouFalta));
+		    BigDecimal temp = new BigDecimal(cota.getReparteCalculado()).multiply(indicedeSobraouFalta);
 		    // divisao usada para arredondar valor
 		    cota.setReparteCalculado(temp.divide(BigDecimal.ONE, 0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
 		}

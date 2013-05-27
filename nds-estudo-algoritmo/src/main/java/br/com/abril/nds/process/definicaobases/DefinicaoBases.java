@@ -8,10 +8,13 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.service.EstudoAlgoritmoService;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
  * Processo que tem como objetivo buscar as edições de base para o estudo.
@@ -87,7 +90,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
 
     private void validaApenasUmaEdicaoFechada(List<ProdutoEdicaoEstudo> edicoesBase) throws Exception {
 	if (edicoesBase.size() == 1 && !edicoesBase.get(0).isEdicaoAberta()) {
-	    throw new Exception("Existe apenas 1 edição fechada, favor incluir mais publicações na base.");
+	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Existe apenas 1 edição fechada, favor incluir mais publicações na base."));
 	}
     }
 
