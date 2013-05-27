@@ -15,6 +15,8 @@ import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.RankingRepository;
 import br.com.abril.nds.repository.RelatorioVendasRepository;
 import br.com.abril.nds.service.RelatorioVendasService;
@@ -28,6 +30,9 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 	
 	@Autowired
 	private RankingRepository rankingRepository;
+	
+	@Autowired
+	private ProdutoRepository produtoRepository;
 
 	@Override
 	@Transactional
@@ -76,18 +81,20 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		List<RegistroCurvaABCDistribuidorVO> lista =
 			this.relatorioVendasRepository.obterCurvaABCDistribuidor(filtroCurvaABCDistribuidorDTO);
 		
+		Produto produto =
+			this.produtoRepository.obterProdutoPorCodigo(filtroCurvaABCDistribuidorDTO.getCodigoProduto());
+		
 		Map<Long, Long> mapRankingProdutoPorProduto =
-			this.rankingRepository.obterRankingProdutoPorProduto(null);
+			this.rankingRepository.obterRankingProdutoPorProduto();
 		
 		Map<Long, Long> mapRankingCotaPorProduto =
-			this.rankingRepository.obterRankingCotaPorProduto(null);
+			this.rankingRepository.obterRankingCotaPorProduto(produto.getId());
 		
 		if(!lista.isEmpty()){
 			
 			for(RegistroCurvaABCDistribuidorVO dto : lista){
 				
-				//TODO:
-				dto.setRkProduto(mapRankingProdutoPorProduto.get(null));
+				dto.setRkProduto(mapRankingProdutoPorProduto.get(dto.getIdProduto()));
 				dto.setRkCota(mapRankingCotaPorProduto.get(dto.getIdCota()));
 			}
 		}

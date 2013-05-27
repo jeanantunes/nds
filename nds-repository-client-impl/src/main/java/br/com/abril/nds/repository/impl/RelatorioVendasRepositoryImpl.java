@@ -36,13 +36,14 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		hql.append(" SELECT ");
 		
+		hql.append("   produto.ID AS idProduto, ");
 		hql.append("   cota.ID AS idCota, ");
 		hql.append("   cota.NUMERO_COTA AS numeroCota, ");
 		hql.append("   COALESCE(pessoa.NOME, pessoa.RAZAO_SOCIAL) AS nomeCota, ");
 		  
 		hql.append("   endereco.CIDADE AS municipio, ");
 		hql.append("   (SELECT COUNT(*) FROM PDV pdv WHERE pdv.COTA_ID = cota.ID) AS quantidadePdvs, ");
-		  
+		
 		hql.append("   SUM(CASE WHEN (tipoMovimento.OPERACAO_ESTOQUE = 'ENTRADA') ");
 		hql.append("   			THEN (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN movimentoEstoqueCota.QTDE ELSE 0 END) ");
 		hql.append("   			ELSE (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN - movimentoEstoqueCota.QTDE ELSE 0 END) ");
@@ -66,6 +67,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
 		
 		query.addScalar("idCota", StandardBasicTypes.LONG);
+		query.addScalar("idProduto", StandardBasicTypes.LONG);
 		query.addScalar("numeroCota");
 		query.addScalar("nomeCota");
 		query.addScalar("municipio");

@@ -196,26 +196,22 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Map<Long, Long> obterRankingProdutoPorProduto(Long idProdutoEdicao) {
+	public Map<Long, Long> obterRankingProdutoPorProduto() {
 		
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append("  	select  consolidado.PRODUTO_EDICAO_ID as idProdutoEdicao, sum(consolidado.VALOR_TOTAL_VENDA_COM_DESCONTO) as valor ")
+		sql.append("  	select  consolidado.PRODUTO_ID as idProduto, sum(consolidado.VALOR_TOTAL_VENDA_COM_DESCONTO) as valor ")
 		
 		.append("    from VIEW_CONSOLIDADO_MOVIMENTO_ESTOQUE_COTA consolidado  ")
-	
-		.append("    where consolidado.PRODUTO_EDICAO_ID = :idProdutoEdicao  ")
 		
-		.append("    group by consolidado.PRODUTO_EDICAO_ID ")
+		.append("    group by consolidado.PRODUTO_ID ")
 	
 		.append("    order by valor desc ");
 		
 		SQLQuery query  = getSession().createSQLQuery(sql.toString());
 		
-		query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
+		query.addScalar("idProduto", StandardBasicTypes.LONG);
 		query.addScalar("valor");
-		
-		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		
 		Map<Long, Long> mapRanking = new HashMap<>();
 		
@@ -232,7 +228,7 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Map<Long, Long> obterRankingCotaPorProduto(Long idProdutoEdicao) {
+	public Map<Long, Long> obterRankingCotaPorProduto(Long idProduto) {
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -240,7 +236,7 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		
 		.append("    from VIEW_CONSOLIDADO_MOVIMENTO_ESTOQUE_COTA consolidado  ")
 	
-		.append("    where consolidado.PRODUTO_EDICAO_ID = :idProdutoEdicao  ")
+		.append("    where consolidado.PRODUTO_ID = :idProduto ")
 		
 		.append("    group by consolidado.COTA_ID ")
 	
@@ -251,7 +247,7 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		query.addScalar("idCota", StandardBasicTypes.LONG);
 		query.addScalar("valor");
 		
-		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setParameter("idProduto", idProduto);
 		
 		Map<Long, Long> mapRanking = new HashMap<>();
 		

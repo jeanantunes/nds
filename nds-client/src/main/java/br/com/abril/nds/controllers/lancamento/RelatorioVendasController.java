@@ -136,13 +136,13 @@ public class RelatorioVendasController extends BaseController {
 
 		switch (tipoRelatorio) {
 		case DISTRIBUIDOR:
-			exportarDistribuidor(fileType, DISTRIBUIDOR);
+			exportarDistribuidor(fileType, TipoConsultaCurvaABC.DISTRIBUIDOR);
 			break;
 		case EDITOR:
 			exportarEditor(fileType);
 			break;
 		case PRODUTO:
-			exportarDistribuidor(fileType, PRODUTO);
+			exportarDistribuidor(fileType, TipoConsultaCurvaABC.PRODUTO);
 			break;
 		case COTA:
 			exportarCota(fileType);
@@ -161,7 +161,7 @@ public class RelatorioVendasController extends BaseController {
 	 * @param fileType
 	 * @throws IOException
 	 */
-	private void exportarDistribuidor(FileType fileType, int tipoRelatorio) throws IOException {
+	private void exportarDistribuidor(FileType fileType, TipoConsultaCurvaABC tipoRelatorio) throws IOException {
 		FiltroCurvaABCDistribuidorDTO filtroSessao = (FiltroCurvaABCDistribuidorDTO) this.session.getAttribute(FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE);
 		if (filtroSessao != null) {
 			if (filtroSessao.getPaginacao() != null) {				
@@ -170,7 +170,16 @@ public class RelatorioVendasController extends BaseController {
 			}
 		}
 		
-		List<RegistroCurvaABCDistribuidorVO> lista = relatorioVendasService.obterCurvaABCDistribuidor(filtroSessao);
+		List<RegistroCurvaABCDistribuidorVO> lista = null;
+		
+		if (tipoRelatorio == TipoConsultaCurvaABC.DISTRIBUIDOR) {
+			
+			lista = relatorioVendasService.obterCurvaABCDistribuidor(filtroSessao);
+			
+		} else {
+			
+			lista = relatorioVendasService.obterCurvaABCProduto(filtroSessao);
+		}
 		
 		List<RegistroCurvaABCExportacaoDistribuidorVO> exportacao = new ArrayList<RegistroCurvaABCExportacaoDistribuidorVO>();
 		
@@ -182,7 +191,7 @@ public class RelatorioVendasController extends BaseController {
 		
 		String nomeArquivo = "";
 		
-		if (tipoRelatorio == DISTRIBUIDOR) {
+		if (tipoRelatorio == TipoConsultaCurvaABC.DISTRIBUIDOR) {
 			nomeArquivo = "relatorio-vendas-curva-abc-distribuidor";
 		} else {
 			nomeArquivo = "relatorio-vendas-curva-abc-produto";
@@ -454,7 +463,7 @@ public class RelatorioVendasController extends BaseController {
 			Long codigoFornecedor, String codigoProduto, String nomeProduto,
 			List<Long> edicaoProduto, Long codigoEditor, Integer codigoCota,
 			String nomeCota, String municipio, String sortorder,
-			String sortname, int page, int rp,TipoConsultaCurvaABC tipoConsulta) throws ParseException, Exception {
+			String sortname, int page, int rp, TipoConsultaCurvaABC tipoConsulta) throws ParseException, Exception {
 		
 		this.validarDadosEntradaPesquisa(dataDe, dataAte);
 
