@@ -1604,7 +1604,7 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
     	
 		sql.append("from Lancamento l where l.dataLancamentoPrevista=:dtLancamento and l.produtoEdicao.id=:produtoEdicaoId");
 
-    	SQLQuery query = getSession().createSQLQuery(sql.toString());
+    	Query query = getSession().createQuery(sql.toString());
     	
     	query.setParameter("dtLancamento", dtLancamento);
     	query.setParameter("produtoEdicaoId", produtoEdicaoId);
