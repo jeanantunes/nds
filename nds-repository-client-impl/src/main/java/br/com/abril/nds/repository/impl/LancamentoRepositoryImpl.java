@@ -1523,14 +1523,12 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
 	sql.append(" select count(*) from lancamento lanc ");
 	sql.append(" join produto_edicao prodEdit ON prodEdit.ID = lanc.PRODUTO_EDICAO_ID ");
 	sql.append(" join produto prod ON prod.ID =  prodEdit.produto_id ");
-	sql.append(" where lanc.DATA_LCTO_DISTRIBUIDOR = :dataLctoDistribuido");
-	sql.append(" and   lanc.DATA_LCTO_PREVISTA  = :dataLctoPrevista");
+	sql.append(" where   lanc.DATA_LCTO_PREVISTA  = :dataLctoPrevista");
 	sql.append(" and   prodEdit.numero_edicao = :numeroEdicao");
 	sql.append(" and   prod.CODIGO = :codigoProduto");
 
 	Query query = super.getSession().createSQLQuery(sql.toString());
 
-	query.setParameter("dataLctoDistribuido", lancamentoBase.getDataLancamentoDistribuidor());
 	query.setParameter("dataLctoPrevista", lancamentoBase.getDataLancamentoPrevista());
 	query.setParameter("numeroEdicao", produtoDistribuicaoVO.getNumeroEdicao());
 	query.setParameter("codigoProduto", produtoDistribuicaoVO.getCodigoProduto());
@@ -1599,5 +1597,19 @@ public class LancamentoRepositoryImpl extends AbstractRepositoryModel<Lancamento
     	
     	return (BigInteger)query.uniqueResult();
     }
+
+	@Override
+	public Lancamento buscarPorDataLancamentoProdutoEdicao(Date dtLancamento,Long produtoEdicaoId) {
+		StringBuilder sql = new StringBuilder();
+    	
+		sql.append("from Lancamento l where l.dataLancamentoPrevista=:dtLancamento and l.produtoEdicao.id=:produtoEdicaoId");
+
+    	Query query = getSession().createQuery(sql.toString());
+    	
+    	query.setParameter("dtLancamento", dtLancamento);
+    	query.setParameter("produtoEdicaoId", produtoEdicaoId);
+    	
+    	return (Lancamento)query.uniqueResult();
+	}
 
 }

@@ -525,6 +525,9 @@ var analiseParcialController = $.extend(true, {
             $.post(analiseParcialController.path +'/distribuicao/analise/parcial/liberar', {'id': $('#estudoId').val()},function(){
                 $('#status_estudo').text('Liberado');
                 analiseParcialController.exibirMsg('SUCCESS', ['Estudo liberado com sucesso!']);
+                if(typeof(matrizDistribuicao)=="object"){
+            		matrizDistribuicao.carregarGrid();
+                }
             });
             event.preventDefault();
         });
