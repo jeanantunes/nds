@@ -14,9 +14,11 @@ import br.com.abril.nds.client.vo.estudocomplementar.BaseEstudoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.EstudoComplementarDTO;
 import br.com.abril.nds.dto.EstudoCotaDTO;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.EstudoComplementarService;
 import br.com.abril.nds.service.EstudoService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -38,6 +40,9 @@ public class EstudoComplementarController  extends BaseController{
 
     @Autowired
     private EstudoComplementarService estudoComplementarService;
+    
+    @Autowired
+    private ProdutoEdicaoService produtoEdicaoService;
 
     @Autowired
     private EstudoService estudoService;
@@ -46,6 +51,8 @@ public class EstudoComplementarController  extends BaseController{
     public void index(Long estudoId, Long idProdutoEdicao, Long idLancamento) {
 
 	String data = DateUtil.formatarDataPTBR(new Date());
+	ProdutoEdicao produto = produtoEdicaoService.buscarPorID(idProdutoEdicao);
+	result.include("pacotePadrao", produto.getPacotePadrao());
 	result.include("data", data);
 	result.include("estudoId", estudoId);
 	result.include("idProdutoEdicao", idProdutoEdicao);

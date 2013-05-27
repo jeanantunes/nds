@@ -123,7 +123,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 	    throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota foi encontrada nos parâmetros para gerar o estudo complementar.");
 	}
 
-	BigInteger qtdReparte = BigInteger.valueOf(estudoComplementarVO.getReparteCota());
+	BigInteger reparte = BigInteger.valueOf(estudoComplementarVO.getReparteCota());
 	BigInteger qtdDistribuido = BigInteger.valueOf(estudoComplementarVO.getReparteDistribuicao());
 
 	Estudo estudo = estudoRepository.buscarPorId(estudoComplementarVO.getCodigoEstudo());
@@ -143,16 +143,15 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 
 	for (EstudoCota cota : estudoCotas) {
 	    EstudoCota nova = new EstudoCota();
-	    BeanUtils.copyProperties(cota, nova, new String[] {"id", "rateiosDiferenca", "movimentosEstoqueCota", "itemNotaEnvios"});
-	    nova.setReparte(nova.getQtdeEfetiva());
+	    BeanUtils.copyProperties(cota, nova, new String[] {"id", "reparte", "rateiosDiferenca", "movimentosEstoqueCota", "itemNotaEnvios"});
 	    nova.setEstudo(estudo1);
-	    nova.setQtdeEfetiva(qtdReparte);
+	    nova.setReparte(reparte);
 	    nova.setClassificacao("CP");
 	    cotas.add(nova);
 	    
-	    qtdDistribuido = qtdDistribuido.subtract(qtdReparte);
+	    qtdDistribuido = qtdDistribuido.subtract(reparte);
 
-	    if (qtdDistribuido.compareTo(qtdReparte) <= 0) {
+	    if (qtdDistribuido.compareTo(reparte) < 0) {
 		break;
 	    }
 	}
@@ -160,21 +159,23 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 	// reordenando de acordo com o ranking
 	cotas = ordenarCotas(cotas, estudoComplementarVO);
 	if (!estudoComplementarVO.isMultiplo()) {
-	    qtdReparte = BigInteger.ONE;
+	    reparte = BigInteger.ONE;
 	} 
-	while (qtdDistribuido.compareTo(qtdReparte) > 0) {
+	while (qtdDistribuido.compareTo(reparte) > 0) {
 	    for (EstudoCota cota : cotas) {
-		cota.setQtdeEfetiva(cota.getQtdeEfetiva().add(qtdReparte));
-		qtdDistribuido = qtdDistribuido.subtract(qtdReparte);
+		cota.setReparte(cota.getReparte().add(reparte));
+		qtdDistribuido = qtdDistribuido.subtract(reparte);
 
-		if (qtdDistribuido.compareTo(qtdReparte) <= 0) {
+		if (qtdDistribuido.compareTo(reparte) < 0) {
 		    break;
 		}
 	    }
 	}
 
 	for (EstudoCota cota : cotas) {
-	    cota.setReparte(cota.getQtdeEfetiva());
+	    if (cota.getReparte() != null) {
+		cota.setQtdeEfetiva(cota.getReparte());
+	    }
 	    estudoCotaRepository.adicionar(cota);	
 	}
 	return true;
@@ -189,7 +190,9 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 	LinkedList<EstudoCota> retorno = new LinkedList<>();
 	
 	for (EstudoCota cota : cotasOrdenadas) {
-	    retorno.add(mapCotas.get(cota.getCota().getId()));
+	    if (mapCotas.get(cota.getCota().getId()) != null) {
+		retorno.add(mapCotas.get(cota.getCota().getId()));
+	    }
 	}
 	return retorno;
     }
