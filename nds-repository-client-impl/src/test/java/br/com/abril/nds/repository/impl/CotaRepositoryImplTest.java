@@ -24,12 +24,10 @@ import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.MunicipioDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
-import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO.OrdenacaoColuna;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO.OrdemColuna;
-import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -1051,105 +1049,6 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	public void gerarSugestaoNumeroCota(){
 		Integer numeroCota = cotaRepository.gerarSugestaoNumeroCota();
 	}
-	
-	@SuppressWarnings("unused")
-	@Test
-	public void obterCurvaABCCotaTotalNulo(){
-		FiltroCurvaABCCotaDTO filtro = new FiltroCurvaABCCotaDTO(null, null, null, null, null, null, null, null, null, null);
-		ResultadoCurvaABCCotaDTO resultadoCurvaABCCotaDTO = cotaRepository.obterCurvaABCCotaTotal(filtro);
-		
-	}
-	
-	@SuppressWarnings("unused")
-	@Test
-	public void obterCurvaABCCotaTotal(){
-		List<Long> edicaoProduto = new ArrayList<>();
-		edicaoProduto.add(1L);
-		edicaoProduto.add(2L);
-		Date dataDe = Fixture.criarData(10, Calendar.APRIL, 2012);
-		Date dataAte = Fixture.criarData(10, Calendar.MAY, 2012);
-		FiltroCurvaABCCotaDTO filtro = new FiltroCurvaABCCotaDTO(dataDe, dataAte, "1", "1", "Teste", edicaoProduto, "1", 1, "teste", "municipio");
-		ResultadoCurvaABCCotaDTO resultadoCurvaABCCotaDTO = cotaRepository.obterCurvaABCCotaTotal(filtro);
-		
-	}
-	
-	@SuppressWarnings("unused")
-	@Test
-	public void obterCurvaABCCotaTotalPorEdicaoProduto(){
-		List<Long> edicaoProduto = new ArrayList<>();
-		edicaoProduto.add(1L);
-		edicaoProduto.add(2L);
-		
-		FiltroCurvaABCCotaDTO filtro = new FiltroCurvaABCCotaDTO(null, null, null, null, null, edicaoProduto, null, null, null, null);
-		ResultadoCurvaABCCotaDTO resultadoCurvaABCCotaDTO = cotaRepository.obterCurvaABCCotaTotal(filtro);
-		
-	}
-	
-	@SuppressWarnings("unused")
-	@Test
-	public void obterCurvaABCCotaTotalPorNomeProduto(){
-		List<Long> edicaoProduto = new ArrayList<>();
-		FiltroCurvaABCCotaDTO filtro = new FiltroCurvaABCCotaDTO(null, null, null, null, "Teste", null, null, null, null, null);
-		ResultadoCurvaABCCotaDTO resultadoCurvaABCCotaDTO = cotaRepository.obterCurvaABCCotaTotal(filtro);
-		
-	}
-	
-	@SuppressWarnings("unused")
-	@Test
-	public void obterCurvaABCCotaTotalPorCodigoFornecedor(){
-		List<Long> edicaoProduto = new ArrayList<>();
-		FiltroCurvaABCCotaDTO filtro = new FiltroCurvaABCCotaDTO(null, null, "1", null, null, null, null, null, null, null);
-		ResultadoCurvaABCCotaDTO resultadoCurvaABCCotaDTO = cotaRepository.obterCurvaABCCotaTotal(filtro);
-		
-	}
-	
-	@SuppressWarnings("unused")
-	@Test
-	public void obterCurvaABCCotaTotalPorCodigoEditor(){
-		List<Long> edicaoProduto = new ArrayList<>();
-		FiltroCurvaABCCotaDTO filtro = new FiltroCurvaABCCotaDTO(null, null, "1", null, null, null, "1", null, null, null);
-		ResultadoCurvaABCCotaDTO resultadoCurvaABCCotaDTO = cotaRepository.obterCurvaABCCotaTotal(filtro);
-		
-	}
-	
-	@SuppressWarnings("unused")
-	@Test
-	public void obterCurvaABCCotaTotalPorCodigoProduto(){
-		List<Long> edicaoProduto = new ArrayList<>();
-		FiltroCurvaABCCotaDTO filtro = new FiltroCurvaABCCotaDTO(null, null, null, "1", null, null, null, null, null, null);
-		ResultadoCurvaABCCotaDTO resultadoCurvaABCCotaDTO = cotaRepository.obterCurvaABCCotaTotal(filtro);
-		
-	}
-
-	
-	@SuppressWarnings("unused")
-	@Test
-	public void obterCurvaABCCotaTotalPorCodigoCota(){
-		List<Long> edicaoProduto = new ArrayList<>();
-		FiltroCurvaABCCotaDTO filtro = new FiltroCurvaABCCotaDTO(null, null, null, null, null, null, null, 1, null, null);
-		ResultadoCurvaABCCotaDTO resultadoCurvaABCCotaDTO = cotaRepository.obterCurvaABCCotaTotal(filtro);
-		
-	}
-	
-	@SuppressWarnings("unused")
-	@Test
-	public void obterCurvaABCCotaTotalPorNomeCota(){
-		List<Long> edicaoProduto = new ArrayList<>();
-		FiltroCurvaABCCotaDTO filtro = new FiltroCurvaABCCotaDTO(null, null, null, null, null, null, null, null, "teste", null);
-		ResultadoCurvaABCCotaDTO resultadoCurvaABCCotaDTO = cotaRepository.obterCurvaABCCotaTotal(filtro);
-		
-	}
-	
-	@SuppressWarnings("unused")
-	@Test
-	public void obterCurvaABCCotaTotalPorMunicipio(){
-		List<Long> edicaoProduto = new ArrayList<>();
-		FiltroCurvaABCCotaDTO filtro = new FiltroCurvaABCCotaDTO(null, null, null, null, null, null, null, null, null, "municipio");
-		ResultadoCurvaABCCotaDTO resultadoCurvaABCCotaDTO = cotaRepository.obterCurvaABCCotaTotal(filtro);
-		
-	}
-	
-	
 	
 	@Test
 	public void buscarCotasPorIN() {
