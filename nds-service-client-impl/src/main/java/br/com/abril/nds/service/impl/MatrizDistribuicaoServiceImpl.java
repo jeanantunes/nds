@@ -247,6 +247,11 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 			if (vo.getIdEstudo() != null) {
 				idsEstudos.add(vo.getIdEstudo().longValue());
 			}
+			
+			if (vo.getIdLancamento() != null && vo.isItemFinalizado()) {
+				
+				reabrirItemDistribuicao(vo.getIdLancamento().longValue());
+			}
 		}
 		
 		if (idsEstudos == null || idsEstudos.isEmpty()) {
@@ -308,20 +313,50 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	@Transactional
 	public void finalizarMatrizDistribuicao(FiltroDistribuicaoDTO filtro, List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
 		 
-		
-		
 		List<ProdutoDistribuicaoVO> listDistrib = produtoDistribuicaoVOs;
 		
 		Map <BigInteger, BigInteger> map = obterMapaEstudoRepartDistrib(produtoDistribuicaoVOs);
 		
+		List<String> mensagens = new ArrayList<String>();
+		
 		for (ProdutoDistribuicaoVO prodDistribVO:listDistrib) {
 			
-			if (!prodDistribVO.isItemFinalizado()) {
+			if(isItemValido(prodDistribVO, mensagens)) {
+			
+				if (!prodDistribVO.isItemFinalizado()) {
+					
+					finalizaItemDistribuicao(prodDistribVO, map);
+				}
+			}
+		}
+		
+		if (!mensagens.isEmpty()) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
+		}
+	}
+	
+	private boolean isItemValido(ProdutoDistribuicaoVO produtoDistribuicaoVO, List<String> mensagens) {
+		
+		if (produtoDistribuicaoVO.getIdEstudo() == null) {
+			
+			String msg = "Não existe estudo para o produto:"+produtoDistribuicaoVO.getCodigoProduto();
+			
+			if (produtoDistribuicaoVO.getIdProdutoEdicao() != null) {
 				
-				finalizaItemDistribuicao(prodDistribVO, map);
+				msg += " edição:" + produtoDistribuicaoVO.getIdProdutoEdicao();
 			}
 			
+			mensagens.add(msg); 
+			return false;
 		}
+		else if (!Boolean.valueOf(produtoDistribuicaoVO.getLiberado())) {
+			
+			mensagens.add("Estudo "+produtoDistribuicaoVO.getIdEstudo()+" não está liberado.");
+			return false;
+		}
+		
+		return true;
 	}
 	
 	
@@ -335,26 +370,30 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		
 		Map <BigInteger, BigInteger> map = obterMapaEstudoRepartDistrib(produtoDistribuicaoVOs);
 		
+		List<String> mensagens = new ArrayList<String>();
+		
 		for (ProdutoDistribuicaoVO prodDistribVO:listDistrib) {
 			
-			validaFinalizacaoMatriz(prodDistribVO);
+			if(isItemValido(prodDistribVO, mensagens)) {
 			
-			if (!prodDistribVO.isItemFinalizado()) {
+				validaFinalizacaoMatriz(prodDistribVO);
 				
-				finalizaItemDistribuicao(prodDistribVO, map);
+				if (!prodDistribVO.isItemFinalizado()) {
+					
+					finalizaItemDistribuicao(prodDistribVO, map);
+				}
 			}
+		}
+		
+		if (!mensagens.isEmpty()) {
 			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
 		}
 	}
 	
 	
 	private void validaFinalizacaoMatriz(ProdutoDistribuicaoVO prodDistribVO) {
 		
-		if (prodDistribVO.getLiberado() == null || !prodDistribVO.getLiberado().equals(StatusEstudo.LIBERADO.name())) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Os estudos devem estar todos liberados para a finalização da matriz.");
-			}
-			
 		if (obterQuantidadeDeLancamentosProdutoEdicaoDuplicados(prodDistribVO) > 1) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não é permitido mais de uma edição por produto.");
@@ -373,7 +412,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	public void reabrirMatrizDistribuicao(List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {
 		
 		for (ProdutoDistribuicaoVO prodDistribVO:produtoDistribuicaoVOs) {
-				
+			
 			reabrirItemDistribuicao(prodDistribVO.getIdLancamento().longValue());
 		}
 	}
@@ -393,15 +432,18 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		
 		for (ProdutoDistribuicaoVO prodDistribVO:listDistrib) {
 			
-			if (prodDistribVO.isItemFinalizado()) {
-				
-				reabrirItemDistribuicao(prodDistribVO.getIdLancamento().longValue());
-			}
-			
+			reabrirItemDistribuicao(prodDistribVO.getIdLancamento().longValue());
 		}
 	}
 	
 	private void finalizaItemDistribuicao(ProdutoDistribuicaoVO prodDistribVO, Map <BigInteger, BigInteger> map) {
+		
+		List<String> mensagens = new ArrayList<String>();
+		
+		if(!isItemValido(prodDistribVO, mensagens)) {
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, mensagens));
+		}
 		
 		Lancamento lanc = (Lancamento)distribuicaoRepository.buscarPorId(prodDistribVO.getIdLancamento().longValue());
 		lanc.setDataFinMatDistrib(new Date());
@@ -410,7 +452,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		BigInteger idEstudo = prodDistribVO.getIdEstudo();
 		
 		if (map.containsKey(idEstudo)) {
-			
+
 			Estudo estudo = estudoRepository.buscarPorId(idEstudo.longValue());
 			estudo.setDataAlteracao(new Date());
 			estudo.setReparteDistribuir(map.get(idEstudo));

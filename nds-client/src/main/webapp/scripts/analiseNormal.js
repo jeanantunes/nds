@@ -42,6 +42,9 @@ $(function(){
 	$("#liberar").click(function(event){
 		$.post("liberar",{"id":$("#estudo_id").text()},function(){
 			alert("Estudo liberado com sucesso");
+			if(typeof(matrizDistribuicao)=="object"){
+         		matrizDistribuicao.carregarGrid();
+			}
 		});
 		event.preventDefault();
 		return false;

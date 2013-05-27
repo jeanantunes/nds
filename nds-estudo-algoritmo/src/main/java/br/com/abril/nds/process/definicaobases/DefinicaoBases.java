@@ -39,14 +39,18 @@ public class DefinicaoBases extends ProcessoAbstrato {
     public void executar(EstudoTransient estudo) throws Exception {
 	if ((estudo.getEdicoesBase() == null) || (estudo.getEdicoesBase().size() == 0)) {
 	    LinkedList<ProdutoEdicaoEstudo> edicoesBase = estudoAlgoritmoService.getEdicoesBases(estudo.getProdutoEdicaoEstudo());
-	    edicoesBase = limitarEdicoesApenasSeis(edicoesBase);
-	    validaApenasUmaEdicaoFechada(edicoesBase);
-	    excluiEdicoesComMaisDeDoisAnos(edicoesBase);
-	    excluiMaiorQueQuatroSeColecionavel(edicoesBase, estudo);
+	    
+	    if (!edicoesBase.isEmpty()) {
+	    	
+	    	edicoesBase = limitarEdicoesApenasSeis(edicoesBase);
+	 	    validaApenasUmaEdicaoFechada(edicoesBase);
+	 	    excluiEdicoesComMaisDeDoisAnos(edicoesBase);
+	 	    excluiMaiorQueQuatroSeColecionavel(edicoesBase, estudo);
 
-	    estudo.setEdicoesBase(edicoesBase);
+	 	    estudo.setEdicoesBase(edicoesBase);
 
-	    baseParaVeraneio.executar(estudo);
+	 	    baseParaVeraneio.executar(estudo);
+	    }
 	}
     }
 

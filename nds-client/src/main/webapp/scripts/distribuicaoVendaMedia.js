@@ -533,6 +533,11 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
             	
             $('#idEstudo').text(result.list[1]);
             $('#idStatusEstudo').text(isLiberado === true ? "Liberado" : "Gerado");
+            
+            	
+            if(typeof(matrizDistribuicao)=="object"){
+            		matrizDistribuicao.carregarGrid();
+            }
                     
 			exibirMensagemDialog("SUCCESS", ["Operação realizada com sucesso!"], "");
 		});

@@ -334,11 +334,6 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 				hash *= 10000l;
 			}
 		}
-				
-//		if (prodDistribVO.getIdCopia() != null) {
-//			
-//			hash += (10 + (prodDistribVO.getIdCopia() * 10));
-//		}
 		
 		return hash;
 	}

@@ -82,7 +82,7 @@ var lancamentosSelecionados = [];
 <div id="matrizDistribuicaoContent">
 	<form id="form_exclusao_estudo">
 	<div id="popup_confirmar_exclusao_estudo" title="Excluir Estudo" style="display:none">
-		<p>Confirma a exclus&ccedil&atildeo do estudo?</p>
+		<p>Confirma a exclus&atildeo do estudo?</p>
 	</div>
 	
 	<div id="confirmar_variaveis" title="Variáveis" style="display:none" >
@@ -171,13 +171,13 @@ var lancamentosSelecionados = [];
 			         	  			</a>
 		         	  		</span>	
 		         	  		
-		         	  		<span class="bt_novos">
-						         	<a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_reabertura_matriz();">
-								        <img id="imgReabrirMat" src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" hspace="5" border="0">
-								         	 Reabrir Itens
-						        		</img>
-						        	</a>
-		         	  		</span>	
+<!-- 		         	  		<span class="bt_novos"> -->
+<!-- 						         	<a href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_reabertura_matriz();"> -->
+<%-- 								        <img id="imgReabrirMat" src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" hspace="5" border="0"> --%>
+<!-- 								         	 Reabrir Itens -->
+<!-- 						        		</img> -->
+<!-- 						        	</a> -->
+<!-- 		         	  		</span>	 -->
 		         	  		
 		         	  		<span class="bt_novos">
 			         	  			<a id="linkReabrir" href="javascript:;" onclick="matrizDistribuicao.popup_confirmar_reabertura_estudo();" rel="tipsy" title="Reabrir Estudo">

@@ -153,7 +153,7 @@ public class MatrizDistribuicaoController extends BaseController {
 				itens.get(i).setIdRow(idRow++);
 			}
 			
-			for (int j=i+1; j < itens.size()-1; j++) {
+			for (int j=i+1; j < itens.size(); j++) {
 				
 				if (itens.get(i).getIdCopia() == null && 
 					(itens.get(i).getCodigoProduto().equals(itens.get(j).getCodigoProduto()) && 
@@ -657,7 +657,7 @@ public class MatrizDistribuicaoController extends BaseController {
 				msgErro.addAll(e.getValidacao().getListaMensagens());
 			} catch (Exception e) {
 				log.error("Erro na geração automatica do estudo.", e);
-				msgErro.add("Erro na geração do estudo:" + produtoDistribuicaoVO.getNumeroEdicao());
+				msgErro.add("Erro na geração do estudo:" + produtoDistribuicaoVO.getNumeroEdicao() + "\n" + e.getMessage());
 			}
 		}
 		
