@@ -295,11 +295,13 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	    selecionados = new ArrayList<ProdutoEdicaoVendaMediaDTO>();
 	}
 
-	if (indexes != null) {
+	if ((indexes != null) && (indexes.size() > 0)) {
 	    for (Integer index : indexes) {
-		ProdutoEdicaoVendaMediaDTO produtoEdicao = resultadoPesquisa.get(index);
-		if (!selecionados.contains(produtoEdicao)) {
-		    selecionados.add(produtoEdicao);
+		if (index != null) {
+		    ProdutoEdicaoVendaMediaDTO produtoEdicao = resultadoPesquisa.get(index);
+		    if (!selecionados.contains(produtoEdicao)) {
+			selecionados.add(produtoEdicao);
+		    }
 		}
 	    }
 	}
@@ -310,51 +312,51 @@ public class DistribuicaoVendaMediaController extends BaseController {
     @Path("gerarEstudo")
     @Post
     public void gerarEstudo(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, String codigoProduto, Long numeroEdicao) throws Exception {
-		EstudoTransient estudo = null;
-		int qtdEdicoesAbertas = 0;
-	
-		if (distribuicaoVendaMedia.getBases().size() > QTD_MAX_PRODUTO_EDICAO) {
-	
-		    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não pode ter mais do que "+QTD_MAX_PRODUTO_EDICAO+" bases."));
-		}
-	
-		for (int i = 0; i < distribuicaoVendaMedia.getBases().size(); i++) {
-		    ProdutoEdicaoDTO produtoEdicaoDTO = distribuicaoVendaMedia.getBases().get(i);
-	
-		    if (!produtoEdicaoDTO.getStatus().equals("FECHADO")) {
-		    	qtdEdicoesAbertas++;
-		    }
-		}
-	
-		if (qtdEdicoesAbertas > 1) {
-		    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não é possível utilizar mais que uma edição base aberta."));
-		}
-	
-		ProdutoEdicaoEstudo produto = new ProdutoEdicaoEstudo(codigoProduto);
-		produto.setNumeroEdicao(numeroEdicao);
-		estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, produto, distribuicaoVendaMedia.getReparteDistribuir(), this.getUsuarioLogado());
-		String htmlEstudo = HTMLTableUtil.estudoToHTML(estudo);
-		
-		List<Object> response = new ArrayList<>();
-		response.add(htmlEstudo);
-		response.add(estudo.getId());
-		response.add(estudo.isLiberado() == null ? false : true);
-		result.use(Results.json()).from(response).recursive().serialize();
-	
-		removeItensDuplicadosMatrizDistribuicao();
+	EstudoTransient estudo = null;
+	int qtdEdicoesAbertas = 0;
+
+	if (distribuicaoVendaMedia.getBases().size() > QTD_MAX_PRODUTO_EDICAO) {
+
+	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não pode ter mais do que "+QTD_MAX_PRODUTO_EDICAO+" bases."));
+	}
+
+	for (int i = 0; i < distribuicaoVendaMedia.getBases().size(); i++) {
+	    ProdutoEdicaoDTO produtoEdicaoDTO = distribuicaoVendaMedia.getBases().get(i);
+
+	    if (!produtoEdicaoDTO.getStatus().equals("FECHADO")) {
+		qtdEdicoesAbertas++;
+	    }
+	}
+
+	if (qtdEdicoesAbertas > 1) {
+	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não é possível utilizar mais que uma edição base aberta."));
+	}
+
+	ProdutoEdicaoEstudo produto = new ProdutoEdicaoEstudo(codigoProduto);
+	produto.setNumeroEdicao(numeroEdicao);
+	estudo = estudoAlgoritmoService.gerarEstudoAutomatico(distribuicaoVendaMedia, produto, distribuicaoVendaMedia.getReparteDistribuir(), this.getUsuarioLogado());
+	String htmlEstudo = HTMLTableUtil.estudoToHTML(estudo);
+
+	List<Object> response = new ArrayList<>();
+	response.add(htmlEstudo);
+	response.add(estudo.getId());
+	response.add(estudo.isLiberado() == null ? false : true);
+	result.use(Results.json()).from(response).recursive().serialize();
+
+	removeItensDuplicadosMatrizDistribuicao();
 
     }
 
     private void removeItensDuplicadosMatrizDistribuicao() {
-    	
-    	ProdutoDistribuicaoVO vo = (ProdutoDistribuicaoVO)session.getAttribute(ProdutoDistribuicaoVO.class.getName());
-    	if (vo != null) {
-    		
-    		MatrizDistribuicaoController matrizDistribuicaoController = new MatrizDistribuicaoController();
-        	matrizDistribuicaoController.setSession(session);
-        	matrizDistribuicaoController.removeItemListaDeItensDuplicadosNaSessao(vo.getIdLancamento(), vo.getIdCopia());
-    		session.removeAttribute(ProdutoDistribuicaoVO.class.getName());
-    	}
+
+	ProdutoDistribuicaoVO vo = (ProdutoDistribuicaoVO)session.getAttribute(ProdutoDistribuicaoVO.class.getName());
+	if (vo != null) {
+
+	    MatrizDistribuicaoController matrizDistribuicaoController = new MatrizDistribuicaoController();
+	    matrizDistribuicaoController.setSession(session);
+	    matrizDistribuicaoController.removeItemListaDeItensDuplicadosNaSessao(vo.getIdLancamento(), vo.getIdCopia());
+	    session.removeAttribute(ProdutoDistribuicaoVO.class.getName());
+	}
     }
 
     public HttpSession getSession() {

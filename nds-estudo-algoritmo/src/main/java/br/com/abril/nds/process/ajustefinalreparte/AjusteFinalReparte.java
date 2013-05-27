@@ -50,7 +50,8 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 			(cota.getVendaEdicaoMaisRecenteFechada() != null && cota.getReparteCalculado().compareTo(cota.getVendaEdicaoMaisRecenteFechada()) < 0) &&
 			(cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado,
 				ClassificacaoCota.MaximoMinimo, ClassificacaoCota.CotaMix,
-				ClassificacaoCota.RedutorAutomatico, ClassificacaoCota.BancaSoComEdicaoBaseAberta))) {
+				ClassificacaoCota.RedutorAutomatico, ClassificacaoCota.BancaSoComEdicaoBaseAberta,
+				ClassificacaoCota.BancaForaDaRegiaoDistribuicao))) {
 		    // RepCalculado Cota = RepCalculado Cota + 1 (ou um pacote padrao)
 		    setReparteCota(cota, estudo);
 		    if (estudo.getReservaAjuste().compareTo(BigInteger.ZERO) <= 0) {
@@ -64,7 +65,8 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 		for (CotaEstudo cota : estudo.getCotas()) {
 		    if (estudo.getReservaAjuste().compareTo(BigInteger.ZERO) == 1 &&
 				(cota.getVendaEdicaoMaisRecenteFechada() != null && cota.getReparteCalculado().compareTo(cota.getVendaEdicaoMaisRecenteFechada()) == 0) &&
-			    cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo, ClassificacaoCota.CotaMix)) {
+			    cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo, ClassificacaoCota.CotaMix,
+				ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
 
 			setReparteCota(cota, estudo);
 			if (estudo.getReservaAjuste().compareTo(BigInteger.ZERO) <= 0) {
@@ -88,7 +90,8 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 
 		for (CotaEstudo cota : estudo.getCotas()) {
 		    if (estudo.getReservaAjuste().compareTo(BigInteger.ZERO) == 1 &&
-			    cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo, ClassificacaoCota.CotaMix)) {
+			    cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo, ClassificacaoCota.CotaMix,
+				ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
 
 			setReparteCota(cota, estudo);
 			if (estudo.getReservaAjuste().compareTo(BigInteger.ZERO) <= 0) {

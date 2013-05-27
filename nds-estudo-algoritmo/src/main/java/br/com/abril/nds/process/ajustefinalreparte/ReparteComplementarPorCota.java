@@ -31,7 +31,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
     @Override
     public void executar(EstudoTransient estudo) throws Exception {
 	listaOrdenada = new LinkedList<>();
-	if (estudo.getReparteComplementar().compareTo(BigInteger.ZERO) > 0) {
+	if (estudo.getReparteComplementar() != null && estudo.getReparteComplementar().compareTo(BigInteger.ZERO) > 0) {
 	    ordenarLista(estudo);
 	    distribuirReparteComplementar(estudo);
 	}
@@ -115,7 +115,8 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	while (estudo.getReparteComplementar().compareTo(reparteGeral) >= 0) {
 	    for (CotaEstudo cota : estudo.getCotas()) {
 		if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
-			ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix)) {
+			ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix,
+			ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
 		    if (cota.getIntervaloMaximo() != null && cota.getReparteCalculado().compareTo(cota.getIntervaloMaximo()) > 0) {
 			cota.setReparteCalculado(cota.getIntervaloMaximo());
 		    } else if (cota.getReparteCalculado().compareTo(cota.getIntervaloMinimo()) < 0) {
