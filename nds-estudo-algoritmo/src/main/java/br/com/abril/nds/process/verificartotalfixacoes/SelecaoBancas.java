@@ -16,6 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.dao.CotaDAO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
@@ -27,6 +29,7 @@ import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.service.EstudoAlgoritmoService;
 import br.com.abril.nds.util.ComponentesPDV;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre as cotas encontradas para o perfil definido no
@@ -72,7 +75,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	}
 
 	if (!existeCotaComHistorico) {
-	    throw new Exception("Não foram encontradas cotas com historico para estas edições de base.");
+	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontradas cotas com historico para estas edições de base."));
 	}
 
 	Map<Long, CotaEstudo> cotasComHistoricoMap = new LinkedHashMap<>();

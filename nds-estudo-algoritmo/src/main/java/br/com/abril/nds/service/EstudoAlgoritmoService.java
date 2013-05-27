@@ -21,6 +21,8 @@ import br.com.abril.nds.dao.ProdutoEdicaoDAO;
 import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.enumerators.DataReferencia;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
@@ -42,6 +44,7 @@ import br.com.abril.nds.process.reparteminimo.ReparteMinimo;
 import br.com.abril.nds.process.reparteproporcional.ReparteProporcional;
 import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
 import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre as cotas encontradas para o perfil definido no
@@ -167,7 +170,7 @@ public class EstudoAlgoritmoService {
 
 	listaEdicoesBase = definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(edicao, getDatasPeriodoVeraneio(edicao));
 	if (listaEdicoesBase.isEmpty()) {
-	    throw new Exception("Não foram encontradas edições de veraneio, favor inserir as bases manualmente.");
+	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontradas edições de veraneio, favor inserir as bases manualmente."));
 	}
 	return listaEdicoesBase;
     }

@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.dao.EstudoDAO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
@@ -22,6 +24,7 @@ import br.com.abril.nds.process.ajustefinalreparte.GravarReparteFinalCota;
 import br.com.abril.nds.process.ajustefinalreparte.ReparteComplementarPorCota;
 import br.com.abril.nds.process.definicaobases.DefinicaoBases;
 import br.com.abril.nds.service.EstudoAlgoritmoService;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre
@@ -120,7 +123,7 @@ public class CalcularReparte extends ProcessoAbstrato {
 	}
 
 	if (estudo.getPercentualProporcaoExcedente().isEmpty()) {
-	    throw new Exception("Parametros do distribuidor não preenchido, Percentual de Excedente não pode estar vazio.");
+	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Parametros do distribuidor não preenchido, Percentual de Excedente não pode estar vazio."));
 	}
 
 	PercentualExcedenteEstudo percentualExcedenteEstudo;
