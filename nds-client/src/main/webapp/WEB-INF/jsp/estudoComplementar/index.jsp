@@ -271,7 +271,7 @@ function somarDistribuicao(){
               <tr>
                 <td align="right"><input name="checkbox" type="checkbox" id="checkboxDistMult" onclick="$('.distrMult').toggle();" /></td>
                 <td >Distribuir por Múltiplo</td>
-                <td><input type="text" class="distrMult" id="distrMult" style="width:40px; text-align:center; display:none;" value="10" readonly="readonly" /></td>
+                <td><input type="text" class="distrMult" id="distrMult" style="width:40px; text-align:center; display:none;" value="${pacotePadrao}" /></td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
