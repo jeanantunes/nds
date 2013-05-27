@@ -217,7 +217,7 @@ public class CalcularReparte extends ProcessoAbstrato {
 	    reparteSobra = estudo.getPacotePadrao();
 	}
 	// indice que sera aplicado para todas as cotas na distribuicao da sobra
-	BigInteger indicedeSobraouFalta = estudo.getReparteDistribuirInicial().divide(sumReparteCalculadoCota);
+	BigDecimal indicedeSobraouFalta = new BigDecimal(estudo.getReparteDistribuirInicial()).divide(new BigDecimal(sumReparteCalculadoCota), 3, BigDecimal.ROUND_HALF_UP);
 
 	Collections.sort(cotas, new Comparator<CotaEstudo>() {
 	    @Override
@@ -233,12 +233,12 @@ public class CalcularReparte extends ProcessoAbstrato {
 	    if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
 		    ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix, ClassificacaoCota.BancaSuspensa)) {
 		if (estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null) {
-		    BigDecimal temp = new BigDecimal(cota.getReparteCalculado()).multiply(new BigDecimal(indicedeSobraouFalta));
+		    BigDecimal temp = new BigDecimal(cota.getReparteCalculado()).multiply(indicedeSobraouFalta);
 		    // divisao usada para arredondar valor
 		    BigInteger inteiro = temp.divide(BigDecimal.ONE, 0, BigDecimal.ROUND_HALF_UP).toBigInteger();
 		    cota.setReparteCalculado(EstudoAlgoritmoService.arredondarPacotePadrao(estudo, inteiro), estudo);
 		} else {
-		    BigDecimal temp = new BigDecimal(cota.getReparteCalculado()).multiply(new BigDecimal(indicedeSobraouFalta));
+		    BigDecimal temp = new BigDecimal(cota.getReparteCalculado()).multiply(indicedeSobraouFalta);
 		    // divisao usada para arredondar valor
 		    cota.setReparteCalculado(temp.divide(BigDecimal.ONE, 0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
 		}

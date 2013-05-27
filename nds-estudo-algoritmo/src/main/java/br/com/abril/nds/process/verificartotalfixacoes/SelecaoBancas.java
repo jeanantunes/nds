@@ -94,9 +94,11 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	    if (cota.getClassificacao().equals(ClassificacaoCota.BancaSemHistorico)) {
 		idsCotas.add(cota.getId());
 	    }
+	    // excluindo as cotas que não entram no estudo.
 	    if (cota.getClassificacao().in(ClassificacaoCota.BancaComVendaZero, ClassificacaoCota.BancaSemHistorico,
 		    ClassificacaoCota.BancaSuspensa, ClassificacaoCota.ReparteFixado, ClassificacaoCota.CotaNaoRecebeSegmento,
-		    ClassificacaoCota.BancaSemClassificacaoDaPublicacao, ClassificacaoCota.BancaMixSemDeterminadaPublicacao)) {
+		    ClassificacaoCota.BancaSemClassificacaoDaPublicacao, ClassificacaoCota.BancaMixSemDeterminadaPublicacao,
+		    ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
 		estudo.getCotasExcluidas().add(cota);
 	    }
 	}
