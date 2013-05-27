@@ -18,6 +18,8 @@ public class GeraDividaDTO implements Serializable{
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	private Long cobrancaId;
+	
 	@Export(label = "Box")
 	private String box;
 	
@@ -73,6 +75,39 @@ public class GeraDividaDTO implements Serializable{
 		this.suportaEmail = suportaEmail;
 	}
 	
+	public GeraDividaDTO(Long cobrancaId, String box,String rota, String roteiro, 
+			 Integer numeroCota,String nomeCota, Date dataVencimento,
+			 Date dataEmissao,BigDecimal valor,TipoCobranca tipoCobranca, 
+			 Integer vias, String nossoNumero) {
+
+			this.cobrancaId = cobrancaId;
+			this.box = box;
+			this.rota = rota;
+			this.roteiro = roteiro; 
+			this.numeroCota = numeroCota;
+			this.nomeCota = nomeCota;
+			this.dataVencimento = dataVencimento;
+			this.dataEmissao = dataEmissao;
+			this.valor = valor;
+			this.tipoCobranca = tipoCobranca;
+			this.vias = vias;
+			this.nossoNumero = nossoNumero;
+}
+	
+	/**
+	 * @return the id
+	 */
+	public Long getCobrancaId() {
+		return cobrancaId;
+	}
+
+	/**
+	 * @param id the id to set
+	 */
+	public void setId(Long cobrancaId) {
+		this.cobrancaId = cobrancaId;
+	}
+
 	/**
 	 * @return the nossoNumero
 	 */

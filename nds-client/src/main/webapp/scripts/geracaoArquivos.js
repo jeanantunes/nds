@@ -20,6 +20,10 @@ GeracaoArquivos.prototype.init = function() {
 		_this.btnGerarOnClick();
 	});
 
+	$("#tipoArquivo", this.workspace).change(function() {
+		_this.tipoArquivoGerarOnChange();
+	});
+
 };
 
 
@@ -33,7 +37,6 @@ GeracaoArquivos.prototype.getParams = function() {
 
 GeracaoArquivos.prototype.btnGerarOnClick = function() {
 
-	var _this = this;
 	var params = this.getParams();
 	
 	$.postJSON(this.path + 'gerar',
@@ -42,7 +45,32 @@ GeracaoArquivos.prototype.btnGerarOnClick = function() {
 				$("#qtdArquivosGerados", this.workspace).html(data.int);
 			},
 			function(result) {
-				
+				$("#resultado").show();
+				$("#qtdArquivosGerados").text(result);
 			}
 	);
 };
+
+GeracaoArquivos.prototype.tipoArquivoGerarOnChange = function() {
+
+	var reparte = $("#dtLancto");
+	var encalhe = $("#dtRecolhimento");
+	var tipoArquivo = $("#tipoArquivo").val();
+
+    switch (tipoArquivo) {  
+            case 'REPARTE':    
+        		reparte.show();
+                encalhe.hide();
+            break;  
+            case 'PICKING':
+        		reparte.show();
+                encalhe.hide();
+            break;  
+            default:
+                reparte.hide();
+            	encalhe.show();
+            break;  
+    }
+
+};
+//@ sourceURL=geracaoArquivo.js

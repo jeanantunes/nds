@@ -1507,4 +1507,22 @@ public class BoletoServiceImpl implements BoletoService {
 		return this.boletoRepository.obterQuantidadeTotalBancario(filtro.getData());
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public List<Boleto> verificaEnvioDeEmail(List<Boleto> boletos) {
+		for(Boleto boleto : boletos)
+		{
+			Long verificaSeRecebeEmail = this.boletoRepository.verificaEnvioDeEmail(boleto);
+			if(verificaSeRecebeEmail.intValue() == 0)
+			{
+				boleto.setRecebeCobrancaEmail(false);
+			}
+			else
+			{
+				boleto.setRecebeCobrancaEmail(true);
+			}
+		}
+		
+		return boletos;
+	}
 }

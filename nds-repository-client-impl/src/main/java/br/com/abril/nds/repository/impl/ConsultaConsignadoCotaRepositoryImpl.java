@@ -1,11 +1,21 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.sql.DataSource;
 
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaConsignadoCotaDTO;
@@ -28,86 +38,168 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		super(MovimentoEstoqueCota.class);
 	}
 
+	@Autowired
+	private DataSource dataSource;
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ConsultaConsignadoCotaDTO> buscarConsignadoCota(
 			FiltroConsultaConsignadoCotaDTO filtro, boolean limitar) {
 		 
-		StringBuilder hql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT ");
+
+		sql.append(" 	PR.CODIGO AS codigoProduto, ");
 		
-		hql.append(" SELECT  ")
-		   .append(" produto.codigo as codigoProduto, 		")
-		   .append(" produto.nome as nomeProduto, 			")	
-		   .append(" cota.id as cotaId, 					")
-		   .append(" pe.id as produtoEdicaoId, 				")	
-		   .append(" pe.numeroEdicao as numeroEdicao, 		")
-		   .append(" pessoa.razaoSocial as nomeFornecedor, 	")
-		   .append(" case when lancamento is not null then lancamento.dataLancamentoDistribuidor else movimento.data end as dataLancamento,")
-		   .append(" coalesce(movimento.valoresAplicados.precoVenda, pe.precoVenda, 0) as precoCapa, ")
-		   
-		   .append(" coalesce(movimento.valoresAplicados.valorDesconto, 0) as desconto, ")
-		   .append(" coalesce(movimento.valoresAplicados.precoComDesconto, pe.precoVenda, 0) as precoDesconto, ")
-		   
-		   .append("	    (sum((case when tipoMovimento.operacaoEstoque = 'ENTRADA'  then movimento.qtde else 0 end) ")
-		   .append("	      - (case when tipoMovimento.operacaoEstoque = 'SAIDA' then movimento.qtde else 0 end) )) as reparte, ")
-		   
-		   .append(" ( coalesce( ")
-		   .append("		movimento.valoresAplicados.precoVenda, pe.precoVenda, 0) * ")
-		   .append("	    (sum((case when tipoMovimento.operacaoEstoque = 'ENTRADA' then movimento.qtde else 0 end) ")
-		   .append("	      - (case when tipoMovimento.operacaoEstoque = 'SAIDA' then movimento.qtde else 0 end) ))  ")
-		   .append(" ) as total, ")
-		   
-		   .append(" ( coalesce( ")
-		   .append("        movimento.valoresAplicados.precoComDesconto, pe.precoVenda, 0) * ")
-		   .append("	    (sum((case when tipoMovimento.operacaoEstoque = 'ENTRADA' then movimento.qtde else 0 end) ")
-		   .append("	      - (case when tipoMovimento.operacaoEstoque = 'SAIDA' then movimento.qtde else 0 end) ) ) ")
-		   .append(" ) as totalDesconto ");
-		   
-		hql.append(createFromConsultaConsignadoCota(filtro));
+		sql.append(" 	PR.NOME AS nomeProduto, ");
 		
+		sql.append(" 	C.ID AS cotaId, ");
+		
+		sql.append(" 	PE.ID AS produtoEdicaoId, ");
+		
+		sql.append(" 	PE.NUMERO_EDICAO AS numeroEdicao, ");
+		
+		sql.append(" 	PJ.RAZAO_SOCIAL AS nomeFornecedor, ");
+		
+		sql.append(" 	CASE " +
+				"			WHEN LCTO.ID IS NOT NULL " +
+				"			THEN LCTO.DATA_LCTO_DISTRIBUIDOR " +
+				"			ELSE MEC.DATA END AS dataLancamento, ");
+		
+		sql.append(" 	COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) AS precoCapa, ");
+		
+		sql.append(" 	COALESCE(MEC.VALOR_DESCONTO, 0) AS desconto, ");
+		
+		sql.append(" 	COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0) AS precoDesconto, ");
+		
+		sql.append(" 	SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END " +
+				   "	  -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' THEN MEC.QTDE ELSE 0 END)) AS reparte, ");
+		
+		sql.append(" 	COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0)" +
+				   "		*SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END" +
+				   "		   -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' THEN MEC.QTDE ELSE 0 END)) AS total, ");
+		
+		sql.append(" 	COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0)" +
+				   "		*SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END" +
+				   "		   -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' then MEC.QTDE ELSE 0 END)) AS totalDesconto ");
+
+		
+		sql.append(" FROM ");
+		
+		sql.append(" MOVIMENTO_ESTOQUE_COTA MEC ");
+		
+		sql.append(" LEFT OUTER JOIN LANCAMENTO LCTO ON MEC.LANCAMENTO_ID=LCTO.ID");
+		
+		sql.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ");
+		
+		sql.append(" INNER JOIN PARAMETRO_COBRANCA_COTA PCC ON C.ID=PCC.COTA_ID ");
+       	
+		sql.append(" INNER JOIN PESSOA P ON C.PESSOA_ID=P.ID ");
+		
+		sql.append(" INNER JOIN TIPO_MOVIMENTO TM ON MEC.TIPO_MOVIMENTO_ID=TM.ID ");
+		
+		sql.append(" INNER JOIN PRODUTO_EDICAO PE ON MEC.PRODUTO_EDICAO_ID = PE.ID ");
+		
+		sql.append(" INNER JOIN PRODUTO PR ON PE.PRODUTO_ID=PR.ID ");
+		
+		sql.append(" INNER JOIN PRODUTO_FORNECEDOR F ON PR.ID=F.PRODUTO_ID ");
+		
+		sql.append(" INNER JOIN FORNECEDOR fornecedor8_ ON F.fornecedores_ID=fornecedor8_.ID ");
+		
+		sql.append(" INNER JOIN PESSOA PJ ON fornecedor8_.JURIDICA_ID=PJ.ID ");
+		
+		
+		sql.append(" WHERE ");
+		
+		sql.append(" ( MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ) ");
+		
+		sql.append(" AND ( TM.GRUPO_MOVIMENTO_ESTOQUE not in (':tipoMovimentoEstorno') ");
+		sql.append(" ) "); 
+
+		if(filtro.getIdCota() != null ) { 
+			sql.append(" AND C.ID = :idCota ");
+		}
+
+		if(filtro.getIdFornecedor() != null) { 
+			sql.append(" AND fornecedor8_.ID = :idFornecedor ");
+		}
+
+		sql.append(" AND (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) "); 
+		
+		sql.append(" GROUP BY ");
+		
+		sql.append(" PE.ID ");
+		
+		sql.append(" HAVING ");
+		sql.append(" SUM((CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END)" +
+				   "    -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' then MEC.QTDE ELSE 0 END))<>0 "); 
+
 		if(filtro.getPaginacao()!=null){
 			
 			if (filtro.getPaginacao().getSortColumn() != null && 
 				!filtro.getPaginacao().getSortColumn().trim().isEmpty()) {
 				
-				hql.append(" ORDER BY ");
-				hql.append(filtro.getPaginacao().getSortColumn());		
+				sql.append(" ORDER BY ");
+				sql.append(filtro.getPaginacao().getSortColumn());		
 			
 				if ( filtro.getPaginacao().getOrdenacao() != null ) {
 					
-					hql.append(" ");
-					hql.append( filtro.getPaginacao().getOrdenacao().toString());
+					sql.append(" ");
+					sql.append( filtro.getPaginacao().getOrdenacao().toString());
 				}
 			}
 		}
 		
-		Query query =  getSession().createQuery(hql.toString());
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 		
-		query.setParameter("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO);
-		
-		if(filtro.getIdCota() != null ) { 
-			query.setParameter("idCota", filtro.getIdCota());
+		if(filtro.getIdCota()!=null) {
+			parameters.put("idCota", filtro.getIdCota());
 		}
-		
+
 		if(filtro.getIdFornecedor() != null ) { 
-			query.setParameter("idFornecedor", filtro.getIdFornecedor());
+			parameters.put("idFornecedor", filtro.getIdFornecedor());
 		}
-		
-		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				ConsultaConsignadoCotaDTO.class));
-		
+
+		parameters.put("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name());
+
+		parameters.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
+
 		if(filtro.getPaginacao()!=null){
 			
-			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			if(filtro.getPaginacao().getPosicaoInicial()!=null && filtro.getPaginacao().getQtdResultadosPorPagina()!=null) {
+				sql.append(" LIMIT :posicaoInicial, :posicaoFinal");
+				parameters.put("posicaoInicial",filtro.getPaginacao().getPosicaoInicial());
+				parameters.put("posicaoFinal",filtro.getPaginacao().getQtdResultadosPorPagina());
+			}
 			
-			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar) 
-				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 		}
+
+		@SuppressWarnings("rawtypes")
+		RowMapper cotaRowMapper = new RowMapper() {
+
+			public Object mapRow(ResultSet rs, int arg1) throws SQLException {
+
+				ConsultaConsignadoCotaDTO dto = new ConsultaConsignadoCotaDTO();
+				dto.setCodigoProduto(rs.getString("codigoProduto"));
+				dto.setNomeProduto(rs.getString("nomeProduto"));
+				dto.setCotaId(rs.getLong("cotaId"));
+				dto.setProdutoEdicaoId(rs.getLong("produtoEdicaoId"));
+				dto.setNumeroEdicao(rs.getLong("numeroEdicao"));
+				dto.setNomeFornecedor(rs.getString("nomeFornecedor"));
+				dto.setDataLancamento(rs.getDate("dataLancamento"));
+				dto.setPrecoCapa(rs.getBigDecimal("precoCapa"));
+				dto.setDesconto(rs.getBigDecimal("desconto"));
+				dto.setPrecoDesconto(rs.getBigDecimal("precoDesconto"));
+				dto.setReparte(BigInteger.valueOf(rs.getLong("reparte")));
+				dto.setTotal(rs.getBigDecimal("total"));
+				dto.setTotalDesconto(rs.getBigDecimal("totalDesconto"));
+				
+				return dto;
+			}
+		};
 		
-		return query.list();
+		return (List<ConsultaConsignadoCotaDTO>) namedParameterJdbcTemplate.query(sql.toString(), parameters, cotaRowMapper);
 				
 	}
 

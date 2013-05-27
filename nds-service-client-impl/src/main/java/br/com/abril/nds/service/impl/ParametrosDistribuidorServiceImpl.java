@@ -9,6 +9,7 @@ import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -17,6 +18,7 @@ import org.lightcouch.CouchDbClient;
 import org.lightcouch.NoDocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
@@ -47,6 +49,9 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
+import br.com.abril.nds.model.movimentacao.StatusOperacao;
+import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
 import br.com.abril.nds.repository.EnderecoDistribuidorRepository;
 import br.com.abril.nds.repository.MovimentoRepository;
 import br.com.abril.nds.repository.ParametroContratoCotaRepository;
@@ -78,6 +83,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	private static final String DB_NAME = "db_parametro_distribuidor";
 	
+	@Autowired
+	private ControleConferenciaEncalheRepository controleConferenciaEncalheRepository;
+
 	@Autowired
 	private DistribuidorService distribuidorService;
 
@@ -1078,5 +1086,31 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			return true;
 		return false;
 	}
-	
+
+	/**
+	 * Obtém o ControleConferenciaEncalhe referente a dataOperacao atual.
+	 * 
+	 * @param dataOperacao
+	 * 
+	 * @return ControleConferenciaEncalhe
+	 */
+	@Transactional(propagation=Propagation.REQUIRES_NEW)
+	public ControleConferenciaEncalhe obterControleConferenciaEncalhe(Date dataOperacao) {
+		
+		ControleConferenciaEncalhe controleConferenciaEncalhe = controleConferenciaEncalheRepository.obterControleConferenciaEncalhe(dataOperacao);
+		
+		if(controleConferenciaEncalhe == null) {
+			
+			controleConferenciaEncalhe = new ControleConferenciaEncalhe();
+			
+			controleConferenciaEncalhe.setData(dataOperacao);
+			
+			controleConferenciaEncalhe.setStatus(StatusOperacao.EM_ANDAMENTO);
+			
+			controleConferenciaEncalheRepository.adicionar(controleConferenciaEncalhe);
+		}
+		
+		return controleConferenciaEncalhe;
+		
+	}
 }

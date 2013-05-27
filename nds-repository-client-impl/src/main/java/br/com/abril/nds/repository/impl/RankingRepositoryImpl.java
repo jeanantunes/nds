@@ -96,7 +96,7 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Map<Long, Long> obterRankingProdutoCota(Long idCota){
+	public Map<Long, Long> obterRankingProdutoPorCota(Long idCota){
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -111,6 +111,7 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		.append("    order by valor desc ");
 		
 		SQLQuery query  = getSession().createSQLQuery(sql.toString());
+		
 		query.addScalar("idProdutoEdicao", StandardBasicTypes.LONG);
 		query.addScalar("valor");
 		
@@ -130,6 +131,137 @@ public class RankingRepositoryImpl extends AbstractRepository  implements Rankin
 		return mapRanking;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public Map<Long, Long> obterRankingCota() {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("  	select  consolidado.COTA_ID as idCota, sum(consolidado.VALOR_TOTAL_VENDA_COM_DESCONTO) as valor ")
+		
+		.append("    from VIEW_CONSOLIDADO_MOVIMENTO_ESTOQUE_COTA consolidado  ")
+	
+		.append("    group by consolidado.COTA_ID ")
+	
+		.append("    order by valor desc ");
+		
+		SQLQuery query  = getSession().createSQLQuery(sql.toString());
+		
+		query.addScalar("idCota", StandardBasicTypes.LONG);
+		query.addScalar("valor");
+		
+		Map<Long, Long> mapRanking = new HashMap<>();
+		
+		List<Object[]> resultList = query.list();
+		
+		long i = 1;
+		
+		for (Object[] result : resultList) {
+			
+			mapRanking.put((long) result[0], i++);
+		}
+		
+		return mapRanking;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Map<Long, Long> obterRankingEditor() {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("  	select  consolidado.EDITOR_ID as idEditor, sum(consolidado.VALOR_TOTAL_VENDA_COM_DESCONTO) as valor ")
+		
+		.append("    from VIEW_CONSOLIDADO_MOVIMENTO_ESTOQUE_COTA consolidado  ")
+	
+		.append("    group by consolidado.EDITOR_ID ")
+	
+		.append("    order by valor desc ");
+		
+		SQLQuery query  = getSession().createSQLQuery(sql.toString());
+		
+		query.addScalar("idEditor", StandardBasicTypes.LONG);
+		query.addScalar("valor");
+		
+		Map<Long, Long> mapRanking = new HashMap<>();
+		
+		List<Object[]> resultList = query.list();
+		
+		long i = 1;
+		
+		for (Object[] result : resultList) {
+			
+			mapRanking.put((long) result[0], i++);
+		}
+		
+		return mapRanking;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Map<Long, Long> obterRankingProdutoPorProduto() {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("  	select  consolidado.PRODUTO_ID as idProduto, sum(consolidado.VALOR_TOTAL_VENDA_COM_DESCONTO) as valor ")
+		
+		.append("    from VIEW_CONSOLIDADO_MOVIMENTO_ESTOQUE_COTA consolidado  ")
+		
+		.append("    group by consolidado.PRODUTO_ID ")
+	
+		.append("    order by valor desc ");
+		
+		SQLQuery query  = getSession().createSQLQuery(sql.toString());
+		
+		query.addScalar("idProduto", StandardBasicTypes.LONG);
+		query.addScalar("valor");
+		
+		Map<Long, Long> mapRanking = new HashMap<>();
+		
+		List<Object[]> resultList = query.list();
+		
+		long i = 1;
+		
+		for (Object[] result : resultList) {
+			
+			mapRanking.put((long) result[0], i++);
+		}
+		
+		return mapRanking;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Map<Long, Long> obterRankingCotaPorProduto(Long idProduto) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("  	select  consolidado.COTA_ID as idCota, sum(consolidado.VALOR_TOTAL_VENDA_COM_DESCONTO) as valor ")
+		
+		.append("    from VIEW_CONSOLIDADO_MOVIMENTO_ESTOQUE_COTA consolidado  ")
+	
+		.append("    where consolidado.PRODUTO_ID = :idProduto ")
+		
+		.append("    group by consolidado.COTA_ID ")
+	
+		.append("    order by valor desc ");
+		
+		SQLQuery query  = getSession().createSQLQuery(sql.toString());
+		
+		query.addScalar("idCota", StandardBasicTypes.LONG);
+		query.addScalar("valor");
+		
+		query.setParameter("idProduto", idProduto);
+		
+		Map<Long, Long> mapRanking = new HashMap<>();
+		
+		List<Object[]> resultList = query.list();
+		
+		long i = 1;
+		
+		for (Object[] result : resultList) {
+			
+			mapRanking.put((long) result[0], i++);
+		}
+		
+		return mapRanking;
+	}
 	
 	public Long obterRankingCotaDistribuidor(Long idCota){
 		

@@ -475,7 +475,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			List<CotaAusenteEncalheDTO> listaCotasAusentes, Cota cotaAusente) throws GerarCobrancaValidacaoException {
 
 		ValidacaoVO validacaoVO = new ValidacaoVO();
-		
+
+		ValidacaoVO validacaoEmails = new ValidacaoVO();
+		validacaoEmails.setListaMensagens(new ArrayList<String>());
+
 		if (cotaAusente != null){
 			
 			listaCotasAusentes = new ArrayList<>();
@@ -527,7 +530,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 							validacaoVO.setListaMensagens(new ArrayList<String>());
 						}
 						
-						validacaoVO.getListaMensagens().add(
+						validacaoEmails.getListaMensagens().add(
 								"A cota "+ cota.getNumeroCota() +" não possui email cadastrado");
 					} else {
 					
@@ -539,7 +542,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 								validacaoVO.setListaMensagens(new ArrayList<String>());
 							}
 							
-							validacaoVO.getListaMensagens().add("Erro ao enviar e-mail para cota " + 
+							// Caso dê erro para enviar o e-mail, mostra uma mensagem na tela
+							// Não mostramos mais este erro na tela
+							validacaoEmails.getListaMensagens().add("Erro ao enviar e-mail para cota " + 
 									cota.getNumeroCota() + ", " +
 									e.getMessage());
 						}
@@ -593,6 +598,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 			
 		}
+
+		// Se um dia precisar tratar as mensagens de erro de e-mail, elas estão nesta lista
+		/*if (validacaoEmails.getListaMensagens() != null && !validacaoEmails.getListaMensagens().isEmpty()) {
+		}*/
 		
 		if (validacaoVO.getListaMensagens() != null && !validacaoVO.getListaMensagens().isEmpty()){
 			
@@ -750,30 +759,36 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 				TipoNotaFiscal tipoNotaFiscal = obterTipoNotaFiscal(listaTipoNotaFiscal, cota);
 				
-				List<ItemNotaFiscalSaida> listItemNotaFiscal = 
-						this.notaFiscalService.obterItensNotaFiscalPor(
-								parametrosRecolhimentoDistribuidor,
-								cota, null, null, null, tipoNotaFiscal);
+				if (tipoNotaFiscal != null) {
 				
-				if (listItemNotaFiscal == null || listItemNotaFiscal.isEmpty()) 
-					continue;
+					List<ItemNotaFiscalSaida> listItemNotaFiscal = 
+							this.notaFiscalService.obterItensNotaFiscalPor(
+									parametrosRecolhimentoDistribuidor,
+									cota, null, null, null, tipoNotaFiscal);
+					
+					if (listItemNotaFiscal == null || listItemNotaFiscal.isEmpty()) 
+						continue;
+					
+					List<NotaFiscalReferenciada> listaNotasFiscaisReferenciadas = this.notaFiscalService.obterNotasReferenciadas(listItemNotaFiscal);
+					
+					InformacaoTransporte transporte = this.notaFiscalService.obterTransporte(cota.getId());
+					
+					Set<Processo> processos = new HashSet<Processo>();
+					processos.add(Processo.GERACAO_NF_E);
+					
+					Long idNotaFiscal = this.notaFiscalService.emitiNotaFiscal(tipoNotaFiscal.getId(), dataEncalhe, cota, 
+							listItemNotaFiscal, transporte, null, listaNotasFiscaisReferenciadas, processos, null);
 				
-				List<NotaFiscalReferenciada> listaNotasFiscaisReferenciadas = this.notaFiscalService.obterNotasReferenciadas(listItemNotaFiscal);
+					NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(idNotaFiscal);
+
+					this.produtoServicoRepository.atualizarProdutosQuePossuemNota(notaFiscal.getProdutosServicos(), listItemNotaFiscal);
 				
-				InformacaoTransporte transporte = this.notaFiscalService.obterTransporte(cota.getId());
+				}
 				
-				Set<Processo> processos = new HashSet<Processo>();
-				processos.add(Processo.GERACAO_NF_E);
-				
-				Long idNotaFiscal = this.notaFiscalService.emitiNotaFiscal(tipoNotaFiscal.getId(), dataEncalhe, cota, 
-						listItemNotaFiscal, transporte, null, listaNotasFiscaisReferenciadas, processos, null);
-				
-				NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(idNotaFiscal);
-				
-				this.produtoServicoRepository.atualizarProdutosQuePossuemNota(notaFiscal.getProdutosServicos(), listItemNotaFiscal);
-				
+			} catch (ValidacaoException e) {
+				throw e;
 			} catch (Exception exception) {
-				LOGGER.warn(exception.getLocalizedMessage(), exception);
+				LOGGER.error(exception.getLocalizedMessage(), exception);
 				continue;
 			}
 		}

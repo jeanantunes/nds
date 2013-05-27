@@ -79,7 +79,7 @@
 					</td>
 					<td>Cidade:</td>
 					<td>
-						<input type="text" style="width:250px" 
+						<input type="text" style="width:250px; text-transform: uppercase;" 
 							   id="${param.telaEndereco}cidade" 
 							   onkeyup="${param.telaEndereco}.autoCompletarLocalidades();"
 							   onblur="${param.telaEndereco}.autoCompletarLocalidades(true);"
@@ -90,7 +90,7 @@
 				
 					<td>Bairro:</td>
 					<td>
-						<input type="text"  style="width:230px"
+						<input type="text"  style="width:230px; text-transform: uppercase;"
 							   onkeyup="${param.telaEndereco}.autoCompletarBairros();"
 							   onblur="${param.telaEndereco}.autoCompletarBairros(true);"
 							   name="enderecoAssociacao.endereco.bairro" id="${param.telaEndereco}bairro" />
@@ -135,14 +135,14 @@
 					
 					<td>Logradouro:</td>
 					<td>
-						<input type="text" style="width:230px"
+						<input type="text" style="width:230px; text-transform: uppercase;"
 							   onkeyup="${param.telaEndereco}.autoCompletarLogradouros();"
 							   onblur="${param.telaEndereco}.autoCompletarLogradouros(true);" 
 							   name="enderecoAssociacao.endereco.logradouro" id="${param.telaEndereco}logradouro" />
 					</td>
 					<td>Complemento:</td>
 					<td>
-						<input type="text" style="width:250px" 
+						<input type="text" style="width:250px; text-transform: uppercase;" 
 							   name="enderecoAssociacao.endereco.complemento" id="${param.telaEndereco}complemento" />
 					</td>
 				    

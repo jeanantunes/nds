@@ -133,7 +133,6 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 			}
 		}
-		
 		return query.list();
 	}
 	
@@ -192,6 +191,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		} else {
 			hql.append(" SELECT new ").append(GeraDividaDTO.class.getCanonicalName())
 			.append("(")
+				.append(" cobranca.id,")
 				.append(" box.codigo || '-'|| box.nome,")
 				.append(" rota.descricaoRota,")
 				.append(" roteiro.descricaoRoteiro,")
@@ -202,32 +202,18 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 				.append(" cobranca.valor,")
 				.append(" cobranca.tipoCobranca,")
 				.append(" cobranca.vias, ")
-				.append(" cobranca.nossoNumero, ")
+				.append(" cobranca.nossoNumero) ");
 
-				.append(" case when ("+
-				        "           select count(f.recebeCobrancaEmail) " +
-						"           from PoliticaCobranca p " +
-						"           join p.formaCobranca f " +
-						"           where f.recebeCobrancaEmail = true"+
-						"           and p.principal=true " +//TODO
-						"           and p.ativo=true " +
-				        "           ) > 0 " +
-						" then " + 
-				
-				        " (case when ("+
-				        "             select count(f.parametroCobrancaCota) " +
-						"             from FormaCobranca f " +
-						"             join f.parametroCobrancaCota p " +
-						"             join p.cota c " +
-						"             where f.recebeCobrancaEmail = true " +
-						"             and c.id = cota.id"+
-						"             and f.principal=true " +//TODO
-						"             and f.ativa=true "+
-				        "             ) > 0 then true else false end)" +
-						" else false end ")
-						
-			.append(")");
-			
+//				.append("(case when ("+
+//				        "             select count(f.parametroCobrancaCota) " +
+//						"             from FormaCobranca f " +
+//						"             join f.parametroCobrancaCota p " +
+//						"             join p.cota c " +
+//						"             where f.recebeCobrancaEmail = true " +
+//						"             and c.id = cota.id"+
+//						"             and f.principal=true " +//TODO
+//						"             and f.ativa=true "+
+//				        "             ) > 0 then true else false end)");
 		}
 		
 		hql.append(" FROM ")
@@ -927,5 +913,37 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		return " SELECT SUM(DIVIDA_.VALOR) ";
 	}
+
+	@Override
+	public Long verificarEnvioDeEmail(GeraDividaDTO dividaGerada) {
+		
+		StringBuilder hql = new StringBuilder();
+		hql.append("select count(forma_cobranca.recebeCobrancaEmail) " +
+						"from Cobranca as cobranca join " +
+						"cobranca.cota as cota join " +
+						"cota.parametroCobranca as parametro_cobranca_cota join " +
+						"parametro_cobranca_cota.formasCobrancaCota as forma_cobranca " +
+						"where " + 
+						"forma_cobranca.recebeCobrancaEmail = true " +
+						"and " +
+						"forma_cobranca.ativa= true " +
+						"and " +
+						"cota.numeroCota = :numeroCota " +
+						"and " +
+						"cobranca.id = :cobrancaId");
+						
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("numeroCota", dividaGerada.getNumeroCota().intValue());
+		query.setParameter("cobrancaId", dividaGerada.getCobrancaId().longValue());
+	    
+		Long retorno = (Long) query.uniqueResult();
+		return retorno;
+	}
+	
+	
+	
+	
+	
+	
 	
 }

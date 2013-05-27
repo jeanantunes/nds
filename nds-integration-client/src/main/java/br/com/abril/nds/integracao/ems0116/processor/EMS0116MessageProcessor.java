@@ -261,7 +261,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		for (EnderecoPDV item : enderecosPDV) {
 
 			//if(item.getEndereco().getLogradouro().equals(input.getEndereco())){
-			if(item.getEndereco().getLogradouro().equals(logradouro) &&
+			if(item.getEndereco().getLogradouro().equalsIgnoreCase(logradouro) &&
 			   item.getEndereco().getNumero().equals(numero)){
 				enderecoPDV = item;
 				break;

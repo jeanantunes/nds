@@ -736,6 +736,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			novaDivida.setResponsavel(usuario);
 			novaDivida.setOrigemNegociacao(false);
 			
+			/*
+			 * 
+			 * Código comentado por solicitação do Cesar, funcionalidade feita no momento da Baixa Financeira.
+			 * 16/05/2013 - Trac 581
+			 * 
 			BigDecimal valorCalculadoJuros = BigDecimal.ZERO;
 			
 			boolean isAcumulaDivida = 
@@ -773,7 +778,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 							this.cobrancaService.calcularJuros(
 									null,
 									cota.getId(),
-									vlMovFinanTotal.add(divida.getValor()).add(valorMulta.abs()),
+									divida.getValor().abs(),
 									divida.getCobranca().getDataVencimento(),
 									dataOperacao);
 
@@ -787,13 +792,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					historicoAcumuloDivida.setResponsavel(usuario);
 					historicoAcumuloDivida.setStatus(StatusInadimplencia.ATIVA);
 
-					novaDivida.setValor(vlMovFinanTotal.add(valorCalculadoJuros.abs()));
+					novaDivida.setValor(vlMovFinanTotal.abs().add(valorCalculadoJuros.abs()));
 				}
 
 			} else {
 				consolidadoFinanceiroCota.getTotal().subtract(consolidadoFinanceiroCota.getPendente().abs());
 				consolidadoFinanceiroCota.setPendente(BigDecimal.ZERO);
-			}
+			}*/
 
 		} else if (vlMovFinanTotal.compareTo(valorMinino) != 0) {
 
