@@ -333,6 +333,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 				.append(" 		       ELSE 0 END) 	 						 		 ")
 				.append("     from diferenca d 										 ")
 				.append("     where d.produto_edicao_id = produtoEdicaoId 			 ")
+				.append("     and d.STATUS_CONFIRMACAO <> 'CANCELADO' 			 ")
 				.append("     group by d.PRODUTO_EDICAO_ID 							 ")
 				.append(" ), 0) AS qntDiferenca, 								 ")
 				.append(" sum(innerQuery.valorFaturado) AS valorFaturado, 		 ")

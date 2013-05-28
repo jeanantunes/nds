@@ -19,6 +19,7 @@ import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
+import br.com.abril.nds.dto.fechamentoencalhe.GridFechamentoEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
@@ -113,15 +114,33 @@ public class FechamentoEncalheController extends BaseController {
 	public void pesquisar(String dataEncalhe, Long fornecedorId, Long boxId, Boolean aplicaRegraMudancaTipo,
 			String sortname, String sortorder, int rp, int page) {
 		
+		@SuppressWarnings("unchecked")
+		List<FechamentoFisicoLogicoDTO> listaEncalheSession = (List<FechamentoFisicoLogicoDTO>) session.getAttribute("gridFechamentoEncalheDTO");
+		
+		if(listaEncalheSession == null || listaEncalheSession.isEmpty())
+		{
+			FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
+			filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
+			filtro.setFornecedorId(fornecedorId);
+			filtro.setBoxId(boxId);
+			
+			listaEncalheSession = this.fechamentoEncalheService.verificarListaDaSessao(listaEncalheSession, filtro, sortname, sortorder);
+			session.setAttribute("gridFechamentoEncalheDTO", listaEncalheSession);
+		}
+		
+		
 		List<FechamentoFisicoLogicoDTO> listaEncalhe = 
 				consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, aplicaRegraMudancaTipo,sortname, sortorder, rp, page);
 		
+		
+		List<FechamentoFisicoLogicoDTO> novaListaEncalhe = this.fechamentoEncalheService.ajustarGrids(listaEncalhe, listaEncalheSession);
+		
 		int quantidade = this.quantidadeItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, aplicaRegraMudancaTipo);
-			
+		
 		if (listaEncalhe.isEmpty()) {
 			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Não houve conferência de encalhe nesta data."), "mensagens").recursive().serialize();
 		} else {
-			this.result.use(FlexiGridJson.class).from(listaEncalhe).total(quantidade).page(page).serialize();
+			this.result.use(FlexiGridJson.class).from(novaListaEncalhe).total(quantidade).page(page).serialize();
 		}
 	}
 	
@@ -149,6 +168,8 @@ public class FechamentoEncalheController extends BaseController {
 		filtro.setFornecedorId(fornecedorId);
 		filtro.setBoxId(boxId);
 		
+		///verificar depois
+		
 		if (aplicaRegraMudancaTipo){
 			if (boxId != null) {
 				FiltroFechamentoEncalheDTO filtroRevomecao = new FiltroFechamentoEncalheDTO(); 
@@ -159,8 +180,8 @@ public class FechamentoEncalheController extends BaseController {
 		
 		this.session.setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE,filtro);
 		
-		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.buscarFechamentoEncalhe(filtro, sortorder, this.resolveSort(sortname), page, rp);
 		
+		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.buscarFechamentoEncalhe(filtro, sortorder, this.resolveSort(sortname), page, rp);
 		return listaEncalhe;
 	}
 	
@@ -169,8 +190,12 @@ public class FechamentoEncalheController extends BaseController {
 	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_ALTERACAO)
 	public void salvar(List<FechamentoFisicoLogicoDTO> listaFechamento, String dataEncalhe, Long fornecedorId, Long boxId) {
 		
-		gravaFechamentoEncalhe(listaFechamento, dataEncalhe, fornecedorId,
-				boxId);
+		@SuppressWarnings("unchecked")
+		List<FechamentoFisicoLogicoDTO> listaDeGrid = (List<FechamentoFisicoLogicoDTO>) this.session.getAttribute("gridFechamentoEncalheDTO");
+				
+		gravaFechamentoEncalhe(listaDeGrid, dataEncalhe, fornecedorId,boxId);
+		
+		this.session.removeAttribute("listaDeGrid");
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Informação gravada com sucesso!"), "result").recursive().serialize();
 	}
@@ -630,5 +655,54 @@ public class FechamentoEncalheController extends BaseController {
 		
 		this.result.use(Results.nothing());
 	}
+	
+	@Post
+	public void enviarGridAnteriorParaSession(String codigo, String produtoEdicao, String fisico, boolean checkbox){
 		
+		@SuppressWarnings("unchecked")
+		List<FechamentoFisicoLogicoDTO> listaDeGrid = (List<FechamentoFisicoLogicoDTO>) session.getAttribute("gridFechamentoEncalheDTO");
+		
+		boolean insercao = true;
+		if(listaDeGrid != null)
+		{
+			for(FechamentoFisicoLogicoDTO linha : listaDeGrid)
+			{
+				if(linha.getCodigo().equals(Long.parseLong(codigo)))
+				{
+					linha.setCodigo(codigo);
+					linha.setProdutoEdicao(Long.parseLong(produtoEdicao));
+					if(fisico != null)
+					{
+						linha.setFisico(Long.parseLong(fisico));	
+					}
+					linha.setReplicar(String.valueOf(checkbox));
+					
+					insercao = false;
+				}
+			}
+		}
+		else
+		{
+			listaDeGrid = new ArrayList<FechamentoFisicoLogicoDTO>();
+		}
+	
+		if(insercao == true)
+		{
+			FechamentoFisicoLogicoDTO gridFechamentoEncalheDTO = new FechamentoFisicoLogicoDTO();
+			
+			if(fisico != null)
+			{
+				gridFechamentoEncalheDTO.setFisico(Long.parseLong(fisico));	
+			}
+			
+			gridFechamentoEncalheDTO.setCodigo(codigo);
+			gridFechamentoEncalheDTO.setProdutoEdicao(Long.parseLong(produtoEdicao));
+			gridFechamentoEncalheDTO.setReplicar(String.valueOf(checkbox));
+			listaDeGrid.add(gridFechamentoEncalheDTO);
+		}
+		
+		
+		session.setAttribute("gridFechamentoEncalheDTO", listaDeGrid);		
+		this.result.use(Results.nothing());
+	}
 }

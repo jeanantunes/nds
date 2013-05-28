@@ -197,4 +197,11 @@ public class FechamentoFisicoLogicoDTO {
 	public void setSequencia(Integer sequencia) {
 		this.sequencia = sequencia;
 	}
+
+	/**
+	 * @param replicar the replicar to set
+	 */
+	public void setReplicar(String replicar) {
+		this.replicar = replicar;
+	}
 }

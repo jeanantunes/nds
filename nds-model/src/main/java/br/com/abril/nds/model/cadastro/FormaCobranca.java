@@ -12,6 +12,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -23,8 +24,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.springframework.transaction.annotation.Transactional;
 
 @Entity
 @Table(name = "FORMA_COBRANCA")
@@ -86,20 +85,20 @@ public class FormaCobranca implements Serializable {
 	@OneToOne(mappedBy="formaCobranca")
 	private PoliticaCobranca politicaCobranca;
 	
-	@ManyToMany
+	@ManyToMany  
 	@JoinTable(name = "FORMA_COBRANCA_FORNECEDOR", joinColumns = {@JoinColumn(name = "FORMA_COBRANCA_ID")}, 
 	inverseJoinColumns = {@JoinColumn(name = "FORNECEDOR_ID")})
 	private Set<Fornecedor> fornecedores = new HashSet<Fornecedor>();
 	
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.EAGER)  
 	@JoinColumn(name = "PARAMETRO_COBRANCA_COTA_ID")
 	private ParametroCobrancaCota parametroCobrancaCota;
 			
-	@ElementCollection
+	@ElementCollection(fetch = FetchType.EAGER)  
 	@OrderBy
 	private List<Integer> diasDoMes; 
 	
-	@OneToMany(mappedBy="formaCobranca")
+	@OneToMany(mappedBy="formaCobranca", fetch = FetchType.EAGER)
 	@OrderBy("codigoDiaSemana ASC")
 	private Set<ConcentracaoCobrancaCota> concentracaoCobrancaCota = new HashSet<ConcentracaoCobrancaCota>();
 	
