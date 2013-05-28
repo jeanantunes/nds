@@ -26,18 +26,16 @@ import br.com.abril.nds.process.calculoreparte.CalcularReparte;
 @Component
 public class ReparteComplementarPorCota extends ProcessoAbstrato {
 
-    LinkedList<CotaEstudo> listaOrdenada;
-
     @Override
     public void executar(EstudoTransient estudo) throws Exception {
-	listaOrdenada = new LinkedList<>();
-	if (estudo.getReparteComplementar().compareTo(BigInteger.ZERO) > 0) {
-	    ordenarLista(estudo);
-	    distribuirReparteComplementar(estudo);
+	if (estudo.getReparteComplementar() != null && estudo.getReparteComplementar().compareTo(BigInteger.ZERO) > 0) {
+	    distribuirReparteComplementar(estudo, ordenarLista(estudo));
 	}
     }
 
-    private void ordenarLista(EstudoTransient estudo) {
+    private LinkedList<CotaEstudo> ordenarLista(EstudoTransient estudo) {
+	LinkedList<CotaEstudo> listaOrdenada = new LinkedList<>();
+	
 	Collections.sort(estudo.getCotasExcluidas(), new Comparator<CotaEstudo>() {
 
 	    @Override
@@ -84,9 +82,10 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	listaOrdenada.addAll(listaC);
 	listaOrdenada.addAll(listaD);
 	listaOrdenada.addAll(listaE);
+	return listaOrdenada;
     }
 
-    private void distribuirReparteComplementar(EstudoTransient estudo) {
+    private void distribuirReparteComplementar(EstudoTransient estudo, LinkedList<CotaEstudo> listaOrdenada) {
 	BigInteger reparte = BigInteger.valueOf(2);
 	if (estudo.isDistribuicaoPorMultiplos()) {
 	    reparte = estudo.getPacotePadrao();
@@ -115,7 +114,8 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	while (estudo.getReparteComplementar().compareTo(reparteGeral) >= 0) {
 	    for (CotaEstudo cota : estudo.getCotas()) {
 		if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
-			ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix)) {
+			ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix,
+			ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
 		    if (cota.getIntervaloMaximo() != null && cota.getReparteCalculado().compareTo(cota.getIntervaloMaximo()) > 0) {
 			cota.setReparteCalculado(cota.getIntervaloMaximo());
 		    } else if (cota.getReparteCalculado().compareTo(cota.getIntervaloMinimo()) < 0) {

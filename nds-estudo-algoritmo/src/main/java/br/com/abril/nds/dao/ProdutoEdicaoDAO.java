@@ -35,6 +35,8 @@ public class ProdutoEdicaoDAO {
 
 	@Value("#{query_estudo.queryQtdeVezesReenviadas}")
 	private String queryQtdeVezesReenviadas;
+	
+	private static final String PRODUTO_COLECIONAVEL = "COLECIONAVEL";
 
 	private static final Logger log = LoggerFactory.getLogger(ProdutoEdicaoDAO.class);
 
@@ -109,6 +111,9 @@ public class ProdutoEdicaoDAO {
 				produtoEdicaoBase.getProduto().setCodigo(rs.getString("CODIGO"));
 				produtoEdicaoBase.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
 				produtoEdicaoBase.setIdLancamento(rs.getLong("LANCAMENTO_ID"));
+				if (rs.getString("GRUPO_PRODUTO") != null && rs.getString("GRUPO_PRODUTO").equalsIgnoreCase(PRODUTO_COLECIONAVEL)) {
+				    produtoEdicaoBase.setColecao(true);
+				}
 				produtoEdicaoBase.setTipoSegmentoProduto(getTipoSegmentoProduto(rs.getLong("TIPO_SEGMENTO_PRODUTO_ID")));
 				return produtoEdicaoBase;
 			}

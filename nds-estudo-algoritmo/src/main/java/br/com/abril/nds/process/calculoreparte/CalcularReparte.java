@@ -50,8 +50,6 @@ public class CalcularReparte extends ProcessoAbstrato {
     @Autowired
     private GravarReparteJuramentado gravarReparteJuramentado;
 
-    BigDecimal excedenteDistribuir = BigDecimal.ZERO;
-
     @Override
     public void executar(EstudoTransient estudo) throws Exception {
 
@@ -73,8 +71,8 @@ public class CalcularReparte extends ProcessoAbstrato {
 
     public void calcularAjusteReparte(EstudoTransient estudo) {
 	BigDecimal reparteDistribuir = new BigDecimal(estudo.getReparteDistribuir());
+	estudo.setExcedenteDistribuir(reparteDistribuir.subtract(estudo.getSomatoriaVendaMedia()));
 	if (reparteDistribuir.compareTo(estudo.getSomatoriaVendaMedia()) > 0) {
-	    excedenteDistribuir = reparteDistribuir.subtract(estudo.getSomatoriaVendaMedia());
 	    boolean temEdicaoBaseFechada = temEdicaoBaseFechada(estudo);
 
 	    BigInteger reservaAjuste = BigInteger.ZERO;
@@ -91,24 +89,24 @@ public class CalcularReparte extends ProcessoAbstrato {
 		    calculo1 = estudo.getPacotePadrao();
 		}
 		// Calculo 2 - Excedente * 1%
-		BigInteger calculo2 = excedenteDistribuir.multiply(BigDecimal.valueOf(0.01)).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger();
+		BigInteger calculo2 = estudo.getExcedenteDistribuir().multiply(BigDecimal.valueOf(0.01)).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger();
 		// Calculo 3 - 1 Exemplar
 		BigInteger calculo3 = BigInteger.ZERO;
 		// checando se 1 exemplar nao e maior que 10%
 		BigDecimal percentual = BigDecimal.ZERO;
-		if (excedenteDistribuir.compareTo(BigDecimal.ZERO) > 0) {
-		    percentual = BigDecimal.valueOf(100).divide(excedenteDistribuir, 2, BigDecimal.ROUND_HALF_UP);
+		if (estudo.getExcedenteDistribuir().compareTo(BigDecimal.ZERO) > 0) {
+		    percentual = BigDecimal.valueOf(100).divide(estudo.getExcedenteDistribuir(), 2, BigDecimal.ROUND_HALF_UP);
 		}
 		if (percentual.compareTo(BigDecimal.valueOf(10)) < 0) {
 		    calculo3 = BigInteger.ONE;
 		}
 
-		reservaAjuste = calculo1.max(calculo2);
+		  reservaAjuste = calculo1.max(calculo2);
 		reservaAjuste = reservaAjuste.max(calculo3);
 		reservaAjuste = EstudoAlgoritmoService.arredondarPacotePadrao(estudo, reservaAjuste);
 
 		// ExcedenteDistribuir = ExcedenteDistribuir - AjusteReparte
-		excedenteDistribuir = excedenteDistribuir.subtract(new BigDecimal(reservaAjuste));
+		estudo.setExcedenteDistribuir(estudo.getExcedenteDistribuir().subtract(new BigDecimal(reservaAjuste)));
 		estudo.setReservaAjuste(reservaAjuste);
 		estudo.setReservaAjusteInicial(reservaAjuste);
 		estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(reservaAjuste));
@@ -119,7 +117,7 @@ public class CalcularReparte extends ProcessoAbstrato {
     public void calcularPercentualExcedente(EstudoTransient estudo) throws Exception {
 	// %Excedente = Excedente / SVendaMédiaFinal
 	if (estudo.getSomatoriaVendaMedia().compareTo(BigDecimal.ZERO) > 0) {
-	    estudo.setPercentualExcedente(excedenteDistribuir.divide(estudo.getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_HALF_UP));
+	    estudo.setPercentualExcedente(estudo.getExcedenteDistribuir().divide(estudo.getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_HALF_UP));
 	}
 
 	if (estudo.getPercentualProporcaoExcedente().isEmpty()) {
@@ -150,14 +148,14 @@ public class CalcularReparte extends ProcessoAbstrato {
 	    } else {
 		if (percentualExcedenteEstudo != null && percentualExcedenteEstudo.getPdv() != null && percentualExcedenteEstudo.getVenda() != null) {
 		    // ExcedentePDV = ((ExcedenteDistribuir * %PropPDV) / SPDVEstudo) * PDVCota
-		    BigDecimal temp = excedenteDistribuir.multiply(percentualExcedenteEstudo.getPdv().divide(BigDecimal.valueOf(100), 4, BigDecimal.ROUND_HALF_UP));
+		    BigDecimal temp = estudo.getExcedenteDistribuir().multiply(percentualExcedenteEstudo.getPdv().divide(BigDecimal.valueOf(100), 4, BigDecimal.ROUND_HALF_UP));
 		    BigDecimal excedentePDV = BigDecimal.ZERO;
 		    if (estudo.getTotalPDVs().compareTo(BigDecimal.ZERO) > 0 && cota.getQuantidadePDVs() != null) {
 			excedentePDV = temp.divide(estudo.getTotalPDVs(), 4, BigDecimal.ROUND_HALF_UP).multiply(cota.getQuantidadePDVs());
 		    }
 
 		    // ExcedenteVDA = ((ExcedenteDistribuir * %PropVenda) / SVendaMédiaFinal) * VendaMédiaFinalCota
-		    temp = excedenteDistribuir.multiply(percentualExcedenteEstudo.getVenda().divide(BigDecimal.valueOf(100), 4, BigDecimal.ROUND_HALF_UP));
+		    temp = estudo.getExcedenteDistribuir().multiply(percentualExcedenteEstudo.getVenda().divide(BigDecimal.valueOf(100), 4, BigDecimal.ROUND_HALF_UP));
 		    if ((percentualExcedenteEstudo.getVenda().compareTo(BigDecimal.ZERO) > 0) &&
 			    (estudo.getSomatoriaVendaMedia().compareTo(BigDecimal.ZERO) > 0)) {
 			temp = temp.divide(estudo.getSomatoriaVendaMedia(), 4, BigDecimal.ROUND_HALF_UP);
@@ -209,7 +207,8 @@ public class CalcularReparte extends ProcessoAbstrato {
 	BigInteger sumReparteCalculadoCota = BigInteger.ZERO;
 	for (CotaEstudo cota : cotas) {
 	    if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
-		    ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix, ClassificacaoCota.BancaSuspensa)) {
+		    ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix, ClassificacaoCota.BancaSuspensa,
+		    ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
 		sumReparteCalculadoCota = sumReparteCalculadoCota.add(cota.getReparteCalculado());
 	    }
 	}
@@ -231,7 +230,8 @@ public class CalcularReparte extends ProcessoAbstrato {
 		break;
 	    }
 	    if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
-		    ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix, ClassificacaoCota.BancaSuspensa)) {
+		    ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix, ClassificacaoCota.BancaSuspensa,
+		    ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
 		if (estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null) {
 		    BigDecimal temp = new BigDecimal(cota.getReparteCalculado()).multiply(indicedeSobraouFalta);
 		    // divisao usada para arredondar valor
@@ -254,7 +254,8 @@ public class CalcularReparte extends ProcessoAbstrato {
 		    break;
 		}
 		if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
-			ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix, ClassificacaoCota.BancaSuspensa)) {
+			ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix, ClassificacaoCota.BancaSuspensa,
+			ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
 		    if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) == 1 &&
 			    estudo.getReparteDistribuir().compareTo(reparteSobra) >= 0) {
 			cota.setReparteCalculado(cota.getReparteCalculado().add(reparteSobra), estudo);
@@ -270,7 +271,8 @@ public class CalcularReparte extends ProcessoAbstrato {
 	if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) != 0) {
 	    for (CotaEstudo cota : cotas) {
 		if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
-			ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix, ClassificacaoCota.BancaSuspensa)) {
+			ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix, ClassificacaoCota.BancaSuspensa,
+			ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
 		    if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) == 1 &&
 			    estudo.getReparteDistribuir().compareTo(reparteSobra) > 0) {
 			cota.setReparteCalculado(cota.getReparteCalculado().add(estudo.getReparteDistribuir()), estudo);
