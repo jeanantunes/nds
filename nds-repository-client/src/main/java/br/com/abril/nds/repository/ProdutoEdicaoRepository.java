@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -336,5 +337,6 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	List<ProdutoEdicao> listProdutoEdicaoPorCodProdutoNumEdicoes(
 			String codigoProduto, Long numeroEdicaoInicial,
 			Long numeroEdicaoFinal);
-	
+
+    BigInteger obterReparteDisponivel(Long idProdutoEdicao);
 }

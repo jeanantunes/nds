@@ -2,6 +2,7 @@ package br.com.abril.nds.service;
 
 import java.io.InputStream;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -184,5 +185,6 @@ public interface ProdutoEdicaoService {
 	public List<AnaliseHistogramaDTO> obterBaseEstudoHistogramaPorFaixaVenda(FiltroHistogramaVendas filtro,String codigoProduto,String[] faixasVenda, String[] edicoes);
 
 	void insereVendaRandomica(String codigoProduto, Integer numeroEdicao);
-	
+
+    BigInteger obterReparteDisponivel(Long idProdutoEdicao);
 }

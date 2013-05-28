@@ -7,10 +7,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.dao.DataAccessException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -99,30 +103,37 @@ public class ProdutoEdicaoDAO {
 		Map<String, Object> params = new HashMap<>();
 		params.put("CODIGO_PRODUTO", codigoProduto);
 		params.put("NUMERO_EDICAO", numeroEdicao);
-		return jdbcTemplate.queryForObject(queryProdutoEdicaoEstudo, params, new RowMapper<ProdutoEdicaoEstudo>() {
-			@Override
-			public ProdutoEdicaoEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {
-				ProdutoEdicaoEstudo produtoEdicaoBase = new ProdutoEdicaoEstudo();
-				produtoEdicaoBase.setId(rs.getLong("ID"));
-				produtoEdicaoBase.setProduto(new Produto());
-				produtoEdicaoBase.getProduto().setId(rs.getLong("PRODUTO_ID"));
-				produtoEdicaoBase.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
-				produtoEdicaoBase.setPacotePadrao(rs.getInt("PACOTE_PADRAO"));
-				produtoEdicaoBase.getProduto().setCodigo(rs.getString("CODIGO"));
-				produtoEdicaoBase.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
-				produtoEdicaoBase.setIdLancamento(rs.getLong("LANCAMENTO_ID"));
-				if (rs.getString("GRUPO_PRODUTO") != null && rs.getString("GRUPO_PRODUTO").equalsIgnoreCase(PRODUTO_COLECIONAVEL)) {
-				    produtoEdicaoBase.setColecao(true);
-				}
-				produtoEdicaoBase.setTipoSegmentoProduto(getTipoSegmentoProduto(rs.getLong("TIPO_SEGMENTO_PRODUTO_ID")));
-				return produtoEdicaoBase;
-			}
 
-			private TipoSegmentoProduto getTipoSegmentoProduto(long idTipoSegmentoProduto) {
-				TipoSegmentoProduto tipoSegmentoProduto = new TipoSegmentoProduto();
-				tipoSegmentoProduto.setId(idTipoSegmentoProduto);
-				return tipoSegmentoProduto;
-			}
-		});
-	}
+        try {
+            return jdbcTemplate.queryForObject(queryProdutoEdicaoEstudo, params, new RowMapper<ProdutoEdicaoEstudo>() {
+                @Override
+                public ProdutoEdicaoEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {
+                    ProdutoEdicaoEstudo produtoEdicaoBase = new ProdutoEdicaoEstudo();
+                    produtoEdicaoBase.setId(rs.getLong("ID"));
+                    produtoEdicaoBase.setProduto(new Produto());
+                    produtoEdicaoBase.getProduto().setId(rs.getLong("PRODUTO_ID"));
+                    produtoEdicaoBase.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
+                    produtoEdicaoBase.setPacotePadrao(rs.getInt("PACOTE_PADRAO"));
+                    produtoEdicaoBase.getProduto().setCodigo(rs.getString("CODIGO"));
+                    produtoEdicaoBase.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
+                    produtoEdicaoBase.setIdLancamento(rs.getLong("LANCAMENTO_ID"));
+                    if (rs.getString("GRUPO_PRODUTO") != null && rs.getString("GRUPO_PRODUTO").equalsIgnoreCase(PRODUTO_COLECIONAVEL)) {
+                        produtoEdicaoBase.setColecao(true);
+                    }
+                    produtoEdicaoBase.setTipoSegmentoProduto(getTipoSegmentoProduto(rs.getLong("TIPO_SEGMENTO_PRODUTO_ID")));
+                    return produtoEdicaoBase;
+                }
+
+                private TipoSegmentoProduto getTipoSegmentoProduto(long idTipoSegmentoProduto) {
+                    TipoSegmentoProduto tipoSegmentoProduto = new TipoSegmentoProduto();
+                    tipoSegmentoProduto.setId(idTipoSegmentoProduto);
+                    return tipoSegmentoProduto;
+                }
+            });
+        } catch (EmptyResultDataAccessException e) {
+            String msg = "Não encontrou o produto[" + codigoProduto + "] edição[" + numeroEdicao + "] do estudo.";
+            log.error(msg, e);
+            throw new ValidacaoException(TipoMensagem.ERROR, msg);
+        }
+    }
 }
