@@ -615,7 +615,7 @@ public class MatrizDistribuicaoController extends BaseController {
 			
 		    definicaoBases.executar(estudoTemp);
 		    
-		    boolean addEdicaoBase = estudoTemp.getEdicoesBase().size() == 1;
+		    boolean addEdicaoBase = (estudoTemp.getEdicoesBase() != null)?(estudoTemp.getEdicoesBase().size() == 1):false;
 		    
 			if(addEdicaoBase) {
 				
@@ -657,7 +657,7 @@ public class MatrizDistribuicaoController extends BaseController {
 				msgErro.addAll(e.getValidacao().getListaMensagens());
 			} catch (Exception e) {
 				log.error("Erro na geração automatica do estudo.", e);
-				msgErro.add("Erro na geração do estudo:" + produtoDistribuicaoVO.getNumeroEdicao() + "\n" + e.getMessage());
+				msgErro.add("Erro na geração do estudo:" + produtoDistribuicaoVO.getNumeroEdicao());
 			}
 		}
 		

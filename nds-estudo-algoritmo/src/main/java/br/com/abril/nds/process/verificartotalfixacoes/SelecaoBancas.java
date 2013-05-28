@@ -75,7 +75,8 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	}
 
 	if (!existeCotaComHistorico) {
-	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontradas cotas com historico para estas edições de base."));
+		
+		throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontradas cotas com historico para estas edições de base.");
 	}
 
 	Map<Long, CotaEstudo> cotasComHistoricoMap = new LinkedHashMap<>();
