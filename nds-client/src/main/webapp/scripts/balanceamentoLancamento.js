@@ -454,8 +454,6 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		$("input[name='dataNova']", _workspace).mask("99/99/9999");
 		
-		
-		
 		var selTodos = $('#selTodos', _workspace).attr("checked") == "checked";
 		
 		if (selTodos) {
