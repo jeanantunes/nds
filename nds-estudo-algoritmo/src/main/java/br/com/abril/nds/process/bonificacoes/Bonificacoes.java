@@ -3,6 +3,7 @@ package br.com.abril.nds.process.bonificacoes;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.dto.BonificacaoDTO;
@@ -10,7 +11,7 @@ import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.medias.Medias;
-import br.com.abril.nds.util.ComponentesPDV;
+import br.com.abril.nds.service.EstudoAlgoritmoService;
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre as cotas encontradas para o perfil definido no
@@ -24,14 +25,18 @@ import br.com.abril.nds.util.ComponentesPDV;
 @Component
 public class Bonificacoes extends ProcessoAbstrato {
 
+    @Autowired
+    private EstudoAlgoritmoService estudoAlgoritmoService;
+
     @Override
     public void executar(EstudoTransient estudo) {
 
 	if ((estudo.getBonificacoes() != null) && (!estudo.getBonificacoes().isEmpty())) {
 	    for (BonificacaoDTO bonificacao : estudo.getBonificacoes()) {
 		for (CotaEstudo cota : estudo.getCotas()) {
-		    if ((bonificacao.getComponente().equals(ComponentesPDV.REGIAO)) && (cota.getRegioes().contains(bonificacao.getElemento()))) {
-			if (bonificacao.getBonificacaoBigDecimal().compareTo(BigDecimal.ZERO) > 0) {
+		    if (bonificacao.getComponente() != null && bonificacao.getElemento() != null &&
+			    estudoAlgoritmoService.isCotaDentroDoComponenteElemento(bonificacao.getComponente(), new String[] {bonificacao.getElemento()}, cota)) {
+			if (bonificacao.getBonificacaoBigDecimal() != null && bonificacao.getBonificacaoBigDecimal().compareTo(BigDecimal.ZERO) > 0) {
 			    BigDecimal indiceBonificacao = BigDecimal.valueOf(100).add(bonificacao.getBonificacaoBigDecimal()).divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
 			    if (indiceBonificacao.compareTo(BigDecimal.ONE) > 0) {
 				cota.setIndiceTratamentoRegional(BigDecimal.ONE);
@@ -39,7 +44,7 @@ public class Bonificacoes extends ProcessoAbstrato {
 				cota.setIndiceTratamentoRegional(indiceBonificacao);
 			    }
 			}
-			if ((bonificacao.getReparteMinimoBigInteger().compareTo(BigInteger.ZERO) > 0) && (!bonificacao.isTodasAsCotas())) {
+			if ((bonificacao.getReparteMinimoBigInteger() != null) && (bonificacao.getReparteMinimoBigInteger().compareTo(BigInteger.ZERO) > 0) && (!bonificacao.isTodasAsCotas())) {
 			    if (bonificacao.getReparteMinimoBigInteger().compareTo(cota.getReparteMinimo()) > 0) {
 				cota.setReparteMinimo(bonificacao.getReparteMinimoBigInteger());
 			    }

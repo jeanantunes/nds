@@ -120,6 +120,23 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		T.produtoEdicaoBases[index].selecionado = checkbox.checked;
 	};
 	
+	this.removerTodasEdicoesDeBase = function() {
+	    $.postJSON(
+	            pathTela + "/distribuicaoVendaMedia/removerTodasEdicoesDeBase", 
+	            [],
+	            function(result) {
+	                T.produtoEdicaoBases = result;
+	                T.preencherGridBases(result);
+	                if(T.produtoEdicaoBases != undefined && T.produtoEdicaoBases.length === 0){
+	                    $('#qtdeBancas').hide();
+	                }
+	            },
+	            function(){
+	                exibirMensagem("ERROR", ["Erro ao excluir itens da lista. Tente novamente mais tarde."]);
+	            }
+	    );
+	};
+	
 	this.removerProdutoEdicaoDaBase = function(){
 		var data = [];
 		$.each(T.produtoEdicaoBases, function(index, item){

@@ -77,8 +77,8 @@ public class HTMLTableUtil {
 		BigInteger venda = BigInteger.ZERO;
 		if (ce.getEdicoesRecebidas() != null) {
 		    for (ProdutoEdicaoEstudo pr : ce.getEdicoesRecebidas()) {
-			reparte = reparte.add(pr.getReparte().toBigInteger());
-			venda = venda.add(pr.getVenda().toBigInteger());
+			reparte = reparte.add(pr.getReparte().setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger());
+			venda = venda.add(pr.getVenda().setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger());
 		    }
 		}
 		h.append(String.format(" <td>%s</td>", reparte));

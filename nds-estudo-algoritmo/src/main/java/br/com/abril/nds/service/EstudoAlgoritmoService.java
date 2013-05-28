@@ -44,6 +44,7 @@ import br.com.abril.nds.process.reparteminimo.ReparteMinimo;
 import br.com.abril.nds.process.reparteproporcional.ReparteProporcional;
 import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
 import br.com.abril.nds.process.verificartotalfixacoes.VerificarTotalFixacoes;
+import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
@@ -205,7 +206,7 @@ public class EstudoAlgoritmoService {
     
     public static BigInteger arredondarPacotePadrao(EstudoTransient estudo, BigInteger reparte) {
 	if (reparte != null && estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null) {
-	    return new BigDecimal(reparte).divide(new BigDecimal(estudo.getPacotePadrao()), 0, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(estudo.getPacotePadrao())).toBigInteger();
+	    return new BigDecimal(reparte).divide(new BigDecimal(estudo.getPacotePadrao()), 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(estudo.getPacotePadrao())).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger();
 	} else {
 	    return reparte;
 	}
@@ -271,7 +272,7 @@ public class EstudoAlgoritmoService {
 	calculate(estudo);
 
 	for (CotaEstudo cota : estudo.getCotas()) {
-	    correcaoVendas.executar(cota);
+	    correcaoVendas.executar(cota, estudo);
 
 	    medias.executar(cota);
 
@@ -302,5 +303,61 @@ public class EstudoAlgoritmoService {
 
 	log.debug("Execução do estudo concluída");
 	return estudo;
+    }
+    
+    public boolean isCotaDentroDoComponenteElemento(ComponentesPDV componente, String[] elementos, CotaEstudo cota) {
+	boolean retorno = false;
+	if (componente != null && elementos != null) {
+	    if (componente.equals(ComponentesPDV.AREA_DE_INFLUENCIA)) {
+		for (String elemento : elementos) {
+		    if (cota.getAreasInfluenciaPdv().contains(Integer.parseInt(elemento))) {
+			retorno = true;
+		    }
+		}
+	    } else if (componente.equals(ComponentesPDV.BAIRRO)) {
+		for (String elemento : elementos) {
+		    if (cota.getBairros().contains(elemento)) {
+			retorno = true;
+		    }
+		}
+	    } else if (componente.equals(ComponentesPDV.COTAS_A_VISTA)) {
+		for (String elemento : elementos) {
+		    if (cota.getTiposCota().contains(Integer.parseInt(elemento))) {
+			retorno = true;
+		    }
+		}
+	    } else if (componente.equals(ComponentesPDV.COTAS_NOVAS_RETIVADAS)) {
+		for (String elemento : elementos) {
+		    if ((cota.isNova() && elemento.equals("1")) || (!cota.isNova() && elemento.equals("0"))) {
+			retorno = true;
+		    }
+		}
+	    } else if (componente.equals(ComponentesPDV.DISTRITO)) {
+		for (String elemento : elementos) {
+		    if (cota.getEstados().contains(elemento)) {
+			retorno = true;
+		    }
+		}
+	    } else if (componente.equals(ComponentesPDV.GERADOR_DE_FLUXO)) {
+		for (String elemento : elementos) {
+		    if (cota.getTiposGeradorFluxo().contains(Integer.parseInt(elemento))) {
+			retorno = true;
+		    }
+		}
+	    } else if (componente.equals(ComponentesPDV.REGIAO)) {
+		for (String elemento : elementos) {
+		    if (cota.getRegioes().contains(Integer.parseInt(elemento))) {
+			retorno = true;
+		    }
+		}
+	    } else if (componente.equals(ComponentesPDV.TIPO_PONTO_DE_VENDA)) {
+		for (String elemento : elementos) {
+		    if (cota.getTiposPontoPdv().contains(Integer.parseInt(elemento))) {
+			retorno = true;
+		    }
+		}
+	    }
+	}
+	return retorno;
     }
 }
