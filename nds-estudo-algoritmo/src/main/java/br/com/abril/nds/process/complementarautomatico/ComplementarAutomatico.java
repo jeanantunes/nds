@@ -71,9 +71,9 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
 		    if (BigDecimal.valueOf(2).divide(estudo.getExcedente(), 2, BigDecimal.ROUND_HALF_UP).compareTo(BigDecimal.valueOf(0.1)) < 0) {
 			calculo4 = BigDecimal.valueOf(2);
 		    }
-		    estudo.setReparteComplementar(calculo1.max(calculo2).toBigInteger());
-		    estudo.setReparteComplementar(new BigDecimal(estudo.getReparteComplementar()).max(calculo3).toBigInteger());
-		    estudo.setReparteComplementar(new BigDecimal(estudo.getReparteComplementar()).max(calculo4).toBigInteger());
+		    estudo.setReparteComplementar(calculo1.max(calculo2).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger());
+		    estudo.setReparteComplementar(new BigDecimal(estudo.getReparteComplementar()).max(calculo3).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger());
+		    estudo.setReparteComplementar(new BigDecimal(estudo.getReparteComplementar()).max(calculo4).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger());
 		} else if (estudo.getPercentualExcedente().compareTo(BigDecimal.valueOf(0.6)) > 0) {
 		    // Calculo1 = 2% do Excedente
 		    BigDecimal calculo1 = estudo.getExcedente().multiply(BigDecimal.valueOf(0.02));

@@ -49,7 +49,7 @@ public class GravarReparteJuramentado extends ProcessoAbstrato {
 
 		    // Verificar se tem reparte juramentado A SER FATURADO
 		    BigInteger reparteJuramentadoAFaturar = movimentoEstoqueCotaDAO
-			    .retornarReparteJuramentadoAFaturar(cota, estudo.getProdutoEdicaoEstudo()).toBigInteger();
+			    .retornarReparteJuramentadoAFaturar(cota, estudo.getProdutoEdicaoEstudo()).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger();
 
 		    if (reparteJuramentadoAFaturar.compareTo(BigInteger.ZERO) == 1) {
 			// Gravar ReparteJura Cota na tabela

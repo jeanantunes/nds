@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.model.estudo.CotaEstudo;
+import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.process.medias.Medias;
 
@@ -44,7 +45,7 @@ public class CorrecaoVendas {
      * <pre>Procedure VendaCrescente</pre>
      * <p>Endif</p>
      */
-    public void executar(CotaEstudo cota) throws Exception {
+    public void executar(CotaEstudo cota, EstudoTransient estudo) throws Exception {
 
 	if (cota.getEdicoesRecebidas() != null && cota.getEdicoesRecebidas().size() > 1) {
 
@@ -52,7 +53,7 @@ public class CorrecaoVendas {
 	    BigDecimal totalVenda = BigDecimal.ZERO;
 
 	    for (ProdutoEdicaoEstudo produtoEdicao : cota.getEdicoesRecebidas()) {
-		if (produtoEdicao.getNumeroEdicao().compareTo(new Long(1)) == 0 || !produtoEdicao.isColecao()) {
+		if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(new Long(1)) == 0) || (!estudo.getProdutoEdicaoEstudo().isColecao())) {
 		    correcaoIndividual.executar(produtoEdicao);
 
 		    totalReparte = totalReparte.add(produtoEdicao.getReparte());

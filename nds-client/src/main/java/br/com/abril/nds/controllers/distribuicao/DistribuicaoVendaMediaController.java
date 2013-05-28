@@ -219,7 +219,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
     }
 
     private List<ProdutoEdicaoDTO> converterResultado(List<ProdutoEdicao> resultado) {
-	List<ProdutoEdicaoDTO> convertido = new ArrayList<ProdutoEdicaoDTO>();
+	List<ProdutoEdicaoDTO> convertido = new ArrayList<>();
 	for (ProdutoEdicao produtoEdicao : resultado) {
 	    ProdutoEdicaoDTO dto = converterResultado(produtoEdicao, null);
 	    convertido.add(dto);
@@ -273,11 +273,18 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	return null;
     }
 
+    @Post
+    public void removerTodasEdicoesDeBase() {
+	List<ProdutoEdicaoVendaMediaDTO> selecionados = new ArrayList<>();
+	session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, selecionados);
+	result.use(Results.json()).withoutRoot().from(selecionados).recursive().serialize();
+    }
+    
     @Path("removerProdutoEdicaoDaBase")
     @Post
     public void removerProdutoEdicaoDaBase(List<Integer> indexes) {
 	List<ProdutoEdicaoVendaMediaDTO> selecionados = (List<ProdutoEdicaoVendaMediaDTO>) session.getAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE);
-	List<ProdutoEdicaoVendaMediaDTO> toRemove = new ArrayList<ProdutoEdicaoVendaMediaDTO>();
+	List<ProdutoEdicaoVendaMediaDTO> toRemove = new ArrayList<>();
 	for (Integer index : indexes) {
 	    toRemove.add(selecionados.get(index));
 	}
@@ -292,7 +299,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	List<ProdutoEdicaoVendaMediaDTO> resultadoPesquisa = (List<ProdutoEdicaoVendaMediaDTO>) session.getAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO);
 	List<ProdutoEdicaoVendaMediaDTO> selecionados = (List<ProdutoEdicaoVendaMediaDTO>) session.getAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE);
 	if (selecionados == null) {
-	    selecionados = new ArrayList<ProdutoEdicaoVendaMediaDTO>();
+	    selecionados = new ArrayList<>();
 	}
 
 	if ((indexes != null) && (indexes.size() > 0)) {

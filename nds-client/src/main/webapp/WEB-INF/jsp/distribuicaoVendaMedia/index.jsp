@@ -25,8 +25,8 @@ function popup_novo() {
 	distribuicaoVendaMedia.produtoEdicaoPesquisaBases = [];
 	$( "#dialog-edicoes-base" ).dialog({
 		resizable: false,
-		height:420,
-		width:800,
+		height:450,
+		width:600,
 		modal: true,
 		buttons: {
 			"Confirmar": function() {
@@ -98,6 +98,24 @@ function popup_excluir() {
 			}
 		}
 	});
+};
+function popup_excluir_todos() {
+    $( "#dialog-excluir" ).dialog({
+	resizable: false,
+	height:'auto',
+	width:380,
+	modal: true,
+	buttons: {
+		"Confirmar": function() {
+			distribuicaoVendaMedia.removerTodasEdicoesDeBase();
+			$( this ).dialog( "close" );
+			$("#effect").show("highlight", {}, 1000, callback);
+		},
+		"Cancelar": function() {
+			$( this ).dialog( "close" );
+		}
+	}
+});  
 };
 function popup_pesqRegiao() {
 	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -456,9 +474,9 @@ function esconde_redutor(){
                      <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.redirectToTelaAnalise()"><img src="images/ico_copia_distrib.gif" alt="Analisar" hspace="5" border="0" />Analisar</a></span>
                 </div>
                 <div id="tab-distribuicao-2" class="distribuicaoVendaMedia-tab">
-               	  <fieldset style="width:600px!important;">
+               	  <fieldset style="width:610px!important;">
                    	<legend>Bases</legend>
-                   	  <table width="600" border="0" cellspacing="2" cellpadding="2">
+                   	  <table width="610" border="0" cellspacing="2" cellpadding="2">
                    	    <tr>
                    	      <td width="36">Código:</td>
                    	      <td width="56">${ produtoEdicao.codigoProduto }</td>
@@ -468,18 +486,25 @@ function esconde_redutor(){
                           <td width="156">${ produtoEdicao.classificacao }</td>
                    	      <td width="35">Edição:</td>
                    	      <td width="83">${ produtoEdicao.numeroEdicao }</td>
-                   	      <td width="79"><span class="bt_novos"><a href="javascript:;" onclick="popup_novo();"><img src="images/ico_salvar.gif" alt="Liberar" hspace="5" border="0" />Novo</a></span></td>
+                   	      <td width="79"><span class="bt_novos"><a href="javascript:;" onclick="popup_novo();" style="margin-right: 1px;"><img src="images/ico_salvar.gif" alt="Liberar" hspace="5" border="0" />Novo</a></span></td>
                	        </tr>
                	    </table>
                    	</fieldset>
-                    <fieldset style="width:600px!important; margin-top:10px;">
+                    <fieldset style="width:610px!important; margin-top:10px;">
                     	<legend>Produtos</legend>
                        <table class="dadosBasesGrid"></table>
 
 
                     </fieldset>
                     <br clear="all" />
-	                <span class="bt_novos"><a href="javascript:;" onclick="popup_excluir();"><img src="images/ico_excluir.gif" hspace="5" alt="Cancelar" border="0" />Excluir</a></span>
+	                <span class="bt_novos">
+	                	<a href="javascript:;" onclick="popup_excluir_todos();">
+	                		<img src="images/ico_excluir.gif" hspace="5" alt="Excluir Todos" border="0" />Excluir Todos
+	                	</a>
+	                	<a href="javascript:;" onclick="popup_excluir();">
+	                		<img src="images/ico_excluir.gif" hspace="5" alt="Excluir" border="0" />Excluir
+	                	</a>
+	                </span>
                 
                 </div>
                 
@@ -950,74 +975,18 @@ $(".lstComponentesGrid").flexigrid({
 $(".dadosBasesGrid").flexigrid({
 	//url : '../xml/dadosDistribB-xml.xml',
 	dataType : 'json',
-	colModel : [ {
-		display : 'Código',
-		name : 'codigoProduto',
-		width : 45,
-		sortable : true,
-		align : 'left'
-	}, {
-		display : 'Produto',
-		name : 'nome',
-		width : 80,
-		sortable : true,
-		align : 'left'
-	}, {
-		display : 'Edição',
-		name : 'numeroEdicao',
-		width : 35,
-		sortable : true,
-		align : 'left'
-	},{
-		display : 'Classificação',
-		name : 'classificacao',
-		width : 70,
-		sortable : true,
-		align : 'left'
-	},{
-		display : 'Período',
-		name : 'periodo',
-		width : 50,
-		sortable : true,
-		align : 'center'
-	}, {
-		display : 'Status',
-		name : 'status',
-		width : 70,
-		sortable : true,
-		align : 'left'
-	}, {
-		display : 'Reparte',
-		name : 'reparte',
-		width : 45,
-		sortable : true,
-		align : 'center'
-	}, {
-		display : 'Venda',
-		name : 'venda',
-		width : 40,
-		sortable : true,
-		align : 'center'
-	}, {
-		display : 'Venda %',
-		name : 'percentualVenda',
-		width : 40,
-		sortable : true,
-		align : 'right'
-	}, {
-		display : 'Peso',
-		name : 'pesoInput',
-		width : 40,
-		sortable : true,
-		align : 'center'
-	}, {
-		display : '',
-		name : 'select',
-		width : 20,
-		sortable : true,
-		align : 'center'
-	}],
-	width : 600,
+	colModel : [{display: 'Código',     name: 'codigoProduto',   width: 45, sortable: true, align: 'left'},
+	    	    {display: 'Produto',    name: 'nome',            width: 70, sortable: true, align: 'left'},
+	    	    {display: 'Edição',     name: 'numeroEdicao',    width: 35, sortable: true, align: 'left'},
+	    	    {display: 'Classific.', name: 'classificacao',   width: 60, sortable: true, align: 'left'},
+	    	    {display: 'Período',    name: 'periodo',         width: 40, sortable: true, align: 'center'},
+	    	    {display: 'Status',     name: 'status',          width: 55, sortable: true, align: 'left'},
+	    	    {display: 'Reparte',    name: 'reparte',         width: 35, sortable: true, align: 'center'},
+	    	    {display: 'Venda',      name: 'venda',           width: 35, sortable: true, align: 'center' },
+	    	    {display: 'Venda %',    name: 'percentualVenda', width: 40, sortable: true, align: 'right'},
+	    	    {display: 'Peso',       name: 'pesoInput',       width: 40, sortable: true, align: 'center'},
+	    	    {display: '',           name: 'select',          width: 20, sortable: true, align: 'center'}],
+	width : 610,
 	height : 240
 });
 </script>

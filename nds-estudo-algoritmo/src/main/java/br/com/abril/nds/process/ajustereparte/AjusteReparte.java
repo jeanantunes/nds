@@ -1,5 +1,6 @@
 package br.com.abril.nds.process.ajustereparte;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import org.springframework.stereotype.Component;
@@ -45,7 +46,7 @@ public class AjusteReparte extends ProcessoAbstrato {
 		} else {
 		    ajusteReparte = estudo.getPacotePadrao();
 		}
-		cota.setReparteCalculado(ajusteReparte.add(cota.getVendaMedia().toBigInteger()), estudo);
+		cota.setReparteCalculado(new BigDecimal(ajusteReparte).add(cota.getVendaMedia()).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
 		cota.setClassificacao(ClassificacaoCota.ReparteFixado);
 	    }
 	}

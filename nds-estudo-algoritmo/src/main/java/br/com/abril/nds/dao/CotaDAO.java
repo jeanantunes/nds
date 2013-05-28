@@ -172,7 +172,7 @@ public class CotaDAO {
 	}
     }
 
-    public List<CotaEstudo> getCotas(EstudoTransient estudo) {
+    public List<CotaEstudo> getCotas(final EstudoTransient estudo) {
 	Map<String, Object> params = new HashMap<>();
 	params.put("tipo_segmento_produto_id", estudo.getProdutoEdicaoEstudo().getTipoSegmentoProduto().getId());
 	params.put("produto_id", estudo.getProdutoEdicaoEstudo().getProduto().getId());
@@ -211,9 +211,11 @@ public class CotaDAO {
 		if (rs.getBoolean("COTA_NAO_RECEBE_CLASSIFICACAO")) {
 		    cota.setClassificacao(ClassificacaoCota.BancaSemClassificacaoDaPublicacao);
 		}
-		if (rs.getLong("COTA_BASE_ID") != 0) {
-		    cota.setNova(true);
-		    cota.setClassificacao(ClassificacaoCota.CotaNova);
+		if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(new Long(1)) == 0) || (!estudo.getProdutoEdicaoEstudo().isColecao())) {
+		    if (rs.getLong("COTA_BASE_ID") != 0) {
+			cota.setNova(true);
+			cota.setClassificacao(ClassificacaoCota.CotaNova);
+		    }
 		}
 		if (cota.isMix()) {
 		    cota.setClassificacao(ClassificacaoCota.CotaMix);
