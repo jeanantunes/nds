@@ -272,6 +272,9 @@ public class ConsultaConsignadoCotaController extends BaseController {
 			filtro.setNomeFornecedor("Todos");
 		}
 		
+		filtro.getPaginacao().setPaginaAtual(null);
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
+		
 		if(filtro.getIdCota() != null
 				&& filtro.getIdFornecedor() == null) { 
 				

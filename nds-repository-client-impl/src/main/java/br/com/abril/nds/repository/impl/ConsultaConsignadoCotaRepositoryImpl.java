@@ -268,13 +268,15 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		hql.append(getGroupBy(filtro));
 
-		if (filtro.getPaginacao().getSortColumn() != null) {
-			hql.append(" ORDER BY ");
-			hql.append(filtro.getPaginacao().getSortColumn());		
-		
-			if (filtro.getPaginacao().getOrdenacao() != null) {
-				hql.append(" ");
-				hql.append( filtro.getPaginacao().getOrdenacao().toString());
+		if (filtro.getPaginacao() != null) {
+			if (filtro.getPaginacao().getSortColumn() != null) {
+				hql.append(" ORDER BY ");
+				hql.append(filtro.getPaginacao().getSortColumn());		
+			
+				if (filtro.getPaginacao().getOrdenacao() != null) {
+					hql.append(" ");
+					hql.append( filtro.getPaginacao().getOrdenacao().toString());
+				}
 			}
 		}
 		
@@ -285,12 +287,14 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaConsignadoCotaPeloFornecedorDTO.class));
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
-			query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+		if (filtro.getPaginacao() != null) {
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
+				query.setFirstResult(filtro.getPaginacao().getPosicaoInicial());
+			
+			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar) 
+				query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
+		}
 		
-		if(filtro.getPaginacao().getQtdResultadosPorPagina() != null && limitar) 
-			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
-				
 		return query.list();
 		 
 	}
