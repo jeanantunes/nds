@@ -350,7 +350,8 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 			mensagens.add(msg); 
 			return false;
 		}
-		else if (!Boolean.valueOf(produtoDistribuicaoVO.getLiberado())) {
+		else if (!(produtoDistribuicaoVO.getLiberado() != null && (produtoDistribuicaoVO.getLiberado().equals("LIBERADO") || 
+				Boolean.valueOf(produtoDistribuicaoVO.getLiberado())))) {
 			
 			mensagens.add("Estudo "+produtoDistribuicaoVO.getIdEstudo()+" não está liberado.");
 			return false;

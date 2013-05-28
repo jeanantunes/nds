@@ -427,6 +427,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 				data.push({name: 'produtosDistribuicao[' + index + '].idEstudo',  	  		 value: lancamento.estudo});
 				data.push({name: 'produtosDistribuicao[' + index + '].repDistrib',    		 value: lancamento.repDistrib});
 				data.push({name: 'produtosDistribuicao[' + index + '].dataFinMatDistrib',    value: lancamento.dataFinMatDistrib});
+				data.push({name: 'produtosDistribuicao[' + index + '].liberado',    		 value: lancamento.liberado});
 			}
 		});
 

@@ -240,7 +240,7 @@ public class EstudoTransient extends Estudo {
 
     @Override
     public String toString() {
-	return "EstudoTransient [reparteDistribuirInicial="
+	 String string =  "EstudoTransient [reparteDistribuirInicial="
 		+ reparteDistribuirInicial + ", produtoEdicaoEstudo="
 		+ produtoEdicaoEstudo + ", edicoesBase=" + edicoesBase
 		+ ", reparteMinimo=" + reparteMinimo + ", somatoriaVendaMedia="
@@ -252,7 +252,15 @@ public class EstudoTransient extends Estudo {
 		+ complementarAutomatico + ", pracaVeraneio=" + pracaVeraneio
 		+ ", geracaoAutomatica=" + geracaoAutomatica
 		+ ", percentualMaximoFixacao=" + percentualMaximoFixacao
-		+ ", vendaMediaMais=" + vendaMediaMais
-		+ ", percentualExcedente=" + percentualProporcaoExcedente.values() + "]";
+		+ ", vendaMediaMais=" + vendaMediaMais;
+	 
+		if (percentualProporcaoExcedente != null) {
+			
+			string += ", percentualExcedente=" + percentualProporcaoExcedente.values();
+		}
+		
+		string += "]";
+	 
+	 return string;
     }
 }
