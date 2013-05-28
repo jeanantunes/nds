@@ -691,7 +691,9 @@ var analiseParcialController = $.extend(true, {
                             $.post(analiseParcialController.path +'/distribuicao/analise/parcial/liberar', {'id': $('#estudoId').val()},function(){
                                 $('#status_estudo').text('Liberado');
                                 analiseParcialController.exibirMsg('SUCCESS', ['Estudo liberado com sucesso!']);
-                                try { matrizDistribuicao.atualizarGrid(); } catch (e) { } //tenta atualizar a grid da tela de matriz de distribuição
+                                if(typeof(matrizDistribuicao)=="object"){
+                                	matrizDistribuicao.carregarGrid();
+                                }
                             });
                         },
                         "Cancelar": function() {
