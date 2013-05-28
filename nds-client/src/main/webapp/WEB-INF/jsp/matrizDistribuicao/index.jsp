@@ -292,9 +292,9 @@ var lancamentosSelecionados = [];
 			</jsp:include>
 			
 		    <fieldset style="width:250px!important;">
-			    	<legend>Confirmar Exclus&ccedil&atildeo de Estudo</legend>
+			    	<legend>Confirmar Exclus&atildeo de Estudo</legend>
 				
-						Confirma exclus&ccedil&atildeo do estudo selecionado?
+						Confirma exclus&atildeo do estudo selecionado?
 
 		    </fieldset>
 		</div>
