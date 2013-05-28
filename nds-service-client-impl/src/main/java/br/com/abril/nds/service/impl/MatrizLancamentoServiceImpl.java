@@ -952,11 +952,20 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		for (ProdutoLancamentoDTO produtoLancamento : produtosLancamentoBalanceaveis) {
 			
-			if (permiteExcederCapacidadeDistribuicao
-					|| (!this.excedeLimiteDataReprogramacao(
-							produtoLancamento, qtdDiasLimiteParaReprogLancamento, dataLancamento)
-						&& !this.excedeCapacidadeDistribuidor(
-								expectativaReparteDataAtual, produtoLancamento, capacidadeDistribuicao))) {
+			boolean excedeLimiteDataReprogramacao =
+				this.excedeLimiteDataReprogramacao(
+					produtoLancamento, qtdDiasLimiteParaReprogLancamento, dataLancamento);
+			
+			boolean excedeCapacidadeDistribuidor =
+				this.excedeCapacidadeDistribuidor(
+					expectativaReparteDataAtual, produtoLancamento, capacidadeDistribuicao);
+			
+			boolean existeLancamentoNaData =
+				this.existeLancamentoNaData(matrizLancamento, produtoLancamento, dataLancamento);
+			
+			if (!existeLancamentoNaData
+					&& (permiteExcederCapacidadeDistribuicao
+						|| (!excedeLimiteDataReprogramacao && !excedeCapacidadeDistribuidor))) {
 				
 				expectativaReparteDataAtual =
 					expectativaReparteDataAtual.add(produtoLancamento.getRepartePrevisto());
@@ -972,6 +981,28 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		}
 		
 		return produtosLancamentoNaoBalanceados;
+	}
+	
+	private boolean existeLancamentoNaData(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+										   ProdutoLancamentoDTO produtoLancamentoAdicionar,
+										   Date dataLancamento) {
+	
+		List<ProdutoLancamentoDTO> produtosLancamento = matrizLancamento.get(dataLancamento);
+		
+		if (produtosLancamento != null && !produtosLancamento.isEmpty()) {
+		
+			for (ProdutoLancamentoDTO produtoLancamento : produtosLancamento) {
+			
+				if (!produtoLancamentoAdicionar.getIdLancamento().equals(produtoLancamento.getIdLancamento())
+						&& produtoLancamentoAdicionar.getIdProdutoEdicao().equals(produtoLancamento.getIdProdutoEdicao())
+						&& dataLancamento.compareTo(produtoLancamento.getNovaDataLancamento()) == 0) {
+					
+					return true;
+				}
+			}
+		}
+		
+		return false;
 	}
 	
 	/**

@@ -25,6 +25,7 @@ import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
+import br.com.abril.nds.dto.fechamentoencalhe.GridFechamentoEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
@@ -84,7 +85,7 @@ import br.com.abril.nds.vo.ValidacaoVO;
 public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(FechamentoEncalheServiceImpl.class);
-	
+		
 	@Autowired
 	private FechamentoEncalheRepository fechamentoEncalheRepository;
 	
@@ -1087,5 +1088,66 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	public Boolean buscaControleFechamentoEncalhe(Date data){
 		
 		return this.fechamentoEncalheRepository.buscaControleFechamentoEncalhe(data);
+	}
+
+	@Override
+	public List<FechamentoFisicoLogicoDTO> ajustarGrids(List<FechamentoFisicoLogicoDTO> listaEncalhe,
+											List<FechamentoFisicoLogicoDTO> listaDeGrid) {
+		
+		if(listaDeGrid == null || listaDeGrid.isEmpty())
+		{
+			return listaEncalhe;
+		}
+		else
+		{
+			for(FechamentoFisicoLogicoDTO linhaGrid : listaDeGrid)
+			{
+				for(FechamentoFisicoLogicoDTO encalhe : listaEncalhe)
+				{
+					if(encalhe.getCodigo().equals(linhaGrid.getCodigo()))
+					{	
+						encalhe.setReplicar(linhaGrid.getReplicar());
+						
+						if(linhaGrid.getFisico() != null)
+						{
+							encalhe.setFisico(linhaGrid.getFisico());
+						}
+					}
+				}
+			}
+			return listaEncalhe;
+		}
+	}
+
+	
+	@Override
+	public List<GridFechamentoEncalheDTO> listaEncalheTotalParaGrid(
+			List<FechamentoFisicoLogicoDTO> listaEncalheSessao) {
+		
+		List<GridFechamentoEncalheDTO> listaGrid = new ArrayList<GridFechamentoEncalheDTO>();
+		for(FechamentoFisicoLogicoDTO encalhe : listaEncalheSessao)
+		{
+			GridFechamentoEncalheDTO gridFechamento = new GridFechamentoEncalheDTO();
+			gridFechamento.setCodigo(Long.parseLong(encalhe.getCodigo()));
+			gridFechamento.setFisico(encalhe.getFisico());
+			listaGrid.add(gridFechamento);
+		}
+		return listaGrid;
+	}
+
+	@Override
+	public List<FechamentoFisicoLogicoDTO> verificarListaDaSessao(
+			List<FechamentoFisicoLogicoDTO> listaEncalheSession, FiltroFechamentoEncalheDTO filtro, String sortname, String sortorder) {
+		
+		if(listaEncalheSession == null || listaEncalheSession.isEmpty())
+		{
+			if (sortname.endsWith("Formatado")) {
+				sortname = sortname.substring(0, sortname.indexOf("Formatado"));
+			}
+			
+			listaEncalheSession = this.buscarFechamentoEncalhe(filtro, sortorder, sortname, null, null);
+		}
+	
+		return listaEncalheSession;
 	}
 }

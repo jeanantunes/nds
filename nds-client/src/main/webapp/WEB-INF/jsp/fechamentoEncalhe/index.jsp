@@ -6,8 +6,31 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/fechamentoEncalhe.js"></script>
 	<script language="javascript" type="text/javascript">
 	$(function(){
+		var contextoAplicacao = "${pageContext.request.contextPath}";
+		
 		fechamentoEncalheController.init();
+		
 		bloquearItensEdicao(fechamentoEncalheController.workspace);
+		
+		$('.pButton', fechamentoEncalheController.workspace).click(function(){
+			
+			linhasTabela = [];
+			$('.fechamentoGrid', fechamentoEncalheController.workspace).find('tr').each(function(){
+				var codigo = $(this).children('td[abbr="codigo"]').children('div').html().toString();
+				var produtoEdicao = $(this).children('td[abbr="edicao"]').children('div').html().toString();
+				var fisico = $(this).children('td').children('div').children('input[name=fisico]').val().toString();
+				var checkbox = $(this).children('td').children('div').children('input[name=checkgroupFechamento]:checked').val() == "on" ? true : false;
+				var envioController = {
+					"codigo"  		: 	codigo,
+					"produtoEdicao" : 	produtoEdicao,
+					"fisico"		:	fisico,
+					"checkbox" 		: 	checkbox
+				};			
+				$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/enviarGridAnteriorParaSession", envioController, function() {
+					  console.log( "success" );
+				});
+			});
+		});	 	
 	});
 	</script>
 
