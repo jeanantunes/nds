@@ -182,10 +182,21 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		
 		List<ConsultaConsignadoCotaDTO> listaConsignadoCota = this.consultaConsignadoCota.buscarConsignadoCota(filtro, true);
 		
+		FiltroConsultaConsignadoCotaDTO filtroTotalDeRegistros = new FiltroConsultaConsignadoCotaDTO();
+		filtroTotalDeRegistros.setIdCota(filtro.getIdCota());
+		
+		filtroTotalDeRegistros.setPaginacao(new PaginacaoVO());
+		
+		filtroTotalDeRegistros.getPaginacao().setOrdenacao(filtro.getPaginacao().getOrdenacao());
+		filtroTotalDeRegistros.getPaginacao().setSortColumn(filtro.getPaginacao().getSortColumn());
+		filtroTotalDeRegistros.getPaginacao().setSortOrder(filtro.getPaginacao().getSortOrder());
+		
+		List<ConsultaConsignadoCotaDTO> totalRegistros = this.consultaConsignadoCota.buscarConsignadoCota(filtroTotalDeRegistros, false);
+		
 		TableModel<CellModelKeyValue<ConsultaConsignadoCotaDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaConsignadoCotaDTO>>();
 		
-		Long totalRegistros = this.consultaConsignadoCota.buscarTodasMovimentacoesPorCota(filtro);
-		if(totalRegistros == 0){
+		//Long totalRegistros = this.consultaConsignadoCota.buscarTodasMovimentacoesPorCota(filtro);
+		if(totalRegistros.size() == 0){
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
 
@@ -193,7 +204,7 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		tableModel.setTotal(totalRegistros.intValue());
+		tableModel.setTotal(totalRegistros.size());
 		
 		return tableModel;
 	}
