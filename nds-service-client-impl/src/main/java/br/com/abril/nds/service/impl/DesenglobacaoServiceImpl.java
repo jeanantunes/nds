@@ -92,11 +92,11 @@ public class DesenglobacaoServiceImpl implements DesenglobacaoService {
 
 	try {
 	    if (desenglobaDTO.size() > 0) {
-		Cota cotaDesenglobada = cotaRepository.obterPorNumerDaCota(desenglobaDTO.get(0).getNumeroCotaDesenglobada());
+		Cota cotaDesenglobada = cotaRepository.obterPorNumeroDaCota(desenglobaDTO.get(0).getNumeroCotaDesenglobada());
 		for (DesenglobacaoDTO origem : desenglobaDTO) {
 		    Desenglobacao destino = new Desenglobacao();
 		    BeanUtils.copyProperties(origem, destino);
-		    Cota cotaEnglobada = cotaRepository.obterPorNumerDaCota(origem.getNumeroCotaEnglobada());
+		    Cota cotaEnglobada = cotaRepository.obterPorNumeroDaCota(origem.getNumeroCotaEnglobada());
 		    destino.setCotaEnglobada(cotaEnglobada);
 		    destino.setCotaDesenglobada(cotaDesenglobada);
 		    trataEnglobacao(destino, usuario);

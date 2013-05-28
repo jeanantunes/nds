@@ -138,7 +138,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	public List<Diferenca> obterDiferencas(FiltroConsultaDiferencaEstoqueDTO filtro) {
 		
 		if(filtro.getNumeroCota() != null) {
-			Cota cota = this.cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
+			Cota cota = this.cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
 			filtro.setIdCota(cota.getId());
 		}
 		
@@ -557,7 +557,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				
 				rateioDiferenca = new RateioDiferenca();
 				
-				Cota cota = this.cotaRepository.obterPorNumerDaCota(rateioCotaVO.getNumeroCota());
+				Cota cota = this.cotaRepository.obterPorNumeroDaCota(rateioCotaVO.getNumeroCota());
 				
 				rateioDiferenca.setCota(cota);
 				

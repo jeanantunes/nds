@@ -143,7 +143,7 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 
 	@Transactional
 	public Cota obterPorNumerDaCota(Integer numeroCota) {
-		return this.cotaRepository.obterPorNumerDaCota(numeroCota); 
+		return this.cotaRepository.obterPorNumeroDaCota(numeroCota);
 	}
 
 	@Transactional

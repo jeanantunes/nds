@@ -77,7 +77,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 			
 			this.validarCotaAusenteNaData(numCota, data);
 			
-			Cota cota = this.cotaRepository.obterPorNumerDaCota(numCota);
+			Cota cota = this.cotaRepository.obterPorNumeroDaCota(numCota);
 
 			List<MovimentoEstoqueCota> movimentosCota = 
 				this.movimentoEstoqueCotaRepository.obterMovimentoCotaLancamentoPorTipoMovimento(
@@ -121,7 +121,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 		
 		for (Integer numCota : numCotas) {
 				
-			Cota cota = this.cotaRepository.obterPorNumerDaCota(numCota);
+			Cota cota = this.cotaRepository.obterPorNumeroDaCota(numCota);
 					
 			List<MovimentoEstoqueCota> movimentosCota = 
 				this.movimentoEstoqueCotaRepository.obterMovimentoCotaLancamentoPorTipoMovimento(
@@ -311,7 +311,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 			
 			total += rateioDTO.getQtde();
 			
-			Cota cota = this.cotaRepository.obterPorNumerDaCota(rateioDTO.getNumCota());
+			Cota cota = this.cotaRepository.obterPorNumeroDaCota(rateioDTO.getNumCota());
 			
 			BigInteger qtdeRateio = BigInteger.valueOf(rateioDTO.getQtde());
 			
@@ -363,7 +363,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 	@Transactional(readOnly = true)
 	public void verificarExistenciaReparteCota(Date data, Integer numeroCota) {
 		
-		Cota cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
+		Cota cota = this.cotaRepository.obterPorNumeroDaCota(numeroCota);
 		
 		Validate.notNull(cota, "Cota inexistente");
 		
