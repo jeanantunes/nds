@@ -258,7 +258,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 		
 		List<ProdutoAbastecimentoDTO> produtosCota = movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorCota(filtro);
 		
-		Cota cota = cotaRepository.obterPorNumerDaCota(filtro.getCodigoCota());
+		Cota cota = cotaRepository.obterPorNumeroDaCota(filtro.getCodigoCota());
 		
 		CompararProdutoMapaCotaDTO comparator = new CompararProdutoMapaCotaDTO();
 		TreeMap<Long,ProdutoMapaCotaDTO> produtoMapa = 

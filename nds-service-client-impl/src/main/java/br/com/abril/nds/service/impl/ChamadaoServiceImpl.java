@@ -164,7 +164,7 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 			}
 		}
 		
-		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 		
 		for (ConsignadoCotaChamadaoDTO consignadoCotaChamadao : listaChamadao) {
 			
@@ -195,7 +195,7 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 				this.chamadaoRepository.obterConsignadosComChamadao(filtro);
 		}
 		
-		Cota cota = cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
+		Cota cota = cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
 		
 		for (ConsignadoCotaChamadaoDTO consignadoCotaChamadao : listaChamadao) {
 			

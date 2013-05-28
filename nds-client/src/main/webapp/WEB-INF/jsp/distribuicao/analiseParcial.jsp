@@ -28,8 +28,14 @@ function escondeDados(){
 .class_vlrs{width:35px;}
 .class_vda{width:35px; color:#F00; font-weight:bold;}
 .detalhesDados{position:absolute; display:none; background:#fff; border:1px solid #ccc; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); }
-.inputBaseNumero{width: 60px;}
-.inputBaseNome{width: 170px;}
+
+.icoEditarEB, .icoExcluirEB, .icoMoverEB { margin: 3px; cursor: pointer; }
+.inputCodigoEB, .inputEdicaoEB { width: 70px; }
+.inputProdutoEB { width: 180px; }
+
+/*.inputBaseNumero{width: 60px;}
+.inputBaseNome{width: 170px;}*/
+
 table.filtro td span {font-weight: normal;}
 .tableTotais {margin: 1px 0 3px; border: 1px solid white; border-collapse: collapse;}
 .paddingTotais td {padding: 0 3px; text-align: right; width: 35px; border: 1px solid white;}
@@ -38,23 +44,21 @@ table.filtro td span {font-weight: normal;}
 .paddingTotais td:nth-child(3) {width: 55px;}
 .paddingTotais td:nth-child(4) {width: 56px;}
 .paddingTotais td:nth-child(5) {width: 24px;}
-.bt_novos{width: 0px;}
-.asterisco:after {
-    content: "*";
-    font-size: 150%;
-    font-weight: bold;
-    position: absolute;
-    left: 43px;
-}
-.reparteSugerido {
-    width: 40px;
-    font-weight: bold;
-    text-align: right;
-}
+.linkNomeCota { text-decoration: underline; cursor: pointer; }
+.editaRepartePorPDV { text-decoration: underline; cursor: pointer; }
+.asterisco:after { content: "*"; font-size: 150%; font-weight: bold; position: absolute; left: 43px; }
+.reparteSugerido { width: 40px; font-weight: bold; text-align: right; }
 #baseEstudoGridParcial td[abbr^="venda"] {color: red;}
 #baseEstudoGridParcial td[abbr^="venda"],
 #baseEstudoGridParcial td[abbr^="ultimoReparte"],
 #baseEstudoGridParcial td[abbr^="reparteSugerido"] {font-weight: bold;}
+.repartePDV {width: 35px; text-align: right;}
+#prodCadastradosGrid tbody tr {display: block !important;}
+.sortable-placeholder {
+    height: 33px !important;
+    line-height: 30px !important;
+    border: 1px solid orange !important;
+}
 
 </style>
 
@@ -359,8 +363,7 @@ table.filtro td span {font-weight: normal;}
 		</fieldset>
 	</div>
 
-	<div id="dialog-cotas-detalhes" title="Pontos de Vendas"
-		style="display: none;">
+	<div id="dialog-cotas-detalhes" title="Pontos de Vendas" style="display: none;">
 
 		<fieldset style="width: 690px !important; margin-top: 5px;">
 			<legend>Cotas Cadastradas</legend>
@@ -404,13 +407,13 @@ table.filtro td span {font-weight: normal;}
 			<table width="686" border="0" cellpadding="2" cellspacing="1">
 				<tr>
 					<td width="55"><strong>Rep.Mín.:</strong></td>
-					<td width="41">05</td>
+					<td width="41"><span id="mixRepMin">05</span></td>
 					<td width="60"><strong>Rep. Máx.:</strong></td>
-					<td width="79">9.999</td>
+					<td width="79"><span id="mixRepMax">9.999</span></td>
 					<td width="49"><strong>Usuário:</strong></td>
-					<td width="141">Rodrigue</td>
+					<td width="141"><span id="mixUsuario">Rodrigue</span></td>
 					<td width="105"><strong>Data Manutenção.:</strong></td>
-					<td width="115">28/03/2012 10:56</td>
+					<td width="115"><span id="mixDataAlteracao">28/03/2012 10:56</span></td>
 				</tr>
 			</table>
 		</fieldset>
@@ -422,10 +425,10 @@ table.filtro td span {font-weight: normal;}
             <table width="500" border="0" cellspacing="1" cellpadding="1">
                 <tr>
                     <td width="42"><strong>Cota:</strong></td>
-                    <td width="92">1223</td>
+                    <td width="92"><span class="numeroCota">1223</span></td>
                     <td width="44"><strong>Nome:</strong></td>
-                    <td width="155">Antonio José da Silva</td>
-                    <td width="151">&nbsp;</td>
+                    <td width="155"><span class="nomeCota">Antonio José da Silva</span></td>
+                    <%--<td width="151">&nbsp;</td>--%>
                 </tr>
             </table>
 
@@ -436,11 +439,11 @@ table.filtro td span {font-weight: normal;}
             <table width="500" border="0" cellspacing="1" cellpadding="1">
                 <tr>
                     <td width="42"><strong>Código:</strong></td>
-                    <td width="92">0564</td>
+                    <td width="92"><span class="codigoProduto">${estudoCota.estudo.produtoEdicao.produto.codigo}</span></td>
                     <td width="44"><strong>Produto:</strong></td>
-                    <td width="155">Tauros</td>
+                    <td width="155"><span class="nomeProduto">${estudoCota.estudo.produtoEdicao.produto.nomeComercial}</span></td>
                     <td width="44"><strong>Classificação:</strong></td>
-                    <td width="155">Relançamento</td>
+                    <td width="155"><span class="tipoClassificacaoProduto">${estudoCota.estudo.produtoEdicao.produto.tipoClassificacaoProduto.descricao}</span></td>
                 </tr>
             </table>
 
@@ -454,11 +457,11 @@ table.filtro td span {font-weight: normal;}
                     <td width="312">&nbsp;
                     </td>
                     <td width="174">&nbsp;</td>
-                    <td width="71" align="center">999.999</td>
+                    <td width="71" align="center"><span class="reparteCota">999</span></td>
                     <td width="43">&nbsp;</td>
                 </tr>
                 <tr>
-                    <td colspan="3" align="right">Manter Fixa&nbsp; </td>
+                    <td colspan="3" align="right">Manter Fixa</td>
                     <td><input name="input2" type="checkbox" value="" /></td>
                 </tr>
             </table>
@@ -466,9 +469,35 @@ table.filtro td span {font-weight: normal;}
 
     </div>
 
+    <div id="dialog-edicoes-produtos" title="Pesquisar Edições de Produto" style="display:none;">
+        <fieldset style="width:500px!important;">
+            <legend>Pesquisar Produto</legend>
+
+            <table width="500" border="0" cellpadding="2" cellspacing="1" class="filtro">
+                <tr>
+                    <td width="36">Código:</td>
+                    <td width="76"><input type="text" name="codigoProduto" id="inputCodigoProduto" style="width:60px;" /></td>
+                    <td width="40">Produto:</td>
+                    <td width="180"><input type="text" name="nomeProduto" id="inputNomeProduto" style="width:160px;" /></td>
+                    <td width="35">Edição:</td>
+                    <td width="61"><input type="text" name="edicao" id="inputNumeroEdicao" style="width:60px;" /></td>
+                    <td width="47"><span class="classPesquisar" style="margin: 0 5px;"><a href="javascript:;">&nbsp;</a></span></td>
+                </tr>
+            </table>
+
+        </fieldset>
+
+        <fieldset style="width:500px!important; margin-top:10px;">
+            <legend>Edições do Produto</legend>
+            <table id="edicaoProdCadastradosGrid"></table>
+        </fieldset>
+    </div>
+
     <div id="dialog-detalhes" title="Capa">
 		<img src="${pageContext.request.contextPath}/capa/getCapaEdicaoJson?codigoProduto=${estudoCota.estudo.produtoEdicao.produto.codigo}&numeroEdicao=${estudoCota.estudo.produtoEdicao.numeroEdicao}" width="235" height="314" />
 	</div>
+
+    <div id="previewImagemCapa" title="Capa"><img src="" alt="Imagem Capa" width="180" height="250"/></div>
 
 	<script type="text/javascript">
 		 $(function(){

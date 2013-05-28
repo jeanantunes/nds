@@ -151,7 +151,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	@Transactional
 	public List<FixacaoReparteDTO> obterHistoricoLancamentoPorCota(
 			FiltroConsultaFixacaoCotaDTO filtroCota) {
-		Cota cota = cotaRepository.obterPorNumerDaCota(new Integer(filtroCota.getCota()));
+		Cota cota = cotaRepository.obterPorNumeroDaCota(new Integer(filtroCota.getCota()));
 		List<FixacaoReparteDTO> resultado = estoqueProdutoCotaRepository.obterHistoricoEdicaoPorCota(cota, filtroCota.getCodigoProduto()) ;
 		return resultado; 
 	}
@@ -216,7 +216,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	
 	private FixacaoReparte getFixacaoRepartePorDTO(FixacaoReparteDTO fixacaoReparteDTO) {
 		FixacaoReparte fixacaoReparte = new FixacaoReparte();
-		Cota cota = cotaRepository.obterPorNumerDaCota(fixacaoReparteDTO.getCotaFixada().intValue());
+		Cota cota = cotaRepository.obterPorNumeroDaCota(fixacaoReparteDTO.getCotaFixada().intValue());
 		Produto produto = produtoRepository.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado().toString());
 		
 		validaStatusProduto(fixacaoReparteDTO, produto);
@@ -386,7 +386,7 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	@Transactional
 	@Override
 	public boolean isCotaValida(FixacaoReparteDTO fixacaoReparteDTO) {
-		Cota cota = cotaRepository.obterPorNumerDaCota(fixacaoReparteDTO.getCotaFixada());
+		Cota cota = cotaRepository.obterPorNumeroDaCota(fixacaoReparteDTO.getCotaFixada());
 		return (cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO) 
 				|| cota.getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO))
 				&& cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.CONVENCIONAL);

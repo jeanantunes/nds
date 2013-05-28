@@ -340,25 +340,30 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
     @Override
     @Transactional(readOnly = true)
-    public List<PdvDTO> carregarDetalhesCota(Long numeroCota) {
+    public List<PdvDTO> carregarDetalhesPdv(Integer numeroCota) {
         StringBuilder sql = new StringBuilder();
         sql.append("select pdv.id, ");
         sql.append("       t.descricao descricaoTipoPontoPDV, ");
-        sql.append("       pdv.porcentagem_faturamento porcentagemFaturamento, ");
-        sql.append("       pdv.ponto_principal principal, ");
+        sql.append("       pdv.nome nomePDV,");
+        sql.append("       pdv.porcentagem_faturamento porcentagemFaturamento,");
+        sql.append("       ifnull(ep.principal, false) principal, ");
+        sql.append("       est.reparte,");
         sql.append("       concat(e.logradouro, ', ', e.numero, ' - ', e.bairro, ' - ', e.cep, ' - ', e.cidade, ' - ', e.uf) endereco ");
         sql.append("  from pdv ");
         sql.append("  left join cota c on c.id = pdv.cota_id ");
-        sql.append("  left join endereco_pdv ep on ep.pdv_id = pdv.id ");
+        sql.append("  left join endereco_pdv ep on ep.pdv_id = pdv.id and ep.principal = true");
         sql.append("  left join endereco e on e.id = ep.endereco_id ");
         sql.append("  left join tipo_ponto_pdv t on t.id = pdv.tipo_ponto_pdv_id ");
+        sql.append("  left join estudo_pdv est on est.pdv_id = pdv.id");
         sql.append(" where c.numero_cota = :numeroCota ");
 
         Query query = getSession().createSQLQuery(sql.toString())
                 .addScalar("id", StandardBasicTypes.LONG)
                 .addScalar("descricaoTipoPontoPDV", StandardBasicTypes.STRING)
+                .addScalar("nomePDV", StandardBasicTypes.STRING)
                 .addScalar("porcentagemFaturamento", StandardBasicTypes.BIG_DECIMAL)
                 .addScalar("principal", StandardBasicTypes.BOOLEAN)
+                .addScalar("reparte", StandardBasicTypes.INTEGER)
                 .addScalar("endereco", StandardBasicTypes.STRING);
         query.setParameter("numeroCota", numeroCota);
         query.setResultTransformer(new AliasToBeanResultTransformer(PdvDTO.class));

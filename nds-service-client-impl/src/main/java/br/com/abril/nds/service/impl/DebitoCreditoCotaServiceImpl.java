@@ -73,7 +73,7 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 
 		movimentoFinanceiroCotaDTO.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
 		
-		Cota cota = this.cotaRepository.obterPorNumerDaCota(debitoCredito.getNumeroCota());
+		Cota cota = this.cotaRepository.obterPorNumeroDaCota(debitoCredito.getNumeroCota());
 		
 		movimentoFinanceiroCotaDTO.setCota(cota);
 
@@ -183,7 +183,7 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		
 		if (numeroCota!=null){
 		
-			cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
+			cota = this.cotaRepository.obterPorNumeroDaCota(numeroCota);
 			
 			if (cota!=null){
 			
