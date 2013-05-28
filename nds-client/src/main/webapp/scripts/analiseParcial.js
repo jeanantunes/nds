@@ -249,12 +249,6 @@ var analiseParcialController = $.extend(true, {
         $('#total_reparte_sugerido').text(totalReparteSugerido);
         $('#total_de_cotas').text(resultado.rows.length);
 
-        //TODO melhorar este trecho
-        var $totalReparteSugeridoCabecalho = $('#total_reparte_sugerido_cabecalho');
-        if ($totalReparteSugeridoCabecalho.text() === '') {
-            $totalReparteSugeridoCabecalho.text(totalReparteSugerido);
-        }
-
         if (resultado.rows.length > 0) {
             for (var j = 1; j < 7; j++) {
                 $('#total_reparte'+ j).text(totais[j - 1].reparte);
@@ -618,7 +612,6 @@ var analiseParcialController = $.extend(true, {
             analiseParcialController.atualizaReparte(this);
 
             $('#total_reparte_sugerido')
-//                .add('#total_reparte_sugerido_cabecalho')
                 .text(
                 $('#baseEstudoGridParcial tr td input:text').map(function(){
                     return parseInt(this.value, 10);
@@ -911,7 +904,7 @@ $(".pdvCotaGrid").flexigrid({
     autoload: false,
     colModel : [
         { display: 'Código',    name: 'id',         width: 50,  sortable: true, align: 'left' },
-        { display: 'Nome PDV',  name: 'nomePdv',    width: 120, sortable: true, align: 'left' },
+        { display: 'Nome PDV',  name: 'nomePDV',    width: 120, sortable: true, align: 'left' },
         { display: 'Endereço',  name: 'endereco',   width: 320, sortable: true, align: 'left' },
         { display: 'Reparte',   name: 'reparte',    width: 50,  sortable: true, align: 'center' } ],
     sortname : "codigo",
