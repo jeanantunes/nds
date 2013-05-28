@@ -568,7 +568,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		sql.append("	SUM(CHAMADA_ENCALHE_COTA.QTDE_PREVISTA) as reparte, ");
 		
-		sql.append("	SUM(COALESCE(MEC_REPARTE.QTDE, 0)) - ( "+ subSqlVendaProduto.toString()  +" )  	as encalhe,     		");
+		sql.append("	SUM(COALESCE(CONFERENCIA_ENCALHE.QTDE, 0)) - ( "+ subSqlVendaProduto.toString()  +" )  	as encalhe,     		");
 		
 		sql.append("	FORNECEDOR.ID						as idFornecedor,		");
 		
