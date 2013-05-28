@@ -428,7 +428,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
             }
         }
         sql.append(" where ec.estudo_id = ? ");
-        sql.append("   and ec.reparte = 0 ");
+        sql.append("   and ( ec.reparte = 0 or ec.reparte is null ) ");
         params.add(queryDTO.getEstudo());
 
         if (queryDTO.possuiCota()) {

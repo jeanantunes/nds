@@ -1,1 +1,0 @@
-java -jar ../nds-test-1.0.jar ../resources/CorrecaoIndividual.xml -testnames "Primeiro Cenario"

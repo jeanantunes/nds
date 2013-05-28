@@ -114,7 +114,7 @@ table.filtro td span {font-weight: normal;}
                 <tr>
                     <td>Status do Estudo: <span id="status_estudo">${estudoCota.estudo.isLiberado()?'Liberado':'Não Liberado'}</span></td>
                     <td>Data de Lancamento: <span><fmt:formatDate value="${estudoCota.estudo.dataLancamento}" /></span></td>
-                    <td>Reparte Distribuido: <span id="total_reparte_sugerido_cabecalho"></span></td>
+                    <td>Reparte Distribuido: <span id="total_reparte_estudo_cabecalho">${estudoCota.estudo.qtdeReparte}</span></td>
                     <td>Pacote Padrão: <span>${estudoCota.estudo.produtoEdicao.pacotePadrao}</span></td>
                 </tr>
             </table>
@@ -497,7 +497,7 @@ table.filtro td span {font-weight: normal;}
 		<img src="${pageContext.request.contextPath}/capa/getCapaEdicaoJson?codigoProduto=${estudoCota.estudo.produtoEdicao.produto.codigo}&numeroEdicao=${estudoCota.estudo.produtoEdicao.numeroEdicao}" width="235" height="314" />
 	</div>
 
-    <div id="previewImagemCapa" title="Capa"><img src="" alt="Imagem Capa" width="180" height="250"/></div>
+    <div id="previewImagemCapa" title="Capa" style="display: none;"><img src="" alt="Imagem Capa" width="180" height="250"/></div>
 
 	<script type="text/javascript">
 		 $(function(){

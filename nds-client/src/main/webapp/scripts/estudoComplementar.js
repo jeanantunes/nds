@@ -129,8 +129,6 @@ consultarEstudo:function (obj) {
 					$('#publicacaoDataLncto').html(json.baseEstudoVO.dataLncto);
 					$('#publicacaoDataRclto').html(json.baseEstudoVO.dataRclto);
 					$('#publicacaoClassificacao').html(json.baseEstudoVO.nomeClassificacao);
-					$('#reparteLancamento').val(json.baseEstudoVO.reparteLancamento);
-					$('#reparteDistribuicao').val(json.baseEstudoVO.reparteLancamento);
 				}
 			}
 		});

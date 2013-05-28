@@ -1111,5 +1111,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	public void insereVendaRandomica(String codigoProduto, Integer numeroEdicao) {
 	    produtoEdicaoRepository.insereVendaRandomica(produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, new Long(numeroEdicao)));
 	}
-	
+
+    @Override
+    public BigInteger obterReparteDisponivel(Long idProdutoEdicao) {
+        return produtoEdicaoRepository.obterReparteDisponivel(idProdutoEdicao);
+    }
+
 }
