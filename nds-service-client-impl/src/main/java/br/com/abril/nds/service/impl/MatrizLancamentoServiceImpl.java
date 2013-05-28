@@ -675,6 +675,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		Set<Date> datasConfirmadas = new TreeSet<>();
 		
+		datasConfirmadas.addAll(datasExpedicaoConfirmada);
+		
 		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry : matrizLancamento.entrySet()) {
 			
 			for (ProdutoLancamentoDTO produtoLancamento : entry.getValue()) {
@@ -689,8 +691,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				}
 			}
 		}
-		
-		datasConfirmadas.addAll(datasExpedicaoConfirmada);
 		
 		return datasConfirmadas;
 	}

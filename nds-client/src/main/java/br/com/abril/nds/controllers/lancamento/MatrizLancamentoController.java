@@ -9,7 +9,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletResponse;
@@ -458,25 +457,6 @@ public class MatrizLancamentoController extends BaseController {
 	 * @param novaData - nova data de recolhimento
 	 */
 	private void validarDataReprogramacao(List<ProdutoLancamentoVO> produtosLancamento, Date novaData) {
-		
-		BalanceamentoLancamentoDTO balanceamentoLancamento =
-			(BalanceamentoLancamentoDTO) this.session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
-		
-		if (balanceamentoLancamento == null) {
-			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
-		}
-		
-		Set<Date> datasExpedicaoConfirmada = balanceamentoLancamento.getDatasExpedicaoConfirmada();
-		
-		for (Date dataExpedicao : datasExpedicaoConfirmada) {
-			
-			if (dataExpedicao.equals(novaData)) {
-				
-				throw new ValidacaoException(TipoMensagem.WARNING,
-					"Lançamentos não podem ser reprogramados para uma em que já houve expedição!");
-			}
-		}
 		
 		this.matrizLancamentoService.verificaDataOperacao(novaData);
 		
@@ -1105,15 +1085,13 @@ public class MatrizLancamentoController extends BaseController {
 		BalanceamentoLancamentoDTO balanceamentoLancamento = 
 			(BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
 		
-		
-		
 		if (balanceamentoLancamento == null) {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
 		}
 		
 		List<ConfirmacaoVO> confirmacoesVO =
-			matrizLancamentoService.obterDatasConfirmacao(balanceamentoLancamento);
+			this.matrizLancamentoService.obterDatasConfirmacao(balanceamentoLancamento);
 
 		return confirmacoesVO;
 	}
