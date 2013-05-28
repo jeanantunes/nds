@@ -227,7 +227,7 @@ var fechamentoEncalheController = $.extend(true, {
 			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
 			row.cell.fisico = '<input class="" isEdicao="true" type="text" onkeypress="fechamentoEncalheController.nextInputExemplares('+index+',window.event);" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" value="' + valorFisico + '" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ')" ' + fechado + '/>';
 
-			if($('#sel').attr('checked')==true || row.cell.replicar == 'true')
+			if(row.cell.replicar == 'true')
 			{
 				row.cell.replicar = '<input isEdicao="true" type="checkbox"  id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index + ');"' + fechado+ ' checked />';
 			}	
@@ -284,6 +284,15 @@ var fechamentoEncalheController = $.extend(true, {
 		var campo = tabela.rows[index].cells[8].firstChild.firstChild;
 		var diferenca = tabela.rows[index].cells[9].firstChild;
 		
+		if($('#ch'+index).is(':checked'))
+		{
+			if($(campo).val() != null || $(campo).val() != "")
+			{
+				$(campo).parent('div').children('.divEscondidoValorFisico_' + index).remove();
+				$(campo).parent('div').append('<div class="divEscondidoValorFisico_' + index + '" style="display:none;">' + $(campo).val() + '</div>');
+			}
+		}	
+		
 		if(campo.disabled){
 			return;
 		}
@@ -298,15 +307,47 @@ var fechamentoEncalheController = $.extend(true, {
 			campo.value = valor;
 			diferenca.innerHTML = "0";
 		}
+		
+		
+		if(! $('#ch'+index).is(':checked'))
+		{
+			var valorAntigo = $(campo).parent('div').children('.divEscondidoValorFisico_' + index).html();
+			$(campo).val(valorAntigo);			
+		}
 	},
 	
 	checkAll:function(input){
 		
-		// dom do botao de todos
+		 
+		if($('input[name=Todos]').is(":checked"))
+		{
+			gridVerificacaoEscritos = [];
+			$('.fechamentoGrid', fechamentoEncalheController.workspace).find('tr').each(function(){
+				if($(this).children('td').children('div').children('input[name=fisico]').val().toString() != '')
+				{
+					gridVerificacaoEscritos.push({codigo : $(this).children('td[abbr="codigo"]').children('div').html().toString(), 
+							fisico : $(this).children('td').children('div').children('input[name=fisico]').val().toString()});
+				}	
+			});
+		
+		}	
 		
 		checkAll(input,"checkgroupFechamento");
 		
 		fechamentoEncalheController.replicarTodos(input.checked);
+	
+		if(! $('input[name=Todos]').is(":checked"))
+		{	
+			$(gridVerificacaoEscritos).each(function(key, valor){
+				$('.fechamentoGrid', fechamentoEncalheController.workspace).find('tr').each(function(chave, valorSegundo){
+					if(valor.codigo == $(valorSegundo).children('td[abbr="codigo"]').children('div').html().toString())
+					{
+						$(this).children('td').children('div').children('input[name=fisico]').val(valor.fisico);
+					}
+					
+				});
+			});
+		}
 	},
 	
 	onChangeFisico : function(campo, index) {

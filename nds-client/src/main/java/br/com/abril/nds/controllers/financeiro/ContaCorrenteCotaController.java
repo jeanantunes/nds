@@ -213,6 +213,13 @@ public class ContaCorrenteCotaController extends BaseController {
 		
 		Collection<InfoTotalFornecedorDTO> listaInfoTotalFornecedor = mostrarInfoTotalForncedoresConsignado(listaConsignadoCota);
 		
+//		BigDecimal soma = new BigDecimal(0);
+//		for(ConsignadoCotaDTO lll : listaConsignadoCota)
+//		{
+//			soma = soma.add(lll.getTotal());
+//		}
+//		System.out.println(soma);
+		
 		TableModel<CellModelKeyValue<ConsignadoCotaDTO>> tableModel = new TableModel<CellModelKeyValue<ConsignadoCotaDTO>>();
 		
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaConsignadoCota));
