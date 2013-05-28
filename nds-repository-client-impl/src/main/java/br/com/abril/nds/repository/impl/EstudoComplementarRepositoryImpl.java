@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,7 +24,7 @@ public class EstudoComplementarRepositoryImpl extends AbstractRepositoryModel<Es
     @Transactional(readOnly = true)
     public LinkedList<EstudoCota> selecionarBancas(EstudoComplementarVO estudoComplementarVO) {
 
-	LinkedList<EstudoCota> lista = new LinkedList<>();
+	LinkedHashSet<EstudoCota> lista = new LinkedHashSet<>();
 
 	for (int i = 0; i < 4; i++) {
 	    StringBuilder sql = new StringBuilder();
@@ -57,9 +58,9 @@ public class EstudoComplementarRepositoryImpl extends AbstractRepositoryModel<Es
 		sql.append(" >= ");
 	    }
 	    sql.append(" (select count(epe.produto_edicao_id) soma ");
-	    sql.append("              from estudo_produto_edicao epe ");
-	    sql.append("             where epe.cota_id = c.id ");
-	    sql.append("               and epe.estudo_id = ec.estudo_id) ");
+	    sql.append("    from estudo_produto_edicao epe ");
+	    sql.append("   where epe.cota_id = c.id ");
+	    sql.append("     and epe.estudo_id = ec.estudo_id) ");
 	    if (estudoComplementarVO.getTipoSelecao().equals("RANKING_FATURAMENTO")) {
 		sql.append(" order by rs.faturamento desc ");
 	    } else {
@@ -70,10 +71,10 @@ public class EstudoComplementarRepositoryImpl extends AbstractRepositoryModel<Es
 	    query.setParameter("estudoId", estudoComplementarVO.getCodigoEstudo());
 	    List<EstudoCota> temp = query.list();
 	    if (temp != null) {
-		lista.addAll(new LinkedList<EstudoCota>(temp));
+		lista.addAll(new LinkedHashSet<EstudoCota>(temp));
 	    }
 	}
-	return lista;
+	return new LinkedList<EstudoCota>(lista);
     }
 
     @Override
@@ -99,14 +100,14 @@ public class EstudoComplementarRepositoryImpl extends AbstractRepositoryModel<Es
 	sql.append("   and ec.estudo_id = :estudoId ");
 	sql.append("   and ((ec.classificacao = 'VZ' ");
 	sql.append("   and (select count(epe.produto_edicao_id) soma ");
-	sql.append("           from estudo_produto_edicao epe ");
-	sql.append("          where epe.cota_id = c.id ");
-	sql.append("            and epe.estudo_id = ec.estudo_id) between 1 and 3) ");
+	sql.append("          from estudo_produto_edicao epe ");
+	sql.append("         where epe.cota_id = c.id ");
+	sql.append("           and epe.estudo_id = ec.estudo_id) >= 1) ");
 	sql.append("    or (ec.classificacao = 'SH' ");
-	sql.append("   and 0 = (select count(epe.produto_edicao_id) soma ");
-	sql.append("              from estudo_produto_edicao epe ");
-	sql.append("             where epe.cota_id = c.id ");
-	sql.append("               and epe.estudo_id = ec.estudo_id))) ");
+	sql.append("   and (select count(epe.produto_edicao_id) soma ");
+	sql.append("          from estudo_produto_edicao epe ");
+	sql.append("         where epe.cota_id = c.id ");
+	sql.append("           and epe.estudo_id = ec.estudo_id) = 0)) ");
 	if (estudoComplementarVO.getTipoSelecao().equals("RANKING_FATURAMENTO")) {
 	    sql.append(" order by rs.faturamento desc ");
 	} else {

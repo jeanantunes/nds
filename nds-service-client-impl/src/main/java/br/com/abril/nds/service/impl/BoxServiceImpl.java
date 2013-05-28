@@ -130,7 +130,7 @@ public class BoxServiceImpl implements BoxService {
 	@Transactional(readOnly=true)
 	public Box obterBoxPorCota(Integer numeroCota) {
 		
-		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 		
 		if(cota == null)
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não existe.");

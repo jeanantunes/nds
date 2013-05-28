@@ -2,10 +2,13 @@ package br.com.abril.nds.process.calculoreparte;
 
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.process.ProcessoAbstrato;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
  * Processo que tem como objetivo ajustar o reparte definido na cota entre o mínimo e o máximo configurado
@@ -24,7 +27,7 @@ public class MinimoMaximo extends ProcessoAbstrato {
 	for (CotaEstudo cota : estudo.getCotas()) {
 	    if ((cota.getIntervaloMinimo() != null) && (cota.getIntervaloMaximo() != null)) {
 		if (cota.getIntervaloMinimo().compareTo(cota.getIntervaloMaximo()) > 0) {
-		    throw new Exception(String.format("O reparte mínimo da cota %s está maior que o reparte máximo.", cota.getId()));
+		    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, String.format("O reparte mínimo da cota %s está maior que o reparte máximo.", cota.getId())));
 		}
 		if (cota.getReparteCalculado().compareTo(cota.getIntervaloMinimo()) < 0) {
 		    cota.setReparteCalculado(cota.getIntervaloMinimo(), estudo);

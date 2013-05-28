@@ -66,7 +66,7 @@ public class Estudo implements Serializable {
 	@Column(name = "LANCAMENTO_ID")
 	private Long lancamentoID;
 	
-	@Cascade(value={CascadeType.SAVE_UPDATE})
+	@Cascade(value={CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
 	@OneToMany(mappedBy = "estudo", fetch = FetchType.LAZY)
 	private Set<EstudoCota> estudoCotas = new HashSet<EstudoCota>();
 	

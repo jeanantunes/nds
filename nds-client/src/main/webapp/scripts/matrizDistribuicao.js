@@ -497,7 +497,6 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 				data.push({name: 'produtosDistribuicao[' + index + '].codigoProduto',  	value: lancamento.codigoProduto});
 				
 				if (lancamento.idCopia != null) {
-					
 					data.push({name: 'produtosDistribuicao[' + index + '].idCopia',  	    value: lancamento.idCopia});
 				}
 			}
@@ -1123,9 +1122,11 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		data.push({name: 'copiaProporcionalDeDistribuicaoVO.idEstudo', 			 value: estudo});
 		data.push({name: 'copiaProporcionalDeDistribuicaoVO.fixacao', 			 value: fixacao});
 		data.push({name: 'copiaProporcionalDeDistribuicaoVO.reparteDistribuido', value: reparteDistribuido});
-		data.push({name: 'copiaProporcionalDeDistribuicaoVO.idCopia', 			 value: idCopia});
-		
-		
+
+        if (idCopia) {
+            data.push({name: 'copiaProporcionalDeDistribuicaoVO.idCopia', 			 value: idCopia});
+        }
+
 		if (pctPadrao != null) {
 			data.push({name: 'copiaProporcionalDeDistribuicaoVO.pacotePadrao', value: pctPadrao});
 		}

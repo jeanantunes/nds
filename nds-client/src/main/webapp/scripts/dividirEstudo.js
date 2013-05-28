@@ -34,7 +34,7 @@ var dividirEstudo = $.extend(true, {
 			$(nomeProduto).val(estudo.nomeProduto);
 			$(edicaoProduto).val(estudo.edicao);
 //			$(dataDistribuicao).val($("#datepickerDe").val());
-			$(dataDistribuicao).val(estudo.dataLancamentoEstudoFormatado);
+			$(dataDistribuicao).val(estudo.dataLancto);
 			$(classificacao).val(estudo.classificacao);
 			
 			
@@ -129,7 +129,9 @@ var dividirEstudo = $.extend(true, {
 	$.postJSON('dividirEstudo/gerarDivisao', dados, function(response) {
 	    numeroPrimeiroEstudo.val(response.divisaoEstudoDTO.numeroPrimeiroEstudo);
 	    repartePrimeiroEstudo.val(response.divisaoEstudoDTO.repartePrimeiroEstudo);
-	    dataLancamentoPrimeiroEstudo.val(response.divisaoEstudoDTO.dataLancamentoPrimeiroEstudo);
+//	    dataLancamentoPrimeiroEstudo.val(response.divisaoEstudoDTO.dataLancamentoPrimeiroEstudo);
+	    dataLancamentoPrimeiroEstudo.val($(dataDistribuicao).val());
+	    
 	    numeroSegundoEstudo.val(response.divisaoEstudoDTO.numeroSegundoEstudo);
 	    reparteSegundoEstudo.val(response.divisaoEstudoDTO.reparteSegundoEstudo);
 	    $('.corpo').flexReload();

@@ -4,12 +4,15 @@ import java.math.BigInteger;
 
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.redutorautomatico.RedutorAutomatico;
 import br.com.abril.nds.process.vendamediafinal.VendaMediaFinal;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
  * Este processo apenas realiza um ajuste no reparte das cotas se a opção
@@ -32,7 +35,7 @@ public class AjusteReparte extends ProcessoAbstrato {
     @Override
     public void executar(EstudoTransient estudo) throws Exception {
 	if ((estudo == null) || (estudo.getCotas() == null)) {
-	    throw new Exception("Houve um erro durante a execução do processo Ajuste de Reparte. Erro: objeto Estudo nulo.");
+	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Houve um erro durante a execução do processo Ajuste de Reparte. Erro: objeto Estudo nulo."));
 	}
 	for (CotaEstudo cota : estudo.getCotas()) {
 	    if ((cota.getVendaMediaMaisN() != null) && (estudo.getPacotePadrao() != null) && (cota.getVendaMediaMaisN().compareTo(BigInteger.ZERO) > 0)) {

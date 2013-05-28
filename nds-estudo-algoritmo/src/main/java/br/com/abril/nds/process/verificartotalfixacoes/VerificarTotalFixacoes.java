@@ -6,9 +6,12 @@ import java.math.BigInteger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.process.ProcessoAbstrato;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre as cotas encontradas para o perfil definido no
@@ -42,7 +45,7 @@ public class VerificarTotalFixacoes extends ProcessoAbstrato {
 			estudo.getPercentualMaximoFixacao().divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP));
 	    }
 	    if ((maximoFixacao != null) && (maximoFixacao.compareTo(new BigDecimal(somaFixacao)) < 0)) {
-		throw new Exception("A soma das fixações de reparte é maior que o percentual configurado na tela de parâmetros do distribuidor.");
+		throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "A soma das fixações de reparte é maior que o percentual configurado na tela de parâmetros do distribuidor."));
 	    }
 	}
     }

@@ -29,6 +29,7 @@ import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.service.EstudoAlgoritmoService;
 import br.com.abril.nds.util.ComponentesPDV;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre as cotas encontradas para o perfil definido no
@@ -94,9 +95,11 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	    if (cota.getClassificacao().equals(ClassificacaoCota.BancaSemHistorico)) {
 		idsCotas.add(cota.getId());
 	    }
+	    // excluindo as cotas que não entram no estudo.
 	    if (cota.getClassificacao().in(ClassificacaoCota.BancaComVendaZero, ClassificacaoCota.BancaSemHistorico,
 		    ClassificacaoCota.BancaSuspensa, ClassificacaoCota.ReparteFixado, ClassificacaoCota.CotaNaoRecebeSegmento,
-		    ClassificacaoCota.BancaSemClassificacaoDaPublicacao, ClassificacaoCota.BancaMixSemDeterminadaPublicacao)) {
+		    ClassificacaoCota.BancaSemClassificacaoDaPublicacao, ClassificacaoCota.BancaMixSemDeterminadaPublicacao,
+		    ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
 		estudo.getCotasExcluidas().add(cota);
 	    }
 	}
@@ -125,127 +128,127 @@ public class SelecaoBancas extends ProcessoAbstrato {
     }
 
     private List<CotaEstudo> validarComponentes(List<CotaEstudo> cotas, EstudoTransient estudo) {
-	List<CotaEstudo> cotasAVista = new ArrayList<>();
 	for (CotaEstudo cota : cotas) {
-	    for (String item : cota.getTiposCota()) {
-		if (!estudo.getDistribuicaoVendaMediaDTO().isCotasAVista() && item.equals("CONSIGNADO")) {
-		    cotasAVista.add(cota);
+	    if (cota.getClassificacao().notIn(ClassificacaoCota.CotaMix, ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo)) {
+		for (String item : cota.getTiposCota()) {
+		    if (!item.equals("CONSIGNADO") && !estudo.getDistribuicaoVendaMediaDTO().isCotasAVista()) {
+			cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
+		    }
 		}
 	    }
 	}
-
-	List<CotaEstudo> lista = new ArrayList<>();
 	// selecao de componente/elemento
-	for (CotaEstudo cota : cotasAVista) {
-	    if (estudo.getDistribuicaoVendaMediaDTO().getComponente() != null && estudo.getDistribuicaoVendaMediaDTO().getElemento() != null) {
-		if (estudo.getDistribuicaoVendaMediaDTO().getComponente().equals(ComponentesPDV.AREA_DE_INFLUENCIA)) {
-		    if (cota.getAreasInfluenciaPdv().contains(Integer.parseInt(estudo.getDistribuicaoVendaMediaDTO().getElemento()))) {
-			lista.add(cota);
-		    }
-		} else if (estudo.getDistribuicaoVendaMediaDTO().getComponente().equals(ComponentesPDV.BAIRRO)) {
-		    if (cota.getBairros().contains(estudo.getDistribuicaoVendaMediaDTO().getElemento())) {
-			lista.add(cota);
-		    }
-		} else if (estudo.getDistribuicaoVendaMediaDTO().getComponente().equals(ComponentesPDV.COTAS_A_VISTA)) {
-		    if (cota.getTiposCota().contains(Integer.parseInt(estudo.getDistribuicaoVendaMediaDTO().getElemento()))) {
-			lista.add(cota);
-		    }
-		} else if (estudo.getDistribuicaoVendaMediaDTO().getComponente().equals(ComponentesPDV.COTAS_NOVAS_RETIVADAS)) {
-		    if ((cota.isNova() && estudo.getDistribuicaoVendaMediaDTO().getElemento().equals("1")) ||
-			    (!cota.isNova() && estudo.getDistribuicaoVendaMediaDTO().getElemento().equals("0"))) {
-			lista.add(cota);
-		    }
-		} else if (estudo.getDistribuicaoVendaMediaDTO().getComponente().equals(ComponentesPDV.DISTRITO)) {
-		    if (cota.getEstados().contains(estudo.getDistribuicaoVendaMediaDTO().getElemento())) {
-			lista.add(cota);
-		    }
-		} else if (estudo.getDistribuicaoVendaMediaDTO().getComponente().equals(ComponentesPDV.GERADOR_DE_FLUXO)) {
-		    if (cota.getTiposGeradorFluxo().contains(Integer.parseInt(estudo.getDistribuicaoVendaMediaDTO().getElemento()))) {
-			lista.add(cota);
-		    }
-		} else if (estudo.getDistribuicaoVendaMediaDTO().getComponente().equals(ComponentesPDV.REGIAO)) {
-		    if (cota.getRegioes().contains(Integer.parseInt(estudo.getDistribuicaoVendaMediaDTO().getElemento()))) {
-			lista.add(cota);
-		    }
-		} else if (estudo.getDistribuicaoVendaMediaDTO().getComponente().equals(ComponentesPDV.TIPO_PONTO_DE_VENDA)) {
-		    if (cota.getTiposPontoPdv().contains(Integer.parseInt(estudo.getDistribuicaoVendaMediaDTO().getElemento()))) {
-			lista.add(cota);
+	for (CotaEstudo cota : cotas) {
+	    if (cota.getClassificacao().notIn(ClassificacaoCota.CotaMix, ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo)) {
+		if (estudo.getDistribuicaoVendaMediaDTO().getComponente() != null && estudo.getDistribuicaoVendaMediaDTO().getElemento() != null) {
+		    if (estudo.getDistribuicaoVendaMediaDTO().getComponente().equals(ComponentesPDV.AREA_DE_INFLUENCIA)) {
+			if (!cota.getAreasInfluenciaPdv().contains(Integer.parseInt(estudo.getDistribuicaoVendaMediaDTO().getElemento()))) {
+			    cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
+			}
+		    } else if (estudo.getDistribuicaoVendaMediaDTO().getComponente().equals(ComponentesPDV.BAIRRO)) {
+			if (!cota.getBairros().contains(estudo.getDistribuicaoVendaMediaDTO().getElemento())) {
+			    cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
+			}
+		    } else if (estudo.getDistribuicaoVendaMediaDTO().getComponente().equals(ComponentesPDV.COTAS_A_VISTA)) {
+			if (!cota.getTiposCota().contains(Integer.parseInt(estudo.getDistribuicaoVendaMediaDTO().getElemento()))) {
+			    cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
+			}
+		    } else if (estudo.getDistribuicaoVendaMediaDTO().getComponente().equals(ComponentesPDV.COTAS_NOVAS_RETIVADAS)) {
+			if ((!cota.isNova() && estudo.getDistribuicaoVendaMediaDTO().getElemento().equals("1")) ||
+				(cota.isNova() && estudo.getDistribuicaoVendaMediaDTO().getElemento().equals("0"))) {
+			    cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
+			}
+		    } else if (estudo.getDistribuicaoVendaMediaDTO().getComponente().equals(ComponentesPDV.DISTRITO)) {
+			if (!cota.getEstados().contains(estudo.getDistribuicaoVendaMediaDTO().getElemento())) {
+			    cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
+			}
+		    } else if (estudo.getDistribuicaoVendaMediaDTO().getComponente().equals(ComponentesPDV.GERADOR_DE_FLUXO)) {
+			if (!cota.getTiposGeradorFluxo().contains(Integer.parseInt(estudo.getDistribuicaoVendaMediaDTO().getElemento()))) {
+			    cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
+			}
+		    } else if (estudo.getDistribuicaoVendaMediaDTO().getComponente().equals(ComponentesPDV.REGIAO)) {
+			if (!cota.getRegioes().contains(Integer.parseInt(estudo.getDistribuicaoVendaMediaDTO().getElemento()))) {
+			    cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
+			}
+		    } else if (estudo.getDistribuicaoVendaMediaDTO().getComponente().equals(ComponentesPDV.TIPO_PONTO_DE_VENDA)) {
+			if (!cota.getTiposPontoPdv().contains(Integer.parseInt(estudo.getDistribuicaoVendaMediaDTO().getElemento()))) {
+			    cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
+			}
 		    }
 		}
-	    } else {
-		lista.add(cota);
 	    }
 	}
 
 	// removendo excecoes da lista de cotas
-	List<CotaEstudo> listaSemExcecoes = new ArrayList<>();
-	for (CotaEstudo cota : lista) {
-	    boolean isExcecao = false;
-	    if (estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente() != null) {
-		if (estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente().equals(ComponentesPDV.AREA_DE_INFLUENCIA) &&
-			estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas() != null) {
-		    for (String elemento : estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas()) {
-			if (cota.getAreasInfluenciaPdv().contains(Integer.parseInt(elemento))) {
-			    isExcecao = true;
+	for (CotaEstudo cota : cotas) {
+	    if (cota.getClassificacao().notIn(ClassificacaoCota.CotaMix, ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo)) {
+		boolean isExcecao = false;
+		if (estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente() != null) {
+		    if (estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente().equals(ComponentesPDV.AREA_DE_INFLUENCIA) &&
+			    estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas() != null) {
+			for (String elemento : estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas()) {
+			    if (cota.getAreasInfluenciaPdv().contains(Integer.parseInt(elemento))) {
+				isExcecao = true;
+			    }
 			}
-		    }
-		} else if (estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente().equals(ComponentesPDV.BAIRRO) &&
-			estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas() != null) {
-		    for (String elemento : estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas()) {
-			if (cota.getBairros().contains(elemento)) {
-			    isExcecao = true;
+		    } else if (estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente().equals(ComponentesPDV.BAIRRO) &&
+			    estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas() != null) {
+			for (String elemento : estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas()) {
+			    if (cota.getBairros().contains(elemento)) {
+				isExcecao = true;
+			    }
 			}
-		    }
-		} else if (estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente().equals(ComponentesPDV.COTAS_A_VISTA) &&
-			estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas() != null) {
-		    for (String elemento : estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas()) {
-			if (cota.getTiposCota().contains(Integer.parseInt(elemento))) {
-			    isExcecao = true;
+		    } else if (estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente().equals(ComponentesPDV.COTAS_A_VISTA) &&
+			    estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas() != null) {
+			for (String elemento : estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas()) {
+			    if (cota.getTiposCota().contains(Integer.parseInt(elemento))) {
+				isExcecao = true;
+			    }
 			}
-		    }
-		} else if (estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente().equals(ComponentesPDV.COTAS_NOVAS_RETIVADAS) &&
-			estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas() != null) {
-		    for (String elemento : estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas()) {
-			if ((cota.isNova() && elemento.equals("1")) ||
-				(!cota.isNova() && elemento.equals("0"))) {
-			    isExcecao = true;
+		    } else if (estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente().equals(ComponentesPDV.COTAS_NOVAS_RETIVADAS) &&
+			    estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas() != null) {
+			for (String elemento : estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas()) {
+			    if ((cota.isNova() && elemento.equals("1")) ||
+				    (!cota.isNova() && elemento.equals("0"))) {
+				isExcecao = true;
+			    }
 			}
-		    }
-		} else if (estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente().equals(ComponentesPDV.DISTRITO) &&
-			estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas() != null) {
-		    for (String elemento : estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas()) {
-			if (cota.getEstados().contains(elemento)) {
-			    isExcecao = true;
+		    } else if (estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente().equals(ComponentesPDV.DISTRITO) &&
+			    estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas() != null) {
+			for (String elemento : estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas()) {
+			    if (cota.getEstados().contains(elemento)) {
+				isExcecao = true;
+			    }
 			}
-		    }
-		} else if (estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente().equals(ComponentesPDV.GERADOR_DE_FLUXO) &&
-			estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas() != null) {
-		    for (String elemento : estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas()) {
-			if (cota.getTiposGeradorFluxo().contains(Integer.parseInt(elemento))) {
-			    isExcecao = true;
+		    } else if (estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente().equals(ComponentesPDV.GERADOR_DE_FLUXO) &&
+			    estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas() != null) {
+			for (String elemento : estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas()) {
+			    if (cota.getTiposGeradorFluxo().contains(Integer.parseInt(elemento))) {
+				isExcecao = true;
+			    }
 			}
-		    }
-		} else if (estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente().equals(ComponentesPDV.REGIAO) &&
-			estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas() != null) {
-		    for (String elemento : estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas()) {
-			if (cota.getRegioes().contains(Integer.parseInt(elemento))) {
-			    isExcecao = true;
+		    } else if (estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente().equals(ComponentesPDV.REGIAO) &&
+			    estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas() != null) {
+			for (String elemento : estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas()) {
+			    if (cota.getRegioes().contains(Integer.parseInt(elemento))) {
+				isExcecao = true;
+			    }
 			}
-		    }
-		} else if (estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente().equals(ComponentesPDV.TIPO_PONTO_DE_VENDA) &&
-			estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas() != null) {
-		    for (String elemento : estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas()) {
-			if (cota.getTiposPontoPdv().contains(Integer.parseInt(elemento))) {
-			    isExcecao = true;
+		    } else if (estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente().equals(ComponentesPDV.TIPO_PONTO_DE_VENDA) &&
+			    estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas() != null) {
+			for (String elemento : estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas()) {
+			    if (cota.getTiposPontoPdv().contains(Integer.parseInt(elemento))) {
+				isExcecao = true;
+			    }
 			}
 		    }
 		}
-	    }
-	    if (!isExcecao) {
-		listaSemExcecoes.add(cota);
+		if (isExcecao && cota.getClassificacao().equals(ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
+		    cota.setClassificacao(ClassificacaoCota.SemClassificacao);
+		}
 	    }
 	}
-	return listaSemExcecoes;
+	return cotas;
     }
 
     private void calcularTotais(CotaEstudo cota, EstudoTransient estudo) {

@@ -18,98 +18,87 @@ import br.com.abril.nds.model.estudo.CotaEstudo;
 @Component
 public class CorrecaoTendencia {
 
-	private BigDecimal totalReparte;
-	private BigDecimal totalVenda;
+    /**
+     * <h2>Sub Processo: Correção de Tendência</h2>
+     * <p>
+     * <b>Aplicar para cada cota</b>
+     * </p>
+     * <p>
+     * %Venda = TOTAL REP por cota / TOTAL VDA por cota
+     * </p>
+     * <p>
+     * ÍndiceCorrTendência = 1
+     * </p>
+     * 
+     * <pre>
+     * Se %Venda = 1
+     * </pre>
+     * 
+     * <pre>
+     * 
+     * <pre>
+     * ÍndiceCorrTendência = 1,2
+     * </pre>
+     * 
+     * </pre>
+     * 
+     * <pre>
+     * Senão
+     * </pre>
+     * 
+     * <pre>
+     * 
+     * <pre>
+     * 
+     * <pre>
+     * Se %Venda >= 0,9
+     * </pre>
+     * 
+     * </pre></pre>
+     * 
+     * <pre>
+     * 
+     * <pre>
+     * 
+     * <pre>
+     * 
+     * <pre>
+     * ÍndiceCorrTendência = 1,1
+     * </pre>
+     * 
+     * </pre></pre></pre>
+     * 
+     * <pre>
+     * 
+     * <pre>
+     * 
+     * <pre>
+     * Endif
+     * </pre>
+     * 
+     * </pre></pre>
+     * 
+     * <pre>
+     * Endif
+     * </pre>
+     */
+    public void executar(CotaEstudo cota, BigDecimal totalReparte, BigDecimal totalVenda) throws Exception {
 
-	public void setTotalReparte(BigDecimal totalReparte) {
-		this.totalReparte = totalReparte;
-	}
+	BigDecimal indiceCorrecaoTendencia = BigDecimal.ONE;
 
-	public void setTotalVenda(BigDecimal totalVenda) {
-		this.totalVenda = totalVenda;
-	}
+	if (totalVenda.compareTo(BigDecimal.ZERO) != 0) {
+	    BigDecimal percentualVenda = totalVenda.divide(totalReparte, 4, BigDecimal.ROUND_HALF_UP);
 
-	/**
-	 * <h2>Sub Processo: Correção de Tendência</h2>
-	 * <p>
-	 * <b>Aplicar para cada cota</b>
-	 * </p>
-	 * <p>
-	 * %Venda = TOTAL REP por cota / TOTAL VDA por cota
-	 * </p>
-	 * <p>
-	 * ÍndiceCorrTendência = 1
-	 * </p>
-	 * 
-	 * <pre>
-	 * Se %Venda = 1
-	 * </pre>
-	 * 
-	 * <pre>
-	 * 
-	 * <pre>
-	 * ÍndiceCorrTendência = 1,2
-	 * </pre>
-	 * 
-	 * </pre>
-	 * 
-	 * <pre>
-	 * Senão
-	 * </pre>
-	 * 
-	 * <pre>
-	 * 
-	 * <pre>
-	 * 
-	 * <pre>
-	 * Se %Venda >= 0,9
-	 * </pre>
-	 * 
-	 * </pre></pre>
-	 * 
-	 * <pre>
-	 * 
-	 * <pre>
-	 * 
-	 * <pre>
-	 * 
-	 * <pre>
-	 * ÍndiceCorrTendência = 1,1
-	 * </pre>
-	 * 
-	 * </pre></pre></pre>
-	 * 
-	 * <pre>
-	 * 
-	 * <pre>
-	 * 
-	 * <pre>
-	 * Endif
-	 * </pre>
-	 * 
-	 * </pre></pre>
-	 * 
-	 * <pre>
-	 * Endif
-	 * </pre>
-	 */
-	public void executar(CotaEstudo cota) throws Exception {
+	    if (percentualVenda.compareTo(BigDecimal.ONE) == 0) {
+		indiceCorrecaoTendencia = indiceCorrecaoTendencia.add(new BigDecimal(0.2).divide(BigDecimal.ONE, 3, BigDecimal.ROUND_HALF_UP));
+	    } else {
+		BigDecimal decimalCompare = new BigDecimal(0.9).divide(BigDecimal.ONE, 3, BigDecimal.ROUND_HALF_UP);
 
-		BigDecimal indiceCorrecaoTendencia = BigDecimal.ONE;
-
-		if (this.totalVenda.compareTo(BigDecimal.ZERO) != 0) {
-			BigDecimal percentualVenda = this.totalVenda.divide(this.totalReparte, 4, BigDecimal.ROUND_HALF_UP);
-
-			if (percentualVenda.compareTo(BigDecimal.ONE) == 0) {
-				indiceCorrecaoTendencia = indiceCorrecaoTendencia.add(new BigDecimal(0.2).divide(BigDecimal.ONE, 3, BigDecimal.ROUND_HALF_UP));
-			} else {
-				BigDecimal decimalCompare = new BigDecimal(0.9).divide(BigDecimal.ONE, 3, BigDecimal.ROUND_HALF_UP);
-
-				if (percentualVenda.compareTo(decimalCompare) >= 0) {
-					indiceCorrecaoTendencia = indiceCorrecaoTendencia.add(new BigDecimal(0.1).divide(BigDecimal.ONE, 3, BigDecimal.ROUND_HALF_UP));
-				}
-			}
+		if (percentualVenda.compareTo(decimalCompare) >= 0) {
+		    indiceCorrecaoTendencia = indiceCorrecaoTendencia.add(new BigDecimal(0.1).divide(BigDecimal.ONE, 3, BigDecimal.ROUND_HALF_UP));
 		}
-		cota.setIndiceCorrecaoTendencia(indiceCorrecaoTendencia);
+	    }
 	}
+	cota.setIndiceCorrecaoTendencia(indiceCorrecaoTendencia);
+    }
 }

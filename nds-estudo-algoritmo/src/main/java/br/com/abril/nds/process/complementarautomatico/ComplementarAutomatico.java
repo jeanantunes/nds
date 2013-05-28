@@ -30,7 +30,7 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
     @Override
     public void executar(EstudoTransient estudo) {
 	if ((estudo.getProdutoEdicaoEstudo() != null) && (estudo.getEdicoesBase() != null)) {
-	    if ((estudo.isComplementarAutomatico()) && ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao() == 1) || (!estudo.getProdutoEdicaoEstudo().isColecao()))) {
+	    if ((estudo.isComplementarAutomatico()) && ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(new Long(1)) == 0) || (!estudo.getProdutoEdicaoEstudo().isColecao()))) {
 		estudo.setExcedente(new BigDecimal(estudo.getReparteDistribuir()).subtract(estudo.getSomatoriaVendaMedia()));
 		estudo.setPercentualExcedente(BigDecimal.ZERO);
 		if (estudo.getSomatoriaVendaMedia().compareTo(BigDecimal.ZERO) > 0) {
@@ -55,11 +55,8 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
 		    percentualAbrangencia = percentualAbrangencia.multiply(BigDecimal.valueOf(100));
 		    BigDecimal excedenteAMais = estudo.getExcedente().subtract(estudo.getSomatoriaVendaMedia());
 
-		    // calculo modificado pelo Genesio por email de
 		    // Calculo1 = ExcedenteAmais * (1 – (((0,6 * %Abrangência) + 40) / 100))
-		    // para
-		    // Calculo1 = ExcedenteAmais * (1 – (((0,5 * %Abrangência) + 50) / 100))
-		    BigDecimal calculo1 = BigDecimal.valueOf(0.5).multiply(percentualAbrangencia).add(BigDecimal.valueOf(50));
+		    BigDecimal calculo1 = BigDecimal.valueOf(0.6).multiply(percentualAbrangencia).add(BigDecimal.valueOf(40));
 		    calculo1 = excedenteAMais.multiply(BigDecimal.ONE.subtract(calculo1.divide(BigDecimal.valueOf(100), 3, BigDecimal.ROUND_HALF_UP)));
 		    // Calculo2 = 2% do Excedente
 		    BigDecimal calculo2 = estudo.getExcedente().multiply(BigDecimal.valueOf(0.02));

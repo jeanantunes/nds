@@ -84,6 +84,11 @@ public class PaginacaoUtil {
 			}
 		}
 
+		if(posicaoInicial>posicaoFinal) {
+			paginacao.setPaginaAtual(1);
+			posicaoInicial=paginacao.getPosicaoInicial();
+		}
+		
 		return listaAPaginar.subList(posicaoInicial, posicaoFinal);
 	}
 	

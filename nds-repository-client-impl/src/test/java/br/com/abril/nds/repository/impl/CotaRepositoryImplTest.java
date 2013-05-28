@@ -328,7 +328,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void obterPorNumeroCota() {
 
-		Cota cota = this.cotaRepository.obterPorNumerDaCota(NUMERO_COTA);
+		Cota cota = this.cotaRepository.obterPorNumeroDaCota(NUMERO_COTA);
 
 		Assert.assertNotNull(cota);
 
@@ -673,7 +673,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 
 	@Test
 	public void obterEnderecosPorIdCotaSucesso() {
-		Cota cota = this.cotaRepository.obterPorNumerDaCota(NUMERO_COTA);
+		Cota cota = this.cotaRepository.obterPorNumeroDaCota(NUMERO_COTA);
 
 		Assert.assertNotNull(cota);
 
