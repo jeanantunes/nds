@@ -1,7 +1,6 @@
 package br.com.abril.nds.controllers.distribuicao;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -12,10 +11,8 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.validation.ValidationException;
 
 import org.apache.commons.lang.SerializationUtils;
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -284,11 +281,8 @@ public class MatrizDistribuicaoController extends BaseController {
 	public void confirmarCopiarProporcionalDeEstudo(CopiaProporcionalDeDistribuicaoVO copiaProporcionalDeDistribuicaoVO) {
 
 		Long idEstudo = matrizDistribuicaoService.confirmarCopiarProporcionalDeEstudo(copiaProporcionalDeDistribuicaoVO);
-		
-		BigInteger idLancamento = new BigInteger(copiaProporcionalDeDistribuicaoVO.getIdLancamento().toString());
-		
+		BigInteger idLancamento = BigInteger.valueOf(copiaProporcionalDeDistribuicaoVO.getIdLancamento());
 		removeItemListaDeItensDuplicadosNaSessao(idLancamento, copiaProporcionalDeDistribuicaoVO.getIdCopia());
-		
 		result.use(Results.json()).from(idEstudo, "result").recursive().serialize();
 	}
 
