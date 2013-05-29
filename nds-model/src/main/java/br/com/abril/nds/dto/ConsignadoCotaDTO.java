@@ -45,6 +45,9 @@ public class ConsignadoCotaDTO implements Serializable{
 	@Export(label="Motivo", fontSize=9)
 	private TipoDiferenca motivo;
 	
+	@Export(label="Motivo Desc.", fontSize=9)
+	private String motivoTexto;
+	
 	@Export(label="Fornecedor", fontSize=9, widthPercent=7)
 	private String nomeFornecedor;
 	
@@ -139,6 +142,14 @@ public class ConsignadoCotaDTO implements Serializable{
 
 	public void setMotivo(TipoDiferenca motivo) {
 		this.motivo = motivo;
+	}
+	
+	public String getMotivoText() {
+		return motivoTexto;
+	}
+
+	public void setMotivoText(String motivoTexto) {
+		this.motivoTexto = motivoTexto;
 	}
 
 	public BigDecimal getDesconto() {
