@@ -6,6 +6,7 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -179,5 +180,19 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 	query.setParameter("estudo", estudo);
 
 	return query.list();
+    }
+    
+    @Override
+    @Transactional
+    public void inserirPrudutoBase(Estudo estudo) {
+	StringBuilder sql = new StringBuilder();
+	sql.append("insert into estudo_produto_edicao_base ");
+	sql.append(" (estudo_id, produto_edicao_id, colecao, parcial, edicao_aberta, peso) ");
+	sql.append(" values (:estudo_id, :produto_edicao_id, 0, 0, 0, 1) ");
+	
+	Query query = getSession().createSQLQuery(sql.toString());
+	query.setParameter("estudo_id", estudo.getId());
+	query.setParameter("produto_edicao_id", estudo.getProdutoEdicao().getId());
+	query.executeUpdate();
     }
 }
