@@ -47,6 +47,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			FiltroConsultaConsignadoCotaDTO filtro, boolean limitar) {
 		 
 		StringBuilder sql = new StringBuilder();
+		
 		sql.append(" SELECT ");
 
 		sql.append(" 	PR.CODIGO AS codigoProduto, ");
