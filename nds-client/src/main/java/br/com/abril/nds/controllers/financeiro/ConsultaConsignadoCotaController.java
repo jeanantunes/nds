@@ -182,10 +182,21 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		
 		List<ConsultaConsignadoCotaDTO> listaConsignadoCota = this.consultaConsignadoCota.buscarConsignadoCota(filtro, true);
 		
+		FiltroConsultaConsignadoCotaDTO filtroTotal = new FiltroConsultaConsignadoCotaDTO();
+		
+		filtroTotal.setIdCota(filtro.getIdCota());
+		filtroTotal.setIdFornecedor(filtro.getIdFornecedor());
+		filtroTotal.setNomeCota(filtro.getNomeCota());
+		filtroTotal.setNomeFornecedor(filtro.getNomeFornecedor());
+		filtroTotal.setOrdenacaoColuna(null);
+		filtroTotal.setPaginacao(null);
+		
+		List<ConsultaConsignadoCotaDTO> totalRegistros = this.consultaConsignadoCota.buscarConsignadoCota(filtroTotal, false);
+		
 		TableModel<CellModelKeyValue<ConsultaConsignadoCotaDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaConsignadoCotaDTO>>();
 		
-		Long totalRegistros = this.consultaConsignadoCota.buscarTodasMovimentacoesPorCota(filtro);
-		if(totalRegistros == 0){
+		if (totalRegistros.size() == 0) {
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
 
@@ -193,7 +204,7 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		
-		tableModel.setTotal(totalRegistros.intValue());
+		tableModel.setTotal(totalRegistros.size());
 		
 		return tableModel;
 	}
@@ -271,6 +282,9 @@ public class ConsultaConsignadoCotaController extends BaseController {
 			
 			filtro.setNomeFornecedor("Todos");
 		}
+		
+		filtro.getPaginacao().setPaginaAtual(null);
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
 		
 		if(filtro.getIdCota() != null
 				&& filtro.getIdFornecedor() == null) { 
