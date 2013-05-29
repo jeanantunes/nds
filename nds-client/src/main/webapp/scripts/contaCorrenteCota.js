@@ -498,8 +498,9 @@ var contaCorrenteCotaController = $.extend(true, {
 	$(".consignadoCotaGrid", contaCorrenteCotaController.workspace).flexigrid({
 		preProcess : function(data) {
 			$.each(data.rows, function(index, value) {
-				if(!value.cell.motivo){
+				if(!value.cell.motivoTexto){
 					value.cell.motivo = "";
+					value.cell.motivoTexto = "";
 				}
 				
 				value.cell.precoCapa = floatToPrice(formatMoneyValue(value.cell.precoCapa));
@@ -566,7 +567,7 @@ var contaCorrenteCotaController = $.extend(true, {
 			align : 'center'
 		}, {
 			display : 'Motivo',
-			name : 'motivo',
+			name : 'motivoTexto',
 			width : 80,
 			sortable : false,
 			align : 'left'
@@ -846,4 +847,4 @@ var contaCorrenteCotaController = $.extend(true, {
 	}
 }, BaseController);
 
-//@ sourceURL=contaCorrente.js
+//@ sourceURL=contaCorrenteCota.js

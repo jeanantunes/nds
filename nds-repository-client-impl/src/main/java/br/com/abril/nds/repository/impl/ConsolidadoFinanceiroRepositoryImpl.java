@@ -526,7 +526,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("	coalesce(estudocota7_.QTDE_PREVISTA,0) as reparteSugerido, ")
 		   .append("	coalesce(estudocota7_.QTDE_EFETIVA,0) as reparteFinal, ")
 		   .append("	coalesce(estudocota7_.QTDE_PREVISTA-estudocota7_.QTDE_EFETIVA,0) as diferenca, ")
-		   .append("	diferenca10_.TIPO_DIFERENCA as motivo, ")
+		   .append("	diferenca10_.TIPO_DIFERENCA as motivoTexto, ")
 		   .append("	sum(movimentos4_.QTDE) * coalesce(movimentos4_.PRECO_COM_DESCONTO,produtoedi8_.PRECO_VENDA) as total, ")
 		   .append("	chamadaEncalhe.sequencia as sequencia ")
 		   .append("from ")
@@ -604,7 +604,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("	estudocota5_.QTDE_PREVISTA as reparteSugerido, ")
 		   .append("	estudocota5_.QTDE_EFETIVA as reparteFinal, ")
 		   .append("	estudocota5_.QTDE_PREVISTA-estudocota5_.QTDE_EFETIVA as diferenca, ")
-		   .append("	diferenca8_.TIPO_DIFERENCA as motivo, ")
+		   .append("	diferenca8_.TIPO_DIFERENCA as motivoTexto, ")
 		   .append("	sum(movimentos2_.QTDE) * coalesce(movimentos2_.PRECO_COM_DESCONTO,produtoedi6_.PRECO_VENDA) as total, ")
 		   .append("	chamadaEncalhe.sequencia as sequencia ")
 		   .append("from ")
@@ -712,7 +712,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 						orderByColumn = " diferenca ";
 						break;
 					case MOTIVO:
-						orderByColumn = " motivo ";
+						orderByColumn = " motivoTexto ";
 						break;						
 					case FORNECEDOR:
 						orderByColumn = " nomeFornecedor ";
@@ -755,7 +755,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		query.addScalar("reparteSugerido", StandardBasicTypes.BIG_INTEGER);
 		query.addScalar("reparteFinal", StandardBasicTypes.BIG_INTEGER);
 		query.addScalar("diferenca", StandardBasicTypes.BIG_INTEGER);
-		query.addScalar("motivo", StandardBasicTypes.STRING);
+		query.addScalar("motivoTexto", StandardBasicTypes.STRING);
 		query.addScalar("total", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("sequencia", StandardBasicTypes.INTEGER);
 		
