@@ -3331,7 +3331,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 
 		
-		totalComposicao = totalComposicao.abs().add(slipDTO.getValorSlip());
+		totalComposicao = slipDTO.getValorSlip().abs().add(totalComposicao);
 
 		
 		BigDecimal totalPagar = totalComposicao;
@@ -3592,7 +3592,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		
 		//e.adicionarCompleteEspaco("Outros valores", slipDTO.getOutrosValores().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
-		e.adicionarCompleteTraco("VALOR TOTAL A PAGAR", valorTotalPagar);
+		e.adicionarCompleteEspaco("VALOR TOTAL A PAGAR", valorTotalPagar);
 		
 		
 		
