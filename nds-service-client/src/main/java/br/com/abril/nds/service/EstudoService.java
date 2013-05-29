@@ -35,7 +35,7 @@ public interface EstudoService {
 	
 	public Long obterMaxId();
 
-	public List<Long> salvarDivisao(Estudo estudoOriginal, List<Estudo> listEstudo);
+	public List<Long> salvarDivisao(Estudo estudoOriginal, List<Estudo> listEstudo, DivisaoEstudoDTO divisaoEstudo);
 
 	public void alterarEstudo(Estudo estudo);
 	
