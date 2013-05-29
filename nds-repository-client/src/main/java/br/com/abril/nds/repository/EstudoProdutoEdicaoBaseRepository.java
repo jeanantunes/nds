@@ -8,4 +8,6 @@ public interface EstudoProdutoEdicaoBaseRepository {
 
 	List<EdicaoBaseEstudoDTO> obterEdicoesBase(Long estudoId);
 
+	void copiarEdicoesBase(Long idOrigem, Long estudoDividido);
+
 }

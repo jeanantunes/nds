@@ -21,6 +21,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.service.CalendarioService;
+import br.com.abril.nds.service.EstudoProdutoEdicaoBaseService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
@@ -51,6 +52,9 @@ public class DividirEstudoController extends BaseController {
 
     @Autowired
     private EstudoService estudoService;
+    
+    @Autowired
+    private EstudoProdutoEdicaoBaseService estudoProdutoEdicaoBaseService;
 
     // public DividirEstudoController(Result result, HttpSession httpSession, Validator validator) {
     // this.result = result;
@@ -189,8 +193,12 @@ public class DividirEstudoController extends BaseController {
 		listEstudo.add(primeiroEstudo);
 		listEstudo.add(segundoEstudo);
 
-		List<Long> listIdEstudoAdiconado = this.estudoService.salvarDivisao(estudoOriginal, listEstudo);
+		List<Long> listIdEstudoAdiconado = this.estudoService.salvarDivisao(estudoOriginal, listEstudo,divisaoEstudo);
 
+		for (Long estudoDividido : listIdEstudoAdiconado) {
+			this.estudoProdutoEdicaoBaseService.copiarEdicoesBase(estudoOriginal.getId(),estudoDividido);
+		}
+		
 		mensagensValidacao.add("Estudo dividido com sucesso! Os número(s) gerado(s) foram : "+StringUtils.join(listIdEstudoAdiconado," - "));
 
 		

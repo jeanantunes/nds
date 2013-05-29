@@ -23,4 +23,11 @@ public class EstudoProdutoEdicaoBaseServiceImpl implements
 		return estudoProdutoEdicaoBaseRepository.obterEdicoesBase(estudoId);
 	}
 
+	@Transactional
+	@Override
+	public void copiarEdicoesBase(Long idOrigem, Long estudoDividido) {
+		estudoProdutoEdicaoBaseRepository.copiarEdicoesBase(idOrigem, estudoDividido);
+		
+	}
+
 }
