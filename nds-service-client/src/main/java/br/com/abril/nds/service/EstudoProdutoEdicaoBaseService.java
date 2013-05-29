@@ -7,5 +7,7 @@ import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
 public interface EstudoProdutoEdicaoBaseService {
 
 	public List<EdicaoBaseEstudoDTO> obterEdicoesBase(Long estudoId);
+
+	public void copiarEdicoesBase(Long id, Long estudoDividido);
 	
 }

@@ -51,4 +51,26 @@ public class EstudoProdutoEdicaoBaseRepositoryImpl extends AbstractRepositoryMod
 		return query.list();
 	}
 
+	@Override
+	public void copiarEdicoesBase(Long idOrigem, Long estudoDividido) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" INSERT INTO estudo_produto_edicao_base ")
+		.append(" (ESTUDO_ID, PRODUTO_EDICAO_ID, COLECAO, PARCIAL, EDICAO_ABERTA, PESO, VENDA_CORRIGIDA) ") 
+		.append(" ( select ").append(estudoDividido).append(" ,e.PRODUTO_EDICAO_ID,e.colecao,e.PARCIAL,e.EDICAO_ABERTA,e.peso,e.venda_corrigida from estudo_produto_edicao_base e where e.ESTUDO_ID = ")
+		.append(idOrigem).append(")");
+		
+		
+		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
+		/*query.setParameter("idEstudoCopia", estudoDividido);
+		query.setParameter("idOrigem", idOrigem);*/
+		
+		query.executeUpdate();
+		
+		//(ESTUDO_ID, PRODUTO_EDICAO_ID, COLECAO, PARCIAL, EDICAO_ABERTA, PESO, VENDA_CORRIGIDA);
+
+		
+	}
+
 }

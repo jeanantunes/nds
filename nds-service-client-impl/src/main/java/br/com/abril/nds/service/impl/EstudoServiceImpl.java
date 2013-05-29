@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -27,6 +28,7 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
+import br.com.abril.nds.service.EstudoProdutoEdicaoBaseService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.util.DateUtil;
@@ -158,7 +160,7 @@ public class EstudoServiceImpl implements EstudoService {
     }
 
     @Transactional
-	public List<Long> salvarDivisao(Estudo estudoOriginal,List<Estudo> listEstudo) {
+	public List<Long> salvarDivisao(Estudo estudoOriginal,List<Estudo> listEstudo,DivisaoEstudoDTO divisaoEstudo) {
 
 		List<Long> listIdEstudoAdicionado = null;
 
@@ -186,9 +188,9 @@ public class EstudoServiceImpl implements EstudoService {
 			}
 			
 			listIdEstudoAdicionado = new ArrayList<Long>();
+			Integer quantidadeReparte = (divisaoEstudo.getQuantidadeReparte()==null)?0:divisaoEstudo.getQuantidadeReparte();
 
-			List<EstudoCota> listEstudoCota = this.estudoCotaRepository
-					.obterEstudoCotaPorEstudo(estudoOriginal);
+			List<EstudoCota> listEstudoCota = this.estudoCotaRepository.obterEstudoCotaPorEstudo(estudoOriginal);
 
 			int iEstudo = 0;
 
@@ -198,11 +200,26 @@ public class EstudoServiceImpl implements EstudoService {
 				Set<EstudoCota> setEstudoCota = new HashSet<EstudoCota>();
 
 				int iEstudoCota = 0;
-				while (iEstudoCota < listEstudoCota.size()) {
-
-					EstudoCota estudoCota = (EstudoCota) SerializationUtils.clone(listEstudoCota.get(iEstudoCota));
+				for (EstudoCota ec : listEstudoCota) {
+					
+					EstudoCota estudoCota = (EstudoCota) SerializationUtils.clone(ec);
 					estudoCota.setId(null);
 					estudoCota.setEstudo(estudo);
+
+					//nao dividir reparte menor que o informado em tela
+					if(estudoCota.getReparte()!=null && estudoCota.getReparte().compareTo(new BigInteger(quantidadeReparte.toString()))>0){
+						BigDecimal toDivide = null;
+						if(iEstudo==0){
+							toDivide = new BigDecimal(divisaoEstudo.getPercentualDivisaoPrimeiroEstudo()).divide(new BigDecimal("100"));
+						}else{
+							toDivide = new BigDecimal(divisaoEstudo.getPercentualDivisaoSegundoEstudo()).divide(new BigDecimal("100"));
+						}
+						
+						BigDecimal i = new BigDecimal(estudoCota.getReparte());
+						
+						estudoCota.setReparte(i.multiply(toDivide).toBigInteger());
+					}
+					
 					setEstudoCota.add(estudoCota);
 
 					iEstudoCota++;
@@ -212,13 +229,11 @@ public class EstudoServiceImpl implements EstudoService {
 
 				// Estudo 1 possui o mesmo lancamentoID do estudo original
 				if (iEstudo == 0) {
-					Lancamento lanc = this.lancamentoRepository.buscarPorId(estudoOriginal.getLancamentoID());
-					estudo.setLancamentoID(lanc.getId());
+					estudo.setLancamentoID(estudoOriginal.getLancamentoID());
 				}
 				else{
 					estudo.setLancamentoID(lancamentoSegundoEstudo.getId());
 				}
-				
 				
 				
 				this.estudoRepository.adicionar(estudo);
@@ -229,7 +244,7 @@ public class EstudoServiceImpl implements EstudoService {
 			}
 
 		}
-
+		
 		return listIdEstudoAdicionado;
 	}
 
@@ -245,4 +260,5 @@ public class EstudoServiceImpl implements EstudoService {
 	public void setIdLancamentoNoEstudo(Long idLancamento, Long idEstudo) {
 		this.estudoRepository.setIdLancamentoNoEstudo(idLancamento, idEstudo);
 	}
+	
 }
