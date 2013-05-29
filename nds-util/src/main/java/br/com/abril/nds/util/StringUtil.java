@@ -1,5 +1,7 @@
 package br.com.abril.nds.util;
 
+import java.text.Normalizer;
+
 public abstract class StringUtil {
 	/**
 	 * Verifica se a String é valida
@@ -10,4 +12,14 @@ public abstract class StringUtil {
 		return (str == null) || str.isEmpty();
 	}
 
+	public static String limparString(String text){
+		if(text == null)
+			return null;
+		
+		if(text == "")
+			return "";
+					
+        text = Normalizer.normalize(text, Normalizer.Form.NFD);
+        return text.replaceAll("[^\\p{ASCII}]", "");
+	}
 }
