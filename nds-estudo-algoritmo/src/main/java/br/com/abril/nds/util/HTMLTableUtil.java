@@ -63,6 +63,7 @@ public class HTMLTableUtil {
 	h.append("<td>Indice Venda Crescente</td>");
 	h.append("<td>Venda Media Final</td>");
 	h.append("<td>Reparte Minimo</td>");
+	h.append("<td>Reparte Minimo Final</td>");
 	h.append("<td>Reparte Final</td>");
 	h.append("<td>Classificacao</td>");
 	h.append("</tr>");
@@ -130,6 +131,7 @@ public class HTMLTableUtil {
 		h.append(String.format(" <td>%s</td>", ce.getIndiceVendaCrescente()));
 		h.append(String.format(" <td>%s</td>", ce.getVendaMedia()));
 		h.append(String.format(" <td>%s</td>", ce.getReparteMinimo()));
+		h.append(String.format(" <td>%s</td>", ce.getReparteMinimoFinal()));
 		h.append(String.format(" <td>%s</td>", ce.getReparteCalculado()));
 		h.append(String.format(" <td>%s</td>", ce.getClassificacao()));
 		h.append("	</tr>");

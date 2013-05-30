@@ -44,6 +44,9 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 	// distribuicao para as cotas que possuem reparteCalculado < ultimaVenda
 	if (estudo.getReservaAjuste() != null) {
 	    for (CotaEstudo cota : estudo.getCotas()) {
+		if (estudo.getReservaAjuste().compareTo(BigInteger.ZERO) <= 0) {
+		    break;
+		}
 		// Se Repcalculado < Venda (Última edição fechada, sem correção)
 		// Se Cota <> FX / MM / MX / RD / PR
 		if (estudo.getReservaAjuste().compareTo(BigInteger.ZERO) == 1 &&
@@ -54,24 +57,20 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 				ClassificacaoCota.BancaForaDaRegiaoDistribuicao))) {
 		    // RepCalculado Cota = RepCalculado Cota + 1 (ou um pacote padrao)
 		    setReparteCota(cota, estudo);
-		    if (estudo.getReservaAjuste().compareTo(BigInteger.ZERO) <= 0) {
-			break;
-		    }
 		}
 	    }
 
 	    // distribuicao para as cotas que ENTRARAM no estudo
 	    if (estudo.getReservaAjuste().compareTo(BigInteger.ZERO) == 1) {
 		for (CotaEstudo cota : estudo.getCotas()) {
+		    if (estudo.getReservaAjuste().compareTo(BigInteger.ZERO) <= 0) {
+			break;
+		    }
 		    if (estudo.getReservaAjuste().compareTo(BigInteger.ZERO) == 1 &&
-				(cota.getVendaEdicaoMaisRecenteFechada() != null && cota.getReparteCalculado().compareTo(cota.getVendaEdicaoMaisRecenteFechada()) == 0) &&
+			    (cota.getVendaEdicaoMaisRecenteFechada() != null && cota.getReparteCalculado().compareTo(cota.getVendaEdicaoMaisRecenteFechada()) == 0) &&
 			    cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo, ClassificacaoCota.CotaMix,
-				ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
-
+				    ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
 			setReparteCota(cota, estudo);
-			if (estudo.getReservaAjuste().compareTo(BigInteger.ZERO) <= 0) {
-			    break;
-			}
 		    }
 		}
 	    }
@@ -89,14 +88,14 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 		Collections.sort(estudo.getCotas(), orderCotaDesc);
 
 		for (CotaEstudo cota : estudo.getCotas()) {
+		    if (estudo.getReservaAjuste().compareTo(BigInteger.ZERO) <= 0) {
+			break;
+		    }
 		    if (estudo.getReservaAjuste().compareTo(BigInteger.ZERO) == 1 &&
 			    cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo, ClassificacaoCota.CotaMix,
-				ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
+				    ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
 
 			setReparteCota(cota, estudo);
-			if (estudo.getReservaAjuste().compareTo(BigInteger.ZERO) <= 0) {
-			    break;
-			}
 		    }
 		}
 	    }

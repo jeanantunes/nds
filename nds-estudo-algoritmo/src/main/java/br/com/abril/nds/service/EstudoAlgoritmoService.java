@@ -126,7 +126,8 @@ public class EstudoAlgoritmoService {
 	estudo.setSomatoriaReparteEdicoesAbertas(BigDecimal.ZERO);
 	estudo.setTotalPDVs(BigDecimal.ZERO);
 	for (CotaEstudo cota : estudo.getCotas()) {
-	    if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.BancaSoComEdicaoBaseAberta, ClassificacaoCota.RedutorAutomatico)) {
+	    if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.BancaSoComEdicaoBaseAberta,
+		    ClassificacaoCota.RedutorAutomatico)) {
 		estudo.setSomatoriaVendaMedia(estudo.getSomatoriaVendaMedia().add(cota.getVendaMedia()));
 	    }
 	    if (cota.isCotaSoRecebeuEdicaoAberta()) {
@@ -137,18 +138,20 @@ public class EstudoAlgoritmoService {
 	    }
 	}
     }
-    
+
     public static void somarVendaMedia(EstudoTransient estudo) {
 	estudo.setSomatoriaVendaMedia(BigDecimal.ZERO);
 	for (CotaEstudo cota : estudo.getCotas()) {
-	    if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.BancaSoComEdicaoBaseAberta, ClassificacaoCota.RedutorAutomatico)) {
+	    if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.BancaSoComEdicaoBaseAberta,
+		    ClassificacaoCota.RedutorAutomatico)) {
 		estudo.setSomatoriaVendaMedia(estudo.getSomatoriaVendaMedia().add(cota.getVendaMedia()));
 	    }
 	}
     }
 
     public void carregarParametros(EstudoTransient estudo) {
-	estudo.setProdutoEdicaoEstudo(produtoEdicaoDAO.getProdutoEdicaoEstudo(estudo.getProdutoEdicaoEstudo().getProduto().getCodigo(), estudo.getProdutoEdicaoEstudo().getNumeroEdicao()));
+	estudo.setProdutoEdicaoEstudo(produtoEdicaoDAO.getProdutoEdicaoEstudo(estudo.getProdutoEdicaoEstudo().getProduto().getCodigo(), estudo
+		.getProdutoEdicaoEstudo().getNumeroEdicao()));
 	if (estudo.getPacotePadrao() == null) {
 	    estudo.setPacotePadrao(BigInteger.valueOf(estudo.getProdutoEdicaoEstudo().getPacotePadrao()));
 	}
@@ -171,7 +174,8 @@ public class EstudoAlgoritmoService {
 
 	listaEdicoesBase = definicaoBasesDAO.listaEdicoesAnosAnterioresVeraneio(edicao, getDatasPeriodoVeraneio(edicao));
 	if (listaEdicoesBase.isEmpty()) {
-	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontradas edições de veraneio, favor inserir as bases manualmente."));
+	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
+		    "Não foram encontradas edições de veraneio, favor inserir as bases manualmente."));
 	}
 	return listaEdicoesBase;
     }
@@ -203,12 +207,14 @@ public class EstudoAlgoritmoService {
     private LocalDate parseLocalDate(Date dataLancamento, Years anosSubtrair, DataReferencia dataReferencia) {
 	return MonthDay.parse(dataReferencia.getData()).toLocalDate(LocalDate.fromDateFields(dataLancamento).minus(anosSubtrair).getYear());
     }
-    
-    public static BigInteger arredondarPacotePadrao(EstudoTransient estudo, BigInteger reparte) {
-	if (reparte != null && estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null) {
-	    return new BigDecimal(reparte).divide(new BigDecimal(estudo.getPacotePadrao()), 4, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(estudo.getPacotePadrao())).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger();
+
+    public static BigInteger arredondarPacotePadrao(EstudoTransient estudo, BigDecimal reparte) {
+	if (reparte != null && estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null &&
+		estudo.getPacotePadrao().compareTo(BigInteger.ZERO) > 0) {
+	    return reparte.divide(new BigDecimal(estudo.getPacotePadrao()), 0, BigDecimal.ROUND_HALF_UP).toBigInteger()
+		    .multiply(estudo.getPacotePadrao());
 	} else {
-	    return reparte;
+	    return reparte.setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger();
 	}
     }
 
@@ -217,14 +223,13 @@ public class EstudoAlgoritmoService {
     }
 
     public EstudoTransient gerarEstudoAutomatico(ProdutoEdicaoEstudo produto, BigInteger reparte, Usuario usuario) throws Exception {
-    	
-    	
-    	return gerarEstudoAutomatico(null, produto, reparte, usuario);
+
+	return gerarEstudoAutomatico(null, produto, reparte, usuario);
     }
 
-    public EstudoTransient gerarEstudoAutomatico(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, ProdutoEdicaoEstudo produto,
-	    BigInteger reparte, Usuario usuario) throws Exception {
-    	
+    public EstudoTransient gerarEstudoAutomatico(DistribuicaoVendaMediaDTO distribuicaoVendaMedia, ProdutoEdicaoEstudo produto, BigInteger reparte,
+	    Usuario usuario) throws Exception {
+
 	log.debug("Iniciando execução do estudo.");
 	EstudoTransient estudo = new EstudoTransient();
 	estudo.setDataCadastro(new Date());
@@ -234,8 +239,8 @@ public class EstudoAlgoritmoService {
 	estudo.setReparteDistribuir(reparte);
 	estudo.setReparteDistribuirInicial(reparte);
 
-	estudo.setDistribuicaoPorMultiplos(0); //valor default
-	estudo.setPacotePadrao(new BigDecimal(produto.getPacotePadrao()).toBigInteger()); //valor default
+	estudo.setDistribuicaoPorMultiplos(0); // valor default
+	estudo.setPacotePadrao(new BigDecimal(produto.getPacotePadrao()).toBigInteger()); // valor default
 
 	if (distribuicaoVendaMedia != null) {
 	    estudo.setBonificacoes(distribuicaoVendaMedia.getBonificacoes());
@@ -257,7 +262,7 @@ public class EstudoAlgoritmoService {
 		edicoesBase.add(ed);
 	    }
 	    estudo.setEdicoesBase(edicoesBase);
-	    if(distribuicaoVendaMedia.isDistribuicaoPorMultiplo() && distribuicaoVendaMedia.getMultiplo() != null){
+	    if (distribuicaoVendaMedia.isDistribuicaoPorMultiplo() && distribuicaoVendaMedia.getMultiplo() != null) {
 		estudo.setPacotePadrao(distribuicaoVendaMedia.getMultiplo());
 	    }
 	}
@@ -275,14 +280,14 @@ public class EstudoAlgoritmoService {
 	    correcaoVendas.executar(cota, estudo);
 
 	    medias.executar(cota);
-
-	    vendaMediaFinal.executar(cota);
 	}
+	bonificacoes.executar(estudo);
+	
 	jornaleirosNovos.executar(estudo);
 	
-	somarVendaMedia(estudo);
+	vendaMediaFinal.executar(estudo);
 	
-	bonificacoes.executar(estudo);
+	somarVendaMedia(estudo);
 
 	ajusteReparte.executar(estudo);
 
@@ -304,7 +309,7 @@ public class EstudoAlgoritmoService {
 	log.debug("Execução do estudo concluída");
 	return estudo;
     }
-    
+
     public boolean isCotaDentroDoComponenteElemento(ComponentesPDV componente, String[] elementos, CotaEstudo cota) {
 	boolean retorno = false;
 	if (componente != null && elementos != null) {

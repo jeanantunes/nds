@@ -24,6 +24,8 @@ public class MinimoMaximo extends ProcessoAbstrato {
     @Override
     public void executar(EstudoTransient estudo) throws Exception {
 
+	validarRepartesMinimos(estudo);
+	
 	for (CotaEstudo cota : estudo.getCotas()) {
 	    if ((cota.getIntervaloMinimo() != null) && (cota.getIntervaloMaximo() != null)) {
 		if (cota.getIntervaloMinimo().compareTo(cota.getIntervaloMaximo()) > 0) {
@@ -46,6 +48,19 @@ public class MinimoMaximo extends ProcessoAbstrato {
 			cota.setClassificacao(ClassificacaoCota.MaximoMinimo);
 		    }
 		}
+	    }
+	}
+    }
+    
+    private void validarRepartesMinimos(EstudoTransient estudo) {
+	for (CotaEstudo cota : estudo.getCotas()) {
+	    if (cota.getReparteMinimoFinal().compareTo(cota.getReparteCalculado()) > 0) {
+		cota.setReparteCalculado(cota.getReparteMinimoFinal(), estudo);
+	    }
+	}
+	for (CotaEstudo cota : estudo.getCotasExcluidas()) {
+	    if (cota.getReparteMinimoFinal().compareTo(cota.getReparteCalculado()) > 0) {
+		cota.setReparteCalculado(cota.getReparteMinimoFinal(), estudo);
 	    }
 	}
     }

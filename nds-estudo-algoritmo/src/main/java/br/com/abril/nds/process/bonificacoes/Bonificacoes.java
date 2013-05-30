@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.dto.BonificacaoDTO;
+import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.process.ProcessoAbstrato;
@@ -33,20 +34,41 @@ public class Bonificacoes extends ProcessoAbstrato {
 
 	if ((estudo.getBonificacoes() != null) && (!estudo.getBonificacoes().isEmpty())) {
 	    for (BonificacaoDTO bonificacao : estudo.getBonificacoes()) {
+		// validando reparte minimo
+		BigInteger reparteMinimo = BigInteger.ZERO;
+		if (bonificacao.getReparteMinimoBigInteger() != null && bonificacao.getReparteMinimoBigInteger().compareTo(BigInteger.ZERO) > 0) {
+		    reparteMinimo = bonificacao.getReparteMinimoBigInteger();
+		}
+		// validando indiceBonificacao
+		BigDecimal indiceBonificacao = BigDecimal.ZERO;
+		if (bonificacao.getBonificacaoBigDecimal() != null && bonificacao.getBonificacaoBigDecimal().compareTo(BigDecimal.ZERO) > 0) {
+		    indiceBonificacao = BigDecimal.valueOf(100).add(bonificacao.getBonificacaoBigDecimal())
+			    .divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
+		}
+
+		// inserindo valor nas cotas do estudo
 		for (CotaEstudo cota : estudo.getCotas()) {
-		    if (bonificacao.getComponente() != null && bonificacao.getElemento() != null &&
-			    estudoAlgoritmoService.isCotaDentroDoComponenteElemento(bonificacao.getComponente(), new String[] {bonificacao.getElemento()}, cota)) {
-			if (bonificacao.getBonificacaoBigDecimal() != null && bonificacao.getBonificacaoBigDecimal().compareTo(BigDecimal.ZERO) > 0) {
-			    BigDecimal indiceBonificacao = BigDecimal.valueOf(100).add(bonificacao.getBonificacaoBigDecimal()).divide(BigDecimal.valueOf(100), 2, BigDecimal.ROUND_HALF_UP);
-			    if (indiceBonificacao.compareTo(BigDecimal.ONE) > 0) {
-				cota.setIndiceTratamentoRegional(BigDecimal.ONE);
-			    } else {
-				cota.setIndiceTratamentoRegional(indiceBonificacao);
-			    }
+		    String[] vetor = {bonificacao.getElemento()};
+		    if (bonificacao.getComponente() != null && bonificacao.getElemento() != null
+			    && estudoAlgoritmoService.isCotaDentroDoComponenteElemento(bonificacao.getComponente(), vetor, cota)) {
+
+			if (indiceBonificacao.compareTo(cota.getIndiceTratamentoRegional()) > 0) {
+			    cota.setIndiceTratamentoRegional(indiceBonificacao);
 			}
-			if ((bonificacao.getReparteMinimoBigInteger() != null) && (bonificacao.getReparteMinimoBigInteger().compareTo(BigInteger.ZERO) > 0) && (!bonificacao.isTodasAsCotas())) {
-			    if (bonificacao.getReparteMinimoBigInteger().compareTo(cota.getReparteMinimo()) > 0) {
-				cota.setReparteMinimo(bonificacao.getReparteMinimoBigInteger());
+
+			if (reparteMinimo.compareTo(cota.getReparteMinimoFinal()) > 0) {
+			    cota.setReparteMinimoFinal(reparteMinimo);
+			}
+		    }
+		}
+
+		// se todas as cotas estiver selecionado, insere reparte minimo para as bancas SH e VZ fora do estudo
+		if (bonificacao.isTodasAsCotas()) {
+		    for (CotaEstudo cota : estudo.getCotasExcluidas()) {
+			if (cota.getClassificacao().in(ClassificacaoCota.BancaComVendaZero, ClassificacaoCota.BancaSemHistorico)) {
+			    if (reparteMinimo.compareTo(cota.getReparteMinimoFinal()) > 0) {
+				cota.setReparteMinimoFinal(reparteMinimo);
+				cota.setReparteCalculado(reparteMinimo, estudo);
 			    }
 			}
 		    }

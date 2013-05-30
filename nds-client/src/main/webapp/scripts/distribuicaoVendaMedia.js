@@ -461,6 +461,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	
 	this.alertaUmaEdicaoBase = function(){
 		$( "#dialog-edicoesbase" ).dialog({
+		    escondeHeader: false,
 			resizable: false,
 			height:'auto',
 			width:380,

@@ -35,7 +35,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 
     private LinkedList<CotaEstudo> ordenarLista(EstudoTransient estudo) {
 	LinkedList<CotaEstudo> listaOrdenada = new LinkedList<>();
-	
+
 	Collections.sort(estudo.getCotasExcluidas(), new Comparator<CotaEstudo>() {
 
 	    @Override
@@ -94,6 +94,9 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	    reparte = estudo.getReparteMinimo();
 	}
 	for (CotaEstudo cota : listaOrdenada) {
+	    if (estudo.getReparteComplementar().compareTo(reparte) < 0) {
+		break;
+	    }
 	    if (cota.getIntervaloMaximo() != null && cota.getReparteCalculado().compareTo(cota.getIntervaloMaximo()) > 0) {
 		cota.setReparteCalculado(cota.getIntervaloMaximo());
 	    } else if (cota.getReparteCalculado().compareTo(cota.getIntervaloMinimo()) < 0) {
@@ -102,9 +105,6 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 		cota.setReparteCalculado(cota.getReparteCalculado().add(reparte));
 		cota.setClassificacao(ClassificacaoCota.BancaEstudoComplementar);
 		estudo.setReparteComplementar(estudo.getReparteComplementar().subtract(reparte));
-		if (estudo.getReparteComplementar().compareTo(reparte) < 0) {
-		    break;
-		}
 	    }
 	}
 	BigInteger reparteGeral = BigInteger.ONE;
@@ -113,6 +113,9 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 	}
 	while (estudo.getReparteComplementar().compareTo(reparteGeral) >= 0) {
 	    for (CotaEstudo cota : estudo.getCotas()) {
+		if (estudo.getReparteComplementar().compareTo(reparteGeral) < 0) {
+		    break;
+		}
 		if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
 			ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix,
 			ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
@@ -123,9 +126,6 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 		    } else {
 			cota.setReparteCalculado(cota.getReparteCalculado().add(reparteGeral));
 			estudo.setReparteComplementar(estudo.getReparteComplementar().subtract(reparteGeral));
-			if (estudo.getReparteComplementar().compareTo(reparteGeral) < 0) {
-			    break;
-			}
 		    }
 		}
 	    }

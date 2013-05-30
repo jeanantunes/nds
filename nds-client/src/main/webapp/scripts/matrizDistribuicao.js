@@ -100,6 +100,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		}
 		
 		$("#dialog-pagincao-confirmada", _workspace).dialog({
+		        escondeHeader: false,
 			resizable: false,
 			height:'auto',
 			width:600,
@@ -535,6 +536,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.popup_confirmar_duplicarLinha = function() {
 		
 		$( "#dialog-confirm-duplicar", _workspace ).dialog({
+		    escondeHeader: false,
 			resizable: false,
 			height:'auto',
 			width:300,
@@ -568,6 +570,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.popup_confirmar_finalizacao_matriz = function() {
 		
 			$( "#dialog-confirm-finalizacao", _workspace ).dialog({
+			    escondeHeader: false,
 				resizable: false,
 				height:'auto',
 				width:300,
@@ -600,6 +603,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		this.popup_confirmar_reabertura_matriz = function() {
 					
 					$( "#dialog-confirm-reabrir-matriz", _workspace ).dialog({
+					    escondeHeader: false,
 						resizable: false,
 						height:'auto',
 						width:300,
@@ -635,6 +639,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.popup_confirmar_exclusao_estudo = function() {
 		
 		$( "#dialog-confirm-exclusao", _workspace ).dialog({
+		    escondeHeader: false,
 			resizable: false,
 			height:'auto',
 			width:300,
@@ -670,6 +675,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.popup_confirmar_reabertura_estudo = function() {
 		
 		$( "#dialog-confirm-reabert", _workspace ).dialog({
+		    escondeHeader: false,
 			resizable: false,
 			height:'auto',
 			width:300,
@@ -1187,6 +1193,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 
 					if(result.boolean){
 						$("#dialog-confirm-coincidencia-cotas").dialog({
+						    escondeHeader: false,
 							resizable: false,
 							height:'auto',
 							width:400,
@@ -1527,6 +1534,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	        }
 	        
 	        $('#confirmar_variaveis').dialog({
+	            escondeHeader: false,
 	            resizable: false,
 	            height:'auto',
 	            width:600,
@@ -1573,6 +1581,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		$('#confirmar_uma_edicao_base').html("<p>"+msg+"</p>");
 		
 		$('#confirmar_uma_edicao_base').dialog({
+		    escondeHeader: false,
             resizable: false,
             height:'auto',
             width:600,

@@ -28,7 +28,6 @@ import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.service.EstudoAlgoritmoService;
-import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre as cotas encontradas para o perfil definido no
@@ -130,6 +129,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
     }
 
     private List<CotaEstudo> validarComponentes(List<CotaEstudo> cotas, EstudoTransient estudo) {
+	// marcando bancas fora da regiao de distribuicao
 	for (CotaEstudo cota : cotas) {
 	    if (cota.getClassificacao().notIn(ClassificacaoCota.CotaMix, ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo)) {
 		for (String item : cota.getTiposCota()) {
@@ -207,11 +207,11 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	if (cota.getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) {
 	    cota.setClassificacao(ClassificacaoCota.BancaSuspensa);
 	}
-	cota.setIntervaloMaximo(EstudoAlgoritmoService.arredondarPacotePadrao(estudo, cota.getIntervaloMaximo()));
-	cota.setIntervaloMinimo(EstudoAlgoritmoService.arredondarPacotePadrao(estudo, cota.getIntervaloMinimo()));
+	cota.setIntervaloMaximo(cota.getIntervaloMaximo());
+	cota.setIntervaloMinimo(cota.getIntervaloMinimo());
 	if (estudo.isUsarFixacao() && cota.getReparteFixado() != null) {
 	    cota.setClassificacao(ClassificacaoCota.ReparteFixado);
-	    cota.setReparteFixado(EstudoAlgoritmoService.arredondarPacotePadrao(estudo, cota.getReparteFixado()));
+	    cota.setReparteFixado(cota.getReparteFixado());
 	    cota.setReparteCalculado(cota.getReparteFixado(), estudo);
 	}
     }

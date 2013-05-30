@@ -3,6 +3,7 @@ package br.com.abril.nds.process.vendamediafinal;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.model.estudo.CotaEstudo;
+import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.process.ajustereparte.AjusteReparte;
 import br.com.abril.nds.process.jornaleirosnovos.JornaleirosNovos;
 
@@ -18,17 +19,19 @@ import br.com.abril.nds.process.jornaleirosnovos.JornaleirosNovos;
 @Component
 public class VendaMediaFinal {
 
-    public void executar(CotaEstudo cota) {
+    public void executar(EstudoTransient estudo) {
 
-	if (cota.getVendaMedia() != null) {
-	    if (cota.getIndiceAjusteCota() != null) {
-		cota.setVendaMedia(cota.getVendaMedia().multiply(cota.getIndiceAjusteCota()));
-	    }
-	    if (cota.getIndiceVendaCrescente() != null) {
-		cota.setVendaMedia(cota.getVendaMedia().multiply(cota.getIndiceVendaCrescente()));
-	    }
-	    if (cota.getIndiceTratamentoRegional() != null) {
-		cota.setVendaMedia(cota.getVendaMedia().multiply(cota.getIndiceTratamentoRegional()));
+	for (CotaEstudo cota : estudo.getCotas()) {
+	    if (cota.getVendaMedia() != null) {
+		if (cota.getIndiceAjusteCota() != null) {
+		    cota.setVendaMedia(cota.getVendaMedia().multiply(cota.getIndiceAjusteCota()));
+		}
+		if (cota.getIndiceVendaCrescente() != null) {
+		    cota.setVendaMedia(cota.getVendaMedia().multiply(cota.getIndiceVendaCrescente()));
+		}
+		if (cota.getIndiceTratamentoRegional() != null) {
+		    cota.setVendaMedia(cota.getVendaMedia().multiply(cota.getIndiceTratamentoRegional()));
+		}
 	    }
 	}
     }

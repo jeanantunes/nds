@@ -24,6 +24,7 @@ function popup_novo() {
 	$("#edicaoPesquisaBases").val("");
 	distribuicaoVendaMedia.produtoEdicaoPesquisaBases = [];
 	$( "#dialog-edicoes-base" ).dialog({
+	    escondeHeader: false,
 		resizable: false,
 		height:450,
 		width:600,
@@ -44,6 +45,7 @@ function popup_cancelar() {
 	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 	$( "#dialog-cancelar" ).dialog({
+	    escondeHeader: false,
 		resizable: false,
 		height:'auto',
 		width:380,
@@ -63,6 +65,7 @@ function popup_cancelar() {
 
 function popup_excluir_bonificacao(index) {
 	$( "#dialog-excluir" ).dialog({
+	    escondeHeader: false,
 		resizable: false,
 		height:'auto',
 		width:380,
@@ -83,6 +86,7 @@ function popup_excluir() {
 	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 	$( "#dialog-excluir" ).dialog({
+	    escondeHeader: false,
 		resizable: false,
 		height:'auto',
 		width:380,
@@ -101,6 +105,7 @@ function popup_excluir() {
 };
 function popup_excluir_todos() {
     $( "#dialog-excluir" ).dialog({
+        escondeHeader: false,
 	resizable: false,
 	height:'auto',
 	width:380,
@@ -121,6 +126,7 @@ function popup_pesqRegiao() {
 	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 	$( "#dialog-regiao" ).dialog({
+	    escondeHeader: false,
 		resizable: false,
 		height:'auto',
 		width:440,
@@ -142,6 +148,7 @@ function popup_pesqRegiao() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-detalhes" ).dialog({
+		    escondeHeader: false,
 			resizable: false,
 			height:'auto',
 			width:'auto',
