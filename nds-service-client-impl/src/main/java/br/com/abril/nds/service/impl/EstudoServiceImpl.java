@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -28,7 +29,6 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
-import br.com.abril.nds.service.EstudoProdutoEdicaoBaseService;
 import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.util.DateUtil;
@@ -193,6 +193,7 @@ public class EstudoServiceImpl implements EstudoService {
 			List<EstudoCota> listEstudoCota = this.estudoCotaRepository.obterEstudoCotaPorEstudo(estudoOriginal);
 
 			int iEstudo = 0;
+			HashMap<Long,BigInteger> diffEstudosMap = new HashMap<Long,BigInteger>();
 
 			for (Estudo estudo : listEstudo) {
 
@@ -200,6 +201,7 @@ public class EstudoServiceImpl implements EstudoService {
 				Set<EstudoCota> setEstudoCota = new HashSet<EstudoCota>();
 
 				int iEstudoCota = 0;
+				
 				for (EstudoCota ec : listEstudoCota) {
 					
 					EstudoCota estudoCota = (EstudoCota) SerializationUtils.clone(ec);
@@ -208,16 +210,27 @@ public class EstudoServiceImpl implements EstudoService {
 
 					//nao dividir reparte menor que o informado em tela
 					if(estudoCota.getReparte()!=null && estudoCota.getReparte().compareTo(new BigInteger(quantidadeReparte.toString()))>0){
-						BigDecimal toDivide = null;
+						//Primeiro estudo gerado
 						if(iEstudo==0){
+							BigDecimal toDivide = null;
+							BigDecimal i = new BigDecimal(estudoCota.getReparte());
 							toDivide = new BigDecimal(divisaoEstudo.getPercentualDivisaoPrimeiroEstudo()).divide(new BigDecimal("100"));
+							BigInteger bigInteger = i.multiply(toDivide).setScale(0,BigDecimal.ROUND_HALF_UP).toBigInteger();
+							estudoCota.setReparte(bigInteger);
+							
+							diffEstudosMap.put(ec.getId(), ec.getReparte().subtract(bigInteger));
+							
+							/*BigDecimal bd  = new BigDecimal(3);
+							BigDecimal toDivide  = new BigDecimal(50).divide(new BigDecimal("100"));
+							System.out.println(bd.multiply(toDivide).setScale(0,BigDecimal.ROUND_HALF_UP));*/
+							
 						}else{
-							toDivide = new BigDecimal(divisaoEstudo.getPercentualDivisaoSegundoEstudo()).divide(new BigDecimal("100"));
+							//Segundo estudo gerado
+//							toDivide = new BigDecimal(divisaoEstudo.getPercentualDivisaoSegundoEstudo()).divide(new BigDecimal("100"));
+							estudoCota.setReparte(diffEstudosMap.get(ec.getId()));
 						}
 						
-						BigDecimal i = new BigDecimal(estudoCota.getReparte());
 						
-						estudoCota.setReparte(i.multiply(toDivide).toBigInteger());
 					}
 					
 					setEstudoCota.add(estudoCota);
