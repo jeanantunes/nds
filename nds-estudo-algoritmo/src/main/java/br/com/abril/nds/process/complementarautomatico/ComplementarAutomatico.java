@@ -92,7 +92,7 @@ public class ComplementarAutomatico extends ProcessoAbstrato {
 		    estudo.setReparteComplementar(new BigDecimal(estudo.getReparteComplementar()).max(calculo3).toBigInteger());
 		}
 		// se for distribuicao por multiplos, faz arredondamento para o pacote padrao
-		estudo.setReparteComplementar(EstudoAlgoritmoService.arredondarPacotePadrao(estudo, estudo.getReparteComplementar()));
+		estudo.setReparteComplementar(EstudoAlgoritmoService.arredondarPacotePadrao(estudo, new BigDecimal(estudo.getReparteComplementar())));
 
 		estudo.setReparteComplementarInicial(estudo.getReparteComplementar());
 		estudo.setReparteDistribuir(estudo.getReparteDistribuir().subtract(estudo.getReparteComplementar()));

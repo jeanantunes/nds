@@ -18,6 +18,7 @@ public class CotaEstudo extends Cota {
     private BigInteger reparteCalculado;
     private BigInteger reparteJuramentadoAFaturar;
     private BigInteger reparteMinimo;
+    private BigInteger reparteMinimoFinal;
     private BigInteger intervaloMinimo;
     private BigInteger intervaloMaximo;
     private BigInteger reparteFixado;
@@ -58,6 +59,7 @@ public class CotaEstudo extends Cota {
 	vendaMedia = BigDecimal.ZERO;
 	indiceTratamentoRegional = BigDecimal.ONE;
 	reparteMinimo = BigInteger.ZERO;
+	reparteMinimoFinal = BigInteger.ZERO;
 	intervaloMinimo = BigInteger.ZERO;
 	reparteCalculado = BigInteger.ZERO;
 	indiceAjusteCota = BigDecimal.ONE;
@@ -345,11 +347,21 @@ public class CotaEstudo extends Cota {
         this.pesoMenorVenda = pesoMenorVenda;
     }
 
+    public BigInteger getReparteMinimoFinal() {
+        return reparteMinimoFinal;
+    }
+
+    public void setReparteMinimoFinal(BigInteger reparteMinimoFinal) {
+	if (reparteMinimoFinal != null && reparteMinimoFinal.compareTo(this.reparteMinimoFinal) >= 0) {
+	    this.reparteMinimoFinal = reparteMinimoFinal;
+	}
+    }
+
     @Override
     public int hashCode() {
 	final int prime = 31;
 	int result = super.hashCode();
-	result = prime * result + ((regioes == null) ? 0 : regioes.hashCode());
+	result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
 	return result;
     }
 
@@ -362,20 +374,11 @@ public class CotaEstudo extends Cota {
 	if (getClass() != obj.getClass())
 	    return false;
 	CotaEstudo other = (CotaEstudo) obj;
-	if (regioes == null) {
-	    if (other.regioes != null) {
-		return false;
-	    }
-	} else if (!regioes.equals(other.regioes)) {
-	    return false;
-	}
 	if (getId() == null) {
-	    if (other.getId() != null) {
+	    if (other.getId() != null)
 		return false;
-	    }
-	} else if (!getId().equals(other.getId())) {
+	} else if (!getId().equals(other.getId()))
 	    return false;
-	}
 	return true;
     }
 }

@@ -616,28 +616,32 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	if (pacotePadrao != null && pacotePadrao.compareTo(BigInteger.ZERO) > 0) {
 	    reparte = pacotePadrao;
 	}
-	if (reparteDistribuir.compareTo(BigInteger.ZERO) != 0) {
+	while (reparteDistribuir.compareTo(reparte) >= 0 || reparteDistribuir.compareTo(reparte.negate()) <= 0) {
 	    for (EstudoCota cota : cotas) {
-		if (reparteDistribuir.compareTo(BigInteger.ZERO) > 0) {
+		if (reparteDistribuir.compareTo(BigInteger.ZERO) >= 0) {
 		    cota.setReparte(cota.getReparte().add(reparte));
 		    reparteDistribuir = reparteDistribuir.subtract(reparte);
-		} else if (reparteDistribuir.compareTo(BigInteger.ZERO) < 0) {
+		} else if (reparteDistribuir.compareTo(BigInteger.ZERO) <= 0) {
 		    cota.setReparte(cota.getReparte().subtract(reparte));
 		    reparteDistribuir = reparteDistribuir.add(reparte);
-		}
-		if (reparteDistribuir.compareTo(BigInteger.ZERO) > 0 && reparteDistribuir.compareTo(reparte) < 0) {
-		    if (cotas.size() > 0) {
-			cotas.get(0).setReparte(cotas.get(0).getReparte().add(reparteDistribuir));
-			reparteDistribuir = reparteDistribuir.subtract(reparteDistribuir);
-		    }
-		    break;
-		} else if (reparteDistribuir.compareTo(BigInteger.ZERO) < 0 && reparteDistribuir.compareTo(reparte.multiply(BigInteger.valueOf(-1))) > 0) {
-		    if (cotas.size() > 0) {
-			cotas.get(0).setReparte(cotas.get(0).getReparte().subtract(reparteDistribuir));
-			reparteDistribuir = reparteDistribuir.add(reparteDistribuir);
-		    }
+		} else {
 		    break;
 		}
+		
+		if (reparteDistribuir.compareTo(BigInteger.ZERO) == 0) {
+		    break;
+		}
+	    }
+	}
+	if (reparteDistribuir.compareTo(BigInteger.ZERO) > 0 && reparteDistribuir.compareTo(reparte) < 0) {
+	    if (cotas.size() > 0) {
+		cotas.get(0).setReparte(cotas.get(0).getReparte().add(reparteDistribuir));
+		reparteDistribuir = reparteDistribuir.subtract(reparteDistribuir);
+	    }
+	} else if (reparteDistribuir.compareTo(BigInteger.ZERO) < 0 && reparteDistribuir.compareTo(reparte.negate()) > 0) {
+	    if (cotas.size() > 0) {
+		cotas.get(0).setReparte(cotas.get(0).getReparte().subtract(reparteDistribuir));
+		reparteDistribuir = reparteDistribuir.add(reparteDistribuir);
 	    }
 	}
 

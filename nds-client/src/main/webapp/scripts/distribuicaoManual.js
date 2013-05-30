@@ -64,6 +64,7 @@ var distribuicaoManual = $.extend(true, {
 	
 	confirmar : function(dialogId, callbackFunction, errorCallback, posCloseCallback) {
 		$(dialogId).dialog({
+		        escondeHeader: false,
 			resizable: false,
 			height:170,
 			width:380,

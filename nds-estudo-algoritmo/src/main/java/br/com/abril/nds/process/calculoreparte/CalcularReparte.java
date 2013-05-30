@@ -60,8 +60,7 @@ public class CalcularReparte extends ProcessoAbstrato {
 
 	minimoMaximo.executar(estudo);
 
-	// Ajustar reparte calculado ao pacote padrão ou simplesmente arredondar
-	// reparte calculado
+	// Ajustar reparte calculado ao pacote padrão ou simplesmente arredondar reparte calculado
 	ajustarReparteCalculado(estudo);
 
 	gravarReparteJuramentado.executar(estudo);
@@ -103,7 +102,7 @@ public class CalcularReparte extends ProcessoAbstrato {
 
 		reservaAjuste = calculo1.max(calculo2);
 		reservaAjuste = reservaAjuste.max(calculo3);
-		reservaAjuste = EstudoAlgoritmoService.arredondarPacotePadrao(estudo, reservaAjuste);
+		reservaAjuste = EstudoAlgoritmoService.arredondarPacotePadrao(estudo, new BigDecimal(reservaAjuste));
 
 		// ExcedenteDistribuir = ExcedenteDistribuir - AjusteReparte
 		estudo.setExcedenteDistribuir(estudo.getExcedenteDistribuir().subtract(new BigDecimal(reservaAjuste)));
@@ -153,45 +152,41 @@ public class CalcularReparte extends ProcessoAbstrato {
 	}
 
 	for (CotaEstudo cota : estudo.getCotas()) {
+	    // calculando reparte minimo para a cota
+	    BigDecimal reparteMinimo = BigDecimal.ZERO;
+	    if (cota.getReparteMinimo() != null) {
+		reparteMinimo = new BigDecimal(cota.getReparteMinimo()).divide(BigDecimal.valueOf(2), 3, BigDecimal.ROUND_HALF_UP);
+	    }
+
 	    if (estudo.getPercentualExcedente().compareTo(BigDecimal.ZERO) < 0) {
 		// RepCalculadoCota = ((RepDistribuir / SVendaMédiaFinal) * VendaMédiaFinalCota) + ReparteMínimo
-		cota.setReparteCalculado(indiceReparte.multiply(cota.getVendaMedia()).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
-		// se o reparte mínimo for nulo, simplesmente não o adiciona
-		// deixando o cálculo conforme abaixo
-		// RepCalculadoCota = ((RepDistribuir / SVendaMédiaFinal) * VendaMédiaFinalCota)
-		if (estudo.getReparteMinimo() != null) {
-		    cota.setReparteCalculado(cota.getReparteCalculado().add(cota.getReparteMinimo()));
-		}
+		cota.setReparteCalculado(indiceReparte.multiply(cota.getVendaMedia()).add(reparteMinimo).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger());
+		
+		// ajuste no reparteDistribuir do estudo para nao remover novamente o valor do reparte minimo do reparteDistribuir
+		BigInteger reparteSemMinimo = indiceReparte.multiply(cota.getVendaMedia()).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger();
+		estudo.setReparteDistribuir(estudo.getReparteDistribuir().add(cota.getReparteCalculado().subtract(reparteSemMinimo)));
 	    } else {
 		// ExcPDV = ExcedentePDV * PDVCota
 		BigDecimal excPDV = BigDecimal.ZERO;
 		if (cota.getQuantidadePDVs() != null) {
 		    excPDV = excedentePDV.multiply(cota.getQuantidadePDVs());
 		}
-
 		// ExcVDA = ExcedenteVDA * VendaMédiaFinalCota		    
 		BigDecimal excVenda = excedenteVenda.multiply(cota.getVendaMedia());
 
 		// RepCalculadoCota = VMFCota + ExcedPDV + ExcedVda + ReparteMínimo
-		cota.setReparteCalculado(cota.getVendaMedia().add(excPDV).add(excVenda).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
-		if (estudo.getReparteMinimo() != null) {
-		    cota.setReparteCalculado(cota.getReparteCalculado().add(cota.getReparteMinimo()));
-		}
+		cota.setReparteCalculado(cota.getVendaMedia().add(excPDV).add(excVenda).add(reparteMinimo).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
+		
+		// ajuste no reparteDistribuir do estudo para nao remover novamente o valor do reparte minimo do reparteDistribuir
+		BigInteger reparteSemMinimo = cota.getVendaMedia().add(excPDV).add(excVenda).setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger();
+		estudo.setReparteDistribuir(estudo.getReparteDistribuir().add(cota.getReparteCalculado().subtract(reparteSemMinimo)));
 	    }
 	}
     }
 
     public void ajustarReparteCalculado(EstudoTransient estudo) {
-	if (estudo.isDistribuicaoPorMultiplos() && (estudo.getPacotePadrao() != null)) {
-	    for (CotaEstudo cota : estudo.getCotas()) {
-		// RepCalculadoCota = ARRED(RepCalculadoCota /Pacote-Padrão; 0) * Pacote-Padrão
-		cota.setReparteCalculado(cota.getReparteCalculado().divide(estudo.getPacotePadrao()).multiply(estudo.getPacotePadrao()), estudo);
-	    }
-	} else {
-	    for (CotaEstudo cota : estudo.getCotas()) {
-		// Arredondar RepCalculado Cota pelo método inglês
-		cota.setReparteCalculado(cota.getReparteCalculado().divide(BigInteger.ONE), estudo);
-	    }
+	for (CotaEstudo cota : estudo.getCotas()) {
+	    cota.setReparteCalculado(EstudoAlgoritmoService.arredondarPacotePadrao(estudo, new BigDecimal(cota.getReparteCalculado())), estudo);
 	}
     }
 
@@ -204,26 +199,24 @@ public class CalcularReparte extends ProcessoAbstrato {
 	return false;
     }
 
+    private BigInteger getSomaReparteCalculadoCotas(EstudoTransient estudo) {
+	List<CotaEstudo> cotas = new ArrayList<>();
+	cotas.addAll(estudo.getCotas());
+	cotas.addAll(estudo.getCotasExcluidas());
+	BigInteger somaReparteCalculadoCota = BigInteger.ZERO;
+	for (CotaEstudo cota : cotas) {
+	    somaReparteCalculadoCota = somaReparteCalculadoCota.add(cota.getReparteCalculado());
+	}
+	return somaReparteCalculadoCota;
+    }
+
     public void calcularIndiceSobra(EstudoTransient estudo) {
 	// Fim do sub processo
 	// Se houver saldo no reparte total distribuido, não considerando-se o total de reparte juramentado:
 	// Indice de Sobra ou Falta = ( 'sum'ReparteCalculado Cota / ReparteCalculado) * ReparteCalculado Cota (não
-
 	List<CotaEstudo> cotas = new ArrayList<>();
-	cotas.addAll(estudo.getCotas());
-	cotas.addAll(estudo.getCotasExcluidas());
-	BigInteger reparteSobra = BigInteger.ONE;
-	BigInteger sumReparteCalculadoCota = BigInteger.ZERO;
-	for (CotaEstudo cota : cotas) {
-	    sumReparteCalculadoCota = sumReparteCalculadoCota.add(cota.getReparteCalculado());
-	}
 	cotas = new ArrayList<>();
 	cotas.addAll(estudo.getCotas());
-	if (estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null) {
-	    reparteSobra = estudo.getPacotePadrao();
-	}
-	// indice que sera aplicado para todas as cotas na distribuicao da sobra
-	BigDecimal indicedeSobraouFalta = new BigDecimal(estudo.getReparteDistribuirInicial()).divide(new BigDecimal(sumReparteCalculadoCota), 3, BigDecimal.ROUND_HALF_UP);
 
 	Collections.sort(cotas, new Comparator<CotaEstudo>() {
 	    @Override
@@ -232,59 +225,54 @@ public class CalcularReparte extends ProcessoAbstrato {
 	    }
 	});
 
+	BigDecimal somaRepartes = new BigDecimal(getSomaReparteCalculadoCotas(estudo).add(estudo.getReparteComplementar()).add(estudo.getReservaAjuste()));
+	estudo.setReparteDistribuir(estudo.getReparteDistribuirInicial().subtract(somaRepartes.toBigInteger()));
+	// indice que sera aplicado para todas as cotas na distribuicao da sobra
+	BigDecimal indicedeSobraouFalta = new BigDecimal(estudo.getReparteDistribuirInicial()).divide(somaRepartes, 3, BigDecimal.ROUND_HALF_UP);
+
+	// aplicacao do indice de sobra nas cotas
 	for (CotaEstudo cota : cotas) {
 	    if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) == 0) {
 		break;
 	    }
 	    if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
 		    ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix)) {
-		if (estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null) {
-		    BigDecimal temp = new BigDecimal(cota.getReparteCalculado()).multiply(indicedeSobraouFalta);
-		    // divisao usada para arredondar valor
-		    BigInteger inteiro = temp.divide(BigDecimal.ONE, 0, BigDecimal.ROUND_HALF_UP).toBigInteger();
-		    cota.setReparteCalculado(EstudoAlgoritmoService.arredondarPacotePadrao(estudo, inteiro), estudo);
-		} else {
-		    BigDecimal temp = new BigDecimal(cota.getReparteCalculado()).multiply(indicedeSobraouFalta);
-		    // divisao usada para arredondar valor
-		    cota.setReparteCalculado(temp.divide(BigDecimal.ONE, 0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
-		}
+		BigDecimal indiceCalculado = new BigDecimal(cota.getReparteCalculado()).multiply(indicedeSobraouFalta);
+		cota.setReparteCalculado(EstudoAlgoritmoService.arredondarPacotePadrao(estudo, indiceCalculado), estudo);
 	    }
 	}
 
-	if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) != 0) {
-	    // Se ainda houver saldo, subtrair ou somar 1 exemplar por cota do maior para o menor reparte
-	    // (exceto repartes fixados (FX), quantidades MAXIMAS E MINIMAS (MM)
-	    // e bancas com MIX (MX)).
+	// Se ainda houver saldo, subtrair ou somar 1 exemplar por cota do maior para o menor reparte
+	// (exceto repartes fixados (FX), quantidades MAXIMAS E MINIMAS (MM) e bancas com MIX (MX)).
+	BigInteger reparte = BigInteger.ONE;
+	if (estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null && estudo.getPacotePadrao().compareTo(BigInteger.ZERO) > 0) {
+	    reparte = estudo.getPacotePadrao();
+	}
+	while (estudo.getReparteDistribuir().compareTo(reparte) >= 0 || estudo.getReparteDistribuir().compareTo(reparte.negate()) <= 0) {
 	    for (CotaEstudo cota : cotas) {
+		if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
+			ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix)) {
+		    if (estudo.getReparteDistribuir().compareTo(reparte) >= 0) {
+			cota.setReparteCalculado(cota.getReparteCalculado().add(reparte), estudo);
+		    } else if (estudo.getReparteDistribuir().compareTo(reparte.negate()) <= 0) {
+			cota.setReparteCalculado(cota.getReparteCalculado().subtract(reparte), estudo);
+		    } else {
+			break;
+		    }
+		}
 		if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) == 0) {
 		    break;
 		}
-		if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
-			ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix)) {
-		    if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) == 1 &&
-			    estudo.getReparteDistribuir().compareTo(reparteSobra) >= 0) {
-			cota.setReparteCalculado(cota.getReparteCalculado().add(reparteSobra), estudo);
-		    } else if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) == -1 &&
-			    estudo.getReparteDistribuir().compareTo(reparteSobra.multiply(BigInteger.valueOf(-1))) <= 0) {
-			cota.setReparteCalculado(cota.getReparteCalculado().subtract(reparteSobra), estudo);
-		    }
-		}
 	    }
 	}
 
-	// se o reparte a distribuir for menor que o pacote padrao ele sera distribuido para a primeira cota
-	if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) != 0) {
-	    for (CotaEstudo cota : cotas) {
-		if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
-			ClassificacaoCota.BancaMixSemDeterminadaPublicacao, ClassificacaoCota.CotaMix)) {
-		    if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) == 1 &&
-			    estudo.getReparteDistribuir().compareTo(reparteSobra) > 0) {
-			cota.setReparteCalculado(cota.getReparteCalculado().add(estudo.getReparteDistribuir()), estudo);
-		    } else if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) == -1 &&
-			    estudo.getReparteDistribuir().compareTo(reparteSobra.multiply(BigInteger.valueOf(-1))) < 0) {
-			cota.setReparteCalculado(cota.getReparteCalculado().subtract(estudo.getReparteDistribuir()), estudo);
-		    }
-		}
+	if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) > 0 && estudo.getReparteDistribuir().compareTo(reparte) < 0) {
+	    if (cotas.size() > 0) {
+		cotas.get(0).setReparteCalculado(cotas.get(0).getReparteCalculado().add(estudo.getReparteDistribuir()), estudo);
+	    }
+	} else if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) < 0 && estudo.getReparteDistribuir().compareTo(reparte.negate()) > 0) {
+	    if (cotas.size() > 0) {
+		cotas.get(0).setReparteCalculado(cotas.get(0).getReparteCalculado().subtract(estudo.getReparteDistribuir()));
 	    }
 	}
     }

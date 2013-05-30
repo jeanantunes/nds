@@ -7,19 +7,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import br.com.abril.nds.enums.TipoMensagem;
-import br.com.abril.nds.exception.ValidacaoException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.estudo.CotaEstudo;
