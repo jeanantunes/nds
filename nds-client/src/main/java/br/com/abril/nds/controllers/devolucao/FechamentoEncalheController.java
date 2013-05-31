@@ -665,16 +665,14 @@ public class FechamentoEncalheController extends BaseController {
 		boolean insercao = true;
 		if(listaDeGrid != null && !listaDeGrid.isEmpty()){
 			
-			Iterator<FechamentoFisicoLogicoDTO> iterator = listaDeGrid.iterator();
+			Iterator<FechamentoFisicoLogicoDTO> iterator = new ArrayList<FechamentoFisicoLogicoDTO>(listaDeGrid).iterator();
 			
 			while(iterator.hasNext()){
 				FechamentoFisicoLogicoDTO linha = iterator.next();
-				if(linha != null && linha.getCodigo() != null && linha.getCodigo().equals(Long.parseLong(codigo)))
-				{
+				if(linha != null && linha.getCodigo() != null && linha.getCodigo().equals(codigo)){
 					linha.setCodigo(codigo);
 					linha.setProdutoEdicao(Long.parseLong(produtoEdicao));
-					if(fisico != null)
-					{
+					if(fisico != null){
 						linha.setFisico(Long.parseLong(fisico));	
 					}
 					linha.setReplicar(String.valueOf(checkbox));
@@ -683,18 +681,14 @@ public class FechamentoEncalheController extends BaseController {
 				}
 			}
 
-		}
-		else
-		{
+		}else{
 			listaDeGrid = new ArrayList<FechamentoFisicoLogicoDTO>();
 		}
 	
-		if(insercao == true)
-		{
+		if(insercao == true){
 			FechamentoFisicoLogicoDTO gridFechamentoEncalheDTO = new FechamentoFisicoLogicoDTO();
 			
-			if(fisico != null)
-			{
+			if(fisico != null){
 				gridFechamentoEncalheDTO.setFisico(Long.parseLong(fisico));	
 			}
 			
