@@ -225,7 +225,10 @@ public class CalcularReparte extends ProcessoAbstrato {
 	    }
 	});
 
-	BigDecimal somaRepartes = new BigDecimal(getSomaReparteCalculadoCotas(estudo).add(estudo.getReparteComplementar()).add(estudo.getReservaAjuste()));
+	BigDecimal somaRepartes = new BigDecimal(getSomaReparteCalculadoCotas(estudo).add(estudo.getReparteComplementar()));
+	if (estudo.getReservaAjuste() != null) {
+	    somaRepartes = somaRepartes.add(new BigDecimal(estudo.getReservaAjuste()));
+	}
 	estudo.setReparteDistribuir(estudo.getReparteDistribuirInicial().subtract(somaRepartes.toBigInteger()));
 	// indice que sera aplicado para todas as cotas na distribuicao da sobra
 	BigDecimal indicedeSobraouFalta = new BigDecimal(estudo.getReparteDistribuirInicial()).divide(somaRepartes, 3, BigDecimal.ROUND_HALF_UP);

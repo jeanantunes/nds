@@ -229,6 +229,9 @@ public class CotaDAO {
     public Map<Long, CotaEstudo> getHistoricoCota(final ProdutoEdicaoEstudo edicao) {
 	Map<String, Object> params = new HashMap<>();
 	params.put("produto_edicao_id", edicao.getId());
+	if (edicao.isParcial()) {
+	    params.put("numero_periodo", edicao.getPeriodo());
+	}
 	List<CotaEstudo> historicoCotas = jdbcTemplate.query(edicao.isParcial() ? queryHistoricoCotaParcial : queryHistoricoCota, params, new RowMapper<CotaEstudo>() {
 	    @Override
 	    public CotaEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {

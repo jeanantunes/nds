@@ -25,7 +25,7 @@ public class MinimoMaximo extends ProcessoAbstrato {
     public void executar(EstudoTransient estudo) throws Exception {
 
 	validarRepartesMinimos(estudo);
-	
+
 	for (CotaEstudo cota : estudo.getCotas()) {
 	    if ((cota.getIntervaloMinimo() != null) && (cota.getIntervaloMaximo() != null)) {
 		if (cota.getIntervaloMinimo().compareTo(cota.getIntervaloMaximo()) > 0) {
@@ -33,25 +33,23 @@ public class MinimoMaximo extends ProcessoAbstrato {
 		}
 		if (cota.getReparteCalculado().compareTo(cota.getIntervaloMinimo()) < 0) {
 		    cota.setReparteCalculado(cota.getIntervaloMinimo(), estudo);
-
-		    if (cota.isMix()) {
-			cota.setClassificacao(ClassificacaoCota.CotaMix);
-		    } else {
-			cota.setClassificacao(ClassificacaoCota.MaximoMinimo);
-		    }
+		    preencheClassificacao(cota);
 		} else if (cota.getReparteCalculado().compareTo(cota.getIntervaloMaximo()) > 0) {
 		    cota.setReparteCalculado(cota.getIntervaloMaximo(), estudo);
-
-		    if (cota.isMix()) {
-			cota.setClassificacao(ClassificacaoCota.CotaMix);
-		    } else {
-			cota.setClassificacao(ClassificacaoCota.MaximoMinimo);
-		    }
+		    preencheClassificacao(cota);
 		}
 	    }
 	}
     }
-    
+
+    private void preencheClassificacao(CotaEstudo cota) {
+	if (cota.isMix()) {
+	    cota.setClassificacao(ClassificacaoCota.CotaMix);
+	} else {
+	    cota.setClassificacao(ClassificacaoCota.MaximoMinimo);
+	}
+    }
+
     private void validarRepartesMinimos(EstudoTransient estudo) {
 	for (CotaEstudo cota : estudo.getCotas()) {
 	    if (cota.getReparteMinimoFinal().compareTo(cota.getReparteCalculado()) > 0) {
