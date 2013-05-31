@@ -63,9 +63,11 @@ public class Bonificacoes extends ProcessoAbstrato {
 		}
 
 		// se todas as cotas estiver selecionado, insere reparte minimo para as bancas SH e VZ fora do estudo
-		if (bonificacao.isTodasAsCotas()) {
+		if (bonificacao.isTodasAsCotas() && bonificacao.getComponente() != null && bonificacao.getElemento() != null) {
+		    String[] vetor = {bonificacao.getElemento()};
 		    for (CotaEstudo cota : estudo.getCotasExcluidas()) {
-			if (cota.getClassificacao().in(ClassificacaoCota.BancaComVendaZero, ClassificacaoCota.BancaSemHistorico)) {
+			if (cota.getClassificacao().in(ClassificacaoCota.BancaComVendaZero, ClassificacaoCota.BancaSemHistorico) &&
+				estudoAlgoritmoService.isCotaDentroDoComponenteElemento(bonificacao.getComponente(), vetor, cota)) {
 			    if (reparteMinimo.compareTo(cota.getReparteMinimoFinal()) > 0) {
 				cota.setReparteMinimoFinal(reparteMinimo);
 				cota.setReparteCalculado(reparteMinimo, estudo);
