@@ -265,6 +265,20 @@ public class EstudoAlgoritmoService {
 	    if (distribuicaoVendaMedia.isDistribuicaoPorMultiplo() && distribuicaoVendaMedia.getMultiplo() != null) {
 		estudo.setPacotePadrao(distribuicaoVendaMedia.getMultiplo());
 	    }
+	    
+	    // verificacao se o reparte minimo e multiplo do pacote padrao
+	    // TODO: melhorar logica ou encontrar alguma funcao da api mais simples
+	    if (estudo.getPacotePadrao() != null && estudo.getPacotePadrao().compareTo(BigInteger.ZERO) > 0 &&
+		    estudo.getReparteMinimo() != null && estudo.getReparteMinimo().compareTo(BigInteger.ZERO) > 0) {
+		BigDecimal quebrado = new BigDecimal(estudo.getReparteMinimo()).
+			divide(new BigDecimal(estudo.getPacotePadrao()), 4, BigDecimal.ROUND_HALF_UP);
+		BigDecimal inteiro = new BigDecimal(estudo.getReparteMinimo()).
+			divide(new BigDecimal(estudo.getPacotePadrao()), 0, BigDecimal.ROUND_HALF_UP);
+		if (quebrado.compareTo(inteiro) != 0) {
+		    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
+			    String.format("O reparte mínimo deve ser múltiplo de %s.", estudo.getPacotePadrao())));
+		}
+	    }
 	}
 
 	// carregando parâmetros do banco de dados

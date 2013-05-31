@@ -87,7 +87,7 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 
     private void distribuirReparteComplementar(EstudoTransient estudo, LinkedList<CotaEstudo> listaOrdenada) {
 	BigInteger reparte = BigInteger.valueOf(2);
-	if (estudo.isDistribuicaoPorMultiplos()) {
+	if (estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null && estudo.getPacotePadrao().compareTo(BigInteger.ONE) > 0) {
 	    reparte = estudo.getPacotePadrao();
 	}
 	if (estudo.getReparteMinimo() != null && estudo.getReparteMinimo().compareTo(reparte) > 0) {
