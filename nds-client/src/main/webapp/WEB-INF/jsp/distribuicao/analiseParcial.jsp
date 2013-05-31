@@ -28,10 +28,15 @@ function escondeDados(){
 .class_vlrs{width:35px;}
 .class_vda{width:35px; color:#F00; font-weight:bold;}
 .detalhesDados{position:absolute; display:none; background:#fff; border:1px solid #ccc; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); }
+#tabelaDetalheAnalise tr { line-height: normal; }
+.class_linha_impar {background:#f0f0f0; }
+.class_linha_par {background:#f8f8f8; }
 
 .icoEditarEB, .icoExcluirEB, .icoMoverEB { margin: 3px; cursor: pointer; }
 .inputCodigoEB, .inputEdicaoEB { width: 70px; }
 .inputProdutoEB { width: 180px; }
+.icoMoverEB { cursor: grab; cursor: -moz-grab; cursor: -webkit-grab; }
+.icoMoverEB:active { cursor: grabbing; cursor: -moz-grabbing; cursor: -webkit-grabbing; }
 
 /*.inputBaseNumero{width: 60px;}
 .inputBaseNome{width: 170px;}*/
@@ -39,19 +44,21 @@ function escondeDados(){
 table.filtro td span {font-weight: normal;}
 .tableTotais {margin: 1px 0 3px; border: 1px solid white; border-collapse: collapse;}
 .paddingTotais td {padding: 0 3px; text-align: right; width: 35px; border: 1px solid white;}
-.paddingTotais td:nth-child(1) {text-align: left; width: 82px;}
-.paddingTotais td:nth-child(2) {text-align: left; width: 197px;}
-.paddingTotais td:nth-child(3) {width: 55px;}
-.paddingTotais td:nth-child(4) {width: 56px;}
-.paddingTotais td:nth-child(5) {width: 24px;}
+.paddingTotais td#lbl_qtd_cotas {text-align: left; width: 82px;}
+.paddingTotais td#total_de_cotas {text-align: left; width: 197px;}
+.paddingTotais td#total_ultimo_reparte {width: 55px;}
+.paddingTotais td#total_reparte_sugerido {width: 56px;}
+.paddingTotais td#lbl_legenda {width: 24px;}
 .linkNomeCota { text-decoration: underline; cursor: pointer; }
 .editaRepartePorPDV { text-decoration: underline; cursor: pointer; }
-.asterisco:after { content: "*"; font-size: 150%; font-weight: bold; position: absolute; left: 43px; }
+.asteriscoCotaNova:after { content: "*"; font-size: 150%; font-weight: bold; position: absolute; left: 43px; }
+.asterisco:after { content: "*"; font-size: 150%; font-weight: bold; position: absolute; margin-left: 2px; }
 .reparteSugerido { width: 40px; font-weight: bold; text-align: right; }
 #baseEstudoGridParcial td[abbr^="venda"] {color: red;}
 #baseEstudoGridParcial td[abbr^="venda"],
 #baseEstudoGridParcial td[abbr^="ultimoReparte"],
 #baseEstudoGridParcial td[abbr^="reparteSugerido"] {font-weight: bold;}
+/*#baseEstudoGridParcial td div { position: relative; }*/
 .repartePDV {width: 35px; text-align: right;}
 #prodCadastradosGrid tbody tr {display: block !important;}
 .sortable-placeholder {
@@ -75,21 +82,64 @@ table.filtro td span {font-weight: normal;}
 	</div>
 
     	<div class="detalhesDados">
-    	  <table width="976" border="0" cellpadding="2" cellspacing="2" class="dadosTab" id="tabelaDetalheAnalise">
-    	    <tr id="edicoes">
-    	      <td class="class_linha_1"><strong>Edição:</strong></td>
-  	        </tr>
-    	    <tr id="dataLancamentos">
-    	      <td width="165" class="class_linha_2"><strong>Data Lançamento:</strong></td>
-  	        </tr>
-    	    <tr id="repartes">
-    	      <td class="class_linha_1"><strong>Reparte:</strong></td>
-  	        </tr>
-    	    <tr id="vendas">
-    	      <td class="class_linha_2"><strong>Venda:</strong></td>
-  	        </tr>
-  	    </table>
-    	</div>
+            <table width="976" border="0" cellpadding="2" cellspacing="2" class="dadosTab" id="tabelaDetalheAnalise" style="float: left;">
+                <tr class="class_linha_impar">
+                    <td><strong>Código:</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="class_linha_par">
+                    <td><strong>Produto:</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="class_linha_impar" id="edicoes">
+                    <td><strong>Edição:</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="class_linha_par" id="dataLancamentos">
+                    <td><strong>Data Lançamento:</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="class_linha_impar" id="repartes">
+                    <td><strong>Reparte:</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                <tr class="class_linha_par" id="vendas">
+                    <td><strong>Venda:</strong></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+  	        </table>
+            <div style="float: right;"><a href="javascript:;" onclick="escondeDados();"><img src="images/ico_excluir.gif" alt="Fechar" width="15" height="15" border="0" /></a></div>
+        </div>
 		<fieldset class="classFieldset">
 			<legend> Pesquisar </legend>
 			<input type="hidden" id="produtoEdicaoId" value="${estudoCota.estudo.produtoEdicao.id}" />
@@ -113,7 +163,7 @@ table.filtro td span {font-weight: normal;}
             <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
                 <tr>
                     <td>Status do Estudo: <span id="status_estudo">${estudoCota.estudo.isLiberado()?'Liberado':'Não Liberado'}</span></td>
-                    <td>Data de Lancamento: <span><fmt:formatDate value="${estudoCota.estudo.dataLancamento}" /></span></td>
+                    <td>Data de Lancamento: <span><fmt:formatDate value="${lancamento.dataLancamentoPrevista}" /></span></td>
                     <td>Reparte Distribuido: <span id="total_reparte_estudo_cabecalho">${estudoCota.estudo.qtdeReparte}</span></td>
                     <td>Pacote Padrão: <span>${estudoCota.estudo.produtoEdicao.pacotePadrao}</span></td>
                 </tr>
@@ -129,7 +179,7 @@ table.filtro td span {font-weight: normal;}
 							<option value="reparte">Reparte</option>
 							<option value="ranking">Ranking</option>
 							<option value="percentual_de_venda">% de Venda</option>
-							<option value="reducao_de_reparte">R de Reparte</option>
+							<option value="reducao_de_reparte">Redução de Reparte</option>
 					</select></td>
 					<%--<td>Reparte: <input type="text" name="textfield6" id="textfield6" style="width: 40px;" /></td>--%>
 					<td>Abrangência: <span id="abrangencia"></span></td>
@@ -166,12 +216,26 @@ table.filtro td span {font-weight: normal;}
 								src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Confirmar" border="0" />
 						</a>
 					</span></td>
-					<td align="center"><a href="javascript:;" onclick="mostraDados();"><img
-							src="${pageContext.request.contextPath}/images/ico_boletos.gif" title="Exibir Detalhes" width="19" height="15" border="0" /></a></td>
-					<td><span class="bt_novos"> <a href="javascript:;" onclick="analiseParcialController.verCapa();">
-								<img src="${pageContext.request.contextPath}/images/ico_detalhes.png" alt="Ver Capa" hspace="5" border="0" /> Ver Capa
-						</a>
-					</span></td>
+					<td align="center">
+                        <a href="javascript:;" onclick="mostraDados();">
+                            <img src="${pageContext.request.contextPath}/images/ico_boletos.gif" title="Exibir Detalhes" width="19" height="15" border="0" />
+                        </a>
+                    </td>
+					<td>
+                        <span class="bt_novos">
+                            <a href="javascript:;" onclick="analiseParcialController.verCapa();">
+								<img src="${pageContext.request.contextPath}/images/ico_detalhes.png" alt="Ver Capa" hspace="5" border="0" />
+                                <span>Ver Capa</span>
+						    </a>
+					    </span>
+                    </td>
+                    <td>
+                        <span class="bt_novos">
+                            <a href="javascript:;" onclick="analiseParcialController.alterarVisualizacaoGrid();">
+                                <img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" alt="Alterar Visualização do Grid" hspace="5" border="0" /> <%--Alterar Visualização do Grid--%>
+                            </a>
+                        </span>
+                    </td>
 				</tr>
 			</table>
 		</fieldset>
@@ -184,11 +248,11 @@ table.filtro td span {font-weight: normal;}
 				<c:if test="${tipoExibicao == 'NORMAL'}">
 					<table border="0" cellspacing="0" cellpadding="0" class="tableTotais">
 						<tr class="class_linha_1 paddingTotais">
-							<td>Qtde Cotas:</td>
+							<td id="lbl_qtd_cotas">Qtde Cotas:</td>
 							<td id="total_de_cotas">0</td>
                             <td id="total_ultimo_reparte">0</td>
                             <td id="total_reparte_sugerido">0</td>
-                            <td>&nbsp;</td><%-- Legenda --%>
+                            <td id="lbl_legenda">&nbsp;</td><%-- Legenda --%>
                         <%--<td id="total_juramento">0</td>--%>
                         <%--<td width="62" align="right" id="total_media_venda">0</td>--%>
 							<td id="total_reparte1">0</td>
@@ -228,31 +292,42 @@ table.filtro td span {font-weight: normal;}
 						</tr>
 					</table>
 				</c:if>
-				<span class="bt_novos" title="Imprimir"> <a href="${pageContext.request.contextPath}/distribuicao/analise/parcial/exportar?fileType=PDF&id=${estudoCota.estudo.id}"> <img
-						src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /> Imprimir
-				</a>
-				</span> <span class="bt_novos" title="Gerar Arquivo"> <a href="${pageContext.request.contextPath}/distribuicao/analise/parcial/exportar?fileType=XLS&id=${estudoCota.estudo.id}"> <img
-						src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /> Arquivo
-				</a>
-				</span> <span class="bt_novos"> <a href="javascript:return false;" id="liberar"> <img
-						src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" alt="Liberar" hspace="5" border="0" /> Liberar
-				</a>
-				</span> <span class="bt_novos"> <a href="javascript:;" onclick="$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));selectTabTitle('Histograma Pré Análise');"> <img
-						src="${pageContext.request.contextPath}/images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" /> Voltar
-				</a>
-				</span> <span class="bt_novos"> <a href="javascript:;" onclick="analiseParcialController.exibirCotasQueNaoEntraramNoEstudo();">
-						<img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" alt="Cotas que não entraram no Estudo" hspace="5"
-						border="0" /> Cotas que não entraram no Estudo
-				</a>
-				<c:if test="${tipoExibicao == 'NORMAL'}">
-					</span> <span class="bt_novos"> <a href="javascript:;" onclick="analiseParcialController.mudarBaseVisualizacao();"> <img
-							src="${pageContext.request.contextPath}/images/ico_atualizar.gif" alt="Mudar Base de Visualização" hspace="5" border="0" />
-							Mudar Base de Visualização
+				<span class="bt_novos" title="Imprimir">
+                    <a href="${pageContext.request.contextPath}/distribuicao/analise/parcial/exportar?fileType=PDF&id=${estudoCota.estudo.id}">
+                        <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" /> Imprimir
+				    </a>
+				</span>
+                <span class="bt_novos" title="Gerar Arquivo">
+                    <a href="${pageContext.request.contextPath}/distribuicao/analise/parcial/exportar?fileType=XLS&id=${estudoCota.estudo.id}">
+                        <img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" /> Arquivo
+				    </a>
+				</span>
+                <span class="bt_novos">
+                    <a href="javascript:return false;" id="liberar">
+                        <img src="${pageContext.request.contextPath}/images/ico_distribuicao_bup.gif" alt="Liberar" hspace="5" border="0" /> Liberar
+				    </a>
+				</span>
+                <span class="bt_novos">
+                    <a href="javascript:;" onclick="$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));selectTabTitle('Histograma Pré Análise');">
+                        <img src="${pageContext.request.contextPath}/images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" /> Voltar
+				    </a>
+				</span>
+                <span class="bt_novos">
+                    <a href="javascript:;" onclick="analiseParcialController.exibirCotasQueNaoEntraramNoEstudo();">
+						<img src="${pageContext.request.contextPath}/images/ico_jornaleiro.gif" alt="Cotas que não entraram no Estudo" hspace="5" border="0" /> Cotas que não entraram no Estudo
+				    </a>
+                </span>
+            <c:if test="${tipoExibicao == 'NORMAL'}">
+                <span class="bt_novos">
+                    <a href="javascript:;" onclick="analiseParcialController.mudarBaseVisualizacao();">
+                        <img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" alt="Mudar Base de Visualização" hspace="5" border="0" />
+                        <span>Mudar Base de Visualização</span>
 					</a>
-				</c:if>
-				</span><br/>
+				</span>
+            </c:if>
+                <%--<br/>--%>
 				<span style="font-weight: bold; font-size: 10px;">Saldo à Distribuir:</span>
-				<span id="saldo_reparte" style="font-weight: bold; font-size: 10px;">${estudoCota.estudo.reparteDistribuir}</span>
+				<span id="saldo_reparte" style="font-weight: bold; font-size: 10px;">${estudoCota.estudo.sobra}</span>
 			</div>
 		</fieldset>
 	</div>
@@ -268,18 +343,17 @@ table.filtro td span {font-weight: normal;}
 				<tr>
 					<td width="63">Cota:</td>
 					<td width="161">
-						<input type="text" name="cotasQueNaoEntraramNoEstudo_cota" id="cotasQueNaoEntraramNoEstudo_cota" style="width: 60px;"
-						    onblur="analiseParcialController.cotasQueNaoEntraramNoEstudo();"/>
-					</td>
+						<input type="text" name="cotasQueNaoEntraramNoEstudo_cota" id="cotasQueNaoEntraramNoEstudo_cota" style="width: 60px;"/>
+                    </td>
 					<td width="46">Nome:</td>
 					<td width="209">
-						<input type="text" name="cotasQueNaoEntraramNoEstudo_nome" id="cotasQueNaoEntraramNoEstudo_nome" style="width: 185px;"
-						    onblur="analiseParcialController.cotasQueNaoEntraramNoEstudo();"/>
-					</td>
+						<input type="text" name="cotasQueNaoEntraramNoEstudo_nome" id="cotasQueNaoEntraramNoEstudo_nome" style="width: 185px;"/>
+                    </td>
+                    <td><span class="classPesquisar" style="margin: 0 5px;"><a href="javascript:;">&nbsp;</a></span></td>
 				</tr>
 				<tr>
 					<td>Motivo:</td>
-					<td colspan="3">
+					<td colspan="4">
 						<select name="cotasQueNaoEntraramNoEstudo_motivo" id="cotasQueNaoEntraramNoEstudo_motivo" style="width: 408px">
 							<option value="TODOS" selected="selected">Todas as Cotas</option>
                             <c:forEach items="${classificacaoCotaList}" var="classificacaoCota">
@@ -314,8 +388,7 @@ table.filtro td span {font-weight: normal;}
 					</td>
 					<td width="52">Elemento:</td>
 					<td width="186">
-						<select id="cotasQueNaoEntraramNoEstudo_elementos" name="elementoCotasNaoSelec" style="width: 170px;"
-						onchange="analiseParcialController.filtrarCotasNaoSelec(${estudoCota.estudo.id})">
+						<select id="cotasQueNaoEntraramNoEstudo_elementos" name="elementoCotasNaoSelec" style="width: 170px;">
 							<option value="" selected="selected">Selecione...</option>
 						</select>
 					</td>
@@ -476,11 +549,11 @@ table.filtro td span {font-weight: normal;}
             <table width="500" border="0" cellpadding="2" cellspacing="1" class="filtro">
                 <tr>
                     <td width="36">Código:</td>
-                    <td width="76"><input type="text" name="codigoProduto" id="inputCodigoProduto" style="width:60px;" /></td>
+                    <td width="76"><input type="text" class="inputCodigoEB" name="codigoProduto" id="inputCodigoProduto" style="width:60px;" /></td>
                     <td width="40">Produto:</td>
-                    <td width="180"><input type="text" name="nomeProduto" id="inputNomeProduto" style="width:160px;" /></td>
+                    <td width="180"><input type="text" class="inputProdutoEB" name="nomeProduto" id="inputNomeProduto" style="width:160px;" /></td>
                     <td width="35">Edição:</td>
-                    <td width="61"><input type="text" name="edicao" id="inputNumeroEdicao" style="width:60px;" /></td>
+                    <td width="61"><input type="text" class="inputEdicaoEB" name="edicao" id="inputNumeroEdicao" style="width:60px;" /></td>
                     <td width="47"><span class="classPesquisar" style="margin: 0 5px;"><a href="javascript:;">&nbsp;</a></span></td>
                 </tr>
             </table>

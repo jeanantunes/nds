@@ -36,7 +36,7 @@ var analiseParcialController = $.extend(true, {
                 edicao:  '<input id="$" class="inputEdicaoEB" value="#">'.replace('$',edicao.produtoEdicaoId).replace('#',edicao.edicao),
                 acao:    '<img src="images/ico_editar.gif" alt="Alterar Edição" class="icoEditarEB">' +
                     '<img src="images/ico_excluir.gif" alt="Excluir Base" class="icoExcluirEB">' +
-                    '<img src="images/ico_fechamento.png" alt="Mover Base" class="icoMoverEB">'
+                    '<img src="images/ico_arrow_resize.png" alt="Mover Base" class="icoMoverEB">'
             } });
         }
         $("#prodCadastradosGrid").flexAddData(objEdicoesBase);
@@ -48,6 +48,7 @@ var analiseParcialController = $.extend(true, {
         });
 
         $("#dialog-mudar-base").dialog({
+            escondeHeader: false,
             resizable : false,
             height : 470,
             width : 550,
@@ -55,25 +56,38 @@ var analiseParcialController = $.extend(true, {
             buttons : {
                 "Confirmar" : function() {
                     var parameters = [];
+                    var hasErros = false;
 
                     $('#prodCadastradosGrid tr').each(function (i) {
 
                         var $this = $(this);
-                        parameters.push({name: 'edicoesBase['+ i +'].codigoProduto',    value: $this.find('.inputCodigoEB').val()});
-                        parameters.push({name: 'edicoesBase['+ i +'].nomeProduto',      value: $this.find('.inputProdutoEB').val()});
-                        parameters.push({name: 'edicoesBase['+ i +'].edicao',           value: $this.find('.inputEdicaoEB').val()});
+                        var codigoProduto = $this.find('.inputCodigoEB').val();
+                        var nomeProduto = $this.find('.inputProdutoEB').val();
+                        var edicao = $this.find('.inputEdicaoEB').val();
+
+                        if (codigoProduto === '' || nomeProduto === '' || edicao === '') {
+                            analiseParcialController.exibirMsg('WARNING', ['É necessário informar todos os campos!']);
+                            hasErros = true;
+                            return false;
+                        }
+
+                        parameters.push({name: 'edicoesBase['+ i +'].codigoProduto',    value: codigoProduto});
+                        parameters.push({name: 'edicoesBase['+ i +'].nomeProduto',      value: nomeProduto});
+                        parameters.push({name: 'edicoesBase['+ i +'].edicao',           value: edicao});
                         parameters.push({name: 'edicoesBase['+ i +'].produtoEdicaoId',  value: $this.find('.inputEdicaoEB').attr('id')});
 
                     });
 
-                    parameters.push({name: 'id', value: $('#estudoId').val()},
+                    if (!hasErros) {
+                        parameters.push({name: 'id', value: $('#estudoId').val()},
                             {name: 'numeroEdicao', value: $('#numeroEdicao').val()},
                             {name: 'codigoProduto', value: $('#codigoProduto').val()},
                             {name: 'faixaDe', value: $('#faixaDe').val()},
                             {name: 'faixaAte', value: $('#faixaAte').val()});
 
-                    $(this).dialog("close");
-                    $("#baseEstudoGridParcial").flexOptions({params: parameters}).flexReload();
+                        $(this).dialog("close");
+                        $("#baseEstudoGridParcial").flexOptions({params: parameters}).flexReload();
+                    }
                 },
                 "Cancelar" : function() {
                     $('#prodCadastradosGrid tbody').sortable("cancel");
@@ -91,9 +105,13 @@ var analiseParcialController = $.extend(true, {
                 type: 'POST',
                 global: false,
                 success: function(result) {
+                    if (result.mensagens) {
+                        analiseParcialController.exibirMsg(result.mensagens);
+                    } else {
                         var $tr = $(elemento).closest('tr');
                         $tr.find('.inputProdutoEB').val(result.result.nome);
                         $tr.find('.inputEdicaoEB').val('');
+                    }
                 }});
         } /*else {
             analiseParcialController.exibirMsg('WARNING', ['É necessário informar um código para o produto!']);
@@ -108,10 +126,14 @@ var analiseParcialController = $.extend(true, {
                 type: 'POST',
                 global: false,
                 success: function(result) {
-                    console.log(result);
-                    var $tr = $(elemento).closest('tr');
-                    $tr.find('.inputProdutoEB').val(result.result.nome);
-                    $tr.find('.inputEdicaoEB').val('');
+                    if (result.mensagens) {
+                        analiseParcialController.exibirMsg(result.mensagens);
+                    } else {
+                        var $tr = $(elemento).closest('tr');
+                        $tr.find('.inputCodigoEB').val(result.result.codigo);
+                        $tr.find('.inputProdutoEB').val(result.result.nome);
+                        $tr.find('.inputEdicaoEB').val('');
+                    }
                 }});
         } /*else {
             analiseParcialController.exibirMsg('WARNING', ['É necessário informar um nome para o produto!']);
@@ -169,6 +191,7 @@ var analiseParcialController = $.extend(true, {
         $("#cotasDetalhesGrid").flexOptions({ params: [{name: 'numeroCota', value: numeroCota}] }).flexReload();
 
         $("#dialog-cotas-detalhes").dialog({
+            escondeHeader: false,
             resizable : false,
             height : 560,
             width : 740,
@@ -219,7 +242,7 @@ var analiseParcialController = $.extend(true, {
                         (cell['reparte'+ j] !== '') && (cell['reparte'+ j] !== '')) {
                     totais[j - 1].reparte += parseInt(cell['reparte'+ j], 10);
                     totais[j - 1].venda += parseInt(cell['venda'+ j], 10);
-                    
+
                     venda += parseInt(cell['venda'+ j], 10);
                     quantidade++;
                 }
@@ -256,7 +279,7 @@ var analiseParcialController = $.extend(true, {
             }
         }
     },
-    
+
     carregarEdicoesBaseEstudo : function(estudoId) {
         var edicoesJaCarregadas = false;
         for (var i = 0; i < 6; i++) {
@@ -272,13 +295,58 @@ var analiseParcialController = $.extend(true, {
                         if (typeof resultado.edicoesBase !== 'undefined' && resultado.edicoesBase.length > 0) {
                             analiseParcialController.edicoesBase = resultado.edicoesBase;
                         }
-                        /*for (var i = 0; i < resultado.edicoesBase.length; i++) {
-                            // atualização dos números das edições
-                            if (typeof resultado.edicoesBase[i] !== 'undefined') {
-                                analiseParcialController.edicoesBase[i] = resultado.edicoesBase[i];
-                            }
-                        }*/
                     });
+        }
+    },
+
+    alterarVisualizacaoGrid : function() {
+
+        if ($('#total_ultimo_reparte').index() == 2) {
+            $('table#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(0) th[colspan="7"]').attr('colspan', 4);
+
+            $('table#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(1)').each(function() {
+                var tr = $(this);
+                var td1 = tr.find('th:eq(4),th:eq(5),th:eq(6)');
+                var td2 = tr.find('th:last');
+                td1.detach().insertAfter(td2);
+            });
+
+            $('#baseEstudoGridParcial tr').each(function() {
+                var tr = $(this);
+                var td1 = tr.find('td:eq(4),td:eq(5),td:eq(6)');
+                var td2 = tr.find('td:last');
+                td1.detach().insertAfter(td2);
+            });
+
+            $('.tableTotais tr').each(function() {
+                var tr = $(this);
+                var td1 = tr.find('td:eq(2),td:eq(3),td:eq(4)');
+                var td2 = tr.find('td:last');
+                td1.detach().insertAfter(td2);
+            });
+        } else {
+            $('table#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(0) th[colspan="4"]').attr('colspan', 7);
+
+            $('table#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(1)').each(function() {
+                var tr = $(this);
+                var td1 = tr.find('th:eq(16),th:eq(17),th:eq(18)');
+                var td2 = tr.find('th:eq(3)');
+                td1.detach().insertAfter(td2);
+            });
+
+            $('#baseEstudoGridParcial tr').each(function() {
+                var tr = $(this);
+                var td1 = tr.find('td:eq(16),td:eq(17),td:eq(18)');
+                var td2 = tr.find('td:eq(3)');
+                td1.detach().insertAfter(td2);
+            });
+
+            $('.tableTotais tr').each(function() {
+                var tr = $(this);
+                var td1 = tr.find('td:eq(14),td:eq(15),td:eq(16)');
+                var td2 = tr.find('td:eq(1)');
+                td1.detach().insertAfter(td2);
+            });
         }
     },
 
@@ -292,8 +360,10 @@ var analiseParcialController = $.extend(true, {
                 $header.find('tr').first().remove();
             }
 
+            var colSpanEdicoesBase = $header.find('tr th[abbr="reparte1"]').index();
+
             if (analiseParcialController.tipoExibicao === 'NORMAL') {
-                $header.prepend($('<tr>').append($('<th colspan="7" style="border-bottom: 1px solid #DDDDDD;">')
+                $header.prepend($('<tr>').append($('<th colspan="' + colSpanEdicoesBase + '" style="border-bottom: 1px solid #DDDDDD;">')
                     .append('<div style="text-align: right;">Edições Base:</div>')));
                 $.each(analiseParcialController.edicoesBase, function(key, value) {
                     if(value){
@@ -304,7 +374,7 @@ var analiseParcialController = $.extend(true, {
             } else {
                 $header.prepend(
                     $('<tr>')
-                        .append($('<th colspan="7" style="border-bottom: 1px solid #DDDDDD;">')
+                        .append($('<th colspan="' + colSpanEdicoesBase + '" style="border-bottom: 1px solid #DDDDDD;">')
                             .append('<div style="text-align: right;">Edições Base:</div>'))
                         .append($('<th colspan="2">').append($('<div style="text-align: center;">').append('3ª Parcial')))
                         .append($('<th colspan="2">').append($('<div style="text-align: center;">').append('2ª Parcial')))
@@ -328,6 +398,7 @@ var analiseParcialController = $.extend(true, {
             $.ajax({url: analiseParcialController.path +'/distribuicao/analise/parcial/mudarReparte',
                 data: {'numeroCota': numeroCota, 'estudoId': $('#estudoId').val(), 'variacaoDoReparte': reparteSubtraido},
                 success: function() {
+                    analiseParcialController.atualizaAbrangencia();
                     $input_reparte.attr('reparteAtual', reparteDigitado);
                     if (reparteDigitado === $input_reparte.attr('reparteInicial')) {
                         $legenda.removeClass('asterisco');
@@ -345,7 +416,15 @@ var analiseParcialController = $.extend(true, {
 
     preProcessGrid : function(resultado) {
 
-        console.log('resultado do init', resultado);
+        if (resultado.mensagens) {
+            analiseParcialController.exibirMsg(resultado.mensagens);
+            return null;
+        }
+
+        if (resultado.rows.length === 0) {
+            analiseParcialController.exibirMsg('WARNING', ['Não há resultados para esta consulta.']);
+            return null;
+        }
 
         var $header = $('table#baseEstudoGridParcial')
             .closest('div.flexigrid')
@@ -374,7 +453,7 @@ var analiseParcialController = $.extend(true, {
                 cell.classificacao = '';
             }
             if (cell.cotaNova == true) {
-                cell.cota += '<span class="asterisco"></span>';
+                cell.cota += '<span class="asteriscoCotaNova"></span>';
             }
             if (cell.npdv > 1) {
                 cell.npdv = '<a tabindex="-1" class="editaRepartePorPDV" numeroCota="'+ numCota +'">'+ cell.npdv +'</a>';
@@ -406,27 +485,52 @@ var analiseParcialController = $.extend(true, {
             analiseParcialController.path + '/distribuicao/analise/parcial/percentualAbrangencia',
             [{name: 'estudoId', value: $('#estudoId').val()}],
             function (result) {
-                $('#abrangencia').text(result);
+                $('#abrangencia').text(result).formatNumber({format:'#.00 %', locale:'br'});
             }
         );
+    },
+
+    carregaDetalhesEdicoesBase: function () {
+        var param = [];
+        $.each(analiseParcialController.edicoesBase, function (key, value) {
+            param.push({name: 'idsProdutoEdicao['+key+']', value: value.produtoEdicaoId});
+        });
+        $.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/historicoEdicoesBase', param, function (result) {
+            var $rows = $('#tabelaDetalheAnalise tr');
+            var rowCodigoProduto = $rows.eq(0).find('td');
+            var rowNomeProduto = $rows.eq(1).find('td');
+            var rowNumeroEdicao = $rows.eq(2).find('td');
+            var rowDataLancamento = $rows.eq(3).find('td');
+            var rowReparte = $rows.eq(4).find('td');
+            var rowVenda = $rows.eq(5).find('td');
+            $.each(analiseParcialController.edicoesBase, function (key, value) {
+                rowCodigoProduto.eq(key+1).text(value.codigoProduto);
+                rowNomeProduto.eq(key+1).text(value.nomeProduto);
+                rowNumeroEdicao.eq(key+1).text(value.edicao);
+                rowDataLancamento.eq(key+1).text(result[key].dataLancamentoFormatada);
+                rowReparte.eq(key+1).text(result[key].reparte*1);
+                rowVenda.eq(key+1).text(result[key].venda*1);
+            });
+        });
     },
 
     onSuccessReloadGrid : function() {
         analiseParcialController.atualizaEdicoesBaseHeader();
         analiseParcialController.atualizaAbrangencia();
+        analiseParcialController.carregaDetalhesEdicoesBase();
     },
 
     modeloNormal : function() {
         return [
             {display: 'Cota',       name: 'cota',               width: 35, sortable: true, align: 'right'},
-            {display: 'Cota Nova',  name: 'cotaNova',           width: 1,  hide: true},
+//            {display: 'Cota Nova',  name: 'cotaNova',           width: 1,  hide: true},
             {display: 'Class.',     name: 'classificacao',      width: 30, sortable: true, align: 'center'},
             {display: 'Nome',       name: 'nome',               width: 150,sortable: true, align: 'left'},
             {display: 'NPDV',       name: 'npdv',               width: 30, sortable: true, align: 'right'},
             {display: 'Últ. Rep.',  name: 'ultimoReparte',      width: 50, sortable: true, align: 'right'},
             {display: 'Rep. Sug.',  name: 'reparteSugerido',    width: 50, sortable: true, align: 'right'},
             {display: 'LEG',        name: 'leg',                width: 20, sortable: true, align: 'center'},
-            {display: 'Desc Leg',   name: 'descricaoLegenda',   width: 1,  hide: true},
+//            {display: 'Desc Leg',   name: 'descricaoLegenda',   width: 1,  hide: true},
 //          {display: 'Média. VDA',  name: 'mediaVenda',         width: 60, sortable: true, align: 'right'},
             {display: 'REP',        name: 'reparte1',           width: 30, sortable: true, align: 'right'},
             {display: 'VDA',        name: 'venda1',             width: 30, sortable: true, align: 'right'},
@@ -445,14 +549,14 @@ var analiseParcialController = $.extend(true, {
     modeloParcial : function() {
         return [
             {display: 'Cota',       name: 'cota',               width: 35, sortable: true, align: 'right'},
-            {display: 'Cota Nova',  name: 'cotaNova',           width: 40, sortable: true, hide: true},
+//            {display: 'Cota Nova',  name: 'cotaNova',           width: 40, sortable: true, hide: true},
             {display: 'Class.',     name: 'classificacao',      width: 30, sortable: true, align: 'center'},
             {display: 'Nome',       name: 'nome',               width: 150,sortable: true, align: 'left'},
             {display: 'NPDV',       name: 'npdv',               width: 30, sortable: true, align: 'right'},
             {display: 'Últ. Rep.',  name: 'ultimoReparte',      width: 50, sortable: true, align: 'right'},
             {display: 'Rep. Sug.',  name: 'reparteSugerido',    width: 50, sortable: true, align: 'right'},
             {display: 'LEG',        name: 'leg',                width: 20, sortable: true, align: 'center'},
-            {display: 'Desc Leg',   name: 'descricaoLegenda',   width: 1,  sortable: false, hide: true},
+//            {display: 'Desc Leg',   name: 'descricaoLegenda',   width: 1,  sortable: false, hide: true},
             {display: 'Juram.',     name: 'juramento',          width: 40, sortable: true, align: 'right'},
 //          {display: 'Média. VDA',  name: 'mediaVenda',         width: 50, sortable: true, align: 'right'},
             {display: 'REP',        name: 'reparte1',           width: 40, sortable: true, align: 'right'},
@@ -495,6 +599,7 @@ var analiseParcialController = $.extend(true, {
         $('.pdvCotaGrid').flexOptions({params:[{name: 'numeroCota', value: numeroCota}]}).flexReload();
 
         $dialogReparte.dialog({
+            escondeHeader: false,
             resizable : false,
             height: 580,
             width: 660,
@@ -503,21 +608,22 @@ var analiseParcialController = $.extend(true, {
                 "Confirmar" : function() {
                     var $repartesPDV = $dialogReparte.find('table.pdvCotaGrid tr input.repartePDV');
                     var totalRepartePDVs = $repartesPDV.map(function(){
-                        return this.value * 1;
+                        return parseInt(this.value, 10);
                     }).toArray().reduce(function(a,b){return a+b;});
-                    if (totalRepartePDVs !== reparteCota*1) {
-                        analiseParcialController.exibirMsg('WARNING', ['A soma do reparte dos PDVs não pode ser diferente do reparte definido para a cota.']);
-                    } else {
-                        var param = [];
-                        param.push({name: 'estudoId', value: $('#estudoId').val()});
-                        param.push({name: 'numeroCota', value: numeroCota});
-                        $repartesPDV.each(function(k){
-                            param.push({name: 'reparteMap['+k+'].id', value: $(this).closest('tr').find('td[abbr="id"] div').text()});
-                            param.push({name: 'reparteMap['+k+'].reparte', value: this.value});
-                        });
-                        $.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/defineRepartePorPDV', param);
-                        $(this).dialog("close");
+                    if (totalRepartePDVs != reparteCota) {
+                        var inputReparteSugeridoCota = $('#baseEstudoGridParcial td[abbr="reparteSugerido"] input[numerocota="' + numeroCota + '"]').val(totalRepartePDVs).get(0);
+                        analiseParcialController.atualizaReparte(inputReparteSugeridoCota);
+//                        analiseParcialController.exibirMsg('WARNING', ['A soma do reparte dos PDVs não pode ser diferente do reparte definido para a cota.']);
                     }
+                    var param = [];
+                    param.push({name: 'estudoId', value: $('#estudoId').val()});
+                    param.push({name: 'numeroCota', value: numeroCota});
+                    $repartesPDV.each(function(k){
+                        param.push({name: 'reparteMap['+k+'].id', value: $(this).closest('tr').find('td[abbr="id"] div').text()});
+                        param.push({name: 'reparteMap['+k+'].reparte', value: this.value});
+                    });
+                    $.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/defineRepartePorPDV', param);
+                    $(this).dialog("close");
                 },
                 "Cancelar" : function() {
                     $(this).dialog("close");
@@ -527,6 +633,8 @@ var analiseParcialController = $.extend(true, {
     },
 
     init : function(_id, _faixaDe, _faixaAte, _tipoExibicao){
+
+        $('#filtroOrdenarPor option:eq(1)').prop('selected', true).parent().change();
 
         $( "#inputNomeProduto" ).autocomplete({
             source: function(request, response) {
@@ -550,7 +658,7 @@ var analiseParcialController = $.extend(true, {
                 return {name: this.name, value: this.value};
             });
             if (parameters) {
-                $("#edicaoProdCadastradosGrid").flexOptions({params: parameters}).flexReload();
+                $("#edicaoProdCadastradosGrid:visible").flexOptions({params: parameters}).flexReload();
             }
         });
 
@@ -558,7 +666,9 @@ var analiseParcialController = $.extend(true, {
         .on('click', '.icoExcluirEB, .icoEditarEB', function () {
             var $this = $(this);
             if ($this.hasClass('icoExcluirEB')) {
-                $this.closest('tr').remove();
+                if ($this.closest('tbody').find('tr').length > 1) {
+                    $this.closest('tr').remove();
+                }
             }
             if ($this.hasClass('icoEditarEB')) {
                 popup_edicoes_produto($this.closest("tr"));
@@ -593,18 +703,26 @@ var analiseParcialController = $.extend(true, {
                     $divCapa.find('img').attr('src', urlImg);
 
                     $divCapa.dialog({
-                            title:'Capa',
-                            resizable: false,
-                            height:'auto',
-                            width:'auto',
-                            modal: false,
-                            position: { my: "left", at: "right", of: $(event.target).parent() }
-                        });
+                        escondeHeader: false,
+                        title:'Capa',
+                        resizable: false,
+                        height:'auto',
+                        width:'auto',
+                        modal: false,
+                        position: { my: "left", at: "right", of: $(event.target).parent() }
+                    });
                 },
                 mouseleave: function () {
                     $('#previewImagemCapa').dialog("close");
                 }
-        }, '.icoCapaEB');
+        }, '.icoCapaEB')
+        .on('change', '.inputCodigoEB', function () {
+            var $this = $(this);
+
+            if ($this.hasClass('inputCodigoEB')) {
+                analiseParcialController.buscarNomeProduto(this);
+            }
+        });
 
         $('#baseEstudoGridParcial')
         .on('blur', 'tr td input:text', function(event){
@@ -638,7 +756,7 @@ var analiseParcialController = $.extend(true, {
         });
 
         analiseParcialController.tipoExibicao = _tipoExibicao;
-        analiseParcialController.inicializarDetalhes();
+//        analiseParcialController.inicializarDetalhes();
 
         var parameters = [];
         parameters.push({name: 'id', value: _id});
@@ -677,6 +795,7 @@ var analiseParcialController = $.extend(true, {
                 analiseParcialController.exibirMsg('WARNING', ['Não é possovel libeara estudo com saldo de reparte.']);
             } else {
                 $('<div>Liberar estudo?</div>').dialog({
+                    escondeHeader: false,
                     title: 'Confirmação',
                     buttons: {
                         "Confirmar": function() {
@@ -702,17 +821,19 @@ var analiseParcialController = $.extend(true, {
             preProcess : analiseParcialController.preProcessGridNaoSelec,
             url: analiseParcialController.path + '/distribuicao/analise/parcial/cotasQueNaoEntraramNoEstudo/filtrar',
             dataType : 'json',
-            colModel : [{display: 'Cota',   name: 'numeroCota', width: 40,  sortable: true, align: 'left'},
-                        {display: 'Nome',   name: 'nomeCota',   width: 160, sortable: true, align: 'left'},
-                        {display: 'Motivo', name: 'motivo',     width: 160, sortable: true, align: 'left'},
-                        {display: 'Qtde',   name: 'quantidade', width: 60,  sortable: true, align: 'center'}],
+            colModel : [{display: 'Cota',         name: 'numeroCota',      width: 40,  sortable: true, align: 'left'},
+                        {display: 'Nome',         name: 'nomeCota',        width: 160, sortable: true, align: 'left'},
+                        {display: 'Sigla Motivo', name: 'motivo',          width: 10,  sortable: true, hide: true},
+                        {display: 'Motivo',       name: 'descricaoMotivo', width: 160, sortable: true, align: 'left'},
+                        {display: 'Qtde',         name: 'quantidade',      width: 60,  sortable: true, align: 'center'}],
             width : 490,
             height : 200,
+            autoload: false,
             sortorder:'desc',
             sortname:'cota'
         });
 
-        analiseParcialController.cotasQueNaoEntraramNoEstudo();
+//        analiseParcialController.cotasQueNaoEntraramNoEstudo();
     },
     
     preProcessGridNaoSelec : function(resultado) {
@@ -720,8 +841,11 @@ var analiseParcialController = $.extend(true, {
             if (typeof value.cell.nomeCota === 'undefined') {
                 value.cell.nomeCota = '';
             }
+            if (typeof value.cell.quantidade === 'undefined') {
+                value.cell.quantidade = '';
+            }
 
-            value.cell.quantidade = '<input type="text" id="inputQuantidade'+ value.cell.numeroCota +'" style="width: 50px;" value="'+
+            value.cell.quantidade = '<input type="text" motivo="' + value.cell.motivo + '" id="inputQuantidade'+ value.cell.numeroCota +'" style="width: 50px;" value="'+
                 value.cell.quantidade +'" onblur="analiseParcialController.atualizaQuantidadeTotal('+ value.cell.numeroCota +');" ' +
                 ' numeroCota="'+ value.cell.numeroCota +'" />';
         });
@@ -756,14 +880,19 @@ var analiseParcialController = $.extend(true, {
                         {name: 'queryDTO.tipoSegmentoProduto',   value: tipoSegmentoProduto}]
             }).flexReload();
         };
-        $("#cotasQueNaoEntraramNoEstudo_cota").blur(filtrarCotasQueNaoEntraramNoEstudo);
-        $("#cotasQueNaoEntraramNoEstudo_nome").blur(filtrarCotasQueNaoEntraramNoEstudo);
-        $("#cotasQueNaoEntraramNoEstudo_motivo").change(filtrarCotasQueNaoEntraramNoEstudo);
-        $("#cotasQueNaoEntraramNoEstudo_elementos").change(filtrarCotasQueNaoEntraramNoEstudo);
+
+        $('#dialog-cotas-estudos .classPesquisar').click(filtrarCotasQueNaoEntraramNoEstudo);
+//        $("#cotasQueNaoEntraramNoEstudo_cota").blur(filtrarCotasQueNaoEntraramNoEstudo);
+//        $("#cotasQueNaoEntraramNoEstudo_nome").blur(filtrarCotasQueNaoEntraramNoEstudo);
+//        $("#cotasQueNaoEntraramNoEstudo_motivo").change(filtrarCotasQueNaoEntraramNoEstudo);
+//        $("#cotasQueNaoEntraramNoEstudo_elementos").change(filtrarCotasQueNaoEntraramNoEstudo);
+
+        filtrarCotasQueNaoEntraramNoEstudo();
     },
     
     verCapa : function() {
         $("#dialog-detalhes").dialog({
+            escondeHeader: false,
             resizable: false,
             height:'auto',
             width:'auto',
@@ -787,12 +916,23 @@ var analiseParcialController = $.extend(true, {
         return data;
     },
 
+    postMudarReparteLote: function () {
+        $.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/mudarReparteLote',
+            analiseParcialController.getCotasComReparte(),
+            function () {
+                $('#baseEstudoGridParcial').flexReload();
+                $('#saldo_reparte').text($('#saldoReparteNaoSelec').text());
+                analiseParcialController.atualizaAbrangencia();
+            });
+    },
+
     exibirCotasQueNaoEntraramNoEstudo : function() {
         $('#saldoReparteNaoSelec').html($('#saldo_reparte').html());
 
         analiseParcialController.cotasQueNaoEntraramNoEstudo();
 
         $("#dialog-cotas-estudos").dialog({
+            escondeHeader: false,
             resizable : false,
             height : 530,
             width : 550,
@@ -800,12 +940,28 @@ var analiseParcialController = $.extend(true, {
             buttons : {
                 "Confirmar" : function() {
                     $(this).dialog("close");
-                    $.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/mudarReparteLote',
-                        analiseParcialController.getCotasComReparte(),
-                        function(){
-                            $('#baseEstudoGridParcial').flexReload();
-                            $('#saldo_reparte').text($('#saldoReparteNaoSelec').text());
-                    });
+                    //FIXME
+                    if ($("#cotasNaoSelec tr td input[value!='']").filter('[motivo="SM"],[motivo="GN"],[motivo="SS"]').length > 0) {
+                        $('<div>Esta ação requer confirmação com senha:<br><input type="password" width="80" maxlength="10"></div>').dialog({
+                            escondeHeader: false,
+                            title: 'Confirmação',
+                            buttons: {
+                                "Confirmar": function() {
+                                    if($(this).find('input').val() != '') {
+                                        analiseParcialController.postMudarReparteLote();
+                                        $(this).dialog("close");
+                                    } else {
+                                        analiseParcialController.exibirMsg('WARNING', ['Senha invalida!']);
+                                    }
+                                },
+                                "Cancelar": function() {
+                                    $(this).dialog("close");
+                                }
+                            }
+                        });
+                    } else {
+                        analiseParcialController.postMudarReparteLote();
+                    }
                 },
                 "Cancelar" : function() {
                     $(this).dialog("close");
@@ -815,18 +971,20 @@ var analiseParcialController = $.extend(true, {
     },
     
     selecionarElementos : function(tipo, optionsId) {
-        $.getJSON(analiseParcialController.path +"/componentes/elementos", [{name: "tipo", value: tipo}, {name: "estudo", value: $("#estudoId").val()}], function(data) {
-            var options = $("#"+ optionsId);
-            options.empty();
-            options.append($("<option />").val('TODOS').text('Selecione...'));
-            $.each(data, function() {
-                if (this.tipo === 'bairro') {
-                    options.append($("<option />").val(this.tipo +"_"+ this.value).text(this.value));
-                } else {
-                    options.append($("<option />").val(this.tipo +"_"+ this.id).text(this.value));
-                }
+        if (tipo !== '') {
+            $.getJSON(analiseParcialController.path +"/componentes/elementos", [{name: "tipo", value: tipo}, {name: "estudo", value: $("#estudoId").val()}], function(data) {
+                var options = $("#"+ optionsId);
+                options.empty();
+                options.append($("<option />").val('TODOS').text('Selecione...'));
+                $.each(data, function() {
+                    if (this.tipo === 'bairro') {
+                        options.append($("<option />").val(this.tipo +"_"+ this.value).text(this.value));
+                    } else {
+                        options.append($("<option />").val(this.tipo +"_"+ this.id).text(this.value));
+                    }
+                });
             });
-        });
+        }
     },
 
     apresentarOpcoesOrdenarPor : function(opcao) {
@@ -840,13 +998,15 @@ var analiseParcialController = $.extend(true, {
     },
 
     filtrarOrdenarPor : function(estudo) {
-        $("#baseEstudoGridParcial").flexOptions({
-            params: [{name:'filterSortName', value: $("#filtroOrdenarPor").val()},
-                     {name:'filterSortFrom', value: $("#ordenarPorDe").val()},
-                     {name:'filterSortTo',   value: $("#ordenarPorAte").val()},
-                     {name:'id',             value: estudo},
-                     {name:'elemento',       value: $("#elementos :selected").val()}]
-        }).flexReload();
+        if ($("#elementos :selected").val() !== '') {
+            $("#baseEstudoGridParcial").flexOptions({
+                params: [{name:'filterSortName', value: $("#filtroOrdenarPor").val()},
+                    {name:'filterSortFrom', value: $("#ordenarPorDe").val()},
+                    {name:'filterSortTo',   value: $("#ordenarPorAte").val()},
+                    {name:'id',             value: estudo},
+                    {name:'elemento',       value: $("#elementos :selected").val()}]
+            }).flexReload();
+        }
         if (event) {
             event.preventDefault();
         }
@@ -986,7 +1146,9 @@ $("#edicaoProdCadastradosGrid").flexigrid({
 });
 
 function popup_edicoes_produto(tr) {
+    $('#edicaoProdCadastradosGrid tbody').remove();
     $("#dialog-edicoes-produtos").dialog({
+        escondeHeader: false,
         resizable : false,
         height : 420,
         width : 550,
@@ -994,12 +1156,20 @@ function popup_edicoes_produto(tr) {
         buttons : {
             "Confirmar" : function() {
                 var $tbody = tr.closest('tbody');
-                var $edicaoSelecao = $(".edicaoSelecao:checked");
-                if (($tbody.length + $edicaoSelecao.length) > 6) {
+                var $edicaoSelecao = $("#edicaoProdCadastradosGrid input.edicaoSelecao:checked");
+                if (($tbody.find('tr').length + $edicaoSelecao.length) > 6) {
                     analiseParcialController.exibirMsg('WARNING', ['Não é possivel selecionar mais do que 6 edições no total!']);
                 } else {
                     var tbodyAppend = '';
-                    var modelRow = '<tr><td align="left"><div style="text-align: left; width: 80px;"><input class="inputCodigoEB" value="#codigoProduto#"></div></td><td align="left"><div style="text-align: left; width: 190px;"><input class="inputProdutoEB" value="#nomeProduto#"></div></td><td align="left"><div style="text-align: left; width: 80px;"><input id="#idEdicao#" class="inputEdicaoEB" value="#numeroEdicao#"></div></td><td align="center"><div style="text-align: center; width: 80px;"><img src="images/ico_editar.gif" alt="Alterar Edição" class="icoEditarEB"><img src="images/ico_excluir.gif" alt="Excluir Base" class="icoExcluirEB"><img src="images/ico_fechamento.png" alt="Mover Base" class="icoMoverEB"></div></td></tr>';
+                    var modelRow = '<tr>' +
+                        '<td align="left"><div style="text-align: left; width: 80px;"><input class="inputCodigoEB" value="#codigoProduto#"></div></td>' +
+                        '<td align="left"><div style="text-align: left; width: 190px;"><input class="inputProdutoEB" value="#nomeProduto#"></div></td>' +
+                        '<td align="left"><div style="text-align: left; width: 80px;"><input id="#idEdicao#" class="inputEdicaoEB" value="#numeroEdicao#"></div></td>' +
+                        '<td align="center"><div style="text-align: center; width: 80px;">' +
+                            '<img src="images/ico_editar.gif" alt="Alterar Edição" class="icoEditarEB">' +
+                            '<img src="images/ico_excluir.gif" alt="Excluir Base" class="icoExcluirEB">' +
+                            '<img src="images/ico_arrow_resize.png" alt="Mover Base" class="icoMoverEB">' +
+                        '</div></td></tr>';
                     modelRow = modelRow.replace(/#codigoProduto#/, $('#inputCodigoProduto').val()).replace(/#nomeProduto#/, $('#inputNomeProduto').val());
                     $edicaoSelecao.each(function(key, value){
                         var $thisTR = $(this).closest('tr');

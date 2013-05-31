@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.distribuicao;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -10,7 +11,9 @@ import javax.servlet.http.HttpSession;
 
 import br.com.abril.nds.dto.*;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,6 +49,9 @@ public class AnaliseParcialController extends BaseController {
     private HttpServletResponse httpResponse;
 
     @Autowired
+    private LancamentoService lancamentoService;
+
+    @Autowired
     private ProdutoEdicaoService produtoEdicaoService;
 
     @Autowired
@@ -58,6 +64,8 @@ public class AnaliseParcialController extends BaseController {
     public void index(Long id, Long faixaDe, Long faixaAte, String modoAnalise) {
 
         EstudoCota estudo = analiseParcialService.buscarPorId(id);
+        Lancamento lancamento = lancamentoService.obterPorId(estudo.getEstudo().getLancamentoID());
+
         if (modoAnalise == null) {
             result.include("tipoExibicao", "NORMAL");
             session.setAttribute("modoAnalise", "NORMAL");
@@ -65,6 +73,7 @@ public class AnaliseParcialController extends BaseController {
             result.include("tipoExibicao", modoAnalise);
             session.setAttribute("modoAnalise", modoAnalise);
         }
+        result.include("lancamento", lancamento);
         result.include("estudoCota", estudo);
         result.include("faixaDe", faixaDe);
         result.include("faixaAte", faixaAte);
@@ -81,6 +90,13 @@ public class AnaliseParcialController extends BaseController {
         table.setRows(CellModelKeyValue.toCellModelKeyValue(lista));
         table.setPage(1);
         result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
+    }
+
+    @Post
+    public void historicoEdicoesBase(Long[] idsProdutoEdicao) {
+        List<AnaliseEstudoDetalhesDTO> list = analiseParcialService.historicoEdicoesBase(idsProdutoEdicao);
+
+        result.use(Results.json()).withoutRoot().from(list).recursive().serialize();
     }
 
     @Path("/abrirAnaliseFaixa")
@@ -180,7 +196,7 @@ public class AnaliseParcialController extends BaseController {
     public void mudarReparteLote(Long estudoId, List<CotaQueNaoEntrouNoEstudoDTO> cotas) {
 
         for (CotaQueNaoEntrouNoEstudoDTO cota : cotas) {
-            analiseParcialService.atualizaReparte(estudoId, cota.getNumeroCota(), cota.getQuantidade().longValue());
+            analiseParcialService.atualizaReparte(estudoId, cota.getNumeroCota(), cota.getQuantidade().negate().longValue());
         }
 
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso.")).recursive().serialize();

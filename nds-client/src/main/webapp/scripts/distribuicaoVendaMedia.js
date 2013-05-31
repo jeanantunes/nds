@@ -225,7 +225,6 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 										+ codigoProduto
 										+ "&numeroEdicao="
 										+ numeroEdicao);
-				console.log($("#imagemCapaEdicao").attr("src"));
 			},
 			close:function(event, ui){
 				$("#imagemCapaEdicao").removeAttr("src").hide();
