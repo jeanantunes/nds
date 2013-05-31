@@ -28,4 +28,6 @@ public interface AnaliseParcialService {
     void defineRepartePorPDV(Long estudoId, Integer numeroCota, List<PdvDTO> reparteMap);
 
     CotaDTO buscarDetalhesCota(Integer numeroCota, String codigoProduto);
+
+    List<AnaliseEstudoDetalhesDTO> historicoEdicoesBase(Long[] idsProdutoEdicao);
 }

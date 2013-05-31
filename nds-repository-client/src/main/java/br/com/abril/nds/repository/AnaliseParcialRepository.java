@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigInteger;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -25,5 +26,5 @@ public interface AnaliseParcialRepository {
 	List<EdicoesProdutosDTO> getEdicoesBaseParciais(Long numeroCota, Long numeroEdicao, String codigoProduto, Long periodo);
 	List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId, boolean edicaoMaisRecente);
 	List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO);
-
+    AnaliseEstudoDetalhesDTO historicoEdicaoBase(Long id);
 }

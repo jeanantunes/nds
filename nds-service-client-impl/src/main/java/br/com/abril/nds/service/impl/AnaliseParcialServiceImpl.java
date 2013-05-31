@@ -76,8 +76,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
             }
             for (AnaliseParcialDTO item : lista) {
                 item.setDescricaoLegenda(traduzClassificacaoCota(item.getLeg()));
-                List<Long> idsProdutoEdicao = new ArrayList<>();
-                List<EdicoesProdutosDTO> edicoesComVenda = new ArrayList<>();
+                List<Long> idsProdutoEdicao = new LinkedList<>();
+                List<EdicoesProdutosDTO> edicoesComVenda = new LinkedList<>();
                 for (EdicoesProdutosDTO edicao : queryDTO.getEdicoesBase()) {
                     idsProdutoEdicao.add(edicao.getProdutoEdicaoId());
                 }
@@ -123,7 +123,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     public List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO) {
         List<CotaQueNaoEntrouNoEstudoDTO> cotaQueNaoEntrouNoEstudoDTOList = analiseParcialRepository.buscarCotasQueNaoEntraramNoEstudo(queryDTO);
         for (CotaQueNaoEntrouNoEstudoDTO cotaQueNaoEntrouNoEstudoDTO : cotaQueNaoEntrouNoEstudoDTOList) {
-            cotaQueNaoEntrouNoEstudoDTO.setMotivo(traduzClassificacaoCota(cotaQueNaoEntrouNoEstudoDTO.getMotivo()));
+            cotaQueNaoEntrouNoEstudoDTO.setDescricaoMotivo(traduzClassificacaoCota(cotaQueNaoEntrouNoEstudoDTO.getMotivo()));
         }
         return cotaQueNaoEntrouNoEstudoDTOList;
     }
@@ -162,6 +162,16 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     @Override
     public CotaDTO buscarDetalhesCota(Integer numeroCota, String codigoProduto) {
         return cotaRepository.buscarCotaPorNumero(numeroCota, codigoProduto);
+    }
+
+    @Override
+    public List<AnaliseEstudoDetalhesDTO> historicoEdicoesBase(Long[] idsProdutoEdicao) {
+        List<AnaliseEstudoDetalhesDTO> list = new LinkedList<>();
+
+        for (Long id : idsProdutoEdicao) {
+            list.add(analiseParcialRepository.historicoEdicaoBase(id));
+        }
+        return list;
     }
 
     private String traduzClassificacaoCota(String motivo) {

@@ -178,6 +178,7 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 	
 	
 	@Override
+    @Transactional
 	public void remover(Estudo estudo) {
 		
 		Long idEstudo = estudo.getId();
@@ -187,8 +188,12 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 		/*movimentoEstoqueCotaRepository.removerMovimentoEstoqueCotaPorEstudo(idEstudo);
 		itemNotaEnvioRepository.removerItemNotaEnvioPorEstudo(idEstudo);
 		estudoCotaRepository.removerEstudoCotaPorEstudo(idEstudo);*/
-		
-		Query queryBases = getSession().createSQLQuery("DELETE FROM ESTUDO_PRODUTO_EDICAO_BASE WHERE ESTUDO_ID = :ESTUDO_ID ");
+
+        SQLQuery queryPdvs = getSession().createSQLQuery("delete from estudo_pdv where estudo_id = :estudo_id");
+        queryPdvs.setLong("estudo_id", idEstudo);
+        queryPdvs.executeUpdate();
+
+        Query queryBases = getSession().createSQLQuery("DELETE FROM ESTUDO_PRODUTO_EDICAO_BASE WHERE ESTUDO_ID = :ESTUDO_ID ");
 		queryBases.setLong("ESTUDO_ID", estudo.getId());
 		queryBases.executeUpdate();
 		

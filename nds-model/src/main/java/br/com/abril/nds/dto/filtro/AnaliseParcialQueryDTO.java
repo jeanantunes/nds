@@ -1,5 +1,6 @@
 package br.com.abril.nds.dto.filtro;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
