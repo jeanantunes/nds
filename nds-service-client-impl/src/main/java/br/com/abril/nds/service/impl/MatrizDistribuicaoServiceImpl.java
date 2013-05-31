@@ -24,6 +24,9 @@ import br.com.abril.nds.dto.filtro.FiltroDistribuicaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
+import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
@@ -31,6 +34,7 @@ import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusEstudo;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuicaoRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
@@ -64,6 +68,9 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+    
+    @Autowired
+    private CotaRepository cotaRepository;
 
     private static final int MAX_DUPLICACOES_PERMITIDA = 3;
 
@@ -546,8 +553,27 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	Lancamento lancamento = lancamentoRepository.buscarPorIdSemEstudo(vo.getIdLancamento());
 	Estudo estudoCopia = obterCopiaDeEstudo(estudo, lancamento);
 	estudoCopia.setQtdeReparte(vo.getReparteDistribuido());
-	LinkedList<EstudoCota> cotas = new LinkedList<>(estudo.getEstudoCotas());
-
+	LinkedList<EstudoCota> cotasSelecionadas = new LinkedList<>(estudo.getEstudoCotas());
+	Map<Long, CotaEstudo> mapCotas = carregarInformacoesCotaEstudo(estudo.getProdutoEdicao());
+	
+	// validacoes de mix e classificacao e segmento nao recebidos
+	LinkedList<EstudoCota> cotas = new LinkedList<>();
+	for (EstudoCota cota : cotasSelecionadas) {
+	    CotaEstudo cotaEstudo = mapCotas.get(cota.getCota().getId());
+	    if (cotaEstudo != null) {
+		if (cotaEstudo.isCotaNaoRecebeClassificacao()) {
+		    continue;
+		}
+		if (cotaEstudo.isCotaNaoRecebeSegmento() && !cotaEstudo.isCotaExcecaoSegmento()) {
+		    continue;
+		}
+		if (cotaEstudo.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO) && !cotaEstudo.isMix()) {
+		    continue;
+		}
+		cotas.add(cota);
+	    }
+	}
+	
 	if (cotas.isEmpty()) {
 	    throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possivel efetuar a copia.");
 	}
@@ -652,6 +678,15 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	estudoCopia.setEstudoCotas(new HashSet<EstudoCota>(cotas));
 	estudoCotaRepository.inserirPrudutoBase(estudoCopia);
 	return estudoCopia;
+    }
+
+    private Map<Long, CotaEstudo> carregarInformacoesCotaEstudo(ProdutoEdicao produtoEdicao) {
+	List<CotaEstudo> cotasEstudo = cotaRepository.getInformacoesCotaEstudo(produtoEdicao);
+	Map<Long, CotaEstudo> mapCotas = new HashMap<>();
+	for (CotaEstudo cotaEstudo : cotasEstudo) {
+	    mapCotas.put(cotaEstudo.getId(), cotaEstudo);
+	}
+	return mapCotas;
     }
 
     @Override

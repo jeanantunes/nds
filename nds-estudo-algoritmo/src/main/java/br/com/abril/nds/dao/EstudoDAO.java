@@ -119,7 +119,9 @@ public class EstudoDAO {
 	SqlRowSet rs = jdbcTemplate.queryForRowSet(queryParametrosDistribuidor, new HashMap<String, Object>());
 
 	while(rs.next()) {
-	    estudo.setComplementarAutomatico(rs.getBoolean("COMPLEMENTAR_AUTOMATICO"));
+	    if (estudo.isComplementarAutomatico()) {
+		estudo.setComplementarAutomatico(rs.getBoolean("COMPLEMENTAR_AUTOMATICO"));
+	    }
 	    estudo.setGeracaoAutomatica(rs.getBoolean("GERACAO_AUTOMATICA_ESTUDO"));
 	    estudo.setPercentualMaximoFixacao(rs.getBigDecimal("PERCENTUAL_MAXIMO_FIXACAO"));
 	    estudo.setPracaVeraneio(rs.getBoolean("PRACA_VERANEIO"));

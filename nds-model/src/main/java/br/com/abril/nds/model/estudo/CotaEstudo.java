@@ -43,7 +43,8 @@ public class CotaEstudo extends Cota {
     private BigDecimal pesoMenorVenda;
     private boolean nova;
     private boolean recebeuUltimaEdicaoAberta;
-    private BigInteger qtdeRanking;
+    private BigInteger qtdeRankingSegmento;
+    private BigDecimal qtdeRankingFaturamento;
     // informacoes referentes à selecao de componentes
     private Set<Integer> tiposPontoPdv;
     private Set<Integer> tiposGeradorFluxo;
@@ -52,6 +53,10 @@ public class CotaEstudo extends Cota {
     private Set<String> tiposCota; // consignado ou a vista
     private Set<Integer> areasInfluenciaPdv;
     private Set<String> estados;
+    // informacoes para a copia proporcional de estudos
+    private boolean cotaNaoRecebeSegmento;
+    private boolean cotaExcecaoSegmento;
+    private boolean cotaNaoRecebeClassificacao;
 
     public CotaEstudo() {
 	nova = false;
@@ -254,12 +259,20 @@ public class CotaEstudo extends Cota {
 	this.recebeuUltimaEdicaoAberta = recebeuUltimaEdicaoAberta;
     }
 
-    public BigInteger getQtdeRanking() {
-	return qtdeRanking;
+    public BigInteger getQtdeRankingSegmento() {
+	return qtdeRankingSegmento;
     }
 
-    public void setQtdeRanking(BigInteger qtdeRanking) {
-	this.qtdeRanking = qtdeRanking;
+    public void setQtdeRankingSegmento(BigInteger qtdeRankingSegmento) {
+	this.qtdeRankingSegmento = qtdeRankingSegmento;
+    }
+
+    public BigDecimal getQtdeRankingFaturamento() {
+        return qtdeRankingFaturamento;
+    }
+
+    public void setQtdeRankingFaturamento(BigDecimal qtdeRankingFaturamento) {
+        this.qtdeRankingFaturamento = qtdeRankingFaturamento;
     }
 
     public BigDecimal getVendaMediaCorrigida() {
@@ -355,6 +368,30 @@ public class CotaEstudo extends Cota {
 	if (reparteMinimoFinal != null && reparteMinimoFinal.compareTo(this.reparteMinimoFinal) >= 0) {
 	    this.reparteMinimoFinal = reparteMinimoFinal;
 	}
+    }
+
+    public boolean isCotaNaoRecebeSegmento() {
+        return cotaNaoRecebeSegmento;
+    }
+
+    public void setCotaNaoRecebeSegmento(boolean cotaNaoRecebeSegmento) {
+        this.cotaNaoRecebeSegmento = cotaNaoRecebeSegmento;
+    }
+
+    public boolean isCotaExcecaoSegmento() {
+        return cotaExcecaoSegmento;
+    }
+
+    public void setCotaExcecaoSegmento(boolean cotaExcecaoSegmento) {
+        this.cotaExcecaoSegmento = cotaExcecaoSegmento;
+    }
+
+    public boolean isCotaNaoRecebeClassificacao() {
+        return cotaNaoRecebeClassificacao;
+    }
+
+    public void setCotaNaoRecebeClassificacao(boolean cotaNaoRecebeClassificacao) {
+        this.cotaNaoRecebeClassificacao = cotaNaoRecebeClassificacao;
     }
 
     @Override

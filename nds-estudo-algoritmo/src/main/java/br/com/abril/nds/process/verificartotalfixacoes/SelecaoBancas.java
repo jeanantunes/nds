@@ -3,6 +3,8 @@ package br.com.abril.nds.process.verificartotalfixacoes;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -53,10 +55,6 @@ public class SelecaoBancas extends ProcessoAbstrato {
     public void executar(EstudoTransient estudo) throws Exception {
 
 	List<CotaEstudo> cotas = cotaDAO.getCotas(estudo);
-	cotaDAO.getComponentesCota(cotas);
-	if (estudo.getDistribuicaoVendaMediaDTO() != null) {
-	    cotas = validarComponentes(cotas, estudo);
-	}
 	List<Map<Long, CotaEstudo>> historico = new ArrayList<>();
 	for (ProdutoEdicaoEstudo edicao : estudo.getEdicoesBase()) {
 	    historico.add(cotaDAO.getHistoricoCota(edicao));
@@ -76,8 +74,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	}
 
 	if (!existeCotaComHistorico) {
-		
-		throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontradas cotas com historico para estas edições de base.");
+	    throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontradas cotas com historico para estas edições de base.");
 	}
 
 	Map<Long, CotaEstudo> cotasComHistoricoMap = new LinkedHashMap<>();
@@ -91,20 +88,30 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	}
 	tratarCotasComEnglobacao(cotasComHistoricoMap);
 
+	cotaDAO.getComponentesCota(cotas);
+	if (estudo.getDistribuicaoVendaMediaDTO() != null) {
+	    cotas = validarComponentes(cotas, estudo);
+	}
+
 	List<Long> idsCotas = new ArrayList<>();
 	for (CotaEstudo cota : cotasComHistoricoMap.values()) {
 	    if (cota.getClassificacao().equals(ClassificacaoCota.BancaSemHistorico)) {
 		idsCotas.add(cota.getId());
 	    }
-	    // excluindo as cotas que não entram no estudo.
+	    if (cota.getClassificacao().equals(ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
+		estudo.getCotasForaDaRegiao().add(cota);
+	    }
+	    // excluindo as cotas que não entram no estudo
 	    if (cota.getClassificacao().in(ClassificacaoCota.BancaComVendaZero, ClassificacaoCota.BancaSemHistorico,
-		    ClassificacaoCota.BancaSuspensa, ClassificacaoCota.ReparteFixado, ClassificacaoCota.CotaNaoRecebeSegmento,
-		    ClassificacaoCota.BancaSemClassificacaoDaPublicacao, ClassificacaoCota.BancaMixSemDeterminadaPublicacao,
-		    ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
+		    ClassificacaoCota.ReparteFixado, ClassificacaoCota.CotaNaoRecebeSegmento, ClassificacaoCota.BancaSuspensa,
+		    ClassificacaoCota.BancaSemClassificacaoDaPublicacao, ClassificacaoCota.BancaMixSemDeterminadaPublicacao)) {
 		estudo.getCotasExcluidas().add(cota);
 	    }
 	}
 	for (CotaEstudo cota : estudo.getCotasExcluidas()) {
+	    cotasComHistoricoMap.remove(cota.getId());
+	}
+	for (CotaEstudo cota : estudo.getCotasForaDaRegiao()) {
 	    cotasComHistoricoMap.remove(cota.getId());
 	}
 
@@ -129,38 +136,108 @@ public class SelecaoBancas extends ProcessoAbstrato {
     }
 
     private List<CotaEstudo> validarComponentes(List<CotaEstudo> cotas, EstudoTransient estudo) {
-	// marcando bancas fora da regiao de distribuicao
-	for (CotaEstudo cota : cotas) {
-	    if (cota.getClassificacao().notIn(ClassificacaoCota.CotaMix, ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo)) {
-		for (String item : cota.getTiposCota()) {
-		    if (!item.equals("CONSIGNADO") && !estudo.getDistribuicaoVendaMediaDTO().isCotasAVista()) {
-			cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
-		    }
-		}
-	    }
-	}
+
 	// selecao de componente/elemento
 	if (estudo.getDistribuicaoVendaMediaDTO().getComponente() != null && estudo.getDistribuicaoVendaMediaDTO().getElemento() != null) {
+	    estudo.setComplementarAutomatico(false);
 	    for (CotaEstudo cota : cotas) {
 		String [] vetor = {estudo.getDistribuicaoVendaMediaDTO().getElemento()};
-		if (cota.getClassificacao().notIn(ClassificacaoCota.CotaMix, ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo)) {
-		    if (!estudoAlgoritmoService.isCotaDentroDoComponenteElemento(estudo.getDistribuicaoVendaMediaDTO().getComponente(), vetor, cota)) {
-			cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
-		    }
+		if (!estudoAlgoritmoService.isCotaDentroDoComponenteElemento(estudo.getDistribuicaoVendaMediaDTO().getComponente(), vetor, cota)) {
+		    cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
+		    cota.setReparteCalculado(BigInteger.ZERO, estudo);
 		}
 	    }
 	}
-	// removendo excecoes da lista de cotas
-	if (estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente() != null && estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas().size() > 0) {
-	    for (CotaEstudo cota : cotas) {
-		if (cota.getClassificacao().notIn(ClassificacaoCota.CotaMix, ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo)) {
-		    String[] vetor = new String[estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas().size()];
-		    for (int i = 0; i < estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas().size(); i++) {
-			vetor[i] = estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas().get(i); 
+
+	// marcando bancas que estao fora do percentual de abrangencia
+	if (estudo.getDistribuicaoVendaMediaDTO().getAbrangenciaCriterio() != null &&
+		estudo.getDistribuicaoVendaMediaDTO().getAbrangencia() != null) {
+	    estudo.setComplementarAutomatico(false);
+	    if (estudo.getDistribuicaoVendaMediaDTO().getAbrangenciaCriterio().equalsIgnoreCase("Segmento")) {
+		Collections.sort(cotas, new Comparator<CotaEstudo>() {
+
+		    @Override
+		    public int compare(CotaEstudo cota1, CotaEstudo cota2) {
+			if (cota1 == null || cota1.getQtdeRankingSegmento() == null) {
+			    return -1;
+			}
+			if (cota2 == null || cota2.getQtdeRankingSegmento() == null) {
+			    return 1;
+			}
+			return cota1.getQtdeRankingSegmento().compareTo(cota2.getQtdeRankingSegmento());
 		    }
-		    if (estudoAlgoritmoService.isCotaDentroDoComponenteElemento(estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente(), vetor, cota) &&
-			    cota.getClassificacao().equals(ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
-			cota.setClassificacao(ClassificacaoCota.SemClassificacao);
+		});
+	    } else if (estudo.getDistribuicaoVendaMediaDTO().getAbrangenciaCriterio().equalsIgnoreCase("Faturamento")) {
+		Collections.sort(cotas, new Comparator<CotaEstudo>() {
+
+		    @Override
+		    public int compare(CotaEstudo cota1, CotaEstudo cota2) {
+			if (cota1 == null || cota1.getQtdeRankingFaturamento() == null) {
+			    return -1;
+			}
+			if (cota2 == null || cota2.getQtdeRankingFaturamento() == null) {
+			    return 1;
+			}
+			return cota1.getQtdeRankingFaturamento().compareTo(cota2.getQtdeRankingFaturamento());
+		    }
+		});
+	    } else {
+		Collections.sort(cotas, new Comparator<CotaEstudo>() {
+
+		    @Override
+		    public int compare(CotaEstudo cota1, CotaEstudo cota2) {
+			return cota1.getVendaMedia().compareTo(cota2.getVendaMedia());
+		    }
+		});
+	    }
+	    BigDecimal qtdeCotasAtivas = BigDecimal.ZERO;
+	    for (CotaEstudo cota : cotas) {
+		if (cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
+		    qtdeCotasAtivas = qtdeCotasAtivas.add(BigDecimal.ONE);
+		}
+	    }
+	    BigDecimal abrangencia = new BigDecimal(estudo.getDistribuicaoVendaMediaDTO().getAbrangencia()).multiply(BigDecimal.valueOf(0.01));
+	    BigDecimal qtdeCotasAbrangencia = qtdeCotasAtivas.multiply(abrangencia);
+	    qtdeCotasAbrangencia = qtdeCotasAbrangencia.setScale(0, BigDecimal.ROUND_HALF_UP);
+	    // lista utilizada para que utilizemos apenas as bancas ativas
+	    List<CotaEstudo> temp = new ArrayList<>();
+	    for (CotaEstudo cota : cotas) {
+		if (cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
+		    temp.add(cota);
+		}
+	    }
+	    for (int i = 0; i < temp.size(); i++) {
+		if (BigDecimal.valueOf(i).compareTo(qtdeCotasAbrangencia) < 0) {
+		    temp.get(i).setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
+		    temp.get(i).setReparteCalculado(BigInteger.ZERO, estudo);
+		}
+	    }
+	}
+
+	// marcando bancas fora da regiao de distribuicao
+	for (CotaEstudo cota : cotas) {
+	    for (String item : cota.getTiposCota()) {
+		if (!item.equals("CONSIGNADO") && !estudo.getDistribuicaoVendaMediaDTO().isCotasAVista()) {
+		    cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
+		    cota.setReparteCalculado(BigInteger.ZERO, estudo);
+		}
+	    }
+	}
+
+	// removendo excecoes da lista de cotas
+	if (estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente() != null &&
+		estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas().size() > 0) {
+	    String[] vetor = new String[estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas().size()];
+	    for (int i = 0; i < estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas().size(); i++) {
+		vetor[i] = estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancas().get(i); 
+	    }
+	    for (CotaEstudo cota : cotas) {
+		if (cota.getClassificacao().notIn(ClassificacaoCota.BancaComVendaZero, ClassificacaoCota.BancaSemHistorico,
+			ClassificacaoCota.CotaNaoRecebeSegmento, ClassificacaoCota.BancaSuspensa,
+			ClassificacaoCota.BancaSemClassificacaoDaPublicacao, ClassificacaoCota.BancaMixSemDeterminadaPublicacao)) {		    
+		    if (estudoAlgoritmoService.isCotaDentroDoComponenteElemento(estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente(), vetor, cota)) {
+			cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
+			cota.setReparteCalculado(BigInteger.ZERO, estudo);
 		    }
 		}
 	    }

@@ -40,13 +40,13 @@ public class ReparteComplementarPorCota extends ProcessoAbstrato {
 
 	    @Override
 	    public int compare(CotaEstudo cota1, CotaEstudo cota2) {
-		if (cota1 == null || cota1.getQtdeRanking() == null) {
+		if (cota1 == null || cota1.getQtdeRankingSegmento() == null) {
 		    return -1;
 		}
-		if (cota2 == null || cota2.getQtdeRanking() == null) {
+		if (cota2 == null || cota2.getQtdeRankingSegmento() == null) {
 		    return 1;
 		}
-		return cota1.getQtdeRanking().compareTo(cota2.getQtdeRanking());
+		return cota1.getQtdeRankingSegmento().compareTo(cota2.getQtdeRankingSegmento());
 	    }
 	});
 	// Lista de cotas que não receberam as edições-base, porém receberam a edição aberta
