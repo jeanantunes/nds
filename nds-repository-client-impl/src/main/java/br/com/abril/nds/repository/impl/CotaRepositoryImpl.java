@@ -55,6 +55,7 @@ import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TipoCota;
@@ -65,6 +66,7 @@ import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -2871,5 +2873,46 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 
         query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
         return (CotaDTO) query.list().get(0); //uniqueResult();
+    }
+    
+    @Override
+    @Transactional(readOnly = true)
+    public List<CotaEstudo> getInformacoesCotaEstudo(ProdutoEdicao produtoEdicao) {
+	
+	StringBuilder sql = new StringBuilder();
+	sql.append("select distinct ");
+	sql.append("       c.id id, ");
+	sql.append("       c.numero_cota numeroCota, ");
+	sql.append("       mcp.reparte_max intervaloMaximo, ");
+	sql.append("       mcp.reparte_min intervaloMinimo, ");
+	sql.append("       c.tipo_distribuicao_cota tipoDistribuicaoCota, ");
+	sql.append("       fr.qtde_exemplares reparteFixado, ");
+	sql.append("       (case when mcp.id is not null then 1 else 0 end) mix, ");
+	sql.append("       (case when snr.id is not null then 1 else 0 end) cotaNaoRecebeSegmento, ");
+	sql.append("       (case when ep.id is not null then 1 else 0 end) cotaExcecaoSegmento, ");
+	sql.append("       (case when cnr.id is not null then 1 else 0 end) cotaNaoRecebeClassificacao ");
+	sql.append("  from cota c ");
+	sql.append("  join produto p ON p.id = :produto_id ");
+	sql.append("  join produto_edicao pe ON pe.produto_id = p.id and pe.numero_edicao = :numero_edicao ");
+	sql.append("  left join mix_cota_produto mcp ON mcp.id_cota = c.id and mcp.id_produto = p.id ");
+	sql.append("  left join fixacao_reparte fr ON fr.id_cota = c.id and fr.id_produto = p.id ");
+	sql.append("   and ((pe.numero_edicao between fr.ed_inicial and fr.ed_final) ");
+	sql.append("    or (coalesce(fr.ed_inicial, 0) = 0 and coalesce(fr.ed_final, 0) = 0 ");
+	sql.append("   and coalesce(fr.ed_atendidas, 0) < coalesce(fr.qtde_edicoes, 0))) ");
+	sql.append("  left join segmento_nao_recebido snr ON snr.cota_id = c.id ");
+	sql.append("   and snr.tipo_segmento_produto_id = p.tipo_segmento_produto_id ");
+	sql.append("  left join excecao_produto_cota ep ON ep.cota_id = c.id ");
+	sql.append("   and ep.produto_id = p.id and ep.tipo_excecao = 'SEGMENTO' ");
+	sql.append("  left join classificacao_nao_recebida cnr ON cnr.cota_id = c.id ");
+	sql.append("   and cnr.tipo_classificacao_produto_id = p.tipo_classificacao_produto_id ");
+	sql.append(" where c.situacao_cadastro in ('ATIVO' , 'SUSPENSO') ");
+	sql.append(" order by c.id ");
+	
+	Query query = getSession().createSQLQuery(sql.toString());
+	query.setParameter("produto_id", produtoEdicao.getProduto().getId());
+	query.setParameter("numero_edicao", produtoEdicao.getNumeroEdicao());
+	
+	query.setResultTransformer(new AliasToBeanResultTransformer(CotaEstudo.class));
+	return query.list();
     }
 }

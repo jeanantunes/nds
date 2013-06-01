@@ -144,7 +144,9 @@ public class EstudoAlgoritmoService {
 	for (CotaEstudo cota : estudo.getCotas()) {
 	    if (cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.BancaSoComEdicaoBaseAberta,
 		    ClassificacaoCota.RedutorAutomatico)) {
-		estudo.setSomatoriaVendaMedia(estudo.getSomatoriaVendaMedia().add(cota.getVendaMedia()));
+		if (cota.getVendaMedia() != null) {
+		    estudo.setSomatoriaVendaMedia(estudo.getSomatoriaVendaMedia().add(cota.getVendaMedia()));
+		}
 	    }
 	}
     }

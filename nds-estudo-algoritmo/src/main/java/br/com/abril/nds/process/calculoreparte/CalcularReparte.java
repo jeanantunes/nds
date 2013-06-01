@@ -133,7 +133,10 @@ public class CalcularReparte extends ProcessoAbstrato {
 	    percentualExcedenteEstudo = estudo.getPercentualProporcaoExcedente().get("DE_0_30");
 	}
 
-	BigDecimal indiceReparte = new BigDecimal(estudo.getReparteDistribuir()).divide(estudo.getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_HALF_UP);
+	BigDecimal indiceReparte = BigDecimal.ZERO;
+	if (estudo.getSomatoriaVendaMedia().compareTo(BigDecimal.ZERO) > 0) {
+	    indiceReparte = new BigDecimal(estudo.getReparteDistribuir()).divide(estudo.getSomatoriaVendaMedia(), 2, BigDecimal.ROUND_HALF_UP);
+	}
 	BigDecimal excedentePDV = BigDecimal.ZERO;
 	BigDecimal excedenteVenda = BigDecimal.ZERO;
 	if (percentualExcedenteEstudo != null && percentualExcedenteEstudo.getPdv() != null && percentualExcedenteEstudo.getVenda() != null) {
@@ -225,7 +228,10 @@ public class CalcularReparte extends ProcessoAbstrato {
 	    }
 	});
 
-	BigDecimal somaRepartes = new BigDecimal(getSomaReparteCalculadoCotas(estudo).add(estudo.getReparteComplementar()));
+	BigDecimal somaRepartes = new BigDecimal(getSomaReparteCalculadoCotas(estudo));
+	if (estudo.getReparteComplementar() != null) {
+	    somaRepartes = somaRepartes.add(new BigDecimal(estudo.getReparteComplementar()));
+	}
 	if (estudo.getReservaAjuste() != null) {
 	    somaRepartes = somaRepartes.add(new BigDecimal(estudo.getReservaAjuste()));
 	}

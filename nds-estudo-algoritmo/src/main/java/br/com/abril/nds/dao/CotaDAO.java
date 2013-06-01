@@ -190,8 +190,11 @@ public class CotaDAO {
 		cota.setMix(rs.getBoolean("MIX"));
 		cota.setTipoDistribuicaoCota(TipoDistribuicaoCota.valueOf(rs.getString("TIPO_DISTRIBUICAO_COTA")));
 		traduzAjusteReparte(rs, cota);
-		if (rs.getBigDecimal("QTDE_RANKING") != null) {
-		    cota.setQtdeRanking(rs.getBigDecimal("QTDE_RANKING").toBigInteger());
+		if (rs.getBigDecimal("QTDE_RANKING_SEGMENTO") != null) {
+		    cota.setQtdeRankingSegmento(rs.getBigDecimal("QTDE_RANKING_SEGMENTO").toBigInteger());
+		}
+		if (rs.getBigDecimal("QTDE_RANKING_FATURAMENTO") != null) {
+		    cota.setQtdeRankingFaturamento(rs.getBigDecimal("QTDE_RANKING_FATURAMENTO"));
 		}
 		if (rs.getBigDecimal("REPARTE_MAX") != null) {
 		    cota.setIntervaloMaximo(rs.getBigDecimal("REPARTE_MAX").toBigInteger());

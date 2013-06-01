@@ -75,8 +75,12 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 		}
 	    }
 
+	    BigInteger reparte = BigInteger.ONE;
+	    if (estudo.isDistribuicaoPorMultiplos() && estudo.getPacotePadrao() != null) {
+		reparte = estudo.getPacotePadrao();
+	    }
 	    // distribuicao para TODAS as cotas em ordem decrescente de reparte
-	    if (estudo.getReservaAjuste().compareTo(BigInteger.ZERO) == 1) {
+	    while (estudo.getReservaAjuste().compareTo(reparte) >= 0) {
 
 		Comparator<CotaEstudo> orderCotaDesc = new Comparator<CotaEstudo>(){
 		    @Override
@@ -88,13 +92,12 @@ public class AjusteFinalReparte extends ProcessoAbstrato {
 		Collections.sort(estudo.getCotas(), orderCotaDesc);
 
 		for (CotaEstudo cota : estudo.getCotas()) {
-		    if (estudo.getReservaAjuste().compareTo(BigInteger.ZERO) <= 0) {
+		    if (estudo.getReservaAjuste().compareTo(reparte) < 0) {
 			break;
 		    }
-		    if (estudo.getReservaAjuste().compareTo(BigInteger.ZERO) == 1 &&
-			    cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo, ClassificacaoCota.CotaMix,
-				    ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
-
+		    if (estudo.getReservaAjuste().compareTo(reparte) >= 0 &&
+			    cota.getClassificacao().notIn(ClassificacaoCota.ReparteFixado, ClassificacaoCota.MaximoMinimo,
+				    ClassificacaoCota.CotaMix)) {
 			setReparteCota(cota, estudo);
 		    }
 		}

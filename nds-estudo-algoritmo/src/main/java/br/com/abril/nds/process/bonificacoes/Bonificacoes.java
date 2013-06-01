@@ -7,12 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import br.com.abril.nds.dto.BonificacaoDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.medias.Medias;
 import br.com.abril.nds.service.EstudoAlgoritmoService;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre as cotas encontradas para o perfil definido no
@@ -37,6 +40,18 @@ public class Bonificacoes extends ProcessoAbstrato {
 		// validando reparte minimo
 		BigInteger reparteMinimo = BigInteger.ZERO;
 		if (bonificacao.getReparteMinimoBigInteger() != null && bonificacao.getReparteMinimoBigInteger().compareTo(BigInteger.ZERO) > 0) {
+		    // verificacao se o reparte minimo da bonificacao e multiplo do pacote padrao
+		    // TODO: melhorar logica ou encontrar alguma funcao da api mais simples
+		    if (estudo.getPacotePadrao() != null && estudo.getPacotePadrao().compareTo(BigInteger.ZERO) > 0) {
+			BigDecimal quebrado = new BigDecimal(bonificacao.getReparteMinimoBigInteger()).
+				divide(new BigDecimal(estudo.getPacotePadrao()), 4, BigDecimal.ROUND_HALF_UP);
+			BigDecimal inteiro = new BigDecimal(bonificacao.getReparteMinimoBigInteger()).
+				divide(new BigDecimal(estudo.getPacotePadrao()), 0, BigDecimal.ROUND_HALF_UP);
+			if (quebrado.compareTo(inteiro) != 0) {
+			    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
+				    String.format("O reparte mínimo da bonificação deve ser múltiplo de %s.", estudo.getPacotePadrao())));
+			}
+		    }
 		    reparteMinimo = bonificacao.getReparteMinimoBigInteger();
 		}
 		// validando indiceBonificacao

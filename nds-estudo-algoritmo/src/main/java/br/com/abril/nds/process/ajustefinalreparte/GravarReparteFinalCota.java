@@ -33,6 +33,7 @@ public class GravarReparteFinalCota extends ProcessoAbstrato {
     @Override
     public void executar(EstudoTransient estudo) {
 	estudo.getCotas().addAll(estudo.getCotasExcluidas());
+	estudo.getCotas().addAll(estudo.getCotasForaDaRegiao());
 	for (CotaEstudo cota : estudo.getCotas()) {
 	    if (!cota.getClassificacao().equals(ClassificacaoCota.CotaNova) && cota.getReparteCalculado().compareTo(BigInteger.ZERO) == 0) {
 		cota.setReparteCalculado(null);
