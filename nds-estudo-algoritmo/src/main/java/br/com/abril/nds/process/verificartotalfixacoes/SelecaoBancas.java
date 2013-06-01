@@ -158,12 +158,6 @@ public class SelecaoBancas extends ProcessoAbstrato {
 
 		    @Override
 		    public int compare(CotaEstudo cota1, CotaEstudo cota2) {
-			if (cota1 == null || cota1.getQtdeRankingSegmento() == null) {
-			    return -1;
-			}
-			if (cota2 == null || cota2.getQtdeRankingSegmento() == null) {
-			    return 1;
-			}
 			return cota1.getQtdeRankingSegmento().compareTo(cota2.getQtdeRankingSegmento());
 		    }
 		});
@@ -172,12 +166,6 @@ public class SelecaoBancas extends ProcessoAbstrato {
 
 		    @Override
 		    public int compare(CotaEstudo cota1, CotaEstudo cota2) {
-			if (cota1 == null || cota1.getQtdeRankingFaturamento() == null) {
-			    return -1;
-			}
-			if (cota2 == null || cota2.getQtdeRankingFaturamento() == null) {
-			    return 1;
-			}
 			return cota1.getQtdeRankingFaturamento().compareTo(cota2.getQtdeRankingFaturamento());
 		    }
 		});

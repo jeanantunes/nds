@@ -66,6 +66,8 @@ public class CotaEstudo extends Cota {
 	reparteMinimo = BigInteger.ZERO;
 	reparteMinimoFinal = BigInteger.ZERO;
 	intervaloMinimo = BigInteger.ZERO;
+	qtdeRankingFaturamento = BigDecimal.ZERO;
+	qtdeRankingSegmento = BigInteger.ZERO;
 	reparteCalculado = BigInteger.ZERO;
 	indiceAjusteCota = BigDecimal.ONE;
 	indiceVendaCrescente = BigDecimal.ONE;
