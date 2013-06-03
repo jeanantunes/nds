@@ -188,7 +188,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		if (cota != null) {
 			
 			List<FormaCobranca> formasCobranca = this.formaCobrancaRepository.obterFormasCobrancaCota(cota);
-						
+			
 			parametroCobrancaDTO = new ParametroCobrancaCotaDTO();
 			
 			parametroCobrancaDTO.setIdCota(cota.getId());
@@ -615,7 +615,15 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	    	//ParametroCobrancaCota parametroCobranca = this.parametroCobrancaCotaRepository.buscarPorId(formaCobrancaDTO.getIdParametroCobranca());
 	    	FormaCobranca formaCobrancaDistribuidor = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
 			
-	    	ParametroCobrancaCota parametroCobranca = new ParametroCobrancaCota();
+	    	Cota c = cotaRepository.buscarPorId(formaCobrancaDTO.getIdCota());
+	    	
+	    	ParametroCobrancaCota parametroCobranca;
+	    	if(c!= null && c.getParametroCobranca() == null) {
+	    		parametroCobranca = new ParametroCobrancaCota();
+	    	} else {
+	    		parametroCobranca = c.getParametroCobranca();
+	    	}
+	    	
 			parametroCobranca.setCota(new Cota(formaCobrancaDTO.getIdCota()));
 			parametroCobranca.setFatorVencimento(1);
 			parametroCobranca.setFormasCobrancaCota(null);
@@ -624,7 +632,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			parametroCobranca.setTipoCota(null);
 			parametroCobranca.setPoliticaSuspensao(null);
 			
-			parametroCobrancaCotaRepository.adicionar(parametroCobranca);
+			parametroCobrancaCotaRepository.merge(parametroCobranca);
 	    	
 	    	formaCobranca.setParametroCobrancaCota(parametroCobranca);
 
