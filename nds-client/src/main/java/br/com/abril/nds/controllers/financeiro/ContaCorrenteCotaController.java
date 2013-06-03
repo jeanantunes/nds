@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -227,7 +226,7 @@ public class ContaCorrenteCotaController extends BaseController {
 		tableModel.setPage(1);
 		tableModel.setTotal(listaConsignadoCota.size());
 		
-		if(listaConsignadoCota != null) {
+		if(listaConsignadoCota != null){
 			
 			if(listaInfoTotalFornecedor != null && !listaInfoTotalFornecedor.isEmpty()) {
 				
@@ -319,7 +318,7 @@ public class ContaCorrenteCotaController extends BaseController {
 				valor = BigDecimal.ZERO;
 			}
 			
-			mapFornecedores.put(key,new InfoTotalFornecedorDTO(key, valor.setScale(4, RoundingMode.HALF_EVEN)));
+			mapFornecedores.put(key,new InfoTotalFornecedorDTO(key, valor.setScale(2, RoundingMode.HALF_EVEN)));
 			
 		}
 		List<InfoTotalFornecedorDTO> infoTotalFornecedorDTOs = new ArrayList<InfoTotalFornecedorDTO>();
