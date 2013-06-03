@@ -35,4 +35,6 @@ public interface EstudoRepository extends Repository<Estudo, Long> {
 	public Long countDeCotasEntreEstudos(Long estudoBase, Long estudoSomado);
 
     int obterCotasComRepartePorIdEstudo(Long estudoId);
+
+	Long obterUltimoAutoIncrement();
 }

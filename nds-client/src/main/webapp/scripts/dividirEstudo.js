@@ -128,12 +128,12 @@ var dividirEstudo = $.extend(true, {
 
 	$.postJSON('dividirEstudo/gerarDivisao', dados, function(response) {
 	    numeroPrimeiroEstudo.val(response.divisaoEstudoDTO.numeroPrimeiroEstudo);
-	    repartePrimeiroEstudo.val(response.divisaoEstudoDTO.repartePrimeiroEstudo);
+//	    repartePrimeiroEstudo.val(response.divisaoEstudoDTO.repartePrimeiroEstudo);
 //	    dataLancamentoPrimeiroEstudo.val(response.divisaoEstudoDTO.dataLancamentoPrimeiroEstudo);
 	    dataLancamentoPrimeiroEstudo.val($(dataDistribuicao).val());
 	    
 	    numeroSegundoEstudo.val(response.divisaoEstudoDTO.numeroSegundoEstudo);
-	    reparteSegundoEstudo.val(response.divisaoEstudoDTO.reparteSegundoEstudo);
+//	    reparteSegundoEstudo.val(response.divisaoEstudoDTO.reparteSegundoEstudo);
 	    $('.corpo').flexReload();
 	}, function() {
 	});
@@ -230,12 +230,12 @@ var dividirEstudo = $.extend(true, {
 	});
 
 	$.postJSON('dividirEstudo/confirmar', dados, function(response) {
-	    $('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
+//	    $('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
 //	    var pathTela = "/nds-client-f2";
 	    if(typeof(matrizDistribuicao)=="object"){
 //	    	var matrizDistribuicao = new MatrizDistribuicao(pathTela, "matrizDistribuicao", BaseController.workspace);
-	    	console.log("pesquisando retorno da divisão")
-	    	matrizDistribuicao.pesquisar();
+//	    	console.log("pesquisando retorno da divisão")
+//	    	matrizDistribuicao.pesquisar();
 	    	
 	    }
 	}, function() {
@@ -347,12 +347,14 @@ var dividirEstudo = $.extend(true, {
     
     analisar : function() {
 		//testa se registro selecionado possui estudo gerado
-		if ($('#numeroEstudoOriginal').val() == null || $('#numeroEstudoOriginal').val() == "") {
+//		if ($('#numeroEstudoOriginal').val() == null || $('#numeroEstudoOriginal').val() == "") {
+    	if ($('#numeroPrimeiroEstudo').val() == null || $('#numeroPrimeiroEstudo').val() == "") {
+    	
 			exibirMensagem("WARNING",["Gere o estudo antes de fazer a análise."]);
 			return;
 		} else {
 			// Deve ir direto para EMS 2031
-			matrizDistribuicao.redirectToTelaAnalise('#dividirEstudoContent', '#dividirEstudoTelaAnalise', $('#numeroEstudoOriginal').val());
+			matrizDistribuicao.redirectToTelaAnalise('#dividirEstudoContent', '#dividirEstudoTelaAnalise', $('#numeroPrimeiroEstudo').val());
 		}
 	},
 	
