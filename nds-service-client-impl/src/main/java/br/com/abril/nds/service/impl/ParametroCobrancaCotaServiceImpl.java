@@ -187,6 +187,8 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		ParametroCobrancaCotaDTO parametroCobrancaDTO = null;
 		if (cota != null) {
 			
+			List<FormaCobranca> formasCobranca = this.formaCobrancaRepository.obterFormasCobrancaCota(cota);
+						
 			parametroCobrancaDTO = new ParametroCobrancaCotaDTO();
 			
 			parametroCobrancaDTO.setIdCota(cota.getId());
@@ -196,7 +198,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			
 			parametroCobranca = cota.getParametroCobranca();
 			
-			if (parametroCobranca == null) {
+			if (parametroCobranca == null && formasCobranca == null || formasCobranca.size() == 0) {
 				FormaCobranca formaCobrancaDistribuidor = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
 				
 				parametroCobranca = new ParametroCobrancaCota();

@@ -68,7 +68,7 @@ $(function(){
 	<fieldset>
 		<legend>Forma Cobrança do Distribuidor</legend>
 		<p>
-			Será incluso a forma de cobrança do distribuidor, deseja continuar?
+			Será incluso a forma de cobrança do distribuidor na cota, deseja continuar?
 		</p>
 	</fieldset>
 </div>
