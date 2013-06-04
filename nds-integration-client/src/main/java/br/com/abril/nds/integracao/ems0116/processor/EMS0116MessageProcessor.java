@@ -1,6 +1,7 @@
 package br.com.abril.nds.integracao.ems0116.processor;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
@@ -221,8 +222,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	 */
 	private void processarEnderecoPDV(Message message, EMS0116Input input,Cota cota, PDV pdv) {
 		
-		if (!input.getEndereco().isEmpty()
-				&& !".".equals(input.getEndereco())) {
+		if (!input.getEndereco().isEmpty() && !".".equals(input.getEndereco())) {
 
 			List<EnderecoPDV> enderecosPDV = obterEnderecoPDVPorLogradouro(input, pdv);
 
@@ -250,21 +250,22 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	/*
 	 * Altera os dados do endereço relacionado ao PDV
 	 */
-	private void alterarEnderecoPDV(Message message, EMS0116Input input,PDV pdv,List<EnderecoPDV> enderecosPDV) {
+	private void alterarEnderecoPDV(Message message, EMS0116Input input, PDV pdv, List<EnderecoPDV> enderecosPDV) {
 		
 		EnderecoPDV enderecoPDV = null;
 
-		//String logradouro = input.getEndereco().split(",")[0].trim();
 		String logradouro = getLogradouroSemTipo(input.getEndereco().split(",")[0].trim());
 		String numero = input.getEndereco().split(",")[1].trim();
 		
 		for (EnderecoPDV item : enderecosPDV) {
 
-			//if(item.getEndereco().getLogradouro().equals(input.getEndereco())){
-			if(item.getEndereco().getLogradouro().equalsIgnoreCase(logradouro) &&
-			   item.getEndereco().getNumero().equals(numero)){
+			if(item.getEndereco().getLogradouro().equalsIgnoreCase(logradouro)
+					&& item.getEndereco().getNumero().equals(numero)) {
+				
 				enderecoPDV = item;
+				
 				break;
+				
 			}
 		}
 		
@@ -278,7 +279,6 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 			
 			endereco.setCep(input.getCep());
 			endereco.setCidade((input.getNomeMunicipio() != null ? input.getNomeMunicipio().toUpperCase() : input.getNomeMunicipio()));
-			//endereco.setLogradouro(input.getEndereco());
 			endereco.setLogradouro((logradouro != null ? logradouro.toUpperCase() : logradouro));
 			endereco.setNumero(numero);
 			endereco.setUf(input.getSiglaUF());
@@ -289,6 +289,14 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 				endereco.setBairro((endTmp.getBairro() != null ? endTmp.getBairro().toUpperCase() : endTmp.getBairro()));
 				endereco.setTipoLogradouro((endTmp.getTipoLogradouro() != null ? endTmp.getTipoLogradouro().toUpperCase() : endTmp.getTipoLogradouro()));
 			}
+			
+			if(!isEnderecoPrincipal(pdv.getEnderecos())) {
+				enderecoPDV.setPrincipal(true);
+			} else {
+				enderecoPDV.setPrincipal(false);
+			}
+			
+			getSession().merge(enderecoPDV);
 			
 			getSession().merge(endereco);
 		}
@@ -326,7 +334,6 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		Endereco endereco = new Endereco();
 		endereco.setCep(input.getCep());
 		endereco.setCidade((input.getNomeMunicipio() != null ? input.getNomeMunicipio().toUpperCase() : input.getNomeMunicipio()));
-		//endereco.setLogradouro(input.getEndereco());
 		endereco.setLogradouro((logradouro != null ? logradouro.toUpperCase() : logradouro));
 		endereco.setNumero(numero);
 		endereco.setUf(input.getSiglaUF());
@@ -336,8 +343,6 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 			endereco.setBairro((endTmp.getBairro() != null ? endTmp.getBairro().toUpperCase() : endTmp.getBairro()));
 			endereco.setTipoLogradouro((endTmp.getTipoLogradouro() != null ? endTmp.getTipoLogradouro().toUpperCase() : endTmp.getTipoLogradouro()));
 		}
-
-		//endereco.setNumero(null);
 
 		getSession().persist(endereco);
 

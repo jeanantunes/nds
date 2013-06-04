@@ -14,11 +14,13 @@
 		
 		$('.pButton', fechamentoEncalheController.workspace).click(function(){
 			
+			
 			linhasTabela = [];
 			$('.fechamentoGrid', fechamentoEncalheController.workspace).find('tr').each(function(){
 				var codigo = $(this).children('td[abbr="codigo"]').children('div').html().toString();
-				var produtoEdicao = $(this).children('td[abbr="edicao"]').children('div').html().toString();
+				var produtoEdicao = $(this).children('td').children('div').children('input[name=fisico]').attr("id");//Envia o id que eh setado com produtoEdicaoId
 				var fisico = $(this).children('td').children('div').children('input[name=fisico]').val().toString();
+
 				var checkbox = $(this).children('td').children('div').children('input[name=checkgroupFechamento]:checked').val() == "on" ? true : false;
 				var envioController = {
 					"codigo"  		: 	codigo,
@@ -30,6 +32,9 @@
 					  console.log( "success" );
 				});
 			});
+			
+			$('input[name=Todos]').attr("checked", false); 
+			
 		});	 	
 	});
 	</script>

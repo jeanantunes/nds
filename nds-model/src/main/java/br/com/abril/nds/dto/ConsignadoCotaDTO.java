@@ -45,6 +45,9 @@ public class ConsignadoCotaDTO implements Serializable{
 	@Export(label="Motivo", fontSize=9)
 	private TipoDiferenca motivo;
 	
+	@Export(label="Motivo Desc.", fontSize=9)
+	private String motivoTexto;
+	
 	@Export(label="Fornecedor", fontSize=9, widthPercent=7)
 	private String nomeFornecedor;
 	
@@ -90,7 +93,7 @@ public class ConsignadoCotaDTO implements Serializable{
 	}
 
 	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
-		this.precoComDesconto = precoComDesconto != null ? precoComDesconto.setScale(2, RoundingMode.HALF_EVEN) : null;
+		this.precoComDesconto = precoComDesconto != null ? precoComDesconto.setScale(4, RoundingMode.HALF_EVEN) : null;
 	}
 
 	public BigInteger getReparteSugerido() {
@@ -130,7 +133,7 @@ public class ConsignadoCotaDTO implements Serializable{
 	}
 
 	public void setTotal(BigDecimal total) {
-		this.total = total != null ? total.setScale(2, RoundingMode.HALF_EVEN) : null;
+		this.total = total != null ? total.setScale(4, RoundingMode.HALF_EVEN) : null;
 	}
 
 	public TipoDiferenca getMotivo() {
@@ -139,6 +142,14 @@ public class ConsignadoCotaDTO implements Serializable{
 
 	public void setMotivo(TipoDiferenca motivo) {
 		this.motivo = motivo;
+	}
+	
+	public String getMotivoText() {
+		return motivoTexto;
+	}
+
+	public void setMotivoText(String motivoTexto) {
+		this.motivoTexto = motivoTexto;
 	}
 
 	public BigDecimal getDesconto() {
