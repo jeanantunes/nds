@@ -68,7 +68,7 @@ $(function(){
 	<fieldset>
 		<legend>Forma Cobrança do Distribuidor</legend>
 		<p>
-			Será incluso a forma de cobrança do distribuidor, deseja continuar?
+			Será incluso a forma de cobrança do distribuidor na cota, deseja continuar?
 		</p>
 	</fieldset>
 </div>
@@ -347,7 +347,7 @@ $(function(){
 							        
 					             <tr>
 					                 <td width="12%">
-					                     <input type="checkbox" name="PS" id="PS" />
+					                     <input type="checkbox" name="PCC-PS" id="PCC-PS" />
 					                 </td>    
 					                 <td width="88%">
 					                     <label for="PS">Segunda-feira</label>
@@ -356,7 +356,7 @@ $(function(){
 							            
 							     <tr>
 					                 <td>           
-							             <input type="checkbox" name="PT" id="PT" />
+							             <input type="checkbox" name="PCC-PT" id="PCC-PT" />
 							         </td>    
 					                 <td>    
 							             <label for="PT">Terça-feira</label>
@@ -365,7 +365,7 @@ $(function(){
 					             
 					             <tr>
 					                 <td>            
-							             <input type="checkbox" name="PQ" id="PQ" />
+							             <input type="checkbox" name="PCC-PQ" id="PCC-PQ" />
 							         </td>    
 					                 <td>      
 							             <label for="PQ">Quarta-feira</label>
@@ -374,7 +374,7 @@ $(function(){
 							                          
 							      <tr>
 					                 <td>          
-							             <input type="checkbox" name="PQu" id="PQu" />
+							             <input type="checkbox" name="PCC-PQu" id="PCC-PQu" />
 							          </td>    
 					                  <td>  
 							             <label for="PQu">Quinta-feira</label>
@@ -383,7 +383,7 @@ $(function(){
 							                  
 							      <tr>
 					                 <td>          
-							             <input type="checkbox" name="PSex" id="PSex" />
+							             <input type="checkbox" name="PCC-PSex" id="PCC-PSex" />
 							         </td>    
 					                 <td>      
 							             <label for="PSex">Sexta-feira</label>
@@ -392,7 +392,7 @@ $(function(){
 							               
 							      <tr>
 					                 <td>    
-							             <input type="checkbox" name="PSab" id="PSab" />
+							             <input type="checkbox" name="PCC-PSab" id="PCC-PSab" />
 							             </td>    
 					                 <td>  
 							             <label for="PSab">Sábado</label>
@@ -401,7 +401,7 @@ $(function(){
 							                   
 							      <tr>
 					                  <td>
-							             <input type="checkbox" name="PDom" id="PDom" />
+							             <input type="checkbox" name="PCC-PDom" id="PCC-PDom" />
 							             </td>    
 					                 <td>  
 							             <label for="PDom">Domingo</label>

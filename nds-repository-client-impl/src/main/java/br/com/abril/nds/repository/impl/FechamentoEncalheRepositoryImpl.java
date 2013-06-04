@@ -453,13 +453,13 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	sql.append("	inner join                                                          ");
 	sql.append("        PDV pdv                                                         ");                 
 	sql.append("            on cota.ID=pdv.COTA_ID                                      ");
-	sql.append("    inner join                                                          ");
+	sql.append("    left outer join                                                     ");
 	sql.append("        ROTA_PDV rotaPdv                                                ");                 
 	sql.append("            on pdv.ID=rotaPdv.PDV_ID                                    ");
-	sql.append("	inner join                                                          ");
+	sql.append("	left outer join                                                     ");
 	sql.append("    	ROTA rota                                                       ");
 	sql.append("    		on rotaPdv.ROTA_ID=rota.ID                                  ");
-	sql.append("    inner join                                                          ");
+	sql.append("    left outer join                                                     ");
 	sql.append("        ROTEIRO roteiro                                                 ");
 	sql.append("        	on rota.ROTEIRO_ID=roteiro.ID                               ");
 	sql.append("    where                                                               ");
@@ -541,13 +541,13 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		sql.append("	inner join                                              ");
 		sql.append("        PDV pdv                                             ");
 		sql.append("            on cota.ID=pdv.COTA_ID                          ");
-		sql.append("    inner join                                              ");
+		sql.append("    left outer join                                         ");
 		sql.append("        ROTA_PDV rotaPdv                                    ");
 		sql.append("            on pdv.ID=rotaPdv.PDV_ID                        ");
-		sql.append("	inner join                                              ");
+		sql.append("	left outer join                                         ");
 		sql.append("    	ROTA rota                                           ");
 		sql.append("    		on rotaPdv.ROTA_ID=rota.ID                      ");
-		sql.append("    inner join                                              ");
+		sql.append("    left outer join                                         ");
 		sql.append("        ROTEIRO roteiro                                     ");
 		sql.append("        	on rota.ROTEIRO_ID=roteiro.ID                   ");
 		

@@ -149,6 +149,7 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ImpressaoMatricialUtil;
 import br.com.abril.nds.util.JasperUtil;
 import br.com.abril.nds.util.MathUtil;
+import br.com.abril.nds.util.StringUtil;
 
 @Service
 public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService {
@@ -905,7 +906,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			adicionarDebitoCreditoDeConsolidado(
 					listaDebitoCredito,
 					consolidado.getValorPostergado(), 
-					"Crédito Postergado: " + dataConsolidadoPostergadoFormatada,
+					"Credito Postergado: " + dataConsolidadoPostergadoFormatada,
 					"Pgto. Postergado: " + dataConsolidadoPostergadoFormatada,
 					consolidado.getDataConsolidado(), 
 					DateUtil.parseDataPTBR(DateUtil.formatarDataPTBR(consolidado.getDataConsolidado())));
@@ -3330,7 +3331,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 
 		
-		totalComposicao = totalComposicao.abs().add(slipDTO.getValorSlip());
+		totalComposicao = slipDTO.getValorSlip().abs().add(totalComposicao);
 
 		
 		BigDecimal totalPagar = totalComposicao;
@@ -3591,7 +3592,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		
 		//e.adicionarCompleteEspaco("Outros valores", slipDTO.getOutrosValores().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
-		e.adicionarCompleteTraco("VALOR TOTAL A PAGAR", valorTotalPagar);
+		e.adicionarCompleteEspaco("VALOR TOTAL A PAGAR", valorTotalPagar);
 		
 		
 		
@@ -3646,7 +3647,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			for(ComposicaoCobrancaSlipDTO composicao : listaComposicaoCobrancaDTO) 
 			{
-				String descricao = composicao.getDescricao();
+				String descricao = StringUtil.limparString(composicao.getDescricao());
 				String valor = (composicao.getValor() == null) ? "0,00" : composicao.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
 				String operacaoFinanceira = (composicao.getOperacaoFinanceira() == null) ? "" : composicao.getOperacaoFinanceira();
 				e.adicionarCompleteEspaco(descricao + ": " + operacaoFinanceira, valor);

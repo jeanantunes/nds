@@ -182,21 +182,21 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		
 		List<ConsultaConsignadoCotaDTO> listaConsignadoCota = this.consultaConsignadoCota.buscarConsignadoCota(filtro, true);
 		
-		FiltroConsultaConsignadoCotaDTO filtroTotalDeRegistros = new FiltroConsultaConsignadoCotaDTO();
-		filtroTotalDeRegistros.setIdCota(filtro.getIdCota());
+		FiltroConsultaConsignadoCotaDTO filtroTotal = new FiltroConsultaConsignadoCotaDTO();
 		
-		filtroTotalDeRegistros.setPaginacao(new PaginacaoVO());
+		filtroTotal.setIdCota(filtro.getIdCota());
+		filtroTotal.setIdFornecedor(filtro.getIdFornecedor());
+		filtroTotal.setNomeCota(filtro.getNomeCota());
+		filtroTotal.setNomeFornecedor(filtro.getNomeFornecedor());
+		filtroTotal.setOrdenacaoColuna(null);
+		filtroTotal.setPaginacao(null);
 		
-		filtroTotalDeRegistros.getPaginacao().setOrdenacao(filtro.getPaginacao().getOrdenacao());
-		filtroTotalDeRegistros.getPaginacao().setSortColumn(filtro.getPaginacao().getSortColumn());
-		filtroTotalDeRegistros.getPaginacao().setSortOrder(filtro.getPaginacao().getSortOrder());
-		
-		List<ConsultaConsignadoCotaDTO> totalRegistros = this.consultaConsignadoCota.buscarConsignadoCota(filtroTotalDeRegistros, false);
+		List<ConsultaConsignadoCotaDTO> totalRegistros = this.consultaConsignadoCota.buscarConsignadoCota(filtroTotal, false);
 		
 		TableModel<CellModelKeyValue<ConsultaConsignadoCotaDTO>> tableModel = new TableModel<CellModelKeyValue<ConsultaConsignadoCotaDTO>>();
 		
-		//Long totalRegistros = this.consultaConsignadoCota.buscarTodasMovimentacoesPorCota(filtro);
-		if(totalRegistros.size() == 0){
+		if (totalRegistros.size() == 0) {
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
 		}
 

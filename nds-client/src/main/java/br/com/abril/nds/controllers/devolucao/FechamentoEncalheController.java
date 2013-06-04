@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -662,16 +663,16 @@ public class FechamentoEncalheController extends BaseController {
 		List<FechamentoFisicoLogicoDTO> listaDeGrid = (List<FechamentoFisicoLogicoDTO>) session.getAttribute("gridFechamentoEncalheDTO");
 		
 		boolean insercao = true;
-		if(listaDeGrid != null)
-		{
-			for(FechamentoFisicoLogicoDTO linha : listaDeGrid)
-			{
-				if(linha.getCodigo().equals(Long.parseLong(codigo)))
-				{
+		if(listaDeGrid != null && !listaDeGrid.isEmpty()){
+			
+			Iterator<FechamentoFisicoLogicoDTO> iterator = new ArrayList<FechamentoFisicoLogicoDTO>(listaDeGrid).iterator();
+			
+			while(iterator.hasNext()){
+				FechamentoFisicoLogicoDTO linha = iterator.next();
+				if(linha != null && linha.getCodigo() != null && linha.getCodigo().equals(codigo)){
 					linha.setCodigo(codigo);
 					linha.setProdutoEdicao(Long.parseLong(produtoEdicao));
-					if(fisico != null)
-					{
+					if(fisico != null){
 						linha.setFisico(Long.parseLong(fisico));	
 					}
 					linha.setReplicar(String.valueOf(checkbox));
@@ -679,18 +680,15 @@ public class FechamentoEncalheController extends BaseController {
 					insercao = false;
 				}
 			}
-		}
-		else
-		{
+
+		}else{
 			listaDeGrid = new ArrayList<FechamentoFisicoLogicoDTO>();
 		}
 	
-		if(insercao == true)
-		{
+		if(insercao == true){
 			FechamentoFisicoLogicoDTO gridFechamentoEncalheDTO = new FechamentoFisicoLogicoDTO();
 			
-			if(fisico != null)
-			{
+			if(fisico != null){
 				gridFechamentoEncalheDTO.setFisico(Long.parseLong(fisico));	
 			}
 			

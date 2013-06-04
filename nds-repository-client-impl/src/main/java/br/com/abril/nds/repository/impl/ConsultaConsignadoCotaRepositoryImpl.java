@@ -47,6 +47,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 			FiltroConsultaConsignadoCotaDTO filtro, boolean limitar) {
 		 
 		StringBuilder sql = new StringBuilder();
+		
 		sql.append(" SELECT ");
 
 		sql.append(" 	PR.CODIGO AS codigoProduto, ");
@@ -113,7 +114,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		sql.append(" ( MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ) ");
 		
-		sql.append(" AND ( TM.GRUPO_MOVIMENTO_ESTOQUE not in (':tipoMovimentoEstorno') ");
+		sql.append(" AND ( TM.GRUPO_MOVIMENTO_ESTOQUE not in (:tipoMovimentoEstorno) ");
 		sql.append(" ) "); 
 
 		if(filtro.getIdCota() != null ) { 
@@ -132,7 +133,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		sql.append(" HAVING ");
 		sql.append(" SUM((CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END)" +
-				   "    -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' then MEC.QTDE ELSE 0 END))<>0 "); 
+				   "    -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' then MEC.QTDE ELSE 0 END))>0 "); 
 
 		if(filtro.getPaginacao()!=null){
 			
@@ -163,7 +164,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		parameters.put("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name());
 
-		parameters.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
+		parameters.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.ordinal());
 
 		if(filtro.getPaginacao()!=null){
 			

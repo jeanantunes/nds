@@ -1,34 +1,84 @@
 package br.com.abril.nds.repository.impl;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.hibernate.Criteria;
-import org.hibernate.criterion.Restrictions;
+import javax.sql.DataSource;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
+import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalheBox;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalheBoxPK;
+import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.FechamentoEncalheBoxRepository;
 
 @Repository
 public class FechamentoEncalheBoxRepositoryImpl extends AbstractRepositoryModel<FechamentoEncalheBox, FechamentoEncalheBoxPK> implements FechamentoEncalheBoxRepository {
 
+	@Autowired
+	private DataSource dataSource;
+	
 	public FechamentoEncalheBoxRepositoryImpl() {
 		super(FechamentoEncalheBox.class);
 	}
 	
 	
 	@Override
-	public List<FechamentoEncalheBox> buscarFechamentoEncalheBox(
-			FiltroFechamentoEncalheDTO filtro) {
-		
-		Criteria criteria = this.getSession().createCriteria(FechamentoEncalheBox.class);
-		criteria.add(Restrictions.eq("fechamentoEncalheBoxPK.box.id", filtro.getBoxId()));
-		criteria.add(Restrictions.eq("fechamentoEncalheBoxPK.fechamentoEncalhe.fechamentoEncalhePK.dataEncalhe", filtro.getDataEncalhe()));
-		return criteria.list();
+	public List<FechamentoEncalheBox> buscarFechamentoEncalheBox(FiltroFechamentoEncalheDTO filtro) {
 
+		StringBuilder sql = new StringBuilder();
+		sql.append(" select ");
+		sql.append("	this_.BOX_ID, ");
+		sql.append("	this_.DATA_ENCALHE, ");
+		sql.append("	this_.PRODUTO_EDICAO_ID, ");
+		sql.append("	this_.QUANTIDADE ");
+		sql.append(" from ");
+		sql.append("	FECHAMENTO_ENCALHE_BOX this_  ");
+		sql.append(" where ");
+		sql.append("	this_.BOX_ID=:idBox ");
+		sql.append("	and this_.DATA_ENCALHE= :dataEncalhe ");
+
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		
+		parameters.put("idBox", filtro.getBoxId());
+		parameters.put("dataEncalhe", filtro.getDataEncalhe());
+		
+		RowMapper<FechamentoEncalheBox> cotaRowMapper = new RowMapper<FechamentoEncalheBox>() {
+
+			public FechamentoEncalheBox mapRow(ResultSet rs, int arg1) throws SQLException {
+
+				FechamentoEncalheBox fechamento = new FechamentoEncalheBox();
+				Box box = new Box();
+				box.setId(rs.getLong("BOX_ID"));
+				
+				fechamento.setFechamentoEncalheBoxPK(new FechamentoEncalheBoxPK());
+				
+				fechamento.getFechamentoEncalheBoxPK().setBox(box);
+				fechamento.getFechamentoEncalheBoxPK().setFechamentoEncalhe(new FechamentoEncalhe());
+				fechamento.getFechamentoEncalheBoxPK().getFechamentoEncalhe().setFechamentoEncalhePK(new FechamentoEncalhePK());
+				fechamento.getFechamentoEncalheBoxPK().getFechamentoEncalhe().getFechamentoEncalhePK().setDataEncalhe(rs.getDate("DATA_ENCALHE"));
+				fechamento.getFechamentoEncalheBoxPK().getFechamentoEncalhe().getFechamentoEncalhePK().setProdutoEdicao(new ProdutoEdicao());
+				fechamento.getFechamentoEncalheBoxPK().getFechamentoEncalhe().getFechamentoEncalhePK().getProdutoEdicao().setId(rs.getLong("PRODUTO_EDICAO_ID"));
+				
+				fechamento.setQuantidade(rs.getLong("QUANTIDADE"));
+				
+				return fechamento;
+			}
+		};
+		
+		return namedParameterJdbcTemplate.query(sql.toString(), parameters, cotaRowMapper);
 	}
 	
 

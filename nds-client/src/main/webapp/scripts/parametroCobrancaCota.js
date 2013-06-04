@@ -770,13 +770,13 @@ var parametroCobrancaCotaController = $.extend(true, {
 					   $("#primeiroDiaQuinzenalParametroCobrancaCota", this.workspace).val(resultado.diasDoMes[0]);
 					   $("#segundoDiaQuinzenalParametroCobrancaCota", this.workspace).val(resultado.diasDoMes[1]);
 				   }
-				   $("#PS", this.workspace).attr("checked", resultado.segunda);
-				   $("#PT", this.workspace).attr("checked", resultado.terca);
-				   $("#PQ", this.workspace).attr("checked", resultado.quarta);
-				   $("#PQu", this.workspace).attr("checked", resultado.quinta);
-				   $("#PSex", this.workspace).attr("checked", resultado.sexta);
-				   $("#PSab", this.workspace).attr("checked", resultado.sabado);
-				   $("#PDom", this.workspace).attr("checked", resultado.domingo);
+				   $("#PCC-PS", this.workspace).attr("checked", resultado.segunda);
+				   $("#PCC-PT", this.workspace).attr("checked", resultado.terca);
+				   $("#PCC-PQ", this.workspace).attr("checked", resultado.quarta);
+				   $("#PCC-PQu", this.workspace).attr("checked", resultado.quinta);
+				   $("#PCC-PSex", this.workspace).attr("checked", resultado.sexta);
+				   $("#PCC-PSab", this.workspace).attr("checked", resultado.sabado);
+				   $("#PCC-PDom", this.workspace).attr("checked", resultado.domingo);
 	
 				   parametroCobrancaCotaController.opcaoPagto(resultado.tipoCobranca);
 				   parametroCobrancaCotaController.opcaoTipoFormaCobranca(resultado.tipoFormaCobranca); 
@@ -822,54 +822,54 @@ var parametroCobrancaCotaController = $.extend(true, {
 		}
 		var recebeEmail = $("#recebeEmail", this.workspace).val();
 		
-		$("#PS", this.workspace).val(0);
+		$("#PCC-PS", this.workspace).val(0);
 		//if (document.formularioFormaCobranca.PS.checked){
-		if ($("#PS", this.workspace).is(":checked")) {
-			$("#PS", this.workspace).val(1);
+		if ($("#PCC-PS", this.workspace).is(":checked")) {
+			$("#PCC-PS", this.workspace).val(1);
 		}
-		var segunda = $("#PS", this.workspace).val();
+		var segunda = $("#PCC-PS", this.workspace).val();
 		
-		$("#PT", this.workspace).val(0);
+		$("#PCC-PT", this.workspace).val(0);
 		//if (document.formularioFormaCobranca.PT.checked){
-		if ($("#PT", this.workspace).is(":checked")) {
-			$("#PT", this.workspace).val(1);
+		if ($("#PCC-PT", this.workspace).is(":checked")) {
+			$("#PCC-PT", this.workspace).val(1);
 		}
-		var terca = $("#PT", this.workspace).val();
+		var terca = $("#PCC-PT", this.workspace).val();
 		
-		$("#PQ", this.workspace).val(0);
+		$("#PCC-PQ", this.workspace).val(0);
 		//if (document.formularioFormaCobranca.PQ.checked){
-		if ($("#PQ", this.workspace).is(":checked")) {
-			$("#PQ", this.workspace).val(1);
+		if ($("#PCC-PQ", this.workspace).is(":checked")) {
+			$("#PCC-PQ", this.workspace).val(1);
 		}
-		var quarta = $("#PQ", this.workspace).val();
+		var quarta = $("#PCC-PQ", this.workspace).val();
 		
-		$("#PQu", this.workspace).val(0);
+		$("#PCC-PQu", this.workspace).val(0);
 		//if (document.formularioFormaCobranca.PQu.checked){
-		if ($("#PQu", this.workspace).is(":checked")) {
-			$("#PQu", this.workspace).val(1);
+		if ($("#PCC-PQu", this.workspace).is(":checked")) {
+			$("#PCC-PQu", this.workspace).val(1);
 		}
-		var quinta = $("#PQu", this.workspace).val();
+		var quinta = $("#PCC-PQu", this.workspace).val();
 		
-		$("#PSex", this.workspace).val(0);
+		$("#PCC-PSex", this.workspace).val(0);
 		//if (document.formularioFormaCobranca.PSex.checked){
-		if ($("#PSex", this.workspace).is(":checked")) {
-			$("#PSex", this.workspace).val(1);
+		if ($("#PCC-PSex", this.workspace).is(":checked")) {
+			$("#PCC-PSex", this.workspace).val(1);
 		}
-		var sexta  = $("#PSex", this.workspace).val();
+		var sexta  = $("#PCC-PSex", this.workspace).val();
 		
-		$("#PSab", this.workspace).val(0);
+		$("#PCC-PSab", this.workspace).val(0);
 		//if (document.formularioFormaCobranca.PSab.checked){
-		if ($("#PSab", this.workspace).is(":checked")) {
-			$("#PSab", this.workspace).val(1);
+		if ($("#PCC-PSab", this.workspace).is(":checked")) {
+			$("#PCC-PSab", this.workspace).val(1);
 		}
-		var sabado = $("#PSab", this.workspace).val();
+		var sabado = $("#PCC-PSab", this.workspace).val();
 		
-		$("#PDom", this.workspace).val(0);
+		$("#PCC-PDom", this.workspace).val(0);
 		//if (document.formularioFormaCobranca.PDom.checked){
-		if ($("#PDom", this.workspace).is(":checked")) {
-			$("#PDom", this.workspace).val(1);
+		if ($("#PCC-PDom", this.workspace).is(":checked")) {
+			$("#PCC-PDom", this.workspace).val(1);
 		}
-		var domingo  = $("#PDom", this.workspace).val();
+		var domingo  = $("#PCC-PDom", this.workspace).val();
 		 var params =  {"formaCobranca.idCota":idCota,
 				 "formaCobranca.idParametroCobranca":idParametroCobranca,
 				 "formaCobranca.tipoCobranca":tipoCobranca, 

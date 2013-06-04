@@ -33,14 +33,12 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 	private static final String REGISTRO_TIPO_DETALHE = "1";
 	private static final String REGISTRO_TIPO_TRAILER = "9";
 	
+	private static final String BANCO_HSBC = "399";
+	private static final String BANCO_BRADESCO = "237";
+	private static final String BANCO_ITAU = "341";
+	
 	private static final int PADRAO_ARQUIVO_CNAB_400 = 400;
 	private static final int PADRAO_ARQUIVO_CNAB_240 = 240;
-	
-	private static final int INDEX_CNAB_400_NUMERO_AGENCIA_INICIO = 26;
-	private static final int INDEX_CNAB_400_NUMERO_AGENCIA_FIM = 31;
-	
-	private static final int INDEX_CNAB_400_NUMERO_CONTA_INICIO = 33;
-	private static final int INDEX_CNAB_400_NUMERO_CONTA_FIM = 44;
 	
 	private static final int INDEX_CNAB_400_CODIGO_BANCO_INICIO = 76;
 	private static final int INDEX_CNAB_400_CODIGO_BANCO_FIM = 79;
@@ -56,6 +54,20 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 	
 	private static final int INDEX_CNAB_400_NUMERO_REGISTRO_INICIO = 394;
 	private static final int INDEX_CNAB_400_NUMERO_REGISTRO_FIM = 400;
+	
+	// HSBC
+	private static final int INDEX_CNAB_400_HSBC_NUMERO_AGENCIA_INICIO = 26;
+	private static final int INDEX_CNAB_400_HSBC_NUMERO_AGENCIA_FIM = 31;
+	
+	private static final int INDEX_CNAB_400_HSBC_NUMERO_CONTA_INICIO = 33;
+	private static final int INDEX_CNAB_400_HSBC_NUMERO_CONTA_FIM = 44;
+	
+	// BRADESCO
+	private static final int INDEX_CNAB_400_BRADESCO_NUMERO_AGENCIA_INICIO = 26;
+	private static final int INDEX_CNAB_400_BRADESCO_NUMERO_AGENCIA_FIM = 29;
+	
+	private static final int INDEX_CNAB_400_BRADESCO_NUMERO_CONTA_INICIO = 31;
+	private static final int INDEX_CNAB_400_BRADESCO_NUMERO_CONTA_FIM = 37;
 	
 	public ArquivoPagamentoBancoDTO obterPagamentosBanco(File file, String nomeArquivo) {
 		
@@ -83,6 +95,9 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 		} else if (lines.get(1).length() == PADRAO_ARQUIVO_CNAB_240) {
 			
 			//TODO: ler arquivo no padrão CNAB 240
+			
+			throw new UnsupportedOperationException("Não implementado para arquivo CNAB padrão 240.");
+			
 		} else {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Arquivo não está no padrão CNAB!");
@@ -105,27 +120,79 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 		
 		String line = null;
 		
+		String codigoBanco = null;
+		
 		for (int i = 0; i < lines.size(); i++) {
 			
 			line = lines.get(i);
 			
 			if (line.startsWith(REGISTRO_TIPO_HEADER)) {
 				
-				arquivoPagamentoBanco.setNumeroAgencia(
-					this.parseLong(line.substring(INDEX_CNAB_400_NUMERO_AGENCIA_INICIO,
-												  INDEX_CNAB_400_NUMERO_AGENCIA_FIM)));
+				codigoBanco =
+					line.substring(INDEX_CNAB_400_CODIGO_BANCO_INICIO, INDEX_CNAB_400_CODIGO_BANCO_FIM);
 				
-				arquivoPagamentoBanco.setNumeroConta(
-					this.parseLong(line.substring(INDEX_CNAB_400_NUMERO_CONTA_INICIO,
-												  INDEX_CNAB_400_NUMERO_CONTA_FIM)));
+				arquivoPagamentoBanco.setCodigoBanco(codigoBanco);
 				
-				arquivoPagamentoBanco.setCodigoBanco(
-					line.substring(INDEX_CNAB_400_CODIGO_BANCO_INICIO, INDEX_CNAB_400_CODIGO_BANCO_FIM));
+				switch (codigoBanco) {
+					case BANCO_HSBC:
+						
+						arquivoPagamentoBanco.setNumeroAgencia(
+							this.parseLong(line.substring(INDEX_CNAB_400_HSBC_NUMERO_AGENCIA_INICIO,
+														  INDEX_CNAB_400_HSBC_NUMERO_AGENCIA_FIM)));
+						
+						arquivoPagamentoBanco.setNumeroConta(
+							this.parseLong(line.substring(INDEX_CNAB_400_HSBC_NUMERO_CONTA_INICIO,
+														  INDEX_CNAB_400_HSBC_NUMERO_CONTA_FIM)));
+						
+						break;
+	
+					case BANCO_BRADESCO:
+						break;
+						
+					case BANCO_ITAU:
+						
+						// TODO: Implementar para o banco Itau
+						
+						throw new UnsupportedOperationException("Não implementado para o banco Itau.");
+						
+						//break;
+						
+					default:
+						break;
+				}
 				
 			} else if (line.startsWith(REGISTRO_TIPO_DETALHE)) {
 				
 				if (line.length() == PADRAO_ARQUIVO_CNAB_400) {
 		
+					switch (codigoBanco) {
+						case BANCO_HSBC:
+							break;
+		
+						case BANCO_BRADESCO:
+							
+							arquivoPagamentoBanco.setNumeroAgencia(
+								this.parseLong(line.substring(INDEX_CNAB_400_BRADESCO_NUMERO_AGENCIA_INICIO,
+															  INDEX_CNAB_400_BRADESCO_NUMERO_AGENCIA_FIM)));
+							
+							arquivoPagamentoBanco.setNumeroConta(
+								this.parseLong(line.substring(INDEX_CNAB_400_BRADESCO_NUMERO_CONTA_INICIO,
+															  INDEX_CNAB_400_BRADESCO_NUMERO_CONTA_FIM)));
+							
+							break;
+							
+						case BANCO_ITAU:
+							
+							// TODO: Implementar para o banco Itau
+							
+							throw new UnsupportedOperationException("Não implementado para o banco Itau.");
+							
+							//break;
+							
+						default:
+							break;
+					}
+					
 					pagamento = new PagamentoDTO();
 					
 					pagamento.setNumeroRegistro(
