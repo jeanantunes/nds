@@ -247,6 +247,8 @@ public class EstudoServiceImpl implements EstudoService {
 				for (EstudoCota estudoCota : setEstudoCota) {
 					BigInteger r = estudoCota.getReparte()==null?BigInteger.ZERO:estudoCota.getReparte();
 					somarReparteParaEstudo=somarReparteParaEstudo.add(r);
+					estudoCota.setQtdeEfetiva(estudoCota.getReparte());
+					estudoCota.setQtdePrevista(estudoCota.getReparte());
 				}
 				estudo.setQtdeReparte(somarReparteParaEstudo);
 				estudo.setEstudoCotas(setEstudoCota);

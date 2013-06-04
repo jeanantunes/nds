@@ -175,6 +175,7 @@ public class EstudoComplementarServiceImpl implements EstudoComplementarService 
 	for (EstudoCota cota : cotas) {
 	    if (cota.getReparte() != null) {
 		cota.setQtdeEfetiva(cota.getReparte());
+		cota.setQtdePrevista(cota.getReparte());
 	    }
 	    estudoCotaRepository.adicionar(cota);	
 	}
