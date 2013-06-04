@@ -24,6 +24,13 @@ import br.com.abril.nds.dto.AnaliticoEncalheDTO;
 import br.com.abril.nds.dto.CotaAusenteEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
+import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorCodigo;
+import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorEdicao;
+import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorPrecoCapa;
+import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorPrecoDesconto;
+import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorProduto;
+import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorSequencia;
+import br.com.abril.nds.dto.FechamentoFisicoLogicoDtoOrdenaPorTotalDevolucao;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
 import br.com.abril.nds.dto.fechamentoencalhe.GridFechamentoEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
@@ -174,78 +181,297 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		Boolean fechado = fechamentoEncalheRepository.buscaControleFechamentoEncalhe(filtro.getDataEncalhe());
 		
-		List<FechamentoFisicoLogicoDTO> listaConferencia = 
-				fechamentoEncalheRepository.buscarConferenciaEncalhe(filtro, sortorder, sort, startSearch, rp);
+//		List<FechamentoFisicoLogicoDTO> listaConferencia = 
+//				fechamentoEncalheRepository.buscarConferenciaEncalhe(filtro, sortorder, sort, startSearch, rp);
 		
 		Date dataAtual = DateUtil.removerTimestamp(new Date());
 		
-		int inicioDiaSemana = 
-				distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
+		List<FechamentoFisicoLogicoDTO> listaConferencia = 
+				fechamentoEncalheRepository.buscarConferenciaEncalheNovo(filtro, sortorder, sort, startSearch, rp);
+		if(! listaConferencia.isEmpty())
+		{
+			ArrayList<String> listaDeCodigosProduto = new ArrayList<String>();
+			for(FechamentoFisicoLogicoDTO conferencia : listaConferencia)
+			{
+				conferencia.setDataRecolhimento(filtro.getDataEncalhe());
+				listaDeCodigosProduto.add(conferencia.getCodigo());
+			}
+			
+			List<FechamentoFisicoLogicoDTO> listaMovimentoEstoqueCota = fechamentoEncalheRepository.buscarMovimentoEstoqueCota(filtro, listaDeCodigosProduto);
+			List<FechamentoFisicoLogicoDTO> listaMovimentoEstoqueCotaVendaProduto = fechamentoEncalheRepository.buscarMovimentoEstoqueCotaVendaProduto(filtro, listaDeCodigosProduto);
 		
-		int numeroSemana = 
-				DateUtil.obterNumeroSemanaNoAno(dataAtual, inicioDiaSemana);
-		
-		Date dataFimSemana = 
-				DateUtil.adicionarDias(DateUtil.obterDataDaSemanaNoAno(
-						numeroSemana, inicioDiaSemana, dataAtual),
-						6);
-		
-		if (filtro.getBoxId() == null ){ 
-			List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro.getDataEncalhe());
-			for (FechamentoFisicoLogicoDTO conferencia : listaConferencia) {
+			for(FechamentoFisicoLogicoDTO conferencia : listaConferencia)
+			{
+				for(FechamentoFisicoLogicoDTO movimentoEstoqueCota : listaMovimentoEstoqueCota)
+				{
+					if(conferencia.getCodigo().equals(movimentoEstoqueCota.getCodigo()) && movimentoEstoqueCota.getExemplaresDevolucao() != null)
+					{
+						if(conferencia.getExemplaresDevolucao() == null)
+						{
+							conferencia.setExemplaresDevolucao(BigInteger.valueOf(0));
+						}
+						
+						if(movimentoEstoqueCota.getExemplaresDevolucao() != null)
+						{
+							conferencia.setExemplaresDevolucao(conferencia.getExemplaresDevolucao().add(movimentoEstoqueCota.getExemplaresDevolucao()));
+						}
+					}
+				}
 				
-				this.setarInfoComumFechamentoFisicoLogicoDTO(conferencia, fechado, dataAtual, dataFimSemana);
-				
-				for (FechamentoEncalhe fechamento : listaFechamento) {
-					if (conferencia.getProdutoEdicao().equals(fechamento.getFechamentoEncalhePK().getProdutoEdicao().getId())) {
-						conferencia.setFisico(fechamento.getQuantidade());
-						conferencia.setDiferenca(calcularDiferenca(conferencia));
-						break;
+				for(FechamentoFisicoLogicoDTO movimentoEstoqueCotaVendaProduto : listaMovimentoEstoqueCotaVendaProduto)
+				{
+					if(conferencia.getCodigo().equals(movimentoEstoqueCotaVendaProduto.getCodigo()) && movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao() != null)
+					{
+						if(movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao() != null)
+						{
+							conferencia.setExemplaresDevolucao(conferencia.getExemplaresDevolucao().subtract(movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao()));
+						}
 					}
 				}
 			}
 			
-		} else {
-			List<FechamentoEncalheBox> listaFechamentoBox = fechamentoEncalheBoxRepository.buscarFechamentoEncalheBox(filtro);
-			for (FechamentoFisicoLogicoDTO conferencia : listaConferencia) {
-				
-				this.setarInfoComumFechamentoFisicoLogicoDTO(conferencia, fechado, dataAtual, dataFimSemana);
-				
-				for (FechamentoEncalheBox fechamento : listaFechamentoBox) {
-					
-					if (conferencia.getProdutoEdicao().equals(fechamento.getFechamentoEncalheBoxPK().getFechamentoEncalhe().getFechamentoEncalhePK().getProdutoEdicao().getId())) {
-												
-						conferencia.setFisico(fechamento.getQuantidade());
-												
-						conferencia.setDiferenca(calcularDiferenca(conferencia));
-						
-						break;
+			if(filtro.getBoxId() != null)
+			{
+				for(int i = 0; i < listaConferencia.size(); i++)
+				{
+					if(listaConferencia.get(i).getExemplaresDevolucao() == null)
+					{
+						listaConferencia.remove(i);
 					}
-					
 				}
 			}
-		}
-		
-		if (sort == null) {
-			if ("asc".equals(sortorder) ) {
-				Collections.sort(listaConferencia, new FechamentoAscComparator());
+						
+			int inicioDiaSemana = 
+					distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
+			
+			int numeroSemana = 
+					DateUtil.obterNumeroSemanaNoAno(dataAtual, inicioDiaSemana);
+			
+			Date dataFimSemana = 
+					DateUtil.adicionarDias(DateUtil.obterDataDaSemanaNoAno(
+							numeroSemana, inicioDiaSemana, dataAtual),
+							6);
+			
+			if (filtro.getBoxId() == null ){ 
+				List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro.getDataEncalhe());
+				for (FechamentoFisicoLogicoDTO conferencia : listaConferencia) {
+					
+					this.setarInfoComumFechamentoFisicoLogicoDTO(conferencia, fechado, dataAtual, dataFimSemana);
+					
+					for (FechamentoEncalhe fechamento : listaFechamento) {
+						if (conferencia.getProdutoEdicao().equals(fechamento.getFechamentoEncalhePK().getProdutoEdicao().getId())) {
+							conferencia.setFisico(fechamento.getQuantidade());
+							conferencia.setDiferenca(calcularDiferenca(conferencia));
+							break;
+						}
+					}
+				}
+				
 			} else {
-				Collections.sort(listaConferencia, new FechamentoDescComparator());
+				List<FechamentoEncalheBox> listaFechamentoBox = fechamentoEncalheBoxRepository.buscarFechamentoEncalheBox(filtro);
+				for (FechamentoFisicoLogicoDTO conferencia : listaConferencia) {
+					
+					this.setarInfoComumFechamentoFisicoLogicoDTO(conferencia, fechado, dataAtual, dataFimSemana);
+					
+					for (FechamentoEncalheBox fechamento : listaFechamentoBox) {
+						
+						if (conferencia.getProdutoEdicao().equals(fechamento.getFechamentoEncalheBoxPK().getFechamentoEncalhe().getFechamentoEncalhePK().getProdutoEdicao().getId())) {
+													
+							conferencia.setFisico(fechamento.getQuantidade());
+													
+							conferencia.setDiferenca(calcularDiferenca(conferencia));
+							
+							break;
+						}
+						
+					}
+				}
+			}
+			
+			if (sort == null) {
+				listaConferencia = this.retornarListaOrdenada(listaConferencia, "sequencia", sortorder);	
+			} 
+			else {
+				listaConferencia = this.retornarListaOrdenada(listaConferencia, sort, sortorder);
 			}
 		}
 		
 		return listaConferencia;
+		
+	}
+
+	private List<FechamentoFisicoLogicoDTO> retornarListaOrdenada(
+			List<FechamentoFisicoLogicoDTO> listaConferencia, String sort, String sortorder) {
+		
+		if(sort.equals("sequencia"))
+		{
+			FechamentoFisicoLogicoDtoOrdenaPorSequencia ordenacao = new FechamentoFisicoLogicoDtoOrdenaPorSequencia(sortorder);
+			Collections.sort(listaConferencia, ordenacao);
+			return listaConferencia;
+		}
+		if(sort.equals("codigo"))
+		{
+			FechamentoFisicoLogicoDtoOrdenaPorCodigo ordenacao = new FechamentoFisicoLogicoDtoOrdenaPorCodigo(sortorder);
+			Collections.sort(listaConferencia, ordenacao);
+			return listaConferencia;
+		}
+		else if(sort.equals("produto"))
+		{
+			FechamentoFisicoLogicoDtoOrdenaPorProduto ordenacao = new FechamentoFisicoLogicoDtoOrdenaPorProduto(sortorder);
+			Collections.sort(listaConferencia, ordenacao);
+			return listaConferencia;
+		}
+		else if(sort.equals("edicao"))
+		{
+			FechamentoFisicoLogicoDtoOrdenaPorEdicao ordenacao = new FechamentoFisicoLogicoDtoOrdenaPorEdicao(sortorder);
+			Collections.sort(listaConferencia, ordenacao);
+			return listaConferencia;
+		}
+		else if(sort.equals("precoCapa"))
+		{
+			FechamentoFisicoLogicoDtoOrdenaPorPrecoCapa ordenacao = new FechamentoFisicoLogicoDtoOrdenaPorPrecoCapa(sortorder);
+			Collections.sort(listaConferencia, ordenacao);
+			return listaConferencia;
+		}
+		else if(sort.equals("precoCapaDesc"))
+		{
+			FechamentoFisicoLogicoDtoOrdenaPorPrecoDesconto ordenacao = new FechamentoFisicoLogicoDtoOrdenaPorPrecoDesconto(sortorder);
+			Collections.sort(listaConferencia, ordenacao);
+			return listaConferencia;
+		}
+		else if(sort.equals("exemplaresDevolucao"))
+		{
+			FechamentoFisicoLogicoDtoOrdenaPorTotalDevolucao ordenacao = new FechamentoFisicoLogicoDtoOrdenaPorTotalDevolucao(sortorder);
+			Collections.sort(listaConferencia, ordenacao);
+			return listaConferencia;
+		}
+		return null;
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public int buscarQuantidadeConferenciaEncalhe(FiltroFechamentoEncalheDTO filtro){
+	
+		Boolean fechado = fechamentoEncalheRepository.buscaControleFechamentoEncalhe(filtro.getDataEncalhe());
 		
-		int quantidade = 0;
+//		List<FechamentoFisicoLogicoDTO> listaConferencia = 
+//				fechamentoEncalheRepository.buscarConferenciaEncalhe(filtro, sortorder, sort, startSearch, rp);
 		
-		quantidade = this.fechamentoEncalheRepository.buscarQuantidadeConferenciaEncalhe(filtro);
+		Date dataAtual = DateUtil.removerTimestamp(new Date());
+		
+		List<FechamentoFisicoLogicoDTO> listaConferencia = 
+				fechamentoEncalheRepository.buscarConferenciaEncalheNovo(filtro, null, null, null, null);
+		if(! listaConferencia.isEmpty())
+		{
+			ArrayList<String> listaDeCodigosProduto = new ArrayList<String>();
+			for(FechamentoFisicoLogicoDTO conferencia : listaConferencia)
+			{
+				conferencia.setDataRecolhimento(filtro.getDataEncalhe());
+				listaDeCodigosProduto.add(conferencia.getCodigo());
+			}
+			
+			List<FechamentoFisicoLogicoDTO> listaMovimentoEstoqueCota = fechamentoEncalheRepository.buscarMovimentoEstoqueCota(filtro, listaDeCodigosProduto);
+			List<FechamentoFisicoLogicoDTO> listaMovimentoEstoqueCotaVendaProduto = fechamentoEncalheRepository.buscarMovimentoEstoqueCotaVendaProduto(filtro, listaDeCodigosProduto);
+		
+			for(FechamentoFisicoLogicoDTO conferencia : listaConferencia)
+			{
+				for(FechamentoFisicoLogicoDTO movimentoEstoqueCota : listaMovimentoEstoqueCota)
+				{
+					if(conferencia.getCodigo().equals(movimentoEstoqueCota.getCodigo()) && movimentoEstoqueCota.getExemplaresDevolucao() != null)
+					{
+						if(conferencia.getExemplaresDevolucao() == null)
+						{
+							conferencia.setExemplaresDevolucao(BigInteger.valueOf(0));
+						}
+						
+						if(movimentoEstoqueCota.getExemplaresDevolucao() != null)
+						{
+							conferencia.setExemplaresDevolucao(conferencia.getExemplaresDevolucao().add(movimentoEstoqueCota.getExemplaresDevolucao()));
+						}
+					}
+				}
 				
-		return quantidade;
+				for(FechamentoFisicoLogicoDTO movimentoEstoqueCotaVendaProduto : listaMovimentoEstoqueCotaVendaProduto)
+				{
+					if(conferencia.getCodigo().equals(movimentoEstoqueCotaVendaProduto.getCodigo()) && movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao() != null)
+					{
+						if(movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao() != null)
+						{
+							conferencia.setExemplaresDevolucao(conferencia.getExemplaresDevolucao().subtract(movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao()));
+						}
+					}
+				}
+			}
+			
+			if(filtro.getBoxId() != null)
+			{
+				for(int i = 0; i < listaConferencia.size(); i++)
+				{
+					if(listaConferencia.get(i).getExemplaresDevolucao() == null)
+					{
+						listaConferencia.remove(i);
+					}
+				}
+			}
+			int inicioDiaSemana = 
+					distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
+			
+			int numeroSemana = 
+					DateUtil.obterNumeroSemanaNoAno(dataAtual, inicioDiaSemana);
+			
+			Date dataFimSemana = 
+					DateUtil.adicionarDias(DateUtil.obterDataDaSemanaNoAno(
+							numeroSemana, inicioDiaSemana, dataAtual),
+							6);
+			
+			if (filtro.getBoxId() == null ){ 
+				List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro.getDataEncalhe());
+				for (FechamentoFisicoLogicoDTO conferencia : listaConferencia) {
+					
+					this.setarInfoComumFechamentoFisicoLogicoDTO(conferencia, fechado, dataAtual, dataFimSemana);
+					
+					for (FechamentoEncalhe fechamento : listaFechamento) {
+						if (conferencia.getProdutoEdicao().equals(fechamento.getFechamentoEncalhePK().getProdutoEdicao().getId())) {
+							conferencia.setFisico(fechamento.getQuantidade());
+							conferencia.setDiferenca(calcularDiferenca(conferencia));
+							break;
+						}
+					}
+				}
+				
+			} else {
+				List<FechamentoEncalheBox> listaFechamentoBox = fechamentoEncalheBoxRepository.buscarFechamentoEncalheBox(filtro);
+				for (FechamentoFisicoLogicoDTO conferencia : listaConferencia) {
+					
+					this.setarInfoComumFechamentoFisicoLogicoDTO(conferencia, fechado, dataAtual, dataFimSemana);
+					
+					for (FechamentoEncalheBox fechamento : listaFechamentoBox) {
+						
+						if (conferencia.getProdutoEdicao().equals(fechamento.getFechamentoEncalheBoxPK().getFechamentoEncalhe().getFechamentoEncalhePK().getProdutoEdicao().getId())) {
+													
+							conferencia.setFisico(fechamento.getQuantidade());
+													
+							conferencia.setDiferenca(calcularDiferenca(conferencia));
+							
+							break;
+						}
+						
+					}
+				}
+			}
+		}
+		
+		return listaConferencia.size();
+		
+		
+		
+		////////////////////////////////////
+		///  antigo
+//		int quantidade = 0;
+//		
+//		quantidade = this.fechamentoEncalheRepository.buscarQuantidadeConferenciaEncalheNovo(filtro);
+//				
+//		return quantidade;
 	}
 	
 	private Long calcularDiferenca(FechamentoFisicoLogicoDTO conferencia) {
@@ -268,6 +494,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			Date dataAtual,
 			Date dataFimSemana){
 		
+		if(conferencia.getExemplaresDevolucao() == null)
+		{
+			conferencia.setExemplaresDevolucao(BigInteger.valueOf(0));
+		}
 		conferencia.setTotal(new BigDecimal(conferencia.getExemplaresDevolucao()).multiply(conferencia.getPrecoCapaDesconto()));
 		conferencia.setFechado(fechado);
 		

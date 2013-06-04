@@ -12,6 +12,15 @@
 		
 		bloquearItensEdicao(fechamentoEncalheController.workspace);
 		
+		
+		
+		$('#cancelar-sessao', fechamentoEncalheController.workspace).click(function(){
+			$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/limparDadosDaSessaoGrid", function() {
+				  console.log( "success" );
+			});
+		});
+		
+		
 		$('.pButton', fechamentoEncalheController.workspace).click(function(){
 			
 			
@@ -138,7 +147,7 @@
 					</c:forEach>
 					</select>
 				</td>
-				<td width="106"><span class="bt_novos"><a href="javascript:;" onclick="fechamentoEncalheController.verificarMensagemConsistenciaDados();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
+				<td width="106"><span class="bt_novos"><a href="javascript:;" onclick="fechamentoEncalheController.verificarMensagemConsistenciaDados();"><img id="cancelar-sessao" src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
 			</tr>
 		</table>
     </fieldset>

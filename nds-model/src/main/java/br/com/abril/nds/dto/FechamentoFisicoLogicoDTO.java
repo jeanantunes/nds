@@ -4,10 +4,12 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
+
 
 @Exportable
 public class FechamentoFisicoLogicoDTO {
@@ -20,6 +22,8 @@ public class FechamentoFisicoLogicoDTO {
 	
 	@Export(label = "Edição", alignment = Alignment.LEFT, exhibitionOrder = 4, fontSize=9)
 	private Long edicao;
+	
+	private Long chamadaEncalheId;
 	
 	private Long produtoEdicao;
 	
@@ -60,6 +64,13 @@ public class FechamentoFisicoLogicoDTO {
 	@Export(label = "Sequência", exhibitionOrder = 1, fontSize=9)
 	private Integer sequencia;
 	
+	private Origem origem;
+	
+	private Long produtoDescontoLogisticaId;
+	
+	private Long produtoEdicaoDescontoLogisticaId;
+	
+	private BigDecimal desconto;
 	
 	public String getReplicar() {
 		return replicar;
@@ -203,5 +214,76 @@ public class FechamentoFisicoLogicoDTO {
 	 */
 	public void setReplicar(String replicar) {
 		this.replicar = replicar;
+	}
+
+	/**
+	 * @return the origem
+	 */
+	public Origem getOrigem() {
+		return origem;
+	}
+
+	/**
+	 * @param origem the origem to set
+	 */
+	public void setOrigem(Origem origem) {
+		this.origem = origem;
+	}
+
+	/**
+	 * @return the produtoDescontoLogisticaId
+	 */
+	public Long getProdutoDescontoLogisticaId() {
+		return produtoDescontoLogisticaId;
+	}
+
+	/**
+	 * @param produtoDescontoLogisticaId the produtoDescontoLogisticaId to set
+	 */
+	public void setProdutoDescontoLogisticaId(Long produtoDescontoLogisticaId) {
+		this.produtoDescontoLogisticaId = produtoDescontoLogisticaId;
+	}
+
+	/**
+	 * @return the produtoEdicaoDescontoLogisticaId
+	 */
+	public Long getProdutoEdicaoDescontoLogisticaId() {
+		return produtoEdicaoDescontoLogisticaId;
+	}
+
+	/**
+	 * @param produtoEdicaoDescontoLogisticaId the produtoEdicaoDescontoLogisticaId to set
+	 */
+	public void setProdutoEdicaoDescontoLogisticaId(
+			Long produtoEdicaoDescontoLogisticaId) {
+		this.produtoEdicaoDescontoLogisticaId = produtoEdicaoDescontoLogisticaId;
+	}
+
+	/**
+	 * @return the desconto
+	 */
+	public BigDecimal getDesconto() {
+		return desconto;
+	}
+
+	/**
+	 * @param desconto the desconto to set
+	 */
+	public void setDesconto(BigDecimal desconto) {
+		this.desconto = desconto;
+	}
+
+	/**
+	 * @return the chamadaEncalheId
+	 */
+	public Long getChamadaEncalheId() {
+		return chamadaEncalheId;
+	}
+
+	/**
+	 * @param chamadaEncalheId the chamadaEncalheId to set
+	 */
+	public void setChamadaEncalheId(Long chamadaEncalheId) {
+		this.chamadaEncalheId = chamadaEncalheId;
 	}
 }

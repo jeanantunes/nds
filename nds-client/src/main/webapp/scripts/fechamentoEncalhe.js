@@ -205,7 +205,6 @@ var fechamentoEncalheController = $.extend(true, {
 	},
 	preprocessamentoGridFechamento : function(resultado) {
 		
-		console.log(resultado);
 		if (typeof resultado.mensagens == "object") {
             exibirMensagemDialog(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens, "");
             return;
