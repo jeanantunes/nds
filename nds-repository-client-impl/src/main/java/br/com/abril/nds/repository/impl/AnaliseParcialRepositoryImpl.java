@@ -63,7 +63,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         StringBuilder order = new StringBuilder();
         StringBuilder limit = new StringBuilder();
 
-        where.append("and ec.reparte > 0");
+        where.append(" and ec.reparte is not null ");
 
         if (queryDTO.possuiOrdenacaoPlusFiltro()) {
             if (queryDTO.possuiOrdenacaoReparte()) {
@@ -80,10 +80,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 limit.append(queryDTO.getFilterSortFrom().intValue() - 1);
                 limit.append(" , ");
                 limit.append((queryDTO.getFilterSortTo().intValue() - queryDTO.getFilterSortFrom().intValue()));
-
-//                params.add(queryDTO.getFilterSortFrom());
-//                params.add(queryDTO.getFilterSortTo());
             }
+
             if (queryDTO.possuiPercentualDeVenda()) {
                 sql.append(" left join estoque_produto_cota epc on epc.cota_id = ec.cota_id and epc.produto_edicao_id = e.produto_edicao_id ");
                 where.append(" and (((epc.qtde_recebida - epc.qtde_devolvida)*100)/epc.qtde_recebida) between ? and ?");
@@ -128,7 +126,10 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 params.add("'".concat(queryDTO.getValorElemento().concat("'")));
             }
             if (queryDTO.elementoIsCotasAVista()) {
-                //TODO
+                sql.append(" join parametro_cobranca_cota pcc on pcc.cota_id = c.id ");
+                sql.append(" and pcc.tipo_cota = upper(?) ");
+
+                params.add("'".concat(queryDTO.getValorElemento()).concat("'"));
             }
             if (queryDTO.elementoIsCotasNovas()) {
                 where.append(" and ec.cota_nova = ? ");
@@ -228,7 +229,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("select pe.id produtoEdicaoId, ");
         sql.append("       p.codigo codigoProduto, ");
         sql.append("       p.nome nomeProduto, ");
-        sql.append("       pe.numero_edicao numeroEdicao, ");
+        sql.append("       pe.numero_edicao edicao, ");
         sql.append("       plp.numero_periodo periodo, ");
         sql.append("       round(sum(case when mec.tipo_movimento_id = 21 then mec.qtde end),0) reparte, ");
         sql.append("       round(sum(case when mec.tipo_movimento_id = 21 then mec.qtde end) - ");
@@ -248,7 +249,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 .addScalar("produtoEdicaoId", StandardBasicTypes.LONG)
                 .addScalar("codigoProduto", StandardBasicTypes.STRING)
                 .addScalar("nomeProduto", StandardBasicTypes.STRING)
-                .addScalar("edicao", StandardBasicTypes.LONG)
+                .addScalar("edicao", StandardBasicTypes.BIG_INTEGER)
                 .addScalar("reparte", StandardBasicTypes.BIG_INTEGER)
                 .addScalar("venda", StandardBasicTypes.BIG_INTEGER);
 
@@ -263,23 +264,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
     private void populateQuery(SQLQuery query, List<Object> params) {
         for (int i = 0; i < params.size(); i++) {
-            Object object = params.get(i);
-            if (object instanceof Long) {
-                query.setLong(i, (Long) object);
-                continue;
-            }
-            if (object instanceof Double) {
-                query.setDouble(i, (Double) object);
-                continue;
-            }
-            if (object instanceof Integer) {
-                query.setInteger(i, (Integer) object);
-                continue;
-            }
-            if (object instanceof String) {
-                query.setString(i, (String) object);
-                continue;
-            }
+            query.setParameter(i, params.get(i));
         }
     }
 
@@ -394,9 +379,10 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("  from estudo_cota ec ");
         sql.append("  join cota on cota.id = ec.cota_id ");
         sql.append("  join pessoa pe on pe.id = cota.pessoa_id ");
-        sql.append("  join ranking_segmento rks on rks.cota_id = cota.id ");
+        sql.append("  left join ranking_segmento rks on rks.cota_id = cota.id ");
         sql.append("     and rks.tipo_segmento_produto_id = ? ");
 
+        StringBuilder where = new StringBuilder();
         List<Object> params = new ArrayList<>();
         params.add(queryDTO.getTipoSegmentoProduto());
 
@@ -415,7 +401,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 sql.append(" join endereco_pdv on endereco_pdv.pdv_id = pdv.id");
                 sql.append(" join endereco on endereco.id = endereco_pdv.endereco_id and endereco.bairro = ? ");
 
-                params.add(queryDTO.getValorElemento());
+                params.add("'".concat(queryDTO.getValorElemento().concat("'")));
             }
             if (queryDTO.elementoIsRegiao()) {
                 sql.append(" join registro_cota_regiao as rcr on rcr.cota_id = cota.id and rcr.regiao_id = ? ");
@@ -430,17 +416,21 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 sql.append(" join endereco_pdv on endereco_pdv.pdv_id = pdv.id ");
                 sql.append(" join endereco on endereco.id = endereco_pdv.endereco_id and endereco.uf = ? ");
 
-                params.add(queryDTO.getValorElemento());
+                params.add("'".concat(queryDTO.getValorElemento().concat("'")));
             }
             if (queryDTO.elementoIsCotasAVista()) {
+                sql.append(" join parametro_cobranca_cota pcc on pcc.cota_id = cota.id ");
+                sql.append(" and pcc.tipo_cota = upper(?) ");
 
+                params.add("'".concat(queryDTO.getValorElemento()).concat("'"));
             }
             if (queryDTO.elementoIsCotasNovas()) {
-
+                where.append(" and ec.cota_nova = ? ");
+                params.add(queryDTO.getValorElemento());
             }
         }
-        sql.append(" where ec.estudo_id = ? ");
-        sql.append("   and ( ec.reparte = 0 or ec.reparte is null ) ");
+        where.append(" and ec.estudo_id = ? ");
+        where.append("   and ( ec.reparte = 0 or ec.reparte is null ) ");
         params.add(queryDTO.getEstudo());
 
         if (queryDTO.possuiCota()) {
@@ -449,8 +439,10 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         }
 
         if (queryDTO.possuiNome()) {
-            sql.append(" and pe.nome = ? ");
-            params.add(queryDTO.getNome());
+            sql.append(" and (pe.nome like upper(?) or pe.razao_social like upper(?) or pe.nome_fantasia like upper(?)) ");
+            params.add("'%".concat(queryDTO.getNome()).concat("%'"));
+            params.add("'%".concat(queryDTO.getNome()).concat("%'"));
+            params.add("'%".concat(queryDTO.getNome()).concat("%'"));
         }
 
         if (queryDTO.getMotivo() != null && !queryDTO.getMotivo().equals("TODOS")) {
@@ -458,6 +450,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
             params.add(queryDTO.getMotivo());
         }
 
+        sql.append(" where 1 = 1 ").append(where);
         sql.append(" order by rks.qtde desc");
 
         Query query = getSession().createSQLQuery(sql.toString())

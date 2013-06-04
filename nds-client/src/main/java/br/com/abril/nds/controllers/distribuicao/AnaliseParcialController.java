@@ -9,6 +9,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import br.com.abril.nds.client.util.PessoaUtil;
 import br.com.abril.nds.dto.*;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -169,6 +170,10 @@ public class AnaliseParcialController extends BaseController {
     public void filtrar(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO) {
 
         List<CotaQueNaoEntrouNoEstudoDTO> lista = new ArrayList<>();
+
+        if (queryDTO.possuiNome()) {
+            queryDTO.setNome(PessoaUtil.removerSufixoDeTipo(queryDTO.getNome()));
+        }
 
         if (queryDTO.getEstudo() != null && queryDTO.getEstudo() > 0) {
             lista = analiseParcialService.buscarCotasQueNaoEntraramNoEstudo(queryDTO);

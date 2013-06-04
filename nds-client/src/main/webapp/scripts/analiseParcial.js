@@ -458,21 +458,20 @@ var analiseParcialController = $.extend(true, {
             if (cell.npdv > 1) {
                 cell.npdv = '<a tabindex="-1" class="editaRepartePorPDV" numeroCota="'+ numCota +'">'+ cell.npdv +'</a>';
             }
+            if (cell.leg === 'S') {
+                cell.leg = '';
+            }
             if (cell.leg !== '') {
                 cell.leg = '<span class="legendas" id="leg_'+ numCota +'" title="'+ cell.descricaoLegenda +'">'+ cell.leg +'</span>';
             }
 
             for (var j = 0; j < 6; j++) {
-                if (typeof cell.edicoesBase[j] !== 'undefined') {
-                    if (cell.edicoesBase[j].reparte === 0) {
-                        cell['reparte'+ (j + 1)] = '';
-                        cell['venda'+ (j + 1)] = '';
-                    }
-                    cell['reparte'+ (j + 1)] = cell.edicoesBase[j].reparte;
-                    cell['venda'+ (j + 1)] = cell.edicoesBase[j].venda;
-                } else {
+                if (typeof cell.edicoesBase[j] === 'undefined' || typeof cell.edicoesBase[j].reparte === 'undefined' || cell.edicoesBase[j].reparte === 0) {
                     cell['reparte'+ (j + 1)] = '';
                     cell['venda'+ (j + 1)] = '';
+                } else {
+                    cell['reparte'+ (j + 1)] = cell.edicoesBase[j].reparte;
+                    cell['venda'+ (j + 1)] = cell.edicoesBase[j].venda;
                 }
             }
         }
@@ -518,6 +517,7 @@ var analiseParcialController = $.extend(true, {
         analiseParcialController.atualizaEdicoesBaseHeader();
         analiseParcialController.atualizaAbrangencia();
         analiseParcialController.carregaDetalhesEdicoesBase();
+        $('table#baseEstudoGridParcial tr td div').filter(function(){return $.trim($(this).html()) === '&nbsp;';}).text('');
     },
 
     modeloNormal : function() {
@@ -572,7 +572,7 @@ var analiseParcialController = $.extend(true, {
     sortGrid : function (sortname, sortorder) {
         var $table, settings, sortAtribute;
         $table = $(arguments.callee.caller.arguments).closest('.flexigrid').find('div.bDiv:first table');
-        settings = {order: sortorder};
+        settings = {order: sortorder, place:'end'};
         sortAtribute = 'td[abbr="' + sortname + '"] div';
 
         if (sortname === 'reparteSugerido') {
@@ -636,6 +636,23 @@ var analiseParcialController = $.extend(true, {
 
         $('#filtroOrdenarPor option:eq(1)').prop('selected', true).parent().change();
 
+        $('#cotasQueNaoEntraramNoEstudo_nome').autocomplete({
+            source: function(request, response) {
+                $.ajax({
+                    url: 'cadastro/cota/autoCompletarPorNome',
+                    data: [{name: 'nomeCota', value: request.term}],
+                    type: 'POST',
+                    global: false,
+                    success: function(result) {
+                        response(result.result.slice(0,10)); // mostrar apenas ,10 resultados
+                    }});
+            },
+            minLength: 3,
+            select: function( event, ui ) {
+                //$('#inputCodigoProduto').val(ui.item.value);
+            }
+        });
+
         $( "#inputNomeProduto" ).autocomplete({
             source: function(request, response) {
                 $.ajax({
@@ -671,7 +688,7 @@ var analiseParcialController = $.extend(true, {
                 }
             }
             if ($this.hasClass('icoEditarEB')) {
-                popup_edicoes_produto($this.closest("tr"));
+                popup_edicoes_produto();
             }
         })
         .on('change', '.inputCodigoEB, .inputProdutoEB, .inputEdicaoEB', function () {
@@ -737,7 +754,7 @@ var analiseParcialController = $.extend(true, {
                         return a+b;
                     }));
         }).on('keyup', 'tr td input:text', function(event){
-            if(event.which === 13 || event.which === 9) {
+            if(event.which === 13) {//tab === 9
                 $(event.currentTarget)
                     .closest('tr').next('tr')
                     .find('input:text').focus()
@@ -845,20 +862,59 @@ var analiseParcialController = $.extend(true, {
                 value.cell.quantidade = '';
             }
 
-            value.cell.quantidade = '<input type="text" motivo="' + value.cell.motivo + '" id="inputQuantidade'+ value.cell.numeroCota +'" style="width: 50px;" value="'+
-                value.cell.quantidade +'" onblur="analiseParcialController.atualizaQuantidadeTotal('+ value.cell.numeroCota +');" ' +
-                ' numeroCota="'+ value.cell.numeroCota +'" />';
+            var isReadOnly = value.cell.motivo === 'CL' ? 'readonly' : '';
+
+            value.cell.quantidade = '<input type="text" motivo="' + value.cell.motivo + '" style="width: 50px;" value="'+
+                value.cell.quantidade +'" onblur="analiseParcialController.atualizaQuantidadeTotal(this);" ' +
+                ' numeroCota="'+ value.cell.numeroCota +'" ' + isReadOnly + ' />';
         });
         return resultado;
     },
-    
-    atualizaQuantidadeTotal : function(numeroCota) {
-        var $quantidade = $('#inputQuantidade' + numeroCota);
-        if (!isNaN($quantidade.val())) {
-            var $saldoReparteNaoSelec = $('#saldoReparteNaoSelec');
-            var saldo = parseInt($saldoReparteNaoSelec.html(), 10);
-            saldo = saldo - parseInt($quantidade.val(), 10);
-            $saldoReparteNaoSelec.html(saldo);
+
+    popupConfirmaSenha : function() {
+        $('#dialog-dialog-confirmacao-senha').dialog({
+            escondeHeader: false,
+            buttons: {
+                "Confirmar": function() {
+                    if($(this).find('input').val() == 'D68') { //FIXME - validar senha no server...
+                        $(this).dialog("close");
+                        return true;
+                    } else {
+                        analiseParcialController.exibirMsg('WARNING', ['Senha invalida!']);
+                    }
+                },
+                "Cancelar": function() {
+                    $(this).dialog("close");
+                    return false;
+                }
+            }
+        });
+    },
+
+    atualizaQuantidadeTotal : function(input) {
+        var $input = $(input);
+        if (!isNaN($input.val())) {
+            var validacao = true;
+            switch ($input.attr('motivo')) {
+                case 'SM': //Publicação não está no MIX da cota
+                    validacao = analiseParcialController.popupConfirmaSenha();
+                    break;
+                case 'GN': //Cota não recebe esse Segmento
+                    validacao = analiseParcialController.popupConfirmaSenha();
+                    break;
+                case 'SS': //Cota Suspensa
+                    validacao = analiseParcialController.popupConfirmaSenha();
+                    break;
+                default:
+            }
+            if (validacao) {
+                var $saldoReparteNaoSelec = $('#saldoReparteNaoSelec');
+                var saldo = parseInt($saldoReparteNaoSelec.html(), 10);
+                saldo = saldo - parseInt($input.val(), 10);
+                $saldoReparteNaoSelec.html(saldo);
+            } else {
+                $input.val('');
+            }
         }
     },
     
@@ -939,9 +995,12 @@ var analiseParcialController = $.extend(true, {
             modal : true,
             buttons : {
                 "Confirmar" : function() {
-                    $(this).dialog("close");
-                    //FIXME
-                    if ($("#cotasNaoSelec tr td input[value!='']").filter('[motivo="SM"],[motivo="GN"],[motivo="SS"]').length > 0) {
+                    var $mainDialog = $(this);
+                    var $inputsPreenchidos = $("#cotasNaoSelec tr td input[value!='']");
+                    //FIXME - refazer esta logica, colocar ação no 'onchange' do input
+                    if ($inputsPreenchidos.filter('[motivo="CL"]').length > 0) {
+                        //este tipo não pode receber reparte
+                    } else if ($inputsPreenchidos.filter('[motivo="SM"],[motivo="GN"],[motivo="SS"]').length > 0) {
                         $('<div>Esta ação requer confirmação com senha:<br><input type="password" width="80" maxlength="10"></div>').dialog({
                             escondeHeader: false,
                             title: 'Confirmação',
@@ -950,6 +1009,7 @@ var analiseParcialController = $.extend(true, {
                                     if($(this).find('input').val() != '') {
                                         analiseParcialController.postMudarReparteLote();
                                         $(this).dialog("close");
+                                        $mainDialog.dialog("close");
                                     } else {
                                         analiseParcialController.exibirMsg('WARNING', ['Senha invalida!']);
                                     }
@@ -961,6 +1021,7 @@ var analiseParcialController = $.extend(true, {
                         });
                     } else {
                         analiseParcialController.postMudarReparteLote();
+                        $mainDialog.dialog("close");
                     }
                 },
                 "Cancelar" : function() {
@@ -971,11 +1032,12 @@ var analiseParcialController = $.extend(true, {
     },
     
     selecionarElementos : function(tipo, optionsId) {
+        //FIXME - rever filtro
         if (tipo !== '') {
             $.getJSON(analiseParcialController.path +"/componentes/elementos", [{name: "tipo", value: tipo}, {name: "estudo", value: $("#estudoId").val()}], function(data) {
                 var options = $("#"+ optionsId);
                 options.empty();
-                options.append($("<option />").val('TODOS').text('Selecione...'));
+                options.append($("<option />").val('').text('Selecione...'));
                 $.each(data, function() {
                     if (this.tipo === 'bairro') {
                         options.append($("<option />").val(this.tipo +"_"+ this.value).text(this.value));
@@ -984,6 +1046,10 @@ var analiseParcialController = $.extend(true, {
                     }
                 });
             });
+        } else {
+            var options = $("#"+ optionsId);
+            options.empty();
+            options.append($("<option />").val('').text('Selecione...'));
         }
     },
 
@@ -998,15 +1064,16 @@ var analiseParcialController = $.extend(true, {
     },
 
     filtrarOrdenarPor : function(estudo) {
+        //FIXME - rever filtro
         if ($("#elementos :selected").val() !== '') {
-            $("#baseEstudoGridParcial").flexOptions({
-                params: [{name:'filterSortName', value: $("#filtroOrdenarPor").val()},
-                    {name:'filterSortFrom', value: $("#ordenarPorDe").val()},
-                    {name:'filterSortTo',   value: $("#ordenarPorAte").val()},
-                    {name:'id',             value: estudo},
-                    {name:'elemento',       value: $("#elementos :selected").val()}]
-            }).flexReload();
         }
+        $("#baseEstudoGridParcial").flexOptions({
+            params: [{name:'filterSortName', value: $("#filtroOrdenarPor").val()},
+                {name:'filterSortFrom', value: $("#ordenarPorDe").val()},
+                {name:'filterSortTo',   value: $("#ordenarPorAte").val()},
+                {name:'id',             value: estudo},
+                {name:'elemento',       value: $("#elementos :selected").val()}]
+        }).flexReload();
         if (event) {
             event.preventDefault();
         }
@@ -1145,8 +1212,9 @@ $("#edicaoProdCadastradosGrid").flexigrid({
     height : 200
 });
 
-function popup_edicoes_produto(tr) {
+function popup_edicoes_produto() {
     $('#edicaoProdCadastradosGrid tbody').remove();
+    $("#dialog-edicoes-produtos input").val('');
     $("#dialog-edicoes-produtos").dialog({
         escondeHeader: false,
         resizable : false,
@@ -1155,7 +1223,7 @@ function popup_edicoes_produto(tr) {
         modal : true,
         buttons : {
             "Confirmar" : function() {
-                var $tbody = tr.closest('tbody');
+                var $tbody = $('#dialog-mudar-base table tbody');
                 var $edicaoSelecao = $("#edicaoProdCadastradosGrid input.edicaoSelecao:checked");
                 if (($tbody.find('tr').length + $edicaoSelecao.length) > 6) {
                     analiseParcialController.exibirMsg('WARNING', ['Não é possivel selecionar mais do que 6 edições no total!']);

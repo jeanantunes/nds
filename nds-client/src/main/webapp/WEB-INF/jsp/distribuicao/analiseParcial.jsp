@@ -1,8 +1,10 @@
+<script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numberformatter-1.2.3.min.js"></script>
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.tinysort.min.js"></script>
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/analiseParcial.js"></script>
 <script language="javascript" type="text/javascript">
 $(function() {
     $('.legendas').tipsy({gravity: $.fn.tipsy.autoNS});
+    $('.asterisco').tipsy({live: true, gravity: $.fn.tipsy.autoNS, title: function(){return 'Reparte Alterado';}});
   });
 
 function mostraDados(){
@@ -232,7 +234,7 @@ table.filtro td span {font-weight: normal;}
                     <td>
                         <span class="bt_novos">
                             <a href="javascript:;" onclick="analiseParcialController.alterarVisualizacaoGrid();">
-                                <img src="${pageContext.request.contextPath}/images/ico_atualizar.gif" alt="Alterar Visualização do Grid" hspace="5" border="0" /> <%--Alterar Visualização do Grid--%>
+                                <img src="${pageContext.request.contextPath}/images/ico_change.png" alt="Alterar Visualização do Grid" hspace="5" border="0" /> <%--Alterar Visualização do Grid--%>
                             </a>
                         </span>
                     </td>
@@ -425,6 +427,7 @@ table.filtro td span {font-weight: normal;}
 				<tr>
 					<td width="104"><strong>Chamada de Capa:</strong></td>
 					<td width="385">${estudoCota.estudo.produtoEdicao.chamadaCapa}</td>
+                    <td><a href="javascript:;" onclick="popup_edicoes_produto()"><img src="${pageContext.request.contextPath}/images/ico_editar.gif" alt="Adicionar Edição" border="0"/></a></td>
 				</tr>
 			</table>
 
@@ -571,6 +574,14 @@ table.filtro td span {font-weight: normal;}
 	</div>
 
     <div id="previewImagemCapa" title="Capa" style="display: none;"><img src="" alt="Imagem Capa" width="180" height="250"/></div>
+
+    <div id="dialog-confirmacao-senha" title="Confirmação" style="display: none;">
+        <p>
+            <span>Esta ação requer confirmação com senha.</span>
+            <br>
+            <input type="password" width="80" maxlength="10"/>
+        </p>
+    </div>
 
 	<script type="text/javascript">
 		 $(function(){
