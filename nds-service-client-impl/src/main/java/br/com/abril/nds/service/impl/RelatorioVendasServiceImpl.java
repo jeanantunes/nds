@@ -177,32 +177,16 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 	private List<RegistroCurvaABCEditorVO> complementarCurvaABCEditor(List<RegistroCurvaABCEditorVO> lista, FiltroCurvaABCEditorDTO filtro) {
 
 		BigDecimal participacaoTotal = BigDecimal.ZERO;
-		BigInteger vendaTotal = BigInteger.ZERO;
 
 		// Soma todos os valores de participacao
 		for (RegistroCurvaABCEditorVO registro : lista) {
 			if (registro.getFaturamentoCapa()!=null) {
 				participacaoTotal = participacaoTotal.add(registro.getFaturamentoCapa());
 			}
-			vendaTotal = vendaTotal.add(registro.getVendaExemplares());
-			
-			BigDecimal porcentagemMargem = null;
-			
-			if (registro.getFaturamentoCapa() != null && registro.getFaturamentoCapa().compareTo(BigDecimal.ZERO) > 0) {
-				
-				porcentagemMargem = MathUtil.divide(registro.getValorMargemDistribuidor(),registro.getFaturamentoCapa());	
-			
-			} else {
-			
-				porcentagemMargem = BigDecimal.ZERO; 
-			}
-
-			registro.setPorcentagemMargemDistribuidor(porcentagemMargem);
 		}
 
 		BigDecimal participacaoRegistro = BigDecimal.ZERO;
 		BigDecimal participacaoAcumulada = BigDecimal.ZERO;
-		BigDecimal porcentagemVendaRegistro = BigDecimal.ZERO;
 
 		// Verifica o percentual dos valores em relação ao total de participacao
 		for (RegistroCurvaABCEditorVO registro : lista) {
@@ -212,14 +196,9 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 				participacaoRegistro = new BigDecimal((registro.getFaturamentoCapa().doubleValue()*100)/participacaoTotal.doubleValue());
 			}
 			registro.setParticipacao(participacaoRegistro);
-
-			if (vendaTotal.doubleValue() != 0) {
-				porcentagemVendaRegistro = new BigDecimal(registro.getVendaExemplares().doubleValue()*100/vendaTotal.doubleValue());
-			}
 			
 			participacaoAcumulada = participacaoAcumulada.add(participacaoRegistro);
 			
-			registro.setPorcentagemVendaExemplares(porcentagemVendaRegistro);
 			registro.setParticipacaoAcumulada(participacaoAcumulada);
 			registro.setDataDe(filtro.getDataDe());
 			registro.setDataAte(filtro.getDataAte());
