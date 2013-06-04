@@ -128,18 +128,22 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		hql.append(" 			ELSE (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN - movimentoEstoqueCota.QTDE ELSE 0 END) ");
 		hql.append(" 		END ");
 		hql.append("   ) * produtoEdicao.PRECO_VENDA AS faturamentoCapa, ");
+		
+		hql.append("   SUM( ");
+		hql.append(" 	  (produtoEdicao.PRECO_VENDA ");
+		hql.append(" 	  		- (produtoEdicao.PRECO_VENDA * COALESCE(descontoLogistica.PERCENTUAL_DESCONTO, 0) / 100) ");
+		hql.append(" 			- movimentoEstoqueCota.PRECO_COM_DESCONTO) ");
+		hql.append(" 			* (CASE WHEN (tipoMovimento.OPERACAO_ESTOQUE = 'ENTRADA') ");
+		hql.append(" 			  		THEN (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN movimentoEstoqueCota.QTDE ELSE 0 END) ");
+		hql.append(" 					ELSE (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN - movimentoEstoqueCota.QTDE ELSE 0 END) ");
+		hql.append(" 				END) ");
+		hql.append("   ) AS valorMargemDistribuidor, ");
 		  
-		hql.append("   SUM(CASE WHEN (tipoMovimento.OPERACAO_ESTOQUE = 'ENTRADA') ");
-		hql.append("   			THEN (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN movimentoEstoqueCota.QTDE ELSE 0 END) ");
-		hql.append(" 			ELSE (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN - movimentoEstoqueCota.QTDE ELSE 0 END) ");
-		hql.append(" 		END ");
-		hql.append("   ) * (produtoEdicao.PRECO_VENDA - movimentoEstoqueCota.PRECO_COM_DESCONTO) AS valorMargemDistribuidor, ");
-		  
-		hql.append("   SUM(CASE WHEN (tipoMovimento.OPERACAO_ESTOQUE = 'ENTRADA') ");
-		hql.append("   			THEN (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN movimentoEstoqueCota.QTDE ELSE 0 END) ");
-		hql.append(" 			ELSE (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN - movimentoEstoqueCota.QTDE ELSE 0 END) ");
-		hql.append(" 		END ");
-		hql.append("   ) * (produtoEdicao.PRECO_VENDA - movimentoEstoqueCota.PRECO_COM_DESCONTO) AS porcentagemMargemDistribuidor ");
+		hql.append("   SUM( ");
+		hql.append(" 	  (produtoEdicao.PRECO_VENDA ");
+		hql.append(" 	  		- (produtoEdicao.PRECO_VENDA * COALESCE(descontoLogistica.PERCENTUAL_DESCONTO, 0) / 100) ");
+		hql.append(" 			- movimentoEstoqueCota.PRECO_COM_DESCONTO) * 100 / movimentoEstoqueCota.PRECO_COM_DESCONTO ");
+		hql.append("   ) / COUNT(*) AS porcentagemMargemDistribuidor ");
 		
 		hql.append(this.getFromWhereObterCurvaABC());
 		hql.append(this.getFiltroCurvaABCEditor(filtro, param));
@@ -282,6 +286,9 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		hql.append(" INNER JOIN ");
 		hql.append("   	  PESSOA pessoaEditor ");
 		hql.append("   	  		ON editor.JURIDICA_ID = pessoaEditor.ID ");
+		hql.append(" LEFT JOIN ");
+		hql.append("   	  DESCONTO_LOGISTICA descontoLogistica ");
+		hql.append("   			ON descontoLogistica.ID = produtoEdicao.DESCONTO_LOGISTICA_ID ");
 		hql.append(" INNER JOIN ");
 		hql.append("     LANCAMENTO lancamento ");
 		hql.append("         ON lancamento.ID = ( ");
