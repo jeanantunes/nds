@@ -76,7 +76,7 @@ public class MovimentoEstoqueCota  extends AbstractMovimentoEstoque implements C
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "LANCAMENTO_ID")
 	private Lancamento lancamento;
-
+	
 	@Column(name = "STATUS_ESTOQUE_FINANCEIRO")
 	private StatusEstoqueFinanceiro statusEstoqueFinanceiro;
 	

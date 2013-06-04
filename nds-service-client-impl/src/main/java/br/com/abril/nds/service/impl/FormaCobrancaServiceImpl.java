@@ -366,13 +366,14 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	FormaCobranca formaCobranca = this.obterFormaCobrancaCota(idCota, idFornecedor, data, valor);
 	
 	if (formaCobranca == null){
+
+		formaCobranca = this.obterFormaCobrancaDistribuidor(idFornecedor, data, valor);
+
+		// Retiramos esta condição pq não fazemos a mínima idéia do pq existe, já que está redundante com a condição acima (formaCobranca == null)
+		/*if (cota!=null && this.cotaPossuiFormaCobranca(cota)) {
+			return null;
+		}*/
 	
-	if (cota!=null && this.cotaPossuiFormaCobranca(cota)){
-	
-	return null;
-	}
-	
-	formaCobranca = this.obterFormaCobrancaDistribuidor(idFornecedor, data, valor);
 	}
 	
 	return formaCobranca;

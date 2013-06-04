@@ -168,8 +168,8 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		Query query = getSession().createQuery(sql.toString());
 		
 		query.setParameterList("idCotas", idCotas);
-		
-		query.setParameterList("listaStatusLancamento", new StatusLancamento[] {StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO});
+
+		query.setParameterList("listaStatusLancamento", new StatusLancamento[] {StatusLancamento.PLANEJADO, StatusLancamento.FECHADO, StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO});
 	
 		if (listaIdsFornecedores != null && !listaIdsFornecedores.isEmpty()) {
 			
