@@ -139,10 +139,10 @@ public class DividirEstudoController extends BaseController {
 
 //		    divisaoEstudo.setDataLancamentoPrimeiroEstudo(DateUtil.formatarDataPTBR(estudoOriginal.getDataLancamento()));
 
-		    Long maxId = estudoService.obterMaxId();
-
-		    divisaoEstudo.setNumeroPrimeiroEstudo(++maxId);
-		    divisaoEstudo.setNumeroSegundoEstudo(++maxId);
+		    Long maxId = estudoService.obterUltimoAutoIncrement();
+		    
+		    divisaoEstudo.setNumeroPrimeiroEstudo(maxId++);
+		    divisaoEstudo.setNumeroSegundoEstudo(maxId);
 
 		    result.use(json()).from(divisaoEstudo).recursive().serialize();
 		} else {

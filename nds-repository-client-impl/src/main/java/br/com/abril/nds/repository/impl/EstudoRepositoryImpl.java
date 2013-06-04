@@ -1,11 +1,15 @@
 package br.com.abril.nds.repository.impl;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
-import br.com.abril.nds.model.planejamento.EstudoCota;
+import javax.sql.DataSource;
+
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Projections;
@@ -13,17 +17,18 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.DivisaoEstudoDTO;
 import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DistribuicaoRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.EstudoRepository;
 import br.com.abril.nds.repository.ItemNotaEnvioRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Classe de implementação referente ao acesso a dados da entidade 
@@ -46,6 +51,10 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
 	
 	@Autowired
 	private DistribuicaoRepository distribuicaoRepository;
+	
+//	@Autowired private ApplicationContext applicationContext;
+	@Autowired
+	private DataSource dataSource;
 	/**
 	 * Construtor.
 	 */
@@ -285,4 +294,26 @@ public class EstudoRepositoryImpl extends AbstractRepositoryModel<Estudo, Long> 
                 .setProjection(Projections.rowCount())
                 .uniqueResult()).intValue();
     }
+
+
+	@Override
+	public Long obterUltimoAutoIncrement() {
+
+//		DataSource ds = (DataSource)this.applicationContext.getBean("dataSource");
+		
+		Connection conn;
+		Long long1 =null;
+		try {
+			conn = this.dataSource.getConnection();
+			String sql="SHOW TABLE STATUS LIKE 'estudo'";
+			PreparedStatement statement=conn.prepareStatement(sql);
+			ResultSet rs=statement.executeQuery();
+			rs.next();
+			long1 = rs.getLong("AUTO_INCREMENT");
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return long1;
+	}
 }

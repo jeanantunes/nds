@@ -40,4 +40,6 @@ public interface EstudoService {
 	public void alterarEstudo(Estudo estudo);
 	
 	public void setIdLancamentoNoEstudo(Long idLancamento, Long idEstudo);
+	
+	public Long obterUltimoAutoIncrement();
 }

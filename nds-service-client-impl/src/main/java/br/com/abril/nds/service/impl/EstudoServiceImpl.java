@@ -229,15 +229,26 @@ public class EstudoServiceImpl implements EstudoService {
 //							toDivide = new BigDecimal(divisaoEstudo.getPercentualDivisaoSegundoEstudo()).divide(new BigDecimal("100"));
 							estudoCota.setReparte(diffEstudosMap.get(ec.getId()));
 						}
+					
+						setEstudoCota.add(estudoCota);
 						
+					}else{
 						
+						if(iEstudo==1 ){
+							estudoCota.setReparte(BigInteger.ZERO);
+						}
+						setEstudoCota.add(estudoCota);
 					}
 					
-					setEstudoCota.add(estudoCota);
-
 					iEstudoCota++;
 				}
 
+				BigInteger somarReparteParaEstudo = BigInteger.ZERO;
+				for (EstudoCota estudoCota : setEstudoCota) {
+					BigInteger r = estudoCota.getReparte()==null?BigInteger.ZERO:estudoCota.getReparte();
+					somarReparteParaEstudo=somarReparteParaEstudo.add(r);
+				}
+				estudo.setQtdeReparte(somarReparteParaEstudo);
 				estudo.setEstudoCotas(setEstudoCota);
 
 				// Estudo 1 possui o mesmo lancamentoID do estudo original
@@ -272,6 +283,12 @@ public class EstudoServiceImpl implements EstudoService {
 	@Transactional
 	public void setIdLancamentoNoEstudo(Long idLancamento, Long idEstudo) {
 		this.estudoRepository.setIdLancamentoNoEstudo(idLancamento, idEstudo);
+	}
+
+	@Override
+	public Long obterUltimoAutoIncrement() {
+		return this.estudoRepository.obterUltimoAutoIncrement();
+		
 	}
 	
 }
