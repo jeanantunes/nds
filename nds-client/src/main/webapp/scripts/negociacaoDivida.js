@@ -528,7 +528,12 @@ var negociacaoDividaController = $.extend(true, {
 		
 		);
 	},
-		
+
+	imprimirNegociacao : function() {
+		var url = contextPath + '/financeiro/negociacaoDivida/imprimirNegociacao?valorDividaSelecionada=' + $('#totalSelecionado', negociacaoDividaController.wokspace).html();
+		window.open(url, '_blank');
+	},
+
 	geraLinhasCheque :function(result) {
 		
 		$('#encargos').hide();
