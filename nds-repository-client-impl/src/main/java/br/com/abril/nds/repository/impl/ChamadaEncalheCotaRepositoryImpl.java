@@ -198,7 +198,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 			Date dataOperacaoDe,
 			Date dataOperacaoAte,
 			Boolean postergado) {
-		
+
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append(" SELECT SUM(PRODUTOS_DESCONTO.PRECO_COM_DESCONTO * PRODUTOS_DESCONTO.QTDE_PREVISTA) as precoTotalComDesconto ");
@@ -208,7 +208,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		sql.append(" ( ");
 		
 		sql.append("  SELECT	");
-		sql.append("  COALESCE(MEC.PRECO_COM_DESCONTO, PROD_EDICAO.PRECO_VENDA) AS PRECO_COM_DESCONTO, ");
+		sql.append("  COALESCE(MEC.PRECO_COM_DESCONTO, MEC.PRECO_VENDA) AS PRECO_COM_DESCONTO, ");
 		sql.append("  CH_ENCALHE_COTA.QTDE_PREVISTA AS QTDE_PREVISTA  ");
 		sql.append("    FROM    ");
 		sql.append("    CHAMADA_ENCALHE_COTA AS CH_ENCALHE_COTA 				");
@@ -244,7 +244,13 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 		sql.append("	WHERE   ");
 
-		sql.append("	( CH_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataOperacaoDe AND  :dataOperacaoAte )  ");
+		sql.append("	( CH_ENCALHE.DATA_RECOLHIMENTO >= :dataOperacaoDe AND  CH_ENCALHE.DATA_RECOLHIMENTO <= :dataOperacaoAte )  ");
+		
+		sql.append(" AND CH_ENCALHE_COTA.QTDE_PREVISTA > 0 ");
+		
+		sql.append(" AND MEC.DATA = ");
+		
+		sql.append(" ( SELECT MAX(MV.DATA) FROM MOVIMENTO_ESTOQUE_COTA MV WHERE MV.LANCAMENTO_ID = LANCAMENTO.ID AND MV.ID = MEC.ID ) ");
 		
 		if(cotaId!=null) {
 			sql.append(" AND COTA.ID = :cotaId ");
@@ -254,7 +260,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 			sql.append(" AND CH_ENCALHE_COTA.POSTERGADO = :postergado		");
 		}
 
-		sql.append("  GROUP BY PRECO_COM_DESCONTO, QTDE_PREVISTA ");
+		sql.append("  GROUP BY CH_ENCALHE.ID ");
 		
 		sql.append(" ) AS PRODUTOS_DESCONTO ");
 
