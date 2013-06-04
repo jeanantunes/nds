@@ -822,6 +822,10 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		parameters.put("TOTAL_PARCELAS",CurrencyUtil.formatarValor(
 				totalParcelas.setScale(2, RoundingMode.HALF_EVEN)));
 		parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
+
+		String nomeDistribuidor = this.distribuidorService.obterRazaoSocialDistribuidor();
+		parameters.put("NOME_DISTRIBUIDOR",nomeDistribuidor);
+
 		parameters.put("LOGO_DISTRIBUIDOR", inputStream);
 		return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 	}

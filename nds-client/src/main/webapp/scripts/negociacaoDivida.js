@@ -924,12 +924,6 @@ var negociacaoDividaController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			},{
-				display : ' ',
-				name : 'tipo',
-				width : 80,
-				sortable : true,
-				align : 'left'
-			},{
 				display : 'R$',
 				name : 'valor',
 				width : 60,
@@ -938,7 +932,7 @@ var negociacaoDividaController = $.extend(true, {
 			},  {
 				display : 'Observa&ccedil;&atilde;o',
 				name : 'observacao',
-				width : 320,
+				width : 400,
 				sortable : true,
 				align : 'left'
 			}],
