@@ -89,18 +89,13 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	tratarCotasComEnglobacao(cotasComHistoricoMap);
 
 	cotaDAO.getComponentesCota(cotas);
-	if (estudo.getDistribuicaoVendaMediaDTO() != null) {
-	    cotas = validarComponentes(cotas, estudo);
-	}
 
 	List<Long> idsCotas = new ArrayList<>();
 	for (CotaEstudo cota : cotasComHistoricoMap.values()) {
 	    if (cota.getClassificacao().equals(ClassificacaoCota.BancaSemHistorico)) {
 		idsCotas.add(cota.getId());
 	    }
-	    if (cota.getClassificacao().equals(ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
-		estudo.getCotasForaDaRegiao().add(cota);
-	    }
+
 	    // excluindo as cotas que não entram no estudo
 	    if (cota.getClassificacao().in(ClassificacaoCota.BancaComVendaZero, ClassificacaoCota.BancaSemHistorico,
 		    ClassificacaoCota.ReparteFixado, ClassificacaoCota.CotaNaoRecebeSegmento, ClassificacaoCota.BancaSuspensa,
@@ -110,6 +105,15 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	}
 	for (CotaEstudo cota : estudo.getCotasExcluidas()) {
 	    cotasComHistoricoMap.remove(cota.getId());
+	}
+	// removendo cotas fora da regiao
+	if (estudo.getDistribuicaoVendaMediaDTO() != null) {
+	    cotas = validarComponentes(new LinkedList<CotaEstudo>(cotasComHistoricoMap.values()), estudo);
+	}
+	for (CotaEstudo cota : cotasComHistoricoMap.values()) {
+	    if (cota.getClassificacao().equals(ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
+		estudo.getCotasForaDaRegiao().add(cota);
+	    }
 	}
 	for (CotaEstudo cota : estudo.getCotasForaDaRegiao()) {
 	    cotasComHistoricoMap.remove(cota.getId());
@@ -198,6 +202,8 @@ public class SelecaoBancas extends ProcessoAbstrato {
 		if (BigDecimal.valueOf(i).compareTo(qtdeCotasAbrangencia) >= 0) {
 		    temp.get(i).setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
 		    temp.get(i).setReparteCalculado(BigInteger.ZERO, estudo);
+		    
+		    temp.get(i).setReparteMinimoFinal(BigInteger.ONE);
 		}
 	    }
 	}

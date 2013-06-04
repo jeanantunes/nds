@@ -274,15 +274,5 @@ public class CalcularReparte extends ProcessoAbstrato {
 		}
 	    }
 	}
-
-	if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) > 0 && estudo.getReparteDistribuir().compareTo(reparte) < 0) {
-	    if (cotas.size() > 0) {
-		cotas.get(0).setReparteCalculado(cotas.get(0).getReparteCalculado().add(estudo.getReparteDistribuir()), estudo);
-	    }
-	} else if (estudo.getReparteDistribuir().compareTo(BigInteger.ZERO) < 0 && estudo.getReparteDistribuir().compareTo(reparte.negate()) > 0) {
-	    if (cotas.size() > 0) {
-		cotas.get(0).setReparteCalculado(cotas.get(0).getReparteCalculado().subtract(estudo.getReparteDistribuir()));
-	    }
-	}
     }
 }

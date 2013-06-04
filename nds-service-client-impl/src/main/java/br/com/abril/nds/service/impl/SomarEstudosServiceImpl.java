@@ -106,6 +106,8 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 				
 				EstudoCota estudoCota = itMap.next().getValue();
 				estudoCota.setEstudo(estudo);
+				estudoCota.setQtdeEfetiva(estudoCota.getReparte());
+				estudoCota.setQtdePrevista(estudoCota.getReparte());
 				estudoCotaRepository.alterar(estudoCota);
 			}
 			

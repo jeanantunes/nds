@@ -588,15 +588,16 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	// somar totais de reparte fixado e reparte minimo da cota mix
 	for (EstudoCota cota : cotas) {
 	    if (cota.getReparte() != null) {
-		CotaEstudo cotaEstudo = mapCotas.get(cota.getCota().getId());
-		if (cotaEstudo != null && cotaEstudo.getClassificacao() != null) {
-		    if (cotaEstudo.getClassificacao().equals(ClassificacaoCota.ReparteFixado)) {
-			cota.setReparte(cotaEstudo.getReparteFixado());
-			cota.setClassificacao(ClassificacaoCota.ReparteFixado.getCodigo());
-			totalFixacao = totalFixacao.add(cotaEstudo.getReparteFixado());
-		    } else if (cotaEstudo.getClassificacao().equals(ClassificacaoCota.CotaMix)) {
-			totalMix = totalMix.add(cotaEstudo.getIntervaloMinimo());
-		    }
+		totalReparte = totalReparte.add(cota.getReparte());
+	    }
+	    CotaEstudo cotaEstudo = mapCotas.get(cota.getCota().getId());
+	    if (cotaEstudo != null && cotaEstudo.getClassificacao() != null) {
+		if (cotaEstudo.getClassificacao().equals(ClassificacaoCota.ReparteFixado)) {
+		    cota.setReparte(cotaEstudo.getReparteFixado());
+		    cota.setClassificacao(ClassificacaoCota.ReparteFixado.getCodigo());
+		    totalFixacao = totalFixacao.add(cotaEstudo.getReparteFixado());
+		} else if (cotaEstudo.getClassificacao().equals(ClassificacaoCota.CotaMix)) {
+		    totalMix = totalMix.add(cotaEstudo.getIntervaloMinimo());
 		}
 	    }
 	}
@@ -642,24 +643,49 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	    CotaEstudo cotaEstudo = mapCotas.get(cota.getCota().getId());
 	    if (cotaEstudo != null && cotaEstudo.getClassificacao() != null) {
 		if (cotaEstudo.getClassificacao().equals(ClassificacaoCota.CotaMix)) {
-		    if (cota.getReparte().compareTo(cotaEstudo.getIntervaloMinimo()) < 0) {
-			BigInteger variacao = cotaEstudo.getIntervaloMinimo().subtract(cota.getReparte());
+		    // multiplos
+		    if (pacotePadrao != null && pacotePadrao.compareTo(BigInteger.ZERO) > 0) {
+			if (pacotePadrao.compareTo(cotaEstudo.getIntervaloMaximo()) > 0) {
+			    BigInteger variacao = cotaEstudo.getIntervaloMaximo().subtract(cota.getReparte());
 
-			cota.setReparte(cotaEstudo.getIntervaloMinimo());
-			cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
+			    cota.setReparte(cotaEstudo.getIntervaloMaximo());
+			    cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
 
-			reparteDistribuir = reparteDistribuir.subtract(variacao);
-		    } else if (cota.getReparte().compareTo(cotaEstudo.getIntervaloMaximo()) > 0) {
-			BigInteger variacao = cotaEstudo.getIntervaloMinimo().subtract(cota.getReparte());
+			    reparteDistribuir = reparteDistribuir.subtract(variacao);
+			} else if (pacotePadrao.compareTo(cotaEstudo.getIntervaloMinimo()) < 0) {
+			    BigInteger variacao = cotaEstudo.getIntervaloMinimo().subtract(cota.getReparte());
 
-			cota.setReparte(cotaEstudo.getIntervaloMaximo());
-			cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
+			    cota.setReparte(cotaEstudo.getIntervaloMinimo());
+			    cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
 
-			reparteDistribuir = reparteDistribuir.add(variacao);
+			    reparteDistribuir = reparteDistribuir.subtract(variacao);
+			}
+		    } else {  // nao multiplos
+			if (cota.getReparte().compareTo(cotaEstudo.getIntervaloMinimo()) < 0) {
+			    BigInteger variacao = cotaEstudo.getIntervaloMinimo().subtract(cota.getReparte());
+
+			    cota.setReparte(cotaEstudo.getIntervaloMinimo());
+			    cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
+
+			    reparteDistribuir = reparteDistribuir.subtract(variacao);
+			} else if (cota.getReparte().compareTo(cotaEstudo.getIntervaloMaximo()) > 0) {
+			    BigInteger variacao = cotaEstudo.getIntervaloMinimo().subtract(cota.getReparte());
+
+			    cota.setReparte(cotaEstudo.getIntervaloMaximo());
+			    cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
+
+			    reparteDistribuir = reparteDistribuir.add(variacao);
+			}
 		    }
 		}
 	    }
 	}
+
+	BigInteger soma = BigInteger.ZERO;
+	for (EstudoCota cx : cotas) {
+	    soma = soma.add(cx.getReparte());
+	}
+	reparteDistribuir = vo.getReparteDistribuido().subtract(soma);
 
 	// distribuicao de sobras caso exista
 	Collections.sort(cotas, new Comparator<EstudoCota>() {
@@ -673,7 +699,8 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	if (pacotePadrao != null && pacotePadrao.compareTo(BigInteger.ZERO) > 0) {
 	    reparte = pacotePadrao;
 	}
-	while (reparteDistribuir.compareTo(reparte) >= 0 || reparteDistribuir.compareTo(reparte.negate()) <= 0) {
+	while ((reparteDistribuir.compareTo(BigInteger.ZERO) > 0 && reparteDistribuir.compareTo(reparte) >= 0) ||
+		(reparteDistribuir.compareTo(BigInteger.ZERO) < 0 && reparteDistribuir.compareTo(reparte.negate()) <= 0)) {
 	    for (EstudoCota cota : cotas) {
 		if (!cota.getClassificacao().equals("FX") && !cota.getClassificacao().equals("MX")) {
 		    if (reparteDistribuir.compareTo(BigInteger.ZERO) >= 0) {
@@ -687,30 +714,9 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		    }
 		}
 
-		if (reparteDistribuir.compareTo(BigInteger.ZERO) == 0) {
-		    break;
-		}
-	    }
-	}
-
-	while ((reparteDistribuir.compareTo(BigInteger.ZERO) > 0 && reparteDistribuir.compareTo(reparte) < 0) ||
-		(reparteDistribuir.compareTo(BigInteger.ZERO) < 0 && reparteDistribuir.compareTo(reparte.negate()) > 0)) {
-	    for (EstudoCota cota : cotas) {
-		if (!cota.getClassificacao().equals("FX")) {
-		    if (reparteDistribuir.compareTo(BigInteger.ZERO) > 0 && reparteDistribuir.compareTo(reparte) < 0) {
-			if (cotas.size() > 0) {
-			    cota.setReparte(cota.getReparte().add(reparteDistribuir));
-			    reparteDistribuir = reparteDistribuir.subtract(reparteDistribuir);
-			}
-		    } else if (reparteDistribuir.compareTo(BigInteger.ZERO) < 0 && reparteDistribuir.compareTo(reparte.negate()) > 0) {
-			if (cotas.size() > 0) {
-			    cota.setReparte(cota.getReparte().subtract(reparteDistribuir));
-			    reparteDistribuir = reparteDistribuir.add(reparteDistribuir);
-			}
-		    }
-		}
-
-		if (reparteDistribuir.compareTo(BigInteger.ZERO) == 0) {
+		if ((reparteDistribuir.compareTo(BigInteger.ZERO) > 0 && reparteDistribuir.compareTo(reparte) < 0) ||
+			(reparteDistribuir.compareTo(BigInteger.ZERO) < 0 && reparteDistribuir.compareTo(reparte.negate()) > 0) ||
+			reparteDistribuir.compareTo(BigInteger.ZERO) == 0) {
 		    break;
 		}
 	    }
@@ -718,6 +724,8 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
 	// salvando no banco
 	for (EstudoCota cota : cotas) {
+	    cota.setQtdeEfetiva(cota.getReparte());
+	    cota.setQtdePrevista(cota.getReparte());
 	    estudoCotaRepository.adicionar(cota);
 	}
 	estudoCopia.setEstudoCotas(new HashSet<EstudoCota>(cotas));
