@@ -57,6 +57,7 @@ public class CotaEstudo extends Cota {
     private boolean cotaNaoRecebeSegmento;
     private boolean cotaExcecaoSegmento;
     private boolean cotaNaoRecebeClassificacao;
+    private String tipoDistribuicao;
 
     public CotaEstudo() {
 	nova = false;
@@ -394,6 +395,14 @@ public class CotaEstudo extends Cota {
 
     public void setCotaNaoRecebeClassificacao(boolean cotaNaoRecebeClassificacao) {
         this.cotaNaoRecebeClassificacao = cotaNaoRecebeClassificacao;
+    }
+
+    public String getTipoDistribuicao() {
+        return tipoDistribuicao;
+    }
+
+    public void setTipoDistribuicao(String tipoDistribuicao) {
+        this.tipoDistribuicao = tipoDistribuicao;
     }
 
     @Override

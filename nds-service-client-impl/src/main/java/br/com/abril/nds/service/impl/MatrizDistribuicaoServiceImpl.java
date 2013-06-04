@@ -26,6 +26,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
+import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -68,7 +69,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
     @Autowired
     private UsuarioRepository usuarioRepository;
-    
+
     @Autowired
     private CotaRepository cotaRepository;
 
@@ -532,12 +533,9 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	for (EstudoCota estudoCota : lista) {
 	    if (estudoCota.getReparte() != null && estudoCota.getReparte().compareTo(BigInteger.ZERO) > 0) {
 		EstudoCota cota = new EstudoCota();
-		BeanUtils.copyProperties(estudoCota, cota, new String[] {"id", "estudo", "rateiosDiferenca", "movimentosEstoqueCota", "itemNotaEnvios"});
+		BeanUtils.copyProperties(estudoCota, cota, new String[] {"id", "estudo", "classificacao", "rateiosDiferenca", "movimentosEstoqueCota", "itemNotaEnvios"});
 		cota.setEstudo(estudo);
-		if (cota.getClassificacao() == null || cota.getClassificacao().isEmpty() || !isFixacao ||
-			(!cota.getClassificacao().equals("FX") && !cota.getClassificacao().equals("MX") && !cota.getClassificacao().equals("MM"))) {
-		    cota.setClassificacao("");
-		}
+		cota.setClassificacao("");
 		retorno.add(cota);
 	    }
 	}
@@ -555,44 +553,53 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	estudoCopia.setQtdeReparte(vo.getReparteDistribuido());
 	LinkedList<EstudoCota> cotasSelecionadas = new LinkedList<>(estudo.getEstudoCotas());
 	Map<Long, CotaEstudo> mapCotas = carregarInformacoesCotaEstudo(estudo.getProdutoEdicao());
-	
-	// validacoes de mix e classificacao e segmento nao recebidos
+
+	cotasSelecionadas = copiarListaDeCotas(cotasSelecionadas, estudoCopia, vo.isFixacao());
+
+	// validacoes de mix e classificacoes e segmentos nao recebidos
 	LinkedList<EstudoCota> cotas = new LinkedList<>();
 	for (EstudoCota cota : cotasSelecionadas) {
 	    CotaEstudo cotaEstudo = mapCotas.get(cota.getCota().getId());
 	    if (cotaEstudo != null) {
 		if (cotaEstudo.isCotaNaoRecebeClassificacao()) {
+		    cota.setClassificacao(ClassificacaoCota.BancaSemClassificacaoDaPublicacao.getCodigo());
 		    continue;
 		}
 		if (cotaEstudo.isCotaNaoRecebeSegmento() && !cotaEstudo.isCotaExcecaoSegmento()) {
+		    cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeSegmento.getCodigo());
 		    continue;
 		}
-		if (cotaEstudo.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO) && !cotaEstudo.isMix()) {
+		if (cotaEstudo.getTipoDistribuicao().equals(TipoDistribuicaoCota.ALTERNATIVO) && !cotaEstudo.isMix()) {
+		    cota.setClassificacao(ClassificacaoCota.BancaMixSemDeterminadaPublicacao.getCodigo());
 		    continue;
 		}
 		cotas.add(cota);
 	    }
 	}
-	
+	// separando as cotas que passaram na validacao acima das cotas que por algum motivo nao entraram no estudo
+	for (EstudoCota cota : cotas) {
+	    cotasSelecionadas.remove(cota);
+	}
+
 	if (cotas.isEmpty()) {
 	    throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possivel efetuar a copia.");
 	}
 
-	// somar totais
+	// somar totais de reparte fixado e reparte minimo da cota mix
 	for (EstudoCota cota : cotas) {
 	    if (cota.getReparte() != null) {
-		if (cota.getClassificacao() != null) {
-		    if (cota.getClassificacao().equals("FX")) {
-			totalFixacao = totalFixacao.add(cota.getReparte());
-		    } else if (cota.getClassificacao().equals("MX") || cota.getClassificacao().equals("MM")) {
-			totalMix = totalMix.add(cota.getReparte());
+		CotaEstudo cotaEstudo = mapCotas.get(cota.getCota().getId());
+		if (cotaEstudo != null && cotaEstudo.getClassificacao() != null) {
+		    if (cotaEstudo.getClassificacao().equals(ClassificacaoCota.ReparteFixado)) {
+			cota.setReparte(cotaEstudo.getReparteFixado());
+			cota.setClassificacao(ClassificacaoCota.ReparteFixado.getCodigo());
+			totalFixacao = totalFixacao.add(cotaEstudo.getReparteFixado());
+		    } else if (cotaEstudo.getClassificacao().equals(ClassificacaoCota.CotaMix)) {
+			totalMix = totalMix.add(cotaEstudo.getIntervaloMinimo());
 		    }
 		}
-		totalReparte = totalReparte.add(cota.getReparte());
 	    }
 	}
-
-	cotas = copiarListaDeCotas(cotas, estudoCopia, vo.isFixacao());
 
 	BigInteger totalReparteFixado = totalFixacao.add(totalMix);
 	BigInteger reparteDistribuir = vo.getReparteDistribuido();
@@ -615,7 +622,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	// distribuicao para as outras cotas
 	if (reparteDistribuir.compareTo(BigInteger.ZERO) > 0) {
 	    for (EstudoCota cota : cotas) {
-		if (!vo.isFixacao() || (!cota.getClassificacao().equals("FX") && !cota.getClassificacao().equals("MX") && !cota.getClassificacao().equals("MM"))) {
+		if (!vo.isFixacao() || !cota.getClassificacao().equals("FX")) {
 		    BigDecimal reparte = new BigDecimal(cota.getReparte()).multiply(indiceProporcional);
 		    // arredondamento por pacote padrao
 		    if (pacotePadrao != null && pacotePadrao.compareTo(BigInteger.ZERO) > 0) {
@@ -626,6 +633,30 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		    }
 		    cota.setReparte(reparte.toBigInteger());
 		    reparteDistribuir = reparteDistribuir.subtract(reparte.toBigInteger());
+		}
+	    }
+	}
+
+	// verificacao dos repartes minimo e maximo para cotas mix
+	for (EstudoCota cota : cotas) {
+	    CotaEstudo cotaEstudo = mapCotas.get(cota.getCota().getId());
+	    if (cotaEstudo != null && cotaEstudo.getClassificacao() != null) {
+		if (cotaEstudo.getClassificacao().equals(ClassificacaoCota.CotaMix)) {
+		    if (cota.getReparte().compareTo(cotaEstudo.getIntervaloMinimo()) < 0) {
+			BigInteger variacao = cotaEstudo.getIntervaloMinimo().subtract(cota.getReparte());
+
+			cota.setReparte(cotaEstudo.getIntervaloMinimo());
+			cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
+
+			reparteDistribuir = reparteDistribuir.subtract(variacao);
+		    } else if (cota.getReparte().compareTo(cotaEstudo.getIntervaloMaximo()) > 0) {
+			BigInteger variacao = cotaEstudo.getIntervaloMinimo().subtract(cota.getReparte());
+
+			cota.setReparte(cotaEstudo.getIntervaloMaximo());
+			cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
+
+			reparteDistribuir = reparteDistribuir.add(variacao);
+		    }
 		}
 	    }
 	}
@@ -644,30 +675,44 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	}
 	while (reparteDistribuir.compareTo(reparte) >= 0 || reparteDistribuir.compareTo(reparte.negate()) <= 0) {
 	    for (EstudoCota cota : cotas) {
-		if (reparteDistribuir.compareTo(BigInteger.ZERO) >= 0) {
-		    cota.setReparte(cota.getReparte().add(reparte));
-		    reparteDistribuir = reparteDistribuir.subtract(reparte);
-		} else if (reparteDistribuir.compareTo(BigInteger.ZERO) <= 0) {
-		    cota.setReparte(cota.getReparte().subtract(reparte));
-		    reparteDistribuir = reparteDistribuir.add(reparte);
-		} else {
-		    break;
+		if (!cota.getClassificacao().equals("FX") && !cota.getClassificacao().equals("MX")) {
+		    if (reparteDistribuir.compareTo(BigInteger.ZERO) >= 0) {
+			cota.setReparte(cota.getReparte().add(reparte));
+			reparteDistribuir = reparteDistribuir.subtract(reparte);
+		    } else if (reparteDistribuir.compareTo(BigInteger.ZERO) <= 0) {
+			cota.setReparte(cota.getReparte().subtract(reparte));
+			reparteDistribuir = reparteDistribuir.add(reparte);
+		    } else {
+			break;
+		    }
 		}
-		
+
 		if (reparteDistribuir.compareTo(BigInteger.ZERO) == 0) {
 		    break;
 		}
 	    }
 	}
-	if (reparteDistribuir.compareTo(BigInteger.ZERO) > 0 && reparteDistribuir.compareTo(reparte) < 0) {
-	    if (cotas.size() > 0) {
-		cotas.get(0).setReparte(cotas.get(0).getReparte().add(reparteDistribuir));
-		reparteDistribuir = reparteDistribuir.subtract(reparteDistribuir);
-	    }
-	} else if (reparteDistribuir.compareTo(BigInteger.ZERO) < 0 && reparteDistribuir.compareTo(reparte.negate()) > 0) {
-	    if (cotas.size() > 0) {
-		cotas.get(0).setReparte(cotas.get(0).getReparte().subtract(reparteDistribuir));
-		reparteDistribuir = reparteDistribuir.add(reparteDistribuir);
+
+	while ((reparteDistribuir.compareTo(BigInteger.ZERO) > 0 && reparteDistribuir.compareTo(reparte) < 0) ||
+		(reparteDistribuir.compareTo(BigInteger.ZERO) < 0 && reparteDistribuir.compareTo(reparte.negate()) > 0)) {
+	    for (EstudoCota cota : cotas) {
+		if (!cota.getClassificacao().equals("FX")) {
+		    if (reparteDistribuir.compareTo(BigInteger.ZERO) > 0 && reparteDistribuir.compareTo(reparte) < 0) {
+			if (cotas.size() > 0) {
+			    cota.setReparte(cota.getReparte().add(reparteDistribuir));
+			    reparteDistribuir = reparteDistribuir.subtract(reparteDistribuir);
+			}
+		    } else if (reparteDistribuir.compareTo(BigInteger.ZERO) < 0 && reparteDistribuir.compareTo(reparte.negate()) > 0) {
+			if (cotas.size() > 0) {
+			    cota.setReparte(cota.getReparte().subtract(reparteDistribuir));
+			    reparteDistribuir = reparteDistribuir.add(reparteDistribuir);
+			}
+		    }
+		}
+
+		if (reparteDistribuir.compareTo(BigInteger.ZERO) == 0) {
+		    break;
+		}
 	    }
 	}
 
@@ -684,6 +729,12 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	List<CotaEstudo> cotasEstudo = cotaRepository.getInformacoesCotaEstudo(produtoEdicao);
 	Map<Long, CotaEstudo> mapCotas = new HashMap<>();
 	for (CotaEstudo cotaEstudo : cotasEstudo) {
+	    if (cotaEstudo.getReparteFixado() != null && cotaEstudo.getReparteFixado().compareTo(BigInteger.ZERO) > 0) {
+		cotaEstudo.setClassificacao(ClassificacaoCota.ReparteFixado);
+	    }
+	    if (cotaEstudo.isMix()) {
+		cotaEstudo.setClassificacao(ClassificacaoCota.CotaMix);
+	    }
 	    mapCotas.put(cotaEstudo.getId(), cotaEstudo);
 	}
 	return mapCotas;

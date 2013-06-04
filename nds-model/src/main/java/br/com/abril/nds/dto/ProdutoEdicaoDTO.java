@@ -50,6 +50,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private BigDecimal expectativaVenda;
 	private boolean permiteValeDesconto;
 	private boolean parcial;
+	private Integer periodo;
 	private Integer dia;
 	private Date dataRecolhimentoDistribuidor;
 	
@@ -855,5 +856,13 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 
 	public void setStatus(String status) {
 	    this.status = status;
+	}
+
+	public Integer getPeriodo() {
+	    return periodo;
+	}
+
+	public void setPeriodo(Integer periodo) {
+	    this.periodo = periodo;
 	}
 }
