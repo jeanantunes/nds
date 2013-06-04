@@ -163,9 +163,8 @@
 			</table>
 
 			<div class="linha_separa_fields">&nbsp;</div>
-
 			<span class="bt_novos"><a
-				href="javascript:;" onclick="dividirEstudo.acaoVoltar('Matriz Distribuição');"><img
+				href="javascript:;" onclick="dividirEstudo.acaoVoltar('Matriz DistribuiÃ§Ã£o');"><img
 					src="${pageContext.request.contextPath}/images/seta_voltar.gif"
 					alt="Voltar" hspace="5" border="0" />Voltar</a></span> <span class="bt_novos">
 				<a href="#" onclick="dividirEstudo.cancelar();"><img
