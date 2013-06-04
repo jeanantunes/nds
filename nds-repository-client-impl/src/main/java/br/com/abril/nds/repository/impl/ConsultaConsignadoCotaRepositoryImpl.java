@@ -114,7 +114,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		sql.append(" ( MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ) ");
 		
-		sql.append(" AND ( TM.GRUPO_MOVIMENTO_ESTOQUE not in (':tipoMovimentoEstorno') ");
+		sql.append(" AND ( TM.GRUPO_MOVIMENTO_ESTOQUE not in (:tipoMovimentoEstorno) ");
 		sql.append(" ) "); 
 
 		if(filtro.getIdCota() != null ) { 

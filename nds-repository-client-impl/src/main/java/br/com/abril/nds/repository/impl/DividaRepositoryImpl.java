@@ -22,6 +22,9 @@ import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.OperacaoEstoque;
+import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.StatusDivida;
@@ -348,6 +351,14 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		HashMap<String,Object> params = new HashMap<String, Object>();
 		
 		tratarFiltro(sql,params,filtro);
+		
+		params.put("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name());
+		
+		params.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
+		
+		params.put("operacaoEstoqueEntrada", OperacaoEstoque.ENTRADA.name());
+		
+		params.put("operacaoEstoqueSaida", OperacaoEstoque.SAIDA.name());
 		
 		sql.append(obterOrderByInadimplenciasCota(filtro));
 		
@@ -869,11 +880,15 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append(" SELECT ");
-		sql.append(" CASE WHEN DIVIDA_.ACUMULADA=0 ");
+		sql.append(" CASE WHEN DIVIDA_.DIVIDA_RAIZ_ID is null ");
 		sql.append(" THEN DIVIDA_.VALOR ");
-		sql.append(" ELSE (SELECT SUM(ACUMULADAS_.VALOR) FROM DIVIDA ACUMULADAS_ ");
-		sql.append(" where ACUMULADAS_.DIVIDA_RAIZ_ID = divida_.DIVIDA_RAIZ_ID ");
-		sql.append(" or ACUMULADAS_.id = DIVIDA_.DIVIDA_RAIZ_ID) ");
+		sql.append(" ELSE DIVIDA_.VALOR ");
+		sql.append(" + (SELECT ");
+		sql.append(" SUM(ACUMULADAS_.VALOR) ");
+		sql.append(" FROM ");
+		sql.append(" DIVIDA ACUMULADAS_ ");
+		sql.append(" where ");
+		sql.append(" ACUMULADAS_.id = DIVIDA_.DIVIDA_RAIZ_ID) ");
 		sql.append(" END as dividaAcumulada, ");
 		sql.append(" CASE WHEN DATEDIFF(CURRENT_DATE, COBRANCA_.DT_VENCIMENTO)<0 THEN 0 ");
 		sql.append(" ELSE DATEDIFF(CURRENT_DATE, COBRANCA_.DT_VENCIMENTO) ");
@@ -888,10 +903,33 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		sql.append(" CASE WHEN PESSOA_.NOME IS NOT NULL ");
 		sql.append(" THEN PESSOA_.NOME ");
 		sql.append(" ELSE PESSOA_.RAZAO_SOCIAL END AS nome, ");
-		sql.append(" (SELECT SUM(ESTOQUE.QTDE_RECEBIDA * PRODEDICAO.PRECO_CUSTO) AS TOTALPRODUTO ");
-		sql.append(" FROM ESTOQUE_PRODUTO_COTA ESTOQUE ");
-		sql.append(" JOIN PRODUTO_EDICAO PRODEDICAO ON (ESTOQUE.PRODUTO_EDICAO_ID=PRODEDICAO.ID) ");
-		sql.append(" WHERE ESTOQUE.COTA_ID=COTA_.ID) AS consignado, ");
+		sql.append(" (SELECT ");
+		sql.append(" CASE WHEN TM.OPERACAO_ESTOQUE=:operacaoEstoqueEntrada ");
+		sql.append(" THEN MEC.QTDE ");
+		sql.append(" ELSE 0 ");
+		sql.append(" END ");
+		sql.append(" - CASE WHEN TM.OPERACAO_ESTOQUE=:operacaoEstoqueSaida ");
+		sql.append(" THEN MEC.QTDE ");
+		sql.append(" ELSE 0 ");
+		sql.append(" END AS reparte ");
+		sql.append(" FROM ");
+		sql.append(" MOVIMENTO_ESTOQUE_COTA MEC ");
+		sql.append(" INNER JOIN ");
+		sql.append(" COTA C ");
+		sql.append(" ON MEC.COTA_ID=C.ID ");
+		sql.append(" INNER JOIN ");
+		sql.append(" TIPO_MOVIMENTO TM ");
+		sql.append(" ON MEC.TIPO_MOVIMENTO_ID=TM.ID ");
+		sql.append(" INNER JOIN ");
+		sql.append(" PRODUTO_EDICAO PE ");
+		sql.append(" ON MEC.PRODUTO_EDICAO_ID = PE.ID ");
+		sql.append(" WHERE ");
+		sql.append(" (MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null) ");
+		sql.append(" AND (TM.GRUPO_MOVIMENTO_ESTOQUE not in (:tipoMovimentoEstorno)) ");
+		sql.append(" AND C.ID = COTA_.ID ");
+		sql.append(" AND (MEC.STATUS_ESTOQUE_FINANCEIRO is null ");
+		sql.append(" OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) ");
+		sql.append(" GROUP BY C.ID) AS consignado, ");
 		sql.append(" COBRANCA_.DT_VENCIMENTO as dataVencimento, ");
 		sql.append(" COBRANCA_.DT_PAGAMENTO as dataPagamento, ");
 		sql.append(" DIVIDA_.STATUS as situacao ");
