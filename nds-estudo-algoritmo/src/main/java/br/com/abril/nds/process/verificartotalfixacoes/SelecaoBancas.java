@@ -158,7 +158,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 
 		    @Override
 		    public int compare(CotaEstudo cota1, CotaEstudo cota2) {
-			return cota1.getQtdeRankingSegmento().compareTo(cota2.getQtdeRankingSegmento());
+			return cota2.getQtdeRankingSegmento().compareTo(cota1.getQtdeRankingSegmento());
 		    }
 		});
 	    } else if (estudo.getDistribuicaoVendaMediaDTO().getAbrangenciaCriterio().equalsIgnoreCase("Faturamento")) {
@@ -166,7 +166,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 
 		    @Override
 		    public int compare(CotaEstudo cota1, CotaEstudo cota2) {
-			return cota1.getQtdeRankingFaturamento().compareTo(cota2.getQtdeRankingFaturamento());
+			return cota2.getQtdeRankingFaturamento().compareTo(cota1.getQtdeRankingFaturamento());
 		    }
 		});
 	    } else {
@@ -174,7 +174,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 
 		    @Override
 		    public int compare(CotaEstudo cota1, CotaEstudo cota2) {
-			return cota1.getVendaMedia().compareTo(cota2.getVendaMedia());
+			return cota2.getVendaMedia().compareTo(cota1.getVendaMedia());
 		    }
 		});
 	    }
@@ -195,7 +195,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 		}
 	    }
 	    for (int i = 0; i < temp.size(); i++) {
-		if (BigDecimal.valueOf(i).compareTo(qtdeCotasAbrangencia) < 0) {
+		if (BigDecimal.valueOf(i).compareTo(qtdeCotasAbrangencia) >= 0) {
 		    temp.get(i).setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
 		    temp.get(i).setReparteCalculado(BigInteger.ZERO, estudo);
 		}
