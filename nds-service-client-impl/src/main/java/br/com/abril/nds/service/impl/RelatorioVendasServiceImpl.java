@@ -1,7 +1,6 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.List;
 import java.util.Map;
 
@@ -24,7 +23,6 @@ import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.RankingRepository;
 import br.com.abril.nds.repository.RelatorioVendasRepository;
 import br.com.abril.nds.service.RelatorioVendasService;
-import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.vo.ValidacaoVO;
 @Service
 public class RelatorioVendasServiceImpl implements RelatorioVendasService {
