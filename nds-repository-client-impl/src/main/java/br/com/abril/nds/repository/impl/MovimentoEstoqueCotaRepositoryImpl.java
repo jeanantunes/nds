@@ -506,7 +506,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append("	valorDesconto, 							");
 		sql.append("	FORNECEDOR.ID, 							");
 		sql.append("	PESSOA.ID 								");
-		//sql.append("    CONTROLE_CONFERENCIA_ENCALHE_COTA.DATA_OPERACAO	");
 
 		return sql;
 	}
