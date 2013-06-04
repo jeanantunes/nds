@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -50,7 +51,26 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
 
     List<CotaAusenteEncalheDTO> obterCotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp);
     
+    int buscarQuantidadeConferenciaEncalheNovo(FiltroFechamentoEncalheDTO filtro);
+    
     int buscarQuantidadeConferenciaEncalhe(FiltroFechamentoEncalheDTO filtro);
     
     BigDecimal obterValorTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro);
+    
+    public List<FechamentoFisicoLogicoDTO> buscarConferenciaEncalheNovo(FiltroFechamentoEncalheDTO filtro,
+			String sortorder, String sortname, Integer page, Integer rp);
+
+	public FechamentoFisicoLogicoDTO buscarDescontosLogistica(FechamentoFisicoLogicoDTO fechamento);
+
+	public FechamentoFisicoLogicoDTO buscarDescontosProduto(
+			FechamentoFisicoLogicoDTO fechamento);
+
+	public FechamentoFisicoLogicoDTO buscarDescontosProdutoEdicao(
+			FechamentoFisicoLogicoDTO fechamento);
+
+	public List<FechamentoFisicoLogicoDTO> buscarMovimentoEstoqueCota(
+			FiltroFechamentoEncalheDTO filtro, ArrayList<String> listaDeCodigosProduto);
+
+	List<FechamentoFisicoLogicoDTO> buscarMovimentoEstoqueCotaVendaProduto(
+			FiltroFechamentoEncalheDTO filtro, ArrayList<String> listaDeCodigosProduto);
 }

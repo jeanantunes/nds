@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -121,6 +122,68 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	
 	@SuppressWarnings("unchecked")
 	@Override
+	public List<FechamentoFisicoLogicoDTO> buscarConferenciaEncalheNovo(FiltroFechamentoEncalheDTO filtro,
+			String sortorder, String sortname, Integer page, Integer rp) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select chamadaEncalhe.sequencia as sequencia, ");
+		hql.append("produto.nome as produto, ");
+		hql.append("produto.codigo as codigo, ");
+		hql.append("produtoEdicao.numeroEdicao as edicao, ");
+		hql.append("produtoEdicao.precoVenda as precoCapa, ");
+		hql.append("produtoEdicao.origem as origem, ");
+		hql.append("descontoLogisticaProdEdicao.id as produtoEdicaoDescontoLogisticaId, ");
+		hql.append("descontoLogisticaProduto.id as produtoDescontoLogisticaId, ");
+		
+		hql.append("coalesce(produtoEdicao.precoVenda, 0) - (coalesce(produtoEdicao.precoVenda, 0)  * ( ");
+		hql.append("   CASE WHEN produtoEdicao.origem = :origemInterface ");
+		hql.append("   THEN (coalesce(descontoLogisticaProdEdicao.percentualDesconto, descontoLogisticaProduto.percentualDesconto, 0 ) /100 ) ");
+		hql.append("   ELSE (coalesce(produtoEdicao.desconto, produto.desconto, 0) / 100) END ");
+		hql.append("   )) as precoCapaDesconto ");
+		
+		
+		hql.append(" , coalesce(produtoEdicao.precoVenda, 0) as precoCapa ");
+		hql.append(" , produtoEdicao.id as produtoEdicao ");
+		hql.append(" , case when  produtoEdicao.parcial  = true  then 'P' else 'N' end  as tipo ");
+		
+		
+		hql.append("from ChamadaEncalhe as chamadaEncalhe ");
+		hql.append("join chamadaEncalhe.produtoEdicao as produtoEdicao ");
+		hql.append("join produtoEdicao.produto as produto ");
+		hql.append("left join produtoEdicao.descontoLogistica as descontoLogisticaProdEdicao ");
+		hql.append("left join produto.descontoLogistica as descontoLogisticaProduto ");
+		hql.append("join produto.fornecedores as fornecedor ");
+		hql.append("where chamadaEncalhe.dataRecolhimento = :dataRecolhimento ");
+		
+		if (filtro.getFornecedorId() != null) {
+			hql.append("and fornecedor.id = :fornecedorId ");
+		}
+		
+		Query query =  getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataRecolhimento", filtro.getDataEncalhe());
+		query.setParameter("origemInterface", Origem.INTERFACE);
+
+		if (filtro.getFornecedorId() != null) {
+			query.setLong("fornecedorId", filtro.getFornecedorId());
+		}
+		
+		if (page != null){
+			query.setFirstResult(page);
+		}
+		
+		if (rp != null){
+			query.setMaxResults(rp);
+		}
+
+		query.setResultTransformer(Transformers.aliasToBean(FechamentoFisicoLogicoDTO.class));
+			
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
 	public List<FechamentoFisicoLogicoDTO> buscarConferenciaEncalhe(FiltroFechamentoEncalheDTO filtro,
 			String sortorder, String sortname, Integer page, Integer rp) {
 		
@@ -189,6 +252,59 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		return query.list();
 	}
 
+	@Override
+	public int buscarQuantidadeConferenciaEncalheNovo(FiltroFechamentoEncalheDTO filtro)
+	{
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select chamadaEncalhe.sequencia as sequencia, ");
+		hql.append("produto.nome as produto, ");
+		hql.append("produto.codigo as codigo, ");
+		hql.append("produtoEdicao.numeroEdicao as edicao, ");
+		hql.append("produtoEdicao.precoVenda as precoCapa, ");
+		hql.append("produtoEdicao.origem as origem, ");
+		hql.append("descontoLogisticaProdEdicao.id as produtoEdicaoDescontoLogisticaId, ");
+		hql.append("descontoLogisticaProduto.id as produtoDescontoLogisticaId, ");
+		
+		hql.append("coalesce(produtoEdicao.precoVenda, 0) - (coalesce(produtoEdicao.precoVenda, 0)  * ( ");
+		hql.append("   CASE WHEN produtoEdicao.origem = :origemInterface ");
+		hql.append("   THEN (coalesce(descontoLogisticaProdEdicao.percentualDesconto, descontoLogisticaProduto.percentualDesconto, 0 ) /100 ) ");
+		hql.append("   ELSE (coalesce(produtoEdicao.desconto, produto.desconto, 0) / 100) END ");
+		hql.append("   )) as precoCapaDesconto ");
+		
+		
+		hql.append(" , coalesce(produtoEdicao.precoVenda, 0) as precoCapa ");
+		hql.append(" , produtoEdicao.id as produtoEdicao ");
+		hql.append(" , case when  produtoEdicao.parcial  = true  then 'P' else 'N' end  as tipo ");
+		
+		
+		hql.append("from ChamadaEncalhe as chamadaEncalhe ");
+		hql.append("join chamadaEncalhe.produtoEdicao as produtoEdicao ");
+		hql.append("join produtoEdicao.produto as produto ");
+		hql.append("left join produtoEdicao.descontoLogistica as descontoLogisticaProdEdicao ");
+		hql.append("left join produto.descontoLogistica as descontoLogisticaProduto ");
+		hql.append("join produto.fornecedores as fornecedor ");
+		
+		hql.append("where chamadaEncalhe.dataRecolhimento = :dataRecolhimento ");
+		
+		if (filtro.getFornecedorId() != null) {
+			hql.append("and fornecedor.id = :fornecedorId ");
+		}
+		
+		Query query =  getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataRecolhimento", filtro.getDataEncalhe());
+		query.setParameter("origemInterface", Origem.INTERFACE);
+
+		if (filtro.getFornecedorId() != null) {
+			query.setLong("fornecedorId", filtro.getFornecedorId());
+		}
+		
+		return query.list().size();
+	}
+	
+	
+	
 	@Override
 	public int buscarQuantidadeConferenciaEncalhe(FiltroFechamentoEncalheDTO filtro) {
 		
@@ -939,6 +1055,144 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		
 		
+	}
+
+	@Override
+	public FechamentoFisicoLogicoDTO buscarDescontosLogistica(FechamentoFisicoLogicoDTO fechamento) {
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append("select descontoLogistica.percentualDesconto as desconto ");
+		hql.append("from DescontoLogistica as descontoLogistica ");
+		hql.append("where descontoLogistica.id = :id");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setResultTransformer(new AliasToBeanResultTransformer(AnaliticoEncalheDTO.class));
+		
+		if(fechamento.getProdutoEdicaoDescontoLogisticaId() != null)
+		{
+			query.setParameter("id", fechamento.getProdutoEdicaoDescontoLogisticaId());
+		}
+		else if(fechamento.getProdutoDescontoLogisticaId() != null)
+		{
+			query.setParameter("id", fechamento.getProdutoDescontoLogisticaId());
+		}
+		else
+		{
+			query.setParameter("id", null);
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(FechamentoFisicoLogicoDTO.class));
+		return (FechamentoFisicoLogicoDTO) query.uniqueResult();
+	
+	}
+
+	@Override
+	public FechamentoFisicoLogicoDTO buscarDescontosProduto(
+			FechamentoFisicoLogicoDTO fechamento) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append("select produto.desconto as desconto ");
+		hql.append("from Produto as produto ");
+		hql.append("where produto.codigo = :codigo");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setResultTransformer(new AliasToBeanResultTransformer(FechamentoFisicoLogicoDTO.class));
+		
+		query.setParameter("codigo", fechamento.getCodigo());
+		return (FechamentoFisicoLogicoDTO) query.uniqueResult();
+	}
+
+	@Override
+	public FechamentoFisicoLogicoDTO buscarDescontosProdutoEdicao(
+			FechamentoFisicoLogicoDTO fechamento) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append("select produtoEdicao.desconto as desconto ");
+		hql.append("from ProdutoEdicao as produtoEdicao ");
+		hql.append("join produtoEdicao.produtoId as produto ");
+		hql.append("where produto.codigo = :codigo");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setResultTransformer(new AliasToBeanResultTransformer(FechamentoFisicoLogicoDTO.class));
+		
+		query.setParameter("codigo", fechamento.getCodigo());
+		
+		return (FechamentoFisicoLogicoDTO) query.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FechamentoFisicoLogicoDTO> buscarMovimentoEstoqueCota(
+			FiltroFechamentoEncalheDTO filtro, ArrayList<String> listaDeCodigosProduto) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append("select produto.codigo as codigo, ");
+		hql.append("conferenciaEncalhe.movimentoEstoqueCota.qtde as exemplaresDevolucao "); 
+		hql.append("from ConferenciaEncalhe as conferenciaEncalhe ");
+		hql.append("join conferenciaEncalhe.produtoEdicao as produtoEdicao ");
+		hql.append("join produtoEdicao.produto as produto ");
+		hql.append("where produto.codigo in (:codigos) ");
+		
+		if (filtro.getBoxId() != null) {
+			hql.append("  and conferenciaEncalhe.controleConferenciaEncalheCota.box.id = :boxId ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setResultTransformer(new AliasToBeanResultTransformer(FechamentoFisicoLogicoDTO.class));
+		query.setParameterList("codigos", listaDeCodigosProduto);
+		
+		if (filtro.getBoxId() != null) {
+			query.setLong("boxId", filtro.getBoxId());
+		}
+		
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<FechamentoFisicoLogicoDTO> buscarMovimentoEstoqueCotaVendaProduto(
+			FiltroFechamentoEncalheDTO filtro, ArrayList<String> listaDeCodigosProduto) {
+		
+		StringBuilder subquery = new StringBuilder();
+			
+		subquery.append(" select vp.qntProduto as exemplaresDevolucao, ");
+		subquery.append(" produto.codigo as codigo ");
+		subquery.append(" from VendaProduto vp, ConferenciaEncalhe conferenciaEncalhe ");
+		subquery.append("join conferenciaEncalhe.produtoEdicao as produtoEdicao ");
+		subquery.append("join produtoEdicao.produto as produto ");
+		
+		subquery.append(" where conferenciaEncalhe.controleConferenciaEncalheCota.dataOperacao = :dataEncalhe and ");
+		subquery.append(" conferenciaEncalhe.controleConferenciaEncalheCota.status = :statusOperacaoFinalizada and ");
+		subquery.append(" conferenciaEncalhe.produtoEdicao.id = vp.produtoEdicao.id and ");
+		subquery.append(" conferenciaEncalhe.controleConferenciaEncalheCota.cota.id = vp.cota.id and ");
+		//subquery.append(" vp.produtoEdicao.id = pe.id and ");
+		subquery.append(" vp.dataOperacao = :dataEncalhe and ");
+		subquery.append(" vp.tipoVenda = :tipoVenda ");
+		subquery.append(" and vp.tipoComercializacaoVenda = :tipoComercializacaoVenda ");
+		subquery.append("and produto.codigo in (:codigos)");
+		
+		if (filtro.getBoxId() != null) {
+			subquery.append("  and conferenciaEncalhe.controleConferenciaEncalheCota.box.id = :boxId ");
+		}
+		
+		Query query = this.getSession().createQuery(subquery.toString());
+		query.setResultTransformer(new AliasToBeanResultTransformer(FechamentoFisicoLogicoDTO.class));
+		
+		query.setParameterList("codigos", listaDeCodigosProduto);
+		query.setDate("dataEncalhe", filtro.getDataEncalhe());
+		query.setParameter("tipoVenda", TipoVendaEncalhe.ENCALHE);
+		query.setParameter("tipoComercializacaoVenda", FormaComercializacao.CONTA_FIRME);
+		query.setParameter("statusOperacaoFinalizada", StatusOperacao.CONCLUIDO);
+	
+		if (filtro.getBoxId() != null) {
+			query.setLong("boxId", filtro.getBoxId());
+		}
+		
+		return query.list();
+
 	}
 	
 	
