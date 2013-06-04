@@ -138,6 +138,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	EstrategiaDTO estrat = new EstrategiaDTO();
 	if (estrategia != null) {
 	    BeanUtils.copyProperties(estrategia, estrat);
+	    selecionados.clear();
 
 	    for (EdicaoBaseEstrategia base : estrategia.getBasesEstrategia()) {
 		selecionados.addAll(distribuicaoVendaMediaRepository.pesquisar(base.getProdutoEdicao().getProduto().getCodigo(), null, base
@@ -150,9 +151,14 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	    estudoTemp.setProdutoEdicaoEstudo(prod);
 	    try {
 		definicaoBases.executar(estudoTemp);
+		selecionados.clear();
 
 		for (ProdutoEdicaoEstudo base : estudoTemp.getEdicoesBase()) {
-		    selecionados.addAll(distribuicaoVendaMediaRepository.pesquisar(base.getProduto().getCodigo(), null, base.getNumeroEdicao()));
+		    if (base.isParcial()) {
+			selecionados.addAll(distribuicaoVendaMediaRepository.pesquisarEdicoesParciais(base.getProduto().getCodigo(), base.getPeriodo(), base.getNumeroEdicao()));
+		    } else {
+			selecionados.addAll(distribuicaoVendaMediaRepository.pesquisar(base.getProduto().getCodigo(), null, base.getNumeroEdicao()));
+		    }
 		}
 	    } catch (Exception e) {
 		System.out.println("erro: "+ e.getMessage());
@@ -279,7 +285,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	session.setAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE, selecionados);
 	result.use(Results.json()).withoutRoot().from(selecionados).recursive().serialize();
     }
-    
+
     @Path("removerProdutoEdicaoDaBase")
     @Post
     public void removerProdutoEdicaoDaBase(List<Integer> indexes) {
