@@ -507,4 +507,36 @@ function addTabWithPost(tabs, label, postResponse, blankPath) {
 	tabs.tabs({load : function( event, ui ) { $('#'+ ui.panel.id).html(postResponse); }});
 	tabs.tabs('addTab', label, blankPath);
 }
+
+
+function insertTelaAnalise(divToHide, divToShow, estudo){
+
+	var matrizSelecionado_estudo =null;
+	
+	if(typeof(histogramaPosEstudoController)!="undefined"){
+		matrizSelecionado_estudo = histogramaPosEstudoController.matrizSelecionado.estudo;
+	}
+	
+    var idEstudo =  matrizSelecionado_estudo || estudo;
+    var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + idEstudo;
+    if ($('#parcial').val() === 'true') {
+		urlAnalise += '&modoAnalise=PARCIAL';
+	}
+
+	$.get(
+			urlAnalise,
+			null, // parametros
+			function(html){ // onSucessCallBack
+				$(divToHide).hide();
+				$(divToShow).html(html);
+				$(divToShow).show();
+
+				$( divToShow + ' #botaoVoltarTelaAnalise').attr("onclick","").click(function voltarTelaAnalise(){
+					$(divToShow).hide();
+					$(divToHide).show();
+				});
+		});
+	
+}
 //@ sourceURL=utils.js
+

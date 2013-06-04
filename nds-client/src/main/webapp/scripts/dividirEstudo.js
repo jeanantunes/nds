@@ -230,18 +230,35 @@ var dividirEstudo = $.extend(true, {
 	});
 
 	$.postJSON('dividirEstudo/confirmar', dados, function(response) {
-//	    $('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
+/*//	    $('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
 //	    var pathTela = "/nds-client-f2";
 	    if(typeof(matrizDistribuicao)=="object"){
 //	    	var matrizDistribuicao = new MatrizDistribuicao(pathTela, "matrizDistribuicao", BaseController.workspace);
 //	    	console.log("pesquisando retorno da divisão")
 //	    	matrizDistribuicao.pesquisar();
-	    	
-	    }
+*/
+		
+		if(response && response.length==2){
+			exibirMensagem("SUCCESS",[response[0]]);
+			$('#repartePrimeiroEstudo').val(response[1][0]);
+			$('#reparteSegundoEstudo').val(response[1][1]);
+			
+			
+			if(typeof(matrizDistribuicao)=="object"){
+//		    	var matrizDistribuicao = new MatrizDistribuicao(pathTela, "matrizDistribuicao", BaseController.workspace);
+		    	matrizDistribuicao.pesquisar();
+			}
+		}
+	    
 	}, function() {
 	});
     },
 
+    acaoVoltar:function(tabTitle){
+    	
+    	$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected')); selectTabTitle(tabTitle);
+    	
+    },
     cancelar : function() {
 
 	var numeroEstudoOriginal = $('#numeroEstudoOriginal');
@@ -353,8 +370,9 @@ var dividirEstudo = $.extend(true, {
 			exibirMensagem("WARNING",["Gere o estudo antes de fazer a análise."]);
 			return;
 		} else {
-			// Deve ir direto para EMS 2031
-			matrizDistribuicao.redirectToTelaAnalise('#dividirEstudoContent', '#dividirEstudoTelaAnalise', $('#numeroPrimeiroEstudo').val());
+			// Deve ir direto para EMS 2031 
+			//funcao declarada no arquivo Util.js
+			insertTelaAnalise('#dividirEstudoContent', '#dividirEstudoTelaAnalise', $('#numeroPrimeiroEstudo').val());
 		}
 	},
 	

@@ -170,6 +170,8 @@ public class DividirEstudoController extends BaseController {
 	String dataLancamentoSegundoEstudo = divisaoEstudo.getDataLancamentoSegundoEstudo();
 	divisaoEstudo.setDataDistribuicaoParaPesquisa(divisaoEstudo.getDataDistribuicao());
 	
+	List<Estudo> listEstudo = null; 
+	
 	if (dataLancamentoSegundoEstudo != null && !dataLancamentoSegundoEstudo.equalsIgnoreCase("")) {
 
 	    if (!dataLancamentoSegundoEstudo.equalsIgnoreCase(dataLancamentoPrimeiroEstudo)) {
@@ -189,7 +191,7 @@ public class DividirEstudoController extends BaseController {
 		segundoEstudo.setQtdeReparte(divisaoEstudo.getReparteSegundoEstudo());
 		segundoEstudo.setDataLancamento(DateUtil.parseData(dataLancamentoSegundoEstudo, Constantes.DATE_PATTERN_PT_BR));
 
-		List<Estudo> listEstudo = new ArrayList<Estudo>();
+		listEstudo = new ArrayList<Estudo>();
 		listEstudo.add(primeiroEstudo);
 		listEstudo.add(segundoEstudo);
 
@@ -198,13 +200,12 @@ public class DividirEstudoController extends BaseController {
 		for (Long estudoDividido : listIdEstudoAdiconado) {
 			this.estudoProdutoEdicaoBaseService.copiarEdicoesBase(estudoOriginal.getId(),estudoDividido);
 		}
+
+		
 		
 		mensagensValidacao.add("Estudo dividido com sucesso! Os número(s) gerado(s) foram : "+StringUtils.join(listIdEstudoAdiconado," - "));
 
-		
 		tipoMensagem = TipoMensagem.SUCCESS;
-
-		// this.result.use(Results.json()).from(Results.nothing()).serialize();
 
 	    } else {
 		mensagensValidacao.add("- A data de lançamento do Segundo Estudo não deve ser igual ao Estudo Original!");
@@ -215,10 +216,17 @@ public class DividirEstudoController extends BaseController {
 	}
 
 	if (!mensagensValidacao.isEmpty()) {
-	    if (TipoMensagem.SUCCESS.equals(tipoMensagem))
-		result.use(Results.json()).from(new ValidacaoVO(tipoMensagem, mensagensValidacao), Constantes.PARAM_MSGS).recursive().serialize();
+	    if (TipoMensagem.SUCCESS.equals(tipoMensagem)){
+	    	
+	    	List<Object> l  = new ArrayList<>();
+	    	l.add(mensagensValidacao.get(0));
+	    	l.add(new Long[]{listEstudo.get(0).getQtdeReparte().longValue(),listEstudo.get(1).getQtdeReparte().longValue()});
+	    	
+	    	result.use(Results.json()).from(l,"result").recursive().serialize();
+	    	
+	    }
 	    else if (TipoMensagem.WARNING.equals(tipoMensagem))
-		throw new ValidacaoException(new ValidacaoVO(tipoMensagem, mensagensValidacao));
+	    	throw new ValidacaoException(new ValidacaoVO(tipoMensagem, mensagensValidacao));
 	}
 
     }
