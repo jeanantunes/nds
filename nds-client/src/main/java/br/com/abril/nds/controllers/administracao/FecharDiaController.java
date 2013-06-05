@@ -145,7 +145,7 @@ public class FecharDiaController extends BaseController {
 		dto.setBaixaBancaria(this.fecharDiaService.existeCobrancaParaFecharDia(dataOperacao));
 		dto.setGeracaoDeCobranca(this.fecharDiaService.existeGeracaoDeCobranca(dataOperacao));
 		dto.setRecebimentoFisico(this.fecharDiaService.existeNotaFiscalSemRecebimentoFisico(dataOperacao));
-		dto.setConfirmacaoDeExpedicao(this.fecharDiaService.existeConfirmacaoDeExpedicao(dataOperacao));
+		dto.setConfirmacaoDeExpedicao(!this.fecharDiaService.existeConfirmacaoDeExpedicao(dataOperacao));
 		dto.setLancamentoFaltasESobras(this.fecharDiaService.existeLancamentoFaltasESobrasPendentes(dataOperacao));
 		dto.setControleDeAprovacao(this.distribuidorService.utilizaControleAprovacao());
 		dto.setFechamentoEncalhe(this.fechamentoEncalheService.buscaControleFechamentoEncalhe(dataOperacao));

@@ -93,7 +93,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		sql.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ");
 		
-		sql.append(" INNER JOIN PARAMETRO_COBRANCA_COTA PCC ON C.ID=PCC.COTA_ID ");
+		sql.append(" LEFT OUTER JOIN PARAMETRO_COBRANCA_COTA PCC ON C.ID=PCC.COTA_ID ");
        	
 		sql.append(" INNER JOIN PESSOA P ON C.PESSOA_ID=P.ID ");
 		
