@@ -202,7 +202,7 @@ public class CotaDAO {
 		if (rs.getBigDecimal("REPARTE_MIN") != null) {
 		    cota.setIntervaloMinimo(rs.getBigDecimal("REPARTE_MIN").toBigInteger());
 		}
-		if (rs.getBigDecimal("REPARTE_FIXADO") != null) {
+		if (cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO) && rs.getBigDecimal("REPARTE_FIXADO") != null) {
 		    cota.setReparteFixado(rs.getBigDecimal("REPARTE_FIXADO").toBigInteger());
 		}
 		if (rs.getBoolean("COTA_NAO_RECEBE_SEGMENTO")) {

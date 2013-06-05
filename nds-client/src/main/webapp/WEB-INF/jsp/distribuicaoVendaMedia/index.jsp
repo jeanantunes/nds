@@ -11,6 +11,7 @@ $(function() {
 			distribuicaoVendaMedia.selectElementoRegiaoDistribuicao('componenteInformacoesComplementares', 'elementoInformacoesComplementares2');
 			distribuicaoVendaMedia.selectElementoRegiaoDistribuicao('componenteInformacoesComplementares', 'elementoInformacoesComplementares3');
 		});
+		distribuicaoVendaMedia.carregarEventos();
 	});
 function popup_novo() {
 	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -446,7 +447,7 @@ function esconde_redutor(){
                	        </tr>
                    	    <tr>
                    	      <td>Lançamento:</td>
-                   	      <td colspan="2">${ lancado }</td>
+                   	      <td colspan="2" id="reparteTotal">${ lancado }</td>
                	        </tr>
                    	    <tr>
                    	      <td>Promocional:</td>
@@ -454,7 +455,7 @@ function esconde_redutor(){
                	        </tr>
                    	    <tr>
                    	      <td>Sobra:</td>
-                   	      <td colspan="2">${sobra}</td>
+                   	      <td colspan="2" id="sobra">${sobra}</td>
                	        </tr>
                    	    <tr>
                    	      <td>Reparte Distribuir:</td>

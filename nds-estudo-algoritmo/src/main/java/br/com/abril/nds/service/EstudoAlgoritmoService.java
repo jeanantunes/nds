@@ -258,9 +258,9 @@ public class EstudoAlgoritmoService {
 		ed.setProduto(new Produto());
 		ed.setId(base.getId());
 		ed.getProduto().setCodigo(base.getCodigoProduto());
-		ed.getProduto().setId(base.getId());
+		ed.getProduto().setId(base.getIdProduto());
 		ed.setNumeroEdicao(base.getNumeroEdicao());
-		ed.setPeso(base.getPeso());
+		ed.setIndicePeso(new BigDecimal(base.getPeso()));
 		ed.setPeriodo(base.getPeriodo());
 		ed.setParcial(base.isParcial());
 		edicoesBase.add(ed);

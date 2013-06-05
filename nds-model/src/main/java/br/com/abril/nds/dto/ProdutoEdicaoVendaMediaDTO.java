@@ -13,6 +13,7 @@ public class ProdutoEdicaoVendaMediaDTO implements Serializable {
 
     private BigInteger id;
     private BigInteger numeroEdicao;
+    private BigInteger idProduto;
     private String codigoProduto;
     private String nome;
     private Integer periodo;
@@ -136,5 +137,13 @@ public class ProdutoEdicaoVendaMediaDTO implements Serializable {
 	} else {
 	    this.parcial = parcial.equals(1);
 	}
+    }
+
+    public BigInteger getIdProduto() {
+        return idProduto;
+    }
+
+    public void setIdProduto(BigInteger idProduto) {
+        this.idProduto = idProduto;
     }
 }
