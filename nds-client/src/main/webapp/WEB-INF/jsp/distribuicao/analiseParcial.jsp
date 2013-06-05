@@ -209,15 +209,18 @@ table.filtro td span {font-weight: normal;}
 						onchange="analiseParcialController.filtrarOrdenarPor(${estudoCota.estudo.id})">
 							<option value="" selected="selected">Selecione...</option>
 					</select></td>
-					<td><span id="opcoesOrdenarPor" style="display: none;" class="label"> <span id="label_reparte"
-							style="display: none;" class="label"> Reparte: </span> <span id="label_reducao_de_reparte" style="display: none;"
-							class="label"> % Dê: </span> <span id="label_ranking" style="display: none;" class="label"> Ranking: </span> <span
-							id="label_percentual_de_venda" style="display: none;" class="label"> % Venda: </span> <input id="ordenarPorDe" type="text"
-							style="width: 60px;" /> Até <input id="ordenarPorAte" type="text" style="width: 60px;" /> Exs. <a
-							href="javascript:analiseParcialController.filtrarOrdenarPor(${estudoCota.estudo.id});"> <img
-								src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Confirmar" border="0" />
-						</a>
-					</span></td>
+					<td>
+                        <span id="opcoesOrdenarPor" style="display: none;" class="label">
+                            <span id="label_reparte" style="display: none;" class="label"> Reparte: </span>
+                            <span id="label_reducao_de_reparte" style="display: none;" class="label"> Dê: </span>
+                            <span id="label_ranking" style="display: none;" class="label"> Ranking: </span>
+                            <span id="label_percentual_de_venda" style="display: none;" class="label"> % Venda: </span>
+                            <input id="ordenarPorDe" type="text" style="width: 60px;" /> Até <input id="ordenarPorAte" type="text" style="width: 60px;" /> Exs.
+                            <a href="javascript:analiseParcialController.filtrarOrdenarPor(${estudoCota.estudo.id});">
+                                <img src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Confirmar" border="0" />
+						    </a>
+					    </span>
+                    </td>
 					<td align="center">
                         <a href="javascript:;" onclick="mostraDados();">
                             <img src="${pageContext.request.contextPath}/images/ico_boletos.gif" title="Exibir Detalhes" width="19" height="15" border="0" />
@@ -577,8 +580,10 @@ table.filtro td span {font-weight: normal;}
 
     <div id="dialog-confirmacao-senha" title="Confirmação" style="display: none;">
         <p>
+            <span id="msg-confirma"></span>
+            <br><br>
             <span>Esta ação requer confirmação com senha.</span>
-            <br>
+            <br><br>
             <input type="password" width="80" maxlength="10"/>
         </p>
     </div>

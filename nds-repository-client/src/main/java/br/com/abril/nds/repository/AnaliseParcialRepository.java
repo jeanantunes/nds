@@ -21,10 +21,10 @@ public interface AnaliseParcialRepository {
 	void atualizaReparteEstudo(Long estudoId, Long reparteSubtraido);
 	void liberar(Long id);
 	List<AnaliseEstudoDetalhesDTO> buscarDetalhesAnalise(ProdutoEdicao produtoEdicao);
-	List<PdvDTO> carregarDetalhesPdv(Integer numeroCota);
+	List<PdvDTO> carregarDetalhesPdv(Integer numeroCota, Long idEstudo);
 	List<EdicoesProdutosDTO> getEdicoesBase(Long numeroCota, List<Long> listProdutoEdicaoId);
 	List<EdicoesProdutosDTO> getEdicoesBaseParciais(Long numeroCota, Long numeroEdicao, String codigoProduto, Long periodo);
-	List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId, boolean edicaoMaisRecente);
+	List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId);
 	List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO);
     AnaliseEstudoDetalhesDTO historicoEdicaoBase(Long id);
 }

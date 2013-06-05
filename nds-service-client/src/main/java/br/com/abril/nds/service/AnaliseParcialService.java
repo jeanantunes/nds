@@ -19,7 +19,7 @@ public interface AnaliseParcialService {
 	void liberar(Long id);
 	List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId);
 	List<AnaliseEstudoDetalhesDTO> buscarDetalhesAnalise(ProdutoEdicao produtoEdicao);
-	List<PdvDTO> carregarDetalhesPdv(Integer numeroCota);
+	List<PdvDTO> carregarDetalhesPdv(Integer numeroCota, Long idEstudo);
 	
 	List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO);
 

@@ -3,7 +3,6 @@ package br.com.abril.nds.controllers.distribuicao;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -115,8 +114,8 @@ public class AnaliseParcialController extends BaseController {
     }
 
     @Path("/carregarDetalhesPdv")
-    public void carregarDetalhesPdv(Integer numeroCota) {
-        List<PdvDTO> lista = analiseParcialService.carregarDetalhesPdv(numeroCota);
+    public void carregarDetalhesPdv(Integer numeroCota, Long estudoId) {
+        List<PdvDTO> lista = analiseParcialService.carregarDetalhesPdv(numeroCota, estudoId);
 
         TableModel<CellModelKeyValue<PdvDTO>> table = new TableModel<>();
         table.setRows(CellModelKeyValue.toCellModelKeyValue(lista));
