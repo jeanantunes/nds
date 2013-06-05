@@ -93,7 +93,7 @@ public class FormaCobranca implements Serializable {
 	@ManyToOne(fetch = FetchType.EAGER)  
 	@JoinColumn(name = "PARAMETRO_COBRANCA_COTA_ID")
 	private ParametroCobrancaCota parametroCobrancaCota;
-			
+	
 	@ElementCollection(fetch = FetchType.EAGER)  
 	@OrderBy
 	private List<Integer> diasDoMes; 
@@ -101,6 +101,17 @@ public class FormaCobranca implements Serializable {
 	@OneToMany(mappedBy="formaCobranca", fetch = FetchType.EAGER)
 	@OrderBy("codigoDiaSemana ASC")
 	private Set<ConcentracaoCobrancaCota> concentracaoCobrancaCota = new HashSet<ConcentracaoCobrancaCota>();
+	
+	@ManyToOne
+	@JoinColumn(name = "FORNECEDOR_PADRAO_ID")
+	private Fornecedor fornecedorPadrao;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_COTA")
+	private TipoCota tipoCota;
+	
+	@Column(name = "FATOR_VENCIMENTO")
+	private Long fatorVencimento;
 	
 	public Long getId() {
 		return id;
@@ -226,7 +237,6 @@ public class FormaCobranca implements Serializable {
 		this.parametroCobrancaCota = parametroCobrancaCota;
 	}
 
-		
 	public Set<ConcentracaoCobrancaCota> getConcentracaoCobrancaCota() {
 		return concentracaoCobrancaCota;
 	}
@@ -276,6 +286,30 @@ public class FormaCobranca implements Serializable {
 	 */
 	public void setPoliticaCobranca(PoliticaCobranca politicaCobranca) {
 		this.politicaCobranca = politicaCobranca;
+	}
+
+	public Fornecedor getFornecedorPadrao() {
+		return fornecedorPadrao;
+	}
+
+	public void setFornecedorPadrao(Fornecedor fornecedorPadrao) {
+		this.fornecedorPadrao = fornecedorPadrao;
+	}
+
+	public TipoCota getTipoCota() {
+		return tipoCota;
+	}
+
+	public void setTipoCota(TipoCota tipoCota) {
+		this.tipoCota = tipoCota;
+	}
+
+	public Long getFatorVencimento() {
+		return fatorVencimento;
+	}
+
+	public void setFatorVencimento(Long fatorVencimento) {
+		this.fatorVencimento = fatorVencimento;
 	}
 	
 }

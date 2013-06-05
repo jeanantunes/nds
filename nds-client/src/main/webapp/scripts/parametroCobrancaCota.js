@@ -3,6 +3,7 @@ var parametroCobrancaCotaController = $.extend(true, {
     idCota: "",
     idHistorico: "",
     idFormaPagto: "",
+    idFormaCobrancaDistribuidor: 0,
     modoTela: null,
 
     init : function () {
@@ -238,7 +239,13 @@ var parametroCobrancaCotaController = $.extend(true, {
 			return resultado;
 		}	
 		
+		
+		
 		$.each(resultado.rows, function(index, row) {
+			
+			if(row.cell.parametroDistribuidor)
+				parametroCobrancaCotaController.idFormaCobrancaDistribuidor = row.cell.idFormaCobranca;
+			
             var title = parametroCobrancaCotaController.isReadOnly() ? 'Visualizar Forma Pagamento' : 'Editar Forma Pagamento';
 
             var linkEditar = '<a href="javascript:;" onclick="parametroCobrancaCotaController.popup_editar_unificacao(' + row.cell.idFormaCobranca + ');" style="cursor:pointer">' +
@@ -437,7 +444,25 @@ var parametroCobrancaCotaController = $.extend(true, {
         parametroCobrancaCotaController.carregarFornecedoresPadrao(resultado.idFornecedor);
 	},
 
-	buildParametroCobrancaDto : function(){
+	buildParametroCobrancaDto : function() {
+		
+		var quarta, quinta;
+		
+		var data = [{name: 'idFormaCobranca', value: this.idFormaCobrancaDistribuidor}, 
+		            {name: 'modoTela', value: parametroCobrancaCotaController.modoTela.value }];
+		$.postJSON(	contextPath + "/cota/parametroCobrancaCota/obterFormaCobranca",
+				   	data,
+				   	function(result) {
+						quarta = result.quarta;
+						quinta = result.quinta;
+						console.log('1: '+ quarta +' - '+ quinta);
+					}, 
+					null,
+					true);
+				
+		console.log(quarta +' - '+ quinta);
+		
+		return;
 		// hidden
 		var idParametroCobranca = $("#_idParametroCobranca", this.workspace).val();
 		var idCota = $("#_idCota", this.workspace).val();
@@ -466,18 +491,18 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var fornecedorPadrao = $("#fornecedorPadrao", this.workspace).val();
 		var unificaCobranca = $("#unificaCobranca", this.workspace).val()==0?1:0;
 		
-		var params = {"parametroCobranca.idParametroCobranca":idParametroCobranca,
-				"parametroCobranca.idCota":idCota,
-				"parametroCobranca.numCota":numCota,   
-				"parametroCobranca.fatorVencimento":fatorVencimento,   
-				"parametroCobranca.sugereSuspensao":sugereSuspensao,   
-				"parametroCobranca.contrato":contrato,         
-				"parametroCobranca.valorMinimo":valorMinimo,   
-				"parametroCobranca.qtdDividasAberto":qtdDividasAberto,  
-				"parametroCobranca.vrDividasAberto":vrDividasAberto,
-				"parametroCobranca.tipoCota":tipoCota,
-				"parametroCobranca.idFornecedor":fornecedorPadrao,
-				"parametroCobranca.unificaCobranca":unificaCobranca};
+		var params = {"parametroCobranca.idParametroCobranca": idParametroCobranca,
+				"parametroCobranca.idCota": idCota,
+				"parametroCobranca.numCota": numCota,   
+				"parametroCobranca.fatorVencimento": fatorVencimento,   
+				"parametroCobranca.sugereSuspensao": sugereSuspensao,   
+				"parametroCobranca.contrato": contrato,         
+				"parametroCobranca.valorMinimo": valorMinimo,   
+				"parametroCobranca.qtdDividasAberto": qtdDividasAberto,  
+				"parametroCobranca.vrDividasAberto": vrDividasAberto,
+				"parametroCobranca.tipoCota": tipoCota,
+				"parametroCobranca.idFornecedor": fornecedorPadrao,
+				"parametroCobranca.unificaCobranca": unificaCobranca};
 		
 		return params;
 	},
@@ -733,13 +758,13 @@ var parametroCobrancaCotaController = $.extend(true, {
 		
 		$("#recebeEmail", this.workspace).attr("checked", resultado.recebeEmail);
 
-        $("#PS", this.workspace).attr("checked", resultado.segunda);
-		$("#PT", this.workspace).attr("checked", resultado.terca);
-		$("#PQ", this.workspace).attr("checked", resultado.quarta);
-		$("#PQu", this.workspace).attr("checked", resultado.quinta);
-		$("#PSex", this.workspace).attr("checked", resultado.sexta);
-		$("#PSab", this.workspace).attr("checked", resultado.sabado);
-		$("#PDom", this.workspace).attr("checked", resultado.domingo);
+        $("#PCC-PS", this.workspace).attr("checked", resultado.segunda);
+		$("#PCC-PT", this.workspace).attr("checked", resultado.terca);
+		$("#PCC-PQ", this.workspace).attr("checked", resultado.quarta);
+		$("#PCC-PQu", this.workspace).attr("checked", resultado.quinta);
+		$("#PCC-PSex", this.workspace).attr("checked", resultado.sexta);
+		$("#PCC-PSab", this.workspace).attr("checked", resultado.sabado);
+		$("#PCC-PDom", this.workspace).attr("checked", resultado.domingo);
 
 		parametroCobrancaCotaController.opcaoPagto(resultado.tipoCobranca);
 		parametroCobrancaCotaController.opcaoTipoFormaCobranca(resultado.tipoFormaCobranca);

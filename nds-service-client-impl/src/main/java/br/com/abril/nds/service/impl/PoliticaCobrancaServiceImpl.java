@@ -236,15 +236,34 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 			parametroCobrancaDTO.setFormaEmissao(politica.getFormaEmissao());
 			parametroCobrancaDTO.setUnificada(politica.isUnificaCobranca()?true:false);
 			
+			if(politica.getFormaCobranca() != null 
+					&& politica.getFormaCobranca().getFornecedorPadrao() != null) {
+				
+				parametroCobrancaDTO.setIdFornecedorPadrao(politica.getFormaCobranca().getFornecedorPadrao().getId());
+				
+			}
+			
+			if(politica.getFormaCobranca() != null) {
+				
+				parametroCobrancaDTO.setTipoCota(politica.getFormaCobranca().getTipoCota());
+				
+			}
+			
+			if(politica.getFormaCobranca() != null) {
+				
+				parametroCobrancaDTO.setFatorVencimento(politica.getFormaCobranca().getFatorVencimento());
+				
+			}
+			
 			Set<ConcentracaoCobrancaCota> concentracoesCobranca=null;
 			
 			if (formaCobranca!=null){
 			
-				if (formaCobranca.getTipoFormaCobranca() == TipoFormaCobranca.SEMANAL){
+				if (formaCobranca.getTipoFormaCobranca() == TipoFormaCobranca.SEMANAL) {
 				    concentracoesCobranca = formaCobranca.getConcentracaoCobrancaCota();
 				}		
-				parametroCobrancaDTO.setDiasDoMes(new ArrayList<Integer>(formaCobranca.getDiasDoMes()));
 				
+				parametroCobrancaDTO.setDiasDoMes(new ArrayList<Integer>(formaCobranca.getDiasDoMes()));
 
 				parametroCobrancaDTO.setTipoFormaCobranca(formaCobranca.getTipoFormaCobranca());
 				parametroCobrancaDTO.setEnvioEmail(formaCobranca.isRecebeCobrancaEmail()?true:false);
@@ -330,23 +349,22 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		boolean novaPolitica=false;
 		boolean novaForma=false;
 		
-		if (parametroCobrancaDTO.getIdBanco()!=null){
+		if (parametroCobrancaDTO.getIdBanco()!=null) {
 		    banco=this.bancoRepository.buscarPorId(parametroCobrancaDTO.getIdBanco());
 		}
 		
 			
-		if (parametroCobrancaDTO.getIdPolitica()!=null){
+		if (parametroCobrancaDTO.getIdPolitica()!=null) {
 			politica = this.politicaCobrancaRepository.buscarPorId(parametroCobrancaDTO.getIdPolitica());
 		}
 		
 		
-		if(politica==null){
+		if(politica==null) {
 			novaPolitica = true;
 			novaForma=true;
 			politica = new PoliticaCobranca();	
 			formaCobranca = new FormaCobranca();
-		}
-		else{
+		} else {
 			novaPolitica = false;
 			
 			formaCobranca = politica.getFormaCobranca();
@@ -357,14 +375,13 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 				concentracoesCobranca = formaCobranca.getConcentracaoCobrancaCota();
 				
 		        //APAGA CONCENTRACOES COBRANCA DA FORMA DE COBRANCA
-				if ((concentracoesCobranca!=null)&&(concentracoesCobranca.size() > 0)){
+				if ((concentracoesCobranca!=null)&&(concentracoesCobranca.size() > 0)) {
 					formaCobranca.setConcentracaoCobrancaCota(null);
 					for(ConcentracaoCobrancaCota itemConcentracaoCobranca:concentracoesCobranca){
 						this.concentracaoCobrancaRepository.remover(itemConcentracaoCobranca);
 					}
 				}  
-			}
-			else{
+			} else {
 				novaForma=true;
 				formaCobranca = new FormaCobranca();
 			}
@@ -391,6 +408,11 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		formaCobranca.setTipoFormaCobranca(parametroCobrancaDTO.getTipoFormaCobranca());
 		formaCobranca.setTipoCobranca(parametroCobrancaDTO.getTipoCobranca());
 		formaCobranca.setBanco(banco);
+		
+		formaCobranca.setFornecedorPadrao(fornecedorService.obterFornecedorPorId(parametroCobrancaDTO.getIdFornecedorPadrao()));
+		formaCobranca.setTipoCota(parametroCobrancaDTO.getTipoCota());
+		formaCobranca.setFatorVencimento(parametroCobrancaDTO.getFatorVencimento());
+		
 		formaCobranca.setRecebeCobrancaEmail(parametroCobrancaDTO.isEnvioEmail());
 		formaCobranca.setAtiva(true);
 		formaCobranca.setTaxaJurosMensal(parametroCobrancaDTO.getTaxaJuros());

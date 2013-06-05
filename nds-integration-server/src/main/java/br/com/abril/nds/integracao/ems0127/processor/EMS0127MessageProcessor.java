@@ -158,7 +158,9 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 		hql.append(" select distinct ce ")
 			.append("from IcdChamadaEncalhe ce join fetch ce.chamadaEncalheItens cei join fetch cei.lancamentoEdicaoPublicacao l ")
 			.append("where ce.tipoStatus in (:status) ")
-			.append("and ce.codigoDistribuidor = :distribuidor and ce.dataAnoReferencia = 2013");
+			.append("and ce.codigoDistribuidor = :distribuidor ")
+			.append("and ce.indiceCEProvisoria = 'N' ")
+			.append("and ce.dataAnoReferencia = 2013");
 		
 		Query query = this.getSessionIcd().createQuery(hql.toString());
 		

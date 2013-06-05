@@ -5,10 +5,21 @@ var idPolitica = null;
 var parametroCobrancaController = $.extend(true,
 	{
 		
-
+		idsFornecedoresDisponiveis : [],
+	
 		init : function() {
 			parametroCobrancaController.formatarCampos();
 	    	parametroCobrancaController.criarParametrosGrid();
+	    	$("#comboFornecedorPadrao", this.workspace).focus(function () {
+	            previous = this.value;
+	        }).change(function() {
+	        	$.each($("#comboFornecedorPadrao option", this.workspace), function(index, row) {
+	        		$("#ParamCob-fornecedor_"+ this.value, this.workspace).attr('disabled', false);
+		        	// $("#ParamCob-fornecedor_"+ this.value, this.workspace).attr('checked', false);
+	        	});
+	        	$("#ParamCob-fornecedor_" + this.value, this.workspace).attr('disabled', true);
+	    		$("#ParamCob-fornecedor_" + this.value, this.workspace).attr('checked', true);
+	        });
 		},
 		
 	   
@@ -445,10 +456,30 @@ var parametroCobrancaController = $.extend(true,
 				$(this, this.workspace).attr('checked',false);
 			});	
 			
+			parametroCobrancaController.idsFornecedoresDisponiveis = resultado.fornecedoresId;
+			
 			$.each(resultado.fornecedoresId, function(index, value) { 
-				 $("#fornecedor_" + value, this.workspace).attr('checked', true);
+				 $("#ParamCob-fornecedor_" + value, this.workspace).attr('checked', true);
 			});
 			
+			$.each($("#comboFatorVencimento option", this.workspace), function(index, value) { 
+				 if(this.value == resultado.fatorVencimento) {
+					this.selected = true;
+				 }
+			});
+			
+			$.each($("#ParamCob-TipoCota option", this.workspace), function(index, value) { 
+				if(this.value == resultado.tipoCota) {
+					this.selected = true;
+				}
+			});
+			
+			$.each($("#comboFornecedorPadrao option", this.workspace), function(index, value) { 
+				if(this.value == resultado.idFornecedorPadrao) {
+					this.selected = true;
+					$("#ParamCob-fornecedor_" + resultado.idFornecedorPadrao, this.workspace).attr('disabled', true);
+				}
+			});
 			
 			$("input[name='radioFormaCobrancaBoleto']", this.workspace).each(function(i) {			
 				if($(this, this.workspace).val() == resultado.formaCobrancaBoleto){
@@ -495,6 +526,9 @@ var parametroCobrancaController = $.extend(true,
 					tipoCobranca : $("#dTipoCobranca", this.worspace).val(),
 					formaEmissao : $("#formaEmissao", this.worspace).val(),
 					idBanco : $("#dBanco", this.workspace).val(),
+					idFornecedorPadrao : $("#comboFornecedorPadrao option:selected", this.workspace).val(),
+					fatorVencimento : $("#comboFatorVencimento option:selected", this.workspace).val(),
+					tipoCota : $("#ParamCob-TipoCota option:selected", this.workspace).val(),
 					valorMinimo : floatValue($("#valorMinimo", this.workspace).val()),
 					taxaMulta : $("#taxaMulta", this.worspace).val(),
 					valorMulta : $("#valorMulta", this.worspace).val(),

@@ -199,17 +199,28 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			parametroCobranca = cota.getParametroCobranca();
 			
 			if (parametroCobranca == null && formasCobranca == null || formasCobranca.size() == 0) {
+				
 				FormaCobranca formaCobrancaDistribuidor = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
 				
 				parametroCobranca = new ParametroCobrancaCota();
 				parametroCobranca.setCota(cota);
-				parametroCobranca.setFatorVencimento(1);
+				parametroCobranca.setFatorVencimento(new Integer(formaCobrancaDistribuidor.getFatorVencimento().toString()));
 				parametroCobranca.setFormasCobrancaCota(null);
 				parametroCobranca.setValorMininoCobranca(formaCobrancaDistribuidor.getValorMinimoEmissao());
-				parametroCobranca.setUnificaCobranca(formaCobrancaDistribuidor.getPoliticaCobranca().isUnificaCobranca());
-				parametroCobranca.setTipoCota(null);
+				
+				if(formaCobrancaDistribuidor.getPoliticaCobranca() != null) {
+					parametroCobranca.setUnificaCobranca(formaCobrancaDistribuidor.getPoliticaCobranca().isUnificaCobranca());
+				}
+				
+				if(formaCobrancaDistribuidor.getTipoCota() != null) {
+					parametroCobranca.setTipoCota(formaCobrancaDistribuidor.getTipoCota());
+				}
+				
+				if(formaCobrancaDistribuidor.getFornecedorPadrao() != null) {
+					parametroCobranca.setFornecedorPadrao(formaCobrancaDistribuidor.getFornecedorPadrao());
+				}
 				parametroCobranca.setPoliticaSuspensao(null);
-				//this.parametroCobrancaCotaRepository.adicionar(parametroCobranca);
+								
 			}
 
 			parametroCobrancaDTO.setIdParametroCobranca(parametroCobranca.getId());
@@ -612,17 +623,13 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 
 		
 	    if(novaFormaCobranca || formaCobrancaDTO.isParametroDistribuidor()) {
-	    	//ParametroCobrancaCota parametroCobranca = this.parametroCobrancaCotaRepository.buscarPorId(formaCobrancaDTO.getIdParametroCobranca());
+
 	    	FormaCobranca formaCobrancaDistribuidor = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
 			
 	    	Cota c = cotaRepository.buscarPorId(formaCobrancaDTO.getIdCota());
 	    	
 	    	ParametroCobrancaCota parametroCobranca;
-	    	if(c!= null && c.getParametroCobranca() == null) {
-	    		parametroCobranca = new ParametroCobrancaCota();
-	    	} else {
-	    		parametroCobranca = c.getParametroCobranca();
-	    	}
+	    	parametroCobranca = new ParametroCobrancaCota();
 	    	
 			parametroCobranca.setCota(new Cota(formaCobrancaDTO.getIdCota()));
 			parametroCobranca.setFatorVencimento(1);
@@ -632,7 +639,12 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			parametroCobranca.setTipoCota(null);
 			parametroCobranca.setPoliticaSuspensao(null);
 			
-			parametroCobrancaCotaRepository.merge(parametroCobranca);
+			if(c!= null && c.getParametroCobranca() != null) {
+				parametroCobrancaCotaRepository.detach(c.getParametroCobranca());
+				parametroCobrancaCotaRepository.removerPorId(c.getParametroCobranca().getId());
+			}
+			
+			parametroCobrancaCotaRepository.adicionar(parametroCobranca);
 	    	
 	    	formaCobranca.setParametroCobrancaCota(parametroCobranca);
 
@@ -640,7 +652,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		    formaCobranca.setTaxaMulta((formaCobranca.getTaxaMulta() == null ? BigDecimal.ZERO : formaCobranca.getTaxaMulta()));
 		    formaCobranca.setValorMinimoEmissao((formaCobranca.getValorMinimoEmissao() == null ? BigDecimal.ZERO : formaCobranca.getValorMinimoEmissao()));
 
-		    formaCobrancaRepository.merge(formaCobranca);
+		    formaCobrancaRepository.adicionar(formaCobranca);
 	    } else {
 	    	formaCobrancaRepository.merge(formaCobranca);    	
 		}
@@ -1072,6 +1084,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		
 		formaCobrancaDTO.setIdCota(parametroCobranca.getIdCota());
 		formaCobrancaDTO.setIdParametroCobranca(parametroCobranca.getIdParametroCobranca());
+		formaCobrancaDTO.setIdFormaCobranca(parametroCobranca.getIdFormaCobranca());
 		formaCobrancaDTO.setTipoCobranca(formaCobrancaDistribuidor.getTipoCobranca());
 		formaCobrancaDTO.setRecebeEmail(formaCobrancaDistribuidor.isRecebeCobrancaEmail());
 		

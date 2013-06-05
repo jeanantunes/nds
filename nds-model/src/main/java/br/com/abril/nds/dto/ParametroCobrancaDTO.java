@@ -6,6 +6,7 @@ import java.util.List;
 import br.com.abril.nds.model.cadastro.FormaCobrancaBoleto;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 
 public class ParametroCobrancaDTO {
@@ -13,6 +14,8 @@ public class ParametroCobrancaDTO {
 	
 	Long idPolitica;
 	Long idBanco;
+	Long idFornecedorPadrao;
+	Long fatorVencimento;
 	
 	BigDecimal valorMinimo;
 	BigDecimal taxaMulta;
@@ -46,14 +49,15 @@ public class ParametroCobrancaDTO {
 	private List<Long> fornecedoresId;
 	
 	private FormaCobrancaBoleto formaCobrancaBoleto;	
-
 	
+	private TipoCota tipoCota; 
+
 	public ParametroCobrancaDTO() {
 		
 	}
 
 
-	public ParametroCobrancaDTO(Long idPolitica, Long idBanco,
+	public ParametroCobrancaDTO(Long idPolitica, Long idBanco, Long idFornecedorPadrao,
 			BigDecimal valorMinimo, BigDecimal taxaMulta,
 			BigDecimal valorMulta, BigDecimal taxaJuros,
 			TipoCobranca tipoCobranca, FormaEmissao formaEmissao,
@@ -66,6 +70,7 @@ public class ParametroCobrancaDTO {
 		super();
 		this.idPolitica = idPolitica;
 		this.idBanco = idBanco;
+		this.idFornecedorPadrao = idFornecedorPadrao;
 		this.valorMinimo = valorMinimo;
 		this.taxaMulta = taxaMulta;
 		this.valorMulta = valorMulta;
@@ -111,10 +116,27 @@ public class ParametroCobrancaDTO {
 	}
 
 
+	public Long getIdFornecedorPadrao() {
+		return idFornecedorPadrao;
+	}
+
+	public void setIdFornecedorPadrao(Long idFornecedorPadrao) {
+		this.idFornecedorPadrao = idFornecedorPadrao;
+	}
+
+
+	public Long getFatorVencimento() {
+		return fatorVencimento;
+	}
+
+	public void setFatorVencimento(Long fatorVencimento) {
+		this.fatorVencimento = fatorVencimento;
+	}
+
+
 	public BigDecimal getValorMinimo() {
 		return valorMinimo;
 	}
-
 
 	public void setValorMinimo(BigDecimal valorMinimo) {
 		this.valorMinimo = valorMinimo;
@@ -353,6 +375,16 @@ public class ParametroCobrancaDTO {
 	 */
 	public void setFormaCobrancaBoleto(FormaCobrancaBoleto formaCobrancaBoleto) {
 		this.formaCobrancaBoleto = formaCobrancaBoleto;
+	}
+
+
+	public TipoCota getTipoCota() {
+		return tipoCota;
+	}
+
+
+	public void setTipoCota(TipoCota tipoCota) {
+		this.tipoCota = tipoCota;
 	}
 
 
