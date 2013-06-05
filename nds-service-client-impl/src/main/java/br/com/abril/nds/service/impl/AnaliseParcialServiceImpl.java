@@ -82,6 +82,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                     idsProdutoEdicao.add(edicao.getProdutoEdicaoId());
                 }
                 Map<Integer, EdicoesProdutosDTO> edicoesProdutosDTOMap = new HashMap<>();
+                Integer ordemExibicaoHelper = 0;
                 item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>());
                 if(idsProdutoEdicao.size() > 0){
                 	edicoesComVenda.addAll(analiseParcialRepository.getEdicoesBase((long) item.getCota(), idsProdutoEdicao));
@@ -89,6 +90,9 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 		for (EdicoesProdutosDTO ed : edicoesComVenda) {
                 			if (ed.getProdutoEdicaoId().equals(edicao.getProdutoEdicaoId())) {
                 				BeanUtils.copyProperties(edicao, ed, new String[] {"reparte", "venda"});
+                                if (ed.getOrdemExibicao() == null) {
+                                    ed.setOrdemExibicao(ordemExibicaoHelper++);
+                                }
                                 edicoesProdutosDTOMap.put(ed.getOrdemExibicao(), ed);
 //                                item.getEdicoesBase().add(ed);
                 			}

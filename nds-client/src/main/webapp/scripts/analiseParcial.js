@@ -461,14 +461,21 @@ var analiseParcialController = $.extend(true, {
     },
 
     atualizaReparte : function(input) {
+        var $saldoreparte = $('#saldo_reparte');
         var $input_reparte = $(input);
+
+        if ($saldoreparte.text() === '0') {
+            $input_reparte.val($input_reparte.attr('reparteAtual'));
+            return;
+        }
+
         var numeroCota = $input_reparte.attr('numeroCota');
         var reparteDigitado = $input_reparte.val();
         var reparteAtual = $input_reparte.attr('reparteAtual');
         var reparteSubtraido = parseInt(reparteDigitado, 10) - parseInt(reparteAtual, 10);
         var $legenda = $input_reparte.closest('td').next().find('div');
         if (reparteSubtraido != 0) {
-            $('#saldo_reparte').text(parseInt($('#saldo_reparte').text(), 10) - reparteSubtraido);
+            $saldoreparte.text(parseInt($saldoreparte.text(), 10) - reparteSubtraido);
 
             $.ajax({url: analiseParcialController.path +'/distribuicao/analise/parcial/mudarReparte',
                 data: {'numeroCota': numeroCota, 'estudoId': $('#estudoId').val(), 'variacaoDoReparte': reparteSubtraido},
@@ -482,10 +489,18 @@ var analiseParcialController = $.extend(true, {
                     } else {
                         $legenda.addClass('asterisco');
                     }
+
+                    $('#total_reparte_sugerido')
+                        .text(
+                            $('#baseEstudoGridParcial tr td input:text').map(function(){
+                                return parseInt(this.value, 10);
+                            }).toArray().reduce(function(a,b){
+                                    return a+b;
+                                }));
                 },
                 error: function() {
                     analiseParcialController.exibirMsg('WARNING', ['Erro ao enviar novo reparte!']);
-//                    $('#baseEstudoGridParcial').flexReload();
+                    $input_reparte.val($input_reparte.attr('reparteAtual'));
                 }
             });
         }
@@ -694,7 +709,8 @@ var analiseParcialController = $.extend(true, {
         $dialogReparte.find('span.nomeCota').text(nomeCota);
         $dialogReparte.find('span.reparteCota').text(reparteCota);
 
-        $('.pdvCotaGrid').flexOptions({params:[{name: 'numeroCota', value: numeroCota}]}).flexReload();
+        $('.pdvCotaGrid').flexOptions({params:[{name: 'numeroCota', value: numeroCota},
+                                               {name: 'estudoId', value: $('#estudoId').val()}]}).flexReload();
 
         $dialogReparte.dialog({
             escondeHeader: false,
@@ -841,16 +857,7 @@ var analiseParcialController = $.extend(true, {
 
         $('#baseEstudoGridParcial')
         .on('blur', 'tr td input:text', function(event){
-
             analiseParcialController.atualizaReparte(this);
-
-            $('#total_reparte_sugerido')
-                .text(
-                $('#baseEstudoGridParcial tr td input:text').map(function(){
-                    return parseInt(this.value, 10);
-                }).toArray().reduce(function(a,b){
-                        return a+b;
-                    }));
         }).on('keyup', 'tr td input:text', function(event){
             if(event.which === 13) {//tab === 9
                 $(event.currentTarget)
