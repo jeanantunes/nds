@@ -33,6 +33,8 @@ public class EdicoesProdutosDTO implements Serializable {
 	/* Campos para grid */
 	private String dataLancamento;
 	private String dataRecolhimento;
+
+    private Integer ordemExibicao;
 	
 	public BigInteger getEdicao() {
 		return edicao;
@@ -134,5 +136,13 @@ public class EdicoesProdutosDTO implements Serializable {
 	}
 	public void setProdutoEdicaoId(Long produtoEdicaoId) {
 	    this.produtoEdicaoId = produtoEdicaoId;
-	}	
+	}
+
+    public Integer getOrdemExibicao() {
+        return ordemExibicao;
+    }
+
+    public void setOrdemExibicao(Integer ordemExibicao) {
+        this.ordemExibicao = ordemExibicao;
+    }
 }

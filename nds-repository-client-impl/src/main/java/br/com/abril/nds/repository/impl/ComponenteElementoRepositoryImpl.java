@@ -123,7 +123,7 @@ public class ComponenteElementoRepositoryImpl implements ComponenteElementoRepos
     @Override
     public List<ComponenteElementoDTO> buscaCotasAVista() {
         List<ComponenteElementoDTO> retorno = new ArrayList<>();
-        retorno.add(new ComponenteElementoDTO("cotas_a_vista", "A_VISTA", TipoCota.A_VISTA.toString()));
+        retorno.add(new ComponenteElementoDTO("cotas_a_vista", "A-VISTA", TipoCota.A_VISTA.toString()));
         retorno.add(new ComponenteElementoDTO("cotas_a_vista", "CONSIGNADO", TipoCota.CONSIGNADO.toString()));
         return retorno;
     }

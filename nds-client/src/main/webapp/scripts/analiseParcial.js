@@ -15,7 +15,7 @@ var analiseParcialController = $.extend(true, {
 
     linkNomeCota : '<a tabindex="-1" class="linkNomeCota" numeroCota="#numeroCota" >#nomeCota</a>',
     edicoesBase : [],
-    inputReparteSugerido: '<input reparteInicial="#value" reparteAtual="#value" numeroCota="#numeroCota" value="#value" class="reparteSugerido" />',
+    inputReparteSugerido: '<input reducaoReparte="#redReparte" reparteInicial="#repEstudo" reparteAtual="#value" numeroCota="#numeroCota" value="#value" class="reparteSugerido" />',
     tipoExibicao : 'NORMAL',
 
     exibirMsg: function(tipo, texto) {
@@ -71,6 +71,7 @@ var analiseParcialController = $.extend(true, {
                             return false;
                         }
 
+                        parameters.push({name: 'edicoesBase['+ i +'].ordemExibicao',    value: i});
                         parameters.push({name: 'edicoesBase['+ i +'].codigoProduto',    value: codigoProduto});
                         parameters.push({name: 'edicoesBase['+ i +'].nomeProduto',      value: nomeProduto});
                         parameters.push({name: 'edicoesBase['+ i +'].edicao',           value: edicao});
@@ -188,7 +189,8 @@ var analiseParcialController = $.extend(true, {
         });
 
 
-        $("#cotasDetalhesGrid").flexOptions({ params: [{name: 'numeroCota', value: numeroCota}] }).flexReload();
+        $("#cotasDetalhesGrid").flexOptions({ params: [{name: 'numeroCota', value: numeroCota},
+                                                       {name: 'estudoId', value: $('#estudoId').val()}] }).flexReload();
 
         $("#dialog-cotas-detalhes").dialog({
             escondeHeader: false,
@@ -304,48 +306,116 @@ var analiseParcialController = $.extend(true, {
         if ($('#total_ultimo_reparte').index() == 2) {
             $('table#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(0) th[colspan="7"]').attr('colspan', 4);
 
+            $('table#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(0)').each(function () {
+                var tr = $(this);
+                var last = tr.find('th[colspan="2"]:last');
+                tr.find('th[colspan="2"]:first').detach().insertAfter(last);
+                tr.find('th[colspan="2"]:first').detach().insertAfter(last);
+                tr.find('th[colspan="2"]:first').detach().insertAfter(last);
+                tr.find('th[colspan="2"]:first').detach().insertAfter(last);
+                tr.find('th[colspan="2"]:first').detach().insertAfter(last);
+            });
+
             $('table#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(1)').each(function() {
                 var tr = $(this);
-                var td1 = tr.find('th:eq(4),th:eq(5),th:eq(6)');
+                var td1 = tr.find('[abbr="ultimoReparte"],[abbr="reparteSugerido"],[abbr="leg"]');
                 var td2 = tr.find('th:last');
                 td1.detach().insertAfter(td2);
+
+                //reparte/venda
+                var last = tr.find('[abbr^="venda"]:last');
+                tr.find('[abbr^="reparte"]:first,[abbr^="venda"]:first').detach().insertAfter(last);
+                tr.find('[abbr^="reparte"]:first,[abbr^="venda"]:first').detach().insertAfter(last);
+                tr.find('[abbr^="reparte"]:first,[abbr^="venda"]:first').detach().insertAfter(last);
+                tr.find('[abbr^="reparte"]:first,[abbr^="venda"]:first').detach().insertAfter(last);
+                tr.find('[abbr^="reparte"]:first,[abbr^="venda"]:first').detach().insertAfter(last);
             });
 
             $('#baseEstudoGridParcial tr').each(function() {
                 var tr = $(this);
-                var td1 = tr.find('td:eq(4),td:eq(5),td:eq(6)');
+                var td1 = tr.find('[abbr="ultimoReparte"],[abbr="reparteSugerido"],[abbr="leg"]');
                 var td2 = tr.find('td:last');
                 td1.detach().insertAfter(td2);
+
+                //reparte/venda
+                var last = tr.find('[abbr^="venda"]:last');
+                tr.find('[abbr^="reparte"]:first,[abbr^="venda"]:first').detach().insertAfter(last);
+                tr.find('[abbr^="reparte"]:first,[abbr^="venda"]:first').detach().insertAfter(last);
+                tr.find('[abbr^="reparte"]:first,[abbr^="venda"]:first').detach().insertAfter(last);
+                tr.find('[abbr^="reparte"]:first,[abbr^="venda"]:first').detach().insertAfter(last);
+                tr.find('[abbr^="reparte"]:first,[abbr^="venda"]:first').detach().insertAfter(last);
             });
 
             $('.tableTotais tr').each(function() {
                 var tr = $(this);
-                var td1 = tr.find('td:eq(2),td:eq(3),td:eq(4)');
+                var td1 = tr.find('#total_ultimo_reparte,#total_reparte_sugerido,#lbl_legenda');
                 var td2 = tr.find('td:last');
                 td1.detach().insertAfter(td2);
+
+                //reparte/venda
+                var last = tr.find('[id^="total_venda"]:last');
+                tr.find('[id^="total_reparte"]:first,[id^="total_venda"]:first').detach().insertAfter(last);
+                tr.find('[id^="total_reparte"]:first,[id^="total_venda"]:first').detach().insertAfter(last);
+                tr.find('[id^="total_reparte"]:first,[id^="total_venda"]:first').detach().insertAfter(last);
+                tr.find('[id^="total_reparte"]:first,[id^="total_venda"]:first').detach().insertAfter(last);
+                tr.find('[id^="total_reparte"]:first,[id^="total_venda"]:first').detach().insertAfter(last);
             });
         } else {
             $('table#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(0) th[colspan="4"]').attr('colspan', 7);
 
+            $('table#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(0)').each(function () {
+                var tr = $(this);
+                var last = tr.find('th[colspan="2"]:last');
+                tr.find('th[colspan="2"]:first').detach().insertAfter(last);
+                tr.find('th[colspan="2"]:first').detach().insertAfter(last);
+                tr.find('th[colspan="2"]:first').detach().insertAfter(last);
+                tr.find('th[colspan="2"]:first').detach().insertAfter(last);
+                tr.find('th[colspan="2"]:first').detach().insertAfter(last);
+            });
+
             $('table#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(1)').each(function() {
                 var tr = $(this);
-                var td1 = tr.find('th:eq(16),th:eq(17),th:eq(18)');
-                var td2 = tr.find('th:eq(3)');
+                var td1 = tr.find('[abbr="ultimoReparte"],[abbr="reparteSugerido"],[abbr="leg"]');
+                var td2 = tr.find('[abbr="npdv"]');
                 td1.detach().insertAfter(td2);
+
+                //reparte/venda
+                var last = tr.find('[abbr^="venda"]:last');
+                tr.find('[abbr^="reparte"]:eq(1),[abbr^="venda"]:first').detach().insertAfter(last);
+                tr.find('[abbr^="reparte"]:eq(1),[abbr^="venda"]:first').detach().insertAfter(last);
+                tr.find('[abbr^="reparte"]:eq(1),[abbr^="venda"]:first').detach().insertAfter(last);
+                tr.find('[abbr^="reparte"]:eq(1),[abbr^="venda"]:first').detach().insertAfter(last);
+                tr.find('[abbr^="reparte"]:eq(1),[abbr^="venda"]:first').detach().insertAfter(last);
             });
 
             $('#baseEstudoGridParcial tr').each(function() {
                 var tr = $(this);
-                var td1 = tr.find('td:eq(16),td:eq(17),td:eq(18)');
-                var td2 = tr.find('td:eq(3)');
+                var td1 = tr.find('[abbr="ultimoReparte"],[abbr="reparteSugerido"],[abbr="leg"]');
+                var td2 = tr.find('[abbr="npdv"]');
                 td1.detach().insertAfter(td2);
+
+                //reparte/venda
+                var last = tr.find('[abbr^="venda"]:last');
+                tr.find('[abbr^="reparte"]:eq(1),[abbr^="venda"]:first').detach().insertAfter(last);
+                tr.find('[abbr^="reparte"]:eq(1),[abbr^="venda"]:first').detach().insertAfter(last);
+                tr.find('[abbr^="reparte"]:eq(1),[abbr^="venda"]:first').detach().insertAfter(last);
+                tr.find('[abbr^="reparte"]:eq(1),[abbr^="venda"]:first').detach().insertAfter(last);
+                tr.find('[abbr^="reparte"]:eq(1),[abbr^="venda"]:first').detach().insertAfter(last);
             });
 
             $('.tableTotais tr').each(function() {
                 var tr = $(this);
-                var td1 = tr.find('td:eq(14),td:eq(15),td:eq(16)');
-                var td2 = tr.find('td:eq(1)');
+                var td1 = tr.find('#total_ultimo_reparte,#total_reparte_sugerido,#lbl_legenda');
+                var td2 = tr.find('#total_de_cotas');
                 td1.detach().insertAfter(td2);
+
+                //reparte/venda
+                var last = tr.find('[id^="total_venda"]:last');
+                tr.find('[id^="total_reparte"]:eq(1),[id^="total_venda"]:first').detach().insertAfter(last);
+                tr.find('[id^="total_reparte"]:eq(1),[id^="total_venda"]:first').detach().insertAfter(last);
+                tr.find('[id^="total_reparte"]:eq(1),[id^="total_venda"]:first').detach().insertAfter(last);
+                tr.find('[id^="total_reparte"]:eq(1),[id^="total_venda"]:first').detach().insertAfter(last);
+                tr.find('[id^="total_reparte"]:eq(1),[id^="total_venda"]:first').detach().insertAfter(last);
             });
         }
     },
@@ -365,12 +435,17 @@ var analiseParcialController = $.extend(true, {
             if (analiseParcialController.tipoExibicao === 'NORMAL') {
                 $header.prepend($('<tr>').append($('<th colspan="' + colSpanEdicoesBase + '" style="border-bottom: 1px solid #DDDDDD;">')
                     .append('<div style="text-align: right;">Edições Base:</div>')));
-                $.each(analiseParcialController.edicoesBase, function(key, value) {
-                    if(value){
-                        $header.find('tr').first().append($('<th colspan="2">').append($('<div style="text-align: center;">')
-                            .append(value.edicao)))
-                    }
-                });
+
+                for (var i=0; i<6; i++) {
+                    var edicao = $.extend({}, {edicao:'-'}, analiseParcialController.edicoesBase[i]);
+                    $header.find('tr').first().append($('<th colspan="2">').append($('<div style="text-align: center;">').append(edicao.edicao)));
+                }
+
+//                $.each(analiseParcialController.edicoesBase, function(key, value) {
+//                    if(value){
+//                        $header.find('tr').first().append($('<th colspan="2">').append($('<div style="text-align: center;">').append(value.edicao)));
+//                    }
+//                });
             } else {
                 $header.prepend(
                     $('<tr>')
@@ -400,7 +475,9 @@ var analiseParcialController = $.extend(true, {
                 success: function() {
                     analiseParcialController.atualizaAbrangencia();
                     $input_reparte.attr('reparteAtual', reparteDigitado);
-                    if (reparteDigitado === $input_reparte.attr('reparteInicial')) {
+                    var reparteInicial = $input_reparte.attr('reparteInicial');
+                    $input_reparte.attr('reducaoReparte', reparteDigitado - reparteInicial);
+                    if (reparteDigitado === reparteInicial) {
                         $legenda.removeClass('asterisco');
                     } else {
                         $legenda.addClass('asterisco');
@@ -417,13 +494,13 @@ var analiseParcialController = $.extend(true, {
     preProcessGrid : function(resultado) {
 
         if (resultado.mensagens) {
-            analiseParcialController.exibirMsg(resultado.mensagens);
-            return null;
+            analiseParcialController.exibirMsg(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
+            return;
         }
 
         if (resultado.rows.length === 0) {
             analiseParcialController.exibirMsg('WARNING', ['Não há resultados para esta consulta.']);
-            return null;
+            return;
         }
 
         var $header = $('table#baseEstudoGridParcial')
@@ -439,11 +516,12 @@ var analiseParcialController = $.extend(true, {
         // atualização dos valores da grid
         for (var i = 0; i < resultado.rows.length; i++) {
             var cell = resultado.rows[i].cell;
-            var repSug = cell.reparteSugerido,
-                numCota = cell.cota;
+            var numCota = cell.cota;
             var input = analiseParcialController.inputReparteSugerido.toString()
                             .replace(/#numeroCota/g, numCota)
-                            .replace(/#value/g, repSug);
+                            .replace(/#value/g, cell.reparteSugerido)
+                            .replace(/#repEstudo/g, cell.reparteEstudo)
+                            .replace(/#redReparte/g, cell.reparteEstudo - cell.reparteSugerido);
             cell.reparteSugerido = input;
             
             cell.nome = analiseParcialController.linkNomeCota.replace('#nomeCota', cell.nome)
@@ -517,7 +595,27 @@ var analiseParcialController = $.extend(true, {
         analiseParcialController.atualizaEdicoesBaseHeader();
         analiseParcialController.atualizaAbrangencia();
         analiseParcialController.carregaDetalhesEdicoesBase();
+
+        //insere asterisco para marcações de reparteSugerido != reparteEstudo
+        $('table#baseEstudoGridParcial tr td[abbr="reparteSugerido"] div input').each(function(){
+            var $this = $(this);
+            if ($this.attr('reparteInicial') != $this.attr('reparteAtual')) {
+                $this.closest('tr').find('td[abbr="leg"] div').addClass('asterisco');
+            }
+        });
+
+        //limpa espaços da grid
         $('table#baseEstudoGridParcial tr td div').filter(function(){return $.trim($(this).html()) === '&nbsp;';}).text('');
+
+        //carrega % de venda
+        $('#baseEstudoGridParcial tr').each(function(){
+            var $tr = $(this);
+            var totalReparte = $tr.find('td[abbr^="reparte"]:not([abbr="reparteSugerido"]) div').map(function(){return $(this).text()*1}).toArray().reduce(function(a,b){return a+b;});
+            var totalVenda = $tr.find('td[abbr^="venda"] div').map(function(){return $(this).text()*1}).toArray().reduce(function(a,b){return a+b;});
+            var perc = Math.round((totalVenda / totalReparte) * 10000) / 100;
+            perc = isNaN(perc)?0:perc;
+            $tr.find('td[abbr="cota"]').attr('percentualVenda', perc);
+        });
     },
 
     modeloNormal : function() {
@@ -572,7 +670,7 @@ var analiseParcialController = $.extend(true, {
     sortGrid : function (sortname, sortorder) {
         var $table, settings, sortAtribute;
         $table = $(arguments.callee.caller.arguments).closest('.flexigrid').find('div.bDiv:first table');
-        settings = {order: sortorder, place:'end'};
+        settings = {order: sortorder};
         sortAtribute = 'td[abbr="' + sortname + '"] div';
 
         if (sortname === 'reparteSugerido') {
@@ -865,57 +963,70 @@ var analiseParcialController = $.extend(true, {
             var isReadOnly = value.cell.motivo === 'CL' ? 'readonly' : '';
 
             value.cell.quantidade = '<input type="text" motivo="' + value.cell.motivo + '" style="width: 50px;" value="'+
-                value.cell.quantidade +'" onblur="analiseParcialController.atualizaQuantidadeTotal(this);" ' +
+                value.cell.quantidade +'" onchange="analiseParcialController.validaMotivoCotaReparte(this);" ' +
                 ' numeroCota="'+ value.cell.numeroCota +'" ' + isReadOnly + ' />';
         });
         return resultado;
     },
 
-    popupConfirmaSenha : function() {
-        $('#dialog-dialog-confirmacao-senha').dialog({
+    validaMotivoCotaReparte : function(input) {
+        if ($('#saldoReparteNaoSelec').text() === '0') {
+            analiseParcialController.exibirMsg('WARNING', ['Não há saldo de reparte para distribuir!']);
+        } else {
+            var $input = $(input);
+            if ($input.val() !== '' && !isNaN($input.val())) {
+                $input.data('valor-anterior', $input.val());
+                switch ($input.attr('motivo')) {
+                    case 'SM': //Publicação não está no MIX da cota
+                        analiseParcialController.popupConfirmaSenha($input, 'Deseja incluir pulicação no mix?');
+                        break;
+                    case 'GN': //Cota não recebe esse Segmento
+                        analiseParcialController.popupConfirmaSenha($input, 'Deseja incluir publicaçao na lista de publicações recebida pela cota?');
+                        break;
+                    case 'SS': //Cota Suspensa
+                        analiseParcialController.popupConfirmaSenha($input, 'Cota suspensa, continuar mesmo assim?');
+                        break;
+                    default:
+                        analiseParcialController.atualizaQuantidadeTotal($input);
+                }
+            } else if ($input.val() === '') {
+                analiseParcialController.atualizaQuantidadeTotal($input);
+                $input.data('valor-anterior', 0);
+            } else {
+                $input.val('');
+                $input.data('valor-anterior', 0);
+            }
+        }
+    },
+
+    popupConfirmaSenha : function($input, msg) {
+        var $dialog = $('#dialog-confirmacao-senha');
+        $dialog.find('#msg-confirma').text(msg);
+        $dialog.dialog({
             escondeHeader: false,
             buttons: {
                 "Confirmar": function() {
                     if($(this).find('input').val() == 'D68') { //FIXME - validar senha no server...
                         $(this).dialog("close");
-                        return true;
+                        analiseParcialController.atualizaQuantidadeTotal($input);
                     } else {
                         analiseParcialController.exibirMsg('WARNING', ['Senha invalida!']);
                     }
                 },
                 "Cancelar": function() {
                     $(this).dialog("close");
-                    return false;
+                    $input.val('');
                 }
             }
         });
     },
 
-    atualizaQuantidadeTotal : function(input) {
-        var $input = $(input);
-        if (!isNaN($input.val())) {
-            var validacao = true;
-            switch ($input.attr('motivo')) {
-                case 'SM': //Publicação não está no MIX da cota
-                    validacao = analiseParcialController.popupConfirmaSenha();
-                    break;
-                case 'GN': //Cota não recebe esse Segmento
-                    validacao = analiseParcialController.popupConfirmaSenha();
-                    break;
-                case 'SS': //Cota Suspensa
-                    validacao = analiseParcialController.popupConfirmaSenha();
-                    break;
-                default:
-            }
-            if (validacao) {
-                var $saldoReparteNaoSelec = $('#saldoReparteNaoSelec');
-                var saldo = parseInt($saldoReparteNaoSelec.html(), 10);
-                saldo = saldo - parseInt($input.val(), 10);
-                $saldoReparteNaoSelec.html(saldo);
-            } else {
-                $input.val('');
-            }
-        }
+    atualizaQuantidadeTotal : function($input) {
+        var $saldoReparteNaoSelec = $('#saldoReparteNaoSelec');
+        var saldo = parseInt($saldoReparteNaoSelec.html(), 10);
+        var variacao = parseInt($input.val(), 10) - parseInt($input.data('valor-anterior'), 10);
+        saldo = saldo - variacao;
+        $saldoReparteNaoSelec.html(saldo);
     },
     
     cotasQueNaoEntraramNoEstudo : function() {
@@ -938,10 +1049,6 @@ var analiseParcialController = $.extend(true, {
         };
 
         $('#dialog-cotas-estudos .classPesquisar').click(filtrarCotasQueNaoEntraramNoEstudo);
-//        $("#cotasQueNaoEntraramNoEstudo_cota").blur(filtrarCotasQueNaoEntraramNoEstudo);
-//        $("#cotasQueNaoEntraramNoEstudo_nome").blur(filtrarCotasQueNaoEntraramNoEstudo);
-//        $("#cotasQueNaoEntraramNoEstudo_motivo").change(filtrarCotasQueNaoEntraramNoEstudo);
-//        $("#cotasQueNaoEntraramNoEstudo_elementos").change(filtrarCotasQueNaoEntraramNoEstudo);
 
         filtrarCotasQueNaoEntraramNoEstudo();
     },
@@ -995,33 +1102,26 @@ var analiseParcialController = $.extend(true, {
             modal : true,
             buttons : {
                 "Confirmar" : function() {
-                    var $mainDialog = $(this);
                     var $inputsPreenchidos = $("#cotasNaoSelec tr td input[value!='']");
-                    //FIXME - refazer esta logica, colocar ação no 'onchange' do input
-                    if ($inputsPreenchidos.filter('[motivo="CL"]').length > 0) {
-                        //este tipo não pode receber reparte
-                    } else if ($inputsPreenchidos.filter('[motivo="SM"],[motivo="GN"],[motivo="SS"]').length > 0) {
-                        $('<div>Esta ação requer confirmação com senha:<br><input type="password" width="80" maxlength="10"></div>').dialog({
-                            escondeHeader: false,
-                            title: 'Confirmação',
-                            buttons: {
-                                "Confirmar": function() {
-                                    if($(this).find('input').val() != '') {
-                                        analiseParcialController.postMudarReparteLote();
-                                        $(this).dialog("close");
-                                        $mainDialog.dialog("close");
-                                    } else {
-                                        analiseParcialController.exibirMsg('WARNING', ['Senha invalida!']);
-                                    }
-                                },
-                                "Cancelar": function() {
-                                    $(this).dialog("close");
-                                }
-                            }
-                        });
-                    } else {
+
+                    if ($inputsPreenchidos.length > 0) {
+                        if ($inputsPreenchidos.filter('[motivo="SM"]').length > 0) {
+
+                            var listaNovosMixCota = [];
+                            var codigoProduto = $('#codigoProduto').val();
+
+                            $inputsPreenchidos.filter('[motivo="SM"]').each(function(key){
+                                var $this = $(this);
+                                listaNovosMixCota.push({name: 'listaNovosMixCota[' + key + '].numeroCota', value: $this.attr('numerocota')});
+                                listaNovosMixCota.push({name: 'listaNovosMixCota[' + key + '].codigoProduto', value: codigoProduto});
+                                listaNovosMixCota.push({name: 'listaNovosMixCota[' + key + '].reparteMinimo', value: $this.val()});
+                                listaNovosMixCota.push({name: 'listaNovosMixCota[' + key + '].reparteMaximo', value: $this.val()});
+                            });
+
+                            $.postJSON(analiseParcialController.path + '/distribuicao/mixCotaProduto/adicionarMixCota', listaNovosMixCota);
+                        }
                         analiseParcialController.postMudarReparteLote();
-                        $mainDialog.dialog("close");
+                        $(this).dialog("close");
                     }
                 },
                 "Cancelar" : function() {
@@ -1032,10 +1132,9 @@ var analiseParcialController = $.extend(true, {
     },
     
     selecionarElementos : function(tipo, optionsId) {
-        //FIXME - rever filtro
         if (tipo !== '') {
             $.getJSON(analiseParcialController.path +"/componentes/elementos", [{name: "tipo", value: tipo}, {name: "estudo", value: $("#estudoId").val()}], function(data) {
-                var options = $("#"+ optionsId);
+                var options = $("#" + optionsId + ":visible");
                 options.empty();
                 options.append($("<option />").val('').text('Selecione...'));
                 $.each(data, function() {
@@ -1054,7 +1153,7 @@ var analiseParcialController = $.extend(true, {
     },
 
     apresentarOpcoesOrdenarPor : function(opcao) {
-        if (opcao === "selecione") {
+        if (opcao === "") {
             $("#opcoesOrdenarPor").hide();
         } else {
             $(".label").hide();
@@ -1064,20 +1163,73 @@ var analiseParcialController = $.extend(true, {
     },
 
     filtrarOrdenarPor : function(estudo) {
-        //FIXME - rever filtro
-        if ($("#elementos :selected").val() !== '') {
+        var valueFiltroOrdenarPor = $("#filtroOrdenarPor").val();
+        switch (valueFiltroOrdenarPor) {
+            case 'percentual_de_venda':
+                analiseParcialController.filtrarOrdenarPercentualVenda();
+                break;
+            case 'reducao_de_reparte':
+                analiseParcialController.filtrarOrdenarReducaoReparte();
+                break;
+            default:
+                $("#baseEstudoGridParcial").flexOptions({
+                    params: [{name:'filterSortName', value: valueFiltroOrdenarPor},
+                        {name:'filterSortFrom', value: $("#ordenarPorDe").val()},
+                        {name:'filterSortTo',   value: $("#ordenarPorAte").val()},
+                        {name:'id',             value: estudo},
+                        {name:'elemento',       value: $("#elementos :selected").val()}]
+                }).flexReload();
         }
-        $("#baseEstudoGridParcial").flexOptions({
-            params: [{name:'filterSortName', value: $("#filtroOrdenarPor").val()},
-                {name:'filterSortFrom', value: $("#ordenarPorDe").val()},
-                {name:'filterSortTo',   value: $("#ordenarPorAte").val()},
-                {name:'id',             value: estudo},
-                {name:'elemento',       value: $("#elementos :selected").val()}]
-        }).flexReload();
         if (event) {
             event.preventDefault();
         }
         return false;
+    },
+
+    filtrarOrdenarPercentualVenda : function() {
+        var de = $("#ordenarPorDe").val() * 1;
+        var ate = $("#ordenarPorAte").val() * 1;
+
+        var settings = {order: de<ate?'asc':'desc', attr: 'percentualVenda'};
+        var sortAtribute = 'td[abbr="cota"]';
+
+        $('#baseEstudoGridParcial tr')
+            .tsort(sortAtribute, settings)
+            .removeClass('erow')
+            .each(function(){
+                var $tr = $(this);
+                var perc = $tr.find(sortAtribute).attr('percentualVenda');
+                if (perc < de || perc > ate) {
+                    $tr.hide();
+                } else {
+                    $tr.show();
+                }
+            })
+            .filter(':odd').addClass('erow')
+            .end().find('td').removeClass('sorted');
+    },
+
+    filtrarOrdenarReducaoReparte : function() {
+        var de = $("#ordenarPorDe").val() * 1;
+        var ate = $("#ordenarPorAte").val() * 1;
+
+        var settings = {order: de<ate?'asc':'desc', attr: 'reducaoReparte'};
+        var sortAtribute = 'td[abbr="reparteSugerido"] div input';
+
+        $('#baseEstudoGridParcial tr')
+            .tsort(sortAtribute, settings)
+            .removeClass('erow')
+            .each(function(){
+                var $tr = $(this);
+                var rr = $tr.find(sortAtribute).attr('reducaoReparte');
+                if (rr < de || rr > ate) {
+                    $tr.hide();
+                } else {
+                    $tr.show();
+                }
+            })
+            .filter(':odd').addClass('erow')
+            .end().find('td').removeClass('sorted');
     },
 
     filtrarCotasNaoSelec : function(estudo) {

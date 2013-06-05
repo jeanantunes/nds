@@ -55,7 +55,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 
     @Override
     public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId) {
-        return analiseParcialRepository.carregarEdicoesBaseEstudo(estudoId, true);
+        return analiseParcialRepository.carregarEdicoesBaseEstudo(estudoId);
     }
 
     @Override
@@ -72,7 +72,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
             }
         } else {
             if (queryDTO.getEdicoesBase() == null) {
-                queryDTO.setEdicoesBase(analiseParcialRepository.carregarEdicoesBaseEstudo(queryDTO.getEstudoId(), true));
+                queryDTO.setEdicoesBase(analiseParcialRepository.carregarEdicoesBaseEstudo(queryDTO.getEstudoId()));
             }
             for (AnaliseParcialDTO item : lista) {
                 item.setDescricaoLegenda(traduzClassificacaoCota(item.getLeg()));
@@ -81,6 +81,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 for (EdicoesProdutosDTO edicao : queryDTO.getEdicoesBase()) {
                     idsProdutoEdicao.add(edicao.getProdutoEdicaoId());
                 }
+                Map<Integer, EdicoesProdutosDTO> edicoesProdutosDTOMap = new HashMap<>();
                 item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>());
                 if(idsProdutoEdicao.size() > 0){
                 	edicoesComVenda.addAll(analiseParcialRepository.getEdicoesBase((long) item.getCota(), idsProdutoEdicao));
@@ -88,11 +89,13 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 		for (EdicoesProdutosDTO ed : edicoesComVenda) {
                 			if (ed.getProdutoEdicaoId().equals(edicao.getProdutoEdicaoId())) {
                 				BeanUtils.copyProperties(edicao, ed, new String[] {"reparte", "venda"});
-                				item.getEdicoesBase().add(ed);
+                                edicoesProdutosDTOMap.put(ed.getOrdemExibicao(), ed);
+//                                item.getEdicoesBase().add(ed);
                 			}
                 		}
                 	}                	
                 }
+                item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>(edicoesProdutosDTOMap.values()));
             }
         }
         return lista;
@@ -105,8 +108,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     }
 
     @Override
-    public List<PdvDTO> carregarDetalhesPdv(Integer numeroCota) {
-        return analiseParcialRepository.carregarDetalhesPdv(numeroCota);
+    public List<PdvDTO> carregarDetalhesPdv(Integer numeroCota, Long idEstudo) {
+        return analiseParcialRepository.carregarDetalhesPdv(numeroCota, idEstudo);
     }
 
     @Override
