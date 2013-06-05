@@ -3,6 +3,18 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	var url = pathTela;
 	var T = this;
 	this.workspace = workspace;
+
+	this.carregarEventos = function() {
+	    if (!isNaN($('#reparteTotal').text()) && !isNaN($('#reparteDistribuir').val())) {
+                $('#sobra').text(parseInt($('#reparteTotal').text()) - parseInt($('#reparteDistribuir').val()));
+            }
+	    
+	    $('#reparteDistribuir').blur(function() {
+	        if (!isNaN($('#reparteTotal').text()) && !isNaN($('#reparteDistribuir').val())) {
+	            $('#sobra').text(parseInt($('#reparteTotal').text()) - parseInt($('#reparteDistribuir').val()));
+	        }
+	    });
+	};
 	
 	this.removerDuplicados = function eliminateDuplicates(arr) {
 		  var i,
@@ -405,12 +417,13 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 			T.bonificacaoSelecionados = totalBonificacoes;
 		}
 
+		T.preencherObjetoBonificacoes();
 		$("#elemento1Grid").flexAddData({
 			rows : toFlexiGridObject(T.bonificacaoSelecionados),
 			page : 1,
 			total : 1
 		});
-		
+		T.preencherTelaBonificacoes();
 		T.bonificacaoSelecionados.forEach(function(element){ 
 			if (element.elemento.checkBox.checked) {
 				element.elemento.checkBox.checked = false;
@@ -418,6 +431,25 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 			}
 		});
 		
+	};
+	
+	this.preencherObjetoBonificacoes = function() {
+	    $('#elemento1Grid tr').each(function(i, value) {
+	        var inp = $(this).closest("tr").find("input");
+	        distribuicaoVendaMedia.bonificacaoSelecionados[i].percBonificacao = inp.eq(0).val();
+	        distribuicaoVendaMedia.bonificacaoSelecionados[i].reparteMinimo = inp.eq(1).val();
+	        distribuicaoVendaMedia.bonificacaoSelecionados[i].todasAsCotas = inp.eq(2).is(":checked");
+	    });
+	};
+
+	this.preencherTelaBonificacoes = function() {
+	    for (var i = distribuicaoVendaMedia.bonificacaoSelecionados.length; i > 0; i--) {
+	        var linha = $('#elemento1Grid tr').eq(i);
+	        
+	        linha.find('input:eq(0)').val(distribuicaoVendaMedia.bonificacaoSelecionados[i].percBonificacao);
+	        linha.find('input:eq(1)').val(distribuicaoVendaMedia.bonificacaoSelecionados[i].reparteMinimo);
+	        linha.find('input:eq(2)').prop('checked', distribuicaoVendaMedia.bonificacaoSelecionados[i].todasAsCotas);
+	    }
 	};
 	
 	this.removerBonificacao = function(index){
@@ -491,6 +523,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 				var produtoEdicao = T.produtoEdicaoBases[i];
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].id", value : produtoEdicao.id});
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].numeroEdicao", value : produtoEdicao.numeroEdicao});
+				data.push({name: "distribuicaoVendaMedia.bases["+i+"].idProduto", value : produtoEdicao.idProduto});
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].codigoProduto", value : produtoEdicao.codigoProduto});
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].periodo", value : produtoEdicao.periodo});
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].parcial", value : produtoEdicao.parcial});
@@ -530,7 +563,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 				excecao2 = $("#elementoInformacoesComplementares2").val(),
 				excecao3 = $("#elementoInformacoesComplementares3").val();
 			
-			if (excecao1 === excecao2 || excecao1 === excecao3 || excecao2 === excecao3) {
+			if (excecao1 === excecao2 || (excecao3 != -1 && excecao1 === excecao3) || (excecao2 != -1 && excecao2 === excecao3)) {
 				exibirMensagemDialog("WARNING", ["Favor selecionar diferentes elementos."], "");
 				return;
 			}

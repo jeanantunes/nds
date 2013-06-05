@@ -25,16 +25,15 @@ public class VendaCrescente {
     protected void executar(CotaEstudo cota) {
 
 	BigDecimal indiceVendaCrescente = BigDecimal.ONE;
-	List<ProdutoEdicaoEstudo> listProdutoEdicao = cota.getEdicoesRecebidas();
 	List<Boolean> listDivBoolean = new ArrayList<Boolean>();
-	if (listProdutoEdicao != null && listProdutoEdicao.size() >= 4) {
+	if (cota.getEdicoesRecebidas() != null && cota.getEdicoesRecebidas().size() >= 4) {
 
 	    int iProdutoEdicao = 0;
-	    while (iProdutoEdicao < listProdutoEdicao.size()) {
-		ProdutoEdicaoEstudo produtoEdicao = listProdutoEdicao.get(iProdutoEdicao);
+	    while (iProdutoEdicao < cota.getEdicoesRecebidas().size()) {
+		ProdutoEdicaoEstudo produtoEdicao = cota.getEdicoesRecebidas().get(iProdutoEdicao);
 		ProdutoEdicaoEstudo previousProdutoEdicao = null;
 		if (iProdutoEdicao > 0) {
-		    previousProdutoEdicao = listProdutoEdicao.get(iProdutoEdicao - 1);
+		    previousProdutoEdicao = cota.getEdicoesRecebidas().get(iProdutoEdicao - 1);
 
 		    if (previousProdutoEdicao.getProduto().getId().equals(produtoEdicao.getProduto().getId()) && !previousProdutoEdicao.isEdicaoAberta()
 			    && !produtoEdicao.isEdicaoAberta()) {
