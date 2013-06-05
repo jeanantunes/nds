@@ -193,8 +193,10 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			List<Long> selecionados = (List<Long>) session.getAttribute("selecionados");
 			
 			TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>> grid = null;
-		
+
 			try {
+
+				verificarExecucaoInterfaces();
 				
 				if(selecionados==null  || selecionados.isEmpty()) {
 					throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, NENHUM_REGISTRO_SELECIONADO));
@@ -251,7 +253,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			retorno[0] = grid;
 			retorno[1] = mensagens;
 			retorno[2] = status;
-			
+
 			
 			result.use(Results.json()).withoutRoot().from(retorno).recursive().serialize();
 		}
@@ -429,4 +431,9 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 				throw new ValidacaoException("/pesquisarExpedicoes",new ValidacaoVO(TipoMensagem.WARNING,MSG_NAO_EXISTE_MATRIZ_BALANCEAMENTO_CONFIRMADO));
 			}
 		}
+		
+		private String verificarExecucaoInterfaces() {
+			throw new ValidacaoException(TipoMensagem.ERROR, "As interfaces encontram-se em processamento. Aguarde o termino da execução para continuar!");
+		}
+		
 	}

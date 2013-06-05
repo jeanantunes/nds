@@ -28,6 +28,7 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.DescontoLogisticaRepository;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 
 @Component
 public class EMS0108MessageProcessor extends AbstractRepository implements
@@ -39,6 +40,9 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 
+	@Autowired
+	private DistribuidorService distribuidorService;
+
 	private final static String DATA_ZEROS = "00000000";
 
 	private final static SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd");
@@ -49,7 +53,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
-		// TODO Auto-generated method stub
+		distribuidorService.bloqueiaProcessosLancamentosEstudos();
 	}
 
 	/**
@@ -416,7 +420,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 
 	@Override
 	public void posProcess(Object tempVar) {
-		// TODO Auto-generated method stub
+		distribuidorService.desbloqueiaProcessosLancamentosEstudos();
 	}
 	
 }
