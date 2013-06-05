@@ -11,7 +11,6 @@ import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
@@ -128,8 +127,9 @@ public interface DistribuidorService {
 
 	/**
 	 * Verifica se os processos que alteram estudos ou balanceamentos de matriz devem ser bloqueados
+	 * Tambem desbloqueia caso a interface esteja sendo executada a mais de uma hora (pois pode ser que a interface tenha travado)
 	 * @return boolean
 	 */
-	boolean isBloqueadoProcessosLancamentosEstudos();
+	boolean verificaDesbloqueioProcessosLancamentosEstudos();
 	
 }

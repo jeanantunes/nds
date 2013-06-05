@@ -146,6 +146,8 @@ public class MatrizRecolhimentoController extends BaseController {
 	@Path("/processarProdutosNaoBalanceadosAposConfirmacaoMatriz")
 	public void processarProdutosNaoBalanceadosAposConfirmacaoMatriz(){
 		
+		verificarExecucaoInterfaces();
+		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
 				(BalanceamentoRecolhimentoDTO) this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
 		
@@ -186,6 +188,8 @@ public class MatrizRecolhimentoController extends BaseController {
 	@Path("/confirmar")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void confirmar(List<Date> datasConfirmadas) {
+		
+		verificarExecucaoInterfaces();
 		
 		if (datasConfirmadas == null || datasConfirmadas.size() <= 0) {
 			
@@ -269,6 +273,8 @@ public class MatrizRecolhimentoController extends BaseController {
 	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void balancearPorEditor() {
 		
+		verificarExecucaoInterfaces();
+		
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
 		
 		this.validarDadosPesquisa(filtro.getDataPesquisa(), filtro.getListaIdsFornecedores());
@@ -296,6 +302,8 @@ public class MatrizRecolhimentoController extends BaseController {
 	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void balancearPorValor() {
 
+		verificarExecucaoInterfaces();
+		
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
 		
 		this.validarDadosPesquisa(filtro.getDataPesquisa(), filtro.getListaIdsFornecedores());
@@ -322,6 +330,8 @@ public class MatrizRecolhimentoController extends BaseController {
 	@Path("/salvar")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void salvar() {
+		
+		verificarExecucaoInterfaces();
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
 			(BalanceamentoRecolhimentoDTO)
@@ -423,6 +433,8 @@ public class MatrizRecolhimentoController extends BaseController {
 	public void reprogramarSelecionados(List<ProdutoRecolhimentoFormatadoVO> listaProdutoRecolhimento,
 										String novaDataFormatada, String dataAntigaFormatada) {
 		
+		verificarExecucaoInterfaces();
+		
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
 		
 		this.validarDadosReprogramar(novaDataFormatada, filtro.getNumeroSemana());
@@ -447,6 +459,8 @@ public class MatrizRecolhimentoController extends BaseController {
 	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void reprogramarRecolhimentoUnico(ProdutoRecolhimentoFormatadoVO produtoRecolhimento,
 										     String dataAntigaFormatada) {
+		
+		verificarExecucaoInterfaces();
 		
 		String novaDataFormatada = produtoRecolhimento.getNovaData();
 		
@@ -480,6 +494,8 @@ public class MatrizRecolhimentoController extends BaseController {
 	@Path("/atualizarResumoBalanceamento")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void atualizarResumoBalanceamento() {
+		
+		verificarExecucaoInterfaces();
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
 			(BalanceamentoRecolhimentoDTO)
@@ -1388,6 +1404,8 @@ public class MatrizRecolhimentoController extends BaseController {
 	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void excluirBalanceamento(Long idLancamento) {
 
+		verificarExecucaoInterfaces();
+		
 		this.recolhimentoService.excluiBalanceamento(idLancamento);
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoSessao =
@@ -1420,6 +1438,12 @@ public class MatrizRecolhimentoController extends BaseController {
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
 			"Balanceamento excluído com sucesso!"), "result").recursive().serialize();
+	}
+
+	private void verificarExecucaoInterfaces() {
+		if (distribuidorService.verificaDesbloqueioProcessosLancamentosEstudos()) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "As interfaces encontram-se em processamento. Aguarde o termino da execução para continuar!");
+		}
 	}
 	
 }

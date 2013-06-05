@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -515,29 +516,50 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 			return novaData;
 		}
 		
-		return null;	
+		return null;
 	}
 
 	@Override
+	@Transactional
 	public void bloqueiaProcessosLancamentosEstudos() {
 		// Bloqueia no sistema os processoss relacionados a estudo e lancamentos
 		Distribuidor distribuidor = this.obter();
 		distribuidor.setInterfacesMatrizExecucao(true);
+		distribuidor.setDataInicioInterfacesMatrizExecucao(new Date());
 		this.alterar(distribuidor);
 	}
 
 	@Override
+	@Transactional
 	public void desbloqueiaProcessosLancamentosEstudos() {
 		// Bloqueia no sistema os processoss relacionados a estudo e lancamentos
 		Distribuidor distribuidor = this.obter();
 		distribuidor.setInterfacesMatrizExecucao(false);
+		distribuidor.setDataInicioInterfacesMatrizExecucao(null);
 		this.alterar(distribuidor);
-		
 	}
 
 	@Override
-	public boolean isBloqueadoProcessosLancamentosEstudos() {
-		return this.obter().isInterfacesMatrizExecucao();
+	@Transactional
+	public boolean verificaDesbloqueioProcessosLancamentosEstudos() {
+		Distribuidor distribuidor = this.obter();
+		Date dataInicioExecucaoInterfaces = distribuidor.getDataInicioInterfacesMatrizExecucao();
+		
+		if (distribuidor.isInterfacesMatrizExecucao() && dataInicioExecucaoInterfaces != null) {
+
+			Calendar calendarDuasHorasApos = Calendar.getInstance();
+			calendarDuasHorasApos.setTime(dataInicioExecucaoInterfaces);
+			calendarDuasHorasApos.add(Calendar.HOUR, 1);
+			
+			//Caso tenha passado uma hora e o sistema nao tenha liberado, desbloqueia automaticamente as funcionalidades (pois provavelmente a interface travou)
+			if (dataInicioExecucaoInterfaces.after(calendarDuasHorasApos.getTime())) {
+				distribuidor.setInterfacesMatrizExecucao(false);
+				this.alterar(distribuidor);
+			}
+
+		}
+		
+		return distribuidor.isInterfacesMatrizExecucao();
 	}
-	
+
 }
