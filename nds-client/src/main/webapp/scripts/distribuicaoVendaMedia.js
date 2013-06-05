@@ -3,6 +3,18 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	var url = pathTela;
 	var T = this;
 	this.workspace = workspace;
+
+	this.carregarEventos = function() {
+	    if (!isNaN($('#reparteTotal').text()) && !isNaN($('#reparteDistribuir').val())) {
+                $('#sobra').text(parseInt($('#reparteTotal').text()) - parseInt($('#reparteDistribuir').val()));
+            }
+	    
+	    $('#reparteDistribuir').blur(function() {
+	        if (!isNaN($('#reparteTotal').text()) && !isNaN($('#reparteDistribuir').val())) {
+	            $('#sobra').text(parseInt($('#reparteTotal').text()) - parseInt($('#reparteDistribuir').val()));
+	        }
+	    });
+	};
 	
 	this.removerDuplicados = function eliminateDuplicates(arr) {
 		  var i,
@@ -296,10 +308,6 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 			T.elementosBonificacao[index].selecionado = checkbox.checked;
 			T.elementosBonificacao[index].checkBox = checkbox;
 		}
-		
-		
-		
-		
 	};
 	
 	this.processarLinhaElemento = function(index, row){
@@ -320,118 +328,127 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	};
 	
 	this.confirmarSelecaoBonificacao = function(){
-		var listaBonificacoes = [];
-		
-		if(T.bonificacaoSelecionados == undefined){
-			T.bonificacaoSelecionados = [];
-		}
-		
-		for(var i = 0; i < T.elementosBonificacao.length; i++){
-			var elemento = T.elementosBonificacao[i];
-			if(elemento.selecionado){
-				if( ! T.containsBonificacao(elemento)){
-					var bonificacao = {
-							index : T.bonificacaoSelecionados.length,
-							componenteDesc : T.componenteBonificacaoSelecionado.descricao,
-							componente : T.componenteBonificacaoSelecionado,
-							elementoDesc : elemento.descricao,
-							elemento : elemento,
-							percBonificacaoInput : '<input id="percBonificacao-' + T.bonificacaoSelecionados.length + '" style="width: 40px; text-align: right;" onchange="distribuicaoVendaMedia.alterarBonificacao(this, '+T.bonificacaoSelecionados.length+')"/>',
-							percBonificacao : '',
-							reparteMinimoInput : '<input id="reparteMinimo-' + T.bonificacaoSelecionados.length + '" style="width: 40px; text-align: right;" onchange="distribuicaoVendaMedia.alterarReparteMinimo(this, '+T.bonificacaoSelecionados.length+')"/>',
-							reparteMinimo : '',
-							sel : '<input id="percBonificacao-' + T.bonificacaoSelecionados.length + '" type="checkbox" onchange="distribuicaoVendaMedia.alterarTodasAsCotas(this, '+T.bonificacaoSelecionados.length+')" />',
-							todasAsCotas : false,
-							acao : '<a onclick="popup_excluir_bonificacao('+T.bonificacaoSelecionados.length+');" href="javascript:;"><img src="images/ico_excluir.gif" border="0"/></a>',
-					};
-					
-					listaBonificacoes.push(bonificacao);
-					
-				}
-			}
-		}
-		
-		var iguais = 0,
-			diferentes = 0,
-			totalBonificacoes = [],
-			totalComponentesUsados = [];
-			
-		listaBonificacoes.forEach(function(novaBonificacao){
-			totalBonificacoes.push(novaBonificacao);
-		});
-		
-		T.bonificacaoSelecionados.forEach(function(bonificacao){
-			totalBonificacoes.push(bonificacao);
-		});
-		
-		totalBonificacoes.forEach(function(novaBonificacao){
-			totalComponentesUsados.push(novaBonificacao.componente.enumValue);
-		});
-		
-		for ( var int = 0; int < totalBonificacoes.length; int++) {
-			iguais = 0;
-			var novaBonificacao = totalBonificacoes[int];
-			
-			totalBonificacoes.forEach(function(bonificacao){
-				if(novaBonificacao.componente.enumValue === bonificacao.componente.enumValue) {
-					iguais++;
-				}
-			});
-			
-			if (iguais > 3) {
-				break;
-			}
-		}
-		
-		totalComponentesUsados = T.removerDuplicados(totalComponentesUsados);
-		
-		totalComponentesUsados.forEach(function(componente1){
-			diferentes = 0;
-			totalComponentesUsados.forEach(function(componente2){
-				if (componente1 !== componente2) {
-					diferentes++;
-				}
-			});
-		});
-		
-		
-		if (iguais > 3) {
-			exibirMensagemDialog("WARNING", ["Não foi possível inserir esse(s) iten(s). Um componente não pode ter mais que 3 elementos."], "");
-			return;
-		}else if ((diferentes+1) > 3) {
-			exibirMensagemDialog("WARNING", ["Não é possível adicionar mais que 3 Componentes."], "");
-			return;
-		}else {
-			T.bonificacaoSelecionados = totalBonificacoes;
-		}
+	    if (typeof T.bonificacaoSelecionados === 'undefined'){
+	        T.bonificacaoSelecionados = [];
+	    }
+	    var bonificacoes = [];
+	    for (var i = 0; i < T.bonificacaoSelecionados.length; i++) {
+	        bonificacoes.push(T.bonificacaoSelecionados[i]);
+	    }
 
-		$("#elemento1Grid").flexAddData({
-			rows : toFlexiGridObject(T.bonificacaoSelecionados),
-			page : 1,
-			total : 1
-		});
-		
-		T.bonificacaoSelecionados.forEach(function(element){ 
-			if (element.elemento.checkBox.checked) {
-				element.elemento.checkBox.checked = false;
-				element.elemento.selecionado = false;
-			}
-		});
-		
+	    for (var i = 0; i < T.elementosBonificacao.length; i++){
+	        var elemento = T.elementosBonificacao[i];
+	        if (elemento.selecionado) {
+	            if (!T.containsBonificacao(elemento)) {
+	                var bonificacao = {
+	                        index: bonificacoes.length,
+	                        componenteDesc: T.componenteBonificacaoSelecionado.descricao,
+	                        componente: T.componenteBonificacaoSelecionado,
+	                        elementoDesc: elemento.descricao,
+	                        elemento: elemento,
+	                        percBonificacaoInput: '<input id="percBonificacao-'+ bonificacoes.length +'" style="width: 40px; text-align: right;" onchange="distribuicaoVendaMedia.alterarBonificacao(this, '+ bonificacoes.length +')"/>',
+	                        percBonificacao: '',
+	                        reparteMinimoInput: '<input id="reparteMinimo-'+ bonificacoes.length +'" style="width: 40px; text-align: right;" onchange="distribuicaoVendaMedia.alterarReparteMinimo(this, '+bonificacoes.length+')"/>',
+	                        reparteMinimo: '',
+	                        sel: '<input id="percBonificacao-'+ bonificacoes.length +'" type="checkbox" onchange="distribuicaoVendaMedia.alterarTodasAsCotas(this, '+ bonificacoes.length+')" />',
+	                        todasAsCotas: false,
+	                        acao: '<a onclick="popup_excluir_bonificacao('+ bonificacoes.length +');" href="javascript:;"><img src="images/ico_excluir.gif" border="0"/></a>',
+	                };
+	                bonificacoes.push(bonificacao);
+	            }
+	        }
+	    }
+
+	    var iguais = 0,
+	    diferentes = 0,
+	    componentesUsados = [];
+
+	    bonificacoes.forEach(function(novaBonificacao){
+	        componentesUsados.push(novaBonificacao.componente.enumValue);
+	    });
+
+	    for (var i = 0; i < bonificacoes.length; i++) {
+	        iguais = 0;
+	        bonificacoes.forEach(function(bonificacao) {
+	            if (bonificacoes[i].componente.enumValue === bonificacao.componente.enumValue) {
+	                iguais++;
+	            }
+	        });
+
+	        if (iguais > 3) {
+	            break;
+	        }
+	    }
+
+	    componentesUsados = T.removerDuplicados(componentesUsados);
+	    componentesUsados.forEach(function(componente1) {
+	        diferentes = 0;
+	        componentesUsados.forEach(function(componente2) {
+	            if (componente1 !== componente2) {
+	                diferentes++;
+	            }
+	        });
+	    });
+
+	    if (iguais > 3) {
+	        exibirMensagemDialog("WARNING", ["Não foi possível inserir esse(s) iten(s). Um componente não pode ter mais que 3 elementos."], "");
+	        return;
+	    } else if ((diferentes + 1) > 3) {
+	        exibirMensagemDialog("WARNING", ["Não é possível adicionar mais que 3 Componentes."], "");
+	        return;
+	    } else {
+	        T.bonificacaoSelecionados = bonificacoes;
+	    }
+
+	    T.preencherObjetoBonificacoes();
+	    $("#elemento1Grid").flexAddData({
+	        rows : toFlexiGridObject(T.bonificacaoSelecionados),
+	        page : 1,
+	        total : 1
+	    });
+	    T.preencherTelaBonificacoes();
+	    T.bonificacaoSelecionados.forEach(function(element) { 
+	        if (element.elemento.checkBox.checked) {
+	            element.elemento.checkBox.checked = false;
+	            element.elemento.selecionado = false;
+	        }
+	    });
+	};
+	
+	this.preencherObjetoBonificacoes = function() {
+	    $('#elemento1Grid tr').each(function(i, value) {
+	        var inp = $(this).closest("tr").find("input");
+	        distribuicaoVendaMedia.bonificacaoSelecionados[i].percBonificacao = inp.eq(0).val();
+	        distribuicaoVendaMedia.bonificacaoSelecionados[i].reparteMinimo = inp.eq(1).val();
+	        distribuicaoVendaMedia.bonificacaoSelecionados[i].todasAsCotas = inp.eq(2).is(":checked");
+	    });
+	};
+
+	this.preencherTelaBonificacoes = function() {
+	    for (var i = 0; i < distribuicaoVendaMedia.bonificacaoSelecionados.length; i++) {
+	        var linha = $('#elemento1Grid tr').eq(i);
+	        
+	        if (typeof distribuicaoVendaMedia.bonificacaoSelecionados[i] !== 'undefined') {
+	            linha.find('input:eq(0)').val(distribuicaoVendaMedia.bonificacaoSelecionados[i].percBonificacao);
+	            linha.find('input:eq(1)').val(distribuicaoVendaMedia.bonificacaoSelecionados[i].reparteMinimo);
+	            linha.find('input:eq(2)').prop('checked', distribuicaoVendaMedia.bonificacaoSelecionados[i].todasAsCotas);
+	        }
+	    }
 	};
 	
 	this.removerBonificacao = function(index){
-		if (T.bonificacaoSelecionados.length === 1) {
-			T.bonificacaoSelecionados.shift();
-		}else{
-			T.bonificacaoSelecionados.splice(index, 1);
-		}
-		
-		$("#elemento1Grid").flexAddData({
-			rows : toFlexiGridObject(T.bonificacaoSelecionados),
-			page : 1,
-			total : 1
-		});
+	    if (T.bonificacaoSelecionados.length === 1) {
+	        T.bonificacaoSelecionados.shift();
+	    } else {
+	        T.bonificacaoSelecionados.splice(index, 1);
+	    }
+
+	    $("#elemento1Grid").flexAddData({
+	        rows : toFlexiGridObject(T.bonificacaoSelecionados),
+	        page : 1,
+	        total : 1
+	    });
+	    T.preencherTelaBonificacoes();
 	};
 	
 	this.containsBonificacao = function(elemento){
@@ -491,6 +508,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 				var produtoEdicao = T.produtoEdicaoBases[i];
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].id", value : produtoEdicao.id});
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].numeroEdicao", value : produtoEdicao.numeroEdicao});
+				data.push({name: "distribuicaoVendaMedia.bases["+i+"].idProduto", value : produtoEdicao.idProduto});
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].codigoProduto", value : produtoEdicao.codigoProduto});
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].periodo", value : produtoEdicao.periodo});
 				data.push({name: "distribuicaoVendaMedia.bases["+i+"].parcial", value : produtoEdicao.parcial});
@@ -530,7 +548,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 				excecao2 = $("#elementoInformacoesComplementares2").val(),
 				excecao3 = $("#elementoInformacoesComplementares3").val();
 			
-			if (excecao1 === excecao2 || excecao1 === excecao3 || excecao2 === excecao3) {
+			if (excecao1 === excecao2 || (excecao3 != -1 && excecao1 === excecao3) || (excecao2 != -1 && excecao2 === excecao3)) {
 				exibirMensagemDialog("WARNING", ["Favor selecionar diferentes elementos."], "");
 				return;
 			}

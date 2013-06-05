@@ -35,6 +35,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private int peb;
 	private BigDecimal precoCusto;
 	private Long peso;
+	private Long idProduto;
 	private String codigoProduto;
 	private PeriodicidadeProduto periodicidade;
 	private Integer numeroPeriodicidade;
@@ -864,5 +865,13 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 
 	public void setPeriodo(Integer periodo) {
 	    this.periodo = periodo;
+	}
+
+	public Long getIdProduto() {
+	    return idProduto;
+	}
+
+	public void setIdProduto(Long idProduto) {
+	    this.idProduto = idProduto;
 	}
 }

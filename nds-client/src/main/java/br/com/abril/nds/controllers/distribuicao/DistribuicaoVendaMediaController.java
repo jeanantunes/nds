@@ -50,11 +50,6 @@ import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.view.Results;
 
-/**
- * 
- * @author william.borba
- * 
- */
 @Path("/distribuicaoVendaMedia")
 @Resource
 public class DistribuicaoVendaMediaController extends BaseController {
@@ -211,7 +206,6 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	carregarComboClassificacao();
 
 	session.setAttribute(ProdutoDistribuicaoVO.class.getName(), produtoDistribuicaoVO);
-
     }
 
     @Path("pesquisarProdutosEdicao")

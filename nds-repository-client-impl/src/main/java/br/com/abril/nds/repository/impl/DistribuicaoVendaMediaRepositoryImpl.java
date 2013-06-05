@@ -33,6 +33,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 	StringBuilder sql = new StringBuilder();
 	sql.append("select t.id, ");
 	sql.append("       t.numero_edicao numeroEdicao, ");
+	sql.append("       t.idProduto, ");
 	sql.append("       t.codigo codigoProduto, ");
 	sql.append("       t.nome nome, ");
 	sql.append("       t.numero_periodo periodo, ");
@@ -46,6 +47,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 	sql.append("  from (select pe.id, ");
 	sql.append("               pe.numero_edicao, ");
 	sql.append("               p.codigo, ");
+	sql.append("               p.id idProduto, ");
 	sql.append("               p.nome, ");
 	sql.append("               plp.numero_periodo, ");
 	sql.append("               (case when plp.id is null then 0 else 1 end) parcial, ");
@@ -98,6 +100,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 	StringBuilder sql = new StringBuilder();
 	sql.append("select pe.id, ");
 	sql.append("       pe.numero_edicao numeroEdicao, ");
+	sql.append("       p.id idProduto, ");
 	sql.append("       p.codigo codigoProduto, ");
 	sql.append("       p.nome nome, ");
 	sql.append("       plp.numero_periodo periodo, ");
