@@ -228,7 +228,7 @@ public class CotaDAO {
 	});
 	return retorno;
     }
-
+ 
     public Map<Long, CotaEstudo> getHistoricoCota(final ProdutoEdicaoEstudo edicao) {
 	Map<String, Object> params = new HashMap<>();
 	params.put("produto_edicao_id", edicao.getId());
