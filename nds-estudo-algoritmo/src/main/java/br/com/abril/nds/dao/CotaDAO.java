@@ -259,7 +259,9 @@ public class CotaDAO {
 	});
 	Map<Long, CotaEstudo> retorno = new HashMap<>();
 	for (CotaEstudo cota : historicoCotas) {
-	    retorno.put(cota.getId(), cota);
+	    if (cota.getEdicoesRecebidas().size() > 0 && cota.getEdicoesRecebidas().get(0).getReparte().compareTo(BigDecimal.ZERO) > 0) {
+		retorno.put(cota.getId(), cota);
+	    }
 	}
 	return retorno;
     }

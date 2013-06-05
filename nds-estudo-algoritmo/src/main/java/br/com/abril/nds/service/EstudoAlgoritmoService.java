@@ -3,6 +3,9 @@ package br.com.abril.nds.service;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -253,6 +256,16 @@ public class EstudoAlgoritmoService {
 	    estudo.setUsarFixacao(distribuicaoVendaMedia.isUsarFixacao());
 	    estudo.setDistribuicaoVendaMediaDTO(distribuicaoVendaMedia);
 	    LinkedList<ProdutoEdicaoEstudo> edicoesBase = new LinkedList<>();
+	    
+	    // ordenando cotas pela data de lancamento
+	    Collections.sort(distribuicaoVendaMedia.getBases(), new Comparator<ProdutoEdicaoDTO>() {
+
+		@Override
+		public int compare(ProdutoEdicaoDTO o1, ProdutoEdicaoDTO o2) {
+		    return o2.getDataLancamento().compareTo(o1.getDataLancamento());
+		}
+	    });
+	    
 	    for (ProdutoEdicaoDTO base : distribuicaoVendaMedia.getBases()) {
 		ProdutoEdicaoEstudo ed = new ProdutoEdicaoEstudo();
 		ed.setProduto(new Produto());

@@ -188,6 +188,11 @@ public class SelecaoBancas extends ProcessoAbstrato {
 		    qtdeCotasAtivas = qtdeCotasAtivas.add(BigDecimal.ONE);
 		}
 	    }
+	    for (CotaEstudo cota : estudo.getCotasExcluidas()) {
+		if (cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
+		    qtdeCotasAtivas = qtdeCotasAtivas.add(BigDecimal.ONE);
+		}
+	    }
 	    BigDecimal abrangencia = new BigDecimal(estudo.getDistribuicaoVendaMediaDTO().getAbrangencia()).multiply(BigDecimal.valueOf(0.01));
 	    BigDecimal qtdeCotasAbrangencia = qtdeCotasAtivas.multiply(abrangencia);
 	    qtdeCotasAbrangencia = qtdeCotasAbrangencia.setScale(0, BigDecimal.ROUND_HALF_UP);
@@ -268,7 +273,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	if (!cota.isMix() && cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)) {
 	    cota.setClassificacao(ClassificacaoCota.BancaMixSemDeterminadaPublicacao);
 	}
-	if (!cota.getClassificacao().equals(ClassificacaoCota.CotaNova)) {
+	if (cota.getClassificacao().notIn(ClassificacaoCota.CotaNova, ClassificacaoCota.CotaMix, ClassificacaoCota.ReparteFixado)) {
 	    if (totalReparte.compareTo(BigDecimal.ZERO) == 0 && cota.getReparteMinimo().compareTo(BigInteger.ZERO) == 0) {
 		cota.setClassificacao(ClassificacaoCota.BancaSemHistorico);
 	    } else if (totalVenda.compareTo(BigDecimal.ZERO) == 0 && cota.getReparteMinimo().compareTo(BigInteger.ZERO) == 0) {

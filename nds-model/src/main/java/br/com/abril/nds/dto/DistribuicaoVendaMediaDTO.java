@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.util.ComponentesPDV;
@@ -22,6 +23,7 @@ public class DistribuicaoVendaMediaDTO {
 	private String elemento;
 	private String abrangenciaCriterio;
 	private Double abrangencia;
+	private Date dataLancamento;
 	
 	private Long roteiroEntregaId;
 	private Boolean complementarAutomatico;
@@ -128,6 +130,12 @@ public class DistribuicaoVendaMediaDTO {
 		this.excecaoDeBancas = excecaoDeBancas;
 	}
 
+	public Date getDataLancamento() {
+	    return dataLancamento;
+	}
+	public void setDataLancamento(Date dataLancamento) {
+	    this.dataLancamento = dataLancamento;
+	}
 	@Override
 	public String toString() {
 		return "DistribuicaoVendaMediaDTO [reparteDistribuir="
