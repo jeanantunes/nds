@@ -115,4 +115,21 @@ public interface DistribuidorService {
 	 * @return Integer
 	 */
 	Integer obterDiaDeRecolhimentoDaData(Date dataConferencia, Date dataRecolhimento, Long idProdutoEdicao);
+	
+	/**
+	 * Bloqueia os processos que alteram estudos ou balanceamentos de matriz
+	 */
+	void bloqueiaProcessosLancamentosEstudos();
+
+	/**
+	 * Desbloqueia os processos que alteram estudos ou balanceamentos de matriz
+	 */
+	void desbloqueiaProcessosLancamentosEstudos();
+
+	/**
+	 * Verifica se os processos que alteram estudos ou balanceamentos de matriz devem ser bloqueados
+	 * @return boolean
+	 */
+	boolean isBloqueadoProcessosLancamentosEstudos();
+	
 }

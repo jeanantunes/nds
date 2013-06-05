@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 import br.com.abril.nds.integracao.ems0106.inbound.EMS0106Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
@@ -36,7 +37,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
-		// TODO Auto-generated method stub
+		distribuidorService.bloqueiaProcessosLancamentosEstudos();
 	}
 	
 	@Override
@@ -216,7 +217,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 	
 	@Override
 	public void posProcess(Object tempVar) {
-		// TODO Auto-generated method stub
+		distribuidorService.desbloqueiaProcessosLancamentosEstudos();
 	}
 	
 }

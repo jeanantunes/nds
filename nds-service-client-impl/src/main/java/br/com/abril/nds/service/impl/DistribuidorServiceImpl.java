@@ -517,5 +517,27 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		
 		return null;	
 	}
+
+	@Override
+	public void bloqueiaProcessosLancamentosEstudos() {
+		// Bloqueia no sistema os processoss relacionados a estudo e lancamentos
+		Distribuidor distribuidor = this.obter();
+		distribuidor.setInterfacesMatrizExecucao(true);
+		this.alterar(distribuidor);
+	}
+
+	@Override
+	public void desbloqueiaProcessosLancamentosEstudos() {
+		// Bloqueia no sistema os processoss relacionados a estudo e lancamentos
+		Distribuidor distribuidor = this.obter();
+		distribuidor.setInterfacesMatrizExecucao(false);
+		this.alterar(distribuidor);
+		
+	}
+
+	@Override
+	public boolean isBloqueadoProcessosLancamentosEstudos() {
+		return this.obter().isInterfacesMatrizExecucao();
+	}
 	
 }

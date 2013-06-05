@@ -47,7 +47,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
-		// TODO Auto-generated method stub
+		distribuidorService.bloqueiaProcessosLancamentosEstudos();
 	}
 	
 	@Override
@@ -311,7 +311,9 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 				this.getSession().delete(estudo);
 			}
 		}
-				
+
+		distribuidorService.desbloqueiaProcessosLancamentosEstudos();
+		
 	}
 		
 }
