@@ -465,6 +465,7 @@ var analiseParcialController = $.extend(true, {
     atualizaReparte : function(input) {
 
         var $saldoreparte = $('#saldo_reparte');
+        var saldoReparte = parseInt($saldoreparte.text());
         var $input_reparte = $(input);
         var numeroCota = $input_reparte.attr('numeroCota');
         var reparteDigitado = $input_reparte.val();
@@ -472,12 +473,10 @@ var analiseParcialController = $.extend(true, {
         var reparteSubtraido = parseInt(reparteDigitado, 10) - parseInt(reparteAtual, 10);
         var $legenda = $input_reparte.closest('td').next().find('div');
 
-        if ($saldoreparte.text() === '0' && reparteSubtraido > 0) {
+        if ((saldoReparte - reparteSubtraido) < 0) {
             $input_reparte.val($input_reparte.attr('reparteAtual'));
-            return;
-        }
-
-        if (reparteSubtraido != 0) {
+            analiseParcialController.exibirMsg('WARNING', ['Não há saldo suficiente para esta operação.']);
+        } else {
             $saldoreparte.text(parseInt($saldoreparte.text(), 10) - reparteSubtraido);
 
             $.ajax({url: analiseParcialController.path +'/distribuicao/analise/parcial/mudarReparte',
