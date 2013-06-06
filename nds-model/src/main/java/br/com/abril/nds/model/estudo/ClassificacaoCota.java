@@ -6,7 +6,7 @@ public enum ClassificacaoCota {
 	/**
 	 * AJ
 	 */
-	Ajuste("AJ", "Ajuste"),
+	Ajuste("AJ", "Cota com ajuste de reparte"),
 	/**
 	 * FX
 	 */
@@ -22,7 +22,7 @@ public enum ClassificacaoCota {
 	/**
 	 * PR
 	 */
-	BancaSoComEdicaoBaseAberta("PR", "Banca que só tem edição base aberta"),
+	BancaSoComEdicaoBaseAberta("PR", "Cota que só tem edição base aberta"),
 	/**
 	 * MM
 	 */
@@ -30,7 +30,7 @@ public enum ClassificacaoCota {
 	/**
 	 * IN
 	 */
-	InclusaoManualCotas("IN", "Inclusão manual de cotas"),
+	InclusaoManualCotas("IN", "Inclusão manual de cota"),
 	/**
 	 * EG
 	 */
@@ -50,7 +50,7 @@ public enum ClassificacaoCota {
 	/**
 	 * SM
 	 */
-	BancaMixSemDeterminadaPublicacao("SM", "Publicação não está no MIX da cota"),
+	BancaMixSemDeterminadaPublicacao("SM", "Cota alternativa sem Mix cadastrado"),
 	/**
 	 * SS
 	 */
@@ -58,15 +58,15 @@ public enum ClassificacaoCota {
 	/**
 	 * FR
 	 */
-	BancaForaDaRegiaoDistribuicao("FR", "Região não recebe publicação"),
+	BancaForaDaRegiaoDistribuicao("FR", "Cota fora da região que recebe a publicação"),
 	/**
 	 * SH
 	 */
-	BancaSemHistorico("SH", "Não recebeu as edições-base"),
+	BancaSemHistorico("SH", "Cota sem histórico"),
 	/**
 	 * VZ
 	 */
-	BancaComVendaZero("VZ", "Sem vendas nas edições-bases"),
+	BancaComVendaZero("VZ", "Cota com venda zero"),
 	/**
 	 * MX
 	 */
@@ -74,11 +74,11 @@ public enum ClassificacaoCota {
 	/**
 	 * CP
 	 */
-	BancaEstudoComplementar("CP", "Bancas de Estudo Complementar"),
+	BancaEstudoComplementar("CP", "Cota do Estudo Complementar"),
 	/**
 	 * TR
 	 */
-	BonificacaoParaCotas("TR", "Bonificação para Cotas"),
+	BonificacaoParaCotas("TR", "Cota com bonificação"),
 	/**
 	 * ZZ
 	 */

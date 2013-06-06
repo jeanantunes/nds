@@ -362,7 +362,7 @@ table.filtro td span {font-weight: normal;}
 						<select name="cotasQueNaoEntraramNoEstudo_motivo" id="cotasQueNaoEntraramNoEstudo_motivo" style="width: 408px">
 							<option value="TODOS" selected="selected">Todas as Cotas</option>
                             <c:forEach items="${classificacaoCotaList}" var="classificacaoCota">
-                                <c:if test="${classificacaoCota.codigo ne ''}">
+                                <c:if test="${classificacaoCota.codigo ne '' && classificacaoCota.codigo ne 'S' && classificacaoCota.codigo ne 'IN'}">
                                     <option value="<c:out value="${classificacaoCota.codigo}"/>"><c:out value="${classificacaoCota.texto}"/></option>
                                 </c:if>
                             </c:forEach>
@@ -386,7 +386,6 @@ table.filtro td span {font-weight: normal;}
 							<option value="bairro">Bairro</option>
 							<option value="regiao">Região</option>
 							<option value="cotas_a_vista">Cotas A Vista</option>
-							<option value="cotas_novas">Cotas Novas</option>
 							<option value="area_influencia">Área de Influência</option>
 							<option value="distrito">Distrito</option>
 						</select>
@@ -584,7 +583,7 @@ table.filtro td span {font-weight: normal;}
             <br><br>
             <span>Esta ação requer confirmação com senha.</span>
             <br><br>
-            <input type="password" width="80" maxlength="10"/>
+            <input type="password" width="80" maxlength="10" id="password"/>
         </p>
     </div>
 
