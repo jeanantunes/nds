@@ -18,7 +18,7 @@ public enum ClassificacaoCota {
 	/**
 	 * 
 	 */
-	CotaNaoRecebeSegmento("SN", "Cota não recebe segmento"),
+	CotaExcecaoSegmento("SN", "Cota exceçao de Segmento"),
 	/**
 	 * PR
 	 */
@@ -42,7 +42,7 @@ public enum ClassificacaoCota {
 	/**
 	 * GN
 	 */
-	BancaQueRecebemDeterminadoSegmento("GN", "Cota não recebe esse Segmento"),
+	CotaNaoRecebeEsseSegmento("GN", "Cota não recebe esse Segmento"),
 	/**
 	 * S
 	 */

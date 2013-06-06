@@ -430,22 +430,24 @@ var analiseParcialController = $.extend(true, {
                 $header.find('tr').first().remove();
             }
 
-            var colSpanEdicoesBase = $header.find('tr th[abbr="reparte1"]').index();
+            var colSpanEdicoesBase = $header.find('tr th[abbr^="venda"]:first').index() - 1;
 
             if (analiseParcialController.tipoExibicao === 'NORMAL') {
                 $header.prepend($('<tr>').append($('<th colspan="' + colSpanEdicoesBase + '" style="border-bottom: 1px solid #DDDDDD;">')
                     .append('<div style="text-align: right;">Edições Base:</div>')));
 
-                for (var i=0; i<6; i++) {
-                    var edicao = $.extend({}, {edicao:'-'}, analiseParcialController.edicoesBase[i]);
-                    $header.find('tr').first().append($('<th colspan="2">').append($('<div style="text-align: center;">').append(edicao.edicao)));
+                if (colSpanEdicoesBase === 7) {
+                    for (var i=0; i<6; i++) {
+                        var edicao = $.extend({}, {edicao:'-'}, analiseParcialController.edicoesBase[i]);
+                        $header.find('tr').first().append($('<th colspan="2">').append($('<div style="text-align: center;">').append(edicao.edicao)));
+                    }
+                } else {
+                    for (var i=5; i>=0; i--) {
+                        var edicao = $.extend({}, {edicao:'-'}, analiseParcialController.edicoesBase[i]);
+                        $header.find('tr').first().append($('<th colspan="2">').append($('<div style="text-align: center;">').append(edicao.edicao)));
+                    }
                 }
 
-//                $.each(analiseParcialController.edicoesBase, function(key, value) {
-//                    if(value){
-//                        $header.find('tr').first().append($('<th colspan="2">').append($('<div style="text-align: center;">').append(value.edicao)));
-//                    }
-//                });
             } else {
                 $header.prepend(
                     $('<tr>')
@@ -461,19 +463,20 @@ var analiseParcialController = $.extend(true, {
     },
 
     atualizaReparte : function(input) {
+
         var $saldoreparte = $('#saldo_reparte');
         var $input_reparte = $(input);
-
-        if ($saldoreparte.text() === '0') {
-            $input_reparte.val($input_reparte.attr('reparteAtual'));
-            return;
-        }
-
         var numeroCota = $input_reparte.attr('numeroCota');
         var reparteDigitado = $input_reparte.val();
         var reparteAtual = $input_reparte.attr('reparteAtual');
         var reparteSubtraido = parseInt(reparteDigitado, 10) - parseInt(reparteAtual, 10);
         var $legenda = $input_reparte.closest('td').next().find('div');
+
+        if ($saldoreparte.text() === '0' && reparteSubtraido > 0) {
+            $input_reparte.val($input_reparte.attr('reparteAtual'));
+            return;
+        }
+
         if (reparteSubtraido != 0) {
             $saldoreparte.text(parseInt($saldoreparte.text(), 10) - reparteSubtraido);
 
@@ -763,6 +766,8 @@ var analiseParcialController = $.extend(true, {
             },
             minLength: 3,
             select: function( event, ui ) {
+                event.preventDefault();
+                event.stopPropagation();
                 //$('#inputCodigoProduto').val(ui.item.value);
             }
         });
@@ -981,8 +986,9 @@ var analiseParcialController = $.extend(true, {
             analiseParcialController.exibirMsg('WARNING', ['Não há saldo de reparte para distribuir!']);
         } else {
             var $input = $(input);
+            $input.data('valid', false);
+
             if ($input.val() !== '' && !isNaN($input.val())) {
-                $input.data('valor-anterior', $input.val());
                 switch ($input.attr('motivo')) {
                     case 'SM': //Publicação não está no MIX da cota
                         analiseParcialController.popupConfirmaSenha($input, 'Deseja incluir pulicação no mix?');
@@ -998,10 +1004,8 @@ var analiseParcialController = $.extend(true, {
                 }
             } else if ($input.val() === '') {
                 analiseParcialController.atualizaQuantidadeTotal($input);
-                $input.data('valor-anterior', 0);
             } else {
                 $input.val('');
-                $input.data('valor-anterior', 0);
             }
         }
     },
@@ -1023,6 +1027,7 @@ var analiseParcialController = $.extend(true, {
                 "Cancelar": function() {
                     $(this).dialog("close");
                     $input.val('');
+                    $input.data('valid', false);
                 }
             }
         });
@@ -1031,9 +1036,20 @@ var analiseParcialController = $.extend(true, {
     atualizaQuantidadeTotal : function($input) {
         var $saldoReparteNaoSelec = $('#saldoReparteNaoSelec');
         var saldo = parseInt($saldoReparteNaoSelec.html(), 10);
-        var variacao = parseInt($input.val(), 10) - parseInt($input.data('valor-anterior'), 10);
+
+        var valorDigitado = parseInt($input.val(), 10);
+        valorDigitado = isNaN(valorDigitado)?0:valorDigitado;
+
+        var valorAnterior = parseInt($input.data('valor-anterior'), 10);
+        valorAnterior = isNaN(valorAnterior)?0:valorAnterior;
+
+        var variacao = valorDigitado - valorAnterior;
+
         saldo = saldo - variacao;
         $saldoReparteNaoSelec.html(saldo);
+
+        $input.data('valor-anterior', $input.val());
+        $input.data('valid', true);
     },
     
     cotasQueNaoEntraramNoEstudo : function() {
@@ -1076,10 +1092,10 @@ var analiseParcialController = $.extend(true, {
 
         data.push({name: 'estudoId', value: estudoId});
 
-        $("#cotasNaoSelec tr td input").each(function (key, value) {
-            if (value.value > 0) {
-                data.push({name: 'cotas[' + key + '].numeroCota', value: value.id.replace(/\D/g, '')});
-                data.push({name: 'cotas[' + key + '].quantidade', value: value.value});
+        $("#cotasNaoSelec tr td input").each(function (key, element) {
+            if (element.value > 0) {
+                data.push({name: 'cotas[' + key + '].numeroCota', value: $(element).attr('numerocota')});
+                data.push({name: 'cotas[' + key + '].quantidade', value: element.value});
             }
         });
 
@@ -1109,23 +1125,33 @@ var analiseParcialController = $.extend(true, {
             modal : true,
             buttons : {
                 "Confirmar" : function() {
-                    var $inputsPreenchidos = $("#cotasNaoSelec tr td input[value!='']");
+                    var $inputsPreenchidos = $("#cotasNaoSelec tr td input").filter(function(){return this.value > 0});
 
-                    if ($inputsPreenchidos.length > 0) {
+                    var isValid = true;
+                    $inputsPreenchidos.each(function () {
+                        if ($(this).data('valid') === false) {
+                            isValid = false;
+                            return false;
+                        }
+                    });
+
+                    if ($inputsPreenchidos.length > 0 && isValid) {
                         if ($inputsPreenchidos.filter('[motivo="SM"]').length > 0) {
 
-                            var listaNovosMixCota = [];
+                            var params = [];
                             var codigoProduto = $('#codigoProduto').val();
+
+                            params.push({name: 'produtoId', value: codigoProduto});
 
                             $inputsPreenchidos.filter('[motivo="SM"]').each(function(key){
                                 var $this = $(this);
-                                listaNovosMixCota.push({name: 'listaNovosMixCota[' + key + '].numeroCota', value: $this.attr('numerocota')});
-                                listaNovosMixCota.push({name: 'listaNovosMixCota[' + key + '].codigoProduto', value: codigoProduto});
-                                listaNovosMixCota.push({name: 'listaNovosMixCota[' + key + '].reparteMinimo', value: $this.val()});
-                                listaNovosMixCota.push({name: 'listaNovosMixCota[' + key + '].reparteMaximo', value: $this.val()});
+                                params.push({name: 'listaNovosMixProduto[' + key + '].numeroCota', value: $this.attr('numerocota')});
+                                params.push({name: 'listaNovosMixProduto[' + key + '].codigoProduto', value: codigoProduto});
+                                params.push({name: 'listaNovosMixProduto[' + key + '].reparteMinimo', value: $this.val()});
+                                params.push({name: 'listaNovosMixProduto[' + key + '].reparteMaximo', value: $this.val()});
                             });
 
-                            $.postJSON(analiseParcialController.path + '/distribuicao/mixCotaProduto/adicionarMixCota', listaNovosMixCota);
+                            $.postJSON(analiseParcialController.path + '/distribuicao/mixCotaProduto/adicionarMixProduto', params);
                         }
                         analiseParcialController.postMudarReparteLote();
                         $(this).dialog("close");
@@ -1382,7 +1408,7 @@ function popup_edicoes_produto() {
         modal : true,
         buttons : {
             "Confirmar" : function() {
-                var $tbody = $('#dialog-mudar-base table tbody');
+                var $tbody = $('#dialog-mudar-base #prodCadastradosGrid tbody');
                 var $edicaoSelecao = $("#edicaoProdCadastradosGrid input.edicaoSelecao:checked");
                 if (($tbody.find('tr').length + $edicaoSelecao.length) > 6) {
                     analiseParcialController.exibirMsg('WARNING', ['Não é possivel selecionar mais do que 6 edições no total!']);
