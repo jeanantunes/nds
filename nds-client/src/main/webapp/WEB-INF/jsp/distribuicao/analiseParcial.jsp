@@ -176,13 +176,13 @@ table.filtro td span {font-weight: normal;}
 					<td>Classificação: <span>${estudoCota.estudo.produtoEdicao.produto.tipoClassificacaoProduto.descricao}</span></td>
 					<td>Segmento: <span>${estudoCota.estudo.produtoEdicao.produto.tipoSegmentoProduto.descricao}</span></td>
 					<td>Filtrar por:</td>
-					<td><select name="select5" id="filtroOrdenarPor" style="width: 138px;"
+					<td><select name="select5" id="filtroOrdenarPor" style="width: 145px;"
 						onchange="analiseParcialController.apresentarOpcoesOrdenarPor(this.value);">
 							<option value="" selected="selected">Selecione...</option>
 							<option value="reparte">Reparte</option>
 							<option value="ranking">Ranking</option>
 							<option value="percentual_de_venda">% de Venda</option>
-							<option value="reducao_de_reparte">Redução de Reparte</option>
+							<option value="reducao_de_reparte">% Variação de Reparte</option>
 					</select></td>
 					<%--<td>Reparte: <input type="text" name="textfield6" id="textfield6" style="width: 40px;" /></td>--%>
 					<td>Abrangência: <span id="abrangencia"></span></td>
@@ -213,7 +213,7 @@ table.filtro td span {font-weight: normal;}
 					<td>
                         <span id="opcoesOrdenarPor" style="display: none;" class="label">
                             <span id="label_reparte" style="display: none;" class="label"> Reparte: </span>
-                            <span id="label_reducao_de_reparte" style="display: none;" class="label"> Dê: </span>
+                            <span id="label_reducao_de_reparte" style="display: none;" class="label"> % Dê: </span>
                             <span id="label_ranking" style="display: none;" class="label"> Ranking: </span>
                             <span id="label_percentual_de_venda" style="display: none;" class="label"> % Venda: </span>
                             <input id="ordenarPorDe" type="text" style="width: 60px;" /> Até <input id="ordenarPorAte" type="text" style="width: 60px;" /> Exs.
