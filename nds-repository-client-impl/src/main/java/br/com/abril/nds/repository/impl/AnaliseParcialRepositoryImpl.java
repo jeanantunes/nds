@@ -38,14 +38,18 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("       coalesce(ec.reparte,0) reparteSugerido, ");
         sql.append("       ec.classificacao leg, ");
         sql.append("       ec.cota_nova cotaNova, ");
-        sql.append("       0 juramento, ");
+        sql.append("       (select coalesce(sum(mec.qtde), 0) ");
+        sql.append("          from movimento_estoque_cota mec ");
+        sql.append("         where mec.tipo_movimento_id = 32 ");
+        sql.append("           and mec.cota_id = c.id ");
+        sql.append("           and mec.produto_edicao_id = pe.id) juramento, ");
         sql.append("       ifnull((select round(epc.qtde_recebida, 0) ");
         sql.append("                 from estoque_produto_cota epc ");
         sql.append("                 join lancamento l on l.produto_edicao_id = epc.produto_edicao_id ");
         sql.append("                 join produto_edicao pe on pe.id = l.produto_edicao_id ");
         sql.append("                 join produto p on p.id = pe.produto_id ");
         sql.append("                where epc.cota_id = c.id ");
-        sql.append("				  and p.id = p.id ");
+        sql.append("                  and p.id = p.id ");
         sql.append("                order by pe.numero_edicao desc ");
         sql.append("                limit 0, 1), 0) ultimoReparte ");
         sql.append("  from estudo_cota ec ");
@@ -240,14 +244,14 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("       p.nome nomeProduto, ");
         sql.append("       pe.numero_edicao edicao, ");
         sql.append("       plp.numero_periodo periodo, ");
-        sql.append("       round(sum(case when mec.tipo_movimento_id = 21 then mec.qtde end),0) reparte, ");
-        sql.append("       round(sum(case when mec.tipo_movimento_id = 21 then mec.qtde end) - ");
-        sql.append("       sum(case when mec.tipo_movimento_id = 26 then mec.qtde end), 0) venda ");
+        sql.append("       round(sum(case when mec.tipo_movimento_id = 13 then mec.qtde end),0) reparte, ");
+        sql.append("       round(sum(case when mec.tipo_movimento_id = 13 then mec.qtde end) - ");
+        sql.append("       sum(case when mec.tipo_movimento_id = 26 or mec.tipo_movimento_id = 32 then mec.qtde end), 0) venda ");
         sql.append("  from lancamento l ");
         sql.append("  join produto_edicao pe on pe.id = l.produto_edicao_id and pe.numero_edicao = :numeroEdicao ");
         sql.append("  join produto p on p.id = pe.produto_id and p.codigo = :codigoProduto ");
         sql.append("  join periodo_lancamento_parcial plp on plp.lancamento_id = l.id ");
-        sql.append("  join movimento_estoque_cota mec on mec.lancamento_id = l.id and mec.tipo_movimento_id in (21, 26) ");
+        sql.append("  join movimento_estoque_cota mec on mec.lancamento_id = l.id and mec.tipo_movimento_id in (13, 26, 32) ");
         sql.append("  join cota c on c.id = mec.cota_id and c.numero_cota = :numeroCota ");
         sql.append(" where l.tipo_lancamento = 'PARCIAL' ");
         sql.append("   and plp.numero_periodo = :numeroPeriodo ");
@@ -259,6 +263,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 .addScalar("codigoProduto", StandardBasicTypes.STRING)
                 .addScalar("nomeProduto", StandardBasicTypes.STRING)
                 .addScalar("edicao", StandardBasicTypes.BIG_INTEGER)
+                .addScalar("periodo", StandardBasicTypes.STRING)
                 .addScalar("reparte", StandardBasicTypes.BIG_INTEGER)
                 .addScalar("venda", StandardBasicTypes.BIG_INTEGER);
 

@@ -44,6 +44,7 @@ $(function(){
     
        <fieldset class="classFieldset">
    	    <legend> Histograma Pr&eacute;-An&aacute;lise</legend>
+   	    <input type="hidden" id="modoAnalise" value="${modoAnalise}" />
         <table width="950" border="0" cellpadding="2" cellspacing="1">
             <tr>
               <td width="45"><strong>Código:</strong></td>

@@ -1,7 +1,7 @@
 var histogramaPosEstudoController = $.extend(true, {
 	MIN_FAIXA : 0, 
 	MAX_FAIXA : 99999999,
-	modoAnalise : 'NORMAL',
+	modoAnalise : $('#modoAnalise').val(),
 	fieldSetValues : {},
 	matrizSelecionado : {},
 	analiseGridRowConsolidada : {},

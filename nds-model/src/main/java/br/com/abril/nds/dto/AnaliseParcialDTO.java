@@ -107,8 +107,12 @@ public class AnaliseParcialDTO implements Serializable {
 	return juramento;
     }
 
-    public void setJuramento(BigInteger juramento) {
-	this.juramento = juramento;
+    public void setJuramento(BigDecimal juramento) {
+	if (juramento == null) {
+	    this.juramento = null;
+	} else {
+	    this.juramento = juramento.toBigInteger();
+	}
     }
 
     public BigDecimal getMediaVenda() {

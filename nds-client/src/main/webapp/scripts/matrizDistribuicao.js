@@ -1448,6 +1448,12 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					params = [];
 					
 					for(var prop in selecionado){
+					    if (prop == 'edicao') {
+					        edicao = selecionado[prop];
+                                            }
+                                            if (prop == 'codigoProduto') {
+                                                codigoProduto = selecionado[prop];
+                                            }
 						params.push({
 							name : "selecionado." + prop, value : selecionado[prop]
 						});
@@ -1458,7 +1464,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					$('#workspace').tabs({load : function(event, ui) {}});
 				}});
 				
-				$('#workspace').tabs('addTab', 'Histograma Pré Análise', contextPath + '/matrizDistribuicao/histogramaPosEstudo');
+				var parametros = '?codigoProduto='+ selecionado.codigoProduto +'&edicao='+ selecionado.edicao;
+				$('#workspace').tabs('addTab', 'Histograma Pré Análise', contextPath + '/matrizDistribuicao/histogramaPosEstudo'+ parametros);
 			}
 			
 		}else{

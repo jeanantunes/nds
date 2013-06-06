@@ -60,7 +60,15 @@ public class HistogramaPosEstudoController extends BaseController{
 	private ProdutoBaseSugeridaRepository baseSugeridaRepository;
 	
 	@Path("/index")
-	public void histogramaPosEstudo(){
+	public void histogramaPosEstudo(String codigoProduto, String edicao) {
+	    if (codigoProduto != null && !codigoProduto.isEmpty() && edicao != null && !edicao.isEmpty()) {
+		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicao);
+		String modoAnalise = "NORMAL";
+		if (produtoEdicao.isParcial()) {
+		    modoAnalise = "PARCIAL";
+		}
+		result.include("modoAnalise", modoAnalise);
+	    }
 	}
 	
 	
@@ -81,8 +89,10 @@ public class HistogramaPosEstudoController extends BaseController{
 		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(selecionado.getCodigoProduto(), selecionado.getEdicao());
 		selecionado.setParcial(produtoEdicao.isParcial());
 
+		String modoAnalise = "NORMAL";
 		if (produtoEdicao.isParcial()) {
 			selecionado.setPeriodicidadeProduto(produto.getPeriodicidade().getOrdem());
+			modoAnalise = "PARCIAL";
 		}
 		
 		TipoSegmentoProduto segmento = produto.getTipoSegmentoProduto();
@@ -96,6 +106,7 @@ public class HistogramaPosEstudoController extends BaseController{
 		} else {
 			selecionado.setEstudoLiberado(Boolean.FALSE);
 		}
+		result.include("modoAnalise", modoAnalise);
 		result.use(Results.json()).withoutRoot().from(selecionado).recursive().serialize();
 	}
 	
