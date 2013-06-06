@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.dao.ProdutoEdicaoDAO;
 import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
 import br.com.abril.nds.dto.EstrategiaDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -99,6 +100,9 @@ public class DistribuicaoVendaMediaController extends BaseController {
 
     @Autowired
     private TipoClassificacaoProdutoService tipoClassificacaoProdutoService;
+    
+    @Autowired
+    private ProdutoEdicaoDAO produtoEdicaoDAO;
 
     private static final int QTD_MAX_PRODUTO_EDICAO = 6;
 
@@ -141,9 +145,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	    }
 	} else {
 	    EstudoTransient estudoTemp = new EstudoTransient();
-	    ProdutoEdicaoEstudo prod = new ProdutoEdicaoEstudo(codigoProduto);
-	    prod.setNumeroEdicao(edicao);
-	    estudoTemp.setProdutoEdicaoEstudo(prod);
+	    estudoTemp.setProdutoEdicaoEstudo(produtoEdicaoDAO.getProdutoEdicaoEstudo(codigoProduto, edicao));
 	    try {
 		definicaoBases.executar(estudoTemp);
 		selecionados.clear();
