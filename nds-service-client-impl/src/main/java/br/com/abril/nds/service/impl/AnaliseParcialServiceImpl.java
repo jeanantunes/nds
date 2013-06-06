@@ -94,7 +94,6 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                                     ed.setOrdemExibicao(ordemExibicaoHelper++);
                                 }
                                 edicoesProdutosDTOMap.put(ed.getOrdemExibicao(), ed);
-//                                item.getEdicoesBase().add(ed);
                 			}
                 		}
                 	}                	

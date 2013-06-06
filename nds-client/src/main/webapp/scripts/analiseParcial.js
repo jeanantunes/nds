@@ -765,9 +765,8 @@ var analiseParcialController = $.extend(true, {
             },
             minLength: 3,
             select: function( event, ui ) {
-                event.preventDefault();
-                event.stopPropagation();
-                //$('#inputCodigoProduto').val(ui.item.value);
+//                event.preventDefault();
+//                event.stopPropagation();
             }
         });
 
@@ -1152,6 +1151,21 @@ var analiseParcialController = $.extend(true, {
                             });
 
                             $.postJSON(analiseParcialController.path + '/distribuicao/mixCotaProduto/adicionarMixProduto', params);
+                        }
+                        if ($inputsPreenchidos.filter('[motivo="GN"]').length > 0) {
+
+                            var produtoId = $('#produtoId').val();
+
+                            $inputsPreenchidos.filter('[motivo="GN"]').each(function(key){
+                                var params = [];
+                                var $this = $(this);
+
+                                params.push({name: 'listaIdProduto[0]', value: produtoId});
+                                params.push({name: 'filtro.cotaDto.excecaoSegmento', value: true});
+                                params.push({name: 'filtro.cotaDto.numeroCota', value: $this.attr('numerocota')});
+
+                                $.postJSON(analiseParcialController.path + '/distribuicao/excecaoSegmentoParciais/inserirExcecaoProdutoNaCota', params);
+                            });
                         }
                         analiseParcialController.postMudarReparteLote();
                         $(this).dialog("close");
