@@ -907,36 +907,6 @@ var baixaFinanceiraController = $.extend(true, {
 		$("#valorTotalHidden", baixaFinanceiraController.workspace).val(resultado.valorTotal);
 		$("#valorBoletoHidden", baixaFinanceiraController.workspace).val(resultado.valor);
 		
-		$('#juros', baixaFinanceiraController.workspace).priceFormat({
-			allowNegative: true,
-		    centsSeparator: ',',
-		    thousandsSeparator: '.'
-		});
-		
-		$('#multa', baixaFinanceiraController.workspace).priceFormat({
-			allowNegative: true,
-			centsSeparator: ',',
-		    thousandsSeparator: '.'
-		});
-		
-		$('#desconto', baixaFinanceiraController.workspace).priceFormat({
-			allowNegative: true,
-			centsSeparator: ',',
-		    thousandsSeparator: '.'
-		});
-		
-		$('#valorTotalHidden', baixaFinanceiraController.workspace).priceFormat({
-			allowNegative: true,
-			centsSeparator: ',',
-		    thousandsSeparator: '.'
-		});
-		
-		$('#valorBoletoHidden', baixaFinanceiraController.workspace).priceFormat({
-			allowNegative: true,
-			centsSeparator: ',',
-		    thousandsSeparator: '.'
-		});
-		
 		$("#valorTotal", baixaFinanceiraController.workspace).html($("#valorTotalHidden", baixaFinanceiraController.workspace).val());
 		$("#valorBoleto", baixaFinanceiraController.workspace).html($("#valorBoletoHidden", baixaFinanceiraController.workspace).val());
 		
