@@ -4,6 +4,7 @@ var fechamentoEncalheController = $.extend(true, {
 	vFornecedorId : '',
 	vBoxId : '',
 	isFechamento : false,
+	arrayCotasAusentesSession: [],
 	
 	init : function() {
 		$("#datepickerDe", fechamentoEncalheController.workspace).datepicker({
@@ -633,15 +634,23 @@ var fechamentoEncalheController = $.extend(true, {
 					
 				
 				} else {
-
-					checkBox = '<input isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" value="' + row.cell.idCota + '" />';	
 					
+					var checked = false;
+					$.each(fechamentoEncalheController.arrayCotasAusentesSession, function(index, value){
+						if(value == row.cell.idCota){
+							checkBox = '<input checked="checked" isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this.checked)" value="' + row.cell.idCota + '" />';							
+							checked = true;
+						}
+					});
+					
+					if(!checked){
+						checkBox = '<input isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this.checked)" value="' + row.cell.idCota + '" />';
+					}
 				}
 				
-			
 			} else {
-			
-				checkBox = '<input isEdicao="true" type="checkbox" disabled="disabled" checked="checked" name="checkboxGridCotas_comDivida" id="checkboxGridCotas" value="' + row.cell.idCota + '" />';	
+				
+				checkBox = '<input isEdicao="true" type="checkbox" disabled="disabled" checked="checked" name="checkboxGridCotas_comDivida" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this.checked)" value="' + row.cell.idCota + '" />';	
 			
 			}
 			
@@ -654,6 +663,25 @@ var fechamentoEncalheController = $.extend(true, {
 		return resultado;
 	},
 
+	preencherArrayCotasAusentes : function(idCota, checked){
+		setTimeout (function () {
+			if(checked){
+				fechamentoEncalheController.arrayCotasAusentesSession.push(parseInt(idCota));
+			}else{
+
+				var newRef = fechamentoEncalheController.arrayCotasAusentesSession.slice();
+				$.each(newRef, function(index, value){
+					if(value == idCota){
+						
+						fechamentoEncalheController.arrayCotasAusentesSession.splice(index, 1);
+					}
+				});
+			}
+		}, 1);
+
+	},
+	
+	
 	obterCotasMarcadas : function() {
  
 		var cotasAusentesSelecionadas = new Array();
@@ -684,7 +712,7 @@ var fechamentoEncalheController = $.extend(true, {
 		
 		var postergarTodas = $("#checkTodasCotas").attr("checked") == "checked";
 
-		var cotasSelecionadas = postergarTodas ? [] : fechamentoEncalheController.obterCotasMarcadas();
+		var cotasSelecionadas = postergarTodas ? [] : fechamentoEncalheController.arrayCotasAusentesSession;
 
 		if (postergarTodas || cotasSelecionadas.length > 0) {
 			
@@ -717,7 +745,9 @@ var fechamentoEncalheController = $.extend(true, {
 											exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemEncerrarEncalhe');
 										}
 
-										$(".cotasGrid", fechamentoEncalheController.workspace).flexReload();
+										fechamentoEncalheController.arrayCotasAusentesSession.length=[];
+										
+										fechamentoEncalheController.popup_encerrarEncalhe(false);
 										
 								        if (fechamentoEncalheController.isFechamento) {
 
@@ -788,7 +818,7 @@ var fechamentoEncalheController = $.extend(true, {
 		
 		$.postJSON(contextPath + '/devolucao/fechamentoEncalhe/veificarCobrancaGerada',
 				{
-					'idsCotas' : fechamentoEncalheController.obterCotasMarcadas(),
+					'idsCotas' : fechamentoEncalheController.arrayCotasAusentesSession,
 					'cobrarTodasCotas': cobrarTodas
 				},
 		
@@ -831,7 +861,7 @@ var fechamentoEncalheController = $.extend(true, {
 		var dataOperacao = $("#datepickerDe", fechamentoEncalheController.workspace).val();
 		var cobrarTodas  = $("#checkTodasCotas").attr("checked") == "checked";
 
-		var idsCotas = cobrarTodas ? [] : fechamentoEncalheController.obterCotasMarcadas();
+		var idsCotas = cobrarTodas ? [] : fechamentoEncalheController.arrayCotasAusentesSession;
 
 		$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/cobrarCotas",
 					{ 
@@ -849,6 +879,10 @@ var fechamentoEncalheController = $.extend(true, {
 						}
 
 						$(".cotasGrid", fechamentoEncalheController.workspace).dialog("close");
+						
+						fechamentoEncalheController.arrayCotasAusentesSession.length=[];
+						
+						fechamentoEncalheController.popup_encerrarEncalhe(false);
 						
 						if (fechamentoEncalheController.isFechamento) {
 

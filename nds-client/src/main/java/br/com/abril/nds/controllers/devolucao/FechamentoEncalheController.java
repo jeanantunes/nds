@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -201,8 +202,7 @@ public class FechamentoEncalheController extends BaseController {
 	}
 	
 	@Path("/cotasAusentes")
-	public void cotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao,
-			String sortname, String sortorder, int rp, int page) {
+	public void cotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao, List<Long> idsCotas, String sortname, String sortorder, int rp, int page) {
 
 		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
 			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, sortorder, sortname, page, rp);
@@ -274,7 +274,7 @@ public class FechamentoEncalheController extends BaseController {
 				this.fechamentoEncalheService.postergarTodasCotas(dataEncalhe, dataPostergacao);
 			
 			} else {
-				
+				idsCotas.addAll(getIdsCotasAusentesComDivida(this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, true, null, null, 0, 0)));
 				this.fechamentoEncalheService.postergarCotas(dataEncalhe, dataPostergacao, idsCotas);
 			}
 			
@@ -336,16 +336,16 @@ public class FechamentoEncalheController extends BaseController {
 		
 		try {
 			
+			List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
+					this.fechamentoEncalheService.buscarCotasAusentes(dataOperacao, true, null, null, 0, 0);
+
 			if (cobrarTodasCotas) {
-				
-				List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
-						this.fechamentoEncalheService.buscarCotasAusentes(dataOperacao, true, null, null, 0, 0);
 				
 				this.fechamentoEncalheService.realizarCobrancaCotas(dataOperacao, getUsuarioLogado(), listaCotaAusenteEncalhe, null);				
 			
-				
 			} else {
 			
+				idsCotas.addAll(getIdsCotasAusentesComDivida(listaCotaAusenteEncalhe));
 				this.fechamentoEncalheService.cobrarCotas(dataOperacao, getUsuarioLogado(), idsCotas);
 			}
 
@@ -360,6 +360,23 @@ public class FechamentoEncalheController extends BaseController {
 		
 		this.result.use(Results.json()).from(
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Cotas cobradas com sucesso!"), "result").recursive().serialize();		
+	}
+
+	private Collection<? extends Long> getIdsCotasAusentesComDivida(List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe) {
+
+		List<Long> idsCotasAusentesComDivida = new ArrayList<Long>();
+		for (CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotaAusenteEncalhe) {
+			
+			if(!cotaAusenteEncalheDTO.isIndPossuiChamadaEncalheCota()) {
+				
+				if (cotaAusenteEncalheDTO.isIndMFCNaoConsolidado()) {
+					idsCotasAusentesComDivida.add(cotaAusenteEncalheDTO.getIdCota());
+				} 
+				
+			}
+		}
+		
+		return idsCotasAusentesComDivida;
 	}
 
 	@Get
