@@ -190,21 +190,23 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				fechamentoEncalheRepository.buscarConferenciaEncalheNovo(filtro, sortorder, sort, startSearch, rp);
 		if(! listaConferencia.isEmpty())
 		{
-			ArrayList<String> listaDeCodigosProduto = new ArrayList<String>();
+			ArrayList<Long> listaDeIdsProdutoEdicao = new ArrayList<Long>();
 			for(FechamentoFisicoLogicoDTO conferencia : listaConferencia)
 			{
 				conferencia.setDataRecolhimento(filtro.getDataEncalhe());
-				listaDeCodigosProduto.add(conferencia.getCodigo());
+				listaDeIdsProdutoEdicao.add(conferencia.getProdutoEdicao());
 			}
 			
-			List<FechamentoFisicoLogicoDTO> listaMovimentoEstoqueCota = fechamentoEncalheRepository.buscarMovimentoEstoqueCota(filtro, listaDeCodigosProduto);
-			List<FechamentoFisicoLogicoDTO> listaMovimentoEstoqueCotaVendaProduto = fechamentoEncalheRepository.buscarMovimentoEstoqueCotaVendaProduto(filtro, listaDeCodigosProduto);
+			List<FechamentoFisicoLogicoDTO> listaMovimentoEstoqueCota = fechamentoEncalheRepository.buscarMovimentoEstoqueCota(filtro, listaDeIdsProdutoEdicao);
+			List<FechamentoFisicoLogicoDTO> listaMovimentoEstoqueCotaVendaProduto = fechamentoEncalheRepository.buscarMovimentoEstoqueCotaVendaProduto(filtro, listaDeIdsProdutoEdicao);
 		
 			for(FechamentoFisicoLogicoDTO conferencia : listaConferencia)
 			{
+				
+				//Soma as quantidades para os exemplares de devolucao
 				for(FechamentoFisicoLogicoDTO movimentoEstoqueCota : listaMovimentoEstoqueCota)
 				{
-					if(conferencia.getCodigo().equals(movimentoEstoqueCota.getCodigo()) && movimentoEstoqueCota.getExemplaresDevolucao() != null)
+					if(conferencia.getProdutoEdicao().equals(movimentoEstoqueCota.getProdutoEdicao()) && movimentoEstoqueCota.getExemplaresDevolucao() != null)
 					{
 						if(conferencia.getExemplaresDevolucao() == null)
 						{
@@ -218,9 +220,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 					}
 				}
 				
+				//Subtrai as quantidades para os exemplares de devolucao
 				for(FechamentoFisicoLogicoDTO movimentoEstoqueCotaVendaProduto : listaMovimentoEstoqueCotaVendaProduto)
 				{
-					if(conferencia.getCodigo().equals(movimentoEstoqueCotaVendaProduto.getCodigo()) && movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao() != null)
+					if(conferencia.getProdutoEdicao().equals(movimentoEstoqueCotaVendaProduto.getProdutoEdicao()) && movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao() != null)
 					{
 						if(movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao() != null)
 						{
@@ -367,11 +370,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				fechamentoEncalheRepository.buscarConferenciaEncalheNovo(filtro, null, null, null, null);
 		if(! listaConferencia.isEmpty())
 		{
-			ArrayList<String> listaDeCodigosProduto = new ArrayList<String>();
+			ArrayList<Long> listaDeCodigosProduto = new ArrayList<Long>();
 			for(FechamentoFisicoLogicoDTO conferencia : listaConferencia)
 			{
 				conferencia.setDataRecolhimento(filtro.getDataEncalhe());
-				listaDeCodigosProduto.add(conferencia.getCodigo());
+				listaDeCodigosProduto.add(conferencia.getProdutoEdicao());
 			}
 			
 			List<FechamentoFisicoLogicoDTO> listaMovimentoEstoqueCota = fechamentoEncalheRepository.buscarMovimentoEstoqueCota(filtro, listaDeCodigosProduto);
@@ -381,7 +384,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			{
 				for(FechamentoFisicoLogicoDTO movimentoEstoqueCota : listaMovimentoEstoqueCota)
 				{
-					if(conferencia.getCodigo().equals(movimentoEstoqueCota.getCodigo()) && movimentoEstoqueCota.getExemplaresDevolucao() != null)
+					if(conferencia.getProdutoEdicao().equals(movimentoEstoqueCota.getProdutoEdicao()) && movimentoEstoqueCota.getExemplaresDevolucao() != null)
 					{
 						if(conferencia.getExemplaresDevolucao() == null)
 						{
@@ -397,7 +400,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				
 				for(FechamentoFisicoLogicoDTO movimentoEstoqueCotaVendaProduto : listaMovimentoEstoqueCotaVendaProduto)
 				{
-					if(conferencia.getCodigo().equals(movimentoEstoqueCotaVendaProduto.getCodigo()) && movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao() != null)
+					if(conferencia.getProdutoEdicao().equals(movimentoEstoqueCotaVendaProduto.getProdutoEdicao()) && movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao() != null)
 					{
 						if(movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao() != null)
 						{
