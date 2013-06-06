@@ -39,7 +39,7 @@ public class AnaliseParcialDTO implements Serializable {
     private BigDecimal mediaVenda;
 
     @Export(label = "Último Reparte", alignment = Alignment.LEFT, exhibitionOrder = 9)
-    private BigDecimal ultimoReparte;
+    private BigInteger ultimoReparte;
     
     private boolean cotaNova;
     private String descricaoLegenda;
@@ -123,22 +123,26 @@ public class AnaliseParcialDTO implements Serializable {
 	this.mediaVenda = mediaVenda;
     }
 
-    public BigDecimal getUltimoReparte() {
+    public BigInteger getUltimoReparte() {
 	return ultimoReparte;
     }
 
     public void setUltimoReparte(BigDecimal ultimoReparte) {
-	this.ultimoReparte = ultimoReparte;
+	if (ultimoReparte == null) {
+	    this.ultimoReparte = null;
+	} else {
+	    this.ultimoReparte = ultimoReparte.toBigInteger();
+	}
     }
     @Export(label = "Reparte 1", alignment = Alignment.LEFT, exhibitionOrder = 16)
-    public BigDecimal getReparte1() {
+    public BigInteger getReparte1() {
 	if (edicoesBase.size() > 0) {
 	    return edicoesBase.get(0).getReparte();
 	}
 	return null;
     }
     @Export(label = "Venda 1", alignment = Alignment.LEFT, exhibitionOrder = 17)
-    public BigDecimal getVenda1() {
+    public BigInteger getVenda1() {
 	if (edicoesBase.size() > 0) {
 	    return edicoesBase.get(0).getVenda();
 	}
@@ -152,14 +156,14 @@ public class AnaliseParcialDTO implements Serializable {
 	return null;
     }
     @Export(label = "Reparte 2", alignment = Alignment.LEFT, exhibitionOrder = 16)
-    public BigDecimal getReparte2() {
+    public BigInteger getReparte2() {
 	if (edicoesBase.size() > 1) {
 	    return edicoesBase.get(1).getReparte();
 	}
 	return null;
     }
     @Export(label = "Venda 2", alignment = Alignment.LEFT, exhibitionOrder = 17)
-    public BigDecimal getVenda2() {
+    public BigInteger getVenda2() {
 	if (edicoesBase.size() > 1) {
 	    return edicoesBase.get(1).getVenda();
 	}
@@ -173,14 +177,14 @@ public class AnaliseParcialDTO implements Serializable {
 	return null;
     }
     @Export(label = "Reparte 3", alignment = Alignment.LEFT, exhibitionOrder = 16)
-    public BigDecimal getReparte3() {
+    public BigInteger getReparte3() {
 	if (edicoesBase.size() > 2) {
 	    return edicoesBase.get(2).getReparte();
 	}
 	return null;
     }
     @Export(label = "Venda 3", alignment = Alignment.LEFT, exhibitionOrder = 17)
-    public BigDecimal getVenda3() {
+    public BigInteger getVenda3() {
 	if (edicoesBase.size() > 2) {
 	    return edicoesBase.get(2).getVenda();
 	}
@@ -194,14 +198,14 @@ public class AnaliseParcialDTO implements Serializable {
 	return null;
     }
     @Export(label = "Reparte 4", alignment = Alignment.LEFT, exhibitionOrder = 16)
-    public BigDecimal getReparte4() {
+    public BigInteger getReparte4() {
 	if (edicoesBase.size() > 3) {
 	    return edicoesBase.get(3).getReparte();
 	}
 	return null;
     }
     @Export(label = "Venda 4", alignment = Alignment.LEFT, exhibitionOrder = 17)
-    public BigDecimal getVenda4() {
+    public BigInteger getVenda4() {
 	if (edicoesBase.size() > 3) {
 	    return edicoesBase.get(3).getVenda();
 	}
@@ -215,14 +219,14 @@ public class AnaliseParcialDTO implements Serializable {
 	return null;
     }
     @Export(label = "Reparte 5", alignment = Alignment.LEFT, exhibitionOrder = 16)
-    public BigDecimal getReparte5() {
+    public BigInteger getReparte5() {
 	if (edicoesBase.size() > 4) {
 	    return edicoesBase.get(4).getReparte();
 	}
 	return null;
     }
     @Export(label = "Venda 5", alignment = Alignment.LEFT, exhibitionOrder = 17)
-    public BigDecimal getVenda5() {
+    public BigInteger getVenda5() {
 	if (edicoesBase.size() > 4) {
 	    return edicoesBase.get(4).getVenda();
 	}
@@ -236,14 +240,14 @@ public class AnaliseParcialDTO implements Serializable {
 	return null;
     }
     @Export(label = "Reparte 6", alignment = Alignment.LEFT, exhibitionOrder = 16)
-    public BigDecimal getReparte6() {
+    public BigInteger getReparte6() {
 	if (edicoesBase.size() > 5) {
 	    return edicoesBase.get(5).getReparte();
 	}
 	return null;
     }
     @Export(label = "Venda 6", alignment = Alignment.LEFT, exhibitionOrder = 17)
-    public BigDecimal getVenda6() {
+    public BigInteger getVenda6() {
 	if (edicoesBase.size() > 5) {
 	    return edicoesBase.get(5).getVenda();
 	}

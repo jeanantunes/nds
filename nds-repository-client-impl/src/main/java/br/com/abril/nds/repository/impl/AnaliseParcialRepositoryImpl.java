@@ -216,8 +216,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         StringBuilder sql = new StringBuilder();
         sql.append("select ");
         sql.append("    epc.produto_edicao_id produtoEdicaoId, ");
-        sql.append("    round(epc.qtde_recebida, 0) reparte, ");
-        sql.append("    round(epc.qtde_recebida - epc.qtde_devolvida, 0) venda ");
+        sql.append("    epc.qtde_recebida reparte, ");
+        sql.append("    epc.qtde_recebida - epc.qtde_devolvida venda ");
         sql.append("  from estoque_produto_cota epc ");
         sql.append("  join cota c on c.id = epc.cota_id ");
         sql.append(" where c.numero_cota = :numeroCota ");
@@ -244,9 +244,9 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("       p.nome nomeProduto, ");
         sql.append("       pe.numero_edicao edicao, ");
         sql.append("       plp.numero_periodo periodo, ");
-        sql.append("       round(sum(case when mec.tipo_movimento_id = 13 then mec.qtde end),0) reparte, ");
-        sql.append("       round(sum(case when mec.tipo_movimento_id = 13 then mec.qtde end) - ");
-        sql.append("       sum(case when mec.tipo_movimento_id = 26 or mec.tipo_movimento_id = 32 then mec.qtde end), 0) venda ");
+        sql.append("       sum(case when mec.tipo_movimento_id = 13 then mec.qtde end) reparte, ");
+        sql.append("       sum(case when mec.tipo_movimento_id = 13 then mec.qtde end) - ");
+        sql.append("       sum(case when mec.tipo_movimento_id = 26 or mec.tipo_movimento_id = 32 then mec.qtde end) venda ");
         sql.append("  from lancamento l ");
         sql.append("  join produto_edicao pe on pe.id = l.produto_edicao_id and pe.numero_edicao = :numeroEdicao ");
         sql.append("  join produto p on p.id = pe.produto_id and p.codigo = :codigoProduto ");
@@ -264,8 +264,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 .addScalar("nomeProduto", StandardBasicTypes.STRING)
                 .addScalar("edicao", StandardBasicTypes.BIG_INTEGER)
                 .addScalar("periodo", StandardBasicTypes.STRING)
-                .addScalar("reparte", StandardBasicTypes.BIG_INTEGER)
-                .addScalar("venda", StandardBasicTypes.BIG_INTEGER);
+                .addScalar("reparte", StandardBasicTypes.BIG_DECIMAL)
+                .addScalar("venda", StandardBasicTypes.BIG_DECIMAL);
 
         query.setParameter("numeroCota", numeroCota);
         query.setParameter("numeroEdicao", numeroEdicao);

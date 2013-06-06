@@ -155,11 +155,11 @@ table.filtro td span {font-weight: normal;}
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
 					<td>Código: <span>${estudoCota.estudo.produtoEdicao.produto.codigo}</span></td>
-					<td>Produto: <span>${estudoCota.estudo.produtoEdicao.produto.nomeComercial}</span></td>
+					<td>Produto: <span>${estudoCota.estudo.produtoEdicao.nomeComercial}</span></td>
 					<td>Edição: <span>${estudoCota.estudo.produtoEdicao.numeroEdicao}</span></td>
 					<td>Estudo: <span>${estudoCota.estudo.id}</span></td>
                     <c:if test="${tipoExibicao != 'NORMAL'}">
-                        <td>Nro. da Parcial: </td>
+                        <td>Nro. da Parcial: <span>${lancamento.periodoLancamentoParcial.numeroPeriodo}</span></td>
                     </c:if>
 				</tr>
             </table>
