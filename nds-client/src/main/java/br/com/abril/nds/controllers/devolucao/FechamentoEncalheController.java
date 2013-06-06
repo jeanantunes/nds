@@ -137,7 +137,7 @@ public class FechamentoEncalheController extends BaseController {
 		
 		int quantidade = this.quantidadeItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, aplicaRegraMudancaTipo);
 		
-		if (listaEncalhe.isEmpty()) {
+		if (novaListaEncalhe.isEmpty()) {
 			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Não houve conferência de encalhe nesta data."), "mensagens").recursive().serialize();
 		} else {
 			this.result.use(FlexiGridJson.class).from(novaListaEncalhe).total(quantidade).page(page).serialize();
@@ -700,6 +700,16 @@ public class FechamentoEncalheController extends BaseController {
 		
 		
 		session.setAttribute("gridFechamentoEncalheDTO", listaDeGrid);		
+		this.result.use(Results.nothing());
+	}
+	
+	@Path("/limparDadosDaSessaoGrid")
+	public void limparDadosDaSessaoGrid()
+	{
+		if(this.session.getAttribute("gridFechamentoEncalheDTO") != null)
+		{
+			this.session.removeAttribute("gridFechamentoEncalheDTO");
+		}
 		this.result.use(Results.nothing());
 	}
 }
