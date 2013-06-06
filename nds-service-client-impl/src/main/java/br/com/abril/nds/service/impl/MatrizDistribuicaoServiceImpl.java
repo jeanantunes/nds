@@ -728,7 +728,10 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 
 	// salvando no banco
 	for (EstudoCota cota : cotas) {
-	    if (cota.getReparte().compareTo(BigInteger.ZERO) == 0) {
+	    if (cota.getReparte() == null) {
+		cota.setQtdePrevista(null);
+		cota.setQtdeEfetiva(null);
+	    } else if (cota.getReparte().compareTo(BigInteger.ZERO) == 0) {
 		cota.setQtdeEfetiva(BigInteger.ZERO);
 		cota.setQtdePrevista(BigInteger.ZERO);
 		cota.setReparte(null);
@@ -740,6 +743,10 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	}
 
 	for (EstudoCota cota : cotasSelecionadas) {
+	    if (cota.getReparte() == null) {
+		cota.setQtdePrevista(null);
+		cota.setQtdeEfetiva(null);
+	    }
 	    estudoCotaRepository.adicionar(cota);
 	}
 	estudoCopia.setEstudoCotas(new HashSet<EstudoCota>(cotas));
