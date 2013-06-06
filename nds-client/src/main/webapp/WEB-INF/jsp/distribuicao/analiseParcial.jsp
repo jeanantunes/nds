@@ -150,6 +150,7 @@ table.filtro td span {font-weight: normal;}
 			<input type="hidden" id="numeroEdicao" value="${estudoCota.estudo.produtoEdicao.numeroEdicao}" />
 			<input type="hidden" id="estudoId" value="${estudoCota.estudo.id}" />
 			<input type="hidden" id="codigoProduto" value="${estudoCota.estudo.produtoEdicao.produto.codigo}" />
+			<input type="hidden" id="produtoId" value="${estudoCota.estudo.produtoEdicao.produto.id}" />
 			<input type="hidden" id="tipoSegmentoProduto" value="${estudoCota.estudo.produtoEdicao.produto.tipoSegmentoProduto.id}" />
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>

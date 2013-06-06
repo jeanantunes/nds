@@ -173,7 +173,7 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 		}
 		
 		validarEntradaFiltroCota(filtro);
-		
+
 		if (filtro.getCotaDto().getNumeroCota() != null && !filtro.getCotaDto().getNumeroCota().equals(0)) {
 			cota = (cotaService.obterPorNumeroDaCota(filtro.getCotaDto().getNumeroCota()));
 		}else {
