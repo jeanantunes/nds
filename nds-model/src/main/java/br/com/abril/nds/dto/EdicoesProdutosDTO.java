@@ -1,11 +1,9 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
-import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.util.DateUtil;
 
 public class EdicoesProdutosDTO implements Serializable {
@@ -17,13 +15,13 @@ public class EdicoesProdutosDTO implements Serializable {
 	
 	private BigInteger edicao;
 	private String periodo;
-	private BigDecimal venda;
+	private BigInteger venda;
 	private Date dtLancamento;
 	private Date dtRecolhimento;
 	private String status;
 	private String capa;
 	private String sel;
-	private BigDecimal reparte;
+	private BigInteger reparte;
 	private String nomeProduto;
 	private String descricaoTipoClassificacao;
 	private String codigoProduto;
@@ -49,10 +47,10 @@ public class EdicoesProdutosDTO implements Serializable {
 		this.periodo = periodo;
 	}
 	
-	public BigDecimal getVenda() {
+	public BigInteger getVenda() {
 		return venda;
 	}
-	public void setVenda(BigDecimal venda) {
+	public void setVenda(BigInteger venda) {
 		this.venda = venda;
 	}
 	public Date getDtLancamento() {
@@ -100,10 +98,10 @@ public class EdicoesProdutosDTO implements Serializable {
 	public void setDataRecolhimento(String dataRecolhimento) {
 		this.dataRecolhimento = dataRecolhimento;
 	}
-	public BigDecimal getReparte() {
+	public BigInteger getReparte() {
 		return reparte;
 	}
-	public void setReparte(BigDecimal reparte) {
+	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte;
 	}
 	public String getNomeProduto() {

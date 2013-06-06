@@ -670,9 +670,9 @@ public class MatrizDistribuicaoController extends BaseController {
 	
 
 	@Get
-	public void histogramaPosEstudo() {
+	public void histogramaPosEstudo(String codigoProduto, String edicao) {
 		
-		result.forwardTo(HistogramaPosEstudoController.class).histogramaPosEstudo();
+		result.forwardTo(HistogramaPosEstudoController.class).histogramaPosEstudo(codigoProduto, edicao);
 	}
 
 	@Post
