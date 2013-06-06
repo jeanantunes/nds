@@ -34,7 +34,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("       c.numero_cota cota, ");
         sql.append("       c.classificacao_espectativa_faturamento classificacao, ");
         sql.append("       coalesce(pes.nome, pes.razao_social, pes.nome_fantasia, '') nome, ");
-        sql.append("       pdv.quantidade npdv, ");
+        sql.append("       pdv_qtd.quantidade npdv, ");
         sql.append("       round(ec.qtde_efetiva,0) reparteSugerido, ");
         sql.append("       ec.reparte reparteEstudo, ");
         sql.append("       ec.classificacao leg, ");
@@ -57,13 +57,13 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("  left join produto p on (p.id = pe.produto_id) ");
         sql.append("  left join (select cota_id cota_id, count(*) quantidade ");
         sql.append("               from pdv as pdvs ");
-        sql.append("              group by cota_id) pdv on pdv.cota_id = c.id ");
+        sql.append("              group by cota_id) pdv_qtd on pdv_qtd.cota_id = c.id ");
 
         StringBuilder where = new StringBuilder();
         StringBuilder order = new StringBuilder();
         StringBuilder limit = new StringBuilder();
 
-        where.append(" and ec.reparte is not null ");
+        where.append(" and ( ec.reparte is not null or ec.qtde_efetiva is not null ) ");
 
         if (queryDTO.possuiOrdenacaoPlusFiltro()) {
             if (queryDTO.possuiOrdenacaoReparte()) {
@@ -74,12 +74,12 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
             if (queryDTO.possuiOrdenacaoRanking()) {
                 sql.append(" left join ranking_segmento ranking on ranking.cota_id = c.id ");
-                order.append(" , ranking.qtde desc ");
+                order.append(" ranking.qtde desc ");
 
                 limit.append(" limit ");
                 limit.append(queryDTO.getFilterSortFrom().intValue() - 1);
                 limit.append(" , ");
-                limit.append((queryDTO.getFilterSortTo().intValue() - queryDTO.getFilterSortFrom().intValue()));
+                limit.append((queryDTO.getFilterSortTo().intValue() - queryDTO.getFilterSortFrom().intValue()) + 1);
             }
 
             if (queryDTO.possuiPercentualDeVenda()) {
@@ -95,32 +95,32 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
         if (queryDTO.possuiElemento()) {
             if (queryDTO.elementoIsTipoPontoVenda()) {
-                sql.append(" join pdv pdv2 on pdv2.cota_id = c.id and pdv2.tipo_ponto_pdv_id = ? ");
+                sql.append(" join pdv on pdv.cota_id = c.id and pdv.tipo_ponto_pdv_id = ? ");
                 params.add(queryDTO.getValorElemento());
             }
             if (queryDTO.elementoIsGeradoorDeFluxo()) {
-                sql.append(" join pdv pdv2 on pdv2.cota_id = c.id ");
-                sql.append(" join gerador_fluxo_pdv gfp on gfp.pdv_id = pdv2.id and gfp.tipo_gerador_fluxo_id = ? ");
+                sql.append(" join pdv on pdv.cota_id = c.id ");
+                sql.append(" join gerador_fluxo_pdv gfp on gfp.pdv_id = pdv.id and gfp.tipo_gerador_fluxo_id = ? "); //FIXME
                 params.add(queryDTO.getValorElemento());
             }
             if (queryDTO.elementoIsBairro()) {
-                sql.append(" join pdv pdv2 on pdv2.cota_id = c.id ");
-                sql.append(" join endereco_pdv on endereco_pdv.pdv_id = pdv2.id");
-                sql.append(" join endereco on endereco.id = endereco_pdv.endereco_id and endereco.bairro = ? ");
-
-                params.add("'".concat(queryDTO.getValorElemento().concat("'")));
+                sql.append(" join pdv on pdv.cota_id = c.id ");
+                sql.append(" join endereco_pdv on endereco_pdv.pdv_id = pdv.id");
+                sql.append(" join endereco on endereco.id = endereco_pdv.endereco_id and endereco.bairro = '");
+                sql.append(queryDTO.getValorElemento());
+                sql.append("' ");
             }
             if (queryDTO.elementoIsRegiao()) {
                 sql.append(" join registro_cota_regiao as rcr on rcr.cota_id = c.id and rcr.regiao_id = ? ");
                 params.add(queryDTO.getValorElemento());
             }
             if (queryDTO.elementoIsAreaDeInfluencia()) {
-                sql.append(" join pdv pdv2 on pdv2.cota_id = c.id and pdv2.area_influencia_pdv_id = ? ");
+                sql.append(" join pdv on pdv.cota_id = c.id and pdv.area_influencia_pdv_id = ? "); //FIXME
                 params.add(queryDTO.getValorElemento());
             }
             if (queryDTO.elementoIsDistrito()) {
-                sql.append(" join pdv pdv2 on pdv2.cota_id = c.id ");
-                sql.append(" join endereco_pdv on endereco_pdv.pdv_id = pdv2.id ");
+                sql.append(" join pdv on pdv.cota_id = c.id ");
+                sql.append(" join endereco_pdv on endereco_pdv.pdv_id = pdv.id ");
                 sql.append(" join endereco on endereco.id = endereco_pdv.endereco_id and endereco.uf = '");
                 sql.append(queryDTO.getValorElemento());
                 sql.append("' ");
@@ -155,10 +155,10 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
         sql.append(" where 1 = 1 ").append(where);
 
-        if (queryDTO.possuiOrderBy()) {
-            sql.append(" order by ").append(queryDTO.getSortName()).append(" ").append(queryDTO.getSortOrder()).append(order).append(limit);
-        } else if (queryDTO.possuiOrdenacaoRanking()) {
+        if (queryDTO.possuiOrdenacaoRanking()) {
             sql.append(" order by ").append(order).append(limit);
+        } else if (queryDTO.possuiOrderBy()) {
+            sql.append(" order by ").append(queryDTO.getSortName()).append(" ").append(queryDTO.getSortOrder());
         }
 
         SQLQuery query = getSession().createSQLQuery(sql.toString());
@@ -299,7 +299,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         StringBuilder sql = new StringBuilder();
         sql.append("update estudo_cota ec ");
         sql.append("  left join cota cota on cota.id = ec.cota_id ");
-        sql.append("   set ec.qtde_efetiva = ec.qtde_efetiva + ? ");
+        sql.append("   set ec.qtde_efetiva = coalesce(ec.qtde_efetiva,0) + ? ");
         sql.append(" where ec.estudo_id = ? ");
         sql.append("   and cota.numero_cota = ? ");
 
@@ -316,8 +316,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
         StringBuilder sql = new StringBuilder();
         sql.append("update estudo ");
-        sql.append("   set reparte_distribuir = reparte_distribuir - ?, ");
-        sql.append("       sobra = sobra + ? ");
+        sql.append("   set reparte_distribuir = reparte_distribuir + ?, ");
+        sql.append("       sobra = sobra - ? ");
         sql.append(" where id = ? ");
 
         SQLQuery query = getSession().createSQLQuery(sql.toString());
@@ -375,7 +375,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         StringBuilder sql = new StringBuilder();
         sql.append("select cota.numero_cota numeroCota, ");
         sql.append("       coalesce(pe.nome, pe.razao_social, pe.nome_fantasia, '') nomeCota, ");
-        sql.append("       ec.reparte quantidade, ");
+        sql.append("       ec.qtde_efetiva quantidade, ");
         sql.append("       ec.classificacao motivo ");
         sql.append("  from estudo_cota ec ");
         sql.append("  join cota on cota.id = ec.cota_id ");
@@ -400,9 +400,9 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
             if (queryDTO.elementoIsBairro()) {
                 sql.append(" join pdv on pdv.cota_id = cota.id ");
                 sql.append(" join endereco_pdv on endereco_pdv.pdv_id = pdv.id");
-                sql.append(" join endereco on endereco.id = endereco_pdv.endereco_id and endereco.bairro = ? ");
-
-                params.add("'".concat(queryDTO.getValorElemento().concat("'")));
+                sql.append(" join endereco on endereco.id = endereco_pdv.endereco_id and endereco.bairro = '");
+                sql.append(queryDTO.getValorElemento());
+                sql.append("' ");
             }
             if (queryDTO.elementoIsRegiao()) {
                 sql.append(" join registro_cota_regiao as rcr on rcr.cota_id = cota.id and rcr.regiao_id = ? ");
@@ -431,24 +431,24 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
             }
         }
         where.append(" and ec.estudo_id = ? ");
-        where.append("   and ( ec.reparte = 0 or ec.reparte is null ) ");
+        where.append("   and (ec.reparte = 0 or ec.reparte is null) and (ec.qtde_efetiva is null or ec.qtde_efetiva = 0) ");
         params.add(queryDTO.getEstudo());
 
         if (queryDTO.possuiCota()) {
-            sql.append(" and cota.numero_cota = ? ");
+            where.append(" and cota.numero_cota = ? ");
             params.add(queryDTO.getCota());
         }
 
         if (queryDTO.possuiNome()) {
-            sql.append(" and (pe.nome like upper('").append(queryDTO.getNome()).append("') ");
-            sql.append("  or pe.razao_social like upper('").append(queryDTO.getNome()).append("') ");
-            sql.append("  or pe.nome_fantasia like upper('").append(queryDTO.getNome()).append("')) ");
+            where.append(" and (pe.nome like upper('").append(queryDTO.getNome()).append("') ");
+            where.append("  or pe.razao_social like upper('").append(queryDTO.getNome()).append("') ");
+            where.append("  or pe.nome_fantasia like upper('").append(queryDTO.getNome()).append("')) ");
         }
 
         if (queryDTO.getMotivo() != null && !queryDTO.getMotivo().equals("TODOS")) {
-            sql.append(" and ec.classificacao = '");
-            sql.append(queryDTO.getMotivo());
-            sql.append("' ");
+            where.append(" and ec.classificacao = '");
+            where.append(queryDTO.getMotivo());
+            where.append("' ");
         }
 
         sql.append(" where 1 = 1 ").append(where);

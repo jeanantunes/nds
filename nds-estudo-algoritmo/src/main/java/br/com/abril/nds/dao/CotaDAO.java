@@ -206,10 +206,10 @@ public class CotaDAO {
 		    cota.setReparteFixado(rs.getBigDecimal("REPARTE_FIXADO").toBigInteger());
 		}
 		if (rs.getBoolean("COTA_NAO_RECEBE_SEGMENTO")) {
-		    cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeSegmento);
+		    cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeEsseSegmento);
 		}
 		if (rs.getBoolean("COTA_EXCECAO_SEGMENTO")) {
-		    cota.setClassificacao(ClassificacaoCota.BancaQueRecebemDeterminadoSegmento);
+		    cota.setClassificacao(ClassificacaoCota.CotaExcecaoSegmento);
 		}
 		if (rs.getBoolean("COTA_NAO_RECEBE_CLASSIFICACAO")) {
 		    cota.setClassificacao(ClassificacaoCota.BancaSemClassificacaoDaPublicacao);

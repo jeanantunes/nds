@@ -200,7 +200,7 @@ public class AnaliseParcialController extends BaseController {
     public void mudarReparteLote(Long estudoId, List<CotaQueNaoEntrouNoEstudoDTO> cotas) {
 
         for (CotaQueNaoEntrouNoEstudoDTO cota : cotas) {
-            analiseParcialService.atualizaReparte(estudoId, cota.getNumeroCota(), cota.getQuantidade().negate().longValue());
+            analiseParcialService.atualizaReparte(estudoId, cota.getNumeroCota(), cota.getQuantidade().longValue());
         }
 
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso.")).recursive().serialize();

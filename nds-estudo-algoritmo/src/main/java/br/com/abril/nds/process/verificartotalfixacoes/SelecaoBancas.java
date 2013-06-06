@@ -98,7 +98,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 
 	    // excluindo as cotas que não entram no estudo
 	    if (cota.getClassificacao().in(ClassificacaoCota.BancaComVendaZero, ClassificacaoCota.BancaSemHistorico,
-		    ClassificacaoCota.ReparteFixado, ClassificacaoCota.CotaNaoRecebeSegmento, ClassificacaoCota.BancaSuspensa,
+		    ClassificacaoCota.ReparteFixado, ClassificacaoCota.CotaNaoRecebeEsseSegmento, ClassificacaoCota.BancaSuspensa,
 		    ClassificacaoCota.BancaSemClassificacaoDaPublicacao, ClassificacaoCota.BancaMixSemDeterminadaPublicacao)) {
 		estudo.getCotasExcluidas().add(cota);
 	    }
@@ -232,7 +232,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	    }
 	    for (CotaEstudo cota : cotas) {
 		if (cota.getClassificacao().notIn(ClassificacaoCota.BancaComVendaZero, ClassificacaoCota.BancaSemHistorico,
-			ClassificacaoCota.CotaNaoRecebeSegmento, ClassificacaoCota.BancaSuspensa,
+			ClassificacaoCota.CotaNaoRecebeEsseSegmento, ClassificacaoCota.BancaSuspensa,
 			ClassificacaoCota.BancaSemClassificacaoDaPublicacao, ClassificacaoCota.BancaMixSemDeterminadaPublicacao)) {		    
 		    if (estudoAlgoritmoService.isCotaDentroDoComponenteElemento(estudo.getDistribuicaoVendaMediaDTO().getExcecaoDeBancasComponente(), vetor, cota)) {
 			cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);

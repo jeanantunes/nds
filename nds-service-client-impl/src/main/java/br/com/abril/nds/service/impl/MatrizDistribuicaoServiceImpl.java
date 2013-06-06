@@ -568,7 +568,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		    continue;
 		}
 		if (cotaEstudo.isCotaNaoRecebeSegmento() && !cotaEstudo.isCotaExcecaoSegmento()) {
-		    cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeSegmento.getCodigo());
+		    cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeEsseSegmento.getCodigo());
 		    cota.setReparte(null);
 		    continue;
 		}
