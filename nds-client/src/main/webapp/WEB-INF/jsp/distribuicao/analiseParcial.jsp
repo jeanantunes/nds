@@ -45,12 +45,20 @@ function escondeDados(){
 
 table.filtro td span {font-weight: normal;}
 .tableTotais {margin: 1px 0 3px; border: 1px solid white; border-collapse: collapse;}
+
+<c:if test="${tipoExibicao == 'NORMAL'}">
 .paddingTotais td {padding: 0 3px; text-align: right; width: 35px; border: 1px solid white;}
+</c:if>
+<c:if test="${tipoExibicao == 'PARCIAL'}">
+.paddingTotais td {padding: 0 3px; text-align: right; width: 45px; border: 1px solid white;}
+</c:if>
+
 .paddingTotais td#lbl_qtd_cotas {text-align: left; width: 82px;}
 .paddingTotais td#total_de_cotas {text-align: left; width: 197px;}
 .paddingTotais td#total_ultimo_reparte {width: 55px;}
 .paddingTotais td#total_reparte_sugerido {width: 56px;}
 .paddingTotais td#lbl_legenda {width: 24px;}
+.paddingTotais td#total_juramento {width: 44px;}
 .linkNomeCota { text-decoration: underline; cursor: pointer; }
 .editaRepartePorPDV { text-decoration: underline; cursor: pointer; }
 .asteriscoCotaNova:after { content: "*"; font-size: 150%; font-weight: bold; position: absolute; left: 43px; }
@@ -63,12 +71,7 @@ table.filtro td span {font-weight: normal;}
 /*#baseEstudoGridParcial td div { position: relative; }*/
 .repartePDV {width: 35px; text-align: right;}
 #prodCadastradosGrid tbody tr {display: block !important;}
-.sortable-placeholder {
-    height: 33px !important;
-    line-height: 30px !important;
-    border: 1px solid orange !important;
-}
-
+.sortable-placeholder {height: 33px !important; line-height: 30px !important; border: 1px solid orange !important;}
 </style>
 
     <br clear="all"/>
@@ -236,11 +239,13 @@ table.filtro td span {font-weight: normal;}
 					    </span>
                     </td>
                     <td>
-                        <span class="bt_novos">
-                            <a href="javascript:;" onclick="analiseParcialController.alterarVisualizacaoGrid();">
-                                <img src="${pageContext.request.contextPath}/images/ico_change.png" alt="Alterar Visualização do Grid" hspace="5" border="0" /> <%--Alterar Visualização do Grid--%>
-                            </a>
-                        </span>
+                        <c:if test="${tipoExibicao == 'NORMAL'}">
+                            <span class="bt_novos">
+                                <a href="javascript:;" onclick="analiseParcialController.alterarVisualizacaoGrid();">
+                                    <img src="${pageContext.request.contextPath}/images/ico_change.png" alt="Alterar Visualização do Grid" hspace="5" border="0" /> <%--Alterar Visualização do Grid--%>
+                                </a>
+                            </span>
+                        </c:if>
                     </td>
 				</tr>
 			</table>
@@ -279,22 +284,21 @@ table.filtro td span {font-weight: normal;}
 				<c:if test="${tipoExibicao == 'PARCIAL'}">
 					<table border="0" cellspacing="0" cellpadding="0" class="tableTotais">
 						<tr class="class_linha_1 paddingTotais">
-							<td width="80">Qtde Cotas:</td>
-							<td width="145" id="total_de_cotas">0</td>
-							<td width="58" align="right" id="total_reparte_sugerido">0</td>
-							<td width="25" align="right">&nbsp;</td>
-							<td width="48" align="right" id="total_juramento">0</td>
-							<%--<td width="57" align="right" id="total_media_venda">0</td>--%>
-							<td width="56" align="right" id="total_ultimo_reparte">0</td>
-							<td width="46" align="right" id="total_reparte1">0</td>
-							<td width="46" align="right" id="total_venda1" class="vermelho">0</td>
-							<td width="46" align="right" id="total_reparte2">0</td>
-							<td width="46" align="right" id="total_venda2" class="vermelho">0</td>
-							<td width="46" align="right" id="total_reparte3">0</td>
-							<td width="46" align="right" id="total_venda3" class="vermelho">0</td>
-							<td width="46" align="right" id="total_reparte4">0</td>
-							<td width="46" align="right" id="total_venda4" class="vermelho">0</td>
-							<td width="15" align="right">&nbsp;</td>
+							<td id="lbl_qtd_cotas">Qtde Cotas:</td>
+							<td id="total_de_cotas">0</td>
+                            <td id="total_ultimo_reparte">0</td>
+                            <td id="total_reparte_sugerido">0</td>
+							<td id="lbl_legenda">&nbsp;</td>
+							<td id="total_juramento">0</td>
+							<%--<td align="right" id="total_media_venda">0</td>--%>
+							<td id="total_reparte1">0</td>
+							<td id="total_venda1" class="vermelho">0</td>
+							<td id="total_reparte2">0</td>
+							<td id="total_venda2" class="vermelho">0</td>
+							<td id="total_reparte3">0</td>
+							<td id="total_venda3" class="vermelho">0</td>
+							<td id="total_reparte4">0</td>
+							<td id="total_venda4" class="vermelho">0</td>
 						</tr>
 					</table>
 				</c:if>
