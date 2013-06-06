@@ -106,6 +106,11 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     }
 
     @Override
+    public void atualizaClassificacaoCota(Long estudoId, Long numeroCota) {
+	analiseParcialRepository.atualizaClassificacaoCota(estudoId, numeroCota);
+    }
+    
+    @Override
     public void atualizaReparte(Long estudoId, Long numeroCota, Long reparte) {
         analiseParcialRepository.atualizaReparteCota(estudoId, numeroCota, reparte);
         analiseParcialRepository.atualizaReparteEstudo(estudoId, reparte);

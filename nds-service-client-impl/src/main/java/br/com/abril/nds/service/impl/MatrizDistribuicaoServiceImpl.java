@@ -732,8 +732,8 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		cota.setQtdePrevista(null);
 		cota.setQtdeEfetiva(null);
 	    } else if (cota.getReparte().compareTo(BigInteger.ZERO) == 0) {
-		cota.setQtdeEfetiva(BigInteger.ZERO);
-		cota.setQtdePrevista(BigInteger.ZERO);
+		cota.setQtdePrevista(null);
+		cota.setQtdeEfetiva(null);
 		cota.setReparte(null);
 	    } else {
 		cota.setQtdeEfetiva(cota.getReparte());

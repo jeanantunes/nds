@@ -1,9 +1,6 @@
 package br.com.abril.nds.repository;
 
-import java.math.BigInteger;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import br.com.abril.nds.dto.AnaliseEstudoDetalhesDTO;
 import br.com.abril.nds.dto.AnaliseParcialDTO;
@@ -17,6 +14,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 public interface AnaliseParcialRepository {
 	
 	List<AnaliseParcialDTO> buscaAnaliseParcialPorEstudo(AnaliseParcialQueryDTO queryDTO);
+	void atualizaClassificacaoCota(Long estudoId, Long numeroCota);
 	void atualizaReparteCota(Long estudoId, Long numeroCota, Long reparteSubtraido);
 	void atualizaReparteEstudo(Long estudoId, Long reparteSubtraido);
 	void liberar(Long id);

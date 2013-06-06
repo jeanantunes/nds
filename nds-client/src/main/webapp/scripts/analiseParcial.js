@@ -974,8 +974,8 @@ var analiseParcialController = $.extend(true, {
             var isReadOnly = value.cell.motivo === 'CL' ? 'readonly' : '';
 
             value.cell.quantidade = '<input type="text" motivo="' + value.cell.motivo + '" style="width: 50px;" value="'+
-                value.cell.quantidade +'" onchange="analiseParcialController.validaMotivoCotaReparte(this);" ' +
-                ' numeroCota="'+ value.cell.numeroCota +'" ' + isReadOnly + ' />';
+            value.cell.quantidade +'" onchange="analiseParcialController.validaMotivoCotaReparte(this);" ' +
+            ' numeroCota="'+ value.cell.numeroCota +'" ' + isReadOnly + ' />';
         });
         return resultado;
     },
@@ -1112,6 +1112,7 @@ var analiseParcialController = $.extend(true, {
     },
 
     exibirCotasQueNaoEntraramNoEstudo : function() {
+        $('#password').val('');
         $('#saldoReparteNaoSelec').html($('#saldo_reparte').html());
 
         analiseParcialController.cotasQueNaoEntraramNoEstudo();
