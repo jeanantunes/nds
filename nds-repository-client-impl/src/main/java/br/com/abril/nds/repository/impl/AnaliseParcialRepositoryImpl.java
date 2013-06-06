@@ -34,8 +34,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("       c.classificacao_espectativa_faturamento classificacao, ");
         sql.append("       coalesce(pes.nome, pes.razao_social, pes.nome_fantasia, '') nome, ");
         sql.append("       pdv_qtd.quantidade npdv, ");
-        sql.append("       round(ec.qtde_efetiva,0) reparteSugerido, ");
-        sql.append("       ec.reparte reparteEstudo, ");
+        sql.append("       ec.qtde_efetiva reparteEstudo, ");
+        sql.append("       coalesce(ec.reparte,0) reparteSugerido, ");
         sql.append("       ec.classificacao leg, ");
         sql.append("       ec.cota_nova cotaNova, ");
         sql.append("       (select coalesce(sum(mec.qtde), 0) ");
@@ -72,7 +72,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
         if (queryDTO.possuiOrdenacaoPlusFiltro()) {
             if (queryDTO.possuiOrdenacaoReparte()) {
-                where.append(" and ec.qtde_efetiva between ? and ? ");
+                where.append(" and ec.reparte between ? and ? ");
                 paramsWhere.add(queryDTO.getFilterSortFrom());
                 paramsWhere.add(queryDTO.getFilterSortTo());
             }
@@ -150,11 +150,11 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         }
 
         if (queryDTO.getFaixaDe() != null) {
-            where.append(" and ec.qtde_efetiva >= ? ");
+            where.append(" and ec.reparte >= ? ");
             paramsWhere.add(queryDTO.getFaixaDe());
         }
         if (queryDTO.getFaixaAte() != null) {
-            where.append(" and ec.qtde_efetiva <= ? ");
+            where.append(" and ec.reparte <= ? ");
             paramsWhere.add(queryDTO.getFaixaAte());
         }
 
@@ -307,7 +307,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         StringBuilder sql = new StringBuilder();
         sql.append("update estudo_cota ec ");
         sql.append("  left join cota cota on cota.id = ec.cota_id ");
-        sql.append("   set ec.qtde_efetiva = coalesce(ec.qtde_efetiva,0) + ? ");
+        sql.append("   set ec.reparte = coalesce(ec.reparte,0) + ? ");
         sql.append(" where ec.estudo_id = ? ");
         sql.append("   and cota.numero_cota = ? ");
 
@@ -400,7 +400,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         StringBuilder sql = new StringBuilder();
         sql.append("select cota.numero_cota numeroCota, ");
         sql.append("       coalesce(pe.nome, pe.razao_social, pe.nome_fantasia, '') nomeCota, ");
-        sql.append("       ec.qtde_efetiva quantidade, ");
+        sql.append("       ec.reparte quantidade, ");
         sql.append("       ec.classificacao motivo ");
         sql.append("  from estudo_cota ec ");
         sql.append("  join cota on cota.id = ec.cota_id ");

@@ -91,18 +91,22 @@ $(function(){
 	   		<legend>Resumo do Estudo</legend>
 	            <table width="950" border="0" cellspacing="2" cellpadding="2">
 				      <tr>
-				        <td width="260" rowspan="4" valign="top"><!--<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>-->
-				          <!-- <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>-->
-				          <span class="bt_novos"><a href="javascript:;" id="alterarFaixaReparte"><img src="images/ico_editar.gif" alt="Alterar Faixar" hspace="5" border="0" />Alterar Faixa</a></span>
-				          <span class="bt_novos"><a href="javascript:;" id="analiseEstudo"><img src="images/ico_redistribuicao_complementar.gif" alt="Análise" hspace="5" border="0" />Análise</a></span>
-				          <span class="bt_novos"><a href="javascript:;" id="recalcularEstudo"><img src="images/ico_add_novo.gif" alt="Recalcular Estudo" hspace="5" border="0" />Recalcular Estudo</a></span>
-				          <!-- <span class="bt_novos"><a href="javascript:;"><img src="images/ico_negociar.png" alt="Reabrir" hspace="5" border="0" />Reabrir</a></span>-->
-				          <span class="bt_novos"><a href="javascript:;" id="baseEstudo"><img src="images/ico_estudo_complementar.gif" alt="Divergências" hspace="5" border="0" />Base de estudo</a></span>
-				          <span class="bt_novos"><a href="javascript:;" id="excluirEstudo"><img src="images/ico_excluir.gif" alt="Excluir Estudo" hspace="5" border="0" />Excluir Estudo</a></span>
-				          <span class="bt_novos"><a href="javascript:;" onclick="$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected')); selectTabTitle('Matriz Distribuição');" id="botaoVoltarMatrizDistribuicao"><img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span><br clear="all" />
-				
-				        </td>
-				        <td width="116" style="border-bottom:1px solid #ccc;">Reparte Total:</td>
+				        <td width="310" rowspan="4" valign="top">
+                                <!--<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>-->
+                                <!-- <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>-->
+                            <div style="float: left;">
+                                <span class="bt_novos"><a href="javascript:;" id="alterarFaixaReparte"><img src="images/ico_editar.gif" alt="Alterar Faixar" hspace="5" border="0" />Alterar Faixa</a></span>
+                                <span class="bt_novos"><a href="javascript:;" id="analiseEstudo"><img src="images/ico_redistribuicao_complementar.gif" alt="Análise" hspace="5" border="0" />Análise</a></span>
+                                <span class="bt_novos"><a href="javascript:;" id="recalcularEstudo"><img src="images/ico_add_novo.gif" alt="Recalcular Estudo" hspace="5" border="0" />Recalcular Estudo</a></span>
+                            </div>
+                            <!-- <span class="bt_novos"><a href="javascript:;"><img src="images/ico_negociar.png" alt="Reabrir" hspace="5" border="0" />Reabrir</a></span>-->
+                            <div>
+                                <span class="bt_novos"><a href="javascript:;" id="baseEstudo"><img src="images/ico_estudo_complementar.gif" alt="Divergências" hspace="5" border="0" />Base de estudo</a></span>
+                                <span class="bt_novos"><a href="javascript:;" id="excluirEstudo"><img src="images/ico_excluir.gif" alt="Excluir Estudo" hspace="5" border="0" />Excluir Estudo</a></span>
+                                <span class="bt_novos"><a href="javascript:;" onclick="$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected')); selectTabTitle('Matriz Distribuição');" id="botaoVoltarMatrizDistribuicao"><img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
+                            </div>
+                        </td>
+                          <td width="116" style="border-bottom:1px solid #ccc;">Reparte Total:</td>
 				        <td width="41" style="border-bottom:1px solid #ccc;" id="fieldSetResumoReparteTotal"></td>
 				        <td width="86" style="border-bottom:1px solid #ccc;">Cota Atual:</td>
 				        

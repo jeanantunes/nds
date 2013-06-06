@@ -485,7 +485,7 @@ var analiseParcialController = $.extend(true, {
                     analiseParcialController.atualizaAbrangencia();
                     $input_reparte.attr('reparteAtual', reparteDigitado);
                     var reparteInicial = $input_reparte.attr('reparteInicial');
-                    $input_reparte.attr('reducaoReparte', reparteDigitado - reparteInicial);
+                    $input_reparte.attr('reducaoReparte', analiseParcialController.calculaPercentualReducaoReparte(reparteDigitado, reparteInicial));
                     if (reparteDigitado === reparteInicial) {
                         $legenda.removeClass('asterisco');
                     } else {
@@ -506,6 +506,11 @@ var analiseParcialController = $.extend(true, {
                 }
             });
         }
+    },
+
+    calculaPercentualReducaoReparte: function (reparteEstudo, reparteSugerido) {
+        var reducaoReparte = Math.abs(reparteEstudo - reparteSugerido);
+        return Math.round((reducaoReparte / reparteEstudo) * 10000) / 100;
     },
 
     preProcessGrid : function(resultado) {
@@ -538,7 +543,7 @@ var analiseParcialController = $.extend(true, {
                             .replace(/#numeroCota/g, numCota)
                             .replace(/#value/g, cell.reparteSugerido)
                             .replace(/#repEstudo/g, cell.reparteEstudo)
-                            .replace(/#redReparte/g, cell.reparteEstudo - cell.reparteSugerido);
+                            .replace(/#redReparte/g, analiseParcialController.calculaPercentualReducaoReparte(cell.reparteEstudo, cell.reparteSugerido));
             cell.reparteSugerido = input;
             
             cell.nome = analiseParcialController.linkNomeCota.replace('#nomeCota', cell.nome)
@@ -1108,6 +1113,7 @@ var analiseParcialController = $.extend(true, {
             if (element.value > 0) {
                 data.push({name: 'cotas[' + key + '].numeroCota', value: $(element).attr('numerocota')});
                 data.push({name: 'cotas[' + key + '].quantidade', value: element.value});
+                data.push({name: 'cotas[' + key + '].motivo', value: $(element).attr('motivo')});
             }
         });
 
@@ -1175,7 +1181,7 @@ var analiseParcialController = $.extend(true, {
                                 var $this = $(this);
 
                                 params.push({name: 'listaIdProduto[0]', value: produtoId});
-                                params.push({name: 'filtro.cotaDto.excecaoSegmento', value: true});
+                                params.push({name: 'filtro.excecaoSegmento', value: true});
                                 params.push({name: 'filtro.cotaDto.numeroCota', value: $this.attr('numerocota')});
 
                                 $.postJSON(analiseParcialController.path + '/distribuicao/excecaoSegmentoParciais/inserirExcecaoProdutoNaCota', params);
@@ -1260,10 +1266,18 @@ var analiseParcialController = $.extend(true, {
             .each(function(){
                 var $tr = $(this);
                 var perc = $tr.find(sortAtribute).attr('percentualVenda');
-                if (perc < de || perc > ate) {
-                    $tr.hide();
+                if (de < ate) {
+                    if (de < perc && perc < ate) {
+                        $tr.show();
+                    } else {
+                        $tr.hide();
+                    }
                 } else {
-                    $tr.show();
+                    if (de > perc && perc > ate) {
+                        $tr.show();
+                    } else {
+                        $tr.hide();
+                    }
                 }
             })
             .filter(':odd').addClass('erow')
@@ -1283,10 +1297,18 @@ var analiseParcialController = $.extend(true, {
             .each(function(){
                 var $tr = $(this);
                 var rr = $tr.find(sortAtribute).attr('reducaoReparte');
-                if (rr < de || rr > ate) {
-                    $tr.hide();
+                if (de < ate) {
+                    if (de < rr && rr < ate) {
+                        $tr.show();
+                    } else {
+                        $tr.hide();
+                    }
                 } else {
-                    $tr.show();
+                    if (de > rr && rr > ate) {
+                        $tr.show();
+                    } else {
+                        $tr.hide();
+                    }
                 }
             })
             .filter(':odd').addClass('erow')
