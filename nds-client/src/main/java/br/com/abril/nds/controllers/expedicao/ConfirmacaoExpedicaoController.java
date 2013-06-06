@@ -432,8 +432,10 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			}
 		}
 		
-		private String verificarExecucaoInterfaces() {
-			throw new ValidacaoException(TipoMensagem.ERROR, "As interfaces encontram-se em processamento. Aguarde o termino da execução para continuar!");
+		private void verificarExecucaoInterfaces() {
+			if (distribuidorService.verificaDesbloqueioProcessosLancamentosEstudos()) {
+				throw new ValidacaoException(TipoMensagem.ERROR, "As interfaces encontram-se em processamento. Aguarde o termino da execução para continuar!");
+			}
 		}
 		
 	}
