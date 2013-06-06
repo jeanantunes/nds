@@ -27,7 +27,7 @@ public class AnaliseParcialDTO implements Serializable {
     private BigInteger npdv;
 
     @Export(label = "Reparte Sugerido", alignment = Alignment.LEFT, exhibitionOrder = 5)
-    private BigDecimal reparteSugerido;
+    private BigInteger reparteSugerido;
 
     @Export(label = "Legenda", alignment = Alignment.LEFT, exhibitionOrder = 6)
     private String leg;
@@ -87,11 +87,11 @@ public class AnaliseParcialDTO implements Serializable {
 	this.npdv = npdv;
     }
 
-    public BigDecimal getReparteSugerido() {
+    public BigInteger getReparteSugerido() {
 	return reparteSugerido;
     }
 
-    public void setReparteSugerido(BigDecimal reparteSugerido) {
+    public void setReparteSugerido(BigInteger reparteSugerido) {
 	this.reparteSugerido = reparteSugerido;
     }
 
@@ -273,7 +273,10 @@ public class AnaliseParcialDTO implements Serializable {
         return reparteEstudo;
     }
 
-    public void setReparteEstudo(BigInteger reparteEstudo) {
-        this.reparteEstudo = reparteEstudo;
+    public void setReparteEstudo(BigDecimal reparteEstudo) {
+        this.reparteEstudo = null;
+        if (reparteEstudo != null) {
+            this.reparteEstudo = reparteEstudo.toBigInteger();
+        }
     }
 }
