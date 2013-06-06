@@ -303,6 +303,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	private List<FechamentoFisicoLogicoDTO> retornarListaOrdenada(
 			List<FechamentoFisicoLogicoDTO> listaConferencia, String sort, String sortorder) {
 		
+		if (sortorder == null) {
+			return listaConferencia;
+		}
+		
 		if(sort.equals("sequencia"))
 		{
 			FechamentoFisicoLogicoDtoOrdenaPorSequencia ordenacao = new FechamentoFisicoLogicoDtoOrdenaPorSequencia(sortorder);
