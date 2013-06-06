@@ -48,6 +48,10 @@ public class RateioDiferenca implements Serializable {
 	@Column(name = "DATA_NOTA_ENVIO", nullable = true)
 	private Date dataNotaEnvio;
 	
+	@Temporal(TemporalType.DATE)
+	@Column(name = "DATA_MOVIMENTO")
+	private Date dataMovimento;
+	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "DIFERENCA_ID")
 	private Diferenca diferenca;
@@ -105,18 +109,20 @@ public class RateioDiferenca implements Serializable {
 		this.estudoCota = estudoCota;
 	}
 
-	/**
-	 * @return the dataNotaEnvio
-	 */
 	public Date getDataNotaEnvio() {
 		return dataNotaEnvio;
 	}
 
-	/**
-	 * @param dataNotaEnvio the dataNotaEnvio to set
-	 */
 	public void setDataNotaEnvio(Date dataNotaEnvio) {
 		this.dataNotaEnvio = dataNotaEnvio;
+	}
+
+	public Date getDataMovimento() {
+		return dataMovimento;
+	}
+
+	public void setDataMovimento(Date dataMovimento) {
+		this.dataMovimento = dataMovimento;
 	}
 	
 }
