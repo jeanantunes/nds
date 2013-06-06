@@ -45,7 +45,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
 
 	    if (!edicoesBase.isEmpty()) {
 
-		edicoesBase = limitarEdicoesApenasSeis(edicoesBase);
+		edicoesBase = limitarEdicoesApenasSeis(edicoesBase, estudo);
 		validaApenasUmaEdicaoFechada(edicoesBase);
 		excluiEdicoesComMaisDeDoisAnos(edicoesBase);
 		excluiMaiorQueQuatroSeColecionavel(edicoesBase, estudo);
@@ -57,13 +57,13 @@ public class DefinicaoBases extends ProcessoAbstrato {
 	}
     }
 
-    private LinkedList<ProdutoEdicaoEstudo> limitarEdicoesApenasSeis(List<ProdutoEdicaoEstudo> edicoesBase) {
+    private LinkedList<ProdutoEdicaoEstudo> limitarEdicoesApenasSeis(List<ProdutoEdicaoEstudo> edicoesBase, EstudoTransient estudo) {
 	LinkedList<ProdutoEdicaoEstudo> nova = new LinkedList<>();
 	int qtdeParciais = 0;
 	for (ProdutoEdicaoEstudo base : edicoesBase) {
 	    if (!base.isEdicaoAberta()) {
 		if (nova.size() < 6) {
-		    if (base.isParcial()) {
+		    if (base.isParcial() && estudo.getProdutoEdicaoEstudo().getId().equals(base.getId())) {
 			if (qtdeParciais < 4) {
 			    qtdeParciais++;
 			} else {
