@@ -419,7 +419,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		hql.append(" AND (movimento.statusEstoqueFinanceiro is null ");
 		hql.append(" or movimento.statusEstoqueFinanceiro = :statusEstoqueFinanceiro ) " );
 		
-		hql.append(" AND movimento.tipoMovimento.operacaoEstoque = :tipoOperacaoEntrada ");
+		hql.append(" AND tipoMovimento.operacaoEstoque = :tipoOperacaoEntrada ");
 		
 		hql.append(" AND movimentoEstoqueCotaFuro.id is null ");
 		
