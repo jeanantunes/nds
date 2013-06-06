@@ -38,7 +38,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 	sql.append("       t.nome nome, ");
 	sql.append("       t.numero_periodo periodo, ");
 	sql.append("       t.parcial parcial, ");
-	sql.append("       t.data_lcto_distribuidor dataLancamento, ");
+	sql.append("       t.dataLancamento, ");
 	sql.append("       round(sum(t.reparte) - sum(t.encalhe)) / sum(t.reparte) * 100 percentualVenda, ");
 	sql.append("       t.reparte, ");
 	sql.append("       t.reparte - t.encalhe venda, ");
@@ -51,7 +51,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 	sql.append("               p.nome, ");
 	sql.append("               plp.numero_periodo, ");
 	sql.append("               (case when plp.id is null then 0 else 1 end) parcial, ");
-	sql.append("               l.data_lcto_distribuidor, ");
+	sql.append("               l.data_lcto_prevista dataLancamento, ");
 	sql.append("               sum(case when tm.grupo_movimento_estoque = 'ENVIO_JORNALEIRO' ");
 	sql.append("                   then mec.qtde else 0 end) reparte, ");
 	sql.append("               sum(case when tm.grupo_movimento_estoque = 'ENVIO_ENCALHE' ");
@@ -105,7 +105,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 	sql.append("       p.nome nome, ");
 	sql.append("       plp.numero_periodo periodo, ");
 	sql.append("       (case when plp.id is null then 0 else 1 end) parcial, ");
-	sql.append("       l.data_lcto_distribuidor dataLancamento, ");
+	sql.append("       l.data_lcto_prevista dataLancamento, ");
 	sql.append("       round(sum(epc.qtde_recebida), 0) reparte, ");
 	sql.append("       round((sum(epc.qtde_recebida) - sum(epc.qtde_devolvida)), 0) venda, ");
 	sql.append("       round(sum(epc.qtde_recebida) - sum(epc.qtde_devolvida)) / sum(epc.qtde_recebida) * 100 percentualVenda, ");

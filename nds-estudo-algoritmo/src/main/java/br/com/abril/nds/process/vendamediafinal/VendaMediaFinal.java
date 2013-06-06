@@ -29,6 +29,9 @@ public class VendaMediaFinal {
 		if (cota.getIndiceVendaCrescente() != null) {
 		    cota.setVendaMedia(cota.getVendaMedia().multiply(cota.getIndiceVendaCrescente()));
 		}
+		if (cota.getIndiceCorrecaoTendencia() != null) {
+		    cota.setVendaMedia(cota.getVendaMedia().multiply(cota.getIndiceCorrecaoTendencia()));
+		}
 		if (cota.getIndiceTratamentoRegional() != null) {
 		    cota.setVendaMedia(cota.getVendaMedia().multiply(cota.getIndiceTratamentoRegional()));
 		}
