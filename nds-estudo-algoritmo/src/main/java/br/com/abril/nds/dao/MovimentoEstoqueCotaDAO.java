@@ -26,7 +26,7 @@ public class MovimentoEstoqueCotaDAO {
 		BigDecimal valorJuramentado = BigDecimal.ZERO;
 
 		Map<String, Object> params = new HashMap<>();
-		params.put("TIPO_MOVIMENTO_ID", 21);
+		params.put("TIPO_MOVIMENTO_ID", 32); // FIXME: corrigir select para buscar tipo movimento corretamente
 		params.put("COTA_ID", cota.getId());
 		params.put("PRODUTO_EDICAO_ID", produtoEdicao.getId());
 		SqlRowSet rs = jdbcTemplate.queryForRowSet(queryReparteJuramentadoAFaturar, params);
