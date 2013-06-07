@@ -28,6 +28,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -45,7 +46,6 @@ import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusDivida;
-import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -515,6 +515,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		return valorMinimo;
 	}
 	
+	@SuppressWarnings("null")
 	private String inserirConsolidadoFinanceiro(Cota cota, List<MovimentoFinanceiroCota> movimentos,
 			Usuario usuario, int qtdDiasNovaCobranca, Date dataOperacao, List<String> msgs,
 			Fornecedor fornecedor,FormaCobranca formaCobrancaPrincipal){
@@ -631,73 +632,99 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		ParametroCobrancaCota parametroCobrancaCota = cota.getParametroCobranca();
 		
+		TipoFormaCobranca tipoFormaCobrancaAntiga = null;
+		
 		if(parametroCobrancaCota!=null && parametroCobrancaCota.getFatorVencimento()!=null) {
 			fatorVencimento = parametroCobrancaCota.getFatorVencimento();
+		}
+		else {
+			fatorVencimento = formaCobrancaPrincipal.getFatorVencimento();
+			tipoFormaCobrancaAntiga = formaCobrancaPrincipal.getTipoFormaCobranca();
+			formaCobrancaPrincipal.setTipoFormaCobranca(null);
 		}
 		
 		boolean cobrarHoje = false;
 		
 		Calendar c = null;
 		
-		switch(formaCobrancaPrincipal.getTipoFormaCobranca()){
-
-			case DIARIA:
-				dataVencimento = 
-				this.calendarioService.adicionarDiasUteis(consolidadoFinanceiroCota.getDataConsolidado(), 
-														  fatorVencimento, 
-														  null, 
-														  null);
-				cobrarHoje = true;
-			break;
+		//acertar a data de vencimento de a cota usa parametros de cobranca do distribuidor
+		if(formaCobrancaPrincipal.getTipoFormaCobranca() == null) {
+			dataVencimento = 
+					this.calendarioService.adicionarDiasUteis(consolidadoFinanceiroCota.getDataConsolidado(), 
+															  fatorVencimento);
+			cobrarHoje = true;
+		} else {
+			// switch usado para se é usado os parametros de cobranca da propria cota
+			switch(formaCobrancaPrincipal.getTipoFormaCobranca()){
 			
-			case QUINZENAL:
-				dataVencimento = 
-				this.calendarioService.adicionarDiasUteis(consolidadoFinanceiroCota.getDataConsolidado(), 
-														  fatorVencimento,
-														  null, 
-														  formaCobrancaPrincipal.getDiasDoMes());
-				c = Calendar.getInstance();
-				c.setTime(dataOperacao);
-				cobrarHoje = 
-						formaCobrancaPrincipal.getDiasDoMes().contains(
-								c.get(Calendar.DAY_OF_MONTH));
-			break;
-			
-			case MENSAL:
-				dataVencimento = 
-				this.calendarioService.adicionarDiasUteis(consolidadoFinanceiroCota.getDataConsolidado(), 
-														  fatorVencimento,
-														  null, 
-														  formaCobrancaPrincipal.getDiasDoMes());
-				c = Calendar.getInstance();
-				c.setTime(dataOperacao);
-				cobrarHoje =
-						formaCobrancaPrincipal.getDiasDoMes().get(0).equals(
-								c.get(Calendar.DAY_OF_MONTH));
-			break;
-			
-			case SEMANAL:
-				diasSemanaConcentracaoPagamento = this.cotaRepository.obterDiasConcentracaoPagamentoCota(cota.getId());
+				case DIARIA:
+					dataVencimento = 
+					this.calendarioService.adicionarDiasUteis(consolidadoFinanceiroCota.getDataConsolidado(), 
+															  fatorVencimento, 
+															  null, 
+															  null);
+					cobrarHoje = true;
+				break;
 				
-				dataVencimento = 
-				this.calendarioService.adicionarDiasUteis(consolidadoFinanceiroCota.getDataConsolidado(), 
-														  fatorVencimento,
-														  diasSemanaConcentracaoPagamento, 
-														  null);
-				c = Calendar.getInstance();
-				c.setTime(dataOperacao);
-				
-				for (ConcentracaoCobrancaCota conc : formaCobrancaPrincipal.getConcentracaoCobrancaCota()){
-					
+				case QUINZENAL:
+					dataVencimento = 
+					this.calendarioService.adicionarDiasUteis(consolidadoFinanceiroCota.getDataConsolidado(), 
+															  fatorVencimento,
+															  null, 
+															  formaCobrancaPrincipal.getDiasDoMes());
+					c = Calendar.getInstance();
+					c.setTime(dataOperacao);
 					cobrarHoje = 
-							c.get(Calendar.DAY_OF_WEEK) == conc.getDiaSemana().getCodigoDiaSemana();
+							formaCobrancaPrincipal.getDiasDoMes().contains(
+									c.get(Calendar.DAY_OF_MONTH));
+				break;
+				
+				case MENSAL:
+					dataVencimento = 
+					this.calendarioService.adicionarDiasUteis(consolidadoFinanceiroCota.getDataConsolidado(), 
+															  fatorVencimento,
+															  null, 
+															  formaCobrancaPrincipal.getDiasDoMes());
+					c = Calendar.getInstance();
+					c.setTime(dataOperacao);
+					cobrarHoje =
+							formaCobrancaPrincipal.getDiasDoMes().get(0).equals(
+									c.get(Calendar.DAY_OF_MONTH));
+				break;
+				
+				case SEMANAL:
+					diasSemanaConcentracaoPagamento = this.cotaRepository.obterDiasConcentracaoPagamentoCota(cota.getId());
 					
-					if (cobrarHoje){
-						break;
+					dataVencimento = 
+							this.calendarioService.adicionarDiasUteis(consolidadoFinanceiroCota.getDataConsolidado(), 
+															  fatorVencimento,
+															  diasSemanaConcentracaoPagamento, 
+															  null);
+					c = Calendar.getInstance();
+					c.setTime(dataOperacao);
+					
+					for (ConcentracaoCobrancaCota conc : formaCobrancaPrincipal.getConcentracaoCobrancaCota()){
+						
+						cobrarHoje = 
+								c.get(Calendar.DAY_OF_WEEK) == conc.getDiaSemana().getCodigoDiaSemana();
+						
+						if (cobrarHoje){
+							break;
+						}
 					}
-				}
-			break;
+				break;
+			}
+			
 		}
+		
+		/*
+		 * Recoloca o TipoFormaCobranca no Local Antigo
+		 */
+		if(parametroCobrancaCota.getFatorVencimento() == null) {
+			formaCobrancaPrincipal.setTipoFormaCobranca(tipoFormaCobrancaAntiga);
+		}
+		
+		
 		
 		if (dataVencimento == null){
 			

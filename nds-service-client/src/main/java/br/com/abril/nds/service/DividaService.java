@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaInadimplenteDTO;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.Divida;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 public interface DividaService {
@@ -54,7 +55,7 @@ public interface DividaService {
 	 * @param idDivida
 	 * @return
 	 */
-	List<Divida> getDividasAcumulo(Long idDivida);
+	List<Divida> obterDividasAcumulo(Long idDivida);
 	
 	
 	/**
@@ -159,5 +160,5 @@ public interface DividaService {
      */
     long contarDividasVencerApos(Date data);
 	
-	
+    List<MovimentoFinanceiroCota> obterDividasNegociacao(Long idDivida);
 }

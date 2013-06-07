@@ -332,6 +332,8 @@ function Endereco(paramTela, paramMessage) {
 			{ "cep": cep },			 
 			function(result) {
 				
+				if (result){
+				
 					$("#"+paramTela+"idEndereco", Endereco.workspace).val(result.id);
 					$("#"+paramTela+"tipoLogradouro", Endereco.workspace).val(result.tipoLogradouro.toUpperCase());
 					$("#"+paramTela+"logradouro", Endereco.workspace).val(result.logradouro);
@@ -340,7 +342,7 @@ function Endereco(paramTela, paramMessage) {
 					$("#"+paramTela+"uf", Endereco.workspace).val(result.uf);
 					$("#"+paramTela+"codigoCidadeIBGE", Endereco.workspace).val(result.codigoCidadeIBGE);
 					$("#"+paramTela+"cidade", Endereco.workspace).val(result.localidade);
-				
+				}
 			},
 			null, 
 			isFromModal,

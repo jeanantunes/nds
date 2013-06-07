@@ -59,7 +59,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
-		// TODO Auto-generated method stub
+		distribuidorService.bloqueiaProcessosLancamentosEstudos();
 	}
 
 	@Override
@@ -364,7 +364,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 	
 	@Override
 	public void posProcess(Object tempVar) {
-		// TODO Auto-generated method stub
+		distribuidorService.desbloqueiaProcessosLancamentosEstudos();
 	}
 	
 }

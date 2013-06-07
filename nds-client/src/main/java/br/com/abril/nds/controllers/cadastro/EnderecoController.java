@@ -578,7 +578,7 @@ public class EnderecoController extends BaseController {
 		
 		if (enderecoRetornado == null) {
 			
-			this.result.use(Results.json()).from("", "result").recursive().serialize();
+			this.result.nothing();
 		
 		} else {
 
