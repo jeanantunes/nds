@@ -268,13 +268,22 @@ public class FechamentoEncalheController extends BaseController {
 		}
 		
 		try {
-			
+			List<CotaAusenteEncalheDTO> listaCotasAusentes = this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, true, null, null, 0, 0);
 			if (postergarTodasCotas) {
-			
-				this.fechamentoEncalheService.postergarTodasCotas(dataEncalhe, dataPostergacao);
+				
+				if(listaCotasAusentes != null){
+					
+					//idsCotas a serem retirados da lista 
+					removerCotasAusentesLista(listaCotasAusentes, idsCotas);
+					
+					this.fechamentoEncalheService.postergarTodasCotas(dataEncalhe, dataPostergacao, listaCotasAusentes);
+				}
+				
 			
 			} else {
-				idsCotas.addAll(getIdsCotasAusentesComDivida(this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, true, null, null, 0, 0)));
+				//Adiciona as contas com dívida
+				idsCotas.addAll(getIdsCotasAusentesComDivida(listaCotasAusentes));
+				
 				this.fechamentoEncalheService.postergarCotas(dataEncalhe, dataPostergacao, idsCotas);
 			}
 			
@@ -288,6 +297,23 @@ public class FechamentoEncalheController extends BaseController {
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Cotas postergadas com sucesso!"), "result").recursive().serialize();
 	}
 	
+	private void removerCotasAusentesLista(List<CotaAusenteEncalheDTO> listaCotasAusentes, List<Long> idsCotas) {
+		
+		ArrayList<CotaAusenteEncalheDTO> newRefListaCotasAusentes = new ArrayList<CotaAusenteEncalheDTO>(listaCotasAusentes);
+		if(idsCotas != null){
+			
+			for(Long idCota : idsCotas){
+				for(int i=0; i < newRefListaCotasAusentes.size(); i++){
+					CotaAusenteEncalheDTO dto = newRefListaCotasAusentes.get(i);
+					
+					if(dto != null && dto.getIdCota().equals(idCota)){
+						listaCotasAusentes.remove(i);
+					}
+				}
+			}
+		}
+	}
+
 	@Path("/dataSugestaoPostergarCota")
 	public void carregarDataSugestaoPostergarCota(String dataEncalhe) throws ParseException {
 		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(dataEncalhe);
@@ -340,6 +366,9 @@ public class FechamentoEncalheController extends BaseController {
 					this.fechamentoEncalheService.buscarCotasAusentes(dataOperacao, true, null, null, 0, 0);
 
 			if (cobrarTodasCotas) {
+				
+				//idsCotas a serem retirados da lista
+				removerCotasAusentesLista(listaCotaAusenteEncalhe, idsCotas);
 				
 				this.fechamentoEncalheService.realizarCobrancaCotas(dataOperacao, getUsuarioLogado(), listaCotaAusenteEncalhe, null);				
 			
