@@ -231,8 +231,6 @@ var analiseParcialController = $.extend(true, {
             totalReparteSugerido = 0,
             totais = [];
         $(resultado.rows).each(function(i, row) {
-            var venda = 0,
-                quantidade = 0;
             var cell = row.cell;
             for (var j = 1; j < 7; j++) {
                 if (typeof totais[j - 1] === 'undefined') {
@@ -240,36 +238,24 @@ var analiseParcialController = $.extend(true, {
                     totais[j - 1].reparte = 0;
                     totais[j - 1].venda = 0;
                 }
-                if (!isNaN(cell['reparte'+ j]) && !isNaN(cell['venda'+ j]) &&
-                        (cell['reparte'+ j] !== '') && (cell['reparte'+ j] !== '')) {
+                if (!isNaN(cell['reparte'+ j]) && (cell['reparte' + j] !== '') ) {
                     totais[j - 1].reparte += parseInt(cell['reparte'+ j], 10);
+                }
+                if (!isNaN(cell['venda'+ j]) && (cell['venda' + j] !== '')) {
                     totais[j - 1].venda += parseInt(cell['venda'+ j], 10);
-
-                    venda += parseInt(cell['venda'+ j], 10);
-                    quantidade++;
                 }
             }
-//            if (venda > 0) {
-//                cell.mediaVenda = (venda / quantidade).toFixed(0);
-//            } else {
-//                cell.mediaVenda = '';
-//            }
             if ((typeof cell.juramento !== 'undefined') && (cell.juramento !== '')) {
                 totalJuramento += parseInt(cell.juramento, 10);
             }
-//            if ((typeof cell.mediaVenda !== 'undefined') && (cell.mediaVenda !== '')) {
-//                totalMediaVenda += parseInt(cell.mediaVenda, 10);
-//            }
             if ((typeof cell.ultimoReparte !== 'undefined') && (cell.ultimoReparte !== '')) {
                 totalUltimoReparte += parseInt(cell.ultimoReparte, 10);
             }
             if (!isNaN($(cell.reparteSugerido).val())) {
                 totalReparteSugerido += parseInt($(cell.reparteSugerido).val(), 10);
             }
-            quantidade++;
         });
         $('#total_juramento').text(totalJuramento);
-//        $('#total_media_venda').text(totalMediaVenda);
         $('#total_ultimo_reparte').text(totalUltimoReparte);
         $('#total_reparte_sugerido').text(totalReparteSugerido);
         $('#total_de_cotas').text(resultado.rows.length);
@@ -509,8 +495,10 @@ var analiseParcialController = $.extend(true, {
     },
 
     calculaPercentualReducaoReparte: function (reparteEstudo, reparteSugerido) {
-        var reducaoReparte = Math.abs(reparteEstudo - reparteSugerido);
-        return Math.round((reducaoReparte / reparteEstudo) * 10000) / 100;
+        var repEstudo = isNaN(reparteEstudo)?0:reparteEstudo;
+        var repSugerido = isNaN(reparteSugerido)?0:reparteSugerido;
+        var reducaoReparte = repEstudo - repSugerido;
+        return Math.round((reducaoReparte / repEstudo) * 10000) / 100;
     },
 
     preProcessGrid : function(resultado) {
@@ -566,7 +554,8 @@ var analiseParcialController = $.extend(true, {
             }
 
             for (var j = 0; j < 6; j++) {
-                if (typeof cell.edicoesBase[j] === 'undefined' || typeof cell.edicoesBase[j].reparte === 'undefined' || cell.edicoesBase[j].reparte === 0) {
+                if (typeof cell.edicoesBase[j] === 'undefined' || typeof cell.edicoesBase[j].reparte === 'undefined' || cell.edicoesBase[j].reparte === 0
+                    || typeof cell.edicoesBase[j].venda === 'undefined' || cell.edicoesBase[j].venda === 0) {
                     cell['reparte'+ (j + 1)] = '';
                     cell['venda'+ (j + 1)] = '';
                 } else {
@@ -1285,8 +1274,8 @@ var analiseParcialController = $.extend(true, {
     },
 
     filtrarOrdenarReducaoReparte : function() {
-        var de = $("#ordenarPorDe").val() * 1;
-        var ate = $("#ordenarPorAte").val() * 1;
+        var de = $("#ordenarPorDe").val() * -1;
+        var ate = $("#ordenarPorAte").val() * -1;
 
         var settings = {order: de<ate?'asc':'desc', attr: 'reducaoReparte'};
         var sortAtribute = 'td[abbr="reparteSugerido"] div input';
