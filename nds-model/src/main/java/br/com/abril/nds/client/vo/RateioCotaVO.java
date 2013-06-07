@@ -35,6 +35,8 @@ public class RateioCotaVO implements Serializable {
 	
 	private Date dataEnvioNota;
 	
+	private Date dataMovimento;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -247,6 +249,16 @@ public class RateioCotaVO implements Serializable {
 		} else if (!reparteCota.equals(other.reparteCota))
 			return false;
 		return true;
+	}
+
+	public Date getDataMovimento() {
+		return dataMovimento;
+	}
+
+
+
+	public void setDataMovimento(Date dataMovimento) {
+		this.dataMovimento = dataMovimento;
 	}
 
 }
