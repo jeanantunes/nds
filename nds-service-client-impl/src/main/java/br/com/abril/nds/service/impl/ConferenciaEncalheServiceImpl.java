@@ -124,11 +124,13 @@ import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ConsolidadoFinanceiroService;
 import br.com.abril.nds.service.ControleNumeracaoSlipService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
+import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
@@ -156,6 +158,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private ConsolidadoFinanceiroService consolidadoFinanceiro;
+	
+	@Autowired
+	private FormaCobrancaService formaCobrancaService;
+	
+	@Autowired
+	private CalendarioService calendarioService;
 	
 	@Autowired
 	private BoxRepository boxRepository;
@@ -2656,7 +2664,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		Date dataOperacaoDistribuidor = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		Cota cota = cotaRepository.obterPorNumerDaCota(ctrlConfEncalheCota.getCota().getNumeroCota());
-		
+			
 		Date dataFinalizacao = new Date();
 		
 		if(ctrlConfEncalheCota.getId()!=null) { 
@@ -2666,6 +2674,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			controleConferenciaEncalheCotaFromBD.setStatus(statusOperacao);
 			controleConferenciaEncalheCotaFromBD.setUsuario(usuario);
+			
 			controleConferenciaEncalheCotaFromBD.setDataFim(dataFinalizacao);
 			
 			controleConferenciaEncalheCotaFromBD.setConferenciasEncalhe(null);
