@@ -553,7 +553,8 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	Estudo estudoCopia = obterCopiaDeEstudo(estudo, lancamento);
 	estudoCopia.setQtdeReparte(vo.getReparteDistribuido());
 	LinkedList<EstudoCota> cotasSelecionadas = new LinkedList<>(estudo.getEstudoCotas());
-	Map<Long, CotaEstudo> mapCotas = carregarInformacoesCotaEstudo(estudo.getProdutoEdicao());
+	ProdutoEdicao edicao = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(vo.getCodigoProduto(), vo.getNumeroEdicao().longValue());
+	Map<Long, CotaEstudo> mapCotas = carregarInformacoesCotaEstudo(edicao);
 
 	cotasSelecionadas = copiarListaDeCotas(cotasSelecionadas, estudoCopia, vo.isFixacao());
 
