@@ -1065,9 +1065,19 @@ public class DiferencaEstoqueController extends BaseController {
 			listaRateiosCadastrados = new ArrayList<RateioCotaVO>();
 		}
 		
+		ProdutoEdicao produtoEdicao =
+			this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
+					diferencaVO.getCodigoProduto(), diferencaVO.getNumeroEdicao());
+		
 		for (RateioCotaVO rateioCotaVO : listaNovosRateios) {
 			
 			rateioCotaVO.setIdDiferenca(diferencaVO.getId());
+			
+			Date dataMovimentacao = 
+				this.movimentoEstoqueCotaService.obterDataUltimaMovimentacaoReparteExpedida(
+						rateioCotaVO.getNumeroCota(), produtoEdicao.getId());
+			
+			rateioCotaVO.setDataMovimento(dataMovimentacao);
 			
 			this.validarNovoRateio(rateioCotaVO,diferencaVO);
 
