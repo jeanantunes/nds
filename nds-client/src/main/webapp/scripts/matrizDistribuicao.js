@@ -1128,6 +1128,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		data.push({name: 'copiaProporcionalDeDistribuicaoVO.idEstudo', 			 value: estudo});
 		data.push({name: 'copiaProporcionalDeDistribuicaoVO.fixacao', 			 value: fixacao});
 		data.push({name: 'copiaProporcionalDeDistribuicaoVO.reparteDistribuido', value: reparteDistribuido});
+		data.push({name: 'copiaProporcionalDeDistribuicaoVO.codigoProduto', value: $('#copiarEstudo-codigoProduto').text()});
+		data.push({name: 'copiaProporcionalDeDistribuicaoVO.numeroEdicao', value: $('#copiarEstudo-edicao').text()});
 
         if (idCopia) {
             data.push({name: 'copiaProporcionalDeDistribuicaoVO.idCopia', 			 value: idCopia});
