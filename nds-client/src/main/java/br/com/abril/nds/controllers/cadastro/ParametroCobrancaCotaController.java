@@ -378,9 +378,9 @@ public class ParametroCobrancaCotaController extends BaseController {
 			// A cota sempre terá uma forma de cobrança a forma de cobrança principal do Distribuidor
 			parametroCobrancaCotaService.inserirFormaCobrancaDoDistribuidorNaCota(parametroCobranca);
 			
-		} 
-		
-		this.parametroCobrancaCotaService.postarParametroCobranca(parametroCobranca);
+		} else {
+			this.parametroCobrancaCotaService.postarParametroCobranca(parametroCobranca);
+		}
 		
 		this.salvarContrato();
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parametros de Cobrança Cadastrados."),Constantes.PARAM_MSGS).recursive().serialize();
@@ -476,7 +476,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 	 */
 	@Post
 	@Path("/postarFormaCobranca")
-	public void postarFormaCobranca(FormaCobrancaDTO formaCobranca, String tipoFormaCobranca, List<Long> listaIdsFornecedores){	
+	public void postarFormaCobranca(FormaCobrancaDTO formaCobranca, String tipoFormaCobranca, List<Long> listaIdsFornecedores, ParametroCobrancaCotaDTO parametroCobranca){	
 
 		if ((tipoFormaCobranca!=null)&&(!"".equals(tipoFormaCobranca))){
 			formaCobranca.setTipoFormaCobranca(TipoFormaCobranca.valueOf(tipoFormaCobranca));
@@ -494,7 +494,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 		if (this.parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(formaCobranca.getIdCota()) == 0) {
 			formaCobranca.setParametroDistribuidor(true);
 		}
-
+		
 		this.parametroCobrancaCotaService.postarFormaCobranca(formaCobranca);	
 
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Forma de Cobrança Cadastrada."),Constantes.PARAM_MSGS).recursive().serialize();

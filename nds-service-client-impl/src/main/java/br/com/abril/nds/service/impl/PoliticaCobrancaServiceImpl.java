@@ -236,6 +236,25 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 			parametroCobrancaDTO.setFormaEmissao(politica.getFormaEmissao());
 			parametroCobrancaDTO.setUnificada(politica.isUnificaCobranca()?true:false);
 			
+			if(politica.getFormaCobranca() != null 
+					&& politica.getFormaCobranca().getFornecedorPadrao() != null) {
+				
+				parametroCobrancaDTO.setIdFornecedorPadrao(politica.getFormaCobranca().getFornecedorPadrao().getId());
+				
+			}
+			
+			if(politica.getFormaCobranca() != null) {
+				
+				parametroCobrancaDTO.setTipoCota(politica.getFormaCobranca().getTipoCota());
+				
+			}
+			
+			if(politica.getFormaCobranca() != null && politica.getFormaCobranca().getFatorVencimento() != null) {
+				
+				parametroCobrancaDTO.setFatorVencimento(politica.getFormaCobranca().getFatorVencimento().longValue());
+				
+			}
+			
 			Set<ConcentracaoCobrancaCota> concentracoesCobranca=null;
 			
 			if (formaCobranca!=null){
@@ -391,6 +410,11 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		formaCobranca.setTipoFormaCobranca(parametroCobrancaDTO.getTipoFormaCobranca());
 		formaCobranca.setTipoCobranca(parametroCobrancaDTO.getTipoCobranca());
 		formaCobranca.setBanco(banco);
+		
+		formaCobranca.setFornecedorPadrao(fornecedorService.obterFornecedorPorId(parametroCobrancaDTO.getIdFornecedorPadrao()));
+		formaCobranca.setTipoCota(parametroCobrancaDTO.getTipoCota());
+		formaCobranca.setFatorVencimento(new Integer(parametroCobrancaDTO.getFatorVencimento().toString()));
+		
 		formaCobranca.setRecebeCobrancaEmail(parametroCobrancaDTO.isEnvioEmail());
 		formaCobranca.setAtiva(true);
 		formaCobranca.setTaxaJurosMensal(parametroCobrancaDTO.getTaxaJuros());
