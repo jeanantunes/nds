@@ -306,6 +306,14 @@ public class Distribuidor {
 	
 	@Column(name = "PRACA_VERANEIO")
 	private boolean pracaVeraneio;
+
+	// Caso as interfaces 106, 107, 108 e 111 estejam em execução
+	@Column(name = "INTERFACES_MATRIZ_EM_EXECUCAO")
+	private boolean interfacesMatrizExecucao;
+
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name = "DATA_INICIO_INTERFACES_MATRIZ_EM_EXECUCAO")
+	private Date dataInicioInterfacesMatrizExecucao;
 	
 	public Long getId() {
 		return id;
@@ -1080,7 +1088,27 @@ public class Distribuidor {
 	public void setPracaVeraneio(boolean pracaVeraneio) {
 		this.pracaVeraneio = pracaVeraneio;
 	}
-	
-	
+
+	public boolean isInterfacesMatrizExecucao() {
+		return interfacesMatrizExecucao;
+	}
+
+	public void setInterfacesMatrizExecucao(boolean interfacesMatrizExecucao) {
+		this.interfacesMatrizExecucao = interfacesMatrizExecucao;
+	}
+
+	public void setUtilizaSugestaoIncrementoCodigo(
+			boolean utilizaSugestaoIncrementoCodigo) {
+		this.utilizaSugestaoIncrementoCodigo = utilizaSugestaoIncrementoCodigo;
+	}
+
+	public Date getDataInicioInterfacesMatrizExecucao() {
+		return dataInicioInterfacesMatrizExecucao;
+	}
+
+	public void setDataInicioInterfacesMatrizExecucao(
+			Date dataInicioInterfacesMatrizExecucao) {
+		this.dataInicioInterfacesMatrizExecucao = dataInicioInterfacesMatrizExecucao;
+	}
 	
 }

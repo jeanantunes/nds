@@ -24,7 +24,9 @@ import br.com.abril.nds.model.financeiro.BaixaManual;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Negociacao;
+import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -101,14 +103,63 @@ public class DividaServiceImpl implements DividaService {
 
 	@Override
 	@Transactional
-	public List<Divida> getDividasAcumulo(Long idDivida) {
+	public List<Divida> obterDividasAcumulo(Long idDivida) {
 		
-		List<Divida> dividas = new ArrayList<Divida>(dividaRepository.buscarPorId(idDivida).getAcumulado());
+		List<Divida> dividas = new ArrayList<Divida>();
 		
-		for(Divida divida:dividas) {
-			divida.getCobranca();
+		Divida dividaAtual = this.dividaRepository.buscarPorId(idDivida);
+		
+		dividas.add(dividaAtual);
+		
+		this.adicionarDividasRaiz(dividas, dividaAtual);
+		
+		for(Divida d : dividas) {
+			d.getCobranca();
 		}
-		return dividas; 
+		
+		return dividas;
+	}
+	
+	@Override
+	@Transactional
+	public List<MovimentoFinanceiroCota> obterDividasNegociacao(Long idDivida) {
+		
+		List<MovimentoFinanceiroCota> movimentosEstoqueCota = new ArrayList<>();
+		
+		Divida dividaAtual = this.dividaRepository.buscarPorId(idDivida);
+		
+		List<Negociacao> listaNegociacao = dividaAtual.getCobranca().getNegociacao();
+		
+		if (listaNegociacao != null && !listaNegociacao.isEmpty()) {
+		
+			Negociacao negociacao = listaNegociacao.get(0);
+			
+			List<ParcelaNegociacao> parcelas = negociacao.getParcelas();
+			
+			if (parcelas != null) {
+				
+				for (ParcelaNegociacao parcelaNegociacao : negociacao.getParcelas()) {
+					
+					MovimentoFinanceiroCota mec = parcelaNegociacao.getMovimentoFinanceiroCota();
+					
+					movimentosEstoqueCota.add(mec);
+				}
+			}
+		}
+		
+		return movimentosEstoqueCota;
+	}
+
+	private void adicionarDividasRaiz(List<Divida> dividas, Divida divida) {
+		
+		Divida dividaRaiz = divida.getDividaRaiz();
+		
+		if (dividaRaiz != null) {
+			
+			dividas.add(dividaRaiz);
+			
+			this.adicionarDividasRaiz(dividas, dividaRaiz);
+		}
 	}
 
 	@Override

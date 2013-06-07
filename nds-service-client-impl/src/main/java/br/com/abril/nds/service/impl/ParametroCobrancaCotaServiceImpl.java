@@ -203,7 +203,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				
 				parametroCobranca = new ParametroCobrancaCota();
 				parametroCobranca.setCota(cota);
-				parametroCobranca.setFatorVencimento(1);
+				parametroCobranca.setFatorVencimento(formaCobrancaDistribuidor.getFatorVencimento());
 				parametroCobranca.setFormasCobrancaCota(null);
 				parametroCobranca.setValorMininoCobranca(formaCobrancaDistribuidor.getValorMinimoEmissao());
 				parametroCobranca.setUnificaCobranca(formaCobrancaDistribuidor.getPoliticaCobranca().isUnificaCobranca());

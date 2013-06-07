@@ -42,12 +42,22 @@ function PesquisaProduto(workspace) {
 	this.autoCompletarPorNomeProduto = function(idProduto, isFromModal) {
 		
 		pesquisaProduto.pesquisaRealizada = false;
+		
 		var nomeProduto = $(idProduto, pesquisaProduto.workspace).attr("value");
 		
-		if (nomeProduto && nomeProduto.length > 2) {
+		if (nomeProduto && nomeProduto.length > 2){
+
 			$.postJSON(contextPath + "/produto/autoCompletarPorNomeProduto", {'filtro.nome': nomeProduto},
-					   function(result) { pesquisaProduto.exibirAutoComplete(result, idProduto); },
-					   null, isFromModal);
+					   function(result) { 
+				
+				           pesquisaProduto.exibirAutoComplete(result, idProduto); 
+				       },
+					   null, 
+					   isFromModal);
+		}	
+		else{
+			
+			$(idProduto, pesquisaProduto.workspace).autocomplete({source:[]});
 		}
 	},
 	
@@ -71,7 +81,8 @@ function PesquisaProduto(workspace) {
 															isFromModal, successCallBack, errorCallBack);
 			}
 			
-		}, 100);
+		}, 
+		100);
 	},
 	
 	//Validação do número da edição

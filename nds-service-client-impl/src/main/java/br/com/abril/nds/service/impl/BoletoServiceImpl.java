@@ -873,53 +873,52 @@ public class BoletoServiceImpl implements BoletoService {
 			baixaCobrancaRepository.adicionar(baixaAutomatica);
 			
 			return baixaAutomatica;
-			
-		} else {
-			
-			BigDecimal valorPagamento = BigDecimal.ZERO;
-			BigDecimal valorJuros = BigDecimal.ZERO;
-			BigDecimal valorMulta = BigDecimal.ZERO;
-			BigDecimal valorDesconto = BigDecimal.ZERO;
-			
-			if (pagamento.getValorPagamento() != null) {
-				
-				valorPagamento = pagamento.getValorPagamento();
-			}
-			
-			if (pagamento.getValorJuros() != null) {
-				
-				valorJuros = pagamento.getValorJuros();
-			}
-			
-			if (pagamento.getValorMulta() != null) {
-				
-				valorMulta = pagamento.getValorMulta();
-			}
-			
-			if (pagamento.getValorDesconto() != null) {
-						
-				valorDesconto = pagamento.getValorDesconto();
-			}
-			
-			BigDecimal valorCalculadoPagamento = 
-				valorPagamento.add(valorJuros).add(valorMulta).subtract(valorDesconto);
-				
-			BaixaManual baixaManual = new BaixaManual();
-			
-			baixaManual.setDataBaixa(dataBaixa);
-			baixaManual.setDataPagamento(dataPagamento);
-			baixaManual.setValorPago(valorCalculadoPagamento);
-			baixaManual.setCobranca(boleto);
-			
-			baixaManual.setResponsavel(usuario);
-			baixaManual.setValorJuros(pagamento.getValorJuros());
-			baixaManual.setValorMulta(pagamento.getValorMulta());
-			baixaManual.setValorDesconto(pagamento.getValorDesconto());
-			
-			baixaCobrancaRepository.adicionar(baixaManual);
-			
-			return baixaManual;
 		}
+			
+		BigDecimal valorPagamento = BigDecimal.ZERO;
+		BigDecimal valorJuros = BigDecimal.ZERO;
+		BigDecimal valorMulta = BigDecimal.ZERO;
+		BigDecimal valorDesconto = BigDecimal.ZERO;
+		
+		if (pagamento.getValorPagamento() != null) {
+			
+			valorPagamento = pagamento.getValorPagamento();
+		}
+		
+		if (pagamento.getValorJuros() != null) {
+			
+			valorJuros = pagamento.getValorJuros();
+		}
+		
+		if (pagamento.getValorMulta() != null) {
+			
+			valorMulta = pagamento.getValorMulta();
+		}
+		
+		if (pagamento.getValorDesconto() != null) {
+					
+			valorDesconto = pagamento.getValorDesconto();
+		}
+		
+		BigDecimal valorCalculadoPagamento = 
+			valorPagamento.add(valorJuros).add(valorMulta).subtract(valorDesconto);
+			
+		BaixaManual baixaManual = new BaixaManual();
+		
+		baixaManual.setDataBaixa(dataBaixa);
+		baixaManual.setDataPagamento(dataPagamento);
+		baixaManual.setValorPago(valorCalculadoPagamento);
+		baixaManual.setCobranca(boleto);
+		
+		baixaManual.setResponsavel(usuario);
+		baixaManual.setValorJuros(pagamento.getValorJuros());
+		baixaManual.setValorMulta(pagamento.getValorMulta());
+		baixaManual.setValorDesconto(pagamento.getValorDesconto());
+		baixaManual.setStatus(StatusBaixa.PAGO);
+		
+		baixaCobrancaRepository.adicionar(baixaManual);
+		
+		return baixaManual;
 	}
 	
 	private void efetivarBaixaCobranca(Boleto boleto, Date dataOperacao) {
