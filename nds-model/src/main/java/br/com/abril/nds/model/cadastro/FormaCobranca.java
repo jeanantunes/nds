@@ -93,7 +93,18 @@ public class FormaCobranca implements Serializable {
 	@ManyToOne(fetch = FetchType.EAGER)  
 	@JoinColumn(name = "PARAMETRO_COBRANCA_COTA_ID")
 	private ParametroCobrancaCota parametroCobrancaCota;
-	
+			
+	@ManyToOne
+	@JoinColumn(name = "FORNECEDOR_PADRAO_ID")
+	private Fornecedor fornecedorPadrao;
+
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_COTA")
+	private TipoCota tipoCota;
+
+	@Column(name = "FATOR_VENCIMENTO")
+	private Integer fatorVencimento;
+
 	@ElementCollection(fetch = FetchType.EAGER)  
 	@OrderBy
 	private List<Integer> diasDoMes; 
@@ -101,17 +112,6 @@ public class FormaCobranca implements Serializable {
 	@OneToMany(mappedBy="formaCobranca", fetch = FetchType.EAGER)
 	@OrderBy("codigoDiaSemana ASC")
 	private Set<ConcentracaoCobrancaCota> concentracaoCobrancaCota = new HashSet<ConcentracaoCobrancaCota>();
-	
-	@ManyToOne
-	@JoinColumn(name = "FORNECEDOR_PADRAO_ID")
-	private Fornecedor fornecedorPadrao;
-	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_COTA")
-	private TipoCota tipoCota;
-	
-	@Column(name = "FATOR_VENCIMENTO")
-	private Long fatorVencimento;
 	
 	public Long getId() {
 		return id;
@@ -237,6 +237,49 @@ public class FormaCobranca implements Serializable {
 		this.parametroCobrancaCota = parametroCobrancaCota;
 	}
 
+		
+	/**
+	 * @return the fornecedorPadrao
+	 */
+	public Fornecedor getFornecedorPadrao() {
+		return fornecedorPadrao;
+	}
+
+	/**
+	 * @param fornecedorPadrao the fornecedorPadrao to set
+	 */
+	public void setFornecedorPadrao(Fornecedor fornecedorPadrao) {
+		this.fornecedorPadrao = fornecedorPadrao;
+	}
+
+	/**
+	 * @return the tipoCota
+	 */
+	public TipoCota getTipoCota() {
+		return tipoCota;
+	}
+
+	/**
+	 * @param tipoCota the tipoCota to set
+	 */
+	public void setTipoCota(TipoCota tipoCota) {
+		this.tipoCota = tipoCota;
+	}
+
+	/**
+	 * @return the fatorVencimento
+	 */
+	public Integer getFatorVencimento() {
+		return fatorVencimento;
+	}
+
+	/**
+	 * @param fatorVencimento the fatorVencimento to set
+	 */
+	public void setFatorVencimento(Integer fatorVencimento) {
+		this.fatorVencimento = fatorVencimento;
+	}
+
 	public Set<ConcentracaoCobrancaCota> getConcentracaoCobrancaCota() {
 		return concentracaoCobrancaCota;
 	}
@@ -286,30 +329,6 @@ public class FormaCobranca implements Serializable {
 	 */
 	public void setPoliticaCobranca(PoliticaCobranca politicaCobranca) {
 		this.politicaCobranca = politicaCobranca;
-	}
-
-	public Fornecedor getFornecedorPadrao() {
-		return fornecedorPadrao;
-	}
-
-	public void setFornecedorPadrao(Fornecedor fornecedorPadrao) {
-		this.fornecedorPadrao = fornecedorPadrao;
-	}
-
-	public TipoCota getTipoCota() {
-		return tipoCota;
-	}
-
-	public void setTipoCota(TipoCota tipoCota) {
-		this.tipoCota = tipoCota;
-	}
-
-	public Long getFatorVencimento() {
-		return fatorVencimento;
-	}
-
-	public void setFatorVencimento(Long fatorVencimento) {
-		this.fatorVencimento = fatorVencimento;
 	}
 	
 }
