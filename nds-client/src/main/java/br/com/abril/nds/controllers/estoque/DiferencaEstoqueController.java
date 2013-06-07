@@ -1238,6 +1238,12 @@ public class DiferencaEstoqueController extends BaseController {
 		Boolean modoNovaDiferenca = (Boolean) this.httpSession.getAttribute(MODO_NOVA_DIFERENCA_SESSION_ATTRIBUTE);
 		
 		Set<Diferenca> listaNovasDiferencas = null;
+
+		Map<Long, List<RateioCotaVO>> mapaRateioCotas =
+				(Map<Long, List<RateioCotaVO>>) this.httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
+			
+			FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa =
+				(FiltroLancamentoDiferencaEstoqueDTO) this.httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
 		
 		if(modoNovaDiferenca != null && modoNovaDiferenca ){
 			listaNovasDiferencas =
@@ -1245,17 +1251,16 @@ public class DiferencaEstoqueController extends BaseController {
 		} else {
 			
 			listaNovasDiferencas = new HashSet<Diferenca>();
-			
-			listaNovasDiferencas.addAll(
-					(List<Diferenca>) this.httpSession.getAttribute(LISTA_DIFERENCAS_SESSION_ATTRIBUTE));
+
+			// Para não limitar os resultados que irão ser persistidos no sistema
+			filtroPesquisa.getPaginacao().setPaginaAtual(1);
+			filtroPesquisa.getPaginacao().setQtdResultadosPorPagina(null);
+			listaNovasDiferencas.addAll(this.diferencaEstoqueService.obterDiferencasLancamento(filtroPesquisa));
+
+			// Esta forma limitava os registros a serem persistidos apenas para a página onde o usuário se encontrava
+			/*listaNovasDiferencas.addAll(
+					(List<Diferenca>) this.httpSession.getAttribute(LISTA_DIFERENCAS_SESSION_ATTRIBUTE));*/
 		}
-		
-		Map<Long, List<RateioCotaVO>> mapaRateioCotas =
-			(Map<Long, List<RateioCotaVO>>) this.httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
-		
-		
-		FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa =
-			(FiltroLancamentoDiferencaEstoqueDTO) this.httpSession.getAttribute(FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
 		
 		this.diferencaEstoqueService.efetuarAlteracoes(
 			listaNovasDiferencas, mapaRateioCotas, filtroPesquisa, this.getUsuarioLogado().getId(), modoNovaDiferenca);
