@@ -662,14 +662,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Override
 	@Transactional
-	public void postergarTodasCotas(Date dataEncalhe, Date dataPostergacao) {
+	public void postergarTodasCotas(Date dataEncalhe, Date dataPostergacao, List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe) {
 	
 		if (dataEncalhe == null) {
 			throw new IllegalArgumentException("Data de encalhe não pode ser nula.");
 		}
-		
-		List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
-				this.fechamentoEncalheRepository.obterCotasAusentes(dataEncalhe, true, null, null, 0, 0);
 		
 		for (CotaAusenteEncalheDTO cotaAusente : listaCotaAusenteEncalhe) {
 		
