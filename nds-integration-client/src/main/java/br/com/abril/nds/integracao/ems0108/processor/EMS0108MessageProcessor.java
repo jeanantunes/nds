@@ -181,7 +181,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 			lancamento = this.recuperarLancamento(produtoEdicaoLancamento, input.getDataMovimento());
 			
 			if (lancamento == null) {
-				// Caso não encontre o lançamento futuro, procura o anterior mais próximo com status CONFIRMADO
+				// Caso não encontre o lançamento futuro, procura o anterior mais próximo com status CONFIRMADO (para alterar a data de lancamento real do distribuidor) ou BALANCEADO (para não fazer alterar e nem inserir um novo)
 				lancamento = this.recuperarLancamentoAnteriorMaisProximo(produtoEdicaoLancamento, input.getDataMovimento());
 			}
 
@@ -277,6 +277,12 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		return (Lancamento) query.uniqueResult();
 	}
 
+	/**
+	 * Busca o lançamento anterior á data de movimetno do arquivo mais próximo (busca apenas CONFIRMADO ou BALANCEADO)
+	 * @param produtoEdicaoLancamento
+	 * @param dataMovimento
+	 * @return
+	 */
 	private Lancamento recuperarLancamentoAnteriorMaisProximo(
 			ProdutoEdicao produtoEdicaoLancamento, Date dataMovimento) {
 		StringBuilder sql = new StringBuilder();
@@ -285,13 +291,14 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		sql.append("      JOIN FETCH lcto.produtoEdicao pe ");
 		sql.append("    WHERE pe = :produtoEdicao ");
 		sql.append("      AND lcto.dataLancamentoDistribuidor < :dataMovimento ");
-		sql.append("      AND lcto.status = :statusConfirmado ");
+		sql.append("      AND (lcto.status = :statusConfirmado OR lcto.status = :statusBalanceado) ");
 		sql.append(" ORDER BY lcto.dataLancamentoDistribuidor DESC");
 		
 		Query query = getSession().createQuery(sql.toString());
 		
 		query.setParameter("produtoEdicao", produtoEdicaoLancamento);
 		query.setParameter("statusConfirmado", StatusLancamento.CONFIRMADO);
+		query.setParameter("statusBalanceado", StatusLancamento.BALANCEADO);
 		query.setDate("dataMovimento", dataMovimento);
 		
 		query.setMaxResults(1);
