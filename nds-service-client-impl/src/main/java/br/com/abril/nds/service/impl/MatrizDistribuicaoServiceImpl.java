@@ -25,7 +25,6 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.estudo.CotaEstudo;
@@ -563,7 +562,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	for (EstudoCota cota : cotasSelecionadas) {
 	    CotaEstudo cotaEstudo = mapCotas.get(cota.getCota().getId());
 	    if (cotaEstudo != null) {
-		if (cotaEstudo.getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) {
+		if (cotaEstudo.getStatus() != null && cotaEstudo.getStatus().equals("SUSPENSO")) {
 		    cota.setClassificacao(ClassificacaoCota.BancaSuspensa.getCodigo());
 		    cota.setReparte(null);
 		    continue;
