@@ -285,7 +285,10 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	}
 	cota.setIntervaloMaximo(cota.getIntervaloMaximo());
 	cota.setIntervaloMinimo(cota.getIntervaloMinimo());
-	if (estudo.isUsarFixacao() && cota.getReparteFixado() != null) {
+	if (estudo.isUsarFixacao() && cota.getReparteFixado() != null &&
+		cota.getClassificacao().notIn(ClassificacaoCota.BancaSuspensa, ClassificacaoCota.BancaMixSemDeterminadaPublicacao,
+			ClassificacaoCota.BancaForaDaRegiaoDistribuicao, ClassificacaoCota.CotaNaoRecebeEsseSegmento,
+			ClassificacaoCota.BancaSemClassificacaoDaPublicacao)) {
 	    cota.setClassificacao(ClassificacaoCota.ReparteFixado);
 	    cota.setReparteFixado(cota.getReparteFixado());
 	    cota.setReparteCalculado(cota.getReparteFixado(), estudo);

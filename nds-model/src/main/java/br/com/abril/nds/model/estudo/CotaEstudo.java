@@ -58,6 +58,7 @@ public class CotaEstudo extends Cota {
     private boolean cotaExcecaoSegmento;
     private boolean cotaNaoRecebeClassificacao;
     private String tipoDistribuicao;
+    private String status;
 
     public CotaEstudo() {
 	nova = false;
@@ -403,6 +404,14 @@ public class CotaEstudo extends Cota {
 
     public void setTipoDistribuicao(String tipoDistribuicao) {
         this.tipoDistribuicao = tipoDistribuicao;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Override

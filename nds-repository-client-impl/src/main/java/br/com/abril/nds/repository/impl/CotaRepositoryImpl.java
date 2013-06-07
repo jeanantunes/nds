@@ -2884,6 +2884,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	sql.append("select distinct ");
 	sql.append("       c.id id, ");
 	sql.append("       c.numero_cota numeroCota, ");
+	sql.append("       c.situacao_cadastro status, ");
 	sql.append("       mcp.reparte_max intervaloMaximo, ");
 	sql.append("       mcp.reparte_min intervaloMinimo, ");
 	sql.append("       c.tipo_distribuicao_cota tipoDistribuicao, ");
@@ -2912,6 +2913,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	Query query = getSession().createSQLQuery(sql.toString())
 		.addScalar("id", StandardBasicTypes.LONG)
 		.addScalar("numeroCota", StandardBasicTypes.INTEGER)
+		.addScalar("status", StandardBasicTypes.STRING)
 		.addScalar("intervaloMaximo", StandardBasicTypes.BIG_INTEGER)
 		.addScalar("intervaloMinimo", StandardBasicTypes.BIG_INTEGER)
 		.addScalar("tipoDistribuicao", StandardBasicTypes.STRING)
