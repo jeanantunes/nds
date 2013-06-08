@@ -69,8 +69,8 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
 			FechamentoFisicoLogicoDTO fechamento);
 
 	public List<FechamentoFisicoLogicoDTO> buscarMovimentoEstoqueCota(
-			FiltroFechamentoEncalheDTO filtro, ArrayList<String> listaDeCodigosProduto);
+			FiltroFechamentoEncalheDTO filtro, ArrayList<Long> listaDeIdsProdutoEdicao);
 
 	List<FechamentoFisicoLogicoDTO> buscarMovimentoEstoqueCotaVendaProduto(
-			FiltroFechamentoEncalheDTO filtro, ArrayList<String> listaDeCodigosProduto);
+			FiltroFechamentoEncalheDTO filtro, ArrayList<Long> listaDeCodigosProduto);
 }

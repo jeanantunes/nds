@@ -1125,16 +1125,17 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<FechamentoFisicoLogicoDTO> buscarMovimentoEstoqueCota(
-			FiltroFechamentoEncalheDTO filtro, ArrayList<String> listaDeCodigosProduto) {
+			FiltroFechamentoEncalheDTO filtro, ArrayList<Long> listaDeIdsProdutosEdicoes) {
 		
 		StringBuffer hql = new StringBuffer();
 		
 		hql.append("select produto.codigo as codigo, ");
+		hql.append("produtoEdicao.id as produtoEdicao, ");
 		hql.append("conferenciaEncalhe.movimentoEstoqueCota.qtde as exemplaresDevolucao "); 
 		hql.append("from ConferenciaEncalhe as conferenciaEncalhe ");
 		hql.append("join conferenciaEncalhe.produtoEdicao as produtoEdicao ");
 		hql.append("join produtoEdicao.produto as produto ");
-		hql.append("where produto.codigo in (:codigos) ");
+		hql.append("where produtoEdicao.id in (:produtosEdicoesId) ");
 		
 		if (filtro.getBoxId() != null) {
 			hql.append("  and conferenciaEncalhe.controleConferenciaEncalheCota.box.id = :boxId ");
@@ -1142,7 +1143,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setResultTransformer(new AliasToBeanResultTransformer(FechamentoFisicoLogicoDTO.class));
-		query.setParameterList("codigos", listaDeCodigosProduto);
+		query.setParameterList("produtosEdicoesId", listaDeIdsProdutosEdicoes);
 		
 		if (filtro.getBoxId() != null) {
 			query.setLong("boxId", filtro.getBoxId());
@@ -1154,11 +1155,12 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<FechamentoFisicoLogicoDTO> buscarMovimentoEstoqueCotaVendaProduto(
-			FiltroFechamentoEncalheDTO filtro, ArrayList<String> listaDeCodigosProduto) {
+			FiltroFechamentoEncalheDTO filtro, ArrayList<Long> listaDeIdsProdutosEdicoes) {
 		
 		StringBuilder subquery = new StringBuilder();
 			
 		subquery.append(" select vp.qntProduto as exemplaresDevolucao, ");
+		subquery.append(" produtoEdicao.id as produtoEdicao, ");
 		subquery.append(" produto.codigo as codigo ");
 		subquery.append(" from VendaProduto vp, ConferenciaEncalhe conferenciaEncalhe ");
 		subquery.append("join conferenciaEncalhe.produtoEdicao as produtoEdicao ");
@@ -1172,7 +1174,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		subquery.append(" vp.dataOperacao = :dataEncalhe and ");
 		subquery.append(" vp.tipoVenda = :tipoVenda ");
 		subquery.append(" and vp.tipoComercializacaoVenda = :tipoComercializacaoVenda ");
-		subquery.append("and produto.codigo in (:codigos)");
+		subquery.append("and produtoEdicao.id in (:produtosEdicoesId)");
 		
 		if (filtro.getBoxId() != null) {
 			subquery.append("  and conferenciaEncalhe.controleConferenciaEncalheCota.box.id = :boxId ");
@@ -1181,7 +1183,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		Query query = this.getSession().createQuery(subquery.toString());
 		query.setResultTransformer(new AliasToBeanResultTransformer(FechamentoFisicoLogicoDTO.class));
 		
-		query.setParameterList("codigos", listaDeCodigosProduto);
+		query.setParameterList("produtosEdicoesId", listaDeIdsProdutosEdicoes);
 		query.setDate("dataEncalhe", filtro.getDataEncalhe());
 		query.setParameter("tipoVenda", TipoVendaEncalhe.ENCALHE);
 		query.setParameter("tipoComercializacaoVenda", FormaComercializacao.CONTA_FIRME);

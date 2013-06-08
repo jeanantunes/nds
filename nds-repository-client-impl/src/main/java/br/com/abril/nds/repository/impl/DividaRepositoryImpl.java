@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -348,17 +349,17 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 			new StringBuilder(
 				this.getSqlInadimplenciaClausulaSelect() + this.getSqlInadimplenciaClausulaFrom());
 		
-		HashMap<String,Object> params = new HashMap<String, Object>();
+		HashMap<String,Object> params = new HashMap<>();
+		
+		HashMap<String, List<String>> paramsList = new HashMap<>();
 		
 		tratarFiltro(sql,params,filtro);
 		
-		params.put("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name());
+		paramsList.put("gruposMovimentoEstoque", Arrays.asList(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name()));
 		
-		params.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
+		params.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.ordinal());
 		
 		params.put("operacaoEstoqueEntrada", OperacaoEstoque.ENTRADA.name());
-		
-		params.put("operacaoEstoqueSaida", OperacaoEstoque.SAIDA.name());
 		
 		sql.append(obterOrderByInadimplenciasCota(filtro));
 		
@@ -386,6 +387,10 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		for(String key : params.keySet()){
 			query.setParameter(key, params.get(key));
+		}
+		
+		for(String key : paramsList.keySet()){
+			query.setParameterList(key, paramsList.get(key));
 		}
 		
 		query.setResultTransformer(Transformers.aliasToBean(StatusDividaDTO.class));
@@ -903,33 +908,33 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		sql.append(" CASE WHEN PESSOA_.NOME IS NOT NULL ");
 		sql.append(" THEN PESSOA_.NOME ");
 		sql.append(" ELSE PESSOA_.RAZAO_SOCIAL END AS nome, ");
-		sql.append(" (SELECT ");
-		sql.append(" CASE WHEN TM.OPERACAO_ESTOQUE=:operacaoEstoqueEntrada ");
-		sql.append(" THEN MEC.QTDE ");
-		sql.append(" ELSE 0 ");
-		sql.append(" END ");
-		sql.append(" - CASE WHEN TM.OPERACAO_ESTOQUE=:operacaoEstoqueSaida ");
-		sql.append(" THEN MEC.QTDE ");
-		sql.append(" ELSE 0 ");
-		sql.append(" END AS reparte ");
-		sql.append(" FROM ");
-		sql.append(" MOVIMENTO_ESTOQUE_COTA MEC ");
-		sql.append(" INNER JOIN ");
-		sql.append(" COTA C ");
-		sql.append(" ON MEC.COTA_ID=C.ID ");
-		sql.append(" INNER JOIN ");
-		sql.append(" TIPO_MOVIMENTO TM ");
-		sql.append(" ON MEC.TIPO_MOVIMENTO_ID=TM.ID ");
-		sql.append(" INNER JOIN ");
-		sql.append(" PRODUTO_EDICAO PE ");
-		sql.append(" ON MEC.PRODUTO_EDICAO_ID = PE.ID ");
-		sql.append(" WHERE ");
-		sql.append(" (MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null) ");
-		sql.append(" AND (TM.GRUPO_MOVIMENTO_ESTOQUE not in (:tipoMovimentoEstorno)) ");
-		sql.append(" AND C.ID = COTA_.ID ");
-		sql.append(" AND (MEC.STATUS_ESTOQUE_FINANCEIRO is null ");
-		sql.append(" OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) ");
-		sql.append(" GROUP BY C.ID) AS consignado, ");
+		
+		sql.append(" (select ");
+		sql.append(" sum(coalesce(movimentoe0_.PRECO_COM_DESCONTO, ");
+		sql.append(" produtoedi4_.PRECO_VENDA, ");
+		sql.append(" 0)*movimentoe0_.QTDE) as col_0_0_ ");
+		sql.append(" from ");
+		sql.append(" MOVIMENTO_ESTOQUE_COTA movimentoe0_ ");
+		sql.append(" inner join ");
+		sql.append(" COTA cota2_ ");
+		sql.append(" on movimentoe0_.COTA_ID=cota2_.ID ");
+		sql.append(" inner join ");
+		sql.append(" TIPO_MOVIMENTO tipomovime3_ ");
+		sql.append(" on movimentoe0_.TIPO_MOVIMENTO_ID=tipomovime3_.ID ");
+		sql.append(" inner join ");
+		sql.append(" PRODUTO_EDICAO produtoedi4_ ");
+		sql.append(" on movimentoe0_.PRODUTO_EDICAO_ID=produtoedi4_.ID ");
+		sql.append(" left outer join ");
+		sql.append(" MOVIMENTO_ESTOQUE_COTA movimentoe11_ ");
+		sql.append(" on movimentoe0_.MOVIMENTO_ESTOQUE_COTA_FURO_ID=movimentoe11_.ID ");
+		sql.append(" where ");
+		sql.append(" (tipomovime3_.GRUPO_MOVIMENTO_ESTOQUE in (:gruposMovimentoEstoque)) ");
+		sql.append(" and (movimentoe0_.STATUS_ESTOQUE_FINANCEIRO is null ");
+		sql.append(" or movimentoe0_.STATUS_ESTOQUE_FINANCEIRO=:statusEstoqueFinanceiro) ");
+		sql.append(" and tipomovime3_.OPERACAO_ESTOQUE=:operacaoEstoqueEntrada ");
+		sql.append(" and (movimentoe11_.ID is null) ");
+		sql.append(" and cota2_.ID=COTA_.ID) AS consignado, ");
+		
 		sql.append(" COBRANCA_.DT_VENCIMENTO as dataVencimento, ");
 		sql.append(" COBRANCA_.DT_PAGAMENTO as dataPagamento, ");
 		sql.append(" DIVIDA_.STATUS as situacao ");
