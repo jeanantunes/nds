@@ -541,7 +541,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 			data.push({name : "distribuicaoVendaMedia.roteiroEntregaId", value : $("#selRoteiro").val() });
 		}
 		data.push({name : "distribuicaoVendaMedia.complementarAutomatico", value : $("#complementarAutomatico")[0].checked });
-		data.push({name : "distribuicaoVendaMedia.cotasAVista", value : $("#distribuicaoPorMultiplo")[0].checked });
+		data.push({name : "distribuicaoVendaMedia.cotasAVista", value : $("#cotasAVista")[0].checked });
 		if($("#RDExcecaoBancas")[0].checked){
 			data.push({name : "distribuicaoVendaMedia.excecaoDeBancasComponente", value : $("#componenteInformacoesComplementares").val() });
 			

@@ -214,11 +214,13 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	}
 
 	// marcando bancas fora da regiao de distribuicao
-	for (CotaEstudo cota : cotas) {
-	    for (String item : cota.getTiposCota()) {
-		if (!item.equals("CONSIGNADO") && !estudo.getDistribuicaoVendaMediaDTO().isCotasAVista()) {
-		    cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
-		    cota.setReparteCalculado(BigInteger.ZERO, estudo);
+	if (estudo.getDistribuicaoVendaMediaDTO() != null && !estudo.getDistribuicaoVendaMediaDTO().isCotasAVista()) {
+	    for (CotaEstudo cota : cotas) {
+		for (String item : cota.getTiposCota()) {
+		    if (item.equals("A_VISTA")) {
+			cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
+			cota.setReparteCalculado(BigInteger.ZERO, estudo);
+		    }
 		}
 	    }
 	}
