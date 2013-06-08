@@ -3,7 +3,7 @@ var parametroCobrancaCotaController = $.extend(true, {
     idCota: "",
     idHistorico: "",
     idFormaPagto: "",
-    idFormaCobrancaDistribuidor: 0,
+    resultFormaCobranca: [],
     modoTela: null,
 
     init : function () {
@@ -239,8 +239,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 			return resultado;
 		}	
 		
-		
-		
 		$.each(resultado.rows, function(index, row) {
 			
 			if(row.cell.parametroDistribuidor)
@@ -446,23 +444,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 
 	buildParametroCobrancaDto : function() {
 		
-		var quarta, quinta;
-		
-		var data = [{name: 'idFormaCobranca', value: this.idFormaCobrancaDistribuidor}, 
-		            {name: 'modoTela', value: parametroCobrancaCotaController.modoTela.value }];
-		$.postJSON(	contextPath + "/cota/parametroCobrancaCota/obterFormaCobranca",
-				   	data,
-				   	function(result) {
-						quarta = result.quarta;
-						quinta = result.quinta;
-						console.log('1: '+ quarta +' - '+ quinta);
-					}, 
-					null,
-					true);
-				
-		console.log(quarta +' - '+ quinta);
-		
-		return;
 		// hidden
 		var idParametroCobranca = $("#_idParametroCobranca", this.workspace).val();
 		var idCota = $("#_idCota", this.workspace).val();
@@ -525,6 +506,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 								buttons : {
 									"Confirmar" : function() {
 										$(this).dialog("close");
+										
 										$.postJSON(
 											   contextPath + "/cota/parametroCobrancaCota/postarParametroCobranca",
 											   params,
@@ -895,31 +877,37 @@ var parametroCobrancaCotaController = $.extend(true, {
 			$("#PCC-PDom", this.workspace).val(1);
 		}
 		var domingo  = $("#PCC-PDom", this.workspace).val();
-		 var params =  {"formaCobranca.idCota":idCota,
-				 "formaCobranca.idParametroCobranca":idParametroCobranca,
-				 "formaCobranca.tipoCobranca":tipoCobranca, 
-				 "formaCobranca.idBanco":idBanco,           
-				 "formaCobranca.recebeEmail":recebeEmail,   
-				 "formaCobranca.numBanco":numBanco,       
-				 "formaCobranca.nomeBanco":nomeBanco,         
-				 "formaCobranca.agencia":agencia,           
-				 "formaCobranca.agenciaDigito":agenciaDigito,    
-				 "formaCobranca.conta":conta,             
-				 "formaCobranca.contaDigito":contaDigito,       
-				 "formaCobranca.domingo":domingo,   
-				 "formaCobranca.segunda":segunda,           
-				 "formaCobranca.terca":terca,           
-				 "formaCobranca.quarta":quarta,           
-				 "formaCobranca.quinta":quinta,           
-				 "formaCobranca.sexta":sexta,           
-				 "formaCobranca.sabado":sabado,
-				 "formaCobranca.diaDoMes":diaDoMes,
-				 "formaCobranca.primeiroDiaQuinzenal":primeiroDiaQuinzenal,
-				 "formaCobranca.segundoDiaQuinzenal":segundoDiaQuinzenal,
-				 "tipoFormaCobranca":tipoFormaCobranca};
-		 params = serializeArrayToPost('listaIdsFornecedores',parametroCobrancaCotaController.obterFornecedoresMarcados(), params );
-		 
-		 return params;
+		
+		if($("#_idParametroCobranca", this.workspace).val() == "") {
+			
+		}
+		
+		var params =  {"formaCobranca.idCota":idCota,
+						 "formaCobranca.idParametroCobranca":idParametroCobranca,
+						 "formaCobranca.tipoCobranca":tipoCobranca, 
+						 "formaCobranca.idBanco":idBanco,           
+						 "formaCobranca.recebeEmail":recebeEmail,   
+						 "formaCobranca.numBanco":numBanco,       
+						 "formaCobranca.nomeBanco":nomeBanco,         
+						 "formaCobranca.agencia":agencia,           
+						 "formaCobranca.agenciaDigito":agenciaDigito,    
+						 "formaCobranca.conta":conta,             
+						 "formaCobranca.contaDigito":contaDigito,       
+						 "formaCobranca.domingo":domingo,   
+						 "formaCobranca.segunda":segunda,           
+						 "formaCobranca.terca":terca,           
+						 "formaCobranca.quarta":quarta,           
+						 "formaCobranca.quinta":quinta,           
+						 "formaCobranca.sexta":sexta,           
+						 "formaCobranca.sabado":sabado,
+						 "formaCobranca.diaDoMes":diaDoMes,
+						 "formaCobranca.primeiroDiaQuinzenal":primeiroDiaQuinzenal,
+						 "formaCobranca.segundoDiaQuinzenal":segundoDiaQuinzenal,
+						 "tipoFormaCobranca":tipoFormaCobranca};
+		
+		params = serializeArrayToPost('listaIdsFornecedores',parametroCobrancaCotaController.obterFornecedoresMarcados(), params );
+ 
+		return params;
 	},
 	
 	postarFormaCobranca : function(novo, incluirSemFechar) {
@@ -931,7 +919,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 			params = {};
 		
 		params = parametroCobrancaCotaController.buildFormaCobrancaDTO();
-		 
+
 		if (novo) {
 			$.postJSON(contextPath + "/cota/parametroCobrancaCota/postarFormaCobranca",
 					  params,
