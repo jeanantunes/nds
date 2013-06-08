@@ -93,7 +93,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		sql.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ");
 		
-		sql.append(" INNER JOIN PARAMETRO_COBRANCA_COTA PCC ON C.ID=PCC.COTA_ID ");
+		sql.append(" LEFT OUTER JOIN PARAMETRO_COBRANCA_COTA PCC ON C.ID=PCC.COTA_ID ");
        	
 		sql.append(" INNER JOIN PESSOA P ON C.PESSOA_ID=P.ID ");
 		
@@ -419,7 +419,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		hql.append(" AND (movimento.statusEstoqueFinanceiro is null ");
 		hql.append(" or movimento.statusEstoqueFinanceiro = :statusEstoqueFinanceiro ) " );
 		
-		hql.append(" AND movimento.tipoMovimento.operacaoEstoque = :tipoOperacaoEntrada ");
+		hql.append(" AND tipoMovimento.operacaoEstoque = :tipoOperacaoEntrada ");
 		
 		hql.append(" AND movimentoEstoqueCotaFuro.id is null ");
 		

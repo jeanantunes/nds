@@ -24,6 +24,8 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.financeiro.Divida;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
+import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DividaService;
@@ -61,8 +63,6 @@ public class InadimplenciaController extends BaseController {
 	
 	@Autowired
 	private DividaService dividaService;
-	
-	private static final String FORMATO_DATA = "dd/MM/yyyy";
 	
 	@Autowired
 	private static final Logger LOG = LoggerFactory
@@ -254,18 +254,62 @@ public class InadimplenciaController extends BaseController {
 	 */
 	public void getDetalhesDivida(Long idDivida) {
 		
-		List<Divida> dividas = dividaService.getDividasAcumulo(idDivida);
+		List<DividaDTO> dividasDTO = null;
 		
-		List<DividaDTO> dividasDTO = new ArrayList<DividaDTO>();
+		Divida dividaAtual = dividaService.obterDividaPorId(idDivida);
 		
-		for(Divida divida : dividas) {
-			dividasDTO.add(new DividaDTO(
-					DateUtil.formatarData(divida.getCobranca().getDataVencimento(), FORMATO_DATA), 
-					CurrencyUtil.formatarValor(divida.getCobranca().getValor())));
+		if (StatusDivida.NEGOCIADA.equals(dividaAtual.getStatus())) {
+			
+			dividasDTO = this.montarDividasDTONegociacao(idDivida);
+			
+		} else {
+			
+			dividasDTO = this.montarDividasDTO(idDivida);
 		}
+		
 		result.use(Results.json()).from(dividasDTO, "result").serialize();
 	}
 	
+	private List<DividaDTO> montarDividasDTONegociacao(Long idDivida) {
+		
+		List<MovimentoFinanceiroCota> movimentosFinanceiroCota =
+			this.dividaService.obterDividasNegociacao(idDivida);
+		
+		List<DividaDTO> dividasDTO = new ArrayList<>();
+		
+		DividaDTO dividaDTO = null;
+		
+		for(MovimentoFinanceiroCota mec : movimentosFinanceiroCota) {
+			
+			dividaDTO = new DividaDTO(DateUtil.formatarDataPTBR(mec.getData()),
+									  CurrencyUtil.formatarValor(mec.getValor()));
+			
+			dividasDTO.add(dividaDTO);
+		}
+		
+		return dividasDTO;
+	}
+	
+	private List<DividaDTO> montarDividasDTO(Long idDivida) {
+		
+		List<Divida> dividas = this.dividaService.obterDividasAcumulo(idDivida);
+		
+		List<DividaDTO> dividasDTO = new ArrayList<>();
+		
+		DividaDTO dividaDTO = null;
+		
+		for(Divida divida : dividas) {
+			
+			dividaDTO =
+				new DividaDTO(DateUtil.formatarDataPTBR(divida.getCobranca().getDataVencimento()), 
+							  CurrencyUtil.formatarValor(divida.getCobranca().getValor()));
+			
+			dividasDTO.add(dividaDTO);
+		}
+		
+		return dividasDTO;
+	}
+
 	/**
 	 * Obtém a divida
 	 * 

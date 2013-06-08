@@ -47,7 +47,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
-		// TODO Auto-generated method stub
+		distribuidorService.bloqueiaProcessosLancamentosEstudos();
 	}
 	
 	@Override
@@ -191,9 +191,9 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		Date dataOperacao = distribuidorService.obter().getDataOperacao();
 		query.setParameter("produtoEdicao", produtoEdicao);
 		
-		//query.setDate("dataOperacao", dataOperacao);
+		query.setDate("dataOperacao", dataOperacao);
 		// Estamos pegando a data atual do servidor devido ao fato da data de operação poder não estar compatível com a do MDC no piloto
-		query.setDate("dataOperacao", new Date());
+		//query.setDate("dataOperacao", new Date());
 		
 		query.setMaxResults(1);
 		query.setFetchSize(1);
@@ -223,8 +223,8 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		Date dataOperacao = distribuidorService.obter().getDataOperacao();
 		query.setParameter("produtoEdicao", produtoEdicao);
 		// Estamos pegando a data atual do servidor devido ao fato da data de operação poder não estar compatível com a do MDC no piloto
-		//query.setDate("dataOperacao", dataOperacao);
-		query.setDate("dataOperacao", new Date());
+		query.setDate("dataOperacao", dataOperacao);
+		//query.setDate("dataOperacao", new Date());
 		
 		query.setMaxResults(1);
 		query.setFetchSize(1);
@@ -256,7 +256,9 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 	
 	@Override
 	public void posProcess(Object tempVar) {
-		
+
+		distribuidorService.desbloqueiaProcessosLancamentosEstudos();
+
 		/*
 		 * Regras de validação para EMS-107:
 		 * 
@@ -311,7 +313,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 				this.getSession().delete(estudo);
 			}
 		}
-				
+
 	}
 		
 }

@@ -123,6 +123,9 @@ public class MatrizLancamentoController extends BaseController {
 	@Post
 	@Path("/salvar")
 	public void salvar() {
+		
+		this.verificarExecucaoInterfaces();
+		
 		BalanceamentoLancamentoDTO balanceamentoLancamento = 
 				(BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
 		
@@ -187,6 +190,8 @@ public class MatrizLancamentoController extends BaseController {
 	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void confirmarMatrizLancamento(List<Date> datasConfirmadas) {
 		
+		this.verificarExecucaoInterfaces();
+		
 		BalanceamentoLancamentoDTO balanceamentoLancamento = 
 			(BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
 		
@@ -226,6 +231,8 @@ public class MatrizLancamentoController extends BaseController {
 	@Post
 	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void voltarConfiguracaoOriginal() {
+		
+		this.verificarExecucaoInterfaces();
 		
 		BalanceamentoLancamentoDTO balanceamentoLancamento = 
 			(BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
@@ -267,6 +274,8 @@ public class MatrizLancamentoController extends BaseController {
 	public void reprogramarLancamentosSelecionados(List<ProdutoLancamentoVO> produtosLancamento,
 												   String novaDataFormatada) {
 		
+		this.verificarExecucaoInterfaces();
+		
 		this.validarDadosReprogramar(novaDataFormatada);
 		
 		adicionarAtributoAlteracaoSessao();
@@ -285,6 +294,8 @@ public class MatrizLancamentoController extends BaseController {
 	@Post
 	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void reprogramarLancamentoUnico(ProdutoLancamentoVO produtoLancamento) {
+		
+		this.verificarExecucaoInterfaces();
 		
 		String novaDataFormatada = produtoLancamento.getNovaDataLancamento();
 		
@@ -1160,6 +1171,12 @@ public class MatrizLancamentoController extends BaseController {
 		
 		
 		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
+	}
+
+	private void verificarExecucaoInterfaces() {
+		if (distribuidorService.verificaDesbloqueioProcessosLancamentosEstudos()) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "As interfaces encontram-se em processamento. Aguarde o termino da execução para continuar!");
+		}
 	}
 	
 }

@@ -506,7 +506,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append("	valorDesconto, 							");
 		sql.append("	FORNECEDOR.ID, 							");
 		sql.append("	PESSOA.ID 								");
-		//sql.append("    CONTROLE_CONFERENCIA_ENCALHE_COTA.DATA_OPERACAO	");
 
 		return sql;
 	}
@@ -2801,4 +2800,38 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		return this.obterMovimentoEstoqueCotaSemEstudoPor(idCota, periodo, listaIdFornecedores, listaGruposMovimentoEstoqueCota);
 	}
+	
+	@Override
+	public Date obterDataUltimaMovimentacaoReparteExpedida(Integer numeroCota,
+														   Long idProdutoEdicao) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select max(mec.DATA) as data ")
+		   .append(" from ")
+		   .append(" movimento_estoque_cota mec ")
+		   .append(" inner join ")
+		   .append(" tipo_movimento tm on (tm.ID = mec.TIPO_MOVIMENTO_ID) ")
+		   .append(" inner join ")
+		   .append(" lancamento on (lancamento.id = mec.LANCAMENTO_ID) ")
+		   .append(" inner join ")
+		   .append(" cota on (cota.ID = mec.COTA_ID) ")
+		   .append(" where ")
+		   .append(" tm.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque ")
+		   .append(" and mec.PRODUTO_EDICAO_ID = :idProdutoEdicao ")
+		   .append(" and cota.NUMERO_COTA = :numeroCota ")
+		   .append(" and lancamento.STATUS = :statusLancamento ");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.addScalar("data", StandardBasicTypes.DATE);
+		
+		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+		query.setParameter("numeroCota", numeroCota);
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setParameter("statusLancamento", StatusLancamento.EXPEDIDO.name());
+		
+		return (Date) query.uniqueResult();		
+	}
+	
 }
