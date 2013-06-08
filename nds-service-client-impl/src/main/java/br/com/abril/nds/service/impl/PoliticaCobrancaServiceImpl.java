@@ -249,9 +249,9 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 				
 			}
 			
-			if(politica.getFormaCobranca() != null) {
+			if(politica.getFormaCobranca() != null && politica.getFormaCobranca().getFatorVencimento() != null) {
 				
-				parametroCobrancaDTO.setFatorVencimento(politica.getFormaCobranca().getFatorVencimento());
+				parametroCobrancaDTO.setFatorVencimento(politica.getFormaCobranca().getFatorVencimento().longValue());
 				
 			}
 			
@@ -411,7 +411,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		
 		formaCobranca.setFornecedorPadrao(fornecedorService.obterFornecedorPorId(parametroCobrancaDTO.getIdFornecedorPadrao()));
 		formaCobranca.setTipoCota(parametroCobrancaDTO.getTipoCota());
-		formaCobranca.setFatorVencimento(parametroCobrancaDTO.getFatorVencimento());
+		formaCobranca.setFatorVencimento(new Integer(parametroCobrancaDTO.getFatorVencimento().toString()));
 		
 		formaCobranca.setRecebeCobrancaEmail(parametroCobrancaDTO.isEnvioEmail());
 		formaCobranca.setAtiva(true);

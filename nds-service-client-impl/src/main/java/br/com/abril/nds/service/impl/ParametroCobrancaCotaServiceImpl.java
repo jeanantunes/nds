@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -462,18 +463,31 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		/////////
 
 		if (formaCobranca==null) {
-			List<Distribuidor> distribuidores = this.distribuidorRepository.buscarTodos();
-			List<FormaCobranca> listaFormaCobrancas = this.formaCobrancaRepository.obterPorDistribuidor(distribuidores.get(0).getId(), null);
-			formaCobranca = listaFormaCobrancas.get(0);
+			//List<Distribuidor> distribuidores = this.distribuidorRepository.buscarTodos();
+			//List<FormaCobranca> listaFormaCobrancas = this.formaCobrancaRepository.obterPorDistribuidor(distribuidores.get(0).getId(), null);
+			//formaCobranca = listaFormaCobrancas.get(0);
 			
+			formaCobranca = new FormaCobranca();
+			formaCobranca.setTipoFormaCobranca(formaCobrancaDTO.getTipoFormaCobranca());
+			formaCobranca.setTipoCobranca(formaCobrancaDTO.getTipoCobranca());
+			formaCobranca.setBanco(banco);
+			formaCobranca.setRecebeCobrancaEmail(formaCobrancaDTO.isRecebeEmail());
+			
+			formaCobrancaRepository.adicionar(formaCobranca);
 			novaFormaCobranca=true;
 	    } else {
 			novaFormaCobranca=false;
 			
+			formaCobranca.setTipoFormaCobranca(formaCobrancaDTO.getTipoFormaCobranca());
+			formaCobranca.setTipoCobranca(formaCobrancaDTO.getTipoCobranca());
+			formaCobranca.setBanco(banco);
+			formaCobranca.setRecebeCobrancaEmail(formaCobrancaDTO.isRecebeEmail());
+			
+			
 			concentracoesCobranca = formaCobranca.getConcentracaoCobrancaCota();
 			
 	        //APAGA CONCENTRACOES COBRANCA DA COTA
-			if ((concentracoesCobranca!=null)&&(concentracoesCobranca.size() > 0)){
+			if ((concentracoesCobranca != null) && (concentracoesCobranca.size() > 0)){
 				formaCobranca.setConcentracaoCobrancaCota(null);
 				for(ConcentracaoCobrancaCota itemConcentracaoCobranca:concentracoesCobranca){
 					this.concentracaoCobrancaRepository.remover(itemConcentracaoCobranca);
@@ -579,11 +593,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			formaCobranca.setDiasDoMes(diasdoMes);
 		}
 		
-		formaCobranca.setTipoFormaCobranca(formaCobrancaDTO.getTipoFormaCobranca());
-		formaCobranca.setTipoCobranca(formaCobrancaDTO.getTipoCobranca());
-		formaCobranca.setBanco(banco);
-		formaCobranca.setRecebeCobrancaEmail(formaCobrancaDTO.isRecebeEmail());
-		
 		contaBancariaCota = formaCobranca.getContaBancariaCota();
 		if(contaBancariaCota == null) {
 			contaBancariaCota = new ContaBancariaDeposito();
@@ -597,6 +606,10 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		contaBancariaCota.setDvConta(formaCobrancaDTO.getContaDigito());
 		
 		formaCobranca.setContaBancariaCota(contaBancariaCota);
+		
+		formaCobranca.setTaxaJurosMensal((formaCobranca.getTaxaJurosMensal() == null ? BigDecimal.ZERO : formaCobranca.getTaxaJurosMensal()));
+	    formaCobranca.setTaxaMulta((formaCobranca.getTaxaMulta() == null ? BigDecimal.ZERO : formaCobranca.getTaxaMulta()));
+	    formaCobranca.setValorMinimoEmissao((formaCobranca.getValorMinimoEmissao() == null ? BigDecimal.ZERO : formaCobranca.getValorMinimoEmissao()));
 		
 		formaCobranca.setAtiva(true);
 		
@@ -627,34 +640,40 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	    	FormaCobranca formaCobrancaDistribuidor = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
 			
 	    	Cota c = cotaRepository.buscarPorId(formaCobrancaDTO.getIdCota());
-	    	
-	    	ParametroCobrancaCota parametroCobranca;
-	    	parametroCobranca = new ParametroCobrancaCota();
-	    	
-			parametroCobranca.setCota(new Cota(formaCobrancaDTO.getIdCota()));
-			parametroCobranca.setFatorVencimento(1);
-			parametroCobranca.setFormasCobrancaCota(null);
-			parametroCobranca.setValorMininoCobranca(formaCobrancaDistribuidor.getValorMinimoEmissao());
-			parametroCobranca.setUnificaCobranca(formaCobrancaDistribuidor.getPoliticaCobranca().isUnificaCobranca());
-			parametroCobranca.setTipoCota(null);
-			parametroCobranca.setPoliticaSuspensao(null);
+	    		    	
+	    	if(c.getParametroCobranca() == null) {	    	
+		    	
+	    		ParametroCobrancaCota parametroCobranca;
+		    	parametroCobranca = new ParametroCobrancaCota();
+		    	
+				parametroCobranca.setCota(c);
+				parametroCobranca.setFatorVencimento(formaCobrancaDistribuidor.getFatorVencimento());
+				parametroCobranca.setValorMininoCobranca(formaCobrancaDistribuidor.getValorMinimoEmissao());
+				parametroCobranca.setUnificaCobranca(formaCobrancaDistribuidor.getPoliticaCobranca().isUnificaCobranca());
+				parametroCobranca.setTipoCota(formaCobrancaDistribuidor.getTipoCota());
+				parametroCobranca.setFornecedorPadrao(formaCobrancaDistribuidor.getFornecedorPadrao());
+				parametroCobranca.setPoliticaSuspensao(null);
+				
+				parametroCobrancaCotaRepository.adicionar(parametroCobranca);
+				formaCobranca.setParametroCobrancaCota(parametroCobranca);
+				
+	    	} else {
+	    		
+	    		if(c.getParametroCobranca().getFormasCobrancaCota() == null) {
+	    			Set<FormaCobranca> formasCobrancaCota = new HashSet<>();
+	    			c.getParametroCobranca().setFormasCobrancaCota(formasCobrancaCota);
+	    		}
+	    		
+	    		formaCobranca.setParametroCobrancaCota(c.getParametroCobranca());
 			
-			if(c!= null && c.getParametroCobranca() != null) {
-				parametroCobrancaCotaRepository.detach(c.getParametroCobranca());
-				parametroCobrancaCotaRepository.removerPorId(c.getParametroCobranca().getId());
 			}
 			
-			parametroCobrancaCotaRepository.adicionar(parametroCobranca);
-	    	
-	    	formaCobranca.setParametroCobrancaCota(parametroCobranca);
-
-		    formaCobranca.setTaxaJurosMensal((formaCobranca.getTaxaJurosMensal() == null ? BigDecimal.ZERO : formaCobranca.getTaxaJurosMensal()));
-		    formaCobranca.setTaxaMulta((formaCobranca.getTaxaMulta() == null ? BigDecimal.ZERO : formaCobranca.getTaxaMulta()));
-		    formaCobranca.setValorMinimoEmissao((formaCobranca.getValorMinimoEmissao() == null ? BigDecimal.ZERO : formaCobranca.getValorMinimoEmissao()));
-
-		    formaCobrancaRepository.adicionar(formaCobranca);
+		    formaCobrancaRepository.merge(formaCobranca);
+		    
 	    } else {
-	    	formaCobrancaRepository.merge(formaCobranca);    	
+	    	
+	    	formaCobrancaRepository.merge(formaCobranca);
+	    	
 		}
 		    
     }	
@@ -1077,17 +1096,112 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 
 
 	@Override
+	@Transactional
 	public void inserirFormaCobrancaDoDistribuidorNaCota(ParametroCobrancaCotaDTO parametroCobranca) {
 
-		FormaCobrancaDTO formaCobrancaDTO = new FormaCobrancaDTO();
 		FormaCobranca formaCobrancaDistribuidor = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
 		
+		Cota cota = cotaRepository.buscarPorId(parametroCobranca.getIdCota());
+		
+		FormaCobranca formaCobranca = new FormaCobranca();
+		formaCobranca.setAtiva(true);
+		formaCobranca.setBanco(formaCobrancaDistribuidor.getBanco());
+		
+		Set<ConcentracaoCobrancaCota> listaCCC = new HashSet<>();
+		for(ConcentracaoCobrancaCota conc : formaCobrancaDistribuidor.getConcentracaoCobrancaCota()) {
+			ConcentracaoCobrancaCota ccc = new ConcentracaoCobrancaCota();
+			ccc.setDiaSemana(conc.getDiaSemana());
+			ccc.setFormaCobranca(formaCobranca);
+			concentracaoCobrancaRepository.adicionar(ccc);
+			listaCCC.add(ccc);
+		}
+		
+		formaCobranca.setConcentracaoCobrancaCota(listaCCC);
+		formaCobranca.setContaBancariaCota(formaCobrancaDistribuidor.getContaBancariaCota());
+		
+		List<Integer> dias = new ArrayList<>();
+		dias.addAll(formaCobrancaDistribuidor.getDiasDoMes());
+		formaCobranca.setDiasDoMes(dias);
+		
+		formaCobranca.setFormaCobrancaBoleto(formaCobrancaDistribuidor.getFormaCobrancaBoleto());
+		
+		Set<Fornecedor> fornecs = new HashSet<>();
+		fornecs.addAll(formaCobrancaDistribuidor.getFornecedores());
+		
+		formaCobranca.setFornecedores(fornecs);
+		formaCobranca.setFornecedorPadrao(formaCobrancaDistribuidor.getFornecedorPadrao());
+		formaCobranca.setInstrucoes(formaCobrancaDistribuidor.getInstrucoes());
+		
+		if(cota.getParametroCobranca() == null) {
+			ParametroCobrancaCota pcc = new ParametroCobrancaCota();
+		
+			pcc.setCota(cota);
+			pcc.setFatorVencimento(new Integer(""+ parametroCobranca.getFatorVencimento()));
+			pcc.setFornecedorPadrao(fornecedorService.obterFornecedorPorId(parametroCobranca.getIdFornecedor()));
+			pcc.setTipoCota(parametroCobranca.getTipoCota());
+			pcc.setUnificaCobranca(parametroCobranca.isUnificaCobranca());
+			pcc.setValorMininoCobranca(parametroCobranca.getValorMinimo());
+			parametroCobrancaCotaRepository.adicionar(pcc);
+			cota.setParametroCobranca(pcc);
+		} else {
+			cota.getParametroCobranca().setFatorVencimento(new Integer(""+ parametroCobranca.getFatorVencimento()));
+			cota.getParametroCobranca().setFornecedorPadrao(fornecedorService.obterFornecedorPorId(parametroCobranca.getIdFornecedor()));
+			cota.getParametroCobranca().setTipoCota(parametroCobranca.getTipoCota());
+		}
+		
+		formaCobranca.setParametroCobrancaCota(cota.getParametroCobranca());
+		
+		//formaCobranca.setPoliticaCobranca(formaCobrancaDistribuidor.getPoliticaCobranca());
+		formaCobranca.setPrincipal(true);
+		formaCobranca.setRecebeCobrancaEmail(formaCobrancaDistribuidor.isRecebeCobrancaEmail());
+		formaCobranca.setTaxaJurosMensal(formaCobrancaDistribuidor.getTaxaJurosMensal());
+		formaCobranca.setTaxaMulta(formaCobrancaDistribuidor.getTaxaMulta());
+		formaCobranca.setTipoCobranca(formaCobrancaDistribuidor.getTipoCobranca());
+		formaCobranca.setTipoCota(formaCobrancaDistribuidor.getTipoCota());
+		formaCobranca.setTipoFormaCobranca(formaCobrancaDistribuidor.getTipoFormaCobranca());
+		formaCobranca.setValorMinimoEmissao(formaCobrancaDistribuidor.getValorMinimoEmissao());
+		formaCobranca.setVencimentoDiaUtil(formaCobrancaDistribuidor.isVencimentoDiaUtil());
+		
+		formaCobrancaRepository.adicionar(formaCobranca);
+		
+		/*
 		formaCobrancaDTO.setIdCota(parametroCobranca.getIdCota());
 		formaCobrancaDTO.setIdParametroCobranca(parametroCobranca.getIdParametroCobranca());
 		formaCobrancaDTO.setIdFormaCobranca(parametroCobranca.getIdFormaCobranca());
 		formaCobrancaDTO.setTipoCobranca(formaCobrancaDistribuidor.getTipoCobranca());
 		formaCobrancaDTO.setRecebeEmail(formaCobrancaDistribuidor.isRecebeCobrancaEmail());
 		
+		for (Iterator<ConcentracaoCobrancaCota> i = formaCobrancaDistribuidor.getConcentracaoCobrancaCota().iterator();i.hasNext(); ) {
+			ConcentracaoCobrancaCota ccc = i.next();
+			
+			switch(ccc.getDiaSemana()) {
+			
+				case DOMINGO:
+					formaCobrancaDTO.setDomingo(true);
+					break;
+				case SEGUNDA_FEIRA:
+					formaCobrancaDTO.setSegunda(true);
+					break;
+				case TERCA_FEIRA:
+					formaCobrancaDTO.setTerca(true);
+					break;
+				case QUARTA_FEIRA:
+					formaCobrancaDTO.setQuarta(true);
+					break;
+				case QUINTA_FEIRA:
+					formaCobrancaDTO.setQuinta(true);
+					break;
+				case SEXTA_FEIRA:
+					formaCobrancaDTO.setSexta(true);
+					break;
+				case SABADO:
+					formaCobrancaDTO.setSabado(true);
+					break;
+				
+			}
+			
+		}
+				
 		Banco bancoCadastrado = formaCobrancaDistribuidor.getBanco();
 		
 		if (bancoCadastrado != null) {
@@ -1120,6 +1234,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		}
 		
 		this.postarFormaCobranca(formaCobrancaDTO);
-		
+		*/
 	}
 }
