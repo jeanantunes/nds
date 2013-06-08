@@ -13,6 +13,8 @@ GeracaoNFeController.prototype.init = function() {
 	$("#selectFornecedores", this.workspace).multiselect({
 		selectedList : 6
 	});
+	
+	$("#selectFornecedores", this.workspace).multiselect("checkAll");
 
 	$(
 			"#datepickerIntervaloMovimentoDe, #datepickerIntervaloMovimentoAte,#datepickerEmissao")
@@ -314,10 +316,9 @@ GeracaoNFeController.prototype.initGrid = function() {
 
 						exibirMensagem(data.mensagens.tipoMensagem,
 								data.mensagens.listaMensagens);
-
-					} else {
-						return data;
 					}
+					
+					return data;
 				},
 				dataType : 'json',
 				colModel : [ {
