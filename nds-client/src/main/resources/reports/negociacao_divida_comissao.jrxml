@@ -109,7 +109,7 @@
 				<text><![CDATA[Dívida Selecionada R$:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="1ab9787e-ca3a-4cd8-b679-512240745607" x="3" y="20" width="106" height="20"/>
+				<reportElement uuid="1ab9787e-ca3a-4cd8-b679-512240745607" x="3" y="20" width="165" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
