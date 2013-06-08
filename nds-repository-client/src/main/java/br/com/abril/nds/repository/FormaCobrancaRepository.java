@@ -64,4 +64,12 @@ public interface FormaCobrancaRepository extends Repository<FormaCobranca,Long>{
 	 * @return FormaCobranca
 	 */
 	FormaCobranca obterFormaCobranca();
+	
+	/**
+	 * Obtem as formas de cobranca atva/inativa das cotas
+	 * @param ativa
+	 * @return
+	 */
+	List<FormaCobranca> obterFormasCobrancaAtivaCotas(Boolean ativa);
+	
 }

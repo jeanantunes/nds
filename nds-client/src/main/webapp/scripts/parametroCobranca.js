@@ -664,6 +664,18 @@ var parametroCobrancaController = $.extend(true,
 			$("#PSab", this.workspace).attr('checked',false);
 			$("#PDom", this.workspace).attr('checked',false);
 	
+			$("#comboFatorVencimento option:first", this.workspace).attr("selected", "selected");
+			
+			$("#ParamCob-TipoCota option:first", this.workspace).attr("selected", "selected");
+			
+			$("#comboFornecedorPadrao option:first", this.workspace).attr("selected", "selected");
+			$.each($("#comboFornecedorPadrao option", this.workspace), function(index, value) { 
+				$("#ParamCob-fornecedor_"+ value.value, this.workspace).attr('disabled', false);				
+			});
+			
+			$.each($('.semanal :input[type="checkbox"]', this.workspace), function(index, value) {
+				$(value).attr('checked', false);
+			});
 			
 			parametroCobrancaController.carregarFormasEmissao(null,"");
 			$("input[name='checkGroupFornecedores']", this.workspace).each(function(i) {			

@@ -15,6 +15,8 @@ import br.com.abril.nds.client.vo.ParametroCobrancaVO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
@@ -113,28 +115,28 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		ParametroCobrancaVO parametroCobranca = null;
 		List<ParametroCobrancaVO> parametrosCobranca = null;
 		FormaCobranca forma = null;
-		if ((politicasCobranca!=null)&&(politicasCobranca.size()>0)){
+		if ((politicasCobranca!=null)&&(politicasCobranca.size()>0)) {
 			parametrosCobranca = new ArrayList<ParametroCobrancaVO>();
 			for(PoliticaCobranca itemPolitica:politicasCobranca){
 				parametroCobranca = new ParametroCobrancaVO();
 			    
 				parametroCobranca.setIdPolitica(itemPolitica.getId());
-				parametroCobranca.setAcumulaDivida(itemPolitica.isAcumulaDivida()?"Sim":"Não");
-				parametroCobranca.setCobrancaUnificada(itemPolitica.isUnificaCobranca()?"Sim":"Não");
+				parametroCobranca.setAcumulaDivida(itemPolitica.isAcumulaDivida() ? "Sim" : "Não");
+				parametroCobranca.setCobrancaUnificada(itemPolitica.isUnificaCobranca() ? "Sim" : "Não");
 				parametroCobranca.setFormaEmissao(itemPolitica.getFormaEmissao()!=null?itemPolitica.getFormaEmissao().getDescFormaEmissao():"");
 				
 				forma = itemPolitica.getFormaCobranca();
-				if (forma!=null){
-					parametroCobranca.setForma(forma.getTipoCobranca()!=null?forma.getTipoCobranca().getDescTipoCobranca():"");
-					parametroCobranca.setBanco(forma.getBanco()!=null?forma.getBanco().getNome():"");
-					parametroCobranca.setValorMinimoEmissao(forma.getValorMinimoEmissao()!=null?forma.getValorMinimoEmissao().toString():"");
-					parametroCobranca.setEnvioEmail(forma.isRecebeCobrancaEmail()?"Sim":"Não");
+				if (forma!=null) {
+					parametroCobranca.setForma(forma.getTipoCobranca() != null ? forma.getTipoCobranca().getDescTipoCobranca() : "");
+					parametroCobranca.setBanco(forma.getBanco() != null ? forma.getBanco().getNome() : "");
+					parametroCobranca.setValorMinimoEmissao(forma.getValorMinimoEmissao() != null ? forma.getValorMinimoEmissao().toString() : "");
+					parametroCobranca.setEnvioEmail(forma.isRecebeCobrancaEmail() ? "Sim" : "Não");
 					StringBuilder fornecedores = new StringBuilder();
 					int i = 0;
 					for (Fornecedor fornecedor: forma.getFornecedores()) {
 						fornecedores.append(fornecedor.getJuridica().getNome());
 						i++;
-						if(i < forma.getFornecedores().size()){
+						if(i < forma.getFornecedores().size()) {
 							fornecedores.append(", ");
 						}
 						
@@ -547,7 +549,27 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 	@Override
 	@Transactional
 	public void dasativarPoliticaCobranca(long idPolitica) {
-		this.politicaCobrancaRepository.desativarPoliticaCobranca(idPolitica);
+		
+		PoliticaCobranca pc = politicaCobrancaRepository.buscarPorId(idPolitica);
+		FormaCobranca fcDistrib = pc.getFormaCobranca();
+		
+		boolean desativar = true;
+		for(FormaCobranca fc : formaCobrancaRepository.obterFormasCobrancaAtivaCotas(true)) {
+			
+			if(fc.getTipoCobranca().equals(fcDistrib.getTipoCobranca()) 
+					&& fc.getTipoFormaCobranca().equals(fcDistrib.getTipoFormaCobranca())
+					&& fc.getParametroCobrancaCota() != null) {
+				
+				desativar = false;
+			}
+			
+		}
+		
+		if(desativar) {
+			this.politicaCobrancaRepository.desativarPoliticaCobranca(idPolitica);
+		} else {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi possível desativar. \nExistem cotas utilizando esta forma de cobrança!");
+		}
 	}
 	
 	@Override
