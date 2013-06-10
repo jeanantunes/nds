@@ -116,6 +116,11 @@ public class GeracaoNFeController extends BaseController {
 				geracaoNFeService.busca(intervaloBox, intervalorCota, intervaloDateMovimento, 
 						listIdFornecedor, tipoNotaFiscal, idRoteiro, idRota, sortname, sortorder, rp, page, null);
 		
+		if (cotaExemplaresDTOs == null || cotaExemplaresDTOs.isEmpty()){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+		}
+		
 		result.use(FlexiGridJson.class).from(cotaExemplaresDTOs).page(page).total(cotaExemplaresDTOs.size()).serialize();
 	}
 	
