@@ -159,13 +159,14 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 			.append("from IcdChamadaEncalhe ce join fetch ce.chamadaEncalheItens cei join fetch cei.lancamentoEdicaoPublicacao l ")
 			.append("where ce.tipoStatus in (:status) ")
 			.append("and ce.codigoDistribuidor = :distribuidor ")
-			.append("and ce.indiceCEProvisoria = 'N' ")
+			.append("and ce.indiceCEProvisoria = :nao ")
 			.append("and ce.dataAnoReferencia = 2013");
 		
 		Query query = this.getSessionIcd().createQuery(hql.toString());
 		
-		query.setParameterList("status", new String[]{"A", "F"}); //FIXME: Sérgio: deve buscar status 'A'
+		query.setParameterList("status", new String[]{"A"}); //FIXME: Sérgio: deve buscar status 'A'
 		query.setParameter("distribuidor", Long.parseLong(distribuidor));
+		query.setParameter("nao", "N");
 
 		return query.list();
 	}
