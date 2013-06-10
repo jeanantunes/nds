@@ -1431,7 +1431,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 					intervaloBox.getAte()));
 		}
 		
-		if(situacoesCadastro != null){
+		if(situacoesCadastro != null && !situacoesCadastro.isEmpty()){
 			criteria.add(Restrictions.in("situacaoCadastro", situacoesCadastro));
 		}
 		

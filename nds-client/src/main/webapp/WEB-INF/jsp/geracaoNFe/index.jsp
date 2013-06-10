@@ -55,11 +55,12 @@ $(function(){
 <fieldset class="fieldFiltro">
 	<legend> Pesquisar NF-e</legend>
 		<form>
-			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+			<table width="1000px" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
 					<td width="91">Tipo de Nota:</td>
     				<td width="204">
 						<select id="selectTipoNotaFiscal" style="width:250px; font-size:11px!important">
+							<option value="">Todos</option>
 							<c:forEach items="${listaTipoNotaFiscal}" var="tipoNotaFiscal">
 								<option value="${tipoNotaFiscal.key }">${tipoNotaFiscal.value }</option>
 							</c:forEach>
