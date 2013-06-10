@@ -177,7 +177,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			total = total.add(estudoCota.getQtdeEfetiva());
 		}
 
-		gerarMovimentoEstoque(dataPrevista, idProdutoEdicao, idUsuario, total, tipoMovimento);
+		gerarMovimentoEstoque(idProdutoEdicao, idUsuario, total, tipoMovimento, dataDistribuidor, false);
 	}
 
 	@Override

@@ -1239,6 +1239,7 @@ public class ConferenciaEncalheController extends BaseController {
 				
 			}
 			
+			/////
 			List<NotaFiscalEntradaCota> notaFiscalEntradaCotas = new ArrayList<NotaFiscalEntradaCota>();
 			notaFiscalEntradaCotas.add(notaFiscal);
 			controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCotas);

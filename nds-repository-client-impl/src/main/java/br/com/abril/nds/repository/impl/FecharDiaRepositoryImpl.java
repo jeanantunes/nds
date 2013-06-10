@@ -98,7 +98,7 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		query.setParameterList("status", listaLancamentos);
 		query.setParameter("dataOperacao", dataOperacaoDistribuidor);
 		
-		return !(Boolean) query.uniqueResult();
+		return (Boolean) query.uniqueResult();
 	}
 
 	@SuppressWarnings("unchecked")

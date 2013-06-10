@@ -229,6 +229,8 @@ public class FuroProdutoController extends BaseController {
 	public void confirmarFuro(String codigoProduto, Long idProdutoEdicao, String novaData, 
 			Long idLancamento) throws Exception{
 		
+		verificarExecucaoInterfaces();
+		
 		codigoProduto = obterCodigoProdutoFormatado(codigoProduto);
 		
 		try {
@@ -298,5 +300,11 @@ public class FuroProdutoController extends BaseController {
 		return StringUtils.leftPad(codigoProduto, 8, '0');
 		
 	}
-	
+
+	private void verificarExecucaoInterfaces() {
+		if (distribuidorService.verificaDesbloqueioProcessosLancamentosEstudos()) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "As interfaces encontram-se em processamento. Aguarde o termino da execução para continuar!");
+		}
+	}
+
 }
