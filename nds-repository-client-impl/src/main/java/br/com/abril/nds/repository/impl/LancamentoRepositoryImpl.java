@@ -1731,6 +1731,22 @@ public class LancamentoRepositoryImpl extends
 		return new TreeSet<Date>(retorno);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<Lancamento> obterLancamentoDataDistribuidorInStatus(Date dataRecolhimentoDistribuidor, List<StatusLancamento> status) {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT lancamento ");
+		hql.append(" FROM Lancamento as lancamento");
+		hql.append(" WHERE lancamento.dataRecolhimentoDistribuidor = :dataRecolhimentoDistribuidor ");
+		hql.append(" and lancamento.status in (:status) ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("dataRecolhimentoDistribuidor", dataRecolhimentoDistribuidor);
+		query.setParameterList("status", status);
+		
+		return (List<Lancamento>) query.list();
+		
+	}
 	
 	@SuppressWarnings("unchecked")
 	public List<ProdutoLancamentoDTO> verificarDataConfirmada(ProdutoLancamentoDTO produtoLancamentoDTO) {
