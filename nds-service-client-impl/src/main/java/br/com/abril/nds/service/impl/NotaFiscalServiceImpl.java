@@ -17,6 +17,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.Column;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,9 +43,9 @@ import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Telefone;
-import br.com.abril.nds.model.cadastro.TelefoneCota;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TelefoneFornecedor;
+import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -117,6 +121,8 @@ import br.com.abril.nds.vo.ValidacaoVO;
 @Service
 public class NotaFiscalServiceImpl implements NotaFiscalService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(NotaFiscalServiceImpl.class);
+	
 	@Autowired
 	private NotaFiscalRepository notaFiscalRepository;
 
@@ -192,7 +198,7 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		Intervalo<Date> periodo = dadosConsultaLoteNotaFiscal
 				.getPeriodoMovimento();
 
-		TipoNotaFiscal tipoNotaFiscal = dadosConsultaLoteNotaFiscal
+		Set<TipoNotaFiscal> tiposNotaFiscal = dadosConsultaLoteNotaFiscal
 				.getTipoNotaFiscal();
 
 		List<Long> listaIdFornecedores = dadosConsultaLoteNotaFiscal
@@ -203,29 +209,32 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = 
 				this.distribuidorRepository.parametrosRecolhimentoDistribuidor();
 		
-		for (Long idCota : dadosConsultaLoteNotaFiscal
-				.getIdsCotasDestinatarias()) {
-
-			if (tipoNotaFiscal.getTipoAtividade().equals(
-					this.distribuidorRepository.tipoAtividade())) {
-
-				Cota cota = this.cotaRepository.buscarPorId(idCota);
-
-				if (cota.getParametrosCotaNotaFiscalEletronica() != null) {
-
-					if (cota.getParametrosCotaNotaFiscalEletronica()
-							.getEmiteNotaFiscalEletronica() == tipoNotaFiscal
-							.isContribuinte()) {
-
-						List<ItemNotaFiscalSaida> itensNotaFiscal = obterItensNotaFiscalPor(
-								parametrosRecolhimentoDistribuidor, 
-								cota, periodo,
-								listaIdFornecedores, null, tipoNotaFiscal);
-
-						if (itensNotaFiscal != null
-								&& !itensNotaFiscal.isEmpty()) {
-							idCotaTotalItensNota.put(cota, this
-									.sumarizarTotalItensNota(itensNotaFiscal));
+		TipoAtividade tipoAtividade = this.distribuidorRepository.tipoAtividade();
+		
+		for (Long idCota : dadosConsultaLoteNotaFiscal.getIdsCotasDestinatarias()) {
+			
+			Cota cota = this.cotaRepository.buscarPorId(idCota);
+			
+			for (TipoNotaFiscal tipoNotaFiscal : tiposNotaFiscal){
+				
+				if (tipoNotaFiscal.getTipoAtividade().equals(tipoAtividade)) {
+	
+					if (cota.getParametrosCotaNotaFiscalEletronica() != null) {
+	
+						if (cota.getParametrosCotaNotaFiscalEletronica()
+								.getEmiteNotaFiscalEletronica() == tipoNotaFiscal
+								.isContribuinte()) {
+	
+							List<ItemNotaFiscalSaida> itensNotaFiscal = obterItensNotaFiscalPor(
+									parametrosRecolhimentoDistribuidor, 
+									cota, periodo,
+									listaIdFornecedores, null, tipoNotaFiscal);
+	
+							if (itensNotaFiscal != null
+									&& !itensNotaFiscal.isEmpty()) {
+								idCotaTotalItensNota.put(cota, this
+										.sumarizarTotalItensNota(itensNotaFiscal));
+							}
 						}
 					}
 				}
@@ -497,6 +506,26 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 			dados = gerarArquivoNota(notasFiscaisParaExportacao);
 
 		} catch (Exception e) {
+			
+			if (e instanceof ValidacaoException){
+				
+				ValidacaoException ex = (ValidacaoException) e;
+				
+				StringBuilder msgs = new StringBuilder();
+				
+				for (String msg : ex.getValidacao().getListaMensagens()){
+					
+					if (msgs.length() != 0){
+						msgs.append(", ");
+					}
+					
+					msgs.append(msg);
+				}
+				
+				throw new ValidacaoException(TipoMensagem.ERROR, 
+						"Erro ao gerar arquivo de nota: " + msgs.toString());
+			}
+			
 			e.printStackTrace();
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,
 					"Falha ao gerar arquivo de exportação"));
@@ -1060,9 +1089,27 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 
 		notaFiscal
 		.setStatusProcessamentoInterno(StatusProcessamentoInterno.GERADA);
-
+		
 		notaFiscal.setProcessos(processos);
-
+		
+		int tamanhoCampoMapeado = 60;
+		
+		try {
+			tamanhoCampoMapeado = (int) Column.class.getField("length").get(
+					notaFiscal.getIdentificacao().getDescricaoNaturezaOperacao());
+			
+		} catch (IllegalArgumentException | IllegalAccessException
+				| NoSuchFieldException | SecurityException e) {
+			
+			LOGGER.warn(e.getLocalizedMessage(), e);
+			e.printStackTrace();
+		}
+		
+		if (notaFiscal.getIdentificacao().getDescricaoNaturezaOperacao().length() > tamanhoCampoMapeado){
+			notaFiscal.getIdentificacao().setDescricaoNaturezaOperacao(
+					notaFiscal.getIdentificacao().getDescricaoNaturezaOperacao().substring(0, tamanhoCampoMapeado));
+		}
+		
 		notaFiscalRepository.adicionar(notaFiscal);
 
 		int sequencia = 1;
