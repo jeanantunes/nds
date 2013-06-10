@@ -16,7 +16,7 @@ public class FechamentoFisicoLogicoDtoOrdenaPorCodigo implements Comparator<Fech
 		BigInteger segundoCodigo = new BigInteger(o2.getCodigo());
 		int resultado = primeiroCodigo.compareTo(segundoCodigo);
 		
-		if(this.sortorder.equals("desc"))
+		if(this.sortorder != null && this.sortorder.equals("desc"))
 		{
 			resultado = resultado *(-1);
 		}
