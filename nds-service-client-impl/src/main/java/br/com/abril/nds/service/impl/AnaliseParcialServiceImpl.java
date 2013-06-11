@@ -62,11 +62,18 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     public List<AnaliseParcialDTO> buscaAnaliseParcialPorEstudo(AnaliseParcialQueryDTO queryDTO) {
         List<AnaliseParcialDTO> lista = analiseParcialRepository.buscaAnaliseParcialPorEstudo(queryDTO);
         if (queryDTO.getModoAnalise() != null && queryDTO.getModoAnalise().equalsIgnoreCase("PARCIAL")) {
+            queryDTO.setEdicoesBase(analiseParcialRepository.carregarEdicoesBaseEstudo(queryDTO.getEstudoId()));
             for (AnaliseParcialDTO item : lista) {
                 item.setDescricaoLegenda(traduzClassificacaoCota(item.getLeg()));
                 List<EdicoesProdutosDTO> temp = new ArrayList<>();
-                for (int i = 0; i < 3; i++) {
-                    temp.addAll(analiseParcialRepository.getEdicoesBaseParciais((long) item.getCota(), queryDTO.getNumeroEdicao(), queryDTO.getCodigoProduto(), (long) i));
+                int contadorParciais = 0;
+                for (EdicoesProdutosDTO edicoesProdutosDTO : queryDTO.getEdicoesBase()) {
+                    if (edicoesProdutosDTO.isParcial()) {
+                        temp.addAll(analiseParcialRepository.getEdicoesBaseParciais((long) item.getCota(), edicoesProdutosDTO.getEdicao().longValue(), edicoesProdutosDTO.getCodigoProduto(), Long.valueOf(edicoesProdutosDTO.getPeriodo())));
+                        if (++contadorParciais > 2) {
+                            break;
+                        }
+                    }
                 }
                 item.setEdicoesBase(temp);
             }

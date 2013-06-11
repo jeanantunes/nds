@@ -34,6 +34,7 @@ public class EdicoesProdutosDTO implements Serializable {
 	private String dataRecolhimento;
 
     private Integer ordemExibicao;
+    private boolean parcial;
 	
 	public BigInteger getEdicao() {
 		return edicao;
@@ -151,5 +152,13 @@ public class EdicoesProdutosDTO implements Serializable {
 
     public void setOrdemExibicao(Integer ordemExibicao) {
         this.ordemExibicao = ordemExibicao;
+    }
+
+    public boolean isParcial() {
+        return parcial;
+    }
+
+    public void setParcial(boolean parcial) {
+        this.parcial = parcial;
     }
 }
