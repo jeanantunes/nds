@@ -5,6 +5,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.DetalheDiferencaCotaDTO;
 import br.com.abril.nds.dto.RateioDiferencaCotaDTO;
+import br.com.abril.nds.dto.RateioDiferencaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheDiferencaCotaDTO;
 import br.com.abril.nds.model.estoque.RateioDiferenca;
 
@@ -19,4 +20,6 @@ public interface RateioDiferencaRepository extends Repository<RateioDiferenca, L
 	void removerRateiosNaoAssociadosDiferenca( Long idDiferenca, List<Long> idRateios);
 
 	Collection<RateioDiferenca> obterRateiosPorDiferenca(Long id);
+	
+	List<RateioDiferencaDTO> obterRateiosParaImpressaoPorDiferenca(Long idDiferenca);
 }

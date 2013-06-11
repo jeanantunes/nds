@@ -24,6 +24,7 @@ import br.com.abril.nds.client.vo.RelatorioLancamentoFaltasSobrasVO;
 import br.com.abril.nds.dto.DetalheDiferencaCotaDTO;
 import br.com.abril.nds.dto.ImpressaoDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.RateioDiferencaCotaDTO;
+import br.com.abril.nds.dto.RateioDiferencaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheDiferencaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
@@ -609,12 +610,16 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				
 				rateioDiferenca.setDiferenca(diferenca);
 			}
+			
 			Cota cota = this.cotaRepository.obterPorNumerDaCota(rateioCotaVO.getNumeroCota());
+			
 			rateioDiferenca.setCota(cota);
 			
 			rateioDiferenca.setQtde(rateioCotaVO.getQuantidade());
 			
 			rateioDiferenca.setDataNotaEnvio(rateioCotaVO.getDataEnvioNota());
+			
+			rateioDiferenca.setDataMovimento(rateioCotaVO.getDataMovimento());
 			
 			rateioDiferenca = this.rateioDiferencaRepository.merge(rateioDiferenca);
 			
@@ -894,9 +899,53 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	 	List<RelatorioLancamentoFaltasSobrasVO> listaRelatorio =  
 	 		new ArrayList<RelatorioLancamentoFaltasSobrasVO>();
 	
-		for (ImpressaoDiferencaEstoqueDTO dadoImpressao : dadosImpressao) {
+	 	final int qtdeRateiosPorLinha = 5;
+	 	
+	 	for (ImpressaoDiferencaEstoqueDTO dadoImpressao : dadosImpressao) {
 			
-			listaRelatorio.add(new RelatorioLancamentoFaltasSobrasVO(dadoImpressao));
+			Long idDiferenca = dadoImpressao.getIdDiferenca();
+			
+			if (idDiferenca != null) {
+				
+				List<RateioDiferencaDTO> rateios = 
+					this.rateioDiferencaRepository.obterRateiosParaImpressaoPorDiferenca(
+						idDiferenca);
+				
+				if (rateios != null) {
+					
+					if (rateios.size() <= qtdeRateiosPorLinha) {
+						
+						dadoImpressao.setRateios(rateios);
+						
+						listaRelatorio.add(
+							new RelatorioLancamentoFaltasSobrasVO(dadoImpressao));
+						
+					} else {
+						
+						int qtdeLinhas = 
+							(int) Math.ceil((double) rateios.size() / qtdeRateiosPorLinha);
+						
+						int indice = 0;
+						
+						for (int linha = 0; linha < qtdeLinhas; linha++) {
+							
+							ImpressaoDiferencaEstoqueDTO dadoImpressaoComRateio = 
+						 		new ImpressaoDiferencaEstoqueDTO();
+							
+							dadoImpressaoComRateio.setIdDiferenca(idDiferenca);
+					 		dadoImpressaoComRateio.setProdutoEdicao(dadoImpressao.getProdutoEdicao());
+					 		dadoImpressaoComRateio.setQtdeFaltas(dadoImpressao.getQtdeFaltas());
+					 		dadoImpressaoComRateio.setQtdeSobras(dadoImpressao.getQtdeSobras());
+					 		
+					 		dadoImpressaoComRateio.setRateios(
+					 			rateios.subList(indice, indice += qtdeRateiosPorLinha));
+							
+							listaRelatorio.add(
+								new RelatorioLancamentoFaltasSobrasVO(dadoImpressaoComRateio));
+						}
+					}
+				}				
+			}
 		}
 		
 		Map<String, Object> parametrosRelatorio = new HashMap<String, Object>();

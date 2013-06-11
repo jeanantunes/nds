@@ -361,5 +361,11 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 		
 	}
 	
+	@Override
+	public Date obterDataUltimaMovimentacaoReparteExpedida(Integer numeroCota,
+														   Long idProdutoEdicao) {
+		
+		return this.movimentoEstoqueCotaRepository.obterDataUltimaMovimentacaoReparteExpedida(numeroCota, idProdutoEdicao);
+	}
 	
 }

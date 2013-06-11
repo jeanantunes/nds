@@ -964,11 +964,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			debitoCredito.setObservacoes(descricaoCredito);
 			debitoCredito.setTipoLancamento(OperacaoFinaceira.CREDITO);
+			debitoCredito.setTipoMovimento(Constantes.COMPOSICAO_COBRANCA_CREDITO);
 		
 		} else {
 			
 			debitoCredito.setObservacoes(descricaoDebito);
 			debitoCredito.setTipoLancamento(OperacaoFinaceira.DEBITO);
+			debitoCredito.setTipoMovimento(Constantes.COMPOSICAO_COBRANCA_DEBITO);
 		
 		}
 		

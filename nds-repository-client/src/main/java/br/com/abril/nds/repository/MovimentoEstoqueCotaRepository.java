@@ -427,4 +427,15 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	public List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaSemEstudoPor(
 			Long idCota, Intervalo<Date> periodo, List<Long> listaIdFornecedores, GrupoMovimentoEstoque grupoMovimentoEstoque);
 
+	/**
+	 * Obtém a data da última movimentação de reparte expedida.
+	 * 
+	 * @param numeroCota - numero da cota
+	 * @param idProdutoEdicao - id do produto edição
+	 * 
+	 * @return {@link Date}
+	 */
+	public Date obterDataUltimaMovimentacaoReparteExpedida(Integer numeroCota,
+			   											   Long idProdutoEdicao);
+	
 }
