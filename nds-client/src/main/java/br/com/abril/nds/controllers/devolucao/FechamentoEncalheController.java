@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -201,8 +202,7 @@ public class FechamentoEncalheController extends BaseController {
 	}
 	
 	@Path("/cotasAusentes")
-	public void cotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao,
-			String sortname, String sortorder, int rp, int page) {
+	public void cotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao, List<Long> idsCotas, String sortname, String sortorder, int rp, int page) {
 
 		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
 			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, sortorder, sortname, page, rp);
@@ -268,12 +268,21 @@ public class FechamentoEncalheController extends BaseController {
 		}
 		
 		try {
-			
+			List<CotaAusenteEncalheDTO> listaCotasAusentes = this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, true, null, null, 0, 0);
 			if (postergarTodasCotas) {
-			
-				this.fechamentoEncalheService.postergarTodasCotas(dataEncalhe, dataPostergacao);
+				
+				if(listaCotasAusentes != null){
+					
+					//idsCotas a serem retirados da lista 
+					removerCotasAusentesLista(listaCotasAusentes, idsCotas);
+					
+					this.fechamentoEncalheService.postergarTodasCotas(dataEncalhe, dataPostergacao, listaCotasAusentes);
+				}
+				
 			
 			} else {
+				//Adiciona as contas com dívida
+				idsCotas.addAll(getIdsCotasAusentesComDivida(listaCotasAusentes));
 				
 				this.fechamentoEncalheService.postergarCotas(dataEncalhe, dataPostergacao, idsCotas);
 			}
@@ -288,6 +297,23 @@ public class FechamentoEncalheController extends BaseController {
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Cotas postergadas com sucesso!"), "result").recursive().serialize();
 	}
 	
+	private void removerCotasAusentesLista(List<CotaAusenteEncalheDTO> listaCotasAusentes, List<Long> idsCotas) {
+		
+		ArrayList<CotaAusenteEncalheDTO> newRefListaCotasAusentes = new ArrayList<CotaAusenteEncalheDTO>(listaCotasAusentes);
+		if(idsCotas != null){
+			
+			for(Long idCota : idsCotas){
+				for(int i=0; i < newRefListaCotasAusentes.size(); i++){
+					CotaAusenteEncalheDTO dto = newRefListaCotasAusentes.get(i);
+					
+					if(dto != null && dto.getIdCota().equals(idCota)){
+						listaCotasAusentes.remove(i);
+					}
+				}
+			}
+		}
+	}
+
 	@Path("/dataSugestaoPostergarCota")
 	public void carregarDataSugestaoPostergarCota(String dataEncalhe) throws ParseException {
 		Date date = new SimpleDateFormat("dd/MM/yyyy").parse(dataEncalhe);
@@ -336,16 +362,19 @@ public class FechamentoEncalheController extends BaseController {
 		
 		try {
 			
+			List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
+					this.fechamentoEncalheService.buscarCotasAusentes(dataOperacao, true, null, null, 0, 0);
+
 			if (cobrarTodasCotas) {
 				
-				List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
-						this.fechamentoEncalheService.buscarCotasAusentes(dataOperacao, true, null, null, 0, 0);
+				//idsCotas a serem retirados da lista
+				removerCotasAusentesLista(listaCotaAusenteEncalhe, idsCotas);
 				
 				this.fechamentoEncalheService.realizarCobrancaCotas(dataOperacao, getUsuarioLogado(), listaCotaAusenteEncalhe, null);				
 			
-				
 			} else {
 			
+				idsCotas.addAll(getIdsCotasAusentesComDivida(listaCotaAusenteEncalhe));
 				this.fechamentoEncalheService.cobrarCotas(dataOperacao, getUsuarioLogado(), idsCotas);
 			}
 
@@ -360,6 +389,23 @@ public class FechamentoEncalheController extends BaseController {
 		
 		this.result.use(Results.json()).from(
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Cotas cobradas com sucesso!"), "result").recursive().serialize();		
+	}
+
+	private Collection<? extends Long> getIdsCotasAusentesComDivida(List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe) {
+
+		List<Long> idsCotasAusentesComDivida = new ArrayList<Long>();
+		for (CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotaAusenteEncalhe) {
+			
+			if(!cotaAusenteEncalheDTO.isIndPossuiChamadaEncalheCota()) {
+				
+				if (cotaAusenteEncalheDTO.isIndMFCNaoConsolidado()) {
+					idsCotasAusentesComDivida.add(cotaAusenteEncalheDTO.getIdCota());
+				} 
+				
+			}
+		}
+		
+		return idsCotasAusentesComDivida;
 	}
 
 	@Get

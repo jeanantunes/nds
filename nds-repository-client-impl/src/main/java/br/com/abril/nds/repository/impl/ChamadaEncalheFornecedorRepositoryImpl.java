@@ -30,8 +30,7 @@ public class ChamadaEncalheFornecedorRepositoryImpl extends AbstractRepositoryMo
         builder.append("join cef.itens as item ");
         builder.append("join item.produtoEdicao as pe ");
         builder.append("join pe.produto as p ");
-        builder.append("join pe.produto as p ");
-        builder.append("join p.fornecedor as f ");
+        builder.append("join p.fornecedores as f ");
         Map<String, Object> parametros = new HashMap<String, Object>();
         if (numeroSemana != null) {
             builder.append("where cef.numeroSemana = :numeroSemana ");

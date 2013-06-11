@@ -126,6 +126,25 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 		return cal.getTime();
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Date subtrairDiasUteisComOperacao(Date data, int numDias) {
+
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(data);
+
+		for (int i = 0; i < numDias; i++) {
+
+			cal.setTime(DateUtil.subtrairDias(cal.getTime(), 1));
+
+			while (DateUtil.isSabadoDomingo(cal) || isFeriadoSemOperacao(data)) {
+				cal.setTime(DateUtil.subtrairDias(cal.getTime(), 1));
+			}
+		}
+
+		return cal.getTime();
+	} 
 
 	@Transactional
 	public boolean isDiaUtil(Date data) {

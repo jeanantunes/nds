@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,8 +40,6 @@ import br.com.abril.nds.util.Intervalo;
 @Service
 public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(GeracaoNFeServiceImpl.class);
-	
 	@Autowired
 	private NotaFiscalService notaFiscalService;
 
@@ -70,17 +66,30 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 			List<Long> listIdFornecedor, Long idTipoNotaFiscal, Long idRoteiro, Long idRota,
 			String sortname, String sortorder, Integer resultsPage, Integer page, SituacaoCadastro situacaoCadastro) {
 		
-		TipoNotaFiscal tipoNotaFiscal = this.tipoNotaFiscalRepository.buscarPorId(idTipoNotaFiscal);
+		Set<TipoNotaFiscal> tiposNota = new HashSet<TipoNotaFiscal>();
 		
-		List<SituacaoCadastro> situacoesCadastro = new ArrayList<SituacaoCadastro>();
-		situacoesCadastro.add(situacaoCadastro);
+		if (idTipoNotaFiscal == null){
+			
+			tiposNota.addAll(this.tipoNotaFiscalRepository.obterTiposNotasFiscaisCotasNaoContribuintesPor(
+					this.distribuidorRepository.tipoAtividade()));
+		} else {
+			
+			tiposNota.add(this.tipoNotaFiscalRepository.buscarPorId(idTipoNotaFiscal));
+		}
+		
+		List<SituacaoCadastro> situacoesCadastro = null;
+		
+		if (situacaoCadastro != null){
+			situacoesCadastro = new ArrayList<SituacaoCadastro>();
+			situacoesCadastro.add(situacaoCadastro);
+		}
 		
 		Set<Long> idsCotasDestinatarias = new HashSet<>();
 		idsCotasDestinatarias.addAll(this.cotaRepository.obterIdCotasEntre(intervalorCota, intervaloBox, situacoesCadastro, idRoteiro, idRota, null, null, null, null));
 		
 		ConsultaLoteNotaFiscalDTO dadosConsultaLoteNotaFiscal = new ConsultaLoteNotaFiscalDTO();
 		
-		dadosConsultaLoteNotaFiscal.setTipoNotaFiscal(tipoNotaFiscal);
+		dadosConsultaLoteNotaFiscal.setTipoNotaFiscal(tiposNota);
 		dadosConsultaLoteNotaFiscal.setPeriodoMovimento(intervaloDateMovimento);
 		dadosConsultaLoteNotaFiscal.setIdsCotasDestinatarias(idsCotasDestinatarias);
 		dadosConsultaLoteNotaFiscal.setListaIdFornecedores(listIdFornecedor);
@@ -123,7 +132,17 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		
 		List<Long> listaIdCota = this.cotaRepository.obterIdCotasEntre(intervalorCota,intervaloBox, null, null, null, null, null, null, null);
 		
-		TipoNotaFiscal tipoNotaFiscal = this.tipoNotaFiscalRepository.buscarPorId(idTipoNotaFiscal);
+		List<TipoNotaFiscal> tiposNotaFiscal = new ArrayList<TipoNotaFiscal>();
+		
+		if (idTipoNotaFiscal == null){
+			
+			tiposNotaFiscal.addAll(
+					this.tipoNotaFiscalRepository.obterTiposNotasFiscaisCotasNaoContribuintesPor(
+							this.distribuidorRepository.tipoAtividade()));
+		} else {
+			
+			tiposNotaFiscal.add(this.tipoNotaFiscalRepository.buscarPorId(idTipoNotaFiscal));
+		}
 		
 		List<NotaFiscal> listaNotaFiscal = new ArrayList<NotaFiscal>();
 		
@@ -133,7 +152,7 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 		for (Long idCota : listaIdCota) {
 			//TRY adicionado para em caso de erro em alguma nota, não parar o fluxo das demais nos testes.
 			//Remove-lo ou trata-lo com Logs
-			try {
+//			try {
 				
 				Cota cota = this.cotaRepository.buscarPorId(idCota);
 				
@@ -148,32 +167,35 @@ public class GeracaoNFeServiceImpl implements GeracaoNFeService {
 					}
 				}
 				
-				List<ItemNotaFiscalSaida> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(
-						parametrosRecolhimentoDistribuidor, 
-						cota, intervaloDateMovimento, listIdFornecedor, listIdProduto, tipoNotaFiscal);
-				
-				if (listItemNotaFiscal == null || listItemNotaFiscal.isEmpty()) 
-					continue;
-				
-				List<NotaFiscalReferenciada> listaNotasFiscaisReferenciadas = this.notaFiscalService.obterNotasReferenciadas(listItemNotaFiscal);
-				
-				InformacaoTransporte transporte = this.notaFiscalService.obterTransporte(idCota);
-				
-				Set<Processo> processos = new HashSet<Processo>();
-				processos.add(Processo.GERACAO_NF_E);
-				
-				Long idNotaFiscal = this.notaFiscalService.emitiNotaFiscal(idTipoNotaFiscal, dataEmissao, cota, 
-						listItemNotaFiscal, transporte, null, listaNotasFiscaisReferenciadas, processos, condicao);
-				
-				NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(idNotaFiscal);
-				
-				this.produtoServicoRepository.atualizarProdutosQuePossuemNota(notaFiscal.getProdutosServicos(), listItemNotaFiscal);
-				
-				listaNotaFiscal.add(notaFiscal);
-			} catch (Exception exception) {
-				LOGGER.warn(exception.getLocalizedMessage(), exception);
-				continue;
-			}
+				for (TipoNotaFiscal tipoNota : tiposNotaFiscal){
+					
+					List<ItemNotaFiscalSaida> listItemNotaFiscal = this.notaFiscalService.obterItensNotaFiscalPor(
+							parametrosRecolhimentoDistribuidor, 
+							cota, intervaloDateMovimento, listIdFornecedor, listIdProduto, tipoNota);
+					
+					if (listItemNotaFiscal == null || listItemNotaFiscal.isEmpty()) 
+						continue;
+					
+					List<NotaFiscalReferenciada> listaNotasFiscaisReferenciadas = this.notaFiscalService.obterNotasReferenciadas(listItemNotaFiscal);
+					
+					InformacaoTransporte transporte = this.notaFiscalService.obterTransporte(idCota);
+					
+					Set<Processo> processos = new HashSet<Processo>();
+					processos.add(Processo.GERACAO_NF_E);
+					
+					Long idNotaFiscal = this.notaFiscalService.emitiNotaFiscal(tipoNota.getId(), dataEmissao, cota, 
+							listItemNotaFiscal, transporte, null, listaNotasFiscaisReferenciadas, processos, condicao);
+					
+					NotaFiscal notaFiscal = this.notaFiscalRepository.buscarPorId(idNotaFiscal);
+					
+					this.produtoServicoRepository.atualizarProdutosQuePossuemNota(notaFiscal.getProdutosServicos(), listItemNotaFiscal);
+					
+					listaNotaFiscal.add(notaFiscal);
+				}
+//			} catch (Exception exception) {
+//				LOGGER.warn(exception.getLocalizedMessage(), exception);
+//				continue;
+//			}
 		}
 		
 		if(listaNotaFiscal == null || listaNotaFiscal.isEmpty())

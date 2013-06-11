@@ -628,7 +628,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		List<Integer> diasSemanaConcentracaoPagamento = null;
 		
 		//obtem a data de vencimento de acordo com o dia em que se concentram os pagamentos da cota
-		int fatorVencimento = 0;
+		Integer fatorVencimento = 0;
 		
 		ParametroCobrancaCota parametroCobrancaCota = cota.getParametroCobranca();
 		
@@ -638,7 +638,12 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			fatorVencimento = parametroCobrancaCota.getFatorVencimento();
 		}
 		else {
-			fatorVencimento = formaCobrancaPrincipal.getFatorVencimento();
+			
+			if(formaCobrancaPrincipal.getFatorVencimento() != null){
+				
+				fatorVencimento = formaCobrancaPrincipal.getFatorVencimento();
+			}
+			
 			tipoFormaCobrancaAntiga = formaCobrancaPrincipal.getTipoFormaCobranca();
 			formaCobrancaPrincipal.setTipoFormaCobranca(null);
 		}
@@ -720,7 +725,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		/*
 		 * Recoloca o TipoFormaCobranca no Local Antigo
 		 */
-		if(parametroCobrancaCota.getFatorVencimento() == null) {
+		if(parametroCobrancaCota !=null && parametroCobrancaCota.getFatorVencimento() == null) {
 			formaCobrancaPrincipal.setTipoFormaCobranca(tipoFormaCobrancaAntiga);
 		}
 		

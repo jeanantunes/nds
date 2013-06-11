@@ -177,16 +177,14 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 			}
 			
 			Lancamento lancamento;
-			//try {
-				//lancamento = this.recuperarLancamento(produtoEdicaoLancamento, DATE_FORMAT.parse(input.getDataLancamentoRecolhimentoProduto()));
-				// Alterado em conjunto com Cesar Pop Punk para buscar o lançamento pela data de movimento
-				lancamento = this.recuperarLancamento(produtoEdicaoLancamento, input.getDataMovimento());
-			/*} catch (ParseException e1) {
-				ndsiLoggerFactory.getLogger().logError(
-						message,
-						EventoExecucaoEnum.ERRO_INFRA,
-						String.format( "Erro ao converter data %1$s Produto %2$s Edicao %3$s.", input.getDataLancamentoRecolhimentoProduto(), input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString() ));
-				return;			}*/
+			
+			lancamento = this.recuperarLancamento(produtoEdicaoLancamento, input.getDataMovimento());
+			
+			if (lancamento == null) {
+				// Caso não encontre o lançamento futuro, procura o anterior mais próximo com status CONFIRMADO (para alterar a data de lancamento real do distribuidor) ou BALANCEADO (para não fazer alterar e nem inserir um novo)
+				lancamento = this.recuperarLancamentoAnteriorMaisProximo(produtoEdicaoLancamento, input.getDataMovimento());
+			}
+
 			if (null == lancamento) {
 				try {
 					lancamento = inserirLancamento(produtoEdicaoLancamento, input);
@@ -278,6 +276,36 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		return (Lancamento) query.uniqueResult();
 	}
 
+	/**
+	 * Busca o lançamento anterior á data de movimetno do arquivo mais próximo (busca apenas CONFIRMADO ou BALANCEADO)
+	 * @param produtoEdicaoLancamento
+	 * @param dataMovimento
+	 * @return
+	 */
+	private Lancamento recuperarLancamentoAnteriorMaisProximo(
+			ProdutoEdicao produtoEdicaoLancamento, Date dataMovimento) {
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("SELECT lcto FROM Lancamento lcto ");
+		sql.append("      JOIN FETCH lcto.produtoEdicao pe ");
+		sql.append("    WHERE pe = :produtoEdicao ");
+		sql.append("      AND lcto.dataLancamentoDistribuidor < :dataMovimento ");
+		sql.append("      AND (lcto.status = :statusConfirmado OR lcto.status = :statusBalanceado) ");
+		sql.append(" ORDER BY lcto.dataLancamentoDistribuidor DESC");
+		
+		Query query = getSession().createQuery(sql.toString());
+		
+		query.setParameter("produtoEdicao", produtoEdicaoLancamento);
+		query.setParameter("statusConfirmado", StatusLancamento.CONFIRMADO);
+		query.setParameter("statusBalanceado", StatusLancamento.BALANCEADO);
+		query.setDate("dataMovimento", dataMovimento);
+		
+		query.setMaxResults(1);
+		query.setFetchSize(1);
+		
+		return (Lancamento) query.uniqueResult();
+	}
+	
 	private Lancamento recuperarRecolhimento(
 			ProdutoEdicao produtoEdicaoRecolhimento, Date dataRecolhimentoLancamento) {
 		StringBuilder sql = new StringBuilder();
