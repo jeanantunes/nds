@@ -3,15 +3,13 @@ package br.com.abril.nds.repository.impl;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.xmlbeans.impl.xb.xsdschema.RestrictionDocument.Restriction;
-import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.DetalheDiferencaCotaDTO;
 import br.com.abril.nds.dto.RateioDiferencaCotaDTO;
+import br.com.abril.nds.dto.RateioDiferencaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheDiferencaCotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -230,6 +228,23 @@ public class RateioDiferencaRepositoryImpl extends AbstractRepositoryModel<Ratei
 		
 		Query query = getSession().createQuery(hql);
 		query.setParameter("idDiferenca", id);
+		
+		return query.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<RateioDiferencaDTO> obterRateiosParaImpressaoPorDiferenca(Long idDiferenca) {
+		
+		String hql = " select cota.numeroCota as numeroCota, rd.qtde as qtde " +
+					 " from RateioDiferenca rd inner join rd.cota cota " +
+					 " where rd.diferenca.id = :idDiferenca ";
+		
+		Query query = getSession().createQuery(hql);
+		
+		query.setParameter("idDiferenca", idDiferenca);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(RateioDiferencaDTO.class));
 		
 		return query.list();
 	}
