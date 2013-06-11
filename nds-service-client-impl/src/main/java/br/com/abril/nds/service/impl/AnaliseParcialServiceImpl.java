@@ -151,7 +151,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         int cotasAtivas = cotaRepository.obterCotasAtivas();
         int cotasComReparte = estudoRepository.obterCotasComRepartePorIdEstudo(estudoId);
         return cotasAtivas == 0 ? BigDecimal.ZERO : BigDecimal.valueOf(cotasComReparte)
-                .divide(BigDecimal.valueOf(cotasAtivas)).multiply(BigDecimal.valueOf(100))
+                .divide(BigDecimal.valueOf(cotasAtivas), 4, RoundingMode.HALF_UP).multiply(BigDecimal.valueOf(100))
                 .divide(BigDecimal.ONE, 2, RoundingMode.HALF_UP);
     }
 
