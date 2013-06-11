@@ -61,7 +61,16 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	@Transactional
 	public List<CotaEmissaoDTO> obterDadosEmissaoChamadasEncalhe(FiltroEmissaoCE filtro) {
 		
-		return chamadaEncalheRepository.obterDadosEmissaoChamadasEncalhe(filtro);
+		List<CotaEmissaoDTO> listaChamadaEncalhe = chamadaEncalheRepository.obterDadosEmissaoChamadasEncalhe(filtro);
+		
+		for(int i = 0; i < listaChamadaEncalhe.size(); i++)
+		{
+			if(listaChamadaEncalhe.get(i).getQtdeExemplares() <= 0)
+			{
+				listaChamadaEncalhe.remove(i);
+			}
+		}
+		return listaChamadaEncalhe;
 	}
 
 
@@ -71,7 +80,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			FiltroEmissaoCE filtro) {
 		
 		List<CotaEmissaoDTO> lista = chamadaEncalheRepository.obterDadosEmissaoImpressaoChamadasEncalhe(filtro);
-		
+		//verificar essa lista para ver a quiantidade de exemplares
 		Cota cota = null;
 		
 		for(CotaEmissaoDTO dto:lista) {
@@ -149,6 +158,20 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			dto.setVlrEncalhe(CurrencyUtil.formatarValor(vlrEncalhe));
 			dto.setVlrTotalLiquido(CurrencyUtil.formatarValor(totalLiquido));			
 		}
+		
+		
+		for(CotaEmissaoDTO cotasEmissao : lista) {
+			
+			List<ProdutoEmissaoDTO> listaProdutos = cotasEmissao.getProdutos();
+			
+			for(int i = 0; i < listaProdutos.size(); i++ ) {
+				
+				if(listaProdutos.get(i).getVendido().intValue() <= 0) {
+					listaProdutos.remove(i);
+				}
+			}
+		}
+		
 		
 		return lista;
 	}

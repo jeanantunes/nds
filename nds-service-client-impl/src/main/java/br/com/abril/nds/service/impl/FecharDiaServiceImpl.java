@@ -76,6 +76,8 @@ import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
+import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ConferenciaEncalheParcialRepository;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
@@ -102,6 +104,7 @@ import br.com.abril.nds.repository.FechamentoDiarioResumoConsolidadoDividaReposi
 import br.com.abril.nds.repository.FechamentoDiarioResumoEstoqueRepository;
 import br.com.abril.nds.repository.FecharDiaRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.MovimentoRepository;
@@ -241,6 +244,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private MovimentoEstoqueService movimentoEstoqueService;
+	
+	@Autowired
+	private LancamentoRepository lancamentoRepository;
 	
 	@Override
 	@Transactional
@@ -1133,11 +1139,82 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				
 		try {
 		
-			return salvarResumoFechamentoDiario(usuario, dataFechamento);
+			FechamentoDiarioDTO fechamentoDiarioDTO =
+				salvarResumoFechamentoDiario(usuario, dataFechamento);
+			
+			this.processarLancamentosRecolhimento();
+			
+			return fechamentoDiarioDTO;
 		
 		} catch (FechamentoDiarioException e) {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
+		}
+	}
+
+	private void processarLancamentosRecolhimento() {
+		
+		Date dataOperacao =
+			this.distribuidorRepository.obterDataOperacaoDistribuidor();
+		
+		this.processarLancamentosEmRecolhimento(dataOperacao);
+		
+		this.processarLancamentosVencidos(dataOperacao);
+	}
+
+	private void processarLancamentosEmRecolhimento(Date dataOperacao) {
+		
+		List<Lancamento> lancamentos =
+			this.lancamentoRepository.obterLancamentosBalanceadosPorDataRecolhimentoDistrib(dataOperacao);
+		
+		for (Lancamento lancamento : lancamentos) {
+			
+			lancamento.setStatus(StatusLancamento.EM_RECOLHIMENTO);
+			
+			this.lancamentoRepository.merge(lancamento);
+		}
+	}
+	
+	private void processarLancamentosVencidos(Date dataOperacao) {
+		
+		Integer ultimoDiaRecolhimento = this.obterUltimoDiaRecolhimento();
+		
+		Date dataBase =
+			calendarioService.subtrairDiasUteisComOperacao(dataOperacao, ultimoDiaRecolhimento);
+		
+		List<Lancamento> lancamentos =
+			this.lancamentoRepository.obterLancamentosEmRecolhimentoVencidos(dataBase);
+		
+		for (Lancamento lancamento : lancamentos) {
+			
+			lancamento.setStatus(StatusLancamento.RECOLHIDO);
+			
+			this.lancamentoRepository.merge(lancamento);
+		}
+	}
+
+	private Integer obterUltimoDiaRecolhimento() {
+		
+		Distribuidor distribuidor = this.distribuidorRepository.obter();
+		
+		boolean primeiro = distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoPrimeiro();
+		boolean segundo = distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoSegundo();
+		boolean terceiro = distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoTerceiro();
+		boolean quarto = distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoQuarto();
+		boolean quinto = distribuidor.getParametrosRecolhimentoDistribuidor().isDiaRecolhimentoQuinto();
+		
+		if (quinto) {
+			return 5;
+		} else if (quarto) {
+			return 4;
+		} else if (terceiro) {
+			return 3;
+		} else if (segundo) {
+			return 2;
+		} else if (primeiro) {
+			return 1;
+		} else {
+			return 0;
 		}
 	}
 
