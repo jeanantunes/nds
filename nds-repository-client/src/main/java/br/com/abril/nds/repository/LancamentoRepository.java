@@ -341,9 +341,17 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	Set<Date> obterDatasLancamentosExpedidos(Intervalo<Date> intervalo);
 
 	List<ProdutoLancamentoDTO> verificarDataConfirmada(ProdutoLancamentoDTO produtoLancamentoDTO);
+
+	public List<Lancamento> obterLancamentoDataDistribuidorInStatus(Date dataRecebimentoDistribuidor, List<StatusLancamento> status);
 	
 	void atualizarDataRecolhimentoDistribuidor(Date dataRecolhimento, Long... idLancamento);
 	
 	Boolean existeRecolhimentoNaoBalanceado(Date dataRecolhimento);
+	
+	List<Lancamento> obterLancamentosBalanceadosPorDataRecolhimentoDistrib(Date dataRecolhimentoDistribuidor);
+	
+	List<Lancamento> obterLancamentosEmRecolhimentoVencidos(Date dataBase);
+	
+	List<Lancamento> obterLancamentosRecolhidosPorEdicoes(Set<Long> idsProdutoEdicao);
 	
 }

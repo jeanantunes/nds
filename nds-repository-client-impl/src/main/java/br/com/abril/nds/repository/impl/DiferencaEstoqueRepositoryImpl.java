@@ -600,14 +600,14 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		   .append(" coalesce( ")
 		   .append(" case when (diferenca.tipoDiferenca = 'SOBRA_DE' or diferenca.tipoDiferenca = 'SOBRA_EM') ")
 		   .append(" then diferenca.qtde else 0 end ")
-		   .append(" , 0)) as qtdeSobras ")
+		   .append(" , 0)) as qtdeSobras, ")
+		   .append(" diferenca.id as idDiferenca ")
 		   .append(" from Lancamento lancamento ")
 		   .append(" join lancamento.estudo estudo ")
 		   .append(" join lancamento.produtoEdicao produtoEdicao ")
 		   .append(" left join produtoEdicao.diferencas diferenca ")
 		   .append(" where lancamento.dataLancamentoDistribuidor = :dataBalanceamento ")
 		   .append(" and lancamento.status not in (:statusLancamento) ")
-		   //.append(" and lancamento.status in (:statusLancamento) ")
 		   .append(" group by produtoEdicao.id ")
 		   .append(" order by produtoEdicao.produto.nome, produtoEdicao.numeroEdicao ");
 		
@@ -615,14 +615,12 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		query.setParameter("dataBalanceamento", data);
 		
-		/*query.setParameterList(
-			"statusLancamento", 
-				new StatusLancamento[] {StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO});*/
 		query.setParameterList(
-				"statusLancamento", 
-					new StatusLancamento[] {StatusLancamento.FECHADO});
+			"statusLancamento", 
+				new StatusLancamento[] {StatusLancamento.FECHADO});
 		
-		query.setResultTransformer(new AliasToBeanResultTransformer(ImpressaoDiferencaEstoqueDTO.class));
+		query.setResultTransformer(
+			new AliasToBeanResultTransformer(ImpressaoDiferencaEstoqueDTO.class));
 
 		return query.list();
 	}
