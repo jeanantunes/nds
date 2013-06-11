@@ -42,12 +42,13 @@ public class ReparteProporcional extends ProcessoAbstrato {
 	    // somatoria somente deve conter reparte da edicao aberta de todas as cotas que só receberam uma edicao aberta
 	    // validação ocorre em {@link EstudoService.calculate}
 	    indiceReparteEdicoesAbertas = new BigDecimal(estudo.getReparteDistribuirInicial()).divide(estudo.getSomatoriaReparteEdicoesAbertas(), 3, BigDecimal.ROUND_HALF_UP);
-	} 
+	}
 	for (CotaEstudo cota : estudo.getCotas()) {
-	    if (temEdicaoBaseAberta && cota.isCotaSoRecebeuEdicaoAberta()) {
+	    if (temEdicaoBaseAberta && cota.isCotaSoRecebeuEdicaoAberta() &&
+		    cota.getClassificacao().notIn(ClassificacaoCota.CotaMix, ClassificacaoCota.ReparteFixado)) {
 		// RepCalculadoCota = ARRED(RepEdiçãoAbertaCota * ÍndiceRepAberta; 0)
 		BigDecimal repCalculado = cota.getSomaReparteEdicoesAbertas().multiply(indiceReparteEdicoesAbertas);
-		cota.setReparteCalculado(repCalculado.divide(BigDecimal.ONE, 0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
+		cota.setReparteCalculado(repCalculado.setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
 		cota.setClassificacao(ClassificacaoCota.BancaSoComEdicaoBaseAberta);
 	    }
 	}

@@ -65,7 +65,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 	sql.append("          join produto_edicao pe on pe.id = mec.produto_edicao_id ");
 	sql.append("          join produto p on p.id = pe.produto_id ");
 	sql.append("          join tipo_classificacao_produto tcp on tcp.id = p.tipo_classificacao_produto_id ");
-	sql.append("         where 1 = 1 ");
+	sql.append("         where l.status in ('EXPEDIDO', 'EM BALANC RECOLHIMENTO', 'BALANCEADO RECOLHIMENTO', 'EM RECOLHIMENTO', 'FECHADO') ");
 	
 	if (edicao != null) {
 	    sql.append("   and pe.numero_edicao = :numero_edicao ");
@@ -117,7 +117,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 	sql.append("  join produto p on p.id = pe.produto_id ");
 	sql.append("  left join estoque_produto_cota epc on epc.produto_edicao_id = pe.id ");
 	sql.append("  join tipo_classificacao_produto tcp on tcp.id = p.tipo_classificacao_produto_id ");
-	sql.append(" where 1 = 1 ");
+	sql.append(" where l.status in ('EXPEDIDO', 'EM BALANC RECOLHIMENTO', 'BALANCEADO RECOLHIMENTO', 'EM RECOLHIMENTO', 'FECHADO') ");
 	
 	if (edicao != null) {
 	    sql.append("   and pe.numero_edicao = :numero_edicao ");
