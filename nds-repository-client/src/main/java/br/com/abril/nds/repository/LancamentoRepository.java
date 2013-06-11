@@ -346,4 +346,10 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	
 	Boolean existeRecolhimentoNaoBalanceado(Date dataRecolhimento);
 	
+	List<Lancamento> obterLancamentosBalanceadosPorDataRecolhimentoDistrib(Date dataRecolhimentoDistribuidor);
+	
+	List<Lancamento> obterLancamentosEmRecolhimentoVencidos(Date dataBase);
+	
+	List<Lancamento> obterLancamentosRecolhidosPorEdicoes(Set<Long> idsProdutoEdicao);
+	
 }
