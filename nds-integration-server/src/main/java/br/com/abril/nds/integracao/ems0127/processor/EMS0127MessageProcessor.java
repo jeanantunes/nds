@@ -166,6 +166,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 		
 		query.setParameterList("status", new String[]{"A", "F"}); //FIXME: Sérgio: deve buscar status 'A'
 		query.setParameter("distribuidor", Long.parseLong(distribuidor));
+		query.setParameter("nao", "N");
 
 		return query.list();
 	}
