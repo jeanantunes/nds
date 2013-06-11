@@ -614,12 +614,12 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	            	histogramaPosEstudoController.dadosResumo = dadosResumo;
 	            	histogramaPosEstudoController.matrizSelecionado = matriz;
 	            	histogramaPosEstudoController.popularFieldsetHistogramaPreAnalise(matriz);
-	            	histogramaPosEstudoController.modoAnalise = 'NORMAL';
-					
+
 					$('#workspace').tabs({load : function(event, ui) {}});
 				}});
-				
-				$('#workspace').tabs('addTab', 'Histograma Pré Análise', contextPath + '/matrizDistribuicao/histogramaPosEstudo');
+
+                var parametros = '?codigoProduto='+ response.codigoProduto +'&edicao='+ response.numeroEdicao;
+				$('#workspace').tabs('addTab', 'Histograma Pré Análise', contextPath + '/matrizDistribuicao/histogramaPosEstudo' + parametros);
         	}
         );
     };

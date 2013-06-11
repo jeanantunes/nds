@@ -253,7 +253,7 @@ public class AnaliseParcialController extends BaseController {
             throw new ValidacaoException(TipoMensagem.WARNING, "A pesquisa realizada não obteve resultado.");
         }
 
-        FileExporter.to("AJUSTE_REPARTE", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, lista, AnaliseParcialDTO.class,
+        FileExporter.to("Analise do Estudo", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, lista, AnaliseParcialDTO.class,
                 this.httpResponse);
 
         result.nothing();
