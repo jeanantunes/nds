@@ -223,48 +223,40 @@ var analiseParcialController = $.extend(true, {
             });
     },
 
-    somarTotais : function(resultado) {
+    somarTotais : function() {
         var totalJuramento = 0,
-//            totalMediaVenda = 0,
             totalUltimoReparte = 0,
-            quantidade = 0,
             totalReparteSugerido = 0,
             totais = [];
-        $(resultado.rows).each(function(i, row) {
-            var cell = row.cell;
-            for (var j = 1; j < 7; j++) {
-                if (typeof totais[j - 1] === 'undefined') {
-                    totais[j - 1] = {};
-                    totais[j - 1].reparte = 0;
-                    totais[j - 1].venda = 0;
-                }
-                if (!isNaN(cell['reparte'+ j]) && (cell['reparte' + j] !== '') ) {
-                    totais[j - 1].reparte += parseInt(cell['reparte'+ j], 10);
-                }
-                if (!isNaN(cell['venda'+ j]) && (cell['venda' + j] !== '')) {
-                    totais[j - 1].venda += parseInt(cell['venda'+ j], 10);
-                }
+
+        for (var i=1; i<7; i++) {
+            totais[i] = {};
+            totais[i].reparte = 0;
+            totais[i].venda = 0;
+        }
+
+        var totalCotas = $('#baseEstudoGridParcial tbody tr:visible').each(function(){
+            var $tr = $(this);
+
+            totalJuramento += $tr.find('td[abbr="juramento"] div').text() * 1;
+            totalUltimoReparte += $tr.find('td[abbr="ultimoReparte"] div').text() * 1;
+            totalReparteSugerido += $tr.find('td[abbr="reparteSugerido"] input').val() * 1;
+
+            for (var i=1; i<7; i++) {
+                totais[i].reparte += $tr.find('td[abbr="reparte' + i + '"] div').text() * 1;
+                totais[i].venda += $tr.find('td[abbr="venda' + i + '"] div').text() * 1;
             }
-            if ((typeof cell.juramento !== 'undefined') && (cell.juramento !== '')) {
-                totalJuramento += parseInt(cell.juramento, 10);
-            }
-            if ((typeof cell.ultimoReparte !== 'undefined') && (cell.ultimoReparte !== '')) {
-                totalUltimoReparte += parseInt(cell.ultimoReparte, 10);
-            }
-            if (!isNaN($(cell.reparteSugerido).val())) {
-                totalReparteSugerido += parseInt($(cell.reparteSugerido).val(), 10);
-            }
-        });
+
+        }).length;
+
         $('#total_juramento').text(totalJuramento);
         $('#total_ultimo_reparte').text(totalUltimoReparte);
         $('#total_reparte_sugerido').text(totalReparteSugerido);
-        $('#total_de_cotas').text(resultado.rows.length);
+        $('#total_de_cotas').text(totalCotas);
 
-        if (resultado.rows.length > 0) {
-            for (var j = 1; j < 7; j++) {
-                $('#total_reparte'+ j).text(totais[j - 1].reparte);
-                $('#total_venda'+ j).text(totais[j - 1].venda);
-            }
+        for (var j = 1; j < 7; j++) {
+            $('#total_reparte'+ j).text(totais[j].reparte);
+            $('#total_venda'+ j).text(totais[j].venda);
         }
     },
 
@@ -564,7 +556,6 @@ var analiseParcialController = $.extend(true, {
                 }
             }
         }
-        analiseParcialController.somarTotais(resultado);
         return resultado;
     },
 
@@ -603,6 +594,10 @@ var analiseParcialController = $.extend(true, {
     },
 
     onSuccessReloadGrid : function() {
+        //limpa espaços da grid
+        $('table#baseEstudoGridParcial tr td div').filter(function(){return $.trim($(this).html()) === '&nbsp;';}).text('');
+
+        analiseParcialController.somarTotais();
         analiseParcialController.atualizaEdicoesBaseHeader();
         analiseParcialController.atualizaAbrangencia();
         analiseParcialController.carregaDetalhesEdicoesBase();
@@ -614,9 +609,6 @@ var analiseParcialController = $.extend(true, {
                 $this.closest('tr').find('td[abbr="leg"] div').addClass('asterisco');
             }
         });
-
-        //limpa espaços da grid
-        $('table#baseEstudoGridParcial tr td div').filter(function(){return $.trim($(this).html()) === '&nbsp;';}).text('');
 
         var totalAcumuladoParcialReparte = 0;
         var totalAcumuladoParcialVenda = 0;
@@ -1243,65 +1235,75 @@ var analiseParcialController = $.extend(true, {
     },
 
     filtrarOrdenarPercentualVenda : function() {
-        var de = $("#ordenarPorDe").val() * 1;
-        var ate = $("#ordenarPorAte").val() * 1;
+        if ($("#ordenarPorDe").val() === '' || $("#ordenarPorAte").val() === '') {
+            $('#baseEstudoGridParcial tr').show();
+        } else {
+            var de = $("#ordenarPorDe").val() * 1;
+            var ate = $("#ordenarPorAte").val() * 1;
 
-        var settings = {order: de<ate?'asc':'desc', attr: 'percentualVenda'};
-        var sortAtribute = 'td[abbr="cota"]';
+            var settings = {order: de<ate?'asc':'desc', attr: 'percentualVenda'};
+            var sortAtribute = 'td[abbr="cota"]';
 
-        $('#baseEstudoGridParcial tr')
-            .tsort(sortAtribute, settings)
-            .removeClass('erow')
-            .each(function(){
-                var $tr = $(this);
-                var perc = $tr.find(sortAtribute).attr('percentualVenda');
-                if (de < ate) {
-                    if (de < perc && perc < ate) {
-                        $tr.show();
+            $('#baseEstudoGridParcial tr')
+                .tsort(sortAtribute, settings)
+                .removeClass('erow')
+                .each(function(){
+                    var $tr = $(this);
+                    var perc = $tr.find(sortAtribute).attr('percentualVenda');
+                    if (de < ate) {
+                        if (de < perc && perc < ate) {
+                            $tr.show();
+                        } else {
+                            $tr.hide();
+                        }
                     } else {
-                        $tr.hide();
+                        if (de > perc && perc > ate) {
+                            $tr.show();
+                        } else {
+                            $tr.hide();
+                        }
                     }
-                } else {
-                    if (de > perc && perc > ate) {
-                        $tr.show();
-                    } else {
-                        $tr.hide();
-                    }
-                }
-            })
-            .filter(':odd').addClass('erow')
-            .end().find('td').removeClass('sorted');
+                })
+                .filter(':odd').addClass('erow')
+                .end().find('td').removeClass('sorted');
+        }
+        analiseParcialController.somarTotais();
     },
 
     filtrarOrdenarReducaoReparte : function() {
-        var de = $("#ordenarPorDe").val() * -1;
-        var ate = $("#ordenarPorAte").val() * -1;
+        if ($("#ordenarPorDe").val() === '' || $("#ordenarPorAte").val() === '') {
+            $('#baseEstudoGridParcial tr').show();
+        } else {
+            var de = $("#ordenarPorDe").val() * -1;
+            var ate = $("#ordenarPorAte").val() * -1;
 
-        var settings = {order: de<ate?'asc':'desc', attr: 'reducaoReparte'};
-        var sortAtribute = 'td[abbr="reparteSugerido"] div input';
+            var settings = {order: de<ate?'asc':'desc', attr: 'reducaoReparte'};
+            var sortAtribute = 'td[abbr="reparteSugerido"] div input';
 
-        $('#baseEstudoGridParcial tr')
-            .tsort(sortAtribute, settings)
-            .removeClass('erow')
-            .each(function(){
-                var $tr = $(this);
-                var rr = $tr.find(sortAtribute).attr('reducaoReparte');
-                if (de < ate) {
-                    if (de < rr && rr < ate) {
-                        $tr.show();
+            $('#baseEstudoGridParcial tr')
+                .tsort(sortAtribute, settings)
+                .removeClass('erow')
+                .each(function(){
+                    var $tr = $(this);
+                    var rr = $tr.find(sortAtribute).attr('reducaoReparte');
+                    if (de < ate) {
+                        if (de < rr && rr < ate) {
+                            $tr.show();
+                        } else {
+                            $tr.hide();
+                        }
                     } else {
-                        $tr.hide();
+                        if (de > rr && rr > ate) {
+                            $tr.show();
+                        } else {
+                            $tr.hide();
+                        }
                     }
-                } else {
-                    if (de > rr && rr > ate) {
-                        $tr.show();
-                    } else {
-                        $tr.hide();
-                    }
-                }
-            })
-            .filter(':odd').addClass('erow')
-            .end().find('td').removeClass('sorted');
+                })
+                .filter(':odd').addClass('erow')
+                .end().find('td').removeClass('sorted');
+        }
+        analiseParcialController.somarTotais();
     },
 
     filtrarCotasNaoSelec : function(estudo) {

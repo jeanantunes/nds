@@ -190,7 +190,9 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("       pe.id produtoEdicaoId, ");
         sql.append("       p.codigo codigoProduto, ");
         sql.append("       p.nome nomeProduto, ");
-        sql.append("       pe.numero_edicao edicao ");
+        sql.append("       pe.numero_edicao edicao, ");
+        sql.append("       epe.periodo_parcial periodo, ");
+        sql.append("       (case when l.tipo_lancamento = 'PARCIAL' then 1 else 0 end) parcial ");
         sql.append("  from estudo_produto_edicao_base epe ");
         sql.append("  join produto_edicao pe on pe.id = epe.produto_edicao_id ");
         sql.append("  join produto p on p.id = pe.produto_id ");
@@ -203,7 +205,9 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 .addScalar("produtoEdicaoId", StandardBasicTypes.LONG)
                 .addScalar("codigoProduto", StandardBasicTypes.STRING)
                 .addScalar("nomeProduto", StandardBasicTypes.STRING)
-                .addScalar("edicao", StandardBasicTypes.BIG_INTEGER);
+                .addScalar("edicao", StandardBasicTypes.BIG_INTEGER)
+                .addScalar("periodo", StandardBasicTypes.STRING)
+                .addScalar("parcial", StandardBasicTypes.BOOLEAN);
         query.setParameter("estudoId", estudoId);
         query.setResultTransformer(new AliasToBeanResultTransformer(EdicoesProdutosDTO.class));
 
@@ -407,6 +411,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("  join pessoa pe on pe.id = cota.pessoa_id ");
         sql.append("  left join ranking_segmento rks on rks.cota_id = cota.id ");
         sql.append("     and rks.tipo_segmento_produto_id = ? ");
+        sql.append("     and rks.data_geracao_rank = (select max(data_geracao_rank) from ranking_segmento) ");
 
         StringBuilder where = new StringBuilder();
         List<Object> params = new ArrayList<>();
