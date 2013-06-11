@@ -106,7 +106,7 @@ function analisar(){
         <table width="347" border="0" cellspacing="0" cellpadding="0" >
           <tr>
             <td width="26"><input id="copiarEstudo-fixacao" name="checkbox" type="checkbox" id="checkbox" checked="checked" /></td>
-            <td width="134" >Usar Fixa&ccedil;&atilde;o e Mix</td>
+            <td width="134" >Usar Fixação</td>
             <td width="187" >&nbsp;</td>
           </tr>
           <tr>

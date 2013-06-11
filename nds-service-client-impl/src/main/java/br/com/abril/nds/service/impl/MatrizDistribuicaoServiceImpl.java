@@ -653,48 +653,46 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	}
 
 	// verificacao dos repartes minimo e maximo para cotas mix
-	if (vo.isFixacao()) {
-	    for (EstudoCota cota : cotas) {
-		CotaEstudo cotaEstudo = mapCotas.get(cota.getCota().getId());
-		if (cotaEstudo != null && cotaEstudo.getClassificacao() != null) {
-		    if (cotaEstudo.getClassificacao().equals(ClassificacaoCota.CotaMix)) {
-			cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
-			if (cota.getReparte() == null) {
-			    cota.setReparte(BigInteger.ZERO);
+	for (EstudoCota cota : cotas) {
+	    CotaEstudo cotaEstudo = mapCotas.get(cota.getCota().getId());
+	    if (cotaEstudo != null && cotaEstudo.getClassificacao() != null) {
+		if (cotaEstudo.getClassificacao().equals(ClassificacaoCota.CotaMix)) {
+		    cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
+		    if (cota.getReparte() == null) {
+			cota.setReparte(BigInteger.ZERO);
+		    }
+		    // multiplos
+		    if (pacotePadrao != null && pacotePadrao.compareTo(BigInteger.ZERO) > 0) {
+			if (pacotePadrao.compareTo(cotaEstudo.getIntervaloMaximo()) > 0) {
+			    BigInteger variacao = cotaEstudo.getIntervaloMaximo().subtract(cota.getReparte());
+
+			    cota.setReparte(cotaEstudo.getIntervaloMaximo());
+			    cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
+
+			    reparteDistribuir = reparteDistribuir.subtract(variacao);
+			} else if (pacotePadrao.compareTo(cotaEstudo.getIntervaloMinimo()) < 0) {
+			    BigInteger variacao = cotaEstudo.getIntervaloMinimo().subtract(cota.getReparte());
+
+			    cota.setReparte(cotaEstudo.getIntervaloMinimo());
+			    cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
+
+			    reparteDistribuir = reparteDistribuir.subtract(variacao);
 			}
-			// multiplos
-			if (pacotePadrao != null && pacotePadrao.compareTo(BigInteger.ZERO) > 0) {
-			    if (pacotePadrao.compareTo(cotaEstudo.getIntervaloMaximo()) > 0) {
-				BigInteger variacao = cotaEstudo.getIntervaloMaximo().subtract(cota.getReparte());
+		    } else {  // nao multiplos
+			if (cota.getReparte().compareTo(cotaEstudo.getIntervaloMinimo()) < 0) {
+			    BigInteger variacao = cotaEstudo.getIntervaloMinimo().subtract(cota.getReparte());
 
-				cota.setReparte(cotaEstudo.getIntervaloMaximo());
-				cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
+			    cota.setReparte(cotaEstudo.getIntervaloMinimo());
+			    cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
 
-				reparteDistribuir = reparteDistribuir.subtract(variacao);
-			    } else if (pacotePadrao.compareTo(cotaEstudo.getIntervaloMinimo()) < 0) {
-				BigInteger variacao = cotaEstudo.getIntervaloMinimo().subtract(cota.getReparte());
+			    reparteDistribuir = reparteDistribuir.subtract(variacao);
+			} else if (cota.getReparte().compareTo(cotaEstudo.getIntervaloMaximo()) > 0) {
+			    BigInteger variacao = cotaEstudo.getIntervaloMinimo().subtract(cota.getReparte());
 
-				cota.setReparte(cotaEstudo.getIntervaloMinimo());
-				cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
+			    cota.setReparte(cotaEstudo.getIntervaloMaximo());
+			    cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
 
-				reparteDistribuir = reparteDistribuir.subtract(variacao);
-			    }
-			} else {  // nao multiplos
-			    if (cota.getReparte().compareTo(cotaEstudo.getIntervaloMinimo()) < 0) {
-				BigInteger variacao = cotaEstudo.getIntervaloMinimo().subtract(cota.getReparte());
-
-				cota.setReparte(cotaEstudo.getIntervaloMinimo());
-				cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
-
-				reparteDistribuir = reparteDistribuir.subtract(variacao);
-			    } else if (cota.getReparte().compareTo(cotaEstudo.getIntervaloMaximo()) > 0) {
-				BigInteger variacao = cotaEstudo.getIntervaloMinimo().subtract(cota.getReparte());
-
-				cota.setReparte(cotaEstudo.getIntervaloMaximo());
-				cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
-
-				reparteDistribuir = reparteDistribuir.add(variacao);
-			    }
+			    reparteDistribuir = reparteDistribuir.add(variacao);
 			}
 		    }
 		}
@@ -704,8 +702,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	BigInteger soma = BigInteger.ZERO;
 	for (EstudoCota cota : cotas) {
 	    soma = soma.add(cota.getReparte());
-	    if (!vo.isFixacao() && (cota.getClassificacao().equals("FX") || cota.getClassificacao().equals("MX") ||
-		    cota.getClassificacao().equals("MM"))) {
+	    if (!vo.isFixacao() && cota.getClassificacao().equals("FX")) {
 		cota.setClassificacao("");
 	    }
 	}
@@ -767,8 +764,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		cota.setQtdePrevista(null);
 		cota.setQtdeEfetiva(null);
 	    }
-	    if (!vo.isFixacao() && (cota.getClassificacao().equals("FX") || cota.getClassificacao().equals("MX") ||
-		    cota.getClassificacao().equals("MM"))) {
+	    if (!vo.isFixacao() && cota.getClassificacao().equals("FX")) {
 		cota.setClassificacao("");
 	    }
 	    estudoCotaRepository.adicionar(cota);
