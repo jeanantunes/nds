@@ -964,11 +964,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		return JasperRunManager.runReportToPdf(caminhoRelatorio, parametrosRelatorio, datasourceRelatorio);
 	}
 	
-	public static void main(String[] args) {
-		
-		System.out.println();
-	}
-	
 	@Override
 	@Transactional(readOnly = true)
 	public void validarDadosParaImpressaoNaData(String dataMovimentoFormatada) {
