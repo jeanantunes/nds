@@ -948,8 +948,8 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   //total
 		   .append(" cfc.TOTAL as total, ")
 		   //saldo = total - valorPago
-		   .append(" (total - ")
-		   .append(" coalesce((select sum(bc.VALOR_PAGO) ")
+		   .append(" (")
+		   .append(" coalesce((select sum(bc.VALOR_PAGO - ((bc.VALOR_JUROS + bc.VALOR_MULTA)+bc.VALOR_DESCONTO)) ")
 		   .append("           from BAIXA_COBRANCA bc ")
 		   .append("           inner join COBRANCA cobranca ")
 		   .append("                 ON cobranca.ID = bc.COBRANCA_ID ")
@@ -959,7 +959,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("           and cota.ID = cobranca.COTA_ID ")
 		   .append("           and divida.CONSOLIDADO_ID = cfc.ID ")
 		   .append("           and cfc.ID),0) ")
-		   .append(" ) as saldo, ")
+		   .append(" + cfc.TOTAL) as saldo, ")
 		   .append(" coalesce(cfc.CONSIGNADO,0) - coalesce(cfc.ENCALHE,0) as valorVendaDia ")
 		   .append(" from CONSOLIDADO_FINANCEIRO_COTA cfc ")
 		   .append(" inner join COTA cota on cota.ID = cfc.COTA_ID")
