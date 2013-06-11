@@ -52,6 +52,8 @@ public interface CalendarioService {
 	 */
 	Date subtrairDiasUteis(Date data, int numDias);
 
+	Date subtrairDiasUteisComOperacao(Date data, int numDias);
+	
 	/**
 	 * Verifica se a data informada é dia útil.
 	 * 

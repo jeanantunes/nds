@@ -1766,4 +1766,63 @@ public class LancamentoRepositoryImpl extends
 		query.executeUpdate();
 	}
 	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Lancamento> obterLancamentosBalanceadosPorDataRecolhimentoDistrib(Date dataRecolhimentoDistribuidor) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select lancamento ")
+		   .append(" from Lancamento lancamento ")
+		   .append(" where lancamento.dataRecolhimentoDistribuidor = :dataRecolhimentoDistribuidor ")
+		   .append(" and lancamento.status in (:statusLancamentoBalanceamento) ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("dataRecolhimentoDistribuidor", dataRecolhimentoDistribuidor);
+		query.setParameterList("statusLancamentoBalanceamento",
+						   	   Arrays.asList(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO, StatusLancamento.BALANCEADO_RECOLHIMENTO));
+		
+		return query.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Lancamento> obterLancamentosEmRecolhimentoVencidos(Date dataBase) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select lancamento ")
+		   .append(" from Lancamento lancamento ")
+		   .append(" where lancamento.dataRecolhimentoDistribuidor < :dataBase ")
+		   .append(" and lancamento.status = :statusEmRecolhimento ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("dataBase", dataBase);
+		query.setParameter("statusEmRecolhimento", StatusLancamento.EM_RECOLHIMENTO);
+		
+		return query.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Lancamento> obterLancamentosRecolhidosPorEdicoes(Set<Long> idsProdutoEdicao) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select lancamento ")
+		   .append(" from Lancamento lancamento ")
+		   .append(" join lancamento.produtoEdicao produtoEdicao ")
+		   .append(" where produtoEdicao.id in (:idsProdutoEdicao) ")
+		   .append(" and lancamento.status = :statusRecolhido ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameterList("idsProdutoEdicao", idsProdutoEdicao);
+		query.setParameter("statusRecolhido", StatusLancamento.RECOLHIDO);
+		
+		return query.list();
+	}
+	
 }
