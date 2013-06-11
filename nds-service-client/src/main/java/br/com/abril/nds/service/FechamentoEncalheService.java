@@ -27,7 +27,7 @@ public interface FechamentoEncalheService {
 
 	void postergarCotas(Date dataEncalhe, Date dataPostergacao, List<Long> idsCotas);
 	
-	void postergarTodasCotas(Date dataEncalhe, Date dataPostergacao);
+	void postergarTodasCotas(Date dataEncalhe, Date dataPostergacao, List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe);
 
 	void cobrarCotas(Date dataOperacao, Usuario usuario, List<Long> idsCotas) throws GerarCobrancaValidacaoException;
 	

@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.List;
 
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
@@ -17,12 +18,16 @@ public class ImpressaoDiferencaEstoqueDTO implements Serializable {
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = -8880460525015896929L;
-
+	
+	private Long idDiferenca;
+	
 	private ProdutoEdicao produtoEdicao;
 	
 	private BigInteger qtdeFaltas;
 	
 	private BigInteger qtdeSobras;
+	
+	private List<RateioDiferencaDTO> rateios;
 	
 	/**
 	 * Construtor padrão.
@@ -55,5 +60,21 @@ public class ImpressaoDiferencaEstoqueDTO implements Serializable {
 	public void setQtdeSobras(BigInteger qtdeSobras) {
 		this.qtdeSobras = qtdeSobras;
 	}
+
+	public Long getIdDiferenca() {
+		return idDiferenca;
+	}
+
+	public void setIdDiferenca(Long idDiferenca) {
+		this.idDiferenca = idDiferenca;
+	}
 	
+	public List<RateioDiferencaDTO> getRateios() {
+		return rateios;
+	}
+
+	public void setRateios(List<RateioDiferencaDTO> rateios) {
+		this.rateios = rateios;
+	}
+
 }

@@ -48,5 +48,7 @@ public interface MovimentoEstoqueCotaService {
 	 * @param notaFiscal
 	 */
 	void envioConsignadoNotaCancelada(NotaFiscal notaFiscalCancelada);
-
+	
+	Date obterDataUltimaMovimentacaoReparteExpedida(Integer numeroCota, Long idProdutoEdicao);
+	
 }

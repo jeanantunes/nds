@@ -166,7 +166,7 @@ function imprimir(){
               <td width="30" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.tipoRecolhimento}</td>
               <td width="80" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.dataLancamento}</td>
               <td width="80" align="right" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.precoComDesconto}</td>
-              <td width="37" align="center" style="border-bottom:1px solid #000;padding-left:5px; "><font size="2"><strong>${produto.reparte}</strong></font></td>
+              <td width="37" align="center" style="border-bottom:1px solid #000;padding-left:5px; "><font size="2"><strong>${produto.vendido}</strong></font></td>
               <td width="50" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; "></td>
             </tr>
             <tr class="class_linha_${status.index%2==0?1:2}">
@@ -269,7 +269,7 @@ function imprimir(){
         <tr>
           <td colspan="2" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;"><span class="dadosNota"><font size="2"><b>${cotaEmissao.numCota} - ${cotaEmissao.nomeCota.toUpperCase()}</b></font></span></td>
         </tr>
-        <tr>
+							<tr>
           <td height="17" colspan="2" style="border-left:1px solid #000;border-right:1px solid #000;"><span class="titulo">Box / Roteiro / Rota</span></td>
         </tr>
         <tr>
@@ -296,7 +296,7 @@ function imprimir(){
 	        <tr class="class_linha_1">
 	          <td width="61" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">${produto.sequencia}</td>
 	          <td colspan="2" width="224" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; "><font size="2"><strong>${produto.nomeProduto}</strong></font></td>
-	          <td width="61" align="center" style="border-left:1px solid #000; border-bottom:1px solid #000;padding-left:5px; "><font size="2"><strong>${produto.reparte}</strong></font></td>
+	          <td width="61" align="center" style="border-left:1px solid #000; border-bottom:1px solid #000;padding-left:5px; "><font size="2"><strong>${produto.vendido}</strong></font></td>
 	          <td width="67" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; "></td>
 	        </tr>
 	        <tr class="class_linha_1">

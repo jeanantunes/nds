@@ -2,8 +2,10 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 import java.math.BigInteger;
+import java.util.List;
 
 import br.com.abril.nds.dto.ImpressaoDiferencaEstoqueDTO;
+import br.com.abril.nds.dto.RateioDiferencaDTO;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -18,6 +20,7 @@ public class RelatorioLancamentoFaltasSobrasVO implements Serializable  {
 	private String 	precoCapa;
 	private String 	qtdeFaltas = "";
 	private String 	qtdeSobras = "";
+	private List<RateioDiferencaDTO> rateios;
 	
 	public RelatorioLancamentoFaltasSobrasVO(ImpressaoDiferencaEstoqueDTO impressaoDiferencaEstoqueDTO) {
 		
@@ -41,6 +44,8 @@ public class RelatorioLancamentoFaltasSobrasVO implements Serializable  {
 			
 			this.qtdeSobras = impressaoDiferencaEstoqueDTO.getQtdeSobras().toString();
 		}
+		
+		this.rateios = impressaoDiferencaEstoqueDTO.getRateios();
 	}
 
 	public String getCodigoProduto() {
@@ -89,6 +94,14 @@ public class RelatorioLancamentoFaltasSobrasVO implements Serializable  {
 
 	public void setQtdeSobras(String qtdeSobras) {
 		this.qtdeSobras = qtdeSobras;
+	}
+
+	public List<RateioDiferencaDTO> getRateios() {
+		return rateios;
+	}
+
+	public void setRateios(List<RateioDiferencaDTO> rateios) {
+		this.rateios = rateios;
 	}	
 		
 }
