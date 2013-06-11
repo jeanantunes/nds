@@ -658,6 +658,10 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 		CotaEstudo cotaEstudo = mapCotas.get(cota.getCota().getId());
 		if (cotaEstudo != null && cotaEstudo.getClassificacao() != null) {
 		    if (cotaEstudo.getClassificacao().equals(ClassificacaoCota.CotaMix)) {
+			cota.setClassificacao(ClassificacaoCota.CotaMix.getCodigo());
+			if (cota.getReparte() == null) {
+			    cota.setReparte(BigInteger.ZERO);
+			}
 			// multiplos
 			if (pacotePadrao != null && pacotePadrao.compareTo(BigInteger.ZERO) > 0) {
 			    if (pacotePadrao.compareTo(cotaEstudo.getIntervaloMaximo()) > 0) {
