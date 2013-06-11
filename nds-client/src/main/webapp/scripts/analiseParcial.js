@@ -564,7 +564,12 @@ var analiseParcialController = $.extend(true, {
             analiseParcialController.path + '/distribuicao/analise/parcial/percentualAbrangencia',
             [{name: 'estudoId', value: $('#estudoId').val()}],
             function (result) {
-                $('#abrangencia').text(result).formatNumber({format:'#.00 %', locale:'br'});
+                if (result.mensagens) {
+                    analiseParcialController.exibirMsg(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+                    $('#abrangencia').text('');
+                } else {
+                    $('#abrangencia').text(result).formatNumber({format:'#.00 %', locale:'br'});
+                }
             }
         );
     },
