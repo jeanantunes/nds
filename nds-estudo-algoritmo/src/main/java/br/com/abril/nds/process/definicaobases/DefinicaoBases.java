@@ -63,11 +63,13 @@ public class DefinicaoBases extends ProcessoAbstrato {
 	for (ProdutoEdicaoEstudo base : edicoesBase) {
 	    if (!base.isEdicaoAberta()) {
 		if (nova.size() < 6) {
-		    if (base.isParcial() && estudo.getProdutoEdicaoEstudo().getId().equals(base.getId()) && qtdeParciais < 4) {
+		    if (base.isParcial() && estudo.getProdutoEdicaoEstudo().getId().equals(base.getId())) {
+			if (qtdeParciais < 4) {
 			    qtdeParciais++;
 			} else {
 			    continue;
 			}
+		    }
 		    nova.add(base);
 		}
 	    }
