@@ -14,6 +14,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -56,13 +57,20 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
+import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
+import br.com.abril.nds.model.movimentacao.StatusOperacao;
+import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
+import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheParcialRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
 import br.com.abril.nds.repository.ControleContagemDevolucaoRepository;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.ParametroEmissaoNotaFiscalRepository;
@@ -136,6 +144,9 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 
 	@Autowired
 	private NotaFiscalRepository notaFiscalRepository;
+	
+	@Autowired
+	private LancamentoRepository lancamentoRepository;
 
     private static final Logger LOG = LoggerFactory.getLogger(ContagemDevolucaoServiceImpl.class);
 	
@@ -902,8 +913,36 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
         Collection<ChamadasEncalheFornecedorDTO> chamadasEncalheDTO = ChamadaEncalheFornecedorDTOAssembler
                 .criarChamadasEncalheFornecedorDTO(chamadasEncalheFornecedor,
                         distribuidor);
+        
+        this.tratarLancamentosASeremFechados(chamadasEncalheFornecedor);
+        
         return gerarPDFChamadaEncalheFornecedor(chamadasEncalheDTO);
     }
+
+	private void tratarLancamentosASeremFechados(List<ChamadaEncalheFornecedor> chamadasEncalheFornecedor) {
+		
+		Set<Long> idsProdutoEdicao = new TreeSet<>();
+        
+        for (ChamadaEncalheFornecedor chamadaEncalheFornecedor : chamadasEncalheFornecedor) {
+        	
+        	for (ItemChamadaEncalheFornecedor item : chamadaEncalheFornecedor.getItens()) {
+        		
+        		Long idProdutoEdicao = item.getProdutoEdicao().getId();
+        		
+        		idsProdutoEdicao.add(idProdutoEdicao);
+        	}
+        }
+        
+        List<Lancamento> lancamentos =
+        	this.lancamentoRepository.obterLancamentosRecolhidosPorEdicoes(idsProdutoEdicao);
+        
+        for (Lancamento lancamento : lancamentos) {
+			
+			lancamento.setStatus(StatusLancamento.FECHADO);
+			
+			this.lancamentoRepository.merge(lancamento);
+		}
+	}
 
     /**
      * Gera o PDF com as chamadas de encalhe recebidas

@@ -1731,6 +1731,22 @@ public class LancamentoRepositoryImpl extends
 		return new TreeSet<Date>(retorno);
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<Lancamento> obterLancamentoDataDistribuidorInStatus(Date dataRecolhimentoDistribuidor, List<StatusLancamento> status) {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT lancamento ");
+		hql.append(" FROM Lancamento as lancamento");
+		hql.append(" WHERE lancamento.dataRecolhimentoDistribuidor = :dataRecolhimentoDistribuidor ");
+		hql.append(" and lancamento.status in (:status) ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("dataRecolhimentoDistribuidor", dataRecolhimentoDistribuidor);
+		query.setParameterList("status", status);
+		
+		return (List<Lancamento>) query.list();
+		
+	}
 	
 	@SuppressWarnings("unchecked")
 	public List<ProdutoLancamentoDTO> verificarDataConfirmada(ProdutoLancamentoDTO produtoLancamentoDTO) {
@@ -1764,6 +1780,65 @@ public class LancamentoRepositoryImpl extends
 		query.setParameterList("idLancamento", idLancamento);
 		
 		query.executeUpdate();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Lancamento> obterLancamentosBalanceadosPorDataRecolhimentoDistrib(Date dataRecolhimentoDistribuidor) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select lancamento ")
+		   .append(" from Lancamento lancamento ")
+		   .append(" where lancamento.dataRecolhimentoDistribuidor = :dataRecolhimentoDistribuidor ")
+		   .append(" and lancamento.status in (:statusLancamentoBalanceamento) ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("dataRecolhimentoDistribuidor", dataRecolhimentoDistribuidor);
+		query.setParameterList("statusLancamentoBalanceamento",
+						   	   Arrays.asList(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO, StatusLancamento.BALANCEADO_RECOLHIMENTO));
+		
+		return query.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Lancamento> obterLancamentosEmRecolhimentoVencidos(Date dataBase) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select lancamento ")
+		   .append(" from Lancamento lancamento ")
+		   .append(" where lancamento.dataRecolhimentoDistribuidor < :dataBase ")
+		   .append(" and lancamento.status = :statusEmRecolhimento ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("dataBase", dataBase);
+		query.setParameter("statusEmRecolhimento", StatusLancamento.EM_RECOLHIMENTO);
+		
+		return query.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Lancamento> obterLancamentosRecolhidosPorEdicoes(Set<Long> idsProdutoEdicao) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select lancamento ")
+		   .append(" from Lancamento lancamento ")
+		   .append(" join lancamento.produtoEdicao produtoEdicao ")
+		   .append(" where produtoEdicao.id in (:idsProdutoEdicao) ")
+		   .append(" and lancamento.status = :statusRecolhido ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameterList("idsProdutoEdicao", idsProdutoEdicao);
+		query.setParameter("statusRecolhido", StatusLancamento.RECOLHIDO);
+		
+		return query.list();
 	}
 	
 }
