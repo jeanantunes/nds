@@ -2,7 +2,6 @@ package br.com.abril.nds.repository.impl;
 
 import br.com.abril.nds.dto.*;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.AnaliseParcialRepository;
@@ -72,7 +71,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
         if (queryDTO.possuiOrdenacaoPlusFiltro()) {
             if (queryDTO.possuiOrdenacaoReparte()) {
-                where.append(" and ec.reparte between ? and ? ");
+                where.append(" and case when ec.cota_nova = 1 then coalesce(ec.reparte, 0) else ec.reparte end between ? and ? ");
                 paramsWhere.add(queryDTO.getFilterSortFrom());
                 paramsWhere.add(queryDTO.getFilterSortTo());
             }
@@ -219,13 +218,13 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
     public List<EdicoesProdutosDTO> getEdicoesBase(Long numeroCota, List<Long> listProdutoEdicaoId) {
         StringBuilder sql = new StringBuilder();
         sql.append("select ");
-        sql.append("    epc.produto_edicao_id produtoEdicaoId, ");
-        sql.append("    epc.qtde_recebida reparte, ");
-        sql.append("    epc.qtde_recebida - epc.qtde_devolvida venda ");
-        sql.append("  from estoque_produto_cota epc ");
-        sql.append("  join cota c on c.id = epc.cota_id ");
-        sql.append(" where c.numero_cota = :numeroCota ");
-        sql.append(" and epc.produto_edicao_id in (:produtoEdicaoId) ");
+        sql.append("    pe.id produtoEdicaoId, ");
+        sql.append("    coalesce(epc.qtde_recebida, 0) reparte, ");
+        sql.append("    coalesce(epc.qtde_recebida - epc.qtde_devolvida, 0) venda ");
+        sql.append("  from produto_edicao pe ");
+        sql.append("  left join estoque_produto_cota epc on pe.id = epc.produto_edicao_id ");
+        sql.append("  left join cota c on c.id = epc.cota_id and c.numero_cota = :numeroCota ");
+        sql.append(" where pe.id in (:produtoEdicaoId) ");
 
         Query query = getSession().createSQLQuery(sql.toString())
                 .addScalar("produtoEdicaoId", StandardBasicTypes.LONG)
@@ -282,26 +281,24 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
     @Override
     @Transactional(readOnly = true)
-    public List<AnaliseEstudoDetalhesDTO> buscarDetalhesAnalise(ProdutoEdicao produtoEdicao) {
+    public AnaliseEstudoDetalhesDTO buscarDetalhesAnalise(Long produtoEdicao) {
         StringBuilder sql = new StringBuilder();
-        sql.append("select * ");
-        sql.append("  from (select pe.numero_edicao numeroEdicao, ");
+        sql.append("  select pe.numero_edicao numeroEdicao, ");
         sql.append("               l.data_lcto_distribuidor dataLancamento, ");
         sql.append("               sum(epc.qtde_recebida) reparte, ");
         sql.append("               sum(epc.qtde_recebida - epc.qtde_devolvida) venda, ");
         sql.append("               sum(epc.qtde_devolvida) encalhe ");
         sql.append("		  from produto_edicao pe ");
         sql.append("          join lancamento l on l.produto_edicao_id = pe.id ");
-        sql.append("		  join estoque_produto_cota epc on epc.produto_edicao_id = pe.id ");
-        sql.append("         where pe.produto_id = :produtoId ");
+        sql.append("		  left join estoque_produto_cota epc on epc.produto_edicao_id = pe.id ");
+        sql.append("         where pe.id = :produtoId ");
         sql.append("		 group by pe.numero_edicao, l.data_lcto_distribuidor ");
-        sql.append("		 order by pe.numero_edicao desc) t ");
-        sql.append(" limit 9 ");
+        sql.append("		 order by pe.numero_edicao desc ");
 
         Query query = getSession().createSQLQuery(sql.toString());
-        query.setParameter("produtoId", produtoEdicao.getProduto().getId());
+        query.setParameter("produtoId", produtoEdicao);
         query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseEstudoDetalhesDTO.class));
-        return query.list();
+        return (AnaliseEstudoDetalhesDTO) query.uniqueResult();
     }
 
     @Override
@@ -505,20 +502,28 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
     @Override
     @Transactional
-    public AnaliseEstudoDetalhesDTO historicoEdicaoBase(Long id) {
+    public AnaliseEstudoDetalhesDTO historicoEdicaoBase(Long id, Integer numeroParcial) {
         StringBuilder sql = new StringBuilder();
-        sql.append("select pe.numero_edicao numeroEdicao, ");
-        sql.append("        l.data_lcto_distribuidor dataLancamento, ");
-        sql.append("        coalesce(sum(epc.qtde_recebida), 0) reparte, ");
-        sql.append("        coalesce(sum(epc.qtde_recebida - epc.qtde_devolvida), 0) venda, ");
-        sql.append("        coalesce(sum(epc.qtde_devolvida), 0) encalhe ");
-        sql.append(" from produto_edicao pe ");
-        sql.append("   join lancamento l on l.produto_edicao_id = pe.id ");
-        sql.append("   join estoque_produto_cota epc on epc.produto_edicao_id = pe.id ");
-        sql.append("   where pe.id = :id ");
+        sql.append(" select pe.numero_edicao numeroEdicao, ");
+        sql.append(" l.data_lcto_distribuidor dataLancamento, ");
+        sql.append(" sum(case when mec.tipo_movimento_id = 13 then mec.qtde end) reparte, ");
+        sql.append("         sum(case when mec.tipo_movimento_id = 13 then mec.qtde end) - ");
+        sql.append("         sum(case when mec.tipo_movimento_id = 26 or mec.tipo_movimento_id = 32 then mec.qtde end) venda, ");
+        sql.append("         sum(case when mec.tipo_movimento_id = 26 or mec.tipo_movimento_id = 32 then mec.qtde end) encalhe, ");
+        sql.append("         plp.numero_periodo numeroParcial ");
+        sql.append(" from lancamento l ");
+        sql.append(" join produto_edicao pe on pe.id = l.produto_edicao_id and pe.id = :id ");
+        sql.append(" join movimento_estoque_cota mec on mec.lancamento_id = l.id and mec.tipo_movimento_id in (13, 26, 32) ");
+        if (numeroParcial == null) {
+            sql.append(" left ");
+        }
+        sql.append(" join periodo_lancamento_parcial plp on plp.lancamento_id = l.id and plp.numero_periodo = :numeroParcial");
+        sql.append(" group by pe.id, pe.numero_edicao, plp.numero_periodo ");
+        sql.append(" order by plp.numero_periodo desc ");
 
         SQLQuery query = getSession().createSQLQuery(sql.toString());
         query.setParameter("id", id);
+        query.setParameter("numeroParcial", numeroParcial);
         query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseEstudoDetalhesDTO.class));
 
         return (AnaliseEstudoDetalhesDTO) query.uniqueResult();

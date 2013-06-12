@@ -103,20 +103,9 @@ public class AnaliseParcialController extends BaseController {
         result.forwardTo("/WEB-INF/jsp/distribuicao/analiseParcial.jsp");
     }
 
-    @Path("/detalhes")
-    public void detalhes(Long id) {
-        ProdutoEdicao produtoEdicao = produtoEdicaoService.buscarPorID(id);
-        List<AnaliseEstudoDetalhesDTO> lista = analiseParcialService.buscarDetalhesAnalise(produtoEdicao);
-
-        TableModel<CellModelKeyValue<AnaliseEstudoDetalhesDTO>> table = new TableModel<>();
-        table.setRows(CellModelKeyValue.toCellModelKeyValue(lista));
-        table.setPage(1);
-        result.use(Results.json()).withoutRoot().from(table).recursive().serialize();
-    }
-
     @Post
-    public void historicoEdicoesBase(Long[] idsProdutoEdicao) {
-        List<AnaliseEstudoDetalhesDTO> list = analiseParcialService.historicoEdicoesBase(idsProdutoEdicao);
+    public void historicoEdicoesBase(List<AnaliseEstudoDetalhesDTO> produtoEdicaoList) {
+        List<AnaliseEstudoDetalhesDTO> list = analiseParcialService.historicoEdicoesBase(produtoEdicaoList);
 
         result.use(Results.json()).withoutRoot().from(list).recursive().serialize();
     }
