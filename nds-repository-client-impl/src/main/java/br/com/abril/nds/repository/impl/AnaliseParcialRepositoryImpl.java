@@ -199,7 +199,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("  join lancamento l on l.produto_edicao_id = pe.id ");
         sql.append(" where epe.estudo_id = :estudoId ");
         sql.append("  order by l.data_lcto_distribuidor desc ");
-        sql.append("  , pe.numero_edicao desc ");
+        sql.append("  , pe.numero_edicao desc, epe.periodo_parcial desc ");
 
         Query query = getSession().createSQLQuery(sql.toString())
                 .addScalar("produtoEdicaoId", StandardBasicTypes.LONG)
@@ -509,9 +509,9 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         StringBuilder sql = new StringBuilder();
         sql.append("select pe.numero_edicao numeroEdicao, ");
         sql.append("        l.data_lcto_distribuidor dataLancamento, ");
-        sql.append("        sum(epc.qtde_recebida) reparte, ");
-        sql.append("        sum(epc.qtde_recebida - epc.qtde_devolvida) venda, ");
-        sql.append("        sum(epc.qtde_devolvida) encalhe ");
+        sql.append("        coalesce(sum(epc.qtde_recebida), 0) reparte, ");
+        sql.append("        coalesce(sum(epc.qtde_recebida - epc.qtde_devolvida), 0) venda, ");
+        sql.append("        coalesce(sum(epc.qtde_devolvida), 0) encalhe ");
         sql.append(" from produto_edicao pe ");
         sql.append("   join lancamento l on l.produto_edicao_id = pe.id ");
         sql.append("   join estoque_produto_cota epc on epc.produto_edicao_id = pe.id ");

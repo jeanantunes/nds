@@ -1,17 +1,6 @@
 var analiseParcialController = $.extend(true, {
 
     path: contextPath,
-    detalheEdicao: '<td class="class_linha_1">#numeroEdicao</td>',
-    detalheDataLancamento : '<td width="80" align="center" class="class_linha_2">#dataLancamento</td>',
-    detalheReparte : '<td align="right" class="class_linha_1">#reparte</td>',
-    detalheVenda : '<td align="right" class="class_linha_2">#venda</td>',
-
-    detalheEdicaoVazia : '<td><a href="javascript:;" onclick="escondeDados();">' +
-        '<img src="'+ contextPath +'/images/ico_excluir.gif" alt="Fechar" width="15" height="15" border="0" />' +
-        '</a></td>',
-    detalheDataLancamentoVazia : '<td width="19" align="center">&nbsp;</td>',
-    detalheReparteVazia : '<td align="right">&nbsp;</td>',
-    detalheVendaVazia : '<td align="right">&nbsp;</td>',
 
     linkNomeCota : '<a tabindex="-1" class="linkNomeCota" numeroCota="#numeroCota" >#nomeCota</a>',
     edicoesBase : [],
@@ -204,23 +193,6 @@ var analiseParcialController = $.extend(true, {
                 }
             }
         });
-    },
-
-    inicializarDetalhes : function() {
-        $.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/detalhes',
-                [{name: "id", value: $('#produtoEdicaoId').val()}],
-                function(result) {
-                $.each(result.rows, function(i, el) {
-                    $('#tabelaDetalheAnalise').find('#edicoes').append(analiseParcialController.detalheEdicao.replace('#numeroEdicao', el.cell.numeroEdicao));
-                    $('#tabelaDetalheAnalise').find('#dataLancamentos').append(analiseParcialController.detalheDataLancamento.replace('#dataLancamento', el.cell.dataLancamentoFormatada));
-                    $('#tabelaDetalheAnalise').find('#repartes').append(analiseParcialController.detalheReparte.replace('#reparte', el.cell.reparte));
-                    $('#tabelaDetalheAnalise').find('#vendas').append(analiseParcialController.detalheVenda.replace('#venda', el.cell.venda));
-                });
-                $('#tabelaDetalheAnalise').find('#edicoes').append(analiseParcialController.detalheEdicaoVazia);
-                $('#tabelaDetalheAnalise').find('#dataLancamentos').append(analiseParcialController.detalheDataLancamentoVazia);
-                $('#tabelaDetalheAnalise').find('#repartes').append(analiseParcialController.detalheReparteVazia);
-                $('#tabelaDetalheAnalise').find('#vendas').append(analiseParcialController.detalheVendaVazia);
-            });
     },
 
     somarTotais : function() {
@@ -454,7 +426,7 @@ var analiseParcialController = $.extend(true, {
         if ((saldoReparte - reparteSubtraido) < 0) {
             $input_reparte.val($input_reparte.attr('reparteAtual'));
             analiseParcialController.exibirMsg('WARNING', ['Não há saldo suficiente para esta operação.']);
-        } else {
+        } else if (reparteAtual != reparteDigitado) {
             $saldoreparte.text(parseInt($saldoreparte.text(), 10) - reparteSubtraido);
 
             $.ajax({url: analiseParcialController.path +'/distribuicao/analise/parcial/mudarReparte',
@@ -493,7 +465,7 @@ var analiseParcialController = $.extend(true, {
         return Math.round((reducaoReparte / repEstudo) * 10000) / 100;
     },
 
-    preProcessGrid : function(resultado) {
+        preProcessGrid : function(resultado) {
 
         if (resultado.mensagens) {
             analiseParcialController.exibirMsg(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
@@ -544,15 +516,17 @@ var analiseParcialController = $.extend(true, {
             if (cell.leg !== '') {
                 cell.leg = '<span class="legendas" id="leg_'+ numCota +'" title="'+ cell.descricaoLegenda +'">'+ cell.leg +'</span>';
             }
+            if (cell.juramento == 0) {
+                cell.juramento = '';
+            }
 
             for (var j = 0; j < 6; j++) {
-                if (typeof cell.edicoesBase[j] === 'undefined' || typeof cell.edicoesBase[j].reparte === 'undefined' || cell.edicoesBase[j].reparte === 0
-                    || typeof cell.edicoesBase[j].venda === 'undefined' || cell.edicoesBase[j].venda === 0) {
+                if (typeof cell.edicoesBase[j] === 'undefined' || typeof cell.edicoesBase[j].reparte === 'undefined' || cell.edicoesBase[j].reparte == 0) {
                     cell['reparte'+ (j + 1)] = '';
                     cell['venda'+ (j + 1)] = '';
                 } else {
                     cell['reparte'+ (j + 1)] = cell.edicoesBase[j].reparte;
-                    cell['venda'+ (j + 1)] = cell.edicoesBase[j].venda;
+                    cell['venda'+ (j + 1)] = cell.edicoesBase[j].venda || 0;
                 }
             }
         }
@@ -592,8 +566,8 @@ var analiseParcialController = $.extend(true, {
                 rowNomeProduto.eq(key+1).text(value.nomeProduto);
                 rowNumeroEdicao.eq(key+1).text(value.edicao);
                 rowDataLancamento.eq(key+1).text(result[key].dataLancamentoFormatada);
-                rowReparte.eq(key+1).text(result[key].reparte*1);
-                rowVenda.eq(key+1).text(result[key].venda*1);
+                rowReparte.eq(key+1).text(result[key].reparte*1 || 0);
+                rowVenda.eq(key+1).text(result[key].venda*1 || 0);
             });
         });
     },
@@ -627,8 +601,10 @@ var analiseParcialController = $.extend(true, {
             $tr.find('td[abbr="cota"]').attr('percentualVenda', perc);
             
             if (analiseParcialController.tipoExibicao == 'PARCIAL') {
-                $tr.find('td[abbr^="reparte4"] div').text(totalReparte);
-                $tr.find('td[abbr^="venda4"] div').text(totalVenda);
+                if (totalReparte != 0) {
+                    $tr.find('td[abbr^="reparte4"] div').text(totalReparte);
+                    $tr.find('td[abbr^="venda4"] div').text(totalVenda);
+                }
                 totalAcumuladoParcialReparte += totalReparte;
                 totalAcumuladoParcialVenda += totalVenda;
             }
@@ -886,7 +862,6 @@ var analiseParcialController = $.extend(true, {
         });
 
         analiseParcialController.tipoExibicao = _tipoExibicao;
-//        analiseParcialController.inicializarDetalhes();
 
         var parameters = [];
         parameters.push({name: 'id', value: _id});
@@ -1279,8 +1254,8 @@ var analiseParcialController = $.extend(true, {
         if ($("#ordenarPorDe").val() === '' || $("#ordenarPorAte").val() === '') {
             $('#baseEstudoGridParcial tr').show();
         } else {
-            var de = $("#ordenarPorDe").val() * -1;
-            var ate = $("#ordenarPorAte").val() * -1;
+            var de = $("#ordenarPorDe").val() * 1;
+            var ate = $("#ordenarPorAte").val() * 1;
 
             var settings = {order: de<ate?'asc':'desc', attr: 'reducaoReparte'};
             var sortAtribute = 'td[abbr="reparteSugerido"] div input';
@@ -1290,15 +1265,15 @@ var analiseParcialController = $.extend(true, {
                 .removeClass('erow')
                 .each(function(){
                     var $tr = $(this);
-                    var rr = $tr.find(sortAtribute).attr('reducaoReparte');
+                    var rr = $tr.find(sortAtribute).attr('reducaoReparte') * 1;
                     if (de < ate) {
-                        if (de < rr && rr < ate) {
+                        if (de <= rr && rr <= ate) {
                             $tr.show();
                         } else {
                             $tr.hide();
                         }
                     } else {
-                        if (de > rr && rr > ate) {
+                        if (de >= rr && rr >= ate) {
                             $tr.show();
                         } else {
                             $tr.hide();
