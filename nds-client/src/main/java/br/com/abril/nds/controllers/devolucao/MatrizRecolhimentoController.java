@@ -32,6 +32,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.FornecedorService;
@@ -1143,6 +1144,16 @@ public class MatrizRecolhimentoController extends BaseController {
 
 				throw new ValidacaoException(TipoMensagem.WARNING,
 						"A data de recolhimento deve ser maior que a data de lançamento.");
+			}
+			
+			ArrayList<StatusLancamento> status = new ArrayList<StatusLancamento>();
+			status.add(StatusLancamento.BALANCEADO_RECOLHIMENTO);
+			
+			List<Lancamento> listaLancamentosDataDistribuidorInStatus = this.lancamentoService.obterLancamentoDataDistribuidorInStatus(novaData, status);
+			
+			if (listaLancamentosDataDistribuidorInStatus != null && !listaLancamentosDataDistribuidorInStatus.isEmpty()) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Produto já possui balanceamento na data: "+produto.getNovaData());
 			}
 		}
 	}
