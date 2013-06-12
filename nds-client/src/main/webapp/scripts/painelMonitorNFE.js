@@ -21,8 +21,7 @@ var PainelMonitorNFE = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 960,
-			height : 'auto'
+			width : 960
 		});
 		
 		$('#dataInicial', PainelMonitorNFE.workspace).datepicker({

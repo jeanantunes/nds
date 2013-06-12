@@ -1,8 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="faltasSobras" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="40" bottomMargin="40">
 	<property name="ireport.zoom" value="1.8181818181818197"/>
-	<property name="ireport.x" value="130"/>
+	<property name="ireport.x" value="17"/>
 	<property name="ireport.y" value="0"/>
+	<subDataset name="Rateios">
+		<parameter name="QTDE_RATEIOS" class="java.lang.Integer"/>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="numeroCota" class="java.lang.Integer">
+			<fieldDescription><![CDATA[numeroCota]]></fieldDescription>
+		</field>
+		<field name="qtde" class="java.math.BigInteger">
+			<fieldDescription><![CDATA[qtde]]></fieldDescription>
+		</field>
+	</subDataset>
 	<parameter name="DISTRIBUIDOR" class="java.lang.String"/>
 	<parameter name="DATA_MOVIMENTO" class="java.lang.String"/>
 	<parameter name="LOGO_DISTRIBUIDOR" class="java.awt.Image"/>
@@ -15,6 +27,7 @@
 	<field name="precoCapa" class="java.lang.String"/>
 	<field name="qtdeFaltas" class="java.lang.String"/>
 	<field name="qtdeSobras" class="java.lang.String"/>
+	<field name="rateios" class="java.util.List"/>
 	<variable name="ID_SUM" class="java.lang.Long" calculation="Count">
 		<variableExpression><![CDATA[$F{codigoProduto}]]></variableExpression>
 	</variable>
@@ -53,7 +66,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font size="16" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Relatorio de Faltas e Sobras"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Relatoria de Faltas e Sobras"]]></textFieldExpression>
 			</textField>
 			<rectangle>
 				<reportElement x="12" y="65" width="104" height="24"/>
@@ -92,7 +105,7 @@
 				<text><![CDATA[ Produto]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="196" y="3" width="56" height="20" forecolor="#000000" backcolor="#CCCCCC"/>
+				<reportElement mode="Opaque" x="195" y="3" width="57" height="20" forecolor="#000000" backcolor="#CCCCCC"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -148,7 +161,7 @@
 				<text><![CDATA[Cota]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="511" y="3" width="32" height="20" forecolor="#000000" backcolor="#CCCCCC"/>
+				<reportElement mode="Opaque" x="511" y="3" width="31" height="20" forecolor="#000000" backcolor="#CCCCCC"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -162,7 +175,7 @@
 				<text><![CDATA[Dif]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="543" y="3" width="32" height="20" forecolor="#000000" backcolor="#CCCCCC"/>
+				<reportElement mode="Opaque" x="542" y="3" width="31" height="20" forecolor="#000000" backcolor="#CCCCCC"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -176,7 +189,7 @@
 				<text><![CDATA[Cota]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="575" y="3" width="32" height="20" forecolor="#000000" backcolor="#CCCCCC"/>
+				<reportElement mode="Opaque" x="573" y="3" width="31" height="20" forecolor="#000000" backcolor="#CCCCCC"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -190,7 +203,7 @@
 				<text><![CDATA[Dif]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="703" y="3" width="32" height="20" forecolor="#000000" backcolor="#CCCCCC"/>
+				<reportElement mode="Opaque" x="697" y="3" width="31" height="20" forecolor="#000000" backcolor="#CCCCCC"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -204,7 +217,7 @@
 				<text><![CDATA[Dif]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="607" y="3" width="32" height="20" forecolor="#000000" backcolor="#CCCCCC"/>
+				<reportElement mode="Opaque" x="604" y="3" width="31" height="20" forecolor="#000000" backcolor="#CCCCCC"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -218,7 +231,7 @@
 				<text><![CDATA[Cota]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="639" y="3" width="32" height="20" forecolor="#000000" backcolor="#CCCCCC"/>
+				<reportElement mode="Opaque" x="635" y="3" width="31" height="20" forecolor="#000000" backcolor="#CCCCCC"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -232,7 +245,7 @@
 				<text><![CDATA[Dif]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="671" y="3" width="32" height="20" forecolor="#000000" backcolor="#CCCCCC"/>
+				<reportElement mode="Opaque" x="666" y="3" width="31" height="20" forecolor="#000000" backcolor="#CCCCCC"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -246,7 +259,7 @@
 				<text><![CDATA[Cota]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="767" y="3" width="32" height="20" forecolor="#000000" backcolor="#CCCCCC"/>
+				<reportElement mode="Opaque" x="759" y="3" width="31" height="20" forecolor="#000000" backcolor="#CCCCCC"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -260,7 +273,7 @@
 				<text><![CDATA[Dif]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Opaque" x="735" y="3" width="32" height="20" forecolor="#000000" backcolor="#CCCCCC"/>
+				<reportElement mode="Opaque" x="728" y="3" width="31" height="20" forecolor="#000000" backcolor="#CCCCCC"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -334,76 +347,6 @@
 				<textFieldExpression><![CDATA[$F{precoCapa}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement mode="Opaque" x="703" y="0" width="32" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement mode="Opaque" x="767" y="0" width="32" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement mode="Opaque" x="671" y="0" width="32" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement mode="Opaque" x="575" y="0" width="32" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement mode="Opaque" x="735" y="0" width="32" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[""]]></textFieldExpression>
-			</textField>
-			<textField>
 				<reportElement mode="Opaque" x="75" y="0" width="120" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<pen lineWidth="0.5"/>
@@ -416,48 +359,6 @@
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{descricaoProduto}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement mode="Opaque" x="639" y="0" width="32" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement mode="Opaque" x="543" y="0" width="32" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement mode="Opaque" x="511" y="0" width="32" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[""]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Opaque" x="334" y="0" width="73" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -474,21 +375,7 @@
 				<textFieldExpression><![CDATA[$F{qtdeFaltas}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement mode="Opaque" x="607" y="0" width="32" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[""]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement mode="Opaque" x="196" y="0" width="56" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
+				<reportElement mode="Opaque" x="195" y="0" width="57" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -500,20 +387,6 @@
 					<font isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{numeroEdicao}]]></textFieldExpression>
-			</textField>
-			<textField>
-				<reportElement mode="Opaque" x="479" y="0" width="32" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA[""]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement mode="Opaque" x="407" y="0" width="73" height="20" forecolor="#000000" backcolor="#FFFFFF"/>
@@ -529,6 +402,167 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$F{qtdeSobras}]]></textFieldExpression>
 			</textField>
+			<componentElement>
+				<reportElement x="480" y="0" width="63" height="20"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Horizontal" ignoreWidth="true">
+					<datasetRun subDataset="Rateios">
+						<datasetParameter name="QTDE_RATEIOS">
+							<datasetParameterExpression><![CDATA[$F{rateios}.size()]]></datasetParameterExpression>
+						</datasetParameter>
+						<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{rateios}) ]]></dataSourceExpression>
+					</datasetRun>
+					<jr:listContents height="20" width="62">
+						<textField>
+							<reportElement x="0" y="0" width="31" height="20"/>
+							<box>
+								<pen lineWidth="0.5"/>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement textAlignment="Center">
+								<font isBold="true"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{numeroCota}]]></textFieldExpression>
+						</textField>
+						<textField>
+							<reportElement x="31" y="0" width="31" height="20"/>
+							<box>
+								<pen lineWidth="0.5"/>
+								<topPen lineWidth="0.5"/>
+								<leftPen lineWidth="0.5"/>
+								<bottomPen lineWidth="0.5"/>
+								<rightPen lineWidth="0.5"/>
+							</box>
+							<textElement textAlignment="Center" verticalAlignment="Top">
+								<font isBold="false"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{qtde}]]></textFieldExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<staticText>
+				<reportElement x="542" y="0" width="31" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="573" y="0" width="31" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="604" y="0" width="31" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="635" y="0" width="31" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="666" y="0" width="31" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="697" y="0" width="31" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="728" y="0" width="31" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="480" y="0" width="31" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="511" y="0" width="31" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="759" y="0" width="31" height="20"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement/>
+				<text><![CDATA[]]></text>
+			</staticText>
 		</band>
 	</detail>
 	<pageFooter>
@@ -558,17 +592,17 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}+"/"]]></textFieldExpression>
 			</textField>
-			<rectangle>
-				<reportElement x="117" y="0" width="601" height="24"/>
-				<graphicElement>
-					<pen lineWidth="0.25"/>
-				</graphicElement>
-			</rectangle>
 			<textField evaluationTime="Report">
 				<reportElement x="758" y="3" width="40" height="20"/>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
+			<rectangle>
+				<reportElement x="116" y="0" width="602" height="24"/>
+				<graphicElement>
+					<pen lineWidth="0.25"/>
+				</graphicElement>
+			</rectangle>
 			<textField>
 				<reportElement x="122" y="3" width="87" height="19"/>
 				<textElement verticalAlignment="Middle"/>
