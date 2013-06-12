@@ -435,7 +435,7 @@ var analiseParcialController = $.extend(true, {
                     analiseParcialController.atualizaAbrangencia();
                     $input_reparte.attr('reparteAtual', reparteDigitado);
                     var reparteInicial = $input_reparte.attr('reparteInicial');
-                    $input_reparte.attr('reducaoReparte', analiseParcialController.calculaPercentualReducaoReparte(reparteDigitado, reparteInicial));
+                    $input_reparte.attr('reducaoReparte', analiseParcialController.calculaPercentualReducaoReparte(reparteInicial, reparteDigitado));
                     if (reparteDigitado === reparteInicial) {
                         $legenda.removeClass('asterisco');
                     } else {
@@ -1254,8 +1254,8 @@ var analiseParcialController = $.extend(true, {
         if ($("#ordenarPorDe").val() === '' || $("#ordenarPorAte").val() === '') {
             $('#baseEstudoGridParcial tr').show();
         } else {
-            var de = $("#ordenarPorDe").val() * 1;
-            var ate = $("#ordenarPorAte").val() * 1;
+            var de = $("#ordenarPorDe").val() * -1;
+            var ate = $("#ordenarPorAte").val() * -1;
 
             var settings = {order: de<ate?'asc':'desc', attr: 'reducaoReparte'};
             var sortAtribute = 'td[abbr="reparteSugerido"] div input';
