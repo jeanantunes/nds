@@ -131,7 +131,8 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 				notaFiscal.getInformacaoEletronica().getRetornoComunicacaoEletronica() == null){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nota ainda não submetida ao SEFAZ");
-		} else if (!notaFiscal.getInformacaoEletronica().getRetornoComunicacaoEletronica().getStatus().equals(Status.AUTORIZADO)) {
+		} else if (!notaFiscal.getInformacaoEletronica().getRetornoComunicacaoEletronica().getStatus().equals(
+				Status.AUTORIZADO)) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nota não autorizada pelo SEFAZ");
 		}
@@ -174,10 +175,10 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		
 		if(notaFiscal.getInformacaoEletronica() != null){
 			
-			InformacaoEletronica informacaoEletronica 	= notaFiscal.getInformacaoEletronica();
+			InformacaoEletronica informacaoEletronica = notaFiscal.getInformacaoEletronica();
 			RetornoComunicacaoEletronica retornoComunicacaoEletronica = notaFiscal.getInformacaoEletronica().getRetornoComunicacaoEletronica();
 			chave = informacaoEletronica.getChaveAcesso();
-			protocolo = retornoComunicacaoEletronica.getProtocolo().toString();
+			protocolo = retornoComunicacaoEletronica.getProtocolo() == null ? "" : retornoComunicacaoEletronica.getProtocolo().toString();
 		}
 		
 		Identificacao identificacao 				= notaFiscal.getIdentificacao();
