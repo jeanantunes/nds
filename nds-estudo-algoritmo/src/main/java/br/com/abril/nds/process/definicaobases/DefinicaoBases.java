@@ -70,7 +70,10 @@ public class DefinicaoBases extends ProcessoAbstrato {
 			    continue;
 			}
 		    }
-		    nova.add(base);
+		    if ((base.isParcial() && estudo.getProdutoEdicaoEstudo().getId().equals(base.getId())) ||
+			    !base.isParcial()) {
+			nova.add(base);
+		    }
 		}
 	    }
 	    if (nova.size() == 6) {
