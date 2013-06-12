@@ -46,6 +46,7 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoValoresTotais;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.fiscal.nota.RetornoComunicacaoEletronica;
+import br.com.abril.nds.model.fiscal.nota.Status;
 import br.com.abril.nds.model.fiscal.nota.StatusProcessamentoInterno;
 import br.com.abril.nds.model.fiscal.nota.ValoresTotaisISSQN;
 import br.com.abril.nds.model.fiscal.nota.Veiculo;
@@ -110,7 +111,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			return gerarDocumentoIreport(listaDanfeWrapper, indEmissaoDepec);
 		
 		} catch(Exception e) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração dos arquivos DANFE");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração dos arquivos DANFE: " + e.getMessage());
 		}
 		
 	}
@@ -124,6 +125,16 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nota Fiscal não encontrada!");
 			
+		}
+		
+		if (notaFiscal.getInformacaoEletronica() == null || 
+				notaFiscal.getInformacaoEletronica().getRetornoComunicacaoEletronica() == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nota ainda não submetida ao SEFAZ");
+		} else if (!notaFiscal.getInformacaoEletronica().getRetornoComunicacaoEletronica().getStatus().equals(
+				Status.AUTORIZADO)) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nota não autorizada pelo SEFAZ");
 		}
 		
 		if(indEmissaoDepec) {
@@ -159,12 +170,21 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	 */
 	private void carregarDanfeDadosPrincipais(DanfeDTO danfe, NotaFiscal notaFiscal) {
 		
-		if(notaFiscal.getInformacaoEletronica() == null) return;
+		String chave = null;
+		String protocolo = null;
+		
+		if(notaFiscal.getInformacaoEletronica() != null){
+			
+			InformacaoEletronica informacaoEletronica = notaFiscal.getInformacaoEletronica();
+			RetornoComunicacaoEletronica retornoComunicacaoEletronica = notaFiscal.getInformacaoEletronica().getRetornoComunicacaoEletronica();
+			chave = informacaoEletronica.getChaveAcesso();
+			protocolo = retornoComunicacaoEletronica.getProtocolo() == null ? "" : retornoComunicacaoEletronica.getProtocolo().toString();
+		}
 		
 		Identificacao identificacao 				= notaFiscal.getIdentificacao();
-		InformacaoEletronica informacaoEletronica 	= notaFiscal.getInformacaoEletronica();
+		
 		InformacaoValoresTotais informacaoValoresTotais = notaFiscal.getInformacaoValoresTotais();
-		RetornoComunicacaoEletronica retornoComunicacaoEletronica = notaFiscal.getInformacaoEletronica().getRetornoComunicacaoEletronica();
+		
 		ValoresTotaisISSQN valoresTotaisISSQN	=	notaFiscal.getInformacaoValoresTotais().getTotaisISSQN();
 		InformacaoAdicional informacaoAdicional = notaFiscal.getInformacaoAdicional();
 		
@@ -172,7 +192,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		
 		String serie 				= identificacao.getSerie().toString();
 		Long numeroNF 	    		= identificacao.getNumeroDocumentoFiscal();
-		String chave 				= informacaoEletronica.getChaveAcesso();
+		
 		Date dataEmissao 			= identificacao.getDataEmissao();
 		Date dataSaida 				= identificacao.getDataSaidaEntrada();
 		
@@ -184,7 +204,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		String horaSaida 		= obterHoras(identificacao.getDataSaidaEntrada());
 		
 		String ambiente 	= ""; //TODO obter campo
-		String protocolo 	= retornoComunicacaoEletronica.getProtocolo().toString();
+		
 		String versao		= ""; //TODO obter campo
 
 		    BigDecimal ISSQNTotal 				= BigDecimal.ZERO;
@@ -224,8 +244,6 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		danfe.setVersao(versao);
 		danfe.setValorLiquido(valorLiquido);
 		danfe.setValorDesconto(valorDesconto);
-		
-		
 	}
 	
 	/**
