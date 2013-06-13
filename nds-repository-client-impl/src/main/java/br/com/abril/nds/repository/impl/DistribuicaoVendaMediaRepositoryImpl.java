@@ -107,8 +107,12 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 	sql.append("       (case when plp.id is null then 0 else 1 end) parcial, ");
 	sql.append("       l.data_lcto_prevista dataLancamento, ");
 	sql.append("       round(sum(epc.qtde_recebida), 0) reparte, ");
-	sql.append("       round((sum(epc.qtde_recebida) - sum(epc.qtde_devolvida)), 0) venda, ");
-	sql.append("       round(sum(epc.qtde_recebida) - sum(epc.qtde_devolvida)) / sum(epc.qtde_recebida) * 100 percentualVenda, ");
+	sql.append("       (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' then ");
+	sql.append("           round((sum(epc.qtde_recebida) - sum(epc.qtde_devolvida)), 0) ");
+	sql.append("       else 0 end) venda, ");
+	sql.append("       (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' then ");
+	sql.append("           round(sum(epc.qtde_recebida) - sum(epc.qtde_devolvida)) / sum(epc.qtde_recebida) * 100 ");
+	sql.append("       else 0 end) percentualVenda, ");
 	sql.append("       l.status status, ");
 	sql.append("       tcp.descricao classificacao ");
 	sql.append("  from lancamento l ");
