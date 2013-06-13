@@ -253,121 +253,88 @@ var analiseParcialController = $.extend(true, {
 
     alterarVisualizacaoGrid : function() {
 
-        if ($('#total_ultimo_reparte').index() == 2) {
-            $('table#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(0) th[colspan="7"]').attr('colspan', 4);
-
-            $('table#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(0)').each(function () {
-                var tr = $(this);
-                var last = tr.find('th[colspan="2"]:last');
-                tr.find('th[colspan="2"]:first').detach().insertAfter(last);
-                tr.find('th[colspan="2"]:first').detach().insertAfter(last);
-                tr.find('th[colspan="2"]:first').detach().insertAfter(last);
-                tr.find('th[colspan="2"]:first').detach().insertAfter(last);
-                tr.find('th[colspan="2"]:first').detach().insertAfter(last);
+        $('#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(0)').each(function () {
+            var tr = $(this);
+            var last = tr.find('th[colspan="2"]:last');
+            tr.find('th[colspan="2"]').not(last).each(function(){
+                $(this).detach().insertAfter(last);
             });
+        });
 
-            $('table#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(1)').each(function() {
-                var tr = $(this);
-                var td1 = tr.find('[abbr="ultimoReparte"],[abbr="reparteSugerido"],[abbr="leg"]');
+        $('#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(1)').each(function() {
+            var tr = $(this);
+            var td1 = tr.find('[abbr="ultimoReparte"],[abbr="reparteSugerido"],[abbr="leg"],[abbr="juramento"]');
+            if (td1.index() > 7) {
+                var td2 = tr.find('[abbr="npdv"]');
+            } else {
                 var td2 = tr.find('th:last');
-                td1.detach().insertAfter(td2);
+            }
+            td1.detach().insertAfter(td2);
 
-                //reparte/venda
-                var last = tr.find('[abbr^="venda"]:last');
-                tr.find('[abbr^="reparte"]:first,[abbr^="venda"]:first').detach().insertAfter(last);
-                tr.find('[abbr^="reparte"]:first,[abbr^="venda"]:first').detach().insertAfter(last);
-                tr.find('[abbr^="reparte"]:first,[abbr^="venda"]:first').detach().insertAfter(last);
-                tr.find('[abbr^="reparte"]:first,[abbr^="venda"]:first').detach().insertAfter(last);
-                tr.find('[abbr^="reparte"]:first,[abbr^="venda"]:first').detach().insertAfter(last);
+            //reparte/venda
+            var last = tr.find('[abbr^="venda"]:last');
+            var tempReparte;
+            tr.find('[abbr^="reparte"],[abbr^="venda"]').not(last).not(last.prev()).not('[abbr="reparteSugerido"]').each(function(){
+                var $this = $(this);
+                if ($this.attr('abbr').indexOf('reparte') > -1) {
+                    tempReparte = $this;
+                    $this.detach().insertAfter(last);
+                } else {
+                    $this.detach().insertAfter(tempReparte);
+                }
             });
+        });
 
-            $('#baseEstudoGridParcial tr').each(function() {
-                var tr = $(this);
-                var td1 = tr.find('[abbr="ultimoReparte"],[abbr="reparteSugerido"],[abbr="leg"]');
-                var td2 = tr.find('td:last');
-                td1.detach().insertAfter(td2);
-
-                //reparte/venda
-                var last = tr.find('[abbr^="venda"]:last');
-                tr.find('[abbr^="reparte"]:first,[abbr^="venda"]:first').detach().insertAfter(last);
-                tr.find('[abbr^="reparte"]:first,[abbr^="venda"]:first').detach().insertAfter(last);
-                tr.find('[abbr^="reparte"]:first,[abbr^="venda"]:first').detach().insertAfter(last);
-                tr.find('[abbr^="reparte"]:first,[abbr^="venda"]:first').detach().insertAfter(last);
-                tr.find('[abbr^="reparte"]:first,[abbr^="venda"]:first').detach().insertAfter(last);
-            });
-
-            $('.tableTotais tr').each(function() {
-                var tr = $(this);
-                var td1 = tr.find('#total_ultimo_reparte,#total_reparte_sugerido,#lbl_legenda');
-                var td2 = tr.find('td:last');
-                td1.detach().insertAfter(td2);
-
-                //reparte/venda
-                var last = tr.find('[id^="total_venda"]:last');
-                tr.find('[id^="total_reparte"]:first,[id^="total_venda"]:first').detach().insertAfter(last);
-                tr.find('[id^="total_reparte"]:first,[id^="total_venda"]:first').detach().insertAfter(last);
-                tr.find('[id^="total_reparte"]:first,[id^="total_venda"]:first').detach().insertAfter(last);
-                tr.find('[id^="total_reparte"]:first,[id^="total_venda"]:first').detach().insertAfter(last);
-                tr.find('[id^="total_reparte"]:first,[id^="total_venda"]:first').detach().insertAfter(last);
-            });
-        } else {
-            $('table#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(0) th[colspan="4"]').attr('colspan', 7);
-
-            $('table#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(0)').each(function () {
-                var tr = $(this);
-                var last = tr.find('th[colspan="2"]:last');
-                tr.find('th[colspan="2"]:first').detach().insertAfter(last);
-                tr.find('th[colspan="2"]:first').detach().insertAfter(last);
-                tr.find('th[colspan="2"]:first').detach().insertAfter(last);
-                tr.find('th[colspan="2"]:first').detach().insertAfter(last);
-                tr.find('th[colspan="2"]:first').detach().insertAfter(last);
-            });
-
-            $('table#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(1)').each(function() {
-                var tr = $(this);
-                var td1 = tr.find('[abbr="ultimoReparte"],[abbr="reparteSugerido"],[abbr="leg"]');
+        $('#baseEstudoGridParcial tr').each(function() {
+            var tr = $(this);
+            var td1 = tr.find('[abbr="ultimoReparte"],[abbr="reparteSugerido"],[abbr="leg"],[abbr="juramento"]');
+            if (td1.index() > 7) {
                 var td2 = tr.find('[abbr="npdv"]');
-                td1.detach().insertAfter(td2);
+            } else {
+                var td2 = tr.find('td:last');
+            }
+            td1.detach().insertAfter(td2);
 
-                //reparte/venda
-                var last = tr.find('[abbr^="venda"]:last');
-                tr.find('[abbr^="reparte"]:eq(1),[abbr^="venda"]:first').detach().insertAfter(last);
-                tr.find('[abbr^="reparte"]:eq(1),[abbr^="venda"]:first').detach().insertAfter(last);
-                tr.find('[abbr^="reparte"]:eq(1),[abbr^="venda"]:first').detach().insertAfter(last);
-                tr.find('[abbr^="reparte"]:eq(1),[abbr^="venda"]:first').detach().insertAfter(last);
-                tr.find('[abbr^="reparte"]:eq(1),[abbr^="venda"]:first').detach().insertAfter(last);
+            //reparte/venda
+            var last = tr.find('[abbr^="venda"]:last');
+            var tempReparte;
+            tr.find('[abbr^="reparte"],[abbr^="venda"]').not(last).not(last.prev()).not('[abbr="reparteSugerido"]').each(function(){
+                var $this = $(this);
+                if ($this.attr('abbr').indexOf('reparte') > -1) {
+                    tempReparte = $this;
+                    $this.detach().insertAfter(last);
+                } else {
+                    $this.detach().insertAfter(tempReparte);
+                }
             });
+        });
 
-            $('#baseEstudoGridParcial tr').each(function() {
-                var tr = $(this);
-                var td1 = tr.find('[abbr="ultimoReparte"],[abbr="reparteSugerido"],[abbr="leg"]');
-                var td2 = tr.find('[abbr="npdv"]');
-                td1.detach().insertAfter(td2);
-
-                //reparte/venda
-                var last = tr.find('[abbr^="venda"]:last');
-                tr.find('[abbr^="reparte"]:eq(1),[abbr^="venda"]:first').detach().insertAfter(last);
-                tr.find('[abbr^="reparte"]:eq(1),[abbr^="venda"]:first').detach().insertAfter(last);
-                tr.find('[abbr^="reparte"]:eq(1),[abbr^="venda"]:first').detach().insertAfter(last);
-                tr.find('[abbr^="reparte"]:eq(1),[abbr^="venda"]:first').detach().insertAfter(last);
-                tr.find('[abbr^="reparte"]:eq(1),[abbr^="venda"]:first').detach().insertAfter(last);
-            });
-
-            $('.tableTotais tr').each(function() {
-                var tr = $(this);
-                var td1 = tr.find('#total_ultimo_reparte,#total_reparte_sugerido,#lbl_legenda');
+        $('.tableTotais tr').each(function() {
+            var tr = $(this);
+            var td1 = tr.find('#total_ultimo_reparte,#total_reparte_sugerido,#lbl_legenda,#total_juramento');
+            if (td1.index() > 7) {
                 var td2 = tr.find('#total_de_cotas');
-                td1.detach().insertAfter(td2);
+            } else {
+                var td2 = tr.find('td:last');
+            }
+            td1.detach().insertAfter(td2);
 
-                //reparte/venda
-                var last = tr.find('[id^="total_venda"]:last');
-                tr.find('[id^="total_reparte"]:eq(1),[id^="total_venda"]:first').detach().insertAfter(last);
-                tr.find('[id^="total_reparte"]:eq(1),[id^="total_venda"]:first').detach().insertAfter(last);
-                tr.find('[id^="total_reparte"]:eq(1),[id^="total_venda"]:first').detach().insertAfter(last);
-                tr.find('[id^="total_reparte"]:eq(1),[id^="total_venda"]:first').detach().insertAfter(last);
-                tr.find('[id^="total_reparte"]:eq(1),[id^="total_venda"]:first').detach().insertAfter(last);
+            //reparte/venda
+            var last = tr.find('[id^="total_venda"]:last');
+            var tempReparte;
+            tr.find('[id^="total_reparte"],[id^="total_venda"]').not(last).not(last.prev()).not('#total_reparte_sugerido').each(function(){
+                var $this = $(this);
+                if ($this.attr('id').indexOf('reparte') > -1) {
+                    tempReparte = $this;
+                    $this.detach().insertAfter(last);
+                } else {
+                    $this.detach().insertAfter(tempReparte);
+                }
             });
-        }
+        });
+
+        var colSpanEdicoesBase = $('#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(1)').find('th[abbr^="venda"]:first').index() - 1;
+        $('#baseEstudoGridParcial').closest('div.flexigrid').find('thead:visible tr:eq(0) th[colspan!="2"]').attr('colspan', colSpanEdicoesBase);
     },
 
     atualizaEdicoesBaseHeader : function() {

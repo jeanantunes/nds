@@ -191,7 +191,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("       p.nome nomeProduto, ");
         sql.append("       pe.numero_edicao edicao, ");
         sql.append("       epe.periodo_parcial periodo, ");
-        sql.append("       (case when l.tipo_lancamento = 'PARCIAL' then 1 else 0 end) parcial ");
+        sql.append("       (case when l.tipo_lancamento = 'PARCIAL' then 1 else 0 end) parcial, ");
+        sql.append("       (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' then 0 else 1 end) edicaoAberta ");
         sql.append("  from estudo_produto_edicao_base epe ");
         sql.append("  join produto_edicao pe on pe.id = epe.produto_edicao_id ");
         sql.append("  join produto p on p.id = pe.produto_id ");
@@ -206,7 +207,8 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 .addScalar("nomeProduto", StandardBasicTypes.STRING)
                 .addScalar("edicao", StandardBasicTypes.BIG_INTEGER)
                 .addScalar("periodo", StandardBasicTypes.STRING)
-                .addScalar("parcial", StandardBasicTypes.BOOLEAN);
+                .addScalar("parcial", StandardBasicTypes.BOOLEAN)
+                .addScalar("edicaoAberta", StandardBasicTypes.BOOLEAN);
         query.setParameter("estudoId", estudoId);
         query.setResultTransformer(new AliasToBeanResultTransformer(EdicoesProdutosDTO.class));
 
@@ -215,16 +217,16 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
     @Override
     @Transactional(readOnly = true)
-    public List<EdicoesProdutosDTO> getEdicoesBase(Long numeroCota, List<Long> listProdutoEdicaoId) {
+    public List<EdicoesProdutosDTO> buscaHistoricoDeVendaParaCota(Long numeroCota, List<Long> listProdutoEdicaoId) {
         StringBuilder sql = new StringBuilder();
         sql.append("select ");
-        sql.append("    pe.id produtoEdicaoId, ");
-        sql.append("    coalesce(epc.qtde_recebida, 0) reparte, ");
-        sql.append("    coalesce(epc.qtde_recebida - epc.qtde_devolvida, 0) venda ");
-        sql.append("  from produto_edicao pe ");
-        sql.append("  left join estoque_produto_cota epc on pe.id = epc.produto_edicao_id ");
-        sql.append("  left join cota c on c.id = epc.cota_id and c.numero_cota = :numeroCota ");
-        sql.append(" where pe.id in (:produtoEdicaoId) ");
+        sql.append("  epc.produto_edicao_id produtoEdicaoId, ");
+        sql.append("  coalesce(epc.qtde_recebida, 0) reparte, ");
+        sql.append("  coalesce(epc.qtde_recebida - epc.qtde_devolvida, 0) venda ");
+        sql.append("from estoque_produto_cota epc ");
+        sql.append(" join cota c on c.id = epc.cota_id and c.numero_cota = :numeroCota ");
+        sql.append(" where epc.produto_edicao_id in (:produtoEdicaoId) ");
+        sql.append(" group by epc.produto_edicao_id ");
 
         Query query = getSession().createSQLQuery(sql.toString())
                 .addScalar("produtoEdicaoId", StandardBasicTypes.LONG)

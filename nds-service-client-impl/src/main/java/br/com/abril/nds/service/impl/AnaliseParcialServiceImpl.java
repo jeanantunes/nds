@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.repository.AnaliseParcialRepository;
@@ -92,7 +91,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 Integer ordemExibicaoHelper = 0;
                 item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>());
                 if(idsProdutoEdicao.size() > 0){
-                	edicoesComVenda.addAll(analiseParcialRepository.getEdicoesBase((long) item.getCota(), idsProdutoEdicao));
+                	edicoesComVenda.addAll(buscaHistoricoDeVendas(item.getCota(), idsProdutoEdicao));
                 	for (EdicoesProdutosDTO edicao : queryDTO.getEdicoesBase()) {
                 		for (EdicoesProdutosDTO ed : edicoesComVenda) {
                 			if (ed.getProdutoEdicaoId().equals(edicao.getProdutoEdicaoId())) {
@@ -109,6 +108,26 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
             }
         }
         return lista;
+    }
+
+    private Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas(int cota, List<Long> idsProdutoEdicao) {
+
+        List<EdicoesProdutosDTO> edicoesProdutosDTOs = analiseParcialRepository.buscaHistoricoDeVendaParaCota((long) cota, idsProdutoEdicao);
+
+        for (Long id : idsProdutoEdicao) {
+            boolean idExiste = false;
+            for (EdicoesProdutosDTO dto : edicoesProdutosDTOs) {
+                if (id.equals(dto.getProdutoEdicaoId())) {
+                    idExiste = true;
+                    break;
+                }
+            }
+            if (!idExiste) {
+                edicoesProdutosDTOs.add(new EdicoesProdutosDTO(id));
+            }
+        }
+
+        return edicoesProdutosDTOs;
     }
 
     @Override
