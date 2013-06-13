@@ -116,6 +116,7 @@ public class ProdutoEdicaoDAO {
                     produtoEdicaoBase.getProduto().setCodigo(rs.getString("CODIGO"));
                     produtoEdicaoBase.setDataLancamento(rs.getDate("DATA_LCTO_DISTRIBUIDOR"));
                     produtoEdicaoBase.setIdLancamento(rs.getLong("LANCAMENTO_ID"));
+                    produtoEdicaoBase.setPeriodo(rs.getInt("NUMERO_PERIODO"));
                     if (rs.getString("GRUPO_PRODUTO") != null && rs.getString("GRUPO_PRODUTO").equalsIgnoreCase(PRODUTO_COLECIONAVEL)) {
                         produtoEdicaoBase.setColecao(true);
                     }

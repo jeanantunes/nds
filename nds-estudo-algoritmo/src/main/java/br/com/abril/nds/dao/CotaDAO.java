@@ -189,6 +189,8 @@ public class CotaDAO {
 		cota.setSituacaoCadastro(SituacaoCadastro.valueOf(rs.getString("SITUACAO_CADASTRO")));
 		cota.setMix(rs.getBoolean("MIX"));
 		cota.setTipoDistribuicaoCota(TipoDistribuicaoCota.valueOf(rs.getString("TIPO_DISTRIBUICAO_COTA")));
+		cota.setRecebeParcial(rs.getBoolean("RECEBE_RECOLHE_PARCIAIS"));
+		cota.setExcecaoParcial(rs.getBoolean("COTA_EXCECAO_PARCIAL"));
 		traduzAjusteReparte(rs, cota);
 		if (rs.getBigDecimal("QTDE_RANKING_SEGMENTO") != null) {
 		    cota.setQtdeRankingSegmento(rs.getBigDecimal("QTDE_RANKING_SEGMENTO").toBigInteger());

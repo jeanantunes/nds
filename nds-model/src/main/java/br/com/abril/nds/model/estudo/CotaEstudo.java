@@ -31,6 +31,8 @@ public class CotaEstudo extends Cota {
     private BigDecimal indiceCorrecaoTendencia;
     private BigDecimal quantidadePDVs;
     private boolean recebeReparteComplementar;
+    private boolean recebeParcial;
+    private boolean excecaoParcial;
     private BigDecimal ajusteReparte;
     private BigInteger vendaMediaMaisN;
     private BigDecimal percentualEncalheMaximo;
@@ -412,6 +414,22 @@ public class CotaEstudo extends Cota {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public boolean isRecebeParcial() {
+        return recebeParcial;
+    }
+
+    public void setRecebeParcial(boolean recebeParcial) {
+        this.recebeParcial = recebeParcial;
+    }
+
+    public boolean isExcecaoParcial() {
+        return excecaoParcial;
+    }
+
+    public void setExcecaoParcial(boolean excecaoParcial) {
+        this.excecaoParcial = excecaoParcial;
     }
 
     @Override
