@@ -549,27 +549,32 @@ var analiseParcialController = $.extend(true, {
     },
 
     carregaDetalhesEdicoesBase: function () {
-        var param = [];
-        $.each(analiseParcialController.edicoesBase, function (key, value) {
-            param.push({name: 'idsProdutoEdicao['+key+']', value: value.produtoEdicaoId});
-        });
-        $.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/historicoEdicoesBase', param, function (result) {
-            var $rows = $('#tabelaDetalheAnalise tr');
-            var rowCodigoProduto = $rows.eq(0).find('td');
-            var rowNomeProduto = $rows.eq(1).find('td');
-            var rowNumeroEdicao = $rows.eq(2).find('td');
-            var rowDataLancamento = $rows.eq(3).find('td');
-            var rowReparte = $rows.eq(4).find('td');
-            var rowVenda = $rows.eq(5).find('td');
+        if (analiseParcialController.edicoesBase.length > 0) {
+            var param = [];
             $.each(analiseParcialController.edicoesBase, function (key, value) {
-                rowCodigoProduto.eq(key+1).text(value.codigoProduto);
-                rowNomeProduto.eq(key+1).text(value.nomeProduto);
-                rowNumeroEdicao.eq(key+1).text(value.edicao);
-                rowDataLancamento.eq(key+1).text(result[key].dataLancamentoFormatada);
-                rowReparte.eq(key+1).text(result[key].reparte*1 || 0);
-                rowVenda.eq(key+1).text(result[key].venda*1 || 0);
+                param.push({name: 'produtoEdicaoList['+key+'].idProdutoEdicao', value: value.produtoEdicaoId});
+                if (typeof value.periodo != 'undefined') {
+                    param.push({name: 'produtoEdicaoList['+key+'].numeroParcial', value: value.periodo});
+                }
             });
-        });
+            $.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/historicoEdicoesBase', param, function (result) {
+                var $rows = $('#tabelaDetalheAnalise tr');
+                var rowCodigoProduto = $rows.eq(0).find('td');
+                var rowNomeProduto = $rows.eq(1).find('td');
+                var rowNumeroEdicao = $rows.eq(2).find('td');
+                var rowDataLancamento = $rows.eq(3).find('td');
+                var rowReparte = $rows.eq(4).find('td');
+                var rowVenda = $rows.eq(5).find('td');
+                $.each(analiseParcialController.edicoesBase, function (key, value) {
+                    rowCodigoProduto.eq(key+1).text(value.codigoProduto);
+                    rowNomeProduto.eq(key+1).text(value.nomeProduto);
+                    rowNumeroEdicao.eq(key+1).text(value.edicao + (typeof result[key].numeroParcial != 'undefined' ? ' / Período: ' + result[key].numeroParcial : ''));
+                    rowDataLancamento.eq(key+1).text(result[key].dataLancamentoFormatada);
+                    rowReparte.eq(key+1).text(result[key].reparte*1 || 0);
+                    rowVenda.eq(key+1).text(result[key].venda*1 || 0);
+                });
+            });
+        }
     },
 
     onSuccessReloadGrid : function() {

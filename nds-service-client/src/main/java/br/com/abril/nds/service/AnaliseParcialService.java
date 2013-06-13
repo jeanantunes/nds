@@ -22,7 +22,6 @@ public interface AnaliseParcialService {
 	void atualizaReparte(Long estudoId, Long numeroCota, Long reparte);
 	void liberar(Long id);
 	List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId);
-	List<AnaliseEstudoDetalhesDTO> buscarDetalhesAnalise(ProdutoEdicao produtoEdicao);
 	List<PdvDTO> carregarDetalhesPdv(Integer numeroCota, Long idEstudo);
 	
 	List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO);
@@ -33,5 +32,5 @@ public interface AnaliseParcialService {
 
     CotaDTO buscarDetalhesCota(Integer numeroCota, String codigoProduto);
 
-    List<AnaliseEstudoDetalhesDTO> historicoEdicoesBase(Long[] idsProdutoEdicao);
+    List<AnaliseEstudoDetalhesDTO> historicoEdicoesBase(List<AnaliseEstudoDetalhesDTO> idsProdutoEdicao);
 }

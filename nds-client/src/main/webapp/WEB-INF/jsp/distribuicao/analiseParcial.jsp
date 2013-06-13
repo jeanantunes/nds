@@ -367,7 +367,9 @@ table.filtro td span {font-weight: normal;}
 						<select name="cotasQueNaoEntraramNoEstudo_motivo" id="cotasQueNaoEntraramNoEstudo_motivo" style="width: 408px">
 							<option value="TODOS" selected="selected">Todas as Cotas</option>
                             <c:forEach items="${classificacaoCotaList}" var="classificacaoCota">
-                                <c:if test="${classificacaoCota.codigo ne '' && classificacaoCota.codigo ne 'S' && classificacaoCota.codigo ne 'IN'}">
+                                <c:if test="${classificacaoCota.codigo eq 'SM' || classificacaoCota.codigo eq 'VZ' || classificacaoCota.codigo eq 'FR'
+                                || classificacaoCota.codigo eq 'CL' || classificacaoCota.codigo eq 'GN' || classificacaoCota.codigo eq 'SH'
+                                || classificacaoCota.codigo eq 'SS'}">
                                     <option value="<c:out value="${classificacaoCota.codigo}"/>"><c:out value="${classificacaoCota.texto}"/></option>
                                 </c:if>
                             </c:forEach>

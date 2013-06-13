@@ -133,11 +133,6 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     }
 
     @Override
-    public List<AnaliseEstudoDetalhesDTO> buscarDetalhesAnalise(ProdutoEdicao produtoEdicao) {
-        return analiseParcialRepository.buscarDetalhesAnalise(produtoEdicao);
-    }
-
-    @Override
     public List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO) {
         List<CotaQueNaoEntrouNoEstudoDTO> cotaQueNaoEntrouNoEstudoDTOList = analiseParcialRepository.buscarCotasQueNaoEntraramNoEstudo(queryDTO);
         for (CotaQueNaoEntrouNoEstudoDTO cotaQueNaoEntrouNoEstudoDTO : cotaQueNaoEntrouNoEstudoDTOList) {
@@ -183,12 +178,28 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
     }
 
     @Override
-    public List<AnaliseEstudoDetalhesDTO> historicoEdicoesBase(Long[] idsProdutoEdicao) {
+    public List<AnaliseEstudoDetalhesDTO> historicoEdicoesBase(List<AnaliseEstudoDetalhesDTO> produtoEdicaoList) {
         List<AnaliseEstudoDetalhesDTO> list = new LinkedList<>();
 
-        for (Long id : idsProdutoEdicao) {
-            list.add(analiseParcialRepository.historicoEdicaoBase(id));
+        for (AnaliseEstudoDetalhesDTO dto : produtoEdicaoList) {
+            if (dto.getNumeroParcial() == null) {
+                list.add(analiseParcialRepository.buscarDetalhesAnalise(dto.getIdProdutoEdicao()));
+            } else {
+                list.add(analiseParcialRepository.historicoEdicaoBase(dto.getIdProdutoEdicao(), dto.getNumeroParcial()));
+            }
         }
+
+        Collections.sort(list, new Comparator<AnaliseEstudoDetalhesDTO>() {
+            @Override
+            public int compare(AnaliseEstudoDetalhesDTO o1, AnaliseEstudoDetalhesDTO o2) {
+                int dt = o2.getDataLancamento().compareTo(o1.getDataLancamento());
+                if (dt != 0 || o1.getNumeroParcial() == null || o2.getNumeroParcial() == null) {
+                    return dt;
+                }
+                return o2.getNumeroParcial().compareTo(o1.getNumeroParcial());
+            }
+        });
+
         return list;
     }
 

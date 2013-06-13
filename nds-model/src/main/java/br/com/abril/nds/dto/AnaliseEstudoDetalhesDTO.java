@@ -13,6 +13,8 @@ public class AnaliseEstudoDetalhesDTO {
     private BigDecimal reparte;
     private BigDecimal venda;
     private BigDecimal encalhe;
+    private Integer numeroParcial;
+    private Long idProdutoEdicao;
     
     public BigInteger getNumeroEdicao() {
         return numeroEdicao;
@@ -53,5 +55,21 @@ public class AnaliseEstudoDetalhesDTO {
     }
     public void setEncalhe(BigDecimal encalhe) {
         this.encalhe = encalhe;
+    }
+
+    public Integer getNumeroParcial() {
+        return numeroParcial;
+    }
+
+    public void setNumeroParcial(Integer numeroParcial) {
+        this.numeroParcial = numeroParcial;
+    }
+
+    public Long getIdProdutoEdicao() {
+        return idProdutoEdicao;
+    }
+
+    public void setIdProdutoEdicao(Long idProdutoEdicao) {
+        this.idProdutoEdicao = idProdutoEdicao;
     }
 }

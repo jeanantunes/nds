@@ -109,7 +109,7 @@ public class DefinicaoBases extends ProcessoAbstrato {
     }
 
     private void excluiMaiorQueQuatroSeColecionavel(List<ProdutoEdicaoEstudo> edicoesBase, EstudoTransient estudo) {
-	if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(1L) > 0) && edicoesBase.get(0).isColecao() && edicoesBase.size() > QUATRO_COLECIONAVEIS) {
+	if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(1L) > 0) && edicoesBase.size() > QUATRO_COLECIONAVEIS && edicoesBase.get(0).isColecao()) {
 	    edicoesBase.subList(QUATRO_COLECIONAVEIS + INDEX_CORRECTION, edicoesBase.size()).clear();
 	}
     }
