@@ -275,6 +275,7 @@ public class EstudoAlgoritmoService {
 		ed.setIndicePeso(new BigDecimal(base.getPeso()));
 		ed.setPeriodo(base.getPeriodo());
 		ed.setParcial(base.isParcial());
+		ed.setEdicaoAberta(definicaoBasesDAO.traduzStatus(base.getStatus()));
 		edicoesBase.add(ed);
 	    }
 	    estudo.setEdicoesBase(edicoesBase);
