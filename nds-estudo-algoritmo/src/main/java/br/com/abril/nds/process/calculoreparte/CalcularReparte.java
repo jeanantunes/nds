@@ -237,7 +237,10 @@ public class CalcularReparte extends ProcessoAbstrato {
 	}
 	estudo.setReparteDistribuir(estudo.getReparteDistribuirInicial().subtract(somaRepartes.toBigInteger()));
 	// indice que sera aplicado para todas as cotas na distribuicao da sobra
-	BigDecimal indicedeSobraouFalta = new BigDecimal(estudo.getReparteDistribuirInicial()).divide(somaRepartes, 3, BigDecimal.ROUND_HALF_UP);
+	BigDecimal indicedeSobraouFalta = BigDecimal.ZERO;
+	if (somaRepartes.compareTo(BigDecimal.ZERO) > 0) {
+	    indicedeSobraouFalta = new BigDecimal(estudo.getReparteDistribuirInicial()).divide(somaRepartes, 3, BigDecimal.ROUND_HALF_UP);
+	}
 
 	// aplicacao do indice de sobra nas cotas
 	for (CotaEstudo cota : cotas) {

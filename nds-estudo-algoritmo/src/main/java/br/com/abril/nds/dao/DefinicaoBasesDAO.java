@@ -103,7 +103,7 @@ public class DefinicaoBasesDAO {
 		return false;
 	}
 
-	private boolean traduzStatus(String status) {
+	public boolean traduzStatus(String status) {
 		if (status != null && ((status.equalsIgnoreCase(STATUS_FECHADO)) || (status.equalsIgnoreCase(STATUS_RECOLHIDO)))) {
 			return false;
 		}
