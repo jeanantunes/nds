@@ -239,13 +239,11 @@ table.filtro td span {font-weight: normal;}
 					    </span>
                     </td>
                     <td>
-                        <c:if test="${tipoExibicao == 'NORMAL'}">
-                            <span class="bt_novos">
-                                <a href="javascript:;" onclick="analiseParcialController.alterarVisualizacaoGrid();">
-                                    <img src="${pageContext.request.contextPath}/images/ico_change.png" alt="Alterar Visualização do Grid" hspace="5" border="0" /> <%--Alterar Visualização do Grid--%>
-                                </a>
-                            </span>
-                        </c:if>
+                        <span class="bt_novos">
+                            <a href="javascript:;" onclick="analiseParcialController.alterarVisualizacaoGrid();">
+                                <img src="${pageContext.request.contextPath}/images/ico_change.png" alt="Alterar Visualização do Grid" hspace="5" border="0" /> <%--Alterar Visualização do Grid--%>
+                            </a>
+                        </span>
                     </td>
 				</tr>
 			</table>

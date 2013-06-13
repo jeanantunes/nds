@@ -35,8 +35,15 @@ public class EdicoesProdutosDTO implements Serializable {
 
     private Integer ordemExibicao;
     private boolean parcial;
-	
-	public BigInteger getEdicao() {
+    private boolean edicaoAberta;
+
+    public EdicoesProdutosDTO() {}
+
+    public EdicoesProdutosDTO(Long id) {
+        produtoEdicaoId = id;
+    }
+
+    public BigInteger getEdicao() {
 		return edicao;
 	}
 	public void setEdicao(BigInteger edicao) {
@@ -160,5 +167,13 @@ public class EdicoesProdutosDTO implements Serializable {
 
     public void setParcial(boolean parcial) {
         this.parcial = parcial;
+    }
+
+    public boolean isEdicaoAberta() {
+        return edicaoAberta;
+    }
+
+    public void setEdicaoAberta(boolean edicaoAberta) {
+        this.edicaoAberta = edicaoAberta;
     }
 }
