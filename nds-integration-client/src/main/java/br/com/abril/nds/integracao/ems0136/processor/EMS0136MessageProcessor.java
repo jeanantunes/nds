@@ -292,11 +292,16 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 	private void excluirLancamentosSemVinculosDePeriodoLancamento(
 			LancamentoParcial lancamentoParcial, Date dataOperacao) {
 		
+		
+		if(lancamentoParcial == null || lancamentoParcial.getPeriodos() == null || lancamentoParcial.getPeriodos().isEmpty())
+			return;
+		
 		// Obtém os lançamentos vinculados aos PeriodoLancamentoParcials gerados
 		List<Lancamento> lancamentosVinculados = new ArrayList<Lancamento>();
 		for (PeriodoLancamentoParcial periodoLancamentoParcial : lancamentoParcial.getPeriodos()) {
 			lancamentosVinculados.add(periodoLancamentoParcial.getLancamento());
 		}
+
 		
 		/*StringBuilder hqlListarLancamentosComItens = new StringBuilder();
 		hqlListarLancamentosComItens.append("SELECT l.recebimentos FROM Lancamento l ");
