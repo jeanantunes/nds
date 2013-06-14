@@ -251,7 +251,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 			
 			if(politica.getFormaCobranca() != null && politica.getFormaCobranca().getFatorVencimento() != null) {
 				
-				parametroCobrancaDTO.setFatorVencimento(politica.getFormaCobranca().getFatorVencimento().longValue());
+				parametroCobrancaDTO.setFatorVencimento(politica.getFormaCobranca().getFatorVencimento());
 				
 			}
 			

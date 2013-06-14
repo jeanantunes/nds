@@ -6,6 +6,7 @@ import java.util.List;
 import br.com.abril.nds.model.cadastro.FormaCobrancaBoleto;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 
 public class ParametroCobrancaDTO {
@@ -46,6 +47,12 @@ public class ParametroCobrancaDTO {
 	private List<Long> fornecedoresId;
 	
 	private FormaCobrancaBoleto formaCobrancaBoleto;	
+	
+	private Integer fatorVencimento;
+	
+	private Long idFornecedorPadrao;
+	
+	private TipoCota tipoCota;
 
 	
 	public ParametroCobrancaDTO() {
@@ -363,6 +370,36 @@ public class ParametroCobrancaDTO {
 
 	public void setCobradoPeloBackoffice(boolean cobradoPeloBackoffice) {
 		this.cobradoPeloBackoffice = cobradoPeloBackoffice;
+	}
+
+
+	public Integer getFatorVencimento() {
+		return fatorVencimento;
+	}
+
+
+	public void setFatorVencimento(Integer fatorVencimento) {
+		this.fatorVencimento = fatorVencimento;
+	}
+
+
+	public Long getIdFornecedorPadrao() {
+		return idFornecedorPadrao;
+	}
+
+
+	public void setIdFornecedorPadrao(Long idFornecedorPadrao) {
+		this.idFornecedorPadrao = idFornecedorPadrao;
+	}
+
+
+	public TipoCota getTipoCota() {
+		return tipoCota;
+	}
+
+
+	public void setTipoCota(TipoCota tipoCota) {
+		this.tipoCota = tipoCota;
 	}
 
 }

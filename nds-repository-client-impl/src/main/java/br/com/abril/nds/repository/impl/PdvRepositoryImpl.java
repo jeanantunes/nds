@@ -97,8 +97,6 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		.append(" LEFT JOIN telefonePdv.telefone telefone ")
 		.append(" LEFT JOIN pdv.segmentacao.tipoPontoPDV tipoPontoPDV ")
 		.append(" WHERE cota.id = :idCota ")
-		.append(" and (enderecoPdv is null or enderecoPdv.principal =:principal )")
-		.append(" and (telefonePdv is null or telefonePdv.principal =:principal) ")
 		
 		.append(" group by pdv.id");
 		
@@ -107,7 +105,6 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("idCota", filtro.getIdCota());
-		query.setParameter("principal",true);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(PdvDTO.class));
 		

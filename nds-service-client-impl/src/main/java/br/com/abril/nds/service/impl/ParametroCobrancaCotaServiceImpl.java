@@ -1070,8 +1070,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 
 		FormaCobranca formaCobrancaDistribuidor = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
 		
-<<<<<<< Updated upstream
-=======
 		Cota cota = cotaRepository.buscarPorId(parametroCobranca.getIdCota());
 		
 		FormaCobranca formaCobranca = new FormaCobranca();
@@ -1136,7 +1134,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		formaCobrancaRepository.adicionar(formaCobranca);
 		
 		/*
->>>>>>> Stashed changes
 		formaCobrancaDTO.setIdCota(parametroCobranca.getIdCota());
 		formaCobrancaDTO.setIdParametroCobranca(parametroCobranca.getIdParametroCobranca());
 		formaCobrancaDTO.setTipoCobranca(formaCobrancaDistribuidor.getTipoCobranca());
@@ -1174,6 +1171,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		}
 		
 		this.postarFormaCobranca(formaCobrancaDTO);
+		*/
 		
 	}
 }

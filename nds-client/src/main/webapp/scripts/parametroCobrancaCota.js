@@ -3,10 +3,7 @@ var parametroCobrancaCotaController = $.extend(true, {
     idCota: "",
     idHistorico: "",
     idFormaPagto: "",
-<<<<<<< Updated upstream
-=======
     resultFormaCobranca: [],
->>>>>>> Stashed changes
     modoTela: null,
 
     init : function () {
@@ -441,12 +438,8 @@ var parametroCobrancaCotaController = $.extend(true, {
         parametroCobrancaCotaController.carregarFornecedoresPadrao(resultado.idFornecedor);
 	},
 
-<<<<<<< Updated upstream
-	buildParametroCobrancaDto : function(){
-=======
 	buildParametroCobrancaDto : function() {
 		
->>>>>>> Stashed changes
 		// hidden
 		var idParametroCobranca = $("#_idParametroCobranca", this.workspace).val();
 		var idCota = $("#_idCota", this.workspace).val();
