@@ -132,9 +132,7 @@ public class EstudoAlgoritmoService {
 		    ClassificacaoCota.RedutorAutomatico)) {
 		estudo.setSomatoriaVendaMedia(estudo.getSomatoriaVendaMedia().add(cota.getVendaMedia()));
 	    }
-	    if (cota.isCotaSoRecebeuEdicaoAberta()) {
-		estudo.setSomatoriaReparteEdicoesAbertas(estudo.getSomatoriaReparteEdicoesAbertas().add(cota.getSomaReparteEdicoesAbertas()));
-	    }
+	    estudo.setSomatoriaReparteEdicoesAbertas(estudo.getSomatoriaReparteEdicoesAbertas().add(cota.getSomaReparteEdicoesAbertas()));
 	    if (cota.getQuantidadePDVs() != null) {
 		estudo.setTotalPDVs(estudo.getTotalPDVs().add(cota.getQuantidadePDVs()));
 	    }
@@ -358,7 +356,7 @@ public class EstudoAlgoritmoService {
 		}
 	    } else if (componente.equals(ComponentesPDV.COTAS_A_VISTA)) {
 		for (String elemento : elementos) {
-		    if (cota.getTiposCota().contains(Integer.parseInt(elemento))) {
+		    if (cota.getTiposCota().contains(elemento)) {
 			retorno = true;
 		    }
 		}

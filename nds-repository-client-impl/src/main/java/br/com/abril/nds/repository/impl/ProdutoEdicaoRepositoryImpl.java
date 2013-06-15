@@ -1561,8 +1561,23 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	    	x.setStatus(StatusLancamento.FECHADO);
 	    	s.persist(x);
 	    }
+	}
 
+
+	@Override
+	public boolean isEdicaoAberta(Long produtoEdicaoId) {
+	    StringBuilder sql = new StringBuilder();
+	    sql.append("select status ");
+	    sql.append("  from lancamento ");
+	    sql.append(" where produto_edicao_id = :produtoEdicaoId ");
 	    
+	    Query query = getSession().createSQLQuery(sql.toString());
+	    query.setParameter("produtoEdicaoId", produtoEdicaoId);
+	    List<String> lista = query.list();
+	    if (lista.size() > 0 && (lista.get(0).equals("FECHADO") || lista.get(0).equals("RECOLHIDO"))) {
+		return false;
+	    }
+	    return true;
 	}
 
 }
