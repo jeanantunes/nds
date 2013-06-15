@@ -384,7 +384,7 @@ public class ProdutoController extends BaseController {
 			
 		} else {
 			
-			result.use(Results.json()).from("", "result").serialize();			
+			result.use(Results.json()).withoutRoot().from(produtoEdicao).serialize();
 		}
 	}
 	

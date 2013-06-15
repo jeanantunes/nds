@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import br.com.abril.nds.service.RepartePdvService;
 
 @Service
 public class RepartePdvServiceImpl implements RepartePdvService{
+
 	@Autowired
 	RepartePDVRepository repartePDVRepository;
 	
@@ -79,9 +81,11 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 			soma += repartePDV.getReparte();
 			repartePDVRepository.merge(repartePDV);
 		}
+
+		mixCotaProduto.setReparteMinimo(new Long(soma));
 		mixCotaProduto.setReparteMaximo(new Long(soma));
-		mixCotaProdutoRepository.alterar(mixCotaProduto);
-		
+        mixCotaProduto.setDataHora(new Date());
+        mixCotaProdutoRepository.alterar(mixCotaProduto);
 	}
 
 	@Override
@@ -111,7 +115,7 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 			soma += repartePDV.getReparte();
 			repartePDVRepository.merge(repartePDV);
 		}
-		
+		fixacaoReparte.setDataHora(new Date());
 		fixacaoReparte.setQtdeExemplares(soma);
 		fixacaoReparteRepository.alterar(fixacaoReparte);
 	}

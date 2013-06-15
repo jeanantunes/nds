@@ -25,5 +25,5 @@ public interface AnaliseParcialRepository {
 	List<EdicoesProdutosDTO> getEdicoesBaseParciais(Long numeroCota, Long numeroEdicao, String codigoProduto, Long periodo);
 	List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId);
 	List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO);
-    AnaliseEstudoDetalhesDTO historicoEdicaoBase(Long id, Integer numeroParcial);
+    AnaliseEstudoDetalhesDTO historicoEdicaoBase(Long id, Integer numeroPeriodo);
 }

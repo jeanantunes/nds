@@ -259,8 +259,8 @@ public class AnaliseParcialController extends BaseController {
     }
 
     @Post
-    public void defineRepartePorPDV(Long estudoId, Integer numeroCota, List<PdvDTO> reparteMap) {
-        analiseParcialService.defineRepartePorPDV(estudoId, numeroCota, reparteMap);
+    public void defineRepartePorPDV(Long estudoId, Integer numeroCota, List<PdvDTO> reparteMap, String legenda, boolean manterFixa) {
+        analiseParcialService.defineRepartePorPDV(estudoId, numeroCota, reparteMap, legenda, manterFixa);
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso.")).recursive().serialize();
     }
 }
