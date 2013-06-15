@@ -3,15 +3,15 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
-import br.com.abril.nds.dto.*;
-import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.pdv.PDV;
-import br.com.abril.nds.model.planejamento.Estudo;
-import br.com.abril.nds.model.planejamento.EstudoPDV;
-import br.com.abril.nds.repository.CotaRepository;
-import br.com.abril.nds.repository.EstudoPDVRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -19,11 +19,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.AnaliseEstudoDetalhesDTO;
+import br.com.abril.nds.dto.AnaliseParcialDTO;
+import br.com.abril.nds.dto.CotaDTO;
+import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
+import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
+import br.com.abril.nds.dto.EdicoesProdutosDTO;
+import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
+import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.planejamento.EstudoPDV;
 import br.com.abril.nds.repository.AnaliseParcialRepository;
+import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.EstudoPDVRepository;
 import br.com.abril.nds.repository.EstudoRepository;
+import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.AnaliseParcialService;
 
 @Service
@@ -40,6 +54,9 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
 
     @Autowired
     private CotaRepository cotaRepository;
+    
+    @Autowired
+    private ProdutoEdicaoRepository produtoEdicaoRepository;
 
     private static final Logger log = LoggerFactory.getLogger(AnaliseParcialServiceImpl.class);
     private Map<String, String> mapClassificacaoCota;
@@ -79,6 +96,8 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         } else {
             if (queryDTO.getEdicoesBase() == null) {
                 queryDTO.setEdicoesBase(analiseParcialRepository.carregarEdicoesBaseEstudo(queryDTO.getEstudoId()));
+            } else {
+        	carregarInformacoesEdicoesBase(queryDTO.getEdicoesBase());
             }
             for (AnaliseParcialDTO item : lista) {
                 item.setDescricaoLegenda(traduzClassificacaoCota(item.getLeg()));
@@ -91,23 +110,35 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 Integer ordemExibicaoHelper = 0;
                 item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>());
                 if(idsProdutoEdicao.size() > 0){
-                	edicoesComVenda.addAll(buscaHistoricoDeVendas(item.getCota(), idsProdutoEdicao));
-                	for (EdicoesProdutosDTO edicao : queryDTO.getEdicoesBase()) {
-                		for (EdicoesProdutosDTO ed : edicoesComVenda) {
-                			if (ed.getProdutoEdicaoId().equals(edicao.getProdutoEdicaoId())) {
-                				BeanUtils.copyProperties(edicao, ed, new String[] {"reparte", "venda"});
-                                if (ed.getOrdemExibicao() == null) {
-                                    ed.setOrdemExibicao(ordemExibicaoHelper++);
-                                }
-                                edicoesProdutosDTOMap.put(ed.getOrdemExibicao(), ed);
-                			}
+                    edicoesComVenda.addAll(buscaHistoricoDeVendas(item.getCota(), idsProdutoEdicao));
+                    for (EdicoesProdutosDTO edicao : queryDTO.getEdicoesBase()) {
+                	for (EdicoesProdutosDTO ed : edicoesComVenda) {
+                	    if (ed.getProdutoEdicaoId().equals(edicao.getProdutoEdicaoId())) {
+                		BeanUtils.copyProperties(edicao, ed, new String[] {"reparte", "venda"});
+                		if (ed.getOrdemExibicao() == null) {
+                		    ed.setOrdemExibicao(ordemExibicaoHelper++);
                 		}
-                	}                	
+                		edicoesProdutosDTOMap.put(ed.getOrdemExibicao(), ed);
+                	    }
+                	}
+                    }                	
+                }
+                // tratamento para deixar as vendas zeradas em caso de edicao aberta
+                for (EdicoesProdutosDTO edicao : edicoesProdutosDTOMap.values()) {
+                    if (edicao.isEdicaoAberta()) {
+                	edicao.setVenda(BigDecimal.ZERO);
+                    }
                 }
                 item.setEdicoesBase(new LinkedList<EdicoesProdutosDTO>(edicoesProdutosDTOMap.values()));
             }
         }
         return lista;
+    }
+
+    private void carregarInformacoesEdicoesBase(List<EdicoesProdutosDTO> edicoesBase) {
+	for (EdicoesProdutosDTO edicao : edicoesBase) {
+	    edicao.setEdicaoAberta(produtoEdicaoRepository.isEdicaoAberta(edicao.getProdutoEdicaoId()));
+	}
     }
 
     private Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas(int cota, List<Long> idsProdutoEdicao) {

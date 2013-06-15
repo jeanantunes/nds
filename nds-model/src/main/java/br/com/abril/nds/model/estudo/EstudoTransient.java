@@ -96,8 +96,7 @@ public class EstudoTransient extends Estudo {
     public BigDecimal getSomatoriaReparteEdicoesAbertas() {
 	return somatoriaReparteEdicoesAbertas;
     }
-    public void setSomatoriaReparteEdicoesAbertas(
-	    BigDecimal somatoriaReparteEdicoesAbertas) {
+    public void setSomatoriaReparteEdicoesAbertas(BigDecimal somatoriaReparteEdicoesAbertas) {
 	this.somatoriaReparteEdicoesAbertas = somatoriaReparteEdicoesAbertas;
     }
     public boolean isComplementarAutomatico() {

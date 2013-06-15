@@ -339,4 +339,6 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 			Long numeroEdicaoFinal);
 
     BigInteger obterReparteDisponivel(Long idProdutoEdicao);
+
+    boolean isEdicaoAberta(Long produtoEdicaoId);
 }
