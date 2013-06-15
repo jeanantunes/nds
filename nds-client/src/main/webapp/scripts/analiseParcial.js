@@ -538,7 +538,7 @@ var analiseParcialController = $.extend(true, {
                 $.each(analiseParcialController.edicoesBase, function (key, value) {
                     rowCodigoProduto.eq(key+1).text(value.codigoProduto);
                     rowNomeProduto.eq(key+1).text(value.nomeProduto);
-                    rowNumeroEdicao.eq(key+1).text(value.edicao + (typeof result[key].numeroPeriodo != 'undefined' ? ' / Período: ' + result[key].numeroPeriodo : ''));
+                    rowNumeroEdicao.eq(key+1).text(value.edicao + (result[key].parcial ? ' / Período: ' + result[key].numeroPeriodo : ''));
                     rowDataLancamento.eq(key+1).text(result[key].dataLancamentoFormatada);
                     rowReparte.eq(key+1).text(result[key].reparte*1 || 0);
                     rowVenda.eq(key+1).text(result[key].venda*1 || 0);

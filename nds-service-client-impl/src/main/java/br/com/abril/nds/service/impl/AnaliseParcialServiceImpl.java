@@ -131,6 +131,12 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         return lista;
     }
 
+    private void carregarInformacoesEdicoesBase(List<EdicoesProdutosDTO> edicoesBase) {
+        for (EdicoesProdutosDTO edicao : edicoesBase) {
+            edicao.setEdicaoAberta(produtoEdicaoRepository.isEdicaoAberta(edicao.getProdutoEdicaoId()));
+        }
+    }
+
     private Collection<? extends EdicoesProdutosDTO> buscaHistoricoDeVendas(int cota, List<Long> idsProdutoEdicao) {
 
         List<EdicoesProdutosDTO> edicoesProdutosDTOs = analiseParcialRepository.buscaHistoricoDeVendaParaCota((long) cota, idsProdutoEdicao);
