@@ -132,28 +132,27 @@ var analiseParcialController = $.extend(true, {
 
     validarNumeroEdicao : function(elemento) {
         var codigoProduto = $(elemento).closest('tr').find('.inputCodigoEB');
-        if (codigoProduto.val() !== '') {
-            if (elemento.value !== '') {
-                $.ajax({
-                    url:analiseParcialController.path + '/produto/validarNumeroEdicao',
-                    data:[{name: 'codigoProduto', value: codigoProduto.val()},
-                         {name: 'numeroEdicao', value: elemento.value}],
-                    type: 'POST',
-                    global: false,
-                    success: function(result) {
-                        console.log(result);
-                    },
-                    error: function(result) {
-                        console.log(result);
-                        if (result.mensagens && result.mensagens.listaMensagens.length > 0) {
-                            elemento.value = '';
-                        }
-                    }});
-            } else {
-//                analiseParcialController.exibirMsg('WARNING', ['É necessário informar um número de edição!']);
-            }
-        } else {
-//            analiseParcialController.exibirMsg('WARNING', ['É necessário informar um código para o produto!']);
+        if (codigoProduto.val() !== '' && elemento.value !== '') {
+            $.ajax({
+                url:analiseParcialController.path + '/produto/validarNumeroEdicao',
+                data:[{name: 'codigoProduto', value: codigoProduto.val()},
+                     {name: 'numeroEdicao', value: elemento.value}],
+                type: 'POST',
+                global: false,
+                success: function(result) {
+                    if (result.mensagens) {
+                        analiseParcialController.exibirMsg(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+                        elemento.value = '';
+                    } else {
+                        $(elemento).attr('id', result.id);
+                    }
+                },
+                error: function(result) {
+                    if (result.mensagens) {
+                        analiseParcialController.exibirMsg(result.mensagens.tipoMensagem, result.mensagens.listaMensagens);
+                        elemento.value = '';
+                    }
+                }});
         }
     },
 
@@ -520,8 +519,12 @@ var analiseParcialController = $.extend(true, {
             var param = [];
             $.each(analiseParcialController.edicoesBase, function (key, value) {
                 param.push({name: 'produtoEdicaoList['+key+'].idProdutoEdicao', value: value.produtoEdicaoId});
+                param.push({name: 'produtoEdicaoList['+key+'].parcial', value: analiseParcialController.tipoExibicao == 'PARCIAL'});
+                if (typeof value.ordemExibicao != 'undefined') {
+                    param.push({name: 'produtoEdicaoList['+key+'].ordemExibicao', value: value.ordemExibicao});
+                }
                 if (typeof value.periodo != 'undefined') {
-                    param.push({name: 'produtoEdicaoList['+key+'].numeroParcial', value: value.periodo});
+                    param.push({name: 'produtoEdicaoList['+key+'].numeroPeriodo', value: value.periodo});
                 }
             });
             $.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/historicoEdicoesBase', param, function (result) {
@@ -535,7 +538,7 @@ var analiseParcialController = $.extend(true, {
                 $.each(analiseParcialController.edicoesBase, function (key, value) {
                     rowCodigoProduto.eq(key+1).text(value.codigoProduto);
                     rowNomeProduto.eq(key+1).text(value.nomeProduto);
-                    rowNumeroEdicao.eq(key+1).text(value.edicao + (typeof result[key].numeroParcial != 'undefined' ? ' / Período: ' + result[key].numeroParcial : ''));
+                    rowNumeroEdicao.eq(key+1).text(value.edicao + (result[key].parcial ? ' / Período: ' + result[key].numeroPeriodo : ''));
                     rowDataLancamento.eq(key+1).text(result[key].dataLancamentoFormatada);
                     rowReparte.eq(key+1).text(result[key].reparte*1 || 0);
                     rowVenda.eq(key+1).text(result[key].venda*1 || 0);
@@ -657,7 +660,30 @@ var analiseParcialController = $.extend(true, {
         return false; //Impede que o flexgrid faça um request para repopular o grid.
     },
 
-    defineRepartePorPDV: function(numeroCota, nomeCota, reparteCota) {
+    salvarRepartePorPDV: function ($dialogReparte, reparteCota, numeroCota, legenda) {
+        var $repartesPDV = $dialogReparte.find('table.pdvCotaGrid tr input.repartePDV');
+        var totalRepartePDVs = $repartesPDV.map(function () {
+            return parseInt(this.value, 10);
+        }).toArray().reduce(function (a, b) {
+                return a + b;
+            });
+        if (totalRepartePDVs != reparteCota) {
+            var inputReparteSugeridoCota = $('#baseEstudoGridParcial td[abbr="reparteSugerido"] input[numerocota="' + numeroCota + '"]').val(totalRepartePDVs).get(0);
+            analiseParcialController.atualizaReparte(inputReparteSugeridoCota);
+        }
+        var param = [];
+        param.push({name: 'estudoId', value: $('#estudoId').val()});
+        param.push({name: 'numeroCota', value: numeroCota});
+        param.push({name: 'legenda', value: legenda});
+        param.push({name: 'manterFixa', value: $('#dialog-defineReparte').find('input[name="input2"]').is(':checked')});
+        $repartesPDV.each(function (k) {
+            param.push({name: 'reparteMap[' + k + '].id', value: $(this).closest('tr').find('td[abbr="id"] div').text()});
+            param.push({name: 'reparteMap[' + k + '].reparte', value: this.value});
+        });
+        $.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/defineRepartePorPDV', param);
+    },
+
+    defineRepartePorPDV: function(numeroCota, nomeCota, reparteCota, legenda) {
 
         var $dialogReparte = $('#dialog-defineReparte');
         $dialogReparte.find('span.numeroCota').text(numeroCota);
@@ -675,24 +701,40 @@ var analiseParcialController = $.extend(true, {
             modal : true,
             buttons : {
                 "Confirmar" : function() {
-                    var $repartesPDV = $dialogReparte.find('table.pdvCotaGrid tr input.repartePDV');
-                    var totalRepartePDVs = $repartesPDV.map(function(){
-                        return parseInt(this.value, 10);
-                    }).toArray().reduce(function(a,b){return a+b;});
-                    if (totalRepartePDVs != reparteCota) {
-                        var inputReparteSugeridoCota = $('#baseEstudoGridParcial td[abbr="reparteSugerido"] input[numerocota="' + numeroCota + '"]').val(totalRepartePDVs).get(0);
-                        analiseParcialController.atualizaReparte(inputReparteSugeridoCota);
-//                        analiseParcialController.exibirMsg('WARNING', ['A soma do reparte dos PDVs não pode ser diferente do reparte definido para a cota.']);
+                    if (legenda.indexOf('FX') > -1) {
+                        $('<div>Confirma alteração de fixação por PDV para esta cota?</div>').dialog({
+                            escondeHeader: false,
+                            title: 'Confirmação',
+                            buttons: {
+                                "Confirmar": function() {
+                                    $(this).dialog("close");
+                                    $dialogReparte.dialog("close");
+                                    analiseParcialController.salvarRepartePorPDV($dialogReparte, reparteCota, numeroCota, legenda);
+                                },
+                                "Cancelar": function() {
+                                    $(this).dialog("close");
+                                }
+                            }
+                        });
+                    } else if (legenda.indexOf('MX') > -1) {
+                        $('<div>Confirma alteração de mix por PDV para esta cota?</div>').dialog({
+                            escondeHeader: false,
+                            title: 'Confirmação',
+                            buttons: {
+                                "Confirmar": function() {
+                                    $(this).dialog("close");
+                                    $dialogReparte.dialog("close");
+                                    analiseParcialController.salvarRepartePorPDV($dialogReparte, reparteCota, numeroCota, legenda);
+                                },
+                                "Cancelar": function() {
+                                    $(this).dialog("close");
+                                }
+                            }
+                        });
+                    } else {
+                        analiseParcialController.salvarRepartePorPDV($dialogReparte, reparteCota, numeroCota, legenda);
+                        $(this).dialog("close");
                     }
-                    var param = [];
-                    param.push({name: 'estudoId', value: $('#estudoId').val()});
-                    param.push({name: 'numeroCota', value: numeroCota});
-                    $repartesPDV.each(function(k){
-                        param.push({name: 'reparteMap['+k+'].id', value: $(this).closest('tr').find('td[abbr="id"] div').text()});
-                        param.push({name: 'reparteMap['+k+'].reparte', value: this.value});
-                    });
-                    $.postJSON(analiseParcialController.path + '/distribuicao/analise/parcial/defineRepartePorPDV', param);
-                    $(this).dialog("close");
                 },
                 "Cancelar" : function() {
                     $(this).dialog("close");
@@ -827,7 +869,8 @@ var analiseParcialController = $.extend(true, {
             event.preventDefault();
             analiseParcialController.defineRepartePorPDV($(this).attr('numeroCota'),
                 $(this).closest('tr').find('a.linkNomeCota').text(),
-                $(this).closest('tr').find('input.reparteSugerido').val());
+                $(this).closest('tr').find('input.reparteSugerido').val(),
+                $(this).closest('tr').find('td[abbr="leg"] span.legendas').text());
         }).on('click', 'a.linkNomeCota', function(event) {
             event.preventDefault();
             analiseParcialController.carregarDetalhesCota($(this).attr('numeroCota'));

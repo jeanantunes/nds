@@ -1,8 +1,12 @@
 package br.com.abril.nds.repository.impl;
 
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoPDV;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EstudoPDVRepository;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -17,5 +21,15 @@ public class EstudoPDVRepositoryImpl extends AbstractRepositoryModel<EstudoPDV, 
 
     public EstudoPDVRepositoryImpl() {
         super(EstudoPDV.class);
+    }
+
+    @Override
+    public EstudoPDV buscarPorEstudoCotaPDV(Estudo estudo, Cota cota, PDV pdv) {
+        return (EstudoPDV) getSession()
+                .createCriteria(EstudoPDV.class)
+                .add(Restrictions.eq("estudo", estudo))
+                .add(Restrictions.eq("cota", cota))
+                .add(Restrictions.eq("pdv", pdv))
+                .uniqueResult();
     }
 }

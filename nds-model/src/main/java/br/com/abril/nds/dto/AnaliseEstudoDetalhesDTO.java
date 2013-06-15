@@ -13,8 +13,10 @@ public class AnaliseEstudoDetalhesDTO {
     private BigDecimal reparte;
     private BigDecimal venda;
     private BigDecimal encalhe;
-    private Integer numeroParcial;
+    private Integer numeroPeriodo;
     private Long idProdutoEdicao;
+    private boolean parcial;
+    private Integer ordemExibicao;
     
     public BigInteger getNumeroEdicao() {
         return numeroEdicao;
@@ -57,12 +59,12 @@ public class AnaliseEstudoDetalhesDTO {
         this.encalhe = encalhe;
     }
 
-    public Integer getNumeroParcial() {
-        return numeroParcial;
+    public Integer getNumeroPeriodo() {
+        return numeroPeriodo;
     }
 
-    public void setNumeroParcial(Integer numeroParcial) {
-        this.numeroParcial = numeroParcial;
+    public void setNumeroPeriodo(Integer numeroPeriodo) {
+        this.numeroPeriodo = numeroPeriodo;
     }
 
     public Long getIdProdutoEdicao() {
@@ -71,5 +73,21 @@ public class AnaliseEstudoDetalhesDTO {
 
     public void setIdProdutoEdicao(Long idProdutoEdicao) {
         this.idProdutoEdicao = idProdutoEdicao;
+    }
+
+    public boolean isParcial() {
+        return parcial;
+    }
+
+    public void setParcial(boolean parcial) {
+        this.parcial = parcial;
+    }
+
+    public Integer getOrdemExibicao() {
+        return ordemExibicao;
+    }
+
+    public void setOrdemExibicao(Integer ordemExibicao) {
+        this.ordemExibicao = ordemExibicao;
     }
 }

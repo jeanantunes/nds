@@ -28,7 +28,7 @@ public interface AnaliseParcialService {
 
     BigDecimal calcularPercentualAbrangencia(Long estudoId);
 
-    void defineRepartePorPDV(Long estudoId, Integer numeroCota, List<PdvDTO> reparteMap);
+    void defineRepartePorPDV(Long estudoId, Integer numeroCota, List<PdvDTO> reparteMap, String legenda, boolean manterFixa);
 
     CotaDTO buscarDetalhesCota(Integer numeroCota, String codigoProduto);
 
