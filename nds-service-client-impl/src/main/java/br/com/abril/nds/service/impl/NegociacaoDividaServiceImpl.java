@@ -657,7 +657,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public byte[] imprimirNegociacao(Long idNegociacao) throws Exception {
+	public byte[] imprimirNegociacao(Long idNegociacao, String valorDividaSelecionada) throws Exception {
 
 		Negociacao negociacao = this.obterNegociacaoPorId(idNegociacao);
 
@@ -785,9 +785,13 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 			impressaoNegociacaoDTO.getParcelasCheques().add(vo);
 		}
 		
-		// campo divida selecionada
-				impressaoNegociacaoDTO
-						.setTotalDividaSelecionada(totalParcelas);
+		// campo divida selecionada (este valorDividaSelecionada é retornado do resultado que aparece no html)
+		if (BigDecimal.ZERO.equals(totalParcelas)) {
+			impressaoNegociacaoDTO.setTotalDividaSelecionada(CurrencyUtil.converterValor(valorDividaSelecionada));
+		} else {
+			impressaoNegociacaoDTO.setTotalDividaSelecionada(totalParcelas);
+		}
+		
 
 		List<ImpressaoNegociacaoDTO> listaJasper = new ArrayList<ImpressaoNegociacaoDTO>();
 		listaJasper.add(impressaoNegociacaoDTO);
@@ -822,6 +826,10 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		parameters.put("TOTAL_PARCELAS",CurrencyUtil.formatarValor(
 				totalParcelas.setScale(2, RoundingMode.HALF_EVEN)));
 		parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
+
+		String nomeDistribuidor = this.distribuidorService.obterRazaoSocialDistribuidor();
+		parameters.put("NOME_DISTRIBUIDOR",nomeDistribuidor);
+
 		parameters.put("LOGO_DISTRIBUIDOR", inputStream);
 		return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 	}
