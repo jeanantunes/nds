@@ -364,7 +364,9 @@
 				</table>
 			</fieldset>
 			<span class="bt_novos" title="Imprimir" name="botoes" id="botaoImprimirNegociacao">
-				<a href="${pageContext.request.contextPath}/financeiro/negociacaoDivida/imprimirNegociacao">
+				<%-- a href="${pageContext.request.contextPath}/financeiro/negociacaoDivida/imprimirNegociacao?valorDividaSelecionada=asas" --%>
+
+				<a href="javascript:;" onclick="negociacaoDividaController.imprimirNegociacao()">
 					<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
 						Imprimir Negocia&ccedil;&atilde;o
 				</a>
