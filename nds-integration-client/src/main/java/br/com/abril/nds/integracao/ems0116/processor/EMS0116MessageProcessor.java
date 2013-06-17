@@ -299,7 +299,9 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 			if(!isEnderecoPrincipal(pdv.getEnderecos())) {
 				enderecoPDV.setPrincipal(true);
 			} else {
-				enderecoPDV.setPrincipal(false);
+				if(!pdv.getEnderecos().contains(enderecoPDV)) {
+					enderecoPDV.setPrincipal(false);
+				}
 			}
 			
 			getSession().merge(enderecoPDV);
@@ -373,7 +375,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		
 		for(EnderecoPDV item : enderecos){
 			
-			if(item.isPrincipal()){
+			if(item.isPrincipal()) {
 				return item.isPrincipal();
 			}
 		}
