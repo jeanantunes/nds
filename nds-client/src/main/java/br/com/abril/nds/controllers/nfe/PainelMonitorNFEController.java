@@ -267,7 +267,6 @@ public class PainelMonitorNFEController extends BaseController {
 	}
 	
 
-	@SuppressWarnings("unchecked")
 	@Rules(Permissao.ROLE_NFE_PAINEL_MONITOR_NFE_ALTERACAO)
 	public void imprimirDanfes(boolean indEmissaoDepec) {
 		
@@ -279,14 +278,7 @@ public class PainelMonitorNFEController extends BaseController {
 		
 		try {
 			
-			String nomeArquivo = "danfes";
-			
-			if (listaNfesParaImpressaoDanfe.size() == 1){
-				
-				nomeArquivo = "danfe - " + listaNfesParaImpressaoDanfe.get(0).getNumero();
-			}
-			
-			escreverArquivoParaResponse(danfeBytes, nomeArquivo);
+			escreverArquivoParaResponse(danfeBytes, "danfes");
 			
 		} catch(IOException e) {
 			
@@ -382,12 +374,12 @@ public class PainelMonitorNFEController extends BaseController {
 	private String obterDescricaoStatusEmissaoNfe(String chave) {
 		
 		if(chave  == null) {
-			return "Aguardando envio";
+			return "";
 		}
 		
 		Status status = Status.valueOf(chave);
 		
-		return ((status == null) ? "Aguardando envio" : status.getDescricao());
+		return ((status == null) ? "" : status.getDescricao());
 		
 	}
 
