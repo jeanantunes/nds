@@ -286,7 +286,7 @@ public class NegociacaoDividaController extends BaseController {
 		}
 	}
 	
-	public void imprimirNegociacao() throws Exception{
+	public void imprimirNegociacao(String valorDividaSelecionada) throws Exception{
 		
 		Long idNegociacao = (Long) this.session.getAttribute(ID_ULTIMA_NEGOCIACAO);
 		
@@ -296,7 +296,7 @@ public class NegociacaoDividaController extends BaseController {
 					TipoMensagem.WARNING, "É necessário confirmar a negociação antes de imprimir.");
 		}
 		
-		byte[] arquivo = this.negociacaoDividaService.imprimirNegociacao(idNegociacao);
+		byte[] arquivo = this.negociacaoDividaService.imprimirNegociacao(idNegociacao, valorDividaSelecionada);
 		
 		this.httpServletResponse.setContentType("application/pdf");
 		this.httpServletResponse.setHeader("Content-Disposition", "attachment; filename=negociacao_"+idNegociacao+".pdf");
