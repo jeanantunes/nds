@@ -506,7 +506,7 @@ public class PainelMonitorNFEController extends BaseController {
 		comboTipoNfe.add(new ItemDTO(Processo.SOBRA_REPARTE.name(), Processo.SOBRA_REPARTE.getDescricao()));
 		comboTipoNfe.add(new ItemDTO(Processo.SOBRA_ENCALHE.name(), Processo.SOBRA_ENCALHE.getDescricao()));
 		comboTipoNfe.add(new ItemDTO(Processo.VENDA.name(), Processo.VENDA.getDescricao()));
-		comboTipoNfe.add(new ItemDTO(Processo.DEVOLUCAO_FORNECEDOR.name(), Processo.DEVOLUCAO_FORNECEDOR.getDescricao()));
+		comboTipoNfe.add(new ItemDTO(Processo.DEVOLUCAO_AO_FORNECEDOR.name(), Processo.DEVOLUCAO_AO_FORNECEDOR.getDescricao()));
 		comboTipoNfe.add(new ItemDTO(Processo.CALCELADA.name(), Processo.CALCELADA.getDescricao()));
 
 		result.include("comboTipoNfe", comboTipoNfe);

@@ -314,6 +314,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				var colunaExemplarNota = linha.find("td")[indexColunaExemplarNota];
 				var colunaTotalComDesconto = linha.find("td")[5];
 				var colunaDiferenca = linha.find("td")[8];
+				var colunaDataRecolhimento = linha.find("td")[7];
 				
 				var codigoProduto = $(colunaCodigoProduto, digitacaoContagemDevolucaoController.workspace).find("div").html();
 				
@@ -327,7 +328,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				
 				var qtdNota = $(colunaExemplarNota, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="qtdNota"]').val();
 				
-				var dataRecolhimentoDistribuidor = $(colunaExemplarNota, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="idDataRecolhimentoDist"]').val();
+				var dataRecolhimentoDistribuidor = $(colunaDataRecolhimento, digitacaoContagemDevolucaoController.workspace).find("div").find('input[name="idDataRecolhimentoDist"]').val();
 				
 				if (!$.trim(qtdNota)) {
 
@@ -337,7 +338,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				var digitacaoContagemDevolucao = {codigoProduto:codigoProduto,
 												  numeroEdicao:numeroEdicao,
 												  precoVenda:precoCapa,
-												  dataRecolhimentoDistribuido:dataRecolhimentoDistribuidor,
+												  dataRecolhimentoDistribuidor:dataRecolhimentoDistribuidor,
 												  qtdNota:qtdNota,
 												  valorTotalComDesconto:totalComDesconto};
 				

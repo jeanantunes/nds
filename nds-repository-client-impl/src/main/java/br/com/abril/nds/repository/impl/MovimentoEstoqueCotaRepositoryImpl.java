@@ -1037,8 +1037,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			sql.append(" 		case when desconto_logistica_prod.ID is not null then 	");	
 			sql.append(" 			 desconto_logistica_prod.PERCENTUAL_DESCONTO      	");	
 			sql.append("         else 0 end         	");		
-			sql.append("   end) as desconto           	");	
-			
+			sql.append("   end) as desconto,           	");
+			sql.append(" CE.DATA_RECOLHIMENTO as dataMovimento ");
 		}
 
 		sql.append(" FROM ");
@@ -1073,7 +1073,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append(" 	PROD.ID = PROD_FORNEC.PRODUTO_ID 			");
 		sql.append(" ) ");
 		
-		
+		sql.append(" INNER JOIN CHAMADA_ENCALHE CE ON (");
+		sql.append("	PROD_EDICAO.ID = CE.PRODUTO_EDICAO_ID ");
+		sql.append(" ) ");
 
 		if( filtro.getIdFornecedor() != null ) {
 			
@@ -1159,7 +1161,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 					.addScalar("numeroEdicao", StandardBasicTypes.LONG)
 					.addScalar("precoVenda", StandardBasicTypes.BIG_DECIMAL)
 					.addScalar("desconto", StandardBasicTypes.BIG_DECIMAL)
-					.addScalar("qtdDevolucao", StandardBasicTypes.BIG_INTEGER);
+					.addScalar("qtdDevolucao", StandardBasicTypes.BIG_INTEGER)
+					.addScalar("dataMovimento", StandardBasicTypes.DATE);
 			
 
 			if(indBuscaTotalParcial) {

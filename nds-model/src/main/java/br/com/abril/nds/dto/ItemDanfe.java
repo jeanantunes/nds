@@ -13,7 +13,7 @@ public class ItemDanfe{
 
 	private String CFOPProduto;
 
-	private Long unidadeProduto;
+	private String unidadeProduto;
 
 	private BigInteger quantidadeProduto;
 
@@ -34,6 +34,10 @@ public class ItemDanfe{
 	private BigDecimal aliquotaIPIProduto;
 
 	private BigDecimal valorIPIProduto;
+	
+	private Long produtoEdicao;
+	
+	private String infoComplementar;
 
 	public String getCodigoProduto() {
 		return codigoProduto;
@@ -67,11 +71,11 @@ public class ItemDanfe{
 		CFOPProduto = cFOPProduto;
 	}
 
-	public Long getUnidadeProduto() {
+	public String getUnidadeProduto() {
 		return unidadeProduto;
 	}
 
-	public void setUnidadeProduto(Long unidadeProduto) {
+	public void setUnidadeProduto(String unidadeProduto) {
 		this.unidadeProduto = unidadeProduto;
 	}
 	
@@ -153,5 +157,21 @@ public class ItemDanfe{
 
 	public void setValorIPIProduto(BigDecimal valorIPIProduto) {
 		this.valorIPIProduto = valorIPIProduto;
+	}
+
+	public Long getProdutoEdicao() {
+		return produtoEdicao;
+	}
+
+	public void setProdutoEdicao(Long produtoEdicao) {
+		this.produtoEdicao = produtoEdicao;
+	}
+
+	public String getInfoComplementar() {
+		return infoComplementar;
+	}
+
+	public void setInfoComplementar(String infoComplementar) {
+		this.infoComplementar = infoComplementar;
 	}
 }
