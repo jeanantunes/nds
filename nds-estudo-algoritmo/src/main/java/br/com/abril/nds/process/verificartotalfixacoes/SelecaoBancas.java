@@ -92,7 +92,6 @@ public class SelecaoBancas extends ProcessoAbstrato {
 		estudo.getCotasForaDaRegiao().add(cota);
 	    }
 	}
-	// removendo cotas suspensas e 
 	// fim da remocao
 	
 	tratarCotasComEnglobacao(cotasComHistoricoMap);
