@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URISyntaxException;
@@ -54,6 +56,7 @@ import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalSaidaRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.service.MonitorNFEService;
+import br.com.abril.nds.service.ParametrosDistribuidorService;
 
 @Service
 public class MonitorNFEServiceImpl implements MonitorNFEService {
@@ -66,6 +69,9 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 	
 	@Autowired
 	protected ItemNotaFiscalSaidaRepository itemNotaFiscalSaidaRepository;
+	
+	@Autowired
+	private ParametrosDistribuidorService parametrosDistribuidorService;
 	
 	@Transactional
 	public InfoNfeDTO pesquisarNFe(FiltroMonitorNfeDTO filtro) {
@@ -151,9 +157,6 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nota Fiscal não possui status correto para geração Depec");
 			
 		}
-		
-		
-		
 	}
 	
 	private String obterHoras(Date dataHoras) {
@@ -620,7 +623,6 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		String descricaoProduto 	= "";
 		String NCMProduto 			= "";
 		String CFOPProduto 			= "";
-		Long unidadeProduto 		= 0L;
 		BigInteger quantidadeProduto = BigInteger.ZERO;
 		BigDecimal valorUnitarioProduto = BigDecimal.ZERO;
 		BigDecimal valorTotalProduto = BigDecimal.ZERO;
@@ -642,9 +644,7 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			NCMProduto 			= produtoServico.getNcm().toString();
 			CFOPProduto 		= produtoServico.getCfop().toString();                            
 			
-			unidadeProduto = 	null; //(unidade == null || unidade.isEmpty()) ? 0L : new Long(unidade);
-			
-			quantidadeProduto 	= null; //TODO: produtoServico.getQuantidade();              
+			quantidadeProduto 	= produtoServico.getQuantidade();              
 			valorUnitarioProduto = produtoServico.getValorUnitario();
 			valorTotalProduto = produtoServico.getValorTotalBruto();              
 			
@@ -661,9 +661,10 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			
 			item.setCodigoProduto(codigoProduto);
 			item.setDescricaoProduto(descricaoProduto);
+			item.setProdutoEdicao(produtoServico.getProdutoEdicao().getNumeroEdicao());
 			item.setNCMProduto(NCMProduto);
 			item.setCFOPProduto(CFOPProduto);
-			item.setUnidadeProduto(unidadeProduto);
+			item.setUnidadeProduto(unidade);
 			item.setQuantidadeProduto(quantidadeProduto);
 			item.setValorUnitarioProduto(valorUnitarioProduto);
 			item.setValorTotalProduto(valorTotalProduto);
@@ -674,6 +675,8 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 			item.setValorICMSProduto(valorICMSProduto);
 			item.setAliquotaIPIProduto(aliquotaIPIProduto);
 			item.setValorIPIProduto(valorIPIProduto);
+			item.setInfoComplementar(
+				produtoServico.getProdutoServicoPK().getNotaFiscal().getInformacaoAdicional().getInformacoesComplementares());
 			
 			listaItemDanfe.add(item);
 			
@@ -705,6 +708,14 @@ public class MonitorNFEServiceImpl implements MonitorNFEService {
 		
 		parameters.put("SUBREPORT_DIR", diretorioReports.toURI().getPath());
 		parameters.put("IND_EMISSAO_DEPEC", indEmissaoDepec);
+		
+		InputStream inputStream = this.parametrosDistribuidorService.getLogotipoDistribuidor();
+		
+		if(inputStream == null) {
+			inputStream = new ByteArrayInputStream(new byte[0]);
+		}
+		
+		parameters.put("LOGO_DISTRIBUIDOR", inputStream);
 		
 		return  JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 	}

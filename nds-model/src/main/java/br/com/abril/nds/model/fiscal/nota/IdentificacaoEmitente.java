@@ -14,11 +14,8 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.util.TipoSecao;
-import br.com.abril.nds.util.export.fiscal.nota.NFEConditions;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
-import br.com.abril.nds.util.export.fiscal.nota.NFEWhen;
-import br.com.abril.nds.util.export.fiscal.nota.NFEWhens;
 
 @Embeddable
 public class IdentificacaoEmitente implements Serializable {
@@ -58,10 +55,6 @@ public class IdentificacaoEmitente implements Serializable {
 	 * CNPJ CPF
 	 */
 	@Column(name="DOCUMENTO_EMITENTE", nullable=false, length=14)
-	@NFEWhens(value = {
-			@NFEWhen(condition = NFEConditions.CPF, export = @NFEExport(secao = TipoSecao.C02a, posicao = 0)),
-			@NFEWhen(condition = NFEConditions.CNPJ, export = @NFEExport(secao = TipoSecao.C02, posicao = 0))
-	})
 	private String documento;
 	
 	/**
