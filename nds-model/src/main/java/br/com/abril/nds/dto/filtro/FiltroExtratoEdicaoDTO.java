@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.List;
 
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -42,6 +43,8 @@ public class FiltroExtratoEdicaoDTO implements Serializable {
 	
 	private PaginacaoVO paginacao;
 	
+	
+	private ProdutoEdicao produtoEdicao;
 	/**
 	 * Construtor padrão.
 	 */
@@ -140,5 +143,19 @@ public class FiltroExtratoEdicaoDTO implements Serializable {
 	 */
 	public void setGruposExcluidos(List<GrupoMovimentoEstoque> gruposExcluidos) {
 		this.gruposExcluidos = gruposExcluidos;
+	}
+
+	/**
+	 * @return the produtoEdicao
+	 */
+	public ProdutoEdicao getProdutoEdicao() {
+		return produtoEdicao;
+	}
+
+	/**
+	 * @param produtoEdicao the produtoEdicao to set
+	 */
+	public void setProdutoEdicao(ProdutoEdicao produtoEdicao) {
+		this.produtoEdicao = produtoEdicao;
 	}
 }

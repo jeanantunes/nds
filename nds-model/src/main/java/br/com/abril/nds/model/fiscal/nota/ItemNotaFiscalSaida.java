@@ -20,7 +20,9 @@ public class ItemNotaFiscalSaida {
 	
 	private String cstICMS;
 	
-	private List<MovimentoEstoqueCota> listaMovimentoEstoqueCota; 
+	private List<MovimentoEstoqueCota> listaMovimentoEstoqueCota;
+	
+	private String infoComplementar;
 	
 	public ItemNotaFiscalSaida() {
 	}
@@ -133,6 +135,14 @@ public class ItemNotaFiscalSaida {
 		if (idProdutoEdicao != other.idProdutoEdicao)
 			return false;
 		return true;
+	}
+
+	public String getInfoComplementar() {
+		return infoComplementar;
+	}
+
+	public void setInfoComplementar(String infoComplementar) {
+		this.infoComplementar = infoComplementar;
 	}
 	
 }
