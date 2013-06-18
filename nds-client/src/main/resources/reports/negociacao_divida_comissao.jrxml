@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="negociacao_divida_comissao" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="2a4f98e6-e0f0-4cc1-b099-e82e926c0cdf">
 	<property name="ireport.zoom" value="1.2100000000000024"/>
-	<property name="ireport.x" value="13"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<parameter name="LOGO_DISTRIBUIDOR" class="java.io.InputStream"/>
+	<parameter name="NOME_DISTRIBUIDOR" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -61,14 +62,13 @@
 					<pen lineWidth="0.5"/>
 				</graphicElement>
 			</rectangle>
-			<staticText>
-				<reportElement uuid="d8ab790c-100e-4a2e-9aad-ee45996bfaa8" x="131" y="18" width="164" height="38"/>
-				<textElement textAlignment="Center">
+			<textField isBlankWhenNull="true">
+				<reportElement uuid="46288c4f-7fed-492b-b204-e2a8b8b5aa90" x="131" y="18" width="164" height="38"/>
+				<textElement textAlignment="Center" markup="none">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[TREELOG S/A
-LOGÍSTICA E DISTRIBUIÇÃO]]></text>
-			</staticText>
+				<textFieldExpression><![CDATA[$P{NOME_DISTRIBUIDOR}]]></textFieldExpression>
+			</textField>
 			<staticText>
 				<reportElement uuid="47bb5779-5420-4516-8414-c3876c5ff624" x="331" y="15" width="204" height="41"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -109,7 +109,7 @@ LOGÍSTICA E DISTRIBUIÇÃO]]></text>
 				<text><![CDATA[Dívida Selecionada R$:]]></text>
 			</staticText>
 			<staticText>
-				<reportElement uuid="1ab9787e-ca3a-4cd8-b679-512240745607" x="3" y="20" width="106" height="20"/>
+				<reportElement uuid="1ab9787e-ca3a-4cd8-b679-512240745607" x="3" y="20" width="165" height="20"/>
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>

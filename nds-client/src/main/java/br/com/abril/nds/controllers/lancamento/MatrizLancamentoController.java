@@ -156,9 +156,38 @@ public class MatrizLancamentoController extends BaseController {
 	}
 	
 	@Post
-	public void obterGridMatrizLancamento(String sortorder, String sortname, int page, int rp) {
+	public void obterGridMatrizLancamento(String dataLancamentoFormatada, String sortorder, String sortname, int page, int rp) {
 		
-		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = this.getProdutoLancamentoDTOFromMatrizSessao();
+		BalanceamentoLancamentoDTO balanceamentoLancamento = 
+			(BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
+	
+		if (balanceamentoLancamento == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
+		}
+		
+		Date data = null;
+		
+ 		if (dataLancamentoFormatada != null && !dataLancamentoFormatada.trim().isEmpty()) {
+			
+			data = DateUtil.parseDataPTBR(dataLancamentoFormatada);
+		}
+		
+		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = new ArrayList<>();
+		
+		if (data != null) {
+			
+			listaProdutoBalanceamento =
+				balanceamentoLancamento.getMatrizLancamento().get(data);
+			
+		} else {
+			
+			for (Map.Entry<Date,List<ProdutoLancamentoDTO>> entry :
+					balanceamentoLancamento.getMatrizLancamento().entrySet()) {
+			
+				listaProdutoBalanceamento.addAll(entry.getValue());
+			}
+		}
 		
 		FiltroLancamentoDTO filtro = obterFiltroSessao();
 		
@@ -709,11 +738,7 @@ public class MatrizLancamentoController extends BaseController {
 		
 		tm.setRows(cells);
 		
-		if((paginacao.getPaginaAtual() * paginacao.getQtdResultadosPorPagina()) > filtro.getTotalRegistrosEncontrados()) {
-			tm.setPage(1);
-		} else {
-			tm.setPage(paginacao.getPaginaAtual());
-		}		
+		tm.setPage(paginacao.getPaginaAtual());
 		
 		tm.setTotal(filtro.getTotalRegistrosEncontrados());
 

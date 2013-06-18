@@ -10,11 +10,8 @@ import javax.persistence.OneToOne;
 
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.util.TipoSecao;
-import br.com.abril.nds.util.export.fiscal.nota.NFEConditions;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExport;
 import br.com.abril.nds.util.export.fiscal.nota.NFEExportType;
-import br.com.abril.nds.util.export.fiscal.nota.NFEWhen;
-import br.com.abril.nds.util.export.fiscal.nota.NFEWhens;
 
 @Embeddable
 public class InformacaoTransporte implements Serializable {
@@ -36,10 +33,6 @@ public class InformacaoTransporte implements Serializable {
 	 * CNPJ ou CPF
 	 */
 	@Column(name="DOCUMENTO_TRANS", nullable=true, length=14)
-	@NFEWhens(value = {
-			@NFEWhen(condition = NFEConditions.CNPJ, export = @NFEExport(secao = TipoSecao.X04, posicao = 0, tamanho = 14)),
-			@NFEWhen(condition = NFEConditions.CPF, export = @NFEExport(secao = TipoSecao.X05, posicao = 0, tamanho = 11))
-	})
 	private String documento;	
 	
 	/**

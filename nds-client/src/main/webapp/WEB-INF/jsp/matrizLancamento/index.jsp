@@ -131,6 +131,12 @@ var lancamentosSelecionados = [];
 								<img src="<c:url value='images/ico_salvar.gif'/>"  hspace="5" border="0" />
 							</a>
 						</span>
+						
+						<span class="bt_novos" style="display: none;">
+							<a id="linkMatrizFornecedor" title="Matriz Fornecedor" href="javascript:;" onclick="balanceamentoLancamento.carregarGrid(null);">
+								<img src="<c:url value='images/ico_detalhes.png'/>"  hspace="5" border="0" />
+							</a>
+						</span>
 			  			
 			  			 <span class="bt_arq">
 							<!-- ARQUIVO -->

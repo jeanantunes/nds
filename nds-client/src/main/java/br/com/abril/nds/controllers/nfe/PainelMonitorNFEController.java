@@ -267,6 +267,7 @@ public class PainelMonitorNFEController extends BaseController {
 	}
 	
 
+	@SuppressWarnings("unchecked")
 	@Rules(Permissao.ROLE_NFE_PAINEL_MONITOR_NFE_ALTERACAO)
 	public void imprimirDanfes(boolean indEmissaoDepec) {
 		
@@ -278,7 +279,14 @@ public class PainelMonitorNFEController extends BaseController {
 		
 		try {
 			
-			escreverArquivoParaResponse(danfeBytes, "danfes");
+			String nomeArquivo = "danfes";
+			
+			if (listaNfesParaImpressaoDanfe.size() == 1){
+				
+				nomeArquivo = "danfe - " + listaNfesParaImpressaoDanfe.get(0).getNumero();
+			}
+			
+			escreverArquivoParaResponse(danfeBytes, nomeArquivo);
 			
 		} catch(IOException e) {
 			
@@ -374,12 +382,12 @@ public class PainelMonitorNFEController extends BaseController {
 	private String obterDescricaoStatusEmissaoNfe(String chave) {
 		
 		if(chave  == null) {
-			return "";
+			return "Aguardando envio";
 		}
 		
 		Status status = Status.valueOf(chave);
 		
-		return ((status == null) ? "" : status.getDescricao());
+		return ((status == null) ? "Aguardando envio" : status.getDescricao());
 		
 	}
 
@@ -498,7 +506,7 @@ public class PainelMonitorNFEController extends BaseController {
 		comboTipoNfe.add(new ItemDTO(Processo.SOBRA_REPARTE.name(), Processo.SOBRA_REPARTE.getDescricao()));
 		comboTipoNfe.add(new ItemDTO(Processo.SOBRA_ENCALHE.name(), Processo.SOBRA_ENCALHE.getDescricao()));
 		comboTipoNfe.add(new ItemDTO(Processo.VENDA.name(), Processo.VENDA.getDescricao()));
-		comboTipoNfe.add(new ItemDTO(Processo.DEVOLUCAO_FORNECEDOR.name(), Processo.DEVOLUCAO_FORNECEDOR.getDescricao()));
+		comboTipoNfe.add(new ItemDTO(Processo.DEVOLUCAO_AO_FORNECEDOR.name(), Processo.DEVOLUCAO_AO_FORNECEDOR.getDescricao()));
 		comboTipoNfe.add(new ItemDTO(Processo.CALCELADA.name(), Processo.CALCELADA.getDescricao()));
 
 		result.include("comboTipoNfe", comboTipoNfe);

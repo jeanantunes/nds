@@ -2,9 +2,6 @@ package br.com.abril.nds.util.export.fiscal.nota;
 
 import java.util.List;
 
-import br.com.abril.nds.model.fiscal.nota.COFINSST;
-import br.com.abril.nds.model.fiscal.nota.PISST;
-import br.com.abril.nds.util.export.fiscal.nota.condition.CNPJCondition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.COFINSNTCondition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.COFINSOutrasAliqCondition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.COFINSOutrasCondition;
@@ -12,7 +9,6 @@ import br.com.abril.nds.util.export.fiscal.nota.condition.COFINSOutrasQtdeCondit
 import br.com.abril.nds.util.export.fiscal.nota.condition.COFINSSTCondition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.COFINSTAliqCondition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.COFINSTQtdeCondition;
-import br.com.abril.nds.util.export.fiscal.nota.condition.CPFCondition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.Condition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.ICMS00Condition;
 import br.com.abril.nds.util.export.fiscal.nota.condition.ICMS10Condition;
@@ -45,8 +41,6 @@ import br.com.abril.nds.util.export.fiscal.nota.condition.PISTQtdeCondition;
 
 public enum NFEConditions {	
 	
-	CPF(new CPFCondition()), 
-	CNPJ(new CNPJCondition()),
 	IDENTIFICACAO_EMITENTE(new IdentificacaoEmitenteCondition()),
 	IDENTIFICACAO_DESTINATARIO(new IdentificacaoDestinatarioCondition()),
 	ICMS_00(new ICMS00Condition()),

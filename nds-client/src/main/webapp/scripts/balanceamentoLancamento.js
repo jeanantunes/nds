@@ -27,6 +27,8 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		$("input[name='checkgroup_menu']:checked", _workspace).each(function(i) {
 			data.push({name:'idsFornecedores', value: $(this).val()});
 		});
+		
+		$(".grids", _workspace).hide();
 				
 		$.postJSON(
 			pathTela + "/matrizLancamento/obterMatrizLancamento", 
@@ -38,14 +40,10 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				}
 				
 				T.popularResumoPeriodo(result);
-				
-				T.carregarGrid();
 			},
 			function() {
 
 				$("#resumoPeriodo", _workspace).hide();
-				
-				$(".grids", _workspace).hide();
 				
 				$(".areaBts").find(".bt_novos", _workspace).hide();				
 			}
@@ -69,7 +67,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		);
 	},
 			
-	this.carregarGrid = function() {		
+	this.carregarGrid = function(dataLancamento) {
 		
 		T.mostrarGridEBotoesAcao();
 		
@@ -86,7 +84,11 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			autoload: false,
 			singleSelect: true,
 			preProcess: T.processaRetornoPesquisa,
-			onSuccess: T.onSuccessPesquisa
+			onSuccess: T.onSuccessPesquisa,
+			params: [
+		         {name:'dataLancamentoFormatada', value: dataLancamento}
+		    ],
+		    newp: 1,
 		});
 		
 		$(".lancamentosProgramadosGrid", _workspace).flexReload();
@@ -121,7 +123,10 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		$.each(data.listaResumoPeriodoBalanceamento, function(index, resumo){
 			  rows+='<td>';
 			  rows+='<div class="box_resumo">';
-			  rows+='<label>'+ resumo.dataFormatada +'</label>';
+			  rows+='<label>'+ resumo.dataFormatada;
+			  rows+= '<a href="javascript:;" onclick="' + T.instancia + '.carregarGrid(' + "'" + resumo.dataFormatada + "'" + ');" style="float: right;">';
+			  rows+= '<img src="' + contextPath + '/images/ico_detalhes.png" width="15" height="15" border="0" title="Visualizar" />';
+			  rows+= '</a></label>';
 			  rows+='<span class="span_1">Qtde. Títulos:</span>';	 
 			  rows+='<span class="span_2">'+ resumo.qtdeTitulos +'</span>';
 			  
