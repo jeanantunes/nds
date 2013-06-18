@@ -366,11 +366,11 @@ public class ParametroCobrancaCotaController extends BaseController {
 	public void postarParametroCobranca(ParametroCobrancaCotaDTO parametroCobranca){	
 
 
-		if(parametroCobranca.getTipoCota()==null){
+		if(parametroCobranca.getTipoCota() == null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha o Tipo da Cota.");
 		}
 
-		if(parametroCobranca.getIdFornecedor()==null){
+		if(parametroCobranca.getIdFornecedor() == null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha um Fornecedor Padrão para o Financeiro da Cota.");
 		}
 		

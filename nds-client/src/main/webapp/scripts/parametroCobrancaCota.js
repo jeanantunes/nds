@@ -58,7 +58,13 @@ var parametroCobrancaCotaController = $.extend(true, {
 		});
 
 		$("#fatorVencimento", this.workspace).numeric();
-		$("#valorMinimo", this.workspace).numeric();
+
+		$("#valorMinimo", this.workspace).priceFormat({
+			centsSeparator: ',',
+		    thousandsSeparator: '.',
+		    centsLimit:2	
+		});
+		
 		$("#qtdDividasAberto", this.workspace).numeric();
 		$("#vrDividasAberto", this.workspace).numeric();
 		
@@ -240,6 +246,10 @@ var parametroCobrancaCotaController = $.extend(true, {
 		}	
 		
 		$.each(resultado.rows, function(index, row) {
+			
+			if(row.cell.parametroDistribuidor)
+				parametroCobrancaCotaController.idFormaCobrancaDistribuidor = row.cell.idFormaCobranca;
+			
             var title = parametroCobrancaCotaController.isReadOnly() ? 'Visualizar Forma Pagamento' : 'Editar Forma Pagamento';
 
             var linkEditar = '<a href="javascript:;" onclick="parametroCobrancaCotaController.popup_editar_unificacao(' + row.cell.idFormaCobranca + ');" style="cursor:pointer">' +
@@ -461,25 +471,25 @@ var parametroCobrancaCotaController = $.extend(true, {
 		}
 		var contrato = $("#contrato", this.workspace).val();
 	 
-		var valorMinimo = $("#valorMinimo", this.workspace).val();
+		var valorMinimo = priceToFloat( $("#valorMinimo", this.workspace).val() );
 		var qtdDividasAberto = $("#qtdDividasAberto", this.workspace).val();
 		var vrDividasAberto = $("#vrDividasAberto", this.workspace).val();
 		var tipoCota = $("#tipoCota", this.workspace).val();
 		var fornecedorPadrao = $("#fornecedorPadrao", this.workspace).val();
 		var unificaCobranca = $("#unificaCobranca", this.workspace).val()==0?1:0;
 		
-		var params = {"parametroCobranca.idParametroCobranca":idParametroCobranca,
-				"parametroCobranca.idCota":idCota,
-				"parametroCobranca.numCota":numCota,   
-				"parametroCobranca.fatorVencimento":fatorVencimento,   
-				"parametroCobranca.sugereSuspensao":sugereSuspensao,   
-				"parametroCobranca.contrato":contrato,         
-				"parametroCobranca.valorMinimo":valorMinimo,   
-				"parametroCobranca.qtdDividasAberto":qtdDividasAberto,  
-				"parametroCobranca.vrDividasAberto":vrDividasAberto,
-				"parametroCobranca.tipoCota":tipoCota,
-				"parametroCobranca.idFornecedor":fornecedorPadrao,
-				"parametroCobranca.unificaCobranca":unificaCobranca};
+		var params = {"parametroCobranca.idParametroCobranca": idParametroCobranca,
+				"parametroCobranca.idCota": idCota,
+				"parametroCobranca.numCota": numCota,   
+				"parametroCobranca.fatorVencimento": fatorVencimento,   
+				"parametroCobranca.sugereSuspensao": sugereSuspensao,   
+				"parametroCobranca.contrato": contrato,         
+				"parametroCobranca.valorMinimo": valorMinimo,   
+				"parametroCobranca.qtdDividasAberto": qtdDividasAberto,  
+				"parametroCobranca.vrDividasAberto": vrDividasAberto,
+				"parametroCobranca.tipoCota": tipoCota,
+				"parametroCobranca.idFornecedor": fornecedorPadrao,
+				"parametroCobranca.unificaCobranca": unificaCobranca};
 		
 		return params;
 	},
@@ -736,13 +746,13 @@ var parametroCobrancaCotaController = $.extend(true, {
 		
 		$("#recebeEmail", this.workspace).attr("checked", resultado.recebeEmail);
 
-        $("#PS", this.workspace).attr("checked", resultado.segunda);
-		$("#PT", this.workspace).attr("checked", resultado.terca);
-		$("#PQ", this.workspace).attr("checked", resultado.quarta);
-		$("#PQu", this.workspace).attr("checked", resultado.quinta);
-		$("#PSex", this.workspace).attr("checked", resultado.sexta);
-		$("#PSab", this.workspace).attr("checked", resultado.sabado);
-		$("#PDom", this.workspace).attr("checked", resultado.domingo);
+        $("#PCC-PS", this.workspace).attr("checked", resultado.segunda);
+		$("#PCC-PT", this.workspace).attr("checked", resultado.terca);
+		$("#PCC-PQ", this.workspace).attr("checked", resultado.quarta);
+		$("#PCC-PQu", this.workspace).attr("checked", resultado.quinta);
+		$("#PCC-PSex", this.workspace).attr("checked", resultado.sexta);
+		$("#PCC-PSab", this.workspace).attr("checked", resultado.sabado);
+		$("#PCC-PDom", this.workspace).attr("checked", resultado.domingo);
 
 		parametroCobrancaCotaController.opcaoPagto(resultado.tipoCobranca);
 		parametroCobrancaCotaController.opcaoTipoFormaCobranca(resultado.tipoFormaCobranca);

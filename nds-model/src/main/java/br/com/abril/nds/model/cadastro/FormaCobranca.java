@@ -105,8 +105,6 @@ public class FormaCobranca implements Serializable {
 	@Column(name = "FATOR_VENCIMENTO")
 	private Integer fatorVencimento;
 
-	
-	
 	@ElementCollection(fetch = FetchType.EAGER)  
 	@OrderBy
 	private List<Integer> diasDoMes; 
@@ -239,7 +237,6 @@ public class FormaCobranca implements Serializable {
 		this.parametroCobrancaCota = parametroCobrancaCota;
 	}
 
-		
 	/**
 	 * @return the fornecedorPadrao
 	 */

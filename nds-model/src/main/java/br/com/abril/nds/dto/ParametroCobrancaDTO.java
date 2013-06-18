@@ -54,13 +54,12 @@ public class ParametroCobrancaDTO {
 	
 	private TipoCota tipoCota;
 
-	
 	public ParametroCobrancaDTO() {
 		
 	}
 
 
-	public ParametroCobrancaDTO(Long idPolitica, Long idBanco,
+	public ParametroCobrancaDTO(Long idPolitica, Long idBanco, Long idFornecedorPadrao,
 			BigDecimal valorMinimo, BigDecimal taxaMulta,
 			BigDecimal valorMulta, BigDecimal taxaJuros,
 			TipoCobranca tipoCobranca, FormaEmissao formaEmissao,
@@ -73,6 +72,7 @@ public class ParametroCobrancaDTO {
 		super();
 		this.idPolitica = idPolitica;
 		this.idBanco = idBanco;
+		this.idFornecedorPadrao = idFornecedorPadrao;
 		this.valorMinimo = valorMinimo;
 		this.taxaMulta = taxaMulta;
 		this.valorMulta = valorMulta;
@@ -121,7 +121,6 @@ public class ParametroCobrancaDTO {
 	public BigDecimal getValorMinimo() {
 		return valorMinimo;
 	}
-
 
 	public void setValorMinimo(BigDecimal valorMinimo) {
 		this.valorMinimo = valorMinimo;
@@ -361,7 +360,6 @@ public class ParametroCobrancaDTO {
 	public void setFormaCobrancaBoleto(FormaCobrancaBoleto formaCobrancaBoleto) {
 		this.formaCobrancaBoleto = formaCobrancaBoleto;
 	}
-
 
 	public boolean isCobradoPeloBackoffice() {
 		return cobradoPeloBackoffice;
