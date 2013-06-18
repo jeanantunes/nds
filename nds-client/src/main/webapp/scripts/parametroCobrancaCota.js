@@ -58,13 +58,19 @@ var parametroCobrancaCotaController = $.extend(true, {
 		});
 
 		$("#fatorVencimento", this.workspace).numeric();
+<<<<<<< HEAD
 
+=======
+>>>>>>> trac-591
 		$("#valorMinimo", this.workspace).priceFormat({
 			centsSeparator: ',',
 		    thousandsSeparator: '.',
 		    centsLimit:2	
 		});
+<<<<<<< HEAD
 		
+=======
+>>>>>>> trac-591
 		$("#qtdDividasAberto", this.workspace).numeric();
 		$("#vrDividasAberto", this.workspace).numeric();
 		
@@ -471,7 +477,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 		}
 		var contrato = $("#contrato", this.workspace).val();
 	 
-		var valorMinimo = priceToFloat( $("#valorMinimo", this.workspace).val() );
+		var valorMinimo = priceToFloat($("#valorMinimo", this.workspace).val());
+
 		var qtdDividasAberto = $("#qtdDividasAberto", this.workspace).val();
 		var vrDividasAberto = $("#vrDividasAberto", this.workspace).val();
 		var tipoCota = $("#tipoCota", this.workspace).val();
@@ -827,6 +834,12 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var diaDoMes            = $("#diaDoMesCota", this.workspace).val();
 		var primeiroDiaQuinzenal= $("#primeiroDiaQuinzenalParametroCobrancaCota", this.workspace).val();
 		var segundoDiaQuinzenal = $("#segundoDiaQuinzenalParametroCobrancaCota", this.workspace).val();
+		
+		var valorMinimo			= priceToFloat($("#valorMinimo", this.workspace).val());
+		var fatorVencimento		= $("#fatorVencimento", this.workspace).val();
+		var tipoCota 			= $("#tipoCota", this.workspace).val();
+		var fornecedorPadrao 	= $("#fornecedorPadrao", this.workspace).val();
+		var unificaCobranca 	= $("#unificaCobranca", this.workspace).val()==0?1:0;
 
 		$("#recebeEmail", this.workspace).val(0);
 		//if (document.formularioDadosBoleto.recebeEmail.checked){
@@ -883,33 +896,35 @@ var parametroCobrancaCotaController = $.extend(true, {
 			$("#PCC-PDom", this.workspace).val(1);
 		}
 		var domingo  = $("#PCC-PDom", this.workspace).val();
-		
-		if($("#_idParametroCobranca", this.workspace).val() == "") {
-			
-		}
-		
-		var params =  {"formaCobranca.idCota":idCota,
-						 "formaCobranca.idParametroCobranca":idParametroCobranca,
-						 "formaCobranca.tipoCobranca":tipoCobranca, 
-						 "formaCobranca.idBanco":idBanco,           
-						 "formaCobranca.recebeEmail":recebeEmail,   
-						 "formaCobranca.numBanco":numBanco,       
-						 "formaCobranca.nomeBanco":nomeBanco,         
-						 "formaCobranca.agencia":agencia,           
-						 "formaCobranca.agenciaDigito":agenciaDigito,    
-						 "formaCobranca.conta":conta,             
-						 "formaCobranca.contaDigito":contaDigito,       
-						 "formaCobranca.domingo":domingo,   
-						 "formaCobranca.segunda":segunda,           
-						 "formaCobranca.terca":terca,           
-						 "formaCobranca.quarta":quarta,           
-						 "formaCobranca.quinta":quinta,           
-						 "formaCobranca.sexta":sexta,           
-						 "formaCobranca.sabado":sabado,
-						 "formaCobranca.diaDoMes":diaDoMes,
-						 "formaCobranca.primeiroDiaQuinzenal":primeiroDiaQuinzenal,
-						 "formaCobranca.segundoDiaQuinzenal":segundoDiaQuinzenal,
-						 "tipoFormaCobranca":tipoFormaCobranca};
+				
+		var params =  {"formaCobranca.idCota": idCota,
+						 "formaCobranca.idParametroCobranca": idParametroCobranca,
+						 "formaCobranca.tipoCobranca": tipoCobranca, 
+						 "formaCobranca.idBanco": idBanco,           
+						 "formaCobranca.recebeEmail": recebeEmail,   
+						 "formaCobranca.numBanco": numBanco,       
+						 "formaCobranca.nomeBanco": nomeBanco,         
+						 "formaCobranca.agencia": agencia,           
+						 "formaCobranca.agenciaDigito": agenciaDigito,    
+						 "formaCobranca.conta": conta,             
+						 "formaCobranca.contaDigito": contaDigito,       
+						 "formaCobranca.domingo": domingo,   
+						 "formaCobranca.segunda": segunda,           
+						 "formaCobranca.terca": terca,           
+						 "formaCobranca.quarta": quarta,           
+						 "formaCobranca.quinta": quinta,           
+						 "formaCobranca.sexta": sexta,           
+						 "formaCobranca.sabado": sabado,
+						 "formaCobranca.diaDoMes": diaDoMes,
+						 "formaCobranca.primeiroDiaQuinzenal": primeiroDiaQuinzenal,
+						 "formaCobranca.segundoDiaQuinzenal": segundoDiaQuinzenal,
+						 "tipoFormaCobranca": tipoFormaCobranca,
+						 "parametroCobranca.idCota": idCota,
+						 "parametroCobranca.valorMinimo": valorMinimo,
+						 "parametroCobranca.fatorVencimento": fatorVencimento,
+						 "parametroCobranca.tipoCota": tipoCota,
+						 "parametroCobranca.idFornecedor": fornecedorPadrao,
+						 "parametroCobranca.unificaCobranca": unificaCobranca};
 		
 		params = serializeArrayToPost('listaIdsFornecedores',parametroCobrancaCotaController.obterFornecedoresMarcados(), params );
  

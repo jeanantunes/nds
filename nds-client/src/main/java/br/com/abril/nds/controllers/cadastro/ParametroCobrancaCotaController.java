@@ -365,14 +365,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 	@Path("/postarParametroCobranca")
 	public void postarParametroCobranca(ParametroCobrancaCotaDTO parametroCobranca){	
 
-
-		if(parametroCobranca.getTipoCota() == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha o Tipo da Cota.");
-		}
-
-		if(parametroCobranca.getIdFornecedor() == null) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha um Fornecedor Padrão para o Financeiro da Cota.");
-		}
+		validarParametroCobrancaCota(parametroCobranca);
 		
 		if (this.parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(parametroCobranca.getIdCota()) == 0) {
 			// A cota sempre terá uma forma de cobrança a forma de cobrança principal do Distribuidor
@@ -384,6 +377,18 @@ public class ParametroCobrancaCotaController extends BaseController {
 		
 		this.salvarContrato();
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parametros de Cobrança Cadastrados."),Constantes.PARAM_MSGS).recursive().serialize();
+	}
+
+
+	private void validarParametroCobrancaCota(ParametroCobrancaCotaDTO parametroCobranca) {
+		
+		if(parametroCobranca.getTipoCota() == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha o Tipo da Cota.");
+		}
+
+		if(parametroCobranca.getIdFornecedor() == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha um Fornecedor Padrão para o Financeiro da Cota.");
+		}
 	}
 
 	/**
@@ -495,6 +500,16 @@ public class ParametroCobrancaCotaController extends BaseController {
 			formaCobranca.setParametroDistribuidor(true);
 		}
 		
+		if(parametroCobranca != null 
+				&& parametroCobranca.getIdCota() != null
+				&& parametroCobranca.getValorMinimo() != null
+				&& parametroCobranca.getIdFornecedor() != null) {
+			
+			validarParametroCobrancaCota(parametroCobranca);
+			
+			parametroCobrancaCotaService.postarParametroCobranca(parametroCobranca);
+		}
+			
 		this.parametroCobrancaCotaService.postarFormaCobranca(formaCobranca);	
 
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Forma de Cobrança Cadastrada."),Constantes.PARAM_MSGS).recursive().serialize();

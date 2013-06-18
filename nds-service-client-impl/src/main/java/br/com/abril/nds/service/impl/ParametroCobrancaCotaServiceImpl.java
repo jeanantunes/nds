@@ -457,7 +457,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		}
 	
 		//////////
-		if (formaCobrancaDTO.getIdFormaCobranca()!=null) {
+		if (formaCobrancaDTO.getIdFormaCobranca() != null && !formaCobrancaDTO.isParametroDistribuidor()) {
 			formaCobranca = this.formaCobrancaRepository.buscarPorId(formaCobrancaDTO.getIdFormaCobranca());
 		}
 		/////////
@@ -655,6 +655,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				parametroCobranca.setPoliticaSuspensao(null);
 				
 				parametroCobrancaCotaRepository.adicionar(parametroCobranca);
+				formaCobranca.setPoliticaCobranca(null);
 				formaCobranca.setParametroCobrancaCota(parametroCobranca);
 				
 	    	} else {
