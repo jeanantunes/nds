@@ -58,19 +58,11 @@ var parametroCobrancaCotaController = $.extend(true, {
 		});
 
 		$("#fatorVencimento", this.workspace).numeric();
-<<<<<<< HEAD
-
-=======
->>>>>>> trac-591
 		$("#valorMinimo", this.workspace).priceFormat({
 			centsSeparator: ',',
 		    thousandsSeparator: '.',
 		    centsLimit:2	
 		});
-<<<<<<< HEAD
-		
-=======
->>>>>>> trac-591
 		$("#qtdDividasAberto", this.workspace).numeric();
 		$("#vrDividasAberto", this.workspace).numeric();
 		
@@ -433,7 +425,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 
 		parametroCobrancaCotaController.exibe_form_contrato(resultado.contrato);
 
-		$("#valorMinimo", this.workspace).val(resultado.valorMinimo);
+		$("#valorMinimo", this.workspace).val( floatToPrice( resultado.valorMinimo ) );
 		$("#qtdDividasAberto", this.workspace).val(resultado.qtdDividasAberto);
 		$("#vrDividasAberto", this.workspace).val(resultado.vrDividasAberto);
 		$("#tipoCota", this.workspace).val(resultado.tipoCota);
