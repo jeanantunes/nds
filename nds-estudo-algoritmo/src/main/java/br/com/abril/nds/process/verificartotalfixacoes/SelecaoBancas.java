@@ -281,6 +281,10 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	    cota.setVendaMediaNominal(totalVenda.divide(totalEdicoes, 2, BigDecimal.ROUND_HALF_UP));
 	    cota.setVendaMedia(cota.getVendaMediaNominal());
 	}
+	if (estudo.getProdutoEdicaoEstudo().getPeriodo() > 1 && !cota.isRecebeParcial() && !cota.isExcecaoParcial()) {
+	    cota.setReparteCalculado(BigInteger.ZERO);
+	    cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
+	}
 	if (!cota.isMix() && cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)) {
 	    cota.setClassificacao(ClassificacaoCota.BancaMixSemDeterminadaPublicacao);
 	}
@@ -302,10 +306,6 @@ public class SelecaoBancas extends ProcessoAbstrato {
 			ClassificacaoCota.BancaSemClassificacaoDaPublicacao)) {
 	    cota.setClassificacao(ClassificacaoCota.ReparteFixado);
 	    cota.setReparteCalculado(cota.getReparteFixado(), estudo);
-	}
-	if (estudo.getProdutoEdicaoEstudo().getPeriodo() > 1 && !cota.isRecebeParcial() && !cota.isExcecaoParcial()) {
-	    cota.setReparteCalculado(BigInteger.ZERO);
-	    cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
 	}
     }
 
