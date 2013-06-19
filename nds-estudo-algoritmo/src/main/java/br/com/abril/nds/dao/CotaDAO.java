@@ -176,6 +176,7 @@ public class CotaDAO {
 	Map<String, Object> params = new HashMap<>();
 	params.put("tipo_segmento_produto_id", estudo.getProdutoEdicaoEstudo().getTipoSegmentoProduto().getId());
 	params.put("produto_id", estudo.getProdutoEdicaoEstudo().getProduto().getId());
+	params.put("data_lcto", estudo.getProdutoEdicaoEstudo().getDataLancamento());
 	params.put("numero_edicao", estudo.getProdutoEdicaoEstudo().getNumeroEdicao());
 	List<CotaEstudo> retorno = jdbcTemplate.query(queryCotas, params, new RowMapper<CotaEstudo>() {
 
