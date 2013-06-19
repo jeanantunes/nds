@@ -69,11 +69,12 @@ public class Bonificacoes extends ProcessoAbstrato {
 
 			if (indiceBonificacao.compareTo(cota.getIndiceTratamentoRegional()) > 0) {
 			    cota.setIndiceTratamentoRegional(indiceBonificacao);
-                cota.setClassificacao(ClassificacaoCota.BonificacaoParaCotas);
+			    cota.setClassificacao(ClassificacaoCota.BonificacaoParaCotas);
 			}
 
 			if (reparteMinimo.compareTo(cota.getReparteMinimoFinal()) > 0) {
 			    cota.setReparteMinimoFinal(reparteMinimo);
+			    cota.setClassificacao(ClassificacaoCota.BonificacaoParaCotas);
 			}
 		    }
 		}
