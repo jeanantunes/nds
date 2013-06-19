@@ -207,10 +207,12 @@ public class CotaDAO {
 		if (cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO) && rs.getBigDecimal("REPARTE_FIXADO") != null) {
 		    cota.setReparteFixado(rs.getBigDecimal("REPARTE_FIXADO").toBigInteger());
 		}
-		if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(new Long(1)) == 0) || (!estudo.getProdutoEdicaoEstudo().isColecao())) {
-		    if (rs.getLong("COTA_BASE_ID") != 0) {
-			cota.setNova(true);
-			cota.setClassificacao(ClassificacaoCota.CotaNova);
+		if (cota.getTipoDistribuicao() != null && (!cota.getTipoDistribuicao().equals(TipoDistribuicaoCota.ALTERNATIVO) || cota.isMix())) {
+		    if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(new Long(1)) == 0) || (!estudo.getProdutoEdicaoEstudo().isColecao())) {
+			if (rs.getLong("COTA_BASE_ID") != 0) {
+			    cota.setNova(true);
+			    cota.setClassificacao(ClassificacaoCota.CotaNova);
+			}
 		    }
 		}
 		if (rs.getBoolean("COTA_NAO_RECEBE_SEGMENTO")) {
