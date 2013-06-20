@@ -44,8 +44,6 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 	
 	private static final String REGISTRO_TIPO_TRAILER = "9";
 	
-	private Cnab padraoCnab = new Cnab();
-	
 	
     /**
      * Subclasse com os atributos contendo as posições dos campos do arquivo CNAB
@@ -80,11 +78,9 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
     
 	/**
 	 * Retorna Cnab configurado para o banco HSBC 
-	 * @return Cnab
+	 * @param cnab
 	 */
-    private Cnab getCnab400Hsbc(){
-    	
-    	Cnab cnab= new Cnab();
+    private void getCnab400Hsbc(Cnab cnab){
 		
 		cnab.IndexCnab400DataPagamentoInicio = 110;
 		cnab.IndexCnab400DataPagamentoFim = 116;
@@ -103,17 +99,13 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 		
 		cnab.IndexCnab400NumeroContaInicio = 33;
 		cnab.IndexCnab400NumeroContaFim = 44;
-		
-		return cnab;
 	}
 	
     /**
 	 * Retorna Cnab configurado para o banco Bradesco
-	 * @return Cnab
+	 * @param cnab
 	 */
-    private Cnab getCnab400Bradesco(){
-		
-    	Cnab cnab= new Cnab();
+    private void getCnab400Bradesco(Cnab cnab){
     	
     	cnab.IndexCnab400DataPagamentoInicio = 110;
     	cnab.IndexCnab400DataPagamentoFim = 116;
@@ -132,18 +124,16 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 		
     	cnab.IndexCnab400NumeroContaInicio = 31;
     	cnab.IndexCnab400NumeroContaFim = 37;
-    	
-    	return cnab;
 	}
     
     /**
 	 * Retorna Cnab configurado para o banco Itau
-	 * @return Cnab
+	 * @param cnab
 	 */
-    private Cnab getCnab400Itau(){
+    private void getCnab400Itau(Cnab cnab){
+    	
     	//TODO Configurar
-    	Cnab cnab= new Cnab();
-		
+
     	cnab.IndexCnab400DataPagamentoInicio = 366;
     	cnab.IndexCnab400DataPagamentoFim = 391;
 		
@@ -161,17 +151,15 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 		
 		cnab.IndexCnab400NumeroContaInicio = 24;
 		cnab.IndexCnab400NumeroContaFim = 28;
-		
-		return cnab;
 	}
     
     /**
 	 * Retorna Cnab configurado para o banco BB
-	 * @return Cnab
+	 * @param cnab
 	 */
-    private Cnab getCnab400BancoDoBrasil(){
+    private void getCnab400BancoDoBrasil(Cnab cnab){
+    	
     	//TODO Configurar
-    	Cnab cnab= new Cnab();
 		
 		cnab.IndexCnab400DataPagamentoInicio = 110;
 		cnab.IndexCnab400DataPagamentoFim = 116;
@@ -190,51 +178,47 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 		
 		cnab.IndexCnab400NumeroContaInicio = 33;
 		cnab.IndexCnab400NumeroContaFim = 44;
-		
-		return cnab;
 	}
     
     /**
      * Obtem padrão de leitura de Cnab por Banco
      * @param codigoBanco
-     * @return Cnab
+     * @param cnab
      */
-    private Cnab obterPosicoesCnabPorBanco(String codigoBanco){
-    	
-    	Cnab cnab= new Cnab();
+    private void obterPosicoesCnabPorBanco(String codigoBanco, Cnab cnab){
     	
     	switch (codigoBanco) {
 		
 			case BANCO_HSBC:
 				
-				padraoCnab = this.getCnab400Hsbc();
+				this.getCnab400Hsbc(cnab);
 				 
 				break;
 			case BANCO_BRADESCO:
 				
-				padraoCnab = this.getCnab400Bradesco();
+				this.getCnab400Bradesco(cnab);
 			
 				break;
 			case BANCO_ITAU:
 				
-				padraoCnab = this.getCnab400Itau();
+				this.getCnab400Itau(cnab);
 				
 				break;
 			case BANCO_DO_BRASIL:
 				
-				padraoCnab = this.getCnab400BancoDoBrasil();
+				this.getCnab400BancoDoBrasil(cnab);
 				
 				break;			
 			default:
 				
 				break;
 		}
-    	
-    	return cnab;
     }
 
 	
 	public ArquivoPagamentoBancoDTO obterPagamentosBanco(File file, String nomeArquivo) {
+		
+		Cnab padraoCnab = new Cnab();
 	    
 		this.validarDadosEntrada(file, nomeArquivo);
 		
@@ -253,11 +237,11 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 		validarConteudoLinhas(lines);
 		
 		//Verifica a quantidade de caractres da primeira linha para determinar o padrão do arquivo
-		if (lines.get(0).length() == this.padraoCnab.PADRAO_ARQUIVO_CNAB_400) {
+		if (lines.get(0).length() == padraoCnab.PADRAO_ARQUIVO_CNAB_400) {
 			
 			arquivoPagamentoBanco = this.lerLinhasCNAB400(lines, nomeArquivo);
 			
-		} else if (lines.get(1).length() == this.padraoCnab.PADRAO_ARQUIVO_CNAB_240) {
+		} else if (lines.get(1).length() == padraoCnab.PADRAO_ARQUIVO_CNAB_240) {
 			
 			//TODO: ler arquivo no padrão CNAB 240
 			
@@ -272,6 +256,8 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 	}
 
 	private ArquivoPagamentoBancoDTO lerLinhasCNAB400(List<String> lines, String nomeArquivo) {
+		
+		Cnab padraoCnab = new Cnab();
 
         String line = null;
 		
@@ -306,13 +292,19 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 				codigoBanco = line.substring(padraoCnab.INDEX_CNAB_400_CODIGO_BANCO_INICIO, 
 						                     padraoCnab.INDEX_CNAB_400_CODIGO_BANCO_FIM);
 				
-				padraoCnab = this.obterPosicoesCnabPorBanco(codigoBanco);
+				this.obterPosicoesCnabPorBanco(codigoBanco,padraoCnab);
+				
+				
+				
 
 				strNumeroAgencia = line.substring(padraoCnab.IndexCnab400NumeroAgenciaInicio,
                                                   padraoCnab.IndexCnab400NumeroAgenciaFim);
 
 				strNumeroConta =   line.substring(padraoCnab.IndexCnab400NumeroContaInicio,
 				                                  padraoCnab.IndexCnab400NumeroContaFim);
+				
+				
+				
 
 				arquivoPagamentoBanco.setCodigoBanco(codigoBanco);
 				
@@ -324,16 +316,15 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 				
 				if (line.length() == padraoCnab.PADRAO_ARQUIVO_CNAB_400) {
 					
-					padraoCnab = this.obterPosicoesCnabPorBanco(codigoBanco);
+					this.obterPosicoesCnabPorBanco(codigoBanco,padraoCnab);
+					
+					if (codigoBanco.equals(BANCO_BRADESCO)){
 
-					strNumeroAgencia = strNumeroAgencia==null?
-							           line.substring(padraoCnab.IndexCnab400NumeroAgenciaInicio,padraoCnab.IndexCnab400NumeroAgenciaFim):
-                            		   strNumeroAgencia;
-
-					strNumeroConta =   strNumeroConta==null?
-							           line.substring(padraoCnab.IndexCnab400NumeroContaInicio,padraoCnab.IndexCnab400NumeroContaFim):
-							           strNumeroConta;
+						strNumeroAgencia = line.substring(padraoCnab.IndexCnab400NumeroAgenciaInicio,padraoCnab.IndexCnab400NumeroAgenciaFim);
 	
+						strNumeroConta =   line.substring(padraoCnab.IndexCnab400NumeroContaInicio,padraoCnab.IndexCnab400NumeroContaFim);
+					}	           
+							                
 					strNumeroRegistro =line.substring(padraoCnab.IndexCnab400NumeroRegistroInicio,
 					                                  padraoCnab.IndexCnab400NumeroRegistroFim);
 					
