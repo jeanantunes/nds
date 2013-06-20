@@ -41,6 +41,7 @@ import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
@@ -831,6 +832,9 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		parameters.put("NOME_DISTRIBUIDOR",nomeDistribuidor);
 
 		parameters.put("LOGO_DISTRIBUIDOR", inputStream);
+		
+		parameters.put("COTA_ATIVA", SituacaoCadastro.ATIVO.equals(cota.getSituacaoCadastro()));
+		
 		return JasperRunManager.runReportToPdf(path, parameters, jrDataSource);
 	}
 
