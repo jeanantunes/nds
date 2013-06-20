@@ -21,6 +21,7 @@ public class EstudoTransient extends Estudo {
     private LinkedList<CotaEstudo> cotas; //Cotas que receberam as edições base.
     private LinkedList<CotaEstudo> cotasExcluidas; //Cotas excluídas durante o estudo
     private LinkedList<CotaEstudo> cotasForaDaRegiao; //Cotas fora da regiao de abrangencia
+    private LinkedList<CotaEstudo> cotasSoComEdicaoAberta;
     private BigInteger reparteMinimo;
     private BigDecimal somatoriaVendaMedia;
     private BigDecimal somatoriaReparteEdicoesAbertas;
@@ -54,6 +55,7 @@ public class EstudoTransient extends Estudo {
 	complementarAutomatico = true; //Default conforme documentação.
 	cotasExcluidas = new LinkedList<>();
 	cotasForaDaRegiao = new LinkedList<>();
+	cotasSoComEdicaoAberta = new LinkedList<>();
 	percentualExcedente = BigDecimal.ZERO;
     }
 
@@ -255,6 +257,14 @@ public class EstudoTransient extends Estudo {
 
     public void setCotasForaDaRegiao(LinkedList<CotaEstudo> cotasForaDaRegiao) {
         this.cotasForaDaRegiao = cotasForaDaRegiao;
+    }
+
+    public LinkedList<CotaEstudo> getCotasSoComEdicaoAberta() {
+        return cotasSoComEdicaoAberta;
+    }
+
+    public void setCotasSoComEdicaoAberta(LinkedList<CotaEstudo> cotasSoComEdicaoAberta) {
+        this.cotasSoComEdicaoAberta = cotasSoComEdicaoAberta;
     }
 
     @Override
