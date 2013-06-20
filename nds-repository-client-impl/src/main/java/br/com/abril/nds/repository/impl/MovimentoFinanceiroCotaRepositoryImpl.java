@@ -920,28 +920,66 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 
 	@Override
 	public Long obterCountResumoTransportadorCota(FiltroRelatorioServicosEntregaDTO filtro) {
-
+		PaginacaoVO paginacaoVO = filtro.getPaginacao();
 		HashMap<String, Object> param = new HashMap<String, Object>();
-		
+				
 		StringBuilder hql = new StringBuilder();
-		hql.append("select count(transportador.id)");
+		
+		hql.append("select 	 pessoaTransportador.razaoSocial as transportador, " +
+						 	"roteiro.descricaoRoteiro as roteiro, " +
+						 	"rota.descricaoRota as rota, " +
+						 	"cota.numeroCota as numCota, " +
+						 	"pessoaCota.nome as nomeCota, " +
+						 	"sum(movimento.valor) as valor, " +
+						 	"transportador.id as idTransportador, " +
+						 	"cota.id as idCota ");
+		
 		addFromJoinObterDadosTransportador(hql);
+		
 		addWhereObterDadosTransportador(hql, filtro.getEntregaDataInicio(), filtro.getEntregaDataFim(), filtro.getIdTransportador(), param);
+		
 		hql.append(" group by transportador.id ");
-
+		
+		getOrderByObterResumoTransportadorCota(paginacaoVO); 
+		
 		Query query = getSession().createQuery(hql.toString());
-
+		
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
 		
-		Long count = (Long) query.uniqueResult();
-		
-		if (count == null) {
-			count = 0L;
+		if (paginacaoVO != null && paginacaoVO.getPosicaoInicial() != null) { 
+			
+			query.setFirstResult(paginacaoVO.getPosicaoInicial());
+			
+			query.setMaxResults(paginacaoVO.getQtdResultadosPorPagina());
 		}
-
-		return count;
+		
+		query.setResultTransformer(Transformers.aliasToBean(CotaTransportadorDTO.class));
+		
+		return Long.parseLong(String.valueOf(query.list()));
+		
+//		HashMap<String, Object> param = new HashMap<String, Object>();
+//		
+//		StringBuilder hql = new StringBuilder();
+//		hql.append("select count(transportador.id)");
+//		addFromJoinObterDadosTransportador(hql);
+//		addWhereObterDadosTransportador(hql, filtro.getEntregaDataInicio(), filtro.getEntregaDataFim(), filtro.getIdTransportador(), param);
+//		hql.append(" group by transportador.id ");
+//
+//		Query query = getSession().createQuery(hql.toString());
+//
+//		for(String key : param.keySet()){
+//			query.setParameter(key, param.get(key));
+//		}
+//		
+//		Long count = (Long) query.uniqueResult();
+//		
+//		if (count == null) {
+//			count = 0L;
+//		}
+//
+//		return count;
 	}
 		
 	@Override

@@ -960,8 +960,16 @@ public class TransportadorServiceImpl implements TransportadorService {
 	public FlexiGridDTO<CotaTransportadorDTO> obterResumoTransportadorCota(FiltroRelatorioServicosEntregaDTO filtro) {
 		
 		FlexiGridDTO<CotaTransportadorDTO> flexiDTO = new FlexiGridDTO<CotaTransportadorDTO>();
-		flexiDTO.setGrid(movimentoFinanceiroCotaRepository.obterResumoTransportadorCota(filtro));
-		flexiDTO.setTotalGrid(movimentoFinanceiroCotaRepository.obterCountResumoTransportadorCota(filtro).intValue());
+		
+		List<CotaTransportadorDTO> listaMovimento = movimentoFinanceiroCotaRepository.obterResumoTransportadorCota(filtro);
+		
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
+		filtro.getPaginacao().setQtdResultadosTotal(null);
+		
+		List<CotaTransportadorDTO> listaMovimentoCount = movimentoFinanceiroCotaRepository.obterResumoTransportadorCota(filtro);
+		
+		flexiDTO.setGrid(listaMovimento);
+		flexiDTO.setTotalGrid(listaMovimentoCount.size());
 		return flexiDTO;
 	}
 
