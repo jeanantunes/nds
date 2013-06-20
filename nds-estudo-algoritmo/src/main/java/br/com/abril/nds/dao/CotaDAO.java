@@ -208,10 +208,12 @@ public class CotaDAO {
 		if (cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO) && rs.getBigDecimal("REPARTE_FIXADO") != null) {
 		    cota.setReparteFixado(rs.getBigDecimal("REPARTE_FIXADO").toBigInteger());
 		}
-		if (cota.getTipoDistribuicao() != null && (!cota.getTipoDistribuicao().equals(TipoDistribuicaoCota.ALTERNATIVO) || cota.isMix())) {
+		if (rs.getLong("COTA_BASE_ID") != 0) {
+		    cota.setNova(true);
+		}
+		if (cota.getTipoDistribuicaoCota() != null && (!cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO) || cota.isMix())) {
 		    if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(new Long(1)) == 0) || (!estudo.getProdutoEdicaoEstudo().isColecao())) {
-			if (rs.getLong("COTA_BASE_ID") != 0) {
-			    cota.setNova(true);
+			if (cota.isNova()) {
 			    cota.setClassificacao(ClassificacaoCota.CotaNova);
 			}
 		    }

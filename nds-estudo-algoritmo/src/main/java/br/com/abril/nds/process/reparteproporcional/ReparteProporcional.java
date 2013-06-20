@@ -46,11 +46,16 @@ public class ReparteProporcional extends ProcessoAbstrato {
 	for (CotaEstudo cota : estudo.getCotas()) {
 	    if (temEdicaoBaseAberta && cota.isCotaSoRecebeuEdicaoAberta() &&
 		    cota.getClassificacao().notIn(ClassificacaoCota.CotaMix, ClassificacaoCota.ReparteFixado)) {
-		// RepCalculadoCota = ARRED(RepEdiçãoAbertaCota * ÍndiceRepAberta; 0)
+		// RepCalculadoCota = ARRED(RepEdicaoAbertaCota * IndiceRepAberta; 0)
 		BigDecimal repCalculado = cota.getSomaReparteEdicoesAbertas().multiply(indiceReparteEdicoesAbertas);
 		cota.setReparteCalculado(repCalculado.setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
 		cota.setClassificacao(ClassificacaoCota.BancaSoComEdicaoBaseAberta);
+		
+		estudo.getCotasSoComEdicaoAberta().add(cota);
 	    }
+	}
+	for (CotaEstudo cota : estudo.getCotasSoComEdicaoAberta()) {
+	    estudo.getCotas().remove(cota);
 	}
     }
 }
