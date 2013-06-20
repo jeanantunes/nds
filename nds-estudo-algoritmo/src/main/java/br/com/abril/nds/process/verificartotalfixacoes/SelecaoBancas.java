@@ -292,8 +292,8 @@ public class SelecaoBancas extends ProcessoAbstrato {
 		ClassificacaoCota.BancaSuspensa, ClassificacaoCota.BancaMixSemDeterminadaPublicacao,
 		ClassificacaoCota.BancaForaDaRegiaoDistribuicao, ClassificacaoCota.CotaNaoRecebeEsseSegmento,
 		ClassificacaoCota.BancaSemClassificacaoDaPublicacao) &&
-		estudo.getDistribuicaoVendaMediaDTO() == null || estudo.getDistribuicaoVendaMediaDTO().getAbrangencia() == null ||
-		estudo.getReparteMinimo() == null) {
+		!(estudo.getDistribuicaoVendaMediaDTO() != null && estudo.getDistribuicaoVendaMediaDTO().getAbrangencia() != null &&
+		estudo.getReparteMinimo() != null)) {
 	    
 	    if (totalReparte.compareTo(BigDecimal.ZERO) == 0 && cota.getReparteMinimo().compareTo(BigInteger.ZERO) == 0) {
 		cota.setClassificacao(ClassificacaoCota.BancaSemHistorico);
