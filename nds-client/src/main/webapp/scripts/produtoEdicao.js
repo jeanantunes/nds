@@ -461,7 +461,7 @@ var produtoEdicaoController =$.extend(true,  {
 	},
 		
 	pesquisarEdicoes : function(codigoProduto, nomeProduto) {
-
+		
 		if (codigoProduto == "" || codigoProduto == undefined) {
 			codigoProduto = $("#produtoEdicaoController-pCodigoProduto",this.workspace).val();
 		}
@@ -497,7 +497,7 @@ var produtoEdicaoController =$.extend(true,  {
 			         {name:'brinde', value : brinde }],
 			         newp: 1,
 		});
-
+			
 		$(".edicoesGrid",this.workspace).flexReload();
 	},
 	
@@ -551,16 +551,24 @@ var produtoEdicaoController =$.extend(true,  {
 
 			//
 			var txt = '';
-			if (nProduto != null || cProduto != null) {
-				txt = ": " + cProduto + " - " + nProduto;
-			}
-			$("#produtoEdicaoController-labelNomeProduto",this.workspace).html(txt);
 			
-			if (cProduto != "") {
-			    
-			    $("#produtoEdicaoController-codigoProduto",this.workspace).val(cProduto);
-            }
-
+			if($("#produtoEdicaoController-pCodigoProduto", this.workspace).val() == "" && 
+					$("#produtoEdicaoController-pNome", this.workspace).val() == "") {
+				
+				$("#produtoEdicaoController-labelNomeProduto",this.workspace).html("");
+			
+			} else {
+				
+				if (nProduto != null || cProduto != null) {
+					txt = ": " + cProduto + " - " + nProduto;
+				}
+				$("#produtoEdicaoController-labelNomeProduto",this.workspace).html(txt);
+				
+				if (cProduto != "") {
+				    $("#produtoEdicaoController-codigoProduto",this.workspace).val(cProduto);
+	            }
+			}	
+		
 			return resultado;
 		}
 	},

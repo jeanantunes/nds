@@ -8,10 +8,10 @@ import java.math.BigDecimal;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -23,6 +23,8 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -86,6 +88,8 @@ import br.com.abril.nds.vo.ValidacaoVO;
 @Service
 public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaService {
 		
+	private static final Logger LOGGER = LoggerFactory.getLogger(ParametroCobrancaCotaServiceImpl.class);
+	
 	@Autowired
 	private CotaRepository cotaRepository;
 	
@@ -197,12 +201,18 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			parametroCobrancaDTO.setSugereSuspensao(cota.isSugereSuspensao());
 			parametroCobrancaDTO.setContrato(cota.isPossuiContrato());
 			
+			if(cota.getContratoCota() != null) {
+				parametroCobrancaDTO.setInicioContrato(cota.getContratoCota().getDataInicio());
+				parametroCobrancaDTO.setTerminoContrato(cota.getContratoCota().getDataTermino());
+			}
+			
 			parametroCobranca = cota.getParametroCobranca();
 			
 			if (parametroCobranca == null && formasCobranca == null || formasCobranca.size() == 0) {
 				
 				FormaCobranca formaCobrancaDistribuidor = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
-				
+				Distribuidor distribuidor = distribuidorRepository.obter();
+								
 				parametroCobranca = new ParametroCobrancaCota();
 				parametroCobranca.setCota(cota);
 				parametroCobranca.setFatorVencimento(formaCobrancaDistribuidor.getFatorVencimento());
@@ -220,7 +230,11 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				if(formaCobrancaDistribuidor.getFornecedorPadrao() != null) {
 					parametroCobranca.setFornecedorPadrao(formaCobrancaDistribuidor.getFornecedorPadrao());
 				}
-				parametroCobranca.setPoliticaSuspensao(null);
+				
+				PoliticaSuspensao ps = new PoliticaSuspensao();
+				ps.setNumeroAcumuloDivida(distribuidor.getPoliticaSuspensao().getNumeroAcumuloDivida());
+				ps.setValor(distribuidor.getPoliticaSuspensao().getValor());				
+				parametroCobranca.setPoliticaSuspensao(ps);
 								
 			}
 
@@ -232,7 +246,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			
 			politicaSuspensao = parametroCobranca.getPoliticaSuspensao();
 			
-			if (politicaSuspensao!=null){
+			if (politicaSuspensao != null){
 				parametroCobrancaDTO.setQtdDividasAberto(politicaSuspensao.getNumeroAcumuloDivida());
 				parametroCobrancaDTO.setVrDividasAberto((politicaSuspensao.getValor()!=null?politicaSuspensao.getValor():BigDecimal.ZERO));
 			}
@@ -408,8 +422,8 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				politicaSuspensao = new PoliticaSuspensao();
 			}
 			
-			politicaSuspensao.setNumeroAcumuloDivida((parametroCobrancaDTO.getQtdDividasAberto()!=null?parametroCobrancaDTO.getQtdDividasAberto():0));
-			politicaSuspensao.setValor((parametroCobrancaDTO.getVrDividasAberto()!=null?parametroCobrancaDTO.getVrDividasAberto():BigDecimal.ZERO));
+			politicaSuspensao.setNumeroAcumuloDivida((parametroCobrancaDTO.getQtdDividasAberto() != null && parametroCobrancaDTO.isSugereSuspensao() ? parametroCobrancaDTO.getQtdDividasAberto() : 0));
+			politicaSuspensao.setValor((parametroCobrancaDTO.getVrDividasAberto() != null && parametroCobrancaDTO.isSugereSuspensao() ? parametroCobrancaDTO.getVrDividasAberto() : BigDecimal.ZERO));
 			
 			parametroCobranca.setPoliticaSuspensao(politicaSuspensao);
 			
@@ -853,7 +867,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			}
 			
 			ParametroContratoCota parametroContrato = this.distribuidorRepository.parametroContratoCota();
-			if (parametroContrato!=null){
+			if (parametroContrato != null) {
 				contrato.setAvisoPrevio( Integer.toString(parametroContrato.getDiasAvisoRescisao()));
 			    contrato.setComplemento(parametroContrato.getComplementoContrato());
 			    contrato.setCondicoes(parametroContrato.getCondicoesContratacao());
@@ -926,15 +940,25 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		if(contrato == null) 
 			contrato = new ContratoCota();
 		
+		Calendar c1 = Calendar.getInstance();
+		Calendar c2 = Calendar.getInstance();
+		
+		c1.setTime(contratoDTO.getInicio());
+		c2.setTime(contratoDTO.getTermino());
+		
+		int prazoEmMeses = (c2.get(Calendar.YEAR) - c1.get(Calendar.YEAR)) * 12;     
+        prazoEmMeses = prazoEmMeses + ((12 - (c1.get(Calendar.MONTH)) + (c2.get(Calendar.MONTH)-12)));     
+        		
 		contrato.setAvisoPrevioRescisao(Integer.parseInt(contratoDTO.getAvisoPrevio()));
 		contrato.setDataInicio(contratoDTO.getInicio());
 		contrato.setDataTermino(contratoDTO.getTermino());
 		contrato.setExigeDocumentacaoSuspencao(cota.isSugereSuspensao());
 		contrato.setCota(cota);
-		contrato.setPrazo((contratoDTO.getPrazo() != null) ? Integer.parseInt(contratoDTO.getPrazo()) : null);
+		contrato.setPrazo(prazoEmMeses);
 		contrato.setRecebido(isRecebido);
 		
 		this.contratoService.salvarContrato(contrato);
+		
 	}
 
 	@Transactional
@@ -992,7 +1016,9 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				fos.close();
 				
 			} catch (IOException e) {
-				e.printStackTrace();
+				
+				LOGGER.error("Falha ao persistir contrato anexo", e);
+				
 				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Falha ao persistir contrato anexo"));
 			}
 			

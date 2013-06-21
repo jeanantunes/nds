@@ -3,7 +3,6 @@ package br.com.abril.nds.service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
@@ -15,6 +14,7 @@ import br.com.abril.nds.dto.SlipDTO;
 import br.com.abril.nds.enums.TipoDocumentoConferenciaEncalhe;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
@@ -272,11 +272,9 @@ public interface ConferenciaEncalheService {
 	 */
 	BigDecimal obterValorTotalConferenciaEncalhe(Long idControleConferenciaEncalheCota);
 
-	public SlipDTO getSlipDTO();
-	
-	public Map<String, Object> getParametersSlip();
-	
 	public Long[] obterIdsFornecedorDoProduto(ProdutoEdicao produtoEdicao);
 	
-	public void setParamsSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip);
+	public SlipDTO setParamsSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip);
+
+	List<DebitoCreditoCotaDTO> obterListaDebitoCreditoCotaDTO(Cota cota, Date dataOperacao);
 }
