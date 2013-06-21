@@ -315,7 +315,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			row.cell.nomeProduto = balanceamentoRecolhimentoController.balanceamento.getColunaProduto(idProdutoEdicao, nomeProduto);
 			row.cell.novaData = balanceamentoRecolhimentoController.gerarHTMLNovaData(row);
 			row.cell.reprogramar = balanceamentoRecolhimentoController.gerarCheckReprogramar(row);
-			row.cell.acao = balanceamentoRecolhimentoController.gerarBtnAcoes(row);
 		});
 			
 		$(".grids", balanceamentoRecolhimentoController.workspace).show();
@@ -325,23 +324,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		balanceamentoRecolhimentoController.defineUtilizacaoSedeAtendida();	 
 		
 		return resultado;
-	},
-
-	gerarBtnAcoes : function(row) {
-		
-		var idLancamento = row.cell.idLancamento;
-		var btnExcluir;
-		
-		if (row.cell.bloqueioAlteracaoBalanceamento) {
-			btnExcluir = '<img src="' + contextPath + '/images/ico_excluir.gif" border="0" disabled="disabled" class="linkDisabled" />';
-		
-		} else {
-			btnExcluir = '<a isEdicao="true" href="javascript:;" class="btn_excluir" '+
-		    'onclick="balanceamentoRecolhimentoController.excluirBalanceamento(' + idLancamento + ');">'+
-		    '<img src="' + contextPath + '/images/ico_excluir.gif" border="0"  /></a>';
-		}
-		
-		return btnExcluir;
 	},
 	
 	gerarHTMLNovaData : function(row) {
@@ -728,12 +710,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				width : 33,
 				sortable : false,
 				align : 'center'
-			}, {
-				display: 'Ação',
-				name : 'acao',
-				width : 30,
-				sortable : false,
-				align : 'center'
 			}],
 			sortname : "nomeProduto",
 			sortorder : "asc",
@@ -741,7 +717,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 1066,
+			width : 1024,
 			height : 180
 		});
 	},
@@ -912,6 +888,86 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	},
 	
 	processarReprogramacao : function() {
+		
+		var novaData = $("#novaDataRecolhimento", balanceamentoRecolhimentoController.workspace).val();
+		
+		var dataAntiga = $("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val();
+		
+		var parametros =
+			balanceamentoRecolhimentoController.obterParametrosValidacaoData(novaData, dataAntiga);
+		
+		$.postJSON(
+			contextPath + "/devolucao/balanceamentoMatriz/verificarDataReprogramacao",
+			parametros,
+			function(result) {
+				
+				var parametrosReprogramarSelecionados =
+					balanceamentoRecolhimentoController.obterParametrosReprogramarSelecionados(novaData, dataAntiga);
+				
+				if (result == "DATA_VALIDA") {
+					
+					balanceamentoRecolhimentoController.efetivarReprogramacaoRecolhimentosSelecionados(parametrosReprogramarSelecionados);
+					
+				} else {
+					
+					var mensagemValidacaoReprogramacao;
+					
+					if (result == "DATA_FORA_SEMANA") {
+						
+						mensagemValidacaoReprogramacao = "A data está fora da semana de recolhimento. Você deseja continuar?";
+					
+					} else if (result == "DATA_DIA_CONFIRMADO") {
+						
+						mensagemValidacaoReprogramacao = "A data escolhida é uma data já confirmada. Você deseja continuar?";
+					}
+					
+					$("#mensagemValidacaoReprogramacao", balanceamentoRecolhimentoController.workspace)
+						.html(mensagemValidacaoReprogramacao);
+					
+					$("#alertAceite", balanceamentoRecolhimentoController.workspace).dialog({
+						resizable: false,
+						height:'auto',
+						width:400,
+						modal: true,
+						buttons: {
+							"Confirmar": function() {
+								
+								balanceamentoRecolhimentoController.efetivarReprogramacaoRecolhimentosSelecionados(parametrosReprogramarSelecionados);
+								
+								$(this).dialog("close");
+							},
+							"Cancelar": function() {
+								
+								$(this).dialog("close");
+							}
+						},
+						form: $("#alertAceite", balanceamentoRecolhimentoController.workspace).parents("form")			
+					});
+				}
+		   }
+		);
+	},
+	
+	efetivarReprogramacaoRecolhimentosSelecionados : function(parametros) {
+		
+		$.postJSON(
+			contextPath + "/devolucao/balanceamentoMatriz/reprogramarSelecionados",
+			parametros,
+			function(result) {
+				   		
+				$("#dialogReprogramarBalanceamento", balanceamentoRecolhimentoController.workspace).dialog("close");
+	
+				balanceamentoRecolhimentoController.atualizarResumoBalanceamento();
+		   		
+				balanceamentoRecolhimentoController.deselectCheckAll();
+			},
+			null,
+			true
+		);
+	},
+	
+	obterParametrosReprogramarSelecionados : function(novaData, dataAntiga) {
+		
 		var linhasDaGrid = $('.balanceamentoGrid tr', balanceamentoRecolhimentoController.workspace);
 		
 		var listaProdutoRecolhimento = new Array();
@@ -941,29 +997,13 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			}
 		});
 		
-		var novaData = $("#novaDataRecolhimento", balanceamentoRecolhimentoController.workspace).val();
-		
-		var dataAntiga = $("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val();
-		
 		var param = {selecionarTodos:checkAllSelected,
 				novaDataFormatada:novaData,
 				dataAntigaFormatada:dataAntiga};
 		
 		param = serializeArrayToPost("listaProdutoRecolhimento", listaProdutoRecolhimento, param);
 		
-		$.postJSON(contextPath + "/devolucao/balanceamentoMatriz/reprogramarSelecionados",
-				   param,
-				   function(result) {
-				   		
-						$("#dialogReprogramarBalanceamento", balanceamentoRecolhimentoController.workspace).dialog("close");
-			
-						balanceamentoRecolhimentoController.atualizarResumoBalanceamento();
-				   		
-						balanceamentoRecolhimentoController.deselectCheckAll();
-				   },
-				   null,
-				   true
-		);
+		return param;
 	},
 	
 	reprogramarRecolhimentoUnico : function(idRow, boolean) {
@@ -992,28 +1032,13 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 
 				var dataAntiga = $("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val();
 				
-				var anoSemanaNumero = 
-					$("#numeroSemana", balanceamentoRecolhimentoController.workspace).val();
-				
-				var numeroSemana = '';
-				
-				if (anoSemanaNumero && anoSemanaNumero.length>=5) {
-					
-					numeroSemana = anoSemanaNumero.substr(4);
-				}
-				
-				var parametros = new Array();
-				
-				parametros.push({name:'numeroSemana', value:numeroSemana });
-				parametros.push({name:'novaDataBalanceamentoFormatada', value:novaData });
-				parametros.push({name:'dataBalanceamentoFormatada', value:dataAntiga });
+				var parametros =
+					balanceamentoRecolhimentoController.obterParametrosValidacaoData(novaData, dataAntiga);
 				
 				$.postJSON(
-					contextPath + "/devolucao/balanceamentoMatriz/validarReprogramacaoDeDataNaSemana",
+					contextPath + "/devolucao/balanceamentoMatriz/verificarDataReprogramacao",
 					parametros,
 					function(result) {
-						
-						var dataValida = result;
 						
 						linhaSelecionada = {
 							idFornecedor: idFornecedor,
@@ -1030,17 +1055,25 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 									'produtoRecolhimento', linhaSelecionada, parametros);
 						}
 						
-						if (dataValida) {
+						if (result == "DATA_VALIDA") {
 							
-							$.postJSON(
-								contextPath + "/devolucao/balanceamentoMatriz/reprogramarRecolhimentoUnico",
-								parametros,
-								function(result) {
-									balanceamentoRecolhimentoController.atualizarResumoBalanceamento();
-								}
-							);
+							balanceamentoRecolhimentoController.efetivarReprogramacaoRecolhimentoUnico(parametros);
 							
 						} else {
+							
+							var mensagemValidacaoReprogramacao;
+							
+							if (result == "DATA_FORA_SEMANA") {
+								
+								mensagemValidacaoReprogramacao = "A data está fora da semana de recolhimento. Você deseja continuar?";
+							
+							} else if (result == "DATA_DIA_CONFIRMADO") {
+								
+								mensagemValidacaoReprogramacao = "A data escolhida é uma data já confirmada. Você deseja continuar?";
+							}
+							
+							$("#mensagemValidacaoReprogramacao", balanceamentoRecolhimentoController.workspace)
+								.html(mensagemValidacaoReprogramacao);
 							
 							$("#alertAceite", balanceamentoRecolhimentoController.workspace).dialog({
 								resizable: false,
@@ -1050,13 +1083,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 								buttons: {
 									"Confirmar": function() {
 										
-										$.postJSON(
-												contextPath + "/devolucao/balanceamentoMatriz/reprogramarRecolhimentoUnico",
-												parametros,
-												function(result) {
-													balanceamentoRecolhimentoController.atualizarResumoBalanceamento();
-												}
-											);
+										balanceamentoRecolhimentoController.efetivarReprogramacaoRecolhimentoUnico(parametros);
 										
 										$(this).dialog("close");
 									},
@@ -1074,6 +1101,38 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				);
 			}
 		});
+	},
+	
+	efetivarReprogramacaoRecolhimentoUnico : function(parametros) {
+		
+		$.postJSON(
+			contextPath + "/devolucao/balanceamentoMatriz/reprogramarRecolhimentoUnico",
+			parametros,
+			function(result) {
+				balanceamentoRecolhimentoController.atualizarResumoBalanceamento();
+			}
+		);
+	},
+	
+	obterParametrosValidacaoData : function(novaData, dataAntiga) {
+		
+		var parametros = new Array();
+		
+		var anoSemanaNumero = 
+			$("#numeroSemana", balanceamentoRecolhimentoController.workspace).val();
+		
+		var numeroSemana = '';
+		
+		if (anoSemanaNumero && anoSemanaNumero.length>=5) {
+			
+			numeroSemana = anoSemanaNumero.substr(4);
+		}
+		
+		parametros.push({name:'numeroSemana', value:numeroSemana });
+		parametros.push({name:'novaDataBalanceamentoFormatada', value:novaData });
+		parametros.push({name:'dataBalanceamentoFormatada', value:dataAntiga });
+		
+		return parametros;
 	},
 	
 	recolocacaoDataAntigaReprogramarRecolhimentoUnico : function(idRow, dataAntiga)
@@ -1174,17 +1233,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		    },
 		    form: $("#dialog-confirm-balanceamento", balanceamentoRecolhimentoController.workspace).parents("form")
 		});
-	},
-	
-	excluirBalanceamento : function(idLancamento) {
-		
-		var params = {"idLancamento":idLancamento};
-		
-		$.postJSON(contextPath + "/devolucao/balanceamentoMatriz/excluirBalanceamento", params, function() {
-			balanceamentoRecolhimentoController.atualizarResumoBalanceamento();	   		
-			balanceamentoRecolhimentoController.deselectCheckAll();
-		});
-		
 	},
 	
 	showResumo : function(ativo) {
