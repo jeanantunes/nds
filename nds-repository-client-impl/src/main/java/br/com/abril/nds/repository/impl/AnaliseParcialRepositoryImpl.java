@@ -67,11 +67,11 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         List<Object> params = new ArrayList<>();
         List<Object> paramsWhere = new ArrayList<>();
 
-        where.append(" and ( ( ec.reparte is not null and ec.reparte > 0 ) or ( ec.qtde_efetiva is not null and ec.qtde_efetiva > 0 ) or ec.cota_nova = 1 ) ");
+        where.append(" and ( ( ec.reparte is not null and ec.reparte > 0 ) or ( ec.qtde_efetiva is not null and ec.qtde_efetiva > 0 ) or ec.classificacao = 'S' ) ");
 
         if (queryDTO.possuiOrdenacaoPlusFiltro()) {
             if (queryDTO.possuiOrdenacaoReparte()) {
-                where.append(" and case when ec.cota_nova = 1 then coalesce(ec.reparte, 0) else ec.reparte end between ? and ? ");
+                where.append(" and case when ec.classificacao = 'S' then coalesce(ec.reparte, 0) else ec.reparte end between ? and ? ");
                 paramsWhere.add(queryDTO.getFilterSortFrom());
                 paramsWhere.add(queryDTO.getFilterSortTo());
             }
@@ -136,8 +136,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 sql.append("') ");
             }
             if (queryDTO.elementoIsCotasNovas()) {
-                where.append(" and ec.cota_nova = ? ");
-                paramsWhere.add(queryDTO.getValorElemento());
+                where.append(" and ec.classificacao "+ (queryDTO.getValorElemento().equals("1") ? "=" : "<>") +" 'S' ");
             }
         }
 
@@ -461,7 +460,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
         where.append(" and ec.estudo_id = ? ");
         where.append("   and (ec.reparte = 0 or ec.reparte is null) and (ec.qtde_efetiva is null or ec.qtde_efetiva = 0) ");
-        where.append("   and ec.cota_nova = 0 ");
+        where.append("   and ec.classificacao <> 'S' ");
         paramsWhere.add(queryDTO.getEstudo());
 
         if (queryDTO.possuiCota()) {
