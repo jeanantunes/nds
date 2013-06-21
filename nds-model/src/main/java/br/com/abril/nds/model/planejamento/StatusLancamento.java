@@ -12,7 +12,6 @@ public enum StatusLancamento {
 	EM_BALANCEAMENTO_RECOLHIMENTO("Em Balanceamento Recolhimento"),
 	//EM_BALANCEAMENTO_LANCAMENTO("Em Balanceamento Lancamento"),
 	BALANCEADO_RECOLHIMENTO("Balanceado Recolhimento"),
-	EXCLUIDO_RECOLHIMENTO("Excluído Recolhimento"),
 	EM_RECOLHIMENTO("Em Recolhimento"),
 	RECOLHIDO("Recolhido"),
 	CANCELADO("Cancelado"),
