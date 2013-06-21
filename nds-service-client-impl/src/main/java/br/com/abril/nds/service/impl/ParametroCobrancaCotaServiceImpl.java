@@ -1168,6 +1168,14 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			pcc.setTipoCota(parametroCobranca.getTipoCota());
 			pcc.setUnificaCobranca(parametroCobranca.isUnificaCobranca());
 			pcc.setValorMininoCobranca(parametroCobranca.getValorMinimo());
+			
+			PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
+			
+			politicaSuspensao.setNumeroAcumuloDivida((parametroCobranca.getQtdDividasAberto() != null && parametroCobranca.isSugereSuspensao() ? parametroCobranca.getQtdDividasAberto() : 0));
+			politicaSuspensao.setValor((parametroCobranca.getVrDividasAberto() != null && parametroCobranca.isSugereSuspensao() ? parametroCobranca.getVrDividasAberto() : BigDecimal.ZERO));
+			
+			pcc.setPoliticaSuspensao(politicaSuspensao);
+			
 			parametroCobrancaCotaRepository.adicionar(pcc);
 			cota.setParametroCobranca(pcc);
 		} else {
