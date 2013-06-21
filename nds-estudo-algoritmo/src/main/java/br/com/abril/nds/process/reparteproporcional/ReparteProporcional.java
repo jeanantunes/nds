@@ -44,7 +44,7 @@ public class ReparteProporcional extends ProcessoAbstrato {
 	    indiceReparteEdicoesAbertas = new BigDecimal(estudo.getReparteDistribuirInicial()).divide(estudo.getSomatoriaReparteEdicoesAbertas(), 3, BigDecimal.ROUND_HALF_UP);
 	}
 	for (CotaEstudo cota : estudo.getCotas()) {
-	    if (temEdicaoBaseAberta && cota.isCotaSoRecebeuEdicaoAberta() &&
+	    if (temEdicaoBaseAberta && cota.isCotaSoRecebeuEdicaoAberta() && cota.getSomaReparteEdicoesAbertas().compareTo(BigDecimal.ZERO) > 0 &&
 		    cota.getClassificacao().notIn(ClassificacaoCota.CotaMix, ClassificacaoCota.ReparteFixado)) {
 		// RepCalculadoCota = ARRED(RepEdicaoAbertaCota * IndiceRepAberta; 0)
 		BigDecimal repCalculado = cota.getSomaReparteEdicoesAbertas().multiply(indiceReparteEdicoesAbertas);

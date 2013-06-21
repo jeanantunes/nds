@@ -218,6 +218,15 @@ public class CotaDAO {
 			}
 		    }
 		}
+		if (cota.isMix()) {
+		    cota.setClassificacao(ClassificacaoCota.CotaMix);
+		}
+		if (cota.getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) {
+		    cota.setClassificacao(ClassificacaoCota.BancaSuspensa);
+		}
+		if (!cota.isMix() && cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)) {
+		    cota.setClassificacao(ClassificacaoCota.BancaMixSemDeterminadaPublicacao);
+		}
 		if (rs.getBoolean("COTA_NAO_RECEBE_SEGMENTO")) {
 		    cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeEsseSegmento);
 		}
@@ -226,9 +235,6 @@ public class CotaDAO {
 		}
 		if (rs.getBoolean("COTA_NAO_RECEBE_CLASSIFICACAO")) {
 		    cota.setClassificacao(ClassificacaoCota.BancaSemClassificacaoDaPublicacao);
-		}
-		if (cota.isMix()) {
-		    cota.setClassificacao(ClassificacaoCota.CotaMix);
 		}
 		return cota;
 	    }
