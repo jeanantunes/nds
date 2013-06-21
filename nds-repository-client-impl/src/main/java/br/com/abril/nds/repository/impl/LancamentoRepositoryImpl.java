@@ -1598,7 +1598,6 @@ public class LancamentoRepositoryImpl extends
 		
 		List<StatusLancamento> status = new ArrayList<StatusLancamento>();
 		status.add(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO);
-		status.add(StatusLancamento.EXCLUIDO_RECOLHIMENTO);
 		
 		query.setParameterList("status", status);
 				
