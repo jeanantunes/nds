@@ -32,7 +32,6 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.planejamento.Lancamento;
-import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.FornecedorService;
@@ -44,6 +43,7 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
@@ -532,11 +532,82 @@ public class MatrizRecolhimentoController extends BaseController {
 	}
 	
 	@Post
-	public void validarReprogramacaoDeDataNaSemana(Integer numeroSemana, 
-												   String novaDataBalanceamentoFormatada,
-												   String dataBalanceamentoFormatada) {
+	public void verificarDataReprogramacao(Integer numeroSemana, 
+										   String novaDataBalanceamentoFormatada,
+										   String dataBalanceamentoFormatada) {
 		
 		Date novaDataBalanceamento = DateUtil.parseDataPTBR(novaDataBalanceamentoFormatada);
+		
+		Intervalo<Date> intervalo =
+			this.obterIntervaloSemana(numeroSemana, dataBalanceamentoFormatada);
+		
+		ValidacaoDataRecolhimento validacaoDataRecolhimento = 
+			this.verificarDataForaDaSemana(intervalo, novaDataBalanceamento);
+		
+		if (validacaoDataRecolhimento == null) {
+			
+			validacaoDataRecolhimento =
+				this.verificarDataEmDiaConfirmado(novaDataBalanceamento);
+		}
+		
+		if (validacaoDataRecolhimento == null) {
+			
+			validacaoDataRecolhimento = ValidacaoDataRecolhimento.DATA_VALIDA;
+		}
+		
+		this.result.use(Results.json()).withoutRoot().from(validacaoDataRecolhimento).serialize();
+	}
+
+	private ValidacaoDataRecolhimento verificarDataForaDaSemana(Intervalo<Date> intervalo,
+																Date novaDataBalanceamento) {
+		
+		boolean dataValidaSemana =
+			DateUtil.validarDataEntrePeriodo(
+				novaDataBalanceamento, intervalo.getDe(), intervalo.getAte());
+		
+		ValidacaoDataRecolhimento validacaoDataRecolhimento = null;
+		
+		if (!dataValidaSemana) {
+			
+			validacaoDataRecolhimento = ValidacaoDataRecolhimento.DATA_FORA_SEMANA;
+		}
+		
+		return validacaoDataRecolhimento;
+	}
+	
+	private ValidacaoDataRecolhimento verificarDataEmDiaConfirmado(Date novaDataBalanceamento) {
+		
+		ValidacaoDataRecolhimento validacaoDataRecolhimento = null;
+				
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento =
+			(BalanceamentoRecolhimentoDTO) this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
+
+		if (balanceamentoRecolhimento == null
+				|| balanceamentoRecolhimento.getMatrizRecolhimento() == null
+				|| balanceamentoRecolhimento.getMatrizRecolhimento().isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Sessão expirada!");
+		}
+		
+		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry :
+				balanceamentoRecolhimento.getMatrizRecolhimento().entrySet()) {
+			
+			if (novaDataBalanceamento.equals(entry.getKey())) {
+			
+				for (ProdutoRecolhimentoDTO produtosRecolhimento : entry.getValue()) {
+					
+					if (produtosRecolhimento.isBalanceamentoConfirmado()) {
+						
+						validacaoDataRecolhimento = ValidacaoDataRecolhimento.DATA_DIA_CONFIRMADO;
+					}
+				}
+			}
+		}
+		
+		return validacaoDataRecolhimento;
+	}
+	
+	private Intervalo<Date> obterIntervaloSemana(Integer numeroSemana, String dataBalanceamentoFormatada) {
 		
 		Date dataBalanceamento = DateUtil.parseDataPTBR(dataBalanceamentoFormatada);
 		
@@ -547,11 +618,9 @@ public class MatrizRecolhimentoController extends BaseController {
 			
 		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 		
-		boolean dataValidaSemana =
-			DateUtil.validarDataEntrePeriodo(
-				novaDataBalanceamento, dataInicioSemana, dataFimSemana);
+		Intervalo<Date> intervalo = new Intervalo<Date>(dataInicioSemana, dataFimSemana);
 		
-		this.result.use(Results.json()).withoutRoot().from(dataValidaSemana).serialize();
+		return intervalo;
 	}
 	
 	/**
@@ -1088,21 +1157,6 @@ public class MatrizRecolhimentoController extends BaseController {
 	private void validarDataReprogramacao(Integer numeroSemana, Date novaData, Date dataBalanceamento) {
 		
 		this.recolhimentoService.verificaDataOperacao(novaData);
-		
-		List<ConfirmacaoVO> confirmacoes = this.montarListaDatasConfirmacao();
-		
-		for (ConfirmacaoVO confirmacao : confirmacoes) {
-			
-			if (DateUtil.parseDataPTBR(confirmacao.getMensagem()).equals(novaData)) {
-				
-				if (confirmacao.isConfirmado()) {
-					
-					throw new ValidacaoException(TipoMensagem.WARNING,
-						"O recolhimento não pode ser reprogramado para uma data já confirmada!");
-				}
-			}
-		}
-
 	}
 
 	/**
@@ -1144,16 +1198,6 @@ public class MatrizRecolhimentoController extends BaseController {
 
 				throw new ValidacaoException(TipoMensagem.WARNING,
 						"A data de recolhimento deve ser maior que a data de lançamento.");
-			}
-			
-			ArrayList<StatusLancamento> status = new ArrayList<StatusLancamento>();
-			status.add(StatusLancamento.BALANCEADO_RECOLHIMENTO);
-			
-			List<Lancamento> listaLancamentosDataDistribuidorInStatus = this.lancamentoService.obterLancamentoDataDistribuidorInStatus(novaData, status);
-			
-			if (listaLancamentosDataDistribuidorInStatus != null && !listaLancamentosDataDistribuidorInStatus.isEmpty()) {
-				
-				throw new ValidacaoException(TipoMensagem.WARNING, "Produto já possui balanceamento na data: "+produto.getNovaData());
 			}
 		}
 	}
@@ -1411,50 +1455,17 @@ public class MatrizRecolhimentoController extends BaseController {
 		return confirmacoesVO;
 	}
 	
-	@Post
-	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
-	public void excluirBalanceamento(Long idLancamento) {
-
-		verificarExecucaoInterfaces();
-		
-		this.recolhimentoService.excluiBalanceamento(idLancamento);
-		
-		BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoSessao =
-				(BalanceamentoRecolhimentoDTO)
-					httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
-			
-		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoSessao =
-				balanceamentoRecolhimentoSessao.getMatrizRecolhimento();
-		
-
-		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry : matrizRecolhimentoSessao.entrySet()) {
-			
-			ProdutoRecolhimentoDTO excluir = null;			
-			
-			for(ProdutoRecolhimentoDTO prodRecolhimento : entry.getValue()) {
-				
-				if(prodRecolhimento.getIdLancamento().equals(idLancamento)) {
-					
-					excluir = prodRecolhimento;
-					break;
-				}
-			}
-			
-			if(excluir!=null) {
-				
-				entry.getValue().remove(excluir);
-				break;
-			}
-		}
-		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
-			"Balanceamento excluído com sucesso!"), "result").recursive().serialize();
-	}
-
 	private void verificarExecucaoInterfaces() {
 		if (distribuidorService.verificaDesbloqueioProcessosLancamentosEstudos()) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "As interfaces encontram-se em processamento. Aguarde o termino da execução para continuar!");
 		}
+	}
+	
+	public enum ValidacaoDataRecolhimento {
+		
+		DATA_DIA_CONFIRMADO,
+		DATA_FORA_SEMANA,
+		DATA_VALIDA
 	}
 	
 }

@@ -35,6 +35,8 @@ public class DebitoCreditoCotaDTO implements Serializable {
 	@Export(label = "Tipo Movimento", exhibitionOrder = 1)
 	private String tipoMovimento;
 	
+	private String descricao;
+	
 	public Date getDataLancamento() {
 		return dataLancamento;
 	}
@@ -67,8 +69,19 @@ public class DebitoCreditoCotaDTO implements Serializable {
 		return (tipoLancamento!=null)? tipoLancamento.getDescricao():null;
 	}
 
-	public void setTipoLancamento(OperacaoFinaceira tipoLancamento) {
-		this.tipoLancamento = tipoLancamento;
+	//usado em query, populado pelo hibernate
+	public void setTipoLancamento(String tipoLancamento) {
+		
+		if (tipoLancamento != null){
+			
+			this.tipoLancamento = OperacaoFinaceira.valueOf(tipoLancamento);
+		}
+	}
+	
+	//usado em métodos que usam esse DTO
+	public void setTipoLancamentoEnum(OperacaoFinaceira operacaoFinaceira) {
+		
+		this.tipoLancamento = operacaoFinaceira;
 	}
 
 	/**
@@ -99,6 +112,14 @@ public class DebitoCreditoCotaDTO implements Serializable {
 
 	public void setValor(BigDecimal valor) {
 		this.valor = valor;
+	}
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
 	}
 	
 	

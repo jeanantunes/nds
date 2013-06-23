@@ -104,7 +104,7 @@
 				
 				<jsp:include page="../messagesDialog.jsp" />
 				
-				<p>A data está fora da semana de recolhimento. Você deseja continuar?</p>
+				<p id="mensagemValidacaoReprogramacao" />
 			</div>
 		
 		</form>
