@@ -223,18 +223,19 @@ public class CotaDAO {
 		}
 		if (cota.getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) {
 		    cota.setClassificacao(ClassificacaoCota.BancaSuspensa);
-		}
-		if (!cota.isMix() && cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)) {
-		    cota.setClassificacao(ClassificacaoCota.BancaMixSemDeterminadaPublicacao);
-		}
-		if (rs.getBoolean("COTA_NAO_RECEBE_SEGMENTO")) {
-		    cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeEsseSegmento);
-		}
-		if (rs.getBoolean("COTA_EXCECAO_SEGMENTO")) {
-		    cota.setClassificacao(ClassificacaoCota.CotaExcecaoSegmento);
-		}
-		if (rs.getBoolean("COTA_NAO_RECEBE_CLASSIFICACAO")) {
-		    cota.setClassificacao(ClassificacaoCota.BancaSemClassificacaoDaPublicacao);
+		} else {
+		    if (!cota.isMix() && cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)) {
+			cota.setClassificacao(ClassificacaoCota.BancaMixSemDeterminadaPublicacao);
+		    }
+		    if (rs.getBoolean("COTA_NAO_RECEBE_SEGMENTO")) {
+			cota.setClassificacao(ClassificacaoCota.CotaNaoRecebeEsseSegmento);
+		    }
+		    if (rs.getBoolean("COTA_EXCECAO_SEGMENTO")) {
+			cota.setClassificacao(ClassificacaoCota.CotaExcecaoSegmento);
+		    }
+		    if (rs.getBoolean("COTA_NAO_RECEBE_CLASSIFICACAO")) {
+			cota.setClassificacao(ClassificacaoCota.BancaSemClassificacaoDaPublicacao);
+		    }
 		}
 		return cota;
 	    }

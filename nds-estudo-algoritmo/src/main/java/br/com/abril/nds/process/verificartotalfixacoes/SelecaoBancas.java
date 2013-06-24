@@ -92,7 +92,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	}
 	// fim da exclusao
 	
-	for (CotaEstudo cota : cotas) {
+	for (CotaEstudo cota : cotasComHistoricoMap.values()) {
 	    if (cota.getClassificacao().equals(ClassificacaoCota.CotaNova) && cota.getEdicoesRecebidas().size() >= 3) {
 		cota.setClassificacao(ClassificacaoCota.SemClassificacao);
 	    }
@@ -156,7 +156,7 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	    }
 	}
 
-	// removendo cotas que não podem receber reparte parcial antes do tratamento de cotas englobadas
+	// removendo cotas que não podem receber reparte parcial
 	for (CotaEstudo cota : cotasComHistoricoMap.values()) {
 	    if (estudo.getProdutoEdicaoEstudo().getPeriodo() > 1 && !cota.isRecebeParcial() && !cota.isExcecaoParcial()) {
 		cota.setReparteCalculado(BigInteger.ZERO);
