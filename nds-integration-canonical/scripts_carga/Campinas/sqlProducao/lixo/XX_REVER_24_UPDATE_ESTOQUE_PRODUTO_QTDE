@@ -1,0 +1,2 @@
+update estoque_produto set QTDE_DEVOLUCAO_FORNECEDOR = QTDE_DEVOLUCAO_ENCALHE;
+update estoque_produto set QTDE_DEVOLUCAO_FORNECEDOR = 0 where produto_edicao_id in (select l.produto_edicao_id from lancamento l where l.status <> 'FECHADO');

@@ -566,8 +566,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	private void validarAlteracaoEstoqueProdutoDistribuidorParaDevolucaoFornecedor(
 			BigInteger saldoEstoque, ProdutoEdicao produtoEdicao, boolean validarTransfEstoqueDiferenca) {
 
-		
-		
 		if (validarTransfEstoqueDiferenca
 				&& !this.validarSaldoEstoque(saldoEstoque)) {
 

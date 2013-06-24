@@ -213,8 +213,7 @@ public class ImpressaoFinalizacaoEncalheTest {
 	
 	public static String getDadosSlipMock() {
 		ConferenciaEncalheServiceImpl conf = new ConferenciaEncalheServiceImpl();
-		conf.setSlipDTO(new ImpressaoFinalizacaoEncalheTest().getSlipDtoMock());
-		String saida = conf.gerarSlipTxtMatricial().toString();
+		String saida = conf.gerarSlipTxtMatricial(new ImpressaoFinalizacaoEncalheTest().getSlipDtoMock()).toString();
 		saida = saida.replaceAll(ImpressaoConstantes.CARACTER_INDENT_LINEFEED_SCAPE, ImpressaoConstantes.CR + ImpressaoConstantes.LINE_FEED);
 		return saida;
 	}
