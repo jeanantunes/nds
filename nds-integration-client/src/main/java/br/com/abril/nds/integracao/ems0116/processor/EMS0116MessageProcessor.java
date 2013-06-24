@@ -78,9 +78,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 	 */
 	private void processarPDV(Message message, EMS0116Input input, Cota cota) {
 		
-		//PDV pdvCandidatoAlteracao = cota.getPdvs().get(0);
-		
-		PDV pdvCandidatoAlteracao  = obterPdvCorrenteImportacao(input,cota);
+		PDV pdvCandidatoAlteracao  = obterPdvCorrenteImportacao(input, cota);
 		
 		// comentado por cesar pop punk em 26/03/2013 pois quem "manda" no cadastro é o novo distrib e não mais o mdc.
 		if(pdvCandidatoAlteracao == null){
@@ -97,6 +95,8 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		processarEnderecoPDV(message, input, cota, pdvCandidatoAlteracao);
 
 		processarTelefonePDV(message, input, cota, pdvCandidatoAlteracao);
+		
+		getSession().update(pdvCandidatoAlteracao);
 	}
 
 	
@@ -280,7 +280,13 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 			endereco.setCep(input.getCep());
 			endereco.setCidade((input.getNomeMunicipio() != null ? input.getNomeMunicipio().toUpperCase() : input.getNomeMunicipio()));
 			endereco.setLogradouro((logradouro != null ? logradouro.toUpperCase() : logradouro));
-			endereco.setNumero(numero);
+			try {
+				Long l = Long.parseLong(numero);
+				endereco.setNumero(l.toString());
+			} catch (Exception e) {
+				
+			}
+			
 			endereco.setUf(input.getSiglaUF());
 			
 			Endereco endTmp = enderecoRepository.getEnderecoSaneado(input.getCep());
@@ -293,7 +299,9 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 			if(!isEnderecoPrincipal(pdv.getEnderecos())) {
 				enderecoPDV.setPrincipal(true);
 			} else {
-				enderecoPDV.setPrincipal(false);
+				if(!pdv.getEnderecos().contains(enderecoPDV)) {
+					enderecoPDV.setPrincipal(false);
+				}
 			}
 			
 			getSession().merge(enderecoPDV);
@@ -367,7 +375,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		
 		for(EnderecoPDV item : enderecos){
 			
-			if(item.isPrincipal()){
+			if(item.isPrincipal()) {
 				return item.isPrincipal();
 			}
 		}
@@ -534,8 +542,8 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 		sql.append(" FROM PDV p join p.enderecos enderecoPDV join enderecoPDV.endereco endereco ");
 		sql.append(" WHERE ");
 		sql.append(" p.cota = :cota ");
-		sql.append(" and endereco.logradouro=:logradouro");
-		sql.append(" and endereco.numero=:numero");
+		sql.append(" and endereco.logradouro = :logradouro");
+		sql.append(" and endereco.numero = :numero");
 
 		Query query = getSession().createQuery(sql.toString());
 		query.setParameter("cota", cota);
