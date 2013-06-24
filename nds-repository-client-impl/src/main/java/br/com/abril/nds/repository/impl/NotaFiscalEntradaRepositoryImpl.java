@@ -343,11 +343,15 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 				   + " itemNotaFiscal.produtoEdicao.numeroEdicao as numeroEdicao, "
 				   + " itemNotaFiscal.preco as precoVenda, "
 				   + " itemNotaFiscal.qtde as quantidadeExemplares, " 
-				   + " (itemNotaFiscal.qtde * itemNotaFiscal.preco) as valorTotal, "
+				   
+				   + " ((itemNotaFiscal.preco - (itemNotaFiscal.preco * itemNotaFiscal.desconto)) * itemNotaFiscal.qtde) as valorTotal, "
+				   
 				   + " diferenca.qtde as sobrasFaltas, " 
 				   + " diferenca.tipoDiferenca as tipoDiferenca, " 
 				   + " itemNotaFiscal.desconto as desconto " 
+				   
 				   + " from ItemNotaFiscalEntrada itemNotaFiscal "
+				   
 				   + " left join itemNotaFiscal.recebimentoFisico.diferenca as diferenca "
 				   + " where itemNotaFiscal.notaFiscal.id = :idNotaFiscal "
 				   + " order by itemNotaFiscal.id ";
