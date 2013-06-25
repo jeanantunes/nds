@@ -163,9 +163,9 @@ public class MovimentoRepositoryImpl extends AbstractRepositoryModel<Movimento, 
 	
 	public boolean existeMovimentoEstoquePendente(List<GrupoMovimentoEstoque> gruposMovimento) {
 		
-		String hql = " select count(movimento) "
-			+ " from Movimento movimento "
-			+ " where movimento.tipoMovimento.grupoMovimentoEstoque in (:gruposMovimento) "
+		String hql = " select count(movimentoEstoque) "
+			+ " from MovimentoEstoque movimentoEstoque "
+			+ " where tipoMovimento.grupoMovimentoEstoque in (:gruposMovimento) "
 			+ " and status = :status ";
 		
 		Query query = getSession().createQuery(hql);
@@ -181,9 +181,9 @@ public class MovimentoRepositoryImpl extends AbstractRepositoryModel<Movimento, 
 	
 	public boolean existeMovimentoFinanceiroPendente(List<GrupoMovimentoFinaceiro> gruposMovimento) {
 		
-		String hql = " select count(movimento) "
-			+ " from Movimento movimento "
-			+ " where movimento.tipoMovimento.grupoMovimentoFinaceiro in (:gruposMovimento)"
+		String hql = " select count(movimentoFinanceiroCota) "
+			+ " from MovimentoFinanceiroCota movimentoFinanceiroCota "
+			+ " where tipoMovimento.grupoMovimentoFinaceiro in (:gruposMovimento)"
 			+ " and status = :status ";
 		
 		Query query = getSession().createQuery(hql);
