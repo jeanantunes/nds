@@ -10,12 +10,12 @@ var fiadorController = $.extend(true, {
 		
 		novoFiador: function (callback){
 			
-			$.getJSON(contextPath + '/cadastro/fiador/novoFiador', null, function(result){callback();});
+			$.getJSON(contextPath + '/cadastro/fiador/novoFiador', null, callback);
 		},
 		
 		novoFiadorCPF:function (){
 			
-			fiadorController.novoFiador(function() {
+			fiadorController.novoFiador(function(result) {
 				
 				$(".fiadorController-inicioAtividadeNovo").show();
 				$(".fiadorController-inicioAtividadeEdicao").hide();
@@ -26,7 +26,7 @@ var fiadorController = $.extend(true, {
 		
 		novoFiadorCNPJ:function (){
 			
-			fiadorController.novoFiador(function() {
+			fiadorController.novoFiador(function(result) {
 				fiadorController.popupCadastroFiadorCNPJ();
 			});
 						

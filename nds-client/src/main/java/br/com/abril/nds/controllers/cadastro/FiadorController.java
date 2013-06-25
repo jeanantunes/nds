@@ -120,7 +120,7 @@ public class FiadorController extends BaseController {
 		
 		this.limparDadosSessao();
 		
-		result.nothing();
+		this.result.use(Results.json()).from("").serialize();
 	}
 	
 	@Post
