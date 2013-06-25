@@ -10,7 +10,6 @@ import java.util.List;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.Util;
 
 /**
@@ -61,11 +60,7 @@ public class ProdutoLancamentoDTO implements Serializable {
 	private BigDecimal valorTotal;
 
 	private Date novaDataLancamento;
-	
-	private Integer numeroReprogramacoes;
-	
-	private boolean possuiRecebimentoFisico;
-	
+		
 	private PeriodicidadeProduto periodicidadeProduto;
 	
 	private Integer ordemPeriodicidadeProduto;
@@ -85,21 +80,6 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 */
 	public ProdutoLancamentoDTO() {
 		
-	}
-
-	/**
-	 * Verifica se o produto excede o número de reprogramações
-	 */
-	public boolean excedeNumeroReprogramacoes() {
-		
-		if (this.possuiRecebimentoFisico
-				&& this.numeroReprogramacoes != null
-				&& this.numeroReprogramacoes >= Constantes.NUMERO_REPROGRAMACOES_LIMITE) {
-			
-			return true;
-		}
-		
-		return false;
 	}
 	
 	/**
@@ -373,34 +353,6 @@ public class ProdutoLancamentoDTO implements Serializable {
 	}
 
 	/**
-	 * @return the numeroReprogramacoes
-	 */
-	public Integer getNumeroReprogramacoes() {
-		return numeroReprogramacoes;
-	}
-
-	/**
-	 * @param numeroReprogramacoes the numeroReprogramacoes to set
-	 */
-	public void setNumeroReprogramacoes(Integer numeroReprogramacoes) {
-		this.numeroReprogramacoes = numeroReprogramacoes;
-	}
-	
-	/**
-	 * @return the possuiRecebimentoFisico
-	 */
-	public boolean isPossuiRecebimentoFisico() {
-		return possuiRecebimentoFisico;
-	}
-
-	/**
-	 * @param possuiRecebimentoFisico the possuiRecebimentoFisico to set
-	 */
-	public void setPossuiRecebimentoFisico(boolean possuiRecebimentoFisico) {
-		this.possuiRecebimentoFisico = possuiRecebimentoFisico;
-	}
-
-	/**
 	 * @return the periodicidadeProduto
 	 */
 	public PeriodicidadeProduto getPeriodicidadeProduto() {
@@ -488,16 +440,17 @@ public class ProdutoLancamentoDTO implements Serializable {
 		this.alteradoInteface = alteradoInteface;
 	}
 	
-	/**
-	 * @return the balanceamentoConfirmado
-	 */
+	public boolean isStatusLancamentoEmBalanceamento() {
+		return StatusLancamento.EM_BALANCEAMENTO.equals(status);
+	}
+	
 	public boolean isStatusLancamentoBalanceado() {
 		return StatusLancamento.BALANCEADO.equals(status);
 	}
 	
-//	public boolean isStatusLancamentoConfirmado() {
-//		return StatusLancamento.CONFIRMADO.equals(status);
-//	}
+	public boolean isStatusLancamentoExpedido() {
+		return StatusLancamento.EXPEDIDO.equals(status);
+	}
 
 	/**
 	 * @return the distribuicao
@@ -511,6 +464,38 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 */
 	public void setDistribuicao(BigInteger distribuicao) {
 		this.distribuicao = distribuicao;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+			+ ((idLancamento == null) ? 0 : idLancamento.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		ProdutoLancamentoDTO other = (ProdutoLancamentoDTO) obj;
+		if (idLancamento == null) {
+			if (other.idLancamento != null)
+				return false;
+		} else if (!idLancamento.equals(other.idLancamento))
+			return false;
+		return true;
 	}
 	
 }

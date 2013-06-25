@@ -12,7 +12,6 @@ import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.RegistroCurvaABCDistribuidorVO;
-import br.com.abril.nds.client.vo.ResultadoCurvaABCDistribuidor;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.Origem;
@@ -117,87 +116,6 @@ public class RelatorioVendasRepositoryImplTest extends AbstractRepositoryImplTes
 				BigInteger.TEN, cotaGuilherme, StatusAprovacao.PENDENTE, null);
 		movimentoEstoqueCota1.setData(Fixture.criarData(8, Calendar.NOVEMBER, 2012));
 		save(movimentoEstoqueCota1);
-		
-	}
-		
-	@Test
-	public void obterCurvaABCDistribuidorTotalFiltroEdicaoProduto(){
-		filtro = new FiltroCurvaABCDistribuidorDTO(); 
-		filtro.setEdicaoProduto(new ArrayList<Long>());
-		filtro.getEdicaoProduto().add(1L);
-		
-		ResultadoCurvaABCDistribuidor resultadoCurvaABCDistribuidor = 
-					relatorioVendasRepository.obterCurvaABCDistribuidorTotal(filtro);
-		
-	}
-	
-	@Test
-	public void obterCurvaABCDistribuidorTotalFiltroCodigoFornecedor(){
-		filtro = new FiltroCurvaABCDistribuidorDTO(); 
-		filtro.setCodigoFornecedor("45");
-		
-		ResultadoCurvaABCDistribuidor resultadoCurvaABCDistribuidor = 
-					relatorioVendasRepository.obterCurvaABCDistribuidorTotal(filtro);
-		
-	}
-	
-	@Test
-	public void obterCurvaABCDistribuidorTotalFiltroCodigoProduto(){
-		filtro = new FiltroCurvaABCDistribuidorDTO(); 
-		filtro.setCodigoProduto("45.5");
-		
-		ResultadoCurvaABCDistribuidor resultadoCurvaABCDistribuidor = 
-					relatorioVendasRepository.obterCurvaABCDistribuidorTotal(filtro);
-		
-	}
-	
-	@Test
-	public void obterCurvaABCDistribuidorTotalFiltroNomeProduto(){
-		filtro = new FiltroCurvaABCDistribuidorDTO(); 
-		filtro.setNomeProduto("produtoTeste");
-		
-		ResultadoCurvaABCDistribuidor resultadoCurvaABCDistribuidor = 
-					relatorioVendasRepository.obterCurvaABCDistribuidorTotal(filtro);
-		
-	}
-	
-	@Test
-	public void obterCurvaABCDistribuidorTotalFiltroCodigoEditor(){
-		filtro = new FiltroCurvaABCDistribuidorDTO(); 
-		filtro.setCodigoEditor("45");
-		
-		ResultadoCurvaABCDistribuidor resultadoCurvaABCDistribuidor = 
-					relatorioVendasRepository.obterCurvaABCDistribuidorTotal(filtro);
-		
-	}
-	
-	@Test
-	public void obterCurvaABCDistribuidorTotalFiltroCodigoCota(){
-		filtro = new FiltroCurvaABCDistribuidorDTO(); 
-		filtro.setCodigoCota(1);
-		
-		ResultadoCurvaABCDistribuidor resultadoCurvaABCDistribuidor = 
-					relatorioVendasRepository.obterCurvaABCDistribuidorTotal(filtro);
-		
-	}
-	
-	@Test
-	public void obterCurvaABCDistribuidorTotalFiltroNomeCota(){
-		filtro = new FiltroCurvaABCDistribuidorDTO(); 
-		filtro.setNomeCota("cotaTest");
-		
-		ResultadoCurvaABCDistribuidor resultadoCurvaABCDistribuidor = 
-					relatorioVendasRepository.obterCurvaABCDistribuidorTotal(filtro);
-		
-	}
-	
-	@Test
-	public void obterCurvaABCDistribuidorTotalFiltroMunicipio(){
-		filtro = new FiltroCurvaABCDistribuidorDTO(); 
-		filtro.setMunicipio("municipioTeste");
-		
-		ResultadoCurvaABCDistribuidor resultadoCurvaABCDistribuidor = 
-					relatorioVendasRepository.obterCurvaABCDistribuidorTotal(filtro);
 		
 	}
 	

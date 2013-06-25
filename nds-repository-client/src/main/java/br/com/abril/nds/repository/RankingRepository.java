@@ -9,29 +9,14 @@ import java.util.Map;
  */
 public interface RankingRepository {
 	
-	/**
-	 * Retorna a posição do ranking do produto em relação a vendas do mesmo
-	 * 
-	 * @param idProduto - identificador do produto
-	 * 
-	 * @return Long - posição do ranking do produto
-	 */
-	Long obterRankingProduto(Long idProduto);
+	Map<Long, Long> obterRankingProdutoPorCota(Long idCota);
 	
-	/**
-	 * Retorna a posição do ranking da cota em relação a um determinado produto
-	 * 
-	 * @param idProduto - identificador do produto
-	 * 
-	 * @param idCota identificador da cota
-	 * 
-	 * @return Long - posição do ranking da cota
-	 */
-	Long obterRankingCota(Long idProduto,Long idCota);
+	Map<Long, Long> obterRankingCota();
 	
-	Map<Long, Long> obterRankingProdutoCota(Long idCota);
+	Map<Long, Long> obterRankingEditor();
 	
-	Long obterRankingCotaDistribuidor(Long idCota);
+	Map<Long, Long> obterRankingProdutoPorProduto();
 	
-	Long obterRankingEditor(Long codigoEditor);
+	Map<Long, Long> obterRankingCotaPorProduto(Long idProduto);
+	
 }

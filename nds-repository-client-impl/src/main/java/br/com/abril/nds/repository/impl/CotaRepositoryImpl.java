@@ -40,7 +40,6 @@ import br.com.abril.nds.dto.MunicipioDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
-import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
@@ -1017,35 +1016,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		Integer numeroCota =  (Integer) getSession().createQuery(hql).uniqueResult();
 		
 		return (numeroCota == null ) ? 0 : numeroCota + 1;
-	}
-
-	/* (non-Javadoc)
-	 * @see br.com.abril.nds.repository.CotaRepository#obterCurvaABCCotaTotal(br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO)
-	 */
-	@Override
-	public ResultadoCurvaABCCotaDTO obterCurvaABCCotaTotal(FiltroCurvaABCCotaDTO filtro){
-		StringBuilder hql = new StringBuilder();
-
-		hql.append("SELECT new ").append(ResultadoCurvaABCCotaDTO.class.getCanonicalName())
-
-		.append(" ( (sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida)), ")
-		.append("   ( sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (estoqueProdutoCota.produtoEdicao.precoVenda - ( movimentos.valoresAplicados.valorDesconto ))) ) ) ");
-
-		hql.append(getWhereQueryObterCurvaABCCota(filtro));
-
-		Query query = this.getSession().createQuery(hql.toString());
-
-		HashMap<String, Object> param = getParametrosObterCurvaABCCota(filtro);
-
-		for(String key : param.keySet()){
-			query.setParameter(key, param.get(key));
-		}
-		
-		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
-			query.setParameterList("edicaoProduto", (filtro.getEdicaoProduto()));
-		}
-		
-		return (ResultadoCurvaABCCotaDTO) query.list().get(0);
 	}
 
 	/* (non-Javadoc)
