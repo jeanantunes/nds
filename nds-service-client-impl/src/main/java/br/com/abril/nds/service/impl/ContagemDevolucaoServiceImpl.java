@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.assembler.ChamadaEncalheFornecedorDTOAssembler;
 import br.com.abril.nds.client.vo.ProdutoEdicaoFechadaVO;
 import br.com.abril.nds.client.vo.RegistroEdicoesFechadasVO;
+import br.com.abril.nds.dto.ContagemDevolucaoAgregationValuesDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoConferenciaCegaDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
@@ -57,9 +58,6 @@ import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
-import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
-import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
@@ -153,19 +151,19 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	
 	@Transactional
 	public InfoContagemDevolucaoDTO obterInfoContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa, boolean indPerfilUsuarioEncarregado) {
-		
+
 		InfoContagemDevolucaoDTO info = new InfoContagemDevolucaoDTO();
-		
-		
-		Integer qtdTotalRegistro = movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(filtroPesquisa);
-		info.setQtdTotalRegistro(qtdTotalRegistro);
+
+		ContagemDevolucaoAgregationValuesDTO contagemDevolucaoAgregationValues = 
+				movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(filtroPesquisa);
+
+		info.setQtdTotalRegistro(contagemDevolucaoAgregationValues.getQuantidadeTotal().intValue());
+		info.setValorTotalGeral(contagemDevolucaoAgregationValues.getValorTotalGeral());
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucao = movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
 				filtroPesquisa,	indPerfilUsuarioEncarregado);
 		
 		info.setListaContagemDevolucao(listaContagemDevolucao);
-		
-		info.setValorTotalGeral(BigDecimal.ZERO);
 		
 		if(indPerfilUsuarioEncarregado) {
 			carregarDadosAdicionais(info, listaContagemDevolucao);
@@ -214,11 +212,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		for(ContagemDevolucaoDTO contagem : listaContagemDevolucao) {
 			adicionarValores(contagem);
-			BigDecimal valorTotal = contagem.getValorTotal();
-			
-			info.setValorTotalGeral(info.getValorTotalGeral().add(valorTotal));
 		}
-		
 	}
 
 

@@ -35,6 +35,7 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.SemanaUtil;
 
 @Service
 public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracaoService {
@@ -264,10 +265,10 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	}
 
 	private Intervalo<Date> obterPeriodoDataRecolhimento(String anoSemana) {
+
+		Integer semana = SemanaUtil.get(anoSemana);
 		
-		Date data = obterDataBase(anoSemana, this.distribuidorService.obterDataOperacaoDistribuidor()); 
-		
-		Integer semana = Integer.parseInt(anoSemana.substring(4));
+		Date data = SemanaUtil.getDateBase(anoSemana, this.distribuidorService.obterDataOperacaoDistribuidor()); 
 		
 		Date dataInicioSemana = 
 				DateUtil.obterDataDaSemanaNoAno(
@@ -280,17 +281,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		return periodoRecolhimento;
 		
 	}
-	
-	private Date obterDataBase(String anoSemana, Date data) {
-		
-		String ano = anoSemana.substring(0,4);
-		Calendar c = Calendar.getInstance();
-		c.setTime(data);
-		c.set(Calendar.YEAR, Integer.parseInt(ano));
-		
-		return c.getTime();
-	}
-	
+
 	@Transactional
 	public void atualizarItemChamadaEncalheFornecedor(Long idItemChamadaFornecedor, BigInteger encalhe, BigInteger venda) {
 		

@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -118,16 +119,12 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 	
 	public Integer getAnoReferente(){
 		
-		return (semana == null)
-				? null
-						: Integer.parseInt(semana.substring(0,4));
+		return SemanaUtil.getAno(semana);
 	}
 	
 	public Integer getNumeroSemana(){
 	
-		return (semana == null || semana.length() < 4)
-				? null
-						: Integer.parseInt(semana.substring(4));
+		return SemanaUtil.get(semana);
 	}
 
 }
