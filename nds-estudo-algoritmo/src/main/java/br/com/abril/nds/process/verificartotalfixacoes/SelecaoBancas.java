@@ -167,6 +167,14 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	for (CotaEstudo cota : estudo.getCotasForaDaRegiao()) {
 	    cotasComHistoricoMap.remove(cota.getId());
 	}
+	// removendo cotas que não podem receber reparte parcial dentre as cotas sem histórico (SH) e com venda zero (VZ)
+	for (CotaEstudo cota : estudo.getCotasForaDaRegiao()) {
+	    if (estudo.getProdutoEdicaoEstudo().getPeriodo() > 1 && !cota.isRecebeParcial() && !cota.isExcecaoParcial() &&
+		    cota.getClassificacao().in(ClassificacaoCota.BancaComVendaZero, ClassificacaoCota.BancaSemHistorico)) {
+		cota.setReparteCalculado(BigInteger.ZERO);
+		cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
+	    }
+	}
 	// fim da remocao
 	
 	estudo.setCotas(new LinkedList<>(cotasComHistoricoMap.values()));
