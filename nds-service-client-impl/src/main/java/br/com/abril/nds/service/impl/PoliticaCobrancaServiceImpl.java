@@ -15,6 +15,8 @@ import br.com.abril.nds.client.vo.ParametroCobrancaVO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.ConcentracaoCobrancaCota;
@@ -113,28 +115,28 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		ParametroCobrancaVO parametroCobranca = null;
 		List<ParametroCobrancaVO> parametrosCobranca = null;
 		FormaCobranca forma = null;
-		if ((politicasCobranca!=null)&&(politicasCobranca.size()>0)){
+		if ((politicasCobranca!=null)&&(politicasCobranca.size()>0)) {
 			parametrosCobranca = new ArrayList<ParametroCobrancaVO>();
 			for(PoliticaCobranca itemPolitica:politicasCobranca){
 				parametroCobranca = new ParametroCobrancaVO();
 			    
 				parametroCobranca.setIdPolitica(itemPolitica.getId());
-				parametroCobranca.setAcumulaDivida(itemPolitica.isAcumulaDivida()?"Sim":"Não");
-				parametroCobranca.setCobrancaUnificada(itemPolitica.isUnificaCobranca()?"Sim":"Não");
+				parametroCobranca.setAcumulaDivida(itemPolitica.isAcumulaDivida() ? "Sim" : "Não");
+				parametroCobranca.setCobrancaUnificada(itemPolitica.isUnificaCobranca() ? "Sim" : "Não");
 				parametroCobranca.setFormaEmissao(itemPolitica.getFormaEmissao()!=null?itemPolitica.getFormaEmissao().getDescFormaEmissao():"");
 				
 				forma = itemPolitica.getFormaCobranca();
-				if (forma!=null){
-					parametroCobranca.setForma(forma.getTipoCobranca()!=null?forma.getTipoCobranca().getDescTipoCobranca():"");
-					parametroCobranca.setBanco(forma.getBanco()!=null?forma.getBanco().getNome():"");
-					parametroCobranca.setValorMinimoEmissao(forma.getValorMinimoEmissao()!=null?forma.getValorMinimoEmissao().toString():"");
-					parametroCobranca.setEnvioEmail(forma.isRecebeCobrancaEmail()?"Sim":"Não");
+				if (forma!=null) {
+					parametroCobranca.setForma(forma.getTipoCobranca() != null ? forma.getTipoCobranca().getDescTipoCobranca() : "");
+					parametroCobranca.setBanco(forma.getBanco() != null ? forma.getBanco().getNome() : "");
+					parametroCobranca.setValorMinimoEmissao(forma.getValorMinimoEmissao() != null ? forma.getValorMinimoEmissao().toString() : "");
+					parametroCobranca.setEnvioEmail(forma.isRecebeCobrancaEmail() ? "Sim" : "Não");
 					StringBuilder fornecedores = new StringBuilder();
 					int i = 0;
 					for (Fornecedor fornecedor: forma.getFornecedores()) {
 						fornecedores.append(fornecedor.getJuridica().getNome());
 						i++;
-						if(i < forma.getFornecedores().size()){
+						if(i < forma.getFornecedores().size()) {
 							fornecedores.append(", ");
 						}
 						
@@ -236,53 +238,71 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 			parametroCobrancaDTO.setFormaEmissao(politica.getFormaEmissao());
 			parametroCobrancaDTO.setUnificada(politica.isUnificaCobranca()?true:false);
 			
+			if(politica.getFormaCobranca() != null 
+					&& politica.getFormaCobranca().getFornecedorPadrao() != null) {
+				
+				parametroCobrancaDTO.setIdFornecedorPadrao(politica.getFormaCobranca().getFornecedorPadrao().getId());
+				
+			}
+			
+			if(politica.getFormaCobranca() != null) {
+				
+				parametroCobrancaDTO.setTipoCota(politica.getFormaCobranca().getTipoCota());
+				
+			}
+			
+			if(politica.getFormaCobranca() != null && politica.getFormaCobranca().getFatorVencimento() != null) {
+				
+				parametroCobrancaDTO.setFatorVencimento(politica.getFormaCobranca().getFatorVencimento());
+				
+			}
+			
 			Set<ConcentracaoCobrancaCota> concentracoesCobranca=null;
 			
 			if (formaCobranca!=null){
 			
-				if (formaCobranca.getTipoFormaCobranca() == TipoFormaCobranca.SEMANAL){
+				if (formaCobranca.getTipoFormaCobranca() == TipoFormaCobranca.SEMANAL) {
 				    concentracoesCobranca = formaCobranca.getConcentracaoCobrancaCota();
 				}		
-				parametroCobrancaDTO.setDiasDoMes(new ArrayList<Integer>(formaCobranca.getDiasDoMes()));
 				
+				parametroCobrancaDTO.setDiasDoMes(new ArrayList<Integer>(formaCobranca.getDiasDoMes()));
 
 				parametroCobrancaDTO.setTipoFormaCobranca(formaCobranca.getTipoFormaCobranca());
-				parametroCobrancaDTO.setEnvioEmail(formaCobranca.isRecebeCobrancaEmail()?true:false);
-				parametroCobrancaDTO.setVencimentoDiaUtil(formaCobranca.isVencimentoDiaUtil()?true:false);
-				parametroCobrancaDTO.setValorMinimo(formaCobranca.getValorMinimoEmissao()!=null?formaCobranca.getValorMinimoEmissao().setScale(2, RoundingMode.HALF_UP):BigDecimal.ZERO);
+				parametroCobrancaDTO.setEnvioEmail(formaCobranca.isRecebeCobrancaEmail() ? true : false);
+				parametroCobrancaDTO.setVencimentoDiaUtil(formaCobranca.isVencimentoDiaUtil() ? true : false);
+				parametroCobrancaDTO.setValorMinimo(formaCobranca.getValorMinimoEmissao() != null ? formaCobranca.getValorMinimoEmissao().setScale(2, RoundingMode.HALF_UP) : BigDecimal.ZERO);
 				parametroCobrancaDTO.setFormaCobrancaBoleto(formaCobranca.getFormaCobrancaBoleto());
 				
 				
-				
-				if ((concentracoesCobranca!=null)&&(concentracoesCobranca.size() > 0)){
-					for (ConcentracaoCobrancaCota itemConcentracaoCobranca:concentracoesCobranca){
+				if ((concentracoesCobranca != null) && (concentracoesCobranca.size() > 0)) {
+					for (ConcentracaoCobrancaCota itemConcentracaoCobranca:concentracoesCobranca) {
 						
 						DiaSemana dia = itemConcentracaoCobranca.getDiaSemana();
-						if (dia==DiaSemana.DOMINGO){
+						if (dia==DiaSemana.DOMINGO) {
 							parametroCobrancaDTO.setDomingo(true);
 						}
 		
-						if (dia==DiaSemana.SEGUNDA_FEIRA){
+						if (dia==DiaSemana.SEGUNDA_FEIRA) {
 							parametroCobrancaDTO.setSegunda(true);
 						}    
 						
-						if (dia==DiaSemana.TERCA_FEIRA){
+						if (dia==DiaSemana.TERCA_FEIRA) {
 							parametroCobrancaDTO.setTerca(true);
 						}    
 						
-						if (dia==DiaSemana.QUARTA_FEIRA){
+						if (dia==DiaSemana.QUARTA_FEIRA) {
 							parametroCobrancaDTO.setQuarta(true);
 						}
 						
-					    if (dia==DiaSemana.QUINTA_FEIRA){
+					    if (dia==DiaSemana.QUINTA_FEIRA) {
 					    	parametroCobrancaDTO.setQuinta(true);
 					    }    
 					    
-						if (dia==DiaSemana.SEXTA_FEIRA){
+						if (dia==DiaSemana.SEXTA_FEIRA) { 
 							parametroCobrancaDTO.setSexta(true);
 						}    
 						
-						if (dia==DiaSemana.SABADO){
+						if (dia==DiaSemana.SABADO) {
 							parametroCobrancaDTO.setSabado(true);
 						}
 						
@@ -293,7 +313,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 			
 
 			Banco banco = formaCobranca.getBanco();
-			if (banco!=null){
+			if (banco != null) {
 				parametroCobrancaDTO.setIdBanco(banco.getId());
 				parametroCobrancaDTO.setTaxaMulta(banco.getMulta());
 				parametroCobrancaDTO.setValorMulta(banco.getVrMulta());
@@ -306,8 +326,8 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 			
 			Set<Fornecedor> fornecedores = formaCobranca.getFornecedores();
 			List<Long> fornecedoresID = new ArrayList<Long>();
-			if (fornecedores!=null){
-			    for(Fornecedor itemFornecedor:fornecedores){
+			if (fornecedores!=null) {
+			    for(Fornecedor itemFornecedor:fornecedores) {
 				    fornecedoresID.add(itemFornecedor.getId());
 			    }
 			    parametroCobrancaDTO.setFornecedoresId(fornecedoresID);
@@ -330,23 +350,22 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		boolean novaPolitica=false;
 		boolean novaForma=false;
 		
-		if (parametroCobrancaDTO.getIdBanco()!=null){
+		if (parametroCobrancaDTO.getIdBanco()!=null) {
 		    banco=this.bancoRepository.buscarPorId(parametroCobrancaDTO.getIdBanco());
 		}
 		
 			
-		if (parametroCobrancaDTO.getIdPolitica()!=null){
+		if (parametroCobrancaDTO.getIdPolitica()!=null) {
 			politica = this.politicaCobrancaRepository.buscarPorId(parametroCobrancaDTO.getIdPolitica());
 		}
 		
 		
-		if(politica==null){
+		if(politica==null) {
 			novaPolitica = true;
 			novaForma=true;
 			politica = new PoliticaCobranca();	
 			formaCobranca = new FormaCobranca();
-		}
-		else{
+		} else {
 			novaPolitica = false;
 			
 			formaCobranca = politica.getFormaCobranca();
@@ -357,14 +376,13 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 				concentracoesCobranca = formaCobranca.getConcentracaoCobrancaCota();
 				
 		        //APAGA CONCENTRACOES COBRANCA DA FORMA DE COBRANCA
-				if ((concentracoesCobranca!=null)&&(concentracoesCobranca.size() > 0)){
+				if ((concentracoesCobranca!=null)&&(concentracoesCobranca.size() > 0)) {
 					formaCobranca.setConcentracaoCobrancaCota(null);
 					for(ConcentracaoCobrancaCota itemConcentracaoCobranca:concentracoesCobranca){
 						this.concentracaoCobrancaRepository.remover(itemConcentracaoCobranca);
 					}
 				}  
-			}
-			else{
+			} else {
 				novaForma=true;
 				formaCobranca = new FormaCobranca();
 			}
@@ -391,6 +409,11 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		formaCobranca.setTipoFormaCobranca(parametroCobrancaDTO.getTipoFormaCobranca());
 		formaCobranca.setTipoCobranca(parametroCobrancaDTO.getTipoCobranca());
 		formaCobranca.setBanco(banco);
+		
+		formaCobranca.setFornecedorPadrao(fornecedorService.obterFornecedorPorId(parametroCobrancaDTO.getIdFornecedorPadrao()));
+		formaCobranca.setTipoCota(parametroCobrancaDTO.getTipoCota());
+		formaCobranca.setFatorVencimento(new Integer(parametroCobrancaDTO.getFatorVencimento().toString()));
+		
 		formaCobranca.setRecebeCobrancaEmail(parametroCobrancaDTO.isEnvioEmail());
 		formaCobranca.setAtiva(true);
 		formaCobranca.setTaxaJurosMensal(parametroCobrancaDTO.getTaxaJuros());
@@ -525,7 +548,27 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 	@Override
 	@Transactional
 	public void dasativarPoliticaCobranca(long idPolitica) {
-		this.politicaCobrancaRepository.desativarPoliticaCobranca(idPolitica);
+		
+		PoliticaCobranca pc = politicaCobrancaRepository.buscarPorId(idPolitica);
+		FormaCobranca fcDistrib = pc.getFormaCobranca();
+		
+		boolean desativar = true;
+		for(FormaCobranca fc : formaCobrancaRepository.obterFormasCobrancaAtivaCotas(true)) {
+			
+			if(fc.getTipoCobranca().equals(fcDistrib.getTipoCobranca()) 
+					&& fc.getTipoFormaCobranca().equals(fcDistrib.getTipoFormaCobranca())
+					&& fc.getParametroCobrancaCota() != null) {
+				
+				desativar = false;
+			}
+			
+		}
+		
+		if(desativar) {
+			this.politicaCobrancaRepository.desativarPoliticaCobranca(idPolitica);
+		} else {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foi possível desativar. \nExistem cotas utilizando esta forma de cobrança!");
+		}
 	}
 	
 	@Override
