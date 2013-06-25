@@ -21,10 +21,12 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BancoService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
@@ -69,6 +71,9 @@ public class ParametroCobrancaController extends BaseController {
 	
 	@Autowired
 	private ParametroCobrancaCotaService parametroCobrancaCotaService;
+	
+	@Autowired
+	private CotaService cotaService;
 		
     private Result result;
     
@@ -83,6 +88,8 @@ public class ParametroCobrancaController extends BaseController {
     private static List<ItemDTO<Long,String>> listaFornecedores =  new ArrayList<ItemDTO<Long,String>>();
     
     private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaParametrosCobranca";
+    
+    private static List<ItemDTO<TipoCota,String>> listaTiposCota = new ArrayList<ItemDTO<TipoCota,String>>();
     
     
     /**
@@ -108,14 +115,17 @@ public class ParametroCobrancaController extends BaseController {
     	listaBancos.clear();
     	listaTiposCobranca.clear();
     	listaFornecedores.clear();
+    	listaTiposCota.clear();
     	
     	listaBancos = this.bancoService.getComboBancos(true);
     	listaTiposCobranca = this.parametroCobrancaCotaService.getComboTiposCobranca();
     	listaFornecedores = this.fornecedorService.obterFornecedoresIdNome(null, null);
+    	listaTiposCota = this.cotaService.getComboTiposCota();
     	
-		result.include("listaBancos",listaBancos);
-		result.include("listaTiposCobranca",listaTiposCobranca);
-		result.include("listaFornecedores",listaFornecedores);		
+		result.include("listaBancos", listaBancos);
+		result.include("listaTiposCobranca", listaTiposCobranca);
+		result.include("listaFornecedores", listaFornecedores);
+		result.include("listaTiposCota", listaTiposCota);
 		
 	}
     
@@ -174,14 +184,14 @@ public class ParametroCobrancaController extends BaseController {
 	@Post
 	@Path("/postarParametroCobranca")
 	@Rules(Permissao.ROLE_FINANCEIRO_PARAMETROS_COBRANCA_ALTERACAO)
-	public void postarParametroCobranca(ParametroCobrancaDTO parametros){
+	public void postarParametroCobranca(ParametroCobrancaDTO parametros) {
 
 		PoliticaCobranca politica = politicaCobrancaService.obterPoliticaCobrancaPrincipal();
 		
 		if ((politica==null || politica.getId().equals(parametros.getIdPolitica())) && !parametros.isPrincipal()){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Defina ao menos um [Parâmetro de Cobrança] como [Principal].");
-		}	
+		}
 		
 		parametros = formatarParametros(parametros);
 		
@@ -200,7 +210,7 @@ public class ParametroCobrancaController extends BaseController {
 	 */
 	@Post
 	@Path("/obterParametroCobranca")
-	public void obterParametroCobranca(Long idPolitica){
+	public void obterParametroCobranca(Long idPolitica) {
 				
 		if (idPolitica==null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "O código da política de cobrança informado náo é válido.");

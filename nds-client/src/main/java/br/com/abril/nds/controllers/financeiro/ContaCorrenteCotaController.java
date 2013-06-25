@@ -281,7 +281,7 @@ public class ContaCorrenteCotaController extends BaseController {
 				valor = mapFornecedores.get(key).getValorTotal().add(valor);				
 			}
 			
-			mapFornecedores.put(key,new InfoTotalFornecedorDTO(key, valor.setScale(2, RoundingMode.HALF_EVEN)));
+			mapFornecedores.put(key,new InfoTotalFornecedorDTO(key, valor.setScale(4, RoundingMode.HALF_EVEN)));
 			
 		}
 		
@@ -318,7 +318,7 @@ public class ContaCorrenteCotaController extends BaseController {
 				valor = BigDecimal.ZERO;
 			}
 			
-			mapFornecedores.put(key,new InfoTotalFornecedorDTO(key, valor.setScale(2, RoundingMode.HALF_EVEN)));
+			mapFornecedores.put(key,new InfoTotalFornecedorDTO(key, valor.setScale(4, RoundingMode.HALF_EVEN)));
 			
 		}
 		List<InfoTotalFornecedorDTO> infoTotalFornecedorDTOs = new ArrayList<InfoTotalFornecedorDTO>();

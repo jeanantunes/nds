@@ -2,6 +2,8 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.StringUtils;
+
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
@@ -104,7 +106,8 @@ public class FiltroConsultaDiferencaEstoqueDTO implements Serializable {
 	 * @param the codigoProduto
 	 */
 	public void setCodigoProduto(String codigoProduto) {
-		this.codigoProduto = codigoProduto;
+
+		this.codigoProduto = StringUtils.leftPad(codigoProduto, 8, '0');
 	}
 
 	/**

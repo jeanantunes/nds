@@ -19,11 +19,14 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.vo.ContratoVO;
 import br.com.abril.nds.client.vo.ParametrosDistribuidorVO;
 import br.com.abril.nds.controllers.BaseController;
+import br.com.abril.nds.controllers.ErrorController;
 import br.com.abril.nds.dto.FormaCobrancaDTO;
 import br.com.abril.nds.dto.FornecedorDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -70,6 +73,8 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/cota/parametroCobrancaCota")
 public class ParametroCobrancaCotaController extends BaseController {
 
+		private static final Logger LOGGER = LoggerFactory.getLogger(ParametroCobrancaCotaController.class);
+	
 	private Result result;
 
 	@Autowired
@@ -365,25 +370,31 @@ public class ParametroCobrancaCotaController extends BaseController {
 	@Path("/postarParametroCobranca")
 	public void postarParametroCobranca(ParametroCobrancaCotaDTO parametroCobranca){	
 
-
-		if(parametroCobranca.getTipoCota()==null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha o Tipo da Cota.");
-		}
-
-		if(parametroCobranca.getIdFornecedor()==null){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha um Fornecedor Padrão para o Financeiro da Cota.");
-		}
+		validarParametroCobrancaCota(parametroCobranca);
 		
 		if (this.parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(parametroCobranca.getIdCota()) == 0) {
 			// A cota sempre terá uma forma de cobrança a forma de cobrança principal do Distribuidor
 			parametroCobrancaCotaService.inserirFormaCobrancaDoDistribuidorNaCota(parametroCobranca);
 			
-		} 
+		} else {
+			this.parametroCobrancaCotaService.postarParametroCobranca(parametroCobranca);
+		}
 		
-		this.parametroCobrancaCotaService.postarParametroCobranca(parametroCobranca);
+		this.salvarContrato(parametroCobranca.getInicioContrato(), parametroCobranca.getTerminoContrato());
 		
-		this.salvarContrato();
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parametros de Cobrança Cadastrados."),Constantes.PARAM_MSGS).recursive().serialize();
+	}
+
+
+	private void validarParametroCobrancaCota(ParametroCobrancaCotaDTO parametroCobranca) {
+		
+		if(parametroCobranca.getTipoCota() == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha o Tipo da Cota.");
+		}
+
+		if(parametroCobranca.getIdFornecedor() == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha um Fornecedor Padrão para o Financeiro da Cota.");
+		}
 	}
 
 	/**
@@ -476,7 +487,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 	 */
 	@Post
 	@Path("/postarFormaCobranca")
-	public void postarFormaCobranca(FormaCobrancaDTO formaCobranca, String tipoFormaCobranca, List<Long> listaIdsFornecedores){	
+	public void postarFormaCobranca(FormaCobrancaDTO formaCobranca, String tipoFormaCobranca, List<Long> listaIdsFornecedores, ParametroCobrancaCotaDTO parametroCobranca){	
 
 		if ((tipoFormaCobranca!=null)&&(!"".equals(tipoFormaCobranca))){
 			formaCobranca.setTipoFormaCobranca(TipoFormaCobranca.valueOf(tipoFormaCobranca));
@@ -494,7 +505,17 @@ public class ParametroCobrancaCotaController extends BaseController {
 		if (this.parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(formaCobranca.getIdCota()) == 0) {
 			formaCobranca.setParametroDistribuidor(true);
 		}
-
+		
+		if(parametroCobranca != null 
+				&& parametroCobranca.getIdCota() != null
+				&& parametroCobranca.getValorMinimo() != null
+				&& parametroCobranca.getIdFornecedor() != null) {
+			
+			validarParametroCobrancaCota(parametroCobranca);
+			
+			parametroCobrancaCotaService.postarParametroCobranca(parametroCobranca);
+		}
+			
 		this.parametroCobrancaCotaService.postarFormaCobranca(formaCobranca);	
 
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Forma de Cobrança Cadastrada."),Constantes.PARAM_MSGS).recursive().serialize();
@@ -533,6 +554,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 
 			result.use(CustomJson.class).from(mapa).serialize();
 		} else {
+			this.session.removeAttribute(CONTRATO_UPLOADED);
 			this.result.nothing();
 		}
 	}
@@ -589,18 +611,24 @@ public class ParametroCobrancaCotaController extends BaseController {
 			contentType = FileImportUtil.getContentTypeByExtension(extension);
 
 		} else {
-			bytes = this.parametroCobrancaCotaService.geraImpressaoContrato(idCota, dataInicio, dataTermino);
+			try {
+				bytes = this.parametroCobrancaCotaService.geraImpressaoContrato(idCota, dataInicio, dataTermino);
+			} catch (ValidacaoException e) {
+				result.forwardTo(ErrorController.class).showError(e);
+			}
 		}
 
 		this.session.setAttribute(CONTRATO_UPLOADED, contrato);
-
-		this.httpResponse.setContentType(contentType);
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=contrato"+extension);
-
-		OutputStream output = this.httpResponse.getOutputStream();
-		output.write(bytes);
-
-		httpResponse.flushBuffer();
+		
+		if(bytes != null && bytes.length > 0) {
+			this.httpResponse.setContentType(contentType);
+			this.httpResponse.setHeader("Content-Disposition", "attachment; filename=contrato"+extension);
+	
+			OutputStream output = this.httpResponse.getOutputStream();
+			output.write(bytes);
+	
+			httpResponse.flushBuffer();
+		}
 	}
 
 	/**
@@ -629,11 +657,15 @@ public class ParametroCobrancaCotaController extends BaseController {
 		return arquivo;
 	}
 
-	private void salvarContrato() {
+	private void salvarContrato(Date inicioContrato, Date terminoContrato) {
 
 		if (this.session.getAttribute(CONTRATO_UPLOADED) != null) {
 
 			ContratoVO contrato = (ContratoVO) this.session.getAttribute(CONTRATO_UPLOADED);
+			if(contrato != null) {
+				contrato.setDataInicio(inicioContrato);
+				contrato.setDataTermino(terminoContrato);
+			}
 
 			this.parametroCobrancaCotaService.salvarContrato(contrato.getIdCota(), contrato.isRecebido(), contrato.getDataInicio(), contrato.getDataTermino());
 
@@ -652,25 +684,44 @@ public class ParametroCobrancaCotaController extends BaseController {
 				path.mkdirs();
 
 				this.fileService.limparDiretorio(path);
-
+				
 				File novoArquivo = new File(path, file.getName());
 
+				FileOutputStream fos = null;
+				
+				FileInputStream fis = null;
+				
 				try {
 					this.fileService.persistirTemporario(path.toString());
+					
+					fos = new FileOutputStream(novoArquivo);
 
-					FileOutputStream fos = new FileOutputStream(novoArquivo);
-
-					FileInputStream fis = new FileInputStream(file);
+					fis = new FileInputStream(file);
 
 					IOUtils.copyLarge(fis, fos);
-
-					fis.close();
-
-					fos.close();
+					
+					this.fileService.eliminarReal(path.getAbsolutePath());
 
 				} catch (IOException e) {
-					e.printStackTrace();
+					
+					LOGGER.error("Falha ao persistir contrato anexo", e);
+
 					throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Falha ao persistir contrato anexo"));
+				} finally {
+					
+					if(fis != null)
+						try {
+							fis.close();
+						} catch (IOException e) {
+							LOGGER.error("Falha ao fechar o arquivo", e);
+						}
+
+					if(fos != null)
+						try {
+							fos.close();
+						} catch (IOException e) {
+							LOGGER.error("Falha ao fechar o arquivo", e);
+						}
 				}
 			}
 		}
@@ -681,10 +732,9 @@ public class ParametroCobrancaCotaController extends BaseController {
 	public void uploadContratoAnexo(UploadedFile uploadedFile, String numeroCota) throws IOException {
 
 		if (uploadedFile == null)
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Falha ao carregar arquivo!"));
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Falha ao carregar arquivo!"));
 
-		this.fileService.validarArquivo(1,
-				uploadedFile, extensoesAceitas);
+		this.fileService.validarArquivo(1, uploadedFile, extensoesAceitas);
 
 		ContratoVO contrato = new ContratoVO();
 

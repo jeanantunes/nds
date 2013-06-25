@@ -334,7 +334,8 @@
 					       onkeyup="pesquisaProdutoCadastroProduto.autoCompletarPorNomeProduto('#produto', false);"
 					       onblur="pesquisaProdutoCadastroProduto.pesquisarPorNomeProduto('#codigoProduto', '#produto', '#edicao', false, undefined, undefined);"/>  -->
 					<input type="text" name="produto" id="produto" style="width: 222px;" maxlength="255"
-					       onkeyup="pesquisaProdutoCadastroProduto.autoCompletarPorNomeProduto('#produto', false);"/>
+					       onkeyup="pesquisaProdutoCadastroProduto.autoCompletarPorNomeProduto('#produto', false);"
+					       onblur="pesquisaProdutoCadastroProduto.pesquisarPorNomeProduto('#codigoProduto', '#produto', null, false);"/>
 				</td>
 				<td width="99">Fornecedor:</td>
 				<td width="251">
