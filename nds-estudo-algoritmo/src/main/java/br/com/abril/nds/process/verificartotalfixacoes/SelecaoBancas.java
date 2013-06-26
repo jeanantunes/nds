@@ -125,36 +125,6 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	for (CotaEstudo cota : estudo.getCotasForaDaRegiao()) {
 	    cotasComHistoricoMap.remove(cota.getId());
 	}
-	// removendo cotas fora da regiao
-	if (estudo.getDistribuicaoVendaMediaDTO() != null) {
-	    cotas = validarComponentes(new LinkedList<CotaEstudo>(cotasComHistoricoMap.values()), estudo);
-	}
-	for (CotaEstudo cota : cotasComHistoricoMap.values()) {
-	    if (cota.getClassificacao().equals(ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
-		estudo.getCotasForaDaRegiao().add(cota);
-	    }
-	}
-	for (CotaEstudo cota : estudo.getCotasForaDaRegiao()) {
-	    cotasComHistoricoMap.remove(cota.getId());
-	}
-
-	if (idsCotas.size() > 0) {
-	    List<Long> numerosEdicao = new ArrayList<>();
-	    if (estudo.getProdutoEdicaoEstudo().getNumeroEdicao() > 1) {
-		numerosEdicao.add(estudo.getProdutoEdicaoEstudo().getNumeroEdicao() - 1);
-	    }
-	    if (estudo.getProdutoEdicaoEstudo().getNumeroEdicao() > 2) {
-		numerosEdicao.add(estudo.getProdutoEdicaoEstudo().getNumeroEdicao() - 2);
-	    }
-	    if (numerosEdicao.size() > 0) {
-		List<Long> cotasQueReceberam = cotaDAO.buscarCotasQueReceberamUltimaEdicaoAberta(estudo.getProdutoEdicaoEstudo().getProduto().getCodigo(), idsCotas, numerosEdicao);
-		for (CotaEstudo cota : estudo.getCotasExcluidas()) {
-		    if (cotasQueReceberam.contains(cota.getId())) {
-			cota.setRecebeuUltimaEdicaoAberta(true);
-		    }
-		}
-	    }
-	}
 
 	// removendo cotas que não podem receber reparte parcial
 	for (CotaEstudo cota : cotasComHistoricoMap.values()) {
@@ -175,7 +145,37 @@ public class SelecaoBancas extends ProcessoAbstrato {
 		cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
 	    }
 	}
-	// fim da remocao
+	
+	// removendo cotas fora da regiao
+	if (estudo.getDistribuicaoVendaMediaDTO() != null) {
+	    cotas = validarComponentes(new LinkedList<CotaEstudo>(cotasComHistoricoMap.values()), estudo);
+	}
+	for (CotaEstudo cota : cotasComHistoricoMap.values()) {
+	    if (cota.getClassificacao().equals(ClassificacaoCota.BancaForaDaRegiaoDistribuicao)) {
+		estudo.getCotasForaDaRegiao().add(cota);
+	    }
+	}
+	for (CotaEstudo cota : estudo.getCotasForaDaRegiao()) {
+	    cotasComHistoricoMap.remove(cota.getId());
+	} // fim da remocao
+
+	if (idsCotas.size() > 0) {
+	    List<Long> numerosEdicao = new ArrayList<>();
+	    if (estudo.getProdutoEdicaoEstudo().getNumeroEdicao() > 1) {
+		numerosEdicao.add(estudo.getProdutoEdicaoEstudo().getNumeroEdicao() - 1);
+	    }
+	    if (estudo.getProdutoEdicaoEstudo().getNumeroEdicao() > 2) {
+		numerosEdicao.add(estudo.getProdutoEdicaoEstudo().getNumeroEdicao() - 2);
+	    }
+	    if (numerosEdicao.size() > 0) {
+		List<Long> cotasQueReceberam = cotaDAO.buscarCotasQueReceberamUltimaEdicaoAberta(estudo.getProdutoEdicaoEstudo().getProduto().getCodigo(), idsCotas, numerosEdicao);
+		for (CotaEstudo cota : estudo.getCotasExcluidas()) {
+		    if (cotasQueReceberam.contains(cota.getId())) {
+			cota.setRecebeuUltimaEdicaoAberta(true);
+		    }
+		}
+	    }
+	}
 	
 	estudo.setCotas(new LinkedList<>(cotasComHistoricoMap.values()));
     }
@@ -234,6 +234,11 @@ public class SelecaoBancas extends ProcessoAbstrato {
 		    qtdeCotasAtivas = qtdeCotasAtivas.add(BigDecimal.ONE);
 		}
 	    }
+	    for (CotaEstudo cota : estudo.getCotasForaDaRegiao()) {
+		if (cota.getSituacaoCadastro().equals(SituacaoCadastro.ATIVO)) {
+		    qtdeCotasAtivas = qtdeCotasAtivas.add(BigDecimal.ONE);
+		}
+	    }
 	    BigDecimal abrangencia = new BigDecimal(estudo.getDistribuicaoVendaMediaDTO().getAbrangencia()).multiply(BigDecimal.valueOf(0.01));
 	    BigDecimal qtdeCotasAbrangencia = qtdeCotasAtivas.multiply(abrangencia);
 	    qtdeCotasAbrangencia = qtdeCotasAbrangencia.setScale(0, BigDecimal.ROUND_HALF_UP);
@@ -244,8 +249,11 @@ public class SelecaoBancas extends ProcessoAbstrato {
 		    temp.add(cota);
 		}
 	    }
+
+	    boolean estudoTemReparteMinimo = estudo.getReparteMinimo() != null;
 	    for (int i = 0; i < temp.size(); i++) {
-		if (BigDecimal.valueOf(i).compareTo(qtdeCotasAbrangencia) >= 0) {
+		if (BigDecimal.valueOf(i).compareTo(qtdeCotasAbrangencia) >= 0 &&
+			!(temp.get(i).isNova() && estudoTemReparteMinimo)) {// se houver reparte minimo não remove as cotas novas do estudo		 
 		    temp.get(i).setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
 		    temp.get(i).setReparteCalculado(BigInteger.ZERO, estudo);
 		    
