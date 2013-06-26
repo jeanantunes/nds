@@ -455,7 +455,7 @@ var MANTER_COTA = $.extend(true, {
                     },
                     {id:"btn_cancelar_cota",text:"Cancelar",
                         click:function(){
-                            MANTER_COTA.fecharModalCadastroCota = false;
+                        	MANTER_COTA.fecharModalCadastroCota = false;
                             $( this, this.workspace ).dialog( "close" );
                         }
                     }
@@ -661,15 +661,13 @@ var MANTER_COTA = $.extend(true, {
     	
     	$.each(inputAbas, function(index, value){
     		
-        	$(value).change(function() {
-        		
+        	$(value).change(function() {		
         		MANTER_COTA._indCadastroCotaAlterado = true;
 
         	});
     		
     		
     	});
-    	
     	
     },
     
