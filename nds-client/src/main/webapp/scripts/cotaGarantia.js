@@ -1584,26 +1584,43 @@ CaucaoLiquida.prototype.adicionaDecimais = function(id){
         centsSeparator : ',',
         thousandsSeparator : '.'
     });
-}
+};
 
-CaucaoLiquida.prototype.setValorCaucaoLiquida = function(tipo,valor){
+CaucaoLiquida.prototype.setValorCaucaoLiquidaPorTipo = function(tipo,valor){
 
-    if (tipo=='BOLETO'){
-        $("#valorBoleto", _workspace).val(valor);
-        this.adicionaDecimais("valorBoleto");
-    }
-    else if (tipo=='DEPOSITO_TRANSFERENCIA'){
-        $("#valorDeposito", _workspace).val(valor);
-        this.adicionaDecimais("valorDeposito");
-    }
-    else if (tipo=='DINHEIRO'){
-        $("#valorDinheiro", _workspace).val(valor);
-        this.adicionaDecimais("valorDinheiro");
-    }
-    else if (tipo=='DESCONTO_COTA'){
-        $("#valorDesconto", _workspace).val(valor);
-        this.adicionaDecimais("valorDesconto");
-    }
+	var id = "";
+	
+	switch(tipo) {
+	
+	case 'BOLETO':
+		id = "valorBoleto";
+		break;
+	case 'DEPOSITO_TRANSFERENCIA':
+		id = "valorDeposito";
+		break;
+	case 'DINHEIRO':
+		id = "valorDinheiro";
+		break;
+	case 'DESCONTO_COTA':
+		id = "valorDesconto";
+		break;
+	}
+
+	$("#"+id, _workspace).val(valor);
+
+	this.adicionaDecimais(id);
+};
+
+CaucaoLiquida.prototype.setValoresComissaoCota = function(tipo, comissao) {
+
+	$("#valorDescontoAtual", _workspace).val(comissao.valorDescontoAtual);
+	this.adicionaDecimais("valorDescontoAtual");
+
+	$("#utilizarDesconto", _workspace).val(comissao.utilizarDesconto);
+	this.adicionaDecimais("utilizarDesconto");
+
+	$("#descontoCotaDesconto", _workspace).val(comissao.descontoCotaDesconto);
+	this.adicionaDecimais("descontoCotaDesconto");
 };
 
 CaucaoLiquida.prototype.salva = function(callBack) {
@@ -1727,7 +1744,6 @@ CaucaoLiquida.prototype.salva = function(callBack) {
                     listaMensagens,
                     "dialog-cota"
                 );
-
             }
             if(callBack){
                 callBack();
@@ -2044,11 +2060,6 @@ CaucaoLiquida.prototype.sucessCallbackObterCaucaoLiquida = function(resultado) {
     $("#valorParcelaBoleto", _workspace).val(resultado.valorParcela);
     CaucaoLiquida.prototype.adicionaDecimais("valorParcelaBoleto");
 
-    //FORMA DESCONTO
-    $("#valorDescontoAtual", _workspace).val(resultado.valorDescontoAtual);
-    $("#utilizarDesconto", _workspace).val(resultado.utilizarDesconto);
-    $("#descontoCotaDesconto", _workspace).val(resultado.descontoCotaDesconto);
-
     //INFORMACOES ADICIONAIS DEPOSITO
     $("#numBancoDeposito", _workspace).val(resultado.numBanco);
     $("#nomeBancoDeposito", _workspace).val(resultado.nomeBanco);
@@ -2056,8 +2067,17 @@ CaucaoLiquida.prototype.sucessCallbackObterCaucaoLiquida = function(resultado) {
     $("#contaDeposito", _workspace).val(resultado.conta);
     $("#nomeCorrentistaDeposito", _workspace).val(resultado.nomeCorrentista);
 
-    CaucaoLiquida.prototype.setValorCaucaoLiquida(resultado.tipoCobranca, resultado.valor);
+    var comissao = {
+    	'valorDescontoAtual'   : resultado.valorDescontoAtual,
+	    'utilizarDesconto' 	   : resultado.utilizarDesconto,
+	    'descontoCotaDesconto' : resultado.descontoCotaDesconto
+    };
 
+    //FORMA DESCONTO
+    CaucaoLiquida.prototype.setValoresComissaoCota(resultado.tipoCobranca, comissao);
+
+    CaucaoLiquida.prototype.setValorCaucaoLiquidaPorTipo(resultado.tipoCobranca, resultado.valor);
+    
     CaucaoLiquida.prototype.opcaoPagto(resultado.tipoCobranca);
    
     tipoCotaGarantia.controller.grid.flexAddData({
