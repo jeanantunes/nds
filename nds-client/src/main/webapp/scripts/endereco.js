@@ -335,7 +335,7 @@ function Endereco(paramTela, paramMessage) {
 				if (result){
 				
 					$("#"+paramTela+"idEndereco", Endereco.workspace).val(result.id);
-					$("#"+paramTela+"tipoLogradouro", Endereco.workspace).val(result.tipoLogradouro.toUpperCase());
+					$("#"+paramTela+"tipoLogradouro", Endereco.workspace).val(result.tipoLogradouro ? result.tipoLogradouro.toUpperCase() : "");
 					$("#"+paramTela+"logradouro", Endereco.workspace).val(result.logradouro);
 					$("#"+paramTela+"codigoBairro", Endereco.workspace).val(result.codigoBairro);
 					$("#"+paramTela+"bairro", Endereco.workspace).val(result.bairro);
