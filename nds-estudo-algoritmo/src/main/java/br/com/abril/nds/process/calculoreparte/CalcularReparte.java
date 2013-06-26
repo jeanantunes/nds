@@ -206,6 +206,7 @@ public class CalcularReparte extends ProcessoAbstrato {
 	List<CotaEstudo> cotas = new ArrayList<>();
 	cotas.addAll(estudo.getCotas());
 	cotas.addAll(estudo.getCotasExcluidas());
+	cotas.addAll(estudo.getCotasSoComEdicaoAberta());
 	BigInteger somaReparteCalculadoCota = BigInteger.ZERO;
 	for (CotaEstudo cota : cotas) {
 	    somaReparteCalculadoCota = somaReparteCalculadoCota.add(cota.getReparteCalculado());
