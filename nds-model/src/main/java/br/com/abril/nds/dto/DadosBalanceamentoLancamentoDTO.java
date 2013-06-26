@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import br.com.abril.nds.util.Intervalo;
+
 /**
  * DTO que representa os dados referentes ao balanceamento do recolhimento. 
  * 
@@ -35,6 +37,8 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	private Date dataLancamento;
 	
 	private Set<Date> datasExpedicaoConfirmada;
+	
+	private Intervalo<Date> periodoDistribuicao;
 
 	/**
 	 * Construtor padrão.
@@ -155,6 +159,20 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	 */
 	public void setDatasExpedicaoConfirmada(Set<Date> datasExpedicaoConfirmada) {
 		this.datasExpedicaoConfirmada = datasExpedicaoConfirmada;
+	}
+
+	/**
+	 * @return the periodoDistribuicao
+	 */
+	public Intervalo<Date> getPeriodoDistribuicao() {
+		return periodoDistribuicao;
+	}
+
+	/**
+	 * @param periodoDistribuicao the periodoDistribuicao to set
+	 */
+	public void setPeriodoDistribuicao(Intervalo<Date> periodoDistribuicao) {
+		this.periodoDistribuicao = periodoDistribuicao;
 	}
 	
 }

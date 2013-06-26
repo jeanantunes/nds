@@ -63,19 +63,24 @@ public class ApplicationContextListener implements ServletContextListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
-
-		/*this.agendarIntegracaoOperacionalDistribuidor();
-		this.agendaExeclusaoAjusteReparte();
-		this.agendarExclusaoDeEstudos();
-		this.agendarGeracaoRankings();
 		
 		try {
-			StdSchedulerFactory.getDefaultScheduler().start();
+			
+			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+			
+//			this.agendarIntegracaoOperacionalDistribuidor(scheduler);
+//			this.agendaExeclusaoAjusteReparte(scheduler);
+//			this.agendarExclusaoDeEstudos(scheduler);
+//			this.agendarGeracaoRankings(scheduler);
+			
+			scheduler.start();
+			
 		} catch (SchedulerException e) {
+			
 			logger.fatal("Falha ao inicializar agendador do Quartz", e);
 
 			throw new RuntimeException(e);
-		}*/
+		}
 
 	}
 
@@ -83,7 +88,7 @@ public class ApplicationContextListener implements ServletContextListener {
 	 * Efetua o agendamento do serviço de integração operacional do
 	 * distribuidor.
 	 */
-	private void agendarIntegracaoOperacionalDistribuidor() {
+	private void agendarIntegracaoOperacionalDistribuidor(Scheduler scheduler) {
 
 		try {
 
@@ -97,8 +102,6 @@ public class ApplicationContextListener implements ServletContextListener {
 			String intervaloExecucaoIntegracaoOperacionalDistribuidor = propertiesUtil
 					.getPropertyValue("intervalo.execucao.integracao.operacional");
 
-			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
-
 			JobDetail job = newJob(IntegracaoOperacionalDistribuidorJob.class)
 					.withIdentity("integracaoOperacionalJob", groupName)
 					.build();
@@ -111,8 +114,6 @@ public class ApplicationContextListener implements ServletContextListener {
 
 			scheduler.scheduleJob(job, cronTrigger);
 
-			scheduler.start();
-
 		} catch (SchedulerException se) {
 
 			logger.fatal("Falha ao inicializar agendador do Quartz", se);
@@ -122,7 +123,7 @@ public class ApplicationContextListener implements ServletContextListener {
 	}
 	
 	
-	private void agendarExclusaoDeEstudos() {
+	private void agendarExclusaoDeEstudos(Scheduler scheduler) {
 
 		try {
 
@@ -134,8 +135,6 @@ public class ApplicationContextListener implements ServletContextListener {
 
 			String intervaloExecucaoIntegracaoOperacionalDistribuidor = propertiesUtil
 					.getPropertyValue("intervalo.execucao.exclusao.estudos");
-			 
-			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 
 			JobDetail job = newJob(IntegracaoOperacionalDistribuidorJob.class)
 					.withIdentity("exclusaoEstudosJob", groupName)
@@ -149,8 +148,6 @@ public class ApplicationContextListener implements ServletContextListener {
 
 			scheduler.scheduleJob(job, cronTrigger);
 
-			scheduler.start();
-
 		} catch (SchedulerException se) {
 
 			logger.fatal("Falha ao inicializar agendador do Quartz", se);
@@ -160,7 +157,8 @@ public class ApplicationContextListener implements ServletContextListener {
 	}
 
 	
-	private void agendarGeracaoRankings(){
+	private void agendarGeracaoRankings(Scheduler scheduler) {
+		
 		final String groupName = "gerarRankingGroup";
 		
 		QuartzUtil.removeJobsFromGroup(groupName);
@@ -192,10 +190,8 @@ public class ApplicationContextListener implements ServletContextListener {
 				.withSchedule(
 						cronSchedule(intervaloExecucaoGeracaoRanking))
 				.build();
-		
-		Scheduler scheduler = null;
+
 		try {
-			scheduler = StdSchedulerFactory.getDefaultScheduler();
 			scheduler.scheduleJob(jobRankingFaturamento, cronTriggerRankingFaturamento);
 			scheduler.scheduleJob(jobRankingSegmento, cronTriggerRankingSegmento);
 		} catch (SchedulerException e) {
@@ -212,7 +208,7 @@ public class ApplicationContextListener implements ServletContextListener {
 	 * Efetua o agendamento do serviço de exclusão de ajuste de reparte.
 	 * 
 	 */
-	private void agendaExeclusaoAjusteReparte() {
+	private void agendaExeclusaoAjusteReparte(Scheduler scheduler) {
 
 		try {
 
@@ -226,8 +222,6 @@ public class ApplicationContextListener implements ServletContextListener {
 			String intervaloExecucao = propertiesUtil
 					.getPropertyValue("intervalo.execucao.ajuste.reparte");
 
-			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
-
 			JobDetail job = newJob(AjusteReparteJob.class)
 					.withIdentity(AjusteReparteJob.class.getName(), groupName)
 					.build();
@@ -239,8 +233,6 @@ public class ApplicationContextListener implements ServletContextListener {
 					.build();
 
 			scheduler.scheduleJob(job, cronTrigger);
-
-			scheduler.start();
 
 		} catch (SchedulerException se) {
 

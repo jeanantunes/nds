@@ -27,12 +27,6 @@ public class ResultadoCurvaABCEditor implements Serializable {
 	@Export(label = "", alignWithHeader="Faturamento da Capa")
 	private String totalFaturamentoFormatado;
 
-	public ResultadoCurvaABCEditor(BigInteger totalVendaExemplares, BigDecimal totalFaturamento) {
-		this.totalVendaExemplares = totalVendaExemplares;
-		this.totalFaturamento = totalFaturamento;
-		this.formatarCampos();
-	}
-
 	public TableModel<CellModelKeyValue<RegistroCurvaABCEditorVO>> getTableModel() {
 		return tableModel;
 	}
@@ -48,6 +42,8 @@ public class ResultadoCurvaABCEditor implements Serializable {
 
 	public void setTotalVendaExemplares(BigInteger totalVendaExemplares) {
 		this.totalVendaExemplares = totalVendaExemplares;
+		
+		this.totalVendaExemplaresFormatado = CurrencyUtil.formatarValor(totalVendaExemplares);
 	}
 
 	public BigDecimal getTotalFaturamento() {
@@ -56,6 +52,8 @@ public class ResultadoCurvaABCEditor implements Serializable {
 
 	public void setTotalFaturamento(BigDecimal totalFaturamento) {
 		this.totalFaturamento = totalFaturamento;
+		
+		this.totalFaturamentoFormatado = CurrencyUtil.formatarValor(totalFaturamento);
 	}
 
 	public String getTotalVendaExemplaresFormatado() {
@@ -73,11 +71,6 @@ public class ResultadoCurvaABCEditor implements Serializable {
 
 	public void setTotalFaturamentoFormatado(String totalFaturamentoFormatado) {
 		this.totalFaturamentoFormatado = totalFaturamentoFormatado;
-	}
-
-	private void formatarCampos() {
-		this.totalVendaExemplaresFormatado = CurrencyUtil.formatarValor(totalVendaExemplares);
-		this.totalFaturamentoFormatado = CurrencyUtil.formatarValor(totalFaturamento);
 	}
 
 }

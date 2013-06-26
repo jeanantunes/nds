@@ -1,6 +1,8 @@
 package br.com.abril.nds.controllers.lancamento;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -134,13 +136,13 @@ public class RelatorioVendasController extends BaseController {
 
 		switch (tipoRelatorio) {
 		case DISTRIBUIDOR:
-			exportarDistribuidor(fileType, DISTRIBUIDOR);
+			exportarDistribuidor(fileType, TipoConsultaCurvaABC.DISTRIBUIDOR);
 			break;
 		case EDITOR:
 			exportarEditor(fileType);
 			break;
 		case PRODUTO:
-			exportarDistribuidor(fileType, PRODUTO);
+			exportarDistribuidor(fileType, TipoConsultaCurvaABC.PRODUTO);
 			break;
 		case COTA:
 			exportarCota(fileType);
@@ -159,7 +161,7 @@ public class RelatorioVendasController extends BaseController {
 	 * @param fileType
 	 * @throws IOException
 	 */
-	private void exportarDistribuidor(FileType fileType, int tipoRelatorio) throws IOException {
+	private void exportarDistribuidor(FileType fileType, TipoConsultaCurvaABC tipoRelatorio) throws IOException {
 		FiltroCurvaABCDistribuidorDTO filtroSessao = (FiltroCurvaABCDistribuidorDTO) this.session.getAttribute(FILTRO_PESQUISA_CURVA_ABC_DISTRIBUIDOR_SESSION_ATTRIBUTE);
 		if (filtroSessao != null) {
 			if (filtroSessao.getPaginacao() != null) {				
@@ -168,7 +170,16 @@ public class RelatorioVendasController extends BaseController {
 			}
 		}
 		
-		List<RegistroCurvaABCDistribuidorVO> lista = relatorioVendasService.obterCurvaABCDistribuidor(filtroSessao);
+		List<RegistroCurvaABCDistribuidorVO> lista = null;
+		
+		if (tipoRelatorio == TipoConsultaCurvaABC.DISTRIBUIDOR) {
+			
+			lista = relatorioVendasService.obterCurvaABCDistribuidor(filtroSessao);
+			
+		} else {
+			
+			lista = relatorioVendasService.obterCurvaABCProduto(filtroSessao);
+		}
 		
 		List<RegistroCurvaABCExportacaoDistribuidorVO> exportacao = new ArrayList<RegistroCurvaABCExportacaoDistribuidorVO>();
 		
@@ -176,11 +187,11 @@ public class RelatorioVendasController extends BaseController {
 			exportacao.add(new RegistroCurvaABCExportacaoDistribuidorVO(item));
 		}
 		
-		ResultadoCurvaABCDistribuidor resultadoTotal = relatorioVendasService.obterCurvaABCDistribuidorTotal(filtroSessao);
+		ResultadoCurvaABCDistribuidor resultadoTotal = this.obterTotaisCurvaABCDistribuidor(lista);
 		
 		String nomeArquivo = "";
 		
-		if (tipoRelatorio == DISTRIBUIDOR) {
+		if (tipoRelatorio == TipoConsultaCurvaABC.DISTRIBUIDOR) {
 			nomeArquivo = "relatorio-vendas-curva-abc-distribuidor";
 		} else {
 			nomeArquivo = "relatorio-vendas-curva-abc-produto";
@@ -206,10 +217,11 @@ public class RelatorioVendasController extends BaseController {
 			}
 		}
 		
-		List<RegistroCurvaABCEditorVO> lista = editorService.obterCurvaABCEditor(filtroSessao);
-		ResultadoCurvaABCEditor resultadoTotal = editorService.obterCurvaABCEditorTotal(filtroSessao);
+		List<RegistroCurvaABCEditorVO> lista = this.relatorioVendasService.obterCurvaABCEditor(filtroSessao);
 		
-		FileExporter.to("relatorio-vendas-curva-abc-editor", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultadoTotal, lista, RegistroCurvaABCEditorVO.class, this.httpServletResponse);
+		ResultadoCurvaABCEditor resultado = this.obterTotaisCurvaABCEditor(lista);
+		
+		FileExporter.to("relatorio-vendas-curva-abc-editor", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultado, lista, RegistroCurvaABCEditorVO.class, this.httpServletResponse);
 		
 		result.nothing();
 	}
@@ -228,8 +240,9 @@ public class RelatorioVendasController extends BaseController {
 			}
 		}
 		
-		List<RegistroCurvaABCCotaDTO> lista = cotaService.obterCurvaABCCota(filtroSessao);
-		ResultadoCurvaABCCotaDTO resultadoTotal = cotaService.obterCurvaABCCotaTotal(filtroSessao);
+		List<RegistroCurvaABCCotaDTO> lista = this.relatorioVendasService.obterCurvaABCCota(filtroSessao);
+		
+		ResultadoCurvaABCCotaDTO resultadoTotal = this.obterTotaisCurvaABCCota(lista);
 		
 		FileExporter.to("relatorio-vendas-curva-abc-cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultadoTotal, lista, RegistroCurvaABCCotaDTO.class, this.httpServletResponse);
 		
@@ -451,21 +464,31 @@ public class RelatorioVendasController extends BaseController {
 			Long codigoFornecedor, String codigoProduto, String nomeProduto,
 			List<Long> edicaoProduto, Long codigoEditor, Integer codigoCota,
 			String nomeCota, String municipio, String sortorder,
-			String sortname, int page, int rp,TipoConsultaCurvaABC tipoConsulta) throws ParseException, Exception {
+			String sortname, int page, int rp, TipoConsultaCurvaABC tipoConsulta) throws ParseException, Exception {
 		
 		this.validarDadosEntradaPesquisa(dataDe, dataAte);
 
 		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
 
-		FiltroCurvaABCDistribuidorDTO filtro = carregarFiltroPesquisaDistribuidor(sdf.parse(dataDe), sdf.parse(dataAte), codigoFornecedor,
-				codigoProduto, nomeProduto, edicaoProduto, codigoEditor,
-				codigoCota, nomeCota, municipio, sortorder, sortname, page, rp);
+		FiltroCurvaABCDistribuidorDTO filtro =
+			this.carregarFiltroPesquisaDistribuidor(sdf.parse(dataDe), sdf.parse(dataAte), codigoFornecedor,
+											   	 	codigoProduto, nomeProduto, edicaoProduto, codigoEditor,
+											   	 	codigoCota, nomeCota, municipio, sortorder, sortname, page, rp);
 		
 		filtro.setTipoConsultaCurvaABC(tipoConsulta);
 
 		List<RegistroCurvaABCDistribuidorVO> resultadoCurvaABCDistribuidor = null;
 		try {
-			resultadoCurvaABCDistribuidor = relatorioVendasService.obterCurvaABCDistribuidor(filtro);
+			
+			if (tipoConsulta == TipoConsultaCurvaABC.DISTRIBUIDOR) {
+				
+				resultadoCurvaABCDistribuidor = relatorioVendasService.obterCurvaABCDistribuidor(filtro);
+				
+			} else {
+				
+				resultadoCurvaABCDistribuidor = relatorioVendasService.obterCurvaABCProduto(filtro);
+			}
+			
 		} catch (Exception e) {
 
 			if (e instanceof ValidacaoException) {
@@ -485,20 +508,45 @@ public class RelatorioVendasController extends BaseController {
 
 			int qtdeTotalRegistros = resultadoCurvaABCDistribuidor.size();
 
-			List<RegistroCurvaABCDistribuidorVO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(resultadoCurvaABCDistribuidor, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
+			List<RegistroCurvaABCDistribuidorVO> resultadoPaginado =
+				PaginacaoUtil.paginarEOrdenarEmMemoria(
+					resultadoCurvaABCDistribuidor, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
 
-			TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>> tableModel = new TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>>();
+			TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>> tableModel =
+				new TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>>();
 
 			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
 			tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(qtdeTotalRegistros);
-
-			ResultadoCurvaABCDistribuidor resultado = relatorioVendasService.obterCurvaABCDistribuidorTotal(filtro);
+			
+			ResultadoCurvaABCDistribuidor resultado =
+				this.obterTotaisCurvaABCDistribuidor(resultadoCurvaABCDistribuidor);
+			
 			resultado.setTableModel(tableModel);
 			
 			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 
 		}
+	}
+
+	private ResultadoCurvaABCDistribuidor obterTotaisCurvaABCDistribuidor(
+							List<RegistroCurvaABCDistribuidorVO> listaCurvaABCDistribuidor) {
+
+		ResultadoCurvaABCDistribuidor resultadoCurvaABCDistribuidor = new ResultadoCurvaABCDistribuidor();
+		
+		BigInteger totalVendaExemplares = BigInteger.ZERO;
+		BigDecimal totalFaturamento = BigDecimal.ZERO;
+		
+		for (RegistroCurvaABCDistribuidorVO registroCurvaABCDistribuidor : listaCurvaABCDistribuidor) {
+			
+			totalVendaExemplares = totalVendaExemplares.add(registroCurvaABCDistribuidor.getVendaExemplares());
+			totalFaturamento = totalFaturamento.add(registroCurvaABCDistribuidor.getFaturamentoCapa());
+		}
+		
+		resultadoCurvaABCDistribuidor.setTotalVendaExemplares(totalVendaExemplares);
+		resultadoCurvaABCDistribuidor.setTotalFaturamento(totalFaturamento);
+		
+		return resultadoCurvaABCDistribuidor;
 	}
 
 	/**
@@ -556,7 +604,7 @@ public class RelatorioVendasController extends BaseController {
 
 		List<RegistroCurvaABCEditorVO> resultadoCurvaABCEditor = null;
 		try {
-			resultadoCurvaABCEditor = editorService.obterCurvaABCEditor(filtroCurvaABCEditorDTO);
+			resultadoCurvaABCEditor = this.relatorioVendasService.obterCurvaABCEditor(filtroCurvaABCEditorDTO);
 		} catch (Exception e) {
 
 			if (e instanceof ValidacaoException) {
@@ -575,7 +623,9 @@ public class RelatorioVendasController extends BaseController {
 
 			int qtdeTotalRegistros = resultadoCurvaABCEditor.size();
 			
-			List<RegistroCurvaABCEditorVO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(resultadoCurvaABCEditor, filtroCurvaABCEditorDTO.getPaginacao(), filtroCurvaABCEditorDTO.getOrdenacaoColuna().toString());
+			List<RegistroCurvaABCEditorVO> resultadoPaginado =
+				PaginacaoUtil.paginarEOrdenarEmMemoria(
+					resultadoCurvaABCEditor, filtroCurvaABCEditorDTO.getPaginacao(), filtroCurvaABCEditorDTO.getOrdenacaoColuna().toString());
 			
 			TableModel<CellModelKeyValue<RegistroCurvaABCEditorVO>> tableModel = new TableModel<CellModelKeyValue<RegistroCurvaABCEditorVO>>();
 	
@@ -583,14 +633,36 @@ public class RelatorioVendasController extends BaseController {
 			tableModel.setPage(filtroCurvaABCEditorDTO.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(qtdeTotalRegistros);
 			
-			ResultadoCurvaABCEditor resultado = editorService.obterCurvaABCEditorTotal(filtroCurvaABCEditorDTO);
+			ResultadoCurvaABCEditor resultado =
+				this.obterTotaisCurvaABCEditor(resultadoCurvaABCEditor);
+			
 			resultado.setTableModel(tableModel);
 			
 			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 		}
-		
 	}
 
+	private ResultadoCurvaABCEditor obterTotaisCurvaABCEditor(
+										List<RegistroCurvaABCEditorVO> listaCurvaABCDistribuidor) {
+
+		ResultadoCurvaABCEditor resultadoCurvaABCDistribuidor = new ResultadoCurvaABCEditor();
+
+		BigInteger totalVendaExemplares = BigInteger.ZERO;
+		BigDecimal totalFaturamento = BigDecimal.ZERO;
+
+		for (RegistroCurvaABCEditorVO registroCurvaABCDistribuidor : listaCurvaABCDistribuidor) {
+
+			totalVendaExemplares = totalVendaExemplares.add(registroCurvaABCDistribuidor.getVendaExemplares());
+			totalFaturamento = totalFaturamento.add(registroCurvaABCDistribuidor.getFaturamentoCapa());
+		}
+
+		resultadoCurvaABCDistribuidor.setTotalVendaExemplares(totalVendaExemplares);
+		
+		resultadoCurvaABCDistribuidor.setTotalFaturamento(totalFaturamento);
+
+		return resultadoCurvaABCDistribuidor;
+	}
+	
 	/**
 	 * Realiza a pesquisa da curva ABC por produto
 	 * @param dataDe
@@ -700,7 +772,7 @@ public class RelatorioVendasController extends BaseController {
 
 		List<RegistroCurvaABCCotaDTO> resultadoCurvaABCCota = null;
 		try {
-			resultadoCurvaABCCota = cotaService.obterCurvaABCCota(filtroCurvaABCCotaDTO);
+			resultadoCurvaABCCota = this.relatorioVendasService.obterCurvaABCCota(filtroCurvaABCCotaDTO);
 		} catch (Exception e) {
 
 			if (e instanceof ValidacaoException) {
@@ -726,13 +798,36 @@ public class RelatorioVendasController extends BaseController {
 			tableModel.setPage(filtroCurvaABCCotaDTO.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(qtdeTotalRegistros);
 			
-			ResultadoCurvaABCCotaDTO resultado = cotaService.obterCurvaABCCotaTotal(filtroCurvaABCCotaDTO);
+			ResultadoCurvaABCCotaDTO resultado = this.obterTotaisCurvaABCCota(resultadoCurvaABCCota);
 			resultado.setTableModel(tableModel);
 			
 			result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 			
 		}
 		
+	}
+	
+	private ResultadoCurvaABCCotaDTO obterTotaisCurvaABCCota(
+										List<RegistroCurvaABCCotaDTO> listaCurvaABCCota) {
+
+		ResultadoCurvaABCCotaDTO resultadoCurvaABCDistribuidor = new ResultadoCurvaABCCotaDTO();
+
+		BigInteger totalVendaExemplares = BigInteger.ZERO;
+		BigDecimal totalFaturamento = BigDecimal.ZERO;
+
+		for (RegistroCurvaABCCotaDTO registroCurvaABCDistribuidor : listaCurvaABCCota) {
+
+			totalVendaExemplares =
+				totalVendaExemplares.add(registroCurvaABCDistribuidor.getVendaExemplares());
+			
+			totalFaturamento =
+				totalFaturamento.add(registroCurvaABCDistribuidor.getFaturamento());
+		}
+
+		resultadoCurvaABCDistribuidor.setTotalVendaExemplares(totalVendaExemplares);
+		resultadoCurvaABCDistribuidor.setTotalFaturamento(totalFaturamento);
+
+		return resultadoCurvaABCDistribuidor;
 	}
 
 	/**

@@ -3,7 +3,6 @@ package br.com.abril.nds.client.vo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import br.com.abril.nds.dto.RegistroCurvaABCDTO;
@@ -63,20 +62,7 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 	
 	private Date dataAte;
 	
-	private static final String FORMATO_DATA = "dd/MM/yyyy";  
-	SimpleDateFormat sdf = new SimpleDateFormat(FORMATO_DATA);
-	
 	public RegistroCurvaABCEditorVO() {
-	}
-
-	public RegistroCurvaABCEditorVO(Long codigoEditor, String nomeEditor,
-			BigInteger reparte, BigInteger vendaExemplares, BigDecimal faturamentoCapa) {
-		this.codigoEditor = codigoEditor;
-		this.nomeEditor = nomeEditor;
-		this.reparte = reparte;
-		this.vendaExemplares = vendaExemplares;
-		this.faturamentoCapa = faturamentoCapa;
-		this.formatarCampos();
 	}
 
 	public String getNomeEditor() {
@@ -91,8 +77,8 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 		return vendaExemplares;
 	}
 
-	public void setVendaExemplares(BigDecimal vendaExemplares) {
-		this.vendaExemplares = vendaExemplares.toBigInteger();
+	public void setVendaExemplares(BigInteger vendaExemplares) {
+		this.vendaExemplares = vendaExemplares;
 		vendaExemplaresFormatado = CurrencyUtil.formatarValorTruncado(vendaExemplares);
 	}
 
@@ -118,16 +104,16 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 		return codigoEditor;
 	}
 
-	public void setCodigoEditor(BigInteger codigoEditor) {
-		this.codigoEditor = codigoEditor.longValue();
+	public void setCodigoEditor(Long codigoEditor) {
+		this.codigoEditor = codigoEditor;
 	}
 
 	public BigInteger getReparte() {
 		return reparte;
 	}
 
-	public void setReparte(BigDecimal reparte) {
-		this.reparte = reparte.toBigInteger();
+	public void setReparte(BigInteger reparte) {
+		this.reparte = reparte;
 		this.reparteFormatado = CurrencyUtil.formatarValorTruncado(reparte);
 	}
 
@@ -155,14 +141,6 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 
 	public void setDataAte(Date dataAte) {
 		this.dataAte = dataAte;
-	}
-
-	public String getDataDeString() {
-		return sdf.format(dataDe);
-	}
-
-	public String getDataAteString() {
-		return sdf.format(dataAte);
 	}
 
 	public String getReparteFormatado() {
@@ -196,13 +174,6 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 
 	public void setFaturamentoCapaFormatado(String faturamentoCapaFormatado) {
 		this.faturamentoCapaFormatado = faturamentoCapaFormatado;
-	}
-
-	private void formatarCampos() {
-		reparteFormatado = CurrencyUtil.formatarValorTruncado(reparte);
-		vendaExemplaresFormatado = String.valueOf(vendaExemplares);
-		porcentagemVendaExemplaresFormatado = CurrencyUtil.formatarValor(porcentagemVendaExemplares);
-		faturamentoCapaFormatado = CurrencyUtil.formatarValor(faturamentoCapa);
 	}
 
 	public Long getRkEditor() {

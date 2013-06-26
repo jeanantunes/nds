@@ -40,6 +40,13 @@ public interface FileService {
 	 */
 	void esvaziarTemp(String dirBase);
 
+	
+	/**
+	 * @param dirBase
+	 * Elimina o diretorio "real" dentro do diretorio-base
+	 */
+	void eliminarReal(String dirBase);
+	
 	/**
 	 * Obtém arquivo temporário
 	 * 

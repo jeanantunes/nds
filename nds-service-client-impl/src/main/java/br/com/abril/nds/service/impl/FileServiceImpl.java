@@ -83,6 +83,13 @@ public class FileServiceImpl implements FileService {
 		
 	}
 	
+	public void eliminarReal(String dirBase) {
+		
+		File realDir = new File(dirBase + "/" + REAL_DIR);	
+		realDir.delete();
+		
+	}
+	
 	@Override
 	public void limparDiretorio(File diretorio) {
 		if(diretorio.exists()) {

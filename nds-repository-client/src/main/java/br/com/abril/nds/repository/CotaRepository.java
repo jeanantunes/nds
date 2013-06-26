@@ -19,7 +19,6 @@ import br.com.abril.nds.dto.MunicipioDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
-import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
@@ -217,9 +216,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
      * @return TelefoneCota
      */
     TelefoneCota obterTelefonePorTelefoneCota(Long idTelefone, Long idCota);
-
-    ResultadoCurvaABCCotaDTO obterCurvaABCCotaTotal(
-            FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO);
 
     List<RegistroCurvaABCCotaDTO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtro);
 

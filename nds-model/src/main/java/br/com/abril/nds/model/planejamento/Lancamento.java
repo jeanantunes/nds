@@ -105,10 +105,7 @@ public class Lancamento implements Serializable {
 	
 	@OneToMany(mappedBy = "lancamento", cascade = CascadeType.REMOVE)
 	private List<HistoricoLancamento> historicos = new ArrayList<HistoricoLancamento>();
-	
-	@Column(name = "NUMERO_REPROGRAMACOES")
-	private Integer numeroReprogramacoes;
-	
+		
 	@Column(name = "SEQUENCIA_MATRIZ", nullable = true)
 	private Integer sequenciaMatriz;
 	
@@ -250,14 +247,6 @@ public class Lancamento implements Serializable {
 	
 	public void addRecebimento(ItemRecebimentoFisico itemRecebimentoFisico) {
 		this.recebimentos.add(itemRecebimentoFisico);
-	}
-	
-	public Integer getNumeroReprogramacoes() {
-		return numeroReprogramacoes;
-	}
-	
-	public void setNumeroReprogramacoes(Integer numeroReprogramacoes) {
-		this.numeroReprogramacoes = numeroReprogramacoes;
 	}
 	
 	public Integer getSequenciaMatriz() {

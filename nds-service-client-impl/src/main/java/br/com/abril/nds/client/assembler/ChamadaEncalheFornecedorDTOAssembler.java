@@ -77,7 +77,8 @@ public class ChamadaEncalheFornecedorDTOAssembler {
                 
                 cefDTO.setPorcentagemDesconto(porcentagemDesconto);
 
-                BigDecimal margemDistribuidor = Util.nvl(fornecedor.getMargemDistribuidor(), BigDecimal.ZERO);
+                BigDecimal margemDistribuidor = fornecedor != null ? fornecedor.getMargemDistribuidor() : BigDecimal.ZERO;
+                
                 cefDTO.setMargemDistribuidor(margemDistribuidor);
 
                 BigDecimal totalMargemDistribuidor = MathUtil.round(MathUtil.calculatePercentageValue(totalBrutoDocumento, margemDistribuidor), 2);
@@ -181,7 +182,13 @@ public class ChamadaEncalheFornecedorDTOAssembler {
      * @return DTO com as informações do fornecedor
      */
     private static PessoaJuridicaChamadaEncalheFornecedorDTO criarFornecedor(final Fornecedor fornecedor) {
-        Endereco endereco = null;
+        
+    	if (fornecedor == null) {
+
+    		return null;
+    	}
+    	
+    	Endereco endereco = null;
         if (fornecedor.getEnderecoPrincipal() != null) {
             endereco = fornecedor.getEnderecoPrincipal().getEndereco();
         }
