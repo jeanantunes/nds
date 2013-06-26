@@ -9,4 +9,4 @@ INSERT INTO FECHAMENTO_ENCALHE
  where tipo_movimento_id=31 );
 
 INSERT INTO CONTROLE_FECHAMENTO_ENCALHE 
-(select DATA_ENCALHE from fechamento_encalhe where data_encalhe <='2013-04-22' group by 1);
+(select DATA_ENCALHE from fechamento_encalhe group by 1);

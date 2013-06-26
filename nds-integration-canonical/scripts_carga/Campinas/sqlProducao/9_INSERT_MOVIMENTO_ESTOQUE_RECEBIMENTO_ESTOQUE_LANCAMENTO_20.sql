@@ -1,3 +1,5 @@
+-- insere o smovimebnto de recebimento de mercadoria dos produtos que ainda estãono estoque do distribuidor, ou seja, ainda não foi lançado para as cota.
+-- Atualizar datas para data do rollout
 insert into movimento_estoque
 (APROVADO_AUTOMATICAMENTE,
  DATA_APROVACAO,
@@ -47,7 +49,7 @@ min(h.data_lancamento),
 group by 1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19
 );
 
-
+-- Movimento criado para justificar a entrada no estoque suplementar do distribuidor para o rollout
 insert into movimento_estoque
 (APROVADO_AUTOMATICAMENTE,
  DATA_APROVACAO,

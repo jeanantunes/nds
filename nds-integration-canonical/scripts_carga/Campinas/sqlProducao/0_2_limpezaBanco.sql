@@ -49,7 +49,8 @@ delete from lancamento_diferenca;
 delete from movimento_estoque;
 delete from estoque_produto;
 
-update nota_fiscal_entrada  set nota_fiscal_entrada.STATUS_NOTA_FISCAL = 'NAO_RECEBIDA'  where nota_fiscal_entrada.ID IN (select recebimento_fisico.NOTA_FISCAL_ID from recebimento_fisico);
+update nota_fiscal_entrada  set nota_fiscal_entrada.STATUS_NOTA_FISCAL = 'NAO_RECEBIDA'  
+where nota_fiscal_entrada.ID IN (select recebimento_fisico.NOTA_FISCAL_ID from recebimento_fisico);
 
 update lancamento  set  lancamento.`STATUS` = 'BALANCEADO'
 where lancamento.PRODUTO_EDICAO_ID IN (

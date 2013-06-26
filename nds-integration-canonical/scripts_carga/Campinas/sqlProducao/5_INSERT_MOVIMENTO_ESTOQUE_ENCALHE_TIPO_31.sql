@@ -1,6 +1,7 @@
 alter table movimento_estoque modify id bigint(20) AUTO_INCREMENT;
 
--- Insere movimento de estoque de recebimento de encalhe do distribuidor baseado no movimento de estoque de envio de encalhe da cota 
+-- Insere movimento de estoque de recebimento de encalhe do distribuidor baseado no 
+-- movimento de estoque de envio de encalhe da cota 
 -- Query OK, 17550 rows affected (8.37 sec)
 INSERT INTO movimento_estoque
 (

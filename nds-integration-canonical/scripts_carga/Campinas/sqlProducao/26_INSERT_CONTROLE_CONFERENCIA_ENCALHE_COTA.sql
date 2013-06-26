@@ -14,7 +14,7 @@ cota_id, usuario_id)
     and cce.data = m.data
 group by 1,2,3,4,5,6,7);
 
-
+/* ponto de atenção 
 create table tmpEstudo (estudo_id int);
 
 insert into tmpEstudo 
@@ -33,3 +33,5 @@ delete from estudo_cota where estudo_id in (select estudo_id from tmpEstudo);
 delete from estudo where id in (select estudo_id from tmpEstudo);
 
 drop table tmpEstudo;
+
+*/

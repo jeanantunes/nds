@@ -1,3 +1,5 @@
+drop table estqbox;
+
 create table estqbox (
     linha_vazia varchar(1),
     tipo int,
@@ -9,6 +11,7 @@ create table estqbox (
     quantidade int,
     produto_edicao_id int);
 
+-- deve ser executado pela console pois o arquivo nao esta local, está no servidor
 LOAD DATA LOCAL INFILE 'ESTQBOX.NEW' INTO TABLE estqbox COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\n';
 
 update estqbox set produto_edicao_id = (select pe.id from produto_edicao pe, produto p where

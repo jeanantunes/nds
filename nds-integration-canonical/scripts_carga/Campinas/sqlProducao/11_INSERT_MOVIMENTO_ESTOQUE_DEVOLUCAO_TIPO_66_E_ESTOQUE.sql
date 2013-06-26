@@ -25,16 +25,16 @@ INSERT INTO movimento_estoque
 
 (select 
 	true,
-        '2013-04-04',
-        'CARGA',
-        'APROVADO',
-        me.data,
-        '2013-04-04',
-        null,
-        66,
-        1,
-        me.QTDE,
-        me.PRODUTO_EDICAO_ID,
+	'2013-04-04',
+	'CARGA',
+	'APROVADO',
+	min(h.data_lancamento),
+	'2013-04-04',
+	null,
+	66,
+	1,
+	me.QTDE,
+	me.PRODUTO_EDICAO_ID,
 	ep.ID,
  	null,
  	null,
@@ -45,9 +45,11 @@ INSERT INTO movimento_estoque
 	'CARGA_INICIAL'
 
     from movimento_estoque me,
-	 estoque_produto ep
-where me.tipo_movimento_id = 31
-    and ep.produto_edicao_id = me.produto_edicao_id
+	 estoque_produto ep,
+	 hvnd h
+ where me.tipo_movimento_id = 31
+	and ep.produto_edicao_id = me.produto_edicao_id
+	and h.produto_edicao_id = ep.produto_edicao_id
     and me.QTDE > 0
     and me.produto_edicao_id not in 
 (select distinct(mec.produto_edicao_id) from movimento_estoque_cota mec, estoque_produto p

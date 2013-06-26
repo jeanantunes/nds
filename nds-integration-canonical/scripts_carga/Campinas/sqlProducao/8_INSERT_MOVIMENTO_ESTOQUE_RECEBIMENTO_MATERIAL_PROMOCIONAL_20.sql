@@ -1,5 +1,6 @@
 -- insere estoque de produto do fornecedor baseado
 -- nos tipos A.R.PROM. do arquivo ESTQBOX
+-- Atualizar para data do rollout
 insert into estoque_produto 
 (produto_edicao_id)
 (select 

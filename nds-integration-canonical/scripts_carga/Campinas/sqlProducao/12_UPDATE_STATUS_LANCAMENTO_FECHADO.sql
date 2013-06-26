@@ -25,3 +25,6 @@ where produto_edicao_id in (select h.produto_edicao_id from hvnd h
 
 
 #UPDATE lancamento set DATA_REC_DISTRIB = DATA_REC_PREVISTA where DATA_REC_DISTRIB = '0000-00-00';
+
+Verificar após a execução desse script se existe DATA_REC_DISTRIB e DATA_LCTO_DISTRIBUIDOR = '0000-00-00'
+Caso exista verificaar o que fazer, discutir.

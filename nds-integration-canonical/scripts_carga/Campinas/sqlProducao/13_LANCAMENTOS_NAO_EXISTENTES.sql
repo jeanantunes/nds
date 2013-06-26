@@ -1,3 +1,6 @@
+-- Garante que não tenha nenhum movimentos para as cotas / distribuidor sem lançamento
+-- Atualizar as datas para data do rollout
+
 insert into lancamento
 (alterado_interface,
 data_criacao,

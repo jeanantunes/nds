@@ -1,3 +1,5 @@
+-- Insere a saida domaterial promocional que esteja no estoque do distribuidor ( estqbox tipo 92)
+-- Atualizar as datas para data atual do rollout
 insert into movimento_estoque
 (APROVADO_AUTOMATICAMENTE,
  DATA_APROVACAO,

@@ -1,3 +1,5 @@
+drop table HVND;
+
 create table HVND
  (COD_COTA_HVCT int,
  COD_PRODUTO_HVCT varchar(12),
@@ -37,8 +39,25 @@ where p.id = pe.produto_id
 and p.codigo = HVND.cod_produto 
 and pe.numero_edicao = HVND.num_edicao);
 
+-- Validação update acima 80.808 sec / 0.000 sec
+select * from HVND
+where produto_edicao_id <> (select pe.id from produto_edicao pe, produto p 
+where p.id = pe.produto_id 
+and p.codigo = HVND.cod_produto 
+and pe.numero_edicao = HVND.num_edicao)
+;
+
 update HVND set cota_id = 
 (select c.id from cota c
 where c.numero_cota = HVND.COD_COTA_HVCT);
+
+-- Validação update acima
+select * from HVND h
+where h.cota_id <>
+(select c.id from cota c
+where c.numero_cota = h.COD_COTA_HVCT)
+;
+
+desc HVND;
 
 ALTER TABLE `HVND` ADD INDEX `hvnd_cota_id` (`COD_COTA_HVCT` ASC, `cod_produto` ASC, `num_edicao` ASC, `produto_edicao_id` ASC) ;

@@ -1,4 +1,4 @@
---Query OK, 1007 rows affected (0.14 sec)
+-- Query OK, 1007 rows affected (0.14 sec)
 insert into CONTROLE_CONFERENCIA_ENCALHE 
 (data, status) 
 (select 

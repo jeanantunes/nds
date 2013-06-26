@@ -1,4 +1,5 @@
--- Necessário para não tomcar erro de ID duplicado (pq não autoincrementa) ao inserir baseado em uma consulta
+-- Necessário para não tomar erro de ID duplicado (pq não autoincrementa) ao 
+-- inserir baseado em uma consulta
 alter table movimento_estoque_cota modify id bigint(20) AUTO_INCREMENT;
 
 -- Insere os movimentos de estoque da cota de encalhe (tipo_movimento_id = 26) onde houve devolução (estoque produto cota.QTDE_DEVOLVIDA > 0)
