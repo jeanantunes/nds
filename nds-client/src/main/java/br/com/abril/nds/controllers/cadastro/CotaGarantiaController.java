@@ -6,10 +6,8 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
 import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.FormaCobrancaCaucaoLiquidaDTO;
@@ -181,9 +179,11 @@ public class CotaGarantiaController extends BaseController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Valor do resgate ultrapassa o valor do Caução Líquida !"));
 		}
 		
+		BigDecimal novoValor = valorAtual.subtract(valor);
+		
 		CaucaoLiquida novaCaucaoLiquida = new CaucaoLiquida();
 		novaCaucaoLiquida.setAtualizacao(new Date());
-		novaCaucaoLiquida.setValor(valorAtual.subtract(valor));
+		novaCaucaoLiquida.setValor(novoValor);
 		
 		this.validaCaucaoLiquida(novaCaucaoLiquida);
 		
@@ -195,6 +195,15 @@ public class CotaGarantiaController extends BaseController {
 		
 		formaCobrancaDTO.setIdFormaCobrancaCaucaoLiquida(null);
 		
+		formaCobrancaDTO.setValor(novoValor);
+		
+		if (novoValor.compareTo(BigDecimal.ZERO) == 0){
+		
+			formaCobrancaDTO.setQtdeParcelas(0);
+		
+		    formaCobrancaDTO.setValorParcela(BigDecimal.ZERO);
+		}
+
 		cotaGarantiaService.salvarCaucaoLiquida(Arrays.asList(novaCaucaoLiquida), idCota, formaCobrancaDTO);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Valor de "+CurrencyUtil.formatarValorComSimbolo(valor)+" resgatado com Sucesso."), "result").recursive().serialize();

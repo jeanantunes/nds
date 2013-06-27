@@ -1601,7 +1601,7 @@ CaucaoLiquida.prototype.setValorCaucaoLiquidaPorTipo = function(tipo, valor){
 		    
 		    id.push("valorResgate");
 		    
-		    $("#"+id[1], _workspace).val(0);
+		    $("#"+id[1], _workspace).val(valor);
 		    
 		break;
 		case 'DEPOSITO_TRANSFERENCIA':
