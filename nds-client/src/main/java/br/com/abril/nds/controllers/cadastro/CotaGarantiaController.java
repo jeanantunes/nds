@@ -6,16 +6,21 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
 import org.apache.poi.util.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaGarantiaDTO;
+import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.FormaCobrancaCaucaoLiquidaDTO;
 import br.com.abril.nds.dto.ImovelDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.NotaPromissoriaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -27,11 +32,19 @@ import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.DebitoCreditoCotaService;
+import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.service.TipoMovimentoFinanceiroService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -52,7 +65,19 @@ public class CotaGarantiaController extends BaseController {
 	private CotaGarantiaService cotaGarantiaService;
 	
 	@Autowired
+	private DebitoCreditoCotaService debitoCreditoCotaService;
+	
+	@Autowired
+	private TipoMovimentoFinanceiroService tipoMovimentoFinanceiroService;
+	
+	@Autowired
+	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
+	
+	@Autowired
 	private CotaService cotaService;
+	
+	@Autowired
+	private UsuarioService usuarioService;
 	
 	@Autowired
 	private Result result;
@@ -110,7 +135,57 @@ public class CotaGarantiaController extends BaseController {
 						"Outras garantias salvas com Sucesso."), "result").recursive()
 				.serialize();
 	}
+	
+	/**
+	 * Lança Débitos e Créditos no lançamento ou Resgate de Caução Líquida
+	 * @param valorParcela
+	 * @param qtdParcelas
+	 * @param idCota
+	 * @param grupoFinanceiro
+	 * @param operacaoFinaceira
+	 */
+	private void lancarDebitoCreditoCaucaoLiquida(BigDecimal valorParcela, 
+			                                      int qtdParcelas, 
+			                                      Long idCota, 
+			                                      GrupoMovimentoFinaceiro grupoFinanceiro, 
+			                                      OperacaoFinaceira operacaoFinaceira){
+		
+		Cota cota = cotaService.obterPorId(idCota);
+		
+		for (int i = 1; i<=qtdParcelas; i++){
+			
+			DebitoCreditoDTO debitoCreditoDTO = new DebitoCreditoDTO();
+			
+			Date dataAtual = Calendar.getInstance().getTime();
+			
+			debitoCreditoDTO.setDataLancamento(DateUtil.formatarDataPTBR(dataAtual));
+			
+			debitoCreditoDTO.setDataVencimento(DateUtil.formatarDataPTBR(DateUtil.adicionarDias(dataAtual, i)));
+			
+			debitoCreditoDTO.setValor(String.valueOf(valorParcela.floatValue()));
 
+			TipoMovimentoFinanceiro tipoMovimento = this.tipoMovimentoFinanceiroService.obterTipoMovimentoFincanceiroPorGrupoFinanceiroEOperacaoFinanceira(grupoFinanceiro, operacaoFinaceira);
+			
+			debitoCreditoDTO.setTipoMovimentoFinanceiro(tipoMovimento);
+
+			debitoCreditoDTO.setPermiteAlteracao(false);
+			
+			debitoCreditoDTO.setObservacao("Caucao Liquida");
+			
+			debitoCreditoDTO.setNomeCota(cota.getPessoa().getNome());
+			
+			debitoCreditoDTO.setNumeroCota(cota.getNumeroCota());
+			
+			debitoCreditoDTO.setIdUsuario(usuarioService.getUsuarioLogado().getId());
+			
+			MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = this.debitoCreditoCotaService.gerarMovimentoFinanceiroCotaDTO(debitoCreditoDTO);
+			
+            movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
+			
+			this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
+		}
+	}
+	
 	/**
 	 * Salva CaucaoLiquida
 	 * @param listaCaucaoLiquida
@@ -143,7 +218,12 @@ public class CotaGarantiaController extends BaseController {
 		formaCobranca = formatarFormaCobranca(formaCobranca);
 		
 		cotaGarantiaService.salvarCaucaoLiquida(listaCaucaoLiquida, idCota, formaCobranca);
-		
+
+		this.lancarDebitoCreditoCaucaoLiquida(formaCobranca.getValorParcela(), 
+				                              formaCobranca.getQtdeParcelas(), 
+				                              idCota,GrupoMovimentoFinaceiro.LANCAMENTO_CAUCAO_LIQUIDA, 
+				                              OperacaoFinaceira.DEBITO);
+
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Caução Líquida salva com Sucesso."), "result").recursive().serialize();
 	}
 
@@ -205,7 +285,13 @@ public class CotaGarantiaController extends BaseController {
 		}
 
 		cotaGarantiaService.salvarCaucaoLiquida(Arrays.asList(novaCaucaoLiquida), idCota, formaCobrancaDTO);
-		
+
+		this.lancarDebitoCreditoCaucaoLiquida(valor, 
+				                              1, 
+				                              idCota, 
+                                              GrupoMovimentoFinaceiro.RESGATE_CAUCAO_LIQUIDA, 
+                                              OperacaoFinaceira.CREDITO);
+
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Valor de "+CurrencyUtil.formatarValorComSimbolo(valor)+" resgatado com Sucesso."), "result").recursive().serialize();
 	}
 	
