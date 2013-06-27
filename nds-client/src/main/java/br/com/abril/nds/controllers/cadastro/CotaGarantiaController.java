@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -184,17 +185,26 @@ public class CotaGarantiaController extends BaseController {
             
             if (dadosCaucaoLiquida != null) {
             	
-                result.use(CustomJson.class).from(dadosCaucaoLiquida).serialize();
+            	this.result.use(CustomJson.class).from(dadosCaucaoLiquida).serialize();
             } else {
             	
-                result.use(CustomJson.class).from("OK").serialize();
+            	this.result.use(CustomJson.class).from("OK").serialize();
             }
+
         } else {
         	
             FormaCobrancaCaucaoLiquidaDTO dto = cotaGarantiaService.obterCaucaoLiquidaHistoricoTitularidadeCota(idCota, idHistorico);
             
-            result.use(CustomJson.class).from(dto).serialize();
+            this.result.use(CustomJson.class).from(dto).serialize();
         }
+	}
+	
+	@Post("/getDescontoAtualCaucaoLiquida.json")
+	public void getDescontoAtualCaucaoLiquida(Long idCota) {
+		
+		BigDecimal descontoAtual = this.cotaGarantiaService.obterValorComissaoCaucaoLiquida(idCota);
+		
+		this.result.use(CustomJson.class).from(descontoAtual).serialize();
 	}
 	
 	/**

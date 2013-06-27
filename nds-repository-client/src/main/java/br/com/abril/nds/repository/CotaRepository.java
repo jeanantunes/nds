@@ -367,4 +367,13 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	
 	HistoricoVendaPopUpCotaDto buscarCota(Integer numero);
 	
+	/**
+	 * Obtém o número da cota, através de seu ID.
+	 * 
+	 * @param idCota - ID da cota que deseja obter o número.
+	 * 
+	 * @return Número da cota.
+	 */
+	Integer buscarNumeroCotaPorId(Long idCota);
+	
 }
