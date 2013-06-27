@@ -2799,4 +2799,18 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Integer buscarNumeroCotaPorId(Long idCota) {
+
+		Criteria criteria = getSession().createCriteria(Cota.class);
+		
+		criteria.add(Restrictions.eq("id", idCota));
+		
+		criteria.setProjection(Projections.property("numeroCota"));
+		
+		return (Integer) criteria.uniqueResult();
+	}
 }
