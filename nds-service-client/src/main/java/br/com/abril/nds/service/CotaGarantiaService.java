@@ -296,4 +296,11 @@ public interface CotaGarantiaService {
 	Long getQtdCotaGarantiaByCota(Long idCota);
 	
 	BigDecimal obterValorComissaoCaucaoLiquida(Long idCota);
+
+	/**
+	 * Método responsável por obter lista de CaucaoLiquida da cota
+	 * @param idCota: ID da cota
+	 * @return List<CaucaoLiquida>
+	 */
+	List<CaucaoLiquida> obterCaucaoLiquidasCota(Long idCota);
 }

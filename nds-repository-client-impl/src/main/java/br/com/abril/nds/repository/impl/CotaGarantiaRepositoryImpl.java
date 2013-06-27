@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.RelatorioDetalheGarantiaDTO;
 import br.com.abril.nds.dto.RelatorioGarantiasDTO;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioGarantiasDTO;
+import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
@@ -66,8 +67,28 @@ public class CotaGarantiaRepositoryImpl extends AbstractRepositoryModel<CotaGara
 		return (T) criteria.uniqueResult();
 	}
 	
+	/**
+	 * Obtem lista de CaucaoLiquida da Cota
+	 * @param idCota
+	 * @return List<CaucaoLiquida>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CaucaoLiquida> getCaucaoLiquidasCota(Long idCota) {
+		
+		StringBuilder hql = new StringBuilder("select ");
+		hql.append(" cgcl.caucaoLiquidas ")
+		   .append(" from  CotaGarantiaCaucaoLiquida cgcl ")
+		   .append(" join  cgcl.cota cota ")
+		   .append(" where cota.id = :idCota ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idCota", idCota);
+		
+		return query.list();
+	}
 	
-
 	@Override
 	public void deleteListaImoveis(Long idGarantia) {
 		

@@ -1476,13 +1476,17 @@ CaucaoLiquida.prototype.incluirCaucao = function(callBack) {
     
     if(!this.caucaoLiquida.valor || this.caucaoLiquida.valor <= 0){
     	
-        exibirMensagemDialog('ERROR', ['O preenchimento do campo [Valor R$] é obrigatório'], '');
+        exibirMensagemDialog('WARNING', ['O campo [Valor R$] é obrigatório e seu valor deve ser maior que 0 (Zero) !'], '');
     }else{
     	
         this.listNovosCalcao.unshift(this.caucaoLiquida);
         
         this.popularGrid();
+        
+        return true;
     }
+    
+    return false;
 };
 
 CaucaoLiquida.prototype.getCaucaoLiquidasSalvas = function() {
@@ -1512,13 +1516,6 @@ CaucaoLiquida.prototype.popularGrid = function() {
     var salvas = CaucaoLiquida.prototype.getCaucaoLiquidasSalvas();
 
     this.rows  = this.listNovosCalcao.concat(salvas);
-
-    this.grid.flexAddData({
-        rows : toFlexiGridObject(this.rows),
-        page : 1,
-        total : 1
-    });
-
 };
 
 CaucaoLiquida.prototype.replaceAll = function(string, token, newtoken) {
@@ -1592,29 +1589,41 @@ CaucaoLiquida.prototype.adicionaDecimais = function(){
 	});
 };
 
-CaucaoLiquida.prototype.setValorCaucaoLiquidaPorTipo = function(tipo,valor){
+CaucaoLiquida.prototype.setValorCaucaoLiquidaPorTipo = function(tipo, valor){
 
-	var id = "";
-	
+	var id = new Array();
+
 	switch(tipo) {
-	
-	case 'BOLETO':
-		id = "valorBoleto";
+
+		case 'BOLETO':
+			
+			id.push("valorBoleto");
+		    
+		    id.push("valorResgate");
+		    
+		    $("#"+id[1], _workspace).val(0);
+		    
 		break;
-	case 'DEPOSITO_TRANSFERENCIA':
-		id = "valorDeposito";
+		case 'DEPOSITO_TRANSFERENCIA':
+			
+			id.push("valorDeposito");
+		    
 		break;
-	case 'DINHEIRO':
-		id = "valorDinheiro";
+		case 'DINHEIRO':
+			
+			id.push("valorDinheiro");
+		    
 		break;
-	case 'DESCONTO_COTA':
-		id = "valorDesconto";
+		case 'DESCONTO_COTA':
+			
+			id.push("valorDesconto");
+		    
 		break;
 	}
 
-	$("#"+id, _workspace).val(valor);
+	$("#"+id[0], _workspace).val(valor);
 
-	this.adicionaDecimais.apply(null, [id]);
+	this.adicionaDecimais.apply(null, id);
 };
 
 CaucaoLiquida.prototype.setValoresComissaoCota = function(tipo, comissao) {
@@ -1630,7 +1639,12 @@ CaucaoLiquida.prototype.setValoresComissaoCota = function(tipo, comissao) {
 
 CaucaoLiquida.prototype.salva = function(callBack) {
 
-    this.incluirCaucao();
+    var novoCalcaoIncluido = this.incluirCaucao();
+    
+    if(novoCalcaoIncluido == false){
+    	
+    	return;
+    }
     
     for (var i = 0; i < this.listNovosCalcao.length; i++){
     	
@@ -1735,7 +1749,7 @@ CaucaoLiquida.prototype.salva = function(callBack) {
     postData['formaCobranca.conta'] = conta;
     postData['formaCobranca.nomeCorrentista'] = nomeCorrentista;
 
-    postData['formaCobranca.valor'] = valor;
+    postData['formaCobranca.valor'] = this.preparaValor(valor,4);
 
     $.postJSON(this.path + 'salvaCaucaoLiquida.json', postData,
         function(data) {
@@ -1769,16 +1783,75 @@ CaucaoLiquida.prototype.salva = function(callBack) {
         "dialog-cota");
 };
 
-CaucaoLiquida.prototype.resgatarValorCaucao = function() {
+CaucaoLiquida.prototype.resgatarCaucaoLiquida = function(valor, idCota) {
+	
+	var params ={
+			     'valor' : valor,
+			     'idCota' : idCota
+			    };
+	         
+    $.postJSON(this.path + 'resgataCaucaoLiquida.json', 
+    		   params,
+		       function(data) {
+		            var tipoMensagem = data.tipoMensagem;
+		            var listaMensagens = data.listaMensagens;
+		
+		            if (tipoMensagem && listaMensagens) {
+		
+		                exibirMensagemDialog(
+		                    tipoMensagem,
+		                    listaMensagens,
+		                    "dialog-cota"
+		                );     
+		                
+		                $("#valorResgate", _workspace).val("0,00");
+		                
+		                CaucaoLiquida.prototype.obterCaucaoLiquida(idCota);	                		         
+		            }
+		       },
+		       function(data){
+		            if (data.mensagens) {
+		
+		                exibirMensagemDialog(
+		                    data.mensagens.tipoMensagem,
+		                    data.mensagens.listaMensagens,
+		                    "dialog-cota"
+		                );
+		            }
+		       },
+		       true,
+		       "dialog-cota"
+		      );
+};
 
+CaucaoLiquida.prototype.isResgatar = function(){
+	
     var _this = this;
     
     var valor = floatValue($("#valorBoleto",this.workspace).val());
     
     if (valor <= 0) {
         
-    	return;
-    }
+    	return false;
+    }	
+    
+    return true;
+};
+
+CaucaoLiquida.prototype.resgatarValorCaucao = function(valorResgate,idCota) {
+	
+	if (valorResgate && valorResgate > 0){
+    	
+    	this.resgatarCaucaoLiquida(valorResgate,idCota); 	
+	}
+}
+
+CaucaoLiquida.prototype.popupResgatarValorCaucao = function(idCota) {
+	
+	if (CaucaoLiquida.prototype.isResgatar == false){
+		
+		return;
+	}
 
     $("#dialog-confirma-resgate", _workspace).dialog({
         resizable : false,
@@ -1786,18 +1859,19 @@ CaucaoLiquida.prototype.resgatarValorCaucao = function() {
         width : 'auto',
         modal : true,
         buttons : {
-            "Confirmar" : function() {
-
-            	CaucaoLiquida.prototype.dataUnBind(0);
+            "Confirmar" : function() {   
             	
-            	CaucaoLiquida.prototype.listNovosCalcao.unshift(CaucaoLiquida.prototype.caucaoLiquida);
-                    
-            	CaucaoLiquida.prototype.popularGrid();
+            	var vr = $("#valorResgate", _workspace).val();
+            	
+            	vr = CaucaoLiquida.prototype.preparaValor(vr,4)
 
-                $(this).dialog("close");
+            	CaucaoLiquida.prototype.resgatarValorCaucao(vr,idCota);
+
+            	$(this, _workspace).dialog("close");
             },
             "Cancelar" : function() {
-                $(this).dialog("close");
+            	
+                $(this, _workspace).dialog("close");
             }
         },
         form: $("#workspaceCota", _workspace)
@@ -1822,7 +1896,7 @@ CaucaoLiquida.prototype.bindEvents = function() {
 
     $("#cotaGarantiaCaucaoLiquidaResgatar", _workspace).click(function(){
     	
-    	CaucaoLiquida.prototype.resgatarValorCaucao();
+    	CaucaoLiquida.prototype.popupResgatarValorCaucao(_this.idCota);
     });
     
     $("#utilizarDesconto", _workspace).keyup(function() {
@@ -1879,6 +1953,12 @@ CaucaoLiquida.prototype.bindEvents = function() {
     });
 
     $("#valorDinheiro", _workspace).priceFormat({
+        allowNegative : true,
+        centsSeparator : ',',
+        thousandsSeparator : '.'
+    });
+    
+    $("#valorResgate", _workspace).priceFormat({
         allowNegative : true,
         centsSeparator : ',',
         thousandsSeparator : '.'
@@ -2125,6 +2205,8 @@ CaucaoLiquida.prototype.sucessCallbackObterCaucaoLiquida = function(resultado) {
     
     CaucaoLiquida.prototype.opcaoPagto(resultado.tipoCobranca);
    
+    this.rows = resultado.caucoes;
+    	
     tipoCotaGarantia.controller.grid.flexAddData({
         rows : toFlexiGridObject(resultado.caucoes),
         page : 1,

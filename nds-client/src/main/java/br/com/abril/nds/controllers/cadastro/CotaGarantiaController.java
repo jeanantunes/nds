@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.cadastro;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -32,6 +33,7 @@ import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -121,6 +123,10 @@ public class CotaGarantiaController extends BaseController {
 	@Post("/salvaCaucaoLiquida.json")
 	public void salvaCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota, FormaCobrancaCaucaoLiquidaDTO formaCobranca) throws Exception {
 		
+		if(idCota==null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não informada.");
+		}
+		
 		if(formaCobranca.getTipoCobranca()==null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha uma Forma de Pagamento.");
 		}
@@ -141,6 +147,57 @@ public class CotaGarantiaController extends BaseController {
 		cotaGarantiaService.salvarCaucaoLiquida(listaCaucaoLiquida, idCota, formaCobranca);
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Caução Líquida salva com Sucesso."), "result").recursive().serialize();
+	}
+
+	/**
+	 * Resgata valor CaucaoLiquida
+	 * @param valor
+	 * @param idCota
+	 * @throws Exception
+	 */
+	@Post("/resgataCaucaoLiquida.json")
+	public void resgataCaucaoLiquida(BigDecimal valor, Long idCota) throws Exception {
+		
+		if(idCota==null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não informada.");
+		}
+
+		List<CaucaoLiquida> caucaoLiquidasCota = cotaGarantiaService.obterCaucaoLiquidasCota(idCota);
+		
+		int indexCaucaoLiquidaAtual = caucaoLiquidasCota.size() - 1; 
+		
+		CaucaoLiquida caucaoLiquidaAtual = caucaoLiquidasCota.get(indexCaucaoLiquidaAtual);
+		
+		BigDecimal valorAtual = caucaoLiquidaAtual.getValor();
+		
+        if(valorAtual.compareTo(BigDecimal.ZERO) == 0){
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não há resgate à ser feito !"));
+		}
+		
+		if(valorAtual.compareTo(valor) < 0){
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Valor do resgate ultrapassa o valor do Caução Líquida !"));
+		}
+		
+		CaucaoLiquida novaCaucaoLiquida = new CaucaoLiquida();
+		novaCaucaoLiquida.setAtualizacao(new Date());
+		novaCaucaoLiquida.setValor(valorAtual.subtract(valor));
+		
+		this.validaCaucaoLiquida(novaCaucaoLiquida);
+		
+		caucaoLiquidasCota.add(novaCaucaoLiquida);
+		
+		FormaCobrancaCaucaoLiquidaDTO formaCobrancaDTO = cotaGarantiaService.obterDadosCaucaoLiquida(idCota);
+		
+		formaCobrancaDTO.setIdCaucaoLiquida(null);
+		
+		formaCobrancaDTO.setIdFormaCobrancaCaucaoLiquida(null);
+		
+		cotaGarantiaService.salvarCaucaoLiquida(Arrays.asList(novaCaucaoLiquida), idCota, formaCobrancaDTO);
+		
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Valor de "+CurrencyUtil.formatarValorComSimbolo(valor)+" resgatado com Sucesso."), "result").recursive().serialize();
 	}
 	
 	@Post("/getByCota.json")

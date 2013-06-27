@@ -293,11 +293,17 @@
 
 	
 	<div id="dialog-confirma-resgate" title="Confirmar Resgate Caução Líquida" style="display:none;" >
-		<fieldset style="width: 380px;">
+		<fieldset style="width: 500px;">
+		
 			<legend>Resgate de Cau&ccedil;&atilde;o L&iacute;quida</legend>
-    		<p>Confirma o Resgate da Cau&ccedil;&atilde;o L&iacute;quida?</p>
+			
+    		<p>Confirma o Resgate da Cau&ccedil;&atilde;o L&iacute;quida no Valor R$ 
+    		<input type="text" id="valorResgate" style="text-align: right; width: 100px;" /> 
+    		?</p>
+    		
 		</fieldset>
 	</div>
+	
 	<fieldset style="width:880px!important; margin:5px;">
 	   	<legend>Cau&ccedil;&atilde;o L&iacute;quida</legend>
         <table width="860" cellpadding="2" cellspacing="2" style="text-align:left;">
