@@ -1575,15 +1575,21 @@ CaucaoLiquida.prototype.getValorCaucaoLiquida = function(tipo){
     return this.preparaValor(valor,4);
 };
 
-CaucaoLiquida.prototype.adicionaDecimais = function(id){
-    if ($("#"+id, _workspace).val().indexOf(".") < 0){
-        $("#"+id, _workspace).val($("#"+id, _workspace).val() + "0000");
-    }
+CaucaoLiquida.prototype.adicionaDecimais = function(){
 
-    $("#"+id, _workspace).priceFormat({
-        centsSeparator : ',',
-        thousandsSeparator : '.'
-    });
+	$.each(arguments, function(index, id) {
+	
+		var value = $("#"+id, _workspace).val();
+		
+	    if (value && value.indexOf(".") < 0){
+	        $("#"+id, _workspace).val(value + "0000");
+	    }
+	
+	    $("#"+id, _workspace).priceFormat({
+	        centsSeparator : ',',
+	        thousandsSeparator : '.'
+	    });
+	});
 };
 
 CaucaoLiquida.prototype.setValorCaucaoLiquidaPorTipo = function(tipo,valor){
@@ -1608,19 +1614,18 @@ CaucaoLiquida.prototype.setValorCaucaoLiquidaPorTipo = function(tipo,valor){
 
 	$("#"+id, _workspace).val(valor);
 
-	this.adicionaDecimais(id);
+	this.adicionaDecimais.apply(null, [id]);
 };
 
 CaucaoLiquida.prototype.setValoresComissaoCota = function(tipo, comissao) {
 
 	$("#valorDescontoAtual", _workspace).val(comissao.valorDescontoAtual);
-	this.adicionaDecimais("valorDescontoAtual");
 
 	$("#utilizarDesconto", _workspace).val(comissao.utilizarDesconto);
-	this.adicionaDecimais("utilizarDesconto");
 
 	$("#descontoCotaDesconto", _workspace).val(comissao.descontoCotaDesconto);
-	this.adicionaDecimais("descontoCotaDesconto");
+
+	this.adicionaDecimais.apply(null, ["valorDescontoAtual", "utilizarDesconto", "descontoCotaDesconto"]);
 };
 
 CaucaoLiquida.prototype.salva = function(callBack) {
@@ -1799,6 +1804,18 @@ CaucaoLiquida.prototype.resgatarValorCaucao = function() {
     });
 };
 
+CaucaoLiquida.prototype.reajustarValorDescontoComissao = function() {
+	
+	var descontoAtual = priceToFloat($("#valorDescontoAtual").val());
+	var descontoUtilizar = priceToFloat($("#utilizarDesconto").val());
+
+	var descontoReajustado = descontoAtual - descontoUtilizar;
+	
+	$("#descontoCotaDesconto").val(descontoReajustado);
+	
+	CaucaoLiquida.prototype.adicionaDecimais.apply(null, ["descontoCotaDesconto"]);
+};
+
 CaucaoLiquida.prototype.bindEvents = function() {
 
     var _this = this;
@@ -1806,6 +1823,11 @@ CaucaoLiquida.prototype.bindEvents = function() {
     $("#cotaGarantiaCaucaoLiquidaResgatar", _workspace).click(function(){
     	
     	CaucaoLiquida.prototype.resgatarValorCaucao();
+    });
+    
+    $("#utilizarDesconto", _workspace).keyup(function() {
+    	
+    	CaucaoLiquida.prototype.reajustarValorDescontoComissao();
     });
 
     $("#valorBoleto", _workspace).priceFormat({
@@ -1935,6 +1957,8 @@ CaucaoLiquida.prototype.opcaoPagto = function(op){
         $('#divFormaDeposito', _workspace).hide();
         $('#divFormaDinheiro', _workspace).hide();
         $('#divFormaDesconto', _workspace).show();
+
+        CaucaoLiquida.prototype.obterDescontoAtualCaucaoLiquida();
     }
     else{
         $('#divFormaBoleto', _workspace).hide();
@@ -2020,6 +2044,27 @@ CaucaoLiquida.prototype.opcaoTipoFormaCobranca = function(op){
     }
 };
 
+CaucaoLiquida.prototype.obterDescontoAtualCaucaoLiquida = function() {
+	
+	var idCota = TipoCotaGarantia.prototype.getIdCota();
+	
+	var data = [{name: 'idCota', value: idCota}];
+	
+	$.postJSON(this.path + 'getDescontoAtualCaucaoLiquida.json',
+        data,
+        function(descontoAtual) {
+
+			$("#valorDescontoAtual", _workspace).val(descontoAtual);
+
+			$("#descontoCotaDesconto", _workspace).val(descontoAtual);
+
+			CaucaoLiquida.prototype.adicionaDecimais.apply(null, ["descontoCotaDesconto", "valorDescontoAtual"]);
+		},
+        null,
+        true
+	);
+};
+
 //OBTEM UM PARÂMETRO PARA ALTERAÇÃO
 CaucaoLiquida.prototype.obterCaucaoLiquida = function(idCota){
 	
@@ -2058,7 +2103,7 @@ CaucaoLiquida.prototype.sucessCallbackObterCaucaoLiquida = function(resultado) {
 
     $("#qtdParcelaBoleto", _workspace).val(resultado.qtdeParcelas);
     $("#valorParcelaBoleto", _workspace).val(resultado.valorParcela);
-    CaucaoLiquida.prototype.adicionaDecimais("valorParcelaBoleto");
+    CaucaoLiquida.prototype.adicionaDecimais(null, ["valorParcelaBoleto"]);
 
     //INFORMACOES ADICIONAIS DEPOSITO
     $("#numBancoDeposito", _workspace).val(resultado.numBanco);
