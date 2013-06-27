@@ -771,6 +771,9 @@ public class CotaServiceImpl implements CotaService {
 					cotaSujeitaSuspensao.getIdCota(), 
 						this.distribuidorRepository.obterDataOperacaoDistribuidor()));
 			
+			cotaSujeitaSuspensao.setDividaAcumulada(
+				this.dividaService.obterTotalDividasAbertoCota(cotaSujeitaSuspensao.getIdCota()));
+			
 			Integer percentualDivida = 
 				(int) ((cotaSujeitaSuspensao.getDoubleDividaAcumulada() 
 							/ cotaSujeitaSuspensao.getDoubleConsignado() ) * 100);
