@@ -1597,32 +1597,28 @@ CaucaoLiquida.prototype.setValorCaucaoLiquidaPorTipo = function(tipo, valor){
 
 		case 'BOLETO':
 			
-			id.push("valorBoleto");
-		    
-		    id.push("valorResgate");
-		    
-		    $("#"+id[1], _workspace).val(valor);
-		    
+			id.push("valorBoleto");   
 		break;
 		case 'DEPOSITO_TRANSFERENCIA':
 			
 			id.push("valorDeposito");
-		    
 		break;
 		case 'DINHEIRO':
 			
 			id.push("valorDinheiro");
-		    
 		break;
 		case 'DESCONTO_COTA':
 			
 			id.push("valorDesconto");
-		    
 		break;
 	}
 
 	$("#"+id[0], _workspace).val(valor);
 
+	id.push("valorResgate");
+    
+    $("#"+id[1], _workspace).val(valor);
+    
 	this.adicionaDecimais.apply(null, id);
 };
 
