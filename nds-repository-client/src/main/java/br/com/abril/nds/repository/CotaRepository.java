@@ -99,7 +99,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
      * @return Cotas
      */
     List<CotaSuspensaoDTO> obterCotasSujeitasSuspensao(String sortOrder,
-            String sortColumn, Integer page, Integer rp);
+            String sortColumn, Integer page, Integer rp, Date dataOperacao);
 
     /**
      * Obtém valor dos repartes Consignados a cota em determinado dia
@@ -122,7 +122,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 
     List<Integer> obterDiasConcentracaoPagamentoCota(Long idCota);
 
-    Long obterTotalCotasSujeitasSuspensao();
+    Long obterTotalCotasSujeitasSuspensao(Date dataOperacao);
 
     List<Cota> obterCotaAssociadaFiador(Long idFiador);
 
