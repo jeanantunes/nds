@@ -66,9 +66,6 @@
 	<input type="hidden" id="relancamentoParciaisEmDiasHidden"
 		   value="${parametrosDistribuidor.relancamentoParciaisEmDias}" />
 		   
-    <input type="hidden" id="impressaoInterfaceLEDHidden"
-		   value="${parametrosDistribuidor.impressaoInterfaceLED}" />
-		   
     <input type="hidden" id="impressaoNECADANFEHidden"
 		   value="${parametrosDistribuidor.impressaoNECADANFE}" />
 	

@@ -133,6 +133,9 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.chamadaEncalheImpressao', value: $('#chamadaEncalheImpressao', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.chamadaEncalheEmail', value: $('#chamadaEncalheEmail', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.impressaoInterfaceLED', value: $("input[name='interfaceLED']:checked", this.workspace).val()},
+			{name:'parametrosDistribuidor.nomeArquivoInterfaceLED1', value: $('#nomeArquivoInterfaceLED1', this.workspace).val()},
+			{name:'parametrosDistribuidor.nomeArquivoInterfaceLED2', value: $('#nomeArquivoInterfaceLED2', this.workspace).val()},
+			{name:'parametrosDistribuidor.nomeArquivoInterfaceLED3', value: $('#nomeArquivoInterfaceLED3', this.workspace).val()},
 			{name:'parametrosDistribuidor.impressaoNECADANFE', value: $("input[name='impressaoNECADANFE']:checked", this.workspace).val()},
 			{name:'parametrosDistribuidor.impressaoCE', value: $("input[name='impressaoCE']:checked", this.workspace).val()},
 			{name:'parametrosDistribuidor.utilizaContratoComCotas', value: $('#utilizaContratoComCotas', this.workspace).is(':checked')},
@@ -502,7 +505,7 @@ var parametrosDistribuidorController = $.extend(true, {
 		
 		$("#relancamentoParciaisEmDias", this.workspace).val($("#relancamentoParciaisEmDias").val());
 		
-		$('input:radio[name=interfaceLED][value=' + $("#impressaoInterfaceLEDHidden").val() + ']', this.workspace).click();
+		//$('input:radio[name=interfaceLED][value=' + $("#impressaoInterfaceLEDHidden").val() + ']', this.workspace).click();
 		$('input:radio[name=impressaoNECADANFE][value=' + $("#impressaoNECADANFEHidden").val() + ']', this.workspace).click();
 		$('input:radio[name=impressaoCE][value=' + $("#impressaoCEHidden").val() + ']', this.workspace).click();
 		

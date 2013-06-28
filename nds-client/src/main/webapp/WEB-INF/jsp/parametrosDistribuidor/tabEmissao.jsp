@@ -133,6 +133,27 @@
 				<td width="111">Modelo 3</td>
 			</tr>
 			<tr>
+				<td colspan="3">Nome Arquivo Modelo 1:</td>
+				<td colspan="3" style="padding-left: 10px;">
+					<input type="text" id="nomeArquivoInterfaceLED1" maxlength="100" style="width: 120px;"
+						   value="${parametrosDistribuidor.nomeArquivoInterfaceLED1}">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3">Nome Arquivo Modelo 2:</td>
+				<td colspan="3" style="padding-left: 10px;">
+					<input type="text" id="nomeArquivoInterfaceLED2" maxlength="100" style="width: 120px;"
+						   value="${parametrosDistribuidor.nomeArquivoInterfaceLED2}">
+				</td>
+			</tr>
+			<tr>
+				<td colspan="3">Nome Arquivo Modelo 3:</td>
+				<td colspan="3" style="padding-left: 10px;">
+					<input type="text" id="nomeArquivoInterfaceLED3" maxlength="100" style="width: 120px;"
+						   value="${parametrosDistribuidor.nomeArquivoInterfaceLED3}">
+				</td>
+			</tr>
+			<tr>
 				<td>&nbsp;</td>
 				<td>&nbsp;</td>
 				<td>&nbsp;</td>
