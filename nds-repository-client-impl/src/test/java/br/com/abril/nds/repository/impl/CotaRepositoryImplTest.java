@@ -372,7 +372,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository
 				.obterCotasSujeitasSuspensao("asc",
-						CotaSuspensaoDTO.Ordenacao.NOME.name(), 0, 50);
+						CotaSuspensaoDTO.Ordenacao.NOME.name(), 0, 50, new Date());
 		Assert.assertNotNull(lista);
 	}
 	
@@ -381,7 +381,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository
 				.obterCotasSujeitasSuspensao(null,
-						null, null, null);
+						null, null, null, new Date());
 		Assert.assertNotNull(lista);
 	}
 
@@ -390,7 +390,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository
 				.obterCotasSujeitasSuspensao(null,
-						null, 1, null);
+						null, 1, null, new Date());
 		Assert.assertNotNull(lista);
 	}
 	
@@ -399,7 +399,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository
 				.obterCotasSujeitasSuspensao(null,
-						null, null, 10);
+						null, null, 10, new Date());
 		Assert.assertNotNull(lista);
 	}
 	
@@ -408,7 +408,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository
 				.obterCotasSujeitasSuspensao("asc",
-						"numCota", null, null);
+						"numCota", null, null, new Date());
 		Assert.assertNotNull(lista);
 	}
 	
@@ -417,7 +417,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository
 				.obterCotasSujeitasSuspensao("asc",
-						"nome", null, null);
+						"nome", null, null, new Date());
 		Assert.assertNotNull(lista);
 	}
 	
@@ -426,7 +426,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository
 				.obterCotasSujeitasSuspensao("asc",
-						"vlrConsignado", null, null);
+						"vlrConsignado", null, null, new Date());
 		Assert.assertNotNull(lista);
 	}
 	
@@ -435,7 +435,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository
 				.obterCotasSujeitasSuspensao("asc",
-						"vlrReparte", null, null);
+						"vlrReparte", null, null, new Date());
 		Assert.assertNotNull(lista);
 	}
 	
@@ -444,7 +444,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository
 				.obterCotasSujeitasSuspensao("asc",
-						"dividaAcumulada", null, null);
+						"dividaAcumulada", null, null, new Date());
 		Assert.assertNotNull(lista);
 	}
 	
@@ -453,7 +453,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository
 				.obterCotasSujeitasSuspensao("asc",
-						"diasAberto", null, null);
+						"diasAberto", null, null, new Date());
 		Assert.assertNotNull(lista);
 	}
 	
@@ -462,7 +462,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository
 				.obterCotasSujeitasSuspensao("asc",
-						null, null, null);
+						null, null, null, new Date());
 		Assert.assertNotNull(lista);
 	}
 	
@@ -494,7 +494,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 		setupHistoricoInadimplencia();
 		List<CotaSuspensaoDTO> lista = cotaRepository
 				.obterCotasSujeitasSuspensao("desc",
-						null, null, null);
+						null, null, null, new Date());
 		Assert.assertNotNull(lista);
 
 	}
@@ -503,7 +503,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void obterTotalCotasSujeitasSuspensao(){
 		setupHistoricoInadimplencia();
-		Long total = cotaRepository.obterTotalCotasSujeitasSuspensao();
+		Long total = cotaRepository.obterTotalCotasSujeitasSuspensao(new Date());
 		Assert.assertTrue(total == 1L);
 	}
 	
