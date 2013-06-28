@@ -878,6 +878,20 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	}
 	
 	/**
+	 * Método responsável por obter lista de CaucaoLiquida da cota
+	 * @param idCota: ID da cota
+	 * @return List<CaucaoLiquida>
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<CaucaoLiquida> obterCaucaoLiquidasCota(Long idCota){
+
+		List<CaucaoLiquida> caucaoLiquidas = cotaGarantiaRepository.getCaucaoLiquidasCota(idCota);
+				
+		return caucaoLiquidas;
+	}
+	
+	/**
 	 * Método responsável por obter os dados de caucao liquida com forma de pagamento Boleto.
 	 * @param idCota: ID da cota
 	 * @return Data Transfer Object com os dados de caucao liquida

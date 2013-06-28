@@ -758,7 +758,8 @@ public class CotaServiceImpl implements CotaService {
 	public List<CotaSuspensaoDTO> obterDTOCotasSujeitasSuspensao(String sortOrder, String sortColumn, Integer inicio, Integer rp) {
 		
 		List<CotaSuspensaoDTO> cotasSujeitasSuspensao = 
-			this.cotaRepository.obterCotasSujeitasSuspensao(sortOrder, sortColumn, inicio, rp);
+			this.cotaRepository.obterCotasSujeitasSuspensao(sortOrder, sortColumn, inicio, rp, 
+					this.distribuidorRepository.obterDataOperacaoDistribuidor());
 		
 		for (CotaSuspensaoDTO cotaSujeitaSuspensao : cotasSujeitasSuspensao) {
 			
@@ -790,7 +791,7 @@ public class CotaServiceImpl implements CotaService {
 	@Override
 	@Transactional
 	public Long obterTotalCotasSujeitasSuspensao() {
-		return cotaRepository.obterTotalCotasSujeitasSuspensao();
+		return cotaRepository.obterTotalCotasSujeitasSuspensao(this.distribuidorRepository.obterDataOperacaoDistribuidor());
 	}
 	
 	@Override
