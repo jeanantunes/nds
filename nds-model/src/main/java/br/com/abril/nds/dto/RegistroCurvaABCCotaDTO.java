@@ -61,22 +61,6 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 	
 	public RegistroCurvaABCCotaDTO	() {
 	}
-
-	public RegistroCurvaABCCotaDTO(String numeroProduto, String codigoProduto,
-			Long numeroEdicao, BigInteger reparte,
-			BigInteger vendaExemplares, BigDecimal faturamento,Long idCota,Long idProduto, Long idProdutoEdicao) {
-		this.codigoProduto = numeroProduto;
-		this.nomeProduto = codigoProduto;
-		this.edicaoProduto = numeroEdicao;
-		this.reparte = reparte;
-		this.vendaExemplares = vendaExemplares;
-		this.faturamento = faturamento;
-		this.idCota = idCota;
-		this.idProduto = idProduto;
-		this.idProdutoEdicao = idProdutoEdicao;
-		
-		this.formatarCampos();
-	}
 	
 	public Long getIdProduto() {
 		return idProduto;
@@ -116,6 +100,8 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 
 	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte;
+		
+		reparteFormatado = CurrencyUtil.formatarValorTruncado(reparte);
 	}
 
 	public BigInteger getVendaExemplares() {
@@ -124,6 +110,8 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 
 	public void setVendaExemplares(BigInteger vendaExemplares) {
 		this.vendaExemplares = vendaExemplares;
+		
+		vendaExemplaresFormatado = String.valueOf(vendaExemplares);
 	}
 
 	public BigDecimal getPorcentagemVenda() {
@@ -131,8 +119,9 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 	}
 
 	public void setPorcentagemVenda(BigDecimal porcentagemVenda) {
-		porcentagemVendaFormatado = CurrencyUtil.formatarValorTruncado(porcentagemVenda);
 		this.porcentagemVenda = porcentagemVenda;
+		
+		porcentagemVendaFormatado = CurrencyUtil.formatarValorTruncado(porcentagemVenda);
 	}
 
 	public BigDecimal getFaturamento() {
@@ -141,6 +130,8 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 
 	public void setFaturamento(BigDecimal faturamento) {
 		this.faturamento = faturamento;
+		
+		faturamentoFormatado = CurrencyUtil.formatarValor( (faturamento==null)?BigInteger.ZERO:faturamento);
 	}
 
 	public Long getEdicaoProduto() {
@@ -205,13 +196,6 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 	 */
 	public void setIdProdutoEdicao(Long idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
-	}
-
-	private void formatarCampos() {
-		reparteFormatado = CurrencyUtil.formatarValorTruncado(reparte);
-		vendaExemplaresFormatado = String.valueOf(vendaExemplares);
-		porcentagemVendaFormatado = CurrencyUtil.formatarValorTruncado(porcentagemVenda);
-		faturamentoFormatado = CurrencyUtil.formatarValor( (faturamento==null)?BigInteger.ZERO:faturamento);
 	}
 	
 }

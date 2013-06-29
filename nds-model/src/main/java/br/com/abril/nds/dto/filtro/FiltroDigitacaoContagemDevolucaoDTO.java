@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -27,6 +28,8 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 	private String nomeFornecedor;
 	
 	private Integer semanaCE;
+	
+	private String anoSemana;
 	
 	private PaginacaoVO paginacao;
 	
@@ -52,8 +55,16 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 		this.semanaCE = semanaCE;
 	}
 
+	
 
-
+	public FiltroDigitacaoContagemDevolucaoDTO(Intervalo<Date> periodo,
+			Long idFornecedor, Integer semanaCE, String semanaConferenciaEncalhe) {
+		super();
+		this.periodo = periodo;
+		this.idFornecedor = idFornecedor;
+		this.semanaCE = semanaCE;
+		this.anoSemana = semanaConferenciaEncalhe;
+	}
 
 	/**
 	 * Enum para ordenação das colunas do filtro.
@@ -196,8 +207,27 @@ public class FiltroDigitacaoContagemDevolucaoDTO implements Serializable {
 	public void setSemanaCE(Integer semanaCE) {
 		this.semanaCE = semanaCE;
 	}
+	
+	/**
+	 * @return the anoSemana
+	 */
+	public String getAnoSemana() {
+		return anoSemana;
+	}
+
+	/**
+	 * @param anoSemana the anoSemana to set
+	 */
+	public void setAnoSemana(String anoSemana) {
+		this.anoSemana = anoSemana;
+	}
 
 
+	public Integer getAnoReferente(){
+		
+		return SemanaUtil.getAno(anoSemana);
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */

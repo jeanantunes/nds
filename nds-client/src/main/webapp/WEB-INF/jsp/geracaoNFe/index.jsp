@@ -52,14 +52,15 @@ $(function(){
 	</div>
 </div>
 <div class="linha_separa_fields">&nbsp;</div>
-<fieldset class="fieldFiltro">
-	<legend> Pesquisar NF-e</legend>
+	<fieldset class="fieldFiltro">
+		<legend> Pesquisar NF-e</legend>
 		<form>
-			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
+			<table width="1000px" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
 					<td width="91">Tipo de Nota:</td>
     				<td width="204">
 						<select id="selectTipoNotaFiscal" style="width:250px; font-size:11px!important">
+							<option value="">Todos</option>
 							<c:forEach items="${listaTipoNotaFiscal}" var="tipoNotaFiscal">
 								<option value="${tipoNotaFiscal.key }">${tipoNotaFiscal.value }</option>
 							</c:forEach>
@@ -126,14 +127,13 @@ $(function(){
 				    	<span class="bt_pesquisar"><a href="javascript:;" id="btnPesquisar" onclick="mostrar();"></a></span>
 				    </td>
   				</tr>
-  				<td colspan="3"></td>
   			</table>
-		</fieldset>
+		</form>
+	</fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
        <fieldset class="fieldGrid">
        	  <legend>Gera&ccedil;&atilde;o NF-e</legend>
           <div class="grids" style="display:none;">
 		  <table id="gridNFe"></table>
 		</div>
-		</form>
       </fieldset>

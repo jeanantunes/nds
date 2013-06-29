@@ -12,6 +12,8 @@ public class ParametroCobrancaCotaDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long idParametroCobranca;
+    
+    private Long idFormaCobranca;
 	
 	private Long idCota;
 	
@@ -50,6 +52,14 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 		this.idParametroCobranca = idParametroCobranca;
 	}
 
+
+	public Long getIdFormaCobranca() {
+		return idFormaCobranca;
+	}
+
+	public void setIdFormaCobranca(Long idFormaCobranca) {
+		this.idFormaCobranca = idFormaCobranca;
+	}
 
 	public Long getIdCota() {
 		return idCota;

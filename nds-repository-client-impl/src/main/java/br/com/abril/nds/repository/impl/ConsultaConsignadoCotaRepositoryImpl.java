@@ -354,23 +354,98 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 	}
 
 	@Override
-	public BigDecimal buscarTotalGeralDaCota(
-			FiltroConsultaConsignadoCotaDTO filtro) {
-		
+	@SuppressWarnings("unchecked")
+	public BigDecimal buscarTotalGeralDaCota(FiltroConsultaConsignadoCotaDTO filtro) {
 
-		StringBuilder hql = new StringBuilder();
+//		StringBuilder hql = new StringBuilder();
+//		
+//		hql.append(" SELECT SUM( coalesce(movimento.valoresAplicados.precoComDesconto, pe.precoVenda, 0)  * movimento.qtde) ");
+//		
+//		hql.append(getHQLFromEWhereConsignadoCota(filtro));
+//		
+//		Query query =  getSession().createQuery(hql.toString());
+//		
+//		buscarParametrosConsignadoCota(query, filtro);
+//		
+//		BigDecimal totalRegistros = (BigDecimal) query.uniqueResult();
 		
-		hql.append(" SELECT SUM( coalesce(movimento.valoresAplicados.precoComDesconto, pe.precoVenda, 0)  * movimento.qtde) ");
+		StringBuilder sql = new StringBuilder();
 		
-		hql.append(getHQLFromEWhereConsignadoCota(filtro));
+		sql.append(" SELECT ");
+
+		sql.append(" 	COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0)" +
+				   "		*SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END" +
+				   "		   -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' then MEC.QTDE ELSE 0 END)) AS totalDesconto ");
 		
-		Query query =  getSession().createQuery(hql.toString());
+		sql.append(" FROM ");
 		
-		buscarParametrosConsignadoCota(query, filtro);
+		sql.append(" MOVIMENTO_ESTOQUE_COTA MEC ");
 		
-		BigDecimal totalRegistros = (BigDecimal) query.uniqueResult();
+		sql.append(" LEFT OUTER JOIN LANCAMENTO LCTO ON MEC.LANCAMENTO_ID=LCTO.ID");
 		
-		return (totalRegistros == null) ? BigDecimal.ZERO : totalRegistros;
+		sql.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ");
+		
+		sql.append(" LEFT OUTER JOIN PARAMETRO_COBRANCA_COTA PCC ON C.ID=PCC.COTA_ID ");
+       	
+		sql.append(" INNER JOIN PESSOA P ON C.PESSOA_ID=P.ID ");
+		
+		sql.append(" INNER JOIN TIPO_MOVIMENTO TM ON MEC.TIPO_MOVIMENTO_ID=TM.ID ");
+		
+		sql.append(" INNER JOIN PRODUTO_EDICAO PE ON MEC.PRODUTO_EDICAO_ID = PE.ID ");
+		
+		sql.append(" INNER JOIN PRODUTO PR ON PE.PRODUTO_ID=PR.ID ");
+		
+		sql.append(" INNER JOIN PRODUTO_FORNECEDOR F ON PR.ID=F.PRODUTO_ID ");
+		
+		sql.append(" INNER JOIN FORNECEDOR fornecedor8_ ON F.fornecedores_ID=fornecedor8_.ID ");
+		
+		sql.append(" INNER JOIN PESSOA PJ ON fornecedor8_.JURIDICA_ID=PJ.ID ");
+		
+		sql.append(" WHERE ");
+		
+		sql.append(" ( MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ) ");
+		
+		sql.append(" AND ( TM.GRUPO_MOVIMENTO_ESTOQUE not in (:tipoMovimentoEstorno) ");
+		sql.append(" ) "); 
+
+		if(filtro.getIdCota() != null ) { 
+			sql.append(" AND C.ID = :idCota ");
+		}
+
+		if(filtro.getIdFornecedor() != null) { 
+			sql.append(" AND fornecedor8_.ID = :idFornecedor ");
+		}
+
+		sql.append(" AND (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) "); 
+
+		Map<String, Object> parameters = new HashMap<String, Object>();
+		
+		NamedParameterJdbcTemplate namedParameterJdbcTemplate = 
+			new NamedParameterJdbcTemplate(dataSource);
+		
+		if(filtro.getIdCota()!=null) {
+			parameters.put("idCota", filtro.getIdCota());
+		}
+
+		if(filtro.getIdFornecedor() != null ) { 
+			parameters.put("idFornecedor", filtro.getIdFornecedor());
+		}
+
+		parameters.put("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name());
+
+		parameters.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.ordinal());
+
+		@SuppressWarnings("rawtypes")
+		RowMapper cotaRowMapper = new RowMapper() {
+
+			public Object mapRow(ResultSet rs, int arg1) throws SQLException {
+
+				return rs.getBigDecimal("totalDesconto");
+			}
+		};
+		
+		return (BigDecimal) namedParameterJdbcTemplate.queryForObject(
+				sql.toString(), parameters, cotaRowMapper);
 	}
 	
 	@SuppressWarnings("unchecked")

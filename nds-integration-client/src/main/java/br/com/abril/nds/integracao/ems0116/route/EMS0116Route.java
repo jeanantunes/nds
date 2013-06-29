@@ -30,13 +30,13 @@ public class EMS0116Route extends FixedLengthRouteTemplate {
 	@Override
 	public void onStart() {
 		if (LOGGER.isInfoEnabled()) {
-			LOGGER.info(String.format("Iniciou carga da EMS0117 - %s", new Date()));
+			LOGGER.info(String.format("Iniciou carga da EMS0116 - %s", new Date()));
 		}
 		
 		ems0117Route.execute(getUserName());
 		
 		if (LOGGER.isInfoEnabled()) {
-			LOGGER.info(String.format("Terminou carga da EMS0117 - %s", new Date()));
+			LOGGER.info(String.format("Terminou carga da EMS0116 - %s", new Date()));
 		}
 	}
 	

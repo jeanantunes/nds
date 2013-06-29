@@ -13,11 +13,12 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -161,16 +162,17 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	
 	
 	@SuppressWarnings("unchecked")
-	public List<DebitoCreditoCotaDTO> obterDebitoCreditoCotaDataOperacao(Integer numeroCota, Date dataOperacao, List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados){
+	public List<DebitoCreditoCotaDTO> obterDebitoCreditoCotaDataOperacao(Integer numeroCota, Date dataOperacao, 
+			List<TipoMovimentoFinanceiro> tiposMovimentoFinanceiroIgnorados){
 		
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append("select ");
-		sql.append("	tipomovime1_.OPERACAO_FINANCEIRA, ");
-		sql.append("	tipomovime1_.DESCRICAO, ");
-		sql.append("	movimentof0_.VALOR, ");
-		sql.append("	movimentof0_.DATA as DATALANCAMENTO, ");
-		sql.append("	movimentof0_.OBSERVACAO ");
+		sql.append("	tipomovime1_.OPERACAO_FINANCEIRA as tipoLancamento, ");
+		sql.append("	tipomovime1_.DESCRICAO as observacoes, ");
+		sql.append("	movimentof0_.VALOR as valor, ");
+		sql.append("	movimentof0_.DATA as dataLancamento, ");
+		sql.append("	movimentof0_.OBSERVACAO as descricao ");
 		sql.append(" from ");
 		sql.append("	MOVIMENTO_FINANCEIRO_COTA movimentof0_, ");
 		sql.append("	TIPO_MOVIMENTO tipomovime1_ cross  ");
@@ -214,40 +216,25 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		sql.append(" order by ");
 		sql.append("	movimentof0_.DATA ");
 		
-		Map<String, Object> parameters = new HashMap<String, Object>();
-		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		query.setResultTransformer(new AliasToBeanResultTransformer(DebitoCreditoCotaDTO.class));
+		query.setParameter("statusAprovado", StatusAprovacao.APROVADO.name());
+		query.setParameter("numeroCota", numeroCota);
+		query.setParameter("dataOperacao", dataOperacao);
 		
-		parameters.put("statusAprovado", StatusAprovacao.APROVADO.name());
-		parameters.put("numeroCota", numeroCota);
-		parameters.put("dataOperacao", dataOperacao);
-		
-		if(tiposMovimentoFinanceiroIgnorados!=null && !tiposMovimentoFinanceiroIgnorados.isEmpty()) {
-			parameters.put("tiposMovimentoFinanceiroIgnorados", getListaTiposMovimentoFinanceiroIgnorados(tiposMovimentoFinanceiroIgnorados));
+		if(tiposMovimentoFinanceiroIgnorados!=null && 
+				!tiposMovimentoFinanceiroIgnorados.isEmpty()) {
+			
+			query.setParameterList("tiposMovimentoFinanceiroIgnorados", getListaTiposMovimentoFinanceiroIgnorados(tiposMovimentoFinanceiroIgnorados));
 		}
 		
-		@SuppressWarnings("rawtypes")
-		RowMapper cotaRowMapper = new RowMapper() {
-
-			public Object mapRow(ResultSet rs, int arg1) throws SQLException {
-
-				DebitoCreditoCotaDTO dto = new DebitoCreditoCotaDTO();
-
-				String tipoLancamento = rs.getString("OPERACAO_FINANCEIRA");
-				if(tipoLancamento !=null && !"".equals(tipoLancamento)){
-					dto.setTipoLancamento(OperacaoFinaceira.valueOf(tipoLancamento));
-				}
-				
-				dto.setTipoMovimento(rs.getString("DESCRICAO"));
-				dto.setValor(rs.getBigDecimal("VALOR"));
-				dto.setDataLancamento(rs.getDate("DATALANCAMENTO"));
-				dto.setObservacoes(rs.getString("OBSERVACAO"));
-				
-				return dto;
-			}
-		};
+		query.addScalar("tipoLancamento", StandardBasicTypes.STRING);
+		query.addScalar("descricao", StandardBasicTypes.STRING);
+		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("dataLancamento", StandardBasicTypes.DATE);
+		query.addScalar("observacoes", StandardBasicTypes.STRING);
 		
-		return (List<DebitoCreditoCotaDTO>) namedParameterJdbcTemplate.query(sql.toString(), parameters, cotaRowMapper);
-		
+		return (List<DebitoCreditoCotaDTO>) query.list();
 	}
 	
 	private List<Long> getListaTiposMovimentoFinanceiroIgnorados(
@@ -920,28 +907,66 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 
 	@Override
 	public Long obterCountResumoTransportadorCota(FiltroRelatorioServicosEntregaDTO filtro) {
-
+		PaginacaoVO paginacaoVO = filtro.getPaginacao();
 		HashMap<String, Object> param = new HashMap<String, Object>();
-		
+				
 		StringBuilder hql = new StringBuilder();
-		hql.append("select count(transportador.id)");
+		
+		hql.append("select 	 pessoaTransportador.razaoSocial as transportador, " +
+						 	"roteiro.descricaoRoteiro as roteiro, " +
+						 	"rota.descricaoRota as rota, " +
+						 	"cota.numeroCota as numCota, " +
+						 	"pessoaCota.nome as nomeCota, " +
+						 	"sum(movimento.valor) as valor, " +
+						 	"transportador.id as idTransportador, " +
+						 	"cota.id as idCota ");
+		
 		addFromJoinObterDadosTransportador(hql);
+		
 		addWhereObterDadosTransportador(hql, filtro.getEntregaDataInicio(), filtro.getEntregaDataFim(), filtro.getIdTransportador(), param);
+		
 		hql.append(" group by transportador.id ");
-
+		
+		getOrderByObterResumoTransportadorCota(paginacaoVO); 
+		
 		Query query = getSession().createQuery(hql.toString());
-
+		
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
 		
-		Long count = (Long) query.uniqueResult();
-		
-		if (count == null) {
-			count = 0L;
+		if (paginacaoVO != null && paginacaoVO.getPosicaoInicial() != null) { 
+			
+			query.setFirstResult(paginacaoVO.getPosicaoInicial());
+			
+			query.setMaxResults(paginacaoVO.getQtdResultadosPorPagina());
 		}
-
-		return count;
+		
+		query.setResultTransformer(Transformers.aliasToBean(CotaTransportadorDTO.class));
+		
+		return Long.parseLong(String.valueOf(query.list()));
+		
+//		HashMap<String, Object> param = new HashMap<String, Object>();
+//		
+//		StringBuilder hql = new StringBuilder();
+//		hql.append("select count(transportador.id)");
+//		addFromJoinObterDadosTransportador(hql);
+//		addWhereObterDadosTransportador(hql, filtro.getEntregaDataInicio(), filtro.getEntregaDataFim(), filtro.getIdTransportador(), param);
+//		hql.append(" group by transportador.id ");
+//
+//		Query query = getSession().createQuery(hql.toString());
+//
+//		for(String key : param.keySet()){
+//			query.setParameter(key, param.get(key));
+//		}
+//		
+//		Long count = (Long) query.uniqueResult();
+//		
+//		if (count == null) {
+//			count = 0L;
+//		}
+//
+//		return count;
 	}
 		
 	@Override

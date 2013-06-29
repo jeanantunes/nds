@@ -279,21 +279,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private ConsolidadoFinanceiroRepository consolidadoFinanceiroRepository;
-		
-	private SlipDTO slipDTO = new SlipDTO();
-	private Map<String, Object> parametersSlip = new HashMap<String, Object>();
-	
-	public SlipDTO getSlipDTO(){
-		return slipDTO;
-	}
-	
-	public void setSlipDTO(SlipDTO dto){
-		this.slipDTO = dto;
-	}
-	
-	public Map<String, Object> getParametersSlip(){
-		return parametersSlip;		
-	}
 	
 	@Transactional
 	public boolean isCotaEmiteNfe(Integer numeroCota) {
@@ -800,7 +785,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @param dataOperacao
 	 * @return List<DebitoCreditoCotaDTO>
 	 */
-	private List<DebitoCreditoCotaDTO> obterListaDebitoCreditoCotaDTO( Cota cota, Date dataOperacao){
+	@Override
+	@Transactional(readOnly = true)
+	public List<DebitoCreditoCotaDTO> obterListaDebitoCreditoCotaDTO(Cota cota, Date dataOperacao){
 		
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCompleta = new ArrayList<DebitoCreditoCotaDTO>();
 		
@@ -817,25 +804,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 																					 dataOperacao, 
 																					 tiposMovimentoFinanceiroIgnorados);
 
-		if(	listaDebitoCreditoCotaNaoConsolidado!=null && 
-			!listaDebitoCreditoCotaNaoConsolidado.isEmpty()) {
-			
-			for (DebitoCreditoCotaDTO debitoCreditoNaoConsolidado : listaDebitoCreditoCotaNaoConsolidado) {
-				
-				if(OperacaoFinaceira.CREDITO.equals(debitoCreditoNaoConsolidado)) {
-
-					debitoCreditoNaoConsolidado.setObservacoes("Créditos - "+debitoCreditoNaoConsolidado.getTipoMovimento());
-
-				} else {
-
-					debitoCreditoNaoConsolidado.setObservacoes("Débitos - "+debitoCreditoNaoConsolidado.getTipoMovimento());
-
-				}
-				
-				
-				listaDebitoCreditoCompleta.add(debitoCreditoNaoConsolidado);
-			}
-		}
+		listaDebitoCreditoCompleta.addAll(listaDebitoCreditoCotaNaoConsolidado);
 		
 		//NEGOCIACOES AVULSAS DA COTA
 		List<DebitoCreditoCotaDTO> listaDebitoNegociacaoNaoAvulsaMaisEncargos = 
@@ -845,7 +814,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			for(DebitoCreditoCotaDTO negociacao : listaDebitoNegociacaoNaoAvulsaMaisEncargos) {
 				
-				negociacao.setTipoLancamento(OperacaoFinaceira.DEBITO);
+				negociacao.setTipoLancamentoEnum(OperacaoFinaceira.DEBITO);
 				
 				negociacao.setObservacoes("Negociação Avulsa e Encargos.");
 				
@@ -876,9 +845,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 												  Date dataOperacao) {
 		
 		
-		List<DebitoCreditoCotaDTO> listaDebitoCreditoCompleta = new ArrayList<DebitoCreditoCotaDTO>();
-				
-		listaDebitoCreditoCompleta = this.obterListaDebitoCreditoCotaDTO(cota, dataOperacao);
+		List<DebitoCreditoCotaDTO> listaDebitoCreditoCompleta = this.obterListaDebitoCreditoCotaDTO(cota, dataOperacao);
 		
 		infoConfereciaEncalheCota.setListaDebitoCreditoCota(listaDebitoCreditoCompleta);		
 	}
@@ -963,12 +930,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if(BigDecimal.ZERO.compareTo(valor) < 0) {
 			
 			debitoCredito.setObservacoes(descricaoCredito);
-			debitoCredito.setTipoLancamento(OperacaoFinaceira.CREDITO);
+			debitoCredito.setTipoLancamentoEnum(OperacaoFinaceira.CREDITO);
+			debitoCredito.setTipoMovimento(Constantes.COMPOSICAO_COBRANCA_CREDITO);
 		
 		} else {
 			
 			debitoCredito.setObservacoes(descricaoDebito);
-			debitoCredito.setTipoLancamento(OperacaoFinaceira.DEBITO);
+			debitoCredito.setTipoLancamentoEnum(OperacaoFinaceira.DEBITO);
+			debitoCredito.setTipoMovimento(Constantes.COMPOSICAO_COBRANCA_DEBITO);
 		
 		}
 		
@@ -2224,7 +2193,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if (!indConferenciaContingencia &&
 				(conferenciaEncalhe.getQtdExemplar() == null || conferenciaEncalhe.getQtdExemplar().compareTo(BigInteger.ZERO) <= 0)){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade de itens conferidos deve encalhe de ser maior que zero.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade de itens conferidos no encalhe deve ser maior que zero.");
 			
 		}
 		
@@ -3056,18 +3025,19 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Transactional
 	public byte[] gerarSlipMatricial(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip) {
-		setParamsSlip(idControleConferenciaEncalheCota, incluirNumeroSlip);
 		
-		return gerarSlipTxtMatricial();
+		SlipDTO slipDTO = setParamsSlip(idControleConferenciaEncalheCota, incluirNumeroSlip);
+		
+		return gerarSlipTxtMatricial(slipDTO);
 	}
 	
 	public byte[] gerarSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip, TipoArquivo tpArquivo) {
 
-		setParamsSlip(idControleConferenciaEncalheCota, incluirNumeroSlip);
+		SlipDTO slipDTO = setParamsSlip(idControleConferenciaEncalheCota, incluirNumeroSlip);
 		
 		switch (tpArquivo) {
 		case PDF:
-			return gerarSlipPDF();
+			return gerarSlipPDF(slipDTO);
 		default:
 			return null;
 		}
@@ -3146,7 +3116,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				dc.setNumeroCota(item.getCota().getNumeroCota());
 				dc.setObservacoes(item.getObservacao());
 				dc.setTipoMovimento(item.getTipoMovimento().getDescricao());
-				dc.setTipoLancamento(((TipoMovimentoFinanceiro)item.getTipoMovimento()).getOperacaoFinaceira());				
+				dc.setTipoLancamentoEnum(((TipoMovimentoFinanceiro)item.getTipoMovimento()).getOperacaoFinaceira());				
 				dc.setValor(item.getValor());
 				
 				listaDebitosCreditos.add(dc);
@@ -3190,7 +3160,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 
 	@Transactional
-	public void setParamsSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip) {
+	public SlipDTO setParamsSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip) {
 		
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = controleConferenciaEncalheCotaRepository.buscarPorId(idControleConferenciaEncalheCota);
 		
@@ -3266,7 +3236,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		qtdeTotalProdutos = (qtdeTotalProdutos == null) ? BigInteger.ZERO : qtdeTotalProdutos;
 		
 		BigDecimal valorVenda = (valorTotalReparte.subtract(valorTotalEncalhe));
-
+		
+		SlipDTO slipDTO = new SlipDTO();
 		
 		slipDTO.setNumeroCota(numeroCota);
 		slipDTO.setNomeCota(nomeCota);
@@ -3291,6 +3262,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		BigDecimal valorCreditoDif = valorVenda.compareTo(slipDTO.getValorTotalPagar())>0?valorVenda.subtract(slipDTO.getValorTotalPagar()):BigDecimal.ZERO;
 		
+		Map<String, Object> parametersSlip = new HashMap<String, Object>();
+		slipDTO.setParametersSlip(parametersSlip);
 		
 		parametersSlip.put("NUMERO_COTA", slipDTO.getNumeroCota());
 		parametersSlip.put("NOME_COTA", slipDTO.getNomeCota());
@@ -3317,18 +3290,19 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		}
 		
-		
-		List<ComposicaoCobrancaSlipDTO> listaComposicaoCobranca = getListaComposicaoCobrancaDTO(slipDTO.getNumeroCota());
+		List<DebitoCreditoCotaDTO> listaComposicaoCobranca = 
+				this.obterListaDebitoCreditoCotaDTO(controleConferenciaEncalheCota.getCota(), dataOperacao);
 		slipDTO.setListaComposicaoCobrancaDTO(listaComposicaoCobranca);
 		
 		parametersSlip.put("LISTA_COMPOSICAO_COBRANCA",listaComposicaoCobranca);
 		
 		BigDecimal totalComposicao = BigDecimal.ZERO;
 		
-		for(ComposicaoCobrancaSlipDTO item : listaComposicaoCobranca){
+		for(DebitoCreditoCotaDTO item : listaComposicaoCobranca){
 			
 	        //TOTALIZAÇÃO DO SLIP CONSIDERANDO COMPOSIÇÃO DE COBRANÇA
-		    if (Constantes.COMPOSICAO_COBRANCA_DEBITO.equals(item.getOperacaoFinanceira())) {
+			//débito para o distribuidor, não para a cota
+		    if (OperacaoFinaceira.DEBITO.equals(item.getTipoLancamento())) {
 		    	
 				totalComposicao = totalComposicao.add(item.getValor());
 				
@@ -3338,10 +3312,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 			}
 		}
-
 		
 		totalComposicao = slipDTO.getValorSlip().abs().add(totalComposicao);
-
 		
 		BigDecimal totalPagar = totalComposicao;
 		
@@ -3358,6 +3330,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		parametersSlip.put("VALOR_TOTAL_PAGAR", totalPagar);
 		
 		parametersSlip.put("RAZAO_SOCIAL_DISTRIBUIDOR", this.distribuidorService.obterRazaoSocialDistribuidor());
+		
+		return slipDTO;
 	}
 
 	private void calcularTotaisListaSlip(List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlip) {
@@ -3483,7 +3457,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 	}
 	
-	public byte[] gerarSlipTxtMatricial(){
+	public byte[] gerarSlipTxtMatricial(SlipDTO slipDTO){
 		
 		StringBuffer sb = new StringBuffer();
 		ImpressaoMatricialUtil e = new ImpressaoMatricialUtil(sb);
@@ -3595,7 +3569,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		e.quebrarLinhaEscape();
 		e.quebrarLinhaEscape();
 	
-		this.adicionarComposicaoCobranca(e, slipDTO.getListaComposicaoCobrancaDTO());
+		this.adicionarComposicaoCobranca(e, slipDTO);
 		
 		String valorTotalPagar = slipDTO.getValorTotalPagar() == null ? "0,00" : slipDTO.getValorTotalPagar().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
 		
@@ -3640,7 +3614,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		e.quebrarLinhaEscape();
 	}
 
-	private void adicionarComposicaoCobranca(ImpressaoMatricialUtil e, List<ComposicaoCobrancaSlipDTO> listaComposicaoCobrancaDTO) {
+	private void adicionarComposicaoCobranca(ImpressaoMatricialUtil e, SlipDTO slipDTO) {
 
 		e.adicionar("COMPOSICAO COBRANCA---------------------");
 
@@ -3652,13 +3626,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		e.quebrarLinhaEscape();
 		
-		if(listaComposicaoCobrancaDTO != null){
+		if(slipDTO.getListaComposicaoCobrancaDTO() != null){
 			
-			for(ComposicaoCobrancaSlipDTO composicao : listaComposicaoCobrancaDTO) 
+			for(DebitoCreditoCotaDTO composicao : slipDTO.getListaComposicaoCobrancaDTO()) 
 			{
 				String descricao = StringUtil.limparString(composicao.getDescricao());
 				String valor = (composicao.getValor() == null) ? "0,00" : composicao.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
-				String operacaoFinanceira = (composicao.getOperacaoFinanceira() == null) ? "" : composicao.getOperacaoFinanceira();
+				String operacaoFinanceira = (composicao.getTipoLancamento() == null) ? "" : composicao.getTipoLancamento().getDescricao();
 				e.adicionarCompleteEspaco(descricao + ": " + operacaoFinanceira, valor);
 				e.quebrarLinhaEscape();
 			}
@@ -3686,11 +3660,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return listaComposicaoCobrancaDTO;
 	}
 	
-	private byte[] gerarSlipPDF() {
+	private byte[] gerarSlipPDF(SlipDTO slipDTO) {
 		
 		URL subReportDir = Thread.currentThread().getContextClassLoader().getResource("/reports/");
 		try{
-		    parametersSlip.put("SUBREPORT_DIR", subReportDir.toURI().getPath());
+		    slipDTO.getParametersSlip().put("SUBREPORT_DIR", subReportDir.toURI().getPath());
 		}
 		catch(Exception e){
 			e.printStackTrace();
@@ -3705,7 +3679,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		try {
 			
 			path = url.toURI().getPath();
-			return  JasperRunManager.runReportToPdf(path, parametersSlip, jrDataSource);
+			return  JasperRunManager.runReportToPdf(path, slipDTO.getParametersSlip(), jrDataSource);
 		} catch (JRException e) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
 		}catch (URISyntaxException e) {

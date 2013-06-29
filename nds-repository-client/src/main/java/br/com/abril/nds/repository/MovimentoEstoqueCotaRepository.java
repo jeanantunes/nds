@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
+import br.com.abril.nds.dto.ContagemDevolucaoAgregationValuesDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
@@ -71,7 +72,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * 
 	 * @return Qtde - Integer
 	 */
-	public Integer obterQuantidadeContagemDevolucao(
+	public ContagemDevolucaoAgregationValuesDTO obterQuantidadeContagemDevolucao(
 			FiltroDigitacaoContagemDevolucaoDTO filtro);
 	
 	
@@ -437,5 +438,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 */
 	public Date obterDataUltimaMovimentacaoReparteExpedida(Integer numeroCota,
 			   											   Long idProdutoEdicao);
+	
+	BigDecimal obterValorReparteDaCotaNaData(Long idCota, Date data);
 	
 }

@@ -167,8 +167,8 @@ var relatorioVendasController = $.extend(true, {
 				sortable : false,
 				align : 'center'
 			} ],
-			sortname : "rkEditor",
-			sortorder : "asc",
+			sortname : "participacaoAcumuladaFormatado",
+			sortorder : "desc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
@@ -235,8 +235,8 @@ var relatorioVendasController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			} ],
-			sortname : "rkCota",
-			sortorder : "asc",
+			sortname : "participacaoAcumuladaFormatado",
+			sortorder : "desc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
@@ -309,8 +309,8 @@ var relatorioVendasController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			} ],
-			sortname : "rkProduto",
-			sortorder : "asc",
+			sortname : "participacaoAcumuladaFormatado",
+			sortorder : "desc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
@@ -383,8 +383,8 @@ var relatorioVendasController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			} ],
-			sortname : "rkProduto",
-			sortorder : "asc",
+			sortname : "participacaoAcumuladaFormatado",
+			sortorder : "desc",
 			usepager : true,
 			useRp : true,
 			rp : 15,

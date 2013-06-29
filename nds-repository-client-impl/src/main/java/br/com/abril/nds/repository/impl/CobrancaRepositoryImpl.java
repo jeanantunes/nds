@@ -45,7 +45,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	@SuppressWarnings("unchecked")
 	public List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota, boolean naoObtemCobrancaOrigemNegociacao) {		
 		
-		Criteria criteria = getSession().createCriteria(Cobranca.class,"cobranca");
+		Criteria criteria = getSession().createCriteria(Boleto.class,"cobranca");
 		
 		criteria.createAlias("cobranca.cota", "cota");
 		
@@ -378,7 +378,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		
 
 		StringBuilder hql = new StringBuilder("select ");
-		hql.append(" m.valor as valor, m.data as data, case when m.observacao is null then '' else m.observacao end as observacao")
+		hql.append(" m.valor as valor, c.dataEmissao as data, case when m.observacao is null then '' else m.observacao end as observacao")
 		   .append(" from Cobranca c ")
 		   .append(" join c.divida.consolidado.movimentos m ")
 		   .append(" where c.id = :idCobranca ");

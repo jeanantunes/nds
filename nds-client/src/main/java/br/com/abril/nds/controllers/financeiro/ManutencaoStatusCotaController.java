@@ -166,12 +166,9 @@ public class ManutencaoStatusCotaController extends BaseController {
 			
 			novoHistoricoSituacaoCota.setDataInicioValidade(new Date());
 		}
-		
-		//Objeto Cota removido, existe muita informação não usada nessa entidade nesse ponto
-		//do sistema, estava ocasionando erro no quartz por ser um objeto que ultrapassa
-		//o tamanho máximo pertmitido. O processo executado pelo quartz, até essa data,
-		//só o id da cota.
+
 		Long idCota = novoHistoricoSituacaoCota.getCota().getId();
+		
 		novoHistoricoSituacaoCota.setCota(new Cota(idCota));
 		
 		this.criarJobAtualizacaoNovaSituacaoCota(novoHistoricoSituacaoCota);
@@ -563,11 +560,11 @@ public class ManutencaoStatusCotaController extends BaseController {
 					listaMensagens.add("Informe um período válido!");
 				}
 				
-				Date dataAtual = DateUtil.removerTimestamp(new Date());
+				Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 				
-				if (novoHistoricoSituacaoCota.getDataInicioValidade().compareTo(dataAtual) < 0) {
+				if (novoHistoricoSituacaoCota.getDataInicioValidade().compareTo(dataOperacao) < 0) {
 					
-					listaMensagens.add("A data inicial do período deve ser igual ou maior que a data atual!");
+					listaMensagens.add("A data inicial do período deve ser igual ou maior que a data de operação!");
 				}
 			}
 		}

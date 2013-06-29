@@ -823,6 +823,7 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 					"Não é possível não utilizar controle de [Aprovação] para [Negociação]. Existem movimentos pendentes!");
 			}
 		}
+		
 //		TODO: Comentado pois, as Transferências não entrarão no workflow de aprovação. 
 //			  Tratar futuramente, como será utilizado o parametro de ajuste.
 //		if (!parametrosDistribuidor.getAjusteEstoque()) {

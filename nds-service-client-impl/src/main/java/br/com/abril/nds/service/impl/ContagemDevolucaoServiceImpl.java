@@ -6,16 +6,15 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Currency;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -31,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.client.assembler.ChamadaEncalheFornecedorDTOAssembler;
 import br.com.abril.nds.client.vo.ProdutoEdicaoFechadaVO;
 import br.com.abril.nds.client.vo.RegistroEdicoesFechadasVO;
+import br.com.abril.nds.dto.ContagemDevolucaoAgregationValuesDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoConferenciaCegaDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.InfoContagemDevolucaoDTO;
@@ -52,23 +52,23 @@ import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
-import br.com.abril.nds.model.fiscal.ParametroEmissaoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.Condicao;
 import br.com.abril.nds.model.fiscal.nota.InformacaoAdicional;
 import br.com.abril.nds.model.fiscal.nota.InformacaoTransporte;
 import br.com.abril.nds.model.fiscal.nota.ItemNotaFiscalSaida;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
-import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
-import br.com.abril.nds.model.movimentacao.ControleContagemDevolucao;
-import br.com.abril.nds.model.movimentacao.StatusOperacao;
+import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
+import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheParcialRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
 import br.com.abril.nds.repository.ControleContagemDevolucaoRepository;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.ParametroEmissaoNotaFiscalRepository;
@@ -83,7 +83,7 @@ import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
-import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -143,24 +143,27 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 
 	@Autowired
 	private NotaFiscalRepository notaFiscalRepository;
+	
+	@Autowired
+	private LancamentoRepository lancamentoRepository;
 
     private static final Logger LOG = LoggerFactory.getLogger(ContagemDevolucaoServiceImpl.class);
 	
 	@Transactional
 	public InfoContagemDevolucaoDTO obterInfoContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtroPesquisa, boolean indPerfilUsuarioEncarregado) {
-		
+
 		InfoContagemDevolucaoDTO info = new InfoContagemDevolucaoDTO();
-		
-		
-		Integer qtdTotalRegistro = movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(filtroPesquisa);
-		info.setQtdTotalRegistro(qtdTotalRegistro);
+
+		ContagemDevolucaoAgregationValuesDTO contagemDevolucaoAgregationValues = 
+				movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(filtroPesquisa);
+
+		info.setQtdTotalRegistro(contagemDevolucaoAgregationValues.getQuantidadeTotal().intValue());
+		info.setValorTotalGeral(contagemDevolucaoAgregationValues.getValorTotalGeral());
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucao = movimentoEstoqueCotaRepository.obterListaContagemDevolucao(
 				filtroPesquisa,	indPerfilUsuarioEncarregado);
 		
 		info.setListaContagemDevolucao(listaContagemDevolucao);
-		
-		info.setValorTotalGeral(BigDecimal.ZERO);
 		
 		if(indPerfilUsuarioEncarregado) {
 			carregarDadosAdicionais(info, listaContagemDevolucao);
@@ -209,11 +212,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 		
 		for(ContagemDevolucaoDTO contagem : listaContagemDevolucao) {
 			adicionarValores(contagem);
-			BigDecimal valorTotal = contagem.getValorTotal();
-			
-			info.setValorTotalGeral(info.getValorTotalGeral().add(valorTotal));
 		}
-		
 	}
 
 
@@ -830,6 +829,8 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 				itemNotaFiscal.setQuantidade(contagem.getQtdNota());
 				
 				itemNotaFiscal.setValorUnitario(produtoEdicao.getPrecoVenda());
+				
+				itemNotaFiscal.setInfoComplementar("Semana chamada encalhe: " + DateUtil.obterDiaDaSemana(contagem.getDataMovimento()));
 
 				listItemNotaFiscal.add(itemNotaFiscal);
 				
@@ -909,8 +910,36 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
         Collection<ChamadasEncalheFornecedorDTO> chamadasEncalheDTO = ChamadaEncalheFornecedorDTOAssembler
                 .criarChamadasEncalheFornecedorDTO(chamadasEncalheFornecedor,
                         distribuidor);
+        
+        this.tratarLancamentosASeremFechados(chamadasEncalheFornecedor);
+        
         return gerarPDFChamadaEncalheFornecedor(chamadasEncalheDTO);
     }
+
+	private void tratarLancamentosASeremFechados(List<ChamadaEncalheFornecedor> chamadasEncalheFornecedor) {
+		
+		Set<Long> idsProdutoEdicao = new TreeSet<>();
+        
+        for (ChamadaEncalheFornecedor chamadaEncalheFornecedor : chamadasEncalheFornecedor) {
+        	
+        	for (ItemChamadaEncalheFornecedor item : chamadaEncalheFornecedor.getItens()) {
+        		
+        		Long idProdutoEdicao = item.getProdutoEdicao().getId();
+        		
+        		idsProdutoEdicao.add(idProdutoEdicao);
+        	}
+        }
+        
+        List<Lancamento> lancamentos =
+        	this.lancamentoRepository.obterLancamentosRecolhidosPorEdicoes(idsProdutoEdicao);
+        
+        for (Lancamento lancamento : lancamentos) {
+			
+			lancamento.setStatus(StatusLancamento.FECHADO);
+			
+			this.lancamentoRepository.merge(lancamento);
+		}
+	}
 
     /**
      * Gera o PDF com as chamadas de encalhe recebidas

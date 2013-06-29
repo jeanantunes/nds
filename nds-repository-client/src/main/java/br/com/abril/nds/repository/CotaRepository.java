@@ -19,7 +19,6 @@ import br.com.abril.nds.dto.MunicipioDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
-import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
@@ -100,7 +99,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
      * @return Cotas
      */
     List<CotaSuspensaoDTO> obterCotasSujeitasSuspensao(String sortOrder,
-            String sortColumn, Integer page, Integer rp);
+            String sortColumn, Integer page, Integer rp, Date dataOperacao);
 
     /**
      * Obtém valor dos repartes Consignados a cota em determinado dia
@@ -123,7 +122,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 
     List<Integer> obterDiasConcentracaoPagamentoCota(Long idCota);
 
-    Long obterTotalCotasSujeitasSuspensao();
+    Long obterTotalCotasSujeitasSuspensao(Date dataOperacao);
 
     List<Cota> obterCotaAssociadaFiador(Long idFiador);
 
@@ -217,9 +216,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
      * @return TelefoneCota
      */
     TelefoneCota obterTelefonePorTelefoneCota(Long idTelefone, Long idCota);
-
-    ResultadoCurvaABCCotaDTO obterCurvaABCCotaTotal(
-            FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO);
 
     List<RegistroCurvaABCCotaDTO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtro);
 
@@ -370,5 +366,14 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas);
 	
 	HistoricoVendaPopUpCotaDto buscarCota(Integer numero);
+	
+	/**
+	 * Obtém o número da cota, através de seu ID.
+	 * 
+	 * @param idCota - ID da cota que deseja obter o número.
+	 * 
+	 * @return Número da cota.
+	 */
+	Integer buscarNumeroCotaPorId(Long idCota);
 	
 }

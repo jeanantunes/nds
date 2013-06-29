@@ -41,6 +41,7 @@ import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
@@ -134,19 +135,25 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	
 	@Post
 	@Path("/pesquisar")
-	public void pesquisar(String dataDe, String dataAte, Long idFornecedor, Integer semanaConferenciaEncalhe, Long idDestinatario, String sortorder, String sortname, int page, int rp){
+	public void pesquisar(String dataDe, String dataAte, Long idFornecedor, String semanaConferenciaEncalhe, Long idDestinatario, String sortorder, String sortname, int page, int rp){
 		
 		Intervalo<Date> periodo = null;
-						
+
 		if ( realizarPesquisaPorSemanaCE(dataDe, dataAte, semanaConferenciaEncalhe) ) {
+			
 			periodo = obterPeriodoSemanaConferenciaEncalhe(semanaConferenciaEncalhe);
 		
 		} else {
+			
 			periodo =  obterPeriodoValidado(dataDe, dataAte);
 		}
 
 		FiltroDigitacaoContagemDevolucaoDTO filtro = 
-				new FiltroDigitacaoContagemDevolucaoDTO(periodo,idFornecedor, semanaConferenciaEncalhe);
+				new FiltroDigitacaoContagemDevolucaoDTO(
+					periodo,idFornecedor, 
+					SemanaUtil.get(semanaConferenciaEncalhe), 
+					semanaConferenciaEncalhe
+				);
 		
 		configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
@@ -157,9 +164,9 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	
 	
 	private boolean realizarPesquisaPorSemanaCE(String dataDe, String dataAte,
-			Integer semanaConferenciaEncalhe) {
+			String anoSemanaConferenciaEncalhe) {
 		
-		if (semanaConferenciaEncalhe != null) {
+		if (anoSemanaConferenciaEncalhe != null || !StringUtil.isEmpty(anoSemanaConferenciaEncalhe)) {
 			
 			if (!StringUtil.isEmpty(dataDe) || !StringUtil.isEmpty(dataAte)) {
 				throw new ValidacaoException(new  ValidacaoVO(TipoMensagem.ERROR, 
@@ -173,18 +180,29 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	}
 
 
-	private Intervalo<Date> obterPeriodoSemanaConferenciaEncalhe(Integer semanaConferenciaEncalhe) {
+	private Intervalo<Date> obterPeriodoSemanaConferenciaEncalhe(String anoSemanaConferenciaEncalhe) {
 		
 		Intervalo<Date> periodo = null;	
 		
-		Date dataInicioSemana = DateUtil.obterDataDaSemanaNoAno(semanaConferenciaEncalhe, 
-				this.distribuidorService.inicioSemana().getCodigoDiaSemana(), null);
+		try {
 		
-		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
+			Integer semana = SemanaUtil.get(anoSemanaConferenciaEncalhe);
+			
+			Date dataBase = SemanaUtil.getDateBase(anoSemanaConferenciaEncalhe, this.distribuidorService.obterDataOperacaoDistribuidor());
+			
+			Date dataInicioSemana = DateUtil.obterDataDaSemanaNoAno(semana, 
+					this.distribuidorService.inicioSemana().getCodigoDiaSemana(), dataBase);
+			
+			Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
+			
+			periodo = new Intervalo<Date>(dataInicioSemana, dataFimSemana);
+			
+			return periodo;
 		
-		periodo = new Intervalo<Date>(dataInicioSemana, dataFimSemana);
+		} catch (IllegalArgumentException e) {
 		
-		return periodo;
+			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
+		}
 	}
 	
 	/*

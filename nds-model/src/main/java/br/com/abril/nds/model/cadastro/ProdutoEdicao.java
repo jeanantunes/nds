@@ -333,6 +333,24 @@ public class ProdutoEdicao implements Serializable {
 	}
 
 	public void setCodigoDeBarras(String codigoDeBarras) {
+		
+		if (codigoDeBarras != null){
+			
+			//evita que sejam gravados zeros na frente do código de barras, vide trac 677
+			if (codigoDeBarras.startsWith("0")){
+				
+				int indexUltimoZero = 0;
+				
+				while (codigoDeBarras.charAt(indexUltimoZero) == '0'){
+					indexUltimoZero++;
+				}
+				
+				codigoDeBarras = codigoDeBarras.substring(
+						indexUltimoZero, 
+						codigoDeBarras.length());
+			}
+		}
+		
 		this.codigoDeBarras = codigoDeBarras;
 	}
 	

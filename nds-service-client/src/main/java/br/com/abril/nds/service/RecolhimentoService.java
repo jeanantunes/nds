@@ -61,13 +61,6 @@ public interface RecolhimentoService {
 											List<Date> datasConfirmadas,
 											Usuario usuario);
 	
-	/**
-	 * Exclui um balanceamento da matriz de recolhimento.
-	 * 
-	 * @param idLancamento - identificador do lançamento
-	 */
-	void excluiBalanceamento(Long idLancamento);
-
 	Intervalo<Date> getPeriodoRecolhimento(Integer numeroSemana, Date dataBalanceamento);
 
 	/**

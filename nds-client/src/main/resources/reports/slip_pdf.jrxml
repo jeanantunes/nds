@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="slip_pdf" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="591" leftMargin="2" rightMargin="2" topMargin="2" bottomMargin="2" whenResourceMissingType="Empty" isIgnorePagination="true" uuid="a28e778e-1e14-484a-90d1-0799fff7d59c">
-	<property name="ireport.zoom" value="1.5026296018031584"/>
-	<property name="ireport.x" value="73"/>
-	<property name="ireport.y" value="94"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="slip_pdf" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="591" leftMargin="2" rightMargin="2" topMargin="2" bottomMargin="2" whenResourceMissingType="Empty" uuid="a28e778e-1e14-484a-90d1-0799fff7d59c">
+	<property name="ireport.zoom" value="1.366026910730144"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="104"/>
 	<style name="zebrado" mode="Opaque" backcolor="#F0F0F0">
 		<conditionalStyle>
 			<conditionExpression><![CDATA[new Boolean(($V{COLUMN_COUNT}.intValue() % 2) == 0)]]></conditionExpression>
@@ -184,6 +184,9 @@
 			<band height="40">
 				<staticText>
 					<reportElement uuid="fdbbc306-4df0-4b63-9565-b611b8d85e9d" isPrintRepeatedValues="false" mode="Opaque" x="50" y="0" width="120" height="20" isPrintInFirstWholeBand="true" printWhenGroupChanges="dataRecolhimentoGroup" backcolor="#E3E3E3"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+					</box>
 					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[Total de Produtos do dia]]></text>
 				</staticText>
@@ -194,6 +197,9 @@
 				</staticText>
 				<textField pattern="" isBlankWhenNull="true">
 					<reportElement uuid="410d0c27-890a-4dbf-80fa-690f0f65f41b" isPrintRepeatedValues="false" mode="Opaque" x="259" y="0" width="288" height="20" isPrintInFirstWholeBand="true" printWhenGroupChanges="dataRecolhimentoGroup" backcolor="#E3E3E3"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+					</box>
 					<textElement textAlignment="Right"/>
 					<textFieldExpression><![CDATA[$F{qtdeTotalProdutos} == null ? 0 : $F{qtdeTotalProdutos}]]></textFieldExpression>
 				</textField>
@@ -204,6 +210,9 @@
 				</textField>
 				<textField>
 					<reportElement uuid="6fc189b5-d777-4661-a4a5-d6c9d38ddf51" isPrintRepeatedValues="false" mode="Opaque" x="170" y="0" width="89" height="20" isPrintInFirstWholeBand="true" printWhenGroupChanges="dataRecolhimentoGroup" backcolor="#E3E3E3"/>
+					<box>
+						<topPen lineWidth="1.0"/>
+					</box>
 					<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
 						<font size="10" isBold="false"/>
 					</textElement>
@@ -368,8 +377,57 @@
 			</textField>
 		</band>
 	</detail>
-	<pageFooter>
-		<band height="364">
+	<summary>
+		<band height="159">
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement uuid="397f5a76-0bc0-476f-b72b-56f51f031e00" mode="Opaque" x="294" y="40" width="254" height="20" backcolor="#F0F0F0"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{VALOR_TOTAL_ENCA}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="f82394c5-158f-49c2-81b5-2830b3cb3ba5" mode="Opaque" x="51" y="40" width="243" height="20" backcolor="#F0F0F0"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Valor total de encalhe:                           ( A )]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="86eab440-320d-40a7-8a31-0031380097b4" mode="Opaque" x="51" y="60" width="243" height="20" backcolor="#E3E3E3"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Valor devido:                                          ( B )]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="921e4711-f4be-49c1-9670-7e76f948c5ce" mode="Opaque" x="51" y="20" width="243" height="20" backcolor="#E3E3E3"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Total de produtos:]]></text>
+			</staticText>
+			<textField pattern="###0" isBlankWhenNull="true">
+				<reportElement uuid="220c5124-d8dd-4eca-bf9f-726ea98122a6" isPrintRepeatedValues="false" mode="Opaque" x="294" y="21" width="254" height="19" backcolor="#E3E3E3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{TOTAL_PRODUTOS}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement uuid="d889ba7e-57e8-4ec0-89c2-f99d9bddbf03" mode="Opaque" x="51" y="0" width="497" height="20" backcolor="#FFFFFF"/>
+				<box leftPadding="3">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[SUB-TOTAL------------------------------------------------------------------------------------------------------------------------------]]></text>
+			</staticText>
+			<staticText>
+				<reportElement uuid="0ac03354-f461-4cc2-aeb7-d253f61b47aa" mode="Opaque" x="51" y="105" width="296" height="26" backcolor="#F0F0F0"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Valor SLIP do dia:                                 ( B - A )                     D]]></text>
+			</staticText>
+			<textField pattern="###0.00" isBlankWhenNull="true">
+				<reportElement uuid="a91ff897-b578-43dd-8a3c-67a3453b4945" mode="Opaque" x="294" y="60" width="254" height="20" backcolor="#E3E3E3"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[$P{VALOR_DEVIDO}]]></textFieldExpression>
+			</textField>
 			<staticText>
 				<reportElement uuid="faf56e46-9f08-4660-83ab-37ecbeb67b14" mode="Opaque" x="51" y="81" width="497" height="23" backcolor="#FFFFFF"/>
 				<box leftPadding="3">
@@ -385,132 +443,27 @@
 				<text><![CDATA[COMPOSIÇÃO COBRANÇA---------------------------------------------------------------------------------------------------------]]></text>
 			</staticText>
 			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement uuid="a91ff897-b578-43dd-8a3c-67a3453b4945" mode="Opaque" x="294" y="60" width="254" height="20" backcolor="#E3E3E3"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$P{VALOR_DEVIDO}]]></textFieldExpression>
-			</textField>
-			<textField pattern="###0.00" isBlankWhenNull="true">
 				<reportElement uuid="4191f347-ae1c-4d05-b8f2-02337d964aee" mode="Opaque" x="347" y="105" width="200" height="26" backcolor="#F0F0F0"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$P{VALOR_SLIP}]]></textFieldExpression>
 			</textField>
-			<staticText>
-				<reportElement uuid="86eab440-320d-40a7-8a31-0031380097b4" mode="Opaque" x="51" y="60" width="243" height="20" backcolor="#E3E3E3"/>
-				<textElement verticalAlignment="Middle"/>
-				<text><![CDATA[Valor devido:                                          ( B )]]></text>
-			</staticText>
-			<staticText>
-				<reportElement uuid="921e4711-f4be-49c1-9670-7e76f948c5ce" mode="Opaque" x="51" y="20" width="243" height="20" backcolor="#E3E3E3"/>
-				<textElement verticalAlignment="Middle"/>
-				<text><![CDATA[Total de produtos:]]></text>
-			</staticText>
-			<staticText>
-				<reportElement uuid="d889ba7e-57e8-4ec0-89c2-f99d9bddbf03" mode="Opaque" x="51" y="0" width="497" height="20" backcolor="#FFFFFF"/>
-				<box leftPadding="3">
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[SUB-TOTAL------------------------------------------------------------------------------------------------------------------------------]]></text>
-			</staticText>
-			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement uuid="397f5a76-0bc0-476f-b72b-56f51f031e00" mode="Opaque" x="294" y="40" width="254" height="20" backcolor="#F0F0F0"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$P{VALOR_TOTAL_ENCA}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement uuid="f82394c5-158f-49c2-81b5-2830b3cb3ba5" mode="Opaque" x="51" y="40" width="243" height="20" backcolor="#F0F0F0"/>
-				<textElement verticalAlignment="Middle"/>
-				<text><![CDATA[Valor total de encalhe:                           ( A )]]></text>
-			</staticText>
-			<staticText>
-				<reportElement uuid="0ac03354-f461-4cc2-aeb7-d253f61b47aa" mode="Opaque" x="51" y="105" width="296" height="26" backcolor="#F0F0F0"/>
-				<textElement verticalAlignment="Middle"/>
-				<text><![CDATA[Valor SLIP do dia:                                 ( B - A )                     D]]></text>
-			</staticText>
-			<textField pattern="###0" isBlankWhenNull="true">
-				<reportElement uuid="220c5124-d8dd-4eca-bf9f-726ea98122a6" isPrintRepeatedValues="false" mode="Opaque" x="294" y="21" width="254" height="19" backcolor="#E3E3E3"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$P{TOTAL_PRODUTOS}]]></textFieldExpression>
-			</textField>
-			<subreport>
-				<reportElement uuid="ef404239-9c91-448a-903d-9b9e5a48cffa" positionType="Float" stretchType="RelativeToBandHeight" mode="Opaque" x="51" y="131" width="497" height="28" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
-				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{LISTA_COMPOSICAO_COBRANCA})]]></dataSourceExpression>
-				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "slip_subreport_pdf.jasper"]]></subreportExpression>
-			</subreport>
-			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement uuid="a92bd3e0-5dd8-4731-849a-a17836cd635b" positionType="Float" stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" mode="Opaque" x="253" y="199" width="295" height="20" isPrintWhenDetailOverflows="true" backcolor="#E3E3E3"/>
-				<box rightPadding="3">
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="0.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$P{VALOR_TOTAL_PAGAR}]]></textFieldExpression>
-			</textField>
-			<textField pattern="" isBlankWhenNull="true">
-				<reportElement uuid="1207be38-8114-4320-9966-e4831edb38a6" positionType="Float" stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" mode="Opaque" x="52" y="199" width="201" height="20" isPrintWhenDetailOverflows="true" backcolor="#E3E3E3"/>
-				<box rightPadding="3">
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="0.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<textFieldExpression><![CDATA["VALOR TOTAL A PAGAR"]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement uuid="52f6bedb-fada-432d-8598-9b9171a792ef" positionType="Float" stretchType="RelativeToBandHeight" mode="Opaque" x="52" y="160" width="201" height="20" backcolor="#E3E3E3"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="0.0"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Reparte Capa]]></text>
-			</staticText>
-			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement uuid="0d464139-b614-4343-8945-12b75c297b38" positionType="Float" stretchType="RelativeToBandHeight" mode="Opaque" x="253" y="160" width="295" height="20" isPrintWhenDetailOverflows="true" backcolor="#E3E3E3"/>
-				<box>
-					<topPen lineWidth="1.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$P{VALOR_TOTAL_SEM_DESCONTO}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement uuid="cee907b8-d4a9-4355-8768-a57c0b528894" positionType="Float" stretchType="RelativeToBandHeight" mode="Opaque" x="52" y="179" width="203" height="20" backcolor="#E3E3E3"/>
-				<box>
-					<topPen lineWidth="0.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="0.0"/>
-				</box>
-				<textElement verticalAlignment="Middle">
-					<font isBold="true"/>
-				</textElement>
-				<text><![CDATA[Desconto Reparte]]></text>
-			</staticText>
-			<textField pattern="###0.00" isBlankWhenNull="true">
-				<reportElement uuid="237cdd84-6b1b-4f9f-bba1-c57a459ede7d" stretchType="RelativeToBandHeight" mode="Opaque" x="253" y="179" width="295" height="20" isPrintWhenDetailOverflows="true" backcolor="#E3E3E3"/>
-				<box>
-					<topPen lineWidth="0.0"/>
-					<bottomPen lineWidth="0.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$P{VALOR_TOTAL_DESCONTO}]]></textFieldExpression>
-			</textField>
+			<elementGroup>
+				<subreport>
+					<reportElement uuid="ef404239-9c91-448a-903d-9b9e5a48cffa" positionType="Float" stretchType="RelativeToBandHeight" mode="Opaque" x="51" y="131" width="497" height="28" isPrintWhenDetailOverflows="true" backcolor="#FFFFFF"/>
+					<subreportParameter name="VALOR_TOTAL_DESCONTO">
+						<subreportParameterExpression><![CDATA[$P{VALOR_TOTAL_DESCONTO}.toString()]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="VALOR_TOTAL_PAGAR">
+						<subreportParameterExpression><![CDATA[$P{VALOR_TOTAL_PAGAR}.toString()]]></subreportParameterExpression>
+					</subreportParameter>
+					<subreportParameter name="VALOR_TOTAL_SEM_DESCONTO">
+						<subreportParameterExpression><![CDATA[$P{VALOR_TOTAL_SEM_DESCONTO}.toString()]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{LISTA_COMPOSICAO_COBRANCA})]]></dataSourceExpression>
+					<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "slip_subreport_pdf.jasper"]]></subreportExpression>
+				</subreport>
+			</elementGroup>
+			<elementGroup/>
 		</band>
-	</pageFooter>
+	</summary>
 </jasperReport>

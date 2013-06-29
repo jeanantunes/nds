@@ -209,11 +209,12 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	 *            - período de distribuição
 	 * @param fornecedores
 	 *            - fornecedores
+	 * @param dataOperacao - data de operação
 	 * 
 	 * @return lista de produtos do balanceamento do lançamento
 	 */
 	List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(
-			Intervalo<Date> periodoDistribuicao, List<Long> fornecedores);
+			Intervalo<Date> periodoDistribuicao, List<Long> fornecedores, Date dataOperacao);
 
 	/**
 	 * Burca último balançeamento de lançamento realizado no dia
@@ -341,9 +342,17 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	Set<Date> obterDatasLancamentosExpedidos(Intervalo<Date> intervalo);
 
 	List<ProdutoLancamentoDTO> verificarDataConfirmada(ProdutoLancamentoDTO produtoLancamentoDTO);
+
+	public List<Lancamento> obterLancamentoDataDistribuidorInStatus(Date dataRecebimentoDistribuidor, List<StatusLancamento> status);
 	
 	void atualizarDataRecolhimentoDistribuidor(Date dataRecolhimento, Long... idLancamento);
 	
 	Boolean existeRecolhimentoNaoBalanceado(Date dataRecolhimento);
+	
+	List<Lancamento> obterLancamentosBalanceadosPorDataRecolhimentoDistrib(Date dataRecolhimentoDistribuidor);
+	
+	List<Lancamento> obterLancamentosEmRecolhimentoVencidos(Date dataBase);
+	
+	List<Lancamento> obterLancamentosRecolhidosPorEdicoes(Set<Long> idsProdutoEdicao);
 	
 }

@@ -314,6 +314,7 @@ var PDV =  $.extend(true, {
 					[{name:"idPdv", value:idPdv},
 					 {name:"idCota", value:idCota},
 					 {name:"modoTela", value: PDV.modoTela.value}], function(result){
+				
 				PDV.fecharModalCadastroPDV = false;
 				PDV.carregarDadosEdicao(result);
 				
@@ -342,24 +343,24 @@ var PDV =  $.extend(true, {
 		},
 		
 		salvarPDV : function(){
-	
 			$.postJSON(contextPath + "/cadastro/pdv/salvar",
 					this.getDadosBasico(), function(result){
-			
-				if(result.listaMensagens){
+				
+					MANTER_COTA._indCadastroCotaAlterado = false;
+				
+				if(result.tipoMensagem && result.tipoMensagem== "ERROR" ){
 					
-					if(result.tipoMensagem && result.tipoMensagem== "ERROR" ){
-						
-						exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "idModalPDV");
-						
-						ENDERECO_PDV.popularGridEnderecos();
-						
-						return;
-					}
+					exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "idModalPDV");
+					
+					ENDERECO_PDV.popularGridEnderecos();
+					
+					return;
 				}
 			
 				$("#dialog-pdv", this.workspace).dialog( "close" );
+				
 				PDV.fecharModalCadastroPDV = true;
+				
 				PDV.pesquisarPdvs();
 				PDV.limparCamposTela();	
 				
@@ -368,8 +369,7 @@ var PDV =  $.extend(true, {
 					exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "");
 				}
 				
-			},null,true,"idModalPDV");
-			
+			},null,true,"idModalPDV");			
 		},
 
 		getDadosBasico: function (){
@@ -713,7 +713,6 @@ var PDV =  $.extend(true, {
                     modal: true,
                     buttons: {
                         "Confirmar": function() {
-
                             if ($("#ptoPrincipal", this.workspace).attr("checked")){
 
                                 data = {idCota:PDV.idCota,idPdv:$("#idPDV").val()};
@@ -721,7 +720,7 @@ var PDV =  $.extend(true, {
                                 $.postJSON(contextPath + "/cadastro/pdv/verificarPontoPrincipal",
                                     data,
                                     function(result){
-
+                               	
                                         if (result){
 
                                             $("#dialog-confirmaPontoPrincipal", this.workspace).dialog({
@@ -761,18 +760,17 @@ var PDV =  $.extend(true, {
                             }
                         },
                         "Cancelar": function() {
-                            PDV.fecharModalCadastroPDV = false;
+                            PDV.fecharModalCadastroPDV = true;
                             $( this ).dialog( "close" );
                         }
                     },
                     beforeClose: function(event, ui) {
-
                         clearMessageDialogTimeout("idModalPDV");
                         clearMessageDialogTimeout();
 
                         if (!PDV.fecharModalCadastroPDV){
 
-                            PDV.cancelarCadastro();
+                        	PDV.cancelarCadastro();
 
                             return PDV.fecharModalCadastroPDV;
                         }

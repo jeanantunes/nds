@@ -27,6 +27,7 @@ import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
+import br.com.abril.nds.dto.ContagemDevolucaoAgregationValuesDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaGenericoDTO;
@@ -996,34 +997,48 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		StringBuffer sql = new StringBuffer("");
 		
 		sql.append(" SELECT "); 
+		
+		StringBuilder qtdDevolucaoSubQuery = new StringBuilder();
+		qtdDevolucaoSubQuery.append(" ( SELECT SUM(  		");
+		qtdDevolucaoSubQuery.append(" COALESCE(ESTOQUE_PROD.QTDE, 0) +	");
+		qtdDevolucaoSubQuery.append(" COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0) + 		");
+		qtdDevolucaoSubQuery.append(" COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0))	");
+		qtdDevolucaoSubQuery.append(" FROM ESTOQUE_PRODUTO ESTOQUE_PROD ");
+		qtdDevolucaoSubQuery.append(" WHERE ESTOQUE_PROD.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ) ");
+		
+		StringBuilder qtdNotaSubQuery = new StringBuilder();
+		qtdNotaSubQuery.append(" ( SELECT SUM( COALESCE(PARCIAL.QTDE, 0)) ");
+		qtdNotaSubQuery.append(" FROM CONFERENCIA_ENC_PARCIAL PARCIAL ");
+		qtdNotaSubQuery.append(" WHERE PROD_EDICAO.ID = PARCIAL.PRODUTOEDICAO_ID AND  ");
+		qtdNotaSubQuery.append(" PARCIAL.STATUS_APROVACAO = :statusAprovacao  ");
+		qtdNotaSubQuery.append(" ) ");
 
 		if(indBuscaQtd) {
 			
-			sql.append(" COUNT(PROD_EDICAO.ID) ");
+			sql.append(" COUNT(PROD_EDICAO.ID) as quantidadeTotal, ");
+			sql.append(" SUM(PROD_EDICAO.PRECO_VENDA * ");
+
+			sql.append(" CASE WHEN ( ");
+			sql.append(qtdNotaSubQuery).append(" = 0 ) ");
+			sql.append(" THEN ").append(qtdNotaSubQuery);
+			sql.append(" ELSE ");
+			sql.append(qtdDevolucaoSubQuery).append(" END ) AS valorTotalGeral ");
 			
 		} else {
 		
 			sql.append(" PROD_EDICAO.ID, ");
 			
-			sql.append(" ( SELECT SUM(  		");
-			sql.append(" COALESCE(ESTOQUE_PROD.QTDE, 0) +	");
-			sql.append(" COALESCE(ESTOQUE_PROD.QTDE_SUPLEMENTAR, 0) + 		");
-			sql.append(" COALESCE(ESTOQUE_PROD.QTDE_DEVOLUCAO_ENCALHE, 0))	");
-			sql.append(" FROM ESTOQUE_PRODUTO ESTOQUE_PROD ");
-			sql.append(" WHERE ESTOQUE_PROD.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ) as qtdDevolucao, ");
-			
+			sql.append(qtdDevolucaoSubQuery);
+			sql.append(" AS qtdDevolucao, ");
+
 			if(indBuscaTotalParcial) {
-				sql.append(" ( ");
-				sql.append(" SELECT SUM( COALESCE(PARCIAL.QTDE, 0)) ");
-				sql.append(" FROM CONFERENCIA_ENC_PARCIAL PARCIAL ");
-				sql.append(" WHERE PROD_EDICAO.ID = PARCIAL.PRODUTOEDICAO_ID AND  ");
-				sql.append(" PARCIAL.STATUS_APROVACAO = :statusAprovacao  ");
-				sql.append(" ) AS qtdNota, ");
+
+				sql.append(qtdNotaSubQuery);
+				sql.append(" AS qtdNota, ");
 				
 			} else {
 				
 				sql.append(" NULL AS QTDE_PARCIAL, ");
-				
 			}
 			
 			sql.append(" PROD.CODIGO as codigoProduto,  				");		
@@ -1037,13 +1052,12 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			sql.append(" 		case when desconto_logistica_prod.ID is not null then 	");	
 			sql.append(" 			 desconto_logistica_prod.PERCENTUAL_DESCONTO      	");	
 			sql.append("         else 0 end         	");		
-			sql.append("   end) as desconto           	");	
-			
+			sql.append("   end) as desconto,           	");
+			sql.append(" CE.DATA_RECOLHIMENTO as dataMovimento ");
 		}
 
 		sql.append(" FROM ");
 
-		
 		sql.append(" (	              ");
 		
 		sql.append(" SELECT CE.PRODUTO_EDICAO_ID AS CE_PRODUTO_EDICAO_ID		");
@@ -1073,7 +1087,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append(" 	PROD.ID = PROD_FORNEC.PRODUTO_ID 			");
 		sql.append(" ) ");
 		
-		
+		sql.append(" INNER JOIN CHAMADA_ENCALHE CE ON (");
+		sql.append("	PROD_EDICAO.ID = CE.PRODUTO_EDICAO_ID ");
+		sql.append(" ) ");
 
 		if( filtro.getIdFornecedor() != null ) {
 			
@@ -1149,7 +1165,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		if(indBuscaQtd) {
 		
-			query = getSession().createSQLQuery(hql.toString());
+			query = getSession().createSQLQuery(hql.toString())
+					.addScalar("quantidadeTotal", StandardBasicTypes.INTEGER)
+					.addScalar("valorTotalGeral", StandardBasicTypes.BIG_DECIMAL);
 		
 		} else {
 			
@@ -1159,7 +1177,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 					.addScalar("numeroEdicao", StandardBasicTypes.LONG)
 					.addScalar("precoVenda", StandardBasicTypes.BIG_DECIMAL)
 					.addScalar("desconto", StandardBasicTypes.BIG_DECIMAL)
-					.addScalar("qtdDevolucao", StandardBasicTypes.BIG_INTEGER);
+					.addScalar("qtdDevolucao", StandardBasicTypes.BIG_INTEGER)
+					.addScalar("dataMovimento", StandardBasicTypes.DATE);
 			
 
 			if(indBuscaTotalParcial) {
@@ -1174,10 +1193,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		query.setParameter("dataFinal", filtro.getPeriodo().getAte());
 		
-		if(indBuscaTotalParcial) {
+		if (indBuscaQtd || indBuscaTotalParcial) {
+		
 			query.setParameter("statusAprovacao", StatusAprovacao.PENDENTE.name());
 		}
-		
+
 		if(filtro.getIdFornecedor() != null) {
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
 		}
@@ -1295,21 +1315,17 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 	}
 	
-	/*
-	 * (non-Javadoc)
-	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterQuantidadeContagemDevolucao(br.com.abril.nds.dto.filtro.FiltroDigitacaoContagemDevolucaoDTO)
-	 */
-	public Integer obterQuantidadeContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtro) {
-		
+	public ContagemDevolucaoAgregationValuesDTO obterQuantidadeContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtro) {
+
 		String hql = getConsultaListaContagemDevolucao(filtro, false, true);
 		
 		Query query = criarQueryComParametrosObterListaContagemDevolucao(hql, filtro, false, true);
 		
-		BigInteger qtde = (BigInteger) query.uniqueResult();
-		
-		return ((qtde == null) ? 0 : qtde.intValue());
-		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ContagemDevolucaoAgregationValuesDTO.class));
+
+		return (ContagemDevolucaoAgregationValuesDTO) query.uniqueResult();
 	}
+
 	
 	/*
 	 * (non-Javadoc)
@@ -2832,6 +2848,22 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		query.setParameter("statusLancamento", StatusLancamento.EXPEDIDO.name());
 		
 		return (Date) query.uniqueResult();		
+	}
+	
+	public BigDecimal obterValorReparteDaCotaNaData(Long idCota, Date data) {
+		
+		String hql = " select sum(mec.qtde * mec.valoresAplicados.precoVenda) from MovimentoEstoqueCota mec "
+				   + " where mec.cota.id = :idCota "
+				   + " and mec.data = :data "
+				   + " and mec.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ";
+		
+		Query query = this.getSession().createQuery(hql);
+		
+		query.setParameter("idCota", idCota);
+		query.setParameter("data", data);
+		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		
+		return (BigDecimal) query.uniqueResult();
 	}
 	
 }

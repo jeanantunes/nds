@@ -242,12 +242,12 @@ obterColunasGridPesquisaSemCota:function(){
 				$("#novoNomeCota", manutencaoStatusCotaController.workspace).html(result.nome);
 
 				$("#novoStatusCota", manutencaoStatusCotaController.workspace).val("");
-					$("#novaDataInicialStatusCota", manutencaoStatusCotaController.workspace).val("");
-					$("#novaDataFinalStatusCota", manutencaoStatusCotaController.workspace).val("");
-					$("#novoMotivo", manutencaoStatusCotaController.workspace).val("");
-					$("#novaDescricao", manutencaoStatusCotaController.workspace).val("");
-				
-					manutencaoStatusCotaController.popupDialogNovo();
+				$("#novaDataInicialStatusCota", manutencaoStatusCotaController.workspace).val("");
+				$("#novaDataFinalStatusCota", manutencaoStatusCotaController.workspace).val("");
+				$("#novoMotivo", manutencaoStatusCotaController.workspace).val("");
+				$("#novaDescricao", manutencaoStatusCotaController.workspace).val("");
+			
+				manutencaoStatusCotaController.popupDialogNovo();
 			}
 		);    
 	},

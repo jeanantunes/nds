@@ -293,11 +293,17 @@
 
 	
 	<div id="dialog-confirma-resgate" title="Confirmar Resgate Caução Líquida" style="display:none;" >
-		<fieldset style="width: 380px;">
+		<fieldset style="width: 500px;">
+		
 			<legend>Resgate de Cau&ccedil;&atilde;o L&iacute;quida</legend>
-    		<p>Confirma o Resgate da Cau&ccedil;&atilde;o L&iacute;quida?</p>
+			
+    		<p>Confirma o Resgate da Cau&ccedil;&atilde;o L&iacute;quida no Valor R$ 
+    		<input type="text" id="valorResgate" style="text-align: right; width: 100px;" /> 
+    		?</p>
+    		
 		</fieldset>
 	</div>
+	
 	<fieldset style="width:880px!important; margin:5px;">
 	   	<legend>Cau&ccedil;&atilde;o L&iacute;quida</legend>
         <table width="860" cellpadding="2" cellspacing="2" style="text-align:left;">
@@ -407,7 +413,7 @@
 	                 <table width="100%" border="0" cellspacing="1" cellpadding="1">
 						  <tr>
 						    <td width="9%">Valor R$:</td>
-						    <td width="15%"><input name="valorBoleto" id="valorBoleto" type="text" maxlength="16" style="width:80px; text-align:right;" onchange="CaucaoLiquida.prototype.calculaValorParcela();" /></td>
+						    <td width="15%"><input name="valorBoleto" id="valorBoleto" type="text" maxlength="16" style="width:80px; text-align:right;" onblur="CaucaoLiquida.prototype.calculaValorParcela();" /></td>
 						    <td width="13%">Qtde. Parcelas </td>
 						    <td width="10%"><input name="qtdParcelaBoleto" id="qtdParcelaBoleto" type="text" maxlength="6" style="width:50px; text-align:center;" onchange="CaucaoLiquida.prototype.calculaValorParcela();" /></td>
 						    <td width="15%">Valor Parcela R$:</td>

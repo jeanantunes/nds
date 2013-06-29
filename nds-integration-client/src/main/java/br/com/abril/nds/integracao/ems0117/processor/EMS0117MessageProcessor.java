@@ -453,19 +453,17 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 		
 		Query query;
 		
-		String logradouro = getLogradouroSemTipo(input.getEndereco().split(",")[0].trim()).toUpperCase();
-		
 		// Verifica EnderecoCota
 		sql = new StringBuilder();
 		sql.append("SELECT ec ");
 		sql.append("FROM EnderecoCota ec ");
 		sql.append("JOIN FETCH ec.endereco e ");
 		sql.append("WHERE ec.cota = :numeroCota ");
-		sql.append("AND e.logradouro = :logradouro ");
-		query = getSession().createQuery(sql.toString());
-		query.setParameter("numeroCota", cota);
-		query.setParameter("logradouro", logradouro);
 
+		query = getSession().createQuery(sql.toString());
+		
+		query.setParameter("numeroCota", cota);
+		
 		List<Endereco> enderecos = (List<Endereco>) query.list();
 
 		if (enderecos.isEmpty()) {
@@ -476,6 +474,8 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			
 			long idEndPrincipal = 0;
 			
+			String logradouro = getLogradouroSemTipo(input.getEndereco().split(",")[0].trim()).toUpperCase();
+			
 			for (EnderecoCota ec : cota.getEnderecos()) {
 				
 				if(ec.getEndereco() != null && ec.getEndereco().getLogradouro() == null || (ec.getEndereco().getLogradouro() != null && "".equalsIgnoreCase(ec.getEndereco().getLogradouro().trim()))) {
@@ -485,8 +485,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 					continue;
 				}
 
-				if(logradouro != null && logradouro != null && ec.getEndereco() != null 
-						&& ec.getEndereco().getLogradouro().equalsIgnoreCase(logradouro)) {
+				if(ec.getEndereco() != null && ec.getEndereco().getLogradouro() != null && ec.getEndereco().getLogradouro().equals(logradouro)) {
 					
 					idEndPrincipal = ec.getId();
 					
@@ -513,12 +512,12 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 								"Não foi possível extrair o número do endereço: "
 										+ cota.getNumeroCota() + " / Logradouro: "+ logradouro +", "+ input.getNumLogradouro());
 					}
+					
 					ec.getEndereco().setNumero(numero.toString());
 					
 					getSession().merge(ec);
 					
 					continue;
-					
 				}
 				
 			}

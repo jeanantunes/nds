@@ -403,7 +403,9 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		if (TipoBaixaCobranca.AUTOMATICA.equals(tipoBaixaCobranca)) {
 			
-			boleto = boletoRepository.obterPorNossoNumeroCompleto(pagamento.getNossoNumero(), null);
+			//boleto = boletoRepository.obterPorNossoNumeroCompleto(pagamento.getNossoNumero(), null);
+			
+			boleto = boletoRepository.obterPorNossoNumero(pagamento.getNossoNumero(), null);
 			
 		} else {
 		
