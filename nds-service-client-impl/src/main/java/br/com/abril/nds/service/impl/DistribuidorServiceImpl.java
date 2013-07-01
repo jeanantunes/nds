@@ -547,12 +547,14 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		
 		if (distribuidor.isInterfacesMatrizExecucao() && dataInicioExecucaoInterfaces != null) {
 
+			Date horaAtual = new Date();
 			Calendar calendarDuasHorasApos = Calendar.getInstance();
-			calendarDuasHorasApos.setTime(dataInicioExecucaoInterfaces);
-			calendarDuasHorasApos.add(Calendar.HOUR, 1);
+			calendarDuasHorasApos.clear();
+			calendarDuasHorasApos.setTimeInMillis(dataInicioExecucaoInterfaces.getTime());
+			calendarDuasHorasApos.add(Calendar.HOUR, 2);
 			
 			//Caso tenha passado uma hora e o sistema nao tenha liberado, desbloqueia automaticamente as funcionalidades (pois provavelmente a interface travou)
-			if (dataInicioExecucaoInterfaces.after(calendarDuasHorasApos.getTime())) {
+			if (horaAtual.after(calendarDuasHorasApos.getTime())) {
 				distribuidor.setInterfacesMatrizExecucao(false);
 				this.alterar(distribuidor);
 			}

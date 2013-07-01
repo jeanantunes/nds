@@ -121,45 +121,20 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 	}
 
 	private String getSqlValor(Boolean conferido, Boolean postergado, String valor) {
-		StringBuffer subSqlWhereDesconto = new StringBuffer();
 		
-		subSqlWhereDesconto.append(" (SELECT ");
-		
-		if (REPARTE_COM_DESCONTO.equals(valor)){
-			
-			subSqlWhereDesconto.append("	MEC.PRECO_COM_DESCONTO ");
-		} else if (DESCONTO.equals(valor)){
-			
-			subSqlWhereDesconto.append(" MEC.PRECO_VENDA - MEC.PRECO_COM_DESCONTO ");
-		} else {
-			
-			subSqlWhereDesconto.append(" MEC.PRECO_VENDA ");
-		}
-		
-		subSqlWhereDesconto.append(" FROM 	");
-		subSqlWhereDesconto.append(" MOVIMENTO_ESTOQUE_COTA MEC, TIPO_MOVIMENTO TIPO_MOV	");
-		subSqlWhereDesconto.append(" WHERE  	");
-		subSqlWhereDesconto.append(" MEC.COTA_ID = CH_ENCALHE_COTA.COTA_ID AND 					");
-		subSqlWhereDesconto.append(" MEC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID AND 				");
-		subSqlWhereDesconto.append(" MEC.TIPO_MOVIMENTO_ID = TIPO_MOV.ID AND ");
-		subSqlWhereDesconto.append(" TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque ");
-		subSqlWhereDesconto.append(" ORDER BY MEC.DATA DESC ");
-		subSqlWhereDesconto.append(" LIMIT 1) ");
-
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append(" SELECT SUM( COALESCE( ");
-		sql.append(subSqlWhereDesconto.toString());
 		
 		if (REPARTE_COM_DESCONTO.equals(valor)){
 			
-			sql.append(", PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+			sql.append("MEC.PRECO_COM_DESCONTO, PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
 		} else if (DESCONTO.equals(valor)){
 			
-			sql.append(", 0 ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+			sql.append("MEC.PRECO_VENDA - MEC.PRECO_COM_DESCONTO, 0 ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
 		} else {
 			
-			sql.append(", PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
+			sql.append("MEC.PRECO_VENDA, PROD_EDICAO.PRECO_VENDA ) * CH_ENCALHE_COTA.QTDE_PREVISTA ");
 		}
 		
 		sql.append(" ) ");
@@ -176,11 +151,24 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		sql.append("	inner join PRODUTO as PROD ON 							");
 		sql.append("	(PROD_EDICAO.PRODUTO_ID = PROD.ID)						");
 		
+		sql.append("	inner join MOVIMENTO_ESTOQUE_COTA MEC ON 				");
+		sql.append("	MEC.COTA_ID = CH_ENCALHE_COTA.COTA_ID AND MEC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
+		
+		sql.append("	INNER JOIN TIPO_MOVIMENTO TIPO_MOV ON ");
+		sql.append("	MEC.TIPO_MOVIMENTO_ID = TIPO_MOV.ID AND  TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque ");
+		
 		sql.append("	WHERE   ");
 		
 		sql.append("	COTA.NUMERO_COTA = :numeroCota  ");
 		
 		sql.append("	AND CH_ENCALHE.DATA_RECOLHIMENTO = :dataOperacao	");
+		
+		sql.append("	AND MEC.DATA = (SELECT 	MAX(MEC.DATA)				");
+		sql.append("	FROM    MOVIMENTO_ESTOQUE_COTA MEC, TIPO_MOVIMENTO TIPO_MOV ");
+		sql.append("	WHERE   MEC.COTA_ID = CH_ENCALHE_COTA.COTA_ID		");
+		sql.append("	AND     MEC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID		");
+		sql.append("	AND 	MEC.TIPO_MOVIMENTO_ID = TIPO_MOV.ID			");
+		sql.append("	AND     TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque) ");
 		
 		if(conferido!=null) {
 			sql.append(" AND	CH_ENCALHE_COTA.FECHADO = :conferido		");

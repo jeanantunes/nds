@@ -34,10 +34,8 @@ import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
 
-@Component
-
+@Component("couchDBImportDataRouter")
 public class CouchDBImportDataRouter extends AbstractRepository implements ContentBasedRouter {
-	
 
 	@Autowired
 	private PlatformTransactionManager transactionManager;
