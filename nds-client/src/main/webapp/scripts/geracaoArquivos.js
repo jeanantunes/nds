@@ -24,6 +24,7 @@ GeracaoArquivos.prototype.init = function() {
 		_this.tipoArquivoGerarOnChange();
 	});
 
+	_this.tipoArquivoGerarOnChange();
 };
 
 
@@ -42,17 +43,20 @@ GeracaoArquivos.prototype.btnGerarOnClick = function() {
 	$.postJSON(this.path + 'gerar',
 			params, 
 			function(data) {
+				$("#resultado", this.workspace).show();
 				$("#qtdArquivosGerados", this.workspace).html(data.int);
 			},
 			function(result) {
-				$("#resultado").show();
-				$("#qtdArquivosGerados").text(result);
+				$("#resultado", this.workspace).show();
+				$("#qtdArquivosGerados", this.workspace).html(0);
 			}
 	);
 };
 
 GeracaoArquivos.prototype.tipoArquivoGerarOnChange = function() {
 
+	$("#resultado", this.workspace).hide();
+	
 	var reparte = $("#dtLancto");
 	var encalhe = $("#dtRecolhimento");
 	var tipoArquivo = $("#tipoArquivo").val();

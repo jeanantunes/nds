@@ -15,7 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.ems0129.data.SomaRegistro;
 import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking1Detalhe;
 import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking1Header;
@@ -26,20 +28,20 @@ import br.com.abril.nds.integracao.ems0129.outbound.EMS0129Picking2Trailer;
 import br.com.abril.nds.integracao.ems0129.route.EMS0129Route;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
-import br.com.abril.nds.model.LeiautePicking;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoImpressaoInterfaceLED;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.repository.AbstractRepository;
+import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.service.DescontoService;
-import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.MathUtil;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
@@ -49,6 +51,8 @@ import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 public class EMS0129MessageProcessor extends AbstractRepository implements MessageProcessor  {
 	private static final Logger LOGGER = LoggerFactory.getLogger(EMS0129Route.class);
 
+	private static final String NOME_ARQUIVO_PICKING_INTERFACE_LED_DEFAULT = "PICKING.NEP";
+	
 	@Autowired
 	private FixedFormatManager fixedFormatManager;
 
@@ -56,11 +60,12 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	private NdsiLoggerFactory ndsiLoggerFactory;
 
 	@Autowired
-	private DistribuidorService distribuidorService;
+	private DistribuidorRepository distribuidorRepository;
 	
 	@Autowired
 	private DescontoService descontoService;
 
+	private String mensagemValidacao;
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
@@ -70,42 +75,70 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 	@Override
 	public void processMessage(Message message) {
 		
-		Distribuidor distribuidor = distribuidorService.obter();
+		this.setMensagemValidacao(null);
+		
+		Distribuidor distribuidor = distribuidorRepository.obter();
 
-		if (distribuidor.getLeiautePicking().equals(LeiautePicking.UM)) {
+		String nomeArquivoPickingInterfaceLED = this.obterNomeArquivoPickingInterfaceLED(distribuidor);
+		
+		if (distribuidor.getTipoImpressaoInterfaceLED().equals(TipoImpressaoInterfaceLED.MODELO_1)) {
 
-			geraArquivoPicking1(message);
+			geraArquivoPicking1(message, nomeArquivoPickingInterfaceLED);
 
-		} else if (distribuidor.getLeiautePicking().equals(LeiautePicking.DOIS)) {
+		} else if (distribuidor.getTipoImpressaoInterfaceLED().equals(TipoImpressaoInterfaceLED.MODELO_2)) {
 
-			geraArquivoPicking2(message);
+			geraArquivoPicking2(message, nomeArquivoPickingInterfaceLED);
 
-		} else if (distribuidor.getLeiautePicking().equals(LeiautePicking.TRES)) {
+		} else if (distribuidor.getTipoImpressaoInterfaceLED().equals(TipoImpressaoInterfaceLED.MODELO_3)) {
 
 			if (LOGGER.isWarnEnabled()) {
 
 				LOGGER.warn(String.format("Leiaute Picking Distribuidor %s nao implementado !",
-						distribuidor.getLeiautePicking()));
+						distribuidor.getTipoImpressaoInterfaceLED()));
 			}
 			
 		} else {
-
-			this.ndsiLoggerFactory.getLogger().logWarning(message,
-					EventoExecucaoEnum.GERACAO_DE_ARQUIVO, "Leiaute Picking Invalido.");
-
-			throw new RuntimeException("Leiaute Picking Invalido.");
+			
+			String mensagemValidacao = "Leiaute Picking Invalido.";
+			
+			this.lancarMensagemValidacao(mensagemValidacao, message);
 		}
 
 	}
 
-	private void geraArquivoPicking1(Message message) {
+	private String obterNomeArquivoPickingInterfaceLED(Distribuidor distribuidor) {
+		
+		String nomeArquivoPickingInterfaceLED = null;
+		
+		if (distribuidor.getTipoImpressaoInterfaceLED().equals(TipoImpressaoInterfaceLED.MODELO_1)) {
+			
+			nomeArquivoPickingInterfaceLED = distribuidor.getArquivoInterfaceLedPicking1();
+			
+		} else if (distribuidor.getTipoImpressaoInterfaceLED().equals(TipoImpressaoInterfaceLED.MODELO_2)) {
+			
+			nomeArquivoPickingInterfaceLED = distribuidor.getArquivoInterfaceLedPicking2();
+			
+		} else if (distribuidor.getTipoImpressaoInterfaceLED().equals(TipoImpressaoInterfaceLED.MODELO_2)) {
+			
+			nomeArquivoPickingInterfaceLED = distribuidor.getArquivoInterfaceLedPicking3();
+		}
+		
+		if (nomeArquivoPickingInterfaceLED == null) {
+			
+			nomeArquivoPickingInterfaceLED = NOME_ARQUIVO_PICKING_INTERFACE_LED_DEFAULT;
+		}
+		
+		return nomeArquivoPickingInterfaceLED;
+	}
+
+	private void geraArquivoPicking1(Message message, String nomeArquivoPickingInterfaceLED) {
 
 		List<PDV> pdvs = findListPDV(message);
-
+		
 		try {
 
 			PrintWriter print = new PrintWriter(
-					new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue()) + "/PICKING1.NEP"));
+					new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue()) + "/" + nomeArquivoPickingInterfaceLED));
 
 			for (PDV pdv : pdvs) {
 
@@ -123,13 +156,15 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 			print.close();
 
 		} catch (IOException e) {
-
-			e.printStackTrace();
+			
+			String mensagemValidacao = "Erro ao gerar o arquivo. " + e.getMessage();
+			
+			this.lancarMensagemValidacao(mensagemValidacao, message);
 		}
 
 	}
 
-	private void geraArquivoPicking2(Message message) {
+	private void geraArquivoPicking2(Message message, String nomeArquivoPickingInterfaceLED) {
 
 		List<PDV> pdvs = findListPDV(message);
 
@@ -139,7 +174,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 		try {
 
-			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())	+ "/PICKING2.NEW"));
+			PrintWriter print = new PrintWriter(new FileWriter(message.getHeader().get(MessageHeaderProperties.OUTBOUND_FOLDER.getValue())	+ "/" + nomeArquivoPickingInterfaceLED));
 
 			for (PDV pdv : pdvs) {
 				
@@ -160,7 +195,9 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 		} catch (IOException e) {
 
-			e.printStackTrace();
+			String mensagemValidacao = "Erro ao gerar o arquivo. " + e.getMessage();
+			
+			this.lancarMensagemValidacao(mensagemValidacao, message);
 		}
 
 	}
@@ -171,10 +208,9 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		
 		if (data == null) {
 			
-			this.ndsiLoggerFactory.getLogger().logWarning(message,
-					EventoExecucaoEnum.GERACAO_DE_ARQUIVO, "Data nao informada!");
-
-			throw new RuntimeException("Execute a interface EMS0129 passando a dataLancamentoDistribuidor !");
+			String mensagemValidacao = "Data nao informada. Execute a interface EMS0129 passando a dataLancamentoDistribuidor!";
+			
+			this.lancarMensagemValidacao(mensagemValidacao, message);
 		}
 		
 		return data;
@@ -205,15 +241,12 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 		if (pdvs.isEmpty()) {
 
-			this.ndsiLoggerFactory.getLogger().logWarning(message,
-					EventoExecucaoEnum.GERACAO_DE_ARQUIVO, "Nenhum registro encontrado!");
-
-			throw new RuntimeException("Nenhum registro encontrado!");
-
-		} else {
-
-			return pdvs;
+			String mensagemValidacao = "Nenhum registro encontrado!";
+			
+			this.lancarMensagemValidacao(mensagemValidacao, message);
 		}
+
+		return pdvs;
 	}
 
 	private void criaHeader(PrintWriter print, Integer numeroCota, String nome) {
@@ -245,10 +278,10 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 			cpfCnpj = ((PessoaJuridica) pessoa).getCnpj();
 		}
 
-		String nomeCotaComCnpj = pdv.getNome() + "-" + cpfCnpj;
+		String nomeCotaComCnpj = pdv.getNome() + "||" + cpfCnpj;
 	
 		outheader.setCodigoCota(pdv.getCota().getNumeroCota());
-		outheader.setNomeCotaComCpfCnpj(nomeCotaComCnpj.replaceAll(" ", ""));
+		outheader.setNomeCotaComCpfCnpj(nomeCotaComCnpj);
 		outheader.setData(data);
 		outheader.setNomeFantasia(nomeFantasia);
 
@@ -288,7 +321,7 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 		for (MovimentoEstoqueCota moviEstCota : movimentoEstoqueCotas) {
 
 			outdetalhe.setCodigoCota(numeroCota);
-			outdetalhe.setQuantidade(moviEstCota.getQtde());
+			outdetalhe.setQuantidade(moviEstCota.getQtde().longValue());
 			ProdutoEdicao produtoEdicao = moviEstCota.getProdutoEdicao();
             outdetalhe.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
 			outdetalhe.setEdicao(produtoEdicao.getNumeroEdicao());
@@ -366,9 +399,14 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 			}
 			
-			somaRegistros.addValorTotalBruto(produtoEdicao.getPrecoCusto());
-			somaRegistros.addValorTotalDesconto(precoVenda);
+			BigDecimal valorTotalBruto =
+				produtoEdicao.getPrecoVenda().multiply(new BigDecimal(moviEstCota.getQtde()));
 			
+			BigDecimal valorTotalVenda =
+				produtoEdicao.getPrecoCusto().multiply(new BigDecimal(moviEstCota.getQtde()));
+			
+			somaRegistros.addValorTotalBruto(valorTotalBruto);
+			somaRegistros.addValorTotalDesconto(valorTotalVenda);
 		}
 		
 		somaRegistros.addQtdeRegistros(qtdeRegistros);
@@ -377,9 +415,33 @@ public class EMS0129MessageProcessor extends AbstractRepository implements Messa
 
 	}
 
+	private void lancarMensagemValidacao(String mensagemValidacao, Message message) {
+		
+		this.ndsiLoggerFactory.getLogger().logWarning(message,
+				EventoExecucaoEnum.GERACAO_DE_ARQUIVO, mensagemValidacao);
+		
+		this.setMensagemValidacao(mensagemValidacao);
+		
+		throw new ValidacaoException(TipoMensagem.WARNING, mensagemValidacao);
+	}
+	
 	@Override
 	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub
+	}
+
+	/**
+	 * @return the mensagemValidacao
+	 */
+	public String getMensagemValidacao() {
+		return mensagemValidacao;
+	}
+
+	/**
+	 * @param mensagemValidacao the mensagemValidacao to set
+	 */
+	public void setMensagemValidacao(String mensagemValidacao) {
+		this.mensagemValidacao = mensagemValidacao;
 	}
 	
 }

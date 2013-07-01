@@ -15,7 +15,6 @@ import org.apache.commons.io.FileUtils;
 
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.model.DiaSemana;
-import br.com.abril.nds.model.LeiautePicking;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -756,7 +755,6 @@ public class Fixture {
 		distribuidor.setFatorRelancamentoParcial(7);
 		distribuidor.setQuantidadeDiasSuspensaoCotas(7);
 		distribuidor.setValorConsignadoSuspensaoCotas(BigDecimal.TEN);
-		distribuidor.setLeiautePicking(LeiautePicking.DOIS);
 		distribuidor.setRequerAutorizacaoEncalheSuperaReparte(false);
 		distribuidor.setObrigacaoFiscal(ObrigacaoFiscal.COTA_TOTAL);
 		distribuidor.setRegimeEspecial(true);

@@ -551,4 +551,5 @@ public class DistribuidorRepositoryImpl extends
 		return (ParametrosAprovacaoDistribuidor)
 				this.getSession().createQuery("select parametrosAprovacaoDistribuidor from Distribuidor").uniqueResult();
 	}
+	
 }

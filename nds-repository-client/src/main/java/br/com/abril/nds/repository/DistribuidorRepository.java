@@ -151,4 +151,5 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 	ParametrosAprovacaoDistribuidor parametrosAprovacaoDistribuidor();
 	
 	boolean utilizaControleAprovacaoFaltaSobra();
+	
 }
