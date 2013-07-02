@@ -29,7 +29,6 @@ import javax.persistence.TemporalType;
 import org.apache.commons.lang.Validate;
 
 import br.com.abril.nds.model.DiaSemana;
-import br.com.abril.nds.model.LeiautePicking;
 
 /**
  * Cadastro do Distribuidor
@@ -204,10 +203,6 @@ public class Distribuidor {
 	@Column(name = "QTD_DIAS_ENCALHE_ATRASADO_ACEITAVEL", nullable = false)
 	private int qtdDiasEncalheAtrasadoAceitavel = 4;
 	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "LEIAUTE_PICKING", length = 20, nullable = true)
-	private LeiautePicking leiautePicking;
-	
 	@Column(name="QNT_DIAS_VENCIMENTO_VENDA_ENCALHE")
 	private Integer qntDiasVencinemtoVendaEncalhe;
 	
@@ -229,6 +224,15 @@ public class Distribuidor {
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_IMPRESSAO_INTERFACE_LED", nullable = true)
 	private TipoImpressaoInterfaceLED tipoImpressaoInterfaceLED; 	
+	
+	@Column(name = "ARQUIVO_INTERFACE_LED_PICKING_1")
+	private String arquivoInterfaceLedPicking1;
+	
+	@Column(name = "ARQUIVO_INTERFACE_LED_PICKING_2")
+	private String arquivoInterfaceLedPicking2;
+	
+	@Column(name = "ARQUIVO_INTERFACE_LED_PICKING_3")
+	private String arquivoInterfaceLedPicking3;
 	
 	@Enumerated(EnumType.STRING)
 	@Column(name = "TIPO_IMPRESSAO_NE_NECA_DANFE", nullable = true)
@@ -677,21 +681,7 @@ public class Distribuidor {
     public void setPoliticaChamadao(PoliticaChamadao politicaChamadao) {
         this.politicaChamadao = politicaChamadao;
     }
-
-    /**
-	 * @return the leiautePicking
-	 */
-	public LeiautePicking getLeiautePicking() {
-		return leiautePicking;
-	}
-
-	/**
-	 * @param leiautePicking the leiautePicking to set
-	 */
-	public void setLeiautePicking(LeiautePicking leiautePicking) {
-		this.leiautePicking = leiautePicking;
-	}
-
+    
 	public BigDecimal getValorConsignadoSuspensaoCotas() {
 		return valorConsignadoSuspensaoCotas;
 	}
@@ -797,6 +787,48 @@ public class Distribuidor {
 
 	public void setTipoImpressaoInterfaceLED(TipoImpressaoInterfaceLED tipoImpressaoInterfaceLED) {
 		this.tipoImpressaoInterfaceLED = tipoImpressaoInterfaceLED;
+	}
+
+	/**
+	 * @return the arquivoInterfaceLedPicking1
+	 */
+	public String getArquivoInterfaceLedPicking1() {
+		return arquivoInterfaceLedPicking1;
+	}
+
+	/**
+	 * @param arquivoInterfaceLedPicking1 the arquivoInterfaceLedPicking1 to set
+	 */
+	public void setArquivoInterfaceLedPicking1(String arquivoInterfaceLedPicking1) {
+		this.arquivoInterfaceLedPicking1 = arquivoInterfaceLedPicking1;
+	}
+
+	/**
+	 * @return the arquivoInterfaceLedPicking2
+	 */
+	public String getArquivoInterfaceLedPicking2() {
+		return arquivoInterfaceLedPicking2;
+	}
+
+	/**
+	 * @param arquivoInterfaceLedPicking2 the arquivoInterfaceLedPicking2 to set
+	 */
+	public void setArquivoInterfaceLedPicking2(String arquivoInterfaceLedPicking2) {
+		this.arquivoInterfaceLedPicking2 = arquivoInterfaceLedPicking2;
+	}
+
+	/**
+	 * @return the arquivoInterfaceLedPicking3
+	 */
+	public String getArquivoInterfaceLedPicking3() {
+		return arquivoInterfaceLedPicking3;
+	}
+
+	/**
+	 * @param arquivoInterfaceLedPicking3 the arquivoInterfaceLedPicking3 to set
+	 */
+	public void setArquivoInterfaceLedPicking3(String arquivoInterfaceLedPicking3) {
+		this.arquivoInterfaceLedPicking3 = arquivoInterfaceLedPicking3;
 	}
 
 	public TipoImpressaoNENECADANFE getTipoImpressaoNENECADANFE() {

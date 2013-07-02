@@ -1,7 +1,6 @@
 package br.com.abril.nds.integracao.ems0129.outbound;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 
 import com.ancientprogramming.fixedformat4j.annotation.Align;
 import com.ancientprogramming.fixedformat4j.annotation.Field;
@@ -29,7 +28,7 @@ public class EMS0129Picking1Detalhe {
 	
 	private BigDecimal desconto;
 	
-	protected BigInteger quantidade;
+	protected Long quantidade;
 	
 	
 	@Field(offset = 1, length = 1, paddingChar = '2')
@@ -47,40 +46,41 @@ public class EMS0129Picking1Detalhe {
 		return sequenciaNotaEnvio;
 	}
 	
-	@Field(offset = 10, length = 5)
+	@Field(offset = 10, length = 8)
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}
 	
-	@Field(offset = 15, length = 4, align = Align.RIGHT)
+	@Field(offset = 18, length = 4, align = Align.RIGHT)
 	public Long getEdicao() {
 		return edicao;
 	}
 	
-	@Field(offset = 19, length = 21)
+	@Field(offset = 22, length = 21)
 	public String getNomePublicacao() {
 		return nomePublicacao;
 	}
 	
-	@Field(offset = 40, length = 10, align = Align.RIGHT)
-	@FixedFormatDecimal(decimals = 2, useDecimalDelimiter = true)
+	@Field(offset = 43, length = 10, align = Align.RIGHT)
+	@FixedFormatDecimal(decimals = 4, useDecimalDelimiter = true)
 	public BigDecimal getPrecoCusto() {
 		return precoCusto;
 	}
 	
-	@Field(offset = 50, length = 10, align = Align.RIGHT)
-	@FixedFormatDecimal(decimals = 2, useDecimalDelimiter = true)
+	@Field(offset = 53, length = 10, align = Align.RIGHT)
+	@FixedFormatDecimal(decimals = 4, useDecimalDelimiter = true)
 	public BigDecimal getPrecoVenda() {
 		return precoVenda;
 	}
 	
-	@Field(offset = 60, length = 3, align = Align.RIGHT)
+	@Field(offset = 63, length = 8, align = Align.RIGHT)
+	@FixedFormatDecimal(decimals = 4, useDecimalDelimiter = true)
 	public BigDecimal getDesconto() {
 		return desconto;
 	}
 	
-	@Field(offset = 63, length = 6, align = Align.RIGHT)
-	public BigInteger getQuantidade() {
+	@Field(offset = 71, length = 6, align = Align.RIGHT)
+	public Long getQuantidade() {
 		return quantidade;
 	}
 	
@@ -120,7 +120,7 @@ public class EMS0129Picking1Detalhe {
 		this.desconto = desconto;
 	}
 	
-	public void setQuantidade(BigInteger quantidade) {
+	public void setQuantidade(Long quantidade) {
 		this.quantidade = quantidade;
 	}	
 }
