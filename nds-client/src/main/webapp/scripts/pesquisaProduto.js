@@ -239,7 +239,7 @@ function PesquisaProduto(workspace) {
 	},
 	
 	this.pesquisarPorNomeErrorCallBack = function(idCodigo, idProduto, idEdicao, errorCallBack) {
-		$(idProduto, pesquisaProduto.workspace).val("");
+
 		$(idProduto, pesquisaProduto.workspace).focus();
 		
 		if (errorCallBack) {
