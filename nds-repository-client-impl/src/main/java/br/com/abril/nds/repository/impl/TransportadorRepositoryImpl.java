@@ -167,12 +167,12 @@ public class TransportadorRepositoryImpl extends
 			hql.append(" order by cota.numeroCota ");
 		}
 		
-		if ("asc".equals(sortorder)){
-			
-			hql.append(" asc ");
-		} else {
+		if ("desc".equals(sortorder)){
 			
 			hql.append(" desc ");
+		} else {
+			
+			hql.append(" asc ");
 		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
