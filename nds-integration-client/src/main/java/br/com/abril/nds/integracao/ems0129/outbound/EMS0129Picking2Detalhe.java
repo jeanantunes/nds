@@ -112,7 +112,7 @@ public class EMS0129Picking2Detalhe {
 	}
 	
 	@Field(offset = 47, length = 10, align = Align.RIGHT)
-	@FixedFormatDecimal(decimals = 2, useDecimalDelimiter = true)
+	@FixedFormatDecimal(decimals = 4, useDecimalDelimiter = true)
 	public BigDecimal getPrecoCusto() {
 		return precoCusto;
 	}
@@ -123,7 +123,7 @@ public class EMS0129Picking2Detalhe {
 	}
 	
 	@Field(offset = 58, length = 10, align = Align.RIGHT)
-	@FixedFormatDecimal(decimals = 2, useDecimalDelimiter = true)
+	@FixedFormatDecimal(decimals = 4, useDecimalDelimiter = true)
 	public BigDecimal getPrecoVenda() {
 		return precoVenda;
 	}
@@ -133,22 +133,23 @@ public class EMS0129Picking2Detalhe {
 		return separador8;
 	}
 	
-	@Field(offset = 69, length = 3, align = Align.RIGHT)
+	@Field(offset = 69, length = 8, align = Align.RIGHT)
+	@FixedFormatDecimal(decimals = 4, useDecimalDelimiter = true)
 	public BigDecimal getDesconto() {
 		return desconto;
 	}
 	
-	@Field(offset = 72, length = 1, paddingChar = ';')
+	@Field(offset = 77, length = 1, paddingChar = ';')
 	public String getSeparador9() {
 		return separador9;
 	}
 	
-	@Field(offset = 73, length = 6, align = Align.RIGHT)
+	@Field(offset = 78, length = 6, align = Align.RIGHT)
 	public Long getQuantidade() {
 		return quantidade;
 	}
 
-	@Field(offset = 79, length = 1, paddingChar = ';')
+	@Field(offset = 84, length = 1, paddingChar = ';')
 	public String getSeparador10() {
 		return separador10;
 	}

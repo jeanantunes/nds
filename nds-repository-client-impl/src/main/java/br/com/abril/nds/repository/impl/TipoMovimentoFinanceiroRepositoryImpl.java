@@ -96,6 +96,29 @@ public class TipoMovimentoFinanceiroRepositoryImpl extends AbstractRepositoryMod
 		return query.list();
 	}
 
+	/**
+	 * Obtem tipo de movimento financeiro por GrupoMovimentoFinanceiro e OperacaoFinanceira
+	 * @param grupo
+	 * @param operacao
+	 * @return TipoMovimentoFinanceiro
+	 */
+	@Override
+	public TipoMovimentoFinanceiro obterTipoMovimentoFincanceiroPorGrupoFinanceiroEOperacaoFinanceira(GrupoMovimentoFinaceiro grupo, OperacaoFinaceira operacao){
+		
+		StringBuilder hql = new StringBuilder("select t ");
+		hql.append(" from TipoMovimentoFinanceiro t ")
+		   .append(" where t.operacaoFinaceira = :operacaoFinaceira ")
+		   .append(" and t.grupoMovimentoFinaceiro = :grupoMovimentoFinanceiro");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("operacaoFinaceira", operacao);
+		
+		query.setParameter("grupoMovimentoFinanceiro", grupo);
+		
+		return (TipoMovimentoFinanceiro) query.uniqueResult();
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> buscarIdsTiposMovimentoFinanceiroPorOperacaoFinanceira(

@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -69,6 +70,7 @@ import br.com.abril.nds.repository.EnderecoFiadorRepository;
 import br.com.abril.nds.repository.FiadorRepository;
 import br.com.abril.nds.repository.FormaCobrancaCaucaoLiquidaRepository;
 import br.com.abril.nds.service.CotaGarantiaService;
+import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -107,6 +109,9 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	
 	@Autowired 
 	private FormaCobrancaCaucaoLiquidaRepository formaCobrancaRepository;
+	
+	@Autowired
+	private DescontoService descontoService;
 	
     private static final  Logger LOGGER = LoggerFactory.getLogger(CotaGarantiaServiceImpl.class);
 	
@@ -873,6 +878,20 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	}
 	
 	/**
+	 * Método responsável por obter lista de CaucaoLiquida da cota
+	 * @param idCota: ID da cota
+	 * @return List<CaucaoLiquida>
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<CaucaoLiquida> obterCaucaoLiquidasCota(Long idCota){
+
+		List<CaucaoLiquida> caucaoLiquidas = cotaGarantiaRepository.getCaucaoLiquidasCota(idCota);
+				
+		return caucaoLiquidas;
+	}
+	
+	/**
 	 * Método responsável por obter os dados de caucao liquida com forma de pagamento Boleto.
 	 * @param idCota: ID da cota
 	 * @return Data Transfer Object com os dados de caucao liquida
@@ -1017,6 +1036,13 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 						formaCobrancaDTO.setValorDescontoAtual(pagamentoDescontoCota.getDescontoAtual());
 						formaCobrancaDTO.setUtilizarDesconto(pagamentoDescontoCota.getPorcentagemUtilizada());
 						formaCobrancaDTO.setDescontoCotaDesconto(pagamentoDescontoCota.getDescontoCota());
+					
+					} else {
+						
+						BigDecimal descontoAtual = this.obterValorComissaoCaucaoLiquida(idCota);
+
+						formaCobrancaDTO.setValorDescontoAtual(descontoAtual);
+						formaCobrancaDTO.setDescontoCotaDesconto(descontoAtual);
 					}
 					
 				break;
@@ -1036,7 +1062,21 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 		return formaCobrancaDTO;
 	}
+	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional
+	public BigDecimal obterValorComissaoCaucaoLiquida(Long idCota) {
+		
+		Integer numeroCota = this.cotaRepository.buscarNumeroCotaPorId(idCota);
 
+		BigDecimal descontoAtual = this.descontoService.obterComissaoCota(numeroCota);
+		
+		return descontoAtual;
+	}
+	
     /**
      * {@inheritDoc}
      */

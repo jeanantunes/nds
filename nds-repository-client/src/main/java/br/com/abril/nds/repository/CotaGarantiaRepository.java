@@ -5,6 +5,7 @@ import java.util.List;
 import br.com.abril.nds.dto.RelatorioDetalheGarantiaDTO;
 import br.com.abril.nds.dto.RelatorioGarantiasDTO;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioGarantiasDTO;
+import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantiaFiador;
@@ -86,4 +87,11 @@ public interface CotaGarantiaRepository extends Repository<CotaGarantia,Long>{
 	Long obterCountDetalheGarantiaCadastrada(FiltroRelatorioGarantiasDTO filtro);
 
 	Long getQtdCotaGarantiaByCota(Long idCota);
+
+	/**
+	 * Obtem lista de CaucaoLiquida da Cota
+	 * @param idCota
+	 * @return List<CaucaoLiquida>
+	 */
+	List<CaucaoLiquida> getCaucaoLiquidasCota(Long idCota);
 }

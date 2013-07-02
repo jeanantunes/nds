@@ -2850,4 +2850,20 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		return (Date) query.uniqueResult();		
 	}
 	
+	public BigDecimal obterValorReparteDaCotaNaData(Long idCota, Date data) {
+		
+		String hql = " select sum(mec.qtde * mec.valoresAplicados.precoVenda) from MovimentoEstoqueCota mec "
+				   + " where mec.cota.id = :idCota "
+				   + " and mec.data = :data "
+				   + " and mec.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ";
+		
+		Query query = this.getSession().createQuery(hql);
+		
+		query.setParameter("idCota", idCota);
+		query.setParameter("data", data);
+		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		
+		return (BigDecimal) query.uniqueResult();
+	}
+	
 }

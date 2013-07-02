@@ -13,9 +13,12 @@
     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
     http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.1.xsd
     http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
-     http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd">
+    http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
 
 	<context:component-scan base-package="br.com.abril.nds" />
+	
+	<aop:aspectj-autoproxy/>
 	
 	<context:property-placeholder location="classpath:nds-client.properties" />
 			
@@ -23,10 +26,12 @@
 		
 	<util:properties id="queries" location="classpath:/query.properties" />
 	
+	<!-- <bean id="ndsProfiler" class="br.com.abril.nds.client.aop.NdsProfiler"/> -->
+	
 	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 		
 	<bean class="com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl"/>
-
+	
 	<!-- TOMCAT -->
 	<jee:jndi-lookup id="dataSource" jndi-name="${jndi-name}"/>
 	

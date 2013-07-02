@@ -24,7 +24,7 @@ public class EMS0129Picking1Trailer {
 		return codigoCota;
 	}
 	
-	@Field(offset = 2, length = 4, align = Align.RIGHT)
+	@Field(offset = 7, length = 4, align = Align.RIGHT)
 	public Integer getQuantidadeRegistros() {
 		return quantidadeRegistros;
 	}

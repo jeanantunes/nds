@@ -702,7 +702,9 @@ var transportadorController = $.extend(true, {
 					$.postJSON(contextPath + "/cadastro/transportador/excluirVeiculo", data, 
 						function(result){
 							
-							exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "idModalCadastroTransportador");
+							if (result.tipoMensagem){
+								exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "idModalCadastroTransportador");
+							}
 							
 							$(".veiculosGrid", transportadorController.workspace).flexReload();
 							
@@ -860,7 +862,9 @@ var transportadorController = $.extend(true, {
 					$.postJSON(contextPath + "/cadastro/transportador/excluirMotorista", data, 
 						function(result){
 							
-							exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "idModalCadastroTransportador");
+							if (result.tipoMensagem){
+								exibirMensagemDialog(result.tipoMensagem, result.listaMensagens, "idModalCadastroTransportador");
+							}
 							
 							$(".motoristasGrid", transportadorController.workspace).flexReload();
 							
@@ -1045,7 +1049,9 @@ var transportadorController = $.extend(true, {
 						[{name:"referencia", value: idTransp}], 
 						function(result) {
 							
-							exibirMensagem(result.tipoMensagem, result.listaMensagens);
+							if (result.tipoMensagem){
+								exibirMensagem(result.tipoMensagem, result.listaMensagens);
+							}
 							
 							$("#dialog-excluir", transportadorController.workspace).dialog("close");
 							

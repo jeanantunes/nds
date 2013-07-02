@@ -33,10 +33,13 @@ public class EMS0129Route extends FileOutputRoute{
 		return RouteInterface.EMS0129;
 	}
 	
-	public void execute(String userName, Date data) {
+	public String execute(String userName, Date data) {
 		
 		getParameters().put("DATA_LCTO_DISTRIB", data);
+		
 		execute(userName);
+		
+		return messageProcessor.getMensagemValidacao();
 	}
 	
 }

@@ -46,6 +46,7 @@ import br.com.abril.nds.dto.TermoAdesaoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.TitularidadeCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaConsignadoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
@@ -93,6 +94,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoProd
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDistribuicao;
 import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
+import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
@@ -103,6 +105,7 @@ import br.com.abril.nds.repository.EntregadorRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.HistoricoNumeroCotaRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
+import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.PessoaFisicaRepository;
@@ -242,6 +245,12 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
+	
+	@Autowired
+	private ConsultaConsignadoCotaRepository consignadoCotaRepository;
+	
+	@Autowired
+	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -748,21 +757,41 @@ public class CotaServiceImpl implements CotaService {
 	@Transactional
 	public List<CotaSuspensaoDTO> obterDTOCotasSujeitasSuspensao(String sortOrder, String sortColumn, Integer inicio, Integer rp) {
 		
-		List<CotaSuspensaoDTO> lista = cotaRepository.obterCotasSujeitasSuspensao(sortOrder,sortColumn, inicio, rp);
+		List<CotaSuspensaoDTO> cotasSujeitasSuspensao = 
+			this.cotaRepository.obterCotasSujeitasSuspensao(sortOrder, sortColumn, inicio, rp, 
+					this.distribuidorRepository.obterDataOperacaoDistribuidor());
 		
-		for(CotaSuspensaoDTO dto : lista) {
-			Integer perc = (int) ((dto.getDoubleDividaAcumulada() / dto.getDoubleConsignado() ) * 100);
-			dto.setPercDivida(perc.toString() + "%");
-			dto.setFaturamento(CurrencyUtil.formatarValor(estoqueProdutoCotaRepository.obterFaturamentoCota(dto.getIdCota())));
+		for (CotaSuspensaoDTO cotaSujeitaSuspensao : cotasSujeitasSuspensao) {
+			
+			cotaSujeitaSuspensao.setVlrConsignado(
+				this.consignadoCotaRepository.buscarTotalGeralDaCota(
+					new FiltroConsultaConsignadoCotaDTO(cotaSujeitaSuspensao.getIdCota())));
+			
+			cotaSujeitaSuspensao.setVlrReparte(
+				this.movimentoEstoqueCotaRepository.obterValorReparteDaCotaNaData(
+					cotaSujeitaSuspensao.getIdCota(), 
+						this.distribuidorRepository.obterDataOperacaoDistribuidor()));
+			
+			cotaSujeitaSuspensao.setDividaAcumulada(
+				this.dividaService.obterTotalDividasAbertoCota(cotaSujeitaSuspensao.getIdCota()));
+			
+			Integer percentualDivida = 
+				(int) ((cotaSujeitaSuspensao.getDoubleDividaAcumulada() 
+							/ cotaSujeitaSuspensao.getDoubleConsignado() ) * 100);
+			
+			cotaSujeitaSuspensao.setPercDivida(percentualDivida.toString() + "%");
+			
+			cotaSujeitaSuspensao.setFaturamento(CurrencyUtil.formatarValor(
+				this.estoqueProdutoCotaRepository.obterFaturamentoCota(cotaSujeitaSuspensao.getIdCota())));
 		}
 		
-		return lista;		
+		return cotasSujeitasSuspensao;		
 	}
 
 	@Override
 	@Transactional
 	public Long obterTotalCotasSujeitasSuspensao() {
-		return cotaRepository.obterTotalCotasSujeitasSuspensao();
+		return cotaRepository.obterTotalCotasSujeitasSuspensao(this.distribuidorRepository.obterDataOperacaoDistribuidor());
 	}
 	
 	@Override
