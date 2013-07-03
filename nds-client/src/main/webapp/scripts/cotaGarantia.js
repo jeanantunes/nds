@@ -2292,6 +2292,8 @@ Outros.prototype.incluirOutros = function(callBack) {
         } else {
 
             var novoOutro = data.outro;
+			
+			novoOutro.valor = floatToPrice(novoOutro.valor);
 
             if (_this.itemEdicao == null || _this.itemEdicao < 0) {
 
@@ -2372,9 +2374,9 @@ Outros.prototype.obterGarantiaOutros = function(idCota) {
 	        	   for (var i = 0; i < data.length; i++){
 	        	   
 		               var outro = data[i];
-		               
+
 					   outro.validade = outro.validade.$;
-					   
+
 					   outro.valor = floatToPrice(outro.valor);
 
 		               tipoCotaGarantia.controller.cotaGarantia.outros.push(outro); 
@@ -2410,14 +2412,17 @@ Outros.prototype.popularGrid = function() {
         page : 1,
         total : 1
     });
-
-
 };
 
 Outros.prototype.salva = function(callBack) {
 
-    var postData = serializeArrayToPost('listaOutros', this.cotaGarantia.outros);
+    for (var i = 0; i < this.cotaGarantia.outros.length; i++) {
+    	
+    	this.cotaGarantia.outros[i].valor = priceToFloat(this.cotaGarantia.outros[i].valor); 
+    }
 
+    var postData = serializeArrayToPost('listaOutros', this.cotaGarantia.outros);
+    
     postData['idCota'] = this.idCota;
 
     $.postJSON(this.path + 'salvaOutros.json', postData,
