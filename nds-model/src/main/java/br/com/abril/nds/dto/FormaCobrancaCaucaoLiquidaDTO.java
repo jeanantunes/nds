@@ -245,7 +245,7 @@ public class FormaCobrancaCaucaoLiquidaDTO {
 	}
 
 	public Integer getQtdeParcelas() {
-		return qtdeParcelas;
+		return this.qtdeParcelas == null ? 0 : this.qtdeParcelas;
 	}
 
 	public void setQtdeParcelas(Integer qtdeParcelas) {
