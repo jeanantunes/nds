@@ -141,8 +141,8 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			
 			CotaGarantiaImovel cotaGarantiaImovel = (CotaGarantiaImovel) cotaGarantia;			
 		
-			cotaGarantiaImovel.getImoveis().size();			
-		
+			cotaGarantiaImovel.getImoveis().size();
+
 		} else if (cotaGarantia instanceof CotaGarantiaNotaPromissoria) {
 		
 			tipo = TipoGarantia.NOTA_PROMISSORIA;
@@ -163,12 +163,11 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			
 			tipo = TipoGarantia.OUTROS;			
 			
-			CotaGarantiaOutros cotaGarantiaOutros = (CotaGarantiaOutros) cotaGarantia;			
-		
-			cotaGarantiaOutros.getOutros().size();			
-			
+			CotaGarantiaOutros cotaGarantiaOutros = (CotaGarantiaOutros) cotaGarantia;
+
+			cotaGarantiaOutros.getOutros().size();
 		}
-		
+
 		return new CotaGarantiaDTO<CotaGarantia>(tipo, cotaGarantia);
 	}
 	
@@ -268,7 +267,33 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 		return imoveisDTO;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<GarantiaCotaOutros> obterDadosGarantiaOutrosDTO(Long idCota) {
+		
+		List<GarantiaCotaOutros> garantiaOutros = new ArrayList<GarantiaCotaOutros>();
+		
+	    CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
+		
+		if (cotaGarantia instanceof CotaGarantiaOutros) {	
+			
+			CotaGarantiaOutros cotaGarantiaOutros = (CotaGarantiaOutros) cotaGarantia;
+
+			if (cotaGarantiaOutros.getOutros() != null) {
+
+				cotaGarantiaOutros.getOutros().size();
+				
+				garantiaOutros = cotaGarantiaOutros.getOutros();
+			}
+		}
+		
+		return garantiaOutros;
+	}
+
 	@Override
 	@Transactional(readOnly = true)
 	public List<Imovel> obterDadosImoveis(Long idCota){

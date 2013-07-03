@@ -170,6 +170,10 @@ TipoCotaGarantia.prototype.configTipoCotaGarantia = function(result) {
     	
  	     NotaPromissoria.prototype.obterNotaPromissoria(idCota);
     }
+    
+    if (tipo=="OUTROS"){
+    	Outros.prototype.obterGarantiaOutros(idCota);
+    }
 };
 
 TipoCotaGarantia.prototype.bindData = function(data) {
@@ -2290,6 +2294,12 @@ Outros.prototype.incluirOutros = function(callBack) {
             var novoOutro = data.outro;
 
             if (_this.itemEdicao == null || _this.itemEdicao < 0) {
+
+            	if (!_this.cotaGarantia.outros) {
+
+            		_this.cotaGarantia.outros = [];
+            	}
+
                 _this.cotaGarantia.outros.push(novoOutro);
 
             } else {
@@ -2336,6 +2346,51 @@ Outros.prototype.dataBind = function() {
 
     $("#validadeCotaGarantiaOutros").mask("99/99/9999");
 
+};
+
+Outros.prototype.obterGarantiaOutros = function(idCota) {
+
+	var param = [{name:'idCota', value:idCota},
+		         {name:'modoTela', value:tipoCotaGarantia.getModoTela().value}];
+
+    $.postJSON(this.path + 'getGarantiaOutrosByCota.json', 
+		   param, 
+           function(result) {
+    	
+    		   var data = result.data;
+
+	           var tipoMensagem = data.tipoMensagem;
+	           var listaMensagens = data.listaMensagens;
+	
+	           if (tipoMensagem && listaMensagens) {
+	               exibirMensagemDialog(tipoMensagem, listaMensagens,"");
+	
+	           } else {  
+
+	        	   tipoCotaGarantia.controller.cotaGarantia.outros = new Array();
+
+	        	   for (var i = 0; i < data.length; i++){
+	        	   
+		               var outro = data[i];
+		               
+					   outro.validade = outro.validade.$;
+					   
+					   outro.valor = floatToPrice(outro.valor);
+
+		               tipoCotaGarantia.controller.cotaGarantia.outros.push(outro); 
+	        	   }
+	  	        	
+	        	   tipoCotaGarantia.controller.grid.flexAddData({
+	        	        rows : toFlexiGridObject(tipoCotaGarantia.controller.cotaGarantia.outros),
+	        	        page : 1,
+	        	        total : 1
+	        	   });  
+	           }
+	       }, 
+	       null, 
+	       true
+     );
+	
 };
 
 Outros.prototype.popularGrid = function() {

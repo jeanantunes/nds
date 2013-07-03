@@ -145,7 +145,7 @@ public class CotaGarantiaController extends BaseController {
 	 * @param operacaoFinaceira
 	 */
 	private void lancarDebitoCreditoCaucaoLiquida(BigDecimal valorParcela, 
-			                                      int qtdParcelas, 
+			                                      Integer qtdParcelas, 
 			                                      Long idCota, 
 			                                      GrupoMovimentoFinaceiro grupoFinanceiro, 
 			                                      OperacaoFinaceira operacaoFinaceira){
@@ -304,10 +304,11 @@ public class CotaGarantiaController extends BaseController {
 	        
 	        if (cotaGarantia != null && cotaGarantia.getCotaGarantia() != null) {	
 	        	
-	            result.use(Results.json()).from(cotaGarantia,"result").serialize();
-	        }else{			
+	            this.result.use(PlainJSONSerialization.class).from(cotaGarantia, "result").serialize();
+	        
+	        } else {
 	        	
-	            result.use(CustomJson.class).from("OK").serialize();
+	        	this.result.use(Results.json()).from("OK").serialize();
 	        }	
 	    } 
 	    else {
@@ -316,10 +317,11 @@ public class CotaGarantiaController extends BaseController {
 	        
 	        if (cotaGarantia != null) {
 	        	
-	            result.use(CustomJson.class).from(cotaGarantia).serialize();  
+	        	this.result.use(PlainJSONSerialization.class).from(cotaGarantia, "result").serialize();
+	        	
 	        } else {
 	        	
-	            result.use(CustomJson.class).from("OK").serialize();      
+	        	this.result.use(Results.json()).from("OK").serialize();      
 	        }
 	    }
 	}
@@ -436,6 +438,28 @@ public class CotaGarantiaController extends BaseController {
         }    
 	}
 
+	/**
+	 * Obtem Cota garantia do tipo Imóvel
+	 * @param idCota
+	 */
+	@Post("/getGarantiaOutrosByCota.json")
+	public void getGarantiaOutrosByCota(Long idCota, ModoTela modoTela) {
+
+        if (ModoTela.CADASTRO_COTA == modoTela) {
+        	
+            List<GarantiaCotaOutros> dadosOutros = cotaGarantiaService.obterDadosGarantiaOutrosDTO(idCota);
+            
+            if (dadosOutros != null) {
+
+            	this.result.use(Results.json()).from(dadosOutros, "data").serialize();
+            	
+            } else {
+            	
+            	this.result.use(CustomJson.class).from("OK").serialize();
+            }
+        }    
+	}
+	
 	/**
 	 * Obtem Cota garantia do tipo Imóvel
 	 * @param idCota
