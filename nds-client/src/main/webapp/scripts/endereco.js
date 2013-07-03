@@ -344,7 +344,17 @@ function Endereco(paramTela, paramMessage) {
 					$("#"+paramTela+"cidade", Endereco.workspace).val(result.localidade);
 				}
 			},
-			null, 
+			function() {
+				
+				$("#"+paramTela+"idEndereco", Endereco.workspace).val("");
+				$("#"+paramTela+"tipoLogradouro", Endereco.workspace).val("");
+				$("#"+paramTela+"logradouro", Endereco.workspace).val("");
+				$("#"+paramTela+"codigoBairro", Endereco.workspace).val("");
+				$("#"+paramTela+"bairro", Endereco.workspace).val("");
+				$("#"+paramTela+"uf", Endereco.workspace).val("");
+				$("#"+paramTela+"codigoCidadeIBGE", Endereco.workspace).val("");
+				$("#"+paramTela+"cidade", Endereco.workspace).val("");
+			}, 
 			isFromModal,
 			paramMessage
 		);
