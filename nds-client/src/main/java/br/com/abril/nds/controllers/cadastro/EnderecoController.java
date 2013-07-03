@@ -17,6 +17,7 @@ import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.ItemAutoComplete;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.EnderecoVO;
@@ -572,13 +573,18 @@ public class EnderecoController extends BaseController {
 	@Post
 	public void obterEnderecoPorCep(String cep) {
 		
+		if (StringUtil.isEmpty(cep)) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "O CEP deve ser informado!");
+		}
+		
 		cep = retirarFormatacaoCep(cep);
 		
 		EnderecoVO enderecoRetornado = this.enderecoService.obterEnderecoPorCep(cep);
 		
 		if (enderecoRetornado == null) {
 			
-			this.result.nothing();
+			throw new ValidacaoException(TipoMensagem.WARNING, "CEP não encontrado!");
 		
 		} else {
 

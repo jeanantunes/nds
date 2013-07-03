@@ -296,6 +296,9 @@ public class ParametrosDistribuidorController extends BaseController {
 	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR_ALTERACAO)
 	public void gravarDiasDistribuidorFornecedor(String selectFornecedoresLancamento, String selectDiasLancamento, String selectDiasRecolhimento) throws Exception {
 		
+		this.validarAssociacaoDiasOperacao(
+			selectFornecedoresLancamento, selectDiasLancamento, selectDiasRecolhimento);
+		
 		List<String> listaFornecedoresLancamento = Arrays.asList(selectFornecedoresLancamento.split(","));
 		List<String> listaDiasLancamento		 = Arrays.asList(selectDiasLancamento.split(","));
 		List<String> listaDiasRecolhimento		 = Arrays.asList(selectDiasRecolhimento.split(","));
@@ -304,6 +307,33 @@ public class ParametrosDistribuidorController extends BaseController {
 		Distribuidor distribuidor = distribuidorService.obter();
 		distribuicaoFornecedorService.gravarAtualizarDadosFornecedor(listaFornecedoresLancamento, listaDiasLancamento, listaDiasRecolhimento, distribuidor);
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Dias de Distribuição do Fornecedor cadastrado com sucesso"),"result").recursive().serialize();
+	}
+
+	private void validarAssociacaoDiasOperacao(String selectFornecedoresLancamento,
+											   String selectDiasLancamento,
+											   String selectDiasRecolhimento) {
+		
+		List<String> mensagens = new ArrayList<>();
+		
+		if (selectFornecedoresLancamento == null) {
+			
+			mensagens.add("Fornecedor(es) deve(m) ser selecionado(s)!");
+		}
+		
+		if (selectDiasLancamento == null) {
+			
+			mensagens.add("Dia(s) de lançamento deve(m) ser selecionado(s)!");
+		}
+		
+		if (selectDiasRecolhimento == null) {
+			
+			mensagens.add("Dia(s) de recolhimento deve(m) ser selecionado(s)!");
+		}
+		
+		if (!mensagens.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, mensagens);
+		}
 	}
 	
 	/**
@@ -428,9 +458,9 @@ public class ParametrosDistribuidorController extends BaseController {
 	 * Busca todos os Grupos de Cota
 	 */
 	@Post
-	public void obterGrupos() {
+	public void obterGrupos(String sortname, String sortorder) {
 			
-		List<GrupoCotaDTO> grupos = this.grupoService.obterTodosGrupos();
+		List<GrupoCotaDTO> grupos = this.grupoService.obterTodosGrupos(sortname, sortorder);
 		
 		result.use(FlexiGridJson.class).from(grupos).page(1).total(grupos.size()).serialize();
 				
@@ -588,20 +618,33 @@ public class ParametrosDistribuidorController extends BaseController {
 	@SuppressWarnings("unchecked")
 	@Post
 	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR_ALTERACAO)
-	public void cadastrarOperacaoDiferenciada(String nome,List<DiaSemana> diasSemana, Long idGrupo){
+	public void cadastrarOperacaoDiferenciada(String nome,List<DiaSemana> diasSemana, Long idGrupo, TipoOperacaoDiferenciada tipoOperacaoDiferenciada){
 		
-		List<Long> cotas = (List<Long>) (session.getAttribute(COTAS_SELECIONADAS) == null ?
-				null
-				:session.getAttribute(COTAS_SELECIONADAS));
-		
-		if(cotas != null) {
+		if (tipoOperacaoDiferenciada.equals(TipoOperacaoDiferenciada.TIPO_COTA)) {
+			
+			List<Long> cotas =
+				(List<Long>) (session.getAttribute(COTAS_SELECIONADAS) == null
+					? null : session.getAttribute(COTAS_SELECIONADAS));
+			
+			if (cotas == null) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota foi selecionada!");
+			}
+			
 			TipoCaracteristicaSegmentacaoPDV tipoCota = (TipoCaracteristicaSegmentacaoPDV) session.getAttribute(TIPO_COTA);
+			
 			grupoService.salvarGrupoCotas(idGrupo,cotas, nome, diasSemana, tipoCota);
+			
 		} else {
-		
-			List<String> municipios = (List<String>) (session.getAttribute(MUNICIPIOS_SELECIONADOS) == null ?
-					null
-					:session.getAttribute(MUNICIPIOS_SELECIONADOS));
+			
+			List<String> municipios =
+				(List<String>) (session.getAttribute(MUNICIPIOS_SELECIONADOS) == null
+					? null : session.getAttribute(MUNICIPIOS_SELECIONADOS));
+			
+			if (municipios == null) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum município foi selecionado!");
+			}
 			
 			grupoService.salvarGrupoMunicipios(idGrupo,municipios, nome, diasSemana);
 		}
@@ -634,4 +677,11 @@ public class ParametrosDistribuidorController extends BaseController {
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Ao desmarcar a opção [Utiliza Controle de Aprovação] não serão mais exibidos os avisos de pendências das funcionalidades abaixo !"),"result").recursive().serialize();
 	}
+	
+	private enum TipoOperacaoDiferenciada {
+		
+		TIPO_COTA,
+		MUNICIPIO;
+	}
+	
 }
