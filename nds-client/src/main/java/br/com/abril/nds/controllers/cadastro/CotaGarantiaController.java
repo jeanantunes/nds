@@ -37,6 +37,7 @@ import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
+import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
@@ -80,13 +81,23 @@ public class CotaGarantiaController extends BaseController {
 	private UsuarioService usuarioService;
 	
 	@Autowired
+	private BancoService bancoService;
+	
+	@Autowired
 	private Result result;
 	
     public CotaGarantiaController() {
-		
-		super();
+    	
+    	super();
 	}
 
+    @Post
+	@Path("/carregarBancos")
+	public void carregarBancos(){
+    	
+		result.use(Results.json()).from(bancoService.getComboBancos(true), "result").recursive().serialize();
+	}
+    
 	@Post
 	@Path("/salvaNotaPromissoria.json")
 	public void salvaNotaPromissoria(NotaPromissoria notaPromissoria,
@@ -145,7 +156,7 @@ public class CotaGarantiaController extends BaseController {
 	 * @param operacaoFinaceira
 	 */
 	private void lancarDebitoCreditoCaucaoLiquida(BigDecimal valorParcela, 
-			                                      int qtdParcelas, 
+			                                      Integer qtdParcelas, 
 			                                      Long idCota, 
 			                                      GrupoMovimentoFinaceiro grupoFinanceiro, 
 			                                      OperacaoFinaceira operacaoFinaceira){
@@ -299,15 +310,16 @@ public class CotaGarantiaController extends BaseController {
 	public void getByCota(Long idCota, ModoTela modoTela, Long idHistorico) {
 		
 	    if (ModoTela.CADASTRO_COTA == modoTela) {
-	    	
+
 	        CotaGarantiaDTO<CotaGarantia> cotaGarantia = cotaGarantiaService.getByCota(idCota);
 	        
 	        if (cotaGarantia != null && cotaGarantia.getCotaGarantia() != null) {	
 	        	
-	            result.use(Results.json()).from(cotaGarantia,"result").serialize();
-	        }else{			
+	            this.result.use(PlainJSONSerialization.class).from(cotaGarantia, "result").serialize();
+	        
+	        } else {
 	        	
-	            result.use(CustomJson.class).from("OK").serialize();
+	        	this.result.use(Results.json()).from("OK").serialize();
 	        }	
 	    } 
 	    else {
@@ -316,10 +328,11 @@ public class CotaGarantiaController extends BaseController {
 	        
 	        if (cotaGarantia != null) {
 	        	
-	            result.use(CustomJson.class).from(cotaGarantia).serialize();  
+	        	this.result.use(PlainJSONSerialization.class).from(cotaGarantia, "result").serialize();
+	        	
 	        } else {
 	        	
-	            result.use(CustomJson.class).from("OK").serialize();      
+	        	this.result.use(Results.json()).from("OK").serialize();      
 	        }
 	    }
 	}
@@ -436,6 +449,28 @@ public class CotaGarantiaController extends BaseController {
         }    
 	}
 
+	/**
+	 * Obtem Cota garantia do tipo Imóvel
+	 * @param idCota
+	 */
+	@Post("/getGarantiaOutrosByCota.json")
+	public void getGarantiaOutrosByCota(Long idCota, ModoTela modoTela) {
+
+        if (ModoTela.CADASTRO_COTA == modoTela) {
+        	
+            List<GarantiaCotaOutros> dadosOutros = cotaGarantiaService.obterDadosGarantiaOutrosDTO(idCota);
+            
+            if (dadosOutros != null) {
+
+            	this.result.use(Results.json()).from(dadosOutros, "data").serialize();
+            	
+            } else {
+            	
+            	this.result.use(CustomJson.class).from("OK").serialize();
+            }
+        }    
+	}
+	
 	/**
 	 * Obtem Cota garantia do tipo Imóvel
 	 * @param idCota

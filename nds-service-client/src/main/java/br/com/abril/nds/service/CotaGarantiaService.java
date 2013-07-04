@@ -303,4 +303,11 @@ public interface CotaGarantiaService {
 	 * @return List<CaucaoLiquida>
 	 */
 	List<CaucaoLiquida> obterCaucaoLiquidasCota(Long idCota);
+
+	/**
+	 * Método responsável por obter lista de {@link GarantiaCotaOutros} da cota
+	 * @param idCota: ID da cota
+	 * @return List<GarantiaCotaOutros>
+	 */
+	List<GarantiaCotaOutros> obterDadosGarantiaOutrosDTO(Long idCota);
 }

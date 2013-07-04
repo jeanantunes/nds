@@ -13,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.GrupoCotaDTO;
 import br.com.abril.nds.dto.MunicipioDTO;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.TipoGrupo;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -38,9 +40,9 @@ public class GrupoServiceImpl implements GrupoService {
 	
 	@Override
 	@Transactional
-	public List<GrupoCotaDTO> obterTodosGrupos() {
+	public List<GrupoCotaDTO> obterTodosGrupos(String sortname, String sortorder) {
 		
-		List<GrupoCota> grupos = grupoRepository.buscarTodos();
+		List<GrupoCota> grupos = grupoRepository.obterGrupos(sortname, sortorder);
 		
 		List<GrupoCotaDTO> gruposDTO = new ArrayList<GrupoCotaDTO>();
 
@@ -132,6 +134,8 @@ public class GrupoServiceImpl implements GrupoService {
 	public void salvarGrupoCotas(Long idGrupo, List<Long> idCotas, String nome,
 			List<DiaSemana> diasSemana, TipoCaracteristicaSegmentacaoPDV tipoCota) {
 		
+		this.validarNomeGrupo(nome, idGrupo);
+		
 		HashSet<Cota> cotas = new HashSet<Cota>();
 		
 		for(Long id : idCotas) {
@@ -160,6 +164,8 @@ public class GrupoServiceImpl implements GrupoService {
 	public void salvarGrupoMunicipios(Long idGrupo, List<String> municipios,
 			String nome, List<DiaSemana> diasSemana) {
 		
+		this.validarNomeGrupo(nome, idGrupo);
+		
 		GrupoCota grupo;
 		
 		if(idGrupo == null)
@@ -174,6 +180,14 @@ public class GrupoServiceImpl implements GrupoService {
 		grupo.setMunicipios(new HashSet<String>(municipios));
 		
 		grupoRepository.merge(grupo);
+	}
+
+	private void validarNomeGrupo(String nome, Long idGrupo) {
+		
+		if (this.grupoRepository.existeGrupoCota(nome, idGrupo)) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Já existe um grupo cadastrado com o nome: " + nome + "!");
+		}
 	}
 
 	@Override

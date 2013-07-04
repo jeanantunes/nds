@@ -1,14 +1,9 @@
-<script language="text/javascript" type="text/javascript"
-	src="${pageContext.request.contextPath}/scripts/cotaGarantia.js"></script>
-<script language="text/javascript" type="text/javascript"
-	src="${pageContext.request.contextPath}/scripts/manterCota.js"></script>
-<script type="text/javascript"
-	src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
-
-<script language="text/javascript" type="text/javascript"
-	src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
-<script language="text/javascript" type="text/javascript"
-	src="${pageContext.request.contextPath}/scripts/confirmDialog.js"></script>
+<script language="text/javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/cotaGarantia.js"></script>
+<script language="text/javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/manterCota.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
+<script language="text/javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
+<script language="text/javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/confirmDialog.js"></script>
+<script language="text/javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/utils.js"></script>
 <script type="text/javascript">
 	var tipoCotaGarantia = new TipoCotaGarantia(MANTER_COTA.workspace);
 		
@@ -489,9 +484,35 @@
     
     <br>
     
+    <div id="divComboBancoCedente" style="display: none;" >
+    
+        <fieldset style="width:880px!important; margin:5px;">
+
+            <legend>Caução Debitada da conta</legend>
+
+			<div name="formularioDadosBancoCedente" id="formularioDadosBancoCedente">
+
+				<table width="755" border="0" cellpadding="2" cellspacing="2">
+					<tr>
+						<td width="57">Nome:</td>
+						<td width="346"><select name="bancoCedente" id="bancoCedente"
+							style="width: 150px;">
+								<option value=""></option>
+								<c:forEach varStatus="counter" var="banco" items="${listaBancosCedente}">
+									<option value="${banco.key}">${banco.value}</option>
+								</c:forEach>
+						</select>
+					</tr>
+				</table>
+
+			</div>
+
+	    </fieldset>
+	    
+	</div>
 	
 	<fieldset style="width:880px!important; margin:5px;">
-	
+
    	    <legend>Caução Depositada na conta</legend>
     
         <table width="755" border="0" cellspacing="2" cellpadding="2">

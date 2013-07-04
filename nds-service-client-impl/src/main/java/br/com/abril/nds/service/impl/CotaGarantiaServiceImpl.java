@@ -27,6 +27,7 @@ import br.com.abril.nds.dto.NotaPromissoriaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.ChequeImage;
@@ -60,6 +61,7 @@ import br.com.abril.nds.model.cadastro.garantia.pagamento.PagamentoDinheiro;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaCaucaoLiquida;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaChequeCaucao;
+import br.com.abril.nds.repository.BancoRepository;
 import br.com.abril.nds.repository.ChequeImageRepository;
 import br.com.abril.nds.repository.ConcentracaoCobrancaCaucaoLiquidaRepository;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
@@ -113,6 +115,9 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	@Autowired
 	private DescontoService descontoService;
 	
+	@Autowired
+	private BancoRepository bancoRepository;
+	
     private static final  Logger LOGGER = LoggerFactory.getLogger(CotaGarantiaServiceImpl.class);
 	
 	/*
@@ -141,8 +146,8 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			
 			CotaGarantiaImovel cotaGarantiaImovel = (CotaGarantiaImovel) cotaGarantia;			
 		
-			cotaGarantiaImovel.getImoveis().size();			
-		
+			cotaGarantiaImovel.getImoveis().size();
+
 		} else if (cotaGarantia instanceof CotaGarantiaNotaPromissoria) {
 		
 			tipo = TipoGarantia.NOTA_PROMISSORIA;
@@ -163,12 +168,11 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			
 			tipo = TipoGarantia.OUTROS;			
 			
-			CotaGarantiaOutros cotaGarantiaOutros = (CotaGarantiaOutros) cotaGarantia;			
-		
-			cotaGarantiaOutros.getOutros().size();			
-			
+			CotaGarantiaOutros cotaGarantiaOutros = (CotaGarantiaOutros) cotaGarantia;
+
+			cotaGarantiaOutros.getOutros().size();
 		}
-		
+
 		return new CotaGarantiaDTO<CotaGarantia>(tipo, cotaGarantia);
 	}
 	
@@ -268,7 +272,33 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 		return imoveisDTO;
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<GarantiaCotaOutros> obterDadosGarantiaOutrosDTO(Long idCota) {
+		
+		List<GarantiaCotaOutros> garantiaOutros = new ArrayList<GarantiaCotaOutros>();
+		
+	    CotaGarantia cotaGarantia = cotaGarantiaRepository.getByCota(idCota);
+		
+		if (cotaGarantia instanceof CotaGarantiaOutros) {	
+			
+			CotaGarantiaOutros cotaGarantiaOutros = (CotaGarantiaOutros) cotaGarantia;
+
+			if (cotaGarantiaOutros.getOutros() != null) {
+
+				cotaGarantiaOutros.getOutros().size();
+				
+				garantiaOutros = cotaGarantiaOutros.getOutros();
+			}
+		}
+		
+		return garantiaOutros;
+	}
+
 	@Override
 	@Transactional(readOnly = true)
 	public List<Imovel> obterDadosImoveis(Long idCota){
@@ -689,7 +719,7 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 	            CotaGarantiaCaucaoLiquida.class);
 		
 		FormaCobrancaCaucaoLiquida formaCobranca = null;
-          	
+		
         if (TipoCobrancaCotaGarantia.BOLETO == cotaGarantiaCaucaoLiquida.getTipoCobranca()){
         	PagamentoBoleto pb = (PagamentoBoleto) cotaGarantiaCaucaoLiquida.getFormaPagamento(); 
         	formaCobranca = pb.getFormaCobrancaCaucaoLiquida();
@@ -838,8 +868,11 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 			
             case DEPOSITO_TRANSFERENCIA:
 				
+            	Banco bancoCedente = this.bancoRepository.buscarPorId(formaCobrancaDTO.getIdBanco());
+            	
             	pagamentoDepositoTransferencia = new PagamentoDepositoTransferencia();
             	pagamentoDepositoTransferencia.setValor(formaCobrancaDTO.getValor());
+            	pagamentoDepositoTransferencia.setBanco(bancoCedente);
 				
 			break;
         }
@@ -1011,6 +1044,8 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 					if (pagamentoDepositoTransferencia != null){
 						
 						formaCobrancaDTO.setValor(pagamentoDepositoTransferencia.getValor());
+						
+						formaCobrancaDTO.setIdBanco(pagamentoDepositoTransferencia.getBanco().getId());
 					}
 					
 				break;

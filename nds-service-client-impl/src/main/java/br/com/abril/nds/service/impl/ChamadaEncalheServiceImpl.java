@@ -21,8 +21,11 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
+import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.service.ChamadaEncalheService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -47,6 +50,9 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	
 	@Autowired
 	private CotaRepository cotaRepository;
+	
+	@Autowired
+	private PdvRepository pdvRepository;
 
 	@Autowired
 	private RecolhimentoService recolhimentoService;
@@ -63,10 +69,15 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 		List<CotaEmissaoDTO> listaChamadaEncalhe = chamadaEncalheRepository.obterDadosEmissaoChamadasEncalhe(filtro);
 		
-		if(listaChamadaEncalhe == null) return null;
+		if (listaChamadaEncalhe==null){
+			
+			return null;
+		}
 		
-		for(int i = 0; i < listaChamadaEncalhe.size(); i++) {
-			if(listaChamadaEncalhe.get(i).getQtdeExemplares() <= 0) {
+		for(int i = 0; i < listaChamadaEncalhe.size(); i++){
+			
+			if(listaChamadaEncalhe.get(i).getQtdeExemplares() <= 0){
+				
 				listaChamadaEncalhe.remove(i);
 			}
 		}
@@ -75,7 +86,48 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 	}
 
+    /**
+     * Obtem endereço do PDV principal da Cota, caso não encontre, obtem o endereço principal da Cota.
+     * @param cota
+     * @return Endereco
+     */
+	private Endereco obterEnderecoImpressaoCE(Cota cota){
+		
+		Endereco endereco = null;
+		
+		PDV pdvPrincipal = this.pdvRepository.obterPDVPrincipal(cota.getId());
 
+		EnderecoPDV enderecoPdv = pdvPrincipal!=null?pdvPrincipal.getEnderecoEntrega():null;
+		
+		if (enderecoPdv == null) {
+		
+			for (EnderecoPDV ePdv : pdvPrincipal.getEnderecos()){
+			    
+				if (ePdv.isPrincipal()){
+				    
+					enderecoPdv = ePdv;
+				}
+			}
+		}
+
+		if (enderecoPdv != null) {
+			
+			return enderecoPdv.getEndereco();
+		}
+		
+		for(EnderecoCota enderecoCota : cota.getEnderecos()){
+			
+			if (enderecoCota.isPrincipal()){
+				
+				endereco = enderecoCota.getEndereco();
+				
+				break;
+			}
+		}
+		
+		return endereco;
+	}
+	
 	@Override
 	@Transactional
 	public List<CotaEmissaoDTO> obterDadosImpressaoEmissaoChamadasEncalhe(
@@ -88,17 +140,9 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		for(CotaEmissaoDTO dto:lista) {
 			
 			cota = cotaRepository.obterPorNumerDaCota( dto.getNumCota());
-			
-			Endereco endereco = null;
-			
-			for(EnderecoCota enderecoCota : cota.getEnderecos()){
-				
-				if (enderecoCota.isPrincipal()){
-					endereco = enderecoCota.getEndereco();
-					break;
-				}
-			}
-			
+
+			Endereco endereco = this.obterEnderecoImpressaoCE(cota);
+
 			if( endereco!= null) {
 				dto.setEndereco( (endereco.getTipoLogradouro()!= null?endereco.getTipoLogradouro().toUpperCase() + ": " :"")
 									+ endereco.getLogradouro().toUpperCase()  + ", " + endereco.getNumero());

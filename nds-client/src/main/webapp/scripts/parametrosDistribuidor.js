@@ -572,7 +572,12 @@ var parametrosDistribuidorController = $.extend(true, {
 				"Cancelar": function() {
 					$(this).dialog( "close" );
 				}
-			}
+			},
+			beforeClose: function() {
+				
+				$("#nomeDiferenca", this.workspace).val("");
+				$("#diaSemana", this.workspace).val("");
+			},
 		});
 	 },
 	 

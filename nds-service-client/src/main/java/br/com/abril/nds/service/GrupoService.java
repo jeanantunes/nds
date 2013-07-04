@@ -15,7 +15,7 @@ public interface GrupoService {
 	 * Obtém todos os Grupos
 	 * @return List<GrupoCota> grupos
 	 */
-	List<GrupoCotaDTO> obterTodosGrupos() ;
+	List<GrupoCotaDTO> obterTodosGrupos(String sortname, String sortorder) ;
 
 	void excluirGrupo(Long idGrupo);
 

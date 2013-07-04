@@ -505,19 +505,25 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		distribuidor.setTipoContabilizacaoCE(parametrosDistribuidor.getTipoContabilizacaoCE());
 		distribuidor.setSupervisionaVendaNegativa(parametrosDistribuidor.isSupervisionaVendaNegativa());
 		PoliticaChamadao politicaChamadao = distribuidor.getPoliticaChamadao();
+		
 		if(politicaChamadao == null) {
 		    politicaChamadao = new PoliticaChamadao();
 		    distribuidor.setPoliticaChamadao(politicaChamadao);
 		}
+		
 		Integer chamadaoDiasSuspensao = parametrosDistribuidor.getChamadaoDiasSuspensao();
 		politicaChamadao.setDiasSuspenso(chamadaoDiasSuspensao);
-		if (parametrosDistribuidor
-							.getChamadaoValorConsignado() != null) {
-			BigDecimal chamadaoConsignado = CurrencyUtil
-					.getBigDecimal(parametrosDistribuidor
-							.getChamadaoValorConsignado());
-			politicaChamadao.setValorConsignado(chamadaoConsignado);
+
+		BigDecimal chamadaoConsignado = null;
+		
+		if (parametrosDistribuidor.getChamadaoValorConsignado() != null) {
+			
+			chamadaoConsignado =
+				CurrencyUtil.getBigDecimal(parametrosDistribuidor.getChamadaoValorConsignado());
 		}
+		
+		politicaChamadao.setValorConsignado(chamadaoConsignado);
+		
 		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = null;
 		if (distribuidor.getParametrosRecolhimentoDistribuidor() != null) {
 			parametrosRecolhimentoDistribuidor = distribuidor.getParametrosRecolhimentoDistribuidor();

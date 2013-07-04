@@ -73,7 +73,7 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/cota/parametroCobrancaCota")
 public class ParametroCobrancaCotaController extends BaseController {
 
-		private static final Logger LOGGER = LoggerFactory.getLogger(ParametroCobrancaCotaController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ParametroCobrancaCotaController.class);
 	
 	private Result result;
 

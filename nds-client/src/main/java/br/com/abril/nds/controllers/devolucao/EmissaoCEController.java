@@ -108,6 +108,7 @@ public class EmissaoCEController extends BaseController {
 		List<CotaEmissaoDTO> lista = chamadaEncalheService.obterDadosEmissaoChamadasEncalhe(filtro); 
 		
 		if(lista == null || lista.isEmpty()){
+			
 			throw new ValidacaoException(TipoMensagem.WARNING,"Nenhum dado foi encontrado!");
 		}
 		

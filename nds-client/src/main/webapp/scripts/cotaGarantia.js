@@ -170,6 +170,10 @@ TipoCotaGarantia.prototype.configTipoCotaGarantia = function(result) {
     	
  	     NotaPromissoria.prototype.obterNotaPromissoria(idCota);
     }
+    
+    if (tipo=="OUTROS"){
+    	Outros.prototype.obterGarantiaOutros(idCota);
+    }
 };
 
 TipoCotaGarantia.prototype.bindData = function(data) {
@@ -1138,7 +1142,11 @@ function Fiador(idCota, cotaGarantia) {
             modal : true,
             buttons : {
                 "Ir para Cadastro Fiador" : function() {
-                    location.replace(contextPath + '/cadastro/fiador');
+          
+                	direcionar("Fiador","/cadastro/fiador/");
+           
+                    $(this).dialog("close");
+                    
                 },
                 Cancel : function() {
                     $(this).dialog("close");
@@ -1657,8 +1665,6 @@ CaucaoLiquida.prototype.salva = function(callBack) {
     var diaDoMes            = $("#diaDoMes", _workspace).val();
     var primeiroDiaQuinzenal= $("#primeiroDiaQuinzenal", _workspace).val();
     var segundoDiaQuinzenal = $("#segundoDiaQuinzenal", _workspace).val();
-    var qtdeParcelas        = $("#qtdParcelaBoleto", _workspace).val();
-    var valorParcela        = $("#valorParcelaBoleto", _workspace).val();
 
     $("#PS", _workspace).val(0);
     if ($("#PS", this.workspace).is(":checked")) {
@@ -1713,8 +1719,18 @@ CaucaoLiquida.prototype.salva = function(callBack) {
     var agencia             = $("#agenciaDeposito", _workspace).val();
     var conta               = $("#contaDeposito", _workspace).val();
     var nomeCorrentista     = $("#nomeCorrentistaDeposito", _workspace).val();
+    
+    var bancoCedente        = $("#bancoCedente", _workspace).val();
 
     var valor               = this.getValorCaucaoLiquida(tipoCobranca);
+    
+    var qtdeParcelas        = $("#qtdParcelaBoleto", _workspace).val();
+    
+    var valorParcela        = $("#valorParcelaBoleto", _workspace).val();
+    
+    qtdeParcelas = qtdeParcelas>0?qtdeParcelas:1;
+    
+    valorParcela = valorParcela>0?valorParcela:valor;
 
     postData['formaCobranca.tipoCobranca'] = tipoCobranca;
 
@@ -1746,6 +1762,8 @@ CaucaoLiquida.prototype.salva = function(callBack) {
     postData['formaCobranca.nomeCorrentista'] = nomeCorrentista;
 
     postData['formaCobranca.valor'] = this.preparaValor(valor,4);
+    
+    postData['formaCobranca.idBanco'] = bancoCedente;
 
     $.postJSON(this.path + 'salvaCaucaoLiquida.json', postData,
         function(data) {
@@ -2015,24 +2033,28 @@ CaucaoLiquida.prototype.opcaoPagto = function(op){
         $('#divFormaDeposito', _workspace).hide();
         $('#divFormaDinheiro', _workspace).hide();
         $('#divFormaDesconto', _workspace).hide();
+        $('#divComboBancoCedente', _workspace).hide();
     }
     else if (op=='DEPOSITO_TRANSFERENCIA'){
         $('#divFormaBoleto', _workspace).hide();
         $('#divFormaDeposito', _workspace).show();
         $('#divFormaDinheiro', _workspace).hide();
         $('#divFormaDesconto', _workspace).hide();
+        $('#divComboBancoCedente', _workspace).show();
     }
     else if (op=='DINHEIRO'){
         $('#divFormaBoleto', _workspace).hide();
         $('#divFormaDeposito', _workspace).hide();
         $('#divFormaDinheiro', _workspace).show();
         $('#divFormaDesconto', _workspace).hide();
+        $('#divComboBancoCedente', _workspace).hide();
     }
     else if (op=='DESCONTO_COTA'){
         $('#divFormaBoleto', _workspace).hide();
         $('#divFormaDeposito', _workspace).hide();
         $('#divFormaDinheiro', _workspace).hide();
         $('#divFormaDesconto', _workspace).show();
+        $('#divComboBancoCedente', _workspace).hide();
 
         CaucaoLiquida.prototype.obterDescontoAtualCaucaoLiquida();
     }
@@ -2041,6 +2063,7 @@ CaucaoLiquida.prototype.opcaoPagto = function(op){
         $('#divFormaDeposito', _workspace).hide();
         $('#divFormaDinheiro', _workspace).hide();
         $('#divFormaDesconto', _workspace).hide();
+        $('#divComboBancoCedente', _workspace).hide();
     }
 
 };
@@ -2141,6 +2164,11 @@ CaucaoLiquida.prototype.obterDescontoAtualCaucaoLiquida = function() {
 	);
 };
 
+CaucaoLiquida.prototype.carregarBancos = function(selected){
+	
+    carregarCombo(contextPath + "/cadastro/garantia/carregarBancos", null, $("#bancoCedente", _workspace), selected, null);
+};
+
 //OBTEM UM PARÂMETRO PARA ALTERAÇÃO
 CaucaoLiquida.prototype.obterCaucaoLiquida = function(idCota){
 	
@@ -2187,6 +2215,8 @@ CaucaoLiquida.prototype.sucessCallbackObterCaucaoLiquida = function(resultado) {
     $("#agenciaDeposito", _workspace).val(resultado.agencia);
     $("#contaDeposito", _workspace).val(resultado.conta);
     $("#nomeCorrentistaDeposito", _workspace).val(resultado.nomeCorrentista);
+    
+    CaucaoLiquida.prototype.carregarBancos(resultado.idBanco);
 
     var comissao = {
     	'valorDescontoAtual'   : resultado.valorDescontoAtual,
@@ -2198,8 +2228,6 @@ CaucaoLiquida.prototype.sucessCallbackObterCaucaoLiquida = function(resultado) {
     CaucaoLiquida.prototype.setValoresComissaoCota(resultado.tipoCobranca, comissao);
 
     CaucaoLiquida.prototype.setValorCaucaoLiquidaPorTipo(resultado.tipoCobranca, resultado.valor);
-    
-    CaucaoLiquida.prototype.opcaoPagto(resultado.tipoCobranca);
    
     this.rows = resultado.caucoes;
     	
@@ -2288,8 +2316,16 @@ Outros.prototype.incluirOutros = function(callBack) {
         } else {
 
             var novoOutro = data.outro;
+			
+			novoOutro.valor = floatToPrice(novoOutro.valor);
 
             if (_this.itemEdicao == null || _this.itemEdicao < 0) {
+
+            	if (!_this.cotaGarantia.outros) {
+
+            		_this.cotaGarantia.outros = [];
+            	}
+
                 _this.cotaGarantia.outros.push(novoOutro);
 
             } else {
@@ -2338,6 +2374,51 @@ Outros.prototype.dataBind = function() {
 
 };
 
+Outros.prototype.obterGarantiaOutros = function(idCota) {
+
+	var param = [{name:'idCota', value:idCota},
+		         {name:'modoTela', value:tipoCotaGarantia.getModoTela().value}];
+
+    $.postJSON(this.path + 'getGarantiaOutrosByCota.json', 
+		   param, 
+           function(result) {
+    	
+    		   var data = result.data;
+
+	           var tipoMensagem = data.tipoMensagem;
+	           var listaMensagens = data.listaMensagens;
+	
+	           if (tipoMensagem && listaMensagens) {
+	               exibirMensagemDialog(tipoMensagem, listaMensagens,"");
+	
+	           } else {  
+
+	        	   tipoCotaGarantia.controller.cotaGarantia.outros = new Array();
+
+	        	   for (var i = 0; i < data.length; i++){
+	        	   
+		               var outro = data[i];
+
+					   outro.validade = outro.validade.$;
+
+					   outro.valor = floatToPrice(outro.valor);
+
+		               tipoCotaGarantia.controller.cotaGarantia.outros.push(outro); 
+	        	   }
+	  	        	
+	        	   tipoCotaGarantia.controller.grid.flexAddData({
+	        	        rows : toFlexiGridObject(tipoCotaGarantia.controller.cotaGarantia.outros),
+	        	        page : 1,
+	        	        total : 1
+	        	   });  
+	           }
+	       }, 
+	       null, 
+	       true
+     );
+	
+};
+
 Outros.prototype.popularGrid = function() {
 
     var lista = [];
@@ -2355,14 +2436,17 @@ Outros.prototype.popularGrid = function() {
         page : 1,
         total : 1
     });
-
-
 };
 
 Outros.prototype.salva = function(callBack) {
 
-    var postData = serializeArrayToPost('listaOutros', this.cotaGarantia.outros);
+    for (var i = 0; i < this.cotaGarantia.outros.length; i++) {
+    	
+    	this.cotaGarantia.outros[i].valor = priceToFloat(this.cotaGarantia.outros[i].valor); 
+    }
 
+    var postData = serializeArrayToPost('listaOutros', this.cotaGarantia.outros);
+    
     postData['idCota'] = this.idCota;
 
     $.postJSON(this.path + 'salvaOutros.json', postData,

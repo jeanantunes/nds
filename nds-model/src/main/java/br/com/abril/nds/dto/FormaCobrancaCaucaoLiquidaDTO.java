@@ -17,6 +17,9 @@ public class FormaCobrancaCaucaoLiquidaDTO {
 	TipoCobrancaCotaGarantia tipoCobranca;
 	TipoFormaCobranca tipoFormaCobranca;
 	
+	//BANCO DO CEDENTE
+	long idBanco;
+	
 	String numBanco;
 	String nomeBanco;
 	Long agencia;
@@ -245,7 +248,7 @@ public class FormaCobrancaCaucaoLiquidaDTO {
 	}
 
 	public Integer getQtdeParcelas() {
-		return qtdeParcelas;
+		return this.qtdeParcelas == null ? 0 : this.qtdeParcelas;
 	}
 
 	public void setQtdeParcelas(Integer qtdeParcelas) {
@@ -283,7 +286,15 @@ public class FormaCobrancaCaucaoLiquidaDTO {
 	public void setDescontoCotaDesconto(BigDecimal descontoCotaDesconto) {
 		this.descontoCotaDesconto = descontoCotaDesconto;
 	}
-	
+
+	public long getIdBanco() {
+		return idBanco;
+	}
+
+	public void setIdBanco(long idBanco) {
+		this.idBanco = idBanco;
+	}
+
 	/**
      * @return the caucoes
      */
