@@ -37,6 +37,7 @@ import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
+import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
@@ -80,13 +81,23 @@ public class CotaGarantiaController extends BaseController {
 	private UsuarioService usuarioService;
 	
 	@Autowired
+	private BancoService bancoService;
+	
+	@Autowired
 	private Result result;
 	
     public CotaGarantiaController() {
-		
-		super();
+    	
+    	super();
 	}
 
+    @Post
+	@Path("/carregarBancos")
+	public void carregarBancos(){
+    	
+		result.use(Results.json()).from(bancoService.getComboBancos(true), "result").recursive().serialize();
+	}
+    
 	@Post
 	@Path("/salvaNotaPromissoria.json")
 	public void salvaNotaPromissoria(NotaPromissoria notaPromissoria,
@@ -299,7 +310,7 @@ public class CotaGarantiaController extends BaseController {
 	public void getByCota(Long idCota, ModoTela modoTela, Long idHistorico) {
 		
 	    if (ModoTela.CADASTRO_COTA == modoTela) {
-	    	
+
 	        CotaGarantiaDTO<CotaGarantia> cotaGarantia = cotaGarantiaService.getByCota(idCota);
 	        
 	        if (cotaGarantia != null && cotaGarantia.getCotaGarantia() != null) {	
