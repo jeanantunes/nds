@@ -71,9 +71,9 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 		if (listaChamadaEncalhe == null) return null;
 		
-		for(int i = 0; i < listaChamadaEncalhe.size(); i++){
+		for(int i = 0; i < listaChamadaEncalhe.size(); i++) {
 			
-			if(listaChamadaEncalhe.get(i).getQtdeExemplares() <= 0){
+			if(listaChamadaEncalhe.get(i).getQtdeExemplares() <= 0) {
 				
 				listaChamadaEncalhe.remove(i);
 			}
