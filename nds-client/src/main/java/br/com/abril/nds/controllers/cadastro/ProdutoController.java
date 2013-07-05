@@ -246,10 +246,12 @@ public class ProdutoController extends BaseController {
 		
 		if (produto == null) {
 		
-			throw new ValidacaoException(TipoMensagem.WARNING, "Produto \"" + filtro.getNome() + "\" não encontrado!");
-		}
+			result.nothing();
 			
-		result.use(Results.json()).from(produto, "result").serialize();
+		} else {
+			
+			result.use(Results.json()).from(produto, "result").serialize();
+		}
 	}
 	
 	@Post

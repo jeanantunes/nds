@@ -13,6 +13,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -626,8 +627,13 @@ public class DiferencaEstoqueController extends BaseController {
 			DiferencaVO diferencaVO = obterDiferencaVO(tipoDiferenca,codigoProduto,edicaoProduto, diferenca, reparteAtual,tipoEstoque,pacotePadrao);
 			diferencaVO.setTipoDirecionamento(TipoDirecionamentoDiferenca.COTA);
 
-			incluirDiferencaEstoque(diferencaVO, tipoDiferenca);
 			
+			Long idDiferenca = incluirDiferencaEstoque(diferencaVO, tipoDiferenca);
+			Set<DiferencaVO> listaNovasDiferencasVO = 
+					(HashSet<DiferencaVO>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
+
+			diferencaVO = this.diferencaEstoqueService.verificarDiferencaComListaSessao(listaNovasDiferencasVO, 
+					diferencaVO, idDiferenca);
 			try {
 			
 				cadastrarRateioCotas(rateioCotas, diferencaVO);
@@ -835,7 +841,12 @@ public class DiferencaEstoqueController extends BaseController {
 		
 		Set<DiferencaVO> listaNovasDiferencasVO = 
 				(HashSet<DiferencaVO>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
-			
+		
+		
+		/*
+		 * Lista VO
+		 */
+		
 		if (listaNovasDiferencasVO == null) {
 			
 			listaNovasDiferencasVO = new HashSet<DiferencaVO>();
@@ -845,7 +856,14 @@ public class DiferencaEstoqueController extends BaseController {
 		
 		diferencaVO.setId(id);
 		
-		listaNovasDiferencasVO.add(diferencaVO);
+		
+		///
+		listaNovasDiferencasVO = this.diferencaEstoqueService.verificarDiferencasVOIguais(listaNovasDiferencasVO, diferencaVO);
+//		listaNovasDiferencasVO.add(diferencaVO);
+		
+		/*
+		 * lista diferenca
+		 */
 		
 		Set<Diferenca> listaDiferencas = (Set<Diferenca>)
 				this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
@@ -855,7 +873,10 @@ public class DiferencaEstoqueController extends BaseController {
 			listaDiferencas = new HashSet<Diferenca>();
 		}
 		
+		
+		//
 		id = this.gerarIdentificadorDiferenca(new ArrayList<Diferenca>(listaDiferencas));
+		//
 		
 		Date dataMovimentacao = this.dataMovimentacaoDiferenca();
 		
@@ -863,13 +884,23 @@ public class DiferencaEstoqueController extends BaseController {
 		
 		Diferenca diferenca = this.obterDiferenca(diferencaVO, tipoDiferenca, id, dataMovimentacao); 
 		
-		listaDiferencas.add(diferenca);
+		HashMap<Long, Set<Diferenca>> mapaLongListaDiferencas = this.diferencaEstoqueService.verificarDiferencasIguais(listaDiferencas, diferenca);
+		Set<Entry<Long, Set<Diferenca>>> entrySet = mapaLongListaDiferencas.entrySet();
+		Entry<Long, Set<Diferenca>> iterator = entrySet.iterator().next();
+		
+		listaDiferencas = iterator.getValue();
+		Long idListaUpdate = iterator.getKey();
+		
 		
 		this.httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE, listaNovasDiferencasVO);
 		
 		this.httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE, listaDiferencas);
 		
-		return diferenca.getId();
+		if(idListaUpdate != null) {
+			return idListaUpdate;
+		} else {
+			return diferenca.getId();
+		}
 	}
 	
 	private <E> Long gerarIdentificadorDiferenca(List<E> listaParaOperacao){
@@ -1080,15 +1111,14 @@ public class DiferencaEstoqueController extends BaseController {
 			rateioCotaVO.setDataMovimento(dataMovimentacao);
 			
 			this.validarNovoRateio(rateioCotaVO,diferencaVO);
-
-			if (!listaRateiosCadastrados.contains(rateioCotaVO)) {
-				
-				listaRateiosCadastrados.add(rateioCotaVO);
-			}
+			
+			mapaRateiosCadastrados = this.diferencaEstoqueService.verificarSeExisteListaNoMapa(mapaRateiosCadastrados, 
+						diferencaVO.getId(), rateioCotaVO);
+			
+			mapaRateiosCadastrados = this.diferencaEstoqueService.incluirSeNaoExisteNoMapa(mapaRateiosCadastrados, diferencaVO.getId(), 
+					rateioCotaVO);
 		}
-		
-		mapaRateiosCadastrados.put(diferencaVO.getId(), listaRateiosCadastrados);
-		
+
 		this.httpSession.setAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE, mapaRateiosCadastrados);
 	}
 

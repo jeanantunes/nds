@@ -87,7 +87,7 @@ public class EMS0129Picking2Header implements Serializable {
 		return separador3;
 	}
 	
-	@Field(offset = 49, length = 7, align = Align.RIGHT)
+	@Field(offset = 49, length = 8, align = Align.RIGHT)
 	@FixedFormatPattern("ddMMyyyy")
 	public Date getData() {
 		return data;
@@ -139,7 +139,7 @@ public class EMS0129Picking2Header implements Serializable {
 		return separador8;
 	}
 	
-	@Field(offset = 106, length = 13, paddingChar = '0')
+	@Field(offset = 106, length = 14, paddingChar = '0')
 	public String getCampoFixo3() {
 		return campoFixo3;
 	}
@@ -149,7 +149,7 @@ public class EMS0129Picking2Header implements Serializable {
 		return separador9;
 	}
 	
-	@Field(offset=24, length=18, paddingChar=' ')
+	@Field(offset=121, length=20, paddingChar=' ')
 	public String getFiller() {
 		return filler;
 	}

@@ -556,4 +556,14 @@ function verificarPermissaoAcesso(workspace) {
 	
 	return false;
 }
+
+function direcionar(novaTab, path){
+	    
+	$('#workspace').tabs('remove', $('#workspace').tabs('option','selected'));
+		
+	$(".tipsy").hide();
+	
+	$('#workspace').tabs('addTab', novaTab, contextPath + path + "?random=" + Math.random());
+}
+
 //@ sourceURL=util.js

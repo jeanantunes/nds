@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.AbastecimentoDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheDetalheDTO;
 import br.com.abril.nds.dto.ConsultaEncalheRodapeDTO;
+import br.com.abril.nds.dto.ContagemDevolucaoAgregationValuesDTO;
 import br.com.abril.nds.dto.ContagemDevolucaoDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
@@ -1568,9 +1569,12 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		
 		setUpForContagemDevolucao();
 		
-		Integer qtde = movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(
+		ContagemDevolucaoAgregationValuesDTO devolucao = movimentoEstoqueCotaRepository.obterQuantidadeContagemDevolucao(
 				obterFiltroDigitacaoContagemDevolucao());
-		Assert.assertTrue(qtde > 0);
+		
+		Assert.assertNotNull(devolucao);
+		
+		Assert.assertTrue(devolucao.getQuantidadeTotal() > 0);
 	}
 	
 	private FiltroDigitacaoContagemDevolucaoDTO obterFiltroDigitacaoContagemDevolucao() {

@@ -489,6 +489,32 @@ public class PdvController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING,"Tipo Expositor deve ser informado!");
 		}
 		
+		@SuppressWarnings("unchecked")
+		List<EnderecoAssociacaoDTO> listaEnderecosExibicao = 
+				(List<EnderecoAssociacaoDTO>) httpSession.getAttribute(LISTA_ENDERECOS_EXIBICAO);
+		
+		if(listaEnderecosExibicao == null || listaEnderecosExibicao.isEmpty()){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre ao menos um endereço para o PDV.");
+		}    
+		
+		boolean enderecoPdvCadastrado = false;
+		
+		for (EnderecoAssociacaoDTO item : listaEnderecosExibicao){
+			
+			if (item.getTipoEndereco()!=null){
+				
+				enderecoPdvCadastrado = true;
+				
+				break;
+			}
+		}
+		
+		if (!enderecoPdvCadastrado){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Altere ao menos um endereço e defina seu tipo para o PDV.");
+		}
+		
 		pdvDTO.setImagem((FileInputStream) httpSession.getAttribute(IMAGEM_PDV));
 		
 		pdvDTO.setPathAplicacao(servletContext.getRealPath(""));

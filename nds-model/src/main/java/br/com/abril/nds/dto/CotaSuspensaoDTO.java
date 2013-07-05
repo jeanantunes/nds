@@ -108,7 +108,7 @@ public class CotaSuspensaoDTO implements Serializable{
 	}
 
 	public void setVlrReparte(BigDecimal vlrReparte) {
-		this.vlrReparte = CurrencyUtil.formatarValor(vlrReparte);
+		this.vlrReparte = CurrencyUtil.formatarValor(vlrReparte == null ? BigDecimal.ZERO : vlrReparte);
 	}
 
 	public String getDividaAcumulada() {

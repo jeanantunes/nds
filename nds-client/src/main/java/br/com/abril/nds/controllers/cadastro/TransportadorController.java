@@ -461,7 +461,7 @@ public class TransportadorController extends BaseController {
 		
 		if (listaEnderecoAssociacao == null || listaEnderecoAssociacao.isEmpty()) {
 			
-			listaMensagens.add("Pelo menos um endereço deve ser cadastrado para o entregador.");
+			listaMensagens.add("Pelo menos um endereço deve ser cadastrado para o transportador.");
 		
 		} else {
 			
@@ -479,7 +479,7 @@ public class TransportadorController extends BaseController {
 
 			if (!temPrincipal) {
 				
-				listaMensagens.add("Deve haver ao menos um endereço principal para o entregador.");
+				listaMensagens.add("Deve haver ao menos um endereço principal para o transportador.");
 			}
 		}
 	}
@@ -502,7 +502,7 @@ public class TransportadorController extends BaseController {
 		}
 		
  		if (listaTelefones == null || listaTelefones.isEmpty()) {
-			mensagensValidacao.add("Pelo menos um telefone deve ser cadastrado para a cota.");
+			mensagensValidacao.add("Pelo menos um telefone deve ser cadastrado para o transportador.");
 		} else {
 			boolean temPrincipal = false;
 			
@@ -517,7 +517,7 @@ public class TransportadorController extends BaseController {
 			}
 			
 			if (!temPrincipal) {
-				mensagensValidacao.add("Deve haver ao menos um telefone principal para a cota.");
+				mensagensValidacao.add("Deve haver ao menos um telefone principal para o transportador.");
 			}
 		}
 	}

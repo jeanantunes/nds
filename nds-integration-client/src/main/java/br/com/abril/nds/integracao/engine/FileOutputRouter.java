@@ -15,7 +15,7 @@ import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
 
 
-@Component
+@Component("fileOutputRouter")
 public class FileOutputRouter extends AbstractRepository implements ContentBasedRouter {
 
 	@Autowired
