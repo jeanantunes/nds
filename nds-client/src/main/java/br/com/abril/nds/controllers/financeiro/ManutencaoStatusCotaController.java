@@ -503,21 +503,21 @@ public class ManutencaoStatusCotaController extends BaseController {
 			
 			if (novoHistoricoSituacaoCota.getNovaSituacao()==SituacaoCadastro.ATIVO){
 				
+				List<String> msgs = new ArrayList<String>();
+				
 				Long qtde = this.enderecoService.obterQtdEnderecoAssociadoCota(cota.getId());
 				
 			    if (qtde == null || qtde == 0){
 			    	
-			    	throw new ValidacaoException(
-			    			TipoMensagem.WARNING, 
-			    			"Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos um [Endereço] cadatrado!");
+			    	msgs.add(
+			    		"Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos um [Endereço] cadatrado!");
 			    }
 			    
 			    qtde = this.telefoneService.obterQtdTelefoneAssociadoCota(cota.getId());
 			    if (qtde == null || qtde == 0){
 			    	
-			    	throw new ValidacaoException(
-			    			TipoMensagem.WARNING, 
-			    			"Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos um [Telefone] cadatrado!");
+			    	msgs.add(
+			    		"Para alterar o status da cota para [Ativo] é necessário que a mesma possua ao menos um [Telefone] cadatrado!");
 			    }
 			    
 				if (this.distribuidorService.utilizaGarantiaPdv()){
@@ -526,9 +526,8 @@ public class ManutencaoStatusCotaController extends BaseController {
 					
 					if (qtde == null || qtde == 0){
 						
-						throw new ValidacaoException(
-								TipoMensagem.WARNING, 
-								"Para alterar o status da cota para [Ativo] é necessário que a mesma possua [Garantia] cadatrada!");
+						msgs.add(
+							"Para alterar o status da cota para [Ativo] é necessário que a mesma possua [Garantia] cadatrada!");
 					}
 				}
 				
@@ -536,9 +535,13 @@ public class ManutencaoStatusCotaController extends BaseController {
 				
 				if (qtde == null || qtde == 0){
 					
-					throw new ValidacaoException(
-							TipoMensagem.WARNING, 
-							"Para alterar o status da cota para [Ativo] é necessário que a mesma possua [Roteirização] cadatrada!");
+					msgs.add(
+						"Para alterar o status da cota para [Ativo] é necessário que a mesma possua [Roteirização] cadatrada!");
+				}
+				
+				if (!msgs.isEmpty()){
+					
+					throw new ValidacaoException(TipoMensagem.WARNING,msgs);
 				}
 			}
 	

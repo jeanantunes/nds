@@ -175,7 +175,9 @@ obterColunasGridPesquisaSemCota:function(){
 				 '<img src="'+ contextPath +'/images/ico_editar.gif" hspace="5" border="0px" title="Incluir Novo Status" />' +
 				 '</a>';			
 			
-				row.cell.acao = linkEdicao; 
+				row.cell.acao = linkEdicao;
+				
+				row.cell.statusAnterior = row.cell.statusAnterior ? row.cell.statusAnterior : "";
 			}
 			
 		});

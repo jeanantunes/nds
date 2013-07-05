@@ -1217,7 +1217,9 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
 		   .append(") and m.DATA = mfc.DATA ")
 		   .append("),0) ")
-		   .append(" ) as total, ")
+		   //adicionado * -1 a pedidos do negócio, o valor armazenado é da cota, mas deve refletir o que significa para o distribuidor
+		   //sendo assim, o que é debito para a cota é crédito para o distribuidor e vice versa
+		   .append(" ) * -1 as total, ")
 		   
 		   //saldo
 		   .append(" 0 as saldo, ")
