@@ -25,11 +25,11 @@ INSERT INTO movimento_estoque
 
 (select 
 	true,
-	'2013-04-04',
+	date(sysdate()),
 	'CARGA',
 	'APROVADO',
 	min(h.data_lancamento),
-	'2013-04-04',
+	date(sysdate()),
 	null,
 	66,
 	1,
@@ -51,6 +51,7 @@ INSERT INTO movimento_estoque
 	and ep.produto_edicao_id = me.produto_edicao_id
 	and h.produto_edicao_id = ep.produto_edicao_id
     and me.QTDE > 0
+	and h.produto_edicao_id is not null
     and me.produto_edicao_id not in 
 (select distinct(mec.produto_edicao_id) from movimento_estoque_cota mec, estoque_produto p
 where mec.tipo_movimento_id = 26 
@@ -63,3 +64,10 @@ set qtde_devolucao_fornecedor = coalesce(qtde_devolucao_fornecedor,0)+coalesce((
 from movimento_estoque me 
 where me.tipo_movimento_id = 66 
 and me.produto_edicao_id = estoque_produto.produto_edicao_id), 0);
+
+
+-- Robson Martins- Limpeza de tabela caso movimento precise ser reprocessado
+/*
+delete from movimento_estoque 
+where TIPO_MOVIMENTO_ID = 66;
+*/

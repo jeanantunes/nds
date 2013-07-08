@@ -73,4 +73,3 @@ update lancamento set lancamento.EXPEDICAO_ID = null;
 delete  from expedicao;
 
 delete from estoque_produto;
-

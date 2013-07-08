@@ -1,4 +1,4 @@
--- Query OK, 1288970 rows affected (2 min 44.77 sec)
+-- Query OK, 1288970 rows affected (6 min)
 -- Insere movimentos de estoque cota de reparte (tipo 21) baseado no estoque de produtos da cota (onde a quantidade recebida > 0)
 INSERT INTO MOVIMENTO_ESTOQUE_COTA
 (
@@ -18,14 +18,14 @@ INSERT INTO MOVIMENTO_ESTOQUE_COTA
 )
 (select 
 	true,
-	'2013-06-15',
+	date(sysdate()),
  	'APROVADO',
 	min(h.data_lancamento),
-	'2013-06-15',
+	date(sysdate()),
 	21,
 	1,
 	epc.QTDE_RECEBIDA,
- 	pe.id,
+ 	h.produto_edicao_id,
 	epc.cota_id,
 	epc.id,
 	'CARGA_INICIAL',
@@ -37,4 +37,5 @@ INSERT INTO MOVIMENTO_ESTOQUE_COTA
 		epc.produto_edicao_id = h.produto_edicao_id
     and epc.cota_id = h.cota_id
     and epc.qtde_recebida > 0
+	and h.produto_edicao_id is not null
 group by 1,2,3,5,6,7,8,9,10,11,12,13);

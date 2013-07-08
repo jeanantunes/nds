@@ -3,7 +3,8 @@
 alter table movimento_estoque_cota modify id bigint(20) AUTO_INCREMENT;
 
 -- Insere os movimentos de estoque da cota de encalhe (tipo_movimento_id = 26) onde houve devolução (estoque produto cota.QTDE_DEVOLVIDA > 0)
--- Query OK, 1288970 rows affected (4 min 1.14 sec)
+-- Alterar DATA_APROVACAO e DATA_CRIACAO para hoje
+-- Query OK, 1288970 rows affected (5 min)
 INSERT INTO MOVIMENTO_ESTOQUE_COTA
 (APROVADO_AUTOMATICAMENTE,
  DATA_APROVACAO,
@@ -21,10 +22,10 @@ INSERT INTO MOVIMENTO_ESTOQUE_COTA
 )
 (select 
 	true,
-	'2013-06-15',
+	date(sysdate()),
  	'APROVADO',
 	min(h.data_recolhimento),
-	'2013-06-15',
+	date(sysdate()),
 	26,
 	1,
 	epc.QTDE_DEVOLVIDA,
@@ -35,9 +36,20 @@ INSERT INTO MOVIMENTO_ESTOQUE_COTA
 	1
 
     from estoque_produto_cota epc,
-		 hvdn h
+		 hvnd h
    where 
 		epc.cota_id = h.cota_id
-	and pe.id = h.produto_edicao_id 
+	and epc.PRODUTO_EDICAO_ID = h.produto_edicao_id 
     and epc.QTDE_DEVOLVIDA > 0
+	and h.produto_edicao_id is not null
 group by 1,2,3,5,6,7,8,9,10,11,12,13);
+
+
+-- ====================######## ABAIXO Scripts Tests ###############============================
+
+select count(1) from MOVIMENTO_ESTOQUE_COTA;
+
+select count(1), produto_edicao_id from hvnd where QTDE_ENCALHE_HVCT > 0 group by 2;
+
+select date(sysdate());
+

@@ -1,6 +1,4 @@
--- Garante que não tenha nenhum movimentos para as cotas / distribuidor sem lançamento
--- Atualizar as datas para data do rollout
-
+-- Garante que não tenha nenhum movimento para as cotas / distribuidor sem lançamento
 insert into lancamento
 (alterado_interface,
 data_criacao,
@@ -14,15 +12,24 @@ tipo_lancamento,
 produto_edicao_id)
 (select 
 true,
-'2013-06-15',
+date(sysdate()),
 data_lancamento,
 data_lancamento,
 data_recolhimento,
 data_recolhimento,
-'2013-06-15',
+date(sysdate()),
 'EXPEDIDO',
 'LANCAMENTO',
 produto_edicao_id
 from hvnd 
 where produto_edicao_id not in (select produto_edicao_id from lancamento) 
-and data_recolhimento != '0000-00-00' and data_recolhimento != '' and data_recolhimento is not null);
+and data_recolhimento <> '0000-00-00' 
+and data_recolhimento is not null
+and produto_edicao_id is not null
+
+);
+
+
+select date(sysdate());
+
+desc lancamento;

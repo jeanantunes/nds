@@ -14,8 +14,13 @@ create table estqbox (
 -- deve ser executado pela console pois o arquivo nao esta local, está no servidor
 LOAD DATA LOCAL INFILE 'ESTQBOX.NEW' INTO TABLE estqbox COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\n';
 
-update estqbox set produto_edicao_id = (select pe.id from produto_edicao pe, produto p where
-p.id = pe.produto_id and p.codigo = produto and pe.numero_edicao = edicao);
+delete from estqbox where produto_edicao_id is null;
+
+update estqbox set produto_edicao_id = (select pe.id from produto_edicao pe, produto p 
+										where p.id = pe.produto_id 
+										and p.codigo = produto 
+										and pe.numero_edicao = edicao)
+;
 
 update estoque_produto
 set qtde=null, qtde_devolucao_encalhe=null, qtde_devolucao_fornecedor=null, qtde_suplementar=null;
@@ -39,7 +44,30 @@ select
     produto_edicao_id 
 from estqbox
 where box not in (92)
+-- and produto_edicao_id is not null
 group by 4;
+
+
+-- ====================######## ABAIXO Scripts Tests ###############============================
+
+select count(1) from estqbox;
+
+select * from estqbox where produto_edicao_id is null;
+select * from estqbox where edicao is null;
+select * from estqbox where produto is null;
+
+
+select q.* from produto_edicao pe, produto p, estqbox q 
+where p.id = pe.produto_id 
+and p.codigo != q.produto 
+and pe.numero_edicao != q.edicao;
+
+select * from estqbox q 
+where q.produto not in (select p.codigo from produto p)
+and	q.edicao not in	(select pe.numero_edicao from produto_edicao pe)
+;
+
+
 
 #update estoque_produto
 #set qtde = (select quantidade from estqbox
@@ -57,3 +85,4 @@ group by 4;
 #set qtde_suplementar = (select quantidade from estqbox
 #                       where estqbox.produto_edicao_id = estoque_produto.produto_edicao_id
 #                       and box=80);
+
