@@ -930,10 +930,6 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" cfc.VENDA_ENCALHE as vendaEncalhe, ")
 		   .append(" ((select count(cob.ID) from COBRANCA cob where cob.DT_EMISSAO = cfc.DT_CONSOLIDADO and cob.COTA_ID = cfc.COTA_ID) > 0) as cobrado, ")
 		   //data raiz postergado
-//		   .append(" (select max(cons.DT_CONSOLIDADO) from CONSOLIDADO_FINANCEIRO_COTA cons ")
-//		   .append("  where cons.DT_CONSOLIDADO < cfc.DT_CONSOLIDADO and ")
-//		   .append("  (select count(cob.id) from COBRANCA cob where cob.COTA_ID = cons.COTA_ID) = 0 and ")
-//		   .append("   cons.COTA_ID = cfc.COTA_ID")
 		   .append(" (select min(mfp.DATA_CRIACAO) from MOVIMENTO_FINANCEIRO_COTA mfp where mfp.COTA_ID = cfc.COTA_ID ")
 		   .append("  AND mfp.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoCredito) OR mfp.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoDebito) ")
 		   .append("  AND mfp.id IN (")
