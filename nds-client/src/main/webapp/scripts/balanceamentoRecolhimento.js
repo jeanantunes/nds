@@ -702,7 +702,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				display : 'Nova Data',
 				name : 'novaData',
 				width : 105,
-				sortable : false,
+				sortable : true,
 				align : 'center'
 			},{
 				display : 'Reprog.',
