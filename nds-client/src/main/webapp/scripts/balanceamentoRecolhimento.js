@@ -269,7 +269,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	},
 	
 	visualizarMatrizBalanceamentoPorDia : function(data) {
-		$(".hidden_buttons").show();
+		$(".hidden_buttons", balanceamentoRecolhimentoController.workspace).show();
 		$("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val(data);
 		
 		$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexOptions({
@@ -823,6 +823,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 		$("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val("");
 		
+		$(".hidden_buttons", balanceamentoRecolhimentoController.workspace).show();
+		
 		$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexOptions({
 			url: contextPath + "/devolucao/balanceamentoMatriz/exibirMatrizFornecedor",
 			preProcess: balanceamentoRecolhimentoController.executarPreProcessamento,
@@ -1145,7 +1147,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	},
 	
 	fecharGridBalanceamento : function() {
-		$(".hidden_buttons").hide();
+		$(".hidden_buttons", balanceamentoRecolhimentoController.workspace).hide();
 		$(".grids", balanceamentoRecolhimentoController.workspace).hide();
 		
 		balanceamentoRecolhimentoController.deselectCheckAll();
