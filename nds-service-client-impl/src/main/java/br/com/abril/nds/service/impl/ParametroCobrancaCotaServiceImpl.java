@@ -215,7 +215,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 								
 				parametroCobranca = new ParametroCobrancaCota();
 				parametroCobranca.setCota(cota);
-				parametroCobranca.setFatorVencimento(formaCobrancaDistribuidor.getFatorVencimento());
+				parametroCobranca.setFatorVencimento(formaCobrancaDistribuidor.getPoliticaCobranca().getFatorVencimento());
 				parametroCobranca.setFormasCobrancaCota(null);
 				parametroCobranca.setValorMininoCobranca(formaCobrancaDistribuidor.getValorMinimoEmissao());
 				
@@ -223,12 +223,12 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 					parametroCobranca.setUnificaCobranca(formaCobrancaDistribuidor.getPoliticaCobranca().isUnificaCobranca());
 				}
 				
-				if(formaCobrancaDistribuidor.getTipoCota() != null) {
-					parametroCobranca.setTipoCota(formaCobrancaDistribuidor.getTipoCota());
+				if(formaCobrancaDistribuidor.getPoliticaCobranca().getTipoCota() != null) {
+					parametroCobranca.setTipoCota(formaCobrancaDistribuidor.getPoliticaCobranca().getTipoCota());
 				}
 				
-				if(formaCobrancaDistribuidor.getFornecedorPadrao() != null) {
-					parametroCobranca.setFornecedorPadrao(formaCobrancaDistribuidor.getFornecedorPadrao());
+				if(parametroCobranca.getFornecedorPadrao() != null) {
+					parametroCobranca.setFornecedorPadrao(parametroCobranca.getFornecedorPadrao());
 				}
 				
 				PoliticaSuspensao ps = new PoliticaSuspensao();
@@ -661,11 +661,11 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		    	parametroCobranca = new ParametroCobrancaCota();
 		    	
 				parametroCobranca.setCota(c);
-				parametroCobranca.setFatorVencimento(formaCobrancaDistribuidor.getFatorVencimento());
+				parametroCobranca.setFatorVencimento(formaCobrancaDistribuidor.getPoliticaCobranca().getFatorVencimento());
 				parametroCobranca.setValorMininoCobranca(formaCobrancaDistribuidor.getValorMinimoEmissao());
 				parametroCobranca.setUnificaCobranca(formaCobrancaDistribuidor.getPoliticaCobranca().isUnificaCobranca());
-				parametroCobranca.setTipoCota(formaCobrancaDistribuidor.getTipoCota());
-				parametroCobranca.setFornecedorPadrao(formaCobrancaDistribuidor.getFornecedorPadrao());
+				parametroCobranca.setTipoCota(formaCobrancaDistribuidor.getPoliticaCobranca().getTipoCota());
+				parametroCobranca.setFornecedorPadrao(formaCobrancaDistribuidor.getPoliticaCobranca().getFornecedorPadrao());
 				parametroCobranca.setPoliticaSuspensao(null);
 				
 				parametroCobrancaCotaRepository.adicionar(parametroCobranca);
@@ -1156,7 +1156,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		fornecs.addAll(formaCobrancaDistribuidor.getFornecedores());
 		
 		formaCobranca.setFornecedores(fornecs);
-		formaCobranca.setFornecedorPadrao(formaCobrancaDistribuidor.getFornecedorPadrao());
 		formaCobranca.setInstrucoes(formaCobrancaDistribuidor.getInstrucoes());
 		
 		if(cota.getParametroCobranca() == null) {
@@ -1192,7 +1191,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		formaCobranca.setTaxaJurosMensal(formaCobrancaDistribuidor.getTaxaJurosMensal());
 		formaCobranca.setTaxaMulta(formaCobrancaDistribuidor.getTaxaMulta());
 		formaCobranca.setTipoCobranca(formaCobrancaDistribuidor.getTipoCobranca());
-		formaCobranca.setTipoCota(formaCobrancaDistribuidor.getTipoCota());
 		formaCobranca.setTipoFormaCobranca(formaCobrancaDistribuidor.getTipoFormaCobranca());
 		formaCobranca.setValorMinimoEmissao(formaCobrancaDistribuidor.getValorMinimoEmissao());
 		formaCobranca.setVencimentoDiaUtil(formaCobrancaDistribuidor.isVencimentoDiaUtil());

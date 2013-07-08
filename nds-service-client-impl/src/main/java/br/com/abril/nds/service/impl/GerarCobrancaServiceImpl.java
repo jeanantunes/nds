@@ -646,9 +646,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
 		else {
 			
-			if(formaCobrancaPrincipal.getFatorVencimento() != null){
+			if(formaCobrancaPrincipal.getPoliticaCobranca().getFatorVencimento() != null){
 				
-				fatorVencimento = formaCobrancaPrincipal.getFatorVencimento();
+				fatorVencimento = formaCobrancaPrincipal.getPoliticaCobranca().getFatorVencimento();
 			}
 			
 			tipoFormaCobrancaAntiga = formaCobrancaPrincipal.getTipoFormaCobranca();
