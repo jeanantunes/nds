@@ -40,7 +40,7 @@ $(function(){
 				style="width: 150px;">
 					<option value="">Selecione...</option>
 					<option value="REPARTE">Reparte</option>
-					<option value="ENCALHE" selected="selected">Encalhe</option>
+					<option value="ENCALHE">Encalhe</option>
 					<option value="PICKING" selected="selected">Picking</option>
 			</select></td>
 			<td width="105">

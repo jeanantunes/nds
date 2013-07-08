@@ -240,6 +240,10 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			}
 		}
 		
+		parametrosDistribuidor.setNomeArquivoInterfaceLED1(distribuidor.getArquivoInterfaceLedPicking1());
+		parametrosDistribuidor.setNomeArquivoInterfaceLED2(distribuidor.getArquivoInterfaceLedPicking2());
+		parametrosDistribuidor.setNomeArquivoInterfaceLED3(distribuidor.getArquivoInterfaceLedPicking3());
+		
 		// Impressão Interface LED
 		if (distribuidor.getTipoImpressaoInterfaceLED() != null)
 			parametrosDistribuidor.setImpressaoInterfaceLED(distribuidor.getTipoImpressaoInterfaceLED().toString());
@@ -501,19 +505,25 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		distribuidor.setTipoContabilizacaoCE(parametrosDistribuidor.getTipoContabilizacaoCE());
 		distribuidor.setSupervisionaVendaNegativa(parametrosDistribuidor.isSupervisionaVendaNegativa());
 		PoliticaChamadao politicaChamadao = distribuidor.getPoliticaChamadao();
+		
 		if(politicaChamadao == null) {
 		    politicaChamadao = new PoliticaChamadao();
 		    distribuidor.setPoliticaChamadao(politicaChamadao);
 		}
+		
 		Integer chamadaoDiasSuspensao = parametrosDistribuidor.getChamadaoDiasSuspensao();
 		politicaChamadao.setDiasSuspenso(chamadaoDiasSuspensao);
-		if (parametrosDistribuidor
-							.getChamadaoValorConsignado() != null) {
-			BigDecimal chamadaoConsignado = CurrencyUtil
-					.getBigDecimal(parametrosDistribuidor
-							.getChamadaoValorConsignado());
-			politicaChamadao.setValorConsignado(chamadaoConsignado);
+
+		BigDecimal chamadaoConsignado = null;
+		
+		if (parametrosDistribuidor.getChamadaoValorConsignado() != null) {
+			
+			chamadaoConsignado =
+				CurrencyUtil.getBigDecimal(parametrosDistribuidor.getChamadaoValorConsignado());
 		}
+		
+		politicaChamadao.setValorConsignado(chamadaoConsignado);
+		
 		ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor = null;
 		if (distribuidor.getParametrosRecolhimentoDistribuidor() != null) {
 			parametrosRecolhimentoDistribuidor = distribuidor.getParametrosRecolhimentoDistribuidor();
@@ -604,6 +614,10 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		} else {
 			distribuidor.setTipoImpressaoInterfaceLED(null);
 		}
+		
+		distribuidor.setArquivoInterfaceLedPicking1(parametrosDistribuidor.getNomeArquivoInterfaceLED1());;
+		distribuidor.setArquivoInterfaceLedPicking2(parametrosDistribuidor.getNomeArquivoInterfaceLED2());;
+		distribuidor.setArquivoInterfaceLedPicking3(parametrosDistribuidor.getNomeArquivoInterfaceLED3());;
 
 		// Impressão NECA / Danfe
 		if (parametrosDistribuidor.getImpressaoNECADANFE() != null && !parametrosDistribuidor.getImpressaoNECADANFE().isEmpty() && !parametrosDistribuidor.getImpressaoNECADANFE().equalsIgnoreCase(UNDEFINED)) {

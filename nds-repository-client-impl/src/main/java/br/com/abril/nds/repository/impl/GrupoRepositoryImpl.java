@@ -3,12 +3,14 @@ package br.com.abril.nds.repository.impl;
 import java.util.List;
 
 import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.GrupoRepository;
+import br.com.abril.nds.util.StringUtil;
 
 @Repository
 public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long> implements GrupoRepository {
@@ -27,11 +29,58 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
 	}
 	
 	@Override
+	public Boolean existeGrupoCota(String nome, Long idGrupo) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select case when count(grupoCota) = 0 then false else true end ");
+		hql.append(" from GrupoCota grupoCota where grupoCota.nome = :nome ");
+		
+		if (idGrupo != null) {
+			
+			hql.append(" and grupoCota.id <> :idGrupo ");
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("nome", nome);
+		
+		if (idGrupo != null) {
+			
+			query.setParameter("idGrupo", idGrupo);
+		}
+		
+		return (Boolean) query.uniqueResult();
+	}
+	
+	@Override
 	public Integer countTodosGrupos() {
 
 		Criteria criteria = super.getSession().createCriteria(GrupoCota.class); 
 		criteria.setProjection(Projections.rowCount());
 		return ((Long)criteria.list().get(0)).intValue();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<GrupoCota> obterGrupos(String sortname, String sortorder) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select grupoCota from GrupoCota grupoCota ");
+		
+		if(!StringUtil.isEmpty(sortname) && !StringUtil.isEmpty(sortorder)) {
+		
+			if (sortname.equals("nome")) {
+				hql.append(" ORDER BY grupoCota.nome ");
+			}
+			
+			hql.append(sortorder);
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+				
+		return query.list();
 	}
 	
 }

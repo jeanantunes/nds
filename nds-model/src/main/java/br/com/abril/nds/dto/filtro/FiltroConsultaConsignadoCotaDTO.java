@@ -26,6 +26,15 @@ public class FiltroConsultaConsignadoCotaDTO implements Serializable {
 	
 	private ColunaOrdenacaoConsultaConsignadoCota ordenacaoColuna;
 	
+	public FiltroConsultaConsignadoCotaDTO() {
+		
+	}
+	
+	public FiltroConsultaConsignadoCotaDTO(Long idCota) {
+		
+		this.idCota = idCota;
+	}
+	
 	public enum ColunaOrdenacaoConsultaConsignadoCota {
 
 		COTA("cota");

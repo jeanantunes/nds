@@ -1,6 +1,5 @@
 package br.com.abril.nds.integracao.engine;
 
-
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -20,8 +19,7 @@ import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
-@Component
-
+@Component("dbImportDataRouter")
 public class DBImportDataRouter extends AbstractRepository implements ContentBasedRouter {
 
 	@Autowired

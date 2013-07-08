@@ -210,9 +210,60 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	
 	@SuppressWarnings("unchecked")
 	public List<CotaSuspensaoDTO> obterCotasSujeitasSuspensao(String sortOrder,
-			String sortColumn, Integer inicio, Integer rp) {
+			String sortColumn, Integer inicio, Integer rp, Date dataOperacao) {
 
-		StringBuilder sql = new StringBuilder(querySuspensaoCota);
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("SELECT COTA_.ID AS IDCOTA, ")
+		.append("      COTA_.NUMERO_COTA AS NUMCOTA, ")
+		.append("      PESSOA_.NOME AS NOME, ")
+		.append("      PESSOA_.RAZAO_SOCIAL AS RAZAOSOCIAL, ")
+		.append("			   (SELECT SUM(ESTOQUE.QTDE_RECEBIDA * PRODEDICAO.PRECO_CUSTO) AS TOTALPRODUTO FROM ESTOQUE_PRODUTO_COTA ESTOQUE  ")
+		.append("			JOIN PRODUTO_EDICAO PRODEDICAO ON(ESTOQUE.PRODUTO_EDICAO_ID=PRODEDICAO.ID)  ")
+		.append("			WHERE ESTOQUE.COTA_ID=COTA_.ID)  ")
+		.append("		   AS VLRCONSIGNADO, (SELECT SUM(MOVIMENTOCOTA.QTDE * PRODEDICAO.PRECO_CUSTO) AS CUTOMOVIMENTO FROM MOVIMENTO_ESTOQUE_COTA MOVIMENTOCOTA ")
+		.append("			JOIN PRODUTO_EDICAO PRODEDICAO ON(MOVIMENTOCOTA.PRODUTO_EDICAO_ID=PRODEDICAO.ID)  ")
+		.append("			JOIN TIPO_MOVIMENTO TIPOMOVIMENTO ON(MOVIMENTOCOTA.TIPO_MOVIMENTO_ID = TIPOMOVIMENTO.ID)  ")
+		.append("			WHERE MOVIMENTOCOTA.COTA_ID = COTA_.ID AND MOVIMENTOCOTA.DATA <= :dataOperacao  ")
+		.append("			AND TIPOMOVIMENTO.OPERACAO_ESTOQUE = 'ENTRADA')  ")
+		.append("	   AS VLRREPARTE, CASE WHEN POLITICA_COBRANCA.ACUMULA_DIVIDA THEN (SELECT VALOR FROM DIVIDA WHERE STATUS = 'EM_ABERTO' AND COTA_ID = COTA_.ID ORDER BY DATA DESC LIMIT 1) ELSE ")
+		.append("           (SELECT  SUM(COBRANCA_.VALOR) FROM COBRANCA COBRANCA_  ")
+		.append("						WHERE  COBRANCA_.COTA_ID=COTA_.ID  ")
+		.append("						AND COBRANCA_.STATUS_COBRANCA='NAO_PAGO'  ")
+		.append("						AND COBRANCA_.DT_VENCIMENTO < :dataOperacao " )
+		.append("						and COBRANCA_.TIPO_DOCUMENTO = :tipoDocumento ")
+		.append(") 			END AS DIVIDAACUMULADA, (SELECT MIN(COBRANCA_.DT_VENCIMENTO) DATAABERTURA FROM COBRANCA COBRANCA_  ")
+		.append("			WHERE  COBRANCA_.COTA_ID=COTA_.ID  ")
+		.append("			AND COBRANCA_.STATUS_COBRANCA='NAO_PAGO' and COBRANCA_.TIPO_DOCUMENTO = :tipoDocumento ) AS DATAABERTURA  ")
+		.append("FROM COTA AS COTA_ ")
+		.append("JOIN PARAMETRO_COBRANCA_COTA POLITICACOTA ON(POLITICACOTA.COTA_ID=COTA_.ID) ")
+		.append("JOIN DISTRIBUIDOR AS POLITICADISTRIB ")
+		.append("JOIN POLITICA_COBRANCA AS POLITICA_COBRANCA ON POLITICA_COBRANCA.DISTRIBUIDOR_ID = POLITICADISTRIB.ID ")
+		.append("JOIN PESSOA AS PESSOA_ ON (PESSOA_.ID=COTA_.PESSOA_ID) ")
+		.append("WHERE COTA_.SUGERE_SUSPENSAO IS TRUE ")
+		.append("AND POLITICA_COBRANCA.PRINCIPAL IS TRUE ")
+		.append("AND SITUACAO_CADASTRO = 'ATIVO' ")
+		.append("AND ( 	  (POLITICACOTA.NUM_ACUMULO_DIVIDA IS NOT NULL 		AND POLITICACOTA.NUM_ACUMULO_DIVIDA = ( ")
+		.append("					SELECT MAX(QTDEDIVIDASATIVAS) FROM (SELECT COUNT(ACUMDIVIDA.DIVIDA_ID) AS QTDEDIVIDASATIVAS FROM HISTORICO_ACUMULO_DIVIDA ACUMDIVIDA WHERE ACUMDIVIDA.STATUS='ATIVA'GROUP BY ACUMDIVIDA.DIVIDA_ID) AS PIORDIVIDA) ")
+		.append("	   ) ")
+		.append("	   OR ")
+		.append("	   (POLITICACOTA.VALOR_SUSPENSAO IS NOT NULL AND  POLITICACOTA.VALOR_SUSPENSAO < (SELECT SUM(VALOR) FROM DIVIDA WHERE DIVIDA.COTA_ID = COTA_.ID AND DIVIDA.DATA = (SELECT MAX(DATA) FROM DIVIDA DIVIDA ")
+		.append("																	 JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
+		.append("																	 WHERE DIVIDA.COTA_ID=COTA_.ID ")
+		.append("																	 AND DIVIDA.STATUS='EM_ABERTO' ")
+		.append("																	 AND COBRANCA_.DT_VENCIMENTO <= :dataOperacao and COBRANCA_.TIPO_DOCUMENTO = :tipoDocumento )) ")
+		.append("	   ) ")
+		.append("	   OR ")
+		.append("	   (POLITICADISTRIB.NUM_ACUMULO_DIVIDA IS NOT NULL 		AND POLITICADISTRIB.NUM_ACUMULO_DIVIDA = ( ")
+		.append("					SELECT MAX(QTDEDIVIDASATIVAS) FROM (SELECT COUNT(ACUMDIVIDA.DIVIDA_ID) AS QTDEDIVIDASATIVAS FROM HISTORICO_ACUMULO_DIVIDA ACUMDIVIDA WHERE ACUMDIVIDA.STATUS='ATIVA'GROUP BY ACUMDIVIDA.DIVIDA_ID) AS PIORDIVIDA) ")
+		.append("	   ) ")
+		.append("	   OR ")
+		.append("	   (POLITICADISTRIB.VALOR_SUSPENSAO IS NOT NULL 			AND  POLITICADISTRIB.VALOR_SUSPENSAO < (SELECT SUM(VALOR) FROM DIVIDA WHERE DIVIDA.COTA_ID = COTA_.ID AND DIVIDA.DATA  = (SELECT MAX(DATA) FROM DIVIDA DIVIDA ")
+		.append("																	 JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
+		.append("																	 WHERE DIVIDA.COTA_ID=COTA_.ID ")
+		.append("																	 AND DIVIDA.STATUS='EM_ABERTO' ")
+		.append("																	 AND COBRANCA_.DT_VENCIMENTO <= :dataOperacao and COBRANCA_.TIPO_DOCUMENTO = :tipoDocumento)) ")
+		.append("	   )) ");
 
 		sql.append(obterOrderByCotasSujeitasSuspensao(sortOrder, sortColumn));
 
@@ -225,6 +276,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 				.addScalar("vlrConsignado").addScalar("vlrReparte")
 				.addScalar("dividaAcumulada").addScalar("nome")
 				.addScalar("razaoSocial").addScalar("dataAbertura");
+		
+		query.setParameter("tipoDocumento", "BOLETO");
+		query.setParameter("dataOperacao", dataOperacao);
 
 		if (inicio != null && rp != null) {
 			query.setInteger("inicio", inicio);
@@ -339,11 +393,45 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	}
 
 	@Override
-	public Long obterTotalCotasSujeitasSuspensao() {
+	public Long obterTotalCotasSujeitasSuspensao(Date dataOperacao) {
 
-		StringBuilder sql = new StringBuilder(queryCountSuspensaoCota);
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append("SELECT COUNT(COTA_.ID) ")
+		.append("FROM COTA AS COTA_ ")
+		.append("JOIN PARAMETRO_COBRANCA_COTA POLITICACOTA ON(POLITICACOTA.COTA_ID=COTA_.ID) ")
+		.append("JOIN DISTRIBUIDOR AS POLITICADISTRIB ")
+		.append("JOIN POLITICA_COBRANCA AS POLITICA_COBRANCA ON POLITICA_COBRANCA.DISTRIBUIDOR_ID = POLITICADISTRIB.ID ")
+		.append("JOIN PESSOA AS PESSOA_ ON (PESSOA_.ID=COTA_.PESSOA_ID) ")
+		.append("WHERE COTA_.SUGERE_SUSPENSAO IS TRUE ")
+		.append("AND POLITICA_COBRANCA.PRINCIPAL IS TRUE ")
+		.append("AND SITUACAO_CADASTRO = 'ATIVO' ")
+		.append("AND ( 	  (POLITICACOTA.NUM_ACUMULO_DIVIDA IS NOT NULL 		AND POLITICACOTA.NUM_ACUMULO_DIVIDA = ( ")
+		.append("					SELECT MAX(QTDEDIVIDASATIVAS) FROM (SELECT COUNT(ACUMDIVIDA.DIVIDA_ID) AS QTDEDIVIDASATIVAS FROM HISTORICO_ACUMULO_DIVIDA ACUMDIVIDA WHERE ACUMDIVIDA.STATUS='ATIVA'GROUP BY ACUMDIVIDA.DIVIDA_ID) AS PIORDIVIDA) ")
+		.append("	   ) ")
+		.append("	   OR ")
+		.append("	   (POLITICACOTA.VALOR_SUSPENSAO IS NOT NULL AND  POLITICACOTA.VALOR_SUSPENSAO < (SELECT SUM(VALOR) FROM DIVIDA WHERE DIVIDA.COTA_ID = COTA_.ID AND DIVIDA.DATA = (SELECT MAX(DATA) FROM DIVIDA DIVIDA ")
+		.append("																	 JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
+		.append("																	 WHERE DIVIDA.COTA_ID=COTA_.ID ")
+		.append("																	 AND DIVIDA.STATUS='EM_ABERTO' ")
+		.append("																	 AND COBRANCA_.DT_VENCIMENTO <= :dataOperacao and COBRANCA_.TIPO_DOCUMENTO = :tipoDocumento )) ")
+		.append("	   ) ")
+		.append("	   OR ")
+		.append("	   (POLITICADISTRIB.NUM_ACUMULO_DIVIDA IS NOT NULL 		AND POLITICADISTRIB.NUM_ACUMULO_DIVIDA = ( ")
+		.append("					SELECT MAX(QTDEDIVIDASATIVAS) FROM (SELECT COUNT(ACUMDIVIDA.DIVIDA_ID) AS QTDEDIVIDASATIVAS FROM HISTORICO_ACUMULO_DIVIDA ACUMDIVIDA WHERE ACUMDIVIDA.STATUS='ATIVA'GROUP BY ACUMDIVIDA.DIVIDA_ID) AS PIORDIVIDA) ")
+		.append("	   ) ")
+		.append("	   OR ")
+		.append("	   (POLITICADISTRIB.VALOR_SUSPENSAO IS NOT NULL 			AND  POLITICADISTRIB.VALOR_SUSPENSAO < (SELECT SUM(VALOR) FROM DIVIDA WHERE DIVIDA.COTA_ID = COTA_.ID AND DIVIDA.DATA  = (SELECT MAX(DATA) FROM DIVIDA DIVIDA ")
+		.append("																	 JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
+		.append("																	 WHERE DIVIDA.COTA_ID=COTA_.ID ")
+		.append("																	 AND DIVIDA.STATUS='EM_ABERTO' ")
+		.append("																	 AND COBRANCA_.DT_VENCIMENTO <= :dataOperacao and COBRANCA_.TIPO_DOCUMENTO = :tipoDocumento)) ")
+		.append("	   )) ");
 
 		Query query = getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("tipoDocumento", "BOLETO");
+		query.setParameter("dataOperacao", dataOperacao);
 
 		Long qtde = ((BigInteger) query.uniqueResult()).longValue();
 
@@ -2799,4 +2887,18 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Integer buscarNumeroCotaPorId(Long idCota) {
+
+		Criteria criteria = getSession().createCriteria(Cota.class);
+		
+		criteria.add(Restrictions.eq("id", idCota));
+		
+		criteria.setProjection(Projections.property("numeroCota"));
+		
+		return (Integer) criteria.uniqueResult();
+	}
 }

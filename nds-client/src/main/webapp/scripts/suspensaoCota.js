@@ -116,7 +116,7 @@ var suspensaoCotaController = $.extend(true, {
 					
 				},
 			},
-			form: $("#dialog-detalhes", this.workspace).parents("form")
+			form: $("#dialog-detalhes", suspensaoCotaController.workspace).parents("form")
 		});
 	},
 	
@@ -162,7 +162,7 @@ var suspensaoCotaController = $.extend(true, {
 					$( this ).dialog( "close" );
 				}
 			},
-			form: $("#dialog-suspender", this.workspace).parents("form")
+			form: $("#dialog-suspender", suspensaoCotaController.workspace).parents("form")
 		});	
 		      
 	},
@@ -181,7 +181,7 @@ var suspensaoCotaController = $.extend(true, {
 					
 				}
 			},
-			form: $("#dialog-nao-selecionada", this.workspace).parents("form")
+			form: $("#dialog-nao-selecionada", suspensaoCotaController.workspace).parents("form")
 		});	
 	},
 	
@@ -217,7 +217,7 @@ var suspensaoCotaController = $.extend(true, {
 						$( this ).dialog( "close" );
 					}
 				},
-				form: $("#divRelatorio", this.workspace).parents("form")
+				form: $("#divRelatorio", suspensaoCotaController.workspace).parents("form")
 			});
 		} else {
 			$(".suspensaoGrid", suspensaoCotaController.workspace).flexReload();
@@ -251,7 +251,7 @@ var suspensaoCotaController = $.extend(true, {
 					$( this ).dialog( "close" );
 				}
 			},
-			form: $("#dialog-excluir", this.workspace).parents("form")
+			form: $("#dialog-excluir", suspensaoCotaController.workspace).parents("form")
 		});
 	},
 	

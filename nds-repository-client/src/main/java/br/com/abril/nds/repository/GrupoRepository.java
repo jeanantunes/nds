@@ -18,6 +18,10 @@ public interface GrupoRepository extends Repository<GrupoCota,Long> {
 	 */
 	List<GrupoCota> obterTodosGrupos() ;
 
+	Boolean existeGrupoCota(String nome, Long idGrupo);
+	
 	Integer countTodosGrupos();
+
+	List<GrupoCota> obterGrupos(String sortname, String sortorder);
 
 }

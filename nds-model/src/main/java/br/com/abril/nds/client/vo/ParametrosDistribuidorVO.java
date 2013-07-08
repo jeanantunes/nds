@@ -104,6 +104,12 @@ public class ParametrosDistribuidorVO {
     // Frame Impressão Interface LED
     // MODELO_1 ou MODELO_2 ou MODELO_3
     private String impressaoInterfaceLED;
+    
+    private String nomeArquivoInterfaceLED1;
+    
+    private String nomeArquivoInterfaceLED2;
+    
+    private String nomeArquivoInterfaceLED3;
 
     // Frame Impressão NECA / DANFE
     // MODELO_1, MODELO_2 ou DANFE
@@ -634,7 +640,49 @@ public class ParametrosDistribuidorVO {
         this.impressaoInterfaceLED = impressaoInterfaceLED;
     }
 
-    public String getImpressaoNECADANFE() {
+    /**
+	 * @return the nomeArquivoInterfaceLED1
+	 */
+	public String getNomeArquivoInterfaceLED1() {
+		return nomeArquivoInterfaceLED1;
+	}
+
+	/**
+	 * @param nomeArquivoInterfaceLED1 the nomeArquivoInterfaceLED1 to set
+	 */
+	public void setNomeArquivoInterfaceLED1(String nomeArquivoInterfaceLED1) {
+		this.nomeArquivoInterfaceLED1 = nomeArquivoInterfaceLED1;
+	}
+
+	/**
+	 * @return the nomeArquivoInterfaceLED2
+	 */
+	public String getNomeArquivoInterfaceLED2() {
+		return nomeArquivoInterfaceLED2;
+	}
+
+	/**
+	 * @param nomeArquivoInterfaceLED2 the nomeArquivoInterfaceLED2 to set
+	 */
+	public void setNomeArquivoInterfaceLED2(String nomeArquivoInterfaceLED2) {
+		this.nomeArquivoInterfaceLED2 = nomeArquivoInterfaceLED2;
+	}
+
+	/**
+	 * @return the nomeArquivoInterfaceLED3
+	 */
+	public String getNomeArquivoInterfaceLED3() {
+		return nomeArquivoInterfaceLED3;
+	}
+
+	/**
+	 * @param nomeArquivoInterfaceLED3 the nomeArquivoInterfaceLED3 to set
+	 */
+	public void setNomeArquivoInterfaceLED3(String nomeArquivoInterfaceLED3) {
+		this.nomeArquivoInterfaceLED3 = nomeArquivoInterfaceLED3;
+	}
+
+	public String getImpressaoNECADANFE() {
         return impressaoNECADANFE;
     }
 

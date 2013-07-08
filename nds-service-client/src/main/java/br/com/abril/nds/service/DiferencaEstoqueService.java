@@ -2,10 +2,12 @@ package br.com.abril.nds.service;
 
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import br.com.abril.nds.client.vo.DiferencaVO;
 import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.dto.DetalheDiferencaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDiferencaEstoqueDTO;
@@ -121,5 +123,28 @@ public interface DiferencaEstoqueService {
 	public Diferenca lancarDiferenca(Diferenca diferenca, TipoEstoque tipoEstoque);
 	
 	void validarDadosParaImpressaoNaData(String dataMovimentoFormatada);
+
+	HashMap<Long, Set<Diferenca>> verificarDiferencasIguais(
+			Set<Diferenca> listaDiferencas,
+			Diferenca diferenca);
+
+	Set<DiferencaVO> verificarDiferencasVOIguais(
+			Set<DiferencaVO> listaNovasDiferencasVO, DiferencaVO diferencaVO);
+
+	Map<Long, List<RateioCotaVO>> insercaoDeNovosValoresNaMesmaCota(
+			Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados,
+			List<RateioCotaVO> listaNovosRateios);
+
+	Map<Long, List<RateioCotaVO>> verificarSeExisteListaNoMapa(
+			Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados, Long id,
+			RateioCotaVO rateioCotaVO);
+
+	DiferencaVO verificarDiferencaComListaSessao(
+			Set<DiferencaVO> listaNovasDiferencasVO, DiferencaVO diferencaVO,
+			Long idDiferenca);
+
+	Map<Long, List<RateioCotaVO>> incluirSeNaoExisteNoMapa(
+			Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados, Long id,
+			RateioCotaVO rateioCotaVO);
 	
 }

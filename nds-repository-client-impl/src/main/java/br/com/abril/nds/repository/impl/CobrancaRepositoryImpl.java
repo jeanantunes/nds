@@ -45,7 +45,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	@SuppressWarnings("unchecked")
 	public List<Cobranca> obterCobrancasDaCotaEmAberto(Long idCota, boolean naoObtemCobrancaOrigemNegociacao) {		
 		
-		Criteria criteria = getSession().createCriteria(Cobranca.class,"cobranca");
+		Criteria criteria = getSession().createCriteria(Boleto.class,"cobranca");
 		
 		criteria.createAlias("cobranca.cota", "cota");
 		

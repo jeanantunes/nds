@@ -1,6 +1,8 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -10,12 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaGarantiaDTO;
+import br.com.abril.nds.dto.DebitoCreditoDTO;
 import br.com.abril.nds.dto.FormaCobrancaCaucaoLiquidaDTO;
 import br.com.abril.nds.dto.ImovelDTO;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.NotaPromissoriaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.CaucaoLiquida;
 import br.com.abril.nds.model.cadastro.Cheque;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -27,10 +32,20 @@ import br.com.abril.nds.model.cadastro.TipoCobrancaCotaGarantia;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
+import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
+import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
+import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.DebitoCreditoCotaService;
+import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.service.TipoMovimentoFinanceiroService;
+import br.com.abril.nds.service.UsuarioService;
+import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
@@ -51,16 +66,38 @@ public class CotaGarantiaController extends BaseController {
 	private CotaGarantiaService cotaGarantiaService;
 	
 	@Autowired
+	private DebitoCreditoCotaService debitoCreditoCotaService;
+	
+	@Autowired
+	private TipoMovimentoFinanceiroService tipoMovimentoFinanceiroService;
+	
+	@Autowired
+	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
+	
+	@Autowired
 	private CotaService cotaService;
+	
+	@Autowired
+	private UsuarioService usuarioService;
+	
+	@Autowired
+	private BancoService bancoService;
 	
 	@Autowired
 	private Result result;
 	
     public CotaGarantiaController() {
-		
-		super();
+    	
+    	super();
 	}
 
+    @Post
+	@Path("/carregarBancos")
+	public void carregarBancos(){
+    	
+		result.use(Results.json()).from(bancoService.getComboBancos(true), "result").recursive().serialize();
+	}
+    
 	@Post
 	@Path("/salvaNotaPromissoria.json")
 	public void salvaNotaPromissoria(NotaPromissoria notaPromissoria,
@@ -109,7 +146,57 @@ public class CotaGarantiaController extends BaseController {
 						"Outras garantias salvas com Sucesso."), "result").recursive()
 				.serialize();
 	}
+	
+	/**
+	 * Lança Débitos e Créditos no lançamento ou Resgate de Caução Líquida
+	 * @param valorParcela
+	 * @param qtdParcelas
+	 * @param idCota
+	 * @param grupoFinanceiro
+	 * @param operacaoFinaceira
+	 */
+	private void lancarDebitoCreditoCaucaoLiquida(BigDecimal valorParcela, 
+			                                      Integer qtdParcelas, 
+			                                      Long idCota, 
+			                                      GrupoMovimentoFinaceiro grupoFinanceiro, 
+			                                      OperacaoFinaceira operacaoFinaceira){
+		
+		Cota cota = cotaService.obterPorId(idCota);
+		
+		for (int i = 1; i<=qtdParcelas; i++){
+			
+			DebitoCreditoDTO debitoCreditoDTO = new DebitoCreditoDTO();
+			
+			Date dataAtual = Calendar.getInstance().getTime();
+			
+			debitoCreditoDTO.setDataLancamento(DateUtil.formatarDataPTBR(dataAtual));
+			
+			debitoCreditoDTO.setDataVencimento(DateUtil.formatarDataPTBR(DateUtil.adicionarDias(dataAtual, i)));
+			
+			debitoCreditoDTO.setValor(String.valueOf(valorParcela.floatValue()));
 
+			TipoMovimentoFinanceiro tipoMovimento = this.tipoMovimentoFinanceiroService.obterTipoMovimentoFincanceiroPorGrupoFinanceiroEOperacaoFinanceira(grupoFinanceiro, operacaoFinaceira);
+			
+			debitoCreditoDTO.setTipoMovimentoFinanceiro(tipoMovimento);
+
+			debitoCreditoDTO.setPermiteAlteracao(false);
+			
+			debitoCreditoDTO.setObservacao("Caucao Liquida");
+			
+			debitoCreditoDTO.setNomeCota(cota.getPessoa().getNome());
+			
+			debitoCreditoDTO.setNumeroCota(cota.getNumeroCota());
+			
+			debitoCreditoDTO.setIdUsuario(usuarioService.getUsuarioLogado().getId());
+			
+			MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = this.debitoCreditoCotaService.gerarMovimentoFinanceiroCotaDTO(debitoCreditoDTO);
+			
+            movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
+			
+			this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
+		}
+	}
+	
 	/**
 	 * Salva CaucaoLiquida
 	 * @param listaCaucaoLiquida
@@ -119,6 +206,10 @@ public class CotaGarantiaController extends BaseController {
 	 */
 	@Post("/salvaCaucaoLiquida.json")
 	public void salvaCaucaoLiquida(List<CaucaoLiquida> listaCaucaoLiquida, Long idCota, FormaCobrancaCaucaoLiquidaDTO formaCobranca) throws Exception {
+		
+		if(idCota==null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não informada.");
+		}
 		
 		if(formaCobranca.getTipoCobranca()==null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha uma Forma de Pagamento.");
@@ -138,23 +229,97 @@ public class CotaGarantiaController extends BaseController {
 		formaCobranca = formatarFormaCobranca(formaCobranca);
 		
 		cotaGarantiaService.salvarCaucaoLiquida(listaCaucaoLiquida, idCota, formaCobranca);
-		
+
+		this.lancarDebitoCreditoCaucaoLiquida(formaCobranca.getValorParcela(), 
+				                              formaCobranca.getQtdeParcelas(), 
+				                              idCota,GrupoMovimentoFinaceiro.LANCAMENTO_CAUCAO_LIQUIDA, 
+				                              OperacaoFinaceira.DEBITO);
+
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Caução Líquida salva com Sucesso."), "result").recursive().serialize();
+	}
+
+	/**
+	 * Resgata valor CaucaoLiquida
+	 * @param valor
+	 * @param idCota
+	 * @throws Exception
+	 */
+	@Post("/resgataCaucaoLiquida.json")
+	public void resgataCaucaoLiquida(BigDecimal valor, Long idCota) throws Exception {
+		
+		if(idCota==null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não informada.");
+		}
+
+		List<CaucaoLiquida> caucaoLiquidasCota = cotaGarantiaService.obterCaucaoLiquidasCota(idCota);
+		
+		int indexCaucaoLiquidaAtual = caucaoLiquidasCota.size() - 1; 
+		
+		CaucaoLiquida caucaoLiquidaAtual = caucaoLiquidasCota.get(indexCaucaoLiquidaAtual);
+		
+		BigDecimal valorAtual = caucaoLiquidaAtual.getValor();
+		
+        if(valorAtual.compareTo(BigDecimal.ZERO) == 0){
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Não há resgate à ser feito !"));
+		}
+		
+		if(valorAtual.compareTo(valor) < 0){
+			
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING,"Valor do resgate ultrapassa o valor do Caução Líquida !"));
+		}
+		
+		BigDecimal novoValor = valorAtual.subtract(valor);
+		
+		CaucaoLiquida novaCaucaoLiquida = new CaucaoLiquida();
+		novaCaucaoLiquida.setAtualizacao(new Date());
+		novaCaucaoLiquida.setValor(novoValor);
+		
+		this.validaCaucaoLiquida(novaCaucaoLiquida);
+		
+		caucaoLiquidasCota.add(novaCaucaoLiquida);
+		
+		FormaCobrancaCaucaoLiquidaDTO formaCobrancaDTO = cotaGarantiaService.obterDadosCaucaoLiquida(idCota);
+		
+		formaCobrancaDTO.setIdCaucaoLiquida(null);
+		
+		formaCobrancaDTO.setIdFormaCobrancaCaucaoLiquida(null);
+		
+		formaCobrancaDTO.setValor(novoValor);
+		
+		if (novoValor.compareTo(BigDecimal.ZERO) == 0){
+		
+			formaCobrancaDTO.setQtdeParcelas(0);
+		
+		    formaCobrancaDTO.setValorParcela(BigDecimal.ZERO);
+		}
+
+		cotaGarantiaService.salvarCaucaoLiquida(Arrays.asList(novaCaucaoLiquida), idCota, formaCobrancaDTO);
+
+		this.lancarDebitoCreditoCaucaoLiquida(valor, 
+				                              1, 
+				                              idCota, 
+                                              GrupoMovimentoFinaceiro.RESGATE_CAUCAO_LIQUIDA, 
+                                              OperacaoFinaceira.CREDITO);
+
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Valor de "+CurrencyUtil.formatarValorComSimbolo(valor)+" resgatado com Sucesso."), "result").recursive().serialize();
 	}
 	
 	@Post("/getByCota.json")
 	public void getByCota(Long idCota, ModoTela modoTela, Long idHistorico) {
 		
 	    if (ModoTela.CADASTRO_COTA == modoTela) {
-	    	
+
 	        CotaGarantiaDTO<CotaGarantia> cotaGarantia = cotaGarantiaService.getByCota(idCota);
 	        
 	        if (cotaGarantia != null && cotaGarantia.getCotaGarantia() != null) {	
 	        	
-	            result.use(Results.json()).from(cotaGarantia,"result").serialize();
-	        }else{			
+	            this.result.use(PlainJSONSerialization.class).from(cotaGarantia, "result").serialize();
+	        
+	        } else {
 	        	
-	            result.use(CustomJson.class).from("OK").serialize();
+	        	this.result.use(Results.json()).from("OK").serialize();
 	        }	
 	    } 
 	    else {
@@ -163,10 +328,11 @@ public class CotaGarantiaController extends BaseController {
 	        
 	        if (cotaGarantia != null) {
 	        	
-	            result.use(CustomJson.class).from(cotaGarantia).serialize();  
+	        	this.result.use(PlainJSONSerialization.class).from(cotaGarantia, "result").serialize();
+	        	
 	        } else {
 	        	
-	            result.use(CustomJson.class).from("OK").serialize();      
+	        	this.result.use(Results.json()).from("OK").serialize();      
 	        }
 	    }
 	}
@@ -184,17 +350,26 @@ public class CotaGarantiaController extends BaseController {
             
             if (dadosCaucaoLiquida != null) {
             	
-                result.use(CustomJson.class).from(dadosCaucaoLiquida).serialize();
+            	this.result.use(CustomJson.class).from(dadosCaucaoLiquida).serialize();
             } else {
             	
-                result.use(CustomJson.class).from("OK").serialize();
+            	this.result.use(CustomJson.class).from("OK").serialize();
             }
+
         } else {
         	
             FormaCobrancaCaucaoLiquidaDTO dto = cotaGarantiaService.obterCaucaoLiquidaHistoricoTitularidadeCota(idCota, idHistorico);
             
-            result.use(CustomJson.class).from(dto).serialize();
+            this.result.use(CustomJson.class).from(dto).serialize();
         }
+	}
+	
+	@Post("/getDescontoAtualCaucaoLiquida.json")
+	public void getDescontoAtualCaucaoLiquida(Long idCota) {
+		
+		BigDecimal descontoAtual = this.cotaGarantiaService.obterValorComissaoCaucaoLiquida(idCota);
+		
+		this.result.use(CustomJson.class).from(descontoAtual).serialize();
 	}
 	
 	/**
@@ -274,6 +449,28 @@ public class CotaGarantiaController extends BaseController {
         }    
 	}
 
+	/**
+	 * Obtem Cota garantia do tipo Imóvel
+	 * @param idCota
+	 */
+	@Post("/getGarantiaOutrosByCota.json")
+	public void getGarantiaOutrosByCota(Long idCota, ModoTela modoTela) {
+
+        if (ModoTela.CADASTRO_COTA == modoTela) {
+        	
+            List<GarantiaCotaOutros> dadosOutros = cotaGarantiaService.obterDadosGarantiaOutrosDTO(idCota);
+            
+            if (dadosOutros != null) {
+
+            	this.result.use(Results.json()).from(dadosOutros, "data").serialize();
+            	
+            } else {
+            	
+            	this.result.use(CustomJson.class).from("OK").serialize();
+            }
+        }    
+	}
+	
 	/**
 	 * Obtem Cota garantia do tipo Imóvel
 	 * @param idCota

@@ -32,8 +32,7 @@ import br.com.abril.nds.model.integracao.Message;
 
 import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
-@Component
-
+@Component("fixedLenghtContentBasedDataRouter")
 public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 	private final Logger logger = LoggerFactory.getLogger(FixedLenghtContentBasedDataRouter.class);
 	
