@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -32,6 +33,8 @@ public class ConsultaNotaEnvioDTO implements Serializable {
 	private boolean notaImpressa;
 	
 	private boolean cotaSuspensa;
+	
+	private StatusLancamento status;
 	
 	private SituacaoCadastro situacaoCadastro;
 
@@ -147,6 +150,16 @@ public class ConsultaNotaEnvioDTO implements Serializable {
 
 	public void setSituacaoCadastro(String situacaoCadastro) {
 		this.situacaoCadastro = SituacaoCadastro.valueOf(situacaoCadastro);
+	}
+
+	public StatusLancamento getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		if(status==null)
+			return;
+		this.status = StatusLancamento.valueOf(status);
 	}
 	
 }
