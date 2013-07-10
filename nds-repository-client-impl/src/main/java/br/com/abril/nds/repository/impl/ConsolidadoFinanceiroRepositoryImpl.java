@@ -930,11 +930,15 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" cfc.VENDA_ENCALHE as vendaEncalhe, ")
 		   .append(" ((select count(cob.ID) from COBRANCA cob where cob.DT_EMISSAO = cfc.DT_CONSOLIDADO and cob.COTA_ID = cfc.COTA_ID) > 0) as cobrado, ")
 		   //data raiz postergado
-		   .append(" (select max(cons.DT_CONSOLIDADO) from CONSOLIDADO_FINANCEIRO_COTA cons ")
-		   .append("  where cons.DT_CONSOLIDADO < cfc.DT_CONSOLIDADO and ")
-		   .append("  (select count(cob.id) from COBRANCA cob where cob.COTA_ID = cons.COTA_ID) = 0 and ")
-		   .append("   cons.COTA_ID = cfc.COTA_ID")
-		   .append(" ) AS dataRaiz, ")
+		   .append(" (select min(mfp.DATA_CRIACAO) from MOVIMENTO_FINANCEIRO_COTA mfp where mfp.COTA_ID = cfc.COTA_ID ")
+		   .append("  AND mfp.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoCredito) OR mfp.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoDebito) ")
+		   .append("  AND mfp.id IN (")
+		   .append(" select MVTO_FINANCEIRO_COTA_ID ")
+		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+		   .append("     inner join COTA on COTA.ID = CON.COTA_ID where  CCC.CONSOLIDADO_FINANCEIRO_ID = cfc.ID) ")
+		   .append(")")
+		   .append(" AS dataRaiz, ")
 		   .append(" coalesce((select sum(bc.VALOR_PAGO) ")
 		   .append("           from BAIXA_COBRANCA bc ")
 		   .append("           inner join COBRANCA cobranca ")
@@ -1217,7 +1221,9 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
 		   .append(") and m.DATA = mfc.DATA ")
 		   .append("),0) ")
-		   .append(" ) as total, ")
+		   //adicionado * -1 a pedidos do negócio, o valor armazenado é da cota, mas deve refletir o que significa para o distribuidor
+		   //sendo assim, o que é debito para a cota é crédito para o distribuidor e vice versa
+		   .append(" ) * -1 as total, ")
 		   
 		   //saldo
 		   .append(" 0 as saldo, ")
