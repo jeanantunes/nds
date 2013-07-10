@@ -2901,4 +2901,27 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		return (Integer) criteria.uniqueResult();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> obterIdsCotasPorMunicipio(String municipio){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select cota.id ");
+				
+		hql.append(" from Cota cota ");
+		hql.append(" join cota.enderecos enderecoCota ");
+		hql.append(" join enderecoCota.endereco endereco ");
+		
+		hql.append(" where enderecoCota.principal=true ");
+		hql.append(" and endereco.cidade = :cidade ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("cidade", municipio);
+		
+		return query.list();
+	}
+	
 }

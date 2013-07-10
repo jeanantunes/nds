@@ -137,7 +137,7 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 			calRecolhimento.setTime(input.getDataLancamento());
 			int peb = produtoEdicao.getPeb() == 0 ? produtoEdicao.getProduto().getPeb() : produtoEdicao.getPeb();
 			if (peb == 0) {
-				peb = 10;
+				peb = 15;
 			}
 			calRecolhimento.add(Calendar.DAY_OF_MONTH, peb);
 			final Date dataRecolhimento = calRecolhimento.getTime();

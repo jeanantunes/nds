@@ -375,5 +375,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	 * @return Número da cota.
 	 */
 	Integer buscarNumeroCotaPorId(Long idCota);
+
+	List<Long> obterIdsCotasPorMunicipio(String municipio);
 	
 }
