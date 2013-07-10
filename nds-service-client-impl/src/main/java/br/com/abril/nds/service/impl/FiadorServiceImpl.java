@@ -278,7 +278,7 @@ public class FiadorServiceImpl implements FiadorService {
 				idsIgnorar.addAll(idsTelefonesRemover);
 			}
 			
-			if (existePrincipal){
+			/*if (existePrincipal){
 				
 				if (fiador.getId() != null){
 					
@@ -287,19 +287,20 @@ public class FiadorServiceImpl implements FiadorService {
 						throw new ValidacaoException(TipoMensagem.WARNING, "Apenas 1 telefone principal é permitido.");
 					}
 				}
-			} else {
+			} else {*/
 				
-				if (fiador.getId() != null){
-					
-					if (!this.telefoneFiadorRepository.verificarTelefonePrincipalFiador(fiador.getId(), idsIgnorar)){
-						
-						throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 telefone principal.");
-					}
-				} else {
+			if (fiador.getId() != null && !existePrincipal) {
+				
+				if (!this.telefoneFiadorRepository.verificarTelefonePrincipalFiador(fiador.getId(), idsIgnorar)) {
 					
 					throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 telefone principal.");
 				}
+			} else {
+				if (fiador.getId() != null && !existePrincipal) {
+					throw new ValidacaoException(TipoMensagem.WARNING, "Cadastre 1 telefone principal.");
+				}
 			}
+			//}
 		} else {
 			
 			if (!this.telefoneFiadorRepository.verificarTelefonePrincipalFiador(fiador.getId(), idsTelefonesRemover)){
