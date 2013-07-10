@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -26,10 +27,12 @@ import br.com.abril.nds.dto.RecolhimentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.factory.devolucao.BalanceamentoRecolhimentoFactory;
+import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -44,8 +47,10 @@ import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
+import br.com.abril.nds.repository.GrupoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -104,6 +109,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	
 	@Autowired
 	private DistribuicaoFornecedorService distribuicaoFornecedorService;
+	
+	@Autowired
+	private GrupoRepository grupoRepository;
+	
+	@Autowired
+	private CotaRepository cotaRepository;
 	
 	/**
 	 * {@inheritDoc}
@@ -596,6 +607,10 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		dadosRecolhimento.setForcarBalanceamento(forcarBalanceamento);
 		
+		//TODO:
+		
+		this.obterCotasOperacaoDiferenciada(periodoRecolhimento);
+		
 		return dadosRecolhimento;
 	}
 
@@ -774,6 +789,119 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		int codigoDiaCorrente = DateUtil.obterDiaDaSemana(dataRecolhimento);
 		
 		return diasRecolhimentoFornecedor.contains(codigoDiaCorrente);
+	}
+	
+	private Map<Long, List<Date>> obterCotasOperacaoDiferenciada(Intervalo<Date> periodoRecolhimento) {
+		
+		Map<Long, List<Date>> mapCotasDiasRecolhimento = new HashMap<>();
+		
+		List<GrupoCota> gruposCota = this.grupoRepository.obterTodosGrupos();
+		
+		for (GrupoCota grupoCota : gruposCota) {
+			
+			Set<Cota> cotas = grupoCota.getCotas();
+			Set<String> municipios = grupoCota.getMunicipios();
+			Set<DiaSemana> diasRecolhimento = grupoCota.getDiasRecolhimento();
+			
+			if (cotas != null && !cotas.isEmpty()) {
+			
+				this.montarMapOperacaoDiferenciadaCotas(
+					cotas, diasRecolhimento, periodoRecolhimento, mapCotasDiasRecolhimento);
+				
+			} else if (municipios != null && !municipios.isEmpty()) {
+				
+				this.montarMapOperacaoDiferenciadaMunicipios(
+					municipios, diasRecolhimento, periodoRecolhimento, mapCotasDiasRecolhimento);
+			}
+		}
+		
+		return mapCotasDiasRecolhimento;
+	}
+
+	private void montarMapOperacaoDiferenciadaCotas(Set<Cota> cotas,
+													Set<DiaSemana> diasRecolhimento,
+													Intervalo<Date> periodoRecolhimento,
+													Map<Long, List<Date>> mapCotasDiasRecolhimento) {
+		
+		List<Date> datasRecolhimento = 
+			this.obterDatasRecolhimentoGrupo(diasRecolhimento, periodoRecolhimento);
+		
+		for (Cota cota : cotas) {
+			
+			mapCotasDiasRecolhimento.put(cota.getId(), datasRecolhimento);
+		}
+	}
+	
+	private void montarMapOperacaoDiferenciadaMunicipios(Set<String> municipios,
+														 Set<DiaSemana> diasRecolhimento,
+														 Intervalo<Date> periodoRecolhimento,
+														 Map<Long, List<Date>> mapCotasDiasRecolhimento) {
+		
+		List<Date> datasRecolhimento = 
+			this.obterDatasRecolhimentoGrupo(diasRecolhimento, periodoRecolhimento);
+		
+		for (String municipio : municipios) {
+			
+			List<Long> idsCotas = this.cotaRepository.obterIdsCotasPorMunicipio(municipio);
+			
+			for (Long idCota : idsCotas) {
+				
+				mapCotasDiasRecolhimento.put(idCota, datasRecolhimento);
+			}
+		}
+	}
+
+	private List<Date> obterDatasRecolhimentoGrupo(Set<DiaSemana> diasRecolhimento,
+											   	   Intervalo<Date> periodoRecolhimento) {
+		
+		List<Date> datasRecolhimentoGrupo = new ArrayList<>();
+		
+		List<Calendar> datasDaSemana =
+			this.getDatasDaSemana(periodoRecolhimento);
+		
+		Set<Integer> diasRecolhimentoNaSemana = this.getDiasRecolhimentoNaSemana(diasRecolhimento);
+		
+		for (Calendar dataRecolhimento : datasDaSemana) {
+			
+			if (diasRecolhimentoNaSemana.contains(DateUtil.obterDiaDaSemana(dataRecolhimento))) {
+				
+				datasRecolhimentoGrupo.add(dataRecolhimento.getTime());
+			}
+		}
+		
+		return datasRecolhimentoGrupo;
+	}
+
+	private Set<Integer> getDiasRecolhimentoNaSemana(Set<DiaSemana> diasRecolhimento) {
+		
+		Set<Integer> diasRecolhimentoNaSemana = new HashSet<>();
+		
+		for (DiaSemana diaSemana : diasRecolhimento) {
+			
+			diasRecolhimentoNaSemana.add(diaSemana.getCodigoDiaSemana());
+		}
+		
+		return diasRecolhimentoNaSemana;
+	}
+
+	private List<Calendar> getDatasDaSemana(Intervalo<Date> periodoRecolhimento) {
+		
+		List<Calendar> datasDaSemana = new ArrayList<>();
+		
+		Calendar dataInicio = DateUtil.toCalendar(periodoRecolhimento.getDe());
+		Calendar dataFim = DateUtil.toCalendar(periodoRecolhimento.getAte());
+		
+		Calendar dataPeriodoRecolhimento = dataInicio;
+		
+		while(dataPeriodoRecolhimento.compareTo(dataInicio) >= 0
+				&& dataPeriodoRecolhimento.compareTo(dataFim) <= 0) {
+			
+			datasDaSemana.add(dataPeriodoRecolhimento);
+			
+			dataPeriodoRecolhimento = DateUtil.adicionarDias(dataPeriodoRecolhimento, 1);
+		}
+		
+		return datasDaSemana;
 	}
 	
 }
