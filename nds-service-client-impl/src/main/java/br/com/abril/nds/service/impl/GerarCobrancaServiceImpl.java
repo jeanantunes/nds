@@ -288,7 +288,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 									ultimaCota != null ? ultimaCota.getId() : null, 
 									ultimoFornecedor != null ? ultimoFornecedor.getId() : null, 
 									dataOperacao, valorMovimentos.compareTo(BigDecimal.ZERO) >= 0?valorMovimentos:valorMovimentos.negate());
-					
+
 					formaCobrancaClone = this.cloneFormaCobranca(formaCobranca);
 					
 					if (formaCobrancaClone != null){
@@ -345,8 +345,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 								ultimaCota != null ? ultimaCota.getId() : null, 
 								ultimoFornecedor != null ? ultimoFornecedor.getId() : null, 
 								dataOperacao, valorMovimentos.compareTo(BigDecimal.ZERO) > 0?valorMovimentos:valorMovimentos.negate());
-				
-				formaCobrancaClone = this.cloneFormaCobranca(formaCobranca);
+					
+				formaCobrancaClone = this.cloneFormaCobranca(formaCobranca);  
 			}
 			
 			//Decide se gera movimento consolidado ou postergado para a ultima cota
@@ -646,9 +646,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
 		else {
 			
-			if(formaCobrancaPrincipal.getFatorVencimento() != null){
+			if(formaCobrancaPrincipal.getPoliticaCobranca().getFatorVencimento() != null){
 				
-				fatorVencimento = formaCobrancaPrincipal.getFatorVencimento();
+				fatorVencimento = formaCobrancaPrincipal.getPoliticaCobranca().getFatorVencimento();
 			}
 			
 			tipoFormaCobrancaAntiga = formaCobrancaPrincipal.getTipoFormaCobranca();
@@ -1132,6 +1132,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	private FormaCobranca cloneFormaCobranca(FormaCobranca formaCobranca) {
 		
+		if (formaCobranca==null){
+			
+			return null;
+		}
+		
 		try {
 			
 			if (formaCobranca == null) {
@@ -1141,21 +1146,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			return (FormaCobranca) BeanUtils.cloneBean(formaCobranca);
 			
-		} catch (IllegalAccessException e) {
+		} catch (Exception e) {
 
-			throw new IllegalArgumentException(e);
-			
-		} catch (InstantiationException e) {
-
-			throw new IllegalArgumentException(e);
-
-		} catch (InvocationTargetException e) {
-
-			throw new IllegalArgumentException(e);
-
-		} catch (NoSuchMethodException e) {
-
-			throw new IllegalArgumentException(e);
+			throw new ValidacaoException(
+					TipoMensagem.ERROR,
+					"Erro ao tentar obter [FormaCobranca]!");
 		}
 	}
 }

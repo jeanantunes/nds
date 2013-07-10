@@ -110,6 +110,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		} else {
 			return cotaRepository.obterDadosCotasComNotaEnvioEmitidasEAEmitir(filtro);
 		}
+		
 
 	}
 
