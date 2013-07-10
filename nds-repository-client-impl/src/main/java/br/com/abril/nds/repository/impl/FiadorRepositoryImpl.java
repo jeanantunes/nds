@@ -292,9 +292,12 @@ public class FiadorRepositoryImpl extends AbstractRepositoryModel<Fiador, Long> 
 	@Override
 	public List<Pessoa> obterFiadorPorNome(String nomeFiador) {
 	
-		StringBuilder hql = new StringBuilder("select p from Fiador f, Pessoa p ");
-		hql.append(" where f.pessoa.id = p.id ")
-		   .append(" and lower(p.nome) like :nomeFiador or lower(p.razaoSocial) like :nomeFiador or lower(p.nomeFantasia) like :nomeFiador ");
+		StringBuilder hql = new StringBuilder("")
+			.append("select distinct p ")
+			.append("from Fiador f join f.pessoa p ")
+			.append("where lower(p.nome) like :nomeFiador ")
+			.append("or lower(p.razaoSocial) like :nomeFiador ")
+			.append("or lower(p.nomeFantasia) like :nomeFiador ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("nomeFiador", "%" + nomeFiador.toLowerCase() + "%");
