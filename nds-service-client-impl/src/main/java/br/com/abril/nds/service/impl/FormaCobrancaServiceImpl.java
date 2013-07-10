@@ -438,13 +438,13 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 
 		if (formaCobranca == null) {
 
-			formaCobranca = this.obterFormaCobrancaDistribuidor(idFornecedor,
+	        formaCobranca = this.obterFormaCobrancaDistribuidor(idFornecedor,
 					data, valor);
 
-			  if (cota!=null && this.cotaPossuiFormaCobranca(cota)) { 
+			if (cota!=null && this.cotaPossuiFormaCobranca(cota)) { 
 				  
-				  return null; 
-			  }
+		        return null; 
+			}
 		}
 
 		return formaCobranca;
