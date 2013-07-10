@@ -10,6 +10,7 @@ import br.com.abril.nds.dto.RomaneioDTO;
 import br.com.abril.nds.dto.filtro.FiltroRomaneioDTO;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.RomaneioRepository;
 
@@ -131,6 +132,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(" and lancamento.produtoEdicao.id = itemNota.produtoEdicao.id ");
 		hql.append(" and cota.situacaoCadastro != :situacaoInativo ");
 		hql.append(" and pdv.caracteristicas.pontoPrincipal = :pontoPrincipal ");
+		hql.append(" and lancamento.status in (:statusLancamento) ");
 		
 		/*if (filtro.getProdutos() != null && filtro.getProdutos().size() == 1){
 			
@@ -243,7 +245,12 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 	private void setarParametrosRomaneio(FiltroRomaneioDTO filtro, Query query) {
 		
 		query.setParameter("situacaoInativo", SituacaoCadastro.INATIVO);
+		
 		query.setParameter("pontoPrincipal", true);
+		
+		query.setParameterList(
+			"statusLancamento", 
+				new StatusLancamento[] {StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO});
 		
 		if(filtro.getIdBox() != null) { 
 			
