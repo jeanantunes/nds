@@ -1134,6 +1134,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		try {
 			
+			if (formaCobranca == null) {
+				
+				return null;
+			}
+			
 			return (FormaCobranca) BeanUtils.cloneBean(formaCobranca);
 			
 		} catch (IllegalAccessException e) {
