@@ -49,6 +49,17 @@ public class PoliticaCobranca {
 	@Column(name="COBRANCA_BO")
 	private boolean cobradoPeloBackoffice; 
 	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_COTA")
+	private TipoCota tipoCota;
+
+	@Column(name = "FATOR_VENCIMENTO")
+	private Integer fatorVencimento;
+	
+	@ManyToOne
+	@JoinColumn(name = "FORNECEDOR_PADRAO_ID")
+	private Fornecedor fornecedorPadrao;
+	
 	public Long getId() {
 		return id;
 	}
@@ -120,5 +131,28 @@ public class PoliticaCobranca {
 	public void setCobradoPeloBackoffice(boolean cobradoPeloBackoffice) {
 		this.cobradoPeloBackoffice = cobradoPeloBackoffice;
 	}
-	
+
+	public TipoCota getTipoCota() {
+		return tipoCota;
+	}
+
+	public void setTipoCota(TipoCota tipoCota) {
+		this.tipoCota = tipoCota;
+	}
+
+	public Integer getFatorVencimento() {
+		return fatorVencimento;
+	}
+
+	public void setFatorVencimento(Integer fatorVencimento) {
+		this.fatorVencimento = fatorVencimento;
+	}
+
+	public Fornecedor getFornecedorPadrao() {
+		return fornecedorPadrao;
+	}
+
+	public void setFornecedorPadrao(Fornecedor fornecedorPadrao) {
+		this.fornecedorPadrao = fornecedorPadrao;
+	}
 }

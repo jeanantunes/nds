@@ -35,6 +35,7 @@ import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.EnderecoFornecedor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.FormaCobrancaBoleto;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
@@ -361,6 +362,7 @@ public class BoletoServiceImpl implements BoletoService {
 		dto.setUsuario(usuario);
 		dto.setValor(valor);
 		dto.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
+		dto.setFornecedor(this.obterFornecedorPadraoCota(cota));
 		
 		this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(dto);
 	}
@@ -1525,5 +1527,25 @@ public class BoletoServiceImpl implements BoletoService {
 		}
 		
 		return boletos;
+	}
+	
+	/**
+	 * Obtém o fornecedor padrão da cota para cobrança. 
+	 * 
+	 * @param cota Cota que deseja obter o fornecedor.
+	 * 
+	 * @return Fornecedor padrão da cota.
+	 */
+	private Fornecedor obterFornecedorPadraoCota(Cota cota) {
+		
+		Fornecedor fornecedor = cota.getParametroCobranca() == null ? 
+										null : cota.getParametroCobranca().getFornecedorPadrao();
+
+		if (fornecedor == null && cota.getFornecedores() != null) {
+			
+			fornecedor = cota.getFornecedores().iterator().next();
+		}
+
+		return fornecedor;
 	}
 }
