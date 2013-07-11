@@ -227,9 +227,11 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			
 			getSession().persist(historicoSituacaoCota);
 			
+			
 			// ParametroCobrancaCota - Realizado em conjunto com Cesar Pop Punk
 			ParametroCobrancaCota parametroCobrancaCota = new ParametroCobrancaCota();
 			parametroCobrancaCota.setCota(cota);
+			
 			
 			if (input.getCondPrazoPagamento().equals("S")) {
 				

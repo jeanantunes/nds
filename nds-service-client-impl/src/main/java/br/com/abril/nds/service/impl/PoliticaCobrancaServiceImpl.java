@@ -239,21 +239,21 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 			parametroCobrancaDTO.setUnificada(politica.isUnificaCobranca()?true:false);
 			
 			if(politica.getFormaCobranca() != null 
-					&& politica.getFormaCobranca().getFornecedorPadrao() != null) {
+					&& politica.getFornecedorPadrao() != null) {
 				
-				parametroCobrancaDTO.setIdFornecedorPadrao(politica.getFormaCobranca().getFornecedorPadrao().getId());
+				parametroCobrancaDTO.setIdFornecedorPadrao(politica.getFornecedorPadrao().getId());
 				
 			}
 			
 			if(politica.getFormaCobranca() != null) {
 				
-				parametroCobrancaDTO.setTipoCota(politica.getFormaCobranca().getTipoCota());
+				parametroCobrancaDTO.setTipoCota(politica.getTipoCota());
 				
 			}
 			
-			if(politica.getFormaCobranca() != null && politica.getFormaCobranca().getFatorVencimento() != null) {
+			if(politica.getFormaCobranca() != null && politica.getFatorVencimento() != null) {
 				
-				parametroCobrancaDTO.setFatorVencimento(politica.getFormaCobranca().getFatorVencimento());
+				parametroCobrancaDTO.setFatorVencimento(politica.getFatorVencimento());
 				
 			}
 			
@@ -403,16 +403,14 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		politica.setUnificaCobranca(parametroCobrancaDTO.isUnificada());
 		politica.setAtivo(true);
 		politica.setDistribuidor(distribuidorRepository.obter());
-		
+		politica.setTipoCota(parametroCobrancaDTO.getTipoCota());
+		politica.setFatorVencimento(new Integer(parametroCobrancaDTO.getFatorVencimento().toString()));
+		politica.setFornecedorPadrao(fornecedorService.obterFornecedorPorId(parametroCobrancaDTO.getIdFornecedorPadrao()));
 		
 		formaCobranca.setDiasDoMes(parametroCobrancaDTO.getDiasDoMes());
 		formaCobranca.setTipoFormaCobranca(parametroCobrancaDTO.getTipoFormaCobranca());
 		formaCobranca.setTipoCobranca(parametroCobrancaDTO.getTipoCobranca());
 		formaCobranca.setBanco(banco);
-		
-		formaCobranca.setFornecedorPadrao(fornecedorService.obterFornecedorPorId(parametroCobrancaDTO.getIdFornecedorPadrao()));
-		formaCobranca.setTipoCota(parametroCobrancaDTO.getTipoCota());
-		formaCobranca.setFatorVencimento(new Integer(parametroCobrancaDTO.getFatorVencimento().toString()));
 		
 		formaCobranca.setRecebeCobrancaEmail(parametroCobrancaDTO.isEnvioEmail());
 		formaCobranca.setAtiva(true);
