@@ -36,21 +36,25 @@ $(function(){
               <td width="71"><input type="text" name="codProduto" id="codProduto"  style="width:60px;" 
               				 onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codProduto','#produto', false, undefined, undefined);"/></td>
               
-              <td width="55">Produto:</td>
-              <td width="138"><input type="text" name="produto" id="produto"  style="width:130px;" 
-              					onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#produto');"/></td>
-              
+              <td style="width:55px">Produto:</td>
+              <td width="138"><input type="text" name="produto" id="produto"  style="width:130px;"/></td>
+              </tr>
+              <tr>
               <td width="46">Edição:</td>
               <td width="70"><input type="text" name="edicaoProd" id="edicaoProd"  style="width:60px;" /></td>
               <td width="78">Classificação:</td>
-              
-              <td width="152"><select name="comboClassificacao" id="comboClassificacao" style="width:140px;">
-              <option selected="selected">Selecione...</option>
-              	<c:forEach items="${listaClassificacao}" var="classificacao">
-					<option value="${classificacao.id}">${classificacao.descricao}</option>
-				</c:forEach>
-            
-            </select>
+              <td width="152">
+	            <select name="comboClassificacao" id="comboClassificacao" style="width:140px;">
+	              <option selected="selected">Selecione...</option>
+	              	<c:forEach items="${listaClassificacao}" var="classificacao">
+						<option value="${classificacao.id}">${classificacao.descricao}</option>
+					</c:forEach>
+	            </select>
+
+			  <td width="72" align="right">Data Lan�amento:</td>
+				<td width="146">
+				<input type="text" name="dataLancamento" id="dataLancamento" style="width:70px;" readonly="true"/>
+	          </td>
             
             </td>
               <td width="104">

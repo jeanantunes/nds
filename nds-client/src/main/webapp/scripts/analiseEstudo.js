@@ -69,6 +69,22 @@ var analiseEstudoController = $.extend(true, {
             width : 950,
             height : 200
         });
+        
+        $('#produto').keyup(function (){
+			pesquisaProduto.autoCompletarPorNomeProduto('#produto', false);
+		});
+		
+		$('#produto').blur(function (){
+			pesquisaProduto.pesquisarPorNomeProduto('#codProduto', '#produto', {}, false, undefined, analiseEstudoController.errorCallBack);
+		});
+		
+		$("#dataLancamento", analiseEstudoController.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/images/calendar.gif",
+			buttonImageOnly: true,
+			dateFormat: "dd/mm/yy"
+		});
+		
     },
 
     executarPreProcessEstudosGrid : function(resultado){
@@ -100,11 +116,12 @@ var analiseEstudoController = $.extend(true, {
     },
 
     carregarEstudos : function() {
-        var data = [{name : 'filtro.numEstudo', value : $("#idEstudo").val() }, 
-                    {name : 'filtro.codigoProduto', value : $("#codProduto").val() }, 
-                    {name : 'filtro.nome', value : $("#produto").val() }, 
-                    {name : 'filtro.numeroEdicao', value : $("#edicaoProd").val() }, 
-                    {name : 'filtro.idTipoClassificacaoProduto', value : $("#comboClassificacao").val() }];
+        var data = [{name : 'filtro.numEstudo', value : $("#idEstudo").val()}, 
+                    {name : 'filtro.codigoProduto', value : $("#codProduto").val()}, 
+                    {name : 'filtro.nome', value : $("#produto").val()}, 
+                    {name : 'filtro.numeroEdicao', value : $("#edicaoProd").val()},
+                    {name : 'filtro.idTipoClassificacaoProduto', value : $("#comboClassificacao").val()},
+                    {name : 'filtro.dataLancamento', value :  $("#dataLancamento", analiseEstudoController.workspace).val()}];
 
         $(".estudosGrid", this.workspace).flexOptions({url: contextPath + "/distribuicao/analiseEstudo/buscarEstudos", 
             params: data});
@@ -152,7 +169,12 @@ var analiseEstudoController = $.extend(true, {
             });
         }
         );
-    }
+    },
+    
+    errorCallBack : function errorCallBack(){
+		$('#codProduto').val('');
+		$('#produto').val('');
+	}
 
 }, BaseController);
 //@ sourceURL=analiseEstudo.js

@@ -86,6 +86,9 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		if(filtro.getIdTipoClassificacaoProduto() !=null && filtro.getIdTipoClassificacaoProduto() > 0){
 			hql.append(" AND tpClassifProduto.id = :ID_TIPO_CLASS_PRODUTO ");
 		}
+		if(filtro.getDataLancamento() != null){
+			hql.append(" AND lancamento.dataLancamentoDistribuidor = :DATA_LANCAMENTO ");
+		}
 		
 		return hql.toString();
 	}
@@ -107,6 +110,9 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		
 		if(filtro.getIdTipoClassificacaoProduto() !=null && filtro.getIdTipoClassificacaoProduto() > 0){
 			query.setParameter("ID_TIPO_CLASS_PRODUTO", filtro.getIdTipoClassificacaoProduto());
+		}
+		if(filtro.getDataLancamento() !=null){
+			query.setParameter("DATA_LANCAMENTO", filtro.getDataLancamento());
 		}
 	}
 	
