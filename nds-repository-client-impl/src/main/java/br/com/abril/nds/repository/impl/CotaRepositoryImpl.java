@@ -484,7 +484,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		Query query = this.getSession().createQuery(hql.toString());
 
 		HashMap<String, Object> param = getParametrosCotasSujeitasAntecipacoEncalhe(filtro);
-
+ 
 		for (String key : param.keySet()) {
 			query.setParameter(key, param.get(key));
 		}
@@ -554,7 +554,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		param.put("codigoProduto", filtro.getCodigoProduto());
 		param.put("numeroEdicao", filtro.getNumeroEdicao());
 		param.put("status", StatusLancamento.EXPEDIDO);
-		param.put("dataAtual", new Date());
+		param.put("dataAtual", filtro.getDataOperacao());
 		param.put("tipoChamadaEncalhe", TipoChamadaEncalhe.ANTECIPADA);
 
 		if (filtro.getNumeroCota() != null) {
