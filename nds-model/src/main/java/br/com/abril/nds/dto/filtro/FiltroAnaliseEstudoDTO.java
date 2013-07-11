@@ -63,7 +63,12 @@ public class FiltroAnaliseEstudoDTO extends FiltroDTO {
 	}
 
 	public void setDataLancamento(String dataLancamento) throws ParseException {
-		this.dataLancamento = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(dataLancamento);
+		
+		if (dataLancamento != null){
+			this.dataLancamento = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(dataLancamento);
+		}else{
+			this.dataLancamento = null;
+		}
+		
 	}
-
 }

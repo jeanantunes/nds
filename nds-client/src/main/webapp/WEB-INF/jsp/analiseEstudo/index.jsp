@@ -51,9 +51,9 @@ $(function(){
 					</c:forEach>
 	            </select>
 
-			  <td width="72" align="right">Data Lançamento:</td>
+			  <td width="72" align="right">Data LanÃ§amento:</td>
 				<td width="146">
-				<input type="text" name="dataLancamento" id="dataLancamento" style="width:70px;" readonly="true"/>
+				<input type="text" name="dataLancamento" id="dataLancamento" style="width:70px;"/>
 	          </td>
             
             </td>
