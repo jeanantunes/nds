@@ -149,6 +149,7 @@ import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ImpressaoMatricialUtil;
+import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.JasperUtil;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.StringUtil;
@@ -3685,5 +3686,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}catch (URISyntaxException e) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
 		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(Integer numeroCota, String codigoBarras) {
+		
+		Date dataRecolhimento = this.distribuidorService.obterDataOperacaoDistribuidor();
+
+		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarras, dataRecolhimento);
 	}
 }

@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -283,9 +284,10 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 		
 		List<ChamadaAntecipadaEncalheDTO> list = null; 
 		
+		filtro.setDataOperacao(this.distribuidorRepository.obterDataOperacaoDistribuidor());
+
 		if(filtro.isProgramacaoCE()){
 			
-			filtro.setDataOperacao(this.distribuidorRepository.obterDataOperacaoDistribuidor());
 			list = chamadaEncalheCotaRepository.obterCotasProgramadaParaAntecipacoEncalhe(filtro);
 			antecipadaEncalheDTO.setTotalRegistros(chamadaEncalheCotaRepository.obterQntCotasProgramadaParaAntecipacoEncalhe(filtro));
 		}
@@ -305,7 +307,9 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	@Override
 	@Transactional(readOnly = true)
 	public Date obterDataRecolhimentoPrevista(String codigoProduto, Long numeroEdicao){
-		 
+
+		codigoProduto = StringUtils.leftPad(codigoProduto, 8, '0');
+
 		 return lancamentoRepository.obterDataRecolhimentoPrevista(codigoProduto, numeroEdicao);
 	}
 	
@@ -338,9 +342,11 @@ public class ChamadaAntecipadaEncalheServiceImpl implements ChamadaAntecipadaEnc
 	public BigInteger obterQntExemplaresCotasSujeitasAntecipacoEncalhe(FiltroChamadaAntecipadaEncalheDTO filtro) {
 		
 		BigInteger qntPrevistaEncalhe = BigInteger.ZERO;
+
+		filtro.setDataOperacao(this.distribuidorRepository.obterDataOperacaoDistribuidor());
 		
 		qntPrevistaEncalhe = cotaRepository.obterQntExemplaresCotasSujeitasAntecipacoEncalhe(filtro);
-		
+
 		if(qntPrevistaEncalhe == null || (qntPrevistaEncalhe.compareTo(BigInteger.ZERO) <= 0)){
 			throw new ValidacaoException(TipoMensagem.WARNING,"Cota não possui exemplares em estoque para chamada antecipada de encalhe!");
 		}
