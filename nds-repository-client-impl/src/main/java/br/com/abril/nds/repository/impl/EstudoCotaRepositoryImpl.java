@@ -54,10 +54,12 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 	@SuppressWarnings("unchecked")
 	public List<EstudoCota> obterEstudoCota(Long idCota, Date dataDe, Date dataAte) {
 		
-		String hql = " from EstudoCota estudoCota"
-				   + " where estudoCota.cota.id = :idCota"
-				   + " and estudoCota.estudo.dataLancamento >= :dataDe"
-				   + " and estudoCota.estudo.dataLancamento <= :dataAte";
+		String hql = " from EstudoCota estudoCota "
+				   + " join estudoCota.estudo estudo "
+				   + " join estudoCota.cota cota "
+				   + " join estudo.lancamentos lancamento "
+				   + " where cota.id = :idCota"
+				   + " and lancamento.dataLancamentoDistribuidor between :dataDe AND :dataAte ";
 		
 		Query query = super.getSession().createQuery(hql);
 
