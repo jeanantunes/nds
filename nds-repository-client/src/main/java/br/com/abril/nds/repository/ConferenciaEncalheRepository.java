@@ -11,6 +11,7 @@ import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
+import br.com.abril.nds.util.ItemAutoComplete;
 
 public interface ConferenciaEncalheRepository extends Repository<ConferenciaEncalhe, Long> { 
 	
@@ -111,4 +112,6 @@ public interface ConferenciaEncalheRepository extends Repository<ConferenciaEnca
 	public ChamadaEncalheCota obterChamadaEncalheDevolucao(Long idMovimentoDevolucao);
 	
 	public BigInteger obterReparteConferencia(Long idCota, Long idControleConferenciaEncCota, Long produtoEdicaoId);
+	
+	List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(Integer numeroCota, String codigoBarras, Date dataRecolhimento);
 }
