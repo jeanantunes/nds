@@ -922,7 +922,7 @@ var fechamentoEncalheController = $.extend(true, {
 
 				        	fechamentoEncalheController.isFechamento = false;
 				        	
-				        	fechamentoEncalheController.verificarEncerrarOperacaoEncalhe();
+				        	//fechamentoEncalheController.verificarEncerrarOperacaoEncalhe();
 				        }
 					},
 				  	null,
