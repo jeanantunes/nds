@@ -1,5 +1,11 @@
 package br.com.abril.nds.dto.filtro;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import br.com.abril.nds.util.Constantes;
+
 
 public class FiltroAnaliseEstudoDTO extends FiltroDTO {
 
@@ -10,6 +16,7 @@ public class FiltroAnaliseEstudoDTO extends FiltroDTO {
 	private Long idTipoClassificacaoProduto;
 	private String codigoProduto;
 	private String nome;
+	private Date dataLancamento;
 	
 	public Long getNumEstudo() {
 		return numEstudo;
@@ -51,4 +58,17 @@ public class FiltroAnaliseEstudoDTO extends FiltroDTO {
 		this.idTipoClassificacaoProduto = idTipoClassificacaoProduto;
 	}
 
+	public Date getDataLancamento() {
+		return dataLancamento;
+	}
+
+	public void setDataLancamento(String dataLancamento) throws ParseException {
+		
+		if (dataLancamento != null){
+			this.dataLancamento = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).parse(dataLancamento);
+		}else{
+			this.dataLancamento = null;
+		}
+		
+	}
 }

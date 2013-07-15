@@ -123,7 +123,9 @@ public class AnaliseEstudoController extends BaseController {
 				if(filtro.getNome() == null || filtro.getNome().isEmpty()){
 					if(filtro.getNumeroEdicao() == null || filtro.getNumeroEdicao() < 0){
 						if(filtro.getIdTipoClassificacaoProduto() == null || filtro.getIdTipoClassificacaoProduto() < 0){
-							throw new ValidacaoException(TipoMensagem.WARNING, "Preencha no mínimo 1 campo.");
+							if(filtro.getDataLancamento() == null){
+								throw new ValidacaoException(TipoMensagem.WARNING, "Preencha no mínimo 1 campo.");
+							}
 						}
 					}
 				}

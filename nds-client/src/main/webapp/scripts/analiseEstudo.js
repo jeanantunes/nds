@@ -69,6 +69,28 @@ var analiseEstudoController = $.extend(true, {
             width : 950,
             height : 200
         });
+        
+        $("#dataLancamento", analiseEstudoController.workspace).mask("99/99/9999");
+        
+        $('#produto').keyup(function (){
+			pesquisaProduto.autoCompletarPorNomeProduto('#produto', false);
+		});
+		
+		$('#produto').blur(function (){
+			pesquisaProduto.pesquisarPorNomeProduto('#codProduto', '#produto', {}, false, undefined, analiseEstudoController.errorCallBack);
+		});
+		
+		$('#dataLancamento').blur(function (){
+			analiseEstudoController.validarData($("#dataLancamento", analiseEstudoController.workspace).val());
+		});
+		
+		$("#dataLancamento", analiseEstudoController.workspace).datepicker({
+			showOn: "button",
+			buttonImage: contextPath + "/images/calendar.gif",
+			buttonImageOnly: true,
+			dateFormat: "dd/mm/yy"
+		});
+		
     },
 
     executarPreProcessEstudosGrid : function(resultado){
@@ -100,11 +122,12 @@ var analiseEstudoController = $.extend(true, {
     },
 
     carregarEstudos : function() {
-        var data = [{name : 'filtro.numEstudo', value : $("#idEstudo").val() }, 
-                    {name : 'filtro.codigoProduto', value : $("#codProduto").val() }, 
-                    {name : 'filtro.nome', value : $("#produto").val() }, 
-                    {name : 'filtro.numeroEdicao', value : $("#edicaoProd").val() }, 
-                    {name : 'filtro.idTipoClassificacaoProduto', value : $("#comboClassificacao").val() }];
+        var data = [{name : 'filtro.numEstudo', value : $("#idEstudo").val()}, 
+                    {name : 'filtro.codigoProduto', value : $("#codProduto").val()}, 
+                    {name : 'filtro.nome', value : $("#produto").val()}, 
+                    {name : 'filtro.numeroEdicao', value : $("#edicaoProd").val()},
+                    {name : 'filtro.idTipoClassificacaoProduto', value : $("#comboClassificacao").val()},
+                    {name : 'filtro.dataLancamento', value :  $("#dataLancamento", analiseEstudoController.workspace).val()}];
 
         $(".estudosGrid", this.workspace).flexOptions({url: contextPath + "/distribuicao/analiseEstudo/buscarEstudos", 
             params: data});
@@ -152,7 +175,46 @@ var analiseEstudoController = $.extend(true, {
             });
         }
         );
-    }
+    },
+    
+    errorCallBack : function errorCallBack(){
+		$('#codProduto').val('');
+		$('#produto').val('');
+	},
+    
+	validarData : function validarData(pObj) {
+
+		if(pObj != ""){
+	  		
+	  		var data_quebrada = pObj.split('/');
+	  		
+	  		dia = data_quebrada[0]; 
+	  		mes = data_quebrada[1]; 
+	  		ano = data_quebrada[2];
+	  		
+    		if (dia > 31) 
+    			analiseEstudoController.exibirMensagem("Verifique o dia.");
+    		else 
+    		  if (mes > 12) 
+    			  analiseEstudoController.exibirMensagem("Verifique o Mês.");	
+    		  else
+    			if (ano < 1970 || ano > 2070)
+    				analiseEstudoController.exibirMensagem("Verifique o Ano.");
+    	  }
+	  	},
+	  	
+  	exibirMensagem : function exibirMensagem(mensagem){
+
+  		var erros = new Array();
+        erros[0] = mensagem;
+        exibirMensagemDialog('WARNING',   erros,"");
+
+        this.closeDialogPopUpSegmento1 = false;
+
+        return;
+  	},
 
 }, BaseController);
 //@ sourceURL=analiseEstudo.js
+
+
