@@ -15,8 +15,8 @@ optimize table temp_script_12_target;
 -- Executar esse update pelo prompt de comando do mysql por ser lento, evita perda de conexões 
 -- ou qqr outra interferência no client que faça parar o processo
 UPDATE lancamento set status = 'FECHADO', 
-    DATA_REC_DISTRIB = (select t.data_recolhimento from temp_script_12_target t
-                        where t.produto_edicao_id = lancamento.produto_edicao_id group by 1)
+DATA_REC_DISTRIB = (select t.data_recolhimento from temp_script_12_target t
+where t.produto_edicao_id = lancamento.produto_edicao_id group by 1)
 where produto_edicao_id in (select produto_edicao_id from temp_script_12_target group by 1);
 
 -- ---- ##### -------
@@ -37,8 +37,8 @@ optimize table temp_script_12_target_2;
 -- Executar esse update pelo prompt de comando do mysql por ser lento, evita perda de conexões 
 -- ou qqr outra interferência no client que faça parar o processo
 UPDATE lancamento SET
-    DATA_LCTO_DISTRIBUIDOR = (select h.data_lancamento from temp_script_12_target_2 h
-                        where h.produto_edicao_id = lancamento.produto_edicao_id order by 1 limit 1)
+DATA_LCTO_DISTRIBUIDOR = (select h.data_lancamento from temp_script_12_target_2 h
+where h.produto_edicao_id = lancamento.produto_edicao_id order by 1 limit 1)
 where produto_edicao_id in (select h.produto_edicao_id from temp_script_12_target_2 h group by 1);
 
 

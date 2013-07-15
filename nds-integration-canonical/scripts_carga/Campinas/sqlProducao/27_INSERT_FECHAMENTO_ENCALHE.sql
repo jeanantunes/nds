@@ -1,7 +1,6 @@
 -- Query OK, 17550 rows affected (0.37 sec)
 INSERT INTO FECHAMENTO_ENCALHE
 (DATA_ENCALHE, QUANTIDADE, PRODUTO_EDICAO_ID)
-
 (select data, 
 	qtde,
 	produto_edicao_id

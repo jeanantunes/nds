@@ -90,3 +90,8 @@ desc movimento_estoque_cota;
 
 
 select * from conferencia_encalhe where QTDE <> null ;
+
+select * from tipo_movimento where GRUPO_MOVIMENTO_ESTOQUE = 'RECEBIMENTO_REPARTE';
+
+ALTER TABLE `pagamento_caucao_liquida`
+	ADD COLUMN `BANCO_ID` BIGINT(20) NULL AFTER `FORMA_COBRANCA_CAUCAO_LIQUIDA_ID`;

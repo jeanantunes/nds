@@ -14,16 +14,17 @@ create table estqbox (
 -- deve ser executado pela console pois o arquivo nao esta local, está no servidor
 LOAD DATA LOCAL INFILE 'ESTQBOX.NEW' INTO TABLE estqbox COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\n';
 
-delete from estqbox where produto_edicao_id is null;
-
 update estqbox set produto_edicao_id = (select pe.id from produto_edicao pe, produto p 
 										where p.id = pe.produto_id 
 										and p.codigo = produto 
 										and pe.numero_edicao = edicao)
 ;
 
+delete from estqbox where produto_edicao_id is null;
+
 update estoque_produto
 set qtde=null, qtde_devolucao_encalhe=null, qtde_devolucao_fornecedor=null, qtde_suplementar=null;
+
 
 #delete from estqbox where  produto_edicao_id is null;
 

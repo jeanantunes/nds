@@ -29,6 +29,7 @@ and produto_edicao_id is not null
 
 );
 
+-- ====================######## ABAIXO Scripts Tests ###############============================
 
 select date(sysdate());
 

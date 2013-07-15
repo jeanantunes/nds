@@ -1,4 +1,4 @@
--- insere o smovimebnto de recebimento de mercadoria dos produtos que ainda estão no estoque do distribuidor, ou seja, ainda não foram 
+-- insere os movimentos de recebimento de mercadoria dos produtos que ainda estão no estoque do distribuidor, ou seja, ainda não foram 
 --	lançados para as cota.
 insert into movimento_estoque
 (APROVADO_AUTOMATICAMENTE,

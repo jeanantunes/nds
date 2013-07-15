@@ -1,6 +1,6 @@
 -- Query OK, 18756 rows affected (0.97 sec)
 -- Insere os moviemento de devolução para o fornecedor baseado no encalhe das cotas
--- Com exceção dos produto que ainda estão do distribuidor (Esses produto serão excluídos após rollaut)
+-- Com exceção dos produtos que ainda estão do distribuidor (Esses produto serão excluídos após rollaut)
 INSERT INTO movimento_estoque
 (
  APROVADO_AUTOMATICAMENTE,
@@ -28,7 +28,7 @@ INSERT INTO movimento_estoque
 	date(sysdate()),
 	'CARGA',
 	'APROVADO',
-	min(h.data_lancamento),
+	me.data,
 	date(sysdate()),
 	null,
 	66,
@@ -52,22 +52,117 @@ INSERT INTO movimento_estoque
 	and h.produto_edicao_id = ep.produto_edicao_id
     and me.QTDE > 0
 	and h.produto_edicao_id is not null
-    and me.produto_edicao_id not in 
+
+-- Robson Martins Retirado o not in - As devoluções de fornecedores devem ser contabilizadas no fornecedor
+and me.produto_edicao_id in 
 (select distinct(mec.produto_edicao_id) from movimento_estoque_cota mec, estoque_produto p
 where mec.tipo_movimento_id = 26 
 and mec.produto_edicao_id = p.produto_edicao_id 
-and coalesce(p.qtde_devolucao_encalhe) > 0) );
+
+-- Comentado - Estava gerando erro na quantidade - 108 e deveria ser 20170
+-- and coalesce(p.qtde_devolucao_encalhe) > 0
+) 
+group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18
+)
+;
+
+-- Hoje - 11/07/2013 - Paramos no script 11 antes do update - Apresentou diferença na estqbox, existe quantidades maior que na movimento estoque entre o range de 49 registros
 
 -- Atualiza o estoque do distribuidor com as quantidades enviadas p/ o fornecedor
 update estoque_produto
-set qtde_devolucao_fornecedor = coalesce(qtde_devolucao_fornecedor,0)+coalesce((select sum(me.qtde) 
-from movimento_estoque me 
-where me.tipo_movimento_id = 66 
-and me.produto_edicao_id = estoque_produto.produto_edicao_id), 0);
+set qtde_devolucao_fornecedor = coalesce(qtde_devolucao_fornecedor,0)+
+coalesce((select sum(me.qtde) from movimento_estoque me where me.tipo_movimento_id = 66 and me.produto_edicao_id = estoque_produto.produto_edicao_id), 0)
+where produto_edicao_id in (select produto_edicao_id from movimento_estoque where estoque_produto.produto_edicao_id = produto_edicao_id and tipo_movimento_id = 66)
+;
 
+select * from movimento_estoque;
+
+select produto_edicao_id, (
+
+(select quantidade from estqbox e where e.produto_edicao_id in
+(142411,144811,145111,145121,145151,149751,152591,152721,152761,153221,153381,153391,153731,156911,157251,157281,157331,157381,157451,157561,157631,157671,157791,158251,
+158271,158291,158321,158351,158431,158461,158521,158541,158551,158681,159451,160831,161111,161601,162151,162171,162341,162501,162681,163451,165431,168301,168501,170361,177031)
+and nome_box = 'ENCALHE'
+and e.produto_edicao_id = movimento_estoque.produto_edicao_id 
+) - qtde)
+
+
+
+from movimento_estoque where produto_edicao_id in(142411,144811,145111,145121,145151,149751,152591,152721,152761,153221,153381,153391,153731,156911,157251,157281,157331,157381,157451,157561,157631,157671,157791,158251,
+158271,158291,158321,158351,158431,158461,158521,158541,158551,158681,159451,160831,161111,161601,162151,162171,162341,162501,162681,163451,165431,168301,168501,170361,177031)
+
+and tipo_movimento_id = 31
+;
+
+-- ====================######## ABAIXO Scripts Tests ###############============================
+
+select true, date(sysdate()),'CARGA','APROVADO',min(h.data_lancamento),date(sysdate()),	null,66,1,me.QTDE,me.PRODUTO_EDICAO_ID,ep.ID,
+ 	null,null,null,null,null,null, 'CARGA_INICIAL' 
+from movimento_estoque me,
+	 estoque_produto ep,
+	 hvnd h
+ where me.tipo_movimento_id = 31
+	and ep.produto_edicao_id = me.produto_edicao_id
+	and h.produto_edicao_id = ep.produto_edicao_id
+    and me.QTDE > 0
+	and h.produto_edicao_id is not null
+
+
+limit 1000000000
+;
+
+select true, date(sysdate()),'CARGA','APROVADO',min(h.data_lancamento),date(sysdate()),	null,66,1,me.QTDE,me.PRODUTO_EDICAO_ID,ep.ID,
+ 	null,null,null,null,null,null, 'CARGA_INICIAL' 
+from movimento_estoque me,
+	 estoque_produto ep,
+	 hvnd h
+ where me.tipo_movimento_id = 31
+	and ep.produto_edicao_id = me.produto_edicao_id
+	and h.produto_edicao_id = ep.produto_edicao_id
+    and me.QTDE > 0
+	and h.produto_edicao_id is not null
+and me.produto_edicao_id in 
+(select distinct(mec.produto_edicao_id) from movimento_estoque_cota mec, estoque_produto p
+where mec.tipo_movimento_id = 26 
+and mec.produto_edicao_id = p.produto_edicao_id 
+) 
+group by 1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18
+limit 1000000000
+;
+
+
+select sum(qtde) from movimento_estoque_cota where produto_edicao_id = 149751 and tipo_movimento_id = 26;
+
+select distinct(mec.produto_edicao_id) from movimento_estoque_cota mec, estoque_produto p
+where mec.tipo_movimento_id = 26 
+and mec.produto_edicao_id = p.produto_edicao_id 
+
+;
+
+select * from movimento_estoque me, estoque_produto
+where me.tipo_movimento_id = 66 
+and me.produto_edicao_id = estoque_produto.produto_edicao_id;
+
+select count(1) from movimento_estoque me
+where TIPO_MOVIMENTO_ID = 31
+and me.produto_edicao_id in 
+							(select distinct(mec.produto_edicao_id) from movimento_estoque_cota mec, estoque_produto p where mec.tipo_movimento_id = 26 
+							and mec.produto_edicao_id = p.produto_edicao_id 
+							and coalesce(p.qtde_devolucao_encalhe) > 0) 
+and not exists ( select 1 from estqbox where produto_edicao_id = me.produto_edicao_id and nome_box = 'ENCALHE') 
+;
+
+select * from estqbox;
+
+select * from estoque_produto
+where produto_edicao_id in (select produto_edicao_id from movimento_estoque where estoque_produto.produto_edicao_id = produto_edicao_id and tipo_movimento_id = 66);
+
+select * from movimento_estoque where TIPO_MOVIMENTO_ID = 66;
+select * from estoque_produto where id = 16531;
 
 -- Robson Martins- Limpeza de tabela caso movimento precise ser reprocessado
 /*
+*/
+
 delete from movimento_estoque 
 where TIPO_MOVIMENTO_ID = 66;
-*/

@@ -34,22 +34,34 @@ INSERT INTO MOVIMENTO_ESTOQUE_COTA
 	epc.id,
 	'CARGA_INICIAL',
 	1
-
     from estoque_produto_cota epc,
 		 hvnd h
    where 
 		epc.cota_id = h.cota_id
 	and epc.PRODUTO_EDICAO_ID = h.produto_edicao_id 
-    and epc.QTDE_DEVOLVIDA > 0
+
+-- 	Robson Martins Comentado devido a não ser inseridos movimentos = 26 QTDE_DEVOLVIDA = 0, ou seja encalhe igual a zero - venda total
+--     and epc.QTDE_DEVOLVIDA > 0
+	and h.status = 'F'
 	and h.produto_edicao_id is not null
 group by 1,2,3,5,6,7,8,9,10,11,12,13);
 
 
--- ====================######## ABAIXO Scripts Tests ###############============================
+-- Caso precise re-executar esse script - deverá re-executar também os scripts 4, 5, 19, (20 - Primeiro update), 23, 26, 28, 29, 30, 31
+delete from MOVIMENTO_ESTOQUE_COTA where tipo_movimento_id = 26; 
 
 select count(1) from MOVIMENTO_ESTOQUE_COTA;
 
 select count(1), produto_edicao_id from hvnd where QTDE_ENCALHE_HVCT > 0 group by 2;
 
 select date(sysdate());
+
+select * from tipo_movimento where id = 31;
+
+SET FOREIGN_KEY_CHECKS = 1;
+truncate MOVIMENTO_ESTOQUE_COTA;
+
+
+
+
 

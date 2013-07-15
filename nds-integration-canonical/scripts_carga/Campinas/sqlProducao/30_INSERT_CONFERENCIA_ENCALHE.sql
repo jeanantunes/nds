@@ -6,7 +6,6 @@ insert into CONFERENCIA_ENCALHE
 (data, preco_capa_informado, qtde, qtde_informada, 
 chamada_encalhe_cota_id, controle_conferencia_encalhe_cota_id,
 movimento_estoque_id, movimento_estoque_cota_id, produto_edicao_id)
-
 (select data_recolhimento, pe.preco_previsto, mec.qtde, mec.qtde,
 cec.id, ccec.id, me.id, mec.id, mec.produto_edicao_id
 from 
@@ -32,6 +31,10 @@ and ccec.ctrl_conf_encalhe_id = cce.id
 and ccec.cota_id = mec.cota_id
 );
 
+-- Robson Martins
+update CONFERENCIA_ENCALHE set qtde = QTDE_INFORMADA;
+
+-- ====================######## ABAIXO Scripts Tests ###############============================
 
 select data_recolhimento, pe.preco_previsto, mec.qtde, mec.qtde,
 cec.id, ccec.id, me.id, mec.id, mec.produto_edicao_id
@@ -57,6 +60,5 @@ and cce.data = me.data
 and ccec.ctrl_conf_encalhe_id = cce.id
 and ccec.cota_id = mec.cota_id;
 
-update CONFERENCIA_ENCALHE set qtde = QTDE_INFORMADA;
+select * from CONFERENCIA_ENCALHE where movimento_estoque_id is null;
 
-select * from CONFERENCIA_ENCALHE;

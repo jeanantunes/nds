@@ -39,3 +39,8 @@ INSERT INTO MOVIMENTO_ESTOQUE_COTA
     and epc.qtde_recebida > 0
 	and h.produto_edicao_id is not null
 group by 1,2,3,5,6,7,8,9,10,11,12,13);
+
+
+
+
+select sum(PRECO_COM_DESCONTO), sum(PRECO_VENDA), cota_id from MOVIMENTO_ESTOQUE_COTA group by 3;

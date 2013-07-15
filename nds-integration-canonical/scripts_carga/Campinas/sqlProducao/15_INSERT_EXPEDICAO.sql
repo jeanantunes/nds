@@ -8,16 +8,16 @@ optimize table lancamento;
 
 update lancamento 
 set expedicao_id = 
-(   select e.id 
-    from expedicao e 
-    where e.data_expedicao = lancamento.data_lcto_distribuidor)
+(select e.id 
+from expedicao e 
+where e.data_expedicao = lancamento.data_lcto_distribuidor)
 where 
-    produto_edicao_id 
-        in (select 
-                me.produto_edicao_id  
-            from movimento_estoque me
-            where me.tipo_movimento_id=13
-            group by me.produto_edicao_id  );
+produto_edicao_id 
+in (select 
+me.produto_edicao_id  
+from movimento_estoque me
+where me.tipo_movimento_id=13
+group by me.produto_edicao_id);
 
 -- ====================######## ABAIXO Scripts Tests ###############============================
 

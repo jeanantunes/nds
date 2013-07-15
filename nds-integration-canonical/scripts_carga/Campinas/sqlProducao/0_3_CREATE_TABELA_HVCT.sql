@@ -81,7 +81,7 @@ where c.numero_cota = h.COD_COTA_HVCT)
 ;
 
 
-select * from HVND
+select count(1) from HVND
 where DATA_RECOLHIMENTO = '0000-00-00' 
 and STATUS = 'F'
 limit 100;
