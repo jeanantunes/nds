@@ -196,7 +196,7 @@ var analiseEstudoController = $.extend(true, {
     			analiseEstudoController.exibirMensagem("Verifique o dia.");
     		else 
     		  if (mes > 12) 
-    			  analiseEstudoController.exibirMensagem("Verifique o Mês.");	
+    			  analiseEstudoController.exibirMensagem("Verifique o MÃªs.");	
     		  else
     			if (ano < 1970 || ano > 2070)
     				analiseEstudoController.exibirMensagem("Verifique o Ano.");
