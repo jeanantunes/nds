@@ -36,7 +36,9 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 	public List<NotasCotasImpressaoNfeDTO> buscarCotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 
 		StringBuilder sql = new StringBuilder();
-		sql.append("select new br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO(nf.identificacao.numeroDocumentoFiscal, nf.notaImpressa, cota, SUM(ps.quantidade), SUM(nf.informacaoValoresTotais.valorProdutos), SUM(nf.informacaoValoresTotais.valorDesconto) ) ");
+		sql.append("select new br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO(nf.identificacao.numeroDocumentoFiscal, ")
+		   .append(" nf.notaImpressa, cota, SUM(ps.quantidade), SUM(nf.informacaoValoresTotais.valorProdutos), ")
+		   .append(" SUM(nf.informacaoValoresTotais.valorDesconto) ) ");
 		
 		//Complementa o HQL com as clausulas de filtro
 		Query q = montarFiltroConsultaNfeParaImpressao(filtro, sql, filtro.getPaginacao());
@@ -56,10 +58,13 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		return q.list().size();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<NotasCotasImpressaoNfeDTO> buscarCotasParaImpressaoNotaEnvio(FiltroImpressaoNFEDTO filtro) {
 		StringBuilder sql = new StringBuilder();
-		sql.append("select new br.com.abril.nds.dto.NotasCotasImpressaoNfeDTO(ne.numero, ne.notaImpressa, cota, SUM(nei.reparte), SUM(nei.precoCapa * nei.reparte), SUM(nei.desconto)) ");
+		sql.append("select new ")
+		   .append(NotasCotasImpressaoNfeDTO.class.getCanonicalName())
+		   .append(" (ne.numero, ne.notaImpressa, cota, SUM(nei.reparte), SUM(nei.precoCapa * nei.reparte), SUM(nei.desconto)) ");
 		
 		//Complementa o HQL com as clausulas de filtro
 		Query q = montarFiltroConsultaNotaEnvioParaImpressao(filtro, sql, filtro.getPaginacao());
@@ -78,6 +83,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		return q.list().size();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<NotaFiscal> buscarNotasParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 		
@@ -90,6 +96,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 		return q.list();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<NotaEnvio> buscarNotasEnvioParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 		StringBuilder sql = new StringBuilder();
@@ -475,6 +482,7 @@ public class ImpressaoNFeRepositoryImpl extends AbstractRepositoryModel<NotaFisc
 			
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public List<Produto> buscarProdutosParaImpressaoNFe(FiltroImpressaoNFEDTO filtro) {
 
