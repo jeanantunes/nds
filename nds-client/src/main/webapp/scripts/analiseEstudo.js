@@ -129,7 +129,7 @@ var analiseEstudoController = $.extend(true, {
 
     carregarEstudos : function() {
     	
-    	if($("#codProduto").length() == 6 ){
+    	if($("#codProduto").val().length == 6 ){
     		alert("foi 6");
     	}
     	
