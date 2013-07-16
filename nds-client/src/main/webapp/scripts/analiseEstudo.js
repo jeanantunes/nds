@@ -31,10 +31,16 @@ var analiseEstudoController = $.extend(true, {
             }, {
                 display : 'Classificação',
                 name : 'descicaoTpClassifProd',
-                width : 150,
+                width : 100,
                 sortable : true,
                 align : 'left'
-            }, {
+            },{
+            	display : 'Dt Lançamento',
+                name : 'dataLancamento',
+                width : 60,
+                sortable : true,
+                align : 'center'            	
+            } ,{
                 display : 'Período',
                 name : 'codPeriodoProd',
                 width : 50,
@@ -122,6 +128,12 @@ var analiseEstudoController = $.extend(true, {
     },
 
     carregarEstudos : function() {
+    	
+    	if($("#codProduto").length() == 6 ){
+    		alert("foi 6");
+    	}
+    	
+    	
         var data = [{name : 'filtro.numEstudo', value : $("#idEstudo").val()}, 
                     {name : 'filtro.codigoProduto', value : $("#codProduto").val()}, 
                     {name : 'filtro.nome', value : $("#produto").val()}, 

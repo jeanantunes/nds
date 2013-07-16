@@ -1,12 +1,14 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 public class AnaliseEstudoDTO implements Serializable {
@@ -30,6 +32,8 @@ public class AnaliseEstudoDTO implements Serializable {
 	
 	private TipoClassificacaoProduto tpClassifProduto;
 	private PeriodicidadeProduto periodoProduto;
+	
+	private String dataLancamento;
 	
 	private PaginacaoVO paginacao;
 	
@@ -123,4 +127,12 @@ public class AnaliseEstudoDTO implements Serializable {
 	public void setPermiteParcial(boolean permiteParcial) {
 	    this.permiteParcial = permiteParcial;
 	}
+	public String getDataLancamento() {
+		return dataLancamento;
+	}
+	public void setDataLancamento(Date dataLancamento) {
+		this.dataLancamento = DateUtil.formatarDataPTBR(dataLancamento);
+	}
+	
+	
 }

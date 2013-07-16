@@ -17,7 +17,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -194,6 +193,9 @@ public class Produto implements Serializable {
 //	@JoinTable(name = "PRODUTO_EDICAO")
 	@OneToMany(mappedBy = "produto")
 	private List<ProdutoEdicao> produtoEdicao;
+	
+	@Column(name = "CODIGO_ICD", nullable = false)
+	private String codigoICD;
 	
 	public Long getId() {
 		return id;
@@ -671,4 +673,14 @@ public class Produto implements Serializable {
 	public void setIsGeracaoAutomatica(Boolean isGeracaoAutomatica) {
 		this.isGeracaoAutomatica = isGeracaoAutomatica;
 	}
+
+	public String getCodigoICD() {
+		return codigoICD;
+	}
+
+	public void setCodigoICD(String codigoICD) {
+		this.codigoICD = codigoICD;
+	}
+	
+	
 }
