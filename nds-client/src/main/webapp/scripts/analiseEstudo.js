@@ -66,7 +66,7 @@ var analiseEstudoController = $.extend(true, {
                 sortable : true,
                 align : 'left'
             }],
-            sortname : "box",
+            sortname : "numeroEstudo",
             sortorder : "asc",
             usepager : true,
             useRp : true,
@@ -128,11 +128,6 @@ var analiseEstudoController = $.extend(true, {
     },
 
     carregarEstudos : function() {
-    	
-    	if($("#codProduto").val().length == 6 ){
-    		alert("foi 6");
-    	}
-    	
     	
         var data = [{name : 'filtro.numEstudo', value : $("#idEstudo").val()}, 
                     {name : 'filtro.codigoProduto', value : $("#codProduto").val()}, 
