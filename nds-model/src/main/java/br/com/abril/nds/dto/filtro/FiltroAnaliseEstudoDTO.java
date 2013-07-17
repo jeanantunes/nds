@@ -18,6 +18,38 @@ public class FiltroAnaliseEstudoDTO extends FiltroDTO {
 	private String nome;
 	private Date dataLancamento;
 	
+	private Long idProduto;
+	
+	private OrdemColuna ordemColuna;
+	
+	public enum OrdemColuna{
+		
+		ESTUDO("numeroEstudo"),
+		CODIGO("codigoProduto"),
+		PRODUTO("nomeProduto"),
+		EDICAO("numeroEdicaoProduto"),
+		CLASSIFICACAO("descicaoTpClassifProd"),
+		DT_NASCIMENTO("dataLancamento"),
+		PERIODO("codPeriodoProd"),		
+		STATUS("statusEstudo");
+		
+		private String descricao;
+		
+		private OrdemColuna(String descricao) {
+			this.descricao = descricao;
+		}
+		
+		public String getDescricao(){
+			return this.descricao;
+		}
+		
+		@Override
+		public String toString() {
+			
+			return this.descricao;
+		}
+	}
+	
 	public Long getNumEstudo() {
 		return numEstudo;
 	}
@@ -71,4 +103,23 @@ public class FiltroAnaliseEstudoDTO extends FiltroDTO {
 		}
 		
 	}
+
+	public OrdemColuna getOrdemColuna() {
+		return ordemColuna;
+	}
+
+	public void setOrdemColuna(OrdemColuna ordemColuna) {
+		this.ordemColuna = ordemColuna;
+	}
+
+	public Long getIdProduto() {
+		return idProduto;
+	}
+
+	public void setIdProduto(Long idProduto) {
+		this.idProduto = idProduto;
+	}
+	
+	
+	
 }
