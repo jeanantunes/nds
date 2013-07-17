@@ -77,10 +77,17 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 	
 	@Override
 	public Produto obterProdutoPorCodigo(String codigoProduto) {
-		String hql = "from Produto produto " 
-				   + " where produto.codigo = :codigoProduto";
 		
-		Query query = super.getSession().createQuery(hql);
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("from Produto produto "); 
+		if(codigoProduto.length() == 6){
+			hql.append(" where produto.codigoICD = :codigoProduto");			
+		}else{
+			hql.append(" where produto.codigo = :codigoProduto");
+		}
+		
+		Query query = super.getSession().createQuery(hql.toString());
 
 		query.setParameter("codigoProduto", codigoProduto);
 		

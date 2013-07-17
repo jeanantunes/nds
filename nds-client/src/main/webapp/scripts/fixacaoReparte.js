@@ -260,6 +260,16 @@ var fixacaoReparteController = $.extend(true, {
 			width : 960,
 			height : 250
 		});
+	
+	$('#codigoProduto').blur(function (){
+		if($("#codigoProduto").val().length > 6 ){
+			$('#filtroClassificacaoFixacao').text('');
+			$('#filtroClassificacaoFixacao').disable();
+    	}else{
+    		$('#filtroClassificacaoFixacao').enable();
+    	}
+	});
+	
 	},
 
 	// remove itens duplicados e vazios de uma array
