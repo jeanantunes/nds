@@ -683,7 +683,12 @@ var lancamentoNovoController = $.extend(true, {
 			$("#dialogNovasDiferencas", lancamentoNovoController.workspace).dialog("close");
 		}
 		else{
+			
+			var tipoDiferencaAnterior = $("#tipoDiferenca", lancamentoNovoController.workspace).val();
+			
 			lancamentoNovoController.popupNovasDiferencas();
+			
+			$("#tipoDiferenca", lancamentoNovoController.workspace).val(tipoDiferencaAnterior);
 		}
 	},
 	
