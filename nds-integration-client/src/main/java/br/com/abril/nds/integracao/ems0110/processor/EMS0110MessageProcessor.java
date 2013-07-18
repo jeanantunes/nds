@@ -100,10 +100,6 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	private DescontoLogistica findDescontoLogisticaByTipoDesconto(
 			Integer codigoTipoDesconto) {
 		StringBuilder sql = new StringBuilder();
-
-		//sql.append("select d from DescontoLogistica d where d.tipoDesconto = :tipoDesconto ");
-		//Query query = this.getSession().createQuery(sql.toString());
-		//query.setParameter("tipoDesconto", codigoTipoDesconto);
 		
 		sql.append("SELECT id ")
 			.append("	, data_inicio_vigencia AS dataInicioVigencia")
@@ -268,6 +264,14 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 
 			produto.setDescontoLogistica(descontoLogistica);
 
+		} else {
+			
+			ndsiLoggerFactory.getLogger().logError(
+					message,
+					EventoExecucaoEnum.HIERARQUIA,
+					String.format( "Produto sem Desconto-Logística:  %1$s", input.getCodProd() )
+				);
+			
 		}
 
 		this.getSession().persist(produto);
