@@ -66,8 +66,6 @@ group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18
 )
 ;
 
--- Hoje - 11/07/2013 - Paramos no script 11 antes do update - Apresentou diferença na estqbox, existe quantidades maior que na movimento estoque entre o range de 49 registros
-
 -- Atualiza o estoque do distribuidor com as quantidades enviadas p/ o fornecedor
 update estoque_produto
 set qtde_devolucao_fornecedor = coalesce(qtde_devolucao_fornecedor,0)+
@@ -75,22 +73,112 @@ coalesce((select sum(me.qtde) from movimento_estoque me where me.tipo_movimento_
 where produto_edicao_id in (select produto_edicao_id from movimento_estoque where estoque_produto.produto_edicao_id = produto_edicao_id and tipo_movimento_id = 66)
 ;
 
-select * from movimento_estoque;
+drop table temp_mvto_estq_sem_12;
 
-select produto_edicao_id, (
-
-(select quantidade from estqbox e where e.produto_edicao_id in
-(142411,144811,145111,145121,145151,149751,152591,152721,152761,153221,153381,153391,153731,156911,157251,157281,157331,157381,157451,157561,157631,157671,157791,158251,
-158271,158291,158321,158351,158431,158461,158521,158541,158551,158681,159451,160831,161111,161601,162151,162171,162341,162501,162681,163451,165431,168301,168501,170361,177031)
-and nome_box = 'ENCALHE'
-and e.produto_edicao_id = movimento_estoque.produto_edicao_id 
-) - qtde)
-
-from movimento_estoque where produto_edicao_id in(142411,144811,145111,145121,145151,149751,152591,152721,152761,153221,153381,153391,153731,156911,157251,157281,157331,157381,157451,157561,157631,157671,157791,158251,
-158271,158291,158321,158351,158431,158461,158521,158541,158551,158681,159451,160831,161111,161601,162151,162171,162341,162501,162681,163451,165431,168301,168501,170361,177031)
-
-and tipo_movimento_id = 31
+create table temp_mvto_estq_sem_12 as (
+select a.data, c.id as estoque_produto_id, f.nome_box,a.produto_edicao_id,d.nome,d.codigo,e.numero_edicao,
+round(a.qtde) me,round(c.qtde_devolucao_encalhe) pe, round(sum(b.qtde)) mec
+from movimento_estoque   a, 
+     movimento_estoque_cota b, 
+     estoque_produto   c,
+  produto     d, 
+  produto_edicao   e,
+  estqbox    f
+where a.tipo_movimento_id = 31 and b.tipo_movimento_id = 26
+and a.produto_edicao_id = b.produto_edicao_id
+and a.produto_edicao_id = c.produto_edicao_id
+and c.produto_edicao_id = b.produto_edicao_id
+and a.produto_edicao_id = e.id
+and b.produto_edicao_id = e.id
+and c.produto_edicao_id = e.id
+and e.produto_id        = d.id
+and a.produto_edicao_id = f.produto_edicao_id
+and b.produto_edicao_id = f.produto_edicao_id
+and c.produto_edicao_id = f.produto_edicao_id
+and c.produto_edicao_id = e.id
+-- and f.nome_box = 'ENCALHE'
+and a.qtde  <> c.qtde_devolucao_encalhe  ## somente para 31 X 26
+and   f.produto_edicao_id   not in (select produto_edicao_id from estqmov where tipo_movto = 12)
+group by 1,2,3,4
+limit 1000000)
 ;
+
+select * from temp_mvto_estq_sem_12;
+
+-- inserir movimento em estoque tipo 15, atribuir o valor ao atributo qtde o resultado da subtração de pe - me
+INSERT INTO movimento_estoque
+(
+ APROVADO_AUTOMATICAMENTE, DATA_APROVACAO, MOTIVO, STATUS, DATA, DATA_CRIACAO, APROVADOR_ID, TIPO_MOVIMENTO_ID,
+ USUARIO_ID, QTDE, PRODUTO_EDICAO_ID, ESTOQUE_PRODUTO_ID, ITEM_REC_FISICO_ID, DATA_INTEGRACAO, STATUS_INTEGRACAO,
+ COD_ORIGEM_MOTIVO, DAT_EMISSAO_DOC_ACERTO, NUM_DOC_ACERTO, ORIGEM)
+(
+select true,	date(sysdate()),	'CARGA',	'APROVADO',	m.data,	date(sysdate()),	null,	18,	1,	(m.pe - m.me),
+	m.PRODUTO_EDICAO_ID,	m.estoque_produto_id, 	null, 	null,	null, 	null, 	null,	null,	'CARGA_INICIAL'
+from temp_mvto_estq_sem_12 m
+where pe > me
+)
+;
+
+-- inserir movimento em estoque tipo 18, atribuir o valor ao atributo qtde da tabela movimento_estoque o resultado 
+-- da subtração de me - pe
+INSERT INTO movimento_estoque
+(
+ APROVADO_AUTOMATICAMENTE, DATA_APROVACAO, MOTIVO, STATUS, DATA, DATA_CRIACAO, APROVADOR_ID, TIPO_MOVIMENTO_ID,
+ USUARIO_ID, QTDE, PRODUTO_EDICAO_ID, ESTOQUE_PRODUTO_ID, ITEM_REC_FISICO_ID, DATA_INTEGRACAO, STATUS_INTEGRACAO,
+ COD_ORIGEM_MOTIVO, DAT_EMISSAO_DOC_ACERTO, NUM_DOC_ACERTO, ORIGEM)
+(
+select true,	date(sysdate()),	'CARGA',	'APROVADO',	m.data,	date(sysdate()),	null,	15,	1,	(m.me - m.pe),
+	m.PRODUTO_EDICAO_ID,	m.estoque_produto_id, 	null, 	null,	null, 	null, 	null,	null,	'CARGA_INICIAL'
+from temp_mvto_estq_sem_12 m
+where pe < me
+)
+
+;
+
+
+-- Excluir os movimentos tipo 66 da movimento_estoque dos 47 registros da temp.
+delete from movimento_estoque 
+where PRODUTO_EDICAO_ID in (select t.PRODUTO_EDICAO_ID from temp_mvto_estq_sem_12 t 
+							where t.PRODUTO_EDICAO_ID = movimento_estoque.PRODUTO_EDICAO_ID)
+and tipo_movimento_id = 66
+;
+
+drop table temp_mvto_estq_sem_12;
+
+create table temp_mvto_estq_qtde_igual(
+select a.data, c.id as estoque_produto_id, f.nome_box,a.produto_edicao_id,d.nome,d.codigo,e.numero_edicao,
+round(a.qtde) me,round(c.qtde_devolucao_encalhe) pe, round(sum(b.qtde)) mec
+from movimento_estoque   a, 
+     movimento_estoque_cota b, 
+     estoque_produto   c,
+  produto     d, 
+  produto_edicao   e,
+  estqbox    f
+where a.tipo_movimento_id = 31 and b.tipo_movimento_id = 26
+and a.produto_edicao_id = b.produto_edicao_id
+and a.produto_edicao_id = c.produto_edicao_id
+and c.produto_edicao_id = b.produto_edicao_id
+and a.produto_edicao_id = e.id
+and b.produto_edicao_id = e.id
+and c.produto_edicao_id = e.id
+and e.produto_id        = d.id
+and a.produto_edicao_id = f.produto_edicao_id
+and b.produto_edicao_id = f.produto_edicao_id
+and c.produto_edicao_id = f.produto_edicao_id
+and c.produto_edicao_id = e.id
+-- and f.nome_box = 'ENCALHE'
+and a.qtde  = c.qtde_devolucao_encalhe  ## somente para 31 X 26
+and   f.produto_edicao_id   not in (select produto_edicao_id from estqmov where tipo_movto = 12)
+group by 1,2,3,4
+limit 1000000)
+;
+
+delete from movimento_estoque 
+where PRODUTO_EDICAO_ID in (select t.PRODUTO_EDICAO_ID from temp_mvto_estq_qtde_igual t 
+							where t.PRODUTO_EDICAO_ID = movimento_estoque.PRODUTO_EDICAO_ID)
+and tipo_movimento_id = 66
+;
+
 
 -- ====================######## ABAIXO Scripts Tests ###############============================
 
@@ -164,3 +252,34 @@ select * from estoque_produto where id = 16531;
 
 delete from movimento_estoque 
 where TIPO_MOVIMENTO_ID = 66;
+
+
+select * from movimento_estoque
+where PRODUTO_EDICAO_ID in( select PRODUTO_EDICAO_ID from temp_mvto_estq_sem_12 t 
+							where movimento_estoque.PRODUTO_EDICAO_ID = t.PRODUTO_EDICAO_ID group by 1)
+and tipo_movimento_id = 66
+;
+
+
+select * from movimento_estoque 
+where produto_edicao_id not in(
+	select e.produto_edicao_id from estqmov e
+	where movimento_estoque.produto_edicao_id = e.produto_edicao_id
+	and e.tipo_movto =12
+)
+and tipo_movimento_id = 66
+and produto_edicao_id in
+	(142411,144811,145111,145121,145151,149751,152591,152721,152761,153221,153381,153391,153731,156911,157251,157281,157331,157381,157451,157561,157631,157671,157791,158251,
+		158271,158291,158321,158351,158431,158461,158521,158541,158551,158681,159451,160831,161111,161601,162151,162171,162341,162501,162681,163451,165431,168301,168501,170361,177031
+	)
+
+;
+
+select * from movimento_estoque
+where tipo_movimento_id = 66
+and produto_edicao_id in
+	(142411,144811,145111,145121,145151,149751,152591,152721,152761,153221,153381,153391,153731,156911,157251,157281,157331,157381,157451,157561,157631,157671,157791,158251,
+		158271,158291,158321,158351,158431,158461,158521,158541,158551,158681,159451,160831,161111,161601,162151,162171,162341,162501,162681,163451,165431,168301,168501,170361,177031
+	)
+
+;
