@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.devolucao;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedHashMap;
@@ -13,6 +14,7 @@ import java.util.TreeMap;
 
 import javax.servlet.http.HttpSession;
 
+import org.lightcouch.DesignDocument.MapReduce;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.SerializationUtils;
 
@@ -25,6 +27,7 @@ import br.com.abril.nds.client.vo.ResultadoResumoBalanceamentoVO;
 import br.com.abril.nds.client.vo.ResumoPeriodoBalanceamentoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
+import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -1274,7 +1277,7 @@ public class MatrizRecolhimentoController extends BaseController {
 				
 				boolean exibeDestaque = false;
 				
-				Long qtdeTitulos = Long.valueOf(listaProdutosRecolhimento.size());
+				Long qtdeTitulos = 0L;
 				Long qtdeTitulosParciais = 0L;
 				
 				Long pesoTotal = 0L;
@@ -1282,6 +1285,14 @@ public class MatrizRecolhimentoController extends BaseController {
 				BigDecimal valorTotal = BigDecimal.ZERO;
 				
 				for (ProdutoRecolhimentoDTO produtoRecolhimento : listaProdutosRecolhimento) {
+					
+					BigDecimal expectativaEncalhe = produtoRecolhimento.getExpectativaEncalhe();
+					
+					if (!itemResumoPeriodoBalanceamento.getIdsProdutoEdicao().contains(
+							produtoRecolhimento.getIdProdutoEdicao())) {
+						
+						qtdeTitulos++;
+					}
 					
 					if (produtoRecolhimento.getExpectativaEncalheAtendida() != null
 							&& produtoRecolhimento.getExpectativaEncalheAtendida().doubleValue() > 0) {
@@ -1296,7 +1307,8 @@ public class MatrizRecolhimentoController extends BaseController {
 					
 					if (produtoRecolhimento.getPeso() != null) {
 						
-						pesoTotal += produtoRecolhimento.getPeso();
+						pesoTotal = pesoTotal + 
+							(produtoRecolhimento.getPeso() * expectativaEncalhe.longValue());
 					}
 					
 					if (produtoRecolhimento.getValorTotal() != null) {
@@ -1306,8 +1318,11 @@ public class MatrizRecolhimentoController extends BaseController {
 					
 					if (produtoRecolhimento.getExpectativaEncalhe() != null) {
 						
-						qtdeExemplares = qtdeExemplares.add(produtoRecolhimento.getExpectativaEncalhe());
+						qtdeExemplares = qtdeExemplares.add(expectativaEncalhe);
 					}
+					
+					itemResumoPeriodoBalanceamento.getIdsProdutoEdicao()
+						.add(produtoRecolhimento.getIdProdutoEdicao());
 				}
 				
 				boolean excedeCapacidadeDistribuidor = false;
@@ -1335,6 +1350,9 @@ public class MatrizRecolhimentoController extends BaseController {
 			resumoPeriodoBalanceamento.add(itemResumoPeriodoBalanceamento);
 		}
 		
+		this.tratarResumoOperacaoDiferenciada(
+			balanceamentoRecolhimento, resumoPeriodoBalanceamento);
+		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = new ResultadoResumoBalanceamentoVO();
 		
 		resultadoResumoBalanceamento.setListaResumoPeriodoBalanceamento(resumoPeriodoBalanceamento);
@@ -1343,6 +1361,144 @@ public class MatrizRecolhimentoController extends BaseController {
 			balanceamentoRecolhimento.getCapacidadeRecolhimentoDistribuidor());
 		
 		return resultadoResumoBalanceamento;
+	}
+
+	private void tratarResumoOperacaoDiferenciada(BalanceamentoRecolhimentoDTO balanceamentoRecolhimento,
+												  List<ResumoPeriodoBalanceamentoVO> resumoPeriodoBalanceamento) {
+		
+		Map<Date, List<CotaOperacaoDiferenciadaDTO>> mapOperacaoDifAdicionar = new TreeMap<>();
+		Map<Date, List<CotaOperacaoDiferenciadaDTO>> mapOperacaoDifRemover = new TreeMap<>();
+		
+		this.recolhimentoService.montarMapasOperacaoDiferenciada(
+			mapOperacaoDifAdicionar, mapOperacaoDifRemover,
+			balanceamentoRecolhimento.getMatrizRecolhimento(),
+			balanceamentoRecolhimento.getCotasOperacaoDiferenciada());
+		
+		for (Map.Entry<Date, List<CotaOperacaoDiferenciadaDTO>> entry : mapOperacaoDifAdicionar.entrySet()) {
+			
+			Date dataRecolhimento = entry.getKey();
+			List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada = entry.getValue();
+			
+			ResumoPeriodoBalanceamentoVO itemResumoPeriodoBalanceamento =
+				this.obterItemResumoBalanceamento(
+					resumoPeriodoBalanceamento, dataRecolhimento);
+			
+			if (itemResumoPeriodoBalanceamento == null) {
+				
+				itemResumoPeriodoBalanceamento = new ResumoPeriodoBalanceamentoVO();
+				
+				itemResumoPeriodoBalanceamento.setData(dataRecolhimento);
+				itemResumoPeriodoBalanceamento.setBloquearVisualizacao(true);
+				
+				resumoPeriodoBalanceamento.add(itemResumoPeriodoBalanceamento);
+			}
+			
+			BigInteger qtdeExemplares =
+				(itemResumoPeriodoBalanceamento.getQtdeExemplares() != null)
+					? itemResumoPeriodoBalanceamento.getQtdeExemplares() : BigInteger.ZERO;
+			
+			Long pesoTotal =
+				(itemResumoPeriodoBalanceamento.getPesoTotal() != null)
+					? itemResumoPeriodoBalanceamento.getPesoTotal() : 0L;
+			
+			BigDecimal valorTotal =
+				(itemResumoPeriodoBalanceamento.getValorTotal() != null)
+					? itemResumoPeriodoBalanceamento.getValorTotal() : BigDecimal.ZERO;
+			
+			Long qtdeTitulos =
+				(itemResumoPeriodoBalanceamento.getQtdeTitulos() != null)
+					? itemResumoPeriodoBalanceamento.getQtdeTitulos() : 0L;
+			
+			Long qtdeTitulosParciais =
+				(itemResumoPeriodoBalanceamento.getQtdeTitulosParciais() != null)
+					? itemResumoPeriodoBalanceamento.getQtdeTitulosParciais() : 0L;
+			
+			for (CotaOperacaoDiferenciadaDTO cotaOperacaoDiferenciada : cotasOperacaoDiferenciada) {
+				
+				BigDecimal expectativaEncalhe = cotaOperacaoDiferenciada.getExpectativaEncalhe();
+				
+				qtdeExemplares = qtdeExemplares.add(expectativaEncalhe.toBigInteger());
+				
+				pesoTotal = pesoTotal +
+					(cotaOperacaoDiferenciada.getPeso() * expectativaEncalhe.longValue());
+				
+				valorTotal = valorTotal.add(cotaOperacaoDiferenciada.getValorTotal());
+				
+				if (!itemResumoPeriodoBalanceamento.getIdsProdutoEdicao().contains(
+						cotaOperacaoDiferenciada.getIdProdutoEdicao())) {
+				
+					qtdeTitulos++;
+					
+					if (cotaOperacaoDiferenciada.getParcial() != null) {
+						
+						qtdeTitulosParciais++;
+					}
+					
+					itemResumoPeriodoBalanceamento.getIdsProdutoEdicao()
+						.add(cotaOperacaoDiferenciada.getIdProdutoEdicao());
+				}
+			}
+			
+			itemResumoPeriodoBalanceamento.setQtdeExemplares(qtdeExemplares);
+			itemResumoPeriodoBalanceamento.setPesoTotal(pesoTotal);
+			itemResumoPeriodoBalanceamento.setValorTotal(valorTotal);
+			itemResumoPeriodoBalanceamento.setQtdeTitulos(qtdeTitulos);
+			itemResumoPeriodoBalanceamento.setQtdeTitulosParciais(qtdeTitulosParciais);
+			itemResumoPeriodoBalanceamento.setOperacaoDiferenciada(true);
+		}
+		
+		for (Map.Entry<Date, List<CotaOperacaoDiferenciadaDTO>> entry : mapOperacaoDifRemover.entrySet()) {
+			
+			Date dataRecolhimento = entry.getKey();
+			List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada = entry.getValue();
+		
+			ResumoPeriodoBalanceamentoVO itemResumoPeriodoBalanceamento =
+				this.obterItemResumoBalanceamento(
+					resumoPeriodoBalanceamento, dataRecolhimento);
+			
+			BigInteger qtdeExemplares =
+				(itemResumoPeriodoBalanceamento.getQtdeExemplares() != null)
+					? itemResumoPeriodoBalanceamento.getQtdeExemplares() : BigInteger.ZERO;
+					
+			Long pesoTotal =
+				(itemResumoPeriodoBalanceamento.getPesoTotal() != null)
+					? itemResumoPeriodoBalanceamento.getPesoTotal() : 0L;
+			
+			BigDecimal valorTotal =
+				(itemResumoPeriodoBalanceamento.getValorTotal() != null)
+					? itemResumoPeriodoBalanceamento.getValorTotal() : BigDecimal.ZERO;
+			
+			for (CotaOperacaoDiferenciadaDTO cotaOperacaoDiferenciada : cotasOperacaoDiferenciada) {
+				
+				BigDecimal expectativaEncalhe = cotaOperacaoDiferenciada.getExpectativaEncalhe();
+				
+				qtdeExemplares = qtdeExemplares.subtract(cotaOperacaoDiferenciada.getExpectativaEncalhe().toBigInteger());
+				
+				pesoTotal = pesoTotal -
+					(cotaOperacaoDiferenciada.getPeso() * expectativaEncalhe.longValue());
+				
+				valorTotal = valorTotal.subtract(cotaOperacaoDiferenciada.getValorTotal());
+			}
+			
+			itemResumoPeriodoBalanceamento.setQtdeExemplares(qtdeExemplares);
+			itemResumoPeriodoBalanceamento.setPesoTotal(pesoTotal);
+			itemResumoPeriodoBalanceamento.setValorTotal(valorTotal);
+		}
+	}
+
+	private ResumoPeriodoBalanceamentoVO obterItemResumoBalanceamento(
+									List<ResumoPeriodoBalanceamentoVO> resumoPeriodoBalanceamento,
+									Date dataRecolhimento) {
+		
+		for (ResumoPeriodoBalanceamentoVO itemResumoPeriodoBalanceamento : resumoPeriodoBalanceamento) {
+			
+			if (dataRecolhimento.compareTo(itemResumoPeriodoBalanceamento.getData()) == 0) {
+				
+				return itemResumoPeriodoBalanceamento;
+			}
+		}
+		
+		return null;
 	}
 	
 

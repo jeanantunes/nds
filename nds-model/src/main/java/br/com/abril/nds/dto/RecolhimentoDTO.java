@@ -27,6 +27,8 @@ public class RecolhimentoDTO implements Serializable {
 	private TreeSet<Date> datasRecolhimentoFornecedor;
 	
 	private boolean forcarBalanceamento;
+	
+	private List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada;
 
 	/**
 	 * Construtor padrão.
@@ -107,6 +109,21 @@ public class RecolhimentoDTO implements Serializable {
 	 */
 	public void setForcarBalanceamento(boolean forcarBalanceamento) {
 		this.forcarBalanceamento = forcarBalanceamento;
+	}
+
+	/**
+	 * @return the cotasOperacaoDiferenciada
+	 */
+	public List<CotaOperacaoDiferenciadaDTO> getCotasOperacaoDiferenciada() {
+		return cotasOperacaoDiferenciada;
+	}
+
+	/**
+	 * @param cotasOperacaoDiferenciada the cotasOperacaoDiferenciada to set
+	 */
+	public void setCotasOperacaoDiferenciada(
+		List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada) {
+		this.cotasOperacaoDiferenciada = cotasOperacaoDiferenciada;
 	}
 	
 }

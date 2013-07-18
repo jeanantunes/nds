@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
+import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.Intervalo;
@@ -84,4 +85,8 @@ public interface RecolhimentoService {
 	 */
 	void processarProdutosProximaSemanaRecolhimento(List<ProdutoRecolhimentoDTO> produtos, Integer numeroSemana,Date dataBalanceamento);
 	
+	void montarMapasOperacaoDiferenciada(Map<Date, List<CotaOperacaoDiferenciadaDTO>> mapOperacaoDifAdicionar,
+										 Map<Date, List<CotaOperacaoDiferenciadaDTO>> mapOperacaoDifRemover,
+										 TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
+										 List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada);
 }
