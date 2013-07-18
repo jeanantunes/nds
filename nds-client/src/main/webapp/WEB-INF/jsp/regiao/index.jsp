@@ -116,7 +116,7 @@ function removeProdutoEscohido(idx){
 	
 	<div id="dialog-addNMaiores" title="Adicionar Produtos"
 		style="display: none;">
-		<fieldset style="width: 600px !important;">
+		<fieldset style="width: 680px !important;">
 			<legend>Pesquisar Produtos</legend>
 			<table width="588" border="0" cellspacing="2" cellpadding="2">
 				<tr>
@@ -131,7 +131,7 @@ function removeProdutoEscohido(idx){
 		 	   		   		   onblur="pesquisaProduto.pesquisarPorNomeProduto('#idCodigo', '#nomeProduto');" />
 					</td>
 					<td width="68">Classificação:</td>
-						 <td width="163">
+						 <td width="150">
 						 	<select name="select" id="comboClassificacao" style="width:140px;">
                             	<option selected="selected">Selecione...</option>
                   					<c:forEach items="${listaClassificacao}" var="classificacao">
@@ -139,13 +139,13 @@ function removeProdutoEscohido(idx){
 				  					</c:forEach>
                 			</select>
                 		</td>
-					<td width="106"><span class="bt_pesquisar"><a href="javascript:;" onclick="regiaoController.filtroNMaiores();">Pesquisar</a></span></td>					
+					<td width="20"><span class="bt_pesquisar"><a href="javascript:;" onclick="regiaoController.filtroNMaiores();">Pesquisar</a></span></td>					
 				</tr>
 			</table>
 		</fieldset>
 
 		<fieldset
-			style="width: 600px !important; margin-top: 10px !important;">
+			style="width: 680px !important; margin-top: 10px !important;">
 			<legend>Produtos</legend>
 			
 			<table id="lstProdutosGrid"></table>
