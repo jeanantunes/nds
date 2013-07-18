@@ -136,7 +136,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 				.append("  notaFiscal.dataEmissao, ")
 				.append("  notaFiscal.dataExpedicao, ")
 				.append("  tipoNotaFiscal.descricao, ")
-				.append("  notaFiscal.valorBruto - notaFiscal.valorDesconto as valorTotalNota, ")
+				.append("  notaFiscal.valorBruto as valorTotalNota, ")
 				.append("  notaFiscal.statusNotaFiscal, ")
 				.append("  notaFiscal.dataRecebimento, ")
 				.append("  f.juridica.razaoSocial,")
@@ -344,7 +344,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 				   + " itemNotaFiscal.preco as precoVenda, "
 				   + " itemNotaFiscal.qtde as quantidadeExemplares, " 
 				   
-				   + " ((itemNotaFiscal.preco - (itemNotaFiscal.preco * itemNotaFiscal.desconto)) * itemNotaFiscal.qtde) as valorTotal, "
+				   + " (itemNotaFiscal.preco * itemNotaFiscal.qtde) as valorTotal, "
 				   
 				   + " diferenca.qtde as sobrasFaltas, " 
 				   + " diferenca.tipoDiferenca as tipoDiferenca, " 

@@ -188,6 +188,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		List<FechamentoFisicoLogicoDTO> listaConferencia = 
 				fechamentoEncalheRepository.buscarConferenciaEncalheNovo(filtro, sortorder, sort, startSearch, rp);
+		
 		if(! listaConferencia.isEmpty())
 		{
 			ArrayList<Long> listaDeIdsProdutoEdicao = new ArrayList<Long>();
