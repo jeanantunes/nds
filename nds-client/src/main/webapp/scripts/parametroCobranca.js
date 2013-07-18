@@ -396,8 +396,34 @@ var parametroCobrancaController = $.extend(true,
 					   null,
 					   true);
 		},
-		
-		
+
+		obterSugestaoFornecedorPadrao : function(idFornecedorPadrao){
+			
+			var sel;
+
+			$.each($("#comboFornecedorPadrao option", this.workspace), function(index, value) { 
+
+				if(!idFornecedorPadrao){
+					
+					if (this.label=='Dinap'){
+						
+						sel = this.value;
+						
+						return false;
+					}
+				}
+				    
+				sel = idFornecedorPadrao;
+			});
+			
+			if (!sel){
+				
+				sel = 0;
+			}
+			
+			$("#comboFornecedorPadrao", this.workspace).val(sel);
+		},
+
 		sucessCallbackObterParametro : function(resultado) {
 			
 			var formaEmissao = resultado.formaEmissao;
@@ -473,7 +499,7 @@ var parametroCobrancaController = $.extend(true,
 					this.selected = true;
 				}
 			});
-			
+
 			$.each($("#comboFornecedorPadrao option", this.workspace), function(index, value) { 
 				if(this.value == resultado.idFornecedorPadrao) {
 					this.selected = true;
@@ -481,6 +507,8 @@ var parametroCobrancaController = $.extend(true,
 				}
 			});
 			
+			parametroCobrancaController.obterSugestaoFornecedorPadrao(resultado.idFornecedorPadrao);
+
 			$("input[name='radioFormaCobrancaBoleto']", this.workspace).each(function(i) {			
 				if($(this, this.workspace).val() == resultado.formaCobrancaBoleto){
 					$(this, this.workspace).attr('checked', true);
