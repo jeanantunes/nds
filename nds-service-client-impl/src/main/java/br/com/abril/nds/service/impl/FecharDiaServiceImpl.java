@@ -1180,7 +1180,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		Integer ultimoDiaRecolhimento = this.obterUltimoDiaRecolhimento();
 		
 		Date dataBase =
-			calendarioService.subtrairDiasUteisComOperacao(dataOperacao, ultimoDiaRecolhimento);
+			calendarioService.subtrairDiasUteisComOperacao(dataOperacao, ultimoDiaRecolhimento - 1);
 		
 		List<Lancamento> lancamentos =
 			this.lancamentoRepository.obterLancamentosEmRecolhimentoVencidos(dataBase);
