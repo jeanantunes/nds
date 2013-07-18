@@ -84,7 +84,13 @@ var regiaoController = $.extend(true, {
 		$("#lstProdutosGrid").flexigrid({
 			preProcess : regiaoController.executarPreProcessLstProdutosGrid,
 			dataType : 'json',
-			colModel : [ {
+			colModel : [{
+				display : 'Código',
+				name : 'codigo_icd',
+				width : 70,
+				sortable : true,
+				align : 'left',
+			}, {
 				display : 'Edição',
 				name : 'numeroEdicao',
 				width : 80,
@@ -127,7 +133,7 @@ var regiaoController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 600,
+			width : 680,
 			height : 200
 		});
 
@@ -1086,7 +1092,7 @@ var regiaoController = $.extend(true, {
 		$("#dialog-addNMaiores").dialog({
 			resizable : false,
 			height : 520,
-			width : 645,
+			width : 710,
 			modal : true,
 			buttons : {
 				"Confirmar" : function() {

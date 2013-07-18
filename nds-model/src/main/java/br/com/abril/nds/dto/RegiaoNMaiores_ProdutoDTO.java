@@ -18,6 +18,7 @@ public class RegiaoNMaiores_ProdutoDTO extends FiltroDTO implements Serializable
 	private StatusLancamento status;
 	private Long classificacao;
 	private String descricaoClassificacao;
+	private String codigo_icd;
 
 	public String getCodProduto() {
 		return codProduto;
@@ -60,5 +61,11 @@ public class RegiaoNMaiores_ProdutoDTO extends FiltroDTO implements Serializable
 	}
 	public void setNomeProduto(String nomeProduto) {
 		this.nomeProduto = nomeProduto;
+	}
+	public String getCodigo_icd() {
+		return codigo_icd;
+	}
+	public void setCodigo_icd(String codigo_icd) {
+		this.codigo_icd = codigo_icd;
 	}
 }

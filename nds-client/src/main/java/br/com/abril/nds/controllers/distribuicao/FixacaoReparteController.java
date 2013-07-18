@@ -115,6 +115,8 @@ public class FixacaoReparteController extends BaseController {
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		
 		tratarFiltroPorProduto(filtro);
+
+		this.setingIdProduto_produto(filtro);
 		
 		List<FixacaoReparteDTO>	resultadoPesquisa = fixacaoReparteService.obterFixacoesRepartePorProduto(filtro);
 		
@@ -155,9 +157,8 @@ public class FixacaoReparteController extends BaseController {
 		
 		result.use(Results.json()).withoutRoot().from(tableModelCota).recursive().serialize();
 	}
-	
-	
-	
+
+
 	private TableModel<CellModelKeyValue<FixacaoReparteDTO>> montarTableModelProduto(FiltroConsultaFixacaoProdutoDTO filtro) {
 		
 		List<FixacaoReparteDTO> resultadoPesquisa = fixacaoReparteService.obterFixacoesRepartePorProduto(filtro);
@@ -649,6 +650,11 @@ public class FixacaoReparteController extends BaseController {
 
 	public void setErrosUpload(List<String> errosUpload) {
 		this.errosUpload = errosUpload;
+	}
+	
+	private void setingIdProduto_produto(FiltroConsultaFixacaoProdutoDTO filtro) {
+		Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigoProduto());
+		filtro.setIdProduto(produto.getId());
 	}
 
 }
