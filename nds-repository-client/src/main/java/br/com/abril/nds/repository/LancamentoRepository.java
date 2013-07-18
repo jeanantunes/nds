@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
+import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.ProdutoLancamentoCanceladoDTO;
@@ -354,5 +355,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	List<Lancamento> obterLancamentosEmRecolhimentoVencidos(Date dataBase);
 	
 	List<Lancamento> obterLancamentosRecolhidosPorEdicoes(Set<Long> idsProdutoEdicao);
+	
+	List<CotaOperacaoDiferenciadaDTO> obterLancamentosEncalhesPorCota(Set<Long> idsCota, Set<Long> idsLancamento);
 	
 }
