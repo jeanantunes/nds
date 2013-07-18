@@ -96,8 +96,8 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 
 	@Transactional
 	@Override
-	public List<FixacaoReparteDTO> obterFixacoesRepartePorProduto(
-			FiltroConsultaFixacaoProdutoDTO filtroConsultaFixacaoProdutoDTO) {
+	public List<FixacaoReparteDTO> obterFixacoesRepartePorProduto(FiltroConsultaFixacaoProdutoDTO filtroConsultaFixacaoProdutoDTO) {
+		
 		List<FixacaoReparteDTO> listaFixacaoReparteDTO = new ArrayList<FixacaoReparteDTO>();
 		Produto produto = new Produto();
 		String nomeProdutoBusca =  filtroConsultaFixacaoProdutoDTO.getNomeProduto();

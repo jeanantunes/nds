@@ -48,13 +48,15 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<FixacaoReparteDTO> obterFixacoesRepartePorProduto(FiltroConsultaFixacaoProdutoDTO produto) {
-	boolean isCodigoProdutoPreenchido = produto!= null && produto.getCodigoProduto() !=null;
-	boolean isClassificacaoPreenchida = StringUtils.isNotEmpty(produto.getClassificacaoProduto());
-	boolean isNomeProdutoPreenchido = StringUtils.isNotEmpty(produto.getNomeProduto());
+	
+		boolean isCodigoProdutoPreenchido = produto!= null && produto.getCodigoProduto() !=null;
+		boolean isClassificacaoPreenchida = StringUtils.isNotEmpty(produto.getClassificacaoProduto());
+		boolean isNomeProdutoPreenchido = StringUtils.isNotEmpty(produto.getNomeProduto());
 	
 		StringBuilder sql = new StringBuilder("");
 
 		sql.append(" select ")
+		
 		.append(" f.id as id, ")
 		.append(" f.qtdeExemplares as qtdeExemplares,")
 		.append(" f.qtdeEdicoes as qtdeEdicoes,")
@@ -69,24 +71,27 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		.append(" f.usuario.login as usuario,")
 		.append(" produto.codigo as codigoProduto,")
 		.append(" count(pdv.id) as qtdPdv")
+		
 		.append(" from ")
+		
 		.append(" FixacaoReparte f ")
 		.append(" left join f.cotaFixada.pessoa as pessoa ")
 		.append(" left join f.cotaFixada.pdvs as pdv ")
 		.append(" inner join f.produtoFixado as produto ")
+		
 		.append(" where ");
 		
 		if(isNomeProdutoPreenchido){
-			sql.append( " UPPER(produto.nome) like  UPPER(:nomeProduto) AND ");
+			sql.append( " UPPER(produto.nome) like  UPPER(:nomeProduto) ");
 		}
-		sql.append(" f.cotaFixada.tipoDistribuicaoCota = :tipoCota ");
+		sql.append(" AND f.cotaFixada.tipoDistribuicaoCota = :tipoCota ");
 		
 		if(isClassificacaoPreenchida){
 			sql.append(" and upper(f.produtoFixado.tipoClassificacaoProduto.descricao) = upper(:classificacaoProduto)");
 		}
 		
 		if(isCodigoProdutoPreenchido){
-			sql.append(	" and UPPER(produto.codigo) = UPPER(:codigoProduto) ");
+			sql.append(	" and (produto.id) = (:idProduto) ");
 		}
 
 		sql.append(" GROUP BY f.id ")
@@ -100,14 +105,15 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		}
 		
 		if(isCodigoProdutoPreenchido){
-			query.setParameter("codigoProduto", produto.getCodigoProduto());
+			query.setParameter("idProduto", produto.getIdProduto());
 		}
 		if(isClassificacaoPreenchida){
 			query.setParameter("classificacaoProduto", produto.getClassificacaoProduto());
 		}
 		query.setParameter("tipoCota", TipoDistribuicaoCota.CONVENCIONAL);
-		 query.setResultTransformer(new AliasToBeanResultTransformer(FixacaoReparteDTO.class));
-		 configurarPaginacao(produto,query);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(FixacaoReparteDTO.class));
+		configurarPaginacao(produto,query);
 		return query.list();
 		
 	}
@@ -132,7 +138,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		 .append(" f.edicaoFinal - f.edicaoInicial as edicoesAtendidas, ")
 		 .append(" f.cotaFixada.numeroCota as cotaFixada, ")
 		 .append(" f.cotaFixada.id as cotaFixadaId, ")
-		 .append(" f.produtoFixado.codigo as produtoFixado, ")
+		 .append(" f.produtoFixado.codigoICD as produtoFixado, ")
 		 .append(" f.produtoFixado.nome as nomeProduto, ")
 		 .append(" f.produtoFixado.id as produtoFixadoId, ")
 		 

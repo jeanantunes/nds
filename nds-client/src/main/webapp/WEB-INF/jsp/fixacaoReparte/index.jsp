@@ -225,12 +225,12 @@ function mostraIntervalo(){
     
  	<div id="dialog-novo" title="Nova Fixação">
  		
-			<fieldset style="width:600px!important; margin-bottom:5px;">
+			<fieldset style="width:760px!important; margin-bottom:5px;">
 		    	<legend id="subtitulo1">Produto:</legend>
 		        	<span id="spanCodigoProduto"></span>-<span id="spanNomeProduto"></span>
 		    </fieldset>
 
-		  <fieldset style="width:600px!important; margin-top:5px;">
+		  <fieldset style="width:760px!important; margin-top:5px;">
 		   	<legend id="subtitulo2">Pesquisar Cota</legend>
 		    <table width="588" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		        <tr>
@@ -254,7 +254,7 @@ function mostraIntervalo(){
 		      </table>
 			</fieldset>
 		    <br clear="all" />
-		    <fieldset style="width:600px!important; margin-top:5px;">
+		    <fieldset style="width:760px!important; margin-top:5px;">
 		      <table width="590" border="0" cellspacing="1" cellpadding="1">
 		      <tr>
 		        <td width="90"><strong>Edição:</strong></td>
@@ -283,7 +283,7 @@ function mostraIntervalo(){
 		  </fieldset>
 		    <br clear="all" />
 
-		    <fieldset style="width:600px!important; margin-top:5px;">
+		    <fieldset style="width:760px!important; margin-top:5px;">
 		    	<legend>Histórico</legend>
 
 		        <table class="historicoGrid"></table>

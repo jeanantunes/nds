@@ -192,6 +192,8 @@ public List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto){
 
 		sql.append(" select ");
 		sql.append("    produto_edicao.NUMERO_EDICAO as edicao, ");
+		sql.append("    produto.codigo_icd as codigoProduto, ");
+		sql.append("    tcp.descricao as classificacaoProduto, ");
 		sql.append("    ifnull(estoque_produto_cota.QTDE_RECEBIDA, 0) as reparte,");
 		sql.append("  	ifnull(estoque_produto_cota.QTDE_RECEBIDA - estoque_produto_cota.QTDE_DEVOLVIDA, 0 ) as venda, ");
 		sql.append("  	lancamento.STATUS as status, ");
@@ -201,6 +203,7 @@ public List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto){
 		sql.append("	left join estoque_produto_cota on estoque_produto_cota.PRODUTO_EDICAO_ID = produto_edicao.id ");
 		sql.append("	join lancamento on lancamento.PRODUTO_EDICAO_ID = produto_edicao.ID ");
 		sql.append("	join produto on produto.ID = produto_edicao.PRODUTO_ID");
+		sql.append("	join tipo_classificacao_produto tcp on tcp.ID = produto.TIPO_CLASSIFICACAO_PRODUTO_ID");
 		sql.append(" where produto.codigo = :produtoBusca ");
 		sql.append("    group by produto_edicao.NUMERO_EDICAO ");
 		sql.append("    order by produto_edicao.NUMERO_EDICAO desc ");
@@ -209,8 +212,7 @@ public List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto){
 		SQLQuery query = getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("produtoBusca", produto.getCodigo());
-		query.setResultTransformer(new AliasToBeanResultTransformer(
-				FixacaoReparteDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(FixacaoReparteDTO.class));
 		
 		return query.list();
 	}
