@@ -1108,7 +1108,9 @@ public class DiferencaEstoqueController extends BaseController {
 				this.movimentoEstoqueCotaService.obterDataUltimaMovimentacaoReparteExpedida(
 						rateioCotaVO.getNumeroCota(), produtoEdicao.getId());
 			
-			rateioCotaVO.setDataMovimento(dataMovimentacao);
+			rateioCotaVO.setDataMovimento(
+				dataMovimentacao == null ? 
+					this.distribuidorService.obterDataOperacaoDistribuidor() : dataMovimentacao);
 			
 			this.validarNovoRateio(rateioCotaVO,diferencaVO);
 			
