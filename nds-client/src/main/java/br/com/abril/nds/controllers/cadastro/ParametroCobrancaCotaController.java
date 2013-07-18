@@ -979,6 +979,11 @@ public class ParametroCobrancaCotaController extends BaseController {
 
 		ParametrosDistribuidorVO parametrosDistribuidor = this.parametroDistribuidorService.getParametrosDistribuidor();
 
+		if(parametrosDistribuidor.getPrazoContrato() == null) {
+			result.nothing();
+			return;
+		}
+		
 		int prazoContratoEmMeses = parametrosDistribuidor.getPrazoContrato();
 
 		Calendar dataTermino = Calendar.getInstance();

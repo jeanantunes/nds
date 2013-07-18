@@ -1,4 +1,4 @@
-package br.com.abril.nds.client.aop;
+package br.com.abril.nds.client.aop.profiler;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

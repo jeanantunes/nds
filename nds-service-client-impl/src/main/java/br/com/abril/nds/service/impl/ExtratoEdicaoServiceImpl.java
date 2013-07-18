@@ -17,10 +17,13 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque.Dominio;
+import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -32,6 +35,9 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 
 	@Autowired
 	MovimentoEstoqueRepository movimentoEstoqueRepository;
+	
+	@Autowired
+	private EstoqueProdutoRespository estoqueProdutoRepository;
 	
 	@Autowired
 	ProdutoEdicaoRepository produtoEdicaoRepository;
@@ -51,29 +57,48 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 		
 		filtroExtratoEdicao.setGruposExcluidos(obterGruposMovimentoEstoqueExtratoEdicao());
 		
-		List<ExtratoEdicaoDTO> listaExtratoEdicao = movimentoEstoqueRepository.obterListaExtratoEdicao(filtroExtratoEdicao, StatusAprovacao.APROVADO);
+		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(filtroExtratoEdicao.getCodigoProduto(), filtroExtratoEdicao.getNumeroEdicao());
 		
-		BigInteger saldoTotalEdicao = BigInteger.ZERO;
+		List<MovimentoEstoque> listaMovimentoEstoque = movimentoEstoqueRepository.obterMovimentoEstoquePorIdProdutoEdicao(produtoEdicao);
 		
-		BigInteger saldoParcialEdicao = null;
-		
-		for( ExtratoEdicaoDTO extratoEdicao :  listaExtratoEdicao ) {
-			
-			BigInteger qtdEdicaoEntrada = extratoEdicao.getQtdEdicaoEntrada();
-			
-			BigInteger qtdEdicaoSaida = extratoEdicao.getQtdEdicaoSaida();
+		ExtratoEdicaoDTO extratoComMovimentoInicial = new ExtratoEdicaoDTO();
+		for(MovimentoEstoque movimentoEstoque : listaMovimentoEstoque) {
+			if(movimentoEstoque.getTipoMovimento().getDescricao().equals("Recebimento de Mercadoria")) {	
+				extratoComMovimentoInicial.setIdMovimento(movimentoEstoque.getId());
+				extratoComMovimentoInicial.setDataMovimento(movimentoEstoque.getDataCriacao());
+				extratoComMovimentoInicial.setQtdEdicaoEntrada(movimentoEstoque.getQtde());
+				extratoComMovimentoInicial.setQtdEdicaoSaida(BigInteger.ZERO);
+				extratoComMovimentoInicial.setDescMovimento(movimentoEstoque.getTipoMovimento().getDescricao());
+				extratoComMovimentoInicial.setQtdParcial(movimentoEstoque.getQtde());
+			}
 				
-			saldoParcialEdicao = qtdEdicaoEntrada.subtract(qtdEdicaoSaida);
-			
-			saldoTotalEdicao = saldoTotalEdicao.add(saldoParcialEdicao);
-				
-			extratoEdicao.setQtdParcial(saldoTotalEdicao);
-			
 		}
+		List<ExtratoEdicaoDTO> listaExtratoEdicao = new ArrayList<ExtratoEdicaoDTO>();
+		listaExtratoEdicao.add(extratoComMovimentoInicial);
+		
+		List<ExtratoEdicaoDTO> movimentosPosterioresRecebimentoMercadoria = movimentoEstoqueRepository.obterListaExtratoEdicao(filtroExtratoEdicao, StatusAprovacao.APROVADO);
+		listaExtratoEdicao.addAll(movimentosPosterioresRecebimentoMercadoria);
+		
+		
+
+		for(int i = 0; i < listaExtratoEdicao.size(); i++) {	
+			BigInteger qtdEdicaoEntrada = BigInteger.ZERO;
+			qtdEdicaoEntrada = listaExtratoEdicao.get(i).getQtdEdicaoEntrada();
+			
+			BigInteger qtdEdicaoSaida = BigInteger.ZERO;
+			qtdEdicaoSaida = listaExtratoEdicao.get(i).getQtdEdicaoSaida();
+		
+			if(i > 0) {
+				listaExtratoEdicao.get(i).setQtdParcial(listaExtratoEdicao.get(i - 1).getQtdParcial().add(qtdEdicaoEntrada.subtract(qtdEdicaoSaida)));
+			}	
+		}
+			
+		
 		
 		InfoGeralExtratoEdicaoDTO infoGeralExtratoEdicao = new InfoGeralExtratoEdicaoDTO();
 		
-		infoGeralExtratoEdicao.setSaldoTotalExtratoEdicao(saldoTotalEdicao);
+		//saldoTotalEdicao
+		infoGeralExtratoEdicao.setSaldoTotalExtratoEdicao(listaExtratoEdicao.get(listaExtratoEdicao.size() - 1).getQtdParcial());
 	
 		infoGeralExtratoEdicao.setListaExtratoEdicao(listaExtratoEdicao);
 		
