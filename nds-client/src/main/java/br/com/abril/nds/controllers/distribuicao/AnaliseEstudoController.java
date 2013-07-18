@@ -14,13 +14,16 @@ import br.com.abril.nds.dto.AnaliseEstudoDTO;
 import br.com.abril.nds.dto.filtro.FiltroAnaliseEstudoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.AnaliseEstudoService;
 import br.com.abril.nds.service.MatrizDistribuicaoService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
@@ -48,6 +51,9 @@ public class AnaliseEstudoController extends BaseController {
 	@Autowired
 	private MatrizDistribuicaoService matrizDistribuicaoService;
 	
+	@Autowired
+	private ProdutoService produtoService;
+	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "FiltroEstudo";
 
 	public AnaliseEstudoController(Result result) {
@@ -72,10 +78,7 @@ public class AnaliseEstudoController extends BaseController {
 	@Path("/buscarEstudos")
 	public void buscarEstudos (FiltroAnaliseEstudoDTO filtro, String sortorder, String sortname, int page, int rp){
 		
-		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
-		
-		this.tratarFiltro(filtro);
-		tratarAtributosFiltro(filtro);
+		tratarAtributosFiltro(filtro, sortorder, sortname, page, rp);
 		
 		TableModel<CellModelKeyValue<AnaliseEstudoDTO>> tableModel = efetuarConsultaEstudos(filtro);
 		
@@ -104,19 +107,7 @@ public class AnaliseEstudoController extends BaseController {
 		return tableModel;
 	}
 	
-	private void tratarFiltro(FiltroAnaliseEstudoDTO filtroAtual) {
-
-		FiltroAnaliseEstudoDTO filtroSession = (FiltroAnaliseEstudoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
-		
-		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
-
-			filtroAtual.getPaginacao().setPaginaAtual(1);
-		}
-		
-		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
-	}
-	
-	private void tratarAtributosFiltro (FiltroAnaliseEstudoDTO filtro){
+	private void tratarAtributosFiltro (FiltroAnaliseEstudoDTO filtro, String sortorder, String sortname, int page, int rp){
 		
 		if(filtro.getNumEstudo() == null || filtro.getNumEstudo() < 0){
 			if(filtro.getCodigoProduto() == null || filtro.getCodigoProduto().isEmpty()){
@@ -131,6 +122,35 @@ public class AnaliseEstudoController extends BaseController {
 				}
 			}
 		}
+		this.configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
+		this.tratarFiltro(filtro);	
+		
+	}
+	
+	private void configurarPaginacaoPesquisa(FiltroAnaliseEstudoDTO filtro,String sortorder,String sortname,int page, int rp) {
+
+		if (filtro != null) {
+			if(filtro.getCodigoProduto() != null){
+				Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigoProduto());
+				filtro.setIdProduto(produto.getId());
+			}
+		
+			filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
+			
+			filtro.setOrdemColuna(Util.getEnumByStringValue(FiltroAnaliseEstudoDTO.OrdemColuna.values(),sortname));
+		}
+	}
+	
+	private void tratarFiltro(FiltroAnaliseEstudoDTO filtroAtual) {
+
+		FiltroAnaliseEstudoDTO filtroSession = (FiltroAnaliseEstudoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
+
+			filtroAtual.getPaginacao().setPaginaAtual(1);
+		}
+		
+		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
 	}
 	
 	private List<AnaliseEstudoDTO> popularPeriodoEStatus (List<AnaliseEstudoDTO> estudos){
