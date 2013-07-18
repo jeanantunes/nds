@@ -81,8 +81,8 @@ $(function(){
 		<tbody>
 			<tr>
 				<td width="195">Fator Vencimento de Cobrança em D+:</td>
-				<td width="157"><select id="fatorVencimento"
-					name="fatorVencimento" size="1" style="width: 50px; height: 19px;">
+				<td width="157">
+				<select id="fatorVencimento" name="fatorVencimento" size="1" style="width: 50px; height: 19px;">
 					    <option>0</option>
 						<option>1</option>
 						<option>2</option>
@@ -104,7 +104,8 @@ $(function(){
 						<option>18</option>
 						<option>19</option>
 						<option>20</option>
-				</select></td>
+				</select>
+				</td>
 				<td width="10" style="width: 10px;">&nbsp;</td>
 				<td width="60">Contrato:</td>
 				<td width="20"><input id="contrato" name="contrato"
