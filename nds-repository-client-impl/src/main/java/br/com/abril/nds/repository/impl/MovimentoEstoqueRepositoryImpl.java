@@ -7,12 +7,15 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ExtratoEdicaoDTO;
+import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroExtratoEdicaoDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
@@ -208,5 +211,27 @@ implements MovimentoEstoqueRepository {
 		Object result = query.uniqueResult();
 		
 		return (result == null) ? BigDecimal.ZERO : (BigDecimal) result;
+	}
+
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<MovimentoEstoque> obterMovimentoEstoquePorIdProdutoEdicao(ProdutoEdicao produtoEdicao) {
+		
+		
+		StringBuilder hql = new StringBuilder("select "); 
+		hql.append("movimentoEstoque.id as id, ");
+		hql.append("movimentoEstoque.tipoMovimento as tipoMovimento, ");
+		hql.append("movimentoEstoque.qtde as qtde ");
+		hql.append("from ");
+		hql.append("MovimentoEstoque as movimentoEstoque ");
+		hql.append("where movimentoEstoque.produtoEdicao = :produtoEdicao");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("produtoEdicao", produtoEdicao);
+		
+		query.setResultTransformer(Transformers.aliasToBean(MovimentoEstoque.class));
+		return query.list();
 	}
 }
