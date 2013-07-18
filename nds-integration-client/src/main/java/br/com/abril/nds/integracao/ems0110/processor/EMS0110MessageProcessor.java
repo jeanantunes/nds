@@ -6,6 +6,9 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -98,13 +101,31 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			Integer codigoTipoDesconto) {
 		StringBuilder sql = new StringBuilder();
 
-		sql.append("select d from DescontoLogistica d ");
-		sql.append(" where d.tipoDesconto = :codigoTipoDesconto ");
-
-		Query query = this.getSession().createQuery(sql.toString());
-
-		query.setParameter("codigoTipoDesconto", codigoTipoDesconto);
-
+		//sql.append("select d from DescontoLogistica d where d.tipoDesconto = :tipoDesconto ");
+		//Query query = this.getSession().createQuery(sql.toString());
+		//query.setParameter("tipoDesconto", codigoTipoDesconto);
+		
+		sql.append("SELECT id ")
+			.append("	, data_inicio_vigencia AS dataInicioVigencia")
+			.append("	, descricao ")
+			.append("	, percentual_desconto AS percentualDesconto ")
+			.append("	, percentual_prestacao_servico AS percentualPrestacaoServico")
+			.append("	, tipo_desconto AS tipoDesconto ")
+			.append("FROM desconto_logistica d ")
+			.append("WHERE d.tipo_desconto = :tipoDesconto ");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+				
+		query.setParameter("tipoDesconto", codigoTipoDesconto);
+		
+		query.addScalar("id", StandardBasicTypes.LONG);
+		query.addScalar("dataInicioVigencia", StandardBasicTypes.DATE);
+		query.addScalar("percentualDesconto", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("percentualPrestacaoServico", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("tipoDesconto", StandardBasicTypes.INTEGER);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(DescontoLogistica.class));
+		
 		return (DescontoLogistica) query.uniqueResult();
 
 	}
@@ -243,7 +264,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			return null;
 		}
 
-		if (descontoLogistica != null) {
+		if (descontoLogistica != null && descontoLogistica.getPercentualDesconto() != null) {
 
 			produto.setDescontoLogistica(descontoLogistica);
 
@@ -306,13 +327,15 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 	
 	
 	
-	private void criarProdutoEdicaoConformeInput(Produto produto,
-			Message message) {
+	private void criarProdutoEdicaoConformeInput(Produto produto, Message message) {
+		
 		EMS0110Input input = (EMS0110Input) message.getBody();
 
 		ProdutoEdicao edicao = new ProdutoEdicao();
 		Dimensao dimensao = new Dimensao();
 		Brinde brinde = new Brinde();
+		
+		DescontoLogistica descontoLogistica = this.findDescontoLogisticaByTipoDesconto( Integer.parseInt( input.getTipoDesconto()) );
 
 		if (null != produto.getCodigoContexto() && !produto.getCodigoContexto().equals(input.getContextoProd())) {
 
@@ -339,6 +362,29 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.INF_DADO_ALTERADO,
 					"Atualizacao do Nome Comercial para: "
 							+ input.getNomeComercial());
+		}
+		
+		if (descontoLogistica != null 
+				&& descontoLogistica.getPercentualDesconto() != null 
+				&& descontoLogistica.getPercentualDesconto().longValue() > 0) {
+
+			edicao.setDescontoLogistica(descontoLogistica);
+
+		} else {
+			
+			StringBuilder sb = new StringBuilder("Produto/Edição sem Desconto Logística : ")
+				.append(input.getNomeComercial())
+				.append(" - ")
+				.append(input.getCodProd())
+				.append(" / ")
+				.append(input.getEdicaoProd());
+			
+			this.ndsiLoggerFactory.getLogger().logInfo(
+					message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					sb.toString());
+			
+			return;
 		}
 		
 		edicao.setProduto(produto);
