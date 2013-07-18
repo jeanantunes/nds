@@ -8,13 +8,13 @@
 	        
 	        <div id="botoesExportacao">
 		        <span class="bt_novos" title="Gerar Arquivo">
-		        	<a href="${pageContext.request.contextPath}/financeiro/exportarResumoBaixaAutomatica?fileType=XLS&tipoBaixaBoleto=PREVISTOS">
+		        	<a href="${pageContext.request.contextPath}/financeiro/baixa/exportarResumoBaixaAutomatica?fileType=XLS&tipoBaixaBoleto=PREVISTOS">
 		        		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 		        		Arquivo
 		        	</a>
 		        </span>
 		        <span class="bt_novos" title="Imprimir">
-		        	<a href="${pageContext.request.contextPath}/financeiro/exportarResumoBaixaAutomatica?fileType=PDF&tipoBaixaBoleto=PREVISTOS">
+		        	<a href="${pageContext.request.contextPath}/financeiro/baixa/exportarResumoBaixaAutomatica?fileType=PDF&tipoBaixaBoleto=PREVISTOS">
 		        		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
 		        		Imprimir
 		        	</a>
@@ -34,13 +34,13 @@
     		
     		<div id="botoesExportacao">
 	       		<span class="bt_novos" title="Gerar Arquivo">
-	       			<a href="${pageContext.request.contextPath}/financeiro/exportarResumoBaixaAutomatica?fileType=XLS&tipoBaixaBoleto=BAIXADOS">
+	       			<a href="${pageContext.request.contextPath}/financeiro/baixa/exportarResumoBaixaAutomatica?fileType=XLS&tipoBaixaBoleto=BAIXADOS">
 	       				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 	       				Arquivo
 	       			</a>
 	       		</span>
 	       		<span class="bt_novos" title="Imprimir">
-	       			<a href="${pageContext.request.contextPath}/financeiro/exportarResumoBaixaAutomatica?fileType=PDF&tipoBaixaBoleto=BAIXADOS">
+	       			<a href="${pageContext.request.contextPath}/financeiro/baixa/exportarResumoBaixaAutomatica?fileType=PDF&tipoBaixaBoleto=BAIXADOS">
 	       				<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
 	       				Imprimir
 	       			</a>
@@ -60,13 +60,13 @@
     		
     		<div id="botoesExportacao">
 	       		<span class="bt_novos" title="Gerar Arquivo">
-	       			<a href="${pageContext.request.contextPath}/financeiro/exportarResumoBaixaAutomatica?fileType=XLS&tipoBaixaBoleto=REJEITADOS">
+	       			<a href="${pageContext.request.contextPath}/financeiro/baixa/exportarResumoBaixaAutomatica?fileType=XLS&tipoBaixaBoleto=REJEITADOS">
 	       				<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 	       				Arquivo
 	       			</a>
 	       		</span>
 	        	<span class="bt_novos" title="Imprimir">
-	        		<a href="${pageContext.request.contextPath}/financeiro/exportarResumoBaixaAutomatica?fileType=PDF&tipoBaixaBoleto=REJEITADOS">
+	        		<a href="${pageContext.request.contextPath}/financeiro/baixa/exportarResumoBaixaAutomatica?fileType=PDF&tipoBaixaBoleto=REJEITADOS">
 	        			<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
 	        			Imprimir
 	        		</a>
@@ -86,13 +86,13 @@
     		
     		<div id="botoesExportacao">
 	        	<span class="bt_novos" title="Gerar Arquivo">
-	        		<a href="${pageContext.request.contextPath}/financeiro/exportarResumoBaixaAutomatica?fileType=XLS&tipoBaixaBoleto=DIVERGENTES">
+	        		<a href="${pageContext.request.contextPath}/financeiro/baixa/exportarResumoBaixaAutomatica?fileType=XLS&tipoBaixaBoleto=DIVERGENTES">
 	        			<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 	        			Arquivo
 	        		</a>
 	        	</span>
 	        	<span class="bt_novos" title="Imprimir">
-	        		<a href="${pageContext.request.contextPath}/financeiro/exportarResumoBaixaAutomatica?fileType=PDF&tipoBaixaBoleto=DIVERGENTES">
+	        		<a href="${pageContext.request.contextPath}/financeiro/baixa/exportarResumoBaixaAutomatica?fileType=PDF&tipoBaixaBoleto=DIVERGENTES">
 	        			<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
 	        			Imprimir
 	        		</a>
@@ -112,13 +112,13 @@
 	    	
 	    	<div id="botoesExportacao">
 		        <span class="bt_novos" title="Gerar Arquivo">
-		        	<a href="${pageContext.request.contextPath}/financeiro/exportarResumoBaixaAutomatica?fileType=XLS&tipoBaixaBoleto=INADIMPLENTES">
+		        	<a href="${pageContext.request.contextPath}/financeiro/baixa/exportarResumoBaixaAutomatica?fileType=XLS&tipoBaixaBoleto=INADIMPLENTES">
 		        		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 		        		Arquivo
 		        	</a>
 		        </span>
 		        <span class="bt_novos" title="Imprimir">
-			        <a href="${pageContext.request.contextPath}/financeiro/exportarResumoBaixaAutomatica?fileType=PDF&tipoBaixaBoleto=INADIMPLENTES">
+			        <a href="${pageContext.request.contextPath}/financeiro/baixa/exportarResumoBaixaAutomatica?fileType=PDF&tipoBaixaBoleto=INADIMPLENTES">
 				        <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
 				        Imprimir
 			        </a>
@@ -136,13 +136,13 @@
 	    	
 	    	<div id="botoesExportacao">
 		        <span class="bt_novos" title="Gerar Arquivo">
-			        <a href="${pageContext.request.contextPath}/financeiro/exportarResumoBaixaAutomatica?fileType=XLS&tipoBaixaBoleto=TOTAL_BANCARIO">
+			        <a href="${pageContext.request.contextPath}/financeiro/baixa/exportarResumoBaixaAutomatica?fileType=XLS&tipoBaixaBoleto=TOTAL_BANCARIO">
 				        <img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
 				        Arquivo
 			        </a>
 		        </span>
 		        <span class="bt_novos" title="Imprimir">
-			        <a href="${pageContext.request.contextPath}/financeiro/exportarResumoBaixaAutomatica?fileType=PDF&tipoBaixaBoleto=TOTAL_BANCARIO">
+			        <a href="${pageContext.request.contextPath}/financeiro/baixa/exportarResumoBaixaAutomatica?fileType=PDF&tipoBaixaBoleto=TOTAL_BANCARIO">
 				        <img src="${pageContext.request.contextPath}/images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />
 				        Imprimir
 			        </a>
