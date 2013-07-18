@@ -126,6 +126,7 @@
 						    <option value="SUPER QUADRA">Super Quadra</option>
 						    <option value="TRAVESSA">Travessa</option>
 						    <option value="VIADUTO">Viaduto</option>
+						    <option value="VIELA">Viela</option>
 						    <option value="VILA">Vila</option>
 						</select>	   
 					</td>

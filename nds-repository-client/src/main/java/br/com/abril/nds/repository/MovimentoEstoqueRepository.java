@@ -9,6 +9,7 @@ import br.com.abril.nds.dto.ExtratoEdicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroExtratoEdicaoDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 
@@ -26,4 +27,6 @@ public interface MovimentoEstoqueRepository extends Repository<MovimentoEstoque,
 	 * @return BigDecimal
 	 */
 	BigDecimal obterSaldoDistribuidor(Date data, OperacaoEstoque operacaoEstoque, FormaComercializacao formaComercializacao);
+
+	List<MovimentoEstoque> obterMovimentoEstoquePorIdProdutoEdicao(ProdutoEdicao produtoEdicao);
 }
