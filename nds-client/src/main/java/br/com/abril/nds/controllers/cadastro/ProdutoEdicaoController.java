@@ -410,13 +410,15 @@ public class ProdutoEdicaoController extends BaseController {
 		}
 		
 		if (dto.getNumeroEdicao() != null && dto.getNumeroEdicao() != 0L) {
+
+			ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorNumeroEdicaoENumeroLancamento(codigoProduto,
+					                                                                                              dto.getNumeroEdicao(), 
+					                                                                                              dto.getNumeroLancamento());
 			
-			ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, dto.getNumeroEdicao().toString());
-		
-			if (produtoEdicao != null && !produtoEdicao.getId().equals(dto.getId())) {
-				listaMensagens.add("O 'Número de Edição' deve ser unico para esse Produto!");
-			}
-			
+			if (produtoEdicao != null) {
+				
+				listaMensagens.add("O 'Número de Edição X Número de Lançamento' deve ser unico para esse Produto!");
+			}	
 		}
 		
 		if (!listaMensagens.isEmpty()) {
