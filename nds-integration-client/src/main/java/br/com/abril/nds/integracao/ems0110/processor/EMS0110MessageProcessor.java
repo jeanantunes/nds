@@ -269,7 +269,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			ndsiLoggerFactory.getLogger().logError(
 					message,
 					EventoExecucaoEnum.HIERARQUIA,
-					String.format( "Produto sem Desconto-Logística:  %1$s", input.getCodProd() )
+					String.format( "Produto sem Desconto-Logística:  %1$s - %1$s", input.getCodProd(), input.getEdicaoProd() )
 				);
 			
 		}
