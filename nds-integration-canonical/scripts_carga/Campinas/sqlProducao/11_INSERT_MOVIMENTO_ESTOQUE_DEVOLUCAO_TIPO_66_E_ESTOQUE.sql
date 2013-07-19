@@ -68,10 +68,16 @@ group by 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18
 
 -- Atualiza o estoque do distribuidor com as quantidades enviadas p/ o fornecedor
 update estoque_produto
-set qtde_devolucao_fornecedor = coalesce(qtde_devolucao_fornecedor,0)+
-coalesce((select sum(me.qtde) from movimento_estoque me where me.tipo_movimento_id = 66 and me.produto_edicao_id = estoque_produto.produto_edicao_id), 0)
-where produto_edicao_id in (select produto_edicao_id from movimento_estoque where estoque_produto.produto_edicao_id = produto_edicao_id and tipo_movimento_id = 66)
+set qtde_devolucao_fornecedor = coalesce(qtde_devolucao_fornecedor,0) + 
+								coalesce((select sum(me.qtde) from movimento_estoque me 
+										  where me.tipo_movimento_id = 66 
+										  and me.produto_edicao_id = estoque_produto.produto_edicao_id), 
+								0)
+where produto_edicao_id in (select produto_edicao_id from movimento_estoque 
+							where estoque_produto.produto_edicao_id = produto_edicao_id 
+							and tipo_movimento_id = 66)
 ;
+
 
 drop table temp_mvto_estq_sem_12;
 
@@ -282,4 +288,21 @@ and produto_edicao_id in
 		158271,158291,158321,158351,158431,158461,158521,158541,158551,158681,159451,160831,161111,161601,162151,162171,162341,162501,162681,163451,165431,168301,168501,170361,177031
 	)
 
+;
+
+
+select sum(coalesce(qtde_devolucao_fornecedor,0) + 
+								coalesce((select sum(me.qtde) from movimento_estoque me 
+										  where me.tipo_movimento_id = 66 
+										  and me.produto_edicao_id = estoque_produto.produto_edicao_id), 
+								0)) from estoque_produto
+
+where produto_edicao_id in (select produto_edicao_id from movimento_estoque 
+							where estoque_produto.produto_edicao_id = produto_edicao_id 
+							and tipo_movimento_id = 66)
+;
+
+select sum(me.qtde) from movimento_estoque me 
+where me.tipo_movimento_id = 66 
+								
 ;
