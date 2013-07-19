@@ -39,6 +39,23 @@ public abstract class CurrencyUtil {
 
 		return new DecimalFormat("#,##0.00",symbols).format(valor);
 	}
+	
+	/**
+	 * Formata um valor de moeda sem símbolo monetário.
+	 * 
+	 * @param valor - valor
+	 * 
+	 * @return Valor formatado
+	 */
+	public static String formatarValorQuatroCasas(Number valor) {
+		
+		if (valor == null) {
+			
+			return null;
+		}
+
+		return new DecimalFormat("#,##0.0000",symbols).format(valor);
+	}
 
 	/**
 	 * Formata um valor de moeda sem símbolo monetário e sem a parte fracionária (truncado).
