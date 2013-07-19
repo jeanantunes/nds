@@ -276,6 +276,20 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				codigoProduto, Long.parseLong(numeroEdicao));
 	}
 
+	/**
+	 * Obtem ProdutoEdicao por codigo do produto, numero de edição e numero de lançamento
+	 * @param codigoProduto
+	 * @param nEdicao
+	 * @param nLancamento
+	 * @return ProdutoEdicao
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public ProdutoEdicao obterProdutoEdicaoPorNumeroEdicaoENumeroLancamento(String codigoProduto, Long nEdicao, Integer nLancamento) {
+		
+		return produtoEdicaoRepository.obterProdutoEdicaoPorNumeroEdicaoENumeroLancamento(codigoProduto, nEdicao, nLancamento);
+	}
+
 	@Override
 	@Transactional
 	public List<ProdutoEdicao> obterProdutosEdicaoPorCodigoProduto(
