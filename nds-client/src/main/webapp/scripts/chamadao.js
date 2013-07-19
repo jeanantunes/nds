@@ -264,8 +264,8 @@ var chamadaoController = $.extend(true, {
 			var spanReparte = "<span id='reparte" + row.id + "'>"
 						+ row.cell.reparte + "</span>";
 			
-			var spanValorTotal = "<span id='valorTotal" + row.id + "'>"
-						+ row.cell.valorTotal + "</span>";
+			var spanValorTotalDesconto = "<span id='valorTotal" + row.id + "'>"
+						+ row.cell.valorTotalDesconto + "</span>";
 			
 			var inputCheck = '<input type="checkbox" id="ch' + row.id + '"'
 						   + ' name="checkConsignado"'
@@ -277,7 +277,7 @@ var chamadaoController = $.extend(true, {
 			var inputHidden = '<input type="hidden" class="lancamentoHidden" value="' + idLancamento + '"/>';
 						   
 			row.cell.reparte = spanReparte;
-			row.cell.valorTotal = spanValorTotal;
+			row.cell.valorTotalDesconto = spanValorTotalDesconto;
 			row.cell.sel = inputCheck;
 			row.cell.lancamentoHidden = inputHidden;
 		});
@@ -345,8 +345,7 @@ var chamadaoController = $.extend(true, {
 				qtdExemplaresParcial = qtdExemplaresParcial + intValue(reparte);
 				
 				var valor = $("#valorTotal" + this.value).html();
-				valor = removeMascaraPriceFormat(valor);
-				valorParcial = valorParcial + intValue(valor);
+				valorParcial = valorParcial + formatMoneyValue(valor);
 			
 			} else {
 				
@@ -386,7 +385,8 @@ var chamadaoController = $.extend(true, {
 		$("#valorParcial", chamadaoController.workspace).priceFormat({
 			allowNegative: true,
 			centsSeparator: ',',
-		    thousandsSeparator: '.'
+		    thousandsSeparator: '.',
+		    centsLimit: 2
 		});
 	},
 	
