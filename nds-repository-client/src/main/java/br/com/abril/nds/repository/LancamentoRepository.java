@@ -354,5 +354,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	List<Lancamento> obterLancamentosEmRecolhimentoVencidos(Date dataBase);
 	
 	List<Lancamento> obterLancamentosRecolhidosPorEdicoes(Set<Long> idsProdutoEdicao);
-	
+
+	boolean existeMatrizRecolhimentoConfirmado(Date dataChamadao);
 }

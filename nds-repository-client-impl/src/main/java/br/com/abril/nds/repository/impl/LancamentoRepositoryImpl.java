@@ -1813,5 +1813,28 @@ public class LancamentoRepositoryImpl extends
 		
 		return query.list();
 	}
-	
+
+	@Override
+	public boolean existeMatrizRecolhimentoConfirmado(Date dataChamadao) {
+		
+		StringBuilder jpql = new StringBuilder();
+		
+		jpql = new StringBuilder();
+		jpql.append(" SELECT CASE WHEN COUNT(lancamento) > 0 THEN true ELSE false END ");	
+		jpql.append(" FROM Lancamento lancamento ");
+		jpql.append(" WHERE lancamento.dataRecolhimentoDistribuidor = :data ")
+		    .append("   AND lancamento.status IN (:statusConfirmado) ");
+		
+		Query query = getSession().createQuery(jpql.toString());
+		
+		List<StatusLancamento> listaLancamentos = new ArrayList<StatusLancamento>();
+		listaLancamentos.add(StatusLancamento.BALANCEADO_RECOLHIMENTO);
+		listaLancamentos.add(StatusLancamento.EM_RECOLHIMENTO);
+		listaLancamentos.add(StatusLancamento.RECOLHIDO);
+		
+		query.setParameterList("statusConfirmado", listaLancamentos);
+		query.setParameter("data", dataChamadao);
+		
+		return (Boolean) query.uniqueResult();
+	}
 }
