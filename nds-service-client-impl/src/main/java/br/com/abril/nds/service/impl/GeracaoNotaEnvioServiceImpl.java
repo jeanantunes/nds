@@ -1022,9 +1022,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		} catch (Exception e) {
 			TRAVA_GERACAO_NE.remove("neCotasSendoGeradas");
 			throw e;
+		} finally {
+			TRAVA_GERACAO_NE.remove("neCotasSendoGeradas");
 		}
-
-		TRAVA_GERACAO_NE.remove("neCotasSendoGeradas");
 		
 		return listaNotaEnvio;
 	}
