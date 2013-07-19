@@ -1245,7 +1245,8 @@ public class ConferenciaEncalheController extends BaseController {
 			controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCotas);
 			
 			Box boxEncalhe = new Box();
-			boxEncalhe.setId(conferenciaEncalheSessionScopeAttr.getIdBoxLogado());
+			Long idBox = conferenciaEncalheSessionScopeAttr.getIdBoxLogado();
+			boxEncalhe = this.boxService.buscarPorId(idBox);
 			
 			controleConfEncalheCota.setBox(boxEncalhe);
 			

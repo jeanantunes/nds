@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -231,7 +233,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			Cota cotaAtual = null;
 			
 			FormaCobranca formaCobranca = null;
-			
+			FormaCobranca formaCobrancaClone = null;
+
 			boolean unificaCobranca = false;
 			
 			for (MovimentoFinanceiroCota movimentoFinanceiroCota : listaMovimentoFinanceiroCota){
@@ -285,15 +288,17 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 									ultimaCota != null ? ultimaCota.getId() : null, 
 									ultimoFornecedor != null ? ultimoFornecedor.getId() : null, 
 									dataOperacao, valorMovimentos.compareTo(BigDecimal.ZERO) >= 0?valorMovimentos:valorMovimentos.negate());
+
+					formaCobrancaClone = this.cloneFormaCobranca(formaCobranca);
 					
-					if (formaCobranca != null){
+					if (formaCobrancaClone != null){
 						
-						if (formaCobranca.getPoliticaCobranca() != null){
+						if (formaCobrancaClone.getPoliticaCobranca() != null){
 					    	
-					    	unificaCobranca = formaCobranca.getPoliticaCobranca().isUnificaCobranca();
-					    } else if (formaCobranca.getParametroCobrancaCota() != null){
+					    	unificaCobranca = formaCobrancaClone.getPoliticaCobranca().isUnificaCobranca();
+					    } else if (formaCobrancaClone.getParametroCobrancaCota() != null){
 					    	
-					    	unificaCobranca = formaCobranca.getParametroCobrancaCota().isUnificaCobranca();
+					    	unificaCobranca = formaCobrancaClone.getParametroCobrancaCota().isUnificaCobranca();
 					    }
 					}
 					
@@ -305,13 +310,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 																	dataOperacao, 
 																	msgs, 
 																	ultimoFornecedor,
-																	formaCobranca);
+																	formaCobrancaClone);
 					
 					if (nossoNumero != null){
 						
 						setNossoNumero.put(nossoNumero,
-								formaCobranca == null ? false :
-									formaCobranca.isRecebeCobrancaEmail());
+								formaCobrancaClone == null ? false :
+									formaCobrancaClone.isRecebeCobrancaEmail());
 					}
 					
 					//Limpa dados para contabilizar próxima cota
@@ -340,6 +345,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 								ultimaCota != null ? ultimaCota.getId() : null, 
 								ultimoFornecedor != null ? ultimoFornecedor.getId() : null, 
 								dataOperacao, valorMovimentos.compareTo(BigDecimal.ZERO) > 0?valorMovimentos:valorMovimentos.negate());
+					
+				formaCobrancaClone = this.cloneFormaCobranca(formaCobranca);  
 			}
 			
 			//Decide se gera movimento consolidado ou postergado para a ultima cota
@@ -350,13 +357,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 															dataOperacao, 
 															msgs, 
 															fornecedorProdutoMovimento, 
-															formaCobranca);
+															formaCobrancaClone);
 			
 			if (nossoNumero != null){
 				
 				setNossoNumero.put(nossoNumero,
-						formaCobranca == null ? false :
-							formaCobranca.isRecebeCobrancaEmail());
+						formaCobrancaClone == null ? false :
+							formaCobrancaClone.isRecebeCobrancaEmail());
 			}
 		}
 		
@@ -639,9 +646,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
 		else {
 			
-			if(formaCobrancaPrincipal.getFatorVencimento() != null){
+			if(formaCobrancaPrincipal.getPoliticaCobranca().getFatorVencimento() != null){
 				
-				fatorVencimento = formaCobrancaPrincipal.getFatorVencimento();
+				fatorVencimento = formaCobrancaPrincipal.getPoliticaCobranca().getFatorVencimento();
 			}
 			
 			tipoFormaCobrancaAntiga = formaCobrancaPrincipal.getTipoFormaCobranca();
@@ -1121,5 +1128,24 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				new AnexoEmail("Cobranca",anexo,TipoAnexo.PDF));
 		
 		this.cobrancaRepository.incrementarVia(nossoNumero);
+	}
+	
+	private FormaCobranca cloneFormaCobranca(FormaCobranca formaCobranca) {
+		
+		if (formaCobranca==null){
+			
+			return null;
+		}
+		
+		try {
+			
+			return (FormaCobranca) BeanUtils.cloneBean(formaCobranca);
+			
+		} catch (Exception e) {
+
+			throw new ValidacaoException(
+					TipoMensagem.ERROR,
+					"Erro ao tentar obter [FormaCobranca]!");
+		}
 	}
 }

@@ -1845,7 +1845,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		+ "		inner join NOTA_ENVIO_ITEM nei " 
         + "    			on nei.ESTUDO_COTA_ID=ec_.ID "
 		+ "	   	where 1=1 "
-		+ "		and pdv_.ponto_principal = :principal "); //		+ "	        lancamento_.STATUS in (:status) "
+		+ "		and pdv_.ponto_principal = :principal " 
+		+ "	    and lancamento_.STATUS not in (:statusNaoEmitiveis) ");
 		
 		if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
 			sql.append(
@@ -1953,6 +1954,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		        + "    			on nei.ESTUDO_COTA_ID=ec_.ID "
 				+ "	   	where "
 				+ "	        lancamento_.STATUS not in (:status)  "
+				+ "	    and lancamento_.STATUS not in (:statusNaoEmitiveis)  "
 				+ "    	and  nei.estudo_cota_id is null "
 				+ "		and pdv_.ponto_principal = :principal ");
 				
@@ -2006,6 +2008,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		query.setParameter("principal", true);
 		query.setParameterList("status", new String[]{StatusLancamento.CONFIRMADO.name(), StatusLancamento.EM_BALANCEAMENTO.name()});
+		query.setParameterList("statusNaoEmitiveis", new String[]{StatusLancamento.PLANEJADO.name(), StatusLancamento.FECHADO.name(), StatusLancamento.CONFIRMADO.name(), StatusLancamento.EM_BALANCEAMENTO.name()});
+		
 		//query.setParameter("movimentoReparteCotaAusente", GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
 		
 		if (filtro.getIdFornecedores() != null && !filtro.getIdFornecedores().isEmpty()) {
@@ -2901,4 +2905,27 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		return (Integer) criteria.uniqueResult();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> obterIdsCotasPorMunicipio(String municipio){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select cota.id ");
+				
+		hql.append(" from Cota cota ");
+		hql.append(" join cota.enderecos enderecoCota ");
+		hql.append(" join enderecoCota.endereco endereco ");
+		
+		hql.append(" where enderecoCota.principal=true ");
+		hql.append(" and endereco.cidade = :cidade ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("cidade", municipio);
+		
+		return query.list();
+	}
+	
 }

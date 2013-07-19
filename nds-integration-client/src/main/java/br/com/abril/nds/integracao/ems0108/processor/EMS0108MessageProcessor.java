@@ -236,7 +236,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 
 		int peb = produtoEdicaoLancamento.getPeb() == 0 ? produtoEdicaoLancamento.getProduto().getPeb() : produtoEdicaoLancamento.getPeb();
 		if (peb == 0) {
-			peb = 10;
+			peb = 15;
 		}
 		
 		Calendar cal = Calendar.getInstance();

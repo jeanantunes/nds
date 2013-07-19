@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URL;
 import java.util.ArrayList;
@@ -8,8 +9,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import net.sf.jasperreports.engine.JasperRunManager;
@@ -19,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.DiferencaVO;
 import br.com.abril.nds.client.vo.RateioCotaVO;
 import br.com.abril.nds.client.vo.RelatorioLancamentoFaltasSobrasVO;
 import br.com.abril.nds.dto.DetalheDiferencaCotaDTO;
@@ -985,6 +989,189 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			throw new ValidacaoException(
 				TipoMensagem.WARNING, "Não há dados para impressão nesta data");
 		}
+	}
+
+	@Override
+	public HashMap<Long, Set<Diferenca>> verificarDiferencasIguais(
+			Set<Diferenca> listaDiferencas,
+			Diferenca diferenca) {
+		
+		Long idDiferenca = null;
+	
+		if(listaDiferencas != null && ! listaDiferencas.isEmpty()) {
+			
+			Iterator<Diferenca> iterator = listaDiferencas.iterator();
+			
+			while( iterator.hasNext() ) {
+				
+				Diferenca diferencaCadastrada = iterator.next();
+					
+				if(diferencaCadastrada.getProdutoEdicao().equals(diferenca.getProdutoEdicao()) && 
+						diferencaCadastrada.getTipoDiferenca().equals(diferenca.getTipoDiferenca())) {
+					
+					idDiferenca = diferencaCadastrada.getId();
+					
+					BigInteger diferencaInicial = diferencaCadastrada.getQtde();
+					BigDecimal valorTotalDiferenca = diferencaCadastrada.getValorTotalDiferenca();
+					
+					diferencaCadastrada.setQtde(diferencaInicial.add(diferenca.getQtde()));
+					diferencaCadastrada.setValorTotalDiferenca(valorTotalDiferenca.add(diferenca.getValorTotalDiferenca()));
+				} else {
+					listaDiferencas.add(diferenca);
+				}
+			}
+		} else {
+			listaDiferencas.add(diferenca);
+		}
+		
+		HashMap<Long, Set<Diferenca>> mapa = new HashMap<Long, Set<Diferenca>>();
+		mapa.put(idDiferenca, listaDiferencas);
+		
+		return mapa;
+	}
+
+	@Override
+	public Set<DiferencaVO> verificarDiferencasVOIguais(
+			Set<DiferencaVO> listaNovaDiferencaVO, DiferencaVO diferencaVO) {
+		
+		if(listaNovaDiferencaVO != null && ! listaNovaDiferencaVO.isEmpty()) {
+			
+			Iterator<DiferencaVO> iterator = listaNovaDiferencaVO.iterator();
+			while( iterator.hasNext() ) {
+				DiferencaVO diferencaVoCadastrada = iterator.next();
+				
+				if( diferencaVoCadastrada.getCodigoProduto().equals(diferencaVO.getCodigoProduto()) && 
+						diferencaVoCadastrada.getNumeroEdicao().equals(diferencaVO.getNumeroEdicao()) && 
+						diferencaVoCadastrada.getTipoDiferenca().equals(diferencaVO.getTipoDiferenca()) ) {
+				
+					
+					BigInteger quantidade = diferencaVoCadastrada.getQuantidade();
+					diferencaVoCadastrada.setQuantidade(quantidade.add(diferencaVO.getQuantidade()));
+					
+					diferencaVO = null;
+				} else {
+					listaNovaDiferencaVO.add(diferencaVO);
+				}
+			}
+		} else {
+			listaNovaDiferencaVO.add(diferencaVO);
+		}
+		return listaNovaDiferencaVO;
+	}
+
+	@Override
+	public Map<Long, List<RateioCotaVO>> insercaoDeNovosValoresNaMesmaCota(
+			Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados,
+			List<RateioCotaVO> listaNovosRateios) {
+		
+			Set<Entry<Long, List<RateioCotaVO>>> entrySet = mapaRateiosCadastrados.entrySet();
+			Iterator<Entry<Long, List<RateioCotaVO>>> iterator = entrySet.iterator();
+			List<RateioCotaVO> listaRateiosCadastrados;
+			
+			while(iterator.hasNext()) {
+				Entry<Long, List<RateioCotaVO>> entry = iterator.next();
+				
+				listaRateiosCadastrados = entry.getValue();				
+				for(RateioCotaVO rateiosCadastrados : listaRateiosCadastrados ) {
+					for(RateioCotaVO rateioCotaVO : listaNovosRateios) {
+						if( rateiosCadastrados.getNumeroCota().equals(rateioCotaVO.getNumeroCota()) ) {
+							
+							BigInteger quantidade = rateiosCadastrados.getQuantidade();
+							BigInteger reparteAtual = rateiosCadastrados.getReparteAtualCota();
+							
+							rateiosCadastrados.setQuantidade(quantidade.add(rateioCotaVO.getQuantidade()));
+							rateiosCadastrados.setReparteAtualCota(reparteAtual.subtract(rateioCotaVO.getQuantidade()));
+						}
+					}
+				}
+			}
+		return mapaRateiosCadastrados;
+	}
+
+	@Override
+	public Map<Long, List<RateioCotaVO>> verificarSeExisteListaNoMapa(
+			Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados, Long id,
+			RateioCotaVO rateioCotaVO) {
+		
+		Set<Entry<Long, List<RateioCotaVO>>> entrySet = mapaRateiosCadastrados.entrySet();
+		Iterator<Entry<Long, List<RateioCotaVO>>> iterator = entrySet.iterator();
+		
+		if(iterator.hasNext()) {
+			while(iterator.hasNext()) {
+				Entry<Long, List<RateioCotaVO>> keyValue = iterator.next();
+				List<RateioCotaVO> listaValue = keyValue.getValue();
+	
+				for(RateioCotaVO value : listaValue) {
+					if(rateioCotaVO.getNumeroCota().equals(value.getNumeroCota()) && 
+							rateioCotaVO.getIdDiferenca().equals(value.getIdDiferenca()) ) {
+							
+							BigInteger quantidade = value.getQuantidade();
+							BigInteger reparteAtual = value.getReparteAtualCota();
+							
+							value.setQuantidade(quantidade.add(rateioCotaVO.getQuantidade()));
+							value.setReparteAtualCota(reparteAtual.subtract(rateioCotaVO.getQuantidade()));	
+					}
+				}
+			}
+		} else {
+			
+			List<RateioCotaVO> listaRateiosCadastrados = new ArrayList<RateioCotaVO>();
+			listaRateiosCadastrados.add(rateioCotaVO);
+			mapaRateiosCadastrados.put(id, listaRateiosCadastrados);
+		
+		}
+		
+		return mapaRateiosCadastrados;
+	}
+
+	@Override
+	public DiferencaVO verificarDiferencaComListaSessao(
+			Set<DiferencaVO> listaNovasDiferencasVO, DiferencaVO diferencaVO,
+			Long idDiferenca) {
+		
+		
+		Iterator<DiferencaVO> iterator = listaNovasDiferencasVO.iterator();
+		
+		while(iterator.hasNext()) {
+			DiferencaVO diferencaVoComparacao = iterator.next();
+			if(diferencaVoComparacao.getId().equals(idDiferenca) && !diferencaVoComparacao.equals(diferencaVO)) {
+				diferencaVO  = diferencaVoComparacao;
+			}
+		}
+		return diferencaVO;
+	}
+
+	@Override
+	public Map<Long, List<RateioCotaVO>> incluirSeNaoExisteNoMapa(
+			Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados, Long id,
+			RateioCotaVO rateioCotaVO) {
+		
+		Set<Entry<Long, List<RateioCotaVO>>> entrySet = mapaRateiosCadastrados.entrySet();
+		Iterator<Entry<Long, List<RateioCotaVO>>> iterator = entrySet.iterator();
+		
+		boolean verificacaoSeEstaNoMapa = false;
+		
+		if(iterator.hasNext()) {
+			while(iterator.hasNext()) {
+				Entry<Long, List<RateioCotaVO>> keyValue = iterator.next();
+				List<RateioCotaVO> listaValue = keyValue.getValue();
+	
+				for(RateioCotaVO value : listaValue) {
+					if(rateioCotaVO.getNumeroCota().equals(value.getNumeroCota()) && 
+							rateioCotaVO.getIdDiferenca().equals(value.getIdDiferenca()) ) {
+							
+						verificacaoSeEstaNoMapa = true;
+					}
+				}
+				
+				if(verificacaoSeEstaNoMapa == false) {
+					listaValue.add(rateioCotaVO);
+				}
+			}
+		} 
+		
+		return mapaRateiosCadastrados;
+		
 	}
 	
 }

@@ -73,7 +73,7 @@ import br.com.caelum.vraptor.view.Results;
 @Path("/cota/parametroCobrancaCota")
 public class ParametroCobrancaCotaController extends BaseController {
 
-		private static final Logger LOGGER = LoggerFactory.getLogger(ParametroCobrancaCotaController.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ParametroCobrancaCotaController.class);
 	
 	private Result result;
 
@@ -979,6 +979,11 @@ public class ParametroCobrancaCotaController extends BaseController {
 
 		ParametrosDistribuidorVO parametrosDistribuidor = this.parametroDistribuidorService.getParametrosDistribuidor();
 
+		if(parametrosDistribuidor.getPrazoContrato() == null) {
+			result.nothing();
+			return;
+		}
+		
 		int prazoContratoEmMeses = parametrosDistribuidor.getPrazoContrato();
 
 		Calendar dataTermino = Calendar.getInstance();

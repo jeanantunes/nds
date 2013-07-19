@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -483,12 +484,34 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		for( RecebimentoFisicoDTO recebimentoFisicoDTO : listaItensNota ){
 			
-			ProdutoEdicao produto = produtoEdicaoServiceImpl.buscarPorID(recebimentoFisicoDTO.getIdProdutoEdicao());
+			ProdutoEdicao produtoEdicao = produtoEdicaoServiceImpl.buscarPorID(recebimentoFisicoDTO.getIdProdutoEdicao());
+			BigDecimal desconto = BigDecimal.ZERO;
 			
-			ItemNotaFiscalEntrada itemNotaFiscal = inserirItemNotaFiscal(usuarioLogado, notaFiscal, recebimentoFisicoDTO, dataAtual, produto.getDesconto());
+			if(produtoEdicao.getOrigem().equals(Origem.MANUAL)) {
+				if(produtoEdicao != null && produtoEdicao.getDesconto() != null) {
+					desconto = produtoEdicao.getDesconto();
+				} else {				
+					//if((desconto.equals(BigDecimal.ZERO) || desconto == null) && produtoEdicao.getProduto() != null) {
+					desconto = (produtoEdicao.getProduto().getDesconto() != null ? produtoEdicao.getProduto().getDesconto() : BigDecimal.ZERO);
+				}
+			} else {
+				if(produtoEdicao != null && produtoEdicao.getDescontoLogistica() != null) {
+					desconto = produtoEdicao.getDescontoLogistica().getPercentualDesconto();
+				} else {				
+					//if((desconto.equals(BigDecimal.ZERO) || desconto == null) && produtoEdicao.getProduto() != null) {
+					desconto = (produtoEdicao.getProduto() != null 
+								&& produtoEdicao.getProduto().getDescontoLogistica() != null ? 
+										produtoEdicao.getProduto().getDescontoLogistica().getPercentualDesconto() : 
+											BigDecimal.ZERO);
+				}
+			}
+			
+			
+			
+			ItemNotaFiscalEntrada itemNotaFiscal = inserirItemNotaFiscal(usuarioLogado, notaFiscal, recebimentoFisicoDTO, dataAtual, desconto);
 			
 			inserirItemRecebimentoFisico(recebimentoFisicoDTO, itemNotaFiscal, recebimentoFisico);
-						
+
 		}
 		
 	}
@@ -741,12 +764,21 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		itemNota.setDataLancamento(recebimentoDTO.getDataLancamento());
 		itemNota.setDataRecolhimento(recebimentoDTO.getDataRecolhimento());
 		itemNota.setTipoLancamento(recebimentoDTO.getTipoLancamento());
-		itemNota.setPreco(new BigDecimal(recebimentoDTO.getPrecoDesconto()));
+		
+		if(notaFiscal.getOrigem().equals(Origem.MANUAL)) {			
+			BigDecimal descontoDecimal = desconto.divide(new BigDecimal("100"));			
+			//BigDecimal precoVenda = new BigDecimal(recebimentoDTO.getPrecoDesconto());
+			//precoVenda = precoVenda.divide(BigDecimal.ONE.subtract(descontoDecimal), 2, RoundingMode.HALF_EVEN);
+			
+			itemNota.setPreco(new BigDecimal(recebimentoDTO.getPrecoDesconto()));
+			itemNota.setDesconto(descontoDecimal);
+		} else {
+			itemNota.setPreco(new BigDecimal(recebimentoDTO.getPrecoDesconto()));
+			itemNota.setDesconto(desconto);
+		}
 		itemNota.setProdutoEdicao(produtoEdicao);
 		itemNota.setUsuario(usuarioLogado);
 		itemNota.setNotaFiscal(notaFiscal);
-		itemNota.setDesconto(desconto);
-		
 		
 		boolean indNotaEnvio = notaFiscal.getNumeroNotaEnvio() != null;
 		
@@ -955,11 +987,10 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			BigDecimal percentualDesconto = 
 				this.produtoEdicaoService.obterPorcentualDesconto(produtoEdicao);
 			
-			BigDecimal valorDesconto = 
-				MathUtil.round(
-					MathUtil.calculatePercentageValue(
-						precoVenda, percentualDesconto), 2);
+			BigDecimal valorDesconto = MathUtil.round( MathUtil.calculatePercentageValue( precoVenda, percentualDesconto ), 2);
 
+			recebimentoFisicoDTO.setPrecoCapa(precoVenda.setScale(2, RoundingMode.HALF_EVEN));
+			
 			recebimentoFisicoDTO.setPrecoDesconto(
 				CurrencyUtil.formatarValor(precoVenda.subtract(valorDesconto)));
 			
