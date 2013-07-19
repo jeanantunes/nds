@@ -181,7 +181,6 @@
                             <td valign="top">Fator de vencimento:</td>
                             <td colspan="3">
                             	<select id="comboFatorVencimento">
-                            		<option value="">Selecione...</option>
                                 	<option>0</option>
 									<option>1</option>
 									<option>2</option>

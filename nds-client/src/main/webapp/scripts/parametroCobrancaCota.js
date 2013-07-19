@@ -209,6 +209,33 @@ var parametroCobrancaCotaController = $.extend(true, {
 		return options;
 	},
 	
+	obterSugestaoFornecedorPadrao : function(resultado){
+		
+		var selected;
+		
+		if (!resultado || resultado.length <= 0){
+			
+			return null;
+		}
+		
+        $.each(resultado, function(index, row) {
+  		   
+ 		    if ('Dinap' == row.value.$){
+ 				   
+ 			    selected = row.key.$	
+ 				   
+ 				return selected;
+ 		    }	   
+ 	    });
+  	   
+        if (!selected){
+  	        
+        	selected = resultado[0].key.$
+        }
+        
+        return selected;
+	},
+	
 	carregarFornecedoresPadrao : function(selected){
 		var data = [{name: 'idCota', value: parametroCobrancaCotaController.idCota},
             {name: 'modoTela', value: parametroCobrancaCotaController.modoTela.value},
@@ -216,8 +243,13 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$.postJSON(contextPath + "/cota/parametroCobrancaCota/fornecedoresCota",
 				   data,
 				   function(resultado){
-				       
-			           parametroCobrancaCotaController.sucessCallbackCarregarFornecedoresPadrao(resultado,selected);
+
+			           if (!selected){
+
+			        	   selected = parametroCobrancaCotaController.obterSugestaoFornecedorPadrao(resultado);
+			           }
+
+			           parametroCobrancaCotaController.sucessCallbackCarregarFornecedoresPadrao(resultado,selected); 
 		           },
 				   null,
 				   true);
