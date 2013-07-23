@@ -28,7 +28,7 @@ function popup_novo() {
 	    escondeHeader: false,
 		resizable: false,
 		height:450,
-		width:600,
+		width:700,
 		modal: true,
 		buttons: {
 			"Confirmar": function() {
@@ -303,7 +303,7 @@ function esconde_redutor(){
     </fieldset>
 </div>
 
-<div id="dialog-edicoes-base" title="Pesquisar Edições de Produto" style="display: none; margin-right: 0px; padding-right: 0px;">  
+<div id="dialog-edicoes-base" title="Pesquisar Edições de Produto" style="display: none; margin-right: 0px; padding-right: 0px; width: 650px ">  
 <fieldset style="width:560px!important;">
     <legend>Pesquisar Produto</legend>
         
@@ -312,7 +312,7 @@ function esconde_redutor(){
             <td width="43">Código:</td>
             <td width="78">
             	<input type="text" id="codigoPesquisaBases" style="width:60px;"
-            	 	onchange="if(this.value.length > 7) pesquisaProduto.pesquisarPorCodigoProduto('#codigoPesquisaBases', '#produtoPesquisaBases', {}, true, undefined, distribuicaoVendaMedia.errorCallBack);"
+            	 	onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigoPesquisaBases', '#produtoPesquisaBases', {}, true, undefined, distribuicaoVendaMedia.errorCallBack);"
             	 	/>
             </td>
             <td width="48">Produto:</td>
@@ -346,7 +346,7 @@ function esconde_redutor(){
     </fieldset>
     <br clear="all" />
 
-    <fieldset style="width:560px!important; margin-top:10px;">
+    <fieldset style="width:655px!important; margin-top:10px;">
     	<legend>Edições do Produto</legend>
         <table class="edicaoProdCadastradosGrid" id="edicaoProdCadastradosGrid"></table>
      </fieldset>
@@ -793,10 +793,15 @@ $(".listaRegiaoGrid").flexigrid({
 	width : 400,
 	height : 200
 });
-$(".edicaoProdCadastradosGrid").flexigrid({
-	//url : '../xml/pesqEdicaoD-xml.xml',
+$(".edicaoProdCadastradosGrid").flexigrid({	
 	dataType : 'json',
 	colModel : [ {
+		display : 'Código',
+		name : 'codigoProduto',
+		width : 60,
+		sortable : true,
+		align : 'left'
+	}, {
 		display : 'Edição',
 		name : 'numeroEdicao',
 		width : 40,
@@ -851,8 +856,13 @@ $(".edicaoProdCadastradosGrid").flexigrid({
 		sortable : true,
 		align : 'center'
 	}],
-	width : 560,
-	height : 200
+	width : 650,
+	height : 200,
+	sortname : "dataLancamentoFormatada",
+	sortorder : "asc",
+	usepager : true,
+    useRp : true,
+    rp : 15
 });
 $(".elemento1Grid").flexigrid({
 	//url : '../xml/elemento1-xml.xml',
