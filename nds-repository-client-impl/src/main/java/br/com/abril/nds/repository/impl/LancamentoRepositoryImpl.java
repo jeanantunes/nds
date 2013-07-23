@@ -1182,7 +1182,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" 	) ");
 		sql.append(" 	OR ( ");
 		sql.append(" 		lancamento.DATA_LCTO_DISTRIBUIDOR between :periodoInicial and :periodoFinal ");
-		sql.append(" 		AND lancamento.STATUS = :statusLancamentoBalanceado ");
+		sql.append(" 		AND lancamento.STATUS in (:statusLancamentoDataEntrePeriodo) ");
 		sql.append(" 	) ");
 		sql.append(" 	OR ( ");
 		sql.append(" 		lancamento.DATA_LCTO_DISTRIBUIDOR between :periodoInicial and :periodoFinal ");
@@ -1231,20 +1231,21 @@ public class LancamentoRepositoryImpl extends
 								   Intervalo<Date> periodoDistribuicao,
 								   List<Long> fornecedores, Date dataOperacao) {
 		
-		String[] arrayStatusLancamentoDataMenorFinal = {StatusLancamento.PLANEJADO.name(),
-				  										StatusLancamento.CONFIRMADO.name(),
-				  										StatusLancamento.FURO.name(),
-				  										StatusLancamento.EM_BALANCEAMENTO.name()};
+		List<String> statusLancamentoDataMenorFinal =
+			Arrays.asList(StatusLancamento.PLANEJADO.name(), StatusLancamento.CONFIRMADO.name(), StatusLancamento.FURO.name());
 		
-		List<String> statusLancamentoDataMenorFinal = Arrays.asList(arrayStatusLancamentoDataMenorFinal);
+		List<String> statusLancamentoDataEntrePeriodo =
+			Arrays.asList(StatusLancamento.EM_BALANCEAMENTO.name(), StatusLancamento.BALANCEADO.name());
 		
+		query.setParameterList("statusLancamentoDataMenorFinal", statusLancamentoDataMenorFinal);
+		
+		query.setParameterList("statusLancamentoDataEntrePeriodo", statusLancamentoDataEntrePeriodo);
+		
+		query.setParameter("statusLancamentoExpedido", StatusLancamento.EXPEDIDO.name());
 		query.setParameterList("idsFornecedores", fornecedores);
 		query.setParameter("periodoInicial", periodoDistribuicao.getDe());
 		query.setParameter("periodoFinal", periodoDistribuicao.getAte());
 		query.setParameter("dataOperacao", dataOperacao);
-		query.setParameterList("statusLancamentoDataMenorFinal", statusLancamentoDataMenorFinal);
-		query.setParameter("statusLancamentoBalanceado", StatusLancamento.BALANCEADO.name());
-		query.setParameter("statusLancamentoExpedido", StatusLancamento.EXPEDIDO.name());
 		query.setParameter("grupoCromo", GrupoProduto.CROMO.toString());
 	}
 
