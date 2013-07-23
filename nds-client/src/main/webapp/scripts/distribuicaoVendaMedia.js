@@ -102,7 +102,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	};
 	
 	this.processarLinhaPesquisaBases = function(index, row){
-	        row.id = '<input type="hidden" id="produtoEdicaoId_'+ index +'" value="'+ row.id +'"/>';
+        row.id = '<input type="hidden" id="produtoEdicaoId_'+ index +'" value="'+ row.id +'"/>';
 		row.capa = '<a onmouseover="distribuicaoVendaMedia.popup_detalhes(\''+row.codigoProduto+'\', '+row.numeroEdicao+');" onmouseout="popup_detalhes_close();" href="javascript:;"><img src="'+ pathTela +'/images/ico_detalhes.png" border="0"/></a>';
 		row.select = '<input onclick="distribuicaoVendaMedia.selecionarProdutoBasePopUp(' + index + ', this)" type="checkbox" value=""/>';
 		if(row.periodo == undefined){
@@ -174,13 +174,26 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	};
 
 	this.preencherGridBasesPesquisa = function(resultado){
-		$.each(resultado, function(index,row){ T.processarLinhaPesquisaBases(index, row);});
+		$.each(resultado, function(index,row){ 
+			T.processarLinhaPesquisaBases(index, row);
+		});
 		
-		$("#edicaoProdCadastradosGrid").flexAddData({
-			rows : toFlexiGridObject(resultado),
+		var rows = [];
+		
+		for ( var e in resultado) {
+			if(!isNaN(parseInt(e))){
+				var id = parseInt(e); 
+				rows.push({"id" : ++id,	"cell" : resultado[e]});
+			}
+		}
+		
+		var dtoTratado = {
+			rows : rows,
 			page : 1,
 			total : 1
-		});
+		};
+		
+		return dtoTratado;
 	};
 	
 	this.pesquisarBases = function(){
@@ -191,23 +204,24 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		var edicao = $("#edicaoPesquisaBases").val();
 		var classificacao = $("#selectClassificacao").val();
 		
-		data.push({name:"codigo", value:codigo});
-		data.push({name:"nome", value:produto});
-		data.push({name:"edicao", value:edicao});
-		data.push({name:"classificacao", value:classificacao});
+		data.push({name:"filtro.codigo", value:codigo});
+		data.push({name:"filtro.nome", value:produto});
+		data.push({name:"filtro.edicao", value:edicao});
+		data.push({name:"filtro.classificacao", value:classificacao});
 		
-		$.postJSON(
-				url + "/distribuicaoVendaMedia/pesquisarProdutosEdicao", 
-					data,
-					function(result) {
-						T.produtoEdicaoPesquisaBases = result;
-						T.preencherGridBasesPesquisa(result);
-					},
-					
-					function(){
-						exibirMensagem("ERROR", ["Erro ao processar a pesquisa. Tente novamente mais tarde."]);
-					}
-				);
+		$("#edicaoProdCadastradosGrid").flexOptions({
+			url: url + "/distribuicaoVendaMedia/pesquisarProdutosEdicao",
+			params: data,
+			preProcess: function(result){
+				T.produtoEdicaoPesquisaBases = result;
+				var dtoTratado = T.preencherGridBasesPesquisa(result);
+				return dtoTratado;
+			},
+			onError: function(){
+				exibirMensagem("ERROR", ["Erro ao processar a pesquisa. Tente novamente mais tarde."]);
+			}
+		}).flexReload();
+		
 	};
 	
 	this.popup_detalhes = function(codigoProduto,numeroEdicao) {
