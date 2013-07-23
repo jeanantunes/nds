@@ -335,7 +335,11 @@ public class MapaAbastecimentoController extends BaseController {
 		
 		if(numeroCota != null) {
 			List<Box> boxes = new ArrayList<Box>();
-			boxes.add(boxService.obterBoxPorCota(numeroCota));
+			Box box = boxService.obterBoxPorCota(numeroCota);
+			
+			if(box != null)
+				boxes.add(box);
+			
 			combos[0] = carregarBoxes(boxes);
 			combos[1] = carregarRota(roteirizacaoService.obterRotasPorCota(numeroCota));
 			combos[2] = carregarRoteiro(roteirizacaoService.obterRoteirosPorCota(numeroCota));
