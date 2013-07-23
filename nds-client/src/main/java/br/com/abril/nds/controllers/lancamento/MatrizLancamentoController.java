@@ -32,6 +32,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
+import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.MatrizLancamentoService;
@@ -196,7 +197,9 @@ public class MatrizLancamentoController extends BaseController {
 		List<ProdutoLancamentoDTO> listaProdutoBalanceamentoNaoAgrupados =
 			this.obterListaLancamentosDTONaoAgrupados(listaProdutoBalanceamento);
 		
-		filtro.setTotalRegistrosEncontrados(listaProdutoBalanceamentoNaoAgrupados.size());
+		if (listaProdutoBalanceamentoNaoAgrupados != null) {
+			filtro.setTotalRegistrosEncontrados(listaProdutoBalanceamentoNaoAgrupados.size());
+		}
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtro);
 		
@@ -206,7 +209,8 @@ public class MatrizLancamentoController extends BaseController {
 			
 		} else {
 			
-			this.result.use(Results.json()).from(Results.nothing()).serialize();
+			listaProdutoBalanceamentoNaoAgrupados = new ArrayList<>();
+			result.use(FlexiGridJson.class).from(listaProdutoBalanceamentoNaoAgrupados).page(page).total(0).serialize();
 		}
 	}
 	
@@ -230,13 +234,38 @@ public class MatrizLancamentoController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
 		}
 
-		List<ProdutoLancamentoDTO> listaProdutoBalanceamento =
-			new ArrayList<ProdutoLancamentoDTO>();
+		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = new ArrayList<ProdutoLancamentoDTO>();
 	
 		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry :
 				balanceamentoLancamento.getMatrizLancamento().entrySet()) {
 			
 			listaProdutoBalanceamento.addAll(entry.getValue());
+		}
+		
+		return listaProdutoBalanceamento;
+	}
+	
+	private List<ProdutoLancamentoDTO> getProdutoLancamentoDTOFromMatrizSessao(Date dataSelecionada) {
+		
+		BalanceamentoLancamentoDTO balanceamentoLancamento = 
+				(BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
+		
+		if (balanceamentoLancamento == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
+		}
+
+		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = new ArrayList<ProdutoLancamentoDTO>();
+	
+		//Se foram selecionados todos de uma data especifica, obtem todos os lancamentos dessa data
+		if(dataSelecionada == null) {
+			for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry :
+					balanceamentoLancamento.getMatrizLancamento().entrySet()) {
+				
+				listaProdutoBalanceamento.addAll(entry.getValue());
+			}
+		} else {
+			listaProdutoBalanceamento.addAll(balanceamentoLancamento.getMatrizLancamento().get(dataSelecionada));
 		}
 		
 		return listaProdutoBalanceamento;
@@ -328,7 +357,7 @@ public class MatrizLancamentoController extends BaseController {
 	@Post
 	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void reprogramarLancamentosSelecionados(List<ProdutoLancamentoVO> produtosLancamento,
-												   String novaDataFormatada, boolean selecionarTodos) {
+												   String dataAtualFormatada, String novaDataFormatada, boolean selecionarTodos) {
 		
 		this.verificarExecucaoInterfaces();
 		
@@ -338,10 +367,13 @@ public class MatrizLancamentoController extends BaseController {
 		
 		Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
 		
+		Date dataAtual = null;
+		if(dataAtualFormatada != null && selecionarTodos)
+			dataAtual = DateUtil.parseDataPTBR(dataAtualFormatada);
+		
 		if (selecionarTodos) {
 			
-			List<ProdutoLancamentoDTO> produtosLancamentoDTO =
-				this.getProdutoLancamentoDTOFromMatrizSessao();
+			List<ProdutoLancamentoDTO> produtosLancamentoDTO = this.getProdutoLancamentoDTOFromMatrizSessao(dataAtual);
 		
 			this.removerProdutosConfirmados(produtosLancamentoDTO);
 			
@@ -373,6 +405,8 @@ public class MatrizLancamentoController extends BaseController {
 	}
 	
 	private void removerProdutosAgrupados(List<ProdutoLancamentoDTO> produtosLancamento) {
+		
+		if(produtosLancamento == null) return;
 		
 		Iterator<ProdutoLancamentoDTO> iterator = produtosLancamento.iterator();
 		
@@ -596,7 +630,7 @@ public class MatrizLancamentoController extends BaseController {
 			new ArrayList<ProdutoLancamentoDTO>();
 		
 		this.montarListasParaAlteracaoMapa(produtosLancamento,
-										   listaProdutoLancamentoAlterar);
+										   listaProdutoLancamentoAlterar, novaData);
 		
 		this.removerEAdicionarMapa(matrizLancamento,
 							  	   listaProdutoLancamentoAlterar,
@@ -634,12 +668,12 @@ public class MatrizLancamentoController extends BaseController {
 	 * 
 	 * @param produtosLancamento - lista de produtos de lançamento
 	 * @param listaProdutoLancamentoAlterar - lista de produtos que serão alterados
+	 * @param dataSelecionada TODO
 	 */
 	private void montarListasParaAlteracaoMapa(List<ProdutoLancamentoVO> produtosLancamento,									 
-											   List<ProdutoLancamentoDTO> listaProdutoLancamentoAlterar) {
+											   List<ProdutoLancamentoDTO> listaProdutoLancamentoAlterar, Date dataSelecionada) {
 		
-		List<ProdutoLancamentoDTO> listaProdutoLancamentoSessao =
-			this.getProdutoLancamentoDTOFromMatrizSessao();
+		List<ProdutoLancamentoDTO> listaProdutoLancamentoSessao = this.getProdutoLancamentoDTOFromMatrizSessao();
 		
 		for (ProdutoLancamentoVO produtoLancamento : produtosLancamento) {
 			
@@ -856,8 +890,7 @@ public class MatrizLancamentoController extends BaseController {
 	@Get
 	public void exportar(FileType fileType) throws IOException {
 		
-		List<ProdutoLancamentoDTO> listaProdutoBalanceamento =
-			getProdutoLancamentoDTOFromMatrizSessao();
+		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = getProdutoLancamentoDTOFromMatrizSessao();
 		
 		FiltroLancamentoDTO filtro = obterFiltroSessao();
 		
