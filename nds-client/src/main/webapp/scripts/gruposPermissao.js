@@ -37,20 +37,32 @@ var gruposPermissaoController = $.extend(true, {
 						params.push({'name' : 'grupoPermissaoDTO.nome', 'value' : $('#grupoPermissaonome', gruposPermissaoController.workspace).val()});
 						
 						var checkSelecionados = $('.permissao:checked');
-												
-						$.each(checkSelecionados, function(index, elemento) {
-							params.push({'name':'grupoPermissaoDTO.permissoes['+index+']', value : elemento.getAttribute('role')});
-						});
-																		
-						$.postJSON(gruposPermissaoController.path + '/salvarGrupoPermissao', params, function(data) {
-														
-							$( self ).dialog("close");
-							$(".gruposGrid", gruposPermissaoController.workspace).flexReload();
+							
+						if( checkSelecionados.length <= 0 ) {
+							
+							$( "#ok-falta-de-permissoes", gruposPermissaoController.workspace ).dialog({
+								resizable: false,
+								height:170,
+								width:380,
+								modal: true,
+								buttons: {
+									"Ok": function() {
+										$( this ).dialog( "close" );
+									}
+								}
+							});
+						} else {
+							$.each(checkSelecionados, function(index, elemento) {
+								params.push({'name':'grupoPermissaoDTO.permissoes['+index+']', value : elemento.getAttribute('role')});
+							});
+																			
+							$.postJSON(gruposPermissaoController.path + '/salvarGrupoPermissao', params, function(data) {
+															
+								$( self ).dialog("close");
+								$(".gruposGrid", gruposPermissaoController.workspace).flexReload();
 
-						}, null, true);
-
-						
-
+							}, null, true);
+						}
 					},
 					"Cancelar": function() {
 						$( this ).dialog( "close" );
