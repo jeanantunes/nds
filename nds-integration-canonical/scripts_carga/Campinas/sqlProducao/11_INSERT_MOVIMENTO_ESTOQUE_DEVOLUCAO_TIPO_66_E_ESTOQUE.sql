@@ -111,7 +111,7 @@ limit 1000000)
 
 select * from temp_mvto_estq_sem_12;
 
--- inserir movimento em estoque tipo 15, atribuir o valor ao atributo qtde o resultado da subtração de pe - me
+-- inserir movimento em estoque tipo 18, atribuir o valor ao atributo qtde o resultado da subtração de pe - me
 INSERT INTO movimento_estoque
 (
  APROVADO_AUTOMATICAMENTE, DATA_APROVACAO, MOTIVO, STATUS, DATA, DATA_CRIACAO, APROVADOR_ID, TIPO_MOVIMENTO_ID,
@@ -125,7 +125,7 @@ where pe > me
 )
 ;
 
--- inserir movimento em estoque tipo 18, atribuir o valor ao atributo qtde da tabela movimento_estoque o resultado 
+-- inserir movimento em estoque tipo 15, atribuir o valor ao atributo qtde da tabela movimento_estoque o resultado 
 -- da subtração de me - pe
 INSERT INTO movimento_estoque
 (
@@ -305,4 +305,53 @@ where produto_edicao_id in (select produto_edicao_id from movimento_estoque
 select sum(me.qtde) from movimento_estoque me 
 where me.tipo_movimento_id = 66 
 								
+;
+
+-- preco_venda com preco_venda
+-- preco_custo colocar PRECO_COM_DESCONTO da movimento_estoque_cota
+
+update movimento_estoque_cota 
+set PRECO_COM_DESCONTO = (select p.preco_venda - (p.preco_venda*movimento_estoque_cota.valor_desconto/100) from produto_edicao p where p.id = movimento_estoque_cota.PRODUTO_EDICAO_ID)
+where PRODUTO_EDICAO_ID in (select p.id from produto_edicao p where p.id = movimento_estoque_cota.PRODUTO_EDICAO_ID)
+and PRECO_COM_DESCONTO = 0
+and (TIPO_MOVIMENTO_ID = 21 or TIPO_MOVIMENTO_ID = 26)
+
+;
+
+
+select count(1) from movimento_estoque_cota 
+where 
+PRODUTO_EDICAO_ID in (select p.id from produto_edicao p where p.id = movimento_estoque_cota.PRODUTO_EDICAO_ID)
+and PRECO_COM_DESCONTO = 0
+and (TIPO_MOVIMENTO_ID = 21 or TIPO_MOVIMENTO_ID = 26)
+
+;
+
+select preco_venda, (select p.preco_venda - (p.preco_venda*movimento_estoque_cota.valor_desconto/100) 
+			from produto_edicao p 
+			where p.id = movimento_estoque_cota.PRODUTO_EDICAO_ID)
+from movimento_estoque_cota 
+where 
+PRODUTO_EDICAO_ID in (select p.id from produto_edicao p where p.id = movimento_estoque_cota.PRODUTO_EDICAO_ID)
+and PRECO_COM_DESCONTO = 0
+and (TIPO_MOVIMENTO_ID = 21 or TIPO_MOVIMENTO_ID = 26)
+
+;
+
+desc movimento_estoque_cota;
+
+
+update movimento_estoque 
+set TIPO_MOVIMENTO_ID = 15
+where produto_edicao_id in(
+152591,
+153731,
+161111,
+152761,
+153221,
+157451,
+162681,
+168301
+)
+and TIPO_MOVIMENTO_ID = 18
 ;
