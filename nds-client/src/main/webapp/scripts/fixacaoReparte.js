@@ -9,7 +9,20 @@ var fixacaoReparteController = $.extend(true, {
 		$(".historicoGrid",fixacaoReparteController.workspace).flexigrid({
 			preProcess: fixacaoReparteController.preProcessHistoricoGrid,
 			dataType : 'json',
-			colModel : [ {
+			colModel : [ 
+			{
+				display : 'Produto',
+				name : 'codigoProduto',
+				width : 75,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Classificação',
+				name : 'classificacaoProduto',
+				width : 75,
+				sortable : true,
+				align : 'left'
+			}, {
 				display : 'Edição',
 				name : 'edicao',
 				width : 75,
@@ -42,11 +55,11 @@ var fixacaoReparteController = $.extend(true, {
 			},  {
 				display : 'Status',
 				name : 'status',
-				width : 130,
+				width : 100,
 				sortable : true,
 				align : 'left'
 			}],
-			width : 600,
+			width : 760,
 			height : 100,
 			sortname : "produtoFixado",
 			sortorder : "asc",
@@ -260,15 +273,6 @@ var fixacaoReparteController = $.extend(true, {
 			width : 960,
 			height : 250
 		});
-	
-	$('#codigoProduto').blur(function (){
-		if($("#codigoProduto").val().length > 6 ){
-			$('#filtroClassificacaoFixacao').text('');
-			$('#filtroClassificacaoFixacao').disable();
-    	}else{
-    		$('#filtroClassificacaoFixacao').enable();
-    	}
-	});
 	
 	},
 
@@ -839,7 +843,7 @@ var fixacaoReparteController = $.extend(true, {
 			 $("#dialog-novo").dialog({
 					resizable: false,
 					height:550,
-					width:650,
+					width:810,
 					modal: true,
 					buttons: {
 						"Confirmar": function() {
