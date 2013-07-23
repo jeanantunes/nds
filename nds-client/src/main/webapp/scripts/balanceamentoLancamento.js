@@ -4,7 +4,6 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	
 	var T = this;
 	
-	this.emptyResult = false;
 	this.tiposMovimento = []; 
 	this.tipoMovimento = null;
 	this.instancia = descInstancia;
