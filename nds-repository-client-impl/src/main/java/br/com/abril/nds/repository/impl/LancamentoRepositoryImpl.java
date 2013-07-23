@@ -1874,8 +1874,6 @@ public class LancamentoRepositoryImpl extends
 		query.setMaxResults(0);
 		return query.list();
 	}
-	
-}
 
 	@Override
 	public boolean existeMatrizRecolhimentoConfirmado(Date dataChamadao) {
