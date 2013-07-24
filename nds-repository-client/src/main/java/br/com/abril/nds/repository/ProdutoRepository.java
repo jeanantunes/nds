@@ -78,4 +78,5 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 
 	List<String> verificarProdutoExiste(String... codigoProduto);
 	
+	String obterCodigoProdinPorCodICD (String codigoProduto);
 }

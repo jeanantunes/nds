@@ -27,6 +27,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.distribuicao.ExcecaoProdutoCota;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoExcecao;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -35,6 +36,7 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.ExcecaoSegmentoParciaisService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
@@ -83,9 +85,17 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
+	@Autowired
+	private TipoClassificacaoProdutoService classificacao;
+	
 	@Rules(Permissao.ROLE_DISTRIBUICAO_EXCECAO_SEGMENTO_PARCIAIS)
 	public void index(){
+		this.carregarComboClassificacao();
+	}
 		
+	private void carregarComboClassificacao(){
+		List<TipoClassificacaoProduto> classificacoes = classificacao.obterTodos();
+		result.include("listaClassificacao", classificacoes);
 	}
 	
 	@Post("pesquisarProdutosRecebidosPelaCota")
@@ -113,6 +123,10 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 		
 		validarEntradaFiltroCota(filtro);
 		
+		String codigoProduto = produtoService.obterCodigoProdinPorICD(filtro.getProdutoDto().getCodigoProduto());
+		
+		filtro.getProdutoDto().setCodigoProduto(codigoProduto);
+		
 		filtro.getCotaDto().setNomePessoa(PessoaUtil.removerSufixoDeTipo(filtro.getCotaDto().getNomePessoa()));
 		
 		List<ProdutoNaoRecebidoDTO> listaProdutoNaoRecebidoDto = this.excecaoSegmentoParciaisService.obterProdutosNaoRecebidosPelaCota(filtro);
@@ -129,6 +143,10 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 
 		validarEntradaFiltroProduto(filtro);
+		
+		String codigoProduto = produtoService.obterCodigoProdinPorICD(filtro.getProdutoDto().getCodigoProduto());
+		
+		filtro.getProdutoDto().setCodigoProduto(codigoProduto);
 		
 		List<CotaQueRecebeExcecaoDTO> listaCotaQueRecebeExcecaoDto = this.excecaoSegmentoParciaisService.obterCotasQueRecebemExcecaoPorProduto(filtro);
 		
@@ -288,16 +306,19 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 		Produto produto = null;
 		TipoSegmentoProduto tipoSegmentoProduto = null;
 		ArrayList<Object> objects = new ArrayList<>();
-		
+		Long idClassificacao;
+				
 		produto = produtoService.obterProdutoPorCodigo(codigoProduto);
 		
 		if (produto != null) {
 			PessoaJuridica juridica = fornecedorService.obterFornecedorUnico(produto.getCodigo()).getJuridica();
 			tipoSegmentoProduto = produto.getTipoSegmentoProduto();
+			idClassificacao = produto.getTipoClassificacaoProduto().getId();
 			
 			objects.add(produto);
 			objects.add(juridica);
 			objects.add(tipoSegmentoProduto);
+			objects.add(idClassificacao);
 		}else {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código \"" + codigoProduto + "\" não encontrado!");
 		}	

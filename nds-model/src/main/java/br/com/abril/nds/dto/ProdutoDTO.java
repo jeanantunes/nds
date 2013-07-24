@@ -5,6 +5,8 @@ public class ProdutoDTO {
 	private String codigoProduto;
 	
 	private String nomeProduto;
+	
+	private Long idClassificacaoProduto;
 
 	public String getCodigoProduto() {
 		return codigoProduto;
@@ -21,5 +23,12 @@ public class ProdutoDTO {
 	public void setNomeProduto(String nomeProduto) {
 		this.nomeProduto = nomeProduto;
 	}
-		
+
+	public Long getIdClassificacaoProduto() {
+		return idClassificacaoProduto;
+	}
+
+	public void setIdClassificacaoProduto(Long idClassificacaoProduto) {
+		this.idClassificacaoProduto = idClassificacaoProduto;
+	}
 }
