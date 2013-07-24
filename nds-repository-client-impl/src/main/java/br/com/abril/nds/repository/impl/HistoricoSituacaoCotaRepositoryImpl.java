@@ -294,19 +294,20 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select h from  HistoricoSituacaoCota h JOIN h.cota cota ")
-		.append(" where cota.numeroCota =:numeroCota")
-		.append(" and cota.situacaoCadastro = h.novaSituacao ")
-		.append(" and cota.situacaoCadastro =:situacaoCadastro ")
-		.append(" order by cota.inicioAtividade, h.dataEdicao desc ");
+		hql.append(" select h from HistoricoSituacaoCota h JOIN h.cota cota ")
+		   .append(" where cota.numeroCota = :numeroCota ")
+		   .append(" and cota.situacaoCadastro = h.novaSituacao ")
+		   .append(" and cota.situacaoCadastro = :situacaoCadastro ")
+		   .append(" order by cota.inicioAtividade, h.dataEdicao desc ");
 		
-		Query query  = getSession().createQuery(hql.toString());
+		Query query = getSession().createQuery(hql.toString());
+		
 		query.setParameter("numeroCota", numeroCota);
 		query.setParameter("situacaoCadastro", SituacaoCadastro.INATIVO);
+		
 		query.setMaxResults(1);
 		
 		return (HistoricoSituacaoCota) query.uniqueResult();
-		
 	}
 
 	/* (non-Javadoc)
