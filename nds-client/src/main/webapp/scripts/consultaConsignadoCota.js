@@ -66,7 +66,7 @@ var consultaConsignadoCotaController = $.extend(true, {
 					sortable : true,
 					align : 'right'
 				}],
-				sortname : "cota",
+				sortname : "codigoProduto",
 				sortorder : "asc",
 				usepager : true,
 				useRp : true,

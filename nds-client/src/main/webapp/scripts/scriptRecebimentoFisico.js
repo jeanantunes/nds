@@ -1204,10 +1204,17 @@ var recebimentoFisicoController = $.extend(true, {
 	},
 	
 	numericOnly : function(event) {
-          var num=event.keyCode;
-          if(num>=48 & num<=57)
-               return true;
-          return false; 
+	
+			var num = (event.keyCode != 0 ? event.keyCode : event.charCode);
+			var numeroId = event.target.id.split("_");
+			if(num>=48 & num<=57) {
+		  		if($("#replicaValorRepartePrevisto_" + numeroId[1]).is(':checked')) {
+		  			$("#replicaValorRepartePrevisto_" + numeroId[1]).attr('checked', false);
+		  		} 
+		  		return true;
+			} else {
+				 return false; 
+			}
 	},
 	
 	/**

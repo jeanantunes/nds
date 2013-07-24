@@ -729,6 +729,16 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 			Cota cota = this.cotaRepository.buscarCotaPorID(c.getIdCota());
 			
+			if(cota == null) {
+				
+				cota = this.cotaRepository.buscarPorId(c.getIdCota());
+				
+				if(cota == null) {
+					throw new ValidacaoException(TipoMensagem.ERROR, "Cota inexistente.");
+				}
+				
+			}
+			
 			movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(
 					cota, 
 					dataOperacaoDistribuidor,
