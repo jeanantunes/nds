@@ -30,6 +30,38 @@ public class FiltroHistoricoVendaDTO extends FiltroDTO {
 	private List<ProdutoEdicaoDTO> listProdutoEdicaoDTO = new ArrayList<>();
 	private String elemento;
 	
+	
+	private OrdemColuna ordemColuna;
+	
+	public enum OrdemColuna{
+		
+		CODIGO("codigoProduto"),
+		CLASSIFICACAO("tipoClassificacaoFormatado"),
+		EDICAO("numeroEdicao"),		
+		PERIODO("codPeriodoProd"),		
+		DT_LANCAMENTO("dataLancamentoFormatada"),
+		REPARTE("repartePrevisto"),
+		VENDA("qtdVendasFormatada"),
+		STATUS("situacaoLancamento");
+		
+		private String descricao;
+		
+		private OrdemColuna(String descricao) {
+			this.descricao = descricao;
+		}
+		
+		public String getDescricao(){
+			return this.descricao;
+		}
+		
+		@Override
+		public String toString() {
+			
+			return this.descricao;
+		}
+	}
+	
+	
 	// utilizado para retorno de mensagem
 	private String validationMsg;
 	
@@ -46,9 +78,6 @@ public class FiltroHistoricoVendaDTO extends FiltroDTO {
 			validationMsg = "Código ou nome do produto é obrigatório.";
 			isValid = false;
 		}
-		
-//		(numeroEdicao == null || numeroEdicao.equals(0)) &&
-//		(tipoClassificacaoProdutoId == null || tipoClassificacaoProdutoId.equals(0)))
 		
 		return isValid;
 	}
@@ -242,6 +271,14 @@ public class FiltroHistoricoVendaDTO extends FiltroDTO {
 
 	public void setElemento(String elemento) {
 		this.elemento = elemento;
+	}
+
+	public OrdemColuna getOrdemColuna() {
+		return ordemColuna;
+	}
+
+	public void setOrdemColuna(OrdemColuna ordemColuna) {
+		this.ordemColuna = ordemColuna;
 	}
 	
 	

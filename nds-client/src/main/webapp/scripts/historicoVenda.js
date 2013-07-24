@@ -252,7 +252,19 @@ var historicoVendaController = $.extend(true, {
 				],
 				gridConfiguration : {
 					dataType: 'json',
-					colModel : [ {
+					colModel : [{
+						display : 'Código',
+						name : 'codigoProduto',
+						width : 40,
+						sortable : true,
+						align : 'left'
+					},{
+						display : 'Classificação',
+						name : 'tipoClassificacaoFormatado',
+						width : 40,
+						sortable : true,
+						align : 'left'
+					},{
 						display : 'Edição',
 						name : 'numeroEdicao',
 						width : 40,
@@ -302,7 +314,9 @@ var historicoVendaController = $.extend(true, {
 						align : 'center'
 					}],
 					width : 480,
-					height : 160
+					height : 160,
+					sortname : "codigoProduto",
+		            sortorder : "asc"
 				}
 			}),
 			EdicaoSelecionadaGrid : flexGridService.GridFactory.createGrid({

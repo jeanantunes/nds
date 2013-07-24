@@ -22,6 +22,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.RegiaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroAnaliseEstudoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -44,8 +45,10 @@ import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.UfEnum;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -104,7 +107,12 @@ public class HistoricoVendaController extends BaseController {
 	}
 	
 	@Post
-	public void pesquisaProduto(FiltroHistoricoVendaDTO filtro){
+	public void pesquisaProduto(FiltroHistoricoVendaDTO filtro, String sortorder, String sortname, int page, int rp){
+		
+		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
+			
+		filtro.setOrdemColuna(Util.getEnumByStringValue(FiltroHistoricoVendaDTO.OrdemColuna.values(), sortname));
+		
 		// valida se o filtro foi devidamente preenchido pelo usuário
 		filtroValidate(filtro.validarEntradaFiltroProduto(), filtro);
 		
@@ -372,7 +380,7 @@ public class HistoricoVendaController extends BaseController {
 	private void filtroValidate(boolean isValid, FiltroHistoricoVendaDTO filtro){
 		if (!isValid) {
 			throw new ValidacaoException(TipoMensagem.WARNING, filtro.getValidationMsg());
-		}
+		}		
 	}
 	
 	private void carregarComboClassificacao(){
