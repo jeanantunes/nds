@@ -549,7 +549,9 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 												? new BigInteger(parametrosDistribuidor.getCapacidadeManuseioHomemHoraRecolhimento().toString())
 												: null);
 		
-		distribuidor.setQntDiasReutilizacaoCodigoCota(parametrosDistribuidor.getReutilizacaoCodigoCotaInativa());
+		distribuidor.setQntDiasReutilizacaoCodigoCota(
+			parametrosDistribuidor.getReutilizacaoCodigoCotaInativa() == null 
+				? null : parametrosDistribuidor.getReutilizacaoCodigoCotaInativa() * 30);
 		
 		distribuidor.setUtilizaSugestaoIncrementoCodigo(parametrosDistribuidor.isUtilizaSugestaoIncrementoCodigo());
 

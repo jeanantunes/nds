@@ -1805,7 +1805,7 @@ public class CotaServiceImpl implements CotaService {
 					throw new ValidacaoException(TipoMensagem.WARNING,"Número da cota está inativo mas não pode ser utilizado.");
 				}
 				else{
-				   //Alterar Numero Cota e registra histoico
+				   //Alterar Numero Cota e registra histórico
 					alteraNumeroCota(cota);
 				}
 			}
@@ -1878,17 +1878,23 @@ public class CotaServiceImpl implements CotaService {
 	 */
 	private boolean isParametroDistribuidoNumeroCotaValido(Integer  numeroCota){
 		
-		HistoricoSituacaoCota histCota  = historicoSituacaoCotaRepository.obterUltimoHistoricoInativo(numeroCota);
+		HistoricoSituacaoCota historicoSituacaoCota  = 
+			this.historicoSituacaoCotaRepository.obterUltimoHistoricoInativo(numeroCota);
 		
-		if(histCota == null){
+		if (historicoSituacaoCota == null) {
+			
 			return true;
 		}
 		
-	    Long qntDiasInativo =  DateUtil.obterDiferencaDias(histCota.getDataInicioValidade(), new Date());
+	    Long qntDiasInativo =  
+	    	DateUtil.obterDiferencaDias(
+	    		historicoSituacaoCota.getDataInicioValidade(), 
+	    			this.distribuidorRepository.obterDataOperacaoDistribuidor());
 	    
-	    Long qntDiasDistribuidor = this.distribuidorService.qntDiasReutilizacaoCodigoCota();
+	    Long qntDiasInativoPermitidoParaReutilizacao =
+	    	this.distribuidorService.qntDiasReutilizacaoCodigoCota();
 	    
-		return (qntDiasInativo > qntDiasDistribuidor );
+		return (qntDiasInativo > qntDiasInativoPermitidoParaReutilizacao);
 	}
 
 	/**
