@@ -64,12 +64,13 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 			
 			// Validar código do distribuidor:
 			Distribuidor distribuidor = this.distribuidorService.obter();
-			if(!distribuidor.getCodigoDistribuidorDinap().equals(
-					input.getCodigoDistribuidor())){			
+			if(!distribuidor.getCodigoDistribuidorDinap().equals(input.getCodigoDistribuidor())) {
+				
 				this.ndsiLoggerFactory.getLogger().logWarning(message,
 						EventoExecucaoEnum.RELACIONAMENTO, 
 						"Código do distribuidor do arquivo não é o mesmo do Sistema.");
 				return;
+				
 			}
 			
 			dbClient = getCouchDBClient(codigoDistribuidor);
@@ -78,6 +79,11 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 			
 			getSession().merge(ce);
 			getSession().flush();
+			
+			this.ndsiLoggerFactory.getLogger().logWarning(message,
+					EventoExecucaoEnum.RELACIONAMENTO, 
+					"Chamada Encalhe Fornecedor inserida com sucesso: "+ input.getCePK().getNumeroChamadaEncalhe());
+			return;
 
 		} catch (Exception e) {
 			LOGGER.error(e.getMessage(), e);
