@@ -8,7 +8,6 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.controllers.BaseController;
@@ -18,6 +17,7 @@ import br.com.abril.nds.dto.EstrategiaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
+import br.com.abril.nds.dto.filtro.FiltroEdicaoBaseDistribuicaoVendaMedia;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -43,6 +43,8 @@ import br.com.abril.nds.service.RoteiroService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.HTMLTableUtil;
+import br.com.abril.nds.util.Util;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
@@ -103,7 +105,7 @@ public class DistribuicaoVendaMediaController extends BaseController {
     
     @Autowired
     private ProdutoEdicaoDAO produtoEdicaoDAO;
-
+    
     private static final int QTD_MAX_PRODUTO_EDICAO = 6;
 
     @Path("index")
@@ -212,22 +214,14 @@ public class DistribuicaoVendaMediaController extends BaseController {
 
     @Path("pesquisarProdutosEdicao")
     @Post
-    @Transactional(readOnly = true)
-    public void pesquisarProdutosEdicao(String codigo, String nome, Long edicao, Long classificacao) {
-	List<ProdutoEdicaoVendaMediaDTO> resultado = distribuicaoVendaMediaRepository.pesquisar(codigo, nome, edicao, classificacao);
-
-	session.setAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO, resultado);
-	result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
-    }
-
-    private List<ProdutoEdicaoDTO> converterResultado(List<ProdutoEdicao> resultado) {
-	List<ProdutoEdicaoDTO> convertido = new ArrayList<>();
-	for (ProdutoEdicao produtoEdicao : resultado) {
-	    ProdutoEdicaoDTO dto = converterResultado(produtoEdicao, null);
-	    convertido.add(dto);
-	}
-
-	return convertido;
+    public void pesquisarProdutosEdicao(FiltroEdicaoBaseDistribuicaoVendaMedia filtro, String sortorder,String sortname,int page, int rp) {
+    	
+    	filtro.setPaginacao( new PaginacaoVO(page, rp, sortorder));
+    	filtro.setOrdemColuna(Util.getEnumByStringValue(FiltroEdicaoBaseDistribuicaoVendaMedia.OrdemColuna.values(), sortname));	
+		List<ProdutoEdicaoVendaMediaDTO> resultado = distribuicaoVendaMediaRepository.pesquisar(filtro);
+	
+		session.setAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO, resultado);
+		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
     }
 
     private ProdutoEdicaoDTO converterResultado(ProdutoEdicao produtoEdicao, Lancamento lancamento) {
@@ -282,7 +276,8 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	result.use(Results.json()).withoutRoot().from(selecionados).recursive().serialize();
     }
 
-    @Path("removerProdutoEdicaoDaBase")
+    @SuppressWarnings("unchecked")
+	@Path("removerProdutoEdicaoDaBase")
     @Post
     public void removerProdutoEdicaoDaBase(List<Integer> indexes) {
 	List<ProdutoEdicaoVendaMediaDTO> selecionados = (List<ProdutoEdicaoVendaMediaDTO>) session.getAttribute(SELECIONADOS_PRODUTO_EDICAO_BASE);
@@ -295,7 +290,8 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	result.use(Results.json()).withoutRoot().from(selecionados).recursive().serialize();
     }
 
-    @Path("adicionarProdutoEdicaoABase")
+    @SuppressWarnings("unchecked")
+	@Path("adicionarProdutoEdicaoABase")
     @Post
     public void adicionarProdutoEdicaoABase(List<Integer> indexes) {
 	List<ProdutoEdicaoVendaMediaDTO> resultadoPesquisa = (List<ProdutoEdicaoVendaMediaDTO>) session.getAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO);
