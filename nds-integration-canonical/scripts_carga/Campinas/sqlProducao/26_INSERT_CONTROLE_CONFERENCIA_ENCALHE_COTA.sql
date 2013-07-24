@@ -37,3 +37,5 @@ delete from estudo where id in (select estudo_id from tmpEstudo);
 drop table tmpEstudo;
 
 */
+
+

@@ -51,7 +51,26 @@ group by 4;
 
 -- ====================######## ABAIXO Scripts Tests ###############============================
 
-select count(1) from estqbox;
+-- Verificar porque não atualizou qtde na estoque_produto
+-- 38575001 edi 103
+-- 85880001 edi 212
+-- São registros que não foram populados na estqbox devido a não existência dos mesmos no arquivo MATRIZ.NEW do MDC 108. 
+-- Como ele não encontra produto_edicao_id, os registros são deletados da estqbox porque ficam com null no produto_edicao_id
+-- Existem 700 linhas na estqbox, porem foram inseridas apenas 681 na estoque_produto
+select * from estoque_produto;
+
+select * from produto_edicao pe, produto p
+where p.id = pe.produto_id 
+and p.codigo = '85880001'
+and pe.numero_edicao = 212
+;
+
+select pe.id from produto_edicao pe, produto p 
+										where p.id = pe.produto_id 
+										and p.codigo = produto 
+										and pe.numero_edicao = edicao
+;
+
 
 select * from estqbox where produto_edicao_id is null;
 select * from estqbox where edicao is null;
