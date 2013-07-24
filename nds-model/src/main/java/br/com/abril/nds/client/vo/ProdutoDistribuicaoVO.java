@@ -69,6 +69,7 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	private String dataLancto;
 	
 	private BigDecimal reparte;
+    private BigDecimal estoque;
 	
 	private BigInteger repDistrib;
 	
@@ -403,5 +404,12 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	public void setDataLancamentoEstudoFormatado(String dataLancamentoEstudoFormatado) {
 		this.dataLancamentoEstudoFormatado = dataLancamentoEstudoFormatado;
 	}
-	
+
+    public BigDecimal getEstoque() {
+        return estoque;
+    }
+
+    public void setEstoque(BigDecimal estoque) {
+        this.estoque = estoque;
+    }
 }
