@@ -304,8 +304,6 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 		} else {
 
-			Endereco endereco = null;
-			EnderecoCota enderecoCota = null;
 			Telefone telefone = null;
 			TelefoneCota telefoneCota = null;
 
@@ -464,6 +462,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 		
 		query.setParameter("numeroCota", cota);
 		
+		@SuppressWarnings("unchecked")
 		List<Endereco> enderecos = (List<Endereco>) query.list();
 
 		if (enderecos.isEmpty()) {

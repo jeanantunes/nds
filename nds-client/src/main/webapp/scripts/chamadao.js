@@ -345,15 +345,15 @@ var chamadaoController = $.extend(true, {
 				qtdExemplaresParcial = qtdExemplaresParcial + intValue(reparte);
 				
 				var valor = $("#valorTotal" + this.value).html();
-				valor = removeMascaraPriceFormat(valor);
-				valorParcial = valorParcial + intValue(valor);
+				valor = priceToFloat(valor);
+				valorParcial = parseFloat(valorParcial) + parseFloat(valor);
 			
 			} else {
 				
 				$("#checkAll", chamadaoController.workspace).attr("checked", false);
 			}
 		});
-		
+		valorParcial = parseFloat(valorParcial).toFixed(4);
 		$("#qtdProdutosParcial", chamadaoController.workspace).val(qtdProdutosParcial);
 		$("#qtdExemplaresParcial", chamadaoController.workspace).val(qtdExemplaresParcial);
 		$("#valorParcial", chamadaoController.workspace).val(valorParcial);

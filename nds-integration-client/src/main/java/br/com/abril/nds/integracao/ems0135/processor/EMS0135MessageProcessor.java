@@ -94,17 +94,12 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 			}
 		}
 
-		/*if (input.getNotaFiscal() != null && !input.getNotaFiscal().equals(0L) &&
-			input.getSerieNotaFiscal() != null && !input.getSerieNotaFiscal().isEmpty() && !"0".equals(input.getSerieNotaFiscal()) &&
-			input.getChaveAcessoNF() != null && !input.getChaveAcessoNF().isEmpty() && !"0".equals(input.getChaveAcessoNF()) ) {*/
-
-			notafiscalEntrada = obterNotaFiscal(
-					input.getNotaFiscal()
-					, input.getSerieNotaFiscal()
-					, input.getCnpjEmissor()
-					, input.getNumeroNotaEnvio()
-					);		
-		//}
+		notafiscalEntrada = obterNotaFiscal(
+				input.getNotaFiscal()
+				, input.getSerieNotaFiscal()
+				, input.getCnpjEmissor()
+				, input.getNumeroNotaEnvio()
+			);		
 			
 		if(notafiscalEntrada == null){
 			
@@ -115,6 +110,12 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 			if (null != notafiscalEntrada) {
 				notafiscalEntrada = calcularValores(notafiscalEntrada);				
 				this.getSession().persist(notafiscalEntrada);
+				
+				this.ndsiLoggerFactory.getLogger().logInfo(
+							message
+							, EventoExecucaoEnum.SEM_DOMINIO
+							, String.format("Nota Fiscal inserida no sistema: %1$s", input.getNotaFiscal()));
+				
 			} else {
 				// Validar código do distribuidor:
 				this.ndsiLoggerFactory.getLogger().logWarning(message,
@@ -123,7 +124,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 				return;		
 			}
 			
-		}else{
+		} else {
 			// Validar código do distribuidor:
 				this.ndsiLoggerFactory.getLogger().logWarning(message,
 						EventoExecucaoEnum.REGISTRO_JA_EXISTENTE, 
