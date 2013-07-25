@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.devolucao;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -14,7 +15,8 @@ import java.util.TreeMap;
 
 import javax.servlet.http.HttpSession;
 
-import org.lightcouch.DesignDocument.MapReduce;
+import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections.comparators.ComparatorChain;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.SerializationUtils;
 
@@ -1345,13 +1347,15 @@ public class MatrizRecolhimentoController extends BaseController {
 				itemResumoPeriodoBalanceamento.setQtdeTitulosParciais(qtdeTitulosParciais);
 				
 				itemResumoPeriodoBalanceamento.setValorTotal(valorTotal);
+				
+				resumoPeriodoBalanceamento.add(itemResumoPeriodoBalanceamento);
 			}
-			
-			resumoPeriodoBalanceamento.add(itemResumoPeriodoBalanceamento);
 		}
 		
 		this.tratarResumoOperacaoDiferenciada(
 			balanceamentoRecolhimento, resumoPeriodoBalanceamento);
+		
+		this.ordenarResumoPeriodoPorData(resumoPeriodoBalanceamento);
 		
 		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = new ResultadoResumoBalanceamentoVO();
 		
@@ -1361,6 +1365,16 @@ public class MatrizRecolhimentoController extends BaseController {
 			balanceamentoRecolhimento.getCapacidadeRecolhimentoDistribuidor());
 		
 		return resultadoResumoBalanceamento;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void ordenarResumoPeriodoPorData(List<ResumoPeriodoBalanceamentoVO> resumoPeriodoBalanceamento) {
+		
+		ComparatorChain comparatorChain = new ComparatorChain();
+		
+		comparatorChain.addComparator(new BeanComparator("data"));
+		
+		Collections.sort(resumoPeriodoBalanceamento, comparatorChain);
 	}
 
 	private void tratarResumoOperacaoDiferenciada(BalanceamentoRecolhimentoDTO balanceamentoRecolhimento,

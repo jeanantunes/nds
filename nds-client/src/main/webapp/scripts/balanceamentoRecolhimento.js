@@ -116,6 +116,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				},
 				"Cancelar": function() {
 					
+					balanceamentoRecolhimentoController.showResumo(false);
+					
 					$(this).dialog("close");
 				}
 			},
