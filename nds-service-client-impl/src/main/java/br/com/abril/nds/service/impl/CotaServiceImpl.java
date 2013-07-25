@@ -1979,6 +1979,10 @@ public class CotaServiceImpl implements CotaService {
 		
 		if (garantia!=null){
 	 
+			this.cotaGarantiaRepository.deleteListaImoveis(garantia.getId());
+			
+			this.cotaGarantiaRepository.deleteListaOutros(garantia.getId());
+			
 			this.cotaGarantiaRepository.deleteByCota(cota.getId());
 		}
 		

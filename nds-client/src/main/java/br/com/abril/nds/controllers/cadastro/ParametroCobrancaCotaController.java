@@ -36,6 +36,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoCota;
@@ -147,7 +148,6 @@ public class ParametroCobrancaCotaController extends BaseController {
 		this.httpResponse = httpResponse;
 	}
 
-
 	/**
 	 * Método de chamada da página
 	 * Pré-carrega itens da pagina com informações default.
@@ -239,7 +239,6 @@ public class ParametroCobrancaCotaController extends BaseController {
 		result.use(Results.json()).from(bancoService.getComboBancos(true), "result").recursive().serialize();
 	}
 
-
 	/**
 	 * Método responsável por obter os parametros de cobranca da Cota para a aba 'Financeiro'.
 	 * @throws Mensagens de Validação.
@@ -268,7 +267,6 @@ public class ParametroCobrancaCotaController extends BaseController {
 
 		result.use(Results.json()).from(parametroCobranca,"result").recursive().serialize();
 	}
-
 
 	/**
 	 * Método responsável por obter os dados da uma forma de cobranca do parametro de cobranca da Cota para a aba 'Financeiro'.
@@ -301,7 +299,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 		result.use(Results.json()).from(formaCobranca, "result").recursive()
 		.serialize();
 	}
-
+	
 	@Post
 	public void obterQtdFormaCobrancaCota(Long id){
 		int qtdFormaCobranca = this.parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(id);
@@ -478,7 +476,6 @@ public class ParametroCobrancaCotaController extends BaseController {
 		return formaCobranca;
 	}
 
-
 	/**
 	 * Método responsável por persistir os dados da forma de cobranca no banco de dados.
 	 * @param formaCobranca
@@ -571,7 +568,6 @@ public class ParametroCobrancaCotaController extends BaseController {
 
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Forma de Cobrança Excluida."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
-
 
 	/**
 	 * Exibe o contrato em formato PDF.
@@ -726,7 +722,6 @@ public class ParametroCobrancaCotaController extends BaseController {
 			}
 		}
 	}
-
 
 	@Post
 	public void uploadContratoAnexo(UploadedFile uploadedFile, String numeroCota) throws IOException {

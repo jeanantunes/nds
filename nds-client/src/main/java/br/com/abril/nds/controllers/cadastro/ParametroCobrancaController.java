@@ -13,6 +13,7 @@ import br.com.abril.nds.client.vo.BancoVO;
 import br.com.abril.nds.client.vo.ParametroCobrancaVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.dto.ParametroCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO;
 import br.com.abril.nds.dto.filtro.FiltroParametrosCobrancaDTO.OrdenacaoColunaParametrosCobranca;
@@ -311,7 +312,7 @@ public class ParametroCobrancaController extends BaseController {
 		return parametros;
 		
 	}
-	
+
 	
 	
 	/**
@@ -330,6 +331,14 @@ public class ParametroCobrancaController extends BaseController {
 		
 		if (parametros.getFormaEmissao()==null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha o campo Impressão.");
+		}
+		
+		if(parametros.getTipoCota() == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha o Tipo de Cota.");
+		}
+
+		if(parametros.getIdFornecedorPadrao() == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Escolha um Fornecedor Padrão.");
 		}
 		
 		if (parametros.getIdBanco()==null){
