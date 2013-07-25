@@ -116,4 +116,6 @@ public interface ProdutoService {
 	List<TipoSegmentoProduto> carregarSegmentos();
 	
 	List<TipoClassificacaoProduto> carregarClassificacaoProduto();
+	
+	String obterCodigoProdinPorICD (String codigoProduto);
 }

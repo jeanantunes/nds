@@ -117,10 +117,17 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 					'#codigoProdutoPrincipal','#nomeProdutoPrincipal',
 					function(result) {
 						if (result) {
-							$('#codigoProdutoPrincipal').val(result[0].codigo);
+							
+							if($('#codigoProdutoPrincipal').val().length == 6){
+								$('#codigoProdutoPrincipal').val(result[0].codigoICD);
+							}else{
+								$('#codigoProdutoPrincipal').val(result[0].codigo);
+							}
+							
 							$('#nomeProdutoPrincipal').val(result[0].nome);
 							$('#fornecedorPrincipal').val(result[1].nomeFantasia || result[1].razaoSocial);
 							$('#segmentoProdutoPrincipal').val(result[2].descricao || "Segmento Não Informado");
+							$('#comboClassificacao').val(result[3]);
 						}
 					}
 			);
@@ -159,7 +166,10 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 				exibirMensagem('WARNING', ["Informe pelo menos um filtro para a pesquisa."]);
 			} else {
 				excecaoSegmentoParciaisController.pesquisarProdutoNaoRecebidoPeloNomeOuCodigo({
-					codigo:$('#codigoProduto').val(), nome:$('#nomeProduto').val()});
+					codigo: $('#codigoProduto').val(), 
+					nome: $('#nomeProduto').val(),
+					classifProduto: $('#comboClassificacaoProdNRec').val()
+				});
 			}
 		});
 		
@@ -1000,6 +1010,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 			$("#nomeProduto").val('');
 			$("#cotasQueNaoRecebemNumeroCota").val('');
 			$("#cotasQueNaoRecebemNomeCota").val('');
+			$("#comboClassificacaoProdNRec").val('');
 		
 			var util = excecaoSegmentoParciaisController.Util,
 			ProdutosNaoRecebidosGrid = excecaoSegmentoParciaisController.Grids.ProdutosNaoRecebidosGrid;
@@ -1014,6 +1025,11 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 			returnFromController.push({
 				name : "filtro.produtoDto.nomeProduto", 
 				value : produto.nome || ''
+			});
+			
+			returnFromController.push({
+				name : "filtro.produtoDto.idClassificacaoProduto", 
+				value : produto.classifProduto || '' 
 			});
 			
 			returnFromController.push({
@@ -1128,6 +1144,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 	    $('#nomeCotaFiltroPrincipal').val('');
 	    $('.excessaoGrid').find('[id^=row]').remove();
 	    $('.excessaoBGrid').find('[id^=row]').remove();
+	    
 	},
 	filtroPorProduto: function filtroPorProduto(){
 		$('#excecaoSegmentoParciais_filtroPorCota').hide();
@@ -1138,6 +1155,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 	    $('#nomeProdutoPrincipal').val('');
 	    $('#fornecedorPrincipal').val('');
 	    $('#segmentoProdutoPrincipal').val('');
+	    $("#comboClassificacao").val('');
 	    $('.excessaoGrid').find('[id^=row]').remove();
 	    $('.excessaoBGrid').find('[id^=row]').remove();
 	},
@@ -1151,6 +1169,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 	    $('#nomeProdutoPrincipal').val('');
 	    $('#fornecedorPrincipal').val('');
 	    $('#segmentoProdutoPrincipal').val('');
+	    $("#comboClassificacao").val('');
 	    $('#radio').check();
 	    excecaoSegmentoParciaisController.filtroPorCota();
 	},

@@ -105,34 +105,43 @@ function incluirSegmento() {
             <td width="49">Produto</td>
             <td width="781">
             <form id="filtroPrincipalCota">
-	            <table width="771" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorCota" id="excecaoSegmentoParciais_filtroPorCota" style="display:none;">
+	            <table width="500" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorCota" id="excecaoSegmentoParciais_filtroPorCota" style="display:none;">
 		            <tr>
 		           	  <td width="30">Cota:</td>
 		                <td width="88">
 		                	<input type="text" name="filtro.cotaDto.numeroCota" id="numeroCotaFiltroPrincipal" style="width:80px;"/>
 		                </td>
 		                <td width="37">Nome:</td>
-		                <td width="486">
+		                <td width="100">
 		                	<input type="text" name="filtro.cotaDto.nomePessoa" id="nomeCotaFiltroPrincipal" style="width:200px;"/>
 		                </td>
 		              <td width="104"><span class="bt_pesquisar"><a href="javascript:;" id="pesquisaPorCota" >Pesquisar</a></span></td>
 		            </tr>
 	            </table>
             </form>
-            <form id="filtroPrincipalProduto">
-          <table width="771" border="0" cellpadding="2" cellspacing="1" id="excecaoSegmentoParciais_filtroPorProduto" class="filtro filtroPorProduto" style="display:none;">
+          <form id="filtroPrincipalProduto">
+          <table width="680" border="0" cellpadding="2" cellspacing="1" id="excecaoSegmentoParciais_filtroPorProduto" class="filtro filtroPorProduto" style="display:none;">
           <tr>
             <td width="42">Código:</td>
             <td width="65"><input type="text" name="filtro.produtoDto.codigoProduto" id="codigoProdutoPrincipal" style="width:60px; float:left; margin-right:5px;"/></td>
             <td width="47">Produto:</td>
-            <td width="120"><input type="text" name="filtro.produtoDto.nomeProduto" id="nomeProdutoPrincipal" style="width:120px;"/></td>
-            <td width="67">Fornecedor:</td>
+            <td width="100"><input type="text" name="filtro.produtoDto.nomeProduto" id="nomeProdutoPrincipal" style="width:120px;"/></td>
+            <td width="49">Fornecedor:</td>
             <td width="110"><input type="text" name="fornecedorPrincipal" id="fornecedorPrincipal" style="width:110px;" disabled="disabled"/></td>
-            <td width="60">Segmento:</td>
-            <td width="110"><input type="text" name="segmentoProdutoPrincipal" id="segmentoProdutoPrincipal" style="width:110px;" disabled="disabled"/></td>
-            <td width="104"><span class="bt_pesquisar"><a href="javascript:;" id="pesquisaPorExcecao" >Pesquisar</a></span></td>
           </tr>
-         
+          <tr>
+          	<td width="100">Segmento:</td>
+            <td width="180"><input type="text" name="segmentoProdutoPrincipal" id="segmentoProdutoPrincipal" style="width:110px;" disabled="disabled"/></td>
+            <td width="150">Classificação:</td>
+            	<td width="180">
+	            <select name="filtro.produtoDto.idClassificacaoProduto" id="comboClassificacao" style="width:140px;">
+	              <option selected="selected">Selecione...</option>
+	              	<c:forEach items="${listaClassificacao}" var="classificacao">
+						<option value="${classificacao.id}">${classificacao.descricao}</option>
+					</c:forEach>
+	            </select>
+            <td width="80"><span class="bt_pesquisar"><a href="javascript:;" id="pesquisaPorExcecao" >Pesquisar</a></span></td>
+          </tr>
         </table>
         </form>
             </td>
@@ -201,11 +210,22 @@ function incluirSegmento() {
               	Produto:
               </td>
               <td width="132">
-              	<input type="text" id="nomeProduto" name="filtro.produtoDto.nomeProduto" style="width:120px;"/>
+              	<input type="text" name="filtro.produtoDto.nomeProduto" id="nomeProduto" style="width:120px;"/>
               </td>
+            </tr>
+            <tr>
+               <td width="78">Classificação:</td>
+            	<td width="152">
+	            <select name="filtro.produtoDto.idClassificacaoProduto" id="comboClassificacaoProdNRec" style="width:140px;">
+	              <option selected="selected">Selecione...</option>
+	              	<c:forEach items="${listaClassificacao}" var="classificacao">
+						<option value="${classificacao.id}">${classificacao.descricao}</option>
+					</c:forEach>
+	            </select>
               <td width="19">
               	<span class="classPesquisar"><a href="javascript:;" id="pesquisarProdutosParciaisNaoRecebidos">&nbsp;</a></span>
               </td>
+   	      	</tr>
    	      </table>
        	  <br />
         	<table class="excessaoBGrid"></table>
