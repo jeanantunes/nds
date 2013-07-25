@@ -27,6 +27,7 @@ import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
@@ -38,14 +39,17 @@ import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.InformacoesProdutoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RegiaoService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.UfEnum;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
@@ -87,6 +91,9 @@ public class HistoricoVendaController extends BaseController {
 	private TipoClassificacaoProdutoService tipoClassificacaoProdutoService;
 	
 	@Autowired
+	private ProdutoService produtoService;
+	
+	@Autowired
 	private Result result;
 
 	@Autowired
@@ -104,7 +111,15 @@ public class HistoricoVendaController extends BaseController {
 	}
 	
 	@Post
-	public void pesquisaProduto(FiltroHistoricoVendaDTO filtro){
+	public void pesquisaProduto(FiltroHistoricoVendaDTO filtro, String sortorder, String sortname, int page, int rp){
+		
+		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
+			
+		filtro.setOrdemColuna(Util.getEnumByStringValue(FiltroHistoricoVendaDTO.OrdemColuna.values(), sortname));
+		
+		Produto produto = this.produtoService.obterProdutoPorCodigo(filtro.getProdutoDto().getCodigoProduto());
+		filtro.getProdutoDto().setIdProduto(produto.getId());
+		
 		// valida se o filtro foi devidamente preenchido pelo usuário
 		filtroValidate(filtro.validarEntradaFiltroProduto(), filtro);
 		
@@ -372,7 +387,7 @@ public class HistoricoVendaController extends BaseController {
 	private void filtroValidate(boolean isValid, FiltroHistoricoVendaDTO filtro){
 		if (!isValid) {
 			throw new ValidacaoException(TipoMensagem.WARNING, filtro.getValidationMsg());
-		}
+		}		
 	}
 	
 	private void carregarComboClassificacao(){

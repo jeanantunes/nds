@@ -148,6 +148,8 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 
 	private String dataRecolhimentoDistribuidorFormatada;
 	
+	private String tipoClassificacaoFormatado;
+	
 	
 	public Long getId() {
 		return id;
@@ -849,6 +851,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 
 	public void setTipoClassificacaoProduto(TipoClassificacaoProduto tipoClassificacaoProduto) {
 		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
+		this.tipoClassificacaoFormatado = tipoClassificacaoProduto.getDescricao();
 	}
 
 	public String getStatus() {

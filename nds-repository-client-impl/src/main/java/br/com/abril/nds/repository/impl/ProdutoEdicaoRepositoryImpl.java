@@ -28,6 +28,7 @@ import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
+import br.com.abril.nds.dto.filtro.FiltroAnaliseEstudoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
 import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
@@ -1241,6 +1242,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 }
 
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<ProdutoEdicaoDTO> obterEdicoesProduto(FiltroHistoricoVendaDTO filtro) {
 		
@@ -1271,9 +1273,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" tipoMovimento.id = 13 and ");
 
 		if (filtro.getProdutoDto() != null) {
-			if (filtro.getProdutoDto().getCodigoProduto() != null && !filtro.getProdutoDto().getCodigoProduto().equals(0)) {
-				hql.append(" produto.codigo = :codigoProduto ");
-				parameters.put("codigoProduto", filtro.getProdutoDto().getCodigoProduto());
+			if (filtro.getProdutoDto().getIdProduto() != null && !filtro.getProdutoDto().getIdProduto().equals(0)) {
+				hql.append(" produto.id = :codigoProduto ");
+				parameters.put("codigoProduto", filtro.getProdutoDto().getIdProduto());
 			}
 			else if (filtro.getProdutoDto().getNomeProduto() != null && !filtro.getProdutoDto().getNomeProduto().isEmpty()) {
 				hql.append(" produto.nome = :nomeProduto ");
@@ -1305,7 +1307,12 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		} 
 		
 		hql.append(" GROUP BY produtoEdicao.numeroEdicao ");
-		hql.append(" ORDER BY produtoEdicao.numeroEdicao DESC ");
+		
+		if(filtro.getOrdemColuna() != null){
+			hql.append(this.ordenarConsultaHistoricoVendaProdutoEdicao(filtro));
+		}else{
+			hql.append(" ORDER BY produtoEdicao.numeroEdicao DESC ");			
+		}
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		
@@ -1321,6 +1328,61 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		for (String key : parameters.keySet()) {
 			query.setParameter(key, parameters.get(key));
 		}
+	}
+	
+	private String ordenarConsultaHistoricoVendaProdutoEdicao(FiltroHistoricoVendaDTO filtro) {
+
+		StringBuilder hql = new StringBuilder();
+
+		if (filtro.getOrdemColuna() != null) {
+
+		    switch (filtro.getOrdemColuna()) {
+
+		   
+		    case CODIGO:
+		    	hql.append(" ORDER BY codigoProduto ");
+		    	break;
+
+		    case CLASSIFICACAO:
+		    	hql.append(" ORDER BY tipoClassificacaoProduto ");
+		    	break;
+		    	
+		    case EDICAO:
+				hql.append(" ORDER BY numeroEdicao ");
+				break;
+
+		    case PERIODO:
+		    	hql.append(" ORDER BY periodicidade ");
+		    	break;
+
+		    case DT_LANCAMENTO:
+		    	hql.append("ORDER BY dataLancamento ");
+		    	break;
+		    	
+		    case REPARTE:
+		    	hql.append(" ORDER BY repartePrevisto ");
+		    	break;
+
+		    case VENDA:
+		    	hql.append(" ORDER BY qtdeVendas ");
+		    	break;
+
+		    case STATUS:
+		    	hql.append(" ORDER BY situacaoLancamento ");
+		    	break;
+			
+
+		    default:
+			hql.append(" ORDER BY produtoEdicao.numeroEdicao DESC ");
+		    }
+
+		    if (filtro.getPaginacao().getOrdenacao() != null) {
+		    	hql.append(filtro.getPaginacao().getOrdenacao().toString());
+		    }
+
+		}
+
+		return hql.toString();
 	}
 
 
