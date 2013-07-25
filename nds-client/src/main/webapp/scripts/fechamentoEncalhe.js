@@ -410,6 +410,7 @@ var fechamentoEncalheController = $.extend(true, {
 		});
 		
 		$(".cotasGrid", fechamentoEncalheController.workspace).flexReload();
+		
 	},
 	
 	verificarEncerrarOperacaoEncalhe : function() {
@@ -605,13 +606,23 @@ var fechamentoEncalheController = $.extend(true, {
 	},
 
 	preprocessamentoGrid : function(resultado) {	
-		
+				
 		if (resultado.mensagens) {
 			exibirMensagem(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
 			$(".cotasGrid", fechamentoEncalheController.workspace).hide();
 			return resultado;
 		}
-
+		
+		
+		$(resultado.rows).each(function(){
+			if( this.cell.postergado == true || this.cell.postergado == "true" ) {
+				this.cell.check = '<input isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ this.cell.idCota +', this.checked)" value="' + this.cell.idCota +'" disabled="disabled" />';
+			}
+			
+		});
+		
+		
+		
 		$( "#dialog-encerrarEncalhe", fechamentoEncalheController.workspace ).dialog({
 			resizable: false,
 			height:500,
@@ -662,13 +673,23 @@ var fechamentoEncalheController = $.extend(true, {
 					var checked = false;
 					$.each(fechamentoEncalheController.arrayCotasAusentesSession, function(index, value){
 						if(value == row.cell.idCota){
-							checkBox = '<input checked="checked" isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this.checked)" value="' + row.cell.idCota + '" />';							
+							if(row.cell.postergado == true || row.cell.postergado == "true") {
+								checkBox = '<input checked="checked" isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this.checked)" value="' + row.cell.idCota + '" disabled="disabled" />';
+							} else {
+								checkBox = '<input checked="checked" isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this.checked)" value="' + row.cell.idCota + '" />';
+							}
+														
 							checked = true;
 						}
 					});
 					
 					if(!checked){
-						checkBox = '<input isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this.checked)" value="' + row.cell.idCota + '" />';
+						if(row.cell.postergado == true || row.cell.postergado == "true") {
+							checkBox = '<input isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this.checked)" value="' + row.cell.idCota + '" disabled="disabled" />';
+						} else {
+							checkBox = '<input isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this.checked)" value="' + row.cell.idCota + '" />';
+						}
+						
 					}
 				}
 				
