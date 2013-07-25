@@ -310,4 +310,8 @@ public interface CotaGarantiaService {
 	 * @return List<GarantiaCotaOutros>
 	 */
 	List<GarantiaCotaOutros> obterDadosGarantiaOutrosDTO(Long idCota);
+
+	List<String> validarDadosCotaPreImpressao(Long idCota);
+
+	boolean existeCaucaoLiquidasCota(Long idCota);
 }
