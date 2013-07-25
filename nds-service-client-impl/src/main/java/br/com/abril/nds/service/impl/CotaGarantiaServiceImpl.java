@@ -621,6 +621,36 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
 		
 		return notaPromissoria;
 	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public List<String> validarDadosCotaPreImpressao(Long idCota){
+		
+		List<String> msgs = new ArrayList<String>();
+		
+		CotaGarantiaNotaPromissoria cotaGarantiaNotaPromissoria = 
+			this.cotaGarantiaRepository.getByCota(idCota, CotaGarantiaNotaPromissoria.class);
+		
+		if(cotaGarantiaNotaPromissoria == null){
+			
+			msgs.add("Nota Promissória não cadastrada para esta cota.");
+		}
+		
+		EnderecoCota enderecoCota =  enderecoCotaRepository.getPrincipal(idCota);
+		
+		if(enderecoCota==null  || enderecoCota.getEndereco() == null){
+			
+			msgs.add( "Endereço não cadastrado para esta cota.");
+		}
+		
+		EnderecoDistribuidor enderecoDistribuidor =  distribuidorRepository.obterEnderecoPrincipal();
+		
+		if(enderecoDistribuidor==null  || enderecoDistribuidor.getEndereco() == null){
+			msgs.add("Endereço não cadastrada para este distribuidor.");
+		}
+		
+		return msgs;
+	}
 
 	@Override
 	@Transactional(readOnly=true)
@@ -1171,4 +1201,16 @@ public class CotaGarantiaServiceImpl implements CotaGarantiaService {
         HistoricoTitularidadeCotaCaucaoLiquida caucao = historico.getGarantiaCaucaoLiquida();
         return caucao == null ? null : HistoricoTitularidadeCotaDTOAssembler.toFormaCobrancaCaucaoLiquidaDTO(caucao);
     }
+
+	@Override
+	@Transactional(readOnly=true)
+	public boolean existeCaucaoLiquidasCota(Long idCota) {
+		
+		if (this.cotaGarantiaRepository.existeCaucaoLiquidasCota(idCota)){
+			
+			return this.cotaGarantiaRepository.verificarQuitacaoCaucaoLiquida(idCota);
+		}
+		
+		return this.cotaGarantiaRepository.existeCaucaoLiquidasCota(idCota);
+	}
 }
