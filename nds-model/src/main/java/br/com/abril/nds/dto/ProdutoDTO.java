@@ -8,6 +8,9 @@ public class ProdutoDTO {
 	
 	private Long idProduto;
 
+	private Long idClassificacaoProduto;
+
+
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}
@@ -32,4 +35,11 @@ public class ProdutoDTO {
 		this.idProduto = idProduto;
 	}
 	
+	public Long getIdClassificacaoProduto() {
+		return idClassificacaoProduto;
+	}
+
+	public void setIdClassificacaoProduto(Long idClassificacaoProduto) {
+		this.idClassificacaoProduto = idClassificacaoProduto;
+	}
 }

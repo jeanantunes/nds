@@ -13,6 +13,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
+import br.com.abril.nds.dto.RegiaoNMaiores_ProdutoDTO;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -393,6 +394,27 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		query.setParameterList("codigoProdutoList", codigoProduto);
 		
 		return query.list();
+	}
+
+	@Override
+	public String obterCodigoProdinPorCodICD(String codigoProduto) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" SELECT ");
+		hql.append(" p.codigo ");
+		hql.append(" from Produto p ");
+		
+		if(codigoProduto.length() == 6){
+			hql.append(" where p.codigoICD = :codigoProduto");			
+		}else{
+			hql.append(" where p.codigo = :codigoProduto");
+		}
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		query.setParameter("codigoProduto", codigoProduto);
+		
+		return (String) query.uniqueResult();
 	}
 
 }

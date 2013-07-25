@@ -356,5 +356,10 @@ public class ProdutoServiceImpl implements ProdutoService {
 	public List<TipoClassificacaoProduto> carregarClassificacaoProduto() {
 		return tipoClassRepo.buscarTodos();
 	}
-	
+
+	@Override
+	@Transactional
+	public String obterCodigoProdinPorICD(String codigoProduto) {
+		return produtoRepository.obterCodigoProdinPorCodICD(codigoProduto);
+	}
 }

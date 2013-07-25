@@ -49,7 +49,7 @@ ExcecaoSegmentoParciaisRepository {
 
 	hql.append(" SELECT ");
 	hql.append(" excecaoProdutoCota.id as idExcecaoProdutoCota, "); // ID ExcessaoProdutoCota
-	hql.append(" produto.codigo as codigoProduto, "); // CODIGO PRODUTO
+	hql.append(" produto.codigoICD as codigoProduto, "); // CODIGO PRODUTO
 	hql.append(" produto.nome as nomeProduto, "); // NOME PRODUTO
 	hql.append(" usuario.nome as nomeUsuario, "); // NOME DO USUÁRIO
 	hql.append(" excecaoProdutoCota.dataAlteracao as dataAlteracao "); // DATA ALTERAÇÃO
@@ -73,8 +73,6 @@ ExcecaoSegmentoParciaisRepository {
 	    parameters.put("tipoExcecao", TipoExcecao.PARCIAL);
 	}
 
-
-
 	if (filtroHasNumeroCota) {
 	    hql.append(" and cota.numeroCota = :numeroCota ");
 	    parameters.put("numeroCota", filtro.getCotaDto().getNumeroCota());
@@ -82,7 +80,7 @@ ExcecaoSegmentoParciaisRepository {
 	    hql.append(" and coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome,'') = :nomePessoa ");
 	    parameters.put("nomePessoa", filtro.getCotaDto().getNomePessoa());
 	}
-
+	
 	hql.append(" order by nomeProduto, codigoProduto");
 
 	Query query = getSession().createQuery(hql.toString());
@@ -111,6 +109,7 @@ ExcecaoSegmentoParciaisRepository {
 	hql.append(" FROM Produto AS produto ");
 	hql.append("  JOIN produto.fornecedores as f ");
 	hql.append("  JOIN f.juridica as j ");
+	hql.append("  JOIN produto.tipoClassificacaoProduto as tpClassifProduto ");
 	hql.append(" WHERE produto.id not in ");
 	hql.append(" 	(select distinct prod.id from ExcecaoProdutoCota e  ");
 	hql.append(" 		JOIN e.produto prod ");
@@ -134,6 +133,10 @@ ExcecaoSegmentoParciaisRepository {
 	if (filtro.getProdutoDto() != null) {		
 	    hql.append(" and produto.codigo = :codProduto ");
 	}
+	
+	if (filtro.getProdutoDto().getIdClassificacaoProduto() != null) {		
+		hql.append(" AND tpClassifProduto.id = :id_tipo_class_produto ");
+	}
 
 	Query query = super.getSession().createQuery(hql.toString());
 
@@ -148,6 +151,9 @@ ExcecaoSegmentoParciaisRepository {
 
 	if (filtro.getCotaDto() != null) {
 	    query.setParameter("numCota", filtro.getCotaDto().getNumeroCota());
+	}
+	if(filtro.getProdutoDto().getIdClassificacaoProduto()  !=null && filtro.getProdutoDto().getIdClassificacaoProduto() > 0){
+		query.setParameter("id_tipo_class_produto", filtro.getProdutoDto().getIdClassificacaoProduto());
 	}
 
 
@@ -220,6 +226,7 @@ ExcecaoSegmentoParciaisRepository {
 	Map<String, Object> parameters = new HashMap<String, Object>();
 
 	StringBuilder hql = new StringBuilder();
+	
 	hql.append("select distinct ");
 	hql.append("       e.id as idExcecaoProdutoCota, ");
 	hql.append("       c.situacaoCadastro as statusCota, ");
@@ -232,6 +239,7 @@ ExcecaoSegmentoParciaisRepository {
 	hql.append("  join e.usuario as u ");
 	hql.append("  join e.cota as c ");
 	hql.append("  join c.pessoa as pe ");
+	hql.append("  join p.tipoClassificacaoProduto as tpClassifProduto ");
 	hql.append(" where 1 = 1 ");
 	hql.append("   and e.tipoExcecao = :tipoExcecao ");
 
@@ -249,12 +257,19 @@ ExcecaoSegmentoParciaisRepository {
 	    hql.append("and p.nome = :nomeProduto");
 	    parameters.put("nomeProduto", filtro.getProdutoDto().getNomeProduto());
 	}
+	
+	if(filtro.getProdutoDto().getIdClassificacaoProduto()  !=null && filtro.getProdutoDto().getIdClassificacaoProduto() > 0){
+		hql.append(" AND tpClassifProduto.id = :ID_TIPO_CLASS_PRODUTO ");
+		parameters.put("ID_TIPO_CLASS_PRODUTO", filtro.getProdutoDto().getIdClassificacaoProduto());
+	}
+	
 	hql.append(" order by numeroCota, nomePessoa");
 
 	Query query = getSession().createQuery(hql.toString());
 	setParameters(query, parameters);
 	query.setResultTransformer(new AliasToBeanResultTransformer(CotaQueRecebeExcecaoDTO.class));
 	configurarPaginacao(filtro, query);
+	
 	return query.list();
     }
 
@@ -327,6 +342,7 @@ ExcecaoSegmentoParciaisRepository {
 	    hql.append(" and p.nome = :nomeProduto ");
 	    parameters.put("nomeProduto", filtro.getProdutoDto().getNomeProduto());
 	}
+	
 	boolean consultaFiltrada = false;
 	if (filtro.getCotaDto() != null) {
 	    if (filtro.getCotaDto().getNumeroCota() != null && !filtro.getCotaDto().getNumeroCota().equals(0)) {
