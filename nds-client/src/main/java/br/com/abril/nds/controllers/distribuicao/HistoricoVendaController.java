@@ -22,12 +22,12 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.RegiaoDTO;
-import br.com.abril.nds.dto.filtro.FiltroAnaliseEstudoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
@@ -39,6 +39,7 @@ import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.InformacoesProdutoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RegiaoService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -90,6 +91,9 @@ public class HistoricoVendaController extends BaseController {
 	private TipoClassificacaoProdutoService tipoClassificacaoProdutoService;
 	
 	@Autowired
+	private ProdutoService produtoService;
+	
+	@Autowired
 	private Result result;
 
 	@Autowired
@@ -112,6 +116,9 @@ public class HistoricoVendaController extends BaseController {
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 			
 		filtro.setOrdemColuna(Util.getEnumByStringValue(FiltroHistoricoVendaDTO.OrdemColuna.values(), sortname));
+		
+		Produto produto = this.produtoService.obterProdutoPorCodigo(filtro.getProdutoDto().getCodigoProduto());
+		filtro.getProdutoDto().setIdProduto(produto.getId());
 		
 		// valida se o filtro foi devidamente preenchido pelo usuário
 		filtroValidate(filtro.validarEntradaFiltroProduto(), filtro);

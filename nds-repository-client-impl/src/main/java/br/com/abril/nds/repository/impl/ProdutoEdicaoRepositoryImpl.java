@@ -1273,9 +1273,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" tipoMovimento.id = 13 and ");
 
 		if (filtro.getProdutoDto() != null) {
-			if (filtro.getProdutoDto().getCodigoProduto() != null && !filtro.getProdutoDto().getCodigoProduto().equals(0)) {
-				hql.append(" produto.codigo = :codigoProduto ");
-				parameters.put("codigoProduto", filtro.getProdutoDto().getCodigoProduto());
+			if (filtro.getProdutoDto().getIdProduto() != null && !filtro.getProdutoDto().getIdProduto().equals(0)) {
+				hql.append(" produto.id = :codigoProduto ");
+				parameters.put("codigoProduto", filtro.getProdutoDto().getIdProduto());
 			}
 			else if (filtro.getProdutoDto().getNomeProduto() != null && !filtro.getProdutoDto().getNomeProduto().isEmpty()) {
 				hql.append(" produto.nome = :nomeProduto ");
@@ -1357,6 +1357,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 
 		    case DT_LANCAMENTO:
 		    	hql.append("ORDER BY dataLancamento ");
+		    	break;
+		    	
+		    case REPARTE:
+		    	hql.append(" ORDER BY repartePrevisto ");
 		    	break;
 
 		    case VENDA:

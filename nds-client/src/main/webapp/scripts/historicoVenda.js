@@ -261,7 +261,7 @@ var historicoVendaController = $.extend(true, {
 					},{
 						display : 'Classificação',
 						name : 'tipoClassificacaoFormatado',
-						width : 40,
+						width : 60,
 						sortable : true,
 						align : 'left'
 					},{
