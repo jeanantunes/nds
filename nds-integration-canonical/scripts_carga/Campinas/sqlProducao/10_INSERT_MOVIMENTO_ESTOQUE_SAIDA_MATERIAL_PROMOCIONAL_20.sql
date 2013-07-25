@@ -1,3 +1,4 @@
+-- Insere a saida domaterial promocional que esteja no estoque do distribuidor ( estqbox tipo 92)
 insert into movimento_estoque
 (APROVADO_AUTOMATICAMENTE,
  DATA_APROVACAO,
@@ -20,11 +21,11 @@ insert into movimento_estoque
  ORIGEM)
 (select 
  true,
- '2013-06-15',
+ date(sysdate()),
  'CARGA',
  'APROVADO',
  min(h.data_lancamento),
- '2013-06-15',
+ date(sysdate()),
  null,
  181,
  1,
@@ -44,8 +45,21 @@ insert into movimento_estoque
 	 hvnd h
  where 
 	h.produto_edicao_id = pe.produto_edicao_id
-    and eb.box = 92 and
-    pe.produto_edicao_id = eb.produto_edicao_id
+    and eb.box = 92 
+	and pe.produto_edicao_id = eb.produto_edicao_id
+	and h.produto_edicao_id is not null
 group by 1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19
 );
 
+
+-- Robson Martins- Limpeza de tabela caso movimento precise ser reprocessado
+/*
+delete from movimento_estoque 
+where TIPO_MOVIMENTO_ID = 181;
+*/
+
+
+-- ====================######## ABAIXO Scripts Tests ###############============================
+
+
+select * from tipo_movimento where id = 191;

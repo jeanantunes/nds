@@ -1,3 +1,5 @@
+drop table estqbox;
+
 create table estqbox (
     linha_vazia varchar(1),
     tipo int,
@@ -9,13 +11,20 @@ create table estqbox (
     quantidade int,
     produto_edicao_id int);
 
+-- deve ser executado pela console pois o arquivo nao esta local, está no servidor
 LOAD DATA LOCAL INFILE 'ESTQBOX.NEW' INTO TABLE estqbox COLUMNS TERMINATED BY '|' LINES TERMINATED BY '\n';
 
-update estqbox set produto_edicao_id = (select pe.id from produto_edicao pe, produto p where
-p.id = pe.produto_id and p.codigo = produto and pe.numero_edicao = edicao);
+update estqbox set produto_edicao_id = (select pe.id from produto_edicao pe, produto p 
+										where p.id = pe.produto_id 
+										and p.codigo = produto 
+										and pe.numero_edicao = edicao)
+;
+
+delete from estqbox where produto_edicao_id is null;
 
 update estoque_produto
 set qtde=null, qtde_devolucao_encalhe=null, qtde_devolucao_fornecedor=null, qtde_suplementar=null;
+
 
 #delete from estqbox where  produto_edicao_id is null;
 
@@ -36,7 +45,49 @@ select
     produto_edicao_id 
 from estqbox
 where box not in (92)
+-- and produto_edicao_id is not null
 group by 4;
+
+
+-- ====================######## ABAIXO Scripts Tests ###############============================
+
+-- Verificar porque não atualizou qtde na estoque_produto
+-- 38575001 edi 103
+-- 85880001 edi 212
+-- São registros que não foram populados na estqbox devido a não existência dos mesmos no arquivo MATRIZ.NEW do MDC 108. 
+-- Como ele não encontra produto_edicao_id, os registros são deletados da estqbox porque ficam com null no produto_edicao_id
+-- Existem 700 linhas na estqbox, porem foram inseridas apenas 681 na estoque_produto
+select * from estoque_produto;
+
+select * from produto_edicao pe, produto p
+where p.id = pe.produto_id 
+and p.codigo = '85880001'
+and pe.numero_edicao = 212
+;
+
+select pe.id from produto_edicao pe, produto p 
+										where p.id = pe.produto_id 
+										and p.codigo = produto 
+										and pe.numero_edicao = edicao
+;
+
+
+select * from estqbox where produto_edicao_id is null;
+select * from estqbox where edicao is null;
+select * from estqbox where produto is null;
+
+
+select q.* from produto_edicao pe, produto p, estqbox q 
+where p.id = pe.produto_id 
+and p.codigo != q.produto 
+and pe.numero_edicao != q.edicao;
+
+select * from estqbox q 
+where q.produto not in (select p.codigo from produto p)
+and	q.edicao not in	(select pe.numero_edicao from produto_edicao pe)
+;
+
+
 
 #update estoque_produto
 #set qtde = (select quantidade from estqbox
@@ -54,3 +105,4 @@ group by 4;
 #set qtde_suplementar = (select quantidade from estqbox
 #                       where estqbox.produto_edicao_id = estoque_produto.produto_edicao_id
 #                       and box=80);
+

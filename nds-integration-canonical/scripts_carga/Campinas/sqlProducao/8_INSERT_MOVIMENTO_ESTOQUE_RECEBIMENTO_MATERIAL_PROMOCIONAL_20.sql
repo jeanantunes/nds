@@ -1,5 +1,6 @@
 -- insere estoque de produto do fornecedor baseado
 -- nos tipos A.R.PROM. do arquivo ESTQBOX
+-- Atualizar para data do rollout
 insert into estoque_produto 
 (produto_edicao_id)
 (select 
@@ -32,11 +33,11 @@ insert into movimento_estoque
  ORIGEM)
 (select 
  true,
- '2013-06-15',
+ date(sysdate()),
  'CARGA',
  'APROVADO',
  min(h.data_lancamento),
- '2013-06-15',
+ date(sysdate()),
  null,
  20,
  1,
@@ -56,10 +57,9 @@ insert into movimento_estoque
 	 hvnd h
  where 
 	h.produto_edicao_id = pe.produto_edicao_id
-    and eb.box = 92 and
-    pe.produto_edicao_id = eb.produto_edicao_id
+    and eb.box = 92 
+	and pe.produto_edicao_id = eb.produto_edicao_id
+	and h.produto_edicao_id is not null
 group by 1,2,3,4,6,7,8,9,10,11,12,13,14,15,16,17,18,19
 );
-
-
 
