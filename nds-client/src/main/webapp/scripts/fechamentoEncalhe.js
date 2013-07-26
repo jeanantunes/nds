@@ -614,12 +614,12 @@ var fechamentoEncalheController = $.extend(true, {
 		}
 		
 		
-		$(resultado.rows).each(function(){
-			if( this.cell.postergado == true || this.cell.postergado == "true" ) {
-				this.cell.check = '<input isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ this.cell.idCota +', this.checked)" value="' + this.cell.idCota +'" disabled="disabled" />';
-			}
-			
-		});
+//		$(resultado.rows).each(function(){
+//			if( this.cell.postergado == true || this.cell.postergado == "true" ) {
+//				this.cell.check = '<input isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ this.cell.idCota +', this.checked)" value="' + this.cell.idCota +'" disabled="disabled" />';
+//			}
+//			
+//		});
 		
 		
 		
