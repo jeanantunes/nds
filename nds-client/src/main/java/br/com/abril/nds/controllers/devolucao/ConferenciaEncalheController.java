@@ -708,7 +708,7 @@ public class ConferenciaEncalheController extends BaseController {
 		if (conferenciaEncalheDTO == null && produtoEdicao == null){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto Edição não encontrado.");
-		} else if (conferenciaEncalheDTO == null){
+		} else if (conferenciaEncalheDTO == null) {
 			
 			conferenciaEncalheDTO = this.criarConferenciaEncalhe(produtoEdicao, quantidade, false, false);
 		}
@@ -1959,7 +1959,7 @@ public class ConferenciaEncalheController extends BaseController {
 				                                                            conferenciaEncalheDTO.getDataRecolhimento(), 
 				                                                            produtoEdicao.getId());
 				
-		conferenciaEncalheDTO.setDia(diaRecolhimento);
+		conferenciaEncalheDTO.setDia(diaRecolhimento + 1);
 		
 		return conferenciaEncalheDTO;
 	}
