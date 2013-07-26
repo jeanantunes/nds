@@ -356,9 +356,9 @@ var chamadaoController = $.extend(true, {
 		valorParcial = parseFloat(valorParcial).toFixed(4);
 		$("#qtdProdutosParcial", chamadaoController.workspace).val(qtdProdutosParcial);
 		$("#qtdExemplaresParcial", chamadaoController.workspace).val(qtdExemplaresParcial);
-		$("#valorParcial", chamadaoController.workspace).val(valorParcial);
+		$("#valorParcial", chamadaoController.workspace).val(floatToPrice(valorParcial));
 		
-		chamadaoController.aplicarMascaraCampos();
+		// chamadaoController.aplicarMascaraCampos();
 	},
 	
 	verifyCheckAll : function() {
