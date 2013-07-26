@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -273,7 +274,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		}
 		
 		return produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
-				codigoProduto, Long.parseLong(numeroEdicao));
+				StringUtils.leftPad(codigoProduto, 8, '0'), Long.parseLong(numeroEdicao));
 	}
 
 	/**

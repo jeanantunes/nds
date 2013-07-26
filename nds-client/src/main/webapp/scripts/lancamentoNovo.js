@@ -1054,7 +1054,16 @@ var lancamentoNovoController = $.extend(true, {
 					},
 					"Não": function() {
 						
-						$( this ).dialog( "close" );
+						lancamentoNovoController.limparProduto();
+						
+						$("#codigoProdutoInput", lancamentoNovoController.workspace).val('');
+						$("#nomeProdutoInput", lancamentoNovoController.workspace).val('');
+						$("#edicaoProdutoInput", lancamentoNovoController.workspace).val('');
+						
+						$("#dialog-tipo-estoque", this.workspace).dialog("close");
+						
+						$(this).dialog("close");
+						
 					}
 				},
 				form: $("#dialog-selecionar-tipo-estoque", this.workspace).parents("form")
