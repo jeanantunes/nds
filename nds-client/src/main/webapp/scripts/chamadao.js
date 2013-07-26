@@ -376,9 +376,9 @@ var chamadaoController = $.extend(true, {
 		
 		$("#qtdProdutosParcial", chamadaoController.workspace).val(0);
 		$("#qtdExemplaresParcial", chamadaoController.workspace).val(0);
-		$("#valorParcial", chamadaoController.workspace).val(0);
+		$("#valorParcial", chamadaoController.workspace).val(floatToPrice(0));
 		
-		chamadaoController.aplicarMascaraCampos();
+		//chamadaoController.aplicarMascaraCampos();
 	},
 	
 	aplicarMascaraCampos : function() {
