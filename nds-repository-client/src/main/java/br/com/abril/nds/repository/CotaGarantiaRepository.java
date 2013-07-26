@@ -94,4 +94,8 @@ public interface CotaGarantiaRepository extends Repository<CotaGarantia,Long>{
 	 * @return List<CaucaoLiquida>
 	 */
 	List<CaucaoLiquida> getCaucaoLiquidasCota(Long idCota);
+
+	boolean existeCaucaoLiquidasCota(Long idCota);
+
+	boolean verificarQuitacaoCaucaoLiquida(Long idCota);
 }

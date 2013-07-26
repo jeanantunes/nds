@@ -55,6 +55,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -189,6 +190,8 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		PoliticaSuspensao politicaSuspensao = null; 
 		ParametroCobrancaCota parametroCobranca = null;
 		
+		boolean parametroDistribuidor = false;
+		
 		ParametroCobrancaCotaDTO parametroCobrancaDTO = null;
 		if (cota != null) {
 			
@@ -210,25 +213,28 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			
 			if (parametroCobranca == null && formasCobranca == null || formasCobranca.size() == 0) {
 				
+				parametroDistribuidor = true;
+				
 				FormaCobranca formaCobrancaDistribuidor = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+				
+				PoliticaCobranca politicaCobranca = formaCobrancaDistribuidor.getPoliticaCobranca();
+				
 				Distribuidor distribuidor = distribuidorRepository.obter();
 								
 				parametroCobranca = new ParametroCobrancaCota();
+
 				parametroCobranca.setCota(cota);
-				parametroCobranca.setFatorVencimento(formaCobrancaDistribuidor.getPoliticaCobranca().getFatorVencimento());
+				parametroCobranca.setFatorVencimento(politicaCobranca.getFatorVencimento());
 				parametroCobranca.setFormasCobrancaCota(null);
 				parametroCobranca.setValorMininoCobranca(formaCobrancaDistribuidor.getValorMinimoEmissao());
 				
-				if(formaCobrancaDistribuidor.getPoliticaCobranca() != null) {
-					parametroCobranca.setUnificaCobranca(formaCobrancaDistribuidor.getPoliticaCobranca().isUnificaCobranca());
-				}
-				
-				if(formaCobrancaDistribuidor.getPoliticaCobranca().getTipoCota() != null) {
-					parametroCobranca.setTipoCota(formaCobrancaDistribuidor.getPoliticaCobranca().getTipoCota());
-				}
-				
-				if(parametroCobranca.getFornecedorPadrao() != null) {
-					parametroCobranca.setFornecedorPadrao(parametroCobranca.getFornecedorPadrao());
+				if(politicaCobranca != null) {
+					
+					parametroCobranca.setUnificaCobranca(politicaCobranca.isUnificaCobranca());
+
+					parametroCobranca.setTipoCota(politicaCobranca.getTipoCota());
+
+					parametroCobranca.setFornecedorPadrao(politicaCobranca.getFornecedorPadrao());
 				}
 				
 				PoliticaSuspensao ps = new PoliticaSuspensao();
@@ -243,6 +249,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			parametroCobrancaDTO.setValorMinimo((parametroCobranca.getValorMininoCobranca()!=null?parametroCobranca.getValorMininoCobranca():BigDecimal.ZERO));
 			parametroCobrancaDTO.setTipoCota(parametroCobranca.getTipoCota());
 			parametroCobrancaDTO.setUnificaCobranca(parametroCobranca.isUnificaCobranca());
+			parametroCobrancaDTO.setParametroDistribuidor(parametroDistribuidor);
 			
 			politicaSuspensao = parametroCobranca.getPoliticaSuspensao();
 			
@@ -829,24 +836,26 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			contratante.setTipoPessoa((cota.getPessoa()instanceof PessoaJuridica)?TipoPessoa.JURIDICA:TipoPessoa.FISICA);
 
 			
-			
-			
 			EnderecoCota enderecoCota = cotaRepository.obterEnderecoPrincipal(cota.getId());
-			endereco = enderecoCota.getEndereco();
-			descEndereco="";
-			if (endereco!=null){
-				descEndereco = descEndereco + 
-						       endereco.getLogradouro()+", "+
-						       endereco.getNumero()+" - "+
-						       endereco.getBairro()+" - "+
-						       endereco.getCidade()+"-"+
-						       endereco.getUf();
+			if (enderecoCota != null){
+				
+				endereco = enderecoCota.getEndereco();
+				
+				descEndereco="";
+				
+				if (endereco!=null){
+					
+					descEndereco = descEndereco + 
+							       endereco.getLogradouro()+", "+
+							       endereco.getNumero()+" - "+
+							       endereco.getBairro()+" - "+
+							       endereco.getCidade()+"-"+
+							       endereco.getUf();
+				}
 			}
 			
 			contratada.setDescEndereco(descEndereco);
 			contratada.setDescEnderecoGestor(descEndereco);
-			
-
 			
 			
 			descTelefones = "";

@@ -225,6 +225,8 @@ public class BalanceamentoRecolhimentoValorStrategy extends AbstractBalanceament
 			 produtosNaDataRecolhimento.addAll(sobraProdutosRecolhimento);
 			 
 			 matrizRecolhimentoBalanceada.put(dataRecolhimento, produtosNaDataRecolhimento);
+			 
+			 sobraProdutosRecolhimento.clear();
 		}
 	}
 	

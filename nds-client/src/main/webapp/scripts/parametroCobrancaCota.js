@@ -4,11 +4,22 @@ var parametroCobrancaCotaController = $.extend(true, {
     numeroCota: "",
     idHistorico: "",
     idFormaPagto: "",
-    resultFormaCobranca: [],
     modoTela: null,
 
+    financeiro: { 
+    	
+    	resultParametroCobranca : null,
+    	
+    	resultFormaCobranca: null,
+    	
+    	parametroDistribuidor: false,
+    	
+    	formaCobrancaAlterada: false,
+    	
+    	fornecedoresUnificacao: null
+    },
+    
     init : function () {
-
 
 		//GRID DE FORMAS DE COBRANÇA
 		$(".boletosUnificadosGrid", this.workspace).flexigrid({
@@ -116,7 +127,21 @@ var parametroCobrancaCotaController = $.extend(true, {
 
 	//PRÉ CARREGAMENTO DA PAGINA
 	carregaFinanceiro : function(idCota) {
-        
+		
+		
+		parametroCobrancaCotaController.financeiro.formaCobrancaAlterada = false;
+		
+		parametroCobrancaCotaController.financeiro.resultParametroCobranca = null;
+    	
+		parametroCobrancaCotaController.financeiro.resultFormaCobranca = null;
+    	
+		parametroCobrancaCotaController.financeiro.parametroDistribuidor = false;
+    	
+		parametroCobrancaCotaController.financeiro.formaCobrancaAlterada = false;
+
+    	
+		parametroCobrancaCotaController.financeiro.fornecedoresUnificacao = null;
+     
 		parametroCobrancaCotaController.idCota = idCota;
 		
 		$("#parametroCobrancaDateTermino", this.workspace).val("");
@@ -256,7 +281,9 @@ var parametroCobrancaCotaController = $.extend(true, {
 	},
 	
 	sucessCallbackCarregarFornecedoresPadrao : function(result,selected) {
+		
 		var comboFornecedoresPadrao =  parametroCobrancaCotaController.montarComboBox(result,"fornecedorPadrao","",selected);
+		
 	    $("#fornecedoresPadrao", this.workspace).html(comboFornecedoresPadrao);
 	},
 
@@ -371,8 +398,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 			$('#divRecebeEmail', this.workspace).hide();
 			$('#divComboBanco', this.workspace).hide();
 			$('#divDadosBancarios', this.workspace).hide();
-		}
-		
+		}	
 	},
 	
 	mostraDiario : function(){
@@ -468,6 +494,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#_idParametroCobranca", this.workspace).val(resultado.idParametroCobranca);
 		$("#_idCota", this.workspace).val(resultado.idCota);
 		$("#_numCota", this.workspace).val(resultado.numCota);
+
 		parametroCobrancaCotaController.numeroCota = resultado.numCota;
 	
 		$("#fatorVencimento", this.workspace).val(resultado.fatorVencimento);
@@ -505,6 +532,12 @@ var parametroCobrancaCotaController = $.extend(true, {
         parametroCobrancaCotaController.carregarFornecedoresPadrao(resultado.idFornecedor);
         
         parametroCobrancaCotaController.carregarArquivoContrato();
+
+        parametroCobrancaCotaController.financeiro.parametroDistribuidor = resultado.parametroDistribuidor;
+        
+        parametroCobrancaCotaController.financeiro.resultParametroCobranca = parametroCobrancaCotaController.buildParametroCobrancaDto();
+        
+        parametroCobrancaCotaController.financeiro.resultParametroCobranca['parametroCobranca.idFornecedor'] = resultado.idFornecedor;     
 	},
 
 	buildParametroCobrancaDto : function() {
@@ -557,52 +590,132 @@ var parametroCobrancaCotaController = $.extend(true, {
 		
 		return params;
 	},
+
+	isAlterFormaCobranca : function(formaCobrancaTela) {
+		
+    	var formaCobranca = parametroCobrancaCotaController.financeiro.resultFormaCobranca;
+    	
+    	if(formaCobrancaTela['formaCobranca.agencia'] != formaCobranca['formaCobranca.agencia']){return true;}
+    	if(formaCobrancaTela['formaCobranca.agenciaDigito'] != formaCobranca['formaCobranca.agenciaDigito']){return true;}
+    	if(formaCobrancaTela['formaCobranca.conta'] != formaCobranca['formaCobranca.conta']){return true;}
+    	if(formaCobrancaTela['formaCobranca.contaDigito'] != formaCobranca['formaCobranca.contaDigito']){return true;}
+    	if(formaCobrancaTela['formaCobranca.diaDoMes'] != formaCobranca['formaCobranca.diaDoMes']){return true;}
+		if(formaCobrancaTela['formaCobranca.domingo'] != formaCobranca['formaCobranca.domingo']){return true;}
+		if(formaCobrancaTela['formaCobranca.idBanco'] != formaCobranca['formaCobranca.idBanco']){return true;}
+		if(formaCobrancaTela['formaCobranca.idCota'] != formaCobranca['formaCobranca.idCota']){return true;}
+		if(formaCobrancaTela['formaCobranca.idParametroCobranca'] != formaCobranca['formaCobranca.idParametroCobranca']){return true;}
+		if(formaCobrancaTela['formaCobranca.nomeBanco'] != formaCobranca['formaCobranca.nomeBanco']){return true;}
+		if(formaCobrancaTela['formaCobranca.numBanco'] != formaCobranca['formaCobranca.numBanco']){return true;}
+		if(formaCobrancaTela['formaCobranca.primeiroDiaQuinzenal'] != formaCobranca['formaCobranca.primeiroDiaQuinzenal']){return true;}
+		if(formaCobrancaTela['formaCobranca.quarta'] != formaCobranca['formaCobranca.quarta']){return true;}
+		if(formaCobrancaTela['formaCobranca.quinta'] != formaCobranca['formaCobranca.quinta']){return true;}
+		if(formaCobrancaTela['formaCobranca.recebeEmail'] != formaCobranca['formaCobranca.recebeEmail']){return true;}
+		if(formaCobrancaTela['formaCobranca.sabado'] != formaCobranca['formaCobranca.sabado']){return true;}
+		if(formaCobrancaTela['formaCobranca.segunda'] != formaCobranca['formaCobranca.segunda']){return true;}
+		if(formaCobrancaTela['formaCobranca.segundoDiaQuinzenal'] != formaCobranca['formaCobranca.segundoDiaQuinzenal']){return true;}
+		if(formaCobrancaTela['formaCobranca.sexta'] != formaCobranca['formaCobranca.sexta']){return true;}
+		if(formaCobrancaTela['formaCobranca.terca'] != formaCobranca['formaCobranca.terca']){return true;}
+		if(formaCobrancaTela['formaCobranca.tipoCobranca'] != formaCobranca['formaCobranca.tipoCobranca']){return true;}
+    	
+    	return false;
+    },
 	
+	isAlterParametroCobranca : function(parametroCobrancaTela) {
+		
+		var parametroCobranca = parametroCobrancaCotaController.financeiro.resultParametroCobranca;
+
+		if(parametroCobrancaTela['parametroCobranca.sugereSuspensao'] != parametroCobranca['parametroCobranca.sugereSuspensao']){return true;}
+        if(parametroCobrancaTela['parametroCobranca.contrato'] != parametroCobranca['parametroCobranca.contrato']){return true;}
+    	if(parametroCobrancaTela['parametroCobranca.fatorVencimento'] != parametroCobranca['parametroCobranca.fatorVencimento']){return true;}
+    	if(parametroCobrancaTela['parametroCobranca.idCota'] != parametroCobranca['parametroCobranca.idCota']){return true;}
+    	if(parametroCobrancaTela['parametroCobranca.idFornecedor'] != parametroCobranca['parametroCobranca.idFornecedor']){return true;}
+    	if(parametroCobrancaTela['parametroCobranca.idParametroCobranca'] != parametroCobranca['parametroCobranca.idParametroCobranca']){return true;}
+    	if(parametroCobrancaTela['parametroCobranca.inicioContrato'] != parametroCobranca['parametroCobranca.inicioContrato']){return true;}
+	    if(parametroCobrancaTela['parametroCobranca.numCota'] != parametroCobranca['parametroCobranca.numCota']){return true;}
+	    if(parametroCobrancaTela['parametroCobranca.qtdDividasAberto'] != parametroCobranca['parametroCobranca.qtdDividasAberto']){return true;}
+	    if(parametroCobrancaTela['parametroCobranca.sugereSuspensao'] != parametroCobranca['parametroCobranca.sugereSuspensao']){return true;}
+	    //if(parametroCobrancaTela['parametroCobranca.terminoContrato'] != parametroCobranca['parametroCobranca.terminoContrato']){return true;}
+	    if(parametroCobrancaTela['parametroCobranca.tipoCota'] != parametroCobranca['parametroCobranca.tipoCota']){return true;}
+	    if(parametroCobrancaTela['parametroCobranca.unificaCobranca'] != parametroCobranca['parametroCobranca.unificaCobranca']){return true;}
+	    if(parametroCobrancaTela['parametroCobranca.valorMinimo'] != parametroCobranca['parametroCobranca.valorMinimo']){return true;}
+	    if(parametroCobrancaTela['parametroCobranca.vrDividasAberto'] != parametroCobranca['parametroCobranca.vrDividasAberto']){return true;}
+
+		return false;
+	},
+	
+	isAlterFornecedoresUnificacao : function(fornecedoresUnificacao){
+		
+		var fornecedores = parametroCobrancaCotaController.financeiro.fornecedoresUnificacao;
+		
+		if (fornecedores.length != fornecedoresUnificacao.length){
+	
+			return true;
+        }
+		
+		for (var i=0; i<fornecedores.length;i++){
+			
+			if (fornecedores[i]!=fornecedoresUnificacao[i]){
+				
+				return true;
+			}
+		}
+		
+		return false;
+	},
+	
+	isAlter : function(parametroCobrancaTela) {
+		
+		if (parametroCobrancaCotaController.isAlterParametroCobranca(parametroCobrancaTela)|| 
+			parametroCobrancaCotaController.financeiro.formaCobrancaAlterada){
+			
+			return true;
+		}
+
+		return false;
+	},
+
 	postarParametroCobranca : function() {
 		
 		var params = parametroCobrancaCotaController.buildParametroCobrancaDto();
-		
-		$.postJSON(
-				   contextPath + "/cota/parametroCobrancaCota/obterQtdFormaCobrancaCota",
-				   {"id" : params["parametroCobranca.idCota"]},
-				   function(response){
-					   if (response == 0) {
-						   
-						   $("#dialog-confirm-formaCobrancaDistribuidor").dialog({
-								resizable : false,
-								height:170,
-								width:490,
-								modal : true,
-								buttons : {
-									"Confirmar" : function() {
-										$(this).dialog("close");
-										
-										$.postJSON(
-											   contextPath + "/cota/parametroCobrancaCota/postarParametroCobranca",
-											   params,
-											   function(){
-												   parametroCobrancaCotaController.mostrarGrid(params["parametroCobranca.idCota"]);
-										           return true;
-											   },
-											   function(){
-										           return false;
-											   },
-											   true
-										);	
-									},
-									"Cancelar" : function() {
-										$(this).dialog("close");
-									}
-								}
-							});
-						   
-					   }
-					   else {
-						   $.postJSON(
+
+	    if (parametroCobrancaCotaController.financeiro.parametroDistribuidor) {
+
+		   if (parametroCobrancaCotaController.isAlter(params)){
+               
+			   
+			   
+			   /*VERIFICACAO DE EXISTENCIA DE FORNECEDORES CINCULADOS À COTA
+			   var fornecedoresVinculados = 0;
+			   
+			   jQuery('fornecedorPadrao').find('option').each(function(){
+				   
+				   fornecedoresVinculados++;
+			   });
+			   
+			   if (fornecedoresVinculados <= 1){
+				   
+				   alert("A [Cota] não possui [Fornecedores] vinculados. Vincule [Fornecedores] à [Cota] na aba fornecedores");
+				   
+				   return;
+			   }
+			   */
+			   
+
+			   $("#dialog-confirm-formaCobrancaDistribuidor").dialog({
+					resizable : false,
+					height:170,
+					width:490,
+					modal : true,
+					buttons : {
+						"Confirmar" : function() {
+							$(this).dialog("close");
+							
+							$.postJSON(
 								   contextPath + "/cota/parametroCobrancaCota/postarParametroCobranca",
 								   params,
 								   function(){
 									   parametroCobrancaCotaController.mostrarGrid(params["parametroCobranca.idCota"]);
+									   parametroCobrancaCotaController.financeiro.parametroDistribuidor = false;
 							           return true;
 								   },
 								   function(){
@@ -610,10 +723,30 @@ var parametroCobrancaCotaController = $.extend(true, {
 								   },
 								   true
 							);	
-					   }
-				   }
-		);
+						},
+						"Cancelar" : function() {
+							$(this).dialog("close");
+						}
+					}
+			   });
+		   } 
+	    }
+	    else {
+		   $.postJSON(
+				   contextPath + "/cota/parametroCobrancaCota/postarParametroCobranca",
+				   params,
+				   function(){
+					   parametroCobrancaCotaController.mostrarGrid(params["parametroCobranca.idCota"]);
+			           return true;
+				   },
+				   function(){
+			           return false;
+				   },
+				   true
+			);	
+	    }
 	},
+	
 	calcularDataTermino : function() {
 		if(parametroCobrancaCotaController.isModoTelaCadastroCota()) {
             var dataInicio = $("#parametroCobrancaDateInicio").val();
@@ -681,7 +814,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 
 		//parametroCobrancaCotaController.obterFormaCobrancaDefault();
 	}, 
-
 	
 	tratarRespostaUploadAnexoContrato : function(data) {
 		
@@ -752,14 +884,18 @@ var parametroCobrancaCotaController = $.extend(true, {
 	},
 	
 	obterFornecedoresUnificados : function(unificados) {
+		
 		$("input[name='checkGroupFornecedores']:checked", parametroCobrancaCotaController.workspace).each(function(i) {
-			//$("#fornecedor_"+$(this).val(), this.workspace).attr("checked", false);
+			
 			document.getElementById("fornecedor_"+$(this).val(), parametroCobrancaCotaController.workspace).checked = false;
 		});
+		
 		var i;
+		
 		for(i=0;i<unificados.length;i++){
-			//$("#fornecedor_"+unificados[i], this.workspace).attr("checked", false);
+			
 			if(document.getElementById('fornecedor_'+unificados[i])){
+				
 			    document.getElementById("fornecedor_"+unificados[i], parametroCobrancaCotaController.workspace).checked = true;
 			}
 		}
@@ -783,20 +919,31 @@ var parametroCobrancaCotaController = $.extend(true, {
 		parametroCobrancaCotaController.carregarComboTipoCobranca(resultado.tipoCobranca);
 		
         $("#tipoFormaCobranca", this.workspace).val(resultado.tipoFormaCobranca);
+        
 		if (parametroCobrancaCotaController.isModoTelaCadastroCota()) {
-            parametroCobrancaCotaController.carregarBancos(resultado.idBanco);
-        } else {
+			
+            parametroCobrancaCotaController.carregarBancos(resultado.idBanco);       
+        } 
+		else {
+        	
             if (resultado.numBanco) {
+            	
                 var descricaoBanco = resultado.numBanco;
+                
                 descricaoBanco += '-'  + resultado.nomeBanco;
+                
                 descricaoBanco += '-' + resultado.conta;
+                
                 if (resultado.contaDigito) {
+                	
                     descricaoBanco+= '-' + resultado.contaDigito;
                 }
+                
                 montarComboBoxUnicaOpcao("",
                     descricaoBanco,$("#banco", this.workspace));
             }
         }
+		
 		$("#numBanco", this.workspace).val(resultado.numBanco);
 		$("#nomeBanco", this.workspace).val(resultado.nomeBanco);
 		$("#agencia", this.workspace).val(resultado.agencia);
@@ -819,8 +966,18 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#PCC-PDom", this.workspace).attr("checked", resultado.domingo);
 
 		parametroCobrancaCotaController.opcaoPagto(resultado.tipoCobranca);
+		
 		parametroCobrancaCotaController.opcaoTipoFormaCobranca(resultado.tipoFormaCobranca);
+		
 		parametroCobrancaCotaController.obterFornecedoresUnificados(resultado.fornecedoresId);
+
+		parametroCobrancaCotaController.financeiro.fornecedoresUnificacao = parametroCobrancaCotaController.obterFornecedoresMarcados();
+		
+		parametroCobrancaCotaController.financeiro.resultFormaCobranca = parametroCobrancaCotaController.buildFormaCobrancaDTO();	
+		
+		parametroCobrancaCotaController.financeiro.resultFormaCobranca['formaCobranca.tipoCobranca'] = resultado.tipoCobranca;
+		
+		parametroCobrancaCotaController.financeiro.resultFormaCobranca['formaCobranca.idBanco'] = resultado.idBanco;
 	},
 
     carregarBancos : function(selected){
@@ -856,6 +1013,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 				   $("#PCC-PDom", this.workspace).attr("checked", resultado.domingo);
 	
 				   parametroCobrancaCotaController.opcaoPagto(resultado.tipoCobranca);
+				   
 				   parametroCobrancaCotaController.opcaoTipoFormaCobranca(resultado.tipoFormaCobranca); 
 	           }
 	           
@@ -865,10 +1023,14 @@ var parametroCobrancaCotaController = $.extend(true, {
 	},
 
 	obterFornecedoresMarcados : function() {
+		
 		var fornecedorMarcado = new Array();
-		$("input[name='checkGroupFornecedores']:checked", this.workspace).each(function(i) {			
+		
+		$("input[name='checkGroupFornecedores']:checked", this.workspace).each(function(i) {	
+			
 			fornecedorMarcado.push($(this).val());
 		});
+		
 		return fornecedorMarcado;
 	},
 	
@@ -1002,6 +1164,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 	
 	postarFormaCobranca : function(novo, incluirSemFechar) {
 		
+		
 		var telaMensagem="idModalUnificacao",
 			idFormaCobranca = $("#_idFormaCobranca", this.workspace).val(),
 			idCota = $("#_idCota", this.workspace).val(),
@@ -1009,6 +1172,20 @@ var parametroCobrancaCotaController = $.extend(true, {
 			params = {};
 		
 		params = parametroCobrancaCotaController.buildFormaCobrancaDTO();
+		
+		
+		if (parametroCobrancaCotaController.financeiro.parametroDistribuidor){
+			
+			parametroCobrancaCotaController.financeiro.formaCobrancaAlterada = 
+	     	   (parametroCobrancaCotaController.isAlterFormaCobranca(params)||
+	     	    parametroCobrancaCotaController.isAlterFornecedoresUnificacao(parametroCobrancaCotaController.obterFornecedoresMarcados()) );
+			
+			if (!parametroCobrancaCotaController.financeiro.formaCobrancaAlterada){
+				
+				return;
+			}
+		}
+		
 
 		if (novo) {
 			$.postJSON(contextPath + "/cota/parametroCobrancaCota/postarFormaCobranca",
@@ -1029,7 +1206,9 @@ var parametroCobrancaCotaController = $.extend(true, {
 							       }
 				        	   }	   
 				           }
-				           parametroCobrancaCotaController.mostrarGrid(idCota);
+				           parametroCobrancaCotaController.mostrarGrid(idCota);			         
+				           
+				           parametroCobrancaCotaController.financeiro.formaCobrancaAlterada = true;
 		               },
 					   null,
 					   true,
@@ -1054,7 +1233,10 @@ var parametroCobrancaCotaController = $.extend(true, {
 							       }
 				        	   }
 				           }
-				           parametroCobrancaCotaController.mostrarGrid(idCota);
+				           
+				           parametroCobrancaCotaController.mostrarGrid(idCota);		
+				           
+				           parametroCobrancaCotaController.financeiro.formaCobrancaAlterada = true;
 		               },
 					   null,
 					   true,
@@ -1068,7 +1250,8 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$.postJSON(contextPath + "/cota/parametroCobrancaCota/excluirFormaCobranca",
 				   data,
 				   function(){
-			parametroCobrancaCotaController.mostrarGrid(idCota);
+			
+			           parametroCobrancaCotaController.mostrarGrid(idCota);
 				   },
 				   null,
 				   true);

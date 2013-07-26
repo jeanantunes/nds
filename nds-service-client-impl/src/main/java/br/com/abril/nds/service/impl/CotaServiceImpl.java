@@ -1979,6 +1979,10 @@ public class CotaServiceImpl implements CotaService {
 		
 		if (garantia!=null){
 	 
+			this.cotaGarantiaRepository.deleteListaImoveis(garantia.getId());
+			
+			this.cotaGarantiaRepository.deleteListaOutros(garantia.getId());
+			
 			this.cotaGarantiaRepository.deleteByCota(cota.getId());
 		}
 		
@@ -2173,7 +2177,7 @@ public class CotaServiceImpl implements CotaService {
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("SUBREPORT_DIR",
-				Thread.currentThread().getContextClassLoader().getResource("/reports/").getPath());
+				Thread.currentThread().getContextClassLoader().getResource("/reports/").toURI().getPath());
 		
 		String informacoesComplementares = this.distribuidorRepository.obterInformacoesComplementaresTermoAdesao();
 		parameters.put("infoComp", informacoesComplementares!=null?informacoesComplementares:"");
