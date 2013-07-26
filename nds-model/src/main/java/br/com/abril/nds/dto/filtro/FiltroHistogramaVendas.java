@@ -19,6 +19,39 @@ public class FiltroHistogramaVendas extends FiltroDTO implements Serializable{
 	private String codigo;
 	private String produto;
 	private String edicao;
+	private Long idTipoClassificacaoProduto;
+	
+	private OrdemColuna ordemColuna;
+	
+	public enum OrdemColuna{
+		
+		CODIGO("codigoProduto"),
+		CLASSIFICACAO("tipoClassificacaoFormatado"),
+		EDICAO("edicao"),		
+		PERIODO("periodo"),		
+		REPARTE("reparte"),
+		VENDA("venda"),
+		DT_LANCAMENTO("dataLancamento"),
+		DT_RECOLHIMENTO("dataRecolhimento"),
+		STATUS("status");
+		
+		private String descricao;
+		
+		private OrdemColuna(String descricao) {
+			this.descricao = descricao;
+		}
+		
+		public String getDescricao(){
+			return this.descricao;
+		}
+		
+		@Override
+		public String toString() {
+			
+			return this.descricao;
+		}
+	}
+	
 	
 	@Override
 	public boolean equals(Object obj) {
@@ -96,6 +129,22 @@ public class FiltroHistogramaVendas extends FiltroDTO implements Serializable{
 	}
 	public void setEdicao(String edicao) {
 		this.edicao = edicao;
+	}
+
+	public OrdemColuna getOrdemColuna() {
+		return ordemColuna;
+	}
+
+	public void setOrdemColuna(OrdemColuna ordemColuna) {
+		this.ordemColuna = ordemColuna;
+	}
+
+	public Long getIdTipoClassificacaoProduto() {
+		return idTipoClassificacaoProduto;
+	}
+
+	public void setIdTipoClassificacaoProduto(Long idTipoClassificacaoProduto) {
+		this.idTipoClassificacaoProduto = idTipoClassificacaoProduto;
 	}
 	
 }

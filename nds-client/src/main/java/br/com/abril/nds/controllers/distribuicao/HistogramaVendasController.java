@@ -29,17 +29,21 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.EstoqueProdutoService;
+import br.com.abril.nds.service.InformacoesProdutoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.RegiaoService;
+import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.UfEnum;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -82,15 +86,23 @@ public class HistogramaVendasController extends BaseController {
 	@Autowired
 	private EstoqueProdutoService estoqueProdutoService;
 	
+	@Autowired
+	private InformacoesProdutoService infoProdService;
+	
+	@Autowired
+	private TipoClassificacaoProdutoService tipoClassificacaoProdutoService;
+	
 	@Rules(Permissao.ROLE_DISTRIBUICAO_HISTOGRAMA_VENDAS)
 	public void index(){
 		
 		result.include("componenteList", ComponentesPDV.values());
+		this.carregarComboClassificacao();		
 	}
 	
 	@Autowired
 	private RegiaoService regiaoService;
 	
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Post
 	@Path("/carregarElementos")
 	public void carregarElementos(String componente){
@@ -148,8 +160,6 @@ public class HistogramaVendasController extends BaseController {
 		File file = new File("temp"+CapaService.DEFAULT_EXTENSION);
 		try {
 			att = capaService.getCapaInputStream(codigoProduto,Long.parseLong(numeroEdicao));
-//			att = capaService.getCapaInputStream("00000000",Long.parseLong("0114"));
-			
 				 
 					// write the inputStream to a FileOutputStream
 					OutputStream out = new FileOutputStream(file);
@@ -221,6 +231,7 @@ public class HistogramaVendasController extends BaseController {
 		session.setAttribute(HISTOGRAMA_SESSION_ATTRIBUTE, list);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Post
 	@Path("/populateHistograma")
 	public void popularHistograma(String edicoes,String faixasVenda,String codigoProduto){
@@ -249,6 +260,8 @@ public class HistogramaVendasController extends BaseController {
 	public void pesquisarFiltro(FiltroHistogramaVendas filtro, String sortorder, String sortname, int page, int rp) {
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
+		
+		filtro.setOrdemColuna(Util.getEnumByStringValue(FiltroHistogramaVendas.OrdemColuna.values(), sortname));
 		
 		tratarFiltro(filtro);
 		
@@ -281,6 +294,7 @@ public class HistogramaVendasController extends BaseController {
 		return tableModel;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Get
 	public void exportar(FileType fileType) throws IOException {
 		
@@ -321,6 +335,16 @@ public class HistogramaVendasController extends BaseController {
 		FiltroHistogramaVendas filtroSession = (FiltroHistogramaVendas) session
 				.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		return filtroSession;
+	}
+	
+	private void carregarComboClassificacao(){
+		List<ItemDTO<Long,String>> comboClassificacao =  new ArrayList<ItemDTO<Long,String>>();
+		List<TipoClassificacaoProduto> classificacoes = infoProdService.buscarClassificacao();
+		
+		for (TipoClassificacaoProduto tipoClassificacaoProduto : classificacoes) {
+			comboClassificacao.add(new ItemDTO<Long,String>(tipoClassificacaoProduto.getId(), tipoClassificacaoProduto.getDescricao()));
+		}
+		result.include("listaClassificacao",comboClassificacao);		
 	}
 	
 	public ProdutoEdicaoService getProdutoEdicaoService() {

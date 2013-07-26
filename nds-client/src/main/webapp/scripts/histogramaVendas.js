@@ -82,6 +82,18 @@ var histogramaVendasController = $.extend(true, {
 				return data;
 			},
 			colModel : [ {
+				display : 'Código',
+				name : 'codigoProduto',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Classificação',
+				name : 'descricaoTipoClassificacao',
+				width : 100,
+				sortable : true,
+				align : 'left'
+			},{
 				display : 'Edição',
 				name : 'edicao',
 				width : 60,
@@ -123,13 +135,6 @@ var histogramaVendasController = $.extend(true, {
 				width : 100,
 				sortable : true,
 				align : 'left'
-			}, 
-			{
-				display : 'Classificação',
-				name : 'descricaoTipoClassificacao',
-				width : 100,
-				sortable : true,
-				align : 'left'
 			},
 			{
 				display : 'Capa',
@@ -149,7 +154,9 @@ var histogramaVendasController = $.extend(true, {
 			rp : 10,
 			showTableToggleBtn : true,
 			usepager : true,
-			useRp : true
+			useRp : true,
+			sortname : "codigoProduto",
+            sortorder : "asc"
 		});
 	},
 	
@@ -224,9 +231,9 @@ var histogramaVendasController = $.extend(true, {
 			formData = new Array();
 		
 		if ($('#inserirComponentes').is(':checked')) {
-			selector = "input[type='radio'][name='filtroPor']:checked,#inserirComponentes,#componente,#elemento,#codigo,#produto,#edicao";
+			selector = "input[type='radio'][name='filtroPor']:checked,#inserirComponentes,#componente,#elemento,#codigo,#produto,#edicao,#idTipoClassificacaoProduto";
 		}else {
-			selector = "input[type='radio'][name='filtroPor']:checked,#codigo,#produto,#edicao";
+			selector = "input[type='radio'][name='filtroPor']:checked,#codigo,#produto,#edicao,#idTipoClassificacaoProduto";
 		}
 		
 		
