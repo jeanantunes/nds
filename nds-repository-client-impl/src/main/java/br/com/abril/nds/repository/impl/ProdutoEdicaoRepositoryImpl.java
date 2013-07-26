@@ -845,6 +845,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<EdicoesProdutosDTO> obterHistoricoEdicoes(FiltroHistogramaVendas filtro) {
 				
@@ -918,6 +919,12 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			whereList.add(" produtoedi1_.numero_edicao = :numeroEdicao");
 			parameterMap.put("numeroEdicao",new Long(filtro.getEdicao()));
 		}
+		
+		//classificação = classificação do produto
+		if (filtro.getIdTipoClassificacaoProduto() != null) {
+			whereList.add(" tipoclassi6_.id = :tipoClassificacaoProdutoId");
+			parameterMap.put("tipoClassificacaoProdutoId",new Long(filtro.getIdTipoClassificacaoProduto()));
+		}		
 		
 		// check opcao de componente e elemento
 		if (StringUtils.isNotEmpty(filtro.getInserirComponentes())
@@ -1009,7 +1016,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		//Group by
 		queryStringProdutoEdicao += " ) as base " +
 									" GROUP BY base.numeroEdicao  " + 
-									" ORDER BY base.numeroEdicao desc ";
+									this.ordenarConsultaHistogramaVenda(filtro);
 		
 		Query query = this.getSession().createSQLQuery(queryStringProdutoEdicao);
 
@@ -1022,6 +1029,66 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		return resultado;
 	}
+	
+	private String ordenarConsultaHistogramaVenda(FiltroHistogramaVendas filtro) {
+
+		StringBuilder hql = new StringBuilder();
+
+		if (filtro.getOrdemColuna() != null) {
+
+		    switch (filtro.getOrdemColuna()) {
+
+		   
+		    case CODIGO:
+		    	hql.append(" ORDER BY codigoProduto ");
+		    	break;
+
+		    case CLASSIFICACAO:
+		    	hql.append(" ORDER BY tipoClassificacaoProduto ");
+		    	break;
+		    	
+		    case EDICAO:
+				hql.append(" ORDER BY edicao ");
+				break;
+
+		    case PERIODO:
+		    	hql.append(" ORDER BY periodo ");
+		    	break;
+		    	
+		    case REPARTE:
+		    	hql.append(" ORDER BY reparte ");
+		    	break;
+		    	
+		    case VENDA:
+		    	hql.append(" ORDER BY venda ");
+		    	break;
+
+		    case DT_LANCAMENTO:
+		    	hql.append("ORDER BY dtLancamento ");
+		    	break;
+		    	
+		    case DT_RECOLHIMENTO:
+		    	hql.append("ORDER BY dtRecolhimento ");
+		    	break;
+
+		    case STATUS:
+		    	hql.append(" ORDER BY status ");
+		    	break;
+			
+
+		    default:
+			hql.append(" ORDER BY base.numeroEdicao DESC ");
+		    }
+
+		    if (filtro.getPaginacao().getOrdenacao() != null) {
+		    	hql.append(filtro.getPaginacao().getOrdenacao().toString());
+		    }
+
+		}
+
+		return hql.toString();
+	}
+
 	
 	@Override
 	public AnaliseHistogramaDTO obterBaseEstudoHistogramaPorFaixaVenda(FiltroHistogramaVendas filtro,String codigoProduto,Integer de, Integer ate,String[] edicoes) {

@@ -90,6 +90,15 @@
             <td width="140"><input type="text" name="produto" id="produto" style="width:140px;" /></td>
             <td width="38">Edição:</td>
             <td width="60"><input type="text" name="edicao" id="edicao" style="width:60px;"/></td>
+            <td width="76">Classificação:</td>
+            <td width="50">
+               <select name="idTipoClassificacaoProduto" id="idTipoClassificacaoProduto" style="width:200px;">
+               	<option selected="selected">Selecione...</option>
+                 		<c:forEach items="${listaClassificacao}" var="classificacao">
+						<option value="${classificacao.key}">${classificacao.value}</option>
+			  		</c:forEach>
+               </select>
+             </td>
             <td width="16"><span class="classPesquisar"><a href="javascript:histogramaVendasController.pesquisarFiltro();">&nbsp;</a></span></td>
           </tr>
         </table>	
