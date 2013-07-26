@@ -1043,9 +1043,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		    	hql.append(" ORDER BY codigoProduto ");
 		    	break;
 
-//		    case CLASSIFICACAO:
-//		    	hql.append(" ORDER BY tipoClassificacaoProduto ");
-//		    	break;
+		    case CLASSIFICACAO:
+		    	hql.append(" ORDER BY tipoClassificacaoProduto ");
+		    	break;
 		    	
 		    case EDICAO:
 				hql.append(" ORDER BY edicao ");
