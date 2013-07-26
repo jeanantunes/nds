@@ -610,6 +610,7 @@ public class DiferencaEstoqueController extends BaseController {
 		result.use(Results.json()).from("").serialize();
 	}
 
+	@SuppressWarnings("unchecked")
 	private void incluirLancamentoDiferencaEstoqueRateio(TipoDiferenca tipoDiferenca,
 													boolean direcionadoParaEstoque,
 													String codigoProduto,
@@ -629,8 +630,9 @@ public class DiferencaEstoqueController extends BaseController {
 
 			
 			Long idDiferenca = incluirDiferencaEstoque(diferencaVO, tipoDiferenca);
+			
 			Set<DiferencaVO> listaNovasDiferencasVO = 
-					(HashSet<DiferencaVO>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
+				(HashSet<DiferencaVO>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
 
 			diferencaVO = this.diferencaEstoqueService.verificarDiferencaComListaSessao(listaNovasDiferencasVO, 
 					diferencaVO, idDiferenca);
@@ -2563,47 +2565,85 @@ public class DiferencaEstoqueController extends BaseController {
 	}
 		
 	private List<EstoqueDTO> gerarEstoques(EstoqueProduto estoque,String codigoPrduto,Long numeroEdicao) {
-
+		
 		List<EstoqueDTO> estoques = new ArrayList<EstoqueDTO>();
 		
 		BigInteger qtde =
 			(estoque.getQtde() != null)
 				? estoque.getQtde() : BigInteger.ZERO;
 		
-		estoques.add(
+		if (!BigInteger.ZERO.equals(qtde)) {
+			estoques.add(
 				new EstoqueDTO(
-						TipoEstoque.LANCAMENTO.name(), 
-						TipoEstoque.LANCAMENTO.getDescricao(),
-						qtde 
-						) 
+					TipoEstoque.LANCAMENTO.name(), 
+					TipoEstoque.LANCAMENTO.getDescricao(),
+					atualizarQuantidadeEstoqueComNovasDiferencas(qtde, TipoEstoque.LANCAMENTO)
+					) 
 				); 
-	
+		}
 		
 		BigInteger qtdeSuplementar =
 			(estoque.getQtdeSuplementar() != null)
 				? estoque.getQtdeSuplementar() : BigInteger.ZERO;
 		
-		estoques.add(
+		if (!BigInteger.ZERO.equals(qtdeSuplementar)) {
+			estoques.add(
 				new EstoqueDTO(
-						TipoEstoque.SUPLEMENTAR.name(), 
-						TipoEstoque.SUPLEMENTAR.getDescricao(),
-						qtdeSuplementar
-						) 
+					TipoEstoque.SUPLEMENTAR.name(), 
+					TipoEstoque.SUPLEMENTAR.getDescricao(),
+					atualizarQuantidadeEstoqueComNovasDiferencas(qtdeSuplementar, TipoEstoque.SUPLEMENTAR)
+					) 
 				);
+		}
 		
 		BigInteger qtdeDevolucaoEncalhe =
 			(estoque.getQtdeDevolucaoEncalhe() != null)
 				? estoque.getQtdeDevolucaoEncalhe() : BigInteger.ZERO;
 		
-		estoques.add(
+		if (!BigInteger.ZERO.equals(qtdeDevolucaoEncalhe)) {
+			estoques.add(
 				new EstoqueDTO(
-						TipoEstoque.DEVOLUCAO_ENCALHE.name(), 
-						TipoEstoque.DEVOLUCAO_ENCALHE.getDescricao(),
-					    qtdeDevolucaoEncalhe
-						) 
-				); 
+					TipoEstoque.DEVOLUCAO_ENCALHE.name(), 
+					TipoEstoque.DEVOLUCAO_ENCALHE.getDescricao(),
+					atualizarQuantidadeEstoqueComNovasDiferencas(qtdeDevolucaoEncalhe, TipoEstoque.DEVOLUCAO_ENCALHE)
+					) 
+				);
+		}
 		
 		return estoques;
+	}
+
+	@SuppressWarnings("unchecked")
+	private BigInteger atualizarQuantidadeEstoqueComNovasDiferencas(BigInteger quantidadeEstoqueAtual,
+														  			TipoEstoque tipoEstoque) {
+		
+		Set<DiferencaVO> listaNovasDiferencas =
+			(Set<DiferencaVO>) this.httpSession.getAttribute(
+				LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
+		
+		if (listaNovasDiferencas != null) {
+			
+			for (DiferencaVO diferencaVO : listaNovasDiferencas) {
+				
+				if (tipoEstoque != null
+						&& diferencaVO.getTipoEstoque() != null
+						&& diferencaVO.getTipoEstoque().equals(tipoEstoque)) {
+				
+					if (diferencaVO.getTipoDiferenca().isFalta()) {
+						
+						quantidadeEstoqueAtual =
+							quantidadeEstoqueAtual.subtract(diferencaVO.getQuantidade());
+						
+					} else {
+						
+						quantidadeEstoqueAtual =
+							quantidadeEstoqueAtual.add(diferencaVO.getQuantidade());
+					}
+				}
+			}
+		}
+		
+		return quantidadeEstoqueAtual;
 	}
 	
 	@SuppressWarnings("unchecked")
