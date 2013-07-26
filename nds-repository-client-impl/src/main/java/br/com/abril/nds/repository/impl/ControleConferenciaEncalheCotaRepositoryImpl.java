@@ -213,6 +213,108 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		
 		return sqlquery.list();
 	}
+
+
+	@Override
+	public boolean obterAceitaJuramentado(Long idCota) {
+		
+		StringBuffer sql = new StringBuffer();
+
+		/*
+		 * Verifica se ha algum produto com recolhimento parcial
+		 * Se houver, retorna true
+		 * 
+		 */
+		sql.append("SELECT CASE WHEN ((SELECT DIA_RECOLHIMENTO_PRIMEIRO from distribuidor) ")
+			.append("AND (SELECT ACEITA_JURAMENTADO FROM distribuidor) ")
+			.append("AND DATEDIFF(CASE WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 0) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 1 DAY) ")
+			.append("WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 7) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 2 DAY) ")
+			.append("ELSE (select DATA_OPERACAO from distribuidor) END, DATA_RECOLHIMENTO) = 0) ")
+			.append("	            AND (NOT EXISTS(SELECT DATA FROM feriado WHERE data = (select DATA_OPERACAO from distribuidor)) ") 
+			.append("	                OR (SELECT IND_OPERA FROM feriado WHERE data = (select DATA_OPERACAO from distribuidor) = true)) THEN DATEDIFF(CASE WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 0) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 1 DAY) ")
+			.append("	                                                                                                                        WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 7) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 2 DAY) ")
+			.append("	                                                                                                                        ELSE (select DATA_OPERACAO from distribuidor) END, DATA_RECOLHIMENTO) + 1 ")
+			.append("	            WHEN ((SELECT DIA_RECOLHIMENTO_SEGUNDO from distribuidor) ")
+			.append("	            AND (SELECT ACEITA_JURAMENTADO FROM distribuidor) ")
+			.append("	            AND DATEDIFF(CASE WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 0) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 1 DAY) ")
+			.append("	                                WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 7) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 2 DAY) ")
+			.append("	                                ELSE (select DATA_OPERACAO from distribuidor) END, DATA_RECOLHIMENTO) = 1) ")
+			.append("	            AND (NOT EXISTS(SELECT DATA FROM feriado WHERE data = (select DATA_OPERACAO from distribuidor)) ")
+			.append("				                OR (SELECT IND_OPERA FROM feriado WHERE data = (select DATA_OPERACAO from distribuidor) = true)) THEN DATEDIFF(CASE WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 0) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 1 DAY) ")
+			.append("																															WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 7) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 2 DAY) ")
+			.append("				                                                                                                            ELSE (select DATA_OPERACAO from distribuidor) END, DATA_RECOLHIMENTO) + 1 ")
+			.append("	        WHEN ((SELECT DIA_RECOLHIMENTO_TERCEIRO from distribuidor) ")
+			.append("	            AND (SELECT ACEITA_JURAMENTADO FROM distribuidor) ")
+			.append("	            AND DATEDIFF(CASE WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 0) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 1 DAY) ")
+			.append("	                                WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 7) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 2 DAY) ")
+			.append("	                                ELSE (select DATA_OPERACAO from distribuidor) END, DATA_RECOLHIMENTO) = 2) ")
+			.append("	            AND (NOT EXISTS(SELECT DATA FROM feriado WHERE data = (select DATA_OPERACAO from distribuidor)) ") 
+			.append("	                OR (SELECT IND_OPERA FROM feriado WHERE data = (select DATA_OPERACAO from distribuidor) = true)) THEN DATEDIFF(CASE WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 0) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 1 DAY) ")
+			.append("	                                                                                                                        WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 7) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 2 DAY) ")
+			.append("	                                                                                                                        ELSE (select DATA_OPERACAO from distribuidor) END, DATA_RECOLHIMENTO) + 1 ")
+			.append("	        WHEN ((SELECT DIA_RECOLHIMENTO_QUARTO from distribuidor) ")
+			.append("	            AND (SELECT ACEITA_JURAMENTADO FROM distribuidor) ")
+			.append("	            AND DATEDIFF(CASE WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 0) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 1 DAY) ")
+			.append("	                                WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 7) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 2 DAY) ")
+			.append("	                                ELSE (select DATA_OPERACAO from distribuidor) END, DATA_RECOLHIMENTO) = 3) ")
+			.append("	            AND (NOT EXISTS(SELECT DATA FROM feriado WHERE data = (select DATA_OPERACAO from distribuidor)) ") 
+			.append("	                OR (SELECT IND_OPERA FROM feriado WHERE data = (select DATA_OPERACAO from distribuidor) = true)) THEN DATEDIFF(CASE WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 0) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 1 DAY) ")
+			.append("	                                                                                                                        WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 7) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 2 DAY) ")
+			.append("	                                                                                                                        ELSE (select DATA_OPERACAO from distribuidor) END, DATA_RECOLHIMENTO) + 1 ")
+			.append("	        WHEN ((SELECT DIA_RECOLHIMENTO_QUINTO from distribuidor) ")
+			.append("	            AND (SELECT ACEITA_JURAMENTADO FROM distribuidor) ")
+			.append("	            AND DATEDIFF(CASE WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 0) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 1 DAY) ")
+			.append("	                                WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 7) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 2 DAY) ")
+			.append("	                                ELSE (select DATA_OPERACAO from distribuidor) END, DATA_RECOLHIMENTO) = 4) ")
+			.append("	            AND (NOT EXISTS(SELECT DATA FROM feriado WHERE data = (select DATA_OPERACAO from distribuidor)) ")
+			.append("	                OR (SELECT IND_OPERA FROM feriado WHERE data = (select DATA_OPERACAO from distribuidor) = true)) THEN DATEDIFF(CASE WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 0) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 1 DAY) ")
+			.append("	                                                                                                                        WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 7) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 2 DAY) ")
+			.append("	                                                                                                                        ELSE (select DATA_OPERACAO from distribuidor) END, DATA_RECOLHIMENTO) + 1 ")
+			.append("	        ELSE -1 END AS dia ")
+			.append("	from chamada_encalhe ce ")
+			.append("	inner join chamada_encalhe_cota cec on cec.chamada_encalhe_id = ce.id ")
+			.append("	where DATA_RECOLHIMENTO IN ( ")
+			.append("	    select CASE WHEN (select DIA_RECOLHIMENTO_PRIMEIRO from distribuidor) THEN ") 
+			.append("	            CASE WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 0) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL -2 DAY) ")
+			.append("	            WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 7) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL -1 DAY) ")
+			.append("	            ELSE (select DATA_OPERACAO from distribuidor) END ELSE (select DATA_OPERACAO from distribuidor) END ")
+			.append("	    from distribuidor ")
+			.append("	    union ")
+			.append("	    select CASE WHEN (select DIA_RECOLHIMENTO_SEGUNDO from distribuidor) THEN ") 
+			.append("	                DATE_ADD(CASE WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 0) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL -2 DAY) ")
+			.append("	                WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 7) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL -1 DAY) ")
+			.append("	                ELSE (select DATA_OPERACAO from distribuidor) END,  INTERVAL -1 DAY) ELSE (select DATA_OPERACAO from distribuidor) END ")
+			.append("	    from distribuidor ")
+			.append("	    union ")
+			.append("	    select CASE WHEN (select DIA_RECOLHIMENTO_TERCEIRO from distribuidor) THEN ") 
+			.append("	                DATE_ADD(CASE WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 0) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL -2 DAY) ")
+			.append("	                WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 7) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL -1 DAY) ")
+			.append("	                ELSE (select DATA_OPERACAO from distribuidor) END,  INTERVAL -2 DAY) ELSE (select DATA_OPERACAO from distribuidor) END ")
+			.append("	    from distribuidor ")
+			.append("	    union ")
+			.append("	    select CASE WHEN (select DIA_RECOLHIMENTO_QUARTO from distribuidor) THEN ") 
+			.append("	                DATE_ADD(CASE WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 0) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL -2 DAY) ")
+			.append("	                WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 7) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL -1 DAY) ")
+			.append("	                ELSE (select DATA_OPERACAO from distribuidor) END,  INTERVAL -3 DAY) ELSE (select DATA_OPERACAO from distribuidor) END ")
+			.append("	    from distribuidor ")
+			.append("	    union ")
+			.append("	    select CASE WHEN (select DIA_RECOLHIMENTO_QUINTO from distribuidor) THEN ") 
+			.append("	                DATE_ADD(CASE WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 0) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL -2 DAY) ")
+			.append("	                WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 7) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL -1 DAY) ")
+			.append("	                ELSE (select DATA_OPERACAO from distribuidor) END,  INTERVAL -4 DAY) ELSE (select DATA_OPERACAO from distribuidor) END ")
+			.append("	    from distribuidor ")
+			.append("	) ")
+			.append("	and cota_id = :idCota ")
+			.append("	group by dia ")
+			.append("	having dia > 0");
+		
+		SQLQuery sqlQuery = getSession().createSQLQuery(sql.toString());
+		
+		sqlQuery.setParameter("idCota", idCota);
+		
+		return (sqlQuery.list() != null && !sqlQuery.list().isEmpty());
+		
+	}
 	
 	
 }
