@@ -226,7 +226,7 @@ var fechamentoEncalheController = $.extend(true, {
 			}
 			
 			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
-			row.cell.fisico = '<input class="" isEdicao="true" type="text" onkeypress="fechamentoEncalheController.nextInputExemplares('+index+',window.event);" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" value="' + valorFisico + '" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ')" ' + fechado + '/>';
+			row.cell.fisico = '<input class="" isEdicao="true" type="text" onkeypress="fechamentoEncalheController.nextInputExemplares('+index+',event); fechamentoEncalheController.retirarCheckBox('+index+');" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" value="' + valorFisico + '" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ')" ' + fechado + '/>';
 
 			if(row.cell.replicar == 'true')
 			{
@@ -426,7 +426,9 @@ var fechamentoEncalheController = $.extend(true, {
 			contextPath + "/devolucao/fechamentoEncalhe/verificarEncerrarOperacaoEncalhe",
 			params,
 			function (result) {
-			
+				
+				console.log(result);
+				
 				var tipoMensagem, listaMensagens;
 				
 				if(result && result.tipoMensagem)
@@ -1112,10 +1114,25 @@ var fechamentoEncalheController = $.extend(true, {
 	
 	nextInputExemplares : function(curIndex,evt) {
 		
-		if (evt.keyCode == 13) {
-			var nextElement = $('[tabindex=' + (curIndex + 1) + ']');
-			nextElement.select();
-			nextElement.focus();
+		var num = (evt.keyCode != 0 ? evt.keyCode : evt.charCode);
+		if(num>=48 & num<=57) {
+			if (evt.keyCode == 13) {
+				var nextElement = $('[tabindex=' + (curIndex + 1) + ']');
+				nextElement.select();
+				nextElement.focus();
+			} 
+	  		return true;
+		} else {
+			 return false; 
+		}
+	},
+	
+	retirarCheckBox : function(index) {
+		if($("#ch" + index).is(":checked")) {
+			$("#ch" + index).attr("checked", false);
+		}
+		if($("#sel").is(":checked")) {
+			$("#sel").attr("checked", false);
 		}
 	}
 	

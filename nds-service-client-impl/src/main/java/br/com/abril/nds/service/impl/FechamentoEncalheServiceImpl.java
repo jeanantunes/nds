@@ -919,7 +919,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Transactional
 	public void encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario,FiltroFechamentoEncalheDTO filtroSessao)  {
 
-		Integer totalCotasAusentes = this.buscarTotalCotasAusentes(dataEncalhe, true);
+		Integer totalCotasAusentes = this.buscarTotalCotasAusentesSemPostergado(dataEncalhe, true);
 		
 		if (totalCotasAusentes > 0) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cotas ausentes existentes!");
@@ -1394,5 +1394,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 	
 		return listaEncalheSession;
+	}
+
+	@Override
+	public Integer buscarTotalCotasAusentesSemPostergado(Date dataEncalhe, boolean isSomenteCotasSemAcao) { 
+		return this.fechamentoEncalheRepository.obterTotalCotasAusentesSemPostergado(dataEncalhe, isSomenteCotasSemAcao, null, null, 0, 0);
+	
 	}
 }
