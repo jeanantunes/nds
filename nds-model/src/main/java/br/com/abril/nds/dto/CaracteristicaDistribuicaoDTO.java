@@ -11,6 +11,8 @@ import br.com.abril.nds.util.export.Exportable;
 @Exportable
 public class CaracteristicaDistribuicaoDTO implements Serializable{
 
+	private static final long serialVersionUID = -7289100234414430049L;
+
 	@Export(label="Codigo",exhibitionOrder=1)
 	private String codigoProduto;
 	
