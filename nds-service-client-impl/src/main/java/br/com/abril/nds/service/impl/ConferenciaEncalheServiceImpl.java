@@ -723,7 +723,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(controleConferenciaEncalheCota.getId());
 			
-			this.atualizaDiaRecolhimentoEmListaConferenciaEncalheDTO(listaConferenciaEncalheDTO, dataOperacao);
+			//this.atualizaDiaRecolhimentoEmListaConferenciaEncalheDTO(listaConferenciaEncalheDTO, dataOperacao);
 			
 			infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);
 			
@@ -774,7 +774,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		infoConfereciaEncalheCota.setValorVendaDia(BigDecimal.ZERO);
 		
-		infoConfereciaEncalheCota.setDistribuidorAceitaJuramentado(this.distribuidorService.aceitaJuramentado());
+		infoConfereciaEncalheCota.setDistribuidorAceitaJuramentado(this.controleConferenciaEncalheCotaRepository.obterAceitaJuramentado(cota.getId()));
 		
 		return infoConfereciaEncalheCota;
 	}

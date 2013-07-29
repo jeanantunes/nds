@@ -749,22 +749,22 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append("	where 1=1	");
 		
 		if(filtro.getDataMovimento() != null) {
-			sql.append("	MOVIMENTO_ESTOQUE_COTA.DATA = :dataMovimento ");
+			sql.append("	AND MOVIMENTO_ESTOQUE_COTA.DATA = :dataMovimento ");
 		}
 		
 		if(filtro.getDataRecolhimento() != null) {
-			sql.append("	and CHAMADA_ENCALHE.DATA_RECOLHIMENTO = :dataRecolhimento ");
+			sql.append("	AND CHAMADA_ENCALHE.DATA_RECOLHIMENTO = :dataRecolhimento ");
 		}
 		
 		if(filtro.getNumeroCota()!=null) {
-			sql.append(" and COTA.NUMERO_COTA = :numeroCota  ");
+			sql.append(" AND COTA.NUMERO_COTA = :numeroCota  ");
 		}
 		
 		if(filtro.getIdFornecedor() != null) {
-			sql.append(" and PRODUTO_FORNECEDOR.FORNECEDORES_ID = :idFornecedor ");
+			sql.append(" AND PRODUTO_FORNECEDOR.FORNECEDORES_ID = :idFornecedor ");
 		}
 		
-		sql.append(" and PRODUTO_EDICAO.ID = :idProdutoEdicao ");
+		sql.append(" AND PRODUTO_EDICAO.ID = :idProdutoEdicao ");
 
 		PaginacaoVO paginacao = filtro.getPaginacao();
 
@@ -881,28 +881,28 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append("	where 1=1 ");
 		
 		if(filtro.getDataMovimento() != null) {
-			sql.append("	MOVIMENTO_ESTOQUE_COTA.DATA = :dataMovimento ");
+			sql.append(" AND MOVIMENTO_ESTOQUE_COTA.DATA = :dataMovimento ");
 		}
 		
 		if(filtro.getDataRecolhimento() != null) {
-			sql.append("	and CHAMADA_ENCALHE.DATA_RECOLHIMENTO = :dataRecolhimento ");
+			sql.append(" AND CHAMADA_ENCALHE.DATA_RECOLHIMENTO = :dataRecolhimento ");
 		}
 		
 		if(filtro.getNumeroCota()!=null) {
-			sql.append(" and COTA.NUMERO_COTA = :numeroCota  ");
+			sql.append(" AND COTA.NUMERO_COTA = :numeroCota  ");
 		}
 		
 		if(filtro.getIdFornecedor() != null) {
-			sql.append(" and PRODUTO_FORNECEDOR.FORNECEDORES_ID =  :idFornecedor ");
+			sql.append(" AND PRODUTO_FORNECEDOR.FORNECEDORES_ID = :idFornecedor ");
 		}
 		
-		sql.append(" and PRODUTO_EDICAO.ID =  :idProdutoEdicao ");
+		sql.append(" AND PRODUTO_EDICAO.ID = :idProdutoEdicao ");
 		
 		sql.append(" ) as consultaEncalheDetalhe ");
 
 		SQLQuery sqlquery = getSession().createSQLQuery(sql.toString());
 		
-		if(filtro.getNumeroCota()!=null) {
+		if(filtro.getNumeroCota() != null) {
 			sqlquery.setParameter("numeroCota", filtro.getNumeroCota());
 		}
 

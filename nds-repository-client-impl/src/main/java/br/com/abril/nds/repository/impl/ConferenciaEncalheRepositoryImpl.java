@@ -471,7 +471,10 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append(" CONTROLE_CONF_ENC_COTA.DATA_OPERACAO AS dataConferencia,  ");
 		hql.append(" CONF_ENCALHE.OBSERVACAO AS observacao, 	");
-		hql.append(" CONF_ENCALHE.JURAMENTADA AS juramentada 	");
+		hql.append(" CONF_ENCALHE.JURAMENTADA AS juramentada, 	");
+		hql.append(" DATEDIFF(CASE WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 0) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 1 DAY) ");
+		hql.append(" WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 7) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 2 DAY) ");
+		hql.append(" ELSE (select DATA_OPERACAO from distribuidor) END, DATA_RECOLHIMENTO) + 1 AS dia ");
 
 		hql.append(" FROM ");
 
@@ -534,6 +537,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		((SQLQuery)query).addScalar("precoComDesconto");
 		((SQLQuery)query).addScalar("valorTotal");
 		((SQLQuery)query).addScalar("dataConferencia");
+		((SQLQuery)query).addScalar("dia", StandardBasicTypes.INTEGER);
 
 		
 		query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);
