@@ -1961,8 +1961,6 @@ public class ConferenciaEncalheController extends BaseController {
 				
 		conferenciaEncalheDTO.setDia(diaRecolhimento + 1);
 		
-		conferenciaEncalheDTO.setJuramentada(true);
-		
 		return conferenciaEncalheDTO;
 	}
 	
