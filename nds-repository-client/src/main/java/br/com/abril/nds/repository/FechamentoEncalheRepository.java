@@ -73,4 +73,6 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
 
 	List<FechamentoFisicoLogicoDTO> buscarMovimentoEstoqueCotaVendaProduto(
 			FiltroFechamentoEncalheDTO filtro, ArrayList<Long> listaDeCodigosProduto);
+
+	Integer obterTotalCotasAusentesSemPostergado(Date dataEncalhe, boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp);
 }

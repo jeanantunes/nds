@@ -373,7 +373,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	
 	public Integer obterTotalCotasAusentes(Date dataEncalhe, 
 			boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp) {
-		
+			
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append(" select count(idCota) from  ");
@@ -485,6 +485,92 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	        
 		return sql;
 	}
+	
+	
+	private StringBuffer getSqlCotaAusenteComChamadaEncalheSemPostergado(boolean indCount, boolean isSomenteCotasSemAcao) {
+		
+		StringBuffer sql = new StringBuffer();
+		
+		if(indCount) {
+		
+			sql.append("	 select                                                             ");
+			sql.append("        cota.ID as idCota,                                              ");
+			sql.append("        false as indMFCNaoConsolidado                                   ");
+		
+		} else {
+
+			sql.append("	 select                                                             ");
+			sql.append("        cota.ID as idCota,                                              ");
+			sql.append("        cota.NUMERO_COTA as numeroCota,                                 ");
+			sql.append("        coalesce(pessoa.NOME,                                           ");
+			sql.append("        pessoa.RAZAO_SOCIAL) as colaboradorName,                        ");
+			sql.append("        box.NOME as boxName,                                            ");
+			sql.append("        roteiro.DESCRICAO_ROTEIRO as roteiroName,                       ");
+			sql.append("        rota.DESCRICAO_ROTA as rotaName,                                ");
+			sql.append(" 		true as indPossuiChamadaEncalheCota, 							");
+			sql.append(" 		false as indMFCNaoConsolidado, 									");
+			sql.append("        coalesce(chamadaEncalheCota.FECHADO, 0)  as fechado,            ");
+			sql.append("        coalesce(chamadaEncalheCota.POSTERGADO, 0) as postergado,       		");
+			sql.append("        coalesce(chamadaEncalhe.DATA_RECOLHIMENTO, :dataEncalhe) as dataEncalhe ");
+
+			
+		}
+		
+		
+		sql.append("	from                                                                ");
+		sql.append("        Cota cota                                                       ");
+		sql.append("	inner join                                                          ");
+		sql.append("        CHAMADA_ENCALHE_COTA chamadaEncalheCota                         ");
+		sql.append("            on chamadaEncalheCota.COTA_ID=cota.ID                       ");         
+		sql.append("	inner join                                                          ");
+		sql.append("        CHAMADA_ENCALHE chamadaEncalhe                                  ");
+		sql.append("            on chamadaEncalheCota.CHAMADA_ENCALHE_ID=chamadaEncalhe.ID  ");         
+		sql.append("	inner join                                                          ");
+		sql.append("        PESSOA pessoa                                                   ");                 
+		sql.append("            on cota.PESSOA_ID=pessoa.ID                                 ");         
+		sql.append("	inner join                                                          ");
+		sql.append("        BOX box                                                         ");                 
+		sql.append("            on cota.BOX_ID=box.ID                                       ");         
+		sql.append("	inner join                                                          ");
+		sql.append("        PDV pdv                                                         ");                 
+		sql.append("            on cota.ID=pdv.COTA_ID                                      ");
+		sql.append("    left outer join                                                     ");
+		sql.append("        ROTA_PDV rotaPdv                                                ");                 
+		sql.append("            on pdv.ID=rotaPdv.PDV_ID                                    ");
+		sql.append("	left outer join                                                     ");
+		sql.append("    	ROTA rota                                                       ");
+		sql.append("    		on rotaPdv.ROTA_ID=rota.ID                                  ");
+		sql.append("    left outer join                                                     ");
+		sql.append("        ROTEIRO roteiro                                                 ");
+		sql.append("        	on rota.ROTEIRO_ID=roteiro.ID                               ");
+		sql.append("    where                                                               ");
+		sql.append("        chamadaEncalhe.DATA_RECOLHIMENTO = 	:dataEncalhe                ");
+		sql.append("        and chamadaEncalheCota.postergado = :postergadoCota             ");
+		sql.append("        and cota.ID not in  (                                           ");
+		sql.append("            select                                                      ");
+		sql.append("                distinct( cec.COTA_ID )                                 ");
+		sql.append("            from                                                        ");
+		sql.append("                controle_conferencia_encalhe_cota cec                   ");
+		sql.append("            where                                                       ");
+		sql.append("                cec.data_operacao = :dataEncalhe                        ");
+		sql.append("                and  cec.status = :statusConcluido         				");     
+		sql.append("        )                                                               ");
+		sql.append("		and pdv.PONTO_PRINCIPAL = :principal                            ");
+		
+		if (isSomenteCotasSemAcao) {
+			sql.append(" and ( chamadaEncalheCota.FECHADO = false or chamadaEncalheCota.FECHADO is null ) 		");
+		}
+		
+		sql.append("	group by                                      ");
+		sql.append("        cota.ID                                   ");
+		        
+		        
+		return sql;
+	}
+	
+	
+	
+	
 	
 	private StringBuffer getSqlCotaAusenteSemChamadaEncalhe(boolean indCount, boolean isSomenteCotasSemAcao) {
 		
@@ -1195,6 +1281,43 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		return query.list();
 
+	}
+
+	@Override
+	public Integer obterTotalCotasAusentesSemPostergado(Date dataEncalhe, boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select count(idCota) from  ");
+		
+		sql.append(" ( ");
+		
+		sql.append(getSqlCotaAusenteComChamadaEncalheSemPostergado(true, isSomenteCotasSemAcao).toString());
+		sql.append(" union all ");
+		sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, isSomenteCotasSemAcao).toString());		 
+
+		sql.append(" ) as ausentes	");
+		
+		Query query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("dataEncalhe", dataEncalhe);
+		
+		query.setParameter("postergadoCota", false);
+		
+		query.setParameter("principal", true);
+
+		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO.name());
+		
+		query.setParameter("statusConcluido", StatusOperacao.CONCLUIDO.name());
+		
+		query.setParameter("inativo", SituacaoCadastro.INATIVO.name());
+		
+		query.setParameter("pendente", SituacaoCadastro.PENDENTE.name());
+		
+		BigInteger qtde = (BigInteger) query.uniqueResult();
+		
+		return ( qtde != null ) ? qtde.intValue() : 0;
+		
 	}
 	
 	
