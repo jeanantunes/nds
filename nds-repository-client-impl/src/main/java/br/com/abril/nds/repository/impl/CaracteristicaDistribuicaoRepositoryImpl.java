@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.CaracteristicaDistribuicaoDTO;
 import br.com.abril.nds.dto.CaracteristicaDistribuicaoSimplesDTO;
+import br.com.abril.nds.dto.filtro.FiltroAnaliseEstudoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaCaracteristicaDistribuicaoDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaCaracteristicaDistribuicaoSimplesDTO;
 import br.com.abril.nds.repository.CaracteristicaDistribuicaoRepository;
@@ -86,7 +87,7 @@ public class CaracteristicaDistribuicaoRepositoryImpl   implements
 		.append(" left join estoque_produto est on est.PRODUTO_EDICAO_ID = ped.ID  ")
 		.append(" where  1=1 ");
 		if(filtro.getCodigoProduto() !=null && filtro.getCodigoProduto() != ""){
-			sql.append(" and pro.codigo = " ).append(filtro.getCodigoProduto());
+			sql.append(" and pro.id = " ).append(filtro.getIdProduto());
 		}
 		if(filtro.getClassificacaoProduto()!=null && filtro.getClassificacaoProduto()!=""){
 			sql.append(" and upper(tipoclas.descricao) = upper('").append(filtro.getClassificacaoProduto()).append("')");
@@ -139,11 +140,81 @@ public class CaracteristicaDistribuicaoRepositoryImpl   implements
 				}
 				
 		}
-				sql.append(" order by pro.nome ASC, ped.NUMERO_EDICAO DESC ");
+				sql.append(this.ordenarConsultaCaracteristicaDistribuicaoDetalhe(filtro));
 				Query  query = getSession().createSQLQuery(sql.toString()); 
 				 query.setResultTransformer(new AliasToBeanResultTransformer(CaracteristicaDistribuicaoDTO.class));
 				 configurarPaginacaoPesquisaDetalhe(filtro,query);
 				return query.list();
+	}
+	
+	private String ordenarConsultaCaracteristicaDistribuicaoDetalhe(FiltroConsultaCaracteristicaDistribuicaoDetalheDTO filtro) {
+
+		StringBuilder sql = new StringBuilder();
+
+		if (filtro.getOrdemColuna() != null) {
+
+		    switch (filtro.getOrdemColuna()) {
+
+		    
+		    case CODIGO:
+		    	sql.append(" ORDER BY codigoProduto ");
+		    	break;
+
+		    case PRODUTO:
+		    	sql.append(" ORDER BY nomeProduto ");
+		    	break;
+		    	
+		    case EDITOR:
+		    	sql.append(" ORDER BY nomeEditor ");
+		    	break;
+		    	
+		    case EDICAO:
+				sql.append(" ORDER BY numeroEdicao ");
+				break;
+				
+		    case PRECO_CAPA:
+		    	sql.append(" ORDER BY precoCapa ");
+		    	break;
+
+		    case CLASSIFICACAO:
+				sql.append(" ORDER BY classificacao ");
+				break;
+		    
+		    case SEGMENTO:
+				sql.append(" ORDER BY segmento ");
+				break;
+			
+		    case DT_LANCAMENTO:
+				sql.append(" ORDER BY dataLancamento ");
+				break;
+			
+		    case DT_RECOLHIMENTO:
+				sql.append(" ORDER BY dataRecolhimento ");
+				break;
+				
+		    case REPARTE:
+				sql.append(" ORDER BY reparte ");
+				break;
+				
+		    case VENDA:
+				sql.append(" ORDER BY venda ");
+				break;
+				
+		    case CHAMADA_CAPA:
+				sql.append(" ORDER BY chamadaCapa ");
+				break;
+
+		    default:
+			sql.append(" ORDER BY dataLancamento desc ");
+		    }
+
+		    if (filtro.getPaginacao() != null && filtro.getPaginacao().getOrdenacao() != null) {
+		    	sql.append(filtro.getPaginacao().getOrdenacao().toString());
+		    }
+
+		}
+
+		return sql.toString();
 	}
 
 	private void configurarPaginacaoPesquisaDetalhe(FiltroConsultaCaracteristicaDistribuicaoDetalheDTO dto,Query query) {
