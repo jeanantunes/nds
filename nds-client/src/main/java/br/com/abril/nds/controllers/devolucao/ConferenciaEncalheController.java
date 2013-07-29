@@ -1955,11 +1955,13 @@ public class ConferenciaEncalheController extends BaseController {
 			this.setListaConferenciaEncalheToSession(lista);
 		}
 
-		Integer diaRecolhimento = this.distribuidorService.obterDiaDeRecolhimentoDaData(conferenciaEncalheDTO.getDataRecolhimento(), 
+		Integer diaRecolhimento = this.distribuidorService.obterDiaDeRecolhimentoDaData(dataOperacao, 
 				                                                            conferenciaEncalheDTO.getDataRecolhimento(), 
 				                                                            produtoEdicao.getId());
 				
 		conferenciaEncalheDTO.setDia(diaRecolhimento + 1);
+		
+		conferenciaEncalheDTO.setJuramentada(true);
 		
 		return conferenciaEncalheDTO;
 	}
