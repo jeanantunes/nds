@@ -75,6 +75,7 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	private String tipoClassificacaoProdutoDescricao;
 	private Boolean estudoLiberado;
 	private BigInteger qtdeReparteEstudo;
+	private String codigoICD;
 	
 	public String getNomeUsuario() {
 		return nomeUsuario;
@@ -250,7 +251,10 @@ public class InformacoesProdutoDTO extends FiltroDTO implements Serializable {
 	public void setQtdeReparteEstudo(BigInteger qtdeReparteEstudo) {
 		this.qtdeReparteEstudo = qtdeReparteEstudo;
 	}
-
-	
-	
+	public String getCodigoICD() {
+		return codigoICD;
+	}
+	public void setCodigoICD(String codigoICD) {
+		this.codigoICD = codigoICD;
+	}
 }

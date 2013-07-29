@@ -10,21 +10,33 @@ $(".produtosInfosGrid").flexigrid({
 		preProcess : informacoesProdutoController.executarPreProcessProdutosInfosGrid,
 		dataType : 'json',
 		colModel : [{
+			display : 'Codigo',
+			name : 'codigoICD',
+			width : 55,
+			sortable : true,
+			align : 'center'
+		},{
 			display : 'Edição',
 			name : 'numeroEdicao',
 			width : 40,
 			sortable : true,
-			align : 'left'
+			align : 'center'
 		},{
 			display : 'Nome',
 			name : 'nomeProduto',
-			width : 40,
+			width : 110,
+			sortable : true,
+			align : 'center'
+		},{
+			display : 'Classificação',
+			name : 'tipoClassificacaoProdutoDescricao',
+			width : 70,
 			sortable : true,
 			align : 'center'
 		},{
 			display : 'Período',
 			name : 'periodo',
-			width : 40,
+			width : 50,
 			sortable : true,
 			align : 'center'
 		},{
@@ -32,13 +44,13 @@ $(".produtosInfosGrid").flexigrid({
 			name : 'preco',
 			width : 50,
 			sortable : true,
-			align : 'right'
+			align : 'center'
 		},{
 			display : 'Status',
 			name : 'status',
 			width : 70,
 			sortable : true,
-			align : 'left'
+			align : 'center'
 		},{
 			display : 'Rep.',
 			name : 'reparteDistribuido',
@@ -60,13 +72,13 @@ $(".produtosInfosGrid").flexigrid({
 		},{
 			display : 'Data Lcto',
 			name : 'dataLcto',
-			width : 50,
+			width : 55,
 			sortable : true,
 			align : 'center'
 		},{
 			display : 'Data Rclto',
 			name : 'dataRcto',
-			width : 50,
+			width : 55,
 			sortable : true,
 			align : 'center'
 		},{
@@ -74,7 +86,7 @@ $(".produtosInfosGrid").flexigrid({
 			name : 'algoritmo',
 			width : 50,
 			sortable : true,
-			align : 'left'
+			align : 'center'
 		},{
 			display : 'Rep. Min.',
 			name : 'reparteMinimo',
@@ -84,19 +96,19 @@ $(".produtosInfosGrid").flexigrid({
 		},{
 			display : 'Estudo',
 			name : 'estudo' ,
-			width : 40,
+			width : 60,
 			sortable : true,
-			align : 'left'
+			align : 'center'
 		},{
 			display : 'Usuário',
 			name : 'nomeUsuario',
 			width : 50,
 			sortable : true,
-			align : 'left'
+			align : 'center'
 		},{
 			display : 'Data',
 			name : 'dataAlteracao',
-			width : 54,
+			width : 55,
 			sortable : true,
 			align : 'center'
 		},{
@@ -118,7 +130,7 @@ $(".produtosInfosGrid").flexigrid({
 		useRp : true,
 		rp : 15,
 		showTableToggleBtn : true,
-		width : 1020,
+		width : 980,
 		height : 255
 	});	
 	

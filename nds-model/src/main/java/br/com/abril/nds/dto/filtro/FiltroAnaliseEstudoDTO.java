@@ -119,7 +119,4 @@ public class FiltroAnaliseEstudoDTO extends FiltroDTO {
 	public void setIdProduto(Long idProduto) {
 		this.idProduto = idProduto;
 	}
-	
-	
-	
 }
