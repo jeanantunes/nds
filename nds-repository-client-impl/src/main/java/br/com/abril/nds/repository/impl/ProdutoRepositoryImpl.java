@@ -397,7 +397,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 	}
 
 	@Override
-	public String obterCodigoProdinPorCodICD(String codigoProduto) {
+	public String obterCodigoProdinPorCodICD(String codigoICD) {
 		
 		StringBuffer hql = new StringBuffer();
 		
@@ -405,14 +405,10 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		hql.append(" p.codigo ");
 		hql.append(" from Produto p ");
 		
-		if(codigoProduto.length() == 6){
-			hql.append(" where p.codigoICD = :codigoProduto");			
-		}else{
-			hql.append(" where p.codigo = :codigoProduto");
-		}
+		hql.append(" where p.codigoICD = :codigoProduto");			
 		
 		Query query = super.getSession().createQuery(hql.toString());
-		query.setParameter("codigoProduto", codigoProduto);
+		query.setParameter("codigoProduto", codigoICD);
 		
 		return (String) query.uniqueResult();
 	}
