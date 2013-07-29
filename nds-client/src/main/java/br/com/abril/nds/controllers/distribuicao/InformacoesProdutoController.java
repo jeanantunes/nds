@@ -28,8 +28,10 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.InformacoesProdutoService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -49,6 +51,9 @@ public class InformacoesProdutoController extends BaseController {
 	
 	@Autowired
 	private InformacoesProdutoService infoProdService;
+	
+	@Autowired
+	private ProdutoService prodService;
 	
 	@Autowired
 	private HttpSession session;
@@ -84,17 +89,26 @@ public class InformacoesProdutoController extends BaseController {
 		
 		this.tratarArgumentosFiltro(filtro);
 		
-		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
+		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+		
+		filtro.setOrdemColuna(Util.getEnumByStringValue(FiltroInformacoesProdutoDTO.OrdemColuna.values(), sortname));
 		
 		tratarFiltro(filtro);
 		
-		TableModel<CellModelKeyValue<InformacoesProdutoDTO>> tableModel = gridProdutos(filtro);
+		TableModel<CellModelKeyValue<InformacoesProdutoDTO>> tableModel = gridProdutos(filtro, sortname);
 		
 		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
 
 	}
 	
-	private TableModel<CellModelKeyValue<InformacoesProdutoDTO>> gridProdutos (FiltroInformacoesProdutoDTO filtro) {
+	private TableModel<CellModelKeyValue<InformacoesProdutoDTO>> gridProdutos (FiltroInformacoesProdutoDTO filtro, String sortname) {
+		
+		String codigoProdin;
+		
+		if(filtro.getCodProduto().length() == 6){
+			codigoProdin = prodService.obterCodigoProdinPorICD(filtro.getCodProduto());
+			filtro.setCodProduto(codigoProdin);
+		}
 		
 		List<InformacoesProdutoDTO> produtos = infoProdService.buscarProduto(filtro);
 
@@ -107,7 +121,7 @@ public class InformacoesProdutoController extends BaseController {
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(produtos));
 
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-
+		
 		tableModel.setTotal(filtro.getPaginacao().getQtdResultadosTotal());
 
 		return tableModel;

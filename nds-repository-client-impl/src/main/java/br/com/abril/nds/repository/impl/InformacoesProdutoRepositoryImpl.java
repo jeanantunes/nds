@@ -38,6 +38,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" SELECT ");
 		
 		hql.append(" produto.codigo AS codProduto, ");
+		hql.append(" produto.codigoICD AS codigoICD, ");
 		hql.append(" prodEdicao.numeroEdicao AS numeroEdicao, ");
 		hql.append(" produto.nome AS nomeProduto, ");
 		hql.append(" produto.periodicidade AS periodo, ");
@@ -46,7 +47,6 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" prodEdicao.reparteDistribuido AS reparteDistribuido, ");
 		hql.append(" produto.percentualAbrangencia AS percentualAbrangencia, ");
 		hql.append(" (select t.descricao from TipoClassificacaoProduto t where t.id=produto.tipoClassificacaoProduto.id) as tipoClassificacaoProdutoDescricao, ");
-		
 		hql.append(" lancamento.dataLancamentoPrevista AS dataLcto, ");
 		hql.append(" lancamento.dataRecolhimentoPrevista AS dataRcto, ");
 		hql.append(" CASE ");
@@ -74,8 +74,6 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" left join prodEdicao.produto AS produto ");
 		hql.append(" left join prodEdicao.lancamentos AS lancamento ");
 		hql.append(" left join produto.algoritmo AS algortm, ");
-//		hql.append(" inner join produto.tipoClassificacaoProduto ");
-		// hql.append(" left join prodEdicao.estudo AS estudoG ");
 		hql.append(" Estudo as estudoG ");
 		hql.append(" left join estudoG.produtoEdicao ");
 		hql.append(" left join estudoG.usuario as usuarioEstudo ");
@@ -109,12 +107,119 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		
 		hql.append(StringUtils.join(whereClauseList, " AND "));
 		
+		
 		hql.append(" group BY estudoG.id ");
-		hql.append(" ORDER BY numeroEdicao desc ");
+		hql.append(this.ordenarConsultaBuscarProdutos(filtro));
 		
 		Query query = super.getSession().createQuery(hql.toString());
-
 		
+		setParameterBuscarProduto(filtro, query);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(InformacoesProdutoDTO.class));
+		
+		if (filtro != null){
+			configurarPaginacao(filtro, query);
+		}
+		return query.list();
+	}
+
+	
+	private String ordenarConsultaBuscarProdutos(FiltroInformacoesProdutoDTO filtro) {
+
+		StringBuilder hql = new StringBuilder();
+
+		if (filtro.getOrdemColuna() != null) {
+
+		    switch (filtro.getOrdemColuna()) {
+
+		    case CODIGO:
+		    	hql.append(" ORDER BY codigoICD ");
+			break;
+
+		    case EDICAO:
+		    	hql.append(" ORDER BY numeroEdicao ");
+			break;
+
+		    case PRODUTO:
+		    	hql.append(" ORDER BY nomeProduto ");
+			break;
+
+		    case CLASSIFICACAO:
+		    	hql.append(" ORDER BY tipoClassificacaoProdutoDescricao ");
+			break;
+
+		    case PERIODO:
+		    	hql.append(" ORDER BY periodo ");
+			break;
+
+		    case PRECO:
+		    	hql.append(" ORDER BY preco ");
+			break;
+
+		    case STATUS:
+		    	hql.append(" ORDER BY status ");
+			break;
+			
+		    case REPARTE:
+	    		hql.append("ORDER BY reparteDistribuido ");
+			break;
+			
+		    case VENDA:
+		    	hql.append("ORDER BY venda ");
+			break;
+				
+		    case ABRANGENCIA:
+	    		hql.append("ORDER BY percentualAbrangencia ");
+			break;
+				
+		    case DATA_LANCAMENTO:
+				hql.append("ORDER BY dataLcto ");
+			break;
+				
+		    case DATA_RELANCAMENTO:
+				hql.append("ORDER BY dataRcto ");
+			break;
+				
+		    case ALGORITMO:
+				hql.append("ORDER BY algoritmo ");
+			break;
+				
+		    case REPARTE_MINIMO:
+				hql.append("ORDER BY reparteMinimo ");
+			break;
+				
+		    case ESTUDO:
+				hql.append("ORDER BY estudo ");
+			break;
+				
+		    case USUARIO:
+				hql.append("ORDER BY nomeUsuario ");
+			break;
+				
+		    case DATA:
+				hql.append("ORDER BY dataAlteracao ");
+			break;
+				
+		    case HORA:
+				hql.append("ORDER BY hora ");
+			break;
+				
+		    default:
+				hql.append(" ORDER BY estudo desc ");
+		    }
+
+		    if (filtro.getPaginacao() != null && filtro.getPaginacao().getOrdenacao() != null) {
+		    	hql.append(filtro.getPaginacao().getOrdenacao().toString());
+		    }
+
+		}else{
+			hql.append(" ORDER BY estudo desc ");
+		}
+		return hql.toString();
+	}
+	
+	private void setParameterBuscarProduto(FiltroInformacoesProdutoDTO filtro,
+			Query query) {
 		if(filtro.getCodProduto()!=null){
 			query.setParameter("COD_PRODUTO", filtro.getCodProduto());
 		}
@@ -132,38 +237,8 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		if(filtro.getIdTipoClassificacaoProd() !=null && filtro.getIdTipoClassificacaoProd() > 0){
 			query.setParameter("ID_CLASSIFICACAO", filtro.getIdTipoClassificacaoProd());
 		}
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(InformacoesProdutoDTO.class));
-		
-		if (filtro != null){
-			configurarPaginacao(filtro, query);
-		}
-		return query.list();
 	}
 		
-	private String paramsDinamicosBuscarProdutos (Query query, FiltroInformacoesProdutoDTO filtro) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		if(filtro.getIdTipoClassificacaoProd() !=null && filtro.getIdTipoClassificacaoProd() > 0){
-			query.setParameter("ID_CLASSIFICACAO", filtro.getIdTipoClassificacaoProd());
-		}
-		
-		return hql.toString();
-	}
-	
-	private String getSqlWhereBuscarProdutos (FiltroInformacoesProdutoDTO filtro) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		if(filtro.getIdTipoClassificacaoProd() !=null && filtro.getIdTipoClassificacaoProd() > 0){
-			hql.append(" AND produto.tipoClassificacaoProduto.id = :ID_CLASSIFICACAO ");
-		}
-
-		return hql.toString();
-	}
-	
-	
 	@Override
 	public InformacoesCaracteristicasProdDTO buscarCaracteristicas(String codProduto, Long numEdicao) {
 
