@@ -652,9 +652,9 @@ public class ParametroCobrancaCotaController extends BaseController {
 
 		return arquivo;
 	}
-
-	private void salvarContrato(Date inicioContrato, Date terminoContrato) {
-
+	
+	private boolean salvarContrato(Date inicioContrato, Date terminoContrato){
+		
 		if (this.session.getAttribute(CONTRATO_UPLOADED) != null) {
 
 			ContratoVO contrato = (ContratoVO) this.session.getAttribute(CONTRATO_UPLOADED);
@@ -720,7 +720,28 @@ public class ParametroCobrancaCotaController extends BaseController {
 						}
 				}
 			}
+			
+			return true;
 		}
+		
+		return false;
+	}
+
+	/**
+	 * Método responsável por postar os dados do contrato da cota.
+	 * @param inicioContrato
+	 * @param terminoContrato
+	 */
+	@Post
+	@Path("/salvarContratoCota")
+	public void salvarContratoCota(Date inicioContrato, Date terminoContrato) {
+
+		if (this.salvarContrato(inicioContrato, terminoContrato)){
+			
+			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Contrato cadastrado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
+		}
+		
+		result.nothing();
 	}
 
 	@Post

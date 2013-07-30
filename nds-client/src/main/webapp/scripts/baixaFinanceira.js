@@ -1347,7 +1347,6 @@ var baixaFinanceiraController = $.extend(true, {
 			form: $("#dialog-total", baixaFinanceiraController.workspace).parents("form")
 		});
 	},
-
 	
 	replaceAll : function(string, token, newtoken) {
 		while (string.indexOf(token) != -1) {
@@ -1355,9 +1354,6 @@ var baixaFinanceiraController = $.extend(true, {
 		}
 		return string;
 	},
-	
-	
-	
 	
 	tratarRespostaBaixaAutomatica : function(data) {
 		
