@@ -569,7 +569,7 @@ public class ChamadaoController extends BaseController {
 		if (dataChamadao.compareTo(dataAtual) < 0) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,
-				"A Data do Chamadão deve ser maior ou igual a data do dia!");
+				"A Data do Chamadão deve ser maior que a data de operação!");
 		}
 	}
 	
