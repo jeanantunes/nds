@@ -34,7 +34,7 @@ public abstract class CurrencyUtil {
 		
 		if (valor == null) {
 			
-			return null;
+			return "0,00";
 		}
 
 		return new DecimalFormat("#,##0.00",symbols).format(valor);

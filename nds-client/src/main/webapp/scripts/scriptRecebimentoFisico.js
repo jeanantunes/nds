@@ -1761,7 +1761,7 @@ var recebimentoFisicoController = $.extend(true, {
 		$("#diferencaItem" + idLinha, recebimentoFisicoController.workspace).val("");
 		$("#valorItem" + idLinha, recebimentoFisicoController.workspace).val("");
 		$("#novoValorTotal", recebimentoFisicoController.workspace).val("");
-		$("#labelValorTotal", recebimentoFisicoController.workspace).text("");
+		$("#labelValorTotal", recebimentoFisicoController.workspace).text("0,00");
 	},
 	
 	isAtributosLancamentoVazios : function(codigo, produto, edicao, precoDesconto, qtdNota, qtdPacote, qtdExemplar) {
@@ -2116,16 +2116,18 @@ var recebimentoFisicoController = $.extend(true, {
     
 	limparCamposNovaNota : function(){
 		
-		$("#novoFornecedor", 	recebimentoFisicoController.workspace).val(-1);
-		$("#novoCnpj", 			recebimentoFisicoController.workspace).val("");
-		$("#novoNumeroNota", 	recebimentoFisicoController.workspace).val("");
-        $("#novoSerieNota", 	recebimentoFisicoController.workspace).val("");
-        $("#novoNfe", 			recebimentoFisicoController.workspace).val("");
-        $("#novoChaveAcesso", 	recebimentoFisicoController.workspace).val("");
-        $("#novoDataEmissao", 	recebimentoFisicoController.workspace).val("");
-        $("#novoDataEntrada", 	recebimentoFisicoController.workspace).val("");
-        $("#novoValorTotal", 	recebimentoFisicoController.workspace).val("");
-        
+		$("#novoFornecedor", 	  recebimentoFisicoController.workspace).val(-1);
+		$("#novoCnpj", 			  recebimentoFisicoController.workspace).val("");
+		$("#novoNumeroNota", 	  recebimentoFisicoController.workspace).val("");
+        $("#novoSerieNota", 	  recebimentoFisicoController.workspace).val("");
+        $("#novoNumeroNotaEnvio", recebimentoFisicoController.workspace).val("");
+        $("#novoNfe", 			  recebimentoFisicoController.workspace).removeAttr("checked");
+        $("#novoChaveAcesso", 	  recebimentoFisicoController.workspace).val("");
+        $("#novoDataEmissao", 	  recebimentoFisicoController.workspace).val("");
+        $("#novoDataEntrada", 	  recebimentoFisicoController.workspace).val("");
+        $("#novoValorTotal", 	  recebimentoFisicoController.workspace).val("");
+        $("#novoReplicarQtde",    recebimentoFisicoController.workspace).removeAttr("checked");
+        $("#labelValorTotal",     recebimentoFisicoController.workspace).text("0,00");
         recebimentoFisicoController.montaGridItens();
 	},
 	
