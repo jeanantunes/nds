@@ -254,6 +254,8 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			politicaSuspensao = parametroCobranca.getPoliticaSuspensao();
 			
 			if (politicaSuspensao != null){
+				
+				parametroCobrancaDTO.setSugereSuspensao(true);
 				parametroCobrancaDTO.setQtdDividasAberto(politicaSuspensao.getNumeroAcumuloDivida());
 				parametroCobrancaDTO.setVrDividasAberto((politicaSuspensao.getValor()!=null?politicaSuspensao.getValor():BigDecimal.ZERO));
 			}

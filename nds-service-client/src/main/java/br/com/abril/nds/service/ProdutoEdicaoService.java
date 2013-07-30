@@ -189,11 +189,12 @@ public interface ProdutoEdicaoService {
 	/**
 	 * Obtem ProdutoEdicao por codigo do produto, numero de edição e numero de lançamento
 	 * @param codigoProduto
+	 * @param idProdutoEdicao
 	 * @param nEdicao
 	 * @param nLancamento
 	 * @return ProdutoEdicao
 	 */
 	ProdutoEdicao obterProdutoEdicaoPorNumeroEdicaoENumeroLancamento(
-			String codigoProduto, Long nEdicao, Integer nLancamento);
+			String codigoProduto, Long idProdutoEdicao, Long nEdicao, Integer nLancamento);
 	
 }

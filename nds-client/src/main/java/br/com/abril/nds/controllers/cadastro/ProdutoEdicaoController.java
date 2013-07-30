@@ -412,12 +412,12 @@ public class ProdutoEdicaoController extends BaseController {
 		if (dto.getNumeroEdicao() != null && dto.getNumeroEdicao() != 0L) {
 
 			ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorNumeroEdicaoENumeroLancamento(codigoProduto,
-					                                                                                              dto.getNumeroEdicao(), 
+					                                                                                              dto.getId(),  
+					                                                                                              dto.getNumeroEdicao(),
 					                                                                                              dto.getNumeroLancamento());
-			
 			if (produtoEdicao != null) {
 				
-				listaMensagens.add("O 'Número de Edição X Número de Lançamento' deve ser unico para esse Produto!");
+				listaMensagens.add("Número do Lançamento já cadastrado para esta Edição!");
 			}	
 		}
 		
