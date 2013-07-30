@@ -208,7 +208,7 @@ public class MapaAbastecimentoController extends BaseController {
 		
 		validarFiltroPesquisa(filtro);
 			
-		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
+		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		
 		tratarFiltro(filtro);
 

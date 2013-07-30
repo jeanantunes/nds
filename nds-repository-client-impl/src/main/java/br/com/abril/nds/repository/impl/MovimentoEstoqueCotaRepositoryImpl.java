@@ -1527,9 +1527,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" select box.id as idBox, ");
 		hql.append(" 		box.codigo || '-'|| box.nome as box, ");
 		hql.append(" 		cota.numeroCota as codigoCota, ");
-		hql.append("       case when (pessoa.nome is not null) then ( pessoa.nome ) ");
-		hql.append("       when (pessoa.razaoSocial is not null) then ( pessoa.razaoSocial ) ");
-		hql.append("       else null end as nomeCota, ");
+		hql.append("        coalesce(pessoa.nome, pessoa.razaoSocial, '') as nomeCota, ");
 		hql.append(" 		count(distinct  produtoEdicao.id) as totalProduto, ");
 		hql.append(" 		lancamento.repartePromocional as materialPromocional, ");
 		hql.append(" 		sum(estudoCota.qtdeEfetiva) as totalReparte, ");
