@@ -593,6 +593,8 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		for (RateioCotaVO rateioCotaVO : listaRateioCotaVO) {
 			
+			rateioCotaVO.setDataMovimento(diferenca.getDataMovimento());
+		
 			RateioDiferenca rateioDiferenca = null;
 			
 			if(rateioCotaVO.getIdRateio()!= null){
