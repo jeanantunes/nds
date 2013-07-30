@@ -625,16 +625,13 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var parametroCobranca = parametroCobrancaCotaController.financeiro.resultParametroCobranca;
 
 		if(parametroCobrancaTela['parametroCobranca.sugereSuspensao'] != parametroCobranca['parametroCobranca.sugereSuspensao']){return true;}
-        if(parametroCobrancaTela['parametroCobranca.contrato'] != parametroCobranca['parametroCobranca.contrato']){return true;}
     	if(parametroCobrancaTela['parametroCobranca.fatorVencimento'] != parametroCobranca['parametroCobranca.fatorVencimento']){return true;}
     	if(parametroCobrancaTela['parametroCobranca.idCota'] != parametroCobranca['parametroCobranca.idCota']){return true;}
     	if(parametroCobrancaTela['parametroCobranca.idFornecedor'] != parametroCobranca['parametroCobranca.idFornecedor']){return true;}
     	if(parametroCobrancaTela['parametroCobranca.idParametroCobranca'] != parametroCobranca['parametroCobranca.idParametroCobranca']){return true;}
-    	if(parametroCobrancaTela['parametroCobranca.inicioContrato'] != parametroCobranca['parametroCobranca.inicioContrato']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.numCota'] != parametroCobranca['parametroCobranca.numCota']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.qtdDividasAberto'] != parametroCobranca['parametroCobranca.qtdDividasAberto']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.sugereSuspensao'] != parametroCobranca['parametroCobranca.sugereSuspensao']){return true;}
-	    //if(parametroCobrancaTela['parametroCobranca.terminoContrato'] != parametroCobranca['parametroCobranca.terminoContrato']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.tipoCota'] != parametroCobranca['parametroCobranca.tipoCota']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.unificaCobranca'] != parametroCobranca['parametroCobranca.unificaCobranca']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.valorMinimo'] != parametroCobranca['parametroCobranca.valorMinimo']){return true;}
@@ -672,6 +669,38 @@ var parametroCobrancaCotaController = $.extend(true, {
 		}
 
 		return false;
+	},
+	
+    salvarSomenteContrato : function(){
+		
+		var inicioContrato 		= $("#parametroCobrancaDateInicio", this.workspace).val();
+		
+        var terminoContrato 	= $("#parametroCobrancaDateTermino", this.workspace).val();
+        
+        var params =  {"inicioContrato": inicioContrato,
+				       "terminoContrato": terminoContrato};
+        
+		$.postJSON(contextPath + "/cota/parametroCobrancaCota/salvarContratoCota",
+				   params,
+				   function(mensagens) {
+			
+			        	   telaMensagem=null;
+			        	   
+			        	   if (mensagens){
+			        		   
+							   var tipoMensagem = mensagens.tipoMensagem;
+							   
+							   var listaMensagens = mensagens.listaMensagens;
+							   
+							   if (tipoMensagem && listaMensagens) {
+								   
+							       exibirMensagem(tipoMensagem, listaMensagens);
+						       }
+			        	   }	   
+	               },
+				   null,
+				   true,
+				   "idModalUnificacao");
 	},
 
 	postarParametroCobranca : function() {
@@ -730,6 +759,10 @@ var parametroCobrancaCotaController = $.extend(true, {
 					}
 			   });
 		   } 
+		   else{
+				
+		       parametroCobrancaCotaController.salvarSomenteContrato();
+		   }
 	    }
 	    else {
 		   $.postJSON(
@@ -1181,7 +1214,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 	     	    parametroCobrancaCotaController.isAlterFornecedoresUnificacao(parametroCobrancaCotaController.obterFornecedoresMarcados()) );
 			
 			if (!parametroCobrancaCotaController.financeiro.formaCobrancaAlterada){
-				
+
 				return;
 			}
 		}
