@@ -26,7 +26,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
-import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
@@ -45,6 +44,7 @@ import br.com.abril.nds.repository.RoteirizacaoRepository;
 import br.com.abril.nds.repository.RoteiroRepository;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.util.OrdenacaoUtil;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -510,13 +510,14 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	 */
 	@Override
 	@Transactional
-	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, String cep, boolean pesquisaPorCota, Long boxID) {
+	public List<PdvRoteirizacaoDTO> obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, 
+			String cep, boolean pesquisaPorCota, Long boxID) {
 		
 		List<PdvRoteirizacaoDTO> listaPdvDTO = new ArrayList<PdvRoteirizacaoDTO>();
 		
-		List<PDV> listaPdv = new ArrayList<PDV>();
-			
-		listaPdv.addAll(this.pdvRepository.obterPDVsDisponiveisPor(numCota, municipio, uf, bairro, cep, pesquisaPorCota, boxID));
+		List<PDV> listaPdv = 
+			this.pdvRepository.obterPDVsDisponiveisPor(
+				numCota, municipio, uf, bairro, cep, pesquisaPorCota, boxID);
 		
 		PdvRoteirizacaoDTO pdvDTO;
 		
@@ -540,16 +541,38 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			if (enderecoPdvEntrega !=null){
 				endereco = enderecoPdvEntrega .getEndereco();
 				pdvDTO.setOrigem(OrigemEndereco.PDV.getDescricao());
-			}
-			else{
-				EnderecoCota enderecoPrincipalCota = itemPdv.getCota().getEnderecoPrincipal();
-				if (enderecoPrincipalCota !=null){
-				    endereco = enderecoPrincipalCota.getEndereco();
-				}    
-				pdvDTO.setOrigem(OrigemEndereco.COTA.getDescricao());
+			} else {
+				
+				Set<EnderecoPDV> enderecosPDV = itemPdv.getEnderecos();
+				
+				if (!enderecosPDV.isEmpty()){
+					for (EnderecoPDV endPdv : itemPdv.getEnderecos()){
+						
+						if (endPdv.isPrincipal()){
+							endereco = endPdv.getEndereco();
+						}
+					}
+					
+					if (endereco == null){
+						endereco = enderecosPDV.iterator().next().getEndereco();
+					}
+					
+					pdvDTO.setOrigem(OrigemEndereco.PDV.getDescricao());
+				}
+				
+				//EnderecoCota enderecoEscolhido = itemPdv.getCota().getEnderecoPrincipal();
+				if (endereco == null){
+				    endereco = itemPdv.getCota().getEnderecoPrincipal().getEndereco();
+				    pdvDTO.setOrigem(OrigemEndereco.COTA.getDescricao());
+				}  
 			}
 			
-			pdvDTO.setEndereco(endereco!=null?endereco.getLogradouro()+", "+endereco.getCidade()+", CEP:"+endereco.getCep():"");
+			pdvDTO.setEndereco(endereco != null ? 
+					endereco.getTipoLogradouro() +
+					endereco.getLogradouro() + " " + 
+					"nº.: " + endereco.getNumero() + ", " +
+					endereco.getCidade() +
+					", CEP:" + Util.adicionarMascaraCEP(endereco.getCep()) : "");
 
 			pdvDTO.setPdv(itemPdv.getNome());
 
