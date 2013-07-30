@@ -2250,9 +2250,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		hql.append(" from Cota cota ");
 		hql.append(" join cota.pessoa pessoa ");
-		hql.append(" join cota.pdvs pdv ");
-		hql.append(" join cota.enderecos enderecoCota ");
-		hql.append(" join enderecoCota.endereco endereco ");
+		hql.append(" left join cota.pdvs pdv ");
+		hql.append(" left join cota.enderecos enderecoCota ");
+		hql.append(" left join enderecoCota.endereco endereco ");
 		
 		hql.append(" where pdv.caracteristicas.pontoPrincipal=true ");
 		hql.append(" and enderecoCota.principal=true ");
