@@ -568,11 +568,11 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 			}
 			
 			pdvDTO.setEndereco(endereco != null ? 
-					endereco.getTipoLogradouro() +
+					endereco.getTipoLogradouro() + " " +
 					endereco.getLogradouro() + " " + 
 					"nº.: " + endereco.getNumero() + ", " +
 					endereco.getCidade() +
-					", CEP:" + Util.adicionarMascaraCEP(endereco.getCep()) : "");
+					", CEP: " + Util.adicionarMascaraCEP(endereco.getCep()) : "");
 
 			pdvDTO.setPdv(itemPdv.getNome());
 
