@@ -36,6 +36,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoCota;
@@ -147,7 +148,6 @@ public class ParametroCobrancaCotaController extends BaseController {
 		this.httpResponse = httpResponse;
 	}
 
-
 	/**
 	 * Método de chamada da página
 	 * Pré-carrega itens da pagina com informações default.
@@ -239,7 +239,6 @@ public class ParametroCobrancaCotaController extends BaseController {
 		result.use(Results.json()).from(bancoService.getComboBancos(true), "result").recursive().serialize();
 	}
 
-
 	/**
 	 * Método responsável por obter os parametros de cobranca da Cota para a aba 'Financeiro'.
 	 * @throws Mensagens de Validação.
@@ -268,7 +267,6 @@ public class ParametroCobrancaCotaController extends BaseController {
 
 		result.use(Results.json()).from(parametroCobranca,"result").recursive().serialize();
 	}
-
 
 	/**
 	 * Método responsável por obter os dados da uma forma de cobranca do parametro de cobranca da Cota para a aba 'Financeiro'.
@@ -301,7 +299,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 		result.use(Results.json()).from(formaCobranca, "result").recursive()
 		.serialize();
 	}
-
+	
 	@Post
 	public void obterQtdFormaCobrancaCota(Long id){
 		int qtdFormaCobranca = this.parametroCobrancaCotaService.obterQuantidadeFormasCobrancaCota(id);
@@ -381,6 +379,8 @@ public class ParametroCobrancaCotaController extends BaseController {
 		}
 		
 		this.salvarContrato(parametroCobranca.getInicioContrato(), parametroCobranca.getTerminoContrato());
+		
+		this.salvarTipoCota(parametroCobranca.getIdCota(), parametroCobranca.getTipoCota());
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parametros de Cobrança Cadastrados."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
@@ -478,7 +478,6 @@ public class ParametroCobrancaCotaController extends BaseController {
 		return formaCobranca;
 	}
 
-
 	/**
 	 * Método responsável por persistir os dados da forma de cobranca no banco de dados.
 	 * @param formaCobranca
@@ -572,9 +571,8 @@ public class ParametroCobrancaCotaController extends BaseController {
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Forma de Cobrança Excluida."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
 
-
 	/**
-	 * Exibe o contrato em formato PDF.
+	 * Exibe o  em formato PDF.
 	 * @param idCota
 	 * @throws Exception
 	 */
@@ -656,9 +654,9 @@ public class ParametroCobrancaCotaController extends BaseController {
 
 		return arquivo;
 	}
-
-	private void salvarContrato(Date inicioContrato, Date terminoContrato) {
-
+	
+	private boolean salvarContrato(Date inicioContrato, Date terminoContrato){
+		
 		if (this.session.getAttribute(CONTRATO_UPLOADED) != null) {
 
 			ContratoVO contrato = (ContratoVO) this.session.getAttribute(CONTRATO_UPLOADED);
@@ -724,9 +722,69 @@ public class ParametroCobrancaCotaController extends BaseController {
 						}
 				}
 			}
+			
+			return true;
 		}
+		
+		return false;
 	}
 
+	private boolean salvarTipoCota(long idCota, TipoCota tipoCota){
+	
+		Cota cota = this.cotaService.obterPorId(idCota);
+		
+		if (!cota.getTipoCota().equals(tipoCota)){
+		
+			cota.setTipoCota(tipoCota);
+			
+			this.cotaService.alterarCota(cota);
+			
+			return true;
+		}
+		
+		return false;
+	}
+
+	/**
+	 * Método responsável por postar os dados da aba financeiro que são específicos da cota.
+	 * @param inicioContrato
+	 * @param terminoContrato
+	 * @param tipoCota
+	 */
+	@Post
+	@Path("/salvarFinanceiroEspecificoDaCota")
+	public void salvarFinanceiroEspecificoDaCota(Long idCota, Date inicioContrato, Date terminoContrato, TipoCota tipoCota) {
+
+		String msg1 = "";
+		String msg2 = "";
+		String msg = "";
+		
+		if (this.salvarContrato(inicioContrato, terminoContrato)){
+			
+			msg1 = "Contrato";
+		}
+		
+        if (this.salvarTipoCota(idCota, tipoCota)){
+			
+        	msg2 = "Tipo da cota";
+		}
+        
+        if (!msg1.equals("") || !msg2.equals("")){
+        	
+        	if (msg1.equals("")){
+        		
+        		msg1=msg2;
+        		
+        		msg2="";
+        	}
+        	
+        	msg = (msg1+(!msg2.equals("")?" e "+msg2:"")+" cadastrado com sucesso.");
+            
+        	result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, msg),Constantes.PARAM_MSGS).recursive().serialize();
+        }
+        
+		result.nothing();
+	}
 
 	@Post
 	public void uploadContratoAnexo(UploadedFile uploadedFile, String numeroCota) throws IOException {

@@ -270,6 +270,10 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 		
 		MapaCotaDTO mapaCota = new MapaCotaDTO();
 		
+		mapaCota.setNumeroCota(filtro.getCodigoCota() != null ? filtro.getCodigoCota() : null);
+		
+		mapaCota.setNomeCota(filtro.getNomeCota() != null ? filtro.getNomeCota() : "");
+		
 		for (ProdutoAbastecimentoDTO item : produtosCota) {
 			
 			if (!produtoMapa.containsKey(item.getIdProdutoEdicao())) {

@@ -227,6 +227,35 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				
 	}
 	
+	/**
+	 * Obtem ProdutoEdicao por codigo do produto, numero de edição e numero de lançamento
+	 * @param codigoProduto
+	 * @param idProdutoEdicao
+	 * @param nEdicao
+	 * @param nLancamento
+	 * @return ProdutoEdicao
+	 */
+	@Override
+	public ProdutoEdicao obterProdutoEdicaoPorNumeroEdicaoENumeroLancamento(String codigoProduto, Long idProdutoEdicao, Long nEdicao, Integer nLancamento) {
+		
+		Criteria criteria = super.getSession().createCriteria(ProdutoEdicao.class);
+		
+		criteria.createAlias("produto", "produto");
+		
+		if (idProdutoEdicao != null){
+			
+			criteria.add(Restrictions.not(Restrictions.eq("id", idProdutoEdicao)));
+		}
+		
+		criteria.add(Restrictions.eq("produto.codigo", codigoProduto));
+		
+		criteria.add(Restrictions.eq("numeroEdicao", nEdicao));
+		
+		criteria.add(Restrictions.eq("numeroLancamento", nLancamento));
+				
+		return  (ProdutoEdicao) criteria.uniqueResult();	
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto, Integer quantidadeRegisttros) {

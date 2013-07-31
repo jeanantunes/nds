@@ -48,10 +48,6 @@ public class PoliticaCobranca {
 	
 	@Column(name="COBRANCA_BO")
 	private boolean cobradoPeloBackoffice; 
-	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_COTA")
-	private TipoCota tipoCota;
 
 	@Column(name = "FATOR_VENCIMENTO")
 	private Integer fatorVencimento;
@@ -130,14 +126,6 @@ public class PoliticaCobranca {
 
 	public void setCobradoPeloBackoffice(boolean cobradoPeloBackoffice) {
 		this.cobradoPeloBackoffice = cobradoPeloBackoffice;
-	}
-
-	public TipoCota getTipoCota() {
-		return tipoCota;
-	}
-
-	public void setTipoCota(TipoCota tipoCota) {
-		this.tipoCota = tipoCota;
 	}
 
 	public Integer getFatorVencimento() {

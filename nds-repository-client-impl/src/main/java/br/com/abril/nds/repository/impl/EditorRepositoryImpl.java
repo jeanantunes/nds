@@ -47,54 +47,42 @@ public class EditorRepositoryImpl extends AbstractRepositoryModel<Editor, Long> 
 	@Override
 	public List<RegistroHistoricoEditorVO> obterHistoricoEditor(FiltroPesquisarHistoricoEditorDTO filtro) {
 		
-		StringBuilder hql = new StringBuilder();
-		
 		StringBuilder hqlMargemCota = new StringBuilder();
+		hqlMargemCota.append(" ((sum (( estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida )) * produtoEdicao.precoVenda)")
+					 .append(" * ( movimentos.valoresAplicados.valorDesconto / 100))");
 		
-		hqlMargemCota.append(" ")
-		.append(" ((sum (( estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida )) * produtoEdicao.precoVenda)")
-		.append(" * ( ").append("movimentos.valoresAplicados.valorDesconto").append(" / 100))");
-		String hqlFaturamento = "   case when (lancamento.status in (:statusLancamentoRecolhido) ) then ( " 
-							  + " 		(sum ( (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida )) * produtoEdicao.precoVenda )"
-							  + "	) else 0 end ";
-
+		StringBuilder hqlFaturamento = new StringBuilder(); 
+		hqlFaturamento.append("   case when (lancamento.status in (:statusLancamentoRecolhido) ) then ( ") 
+					  .append(" 		(sum ( (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida )) * produtoEdicao.precoVenda )")
+					  .append("	) else 0 end ");
+		
+		StringBuilder hql = new StringBuilder();
 		hql.append("SELECT ")
-			
 			.append("   pessoaJuridica.razaoSocial as nomeEditor , ")
-			
 			.append("   produto.codigo as codigoProduto , ")
-			
 			.append("   produto.nome as nomeProduto , ")
-			
 			.append("   produtoEdicao.numeroEdicao as edicaoProduto , ")
-			
 			.append("   sum(estoqueProdutoCota.qtdeRecebida) as reparte,")
-			
    		    .append("   case when (lancamento.status in (:statusLancamentoRecolhido) ) then ( ")
 			.append("   	sum(estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) ")
 			.append("	) else 0 end as vendaExemplares, ")
-
 			.append(hqlFaturamento).append(" as faturamento ,")
-					
 			.append(hqlMargemCota).append("  as valorMargemCota, ")
-			
-			.append("((").append(hqlFaturamento).append(" * (fornecedores.margemDistribuidor /100))")
-			.append("- (").append(hqlMargemCota).append(" )) as valorMargemDistribuidor  ");	
-
-		hql.append(" FROM EstoqueProdutoCota  estoqueProdutoCota ")
-		.append(" JOIN estoqueProdutoCota.movimentos  movimentos ")
-		.append(" LEFT JOIN movimentos.lancamento as lancamento ")
-		.append(" JOIN estoqueProdutoCota.produtoEdicao produtoEdicao")
-		.append(" JOIN produtoEdicao.produto produto ")
-		.append(" JOIN produto.fornecedores  fornecedores ")
-		.append(" JOIN produto.editor editor ")
-		.append(" JOIN editor.pessoaJuridica pessoaJuridica ");
-		
-
-		hql.append("WHERE movimentos.data BETWEEN :dataDe AND :dataAte ");
-		hql.append(" AND editor.codigo = :codigoEditor ");
-		hql.append(" AND movimentos.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
-		hql.append(" group by pessoaJuridica.razaoSocial, produto.codigo, produtoEdicao.numeroEdicao ");
+			.append("((").append(hqlFaturamento)
+			.append("- ").append(hqlMargemCota)
+			.append(") * fornecedores.margemDistribuidor /100) as valorMargemDistribuidor ")
+			.append(" FROM EstoqueProdutoCota  estoqueProdutoCota ")
+			.append(" JOIN estoqueProdutoCota.movimentos  movimentos ")
+			.append(" LEFT JOIN movimentos.lancamento as lancamento ")
+			.append(" JOIN estoqueProdutoCota.produtoEdicao produtoEdicao")
+			.append(" JOIN produtoEdicao.produto produto ")
+			.append(" JOIN produto.fornecedores  fornecedores ")
+			.append(" JOIN produto.editor editor ")
+			.append(" JOIN editor.pessoaJuridica pessoaJuridica ")
+			.append("WHERE movimentos.data BETWEEN :dataDe AND :dataAte ")
+			.append(" AND editor.id = :codigoEditor ")
+			.append(" AND movimentos.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ")
+			.append(" group by pessoaJuridica.razaoSocial, produto.codigo, produtoEdicao.numeroEdicao ");
 		
 		
 		Query query = this.getSession().createQuery(hql.toString());

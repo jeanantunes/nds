@@ -24,6 +24,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.apache.commons.lang.StringUtils;
+
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
@@ -190,11 +192,11 @@ public class Produto implements Serializable {
 	}
 	
 	public String getCodigo() {
-		return codigo;
+		return StringUtils.leftPad(codigo, 8, '0');
 	}
 	
 	public void setCodigo(String codigo) {
-		this.codigo = codigo;
+		this.codigo = StringUtils.leftPad(codigo, 8, '0');
 	}
 	
 	public PeriodicidadeProduto getPeriodicidade() {

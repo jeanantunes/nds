@@ -242,19 +242,11 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 					&& politica.getFornecedorPadrao() != null) {
 				
 				parametroCobrancaDTO.setIdFornecedorPadrao(politica.getFornecedorPadrao().getId());
-				
-			}
-			
-			if(politica.getFormaCobranca() != null) {
-				
-				parametroCobrancaDTO.setTipoCota(politica.getTipoCota());
-				
 			}
 			
 			if(politica.getFormaCobranca() != null && politica.getFatorVencimento() != null) {
 				
 				parametroCobrancaDTO.setFatorVencimento(politica.getFatorVencimento());
-				
 			}
 			
 			Set<ConcentracaoCobrancaCota> concentracoesCobranca=null;
@@ -310,7 +302,6 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 				}
 				
 			}
-			
 
 			Banco banco = formaCobranca.getBanco();
 			if (banco != null) {
@@ -403,7 +394,6 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		politica.setUnificaCobranca(parametroCobrancaDTO.isUnificada());
 		politica.setAtivo(true);
 		politica.setDistribuidor(distribuidorRepository.obter());
-		politica.setTipoCota(parametroCobrancaDTO.getTipoCota());
 		politica.setFatorVencimento(new Integer(parametroCobrancaDTO.getFatorVencimento().toString()));
 		politica.setFornecedorPadrao(fornecedorService.obterFornecedorPorId(parametroCobrancaDTO.getIdFornecedorPadrao()));
 		

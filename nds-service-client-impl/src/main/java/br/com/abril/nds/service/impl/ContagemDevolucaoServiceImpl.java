@@ -930,15 +930,17 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
         	}
         }
         
-        List<Lancamento> lancamentos =
-        	this.lancamentoRepository.obterLancamentosRecolhidosPorEdicoes(idsProdutoEdicao);
-        
-        for (Lancamento lancamento : lancamentos) {
-			
-			lancamento.setStatus(StatusLancamento.FECHADO);
-			
-			this.lancamentoRepository.merge(lancamento);
-		}
+        if (!idsProdutoEdicao.isEmpty()){
+	        List<Lancamento> lancamentos =
+	        	this.lancamentoRepository.obterLancamentosRecolhidosPorEdicoes(idsProdutoEdicao);
+	        
+	        for (Lancamento lancamento : lancamentos) {
+				
+				lancamento.setStatus(StatusLancamento.FECHADO);
+				
+				this.lancamentoRepository.merge(lancamento);
+			}
+        }
 	}
 
     /**

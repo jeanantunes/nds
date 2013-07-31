@@ -1109,7 +1109,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" ((select count(cob.ID) from COBRANCA cob where cob.DT_EMISSAO = mfc.DATA and cob.COTA_ID = mfc.COTA_ID) > 0) as cobrado, ")
 		   
 		   //data raiz
-		   .append(" (select max(mfp.DATA) from MOVIMENTO_FINANCEIRO_COTA mfp where mfp.COTA_ID = mfc.COTA_ID and mfp.DATA < mfc.DATA and mfp.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoDebito) or mfp.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoCredito)) ")
+		   .append(" (select max(mfp.DT_CONSOLIDADO) from CONSOLIDADO_FINANCEIRO_COTA mfp where mfp.COTA_ID = mfc.COTA_ID and mfp.DT_CONSOLIDADO < mfc.DATA) ")
 		   .append("  as dataRaiz, ")
 		   
 		   //valor pago
@@ -1221,9 +1221,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
 		   .append(") and m.DATA = mfc.DATA ")
 		   .append("),0) ")
-		   //adicionado * -1 a pedidos do negócio, o valor armazenado é da cota, mas deve refletir o que significa para o distribuidor
-		   //sendo assim, o que é debito para a cota é crédito para o distribuidor e vice versa
-		   .append(" ) * -1 as total, ")
+		   .append(" ) as total, ")
 		   
 		   //saldo
 		   .append(" 0 as saldo, ")

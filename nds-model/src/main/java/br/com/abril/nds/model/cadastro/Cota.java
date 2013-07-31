@@ -100,6 +100,10 @@ public class Cota implements Serializable {
 	
 	@OneToOne(mappedBy = "cota")
 	private ParametroCobrancaCota parametroCobranca;
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "TIPO_COTA", columnDefinition = "VARCHAR(255)", nullable=false)
+	private TipoCota tipoCota;
 		
 	@Embedded
 	private ParametroDistribuicaoCota parametroDistribuicao;
@@ -314,6 +318,14 @@ public class Cota implements Serializable {
 	
 	public void setParametroCobranca(ParametroCobrancaCota parametroCobranca) {
 		this.parametroCobranca = parametroCobranca;
+	}
+
+	public TipoCota getTipoCota() {
+		return tipoCota;
+	}
+
+	public void setTipoCota(TipoCota tipoCota) {
+		this.tipoCota = tipoCota;
 	}
 
 	public Fiador getFiador() {

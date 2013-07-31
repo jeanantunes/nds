@@ -43,6 +43,8 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 	
 	private boolean unificaCobranca;
 	
+	private boolean parametroDistribuidor;
+	
 	
 	public Long getIdParametroCobranca() {
 		return idParametroCobranca;
@@ -194,6 +196,16 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 
 	public void setUnificaCobranca(boolean unificaCobranca) {
 		this.unificaCobranca = unificaCobranca;
+	}
+
+	
+	public boolean isParametroDistribuidor() {
+		return parametroDistribuidor;
+	}
+
+	
+	public void setParametroDistribuidor(boolean parametroDistribuidor) {
+		this.parametroDistribuidor = parametroDistribuidor;
 	}
 
 	

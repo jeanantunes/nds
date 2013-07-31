@@ -181,7 +181,6 @@
                             <td valign="top">Fator de vencimento:</td>
                             <td colspan="3">
                             	<select id="comboFatorVencimento">
-                            		<option value="">Selecione...</option>
                                 	<option>0</option>
 									<option>1</option>
 									<option>2</option>
@@ -214,16 +213,6 @@
                             		<option value="-1">Selecione...</option>
                                 	<c:forEach step="1" items="${listaFornecedores}" varStatus="status">
                                     	<option value="${listaFornecedores[status.index].key}">${listaFornecedores[status.index].value}</option>
-									</c:forEach>
-								</select>
-							</td>
-							<td valign="middle">Tipo da Cota:</td>
-                            <td>
-                            	<select id="ParamCob-TipoCota">
-                            		<option value="">Selecione...</option>
-									<c:forEach varStatus="counter" var="itemTipoCota"
-										items="${listaTiposCota}">
-										<option value="${itemTipoCota.key}">${itemTipoCota.value}</option>
 									</c:forEach>
 								</select>
 							</td>

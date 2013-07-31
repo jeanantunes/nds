@@ -198,7 +198,13 @@ public class VisaoEstoqueController extends BaseController {
 		
 		FiltroConsultaVisaoEstoque filtro = (FiltroConsultaVisaoEstoque) this.session.getAttribute(FILTRO_VISAO_ESTOQUE);
 		
-		filtro.setPaginacao(new PaginacaoVO());
+		if (filtro.getPaginacao() == null){
+			filtro.setPaginacao(new PaginacaoVO());
+		}
+		
+		filtro.getPaginacao().setPaginaAtual(null);
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
+		filtro.getPaginacao().setQtdResultadosTotal(null);
 		
 		List<? extends VisaoEstoqueDetalheDTO> listDetalhe = visaoEstoqueService.obterVisaoEstoqueDetalhe(filtro);
 		Class clazz = VisaoEstoqueDetalheDTO.class;

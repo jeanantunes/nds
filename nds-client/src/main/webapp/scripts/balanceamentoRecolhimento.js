@@ -116,6 +116,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				},
 				"Cancelar": function() {
 					
+					balanceamentoRecolhimentoController.showResumo(false);
+					
 					$(this).dialog("close");
 				}
 			},
@@ -156,9 +158,14 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			}
 			
 			rows += '<label>' + resumo.dataFormatada;
-			rows += '<a href="javascript:;" onclick="balanceamentoRecolhimentoController.visualizarMatrizBalanceamentoPorDia(' + "'" + resumo.dataFormatada + "'" + ');" style="float: right;">';
-			rows += '<img src="' + contextPath + '/images/ico_detalhes.png" width="15" height="15" border="0" title="Visualizar" />';
-			rows += '</a>';
+			
+			if (!resumo.bloquearVisualizacao) {
+			
+				rows += '<a href="javascript:;" onclick="balanceamentoRecolhimentoController.visualizarMatrizBalanceamentoPorDia(' + "'" + resumo.dataFormatada + "'" + ');" style="float: right;">';
+				rows += '<img src="' + contextPath + '/images/ico_detalhes.png" width="15" height="15" border="0" title="Visualizar" />';
+				rows += '</a>';
+			}
+			
 			rows += '</label>';
 			rows += '<span class="span_1">Qtde. Títulos:</span>';
 			rows += '<span class="span_2">' + resumo.qtdeTitulos + '</span>';
@@ -169,12 +176,28 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				rows += '<span name="qtdeExemplares" class="span_2 redLabel"';
 				rows += 'title="A quantidade de exemplares excede a capacidade de manuseio ';
 				rows += result.capacidadeRecolhimentoDistribuidor + ' do distribuidor">';
-				rows += resumo.qtdeExemplaresFormatada + '</span>';
+				
+				if (resumo.operacaoDiferenciada) {
+					
+					rows += '<u>' + resumo.qtdeExemplaresFormatada + '</u></span>';
+					
+				} else {
+					
+					rows += resumo.qtdeExemplaresFormatada + '</span>';	
+				}
 			
 			} else {
 			
-				rows += '<span class="span_1">Qtde. Exempl.:</span>';	
-				rows += '<span class="span_2">' + resumo.qtdeExemplaresFormatada + '</span>';
+				rows += '<span class="span_1">Qtde. Exempl.:</span>';
+				
+				if (resumo.operacaoDiferenciada) {
+					
+					rows += '<span class="span_2"><u>' + resumo.qtdeExemplaresFormatada + '</u></span>';
+					
+				} else {
+					
+					rows += '<span class="span_2">' + resumo.qtdeExemplaresFormatada + '</span>';	
+				}
 			}
 			
 			rows += '<span class="span_1">Qtde. Parciais:</span>';
@@ -269,7 +292,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	},
 	
 	visualizarMatrizBalanceamentoPorDia : function(data) {
-		$(".hidden_buttons").show();
+		$(".hidden_buttons", balanceamentoRecolhimentoController.workspace).show();
 		$("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val(data);
 		
 		$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexOptions({
@@ -702,7 +725,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				display : 'Nova Data',
 				name : 'novaData',
 				width : 105,
-				sortable : false,
+				sortable : true,
 				align : 'center'
 			},{
 				display : 'Reprog.',
@@ -822,6 +845,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	exibirMatrizFornecedor : function() {
 		
 		$("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val("");
+		
+		$(".hidden_buttons", balanceamentoRecolhimentoController.workspace).show();
 		
 		$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexOptions({
 			url: contextPath + "/devolucao/balanceamentoMatriz/exibirMatrizFornecedor",
@@ -1145,7 +1170,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	},
 	
 	fecharGridBalanceamento : function() {
-		$(".hidden_buttons").hide();
+		$(".hidden_buttons", balanceamentoRecolhimentoController.workspace).hide();
 		$(".grids", balanceamentoRecolhimentoController.workspace).hide();
 		
 		balanceamentoRecolhimentoController.deselectCheckAll();

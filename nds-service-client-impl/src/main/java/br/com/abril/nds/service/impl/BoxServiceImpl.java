@@ -2,7 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.util.List;
 
-import org.hibernate.exception.ConstraintViolationException;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -40,6 +40,8 @@ public class BoxServiceImpl implements BoxService {
 	@Transactional(readOnly = true)
 	@Override
 	public List<Box> obterBoxPorProduto(String codigoProduto) {
+		
+		codigoProduto = StringUtils.leftPad(codigoProduto, 8, '0');
 
 		return boxRepository.obterBoxPorProduto(codigoProduto);
 	}

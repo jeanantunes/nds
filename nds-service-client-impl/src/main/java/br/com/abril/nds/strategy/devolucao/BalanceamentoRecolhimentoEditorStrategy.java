@@ -54,7 +54,7 @@ public class BalanceamentoRecolhimentoEditorStrategy extends AbstractBalanceamen
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento =
 			super.gerarBalanceamentoRecolhimentoDTO(matrizRecolhimentoBalanceada,
 													produtosRecolhimentoNaoBalanceados,
-													dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor());
+													dadosRecolhimento);
 		
 		return balanceamentoRecolhimento;
 	}

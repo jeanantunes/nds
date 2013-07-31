@@ -83,6 +83,7 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				onSuccess: function(){
 					bloquearItensEdicao(digitacaoContagemDevolucaoController.workspace);
 					$(".edicaoFechada").parents("tr").css("background", "#ffeeee");
+					$('input[id^="valorExemplarNota"]', digitacaoContagemDevolucaoController.workspace).numeric();
 				}
 			});
 			
@@ -171,10 +172,10 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				
 				if(row.find(".chBoxReplicar").is(":checked")){ 
 					qtdNota.val(value);
-					qtdNota.prop('disabled', true); 
+					//qtdNota.prop('disabled', true); 
 				} else {
 					qtdNota.val("");
-					qtdNota.prop('disabled', false); 
+					//qtdNota.prop('disabled', false); 
 				}
 				
 			});
@@ -566,7 +567,10 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 					} else {
 						$.each(data.rows, function(index, value) {
 							
-							var onClick = 'digitacaoContagemDevolucaoController.clickEdicoesFechada('+value.cell.idProdutoEdicao+','+value.cell.codigoProduto+', ' +value.cell.edicaoProduto+','+value.cell.parcial+',this )';
+							var onClick = 'digitacaoContagemDevolucaoController.clickEdicoesFechada('
+								+value.cell.idProdutoEdicao+','+value.cell.codigoProduto+', ' 
+								+value.cell.edicaoProduto+','+value.cell.parcial+',this )';
+							
 							var sel = '<input type="checkbox" name="checkbox" id="checkbox" onclick="'+onClick+'" />';
 							value.cell.parcial = (value.cell.parcial)?"Sim":"Não";				
 							
