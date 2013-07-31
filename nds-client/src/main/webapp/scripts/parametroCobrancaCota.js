@@ -632,7 +632,6 @@ var parametroCobrancaCotaController = $.extend(true, {
 	    if(parametroCobrancaTela['parametroCobranca.numCota'] != parametroCobranca['parametroCobranca.numCota']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.qtdDividasAberto'] != parametroCobranca['parametroCobranca.qtdDividasAberto']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.sugereSuspensao'] != parametroCobranca['parametroCobranca.sugereSuspensao']){return true;}
-	    if(parametroCobrancaTela['parametroCobranca.tipoCota'] != parametroCobranca['parametroCobranca.tipoCota']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.unificaCobranca'] != parametroCobranca['parametroCobranca.unificaCobranca']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.valorMinimo'] != parametroCobranca['parametroCobranca.valorMinimo']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.vrDividasAberto'] != parametroCobranca['parametroCobranca.vrDividasAberto']){return true;}
@@ -671,16 +670,22 @@ var parametroCobrancaCotaController = $.extend(true, {
 		return false;
 	},
 	
-    salvarSomenteContrato : function(){
+	salvarFinanceiroEspecificoDaCota : function(){
+		
+		var idCota              = $("#_idCota", this.workspace).val();
 		
 		var inicioContrato 		= $("#parametroCobrancaDateInicio", this.workspace).val();
 		
         var terminoContrato 	= $("#parametroCobrancaDateTermino", this.workspace).val();
         
-        var params =  {"inicioContrato": inicioContrato,
-				       "terminoContrato": terminoContrato};
+        var tipoCota            = $("#tipoCota", this.workspace).val();
         
-		$.postJSON(contextPath + "/cota/parametroCobrancaCota/salvarContratoCota",
+        var params =  {"idCota": idCota,
+        		       "inicioContrato": inicioContrato,
+				       "terminoContrato": terminoContrato,
+				       "tipoCota": tipoCota};
+        
+		$.postJSON(contextPath + "/cota/parametroCobrancaCota/salvarFinanceiroEspecificoDaCota",
 				   params,
 				   function(mensagens) {
 			
@@ -761,7 +766,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		   } 
 		   else{
 				
-		       parametroCobrancaCotaController.salvarSomenteContrato();
+		       parametroCobrancaCotaController.salvarFinanceiroEspecificoDaCota();
 		   }
 	    }
 	    else {

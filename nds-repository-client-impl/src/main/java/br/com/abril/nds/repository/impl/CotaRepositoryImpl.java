@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -2217,6 +2218,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		gerarOrderByObterQtdeCotaMunicipio(hql, sortname, sortorder);
 		
 		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameterList("situacoesCota", Arrays.asList(SituacaoCadastro.PENDENTE, SituacaoCadastro.INATIVO));
 				
 		query.setResultTransformer(new AliasToBeanResultTransformer(MunicipioDTO.class));
 
@@ -2256,6 +2259,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		hql.append(" where pdv.caracteristicas.pontoPrincipal=true ");
 		hql.append(" and enderecoCota.principal=true ");
+		hql.append(" and cota.situacaoCadastro not in (:situacoesCota) ");
 	}
 	
 	@Override
@@ -2268,6 +2272,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		gerarWhereFromObterQtdeCotaMunicipio(hql);
 		
 		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameterList("situacoesCota", Arrays.asList(SituacaoCadastro.PENDENTE, SituacaoCadastro.INATIVO));
 		
 		return ((Long)query.uniqueResult()).intValue();
 	}

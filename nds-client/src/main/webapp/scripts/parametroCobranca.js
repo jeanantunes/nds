@@ -493,12 +493,6 @@ var parametroCobrancaController = $.extend(true,
 					this.selected = true;
 				 }
 			});
-			
-			$.each($("#ParamCob-TipoCota option", this.workspace), function(index, value) { 
-				if(this.value == resultado.tipoCota) {
-					this.selected = true;
-				}
-			});
 
 			$.each($("#comboFornecedorPadrao option", this.workspace), function(index, value) { 
 				if(this.value == resultado.idFornecedorPadrao) {
@@ -556,7 +550,6 @@ var parametroCobrancaController = $.extend(true,
 					idBanco : $("#dBanco", this.workspace).val(),
 					idFornecedorPadrao : $("#comboFornecedorPadrao option:selected", this.workspace).val(),
 					fatorVencimento : $("#comboFatorVencimento option:selected", this.workspace).val(),
-					tipoCota : $("#ParamCob-TipoCota option:selected", this.workspace).val(),
 					valorMinimo : floatValue($("#valorMinimo", this.workspace).val()),
 					taxaMulta : $("#taxaMulta", this.worspace).val(),
 					valorMulta : $("#valorMulta", this.worspace).val(),
@@ -693,8 +686,6 @@ var parametroCobrancaController = $.extend(true,
 			$("#PDom", this.workspace).attr('checked',false);
 	
 			$("#comboFatorVencimento option:first", this.workspace).attr("selected", "selected");
-			
-			$("#ParamCob-TipoCota option:first", this.workspace).attr("selected", "selected");
 			
 			$("#comboFornecedorPadrao option:first", this.workspace).attr("selected", "selected");
 			$.each($("#comboFornecedorPadrao option", this.workspace), function(index, value) { 

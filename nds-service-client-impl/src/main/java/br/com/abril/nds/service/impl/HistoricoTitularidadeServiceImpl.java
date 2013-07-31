@@ -1263,7 +1263,6 @@ public class HistoricoTitularidadeServiceImpl implements HistoricoTitularidadeSe
 		HistoricoTitularidadeCotaFinanceiro historicoTitularidadeCotaFinanceiro = 
 				new HistoricoTitularidadeCotaFinanceiro();
 		
-		historicoTitularidadeCotaFinanceiro.setTipoCota(parametroCobrancaCota.getTipoCota());
 		historicoTitularidadeCotaFinanceiro.setFatorVencimento(parametroCobrancaCota.getFatorVencimento());
 		historicoTitularidadeCotaFinanceiro.setPoliticaSuspensao(parametroCobrancaCota.getPoliticaSuspensao());
 		historicoTitularidadeCotaFinanceiro.setValorMininoCobranca(parametroCobrancaCota.getValorMininoCobranca());
