@@ -12,7 +12,6 @@ import br.com.abril.nds.integracao.ems0117.inbound.EMS0117Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.model.TipoEdicao;
-import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
@@ -63,26 +62,8 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 		EMS0117Input input = (EMS0117Input) message.getBody();
 
 		StringBuilder sql = new StringBuilder();
-
-		// Obter Box
-		sql.append("FROM Box b ");
-		sql.append("WHERE b.codigo = :codigo ");
-		Query query = getSession().createQuery(sql.toString());
-		query.setParameter("codigo", Integer.valueOf( input.getCodBox().toString() ));
-		Box box = (Box) query.uniqueResult();
+		Query query = null;
 		
-		if (null == box) {
-			// Não encontrou a Box. Realizar Log
-			// Passar para a próxima linha
-			ndsiLoggerFactory.getLogger().logWarning(
-					message,
-					EventoExecucaoEnum.HIERARQUIA,
-					"Codigo BOX " + input.getCodBox().toString()
-							+ " nao encontrado para a Cota "
-							+ input.getCodCota().toString());
-			return;
-		}
-
 		Pessoa pessoa = null;
 		Cota cota = null;
 		sql = new StringBuilder();
