@@ -60,6 +60,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		sql.append(" select ") 
 		.append(" mix_cota_produto.ID id,  ")
 		.append(" produto.codigo as codigoProduto, ")
+		.append(" produto.CODIGO_ICD as codigoICD, ")
 		.append(" produto.nome as nomeProduto, ")
 		.append(" mix_cota_produto.DATAHORA as dataHora, ")
 		.append(" mix_cota_produto.REPARTE_MAX as reparteMaximo, ")

@@ -10,7 +10,7 @@ var mixCotaProdutoController = $.extend(true, {
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
-				name : 'codigoProduto',
+				name : 'codigoICD',
 				width : 50,
 				sortable : true,
 				align : 'left'
@@ -545,6 +545,7 @@ var mixCotaProdutoController = $.extend(true, {
 				
 				$("#tableNovoCota tbody tr:gt(0)").remove();
 				$("#tableNovoCota tbody tr:eq(0) input[type='text']").val('');
+				$('#classifMixModal').val("NORMAL");
 				mixCotaProdutoController.definirIdInput();
 				
 			},
@@ -582,6 +583,10 @@ var mixCotaProdutoController = $.extend(true, {
 								 listaNovosMixCota.push({
 									  name : "listaNovosMixCota["+idx+"].reparteMaximo" , 
 									  value : $("#repMaximo"+idx).val()
+									  });
+								 listaNovosMixCota.push({
+									  name : "listaNovosMixCota["+idx+"].classificacaoProduto" , 
+									  value : $("#classifMixModal"+idx).val()
 									  });
 							 });
 							 $.postJSON(contextPath + '/distribuicao/mixCotaProduto/adicionarMixCota',listaNovosMixCota,function(result){ mixCotaProdutoController.adicionarMixCotaSucesso();},
@@ -690,6 +695,10 @@ var mixCotaProdutoController = $.extend(true, {
 										  name : "listaNovosMixProduto["+idx+"].reparteMaximo" , 
 										  value : $("#repMaximo"+idx).val()
 										  });
+								 list.push({
+									  name : "listaNovosMixProduto["+idx+"].classificacaoProduto" , 
+									  value : $("#classifMixModal"+idx).val()
+									  });
 //								 });
 							 });
 							 
@@ -755,6 +764,7 @@ var mixCotaProdutoController = $.extend(true, {
 			$(tr).find("input:text:eq(1)").attr("id","produtoModal"+idx);
 			$(tr).find("input:text:eq(2)").attr("id","repMinimo"+idx);
 			$(tr).find("input:text:eq(3)").attr("id","repMaximo"+idx);
+			$(tr).find("select:eq(0)").attr("id","classifMixModal"+idx);
 			
 		});
 	},
@@ -1209,8 +1219,32 @@ var mixCotaProdutoController = $.extend(true, {
 			});
 			
 			
-		}
+		},
 		
+		pesquisarPorCodigoProduto : function (idCodigo, idProduto, idClassificacao){
+			
+//			$.postJSON(contextPath + '/distribuicao/mixCotaProduto/removerMixCotaProduto', mixCotaProdutoController.getIdExcluir(idMix) , mixCotaProdutoController.exclusaoMixCotaSucesso, mixCotaProdutoController.exclusaoMixCotaErro);
+			
+			var codigoPdt = $(idCodigo).val();
+			
+			$.postJSON(contextPath + '/distribuicao/mixCotaProduto/pesquisarPorCodigoProdutoAutoComplete',
+					{codigo : codigoPdt},
+					function(result) {
+						if (result) {
+
+							if(codigoPdt.length == 6){
+								$(idCodigo).val(result[0].codigoICD);
+							}else{
+								$(idCodigo).val(result[0].codigo);
+							}
+							$(idProduto).val(result[0].nome);
+							$(idClassificacao).val(result[1]).disable();
+						}
+					}
+			);
+			
+			
+		}
 		
 	}, BaseController);
 //@ sourceURL=mixCotaProduto.js

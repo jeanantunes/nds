@@ -128,6 +128,11 @@ public class MixCotaProdutoController extends BaseController {
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 
 		tratarFiltroPorProduto(filtro);
+		
+		if(filtro.getCodigoProduto().length() == 6){
+			String codigoProdin = produtoService.obterCodigoProdinPorICD(filtro.getCodigoProduto());  
+			filtro.setCodigoProduto(codigoProdin);
+		}
 
 		List<MixProdutoDTO> resultadoPesquisa = mixCotaProdutoService.pesquisarPorProduto(filtro);
 
@@ -149,7 +154,7 @@ public class MixCotaProdutoController extends BaseController {
 
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		tratarFiltroPorCota(filtro);
-
+		
 		List<MixCotaDTO> resultadoPesquisa = mixCotaProdutoService.pesquisarPorCota(filtro);
 
 		if (resultadoPesquisa.isEmpty()) {
@@ -575,6 +580,32 @@ public class MixCotaProdutoController extends BaseController {
 		
 		result.use(Results.json()).from(new ValidacaoVO(tipoMsg, msg),"result").recursive().serialize();
 		
+	}
+	
+	@Post
+	public void pesquisarPorCodigoProdutoAutoComplete(String codigo){
+		
+		pesquisarPorCodigoProduto(codigo);
+	}
+	
+	@Post
+	public void pesquisarPorCodigoProduto(String codigoProduto){
+		ArrayList<Object> objects = new ArrayList<>();
+		Produto produto = null;
+		String descricaoClassificacao;
+				
+		produto = produtoService.obterProdutoPorCodigo(codigoProduto);
+		
+		if (produto != null) {
+			descricaoClassificacao = produto.getTipoClassificacaoProduto().getDescricao();
+
+			objects.add(produto);
+			objects.add(descricaoClassificacao);
+		}else {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código \"" + codigoProduto + "\" não encontrado!");
+		}	
+		
+		result.use(Results.json()).from(objects, "result").serialize();
 	}
 
 }
