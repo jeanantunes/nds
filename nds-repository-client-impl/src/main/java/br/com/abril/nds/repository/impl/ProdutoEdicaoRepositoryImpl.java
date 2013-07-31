@@ -109,7 +109,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append("select new ")
 		   .append(FuroProdutoDTO.class.getCanonicalName())
 		   .append("(produto.codigo, produto.nome, produtoEdicao.numeroEdicao, ")
-		   .append("coalesce((select ep.qtde from EstoqueProduto ep where ep.produtoEdicao.id = produtoEdicao.id),0) as qtde, ")
+		   .append("coalesce((select ep.qtde from EstoqueProduto ep where ep.produtoEdicao.id = produtoEdicao.id), lancamento.reparte, 0) as quantidadeExemplares, ")
 		   .append("   lancamento.dataLancamentoDistribuidor, lancamento.id, produtoEdicao.id)")
 		   .append(" from Produto produto, Lancamento lancamento, ProdutoEdicao produtoEdicao ")
 		   .append(" where produtoEdicao.produto.id              = produto.id ")

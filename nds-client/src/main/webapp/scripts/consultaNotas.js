@@ -213,9 +213,9 @@ pesquisarDetalhesNota : function(idNota) {
 					sortable : true,
 					align : 'center'
 				}, {
-					display : 'Preço de Venda R$',
+					display : 'Preço Capa R$',
 					name : 'precoCapa',
-					width : 100,
+					width : 110,
 					sortable : true,
 					align : 'right'
 				}, {
@@ -233,7 +233,7 @@ pesquisarDetalhesNota : function(idNota) {
 				}, {
 					display : 'Total R$',
 					name : 'total',
-					width : 80,
+					width : 70,
 					sortable : true,
 					align : 'right'
 				} ],

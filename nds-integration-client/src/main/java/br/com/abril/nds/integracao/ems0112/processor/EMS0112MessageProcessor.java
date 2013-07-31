@@ -57,9 +57,11 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 		query.setParameter("codigoEditor", input.getCodigoEditor());
 		
 		Editor editor = (Editor) query.uniqueResult();
+		
 		if (null != editor) {
+			
 			if(distribuidorService.isDistribuidor(input.getCodigoDistribuidor()) &&
-					input.getTipoOperacao().equals("A")){
+					input.getTipoOperacao().equals("A")) {
 				
 				if(!input.getNomeEditor().equals(editor.getPessoaJuridica().getNome())){
 					editor.getPessoaJuridica().setRazaoSocial(input.getNomeEditor());
@@ -95,8 +97,7 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				atualizaEndereco(input, message, editor, TipoEndereco.COMERCIAL);
 				
 				atualizaEndereco(input, message, editor, TipoEndereco.LOCAL_ENTREGA);
-				
-				
+
 				
 				atualizaTelefone(input, message, editor, TipoTelefone.COMERCIAL);
 				
@@ -106,8 +107,7 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				
 			}
 		} else {
-			//CASO: NAO EXISTE EDITOR CADASTRADO
-		
+			//CASO: NAO EXISTE EDITOR CADASTRADO		
 			// VERIFICA A EXISTENCIA DA PESSOA
 			
 			StringBuilder hql = new StringBuilder();
@@ -115,11 +115,12 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 			hql.append("FROM PessoaJuridica j ");
 			hql.append("WHERE j.cnpj = :cnpj ");
 			
-			Query pj_query = getSession().createQuery(hql.toString());
+			Query pjQuery = getSession().createQuery(hql.toString());
 			
-			pj_query.setParameter("cnpj", input.getCnpj());
+			pjQuery.setParameter("cnpj", input.getCnpj());
 					
-			PessoaJuridica pessoa = (PessoaJuridica) pj_query.uniqueResult();		
+			PessoaJuridica pessoa = (PessoaJuridica) pjQuery.uniqueResult();
+			
 			if (null == pessoa) {			
 				//INSERE
 						
@@ -130,11 +131,24 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				pessoa.setInscricaoMunicipal(input.getInscricaoMunicipal());
 				pessoa.setRazaoSocial(input.getNomeEditor());
 				getSession().persist(pessoa);
+				
+				ndsiLoggerFactory.getLogger().logInfo(
+						message
+						, EventoExecucaoEnum.INF_DADO_ALTERADO
+						, "Inserido Editor/Pessoa: "+ input.getNomeEditor());
+				
 			} else {
+				
 				pessoa.setInscricaoEstadual(input.getInscricaoEstadual());
 				pessoa.setInscricaoMunicipal(input.getInscricaoMunicipal());		
 				pessoa.setRazaoSocial(input.getNomeEditor());
-				getSession().update(pessoa);				
+				getSession().update(pessoa);	
+				
+				ndsiLoggerFactory.getLogger().logInfo(
+						message
+						, EventoExecucaoEnum.INF_DADO_ALTERADO
+						, "Atualizado Editor/Pessoa: "+ input.getNomeEditor());
+				
 			}
 			
 			//EDITOR
@@ -145,6 +159,10 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 			ed.setPessoaJuridica(pessoa);
 			getSession().persist(ed);
 			
+			ndsiLoggerFactory.getLogger().logInfo(
+					message
+					, EventoExecucaoEnum.INF_DADO_ALTERADO
+					, "Atualizado Editor/Pessoa: "+ input.getNomeEditor());
 			
 			//ENDERECO EDITOR [COMERCIAL]
 			Endereco endComercial = new Endereco();
@@ -163,7 +181,7 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 			enderecoEditorCom.setTipoEndereco(TipoEndereco.COMERCIAL);
 			enderecoEditorCom.setEditor(ed);
 			enderecoEditorCom.setEndereco(endComercial);
-			getSession().persist(enderecoEditorCom);			
+			getSession().persist(enderecoEditorCom);
 			
 			
 			//ENDERECO EDITOR [ENTREGA]
@@ -224,6 +242,11 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 			telefonePrincipal.setTipoTelefone(TipoTelefone.COMERCIAL);
 			telefonePrincipal.setPrincipal(true);
 			getSession().persist(telefonePrincipal);
+			
+			ndsiLoggerFactory.getLogger().logInfo(
+					message
+					, EventoExecucaoEnum.INF_DADO_ALTERADO
+					, "Inseridos dados de Endereço e Telefone do Editor: "+ input.getNomeEditor());
 			
 			
 		}
@@ -288,7 +311,7 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Bairro para: "+ed.getEndereco().getBairro());
 				}						
 				
-			}else if(ed.getTipoEndereco() == TipoEndereco.LOCAL_ENTREGA){
+			} else if(ed.getTipoEndereco() == TipoEndereco.LOCAL_ENTREGA) {
 				
 				if(!input.getNumeroEntrega().equals(ed.getEndereco().getNumero())){
 					ed.getEndereco().setNumero(input.getNumeroEntrega());
@@ -360,8 +383,12 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				enderecoEditorCom.setEndereco(endComercial);
 				getSession().persist(enderecoEditorCom);
 				
+				ndsiLoggerFactory.getLogger().logInfo(
+						message
+						, EventoExecucaoEnum.INF_DADO_ALTERADO
+						, "Inseridos dados de Endereço do Editor: "+ input.getNomeEditor());
 			
-			}else if(tipo == TipoEndereco.LOCAL_ENTREGA){
+			} else if(tipo == TipoEndereco.LOCAL_ENTREGA) {
 				//ENDERECO EDITOR [ENTREGA]
 
 				Endereco endEntrega = new Endereco();
@@ -382,6 +409,11 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				enderecoEditorEnt.setEditor(editor);
 				enderecoEditorEnt.setEndereco(endEntrega);
 				getSession().persist(enderecoEditorEnt);
+				
+				ndsiLoggerFactory.getLogger().logInfo(
+						message
+						, EventoExecucaoEnum.INF_DADO_ALTERADO
+						, "Inseridos dados de Endereço do Editor: "+ input.getNomeEditor());
 				
 			}
 			
@@ -407,36 +439,36 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 		if (null != telefone) {
 			if(telefone.getTipoTelefone() == TipoTelefone.FAX){
 				
-				if(!input.getDddFax().equals(telefone.getTelefone().getDdd())){
+				if(!input.getDddFax().equals(telefone.getTelefone().getDdd())) {
 					telefone.getTelefone().setDdd(input.getDddFax());
 					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do DDD (Fax) para: "+telefone.getTelefone().getDdd());
 				}
 				
-				if(!input.getTelefoneFax().equals(telefone.getTelefone().getNumero())){
+				if(!input.getTelefoneFax().equals(telefone.getTelefone().getNumero())) {
 					telefone.getTelefone().setNumero(input.getTelefoneFax());
 					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Numero (Fax) para: "+telefone.getTelefone().getNumero());
 				}
 				
-			}else if(telefone.isPrincipal() == true){
+			} else if(telefone.isPrincipal() == true) {
 				
-				if(!input.getDddEditor().equals(telefone.getTelefone().getDdd())){
+				if(!input.getDddEditor().equals(telefone.getTelefone().getDdd())) {
 					telefone.getTelefone().setDdd(input.getDddEditor());
 					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do DDD Principal para: "+telefone.getTelefone().getDdd());
 				}
 				
-				if(!input.getTelefoneEditor().equals(telefone.getTelefone().getNumero())){
+				if(!input.getTelefoneEditor().equals(telefone.getTelefone().getNumero())) {
 					telefone.getTelefone().setNumero(input.getTelefoneEditor());
 					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Numero Principal para: "+telefone.getTelefone().getNumero());
 				}
 				
-			}else if(telefone.getTipoTelefone() == TipoTelefone.CONTATO){
+			} else if(telefone.getTipoTelefone() == TipoTelefone.CONTATO) {
 				
-				if(!input.getDddContato().equals(telefone.getTelefone().getDdd())){
+				if(!input.getDddContato().equals(telefone.getTelefone().getDdd())) {
 					telefone.getTelefone().setDdd(input.getDddContato());
 					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do DDD Principal para: "+telefone.getTelefone().getDdd());
 				}
 				
-				if(!input.getTelefoneContato().equals(telefone.getTelefone().getNumero())){
+				if(!input.getTelefoneContato().equals(telefone.getTelefone().getNumero())) {
 					telefone.getTelefone().setNumero(input.getTelefoneContato());
 					ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.INF_DADO_ALTERADO, "Atualizacao do Numero Principal para: "+telefone.getTelefone().getNumero());
 				}
@@ -447,7 +479,7 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 			
 			// INSERE 
 			
-			if(tipo == TipoTelefone.CONTATO){
+			if(tipo == TipoTelefone.CONTATO) {
 				//TELEFONE [CONTATO]
 				Telefone telContato = new Telefone();
 				telContato.setDdd(input.getDddContato());
@@ -461,8 +493,12 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				telefoneContato.setTipoTelefone(TipoTelefone.CONTATO);
 				getSession().persist(telefoneContato);
 				
+				ndsiLoggerFactory.getLogger().logInfo(
+						message
+						, EventoExecucaoEnum.INF_DADO_ALTERADO
+						, "Inseridos dados de Telefone do Editor: "+ input.getNomeEditor());
 				
-			}else if(tipo == TipoTelefone.FAX){
+			} else if(tipo == TipoTelefone.FAX) {
 				//TELEFONE [FAX]
 				Telefone telFax = new Telefone();
 				telFax.setDdd(input.getDddFax());
@@ -476,7 +512,12 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				telefoneFax.setTipoTelefone(TipoTelefone.FAX);
 				getSession().persist(telefoneFax);
 				
-			}else if(tipo == TipoTelefone.COMERCIAL){	
+				ndsiLoggerFactory.getLogger().logInfo(
+						message
+						, EventoExecucaoEnum.INF_DADO_ALTERADO
+						, "Inseridos dados de Telefone do Editor: "+ input.getNomeEditor());
+				
+			} else if(tipo == TipoTelefone.COMERCIAL) {	
 				//TELEFONE [PRINCIPAL]
 				Telefone telPrincipal = new Telefone();
 				telPrincipal.setDdd(input.getDddEditor());
@@ -490,6 +531,11 @@ public class EMS0112MessageProcessor extends AbstractRepository implements Messa
 				telefonePrincipal.setTipoTelefone(TipoTelefone.COMERCIAL);
 				telefonePrincipal.setPrincipal(true);
 				getSession().persist(telefonePrincipal);
+				
+				ndsiLoggerFactory.getLogger().logInfo(
+						message
+						, EventoExecucaoEnum.INF_DADO_ALTERADO
+						, "Inseridos dados de Telefone do Editor: "+ input.getNomeEditor());
 				
 			}
 			

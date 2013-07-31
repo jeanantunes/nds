@@ -1,6 +1,5 @@
 package br.com.abril.nds.integracao.ems0113.processor;
 
-import java.math.BigDecimal;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,6 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
  * @version 1.0
  */
 @Component
-
 public class EMS0113MessageProcessor extends AbstractRepository implements MessageProcessor  {
 
 
@@ -45,7 +43,7 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 
 		EMS0113Input input = (EMS0113Input) message.getBody();
 		
-		if(distribuidorService.isDistribuidor(input.getCodigoDistribuidor())){
+		if(distribuidorService.isDistribuidor(input.getCodigoDistribuidor())) {
 			
 			DescontoLogistica descontoLogistica = descontoLogisticaService.obterPorTipoDesconto(input.getTipoDesconto());
 			
@@ -56,7 +54,13 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 				descontoLogistica.setDataInicioVigencia(input.getDataInicioDesconto());
 				
 				getSession().merge(descontoLogistica);
+				
+				ndsiLoggerFactory.getLogger().logInfo(
+						message
+						, EventoExecucaoEnum.INF_DADO_ALTERADO
+						, "Desconto logística atualizado com sucesso. Tipo Desconto: "+ descontoLogistica.getTipoDesconto());
 			} else {
+				
 				descontoLogistica = new DescontoLogistica();
 				
 				descontoLogistica.setId(null);//auto increment
@@ -68,15 +72,17 @@ public class EMS0113MessageProcessor extends AbstractRepository implements Messa
 				descontoLogistica.setDataInicioVigencia(input.getDataInicioDesconto());
 				
 				getSession().persist(descontoLogistica);
+				
+				ndsiLoggerFactory.getLogger().logInfo(
+						message
+						, EventoExecucaoEnum.INF_DADO_ALTERADO
+						, "Desconto logística inserido com sucesso. Tipo Desconto: "+ input.getTipoDesconto());
 			}
 		}
 
 		else{
 			ndsiLoggerFactory.getLogger().logInfo(message, EventoExecucaoEnum.SEM_DOMINIO, "Codigo do Distribuidor invalido: "+input.getCodigoDistribuidor());
 		}
-
-
-		
 
 	}
 

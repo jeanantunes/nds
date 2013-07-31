@@ -1023,9 +1023,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		} catch (Exception e) {
 			TRAVA_GERACAO_NE.remove("neCotasSendoGeradas");
 			throw e;
+		} finally {
+			TRAVA_GERACAO_NE.remove("neCotasSendoGeradas");
 		}
-
-		TRAVA_GERACAO_NE.remove("neCotasSendoGeradas");
 		
 		return listaNotaEnvio;
 	}
@@ -1069,6 +1069,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 						cotasSemRoteirizacao.add(cotaSemRoteirizacao.toString());
 					}
 					
+				} else {
+					throw new ValidacaoException(TipoMensagem.WARNING, "Cota com problemas de Roteirização: Cota: "+ cota.getNumeroCota() +" / "+ cota.getPessoa().getNome());
 				}
 			}
 			
