@@ -345,7 +345,10 @@ var chamadaoController = $.extend(true, {
 				qtdExemplaresParcial = qtdExemplaresParcial + intValue(reparte);
 				
 				var valor = $("#valorTotal" + this.value).html();
+<<<<<<< HEAD
 
+=======
+>>>>>>> DGBti/master
 				valor = priceToFloat(valor);
 				valorParcial = parseFloat(valorParcial) + parseFloat(valor);
 			

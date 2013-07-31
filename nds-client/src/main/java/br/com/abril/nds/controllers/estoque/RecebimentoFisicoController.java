@@ -1249,9 +1249,15 @@ public class RecebimentoFisicoController extends BaseController {
 	@Path("/obterDadosEdicao")
 	public void obterDadosEdicao(String codigo, String edicao) {
 		
+<<<<<<< HEAD
 		if (codigo != null 
 				&& !codigo.trim().isEmpty() 
 				&& edicao != null) {
+=======
+		if(codigo != null && !codigo.trim().isEmpty() && edicao != null) {
+			
+			codigo = StringUtils.leftPad(codigo, 8, '0');
+>>>>>>> DGBti/master
 			
 			codigo = StringUtils.leftPad(codigo, 8, '0');
 			

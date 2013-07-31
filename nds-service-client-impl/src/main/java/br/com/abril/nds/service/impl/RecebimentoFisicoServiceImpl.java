@@ -505,9 +505,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 										produtoEdicao.getProduto().getDescontoLogistica().getPercentualDesconto() : 
 											BigDecimal.ZERO);
 				}
-			}
-			
-			
+			}			
 			
 			ItemNotaFiscalEntrada itemNotaFiscal = inserirItemNotaFiscal(usuarioLogado, notaFiscal, recebimentoFisicoDTO, dataAtual, desconto);
 			
