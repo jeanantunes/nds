@@ -380,10 +380,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 		
 		this.salvarContrato(parametroCobranca.getInicioContrato(), parametroCobranca.getTerminoContrato());
 		
-		this.salvarFinanceiroEspecificoDaCota(parametroCobranca.getIdCota(), 
-				                              parametroCobranca.getInicioContrato(), 
-				                              parametroCobranca.getTerminoContrato(),
-				                              parametroCobranca.getTipoCota());
+		this.salvarTipoCota(parametroCobranca.getIdCota(), parametroCobranca.getTipoCota());
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parametros de Cobrança Cadastrados."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
