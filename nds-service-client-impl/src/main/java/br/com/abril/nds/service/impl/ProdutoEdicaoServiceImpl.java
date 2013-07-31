@@ -1060,6 +1060,16 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			
 			dto.setPeb(produto.getPeb());
 			
+			BigDecimal percentualDesconto = BigDecimal.ZERO;
+			
+			percentualDesconto = produto.getDesconto();
+			
+			if(produto.getDescricaoDesconto() != null && !"".equals(produto.getDescricaoDesconto())){
+				dto.setDescricaoDesconto(produto.getDescricaoDesconto());
+			}
+			
+			dto.setDesconto(percentualDesconto);
+			
 			Long ultimaEdicao = produtoEdicaoRepository.obterUltimoNumeroEdicao(codigoProduto);
 			
 			if (ultimaEdicao == null) {

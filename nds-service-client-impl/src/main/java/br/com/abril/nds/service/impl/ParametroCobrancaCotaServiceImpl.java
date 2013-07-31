@@ -1009,6 +1009,11 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				contratoRecebido = files[0];
 			}
 			
+			if (contratoRecebido==null){
+				
+				return null;
+			}
+			
 			File arquivoTemporario = new File(tempDir, contratoRecebido.getName());
 			
 			File arquivoContrato = new File(diretorioContrato, contratoRecebido.getName());
