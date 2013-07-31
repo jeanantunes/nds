@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 public class FiltroConsultaCaracteristicaDistribuicaoDetalheDTO extends FiltroDTO implements Serializable{
 
+	private static final long serialVersionUID = -6219213708879289967L;
+	
 	private String codigoProduto;
 	private String classificacaoProduto;
 	private String segmento;
@@ -16,6 +18,41 @@ public class FiltroConsultaCaracteristicaDistribuicaoDetalheDTO extends FiltroDT
 	private boolean opcaoFiltroPublicacao;
 	private boolean opcaoFiltroEditor;
 	private boolean opcaoFiltroChamadaCapa;
+	private Long idProduto;
+	
+	private OrdemColuna ordemColuna;
+	
+	public enum OrdemColuna{
+		
+		CODIGO("codigoProduto"),
+		PRODUTO("nomeProduto"),
+		EDITOR("nomeEditor"),
+		EDICAO("numeroEdicao"),
+		PRECO_CAPA("precoCapa"),
+		CLASSIFICACAO("classificacao"),
+		SEGMENTO("segmento"),
+		DT_LANCAMENTO("dataLancamentoString"),
+		DT_RECOLHIMENTO("dataRecolhimentoString"),
+		REPARTE("reparteString"),		
+		VENDA("vendaString"),
+		CHAMADA_CAPA("chamadaCapa");
+		
+		private String descricao;
+		
+		private OrdemColuna(String descricao) {
+			this.descricao = descricao;
+		}
+		
+		public String getDescricao(){
+			return this.descricao;
+		}
+		
+		@Override
+		public String toString() {
+			
+			return this.descricao;
+		}
+	}
 	
 	public String getCodigoProduto() {
 		return codigoProduto;
@@ -89,8 +126,16 @@ public class FiltroConsultaCaracteristicaDistribuicaoDetalheDTO extends FiltroDT
 	public void setOpcaoFiltroChamadaCapa(boolean opcaoFiltroChamadaCapa) {
 		this.opcaoFiltroChamadaCapa = opcaoFiltroChamadaCapa;
 	}
-	
-	
-	
-	
+	public OrdemColuna getOrdemColuna() {
+		return ordemColuna;
+	}
+	public void setOrdemColuna(OrdemColuna ordemColuna) {
+		this.ordemColuna = ordemColuna;
+	}
+	public Long getIdProduto() {
+		return idProduto;
+	}
+	public void setIdProduto(Long idProduto) {
+		this.idProduto = idProduto;
+	}
 }

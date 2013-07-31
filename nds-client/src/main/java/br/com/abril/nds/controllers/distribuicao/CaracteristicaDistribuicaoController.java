@@ -18,17 +18,21 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CaracteristicaDistribuicaoDTO;
 import br.com.abril.nds.dto.CaracteristicaDistribuicaoSimplesDTO;
+import br.com.abril.nds.dto.filtro.FiltroAnaliseEstudoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaCaracteristicaDistribuicaoDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaCaracteristicaDistribuicaoSimplesDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BrindeService;
 import br.com.abril.nds.service.CapaService;
 import br.com.abril.nds.service.CaracteristicaDistribuicaoService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.TipoSegmentoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -57,6 +61,9 @@ public class CaracteristicaDistribuicaoController extends BaseController{
 	
 	@Autowired
 	private BrindeService brindeService;
+	
+	@Autowired
+	private ProdutoService produtoService;
 	
 	@Autowired
 	private Result result;
@@ -106,20 +113,24 @@ public class CaracteristicaDistribuicaoController extends BaseController{
 			this.session.setAttribute(FILTRO_DETALHE_SESSION_ATTRIBUTE, filtro);
 		}
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+		filtro.setOrdemColuna(Util.getEnumByStringValue(FiltroConsultaCaracteristicaDistribuicaoDetalheDTO.OrdemColuna.values(), sortname));
 		tratarFiltroDetalhe(filtro);
-		List<CaracteristicaDistribuicaoDTO> resultado =caracteristicaDistribuicaoService.buscarComFiltroCompleto(filtro);
 		
-		if(resultado.isEmpty()){
-			 throw new ValidacaoException(TipoMensagem.WARNING, "Não Foram encontrados resultados para a pesquisa");
-	    }
+		if(filtro.getCodigoProduto() != null && filtro.getCodigoProduto() != ""){
+			Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigoProduto());
+			filtro.setIdProduto(produto.getId());
+		}
 		   
-		   TableModel<CellModelKeyValue<CaracteristicaDistribuicaoDTO>> tableModelPesquisaDetalhe = montarTableModelPesquisaDetalhe(filtro);
-			result.use(Results.json()).withoutRoot().from(tableModelPesquisaDetalhe).recursive().serialize();
+	   TableModel<CellModelKeyValue<CaracteristicaDistribuicaoDTO>> tableModelPesquisaDetalhe = montarTableModelPesquisaDetalhe(filtro);
+	   result.use(Results.json()).withoutRoot().from(tableModelPesquisaDetalhe).recursive().serialize();
 	}
 	  
 	private TableModel<CellModelKeyValue<CaracteristicaDistribuicaoDTO>> montarTableModelPesquisaDetalhe(FiltroConsultaCaracteristicaDistribuicaoDetalheDTO filtro) {
 		
 		List<CaracteristicaDistribuicaoDTO> resultadoPesquisa = caracteristicaDistribuicaoService.buscarComFiltroCompleto(filtro);
+		if(resultadoPesquisa.isEmpty()){
+			 throw new ValidacaoException(TipoMensagem.WARNING, "Não Foram encontrados resultados para a pesquisa");
+	    }
 		TableModel<CellModelKeyValue<CaracteristicaDistribuicaoDTO>> tableModel = new TableModel<CellModelKeyValue<CaracteristicaDistribuicaoDTO>>();
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPesquisa));
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
