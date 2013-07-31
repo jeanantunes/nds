@@ -158,12 +158,23 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 			hql.append("    AND f.id = :idFornecedor ");
 		}
 		
-		
-		
 		if(!isCount) {
 			hql.append(" group by pe.id ");
-			QueryUtil.addOrderBy(hql, filtro.getPaginacao(), 
-				"codigo","produto","edicao","precoCapa","lcto","rclto","qtde","valor");
+			
+			if (filtro.getPaginacao() != null && filtro.getPaginacao().getOrdenacao() != null &&
+					filtro.getPaginacao().getSortColumn() != null){
+				
+				hql.append(" order by ");
+				
+				if (filtro.getPaginacao().getSortColumn().equals("codigo")){
+					
+					hql.append(" (LPAD(pe.produto.codigo, 10, '0')) ");
+				} else {
+					hql.append(filtro.getPaginacao().getSortColumn());
+				}
+				
+				hql.append(" ").append(filtro.getPaginacao().getOrdenacao().name());
+			}
 		}
 		
 		Query query = this.getSession().createQuery(hql.toString());

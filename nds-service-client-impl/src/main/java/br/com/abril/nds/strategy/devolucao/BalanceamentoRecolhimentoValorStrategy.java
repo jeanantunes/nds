@@ -75,7 +75,7 @@ public class BalanceamentoRecolhimentoValorStrategy extends AbstractBalanceament
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento =
 			super.gerarBalanceamentoRecolhimentoDTO(matrizRecolhimentoBalanceada,
 													sobraProdutosRecolhimento,
-													dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor());
+													dadosRecolhimento);
 		
 		return balanceamentoRecolhimento;
 	}
@@ -225,6 +225,8 @@ public class BalanceamentoRecolhimentoValorStrategy extends AbstractBalanceament
 			 produtosNaDataRecolhimento.addAll(sobraProdutosRecolhimento);
 			 
 			 matrizRecolhimentoBalanceada.put(dataRecolhimento, produtosNaDataRecolhimento);
+			 
+			 sobraProdutosRecolhimento.clear();
 		}
 	}
 	

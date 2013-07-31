@@ -538,8 +538,12 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			return isOperacaoEntrada(operacaoEstoque) 
 					? GrupoMovimentoEstoque.TRANSFERENCIA_ENTRADA_PRODUTOS_DEVOLUCAO_ENCALHE
 							   :GrupoMovimentoEstoque.TRANSFERENCIA_SAIDA_PRODUTOS_DEVOLUCAO_ENCALHE;
-		
-		
+			
+		case GANHO:
+			return GrupoMovimentoEstoque.GANHO_EM;	
+
+		case PERDA:
+			return GrupoMovimentoEstoque.PERDA_EM;
 			
 		default:
 			throw new ValidacaoException(TipoMensagem.ERROR,"Erro para obter tipo de movimento estoque para lançamento de faltas e sobras!");
@@ -593,6 +597,8 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		for (RateioCotaVO rateioCotaVO : listaRateioCotaVO) {
 			
+			rateioCotaVO.setDataMovimento(diferenca.getDataMovimento());
+		
 			RateioDiferenca rateioDiferenca = null;
 			
 			if(rateioCotaVO.getIdRateio()!= null){

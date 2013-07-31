@@ -794,13 +794,13 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					if (value.dia || value.dataRecolhimento){
 					
-						if (value.dia && value.dia > 0){
+						//if (value.dia && value.dia > 0){
 						
 							innerTable += "<td style='text-align: center;' nowrap='nowrap'>" + value.dia + "º" + "</td>";
-						} else {
+						/*} else {
 							
 							innerTable += "<td style='text-align: center;' nowrap='nowrap' style='width: 20px;'>" + value.dataRecolhimento + "</td>";
-						}
+						}*/
 					} else {
 						
 						innerTable += "<td></td>";
@@ -1627,10 +1627,14 @@ var ConferenciaEncalhe = $.extend(true, {
 	},
 
 	autoCompletarPorCodigoDeBarras: function() {
-		
-		var codBarra = $("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).val().trim();
 
-		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/autoCompleteProdutoEdicaoCodigoDeBarras", {"codigoBarra" : codBarra},
+		var codBarra = $("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).val().trim();
+		
+		var data = 
+			[{name: 'numeroCota', value: $("#numeroCota", ConferenciaEncalhe.workspace).val()}, 
+			 {name: 'codigoBarra', value: codBarra}];
+
+		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/autoCompleteProdutoEdicaoCodigoDeBarras", data,
 			function(result){
 				//EXIBE AUTOCOMPLETE SOMENTE SE HOUVER MAIS DE UM RESULTADO
 			    if (result.length > 1){				
@@ -1642,10 +1646,6 @@ var ConferenciaEncalhe = $.extend(true, {
 							ConferenciaEncalhe.ultimoIdProdutoEdicao = ui.item.chave.$;	
 							
 							ConferenciaEncalhe.getProdutoEdicao();								
-						},
-						open:function(event,ui){
-							
-							$('#cod_barras_conf_encalhe', ConferenciaEncalhe.workspace).unbind('keypress');								
 						},
 						close:function(event, ui){	
 							
@@ -1667,6 +1667,8 @@ var ConferenciaEncalhe = $.extend(true, {
 			}, 
 			function() {
 		
+				$("#qtdeExemplar", ConferenciaEncalhe.workspace).val("1");
+				
 				$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).autocomplete({});
 					
 				$('#cod_barras_conf_encalhe', ConferenciaEncalhe.workspace).val("");

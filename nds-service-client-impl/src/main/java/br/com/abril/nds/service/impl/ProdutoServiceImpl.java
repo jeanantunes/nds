@@ -162,7 +162,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 			}
 		} catch (Exception e) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, 
+			throw new ValidacaoException(TipoMensagem.WARNING, 
 					"Impossível excluir o produto. Existem associações que não podem ser excluídas.");
 		}
 	}

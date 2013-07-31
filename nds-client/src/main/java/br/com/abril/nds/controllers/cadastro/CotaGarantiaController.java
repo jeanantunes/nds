@@ -435,7 +435,7 @@ public class CotaGarantiaController extends BaseController {
 	@Post("/getNotaPromissoriaByCota.json")
 	public void getNotaPromissoriaByCota(Long idCota, ModoTela modoTela) {
     	
-		if (ModoTela.CADASTRO_COTA == modoTela) {
+		if (ModoTela.CADASTRO_COTA == modoTela || ModoTela.HISTORICO_TITULARIDADE == modoTela) {
             
             NotaPromissoria dadosNotaPromissoria= cotaGarantiaService.obterDadosNotaPromissoria(idCota);
             
@@ -446,7 +446,10 @@ public class CotaGarantiaController extends BaseController {
             	
                 result.use(CustomJson.class).from("OK").serialize();
             }
-        }    
+        } else {
+        	result.use(CustomJson.class).from("OK").serialize();
+        }		
+		
 	}
 
 	/**
@@ -494,6 +497,32 @@ public class CotaGarantiaController extends BaseController {
 		
 	}
 
+	@Post("/validarDadosCotaPreImpressao.json")
+	public void validarDadosCotaPreImpressao(Long idCota){
+		
+		List<String> msgs = this.cotaGarantiaService.validarDadosCotaPreImpressao(idCota);
+		
+		if (msgs != null && !msgs.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING, msgs);
+		}
+		
+		result.use(Results.json()).from("OK").serialize();
+	}
+	
+	@Post("/verificarValorCaucaoLiquida")
+	public void verificarValorCaucaoLiquida(Long idCota){
+		
+		boolean existeCL= this.cotaGarantiaService.existeCaucaoLiquidasCota(idCota);
+		
+		if (existeCL){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, 
+				"É necessário resgatar a caução líquida antes de alterar o tipo de garantia.");
+		}
+		
+		result.use(Results.json()).from("OK").serialize();
+	}
+	
 	@Get("/impriNotaPromissoria/{id}")
 	public void impriNotaPromissoria(Long id) {
 		NotaPromissoriaDTO nota = cotaGarantiaService.getDadosImpressaoNotaPromissoria(id);

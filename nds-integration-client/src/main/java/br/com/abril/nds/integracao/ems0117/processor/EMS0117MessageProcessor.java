@@ -12,7 +12,6 @@ import br.com.abril.nds.integracao.ems0117.inbound.EMS0117Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.model.TipoEdicao;
-import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
@@ -63,26 +62,8 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 		EMS0117Input input = (EMS0117Input) message.getBody();
 
 		StringBuilder sql = new StringBuilder();
-
-		// Obter Box
-		sql.append("FROM Box b ");
-		sql.append("WHERE b.codigo = :codigo ");
-		Query query = getSession().createQuery(sql.toString());
-		query.setParameter("codigo", Integer.valueOf( input.getCodBox().toString() ));
-		Box box = (Box) query.uniqueResult();
+		Query query = null;
 		
-		if (null == box) {
-			// Não encontrou a Box. Realizar Log
-			// Passar para a próxima linha
-			ndsiLoggerFactory.getLogger().logWarning(
-					message,
-					EventoExecucaoEnum.HIERARQUIA,
-					"Codigo BOX " + input.getCodBox().toString()
-							+ " nao encontrado para a Cota "
-							+ input.getCodCota().toString());
-			return;
-		}
-
 		Pessoa pessoa = null;
 		Cota cota = null;
 		sql = new StringBuilder();
@@ -227,19 +208,30 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			
 			getSession().persist(historicoSituacaoCota);
 			
+			
 			// ParametroCobrancaCota - Realizado em conjunto com Cesar Pop Punk
 			ParametroCobrancaCota parametroCobrancaCota = new ParametroCobrancaCota();
 			parametroCobrancaCota.setCota(cota);
 			
+			
+			
+			
+			
+			
+			//OBS: Necessidade de ajusta na Interface: Tipo de Cota agora se encontra na Cota. 
+			/*
 			if (input.getCondPrazoPagamento().equals("S")) {
 				
-				parametroCobrancaCota.setTipoCota(TipoCota.CONSIGNADO);
-				
+				cota.setTipoCota(TipoCota.CONSIGNADO);
 			} else {
 				
-				parametroCobrancaCota.setTipoCota(TipoCota.A_VISTA);
-				
+				cota.setTipoCota(TipoCota.A_VISTA);
 			}
+			*/
+			
+			
+			
+			
 			
 			getSession().persist(parametroCobrancaCota);
 			
@@ -304,8 +296,6 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 		} else {
 
-			Endereco endereco = null;
-			EnderecoCota enderecoCota = null;
 			Telefone telefone = null;
 			TelefoneCota telefoneCota = null;
 
@@ -464,6 +454,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 		
 		query.setParameter("numeroCota", cota);
 		
+		@SuppressWarnings("unchecked")
 		List<Endereco> enderecos = (List<Endereco>) query.list();
 
 		if (enderecos.isEmpty()) {

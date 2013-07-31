@@ -1249,16 +1249,21 @@ public class RecebimentoFisicoController extends BaseController {
 	@Path("/obterDadosEdicao")
 	public void obterDadosEdicao(String codigo, String edicao) {
 		
-		if(codigo != null && !codigo.trim().isEmpty() && edicao != null) {
+		if (codigo != null 
+				&& !codigo.trim().isEmpty() 
+				&& edicao != null) {
 			
 			codigo = StringUtils.leftPad(codigo, 8, '0');
 			
-			RecebimentoFisicoDTO recebimentoFisicoDTO = this.recebimentoFisicoService.obterRecebimentoFisicoDTO(codigo, edicao);
+			RecebimentoFisicoDTO recebimentoFisicoDTO = 
+				this.recebimentoFisicoService.obterRecebimentoFisicoDTO(codigo, edicao);
 			
-			result.use(Results.json()).from(recebimentoFisicoDTO, "result").serialize();
-		}
+			this.result.use(Results.json()).from(recebimentoFisicoDTO, "result").serialize();
+			
+		} else {
 		
-		result.use(Results.nothing());
+			this.result.use(Results.nothing());
+		}
 	}
 	
 	/**
@@ -1486,5 +1491,6 @@ public class RecebimentoFisicoController extends BaseController {
 		listaMensagens.add("Nota fiscal cadastrada com sucesso.");
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, listaMensagens),"result").recursive().serialize();
 	}
+	
 	
 }

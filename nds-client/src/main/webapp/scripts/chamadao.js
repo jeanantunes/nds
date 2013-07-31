@@ -264,8 +264,8 @@ var chamadaoController = $.extend(true, {
 			var spanReparte = "<span id='reparte" + row.id + "'>"
 						+ row.cell.reparte + "</span>";
 			
-			var spanValorTotal = "<span id='valorTotal" + row.id + "'>"
-						+ row.cell.valorTotal + "</span>";
+			var spanValorTotalDesconto = "<span id='valorTotal" + row.id + "'>"
+						+ row.cell.valorTotalDesconto + "</span>";
 			
 			var inputCheck = '<input type="checkbox" id="ch' + row.id + '"'
 						   + ' name="checkConsignado"'
@@ -277,7 +277,7 @@ var chamadaoController = $.extend(true, {
 			var inputHidden = '<input type="hidden" class="lancamentoHidden" value="' + idLancamento + '"/>';
 						   
 			row.cell.reparte = spanReparte;
-			row.cell.valorTotal = spanValorTotal;
+			row.cell.valorTotalDesconto = spanValorTotalDesconto;
 			row.cell.sel = inputCheck;
 			row.cell.lancamentoHidden = inputHidden;
 		});
@@ -345,20 +345,21 @@ var chamadaoController = $.extend(true, {
 				qtdExemplaresParcial = qtdExemplaresParcial + intValue(reparte);
 				
 				var valor = $("#valorTotal" + this.value).html();
-				valor = removeMascaraPriceFormat(valor);
-				valorParcial = valorParcial + intValue(valor);
+				
+				valor = priceToFloat(valor);
+				valorParcial = parseFloat(valorParcial) + parseFloat(valor);
 			
 			} else {
 				
 				$("#checkAll", chamadaoController.workspace).attr("checked", false);
 			}
 		});
-		
+		valorParcial = parseFloat(valorParcial).toFixed(4);
 		$("#qtdProdutosParcial", chamadaoController.workspace).val(qtdProdutosParcial);
 		$("#qtdExemplaresParcial", chamadaoController.workspace).val(qtdExemplaresParcial);
-		$("#valorParcial", chamadaoController.workspace).val(valorParcial);
+		$("#valorParcial", chamadaoController.workspace).val(floatToPrice(valorParcial));
 		
-		chamadaoController.aplicarMascaraCampos();
+		// chamadaoController.aplicarMascaraCampos();
 	},
 	
 	verifyCheckAll : function() {
@@ -376,9 +377,9 @@ var chamadaoController = $.extend(true, {
 		
 		$("#qtdProdutosParcial", chamadaoController.workspace).val(0);
 		$("#qtdExemplaresParcial", chamadaoController.workspace).val(0);
-		$("#valorParcial", chamadaoController.workspace).val(0);
+		$("#valorParcial", chamadaoController.workspace).val(floatToPrice(0));
 		
-		chamadaoController.aplicarMascaraCampos();
+		//chamadaoController.aplicarMascaraCampos();
 	},
 	
 	aplicarMascaraCampos : function() {
@@ -386,7 +387,8 @@ var chamadaoController = $.extend(true, {
 		$("#valorParcial", chamadaoController.workspace).priceFormat({
 			allowNegative: true,
 			centsSeparator: ',',
-		    thousandsSeparator: '.'
+		    thousandsSeparator: '.',
+		    centsLimit: 2
 		});
 	},
 	
@@ -518,3 +520,4 @@ var chamadaoController = $.extend(true, {
 }, BaseController);
 
 //@ sourceURL=chamadao.js
+

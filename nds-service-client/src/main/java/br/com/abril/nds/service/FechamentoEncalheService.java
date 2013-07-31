@@ -80,4 +80,7 @@ public interface FechamentoEncalheService {
 	List<FechamentoFisicoLogicoDTO> ajustarGrids(
 			List<FechamentoFisicoLogicoDTO> listaEncalhe,
 			List<FechamentoFisicoLogicoDTO> listaEncalheSession);
+
+	
+	Integer buscarTotalCotasAusentesSemPostergado(Date dataEncalhe, boolean isSomenteCotasSemAcao);
 }

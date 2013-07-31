@@ -185,5 +185,16 @@ public interface ProdutoEdicaoService {
 	public List<AnaliseHistogramaDTO> obterBaseEstudoHistogramaPorFaixaVenda(FiltroHistogramaVendas filtro,String codigoProduto,String[] faixasVenda, String[] edicoes);
 
 	public abstract List<ItemAutoComplete> obterPorCodigoBarraILike(String codigoBarra);
+
+	/**
+	 * Obtem ProdutoEdicao por codigo do produto, numero de edição e numero de lançamento
+	 * @param codigoProduto
+	 * @param idProdutoEdicao
+	 * @param nEdicao
+	 * @param nLancamento
+	 * @return ProdutoEdicao
+	 */
+	ProdutoEdicao obterProdutoEdicaoPorNumeroEdicaoENumeroLancamento(
+			String codigoProduto, Long idProdutoEdicao, Long nEdicao, Integer nLancamento);
 	
 }

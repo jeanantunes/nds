@@ -369,16 +369,6 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		hql.append("      AND lancamento.STATUS IN (:statusLancamentoExpedido, :statusLancamentoEmBalanceamentoRec) ");
 		hql.append("      AND lancamento.DATA_REC_PREVISTA >= :dataRecolhimento ");
 		hql.append("      AND (estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) > 0 ");
-	    	
-		hql.append(" AND NOT EXISTS ( ");
-	    hql.append(" 	SELECT chamadaEncalheCota.COTA_ID ");
-	    hql.append(" 	FROM CHAMADA_ENCALHE_COTA chamadaEncalheCota ") ;
-	    hql.append(" 		INNER JOIN CHAMADA_ENCALHE chamadaEncalhe ");
-	    hql.append(" 			ON chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.ID ");
-	    hql.append(" 	WHERE chamadaEncalheCota.COTA_ID = cota.ID ");
-	    hql.append(" 		AND chamadaEncalhe.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
-	    hql.append(" 		AND chamadaEncalhe.TIPO_CHAMADA_ENCALHE IN (:chamadaEncalheAntecipada, :chamadaEncalheChamadao) ");
-        hql.append(" )");
 		
 		if (filtro != null) {
 		
@@ -469,10 +459,6 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 			"statusLancamentoEmBalanceamentoRec", StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name());
 		
 		query.setParameter("statusLancamentoExpedido", StatusLancamento.EXPEDIDO.name());
-		
-		query.setParameter("chamadaEncalheAntecipada", TipoChamadaEncalhe.ANTECIPADA.name());
-		
-		query.setParameter("chamadaEncalheChamadao", TipoChamadaEncalhe.CHAMADAO.name());
 		
 		if (filtro == null) {
 			

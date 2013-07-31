@@ -162,18 +162,18 @@
 	        
 	        <table width="949" border="0" cellspacing="1" cellpadding="1">
 	   			<tr>
-	   				<td width="442" valign="top"></td>
+	   				<td width="242" valign="top"></td>
 	      				
 	      			<td width="458">
-				        <fieldset class="box_field" style="width:320px;">
+				        <fieldset class="box_field" style="width:420px;">
 				        	<legend>Chamadão</legend>
-				        	<div class="box_resumo" style="width:308px;">
-				            	<table width="309" border="0" cellspacing="1" cellpadding="1">
+				        	<div class="box_resumo" style="width:408px;">
+				            	<table width="409" border="0" cellspacing="1" cellpadding="1">
 				                	<tr class="header_table">
 				                    	<td height="23" align="right">&nbsp;</td>
 				                      	<td align="center"><strong>Produtos</strong></td>
 				                      	<td align="center"><strong>Exemplares</strong></td>
-				                      	<td align="center"><strong>Total R$</strong></td>
+				                      	<td align="center"><strong>Total R$ (com desconto)</strong></td>
 				                    </tr>
 				                    <tr class="class_linha_1">
 				                    	<td width="52" height="23"><strong>Parcial:</strong></td>

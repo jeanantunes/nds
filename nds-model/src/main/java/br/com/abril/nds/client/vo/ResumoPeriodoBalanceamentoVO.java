@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
@@ -24,6 +26,9 @@ public class ResumoPeriodoBalanceamentoVO implements Serializable {
 	private Long qtdeTitulosParciais;
 	private boolean exibeDestaque;
 	private boolean excedeCapacidadeDistribuidor;
+	private boolean bloquearVisualizacao;
+	private boolean operacaoDiferenciada;
+	private Set<Long> idsProdutoEdicao = new HashSet<>();
 	
 	public Date getData() {
 		return data;
@@ -143,6 +148,48 @@ public class ResumoPeriodoBalanceamentoVO implements Serializable {
 	 */
 	public void setExcedeCapacidadeDistribuidor(boolean excedeCapacidadeDistribuidor) {
 		this.excedeCapacidadeDistribuidor = excedeCapacidadeDistribuidor;
+	}
+
+	/**
+	 * @return the bloquearVisualizacao
+	 */
+	public boolean isBloquearVisualizacao() {
+		return bloquearVisualizacao;
+	}
+
+	/**
+	 * @param bloquearVisualizacao the bloquearVisualizacao to set
+	 */
+	public void setBloquearVisualizacao(boolean bloquearVisualizacao) {
+		this.bloquearVisualizacao = bloquearVisualizacao;
+	}
+
+	/**
+	 * @return the operacaoDiferenciada
+	 */
+	public boolean isOperacaoDiferenciada() {
+		return operacaoDiferenciada;
+	}
+
+	/**
+	 * @param operacaoDiferenciada the operacaoDiferenciada to set
+	 */
+	public void setOperacaoDiferenciada(boolean operacaoDiferenciada) {
+		this.operacaoDiferenciada = operacaoDiferenciada;
+	}
+
+	/**
+	 * @return the idsProdutoEdicao
+	 */
+	public Set<Long> getIdsProdutoEdicao() {
+		return idsProdutoEdicao;
+	}
+
+	/**
+	 * @param idsProdutoEdicao the idsProdutoEdicao to set
+	 */
+	public void setIdsProdutoEdicao(Set<Long> idsProdutoEdicao) {
+		this.idsProdutoEdicao = idsProdutoEdicao;
 	}
 	
 }

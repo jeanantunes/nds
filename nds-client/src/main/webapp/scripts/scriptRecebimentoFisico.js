@@ -1329,7 +1329,6 @@ var recebimentoFisicoController = $.extend(true, {
 			$('#botaoNovoProduto', recebimentoFisicoController.workspace).hide();
 			
 		}	
-		
 		return data;
 
 	},
@@ -1728,9 +1727,9 @@ var recebimentoFisicoController = $.extend(true, {
 			 
 			 var qtdNota =      '<input class="number" maxlength="10" value="'+valueQtdNota+'" type="text" name="itensRecebimento.qtdNotaItem" id="qtdNotaItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.replicarQuantidadeItem('+index+'); recebimentoFisicoController.alterarValorItem('+index+');"></input>';
 			     
-	         var qtdPacote =    '<input class="number" maxlength="10" value="'+valueQtdPacote+'" type="text" name="itensRecebimento.qtdPacoteItem" id="qtdPacoteItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.alterarValorItem('+index+');"></input>';
+	         var qtdPacote =    '<input class="number" maxlength="10" value="'+valueQtdPacote+'" type="text" name="itensRecebimento.qtdPacoteItem" id="qtdPacoteItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.alterarValorItem('+index+');" onkeydown="recebimentoFisicoController.retirarChekboxReplicar('+index+');"></input>';
 				             
-			 var qtdExemplar =  '<input class="number" maxlength="10" value="'+valueQtdExemplar+'" type="text" name="itensRecebimento.qtdExemplarItem" id="qtdExemplarItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.alterarValorItem('+index+');"></input>'; 
+			 var qtdExemplar =  '<input class="number" maxlength="10" value="'+valueQtdExemplar+'" type="text" name="itensRecebimento.qtdExemplarItem" id="qtdExemplarItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.alterarValorItem('+index+');" onkeydown="recebimentoFisicoController.retirarChekboxReplicar('+index+');"></input>'; 
 			 
 			 var pacotePadrao =  '<input class="number" maxlength="10" value="'+valuePacotePadrao+'" type="text" readonly="readonly" name="itensRecebimento.pacotePadraoItem" id="pacotePadraoItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
 			 
@@ -1768,7 +1767,7 @@ var recebimentoFisicoController = $.extend(true, {
 		$("#diferencaItem" + idLinha, recebimentoFisicoController.workspace).val("");
 		$("#valorItem" + idLinha, recebimentoFisicoController.workspace).val("");
 		$("#novoValorTotal", recebimentoFisicoController.workspace).val("");
-		$("#labelValorTotal", recebimentoFisicoController.workspace).text("");
+		$("#labelValorTotal", recebimentoFisicoController.workspace).text("0,00");
 	},
 	
 	isAtributosLancamentoVazios : function(codigo, produto, edicao, precoDesconto, qtdNota, qtdPacote, qtdExemplar) {
@@ -2123,16 +2122,18 @@ var recebimentoFisicoController = $.extend(true, {
     
 	limparCamposNovaNota : function(){
 		
-		$("#novoFornecedor", 	recebimentoFisicoController.workspace).val(-1);
-		$("#novoCnpj", 			recebimentoFisicoController.workspace).val("");
-		$("#novoNumeroNota", 	recebimentoFisicoController.workspace).val("");
-        $("#novoSerieNota", 	recebimentoFisicoController.workspace).val("");
-        $("#novoNfe", 			recebimentoFisicoController.workspace).val("");
-        $("#novoChaveAcesso", 	recebimentoFisicoController.workspace).val("");
-        $("#novoDataEmissao", 	recebimentoFisicoController.workspace).val("");
-        $("#novoDataEntrada", 	recebimentoFisicoController.workspace).val("");
-        $("#novoValorTotal", 	recebimentoFisicoController.workspace).val("");
-        
+		$("#novoFornecedor", 	  recebimentoFisicoController.workspace).val(-1);
+		$("#novoCnpj", 			  recebimentoFisicoController.workspace).val("");
+		$("#novoNumeroNota", 	  recebimentoFisicoController.workspace).val("");
+        $("#novoSerieNota", 	  recebimentoFisicoController.workspace).val("");
+        $("#novoNumeroNotaEnvio", recebimentoFisicoController.workspace).val("");
+        $("#novoNfe", 			  recebimentoFisicoController.workspace).removeAttr("checked");
+        $("#novoChaveAcesso", 	  recebimentoFisicoController.workspace).val("");
+        $("#novoDataEmissao", 	  recebimentoFisicoController.workspace).val("");
+        $("#novoDataEntrada", 	  recebimentoFisicoController.workspace).val("");
+        $("#novoValorTotal", 	  recebimentoFisicoController.workspace).val("");
+        $("#novoReplicarQtde",    recebimentoFisicoController.workspace).removeAttr("checked");
+        $("#labelValorTotal",     recebimentoFisicoController.workspace).text("0,00");
         recebimentoFisicoController.montaGridItens();
 	},
 	
@@ -2225,6 +2226,17 @@ var recebimentoFisicoController = $.extend(true, {
 			}
 			
 		});
+		
+	},
+	
+	retirarChekboxReplicar : function(numeroDaLinha) {
+		
+		if($("#checkbox" + numeroDaLinha).is(":checked")) {
+			$("#checkbox" + numeroDaLinha).attr("checked", false);
+		}
+		if($("#selTodos").is(":checked")) {
+			$("#selTodos").attr("checked", false);
+		}
 		
 	}
 		

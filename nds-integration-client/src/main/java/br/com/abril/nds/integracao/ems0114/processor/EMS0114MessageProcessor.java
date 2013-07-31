@@ -45,8 +45,8 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 		// Validar Produto/Edicao
 		final String codigoProduto = input.getCodProd();
 		final Long edicao = input.getEdicao();
-		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto,
-				edicao, message);
+		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto, edicao, message);
+		
 		if (produtoEdicao == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
@@ -58,8 +58,9 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 
 		
 		final Date dataGeracaoArquivo = input.getDataGeracaoArq();
-		Lancamento lancamento = this.getLancamentoRecolhimentoMaisProximo(
-				produtoEdicao, dataGeracaoArquivo);
+		
+		Lancamento lancamento = this.getLancamentoRecolhimentoMaisProximo(produtoEdicao, dataGeracaoArquivo);
+		
 		if (lancamento == null) {
 			
 			lancamento = this.getLancamentoAnteriorRecolhimentoMaisProximo(produtoEdicao, dataGeracaoArquivo);
@@ -82,10 +83,10 @@ public class EMS0114MessageProcessor extends AbstractRepository implements
 			return;
 		}
 		
-		final Date dtRecolhimentoDistribuidor = this.normalizarDataSemHora(
-				lancamento.getDataRecolhimentoDistribuidor());
-		final Date dtRecolhimentoArquivo = this.normalizarDataSemHora(
-				input.getDataRecolhimento());
+		final Date dtRecolhimentoDistribuidor = this.normalizarDataSemHora(lancamento.getDataRecolhimentoDistribuidor());
+		
+		final Date dtRecolhimentoArquivo = this.normalizarDataSemHora(input.getDataRecolhimento());
+		
 		if (!dtRecolhimentoDistribuidor.equals(dtRecolhimentoArquivo)) {
 			
 			final Date dtRecolhimentoPrevista = this.normalizarDataSemHora(

@@ -1235,6 +1235,7 @@ public class CotaServiceImpl implements CotaService {
 			cota = new Cota();
 			cota.setInicioAtividade(distribuidorService.obterDataOperacaoDistribuidor());
 			cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
+			cota.setTipoCota(TipoCota.CONSIGNADO);
 			incluirPDV = true;
 			newCota = true;
 		}
@@ -1805,7 +1806,7 @@ public class CotaServiceImpl implements CotaService {
 					throw new ValidacaoException(TipoMensagem.WARNING,"Número da cota está inativo mas não pode ser utilizado.");
 				}
 				else{
-				   //Alterar Numero Cota e registra histoico
+				   //Alterar Numero Cota e registra histórico
 					alteraNumeroCota(cota);
 				}
 			}
@@ -1878,17 +1879,23 @@ public class CotaServiceImpl implements CotaService {
 	 */
 	private boolean isParametroDistribuidoNumeroCotaValido(Integer  numeroCota){
 		
-		HistoricoSituacaoCota histCota  = historicoSituacaoCotaRepository.obterUltimoHistoricoInativo(numeroCota);
+		HistoricoSituacaoCota historicoSituacaoCota  = 
+			this.historicoSituacaoCotaRepository.obterUltimoHistoricoInativo(numeroCota);
 		
-		if(histCota == null){
+		if (historicoSituacaoCota == null) {
+			
 			return true;
 		}
 		
-	    Long qntDiasInativo =  DateUtil.obterDiferencaDias(histCota.getDataInicioValidade(), new Date());
+	    Long qntDiasInativo =  
+	    	DateUtil.obterDiferencaDias(
+	    		historicoSituacaoCota.getDataInicioValidade(), 
+	    			this.distribuidorRepository.obterDataOperacaoDistribuidor());
 	    
-	    Long qntDiasDistribuidor = this.distribuidorService.qntDiasReutilizacaoCodigoCota();
+	    Long qntDiasInativoPermitidoParaReutilizacao =
+	    	this.distribuidorService.qntDiasReutilizacaoCodigoCota();
 	    
-		return (qntDiasInativo > qntDiasDistribuidor );
+		return (qntDiasInativo > qntDiasInativoPermitidoParaReutilizacao);
 	}
 
 	/**
@@ -1973,6 +1980,10 @@ public class CotaServiceImpl implements CotaService {
 		
 		if (garantia!=null){
 	 
+			this.cotaGarantiaRepository.deleteListaImoveis(garantia.getId());
+			
+			this.cotaGarantiaRepository.deleteListaOutros(garantia.getId());
+			
 			this.cotaGarantiaRepository.deleteByCota(cota.getId());
 		}
 		
@@ -2017,6 +2028,7 @@ public class CotaServiceImpl implements CotaService {
 		cotaNova.setParametroDistribuicao(parametroDistribuicaoCota);
 		cotaNova.setTitularesCota(titularesCota);
 		cotaNova.setSituacaoCadastro(SituacaoCadastro.ATIVO);
+		cotaNova.setTipoCota(TipoCota.CONSIGNADO);
 		
 		this.cotaRepository.merge(cotaNova);
 		processarTitularidadeCota(cotaAntiga, cotaDTO);
@@ -2167,7 +2179,7 @@ public class CotaServiceImpl implements CotaService {
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		parameters.put("SUBREPORT_DIR",
-				Thread.currentThread().getContextClassLoader().getResource("/reports/").getPath());
+				Thread.currentThread().getContextClassLoader().getResource("/reports/").toURI().getPath());
 		
 		String informacoesComplementares = this.distribuidorRepository.obterInformacoesComplementaresTermoAdesao();
 		parameters.put("infoComp", informacoesComplementares!=null?informacoesComplementares:"");

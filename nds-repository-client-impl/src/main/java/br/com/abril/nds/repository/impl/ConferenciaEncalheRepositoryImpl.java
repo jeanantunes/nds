@@ -9,18 +9,21 @@ import java.util.Set;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
+import br.com.abril.nds.util.ItemAutoComplete;
 
 @Repository
 public class ConferenciaEncalheRepositoryImpl extends
@@ -424,6 +427,71 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(Integer numeroCota, String codigoBarras, Date dataRecolhimento) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" select	 ");
+		sql.append(" PROD_EDICAO.ID as chave,	");
+		sql.append(" PROD_EDICAO.CODIGO_DE_BARRAS as value, ");
+		sql.append(" CONCAT(PROD_EDICAO.CODIGO_DE_BARRAS, ' - ', PROD.NOME,' - Ed.:', PROD_EDICAO.NUMERO_EDICAO) as label ");
+		
+		sql.append("    FROM    ");
+		sql.append("    CHAMADA_ENCALHE_COTA AS CH_ENCALHE_COTA 	");
+		sql.append("	inner join COTA AS COTA ON ");
+		sql.append("	(COTA.ID = CH_ENCALHE_COTA.COTA_ID)	");
+		sql.append("	inner join CHAMADA_ENCALHE AS CH_ENCALHE ON ");
+		sql.append("	(CH_ENCALHE_COTA.CHAMADA_ENCALHE_ID = CH_ENCALHE.ID)	");
+		sql.append("	inner join PRODUTO_EDICAO as PROD_EDICAO ON ");
+		sql.append("	(PROD_EDICAO.ID = CH_ENCALHE.PRODUTO_EDICAO_ID)	");
+		sql.append("	inner join PRODUTO as PROD ON ");
+		sql.append("	(PROD_EDICAO.PRODUTO_ID = PROD.ID)	");
+		sql.append("	inner join MOVIMENTO_ESTOQUE_COTA MEC ON ");
+		sql.append("	MEC.COTA_ID = CH_ENCALHE_COTA.COTA_ID AND MEC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
+		sql.append("	inner join TIPO_MOVIMENTO TIPO_MOV ON ");
+		sql.append("	MEC.TIPO_MOVIMENTO_ID = TIPO_MOV.ID AND  TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque ");
+
+		sql.append("	WHERE   ");
+		sql.append("	UPPER(PROD_EDICAO.CODIGO_DE_BARRAS) like :codigoBarras AND  ");
+		sql.append("	CH_ENCALHE.DATA_RECOLHIMENTO = :dataRecolhimento AND ");
+		sql.append("	CH_ENCALHE_COTA.FECHADO = :indFechado AND	");
+		sql.append("	CH_ENCALHE_COTA.POSTERGADO = :indPostergado 	");
+		sql.append("	AND MEC.DATA = (SELECT 	MAX(MEC.DATA) ");
+		sql.append("					FROM    MOVIMENTO_ESTOQUE_COTA MEC, TIPO_MOVIMENTO TIPO_MOV ");
+		sql.append("					WHERE   MEC.COTA_ID = CH_ENCALHE_COTA.COTA_ID ");
+		sql.append("					AND     MEC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
+		sql.append("					AND 	MEC.TIPO_MOVIMENTO_ID = TIPO_MOV.ID ");
+		sql.append("					AND     TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque) ");
+
+		if (numeroCota != null) {
+			
+			sql.append("	AND COTA.NUMERO_COTA = :numeroCota ");
+		}
+
+		sql.append(" GROUP BY PROD_EDICAO.ID ");
+		sql.append(" ORDER BY label ");
+		
+		Query query =  this.getSession().createSQLQuery(sql.toString());
+
+		query.setParameter("codigoBarras", codigoBarras.toUpperCase() + "%");
+		query.setParameter("dataRecolhimento", dataRecolhimento);
+		query.setParameter("indFechado", false);
+		query.setParameter("indPostergado", false);
+		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+
+		if (numeroCota != null) {
+			query.setParameter("numeroCota", numeroCota);
+		}
+
+		query.setResultTransformer(Transformers.aliasToBean(ItemAutoComplete.class));
+		
+		return query.list();
+	}
 	
 	/*
 	 * (non-Javadoc)
@@ -471,7 +539,10 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append(" CONTROLE_CONF_ENC_COTA.DATA_OPERACAO AS dataConferencia,  ");
 		hql.append(" CONF_ENCALHE.OBSERVACAO AS observacao, 	");
-		hql.append(" CONF_ENCALHE.JURAMENTADA AS juramentada 	");
+		hql.append(" CONF_ENCALHE.JURAMENTADA AS juramentada, 	");
+		hql.append(" DATEDIFF(CASE WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 0) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 1 DAY) ");
+		hql.append(" WHEN (DAYOFWEEK((select DATA_OPERACAO from distribuidor)) = 7) THEN DATE_ADD((select DATA_OPERACAO from distribuidor), INTERVAL 2 DAY) ");
+		hql.append(" ELSE (select DATA_OPERACAO from distribuidor) END, DATA_RECOLHIMENTO) + 1 AS dia ");
 
 		hql.append(" FROM ");
 
@@ -534,6 +605,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		((SQLQuery)query).addScalar("precoComDesconto");
 		((SQLQuery)query).addScalar("valorTotal");
 		((SQLQuery)query).addScalar("dataConferencia");
+		((SQLQuery)query).addScalar("dia", StandardBasicTypes.INTEGER);
 
 		
 		query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);

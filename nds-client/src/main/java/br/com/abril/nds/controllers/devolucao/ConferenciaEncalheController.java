@@ -560,14 +560,16 @@ public class ConferenciaEncalheController extends BaseController {
 	}
 	
 	@Post
-	public void autoCompleteProdutoEdicaoCodigoDeBarras(String codigoBarra) {
+	public void autoCompleteProdutoEdicaoCodigoDeBarras(Integer numeroCota, String codigoBarra) {
 		
 		if (codigoBarra == null || codigoBarra.trim().isEmpty()) {
 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Código de barras inválido.");
 		}
 
-		List<ItemAutoComplete> listaProdutos = this.produtoEdicaoService.obterPorCodigoBarraILike(codigoBarra);
+		List<ItemAutoComplete> listaProdutos = 
+				this.conferenciaEncalheService.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarra); 
+
 		if (listaProdutos == null || listaProdutos.isEmpty()) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nehum produto Encontrado.");
@@ -708,7 +710,7 @@ public class ConferenciaEncalheController extends BaseController {
 		if (conferenciaEncalheDTO == null && produtoEdicao == null){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto Edição não encontrado.");
-		} else if (conferenciaEncalheDTO == null){
+		} else if (conferenciaEncalheDTO == null) {
 			
 			conferenciaEncalheDTO = this.criarConferenciaEncalhe(produtoEdicao, quantidade, false, false);
 		}
@@ -1955,11 +1957,11 @@ public class ConferenciaEncalheController extends BaseController {
 			this.setListaConferenciaEncalheToSession(lista);
 		}
 
-		Integer diaRecolhimento = this.distribuidorService.obterDiaDeRecolhimentoDaData(conferenciaEncalheDTO.getDataRecolhimento(), 
+		Integer diaRecolhimento = this.distribuidorService.obterDiaDeRecolhimentoDaData(dataOperacao, 
 				                                                            conferenciaEncalheDTO.getDataRecolhimento(), 
 				                                                            produtoEdicao.getId());
 				
-		conferenciaEncalheDTO.setDia(diaRecolhimento);
+		conferenciaEncalheDTO.setDia(diaRecolhimento + 1);
 		
 		return conferenciaEncalheDTO;
 	}

@@ -109,15 +109,17 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append("select new ")
 		   .append(FuroProdutoDTO.class.getCanonicalName())
 		   .append("(produto.codigo, produto.nome, produtoEdicao.numeroEdicao, ")
-		   .append("coalesce((select ep.qtde from EstoqueProduto ep where ep.produtoEdicao.id = produtoEdicao.id),0) as qtde, ")
+		   .append("coalesce((select ep.qtde from EstoqueProduto ep where ep.produtoEdicao.id = produtoEdicao.id), lancamento.reparte, 0) as quantidadeExemplares, ")
 		   .append("   lancamento.dataLancamentoDistribuidor, lancamento.id, produtoEdicao.id)")
 		   .append(" from Produto produto, Lancamento lancamento, ProdutoEdicao produtoEdicao ")
 		   .append(" where produtoEdicao.produto.id              = produto.id ")
 		   .append(" and   produtoEdicao.id                      = lancamento.produtoEdicao.id ")
 		   .append(" and   produto.codigo                        = :codigo ")
 		   .append(" and   produtoEdicao.numeroEdicao            = :edicao")
-		   .append(" and   lancamento.dataLancamentoDistribuidor = :dataLancamento ");
-		   
+		   .append(" and   lancamento.dataLancamentoDistribuidor = :dataLancamento ")
+		   .append(" and   ( lancamento.status = :balanceadoLancamento or ")
+		   .append(" lancamento.status = :expedido ) ");   
+		
 		   if (furado) {
 			   hql.append(" and   lancamento.status                     != :statusFuro");
 		   }
@@ -147,6 +149,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.setParameter("codigo", codigo);
 		query.setParameter("edicao", edicao);
 		query.setParameter("dataLancamento", dataLancamento);
+		query.setParameter("balanceadoLancamento", StatusLancamento.BALANCEADO);
+		query.setParameter("expedido", StatusLancamento.EXPEDIDO);
 		
 		if (furado) {
 			query.setParameter("statusFuro", StatusLancamento.FURO);
@@ -221,6 +225,35 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				
 		return  criteria.list();
 				
+	}
+	
+	/**
+	 * Obtem ProdutoEdicao por codigo do produto, numero de edição e numero de lançamento
+	 * @param codigoProduto
+	 * @param idProdutoEdicao
+	 * @param nEdicao
+	 * @param nLancamento
+	 * @return ProdutoEdicao
+	 */
+	@Override
+	public ProdutoEdicao obterProdutoEdicaoPorNumeroEdicaoENumeroLancamento(String codigoProduto, Long idProdutoEdicao, Long nEdicao, Integer nLancamento) {
+		
+		Criteria criteria = super.getSession().createCriteria(ProdutoEdicao.class);
+		
+		criteria.createAlias("produto", "produto");
+		
+		if (idProdutoEdicao != null){
+			
+			criteria.add(Restrictions.not(Restrictions.eq("id", idProdutoEdicao)));
+		}
+		
+		criteria.add(Restrictions.eq("produto.codigo", codigoProduto));
+		
+		criteria.add(Restrictions.eq("numeroEdicao", nEdicao));
+		
+		criteria.add(Restrictions.eq("numeroLancamento", nLancamento));
+				
+		return  (ProdutoEdicao) criteria.uniqueResult();	
 	}
 	
 	@SuppressWarnings("unchecked")

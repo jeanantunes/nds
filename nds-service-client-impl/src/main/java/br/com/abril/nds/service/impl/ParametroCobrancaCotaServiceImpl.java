@@ -55,6 +55,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.ParametroContratoCota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -189,6 +190,8 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		PoliticaSuspensao politicaSuspensao = null; 
 		ParametroCobrancaCota parametroCobranca = null;
 		
+		boolean parametroDistribuidor = false;
+		
 		ParametroCobrancaCotaDTO parametroCobrancaDTO = null;
 		if (cota != null) {
 			
@@ -200,6 +203,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			parametroCobrancaDTO.setNumCota(cota.getNumeroCota());
 			parametroCobrancaDTO.setSugereSuspensao(cota.isSugereSuspensao());
 			parametroCobrancaDTO.setContrato(cota.isPossuiContrato());
+			parametroCobrancaDTO.setTipoCota(cota.getTipoCota());
 			
 			if(cota.getContratoCota() != null) {
 				parametroCobrancaDTO.setInicioContrato(cota.getContratoCota().getDataInicio());
@@ -210,43 +214,49 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			
 			if (parametroCobranca == null && formasCobranca == null || formasCobranca.size() == 0) {
 				
+				parametroDistribuidor = true;
+				
 				FormaCobranca formaCobrancaDistribuidor = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+				
+				PoliticaCobranca politicaCobranca = formaCobrancaDistribuidor.getPoliticaCobranca();
+				
 				Distribuidor distribuidor = distribuidorRepository.obter();
 								
 				parametroCobranca = new ParametroCobrancaCota();
+
 				parametroCobranca.setCota(cota);
-				parametroCobranca.setFatorVencimento(formaCobrancaDistribuidor.getPoliticaCobranca().getFatorVencimento());
+				parametroCobranca.setFatorVencimento(politicaCobranca.getFatorVencimento());
 				parametroCobranca.setFormasCobrancaCota(null);
 				parametroCobranca.setValorMininoCobranca(formaCobrancaDistribuidor.getValorMinimoEmissao());
 				
-				if(formaCobrancaDistribuidor.getPoliticaCobranca() != null) {
-					parametroCobranca.setUnificaCobranca(formaCobrancaDistribuidor.getPoliticaCobranca().isUnificaCobranca());
+				if(politicaCobranca != null) {
+					
+					parametroCobranca.setUnificaCobranca(politicaCobranca.isUnificaCobranca());
+
+					parametroCobranca.setFornecedorPadrao(politicaCobranca.getFornecedorPadrao());
 				}
 				
-				if(formaCobrancaDistribuidor.getPoliticaCobranca().getTipoCota() != null) {
-					parametroCobranca.setTipoCota(formaCobrancaDistribuidor.getPoliticaCobranca().getTipoCota());
+				if(distribuidor.getPoliticaSuspensao()!=null){
+				    
+					PoliticaSuspensao ps = new PoliticaSuspensao();
+			    	ps.setNumeroAcumuloDivida(distribuidor.getPoliticaSuspensao().getNumeroAcumuloDivida());
+				    ps.setValor(distribuidor.getPoliticaSuspensao().getValor());				
+				    parametroCobranca.setPoliticaSuspensao(ps);
 				}
-				
-				if(parametroCobranca.getFornecedorPadrao() != null) {
-					parametroCobranca.setFornecedorPadrao(parametroCobranca.getFornecedorPadrao());
-				}
-				
-				PoliticaSuspensao ps = new PoliticaSuspensao();
-				ps.setNumeroAcumuloDivida(distribuidor.getPoliticaSuspensao().getNumeroAcumuloDivida());
-				ps.setValor(distribuidor.getPoliticaSuspensao().getValor());				
-				parametroCobranca.setPoliticaSuspensao(ps);
 								
 			}
 
 			parametroCobrancaDTO.setIdParametroCobranca(parametroCobranca.getId());
 			parametroCobrancaDTO.setFatorVencimento((parametroCobranca.getFatorVencimento()==null) ? 0 : parametroCobranca.getFatorVencimento());
 			parametroCobrancaDTO.setValorMinimo((parametroCobranca.getValorMininoCobranca()!=null?parametroCobranca.getValorMininoCobranca():BigDecimal.ZERO));
-			parametroCobrancaDTO.setTipoCota(parametroCobranca.getTipoCota());
 			parametroCobrancaDTO.setUnificaCobranca(parametroCobranca.isUnificaCobranca());
+			parametroCobrancaDTO.setParametroDistribuidor(parametroDistribuidor);
 			
 			politicaSuspensao = parametroCobranca.getPoliticaSuspensao();
 			
 			if (politicaSuspensao != null){
+				
+				parametroCobrancaDTO.setSugereSuspensao(true);
 				parametroCobrancaDTO.setQtdDividasAberto(politicaSuspensao.getNumeroAcumuloDivida());
 				parametroCobrancaDTO.setVrDividasAberto((politicaSuspensao.getValor()!=null?politicaSuspensao.getValor():BigDecimal.ZERO));
 			}
@@ -415,7 +425,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 
 			parametroCobranca.setFatorVencimento((int) parametroCobrancaDTO.getFatorVencimento());
 			parametroCobranca.setValorMininoCobranca((parametroCobrancaDTO.getValorMinimo()!=null?parametroCobrancaDTO.getValorMinimo():BigDecimal.ZERO));
-			parametroCobranca.setTipoCota(parametroCobrancaDTO.getTipoCota());
 			parametroCobranca.setUnificaCobranca(parametroCobrancaDTO.isUnificaCobranca());
 
 			if (politicaSuspensao == null) {
@@ -664,7 +673,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				parametroCobranca.setFatorVencimento(formaCobrancaDistribuidor.getPoliticaCobranca().getFatorVencimento());
 				parametroCobranca.setValorMininoCobranca(formaCobrancaDistribuidor.getValorMinimoEmissao());
 				parametroCobranca.setUnificaCobranca(formaCobrancaDistribuidor.getPoliticaCobranca().isUnificaCobranca());
-				parametroCobranca.setTipoCota(formaCobrancaDistribuidor.getPoliticaCobranca().getTipoCota());
 				parametroCobranca.setFornecedorPadrao(formaCobrancaDistribuidor.getPoliticaCobranca().getFornecedorPadrao());
 				parametroCobranca.setPoliticaSuspensao(null);
 				
@@ -829,24 +837,26 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			contratante.setTipoPessoa((cota.getPessoa()instanceof PessoaJuridica)?TipoPessoa.JURIDICA:TipoPessoa.FISICA);
 
 			
-			
-			
 			EnderecoCota enderecoCota = cotaRepository.obterEnderecoPrincipal(cota.getId());
-			endereco = enderecoCota.getEndereco();
-			descEndereco="";
-			if (endereco!=null){
-				descEndereco = descEndereco + 
-						       endereco.getLogradouro()+", "+
-						       endereco.getNumero()+" - "+
-						       endereco.getBairro()+" - "+
-						       endereco.getCidade()+"-"+
-						       endereco.getUf();
+			if (enderecoCota != null){
+				
+				endereco = enderecoCota.getEndereco();
+				
+				descEndereco="";
+				
+				if (endereco!=null){
+					
+					descEndereco = descEndereco + 
+							       endereco.getLogradouro()+", "+
+							       endereco.getNumero()+" - "+
+							       endereco.getBairro()+" - "+
+							       endereco.getCidade()+"-"+
+							       endereco.getUf();
+				}
 			}
 			
 			contratada.setDescEndereco(descEndereco);
 			contratada.setDescEnderecoGestor(descEndereco);
-			
-
 			
 			
 			descTelefones = "";
@@ -997,6 +1007,11 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				File[] files = diretorioContrato.listFiles();
 				
 				contratoRecebido = files[0];
+			}
+			
+			if (contratoRecebido==null){
+				
+				return null;
 			}
 			
 			File arquivoTemporario = new File(tempDir, contratoRecebido.getName());
@@ -1164,7 +1179,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			pcc.setCota(cota);
 			pcc.setFatorVencimento(new Integer(""+ parametroCobranca.getFatorVencimento()));
 			pcc.setFornecedorPadrao(fornecedorService.obterFornecedorPorId(parametroCobranca.getIdFornecedor()));
-			pcc.setTipoCota(parametroCobranca.getTipoCota());
 			pcc.setUnificaCobranca(parametroCobranca.isUnificaCobranca());
 			pcc.setValorMininoCobranca(parametroCobranca.getValorMinimo());
 			
@@ -1180,7 +1194,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		} else {
 			cota.getParametroCobranca().setFatorVencimento(new Integer(""+ parametroCobranca.getFatorVencimento()));
 			cota.getParametroCobranca().setFornecedorPadrao(fornecedorService.obterFornecedorPorId(parametroCobranca.getIdFornecedor()));
-			cota.getParametroCobranca().setTipoCota(parametroCobranca.getTipoCota());
 		}
 		
 		formaCobranca.setParametroCobrancaCota(cota.getParametroCobranca());

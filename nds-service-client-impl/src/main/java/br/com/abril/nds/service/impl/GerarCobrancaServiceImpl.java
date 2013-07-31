@@ -1027,32 +1027,29 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		if (idMovimentoFinanceiroCota != null){
 
-			consolidados = 
-					this.consolidadoFinanceiroRepository.obterConsolidadoPorIdMovimentoFinanceiro(
-							idMovimentoFinanceiroCota);
+			consolidados = this.consolidadoFinanceiroRepository.obterConsolidadoPorIdMovimentoFinanceiro(idMovimentoFinanceiroCota);
 		} else {
 			
-			consolidados =
-					this.consolidadoFinanceiroRepository.obterConsolidadosDataOperacao(idCota);
+			consolidados = this.consolidadoFinanceiroRepository.obterConsolidadosDataOperacao(idCota);
 		}
 		
 		Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
 		
-		if (consolidados != null){
+		if (consolidados != null) {
 			
-			for (ConsolidadoFinanceiroCota consolidado : consolidados){
+			for (ConsolidadoFinanceiroCota consolidado : consolidados) {
 				
 				Divida divida = this.dividaRepository.obterDividaPorIdConsolidado(consolidado.getId());
 				
-				if (divida != null){
+				if (divida != null) {
 				
 					this.cobrancaControleConferenciaEncalheCotaRepository.excluirPorCobranca(divida.getCobranca().getId());
 					
 					Negociacao negociacao = this.negociacaoRepository.obterNegociacaoPorCobranca(divida.getCobranca().getId());
 					
-					if (negociacao != null){
+					if (negociacao != null) {
 					    
-						if (!negociacao.isNegociacaoAvulsa()){
+						if (!negociacao.isNegociacaoAvulsa()) {
 						
 						    this.parcelaNegociacaoRepository.excluirPorNegociacao(negociacao.getId());
 						
@@ -1061,12 +1058,13 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						    this.removerDividaCobrancaConsolidado(divida,consolidado, dataOperacao);
 						}
 					
-					} else{
+					} else {
 					
 						this.removerDividaCobrancaConsolidado(divida,consolidado, dataOperacao);
 					}
 				}
 				
+				consolidado.setMovimentos(null);
 			    this.consolidadoFinanceiroRepository.remover(consolidado);
 			}
 		}
@@ -1138,6 +1136,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
 		
 		try {
+			
+			if (formaCobranca == null) {
+				
+				return null;
+			}
 			
 			return (FormaCobranca) BeanUtils.cloneBean(formaCobranca);
 			

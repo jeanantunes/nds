@@ -42,7 +42,7 @@ var impressaoNfeController = $.extend(true, {
 
 		$(".produtosPesqGrid", impressaoNfeController.workspace).flexigrid({
 			preProcess : impressaoNfeController.prepararJSONPesquisaProdutos,
-			url : contextPath + "/nfe/impressaoNFE/pesquisarProdutosImpressaoNFE",
+			//url : contextPath + "/nfe/impressaoNFE/pesquisarProdutosImpressaoNFE",
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
@@ -490,7 +490,7 @@ var impressaoNfeController = $.extend(true, {
 		           	{name:'filtro.codigoProduto', value:$('#dialog-pesqProdutos-codigoProduto').val()},
 		           	{name:'filtro.nomeProduto', value:$('#dialog-pesqProdutos-nomeProduto').val()},
 		           	]
-		$(".produtosPesqGrid").flexOptions({params: params}).flexReload();
+		$(".produtosPesqGrid").flexOptions({params: params, url: contextPath + "/nfe/impressaoNFE/pesquisarProdutosImpressaoNFE"}).flexReload();
 	},
 
 	adicionarAosProdutosFiltradosERecarregar : function(check, codigoProduto, nomeProduto) {

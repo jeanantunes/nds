@@ -385,11 +385,7 @@ var parametrosDistribuidorController = $.extend(true, {
 		
 		$('#formParamentrosDistribuidor', this.workspace).ajaxForm(options);
 		
-		$("input[id^='reutilizacaoCodigoCotaInativa']", this.workspace).maskMoney({
-			 thousands:'', 
-			 decimal:'', 
-			 precision:0
-		});
+		$("input[id^='reutilizacaoCodigoCotaInativa']", this.workspace).numeric();
 
 		$("input[id^='capacidadeManuseioHomemHoraLancamento']", this.workspace).maskMoney({
 			 thousands:'', 

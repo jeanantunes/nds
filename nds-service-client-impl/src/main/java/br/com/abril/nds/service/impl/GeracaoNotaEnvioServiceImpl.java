@@ -110,6 +110,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		} else {
 			return cotaRepository.obterDadosCotasComNotaEnvioEmitidasEAEmitir(filtro);
 		}
+		
 
 	}
 
@@ -1068,6 +1069,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 						cotasSemRoteirizacao.add(cotaSemRoteirizacao.toString());
 					}
 					
+				} else {
+					throw new ValidacaoException(TipoMensagem.WARNING, "Cota com problemas de Roteirização: Cota: "+ cota.getNumeroCota() +" / "+ cota.getPessoa().getNome());
 				}
 			}
 			
