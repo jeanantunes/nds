@@ -78,7 +78,9 @@ $(function(){
  	<legend>Financeiro</legend>
 
 	<table width="100%" border="0" cellspacing="1" cellpadding="1">
+		
 		<tbody>
+		
 			<tr>
 				<td width="195">Fator Vencimento de Cobrança em D+:</td>
 				<td width="157">
@@ -106,6 +108,7 @@ $(function(){
 						<option>20</option>
 				</select>
 				</td>
+				
 				<td width="10" style="width: 10px;">&nbsp;</td>
 				<td width="60">Contrato:</td>
 				<td width="20"><input id="contrato" name="contrato"
@@ -120,6 +123,7 @@ $(function(){
 						</span>
 					</div>
 				</td>
+				
 			</tr>
 			<tr>
 				<td>&nbsp;</td>

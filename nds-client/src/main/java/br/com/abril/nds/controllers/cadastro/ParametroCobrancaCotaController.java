@@ -380,6 +380,11 @@ public class ParametroCobrancaCotaController extends BaseController {
 		
 		this.salvarContrato(parametroCobranca.getInicioContrato(), parametroCobranca.getTerminoContrato());
 		
+		this.salvarFinanceiroEspecificoDaCota(parametroCobranca.getIdCota(), 
+				                              parametroCobranca.getInicioContrato(), 
+				                              parametroCobranca.getTerminoContrato(),
+				                              parametroCobranca.getTipoCota());
+		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parametros de Cobrança Cadastrados."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
 
@@ -727,20 +732,60 @@ public class ParametroCobrancaCotaController extends BaseController {
 		return false;
 	}
 
-	/**
-	 * Método responsável por postar os dados do contrato da cota.
-	 * @param inicioContrato
-	 * @param terminoContrato
-	 */
-	@Post
-	@Path("/salvarContratoCota")
-	public void salvarContratoCota(Date inicioContrato, Date terminoContrato) {
-
-		if (this.salvarContrato(inicioContrato, terminoContrato)){
+	private boolean salvarTipoCota(long idCota, TipoCota tipoCota){
+	
+		Cota cota = this.cotaService.obterPorId(idCota);
+		
+		if (!cota.getTipoCota().equals(tipoCota)){
+		
+			cota.setTipoCota(tipoCota);
 			
-			result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Contrato cadastrado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
+			this.cotaService.alterarCota(cota);
+			
+			return true;
 		}
 		
+		return false;
+	}
+
+	/**
+	 * Método responsável por postar os dados da aba financeiro que são específicos da cota.
+	 * @param inicioContrato
+	 * @param terminoContrato
+	 * @param tipoCota
+	 */
+	@Post
+	@Path("/salvarFinanceiroEspecificoDaCota")
+	public void salvarFinanceiroEspecificoDaCota(Long idCota, Date inicioContrato, Date terminoContrato, TipoCota tipoCota) {
+
+		String msg1 = "";
+		String msg2 = "";
+		String msg = "";
+		
+		if (this.salvarContrato(inicioContrato, terminoContrato)){
+			
+			msg1.concat("Contrato");
+		}
+		
+        if (this.salvarTipoCota(idCota, tipoCota)){
+			
+        	msg2.concat("Tipo da cota");
+		}
+        
+        if (msg1!="" || msg2!=""){
+        	
+        	if (msg1==""){
+        		
+        		msg1=msg2;
+        		
+        		msg2="";
+        	}
+        	
+        	msg.concat(msg1+(msg2!=""?" e "+msg2:"")+" cadastrado com sucesso.");
+            
+        	result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, msg),Constantes.PARAM_MSGS).recursive().serialize();
+        }
+        
 		result.nothing();
 	}
 

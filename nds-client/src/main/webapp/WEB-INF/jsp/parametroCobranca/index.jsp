@@ -216,16 +216,6 @@
 									</c:forEach>
 								</select>
 							</td>
-							<td valign="middle">Tipo da Cota:</td>
-                            <td>
-                            	<select id="ParamCob-TipoCota">
-                            		<option value="">Selecione...</option>
-									<c:forEach varStatus="counter" var="itemTipoCota"
-										items="${listaTiposCota}">
-										<option value="${itemTipoCota.key}">${itemTipoCota.value}</option>
-									</c:forEach>
-								</select>
-							</td>
                         </tr>
     
                         <tr>
