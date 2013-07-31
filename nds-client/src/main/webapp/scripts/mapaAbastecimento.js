@@ -642,7 +642,7 @@ $(function() {
 			sortable : true,
 			align : 'right'
 		}, {
-			display : 'Material Promocional',
+			display : 'Reparte Promocional',
 			name : 'materialPromocional',
 			width : 135,
 			sortable : true,
@@ -702,7 +702,7 @@ $(function() {
 			sortable : true,
 			align : 'right'
 		},  {
-			display : 'Material Promocional',
+			display : 'Reparte Promocional',
 			name : 'materialPromocional',
 			width : 100,
 			sortable : true,
@@ -841,7 +841,7 @@ $(function() {
 			sortable : true,
 			align : 'right'
 		}, {
-			display : 'Material Promocional',
+			display : 'Reparte Promocional',
 			name : 'materialPromocional',
 			width : 135,
 			sortable : true,
@@ -902,7 +902,7 @@ $(function() {
 			sortable : true,
 			align : 'right'
 		}, {
-			display : 'Material Promocional',
+			display : 'Reparte Promocional',
 			name : 'materialPromocional',
 			width : 100,
 			sortable : true,
@@ -976,7 +976,7 @@ $(function() {
 			sortable : true,
 			align : 'right'
 		}, {
-			display : 'Material Promocional',
+			display : 'Reparte Promocional',
 			name : 'materialPromocional',
 			width : 250,
 			sortable : true,
@@ -1019,7 +1019,7 @@ $(function() {
 			sortable : true,
 			align : 'right'
 		}, {
-			display : 'Material Promocional',
+			display : 'Reparte Promocional',
 			name : 'materialPromocional',
 			width : 160,
 			sortable : true,

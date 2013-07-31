@@ -201,6 +201,30 @@ public class FechamentoEncalheController extends BaseController {
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Informação gravada com sucesso!"), "result").recursive().serialize();
 	}
 	
+	@Path("/cotasAusentesConfirmacao")
+	public void cotasAusentesConfirmacao(Date dataEncalhe, boolean isSomenteCotasSemAcao, List<Long> idsCotas, String sortname, String sortorder, int rp, int page) {
+
+		List<CotaAusenteEncalheDTO> listaCotasAusenteEncalhe =
+			this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, sortorder, sortname, page, rp);
+		
+		int total = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao);
+		
+		if (listaCotasAusenteEncalhe == null || listaCotasAusenteEncalhe.isEmpty()) {
+			
+			if (isSomenteCotasSemAcao) {
+			
+				this.result.nothing();
+				
+				return;
+			}
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota ausente!");
+		}
+		
+		this.result.use(FlexiGridJson.class).from(listaCotasAusenteEncalhe).total(total).page(page).serialize();
+	}
+	
+	
 	@Path("/cotasAusentes")
 	public void cotasAusentes(Date dataEncalhe, boolean isSomenteCotasSemAcao, List<Long> idsCotas, String sortname, String sortorder, int rp, int page) {
 
@@ -543,7 +567,7 @@ public class FechamentoEncalheController extends BaseController {
 			return;
 		}
 		
-		int totalCotasAusentes = this.fechamentoEncalheService.buscarTotalCotasAusentes(dataEncalhe, true);
+		int totalCotasAusentes = this.fechamentoEncalheService.buscarTotalCotasAusentesSemPostergado(dataEncalhe, true);
 		
 		if (totalCotasAusentes > 0 && ("VERIFICACAO").equalsIgnoreCase(operacao)) {
 			

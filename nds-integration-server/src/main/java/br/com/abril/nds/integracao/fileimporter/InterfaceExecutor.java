@@ -598,6 +598,7 @@ public class InterfaceExecutor {
 		}
 		
 		in.close();
+		scanner.close();
 	}
 
 	/**

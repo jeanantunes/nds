@@ -13,6 +13,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -1252,6 +1253,8 @@ public class RecebimentoFisicoController extends BaseController {
 				&& !codigo.trim().isEmpty() 
 				&& edicao != null) {
 			
+			codigo = StringUtils.leftPad(codigo, 8, '0');
+			
 			RecebimentoFisicoDTO recebimentoFisicoDTO = 
 				this.recebimentoFisicoService.obterRecebimentoFisicoDTO(codigo, edicao);
 			
@@ -1393,6 +1396,10 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		this.validaItensNota(itens);
 		
+		if(nota != null && nota.getValorTotal() == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "O valor total da nota deve ser maior que 0.");
+		}
+		
 		BigDecimal valorInformadoNotaFiscal = CurrencyUtil.converterValor(nota.getValorTotal());
 				
 		BigDecimal totalItem = BigDecimal.ZERO;
@@ -1458,7 +1465,7 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		ProdutoEdicao pe = null;
 		
-		for (RecebimentoFisicoDTO item : itens){
+		for (RecebimentoFisicoDTO item : itens) {
 		    
 			pe = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(item.getCodigoProduto(), Long.toString(item.getEdicao()));
 		    

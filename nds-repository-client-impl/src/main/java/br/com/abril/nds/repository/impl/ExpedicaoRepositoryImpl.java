@@ -355,6 +355,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		if (isDetalhesResumo) {
 
 			innerQuery
+					.append(" lancamento.DATA_LCTO_DISTRIBUIDOR AS dataLancamento, ")
 					.append(" coalesce((select valor from desconto where id = produtoEdicao.desconto_id),")
 					.append(" (select valor from desconto where id = produto.desconto_id), 0) as desconto, ")
 					.append(" pessoa.RAZAO_SOCIAL as razaoSocial ");
@@ -399,7 +400,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		innerQuery
 				.append(" INNER JOIN ESTUDO_COTA estudoCota ON estudo.ID=estudoCota.ESTUDO_ID ")
 				.append(" INNER JOIN COTA cota ON estudoCota.COTA_ID=cota.ID ")
-				.append(" JOIN BOX box ON cota.BOX_ID=box.ID ")
+				.append(" LEFT OUTER JOIN BOX box ON cota.BOX_ID=box.ID ")
 				.append(" WHERE lancamento.DATA_LCTO_DISTRIBUIDOR = :dataLancamento ");
 
 		sql.append(" FROM ( ")
@@ -413,7 +414,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		} else if (isDetalhesResumo) {
 
 			sql.append(filtro != null && filtro.getCodigoBox() != null ? 
-				" WHERE innerQuery.codigoBox = :codigoBox " : " WHERE innerQuery.codigoBox is null"
+				" WHERE innerQuery.codigoBox = :codigoBox " : " WHERE innerQuery.codigoBox is null OR innerQuery.codigoBox = '-' "
 			);
 
 			sql.append(" GROUP BY innerQuery.produtoEdicaoId ");

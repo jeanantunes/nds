@@ -1204,10 +1204,17 @@ var recebimentoFisicoController = $.extend(true, {
 	},
 	
 	numericOnly : function(event) {
-          var num=event.keyCode;
-          if(num>=48 & num<=57)
-               return true;
-          return false; 
+	
+			var num = (event.keyCode != 0 ? event.keyCode : event.charCode);
+			var numeroId = event.target.id.split("_");
+			if(num>=48 & num<=57) {
+		  		if($("#replicaValorRepartePrevisto_" + numeroId[1]).is(':checked')) {
+		  			$("#replicaValorRepartePrevisto_" + numeroId[1]).attr('checked', false);
+		  		} 
+		  		return true;
+			} else {
+				 return false; 
+			}
 	},
 	
 	/**
@@ -1322,7 +1329,6 @@ var recebimentoFisicoController = $.extend(true, {
 			$('#botaoNovoProduto', recebimentoFisicoController.workspace).hide();
 			
 		}	
-		
 		return data;
 
 	},
@@ -1576,7 +1582,7 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		$.postJSON(this.path + 'obterDadosEdicao', {codigo:codigo,edicao:edicao}, 
 			function(result) { 
-				$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).val(result.precoDesconto);
+				$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).val(floatToPrice(result.precoCapa));
 				$("#pacotePadraoItem"+index, recebimentoFisicoController.workspace).val(result.pacotePadrao);
 			},
 			null,
@@ -1721,9 +1727,9 @@ var recebimentoFisicoController = $.extend(true, {
 			 
 			 var qtdNota =      '<input class="number" maxlength="10" value="'+valueQtdNota+'" type="text" name="itensRecebimento.qtdNotaItem" id="qtdNotaItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.replicarQuantidadeItem('+index+'); recebimentoFisicoController.alterarValorItem('+index+');"></input>';
 			     
-	         var qtdPacote =    '<input class="number" maxlength="10" value="'+valueQtdPacote+'" type="text" name="itensRecebimento.qtdPacoteItem" id="qtdPacoteItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.alterarValorItem('+index+');"></input>';
+	         var qtdPacote =    '<input class="number" maxlength="10" value="'+valueQtdPacote+'" type="text" name="itensRecebimento.qtdPacoteItem" id="qtdPacoteItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.alterarValorItem('+index+');" onkeydown="recebimentoFisicoController.retirarChekboxReplicar('+index+');"></input>';
 				             
-			 var qtdExemplar =  '<input class="number" maxlength="10" value="'+valueQtdExemplar+'" type="text" name="itensRecebimento.qtdExemplarItem" id="qtdExemplarItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.alterarValorItem('+index+');"></input>'; 
+			 var qtdExemplar =  '<input class="number" maxlength="10" value="'+valueQtdExemplar+'" type="text" name="itensRecebimento.qtdExemplarItem" id="qtdExemplarItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.alterarValorItem('+index+');" onkeydown="recebimentoFisicoController.retirarChekboxReplicar('+index+');"></input>'; 
 			 
 			 var pacotePadrao =  '<input class="number" maxlength="10" value="'+valuePacotePadrao+'" type="text" readonly="readonly" name="itensRecebimento.pacotePadraoItem" id="pacotePadraoItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
 			 
@@ -2220,6 +2226,17 @@ var recebimentoFisicoController = $.extend(true, {
 			}
 			
 		});
+		
+	},
+	
+	retirarChekboxReplicar : function(numeroDaLinha) {
+		
+		if($("#checkbox" + numeroDaLinha).is(":checked")) {
+			$("#checkbox" + numeroDaLinha).attr("checked", false);
+		}
+		if($("#selTodos").is(":checked")) {
+			$("#selTodos").attr("checked", false);
+		}
 		
 	}
 		
