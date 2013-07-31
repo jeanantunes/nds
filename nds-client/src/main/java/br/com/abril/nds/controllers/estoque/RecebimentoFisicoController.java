@@ -1492,4 +1492,5 @@ public class RecebimentoFisicoController extends BaseController {
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, listaMensagens),"result").recursive().serialize();
 	}
 	
+	
 }

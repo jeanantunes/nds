@@ -582,6 +582,7 @@ public class ChamadaoController extends BaseController {
 		}
 		
 		if (!msgs.isEmpty()){
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, msgs);
 		}
 	}
@@ -678,5 +679,6 @@ public class ChamadaoController extends BaseController {
 				Util.getEnumByStringValue(OrdenacaoColunaChamadao.values(), sortname));
 		}
 	}
+	
 	
 }
