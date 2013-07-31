@@ -242,15 +242,23 @@
         		<tr>
          		<td><strong>C&oacute;digo:</strong></td>
          		<td><strong>Produto:</strong></td>
-         		<td><strong>Rep. Minimo:</strong></td>
-         		<td><strong>Rep. Maximo:</strong></td>
+         		<td><strong>Classificação:</strong></td>
+         		<td><strong>Rep. Mínimo:</strong></td>
+         		<td><strong>Rep. Máximo:</strong></td>
          		<td><a href="javascript:mixCotaProdutoController.addLinha();"><img src="images/ico_add.gif"/></a></td>
         		</tr>
          </thead>
          <tbody>
            <tr> 
-           		<td><input id="codigoModal" class="codigoId" type="text"  style="width:80px;" onblur="pesquisaProduto.pesquisarPorCodigoProduto('#'+this.id,'#'+$(this).parent().parent().find('.target').attr('id'),null,false,undefined,undefined )"></td>
+           		<td><input id="codigoModal" class="codigoId" type="text"  style="width:80px;" onblur="mixCotaProdutoController.pesquisarPorCodigoProduto('#'+this.id,'#'+$(this).parent().parent().find('.target').attr('id'), '#'+$(this).parent().parent().find('.classificacao').attr('id'))"></td>
            		<td><input id="produtoModal" type="text"  style="width:80px;" class="target"></td>
+           		<td width=80px;>
+	                <select name="select" id="classifMixModal" style="width:160px;" class="classificacao">
+				            <c:forEach items="${classificacao}" var="tipoProduto">
+								<option value="<c:out value="${tipoProduto.descricao}"/>" ${tipoProduto.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoProduto.descricao}"/></option>
+							</c:forEach>
+	          		</select>
+                </td>
            		<td><input type="text"  style="width:80px;" maxlength="5"></td>
            		<td><input type="text"  style="width:80px;" maxlength="5"></td>
            		<td><input type="image" id="excluirLinha0" src="images/ico_excluir.gif" onclick="mixCotaProdutoController.excluirLinha($(this));" /></td>

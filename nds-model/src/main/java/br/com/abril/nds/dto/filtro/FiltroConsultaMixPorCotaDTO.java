@@ -45,7 +45,4 @@ public class FiltroConsultaMixPorCotaDTO extends FiltroDTO implements Serializab
 	public void setCotaId(Long cotaId) {
 		this.cotaId = cotaId;
 	}
-	
-	
-	
 }
