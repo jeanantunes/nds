@@ -141,7 +141,7 @@ public class LancamentoRepositoryImpl extends
 		
 		hql.append(" select lancamento ");
 		
-		hql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, estudo));	
+		hql.append(gerarQueryProdutosNaoExpedidosConfirmaExpedicao(parametros, data, idFornecedor, estudo));	
 		
 		if( paginacaoVO != null ) {
 			hql.append(gerarOrderByProdutosNaoExpedidos(
@@ -163,6 +163,68 @@ public class LancamentoRepositoryImpl extends
 		return (List<Lancamento>)query.list();
 	}
 	
+	private String gerarQueryProdutosNaoExpedidosConfirmaExpedicao(
+			Map<String, Object> parametros, Date data, Long idFornecedor,
+			Boolean estudo) {
+	
+		StringBuilder hql = new StringBuilder();	
+		
+		hql.append(" from Lancamento lancamento ");
+		hql.append(" join lancamento.produtoEdicao produtoEdicao ");
+		hql.append(" join produtoEdicao.produto produto ");
+		
+		if(idFornecedor!=null) {
+			hql.append(" join produto.fornecedores fornecedor ");
+		}
+		
+		hql.append(" left join produtoEdicao.estoqueProduto estoque ");
+		
+//		hql.append(" left join lancamento.estudo estudo ");
+		hql.append(" join lancamento.estudo estudo ");
+		
+		boolean where = false;
+		
+		if (estudo != null && estudo == true ) {
+			
+			hql.append(" where estudo.status = :statusEstudo ");
+			
+			parametros.put("statusEstudo", StatusLancamento.ESTUDO_FECHADO);
+			
+			where = true;
+		}
+		
+		if (!where) {
+			
+			hql.append(" where ");
+			
+		} else {
+			
+			hql.append(" and ");
+		}
+		
+		hql.append(" lancamento.status=:statusBalanceado ");
+		
+		//hql.append(" and ( (itemRecebido.id is null and produtoEdicao.parcial=true) or (itemRecebido.id is not null)) ");
+				
+		parametros.put("statusBalanceado", StatusLancamento.BALANCEADO);
+		
+		if (data != null) {
+			
+			hql.append(" AND lancamento.dataLancamentoDistribuidor = :data");
+			
+			parametros.put("data", data);
+		}				
+		
+		if (idFornecedor != null) {
+			hql.append(" AND fornecedor.id = :idFornecedor ");			
+			parametros.put("idFornecedor", idFornecedor);
+		}				
+		
+		
+		
+		return hql.toString();
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> obterIdsLancamentosNaoExpedidos(
@@ -265,6 +327,7 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" left join produtoEdicao.estoqueProduto estoque ");
 		
 		hql.append(" left join lancamento.estudo estudo ");
+//		hql.append(" join lancamento.estudo estudo ");
 		
 		boolean where = false;
 		
