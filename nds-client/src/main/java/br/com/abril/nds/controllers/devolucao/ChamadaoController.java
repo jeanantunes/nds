@@ -568,7 +568,6 @@ public class ChamadaoController extends BaseController {
 			msgs.add("Data inválida");
 		} else {
 			
-<<<<<<< HEAD
 			Date dataAtual = DateUtil.removerTimestamp(this.distribuidorService.obterDataOperacaoDistribuidor());
 			
 			if (dataChamadao.compareTo(dataAtual) <= 0) {
@@ -583,11 +582,8 @@ public class ChamadaoController extends BaseController {
 		}
 		
 		if (!msgs.isEmpty()){
+			
 			throw new ValidacaoException(TipoMensagem.WARNING, msgs);
-=======
-			throw new ValidacaoException(TipoMensagem.WARNING,
-				"A Data do Chamadão deve ser maior que a data de operação!");
->>>>>>> DGBti/master
 		}
 	}
 	
@@ -683,5 +679,6 @@ public class ChamadaoController extends BaseController {
 				Util.getEnumByStringValue(OrdenacaoColunaChamadao.values(), sortname));
 		}
 	}
+	
 	
 }

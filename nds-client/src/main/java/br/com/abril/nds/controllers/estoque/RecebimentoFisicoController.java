@@ -1249,15 +1249,9 @@ public class RecebimentoFisicoController extends BaseController {
 	@Path("/obterDadosEdicao")
 	public void obterDadosEdicao(String codigo, String edicao) {
 		
-<<<<<<< HEAD
 		if (codigo != null 
 				&& !codigo.trim().isEmpty() 
 				&& edicao != null) {
-=======
-		if(codigo != null && !codigo.trim().isEmpty() && edicao != null) {
-			
-			codigo = StringUtils.leftPad(codigo, 8, '0');
->>>>>>> DGBti/master
 			
 			codigo = StringUtils.leftPad(codigo, 8, '0');
 			
@@ -1497,5 +1491,6 @@ public class RecebimentoFisicoController extends BaseController {
 		listaMensagens.add("Nota fiscal cadastrada com sucesso.");
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, listaMensagens),"result").recursive().serialize();
 	}
+	
 	
 }
