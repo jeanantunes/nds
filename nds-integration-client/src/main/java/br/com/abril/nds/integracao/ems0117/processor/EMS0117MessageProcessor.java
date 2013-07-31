@@ -227,19 +227,30 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			
 			getSession().persist(historicoSituacaoCota);
 			
+			
 			// ParametroCobrancaCota - Realizado em conjunto com Cesar Pop Punk
 			ParametroCobrancaCota parametroCobrancaCota = new ParametroCobrancaCota();
 			parametroCobrancaCota.setCota(cota);
 			
+			
+			
+			
+			
+			
+			//OBS: Necessidade de ajusta na Interface: Tipo de Cota agora se encontra na Cota. 
+			/*
 			if (input.getCondPrazoPagamento().equals("S")) {
 				
-				parametroCobrancaCota.setTipoCota(TipoCota.CONSIGNADO);
-				
+				cota.setTipoCota(TipoCota.CONSIGNADO);
 			} else {
 				
-				parametroCobrancaCota.setTipoCota(TipoCota.A_VISTA);
-				
+				cota.setTipoCota(TipoCota.A_VISTA);
 			}
+			*/
+			
+			
+			
+			
 			
 			getSession().persist(parametroCobrancaCota);
 			

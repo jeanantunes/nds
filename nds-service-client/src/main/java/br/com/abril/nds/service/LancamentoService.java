@@ -126,6 +126,7 @@ public interface LancamentoService {
 
 	List<Long> obterIdsLancamentosNaoExpedidos(PaginacaoVO paginacaoVO,
 			Date data, Long idFornecedor);
-	
+
+	boolean existeMatrizRecolhimentoConfirmado(Date dataChamadao);
 }
  

@@ -112,6 +112,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 													TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
 													List<Date> datasConfirmadas, Usuario usuario) {
 		
+		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno =
+			new TreeMap<Date, List<ProdutoLancamentoDTO>>();
+		
 		this.validarDadosConfirmacao(matrizLancamento);
 
 		Map<Long, ProdutoLancamentoDTO> mapaLancamento = new TreeMap<Long, ProdutoLancamentoDTO>();
@@ -134,21 +137,22 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				mapaLancamento.put(idLancamento, produtoLancamento);
 			}
 		}
-				
-		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoConfirmada = null;
 		
 		if (!mapaLancamento.isEmpty()) {
-		
-			matrizLancamentoConfirmada =
-				this.atualizarLancamentos(usuario, mapaLancamento, OperacaoMatrizLancamento.CONFIRMAR);
+			
+			this.atualizarLancamentos(
+				matrizLancamentoRetorno, usuario, mapaLancamento, OperacaoMatrizLancamento.CONFIRMAR);
 		}
 		
-		return matrizLancamentoConfirmada;
+		return matrizLancamentoRetorno;
 	}
 	
 	@Override
 	@Transactional
 	public TreeMap<Date, List<ProdutoLancamentoDTO>> salvarMatrizLancamento(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento, Usuario usuario) {
+		
+		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno =
+			new TreeMap<Date, List<ProdutoLancamentoDTO>>();
 		
 		this.validarDadosConfirmacao(matrizLancamento);
 
@@ -156,6 +160,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 
 		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry : matrizLancamento.entrySet()) {
 			
+			Date dataLancamento = entry.getKey();
 			List<ProdutoLancamentoDTO> listaProdutoLancamentoDTO = entry.getValue();
 			
 			if (listaProdutoLancamentoDTO == null || listaProdutoLancamentoDTO.isEmpty()) {
@@ -172,16 +177,19 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 					// Monta Map para controlar a atualização dos lançamentos
 					
 					mapaLancamento.put(idLancamento, produtoLancamento);
+					
+				} else {
+					
+					this.montarMatrizLancamentosConfirmadosRetorno(
+						matrizLancamentoRetorno, produtoLancamento, dataLancamento);
 				}
 			}
 		}
 		
-		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno = null;
-		
 		if (!mapaLancamento.isEmpty()) {
-		
-			matrizLancamentoRetorno =
-				this.atualizarLancamentos(usuario, mapaLancamento, OperacaoMatrizLancamento.SALVAR);
+			
+			this.atualizarLancamentos(
+				matrizLancamentoRetorno, usuario, mapaLancamento, OperacaoMatrizLancamento.SALVAR);
 		}
 		
 		return matrizLancamentoRetorno;
@@ -198,22 +206,20 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	/**
 	 * Método que atualiza as informações dos lançamentos.
 	 * 
+	 * @param matrizLancamentoRetorno
 	 * @param idsLancamento - identificadores de lançamentos
 	 * @param usuario - usuário
 	 * @param mapaLancamento - mapa de lancamentos e produtos de recolhimento
 	 * 
 	 * @return {@link TreeMap<Date, List<ProdutoLancamentoDTO>>}
 	 */
-	private TreeMap<Date, List<ProdutoLancamentoDTO>> atualizarLancamentos(
-													Usuario usuario,
-													Map<Long, ProdutoLancamentoDTO> mapaLancamento,
-													OperacaoMatrizLancamento operacaoMatrizLancamento) {
+	private void atualizarLancamentos(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno,											
+									  Usuario usuario,
+									  Map<Long, ProdutoLancamentoDTO> mapaLancamento,
+									  OperacaoMatrizLancamento operacaoMatrizLancamento) {
 		
 		StatusLancamento proximoStatusLancamento =
 			this.getProximoStatusLancamentoPorOperacao(operacaoMatrizLancamento);
-		
-		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoRetorno =
-			new TreeMap<Date, List<ProdutoLancamentoDTO>>();
 		
 		Set<Long> idsLancamento = mapaLancamento.keySet();
 		
@@ -251,8 +257,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			
 			this.lancamentoRepository.merge(lancamento);
 		}
-		
-		return matrizLancamentoRetorno;
 	}
 
 	private StatusLancamento getProximoStatusLancamentoPorOperacao(
@@ -496,11 +500,27 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		this.historicoLancamentoRepository.merge(historicoLancamento);
 	}
 	
+	private void montarMatrizLancamentosConfirmadosRetorno(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
+														   ProdutoLancamentoDTO produtoLancamento,
+														   Date dataLancamento) {
+		
+		List<ProdutoLancamentoDTO> produtosLancamento = matrizLancamento.get(dataLancamento);
+
+		if (produtosLancamento == null) {
+
+			produtosLancamento = new ArrayList<ProdutoLancamentoDTO>();
+		}
+
+		produtosLancamento.add(produtoLancamento);
+
+		matrizLancamento.put(dataLancamento, produtosLancamento);
+	}
+	
 	private void montarMatrizLancamentosRetorno(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
-													ProdutoLancamentoDTO produtoLancamento,
-													Lancamento lancamento,
-													Date novaData,
-													StatusLancamento statusLancamento) {
+												ProdutoLancamentoDTO produtoLancamento,
+												Lancamento lancamento,
+												Date novaData,
+												StatusLancamento statusLancamento) {
 		
 		if (produtoLancamento.isLancamentoAgrupado()) {
 

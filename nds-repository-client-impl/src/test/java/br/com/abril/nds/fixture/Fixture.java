@@ -2616,7 +2616,6 @@ public class Fixture {
 		parametro.setValorMininoCobranca(valorMininoCobranca);
 		parametro.setPoliticaSuspensao(politicaSuspensao);
 		parametro.setFormasCobrancaCota(formasCobranca);
-		parametro.setTipoCota(tipoCota);
 		
 		return parametro;
 	}

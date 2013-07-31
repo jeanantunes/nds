@@ -266,4 +266,10 @@ public class LancamentoServiceImpl implements LancamentoService {
 		return lancamentoRepository.obterLancamentosEdicao(idProdutoEdicao, sortorder, sortname);
 	}
 
+	@Override
+	@Transactional(readOnly=true)
+	public boolean existeMatrizRecolhimentoConfirmado(Date dataChamadao) {
+		
+		return this.lancamentoRepository.existeMatrizRecolhimentoConfirmado(dataChamadao);
+	}
 }

@@ -160,8 +160,13 @@ var OperacaoDiferenciadaController = $.extend(true, {
 			
 			var municipio = row.cell.municipio;
 			
-			if(!municipio || municipio.length < 1)
+			if(!municipio || municipio.length < 1){
 				municipio = " null ";
+			}
+			
+			if (!row.cell.municipio && "" != row.cell.municipio){
+				row.cell.municipio = 'Cota sem endereço';
+			}
 			
 			row.cell.selecionado="<input type='checkbox' name='selecao' " +
 			"id='municipio["+municipio+"]' " +

@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.BalanceamentoRecolhimentoDTO;
+import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
 import br.com.abril.nds.dto.ProdutoRecolhimentoDTO;
 import br.com.abril.nds.dto.RecolhimentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -135,9 +136,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = 
 			BalanceamentoRecolhimentoFactory.getStrategy(tipoBalanceamentoRecolhimento);
 		
-		return balanceamentoRecolhimentoStrategy.balancear(dadosRecolhimento);
+		BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoDTO =
+			balanceamentoRecolhimentoStrategy.balancear(dadosRecolhimento);
+		
+		return balanceamentoRecolhimentoDTO;
 	}
-	
+
 	/**
 	 * {@inheritDoc}
 	 */
@@ -607,9 +611,11 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		dadosRecolhimento.setForcarBalanceamento(forcarBalanceamento);
 		
-		//TODO:
+		if (!produtosRecolhimento.isEmpty()) {
 		
-		this.obterCotasOperacaoDiferenciada(periodoRecolhimento);
+			this.obterCotasOperacaoDiferenciada(
+				periodoRecolhimento, produtosRecolhimento, dadosRecolhimento);
+		}
 		
 		return dadosRecolhimento;
 	}
@@ -791,6 +797,29 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return diasRecolhimentoFornecedor.contains(codigoDiaCorrente);
 	}
 	
+	private void obterCotasOperacaoDiferenciada(Intervalo<Date> periodoRecolhimento,
+											    List<ProdutoRecolhimentoDTO> produtosRecolhimento,
+											    RecolhimentoDTO dadosRecolhimento) {
+
+		Map<Long, List<Date>> mapCotasDiasRecolhimento =
+			this.obterCotasOperacaoDiferenciada(periodoRecolhimento);
+
+		if (mapCotasDiasRecolhimento.isEmpty()) {
+			
+			return;
+		}
+		
+		Set<Long> idsLancamento = this.obterIdsLancamento(produtosRecolhimento);
+
+		List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada =
+			this.lancamentoRepository.obterLancamentosEncalhesPorCota(
+				mapCotasDiasRecolhimento.keySet(), idsLancamento);
+
+		this.setDatasRecolhimentoCotasOperaDif(mapCotasDiasRecolhimento, cotasOperacaoDiferenciada);
+
+		dadosRecolhimento.setCotasOperacaoDiferenciada(cotasOperacaoDiferenciada);
+	}
+	
 	private Map<Long, List<Date>> obterCotasOperacaoDiferenciada(Intervalo<Date> periodoRecolhimento) {
 		
 		Map<Long, List<Date>> mapCotasDiasRecolhimento = new HashMap<>();
@@ -902,6 +931,142 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 		
 		return datasDaSemana;
+	}
+	
+	private Set<Long> obterIdsLancamento(List<ProdutoRecolhimentoDTO> produtosRecolhimento) {
+		
+		Set<Long> idsLancamento = new HashSet<>();
+		
+		for (ProdutoRecolhimentoDTO produtoRecolhimentoDTO : produtosRecolhimento) {
+			
+			idsLancamento.add(produtoRecolhimentoDTO.getIdLancamento());
+		}
+		
+		return idsLancamento;
+	}
+	
+	private void setDatasRecolhimentoCotasOperaDif(Map<Long, List<Date>> mapCotasDiasRecolhimento,
+												   List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada) {
+
+		List<Date> datasRecolhimento = null;
+		
+		for (CotaOperacaoDiferenciadaDTO cotaOperacaoDiferenciadaDTO : cotasOperacaoDiferenciada) {
+
+			datasRecolhimento = mapCotasDiasRecolhimento.get(cotaOperacaoDiferenciadaDTO.getIdCota());
+
+			cotaOperacaoDiferenciadaDTO.setDatasRecolhimento(datasRecolhimento);
+		}
+	}
+	
+	public void montarMapasOperacaoDiferenciada(Map<Date, List<CotaOperacaoDiferenciadaDTO>> mapOperacaoDifAdicionar,
+												Map<Date, List<CotaOperacaoDiferenciadaDTO>> mapOperacaoDifRemover,
+												TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
+												List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada) {
+		
+		if (cotasOperacaoDiferenciada == null || cotasOperacaoDiferenciada.isEmpty()) {
+			
+			return;
+		}
+
+		if (matrizRecolhimento == null) {
+			
+			return;
+		}
+
+		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entry : matrizRecolhimento.entrySet()) {
+			
+			Date dataRecolhimento = entry.getKey();
+			List<ProdutoRecolhimentoDTO> produtosRecolhimento = entry.getValue();
+			
+			for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
+				
+				List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciadaDoLancamento =
+					this.obterCotasOperacaoDiferenciadaPorLancamento(
+						cotasOperacaoDiferenciada, produtoRecolhimento.getIdLancamento());
+				
+				if (!cotasOperacaoDiferenciadaDoLancamento.isEmpty()) {
+					
+					this.montarMapsOperacaoDiferenciada(
+						cotasOperacaoDiferenciadaDoLancamento, mapOperacaoDifAdicionar,
+						mapOperacaoDifRemover, dataRecolhimento);
+				}
+			}
+		}
+	}
+	
+	private List<CotaOperacaoDiferenciadaDTO> obterCotasOperacaoDiferenciadaPorLancamento(
+										List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada,
+										Long idLancamento) {
+		
+		List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciadaDoLancamento = new ArrayList<>();
+		
+		for (CotaOperacaoDiferenciadaDTO cotaOperacaoDiferenciada : cotasOperacaoDiferenciada) {
+			
+			if (cotaOperacaoDiferenciada.getIdLancamento().equals(idLancamento)) {
+				
+				cotasOperacaoDiferenciadaDoLancamento.add(cotaOperacaoDiferenciada);
+			}
+		}
+		
+		return cotasOperacaoDiferenciadaDoLancamento;
+	}
+	
+	private void montarMapsOperacaoDiferenciada(List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciadaDoLancamento,
+												Map<Date, List<CotaOperacaoDiferenciadaDTO>> mapOperacaoDifAdicionar,
+												Map<Date, List<CotaOperacaoDiferenciadaDTO>> mapOperacaoDifRemover,
+												Date dataRecolhimento) {
+		
+		List<Date> datasRecolhimento = null;
+		
+		for (CotaOperacaoDiferenciadaDTO cotaOperacaoDiferenciada : cotasOperacaoDiferenciadaDoLancamento) {
+			
+			datasRecolhimento = cotaOperacaoDiferenciada.getDatasRecolhimento();
+			
+			if (!datasRecolhimento.contains(dataRecolhimento)) {
+				
+				Date dataRecolhimentoEscolhida =
+					this.obterDataRecolhimentoOperacaoDiferenciada(datasRecolhimento, dataRecolhimento);
+				
+				this.addMap(mapOperacaoDifAdicionar, dataRecolhimentoEscolhida, cotaOperacaoDiferenciada);
+				
+				this.addMap(mapOperacaoDifRemover, dataRecolhimento, cotaOperacaoDiferenciada);
+			}
+		}
+	}
+
+	private void addMap(Map<Date, List<CotaOperacaoDiferenciadaDTO>> map,
+						Date dataRecolhimento,
+						CotaOperacaoDiferenciadaDTO cotaOperacaoDiferenciada) {
+		
+		List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada = map.get(dataRecolhimento);
+		
+		if (cotasOperacaoDiferenciada == null) {
+			
+			cotasOperacaoDiferenciada = new ArrayList<>();
+		}
+		
+		cotasOperacaoDiferenciada.add(cotaOperacaoDiferenciada);
+		
+		map.put(dataRecolhimento, cotasOperacaoDiferenciada);
+	}
+	
+	/*
+	 * Obtém uma data de recolhimento de acordo com a datas de recolhimento da cota.
+	 * Primeiro tenta obter uma data maior que a data de recolhimento do lançamento.
+	 * Se não houver nenhuma pega a primeira data da cota, mesmo não sendo mais que a data do lançamento.
+	 */
+	private Date obterDataRecolhimentoOperacaoDiferenciada(List<Date> datasRecolhimento,
+														   Date dataRecolhimento) {
+		
+		for (Date dataRecolhimentoOperacaoDiferenciada : datasRecolhimento) {
+			
+			if (dataRecolhimentoOperacaoDiferenciada.after(dataRecolhimento)) {
+				
+				return dataRecolhimentoOperacaoDiferenciada;
+			}
+		}
+		
+		return datasRecolhimento.get(0);
 	}
 	
 }
