@@ -105,6 +105,10 @@ public class CotaBaseController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não encontrada!");
 		}
 		
+		if(filtro.getTpDistribCota().getDescTipoDistribuicaoCota().equalsIgnoreCase("Alternativo")){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não é do tipo Convencional!!");
+		}
+		
 		if (existeCotaBase) {
 			filtro.setDiasRestantes(calcularDiasRestantes(filtro.getDataFinal()));
 		}

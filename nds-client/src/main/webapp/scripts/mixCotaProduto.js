@@ -1242,8 +1242,6 @@ var mixCotaProdutoController = $.extend(true, {
 						}
 					}
 			);
-			
-			
 		}
 		
 	}, BaseController);
