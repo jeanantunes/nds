@@ -32,7 +32,8 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" endereco.bairro as bairro, "); // BAIRRO
         hql.append(" endereco.cidade as cidade, "); // CIDADE        
         hql.append(" tipoGeradorFluxoPrincipal.descricao as geradorDeFluxo, "); // GERADOR DE FLUXO PRINCIPAL
-        hql.append(" areaInfluenciaPDV.descricao as areaInfluencia "); // AREA DE INFLUÊNCIA
+        hql.append(" areaInfluenciaPDV.descricao as areaInfluencia, "); // AREA DE INFLUÊNCIA
+        hql.append(" cota.tipoDistribuicaoCota as tpDistribCota "); // TIPO DISTRIBUIÇÃO COTA
         
         if(obterFaturamento){
         	hql.append(" , sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * produtoEdicao.precoVenda) as faturamentoMedio "); // FATURAMENTO MENSAL        	
@@ -196,7 +197,8 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" tipoGeradorFluxoPrincipal.descricao as geradorDeFluxo, "); // GERADOR DE FLUXO PRINCIPAL
         hql.append(" areaInfluenciaPDV.descricao as areaInfluencia, "); // AREA DE INFLUÊNCIA
     	hql.append(" cotaBase.dataInicio as dataInicial, "); // DATA INICIAL
-    	hql.append(" cotaBase.dataFim as dataFinal "); // DATA INICIAL
+    	hql.append(" cotaBase.dataFim as dataFinal, "); // DATA INICIAL
+    	hql.append(" cota.tipoDistribuicaoCota as tpDistribCota "); // TIPO DISTRIBUIÇÃO COTA
     	
     	hql.append(" FROM CotaBaseCota as cotaBaseCota ");
     	hql.append(" LEFT JOIN cotaBaseCota.cotaBase as cotaBase ");        

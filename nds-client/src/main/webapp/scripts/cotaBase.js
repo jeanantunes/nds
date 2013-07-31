@@ -447,7 +447,8 @@ var cotaBaseController = $.extend(true, {
 				function(result){
 					
 					cotaBaseController.atribuirDadosCota(result,index);						
- 					
+//					cotaBaseController.segmentosNaoRecebidos(numeroCota);
+					
  				}, function(result){					
 					//Verifica mensagens de erro do retorno da chamada ao controller.
 					if (result.mensagens) {
@@ -486,6 +487,8 @@ var cotaBaseController = $.extend(true, {
 		'</a>';
 		
 		$("#acao"+index, cotaBaseController.workspace).html(linkSegmento + linkExcluir);
+		
+		cotaBaseController.segmentosNaoRecebidos(resultado.numeroCota);
 		
  	},
 	
