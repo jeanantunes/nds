@@ -26,6 +26,7 @@ import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
+import br.com.abril.nds.dto.CotaOperacaoDiferenciadaDTO;
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
@@ -1181,7 +1182,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" 	) ");
 		sql.append(" 	OR ( ");
 		sql.append(" 		lancamento.DATA_LCTO_DISTRIBUIDOR between :periodoInicial and :periodoFinal ");
-		sql.append(" 		AND lancamento.STATUS = :statusLancamentoBalanceado ");
+		sql.append(" 		AND lancamento.STATUS in (:statusLancamentoDataEntrePeriodo) ");
 		sql.append(" 	) ");
 		sql.append(" 	OR ( ");
 		sql.append(" 		lancamento.DATA_LCTO_DISTRIBUIDOR between :periodoInicial and :periodoFinal ");
@@ -1230,20 +1231,21 @@ public class LancamentoRepositoryImpl extends
 								   Intervalo<Date> periodoDistribuicao,
 								   List<Long> fornecedores, Date dataOperacao) {
 		
-		String[] arrayStatusLancamentoDataMenorFinal = {StatusLancamento.PLANEJADO.name(),
-				  										StatusLancamento.CONFIRMADO.name(),
-				  										StatusLancamento.FURO.name(),
-				  										StatusLancamento.EM_BALANCEAMENTO.name()};
+		List<String> statusLancamentoDataMenorFinal =
+			Arrays.asList(StatusLancamento.PLANEJADO.name(), StatusLancamento.CONFIRMADO.name(), StatusLancamento.FURO.name());
 		
-		List<String> statusLancamentoDataMenorFinal = Arrays.asList(arrayStatusLancamentoDataMenorFinal);
+		List<String> statusLancamentoDataEntrePeriodo =
+			Arrays.asList(StatusLancamento.EM_BALANCEAMENTO.name(), StatusLancamento.BALANCEADO.name());
 		
+		query.setParameterList("statusLancamentoDataMenorFinal", statusLancamentoDataMenorFinal);
+		
+		query.setParameterList("statusLancamentoDataEntrePeriodo", statusLancamentoDataEntrePeriodo);
+		
+		query.setParameter("statusLancamentoExpedido", StatusLancamento.EXPEDIDO.name());
 		query.setParameterList("idsFornecedores", fornecedores);
 		query.setParameter("periodoInicial", periodoDistribuicao.getDe());
 		query.setParameter("periodoFinal", periodoDistribuicao.getAte());
 		query.setParameter("dataOperacao", dataOperacao);
-		query.setParameterList("statusLancamentoDataMenorFinal", statusLancamentoDataMenorFinal);
-		query.setParameter("statusLancamentoBalanceado", StatusLancamento.BALANCEADO.name());
-		query.setParameter("statusLancamentoExpedido", StatusLancamento.EXPEDIDO.name());
 		query.setParameter("grupoCromo", GrupoProduto.CROMO.toString());
 	}
 
@@ -1814,4 +1816,87 @@ public class LancamentoRepositoryImpl extends
 		return query.list();
 	}
 	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<CotaOperacaoDiferenciadaDTO> obterLancamentosEncalhesPorCota(Set<Long> idsCota, Set<Long> idsLancamento) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select lancamento.id as idLancamento, ");
+		hql.append(" cota.id as idCota, ");
+		hql.append(" produtoEdicao.peso as peso, ");
+		hql.append(" produtoEdicao.precoVenda as valorTotal, ");
+		hql.append(" produtoEdicao.id as idProdutoEdicao, ");
+		hql.append(" periodoLancamentoParcial.tipo as parcial, ");
+		
+		hql.append(" ( ");
+		hql.append("  case when (tipoProduto.grupoProduto = :grupoCromo and periodoLancamentoParcial.tipo <> :tipoParcial) ");
+		hql.append("		then (((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) - ((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (coalesce(produtoEdicao.expectativaVenda, ");
+		hql.append("      	0) / 100)) / produtoEdicao.pacotePadrao)) ");
+		hql.append("   	else ((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) - ((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (coalesce(produtoEdicao.expectativaVenda, ");
+		hql.append("   		0) / 100))) ");  
+		hql.append(" end ");
+		hql.append(" ) as expectativaEncalhe, ");
+		  
+		hql.append(" ( ");
+		hql.append("  (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) - ((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (coalesce(produtoEdicao.expectativaVenda, ");
+		hql.append("     0) / 100))) * (produtoEdicao.precoVenda - ( produtoEdicao.precoVenda * (coalesce(descontoLogisticaProdutoEdicao.percentualDesconto / 100, ");
+		hql.append("     descontoLogisticaProduto.percentualDesconto / 100, ");
+		hql.append("     0)) )  ");
+		hql.append(" ) as valorTotal ");
+		
+		hql.append(" from Lancamento lancamento ");
+		hql.append(" join lancamento.produtoEdicao produtoEdicao ");
+		hql.append(" join produtoEdicao.produto produto ");
+		hql.append(" join produto.tipoProduto tipoProduto ");
+		hql.append(" left join produtoEdicao.descontoLogistica descontoLogisticaProdutoEdicao ");
+		hql.append(" left join produto.descontoLogistica descontoLogisticaProduto ");
+		hql.append(" left join lancamento.periodoLancamentoParcial periodoLancamentoParcial ");
+		hql.append(" join lancamento.estudo estudo ");
+		hql.append(" join estudo.estudoCotas estudoCota ");
+		hql.append(" join estudoCota.cota cota ");
+		hql.append(" join cota.box box, ");
+		hql.append(" EstoqueProdutoCota estoqueProdutoCota ");
+		
+		hql.append(" where estoqueProdutoCota.cota = cota ");
+		hql.append(" and estoqueProdutoCota.produtoEdicao = produtoEdicao ");
+		hql.append(" and cota.id in (:idsCota) ");
+		hql.append(" and lancamento.id in (:idsLancamento) ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameterList("idsCota", idsCota);
+		query.setParameterList("idsLancamento", idsLancamento);
+		query.setParameter("grupoCromo", GrupoProduto.CROMO);
+		query.setParameter("tipoParcial", TipoLancamentoParcial.PARCIAL);
+
+		query.setResultTransformer(Transformers.aliasToBean(CotaOperacaoDiferenciadaDTO.class));
+		
+		query.setMaxResults(0);
+		return query.list();
+	}
+
+	@Override
+	public boolean existeMatrizRecolhimentoConfirmado(Date dataChamadao) {
+		
+		StringBuilder jpql = new StringBuilder();
+		
+		jpql = new StringBuilder();
+		jpql.append(" SELECT CASE WHEN COUNT(lancamento) > 0 THEN true ELSE false END ");	
+		jpql.append(" FROM Lancamento lancamento ");
+		jpql.append(" WHERE lancamento.dataRecolhimentoDistribuidor = :data ")
+		    .append("   AND lancamento.status IN (:statusConfirmado) ");
+		
+		Query query = getSession().createQuery(jpql.toString());
+		
+		List<StatusLancamento> listaLancamentos = new ArrayList<StatusLancamento>();
+		listaLancamentos.add(StatusLancamento.BALANCEADO_RECOLHIMENTO);
+		listaLancamentos.add(StatusLancamento.EM_RECOLHIMENTO);
+		listaLancamentos.add(StatusLancamento.RECOLHIDO);
+		
+		query.setParameterList("statusConfirmado", listaLancamentos);
+		query.setParameter("data", dataChamadao);
+		
+		return (Boolean) query.uniqueResult();
+	}
 }

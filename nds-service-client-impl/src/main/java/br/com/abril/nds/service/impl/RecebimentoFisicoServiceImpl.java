@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -504,9 +505,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 										produtoEdicao.getProduto().getDescontoLogistica().getPercentualDesconto() : 
 											BigDecimal.ZERO);
 				}
-			}
-			
-			
+			}			
 			
 			ItemNotaFiscalEntrada itemNotaFiscal = inserirItemNotaFiscal(usuarioLogado, notaFiscal, recebimentoFisicoDTO, dataAtual, desconto);
 			
@@ -971,10 +970,10 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	@Override
 	@Transactional
 	public RecebimentoFisicoDTO obterRecebimentoFisicoDTO(String codigo, String edicao) {
-		
+
 		ProdutoEdicao produtoEdicao = 
 			this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
-				codigo, edicao);
+				StringUtils.leftPad(codigo, 8, '0'), edicao);
 		
 		RecebimentoFisicoDTO recebimentoFisicoDTO = null;
 		

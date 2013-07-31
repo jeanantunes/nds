@@ -53,10 +53,6 @@ public class ParametroCobrancaCota implements Serializable {
 	@Embedded
 	private PoliticaSuspensao politicaSuspensao;
 	
-	@Enumerated(EnumType.STRING)
-	@Column(name = "TIPO_COTA")
-	private TipoCota tipoCota;
-	
 	@ManyToOne
 	@JoinColumn(name = "FORNECEDOR_ID")
 	private Fornecedor fornecedorPadrao;
@@ -107,14 +103,6 @@ public class ParametroCobrancaCota implements Serializable {
 
 	public void setFormasCobrancaCota(Set<FormaCobranca> formasCobrancaCota) {
 		this.formasCobrancaCota = formasCobrancaCota;
-	}
-
-	public TipoCota getTipoCota() {
-		return tipoCota;
-	}
-
-	public void setTipoCota(TipoCota tipoCota) {
-		this.tipoCota = tipoCota;
 	}
 	
 	public Fornecedor getFornecedorPadrao() {

@@ -566,4 +566,11 @@ function direcionar(novaTab, path){
 	$('#workspace').tabs('addTab', novaTab, contextPath + path + "?random=" + Math.random());
 }
 
+function adicionarTab(novaTab, path){
+	
+	$(".tipsy").hide();
+	
+	$('#workspace').tabs('addTab', novaTab, contextPath + path + "?random=" + Math.random());
+}
+
 //@ sourceURL=util.js

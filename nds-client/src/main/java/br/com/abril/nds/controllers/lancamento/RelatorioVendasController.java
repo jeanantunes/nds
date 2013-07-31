@@ -369,11 +369,14 @@ public class RelatorioVendasController extends BaseController {
 	 */
 	@Post
 	@Path("/pesquisarHistoricoEditor")
-	public void pesquisarHistoricoEditor(String dataDe, String dataAte, String codigoEditor, String sortorder, String sortname, int page, int rp) throws Exception {
+	public void pesquisarHistoricoEditor(String dataDe, String dataAte, String codigoEditor, 
+			String sortorder, String sortname, int page, int rp) throws Exception {
 
 		SimpleDateFormat sdf = new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR);
 
-		FiltroPesquisarHistoricoEditorDTO filtro = carregarFiltroHistoricoEditor(sortorder, sortname, page, rp, sdf.parse(dataDe), sdf.parse(dataAte), codigoEditor);	
+		FiltroPesquisarHistoricoEditorDTO filtro = 
+				carregarFiltroHistoricoEditor(sortorder, sortname, page, rp, 
+						sdf.parse(dataDe), sdf.parse(dataAte), codigoEditor);	
 
 		List<RegistroHistoricoEditorVO> resultado = null;
 		try {
@@ -396,12 +399,15 @@ public class RelatorioVendasController extends BaseController {
 			
 			int qtdeTotalRegistros = resultado.size();
 
-			List<RegistroHistoricoEditorVO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(resultado, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
+			List<RegistroHistoricoEditorVO> resultadoPaginado = 
+				PaginacaoUtil.paginarEOrdenarEmMemoria(
+					resultado, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
 
-			TableModel<CellModelKeyValue<RegistroHistoricoEditorVO>> tableModel = new TableModel<CellModelKeyValue<RegistroHistoricoEditorVO>>();
+			TableModel<CellModelKeyValue<RegistroHistoricoEditorVO>> tableModel = 
+					new TableModel<CellModelKeyValue<RegistroHistoricoEditorVO>>();
 
 			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPaginado));
-			tableModel.setPage(1);
+			tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 			tableModel.setTotal(qtdeTotalRegistros);
 			
 			result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
@@ -966,16 +972,19 @@ public class RelatorioVendasController extends BaseController {
 	 * @param codigoEditor
 	 * @return
 	 */
-	private FiltroPesquisarHistoricoEditorDTO carregarFiltroHistoricoEditor(String sortorder, String sortname, int page, int rp, Date dataDe, Date dataAte, String codigoEditor) {
+	private FiltroPesquisarHistoricoEditorDTO carregarFiltroHistoricoEditor(String sortorder, 
+			String sortname, int page, int rp, Date dataDe, Date dataAte, String codigoEditor) {
 
 		FiltroPesquisarHistoricoEditorDTO filtro = new FiltroPesquisarHistoricoEditorDTO(dataDe, dataAte, codigoEditor);
 		
 		this.configurarPaginacaoPesquisarHistoricoEditor(filtro, sortorder, sortname, page, rp);
 
-		FiltroPesquisarHistoricoEditorDTO filtroSessao = (FiltroPesquisarHistoricoEditorDTO) this.session.getAttribute(FILTRO_PESQUISA_CURVA_ABC_HISTORICO_EDITOR_SESSION_ATTRIBUTE);
+		FiltroPesquisarHistoricoEditorDTO filtroSessao = 
+				(FiltroPesquisarHistoricoEditorDTO) 
+				this.session.getAttribute(FILTRO_PESQUISA_CURVA_ABC_HISTORICO_EDITOR_SESSION_ATTRIBUTE);
 
 		if (filtroSessao != null && !filtroSessao.equals(filtro)) {
-			filtro.getPaginacao().setPaginaAtual(1);
+			filtro.getPaginacao().setPaginaAtual(page);
 		}
 
 		session.setAttribute(FILTRO_PESQUISA_CURVA_ABC_HISTORICO_EDITOR_SESSION_ATTRIBUTE, filtro);
@@ -1011,7 +1020,9 @@ public class RelatorioVendasController extends BaseController {
 		if (filtro != null) {
 			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 			filtro.setPaginacao(paginacao);
-			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroCurvaABCCotaDTO.ColunaOrdenacaoCurvaABCCota.values(), sortname));
+			filtro.setOrdenacaoColuna(
+					Util.getEnumByStringValue(
+							FiltroCurvaABCCotaDTO.ColunaOrdenacaoCurvaABCCota.values(), sortname));
 		}
 	}
 

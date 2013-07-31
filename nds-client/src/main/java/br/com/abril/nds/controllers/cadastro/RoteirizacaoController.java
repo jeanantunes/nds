@@ -863,9 +863,11 @@ public class RoteirizacaoController extends BaseController {
 	 */
 	@Post
 	@Path("/obterPdvsDisponiveis")
-	public void obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, String cep, boolean pesquisaPorCota, Long boxID ,String sortname, String sortorder ){
+	public void obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, 
+			String cep, boolean pesquisaPorCota, Long boxID ,String sortname, String sortorder ){
         
-		List<PdvRoteirizacaoDTO> lista = this.roteirizacaoService.obterPdvsDisponiveis(numCota, municipio, uf, bairro, cep, pesquisaPorCota, boxID);
+		List<PdvRoteirizacaoDTO> lista = 
+			this.roteirizacaoService.obterPdvsDisponiveis(numCota, municipio, uf, bairro, cep, pesquisaPorCota, boxID);
 		
 		Ordenacao ordenacao = Util.getEnumByStringValue(Ordenacao.values(), sortorder);
 		PaginacaoUtil.ordenarEmMemoria(lista, ordenacao, sortname);
@@ -886,7 +888,8 @@ public class RoteirizacaoController extends BaseController {
 		RotaRoteirizacaoDTO rotaDTO = roteiroDTO.getRotaByOrdem(ordemRota);
 		
 		if (rotaDTO == null) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Falha ao obter Rota da sessão com a Ordem: "+ordemRota));
+			throw new ValidacaoException(new ValidacaoVO(
+				TipoMensagem.ERROR, "Falha ao obter Rota da sessão com a Ordem: "+ordemRota));
 		}
 		
 		return rotaDTO;

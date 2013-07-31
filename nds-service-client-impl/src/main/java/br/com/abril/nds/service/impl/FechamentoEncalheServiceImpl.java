@@ -37,6 +37,7 @@ import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
@@ -48,6 +49,8 @@ import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalheBox;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.LancamentoDiferenca;
+import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -83,6 +86,7 @@ import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.NotaFiscalService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
@@ -159,11 +163,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
-	
 	@Autowired
 	private PlatformTransactionManager transactionManager;
 	
-	
+	@Autowired
+	private UsuarioService usuarioService;
 	
 	@Override
 	@Transactional
@@ -946,7 +950,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		this.gerarNotaFiscal(dataEncalhe);
 	}
 	
-	
 	/**
 	 * Ajusta o estoque distribuidor de um produto 
 	 * edicao parcial não juramentado.
@@ -978,18 +981,18 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		diferenca.setQtde(qntDiferenca.abs());
 		diferenca.setResponsavel(usuarioLogado);
 		diferenca.setProdutoEdicao(produtoEdicao);
-		
+
 		if( qntDiferenca.compareTo(BigInteger.ZERO ) < 0 ){
 		
-			diferenca.setTipoDiferenca(TipoDiferenca.FALTA_EM);
-			
+			diferenca.setTipoDiferenca(TipoDiferenca.PERDA_EM);
+
+			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.PERDA, StatusAprovacao.APROVADO);
 		} else if(qntDiferenca.compareTo(BigInteger.ZERO) > 0){						
 			
-			diferenca.setTipoDiferenca(TipoDiferenca.SOBRA_EM);
-			
+			diferenca.setTipoDiferenca(TipoDiferenca.GANHO_EM);
+
+			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.GANHO, StatusAprovacao.APROVADO);
 		}
-		
-		diferencaEstoqueService.lancarDiferenca(diferenca,TipoEstoque.RECOLHIMENTO);
 	}
 
 	@Transactional(rollbackFor=Exception.class)

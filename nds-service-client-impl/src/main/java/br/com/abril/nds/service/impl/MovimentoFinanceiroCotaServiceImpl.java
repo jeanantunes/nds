@@ -751,10 +751,8 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 				
 			}
 		}
-		
-        ParametroCobrancaCota parametro = cota.getParametroCobranca();
         
-		TipoCota tipoCota = parametro!=null?parametro.getTipoCota():null;	
+		TipoCota tipoCota = cota!=null?cota.getTipoCota():null;	
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = 
 				tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
@@ -814,8 +812,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			                                                           List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEstorno
 			                                                           ){
 		
-		ParametroCobrancaCota parametro = cota.getParametroCobranca();
-		TipoCota tipoCota = parametro!=null?parametro.getTipoCota():null;
+		TipoCota tipoCota = cota!=null?cota.getTipoCota():null;
 		
 		//GERA MOVIMENTOS FINANCEIROS PARA A COTA A VISTA E PRODUTOS CONTA FIRME
 		if(movimentosEstoqueCotaOperacaoEnvioReparte!=null && movimentosEstoqueCotaOperacaoEnvioReparte.size()>0){

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -1064,7 +1065,8 @@ public class BaixaFinanceiraController extends BaseController {
 			baixa.setNossoNumero(detalhe.getNossoNumero());
 			baixa.setNumeroConta(detalhe.getNumeroConta());
 			baixa.setNumeroCota(detalhe.getNumeroCota());
-			baixa.setValorBoleto(detalhe.getValorBoleto());
+			baixa.setValorBoleto(detalhe.getValorBoleto() == null ? null : 
+				detalhe.getValorBoleto().setScale(2, RoundingMode.HALF_EVEN));
 			
 			lista.add(baixa);
 		}
@@ -1087,8 +1089,10 @@ public class BaixaFinanceiraController extends BaseController {
 			baixa.setMotivoDivergencia(detalhe.getMotivoDivergencia());
 			baixa.setNomeBanco(detalhe.getNomeBanco());
 			baixa.setNumeroConta(detalhe.getNumeroConta());
-			baixa.setValorBoleto(detalhe.getValorBoleto());
-			baixa.setValorPago(detalhe.getValorPago());
+			baixa.setValorBoleto(detalhe.getValorBoleto() == null ? null :
+				detalhe.getValorBoleto().setScale(2, RoundingMode.HALF_EVEN));
+			baixa.setValorPago(detalhe.getValorPago() == null ? null : 
+				detalhe.getValorPago().setScale(2, RoundingMode.HALF_EVEN));
 			
 			lista.add(baixa);
 		}
@@ -1110,7 +1114,8 @@ public class BaixaFinanceiraController extends BaseController {
 			baixa.setMotivoRejeitado(detalhe.getMotivoRejeitado());
 			baixa.setNomeBanco(detalhe.getNomeBanco());
 			baixa.setNumeroConta(detalhe.getNumeroConta());
-			baixa.setValorBoleto(detalhe.getValorBoleto());
+			baixa.setValorBoleto(detalhe.getValorBoleto() == null ? null : 
+				detalhe.getValorBoleto().setScale(2, RoundingMode.HALF_EVEN));
 			
 			lista.add(baixa);
 		}
@@ -1131,7 +1136,8 @@ public class BaixaFinanceiraController extends BaseController {
 			
 			baixa.setNomeBanco(detalhe.getNomeBanco());
 			baixa.setNumeroConta(detalhe.getNumeroConta());
-			baixa.setValorPago(detalhe.getValorPago());
+			baixa.setValorPago(detalhe.getValorPago() == null ? null :
+				detalhe.getValorPago().setScale(2, RoundingMode.HALF_EVEN));
 			baixa.setDataPagamento(DateUtil.formatarDataPTBR(detalhe.getDataVencimento()));
 			
 			lista.add(baixa);

@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -273,7 +274,22 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		}
 		
 		return produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
-				codigoProduto, Long.parseLong(numeroEdicao));
+				StringUtils.leftPad(codigoProduto, 8, '0'), Long.parseLong(numeroEdicao));
+	}
+
+	/**
+	 * Obtem ProdutoEdicao por codigo do produto, numero de edição e numero de lançamento
+	 * @param codigoProduto
+	 * @param idProdutoEdicao
+	 * @param nEdicao
+	 * @param nLancamento
+	 * @return ProdutoEdicao
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public ProdutoEdicao obterProdutoEdicaoPorNumeroEdicaoENumeroLancamento(String codigoProduto, Long idProdutoEdicao, Long nEdicao, Integer nLancamento) {
+		
+		return produtoEdicaoRepository.obterProdutoEdicaoPorNumeroEdicaoENumeroLancamento(codigoProduto, idProdutoEdicao, nEdicao, nLancamento);
 	}
 
 	@Override
@@ -557,11 +573,16 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			produtoEdicao.setNumeroEdicao(Long.valueOf(1));
 		}
 		
+		
+		
 		/* Regra: Não deve existir dois número de edição para o mesmo grupo de Edições: */
-		if (this.produtoEdicaoRepository.isNumeroEdicaoCadastrada(
-				dto.getCodigoProduto(), dto.getNumeroEdicao(), produtoEdicao.getId())) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Este número de edição já esta cadastrada para outra Edição!");
-		}
+		/*VALIDAÇÃO FEITA POR EDICAO + LCTO*/
+		//if (this.produtoEdicaoRepository.isNumeroEdicaoCadastrada(
+				//dto.getCodigoProduto(), dto.getNumeroEdicao(), produtoEdicao.getId())) {
+			//throw new ValidacaoException(TipoMensagem.ERROR, "Este número de edição já esta cadastrada para outra Edição!");
+		//}
+		
+		
 		
 		/* Regra: Não deve existir duas Edições com o mesmo código de barra. */
 		// Nota: Conforme conversado com o Cesar e Paulo Bacherini em 05/11/2012, dois produtos diferentes podem sim ter o mesmo código de barras
@@ -646,7 +667,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			
 			// Identificação:
 			produtoEdicao.setNumeroEdicao(dto.getNumeroEdicao());
-			produtoEdicao.setPacotePadrao(dto.getPacotePadrao());
 			produtoEdicao.setNomeComercial(dto.getNomeComercialProduto());
 			produtoEdicao.setCaracteristicaProduto(dto.getCaracteristicaProduto());
 			produtoEdicao.setPrecoPrevisto(dto.getPrecoPrevisto());
@@ -698,6 +718,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		produtoEdicao.setNumeroLancamento(dto.getNumeroLancamento());
 		produtoEdicao.setPossuiBrinde(false);
 		produtoEdicao.setBrinde(null);
+		produtoEdicao.setPacotePadrao(dto.getPacotePadrao());
 		
 		if(dto.getIdBrinde()!=null && dto.isPossuiBrinde()){
 			Brinde brinde = brindeRepository.buscarPorId(dto.getIdBrinde());
@@ -709,6 +730,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		if (produtoEdicao.getId() == null) {			
 			// Salvar:
+			
+			Produto produto = this.produtoRepository.obterProdutoPorCodigo(dto.getCodigoProduto());
+			
+			produtoEdicao.setProduto(produto);
+			
 			produtoEdicaoRepository.adicionar(produtoEdicao);
 		} else {			
 			// Atualizar:
@@ -794,7 +820,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			if (!(lancamento.getStatus().equals(StatusLancamento.PLANEJADO)
 					|| lancamento.getStatus().equals(StatusLancamento.CONFIRMADO))) {
 				
-				throw new ValidacaoException(TipoMensagem.ERROR, "Esta Edição não pode ser excluida por ter lancamentos em balanceamento ou já balanceados!");
+				throw new ValidacaoException(TipoMensagem.WARNING, "Esta Edição não pode ser excluida por ter lancamentos em balanceamento ou já balanceados!");
 			}
 		}
 
@@ -802,9 +828,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			
 			for (Lancamento lancamento : lancamentos){				
 				if (Origem.MANUAL.equals(produtoEdicao.getOrigem())) {
+					
 					this.lancamentoRepository.remover(lancamento);
 				}else{
+					
 					lancamento.setStatus(StatusLancamento.CANCELADO);
+					
 					if (lancamento.getPeriodoLancamentoParcial() != null) {
 
 						lancamento.getPeriodoLancamentoParcial().setStatus(
@@ -819,6 +848,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 								.getPeriodoLancamentoParcial()
 								.getLancamentoParcial());
 					}
+					
 					this.lancamentoRepository.alterar(lancamento);
 				}
 			}
@@ -1029,6 +1059,16 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dto.setOrigemInterface(false);
 			
 			dto.setPeb(produto.getPeb());
+			
+			BigDecimal percentualDesconto = BigDecimal.ZERO;
+			
+			percentualDesconto = produto.getDesconto();
+			
+			if(produto.getDescricaoDesconto() != null && !"".equals(produto.getDescricaoDesconto())){
+				dto.setDescricaoDesconto(produto.getDescricaoDesconto());
+			}
+			
+			dto.setDesconto(percentualDesconto);
 			
 			Long ultimaEdicao = produtoEdicaoRepository.obterUltimoNumeroEdicao(codigoProduto);
 			

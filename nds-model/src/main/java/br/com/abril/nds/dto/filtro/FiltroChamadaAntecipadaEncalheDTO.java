@@ -3,6 +3,8 @@ package br.com.abril.nds.dto.filtro;
 import java.io.Serializable;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
+
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -250,7 +252,7 @@ public class FiltroChamadaAntecipadaEncalheDTO implements Serializable {
 	 * @param codigoProduto the codigoProduto to set
 	 */
 	public void setCodigoProduto(String codigoProduto) {
-		this.codigoProduto = codigoProduto;
+		this.codigoProduto = StringUtils.leftPad(codigoProduto, 8, '0');
 	}
 
 	/**

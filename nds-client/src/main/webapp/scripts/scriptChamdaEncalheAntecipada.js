@@ -519,7 +519,17 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 						$(idInputCkeck,chamdaEncalheAnteipadaController.workspace).attr("checked",false);
 						$(idInputCkeck,chamdaEncalheAnteipadaController.workspace).attr("disabled","disabled");
 						$(idInputExemplares,chamdaEncalheAnteipadaController.workspace).val("");
+
+						chamdaEncalheAnteipadaController.limparLinhaCEAntecipadaCotaGrid(indexLinha);
 					});	
+		},
+
+		limparLinhaCEAntecipadaCotaGrid: function(indexLinha) {
+
+			$("#numCota" + indexLinha).val("");
+			$("#descricaoCota" + indexLinha).val("");
+			$("#qntExemplares" + indexLinha).val("");
+			$("#chCota" + indexLinha).attr("checked", false);
 		},
 		
 		executarPreProcessamentoGridCota:function(resultado){

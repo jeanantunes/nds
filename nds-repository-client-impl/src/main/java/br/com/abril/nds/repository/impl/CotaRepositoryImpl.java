@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -484,7 +485,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		Query query = this.getSession().createQuery(hql.toString());
 
 		HashMap<String, Object> param = getParametrosCotasSujeitasAntecipacoEncalhe(filtro);
-
+ 
 		for (String key : param.keySet()) {
 			query.setParameter(key, param.get(key));
 		}
@@ -554,7 +555,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		param.put("codigoProduto", filtro.getCodigoProduto());
 		param.put("numeroEdicao", filtro.getNumeroEdicao());
 		param.put("status", StatusLancamento.EXPEDIDO);
-		param.put("dataAtual", new Date());
+		param.put("dataAtual", filtro.getDataOperacao());
 		param.put("tipoChamadaEncalhe", TipoChamadaEncalhe.ANTECIPADA);
 
 		if (filtro.getNumeroCota() != null) {
@@ -1669,7 +1670,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		if(isCount) {
 			sql.append( " select cota_.ID ");
 		} else {
-			sql.append( " select "
+			sql.append( " select lancamento_.STATUS as status, "
 				+ "	        cota_.ID as idCota, "
 				+ "	        cota_.NUMERO_COTA as numeroCota, "
 				+ "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
@@ -1790,7 +1791,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		if(isCount) {
 			sql.append( " select cota_.ID ");
 		} else {
-			sql.append( " select "
+			sql.append( " select lancamento_.STATUS as status,  "
 			+ "	        cota_.ID as idCota, "
 			+ "	        cota_.NUMERO_COTA as numeroCota, "
 			+ "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
@@ -1899,7 +1900,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		if(isCount) {
 			sql.append( " select cota_.ID ");
 		} else {
-			sql.append( " select "
+			sql.append( " select lancamento_.STATUS as status,  "
 				+ "	        cota_.ID as idCota, "
 				+ "	        cota_.NUMERO_COTA as numeroCota, "
 				+ "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
@@ -2007,6 +2008,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			FiltroConsultaNotaEnvioDTO filtro, Query query, boolean isCount) {
 		
 		query.setParameter("principal", true);
+
 		query.setParameterList("status", new String[]{StatusLancamento.CONFIRMADO.name(), StatusLancamento.EM_BALANCEAMENTO.name()});
 		query.setParameterList("statusNaoEmitiveis", new String[]{StatusLancamento.PLANEJADO.name(), StatusLancamento.FECHADO.name(), StatusLancamento.CONFIRMADO.name(), StatusLancamento.EM_BALANCEAMENTO.name()});
 		
@@ -2216,6 +2218,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		gerarOrderByObterQtdeCotaMunicipio(hql, sortname, sortorder);
 		
 		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameterList("situacoesCota", Arrays.asList(SituacaoCadastro.PENDENTE, SituacaoCadastro.INATIVO));
 				
 		query.setResultTransformer(new AliasToBeanResultTransformer(MunicipioDTO.class));
 
@@ -2249,12 +2253,13 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		hql.append(" from Cota cota ");
 		hql.append(" join cota.pessoa pessoa ");
-		hql.append(" join cota.pdvs pdv ");
-		hql.append(" join cota.enderecos enderecoCota ");
-		hql.append(" join enderecoCota.endereco endereco ");
+		hql.append(" left join cota.pdvs pdv ");
+		hql.append(" left join cota.enderecos enderecoCota ");
+		hql.append(" left join enderecoCota.endereco endereco ");
 		
 		hql.append(" where pdv.caracteristicas.pontoPrincipal=true ");
 		hql.append(" and enderecoCota.principal=true ");
+		hql.append(" and cota.situacaoCadastro not in (:situacoesCota) ");
 	}
 	
 	@Override
@@ -2267,6 +2272,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		gerarWhereFromObterQtdeCotaMunicipio(hql);
 		
 		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameterList("situacoesCota", Arrays.asList(SituacaoCadastro.PENDENTE, SituacaoCadastro.INATIVO));
 		
 		return ((Long)query.uniqueResult()).intValue();
 	}

@@ -35,6 +35,7 @@ import br.com.abril.nds.service.ChamadaoService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EditorService;
 import br.com.abril.nds.service.FornecedorService;
+import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -86,6 +87,9 @@ public class ChamadaoController extends BaseController {
 	
 	@Autowired
 	private EditorService editorService;
+	
+	@Autowired
+	private LancamentoService lancamentoService;
 	
 	private static final String FILTRO_PESQUISA_CONSIGNADOS_SESSION_ATTRIBUTE = "filtroPesquisaConsignados";
 	
@@ -544,32 +548,42 @@ public class ChamadaoController extends BaseController {
 	 */
 	private void validarEntradaDadosPesquisa(Integer numeroCota, String dataChamadaoFormatada) {
 		
+		List<String> msgs = new ArrayList<String>();
+		
 		if (numeroCota == null) {
 			
-			throw new ValidacaoException(
-				TipoMensagem.WARNING, "O preenchimento da cota é obrigatório!");
+			msgs.add("O preenchimento da cota é obrigatório!");
 		}
 		
 		if (dataChamadaoFormatada == null 
 				|| dataChamadaoFormatada.trim().isEmpty()) {
 			
-			throw new ValidacaoException(
-				TipoMensagem.WARNING, "O preenchimento do campo [Data Chamadão] é obrigatório!");
+			msgs.add("O preenchimento do campo [Data Chamadão] é obrigatório!");
 		}
 		
 		Date dataChamadao = DateUtil.parseDataPTBR(dataChamadaoFormatada);
 		
 		if (dataChamadao == null) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Data inválida");
+			msgs.add("Data inválida");
+		} else {
+			
+			Date dataAtual = DateUtil.removerTimestamp(this.distribuidorService.obterDataOperacaoDistribuidor());
+			
+			if (dataChamadao.compareTo(dataAtual) <= 0) {
+				
+				msgs.add("A Data do Chamadão deve ser maior que a data de operação!");
+			}
+			
+			if (this.lancamentoService.existeMatrizRecolhimentoConfirmado(dataChamadao)){
+				
+				msgs.add("Data escolhida já possui matriz de recolhimento confirmada.");
+			}
 		}
 		
-		Date dataAtual = DateUtil.removerTimestamp(new Date());
-		
-		if (dataChamadao.compareTo(dataAtual) < 0) {
+		if (!msgs.isEmpty()){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING,
-				"A Data do Chamadão deve ser maior que a data de operação!");
+			throw new ValidacaoException(TipoMensagem.WARNING, msgs);
 		}
 	}
 	
@@ -665,5 +679,6 @@ public class ChamadaoController extends BaseController {
 				Util.getEnumByStringValue(OrdenacaoColunaChamadao.values(), sortname));
 		}
 	}
+	
 	
 }

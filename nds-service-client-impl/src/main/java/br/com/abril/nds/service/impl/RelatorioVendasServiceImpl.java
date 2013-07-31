@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 import java.util.Map;
 
@@ -135,6 +136,7 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 	private List<RegistroCurvaABCDistribuidorVO> obterParticipacaoCurvaABCDistribuidor(List<RegistroCurvaABCDistribuidorVO> lista) {
 
 		BigDecimal participacaoTotal = BigDecimal.ZERO;
+		BigDecimal CEM = new BigDecimal(100);
 		
 		if (lista==null) {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Nenhum registro foi encontrado"));
@@ -154,8 +156,8 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		for (RegistroCurvaABCDistribuidorVO registro : lista) {
 			
 			// Partipacao do registro em relacao a participacao total no periodo
-			if ( participacaoTotal.doubleValue() != 0 ) {
-				participacaoRegistro = new BigDecimal((registro.getFaturamentoCapa().doubleValue()*100)/participacaoTotal.doubleValue());
+			if (participacaoTotal.compareTo(BigDecimal.ZERO) != 0) {
+				participacaoRegistro = registro.getFaturamentoCapa().multiply(CEM).divide(participacaoTotal, RoundingMode.HALF_EVEN);
 			}
 			
 			participacaoAcumulada = participacaoAcumulada.add(participacaoRegistro);

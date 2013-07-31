@@ -494,6 +494,32 @@ public class CotaGarantiaController extends BaseController {
 		
 	}
 
+	@Post("/validarDadosCotaPreImpressao.json")
+	public void validarDadosCotaPreImpressao(Long idCota){
+		
+		List<String> msgs = this.cotaGarantiaService.validarDadosCotaPreImpressao(idCota);
+		
+		if (msgs != null && !msgs.isEmpty()){
+			throw new ValidacaoException(TipoMensagem.WARNING, msgs);
+		}
+		
+		result.use(Results.json()).from("OK").serialize();
+	}
+	
+	@Post("/verificarValorCaucaoLiquida")
+	public void verificarValorCaucaoLiquida(Long idCota){
+		
+		boolean existeCL= this.cotaGarantiaService.existeCaucaoLiquidasCota(idCota);
+		
+		if (existeCL){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, 
+				"É necessário resgatar a caução líquida antes de alterar o tipo de garantia.");
+		}
+		
+		result.use(Results.json()).from("OK").serialize();
+	}
+	
 	@Get("/impriNotaPromissoria/{id}")
 	public void impriNotaPromissoria(Long id) {
 		NotaPromissoriaDTO nota = cotaGarantiaService.getDadosImpressaoNotaPromissoria(id);

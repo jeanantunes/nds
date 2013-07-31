@@ -24,14 +24,6 @@ public class RelatorioGarantiasServiceImpl implements RelatorioGarantiasService 
 	@Transactional
 	@Override
 	public FlexiGridDTO<RelatorioGarantiasDTO> gerarTodasGarantias(FiltroRelatorioGarantiasDTO filtro) {
-	
-		if (filtro.getStatusGarantia()!=null && !filtro.getStatusGarantia().equals("TODAS")){
-		    filtro.setStatusGarantiaEnum(TipoStatusGarantia.valueOf(filtro.getStatusGarantia()));
-		}
-		
-		if (filtro.getTipoGarantia()!=null && !filtro.getTipoGarantia().equals("TODAS")){
-		    filtro.setTipoGarantiaEnum(TipoGarantia.valueOf(filtro.getTipoGarantia()));
-		}
 		
 		FlexiGridDTO<RelatorioGarantiasDTO> to = new FlexiGridDTO<RelatorioGarantiasDTO>();
 		to.setGrid(this.cotaGarantiaRepository.obterGarantiasCadastradas(filtro));
@@ -46,14 +38,6 @@ public class RelatorioGarantiasServiceImpl implements RelatorioGarantiasService 
 	public FlexiGridDTO<RelatorioDetalheGarantiaDTO> gerarPorTipoGarantia(FiltroRelatorioGarantiasDTO filtro) {
 		
 		this.validaFiltroDetalhe(filtro);
-		
-		if (filtro.getStatusGarantia()!=null && !filtro.getStatusGarantia().equals("TODAS")){
-		    filtro.setStatusGarantiaEnum(TipoStatusGarantia.valueOf(filtro.getStatusGarantia()));
-		}
-		
-		if (filtro.getTipoGarantia()!=null && !filtro.getTipoGarantia().equals("TODAS")){
-		    filtro.setTipoGarantiaEnum(TipoGarantia.valueOf(filtro.getTipoGarantia()));
-		}
 		
 		FlexiGridDTO<RelatorioDetalheGarantiaDTO> to = new FlexiGridDTO<RelatorioDetalheGarantiaDTO>();
 		to.setGrid(this.cotaGarantiaRepository.obterDetalheGarantiaCadastrada(filtro));

@@ -51,7 +51,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	protected BalanceamentoRecolhimentoDTO gerarBalanceamentoRecolhimentoDTO(
 										TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
 										List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceados,
-										BigInteger capacidadeRecolhimentoDistribuidor) {
+										RecolhimentoDTO dadosRecolhimento) {
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = new BalanceamentoRecolhimentoDTO();
 		
@@ -60,7 +60,11 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		balanceamentoRecolhimento.setProdutosRecolhimentoNaoBalanceados(
 			produtosRecolhimentoNaoBalanceados);
 		
-		balanceamentoRecolhimento.setCapacidadeRecolhimentoDistribuidor(capacidadeRecolhimentoDistribuidor);
+		balanceamentoRecolhimento.setCapacidadeRecolhimentoDistribuidor(
+			dadosRecolhimento.getCapacidadeRecolhimentoDistribuidor());
+		
+		balanceamentoRecolhimento.setCotasOperacaoDiferenciada(
+			dadosRecolhimento.getCotasOperacaoDiferenciada());
 		
 		return balanceamentoRecolhimento;
 	}

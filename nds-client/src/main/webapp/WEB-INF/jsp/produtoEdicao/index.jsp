@@ -465,7 +465,7 @@ fieldset {
 					
 					<td width="65">
 					
-						<input type="text" name="pCodigoProduto" id="produtoEdicaoController-pCodigoProduto" maxlength="8" 
+						<input type="text" name="pCodigoProduto" id="produtoEdicaoController-pCodigoProduto" maxlength="30" 
 								style="width:60px;" 
 								onchange="produtoEdicaoController.pesquisarPorCodigoProduto('#produtoEdicaoController-pCodigoProduto', '#produtoEdicaoController-pNome', false,
 										undefined,
