@@ -575,7 +575,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 	}
 
 	/**
-	 * Exibe o contrato em formato PDF.
+	 * Exibe o  em formato PDF.
 	 * @param idCota
 	 * @throws Exception
 	 */
@@ -764,24 +764,24 @@ public class ParametroCobrancaCotaController extends BaseController {
 		
 		if (this.salvarContrato(inicioContrato, terminoContrato)){
 			
-			msg1.concat("Contrato");
+			msg1 = "Contrato";
 		}
 		
         if (this.salvarTipoCota(idCota, tipoCota)){
 			
-        	msg2.concat("Tipo da cota");
+        	msg2 = "Tipo da cota";
 		}
         
-        if (msg1!="" || msg2!=""){
+        if (!msg1.equals("") || !msg2.equals("")){
         	
-        	if (msg1==""){
+        	if (msg1.equals("")){
         		
         		msg1=msg2;
         		
         		msg2="";
         	}
         	
-        	msg.concat(msg1+(msg2!=""?" e "+msg2:"")+" cadastrado com sucesso.");
+        	msg = (msg1+(!msg2.equals("")?" e "+msg2:"")+" cadastrado com sucesso.");
             
         	result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, msg),Constantes.PARAM_MSGS).recursive().serialize();
         }

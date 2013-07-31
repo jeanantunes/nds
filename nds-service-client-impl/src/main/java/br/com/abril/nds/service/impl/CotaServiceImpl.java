@@ -1235,6 +1235,7 @@ public class CotaServiceImpl implements CotaService {
 			cota = new Cota();
 			cota.setInicioAtividade(distribuidorService.obterDataOperacaoDistribuidor());
 			cota.setSituacaoCadastro(SituacaoCadastro.PENDENTE);
+			cota.setTipoCota(TipoCota.CONSIGNADO);
 			incluirPDV = true;
 			newCota = true;
 		}
@@ -2027,6 +2028,7 @@ public class CotaServiceImpl implements CotaService {
 		cotaNova.setParametroDistribuicao(parametroDistribuicaoCota);
 		cotaNova.setTitularesCota(titularesCota);
 		cotaNova.setSituacaoCadastro(SituacaoCadastro.ATIVO);
+		cotaNova.setTipoCota(TipoCota.CONSIGNADO);
 		
 		this.cotaRepository.merge(cotaNova);
 		processarTitularidadeCota(cotaAntiga, cotaDTO);
