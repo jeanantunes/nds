@@ -54,11 +54,7 @@ implements MovimentoEstoqueRepository {
 
 		hql.append(" sum(case when m.tipoMovimento.operacaoEstoque  = :tipoOperacaoSaida then m.qtde else 0 end) )  ");
 
-		hql.append(" from Diferenca diferenca ");
-		
-		hql.append(" join diferenca.lancamentoDiferenca lancamentoDiferenca ");
-		
-		hql.append(" join lancamentoDiferenca.movimentoEstoque m ");		
+		hql.append(" from MovimentoEstoque m ");	
 			
 		hql.append(" where m.produtoEdicao.numeroEdicao = :numeroEdicao and ");		
 
