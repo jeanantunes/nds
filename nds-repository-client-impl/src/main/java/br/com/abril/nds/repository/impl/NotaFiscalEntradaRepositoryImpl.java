@@ -445,7 +445,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 				hql.append(" and ");
 			}
 			
-			hql.append(" nf.fornecedor.juridica.cnpj = :cnpj ");	
+			hql.append(" nf.emitente.cnpj = :cnpj ");	
 			
 			indAnd = true;
 			

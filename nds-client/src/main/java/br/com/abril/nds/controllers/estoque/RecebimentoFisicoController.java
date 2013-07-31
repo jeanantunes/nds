@@ -49,6 +49,7 @@ import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -104,6 +105,9 @@ public class RecebimentoFisicoController extends BaseController {
 	
 	@Autowired
 	private Validator validator;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 
 	public RecebimentoFisicoController(
 			Result result, 
@@ -126,6 +130,7 @@ public class RecebimentoFisicoController extends BaseController {
 		result.include("permissaoBotaoConfirmacao", usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_BOTAO_CONFIRMACAO));
 		result.include("permissaoGridColRepartePrevisto", usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_REPARTE_PREVISTO));
 		result.include("permissaoGridColDiferenca", usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_DIFERENCA));
+		result.include("indConferenciaCega", this.distribuidorService.isConferenciaCegaRecebimentoFisico());
 	}
 	
 	/**
@@ -852,7 +857,7 @@ public class RecebimentoFisicoController extends BaseController {
 			notaFiscal = listaNotaFiscal.get(0);
 		} 
 		
-		if (notaFiscal == null){	
+		if (notaFiscal == null){
 						
 			List<String> msgs = new ArrayList<String>();
 			
@@ -891,10 +896,17 @@ public class RecebimentoFisicoController extends BaseController {
 			}
 			
 			boolean indRecebimentoFisicoConfirmado = verificarRecebimentoFisicoConfirmado(notaFiscal.getId());
-						
+			
+			if (cnpj == null || cnpj.isEmpty()){
+				if (notaFiscal instanceof NotaFiscalEntradaFornecedor){
+					cnpj = ((NotaFiscalEntradaFornecedor) notaFiscal).getEmitente().getCnpj();
+				}
+			}
+			
 			result.use(Results.json()).from(
 				new ResultadoNotaFiscalExistente(
-					validacao, indNotaInterface, indRecebimentoFisicoConfirmado ), "result")
+					validacao, indNotaInterface, indRecebimentoFisicoConfirmado,
+					cnpj, notaFiscal.getNumero(), notaFiscal.getSerie()), "result")
 						.include("validacao")
 						.include("validacao.listaMensagens").serialize();
 		}
@@ -906,6 +918,8 @@ public class RecebimentoFisicoController extends BaseController {
 		private ValidacaoVO validacao;
 		private boolean indNotaInterface;		
         private boolean indRecebimentoFisicoConfirmado;
+        private String cnpj, serieNotaFiscal, fornecedor;
+        private Long numeroNotaFiscal;
 			
 		public ResultadoNotaFiscalExistente(ValidacaoVO validacao,
 				boolean indNotaInterface,
@@ -914,6 +928,19 @@ public class RecebimentoFisicoController extends BaseController {
 			this.validacao = validacao;
 			this.indNotaInterface = indNotaInterface;
 			this.indRecebimentoFisicoConfirmado = indRecebimentoFisicoConfirmado;
+		}
+		
+		public ResultadoNotaFiscalExistente(ValidacaoVO validacao,
+				boolean indNotaInterface,
+				boolean indRecebimentoFisicoConfirmado,
+				String cnpj, Long numeroNotaFiscal,
+				String serieNotaFiscal) {
+			this(validacao, indNotaInterface, indRecebimentoFisicoConfirmado);
+			this.cnpj = Util.adicionarMascaraCNPJ(cnpj);
+			this.serieNotaFiscal = serieNotaFiscal;
+			this.numeroNotaFiscal = numeroNotaFiscal;
+			this.fornecedor = cnpj;
+			
 		}
 		
 		public ValidacaoVO getValidacao() {
@@ -936,6 +963,38 @@ public class RecebimentoFisicoController extends BaseController {
 		public void setIndRecebimentoFisicoConfirmado(
 				boolean indRecebimentoFisicoConfirmado) {
 			this.indRecebimentoFisicoConfirmado = indRecebimentoFisicoConfirmado;
+		}
+
+		public String getCnpj() {
+			return cnpj;
+		}
+
+		public void setCnpj(String cnpj) {
+			this.cnpj = cnpj;
+		}
+
+		public String getSerieNotaFiscal() {
+			return serieNotaFiscal;
+		}
+
+		public void setSerieNotaFiscal(String serieNotaFiscal) {
+			this.serieNotaFiscal = serieNotaFiscal;
+		}
+
+		public Long getNumeroNotaFiscal() {
+			return numeroNotaFiscal;
+		}
+
+		public void setNumeroNotaFiscal(Long numeroNotaFiscal) {
+			this.numeroNotaFiscal = numeroNotaFiscal;
+		}
+
+		public String getFornecedor() {
+			return fornecedor;
+		}
+
+		public void setFornecedor(String fornecedor) {
+			this.fornecedor = fornecedor;
 		}
 
 	}
