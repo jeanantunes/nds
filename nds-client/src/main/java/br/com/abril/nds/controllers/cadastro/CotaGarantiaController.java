@@ -435,7 +435,7 @@ public class CotaGarantiaController extends BaseController {
 	@Post("/getNotaPromissoriaByCota.json")
 	public void getNotaPromissoriaByCota(Long idCota, ModoTela modoTela) {
     	
-		if (ModoTela.CADASTRO_COTA == modoTela) {
+		if (ModoTela.CADASTRO_COTA == modoTela || ModoTela.HISTORICO_TITULARIDADE == modoTela) {
             
             NotaPromissoria dadosNotaPromissoria= cotaGarantiaService.obterDadosNotaPromissoria(idCota);
             
@@ -446,7 +446,10 @@ public class CotaGarantiaController extends BaseController {
             	
                 result.use(CustomJson.class).from("OK").serialize();
             }
-        }    
+        } else {
+        	result.use(CustomJson.class).from("OK").serialize();
+        }		
+		
 	}
 
 	/**
