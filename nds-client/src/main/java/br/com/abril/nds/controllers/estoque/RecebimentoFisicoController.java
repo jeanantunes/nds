@@ -315,11 +315,8 @@ public class RecebimentoFisicoController extends BaseController {
 			
 			indChaveAcessoInformada = true;
 			
-			if(filtro.getChave() == null || filtro.getChave().trim().isEmpty()) {
-				
-				msgs.add("Chave de Acesso é Obrigatória!");
-				
-			} else if(!filtro.getChave().matches(regraParaChaveAcesso)) {
+			if(filtro.getChave() != null && 
+				!filtro.getChave().matches(regraParaChaveAcesso)) {
 				
 				msgs.add("Chave de Acesso deve possuir " + NFEImportUtil.QTD_DIGITOS_CHAVE_ACESSO_NFE +  " dígitos.");
 				
@@ -832,7 +829,20 @@ public class RecebimentoFisicoController extends BaseController {
 		
 			
 		if(listaNotaFiscal != null && listaNotaFiscal.size()>1) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Mais de uma nota fiscal cadastrada com estes valores.");
+			
+			if (filtro.getNumeroNota() != null && 
+				(filtro.getIdFornecedor() == null || filtro.getIdFornecedor() == -1) && 
+				(filtro.getSerie() == null || filtro.getSerie().isEmpty())){
+				
+				throw new ValidacaoException(
+						TipoMensagem.WARNING, 
+						"Mais de uma nota fiscal cadastrada com estes valores, especifique um fornecedor.");
+			} else {
+			
+				throw new ValidacaoException(
+					TipoMensagem.WARNING, 
+					"Mais de uma nota fiscal encontrada com o filtro escolhido.");
+			}
 		} 
 		
 		NotaFiscalEntrada notaFiscal = null;
@@ -856,7 +866,11 @@ public class RecebimentoFisicoController extends BaseController {
 			
 			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, msgs);
 													
-			result.use(Results.json()).from(new ResultadoNotaFiscalExistente(validacao, false, false ), "result").include("validacao").include("validacao.listaMensagens").serialize();
+			result.use(Results.json()).from(
+				new ResultadoNotaFiscalExistente(
+					validacao, false, false ), "result")
+						.include("validacao")
+						.include("validacao.listaMensagens").serialize();
 		
 		} else {
 			
@@ -877,8 +891,11 @@ public class RecebimentoFisicoController extends BaseController {
 			
 			boolean indRecebimentoFisicoConfirmado = verificarRecebimentoFisicoConfirmado(notaFiscal.getId());
 						
-			result.use(Results.json()).from(new ResultadoNotaFiscalExistente(validacao, indNotaInterface, indRecebimentoFisicoConfirmado ), "result").include("validacao").include("validacao.listaMensagens").serialize();
-
+			result.use(Results.json()).from(
+				new ResultadoNotaFiscalExistente(
+					validacao, indNotaInterface, indRecebimentoFisicoConfirmado ), "result")
+						.include("validacao")
+						.include("validacao.listaMensagens").serialize();
 		}
 				
 	}
