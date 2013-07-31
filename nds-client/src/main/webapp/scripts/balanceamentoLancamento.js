@@ -10,6 +10,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	this.linhasDestacadas = [];
 	this.lancamentos = [];
 	this.selecionados = [];
+	this.dataAtualSelecionada = [];
 	
 	this.definirAcaoPesquisaTeclaEnter = function() {
 		
@@ -72,8 +73,9 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		T.mostrarGridEBotoesAcao();
 		
 		T.linhasDestacadas = [];		
-		lancamentosSelecionados = [];		
+		lancamentosSelecionados = [];	
 		
+		T.dataAtualSelecionada = dataLancamento;
 		$('#selTodos', _workspace).uncheck();
 		
 		T.checkUncheckLancamentos(false);
@@ -92,6 +94,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		});
 		
 		$(".lancamentosProgramadosGrid", _workspace).flexReload();
+		
 	},
 	
 	this.processaRetornoPesquisa = function(resultadoPesquisa) {
@@ -110,9 +113,11 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		$("#valorTotal", _workspace).html(resultadoPesquisa[1]);
 		
-		$.each(resultadoPesquisa[0].rows, function(index,row){ T.processarLinha(index, row);});
+		if(resultadoPesquisa && resultadoPesquisa[0] && resultadoPesquisa[0].rows) {
+			$.each(resultadoPesquisa[0].rows, function(index,row){ T.processarLinha(index, row);});
+		}
 		
-		return resultadoPesquisa[0];
+		return (resultadoPesquisa[0] && resultadoPesquisa[0].rows) ? resultadoPesquisa[0] : resultadoPesquisa;
 	},
 		
 	this.popularResumoPeriodo = function(data) {
@@ -371,6 +376,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		var inputSelecionarTodos = $('#selTodos', _workspace).attr("checked");
 		
 		data.push({name: 'novaDataFormatada', value: $("#novaDataLancamento", _workspace).val()});
+		data.push({name: 'dataAtualFormatada', value: T.dataAtualSelecionada});
 		
 		var selecionarTodos = inputSelecionarTodos == 'checked';
 		
@@ -395,6 +401,8 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				}
 			);
 				
+		console.log('reprogramando...');
+		
 		$("#dialogReprogramarBalanceamento", _workspace).dialog("close");
 	},
 	
@@ -481,6 +489,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		}
 		
 		T.verificarBloqueioReprogramacao();
+		
 	},
 	
     /**

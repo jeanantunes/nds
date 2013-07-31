@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
+import org.apache.commons.lang.StringUtils;
+
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
@@ -142,7 +144,7 @@ public class RecebimentoFisicoDTO implements Serializable {
 	}
 
 	public void setCodigoProduto(String codigoProduto) {
-		this.codigoProduto = codigoProduto;
+		this.codigoProduto = StringUtils.leftPad(codigoProduto, 8, '0');
 	}
 
 	public String getNomeProduto() {

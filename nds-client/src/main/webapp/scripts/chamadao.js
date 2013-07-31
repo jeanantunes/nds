@@ -345,19 +345,21 @@ var chamadaoController = $.extend(true, {
 				qtdExemplaresParcial = qtdExemplaresParcial + intValue(reparte);
 				
 				var valor = $("#valorTotal" + this.value).html();
-				valorParcial = valorParcial + formatMoneyValue(valor);
+				
+				valor = priceToFloat(valor);
+				valorParcial = parseFloat(valorParcial) + parseFloat(valor);
 			
 			} else {
 				
 				$("#checkAll", chamadaoController.workspace).attr("checked", false);
 			}
 		});
-		
+		valorParcial = parseFloat(valorParcial).toFixed(4);
 		$("#qtdProdutosParcial", chamadaoController.workspace).val(qtdProdutosParcial);
 		$("#qtdExemplaresParcial", chamadaoController.workspace).val(qtdExemplaresParcial);
-		$("#valorParcial", chamadaoController.workspace).val(valorParcial);
+		$("#valorParcial", chamadaoController.workspace).val(floatToPrice(valorParcial));
 		
-		chamadaoController.aplicarMascaraCampos();
+		// chamadaoController.aplicarMascaraCampos();
 	},
 	
 	verifyCheckAll : function() {
@@ -375,9 +377,9 @@ var chamadaoController = $.extend(true, {
 		
 		$("#qtdProdutosParcial", chamadaoController.workspace).val(0);
 		$("#qtdExemplaresParcial", chamadaoController.workspace).val(0);
-		$("#valorParcial", chamadaoController.workspace).val(0);
+		$("#valorParcial", chamadaoController.workspace).val(floatToPrice(0));
 		
-		chamadaoController.aplicarMascaraCampos();
+		//chamadaoController.aplicarMascaraCampos();
 	},
 	
 	aplicarMascaraCampos : function() {
@@ -518,3 +520,4 @@ var chamadaoController = $.extend(true, {
 }, BaseController);
 
 //@ sourceURL=chamadao.js
+

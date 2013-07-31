@@ -176,13 +176,14 @@ public class GruposAcessoController extends BaseController {
 	public void salvarGrupoPermissao(GrupoPermissaoDTO grupoPermissaoDTO) throws Exception {
 		
 		this.validarDadosGrupoPermissao(grupoPermissaoDTO);
-
+		
 		GrupoPermissao grupoPermissao = new GrupoPermissao();
 		grupoPermissao.setId(grupoPermissaoDTO.getId());
 		grupoPermissao.setNome(grupoPermissaoDTO.getNome());
 		
-		if(grupoPermissaoDTO.getPermissoes() == null)
+		if(grupoPermissaoDTO.getPermissoes() == null) {
 			grupoPermissaoDTO.setPermissoes(new ArrayList<Permissao>());
+		}
 		
 		addPais(grupoPermissaoDTO.getPermissoes());
 		

@@ -49,5 +49,14 @@ public interface ControleConferenciaEncalheCotaRepository  extends Repository<Co
 	 * @return List - Long
 	 */
 	public List<Long> obterListaIdControleConferenciaEncalheCota(FiltroConsultaEncalheDTO filtro);
+	
+	/**
+	 * Obtém a flag para sinalizar se aceita Juramentado 
+	 * cota e dataOperação.
+	 * 
+	 * @param idCota
+	 * @return boolean
+	 */
+	public boolean obterAceitaJuramentado(Long idCota);
 
 }

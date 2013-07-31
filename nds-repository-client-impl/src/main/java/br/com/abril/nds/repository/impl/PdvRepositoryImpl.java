@@ -346,11 +346,14 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 		criteria.createAlias("cota", "cota");
 		criteria.createAlias("enderecos", "enderecos") ;
 		criteria.createAlias("enderecos.endereco", "endereco");
-		
-		
-		if(boxID > 0) {
+				
+		if(boxID > 0 || boxID == -1) {
 			DetachedCriteria subquery = 
 					DetachedCriteria.forClass(RotaPDV.class, "rotaPdv")
+									.createAlias("rota", "rota")
+									.createAlias("rota.roteiro", "roteiro")
+									.createAlias("roteiro.roteirizacao", "roteirizacao")
+									.add(Restrictions.isNotNull("roteirizacao.box"))
 									.setProjection(Projections.property("rotaPdv.pdv.id"));
 			
 			criteria.add(Subqueries.propertyNotIn("pdv.id", subquery));

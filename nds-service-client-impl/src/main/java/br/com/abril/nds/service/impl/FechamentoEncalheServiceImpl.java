@@ -192,6 +192,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		List<FechamentoFisicoLogicoDTO> listaConferencia = 
 				fechamentoEncalheRepository.buscarConferenciaEncalheNovo(filtro, sortorder, sort, startSearch, rp);
+		
 		if(! listaConferencia.isEmpty())
 		{
 			ArrayList<Long> listaDeIdsProdutoEdicao = new ArrayList<Long>();
@@ -732,6 +733,16 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 			Cota cota = this.cotaRepository.buscarCotaPorID(c.getIdCota());
 			
+			if(cota == null) {
+				
+				cota = this.cotaRepository.buscarPorId(c.getIdCota());
+				
+				if(cota == null) {
+					throw new ValidacaoException(TipoMensagem.ERROR, "Cota inexistente.");
+				}
+				
+			}
+			
 			movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(
 					cota, 
 					dataOperacaoDistribuidor,
@@ -912,7 +923,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Transactional
 	public void encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario,FiltroFechamentoEncalheDTO filtroSessao)  {
 
-		Integer totalCotasAusentes = this.buscarTotalCotasAusentes(dataEncalhe, true);
+		Integer totalCotasAusentes = this.buscarTotalCotasAusentesSemPostergado(dataEncalhe, true);
 		
 		if (totalCotasAusentes > 0) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cotas ausentes existentes!");
@@ -1386,5 +1397,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 	
 		return listaEncalheSession;
+	}
+
+	@Override
+	public Integer buscarTotalCotasAusentesSemPostergado(Date dataEncalhe, boolean isSomenteCotasSemAcao) { 
+		return this.fechamentoEncalheRepository.obterTotalCotasAusentesSemPostergado(dataEncalhe, isSomenteCotasSemAcao, null, null, 0, 0);
+	
 	}
 }

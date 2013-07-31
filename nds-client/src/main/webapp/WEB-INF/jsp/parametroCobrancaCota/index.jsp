@@ -194,7 +194,6 @@ $(function(){
 			<tr>
 				<td>Tipo de Cota:</td>
 				<td><select name="tipoCota" id="tipoCota" style="width: 150px;">
-						<option value="">Selecione</option>
 						<c:forEach varStatus="counter" var="itemTipoCota"
 							items="${listaTiposCota}">
 							<option value="${itemTipoCota.key}">${itemTipoCota.value}</option>
