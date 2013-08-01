@@ -10,13 +10,15 @@ var confirmaExpedicaoController = $.extend(true, {
 
 		$(".confirmaExpedicaoGrid", confirmaExpedicaoController.workspace).flexigrid($.extend({},{
 			onSuccess: function() {bloquearItensEdicao(confirmaExpedicaoController.workspace);},
-			colModel : [ {
-				display : 'Data Entrada',
-				name : 'dataEntrada',
-				width : 65,
-				sortable : true,
-				align : 'center'
-			}, {
+			colModel : [ 
+//			{
+//				display : 'Data Entrada',
+//				name : 'dataEntrada',
+//				width : 65,
+//				sortable : true,
+//				align : 'center'
+//			}, 
+			{
 				display : 'C&oacute;digo',
 				name : 'codigo',
 				width : 50,
@@ -53,9 +55,9 @@ var confirmaExpedicaoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}, {
-				display : 'Reparte',
+				display : 'Rep. Previsto',
 				name : 'reparte',
-				width : 50,
+				width : 70,
 				sortable : true,
 				align : 'center'
 			}, {
@@ -70,6 +72,12 @@ var confirmaExpedicaoController = $.extend(true, {
 				width : 80,
 				sortable : false,
 				align : 'left'
+			}, {
+				display : 'Físico',
+				name : 'fisico',
+				width : 50,
+				sortable : true,
+				align : 'center'
 			}, {
 				display : 'Estudo',
 				name : 'estudo',
@@ -160,7 +168,9 @@ var confirmaExpedicaoController = $.extend(true, {
 	},
 			
 	processaRetornoPesquisa : function(data) {
-				
+		
+		console.log(data);
+		
 		var grid = data[0];
 		var mensagens = data[1];
 		var status = data[2];
