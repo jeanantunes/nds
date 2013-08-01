@@ -109,13 +109,11 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		BigDecimal valorTotalEncalhe = BigDecimal.ZERO;
 
-		valorTotalReparte = 
-				chamadaEncalheCotaRepository.obterReparteDaChamaEncalheCotaNoPeriodo(
-						filtro.getIdCota(), 
-						filtro.getDataRecolhimentoInicial(), 
-						filtro.getDataRecolhimentoFinal(), false);
+		ConsultaEncalheDTO totalReparteEncalhe = movimentoEstoqueCotaRepository.obterValorTotalReparteEncalheDataCotaFornecedor(filtro);
 		
-		valorTotalEncalhe = movimentoEstoqueCotaRepository.obterValorTotalEncalhe(filtro);
+		valorTotalReparte = totalReparteEncalhe.getReparte();
+		
+		valorTotalEncalhe = totalReparteEncalhe.getEncalhe();
 		
 		BigDecimal valorVendaDia = valorTotalReparte.subtract(valorTotalEncalhe); 
 		
