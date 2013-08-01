@@ -630,7 +630,7 @@ public class MatrizLancamentoController extends BaseController {
 			new ArrayList<ProdutoLancamentoDTO>();
 		
 		this.montarListasParaAlteracaoMapa(produtosLancamento,
-										   listaProdutoLancamentoAlterar, novaData);
+										   listaProdutoLancamentoAlterar);
 		
 		this.removerEAdicionarMapa(matrizLancamento,
 							  	   listaProdutoLancamentoAlterar,
@@ -668,10 +668,9 @@ public class MatrizLancamentoController extends BaseController {
 	 * 
 	 * @param produtosLancamento - lista de produtos de lançamento
 	 * @param listaProdutoLancamentoAlterar - lista de produtos que serão alterados
-	 * @param dataSelecionada TODO
 	 */
 	private void montarListasParaAlteracaoMapa(List<ProdutoLancamentoVO> produtosLancamento,									 
-											   List<ProdutoLancamentoDTO> listaProdutoLancamentoAlterar, Date dataSelecionada) {
+											   List<ProdutoLancamentoDTO> listaProdutoLancamentoAlterar) {
 		
 		List<ProdutoLancamentoDTO> listaProdutoLancamentoSessao = this.getProdutoLancamentoDTOFromMatrizSessao();
 		
@@ -754,13 +753,13 @@ public class MatrizLancamentoController extends BaseController {
 		
 		PaginacaoVO paginacao = filtro.getPaginacao();
 		
+		Double valorTotal = this.getValorTotal(listaProdutoLancamento);
+		
 		listaProdutoLancamento =
 			PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoLancamento, paginacao, paginacao.getSortColumn());
 		
 		List<ProdutoLancamentoVO> listaProdutoBalanceamentoVO =
 				new LinkedList<ProdutoLancamentoVO>();
-		
-		Double valorTotal = getValorTotal(listaProdutoLancamento);
 		
 		listaProdutoBalanceamentoVO = getProdutosLancamentoVO(listaProdutoLancamento);
 						
