@@ -369,9 +369,9 @@ var chamdaEncalheAnteipadaController = $.extend(true, {
 			$("#box",chamdaEncalheAnteipadaController.workspace).html(comboBoxes);
 		}, 
 		
-		pesquisarFornecedor:function(data){
+		pesquisarFornecedor:function(data) {
 		
-			$.postJSON(contextPath + "/devolucao/chamadaEncalheAntecipada/pesquisarFornecedor",
+			$.postJSON(contextPath + "/produto/pesquisarFornecedorProduto",
 					   data, chamdaEncalheAnteipadaController.montarComboFornecedores);
 			
 		},

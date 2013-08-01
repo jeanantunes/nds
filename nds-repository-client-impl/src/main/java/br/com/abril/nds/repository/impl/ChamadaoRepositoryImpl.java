@@ -40,9 +40,8 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		StringBuilder hql = new StringBuilder("select SUM(consignadoCota.qtdExemplaresTotal) AS qtdExemplaresTotal, SUM(consignadoCota.valorTotal) AS valorTotal FROM ( ");
 		
 		hql.append("SELECT ")
-			.append(" SUM(estoqueProdCota.QTDE_RECEBIDA ")
-			.append(" - estoqueProdCota.QTDE_DEVOLVIDA) AS qtdExemplaresTotal, ")
-			.append(" SUM((mec.PRECO_COM_DESCONTO) * (estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA)) AS valorTotal ");
+			.append(" estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA AS qtdExemplaresTotal, ")
+			.append(" (mec.PRECO_COM_DESCONTO) * (estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) AS valorTotal ");
 		
 		hql.append(this.gerarQueryConsignados(filtro));
 		
