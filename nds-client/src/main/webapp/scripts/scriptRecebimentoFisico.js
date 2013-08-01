@@ -225,16 +225,31 @@ var recebimentoFisicoController = $.extend(true, {
 		if(validacao.tipoMensagem == "SUCCESS") {
 		
 			if (recebimentoFisicoController.indNotaFiscalInterface){
-				$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).attr('disabled', false);
+				$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).disable();
 				recebimentoFisicoController.carregarItemNotaGridNotaInterface();
 				
+				$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(10,false);
+				
 	    	}else{
-				$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).attr('disabled', true);
+				$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).enable();
 				recebimentoFisicoController.carregarItemNotaGridNotaManual();
 	    	}
 			
 			if(result.validacao.listaMensagens.length>0)
 				exibirMensagem(validacao.tipoMensagem, validacao.listaMensagens);
+			
+			if (result.cnpj){
+				$("#cnpj", recebimentoFisicoController.workspace).val(result.cnpj);
+				$("#fornecedor", recebimentoFisicoController.workspace).val(removeSpecialCharacteres(result.cnpj));
+			}
+			
+			if (result.numeroNotaFiscal){
+				$("#notaFiscal", recebimentoFisicoController.workspace).val(result.numeroNotaFiscal);
+			}
+			
+			if (result.serieNotaFiscal){
+				$("#serie", recebimentoFisicoController.workspace).val(result.serieNotaFiscal);
+			}
 			
 			recebimentoFisicoController.pesquisarItemNotaGrid();
 
@@ -927,6 +942,8 @@ var recebimentoFisicoController = $.extend(true, {
 			$("#qtdPacote_"+lineId, recebimentoFisicoController.workspace).val(resultado.qtdPacote);
 			
 			$("#qtdExemplar_"+lineId, recebimentoFisicoController.workspace).val(resultado.qtdExemplar);
+			
+			$("#diferenca_"+lineId, recebimentoFisicoController.workspace).text(0);
 		
 		});
 		
@@ -1267,7 +1284,7 @@ var recebimentoFisicoController = $.extend(true, {
 				$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).disable();
 			}
 			
-			$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).uncheck();
+			//$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).uncheck();
 			
 			value.cell.precoCapa = $.formatNumber(value.cell.precoCapa, {format:"#,##0.00", locale:"br"}); 
 			value.cell.valorTotal = $.formatNumber(value.cell.valorTotal, {format:"#,##0.00", locale:"br"}); 
@@ -1328,7 +1345,21 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			$('#botaoNovoProduto', recebimentoFisicoController.workspace).hide();
 			
-		}	
+		}
+		
+		if ($("#indConferenciaCega", recebimentoFisicoController.workspace).val() == "true"){
+			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(9,false);
+			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(11,false);
+			
+			$(".bt_sellAll", recebimentoFisicoController.workspace).hide();
+		} else {
+			
+			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(9,true);
+			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(11,true);
+			
+			$(".bt_sellAll", recebimentoFisicoController.workspace).show();
+		}
+		
 		return data;
 
 	},

@@ -1,6 +1,7 @@
 <input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <input id="permissaoGridColRepartePrevisto" type="hidden" value="${permissaoGridColRepartePrevisto}">
 <input id="permissaoGridColDiferenca" type="hidden" value="${permissaoGridColDiferenca}">
+<input id="indConferenciaCega" type="hidden" value="${indConferenciaCega}">
 
 <head>
 
