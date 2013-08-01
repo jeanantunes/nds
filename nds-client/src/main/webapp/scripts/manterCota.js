@@ -388,7 +388,7 @@ var MANTER_COTA = $.extend(true, {
 
         if(!er.exec($(idInput, this.workspace).val())) {
             $(idInput, this.workspace).focus();
-            exibirMensagemDialog("WARNING",["E-mail inv&aacutelido."],"");
+            exibirMensagemDialog("WARNING",["E-mail inv&aacute;lido."],"");
         }
     },
 
@@ -1201,6 +1201,8 @@ var COTA_CNPJ = $.extend(true, {
                 if (MANTER_COTA.isAlteracaoTitularidade) {
                     MANTER_COTA.isAlteracaoTitularidade = false;
                 }
+                
+                MANTER_COTA._indCadastroCotaAlterado = false;
 
             },
             null,
@@ -1408,7 +1410,11 @@ var COTA_CPF = $.extend(true, {
                 if (MANTER_COTA.isAlteracaoTitularidade) {
                     MANTER_COTA.isAlteracaoTitularidade = false;
                 }
-
+                
+                if(result.dataNascimento) $("#dataNascimento", this.workspace).val(result.dataNascimento);
+                
+                MANTER_COTA._indCadastroCotaAlterado = false;
+                
             },
             null,
             true
