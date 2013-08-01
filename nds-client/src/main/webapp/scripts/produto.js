@@ -336,6 +336,8 @@ var produtoController = $.extend(true, {
 	},
 	
 	editarProduto : function(id) {
+		
+		$("td[name='tdCodigoProdutoICDCadastro']", produtoController.workspace).show();
 
 		$("#dialog-novo", this.workspace).dialog({
 			resizable: false,
@@ -369,6 +371,7 @@ var produtoController = $.extend(true, {
 		);
 		
 		$("#codigoProdutoCadastro", this.workspace).disable();
+		$("#codigoProdutoICDCadastro", this.workspace).disable();
 	},
 	
 	atualizarValorComboGeraAutomatica : function(){
@@ -405,6 +408,7 @@ var produtoController = $.extend(true, {
 			   
 						$("#idProduto", produtoController.workspace).val(result.id);
 						$("#codigoProdutoCadastro", produtoController.workspace).val(result.codigo);
+						$("#codigoProdutoICDCadastro", produtoController.workspace).val(result.codigoICD);
 						$("#nomeProduto", produtoController.workspace).val(result.nome);
 						$("#sloganProduto", produtoController.workspace).val(result.slogan);
 						$("#peb", produtoController.workspace).val(result.peb);
@@ -557,6 +561,7 @@ var produtoController = $.extend(true, {
 		$("#comboTipoDesconto", produtoController.workspace).hide();
 		$("#tipoDescontoManual", produtoController.workspace).show();
 		$("#percentualDesconto", produtoController.workspace).removeAttr('disabled');
+		$("td[name='tdCodigoProdutoICDCadastro']", produtoController.workspace).hide();
 	},
 
 	carregarNovoProduto : function(callback) {

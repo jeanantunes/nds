@@ -7,7 +7,6 @@ import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TributacaoFiscal;
-import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.util.CurrencyUtil;
 
 public class ProdutoCadastroVO implements Serializable {
@@ -17,6 +16,8 @@ public class ProdutoCadastroVO implements Serializable {
 	private Long id;
 	
 	private String codigo;
+	
+	private String codigoICD;
 	
 	private String nome;
 	
@@ -72,7 +73,7 @@ public class ProdutoCadastroVO implements Serializable {
 		
 	}
 	
-	public ProdutoCadastroVO(Long id, String codigo, String nome,
+	public ProdutoCadastroVO(Long id, String codigo, String codigoICD, String nome,
 			Long codigoFornecedor, Long codigoEditor, String slogan,
 			Long codigoTipoProduto, String formaComercializacao, Integer peb,
 			Integer pacotePadrao, Long tipoDesconto, String periodicidade,
@@ -88,6 +89,7 @@ public class ProdutoCadastroVO implements Serializable {
 		
 		this.id = id;
 		this.codigo = codigo;
+		this.codigoICD = codigoICD;
 		this.nome = nome;
 		this.codigoFornecedor = codigoFornecedor;
 		this.codigoEditor = codigoEditor;
@@ -129,7 +131,8 @@ public class ProdutoCadastroVO implements Serializable {
 				produto.getDescontoLogistica().getTipoDesconto().longValue() : 0L;
 		ProdutoCadastroVO produtoCadastroVO = new ProdutoCadastroVO(
 			produto.getId(), 
-			produto.getCodigo(), 
+			produto.getCodigo(),
+			produto.getCodigoICD(),
 			produto.getNome(), 
 			(produto.getFornecedor()!=null)?produto.getFornecedor().getId():null, 
 			produto.getEditor()!=null?produto.getEditor().getId():0, 
@@ -188,6 +191,14 @@ public class ProdutoCadastroVO implements Serializable {
 	 */
 	public void setCodigo(String codigo) {
 		this.codigo = codigo;
+	}
+	
+	public String getCodigoICD() {
+		return codigoICD;
+	}
+
+	public void setCodigoICD(String codigoICD) {
+		this.codigoICD = codigoICD;
 	}
 
 	/**
