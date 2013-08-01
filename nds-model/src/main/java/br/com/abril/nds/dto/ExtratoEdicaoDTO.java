@@ -42,6 +42,7 @@ public class ExtratoEdicaoDTO implements Serializable {
 		this.descMovimento = descMovimento;
 		this.qtdEdicaoEntrada = qtdEdicaoEntrada;
 		this.qtdEdicaoSaida = qtdEdicaoSaida;
+		this.qtdParcial = BigInteger.ZERO;
 	}
 
 	public ExtratoEdicaoDTO(){
