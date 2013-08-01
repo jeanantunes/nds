@@ -74,7 +74,7 @@ var produtoController = $.extend(true, {
 	
 	pesquisarFornecedor:function(data){
 	
-		$.postJSON(contextPath + "/devolucao/chamadaEncalheAntecipada/pesquisarFornecedor",
+		$.postJSON(contextPath + "/produto/pesquisarFornecedorProduto",
 				   data, this.montarComboFornecedores);
 	},
 

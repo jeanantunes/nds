@@ -105,7 +105,7 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 	private PdvService pdvService;
 	
 	@Path("/")
-	public void index(){
+	public void index() {
 		
 		result.include("listaFornecedores",obterFornecedores(null));
 		result.include("listaBoxes",obterBoxs(null));
@@ -133,20 +133,6 @@ public class ChamadaEncalheAntecipadaController extends BaseController {
 		List<ItemDTO<Integer, String>> municipios = pdvService.buscarMunicipiosPdvPrincipal();
 		
 		result.include("listaMunicipios",municipios);
-	}
-	
-	/**
-	 * Pesquisa fornecedores relacionados a um determinado produto
-	 * 
-	 * @param codigoProduto
-	 */
-	@Post
-	@Path("/pesquisarFornecedor")
-	public void pesquisarFornecedorPorProduto(String codigoProduto){
-		
-		List<ItemDTO<Long, String>> listaFornecedoresCombo = obterFornecedores(codigoProduto);
-		
-		result.use(Results.json()).from(listaFornecedoresCombo, "result").recursive().serialize();
 	}
 	
 	/**
