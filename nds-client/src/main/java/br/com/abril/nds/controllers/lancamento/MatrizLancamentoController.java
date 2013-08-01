@@ -87,6 +87,8 @@ public class MatrizLancamentoController extends BaseController {
 	
 	private static final String ATRIBUTO_SESSAO_BALANCEAMENTO_ALTERADO = "balanceamentoAlterado";
 	
+	private static final String DATA_ATUAL_SELECIONADA = "dataAtualSelecionada";
+	
 	@Path("/")
 	public void index() {
 		
@@ -156,23 +158,14 @@ public class MatrizLancamentoController extends BaseController {
 			"Balanceamento da matriz de lancamento salvo com sucesso!"), "result").recursive().serialize();
 	}
 	
-	@Post
-	public void obterGridMatrizLancamento(String dataLancamentoFormatada, String sortorder, String sortname, int page, int rp) {
-		
-		BalanceamentoLancamentoDTO balanceamentoLancamento = 
-			(BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
-	
-		if (balanceamentoLancamento == null) {
-			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
-		}
-		
-		Date data = null;
-		
- 		if (dataLancamentoFormatada != null && !dataLancamentoFormatada.trim().isEmpty()) {
-			
-			data = DateUtil.parseDataPTBR(dataLancamentoFormatada);
-		}
+	/**
+	 * Obtem lista de produtos do balanceamento
+	 * 
+	 * @param data
+	 * @param balanceamentoLancamento
+	 * @return List<ProdutoLancamentoDTO>
+	 */
+	private List<ProdutoLancamentoDTO> getListaProdutoBalanceamento(Date data, BalanceamentoLancamentoDTO balanceamentoLancamento){
 		
 		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = new ArrayList<>();
 		
@@ -190,6 +183,31 @@ public class MatrizLancamentoController extends BaseController {
 			}
 		}
 		
+		return listaProdutoBalanceamento;
+	}
+	
+	@Post
+	public void obterGridMatrizLancamento(String dataLancamentoFormatada, String sortorder, String sortname, int page, int rp) {
+		
+		BalanceamentoLancamentoDTO balanceamentoLancamento = 
+			(BalanceamentoLancamentoDTO) session.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO);
+	
+		if (balanceamentoLancamento == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
+		}
+		
+		session.setAttribute(DATA_ATUAL_SELECIONADA, dataLancamentoFormatada);
+		
+		Date data = null;
+		
+ 		if (dataLancamentoFormatada != null && !dataLancamentoFormatada.trim().isEmpty()) {
+			
+			data = DateUtil.parseDataPTBR(dataLancamentoFormatada);
+		}
+
+		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = this.getListaProdutoBalanceamento(data, balanceamentoLancamento);
+
 		FiltroLancamentoDTO filtro = obterFiltroSessao();
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
@@ -224,6 +242,11 @@ public class MatrizLancamentoController extends BaseController {
 		return listaProdutoBalanceamentoClone;
 	}
 
+	/**
+	 * Obtem lista de todos os produtos de lançamento
+	 * 
+	 * @return List<ProdutoLancamentoDTO>
+	 */
 	private List<ProdutoLancamentoDTO> getProdutoLancamentoDTOFromMatrizSessao() {
 		
 		BalanceamentoLancamentoDTO balanceamentoLancamento = 
@@ -234,17 +257,18 @@ public class MatrizLancamentoController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
 		}
 
-		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = new ArrayList<ProdutoLancamentoDTO>();
-	
-		for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry :
-				balanceamentoLancamento.getMatrizLancamento().entrySet()) {
-			
-			listaProdutoBalanceamento.addAll(entry.getValue());
-		}
-		
+		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = this.getListaProdutoBalanceamento(null, balanceamentoLancamento);
+
 		return listaProdutoBalanceamento;
 	}
 	
+	/**
+	 * Obtem lista de produtos de lançamento por data
+	 * 
+	 * @param dataSelecionada
+	 * 
+	 * @return List<ProdutoLancamentoDTO>
+	 */
 	private List<ProdutoLancamentoDTO> getProdutoLancamentoDTOFromMatrizSessao(Date dataSelecionada) {
 		
 		BalanceamentoLancamentoDTO balanceamentoLancamento = 
@@ -255,18 +279,7 @@ public class MatrizLancamentoController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
 		}
 
-		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = new ArrayList<ProdutoLancamentoDTO>();
-	
-		//Se foram selecionados todos de uma data especifica, obtem todos os lancamentos dessa data
-		if(dataSelecionada == null) {
-			for (Map.Entry<Date, List<ProdutoLancamentoDTO>> entry :
-					balanceamentoLancamento.getMatrizLancamento().entrySet()) {
-				
-				listaProdutoBalanceamento.addAll(entry.getValue());
-			}
-		} else {
-			listaProdutoBalanceamento.addAll(balanceamentoLancamento.getMatrizLancamento().get(dataSelecionada));
-		}
+		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = this.getListaProdutoBalanceamento(dataSelecionada, balanceamentoLancamento);
 		
 		return listaProdutoBalanceamento;
 	}
@@ -343,7 +356,6 @@ public class MatrizLancamentoController extends BaseController {
 		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
 	}
 	
-	
 	@Post
 	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void perguntarDataConfirmadaOuNao( ProdutoLancamentoDTO produtoLancamento ){
@@ -351,8 +363,6 @@ public class MatrizLancamentoController extends BaseController {
 		boolean retornoDataConfirmada = this.matrizLancamentoService.isDataConfirmada(produtoLancamento);
 		this.result.use(Results.json()).from(retornoDataConfirmada).serialize();
 	}
-	
-	
 	
 	@Post
 	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
@@ -889,8 +899,17 @@ public class MatrizLancamentoController extends BaseController {
 	@Get
 	public void exportar(FileType fileType) throws IOException {
 		
-		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = getProdutoLancamentoDTOFromMatrizSessao();
+		String dataSelecionada = (String) session.getAttribute(DATA_ATUAL_SELECIONADA);
 		
+        Date data = null;
+		
+ 		if (dataSelecionada != null && !dataSelecionada.trim().isEmpty()) {
+			
+			data = DateUtil.parseDataPTBR(dataSelecionada);
+		}
+
+		List<ProdutoLancamentoDTO> listaProdutoBalanceamento = getProdutoLancamentoDTOFromMatrizSessao(data);
+
 		FiltroLancamentoDTO filtro = obterFiltroSessao();
 		
 		if (listaProdutoBalanceamento != null && !listaProdutoBalanceamento.isEmpty()) {	
