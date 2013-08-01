@@ -240,6 +240,7 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			if (result.cnpj){
 				$("#cnpj", recebimentoFisicoController.workspace).val(result.cnpj);
+				$("#fornecedor", recebimentoFisicoController.workspace).val(removeSpecialCharacteres(result.cnpj));
 			}
 			
 			if (result.numeroNotaFiscal){
@@ -248,10 +249,6 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			if (result.serieNotaFiscal){
 				$("#serie", recebimentoFisicoController.workspace).val(result.serieNotaFiscal);
-			}
-			
-			if (result.fornecedor){
-				$("#fornecedor", recebimentoFisicoController.workspace).val(result.fornecedor);
 			}
 			
 			recebimentoFisicoController.pesquisarItemNotaGrid();

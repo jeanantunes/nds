@@ -918,7 +918,7 @@ public class RecebimentoFisicoController extends BaseController {
 		private ValidacaoVO validacao;
 		private boolean indNotaInterface;		
         private boolean indRecebimentoFisicoConfirmado;
-        private String cnpj, serieNotaFiscal, fornecedor;
+        private String cnpj, serieNotaFiscal;
         private Long numeroNotaFiscal;
 			
 		public ResultadoNotaFiscalExistente(ValidacaoVO validacao,
@@ -939,7 +939,6 @@ public class RecebimentoFisicoController extends BaseController {
 			this.cnpj = Util.adicionarMascaraCNPJ(cnpj);
 			this.serieNotaFiscal = serieNotaFiscal;
 			this.numeroNotaFiscal = numeroNotaFiscal;
-			this.fornecedor = cnpj;
 			
 		}
 		
@@ -988,15 +987,6 @@ public class RecebimentoFisicoController extends BaseController {
 		public void setNumeroNotaFiscal(Long numeroNotaFiscal) {
 			this.numeroNotaFiscal = numeroNotaFiscal;
 		}
-
-		public String getFornecedor() {
-			return fornecedor;
-		}
-
-		public void setFornecedor(String fornecedor) {
-			this.fornecedor = fornecedor;
-		}
-
 	}
 	
 	private void carregarValoresQtdPacoteQtdExemplar(RecebimentoFisicoDTO itemRecebimento) {
