@@ -956,6 +956,12 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 					}
 				}				
 			}
+            //Dados impressão sem rateio
+			else{
+				
+				listaRelatorio.add(
+						new RelatorioLancamentoFaltasSobrasVO(dadoImpressao));
+			}
 		}
 		
 		Map<String, Object> parametrosRelatorio = new HashMap<String, Object>();
