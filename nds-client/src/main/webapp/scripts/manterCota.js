@@ -1356,7 +1356,7 @@ var COTA_CPF = $.extend(true, {
         $("#historicoTerceiraPorcentagemCPF", this.workspace).val( eval( result.historicoTerceiraPorcentagem));
 
         if(result.dataNascimento){
-            $("#dataNascimento", this.workspace).val(result.dataNascimento.$);
+            $("#dataNascimento", this.workspace).val((result.dataNascimento && result.dataNascimento.$) ? result.dataNascimento.$ : result.dataNascimento);
         }
 
         if(result.inicioPeriodo){
@@ -1411,7 +1411,7 @@ var COTA_CPF = $.extend(true, {
                     MANTER_COTA.isAlteracaoTitularidade = false;
                 }
                 
-                if(result.dataNascimento) $("#dataNascimento", this.workspace).val(result.dataNascimento);
+                if(result.dataNascimento) $("#dataNascimento", this.workspace).val(result.dataNascimento.$);
                 
                 MANTER_COTA._indCadastroCotaAlterado = false;
                 
