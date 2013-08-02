@@ -1295,6 +1295,9 @@ var parametroCobrancaCotaController = $.extend(true, {
 				   },
 				   null,
 				   true);
+		
+		parametroCobrancaCotaController.obterParametroCobranca(idCota);
+		
 	},
 
 	//POPUPS
