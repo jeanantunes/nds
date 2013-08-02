@@ -34,13 +34,13 @@ public class RelatorioLancamentoFaltasSobrasVO implements Serializable  {
 		this.precoCapa = CurrencyUtil.formatarValor(produtoEdicao.getPrecoVenda());
 		
 		if (impressaoDiferencaEstoqueDTO.getQtdeFaltas() != null
-				&& BigInteger.ZERO.compareTo(impressaoDiferencaEstoqueDTO.getQtdeFaltas()) < 0) {
+				&& BigInteger.ZERO.compareTo(impressaoDiferencaEstoqueDTO.getQtdeFaltas()) <= 0) {
 			
 			this.qtdeFaltas = impressaoDiferencaEstoqueDTO.getQtdeFaltas().toString();
 		}
 		
 		if (impressaoDiferencaEstoqueDTO.getQtdeSobras() != null
-				&& BigInteger.ZERO.compareTo(impressaoDiferencaEstoqueDTO.getQtdeSobras()) < 0) {
+				&& BigInteger.ZERO.compareTo(impressaoDiferencaEstoqueDTO.getQtdeSobras()) <= 0) {
 			
 			this.qtdeSobras = impressaoDiferencaEstoqueDTO.getQtdeSobras().toString();
 		}

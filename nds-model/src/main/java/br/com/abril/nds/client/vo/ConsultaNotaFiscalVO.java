@@ -45,6 +45,9 @@ public class ConsultaNotaFiscalVO implements Serializable {
 	@Export(label = "Valor R$")
 	private String valor;
 	
+	@Export(label = "Valor Líquido R$")
+	private String valorLiquido;
+	
 	@Export(label = "Nota Recebida")
 	private String notaRecebida;
 	
@@ -151,6 +154,14 @@ public class ConsultaNotaFiscalVO implements Serializable {
 	 */
 	public void setValor(String valor) {
 		this.valor = valor;
+	}
+
+	public String getValorLiquido() {
+		return valorLiquido;
+	}
+
+	public void setValorLiquido(String valorLiquido) {
+		this.valorLiquido = valorLiquido;
 	}
 
 	public String getSerie() {
