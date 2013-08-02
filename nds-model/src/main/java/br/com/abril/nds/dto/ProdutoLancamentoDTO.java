@@ -38,6 +38,8 @@ public class ProdutoLancamentoDTO implements Serializable {
 	private Long peso;
 
 	private String codigoProduto;
+	
+	private String codigoProdutoFormatado;
 
 	private String nomeProduto;
 	
@@ -189,6 +191,15 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 */
 	public void setCodigoProduto(String codigoProduto) {
 		this.codigoProduto = codigoProduto;
+		
+		this.codigoProdutoFormatado = Util.padLeft(codigoProduto, "0", 30);
+	}
+
+	/**
+	 * @return the codigoProdutoFormatado
+	 */
+	public String getCodigoProdutoFormatado() {
+		return codigoProdutoFormatado;
 	}
 
 	/**
