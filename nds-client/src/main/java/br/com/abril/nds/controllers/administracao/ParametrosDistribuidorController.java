@@ -488,8 +488,7 @@ public class ParametrosDistribuidorController extends BaseController {
 		List<String> selecionados = getMunicipiosSelecionados();
 				
 		for(MunicipioDTO municipio : municipios) {
-			if(selecionados.contains(municipio.getMunicipio()))
-				municipio.setSelecionado(true);
+			municipio.setSelecionado(selecionados.contains(municipio.getMunicipio()));
 		}
 		
 		result.use(FlexiGridJson.class).from(municipios).page(page).total(total).serialize();

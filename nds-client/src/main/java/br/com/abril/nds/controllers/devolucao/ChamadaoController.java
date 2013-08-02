@@ -467,8 +467,7 @@ public class ChamadaoController extends BaseController {
 			
 			if (resumoConsignadoCotaChamadao.getValorTotal() != null) {
 			
-				valorTotalFormatado =
-					CurrencyUtil.formatarValor(resumoConsignadoCotaChamadao.getValorTotal());	
+				valorTotalFormatado = CurrencyUtil.formatarValorQuatroCasas(resumoConsignadoCotaChamadao.getValorTotal());	
 			}
 		}
 		
@@ -505,8 +504,7 @@ public class ChamadaoController extends BaseController {
 			
 			if (consignadoCotaChamadao.getPrecoDesconto() != null) {
 				
-				chamadaoVO.setPrecoDesconto(
-					CurrencyUtil.formatarValor(consignadoCotaChamadao.getPrecoDesconto()));
+				chamadaoVO.setPrecoDesconto(CurrencyUtil.formatarValorQuatroCasas(consignadoCotaChamadao.getPrecoDesconto()));
 				
 			} else {
 				chamadaoVO.setPrecoDesconto("");
@@ -522,7 +520,7 @@ public class ChamadaoController extends BaseController {
 				CurrencyUtil.formatarValor(consignadoCotaChamadao.getValorTotal()));
 			
 			chamadaoVO.setValorTotalDesconto(
-				CurrencyUtil.formatarValor(consignadoCotaChamadao.getValorTotalDesconto()));
+				CurrencyUtil.formatarValorQuatroCasas(consignadoCotaChamadao.getValorTotalDesconto()));
 			
 			if (consignadoCotaChamadao.getIdLancamento() != null) {
 				

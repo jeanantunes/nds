@@ -12,7 +12,6 @@ import br.com.abril.nds.integracao.ems0117.inbound.EMS0117Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.model.TipoEdicao;
-import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
@@ -63,29 +62,10 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 		EMS0117Input input = (EMS0117Input) message.getBody();
 
 		StringBuilder sql = new StringBuilder();
-
-		// Obter Box
-		sql.append("FROM Box b ");
-		sql.append("WHERE b.codigo = :codigo ");
-		Query query = getSession().createQuery(sql.toString());
-		query.setParameter("codigo", Integer.valueOf( input.getCodBox().toString() ));
-		Box box = (Box) query.uniqueResult();
+		Query query = null;
 		
-		if (null == box) {
-			// Não encontrou a Box. Realizar Log
-			// Passar para a próxima linha
-			ndsiLoggerFactory.getLogger().logWarning(
-					message,
-					EventoExecucaoEnum.HIERARQUIA,
-					"Codigo BOX " + input.getCodBox().toString()
-							+ " nao encontrado para a Cota "
-							+ input.getCodCota().toString());
-			return;
-		}
-
 		Pessoa pessoa = null;
 		Cota cota = null;
-		sql = new StringBuilder();
 
 		// Obter Pessoa
 		if (INDICE_PESSOA_FISICA.equals(input.getTipoPessoa())) {
@@ -194,268 +174,274 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 
 		if (cotas.isEmpty()) {
 
-			Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
-			
-			cota = new Cota();
-			
-			cota.setInicioAtividade(dataOperacao);
-			cota.setNumeroCota(input.getCodCota());
-			cota.setPossuiContrato(false);
-						
-			setSituacaoCadastro(input, cota);
+			incluirCota(message, input, pessoa);
 
-			cota.setSugereSuspensao(true);
-			//cota.setBox(box);
-			cota.setPessoa(pessoa);
-			getSession().persist(cota);
+		} else {
 
-			// HistoricoSituacaoCota - Realizado em conjunto com Cesar Pop Punk
-			HistoricoSituacaoCota historicoSituacaoCota = new HistoricoSituacaoCota();
-			historicoSituacaoCota.setCota(cota);
-			historicoSituacaoCota.setSituacaoAnterior(null);
-			historicoSituacaoCota.setNovaSituacao(cota.getSituacaoCadastro());
-			historicoSituacaoCota.setMotivo(MotivoAlteracaoSituacao.OUTROS);
-			historicoSituacaoCota.setDataInicioValidade(new Date());
-			historicoSituacaoCota.setDataFimValidade(null);
-			historicoSituacaoCota.setDescricao("INTERFACE");
-			historicoSituacaoCota.setDataEdicao(new Date());
-			historicoSituacaoCota.setTipoEdicao(TipoEdicao.INCLUSAO);
-			
-			Usuario usuarioResponsavel = new Usuario();
-			usuarioResponsavel.setId(2L);
-			historicoSituacaoCota.setResponsavel(usuarioResponsavel);
-			
-			getSession().persist(historicoSituacaoCota);
-			
-			
-			// ParametroCobrancaCota - Realizado em conjunto com Cesar Pop Punk
-			ParametroCobrancaCota parametroCobrancaCota = new ParametroCobrancaCota();
-			parametroCobrancaCota.setCota(cota);
-			
-			
-			
-			
-			
-			
-			//OBS: Necessidade de ajusta na Interface: Tipo de Cota agora se encontra na Cota. 
-			/*
-			if (input.getCondPrazoPagamento().equals("S")) {
-				
-				cota.setTipoCota(TipoCota.CONSIGNADO);
-			} else {
-				
-				cota.setTipoCota(TipoCota.A_VISTA);
+			atualizarCota(message, input, pessoa, cota, cotas);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void atualizarCota(Message message, EMS0117Input input,
+			Pessoa pessoa, Cota cota, List<Cota> cotas) {
+		
+		StringBuilder sql;
+		Query query;
+		Telefone telefone = null;
+		TelefoneCota telefoneCota = null;
+
+		for (Cota cota2 : cotas) {
+
+			if (cota2.getNumeroCota().equals(input.getCodCota())) {
+
+				cota = cota2;
 			}
-			*/
-			
-			
-			
-			
-			
-			getSession().persist(parametroCobrancaCota);
-			
-			if (!input.getEndereco().isEmpty() && !".".equals(input.getEndereco())) {
-				
-				Endereco endereco = null;
+		}
 
-				endereco = new Endereco();
-				endereco.setCep(input.getCep());
-				endereco.setCidade(input.getMunicipio());
-				endereco.setLogradouro(input.getEndereco());
-				endereco.setUf(input.getSiglaUF());
-				endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
-				Endereco endTmp = enderecoRepository.getEnderecoSaneado(input.getCep());
-				
-				if (null != endTmp) {
-					endereco.setBairro(endTmp.getBairro());
-					endereco.setTipoLogradouro(endTmp.getTipoLogradouro());
-				}
+		ndsiLoggerFactory.getLogger().logInfo(message,
+				EventoExecucaoEnum.INF_DADO_ALTERADO,
+				"Atualizacao da Cota " + cota.getNumeroCota());
 
-				endereco.setNumero(input.getNumLogradouro());
-				getSession().persist(endereco);
+		cota.setInicioAtividade(new Date());
+		cota.setNumeroCota(input.getCodCota());
+		cota.setPossuiContrato(false);
+		
+		setSituacaoCadastro(input, cota);
+		
+		if (input.getCondPrazoPagamento().equals("S")) {				
+			cota.setTipoCota(TipoCota.CONSIGNADO);
+		} else {
+			cota.setTipoCota(TipoCota.A_VISTA);
+		}
 
-				EnderecoCota enderecoCota = new EnderecoCota();
-				enderecoCota.setPrincipal(true);
-				enderecoCota.setTipoEndereco(TipoEndereco.COMERCIAL);
-				enderecoCota.setEndereco(endereco);
-				enderecoCota.setCota(cota);
-				getSession().persist(enderecoCota);
+		cota.setSugereSuspensao(true);			
+		cota.setPessoa(pessoa);
+
+		if (!input.getEndereco().isEmpty() && !".".equals(input.getEndereco())) {
+		
+			if (cota.getEnderecos().isEmpty()) {
+
+				persistirEnderecoCotaSemEndereco(input, cota);
 
 			} else {
 
-				ndsiLoggerFactory.getLogger().logWarning(
-						message,
-						EventoExecucaoEnum.RELACIONAMENTO,
-						"O arquivo nao contem dados de endereco para a cota "
-								+ cota.getNumeroCota());
+				atualizarEnderecoExistenteCota(input, cota, message);
+
 			}
+			
+		} else {
 
-			if (!input.getTelefone().isEmpty()) {
+			ndsiLoggerFactory.getLogger().logWarning(
+					message,
+					EventoExecucaoEnum.RELACIONAMENTO,
+					"O arquivo nao contem dados de endereco para a cota "
+							+ cota.getNumeroCota());
+		}
 
-				Telefone telefone = new Telefone();
+		if (!input.getTelefone().isEmpty()) {
+
+			// Verifica TelefoneCota
+			sql = new StringBuilder();
+			sql.append("SELECT tc  ");
+			sql.append("FROM TelefoneCota tc ");
+			sql.append("JOIN FETCH tc.telefone t  ");
+			sql.append("WHERE tc.cota = :numeroCota ");
+			sql.append("AND t.numero = :numeroTelefone ");
+			query = getSession().createQuery(sql.toString());
+			query.setParameter("numeroCota", cota);
+			query.setParameter("numeroTelefone", input.getTelefone());
+
+			List<TelefoneCota> telefonesCota = (List<TelefoneCota>) query.list();
+
+			if (telefonesCota.isEmpty()) {
+
+				telefone = new Telefone();
 				telefone.setDdd(input.getDdd());
 				telefone.setNumero(input.getTelefone());
 				getSession().persist(telefone);
-
-				TelefoneCota telefoneCota = new TelefoneCota();
+				
+				telefoneCota = new TelefoneCota();
+				
 				telefoneCota.setPrincipal(true);
 				telefoneCota.setTipoTelefone(TipoTelefone.COMERCIAL);
 				telefoneCota.setTelefone(telefone);
 				telefoneCota.setCota(cota);
 				getSession().persist(telefoneCota);
 
+
 			} else {
 
-				ndsiLoggerFactory.getLogger().logWarning(
-						message,
-						EventoExecucaoEnum.RELACIONAMENTO,
-						"O arquivo nao contem dados de telefone para a cota "
-								+ cota.getNumeroCota());
-			}
+				for (TelefoneCota telefoneCota2 : telefonesCota) {
 
-		} else {
+					if (telefoneCota2.getCota().equals(cota)) {
 
-			Telefone telefone = null;
-			TelefoneCota telefoneCota = null;
+						telefoneCota = telefoneCota2;
 
-			for (Cota cota2 : cotas) {
+						// Definir Telefone
+						sql = new StringBuilder();
+						sql.append("SELECT tel ");
+						sql.append("FROM Telefone tel ");
+						sql.append("WHERE tel.numero = :numero ");
+						query = getSession().createQuery(sql.toString());
+						query.setParameter("numero", input.getTelefone());
 
-				if (cota2.getNumeroCota().equals(input.getCodCota())) {
+						List<Telefone> telefones = (List<Telefone>) query
+								.list();
 
-					cota = cota2;
-				}
-			}
+						if (telefones.isEmpty()) {
 
-			ndsiLoggerFactory.getLogger().logInfo(message,
-					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualizacao da Cota " + cota.getNumeroCota());
+							telefone = new Telefone();
+							telefone.setDdd(input.getDdd());
+							telefone.setNumero(input.getTelefone());
+							getSession().persist(telefone);
 
-			cota.setInicioAtividade(new Date());
-			cota.setNumeroCota(input.getCodCota());
-			cota.setPossuiContrato(false);
-			
-			setSituacaoCadastro(input, cota);
+						} else {
 
-			cota.setSugereSuspensao(true);			
-			cota.setPessoa(pessoa);
+							for (Telefone telefones2 : telefones) {
 
-			if (!input.getEndereco().isEmpty() && !".".equals(input.getEndereco())) {
-			
-				if (cota.getEnderecos().isEmpty()) {
+								if (telefones2.getNumero().equals(
+										input.getTelefone())) {
 
-					persistirEnderecoCotaSemEndereco(input, cota);
-
-				} else {
-
-					atualizarEnderecoExistenteCota(input, cota, message);
-
-				}
-				
-			} else {
-
-				ndsiLoggerFactory.getLogger().logWarning(
-						message,
-						EventoExecucaoEnum.RELACIONAMENTO,
-						"O arquivo nao contem dados de endereco para a cota "
-								+ cota.getNumeroCota());
-			}
-
-			if (!input.getTelefone().isEmpty()) {
-
-				// Verifica TelefoneCota
-				sql = new StringBuilder();
-				sql.append("SELECT tc  ");
-				sql.append("FROM TelefoneCota tc ");
-				sql.append("JOIN FETCH tc.telefone t  ");
-				sql.append("WHERE tc.cota = :numeroCota ");
-				sql.append("AND t.numero = :numeroTelefone ");
-				query = getSession().createQuery(sql.toString());
-				query.setParameter("numeroCota", cota);
-				query.setParameter("numeroTelefone", input.getTelefone());
-
-				List<TelefoneCota> telefonesCota = (List<TelefoneCota>) query
-						.list();
-
-				if (telefonesCota.isEmpty()) {
-
-					telefone = new Telefone();
-					telefone.setDdd(input.getDdd());
-					telefone.setNumero(input.getTelefone());
-					getSession().persist(telefone);
-					
-					telefoneCota = new TelefoneCota();
-					
-					telefoneCota.setPrincipal(true);
-					telefoneCota.setTipoTelefone(TipoTelefone.COMERCIAL);
-					telefoneCota.setTelefone(telefone);
-					telefoneCota.setCota(cota);
-					getSession().persist(telefoneCota);
-
-
-				} else {
-
-					for (TelefoneCota telefoneCota2 : telefonesCota) {
-
-						if (telefoneCota2.getCota().equals(cota)) {
-
-							telefoneCota = telefoneCota2;
-
-							// Definir Telefone
-							sql = new StringBuilder();
-							sql.append("SELECT tel ");
-							sql.append("FROM Telefone tel ");
-							sql.append("WHERE tel.numero = :numero ");
-							query = getSession().createQuery(sql.toString());
-							query.setParameter("numero", input.getTelefone());
-
-							List<Telefone> telefones = (List<Telefone>) query
-									.list();
-
-							if (telefones.isEmpty()) {
-
-								telefone = new Telefone();
-								telefone.setDdd(input.getDdd());
-								telefone.setNumero(input.getTelefone());
-								getSession().persist(telefone);
-
-							} else {
-
-								for (Telefone telefones2 : telefones) {
-
-									if (telefones2.getNumero().equals(
-											input.getTelefone())) {
-
-										telefone = telefones2;
-									}
+									telefone = telefones2;
 								}
 							}
 						}
 					}
-
-					ndsiLoggerFactory.getLogger().logInfo(
-							message,
-							EventoExecucaoEnum.INF_DADO_ALTERADO,
-							"Atualizacao do Telefone Cota "
-									+ telefoneCota.getId());
-
-
-					// Alteração para falso no principal, todos os dados de importacao se tornavam telefones principais Eduardo "PunkRock" Castro
-					telefoneCota.setTipoTelefone(TipoTelefone.COMERCIAL);
-					telefoneCota.setTelefone(telefone);
-					telefoneCota.setCota(cota);
-
 				}
-			} else {
 
-				ndsiLoggerFactory.getLogger().logWarning(
+				ndsiLoggerFactory.getLogger().logInfo(
 						message,
-						EventoExecucaoEnum.RELACIONAMENTO,
-						"O arquivo nao contem dados de telefone para a cota "
-								+ cota.getNumeroCota());
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Atualizacao do Telefone Cota "
+								+ telefoneCota.getId());
+
+
+				// Alteração para falso no principal, todos os dados de importacao se tornavam telefones principais Eduardo "PunkRock" Castro
+				telefoneCota.setTipoTelefone(TipoTelefone.COMERCIAL);
+				telefoneCota.setTelefone(telefone);
+				telefoneCota.setCota(cota);
+
 			}
+		} else {
+
+			ndsiLoggerFactory.getLogger().logWarning(
+					message,
+					EventoExecucaoEnum.RELACIONAMENTO,
+					"O arquivo nao contem dados de telefone para a cota "
+							+ cota.getNumeroCota());
 		}
 	}
 
+	private void incluirCota(Message message, EMS0117Input input, Pessoa pessoa) {
+		Cota cota;
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		cota = new Cota();
+		
+		cota.setInicioAtividade(dataOperacao);
+		cota.setNumeroCota(input.getCodCota());
+		cota.setPossuiContrato(false);
+					
+		setSituacaoCadastro(input, cota);
+		
+		if (input.getCondPrazoPagamento().equals("S")) {				
+			cota.setTipoCota(TipoCota.CONSIGNADO);
+		} else {
+			cota.setTipoCota(TipoCota.A_VISTA);
+		}
+
+		cota.setSugereSuspensao(true);
+		//cota.setBox(box);
+		cota.setPessoa(pessoa);
+		getSession().persist(cota);
+
+		// HistoricoSituacaoCota - Realizado em conjunto com Cesar Pop Punk
+		HistoricoSituacaoCota historicoSituacaoCota = new HistoricoSituacaoCota();
+		historicoSituacaoCota.setCota(cota);
+		historicoSituacaoCota.setSituacaoAnterior(null);
+		historicoSituacaoCota.setNovaSituacao(cota.getSituacaoCadastro());
+		historicoSituacaoCota.setMotivo(MotivoAlteracaoSituacao.OUTROS);
+		historicoSituacaoCota.setDataInicioValidade(new Date());
+		historicoSituacaoCota.setDataFimValidade(null);
+		historicoSituacaoCota.setDescricao("INTERFACE");
+		historicoSituacaoCota.setDataEdicao(new Date());
+		historicoSituacaoCota.setTipoEdicao(TipoEdicao.INCLUSAO);
+		
+		Usuario usuarioResponsavel = new Usuario();
+		usuarioResponsavel.setId(2L);
+		historicoSituacaoCota.setResponsavel(usuarioResponsavel);
+		
+		getSession().persist(historicoSituacaoCota);
+		
+		
+		// ParametroCobrancaCota - Realizado em conjunto com Cesar Pop Punk
+		ParametroCobrancaCota parametroCobrancaCota = new ParametroCobrancaCota();
+		parametroCobrancaCota.setCota(cota);
+		
+		getSession().persist(parametroCobrancaCota);
+		
+		if (!input.getEndereco().isEmpty() && !".".equals(input.getEndereco())) {
+			
+			Endereco endereco = null;
+
+			endereco = new Endereco();
+			endereco.setCep(input.getCep());
+			endereco.setCidade(input.getMunicipio());
+			endereco.setLogradouro(input.getEndereco());
+			endereco.setUf(input.getSiglaUF());
+			endereco.setCodigoCidadeIBGE(input.getCodCidadeIbge());
+			Endereco endTmp = enderecoRepository.getEnderecoSaneado(input.getCep());
+			
+			if (null != endTmp) {
+				endereco.setBairro(endTmp.getBairro());
+				endereco.setTipoLogradouro(endTmp.getTipoLogradouro());
+			}
+
+			endereco.setNumero(input.getNumLogradouro());
+			getSession().persist(endereco);
+
+			EnderecoCota enderecoCota = new EnderecoCota();
+			enderecoCota.setPrincipal(true);
+			enderecoCota.setTipoEndereco(TipoEndereco.COMERCIAL);
+			enderecoCota.setEndereco(endereco);
+			enderecoCota.setCota(cota);
+			getSession().persist(enderecoCota);
+
+		} else {
+
+			ndsiLoggerFactory.getLogger().logWarning(
+					message,
+					EventoExecucaoEnum.RELACIONAMENTO,
+					"O arquivo nao contem dados de endereco para a cota "
+							+ cota.getNumeroCota());
+		}
+
+		if (!input.getTelefone().isEmpty()) {
+
+			Telefone telefone = new Telefone();
+			telefone.setDdd(input.getDdd());
+			telefone.setNumero(input.getTelefone());
+			getSession().persist(telefone);
+
+			TelefoneCota telefoneCota = new TelefoneCota();
+			telefoneCota.setPrincipal(true);
+			telefoneCota.setTipoTelefone(TipoTelefone.COMERCIAL);
+			telefoneCota.setTelefone(telefone);
+			telefoneCota.setCota(cota);
+			getSession().persist(telefoneCota);
+
+		} else {
+
+			ndsiLoggerFactory.getLogger().logWarning(
+					message,
+					EventoExecucaoEnum.RELACIONAMENTO,
+					"O arquivo nao contem dados de telefone para a cota "
+							+ cota.getNumeroCota());
+		}
+	}
+
+	@SuppressWarnings("unchecked")
 	private void atualizarEnderecoExistenteCota(EMS0117Input input, Cota cota, Message message) {
 		
 		StringBuilder sql;
@@ -473,7 +459,6 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 		
 		query.setParameter("numeroCota", cota);
 		
-		@SuppressWarnings("unchecked")
 		List<Endereco> enderecos = (List<Endereco>) query.list();
 
 		if (enderecos.isEmpty()) {
@@ -491,6 +476,8 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 				if(ec.getEndereco() != null && ec.getEndereco().getLogradouro() == null || (ec.getEndereco().getLogradouro() != null && "".equalsIgnoreCase(ec.getEndereco().getLogradouro().trim()))) {
 					
 					getSession().delete(ec);
+					getSession().flush();
+					getSession().clear();
 					
 					continue;
 				}
@@ -510,7 +497,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 					if (null != endTmp) {
 						ec.getEndereco().setBairro(endTmp.getBairro() != null ? endTmp.getBairro().toUpperCase() : endTmp.getBairro());
 						ec.getEndereco().setTipoLogradouro(endTmp.getTipoLogradouro() != null ? endTmp.getTipoLogradouro().toUpperCase() : endTmp.getTipoLogradouro());
-					}									
+					}
 
 					Integer numero = 0;
 					try {
@@ -532,6 +519,11 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 				
 			}
 			
+			enderecos = (List<Endereco>) query.list();
+			if (enderecos.isEmpty()) {
+				persistirEnderecoCotaSemEndereco(input, cota);
+			}
+			
 			// Ajusta os enderecos para existir apenas 1 como principal
 			for (EnderecoCota ec : cota.getEnderecos()) {
 				
@@ -546,6 +538,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 	}
 
 	private EnderecoCota persistirEnderecoCotaSemEndereco(EMS0117Input input, Cota cota) {
+		
 		Endereco endereco;
 		EnderecoCota enderecoCota;
 		String logradouro = getLogradouroSemTipo(input.getEndereco().split(",")[0].trim());
@@ -561,9 +554,16 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 		if (null != endTmp) {
 			endereco.setBairro(endTmp.getBairro() != null ? endTmp.getBairro().toUpperCase() : endTmp.getBairro());
 			endereco.setTipoLogradouro(endTmp.getTipoLogradouro() != null ? endTmp.getTipoLogradouro().toUpperCase() : endTmp.getTipoLogradouro());
-		}						
+		} else {
+			endereco.setTipoLogradouro(getTipoLogradouro(input.getEndereco()));
+		}
 
-		endereco.setNumero(input.getNumLogradouro());
+		try {
+			endereco.setNumero(Integer.toString(Integer.parseInt(input.getNumLogradouro())));
+		} catch (Exception e) {
+			endereco.setNumero(input.getNumLogradouro());
+		}
+		
 		getSession().persist(endereco);
 
 		enderecoCota = new EnderecoCota();
@@ -571,7 +571,9 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 		enderecoCota.setTipoEndereco(TipoEndereco.COMERCIAL);
 		enderecoCota.setEndereco(endereco);
 		enderecoCota.setCota(cota);
+		
 		getSession().persist(enderecoCota);
+		
 		return enderecoCota;
 	}
 
@@ -593,7 +595,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 	private String getLogradouroSemTipo(String logradouro) {
 		
 		String rua = "RUA";
-		if (logradouro.startsWith("RUA"))
+		if (logradouro.startsWith(rua))
 			return logradouro.substring(rua.length()).trim();
 
 		String avenida = "AV. ";
@@ -623,6 +625,42 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 		String jardins = "JA. ";
 		if (logradouro.startsWith(jardins))
 			return logradouro.substring(jardins.length()).trim();
+		return logradouro;
+	}
+	
+	private String getTipoLogradouro(String logradouro) {
+		
+		String rua = "RUA";
+		if (logradouro.startsWith(rua))
+			return logradouro.substring(0, rua.length()).trim();
+
+		String avenida = "AV. ";
+		if (logradouro.startsWith(avenida))
+			return logradouro.substring(0, avenida.length()).trim();
+		
+		String estrada = "ES. ";
+		if (logradouro.startsWith(estrada))
+			return logradouro.substring(0, estrada.length()).trim();
+		
+		String alameda = "AL. ";
+		if (logradouro.startsWith(alameda))
+			return logradouro.substring(0, alameda.length()).trim();
+		
+		String praca = "PR. ";
+		if (logradouro.startsWith(praca))
+			return logradouro.substring(0, praca.length()).trim();
+		
+		String rodovia = "RO. ";
+		if (logradouro.startsWith(rodovia))
+			return logradouro.substring(0, rodovia.length()).trim();
+		
+		String lagoa = "LA. ";
+		if (logradouro.startsWith(lagoa))
+			return logradouro.substring(0, lagoa.length()).trim();
+		
+		String jardins = "JA. ";
+		if (logradouro.startsWith(jardins))
+			return logradouro.substring(0, jardins.length()).trim();
 		return logradouro;
 	}
 

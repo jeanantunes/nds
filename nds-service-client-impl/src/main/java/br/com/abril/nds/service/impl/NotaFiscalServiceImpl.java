@@ -1136,16 +1136,16 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 		
 		int tamanhoCampoMapeado = 60;
 		
-		try {
-			tamanhoCampoMapeado = (int) Column.class.getField("length").get(
-					notaFiscal.getIdentificacao().getDescricaoNaturezaOperacao());
-			
-		} catch (IllegalArgumentException | IllegalAccessException
-				| NoSuchFieldException | SecurityException e) {
-			
-			LOGGER.warn(e.getLocalizedMessage(), e);
-			e.printStackTrace();
-		}
+//		try {
+//			tamanhoCampoMapeado = (int) Column.class.getField("length").get(
+//					notaFiscal.getIdentificacao().getDescricaoNaturezaOperacao());
+//			
+//		} catch (IllegalArgumentException | IllegalAccessException
+//				| NoSuchFieldException | SecurityException e) {
+//			
+//			LOGGER.warn(e.getLocalizedMessage(), e);
+//			e.printStackTrace();
+//		}
 		
 		if (notaFiscal.getIdentificacao().getDescricaoNaturezaOperacao().length() > tamanhoCampoMapeado){
 			notaFiscal.getIdentificacao().setDescricaoNaturezaOperacao(

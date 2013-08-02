@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -195,8 +196,15 @@ public class GrupoServiceImpl implements GrupoService {
 	public List<String> obterMunicipiosDoGrupo(Long idGrupo) {
 
 		GrupoCota grupo = grupoRepository.buscarPorId(idGrupo);
+		
+		//TODO: Corrigir este desvio tecnico emergencial
+		ArrayList<String> municipios = new ArrayList<String>();
+		for(Iterator<String> i = grupo.getMunicipios().iterator(); i.hasNext(); ) {
+			String s = i.next().toString();
+			municipios.add(s.replaceAll("municipio\\[", "").replaceAll("\\]", ""));
+		}
 	
-		return new ArrayList<String>(grupo.getMunicipios());
+		return municipios;
 	}
 
 	@Override
