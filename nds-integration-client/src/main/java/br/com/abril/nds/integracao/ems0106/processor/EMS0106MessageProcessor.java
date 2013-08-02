@@ -89,6 +89,11 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			
 			// Associar novo estudo com o lançamento existente:
 			lancamento.setEstudo(estudo);
+			
+			if(lancamento.getReparte() == null || (lancamento.getReparte() != null && lancamento.getReparte().compareTo(new BigInteger("1")) < 0)) {
+				lancamento.setReparte(estudo.getQtdeReparte());
+			}
+			
 			this.getSession().merge(lancamento);
 		} else {
 			
@@ -124,6 +129,13 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			
 			estudo.setDataAlteracao(new Date());
 			this.getSession().merge(estudo);
+			
+			if(lancamento.getReparte() == null || (lancamento.getReparte() != null && lancamento.getReparte().compareTo(new BigInteger("0")) < 1)) {
+				lancamento.setReparte(estudo.getQtdeReparte());
+			}
+			
+			this.getSession().merge(lancamento);
+			
 		}
 		
 	}
