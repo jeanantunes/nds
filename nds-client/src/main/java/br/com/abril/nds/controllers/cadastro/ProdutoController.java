@@ -8,6 +8,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -25,6 +26,7 @@ import br.com.abril.nds.model.cadastro.Editor;
 import br.com.abril.nds.model.cadastro.FaixaEtaria;
 import br.com.abril.nds.model.cadastro.FormatoProduto;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.GrupoFornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Sexo;
@@ -504,6 +506,30 @@ public class ProdutoController extends BaseController {
 		ProdutoCadastroVO produtoCadastroVO = ProdutoCadastroVO.parseProdutoToProdutoCadastroVO(produto);
 		
 		this.result.use(Results.json()).from(produtoCadastroVO, "result").recursive().serialize();
+	}
+	
+	/**
+	 * Retorna uma lista fornecedores relacionados a um determinado produto
+	 * 
+	 * @param codigoProduto
+	 * @return  List<ItemDTO<Long, String>>
+	 */
+	@Post
+	@Path("/pesquisarFornecedorProduto")
+	public void pesquisarFornecedorPorProduto(String codigoProduto){
+		
+		codigoProduto = StringUtils.leftPad(codigoProduto, 8, '0');
+		
+		List<Fornecedor> listaFornecedor = fornecedorService.obterFornecedoresPorProduto(codigoProduto, GrupoFornecedor.PUBLICACAO);
+		
+		List<ItemDTO<Long, String>> listaFornecedoresCombo = new ArrayList<ItemDTO<Long,String>>();
+		
+		for (Fornecedor fornecedor : listaFornecedor) {
+			listaFornecedoresCombo.add(
+				new ItemDTO<Long, String>(fornecedor.getId(), fornecedor.getJuridica().getRazaoSocial()));
+		}
+		
+		result.use(Results.json()).from(listaFornecedoresCombo, "result").recursive().serialize();
 	}
 	
 	/**

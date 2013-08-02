@@ -132,6 +132,8 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 */
 	public BigDecimal obterValorTotalEncalhe(FiltroConsultaEncalheDTO filtro);
 	
+	public ConsultaEncalheDTO obterValorTotalReparteEncalheDataCotaFornecedor(FiltroConsultaEncalheDTO filtro);
+	
 	/**
 	 * Pesquisa lista de ConsultaEncalhe.
 	 * 
