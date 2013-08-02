@@ -137,6 +137,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 				.append("  notaFiscal.dataExpedicao, ")
 				.append("  tipoNotaFiscal.descricao, ")
 				.append("  notaFiscal.valorBruto as valorTotalNota, ")
+				.append("  notaFiscal.valorLiquido as valorTotalLiquidoNota, ")
 				.append("  notaFiscal.statusNotaFiscal, ")
 				.append("  notaFiscal.dataRecebimento, ")
 				.append("  f.juridica.razaoSocial,")
@@ -277,7 +278,11 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 						break;
 					case VALOR:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " (notaFiscal.valorBruto - notaFiscal.valorDesconto) ";
+						orderByColumn += " (notaFiscal.valorBruto) ";
+						break;
+					case VALOR_LIQUIDO:
+						orderByColumn += orderByColumn.equals("") ? "" : ",";
+						orderByColumn += " (notaFiscal.valorLiquido) ";
 						break;
 					case CHAVE_ACESSO:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";

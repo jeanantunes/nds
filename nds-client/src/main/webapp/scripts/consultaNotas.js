@@ -78,6 +78,12 @@ init : function() {
 			sortable : true,
 			align : 'right'
 		}, {
+			display : 'Valor Líquido R$',
+			name : 'valorTotalLiquidoNota',
+			width : 130,
+			sortable : true,
+			align : 'right'
+		}, {
 			display : 'Nota Recebida',
 			name : 'notaRecebida',
 			width : 90,
@@ -197,7 +203,7 @@ pesquisarDetalhesNota : function(idNota) {
 				colModel : [ {
 					display : 'Código',
 					name : 'codigoItem',
-					width : 70,
+					width : 60,
 					sortable : true,
 					align : 'left'
 				}, {
@@ -209,13 +215,19 @@ pesquisarDetalhesNota : function(idNota) {
 				}, {
 					display : 'Edição',
 					name : 'numeroEdicao',
-					width : 70,
+					width : 60,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Preço Capa R$',
 					name : 'precoCapa',
-					width : 110,
+					width : 90,
+					sortable : true,
+					align : 'right'
+				}, {
+					display : 'Preço Com Desconto R$',
+					name : 'precoComDesconto',
+					width : 130,
 					sortable : true,
 					align : 'right'
 				}, {
@@ -236,8 +248,14 @@ pesquisarDetalhesNota : function(idNota) {
 					width : 70,
 					sortable : true,
 					align : 'right'
+				}, {
+					display : 'Total com Desconto R$',
+					name : 'totalComDesconto',
+					width : 130,
+					sortable : true,
+					align : 'right'
 				} ],
-				width : 715,
+				width : 840,
 				height : 230,
 				params : [ {
 					name : 'idNota',
@@ -285,7 +303,7 @@ popup : function() {
 	$("#dialog-novo", consultaNotasController.workspace).dialog({
 		resizable : false,
 		height : 400,
-		width : 750,
+		width : 860,
 		modal : true,
 		buttons : {
 			"Fechar" : function() {
@@ -297,3 +315,5 @@ popup : function() {
 }
 
 }, BaseController);
+
+//@ sourceURL=scriptConsultaNota.js
