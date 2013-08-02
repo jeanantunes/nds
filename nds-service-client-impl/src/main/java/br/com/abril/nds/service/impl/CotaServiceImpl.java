@@ -128,6 +128,7 @@ import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -252,6 +253,9 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
+	
+	@Autowired
+	private UsuarioService usuarioService; 
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -1430,6 +1434,22 @@ public class CotaServiceImpl implements CotaService {
 	    
 	    cota  = cotaRepository.merge(cota);
 	    
+	    if(newCota) {
+	    	
+		    HistoricoSituacaoCota hsc = new HistoricoSituacaoCota();
+			hsc.setCota(cota);
+			hsc.setDataEdicao(new Date());
+			hsc.setDataInicioValidade(new Date());
+			hsc.setTipoEdicao(TipoEdicao.INCLUSAO);
+			hsc.setResponsavel(usuarioService.getUsuarioLogado());
+			hsc.setSituacaoAnterior(cota.getSituacaoCadastro());
+			hsc.setNovaSituacao(cota.getSituacaoCadastro());
+			hsc.setDescricao("Cota nova.");
+			
+			historicoSituacaoCotaRepository.adicionar(hsc);
+			
+	    }
+		
 	    BaseReferenciaCota baseReferenciaCota = processarDadosBaseReferenciaCota(cota, cotaDto);
 	    
 	    processarDadosReferenciaCota(baseReferenciaCota, cotaDto);
