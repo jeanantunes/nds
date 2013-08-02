@@ -141,7 +141,7 @@ public class LancamentoRepositoryImpl extends
 		
 		hql.append(" select lancamento ");
 		
-		hql.append(gerarQueryProdutosNaoExpedidosConfirmaExpedicao(parametros, data, idFornecedor, estudo));	
+		hql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, estudo));	
 		
 		if( paginacaoVO != null ) {
 			hql.append(gerarOrderByProdutosNaoExpedidos(
@@ -170,6 +170,7 @@ public class LancamentoRepositoryImpl extends
 		StringBuilder hql = new StringBuilder();	
 		
 		hql.append(" from Lancamento lancamento ");
+		
 		hql.append(" join lancamento.produtoEdicao produtoEdicao ");
 		hql.append(" join produtoEdicao.produto produto ");
 		
@@ -180,6 +181,8 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" left join produtoEdicao.estoqueProduto estoque ");
 		
 //		hql.append(" left join lancamento.estudo estudo ");
+		hql.append(" join lancamento.estudo estudo ");
+		
 		hql.append(" join lancamento.estudo estudo ");
 		
 		boolean where = false;

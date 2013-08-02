@@ -390,7 +390,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			
 				List<LancamentoNaoExpedidoDTO> listaExpedicoes = 
 						lancamentoService.obterLancamentosNaoExpedidos(paginacaoVO, date, idFornecedor, estudo);
-				
+
 				Long total = lancamentoService.obterTotalLancamentosNaoExpedidos(date, idFornecedor, estudo);
 				
 				List<CellModelKeyValue<LancamentoNaoExpedidoDTO>> listaCelula = new LinkedList<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
