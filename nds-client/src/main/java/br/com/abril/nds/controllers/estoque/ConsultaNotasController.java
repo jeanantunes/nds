@@ -319,6 +319,10 @@ public class ConsultaNotasController extends BaseController {
 		    	(detalheNotaFiscalVO.getValorTotal() == null) 
 		    		? BigDecimal.ZERO : detalheNotaFiscalVO.getValorTotal();
 		    
+		    BigDecimal valorTotalComDesconto = 
+			    	(detalheNotaFiscalVO.getPrecoTotalComDesconto() == null) 
+			    		? BigDecimal.ZERO : detalheNotaFiscalVO.getPrecoTotalComDesconto();
+		    
 		    BigInteger qtdeExemplares = 
 		    	(detalheNotaFiscalVO.getQuantidadeExemplares() == null) 
 		    		? BigInteger.ZERO : detalheNotaFiscalVO.getQuantidadeExemplares();
@@ -330,9 +334,11 @@ public class ConsultaNotasController extends BaseController {
 							itemExibicaoToString(detalheNotaFiscalVO.getNomeProduto()),
 							itemExibicaoToString(detalheNotaFiscalVO.getNumeroEdicao()),
 							itemExibicaoToString(CurrencyUtil.formatarValor(detalheNotaFiscalVO.getPrecoVenda())),
+							itemExibicaoToString(CurrencyUtil.formatarValor(detalheNotaFiscalVO.getPrecoComDesconto())),
 							itemExibicaoToString(qtdeExemplares.intValue()),
 							sobrasFaltas, 
-							itemExibicaoToString(CurrencyUtil.formatarValor(valorTotal)));
+							itemExibicaoToString(CurrencyUtil.formatarValor(valorTotal)),
+							itemExibicaoToString(CurrencyUtil.formatarValor(valorTotalComDesconto)));
 
 			listaCellModels.add(cellModel);
 		}
