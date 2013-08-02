@@ -1286,14 +1286,11 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var idCota = $("#_idCota", this.workspace).val();
 		
 		
-		parametroCobrancaCotaController.obterParametroCobranca(idCota);
-		
-		
 		var data = [{name: 'idFormaCobranca', value: idFormaCobranca}];
 		$.postJSON(contextPath + "/cota/parametroCobrancaCota/excluirFormaCobranca",
 				   data,
 				   function(){
-			
+					parametroCobrancaCotaController.obterParametroCobranca(idCota);
 			           parametroCobrancaCotaController.mostrarGrid(idCota);
 				   },
 				   null,
