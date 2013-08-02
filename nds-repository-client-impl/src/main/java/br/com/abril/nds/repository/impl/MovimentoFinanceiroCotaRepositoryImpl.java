@@ -457,10 +457,28 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		if (filtroDebitoCreditoDTO.getPaginacao() != null 
 				&& filtroDebitoCreditoDTO.getPaginacao().getPosicaoInicial() != null) { 
 			
-			query.setFirstResult(filtroDebitoCreditoDTO.getPaginacao().getPosicaoInicial());
+			boolean selecionouFiltro = false;
+			if(filtroDebitoCreditoDTO.getNumeroCota() != null || filtroDebitoCreditoDTO.getIdTipoMovimento() != null ||
+					filtroDebitoCreditoDTO.getDataLancamentoInicio() != null || filtroDebitoCreditoDTO.getDataLancamentoFim() != null ||
+					filtroDebitoCreditoDTO.getDataVencimentoInicio() != null || filtroDebitoCreditoDTO.getDataVencimentoFim() != null){
+				selecionouFiltro = true;
+			}
 			
+			if(!selecionouFiltro){
+				query.setFirstResult(filtroDebitoCreditoDTO.getPaginacao().getPosicaoInicial());
+			}else{
+				
+				int obterContagemMovimentosFinanceiroCota = obterContagemMovimentosFinanceiroCota(filtroDebitoCreditoDTO);
+				
+				if(filtroDebitoCreditoDTO.getPaginacao().getQtdResultadosPorPagina() < obterContagemMovimentosFinanceiroCota){
+					
+					query.setFirstResult(filtroDebitoCreditoDTO.getPaginacao().getPosicaoInicial());
+				}
+			}
+		
 			query.setMaxResults(filtroDebitoCreditoDTO.getPaginacao().getQtdResultadosPorPagina());
 		}
+		
 		
 		return query.list();
 	}
