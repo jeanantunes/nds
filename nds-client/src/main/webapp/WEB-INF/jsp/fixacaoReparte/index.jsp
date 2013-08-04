@@ -2,6 +2,7 @@
 <!-- fixacaoReparte -->
 <script type="text/javascript" src="scripts/pesquisaCota.js"></script>
 <script type="text/javascript" src="scripts/pesquisaProduto.js"></script>
+<script type="text/javascript" src="scripts/autoCompleteCampos.js"></script>
 <script type="text/javascript" src="scripts/fixacaoReparte.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
 
@@ -162,7 +163,7 @@ function mostraIntervalo(){
             <td width="52">Código:</td>
             <td width="86"><input type="text" name="codigoProduto" id="codigoProduto"  style="width:80px;" onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigoProduto','#nomeProduto',false,undefined,undefined )"/></td>
             <td width="48">Produto:</td>
-            <td width="206"><input type="text" name="nomeProduto" id="nomeProduto" onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#nomeProduto');" style="width:200px;"/></td>
+            <td width="206"><input type="text" name="nomeProduto" id="nomeProduto" style="width:200px;"/></td>
             <td width="75">Classificação:</td>
             <td width="167">
             	<select name="select" id="filtroClassificacaoFixacao" style="width:160px;">
@@ -180,7 +181,7 @@ function mostraIntervalo(){
             <tr>
            	  <td width="30" >Cota:</td>
                 <td width="91">
-                <input type="text" name="codigoCota" id="codigoCota" style="width:80px;" onchange="pesquisaCota.pesquisarPorNumeroCota('#codigoCota','#nomeCota',false,undefined,undefined)"/></td>
+                <input type="text" name="codigoCota" id="codigoCota" style="width:80px;" onchange="fixacaoReparteController.autoCompleteNumeroCota('#codigoCota','#nomeCota');"/></td>
                 <td width="37" >Nome:</td>
                 <td width="470"><input type="text" name="nomeCota" id="nomeCota" style="width:200px;"/></td>
               <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="fixacaoReparteController.pesquisarPorCota();">Pesquisar</a></span></td>
@@ -238,7 +239,7 @@ function mostraIntervalo(){
 		          <td width="66"><input type="text" name="codigoModal" id="codigoModal" style="width:60px;" onchange="pesquisaCota.pesquisarPorNumeroCota('#codigoModal','#nomeModal');"/></td>
 		          <td width="41" id="label2">Nome:</td>
 		          <td width="119">
-		          	<input type="text" name="nomeModal" id="nomeModal" style="width:110px;"/>
+		          	<input type="text" name="nomeModal" id="nomeModal" style="width:110px;" onkeyup="fixacaoReparteController.autoCompleteNomeModal();"/>
 			       </td>
 			       <td width="119">
 			       		<select name="selectModal" id="selectModal" style="width:160px;display:none;">

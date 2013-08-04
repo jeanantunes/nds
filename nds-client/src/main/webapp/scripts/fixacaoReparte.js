@@ -2,10 +2,16 @@ var codigos =  [],
 	repartes =  [],
 	listaPDV = [];
 
+var pesquisaCota = new PesquisaCota();
+var autoComplete;
+
 var fixacaoReparteController = $.extend(true, {
 //Grid de historico de edicoes 	
     wsp : function() { return fixacaoReparteController.workspace; },
 	init : function() {
+		
+		autoComplete = new AutoCompleteCampos(fixacaoReparteController.workspace);
+		
 		$(".historicoGrid",fixacaoReparteController.workspace).flexigrid({
 			preProcess: fixacaoReparteController.preProcessHistoricoGrid,
 			dataType : 'json',
@@ -274,6 +280,15 @@ var fixacaoReparteController = $.extend(true, {
 			height : 250
 		});
 	
+	$('#nomeCota').keyup(function (){
+		autoComplete.autoCompletarPorNome("/cadastro/cota/autoCompletarPorNome",'#codigoCota', '#nomeCota', "nomeCota", 3);
+	});
+	
+	$('#nomeProduto').keyup(function (){
+		autoComplete.autoCompletarPorNome("/produto/autoCompletarPorNomeProdutoAutoComplete",'#codigoProduto', '#nomeProduto', "nome", 3);
+		
+	});
+	
 	},
 
 	// remove itens duplicados e vazios de uma array
@@ -364,14 +379,19 @@ var fixacaoReparteController = $.extend(true, {
 			data.rows[i].cell["acao"]=fixacaoReparteController.getActionsConsultaFixacaoCota(data.rows[i].cell);
 		}
 		
-		$('.fixacaoCotaGrid').show();
+		
+		if((data.mensagem == undefined) || (data.mensagens.listaMensagens[0] != "Não é possivel fixar reparte para cota tipo[Alternativo].")){
+			$('#fixacaoReparte_porCota').show();
+			$('.fixacaoCotaGrid').show();
+		}
+	
 		if (data.result){
 			return data.result[1];
 		}
 		return data;
 
 	},
-
+	
 	//retorna acoes de edicao e exclusao de fixacao por produto
 	getActionsConsultaFixacaoProduto: function (cell){
 
@@ -686,9 +706,9 @@ var fixacaoReparteController = $.extend(true, {
 		
 	},
 	//funcao de exibicao de grid
-	exibeGridCota:function(){
+	escondeGridCota:function(){
 
-		$('#fixacaoReparte_porCota').show();
+		$('#fixacaoReparte_porCota').hide();
 		$('#fixacaoReparte_fixacaoProduto').hide();
 	},
 
@@ -717,27 +737,40 @@ var fixacaoReparteController = $.extend(true, {
 	
 	//Funcao que realiza pesquisa de fixações por produto
 	pesquisarPorProduto:function(){
-		fixacaoReparteController.exibeGridProduto();
-		$(".fixacaoProdutoGrid", fixacaoReparteController.workspace).flexOptions({
-			url: contextPath + "/distribuicao/fixacaoReparte/pesquisarPorProduto",
-			dataType : 'json',
-			params: fixacaoReparteController.getDadosProduto()
-		});
-
-		$(".fixacaoProdutoGrid", fixacaoReparteController.workspace).flexReload();
-
+		
+		if(fixacaoReparteController.validarFiltroPrincipal(codigoProduto, nomeProduto)){
+			fixacaoReparteController.exibeGridProduto();
+			$(".fixacaoProdutoGrid", fixacaoReparteController.workspace).flexOptions({
+				url: contextPath + "/distribuicao/fixacaoReparte/pesquisarPorProduto",
+				dataType : 'json',
+				params: fixacaoReparteController.getDadosProduto()
+			});
+	
+			$(".fixacaoProdutoGrid", fixacaoReparteController.workspace).flexReload();
+		}else{
+			$('#fixacaoReparte_fixacaoProduto').hide();
+			exibirMensagem("WARNING", ["Por favor preencha os campos necessários!"]);
+		}
 	},
 	
 	//Funcao que realiza pesquisa de fixações por cota
 	pesquisarPorCota:function(){
-		fixacaoReparteController.exibeGridCota();
-		$(".fixacaoCotaGrid", fixacaoReparteController.workspace).flexOptions({
-			url: contextPath + "/distribuicao/fixacaoReparte/pesquisarPorCota",
-			dataType : 'json',
-			params: fixacaoReparteController.getDadosCota()
-		});
 		
-		$(".fixacaoCotaGrid", fixacaoReparteController.workspace).flexReload();
+		if(fixacaoReparteController.validarFiltroPrincipal(codigoCota, nomeCota)){
+
+			fixacaoReparteController.escondeGridCota();
+			
+			$(".fixacaoCotaGrid", fixacaoReparteController.workspace).flexOptions({
+				url: contextPath + "/distribuicao/fixacaoReparte/pesquisarPorCota",
+				dataType : 'json',
+				params: fixacaoReparteController.getDadosCota()
+			});
+			
+			$(".fixacaoCotaGrid", fixacaoReparteController.workspace).flexReload();
+			
+		}else{
+			exibirMensagem("WARNING", ["Por favor preencha os campos necessários!"]);
+		}
 				
 	},
 
@@ -822,22 +855,22 @@ var fixacaoReparteController = $.extend(true, {
 		novo:function () {
 
 			if($("input:radio:checked").val() == 'Produto'){
+
 				if(($("#codigoProduto").val()=='' || $("#codigoProduto").val() =='undefined' )){
 					exibirMensagem("WARNING", ["Por favor preencha o campo codigo "]);
 					return false;
 				}else{
 					fixacaoReparteController.exibeCodigoNomeProdutoSelecionado();
 				}
-
-
 			}
+			
 			if($("input:radio:checked").val() == 'Cota'){
+
 				if(($("#codigoCota").val()=='' || $("#codigoCota").val() =='undefined' )){
 					exibirMensagem("WARNING", ["Por favor preencha o campo codigo"]);
 					return false;
 					}else{
 						fixacaoReparteController.exibeCodigoNomeCotaSelecionado();
-
 					}
 			}
 			 $("#dialog-novo").dialog({
@@ -969,25 +1002,39 @@ var fixacaoReparteController = $.extend(true, {
 		
 		//Função que realiza a pesquisa que preenche os dados da grid historico produto
 		pesquisaHistoricoPorProduto:function(){
+			
+			if(fixacaoReparteController.validarFiltroPrincipal(codigoModal, nomeModal)){
 
-			$(".historicoGrid").flexOptions({
-				url: contextPath + "/distribuicao/fixacaoReparte/carregarGridHistoricoProduto",
-				dataType : 'json',
-				params: fixacaoReparteController.getDadosProdutoHistorico()
-			});
-			$(".historicoGrid").flexReload();
+				$(".historicoGrid").flexOptions({
+					url: contextPath + "/distribuicao/fixacaoReparte/carregarGridHistoricoProduto",
+					dataType : 'json',
+					params: fixacaoReparteController.getDadosProdutoHistorico()
+				});
 
+				$(".historicoGrid").flexReload();
+				
+			}else{
+				exibirMensagem("WARNING", ["Por favor preencha os campos necessários!"]);
+			}
+			
 		},
 
 		//Função que realiza a pesquisa que preenche os dados da grid historico produto
 		pesquisaHistoricoPorCota:function(){
 
-			$(".historicoGrid").flexOptions({
-				url: contextPath + "/distribuicao/fixacaoReparte/carregarGridHistoricoCota",
-				dataType : 'json',
-				params: fixacaoReparteController.getDadosCotaHistorico()
-			});
-			$(".historicoGrid").flexReload();
+			if(fixacaoReparteController.validarFiltroPrincipal(codigoModal, nomeModal)){
+
+				$(".historicoGrid").flexOptions({
+					url: contextPath + "/distribuicao/fixacaoReparte/carregarGridHistoricoCota",
+					dataType : 'json',
+					params: fixacaoReparteController.getDadosCotaHistorico()
+				});
+				$(".historicoGrid").flexReload();
+				
+			}else{
+				exibirMensagem("WARNING", ["Por favor preencha os campos necessários!"]);
+			}
+			
 
 		},
 		
@@ -1123,7 +1170,99 @@ var fixacaoReparteController = $.extend(true, {
 			});
 			
 			
+		},
+		
+		autoCompleteNumeroCota:function(codigoCota, nomeCota){
+			$('#fixacaoReparte_porCota').hide();
+			$('#fixacaoReparte_fixacaoProduto').hide();
+			
+			if($(codigoCota).val() != ""){
+				
+				pesquisaCota.pesquisarPorNumeroCota(codigoCota,nomeCota,false,undefined,undefined);
+
+				$.postJSON(contextPath + '/distribuicao/fixacaoReparte/validarTipoCota', {numeroCota:$(codigoCota).val()});
+				
+			}
+		},
+		
+		autoCompleteNomeModal:function(){
+			
+			if($("input:radio:checked").val() == 'Produto'){
+				this.autoCompletarPorNome("/cadastro/cota/autoCompletarPorNome",'#codigoModal', '#nomeModal', "nomeCota", 3);
+			}
+			
+			if($("input:radio:checked").val() == 'Cota'){
+				this.autoCompletarPorNome("/produto/autoCompletarPorNomeProdutoAutoComplete",'#codigoModal', '#nomeModal', "nome", 3);
+			}
+		},
+		
+		autoCompletarPorNome:function(action, idCampoCodigo, idCampoNome, parametroPesquisa, disparoDaPesquisa, isFromModal) {
+			
+			var	localParametroPesquisa = parametroPesquisa;
+			
+			if(!disparoDaPesquisa){
+				disparoDaPesquisa = 2;
+			}
+			
+			if(!parametroPesquisa){
+				localParametroPesquisa = nomeProduto;
+			}
+			
+			var nome = $(idCampoNome).val();
+			
+			nome = $.trim(nome);
+			
+			$(idCampoNome).autocomplete({source: [""]});
+			
+			if (nome && nome.length > disparoDaPesquisa) {
+				
+				$.postJSON(
+					contextPath + action, [{name : localParametroPesquisa, value : nome}],
+					function(result) { 
+						fixacaoReparteController.exibirAutoCompletePorNome(result, idCampoCodigo, idCampoNome);
+					},
+					null, 
+					isFromModal
+				);
+			}
+	},
+	
+	//Exibe o auto complete no campo
+	exibirAutoCompletePorNome : function(result, idCampoCodigo, idCampoNome) {
+	
+			$(idCampoNome).autocomplete({
+				source: result,
+				
+				select : function(event, ui) {
+					$(idCampoCodigo).val(ui.item.chave.numero);
+					$(idCampoNome).val(ui.item.chave.label);
+				},
+				focus : function(event, ui) {
+					$(idCampoCodigo).val(ui.item.chave.numero);
+					$(idCampoNome).val(ui.item.chave.label);
+				},
+				close : function(event, ui) {
+					$(idCampoCodigo).val(ui.item.chave.numero);
+					$(idCampoNome).val(ui.item.chave.label);
+				},
+				minLength: this.tamanhoInicial,
+				delay : 0,
+			});
+	},
+	
+	validarFiltroPrincipal : function(codigo, nome){
+
+		if((($(codigo).val()) == 'undefined') || (($(codigo).val()) == '')){
+			return false;
+		}else{
+			if((($(nome).val()) == 'undefined') || (($(nome).val()) == '')){
+				return false;
+			}else{
+				return true;
+			}
 		}
+		
+	}
 		
 	}, BaseController);
 //@ sourceURL=fixacaoReparte.js
