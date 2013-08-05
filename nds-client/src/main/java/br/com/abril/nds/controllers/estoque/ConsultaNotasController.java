@@ -164,7 +164,8 @@ public class ConsultaNotasController extends BaseController {
 		ResultadoConsultaDetallheNFVO resultadoConsultaDetallheNF = 
 			new ResultadoConsultaDetallheNFVO(
 				tableModelDetalhesNota, String.valueOf(detalheNotaFiscal.getTotalExemplares().intValue()), 
-					decimalFormat.format(detalheNotaFiscal.getValorTotalSumarizado()));
+					decimalFormat.format(detalheNotaFiscal.getValorTotalSumarizado()), 
+					decimalFormat.format(detalheNotaFiscal.getValorTotalSumarizadoComDesconto()));
 
 		this.result.use(Results.json()).withoutRoot().from(resultadoConsultaDetallheNF).recursive().serialize();
 	}
@@ -254,7 +255,7 @@ public class ConsultaNotasController extends BaseController {
 			consultaNotaFiscalVO.setNumeroNota( Long.parseLong(notaFiscal.getNumero()) );
 			consultaNotaFiscalVO.setTipoNotaFiscal(notaFiscal.getDescricao());
 			consultaNotaFiscalVO.setValor(notaFiscal.getValorTotalNota());
-			consultaNotaFiscalVO.setValorLiquido(notaFiscal.getValorTotalLiquidoNota());
+			consultaNotaFiscalVO.setValorComDesconto(notaFiscal.getValorTotalNotaComDesconto());
 			consultaNotaFiscalVO.setSerie(notaFiscal.getSerie());
 			consultaNotaFiscalVO.setNotaEnvio(notaFiscal.getNumeroNotaEnvio());
 			
@@ -321,8 +322,8 @@ public class ConsultaNotasController extends BaseController {
 		    		? BigDecimal.ZERO : detalheNotaFiscalVO.getValorTotal();
 		    
 		    BigDecimal valorTotalComDesconto = 
-			    	(detalheNotaFiscalVO.getPrecoTotalComDesconto() == null) 
-			    		? BigDecimal.ZERO : detalheNotaFiscalVO.getPrecoTotalComDesconto();
+			    	(detalheNotaFiscalVO.getValorTotalComDesconto() == null) 
+			    		? BigDecimal.ZERO : detalheNotaFiscalVO.getValorTotalComDesconto();
 		    
 		    BigInteger qtdeExemplares = 
 		    	(detalheNotaFiscalVO.getQuantidadeExemplares() == null) 
