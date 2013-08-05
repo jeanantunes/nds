@@ -17,6 +17,7 @@ label{ vertical-align:super;}
 #produtoEdicaoController-dialog-novo,
 #produtoEdicaoController-dialog-capa, 
 #produtoEdicaoController-dialog-excluir-capa,
+#produtoEdicaoController-dialog-precos-real-previsto-divergentes,
 #produtoEdicaoController-dialog-excluir{
 	display:none;
 }
@@ -46,6 +47,10 @@ fieldset {
 
 <div id="produtoEdicaoController-dialog-excluir" title="Excluir Edi&ccedil;&atilde;o">
 	<p>Confirma a exclus&atilde;o desta Edi&ccedil;&atilde;o?</p>
+</div>
+
+<div id="produtoEdicaoController-dialog-precos-real-previsto-divergentes" title="Preços Real e Previsto divergentes">
+	<p>Os valores de preço previsto e real estão divergentes. Deseja corrigir?</p>
 </div>
 
 <!--  INICIO POPUP CADASTRO EDICAO -->
