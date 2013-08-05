@@ -1154,13 +1154,15 @@ var lancamentoNovoController = $.extend(true, {
 	
 	tratarVisualizacaoOpcaoEstoque:function(value){
 		
-		if(value == 'FALTA_EM'){
-			 $(".view-estouque",this.workspace).hide();
-			 $("#paraCota").check();
-			 lancamentoNovoController.paraEstoque(false);
-		}
-		else{
+		if (value == 'FALTA_DE') {
 			$(".view-estouque",this.workspace).show();
+			$(".view-cota", this.workspace).hide();
+			$("#paraEstoque", this.workspace).check();
+			lancamentoNovoController.paraEstoque(true);
+		} else {
+			$(".view-cota", this.workspace).show()
+			$("#paraEstoque", this.workspace).check();
+			lancamentoNovoController.paraEstoque(true);
 		}
 	},
 	
