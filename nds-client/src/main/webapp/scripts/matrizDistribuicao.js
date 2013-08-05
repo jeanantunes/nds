@@ -1378,7 +1378,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 
 	this.mostrarOpcoes = function() {
 		opcoesAberto = !opcoesAberto;
-		$( '.opcoesEstudos' ).toggle(opcoesAberto);
+		$( '.opcoesEstudos' ).toggle(opcoesAberto);		
 		$('.setaMuda').attr('src',(opcoesAberto)? contextPath + '/images/p7PM_dark_south_1.gif': contextPath + '/images/p7PM_dark_south.gif');
 	},
 	
