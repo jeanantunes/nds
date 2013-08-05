@@ -60,12 +60,6 @@ init : function() {
 			sortable : true,
 			align : 'center'
 		}, {
-			display : 'Tipo',
-			name : 'descricao',
-			width : 150,
-			sortable : true,
-			align : 'left'
-		}, {
 			display : 'Fornecedor',
 			name : 'razaoSocial',
 			width : 60,
@@ -78,8 +72,8 @@ init : function() {
 			sortable : true,
 			align : 'right'
 		}, {
-			display : 'Valor Líquido R$',
-			name : 'valorTotalLiquidoNota',
+			display : 'Valor Com Desconto R$',
+			name : 'valorTotalNotaComDesconto',
 			width : 130,
 			sortable : true,
 			align : 'right'
@@ -292,6 +286,7 @@ montarGridComRodape : function(data) {
 
 	$("#totalExemplares", consultaNotasController.workspace).html(result.totalExemplares);
 	$("#totalSumarizado", consultaNotasController.workspace).html("R$ " + result.totalSumarizado);
+	$("#totalSumarizadoComDesconto", consultaNotasController.workspace).html("R$ " + result.totalSumarizadoComDesconto);
 
 	consultaNotasController.popup();
 
