@@ -14,6 +14,8 @@ public class DetalheNotaFiscalDTO implements Serializable {
 	private BigInteger totalExemplares;
 	
 	private BigDecimal valorTotalSumarizado;
+	
+	private BigDecimal valorTotalSumarizadoComDesconto;
 
 	/**
 	 * @return the itensDetalhados
@@ -50,4 +52,14 @@ public class DetalheNotaFiscalDTO implements Serializable {
 	public void setValorTotalSumarizado(BigDecimal valorTotalSumarizado) {
 		this.valorTotalSumarizado = valorTotalSumarizado;
 	}
+
+	public BigDecimal getValorTotalSumarizadoComDesconto() {
+		return valorTotalSumarizadoComDesconto;
+	}
+
+	public void setValorTotalSumarizadoComDesconto(
+			BigDecimal valorTotalSumarizadoComDesconto) {
+		this.valorTotalSumarizadoComDesconto = valorTotalSumarizadoComDesconto;
+	}
+	
 }

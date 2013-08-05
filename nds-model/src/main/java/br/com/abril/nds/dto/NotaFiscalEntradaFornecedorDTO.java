@@ -32,7 +32,7 @@ public class NotaFiscalEntradaFornecedorDTO implements Serializable {
 	
 	private String valorTotalNota;
 	
-	private String valorTotalLiquidoNota;
+	private String valorTotalNotaComDesconto;
 	
 	private String notaRecebida;
 	
@@ -77,7 +77,7 @@ public class NotaFiscalEntradaFornecedorDTO implements Serializable {
 
 	public NotaFiscalEntradaFornecedorDTO(Long id, Long numero, String serie, Long numeroNotaEnvio,
 			Date dataEmissao, Date dataExpedicao, String descricao,
-			BigDecimal valorTotalNota, BigDecimal valorTotalLiquidoNota, 
+			BigDecimal valorTotalNota, BigDecimal valorTotalNotaComDesconto, 
 			StatusNotaFiscalEntrada statusNotaFiscal, 
 			Date dataRecebimento, String razaoSocial,String chaveAcesso) {
 		this.id = id;
@@ -88,7 +88,7 @@ public class NotaFiscalEntradaFornecedorDTO implements Serializable {
 		this.dataExpedicao = DateUtil.formatarDataPTBR(dataExpedicao);
 		this.descricao = StringUtils.defaultString(descricao);
 		this.valorTotalNota = CurrencyUtil.formatarValor(MathUtil.round(valorTotalNota, 2));
-		this.valorTotalLiquidoNota = CurrencyUtil.formatarValor(MathUtil.round(valorTotalLiquidoNota, 2));
+		this.valorTotalNotaComDesconto = CurrencyUtil.formatarValor(MathUtil.round(valorTotalNotaComDesconto, 2));
 		this.notaRecebida = 
 				StatusNotaFiscalEntrada.RECEBIDA.equals(statusNotaFiscal) 
 					? DateUtil.formatarDataPTBR(dataRecebimento)
@@ -145,12 +145,12 @@ public class NotaFiscalEntradaFornecedorDTO implements Serializable {
 		this.valorTotalNota = valorTotalNota;
 	}
 
-	public String getValorTotalLiquidoNota() {
-		return valorTotalLiquidoNota;
+	public String getValorTotalNotaComDesconto() {
+		return valorTotalNotaComDesconto;
 	}
 
-	public void setValorTotalLiquidoNota(String valorTotalLiquidoNota) {
-		this.valorTotalLiquidoNota = valorTotalLiquidoNota;
+	public void setValorTotalNotaComDesconto(String valorTotalNotaComDesconto) {
+		this.valorTotalNotaComDesconto = valorTotalNotaComDesconto;
 	}
 
 	public String getNotaRecebida() {

@@ -245,18 +245,24 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 		
 		BigInteger totalExemplares = BigInteger.ZERO;
 		BigDecimal totalSumarizado = BigDecimal.ZERO;
+		BigDecimal totalSumarizadoComDesconto = BigDecimal.ZERO;
 		
 		for (DetalheItemNotaFiscalDTO item : itensDetalhados) {
 			
 			BigDecimal valorTotal =
 				(item.getValorTotal() == null) ? BigDecimal.ZERO : item.getValorTotal();
 			
+			BigDecimal valorTotalComDesconto =
+					(item.getValorTotalComDesconto() == null) ? BigDecimal.ZERO : item.getValorTotalComDesconto();
+
 			totalExemplares = totalExemplares.add(item.getQuantidadeExemplares() == null ? BigInteger.ZERO : item.getQuantidadeExemplares());
 			totalSumarizado = totalSumarizado.add(item.getPrecoVenda() == null ? BigDecimal.ZERO : MathUtil.round(valorTotal, 2));
+			totalSumarizadoComDesconto = totalSumarizadoComDesconto.add(item.getPrecoComDesconto() == null ? BigDecimal.ZERO : MathUtil.round(valorTotalComDesconto, 2));
 		}
 
 		detalheNotaFiscalDTO.setTotalExemplares(totalExemplares);
 		detalheNotaFiscalDTO.setValorTotalSumarizado(MathUtil.round(totalSumarizado, 2));
+		detalheNotaFiscalDTO.setValorTotalSumarizadoComDesconto(MathUtil.round(totalSumarizadoComDesconto, 2));
 		
 		return detalheNotaFiscalDTO;
 	}
