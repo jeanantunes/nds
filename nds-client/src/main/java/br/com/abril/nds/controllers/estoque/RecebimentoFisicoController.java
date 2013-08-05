@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.estoque;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -241,7 +242,8 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		Long idNotaFiscal = notaFiscal.getId();
 		
-		List<RecebimentoFisicoDTO> itensRecebimentoFisico = recebimentoFisicoService.obterListaItemRecebimentoFisico(idNotaFiscal);
+		List<RecebimentoFisicoDTO> itensRecebimentoFisico = 
+				recebimentoFisicoService.obterListaItemRecebimentoFisico(idNotaFiscal);
 				
 		if(itensRecebimentoFisico == null) {
 			itensRecebimentoFisico = new LinkedList<RecebimentoFisicoDTO>();
@@ -600,13 +602,18 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		BigDecimal precoItem = itemRecebimento.getPrecoItem() == null ? BigDecimal.ZERO :  itemRecebimento.getPrecoItem();
 		
-		BigDecimal valorTotal = new BigDecimal(0.0D);
+		BigDecimal valorTotal = BigDecimal.ZERO;
 		
 		BigInteger qtdeTotalItens = qtdePacote.multiply(qtdePacotePadrao).add(qtdeExemplares);
 		
 		valorTotal = precoItem.multiply(new BigDecimal(qtdeTotalItens));
   
 		itemRecebimento.setValorTotal(valorTotal);
+		
+		itemRecebimento.setValorTotalDesconto(
+			precoItem.subtract(
+				precoItem.multiply(
+					itemRecebimento.getPercentualDesconto())).multiply(new BigDecimal(qtdeTotalItens)));
 	}
 		
 	/**
@@ -1054,6 +1061,19 @@ public class RecebimentoFisicoController extends BaseController {
 			String diferenca		 	 = (dto.getDiferenca() 			== null) 	? "0" : dto.getDiferenca().toString();
 			String valorTotal		 	 = (dto.getValorTotal() 		== null) 	? "0.0" : dto.getValorTotal().toString();
 			String pacotePadrao		 	 = (dto.getValorTotal() 		== null) 	? "0"   : Integer.toString(dto.getPacotePadrao());
+			String valorDesconto = null;
+			BigDecimal valorTotalDesconto = BigDecimal.ZERO;
+			
+			if (dto.getPrecoItem() != null){
+				
+				valorTotalDesconto = valorTotalDesconto.add(dto.getValorTotalDesconto());
+				
+				valorDesconto = dto.getPrecoItem().subtract(
+							dto.getPrecoItem().multiply(
+								dto.getPercentualDesconto())).toString();
+			} else {
+				valorDesconto = "0.0";
+			}
 			
 			String edicaoItemNotaPermitida 		= IND_SIM;
 			String edicaoItemRecFisicoPermitida = IND_SIM;
@@ -1084,11 +1104,15 @@ public class RecebimentoFisicoController extends BaseController {
 			recebFisico.setNomeProduto(nomeProduto);
 			recebFisico.setEdicao(edicao);
 			recebFisico.setPrecoCapa(precoItem);
+			
+			recebFisico.setPrecoDesconto(valorDesconto);
+			
 			recebFisico.setRepartePrevisto(repartePrevisto);
 			recebFisico.setQtdPacote(qtdPacote);
 			recebFisico.setQtdExemplar(qtdExemplar);
 			recebFisico.setDiferenca(diferenca);
-			recebFisico.setValorTotal(valorTotal);
+			recebFisico.setValorTotalCapa(valorTotal);
+			recebFisico.setValorTotalDesconto(valorTotalDesconto.setScale(2, RoundingMode.HALF_EVEN).toString());
 			recebFisico.setPacotePadrao(pacotePadrao);
 			
 			recebFisico.setEdicaoItemNotaPermitida(edicaoItemNotaPermitida);

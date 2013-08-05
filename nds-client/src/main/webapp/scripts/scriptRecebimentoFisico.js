@@ -228,7 +228,7 @@ var recebimentoFisicoController = $.extend(true, {
 				$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).disable();
 				recebimentoFisicoController.carregarItemNotaGridNotaInterface();
 				
-				$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(10,false);
+				//$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(10,false);
 				
 	    	}else{
 				$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).enable();
@@ -464,7 +464,7 @@ var recebimentoFisicoController = $.extend(true, {
 		$("#datepickerRecolhimento", recebimentoFisicoController.workspace).val("");
 		$("#repartePrevisto", recebimentoFisicoController.workspace).val("");
 		$("#tipoLancamento", recebimentoFisicoController.workspace).val("");		
-		$("#novoValorTotal", recebimentoFisicoController.workspace).val("");
+		$("#novoValorTotal", recebimentoFisicoController.workspace).val("0,00");
 		$('#labelValorTotal', recebimentoFisicoController.workspace).text('0,00');
 	
 	},
@@ -484,7 +484,7 @@ var recebimentoFisicoController = $.extend(true, {
 		$("#tipoLancamento", recebimentoFisicoController.workspace).val("");
 		$("#peso", recebimentoFisicoController.workspace).val("");
 		$("#pacotePadrao", recebimentoFisicoController.workspace).val("");
-		$("#novoValorTotal", recebimentoFisicoController.workspace).val("");
+		$("#novoValorTotal", recebimentoFisicoController.workspace).val("0,00");
 		
 	
 	},
@@ -580,8 +580,14 @@ var recebimentoFisicoController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Preço c/ Desconto R$ ',
-				name : 'precoCapa',
+				name : 'precoDesconto',
 				width : 110,
+				sortable : false,
+				align : 'center'
+			}, {
+				display : 'Preço Capa ',
+				name : 'precoCapa',
+				width : 70,
 				sortable : false,
 				align : 'center'
 			}, {
@@ -608,14 +614,18 @@ var recebimentoFisicoController = $.extend(true, {
 				width : 60,
 				sortable : false,
 				align : 'center'
-				
+			}, {
+				display : 'Valor Total c/ Desc. R$',
+				name : 'valorTotalDesconto',
+				width : 110,
+				sortable : false,
+				align : 'center'
 			}, {
 				display : 'Valor Total R$',
-				name : 'valorTotal',
+				name : 'valorTotalCapa',
 				width : 70,
 				sortable : false,
 				align : 'center'
-				
 			},{
 				display : 'Ação',
 				name : 'acao',
@@ -623,30 +633,28 @@ var recebimentoFisicoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			},{
-				
 				display : 'Replicar Qtd.',
 				name : 'replicaQtd',
 				width : 60,
 				sortable : true,
 				align : 'center'
-					
 			}],
 		
 			showTableToggleBtn : false,
-			width : 980,
+			width : 1200,
 			height : 180
 		});
 		
 		recebimentoFisicoController.apresentarEsconderConteudoPermissao();
 		
 		if($("#permissaoGridColDiferenca").val() != "true"){
-			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(8,false);
+			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(9,false);
 		}
 	},
 	
 	apresentarEsconderConteudoPermissao : function() {
 		if($("#permissaoGridColRepartePrevisto").val() != "true"){
-			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(5,false);
+			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(6,false);
 		}
 		
 	},
@@ -694,7 +702,7 @@ var recebimentoFisicoController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Preço c/ Desconto R$',
-				name : 'precoCapa',
+				name : 'precoDesconto',
 				width : 120,
 				sortable : false,
 				align : 'center'
@@ -1086,7 +1094,8 @@ var recebimentoFisicoController = $.extend(true, {
 			var imgEdicao = '<img src="'+contextPath+'/images/ico_editar.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />'; 
 			
 			value.cell.precoCapa = $.formatNumber(value.cell.precoCapa, {format:"#,##0.00", locale:"br"}); 
-			value.cell.valorTotal = $.formatNumber(value.cell.valorTotal, {format:"#,##0.00", locale:"br"}); 
+			value.cell.valorTotalCapa = $.formatNumber(value.cell.valorTotalCapa, {format:"#,##0.00", locale:"br"});
+			value.cell.valorTotalDesconto = $.formatNumber(value.cell.valorTotalDesconto, {format:"#,##0.00", locale:"br"});
 			
 			if(edicaoItemNotaPermitida == "S") {
 				
@@ -1237,8 +1246,9 @@ var recebimentoFisicoController = $.extend(true, {
 	/**
 	 * PREPARA OS DADOS DA NOTA INTERFACE A SEREM APRESENTADOS NA GRID.
 	 */
-	getDataFromResultNotaInterface : function(data) {		
+	getDataFromResultNotaInterface : function(data) {
 		
+		var totalDescontoGeral = 0;
 		$.each(data.rows, function(index, value) {
 			
 			var edicaoItemRecFisicoPermitida 	= value.cell.edicaoItemRecFisicoPermitida;
@@ -1286,8 +1296,12 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			//$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).uncheck();
 			
+			totalDescontoGeral += parseFloat(value.cell.valorTotalDesconto);
+			
 			value.cell.precoCapa = $.formatNumber(value.cell.precoCapa, {format:"#,##0.00", locale:"br"}); 
-			value.cell.valorTotal = $.formatNumber(value.cell.valorTotal, {format:"#,##0.00", locale:"br"}); 
+			value.cell.valorTotalCapa = $.formatNumber(value.cell.valorTotalCapa, {format:"#,##0.00", locale:"br"});
+			value.cell.precoDesconto = $.formatNumber(value.cell.precoDesconto, {format:"#,##0.00", locale:"br"});
+			value.cell.valorTotalDesconto = $.formatNumber(value.cell.valorTotalDesconto, {format:"#,##0.00", locale:"br"});
 
 			if(edicaoItemNotaPermitida == "S") {
 				
@@ -1347,18 +1361,21 @@ var recebimentoFisicoController = $.extend(true, {
 			
 		}
 		
-		if ($("#indConferenciaCega", recebimentoFisicoController.workspace).val() == "true"){
-			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(9,false);
-			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(11,false);
-			
-			$(".bt_sellAll", recebimentoFisicoController.workspace).hide();
-		} else {
-			
-			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(9,true);
-			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(11,true);
-			
-			$(".bt_sellAll", recebimentoFisicoController.workspace).show();
-		}
+//		if ($("#indConferenciaCega", recebimentoFisicoController.workspace).val() == "true"){
+//			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(9,false);
+//			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(11,false);
+//			
+//			$(".bt_sellAll", recebimentoFisicoController.workspace).hide();
+//		} else {
+//			
+//			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(9,true);
+//			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(11,true);
+//			
+//			$(".bt_sellAll", recebimentoFisicoController.workspace).show();
+//		}
+		
+		$("#totalComDescontoLbl", recebimentoFisicoController.workspace).text(
+				$.formatNumber(totalDescontoGeral, {format:"#,##0.00", locale:"br"}));
 		
 		return data;
 
@@ -1422,6 +1439,13 @@ var recebimentoFisicoController = $.extend(true, {
 				sortable : false,
 				align : 'center',
 				resizable : false
+			},{
+				display : 'Preço Capa',
+				name : 'precoCapa',
+				width : 90,
+				sortable : false,
+				align : 'right',
+				resizable : false
 			}, {
 				display : 'Preço Desc. R$',
 				name : 'precoDesconto',
@@ -1471,8 +1495,15 @@ var recebimentoFisicoController = $.extend(true, {
 				sortable : false,
 				align : 'center',
 				resizable : false
+			}, {
+				display : 'Excluir',
+				name: 'excluir',
+				width: 30,
+				sortable: false,
+				align: 'center',
+				resizable: false
 			}],
-			width : 1000,
+			width : 1150,
 			height : 180
 		});
 
@@ -1488,8 +1519,8 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		$( "#dialog-adicionar", recebimentoFisicoController.workspace ).dialog({
 			resizable: false,
-			height:530,
-			width:1028,
+			height:500,
+			width:1190,
 			modal: true,
 			buttons:[ 
 			          {
@@ -1613,7 +1644,8 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		$.postJSON(this.path + 'obterDadosEdicao', {codigo:codigo,edicao:edicao}, 
 			function(result) { 
-				$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).val(floatToPrice(result.precoCapa));
+				$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).val(floatToPrice(result.precoDesconto));
+				$("#precoCapa"+index, recebimentoFisicoController.workspace).val(floatToPrice(result.precoCapa));
 				$("#pacotePadraoItem"+index, recebimentoFisicoController.workspace).val(result.pacotePadrao);
 			},
 			null,
@@ -1713,6 +1745,11 @@ var recebimentoFisicoController = $.extend(true, {
 				 valueEdicao = row.cell.edicao;
 			 }
 			 
+			 var valuePrecoCapa='';
+			 if (row.cell.precoCapa!=null){
+				 valuePrecoCapa = row.cell.precoCapa;
+			 }
+			 
 			 var valuePrecoDesconto='';
 			 if (row.cell.precoDesconto!=null){
 				 valuePrecoDesconto = row.cell.precoDesconto;
@@ -1754,6 +1791,8 @@ var recebimentoFisicoController = $.extend(true, {
 				             
 			 var edicao =       '<input class="number" maxlength="18" value="'+valueEdicao+'" type="text" name="itensRecebimento.edicaoItem" id="edicaoItem'+ index +'" style="width: 30px;" onchange="recebimentoFisicoController.obterDadosEdicao('+index+');"></input>';         
 			
+			 var precoCapa ='<input class="money" maxlength="17" value="'+valuePrecoCapa+'" type="text" readonly="readonly" name="itensRecebimento.precoCapa" id="precoCapa'+ index +'" style="width: 80px; border: 0px; background-color: inherit;"></input>';
+			 
 			 var precoDesconto ='<input class="money" maxlength="17" value="'+valuePrecoDesconto+'" type="text" readonly="readonly" name="itensRecebimento.precoDescontoItem" id="precoDescontoItem'+ index +'" style="width: 80px; border: 0px; background-color: inherit;"></input>';
 			 
 			 var qtdNota =      '<input class="number" maxlength="10" value="'+valueQtdNota+'" type="text" name="itensRecebimento.qtdNotaItem" id="qtdNotaItem'+ index +'" style="width: 70px;" onchange="recebimentoFisicoController.replicarQuantidadeItem('+index+'); recebimentoFisicoController.alterarValorItem('+index+');"></input>';
@@ -1769,18 +1808,22 @@ var recebimentoFisicoController = $.extend(true, {
 			 var valor =        '<input class="money" maxlength="17" value="'+valueValor+'" type="text" readonly="readonly" name="itensRecebimento.valorItem" id="valorItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
 						 
 			 var checkBox =     '<input title="Replicar Item" type="checkbox" name="checkboxGrid" id="checkbox'+ index +'"/>';
+			 
+			 var btnExcluir =   '<a href="javascript:;"><img src="'+contextPath+'/images/ico_excluir.gif" width="15" height="15" hspace="5" border="0" onclick="$(this).parent().parent().parent().parent().remove();"/></a>';
 
 		     row.cell[0] = codigo;
 		     row.cell[1] = produto;
 		     row.cell[2] = edicao;
 		     row.cell[3] = pacotePadrao;
-		     row.cell[4] = precoDesconto;
-		     row.cell[5] = qtdNota;
-		     row.cell[6] = qtdPacote;
-		     row.cell[7] = qtdExemplar;
-		     row.cell[8] = diferenca;
-		     row.cell[9] = valor;
-		     row.cell[10] = checkBox;
+		     row.cell[4] = precoCapa;
+		     row.cell[5] = precoDesconto;
+		     row.cell[6] = qtdNota;
+		     row.cell[7] = qtdPacote;
+		     row.cell[8] = qtdExemplar;
+		     row.cell[9] = diferenca;
+		     row.cell[10] = valor;
+		     row.cell[11] = checkBox;
+		     row.cell[12] = btnExcluir;
          }
 	    
 		);
@@ -1797,7 +1840,7 @@ var recebimentoFisicoController = $.extend(true, {
 		$("#pacotePadraoItem" + idLinha, recebimentoFisicoController.workspace).val("");
 		$("#diferencaItem" + idLinha, recebimentoFisicoController.workspace).val("");
 		$("#valorItem" + idLinha, recebimentoFisicoController.workspace).val("");
-		$("#novoValorTotal", recebimentoFisicoController.workspace).val("");
+		$("#novoValorTotal", recebimentoFisicoController.workspace).val("0,00");
 		$("#labelValorTotal", recebimentoFisicoController.workspace).text("0,00");
 	},
 	
@@ -1849,12 +1892,13 @@ var recebimentoFisicoController = $.extend(true, {
 			var colunaEdicao = linha.find("td")[2];
 			var colunaPacotePadrao = linha.find("td")[3];
 			var colunaPrecoDesconto = linha.find("td")[4];
-			var colunaQtdNota = linha.find("td")[5];
-			var colunaQtdPacote = linha.find("td")[6];
-			var colunaQtdExemplar = linha.find("td")[7];
-			var colunaDiferenca = linha.find("td")[8];
-			var colunaValor = linha.find("td")[9];
-			var colunaCheck = linha.find("td")[10];
+			var colunaPrecoCapa = linha.find("td")[5];
+			var colunaQtdNota = linha.find("td")[6];
+			var colunaQtdPacote = linha.find("td")[7];
+			var colunaQtdExemplar = linha.find("td")[8];
+			var colunaDiferenca = linha.find("td")[9];
+			var colunaValor = linha.find("td")[10];
+			var colunaCheck = linha.find("td")[11];
 			
 			var codigo = 
 				$(colunaCodigo).find("div").find('input[name="itensRecebimento.codigoItem"]').val();
@@ -1867,6 +1911,9 @@ var recebimentoFisicoController = $.extend(true, {
 
 			var precoDesconto =
 				$(colunaPrecoDesconto).find("div").find('input[name="itensRecebimento.precoDescontoItem"]').val();
+			
+			var precoCapa = 
+				$(colunaPrecoCapa).find("div").find('input[name="itensRecebimento.precoCapa"').val();
 			
 			var qtdNota =
 				$(colunaQtdNota).find("div").find('input[name="itensRecebimento.qtdNotaItem"]').val();
@@ -1898,6 +1945,7 @@ var recebimentoFisicoController = $.extend(true, {
 						nomeProduto:produto,
 						edicao:edicao,
 						precoDesconto:recebimentoFisicoController.preparaValor(precoDesconto),
+						precoCapa:recebimentoFisicoController.prepararValor(precoCapa),
 						repartePrevisto:qtdNota,
 						qtdFisico:qtdNota,
 						qtdPacote:qtdPacote,
@@ -1929,18 +1977,21 @@ var recebimentoFisicoController = $.extend(true, {
 
 			var linha = $(value);
 
-			var colunaValor = linha.find("td")[9];
+			var colunaValor = linha.find("td")[10];
 
 			valorTotal += intValue(removeMascaraPriceFormat($(colunaValor).find("div").find('input[name="itensRecebimento.valorItem"]').val()));
 			
 		});
 		
 		if(!this.novoValorTotalTyped){
-			$("#novoValorTotal", recebimentoFisicoController.workspace).val(floatToPrice(valorTotal/100));
+			if (!isNaN(valorTotal)){
+				$("#novoValorTotal", recebimentoFisicoController.workspace).val(floatToPrice(valorTotal/100));
+			}
 		}
        
-        
-        $("#labelValorTotal", recebimentoFisicoController.workspace).html(floatToPrice(valorTotal/100));
+		if (!isNaN(valorTotal)){
+        	$("#labelValorTotal", recebimentoFisicoController.workspace).html(floatToPrice(valorTotal/100));
+		}
 	},
     
     replicarQuantidadeItem : function(index){
@@ -1979,6 +2030,8 @@ var recebimentoFisicoController = $.extend(true, {
 		var valor =        '<input class="money" maxlength="17" type="text" readonly="readonly" name="itensRecebimento.valorItem" id="valorItem'+ index +'" style="width: 70px; border: 0px; background-color: inherit;"></input>';
 					 
 		var checkBox =     '<input title="Replicar Item" type="checkbox" name="checkboxGrid" id="checkbox'+ index +'"/>';
+		
+		var btnExcluir =   '<a href="javascript:;"><img src="'+contextPath+'/images/ico_excluir.gif" width="15" height="15" hspace="5" border="0" onclick="$(this).parent().parent().parent().parent().remove();"/></a>';
 
     	var row = [{name: 'codigo', value: codigo},
    	               {name: 'produto', value: produto},
@@ -1990,7 +2043,8 @@ var recebimentoFisicoController = $.extend(true, {
    	               {name: 'qtdeExemplar', value: qtdExemplar},
    	               {name: 'diferenca', value: diferenca},
    	               {name: 'valor', value: valor},
-   	               {name: 'replicar', value: checkBox}];
+   	               {name: 'replicar', value: checkBox},
+   	               {name: 'excluir', value: btnExcluir}];
     	
     	return row;
     },
@@ -2019,12 +2073,13 @@ var recebimentoFisicoController = $.extend(true, {
 			var colunaEdicao = linha.find("td")[2];
 			var colunaPacotePadrao = linha.find("td")[3];
 			var colunaPrecoDesconto = linha.find("td")[4];
-			var colunaQtdNota = linha.find("td")[5];
-			var colunaQtdPacote = linha.find("td")[6];
-			var colunaQtdExemplar = linha.find("td")[7];
-			var colunaDiferenca = linha.find("td")[8];
-			var colunaValor = linha.find("td")[9];
-			var colunaCheck = linha.find("td")[10];
+			var colunaPrecoCapa = linha.find("td")[5];
+			var colunaQtdNota = linha.find("td")[6];
+			var colunaQtdPacote = linha.find("td")[7];
+			var colunaQtdExemplar = linha.find("td")[8];
+			var colunaDiferenca = linha.find("td")[9];
+			var colunaValor = linha.find("td")[10];
+			var colunaCheck = linha.find("td")[11];
 			
 			var valueCodigo = 
 				$(colunaCodigo).find("div").find('input[name="itensRecebimento.codigoItem"]').val();
@@ -2037,6 +2092,9 @@ var recebimentoFisicoController = $.extend(true, {
 
 			var valuePrecoDesconto =
 				$(colunaPrecoDesconto).find("div").find('input[name="itensRecebimento.precoDescontoItem"]').val();
+			
+			var valuePrecoCapa=
+				$(colunaPrecoCapa).find("div").find("itensRecebimento.precoCapa").val();
 			
 			var valueQtdNota =
 				$(colunaQtdNota).find("div").find('input[name="itensRecebimento.qtdNotaItem"]').val();
@@ -2062,6 +2120,7 @@ var recebimentoFisicoController = $.extend(true, {
 		   	              {name: 'edicao', value: valueEdicao},
 		   	              {name: 'pacotePadrao', value: valuePacotePadrao},
 		   	              {name: 'precoDesconto', value: valuePrecoDesconto},
+		   	              {name: 'precoCapa', value: valuePrecoCapa},
 		   	              {name: 'qtdeNota', value: valueQtdNota},
 		   	              {name: 'qtdePcts', value: valueQtdPacote},
 						  {name: 'qtdeExemplar', value: valueQtdExemplar},
@@ -2108,23 +2167,26 @@ var recebimentoFisicoController = $.extend(true, {
 				var colunaEdicao = linha.find("td")[2];
 				var colunaPacotePadrao = linha.find("td")[3];
 				var colunaPrecoDesconto = linha.find("td")[4];
-				var colunaQtdNota = linha.find("td")[5];
-				var colunaQtdPacote = linha.find("td")[6];
-				var colunaQtdExemplar = linha.find("td")[7];
-				var colunaDiferenca = linha.find("td")[8];
-				var colunaValor = linha.find("td")[9];
-				var colunaCheck = linha.find("td")[10];
+				var colunaPrecoCapa = linha.find("td")[5];
+				var colunaQtdNota = linha.find("td")[6];
+				var colunaQtdPacote = linha.find("td")[7];
+				var colunaQtdExemplar = linha.find("td")[8];
+				var colunaDiferenca = linha.find("td")[9];
+				var colunaValor = linha.find("td")[10];
+				var colunaCheck = linha.find("td")[11];
 				
 				$(colunaCodigo).find("div").find('input[name="itensRecebimento.codigoItem"]').val(dataValores[index].cell[0].value);
 				$(colunaProduto).find("div").find('input[name="itensRecebimento.produtoItem"]').val(dataValores[index].cell[1].value);
 				$(colunaEdicao).find("div").find('input[name="itensRecebimento.edicaoItem"]').val(dataValores[index].cell[2].value);
 				$(colunaPacotePadrao).find("div").find('input[name="itensRecebimento.pacotePadraoItem"]').val(dataValores[index].cell[3].value);
 				$(colunaPrecoDesconto).find("div").find('input[name="itensRecebimento.precoDescontoItem"]').val(dataValores[index].cell[4].value);
-				$(colunaQtdNota).find("div").find('input[name="itensRecebimento.qtdNotaItem"]').val(dataValores[index].cell[5].value);
-				$(colunaQtdPacote).find("div").find('input[name="itensRecebimento.qtdPacoteItem"]').val(dataValores[index].cell[6].value);
-				$(colunaQtdExemplar).find("div").find('input[name="itensRecebimento.qtdExemplarItem"]').val(dataValores[index].cell[7].value);
-				$(colunaDiferenca).find("div").find('input[name="itensRecebimento.diferencaItem"]').val(dataValores[index].cell[8].value);
-				$(colunaValor).find("div").find('input[name="itensRecebimento.valorItem"]').val(dataValores[index].cell[9].value);
+				$(colunaPrecoCapa).find("div").find('itensRecebimento.precoCapa').val(dataValores[index].cell[5].value);
+				
+				$(colunaQtdNota).find("div").find('input[name="itensRecebimento.qtdNotaItem"]').val(dataValores[index].cell[6].value);
+				$(colunaQtdPacote).find("div").find('input[name="itensRecebimento.qtdPacoteItem"]').val(dataValores[index].cell[7].value);
+				$(colunaQtdExemplar).find("div").find('input[name="itensRecebimento.qtdExemplarItem"]').val(dataValores[index].cell[8].value);
+				$(colunaDiferenca).find("div").find('input[name="itensRecebimento.diferencaItem"]').val(dataValores[index].cell[9].value);
+				$(colunaValor).find("div").find('input[name="itensRecebimento.valorItem"]').val(dataValores[index].cell[10].value);
 	        	
         	}
         });
@@ -2162,7 +2224,7 @@ var recebimentoFisicoController = $.extend(true, {
         $("#novoChaveAcesso", 	  recebimentoFisicoController.workspace).val("");
         $("#novoDataEmissao", 	  recebimentoFisicoController.workspace).val("");
         $("#novoDataEntrada", 	  recebimentoFisicoController.workspace).val("");
-        $("#novoValorTotal", 	  recebimentoFisicoController.workspace).val("");
+        $("#novoValorTotal", 	  recebimentoFisicoController.workspace).val("0,00");
         $("#novoReplicarQtde",    recebimentoFisicoController.workspace).removeAttr("checked");
         $("#labelValorTotal",     recebimentoFisicoController.workspace).text("0,00");
         recebimentoFisicoController.montaGridItens();
