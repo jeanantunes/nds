@@ -142,6 +142,9 @@ var MANTER_COTA = $.extend(true, {
     },
 
     carregarTelefones:function(){
+    	
+    	MANTER_COTA._indCadastroCotaAlterado = false;
+    	
         COTA.definirReadonly(!MANTER_COTA.isModoTelaCadastroCota());
 
         if (MANTER_COTA.isModoTelaCadastroCota()) {
@@ -762,11 +765,15 @@ var MANTER_COTA = $.extend(true, {
         $.postJSON(contextPath + "/cadastro/cota/historicoTitularidade", data,
             function(result){
                 if(result){
-                    if(result.tipoPessoa == MANTER_COTA.tipoCota_CPF){
-                        MANTER_COTA.montarCombo(result.listaClassificacao,"#classificacaoSelecionadaCPF");
+                    if(result.tipoPessoa == MANTER_COTA.tipoCota_CPF) {
+                    	
+                    	if(result.listaClassificacao) {
+                    		MANTER_COTA.montarCombo(result.listaClassificacao, "#classificacaoSelecionadaCPF");
+                    	}
+                    	
                         COTA_CPF.editarCPF(result);
-                    }
-                    else {
+                        
+                    } else {
                         MANTER_COTA.montarCombo(result.listaClassificacao,"#classificacaoSelecionada");
                         COTA_CNPJ.editarCNPJ(result);
                     }

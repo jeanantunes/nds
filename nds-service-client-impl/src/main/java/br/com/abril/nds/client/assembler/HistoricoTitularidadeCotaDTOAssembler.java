@@ -421,10 +421,10 @@ public final class HistoricoTitularidadeCotaDTOAssembler {
                 dto.setVrDividasAberto(politicaSuspensao.getValor());
                 dto.setSugereSuspensao(true);
             }
-            dto.setContrato(financeiro.isPossuiContrato());
+            dto.setContrato(financeiro.isPossuiContrato() != null ? financeiro.isPossuiContrato() : false);
             dto.setInicioContrato(financeiro.getDataInicioContrato());
             dto.setTerminoContrato(financeiro.getDataTerminoContrato());
-            dto.setContratoRecebido(financeiro.isContratoRecebido());
+            dto.setContratoRecebido(financeiro.isContratoRecebido() != null ? financeiro.isContratoRecebido() : false);
             dto.setTipoCota(financeiro.getTipoCota());
         }
         return dto;
