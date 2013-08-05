@@ -39,6 +39,7 @@ public class DistribuicaoRepositoryImpl extends AbstractRepositoryModel<Lancamen
 		.append(" pessoa.NOME_FANTASIA as nomeFornecedor,")
 		.append(" estoqueProdJuram.QTDE as juram,")
 		.append(" estoqueProd.QTDE_SUPLEMENTAR as suplem,")
+		.append(" estoqueProd.QTDE as estoque,")
 		.append(" lanc.REPARTE_PROMOCIONAL as promo,")
 		.append(" lanc.DATA_LCTO_PREVISTA as dataLanctoSemFormatacao,")
 		.append(" case estudo.liberado when 1 then 'LIBERADO'")
