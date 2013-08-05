@@ -18,11 +18,13 @@ public class RecebimentoFisicoVO implements Serializable {
 	private String nomeProduto;
 	private String edicao;
 	private String precoCapa;
+	private String precoDesconto;
 	private String repartePrevisto;
 	private String qtdPacote;
 	private String qtdExemplar;
 	private String diferenca;
-	private String valorTotal;
+	private String valorTotalCapa;
+	private String valorTotalDesconto;
 	
 	private String pacotePadrao;
 	
@@ -179,16 +181,16 @@ public class RecebimentoFisicoVO implements Serializable {
 	 *
 	 * @return String
 	 */
-	public String getValorTotal() {
-		return valorTotal;
+	public String getValorTotalCapa() {
+		return valorTotalCapa;
 	}
 
 	/**
 	 * Atribuí valorTotal
 	 * @param valorTotal 
 	 */
-	public void setValorTotal(String valorTotal) {
-		this.valorTotal = valorTotal;
+	public void setValorTotalCapa(String valorTotalCapa) {
+		this.valorTotalCapa = valorTotalCapa;
 	}
 
 	/**
@@ -376,6 +378,22 @@ public class RecebimentoFisicoVO implements Serializable {
 	 */
 	public void setPeso(String peso) {
 		this.peso = peso;
+	}
+
+	public String getPrecoDesconto() {
+		return precoDesconto;
+	}
+
+	public void setPrecoDesconto(String precoDesconto) {
+		this.precoDesconto = precoDesconto;
+	}
+
+	public String getValorTotalDesconto() {
+		return valorTotalDesconto;
+	}
+
+	public void setValorTotalDesconto(String valorTotalDesconto) {
+		this.valorTotalDesconto = valorTotalDesconto;
 	}
 	
 	

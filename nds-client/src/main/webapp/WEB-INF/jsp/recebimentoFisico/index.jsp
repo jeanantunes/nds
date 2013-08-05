@@ -11,6 +11,13 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/scriptRecebimentoFisico.js"></script>
 
+<style type="text/css">
+	#conteudo{
+		width: 1200px;
+		margin: 0 auto;
+	}
+</style>
+
 <script language="javascript" type="text/javascript">
 
     var pesquisaProdutoRecebimentoFisico = new PesquisaProduto(recebimentoFisicoController.workspace);
@@ -314,7 +321,7 @@
 
 			<div class="linha_separa_fields">&nbsp;</div>
 
-			<fieldset class="fieldGrid">
+			<fieldset class="fieldGrid" style="width: 1200px;">
 
 				<legend>Recebimentos F&iacute;sico Cadastrados</legend>
 
@@ -326,13 +333,16 @@
 
 					</div>
 
-					
-
 					<span class="bt_sellAll" style="float:right; margin-right:40px;">
 						<label for="chBoxReplicaValorRepartePrevistoAll">Selecionar Todos</label>
-						<input isEdicao="true" type="checkbox" name="Todos" id="chBoxReplicaValorRepartePrevistoAll" onclick="recebimentoFisicoController.replicarTodosValoresRepartePrevisto(this);" style="float:right;"/>
+						<input isEdicao="true" type="checkbox" name="Todos" id="chBoxReplicaValorRepartePrevistoAll" 
+							onclick="recebimentoFisicoController.replicarTodosValoresRepartePrevisto(this);" style="float:right;"/>
 					</span>
-
+					
+					<span style="float:right; margin-right:40px;">
+						<label>Total com desconto: </label>
+						<label id="totalComDescontoLbl">Selecionar Todos</label>
+					</span>
 				</div>
 
 			</fieldset>
@@ -349,9 +359,9 @@
 
 		    <jsp:include page="../messagesDialog.jsp" />
 
-			<fieldset style="width:1000x!important;">
+			<fieldset style="width:1150px!important;">
 			  <legend>Dados da Nota</legend>
-			  <table width="1000" cellpadding="2" cellspacing="2" style="text-align:left;">
+			  <table width="1150" cellpadding="2" cellspacing="2" style="text-align:left;">
 
 			    <tr style="width: 25%">
 
@@ -442,7 +452,7 @@
 			</fieldset>
 
 
-			<fieldset style="width:1000px!important; margin-top:10px;">
+			<fieldset style="width:1150px!important; margin-top:10px;">
 			    <form name="formularioItensNota" id="formularioItensNota">
 				    <legend>Itens da Nota</legend>
 				    <table id="tabelaItens" class="novoItemNotaGrid"></table>
