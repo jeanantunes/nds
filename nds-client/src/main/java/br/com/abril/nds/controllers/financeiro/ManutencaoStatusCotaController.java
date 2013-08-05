@@ -400,11 +400,20 @@ public class ManutencaoStatusCotaController extends BaseController {
 		
 		for (SituacaoCadastro situacaoCadastro : SituacaoCadastro.values()) {
 			
-			if (!situacaoCadastro.equals(SituacaoCadastro.PENDENTE)) {
-				listaSituacoesStatusCota.add(
+			listaSituacoesStatusCota.add(
 					new ItemDTO<SituacaoCadastro, String>(situacaoCadastro, situacaoCadastro.toString())
 				);
-			}
+		
+		/*
+		 * 		foi solicitado na homologação pra que incluisse o status pendente na pesquisa
+		 */
+			
+			
+//			if (!situacaoCadastro.equals(SituacaoCadastro.PENDENTE)) {
+//				listaSituacoesStatusCota.add(
+//					new ItemDTO<SituacaoCadastro, String>(situacaoCadastro, situacaoCadastro.toString())
+//				);
+//			}
 		}
 		
 		result.include("listaSituacoesStatusCota", listaSituacoesStatusCota);
