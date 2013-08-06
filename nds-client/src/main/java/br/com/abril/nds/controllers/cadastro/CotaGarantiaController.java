@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaGarantiaDTO;
 import br.com.abril.nds.dto.DebitoCreditoDTO;
+import br.com.abril.nds.dto.FiadorDTO;
 import br.com.abril.nds.dto.FormaCobrancaCaucaoLiquidaDTO;
 import br.com.abril.nds.dto.ImovelDTO;
 import br.com.abril.nds.dto.ItemDTO;
@@ -306,6 +307,7 @@ public class CotaGarantiaController extends BaseController {
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Valor de "+CurrencyUtil.formatarValorComSimbolo(valor)+" resgatado com Sucesso."), "result").recursive().serialize();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Post("/getByCota.json")
 	public void getByCota(Long idCota, ModoTela modoTela, Long idHistorico) {
 		
@@ -328,7 +330,20 @@ public class CotaGarantiaController extends BaseController {
 	        
 	        if (cotaGarantia != null) {
 	        	
-	        	this.result.use(PlainJSONSerialization.class).from(cotaGarantia, "result").serialize();
+	        	if(cotaGarantia.getCotaGarantia().getClass().getName().equals("br.com.abril.nds.dto.FiadorDTO")) {
+	        		CotaGarantiaDTO<FiadorDTO> cotaGarantiaFiadorDTO = (CotaGarantiaDTO<FiadorDTO>) cotaGarantia;
+	        		
+	        		if( cotaGarantiaFiadorDTO.getCotaGarantia().getEnderecoPrincipal().getLogradouro() == null &&
+	        				cotaGarantiaFiadorDTO.getCotaGarantia().getEnderecoPrincipal().getNumero() == null) {
+	        			this.result.use(Results.json()).from("OK").serialize();
+	        		} else {
+		        		this.result.use(PlainJSONSerialization.class).from(cotaGarantia, "result").serialize();
+		        	}
+	        		
+	        	} 
+	        	
+	        	
+	        	
 	        	
 	        } else {
 	        	
