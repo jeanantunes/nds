@@ -5,8 +5,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -69,6 +67,7 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	private String dataLancto;
 	
 	private BigDecimal reparte;
+    private BigDecimal estoque;
 	
 	private BigInteger repDistrib;
 	
@@ -158,8 +157,12 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 		return periodo;
 	}
 
-	public void setPeriodo(String periodo) {
-		this.periodo = periodo;
+	public void setPeriodo(Integer periodo) {
+		if(periodo == null){
+			this.periodo = "";
+		}else{
+			this.periodo = periodo.toString();			
+		}
 	}
 
 	public BigDecimal getPrecoVenda() {
@@ -403,5 +406,12 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	public void setDataLancamentoEstudoFormatado(String dataLancamentoEstudoFormatado) {
 		this.dataLancamentoEstudoFormatado = dataLancamentoEstudoFormatado;
 	}
-	
+
+    public BigDecimal getEstoque() {
+        return estoque;
+    }
+
+    public void setEstoque(BigDecimal estoque) {
+        this.estoque = estoque;
+    }
 }

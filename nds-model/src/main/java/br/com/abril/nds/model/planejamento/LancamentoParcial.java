@@ -35,6 +35,8 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 @SequenceGenerator(name = "LANCAMENTO_PARCIAL_SEQ", initialValue = 1, allocationSize = 1)
 public class LancamentoParcial implements Serializable{
 	
+	private static final long serialVersionUID = -7421475045435988608L;
+
 	@Id
 	@GeneratedValue(generator = "LANCAMENTO_PARCIAL_SEQ")
 	@Column(name = "ID")
