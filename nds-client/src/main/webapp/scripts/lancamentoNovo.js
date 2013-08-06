@@ -974,7 +974,7 @@ var lancamentoNovoController = $.extend(true, {
 		
 		if (estoques.length == 0) {
 			
-			lancamentoNovoController.tipoEstoqueSelecionado = null;
+			lancamentoNovoController.tipoEstoqueSelecionado = 'LANCAMENTO';
 			
 			$("#reparteProduto", lancamentoNovoController.workspace).text(0);
 		
