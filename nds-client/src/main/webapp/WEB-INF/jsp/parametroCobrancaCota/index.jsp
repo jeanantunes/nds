@@ -66,9 +66,9 @@ $(function(){
 
 <div id="dialog-confirm-formaCobrancaDistribuidor" title="Atenção" style="display: none;">
 	<fieldset>
-		<legend>Forma Cobrança do Distribuidor</legend>
+		<legend>Forma Cobran&ccedil;a da Cota</legend>
 		<p>
-			Será incluso a forma de cobrança do distribuidor na cota, deseja continuar?
+			Confirma a altera&ccedil;&atilde;o na forma de cobran&ccedil;a da cota?
 		</p>
 	</fieldset>
 </div>
@@ -553,8 +553,8 @@ $(function(){
 <form id="form-excluir-unificacao">
 	<div id="dialog-excluir-unificacao" title="Forma de Pagamento">
 		<fieldset>
-			<legend>Exclusão de Forma de Pagamento</legend>
-			<p>Confirma a exclusão da Forma de Pagamento.</p>
+			<legend>Exclus&atilde;o Forma de Pagamento da Cota </legend>
+			<p>Confirma a exclusão da Forma de Pagamento da Cota?</p>
 		</fieldset>
 	</div>
 </form>

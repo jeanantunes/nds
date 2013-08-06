@@ -529,7 +529,8 @@ var parametroCobrancaCotaController = $.extend(true, {
             parametroCobrancaCotaController.carregarFornecedoresRelacionados();
         }
         
-        parametroCobrancaCotaController.carregarFornecedoresPadrao(resultado.idFornecedor);
+        if(resultado && resultado.idFornecedor)
+        	parametroCobrancaCotaController.carregarFornecedoresPadrao(resultado.idFornecedor);
         
         parametroCobrancaCotaController.carregarArquivoContrato();
 
@@ -1251,19 +1252,18 @@ var parametroCobrancaCotaController = $.extend(true, {
 					   null,
 					   true,
 					   telaMensagem);
-		}
-		else{
+		} else {
 			params["formaCobranca.idFormaCobranca"] = idFormaCobranca;
 			$.postJSON(contextPath + "/cota/parametroCobrancaCota/postarFormaCobranca",params,
 					   function(mensagens) {
 				           $("#dialog-unificacao", this.workspace).dialog("close");
-				           if (incluirSemFechar){
+				           if (incluirSemFechar) {
 				        	   
 				        	   parametroCobrancaCotaController.popup_nova_unificacao();
-				           }
-				           else{
-				        	   telaMensagem=null;
-				        	   if (mensagens){
+				        	   
+				           } else {
+				        	   telaMensagem = null;
+				        	   if (mensagens) {
 								   var tipoMensagem = mensagens.tipoMensagem;
 								   var listaMensagens = mensagens.listaMensagens;
 								   if (tipoMensagem && listaMensagens) {
@@ -1279,20 +1279,27 @@ var parametroCobrancaCotaController = $.extend(true, {
 					   null,
 					   true,
 					   telaMensagem);
-	    }
+	    };
+	    
+	    MANTER_COTA._indCadastroCotaAlterado = false;
 	},
 	
 	excluirFormaCobranca : function(idFormaCobranca){
 		var idCota = $("#_idCota", this.workspace).val();
+		
+		
 		var data = [{name: 'idFormaCobranca', value: idFormaCobranca}];
 		$.postJSON(contextPath + "/cota/parametroCobrancaCota/excluirFormaCobranca",
 				   data,
 				   function(){
-			
+					parametroCobrancaCotaController.obterParametroCobranca(idCota);
 			           parametroCobrancaCotaController.mostrarGrid(idCota);
 				   },
 				   null,
 				   true);
+		
+		parametroCobrancaCotaController.obterParametroCobranca(idCota);
+		
 	},
 
 	//POPUPS

@@ -254,6 +254,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		return (qtd != null && qtd.intValue() > 0);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void posProcess(Object tempVar) {
 
@@ -275,6 +276,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		hqlEstudoSemEstudoCota.append("  WHERE NOT EXISTS( FROM EstudoCota ec WHERE ec.estudo = e)");
 		
 		Query query = getSession().createQuery(hqlEstudoSemEstudoCota.toString());
+		
 		List<Estudo> lstEstudos = query.list();
 		if (lstEstudos != null && !lstEstudos.isEmpty()) {
 			for (Estudo estudo : lstEstudos) {

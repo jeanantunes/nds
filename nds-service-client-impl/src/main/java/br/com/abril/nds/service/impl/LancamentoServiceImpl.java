@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -56,12 +57,13 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Transactional
 	public List<LancamentoNaoExpedidoDTO> obterLancamentosNaoExpedidos(PaginacaoVO paginacaoVO, Date data, Long idFornecedor, Boolean estudo) {
 		
-		List<Lancamento> lancametos = lancamentoRepository.obterLancamentosNaoExpedidos(
+		List<Lancamento> lancamentos = lancamentoRepository.obterLancamentosNaoExpedidos(
 				paginacaoVO, data, idFornecedor, estudo);
 		
-		 List<LancamentoNaoExpedidoDTO> dtos = new ArrayList<LancamentoNaoExpedidoDTO>();
 		
-		for(Lancamento lancamento:lancametos) {
+		List<LancamentoNaoExpedidoDTO> dtos = new ArrayList<LancamentoNaoExpedidoDTO>();
+		
+		for(Lancamento lancamento:lancamentos) {
 			dtos.add(montarDTOExpedicao(lancamento));
 		}
 		return dtos;
@@ -91,10 +93,11 @@ public class LancamentoServiceImpl implements LancamentoService {
 		}
 		
 		Date maisRecente = null;
-		
+		BigInteger fisico =BigInteger.ZERO;
 		if(lancamento.getRecebimentos()!=null && lancamento.getRecebimentos().size()==1) {
 			maisRecente = lancamento.getRecebimentos().iterator().next().getRecebimentoFisico().getDataRecebimento();
-		
+			fisico = lancamento.getRecebimentos().iterator().next().getItemNotaFiscal().getRecebimentoFisico().getQtdeFisico();
+			
 		} else if(lancamento.getRecebimentos()!=null && lancamento.getRecebimentos().size()>1) {
 			
 			Iterator<ItemRecebimentoFisico> itemFisico = lancamento.getRecebimentos().iterator();
@@ -102,10 +105,12 @@ public class LancamentoServiceImpl implements LancamentoService {
 			while(itemFisico.hasNext()) {
 				
 				ItemRecebimentoFisico item = itemFisico.next();
-			
+				
 				if(maisRecente == null || maisRecente.getTime()<item.getRecebimentoFisico().getDataRecebimento().getTime()) {
 					maisRecente = item.getRecebimentoFisico().getDataRecebimento();
 				}
+				
+				fisico = item.getItemNotaFiscal().getRecebimentoFisico().getQtdeFisico();
 			}
 		} 
 		
@@ -121,21 +126,26 @@ public class LancamentoServiceImpl implements LancamentoService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Produto sem preço de venda e preco previsto. Codigo: " + lancamento.getProdutoEdicao().getProduto().getCodigo() + ", Edicao: " + lancamento.getProdutoEdicao().getProduto().getNome());
 		}
 		
-		LancamentoNaoExpedidoDTO dto = new LancamentoNaoExpedidoDTO(
-				lancamento.getId(), 
-				maisRecente==null?"":sdf.format(maisRecente), 
-				lancamento.getProdutoEdicao().getProduto().getCodigo(), 
-				lancamento.getProdutoEdicao().getProduto().getNome(), 
-				lancamento.getProdutoEdicao().getNumeroEdicao(), 
-				lancamento.getProdutoEdicao().getProduto().getTipoProduto().getDescricao(), 
-				preco, 
-				lancamento.getProdutoEdicao().getPacotePadrao(), 
-				lancamento.getReparte() != null ? lancamento.getReparte().intValue() : 0, 
-				sdf.format(lancamento.getDataRecolhimentoPrevista()), 
-				fornecedor, 
-				(lancamento.getEstudo()==null) ? null : lancamento.getEstudo().getQtdeReparte().intValue(),
-				false,
-				lancamento.getProdutoEdicao().getEstoqueProduto()!=null?lancamento.getProdutoEdicao().getEstoqueProduto().getQtde().intValue():0);
+		LancamentoNaoExpedidoDTO dto = null;
+//		if (maisRecente != null) {
+			dto = new LancamentoNaoExpedidoDTO(
+					lancamento.getId(), 
+					lancamento.getProdutoEdicao().getProduto().getCodigo(), 
+					lancamento.getProdutoEdicao().getProduto().getNome(), 
+					lancamento.getProdutoEdicao().getNumeroEdicao(), 
+					lancamento.getProdutoEdicao().getProduto().getTipoProduto().getDescricao(), 
+					preco, 
+					lancamento.getProdutoEdicao().getPacotePadrao(), 
+					lancamento.getReparte() != null ? lancamento.getReparte().intValue() : 0, 
+					fisico,
+					sdf.format(lancamento.getDataRecolhimentoPrevista()), 
+					fornecedor, 
+					(lancamento.getEstudo()==null) ? null : lancamento.getEstudo().getQtdeReparte().intValue(),
+					false,
+					lancamento.getProdutoEdicao().getEstoqueProduto()!=null?lancamento.getProdutoEdicao().getEstoqueProduto().getQtde().intValue():0);
+			
+			
+//		}
 		
 		return dto;
 	}

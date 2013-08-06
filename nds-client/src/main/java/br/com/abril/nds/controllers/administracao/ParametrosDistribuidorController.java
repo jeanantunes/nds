@@ -38,6 +38,7 @@ import br.com.abril.nds.service.DistribuicaoFornecedorService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GrupoService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
+import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
@@ -69,6 +70,9 @@ public class ParametrosDistribuidorController extends BaseController {
 
 	@Autowired
 	private FornecedorService fornecedorService;
+	
+	@Autowired
+	private PessoaService pessoaService;
 
 	@Autowired
 	private ParametrosDistribuidorService parametrosDistribuidorService;
@@ -374,6 +378,9 @@ public class ParametrosDistribuidorController extends BaseController {
 	    if (vo.getCnpj() == null || vo.getCnpj().trim().isEmpty()) {
 	        erros.add("É necessário informar o CNPJ!");
 	    }
+	    
+	    this.pessoaService.validarCNPJ(vo.getCnpj());
+	    
 	    if (vo.getInscricaoEstadual() == null || vo.getInscricaoEstadual().trim().isEmpty()) {
 	        erros.add("É necessário informar a Insc. Estadual!");
 	    }

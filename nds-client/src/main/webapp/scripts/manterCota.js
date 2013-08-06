@@ -142,6 +142,9 @@ var MANTER_COTA = $.extend(true, {
     },
 
     carregarTelefones:function(){
+    	
+    	MANTER_COTA._indCadastroCotaAlterado = false;
+    	
         COTA.definirReadonly(!MANTER_COTA.isModoTelaCadastroCota());
 
         if (MANTER_COTA.isModoTelaCadastroCota()) {
@@ -762,11 +765,15 @@ var MANTER_COTA = $.extend(true, {
         $.postJSON(contextPath + "/cadastro/cota/historicoTitularidade", data,
             function(result){
                 if(result){
-                    if(result.tipoPessoa == MANTER_COTA.tipoCota_CPF){
-                        MANTER_COTA.montarCombo(result.listaClassificacao,"#classificacaoSelecionadaCPF");
+                    if(result.tipoPessoa == MANTER_COTA.tipoCota_CPF) {
+                    	
+                    	if(result.listaClassificacao) {
+                    		MANTER_COTA.montarCombo(result.listaClassificacao, "#classificacaoSelecionadaCPF");
+                    	}
+                    	
                         COTA_CPF.editarCPF(result);
-                    }
-                    else {
+                        
+                    } else {
                         MANTER_COTA.montarCombo(result.listaClassificacao,"#classificacaoSelecionada");
                         COTA_CNPJ.editarCNPJ(result);
                     }
@@ -1356,7 +1363,7 @@ var COTA_CPF = $.extend(true, {
         $("#historicoTerceiraPorcentagemCPF", this.workspace).val( eval( result.historicoTerceiraPorcentagem));
 
         if(result.dataNascimento){
-            $("#dataNascimento", this.workspace).val(result.dataNascimento.$);
+            $("#dataNascimento", this.workspace).val((result.dataNascimento && result.dataNascimento.$) ? result.dataNascimento.$ : result.dataNascimento);
         }
 
         if(result.inicioPeriodo){
@@ -1411,7 +1418,7 @@ var COTA_CPF = $.extend(true, {
                     MANTER_COTA.isAlteracaoTitularidade = false;
                 }
                 
-                if(result.dataNascimento) $("#dataNascimento", this.workspace).val(result.dataNascimento);
+                if(result.dataNascimento) $("#dataNascimento", this.workspace).val(result.dataNascimento.$);
                 
                 MANTER_COTA._indCadastroCotaAlterado = false;
                 

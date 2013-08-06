@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 
 
 public class LancamentoNaoExpedidoDTO implements Serializable {
@@ -8,7 +9,6 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 	private static final long serialVersionUID = 6884763521167786938L;
 
 	private Long idLancamento;		
-	private String dataEntrada;
 	private String codigo;
 	private String produto;
 	private Long edicao;
@@ -16,16 +16,16 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 	private String preco;
 	private Integer pctPadrao;
 	private Integer reparte;
+	private BigInteger fisico;
 	private String  dataChamada;
 	private String fornecedor;
 	private Integer estudo;
 	private Boolean selecionado; 
 	private Integer estoqueLancamentoPE;
 	
-	public LancamentoNaoExpedidoDTO(Long idLancamento, String dataEntrada, String codigo, String produto, Long edicao, String classificacao, String preco, Integer pctPadrao, Integer reparte, String dataChamada, String fornecedor, Integer estudo, Boolean selecionado, Integer estoqueLancamentoPE) {
+	public LancamentoNaoExpedidoDTO(Long idLancamento, String codigo, String produto, Long edicao, String classificacao, String preco, Integer pctPadrao, Integer reparte, BigInteger fisico, String dataChamada, String fornecedor, Integer estudo, Boolean selecionado, Integer estoqueLancamentoPE) {
 		super();
 		this.idLancamento = idLancamento;
-		this.dataEntrada = dataEntrada;
 		this.codigo = codigo;
 		this.produto = produto;
 		this.edicao = edicao;
@@ -33,6 +33,7 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 		this.preco = preco;
 		this.pctPadrao = pctPadrao;
 		this.reparte = reparte;
+		this.fisico = fisico;
 		this.dataChamada = dataChamada;
 		this.fornecedor = fornecedor;
 		this.estudo = estudo;
@@ -50,23 +51,6 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 	public void setIdLancamento(Long idLancamento) {
 		this.idLancamento = idLancamento;
 	}
-
-
-
-
-	public String getDataEntrada() {
-		return dataEntrada;
-	}
-
-
-
-
-	public void setDataEntrada(String dataEntrada) {
-		this.dataEntrada = dataEntrada;
-	}
-
-
-
 
 	public String getCodigo() {
 		return codigo;
@@ -165,6 +149,14 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 
 
 
+
+	public BigInteger getFisico() {
+		return fisico;
+	}
+
+	public void setFisico(BigInteger fisico) {
+		this.fisico = fisico;
+	}
 
 	public String getDataChamada() {
 		return dataChamada;

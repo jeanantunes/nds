@@ -145,6 +145,7 @@ public class EntregadorController extends BaseController {
 	 *  
 	 * @param page - Número da página atual da grid.
 	 */
+	@SuppressWarnings("deprecation")
 	public void pesquisarEntregadores(
 			FiltroEntregadorDTO filtroEntregador, int page, int rp, 
 			String sortname, String sortorder) {
@@ -429,7 +430,7 @@ public class EntregadorController extends BaseController {
 	 * 
 	 * @param idEntregador - Id do entregador a ser editado.
 	 */
-	@Rules(Permissao.ROLE_CADASTRO_FIADOR_ALTERACAO)
+	@Rules(Permissao.ROLE_CADASTRO_ENTREGADOR_ALTERACAO)
 	public void editarEntregador(Long idEntregador) {
 
 		this.session.removeAttribute(LISTA_TELEFONES_SALVAR_SESSAO);
@@ -504,7 +505,7 @@ public class EntregadorController extends BaseController {
 	 * 
 	 * @param idEntregador
 	 */
-	@Rules(Permissao.ROLE_CADASTRO_FIADOR_ALTERACAO)
+	@Rules(Permissao.ROLE_CADASTRO_ENTREGADOR_ALTERACAO)
 	public void removerEntregador(Long idEntregador) {
 
 		if (idEntregador == null) {
@@ -522,7 +523,7 @@ public class EntregadorController extends BaseController {
 	/**
 	 * Método que prepara a tela para um novo cadastro.
 	 */
-	@Rules(Permissao.ROLE_CADASTRO_FIADOR_ALTERACAO)
+	@Rules(Permissao.ROLE_CADASTRO_ENTREGADOR_ALTERACAO)
 	public void novoCadastro() {
 		
 		this.session.removeAttribute(LISTA_ENDERECOS_SALVAR_SESSAO);
@@ -539,7 +540,7 @@ public class EntregadorController extends BaseController {
 			novoCodigoEntregador = this.entregadorService.obterMinCodigoEntregadorDisponivel();
 		}
 		
-		Map<String, Object> mapa = new TreeMap();
+		Map<String, Object> mapa = new TreeMap<String, Object>();
 		mapa.put("data", DateUtil.formatarDataPTBR(new Date()));
 		
 		if (novoCodigoEntregador != null) {
@@ -771,10 +772,6 @@ public class EntregadorController extends BaseController {
 		}
 	}
 	
-	/*
-	 * 
-	 */
-	@SuppressWarnings("unchecked")
 	private void validarParametrosEntradaCadastroEntregador(Pessoa pessoa,
 														    String dataNascimento,
 															Long idEntregador,												
@@ -913,8 +910,6 @@ public class EntregadorController extends BaseController {
 			
 			try {
 				
-				BigDecimal percentualComissaoValue = new BigDecimal(getValorSemMascara(percentualComissao));
-				
 				if (new Double(getValorSemMascara(percentualComissao)) > 100) {
 					listaMensagens.add("O valor máximo de percentual de comissão não pode ultrapassar 100%.");
 				}
@@ -931,7 +926,8 @@ public class EntregadorController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, listaMensagens);
 		}
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	private void validarEndereco(List<String> listaMensagens) {
 		
 		List<EnderecoAssociacaoDTO> listaEnderecoAssociacaoSalvar = 
@@ -1194,6 +1190,7 @@ public class EntregadorController extends BaseController {
 	/*
 	 * Método que cria um table model baseado no retorno da pesquisa de entregadores.
 	 */
+	@SuppressWarnings("deprecation")
 	private TableModel<CellModel> obterTableModel(List<Entregador> listaEntregador) {
 
 		CNPJFormatter cnpjFormatter = new CNPJFormatter();
