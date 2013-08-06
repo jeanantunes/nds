@@ -198,17 +198,19 @@ public final class HistoricoTitularidadeCotaDTOAssembler {
      */
     public static EnderecoDTO toEnderecoDTO(HistoricoTitularidadeCotaEndereco endereco) {
         EnderecoDTO dto = new EnderecoDTO();
-        dto.setTipoLogradouro(endereco.getTipoLogradouro());
-        dto.setLogradouro(endereco.getLogradouro());
-        dto.setNumero(endereco.getNumero());
-        dto.setComplemento(endereco.getComplemento());
-        dto.setBairro(endereco.getBairro());
-        dto.setCep(endereco.getCep());
-        dto.setCidade(endereco.getCidade());
-        dto.setCodigoCidadeIBGE(endereco.getCodigoCidadeIBGE());
-        dto.setCodigoUf(endereco.getCodigoUf());
-        dto.setUf(endereco.getUf());
-        dto.setId(Util.generateObjectId(dto));
+        if(endereco != null) {
+        	dto.setTipoLogradouro(endereco.getTipoLogradouro());
+            dto.setLogradouro(endereco.getLogradouro());
+            dto.setNumero(endereco.getNumero());
+            dto.setComplemento(endereco.getComplemento());
+            dto.setBairro(endereco.getBairro());
+            dto.setCep(endereco.getCep());
+            dto.setCidade(endereco.getCidade());
+            dto.setCodigoCidadeIBGE(endereco.getCodigoCidadeIBGE());
+            dto.setCodigoUf(endereco.getCodigoUf());
+            dto.setUf(endereco.getUf());
+            dto.setId(Util.generateObjectId(dto));
+        }
         return dto;
     }
     
@@ -221,10 +223,12 @@ public final class HistoricoTitularidadeCotaDTOAssembler {
      */
     public static TelefoneDTO toTelefoneDTO(HistoricoTitularidadeCotaTelefone telefone) {
         TelefoneDTO dto = new TelefoneDTO();
-        dto.setDdd(telefone.getDdd());
-        dto.setNumero(telefone.getNumero());
-        dto.setRamal(telefone.getRamal());
-        dto.setId(Util.generateObjectId(dto));
+        if(telefone != null) {
+        	dto.setDdd(telefone.getDdd());
+            dto.setNumero(telefone.getNumero());
+            dto.setRamal(telefone.getRamal());
+            dto.setId(Util.generateObjectId(dto));
+        }
         return dto;
     }
 
