@@ -1165,7 +1165,7 @@ public class LancamentoRepositoryImpl extends
 		
 		sql.append(" coalesce( ");
 		sql.append(" case when tipoProduto.GRUPO_PRODUTO = :grupoCromo then ");
-		sql.append(" (lancamento.REPARTE / produtoEdicao.PACOTE_PADRAO) * produtoEdicao.PRECO_VENDA ");
+		sql.append(" (lancamento.REPARTE) * produtoEdicao.PRECO_VENDA ");
 		sql.append(" else ");
 		sql.append(" lancamento.REPARTE * produtoEdicao.PRECO_VENDA ");
 		sql.append(" end, 0) as valorTotal, ");
