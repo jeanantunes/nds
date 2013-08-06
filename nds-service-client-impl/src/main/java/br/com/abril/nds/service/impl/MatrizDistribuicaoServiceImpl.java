@@ -79,17 +79,17 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
     @Transactional(readOnly = true)
     public TotalizadorProdutoDistribuicaoVO obterMatrizDistribuicao(FiltroDistribuicaoDTO filtro) {
 
-	this.validarFiltro(filtro);
-
-	List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs = distribuicaoRepository.obterMatrizDistribuicao(filtro);
-
-	boolean matrizFinalizada = isMatrizFinalizada(produtoDistribuicaoVOs);
-
-	TotalizadorProdutoDistribuicaoVO totalizadorProdutoDistribuicaoVO = getProdutoDistribuicaoVOTotalizado(produtoDistribuicaoVOs);
-
-	totalizadorProdutoDistribuicaoVO.setMatrizFinalizada(matrizFinalizada);
-
-	return totalizadorProdutoDistribuicaoVO;
+		this.validarFiltro(filtro);
+	
+		List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs = distribuicaoRepository.obterMatrizDistribuicao(filtro);
+	
+		boolean matrizFinalizada = isMatrizFinalizada(produtoDistribuicaoVOs);
+	
+		TotalizadorProdutoDistribuicaoVO totalizadorProdutoDistribuicaoVO = getProdutoDistribuicaoVOTotalizado(produtoDistribuicaoVOs);
+	
+		totalizadorProdutoDistribuicaoVO.setMatrizFinalizada(matrizFinalizada);
+	
+		return totalizadorProdutoDistribuicaoVO;
     }
 
     private boolean isMatrizFinalizada(List<ProdutoDistribuicaoVO> produtoDistribuicaoVOs) {

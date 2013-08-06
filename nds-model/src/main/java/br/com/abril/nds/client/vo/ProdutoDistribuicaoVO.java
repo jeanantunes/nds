@@ -157,8 +157,12 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 		return periodo;
 	}
 
-	public void setPeriodo(String periodo) {
-		this.periodo = periodo;
+	public void setPeriodo(Integer periodo) {
+		if(periodo == null){
+			this.periodo = "";
+		}else{
+			this.periodo = periodo.toString();			
+		}
 	}
 
 	public BigDecimal getPrecoVenda() {
