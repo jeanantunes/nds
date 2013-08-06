@@ -115,10 +115,7 @@ public class DetalheItemNotaFiscalDTO implements Serializable {
 	 */
 	public BigDecimal getPrecoComDesconto() {
 		
-		this.precoComDesconto = (this.getValorTotalComDesconto()
-				                    .divide(this.quantidadeExemplares == null ? BigDecimal.ONE
-										: new BigDecimal(
-												this.quantidadeExemplares),3));
+		this.setPrecoComDesconto(this.precoVenda.subtract(this.desconto!=null?(this.desconto.multiply(this.precoVenda)):BigDecimal.ZERO));
 		
 		return precoComDesconto;
 	}
@@ -136,9 +133,7 @@ public class DetalheItemNotaFiscalDTO implements Serializable {
 	 */
 	public BigDecimal getValorTotalComDesconto() {
 		
-		this.valorTotalComDesconto = this.valorTotal
-				.subtract(this.desconto == null ? BigDecimal.ZERO
-						: this.desconto);
+		this.valorTotalComDesconto = this.getPrecoComDesconto().multiply(new BigDecimal(this.quantidadeExemplares));
 		
 		return valorTotalComDesconto;
 	}
