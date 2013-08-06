@@ -55,6 +55,7 @@ import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Entregador;
@@ -127,6 +128,7 @@ import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PessoaService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.TelefoneService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -251,6 +253,9 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
+	
+	@Autowired
+	private UsuarioService usuarioService; 
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -926,12 +931,48 @@ public class CotaServiceImpl implements CotaService {
 			dto.setQtdeAutomatica(true);
 		}
 		
+		
+		
+		
 		if (parametro == null) {
 
 			dto = this.setDistribuicaoDefault(dto);
-
 			return dto;	
+			
+		} else if (parametro.getSlipImpresso() == null &&
+					parametro.getSlipEmail() == null &&
+					parametro.getBoletoImpresso() == null &&
+					parametro.getBoletoEmail() == null &&
+					parametro.getBoletoSlipImpresso() == null &&
+					parametro.getBoletoSlipEmail() == null &&
+					parametro.getReciboImpresso() == null &&
+					parametro.getReciboEmail() == null &&
+					parametro.getChamadaEncalheImpresso() == null &&
+					parametro.getChamadaEncalheEmail() == null &&
+					parametro.getNotaEnvioImpresso() == null &&
+					parametro.getNotaEnvioEmail() == null ) 
+		{
+			
+			dto = this.setDistribuicaoDefault(dto);
+	
+		} else {
+			dto.setNeImpresso(parametro.getNotaEnvioImpresso());
+			dto.setNeEmail(parametro.getNotaEnvioEmail());
+			dto.setCeImpresso(parametro.getChamadaEncalheImpresso());
+			dto.setCeEmail(parametro.getChamadaEncalheEmail());
+			dto.setSlipImpresso(parametro.getSlipImpresso());
+			dto.setSlipEmail(parametro.getSlipEmail());
+			dto.setBoletoImpresso(parametro.getBoletoImpresso());
+			dto.setBoletoEmail(parametro.getBoletoEmail());
+			dto.setBoletoSlipImpresso(parametro.getBoletoSlipImpresso());
+			dto.setBoletoSlipEmail(parametro.getBoletoSlipEmail());
+			dto.setReciboImpresso(parametro.getReciboImpresso());
+			dto.setReciboEmail(parametro.getReciboEmail());
 		}
+			
+		
+		
+		
 		
 		if(!qtdePDVAutomatico) {
 			dto.setQtdePDV(parametro.getQtdePDV());
@@ -946,18 +987,6 @@ public class CotaServiceImpl implements CotaService {
 		dto.setRepPorPontoVenda(parametro.getRepartePorPontoVenda());
 		dto.setSolNumAtras(parametro.getSolicitaNumAtras());
 		dto.setRecebeRecolhe(parametro.getRecebeRecolheParciais());
-		dto.setNeImpresso(parametro.getNotaEnvioImpresso());
-		dto.setNeEmail(parametro.getNotaEnvioEmail());
-		dto.setCeImpresso(parametro.getChamadaEncalheImpresso());
-		dto.setCeEmail(parametro.getChamadaEncalheEmail());
-		dto.setSlipImpresso(parametro.getSlipImpresso());
-		dto.setSlipEmail(parametro.getSlipEmail());
-		dto.setBoletoImpresso(parametro.getBoletoImpresso());
-		dto.setBoletoEmail(parametro.getBoletoEmail());
-		dto.setBoletoSlipImpresso(parametro.getBoletoSlipImpresso());
-		dto.setBoletoSlipEmail(parametro.getBoletoSlipEmail());
-		dto.setReciboImpresso(parametro.getReciboImpresso());
-		dto.setReciboEmail(parametro.getReciboEmail());
 		dto.setUtilizaTermoAdesao(parametro.getUtilizaTermoAdesao());
 		dto.setTermoAdesaoRecebido(parametro.getTermoAdesaoRecebido());
 		dto.setUtilizaProcuracao(parametro.getUtilizaProcuracao());
@@ -985,7 +1014,25 @@ public class CotaServiceImpl implements CotaService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota não encontrada.");
 		}
 		
+		
+		///////////////////////////////////////////////
+		
+		
+		/*
+		 *  faço a pesquisa nos parâmetros de distribuidor para comparar ao que foi inserido pelo usuário.
+		 *  Se os parâmetros forem iguais, utilizo o do distribuidor.
+		 */
+		
+		ParametroDistribuicaoCota parametrosDistribuidorConferenciaCota = new ParametroDistribuicaoCota();
+		
+		Distribuidor distribuidor = this.distribuidorService.obter();	
+		List<ParametrosDistribuidorEmissaoDocumento> listaParametrosDeDistribuicao = distribuidor.getParametrosDistribuidorEmissaoDocumentos();
+		
+		
+		
+		
 		ParametroDistribuicaoCota parametros = new ParametroDistribuicaoCota();
+		
 		parametros.setQtdePDV(dto.getQtdePDV());
 		parametros.setAssistenteComercial(dto.getAssistComercial());
 		parametros.setGerenteComercial(dto.getGerenteComercial());
@@ -995,18 +1042,6 @@ public class CotaServiceImpl implements CotaService {
 		parametros.setSolicitaNumAtras(dto.getSolNumAtras());
 		parametros.setRecebeRecolheParciais(dto.getRecebeRecolhe());
 		parametros.setRecebeComplementar(dto.getRecebeComplementar());
-		parametros.setNotaEnvioImpresso(dto.getNeImpresso());
-		parametros.setNotaEnvioEmail(dto.getNeEmail());
-		parametros.setChamadaEncalheImpresso(dto.getCeImpresso());
-		parametros.setChamadaEncalheEmail(dto.getCeEmail());
-		parametros.setSlipImpresso(dto.getSlipImpresso());
-		parametros.setSlipEmail(dto.getSlipEmail());
-		parametros.setBoletoImpresso(dto.getBoletoImpresso());
-		parametros.setBoletoEmail(dto.getBoletoEmail());
-		parametros.setBoletoSlipImpresso(dto.getBoletoSlipImpresso());
-		parametros.setBoletoSlipEmail(dto.getBoletoSlipEmail());
-		parametros.setReciboImpresso(dto.getReciboImpresso());
-		parametros.setReciboEmail(dto.getReciboEmail());
 		parametros.setUtilizaTermoAdesao(dto.getUtilizaTermoAdesao());
 		parametros.setTermoAdesaoRecebido(dto.getTermoAdesaoRecebido());
 		parametros.setUtilizaProcuracao(dto.getUtilizaProcuracao());
@@ -1026,9 +1061,146 @@ public class CotaServiceImpl implements CotaService {
 		} else {
 			parametros.setFimPeriodoCarencia(null);			
 		}
-				
-		cota.setParametroDistribuicao(parametros);
 		
+		
+		
+		for(ParametrosDistribuidorEmissaoDocumento parametrosDeDistribuicao : listaParametrosDeDistribuicao) {
+			
+			String nomeDocumento = parametrosDeDistribuicao.getTipoParametrosDistribuidorEmissaoDocumento().name();
+			
+			switch (nomeDocumento) {
+				case "BOLETO":
+					if( parametrosDeDistribuicao.isUtilizaEmail() ){
+						parametrosDistribuidorConferenciaCota.setBoletoEmail(true);
+					} else {
+						parametrosDistribuidorConferenciaCota.setBoletoEmail(false);
+					}
+					if( parametrosDeDistribuicao.isUtilizaImpressao() ){
+						parametrosDistribuidorConferenciaCota.setBoletoImpresso(true);
+					} else {
+						parametrosDistribuidorConferenciaCota.setBoletoImpresso(false);
+					}
+				break;
+				
+				case "BOLETO_SLIP":
+					if( parametrosDeDistribuicao.isUtilizaEmail() ){
+						parametrosDistribuidorConferenciaCota.setBoletoSlipEmail(true);
+					} else {
+						parametrosDistribuidorConferenciaCota.setBoletoSlipEmail(false);
+					}
+					if( parametrosDeDistribuicao.isUtilizaImpressao() ){
+						parametrosDistribuidorConferenciaCota.setBoletoSlipImpresso(true);
+					} else {
+						parametrosDistribuidorConferenciaCota.setBoletoSlipImpresso(false);
+					}
+				break;
+				
+				case "CHAMADA_ENCALHE":
+					if( parametrosDeDistribuicao.isUtilizaEmail() ){
+						parametrosDistribuidorConferenciaCota.setChamadaEncalheEmail(true);
+					} else {
+						parametrosDistribuidorConferenciaCota.setChamadaEncalheEmail(false);
+					}
+					if( parametrosDeDistribuicao.isUtilizaImpressao() ){
+						parametrosDistribuidorConferenciaCota.setChamadaEncalheImpresso(true);
+					} else {
+						parametrosDistribuidorConferenciaCota.setChamadaEncalheImpresso(false);
+					}
+				break;
+				
+				case "NOTA_ENVIO":
+					if( parametrosDeDistribuicao.isUtilizaEmail() ){
+						parametrosDistribuidorConferenciaCota.setNotaEnvioEmail(true);
+					} else {
+						parametrosDistribuidorConferenciaCota.setNotaEnvioEmail(false);
+					}
+					if( parametrosDeDistribuicao.isUtilizaImpressao() ){
+						parametrosDistribuidorConferenciaCota.setNotaEnvioImpresso(true);
+					} else {
+						parametrosDistribuidorConferenciaCota.setNotaEnvioImpresso(false);
+					}
+				break;
+				
+				case "RECIBO":
+					if( parametrosDeDistribuicao.isUtilizaEmail() ){
+						parametrosDistribuidorConferenciaCota.setReciboEmail(true);
+					} else {
+						parametrosDistribuidorConferenciaCota.setReciboEmail(false);
+					}
+					if( parametrosDeDistribuicao.isUtilizaImpressao() ){
+						parametrosDistribuidorConferenciaCota.setReciboImpresso(true);
+					} else {
+						parametrosDistribuidorConferenciaCota.setReciboImpresso(false);
+					}
+				break;
+				
+				case "SLIP":
+					if( parametrosDeDistribuicao.isUtilizaEmail() ){
+						parametrosDistribuidorConferenciaCota.setSlipEmail(true);
+					} else {
+						parametrosDistribuidorConferenciaCota.setSlipEmail(false);
+					}
+					if( parametrosDeDistribuicao.isUtilizaImpressao() ){
+						parametrosDistribuidorConferenciaCota.setSlipImpresso(true);
+					} else {
+						parametrosDistribuidorConferenciaCota.setSlipImpresso(false);
+					}
+				break;
+			}
+		}
+	
+		
+		if(	
+				
+			parametrosDistribuidorConferenciaCota.getBoletoEmail().equals(dto.getBoletoEmail()) &&
+			parametrosDistribuidorConferenciaCota.getBoletoImpresso().equals(dto.getBoletoImpresso()) &&
+				
+			parametrosDistribuidorConferenciaCota.getBoletoSlipEmail().equals(dto.getBoletoSlipEmail()) &&
+			parametrosDistribuidorConferenciaCota.getBoletoSlipImpresso().equals(dto.getBoletoSlipImpresso()) &&
+				
+			parametrosDistribuidorConferenciaCota.getChamadaEncalheEmail().equals(dto.getCeEmail()) &&
+			parametrosDistribuidorConferenciaCota.getChamadaEncalheImpresso().equals(dto.getCeImpresso()) &&
+				
+			parametrosDistribuidorConferenciaCota.getNotaEnvioEmail().equals(dto.getNeEmail()) &&
+			parametrosDistribuidorConferenciaCota.getNotaEnvioImpresso().equals(dto.getNeImpresso()) &&
+				
+			parametrosDistribuidorConferenciaCota.getReciboEmail().equals(dto.getReciboEmail()) &&
+			parametrosDistribuidorConferenciaCota.getReciboImpresso().equals(dto.getReciboImpresso()) &&
+				
+			parametrosDistribuidorConferenciaCota.getSlipEmail().equals(dto.getSlipEmail()) &&
+			parametrosDistribuidorConferenciaCota.getSlipImpresso().equals(dto.getSlipImpresso()) 
+			
+			) {
+				parametros.setSlipImpresso(null);
+				parametros.setSlipEmail(null);
+				parametros.setBoletoImpresso(null);
+				parametros.setBoletoEmail(null);
+				parametros.setBoletoSlipImpresso(null);
+				parametros.setBoletoSlipEmail(null);
+				parametros.setReciboImpresso(null);
+				parametros.setReciboEmail(null);
+				parametros.setChamadaEncalheImpresso(null);
+				parametros.setChamadaEncalheEmail(null);
+				parametros.setNotaEnvioImpresso(null);
+				parametros.setNotaEnvioEmail(null);
+			} else {
+				parametros.setSlipImpresso(dto.getSlipImpresso());
+				parametros.setSlipEmail(dto.getSlipEmail());
+				parametros.setBoletoImpresso(dto.getBoletoImpresso());
+				parametros.setBoletoEmail(dto.getBoletoEmail());
+				parametros.setBoletoSlipImpresso(dto.getBoletoSlipImpresso());
+				parametros.setBoletoSlipEmail(dto.getBoletoSlipEmail());
+				parametros.setReciboImpresso(dto.getReciboImpresso());
+				parametros.setReciboEmail(dto.getReciboEmail());
+				parametros.setChamadaEncalheImpresso(dto.getCeImpresso());
+				parametros.setChamadaEncalheEmail(dto.getCeEmail());
+				parametros.setNotaEnvioImpresso(dto.getNeImpresso());
+				parametros.setNotaEnvioEmail(dto.getNeEmail());
+			}
+			
+		
+		cota.setParametroDistribuicao(parametros);
+
 		cotaRepository.merge(cota);		
 
 		this.atualizaTermoAdesao(
@@ -1262,6 +1434,22 @@ public class CotaServiceImpl implements CotaService {
 	    
 	    cota  = cotaRepository.merge(cota);
 	    
+	    if(newCota) {
+	    	
+		    HistoricoSituacaoCota hsc = new HistoricoSituacaoCota();
+			hsc.setCota(cota);
+			hsc.setDataEdicao(new Date());
+			hsc.setDataInicioValidade(new Date());
+			hsc.setTipoEdicao(TipoEdicao.INCLUSAO);
+			hsc.setResponsavel(usuarioService.getUsuarioLogado());
+			hsc.setSituacaoAnterior(cota.getSituacaoCadastro());
+			hsc.setNovaSituacao(cota.getSituacaoCadastro());
+			hsc.setDescricao("Cota nova.");
+			
+			historicoSituacaoCotaRepository.adicionar(hsc);
+			
+	    }
+		
 	    BaseReferenciaCota baseReferenciaCota = processarDadosBaseReferenciaCota(cota, cotaDto);
 	    
 	    processarDadosReferenciaCota(baseReferenciaCota, cotaDto);

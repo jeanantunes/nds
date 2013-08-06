@@ -962,6 +962,42 @@ var produtoEdicaoController =$.extend(true,  {
 	
 	salvarProdutoEdicao : function(closePopUp) {
 
+		previsto = $('#produtoEdicaoController-precoPrevisto', this.workspace).val();
+		real = $('#produtoEdicaoController-precoVenda', this.workspace).val();
+		
+		if(previsto != real) {
+			$("#produtoEdicaoController-dialog-precos-real-previsto-divergentes").dialog({
+				resizable: false,
+				height:140,
+				modal: true,
+				buttons: {
+					"Sim": function() {
+						
+						setTimeout(function() {
+							$("#produtoEdicaoController-precoVenda", this.workspace).focus(); }, 10);
+						
+						setTimeout(function() {
+							$("#produtoEdicaoController-precoVenda", this.workspace).select(); }, 10);
+						
+						
+						$( this ).dialog( "close" );
+					},
+					"Não": function() {
+						
+						produtoEdicaoController.submeterProdutoEdicao(closePopUp);
+						
+						$( this ).dialog( "close" );						
+					}
+				}
+			});
+		} else {
+		
+			produtoEdicaoController.submeterProdutoEdicao(closePopUp);
+			
+		}
+	},
+	
+	submeterProdutoEdicao : function(closePopUp) {
 		$("#produtoEdicaoController-formUpload").ajaxSubmit({
 			beforeSubmit: function(arr, formData, options) {
 				// Incluir aqui as validacoes;

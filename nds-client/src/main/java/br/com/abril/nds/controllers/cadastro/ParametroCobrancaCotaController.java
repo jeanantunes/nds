@@ -36,7 +36,6 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoCota;
@@ -218,16 +217,19 @@ public class ParametroCobrancaCotaController extends BaseController {
 	@Path("/fornecedoresCota")
 	public void fornecedoresCota(Long idCota, ModoTela modoTela, Long idFormaPagto){
 		List<ItemDTO<Long,String>> listaFornecedores;
+		
 		if (ModoTela.CADASTRO_COTA == modoTela) {
+			
 			listaFornecedores = this.parametroCobrancaCotaService.getComboFornecedoresCota(idCota);
+			
 		} else {
-			List<FornecedorDTO> fornecedores = parametroCobrancaCotaService
-					.obterFornecedoresFormaPagamentoHistoricoTitularidade(idFormaPagto);
-			listaFornecedores = new ArrayList<ItemDTO<Long, String>>(
-					fornecedores.size());
+			
+			List<FornecedorDTO> fornecedores = parametroCobrancaCotaService.obterFornecedoresFormaPagamentoHistoricoTitularidade(idFormaPagto);
+			
+			listaFornecedores = new ArrayList<ItemDTO<Long, String>>(fornecedores.size());
+			
 			for (FornecedorDTO fornecedorDTO : fornecedores) {
-				listaFornecedores.add(new ItemDTO<Long, String>(fornecedorDTO
-						.getIdFornecedor(), fornecedorDTO.getRazaoSocial()));
+				listaFornecedores.add(new ItemDTO<Long, String>(fornecedorDTO.getIdFornecedor(), fornecedorDTO.getRazaoSocial()));
 			}
 		}
 		result.use(Results.json()).from(listaFornecedores, "result").recursive().serialize();

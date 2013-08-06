@@ -71,6 +71,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 	
 	limparSelecoes : function(callback) {
 		
+	$("#selecionarTodosID", OperacaoDiferenciadaController.workspace).attr('checked', false);	
 		$.postJSON(contextPath + '/administracao/parametrosDistribuidor/limparSelecoes',
 				null,
 				callback);		
@@ -125,7 +126,7 @@ var OperacaoDiferenciadaController = $.extend(true, {
 	
 	novoGrupo : function() {
 		
-		this.grupoSelecionado = null;
+		this.grupoSelecionado = null;	
 		
 		$('#comboTipoCota', OperacaoDiferenciadaController.workspace).hide();
 		$('#radioTipoCota', OperacaoDiferenciadaController.workspace).prop('checked', false);
