@@ -336,14 +336,14 @@
 							onclick="recebimentoFisicoController.replicarTodosValoresRepartePrevisto(this);" style="float:right;"/>
 					</span>
 					
-					<span style="float:right; margin-right:40px;" id="spanTotalSemDescontoLbl">
-						<label>Total: </label>
-						<label id="totalSemDescontoLbl">Selecionar Todos</label>
-					</span>
-					
 					<span style="float:right; margin-right:40px;" id="spanTotalComDescontoLbl">
 						<label>Total com desconto: </label>
-						<label id="totalComDescontoLbl">Selecionar Todos</label>
+						<label id="totalComDescontoLbl"></label>
+					</span>
+					
+					<span style="float:right; margin-right:40px;" id="spanTotalSemDescontoLbl">
+						<label>Total: </label>
+						<label id="totalSemDescontoLbl"></label>
 					</span>
 				</div>
 
