@@ -7,7 +7,9 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
+import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0109Input;
@@ -23,6 +25,9 @@ import br.com.abril.nds.model.cadastro.TributacaoFiscal;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
+import br.com.abril.nds.service.EmailService;
+import br.com.abril.nds.service.exception.AutenticacaoEmailException;
+import br.com.abril.nds.util.Constantes;
 
 @Component
 public class EMS0109MessageProcessor extends AbstractRepository implements
@@ -31,6 +36,10 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 	@Autowired
 	private NdsiLoggerFactory ndsiLoggerFactory;
 
+	@Autowired
+	private EmailService emailService;
+
+	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
 		// TODO Auto-generated method stub
@@ -195,6 +204,12 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 		Fornecedor fornecedor = this
 				.findFornecedor(input.getCodigoFornecedor());
+		
+		if(input.getTipoDesconto() == null){
+			String assunto = "Erro na Interface 109 PUB - TipoDesconto não consta no arquivo";
+			sendEmailInterface(assunto, "TipoDesconto não consta no arquivo no arquivo .PUB de publicações vindo PRODIN ");
+		}
+		
 		DescontoLogistica descontoLogistica = this
 				.findDescontoLogisticaByTipoDesconto( Integer.parseInt( input.getTipoDesconto()) );
 
@@ -248,12 +263,26 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 			produto.setDescontoLogistica(descontoLogistica);
 
+		}else{
+			
+			String assunto = "Erro na Interface 109 PUB - TipoDesconto não cadastrado na DescontoLogistico";
+			sendEmailInterface(assunto, "TipoDesconto não cadastrado na tabela DescontoLogistico arquivo .PUB de publicações vindo PRODIN ");
 		}
 
 		this.getSession().persist(produto);
 
 	}
 
+	private void sendEmailInterface(String assunto, String mensagem){
+		try {
+			emailService.enviar(assunto, mensagem, Constantes.MAILS_RECEBIMENTO_INTERFACE);
+			throw new ValidacaoException(TipoMensagem.SUCCESS, "E-mail enviado com sucesso");
+		} catch (AutenticacaoEmailException e) {
+			throw new ValidacaoException(TipoMensagem.ERROR, "[E-mail inválido] Não foi possível enviar o e-mail. Utilize ';' para separar e-mails.");
+		}
+	}
+	
+	
 	private void atualizaProdutoConformeInput(Produto produto, Editor editor,
 			TipoProduto tipoProduto, Message message) {
 

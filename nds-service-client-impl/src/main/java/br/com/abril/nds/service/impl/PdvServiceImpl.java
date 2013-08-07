@@ -29,6 +29,7 @@ import br.com.abril.nds.dto.TelefoneAssociacaoDTO;
 import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.dto.TipoEstabelecimentoAssociacaoPDVDTO;
 import br.com.abril.nds.dto.TipoLicencaMunicipalDTO;
+import br.com.abril.nds.dto.TipoPontoPDVDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
@@ -811,6 +812,16 @@ public class PdvServiceImpl implements PdvService {
         pdvDTO.setArrendatario(pdv.isArrendatario());
         TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoPDV = pdv
                 .getTipoEstabelecimentoPDV();
+        
+        if(pdv.getSegmentacao() != null && pdv.getSegmentacao().getTipoPontoPDV() != null) {
+	        TipoPontoPDVDTO tppDTO = new TipoPontoPDVDTO();
+	        tppDTO.setCodigo(pdv.getSegmentacao().getTipoPontoPDV().getCodigo());
+	        tppDTO.setDescricao(pdv.getSegmentacao().getTipoPontoPDV().getDescricao());
+	        tppDTO.setId(pdv.getSegmentacao().getTipoPontoPDV().getId());
+	        
+	        pdvDTO.setTipoPontoPDV(tppDTO);
+        }
+
         if (tipoEstabelecimentoPDV != null) {
             pdvDTO.setTipoEstabelecimentoAssociacaoPDV(new TipoEstabelecimentoAssociacaoPDVDTO(
                     tipoEstabelecimentoPDV.getId(), tipoEstabelecimentoPDV

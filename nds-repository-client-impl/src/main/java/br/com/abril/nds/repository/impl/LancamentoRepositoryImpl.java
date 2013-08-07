@@ -1253,7 +1253,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" 	OR ( ");
 		sql.append(" 		lancamento.DATA_LCTO_DISTRIBUIDOR between :periodoInicial and :periodoFinal ");
 		sql.append(" 		AND lancamento.STATUS = :statusLancamentoExpedido ");
-		sql.append(" 		AND DATE_FORMAT(expedicao.DATA_EXPEDICAO, '%Y-%m-%d') = :dataOperacao ");
+		sql.append(" 		AND DATE_FORMAT(expedicao.DATA_EXPEDICAO, '%Y-%m-%d') <= :dataOperacao ");
 		sql.append(" 	) ");
 		sql.append(" ) ");
 		
