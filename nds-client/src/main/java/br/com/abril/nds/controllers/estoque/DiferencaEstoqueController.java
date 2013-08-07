@@ -623,7 +623,9 @@ public class DiferencaEstoqueController extends BaseController {
 													String pacotePadrao) {
 		if(!direcionadoParaEstoque){
 			
-			validarTipoDiferenca(tipoDiferenca, diferenca, qntReparteRateio);
+			validarTipoDiferenca(
+				tipoDiferenca, diferenca, 
+					qntReparteRateio, TipoDirecionamentoDiferenca.COTA);
 				
 			DiferencaVO diferencaVO = obterDiferencaVO(tipoDiferenca,codigoProduto,edicaoProduto, diferenca, reparteAtual,tipoEstoque,pacotePadrao);
 			diferencaVO.setTipoDirecionamento(TipoDirecionamentoDiferenca.COTA);
@@ -658,12 +660,16 @@ public class DiferencaEstoqueController extends BaseController {
 		this.httpSession.setAttribute(MODO_NOVA_DIFERENCA_SESSION_ATTRIBUTE,true);
 	}
 
-	private void validarTipoDiferenca(TipoDiferenca tipoDiferenca,BigInteger diferenca, BigInteger qntReparteRateio) {
+	private void validarTipoDiferenca(TipoDiferenca tipoDiferenca,
+									  BigInteger diferenca, 
+									  BigInteger qntReparteRateio,
+									  TipoDirecionamentoDiferenca direcionamento) {
 		
-		if(TipoDiferenca.FALTA_EM.equals(tipoDiferenca)){
+		if (TipoDiferenca.FALTA_EM.equals(tipoDiferenca)
+				&& TipoDirecionamentoDiferenca.COTA.equals(direcionamento)){
 			
 			if(qntReparteRateio.compareTo(diferenca) < 0){
-				throw new ValidacaoException(TipoMensagem.WARNING,"O quantidade total de diferença de produto deve ser direcionada a(s) cota(s)!");
+				throw new ValidacaoException(TipoMensagem.WARNING,"A quantidade total de diferença de produto deve ser direcionada a(s) cota(s)!");
 			}
 		}
 	}
@@ -681,7 +687,7 @@ public class DiferencaEstoqueController extends BaseController {
 					
 			TipoDiferenca tipoDiferencas = diferencaEditavel.getTipoDiferenca(); 
 			 		
-			validarTipoDiferenca(tipoDiferencas, qntDiferenca, qntReparteRateio);
+			validarTipoDiferenca(tipoDiferencas, qntDiferenca, qntReparteRateio, direcionamento);
 			
 			String mensagemErro = null;
 			
@@ -837,6 +843,15 @@ public class DiferencaEstoqueController extends BaseController {
 	private Long incluirDiferencaEstoque(DiferencaVO diferencaVO, TipoDiferenca tipoDiferenca) {
 		
 		Set<DiferencaVO> diferencasNovas = new HashSet<DiferencaVO>();
+		
+//		DiferencaVO diferencaSimilar = this.obterDiferencaCadastradaSimilar(diferencaVO);
+//		
+//		if (diferencaSimilar != null) {
+//			
+//			diferencaVO.setQuantidade(
+//				diferencaVO.getQuantidade().add(diferencaSimilar.getQuantidade()));
+//		}
+		
 		diferencasNovas.add(diferencaVO);
 		
 		this.validarProdutoDuplicadoLancamento(diferencasNovas);
@@ -2293,13 +2308,14 @@ public class DiferencaEstoqueController extends BaseController {
 		}
 	
 		Set<DiferencaVO> listaDiferencasCadastradas =
-			(Set<DiferencaVO>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
+			(Set<DiferencaVO>) this.httpSession.getAttribute(
+				LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE);
 		
 		if (listaDiferencasCadastradas != null) {
 			listaDiferencas.addAll(listaNovasDiferencas);
 			listaDiferencas.addAll(listaDiferencasCadastradas);
 		}
-		
+
 		ComparatorChain comparatorChain = new ComparatorChain();
 		
 		comparatorChain.addComparator(new BeanComparator("codigoProduto"));
@@ -2397,7 +2413,11 @@ public class DiferencaEstoqueController extends BaseController {
 		
 		ProdutoEdicao pe = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(diferencaVO.getCodigoProduto(), diferencaVO.getNumeroEdicao());
 		
-		diferencaVO.setQtdeEstoqueAtual(obterReparteAtualProdutoEdicao(diferencaVO,pe.getId()));		
+		BigInteger qtdeEstoqueAtual = 
+			atualizarQuantidadeEstoqueComNovasDiferencas(
+				obterReparteAtualProdutoEdicao(diferencaVO,pe.getId()), diferencaVO.getTipoEstoque());
+		
+		diferencaVO.setQtdeEstoqueAtual(qtdeEstoqueAtual);		
 		
 		if(!TipoDirecionamentoDiferenca.ESTOQUE.equals(diferencaVO.getTipoDirecionamento())){
 			

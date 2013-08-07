@@ -284,7 +284,7 @@ var lancamentoNovoController = $.extend(true, {
 			lancamentoNovoController.renderizarlistaRateio(result.rateios);
 		}
 		
-		lancamentoNovoController.tratarVisualizacaoOpcaoEstoque(result.diferenca.tipoDiferenca);
+		//lancamentoNovoController.tratarVisualizacaoOpcaoEstoque(result.diferenca.tipoDiferenca);
 	},
 	
 	carregarEdicaoDirecionamentoEstoque:function(result){
@@ -1153,16 +1153,14 @@ var lancamentoNovoController = $.extend(true, {
 	},
 	
 	tratarVisualizacaoOpcaoEstoque:function(value){
-		
+
 		if (value == 'FALTA_DE') {
 			$(".view-estouque",this.workspace).show();
 			$(".view-cota", this.workspace).hide();
 			$("#paraEstoque", this.workspace).check();
-			lancamentoNovoController.paraEstoque(true);
 		} else {
 			$(".view-cota", this.workspace).show()
 			$("#paraEstoque", this.workspace).check();
-			lancamentoNovoController.paraEstoque(true);
 		}
 	},
 	
