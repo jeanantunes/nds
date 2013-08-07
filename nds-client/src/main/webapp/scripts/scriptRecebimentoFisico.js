@@ -1111,7 +1111,7 @@ var recebimentoFisicoController = $.extend(true, {
 			var imgEdicao = '<img src="'+contextPath+'/images/ico_editar.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />'; 
 			
 			value.cell.precoCapa = $.formatNumber(value.cell.precoCapa, {format:"#,##0.00", locale:"br"}); 
-			value.cell.valorTotalCapa = $.formatNumber(value.cell.valorTotalCapa, {format:"#,##0.00", locale:"br"});
+			value.cell.valorTotal = $.formatNumber(value.cell.valorTotalCapa, {format:"#,##0.00", locale:"br"});
 			value.cell.valorTotalDesconto = $.formatNumber(value.cell.valorTotalDesconto, {format:"#,##0.00", locale:"br"});
 			
 			if(edicaoItemNotaPermitida == "S") {
