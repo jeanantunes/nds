@@ -7,9 +7,7 @@ import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
-import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0109Input;
@@ -26,7 +24,6 @@ import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.service.EmailService;
-import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.util.Constantes;
 
 @Component
@@ -205,10 +202,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		Fornecedor fornecedor = this
 				.findFornecedor(input.getCodigoFornecedor());
 		
-		if(input.getTipoDesconto() == null){
-			String assunto = "Erro na Interface 109 PUB - TipoDesconto não consta no arquivo";
-			sendEmailInterface(assunto, "TipoDesconto não consta no arquivo no arquivo .PUB de publicações vindo PRODIN ");
-		}
+		validarTipoDesconto(message, input.getTipoDesconto(), input.getCodigoPublicacao());
 		
 		DescontoLogistica descontoLogistica = this
 				.findDescontoLogisticaByTipoDesconto( Integer.parseInt( input.getTipoDesconto()) );
@@ -264,21 +258,31 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 			produto.setDescontoLogistica(descontoLogistica);
 
 		}else{
-			
-			String assunto = "Erro na Interface 109 PUB - TipoDesconto não cadastrado na DescontoLogistico";
-			sendEmailInterface(assunto, "TipoDesconto não cadastrado na tabela DescontoLogistico arquivo .PUB de publicações vindo PRODIN ");
+			validarDescontoLogistico(message, input.getCodigoPublicacao());
 		}
 
 		this.getSession().persist(produto);
 
 	}
+ 
+	private void validarDescontoLogistico(Message message, String codigoPublicacao) {
+		String assunto = "Erro na Interface 109 PUB - TipoDesconto não cadastrado na DescontoLogistico";
+		sendEmailInterface(assunto, "TipoDesconto não cadastrado na tabela DescontoLogistico arquivo .PUB vindo PRODIN, código de publicação:  "+codigoPublicacao, message);
+	}
 
-	private void sendEmailInterface(String assunto, String mensagem){
+	public void validarTipoDesconto(Message message, String tipoDesconto, String codigoPublicacao){
+		if(tipoDesconto == null || tipoDesconto == "00" || tipoDesconto == ""){
+			String assunto = "Erro na Interface 109 PUB - TipoDesconto não consta no arquivo";
+			sendEmailInterface(assunto, "TipoDesconto não consta no arquivo .PUB de publicações vindo PRODIN, código de publicação:  "+codigoPublicacao, message);
+		}
+	}
+	
+	private void sendEmailInterface(String assunto, String mensagem, Message message){
 		try {
 			emailService.enviar(assunto, mensagem, Constantes.MAILS_RECEBIMENTO_INTERFACE);
-			throw new ValidacaoException(TipoMensagem.SUCCESS, "E-mail enviado com sucesso");
-		} catch (AutenticacaoEmailException e) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "[E-mail inválido] Não foi possível enviar o e-mail. Utilize ';' para separar e-mails.");
+		} catch (Exception e) {
+			e.printStackTrace();
+			ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.HIERARQUIA, String.format("Erro ao tentar enviar e-mail Interface"));
 		}
 	}
 	
@@ -291,8 +295,10 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		
 		Fornecedor fornecedor = this
 				.findFornecedor(input.getCodigoFornecedor());
-		DescontoLogistica descontoLogistica = this
-				.findDescontoLogisticaByTipoDesconto(Integer.parseInt( input.getTipoDesconto()) );
+		
+		validarTipoDesconto(message, input.getTipoDesconto(), input.getCodigoPublicacao());
+		
+		DescontoLogistica descontoLogistica = this.findDescontoLogisticaByTipoDesconto(Integer.parseInt( input.getTipoDesconto()));
 		
 		produto.setOrigem(Origem.INTERFACE);
 		
@@ -432,13 +438,10 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 				produto.setDescontoLogistica(descontoLogistica);
 
-				this.ndsiLoggerFactory.getLogger().logInfo(
-						message,
-						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						"Atualizacao do Tipo Desconto para: "
-								+ descontoLogistica.getTipoDesconto());
-
+				this.ndsiLoggerFactory.getLogger().logInfo(message,EventoExecucaoEnum.INF_DADO_ALTERADO,"Atualizacao do Tipo Desconto para: " + descontoLogistica.getTipoDesconto());
 			}
+		}else{
+			validarDescontoLogistico(message, input.getCodigoPublicacao());
 		}
 
 		TributacaoFiscal tributacaoFiscal = getTributacaoFiscal(input.getCodigoSituacaoTributaria());
