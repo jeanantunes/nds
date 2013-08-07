@@ -39,9 +39,9 @@ fieldset label
 	    <table id="notasSemFisicoDetalheGrid" class="notasSemFisicoDetalheGrid"></table>
 		<br />
 
-		<table width="569" border="0" cellspacing="2" cellpadding="2">
-	      <tr style="font-size:11px;">
-	        <td width="275" align="right"><strong>Total:</strong></td>
+		<table width="830" border="0" cellspacing="2" cellpadding="2">
+	      <tr style="font-size:11px;" align="right">
+	        <td width="275" align="right"><strong>Total Exemplares:</strong></td>
 	        <td width="106" align="right">
 	        	<span id="totalExemplares"></span>
 	        </td>
@@ -49,7 +49,7 @@ fieldset label
 	        <td width="168" align="right"> 
 	        	<span id="totalSumarizado"></span>
 	        </td>
-	        <td width="275" align="right"><strong>Total com Desconto:</strong></td>
+	        <td width="275" align="right"><strong>Total C/Desc:</strong></td>
 	        <td width="168" align="right"> 
 	        	<span id="totalSumarizadoComDesconto"></span>
 	        </td>
@@ -88,12 +88,12 @@ fieldset label
 						<td>Período</td>
 						<td width="46">de:</td>
 						<td width="120">
-							<input name="dataInicial" type="text" id="datepickerDe"
+							<input name="dataInicial" type="text" id="dataNFDe"
 								   style="width: 80px; float: left; margin-right: 5px;" value="${dataAtual}" />
 						</td>
 						<td align="center">Até</td>
 						<td>
-							<input name="dataFinal" type="text" id="datepickerAte"
+							<input name="dataFinal" type="text" id="dataNFAte"
 							 	   style="width: 80px; float: left; margin-right: 5px;" value="${dataAtual}" />
 						</td>
 					</tr>
