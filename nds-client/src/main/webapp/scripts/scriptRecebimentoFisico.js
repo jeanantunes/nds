@@ -1926,8 +1926,8 @@ var recebimentoFisicoController = $.extend(true, {
 			var colunaProduto = linha.find("td")[1];
 			var colunaEdicao = linha.find("td")[2];
 			var colunaPacotePadrao = linha.find("td")[3];
-			var colunaPrecoDesconto = linha.find("td")[4];
-			var colunaPrecoCapa = linha.find("td")[5];
+			var colunaPrecoCapa = linha.find("td")[4];
+			var colunaPrecoDesconto = linha.find("td")[5];
 			var colunaQtdNota = linha.find("td")[6];
 			var colunaQtdPacote = linha.find("td")[7];
 			var colunaQtdExemplar = linha.find("td")[8];
@@ -1948,7 +1948,7 @@ var recebimentoFisicoController = $.extend(true, {
 				$(colunaPrecoDesconto).find("div").find('input[name="itensRecebimento.precoDescontoItem"]').val();
 			
 			var precoCapa = 
-				$(colunaPrecoCapa).find("div").find('input[name="itensRecebimento.precoCapa"').val();
+				$(colunaPrecoCapa).find("div").find('input[name="itensRecebimento.precoCapa"]').val();
 			
 			var qtdNota =
 				$(colunaQtdNota).find("div").find('input[name="itensRecebimento.qtdNotaItem"]').val();
@@ -1980,7 +1980,7 @@ var recebimentoFisicoController = $.extend(true, {
 						nomeProduto:produto,
 						edicao:edicao,
 						precoDesconto:recebimentoFisicoController.preparaValor(precoDesconto),
-						precoCapa:recebimentoFisicoController.prepararValor(precoCapa),
+						precoCapa:recebimentoFisicoController.preparaValor(precoCapa),
 						repartePrevisto:qtdNota,
 						qtdFisico:qtdNota,
 						qtdPacote:qtdPacote,
@@ -2107,8 +2107,8 @@ var recebimentoFisicoController = $.extend(true, {
 			var colunaProduto = linha.find("td")[1];
 			var colunaEdicao = linha.find("td")[2];
 			var colunaPacotePadrao = linha.find("td")[3];
-			var colunaPrecoDesconto = linha.find("td")[4];
-			var colunaPrecoCapa = linha.find("td")[5];
+			var colunaPrecoCapa = linha.find("td")[4];
+			var colunaPrecoDesconto = linha.find("td")[5];
 			var colunaQtdNota = linha.find("td")[6];
 			var colunaQtdPacote = linha.find("td")[7];
 			var colunaQtdExemplar = linha.find("td")[8];
@@ -2129,7 +2129,7 @@ var recebimentoFisicoController = $.extend(true, {
 				$(colunaPrecoDesconto).find("div").find('input[name="itensRecebimento.precoDescontoItem"]').val();
 			
 			var valuePrecoCapa=
-				$(colunaPrecoCapa).find("div").find("itensRecebimento.precoCapa").val();
+				$(colunaPrecoCapa).find("div").find('input[name="itensRecebimento.precoCapa"]').val();
 			
 			var valueQtdNota =
 				$(colunaQtdNota).find("div").find('input[name="itensRecebimento.qtdNotaItem"]').val();
