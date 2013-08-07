@@ -283,8 +283,6 @@ var lancamentoNovoController = $.extend(true, {
 			
 			lancamentoNovoController.renderizarlistaRateio(result.rateios);
 		}
-		
-		//lancamentoNovoController.tratarVisualizacaoOpcaoEstoque(result.diferenca.tipoDiferenca);
 	},
 	
 	carregarEdicaoDirecionamentoEstoque:function(result){

@@ -844,14 +844,6 @@ public class DiferencaEstoqueController extends BaseController {
 		
 		Set<DiferencaVO> diferencasNovas = new HashSet<DiferencaVO>();
 		
-//		DiferencaVO diferencaSimilar = this.obterDiferencaCadastradaSimilar(diferencaVO);
-//		
-//		if (diferencaSimilar != null) {
-//			
-//			diferencaVO.setQuantidade(
-//				diferencaVO.getQuantidade().add(diferencaSimilar.getQuantidade()));
-//		}
-		
 		diferencasNovas.add(diferencaVO);
 		
 		this.validarProdutoDuplicadoLancamento(diferencasNovas);
