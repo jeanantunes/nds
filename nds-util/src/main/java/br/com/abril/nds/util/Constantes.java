@@ -18,7 +18,7 @@ public abstract class Constantes {
 	
 	public static final String[] EXTENSOES_IMAGENS = new String[]{".jpg", ".jpeg", ".png", ".bmp"};
 	
-	public static final String PARAM_MSGS = "mensagens"; 
+	public static final String PARAM_MSGS = "mensagens";
 	
 	public static final String TIPO_MSG_SUCCESS = "success";
 	
