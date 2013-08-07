@@ -813,13 +813,14 @@ public class PdvServiceImpl implements PdvService {
         TipoEstabelecimentoAssociacaoPDV tipoEstabelecimentoPDV = pdv
                 .getTipoEstabelecimentoPDV();
         
-        TipoPontoPDVDTO tppDTO = new TipoPontoPDVDTO();
-        tppDTO.setCodigo(pdv.getSegmentacao().getTipoPontoPDV().getCodigo());
-        tppDTO.setDescricao(pdv.getSegmentacao().getTipoPontoPDV().getDescricao());
-        tppDTO.setId(pdv.getSegmentacao().getTipoPontoPDV().getId());
-
-        pdvDTO.setTipoPontoPDV(tppDTO);
-
+        if(pdv.getSegmentacao() != null && pdv.getSegmentacao().getTipoPontoPDV() != null) {
+	        TipoPontoPDVDTO tppDTO = new TipoPontoPDVDTO();
+	        tppDTO.setCodigo(pdv.getSegmentacao().getTipoPontoPDV().getCodigo());
+	        tppDTO.setDescricao(pdv.getSegmentacao().getTipoPontoPDV().getDescricao());
+	        tppDTO.setId(pdv.getSegmentacao().getTipoPontoPDV().getId());
+	        
+	        pdvDTO.setTipoPontoPDV(tppDTO);
+        }
 
         if (tipoEstabelecimentoPDV != null) {
             pdvDTO.setTipoEstabelecimentoAssociacaoPDV(new TipoEstabelecimentoAssociacaoPDVDTO(
