@@ -307,6 +307,10 @@ var PDV =  $.extend(true, {
 		},
 		
 		editarPDV:function (idPdv,idCota){
+			
+			//para não haver o alert no final sem existir alterações
+			MANTER_COTA._indCadastroCotaAlterado = false;
+			
 			PDV.idPdv = idPdv;
 			PDV.limparCamposTela();
 			
