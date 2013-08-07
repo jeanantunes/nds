@@ -128,9 +128,26 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		preencherDataEmissao();
 
-		result.include("permissaoBotaoConfirmacao", usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_BOTAO_CONFIRMACAO));
-		result.include("permissaoGridColRepartePrevisto", usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_REPARTE_PREVISTO));
-		result.include("permissaoGridColDiferenca", usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_DIFERENCA));
+		result.include(
+			"permissaoBotaoConfirmacao", 
+			usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_BOTAO_CONFIRMACAO));
+		
+		result.include(
+			"permissaoGridColRepartePrevisto", 
+			usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_REPARTE_PREVISTO));
+		
+		result.include(
+			"permissaoGridColDiferenca", 
+			usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_DIFERENCA));
+		
+		result.include(
+			"permissaoColValorTotal",
+			usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_VALOR_TOTAL));
+		
+		result.include(
+				"permissaoColValorTotalDesconto",
+				usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_VALOR_TOTAL_DESCONTO));
+		
 		result.include("indConferenciaCega", this.distribuidorService.isConferenciaCegaRecebimentoFisico());
 	}
 	
@@ -913,7 +930,8 @@ public class RecebimentoFisicoController extends BaseController {
 			result.use(Results.json()).from(
 				new ResultadoNotaFiscalExistente(
 					validacao, indNotaInterface, indRecebimentoFisicoConfirmado,
-					cnpj, notaFiscal.getNumero(), notaFiscal.getSerie()), "result")
+					cnpj, notaFiscal.getNumero(), notaFiscal.getSerie(),
+					notaFiscal.getChaveAcesso()), "result")
 						.include("validacao")
 						.include("validacao.listaMensagens").serialize();
 		}
@@ -925,7 +943,7 @@ public class RecebimentoFisicoController extends BaseController {
 		private ValidacaoVO validacao;
 		private boolean indNotaInterface;		
         private boolean indRecebimentoFisicoConfirmado;
-        private String cnpj, serieNotaFiscal;
+        private String cnpj, serieNotaFiscal, chaveAcesso;
         private Long numeroNotaFiscal;
 			
 		public ResultadoNotaFiscalExistente(ValidacaoVO validacao,
@@ -941,12 +959,13 @@ public class RecebimentoFisicoController extends BaseController {
 				boolean indNotaInterface,
 				boolean indRecebimentoFisicoConfirmado,
 				String cnpj, Long numeroNotaFiscal,
-				String serieNotaFiscal) {
+				String serieNotaFiscal,
+				String chaveAcesso) {
 			this(validacao, indNotaInterface, indRecebimentoFisicoConfirmado);
 			this.cnpj = Util.adicionarMascaraCNPJ(cnpj);
 			this.serieNotaFiscal = serieNotaFiscal;
 			this.numeroNotaFiscal = numeroNotaFiscal;
-			
+			this.chaveAcesso = chaveAcesso;
 		}
 		
 		public ValidacaoVO getValidacao() {
@@ -993,6 +1012,14 @@ public class RecebimentoFisicoController extends BaseController {
 
 		public void setNumeroNotaFiscal(Long numeroNotaFiscal) {
 			this.numeroNotaFiscal = numeroNotaFiscal;
+		}
+
+		public String getChaveAcesso() {
+			return chaveAcesso;
+		}
+
+		public void setChaveAcesso(String chaveAcesso) {
+			this.chaveAcesso = chaveAcesso;
 		}
 	}
 	

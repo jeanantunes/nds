@@ -1,6 +1,10 @@
 <input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <input id="permissaoGridColRepartePrevisto" type="hidden" value="${permissaoGridColRepartePrevisto}">
 <input id="permissaoGridColDiferenca" type="hidden" value="${permissaoGridColDiferenca}">
+
+<input id="permissaoColValorTotal" type="hidden" value="${permissaoColValorTotal}">
+<input id="permissaoColValorTotalDesconto" type="hidden" value="${permissaoColValorTotalDesconto}">
+
 <input id="indConferenciaCega" type="hidden" value="${indConferenciaCega}">
 
 <head>
@@ -10,13 +14,6 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/scriptRecebimentoFisico.js"></script>
-
-<style type="text/css">
-	#conteudo{
-		width: 1200px;
-		margin: 0 auto;
-	}
-</style>
 
 <script language="javascript" type="text/javascript">
 
@@ -339,7 +336,12 @@
 							onclick="recebimentoFisicoController.replicarTodosValoresRepartePrevisto(this);" style="float:right;"/>
 					</span>
 					
-					<span style="float:right; margin-right:40px;">
+					<span style="float:right; margin-right:40px;" id="spanTotalSemDescontoLbl">
+						<label>Total: </label>
+						<label id="totalSemDescontoLbl">Selecionar Todos</label>
+					</span>
+					
+					<span style="float:right; margin-right:40px;" id="spanTotalComDescontoLbl">
 						<label>Total com desconto: </label>
 						<label id="totalComDescontoLbl">Selecionar Todos</label>
 					</span>
