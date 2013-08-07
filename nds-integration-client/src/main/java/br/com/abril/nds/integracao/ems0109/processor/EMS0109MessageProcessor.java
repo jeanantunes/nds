@@ -431,7 +431,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 								+ fornecedor.getResponsavel());
 			}
 		}
-
+ 
 		if (null != produto.getDescontoLogistica() && null != descontoLogistica) {
 
 			if (!produto.getDescontoLogistica().equals(descontoLogistica)) {
