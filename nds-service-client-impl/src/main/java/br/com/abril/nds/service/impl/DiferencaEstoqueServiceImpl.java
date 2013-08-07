@@ -1018,8 +1018,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				
 				Diferenca diferencaCadastrada = iterator.next();
 					
-				if(diferencaCadastrada.getProdutoEdicao().equals(diferenca.getProdutoEdicao()) && 
-						diferencaCadastrada.getTipoDiferenca().equals(diferenca.getTipoDiferenca())) {
+				if(diferencaCadastrada.getProdutoEdicao().equals(diferenca.getProdutoEdicao()) 
+						&& diferencaCadastrada.getTipoDiferenca().equals(diferenca.getTipoDiferenca())
+						&& diferencaCadastrada.getTipoDirecionamento().equals(diferenca.getTipoDirecionamento())) {
 					
 					idDiferenca = diferencaCadastrada.getId();
 					
@@ -1052,12 +1053,13 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			while( iterator.hasNext() ) {
 				DiferencaVO diferencaVoCadastrada = iterator.next();
 				
-				if( diferencaVoCadastrada.getCodigoProduto().equals(diferencaVO.getCodigoProduto()) && 
-						diferencaVoCadastrada.getNumeroEdicao().equals(diferencaVO.getNumeroEdicao()) && 
-						diferencaVoCadastrada.getTipoDiferenca().equals(diferencaVO.getTipoDiferenca()) ) {
+				if( diferencaVoCadastrada.getCodigoProduto().equals(diferencaVO.getCodigoProduto())  
+						&& diferencaVoCadastrada.getNumeroEdicao().equals(diferencaVO.getNumeroEdicao()) 
+						&& diferencaVoCadastrada.getTipoDiferenca().equals(diferencaVO.getTipoDiferenca())
+						&& diferencaVoCadastrada.getTipoDirecionamento().equals(diferencaVO.getTipoDirecionamento())) {
 				
-					
 					BigInteger quantidade = diferencaVoCadastrada.getQuantidade();
+					
 					diferencaVoCadastrada.setQuantidade(quantidade.add(diferencaVO.getQuantidade()));
 					
 					diferencaVO = null;
