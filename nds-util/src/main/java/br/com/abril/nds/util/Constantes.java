@@ -46,6 +46,8 @@ public abstract class Constantes {
 
 	public static final int TAMANHO_CAMPO_PRODUTO_CONSULTA = 8;
 	
+	public static final String[] MAILS_RECEBIMENTO_INTERFACE = new String[]{"novodistrib@dgb.com.br"};
+	
 }
 
 
