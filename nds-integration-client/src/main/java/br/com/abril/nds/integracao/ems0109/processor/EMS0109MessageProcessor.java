@@ -264,7 +264,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		this.getSession().persist(produto);
 
 	}
-
+ 
 	private void validarDescontoLogistico(Message message, String codigoPublicacao) {
 		String assunto = "Erro na Interface 109 PUB - TipoDesconto não cadastrado na DescontoLogistico";
 		sendEmailInterface(assunto, "TipoDesconto não cadastrado na tabela DescontoLogistico arquivo .PUB vindo PRODIN, código de publicação:  "+codigoPublicacao, message);
