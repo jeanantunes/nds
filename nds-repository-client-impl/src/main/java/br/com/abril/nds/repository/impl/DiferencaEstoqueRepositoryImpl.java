@@ -644,7 +644,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		query.setParameterList(
 			"statusLancamento", 
-				new StatusLancamento[] {StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO});
+				new StatusLancamento[] {StatusLancamento.CONFIRMADO});
 
 		return (Long) query.uniqueResult();
 	}
