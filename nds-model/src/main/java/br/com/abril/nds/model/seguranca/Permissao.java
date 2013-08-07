@@ -145,6 +145,9 @@ public enum Permissao {
 	ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_DIFERENCA_ALTERACAO("Recebimento Físico, coluna Diferença", null, false),
 	ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_DIFERENCA("Recebimento Físico, coluna Diferença",	ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_DIFERENCA_ALTERACAO, false),
 
+	ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_VALOR_TOTAL("Recebimento Físico, coluna Valor Total", ROLE_ESTOQUE, null, false),
+	ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_VALOR_TOTAL_DESCONTO("Recebimento Físico, coluna Valor Total com Desconto", ROLE_ESTOQUE, null, false),
+	
 	ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_ALTERACAO("Lançamento Faltas e Sobras",							Permissao.ROLE_ESTOQUE, true),
 	ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS("Lançamento Faltas e Sobras",									   	Permissao.ROLE_ESTOQUE, ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_ALTERACAO, true),
 	 
