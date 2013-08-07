@@ -2917,7 +2917,7 @@ public class DiferencaEstoqueController extends BaseController {
 		Date dataMovimento = DateUtil.parseDataPTBR(dataMovimentoFormatada);
 		
 		byte[] relatorio = this.diferencaEstoqueService.imprimirRelatorioFaltasSobras(dataMovimento);
-
+		
 		String nomeArquivoRelatorio = "relatorioFaltasSobras" + FileType.PDF.getExtension();
 		
 		return new ByteArrayDownload(
