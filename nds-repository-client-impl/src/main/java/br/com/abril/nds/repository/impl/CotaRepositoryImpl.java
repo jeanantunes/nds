@@ -2724,7 +2724,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 
 		StringBuilder hql = new StringBuilder();
 		
-		if(sortname.equals("qtdPdv")){
+		if(sortname != null && sortname.equals("qtdPdv") ){
 			hql.append(" ORDER BY qtdPdv " + sortorder);
 		}
 

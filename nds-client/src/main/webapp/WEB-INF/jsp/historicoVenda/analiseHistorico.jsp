@@ -111,7 +111,7 @@ function escondeDados(){
                 	</c:if>
                 	<c:if test="${status.last}">
                 		<c:forEach var="i" begin="1" end="${6 - status.count}">
-	                		<td width="85" align="center" class="header_table">0000</td>
+	                		<td width="85" align="center" class="header_table"></td>
                 		</c:forEach>
                 	</c:if>
                 </c:forEach>

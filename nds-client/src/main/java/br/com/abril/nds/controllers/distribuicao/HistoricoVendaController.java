@@ -4,6 +4,7 @@ package br.com.abril.nds.controllers.distribuicao;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -237,12 +238,22 @@ public class HistoricoVendaController extends BaseController {
 	@Post
 	public void analiseHistorico(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas){
 		
-		Collections.sort(listProdutoEdicaoDto);
+		ordenarEdicoesMaiorParaMenor(listProdutoEdicaoDto);
 		
 		result.include("listProdutoEdicao", listProdutoEdicaoDto);
 		
 		session.setAttribute("listProdutoEdicao", listProdutoEdicaoDto);
 		session.setAttribute("listCotas", cotas);
+	}
+
+	private void ordenarEdicoesMaiorParaMenor(List<ProdutoEdicaoDTO> listProdutoEdicaoDto) {
+		Collections.sort(listProdutoEdicaoDto, new Comparator<ProdutoEdicaoDTO>() {
+
+			@Override
+			public int compare(ProdutoEdicaoDTO o1, ProdutoEdicaoDTO o2) {				
+				return o2.getNumeroEdicao().compareTo(o1.getNumeroEdicao());
+			}
+		});
 	}
 	
 	@SuppressWarnings("unchecked")

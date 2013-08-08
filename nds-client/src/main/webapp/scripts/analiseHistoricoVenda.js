@@ -249,13 +249,56 @@ var analiseHistoricoVendaController = $.extend(true, {
 			resumo.ed5Rep +=  parseInt((row.cell.ed5Reparte ||  0));
 			resumo.ed5Venda +=  parseInt((row.cell.ed5Venda ||  0));
 			resumo.ed6Rep +=  parseInt((row.cell.ed6Reparte ||  0));
-			resumo.ed6Venda +=  parseInt((row.cell.ed6Venda ||  0));
+			resumo.ed6Venda +=  parseInt((row.cell.ed6Venda || 0));
 			
 			row.cell.reparteMedio = (row.cell.reparteMedio || 0).toFixed(0);
 			row.cell.vendaMedia = (row.cell.vendaMedia || 0).toFixed(0);
 		}
 		
 		analiseHistoricoVendaController.calcularMediaVendaEReparteCota(resumo);
+		
+		
+		if(resumo.ed1Rep == 0){
+			resumo.ed1Rep = "";
+		}
+		if(resumo.ed1Venda == 0){
+			resumo.ed1Venda = "";
+		}
+		
+		if(resumo.ed2Rep == 0){
+			resumo.ed2Rep = "";
+		}
+		if(resumo.ed2Venda == 0){
+			resumo.ed2Venda = "";
+		}
+		
+		if(resumo.ed3Rep == 0){
+			resumo.ed3Rep = "";
+		}
+		if(resumo.ed3Venda == 0){
+			resumo.ed3Venda = "";
+		}
+		
+		if(resumo.ed4Rep == 0){
+			resumo.ed4Rep = "";
+		}
+		if(resumo.ed4Venda == 0){
+			resumo.ed4Venda = "";
+		}
+		
+		if(resumo.ed5Rep == 0){
+			resumo.ed5Rep = "";
+		}
+		if(resumo.ed5Venda == 0){
+			resumo.ed5Venda = "";
+		}
+		
+		if(resumo.ed6Rep == 0){
+			resumo.ed6Rep = "";
+		}
+		if(resumo.ed6Venda == 0){
+			resumo.ed6Venda = "";
+		}
 		
 		html = '<td width="50" >Qtde Cotas:</td>' +
 		        '<td width="103" >' + resumo.qtdCota + '</td>' +
