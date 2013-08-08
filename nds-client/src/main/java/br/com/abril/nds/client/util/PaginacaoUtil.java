@@ -84,9 +84,11 @@ public class PaginacaoUtil {
 			}
 		}
 
-		if(posicaoInicial > posicaoFinal) {
-			posicaoInicial = 0;
-			posicaoFinal = posicaoInicial + paginacao.getQtdResultadosPorPagina();
+		while (posicaoInicial > posicaoFinal) {
+			
+			posicaoInicial = posicaoInicial - paginacao.getQtdResultadosPorPagina();
+			
+			paginacao.setPaginaAtual(paginacao.getPaginaAtual() - 1);
 		}
 		
 		return listaAPaginar.subList(posicaoInicial, posicaoFinal);

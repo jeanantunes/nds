@@ -8,8 +8,9 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	this.tipoMovimento = null;
 	this.instancia = descInstancia;
 	this.linhasDestacadas = [];
-	this.lancamentos = [];
+	this.lancamentosPaginacao = [];
 	this.selecionados = [];
+	this.produtosLancamento = [];
 	this.dataAtualSelecionada = [];
 	
 	this.definirAcaoPesquisaTeclaEnter = function() {
@@ -78,7 +79,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		T.dataAtualSelecionada = dataLancamento;
 		$('#selTodos', _workspace).uncheck();
 		
-		T.checkUncheckLancamentos(false);
+		T.checkUncheckLancamentos();
 		
 		$(".lancamentosProgramadosGrid", _workspace).flexOptions({			
 			url : pathTela + "/matrizLancamento/obterGridMatrizLancamento",
@@ -109,13 +110,15 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		T.linhasDestacadas = [];
 		
-		T.lancamentos = [];
+		T.lancamentosPaginacao = [];
 		
 		$("#valorTotal", _workspace).html(resultadoPesquisa[1]);
 		
 		if(resultadoPesquisa && resultadoPesquisa[0] && resultadoPesquisa[0].rows) {
 			$.each(resultadoPesquisa[0].rows, function(index,row){ T.processarLinha(index, row);});
 		}
+		
+		T.produtosLancamento = resultadoPesquisa[2];
 		
 		return (resultadoPesquisa[0] && resultadoPesquisa[0].rows) ? resultadoPesquisa[0] : resultadoPesquisa;
 	},
@@ -169,7 +172,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	
 	this.processarLinha = function(i,row) {
 		
-		T.lancamentos.push({
+		T.lancamentosPaginacao.push({
 			id:							row.cell.id, 
 			numeroEdicao:				row.cell.numeroEdicao,
 			nomeProduto:	    		row.cell.nomeProduto,
@@ -213,7 +216,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		var data = [];
 		
-		data.push({name : 'produtoLancamento.novaDataLancamento', value : T.lancamentos[index].novaDataLancamento});
+		data.push({name : 'produtoLancamento.novaDataLancamento', value : T.lancamentosPaginacao[index].novaDataLancamento});
 		$.postJSON(
 			pathTela + "/matrizLancamento/perguntarDataConfirmadaOuNao",
 			data,
@@ -288,11 +291,11 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		var data = [];
 		
-		data.push({name: 'produtoLancamento.id', 					   value: T.lancamentos[index].id});
-		data.push({name: 'produtoLancamento.novaDataLancamento', 	   value: T.lancamentos[index].novaDataLancamento});
-		data.push({name: 'produtoLancamento.nomeProduto', 			   value: T.lancamentos[index].nomeProduto});
-		data.push({name: 'produtoLancamento.numeroEdicao', 	           value: T.lancamentos[index].numeroEdicao});
-		data.push({name: 'produtoLancamento.dataRecolhimentoPrevista', value: T.lancamentos[index].dataRecolhimentoPrevista});
+		data.push({name: 'produtoLancamento.id', 					   value: T.lancamentosPaginacao[index].id});
+		data.push({name: 'produtoLancamento.novaDataLancamento', 	   value: T.lancamentosPaginacao[index].novaDataLancamento});
+		data.push({name: 'produtoLancamento.nomeProduto', 			   value: T.lancamentosPaginacao[index].nomeProduto});
+		data.push({name: 'produtoLancamento.numeroEdicao', 	           value: T.lancamentosPaginacao[index].numeroEdicao});
+		data.push({name: 'produtoLancamento.dataRecolhimentoPrevista', value: T.lancamentosPaginacao[index].dataRecolhimentoPrevista});
 		
 		$.postJSON(
 				pathTela + "/matrizLancamento/reprogramarLancamentoUnico",
@@ -300,17 +303,17 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				function() {
 					
 					T.atualizarResumoBalanceamento();
-					T.checkUncheckLancamentos(false);
+					T.checkUncheckLancamentos();
 					
-					T.lancamentos[index].novaDataOriginal = T.lancamentos[index].novaDataLancamento;
+					T.lancamentosPaginacao[index].novaDataOriginal = T.lancamentosPaginacao[index].novaDataLancamento;
 				},
 				function() {
 					
 					var inputNovaData = $("#inputNovaData" + index, _workspace);
 					
-					$(inputNovaData).val(T.lancamentos[index].novaDataOriginal);
+					$(inputNovaData).val(T.lancamentosPaginacao[index].novaDataOriginal);
 					
-					T.lancamentos[index].novaDataLancamento = inputNovaData.val();
+					T.lancamentosPaginacao[index].novaDataLancamento = inputNovaData.val();
 				}
 			);
 	},
@@ -375,25 +378,15 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 
 		var data = [];
 		
-		var inputSelecionarTodos = $('#selTodos', _workspace).attr("checked");
-		
 		data.push({name: 'novaDataFormatada', value: $("#novaDataLancamento", _workspace).val()});
-		data.push({name: 'dataAtualFormatada', value: T.dataAtualSelecionada});
-		
-		var selecionarTodos = inputSelecionarTodos == 'checked';
-		
-		data.push({name: 'selecionarTodos', value: selecionarTodos});
-		
-		if (!selecionarTodos) {
 			
-			$.each(T.selecionados, function(index, lancamentoSelecionado) {
-				
-				data.push({name: 'produtosLancamento[' + index + '].id', 			   		   value: lancamentoSelecionado.id});
-				data.push({name: 'produtosLancamento[' + index + '].nomeProduto', 	   		   value: lancamentoSelecionado.nomeProduto});
-				data.push({name: 'produtosLancamento[' + index + '].numeroEdicao', 	   		   value: lancamentoSelecionado.numeroEdicao});
-				data.push({name: 'produtosLancamento[' + index + '].dataRecolhimentoPrevista', value: lancamentoSelecionado.dataRecolhimentoPrevista});
-			});
-		}
+		$.each(T.selecionados, function(index, lancamentoSelecionado) {
+			
+			data.push({name: 'produtosLancamento[' + index + '].id', 			   		   value: lancamentoSelecionado.id});
+			data.push({name: 'produtosLancamento[' + index + '].nomeProduto', 	   		   value: lancamentoSelecionado.nomeProduto});
+			data.push({name: 'produtosLancamento[' + index + '].numeroEdicao', 	   		   value: lancamentoSelecionado.numeroEdicao});
+			data.push({name: 'produtosLancamento[' + index + '].dataRecolhimentoPrevista', value: lancamentoSelecionado.dataRecolhimentoPrevista});
+		});
 		
 		$.postJSON(
 				pathTela + "/matrizLancamento/reprogramarLancamentosSelecionados",
@@ -402,14 +395,12 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 					T.atualizarResumoBalanceamento();
 				}
 			);
-				
-		console.log('reprogramando...');
 		
 		$("#dialogReprogramarBalanceamento", _workspace).dialog("close");
 	},
 	
 	this.alterarData = function(input, index) {
-		T.lancamentos[index].novaDataLancamento = input.value;
+		T.lancamentosPaginacao[index].novaDataLancamento = input.value;
 	},
 	
 	this.gerarCheckReprogramar = function(id, bloquearData, index) { 
@@ -425,7 +416,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		var checked = check.checked;
 		
-		T.lancamentos[index].selecionado = checked;
+		T.lancamentosPaginacao[index].selecionado = checked;
 				
 		$.each($("input[name='checkgroup'][bloqueado!='true']", _workspace),function(index,row) {
 			
@@ -434,7 +425,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		if (checked) {
 			
-			T.selecionados.push(T.lancamentos[index]);
+			T.selecionados.push(T.lancamentosPaginacao[index]);
 			
 		} else {
 		
@@ -442,7 +433,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			
 			$.each(T.selecionados, function(i, lancamentoSelecionado) {
 				
-				if (lancamentoSelecionado.id == T.lancamentos[index].id) {
+				if (lancamentoSelecionado.id == T.lancamentosPaginacao[index].id) {
 					
 					indexRemover = i;
 				}
@@ -474,13 +465,6 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		if (selTodos) {
 		
 			checkAll($('#selTodos', _workspace), "checkgroup");
-			
-			T.selecionados = [];
-			
-			$.each(T.lancamentos, function(i, lancamento) {
-				
-				T.selecionados.push(lancamento);
-			});
 			
 		} else {
 			
@@ -630,7 +614,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		$('#selTodos', _workspace).uncheck();
 		
-		T.checkUncheckLancamentos(false);
+		T.checkUncheckLancamentos();
 		
 		$(".lancamentosProgramadosGrid", _workspace).flexOptions({			
 			url : pathTela + "/matrizLancamento/obterGridMatrizLancamento",
@@ -651,25 +635,20 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		$(".areaBts").find(".bt_novos", _workspace).show();
 	},
 	
-	this.checkUncheckLancamentos = function(checked) {
+	this.checkUncheckLancamentos = function() {
 				
 		var inputTodos = $('#selTodos', _workspace);
 		
-		if(checked) 
-			todos.check(checked);
-		
 		var todos = (inputTodos.attr("checked") == 'checked');
 		
-		T.selecionados = [];
-		
-		$.each(T.lancamentos, function(index, row){
-			row.selecionado = todos;
+		if (todos) {
 			
-			if (todos) {
-				
-				T.selecionados.push(row);
-			}
-		}),
+			T.selecionados = T.produtosLancamento;
+			
+		} else {
+			
+			T.selecionados = []
+		}
 		
 		checkAll(document.getElementById('selTodos'), "checkgroup");
 		

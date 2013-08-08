@@ -367,7 +367,7 @@ public class MatrizLancamentoController extends BaseController {
 	@Post
 	@Rules(Permissao.ROLE_LANCAMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
 	public void reprogramarLancamentosSelecionados(List<ProdutoLancamentoVO> produtosLancamento,
-												   String dataAtualFormatada, String novaDataFormatada, boolean selecionarTodos) {
+												   String novaDataFormatada) {
 		
 		this.verificarExecucaoInterfaces();
 		
@@ -377,19 +377,6 @@ public class MatrizLancamentoController extends BaseController {
 		
 		Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
 		
-		Date dataAtual = null;
-		if(dataAtualFormatada != null && selecionarTodos)
-			dataAtual = DateUtil.parseDataPTBR(dataAtualFormatada);
-		
-		if (selecionarTodos) {
-			
-			List<ProdutoLancamentoDTO> produtosLancamentoDTO = this.getProdutoLancamentoDTOFromMatrizSessao(dataAtual);
-		
-			this.removerProdutosConfirmados(produtosLancamentoDTO);
-			
-			produtosLancamento = this.getProdutosLancamentoVO(produtosLancamentoDTO);
-		}
-		
 		this.validarListaParaReprogramacao(produtosLancamento);
 		
 		this.validarDataReprogramacao(produtosLancamento, novaData);
@@ -397,21 +384,6 @@ public class MatrizLancamentoController extends BaseController {
 		this.atualizarMapaLancamento(produtosLancamento, novaData);
 		
 		this.result.use(Results.json()).from(Results.nothing()).serialize();
-	}
-	
-	private void removerProdutosConfirmados(List<ProdutoLancamentoDTO> produtosLancamento) {
-		
-		Iterator<ProdutoLancamentoDTO> iterator = produtosLancamento.iterator();
-		
-		while (iterator.hasNext()) {
-			
-			ProdutoLancamentoDTO produtoLancamento = iterator.next();
-			
-			if (this.matrizLancamentoService.isProdutoConfirmado(produtoLancamento)) {
-				
-				iterator.remove();
-			}
-		}
 	}
 	
 	private void removerProdutosAgrupados(List<ProdutoLancamentoDTO> produtosLancamento) {
@@ -765,17 +737,22 @@ public class MatrizLancamentoController extends BaseController {
 		
 		Double valorTotal = this.getValorTotal(listaProdutoLancamento);
 		
+		List<ProdutoLancamentoVO> listaProdutoBalanceamentoVO =
+			new LinkedList<ProdutoLancamentoVO>();
+	
+		listaProdutoBalanceamentoVO = getProdutosLancamentoVO(listaProdutoLancamento);
+		
 		listaProdutoLancamento =
 			PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoLancamento, paginacao, paginacao.getSortColumn());
 		
-		List<ProdutoLancamentoVO> listaProdutoBalanceamentoVO =
+		List<ProdutoLancamentoVO> listaProdutoBalanceamentoPaginacaoVO =
 				new LinkedList<ProdutoLancamentoVO>();
 		
-		listaProdutoBalanceamentoVO = getProdutosLancamentoVO(listaProdutoLancamento);
+		listaProdutoBalanceamentoPaginacaoVO = getProdutosLancamentoVO(listaProdutoLancamento);
 						
 		TableModel<CellModelKeyValue<ProdutoLancamentoVO>> tm = new TableModel<CellModelKeyValue<ProdutoLancamentoVO>>();
 		List<CellModelKeyValue<ProdutoLancamentoVO>> cells = CellModelKeyValue
-				.toCellModelKeyValue(listaProdutoBalanceamentoVO);
+				.toCellModelKeyValue(listaProdutoBalanceamentoPaginacaoVO);
 		
 		List<Object> resultado = new ArrayList<Object>();
 		
@@ -787,6 +764,7 @@ public class MatrizLancamentoController extends BaseController {
 
 		resultado.add(tm);
 		resultado.add(CurrencyUtil.formatarValor(valorTotal));
+		resultado.add(listaProdutoBalanceamentoVO);
 		
 		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
 		
