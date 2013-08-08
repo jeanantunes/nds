@@ -48,6 +48,7 @@ import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.ResultadoCurvaABCCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroAnaliseEstudoDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
@@ -2641,7 +2642,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<AnaliseHistoricoDTO> buscarCotasComHistoricoDeVenda(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas) {
+    public List<AnaliseHistoricoDTO> buscarCotasComHistoricoDeVenda(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas, String sortorder, String sortname) {
 	Map<String, Object> parameters = new HashMap<String, Object>();
 
 	StringBuilder hql = new StringBuilder();
@@ -2707,6 +2708,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	}
 
 	hql.append(" GROUP BY cota.numeroCota ");
+	
+	hql.append(this.ordenarCotasComHistoricoDeVenda(sortorder, sortname));
 
 	Query query = super.getSession().createQuery(hql.toString());
 
@@ -2716,6 +2719,17 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 
 	return query.list();
     }
+    
+    private String ordenarCotasComHistoricoDeVenda(String sortorder, String sortname) {
+
+		StringBuilder hql = new StringBuilder();
+		
+		if(sortname.equals("qtdPdv")){
+			hql.append(" ORDER BY qtdPdv " + sortorder);
+		}
+
+		return hql.toString();
+	}
 
     @Override
     public HistoricoVendaPopUpCotaDto buscarCota(Integer numero) {

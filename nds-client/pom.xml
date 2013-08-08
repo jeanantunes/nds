@@ -342,7 +342,7 @@
 			</activation>
 			<properties>
 				<jndi-name>java:comp/env/jdbc/nds-client</jndi-name>
-				<dataSourceURL>jdbc:mysql://localhost:3306/nds-client</dataSourceURL>
+				<dataSourceURL>jdbc:mysql://localhost:3306/nds-client-f2</dataSourceURL>
 				<dataSourceUsername>root</dataSourceUsername>
 				<dataSourcePassword>root</dataSourcePassword>
 				<testDataSourceURL>jdbc:mysql://localhost:3306/nds-client-test</testDataSourceURL>

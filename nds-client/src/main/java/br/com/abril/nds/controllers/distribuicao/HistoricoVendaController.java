@@ -245,13 +245,14 @@ public class HistoricoVendaController extends BaseController {
 		session.setAttribute("listCotas", cotas);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Post
-	public void carregarGridAnaliseHistorico(){
+	public void carregarGridAnaliseHistorico(String sortorder, String sortname){
 		List<ProdutoEdicaoDTO> listProdutoEdicaoDTO = (List<ProdutoEdicaoDTO>) session.getAttribute("listProdutoEdicao");
 		
 		List<Cota> listCota = (List<Cota>) session.getAttribute("listCotas");
 		
-		List<AnaliseHistoricoDTO> listAnaliseHistorico = cotaService.buscarHistoricoCotas(listProdutoEdicaoDTO, listCota);
+		List<AnaliseHistoricoDTO> listAnaliseHistorico = cotaService.buscarHistoricoCotas(listProdutoEdicaoDTO, listCota, sortorder, sortname);
 		
 		TableModel<CellModelKeyValue<AnaliseHistoricoDTO>> tableModel = new TableModel<CellModelKeyValue<AnaliseHistoricoDTO>>();
 		
@@ -339,7 +340,7 @@ public class HistoricoVendaController extends BaseController {
 		List<ProdutoEdicaoDTO> listProdutoEdicaoDTO = (List<ProdutoEdicaoDTO>) session.getAttribute("listProdutoEdicao");
 		List<Cota> listCota = (List<Cota>) session.getAttribute("listCotas");
 		
-		List<AnaliseHistoricoDTO> dto = cotaService.buscarHistoricoCotas(listProdutoEdicaoDTO, listCota);
+		List<AnaliseHistoricoDTO> dto = cotaService.buscarHistoricoCotas(listProdutoEdicaoDTO, listCota, null, null);
 		
 		try {
 			FileExporter.to("Analise Historico Venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, dto,

@@ -372,7 +372,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 
 	List<CotaDTO> buscarCotasPorComponentes(ComponentesPDV componente, String elemento, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 	
-	List<AnaliseHistoricoDTO> buscarCotasComHistoricoDeVenda(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas);
+	List<AnaliseHistoricoDTO> buscarCotasComHistoricoDeVenda(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas, String sortorder, String sortname);
 	
 	HistoricoVendaPopUpCotaDto buscarCota(Integer numero);
 
