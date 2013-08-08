@@ -942,7 +942,9 @@ var lancamentoNovoController = $.extend(true, {
 				$("#pacotePadrao", lancamentoNovoController.workspace).text(result[1]);
 				$("#idProdutoEdicao", lancamentoNovoController.workspace).val(result[2]);
 				
-				lancamentoNovoController.verificarTipoEstoque(result[3]);
+				if ($("#paraEstoque").is(":checked")){
+					lancamentoNovoController.verificarTipoEstoque(result[3]);
+				}
 				
 			},
 			null,
