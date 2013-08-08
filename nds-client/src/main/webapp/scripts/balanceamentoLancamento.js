@@ -20,7 +20,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	
 	this.pesquisar = function() {
 		
-		$("#resumoPeriodo", _workspace).show();				
+		$("#resumoPeriodo", _workspace).show();
 		
 		var data = [];
 		
@@ -30,7 +30,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			data.push({name:'idsFornecedores', value: $(this).val()});
 		});
 		
-		$(".grids", _workspace).hide();
+		T.esconderGrid();
 				
 		$.postJSON(
 			pathTela + "/matrizLancamento/obterMatrizLancamento", 
@@ -42,17 +42,17 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				}
 				
 				T.popularResumoPeriodo(result);
+				
+				T.mostrarBotoesAcao();
 			},
 			function() {
 
 				$("#resumoPeriodo", _workspace).hide();
 				
-				$(".areaBts").find(".bt_novos", _workspace).hide();				
+				T.esconderBotoesAcao();				
 			}
 		);
 	},
-	
-
 
 	this.verificarBalanceamentosAlterados = function(funcao) {
 
@@ -68,49 +68,32 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			}
 		);
 	},
-			
-	this.carregarGrid = function(dataLancamento) {
-		
-		T.mostrarGridEBotoesAcao();
-		
-		T.linhasDestacadas = [];		
-		lancamentosSelecionados = [];	
-		
-		T.dataAtualSelecionada = dataLancamento;
-		$('#selTodos', _workspace).uncheck();
-		
-		T.checkUncheckLancamentos();
-		
-		$(".lancamentosProgramadosGrid", _workspace).flexOptions({			
-			url : pathTela + "/matrizLancamento/obterGridMatrizLancamento",
-			dataType : 'json',
-			autoload: false,
-			singleSelect: true,
-			preProcess: T.processaRetornoPesquisa,
-			onSuccess: T.onSuccessPesquisa,
-			params: [
-		         {name:'dataLancamentoFormatada', value: dataLancamento}
-		    ],
-		    newp: 1,
-		});
-		
-		$(".lancamentosProgramadosGrid", _workspace).flexReload();
-		
-	},
 	
 	this.processaRetornoPesquisa = function(resultadoPesquisa) {
 		
 		if(resultadoPesquisa.mensagens) {
 			
 			exibirMensagem(resultadoPesquisa.mensagens.tipoMensagem, resultadoPesquisa.mensagens.listaMensagens);
-			return resultadoPesquisa.rows;
+		
+		    return null;
+		}
+		
+		T.linhasDestacadas = [];
+		T.lancamentosPaginacao = [];
+		T.produtosLancamento = [];
+		
+		if (resultadoPesquisa[0]) {
+		
+			T.mostrarGrid();
+			
+		} else {
+			
+			T.esconderGrid();
+			
+			return null;
 		}
 		
 		$("#valorTotal", _workspace).clear();
-		
-		T.linhasDestacadas = [];
-		
-		T.lancamentosPaginacao = [];
 		
 		$("#valorTotal", _workspace).html(resultadoPesquisa[1]);
 		
@@ -120,7 +103,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		T.produtosLancamento = resultadoPesquisa[2];
 		
-		return (resultadoPesquisa[0] && resultadoPesquisa[0].rows) ? resultadoPesquisa[0] : resultadoPesquisa;
+		return (resultadoPesquisa[0] && resultadoPesquisa[0].rows) ? resultadoPesquisa[0] : null;
 	},
 		
 	this.popularResumoPeriodo = function(data) {
@@ -132,7 +115,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			  rows+='<td>';
 			  rows+='<div class="box_resumo">';
 			  rows+='<label>'+ resumo.dataFormatada;
-			  rows+= '<a href="javascript:;" onclick="' + T.instancia + '.carregarGrid(' + "'" + resumo.dataFormatada + "'" + ');" style="float: right;">';
+			  rows+= '<a href="javascript:;" onclick="' + T.instancia + '.carregarGrid(' + "'" + resumo.dataFormatada + "'" + ', true);" style="float: right;">';
 			  rows+= '<img src="' + contextPath + '/images/ico_detalhes.png" width="15" height="15" border="0" title="Visualizar" />';
 			  rows+= '</a></label>';
 			  rows+='<span class="span_1">Qtde. Títulos:</span>';	 
@@ -600,40 +583,78 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				   function(result) {
 						T.popularResumoPeriodo(result);
 						
-						T.atualizarGrid();
+						T.carregarGrid(null, false);
 				   }
 		);
 	},
 	
-	this.atualizarGrid = function() {		
-		
-		T.mostrarGridEBotoesAcao();
+	this.carregarGrid = function(dataLancamento, iniciarGrid) {
 		
 		T.linhasDestacadas = [];		
-		lancamentosSelecionados = [];		
+		lancamentosSelecionados = [];	
 		
+		if (dataLancamento || iniciarGrid) {
+			
+			T.dataAtualSelecionada = dataLancamento;
+		}
+	
 		$('#selTodos', _workspace).uncheck();
 		
 		T.checkUncheckLancamentos();
 		
-		$(".lancamentosProgramadosGrid", _workspace).flexOptions({			
-			url : pathTela + "/matrizLancamento/obterGridMatrizLancamento",
-			dataType : 'json',
-			autoload: false,
-			singleSelect: true,
-			preProcess: T.processaRetornoPesquisa,
-			onSuccess: T.onSuccessPesquisa
-		});
+		if (iniciarGrid) {
+		
+			$(".lancamentosProgramadosGrid", _workspace).flexOptions({			
+				url : pathTela + "/matrizLancamento/obterGridMatrizLancamento",
+				dataType : 'json',
+				autoload: false,
+				singleSelect: true,
+				preProcess: T.processaRetornoPesquisa,
+				onSuccess: T.onSuccessPesquisa,
+				params: [
+			         {name:'dataLancamentoFormatada', value: T.dataAtualSelecionada}
+			    ],
+			    newp: 1,
+			});
+			
+		} else {
+			
+			$(".lancamentosProgramadosGrid", _workspace).flexOptions({			
+				url : pathTela + "/matrizLancamento/obterGridMatrizLancamento",
+				dataType : 'json',
+				autoload: false,
+				singleSelect: true,
+				preProcess: T.processaRetornoPesquisa,
+				onSuccess: T.onSuccessPesquisa,
+				params: [
+			         {name:'dataLancamentoFormatada', value: T.dataAtualSelecionada}
+			    ]
+			});
+		}
 		
 		$(".lancamentosProgramadosGrid", _workspace).flexReload();
 	},
 	
-	this.mostrarGridEBotoesAcao = function () {
+	this.mostrarGrid = function() {
 		
 		$(".grids", _workspace).show();
+	},
+	
+	this.esconderGrid = function() {
+		
+		$(".grids", _workspace).hide();
+	},
+	
+	this.mostrarBotoesAcao = function() {
 		
 		$(".areaBts").find(".bt_novos", _workspace).show();
 	},
+	
+	this.esconderBotoesAcao = function() {
+		
+		$(".areaBts").find(".bt_novos", _workspace).hide();
+	},
+	
 	
 	this.checkUncheckLancamentos = function() {
 				
@@ -728,9 +749,10 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			pathTela + "/matrizLancamento/voltarConfiguracaoOriginal",
 			null,
 			function(result) {
+				
+					T.esconderGrid();
+				
 					T.popularResumoPeriodo(result);
-					
-					T.carregarGrid();
 			},
 			function() {
 				
