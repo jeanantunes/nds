@@ -1160,32 +1160,23 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados, Long id,
 			RateioCotaVO rateioCotaVO) {
 		
-		Set<Entry<Long, List<RateioCotaVO>>> entrySet = mapaRateiosCadastrados.entrySet();
-		Iterator<Entry<Long, List<RateioCotaVO>>> iterator = entrySet.iterator();
+		List<RateioCotaVO> listaRateiosCadastrados = mapaRateiosCadastrados.get(id);
 		
-		boolean verificacaoSeEstaNoMapa = false;
+		if (listaRateiosCadastrados == null) {
 		
-		if(iterator.hasNext()) {
-			while(iterator.hasNext()) {
-				Entry<Long, List<RateioCotaVO>> keyValue = iterator.next();
-				List<RateioCotaVO> listaValue = keyValue.getValue();
-	
-				for(RateioCotaVO value : listaValue) {
-					if(rateioCotaVO.getNumeroCota().equals(value.getNumeroCota()) && 
-							rateioCotaVO.getIdDiferenca().equals(value.getIdDiferenca()) ) {
-							
-						verificacaoSeEstaNoMapa = true;
-					}
-				}
-				
-				if(verificacaoSeEstaNoMapa == false) {
-					listaValue.add(rateioCotaVO);
-				}
-			}
-		} 
+			listaRateiosCadastrados = new ArrayList<RateioCotaVO>();
+		}
+
+		if (listaRateiosCadastrados.contains(rateioCotaVO)) {
+			
+			listaRateiosCadastrados.remove(rateioCotaVO);
+		}
+		
+		listaRateiosCadastrados.add(rateioCotaVO);
+		
+		mapaRateiosCadastrados.put(id, listaRateiosCadastrados);
 		
 		return mapaRateiosCadastrados;
-		
 	}
 	
 }

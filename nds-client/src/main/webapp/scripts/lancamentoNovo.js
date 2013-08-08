@@ -177,7 +177,6 @@ var lancamentoNovoController = $.extend(true, {
 				
 				var diferenca = result.diferenca;
 				
-				$("#reparteProduto", lancamentoNovoController.workspace).text(diferenca.qtdeEstoqueAtual);
 				$("#tipoDiferenca", lancamentoNovoController.workspace).val(diferenca.tipoDiferenca);
 				$("#idProdutoEdicao", lancamentoNovoController.workspace).val(result.idProdutoEdicao);
 				
@@ -186,14 +185,17 @@ var lancamentoNovoController = $.extend(true, {
 				if(diferenca.tipoDirecionamento == 'COTA'){
 					
 					lancamentoNovoController.carregarEdicaoDirecionamentoCota(result);
+					$("#reparteProduto", lancamentoNovoController.workspace).text('');
 				}
 				else if(diferenca.tipoDirecionamento == 'ESTOQUE'){
 					
 					lancamentoNovoController.carregarEdicaoDirecionamentoEstoque(result);
+					$("#reparteProduto", lancamentoNovoController.workspace).text(diferenca.qtdeEstoqueAtual);
 				}
 				else if(diferenca.tipoDirecionamento == 'NOTA'){
 					
 					lancamentoNovoController.carregarEdicaoDirecionamentoNota(result);
+					$("#reparteProduto", lancamentoNovoController.workspace).text(diferenca.qtdeEstoqueAtual);
 				}
 
 				lancamentoNovoController.desabilitarCamposEdicaoDiferenca();				

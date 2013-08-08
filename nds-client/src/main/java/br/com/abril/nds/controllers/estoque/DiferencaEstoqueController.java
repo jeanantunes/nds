@@ -765,6 +765,8 @@ public class DiferencaEstoqueController extends BaseController {
 					break;
 				}
 			}
+			
+			this.httpSession.setAttribute(LISTA_DIFERENCAS_SESSION_ATTRIBUTE, listaDiferencas);
 		}
 	}
 
@@ -788,6 +790,7 @@ public class DiferencaEstoqueController extends BaseController {
 				}
 			}
 			
+			this.httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE, listaDiferencas);
 		}
 		
 		Set<DiferencaVO> listaNovasDiferencasVO = 
@@ -804,6 +807,8 @@ public class DiferencaEstoqueController extends BaseController {
 					break;
 				}
 			}
+			
+			this.httpSession.setAttribute(LISTA_NOVAS_DIFERENCAS_VO_SESSION_ATTRIBUTE, listaNovasDiferencasVO);
 		}
 	}
 
@@ -1123,11 +1128,9 @@ public class DiferencaEstoqueController extends BaseController {
 			
 			this.validarNovoRateio(rateioCotaVO,diferencaVO);
 			
-			mapaRateiosCadastrados = this.diferencaEstoqueService.verificarSeExisteListaNoMapa(mapaRateiosCadastrados, 
-						diferencaVO.getId(), rateioCotaVO);
-			
-			mapaRateiosCadastrados = this.diferencaEstoqueService.incluirSeNaoExisteNoMapa(mapaRateiosCadastrados, diferencaVO.getId(), 
-					rateioCotaVO);
+			mapaRateiosCadastrados = 
+				this.diferencaEstoqueService.incluirSeNaoExisteNoMapa(
+					mapaRateiosCadastrados, diferencaVO.getId(), rateioCotaVO);
 		}
 
 		this.httpSession.setAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE, mapaRateiosCadastrados);
