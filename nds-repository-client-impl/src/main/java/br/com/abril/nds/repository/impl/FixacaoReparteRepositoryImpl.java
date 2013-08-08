@@ -272,6 +272,11 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 
 	@Override
 	public void execucaoQuartz() {
+		
+		/*
+		 * criar teste para este quartz, o banco já está preparado com 5 fixações a serem excluidas.
+		 */
+		
 		StringBuilder hql = new StringBuilder("");
 
 		hql.append("")

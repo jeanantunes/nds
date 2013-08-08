@@ -60,6 +60,9 @@ public class FixacaoReparte {
 	@Column(name="ED_FINAL")
 	private Integer edicaoFinal;
 	
+	@Column(name="ED_CORRENTE")
+	private Integer edicaoCorrente;
+	
 	@Column(name="ED_ATENDIDAS")
 	private Integer edicoesAtendidas;
 	
@@ -182,5 +185,12 @@ public class FixacaoReparte {
 		this.manterFixa = manterFixa;
 	}
 
+	public Integer getEdicaoCorrente() {
+		return edicaoCorrente;
+	}
+
+	public void setEdicaoCorrente(Integer edicaoCorrente) {
+		this.edicaoCorrente = edicaoCorrente;
+	}
 }
 

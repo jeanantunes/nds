@@ -454,5 +454,11 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		return true;
 	
 	}
+
+	@Transactional
+	@Override
+	public void testeExecucaoQuartz() {
+		fixacaoReparteRepository.execucaoQuartz();
+	}
 	
 }
