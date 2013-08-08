@@ -11,7 +11,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	this.lancamentosPaginacao = [];
 	this.selecionados = [];
 	this.produtosLancamento = [];
-	this.dataAtualSelecionada = [];
+	this.dataAtualSelecionada = null;
 	
 	this.definirAcaoPesquisaTeclaEnter = function() {
 		
@@ -22,9 +22,11 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		$("#resumoPeriodo", _workspace).show();
 		
+		var dataLancamento = $("#datepickerDe", _workspace).val();
+		
 		var data = [];
 		
-		data.push({name:'dataLancamento', value: $("#datepickerDe", _workspace).val()});
+		data.push({name:'dataLancamento', value: dataLancamento});
 		
 		$("input[name='checkgroup_menu']:checked", _workspace).each(function(i) {
 			data.push({name:'idsFornecedores', value: $(this).val()});
@@ -44,6 +46,8 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				T.popularResumoPeriodo(result);
 				
 				T.mostrarBotoesAcao();
+				
+				T.escolherDataAbrirGrid(result, dataLancamento);
 			},
 			function() {
 
@@ -52,6 +56,21 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				T.esconderBotoesAcao();				
 			}
 		);
+	},
+	
+	this.escolherDataAbrirGrid = function(result, dataLancamento) {
+		
+		T.dataAtualSelecionada = null;
+		
+		$.each(result.listaResumoPeriodoBalanceamento, function(index, resumo){
+			
+			if (resumo.dataFormatada == dataLancamento) {
+				
+				T.dataAtualSelecionada = resumo.dataFormatada;
+			}
+		});
+		
+		T.carregarGrid(T.dataAtualSelecionada, true);
 	},
 
 	this.verificarBalanceamentosAlterados = function(funcao) {
