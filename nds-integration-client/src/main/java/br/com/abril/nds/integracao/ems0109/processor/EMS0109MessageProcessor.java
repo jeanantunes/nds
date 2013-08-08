@@ -267,13 +267,17 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
  
 	private void validarDescontoLogistico(Message message, String codigoPublicacao) {
 		String assunto = "Erro na Interface 109 PUB - TipoDesconto não cadastrado na DescontoLogistico";
-		sendEmailInterface(assunto, "TipoDesconto não cadastrado na tabela DescontoLogistico arquivo .PUB vindo PRODIN, código de publicação:  "+codigoPublicacao, message);
+		String msg = "TipoDesconto não cadastrado na tabela DescontoLogistico arquivo .PUB vindo PRODIN, código de publicação:  "+codigoPublicacao;
+		sendEmailInterface(assunto, msg, message);
+		this.ndsiLoggerFactory.getLogger().logWarning(message,EventoExecucaoEnum.SEM_DOMINIO,msg);
 	}
 
 	public void validarTipoDesconto(Message message, String tipoDesconto, String codigoPublicacao){
 		if(tipoDesconto == null || tipoDesconto == "00" || tipoDesconto == ""){
 			String assunto = "Erro na Interface 109 PUB - TipoDesconto não consta no arquivo";
-			sendEmailInterface(assunto, "TipoDesconto não consta no arquivo .PUB de publicações vindo PRODIN, código de publicação:  "+codigoPublicacao, message);
+			String msg ="TipoDesconto não consta no arquivo .PUB de publicações vindo PRODIN, código de publicação:  "+codigoPublicacao;
+			sendEmailInterface(assunto, msg, message);
+			this.ndsiLoggerFactory.getLogger().logWarning(message,EventoExecucaoEnum.SEM_DOMINIO,msg);
 		}
 	}
 	
