@@ -253,6 +253,7 @@ var analiseHistoricoVendaController = $.extend(true, {
 			
 			row.cell.reparteMedio = (row.cell.reparteMedio || 0).toFixed(0);
 			row.cell.vendaMedia = (row.cell.vendaMedia || 0).toFixed(0);
+			
 		}
 		
 		analiseHistoricoVendaController.calcularMediaVendaEReparteCota(resumo);
@@ -298,6 +299,12 @@ var analiseHistoricoVendaController = $.extend(true, {
 		}
 		if(resumo.ed6Venda == 0){
 			resumo.ed6Venda = "";
+		}
+		if(resumo.reparteMedio == 0){
+			resumo.reparteMedio = "";
+		}
+		if(resumo.vendaMedia == 0){
+			resumo.vendaMedia = "";
 		}
 		
 		html = '<td width="50" >Qtde Cotas:</td>' +

@@ -139,6 +139,7 @@ import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.JasperUtil;
+import br.com.abril.nds.util.ListUtils;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -2519,13 +2520,13 @@ public class CotaServiceImpl implements CotaService {
 			setMediaVendaEReparte(listProdutoEdicaoDto.size(), analiseHistoricoDTO);
 		}
 
-		ordenarListaHistoricoVenda(sortorder, sortname, formatarListaHistoricoVenda(listAnaliseHistoricoDTO));
+		formatarListaHistoricoVenda(listAnaliseHistoricoDTO);
+		ordenarListaHistoricoVenda(sortorder, sortname, listAnaliseHistoricoDTO);
 		
 		return listAnaliseHistoricoDTO;
 	}
 
-	private List<AnaliseHistoricoDTO> formatarListaHistoricoVenda(List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO) {
-		ArrayList<AnaliseHistoricoDTO> listaDeRetorno = new ArrayList<AnaliseHistoricoDTO>();
+	private void formatarListaHistoricoVenda(List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO) {
 		for (AnaliseHistoricoDTO dto : listAnaliseHistoricoDTO) {			
 
 			if(dto.getEd1Reparte().equals("0")){
@@ -2562,114 +2563,59 @@ public class CotaServiceImpl implements CotaService {
 				dto.setEd6Reparte("");
 			}if(dto.getEd6Venda().equals("0")){
 				dto.setEd6Venda("");
-			}			
-			listaDeRetorno.add(dto);
+			}
+			if(dto.getReparteMedio() == 0){
+				dto.setReparteMedio(null);
+			}
+			if(dto.getVendaMedia() == 0){
+				dto.setVendaMedia(null);
+			}
 		}
-		return listaDeRetorno;
+	}
+	
+	public static void main(String[] args) {
+		Double d = 0.0;
+		
+		if(d == 0){
+			System.out.println("entrou");
+		}
+		
 	}
 
-	private void ordenarListaHistoricoVenda(final String sortorder,
-			final String sortname,
-			List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO) {
+	private void ordenarListaHistoricoVenda(final String sortorder, final String sortname, List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO) {
 		if(!StringUtils.equals(sortorder, "undefined")){
-			Collections.sort(listAnaliseHistoricoDTO, new Comparator<AnaliseHistoricoDTO>() {
-				
-				@Override
-				public int compare(AnaliseHistoricoDTO o1, AnaliseHistoricoDTO o2) {
-					
-					int i = 0;
-					if(sortname != null){
-						if(sortname.equals("ed1Reparte")){
-							if(sortorder.equalsIgnoreCase("ASC")){
-								i = Integer.compare(Integer.parseInt(o1.getEd1Reparte()), Integer.parseInt(o2.getEd1Reparte()));
-							}else if(sortorder.equalsIgnoreCase("DESC")){
-								i = Integer.compare(Integer.parseInt(o2.getEd1Reparte()), Integer.parseInt(o1.getEd1Reparte()));
-							}						
-						}else if(sortname.equals("ed1Venda")){
-							if(sortorder.equalsIgnoreCase("ASC")){
-								i = Integer.compare(Integer.parseInt(o1.getEd1Venda()), Integer.parseInt(o2.getEd1Venda()));
-							}else if(sortorder.equalsIgnoreCase("DESC")){
-								i = Integer.compare(Integer.parseInt(o2.getEd1Venda()), Integer.parseInt(o1.getEd1Venda()));
-							}	
-						}else if(sortname.equals("ed2Reparte")){
-							if(sortorder.equalsIgnoreCase("ASC")){
-								i = Integer.compare(Integer.parseInt(o1.getEd2Reparte()), Integer.parseInt(o2.getEd2Reparte()));
-							}else if(sortorder.equalsIgnoreCase("DESC")){
-								i = Integer.compare(Integer.parseInt(o2.getEd2Reparte()), Integer.parseInt(o1.getEd2Reparte()));
-							}						
-						}else if(sortname.equals("ed2Venda")){
-							if(sortorder.equalsIgnoreCase("ASC")){
-								i = Integer.compare(Integer.parseInt(o1.getEd2Venda()), Integer.parseInt(o2.getEd2Venda()));
-							}else if(sortorder.equalsIgnoreCase("DESC")){
-								i = Integer.compare(Integer.parseInt(o2.getEd2Venda()), Integer.parseInt(o1.getEd2Venda()));
-							}	
-						}else if(sortname.equals("ed3Reparte")){
-							if(sortorder.equalsIgnoreCase("ASC")){
-								i = Integer.compare(Integer.parseInt(o1.getEd3Reparte()), Integer.parseInt(o2.getEd3Reparte()));
-							}else if(sortorder.equalsIgnoreCase("DESC")){
-								i = Integer.compare(Integer.parseInt(o2.getEd3Reparte()), Integer.parseInt(o1.getEd3Reparte()));
-							}						
-						}else if(sortname.equals("ed3Venda")){
-							if(sortorder.equalsIgnoreCase("ASC")){
-								i = Integer.compare(Integer.parseInt(o1.getEd3Venda()), Integer.parseInt(o2.getEd3Venda()));
-							}else if(sortorder.equalsIgnoreCase("DESC")){
-								i = Integer.compare(Integer.parseInt(o2.getEd3Venda()), Integer.parseInt(o1.getEd3Venda()));
-							}	
-						}else if(sortname.equals("ed3Reparte")){
-							if(sortorder.equalsIgnoreCase("ASC")){
-								i = Integer.compare(Integer.parseInt(o1.getEd3Reparte()), Integer.parseInt(o2.getEd3Reparte()));
-							}else if(sortorder.equalsIgnoreCase("DESC")){
-								i = Integer.compare(Integer.parseInt(o2.getEd3Reparte()), Integer.parseInt(o1.getEd3Reparte()));
-							}						
-						}else if(sortname.equals("ed4Venda")){
-							if(sortorder.equalsIgnoreCase("ASC")){
-								i = Integer.compare(Integer.parseInt(o1.getEd4Venda()), Integer.parseInt(o2.getEd4Venda()));
-							}else if(sortorder.equalsIgnoreCase("DESC")){
-								i = Integer.compare(Integer.parseInt(o2.getEd4Venda()), Integer.parseInt(o1.getEd4Venda()));
-							}	
-						}else if(sortname.equals("ed5Reparte")){
-							if(sortorder.equalsIgnoreCase("ASC")){
-								i = Integer.compare(Integer.parseInt(o1.getEd5Reparte()), Integer.parseInt(o2.getEd5Reparte()));
-							}else if(sortorder.equalsIgnoreCase("DESC")){
-								i = Integer.compare(Integer.parseInt(o2.getEd5Reparte()), Integer.parseInt(o1.getEd5Reparte()));
-							}						
-						}else if(sortname.equals("ed5Venda")){
-							if(sortorder.equalsIgnoreCase("ASC")){
-								i = Integer.compare(Integer.parseInt(o1.getEd5Venda()), Integer.parseInt(o2.getEd5Venda()));
-							}else if(sortorder.equalsIgnoreCase("DESC")){
-								i = Integer.compare(Integer.parseInt(o2.getEd5Venda()), Integer.parseInt(o1.getEd5Venda()));
-							}	
-						}else if(sortname.equals("ed5Reparte")){
-							if(sortorder.equalsIgnoreCase("ASC")){
-								i = Integer.compare(Integer.parseInt(o1.getEd5Reparte()), Integer.parseInt(o2.getEd5Reparte()));
-							}else if(sortorder.equalsIgnoreCase("DESC")){
-								i = Integer.compare(Integer.parseInt(o2.getEd5Reparte()), Integer.parseInt(o1.getEd5Reparte()));
-							}						
-						}else if(sortname.equals("ed6Venda")){
-							if(sortorder.equalsIgnoreCase("ASC")){
-								i = Integer.compare(Integer.parseInt(o1.getEd6Venda()), Integer.parseInt(o2.getEd6Venda()));
-							}else if(sortorder.equalsIgnoreCase("DESC")){
-								i = Integer.compare(Integer.parseInt(o2.getEd6Venda()), Integer.parseInt(o1.getEd6Venda()));
-							}	
-						}else if(sortname.equals("reparteMedio")){
-							if(sortorder.equalsIgnoreCase("ASC")){
-								i = Double.compare(o1.getReparteMedio(), o2.getReparteMedio());
-							}else if(sortorder.equalsIgnoreCase("DESC")){
-								i = Double.compare(o2.getReparteMedio() , o1.getReparteMedio());							
-							}	
-						}else if(sortname.equals("vendaMedia")){
-							if(sortorder.equalsIgnoreCase("ASC")){
-								i = Double.compare(o1.getVendaMedia(), o2.getVendaMedia());
-							}else if(sortorder.equalsIgnoreCase("DESC")){
-								i = Double.compare(o2.getVendaMedia(), o1.getVendaMedia());
-							}	
-						}
-						
-					}
-					return i;
-				}
-			} );
 			
+			if(sortname != null){
+				if(sortname.equals("ed1Reparte")){
+					ListUtils.orderList(sortorder, "ed1Reparte", listAnaliseHistoricoDTO, Integer.class);					
+				}else if(sortname.equals("ed1Venda")){
+					ListUtils.orderList(sortorder, "ed1Venda", listAnaliseHistoricoDTO, Integer.class);	
+				}else if(sortname.equals("ed2Reparte")){
+					ListUtils.orderList(sortorder, "ed2Reparte", listAnaliseHistoricoDTO, Integer.class);						
+				}else if(sortname.equals("ed2Venda")){
+					ListUtils.orderList(sortorder, "ed2Venda", listAnaliseHistoricoDTO, Integer.class);	
+				}else if(sortname.equals("ed3Reparte")){
+					ListUtils.orderList(sortorder, "ed3Reparte", listAnaliseHistoricoDTO, Integer.class);					
+				}else if(sortname.equals("ed3Venda")){
+					ListUtils.orderList(sortorder, "ed3Venda", listAnaliseHistoricoDTO, Integer.class);	
+				}else if(sortname.equals("ed4Reparte")){
+					ListUtils.orderList(sortorder, "ed4Reparte", listAnaliseHistoricoDTO, Integer.class);						
+				}else if(sortname.equals("ed4Venda")){
+					ListUtils.orderList(sortorder, "ed4Venda", listAnaliseHistoricoDTO, Integer.class);
+				}else if(sortname.equals("ed5Reparte")){
+					ListUtils.orderList(sortorder, "ed5Reparte", listAnaliseHistoricoDTO, Integer.class);						
+				}else if(sortname.equals("ed5Venda")){
+					ListUtils.orderList(sortorder, "ed5Venda", listAnaliseHistoricoDTO, Integer.class);
+				}else if(sortname.equals("ed6Reparte")){
+					ListUtils.orderList(sortorder, "ed6Reparte", listAnaliseHistoricoDTO, Integer.class);					
+				}else if(sortname.equals("ed6Venda")){
+					ListUtils.orderList(sortorder, "ed6Venda", listAnaliseHistoricoDTO, Integer.class);
+				}else if(sortname.equals("reparteMedio")){
+					ListUtils.orderList(sortorder, "reparteMedio", listAnaliseHistoricoDTO);
+				}else if(sortname.equals("vendaMedia")){
+					ListUtils.orderList(sortorder, "vendaMedia", listAnaliseHistoricoDTO);
+				}
+			}
 		}
 	}
 
