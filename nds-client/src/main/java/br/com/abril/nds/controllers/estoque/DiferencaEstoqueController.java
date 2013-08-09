@@ -995,13 +995,15 @@ public class DiferencaEstoqueController extends BaseController {
 		BigDecimal valorTotalDiferenca = BigDecimal.ZERO;
 		
 		if (TipoDiferenca.FALTA_DE.equals(tipoDiferenca)
-				|| TipoDiferenca.SOBRA_DE.equals(tipoDiferenca)) {
+				|| TipoDiferenca.SOBRA_DE.equals(tipoDiferenca)
+				|| TipoDiferenca.SOBRA_DE_DIRECIONADA_COTA.equals(tipoDiferenca)) {
 
 			valorTotalDiferenca =
 					produtoEdicao.getPrecoVenda().multiply( new BigDecimal( diferenca ) );
 			
 		} else if (TipoDiferenca.FALTA_EM.equals(tipoDiferenca)
-						|| TipoDiferenca.SOBRA_EM.equals(tipoDiferenca)) {
+						|| TipoDiferenca.SOBRA_EM.equals(tipoDiferenca)
+						|| TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA.equals(tipoDiferenca)) {
 			
 			valorTotalDiferenca =
 				produtoEdicao.getPrecoVenda().multiply(new BigDecimal( diferenca ) );
@@ -2705,7 +2707,9 @@ public class DiferencaEstoqueController extends BaseController {
 					quantidadeEstoque.subtract(diferenca.getQuantidade());
 		
 		} else if (diferenca.getTipoDiferenca().equals(TipoDiferenca.SOBRA_EM) 
-				||diferenca.getTipoDiferenca().equals(TipoDiferenca.SOBRA_DE)) {
+				||diferenca.getTipoDiferenca().equals(TipoDiferenca.SOBRA_DE)
+				||diferenca.getTipoDiferenca().equals(TipoDiferenca.SOBRA_DE_DIRECIONADA_COTA)
+				||diferenca.getTipoDiferenca().equals(TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA)) {
 			
 			quantidadeEstoque =
 					quantidadeEstoque.add(diferenca.getQuantidade());
