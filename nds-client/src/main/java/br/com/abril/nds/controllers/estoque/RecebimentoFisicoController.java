@@ -494,7 +494,9 @@ public class RecebimentoFisicoController extends BaseController {
 		recebimentoFisicoVO.setPeso(peso);
 		recebimentoFisicoVO.setQtdPacote(qtdPacote);
 		recebimentoFisicoVO.setQtdExemplar(qtdExemplar);
-		
+		recebimentoFisicoVO.setValorTotalCapa(recebimentoFisicoDTO.getValorTotal().setScale(2, RoundingMode.HALF_EVEN).toString());
+		recebimentoFisicoVO.setValorTotalDesconto(recebimentoFisicoDTO.getValorTotalDesconto().setScale(2, RoundingMode.HALF_EVEN).toString());
+				
 		result.use(Results.json()).withoutRoot().from(recebimentoFisicoVO).serialize();
 		
 	}
