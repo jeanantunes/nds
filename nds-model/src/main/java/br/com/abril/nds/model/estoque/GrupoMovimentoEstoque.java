@@ -90,7 +90,17 @@ public enum GrupoMovimentoEstoque  {
 	/**
 	 * Sobra em pacote distribuidor
 	 */
-	SOBRA_EM_COTA(OperacaoEstoque.ENTRADA, Dominio.COTA, TipoEstoque.LANCAMENTO), 
+	SOBRA_EM_COTA(OperacaoEstoque.ENTRADA, Dominio.COTA, TipoEstoque.LANCAMENTO),
+	
+	/**
+	 * Sobra de pacote direcionada para cota
+	 */
+	SOBRA_DE_DIRECIONADA_PARA_COTA(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.COTA),
+	
+	/**
+	 * Sobra em pacote direcionada para cota
+	 */
+	SOBRA_EM_DIRECIONADA_PARA_COTA(OperacaoEstoque.ENTRADA, Dominio.DISTRIBUIDOR, TipoEstoque.COTA),
 	
 	/**
 	 * Falta de pacote distribuidor
