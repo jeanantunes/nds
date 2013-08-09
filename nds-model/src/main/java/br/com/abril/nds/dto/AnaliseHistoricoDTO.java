@@ -232,9 +232,17 @@ public class AnaliseHistoricoDTO {
 	public String getReparteMedioFormat() {
 		return reparteMedioFormat;
 	}
+	
+	public void setReparteMedioFormat(String reparteMedioFormatado) {
+		this.reparteMedioFormat = reparteMedioFormatado;
+	}
 
 	public String getVendaMediaFormat() {
 		return vendaMediaFormat;
+	}
+	
+	public void setVendaMediaFormat(String vendaMediaFormatado) {
+		this.vendaMediaFormat = vendaMediaFormatado;
 	}
 
 }
