@@ -82,6 +82,29 @@ public class RegiaoRepositoryImpl extends AbstractRepositoryModel<Regiao, Long> 
 	
 	@Override
 	public void execucaoQuartz() {
+		this.quartz1();
+		this.quartz2();
+	}
+	
+	private void quartz1 (){
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" delete ");
+		hql.append(" 	from ");
+		hql.append("		 REGISTRO_COTA_REGIAO ");
+		hql.append(" 	where ");
+		hql.append(" 		REGIAO_ID in ( ");
+		hql.append(" 			select regiao.ID ");
+		hql.append(" 			from  regiao ");
+		hql.append(" 			where  datediff(now(),data_regiao)>90 and REGIAO_IS_FIXA = 0 ) ");
+		
+		SQLQuery createSQLQuery = this.getSession().createSQLQuery(hql.toString());
+		
+		createSQLQuery.executeUpdate();
+	}
+	
+	private void quartz2 (){
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -90,6 +113,4 @@ public class RegiaoRepositoryImpl extends AbstractRepositoryModel<Regiao, Long> 
 		
 		createSQLQuery.executeUpdate();
 	}
-
-	
 }

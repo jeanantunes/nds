@@ -152,7 +152,7 @@ function removeProdutoEscohido(idx){
 			<span class="bt_sellAll" style="float: right;">
 				<label for="sel">Selecionar Todos</label>
 					<input type="checkbox" id="selTodosProdutos" name="Todos" onclick="regiaoController.checkAllNMaiores();"
-				style="float: left; margin-right: 25px;" checked /> </span>
+				style="float: left; margin-right: 25px;"/> </span>
 		</fieldset>
 
 	</div>
@@ -441,7 +441,7 @@ function removeProdutoEscohido(idx){
 									onchange="$('.grids').toggle(); regiaoController.carregarRegiao()">
 									<option selected="selected">Selecione...</option>
 									<c:forEach items="${listaRegiao}" var="regiao">
-										<option value="${regiao.key}">${regiao.value}</option>
+										<option value="${regiao.key}" label="${regiao.value}" />
 									</c:forEach>
 							</select>
 						</td>

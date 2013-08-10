@@ -60,7 +60,7 @@ public class RegiaoController extends BaseController {
 
 	@Autowired
 	private RegiaoService regiaoService;
-
+	
 	@Autowired
 	private HttpSession session;
 
@@ -83,7 +83,6 @@ public class RegiaoController extends BaseController {
 		this.carregarComboRegiao();
 		this.carregarComboSegmento();
 		this.carregarComboClassificacao();
-
 	}
 
 	@Post
@@ -312,16 +311,18 @@ public class RegiaoController extends BaseController {
 		Cota objCota = cotaService.obterPorNumeroDaCota(numCota);
 		
 		if (objCota == null) {
-			
 			return "A cota ["+numCota+"] não existe.";
+		}
+		
+		if (objCota.getSituacaoCadastro().toString().equalsIgnoreCase("Inativo")){
+			return "A cota ["+numCota+"] está com status de Inativo.";
 		}
 		
 		List<Integer> cotasCadas =  this.regiaoService.buscarNumeroCotasPorIdRegiao(idRegiao);
 		
 		for (Integer cotasCad : cotasCadas) {
 			
-			if(numCota == cotasCad) {
-				
+			if(numCota.equals(cotasCad)) {
 				return "A cota ["+numCota+"] já está cadastrada.";
 			}
 		}
@@ -560,8 +561,9 @@ public class RegiaoController extends BaseController {
 		result.use(Results.json()).from(Results.nothing()).serialize();
 	}
 	
-	
-	private void carregarComboRegiao() {
+	@Post
+	@Path("/carregarComboRegiao")
+	public void carregarComboRegiao() {
 
 		List<ItemDTO<Long,String>> comboRegiao =  new ArrayList<ItemDTO<Long,String>>();
 		List<RegiaoDTO> regioes = regiaoService.buscarRegiao();
