@@ -50,5 +50,4 @@ public interface FixacaoReparteService {
 
 	boolean gerarCopiafixacao(CopiaMixFixacaoDTO copiaDTO);
 	
-	public void testeExecucaoQuartz();
 }
