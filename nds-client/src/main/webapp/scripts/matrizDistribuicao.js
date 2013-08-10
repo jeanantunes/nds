@@ -207,26 +207,36 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		T.formataCampos(row);
 		
-		var repDist = (row.cell.repDistrib != null && row.cell.repDistrib > 0)? row.cell.repDistrib : (row.cell.reparte - row.cell.promo); 
-		
-		row.cell.sobra = (row.cell.idEstudo == null || row.cell.idEstudo == "")?'<span id="sobra'+i+'">0</span>':
-			'<span id="sobra'+i+'">'+(row.cell.reparte - row.cell.promo - row.cell.repDistrib)+'</span>';
-		row.cell.repDistrib = T.gerarInputRepDistrib(repDist, i);
-		row.cell.reparte = parseInt(row.cell.reparte, 10);
-		row.cell.promo = parseInt(row.cell.promo, 10);
-		row.cell.juram = parseInt(row.cell.juram, 10);
-		row.cell.suplem = parseInt(row.cell.suplem, 10);
-		
+        row.cell.reparte = parseInt(row.cell.reparte, 10) || 0;
+		row.cell.promo = parseInt(row.cell.promo, 10) || 0;
+        row.cell.juram = parseInt(row.cell.juram, 10) || 0;
+        row.cell.suplem = parseInt(row.cell.suplem, 10) || 0;
+        row.cell.estoque = parseInt(row.cell.estoque, 10) || 0;
+
+        var reparte = (row.cell.estoque + row.cell.reparte) - row.cell.promo;
+        var repDist = (row.cell.repDistrib != null && row.cell.repDistrib > 0)? row.cell.repDistrib : ((row.cell.estoque + row.cell.reparte) - row.cell.promo);
+
+        row.cell.repDistrib = T.gerarInputRepDistrib(repDist, i, liberado);
+
+        row.cell.sobra = (row.cell.idEstudo == null || row.cell.idEstudo == "")?'<span id="sobra'+i+'">0</span>':
+            '<span id="sobra'+i+'">'+(reparte - repDist)+'</span>';
+
+        var t  = "Previsto: " + (row.cell.reparte - row.cell.promo);
+            t += "\r\nEstoque: " + row.cell.estoque;
+
+        row.cell.reparte = '<span title="' + t + '">' + reparte + '</span>'; //parseInt(row.cell.reparte, 10)
+
 		T.lancamentos.push({
-					idRow 		 : row.cell.idRow, 
+					idRow : row.cell.idRow,
 					idLancamento : row.cell.idLancamento,
 					estudo : row.cell.idEstudo,
-					lancto : row.cell.reparte,
+					lancto : reparte,
 					promo : row.cell.promo,
 					suplem : row.cell.suplem,
+					estoque : row.cell.estoque,
 					juram : row.cell.juram,
 					repDistrib : repDist,
-					sobra : repDist,
+					sobra : (reparte - repDist),
 					codigoProduto : row.cell.codigoProduto,
 					idProdutoEdicao : row.cell.idProdutoEdicao,
 					edicao : row.cell.numeroEdicao,
@@ -234,7 +244,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					classificacao : row.cell.classificacao,
 					dataLancto : row.cell.dataLancto,
 					dataLancamentoEstudoFormatado : row.cell.dataLancamentoEstudoFormatado,
-					reparte : row.cell.reparte,
+					reparte : reparte,
 					pctPadrao : row.cell.pctPadrao,
 					liberado : liberado,
 					dataFinMatDistrib : row.cell.dataFinMatDistrib,
@@ -330,9 +340,10 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 	},
 	
-	this.gerarInputRepDistrib = function(valor, index) {
-		
-		return '<input id="inputRepDistrib' + index + '" onchange="' + T.instancia + '.alterarReparte(this,\'' + index + '\');" type="text" name="repDistrib" style="width:60px; float:left;" value="' + valor + '" />'; 
+	this.gerarInputRepDistrib = function(valor, index, liberado) {
+
+        var readOnly = liberado ? 'readonly' : '';
+		return '<input id="inputRepDistrib' + index + '" onchange="' + T.instancia + '.alterarReparte(this,\'' + index + '\');" ' + readOnly + ' type="text" name="repDistrib" style="width:60px; float:left;" value="' + valor + '" />';
 		
 	},
 
@@ -1288,15 +1299,24 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 				name : 'juram',
 				width : 40,
 				sortable : true,
-				align : 'center'
+				align : 'center',
+                hide: true
 			}, {
 				display : 'Suplem.',
 				name : 'suplem',
 				width : 40,
 				sortable : true,
-				align : 'center'
+				align : 'center',
+                hide: true
 			}, {
-				display : 'Lancto.',
+				display : 'Estoque.',
+				name : 'estoque',
+				width : 40,
+				sortable : true,
+				align : 'center',
+                hide: true
+			}, {
+				display : 'Reparte',
 				name : 'reparte',
 				width : 40,
 				sortable : true,
@@ -1306,7 +1326,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 				name : 'promo',
 				width : 40,
 				sortable : true,
-				align : 'center'
+				align : 'center',
+                hide: true
 			}, {
 				display : 'Sobra',
 				name : 'sobra',
@@ -1378,7 +1399,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 
 	this.mostrarOpcoes = function() {
 		opcoesAberto = !opcoesAberto;
-		$( '.opcoesEstudos' ).toggle(opcoesAberto);
+		$( '.opcoesEstudos' ).toggle(opcoesAberto);		
 		$('.setaMuda').attr('src',(opcoesAberto)? contextPath + '/images/p7PM_dark_south_1.gif': contextPath + '/images/p7PM_dark_south.gif');
 	},
 	

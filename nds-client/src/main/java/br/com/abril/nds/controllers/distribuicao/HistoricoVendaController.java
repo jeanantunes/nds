@@ -4,6 +4,7 @@ package br.com.abril.nds.controllers.distribuicao;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -237,21 +238,32 @@ public class HistoricoVendaController extends BaseController {
 	@Post
 	public void analiseHistorico(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas){
 		
-		Collections.sort(listProdutoEdicaoDto);
+		ordenarEdicoesMaiorParaMenor(listProdutoEdicaoDto);
 		
 		result.include("listProdutoEdicao", listProdutoEdicaoDto);
 		
 		session.setAttribute("listProdutoEdicao", listProdutoEdicaoDto);
 		session.setAttribute("listCotas", cotas);
 	}
+
+	private void ordenarEdicoesMaiorParaMenor(List<ProdutoEdicaoDTO> listProdutoEdicaoDto) {
+		Collections.sort(listProdutoEdicaoDto, new Comparator<ProdutoEdicaoDTO>() {
+
+			@Override
+			public int compare(ProdutoEdicaoDTO o1, ProdutoEdicaoDTO o2) {				
+				return o2.getNumeroEdicao().compareTo(o1.getNumeroEdicao());
+			}
+		});
+	}
 	
+	@SuppressWarnings("unchecked")
 	@Post
-	public void carregarGridAnaliseHistorico(){
+	public void carregarGridAnaliseHistorico(String sortorder, String sortname){
 		List<ProdutoEdicaoDTO> listProdutoEdicaoDTO = (List<ProdutoEdicaoDTO>) session.getAttribute("listProdutoEdicao");
 		
 		List<Cota> listCota = (List<Cota>) session.getAttribute("listCotas");
 		
-		List<AnaliseHistoricoDTO> listAnaliseHistorico = cotaService.buscarHistoricoCotas(listProdutoEdicaoDTO, listCota);
+		List<AnaliseHistoricoDTO> listAnaliseHistorico = cotaService.buscarHistoricoCotas(listProdutoEdicaoDTO, listCota, sortorder, sortname);
 		
 		TableModel<CellModelKeyValue<AnaliseHistoricoDTO>> tableModel = new TableModel<CellModelKeyValue<AnaliseHistoricoDTO>>();
 		
@@ -339,7 +351,7 @@ public class HistoricoVendaController extends BaseController {
 		List<ProdutoEdicaoDTO> listProdutoEdicaoDTO = (List<ProdutoEdicaoDTO>) session.getAttribute("listProdutoEdicao");
 		List<Cota> listCota = (List<Cota>) session.getAttribute("listCotas");
 		
-		List<AnaliseHistoricoDTO> dto = cotaService.buscarHistoricoCotas(listProdutoEdicaoDTO, listCota);
+		List<AnaliseHistoricoDTO> dto = cotaService.buscarHistoricoCotas(listProdutoEdicaoDTO, listCota, null, null);
 		
 		try {
 			FileExporter.to("Analise Historico Venda", fileType).inHTTPResponse(this.getNDSFileHeader(), null, null, dto,

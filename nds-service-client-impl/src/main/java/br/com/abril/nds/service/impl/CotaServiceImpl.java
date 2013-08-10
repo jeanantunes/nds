@@ -139,6 +139,7 @@ import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.JasperUtil;
+import br.com.abril.nds.util.ListUtils;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -2441,10 +2442,10 @@ public class CotaServiceImpl implements CotaService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas) {
+	public List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas, final String sortorder, final String sortname) {
 		Collections.sort(listProdutoEdicaoDto);
 		
-		List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO = cotaRepository.buscarCotasComHistoricoDeVenda(listProdutoEdicaoDto, cotas);  
+		List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO = cotaRepository.buscarCotasComHistoricoDeVenda(listProdutoEdicaoDto, cotas, sortorder, sortname);  
 		
 		for (AnaliseHistoricoDTO analiseHistoricoDTO : listAnaliseHistoricoDTO) {
 			
@@ -2456,7 +2457,7 @@ public class CotaServiceImpl implements CotaService {
 				if (dto != null) {
 					if (i == 0) {
 						if(dto.getReparte() != null){
-							analiseHistoricoDTO.setEd1Reparte(dto.getReparte().toString());
+							analiseHistoricoDTO.setEd1Reparte(dto.getReparte() != null ? dto.getReparte().toString() : "");
 						}
 						
 						if(dto.getQtdeVendas() != null){
@@ -2506,7 +2507,7 @@ public class CotaServiceImpl implements CotaService {
 					
 					if (i == 5) {
 						if(dto.getReparte() != null){
-							analiseHistoricoDTO.setEd6Reparte(dto.getReparte().toString());
+							analiseHistoricoDTO.setEd6Reparte(dto.getReparte() != null ? dto.getReparte().toString() : "");
 						}
 						
 						if(dto.getQtdeVendas() != null){
@@ -2518,8 +2519,104 @@ public class CotaServiceImpl implements CotaService {
 			
 			setMediaVendaEReparte(listProdutoEdicaoDto.size(), analiseHistoricoDTO);
 		}
+
+		formatarListaHistoricoVenda(listAnaliseHistoricoDTO);
+		ordenarListaHistoricoVenda(sortorder, sortname, listAnaliseHistoricoDTO);
 		
 		return listAnaliseHistoricoDTO;
+	}
+
+	private void formatarListaHistoricoVenda(List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO) {
+		for (AnaliseHistoricoDTO dto : listAnaliseHistoricoDTO) {			
+
+			if(dto.getEd1Reparte().equals("0")){
+				dto.setEd1Reparte("");
+			}
+			if(dto.getEd1Venda().equals("0")){
+				dto.setEd1Venda("");
+			}
+			if(dto.getEd2Reparte().equals("0")){
+				dto.setEd2Reparte("");
+			}
+			if(dto.getEd2Venda().equals("0")){
+				dto.setEd2Venda("");
+			}
+			if(dto.getEd3Reparte().equals("0")){
+				dto.setEd3Reparte("");
+			}
+			if(dto.getEd3Venda().equals("0")){
+				dto.setEd3Venda("");
+			}
+			if(dto.getEd4Reparte().equals("0")){
+				dto.setEd4Reparte("");
+			}
+			if(dto.getEd4Venda().equals("0")){
+				dto.setEd4Venda("");
+			}
+			if(dto.getEd5Reparte().equals("0")){
+				dto.setEd5Reparte("");
+			}
+			if(dto.getEd5Venda().equals("0")){
+				dto.setEd5Venda("");
+			}
+			if(dto.getEd6Reparte().equals("0")){
+				dto.setEd6Reparte("");
+			}if(dto.getEd6Venda().equals("0")){
+				dto.setEd6Venda("");
+			}
+			if(dto.getReparteMedio() == 0){
+				dto.setReparteMedio(null);
+			}
+			if(dto.getVendaMedia() == 0){
+				dto.setVendaMedia(null);
+			}
+		}
+	}
+	
+	public static void main(String[] args) {
+		Double d = 0.0;
+		
+		if(d == 0){
+			System.out.println("entrou");
+		}
+		
+	}
+
+	private void ordenarListaHistoricoVenda(final String sortorder, final String sortname, List<AnaliseHistoricoDTO> listAnaliseHistoricoDTO) {
+		if(!StringUtils.equals(sortorder, "undefined")){
+			
+			if(sortname != null){
+				if(sortname.equals("ed1Reparte")){
+					ListUtils.orderList(sortorder, "ed1Reparte", listAnaliseHistoricoDTO, Integer.class);					
+				}else if(sortname.equals("ed1Venda")){
+					ListUtils.orderList(sortorder, "ed1Venda", listAnaliseHistoricoDTO, Integer.class);	
+				}else if(sortname.equals("ed2Reparte")){
+					ListUtils.orderList(sortorder, "ed2Reparte", listAnaliseHistoricoDTO, Integer.class);						
+				}else if(sortname.equals("ed2Venda")){
+					ListUtils.orderList(sortorder, "ed2Venda", listAnaliseHistoricoDTO, Integer.class);	
+				}else if(sortname.equals("ed3Reparte")){
+					ListUtils.orderList(sortorder, "ed3Reparte", listAnaliseHistoricoDTO, Integer.class);					
+				}else if(sortname.equals("ed3Venda")){
+					ListUtils.orderList(sortorder, "ed3Venda", listAnaliseHistoricoDTO, Integer.class);	
+				}else if(sortname.equals("ed4Reparte")){
+					ListUtils.orderList(sortorder, "ed4Reparte", listAnaliseHistoricoDTO, Integer.class);						
+				}else if(sortname.equals("ed4Venda")){
+					ListUtils.orderList(sortorder, "ed4Venda", listAnaliseHistoricoDTO, Integer.class);
+				}else if(sortname.equals("ed5Reparte")){
+					ListUtils.orderList(sortorder, "ed5Reparte", listAnaliseHistoricoDTO, Integer.class);						
+				}else if(sortname.equals("ed5Venda")){
+					ListUtils.orderList(sortorder, "ed5Venda", listAnaliseHistoricoDTO, Integer.class);
+				}else if(sortname.equals("ed6Reparte")){
+					ListUtils.orderList(sortorder, "ed6Reparte", listAnaliseHistoricoDTO, Integer.class);					
+				}else if(sortname.equals("ed6Venda")){
+					ListUtils.orderList(sortorder, "ed6Venda", listAnaliseHistoricoDTO, Integer.class);
+				}else if(sortname.equals("reparteMedio")){
+					ListUtils.orderList(sortorder, "reparteMedio", listAnaliseHistoricoDTO);
+				}else if(sortname.equals("vendaMedia")){
+					ListUtils.orderList(sortorder, "vendaMedia", listAnaliseHistoricoDTO);
+				}
+			}
+		}
 	}
 
 	private void setMediaVendaEReparte(int qtdEdicoes, AnaliseHistoricoDTO analiseHistoricoDTO){
@@ -2615,5 +2712,26 @@ public class CotaServiceImpl implements CotaService {
 		
 		return (tpDistribuicaoCota != null && tpDistribuicaoCota.equals(tipoDistribuicaoCota));
 	}
+	
+/*	
+	public static void main(String[] args) {
+		ArrayList a = new ArrayList<>();
+		
+		a.add("z");
+		a.add("x");
+		a.add("0");
+		
+		Collections.sort(a,new Comparator<String>() {
+
+			@Override
+			public int compare(String o1, String o2) {
+				
+				return o2.compareTo(o1);
+			}
+		});
+		
+		System.out.println(a);
+	}*/
 }
+
 
