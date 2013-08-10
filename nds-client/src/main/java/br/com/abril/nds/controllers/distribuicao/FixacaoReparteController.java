@@ -157,6 +157,19 @@ public class FixacaoReparteController extends BaseController {
 		
 		result.use(Results.json()).withoutRoot().from(tableModelCota).recursive().serialize();
 	}
+	
+	@Post
+	@Path("/validarTipoCota")
+	public void validarTipoCota (String numeroCota){
+		
+		Cota cota = cotaService.obterPorNumeroDaCota(Integer.parseInt(numeroCota));
+		
+		if(cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possivel fixar reparte para cota [ "+ numeroCota +" ] tipo[" +	TipoDistribuicaoCota.ALTERNATIVO.toString() + "].");
+	}else{
+		result.nothing();
+	}
+}
 
 
 	private TableModel<CellModelKeyValue<FixacaoReparteDTO>> montarTableModelProduto(FiltroConsultaFixacaoProdutoDTO filtro) {

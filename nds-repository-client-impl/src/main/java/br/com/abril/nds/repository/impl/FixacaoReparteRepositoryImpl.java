@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
-import org.hibernate.Transaction;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -271,26 +270,6 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 	}
 
 	@Override
-	public void execucaoQuartz() {
-		StringBuilder hql = new StringBuilder("");
-
-		hql.append("")
-				.append(" delete from fixacao_reparte   ")
-				.append(" where  fixacao_reparte.manter_fixa is false ")
-				.append(" and fixacao_reparte.data_hora <= date_format(DATE_SUB(CURDATE(),INTERVAL 732 DAY),'%d/%m/%Y') ")
-				.append(" and fixacao_reparte.ID_PRODUTO in  ")
-				.append(" ( select distinct id_produto from fixacao_reparte ")
-				.append(" join produto on produto.ID = fixacao_reparte.ID_PRODUTO  ")
-				.append(" join produto_edicao on produto_edicao.PRODUTO_ID = produto.ID ")
-				.append(" join lancamento on lancamento.PRODUTO_EDICAO_ID = produto_edicao.ID ")
-				.append(" where lancamento.DATA_CRIACAO <= date_format(DATE_SUB(CURDATE(),INTERVAL 732 DAY),'%d/%m/%Y')) ");
-				
-		Query query = getSession().createSQLQuery(hql.toString());
-		query.executeUpdate();
-		
-	}
-
-	@Override
 	public void gerarCopiaPorCotaFixacaoReparte(List<FixacaoReparteDTO> mixCotaOrigem, Usuario usuarioLogado) {
 
 		StringBuilder hql = new StringBuilder("");
@@ -360,6 +339,18 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 			getSession().save(fr);
 		}
 		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public void execucaoQuartz() {
+		
+		Query q = getSession().createQuery("from FixacaoReparte where datediff(now(),dataHora)> 365 and manterFixa = 0 ");
+		List<FixacaoReparte> listaParaApagar = q.list();
+		for (FixacaoReparte fixacaoReparte : listaParaApagar) {
+			getSession().delete(fixacaoReparte);			
+		}
+
 	}
 	
 }

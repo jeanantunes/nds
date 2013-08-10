@@ -48,5 +48,6 @@ public interface FixacaoReparteService {
 
 	public boolean isCotaValida(FixacaoReparteDTO fixacaoReparteDTO);
 
-	boolean gerarCopiafixacao(CopiaMixFixacaoDTO copiaDTO);;
+	boolean gerarCopiafixacao(CopiaMixFixacaoDTO copiaDTO);
+	
 }
