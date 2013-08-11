@@ -859,7 +859,7 @@ $(".edicaoProdCadastradosGrid").flexigrid({
 	width : 650,
 	height : 200,
 	sortname : "dataLancamentoFormatada",
-	sortorder : "asc",
+	sortorder : "desc",
 	usepager : true,
     useRp : true,
     rp : 15

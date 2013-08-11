@@ -67,7 +67,7 @@ var analiseEstudoController = $.extend(true, {
                 align : 'left'
             }],
             sortname : "numeroEstudo",
-            sortorder : "asc",
+            sortorder : "desc",
             usepager : true,
             useRp : true,
             rp : 15,

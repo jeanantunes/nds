@@ -18,7 +18,6 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CaracteristicaDistribuicaoDTO;
 import br.com.abril.nds.dto.CaracteristicaDistribuicaoSimplesDTO;
-import br.com.abril.nds.dto.filtro.FiltroAnaliseEstudoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaCaracteristicaDistribuicaoDetalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaCaracteristicaDistribuicaoSimplesDTO;
 import br.com.abril.nds.enums.TipoMensagem;

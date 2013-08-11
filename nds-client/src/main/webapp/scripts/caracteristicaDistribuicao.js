@@ -557,7 +557,7 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 		data.push({name:'filtro.opcaoFiltroChamadaCapa', value:$('#checkChamadaCapaExato').is(":checked")});
 		
 		
-		data.push({name:'filtro.classificacao',  value: $("#classificacao option:selected").val()});
+		data.push({name:'filtro.classificacaoProduto',  value: $("#classificacao option:selected").val()});
 		data.push({name:'filtro.segmento',  value: $("#segmento option:selected").val()});
 		data.push({name:'filtro.brinde',  value: $("#brinde option:selected").val()});
 		data.push({name:'filtro.chamadaCapa', value:$('#chamadaCapa').val()});
