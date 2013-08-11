@@ -222,8 +222,6 @@ var regiaoController = $.extend(true, {
 		});
 
 		$(".classificacaoGrid").flexigrid({
-//			url : '../xml/segmentos-xml.xml',
-//			dataType : 'xml',
 			colModel : [ {
 				display : 'Cota',
 				name : 'cota',
@@ -248,8 +246,6 @@ var regiaoController = $.extend(true, {
 		});
 
 		$(".addCotasGrid").flexigrid({
-//			url : '../xml/addCotas-xml.xml',
-//			dataType : 'xml',
 			colModel : [ {
 				display : 'Região',
 				name : 'regiao',
@@ -441,28 +437,41 @@ var regiaoController = $.extend(true, {
 			return resultado;
 		}
 		
+		var vlrCombo = $("#comboRegioes").val();
+		var idParaEliminar = "";
+		
 		$.each(resultado.rows, function(index, row) {
 			var checkBox = null;
 			
-			if(row.cell.isFixa){
-				checkBox = '<input type="checkbox" name="fixa" onchange="regiaoController.alterarRegiao('+row.cell.idRegiao+')" value="'+row.cell.isFixa+'" id="fixa" checked>';				
+			if(row.cell.idRegiao != vlrCombo){
+				
+				if(row.cell.isFixa){
+					checkBox = '<input type="checkbox" name="fixa" onchange="regiaoController.alterarRegiao('+row.cell.idRegiao+')" value="'+row.cell.isFixa+'" id="fixa" checked>';				
+				}else{
+					checkBox = '<input type="checkbox" name="fixa" onchange="regiaoController.alterarRegiao('+row.cell.idRegiao+')" value="'+row.cell.isFixa+'" id="fixa">';
+				}
+				
+				row.cell.isFixa = checkBox;
+				
+				var linkExcluir = '<a href="javascript:;" onclick="regiaoController.excluirRegiao('+row.cell.idRegiao+');" style="cursor:pointer">' +
+				'<img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0" />'+	
+				'</a>';
+				row.cell.acao = linkExcluir;
+				
 			}else{
-				checkBox = '<input type="checkbox" name="fixa" onchange="regiaoController.alterarRegiao('+row.cell.idRegiao+')" value="'+row.cell.isFixa+'" id="fixa">';
+				idParaEliminar = index;
 			}
 			
-			row.cell.isFixa = checkBox;
-			
-			var linkExcluir = '<a href="javascript:;" onclick="regiaoController.excluirRegiao('+row.cell.idRegiao+');" style="cursor:pointer">' +
-								'<img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0" />'+	
-							   '</a>';
-			row.cell.acao = linkExcluir;
 		});
+		
+		if(idParaEliminar){
+			resultado.rows.splice(idParaEliminar, 1);
+		}
 		
 		$(".grids", regiaoController.workspace).show();
 		
 		return resultado;
 	},
-	
 	
 	// Preprocess do faixaGrid
 	executarPreProcessFaixaGrid : function(resultado){
@@ -678,7 +687,7 @@ var regiaoController = $.extend(true, {
 			url: contextPath + "/distribuicao/regiao/carregarRegiao",
 			dataType : 'json'
 		});
-		$(".regioesCadastradasGrid", this.workspace).flexReload();		
+		$(".regioesCadastradasGrid").flexReload();		
 		
 		$("#dialog-novo").dialog({
 			resizable : false,
@@ -765,6 +774,8 @@ var regiaoController = $.extend(true, {
 		$("#nomeRegiao").val("");
 		$("#regiaoIsFixa").removeAttr('checked');
 		
+		var idRegiaoCadastrada = "";
+		
 		$("#dialog-addRegiao").dialog({
 
 					resizable : false,
@@ -791,13 +802,23 @@ var regiaoController = $.extend(true, {
 									data, 
 									function(result) 
 									{
-								var options = "<option selected=selected value=0>Selecione...</option>";
-				                 $.each(result.listaRegiao, function(key, tipoRegiao){
-				                    options += '<option value="' + tipoRegiao.idRegiao + '">' + tipoRegiao.nomeRegiao + '</option>';
-				                 });
-				                 $("#comboRegioes").html(options);
-									}
-									);
+										var options = "<option selected=selected value=0>Selecione...</option>";
+						                
+										$.each(result.listaRegiao, function(key, tipoRegiao){
+						                    options += '<option value="' + tipoRegiao.idRegiao + '">' + tipoRegiao.nomeRegiao + '</option>';
+						                    
+						                    if(tipoRegiao.nomeRegiao == nome){
+						                    	idRegiaoCadastrada = tipoRegiao.idRegiao;
+						                    }
+						                 });
+										
+						                 $("#comboRegioes").html(options);
+						                 
+						                 if(idRegiaoCadastrada != ""){
+						                	 $("#comboRegioes").val(idRegiaoCadastrada);
+						                	 regiaoController.carregarRegiao();
+						                 }
+									});
 							$(".grids", regiaoController.workspace).hide();
 							
 						},
@@ -815,6 +836,7 @@ var regiaoController = $.extend(true, {
 	excluirRegiao : function(id) {
 
 		$("#dialog-excluir").dialog({
+			
 			resizable : false,
 			height : 170,
 			width : 380,
@@ -833,7 +855,9 @@ var regiaoController = $.extend(true, {
 										exibirMensagem(tipoMensagem, listaMensagens);
 									}
 					                 
-					                 $(".regioesCadastradasGrid").flexReload();
+									$("#comboRegioes option[value='"+id+"']").remove();
+									$(".regioesCadastradasGrid").flexReload();
+					                 
 							   },
 							   null,
 							   true
@@ -1085,7 +1109,7 @@ var regiaoController = $.extend(true, {
 		$("#nomeProduto").val("");
 		$("#comboClassificacao").val("");
 		
-		$('#selTodosProdutos').attr('checked', true);
+		$('#selTodosProdutos').attr('checked', false);
 		
 		$('#lstProdutosGrid').hide();
 		

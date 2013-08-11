@@ -454,5 +454,5 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 		return true;
 	
 	}
-	
+
 }
