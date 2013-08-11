@@ -20,6 +20,7 @@ public class FiltroHistogramaVendas extends FiltroDTO implements Serializable{
 	private String produto;
 	private String edicao;
 	private Long idTipoClassificacaoProduto;
+	private Long idProduto;
 	
 	private OrdemColuna ordemColuna;
 	
@@ -146,5 +147,12 @@ public class FiltroHistogramaVendas extends FiltroDTO implements Serializable{
 	public void setIdTipoClassificacaoProduto(Long idTipoClassificacaoProduto) {
 		this.idTipoClassificacaoProduto = idTipoClassificacaoProduto;
 	}
-	
+
+	public Long getIdProduto() {
+		return idProduto;
+	}
+
+	public void setIdProduto(Long idProduto) {
+		this.idProduto = idProduto;
+	}
 }
