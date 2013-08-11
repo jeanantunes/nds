@@ -267,9 +267,10 @@ public class HistogramaVendasController extends BaseController {
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 		
 		filtro.setOrdemColuna(Util.getEnumByStringValue(FiltroHistogramaVendas.OrdemColuna.values(), sortname));
-		
-		Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigo());
-		filtro.setIdProduto(produto.getId());
+		if(filtro.getCodigo() != null){
+			Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigo());
+			filtro.setIdProduto(produto.getId());			
+		}
 		
 		tratarFiltro(filtro);
 		
