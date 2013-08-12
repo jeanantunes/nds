@@ -8,9 +8,10 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	this.tipoMovimento = null;
 	this.instancia = descInstancia;
 	this.linhasDestacadas = [];
-	this.lancamentos = [];
+	this.lancamentosPaginacao = [];
 	this.selecionados = [];
-	this.dataAtualSelecionada = [];
+	this.produtosLancamento = [];
+	this.dataAtualSelecionada = null;
 	
 	this.definirAcaoPesquisaTeclaEnter = function() {
 		
@@ -19,17 +20,19 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	
 	this.pesquisar = function() {
 		
-		$("#resumoPeriodo", _workspace).show();				
+		$("#resumoPeriodo", _workspace).show();
+		
+		var dataLancamento = $("#datepickerDe", _workspace).val();
 		
 		var data = [];
 		
-		data.push({name:'dataLancamento', value: $("#datepickerDe", _workspace).val()});
+		data.push({name:'dataLancamento', value: dataLancamento});
 		
 		$("input[name='checkgroup_menu']:checked", _workspace).each(function(i) {
 			data.push({name:'idsFornecedores', value: $(this).val()});
 		});
 		
-		$(".grids", _workspace).hide();
+		T.esconderGrid();
 				
 		$.postJSON(
 			pathTela + "/matrizLancamento/obterMatrizLancamento", 
@@ -41,17 +44,34 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				}
 				
 				T.popularResumoPeriodo(result);
+				
+				T.mostrarBotoesAcao();
+				
+				T.escolherDataAbrirGrid(result, dataLancamento);
 			},
 			function() {
 
 				$("#resumoPeriodo", _workspace).hide();
 				
-				$(".areaBts").find(".bt_novos", _workspace).hide();				
+				T.esconderBotoesAcao();				
 			}
 		);
 	},
 	
-
+	this.escolherDataAbrirGrid = function(result, dataLancamento) {
+		
+		T.dataAtualSelecionada = null;
+		
+		$.each(result.listaResumoPeriodoBalanceamento, function(index, resumo){
+			
+			if (resumo.dataFormatada == dataLancamento) {
+				
+				T.dataAtualSelecionada = resumo.dataFormatada;
+			}
+		});
+		
+		T.carregarGrid(T.dataAtualSelecionada, true);
+	},
 
 	this.verificarBalanceamentosAlterados = function(funcao) {
 
@@ -67,49 +87,32 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			}
 		);
 	},
-			
-	this.carregarGrid = function(dataLancamento) {
-		
-		T.mostrarGridEBotoesAcao();
-		
-		T.linhasDestacadas = [];		
-		lancamentosSelecionados = [];	
-		
-		T.dataAtualSelecionada = dataLancamento;
-		$('#selTodos', _workspace).uncheck();
-		
-		T.checkUncheckLancamentos(false);
-		
-		$(".lancamentosProgramadosGrid", _workspace).flexOptions({			
-			url : pathTela + "/matrizLancamento/obterGridMatrizLancamento",
-			dataType : 'json',
-			autoload: false,
-			singleSelect: true,
-			preProcess: T.processaRetornoPesquisa,
-			onSuccess: T.onSuccessPesquisa,
-			params: [
-		         {name:'dataLancamentoFormatada', value: dataLancamento}
-		    ],
-		    newp: 1,
-		});
-		
-		$(".lancamentosProgramadosGrid", _workspace).flexReload();
-		
-	},
 	
 	this.processaRetornoPesquisa = function(resultadoPesquisa) {
 		
 		if(resultadoPesquisa.mensagens) {
 			
 			exibirMensagem(resultadoPesquisa.mensagens.tipoMensagem, resultadoPesquisa.mensagens.listaMensagens);
-			return resultadoPesquisa.rows;
+		
+		    return null;
+		}
+		
+		T.linhasDestacadas = [];
+		T.lancamentosPaginacao = [];
+		T.produtosLancamento = [];
+		
+		if (resultadoPesquisa[0]) {
+		
+			T.mostrarGrid();
+			
+		} else {
+			
+			T.esconderGrid();
+			
+			return null;
 		}
 		
 		$("#valorTotal", _workspace).clear();
-		
-		T.linhasDestacadas = [];
-		
-		T.lancamentos = [];
 		
 		$("#valorTotal", _workspace).html(resultadoPesquisa[1]);
 		
@@ -117,7 +120,9 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			$.each(resultadoPesquisa[0].rows, function(index,row){ T.processarLinha(index, row);});
 		}
 		
-		return (resultadoPesquisa[0] && resultadoPesquisa[0].rows) ? resultadoPesquisa[0] : resultadoPesquisa;
+		T.produtosLancamento = resultadoPesquisa[2];
+		
+		return (resultadoPesquisa[0] && resultadoPesquisa[0].rows) ? resultadoPesquisa[0] : null;
 	},
 		
 	this.popularResumoPeriodo = function(data) {
@@ -129,7 +134,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			  rows+='<td>';
 			  rows+='<div class="box_resumo">';
 			  rows+='<label>'+ resumo.dataFormatada;
-			  rows+= '<a href="javascript:;" onclick="' + T.instancia + '.carregarGrid(' + "'" + resumo.dataFormatada + "'" + ');" style="float: right;">';
+			  rows+= '<a href="javascript:;" onclick="' + T.instancia + '.carregarGrid(' + "'" + resumo.dataFormatada + "'" + ', true);" style="float: right;">';
 			  rows+= '<img src="' + contextPath + '/images/ico_detalhes.png" width="15" height="15" border="0" title="Visualizar" />';
 			  rows+= '</a></label>';
 			  rows+='<span class="span_1">Qtde. Títulos:</span>';	 
@@ -169,7 +174,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 	
 	this.processarLinha = function(i,row) {
 		
-		T.lancamentos.push({
+		T.lancamentosPaginacao.push({
 			id:							row.cell.id, 
 			numeroEdicao:				row.cell.numeroEdicao,
 			nomeProduto:	    		row.cell.nomeProduto,
@@ -183,6 +188,8 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				   							   			   row.cell.possuiFuro);
 		
 		row.cell.nomeProduto = colunaProduto;
+		
+		row.cell.codigoProdutoFormatado = row.cell.codigoProduto;
 		
 		row.cell.novaDataLancamento = T.gerarInputDataDistrib(row.cell.novaDataLancamento, row.cell.bloquearData, i);
 		row.cell.reprogramar = T.gerarCheckReprogramar(row.cell.id.toString(), row.cell.bloquearData, i);
@@ -211,7 +218,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		var data = [];
 		
-		data.push({name : 'produtoLancamento.novaDataLancamento', value : T.lancamentos[index].novaDataLancamento});
+		data.push({name : 'produtoLancamento.novaDataLancamento', value : T.lancamentosPaginacao[index].novaDataLancamento});
 		$.postJSON(
 			pathTela + "/matrizLancamento/perguntarDataConfirmadaOuNao",
 			data,
@@ -286,11 +293,11 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		var data = [];
 		
-		data.push({name: 'produtoLancamento.id', 					   value: T.lancamentos[index].id});
-		data.push({name: 'produtoLancamento.novaDataLancamento', 	   value: T.lancamentos[index].novaDataLancamento});
-		data.push({name: 'produtoLancamento.nomeProduto', 			   value: T.lancamentos[index].nomeProduto});
-		data.push({name: 'produtoLancamento.numeroEdicao', 	           value: T.lancamentos[index].numeroEdicao});
-		data.push({name: 'produtoLancamento.dataRecolhimentoPrevista', value: T.lancamentos[index].dataRecolhimentoPrevista});
+		data.push({name: 'produtoLancamento.id', 					   value: T.lancamentosPaginacao[index].id});
+		data.push({name: 'produtoLancamento.novaDataLancamento', 	   value: T.lancamentosPaginacao[index].novaDataLancamento});
+		data.push({name: 'produtoLancamento.nomeProduto', 			   value: T.lancamentosPaginacao[index].nomeProduto});
+		data.push({name: 'produtoLancamento.numeroEdicao', 	           value: T.lancamentosPaginacao[index].numeroEdicao});
+		data.push({name: 'produtoLancamento.dataRecolhimentoPrevista', value: T.lancamentosPaginacao[index].dataRecolhimentoPrevista});
 		
 		$.postJSON(
 				pathTela + "/matrizLancamento/reprogramarLancamentoUnico",
@@ -298,17 +305,17 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				function() {
 					
 					T.atualizarResumoBalanceamento();
-					T.checkUncheckLancamentos(false);
+					T.checkUncheckLancamentos();
 					
-					T.lancamentos[index].novaDataOriginal = T.lancamentos[index].novaDataLancamento;
+					T.lancamentosPaginacao[index].novaDataOriginal = T.lancamentosPaginacao[index].novaDataLancamento;
 				},
 				function() {
 					
 					var inputNovaData = $("#inputNovaData" + index, _workspace);
 					
-					$(inputNovaData).val(T.lancamentos[index].novaDataOriginal);
+					$(inputNovaData).val(T.lancamentosPaginacao[index].novaDataOriginal);
 					
-					T.lancamentos[index].novaDataLancamento = inputNovaData.val();
+					T.lancamentosPaginacao[index].novaDataLancamento = inputNovaData.val();
 				}
 			);
 	},
@@ -373,25 +380,15 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 
 		var data = [];
 		
-		var inputSelecionarTodos = $('#selTodos', _workspace).attr("checked");
-		
 		data.push({name: 'novaDataFormatada', value: $("#novaDataLancamento", _workspace).val()});
-		data.push({name: 'dataAtualFormatada', value: T.dataAtualSelecionada});
-		
-		var selecionarTodos = inputSelecionarTodos == 'checked';
-		
-		data.push({name: 'selecionarTodos', value: selecionarTodos});
-		
-		if (!selecionarTodos) {
 			
-			$.each(T.selecionados, function(index, lancamentoSelecionado) {
-				
-				data.push({name: 'produtosLancamento[' + index + '].id', 			   		   value: lancamentoSelecionado.id});
-				data.push({name: 'produtosLancamento[' + index + '].nomeProduto', 	   		   value: lancamentoSelecionado.nomeProduto});
-				data.push({name: 'produtosLancamento[' + index + '].numeroEdicao', 	   		   value: lancamentoSelecionado.numeroEdicao});
-				data.push({name: 'produtosLancamento[' + index + '].dataRecolhimentoPrevista', value: lancamentoSelecionado.dataRecolhimentoPrevista});
-			});
-		}
+		$.each(T.selecionados, function(index, lancamentoSelecionado) {
+			
+			data.push({name: 'produtosLancamento[' + index + '].id', 			   		   value: lancamentoSelecionado.id});
+			data.push({name: 'produtosLancamento[' + index + '].nomeProduto', 	   		   value: lancamentoSelecionado.nomeProduto});
+			data.push({name: 'produtosLancamento[' + index + '].numeroEdicao', 	   		   value: lancamentoSelecionado.numeroEdicao});
+			data.push({name: 'produtosLancamento[' + index + '].dataRecolhimentoPrevista', value: lancamentoSelecionado.dataRecolhimentoPrevista});
+		});
 		
 		$.postJSON(
 				pathTela + "/matrizLancamento/reprogramarLancamentosSelecionados",
@@ -400,14 +397,12 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 					T.atualizarResumoBalanceamento();
 				}
 			);
-				
-		console.log('reprogramando...');
 		
 		$("#dialogReprogramarBalanceamento", _workspace).dialog("close");
 	},
 	
 	this.alterarData = function(input, index) {
-		T.lancamentos[index].novaDataLancamento = input.value;
+		T.lancamentosPaginacao[index].novaDataLancamento = input.value;
 	},
 	
 	this.gerarCheckReprogramar = function(id, bloquearData, index) { 
@@ -423,7 +418,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		var checked = check.checked;
 		
-		T.lancamentos[index].selecionado = checked;
+		T.lancamentosPaginacao[index].selecionado = checked;
 				
 		$.each($("input[name='checkgroup'][bloqueado!='true']", _workspace),function(index,row) {
 			
@@ -432,7 +427,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		if (checked) {
 			
-			T.selecionados.push(T.lancamentos[index]);
+			T.selecionados.push(T.lancamentosPaginacao[index]);
 			
 		} else {
 		
@@ -440,7 +435,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			
 			$.each(T.selecionados, function(i, lancamentoSelecionado) {
 				
-				if (lancamentoSelecionado.id == T.lancamentos[index].id) {
+				if (lancamentoSelecionado.id == T.lancamentosPaginacao[index].id) {
 					
 					indexRemover = i;
 				}
@@ -472,13 +467,6 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		if (selTodos) {
 		
 			checkAll($('#selTodos', _workspace), "checkgroup");
-			
-			T.selecionados = [];
-			
-			$.each(T.lancamentos, function(i, lancamento) {
-				
-				T.selecionados.push(lancamento);
-			});
 			
 		} else {
 			
@@ -614,60 +602,93 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				   function(result) {
 						T.popularResumoPeriodo(result);
 						
-						T.atualizarGrid();
+						T.carregarGrid(null, false);
 				   }
 		);
 	},
 	
-	this.atualizarGrid = function() {		
-		
-		T.mostrarGridEBotoesAcao();
+	this.carregarGrid = function(dataLancamento, iniciarGrid) {
 		
 		T.linhasDestacadas = [];		
-		lancamentosSelecionados = [];		
+		lancamentosSelecionados = [];	
 		
+		if (dataLancamento || iniciarGrid) {
+			
+			T.dataAtualSelecionada = dataLancamento;
+		}
+	
 		$('#selTodos', _workspace).uncheck();
 		
-		T.checkUncheckLancamentos(false);
+		T.checkUncheckLancamentos();
 		
-		$(".lancamentosProgramadosGrid", _workspace).flexOptions({			
-			url : pathTela + "/matrizLancamento/obterGridMatrizLancamento",
-			dataType : 'json',
-			autoload: false,
-			singleSelect: true,
-			preProcess: T.processaRetornoPesquisa,
-			onSuccess: T.onSuccessPesquisa
-		});
+		if (iniciarGrid) {
+		
+			$(".lancamentosProgramadosGrid", _workspace).flexOptions({			
+				url : pathTela + "/matrizLancamento/obterGridMatrizLancamento",
+				dataType : 'json',
+				autoload: false,
+				singleSelect: true,
+				preProcess: T.processaRetornoPesquisa,
+				onSuccess: T.onSuccessPesquisa,
+				params: [
+			         {name:'dataLancamentoFormatada', value: T.dataAtualSelecionada}
+			    ],
+			    newp: 1,
+			});
+			
+		} else {
+			
+			$(".lancamentosProgramadosGrid", _workspace).flexOptions({			
+				url : pathTela + "/matrizLancamento/obterGridMatrizLancamento",
+				dataType : 'json',
+				autoload: false,
+				singleSelect: true,
+				preProcess: T.processaRetornoPesquisa,
+				onSuccess: T.onSuccessPesquisa,
+				params: [
+			         {name:'dataLancamentoFormatada', value: T.dataAtualSelecionada}
+			    ]
+			});
+		}
 		
 		$(".lancamentosProgramadosGrid", _workspace).flexReload();
 	},
 	
-	this.mostrarGridEBotoesAcao = function () {
+	this.mostrarGrid = function() {
 		
 		$(".grids", _workspace).show();
+	},
+	
+	this.esconderGrid = function() {
+		
+		$(".grids", _workspace).hide();
+	},
+	
+	this.mostrarBotoesAcao = function() {
 		
 		$(".areaBts").find(".bt_novos", _workspace).show();
 	},
 	
-	this.checkUncheckLancamentos = function(checked) {
+	this.esconderBotoesAcao = function() {
+		
+		$(".areaBts").find(".bt_novos", _workspace).hide();
+	},
+	
+	
+	this.checkUncheckLancamentos = function() {
 				
 		var inputTodos = $('#selTodos', _workspace);
 		
-		if(checked) 
-			todos.check(checked);
-		
 		var todos = (inputTodos.attr("checked") == 'checked');
 		
-		T.selecionados = [];
-		
-		$.each(T.lancamentos, function(index, row){
-			row.selecionado = todos;
+		if (todos) {
 			
-			if (todos) {
-				
-				T.selecionados.push(row);
-			}
-		}),
+			T.selecionados = T.produtosLancamento;
+			
+		} else {
+			
+			T.selecionados = []
+		}
 		
 		checkAll(document.getElementById('selTodos'), "checkgroup");
 		
@@ -747,9 +768,10 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			pathTela + "/matrizLancamento/voltarConfiguracaoOriginal",
 			null,
 			function(result) {
+				
+					T.esconderGrid();
+				
 					T.popularResumoPeriodo(result);
-					
-					T.carregarGrid();
 			},
 			function() {
 				
@@ -764,7 +786,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		$("#lancamentosProgramadosGrid", _workspace).flexigrid({
 			colModel : [  {
 				display : 'Código',
-				name : 'codigoProduto',
+				name : 'codigoProdutoFormatado',
 				width : 45,
 				sortable : true,
 				align : 'center'

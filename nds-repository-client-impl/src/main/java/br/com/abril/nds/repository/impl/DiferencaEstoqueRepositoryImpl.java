@@ -3,6 +3,7 @@ package br.com.abril.nds.repository.impl;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -142,9 +143,9 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		String hql = this.gerarQueryDiferencasLancamento(filtro, true);
 		
 		Query query = getSession().createQuery(hql);
-		
+
 		query.setParameter("statusConfirmacao", StatusConfirmacao.PENDENTE);
-		
+
 		if (filtro.getDataMovimento() != null) {
 			
 			query.setParameter("dataMovimento", filtro.getDataMovimento());
@@ -602,23 +603,21 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		   .append(" then diferenca.qtde else 0 end ")
 		   .append(" , 0)) as qtdeSobras, ")
 		   .append(" diferenca.id as idDiferenca ")
-		   .append(" from Lancamento lancamento ")
+		   .append(" from Lancamento lancamento ") 
 		   .append(" join lancamento.estudo estudo ")
 		   .append(" join lancamento.produtoEdicao produtoEdicao ")
 		   .append(" left join produtoEdicao.diferencas diferenca ")
 		   .append(" where lancamento.dataLancamentoDistribuidor = :dataBalanceamento ")
-		   .append(" and lancamento.status not in (:statusLancamento) ")
+		   .append(" and lancamento.status = :statusLancamento ")
 		   .append(" group by produtoEdicao.id ")
 		   .append(" order by produtoEdicao.produto.nome, produtoEdicao.numeroEdicao ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("dataBalanceamento", data);
-		
-		query.setParameterList(
-			"statusLancamento", 
-				new StatusLancamento[] {StatusLancamento.FECHADO});
-		
+
+		query.setParameter("statusLancamento", StatusLancamento.CONFIRMADO);
+
 		query.setResultTransformer(
 			new AliasToBeanResultTransformer(ImpressaoDiferencaEstoqueDTO.class));
 
@@ -645,7 +644,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		query.setParameterList(
 			"statusLancamento", 
-				new StatusLancamento[] {StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO});
+				new StatusLancamento[] {StatusLancamento.CONFIRMADO});
 
 		return (Long) query.uniqueResult();
 	}

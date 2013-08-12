@@ -132,4 +132,6 @@ public interface DistribuidorService {
 	 */
 	boolean verificaDesbloqueioProcessosLancamentosEstudos();
 	
+	boolean isConferenciaCegaRecebimentoFisico();
+	
 }
