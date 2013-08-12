@@ -2,6 +2,7 @@ package br.com.abril.nds.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -19,14 +20,30 @@ public class ListUtils {
 		Collections.sort(list, new Comparator<Object>() {
 			
 			public int compare(Object o1, Object o2){
+				if(o1==null || o2==null)
+						return 0;
+				
 				Object valuePath1 = Util.getValuePath(o1, path);
 				Object valuePath2 = Util.getValuePath(o2, path);
 				
-				Class clazz = valuePath1.getClass();
-				
-				Method method;
 				int i =0;
+				
 				try {
+					
+					if(valuePath1==null){
+						Class class1 = ((Class)Util.getReturnTypePath(o1,path));
+						valuePath1= class1.getConstructor(String.class).newInstance("0");
+						
+					}
+					if(valuePath2==null){
+						Class class2 = ((Class)Util.getReturnTypePath(o2,path));
+						valuePath2= class2.getConstructor(String.class).newInstance("0");
+					}
+					
+					Class clazz = valuePath1.getClass();
+					
+					Method method;
+				
 					method = clazz.getMethod("compareTo", clazz);
 					if(orderType.equalsIgnoreCase("asc")){
 						i = (Integer)method.invoke(valuePath1, valuePath2);
@@ -35,7 +52,7 @@ public class ListUtils {
 						i = (Integer)method.invoke(valuePath2, valuePath1 );
 					}
 				} catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException 
-						| InvocationTargetException e) {
+						| InvocationTargetException | InstantiationException e) {
 					e.printStackTrace();
 				}
 					
