@@ -1277,8 +1277,6 @@ public class MatrizRecolhimentoController extends BaseController {
 			
 			if (listaProdutosRecolhimento != null && !listaProdutosRecolhimento.isEmpty()) {
 				
-				boolean exibeDestaque = false;
-				
 				Long qtdeTitulos = 0L;
 				Long qtdeTitulosParciais = 0L;
 				
@@ -1294,12 +1292,6 @@ public class MatrizRecolhimentoController extends BaseController {
 							produtoRecolhimento.getIdProdutoEdicao())) {
 						
 						qtdeTitulos++;
-					}
-					
-					if (produtoRecolhimento.getExpectativaEncalheAtendida() != null
-							&& produtoRecolhimento.getExpectativaEncalheAtendida().doubleValue() > 0) {
-						
-						exibeDestaque = true;
 					}
 					
 					if (produtoRecolhimento.getParcial() != null) {
@@ -1339,7 +1331,6 @@ public class MatrizRecolhimentoController extends BaseController {
 				itemResumoPeriodoBalanceamento.setExcedeCapacidadeDistribuidor(
 					excedeCapacidadeDistribuidor);
 				
-				itemResumoPeriodoBalanceamento.setExibeDestaque(exibeDestaque);
 				itemResumoPeriodoBalanceamento.setPesoTotal(pesoTotal);
 				itemResumoPeriodoBalanceamento.setQtdeExemplares(qtdeExemplares.toBigInteger());
 				itemResumoPeriodoBalanceamento.setQtdeTitulos(qtdeTitulos);
@@ -1458,7 +1449,7 @@ public class MatrizRecolhimentoController extends BaseController {
 			itemResumoPeriodoBalanceamento.setValorTotal(valorTotal);
 			itemResumoPeriodoBalanceamento.setQtdeTitulos(qtdeTitulos);
 			itemResumoPeriodoBalanceamento.setQtdeTitulosParciais(qtdeTitulosParciais);
-			itemResumoPeriodoBalanceamento.setOperacaoDiferenciada(true);
+			itemResumoPeriodoBalanceamento.setExibeDestaque(true);
 		}
 		
 		for (Map.Entry<Date, List<CotaOperacaoDiferenciadaDTO>> entry : mapOperacaoDifRemover.entrySet()) {
