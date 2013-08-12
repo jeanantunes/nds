@@ -206,17 +206,17 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 				
 				case SOMENTE_NOTAS_RECEBIDAS:
 					
-					condicaoNotaRecebida = " notaFiscal.statusNotaFiscal = 'RECEBIDA' ";
+					condicaoNotaRecebida = " ( notaFiscal.dataRecebimento is not null and notaFiscal.statusNotaFiscal = 'RECEBIDA' ) ";
 					
 					break;
 				case SOMENTE_NOTAS_NAO_RECEBIDAS:
 					
-					condicaoNotaRecebida = " notaFiscal.statusNotaFiscal <> 'RECEBIDA' and notaFiscal.numeroNotaEnvio is null ";
+					condicaoNotaRecebida = " ( notaFiscal.dataRecebimento is null and notaFiscal.statusNotaFiscal <> 'RECEBIDA' ) ";
 					
 					break;
 				case NOTAS_NAO_RECEBIDAS_COM_NOTA_DE_ENVIO:
 					
-					condicaoNotaRecebida = " (((notaFiscal.numeroNotaEnvio is not null) and (notaFiscal.numeroNotaEnvio <> 0)) and notaFiscal.numero = 0) ";
+					condicaoNotaRecebida = " ((notaFiscal.numeroNotaEnvio is not null and notaFiscal.numeroNotaEnvio <> 0) and (notaFiscal.numero is null or notaFiscal.numero = 0)) ";
 					
 					break;
 				default:
