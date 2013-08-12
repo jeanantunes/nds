@@ -24,9 +24,9 @@ init : function() {
 		preProcess : consultaNotasController.processarResultadoConsultaNF,
 		dataType : 'json',
 		colModel : [ {
-			display : 'Número da Nota',
+			display : 'Nº NF',
 			name : 'numero',
-			width : 90,
+			width : 30,
 			sortable : true,
 			align : 'left'
 		}, {
@@ -44,27 +44,21 @@ init : function() {
 		}, {
 			display : 'Chave Acesso',
 			name : 'chaveAcesso',
-			width : 130,
+			width : 260,
 			sortable : true,
 			align : 'left'
 		},{
-			display : 'Data de Emissão',
+			display : 'Emissão',
 			name : 'dataEmissao',
-			width : 100,
+			width : 60,
 			sortable : true,
 			align : 'center'
 		}, {
-			display : 'Data de Expedição',
+			display : 'Expedição',
 			name : 'dataExpedicao',
-			width : 100,
+			width : 60,
 			sortable : true,
 			align : 'center'
-		}, {
-			display : 'Tipo',
-			name : 'descricao',
-			width : 150,
-			sortable : true,
-			align : 'left'
 		}, {
 			display : 'Fornecedor',
 			name : 'razaoSocial',
@@ -72,21 +66,27 @@ init : function() {
 			sortable : true,
 			align : 'left'
 		}, {
-			display : 'Valor R$',
+			display : 'Valor Capa R$',
 			name : 'valorTotalNota',
-			width : 60,
+			width : 70,
+			sortable : true,
+			align : 'right'
+		}, {
+			display : 'Valor C/Desc R$',
+			name : 'valorTotalNotaComDesconto',
+			width : 90,
 			sortable : true,
 			align : 'right'
 		}, {
 			display : 'Nota Recebida',
 			name : 'notaRecebida',
-			width : 90,
+			width : 80,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : "Ação",
 			name : 'acao',
-			width : 40,
+			width : 30,
 			sortable : false,
 			align : 'center'
 		} ],
@@ -101,7 +101,7 @@ init : function() {
 		singleSelect : true
 	});
 
-	$("#datepickerDe", consultaNotasController.workspace).datepicker({
+	$("#dataNFDe", consultaNotasController.workspace).datepicker({
 		showOn : "button",
 		buttonImage : contextPath + "/images/calendar.gif",
 		buttonImageOnly : true,
@@ -109,9 +109,9 @@ init : function() {
 		defaultDate : new Date()
 	});
 
-	$("#datepickerDe", consultaNotasController.workspace).mask("99/99/9999");
+	$("#dataNFDe", consultaNotasController.workspace).mask("99/99/9999");
 
-	$("#datepickerAte", consultaNotasController.workspace).datepicker({
+	$("#dataNFAte", consultaNotasController.workspace).datepicker({
 		showOn : "button",
 		buttonImage : contextPath + "/images/calendar.gif",
 		buttonImageOnly : true,
@@ -119,18 +119,18 @@ init : function() {
 		defaultDate : new Date()
 	});
 
-	$("#datepickerAte", consultaNotasController.workspace).mask("99/99/9999");
+	$("#dataNFAte", consultaNotasController.workspace).mask("99/99/9999");
 	
 },	
 	
 processarResultadoConsultaNF : function (data) {
 
-	if ($("#datepickerDe", consultaNotasController.workspace).val() == "" && $("#datepickerAte", consultaNotasController.workspace).val() == "") {
+	if ($("#dataNFDe", consultaNotasController.workspace).val() == "" && $("#dataNFAte", consultaNotasController.workspace).val() == "") {
 
 		var dataAtual = $.format.date(new Date(), "dd/MM/yyyy");
 
-		$("#datepickerDe", consultaNotasController.workspace).val(dataAtual);
-		$("#datepickerAte", consultaNotasController.workspace).val(dataAtual);
+		$("#dataNFDe", consultaNotasController.workspace).val(dataAtual);
+		$("#dataNFAte", consultaNotasController.workspace).val(dataAtual);
 	}
 
 	if (data.mensagens) {
@@ -197,25 +197,31 @@ pesquisarDetalhesNota : function(idNota) {
 				colModel : [ {
 					display : 'Código',
 					name : 'codigoItem',
-					width : 70,
+					width : 45,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Produto',
 					name : 'nomeProduto',
-					width : 150,
+					width : 170,
 					sortable : true,
 					align : 'left'
 				}, {
 					display : 'Edição',
 					name : 'numeroEdicao',
-					width : 70,
+					width : 40,
 					sortable : true,
 					align : 'center'
 				}, {
 					display : 'Preço Capa R$',
 					name : 'precoCapa',
-					width : 110,
+					width : 80,
+					sortable : true,
+					align : 'right'
+				}, {
+					display : 'Preço C/Desc R$',
+					name : 'precoComDesconto',
+					width : 90,
 					sortable : true,
 					align : 'right'
 				}, {
@@ -233,11 +239,17 @@ pesquisarDetalhesNota : function(idNota) {
 				}, {
 					display : 'Total R$',
 					name : 'total',
-					width : 70,
+					width : 55,
+					sortable : true,
+					align : 'right'
+				}, {
+					display : 'Total C/Desc R$',
+					name : 'totalComDesconto',
+					width : 80,
 					sortable : true,
 					align : 'right'
 				} ],
-				width : 715,
+				width : 840,
 				height : 230,
 				params : [ {
 					name : 'idNota',
@@ -274,6 +286,7 @@ montarGridComRodape : function(data) {
 
 	$("#totalExemplares", consultaNotasController.workspace).html(result.totalExemplares);
 	$("#totalSumarizado", consultaNotasController.workspace).html("R$ " + result.totalSumarizado);
+	$("#totalSumarizadoComDesconto", consultaNotasController.workspace).html("R$ " + result.totalSumarizadoComDesconto);
 
 	consultaNotasController.popup();
 
@@ -285,7 +298,7 @@ popup : function() {
 	$("#dialog-novo", consultaNotasController.workspace).dialog({
 		resizable : false,
 		height : 400,
-		width : 750,
+		width : 860,
 		modal : true,
 		buttons : {
 			"Fechar" : function() {
@@ -297,3 +310,5 @@ popup : function() {
 }
 
 }, BaseController);
+
+//@ sourceURL=scriptConsultaNota.js

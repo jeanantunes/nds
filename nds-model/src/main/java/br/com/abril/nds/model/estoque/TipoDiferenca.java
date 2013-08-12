@@ -16,6 +16,8 @@ public enum TipoDiferenca {
 	FALTA_EM(GrupoMovimentoEstoque.FALTA_EM, "Falta em", GrupoMovimentoEstoque.FALTA_EM_COTA),
 	SOBRA_DE(GrupoMovimentoEstoque.SOBRA_DE, "Sobra de", GrupoMovimentoEstoque.SOBRA_DE_COTA),
 	SOBRA_EM(GrupoMovimentoEstoque.SOBRA_EM, "Sobra em", GrupoMovimentoEstoque.SOBRA_EM_COTA),
+	SOBRA_DE_DIRECIONADA_COTA(GrupoMovimentoEstoque.SOBRA_DE_DIRECIONADA_PARA_COTA, "Sobra DE direcionada para Cota", GrupoMovimentoEstoque.SOBRA_DE_COTA),
+	SOBRA_EM_DIRECIONADA_COTA(GrupoMovimentoEstoque.SOBRA_EM_DIRECIONADA_PARA_COTA, "Sobra EM direcionada para Cota", GrupoMovimentoEstoque.SOBRA_EM_COTA),
 	PERDA_EM(GrupoMovimentoEstoque.PERDA_EM, "Perda em"),
 	PERDA_DE(GrupoMovimentoEstoque.PERDA_DE, "Perda de"),
 	GANHO_EM(GrupoMovimentoEstoque.GANHO_EM, "Ganho em"),
@@ -33,7 +35,7 @@ public enum TipoDiferenca {
 	
 	private static final Set<TipoDiferenca> TIPOS_DIFERENCA_FALTA = EnumSet.of(FALTA_DE, FALTA_EM);
 	
-	private static final Set<TipoDiferenca> TIPOS_DIFERENCA_SOBRA = EnumSet.of(SOBRA_DE, SOBRA_EM);
+	private static final Set<TipoDiferenca> TIPOS_DIFERENCA_SOBRA = EnumSet.of(SOBRA_DE, SOBRA_EM, SOBRA_DE_DIRECIONADA_COTA, SOBRA_EM_DIRECIONADA_COTA);
 	
 	private static final Set<TipoDiferenca> TIPOS_DIFERENCA_PERDA = EnumSet.of(PERDA_DE, PERDA_EM);
 	

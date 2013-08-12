@@ -564,4 +564,11 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		return distribuidor.isInterfacesMatrizExecucao();
 	}
 
+	@Override
+	@Transactional(readOnly=true)
+	public boolean isConferenciaCegaRecebimentoFisico() {
+		
+		return this.distribuidorRepository.isConferenciaCegaRecebimentoFisico();
+	}
+
 }

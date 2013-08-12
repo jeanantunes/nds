@@ -22,8 +22,6 @@ var balanceamentoLancamento = new BalanceamentoLancamento(pathTela, "balanceamen
 
 balanceamentoLancamento.inicializar();
 
-var lancamentosSelecionados = [];
-
 </script>
 
 <style>
@@ -133,7 +131,7 @@ var lancamentosSelecionados = [];
 						</span>
 						
 						<span class="bt_novos" style="display: none;">
-							<a id="linkMatrizFornecedor" title="Matriz Fornecedor" href="javascript:;" onclick="balanceamentoLancamento.carregarGrid(null);">
+							<a id="linkMatrizFornecedor" title="Matriz Fornecedor" href="javascript:;" onclick="balanceamentoLancamento.carregarGrid(null, true);">
 								<img src="<c:url value='images/ico_detalhes.png'/>"  hspace="5" border="0" />
 							</a>
 						</span>

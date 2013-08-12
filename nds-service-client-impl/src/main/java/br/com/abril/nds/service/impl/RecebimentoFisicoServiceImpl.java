@@ -58,7 +58,6 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
-import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.MathUtil;
 
 @Service
@@ -120,6 +119,8 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	private final BigDecimal CEM = new BigDecimal(100);
 	
 	/**
 	* Obtem lista com dados de itemRecebimento relativos ao id de uma nota fiscal.
@@ -765,7 +766,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		itemNota.setTipoLancamento(recebimentoDTO.getTipoLancamento());
 		
 		if(notaFiscal.getOrigem().equals(Origem.MANUAL)) {			
-			BigDecimal descontoDecimal = desconto.divide(new BigDecimal("100"));			
+			BigDecimal descontoDecimal = desconto.divide(CEM);			
 			//BigDecimal precoVenda = new BigDecimal(recebimentoDTO.getPrecoDesconto());
 			//precoVenda = precoVenda.divide(BigDecimal.ONE.subtract(descontoDecimal), 2, RoundingMode.HALF_EVEN);
 			
@@ -991,7 +992,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			recebimentoFisicoDTO.setPrecoCapa(precoVenda.setScale(2, RoundingMode.HALF_EVEN));
 			
 			recebimentoFisicoDTO.setPrecoDesconto(
-				CurrencyUtil.formatarValor(precoVenda.subtract(valorDesconto)));
+				precoVenda.subtract(valorDesconto).setScale(2, RoundingMode.HALF_EVEN).toString());
 			
             recebimentoFisicoDTO.setRepartePrevisto(
             	produtoEdicao.getReparteDistribuido());
