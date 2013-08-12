@@ -98,15 +98,11 @@ fieldset label
 						</td>
 					</tr>
 					<tr>
-						<td width="107">Tipo de Nota:</td>
+					
+						<td width="107"></td>
 						<td width="293">
-						<select name="filtroConsultaNotaFiscal.idTipoNotaFiscal" id="selectTiposNotaFiscal" style="width: 250px;">
-							<option selected="selected" value="-1"></option>
-							<c:forEach items="${tiposNotaFiscal}" var="tipoNotaFiscal">
-								<option value="${tipoNotaFiscal.id}">${tipoNotaFiscal.descricao}</option>
-							</c:forEach>
-							
-						</select></td>
+						</td>
+						
 						<td width="95"><label for="notaRecebida" style="margin:0px">Nota Recebida</label></td>
 						<td colspan="2">
 						<select name="filtroConsultaNotaFiscal.notaRecebida" id="selectNotaRecebida"
