@@ -1278,6 +1278,10 @@ var recebimentoFisicoController = $.extend(true, {
 		} else {
 			$("#diferenca_"+idLinha)[0].style.color = "black";			
 		}
+		
+		if (isNaN(diferenca)){
+			diferenca = 0;
+		}
 
 		$("#diferenca_"+idLinha).text(diferenca);
 		

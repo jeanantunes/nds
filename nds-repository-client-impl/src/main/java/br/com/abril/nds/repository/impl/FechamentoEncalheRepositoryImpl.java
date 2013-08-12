@@ -149,7 +149,10 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		
 		hql.append("from ChamadaEncalhe as chamadaEncalhe ");
-		hql.append("join chamadaEncalhe.produtoEdicao as produtoEdicao ");
+		
+		hql.append("join chamadaEncalhe.lancamentos as lancamentos ");
+		hql.append("join lancamentos.produtoEdicao as produtoEdicao ");		
+		
 		hql.append("join produtoEdicao.produto as produto ");
 		hql.append("left join produtoEdicao.descontoLogistica as descontoLogisticaProdEdicao ");
 		hql.append("left join produto.descontoLogistica as descontoLogisticaProduto ");
@@ -178,7 +181,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		}
 
 		query.setResultTransformer(Transformers.aliasToBean(FechamentoFisicoLogicoDTO.class));
-			
+		
 		return query.list();
 	}
 	

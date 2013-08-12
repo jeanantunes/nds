@@ -219,11 +219,21 @@ public class ConsultaNotasController extends BaseController {
 	private void preencherCombos() {
 
 		List<Fornecedor> fornecedores = fornecedorService.obterFornecedoresAtivos();
+		
+		List<Fornecedor> fornecedoresDistribuicao = new ArrayList<Fornecedor>();
+		
+		for (Fornecedor f : fornecedores){
+			
+			if (!f.getJuridica().getNomeFantasia().equals("Dinap") && !f.getJuridica().getNomeFantasia().equals("FC")){
+				
+				fornecedoresDistribuicao.add(f);
+			}
+		}
 
 		List<TipoNotaFiscal> tiposNotaFiscal = 
 				this.tipoNotaFiscalService.obterTiposNotasFiscaisPorTipoAtividadeDistribuidor();
 
-		this.result.include("fornecedores", fornecedores);
+		this.result.include("fornecedores", fornecedoresDistribuicao);
 		this.result.include("tiposNotaFiscal", tiposNotaFiscal);
 	}
 
@@ -365,7 +375,7 @@ public class ConsultaNotasController extends BaseController {
 			filtroConsultaNotaFiscal.setIdFornecedor(null);
 		}
 		
-		if (filtroConsultaNotaFiscal.getIdTipoNotaFiscal() == -1) {
+		if (filtroConsultaNotaFiscal.getIdTipoNotaFiscal()!=null && filtroConsultaNotaFiscal.getIdTipoNotaFiscal() == -1) {
 			
 			filtroConsultaNotaFiscal.setIdTipoNotaFiscal(null);
 		}
