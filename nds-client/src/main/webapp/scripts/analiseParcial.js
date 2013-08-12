@@ -1205,7 +1205,16 @@ var analiseParcialController = $.extend(true, {
         }
     },
 
+    limparCamposDeAte: function () {
+        $("#faixaDe")
+        .add("#faixaAte")
+        .add("#ordenarPorDe")
+        .add("#ordenarPorAte")
+        .val('');
+    },
+
     filtrarOrdenarPor : function(estudo) {
+        analiseParcialController.limparCamposDeAte();
         var valueFiltroOrdenarPor = $("#filtroOrdenarPor").val();
         switch (valueFiltroOrdenarPor) {
             case 'percentual_de_venda':

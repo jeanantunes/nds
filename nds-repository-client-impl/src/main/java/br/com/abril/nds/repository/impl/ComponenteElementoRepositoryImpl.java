@@ -124,7 +124,7 @@ public class ComponenteElementoRepositoryImpl implements ComponenteElementoRepos
     public List<ComponenteElementoDTO> buscaCotasAVista() {
         List<ComponenteElementoDTO> retorno = new ArrayList<>();
         retorno.add(new ComponenteElementoDTO("cotas_a_vista", "A-VISTA", TipoCota.A_VISTA.toString()));
-        retorno.add(new ComponenteElementoDTO("cotas_a_vista", "CONSIGNADO", TipoCota.CONSIGNADO.toString()));
+        //retorno.add(new ComponenteElementoDTO("cotas_a_vista", "CONSIGNADO", TipoCota.CONSIGNADO.toString())); removido a pedido do cliente.
         return retorno;
     }
 
@@ -132,7 +132,7 @@ public class ComponenteElementoRepositoryImpl implements ComponenteElementoRepos
     public List<ComponenteElementoDTO> buscaCotasNovas() {
         List<ComponenteElementoDTO> retorno = new ArrayList<>();
         retorno.add(new ComponenteElementoDTO("cotas_novas", 1, "Sim"));
-        retorno.add(new ComponenteElementoDTO("cotas_novas", 0, "Não"));
+        //retorno.add(new ComponenteElementoDTO("cotas_novas", 0, "Não")); removido a pedido do cliente.
         return retorno;
     }
 
