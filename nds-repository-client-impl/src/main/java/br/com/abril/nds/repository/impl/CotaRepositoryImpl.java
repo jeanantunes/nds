@@ -1496,7 +1496,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		criteria.createAlias("pdvs.rotas", "rotaPdv", JoinType.LEFT_OUTER_JOIN);
 	    criteria.createAlias("rotaPdv.rota", "rota", JoinType.LEFT_OUTER_JOIN);
-		//criteria.createAlias("rota.roteiro", "roteiro", JoinType.LEFT_OUTER_JOIN);
+		criteria.createAlias("rota.roteiro", "roteiro", JoinType.LEFT_OUTER_JOIN);
 				
 		
 		if (idRoteiro != null){

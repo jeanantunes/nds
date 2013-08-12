@@ -724,19 +724,29 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	
 	
 	
+	
 	private void ordenarNotasEnvioPorRoteirizacaoENumeroCota(List<NotaEnvio> notasEnvio){
 		
 		Map<String,List<NotaEnvio>> mapNotasEnvioPorRoteirizacao = new HashMap<String, List<NotaEnvio>>();
 		
 		List<NotaEnvio> notasEnvioPorRoteirizacao = new ArrayList<NotaEnvio>();
 		
-		for (NotaEnvio ne1 : notasEnvio){
+		for (NotaEnvio ne : notasEnvio){
 			
-		  
+			String roteirizacao = "";
+			
+			roteirizacao += ne.getDestinatario().getCodigoBox();
+			
+			roteirizacao += ne.getDestinatario().getCodigoRota();
+			
+			roteirizacao += ne.getDestinatario().getDescricaoRota();
+			
+			if (mapNotasEnvioPorRoteirizacao.containsKey(roteirizacao)){
+				
+				
+			}
 		}
 	}
-	
-	
 	
 	
 	
