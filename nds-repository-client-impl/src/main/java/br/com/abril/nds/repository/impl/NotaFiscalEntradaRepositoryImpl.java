@@ -137,6 +137,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 				.append("  notaFiscal.dataExpedicao, ")
 				.append("  tipoNotaFiscal.descricao, ")
 				.append("  notaFiscal.valorBruto as valorTotalNota, ")
+				.append("  (notaFiscal.valorBruto - coalesce(notaFiscal.valorDesconto,0)) as valorTotalNotaComDesconto, ")
 				.append("  notaFiscal.statusNotaFiscal, ")
 				.append("  notaFiscal.dataRecebimento, ")
 				.append("  f.juridica.razaoSocial,")
@@ -277,7 +278,11 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 						break;
 					case VALOR:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " (notaFiscal.valorBruto - notaFiscal.valorDesconto) ";
+						orderByColumn += " (notaFiscal.valorBruto) ";
+						break;
+					case VALOR_COM_DESCONTO:
+						orderByColumn += orderByColumn.equals("") ? "" : ",";
+						orderByColumn += " (notaFiscal.valorBruto - coalesce(notaFiscal.valorDesconto,0)) ";
 						break;
 					case CHAVE_ACESSO:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
@@ -445,7 +450,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 				hql.append(" and ");
 			}
 			
-			hql.append(" nf.fornecedor.juridica.cnpj = :cnpj ");	
+			hql.append(" nf.emitente.cnpj = :cnpj ");	
 			
 			indAnd = true;
 			

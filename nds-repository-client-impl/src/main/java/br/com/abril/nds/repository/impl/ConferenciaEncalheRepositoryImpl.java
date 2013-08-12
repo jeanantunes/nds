@@ -16,7 +16,6 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
@@ -95,47 +94,6 @@ public class ConferenciaEncalheRepositoryImpl extends
 			Date dataOperacao,
 			boolean indPostergado,
 			Set<Long> listaIdProdutoEdicao) {
-
-		StringBuffer subSqlPrecoVenda = new StringBuffer();
-		subSqlPrecoVenda.append(" ( SELECT ");
-		subSqlPrecoVenda.append("	MEC.PRECO_VENDA ");
-		subSqlPrecoVenda.append(" FROM 	");
-		subSqlPrecoVenda.append(" MOVIMENTO_ESTOQUE_COTA MEC, TIPO_MOVIMENTO TIPO_MOV	");
-		subSqlPrecoVenda.append(" WHERE  	");
-		subSqlPrecoVenda.append(" MEC.COTA_ID = CH_ENCALHE_COTA.COTA_ID AND 					");
-		subSqlPrecoVenda.append(" MEC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID AND 	");
-		subSqlPrecoVenda.append(" MEC.TIPO_MOVIMENTO_ID = TIPO_MOV.ID AND ");
-		subSqlPrecoVenda.append(" TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque ");
-		subSqlPrecoVenda.append(" ORDER BY MEC.DATA DESC ");
-		subSqlPrecoVenda.append(" LIMIT 1 ) ");
-
-		
-		StringBuffer subSqlPrecoComDesconto = new StringBuffer();
-		subSqlPrecoComDesconto.append(" ( SELECT ");
-		subSqlPrecoComDesconto.append("	MEC.PRECO_COM_DESCONTO ");
-		subSqlPrecoComDesconto.append(" FROM 	");
-		subSqlPrecoComDesconto.append(" MOVIMENTO_ESTOQUE_COTA MEC, TIPO_MOVIMENTO TIPO_MOV	");
-		subSqlPrecoComDesconto.append(" WHERE  	");
-		subSqlPrecoComDesconto.append(" MEC.COTA_ID = CH_ENCALHE_COTA.COTA_ID AND 					");
-		subSqlPrecoComDesconto.append(" MEC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID AND 	");
-		subSqlPrecoComDesconto.append(" MEC.TIPO_MOVIMENTO_ID = TIPO_MOV.ID AND ");
-		subSqlPrecoComDesconto.append(" TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque ");
-		subSqlPrecoComDesconto.append(" ORDER BY MEC.DATA DESC ");
-		subSqlPrecoComDesconto.append(" LIMIT 1 ) ");
-		
-		
-		StringBuffer subSqlDesconto = new StringBuffer();
-		subSqlDesconto.append(" ( SELECT ");
-		subSqlDesconto.append("	( MEC.PRECO_VENDA -  MEC.PRECO_COM_DESCONTO ) ");
-		subSqlDesconto.append(" FROM 	");
-		subSqlDesconto.append(" MOVIMENTO_ESTOQUE_COTA MEC, TIPO_MOVIMENTO TIPO_MOV	");
-		subSqlDesconto.append(" WHERE  	");
-		subSqlDesconto.append(" MEC.COTA_ID = CH_ENCALHE_COTA.COTA_ID AND 					");
-		subSqlDesconto.append(" MEC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID AND 	");
-		subSqlDesconto.append(" MEC.TIPO_MOVIMENTO_ID = TIPO_MOV.ID AND ");
-		subSqlDesconto.append(" TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque ");
-		subSqlDesconto.append(" ORDER BY MEC.DATA DESC ");
-		subSqlDesconto.append(" LIMIT 1 ) ");		
 		
 		StringBuffer hql = new StringBuffer();
 		
@@ -145,10 +103,10 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" PROD.NOME as nomeProduto,						");
 		hql.append(" PROD_EDICAO.NUMERO_EDICAO as numeroEdicao,		");
 		hql.append(" PROD_EDICAO.ID as idProdutoEdicao,				");
-		hql.append( " COALESCE(" + subSqlPrecoComDesconto.toString() + ", PROD_EDICAO.PRECO_VENDA, 0) AS precoVenda, ");
+		hql.append(" COALESCE(MEC.PRECO_COM_DESCONTO, PROD_EDICAO.PRECO_VENDA, 0) AS precoVenda, ");
 		hql.append(" CH_ENCALHE_COTA.QTDE_PREVISTA AS reparte, 		");
-		hql.append( " 0 AS encalhe, 				");
-		hql.append( " 0 AS valorTotal, 				");
+		hql.append(" 0 AS encalhe, 				");
+		hql.append(" 0 AS valorTotal, 				");
 		hql.append(" CH_ENCALHE.DATA_RECOLHIMENTO AS dataOperacao, ");
 		hql.append(" CH_ENCALHE.DATA_RECOLHIMENTO AS dataRecolhimento	");
 		
@@ -167,6 +125,11 @@ public class ConferenciaEncalheRepositoryImpl extends
 
 		hql.append("	inner join PRODUTO as PROD ON ");
 		hql.append("	(PROD_EDICAO.PRODUTO_ID = PROD.ID)	");
+		
+		hql.append("	inner join MOVIMENTO_ESTOQUE_COTA MEC on MEC.COTA_ID = CH_ENCALHE_COTA.COTA_ID	");
+		hql.append("	        AND       MEC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID	");
+		hql.append("	inner join TIPO_MOVIMENTO TIPO_MOV on MEC.TIPO_MOVIMENTO_ID = TIPO_MOV.ID	"); 
+		hql.append("	        AND  TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque	");
 
 		hql.append("	WHERE   ");
 		

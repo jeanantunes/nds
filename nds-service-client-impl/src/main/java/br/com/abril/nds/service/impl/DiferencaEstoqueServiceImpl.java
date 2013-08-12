@@ -381,7 +381,8 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			List<MovimentoEstoqueCota> listaMovimentosEstoqueCota = null;
 			MovimentoEstoque movimentoEstoque = null;
 			
-			boolean validarTransfEstoqueDiferenca = diferenca.getTipoEstoque().equals(TipoEstoque.LANCAMENTO);
+			boolean validarTransfEstoqueDiferenca = 
+				TipoEstoque.LANCAMENTO.equals(diferenca.getTipoEstoque());
 			
 			if (diferenca.getRateios() != null && !diferenca.getRateios().isEmpty()) {
 					
@@ -400,11 +401,15 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				
 				if (diferenca.getTipoDiferenca().isSobra()) {
 					
-					this.direcionarItensEstoque(diferenca, qntTotalRateio, validarTransfEstoqueDiferenca);
+					this.gerarMovimentoEstoque(
+						diferenca, diferenca.getResponsavel().getId(), diferenca.isAutomatica(),
+							validarTransfEstoqueDiferenca);
+					
+					//this.direcionarItensEstoque(diferenca, qntTotalRateio, validarTransfEstoqueDiferenca);
 				}
 				
 				//Verifica se ha direcionamento de produtos para o estoque do distribuidor
-				if(diferenca.getQtde().compareTo(qntTotalRateio)>0){
+				if (diferenca.getQtde().compareTo(qntTotalRateio)>0) {
 					
 					this.direcionarItensEstoque(diferenca, diferenca.getQtde().subtract(qntTotalRateio), validarTransfEstoqueDiferenca);
 					
@@ -841,7 +846,8 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	 * Efetua a geração da movimentação de estoque para diferença.
 	 */
 	private MovimentoEstoque gerarMovimentoEstoque(Diferenca diferenca, Long idUsuario,
-												   boolean isAprovacaoAutomatica, boolean validarTransfEstoqueDiferenca) {
+												   boolean isAprovacaoAutomatica, 
+												   boolean validarTransfEstoqueDiferenca) {
 		
 		TipoMovimentoEstoque tipoMovimentoEstoque =
 			this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
@@ -956,6 +962,12 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 					}
 				}				
 			}
+            //Dados impressão sem rateio
+			else{
+				
+				listaRelatorio.add(
+						new RelatorioLancamentoFaltasSobrasVO(dadoImpressao));
+			}
 		}
 		
 		Map<String, Object> parametrosRelatorio = new HashMap<String, Object>();
@@ -1002,7 +1014,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			Set<Diferenca> listaDiferencas,
 			Diferenca diferenca) {
 		
-		Long idDiferenca = null;
+		Long idDiferenca = diferenca.getId();
 	
 		if(listaDiferencas != null && ! listaDiferencas.isEmpty()) {
 			
@@ -1012,8 +1024,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				
 				Diferenca diferencaCadastrada = iterator.next();
 					
-				if(diferencaCadastrada.getProdutoEdicao().equals(diferenca.getProdutoEdicao()) && 
-						diferencaCadastrada.getTipoDiferenca().equals(diferenca.getTipoDiferenca())) {
+				if(diferencaCadastrada.getProdutoEdicao().equals(diferenca.getProdutoEdicao()) 
+						&& diferencaCadastrada.getTipoDiferenca().equals(diferenca.getTipoDiferenca())
+						&& diferencaCadastrada.getTipoDirecionamento().equals(diferenca.getTipoDirecionamento())) {
 					
 					idDiferenca = diferencaCadastrada.getId();
 					
@@ -1046,15 +1059,14 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			while( iterator.hasNext() ) {
 				DiferencaVO diferencaVoCadastrada = iterator.next();
 				
-				if( diferencaVoCadastrada.getCodigoProduto().equals(diferencaVO.getCodigoProduto()) && 
-						diferencaVoCadastrada.getNumeroEdicao().equals(diferencaVO.getNumeroEdicao()) && 
-						diferencaVoCadastrada.getTipoDiferenca().equals(diferencaVO.getTipoDiferenca()) ) {
+				if( diferencaVoCadastrada.getCodigoProduto().equals(diferencaVO.getCodigoProduto())  
+						&& diferencaVoCadastrada.getNumeroEdicao().equals(diferencaVO.getNumeroEdicao()) 
+						&& diferencaVoCadastrada.getTipoDiferenca().equals(diferencaVO.getTipoDiferenca())
+						&& diferencaVoCadastrada.getTipoDirecionamento().equals(diferencaVO.getTipoDirecionamento())) {
 				
-					
 					BigInteger quantidade = diferencaVoCadastrada.getQuantidade();
-					diferencaVoCadastrada.setQuantidade(quantidade.add(diferencaVO.getQuantidade()));
 					
-					diferencaVO = null;
+					diferencaVoCadastrada.setQuantidade(quantidade.add(diferencaVO.getQuantidade()));
 				} else {
 					listaNovaDiferencaVO.add(diferencaVO);
 				}
@@ -1152,32 +1164,23 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados, Long id,
 			RateioCotaVO rateioCotaVO) {
 		
-		Set<Entry<Long, List<RateioCotaVO>>> entrySet = mapaRateiosCadastrados.entrySet();
-		Iterator<Entry<Long, List<RateioCotaVO>>> iterator = entrySet.iterator();
+		List<RateioCotaVO> listaRateiosCadastrados = mapaRateiosCadastrados.get(id);
 		
-		boolean verificacaoSeEstaNoMapa = false;
+		if (listaRateiosCadastrados == null) {
 		
-		if(iterator.hasNext()) {
-			while(iterator.hasNext()) {
-				Entry<Long, List<RateioCotaVO>> keyValue = iterator.next();
-				List<RateioCotaVO> listaValue = keyValue.getValue();
-	
-				for(RateioCotaVO value : listaValue) {
-					if(rateioCotaVO.getNumeroCota().equals(value.getNumeroCota()) && 
-							rateioCotaVO.getIdDiferenca().equals(value.getIdDiferenca()) ) {
-							
-						verificacaoSeEstaNoMapa = true;
-					}
-				}
-				
-				if(verificacaoSeEstaNoMapa == false) {
-					listaValue.add(rateioCotaVO);
-				}
-			}
-		} 
+			listaRateiosCadastrados = new ArrayList<RateioCotaVO>();
+		}
+
+		if (listaRateiosCadastrados.contains(rateioCotaVO)) {
+			
+			listaRateiosCadastrados.remove(rateioCotaVO);
+		}
+		
+		listaRateiosCadastrados.add(rateioCotaVO);
+		
+		mapaRateiosCadastrados.put(id, listaRateiosCadastrados);
 		
 		return mapaRateiosCadastrados;
-		
 	}
 	
 }

@@ -1704,7 +1704,9 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					ConferenciaEncalhe.ultimoIdProdutoEdicao = result.idProdutoEdicao;
 			    	
-        		    ConferenciaEncalhe.getProdutoEdicao();
+        		    ConferenciaEncalhe.setarValoresPesquisados(result);
+					
+					ConferenciaEncalhe.adicionarProdutoConferido();
         		    
 				}, 
 				function(){
