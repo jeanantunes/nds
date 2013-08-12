@@ -603,12 +603,11 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		   .append(" then diferenca.qtde else 0 end ")
 		   .append(" , 0)) as qtdeSobras, ")
 		   .append(" diferenca.id as idDiferenca ")
-		   .append(" from Lancamento lancamento ") 
-		   .append(" join lancamento.estudo estudo ")
+		   .append(" from Lancamento lancamento ")    
 		   .append(" join lancamento.produtoEdicao produtoEdicao ")
 		   .append(" left join produtoEdicao.diferencas diferenca ")
 		   .append(" where lancamento.dataLancamentoDistribuidor = :dataBalanceamento ")
-		   .append(" and lancamento.status = :statusLancamento ")
+		   .append(" and lancamento.status not in (:statusLancamento) ")
 		   .append(" group by produtoEdicao.id ")
 		   .append(" order by produtoEdicao.produto.nome, produtoEdicao.numeroEdicao ");
 		
@@ -616,7 +615,11 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		query.setParameter("dataBalanceamento", data);
 
-		query.setParameter("statusLancamento", StatusLancamento.CONFIRMADO);
+		query.setParameterList("statusLancamento", Arrays.asList(StatusLancamento.CONFIRMADO,
+										                         StatusLancamento.CANCELADO,
+										                         StatusLancamento.PLANEJADO,
+										                         StatusLancamento.EM_BALANCEAMENTO,
+										                         StatusLancamento.FURO));
 
 		query.setResultTransformer(
 			new AliasToBeanResultTransformer(ImpressaoDiferencaEstoqueDTO.class));
@@ -631,11 +634,10 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		hql.append(" select count(distinct produtoEdicao) ")
 		   .append(" from Lancamento lancamento ")
-		   .append(" join lancamento.estudo estudo ")
 		   .append(" join lancamento.produtoEdicao produtoEdicao ")
 		   .append(" left join produtoEdicao.diferencas diferenca ")
 		   .append(" where lancamento.dataLancamentoDistribuidor = :dataBalanceamento ")
-		   .append(" and lancamento.status in (:statusLancamento) ")
+		   .append(" and lancamento.status not in (:statusLancamento) ")
 		   .append(" group by produtoEdicao.id ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
@@ -643,8 +645,11 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		query.setParameter("dataBalanceamento", data);
 		
 		query.setParameterList(
-			"statusLancamento", 
-				new StatusLancamento[] {StatusLancamento.CONFIRMADO});
+			"statusLancamento", Arrays.asList(StatusLancamento.CONFIRMADO,
+					                          StatusLancamento.CANCELADO,
+					                          StatusLancamento.PLANEJADO,
+					                          StatusLancamento.EM_BALANCEAMENTO,
+					                          StatusLancamento.FURO));
 
 		return (Long) query.uniqueResult();
 	}
