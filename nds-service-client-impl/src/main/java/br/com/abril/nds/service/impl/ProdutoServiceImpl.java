@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +24,7 @@ import br.com.abril.nds.repository.DescontoLogisticaRepository;
 import br.com.abril.nds.repository.EditorRepository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
+import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.repository.TipoProdutoRepository;
 import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
@@ -57,6 +59,9 @@ public class ProdutoServiceImpl implements ProdutoService {
 		
 	@Autowired
 	private DescontoLogisticaRepository descontoLogisticaRepository;
+	
+	@Autowired
+	private RecebimentoFisicoRepository recebimentoFisicoRepository;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -189,6 +194,27 @@ public class ProdutoServiceImpl implements ProdutoService {
 	}
 	
 	/**
+	 * Alteração de fornecedor do Produto, verificando se o mesmo pode ser alterado
+	 * @param produto
+	 * @param fornecedor
+	 */
+	private void alteraFornecedorProduto(Produto produto, Fornecedor fornecedor){
+		
+		if ( !this.recebimentoFisicoRepository.produtoPossuiRecebimentoFisico(produto.getId())){
+			
+			produto.setFornecedores(new HashSet<Fornecedor>());
+			produto.addFornecedor(fornecedor);
+		}
+		else{
+			
+			if (!fornecedor.getId().equals(produto.getId())){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "O [Produto] já possui movimentações e o campo [Fornecedor] não pode ser alterado.");
+			}
+		}
+	}
+
+	/**
 	 * @see br.com.abril.nds.service.ProdutoService#salvarProduto(br.com.abril.nds.model.cadastro.Produto, java.lang.Long, java.lang.Long, java.lang.Long, java.lang.Long)
 	 */
 	@Override
@@ -227,7 +253,9 @@ public class ProdutoServiceImpl implements ProdutoService {
 				produtoExistente.setSegmentacao(produto.getSegmentacao());
 				
 				produtoExistente.setEditor(editor);
-				produtoExistente.addFornecedor(fornecedor);
+
+				this.alteraFornecedorProduto(produtoExistente, fornecedor);
+
 				produtoExistente.setTipoProduto(tipoProduto);
 				
 				if (Origem.MANUAL == produtoExistente.getOrigem()){

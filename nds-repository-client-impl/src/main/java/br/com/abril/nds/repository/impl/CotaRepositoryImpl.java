@@ -1510,9 +1510,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		}
 		
 		criteria.addOrder(Order.asc("box.codigo"));
-		criteria.addOrder(Order.asc("roteiro.ordem"));
-		criteria.addOrder(Order.asc("roteiro.descricaoRoteiro"));
-		criteria.addOrder(Order.asc("rota.ordem"));
+		criteria.addOrder(Order.asc("rota.id"));
 		criteria.addOrder(Order.asc("rota.descricaoRota"));
 		criteria.addOrder(Order.asc("numeroCota"));
 		

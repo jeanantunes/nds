@@ -140,7 +140,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 				.append("  (notaFiscal.valorBruto - coalesce(notaFiscal.valorDesconto,0)) as valorTotalNotaComDesconto, ")
 				.append("  notaFiscal.statusNotaFiscal, ")
 				.append("  notaFiscal.dataRecebimento, ")
-				.append("  f.juridica.razaoSocial,")
+				.append("  notaFiscal.emitente.razaoSocial,")
 				.append("  notaFiscal.chaveAcesso ) ");
 
 		} else {
@@ -160,6 +160,8 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 		   .append(" join i.produtoEdicao pe			")
 		   .append(" join pe.produto p					")
 		   .append(" join p.fornecedores f				");
+		
+		
 		
 		String condicoes = "";
 		
@@ -193,7 +195,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 
 			condicoes += "".equals(condicoes) ? " where " : " and ";
 			
-			condicoes += " f.id = :idFornecedor ";
+			condicoes += " notaFiscal.emitente.id = ( select fncd.juridica.id from Fornecedor fncd where fncd.id = :idFornecedor ) ";
 		}
 
 		if (filtroConsultaNotaFiscal.getNotaRecebida() != null) {
@@ -201,24 +203,24 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 			String condicaoNotaRecebida = null;
 			
 			switch(filtroConsultaNotaFiscal.getNotaRecebida()) {
-			
-			case SOMENTE_NOTAS_RECEBIDAS:
 				
-				condicaoNotaRecebida = " notaFiscal.numero is not null ";
-				
-				break;
-			case SOMENTE_NOTAS_NAO_RECEBIDAS:
-				
-				condicaoNotaRecebida = " notaFiscal.numero is null and notaFiscal.numeroNotaEnvio is null ";
-				
-				break;
-			case NOTAS_NAO_RECEBIDAS_COM_NOTA_DE_ENVIO:
-				
-				condicaoNotaRecebida = " notaFiscal.numero is null and notaFiscal.numeroNotaEnvio is not null ";
-				
-				break;
-			default:
-				break;
+				case SOMENTE_NOTAS_RECEBIDAS:
+					
+					condicaoNotaRecebida = " ( notaFiscal.dataRecebimento is not null and notaFiscal.statusNotaFiscal = 'RECEBIDA' ) ";
+					
+					break;
+				case SOMENTE_NOTAS_NAO_RECEBIDAS:
+					
+					condicaoNotaRecebida = " ( notaFiscal.dataRecebimento is null and notaFiscal.statusNotaFiscal <> 'RECEBIDA' ) ";
+					
+					break;
+				case NOTAS_NAO_RECEBIDAS_COM_NOTA_DE_ENVIO:
+					
+					condicaoNotaRecebida = " ((notaFiscal.numeroNotaEnvio is not null and notaFiscal.numeroNotaEnvio <> 0) and (notaFiscal.numero is null or notaFiscal.numero = 0)) ";
+					
+					break;
+				default:
+					break;
 			}
 			
 			if (condicaoNotaRecebida != null) {
