@@ -226,9 +226,11 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		sql.append(" inner join ");
 		sql.append(" CHAMADA_ENCALHE chamadaenc2_ ");
 		sql.append(" on chamadaenc0_.CHAMADA_ENCALHE_ID=chamadaenc2_.ID ");
-		sql.append(" inner join ");
-		sql.append(" PRODUTO_EDICAO produtoedi5_ ");
-		sql.append(" on chamadaenc2_.PRODUTO_EDICAO_ID=produtoedi5_.ID ");
+		
+		sql.append(" join CHAMADA_ENCALHE_LANCAMENTO cel on (cel.CHAMADA_ENCALHE_ID=chamadaenc2_.ID) ");
+		sql.append(" join LANCAMENTO l on (l.ID=cel.LANCAMENTO_ID) ");
+		sql.append(" join PRODUTO_EDICAO produtoedi5_ on (l.PRODUTO_EDICAO_ID=produtoedi5_.ID) ");
+				
 		sql.append(" inner join ");
 		sql.append(" PRODUTO produto6_ ");
 		sql.append(" on produtoedi5_.PRODUTO_ID=produto6_.ID ");
