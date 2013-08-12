@@ -664,5 +664,48 @@ private static String toFirstUpperCase(String string) {
             return getValuePath(result,path.substring(path.indexOf(".")+1));
         }
     }
+    
+    public static Object getReturnTypePath(Object obj,String path){
+        
+        
+        String[] pathList = path.split("\\.");
+        
+        String att = null;
+        if(pathList.length==0){
+            att=path;
+        }else{
+            att = pathList[0];
+            
+        }
+        
+        Method[] declaredMethods = obj.getClass().getDeclaredMethods();
+        
+        Method getM = null;
+        for (Method method : declaredMethods) {
+            if(method.getName().equals("get"+toFirstUpperCase(att))){
+                getM = method;
+            }
+        }
+        
+        if(getM==null){
+            return null;
+        }
+        
+        Object result =null;
+        try {
+             result = getM.invoke(obj, null);
+        } catch (IllegalAccessException | IllegalArgumentException
+                | InvocationTargetException e) {
+            e.printStackTrace();
+        }
+        
+        if(pathList.length==1){
+            //return result;
+        	return getM.getReturnType();
+        }else{
+            
+            return getValuePath(result,path.substring(path.indexOf(".")+1));
+        }
+    }
 
 }
