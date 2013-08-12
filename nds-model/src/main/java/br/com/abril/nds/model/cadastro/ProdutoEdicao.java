@@ -334,7 +334,7 @@ public class ProdutoEdicao implements Serializable {
 
 	public void setCodigoDeBarras(String codigoDeBarras) {
 		
-		if (codigoDeBarras != null){
+		if (codigoDeBarras != null && !"".equals(codigoDeBarras) && new BigInteger(codigoDeBarras).compareTo(BigInteger.ZERO) > 0){
 			
 			//evita que sejam gravados zeros na frente do código de barras, vide trac 677
 			if (codigoDeBarras.startsWith("0")){
