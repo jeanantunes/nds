@@ -23,6 +23,7 @@ import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.ExtratoEdicaoService;
+import br.com.abril.nds.util.Util;
 
 
 @Service
@@ -133,6 +134,8 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 	@Transactional
 	public String obterRazaoSocialFornecedorDeProduto(String codigoProduto) {
 		
+		codigoProduto = Util.padLeft(codigoProduto, "0", 8);
+		
 		List<Fornecedor> listaFornecedor =
 			fornecedorRepository.obterFornecedoresDeProduto(codigoProduto, null);
 		
@@ -146,8 +149,8 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 			
 		}
 		
-		return "";
 		
+		return "";
 	}
 
 	
