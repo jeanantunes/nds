@@ -27,7 +27,6 @@ public class ResumoPeriodoBalanceamentoVO implements Serializable {
 	private boolean exibeDestaque;
 	private boolean excedeCapacidadeDistribuidor;
 	private boolean bloquearVisualizacao;
-	private boolean operacaoDiferenciada;
 	private Set<Long> idsProdutoEdicao = new HashSet<>();
 	
 	public Date getData() {
@@ -162,20 +161,6 @@ public class ResumoPeriodoBalanceamentoVO implements Serializable {
 	 */
 	public void setBloquearVisualizacao(boolean bloquearVisualizacao) {
 		this.bloquearVisualizacao = bloquearVisualizacao;
-	}
-
-	/**
-	 * @return the operacaoDiferenciada
-	 */
-	public boolean isOperacaoDiferenciada() {
-		return operacaoDiferenciada;
-	}
-
-	/**
-	 * @param operacaoDiferenciada the operacaoDiferenciada to set
-	 */
-	public void setOperacaoDiferenciada(boolean operacaoDiferenciada) {
-		this.operacaoDiferenciada = operacaoDiferenciada;
 	}
 
 	/**

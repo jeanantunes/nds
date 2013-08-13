@@ -717,6 +717,44 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		return estudosCota;
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	private void ordenarNotasEnvioPorRoteirizacaoENumeroCota(List<NotaEnvio> notasEnvio){
+		
+		Map<String,List<NotaEnvio>> mapNotasEnvioPorRoteirizacao = new HashMap<String, List<NotaEnvio>>();
+		
+		List<NotaEnvio> notasEnvioPorRoteirizacao = new ArrayList<NotaEnvio>();
+		
+		for (NotaEnvio ne : notasEnvio){
+			
+			String roteirizacao = "";
+			
+			roteirizacao += ne.getDestinatario().getCodigoBox();
+			
+			roteirizacao += ne.getDestinatario().getCodigoRota();
+			
+			roteirizacao += ne.getDestinatario().getDescricaoRota();
+			
+			if (mapNotasEnvioPorRoteirizacao.containsKey(roteirizacao)){
+				
+				
+			}
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
 	/**
 	 * Gera Notas de Envio para as Cotas
 	 * @param idCotas
@@ -845,10 +883,13 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	}
 
 	private IdentificacaoDestinatario carregaDestinatario(Cota cota, Long idRota, PDV pdvPrincipalCota, Intervalo<Date> periodo) {
-														  IdentificacaoDestinatario destinatario = new IdentificacaoDestinatario();
-														  destinatario.setNumeroCota(cota.getNumeroCota());
-														  destinatario.setDocumento(cota.getPessoa().getDocumento());
 		
+	    IdentificacaoDestinatario destinatario = new IdentificacaoDestinatario();
+	    
+	    destinatario.setNumeroCota(cota.getNumeroCota());
+	    
+	    destinatario.setDocumento(cota.getPessoa().getDocumento());
+	 	
 		EnderecoPDV enderecoPdv = pdvPrincipalCota!=null?pdvPrincipalCota.getEnderecoEntrega():null;
 		
 		if (enderecoPdv == null) {

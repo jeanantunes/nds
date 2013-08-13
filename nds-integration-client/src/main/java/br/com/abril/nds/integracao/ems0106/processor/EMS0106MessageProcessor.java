@@ -138,6 +138,11 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			
 		}
 		
+		this.ndsiLoggerFactory.getLogger().logInfo(message,
+				EventoExecucaoEnum.INF_DADO_ALTERADO,
+				"EstudoCota processado: " + estudo.getId() + "para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao + 
+				" no Lancamento: " + lancamento.getDataLancamentoPrevista().toString() + " Inserido com sucesso!");
+
 	}
 	
 	/**

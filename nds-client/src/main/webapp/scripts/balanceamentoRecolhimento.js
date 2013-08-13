@@ -176,28 +176,12 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				rows += '<span name="qtdeExemplares" class="span_2 redLabel"';
 				rows += 'title="A quantidade de exemplares excede a capacidade de manuseio ';
 				rows += result.capacidadeRecolhimentoDistribuidor + ' do distribuidor">';
-				
-				if (resumo.operacaoDiferenciada) {
-					
-					rows += '<u>' + resumo.qtdeExemplaresFormatada + '</u></span>';
-					
-				} else {
-					
-					rows += resumo.qtdeExemplaresFormatada + '</span>';	
-				}
+				rows += resumo.qtdeExemplaresFormatada + '</span>';	
 			
 			} else {
 			
 				rows += '<span class="span_1">Qtde. Exempl.:</span>';
-				
-				if (resumo.operacaoDiferenciada) {
-					
-					rows += '<span class="span_2"><u>' + resumo.qtdeExemplaresFormatada + '</u></span>';
-					
-				} else {
-					
-					rows += '<span class="span_2">' + resumo.qtdeExemplaresFormatada + '</span>';	
-				}
+				rows += '<span class="span_2">' + resumo.qtdeExemplaresFormatada + '</span>';
 			}
 			
 			rows += '<span class="span_1">Qtde. Parciais:</span>';
