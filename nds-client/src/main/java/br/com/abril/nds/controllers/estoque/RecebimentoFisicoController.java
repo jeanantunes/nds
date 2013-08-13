@@ -545,6 +545,49 @@ public class RecebimentoFisicoController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Produto edição não existe.");
 		}
 		
+		BigDecimal qtdProduto = 
+			new BigDecimal(
+				itemRecebimento.getRepartePrevisto().multiply(
+					new BigInteger(
+							String.valueOf(itemRecebimento.getPacotePadrao())
+		)));
+		
+		if (itemRecebimento.getPrecoItem() == null){
+			itemRecebimento.setPrecoItem(produtoEdicao.getPrecoVenda());
+		}
+		
+		if ((itemRecebimento.getPrecoDesconto() == null ||
+			itemRecebimento.getPrecoDesconto().isEmpty()) &&
+			produtoEdicao.getDesconto() != null){
+			
+			itemRecebimento.setPrecoDesconto(
+				produtoEdicao.getPrecoVenda().subtract(
+					produtoEdicao.getPrecoVenda().multiply(
+						produtoEdicao.getDesconto())).setScale(
+							2, RoundingMode.HALF_EVEN).toString());
+			
+		} else {
+			
+			itemRecebimento.setPrecoDesconto(
+				produtoEdicao.getPrecoVenda().setScale(
+					2, RoundingMode.HALF_EVEN).toString());
+		}
+		
+		if (itemRecebimento.getValorTotal() == null){
+			itemRecebimento.setValorTotal(
+				itemRecebimento.getPrecoItem().multiply(qtdProduto));
+		}
+		
+		if (itemRecebimento.getValorTotalDesconto() == null &&
+			itemRecebimento.getPrecoDesconto() != null){
+			
+			itemRecebimento.setValorTotalDesconto(
+				new BigDecimal(itemRecebimento.getPrecoDesconto()).multiply(qtdProduto));
+		} else {
+			
+			itemRecebimento.setValorTotalDesconto(itemRecebimento.getValorTotal());
+		}
+		
 		List<RecebimentoFisicoDTO> itensRecebimentoFisico =  getItensRecebimentoFisicoFromSession();
 		
 		if(itensRecebimentoFisico == null) {
@@ -1098,14 +1141,19 @@ public class RecebimentoFisicoController extends BaseController {
 			
 			if (dto.getPrecoItem() != null){
 				
-				valorTotalDesconto = valorTotalDesconto.add(dto.getValorTotalDesconto());
-				
-				valorDesconto = dto.getPrecoItem().subtract(
-							dto.getPrecoItem().multiply(
-								dto.getPercentualDesconto())).toString();
+				if (dto.getPercentualDesconto() != null){
+					valorDesconto = dto.getPrecoItem().subtract(
+								dto.getPrecoItem().multiply(
+									dto.getPercentualDesconto())).toString();
+				} else {
+					
+					valorDesconto = dto.getPrecoItem().setScale(2, RoundingMode.HALF_EVEN).toString();
+				}
 			} else {
 				valorDesconto = "0.0";
 			}
+			
+			valorTotalDesconto = valorTotalDesconto.add(dto.getValorTotalDesconto());
 			
 			String edicaoItemNotaPermitida 		= IND_SIM;
 			String edicaoItemRecFisicoPermitida = IND_SIM;

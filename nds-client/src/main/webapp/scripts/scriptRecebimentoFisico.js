@@ -1123,7 +1123,9 @@ var recebimentoFisicoController = $.extend(true, {
 			$("#peso", recebimentoFisicoController.workspace).val(resultado.peso);
 			$("#codigo", recebimentoFisicoController.workspace).val(resultado.codigo);
 			$("#produto", recebimentoFisicoController.workspace).val(resultado.nomeProduto);
-			$("#precoCapa", recebimentoFisicoController.workspace).val(resultado.precoCapa);
+			$("#precoCapa", recebimentoFisicoController.workspace).val(
+				$.formatNumber(resultado.precoCapa, {format:"#,##0.00", locale:"br"})
+			);
 			$("#edicao", recebimentoFisicoController.workspace).val(resultado.edicao);
 			$("#datepickerLancto", recebimentoFisicoController.workspace).val(resultado.dataLancamento);
 			$("#datepickerRecolhimento", recebimentoFisicoController.workspace).val(resultado.dataRecolhimento);
@@ -1252,49 +1254,45 @@ var recebimentoFisicoController = $.extend(true, {
 	
 	alterarValor : function(idLinha) {
 
-		var qtdPacote 		= $("#qtdPacote_"+idLinha).val();
-		var qtdQuebra 		= $("#qtdExemplar_"+idLinha).val();
+		var qtdPacote 		= $("#qtdPacote_"+idLinha, recebimentoFisicoController.workspace).val();
+		var qtdQuebra 		= $("#qtdExemplar_"+idLinha, recebimentoFisicoController.workspace).val();
 
 		if (qtdPacote == "") {
 			qtdPacote = 0;
-			$("#qtdPacote_"+idLinha).val(0);
+			$("#qtdPacote_"+idLinha, recebimentoFisicoController.workspace).val(0);
 		}
 
 		if (qtdQuebra == "") {
 			qtdQuebra = 0;
-			$("#qtdExemplar_"+idLinha).val(0);
+			$("#qtdExemplar_"+idLinha, recebimentoFisicoController.workspace).val(0);
 		}
 
-		var qtdPacote 		= parseInt(qtdPacote);
-		var qtdQuebra 		= parseInt(qtdQuebra);
-		var repartePrevisto = parseInt($("#repartePrevisto_"+idLinha).text());
-		var pacotePadrao 	= parseInt($("#pacotePadrao_"+idLinha).text());
+		qtdPacote 		= parseInt(qtdPacote);
+		qtdQuebra 		= parseInt(qtdQuebra);
+		var repartePrevisto = parseInt($("#repartePrevisto_"+idLinha, recebimentoFisicoController.workspace).text());
+		var pacotePadrao 	= parseInt($("#pacotePadrao_"+idLinha, recebimentoFisicoController.workspace).text());
 		var diferenca 		= 0;
 
 		diferenca = ( (qtdPacote * pacotePadrao) + qtdQuebra) - repartePrevisto; 
 
 		if (diferenca < 0) {
-			$("#diferenca_"+idLinha)[0].style.color = "red";			
+			$("#diferenca_"+idLinha, recebimentoFisicoController.workspace)[0].style.color = "red";			
 		} else {
-			$("#diferenca_"+idLinha)[0].style.color = "black";			
-		}
-		
-		if (isNaN(diferenca)){
-			diferenca = 0;
+			$("#diferenca_"+idLinha, recebimentoFisicoController.workspace)[0].style.color = "black";			
 		}
 
-		$("#diferenca_"+idLinha).text(diferenca);
+		$("#diferenca_"+idLinha, recebimentoFisicoController.workspace).text(diferenca);
 		
-		$("#valorTotalCapa_" + idLinha).text(
+		$("#valorTotalCapa_" + idLinha, recebimentoFisicoController.workspace).text(
 			$.formatNumber(
-				(repartePrevisto + diferenca) * parseFloat(priceToFloat($("#precoCapa_" + idLinha).text())),
+				(repartePrevisto + diferenca) * parseFloat(priceToFloat($("#precoCapa_" + idLinha, recebimentoFisicoController.workspace).text())),
 				{format:"#,##0.00", locale:"br"}
 			)
 		);
 		
-		$("#valorTotalDesconto_" + idLinha).text(
+		$("#valorTotalDesconto_" + idLinha, recebimentoFisicoController.workspace).text(
 			$.formatNumber(
-				(repartePrevisto + diferenca) * parseFloat(priceToFloat($("#precoCapaDesconto_" + idLinha).text())),
+				(repartePrevisto + diferenca) * parseFloat(priceToFloat($("#precoCapaDesconto_" + idLinha, recebimentoFisicoController.workspace).text())),
 				{format:"#,##0.00", locale:"br"}
 			)
 		);
@@ -1340,8 +1338,8 @@ var recebimentoFisicoController = $.extend(true, {
 			$("#qtdExemplarItem"+idLinha).val(0);
 		}
 		
-		var qtdPacote 		= parseInt(qtdPacote);
-		var qtdQuebra 		= parseInt(qtdQuebra);
+		qtdPacote 		= parseInt(qtdPacote);
+		qtdQuebra 		= parseInt(qtdQuebra);
 		var repartePrevisto = parseInt($("#qtdNotaItem"+idLinha).val());
 		var pacotePadrao 	= parseInt($("#pacotePadraoItem"+idLinha).text());
 		var diferenca 		= 0;
@@ -1359,10 +1357,6 @@ var recebimentoFisicoController = $.extend(true, {
 		} else {
 			$("#diferencaItem"+idLinha)[0].style.color = "black";			
 		}
-
-		if (isNaN(diferenca)){
-        	diferenca = 0;
-        }
 		
 		$("#diferencaItem"+idLinha).val(diferenca);
 		
@@ -1417,7 +1411,7 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			var imgEdicao = '<img src="'+contextPath+'/images/ico_editar.gif" width="15" height="15" alt="Salvar" hspace="5" border="0" />'; 
 			
-			var pacotePadrao = value.cell.pacotePadrao;
+			value.cell.pacotePadrao = '<span id="pacotePadrao_'+lineId+'">'+value.cell.pacotePadrao+'</span>'; 
 			
 			
 			if(destacarValorNegativo == "S") {
@@ -1841,7 +1835,9 @@ var recebimentoFisicoController = $.extend(true, {
 		$.postJSON(this.path + 'obterDadosEdicao', {codigo:codigo,edicao:edicao}, 
 			function(result) { 
 				$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).text(floatToPrice(result.precoDesconto));
-				$("#precoCapa"+index, recebimentoFisicoController.workspace).text(floatToPrice(result.precoCapa));
+				$("#precoCapa"+index, recebimentoFisicoController.workspace).text(
+					$.formatNumber(result.precoCapa, {format:"#,##0.00", locale:"br"})
+				);
 				$("#pacotePadraoItem"+index, recebimentoFisicoController.workspace).text(result.pacotePadrao);
 			},
 			null,
@@ -2653,7 +2649,9 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			if(typeof result != "undefined") {
 				
-				$("#precoCapa", recebimentoFisicoController.workspace).val(result.precoVenda);			
+				$("#precoCapa", recebimentoFisicoController.workspace).val(
+					$.formatNumber(result.precoVenda, {format:"#,##0.00", locale:"br"})
+				);			
 				$("#peso", recebimentoFisicoController.workspace).val(result.peso);			
 				$("#pacotePadrao", recebimentoFisicoController.workspace).val(result.pacotePadrao);			
 				
