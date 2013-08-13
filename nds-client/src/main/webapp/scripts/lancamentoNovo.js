@@ -582,7 +582,9 @@ var lancamentoNovoController = $.extend(true, {
 		
 		data.push({name: "qntReparteRateio", value: qntReparteRateio});
 		
-		if (direcionadoParaEstoque) {
+		if (direcionadoParaEstoque
+				|| tipoDiferenca == 'FALTA_DE'
+				|| tipoDiferenca == 'FALTA_EM') {
 			
 			data.push({name: "tipoDiferenca", value: tipoDiferenca});
 			
