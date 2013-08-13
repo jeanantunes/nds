@@ -17,7 +17,7 @@ public class NdsProfiler {
 	public Object profileRepository(ProceedingJoinPoint pjp) throws Throwable {
 		
 		long start = System.currentTimeMillis();
-		LOGGER.info("Repository: Chamando método: "+ pjp.toShortString() +".");
+		//LOGGER.info("Repository: Chamando método: "+ pjp.toShortString() +".");
 		
 		StringBuilder msgRep = new StringBuilder("");
 		int indexRep = 0;
@@ -48,7 +48,7 @@ public class NdsProfiler {
 	public Object profileService(ProceedingJoinPoint pjp) throws Throwable {
 		
 		long start = System.currentTimeMillis();
-		LOGGER.info("Service: Chamando método: "+ pjp.toShortString() +".");
+		//LOGGER.info("Service: Chamando método: "+ pjp.toShortString() +".");
 		
 		StringBuilder msgRep = new StringBuilder("");
 		int indexServ = 0;

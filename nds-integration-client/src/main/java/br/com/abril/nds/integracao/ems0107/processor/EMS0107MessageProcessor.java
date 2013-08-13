@@ -120,7 +120,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		eCota.setQtdePrevista(qtdReparte);
 		eCota.setQtdeEfetiva(qtdReparte);
 
-		this.ndsiLoggerFactory.getLogger().logError(message,
+		this.ndsiLoggerFactory.getLogger().logInfo(message,
 				EventoExecucaoEnum.INF_DADO_ALTERADO,
 				"EstudoCota para a numero de Cota: " + numeroCota + "para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao + " no Lancamento: " + lancamento.getDataLancamentoPrevista().toString() + " Inserido com sucesso!");
 		

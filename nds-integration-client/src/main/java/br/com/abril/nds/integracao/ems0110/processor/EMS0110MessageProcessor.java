@@ -1,5 +1,6 @@
 package br.com.abril.nds.integracao.ems0110.processor;
 
+import java.math.BigInteger;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -402,7 +403,10 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		brinde.setPermiteVendaSeparada(input.getCondVendeSeparado());
 		edicao.setBrinde(brinde);
 
-		edicao.setCodigoDeBarras(input.getCodBarra());
+		String codigoDeBarras = input.getCodBarra();
+		validarCodigoBarras(produto.getCodigo(), input.getEdicaoProd(), message, codigoDeBarras);
+		
+		edicao.setCodigoDeBarras(codigoDeBarras);
 		edicao.setNumeroEdicao(input.getEdicaoProd());
 		edicao.setPacotePadrao(input.getPactPadrao());
 		edicao.setPeb(input.getPeb());
@@ -425,6 +429,12 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		
 		inserirDescontoProdutoEdicao(edicao, produto);
 		
+	}
+
+	private void validarCodigoBarras(String codigo, Long edicao, Message message,	String codigoDeBarras) {
+		if (codigoDeBarras == null || "".equals(codigoDeBarras) || new BigInteger(codigoDeBarras).compareTo(BigInteger.ZERO) <= 0){
+			this.ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO, "Código de barras vazio para o Produto código: "+codigo +" edição: "+edicao);
+		}
 	}
 
 	/**
@@ -600,6 +610,9 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		}
 		if (null != edicao.getCodigoDeBarras() && !edicao.getCodigoDeBarras().equals(input.getCodBarra())) {
 
+			String codigoDeBarras = input.getCodBarra();
+			validarCodigoBarras(edicao.getProduto().getCodigo(), edicao.getNumeroEdicao(), message, codigoDeBarras);
+			
 			edicao.setCodigoDeBarras(input.getCodBarra());
 			this.ndsiLoggerFactory.getLogger().logInfo(
 					message,

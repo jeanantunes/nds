@@ -90,7 +90,7 @@
 
 	<filter-mapping>
 		<filter-name>imagesCache</filter-name>
-		<url-pattern>*.png</url-pattern>
+		<url-pattern>*.png, *.gif, *.jpg, *.jpeg</url-pattern>
 	</filter-mapping>
 
 	<listener>
