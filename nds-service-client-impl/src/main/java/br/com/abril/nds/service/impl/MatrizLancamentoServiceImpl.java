@@ -63,6 +63,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	@Autowired
 	private HistoricoLancamentoRepository historicoLancamentoRepository;
 	
+	private int indiceImpressao;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -633,6 +634,12 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		List<ProdutoLancamentoDTO> produtosLancamentoNaoBalanceadosTotal = 
 			new ArrayList<ProdutoLancamentoDTO>();
 		
+		indiceImpressao = 1;
+		
+		this.imprimir("Id | Código | Nome | Edição | Reparte | Dt Prevista | Dt Distribuidor | Dt Balanceamento | Periodicidade");
+		
+		this.imprimir("=============== PRODUTOS SALVOS / CONFIRMADOS ===============");
+		
 		List<ProdutoLancamentoDTO> produtosLancamentoBalancear =
 			this.processarProdutosLancamentoNaoBalanceaveis(matrizLancamento,
 															dadosBalanceamentoLancamento);
@@ -650,6 +657,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		Set<Date> datasExpectativaReparteOrdenado =
 			ordenarMapaExpectativaRepartePorDatasDistribuicao(datasExpectativaReparte,
 															  datasDistribuicao);
+		
+		this.imprimir("=============== PRODUTOS BALANCEÁVEIS ===============");
 		
 		for (Date dataLancamentoPrevista : datasExpectativaReparteOrdenado) {
 			
@@ -673,6 +682,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		if (!produtosLancamentoNaoBalanceadosTotal.isEmpty()) {
 
+			this.imprimir("=============== REALOCAÇÃO DE PRODUTOS QUE SOBRARAM ===============");
+			
 			produtosLancamentoNaoBalanceadosTotal = 
 				this.realocarSobrasProdutosLancamento(
 					matrizLancamento, produtosLancamentoNaoBalanceadosTotal,
@@ -1109,6 +1120,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		long quantidadeProdutosNaoBalanceados = 0;
 		
+		this.imprimir("=============== REALOCAÇÃO DE PRODUTOS (EXCEDE CAPACIDADE DO DISTRIBUIDOR) ===============");
+		
 		while (!produtosLancamentoBalancear.isEmpty()
 					&& quantidadeProdutosBalancear != quantidadeProdutosNaoBalanceados) {
 		
@@ -1129,6 +1142,11 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 											 	  false);
 			
 			quantidadeProdutosNaoBalanceados = produtosLancamentoBalancear.size();
+		}
+		
+		if (!produtosLancamentoBalancear.isEmpty()) {
+			
+			this.imprimir("=============== REALOCAÇÃO DE PRODUTOS (BALANCEAR PARA PRIMEIRO DIA) ===============");
 		}
 		
 		mapaExpectativaReparteTotalDiariaAtual = 
@@ -1253,6 +1271,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			
 			produtosLancamentoMatriz = new ArrayList<ProdutoLancamentoDTO>();
 		}
+		
+		this.imprimirProdutoLancamento(produtoLancamento, dataLancamento);
 		
 		produtoLancamento.setNovaDataLancamento(dataLancamento);
 		produtoLancamento.setDataLancamentoDistribuidor(dataLancamento);
@@ -1674,4 +1694,27 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		SALVAR,
 		CONFIRMAR;
 	}
+	
+	private void imprimirProdutoLancamento(ProdutoLancamentoDTO produtoLancamento, Date dataLancamento) {
+		
+		StringBuilder log = new StringBuilder();
+		
+		log.append(indiceImpressao++ + " | ");
+		log.append(produtoLancamento.getCodigoProduto() + " | ");
+		log.append(produtoLancamento.getNomeProduto() + " | ");
+		log.append(produtoLancamento.getNumeroEdicao() + " | ");
+		log.append(produtoLancamento.getRepartePrevisto() + " | ");
+		log.append(DateUtil.formatarDataPTBR(produtoLancamento.getDataLancamentoPrevista()) + " | ");
+		log.append(DateUtil.formatarDataPTBR(produtoLancamento.getDataLancamentoDistribuidor()) + " | ");
+		log.append(DateUtil.formatarDataPTBR(dataLancamento) + " | ");
+		log.append(produtoLancamento.getPeriodicidadeProduto().name());
+		
+		this.imprimir(log.toString());
+	}
+	
+	private void imprimir(String log) {
+		
+		System.out.println(log);
+	}
+	
 }
