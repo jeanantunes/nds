@@ -1280,6 +1280,10 @@ var recebimentoFisicoController = $.extend(true, {
 		} else {
 			$("#diferenca_"+idLinha, recebimentoFisicoController.workspace)[0].style.color = "black";			
 		}
+		
+		if (isNaN(diferenca)){
+			diferenca = 0;
+		}
 
 		$("#diferenca_"+idLinha, recebimentoFisicoController.workspace).text(diferenca);
 		

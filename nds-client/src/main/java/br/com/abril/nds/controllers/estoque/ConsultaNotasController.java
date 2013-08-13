@@ -129,7 +129,7 @@ public class ConsultaNotasController extends BaseController {
 			
 			List<NotaFiscalEntradaFornecedorDTO> listaNotasFiscais =
 				notaFiscalService.obterNotasFiscaisCadastradasDTO(filtroConsultaNotaFiscal);
-
+			
  			Integer quantidadeRegistros = this.notaFiscalService.obterQuantidadeNotasFicaisCadastradas(filtroConsultaNotaFiscal);
 			
 			if (quantidadeRegistros <= 0) {
@@ -253,17 +253,18 @@ public class ConsultaNotasController extends BaseController {
 		for (NotaFiscalEntradaFornecedorDTO notaFiscal : listaNotasFiscais) {
 			
 			ConsultaNotaFiscalVO consultaNotaFiscalVO = new ConsultaNotaFiscalVO();
-			
 			try {
 				consultaNotaFiscalVO.setDataEmissao( sdf.parse(notaFiscal.getDataEmissao()) );
 				consultaNotaFiscalVO.setDataExpedicao( sdf.parse(notaFiscal.getDataExpedicao()) );
 			} catch (ParseException e) {
 				throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
 			}
+			
+			consultaNotaFiscalVO.setChaveAcesso(notaFiscal.getChaveAcesso());
 			consultaNotaFiscalVO.setNomeFornecedor(mapaFornecedorNotaFiscal.get(notaFiscal.getId()));
 			consultaNotaFiscalVO.setNotaRecebida(notaFiscal.getNotaRecebida());
 			consultaNotaFiscalVO.setNumeroNota( Long.parseLong(notaFiscal.getNumero()) );
-			consultaNotaFiscalVO.setTipoNotaFiscal(notaFiscal.getDescricao());
+//			consultaNotaFiscalVO.setTipoNotaFiscal(notaFiscal.getDescricao());
 			consultaNotaFiscalVO.setValor(notaFiscal.getValorTotalNota());
 			consultaNotaFiscalVO.setValorComDesconto(notaFiscal.getValorTotalNotaComDesconto());
 			consultaNotaFiscalVO.setSerie(notaFiscal.getSerie());
