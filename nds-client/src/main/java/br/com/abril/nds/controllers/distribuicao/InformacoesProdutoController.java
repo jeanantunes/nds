@@ -219,9 +219,18 @@ public class InformacoesProdutoController extends BaseController {
 
 		InformacoesAbrangenciaEMinimoProdDTO informacoes = infoProdService.buscarAbrangenciaEMinimo(idEstudo);
 		
+		if(informacoes == null){
+			
+			informacoes = new InformacoesAbrangenciaEMinimoProdDTO();
+			informacoes.setAbrangenciaSugerida(new BigDecimal(0));
+			informacoes.setMinimoSugerido(new BigInteger("0"));
+			
+		}
+		
 		BigDecimal abrang = infoProdService.buscarAbrangenciaApurada(codProduto, numEdicao);
 		
-		informacoes.setAbrangenciaApurada(abrang);
+		informacoes.setAbrangenciaApurada(abrang.equals(null) ? new BigDecimal(0): abrang);
+		
 		informacoes.setMinimoEstudoId(idEstudo);
 		
 		result.use(Results.json()).from(informacoes, "result").serialize();
