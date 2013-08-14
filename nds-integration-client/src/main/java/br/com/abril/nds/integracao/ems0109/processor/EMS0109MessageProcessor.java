@@ -269,7 +269,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		String assunto = "Erro na Interface 109 PUB - TipoDesconto não cadastrado na DescontoLogistico";
 		String msg = "TipoDesconto não cadastrado na tabela DescontoLogistico arquivo .PUB vindo PRODIN, código de publicação:  "+codigoPublicacao;
 		sendEmailInterface(assunto, msg, message);
-		this.ndsiLoggerFactory.getLogger().logWarning(message,EventoExecucaoEnum.SEM_DOMINIO,msg);
+		this.ndsiLoggerFactory.getLogger().logWarning(message,EventoExecucaoEnum.RELACIONAMENTO,msg);
 	}
 
 	public void validarTipoDesconto(Message message, String tipoDesconto, String codigoPublicacao){
@@ -277,7 +277,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 			String assunto = "Erro na Interface 109 PUB - TipoDesconto não consta no arquivo";
 			String msg ="TipoDesconto não consta no arquivo .PUB de publicações vindo PRODIN, código de publicação:  "+codigoPublicacao;
 			sendEmailInterface(assunto, msg, message);
-			this.ndsiLoggerFactory.getLogger().logWarning(message,EventoExecucaoEnum.SEM_DOMINIO,msg);
+			this.ndsiLoggerFactory.getLogger().logWarning(message,EventoExecucaoEnum.HIERARQUIA,msg);
 		}
 	}
 	
