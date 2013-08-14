@@ -92,7 +92,7 @@ function incluirSegmento() {
 	          <tr>
 	            <td width="20"><input type="radio" name="tipoExcecao" id="tipoExcecaoSegmento" checked="checked" class="pesquisaPorSegmento"/></td>
 	            <td width="188">Por Exceção Segmento</td> 
-	            <td width="20"><input type="radio" name="tipoExcecao" id="tipoExcecaoSegmento" class="pesquisaPorParcial"/></td>
+	            <td width="20"><input type="radio" name="tipoExcecao" id="tipoExcecaoSegmento" class="pesquisaPorParcial" onclick="excecaoSegmentoParciaisController.limparCampos();"/></td>
 	            <td width="696">Por Exceção de Parciais</td>
 	          </tr>
 	        </table>
@@ -180,6 +180,7 @@ function incluirSegmento() {
    	      </table>
        	  <br />
         	<table class="excessaoGrid"></table>
+              <span class="bt_novos" title="limpar" style="float:right;"><a href="javascript:;" id="limparCotaNaExcecao"><img src="images/ico_excluir.gif" hspace="5" border="0" />Limpar</a></span>
               <span class="bt_novos" title="Confirmar" style="float:right;"><a href="javascript:;" id="inserirCotaNaExcecao"><img src="images/ico_check.gif" hspace="5" border="0" />Confirmar</a></span>
         
       </fieldset>
@@ -229,6 +230,7 @@ function incluirSegmento() {
    	      </table>
        	  <br />
         	<table class="excessaoBGrid"></table>
+              <span class="bt_novos" title="limpar" style="float:right;"><a href="javascript:;" id="limparExcecaoDeProdutos"><img src="images/ico_excluir.gif" hspace="5" border="0" />Limpar</a></span>
               <span class="bt_novos" title="Confirmar" style="float:right;"><a href="javascript:;" id="inserirExcecaoDeProdutos"><img src="images/ico_check.gif" hspace="5" border="0" />Confirmar</a></span>
         
       </fieldset>

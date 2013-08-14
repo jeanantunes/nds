@@ -67,7 +67,7 @@ public class ApplicationContextListener implements ServletContextListener {
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
 
 //		this.agendarIntegracaoOperacionalDistribuidor();
-//		this.agendaExeclusaoAjusteReparte();
+//		this.agendaExclusaoAjusteReparte();
 //		this.agendarExclusaoDeEstudos();
 //		this.agendarGeracaoRankings();
 //		this.agendaExeclusaoFixacaoReparte();
@@ -214,7 +214,7 @@ public class ApplicationContextListener implements ServletContextListener {
 	 * Efetua o agendamento do serviço de exclusão de ajuste de reparte.
 	 * 
 	 */
-	private void agendaExeclusaoAjusteReparte() {
+	private void agendaExclusaoAjusteReparte() {
 
 		try {
 
