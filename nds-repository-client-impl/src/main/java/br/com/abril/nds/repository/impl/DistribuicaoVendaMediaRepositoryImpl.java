@@ -206,7 +206,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 			break;
 
 		    default:
-			hql.append(" ORDER BY l.data_lcto_prevista asc ");
+			hql.append(" ORDER BY l.data_lcto_prevista ");
 		    }
 
 		    if (filtro.getPaginacao().getOrdenacao() != null) {

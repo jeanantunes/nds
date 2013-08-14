@@ -360,7 +360,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		}
 		
 		T.lancamentos[index].repDistrib = input.value;
-		var vlr = (T.lancamentos[index].reparte - T.lancamentos[index].promo - T.lancamentos[index].repDistrib); 
+		var vlr = (T.lancamentos[index].reparte - T.lancamentos[index].repDistrib);
 		$("#sobra" + index, _workspace).text(vlr);
 		T.lancamentos[index].sobra = vlr;
 	},

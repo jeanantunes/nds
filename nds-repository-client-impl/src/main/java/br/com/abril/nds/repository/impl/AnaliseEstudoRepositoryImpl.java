@@ -138,7 +138,7 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 			break;
 
 		    default:
-			hql.append(" ORDER BY numeroEstudo asc ");
+			hql.append(" ORDER BY numeroEstudo desc ");
 		    }
 
 		    if (filtro.getPaginacao() != null && filtro.getPaginacao().getOrdenacao() != null) {

@@ -32,19 +32,13 @@ public class CaracteristicaDistribuicaoServiceImpl implements
 		return tipoClassificacaoProdutoRepository.obterTodos();
 	}
 
-
-
 	@Override
 	@Transactional
 	public List<CaracteristicaDistribuicaoDTO> buscarComFiltroCompleto(
 			FiltroConsultaCaracteristicaDistribuicaoDetalheDTO filtro) {
 		return claDistribuicaoRepository.obterCaracteristicaDistribuicaoDetalhe(filtro);
-		
 	}
 
-
-
-	
 	@Override
 	@Transactional
 	public List<CaracteristicaDistribuicaoSimplesDTO> buscarComFiltroSimples(

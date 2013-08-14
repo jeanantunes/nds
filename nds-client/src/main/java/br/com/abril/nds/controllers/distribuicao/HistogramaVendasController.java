@@ -25,6 +25,7 @@ import br.com.abril.nds.dto.RegiaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
@@ -37,6 +38,7 @@ import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.InformacoesProdutoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RegiaoService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -91,6 +93,9 @@ public class HistogramaVendasController extends BaseController {
 	
 	@Autowired
 	private TipoClassificacaoProdutoService tipoClassificacaoProdutoService;
+	
+	@Autowired
+	private ProdutoService produtoService;
 	
 	@Rules(Permissao.ROLE_DISTRIBUICAO_HISTOGRAMA_VENDAS)
 	public void index(){
@@ -262,6 +267,10 @@ public class HistogramaVendasController extends BaseController {
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 		
 		filtro.setOrdemColuna(Util.getEnumByStringValue(FiltroHistogramaVendas.OrdemColuna.values(), sortname));
+		if(filtro.getCodigo() != null){
+			Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigo());
+			filtro.setIdProduto(produto.getId());			
+		}
 		
 		tratarFiltro(filtro);
 		
