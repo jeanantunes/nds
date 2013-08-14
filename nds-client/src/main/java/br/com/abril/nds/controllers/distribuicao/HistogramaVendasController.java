@@ -22,6 +22,7 @@ import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RegiaoDTO;
+import br.com.abril.nds.dto.RodapeHistogramaVendaDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -302,6 +303,9 @@ public class HistogramaVendasController extends BaseController {
 		
 		return tableModel;
 	}
+	
+	
+        
 
 	@SuppressWarnings("unchecked")
 	@Get
@@ -309,13 +313,24 @@ public class HistogramaVendasController extends BaseController {
 		
 		List<AnaliseHistogramaDTO> lista = (List<AnaliseHistogramaDTO>)session.getAttribute(HISTOGRAMA_SESSION_ATTRIBUTE);
 		
+		AnaliseHistogramaDTO footer = lista.get(lista.size() - 1);
+		
+		//String eficiencia = ( (footer.getVdaTotal().d )  / (footer.getReparteTotalDistribuidor() * 100) );
+		
+		RodapeHistogramaVendaDTO rodapeDTO = new RodapeHistogramaVendaDTO(footer.getQtdeCotasAtivas().toString(), "", footer.getCotasEsmagadas().toString(), footer.getVendaEsmagadas().toString(), 
+				footer.getRepTotal().toString(), footer.getReparteDistribuido().toString(), footer.getVdaTotal().toString(),
+				"", "", "", footer.getRepMedio().toString(), footer.getVdaMedio().toString(), footer.getEncalheMedio().toString());
+		
 		if (lista==null || lista.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,
 					"A última pesquisa realizada não obteve resultado.");
 		}
 
 		FileExporter.to("Histórico_de_venda_por_faixa", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), getFiltroSessao(), null, lista,
+				this.getNDSFileHeader(), 
+				getFiltroSessao(), 
+				rodapeDTO, 
+				lista,
 				AnaliseHistogramaDTO.class, this.httpResponse);
 		
 		result.nothing();
