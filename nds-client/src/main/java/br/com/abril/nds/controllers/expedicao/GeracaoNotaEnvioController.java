@@ -161,7 +161,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 		
 		List<ItemDTO<Long, String>> listaBox = new ArrayList<ItemDTO<Long,String>>();
 		
-		listaBox.add(new ItemDTO<Long, String>(-1L, "Especial"));
+		listaBox.add(new ItemDTO<Long, String>(0L, "Especial"));
 		
 		for (Box box : boxs) {
 			
@@ -207,7 +207,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 		
 			List<Box> boxes = this.boxService.buscarBoxPorRota(idRota);
 	
-	        lista.add(new ItemDTO<Long, String>(-1L, "Especial"));
+	        lista.add(new ItemDTO<Long, String>(0L, "Especial"));
 	
 			for (Box box : boxes){
 	    		
@@ -234,7 +234,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 			
 			List<Box> boxes = this.boxService.buscarBoxPorRoteiro(idRoteiro);
 	
-	        lista.add(new ItemDTO<Long, String>(-1L, "Especial"));
+	        lista.add(new ItemDTO<Long, String>(0L, "Especial"));
 	        	
 	    	for (Box box : boxes){
 	    		
