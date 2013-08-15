@@ -82,7 +82,7 @@ var confirmaExpedicaoController = $.extend(true, {
 				display : 'Estudo',
 				name : 'estudo',
 				width : 50,
-				sortable : false,
+				sortable : true,
 				align : 'center'
 			}, {
 				display : '',
