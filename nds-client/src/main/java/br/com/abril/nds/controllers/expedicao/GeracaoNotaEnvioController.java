@@ -161,7 +161,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 		
 		List<ItemDTO<Long, String>> listaBox = new ArrayList<ItemDTO<Long,String>>();
 		
-		listaBox.add(new ItemDTO<Long, String>(-1L, "Especial"));
+		listaBox.add(new ItemDTO<Long, String>(0L, "Especial"));
 		
 		for (Box box : boxs) {
 			
@@ -207,7 +207,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 		
 			List<Box> boxes = this.boxService.buscarBoxPorRota(idRota);
 	
-	        lista.add(new ItemDTO<Long, String>(-1L, "Especial"));
+	        lista.add(new ItemDTO<Long, String>(0L, "Especial"));
 	
 			for (Box box : boxes){
 	    		
@@ -234,7 +234,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 			
 			List<Box> boxes = this.boxService.buscarBoxPorRoteiro(idRoteiro);
 	
-	        lista.add(new ItemDTO<Long, String>(-1L, "Especial"));
+	        lista.add(new ItemDTO<Long, String>(0L, "Especial"));
 	        	
 	    	for (Box box : boxes){
 	    		
@@ -368,11 +368,13 @@ public class GeracaoNotaEnvioController extends BaseController {
 	@Path("/carregarCombosPorBox")
 	public void carregarCombosPorBox(Integer codigoBoxDe, Integer codigoBoxAte) {
 		
+		List<ItemDTO<Long, String>> boxes = this.getComboTodosBoxes();
+		
 		List<ItemDTO<Long, String>> rotas = this.carregarComboRotaPorBox(codigoBoxDe, codigoBoxAte);
 		
 		List<ItemDTO<Long, String>> roteiros = this.carregarComboRoteiroPorBox(codigoBoxDe, codigoBoxAte);
 		
-		result.use(Results.json()).from(Arrays.asList(rotas, roteiros),"result").recursive().serialize();
+		result.use(Results.json()).from(Arrays.asList(rotas, roteiros, boxes),"result").recursive().serialize();
 	}
 	
 	/**
@@ -383,11 +385,13 @@ public class GeracaoNotaEnvioController extends BaseController {
 	@Path("/carregarCombosPorRota")
 	public void carregarCombosPorRota(Long idRota) {
 		
+		List<ItemDTO<Long, String>> rotas = this.getComboTodosRotas();
+		
 		List<ItemDTO<Long, String>> roteiros = this.carregarComboRoteiroPorRota(idRota);
 		
 		List<ItemDTO<Long, String>> boxes = this.carregarComboBoxPorRota(idRota);
 		
-		result.use(Results.json()).from(Arrays.asList(roteiros, boxes),"result").recursive().serialize();
+		result.use(Results.json()).from(Arrays.asList(roteiros, boxes, rotas),"result").recursive().serialize();
 	}
 	
 	/**
@@ -398,11 +402,13 @@ public class GeracaoNotaEnvioController extends BaseController {
 	@Path("/carregarCombosPorRoteiro")
 	public void carregarCombosPorRoteiro(Long idRoteiro) {
 		
+		List<ItemDTO<Long, String>> roteiros = this.getComboTodosRoteiros();
+		
 		List<ItemDTO<Long, String>> rotas = this.carregarComboRotaPorRoteiro(idRoteiro);
 		
 		List<ItemDTO<Long, String>> boxes = this.carregarComboBoxPorRoteiro(idRoteiro);
 		
-		result.use(Results.json()).from(Arrays.asList(rotas, boxes),"result").recursive().serialize();
+		result.use(Results.json()).from(Arrays.asList(rotas, boxes, roteiros),"result").recursive().serialize();
 	}
 
 	@Post

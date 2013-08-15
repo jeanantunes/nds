@@ -548,10 +548,16 @@ var geracaoNotaEnvioController = $.extend({
         		    var listaRota = result[0];
         		    
         		    var listaRoteiro = result[1];
+        		    
+        		    var listaBox = result[2];
         		
         		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-selectRota", geracaoNotaEnvioController.workspace), listaRota ,idRota);
      		    
-        		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-selectRoteiro", geracaoNotaEnvioController.workspace), listaRoteiro ,idRoteiro);  
+        		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-selectRoteiro", geracaoNotaEnvioController.workspace), listaRoteiro ,idRoteiro); 
+        		    
+        		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-boxDe", geracaoNotaEnvioController.workspace), listaBox ,boxDe);
+         		    
+        		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-boxAte", geracaoNotaEnvioController.workspace), listaBox ,boxAte);
         	    }    
 			);
 		},
@@ -580,12 +586,16 @@ var geracaoNotaEnvioController = $.extend({
         		    var listaRoteiro = result[0];
         		 
         		    var listaBox = result[1];
+        		    
+        		    var listaRota = result[2];
 
         		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-boxDe", geracaoNotaEnvioController.workspace), listaBox ,boxDe);
      		    
         		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-boxAte", geracaoNotaEnvioController.workspace), listaBox ,boxAte);
      		    
-        		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-selectRoteiro", geracaoNotaEnvioController.workspace), listaRoteiro ,idRoteiro);  
+        		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-selectRoteiro", geracaoNotaEnvioController.workspace), listaRoteiro ,idRoteiro); 
+        		    
+        		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-selectRota", geracaoNotaEnvioController.workspace), listaRota ,idRota);
         	    }    
 			);
 		},
@@ -611,15 +621,19 @@ var geracaoNotaEnvioController = $.extend({
          	$.postJSON(contextPath + '/expedicao/geracaoNotaEnvio/carregarCombosPorRoteiro', params, 
 				function(result) {
         		
-        		    var listaRotas = result[0];
+        		    var listaRota = result[0];
         		 
         		    var listaBox = result[1];
+        		    
+        		    var listaRoteiro = result[2];
      		    
-        		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-selectRota", geracaoNotaEnvioController.workspace), listaRotas ,idRota);  
+        		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-selectRota", geracaoNotaEnvioController.workspace), listaRota ,idRota);  
         		    
         		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-boxDe", geracaoNotaEnvioController.workspace), listaBox ,boxDe);
          		    
         		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-boxAte", geracaoNotaEnvioController.workspace), listaBox ,boxAte);
+        		    
+        		    geracaoNotaEnvioController.recarregarCombo($("#geracaoNotaEnvio-filtro-selectRoteiro", geracaoNotaEnvioController.workspace), listaRoteiro ,idRoteiro); 
         	    }    
 			);
 		},
