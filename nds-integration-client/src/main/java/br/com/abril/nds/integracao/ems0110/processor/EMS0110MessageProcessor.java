@@ -209,7 +209,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		if (null == editor) {
 			this.ndsiLoggerFactory.getLogger().logWarning(message,
 					EventoExecucaoEnum.SEM_DOMINIO,
-					"Editor " + input.getCodEditor() + " nao encontrado.");
+					"Editor " + input.getCodEditor() + " nao encontrado. Código do produto: " + input.getCodProd() +  " - Nome do Produto: " + input.getNomeProd());
 
 			throw new RuntimeException("Editor " + input.getCodEditor() + " nao encontrado. Código do produto: " + input.getCodProd() +  " - Nome do Produto: " + input.getNomeProd());
 		}

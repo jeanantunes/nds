@@ -1,6 +1,9 @@
 package br.com.abril.nds.controllers.administracao;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -179,15 +182,35 @@ public class PainelProcessamentoController extends BaseController {
 	 * @param rp
 	 * @param page
 	 */
-	public void pesquisarDetalhesInterfaceProcessamento(String idLogProcessamento, String sortname, String sortorder, int rp, int page) throws Exception {
+	public void pesquisarDetalhesInterfaceProcessamento(String idLogProcessamento, String dataProcessamento, 
+			String sortname, String sortorder, int rp, int page) throws Exception {
 
 		FiltroDetalheProcessamentoDTO filtro = carregarFiltroDetalhesProcessamento(sortorder, sortname, page, rp);
-
+		
 		List<DetalheProcessamentoVO> lista;
 		int quantidade = 0;
 		try {
-			lista = painelProcessamentoService.listardetalhesProcessamentoInterface(Long.parseLong(idLogProcessamento), filtro);
-			quantidade = Integer.valueOf( painelProcessamentoService.listarTotaldetalhesProcessamentoInterface(Long.parseLong(idLogProcessamento), filtro).toString() );
+
+			Long idProcessamentoLong = 0l;
+			if(idLogProcessamento != null && !"".equals(idLogProcessamento)){
+				idProcessamentoLong = Long.parseLong(idLogProcessamento);
+			}
+			
+			filtro.setCodigoLogExecucao(idProcessamentoLong);
+			
+			Date dataOperacao = null;
+			if(dataProcessamento != null && !"".equals(dataProcessamento)){
+				try {
+					dataOperacao = new SimpleDateFormat("dd/MM/yyyy").parse(dataProcessamento);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			filtro.setDataProcessamento(dataOperacao);
+			
+			lista = painelProcessamentoService.listardetalhesProcessamentoInterface(filtro);
+			quantidade = Integer.valueOf( painelProcessamentoService.listarTotaldetalhesProcessamentoInterface(filtro).toString() );
 			
 			if (lista == null || lista.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
