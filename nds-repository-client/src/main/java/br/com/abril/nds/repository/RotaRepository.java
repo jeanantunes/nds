@@ -6,6 +6,7 @@ import org.hibernate.criterion.MatchMode;
 
 import br.com.abril.nds.dto.RotaRoteiroDTO;
 import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 
@@ -78,4 +79,11 @@ public interface RotaRepository extends Repository<Rota, Long> {
 	List<Rota> obterRotasNaoAssociadasAoRoteiro(Long roteiroID);
 
 	Long obterQtdRotasPorCota(Integer numeroCota);
+
+	/**
+	 * Busca lista de RotaPDV por Rota
+	 * @param rotaId
+	 * @return List<RotaPDV>
+	 */
+	List<RotaPDV> buscarRotaPDVPorRota(Long rotaId);
 }

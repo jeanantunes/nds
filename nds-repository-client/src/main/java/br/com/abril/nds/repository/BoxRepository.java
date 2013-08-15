@@ -143,4 +143,26 @@ public interface BoxRepository extends Repository<Box,Long> {
 	 * @return
 	 */
 	public Box obterBoxPorRoteiro(Long roteiroID);
+
+	/**
+	 * Obtem lista de Box por intervalo de Código
+	 * @param codigoBoxDe
+	 * @param codigoBoxAte
+	 * @return List<Box>
+	 */
+	List<Box> obterBoxPorIntervaloCodigo(Integer codigoBoxDe, Integer codigoBoxAte);
+	
+	/**
+	 * Busca lista de Box por Rota
+	 * @param rotaId
+	 * @return List<Box>
+	 */
+	List<Box> buscarBoxPorRota(Long rotaId);
+	
+	/**
+	 * Busca lista de Box por Roteiro
+	 * @param roteiroId
+	 * @return List<Box>
+	 */
+	List<Box> buscarBoxPorRoteiro(Long roteiroId);
 }
