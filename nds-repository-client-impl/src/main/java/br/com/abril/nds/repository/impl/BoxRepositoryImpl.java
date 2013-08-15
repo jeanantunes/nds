@@ -1,4 +1,5 @@
 package br.com.abril.nds.repository.impl;
+import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -457,7 +458,72 @@ public class BoxRepositoryImpl extends AbstractRepositoryModel<Box,Long> impleme
 		return (Box) query.uniqueResult();
 	}
 
+	/**
+	 * Obtem lista de Box por intervalo de Código
+	 * @param codigoBoxDe
+	 * @param codigoBoxAte
+	 * @return List<Box>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Box> obterBoxPorIntervaloCodigo(Integer codigoBoxDe, Integer codigoBoxAte) {
 
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT box FROM Box box ");
+		
+		sql.append(" WHERE box.codigo in (:codigosBox) ");
+		
+		Query query = this.getSession().createQuery(sql.toString());
+		
+		query.setParameterList("codigosBox", Arrays.asList(codigoBoxDe, codigoBoxAte));
+		
+		return query.list();
+	}
 
+	/**
+	 * Busca lista de Box por Rota
+	 * @param rotaId
+	 * @return List<Box>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Box> buscarBoxPorRota(Long rotaId) {
+		
+	    String hql  = " select box from Rota rota ";
+	           hql += " join rota.roteiro roteiro ";
+	           hql += " join roteiro.roteirizacao roteirizacao ";
+	           hql += " join roteirizacao.box box ";
+	           hql += " where rota.id = :rotaId ";
+	           hql += " group by box.codigo ";
+			
+		Query query = getSession().createQuery(hql);
+		
+		query.setParameter("rotaId", rotaId);
+		
+		return query.list();
+	}
 
+	/**
+	 * Busca lista de Box por Roteiro
+	 * @param roteiroId
+	 * @return List<Box>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Box> buscarBoxPorRoteiro(Long roteiroId) {
+		
+		String hql  = " select box from Rota rota ";
+			   hql += " join rota.roteiro roteiro ";
+               hql += " join roteiro.roteirizacao roteirizacao ";
+		       hql += " join roteirizacao.box box ";
+		       hql += " where roteiro.id = :roteiroId ";
+		       hql += " group by box.codigo ";
+		
+        Query query = getSession().createQuery(hql);
+	
+	    query.setParameter("roteiroId", roteiroId);
+	
+	    return query.list();
+	}
 }

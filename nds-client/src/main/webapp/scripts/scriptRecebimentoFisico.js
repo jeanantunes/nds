@@ -275,7 +275,7 @@ var recebimentoFisicoController = $.extend(true, {
 			$("#novoSerieNota", recebimentoFisicoController.workspace).val($("#serie", recebimentoFisicoController.workspace).val());		
 			$("#novoChaveAcesso", recebimentoFisicoController.workspace).val($("#chaveAcesso", recebimentoFisicoController.workspace).val());		
 		}
-		
+		$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).uncheck();
 	},
 		
 	/**
@@ -1543,7 +1543,7 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		if (subtrairNumeroColunaReplicar != 0){
 			
-			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(13 - subtrairNumeroColunaReplicar,false);
+			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(13,false);
 			$(".bt_sellAll", recebimentoFisicoController.workspace).hide();
 		} else {
 			
