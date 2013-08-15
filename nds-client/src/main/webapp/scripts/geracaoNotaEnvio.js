@@ -542,7 +542,7 @@ var geracaoNotaEnvioController = $.extend({
 							value : boxAte
 						  }];
         	
-        	$.postJSON(contextPath + '/expedicao/geracaoNotaEnvio/carregarCombosPorBox', params, 
+        	$.postJSON(contextPath + '/cadastro/roteirizacao/carregarCombosPorBox', params, 
 				function(result) {
         		
         		    var listaRota = result[0];
@@ -580,7 +580,7 @@ var geracaoNotaEnvioController = $.extend({
 				            value : idRota	
 						  }];
 		    
-        	$.postJSON(contextPath + '/expedicao/geracaoNotaEnvio/carregarCombosPorRota', params, 
+        	$.postJSON(contextPath + '/cadastro/roteirizacao/carregarCombosPorRota', params, 
 				function(result) {
         		
         		    var listaRoteiro = result[0];
@@ -618,7 +618,7 @@ var geracaoNotaEnvioController = $.extend({
  				            value : idRoteiro	
  						  }];
          	
-         	$.postJSON(contextPath + '/expedicao/geracaoNotaEnvio/carregarCombosPorRoteiro', params, 
+         	$.postJSON(contextPath + '/cadastro/roteirizacao/carregarCombosPorRoteiro', params, 
 				function(result) {
         		
         		    var listaRota = result[0];
