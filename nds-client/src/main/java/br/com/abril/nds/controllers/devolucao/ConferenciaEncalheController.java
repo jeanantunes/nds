@@ -101,6 +101,8 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	private static final String NUMERO_COTA = "numeroCotaConferenciaEncalhe";
 	
+	private static final String COTA = "cotaConferenciaEncalhe";
+	
 	private static final int QUANTIDADE_MAX_REGISTROS = 15;
 	
 	private static final String CONFERENCIA_ENCALHE_COTA_STATUS = "CONFERENCIA_ENCALHE_COTA_STATUS";
@@ -376,6 +378,7 @@ public class ConferenciaEncalheController extends BaseController {
 		boolean indCotaComRecolhimento = conferenciaEncalheService.isCotaComReparteARecolherNaDataOperacao(numeroCota);
 
 		this.session.setAttribute(NUMERO_COTA, numeroCota);
+		this.session.setAttribute(COTA, cota);
 		
 		if(!indCotaComRecolhimento) {
 			
@@ -466,6 +469,7 @@ public class ConferenciaEncalheController extends BaseController {
 		this.calcularValoresMonetarios(dados);
 		
 		Cota cota = infoConfereciaEncalheCota.getCota();
+		this.session.setAttribute(COTA, cota);
 		
 		if (cota != null){
 			
@@ -838,7 +842,7 @@ public class ConferenciaEncalheController extends BaseController {
 		} 
 		
 		conferenciaEncalheService.validarQtdeEncalheExcedeQtdeReparte(
-				conferenciaEncalheDTONaoValidado, getNumeroCotaFromSession(), null, indConferenciaContingencia);
+				conferenciaEncalheDTONaoValidado, getCotaFromSession(), null, indConferenciaContingencia);
 	}
 	
 	@Post
@@ -1875,7 +1879,7 @@ public class ConferenciaEncalheController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Falha ao validar quantidade de itens de encalhe.");
 		} 
 		conferenciaEncalheService.validarQtdeEncalheExcedeQtdeReparte(
-				conferenciaEncalheDTONaoValidado, getNumeroCotaFromSession(), null, indConferenciaContingencia);
+				conferenciaEncalheDTONaoValidado, getCotaFromSession(), null, indConferenciaContingencia);
 		
 		return  qtd;
 	}
@@ -2042,6 +2046,18 @@ public class ConferenciaEncalheController extends BaseController {
 		}
 		
 		return numeroCota;
+	}
+	
+	private Cota getCotaFromSession(){
+		
+		Cota cota = (Cota) this.session.getAttribute(COTA);
+		
+		if (cota == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Informe uma cota.");
+		}
+		
+		return cota;
 	}
 	
 	private void alterarBoxUsuario(Long idBox) {
