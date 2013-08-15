@@ -155,6 +155,7 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		sql.append(" JOIN produtoEdicao.produto produto ");
 		sql.append(" JOIN produto.fornecedores fornecedor ");
 		sql.append(" WHERE cota.id IN (:idCotas) ");
+		sql.append(" AND estudo.dataLancamento = lancamento.dataLancamentoPrevista ");
 		sql.append(" AND lancamento.status NOT IN (:listaStatusLancamento) ");
 		
 		if (listaIdsFornecedores != null && !listaIdsFornecedores.isEmpty()) {
