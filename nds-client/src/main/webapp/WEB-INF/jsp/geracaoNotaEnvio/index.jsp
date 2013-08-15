@@ -49,7 +49,7 @@
   			<tbody>
   				<tr>
     				<td>Fornecedor:</td>
-    				<td>
+    				<td style="width: 243px; ">
     					<select id="geracaoNotaEnvio-filtro-selectFornecedores" multiple="multiple" style="width:200px">
 							<c:forEach items="${fornecedores}" var="fornecedor">
 								<option value="${fornecedor.key}">${fornecedor.value}</option>
@@ -57,15 +57,15 @@
 						</select>
     				</td>
     				
-    				<td>Data Movimento:</td>
-    				<td>
+    				<td style="width: 111px; ">Data Movimento:</td>
+    				<td style="width: 240px; ">
     					<input type="text" id="geracaoNotaEnvio-filtro-movimentoDe" name ="movimentoDe" style="width:76px;" class="input-date">
      						&nbsp;&nbsp;Até&nbsp;
       					<input type="text" id="geracaoNotaEnvio-filtro-movimentoAte" name ="movimentoAte" style="width:76px;" class="input-date">
       				</td>
     				
-    				<td>Data Emissão:</td>
-    				<td>
+    				<td style="width: 91px; ">Data Emissão:</td>
+    				<td style="width: 219px; ">
     					<input type="text" id="geracaoNotaEnvio-filtro-dataEmissao" style="width:80px;" class="input-date">
     				</td>
   				</tr>
@@ -73,7 +73,7 @@
   				<tr>
     				<td width="91">Roteiro:</td>
    	 				<td width="215">
-   	 					<select id="geracaoNotaEnvio-filtro-selectRoteiro" style="width:200px; font-size:11px!important">
+   	 					<select id="geracaoNotaEnvio-filtro-selectRoteiro" onchange="geracaoNotaEnvioController.changeRoteiro();" style="width:200px; font-size:11px!important">
       						<option value="">Selecione...</option>
       						<c:forEach items="${roteiros}" var="roteiro">
 								<option value="${roteiro.key }">${roteiro.value }</option>
@@ -83,7 +83,7 @@
     					
     				<td width="93">Rota:</td>
     				<td>
-    					<select id="geracaoNotaEnvio-filtro-selectRota" style="width:150px; font-size:11px!important">
+    					<select id="geracaoNotaEnvio-filtro-selectRota" onchange="geracaoNotaEnvioController.changeRota();" style="width:150px; font-size:11px!important">
       						<option value="">Selecione...</option>
       						<c:forEach items="${rotas}" var="rota">
 								<option value="${rota.key }">${rota.value }</option>
@@ -99,13 +99,28 @@
 					</td>
 				</tr>
    				<tr>
+   				
    					<td>Intervalo Box:</td>
+   					
    					<td>
-   						<input id="geracaoNotaEnvio-filtro-boxDe" type="text" style="width:76px;" class="input-numeric">
-							&nbsp;Até &nbsp;
-						<input id="geracaoNotaEnvio-filtro-boxAte" type="text" style="width:76px;" class="input-numeric">
+   			
+	   					<select name="geracaoNotaEnvio-filtro-boxDe" id="geracaoNotaEnvio-filtro-boxDe" onchange="geracaoNotaEnvioController.changeBox();" style="width: 100px;">
+							<option value="" selected="selected">Selecione...</option>
+							<c:forEach var="box" items="${listaBox}">
+								<option value="${box.key}">${box.value}</option>
+							</c:forEach>
+					    </select>
+
+						&nbsp;Até &nbsp;
+	
+						<select name="geracaoNotaEnvio-filtro-boxAte" id="geracaoNotaEnvio-filtro-boxAte" onchange="geracaoNotaEnvioController.changeBox();" style="width: 100px;">
+							<option value="" selected="selected">Selecione...</option>
+							<c:forEach var="box" items="${listaBox}">
+								<option value="${box.key}">${box.value}</option>
+							</c:forEach>
+					    </select>
 					</td>
-    					
+	
    					<td>Exibir Notas: </td>
    					<td width="270">
    						<select id="geracaoNotaEnvio-filtro-exibirNotasEnvio" style="width:150px; font-size:11px!important">
