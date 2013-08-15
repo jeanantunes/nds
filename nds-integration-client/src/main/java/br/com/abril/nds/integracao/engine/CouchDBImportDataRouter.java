@@ -131,7 +131,13 @@ public class CouchDBImportDataRouter extends AbstractRepository implements Conte
 			view.key(inputModel.getRouteInterface().getName());
 			view.limit(couchDbProperties.getBachSize());
 			view.includeDocs(true);
-			result = view.queryView(String.class, Void.class, classByTipoInterfaceEnum);
+			
+			try{
+				result = view.queryView(String.class, Void.class, classByTipoInterfaceEnum);
+			}catch(org.lightcouch.NoDocumentException e){
+				//Nao ha mais informacoes a serem processadas
+				break;
+			}
 		} while(!result.getRows().isEmpty());
 		
 		// Processamento a ser executado APÓS o processamento principal:

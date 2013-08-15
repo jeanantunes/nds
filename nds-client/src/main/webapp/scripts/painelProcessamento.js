@@ -255,12 +255,14 @@ var painelProcessamentoController = $.extend(true, {
 
 			//row.cell.nome = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterface(" + row.cell.idLogProcessamento + ")'>" + row.cell.nome + "</href>";
 			
-			if (row.cell.status == 'S' || row.cell.status == 'A')
+			if (row.cell.status == 'S')
 				row.cell.status = "<img src= " + contextPath + "/images/ico_operando.png />";
 			else if (row.cell.status == 'F')
 				row.cell.status = "<img src= " + contextPath + "/images/ico_offline.png />";
 			else if (row.cell.status == 'V')
 				row.cell.status = "<img src= " + contextPath + "/images/ico_semdados.png />";
+			else if(row.cell.status == 'A')
+				row.cell.status = "<img src= " + contextPath + "/images/ico_offline.png />";
 			else // Não processado
 				row.cell.status = "<img src= " + contextPath + "/images/ico_encerrado.png />";
 			
@@ -313,7 +315,8 @@ var painelProcessamentoController = $.extend(true, {
 		$(".detalheProcessamentoGrid", painelProcessamentoController.workspace).flexOptions({
 			url: contextPath + '/administracao/painelProcessamento/pesquisarDetalhesInterfaceProcessamento',
 			params: [
-		         {name:'idLogProcessamento', value: idLogProcessamento}
+		         {name:'idLogProcessamento', value: idLogProcessamento},
+		          {name:'dataProcessamento', value: dataProcessamento}
 		    ],
 		    newp: 1,
 		});

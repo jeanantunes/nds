@@ -286,7 +286,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 			emailService.enviar(assunto, mensagem, Constantes.MAILS_RECEBIMENTO_INTERFACE);
 		} catch (Exception e) {
 			e.printStackTrace();
-			ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.HIERARQUIA, String.format("Erro ao tentar enviar e-mail Interface"));
+			ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.HIERARQUIA, String.format("Erro ao tentar enviar e-mail Interface"));
 		}
 	}
 	
@@ -443,6 +443,9 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 				produto.setDescontoLogistica(descontoLogistica);
 
 				this.ndsiLoggerFactory.getLogger().logInfo(message,EventoExecucaoEnum.INF_DADO_ALTERADO,"Atualizacao do Tipo Desconto para: " + descontoLogistica.getTipoDesconto());
+				
+				//FIXME ROBSONApagar linha apos teste
+				validarDescontoLogistico(message, input.getCodigoPublicacao());
 			}
 		}else{
 			validarDescontoLogistico(message, input.getCodigoPublicacao());

@@ -163,10 +163,10 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 	 */
 	@Transactional(readOnly = true)
 	@Override
-	public List<DetalheProcessamentoVO> listardetalhesProcessamentoInterface(Long codigoLogExecucao, FiltroDetalheProcessamentoDTO filtro) {
+	public List<DetalheProcessamentoVO> listardetalhesProcessamentoInterface(FiltroDetalheProcessamentoDTO filtro) {
 		List<DetalheProcessamentoVO> lista = new ArrayList<DetalheProcessamentoVO>();
 		DetalheProcessamentoVO detalheProcessamentoVO = null;
-		for (LogExecucaoMensagem logExecucaoMensagem : logExecucaoRepository.obterMensagensErroLogInterface(codigoLogExecucao, distribuidorService.obterDataOperacaoDistribuidor(), filtro)) {
+		for (LogExecucaoMensagem logExecucaoMensagem : logExecucaoRepository.obterMensagensErroLogInterface(filtro)) {
 			String tipoErro = "";
 			detalheProcessamentoVO = new DetalheProcessamentoVO();
 			detalheProcessamentoVO.setMensagem(logExecucaoMensagem.getMensagem());
@@ -193,8 +193,8 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 
 	@Transactional(readOnly = true)
 	@Override
-	public Long listarTotaldetalhesProcessamentoInterface(long codigoLogExecucao, FiltroDetalheProcessamentoDTO filtro) {
-		return logExecucaoRepository.obterTotalMensagensErroLogInterface(codigoLogExecucao, distribuidorService.obterDataOperacaoDistribuidor(), filtro);
+	public Long listarTotaldetalhesProcessamentoInterface(FiltroDetalheProcessamentoDTO filtro) {
+		return logExecucaoRepository.obterTotalMensagensErroLogInterface(filtro);
 	}
 
 	
