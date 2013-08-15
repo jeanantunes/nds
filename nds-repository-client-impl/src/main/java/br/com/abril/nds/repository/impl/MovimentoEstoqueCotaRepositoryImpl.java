@@ -197,6 +197,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		query.setParameter("idCota", idCota);
 		query.setParameter("dataControleConferencia", dataControleConferencia);
 		
+		query.setCacheable(true);
+		
 		return query.list();
 		
 	}

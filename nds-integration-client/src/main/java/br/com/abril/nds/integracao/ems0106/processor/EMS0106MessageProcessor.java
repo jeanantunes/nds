@@ -47,8 +47,8 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		String codigoPublicacao = input.getCodigoPublicacao();
 		Long edicao = input.getEdicao();
 
-		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoPublicacao,
-				edicao);
+		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoPublicacao, edicao);
+		
 		if (produtoEdicao == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
@@ -80,8 +80,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			
 			// Cadastrar novo estudo:
 			estudo = new Estudo();
-			estudo.setQtdeReparte(BigInteger.valueOf(
-					input.getReparteDistribuir()));
+			estudo.setQtdeReparte(BigInteger.valueOf(input.getReparteDistribuir()));
 			estudo.setDataLancamento(lancamento.getDataLancamentoPrevista());
 			estudo.setProdutoEdicao(produtoEdicao);
 			estudo.setStatus(StatusLancamento.ESTUDO_FECHADO);
@@ -105,8 +104,8 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			
 			// Atualizar os dados do Estudo:
 			BigInteger qtdeReparteAtual = estudo.getQtdeReparte();
-			BigInteger qtdeReparteCorrente = BigInteger.valueOf(
-					input.getReparteDistribuir());
+			BigInteger qtdeReparteCorrente = BigInteger.valueOf(input.getReparteDistribuir());
+			
 			if (!qtdeReparteAtual.equals(qtdeReparteCorrente)) {
 				this.ndsiLoggerFactory.getLogger().logInfo(message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
@@ -153,13 +152,11 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 	 * 
 	 * @return
 	 */
-	private ProdutoEdicao obterProdutoEdicao(String codigoPublicacao,
-			Long edicao) {
+	private ProdutoEdicao obterProdutoEdicao(String codigoPublicacao, Long edicao) {
 
 		try {
 
-			Criteria criteria = this.getSession().createCriteria(
-					ProdutoEdicao.class, "produtoEdicao");
+			Criteria criteria = this.getSession().createCriteria(ProdutoEdicao.class, "produtoEdicao");
 
 			criteria.createAlias("produtoEdicao.produto", "produto");
 			criteria.setFetchMode("produto", FetchMode.JOIN);

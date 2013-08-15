@@ -57,8 +57,8 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		
 		String codigoPublicacao = input.getCodigoPublicacao();
 		Long edicao = input.getEdicao();
-		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoPublicacao,
-				edicao);
+		ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoPublicacao, edicao);
+		
 		if (produtoEdicao == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
@@ -66,8 +66,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 			return;
 		}
 			
-		Lancamento lancamento = this.getLancamentoPrevistoMaisProximo(
-				produtoEdicao);
+		Lancamento lancamento = this.getLancamentoPrevistoMaisProximo(produtoEdicao);
 		if (lancamento == null) {
 			
 			lancamento = getLancamentoPrevistoAnteriorMaisProximo(produtoEdicao);
@@ -135,13 +134,11 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 	 * 
 	 * @return
 	 */
-	private ProdutoEdicao obterProdutoEdicao(String codigoPublicacao,
-			Long edicao) {
+	private ProdutoEdicao obterProdutoEdicao(String codigoPublicacao, Long edicao) {
 
 		try {
 
-			Criteria criteria = this.getSession().createCriteria(
-					ProdutoEdicao.class, "produtoEdicao");
+			Criteria criteria = this.getSession().createCriteria(ProdutoEdicao.class, "produtoEdicao");
 
 			criteria.createAlias("produtoEdicao.produto", "produto");
 			criteria.setFetchMode("produto", FetchMode.JOIN);
@@ -175,8 +172,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 	 * @param produtoEdicao
 	 * @return
 	 */
-	private Lancamento getLancamentoPrevistoMaisProximo(
-			ProdutoEdicao produtoEdicao) {
+	private Lancamento getLancamentoPrevistoMaisProximo(ProdutoEdicao produtoEdicao) {
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -207,8 +203,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 	 * @param produtoEdicao
 	 * @return
 	 */
-	private Lancamento getLancamentoPrevistoAnteriorMaisProximo(
-			ProdutoEdicao produtoEdicao) {
+	private Lancamento getLancamentoPrevistoAnteriorMaisProximo(ProdutoEdicao produtoEdicao) {
 		
 		StringBuilder sql = new StringBuilder();
 		
@@ -305,8 +300,7 @@ public class EMS0107MessageProcessor extends AbstractRepository implements Messa
 		if (lstEstudoId != null && !lstEstudoId.isEmpty()) {
 			for (Object estudoId : lstEstudoId) {
 				
-				Criteria criteriaEstudo = this.getSession().createCriteria(
-						Estudo.class, "estudo");
+				Criteria criteriaEstudo = this.getSession().createCriteria(Estudo.class, "estudo");
 				criteriaEstudo.add(Restrictions.eq("estudo.id", estudoId));
 				Estudo estudo = (Estudo) criteriaEstudo.uniqueResult();
 				

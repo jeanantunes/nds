@@ -103,6 +103,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 						"select c from Cota c where c.numeroCota = :numeroCota");
 		
 		query.setParameter("numeroCota", numeroCota);
+		query.setCacheable(true);
 		
 		return (Cota) query.uniqueResult();
 	}
