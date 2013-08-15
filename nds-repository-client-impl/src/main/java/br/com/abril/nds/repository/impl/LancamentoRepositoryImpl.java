@@ -285,6 +285,10 @@ public class LancamentoRepositoryImpl extends
 			order =  "lancamento.reparte";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.DATA_CHAMADA)) {
 			order =  "lancamento.dataRecolhimentoPrevista";
+		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.QTDE_FISICO)) {
+			order =  "recebimento.qtdeFisico";
+		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.QTDE_ESTUDO)) {
+			order =  "estudo.qtdeReparte";
 		} else {
 			return "";
 		}
@@ -330,7 +334,7 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" left join produtoEdicao.estoqueProduto estoque ");
 		
 		hql.append(" left join lancamento.estudo estudo ");
-//		hql.append(" join lancamento.estudo estudo ");
+		hql.append(" left join lancamento.recebimentos recebimento ");
 		
 		boolean where = false;
 		
@@ -370,7 +374,7 @@ public class LancamentoRepositoryImpl extends
 			parametros.put("idFornecedor", idFornecedor);
 		}				
 		
-		
+		hql.append(" group by lancamento ");
 		
 		return hql.toString();
 	}
@@ -427,7 +431,7 @@ public class LancamentoRepositoryImpl extends
 			query.setParameter(entry.getKey(), entry.getValue());
 		}
 
-		return (Long) query.uniqueResult();
+		return (long) query.list().size();
 	}
 	
 	public Lancamento obterLancamentoPorItensRecebimentoFisico(Date dataLancamento, TipoLancamento tipoLancamento, Long idProdutoEdicao){

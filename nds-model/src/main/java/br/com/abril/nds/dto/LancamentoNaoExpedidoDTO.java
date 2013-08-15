@@ -243,7 +243,8 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 		QTDE_REPARTE("reparte"),
 		DATA_CHAMADA("dataChamada"),
 		FORNECEDOR("fornecedor"),
-		ID_ESTUDO("estudo");
+		QTDE_FISICO("fisico"),
+		QTDE_ESTUDO("estudo");
 		
 		private SortColumn(String property) {
 			this.property = property;
