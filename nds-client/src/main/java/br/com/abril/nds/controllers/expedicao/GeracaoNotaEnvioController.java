@@ -4,17 +4,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
@@ -23,8 +20,6 @@ import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
-import br.com.abril.nds.model.cadastro.Rota;
-import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -96,30 +91,38 @@ public class GeracaoNotaEnvioController extends BaseController {
 	public void index() {
 				
 		result.include("fornecedores",  fornecedorService.obterFornecedoresIdNome(SituacaoCadastro.ATIVO, true));
+   
+		this.iniciarComboBox();
 		
-		List<Roteiro> roteiros = this.roteirizacaoService.buscarRoteiro(null, null);
+		this.iniciarComboRota();
 		
-		List<ItemDTO<Long, String>> listRoteiro = new ArrayList<ItemDTO<Long,String>>();
-		
-		for (Roteiro roteiro : roteiros){
-			
-			listRoteiro.add(new ItemDTO<Long, String>(roteiro.getId(), roteiro.getDescricaoRoteiro()));
-		}
-		
-		result.include("roteiros", listRoteiro);
-		
-		List<Rota> rotas = this.roteirizacaoService.buscarRota(null, null);
-		
-		List<ItemDTO<Long, String>> listRota = new ArrayList<ItemDTO<Long,String>>();
-		
-		for (Rota rota : rotas){
-			
-			listRota.add(new ItemDTO<Long, String>(rota.getId(), rota.getDescricaoRota()));
-		}
-		
-		result.include("rotas", listRota);
+		this.iniciarComboRoteiro();
 	}
 	
+	/**
+	 * Inicia o combo Roteiro
+	 */
+	private void iniciarComboRoteiro() {
+
+		result.include("roteiros", this.roteirizacaoService.getComboTodosRoteiros());
+	}
+	
+	/**
+	 * Inicia o combo Rota
+	 */
+	private void iniciarComboRota() {
+
+		result.include("rotas", this.roteirizacaoService.getComboTodosRotas());
+	}
+	
+	/**
+	 * Inicia o combo Box
+	 */
+	private void iniciarComboBox() {
+
+		result.include("listaBox", this.roteirizacaoService.getComboTodosBoxes());
+	}
+
 	@Post
 	public void obterDataDistribuidor(){
 		

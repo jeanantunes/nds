@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.RotaRoteiroDTO;
 import br.com.abril.nds.model.cadastro.Rota;
+import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.util.StringUtil;
@@ -210,6 +211,24 @@ public class RotaRepositoryImpl extends AbstractRepositoryModel<Rota, Long>
 		criteria.add(Restrictions.ne("roteiro.id", roteiroID));
 		
 		return criteria.list();
+	}
+
+	/**
+	 * Busca lista de RotaPDV por Rota
+	 * @param rotaId
+	 * @return List<RotaPDV>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<RotaPDV> buscarRotaPDVPorRota(Long rotaId) {
+		
+        String hql = " select rotaPDV from RotaPDV rotaPDV where rotaPDV.rota.id = :rotaId ";
+		
+		Query query = getSession().createQuery(hql);
+		
+		query.setParameter("rotaId", rotaId);
+		
+		return query.list();
 	}
 	
 }

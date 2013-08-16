@@ -15,6 +15,7 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -341,14 +342,14 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 	}
 
-	public ChamadaEncalheCota obterUltimaChamaEncalheCota(Integer numeroCota,Long idProdutoEdicao,
+	public ChamadaEncalheCota obterUltimaChamaEncalheCota(Cota cota,Long idProdutoEdicao,
 														 boolean postergado,Date dataOperacao) {
 
-		return obterUltimaChamadaEncalheCota(numeroCota, idProdutoEdicao,postergado, null);
+		return obterUltimaChamadaEncalheCota(cota, idProdutoEdicao,postergado, null);
 
 	}
 
-	private ChamadaEncalheCota obterUltimaChamadaEncalheCota(Integer numeroCota, Long idProdutoEdicao, boolean postergado,
+	private ChamadaEncalheCota obterUltimaChamadaEncalheCota(Cota cota, Long idProdutoEdicao, boolean postergado,
 															 Date dataOperacao) {
 		
 		StringBuilder hql = new StringBuilder();
@@ -359,7 +360,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 		hql.append(" where ");
 
-		hql.append(" chamadaEncalheCota.cota.numeroCota = :numeroCota ");
+		hql.append(" chamadaEncalheCota.cota.id = :idCota ");
 
 		hql.append(" and chamadaEncalheCota.postergado = :postergado ");
 		
@@ -378,7 +379,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 		query.setMaxResults(1);
 		
-		query.setParameter("numeroCota", numeroCota);
+		query.setParameter("idCota", cota.getId());
 
 		query.setParameter("postergado", postergado);
 
@@ -393,10 +394,10 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		return (ChamadaEncalheCota) query.uniqueResult();
 	}
 	
-	public ChamadaEncalheCota obterUltimaChamaEncalheCotaParcial(Integer numeroCota,Long idProdutoEdicao,
+	public ChamadaEncalheCota obterUltimaChamaEncalheCotaParcial(Cota cota, Long idProdutoEdicao,
 			 													 boolean postergado,Date dataOperacao) {
 		
-		return obterUltimaChamadaEncalheCota(numeroCota, idProdutoEdicao, postergado, dataOperacao);
+		return obterUltimaChamadaEncalheCota(cota, idProdutoEdicao, postergado, dataOperacao);
 	}
 	
 
