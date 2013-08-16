@@ -556,8 +556,10 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		if(Origem.INTERFACE.equals(recebimentoFisicoDTO.getOrigemItemNota())) {
 			return;
 		}
-		//TODO : Por hora estamos usando somente a Data Lancamento como unica. Verificar se a do Distribuidor também será
-		Lancamento lancamento = lancamentoRepository.obterLancamentoPorItensRecebimentoFisico(recebimentoFisicoDTO.getDataLancamento(), null, recebimentoFisicoDTO.getIdProdutoEdicao());
+		
+		Lancamento lancamento =
+			lancamentoRepository.obterLancamentoPorItensRecebimentoFisico(
+				recebimentoFisicoDTO.getDataLancamento(), recebimentoFisicoDTO.getIdProdutoEdicao());
 		
 		ProdutoEdicao produtoEdicao =  produtoEdicaoService.buscarPorID(recebimentoFisicoDTO.getIdProdutoEdicao());
 				

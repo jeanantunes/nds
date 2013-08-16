@@ -644,17 +644,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		Date dataPrevista = Fixture.criarData(01, Calendar.NOVEMBER, 2012);
 
 		Lancamento lancamento = lancamentoRepository
-				.obterLancamentoPorItensRecebimentoFisico(dataPrevista, null,
-						idProdutoEdicao);
-	}
-
-	@Test
-	public void obterLancamentoPorItensRecebimentoFisicoTipoLancamento() {
-		Long idProdutoEdicao = 1L;
-		TipoLancamento tipo = TipoLancamento.PARCIAL;
-
-		Lancamento lancamento = lancamentoRepository
-				.obterLancamentoPorItensRecebimentoFisico(null, tipo,
+				.obterLancamentoPorItensRecebimentoFisico(dataPrevista,
 						idProdutoEdicao);
 	}
 

@@ -188,7 +188,7 @@ var confirmaExpedicaoController = $.extend(true, {
 			var cell = grid.rows[i].cell;
 								
 			if(cell.estudo) {
-				cell.selecionado = confirmaExpedicaoController.gerarCheckbox('idCheck'+i,'selecao', cell.idLancamento,cell.selecionado,(cell.estoqueLancamentoPE < cell.estudo));
+				cell.selecionado = confirmaExpedicaoController.gerarCheckbox('idCheck'+i,'selecao', cell.idLancamento,cell.selecionado,(cell.fisico < cell.estudo));
 			} else {
 				cell.estudo="";
 				cell.selecionado="";

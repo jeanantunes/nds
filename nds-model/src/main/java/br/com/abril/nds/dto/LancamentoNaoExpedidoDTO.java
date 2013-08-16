@@ -16,14 +16,13 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 	private String preco;
 	private Integer pctPadrao;
 	private Integer reparte;
-	private BigInteger fisico;
 	private String  dataChamada;
 	private String fornecedor;
 	private Integer estudo;
 	private Boolean selecionado; 
-	private Integer estoqueLancamentoPE;
+	private BigInteger fisico;
 	
-	public LancamentoNaoExpedidoDTO(Long idLancamento, String codigo, String produto, Long edicao, String classificacao, String preco, Integer pctPadrao, Integer reparte, BigInteger fisico, String dataChamada, String fornecedor, Integer estudo, Boolean selecionado, Integer estoqueLancamentoPE) {
+	public LancamentoNaoExpedidoDTO(Long idLancamento, String codigo, String produto, Long edicao, String classificacao, String preco, Integer pctPadrao, Integer reparte, String dataChamada, String fornecedor, Integer estudo, Boolean selecionado, BigInteger fisico) {
 		super();
 		this.idLancamento = idLancamento;
 		this.codigo = codigo;
@@ -33,12 +32,11 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 		this.preco = preco;
 		this.pctPadrao = pctPadrao;
 		this.reparte = reparte;
-		this.fisico = fisico;
 		this.dataChamada = dataChamada;
 		this.fornecedor = fornecedor;
 		this.estudo = estudo;
 		this.selecionado = selecionado;
-		this.estoqueLancamentoPE = estoqueLancamentoPE;
+		this.fisico = fisico;
 	}
 
 	public Long getIdLancamento() {
@@ -146,17 +144,8 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 	public void setReparte(Integer reparte) {
 		this.reparte = reparte;
 	}
+	
 
-
-
-
-	public BigInteger getFisico() {
-		return fisico;
-	}
-
-	public void setFisico(BigInteger fisico) {
-		this.fisico = fisico;
-	}
 
 	public String getDataChamada() {
 		return dataChamada;
@@ -214,17 +203,17 @@ public class LancamentoNaoExpedidoDTO implements Serializable {
 
 
 	/**
-	 * @return the estoqueLancamentoPE
+	 * @return the fisico
 	 */
-	public Integer getEstoqueLancamentoPE() {
-		return estoqueLancamentoPE;
+	public BigInteger getFisico() {
+		return fisico;
 	}
 
 	/**
-	 * @param estoqueLancamentoPE the estoqueLancamentoPE to set
+	 * @param fisico the fisico to set
 	 */
-	public void setEstoqueLancamentoPE(Integer estoqueLancamentoPE) {
-		this.estoqueLancamentoPE = estoqueLancamentoPE;
+	public void setFisico(BigInteger fisico) {
+		this.fisico = fisico;
 	}
 
 

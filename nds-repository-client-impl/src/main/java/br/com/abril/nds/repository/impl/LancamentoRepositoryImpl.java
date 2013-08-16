@@ -45,7 +45,6 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
-import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.LancamentoRepository;
@@ -286,7 +285,7 @@ public class LancamentoRepositoryImpl extends
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.DATA_CHAMADA)) {
 			order =  "lancamento.dataRecolhimentoPrevista";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.QTDE_FISICO)) {
-			order =  "recebimento.qtdeFisico";
+			order =  "estoque.qtde";
 		} else if(sortOrder.equals(LancamentoNaoExpedidoDTO.SortColumn.QTDE_ESTUDO)) {
 			order =  "estudo.qtdeReparte";
 		} else {
@@ -334,7 +333,6 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" left join produtoEdicao.estoqueProduto estoque ");
 		
 		hql.append(" left join lancamento.estudo estudo ");
-		hql.append(" left join lancamento.recebimentos recebimento ");
 		
 		boolean where = false;
 		
@@ -434,35 +432,33 @@ public class LancamentoRepositoryImpl extends
 		return (long) query.list().size();
 	}
 	
-	public Lancamento obterLancamentoPorItensRecebimentoFisico(Date dataLancamento, TipoLancamento tipoLancamento, Long idProdutoEdicao){
+	public Lancamento obterLancamentoPorItensRecebimentoFisico(Date dataLancamento, Long idProdutoEdicao){
 		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" from Lancamento lancamento ");
 		
-		hql.append(" where (lancamento.dataLancamentoPrevista >= :dataLancamento ");
-		
-		hql.append(" or lancamento.dataLancamentoDistribuidor >= :dataLancamento) ");
-		
-		if (tipoLancamento != null) {
-			hql.append(" and lancamento.tipoLancamento = :tipoLancamento ");
-		}
+		hql.append(" where lancamento.status in (:statusLancamento) ");
 		
 		hql.append(" and lancamento.produtoEdicao.id = :idProdutoEdicao ");
 
-		hql.append(" order by lancamento.dataLancamentoPrevista, lancamento.dataLancamentoDistribuidor ");
+		hql.append(" order by lancamento.dataLancamentoDistribuidor ");
 		
 		Query query = getSession().createQuery(hql.toString());
 
-		query.setDate("dataLancamento", dataLancamento);
+		List<StatusLancamento> statusLancamento = new ArrayList<>();
+		statusLancamento.add(StatusLancamento.CONFIRMADO);
+		statusLancamento.add(StatusLancamento.PLANEJADO);
+		statusLancamento.add(StatusLancamento.EM_BALANCEAMENTO);
+		statusLancamento.add(StatusLancamento.BALANCEADO);
+		statusLancamento.add(StatusLancamento.FURO);
+		statusLancamento.add(StatusLancamento.CONFIRMADO);
 		
-		query.setMaxResults(1);
-		
-		if(tipoLancamento != null){	
-			query.setParameter("tipoLancamento", tipoLancamento);
-		}
+		query.setParameterList("statusLancamento", statusLancamento);
 		
 		query.setLong("idProdutoEdicao", idProdutoEdicao);
+		
+		query.setMaxResults(1);
 		
 		return (Lancamento) query.uniqueResult();
 	}
