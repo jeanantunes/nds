@@ -43,6 +43,7 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
@@ -263,7 +264,13 @@ public class ConsultaNotasController extends BaseController {
 			consultaNotaFiscalVO.setChaveAcesso(notaFiscal.getChaveAcesso());
 			consultaNotaFiscalVO.setNomeFornecedor(mapaFornecedorNotaFiscal.get(notaFiscal.getId()));
 			consultaNotaFiscalVO.setNotaRecebida(notaFiscal.getNotaRecebida());
-			consultaNotaFiscalVO.setNumeroNota( Long.parseLong(notaFiscal.getNumero()) );
+			if(!StringUtil.isEmpty(notaFiscal.getNumero())) {
+				try {
+					consultaNotaFiscalVO.setNumeroNota( Long.parseLong(notaFiscal.getNumero()) );
+				} catch(Exception e) {
+					
+				}
+			}
 //			consultaNotaFiscalVO.setTipoNotaFiscal(notaFiscal.getDescricao());
 			consultaNotaFiscalVO.setValor(notaFiscal.getValorTotalNota());
 			consultaNotaFiscalVO.setValorComDesconto(notaFiscal.getValorTotalNotaComDesconto());
