@@ -168,7 +168,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 				
 				if (filtro.getPaginacao().getSortColumn().equals("codigo")){
 					
-					hql.append(" (LPAD(pe.produto.codigo, 10, '0')), pe.numeroEdicao ");
+					hql.append(" (LPAD(pe.produto.codigo, (select max(length(pe.produto.codigo)) from pe.produto), '0')) ");
 				} else {
 					hql.append(filtro.getPaginacao().getSortColumn());
 				}
