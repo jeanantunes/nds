@@ -241,8 +241,6 @@ public class LancamentoRepositoryImpl extends
 		
 		hql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, true));	
 		
-		hql.append(" and estoque.qtde>=estudo.qtdeReparte ");
-		
 		if( paginacaoVO != null ) {
 			hql.append(gerarOrderByProdutosNaoExpedidos(
 					LancamentoNaoExpedidoDTO.SortColumn.getByProperty(paginacaoVO.getSortColumn()),
@@ -372,7 +370,9 @@ public class LancamentoRepositoryImpl extends
 		if (idFornecedor != null) {
 			hql.append(" AND fornecedor.id = :idFornecedor ");			
 			parametros.put("idFornecedor", idFornecedor);
-		}				
+		}			
+		
+		hql.append(" and estoque.qtde>=estudo.qtdeReparte ");
 		
 		hql.append(" group by lancamento ");
 		
