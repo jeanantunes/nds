@@ -257,12 +257,10 @@ var painelProcessamentoController = $.extend(true, {
 			
 			if (row.cell.status == 'S')
 				row.cell.status = "<img src= " + contextPath + "/images/ico_operando.png />";
-			else if (row.cell.status == 'F')
+			else if (row.cell.status == 'F' || row.cell.status == 'A')
 				row.cell.status = "<img src= " + contextPath + "/images/ico_offline.png />";
 			else if (row.cell.status == 'V')
 				row.cell.status = "<img src= " + contextPath + "/images/ico_semdados.png />";
-			else if(row.cell.status == 'A')
-				row.cell.status = "<img src= " + contextPath + "/images/ico_offline.png />";
 			else // Não processado
 				row.cell.status = "<img src= " + contextPath + "/images/ico_encerrado.png />";
 			

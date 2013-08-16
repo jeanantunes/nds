@@ -282,12 +282,13 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 	}
 	
 	private void sendEmailInterface(String assunto, String mensagem, Message message){
-		try {
-			emailService.enviar(assunto, mensagem, Constantes.MAILS_RECEBIMENTO_INTERFACE);
-		} catch (Exception e) {
-			e.printStackTrace();
-			ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.HIERARQUIA, String.format("Erro ao tentar enviar e-mail Interface"));
-		}
+		//Descomentar p/ enviar e-mail quando resolver questoes de rede e conta de e-mail
+//		try {
+//			emailService.enviar(assunto, mensagem, Constantes.MAILS_RECEBIMENTO_INTERFACE);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.HIERARQUIA, String.format("Erro ao tentar enviar e-mail Interface"));
+//		}
 	}
 	
 	
@@ -444,8 +445,6 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 				this.ndsiLoggerFactory.getLogger().logInfo(message,EventoExecucaoEnum.INF_DADO_ALTERADO,"Atualizacao do Tipo Desconto para: " + descontoLogistica.getTipoDesconto());
 				
-				//FIXME ROBSONApagar linha apos teste
-				validarDescontoLogistico(message, input.getCodigoPublicacao());
 			}
 		}else{
 			validarDescontoLogistico(message, input.getCodigoPublicacao());
