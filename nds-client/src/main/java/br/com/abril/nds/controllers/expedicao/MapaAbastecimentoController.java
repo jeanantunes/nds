@@ -413,6 +413,8 @@ public class MapaAbastecimentoController extends BaseController {
 		
 		filtro.getPaginacao().setSortColumn("nomeEdicao");
 		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+		filtro.setBox(null);
+		
 		TreeMap<String, ProdutoMapaDTO> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBox(filtro);
 		setaNomeParaImpressao();
 		result.include("produtosMapa",produtosMapa.values());

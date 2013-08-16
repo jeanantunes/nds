@@ -76,7 +76,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 		
 		for(ProdutoAbastecimentoDTO produtoPorBox : produtosPorBox ) {
 			
-			String keyProduto = produtoPorBox.getCodigoProduto();
+			String keyProduto = produtoPorBox.getIdProdutoEdicao().toString();
 			
 			if(!boxes.contains(produtoPorBox.getCodigoBox()))
 				boxes.add(produtoPorBox.getCodigoBox());
