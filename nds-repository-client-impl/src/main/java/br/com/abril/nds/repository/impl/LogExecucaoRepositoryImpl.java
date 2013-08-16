@@ -45,6 +45,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 				.addScalar("status", StandardBasicTypes.STRING)
 				.addScalar("nome", StandardBasicTypes.STRING)
 				.addScalar("id", StandardBasicTypes.LONG)
+				.addScalar("idLogExecucao", StandardBasicTypes.LONG)
 				.addScalar("descricao", StandardBasicTypes.STRING)
 				.addScalar("nomeArquivo", StandardBasicTypes.STRING)
 				.addScalar("extensaoArquivo", StandardBasicTypes.STRING)
@@ -81,7 +82,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 			sql.append(" SELECT COUNT(*) FROM ("); 
 		}
 		
-		sql.append("select ie.id, ie.nome, ie.extensao_arquivo ");
+		sql.append("select le.id as idLogExecucao, ie.id, ie.nome, ie.extensao_arquivo ");
 		sql.append("	, ie.descricao, ie.extensao_arquivo as extensaoArquivo, ");
 		sql.append("	case when (le.status = 'S' and lem.nome_arquivo is null and ie.extensao_arquivo <> 'BANCO') then 'V' "); 
 		sql.append("	else coalesce(le.status, 'N') end as status ");
@@ -160,8 +161,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 	@Override
 	public List<LogExecucaoMensagem> obterMensagensErroLogInterface(FiltroDetalheProcessamentoDTO filtro) {
 		Criteria criteria = addMensagensLogInterfaceRestrictions(filtro.getCodigoLogExecucao());
-		
-		criteria.add( Restrictions.between("logExecucao.dataInicio", this.getPeriodoInicialDia(filtro.getDataProcessamento()), this.getPeriodoFinalDia(filtro.getDataProcessamento())) );
+		criteria.add(Restrictions.eq("logExecucao.id", filtro.getIdLogExecucao()));
 
 		boolean desc = true;
 		if (filtro.getPaginacao() != null && filtro.getPaginacao().getSortOrder() != null) {

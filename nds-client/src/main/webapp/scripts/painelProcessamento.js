@@ -47,7 +47,7 @@ var painelProcessamentoController = $.extend(true, {
 			preProcess : painelProcessamentoController.executarPreInterfaceProcessamento,
 			dataType : 'json',
 			colModel : [ {
-				display : 'Tipo do Erro',
+				display : 'Estado',
 				name : 'tipoErro',
 				width : 100,
 				sortable : true,
@@ -250,9 +250,9 @@ var painelProcessamentoController = $.extend(true, {
 		$.each(resultado.rows, function(index, row) {
 
 			btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterface(\"" + row.cell.nome + "\")'><img border='0' style='margin-right:10px;' src= " + contextPath + "/images/bt_devolucao.png /></href>";
-			brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceProcessamento(" + row.cell.idLogProcessamento + ", \"" + row.cell.dataProcessmento + "\", \"" + row.cell.horaProcessamento + "\")'><img border='0' src= " + contextPath + "/images/ico_detalhes.png /></href>";
+			brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceProcessamento(" + row.cell.idLogProcessamento + ", \"" + row.cell.dataProcessmento + "\", \"" + row.cell.idLogExecucao + "\", \"" + row.cell.horaProcessamento + "\")'><img border='0' src= " + contextPath + "/images/ico_detalhes.png /></href>";
 
-			if(row.cell.idLogProcessamento != "" && row.cell.dataProcessmento != "" && row.cell.status != 'V'){
+			if(row.cell.idLogProcessamento != "" && row.cell.dataProcessmento != "" && row.cell.idLogExecucao != ""){
 				row.cell.reprocessar = btReprocessamento + brDetalhes;
 			}else{
 				row.cell.reprocessar = btReprocessamento;
@@ -314,12 +314,13 @@ var painelProcessamentoController = $.extend(true, {
 		
 		return resultado;
 	},
-	abrirPopUpDetalhesInterfaceProcessamento : function(idLogProcessamento, dataProcessamento, horaProcessamento) {
+	abrirPopUpDetalhesInterfaceProcessamento : function(idLogProcessamento, dataProcessamento, idLogExecucao, horaProcessamento) {
 		$(".detalheProcessamentoGrid", painelProcessamentoController.workspace).flexOptions({
 			url: contextPath + '/administracao/painelProcessamento/pesquisarDetalhesInterfaceProcessamento',
 			params: [
 		         {name:'idLogProcessamento', value: idLogProcessamento},
-		          {name:'dataProcessamento', value: dataProcessamento}
+		          {name:'dataProcessamento', value: dataProcessamento},
+		         {name:'idLogExecucao', value: idLogExecucao}
 		    ],
 		    newp: 1,
 		});

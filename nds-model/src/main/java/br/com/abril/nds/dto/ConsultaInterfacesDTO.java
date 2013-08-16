@@ -14,6 +14,7 @@ public class ConsultaInterfacesDTO implements Serializable {
 	private String status;
 	private String nome;
 	private Long id;
+	private Long idLogExecucao;
 	private String descricao;
 	private String nomeArquivo;
 	private String extensaoArquivo;
@@ -73,6 +74,14 @@ public class ConsultaInterfacesDTO implements Serializable {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+
+	public Long getIdLogExecucao() {
+		return idLogExecucao;
+	}
+
+	public void setIdLogExecucao(Long idLogExecucao) {
+		this.idLogExecucao = idLogExecucao;
 	}
 	
 }
