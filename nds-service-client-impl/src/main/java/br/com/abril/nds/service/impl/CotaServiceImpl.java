@@ -939,18 +939,18 @@ public class CotaServiceImpl implements CotaService {
 			dto = this.setDistribuicaoDefault(dto);
 			return dto;	
 			
-		} else if (parametro.getSlipImpresso() == null &&
-					parametro.getSlipEmail() == null &&
-					parametro.getBoletoImpresso() == null &&
-					parametro.getBoletoEmail() == null &&
-					parametro.getBoletoSlipImpresso() == null &&
-					parametro.getBoletoSlipEmail() == null &&
-					parametro.getReciboImpresso() == null &&
-					parametro.getReciboEmail() == null &&
-					parametro.getChamadaEncalheImpresso() == null &&
-					parametro.getChamadaEncalheEmail() == null &&
-					parametro.getNotaEnvioImpresso() == null &&
-					parametro.getNotaEnvioEmail() == null ) 
+		} else if ((parametro.getSlipImpresso() == null || parametro.getSlipImpresso() == false) &&
+					(parametro.getSlipEmail() == null || parametro.getSlipEmail() == false) &&
+					(parametro.getBoletoImpresso() == null || parametro.getBoletoImpresso() == false) &&
+					(parametro.getBoletoEmail() == null || parametro.getBoletoEmail() == false) &&
+					(parametro.getBoletoSlipImpresso() == null || parametro.getBoletoSlipImpresso() == false) &&
+					(parametro.getBoletoSlipEmail() == null || parametro.getBoletoSlipEmail() == false) &&
+					(parametro.getReciboImpresso() == null || parametro.getReciboImpresso() == false) &&
+					(parametro.getReciboEmail() == null || parametro.getReciboEmail() == false) &&
+					(parametro.getChamadaEncalheImpresso() == null || parametro.getChamadaEncalheImpresso() == false) &&
+					(parametro.getChamadaEncalheEmail() == null || parametro.getChamadaEncalheEmail() == false) &&
+					(parametro.getNotaEnvioImpresso() == null || parametro.getNotaEnvioImpresso() == false) &&
+					(parametro.getNotaEnvioEmail() == null || parametro.getNotaEnvioEmail() == false)) 
 		{
 			
 			dto = this.setDistribuicaoDefault(dto);
@@ -1070,81 +1070,33 @@ public class CotaServiceImpl implements CotaService {
 			
 			switch (nomeDocumento) {
 				case "BOLETO":
-					if( parametrosDeDistribuicao.isUtilizaEmail() ){
-						parametrosDistribuidorConferenciaCota.setBoletoEmail(true);
-					} else {
-						parametrosDistribuidorConferenciaCota.setBoletoEmail(false);
-					}
-					if( parametrosDeDistribuicao.isUtilizaImpressao() ){
-						parametrosDistribuidorConferenciaCota.setBoletoImpresso(true);
-					} else {
-						parametrosDistribuidorConferenciaCota.setBoletoImpresso(false);
-					}
+					parametrosDistribuidorConferenciaCota.setBoletoEmail(parametrosDeDistribuicao.isUtilizaEmail());
+					parametrosDistribuidorConferenciaCota.setBoletoImpresso(parametrosDeDistribuicao.isUtilizaImpressao());
 				break;
 				
 				case "BOLETO_SLIP":
-					if( parametrosDeDistribuicao.isUtilizaEmail() ){
-						parametrosDistribuidorConferenciaCota.setBoletoSlipEmail(true);
-					} else {
-						parametrosDistribuidorConferenciaCota.setBoletoSlipEmail(false);
-					}
-					if( parametrosDeDistribuicao.isUtilizaImpressao() ){
-						parametrosDistribuidorConferenciaCota.setBoletoSlipImpresso(true);
-					} else {
-						parametrosDistribuidorConferenciaCota.setBoletoSlipImpresso(false);
-					}
+					parametrosDistribuidorConferenciaCota.setBoletoSlipEmail(parametrosDeDistribuicao.isUtilizaEmail());
+					parametrosDistribuidorConferenciaCota.setBoletoSlipImpresso(parametrosDeDistribuicao.isUtilizaImpressao());
 				break;
 				
 				case "CHAMADA_ENCALHE":
-					if( parametrosDeDistribuicao.isUtilizaEmail() ){
-						parametrosDistribuidorConferenciaCota.setChamadaEncalheEmail(true);
-					} else {
-						parametrosDistribuidorConferenciaCota.setChamadaEncalheEmail(false);
-					}
-					if( parametrosDeDistribuicao.isUtilizaImpressao() ){
-						parametrosDistribuidorConferenciaCota.setChamadaEncalheImpresso(true);
-					} else {
-						parametrosDistribuidorConferenciaCota.setChamadaEncalheImpresso(false);
-					}
+					parametrosDistribuidorConferenciaCota.setChamadaEncalheEmail(parametrosDeDistribuicao.isUtilizaEmail());
+					parametrosDistribuidorConferenciaCota.setChamadaEncalheImpresso(parametrosDeDistribuicao.isUtilizaImpressao());
 				break;
 				
 				case "NOTA_ENVIO":
-					if( parametrosDeDistribuicao.isUtilizaEmail() ){
-						parametrosDistribuidorConferenciaCota.setNotaEnvioEmail(true);
-					} else {
-						parametrosDistribuidorConferenciaCota.setNotaEnvioEmail(false);
-					}
-					if( parametrosDeDistribuicao.isUtilizaImpressao() ){
-						parametrosDistribuidorConferenciaCota.setNotaEnvioImpresso(true);
-					} else {
-						parametrosDistribuidorConferenciaCota.setNotaEnvioImpresso(false);
-					}
+					parametrosDistribuidorConferenciaCota.setNotaEnvioEmail(parametrosDeDistribuicao.isUtilizaEmail());
+					parametrosDistribuidorConferenciaCota.setNotaEnvioImpresso(parametrosDeDistribuicao.isUtilizaImpressao());
 				break;
 				
 				case "RECIBO":
-					if( parametrosDeDistribuicao.isUtilizaEmail() ){
-						parametrosDistribuidorConferenciaCota.setReciboEmail(true);
-					} else {
-						parametrosDistribuidorConferenciaCota.setReciboEmail(false);
-					}
-					if( parametrosDeDistribuicao.isUtilizaImpressao() ){
-						parametrosDistribuidorConferenciaCota.setReciboImpresso(true);
-					} else {
-						parametrosDistribuidorConferenciaCota.setReciboImpresso(false);
-					}
+					parametrosDistribuidorConferenciaCota.setReciboEmail(parametrosDeDistribuicao.isUtilizaEmail());
+					parametrosDistribuidorConferenciaCota.setReciboImpresso(parametrosDeDistribuicao.isUtilizaImpressao());
 				break;
 				
 				case "SLIP":
-					if( parametrosDeDistribuicao.isUtilizaEmail() ){
-						parametrosDistribuidorConferenciaCota.setSlipEmail(true);
-					} else {
-						parametrosDistribuidorConferenciaCota.setSlipEmail(false);
-					}
-					if( parametrosDeDistribuicao.isUtilizaImpressao() ){
-						parametrosDistribuidorConferenciaCota.setSlipImpresso(true);
-					} else {
-						parametrosDistribuidorConferenciaCota.setSlipImpresso(false);
-					}
+					parametrosDistribuidorConferenciaCota.setSlipEmail(parametrosDeDistribuicao.isUtilizaEmail());
+					parametrosDistribuidorConferenciaCota.setSlipImpresso(parametrosDeDistribuicao.isUtilizaImpressao());
 				break;
 			}
 		}

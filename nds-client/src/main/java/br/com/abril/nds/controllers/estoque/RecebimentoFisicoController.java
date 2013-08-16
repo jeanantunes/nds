@@ -1663,6 +1663,8 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		notaFiscal.setValorBruto(totalItem);
 		
+		notaFiscal.setOrigem(Origem.MANUAL);
+		
 		recebimentoFisicoService.validarExisteNotaFiscal(notaFiscal);
 	    
 		recebimentoFisicoService.confirmarRecebimentoFisico(getUsuarioLogado(), notaFiscal, itens, new Date(), true);

@@ -1244,18 +1244,22 @@ var recebimentoFisicoController = $.extend(true, {
 			if(edicaoItemRecFisicoPermitida == "S") {
 				value.cell.qtdPacote 	=  '<input isEdicao="true" name="qtdPacote" id="qtdPacote_'+ lineId +
 				'" onkeypress="return recebimentoFisicoController.numericOnly(event)" style="width: 45px;" type="text" value="'+qtdPacote+
-				
-				'" onchange="recebimentoFisicoController.alterarValor('+ lineId +');recebimentoFisicoController.atualizarValoresTotais();" onfocus="recebimentoFisicoController.tratarFocoInputQuantidade(this)" />'+
+				'" onchange="recebimentoFisicoController.alterarValor('+ lineId +
+				');recebimentoFisicoController.atualizarValoresTotais();" onfocus="recebimentoFisicoController.tratarFocoInputQuantidade(this)" />'+
 				hiddenFields;
 				
 				value.cell.qtdExemplar = '<input isEdicao="true" name="qtdExemplar" id="qtdExemplar_'+ lineId +
 				'" onkeypress="return recebimentoFisicoController.numericOnly(event)"  style="width: 45px;" type="text" value="'+qtdExemplar+
+				'" onchange="recebimentoFisicoController.alterarValor('+ lineId +
+				');recebimentoFisicoController.atualizarValoresTotais();" onfocus="recebimentoFisicoController.tratarFocoInputQuantidade(this)" />';
 				
-				'" onchange="recebimentoFisicoController.alterarValor('+ lineId +');recebimentoFisicoController.atualizarValoresTotais();" onfocus="recebimentoFisicoController.tratarFocoInputQuantidade(this)" />';
 				$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).enable();
 			} else {
-				value.cell.qtdPacote 	= '<input isEdicao="true" name="qtdPacote" disabled="disabled" style="width: 45px;" type="text" value="'+qtdPacote+'"/>'+hiddenFields;
-				value.cell.qtdExemplar 	=  '<input isEdicao="true" name="qtdExemplar" disabled="disabled" style="width: 45px;" type="text" value="'+qtdExemplar+'"/>';
+				value.cell.qtdPacote 	= '<input isEdicao="true" name="qtdPacote" disabled="disabled" style="width: 45px;" type="text" value="'+
+					qtdPacote+'"/>'+hiddenFields;
+				value.cell.qtdExemplar 	=  '<input isEdicao="true" name="qtdExemplar" disabled="disabled" style="width: 45px;" type="text" value="'+
+					qtdExemplar+'"/>';
+				
 				$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).disable();
 			}
 			
@@ -1282,8 +1286,10 @@ var recebimentoFisicoController = $.extend(true, {
 
 			if(edicaoItemNotaPermitida == "S") {
 				
-				value.cell.acao =  '<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.editarItemNotaFiscal('+[lineId]+');">' + imgEdicao + '</a>' +
-								   '<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.excluirItemNotaFiscal('+[lineId]+');">' + imgExclusao + '</a>';
+				value.cell.acao =  '<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.editarItemNotaFiscal('+[lineId]+');">' + 
+									imgEdicao + '</a>' +
+								   '<a isEdicao="true" href="javascript:;" onclick="recebimentoFisicoController.excluirItemNotaFiscal('+[lineId]+');">' + 
+								   imgExclusao + '</a>';
 				
 			} else{
 				
