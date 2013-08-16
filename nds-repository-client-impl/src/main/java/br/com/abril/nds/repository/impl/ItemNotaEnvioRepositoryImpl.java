@@ -53,23 +53,34 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<DetalheItemNotaFiscalDTO> obterItensNotaEnvioLancamentoProduto(Date dataEmissao, Integer numeroCota) {
-		
-		String hql = "select produto.codigo as codigoProduto, produto.nome as nomeProduto, "
-				   + " produtoEdicao.numeroEdicao as numeroEdicao, produtoEdicao.precoVenda as precoVenda, "
-				   + " sum(itemNotaEnvio.reparte) as quantidadeExemplares, produtoEdicao.id as idProdutoEdicao, "
+		/*
+		String hqlProx = "select proxLancamento.dataLancamentoDistribuidor "
+				       + " from MovimentoEstoqueCota mec "
+					   + " join mec.cota cota "
+					   + " join mec.lancamento proxLancamento "
+				       + " where proxLancamento.dataLancamentoDistribuidor > :dataEmissao "
+				       + " and proxLancamento.id <> lancamento.id "
+				       + " and cota.numeroCota = :numeroCota ";
+		*/
+		String hql = " select produto.codigo as codigoProduto, "
+				   + " produto.nome as nomeProduto, "
+				   + " produtoEdicao.numeroEdicao as numeroEdicao, "
+				   + " produtoEdicao.precoVenda as precoVenda, "  
+				   + " sum(CASE mec.tipoMovimento.operacaoEstoque WHEN 'ENTRADA' THEN (mec.qtde) ELSE (mec.qtde * -1) END) as quantidadeExemplares,"
+				   + " produtoEdicao.id as idProdutoEdicao, "
 				   + " produtoEdicao.pacotePadrao as pacotePadrao "
-				   + " from ItemNotaEnvio itemNotaEnvio "
-				   + " join itemNotaEnvio.itemNotaEnvioPK.notaEnvio notaEnvio "
-				   + " join itemNotaEnvio.produtoEdicao produtoEdicao "
+				   + " from MovimentoEstoqueCota mec "
+				   + " join mec.cota cota "
+				   + " join mec.lancamento lancamento "
+				   + " join mec.estudoCota estudoCota "
+				   + " join mec.produtoEdicao produtoEdicao "
 				   + " join produtoEdicao.produto produto "
-				   + " join itemNotaEnvio.estudoCota estudoCota "
-				   + " join estudoCota.estudo estudo "
-				   + " join estudo.lancamentos lancamento "
-			       + " where lancamento.dataLancamentoDistribuidor = :dataEmissao "
-				   + " and notaEnvio.destinatario.numeroCota = :numeroCota "
-				   + " and itemNotaEnvio.estudoCota is not null" // Condicao para ignorar itens provenientes de furo
-				   + " and lancamento.expedicao is not null"
-				   + " group by produtoEdicao.id ";
+				   + " where lancamento.dataLancamentoDistribuidor = :dataEmissao "
+				   
+				   //+ " and lancamento.dataLancamentoDistribuidor < (" + hqlProx + ")"
+				   
+				   + " and cota.numeroCota = :numeroCota "
+				   + " group by produtoEdicao.id ";		
 		
 		Query query = super.getSession().createQuery(hql);
 		

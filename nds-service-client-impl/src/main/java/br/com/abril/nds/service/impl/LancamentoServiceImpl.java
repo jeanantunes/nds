@@ -2,11 +2,9 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigInteger;
 import java.math.RoundingMode;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +18,6 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
-import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -32,6 +29,7 @@ import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -92,30 +90,6 @@ public class LancamentoServiceImpl implements LancamentoService {
 			fornecedor = lancamento.getProdutoEdicao().getProduto().getFornecedor().getJuridica().getRazaoSocial();			
 		}
 		
-		Date maisRecente = null;
-		BigInteger fisico =BigInteger.ZERO;
-		if(lancamento.getRecebimentos()!=null && lancamento.getRecebimentos().size()==1) {
-			maisRecente = lancamento.getRecebimentos().iterator().next().getRecebimentoFisico().getDataRecebimento();
-			fisico = lancamento.getRecebimentos().iterator().next().getItemNotaFiscal().getRecebimentoFisico().getQtdeFisico();
-			
-		} else if(lancamento.getRecebimentos()!=null && lancamento.getRecebimentos().size()>1) {
-			
-			Iterator<ItemRecebimentoFisico> itemFisico = lancamento.getRecebimentos().iterator();
-			
-			while(itemFisico.hasNext()) {
-				
-				ItemRecebimentoFisico item = itemFisico.next();
-				
-				if(maisRecente == null || maisRecente.getTime()<item.getRecebimentoFisico().getDataRecebimento().getTime()) {
-					maisRecente = item.getRecebimentoFisico().getDataRecebimento();
-				}
-				
-				fisico = item.getItemNotaFiscal().getRecebimentoFisico().getQtdeFisico();
-			}
-		} 
-		
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		
 		// Conforme solicitado pelo Cesar, caso não encontre preço de venda utiliza o preço previsto
 		String preco = "";
 		if (lancamento.getProdutoEdicao().getPrecoVenda() != null) {
@@ -126,26 +100,21 @@ public class LancamentoServiceImpl implements LancamentoService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Produto sem preço de venda e preco previsto. Codigo: " + lancamento.getProdutoEdicao().getProduto().getCodigo() + ", Edicao: " + lancamento.getProdutoEdicao().getProduto().getNome());
 		}
 		
-		LancamentoNaoExpedidoDTO dto = null;
-//		if (maisRecente != null) {
-			dto = new LancamentoNaoExpedidoDTO(
-					lancamento.getId(), 
-					lancamento.getProdutoEdicao().getProduto().getCodigo(), 
-					lancamento.getProdutoEdicao().getProduto().getNome(), 
-					lancamento.getProdutoEdicao().getNumeroEdicao(), 
-					lancamento.getProdutoEdicao().getProduto().getTipoProduto().getDescricao(), 
-					preco, 
-					lancamento.getProdutoEdicao().getPacotePadrao(), 
-					lancamento.getReparte() != null ? lancamento.getReparte().intValue() : 0, 
-					fisico,
-					sdf.format(lancamento.getDataRecolhimentoPrevista()), 
-					fornecedor, 
-					(lancamento.getEstudo()==null) ? null : lancamento.getEstudo().getQtdeReparte().intValue(),
-					false,
-					lancamento.getProdutoEdicao().getEstoqueProduto()!=null?lancamento.getProdutoEdicao().getEstoqueProduto().getQtde().intValue():0);
-			
-			
-//		}
+		LancamentoNaoExpedidoDTO dto = 
+			new LancamentoNaoExpedidoDTO(
+				lancamento.getId(), 
+				lancamento.getProdutoEdicao().getProduto().getCodigo(), 
+				lancamento.getProdutoEdicao().getProduto().getNome(), 
+				lancamento.getProdutoEdicao().getNumeroEdicao(), 
+				lancamento.getProdutoEdicao().getProduto().getTipoProduto().getDescricao(), 
+				preco, 
+				lancamento.getProdutoEdicao().getPacotePadrao(), 
+				lancamento.getReparte() != null ? lancamento.getReparte().intValue() : 0,
+				DateUtil.formatarDataPTBR(lancamento.getDataRecolhimentoPrevista()), 
+				fornecedor, 
+				(lancamento.getEstudo()==null) ? null : lancamento.getEstudo().getQtdeReparte().intValue(),
+				false,
+				lancamento.getProdutoEdicao().getEstoqueProduto()!=null?lancamento.getProdutoEdicao().getEstoqueProduto().getQtde():BigInteger.ZERO);
 		
 		return dto;
 	}
