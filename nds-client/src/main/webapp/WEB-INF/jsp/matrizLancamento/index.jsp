@@ -182,7 +182,7 @@ balanceamentoLancamento.inicializar();
 		   	        <td width="112">&nbsp;</td>
 		   	        <td width="104"><span class="bt_novos" title="Pesquisar">   
 						<!-- Pesquisar -->
-						<a id="linkPesquisar" href="javascript:;" onclick="balanceamentoLancamento.verificarBalanceamentosAlterados(balanceamentoLancamento.pesquisar);"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span>
+						<a id="linkPesquisarMatrizLancamento" href="javascript:;" onclick="balanceamentoLancamento.verificarBalanceamentosAlterados(balanceamentoLancamento.pesquisar);"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span>
 					</td>
 		          </tr>
 		        </table>

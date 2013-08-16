@@ -60,13 +60,13 @@ public interface ConferenciaEncalheService {
 	/**
 	 * 
 	 * @param conferenciaEncalhe
-	 * @param numeroCota
+	 * @param cota
 	 * @param dataOperacao
 	 * @param indConferenciaContingencia
 	 */
 	public void validarQtdeEncalheExcedeQtdeReparte(
 			ConferenciaEncalheDTO conferenciaEncalhe,
-			Integer numeroCota, 
+			Cota cota, 
 			Date dataOperacao, 
 			boolean indConferenciaContingencia);
 	

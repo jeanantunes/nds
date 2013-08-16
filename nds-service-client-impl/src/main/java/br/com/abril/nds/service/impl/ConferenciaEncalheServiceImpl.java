@@ -436,7 +436,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if(produtoEdicao.isParcial()) {
 
 			chamadaEncalheCota = 
-					chamadaEncalheCotaRepository.obterUltimaChamaEncalheCotaParcial(cota.getNumeroCota(),produtoEdicao.getId(),postergado,dataOperacao);
+					chamadaEncalheCotaRepository.obterUltimaChamaEncalheCotaParcial(cota, produtoEdicao.getId(),postergado,dataOperacao);
 			
 			if(chamadaEncalheCota == null ) {
 				
@@ -448,7 +448,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		} else {
 
 			chamadaEncalheCota =
-					chamadaEncalheCotaRepository.obterUltimaChamaEncalheCota(cota.getNumeroCota(), 
+					chamadaEncalheCotaRepository.obterUltimaChamaEncalheCota(cota, 
 																			produtoEdicao.getId(), 
 																			postergado,
 																			dataOperacao);
@@ -1670,7 +1670,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 			validarQtdeEncalheExcedeQtdeReparte(
 					conferenciaEncalheDTO,
-					controleConferenciaEncalheCota.getCota().getNumeroCota(), 
+					controleConferenciaEncalheCota.getCota(), 
 					dataOperacao, indConferenciaContingencia);
 				
 			
@@ -2181,14 +2181,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * de um produtoEdicao para determinada cota.
 	 * 
 	 * @param conferenciaEncalhe
-	 * @param numeroCota
+	 * @param cota
 	 * @param dataOperacao
 	 * @param indConferenciaContingencia
 	 */
 	@Transactional(readOnly=true)
 	public void validarQtdeEncalheExcedeQtdeReparte(
 			ConferenciaEncalheDTO conferenciaEncalhe,
-			Integer numeroCota, 
+			Cota cota, 
 			Date dataOperacao, boolean indConferenciaContingencia) {
 
 		if (!indConferenciaContingencia &&
@@ -2197,8 +2197,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade de itens conferidos no encalhe deve ser maior que zero.");
 			
 		}
-		
-		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		
 		if(dataOperacao == null) {
 			dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
@@ -2566,8 +2564,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		boolean postergado = false;
 		
+		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+		
 		ChamadaEncalheCota chamadaEncalheCota = 
-				chamadaEncalheCotaRepository.obterUltimaChamaEncalheCota(numeroCota, idProdutoEdicao, postergado,dataRecolhimentoReferencia);
+				chamadaEncalheCotaRepository.obterUltimaChamaEncalheCota(cota, idProdutoEdicao, postergado,dataRecolhimentoReferencia);
 
 		StringBuffer errorMsg = new StringBuffer();
 		
@@ -3641,24 +3641,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		e.quebrarLinhaEscape();
 		e.quebrarLinhaEscape();
-	}
-
-	private List<ComposicaoCobrancaSlipDTO> getListaComposicaoCobrancaDTO(
-			Integer numeroCota) {
-		InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota = obterInfoConferenciaEncalheCota(numeroCota, true);
-		List<DebitoCreditoCotaDTO> listaDebitoCreditoCota = obterInfoConferenciaEncalheCota.getListaDebitoCreditoCota();
-		
-		List<ComposicaoCobrancaSlipDTO> listaComposicaoCobrancaDTO = new ArrayList<ComposicaoCobrancaSlipDTO>();
-		for(DebitoCreditoCotaDTO debitoCredito : listaDebitoCreditoCota)
-		{
-			ComposicaoCobrancaSlipDTO composicaoAcertoDeValoresNaoRetornados = new ComposicaoCobrancaSlipDTO();
-			composicaoAcertoDeValoresNaoRetornados.setDescricao(debitoCredito.getObservacoes());
-			composicaoAcertoDeValoresNaoRetornados.setOperacaoFinanceira(debitoCredito.getTipoMovimento());
-			composicaoAcertoDeValoresNaoRetornados.setValor(debitoCredito.getValor());
-			
-			listaComposicaoCobrancaDTO.add(composicaoAcertoDeValoresNaoRetornados);
-		}
-		return listaComposicaoCobrancaDTO;
 	}
 	
 	private byte[] gerarSlipPDF(SlipDTO slipDTO) {

@@ -906,7 +906,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			
 			focusSelectRefField($("#datepickerDe"));
 			
-			$(document.body).keydown(function(e) {
+			$('#linkPesquisarMatrizLancamento').keydown(function(e) {
 				
 				if(keyEventEnterAux(e) && $(".ui-tabs-selected .classROLE_LANCAMENTO").length > 0){
 					balanceamentoLancamento.verificarBalanceamentosAlterados(balanceamentoLancamento.pesquisar);
@@ -914,6 +914,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 				
 				return true;
 			});
+			
 		});
 	},
 
