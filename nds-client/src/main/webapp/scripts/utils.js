@@ -40,7 +40,7 @@ $(document).ready(function(){
 		if(keycode == 17){
 			pressedCtrl=false; 
 		}
-	})
+	});
 	
 	$(document.body).keydown(function(e) {
 		
@@ -79,7 +79,7 @@ $(document).ready(function(){
 			//Navegação pelas abas por CTRL+(Seta Esquerda | Direita)
 			
 			var refTabs = $("li", $('.ui-tabs-nav'));
-			var qtdAbasAbertas =  $('.ui-corner-top').size()
+			var qtdAbasAbertas =  $('.ui-corner-top').size();
 			if(qtdAbasAbertas > 1){
 				
 				if(keycode == 17){
@@ -360,7 +360,7 @@ function doGet(url, params, target) {
 }
 
 function newOption(value, label) {
-    return "<option value='" + value + "'>" + label + "</option>"
+    return "<option value='" + value + "'>" + label + "</option>";
 }
 
 function replaceAll(string, token, newtoken) {
@@ -491,15 +491,15 @@ function onlyNumeric(event){
 }
 
 function focusSelectRefField(objectField){
-	setTimeout (function () {objectField.focus();objectField.select()}, 500);
+	setTimeout (function () {objectField.focus();objectField.select();}, 500);
 }
 
 function focusFirstContentView(context){
-	setTimeout (function () {$(context).find('select:visible, input:text:visible, textarea:visible').first().focus()}, 1);
+	setTimeout (function () {$(context).find('select:visible, input:text:visible, textarea:visible').first().focus();}, 1);
 }
 
 function focusFirstContentModal(){
-	setTimeout (function () {$(".ui-dialog:visible").find('select:visible, input:visible, textarea:visible').first().focus()}, 1);
+	setTimeout (function () {$(".ui-dialog:visible").find('select:visible, input:visible, textarea:visible').first().focus();}, 1);
 }
 
 function keyEventEnterAux(e){
@@ -572,5 +572,17 @@ function adicionarTab(novaTab, path){
 	
 	$('#workspace').tabs('addTab', novaTab, contextPath + path + "?random=" + Math.random());
 }
+
+function disableF5(e) { if ((e.which || e.keyCode) == 116) e.preventDefault(); };
+
+//simply visual, let's you know when the correct iframe is selected
+/*$(window).on("focus", function(e) {
+ $("html, body").css({ background: "#FFF", color: "#000" })
+ .find("h2").html("THIS BOX NOW HAS FOCUS<br />F5 should not work.");
+})
+.on("blur", function(e) {
+ $("html, body").css({ background: "", color: "" })
+ .find("h2").html("CLICK HERE TO GIVE THIS BOX FOCUS BEFORE PRESSING F5");
+});*/
 
 //@ sourceURL=util.js
