@@ -632,7 +632,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		if(destinatarioAtualizado == null)
 			return;// Caso retorne null pular próxima cota pois não encontrou endereço PDV p uma cota sem movimentoEstudo 
 		
-		List<ItemNotaEnvio>listaItemNotaEnvio = 
+		List<ItemNotaEnvio> listaItemNotaEnvio = 
 				this.processarNotasDeEnvioGeradas(cota, idRota, notasEnvio, periodo, listaIdFornecedores, listaEstudosCota,destinatarioAtualizado);
 
 		if(listaItemNotaEnvio != null && listaItemNotaEnvio.size() > 0) {

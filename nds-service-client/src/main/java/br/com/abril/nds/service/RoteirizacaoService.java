@@ -7,6 +7,7 @@ import org.hibernate.criterion.MatchMode;
 import br.com.abril.nds.dto.BoxRoteirizacaoDTO;
 import br.com.abril.nds.dto.ConsultaRoteirizacaoDTO;
 import br.com.abril.nds.dto.CotaDisponivelRoteirizacaoDTO;
+import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.PdvRoteirizacaoDTO;
 import br.com.abril.nds.dto.RotaRoteirizacaoDTO;
 import br.com.abril.nds.dto.RoteirizacaoDTO;
@@ -269,4 +270,62 @@ public interface RoteirizacaoService {
 	List<RoteiroRoteirizacaoDTO> buscarRoteirosNaoAssociadosAoBox(Long idBox);
 
 	Long obterQtdRotasPorCota(Integer numeroCota);
+
+	/**
+	 * Obtem combo com todos os Roteiros
+	 * @return List<ItemDTO<Long, String>>
+	 */
+	List<ItemDTO<Long, String>> getComboTodosRoteiros();
+
+	/**
+	 * Obtem combo com todas as Rotas
+	 * @return List<ItemDTO<Long, String>>
+	 */
+	List<ItemDTO<Long, String>> getComboTodosRotas();
+
+	/**
+     * Obtem combo com todos os Boxes
+     * @return List<ItemDTO<Long, String>>
+     */
+	List<ItemDTO<Long, String>> getComboTodosBoxes();
+
+	/**
+	 * Carrega o combo Box por Rota
+	 * @param idRota
+	 */
+	List<ItemDTO<Long, String>> getComboBoxPorRota(Long idRota);
+
+	/**
+	 * Carrega o combo Box por Roteiro
+	 * @param idRoteiro
+	 */
+	List<ItemDTO<Long, String>> getComboBoxPorRoteiro(Long idRoteiro);
+
+	/**
+	 * Carrega o combo Rota por intervalo de Box
+	 * @param codigoBoxDe
+	 * @param codigoBoxAte
+	 */
+	List<ItemDTO<Long, String>> getComboRotaPorBox(Integer codigoBoxDe,
+			Integer codigoBoxAte);
+
+	/**
+	 * Carrega o combo Rota por Roteiro
+	 * @param idRoteiro
+	 */
+	List<ItemDTO<Long, String>> getComboRotaPorRoteiro(Long idRoteiro);
+
+	/**
+	 * Carrega o combo Roteiro por Rota
+	 * @param idRota
+	 */
+	List<ItemDTO<Long, String>> getComboRoteiroPorRota(Long idRota);
+
+	/**
+	 * Carrega o combo Roteiro por intervalo de Box
+	 * @param codigoBoxDe
+	 * @param codigoBoxAte
+	 */
+	List<ItemDTO<Long, String>> getComboRoteiroPorBox(Integer codigoBoxDe,
+			Integer codigoBoxAte);
 }

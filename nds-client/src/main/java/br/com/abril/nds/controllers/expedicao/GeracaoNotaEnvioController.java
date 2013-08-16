@@ -4,18 +4,14 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
@@ -23,22 +19,16 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
-import br.com.abril.nds.model.cadastro.Rota;
-import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
-import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.CustomJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
-import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.GeracaoNotaEnvioService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.NFeService;
-import br.com.abril.nds.service.RotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.Constantes;
@@ -83,12 +73,6 @@ public class GeracaoNotaEnvioController extends BaseController {
 	
 	@Autowired
 	private NFeService nfeService;
-	
-	@Autowired
-	private BoxService boxService;
-
-	@Autowired
-	private RotaService rotaService;
 
 	@Autowired
 	private HttpServletResponse httpServletResponse;
@@ -116,67 +100,11 @@ public class GeracaoNotaEnvioController extends BaseController {
 	}
 	
 	/**
-	 * Obtem todos os Roteiros
-	 * @return List<ItemDTO<Long, String>>
-	 */
-	private List<ItemDTO<Long, String>> getComboTodosRoteiros(){
-		
-        List<Roteiro> roteiros = this.roteirizacaoService.buscarRoteiro(null, null);
-		
-		List<ItemDTO<Long, String>> listRoteiro = new ArrayList<ItemDTO<Long,String>>();
-		
-		for (Roteiro roteiro : roteiros){
-			
-			listRoteiro.add(new ItemDTO<Long, String>(roteiro.getId(), roteiro.getDescricaoRoteiro()));
-		}
-		
-		return listRoteiro;
-	}
-	
-	/**
-	 * Obtem todas as Rotas
-	 * @return List<ItemDTO<Long, String>>
-	 */
-    private List<ItemDTO<Long, String>> getComboTodosRotas(){
-		
-        List<Rota> rotas = this.roteirizacaoService.buscarRota(null, null);
-		
-		List<ItemDTO<Long, String>> listRota = new ArrayList<ItemDTO<Long,String>>();
-		
-		for (Rota rota : rotas){
-			
-			listRota.add(new ItemDTO<Long, String>(rota.getId(), rota.getDescricaoRota()));
-		}
-		
-		return listRota;
-	}
-    
-    /**
-     * Obtem todos os Boxes
-     * @return List<ItemDTO<Long, String>>
-     */
-    private List<ItemDTO<Long, String>> getComboTodosBoxes(){
-		
-        List<Box> boxs = boxService.buscarPorTipo(TipoBox.LANCAMENTO);
-		
-		List<ItemDTO<Long, String>> listaBox = new ArrayList<ItemDTO<Long,String>>();
-		
-		listaBox.add(new ItemDTO<Long, String>(-1L, "Especial"));
-		
-		for (Box box : boxs) {
-			
-			listaBox.add(new ItemDTO<Long, String>(box.getCodigo().longValue(), box.getCodigo().toString()+"-"+box.getNome()));
-		}
-		
-		return listaBox;
-	}
-	
-	/**
 	 * Inicia o combo Roteiro
 	 */
 	private void iniciarComboRoteiro() {
 
-		result.include("roteiros", this.getComboTodosRoteiros());
+		result.include("roteiros", this.roteirizacaoService.getComboTodosRoteiros());
 	}
 	
 	/**
@@ -184,7 +112,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 	 */
 	private void iniciarComboRota() {
 
-		result.include("rotas", this.getComboTodosRotas());
+		result.include("rotas", this.roteirizacaoService.getComboTodosRotas());
 	}
 	
 	/**
@@ -192,217 +120,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 	 */
 	private void iniciarComboBox() {
 
-		result.include("listaBox", this.getComboTodosBoxes());
-	}
-	
-	/**
-	 * Carrega o combo Box por Rota
-	 * @param idRota
-	 */
-	private List<ItemDTO<Long, String>> carregarComboBoxPorRota(Long idRota) {
-		
-		List<ItemDTO<Long, String>> lista = new ArrayList<ItemDTO<Long,String>>();
-		
-		if (idRota != null && idRota > 0){
-		
-			List<Box> boxes = this.boxService.buscarBoxPorRota(idRota);
-	
-	        lista.add(new ItemDTO<Long, String>(-1L, "Especial"));
-	
-			for (Box box : boxes){
-	    		
-	    		lista.add(new ItemDTO<Long, String>(box.getCodigo().longValue(), box.getCodigo().toString()+"-"+box.getNome()));
-	    	}
-		}
-		else{
-		    
-			lista = this.getComboTodosBoxes();
-		}
-		
-		return lista;
-	}
-	
-	/**
-	 * Carrega o combo Box por Roteiro
-	 * @param idRoteiro
-	 */
-	private List<ItemDTO<Long, String>> carregarComboBoxPorRoteiro(Long idRoteiro) {
-		
-		List<ItemDTO<Long, String>> lista = new ArrayList<ItemDTO<Long,String>>();
-		
-		if (idRoteiro != null && idRoteiro > 0){
-			
-			List<Box> boxes = this.boxService.buscarBoxPorRoteiro(idRoteiro);
-	
-	        lista.add(new ItemDTO<Long, String>(-1L, "Especial"));
-	        	
-	    	for (Box box : boxes){
-	    		
-	    		lista.add(new ItemDTO<Long, String>(box.getCodigo().longValue(), box.getCodigo().toString()+"-"+box.getNome()));
-	    	}
-		}
-		else{
-			
-			lista = this.getComboTodosBoxes();
-		}
-		
-		return lista;
-	}
-	
-	/**
-	 * Carrega o combo Rota por intervalo de Box
-	 * @param codigoBoxDe
-	 * @param codigoBoxAte
-	 */
-	private List<ItemDTO<Long, String>> carregarComboRotaPorBox(Integer codigoBoxDe, Integer codigoBoxAte) {
-		
-		List<ItemDTO<Long, String>> lista = new ArrayList<ItemDTO<Long,String>>();
-		
-		if ((codigoBoxDe != null && codigoBoxDe > 0)||(codigoBoxAte != null && codigoBoxAte > 0)){
-		
-			List<Box> boxes = this.boxService.obterBoxPorIntervaloCodigo(codigoBoxDe, codigoBoxAte);
-			
-			for (Box box : boxes){
-			
-		        List<Rota> rotas = this.roteirizacaoService.buscarRotaDeBox(box.getId());
-				
-				for (Rota rota : rotas){
-					
-					lista.add(new ItemDTO<Long, String>(rota.getId(), rota.getDescricaoRota()));
-				}
-			}
-		}
-		else{
-			
-			lista = this.getComboTodosRotas();
-		}
-		
-		return lista;
-	}
-	
-	/**
-	 * Carrega o combo Rota por Roteiro
-	 * @param idRoteiro
-	 */
-	private List<ItemDTO<Long, String>> carregarComboRotaPorRoteiro(Long idRoteiro) {
-		
-		List<ItemDTO<Long, String>> lista = new ArrayList<ItemDTO<Long,String>>();
-		
-		if(idRoteiro != null && idRoteiro > 0){
-		
-			List<Rota> rotas = this.rotaService.buscarRotaPorRoteiro(idRoteiro);
-
-			for (Rota rota : rotas){
-				
-				lista.add(new ItemDTO<Long, String>(rota.getId(), rota.getDescricaoRota()));
-			}
-		}
-		else{
-			
-			lista = this.getComboTodosRotas();
-		}
-		return lista;
-	}
-	
-	/**
-	 * Carrega o combo Roteiro por Rota
-	 * @param idRota
-	 */
-	private List<ItemDTO<Long, String>> carregarComboRoteiroPorRota(Long idRota) {
-		
-		List<ItemDTO<Long, String>> lista = new ArrayList<ItemDTO<Long,String>>();
-		
-		if (idRota != null && idRota > 0){
-		
-			Rota rota = this.roteirizacaoService.buscarRotaPorId(idRota);
-		
-			Roteiro roteiro = rota.getRoteiro();
-			
-			lista.add(new ItemDTO<Long, String>(roteiro.getId(), roteiro.getDescricaoRoteiro()));
-		}
-		else{
-			
-			lista = this.getComboTodosRoteiros();
-		}
-
-		return lista;
-	}
-	
-	/**
-	 * Carrega o combo Roteiro por intervalo de Box
-	 * @param codigoBoxDe
-	 * @param codigoBoxAte
-	 */
-	private List<ItemDTO<Long, String>> carregarComboRoteiroPorBox(Integer codigoBoxDe, Integer codigoBoxAte) {
-		
-		List<ItemDTO<Long, String>> lista = new ArrayList<ItemDTO<Long,String>>();
-		
-		if ((codigoBoxDe != null && codigoBoxDe > 0)||(codigoBoxAte != null && codigoBoxAte > 0)){
-		
-			List<Box> boxes = this.boxService.obterBoxPorIntervaloCodigo(codigoBoxDe, codigoBoxAte);
-			
-			for (Box box : boxes){
-			
-				List<Roteiro> roteiros = this.roteirizacaoService.buscarRoteiroDeBox(box.getId());
-				
-				for (Roteiro roteiro : roteiros){
-				
-					lista.add(new ItemDTO<Long, String>(roteiro.getId(), roteiro.getDescricaoRoteiro()));
-				}
-			}
-		}
-		else{
-			
-			lista = this.getComboTodosRoteiros();
-		}
-
-		return lista;
-	}
-
-	/**
-	 * Carrega o combos Roteiro e Rota por intervalo de Box
-	 * @param codigoBoxDe
-	 * @param codigoBoxAte
-	 */
-	@Post
-	@Path("/carregarCombosPorBox")
-	public void carregarCombosPorBox(Integer codigoBoxDe, Integer codigoBoxAte) {
-		
-		List<ItemDTO<Long, String>> rotas = this.carregarComboRotaPorBox(codigoBoxDe, codigoBoxAte);
-		
-		List<ItemDTO<Long, String>> roteiros = this.carregarComboRoteiroPorBox(codigoBoxDe, codigoBoxAte);
-		
-		result.use(Results.json()).from(Arrays.asList(rotas, roteiros),"result").recursive().serialize();
-	}
-	
-	/**
-	 * Carrega o combo Roteiro e Box por Rota
-	 * @param idRota
-	 */
-	@Post
-	@Path("/carregarCombosPorRota")
-	public void carregarCombosPorRota(Long idRota) {
-		
-		List<ItemDTO<Long, String>> roteiros = this.carregarComboRoteiroPorRota(idRota);
-		
-		List<ItemDTO<Long, String>> boxes = this.carregarComboBoxPorRota(idRota);
-		
-		result.use(Results.json()).from(Arrays.asList(roteiros, boxes),"result").recursive().serialize();
-	}
-	
-	/**
-	 * Carrega o combo Rota e Box por Roteiro
-	 * @param idRoteiro
-	 */
-	@Post
-	@Path("/carregarCombosPorRoteiro")
-	public void carregarCombosPorRoteiro(Long idRoteiro) {
-		
-		List<ItemDTO<Long, String>> rotas = this.carregarComboRotaPorRoteiro(idRoteiro);
-		
-		List<ItemDTO<Long, String>> boxes = this.carregarComboBoxPorRoteiro(idRoteiro);
-		
-		result.use(Results.json()).from(Arrays.asList(rotas, boxes),"result").recursive().serialize();
+		result.include("listaBox", this.roteirizacaoService.getComboTodosBoxes());
 	}
 
 	@Post
