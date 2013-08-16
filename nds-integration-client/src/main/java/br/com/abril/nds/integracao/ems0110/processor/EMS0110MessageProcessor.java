@@ -94,7 +94,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 			this.ndsiLoggerFactory.getLogger().logWarning(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
 					"Distribuidor nao encontrato.");
-			throw new RuntimeException("Distribuidor nao encontrado.");
+//			throw new RuntimeException("Distribuidor nao encontrado.");
 		}
 	}
 	
@@ -211,7 +211,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.SEM_DOMINIO,
 					"Editor " + input.getCodEditor() + " nao encontrado. Código do produto: " + input.getCodProd() +  " - Nome do Produto: " + input.getNomeProd());
 
-			throw new RuntimeException("Editor " + input.getCodEditor() + " nao encontrado. Código do produto: " + input.getCodProd() +  " - Nome do Produto: " + input.getNomeProd());
+//			throw new RuntimeException("Editor " + input.getCodEditor() + " nao encontrado. Código do produto: " + input.getCodProd() +  " - Nome do Produto: " + input.getNomeProd());
 		}
 		
 		TipoProduto tipoProduto = this.findTipoProduto(input.getCodCategoria());
@@ -221,7 +221,7 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.SEM_DOMINIO,
 					"Tipo Produto REVISTA nao encontrado.");
 
-			throw new RuntimeException("Tipo Produto nao encontrado.");
+//			throw new RuntimeException("Tipo Produto nao encontrado.");
 		}
 						
 		produto.setTipoProduto(tipoProduto);

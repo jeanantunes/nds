@@ -70,7 +70,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.RELACIONAMENTO,
 					"Distribuidor nao encontrato.");
 
-			throw new RuntimeException("Distribuidor incorreto.");
+//			throw new RuntimeException("Distribuidor incorreto.");
 		}
 	}
 
@@ -126,10 +126,12 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 			this.ndsiLoggerFactory.getLogger().logWarning(message,
 					EventoExecucaoEnum.SEM_DOMINIO,
-					"Editor " + input.getCodigoEditor() + " nao encontrado.");
+					"Editor " + input.getCodigoEditor() + " nao encontrado, publicação: "+input.getCodigoPublicacao());
 
-			throw new RuntimeException("Editor " + input.getCodigoEditor() + " nao encontrado.");
+//			throw new RuntimeException("Editor " + input.getCodigoEditor() + " nao encontrado.");
 		}
+		
+		return editor;
 	}
 
 	private DescontoLogistica findDescontoLogisticaByTipoDesconto(
@@ -175,8 +177,9 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.SEM_DOMINIO,
 					"Tipo Produto REVISTA nao encontrado.");
 
-			throw new RuntimeException("Tipo Produto nao encontrado.");
+//			throw new RuntimeException("Tipo Produto nao encontrado.");
 		}
+		return tipoProduto;
 	}
 
 	private Fornecedor findFornecedor(Integer codigoInterface) {
