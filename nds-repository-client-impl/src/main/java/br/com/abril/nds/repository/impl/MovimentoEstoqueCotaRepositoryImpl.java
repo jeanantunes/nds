@@ -1988,6 +1988,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		StringBuilder hql = new StringBuilder();
 				
 		hql.append(" select box.codigo as codigoBox, ");
+		hql.append(" 		produtoEdicao.id as idProdutoEdicao, ");
 	    hql.append(" 		produto.codigo as codigoProduto, ");
 		hql.append(" 		produto.nome as nomeProduto, ");
 		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");		

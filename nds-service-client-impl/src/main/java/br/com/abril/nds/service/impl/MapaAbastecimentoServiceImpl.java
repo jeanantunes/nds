@@ -4,9 +4,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +21,10 @@ import br.com.abril.nds.dto.ProdutoMapaCotaDTO;
 import br.com.abril.nds.dto.ProdutoMapaDTO;
 import br.com.abril.nds.dto.ProdutoMapaRotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
-import br.com.abril.nds.enums.TipoMensagem;
-import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.service.MapaAbastecimentoService;
-import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
 public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
