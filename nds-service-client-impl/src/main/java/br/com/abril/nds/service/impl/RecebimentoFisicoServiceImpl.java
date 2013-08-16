@@ -467,17 +467,16 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "CNPJ não corresponde a Pessoa Jurídica cadastrada.");
 		}
 		
-		boolean indNotaEnvio = notaFiscal.getNumeroNotaEnvio() != null;
-		
-		if(indNotaEnvio) {
-
-			notaFiscal.setOrigem(Origem.INTERFACE);
-
+		if (notaFiscal.getOrigem() == null){
+			boolean indNotaEnvio = notaFiscal.getNumeroNotaEnvio() != null;
 			
-		} else {
-			
-			notaFiscal.setOrigem(Origem.MANUAL);
-			
+			if(indNotaEnvio) {
+	
+				notaFiscal.setOrigem(Origem.INTERFACE);
+			} else {
+				
+				notaFiscal.setOrigem(Origem.MANUAL);
+			}
 		}
 		
 		notaFiscalRepository.adicionar(notaFiscal);
