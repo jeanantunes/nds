@@ -110,11 +110,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 					Integer novaQtdeTotal =  produtoPorBox.getReparte() + produtoMapa.get(keyProduto).getTotalReparte();
 					produtoMapa.get(keyProduto).setTotalReparte(novaQtdeTotal);
 			}
-<<<<<<< HEAD
-			
-=======
 
->>>>>>> DGBti/master
 			preencheBoxNaoUtilizado(boxes, produtoMapa);	
 			
 			TreeMap<String,ProdutoMapaDTO> produtoMapaOrdenada = new TreeMap<String, ProdutoMapaDTO>(comparator);	
