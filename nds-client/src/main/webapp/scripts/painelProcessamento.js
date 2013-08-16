@@ -251,15 +251,20 @@ var painelProcessamentoController = $.extend(true, {
 
 			btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterface(\"" + row.cell.nome + "\")'><img border='0' style='margin-right:10px;' src= " + contextPath + "/images/bt_devolucao.png /></href>";
 			brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceProcessamento(" + row.cell.idLogProcessamento + ", \"" + row.cell.dataProcessmento + "\", \"" + row.cell.horaProcessamento + "\")'><img border='0' src= " + contextPath + "/images/ico_detalhes.png /></href>";
-			row.cell.reprocessar = btReprocessamento + brDetalhes;
+
+			if(row.cell.idLogProcessamento != "" && row.cell.dataProcessmento != "" && row.cell.status != 'V'){
+				row.cell.reprocessar = btReprocessamento + brDetalhes;
+			}else{
+				row.cell.reprocessar = btReprocessamento;
+			}
 
 			//row.cell.nome = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterface(" + row.cell.idLogProcessamento + ")'>" + row.cell.nome + "</href>";
 			
-			if (row.cell.status == 'S')
+			if (row.cell.status == 'S')//Sucesso
 				row.cell.status = "<img src= " + contextPath + "/images/ico_operando.png />";
-			else if (row.cell.status == 'F' || row.cell.status == 'A')
+			else if (row.cell.status == 'F' || row.cell.status == 'A')//Falha ou Aviso
 				row.cell.status = "<img src= " + contextPath + "/images/ico_offline.png />";
-			else if (row.cell.status == 'V')
+			else if (row.cell.status == 'V')//Sem informacoes
 				row.cell.status = "<img src= " + contextPath + "/images/ico_semdados.png />";
 			else // Não processado
 				row.cell.status = "<img src= " + contextPath + "/images/ico_encerrado.png />";
