@@ -1,4 +1,4 @@
-function MapaAbastecimento(pathTela, objName, workspace) {
+ function MapaAbastecimento(pathTela, objName, workspace) {
 	
 	var _workspace = workspace;
 	
@@ -371,8 +371,10 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 	
 	this.processarLinha = function(index,cell) {
 		
-		T.mapas.push(cell);
-		
+		if(cell.box == undefined || cell.box == 'undefined') {
+			cell.box = "Sem box definido";
+		}
+			
 		cell.acao =	'<a href="javascript:;" onclick="' + objName +'.carregarDetalhes(\''+ index + '\')">' +
 					'<img src="' + pathTela + '/images/ico_detalhes.png" alt="Detalhes do box" border="0" /></a>';
 	},

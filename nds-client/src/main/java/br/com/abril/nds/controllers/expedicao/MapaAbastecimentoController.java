@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpSession;
@@ -371,8 +372,36 @@ public class MapaAbastecimentoController extends BaseController {
 		
 			switch(filtro.getTipoConsulta()) {
 				case BOX:
-					result.forwardTo(MapaAbastecimentoController.class).impressaoPorBox(filtro);	
+					filtro.getPaginacao().setQtdResultadosPorPagina(null);
+					filtro.getPaginacao().setPaginaAtual(null);
+					
+					filtro.getPaginacao().setSortColumn("nomeEdicao");
+					filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
+					TreeMap<String, ProdutoMapaDTO> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBox(filtro);
+					
+					boolean cotasSemRoteirizacao = false;
+					List<String> arrayCotasSemRoteirizacao = new ArrayList<String>();
+					Set<Entry<String, ProdutoMapaDTO>> entrySet = produtosMapa.entrySet();
+					java.util.Iterator<Entry<String, ProdutoMapaDTO>> iterator = entrySet.iterator();
+					
+					
+					while(iterator.hasNext()) {
+						Entry<String, ProdutoMapaDTO> next = iterator.next();
+						if(next.getValue() == null) {
+							cotasSemRoteirizacao = true;
+							
+							arrayCotasSemRoteirizacao.add(next.getKey());
+						}
+					}
+					
+					if(cotasSemRoteirizacao == true) {
+						result.include("result", arrayCotasSemRoteirizacao);
+					} else {
+						setaNomeParaImpressao();
+						result.forwardTo(MapaAbastecimentoController.class).impressaoPorBox(produtosMapa);
+					}
 					break;
+					
 				case ROTA:
 					result.forwardTo(MapaAbastecimentoController.class).impressaoPorRota(filtro);
 					break;
@@ -406,17 +435,8 @@ public class MapaAbastecimentoController extends BaseController {
 				
 	}
 	
-	public void impressaoPorBox(FiltroMapaAbastecimentoDTO filtro) {
+	public void impressaoPorBox(TreeMap<String, ProdutoMapaDTO> produtosMapa) {
 		
-		filtro.getPaginacao().setQtdResultadosPorPagina(null);
-		filtro.getPaginacao().setPaginaAtual(null);
-		
-		filtro.getPaginacao().setSortColumn("nomeEdicao");
-		filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
-		filtro.setBox(null);
-		
-		TreeMap<String, ProdutoMapaDTO> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBox(filtro);
-		setaNomeParaImpressao();
 		result.include("produtosMapa",produtosMapa.values());
 		
 	}

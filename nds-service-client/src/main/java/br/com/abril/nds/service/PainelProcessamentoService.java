@@ -40,7 +40,7 @@ public interface PainelProcessamentoService {
 	 * @param maxResults
 	 * @return List<LogExecucaoMensagem>
 	 */
-	public List<DetalheProcessamentoVO> listardetalhesProcessamentoInterface(Long codigoLogExecucao, FiltroDetalheProcessamentoDTO filtro);
+	public List<DetalheProcessamentoVO> listardetalhesProcessamentoInterface(FiltroDetalheProcessamentoDTO filtro);
 	
 	/**
 	 * Retorna o estado operacional do sistema, sendo:
@@ -57,7 +57,7 @@ public interface PainelProcessamentoService {
 	 */
 	public List<DetalheInterfaceVO> listarDetalhesInterface(Long codigoLogExecucao);
 
-	public Long listarTotaldetalhesProcessamentoInterface(long parseLong, FiltroDetalheProcessamentoDTO filtro);
+	public Long listarTotaldetalhesProcessamentoInterface(FiltroDetalheProcessamentoDTO filtro);
 
 	public BigInteger listarTotalInterfaces(FiltroInterfacesDTO filtro);
 	

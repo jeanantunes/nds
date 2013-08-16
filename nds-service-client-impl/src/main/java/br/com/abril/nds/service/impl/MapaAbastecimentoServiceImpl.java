@@ -74,41 +74,56 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 		
 		List<ProdutoAbastecimentoDTO> produtosPorBox = movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorBox(filtro);
 		
+		//variavel para verificacao se existem cotas sem roteirizaca
+		
 		for(ProdutoAbastecimentoDTO produtoPorBox : produtosPorBox ) {
-			
-			String keyProduto = produtoPorBox.getIdProdutoEdicao().toString();
-			
-			if(!boxes.contains(produtoPorBox.getCodigoBox()))
-				boxes.add(produtoPorBox.getCodigoBox());
-			
-			if(!produtoMapa.containsKey(keyProduto))
-				produtoMapa.put(keyProduto, new ProdutoMapaDTO(
-						produtoPorBox.getCodigoProduto(), 
-						produtoPorBox.getNomeProduto(), 
-						produtoPorBox.getNumeroEdicao(), 
-						produtoPorBox.getPrecoCapa(), 
-						0, 
-						new HashMap<Integer, Integer>()));
-			
-				if(!produtoMapa.get(keyProduto).getBoxQtde().containsKey(produtoPorBox.getCodigoBox()))
-					produtoMapa.get(keyProduto).getBoxQtde().put(produtoPorBox.getCodigoBox(),0);
-				
-				Integer qtdeBox = produtoMapa.get(keyProduto).getBoxQtde().get(produtoPorBox.getCodigoBox());
-				
-				produtoMapa.get(keyProduto).getBoxQtde().put(produtoPorBox.getCodigoBox(), qtdeBox + produtoPorBox.getReparte());
-			
-				Integer novaQtdeTotal =  produtoPorBox.getReparte() + produtoMapa.get(keyProduto).getTotalReparte();
-				produtoMapa.get(keyProduto).setTotalReparte(novaQtdeTotal);
-			
+			if(produtoPorBox.getCodigoBox() == null) {
+				if(!produtoMapa.containsKey(produtoPorBox.getCodigoCota().toString() +" - "+ produtoPorBox.getNomeCota())) {
+					produtoMapa.put(produtoPorBox.getCodigoCota().toString() +" - "+ produtoPorBox.getNomeCota(), null);
+				}
+			} 
 		}
 		
-		preencheBoxNaoUtilizado(boxes, produtoMapa);	
-		
-		TreeMap<String,ProdutoMapaDTO> produtoMapaOrdenada = new TreeMap<String, ProdutoMapaDTO>(comparator);	
-		
-		produtoMapaOrdenada.putAll(produtoMapa);
-		
-		return produtoMapaOrdenada;
+		if(produtoMapa.isEmpty()) {
+			for(ProdutoAbastecimentoDTO produtoPorBox : produtosPorBox) {
+				String keyProduto = produtoPorBox.getCodigoProduto();
+				
+				if(!boxes.contains(produtoPorBox.getCodigoBox()))
+					boxes.add(produtoPorBox.getCodigoBox());
+				
+				if(!produtoMapa.containsKey(keyProduto))
+					produtoMapa.put(keyProduto, new ProdutoMapaDTO(
+							produtoPorBox.getCodigoProduto(), 
+							produtoPorBox.getNomeProduto(), 
+							produtoPorBox.getNumeroEdicao(), 
+							produtoPorBox.getPrecoCapa(), 
+							0, 
+							new HashMap<Integer, Integer>()));
+				
+					if(!produtoMapa.get(keyProduto).getBoxQtde().containsKey(produtoPorBox.getCodigoBox()))
+						produtoMapa.get(keyProduto).getBoxQtde().put(produtoPorBox.getCodigoBox(),0);
+					
+					Integer qtdeBox = produtoMapa.get(keyProduto).getBoxQtde().get(produtoPorBox.getCodigoBox());
+					
+					produtoMapa.get(keyProduto).getBoxQtde().put(produtoPorBox.getCodigoBox(), qtdeBox + produtoPorBox.getReparte());
+				
+					Integer novaQtdeTotal =  produtoPorBox.getReparte() + produtoMapa.get(keyProduto).getTotalReparte();
+					produtoMapa.get(keyProduto).setTotalReparte(novaQtdeTotal);
+			}
+
+			preencheBoxNaoUtilizado(boxes, produtoMapa);	
+			
+			TreeMap<String,ProdutoMapaDTO> produtoMapaOrdenada = new TreeMap<String, ProdutoMapaDTO>(comparator);	
+			
+			produtoMapaOrdenada.putAll(produtoMapa);
+			
+			return produtoMapaOrdenada;
+			
+			
+		} else {
+			
+			return produtoMapa;
+		}
 	}
 		
 	/**
@@ -411,7 +426,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	@Transactional
 	public List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorCota(FiltroMapaAbastecimentoDTO filtro) {
 		
-		List<ProdutoAbastecimentoDTO> mapaRetorno = new ArrayList<ProdutoAbastecimentoDTO>();
+ 		List<ProdutoAbastecimentoDTO> mapaRetorno = new ArrayList<ProdutoAbastecimentoDTO>();
 		
 		List<ProdutoAbastecimentoDTO> mapaCota = 
 			this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorCota(filtro);

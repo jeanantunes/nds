@@ -6,6 +6,7 @@ import java.util.List;
 
 import br.com.abril.nds.dto.ChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 
 
@@ -78,14 +79,14 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	 * numeroCota e dataRecolhimento.  
 	 * 
 	 * 
-	 * @param numeroCota
+	 * @param cota
 	 * @param dataOperacao
 	 * @param idProdutoEdicao
 	 * @param postergado
 	 * 
 	 * @return ChamadaEncalheCota
 	 */
-	public ChamadaEncalheCota obterUltimaChamaEncalheCota(Integer numeroCota,Long idProdutoEdicao,
+	public ChamadaEncalheCota obterUltimaChamaEncalheCota(Cota cota,Long idProdutoEdicao,
 			   											 boolean postergado,Date dataOperacao);
 	
 	
@@ -153,5 +154,5 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	BigDecimal obterTotalDaChamaEncalheCotaSemDesconto(Integer numeroCota,
 			Date dataOperacao, Boolean conferido, Boolean postergado);
 	
-	ChamadaEncalheCota obterUltimaChamaEncalheCotaParcial(Integer numeroCota,Long idProdutoEdicao,boolean postergado,Date dataOperacao);
+	ChamadaEncalheCota obterUltimaChamaEncalheCotaParcial(Cota cota,Long idProdutoEdicao,boolean postergado,Date dataOperacao);
 }

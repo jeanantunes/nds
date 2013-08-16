@@ -26,7 +26,7 @@ public class FiltroConsultaNotaFiscalDTO implements Serializable {
 	
 	private Long idTipoNotaFiscal;
 	
-	@Export(label = "Tipo de Nota", exhibitionOrder = 4)
+//	@Export(label = "Tipo de Nota", exhibitionOrder = 4)
 	private String tipoNotaFiscal;
 	
 	private Long idFornecedor;

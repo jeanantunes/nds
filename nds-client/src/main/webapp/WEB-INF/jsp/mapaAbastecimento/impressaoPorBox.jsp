@@ -26,7 +26,6 @@ function imprimir(){
 
 <body>
 
-
 <table width="800" border="0" align="center" cellpadding="3" cellspacing="0" style="border:1px solid #000; margin-bottom:5px;">
   <tr>
   <td width="121" height="21" align="center">
