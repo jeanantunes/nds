@@ -91,11 +91,8 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 		sql.append("when descricao like 'NDS > MDC%' then 2 ");
 		sql.append("else 3 end as ordenacao ");
 		sql.append(" from interface_execucao ie ");
-		sql.append(" left join log_execucao le on le.id = (select MAX(lei.id) as id from log_execucao lei)  and ie.id = le.interface_execucao_id ");
-		sql.append(" left join ( ");
-		sql.append(" 	select id, log_execucao_id, MAX(NOME_ARQUIVO) as NOME_ARQUIVO ");
-		sql.append(" 	from log_execucao_mensagem lem ");
-		sql.append(" 	group by log_execucao_id) lem on le.id = lem.log_execucao_id ");
+		sql.append(" left join log_execucao le on le.id = (select MAX(lei.id) as id from log_execucao lei where lei.interface_execucao_id = ie.id) ");
+		sql.append(" left join log_execucao_mensagem lem on le.id = lem.log_execucao_id ");
 		sql.append(" group by ie.id ");
 
 		if (filtro.getOrdenacaoColuna() != null) {
