@@ -236,4 +236,10 @@ public class LancamentoServiceImpl implements LancamentoService {
 		return lancamentoRepository.obterLancamentosEdicao(idProdutoEdicao, sortorder, sortname);
 	}
 
+	@Override
+	@Transactional(readOnly=true)
+	public Lancamento obterLancamentoNaMesmaSessao(Long id) {
+		return this.lancamentoRepository.buscarPorIdSemEstudo(id);
+	}
+
 }

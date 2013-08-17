@@ -46,6 +46,7 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Estudo não pode ser somado.");
 		}
 		
+		Long idEstudo = distribuicaoVO.getIdEstudo().longValue();
 		Estudo estudoBase = estudoRepository.buscarPorId(idEstudoBase);
 		
 		Map<Long,EstudoCota> mapEstudoCota = new HashMap<Long,EstudoCota>();
@@ -71,7 +72,7 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 			return; 
 		}
 		
-		Long idEstudo = distribuicaoVO.getIdEstudo().longValue();
+		
 		
 		Estudo estudo = estudoRepository.buscarPorId(idEstudo);
 		
@@ -105,13 +106,27 @@ public class SomarEstudosServiceImpl implements SomarEstudosService {
 				
 				EstudoCota estudoCota = itMap.next().getValue();
 				estudoCota.setEstudo(estudo);
+				estudoCota.setQtdeEfetiva(estudoCota.getReparte());
+				estudoCota.setQtdePrevista(estudoCota.getReparte());
 				estudoCotaRepository.alterar(estudoCota);
 			}
 			
+			if(estudo.getQtdeReparte()!=null && estudoBase.getQtdeReparte()!=null){
+				estudo.setQtdeReparte(estudo.getQtdeReparte().add(estudoBase.getQtdeReparte()));				
+			}
 			estudoRepository.alterar(estudo);
 			estudoRepository.remover(estudoBase);
 		}
 		
+	}
+
+
+	@Override
+	public Boolean verificarCoincidenciaEntreCotas(Long estudoBase,Long estudoSomado) {
+		
+		Long count = estudoRepository.countDeCotasEntreEstudos(estudoBase,estudoSomado);
+		
+		return (count>0);
 	}
 	
 	

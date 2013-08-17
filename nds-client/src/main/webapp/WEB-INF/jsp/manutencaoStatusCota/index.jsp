@@ -118,10 +118,32 @@
 		
 		<div class="grids" style="display: none;">
 			<table class="manutencaoStatusCotaGrid"></table>
+			
 		</div>
 	</fieldset>
 </form>
 	
 <jsp:include page="novo.jsp" />
+
+<div class="botoesGrid" style="display: none;">
+	<table border="0" align="left">
+		<tr>
+			<td align="left">
+				<span class="bt_novos" style="float:left;">
+						<a id="linkArquivo" href="${pageContext.request.contextPath}/financeiro/manutencaoStatusCota/exportar?fileType=XLS" rel="tipsy" title="Gerar Arquivo">
+								<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" >Arquivo</img>
+						</a>
+				</span>
+			</td>
+			<td>
+				<span class="bt_novos" title="Imprimir">
+						<a id="linkImprimir" href="${pageContext.request.contextPath}/financeiro/manutencaoStatusCota/exportar?fileType=PDF" rel="tipsy" title="Imprimir">
+								<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" >Imprimir</img>
+						</a>
+				</span>
+			</td>
+		</tr>
+	</table>
+</div>	
 
 </body>

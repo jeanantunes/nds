@@ -690,7 +690,7 @@ public class ParametrosDistribuidorVO {
     }
 
     /**
-     * @param validadeCheque the validadeChequeCaucao to set
+     * @param validadeChequeCaucao the validadeChequeCaucao to set
      */
     public void setValidadeChequeCaucao(Integer validadeChequeCaucao) {
         this.validadeChequeCaucao = validadeChequeCaucao;

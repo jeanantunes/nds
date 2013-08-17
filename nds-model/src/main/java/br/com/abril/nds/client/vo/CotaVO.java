@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -53,6 +54,7 @@ public class CotaVO implements Serializable {
 	@Export(label = "Box", exhibitionOrder = 3)
 	private String descricaoBox;
 	
+	private String tipoDistribuicaoCota;
 	
 	private SituacaoCadastro situacaoCadastro;
 	
@@ -276,5 +278,19 @@ public class CotaVO implements Serializable {
 	public void setSituacaoCadastro(SituacaoCadastro situacaoCadastro) {
 		this.situacaoCadastro = situacaoCadastro;
 	}
+
+
+
+	public String getTipoDistribuicaoCota() {
+		return tipoDistribuicaoCota;
+	}
+
+
+
+	public void setTipoDistribuicaoCota(String tipoDistribuicaoCota) {
+		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
+	}
+	
+	
 	
 }

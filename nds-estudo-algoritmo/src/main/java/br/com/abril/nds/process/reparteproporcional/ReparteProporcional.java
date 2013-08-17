@@ -4,9 +4,10 @@ import java.math.BigDecimal;
 
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.model.ClassificacaoCota;
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.ProdutoEdicaoBase;
+import br.com.abril.nds.model.estudo.ClassificacaoCota;
+import br.com.abril.nds.model.estudo.CotaEstudo;
+import br.com.abril.nds.model.estudo.EstudoTransient;
+import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.encalhemaximo.EncalheMaximo;
 import br.com.abril.nds.process.reparteminimo.ReparteMinimo;
@@ -24,34 +25,37 @@ import br.com.abril.nds.process.reparteminimo.ReparteMinimo;
  */
 @Component
 public class ReparteProporcional extends ProcessoAbstrato {
-	
+
     @Override
-    protected void executarProcesso() {
-    	boolean temEdicaoBaseAberta = false;
-    	for (ProdutoEdicaoBase edicaoBase : getEstudo().getEdicoesBase()) {
-    		if (edicaoBase.isEdicaoAberta()) {
-    			temEdicaoBaseAberta = true;
-    			break;
-    		}
-    	}
-    	BigDecimal somaReparteProporcional = BigDecimal.ZERO;
-    	BigDecimal indiceReparteEdicoesAbertas = BigDecimal.ZERO;
-    	if (getEstudo().getSomatoriaReparteEdicoesAbertas().compareTo(BigDecimal.ZERO) > 0) {
-    		// ÍndiceRepAberta =  RepDistribInicial / ΣRepEdiçãoAberta
-    		indiceReparteEdicoesAbertas = getEstudo().getReparteDistribuirInicial().divide(getEstudo().getSomatoriaReparteEdicoesAbertas(), 3, BigDecimal.ROUND_HALF_UP);
-    	} 
-    	for (Cota cota : getEstudo().getCotas()) {
-    		if (temEdicaoBaseAberta && cota.isCotaSoRecebeuEdicaoAberta()) {
-    			// RepCalculadoCota = ARRED(RepEdiçãoAbertaCota * ÍndiceRepAberta; 0)
-    			BigDecimal repCalculado = cota.getSomaReparteEdicoesAbertas().multiply(indiceReparteEdicoesAbertas);
-    			repCalculado = repCalculado.divide(BigDecimal.ONE, 0, BigDecimal.ROUND_HALF_UP);
-    			cota.setReparteCalculado(repCalculado);
-    			
-    			cota.setClassificacao(ClassificacaoCota.BancaSoComEdicaoBaseAberta);
-    			somaReparteProporcional = somaReparteProporcional.add(cota.getReparteCalculado());
-    		}
-    	}
-    	// RepDistribuir = RepDistribuir – ΣRepProporcional
-    	getEstudo().setReparteDistribuir(getEstudo().getReparteDistribuir().subtract(somaReparteProporcional));
+    public void executar(EstudoTransient estudo) {
+	boolean temEdicaoBaseAberta = false;
+	for (ProdutoEdicaoEstudo edicaoBase : estudo.getEdicoesBase()) {
+	    if (edicaoBase.isEdicaoAberta()) {
+		temEdicaoBaseAberta = true;
+		break;
+	    }
+	}
+	BigDecimal indiceReparteEdicoesAbertas = BigDecimal.ZERO;
+	if (estudo.getEdicoesBase().size() > 1 && estudo.getSomatoriaReparteEdicoesAbertas().compareTo(BigDecimal.ZERO) > 0) {
+	    // ÍndiceRepAberta =  RepDistribInicial / ΣRepEdiçãoAberta
+	    // só entrar nesse calculo se houver mais de uma edicao base
+	    // somatoria somente deve conter reparte da edicao aberta de todas as cotas que só receberam uma edicao aberta
+	    // validação ocorre em {@link EstudoService.calculate}
+	    indiceReparteEdicoesAbertas = new BigDecimal(estudo.getReparteDistribuirInicial()).divide(estudo.getSomatoriaReparteEdicoesAbertas(), 3, BigDecimal.ROUND_HALF_UP);
+	}
+	for (CotaEstudo cota : estudo.getCotas()) {
+	    if (temEdicaoBaseAberta && cota.isCotaSoRecebeuEdicaoAberta() && cota.getSomaReparteEdicoesAbertas().compareTo(BigDecimal.ZERO) > 0 &&
+		    cota.getClassificacao().notIn(ClassificacaoCota.CotaMix, ClassificacaoCota.ReparteFixado)) {
+		// RepCalculadoCota = ARRED(RepEdicaoAbertaCota * IndiceRepAberta; 0)
+		BigDecimal repCalculado = cota.getSomaReparteEdicoesAbertas().multiply(indiceReparteEdicoesAbertas);
+		cota.setReparteCalculado(repCalculado.setScale(0, BigDecimal.ROUND_HALF_UP).toBigInteger(), estudo);
+		cota.setClassificacao(ClassificacaoCota.BancaSoComEdicaoBaseAberta);
+		
+		estudo.getCotasSoComEdicaoAberta().add(cota);
+	    }
+	}
+	for (CotaEstudo cota : estudo.getCotasSoComEdicaoAberta()) {
+	    estudo.getCotas().remove(cota);
+	}
     }
 }

@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<suite name="CorrecaoVendas" parallel="false">
-	<reporter-output></reporter-output>
-	<test verbose="2" name="Default test">
-		<classes>
-			<class name="br.com.abril.nds.process.correcaovendas.CorrecaoVendasTest" />
-		</classes>
-	</test>
-</suite> <!-- Suite -->

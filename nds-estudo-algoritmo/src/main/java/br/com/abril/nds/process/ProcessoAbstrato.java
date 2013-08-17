@@ -2,45 +2,10 @@ package br.com.abril.nds.process;
 
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.model.Estudo;
-import br.com.abril.nds.model.GenericDTO;
+import br.com.abril.nds.model.estudo.EstudoTransient;
 
 @Component
 public abstract class ProcessoAbstrato {
 
-	protected GenericDTO<?> genericDTO;
-
-	protected ProcessoAbstrato() {
-	}
-
-	protected ProcessoAbstrato(GenericDTO<?> genericDTO) {
-		this.genericDTO = genericDTO;
-	}
-
-	/**
-	 * Método utilizado apenas para dar sequencia no fluxo de execução do
-	 * processo. Função semelhante a do método main. Implementa-lo para chamar o
-	 * método calcular() do processo e eventuais subprocessos.
-	 */
-	protected abstract void executarProcesso() throws Exception;
-
-	public GenericDTO<?> getGenericDTO() {
-		return genericDTO;
-	}
-	
-	public void setGenericDTO(GenericDTO<?> genericDTO) {
-	    this.genericDTO = genericDTO;
-	}
-	
-	public Estudo getEstudo() {
-		return (Estudo) genericDTO;
-	}
-	
-	public void setEstudo(Estudo estudo) {
-	    genericDTO = estudo;
-	}
-
-	public void executar() throws Exception {
-		executarProcesso();
-	}
+	public abstract void executar(EstudoTransient estudo) throws Exception;
 }

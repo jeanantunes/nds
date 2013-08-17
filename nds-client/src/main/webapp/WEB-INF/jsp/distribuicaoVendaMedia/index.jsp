@@ -1,10 +1,17 @@
 <%--
  --%>
- <%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+ <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+ <!-- distribuicaoVendaMedia -->
 <script language="javascript">
 $(function() {
 		$( "#tab-distribuicao" ).tabs();
+		distribuicaoVendaMedia.confirmarProdutosEdicaoBasePopup();
+		$('#componenteInformacoesComplementares').change(function(){
+			distribuicaoVendaMedia.selectElementoRegiaoDistribuicao('componenteInformacoesComplementares', 'elementoInformacoesComplementares1');
+			distribuicaoVendaMedia.selectElementoRegiaoDistribuicao('componenteInformacoesComplementares', 'elementoInformacoesComplementares2');
+			distribuicaoVendaMedia.selectElementoRegiaoDistribuicao('componenteInformacoesComplementares', 'elementoInformacoesComplementares3');
+		});
+		distribuicaoVendaMedia.carregarEventos();
 	});
 function popup_novo() {
 	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
@@ -17,10 +24,11 @@ function popup_novo() {
 	$("#produtoPesquisaBases").val("");
 	$("#edicaoPesquisaBases").val("");
 	distribuicaoVendaMedia.produtoEdicaoPesquisaBases = [];
-	$( "#dialog-novo" ).dialog({
+	$( "#dialog-edicoes-base" ).dialog({
+	    escondeHeader: false,
 		resizable: false,
-		height:420,
-		width:600,
+		height:450,
+		width:700,
 		modal: true,
 		buttons: {
 			"Confirmar": function() {
@@ -38,6 +46,7 @@ function popup_cancelar() {
 	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 	$( "#dialog-cancelar" ).dialog({
+	    escondeHeader: false,
 		resizable: false,
 		height:'auto',
 		width:380,
@@ -57,6 +66,7 @@ function popup_cancelar() {
 
 function popup_excluir_bonificacao(index) {
 	$( "#dialog-excluir" ).dialog({
+	    escondeHeader: false,
 		resizable: false,
 		height:'auto',
 		width:380,
@@ -77,6 +87,7 @@ function popup_excluir() {
 	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 	$( "#dialog-excluir" ).dialog({
+	    escondeHeader: false,
 		resizable: false,
 		height:'auto',
 		width:380,
@@ -85,7 +96,7 @@ function popup_excluir() {
 			"Confirmar": function() {
 				distribuicaoVendaMedia.removerProdutoEdicaoDaBase();
 				$( this ).dialog( "close" );
-				$("#effect").show("highlight", {}, 1000, callback);				
+				$("#effect").show("highlight", {}, 1000, callback);
 			},
 			"Cancelar": function() {
 				$( this ).dialog( "close" );
@@ -93,10 +104,30 @@ function popup_excluir() {
 		}
 	});
 };
+function popup_excluir_todos() {
+    $( "#dialog-excluir" ).dialog({
+        escondeHeader: false,
+	resizable: false,
+	height:'auto',
+	width:380,
+	modal: true,
+	buttons: {
+		"Confirmar": function() {
+			distribuicaoVendaMedia.removerTodasEdicoesDeBase();
+			$( this ).dialog( "close" );
+			$("#effect").show("highlight", {}, 1000, callback);
+		},
+		"Cancelar": function() {
+			$( this ).dialog( "close" );
+		}
+	}
+});  
+};
 function popup_pesqRegiao() {
 	//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 
 	$( "#dialog-regiao" ).dialog({
+	    escondeHeader: false,
 		resizable: false,
 		height:'auto',
 		width:440,
@@ -114,21 +145,22 @@ function popup_pesqRegiao() {
 	});
 };
 
-function popup_detalhes() {
+/* function popup_detalhes() {
 		//$( "#dialog:ui-dialog" ).dialog( "destroy" );
 	
 		$( "#dialog-detalhes" ).dialog({
+		    escondeHeader: false,
 			resizable: false,
 			height:'auto',
 			width:'auto',
 			modal: false,
 		});
-	};
+	};*/
 function popup_detalhes_close() {
 	  $( "#dialog-detalhes" ).dialog( "close" );
 	  
 	  
-	  }
+	  } 
 function nenhuma(){
 	$('#selRegiao').hide();
 	$('#qtdeBancas').hide();
@@ -157,14 +189,37 @@ function mostra_regiao(){
 	$('#lstExcecao').hide();
 	}
 function mostra_qtdeBancas(){
+	
+	if(distribuicaoVendaMedia.produtoEdicaoBases != undefined && distribuicaoVendaMedia.produtoEdicaoBases.length === 0){
+		exibirMensagemDialog('WARNING',  ['Não existe base para informar abrangência.']);
+		$('#qtdeBancas').hide();
+		$('#selRegiao').hide();
+		$('#rrGeral').hide();
+		$('#rrSegmento').hide();
+		$('#historico').hide();
+		$('#lstComponentes').hide();
+		$('#lstExcecao').hide();
+	}else{
+		$('#selRegiao').hide();
+		$('#qtdeBancas').show();
+		$('#rrGeral').hide();
+		$('#rrSegmento').hide();
+		$('#historico').hide();
+		$('#lstComponentes').hide();
+		$('#lstExcecao').hide();
+	}
+	
+}
+	
+function mostrarTodasCotas(){
 	$('#selRegiao').hide();
-	$('#qtdeBancas').show();
+	$('#qtdeBancas').hide();
 	$('#rrGeral').hide();
 	$('#rrSegmento').hide();
 	$('#historico').hide();
 	$('#lstComponentes').hide();
 	$('#lstExcecao').hide();
-	}
+}
 function mostraComponentes(){
 	$('#selRegiao').hide();
 	$('#qtdeBancas').hide();
@@ -220,7 +275,13 @@ function esconde_redutor(){
     </fieldset>
 </div>
 
+<div id="dialog-edicoesbase" title="Alerta" style="display:none;">  
+    <fieldset style="width:320px!important;">
+            <p>Existe apenas uma edição base. Deseja continuar?</p>
+    </fieldset>
+</div>
 
+<!-- T.produtoEdicaoBases.length -->
 <div id="dialog-detalhes" title="Visualizando Produto" style="margin-right:0px!important; float:right!important;">
 	
 	<img src="images/loading.gif" id="loadingCapa"/>
@@ -242,7 +303,7 @@ function esconde_redutor(){
     </fieldset>
 </div>
 
-<div id="dialog-novo" title="Pesquisar Edições de Produto" style="margin-right: 0px; padding-right: 0px;">  
+<div id="dialog-edicoes-base" title="Pesquisar Edições de Produto" style="display: none; margin-right: 0px; padding-right: 0px; width: 650px ">  
 <fieldset style="width:560px!important;">
     <legend>Pesquisar Produto</legend>
         
@@ -250,27 +311,42 @@ function esconde_redutor(){
           <tr>
             <td width="43">Código:</td>
             <td width="78">
-            	<input type="text" name="textfield" id="codigoPesquisaBases" style="width:60px;"
-            	 	onblur="if(this.value.length > 7) pesquisaProduto.pesquisarPorCodigoProduto('#codigoPesquisaBases', '#produtoPesquisaBases', {}, true, undefined, distribuicaoVendaMedia.errorCallBack);"
+            	<input type="text" id="codigoPesquisaBases" style="width:60px;"
+            	 	onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codigoPesquisaBases', '#produtoPesquisaBases', {}, true, undefined, distribuicaoVendaMedia.errorCallBack);"
             	 	/>
             </td>
             <td width="48">Produto:</td>
             <td width="184">
-            	<input type="text" name="textfield2" id="produtoPesquisaBases" style="width:160px;" 
+            	<input type="text" id="produtoPesquisaBases" style="width:160px;" 
             		onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#produtoPesquisaBases', true);" 
                 	 onblur="pesquisaProduto.pesquisarPorNomeProduto('#codigoPesquisaBases', '#produtoPesquisaBases', {}, true, undefined, distribuicaoVendaMedia.errorCallBack);"
             		/>
             </td>
             <td width="42">Edição:</td>
             <td width="62"><input type="text" name="textfield3" id="edicaoPesquisaBases" style="width:60px;" /></td>
-            <td width="52"><span class="classPesquisar"><a href="javascript:;" onclick="distribuicaoVendaMedia.pesquisarBases('${pageContext.request.contextPath}')">&nbsp;</a></span></td>
-          </tr>
+            </tr>
+          	<tr>
+	          	<td width="76">Classifica&ccedil;&atilde;o:</td>
+	            <td colspan="3">
+		        <select name="filtro.idTipoClassificacaoProduto" id="selectClassificacao" style="width:200px;">
+			        <option selected="selected">Selecione...</option>
+			        <c:forEach items="${listaTipoClassificacao}" var="tipoClassificacao">
+			            <option value="${tipoClassificacao.key}">${tipoClassificacao.value}</option>
+			        </c:forEach>
+		        </select>
+		        </td>
+	          	<td>
+	          		<span class="classPesquisar">
+	          			<a href="javascript:;" onclick="distribuicaoVendaMedia.pesquisarBases('${pageContext.request.contextPath}')">&nbsp;</a>
+	          		</span>
+	          	</td>
+          	</tr>
         </table>
 
     </fieldset>
     <br clear="all" />
 
-    <fieldset style="width:560px!important; margin-top:10px;">
+    <fieldset style="width:655px!important; margin-top:10px;">
     	<legend>Edições do Produto</legend>
         <table class="edicaoProdCadastradosGrid" id="edicaoProdCadastradosGrid"></table>
      </fieldset>
@@ -280,8 +356,7 @@ function esconde_redutor(){
 
 
 
-
-<div >
+<div>
   
   
     <br clear="all"/>
@@ -320,11 +395,11 @@ function esconde_redutor(){
                           </tr>
                           <tr>
                             <td width="110">Código</td>
-                            <td>${ produtoEdicao.codigoProduto }</td>
+                            <td id="codigoProduto">${ produtoEdicao.codigoProduto }</td>
                           </tr>
                           <tr>
                             <td>Edição:</td>
-                            <td>${ produtoEdicao.numeroEdicao }</td>
+                            <td id="numeroEdicao">${ produtoEdicao.numeroEdicao }</td>
                           </tr>
                           <tr>
                             <td>Preço R$</td>
@@ -354,11 +429,11 @@ function esconde_redutor(){
                         
                     </fieldset>
                   <fieldset style="width:270px!important; margin-bottom:10px; margin-left:10px; float:left;">
-               	    <legend>Estudo Nº: ${ estudo.id }</legend>
+               	    <legend>Estudo Nº: <span id="idEstudo"></span></legend>
                    	  <table width="270" border="0" cellspacing="2" cellpadding="2">
                         <tr class="class_linha_1">
                           <td width="99"><strong>Status do Estudo:</strong></td>
-                          <td width="157"><strong>${ estudo.status.descricao }</strong></td>
+                          <td width="157"><strong id="idStatusEstudo">${estudo.status.descricao}</strong></td>
                         </tr>
                       </table>
                    	  <table width="275" border="0" cellspacing="2" cellpadding="2">
@@ -372,7 +447,7 @@ function esconde_redutor(){
                	        </tr>
                    	    <tr>
                    	      <td>Lançamento:</td>
-                   	      <td colspan="2">${ lancado }</td>
+                   	      <td colspan="2" id="reparteTotal">${ lancado }</td>
                	        </tr>
                    	    <tr>
                    	      <td>Promocional:</td>
@@ -380,11 +455,11 @@ function esconde_redutor(){
                	        </tr>
                    	    <tr>
                    	      <td>Sobra:</td>
-                   	      <td colspan="2">${ sobra }</td>
+                   	      <td colspan="2" id="sobra">${sobra}</td>
                	        </tr>
                    	    <tr>
                    	      <td>Reparte Distribuir:</td>
-                   	      <td colspan="2"><input type="text" name="textfield6" id="reparteDistribuir" style="width:40px; text-align:center;"  /></td>
+                   	      <td colspan="2"><input type="text" name="textfield6" id="reparteDistribuir" style="width:40px; text-align:center;" value="${repDistrib}" /></td>
                	        </tr>
                    	    <tr>
                    	      <td>Reparte Mínimo:</td>
@@ -397,46 +472,47 @@ function esconde_redutor(){
                    	    <tr>
                    	      <td align="right"><input type="checkbox" name="checkbox3" id="distribuicaoPorMultiplo" onclick="$('.distrMult').toggle();" /></td>
                    	      <td width="120">Distribuição por multiplo</td>
-                   	      <td width="44"><input type="text" class="distrMult" style="width:40px; text-align:center; display:none;" id="multiplo" value="10" readonly="readonly" /></td>
+                   	      <td width="44"><input type="text" class="distrMult" style="width:40px; text-align:center; display:none;" id="multiplo" value="10" /></td>
                	        </tr>
                	    </table>
                   </fieldset>
                     <br clear="all" />
-                    <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.cancelar()"><img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
-                     <span class="bt_novos"><a href="javascript:;" onclick="popup_cancelar();"><img src="images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
-                                       
-                     <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.gerar()"><img src="images/ico_check.gif" alt="Gerar" hspace="5" border="0" />Gerar</a></span>
-                     <span class="bt_novos"><a href="analise_1.htm"><img src="images/ico_copia_distrib.gif" alt="Analisar" hspace="5" border="0" />Analisar</a></span>
+                     <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.cancelar()"><img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
+                     <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.verificacoesGerar()"><img src="images/ico_check.gif" alt="Gerar" hspace="5" border="0" />Gerar</a></span>
+                     <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.redirectToTelaAnalise()"><img src="images/ico_copia_distrib.gif" alt="Analisar" hspace="5" border="0" />Analisar</a></span>
                 </div>
                 <div id="tab-distribuicao-2" class="distribuicaoVendaMedia-tab">
-               	  <fieldset style="width:600px!important;">
+               	  <fieldset style="width:610px!important;">
                    	<legend>Bases</legend>
-                   	  <table width="600" border="0" cellspacing="2" cellpadding="2">
+                   	  <table width="610" border="0" cellspacing="2" cellpadding="2">
                    	    <tr>
                    	      <td width="36">Código:</td>
                    	      <td width="56">${ produtoEdicao.codigoProduto }</td>
                    	      <td width="41">Produto:</td>
                    	      <td width="226">${ produtoEdicao.nomeProduto }</td>
+                          <td>Classificação:</td>
+                          <td width="156">${ produtoEdicao.classificacao }</td>
                    	      <td width="35">Edição:</td>
                    	      <td width="83">${ produtoEdicao.numeroEdicao }</td>
-                   	      <td width="79"><span class="bt_novos"><a href="javascript:;" onclick="popup_novo();"><img src="images/ico_salvar.gif" alt="Liberar" hspace="5" border="0" />Novo</a></span></td>
+                   	      <td width="79"><span class="bt_novos"><a href="javascript:;" onclick="popup_novo();" style="margin-right: 1px;"><img src="images/ico_salvar.gif" alt="Liberar" hspace="5" border="0" />Novo</a></span></td>
                	        </tr>
                	    </table>
                    	</fieldset>
-                    <fieldset style="width:600px!important; margin-top:10px;">
+                    <fieldset style="width:610px!important; margin-top:10px;">
                     	<legend>Produtos</legend>
                        <table class="dadosBasesGrid"></table>
 
 
                     </fieldset>
                     <br clear="all" />
-                    
-                    <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.cancelar()"><img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
-
-                    <span class="bt_novos"><a href="javascript:;" onclick="popup_cancelar();"><img src="images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
-                    
-                   
-                <span class="bt_novos"><a href="javascript:;" onclick="popup_excluir();"><img src="images/ico_excluir.gif" hspace="5" alt="Cancelar" border="0" />Excluir</a></span>
+	                <span class="bt_novos">
+	                	<a href="javascript:;" onclick="popup_excluir_todos();">
+	                		<img src="images/ico_excluir.gif" hspace="5" alt="Excluir Todos" border="0" />Excluir Todos
+	                	</a>
+	                	<a href="javascript:;" onclick="popup_excluir();">
+	                		<img src="images/ico_excluir.gif" hspace="5" alt="Excluir" border="0" />Excluir
+	                	</a>
+	                </span>
                 
                 </div>
                 
@@ -449,6 +525,8 @@ function esconde_redutor(){
                    	    <td width="60">${ produtoEdicao.codigoProduto }</td>
                    	    <td width="42">Produto:</td>
                    	    <td width="235">${ produtoEdicao.nomeComercial }</td>
+                   	    <td>Classificação:</td>
+                        <td width="156">${ produtoEdicao.classificacao }</td>
                    	    <td width="35">Edição:</td>
                    	    <td width="66">${ produtoEdicao.numeroEdicao }</td>
                    	    <td width="69">&nbsp;</td>
@@ -482,7 +560,12 @@ function esconde_redutor(){
             </td>
             </tr>
     </table>
-    <span class="bt_novos" style="float:right!important; margin-right:20px;"><a href="javascript:;" onclick="distribuicaoVendaMedia.confirmarSelecaoBonificacao();"><img src="images/ico_add.gif" alt="Confirmar Seleção" hspace="5" border="0" />Confirmar Seleção</a></span>
+    <span class="bt_novos" style="float:right!important; margin-right:20px;">
+    	<a href="javascript:;" onclick="distribuicaoVendaMedia.confirmarSelecaoBonificacao();">
+    		<img src="images/ico_add.gif" alt="Confirmar Seleção" hspace="5" border="0" />
+    			Confirmar Seleção
+    	</a>
+    </span>
     <br />
 
     <table width="590" border="0" cellspacing="2" cellpadding="2">
@@ -494,9 +577,6 @@ function esconde_redutor(){
     </table>                 
 <br clear="all" />
 </fieldset>
-                    <br clear="all" />
-                    <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.cancelar()"><img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
-                    <span class="bt_novos"><a href="javascript:;" onclick="popup_cancelar();"><img src="images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span><span class="bt_novos"><a href="javascript:;"><img src="images/ico_salvar.gif" alt="Salvar" hspace="5" border="0" />Salvar</a></span>
                 <br clear="all" />
 
                 </div>
@@ -510,6 +590,8 @@ function esconde_redutor(){
                    	    <td width="60">${ produtoEdicao.codigoProduto }</td>
                    	    <td width="42">Produto:</td>
                    	    <td width="235">${ produtoEdicao.nomeComercial }</td>
+                   	    <td>Classificação:</td>
+                        <td width="156">${ produtoEdicao.classificacao }</td>
                    	    <td width="35">Edição:</td>
                    	    <td width="66">${ produtoEdicao.numeroEdicao }</td>
                    	    <td width="69">&nbsp;</td>
@@ -522,7 +604,7 @@ function esconde_redutor(){
                		<legend>Região</legend>
                         <table width="600" border="0" cellspacing="2" cellpadding="2">
                           <tr>
-                            <td width="20"><input name="regiao" type="radio" id="RDtodasAsCotas" value="radio" checked="checked"  /></td>
+                            <td width="20"><input name="regiao" type="radio" id="RDtodasAsCotas" value="radio" onclick="mostrarTodasCotas();" checked="checked"  /></td>
                             <td width="85">Todas as Cotas</td>
                             <td width="475">&nbsp;</td>
                           </tr>
@@ -598,7 +680,7 @@ function esconde_redutor(){
                    <tr>
                      <td width="156">
 	                     <select name="componenteInformacoesComplementares" id="componenteInformacoesComplementares"
-	                     	onchange="distribuicaoVendaMedia.selectElementoRegiaoDistribuicao('componenteInformacoesComplementares', 'elementoInformacoesComplementares')"  
+	                     	onchange="distribuicaoVendaMedia.selectElementoRegiaoDistribuicao('componenteInformacoesComplementares', 'elementoInformacoesComplementares1')"  
 	                     	style="width:110px;" class="filtroComponentes">
 	                  		<option selected="selected">Selecione...</option>
 		                    <c:forEach items="${componentes}" var="componente" varStatus="idx">
@@ -608,8 +690,21 @@ function esconde_redutor(){
                      </td>
                      <td width="51">Elemento:</td>
                      <td width="152">
-                     	<select name="elementoInformacoesComplementares" id="elementoInformacoesComplementares" style="width:150px;">
-                     	</select>
+	                    <select 
+	                    	name="elementoInformacoesComplementares" 
+	                    	id="elementoInformacoesComplementares1" 
+	                    	style="width:150px;">
+	                    </select>
+ 	                    <select 
+ 	                    	name="elementoInformacoesComplementares" 
+ 	                    	id="elementoInformacoesComplementares2" 
+ 	                    	style="width:150px; ">
+ 	                    </select>
+                       	<select 
+                       		name="elementoInformacoesComplementares" 
+                       		id="elementoInformacoesComplementares3" 
+                       		style="width:150px;">
+                       	</select>
                      </td>
                    </tr>
                  </table></td>
@@ -617,9 +712,6 @@ function esconde_redutor(){
                     </table>
                         
                     </fieldset>
-                    <br clear="all" />
-                    <span class="bt_novos"><a href="javascript:;" onclick="distribuicaoVendaMedia.cancelar()"><img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
-                <span class="bt_novos"><a href="javascript:;" onclick="popup_cancelar();"><img 	src="images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
                 </div>
                 <br clear="all" />
 
@@ -631,25 +723,45 @@ function esconde_redutor(){
        	  <legend>Estratégia</legend>
           <table width="270" border="0" cellspacing="2" cellpadding="0">
   <tr>
-    <td width="219">Veja - Edição: 021</td>
+    <td width="219">${ produtoEdicao.nomeProduto } - Edição: ${ produtoEdicao.numeroEdicao }</td>
     <td width="28">Capa:</td>
-    <td width="15"><a href="javascript:;" onmouseover="popup_detalhes();" onmouseout="popup_detalhes_close();"><img src="images/ico_detalhes.png" alt="Capa" width="15" height="15" border="0" /></a></td>
+    <td width="15"><a href="javascript:;" onmouseover="distribuicaoVendaMedia.popup_detalhes('${ produtoEdicao.codigoProduto }','${ produtoEdicao.numeroEdicao }');" onmouseout="popup_detalhes_close();"><img src="images/ico_detalhes.png" alt="Capa" width="15" height="15" border="0" /></a></td>
   </tr>
 </table>
-<p><strong>Período:</strong> 1</p>
-<p><strong>Chamada de Capa:</strong> Os Segredos de Valério</p>
+<p><strong>Período:</strong> ${ estrategia.periodo }</p>
+<p><strong>Chamada de Capa:</strong> ${ estrategia.produtoEdicao.chamadaCapa }</p>
 
 
-        <table class="estrategiaGrid"></table>
+        <table class="estrategiaGrid">
+        	<c:forEach var="estrategiaEdicao" items="${ estrategia.basesEstrategia }">
+        		<tr>
+        			<td>
+        				${ estrategiaEdicao.produtoEdicao.produto.codigo }
+        			</td>
+        			<td>
+        				${ estrategiaEdicao.produtoEdicao.produto.nome }
+        			</td>
+        			<td>
+        				${ estrategiaEdicao.produtoEdicao.numeroEdicao }
+        			</td>
+        			<td>
+        				${ estrategiaEdicao.periodoEdicao}
+        			</td>
+        			<td>
+        				${ estrategiaEdicao.produtoEdicao.peso }
+        			</td>
+        		</tr>
+        	</c:forEach>
+        </table>
         <br />
 
 
-          <p><strong>Reparte Mánimo:</strong> 02</p>
+          <p><strong>Reparte Mínimo:</strong> ${ estrategia.reparteMinimo }</p>
 
-          <p><strong>Abrangência:</strong> 60%</p>
+          <p><strong>Abrangência:</strong> ${ estrategia.abrangencia }%</p>
           
         <p><strong>Oportunidade de Venda:</strong></p>
-          <textarea cols="30" rows="6"></textarea>
+          <textarea cols="30" rows="6" >${estrategia.oportunidadeVenda}</textarea>
 
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
@@ -660,280 +772,239 @@ function esconde_redutor(){
     
     </div>
 </div> 
+
 <script>
 $(".listaRegiaoGrid").flexigrid({
-			//url : '../xml/pesqRegiao-xml.xml',
-			dataType : 'json',
-			colModel : [ {
-				display : 'Região',
-				name : 'regiao',
-				width : 330,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : '',
-				name : 'sel',
-				width : 20,
-				sortable : true,
-				align : 'center'
-			}],
-			width : 400,
-			height : 200
-		});
- $(".edicaoProdCadastradosGrid").flexigrid({
-			//url : '../xml/pesqEdicaoD-xml.xml',
-			dataType : 'json',
-			colModel : [ {
-				display : 'Edição',
-				name : 'numeroEdicao',
-				width : 40,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Período',
-				name : 'periodicidade',
-				width : 40,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Data Lançamento',
-				name : 'dataLancamentoFormatada',
-				width : 90,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Reparte',
-				name : 'reparte',
-				width : 40,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Venda',
-				name : 'venda',
-				width : 35,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Status',
-				name : 'statusSituacao',
-				width : 70,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Classificação',
-				name : 'classificacao',
-				width : 70,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Capa',
-				name : 'capa',
-				width : 25,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : '',
-				name : 'select',
-				width : 20,
-				sortable : true,
-				align : 'center'
-			}],
-			width : 560,
-			height : 200
-		});
-	$(".elemento1Grid").flexigrid({
-			//url : '../xml/elemento1-xml.xml',
-			dataType : 'json',
-			colModel : [ {
-				display : 'Componentes',
-				name : 'componenteDesc',
-				width : 120,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Elementos',
-				name : 'elementoDesc',
-				width : 145,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : '% Bonificacao',
-				name : 'percBonificacaoInput',
-				width : 80,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Reparte Min.',
-				name : 'reparteMinimoInput',
-				width : 70,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Todas<br/> as Cotas',
-				name : 'sel',
-				width : 45,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Ação',
-				name : 'acao',
-				width : 25,
-				sortable : true,
-				align : 'center'
-			}],
-			width : 580,
-			height : 130
-		});
-	
-	
-		$(".bonificacoesGrid").flexigrid({
-			//url : '../xml/criarRegiao1-xml.xml',
-			dataType : 'json',
-			colModel : [{
-				display : 'Elementos',
-				name : 'descricao',
-				width : 205,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Ação',
-				name : 'acao',
-				width : 30,
-				sortable : true,
-				align : 'center'
-			}],
-			width : 280,
-			height : 110
-		});
-		
-		
-		
-	$(".estrategiaGrid").flexigrid({
-			//url : '../xml/listaEstrategias-xml.xml',
-			dataType : 'json',
-			colModel : [ {
-				display : 'Código',
-				name : 'codigo',
-				width : 35,
-				sortable : true,
-				align : 'left'
-			},{
-				display : 'Prod.',
-				name : 'produto',
-				width : 90,
-				sortable : true,
-				align : 'left'
-			},{
-				display : 'Edição',
-				name : 'edicao',
-				width : 35,
-				sortable : true,
-				align : 'left'
-			},{
-				display : 'Per.',
-				name : 'periodo',
-				width : 20,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Peso',
-				name : 'peso',
-				width : 20,
-				sortable : true,
-				align : 'center'
-			}],
-			width : 280,
-			height : 110
-		});
-		
-		
-		
-	$(".lstComponentesGrid").flexigrid({
-			//url : '../xml/listaComponentes-xml.xml',
-			dataType : 'json',
-			colModel : [ {
-				display : 'Componentes',
-				name : 'componentes',
-				width : 205,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Ação',
-				name : 'acao',
-				width : 30,
-				sortable : true,
-				align : 'center'
-			}],
-			width : 280,
-			height : 110
-		});
-	$(".dadosBasesGrid").flexigrid({
-			//url : '../xml/dadosDistribB-xml.xml',
-			dataType : 'json',
-			colModel : [ {
-				display : 'Código',
-				name : 'codigoProduto',
-				width : 40,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Produto',
-				name : 'nomeComercial',
-				width : 80,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Edição',
-				name : 'numeroEdicao',
-				width : 35,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Período',
-				name : 'periodicidade',
-				width : 50,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Status',
-				name : 'statusSituacao',
-				width : 70,
-				sortable : true,
-				align : 'left'
-			}, {
-				display : 'Reparte',
-				name : 'reparte',
-				width : 45,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Venda',
-				name : 'venda',
-				width : 40,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : 'Venda %',
-				name : 'percentualVenda',
-				width : 40,
-				sortable : true,
-				align : 'right'
-			}, {
-				display : 'Peso',
-				name : 'pesoInput',
-				width : 40,
-				sortable : true,
-				align : 'center'
-			}, {
-				display : '',
-				name : 'select',
-				width : 20,
-				sortable : true,
-				align : 'center'
-			}],
-			width : 600,
-			height : 240
-		});
+	//url : '../xml/pesqRegiao-xml.xml',
+	dataType : 'json',
+	colModel : [ {
+		display : 'Região',
+		name : 'regiao',
+		width : 330,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : '',
+		name : 'sel',
+		width : 20,
+		sortable : true,
+		align : 'center'
+	}],
+	width : 400,
+	height : 200
+});
+$(".edicaoProdCadastradosGrid").flexigrid({	
+	dataType : 'json',
+	colModel : [ {
+		display : 'Código',
+		name : 'codigoProduto',
+		width : 60,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : 'Edição',
+		name : 'numeroEdicao',
+		width : 40,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : 'Período',
+		name : 'periodo',
+		width : 40,
+		sortable : true,
+		align : 'center'
+	}, {
+		display : 'Data Lançamento',
+		name : 'dataLancamentoFormatada',
+		width : 90,
+		sortable : true,
+		align : 'center'
+	}, {
+		display : 'Reparte',
+		name : 'reparte',
+		width : 40,
+		sortable : true,
+		align : 'right'
+	}, {
+		display : 'Venda',
+		name : 'venda',
+		width : 35,
+		sortable : true,
+		align : 'right'
+	}, {
+		display : 'Status',
+		name : 'status',
+		width : 70,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : 'Classificação',
+		name : 'classificacao',
+		width : 70,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : 'Capa',
+		name : 'capa',
+		width : 25,
+		sortable : true,
+		align : 'center'
+	}, {
+		display : '',
+		name : 'select',
+		width : 20,
+		sortable : true,
+		align : 'center'
+	}],
+	width : 650,
+	height : 200,
+	sortname : "dataLancamentoFormatada",
+	sortorder : "desc",
+	usepager : true,
+    useRp : true,
+    rp : 15
+});
+$(".elemento1Grid").flexigrid({
+	//url : '../xml/elemento1-xml.xml',
+	dataType : 'json',
+	colModel : [ {
+		display : 'Componentes',
+		name : 'componenteDesc',
+		width : 120,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : 'Elementos',
+		name : 'elementoDesc',
+		width : 145,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : '% Bonificacao',
+		name : 'percBonificacaoInput',
+		width : 80,
+		sortable : true,
+		align : 'center'
+	}, {
+		display : 'Reparte Min.',
+		name : 'reparteMinimoInput',
+		width : 70,
+		sortable : true,
+		align : 'center'
+	}, {
+		display : 'Todas<br/> as Cotas',
+		name : 'sel',
+		width : 45,
+		sortable : true,
+		align : 'center'
+	}, {
+		display : 'Ação',
+		name : 'acao',
+		width : 25,
+		sortable : true,
+		align : 'center'
+	}],
+	width : 580,
+	height : 130
+});
+
+
+$(".bonificacoesGrid").flexigrid({
+	//url : '../xml/criarRegiao1-xml.xml',
+	dataType : 'json',
+	colModel : [{
+		display : 'Elementos',
+		name : 'descricao',
+		width : 205,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : 'Ação',
+		name : 'acao',
+		width : 30,
+		sortable : true,
+		align : 'center'
+	}],
+	width : 280,
+	height : 110
+});
+
+
+
+$(".estrategiaGrid").flexigrid({
+	//url : '../xml/listaEstrategias-xml.xml',
+	dataType : 'json',
+	colModel : [ {
+		display : 'Código',
+		name : 'codigo',
+		width : 35,
+		sortable : true,
+		align : 'left'
+	},{
+		display : 'Prod.',
+		name : 'produto',
+		width : 90,
+		sortable : true,
+		align : 'left'
+	},{
+		display : 'Edição',
+		name : 'edicao',
+		width : 35,
+		sortable : true,
+		align : 'left'
+	},{
+		display : 'Per.',
+		name : 'periodo',
+		width : 20,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : 'Peso',
+		name : 'peso',
+		width : 20,
+		sortable : true,
+		align : 'center'
+	}],
+	width : 280,
+	height : 110
+});
+
+
+
+$(".lstComponentesGrid").flexigrid({
+	//url : '../xml/listaComponentes-xml.xml',
+	dataType : 'json',
+	colModel : [ {
+		display : 'Componentes',
+		name : 'componentes',
+		width : 205,
+		sortable : true,
+		align : 'left'
+	}, {
+		display : 'Ação',
+		name : 'acao',
+		width : 30,
+		sortable : true,
+		align : 'center'
+	}],
+	width : 280,
+	height : 110
+});
+$(".dadosBasesGrid").flexigrid({
+	//url : '../xml/dadosDistribB-xml.xml',
+	dataType : 'json',
+	colModel : [{display: 'Código',     name: 'codigoProduto',   width: 45, sortable: true, align: 'left'},
+	    	    {display: 'Produto',    name: 'nome',            width: 70, sortable: true, align: 'left'},
+	    	    {display: 'Edição',     name: 'numeroEdicao',    width: 35, sortable: true, align: 'left'},
+	    	    {display: 'Classific.', name: 'classificacao',   width: 60, sortable: true, align: 'left'},
+	    	    {display: 'Período',    name: 'periodo',         width: 40, sortable: true, align: 'center'},
+	    	    {display: 'Status',     name: 'status',          width: 55, sortable: true, align: 'left'},
+	    	    {display: 'Reparte',    name: 'reparte',         width: 35, sortable: true, align: 'center'},
+	    	    {display: 'Venda',      name: 'venda',           width: 35, sortable: true, align: 'center' },
+	    	    {display: 'Venda %',    name: 'percentualVenda', width: 40, sortable: true, align: 'right'},
+	    	    {display: 'Peso',       name: 'pesoInput',       width: 40, sortable: true, align: 'center'},
+	    	    {display: '',           name: 'select',          width: 20, sortable: true, align: 'center'}],
+	width : 610,
+	height : 240
+});
 </script>
-<%--
- --%>

@@ -8,10 +8,12 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.PessoaUtil;
+import br.com.abril.nds.client.vo.ProdutoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CotaQueNaoRecebeExcecaoDTO;
 import br.com.abril.nds.dto.CotaQueRecebeExcecaoDTO;
@@ -25,6 +27,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.distribuicao.ExcecaoProdutoCota;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoExcecao;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -33,8 +36,10 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.ExcecaoSegmentoParciaisService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
@@ -80,9 +85,17 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
+	@Autowired
+	private TipoClassificacaoProdutoService classificacao;
+	
 	@Rules(Permissao.ROLE_DISTRIBUICAO_EXCECAO_SEGMENTO_PARCIAIS)
 	public void index(){
+		this.carregarComboClassificacao();
+	}
 		
+	private void carregarComboClassificacao(){
+		List<TipoClassificacaoProduto> classificacoes = classificacao.obterTodos();
+		result.include("listaClassificacao", classificacoes);
 	}
 	
 	@Post("pesquisarProdutosRecebidosPelaCota")
@@ -95,7 +108,7 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 		filtro.getCotaDto().setNomePessoa(PessoaUtil.removerSufixoDeTipo(filtro.getCotaDto().getNomePessoa()));
 		
 		List<ProdutoRecebidoDTO> listaProdutoRecebidoDto = this.excecaoSegmentoParciaisService.obterProdutosRecebidosPelaCota(filtro);
-
+		
 		guardarFiltroNaSession(filtro);
 		
 		TableModel<CellModelKeyValue<ProdutoNaoRecebidoDTO>> tableModel = new TableModel<CellModelKeyValue<ProdutoNaoRecebidoDTO>>();
@@ -109,6 +122,11 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 	public void pesquisarProdutosNaoRecebidosPelaCota(FiltroExcecaoSegmentoParciaisDTO filtro, String sortorder, String sortname, int page, int rp ){
 		
 		validarEntradaFiltroCota(filtro);
+		
+		if(filtro.getProdutoDto().getCodigoProduto().length() == 6){
+			String codigoProduto = produtoService.obterCodigoProdinPorICD(filtro.getProdutoDto().getCodigoProduto());
+			filtro.getProdutoDto().setCodigoProduto(codigoProduto);
+		}
 		
 		filtro.getCotaDto().setNomePessoa(PessoaUtil.removerSufixoDeTipo(filtro.getCotaDto().getNomePessoa()));
 		
@@ -127,8 +145,12 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 
 		validarEntradaFiltroProduto(filtro);
 		
+		String codigoProduto = produtoService.obterCodigoProdinPorICD(filtro.getProdutoDto().getCodigoProduto());
+		
+		filtro.getProdutoDto().setCodigoProduto(codigoProduto);
+		
 		List<CotaQueRecebeExcecaoDTO> listaCotaQueRecebeExcecaoDto = this.excecaoSegmentoParciaisService.obterCotasQueRecebemExcecaoPorProduto(filtro);
-
+		
 		guardarFiltroNaSession(filtro);
 		
 		TableModel<CellModelKeyValue<CotaQueRecebeExcecaoDTO>> tableModel = new TableModel<CellModelKeyValue<CotaQueRecebeExcecaoDTO>>();
@@ -142,8 +164,13 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 	public void pesquisarCotasQueNaoRecebemExcecao(FiltroExcecaoSegmentoParciaisDTO filtro, String sortorder, String sortname, int page, int rp ){
 		validarEntradaFiltroProduto(filtro);
 		
+		if(filtro.getProdutoDto().getCodigoProduto().length() == 6){
+			String codigoProduto = produtoService.obterCodigoProdinPorICD(filtro.getProdutoDto().getCodigoProduto());
+			filtro.getProdutoDto().setCodigoProduto(codigoProduto);
+		}
+		
 		List<CotaQueNaoRecebeExcecaoDTO> listaCotaQueNaoRecebeExcecaoDto = this.excecaoSegmentoParciaisService.obterCotasQueNaoRecebemExcecaoPorProduto(filtro);
-
+		
 		TableModel<CellModelKeyValue<CotaQueNaoRecebeExcecaoDTO>> tableModel = new TableModel<CellModelKeyValue<CotaQueNaoRecebeExcecaoDTO>>();
 		
 		configurarTableModelSemPaginacao(listaCotaQueNaoRecebeExcecaoDto, tableModel);
@@ -170,7 +197,7 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 		}
 		
 		validarEntradaFiltroCota(filtro);
-		
+
 		if (filtro.getCotaDto().getNumeroCota() != null && !filtro.getCotaDto().getNumeroCota().equals(0)) {
 			cota = (cotaService.obterPorNumeroDaCota(filtro.getCotaDto().getNumeroCota()));
 		}else {
@@ -216,8 +243,6 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 		
 		if (filtro.getProdutoDto().getCodigoProduto() != null && !filtro.getProdutoDto().getCodigoProduto().equals(0)) {
 			produto = produtoService.obterProdutoPorCodigo(filtro.getProdutoDto().getCodigoProduto());
-		}else {
-			produto = produtoService.obterProdutoPorNome(filtro.getProdutoDto().getNomeProduto());
 		}
 		
 		if (filtro.isExcecaoSegmento()) {
@@ -262,7 +287,7 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 	
 	@Post
 	public void autoCompletarPorNomeCotaQueNaoRecebeExcecao(FiltroExcecaoSegmentoParciaisDTO filtro){
-		List<CotaQueNaoRecebeExcecaoDTO> listaCotaQueNaoRecebeExcecaoDTO = this.excecaoSegmentoParciaisService.obterCotasQueNaoRecebemExcecaoPorProduto(filtro);
+		List<CotaQueNaoRecebeExcecaoDTO> listaCotaQueNaoRecebeExcecaoDTO = this.excecaoSegmentoParciaisService.autoCompletarPorNomeCotaQueNaoRecebeExcecao(filtro);
 		
 		List<ItemAutoComplete> listaCotaQueNaoRecebeExcecaoDTOAutoComplete = new ArrayList<ItemAutoComplete>();
 		
@@ -277,29 +302,74 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 	}
 	
 	@Post
-	public void pesquisarProduto(String nomeProduto, String codigoProduto){
+	public void pesquisarPorCodigoProdutoAutoComplete(String codigo){
+		
+		pesquisarPorCodigoProduto(codigo);
+	}
+	
+	@Post
+	public void pesquisarPorCodigoProduto(String codigoProduto){
 		Produto produto = null;
 		TipoSegmentoProduto tipoSegmentoProduto = null;
 		ArrayList<Object> objects = new ArrayList<>();
-		
-		if (nomeProduto != null && !nomeProduto.isEmpty()) {
-			produto = produtoService.obterProdutoPorNome(nomeProduto);
-		}else {
-			produto = produtoService.obterProdutoPorCodigo(codigoProduto);
-		}
+		Long idClassificacao;
+				
+		produto = produtoService.obterProdutoPorCodigo(codigoProduto);
 		
 		if (produto != null) {
 			PessoaJuridica juridica = fornecedorService.obterFornecedorUnico(produto.getCodigo()).getJuridica();
 			tipoSegmentoProduto = produto.getTipoSegmentoProduto();
+			idClassificacao = produto.getTipoClassificacaoProduto().getId();
 			
 			objects.add(produto);
 			objects.add(juridica);
 			objects.add(tipoSegmentoProduto);
+			objects.add(idClassificacao);
 		}else {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código \"" + codigoProduto + "\" não encontrado!");
 		}	
 		
 		result.use(Results.json()).from(objects, "result").serialize();
+	}
+	
+	@Post
+	public void autoCompletarProduto(String nome) {
+		
+		List<Produto> listaProduto = null;
+		
+		if (StringUtils.isNumeric(nome)) {
+			
+			listaProduto = this.produtoService.obterProdutoLikeCodigo(nome);
+		}
+		else {
+			
+			listaProduto = this.produtoService.obterProdutoLikeNome(nome, Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
+		}
+		
+		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
+		
+		if (listaProduto != null && !listaProduto.isEmpty()) {
+			ProdutoVO produtoAutoComplete = null;
+			
+			for (Produto produto : listaProduto) {
+				produtoAutoComplete = new ProdutoVO(produto.getCodigo(),produto.getNome(),produto);
+				
+				PessoaJuridica juridica = fornecedorService.obterFornecedorUnico(produto.getCodigo()).getJuridica();
+				
+				produtoAutoComplete.setNomeFantasia(juridica.getNomeFantasia());
+				produtoAutoComplete.setRazaoSocial(juridica.getRazaoSocial());
+				if (produto.getTipoSegmentoProduto() != null) {
+					produtoAutoComplete.setTipoSegmentoProduto(produto.getTipoSegmentoProduto().getDescricao());
+				}
+				
+				ItemAutoComplete itemAutoComplete =
+					new ItemAutoComplete(produtoAutoComplete.getNumero(), produtoAutoComplete.getLabel(), produtoAutoComplete);
+				
+				listaProdutos.add(itemAutoComplete);
+			}
+		}
+		
+		result.use(Results.json()).from(listaProdutos, "result").include("value", "chave").serialize();
 	}
 	
 	@SuppressWarnings("unchecked")

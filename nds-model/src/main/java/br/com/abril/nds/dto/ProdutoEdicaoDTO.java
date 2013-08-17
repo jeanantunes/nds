@@ -11,10 +11,10 @@ import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.TemaProduto;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
-import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 
 public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoDTO> {
@@ -35,10 +35,11 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private int peb;
 	private BigDecimal precoCusto;
 	private Long peso;
+	private Long idProduto;
 	private String codigoProduto;
 	private PeriodicidadeProduto periodicidade;
 	private Integer numeroPeriodicidade;
-	
+	private TipoClassificacaoProduto tipoClassificacaoProduto;
 	private String nomeProduto;
 	private String nomeComercial;
 	private GrupoProduto grupoProduto;
@@ -50,6 +51,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private BigDecimal expectativaVenda;
 	private boolean permiteValeDesconto;
 	private boolean parcial;
+	private Integer periodo;
 	private Integer dia;
 	private Date dataRecolhimentoDistribuidor;
 	
@@ -61,6 +63,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private String statusLancamento;
 	private String statusSituacao;
 	private String temBrinde;
+	private String status;
 	
 	// Campos para cadastrar uma nova Edição:
 	// codigoProduto;
@@ -108,8 +111,13 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private BigInteger reparte;
 	private String qtdVendasFormatada = "0";
 	
-	private String precoVendaFormatado;
-	private String precoPrevistoFormatado;
+	private String segmentacao;
+	private String classificacao;
+	
+	private Double venda;
+	private Double percentualVenda;
+	private Long reparteEstudo;
+	private Long tipoSegmentoProdutoId;
 	
 	public ProdutoEdicaoDTO() {};
 	
@@ -137,6 +145,10 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	 * Tipo de chamada de encalhe deste produtoEdicao
 	 */
 	private TipoChamadaEncalhe tipoChamadaEncalhe;
+
+	private String dataRecolhimentoDistribuidorFormatada;
+	
+	private String tipoClassificacaoFormatado;
 	
 	
 	public Long getId() {
@@ -168,7 +180,6 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	}
 	public void setPrecoVenda(BigDecimal precoVenda) {
 		this.precoVenda = precoVenda;
-		this.precoVendaFormatado = CurrencyUtil.formatarValor(precoVenda);
 	}
 	public BigDecimal getDesconto() {
 		return desconto;
@@ -247,6 +258,9 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	}
 	public void setDataRecolhimentoDistribuidor(Date dataRecolhimentoDistribuidor) {
 		this.dataRecolhimentoDistribuidor = dataRecolhimentoDistribuidor;
+		if (dataRecolhimentoDistribuidor != null) {
+			this.dataRecolhimentoDistribuidorFormatada = DateUtil.formatarDataPTBR(dataRecolhimentoDistribuidor); 
+		}
 	}
 	public TipoChamadaEncalhe getTipoChamadaEncalhe() {
 		return tipoChamadaEncalhe;
@@ -379,7 +393,6 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	 */
 	public void setPrecoPrevisto(BigDecimal precoPrevisto) {
 		this.precoPrevisto = precoPrevisto;
-		this.precoPrevistoFormatado = CurrencyUtil.formatarValor(precoPrevisto);
 	}
 	/**
 	 * @return the dataLancamentoPrevisto
@@ -775,31 +788,93 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 		return qtdVendasFormatada;
 	}
 
-	/**
-	 * @return the precoVendaFormatado
-	 */
-	public String getPrecoVendaFormatado() {
-		return precoVendaFormatado;
+	public String getDataRecolhimentoDistribuidorFormatada() {
+		return dataRecolhimentoDistribuidorFormatada;
 	}
 
-	/**
-	 * @param precoVendaFormatado the precoVendaFormatado to set
-	 */
-	public void setPrecoVendaFormatado(String precoVendaFormatado) {
-		this.precoVendaFormatado = precoVendaFormatado;
+	public void setDataRecolhimentoDistribuidorFormatada(
+			String dataRecolhimentoDistribuidorFormatada) {
+		this.dataRecolhimentoDistribuidorFormatada = dataRecolhimentoDistribuidorFormatada;
 	}
 
-	/**
-	 * @return the precoPrevistoFormatado
-	 */
-	public String getPrecoPrevistoFormatado() {
-		return precoPrevistoFormatado;
+	public String getSegmentacao() {
+		return segmentacao;
 	}
 
-	/**
-	 * @param precoPrevistoFormatado the precoPrevistoFormatado to set
-	 */
-	public void setPrecoPrevistoFormatado(String precoPrevistoFormatado) {
-		this.precoPrevistoFormatado = precoPrevistoFormatado;
-	}  
+	public void setSegmentacao(String segmentacao) {
+		this.segmentacao = segmentacao;
+	}
+
+	public String getClassificacao() {
+		return classificacao;
+	}
+
+	public void setClassificacao(String classificacao) {
+		this.classificacao = classificacao;
+	}
+
+	public Double getVenda() {
+		return venda;
+	}
+
+	public void setVenda(Double venda) {
+		this.venda = venda;
+	}
+
+	public Long getReparteEstudo() {
+		return reparteEstudo;
+	}
+
+	public void setReparteEstudo(Long reparteEstudo) {
+		this.reparteEstudo = reparteEstudo;
+	}
+
+	public Double getPercentualVenda() {
+		return percentualVenda;
+	}
+
+	public void setPercentualVenda(Double percentualVenda) {
+		this.percentualVenda = percentualVenda;
+	}
+
+	public Long getTipoSegmentoProdutoId() {
+		return tipoSegmentoProdutoId;
+	}
+
+	public void setTipoSegmentoProdutoId(Long tipoSegmentoProdutoId) {
+		this.tipoSegmentoProdutoId = tipoSegmentoProdutoId;
+	}
+
+	public TipoClassificacaoProduto getTipoClassificacaoProduto() {
+		return tipoClassificacaoProduto;
+	}
+
+	public void setTipoClassificacaoProduto(TipoClassificacaoProduto tipoClassificacaoProduto) {
+		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
+		this.tipoClassificacaoFormatado = tipoClassificacaoProduto.getDescricao();
+	}
+
+	public String getStatus() {
+	    return status;
+	}
+
+	public void setStatus(String status) {
+	    this.status = status;
+	}
+
+	public Integer getPeriodo() {
+	    return periodo;
+	}
+
+	public void setPeriodo(Integer periodo) {
+	    this.periodo = periodo;
+	}
+
+	public Long getIdProduto() {
+	    return idProduto;
+	}
+
+	public void setIdProduto(Long idProduto) {
+	    this.idProduto = idProduto;
+	}
 }

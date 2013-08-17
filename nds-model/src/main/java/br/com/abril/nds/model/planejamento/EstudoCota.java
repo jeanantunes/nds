@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -14,6 +15,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -29,132 +34,172 @@ import br.com.abril.nds.model.estoque.RateioDiferenca;
 @SequenceGenerator(name="ESTUDO_COTA_SEQ", initialValue = 1, allocationSize = 1)
 public class EstudoCota implements Serializable {
 
-	/**
-	 * Serial Version UID
-	 */
-	private static final long serialVersionUID = -2730755900853136814L;
-	@Id
-	@GeneratedValue(generator = "ESTUDO_COTA_SEQ")
-	@Column(name = "ID")
-	private Long id;
-	@Column(name = "QTDE_PREVISTA", nullable = false)
-	private BigInteger qtdePrevista;
-	@Column(name = "QTDE_EFETIVA", nullable = false)
-	private BigInteger qtdeEfetiva;
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "ESTUDO_ID")
-	private Estudo estudo;
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "COTA_ID")
-	private Cota cota;
+    private static final long serialVersionUID = -2730755900853136814L;
 
-	@Column(name = "REPARTE")
-	private BigInteger reparte;
-	
-	@OneToMany(mappedBy = "estudoCota")
-	private Set<RateioDiferenca> rateiosDiferenca = new HashSet<RateioDiferenca>();
-	
-	@OneToMany(mappedBy = "estudoCota")
-	private List<MovimentoEstoqueCota> movimentosEstoqueCota; 
-	
-	@OneToMany(mappedBy = "estudoCota")
-	private List<ItemNotaEnvio> itemNotaEnvios;
-	
-	@Column(name = "CLASSIFICACAO")
-	private String classificacao;
-	
-	public EstudoCota() {
-		
-	}
-	
-	public EstudoCota(Long id) {
-		this.id=id;
-	}
+    @Id
+    @GeneratedValue(generator = "ESTUDO_COTA_SEQ")
+    @Column(name = "ID")
+    private Long id;
 
-	public Long getId() {
-		return id;
-	}
-	
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public BigInteger getQtdePrevista() {
-		return qtdePrevista;
-	}
-	
-	public void setQtdePrevista(BigInteger qtdePrevista) {
-		this.qtdePrevista = qtdePrevista;
-	}
-	
-	public BigInteger getQtdeEfetiva() {
-		return qtdeEfetiva;
-	}
-	
-	public void setQtdeEfetiva(BigInteger qtdeEfetiva) {
-		this.qtdeEfetiva = qtdeEfetiva;
-	}
-	
-	public Estudo getEstudo() {
-		return estudo;
-	}
-	
-	public void setEstudo(Estudo estudo) {
-		this.estudo = estudo;
-	}
-	
-	public Cota getCota() {
-		return cota;
-	}
-	
-	public void setCota(Cota cota) {
-		this.cota = cota;
-	}
-	
-	public Set<RateioDiferenca> getRateiosDiferenca() {
-		return rateiosDiferenca;
-	}
-	
-	public void setRateiosDiferenca(Set<RateioDiferenca> rateiosDiferenca) {
-		this.rateiosDiferenca = rateiosDiferenca;
-	}
+    @Column(name = "QTDE_PREVISTA", nullable = true)
+    private BigInteger qtdePrevista;
 
-	public List<MovimentoEstoqueCota> getMovimentosEstoqueCota() {
-		return movimentosEstoqueCota;
-	}
+    @Column(name = "QTDE_EFETIVA", nullable = false)
+    private BigInteger qtdeEfetiva;
 
-	public void setMovimentosEstoqueCota(List<MovimentoEstoqueCota> movimentosEstoqueCota) {
-		this.movimentosEstoqueCota = movimentosEstoqueCota;
-	}
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "ESTUDO_ID")
+    private Estudo estudo;
 
-	/**
-	 * @return the itemNotaEnvios
-	 */
-	public List<ItemNotaEnvio> getItemNotaEnvios() {
-		return itemNotaEnvios;
-	}
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "COTA_ID")
+    private Cota cota;
 
-	/**
-	 * @param itemNotaEnvios the itemNotaEnvios to set
-	 */
-	public void setItemNotaEnvios(List<ItemNotaEnvio> itemNotaEnvios) {
-		this.itemNotaEnvios = itemNotaEnvios;
-	}
+    @Column(name = "REPARTE_MINIMO")
+    private BigInteger reparteMinimo;
 
-	public String getClassificacao() {
-		return classificacao;
-	}
+    @Column(name = "REPARTE")
+    private BigInteger reparte;
 
-	public void setClassificacao(String classificacao) {
-		this.classificacao = classificacao;
-	}
+    @OneToMany(mappedBy = "estudoCota", fetch = FetchType.LAZY)
+    private Set<RateioDiferenca> rateiosDiferenca = new HashSet<RateioDiferenca>();
 
-	public BigInteger getReparte() {
-		return reparte;
-	}
+    @Cascade(value={CascadeType.DELETE})
+    @OneToMany(mappedBy = "estudoCota", fetch = FetchType.LAZY)
+    private List<MovimentoEstoqueCota> movimentosEstoqueCota; 
+
+    @Cascade(value={CascadeType.DELETE})
+    @OneToMany(mappedBy = "estudoCota", fetch = FetchType.LAZY)
+    private List<ItemNotaEnvio> itemNotaEnvios;
+
+    @Column(name = "CLASSIFICACAO")
+    private String classificacao;
+
+    public EstudoCota() {
+
+    }
+
+    public EstudoCota(Long id) {
+	this.id=id;
+    }
+
+    public Long getId() {
+	return id;
+    }
+
+    public void setId(Long id) {
+	this.id = id;
+    }
+
+    public BigInteger getQtdePrevista() {
+	return qtdePrevista;
+    }
+
+    public void setQtdePrevista(BigInteger qtdePrevista) {
+	this.qtdePrevista = qtdePrevista;
+    }
+
+    public BigInteger getQtdeEfetiva() {
+	return qtdeEfetiva;
+    }
+
+    public void setQtdeEfetiva(BigInteger qtdeEfetiva) {
+	this.qtdeEfetiva = qtdeEfetiva;
+    }
+
+    public Estudo getEstudo() {
+	return estudo;
+    }
+
+    public void setEstudo(Estudo estudo) {
+	this.estudo = estudo;
+    }
+
+    public Cota getCota() {
+	return cota;
+    }
+
+    public void setCota(Cota cota) {
+	this.cota = cota;
+    }
+
+    public Set<RateioDiferenca> getRateiosDiferenca() {
+	return rateiosDiferenca;
+    }
+
+    public void setRateiosDiferenca(Set<RateioDiferenca> rateiosDiferenca) {
+	this.rateiosDiferenca = rateiosDiferenca;
+    }
+
+    public List<MovimentoEstoqueCota> getMovimentosEstoqueCota() {
+	return movimentosEstoqueCota;
+    }
+
+    public void setMovimentosEstoqueCota(List<MovimentoEstoqueCota> movimentosEstoqueCota) {
+	this.movimentosEstoqueCota = movimentosEstoqueCota;
+    }
+
+    /**
+     * @return the itemNotaEnvios
+     */
+    public List<ItemNotaEnvio> getItemNotaEnvios() {
+	return itemNotaEnvios;
+    }
+
+    /**
+     * @param itemNotaEnvios the itemNotaEnvios to set
+     */
+    public void setItemNotaEnvios(List<ItemNotaEnvio> itemNotaEnvios) {
+	this.itemNotaEnvios = itemNotaEnvios;
+    }
+
+    public String getClassificacao() {
+	return classificacao;
+    }
+
+    public void setClassificacao(String classificacao) {
+	this.classificacao = classificacao;
+    }
+
+    public BigInteger getReparte() {
+	return reparte;
+    }
+
+    public void setReparte(BigInteger reparte) {
+	this.reparte = reparte;
+    }
+
+    public BigInteger getReparteMinimo() {
+	return reparteMinimo;
+    }
+
+    public void setReparteMinimo(BigInteger reparteMinimo) {
+	this.reparteMinimo = reparteMinimo;
+    }
+
+    @Override
+    public int hashCode() {
+	final int prime = 31;
+	int result = 1;
+	result = prime * result + ((id == null) ? 0 : id.hashCode());
+	return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+	if (this == obj)
+	    return true;
+	if (obj == null)
+	    return false;
+	if (getClass() != obj.getClass())
+	    return false;
+	EstudoCota other = (EstudoCota) obj;
 	
-	public void setReparte(BigInteger reparte) {
-		this.reparte = reparte;
-	}
-
+	if(id==null && other.id==null)
+		return false;
+	
+	if (id!=null && !id.equals(other.id))
+	    return false;
+	return true;
+    }
 }

@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -28,6 +29,8 @@ import br.com.abril.nds.repository.ContasAPagarRepository;
 import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.service.ContasAPagarService;
 import br.com.abril.nds.service.RecolhimentoService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -42,6 +45,9 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 	
 	@Autowired
 	private NotaFiscalRepository notaFiscalRepository;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 
 	@Transactional
 	@Override
@@ -175,7 +181,7 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 		
 		if (filtro.getCe() != null){
 			
-			Intervalo<Date> intervaloCE = this.recolhimentoService.getPeriodoRecolhimento(filtro.getCe(), null);
+			Intervalo<Date> intervaloCE = obterDataDaSemana(filtro.getCe().toString());
 			
 			if (filtro.getDataDe() != null && filtro.getDataAte() != null){
 			
@@ -189,6 +195,34 @@ public class ContasAPagarServiceImpl implements ContasAPagarService {
 				filtro.setDataAte(intervaloCE.getAte());
 			}
 		}
+	}
+	
+	private Intervalo<Date> obterDataDaSemana(String anoSemana) {
+		
+		Date data = obterDataBase(anoSemana, this.distribuidorService.obterDataOperacaoDistribuidor()); 
+		
+		Integer semana = Integer.parseInt(anoSemana.substring(4));
+		
+		Date dataInicioSemana = 
+				DateUtil.obterDataDaSemanaNoAno(
+					semana, this.distribuidorService.inicioSemana().getCodigoDiaSemana(), data);
+			
+		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
+		
+		Intervalo<Date> periodoRecolhimento = new Intervalo<Date>(dataInicioSemana, dataFimSemana);
+		
+		return periodoRecolhimento;
+		
+	}
+	
+	private Date obterDataBase(String anoSemana, Date data) {
+		
+		String ano = anoSemana.substring(0,4);
+		Calendar c = Calendar.getInstance();
+		c.setTime(data);
+		c.set(Calendar.YEAR, Integer.parseInt(ano));
+		
+		return c.getTime();
 	}
 
 	@Transactional

@@ -1,4 +1,4 @@
-<head>
+<!-- analiseEstudo -->
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
@@ -15,7 +15,9 @@ $(function(){
 });
 </script>
 
-</head>
+<div id="histogramaPosEstudoContent" />
+
+<div id="AnaliseEstudoMainContent">
 
 <body>
 <form name="form" id="form">
@@ -31,23 +33,28 @@ $(function(){
               <td width="44">Estudo:</td>
               <td width="90"><input type="text" name="idEstudo" id="idEstudo"  style="width:80px;" /></td>
               <td width="46">Código:</td>
-              <td width="71"><input type="text" name="codProduto" id="codProduto"  style="width:60px;" /></td>
+              <td width="71"><input type="text" name="codProduto" id="codProduto"  style="width:60px;" 
+              				 onchange="pesquisaProduto.pesquisarPorCodigoProduto('#codProduto','#produto', false, undefined, undefined);"/></td>
               
-              <td width="55">Produto:</td>
-              <td width="138"><input type="text" name="produto" id="produto"  style="width:130px;" 
-              					onkeyup="pesquisaProduto.autoCompletarPorNomeProduto('#produto');"/></td>
-              
+              <td style="width:55px">Produto:</td>
+              <td width="138"><input type="text" name="produto" id="produto"  style="width:130px;"/></td>
+              </tr>
+              <tr>
               <td width="46">Edição:</td>
               <td width="70"><input type="text" name="edicaoProd" id="edicaoProd"  style="width:60px;" /></td>
               <td width="78">Classificação:</td>
-              
-              <td width="152"><select name="comboClassificacao" id="comboClassificacao" style="width:140px;">
-              <option selected="selected">Selecione...</option>
-              	<c:forEach items="${listaClassificacao}" var="classificacao">
-					<option value="${classificacao.id}">${classificacao.descricao}</option>
-				</c:forEach>
-            
-            </select>
+              <td width="152">
+	            <select name="comboClassificacao" id="comboClassificacao" style="width:140px;">
+	              <option selected="selected">Selecione...</option>
+	              	<c:forEach items="${listaClassificacao}" var="classificacao">
+						<option value="${classificacao.id}">${classificacao.descricao}</option>
+					</c:forEach>
+	            </select>
+
+			  <td width="72" align="right">Data Lançamento:</td>
+				<td width="146">
+				<input type="text" name="dataLancamento" id="dataLancamento" style="width:70px;"/>
+	          </td>
             
             </td>
               <td width="104">
@@ -77,3 +84,4 @@ $(function(){
      
  </form>
 </body>
+</div>

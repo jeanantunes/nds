@@ -1,11 +1,17 @@
-
-<head>
+<div id="estudoComplementarTelaAnalise" />
+<div id="estudoComplementarContent">
 
 <script type="text/javascript" src='scripts/estudoComplementar.js'></script>
 
 <script type="text/javascript">
 function informacoesProdutoShow(link){
-	$('#workspace').tabs('addTab', 'Informa&ccedil;&otilde;es do Produto', link);
+	$('#workspace').tabs({
+		  load: function( event, ui ) {
+			  if(informacoesProdutoController){
+				  informacoesProdutoController.targetRecuperarEstudo="#codigoEstudo";
+			  }
+		  }
+	}).tabs('addTab', 'Informa&ccedil;&otilde;es do Produto', link);
 }
 </script>
 
@@ -27,6 +33,13 @@ $(document).ready(function () {
             }
         }
     });
+
+    var estudoValue = $('#codigoEstudo').val();
+    
+    if (estudoValue) {
+	    estudoComplementarController.consultarEstudo($('#codigoEstudo'));
+	}
+    
 });
 
 
@@ -137,9 +150,7 @@ function somarDistribuicao(){
 	$('#reparteDistribuicao').val($("#reparteDistribuicao").val() - $('#reparteSobra').val());
 };
 </script>
-</head>
 
-<body>
 <div id="dialog-cancelar" title="Cancelar Operação" style="display:none;">  
     <fieldset style="width:320px!important;">
             <legend>Cancelar Operação</legend>
@@ -169,9 +180,6 @@ function somarDistribuicao(){
 
 
 <div class="corpo">
-  <div class="header">
-  	
-  </div>
   <div class="bg_menu">
 
     <br clear="all"/>
@@ -188,10 +196,12 @@ function somarDistribuicao(){
     	
       <fieldset class="classFieldset">
    	    <legend>Estudo Complementar</legend>
+   	    <input type="hidden" id="idLancamento" value="${idLancamento}" />
+   	    <input type="hidden" id="idProdutoEdicao" value="${idProdutoEdicao}" />
    	    <table width="950" border="0" cellspacing="2" cellpadding="2">
           <tr>
               <td width="78"><strong>Estudo Base:</strong></td>
-              <td width="102"><input type="text" name="codigoEstudo" id="codigoEstudo" style="width:70px; margin-right:5px; float:left;" maxlength="8" onblur="estudoComplementarController.consultarEstudo(this);"/>
+              <td width="102"><input type="text" name="codigoEstudo" id="codigoEstudo" style="width:70px; margin-right:5px; float:left;" maxlength="8" value="${estudoId}" onblur="estudoComplementarController.consultarEstudo(this);"/>
                 <span class="classPesquisar"><a href= "javascript:;" onclick="informacoesProdutoShow('${pageContext.request.contextPath}/distribuicao/informacoesProduto')">&nbsp;</a></span></td>
               <td width="130"><strong>Estudo Complementar:</strong></td>
               <td width="64" id="idEstudoComplementar">
@@ -200,7 +210,7 @@ function somarDistribuicao(){
               <td width="42"><strong>Código:</strong></td>
               <td width="42" id="idProduto"></td>
               <td width="47"><strong>Produto:</strong></td>
-              <td width="158" id="nomeProduto"></td>
+              <td width="158" id="nomeProdutoLabel"></td>
               <td width="38"><strong>Edição:</strong></td>
               <td width="28" id="numeroEdicao"></td>
               <td width="77"><strong>Classificação:</strong></td>
@@ -246,22 +256,22 @@ function somarDistribuicao(){
                 <td width="62">Tipo Base:</td>
                 <td width="180" ><select name="tipoSelecao" id="tipoSelecao" style="width:160px;">
                   <option selected="selected" value="0">Selecione...</option>
-                  <option  value="1">Ranking Segmento</option>
-                  <option value="2">Ranking Faturamento</option>
+                  <option  value="RANKING_SEGMENTO">Ranking Segmento</option>
+                  <option value="RANKING_FATURAMENTO">Ranking Faturamento</option>
                 </select></td>
                 <td width="106">Reparte por Cota:</td>
                 <td width="78"><input name="reparteCota" type="text" id="reparteCota" style="width:60px; text-align:center;" value="2" /></td>
                 <td width="84">Reparte Lncto:</td>
-                <td width="70"><input name="reparteLancamento" type="text" id="reparteLancamento" style="width:60px; text-align:center;" value=""  readonly="readonly" /></td>
+                <td width="70"><input name="reparteLancamento" type="text" id="reparteLancamento" style="width:60px; text-align:center;" value="${reparteDisponivel}"  readonly="readonly" /></td>
                 <td width="46">Sobra:</td>
                 <td width="75"><input name="reparteSobra" type="text" id="reparteSobra" style="width:60px; text-align:center;" value="" onkeyup="somarDistribuicao();"/></td>
                 <td width="127">Reparte Distribuido:</td>
-                <td width="60"><input name="reparteDistribuicao" type="text" id="reparteDistribuicao" style="width:60px; text-align:center;" value="" onkeyup="somarSobra();" o/></td>
+                <td width="60"><input name="reparteDistribuicao" type="text" id="reparteDistribuicao" style="width:60px; text-align:center;" value="${reparteDisponivel}" onkeyup="somarSobra();" o/></td>
               </tr>
               <tr>
                 <td align="right"><input name="checkbox" type="checkbox" id="checkboxDistMult" onclick="$('.distrMult').toggle();" /></td>
                 <td >Distribuir por Múltiplo</td>
-                <td><input type="text" class="distrMult" id="distrMult" style="width:40px; text-align:center; display:none;" value="10" readonly="readonly" /></td>
+                <td><input type="text" class="distrMult" id="distrMult" style="width:40px; text-align:center; display:none;" value="${pacotePadrao}" /></td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
                 <td>&nbsp;</td>
@@ -277,9 +287,9 @@ function somarDistribuicao(){
       <div class="linha_separa_fields">&nbsp;</div>
       
       <span class="bt_novos"><a href="javascript:$('#workspace').tabs('remove', $('#workspace').tabs('option', 'selected'));"><img src="${pageContext.request.contextPath}/images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span>
-      <span class="bt_novos"><a href="javascript:history.back(-1);"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
+      <span class="bt_novos"><a href="javascript:;" onclick="$('#codigoEstudo').val('').blur();"><img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Cancelar" hspace="5" border="0" />Cancelar</a></span>
       <span class="bt_novos"><a href="#" onclick="estudoComplementarController.gerarEstudoComplementar();"><img src="${pageContext.request.contextPath}/images/ico_check.gif" alt="Gerar Estudo" hspace="5" border="0" />Gerar Estudo</a></span>
-      <span class="bt_novos"><a href="analise_2.htm"><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" alt="Confirmar" hspace="5" border="0" />Análise</a></span>
+      <span class="bt_novos"><a href="javascript:;" onclick="estudoComplementarController.analisar()"><img src="${pageContext.request.contextPath}/images/ico_copia_distrib.gif" alt="Confirmar" hspace="5" border="0" />Análise</a></span>
         
 
     
@@ -436,5 +446,4 @@ function somarDistribuicao(){
 			height : 240
 		});
 </script>
-</body>
 

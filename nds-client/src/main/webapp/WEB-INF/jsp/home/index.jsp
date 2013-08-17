@@ -25,7 +25,7 @@
 
 <script language="javascript" type="text/javascript" src="scripts/jquery.json-2.3.min.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/flexigrid-1.1/js/flexigrid.js"></script>
-<script language="javascript" type="text/javascript" src="scripts/jquery.ui.datepicker-pt-BR.js"></script>'
+<script language="javascript" type="text/javascript" src="scripts/jquery.ui.datepicker-pt-BR.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/jquery.maskmoney.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/jquery.maskedinput.js"></script>
 <script language="javascript" type="text/javascript" src="scripts/jquery.justLetter.js"></script>

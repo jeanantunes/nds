@@ -24,6 +24,7 @@ import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BancoService;
 import br.com.abril.nds.util.CellModel;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
@@ -496,7 +497,7 @@ public class BancoController extends BaseController {
 	@Post
 	public void autoCompletarPorNomeBanco(String nomeBanco){
 		
-		List<Banco> listabancos = bancoService.obterBancosPorNome(nomeBanco);
+		List<Banco> listabancos = bancoService.obterBancosPorNome(nomeBanco, Constantes.QTD_MAX_REGISTROS_AUTO_COMPLETE);
 		
 		List<ItemAutoComplete> listaCotasAutoComplete = new ArrayList<ItemAutoComplete>();
 		

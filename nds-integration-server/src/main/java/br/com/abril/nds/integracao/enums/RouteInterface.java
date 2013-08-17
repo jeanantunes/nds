@@ -3,7 +3,8 @@ package br.com.abril.nds.integracao.enums;
 public enum RouteInterface {
 	
 	EMS0127(127, "EMS0127"),
-	EMS0185(185, "EMS0185");
+	EMS0185(185, "EMS0185"),
+	EMS2021(2021, "EMS2021");
 	
 	private Integer id;
 	

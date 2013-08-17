@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,7 +8,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.RepartePDVDTO;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
@@ -23,6 +23,7 @@ import br.com.abril.nds.service.RepartePdvService;
 
 @Service
 public class RepartePdvServiceImpl implements RepartePdvService{
+
 	@Autowired
 	RepartePDVRepository repartePDVRepository;
 	
@@ -54,42 +55,12 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 		return repartePDVRepository.obterRepartePdvMix(idMix, idProduto, idPdv);
 	}
 
-	@Override
-	@Transactional
-	public void salvarRepartesPDV(List<RepartePDVDTO> listaRepartes, String codProduto, String codCota, Long idFixacao) {
-		int soma = 0;
-		Cota cota=  cotaRepository.obterPorNumerDaCota(new Integer(codCota));
-		Produto produto= produtoRepository.obterProdutoPorCodigo(codProduto);
-		FixacaoReparte fixacaoReparte = fixacaoReparteRepository.buscarPorId(idFixacao);
-		PDV pdv = null;
-		
-		for (RepartePDVDTO repartePDVDTO : listaRepartes) {
-			if(repartePDVDTO.getCodigoPdv() !=null){
-				pdv= pdvRepository.buscarPorId(repartePDVDTO.getCodigoPdv());
-			}
-			RepartePDV repartePDV =  repartePDVRepository.obterRepartePorPdv(idFixacao, produto.getId(), pdv.getId());
-			if(repartePDV == null){
-				repartePDV = new RepartePDV();
-			}	
-			repartePDV.setFixacaoReparte(fixacaoReparte);
-			repartePDV.setPdv(pdv);
-			repartePDV.setReparte(repartePDVDTO.getReparte().intValue());
-			repartePDV.setProduto(produto);
-			
-			soma += repartePDV.getReparte();
-			repartePDVRepository.merge(repartePDV);
-		}
-		fixacaoReparte.setQtdeExemplares(soma);
-		fixacaoReparteRepository.alterar(fixacaoReparte);
-		
-	}
-
+	
 
 	@Override
 	@Transactional
-	public void salvarRepartesPDVMix(List<RepartePDVDTO> listaRepartes, String codProduto, String codCota, Long idMix) {
+	public void salvarRepartesPDVMix(List<RepartePDVDTO> listaRepartes, String codProduto, Long idMix) {
 		int soma = 0;
-		Cota cota=  cotaRepository.obterPorNumerDaCota(new Integer(codCota));
 		Produto produto= produtoRepository.obterProdutoPorCodigo(codProduto);
 		MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.buscarPorId(idMix);
 		PDV pdv = null;
@@ -110,10 +81,42 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 			soma += repartePDV.getReparte();
 			repartePDVRepository.merge(repartePDV);
 		}
+
+		mixCotaProduto.setReparteMinimo(new Long(soma));
 		mixCotaProduto.setReparteMaximo(new Long(soma));
-		mixCotaProdutoRepository.alterar(mixCotaProduto);
-		
+        mixCotaProduto.setDataHora(new Date());
+        mixCotaProdutoRepository.alterar(mixCotaProduto);
 	}
-	
-	
+
+	@Override
+	@Transactional
+	public void salvarRepartesPDV(List<RepartePDVDTO> listaRepartes, String codProduto, Long idFixacao, boolean manterFixa) {
+		int soma = 0;
+		Produto produto = produtoRepository.obterProdutoPorCodigo(codProduto);
+		FixacaoReparte fixacaoReparte = fixacaoReparteRepository.buscarPorId(idFixacao);
+		fixacaoReparte.setManterFixa(manterFixa);
+		PDV pdv = null;
+		
+		for (RepartePDVDTO repartePDVDTO : listaRepartes) {
+			if(repartePDVDTO.getCodigoPdv() !=null) {
+				pdv = pdvRepository.buscarPorId(repartePDVDTO.getCodigoPdv());
+			}
+			
+			RepartePDV repartePDV = repartePDVRepository.obterRepartePorPdv(idFixacao, produto.getId(), pdv.getId());
+			if(repartePDV == null) {
+				repartePDV = new RepartePDV();
+			}
+			
+			repartePDV.setFixacaoReparte(fixacaoReparte);
+			repartePDV.setPdv(pdv);
+			repartePDV.setReparte(repartePDVDTO.getReparte().intValue());
+			repartePDV.setProduto(produto);
+			
+			soma += repartePDV.getReparte();
+			repartePDVRepository.merge(repartePDV);
+		}
+		fixacaoReparte.setDataHora(new Date());
+		fixacaoReparte.setQtdeExemplares(soma);
+		fixacaoReparteRepository.alterar(fixacaoReparte);
+	}
 }

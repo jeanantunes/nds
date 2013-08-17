@@ -5,7 +5,12 @@ import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
 
 @Exportable
-public class CotaQueNaoRecebeClassificacaoDTO {
+public class CotaQueNaoRecebeClassificacaoDTO extends UsuarioLogDTO {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -6162837741216511779L;
 
 	private Long idClassificacaoNaoRecebida;
 

@@ -12,6 +12,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
+
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -29,6 +32,7 @@ public class RegistroCotaRegiao implements Serializable {
 	
 	@ManyToOne
 	@JoinColumn(name = "REGIAO_ID")
+	@Cascade({CascadeType.REMOVE})
 	private Regiao regiao;
 	
 	@ManyToOne

@@ -2,12 +2,16 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+
 /**
  * Value Object de histórico de situação da cota.
  * 
  * @author Discover Technology
  *
  */
+@Exportable
 public class HistoricoSituacaoCotaVO implements Serializable {
 
 	/**
@@ -15,20 +19,28 @@ public class HistoricoSituacaoCotaVO implements Serializable {
 	 */
 	private static final long serialVersionUID = -4573189935810707316L;
 	
+	@Export(label="Data", exhibitionOrder = 0)
 	private String data;
 
+	@Export(label="Status Anterior", exhibitionOrder = 1)
 	private String statusAnterior;
 	
+	@Export(label="Status Atualizado", exhibitionOrder = 2)
 	private String statusAtualizado;
 	
+	@Export(label="Usuário", exhibitionOrder = 3)
 	private String usuario;
 	
+	@Export(label="Motivo", exhibitionOrder = 4)
 	private String motivo;
 	
+	@Export(label="Descrição", exhibitionOrder = 5)
 	private String descricao;
 	
+	@Export(label="Cota", exhibitionOrder = 6)
 	private String nomeCota;
 	
+	@Export(label="Numero da Cota", exhibitionOrder = 7)
 	private Integer numeroCota;
 	
 	/**

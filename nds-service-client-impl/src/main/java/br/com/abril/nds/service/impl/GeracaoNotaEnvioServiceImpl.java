@@ -259,7 +259,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 		PessoaJuridica pessoaEmitente = this.distribuidorRepository.juridica();
 
-		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 
 		Long idCota = cota.getId();
 

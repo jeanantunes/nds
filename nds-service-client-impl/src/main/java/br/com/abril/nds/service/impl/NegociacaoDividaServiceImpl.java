@@ -164,7 +164,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 
 		List<NegociacaoDividaDTO> dividas = this.negociacaoDividaRepository
 				.obterNegociacaoPorCota(filtro);
-		Cota cota = cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
+		Cota cota = cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
 		Date data = DateUtil.removerTimestamp(new Date());
 
 		for (NegociacaoDividaDTO divida : dividas) {
@@ -229,7 +229,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 			msgs.add("Cota da negociação não encontrada.");
 		} else {
 
-			cota = this.cotaRepository.obterPorNumerDaCota(numeroCota);
+			cota = this.cotaRepository.obterPorNumeroDaCota(numeroCota);
 
 			if (cota == null) {
 
@@ -860,7 +860,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		
 		
 		BigDecimal valorParcelasModificadas =  BigDecimal.ZERO;
-		Cota cota = cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
+		Cota cota = cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
 		FormaCobranca formaCobranca = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(cota.getId());
 		if(formaCobranca ==null){
 			formaCobranca = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();		
@@ -973,7 +973,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 					valorParcela, DateUtil.parseDataPTBR(parcela.getDataVencimento()), new Date());
 
 			BigDecimal multas = cobrancaService.calcularMulta(banco,
-					cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota()),
+					cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota()),
 					valorParcela);
 
 			encargos = juros.add(multas).doubleValue();
@@ -994,7 +994,7 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		BigDecimal somaParelas =  BigDecimal.ZERO;
 
 		Date dataBase = new Date();
-		Cota cota = cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
+		Cota cota = cotaRepository.obterPorNumeroDaCota(filtro.getNumeroCota());
 		Banco banco = bancoService.obterBancoPorId(filtro.getIdBanco());
 		
 		FormaCobranca formaCobranca = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(cota.getId());

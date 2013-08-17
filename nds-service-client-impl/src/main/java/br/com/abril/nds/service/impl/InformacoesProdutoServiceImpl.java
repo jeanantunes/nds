@@ -1,17 +1,27 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.dto.InformacoesBaseProdDTO;
+import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
+import br.com.abril.nds.dto.InfoProdutosItemRegiaoEspecificaDTO;
+import br.com.abril.nds.dto.InformacoesAbrangenciaEMinimoProdDTO;
 import br.com.abril.nds.dto.InformacoesCaracteristicasProdDTO;
 import br.com.abril.nds.dto.InformacoesProdutoDTO;
+import br.com.abril.nds.dto.InformacoesReparteTotalEPromocionalDTO;
+import br.com.abril.nds.dto.InformacoesVendaEPerceDeVendaDTO;
+import br.com.abril.nds.dto.ProdutoBaseSugeridaDTO;
 import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
+import br.com.abril.nds.repository.EstudoProdutoEdicaoBaseRepository;
 import br.com.abril.nds.repository.InformacoesProdutoRepository;
+import br.com.abril.nds.repository.MovimentoEstoqueRepository;
+import br.com.abril.nds.repository.ProdutoBaseSugeridaRepository;
 import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
 import br.com.abril.nds.service.InformacoesProdutoService;
 
@@ -23,6 +33,15 @@ public class InformacoesProdutoServiceImpl implements InformacoesProdutoService 
 
 	@Autowired
 	private InformacoesProdutoRepository infoProdutosRepo;
+	
+	@Autowired	
+	private EstudoProdutoEdicaoBaseRepository estudoProdEdicBaseRepo;
+	
+	@Autowired
+	private MovimentoEstoqueRepository movimentoEstoqRepo;
+	
+	@Autowired
+	private ProdutoBaseSugeridaRepository baseSugRepo;
 	
 	
 	@Override
@@ -39,14 +58,68 @@ public class InformacoesProdutoServiceImpl implements InformacoesProdutoService 
 
 	@Override
 	@Transactional
-	public List<InformacoesBaseProdDTO> buscarBases(String codProduto) {
-		return infoProdutosRepo.buscarBase(codProduto);
+	public List<EdicaoBaseEstudoDTO> buscarBases(Long idEstudo) {
+		return estudoProdEdicBaseRepo.obterEdicoesBase(idEstudo);
+	}
+	
+	@Override
+	@Transactional
+	public List<ProdutoBaseSugeridaDTO> buscarBaseSugerida(Long idEstudo) {
+		return baseSugRepo.obterBaseSugerida(idEstudo);
 	}
 
 	@Override
 	@Transactional
 	public InformacoesCaracteristicasProdDTO buscarCaracteristicas(String codProduto, Long numEdicao) {
 		return infoProdutosRepo.buscarCaracteristicas(codProduto, numEdicao);
+	}
+
+	@Override
+	@Transactional
+	public List<InfoProdutosItemRegiaoEspecificaDTO> buscarItemRegiao(Long idEstudo) {
+		return infoProdutosRepo.buscarItensRegiao(idEstudo);
+	}
+
+	@Override
+	@Transactional
+	public InformacoesAbrangenciaEMinimoProdDTO buscarAbrangenciaEMinimo(Long idEstudo) {
+		return infoProdutosRepo.buscarAbrangenciaEMinimo(idEstudo);
+	}
+
+	@Override
+	@Transactional
+	public BigDecimal buscarAbrangenciaApurada(String codProduto, Long numEdicao) {
+		return infoProdutosRepo.buscarAbrangenciaApurada(codProduto, numEdicao);
+	}
+
+	@Override
+	@Transactional
+	public InformacoesReparteTotalEPromocionalDTO buscarReparteTotalEPromocional(String codProduto, Long numEdicao) {
+		return infoProdutosRepo.buscarRepartes(codProduto, numEdicao);
+	}
+
+	@Override
+	@Transactional
+	public BigInteger buscarSobra(Long idEstudo) {
+		return infoProdutosRepo.buscarReparteDaEdica_Sobra(idEstudo);
+	}
+
+	@Override
+	@Transactional
+	public BigInteger buscarTotalVenda(String codProduto, Long numEdicao) {
+		return infoProdutosRepo.buscarVendaTotal(codProduto, numEdicao);
+	}
+	
+	@Override
+	@Transactional
+	public InformacoesVendaEPerceDeVendaDTO buscarVendas(String codProduto, Long numEdicao) {
+		return infoProdutosRepo.buscarVendas(codProduto, numEdicao);
+	}
+
+	@Override
+	@Transactional
+	public BigInteger obterReparteDistribuido(String codProduto) {
+		return movimentoEstoqRepo.obterReparteDistribuidoProduto(codProduto);
 	}
 
 }

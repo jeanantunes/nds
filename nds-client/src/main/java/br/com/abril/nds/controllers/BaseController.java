@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -71,4 +73,5 @@ public abstract class BaseController {
 		
 		return inputStream;
 	}
+
 }

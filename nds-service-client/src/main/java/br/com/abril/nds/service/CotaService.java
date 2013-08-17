@@ -34,6 +34,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.ComponentesPDV;
@@ -73,6 +74,8 @@ public interface CotaService {
 	List<Cota> obterCotasPorNomePessoa(String nome);
 
 	List<Cota> obterPorNome(String nome);
+	
+	List<CotaDTO> obterPorNomeAutoComplete(String nome);
 
 	Cota obterPorId(Long idCota);
 
@@ -369,7 +372,7 @@ public interface CotaService {
 	
 	List<CotaResumoDTO> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe);
 
-	List<CotaDTO> buscarCotasQueInquadramNoRangeDeReparte(BigInteger qtdReparteInicial, BigInteger qtdReparteFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
+	List<CotaDTO> buscarCotasQueEnquadramNoRangeDeReparte(BigInteger qtdReparteInicial, BigInteger qtdReparteFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 	
 	List<CotaDTO> buscarCotasQueInquadramNoRangeVenda(BigInteger qtdVendaInicial, BigInteger qtdVendaFinal, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 	
@@ -379,7 +382,7 @@ public interface CotaService {
 	
 	List<CotaDTO> buscarCotasPorComponentes(ComponentesPDV componente, String elemento, List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 	
-	List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas);
+	List<AnaliseHistoricoDTO> buscarHistoricoCotas(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, List<Cota> cotas, String sortorder, String sortname);
 	
 	HistoricoVendaPopUpCotaDto buscarCota(Integer numero);
 	
@@ -393,4 +396,14 @@ public interface CotaService {
 	public void apagarTipoCota(Long idCota, String TipoCota);
 	
 	public List<DistribuidorClassificacaoCota> obterListaClassificacao();
+
+	public abstract boolean cotaVinculadaCotaBase(Long idCota);
+	
+	List<Integer> numeroCotaExiste(TipoDistribuicaoCota tipoDistribuicaoCota, Integer... cotaIdArray);
+
+	public TipoDistribuicaoCota obterTipoDistribuicaoCotaPorNumeroCota(Integer numeroCota);
+
+	public abstract boolean isTipoDistribuicaoCotaEspecifico(Integer numeroCota,
+			TipoDistribuicaoCota tipoDistribuicaoCota);
+
 }

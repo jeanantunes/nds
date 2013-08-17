@@ -893,7 +893,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 										Usuario usuario, Date dataVencimentoDebito,
 										ProdutoEdicao produtoEdicao) {
 
-		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota.intValue());
+		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota.intValue());
 		
 		ValoresAplicados valoresAplicados = this.obterValoresAplicados(cota, produtoEdicao);
 		
@@ -1286,7 +1286,7 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 				vendaEncalheDTO.setNomeProduto(produtoEdicao.getProduto().getNome());
 				vendaEncalheDTO.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
 				
-				Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota.intValue());
+				Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota.intValue());
 				
 				BigDecimal descontoProduto = descontoService.obterValorDescontoPorCotaProdutoEdicao(null, cota, produtoEdicao);
 		

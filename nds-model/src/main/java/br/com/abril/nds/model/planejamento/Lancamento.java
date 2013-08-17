@@ -12,6 +12,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -112,18 +113,20 @@ public class Lancamento implements Serializable {
 	@Column(name = "SEQUENCIA_MATRIZ", nullable = true)
 	private Integer sequenciaMatriz;
 	
+	
 	@NotFound(action = NotFoundAction.IGNORE)
-	@ManyToOne(cascade = {CascadeType.ALL})
+	@ManyToOne(cascade = {CascadeType.ALL},fetch = FetchType.LAZY)
 	@JoinColumns({
 		@JoinColumn(name = "PRODUTO_EDICAO_ID", referencedColumnName = "PRODUTO_EDICAO_ID", insertable = false, updatable = false),
-		@JoinColumn(name = "DATA_LCTO_PREVISTA", referencedColumnName = "DATA_LANCAMENTO", insertable = false, updatable = false) })
+		@JoinColumn(name = "DATA_LCTO_PREVISTA", referencedColumnName = "DATA_LANCAMENTO", insertable = false, updatable = false)})
 	private Estudo estudo;
 	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "EXPEDICAO_ID")
 	private Expedicao expedicao;
 	
-	@OneToOne(mappedBy="lancamento",cascade = {CascadeType.ALL})
+	@NotFound(action = NotFoundAction.IGNORE)
+	@OneToOne(mappedBy="lancamento",cascade = {CascadeType.ALL}, fetch = FetchType.LAZY)
 	private PeriodoLancamentoParcial periodoLancamentoParcial;
 
 	@OneToMany(mappedBy = "lancamento")

@@ -1,8 +1,9 @@
+
 package br.com.abril.nds.model.distribuicao;
 
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,6 +13,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
@@ -39,8 +43,9 @@ public class FixacaoReparte {
 	@ManyToOne
 	@JoinColumn(name = "ID_USUARIO")
 	private Usuario usuario;
-	
-	@OneToMany(mappedBy="fixacaoReparte", cascade={CascadeType.REMOVE})
+
+	@Cascade({CascadeType.REMOVE,CascadeType.SAVE_UPDATE,CascadeType.PERSIST})
+	@OneToMany(mappedBy="fixacaoReparte")
 	List<RepartePDV> repartesPDV;
 	
 	@Column(name="QTDE_EDICOES")
@@ -60,6 +65,9 @@ public class FixacaoReparte {
 	
 	@Column(name="DATA_HORA")
 	private Date dataHora;
+	
+	@Column(name="MANTER_FIXA")
+	private Boolean manterFixa = false;
 	
 	public Long getId() {
 		return id;
@@ -166,9 +174,13 @@ public class FixacaoReparte {
 		this.repartesPDV = repartesPDV;
 	}
 
+	public Boolean isManterFixa() {
+		return manterFixa;
+	}
 
-
-	
+	public void setManterFixa(Boolean manterFixa) {
+		this.manterFixa = manterFixa;
+	}
 
 }
 

@@ -4,8 +4,7 @@ import java.math.BigDecimal;
 
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.model.ProdutoEdicao;
-import br.com.abril.nds.process.ProcessoAbstrato;
+import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre as cotas encontradas para o perfil definido no
@@ -17,7 +16,7 @@ import br.com.abril.nds.process.ProcessoAbstrato;
  * </p>
  */
 @Component
-public class CorrecaoIndividual extends ProcessoAbstrato {
+public class CorrecaoIndividual {
 
     /**
      * Sub Processo: Correção Individual
@@ -30,28 +29,26 @@ public class CorrecaoIndividual extends ProcessoAbstrato {
      * 
      * VendaCorrigida = Venda * ÍndiceCorreção Gravar VendaCorrig para cada edição-base de cada cota.
      */
-    @Override
-    protected void executarProcesso() throws Exception {
-
-	ProdutoEdicao produtoEdicao = (ProdutoEdicao) super.genericDTO;
+    public void executar(ProdutoEdicaoEstudo produtoEdicao) throws Exception {
 
 	BigDecimal indiceCorrecao = BigDecimal.ONE;
 
 	if (produtoEdicao.getVenda().compareTo(BigDecimal.ZERO) == 1) {
-	    BigDecimal percentualVenda = produtoEdicao.getVenda().divide(produtoEdicao.getReparte(), 1, BigDecimal.ROUND_FLOOR);
+	    BigDecimal percentualVenda = produtoEdicao.getVenda().divide(produtoEdicao.getReparte(), 3, BigDecimal.ROUND_HALF_UP);
 
 	    if (percentualVenda.compareTo(BigDecimal.ONE) == 0) {
-		indiceCorrecao = indiceCorrecao.add(BigDecimal.valueOf(0.2).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR));
+		indiceCorrecao = indiceCorrecao.add(BigDecimal.valueOf(0.2).divide(BigDecimal.ONE, 3, BigDecimal.ROUND_HALF_UP));
 	    } else {
 
-		BigDecimal decimalCompare = BigDecimal.valueOf(0.9).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR);
+		BigDecimal decimalCompare = BigDecimal.valueOf(0.9).divide(BigDecimal.ONE, 3, BigDecimal.ROUND_HALF_UP);
 
 		if (percentualVenda.compareTo(decimalCompare) >= 0) {
-		    indiceCorrecao = indiceCorrecao.add(BigDecimal.valueOf(0.1).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR));
+		    indiceCorrecao = indiceCorrecao.add(BigDecimal.valueOf(0.1).divide(BigDecimal.ONE, 3, BigDecimal.ROUND_HALF_UP));
 		}
 	    }
 	}
 	produtoEdicao.setIndiceCorrecao(indiceCorrecao);
-	produtoEdicao.setVendaCorrigida(produtoEdicao.getVenda().multiply(indiceCorrecao).divide(BigDecimal.ONE, 2, BigDecimal.ROUND_FLOOR));
+	produtoEdicao.setVendaCorrigida(produtoEdicao.getVenda().multiply(indiceCorrecao).divide(BigDecimal.ONE, 3, BigDecimal.ROUND_HALF_UP));
     }
+
 }

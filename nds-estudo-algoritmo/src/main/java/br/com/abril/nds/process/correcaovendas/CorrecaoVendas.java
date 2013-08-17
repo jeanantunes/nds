@@ -5,11 +5,10 @@ import java.math.BigDecimal;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.model.ProdutoEdicao;
-import br.com.abril.nds.process.ProcessoAbstrato;
+import br.com.abril.nds.model.estudo.CotaEstudo;
+import br.com.abril.nds.model.estudo.EstudoTransient;
+import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.process.medias.Medias;
-import br.com.abril.nds.process.montatabelaestudos.MontaTabelaEstudos;
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre
@@ -21,17 +20,17 @@ import br.com.abril.nds.process.montatabelaestudos.MontaTabelaEstudos;
  * Processo Anterior: {@link MontaTabelaEstudos} Próximo Processo: {@link Medias} </p>
  */
 @Component
-public class CorrecaoVendas extends ProcessoAbstrato {
+public class CorrecaoVendas {
 
     @Autowired
     private CorrecaoIndividual correcaoIndividual;
-    
+
     @Autowired
     private CorrecaoTendencia correcaoTendencia;
-    
+
     @Autowired
     private VendaCrescente vendaCrescente;
-    
+
     /**
      * <h2>Processo: Correção de Vendas</h2>
      * <p><b>Recuperar as cotas armazenadas na tabela e para cada edição base por cota aplicar a regra abaixo e<br>depois armazenar os valores encontrados (vendaCorr) na
@@ -46,33 +45,25 @@ public class CorrecaoVendas extends ProcessoAbstrato {
      * <pre>Procedure VendaCrescente</pre>
      * <p>Endif</p>
      */
-    @Override
-    protected void executarProcesso() throws Exception {
+    public void executar(CotaEstudo cota, EstudoTransient estudo) throws Exception {
 
-	Cota cota = (Cota) super.genericDTO;
-	
 	if (cota.getEdicoesRecebidas() != null && cota.getEdicoesRecebidas().size() > 1) {
 
 	    BigDecimal totalReparte = BigDecimal.ZERO;
 	    BigDecimal totalVenda = BigDecimal.ZERO;
 
-	    for (ProdutoEdicao produtoEdicao : cota.getEdicoesRecebidas()) {
-		if (produtoEdicao.getNumeroEdicao().compareTo(new Long(1)) == 0 || !produtoEdicao.isColecao()) {
-		    correcaoIndividual.setGenericDTO(produtoEdicao);
-		    correcaoIndividual.executar();
-		    
+	    for (ProdutoEdicaoEstudo produtoEdicao : cota.getEdicoesRecebidas()) {
+		if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(new Long(1)) == 0) || (!estudo.getProdutoEdicaoEstudo().isColecao())) {
+		    correcaoIndividual.executar(produtoEdicao);
+
 		    totalReparte = totalReparte.add(produtoEdicao.getReparte());
 		    totalVenda = totalVenda.add(produtoEdicao.getVenda());
 		}
 	    }
 	    if (totalReparte.compareTo(BigDecimal.ZERO) == 1) {
-		correcaoTendencia.setGenericDTO(cota);
-		correcaoTendencia.setTotalReparte(totalReparte);
-		correcaoTendencia.setTotalVenda(totalVenda);
-		correcaoTendencia.executar();
+		correcaoTendencia.executar(cota, totalReparte, totalVenda);
 	    }
 	}
-	vendaCrescente.setGenericDTO(cota);
-	vendaCrescente.executar();
+	vendaCrescente.executar(cota);
     }
 }

@@ -2,13 +2,16 @@ package br.com.abril.nds.client.vo;
 
 public class EstudoComplementarVO {
 
-
-	int  reparteCota;
+    int  reparteCota;
     int  reparteDistribuicao;
     int  reparteLancamento;
     int  reparteSobra;
     long codigoEstudo;
-    int  tipoSelecao;
+    String tipoSelecao;
+    long idEstudoComplementar;
+    long idLancamento;
+    long idProdutoEdicao;
+    boolean multiplo;
     
 	public int getReparteCota() {
 		return reparteCota;
@@ -40,11 +43,35 @@ public class EstudoComplementarVO {
 	public void setReparteSobra(int reparteSobra) {
 		this.reparteSobra = reparteSobra;
 	}
-	public int getTipoSelecao() {
+	public String getTipoSelecao() {
 		return tipoSelecao;
 	}
-	public void setTipoSelecao(int tipoSelecao) {
+	public void setTipoSelecao(String tipoSelecao) {
 		this.tipoSelecao = tipoSelecao;
 	}
-    
+	public long getIdEstudoComplementar() {
+		return idEstudoComplementar;
+	}
+	public void setIdEstudoComplementar(long idEstudoComplementar) {
+		this.idEstudoComplementar = idEstudoComplementar;
+	}
+	public long getIdLancamento() {
+		return idLancamento;
+	}
+	public void setIdLancamento(long idLancamento) {
+		this.idLancamento = idLancamento;
+	}
+	public long getIdProdutoEdicao() {
+		return idProdutoEdicao;
+	}
+	public void setIdProdutoEdicao(long idProdutoEdicao) {
+		this.idProdutoEdicao = idProdutoEdicao;
+	}
+	public boolean isMultiplo() {
+		return multiplo;
+	}
+	public void setMultiplo(boolean multiplo) {
+		this.multiplo = multiplo;
+	}
+	
 }

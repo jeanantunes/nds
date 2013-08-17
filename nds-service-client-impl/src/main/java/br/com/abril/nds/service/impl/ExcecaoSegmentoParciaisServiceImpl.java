@@ -48,15 +48,21 @@ public class ExcecaoSegmentoParciaisServiceImpl implements ExcecaoSegmentoParcia
 		excecaoSegmentoParciaisRepository.removerPorId(id);
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	@Override
 	public List<CotaQueRecebeExcecaoDTO> obterCotasQueRecebemExcecaoPorProduto(	FiltroExcecaoSegmentoParciaisDTO filtro) {
 		return excecaoSegmentoParciaisRepository.obterCotasQueRecebemExcecaoPorProduto(filtro);
 	}
 
-	@Transactional
+	@Transactional(readOnly = true)
 	@Override
 	public List<CotaQueNaoRecebeExcecaoDTO> obterCotasQueNaoRecebemExcecaoPorProduto(FiltroExcecaoSegmentoParciaisDTO filtro) {
 		return excecaoSegmentoParciaisRepository.obterCotasQueNaoRecebemExcecaoPorProduto(filtro);
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public List<CotaQueNaoRecebeExcecaoDTO> autoCompletarPorNomeCotaQueNaoRecebeExcecao(FiltroExcecaoSegmentoParciaisDTO filtro) {
+		return excecaoSegmentoParciaisRepository.autoCompletarPorNomeCotaQueNaoRecebeExcecao(filtro);
 	}
 }

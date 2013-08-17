@@ -1,17 +1,19 @@
 package br.com.abril.nds.dto;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.util.ComponentesPDV;
 
 public class DistribuicaoVendaMediaDTO {
 	
-	private String reparteDistribuir;
-	private String reparteMinimo;
-	private Boolean usarFixacao;
+	private BigInteger reparteDistribuir;
+	private BigInteger reparteMinimo;
+	private boolean usarFixacao;
 	private Boolean distribuicaoPorMultiplo;
-	private Double multiplo;
+	private BigInteger multiplo;
 	
 	private List<ProdutoEdicaoDTO> bases = new ArrayList<ProdutoEdicaoDTO>();
 	private List<BonificacaoDTO> bonificacoes = new ArrayList<BonificacaoDTO>();
@@ -21,32 +23,33 @@ public class DistribuicaoVendaMediaDTO {
 	private String elemento;
 	private String abrangenciaCriterio;
 	private Double abrangencia;
+	private Date dataLancamento;
 	
 	private Long roteiroEntregaId;
 	private Boolean complementarAutomatico;
-	private Boolean cotasAVista;
+	private boolean cotasAVista;
 	private ComponentesPDV excecaoDeBancasComponente;
-	private String excecaoDeBancasElemento;
+	private List<String> excecaoDeBancas = new ArrayList<>();
 	
-	public String getReparteDistribuir() {
+	public BigInteger getReparteDistribuir() {
 		return reparteDistribuir;
 	}
-	public void setReparteDistribuir(String reparteDistribuir) {
+	public void setReparteDistribuir(BigInteger reparteDistribuir) {
 		this.reparteDistribuir = reparteDistribuir;
 	}
-	public String getReparteMinimo() {
+	public BigInteger getReparteMinimo() {
 		return reparteMinimo;
 	}
-	public void setReparteMinimo(String reparteMinimo) {
+	public void setReparteMinimo(BigInteger reparteMinimo) {
 		this.reparteMinimo = reparteMinimo;
 	}
-	public Boolean getUsarFixacao() {
+	public boolean isUsarFixacao() {
 		return usarFixacao;
 	}
-	public void setUsarFixacao(Boolean usarFixacao) {
+	public void setUsarFixacao(boolean usarFixacao) {
 		this.usarFixacao = usarFixacao;
 	}
-	public Boolean getDistribuicaoPorMultiplo() {
+	public Boolean isDistribuicaoPorMultiplo() {
 		return distribuicaoPorMultiplo;
 	}
 	public void setDistribuicaoPorMultiplo(Boolean distribuicaoPorMultiplo) {
@@ -106,10 +109,10 @@ public class DistribuicaoVendaMediaDTO {
 	public void setComplementarAutomatico(Boolean complementarAutomatico) {
 		this.complementarAutomatico = complementarAutomatico;
 	}
-	public Boolean getCotasAVista() {
+	public boolean isCotasAVista() {
 		return cotasAVista;
 	}
-	public void setCotasAVista(Boolean cotasAVista) {
+	public void setCotasAVista(boolean cotasAVista) {
 		this.cotasAVista = cotasAVista;
 	}
 	public ComponentesPDV getExcecaoDeBancasComponente() {
@@ -118,11 +121,20 @@ public class DistribuicaoVendaMediaDTO {
 	public void setExcecaoDeBancasComponente(ComponentesPDV excecaoDeBancasComponente) {
 		this.excecaoDeBancasComponente = excecaoDeBancasComponente;
 	}
-	public String getExcecaoDeBancasElemento() {
-		return excecaoDeBancasElemento;
+
+	public List<String> getExcecaoDeBancas() {
+		return excecaoDeBancas;
 	}
-	public void setExcecaoDeBancasElemento(String excecaoDeBancasElemento) {
-		this.excecaoDeBancasElemento = excecaoDeBancasElemento;
+	
+	public void setExcecaoDeBancas(List<String> excecaoDeBancas) {
+		this.excecaoDeBancas = excecaoDeBancas;
+	}
+
+	public Date getDataLancamento() {
+	    return dataLancamento;
+	}
+	public void setDataLancamento(Date dataLancamento) {
+	    this.dataLancamento = dataLancamento;
 	}
 	@Override
 	public String toString() {
@@ -137,12 +149,12 @@ public class DistribuicaoVendaMediaDTO {
 				+ roteiroEntregaId + ", complementarAutomatico="
 				+ complementarAutomatico + ", cotasAVista=" + cotasAVista
 				+ ", excecaoDeBancasComponente=" + excecaoDeBancasComponente
-				+ ", excecaoDeBancasElemento=" + excecaoDeBancasElemento + "]";
+				+ ", excecaoDeBancasElemento=" + excecaoDeBancas + "]";
 	}
-	public Double getMultiplo() {
+	public BigInteger getMultiplo() {
 		return multiplo;
 	}
-	public void setMultiplo(Double multiplo) {
+	public void setMultiplo(BigInteger multiplo) {
 		this.multiplo = multiplo;
 	}
 	

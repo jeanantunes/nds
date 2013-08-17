@@ -89,6 +89,7 @@
 				<li><a href="#tabCadastroFiscal">Cadastro / Fiscal</a></li>
 				<li><a href="#tabOperacao">Operação</a></li>
 				<li><a href="#tabDiferenciada">Operação Diferenciada</a></li>
+				<li><a href="#tabDistribuicao">Distribuição</a></li>
 				<li><a href="#tabEmissao">Documentos</a></li>
 				<li><a href="#tabContratos">Contratos e Garantias</a></li>
 			    <li><a href="#tabNegociacao">Negociação</a></li>
@@ -102,6 +103,9 @@
             <jsp:include page="tabOperacao.jsp"/>
 			
 			<jsp:include page="tabOperacaoDiferenciada.jsp"/>
+			
+			<!-- Aba Distribuição -->
+			<jsp:include page="tabDistribuicao.jsp" />
 						
 			<jsp:include page="tabEmissao.jsp"></jsp:include>
 			

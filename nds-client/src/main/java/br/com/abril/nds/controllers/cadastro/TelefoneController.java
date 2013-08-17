@@ -43,8 +43,10 @@ public class TelefoneController extends BaseController {
 	
 	private static String LISTA_TELEFONES_EXIBICAO = "";
 	
+	@Autowired
 	private Result result;
 	
+	@Autowired
 	private HttpSession httpSession;
 	
 	@Autowired

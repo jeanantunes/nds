@@ -18,6 +18,8 @@ public class EstudoComplementarDTO  implements Serializable{
 	 private String dataLncto;
 	 private String dataRclto;
 	 private BigInteger QtdeReparte;
+	 private Long numeroEdicao;
+	 private String codigoProduto;
 	 
 	public long getIdEstudo() {
 		return idEstudo;
@@ -90,6 +92,18 @@ public class EstudoComplementarDTO  implements Serializable{
 	}
 	public void setQtdeReparte(BigInteger getQtdeReparte) {
 		this.QtdeReparte = getQtdeReparte;
+	}
+	public Long getNumeroEdicao() {
+		return numeroEdicao;
+	}
+	public void setNumeroEdicao(Long numeroEdicao) {
+		this.numeroEdicao = numeroEdicao;
+	}
+	public String getCodigoProduto() {
+		return codigoProduto;
+	}
+	public void setCodigoProduto(String codigoProduto) {
+		this.codigoProduto = codigoProduto;
 	}
 	 
 	 

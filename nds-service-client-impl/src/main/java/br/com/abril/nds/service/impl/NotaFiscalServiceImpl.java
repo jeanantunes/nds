@@ -1190,6 +1190,8 @@ public class NotaFiscalServiceImpl implements NotaFiscalService {
 					parametrosRecolhimentoDistribuidor, idCota, periodo, listaIdFornecedores, 
 					listaIdProdutos, tipoNotaFiscal);
 			break;
+		default:
+		    break;
 		}
 
 		return itensNotaFiscal;

@@ -1,11 +1,16 @@
 package br.com.abril.nds.process.ajustefinalreparte;
 
+import java.math.BigInteger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.model.estudo.ClassificacaoCota;
+import br.com.abril.nds.model.estudo.CotaEstudo;
+import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.process.ProcessoAbstrato;
 import br.com.abril.nds.process.calculoreparte.CalcularReparte;
-import br.com.abril.nds.service.EstudoServiceEstudo;
+import br.com.abril.nds.service.EstudoAlgoritmoService;
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre as cotas encontradas para o
@@ -23,10 +28,19 @@ import br.com.abril.nds.service.EstudoServiceEstudo;
 public class GravarReparteFinalCota extends ProcessoAbstrato {
 
     @Autowired
-    private EstudoServiceEstudo estudoServiceEstudo;
+    private EstudoAlgoritmoService estudoAlgoritmoService;
 
     @Override
-    protected void executarProcesso() {
-	estudoServiceEstudo.gravarEstudo(getEstudo());
+    public void executar(EstudoTransient estudo) {
+	estudo.getCotas().addAll(estudo.getCotasExcluidas());
+	estudo.getCotas().addAll(estudo.getCotasForaDaRegiao());
+	estudo.getCotas().addAll(estudo.getCotasSoComEdicaoAberta());
+	for (CotaEstudo cota : estudo.getCotas()) {
+	    if (!cota.getClassificacao().equals(ClassificacaoCota.CotaNova) && cota.getReparteCalculado() != null &&
+		    cota.getReparteCalculado().compareTo(BigInteger.ZERO) == 0) {
+		cota.setReparteCalculado(null);
+	    }
+	}
+	estudoAlgoritmoService.gravarEstudo(estudo);
     }
 }

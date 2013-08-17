@@ -20,11 +20,9 @@ public AjusteReparteJob() {
 			applicationContext.getBean(AjusteReparteRepository.class);
 	}
 	
-	
 	@Override
 	public void execute(JobExecutionContext arg0) throws JobExecutionException {
 		
 		ajusteRepository.execucaoQuartz();		
 	}
-
 }

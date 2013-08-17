@@ -1,8 +1,8 @@
-<<<<<<< HEAD
 var edicoesEscolhidas_HistogramaVenda = new Array();
 var nomeProduto='';
-var descricaoTipoProduto='';
+var descricaoTipoSegmento='';
 var codigoProduto_HistogramaVenda="";
+var descricaoTipoClassificacao_histogramaVenda="";
 
 function checkEdicao(check){
 	//console.log(check.checked);
@@ -32,12 +32,25 @@ function checkEdicao(check){
 
 var histogramaVendasController = $.extend(true, { 
 	
-	
 	iniciarGrid: function(){
 		
 		$(".edicaoProdCadastradosGrid",this.workspace).flexigrid({
 			dataType : 'json',
 			preProcess: function (data){
+				$.each(data.rows, function(index,row){
+					row.cell.reparte = parseInt(row.cell.reparte, 10);
+					row.cell.venda = parseInt(row.cell.venda, 10);
+				});
+				
+				if (data.mensagens) {
+
+					exibirMensagem(
+						data.mensagens.tipoMensagem, 
+						data.mensagens.listaMensagens
+					);
+					
+					return data;
+				}
 				
 				if (data.result){
 					
@@ -47,18 +60,19 @@ var histogramaVendasController = $.extend(true, {
 				$.each(data.rows, function(index, value) {						
 
 					nomeProduto=value.cell.nomeProduto;
-					descricaoTipoProduto=value.cell.descricaoTipoProduto;
+					descricaoTipoSegmento=value.cell.descricaoTipoSegmento;
 					codigoProduto_HistogramaVenda=value.cell.codigoProduto;
+					descricaoTipoClassificacao_histogramaVenda=value.cell.descricaoTipoClassificacao;
 					
 					var objString = 
 						'{"codigo":"'+ value.cell.codigoProduto
 					+ '","edicao":"'+ value.cell.edicao
 					+ '","nomeProduto":"'+ value.cell.nomeProduto
-					+ '","descricaoTipoProduto":"'+ value.cell.descricaoTipoProduto
+					+ '","descricaoTipoSegmento":"'+ value.cell.descricaoTipoSegmento
 					+ '"}'; 
 					
 					//verificando se já estão escolhidas 6 edicoes para analise do histograma
-					var disabled=(edicoesEscolhidas_HistogramaVenda.length==6)?"disabled='disabled'":""
+					var disabled=(edicoesEscolhidas_HistogramaVenda.length==6)?"disabled='disabled'":"";
 					value.cell.sel = "<input type='checkbox'  class='checkEdicao' value='"+objString+"' "+disabled+" onclick='checkEdicao(this)'/>";
 					
 					//setando atributo para capa
@@ -68,6 +82,18 @@ var histogramaVendasController = $.extend(true, {
 				return data;
 			},
 			colModel : [ {
+				display : 'Código',
+				name : 'codigoProduto',
+				width : 60,
+				sortable : true,
+				align : 'left'
+			},{
+				display : 'Classificação',
+				name : 'descricaoTipoClassificacao',
+				width : 100,
+				sortable : true,
+				align : 'left'
+			},{
 				display : 'Edição',
 				name : 'edicao',
 				width : 60,
@@ -106,10 +132,11 @@ var histogramaVendasController = $.extend(true, {
 			}, {
 				display : 'Status',
 				name : 'status',
-				width : 240,
+				width : 100,
 				sortable : true,
 				align : 'left'
-			}, {
+			},
+			{
 				display : 'Capa',
 				name : 'capa',
 				width : 30,
@@ -127,7 +154,9 @@ var histogramaVendasController = $.extend(true, {
 			rp : 10,
 			showTableToggleBtn : true,
 			usepager : true,
-			useRp : true
+			useRp : true,
+			sortname : "codigoProduto",
+            sortorder : "asc"
 		});
 	},
 	
@@ -137,17 +166,6 @@ var histogramaVendasController = $.extend(true, {
 			return;
 		}
 		
-		//$.getJSON(contextPath + "/distribuicao/histogramaVendas/analiseHistograma");
-		
-		var faixas = new Array();
-		
-		for ( var int = 0; int < faixasVenda.length; int++) {
-			var obj = faixasVenda[int];
-			if(obj.cell.enabled)
-				faixas.push(obj.cell.faixaReparteDe+"-"+obj.cell.faixaReparteAte);
-		}
-//		console.log(faixas);
-		
 		var labelComponente="",labelElemento="";
 		if($("#inserirComponentes").is(":checked") && $("#componente").val()!="-1" && $("#elemento").val()!="-1"){
 			labelComponente=$("#componente").children("option:selected:first").text();
@@ -156,10 +174,10 @@ var histogramaVendasController = $.extend(true, {
 		}
 		
 		var data = {"edicoes":edicoesEscolhidas_HistogramaVenda.sort().toString(),
-				"segmento":descricaoTipoProduto,
+				"segmento":descricaoTipoSegmento,
 				"nomeProduto":nomeProduto,
-				"faixasVenda":faixas,
 				"codigoProduto":codigoProduto_HistogramaVenda,
+				"classificacaoLabel":descricaoTipoClassificacao_histogramaVenda,
 				"labelComponente":labelComponente,
 				"labelElemento":labelElemento};
 		
@@ -175,23 +193,51 @@ var histogramaVendasController = $.extend(true, {
 	},
 	
 	init: function(){
+		
+		var autoComplete = new AutoCompleteController(histogramaVendasController.workspace);
+		
+		$('#produto').keyup(function () {
+			
+			autoComplete.autoCompletar("/produto/autoCompletarPorNomeProdutoAutoComplete",'#codigo','#produto');
+		});
+		
+		autoComplete.limparCampoOnChange('#produto', new Array('#codigo','#edicao'));
+		
+		$('#codigo').change(function () {
+			
+			autoComplete.pesquisarPorCodigo("/produto/pesquisarPorCodigoProdutoAutoComplete",'#codigo','#produto');
+		});
+		
+		autoComplete.limparCampoOnChange('#codigo', new Array('#produto','#edicao'));
+		
 		this.iniciarGrid();
 		
 		//
 		$("#componente").change(function(){
+			
+			if ($('#componente').val() !== "-1") {
 			  carregarCombo(contextPath + "/distribuicao/histogramaVendas/carregarElementos", 
 					  {"componente":$("#componente").val()},
 			            $("#elemento", this.workspace), null, null);
+			}else{
+				$('#elemento').html('');
+				$('#elemento').append("<option value='-1'>Selecione...</option>");
+			}
 		});
 	},
 	
 	getFormFiltro: function(){
-		var selector="input[type='radio'][name='filtroPor']:checked,#inserirComponentes,#componente,#elemento,#codigo,#produto,#edicao";
+		var selector = "",
+			formData = new Array();
 		
-		var formData = new Array();
+		if ($('#inserirComponentes').is(':checked')) {
+			selector = "input[type='radio'][name='filtroPor']:checked,#inserirComponentes,#componente,#elemento,#codigo,#produto,#edicao,#idTipoClassificacaoProduto";
+		}else {
+			selector = "input[type='radio'][name='filtroPor']:checked,#codigo,#produto,#edicao,#idTipoClassificacaoProduto";
+		}
+		
 		
 		$(selector).each(function(idx,comp){
-//			console.log("filtro."+comp.getAttribute('name')+"=="+comp.value);
 			formData.push({name:"filtro."+comp.getAttribute('name'),value:comp.value});
 		});
 		
@@ -207,6 +253,12 @@ var histogramaVendasController = $.extend(true, {
 		});
 		
 		$("#edicaoProdCadastradosGrid", histogramaVendasController.workspace).flexReload();
+		
+		edicoesEscolhidas_HistogramaVenda = new Array();
+		nomeProduto='';
+		descricaoTipoSegmento='';
+		codigoProduto_HistogramaVenda="";
+		descricaoTipoClassificacao_histogramaVenda="";
 
 	}
 
@@ -235,12 +287,13 @@ function popup_detalhes(codigoProduto,numeroEdicao) {
 			
 			$("#imagemCapaEdicao")
 					.attr("src",contextPath
-									+ "/distribuicao/histogramaVendas/getCapaEdicaoJson?random="+randomnumber+"&codigoProduto="
+							
+									+ "/capa/getCapaEdicaoJson?random="+randomnumber+"&codigoProduto="
 //									+ "/capas/revista-nautica-11.jpg?codigoProduto="
 									+ codigoProduto
 									+ "&numeroEdicao="
 									+ numeroEdicao);
-			console.log($("#imagemCapaEdicao").attr("src"));
+//			console.log($("#imagemCapaEdicao").attr("src"));
 		},
 		close:function(event, ui){
 			$("#imagemCapaEdicao").removeAttr("src").hide();
@@ -266,12 +319,14 @@ function filtroSede(){
 	$('.filtroPracaSede').show();
 	$('.filtroPracaAtendida').hide();
 	$('.filtroComponentes').hide();
+	$('#inserirComponentes').attr('checked', false);
 }
 function filtroAtendida(){
 	$('.filtroTodas').hide();
 	$('.filtroPracaSede').hide();
 	$('.filtroPracaAtendida').show();
 	$('.filtroComponentes').hide();
+	$('#inserirComponentes').attr('checked', false);
 }
 function filtroComponentes(){
 	$('.filtroTodas').hide();
@@ -279,3 +334,4 @@ function filtroComponentes(){
 	$('.filtroPracaAtendida').hide();
 	$('.filtroComponentes').show();
 }
+//@ sourceURL=historicoVenda.js

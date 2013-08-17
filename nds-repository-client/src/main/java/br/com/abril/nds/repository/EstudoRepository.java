@@ -3,6 +3,8 @@ package br.com.abril.nds.repository;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.DivisaoEstudoDTO;
+import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.model.planejamento.Estudo;
 
 /**
@@ -21,4 +23,18 @@ public interface EstudoRepository extends Repository<Estudo, Long> {
 	public Estudo obterEstudoECotasPorIdEstudo(Long idEstudo);
 	
 	public List<Estudo> obterEstudosPorIntervaloData(Date dataStart, Date dataEnd);
+	
+	ResumoEstudoHistogramaPosAnaliseDTO obterResumoEstudo(Long id);
+	
+	public Estudo obterEstudoByEstudoOriginalFromDivisaoEstudo(DivisaoEstudoDTO divisaoEstudoVO);
+
+	public Long obterMaxId();
+	
+	public void setIdLancamentoNoEstudo(Long idLancamento, Long idEstudo);
+
+	public Long countDeCotasEntreEstudos(Long estudoBase, Long estudoSomado);
+
+    int obterCotasComRepartePorIdEstudo(Long estudoId);
+
+	Long obterUltimoAutoIncrement();
 }

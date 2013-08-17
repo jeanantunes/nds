@@ -119,10 +119,18 @@ public class AnaliseHistoricoDTO {
 		this.reparteMedio = reparteMedio;
 		this.reparteMedioFormat = CurrencyUtil.formatarValor(reparteMedio);
 	}
+	
+	public Double getReparteMedio(){
+		return this.reparteMedio;
+	}
 
 	public void setVendaMedia(Double vendaMedia) {
 		this.vendaMedia = vendaMedia;
 		this.vendaMediaFormat = CurrencyUtil.formatarValor(vendaMedia);
+	}
+	
+	public Double getVendaMedia(){
+		return this.vendaMedia;
 	}
 
 	public String getEd1Reparte() {
@@ -224,9 +232,17 @@ public class AnaliseHistoricoDTO {
 	public String getReparteMedioFormat() {
 		return reparteMedioFormat;
 	}
+	
+	public void setReparteMedioFormat(String reparteMedioFormatado) {
+		this.reparteMedioFormat = reparteMedioFormatado;
+	}
 
 	public String getVendaMediaFormat() {
 		return vendaMediaFormat;
+	}
+	
+	public void setVendaMediaFormat(String vendaMediaFormatado) {
+		this.vendaMediaFormat = vendaMediaFormatado;
 	}
 
 }

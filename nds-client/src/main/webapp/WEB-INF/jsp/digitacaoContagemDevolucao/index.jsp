@@ -3,6 +3,7 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.fileDownload.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/digitacaoContagemDevolucao.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/utils.js"></script>
 
 <script  type="text/javascript">
 $(function(){
@@ -59,7 +60,7 @@ $(function(){
 				    
 				    <td>CE:</td>
 				    <td>
-				 		<input type="text" name="semanaConferenciaEncalhe" id="semanaConferenciaEncalhe" style="width:80px; float:left; margin-right:5px;"/>
+				 		<input type="text" name="semanaConferenciaEncalhe" id="semanaConferenciaEncalhe" style="width:80px; float:left; margin-right:5px;" maxlength="6" onkeydown="return onlyNumeric(event);" />
 				 		<span>(semana)</span>
 				 	</td>
 				    <td width="104">

@@ -33,6 +33,7 @@ import org.hibernate.annotations.Cascade;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.garantia.CotaGarantia;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.distribuicao.RankingSegmento;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
@@ -56,10 +57,6 @@ public class Cota implements Serializable {
 	
 	@Column(name = "NUMERO_COTA", nullable = false)
 	private Integer numeroCota;
-	
-	
-	@Column(name="TIPO_COTA", nullable= false)
-	private String tipoCota;
 	
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "PESSOA_ID")
@@ -93,7 +90,7 @@ public class Cota implements Serializable {
 	
 	@ManyToOne
 	@JoinColumn(name = "BOX_ID")
-	private Box box; 
+	private Box box;
 	
 	@Cascade(value = org.hibernate.annotations.CascadeType.PERSIST)
 	@OneToMany(mappedBy = "cota")
@@ -122,7 +119,12 @@ public class Cota implements Serializable {
 	@Enumerated(EnumType.STRING)
 	private TipoDistribuicaoCota tipoDistribuicaoCota;
 	
-
+	@OneToMany(mappedBy="cota", fetch=FetchType.LAZY)
+	private List<RankingSegmento> rankingSegmento;
+	
+	@OneToMany(mappedBy="cota", fetch=FetchType.LAZY)
+	private List<EstoqueProdutoCota> estoqueProdutoCota;
+	
 	/**
 	 * Data de início de atividade da cota
 	 */
@@ -173,11 +175,15 @@ public class Cota implements Serializable {
 	@OneToMany(mappedBy = "cota", cascade = {CascadeType.ALL})
 	private Set<HistoricoTitularidadeCota> titularesCota =new HashSet<HistoricoTitularidadeCota>();
 	
-	/**
+	/** 
 	 * Referente a garantias da cota.
 	 */
 	@OneToOne(mappedBy="cota", fetch=FetchType.LAZY)
 	private CotaGarantia cotaGarantia;
+	
+	@Column(name = "RECEBE_RECOLHE_PARCIAIS", insertable=false,  updatable=false)
+	private Integer recebeRecolheParciais;
+	///insertable = false, updatable = false
 	
 	public Cota() {
         this.inicioAtividade = new Date();
@@ -561,29 +567,40 @@ public class Cota implements Serializable {
 		return null;
 	}
 
-
 	public TipoDistribuicaoCota getTipoDistribuicaoCota() {
 		return tipoDistribuicaoCota;
 	}
-
 
 	public void setTipoDistribuicaoCota(TipoDistribuicaoCota tipoDistribuicaoCota) {
 		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
 	}
 
-
-	public String getTipoCota() {
-		return tipoCota;
+	public List<RankingSegmento> getRankingSegmento() {
+		return rankingSegmento;
 	}
 
 
-	public void setTipoCota(String tipoCota) {
-		this.tipoCota = tipoCota;
+	public void setRankingSegmento(List<RankingSegmento> rankingSegmento) {
+		this.rankingSegmento = rankingSegmento;
 	}
 
 
-	
-	
-	
+	public List<EstoqueProdutoCota> getEstoqueProdutoCota() {
+		return estoqueProdutoCota;
+	}
 
+
+	public void setEstoqueProdutoCota(List<EstoqueProdutoCota> estoqueProdutoCota) {
+		this.estoqueProdutoCota = estoqueProdutoCota;
+	}
+
+
+	public Integer getRecebeRecolheParciais() {
+		return recebeRecolheParciais;
+	}
+
+
+	public void setRecebeRecolheParciais(Integer recebeRecolheParciais) {
+		this.recebeRecolheParciais = recebeRecolheParciais;
+	}
 }

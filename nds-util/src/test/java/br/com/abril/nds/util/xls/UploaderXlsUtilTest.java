@@ -1,38 +1,69 @@
 package br.com.abril.nds.util.xls;
 
-import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.List;
+import br.com.abril.nds.util.xls.CotaTemplateDTO;
 
-import br.com.abril.nds.util.upload.KeyValue;
+import br.com.abril.nds.util.upload.XlsMapper;
 import br.com.abril.nds.util.upload.XlsUploaderUtils;
+import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 
 public class UploaderXlsUtilTest {
 
-	public static void main(String[] args) throws URISyntaxException {
-		
-		URL url = ClassLoader.getSystemResource("test.xlsx");
-		List<KeyValue> list = XlsUploaderUtils.returnKeyValueFromXls(new File(url.toURI()));
-		
-		System.out.println("## retornando todos os valores que contem a chave cotaID");
-		for (KeyValue keyValue : list) {
-			if (keyValue.getKey().equals("cotaID")) {
-				System.out.println(keyValue.getValue());
-			}
+
+    private static URL url = ClassLoader.getSystemResource("cota-template.xlsx");
+
+    /**
+     * @param args
+     * @throws URISyntaxException
+     * 
+     *             Para o funcionamento desse serviço, deve-se anotar o DTO(ou qualquer bean que desejar) com a anotação
+     *             {@link XlsMapper} Nessa anotação, você basicamente vai fazer o mapeamento, dizendo qual coluna do XLS,
+     *             corresponde o seu field do seu bean. Vejam o exemplo no Bean de teste criado {@link CotaXlsDTO}
+     * 
+     */
+    public static void main(String[] args) throws URISyntaxException {
+	
+	List<CotaTemplateDTO> lista = XlsUploaderUtils.getBeanListFromXls(CotaTemplateDTO.class, getUploadedFile());
+		for (CotaTemplateDTO cotaTemplateDTO : lista) {
+		    System.out.println(cotaTemplateDTO.getCodigoProduto());
+		    System.out.println(cotaTemplateDTO.getNumeroCota());
+		    System.out.println(cotaTemplateDTO.getReparteMinimo());
+		    System.out.println(cotaTemplateDTO.getReparteMaximo());
 		}
-		
-		System.out.println("\n\n## retornando todos os valores que contem a chave nomeCota");
-		for (KeyValue keyValue : list) {
-			if (keyValue.getKey().equals("nomeCota")) {
-				System.out.println(keyValue.getValue());
-			}
+    }
+    
+    public static UploadedFile getUploadedFile() {
+	return new UploadedFile() {
+
+	    @Override
+	    public String getFileName() {
+		try {
+		    return url.toURI().toString();
+		} catch (URISyntaxException e) {
+		    e.printStackTrace();
 		}
-		
-		System.out.println("\n\n## retornando todos os objetos ##");
-		for (KeyValue keyValue : list) {
-			System.out.println("chave: " + keyValue.getKey());
-			System.out.println("valor: " + keyValue.getValue());
+		return "";
+	    }
+
+	    @Override
+	    public InputStream getFile() {
+		try {
+		    return new FileInputStream(url.toURI().getPath());
+		} catch (FileNotFoundException | URISyntaxException e) {
+		    e.printStackTrace();
 		}
-	}
+		return null;
+	    }
+
+	    @Override
+	    public String getContentType() {
+		return "multipart/form-data";
+	    }
+	};
+    }
 }

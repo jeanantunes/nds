@@ -7,11 +7,13 @@ import java.util.List;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
+import br.com.abril.nds.dto.RegiaoNMaiores_ProdutoDTO;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -46,6 +48,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		return query.list();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Produto> obterProdutoLikeNome(String nome, Integer qtdMaxRegRetorno) {
 		String hql = "from Produto produto "
@@ -75,10 +78,17 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 	
 	@Override
 	public Produto obterProdutoPorCodigo(String codigoProduto) {
-		String hql = "from Produto produto " 
-				   + " where produto.codigo = :codigoProduto";
 		
-		Query query = super.getSession().createQuery(hql);
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("from Produto produto "); 
+		if(codigoProduto.length() == 6){
+			hql.append(" where produto.codigoICD = :codigoProduto");			
+		}else{
+			hql.append(" where produto.codigo = :codigoProduto");
+		}
+		
+		Query query = super.getSession().createQuery(hql.toString());
 
 		query.setParameter("codigoProduto", codigoProduto);
 		
@@ -118,7 +128,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 	@SuppressWarnings("unchecked")
 	public List<ConsultaProdutoDTO> pesquisarProdutos(String codigo, String produto,
 			String fornecedor, String editor, Long codigoTipoProduto,
-			String sortorder, String sortname, int page, int rp) {
+			String sortorder, String sortname, int page, int rp, Boolean isGeracaoAutomatica) {
 		
 		StringBuffer hql = new StringBuffer();
 		
@@ -150,7 +160,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 			Query query = 
 				this.getQueryBuscaProdutos(
 					hql, codigo, produto, fornecedor, 
-					editor, codigoTipoProduto, sortname, sortorder, false);
+					editor, codigoTipoProduto, sortname, sortorder, false, isGeracaoAutomatica);
 			
 			query.setResultTransformer(
 				new AliasToBeanResultTransformer(
@@ -168,7 +178,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 
 	@Override
 	public Integer pesquisarCountProdutos(String codigo, String produto,
-			String fornecedor, String editor, Long codigoTipoProduto) {
+			String fornecedor, String editor, Long codigoTipoProduto, Boolean isGeracaoAutomatica) {
 		
 		StringBuffer hql = new StringBuffer(" select count(distinct produto.id) ");
 		
@@ -177,7 +187,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 			Query query = 
 				this.getQueryBuscaProdutos(
 					hql, codigo, produto, fornecedor, 
-					editor, codigoTipoProduto, null, null, true);
+					editor, codigoTipoProduto, null, null, true, isGeracaoAutomatica);
 			
 			return ((Long) query.uniqueResult()).intValue();
 			
@@ -187,7 +197,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 	}
 	
 	private Query getQueryBuscaProdutos(StringBuffer hql, String codigo, String nome,
-			String fornecedor, String editor, Long codigoTipoProduto, String sortname, String sortorder, boolean isCount) {
+			String fornecedor, String editor, Long codigoTipoProduto, String sortname, String sortorder, boolean isCount, Boolean isGeracaoAutomatica) {
 		
 		hql.append(" from ");
 		hql.append(" Produto produto ");
@@ -225,6 +235,20 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 			
 			hql.append(auxHql);
 			hql.append(" lower( editorProd.pessoaJuridica.razaoSocial ) like :nomeEditor ");
+			auxHql = " and ";
+		}
+		
+		if (isGeracaoAutomatica != null && isGeracaoAutomatica == true) {
+			
+			hql.append(auxHql);
+			hql.append(" produto.isGeracaoAutomatica = true " );
+			auxHql = " and ";
+		}
+		
+		if (isGeracaoAutomatica != null && isGeracaoAutomatica == false) {
+			
+			hql.append(auxHql);
+			hql.append(" produto.isGeracaoAutomatica = false " );
 			auxHql = " and ";
 		}
 
@@ -360,5 +384,33 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		
 		return query.list();
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> verificarProdutoExiste(String... codigoProduto) {
+		StringBuilder hql = new StringBuilder("select codigo from produto where produto.codigo in (:codigoProdutoList)");
+		
+		SQLQuery query = super.getSession().createSQLQuery(hql.toString());
+		query.setParameterList("codigoProdutoList", codigoProduto);
+		
+		return query.list();
+	}
+
+	@Override
+	public String obterCodigoProdinPorCodICD(String codigoICD) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" SELECT ");
+		hql.append(" p.codigo ");
+		hql.append(" from Produto p ");
+		
+		hql.append(" where p.codigoICD = :codigoProduto");			
+		
+		Query query = super.getSession().createQuery(hql.toString());
+		query.setParameter("codigoProduto", codigoICD);
+		
+		return (String) query.uniqueResult();
+	}
+
 }

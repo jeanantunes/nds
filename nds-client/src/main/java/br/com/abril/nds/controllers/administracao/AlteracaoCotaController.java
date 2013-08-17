@@ -217,12 +217,23 @@ public class AlteracaoCotaController extends BaseController {
 	@Post
 	public void salvarAlteracao(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO) {	
 		
-		alteracaoCotaService.salvarAlteracoes(filtroAlteracaoCotaDTO);
-		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cota alterada com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
+		if (filtroAlteracaoCotaDTO.getFiltroModalFornecedor() != null &&
+				filtroAlteracaoCotaDTO.getFiltroModalFornecedor().getListaFornecedoresSelecionados() != null &&
+				filtroAlteracaoCotaDTO.getFiltroModalFornecedor().getListaFornecedoresSelecionados().isEmpty()){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione ao menos 1 Fornecedor");
 		}
 		
-				
+		this.alteracaoCotaService.salvarAlteracoes(filtroAlteracaoCotaDTO);
+		
+		this.result.use(
+				Results.json()).from(
+						new ValidacaoVO(
+								TipoMensagem.SUCCESS, "Cota alterada com sucesso."),
+								Constantes.PARAM_MSGS).recursive().serialize();
+	}
+
+	
 	
 	public void preencherFiltroFinanceiro(FiltroAlteracaoCotaDTO filtroAlteracaoCotaDTO, Cota cota){
 		

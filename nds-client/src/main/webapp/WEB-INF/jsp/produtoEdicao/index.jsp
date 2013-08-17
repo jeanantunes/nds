@@ -52,22 +52,22 @@ fieldset {
 <form id="produtoEdicaoController-formUpload" name="formUpload" method="post" enctype="multipart/form-data">
 
 <div id="produtoEdicaoController-dialog-novo" title="Incluir Nova Edi&ccedil;&atilde;o">
-	
+
 	<jsp:include page="../messagesDialog.jsp">
 		<jsp:param value="dialogMensagemNovo" name="messageDialog"/>
 	</jsp:include> 
-	
-	<div id="dialog-produto-edicao-periodos-lancamentos" title="PerÃ­odos de LanÃ§amentos" style="display:none">
+
+	<div id="dialog-produto-edicao-periodos-lancamentos" title="Períodos de Lançamentos" style="display:none">
 		<table class="produtoEdicaoPeriodosLancamentosGrid"></table>
 	</div>
-	
+
 		<div id="produtoEdicaoController-tabEdicoes">
 			<ul>
 				<li><a id="produtoEdicaoController-tabIdentificacao" href="#produtoEdicaoController-tabEdicoes-1">Identifica&ccedil;&atilde;o</a></li>
 				<li><a id="produtoEdicaoController-tabCaractLancto" href="#produtoEdicaoController-tabEdicoes-2">Caracter&iacute;sticas do Lan&ccedil;amento</a></li>
 				<li><a id="produtoEdicaoController-tabSegmentacao" href="#produtoEdicaoController-tabEdicoes-3">Segmenta&ccedil;&atilde;o</a></li>
 			</ul>
-			
+
 			<div id="produtoEdicaoController-tabEdicoes-1">
 				<input type="hidden" id="produtoEdicaoController-idProdutoEdicao" name="idProdutoEdicao" />
 				<div class="ldPesq">
@@ -75,10 +75,10 @@ fieldset {
 						<legend>Produtos Pesquisados</legend>
 						<table class="prodsPesqGrid"></table>
 					</fieldset>
-					
+
 					<span class="bt_novos"><a href="javascript:;" onclick="produtoEdicaoController.salvarProdutoEdicao(false);" ><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /><b> Incluir Novo</b></a></span>
 				</div>
-				
+
 				<div class="ldForm">
 					<fieldset style="width:655px!important; margin-bottom:5px;">
 						<legend>Identifica&ccedil;&atilde;o</legend>
@@ -88,15 +88,15 @@ fieldset {
 								<tr>
 									<td width="181">C&oacute;digo:</td>
 									<td width="100" colspan="3"><input type="text" name="codigoProdutoEdicao" id="produtoEdicaoController-codigoProdutoEdicao" style="width:100px;" /></td>
-									
+
 									<td width="90">&nbsp;</td>
 									<td width="108">&nbsp;</td>
 									<td width="153" rowspan="8" align="center">
-										
+
 										<div id="produtoEdicaoController-div_imagem_capa">
 											<img alt="Capa" src="" width="144" height="185" />
 										</div>
-										
+
 										<br clear="all" />
 										<a href="javascript:;" onclick="produtoEdicaoController.popup_excluir_capa();">
 											<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir Capa" width="15" height="15" hspace="5" vspace="3" border="0" />
@@ -127,9 +127,9 @@ fieldset {
 									<td>Pct. Padr&atilde;o:</td>
 									<td><input type="text" name="pacotePadrao" id="produtoEdicaoController-pacotePadrao" style="width:50px;" /></td>
 								</tr>
-							
+
 								<tr>
-									<td>Tipo de Lan&ccedil;amento:</td>
+									<td>Tipo de Distribui&ccedil;&atilde;o:</td>
 									<td colspan="3">
 										<select name="tipoLancamento" id="produtoEdicaoController-tipoLancamento" style="width:160px;" >
 											<option value="">Selecione...</option>
@@ -137,7 +137,7 @@ fieldset {
 											<option value="PARCIAL">Ed. Parcial</option>
 											<option value="RELANCAMENTO">Relan&ccedil;amento</option>
 											<option value="REDISTRIBUICAO">Redistribui&ccedil;&atilde;o</option>
-											<option value="SUPLEMENTAR">Supl. Compuls</option>
+											<option value="SUPLEMENTAR">Suplementar</option>
 										</select>
 									</td>
 									<td>N&ordm; Lancto:</td>
@@ -180,7 +180,7 @@ fieldset {
 							<tbody>
 								<tr>
 									<td width="60">Previsto:</td>
-									<td width="90"><input type="text" name="precoPrevisto" id="produtoEdicaoController-precoPrevisto" style="width:70px; text-align:right; float:left;" /></td>
+									<td width="90"><input type="text" name="precoPrevisto" id="produtoEdicaoController-precoPrevisto" style="width:70px; float:left;" /></td>
 									<td width="30">Real:</td>
 									<td width="120"><input type="text" name="precoVenda" id="produtoEdicaoController-precoVenda" style="width:70px; text-align:right;" /></td>
 								</tr>
@@ -219,17 +219,17 @@ fieldset {
 				</div>
 				<br clear="all" />
 			</div>
-			
+
 			<div id="produtoEdicaoController-tabEdicoes-2">
 				<div class="ldPesq">
 					<fieldset id="produtoEdicaoController-pesqProdutos" style="width:200px!important;">
 						<legend>Produtos Pesquisados</legend>
 						<table class="prodsPesqGrid"></table>
 					</fieldset>
-					
+
 					<span class="bt_novos"><a href="javascript:;" onclick="produtoEdicaoController.salvarProdutoEdicao(false);" rel="tipsy" title="Incluir Novo Produto" ><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /><b> Incluir Novo</b></a></span>
 				</div>
-				
+
 				<div class="ldForm">
 					<fieldset style="width:350px!important; margin-bottom:5px;">
 						<legend>Caracter&iacute;sticas do Lan&ccedil;amento</legend>
@@ -237,7 +237,7 @@ fieldset {
 							<thead />
 							<tbody>
 								<tr>
-									<td width="145">Categoria:</td>
+									<td width="145">Firma F&iacute;sica:</td>
 									<td width="193">
 										<select name="categoria" id="produtoEdicaoController-categoria" style="width:180px;" >
 											<option value="">Selecione</option>
@@ -302,7 +302,7 @@ fieldset {
 									<td width="193"><input type="text" name="chamadaCapa" id="produtoEdicaoController-chamadaCapa" style="width:190px;" /></td>
 								</tr>
 								<tr>
-									<td height="24">Regime Recolhimento:</td>
+									<td height="24">Tipo de Recolhimento:</td>
 									<td>
 										<select name="parcial" id="produtoEdicaoController-parcial" style="width:190px;" >
 											<option value="">Selecione...</option>
@@ -315,7 +315,7 @@ fieldset {
 									<td height="24">Brinde:</td>
 									<td><input type="checkbox" name="possuiBrinde" id="produtoEdicaoController-possuiBrinde" /></td>
 								</tr>			     	
-						     	
+
 						     	<tr class="descBrinde" style="display:none;">
 								    <td height="24">Descri&ccedil;&atilde;o Brinde:</td>
 								    <td>
@@ -327,7 +327,7 @@ fieldset {
 					                    </select> 
 								    </td>
 							    </tr>						     							     	
-						 	
+
 							</tbody>
 						</table>
 					</fieldset>
@@ -345,17 +345,17 @@ fieldset {
 				</div>
 				<br clear="all" />
 			</div>
-			
+
 			<div id="produtoEdicaoController-tabEdicoes-3">
 				<div class="ldPesq">
 					<fieldset id="produtoEdicaoController-pesqProdutos" style="width:200px!important;">
 						<legend>Produtos Pesquisados</legend>
 						<table class="prodsPesqGrid"></table>
 					</fieldset>
-					
+
 					<span class="bt_novos"><a href="javascript:;" onclick="produtoEdicaoController.salvarProdutoEdicao(false);" rel="tipsy" title="Incluir Novo Produto" ><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /><b> Incluir Novo</b></a></span>
 				</div>
-				
+
 				<div class="ldForm">
 					<fieldset style="width:410px!important;">
 						<legend>P&uacute;blico Alvo</legend>
@@ -395,10 +395,21 @@ fieldset {
 -					                    </select>
 									</td>
 								</tr>
+								<tr>
+									<td>Segmento:</td>
+									<td>
+										<select name="tipoSegmentoProdutoId" id="produtoEdicaoController-tipoSegmento" style="width:150px;">
+-					                        <option value="">Selecione</option>
+-					                        <c:forEach varStatus="counter" var="itemTipoSegmentoProduto" items="${listaTipoSegmentoProduto}">
+-							                    <option value="${itemTipoSegmentoProduto.key}">${itemTipoSegmentoProduto.value}</option>
+-							                </c:forEach>
+-					                    </select>
+									</td>
+								</tr>
 							</tbody>
 						</table>
 					</fieldset>
-					<fieldset style="width:410px!important;">
+					<%-- <fieldset style="width:410px!important;">
 						<legend>Outros</legend>
 						<table width="400" border="0" cellspacing="1" cellpadding="1">
 							<thead />
@@ -426,7 +437,7 @@ fieldset {
 									</td>
 							</tbody>
 						</table>
-					</fieldset>
+					</fieldset> --%>
 				</div>
 				<br clear="all" />
 			</div>
@@ -438,53 +449,53 @@ fieldset {
 	<div class="areaBts">
 		<div class="area">
 			<span class="bt_novos">
-				<a href="javascript:;" onclick="produtoEdicaoController.novaEdicao();" rel="tipsy" title="Incluir Nova EdiÃ§Ã£o"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/></a>
+				<a href="javascript:;" onclick="produtoEdicaoController.novaEdicao();" rel="tipsy" title="Incluir Nova Edição"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/></a>
 			</span>
 		</div>
 	</div>
-	
+
 	<div class="linha_separa_fields">&nbsp;</div>
-		
+
 	<!-- INICIO FILTRO PESQUISA -->
-	
+
 	<fieldset class="fieldFiltro">
-		
+
 		<input type="hidden" id="produtoEdicaoController-codigoProduto" name="codigoProduto" value="" />
-		
+
 		<legend>Pesquisar Produto</legend>
-		
+
 		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
-			
+
 			<thead/>
-			
+
 			<tbody>
-			
+
 				<tr>
-				
+
 					<td width="75">C&oacute;digo:</td>
-					
+
 					<td width="65">
-					
+
 						<input type="text" name="pCodigoProduto" id="produtoEdicaoController-pCodigoProduto" maxlength="8" 
 								style="width:60px;" 
 								onchange="produtoEdicaoController.pesquisarPorCodigoProduto('#produtoEdicaoController-pCodigoProduto', '#produtoEdicaoController-pNome', false,
 										undefined,
 										undefined);" />
 					</td>
-					
+
 					<td width="57">Produto:</td>
-					
+
 					<td width="170">
-					
+
 						<input type="text" name="pNomeProduto" id="produtoEdicaoController-pNome" maxlength="255" 
 								style="width:150px;"
 								onkeyup="produtoEdicaoController.autoCompletarPorNome('#produtoEdicaoController-pNome', false);"
 								onblur="produtoEdicaoController.pesquisarPorNome('#produtoEdicaoController-pCodigoProduto', '#produtoEdicaoController-pNome', false,
 									undefined,
 									undefined);" />
-					
+
 					</td>
-					
+
 					<td width="93">Per&iacute;odo Lcto:</td>
 	                <td width="106"><input type="text" name="pDateLanctoDe" id="produtoEdicaoController-pDateLanctoDe" style="width:60px;"/></td>
 	                <td width="26">At&eacute;:</td>
@@ -492,7 +503,7 @@ fieldset {
 					<td width="22">&nbsp;</td>
 					<td width="57">Situa&ccedil;&atilde;o:</td>
 					<td width="113">
-					
+
 						<select name="pSituacaoLancamento" id="produtoEdicaoController-pSituacaoLancamento" style="width:130px;" >
 							<option value="" selected="selected">Selecione...</option>
 	                        <c:forEach items="${listaStatusLancamento}" var="statusLancamento">
@@ -500,11 +511,11 @@ fieldset {
 							</c:forEach>
 						</select>
 					</td>
-		
+
 				</tr>
-		
+
 				<tr>
-		
+
 					<td>C&oacute;d. Barras:</td>
 					<td colspan="3" ><input type="text" name="pCodigoDeBarras" id="produtoEdicaoController-pCodigoDeBarras" style="width:290px;" maxlength="25" /></td>						
 					<td>Pre&ccedil;o (R$) de:</td>
@@ -514,30 +525,30 @@ fieldset {
 					<td align="right"><input type="checkbox" name="pBrinde" id="produtoEdicaoController-pBrinde" value=""/></td>
 					<td><label for="pBrinde">Brinde</label></td>
 					<td><span class="bt_novos"><a href="javascript:;" onclick="produtoEdicaoController.pesquisarEdicoes();"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a></span></td>
-		
+
 				</tr>
-		
+
 			</tbody>
-		
+
 		</table>
-		
+
 	</fieldset>
 	<!-- FIM FILTRO PESQUISA -->
-	
-	
+
+
 	<div class="linha_separa_fields">&nbsp;</div>
-	
+
 	<!-- INICIO GRID RESULTADO -->
 	<div class="grids" style="display:none;">
-	
+
 		<fieldset class="fieldGrid">
 			<legend>Edi&ccedil;&otilde;es do Produto<span id="produtoEdicaoController-labelNomeProduto" /></legend>
 			<table class="edicoesGrid"></table>
 		</fieldset>
-	
+
 	</div>
 	<!-- FIM GRID RESULTADO -->
-		
+
 </body>
 
 </html>

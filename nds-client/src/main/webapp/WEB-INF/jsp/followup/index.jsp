@@ -40,6 +40,21 @@
         </div> 
 		</div>
 		
+		<div id="btnsDistribuidor" class="divButtonsWrapper" style="display:none;">
+	    <div id="botoesDistribuidor">
+	        <span class="bt_arq" title="Gerar Arquivo">                      
+				<a href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=distribuicao">
+		     		<img src="${pageContext.request.contextPath}/images/ico_excel.png" hspace="5" border="0" />
+				</a>
+	        </span>
+	        <span class="bt_arq" title="Imprimir">                      
+		        <a href="${pageContext.request.contextPath}/followup/exportar?fileType=PDF&tipoExportacao=distribuicao">
+		       		<img src="${pageContext.request.contextPath}/images/ico_impressora.gif" hspace="5" border="0" />
+				</a>
+	        </span>  
+        </div> 
+		</div>
+		
 		<div id="btnsStatusCota" class="divButtonsWrapper" style="display:none;">
 		<div id="botoesArquivoAlteracaoStatusCota">
 	        <span class="bt_arq" title="Gerar Arquivo">                      
@@ -113,6 +128,7 @@
             <ul>
                 <li><a href="#tabNegocia" 			onclick="followUpSistemaController.toggleButtons('btnsNegociacao');">Negociação</a></li>
                 <li><a href="#tabChamadao" 			onclick="followUpSistemaController.toggleButtons('btnsChamadao');">Chamadão</a></li>
+                <li><a href="#tabDistribuicao"																		  >Distribuição</a></li>
                 <li><a href="#tabAlteracao" 		onclick="followUpSistemaController.toggleButtons('btnsStatusCota');">Alteração de Status Cota</a></li>
                 <li><a href="#tabAtualizacao"		onclick="followUpSistemaController.toggleButtons('btnsAtualizacaoCadastral');">Atualização Cadastral</a></li>
                 <li><a href="#tabPendencia" 		onclick="followUpSistemaController.toggleButtons('btnsArquivoPendencia');">Pend&ecirc;ncias NF-e Encalhe</a></li>
@@ -134,7 +150,30 @@
                           
                </fieldset>
             </div>
-            <div id="tabAlteracao">
+
+				<div id="tabDistribuicao">
+					<fieldset style="width: 880px !important;">
+						<legend>Distribuição</legend>
+						<table class="distribuicaoGrid"></table>
+						<div id="botoesArquivoDistribuicao">
+							<span class="bt_novos" title="Gerar Arquivo"> <a
+								href="${pageContext.request.contextPath}/followup/exportar?fileType=XLS&tipoExportacao=distribuicao">
+									<img
+									src="${pageContext.request.contextPath}/images/ico_excel.png"
+									hspace="5" border="0" /> Arquivo
+							</a>
+							</span> <span class="bt_novos" title="Imprimir"> <a
+								href="${pageContext.request.contextPath}/followup/exportar?fileType=PDF&tipoExportacao=distribuicao">
+									<img
+									src="${pageContext.request.contextPath}/images/ico_impressora.gif"
+									hspace="5" border="0" /> Imprimir
+							</a>
+							</span>
+						</div>
+					</fieldset>
+				</div>
+
+				<div id="tabAlteracao">
             <br />
                 <fieldset style="width:960px!important;">
                	<legend>Alteração de Status Cota</legend>

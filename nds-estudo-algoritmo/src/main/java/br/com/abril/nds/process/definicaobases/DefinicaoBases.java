@@ -8,10 +8,13 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.model.ProdutoEdicaoBase;
+import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.estudo.EstudoTransient;
+import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
 import br.com.abril.nds.process.ProcessoAbstrato;
-import br.com.abril.nds.process.somarfixacoes.SomarFixacoes;
-import br.com.abril.nds.service.EstudoServiceEstudo;
+import br.com.abril.nds.service.EstudoAlgoritmoService;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
  * Processo que tem como objetivo buscar as edições de base para o estudo.
@@ -33,57 +36,68 @@ public class DefinicaoBases extends ProcessoAbstrato {
     private BaseParaVeraneio baseParaVeraneio;
 
     @Autowired
-    private EstudoServiceEstudo estudoServiceEstudo;
+    private EstudoAlgoritmoService estudoAlgoritmoService;
 
     @Override
-    public void executarProcesso() throws Exception {
-	LinkedList<ProdutoEdicaoBase> edicoesBase = estudoServiceEstudo.buscaEdicoesPorLancamento(getEstudo().getProduto());
-	edicoesBase = limitarEdicoesApenasSeis(edicoesBase);
-	validaApenasUmaEdicaoFechada(edicoesBase);
-	excluiEdicoesComMaisDeDoisAnos(edicoesBase);
-	excluiMaiorQueQuatroSeColecionavel(edicoesBase);
+    public void executar(EstudoTransient estudo) throws Exception {
+	if ((estudo.getEdicoesBase() == null) || (estudo.getEdicoesBase().size() == 0)) {
+	    LinkedList<ProdutoEdicaoEstudo> edicoesBase = estudoAlgoritmoService.getEdicoesBases(estudo.getProdutoEdicaoEstudo());
 
-	getEstudo().setEdicoesBase(edicoesBase);
+	    if (!edicoesBase.isEmpty()) {
 
-	baseParaVeraneio.setEstudo(getEstudo());
-	baseParaVeraneio.executar();
+		edicoesBase = limitarEdicoesApenasSeis(edicoesBase, estudo);
+		validaApenasUmaEdicaoFechada(edicoesBase);
+		excluiEdicoesComMaisDeDoisAnos(edicoesBase);
+		excluiMaiorQueQuatroSeColecionavel(edicoesBase, estudo);
+
+		estudo.setEdicoesBase(edicoesBase);
+
+		baseParaVeraneio.executar(estudo);
+	    }
+	}
     }
 
-    private LinkedList<ProdutoEdicaoBase> limitarEdicoesApenasSeis(List<ProdutoEdicaoBase> edicoesBase) {
-	LinkedList<ProdutoEdicaoBase> nova = new LinkedList<>();
+    private LinkedList<ProdutoEdicaoEstudo> limitarEdicoesApenasSeis(List<ProdutoEdicaoEstudo> edicoesBase, EstudoTransient estudo) {
+	LinkedList<ProdutoEdicaoEstudo> nova = new LinkedList<>();
 	int qtdeParciais = 0;
-	for (ProdutoEdicaoBase base : edicoesBase) {
-	    if (base.isEdicaoAberta()) {
-		if (nova.size() != 0) {
-		    continue;
-		}
-		nova.add(base);
-	    } else {
+	for (ProdutoEdicaoEstudo base : edicoesBase) {
+	    if (!base.isEdicaoAberta()) {
 		if (nova.size() < 6) {
-		    if (base.isParcial()) {
+		    if (base.isParcial() && estudo.getProdutoEdicaoEstudo().getId().equals(base.getId())) {
 			if (qtdeParciais < 4) {
 			    qtdeParciais++;
 			} else {
 			    continue;
 			}
 		    }
-		    nova.add(base);
+		    if ((base.isParcial() && estudo.getProdutoEdicaoEstudo().getId().equals(base.getId())) ||
+			    !base.isParcial()) {
+			nova.add(base);
+		    }
 		}
 	    }
 	    if (nova.size() == 6) {
 		break;
 	    }
 	}
+	if (nova.size() < 3) {
+	    for (ProdutoEdicaoEstudo base : edicoesBase) {
+		if (base.isEdicaoAberta()) {
+		    nova.add(base);
+		    break;
+		}
+	    }
+	}
 	return nova;
     }
 
-    private void validaApenasUmaEdicaoFechada(List<ProdutoEdicaoBase> edicoesBase) throws Exception {
+    private void validaApenasUmaEdicaoFechada(List<ProdutoEdicaoEstudo> edicoesBase) throws Exception {
 	if (edicoesBase.size() == 1 && !edicoesBase.get(0).isEdicaoAberta()) {
-	    throw new Exception("Existe apenas 1 edição fechada, favor incluir mais publicações na base.");
+	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Existe apenas 1 edição fechada, favor incluir mais publicações na base."));
 	}
     }
 
-    private void excluiEdicoesComMaisDeDoisAnos(List<ProdutoEdicaoBase> edicoesBase) {
+    private void excluiEdicoesComMaisDeDoisAnos(List<ProdutoEdicaoEstudo> edicoesBase) {
 	int count = TRES_EDICOES - INDEX_CORRECTION;
 	while (edicoesBase.size() > count) {
 	    if (isBeforeTwoYears(edicoesBase.get(count).getDataLancamento())) {
@@ -94,9 +108,8 @@ public class DefinicaoBases extends ProcessoAbstrato {
 	}
     }
 
-    private void excluiMaiorQueQuatroSeColecionavel(List<ProdutoEdicaoBase> edicoesBase) {
-	if ((getEstudo().getProduto().getNumeroEdicao().compareTo(1L) > 0) && edicoesBase.get(0).isColecao()
-		&& edicoesBase.size() > QUATRO_COLECIONAVEIS) {
+    private void excluiMaiorQueQuatroSeColecionavel(List<ProdutoEdicaoEstudo> edicoesBase, EstudoTransient estudo) {
+	if ((estudo.getProdutoEdicaoEstudo().getNumeroEdicao().compareTo(1L) > 0) && edicoesBase.size() > QUATRO_COLECIONAVEIS && edicoesBase.get(0).isColecao()) {
 	    edicoesBase.subList(QUATRO_COLECIONAVEIS + INDEX_CORRECTION, edicoesBase.size()).clear();
 	}
     }

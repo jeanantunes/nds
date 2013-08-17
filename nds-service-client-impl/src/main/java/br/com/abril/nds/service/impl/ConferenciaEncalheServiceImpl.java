@@ -266,7 +266,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	public boolean isCotaEmiteNfe(Integer numeroCota) {
 
 		
-		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 
 		if (cota == null) {
 			throw new ValidacaoException(TipoMensagem.ERROR,
@@ -679,7 +679,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 						dataOperacao, 
 						tiposMovimentoFinanceiroIgnorados);
 		
-		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 		
 		infoConfereciaEncalheCota.setCota(cota);
 		infoConfereciaEncalheCota.setListaDebitoCreditoCota(listaDebitoCreditoCota);
@@ -795,7 +795,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			produtoEdicaoDTO = new ProdutoEdicaoDTO();
 			
-		    Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+		    Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 		    
 			ChamadaEncalhe chamadaEncalhe = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
 			
@@ -862,7 +862,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		    
 			produtoEdicaoDTO = new ProdutoEdicaoDTO();
 			
-		    Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+		    Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 		    
 			ChamadaEncalhe chamadaEncalhe = this.validarExistenciaChamadaEncalheParaCotaProdutoEdicao(cota, produtoEdicao);
 			
@@ -969,7 +969,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			ProdutoEdicaoDTO produtoEdicaoDTO = new ProdutoEdicaoDTO();
 			
-		    Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+		    Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 		    
 		    for (ProdutoEdicao produtoEdicao : produtosEdicao) {
 		    
@@ -1696,7 +1696,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				throw new IllegalStateException("TipoNotaFiscal não parametrizada");
 			}
 			
-	 		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+	 		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 			
 			CFOP cfop = parametroEmissaoNF.getCfopDentroEstado();
 			
@@ -1904,7 +1904,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		}
 		
-		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
+		Cota cota = cotaRepository.obterPorNumeroDaCota(numeroCota);
 		
 		if(dataOperacao == null) {
 			dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
@@ -2309,7 +2309,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		Date dataOperacaoDistribuidor = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
-		Cota cota = cotaRepository.obterPorNumerDaCota(ctrlConfEncalheCota.getCota().getNumeroCota());
+		Cota cota = cotaRepository.obterPorNumeroDaCota(ctrlConfEncalheCota.getCota().getNumeroCota());
 		
 		Date dataFinalizacao = new Date();
 		

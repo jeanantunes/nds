@@ -1,12 +1,14 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 public class AnaliseEstudoDTO implements Serializable {
@@ -21,14 +23,17 @@ public class AnaliseEstudoDTO implements Serializable {
 	private Long numeroEdicaoProduto;
 	private Integer codPeriodoProd;
 	private String descicaoTpClassifProd;
+	private boolean permiteParcial;
 	
 	private String statusEstudo = "";
 	
 	private StatusLancamento statusRecolhiOuExpedido;
-	private Integer statusLiberadoOuGerado;
+	private Boolean statusLiberadoOuGerado;
 	
 	private TipoClassificacaoProduto tpClassifProduto;
 	private PeriodicidadeProduto periodoProduto;
+	
+	private String dataLancamento;
 	
 	private PaginacaoVO paginacao;
 	
@@ -110,10 +115,24 @@ public class AnaliseEstudoDTO implements Serializable {
 	public void setStatusRecolhiOuExpedido(StatusLancamento statusRecolhiOuExpedido) {
 		this.statusRecolhiOuExpedido = statusRecolhiOuExpedido;
 	}
-	public Integer getStatusLiberadoOuGerado() {
+	public Boolean getStatusLiberadoOuGerado() {
 		return statusLiberadoOuGerado;
 	}
-	public void setStatusLiberadoOuGerado(Integer statusLiberadoOuGerado) {
+	public void setStatusLiberadoOuGerado(Boolean statusLiberadoOuGerado) {
 		this.statusLiberadoOuGerado = statusLiberadoOuGerado;
 	}
+	public boolean isPermiteParcial() {
+	    return permiteParcial;
+	}
+	public void setPermiteParcial(boolean permiteParcial) {
+	    this.permiteParcial = permiteParcial;
+	}
+	public String getDataLancamento() {
+		return dataLancamento;
+	}
+	public void setDataLancamento(Date dataLancamento) {
+		this.dataLancamento = DateUtil.formatarDataPTBR(dataLancamento);
+	}
+	
+	
 }

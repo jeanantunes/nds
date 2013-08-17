@@ -1,5 +1,6 @@
 package br.com.abril.nds.model.cadastro;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -19,7 +20,12 @@ import javax.persistence.Table;
 @Entity
 @Table(name="ALGORITMO")
 @SequenceGenerator(name="ALGORTIMO_SEQ", initialValue = 1, allocationSize = 1)
-public class Algoritmo {
+public class Algoritmo implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4158811574730523034L;
 
 	@Id
 	@Column(name="ID")

@@ -32,7 +32,8 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" endereco.bairro as bairro, "); // BAIRRO
         hql.append(" endereco.cidade as cidade, "); // CIDADE        
         hql.append(" tipoGeradorFluxoPrincipal.descricao as geradorDeFluxo, "); // GERADOR DE FLUXO PRINCIPAL
-        hql.append(" areaInfluenciaPDV.descricao as areaInfluencia "); // AREA DE INFLUÊNCIA
+        hql.append(" areaInfluenciaPDV.descricao as areaInfluencia, "); // AREA DE INFLUÊNCIA
+        hql.append(" cota.tipoDistribuicaoCota as tpDistribCota "); // TIPO DISTRIBUIÇÃO COTA
         
         if(obterFaturamento){
         	hql.append(" , sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * produtoEdicao.precoVenda) as faturamentoMedio "); // FATURAMENTO MENSAL        	
@@ -51,18 +52,17 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         	hql.append(" LEFT JOIN cotaBaseCota.cotaBase as cotaBase ");
         }
         
-        hql.append(" left join cota.enderecos as cotaEndereco ");
+        hql.append(" left join cota.enderecos as cotaEndereco with cotaEndereco.principal = true ");
         hql.append(" left join cota.pessoa as pessoa ");
         hql.append(" left join cotaEndereco.endereco as endereco ");
-        hql.append(" left join cota.pdvs as pdv ");
+        hql.append(" left join cota.pdvs as pdv with pdv.caracteristicas.pontoPrincipal = true ");
         hql.append(" left join pdv.segmentacao as segmento ");
         hql.append(" left join pdv.geradorFluxoPDV as geradorFluxoPrincipalPDV ");
         hql.append(" left join geradorFluxoPrincipalPDV.principal as tipoGeradorFluxoPrincipal ");
         
         hql.append(" left join segmento.tipoPontoPDV as tipoPontoPDV ");
         hql.append(" left join segmento.areaInfluenciaPDV as areaInfluenciaPDV ");
-        hql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
-        hql.append(" and cotaEndereco.principal = true ");
+        hql.append(" where  1 = 1");
         if(semCotaBase || obterFaturamento){
         	hql.append(" and cota.numeroCota = :numeroCota ");
         }else{
@@ -128,7 +128,6 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" left join segmento.tipoPontoPDV as tipoPontoPDV ");
         hql.append(" left join segmento.areaInfluenciaPDV as areaInfluenciaPDV ");
         hql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
-        hql.append(" and cotaEndereco.principal = true ");
         if(dto == null){
         	hql.append(" and cotaBaseCota.ativo = true ");        	
         	hql.append(" and cotaBase.id = :idCotaBase ");        	
@@ -139,6 +138,8 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         }else{
         	hql.append(" GROUP BY cota.id");        	
         }
+        
+        hql.append(" order by numeroCota");
         
         Query query =  getSession().createQuery(hql.toString());
         
@@ -156,7 +157,7 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
 	}
 
 	@Override
-	public CotaBase obterCotaNova(Integer numeroCotaNova) {
+	public CotaBase obterCotaNova(Integer numeroCotaNova, Boolean ativo) {
 		
 		StringBuilder hql = new StringBuilder();
         
@@ -165,8 +166,12 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" FROM CotaBaseCota as cotaBaseCota");
         hql.append(" JOIN cotaBaseCota.cotaBase as cotaBase");
        
-        hql.append(" WHERE cotaBaseCota.ativo = true ");
-        hql.append(" AND cotaBase.cota.numeroCota = :numeroCotaNova ");
+        if(ativo){
+        	hql.append(" WHERE cotaBaseCota.ativo = true ");        	
+        	hql.append(" AND cotaBase.cota.numeroCota = :numeroCotaNova ");
+        }else{
+        	hql.append(" WHERE cotaBase.cota.numeroCota = :numeroCotaNova ");
+        }
         
         hql.append(" GROUP BY cotaBase.cota.id ");
         
@@ -192,7 +197,8 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" tipoGeradorFluxoPrincipal.descricao as geradorDeFluxo, "); // GERADOR DE FLUXO PRINCIPAL
         hql.append(" areaInfluenciaPDV.descricao as areaInfluencia, "); // AREA DE INFLUÊNCIA
     	hql.append(" cotaBase.dataInicio as dataInicial, "); // DATA INICIAL
-    	hql.append(" cotaBase.dataFim as dataFinal "); // DATA INICIAL
+    	hql.append(" cotaBase.dataFim as dataFinal, "); // DATA INICIAL
+    	hql.append(" cota.tipoDistribuicaoCota as tpDistribCota "); // TIPO DISTRIBUIÇÃO COTA
     	
     	hql.append(" FROM CotaBaseCota as cotaBaseCota ");
     	hql.append(" LEFT JOIN cotaBaseCota.cotaBase as cotaBase ");        
@@ -208,7 +214,6 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" left join segmento.areaInfluenciaPDV as areaInfluenciaPDV ");
         
         hql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
-        hql.append(" and cotaEndereco.principal = true ");
        	hql.append(" and cotaBase.id = :idCotaNova ");        	
         
         hql.append(" group by cota.id ");
@@ -275,7 +280,6 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" left join segmento.tipoPontoPDV as tipoPontoPDV ");
         hql.append(" left join segmento.areaInfluenciaPDV as areaInfluenciaPDV ");
         hql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
-        hql.append(" and cotaEndereco.principal = true ");        
         hql.append(" and cotaBase.id = :idCotaBase ");
         
         
@@ -329,11 +333,18 @@ public class CotaBaseRepositoryImpl extends AbstractRepositoryModel<CotaBase, Lo
         hql.append(" left join segmento.tipoPontoPDV as tipoPontoPDV ");
         hql.append(" left join segmento.areaInfluenciaPDV as areaInfluenciaPDV ");
         hql.append(" where pdv.caracteristicas.pontoPrincipal = true ");
-        hql.append(" and cotaEndereco.principal = true ");        
         
-        hql.append(" GROUP BY cotaBase.id");
+        if (dto.getNumeroCota() != null) {
+        	hql.append(" and cota.numeroCota = :numeroCota");
+        }
+        
+        hql.append(" GROUP BY cota.id");
         
         Query query =  getSession().createQuery(hql.toString());
+        
+        if (dto.getNumeroCota() != null) {
+        	query.setParameter("numeroCota", dto.getNumeroCota());
+        }
         
         query.setResultTransformer(new AliasToBeanResultTransformer(CotaBaseDTO.class));
         

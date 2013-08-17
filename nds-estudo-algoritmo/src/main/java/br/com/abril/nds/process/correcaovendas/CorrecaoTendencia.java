@@ -4,8 +4,7 @@ import java.math.BigDecimal;
 
 import org.springframework.stereotype.Component;
 
-import br.com.abril.nds.model.Cota;
-import br.com.abril.nds.process.ProcessoAbstrato;
+import br.com.abril.nds.model.estudo.CotaEstudo;
 
 /**
  * Processo que tem como objetivo efetuar o cálculo da divisão do reparte entre as cotas encontradas para o perfil definido no
@@ -17,18 +16,7 @@ import br.com.abril.nds.process.ProcessoAbstrato;
  * </p>
  */
 @Component
-public class CorrecaoTendencia extends ProcessoAbstrato {
-
-    private BigDecimal totalReparte;
-    private BigDecimal totalVenda;
-
-    public void setTotalReparte(BigDecimal totalReparte) {
-	this.totalReparte = totalReparte;
-    }
-
-    public void setTotalVenda(BigDecimal totalVenda) {
-	this.totalVenda = totalVenda;
-    }
+public class CorrecaoTendencia {
 
     /**
      * <h2>Sub Processo: Correção de Tendência</h2>
@@ -94,24 +82,20 @@ public class CorrecaoTendencia extends ProcessoAbstrato {
      * Endif
      * </pre>
      */
-    @Override
-    protected void executarProcesso() throws Exception {
+    public void executar(CotaEstudo cota, BigDecimal totalReparte, BigDecimal totalVenda) throws Exception {
 
 	BigDecimal indiceCorrecaoTendencia = BigDecimal.ONE;
 
-	Cota cota = (Cota) super.genericDTO;
-
-	if (this.totalVenda.compareTo(BigDecimal.ZERO) != 0) {
-
-	    BigDecimal percentualVenda = this.totalVenda.divide(this.totalReparte, 1, BigDecimal.ROUND_FLOOR);
+	if (totalVenda.compareTo(BigDecimal.ZERO) != 0) {
+	    BigDecimal percentualVenda = totalVenda.divide(totalReparte, 4, BigDecimal.ROUND_HALF_UP);
 
 	    if (percentualVenda.compareTo(BigDecimal.ONE) == 0) {
-		indiceCorrecaoTendencia = indiceCorrecaoTendencia.add(new BigDecimal(0.2).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR));
+		indiceCorrecaoTendencia = indiceCorrecaoTendencia.add(new BigDecimal(0.2).divide(BigDecimal.ONE, 3, BigDecimal.ROUND_HALF_UP));
 	    } else {
-		BigDecimal decimalCompare = new BigDecimal(0.9).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR);
+		BigDecimal decimalCompare = new BigDecimal(0.9).divide(BigDecimal.ONE, 3, BigDecimal.ROUND_HALF_UP);
 
 		if (percentualVenda.compareTo(decimalCompare) >= 0) {
-		    indiceCorrecaoTendencia = indiceCorrecaoTendencia.add(new BigDecimal(0.1).divide(BigDecimal.ONE, 1, BigDecimal.ROUND_FLOOR));
+		    indiceCorrecaoTendencia = indiceCorrecaoTendencia.add(new BigDecimal(0.1).divide(BigDecimal.ONE, 3, BigDecimal.ROUND_HALF_UP));
 		}
 	    }
 	}

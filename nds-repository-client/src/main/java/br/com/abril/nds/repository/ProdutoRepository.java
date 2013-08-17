@@ -57,10 +57,10 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	String obterNomeProdutoPorCodigo(String codigoProduto);
 	
 	List<ConsultaProdutoDTO> pesquisarProdutos(String codigo, String produto, String fornecedor, String editor,
-			Long codigoTipoProduto, String sortorder, String sortname, int page, int rp);
+			Long codigoTipoProduto, String sortorder, String sortname, int page, int rp, Boolean isGeracaoAutomatica);
 
 	Integer pesquisarCountProdutos(String codigo, String produto,
-			String fornecedor, String editor, Long codigoTipoProduto);
+			String fornecedor, String editor, Long codigoTipoProduto, Boolean isGeracaoAutomatica);
 
 	Produto obterProdutoPorID(Long id);
 	
@@ -75,5 +75,8 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	GrupoProduto obterGrupoProduto(String codigoProduto);
 	
 	List<Produto> buscarProdutosBalanceadosOrdenadosNome(Date dataLancamento);
+
+	List<String> verificarProdutoExiste(String... codigoProduto);
 	
+	String obterCodigoProdinPorCodICD (String codigoProduto);
 }

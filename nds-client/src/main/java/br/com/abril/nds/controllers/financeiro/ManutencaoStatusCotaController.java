@@ -4,11 +4,14 @@ import static org.quartz.JobBuilder.newJob;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.quartz.JobDataMap;
@@ -35,6 +38,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.CotaService;
@@ -49,6 +53,8 @@ import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PeriodoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -75,6 +81,9 @@ public class ManutencaoStatusCotaController extends BaseController {
 	
 	@Autowired
 	private HttpSession httpSession;
+	
+	@Autowired
+	private HttpServletResponse httpResponse;
 	
 	@Autowired
 	private SituacaoCotaService situacaoCotaService;
@@ -147,6 +156,7 @@ public class ManutencaoStatusCotaController extends BaseController {
 		 result.use(Results.json()).from(cotaVO, "result").serialize();
 	}
 	
+
 	@Post
 	@Path("/novo/confirmar")
 	public void confirmarNovo(HistoricoSituacaoCota novoHistoricoSituacaoCota) throws SchedulerException {
@@ -266,14 +276,8 @@ public class ManutencaoStatusCotaController extends BaseController {
 	    scheduler.scheduleJob(job, trigger);
 	}
 	
-	/*
-	 * Processa o histórico da situação da cota.
-	 *  
-	 * @param listaHistoricoStatusCota - lista de histórico
-	 * @param filtro - filtro de pesquisa
-	 */
-	private void processarHistoricoStatusCota(List<HistoricoSituacaoCota> listaHistoricoStatusCota,
-											  FiltroStatusCotaDTO filtro) {
+	
+	private List<HistoricoSituacaoCotaVO> obterListaHistoricoSituacaoCotaVO(List<HistoricoSituacaoCota> listaHistoricoStatusCota) {
 		
 		List<HistoricoSituacaoCotaVO> listaHistoricoSituacaoCotaVO = new ArrayList<HistoricoSituacaoCotaVO>();
 		
@@ -308,6 +312,20 @@ public class ManutencaoStatusCotaController extends BaseController {
 			
 			listaHistoricoSituacaoCotaVO.add(historicoSituacaoCotaVO);
 		}
+		
+		return listaHistoricoSituacaoCotaVO;
+	}
+	
+	/*
+	 * Processa o histórico da situação da cota.
+	 *  
+	 * @param listaHistoricoStatusCota - lista de histórico
+	 * @param filtro - filtro de pesquisa
+	 */
+	private void processarHistoricoStatusCota(List<HistoricoSituacaoCota> listaHistoricoStatusCota,
+											  FiltroStatusCotaDTO filtro) {
+		
+		List<HistoricoSituacaoCotaVO> listaHistoricoSituacaoCotaVO = obterListaHistoricoSituacaoCotaVO(listaHistoricoStatusCota);
 		
 		TableModel<CellModelKeyValue<HistoricoSituacaoCotaVO>> tableModel =
 			new TableModel<CellModelKeyValue<HistoricoSituacaoCotaVO>>();
@@ -570,12 +588,52 @@ public class ManutencaoStatusCotaController extends BaseController {
 			}
 		}
 		
+		Cota cota = novoHistoricoSituacaoCota.getCota();
+		
+		if (cota != null && cota.getTipoDistribuicaoCota() != null) {
+			
+			if (cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.CONVENCIONAL)) {
+				
+				if (!cotaService.cotaVinculadaCotaBase(cota.getId())) {
+					
+					listaMensagens.add("Cota Convencional deve ter ao menos uma cota base relacionada.");
+				}
+				else {
+					
+					if ((cota.getSituacaoCadastro().equals(SituacaoCadastro.INATIVO) || cota.getSituacaoCadastro().equals(SituacaoCadastro.SUSPENSO)) &&
+							isPeriodoCotaConvencionalSuperior(novoHistoricoSituacaoCota, 90)) {
+						
+						listaMensagens.add("Periodo superior a 90 dias. Favor vincular a cota a uma cota base.");
+					}
+					
+				}
+			}
+		}
+		
 		if (!listaMensagens.isEmpty()) {
 			
 			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagens);
 			
 			throw new ValidacaoException(validacao);
 		}
+	}
+	
+	private boolean isPeriodoCotaConvencionalSuperior(HistoricoSituacaoCota novoHistoricoSituacaoCota, int qtdDias) {
+		
+		Date dataInicio = novoHistoricoSituacaoCota.getDataInicioValidade();
+		Calendar calendarDataInicio = Calendar.getInstance();
+		calendarDataInicio.setTime(dataInicio);
+		
+		Calendar calendarAtual = Calendar.getInstance();
+		
+		calendarDataInicio.add(Calendar.DAY_OF_YEAR, qtdDias);
+		
+		if (calendarAtual.compareTo(calendarDataInicio) > -1) {
+			
+			return true;
+		}
+	  
+	  return false;	
 	}
 	
 	/**
@@ -598,4 +656,27 @@ public class ManutencaoStatusCotaController extends BaseController {
 
 		result.use(Results.json()).from(validacao!=null?validacao:"", "result").recursive().serialize();
 	}	
+	
+	
+	 /**
+     * Exporta os dados da pesquisa.
+     * 
+     * @param fileType - tipo de arquivo
+     * 
+     * @throws IOException Exceção de E/S
+     */
+    @Get
+    public void exportar(FileType fileType) throws IOException {
+
+		FiltroStatusCotaDTO filtroSessao = (FiltroStatusCotaDTO) httpSession.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
+	
+		List<HistoricoSituacaoCota> listaHistoricoStatusCota = this.situacaoCotaService.obterHistoricoStatusCota(filtroSessao);
+		
+		List<HistoricoSituacaoCotaVO> listaHistoricoSituacaoCotaVO = obterListaHistoricoSituacaoCotaVO(listaHistoricoStatusCota);
+		
+		FileExporter.to("manutencao_status_cota", fileType).inHTTPResponse(this.getNDSFileHeader(), filtroSessao, null, 
+				listaHistoricoSituacaoCotaVO, HistoricoSituacaoCotaVO.class, httpResponse);
+		
+		result.nothing();
+    }
 }
