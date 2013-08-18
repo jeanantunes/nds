@@ -155,6 +155,10 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 		
 		for(ProdutoAbastecimentoDTO item : boxProdutoRota ) {
 			
+			if(item.getCodigoBox() == null) {
+				return null;
+			}
+			
 			Integer keyBox = item.getCodigoBox();
 			
 			if(!boxes.containsKey(keyBox))

@@ -285,9 +285,18 @@
 	
 	this.processarMensagens = function(result) {
 
-		if(result.mensagens)
+		if(result.mensagens) {
 			exibirMensagem(result.mensagens.tipoMensagem,result.mensagens.listaMensagens);
-		
+		} else {
+			$(result.rows).each(function(){
+				if(this.cell.codigoBox == undefined) {
+					this.cell.codigoBox = "Sem box definido";
+				}
+				if(this.cell.codigoRota == undefined) {
+					this.cell.codigoRota = "Sem rota definida";
+				}
+			});	
+		}
 		return result;
 	},
 	
