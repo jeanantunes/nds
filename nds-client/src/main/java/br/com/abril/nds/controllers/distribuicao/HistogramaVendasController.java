@@ -137,7 +137,7 @@ public class HistogramaVendasController extends BaseController {
 			}
 			break;
 		case GERADOR_DE_FLUXO:
-			for(TipoGeradorFluxoPDV tipo:pdvService.obterTodosTiposGeradorFluxo()){
+			for(TipoGeradorFluxoPDV tipo:pdvService.obterTodosTiposGeradorFluxoOrdenado()){
 				resultList.add(new ItemDTO(tipo.getCodigo(),tipo.getDescricao()));
 			}
 			break;
