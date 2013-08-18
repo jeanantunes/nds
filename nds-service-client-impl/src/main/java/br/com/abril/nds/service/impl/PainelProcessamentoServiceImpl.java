@@ -124,6 +124,7 @@ public class PainelProcessamentoServiceImpl implements PainelProcessamentoServic
 		for (ConsultaInterfacesDTO logExecucao : listaLogExecucao) {
 			interfaceDTO = new InterfaceDTO();
 			interfaceDTO.setIdLogProcessamento(logExecucao.getId().toString());
+			interfaceDTO.setIdLogExecucao(logExecucao.getIdLogExecucao());
 			
 			if(logExecucao != null &&  logExecucao.getDataInicio() != null)	{	
 				interfaceDTO.setDataProcessmento( sdfData.format(logExecucao.getDataInicio() ));
