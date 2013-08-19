@@ -160,7 +160,7 @@
    	  		
     		<table width="650" border="0" cellspacing="1" cellpadding="1">
 				<tr>
-					<td width="73">Nota de Envio:</td>
+					<td width="73">Data Lancto:</td>
 					<td width="124">
 						<div id="divDataNotaEnvio">
 							<input name="dateNotaEnvio" type="text" style="width:80px;" class="viewNotaEnvio" id="dateNotaEnvio" />
@@ -179,7 +179,7 @@
 							onblur="pesquisaCotaLancamentoFaltasSobras.pesquisarPorNomeCota(cotaInputNota, nomeCotaNota);" />
 					</td>
 					<td width="16">
-						<img id="incluirNovosProduto" src="${pageContext.request.contextPath}/images/ico_add.gif" width="16" height="16" alt="Incluir"
+						<img id="incluirNovosProduto" src="${pageContext.request.contextPath}/images/ico_pesquisar.png" width="16" height="16" alt="Incluir"
 							onclick="lancamentoNovoController.pesquisarProdutosNota();"/>
 					</td>
           		</tr>

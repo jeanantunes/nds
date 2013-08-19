@@ -13,7 +13,6 @@ var furoProdutoController = $.extend(true, {
 			buttonImageOnly: true,
 			dateFormat: "dd/mm/yy"
 		});
-		$("#produto", furoProdutoController.workspace).autocomplete({source: ""});
 		
 		$("#dataLancamento", furoProdutoController.workspace).mask("99/99/9999");
 		$("#novaData", furoProdutoController.workspace).mask("99/99/9999");
@@ -23,7 +22,7 @@ var furoProdutoController = $.extend(true, {
 			
 			focusSelectRefField($("#codigo"));
 			
-			$(document.body).keydown(function(e) {
+			$('#linkPesquisarFuro').keydown(function(e) {
 				
 				if(keyEventEnterAux(e)){
 					furoProdutoController.pesquisar();
@@ -90,13 +89,17 @@ var furoProdutoController = $.extend(true, {
 	},
 	
 	pesquisarPorNomeProduto : function(){
+		
+		var produto = $("#produto", furoProdutoController.workspace).val().trim();
+		
+		if (!produto || produto.trim().length <= 2)
+			return;
+		
 		if(!isPesquisarPorNomeProdutoRequestCallBack){
 			isPesquisarPorNomeProdutoRequestCallBack = true;
-			var produto = $("#produto", furoProdutoController.workspace).val().trim();
 			
-			if (produto && produto.length > 2){
-				$.postJSON(contextPath + "/lancamento/furoProduto/pesquisarPorNomeProduto", {nomeProduto:produto}, furoProdutoController.exibirAutoComplete);
-			}
+			$.postJSON(contextPath + "/lancamento/furoProduto/pesquisarPorNomeProduto", {nomeProduto:produto}, furoProdutoController.exibirAutoComplete);
+			
 		}
 	},
 	
@@ -107,13 +110,12 @@ var furoProdutoController = $.extend(true, {
 			select: function(event, ui){
 				furoProdutoController.completarPesquisa(ui.item.chave);
 			},
-			delay : 0
+			delay : 1
 		});
 	},
 	
 	completarPesquisa : function(chave){
 		$("#codigo", furoProdutoController.workspace).val(chave.codigoProduto);
-		$("#edicao", furoProdutoController.workspace).focus();
 	},
 	
 	confirmar : function(){
@@ -121,7 +123,7 @@ var furoProdutoController = $.extend(true, {
 				idProdutoEdicao:$("#produtoEdicaoHidden", furoProdutoController.workspace).val(),
 				novaData:$("#novaData", furoProdutoController.workspace).val(),
 				idLancamento:$("#lancamentoHidden", furoProdutoController.workspace).val()};
-		$.postJSON(contextPath + "/lancamento/furoProduto/validarFuro", data, function(result) { furoProdutoController.posProcessarConfirmacao(result, data) } );
+		$.postJSON(contextPath + "/lancamento/furoProduto/validarFuro", data, function(result) { furoProdutoController.posProcessarConfirmacao(result, data); } );
 	},
 	
 	posProcessarConfirmacao : function(result, data) {

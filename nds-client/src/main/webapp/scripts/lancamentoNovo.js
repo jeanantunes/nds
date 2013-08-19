@@ -233,13 +233,7 @@ var lancamentoNovoController = $.extend(true, {
 	
 	carregarDiferencaProduto:function(diferenca){
 		
-		if(diferenca.automatica && diferenca.automatica == true){
-			
-			$("#diferencaProdutoInput", lancamentoNovoController.workspace).attr("disabled", "disabled");
-		}
-		else{
-			$("#diferencaProdutoInput", lancamentoNovoController.workspace).removeAttr("disabled");
-		}
+		$("#diferencaProdutoInput", lancamentoNovoController.workspace).removeAttr("disabled");
 		
 		if (diferenca.codigoProduto){
 			
@@ -582,7 +576,9 @@ var lancamentoNovoController = $.extend(true, {
 		
 		data.push({name: "qntReparteRateio", value: qntReparteRateio});
 		
-		if (direcionadoParaEstoque) {
+		if (direcionadoParaEstoque
+				|| tipoDiferenca == 'FALTA_DE'
+				|| tipoDiferenca == 'FALTA_EM') {
 			
 			data.push({name: "tipoDiferenca", value: tipoDiferenca});
 			

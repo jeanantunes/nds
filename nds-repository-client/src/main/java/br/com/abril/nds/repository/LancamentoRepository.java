@@ -25,7 +25,6 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
-import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
@@ -47,8 +46,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	Long obterTotalLancamentosNaoExpedidos(Date data, Long idFornecedor,
 			Boolean estudo);
 
-	Lancamento obterLancamentoPorItensRecebimentoFisico(Date dataPrevista,
-			TipoLancamento tipoLancamento, Long idProdutoEdicao);
+	Lancamento obterLancamentoPorItensRecebimentoFisico(Date dataPrevista, Long idProdutoEdicao);
 
 	Date obterDataRecolhimentoPrevista(String codigoProduto, Long numeroEdicao);
 

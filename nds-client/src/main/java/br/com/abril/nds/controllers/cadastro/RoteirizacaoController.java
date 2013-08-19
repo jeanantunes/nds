@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.cadastro;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -200,6 +201,57 @@ public class RoteirizacaoController extends BaseController {
         this.result.use(Results.json()).from(listaRotas, "result").serialize();
     }
 	
+	/**
+	 * Carrega o combos Roteiro e Rota por intervalo de Box
+	 * @param codigoBoxDe
+	 * @param codigoBoxAte
+	 */
+	@Post
+	@Path("/carregarCombosPorBox")
+	public void carregarCombosPorBox(Integer codigoBoxDe, Integer codigoBoxAte) {
+		
+		List<ItemDTO<Long, String>> boxes = this.roteirizacaoService.getComboTodosBoxes();
+		
+		List<ItemDTO<Long, String>> rotas = this.roteirizacaoService.getComboRotaPorBox(codigoBoxDe, codigoBoxAte);
+		
+		List<ItemDTO<Long, String>> roteiros = this.roteirizacaoService.getComboRoteiroPorBox(codigoBoxDe, codigoBoxAte);
+		
+		result.use(Results.json()).from(Arrays.asList(rotas, roteiros, boxes),"result").recursive().serialize();
+	}
+	
+	/**
+	 * Carrega o combo Roteiro e Box por Rota
+	 * @param idRota
+	 */
+	@Post
+	@Path("/carregarCombosPorRota")
+	public void carregarCombosPorRota(Long idRota) {
+		
+		List<ItemDTO<Long, String>> rotas = this.roteirizacaoService.getComboTodosRotas();
+		
+		List<ItemDTO<Long, String>> roteiros = this.roteirizacaoService.getComboRoteiroPorRota(idRota);
+		
+		List<ItemDTO<Long, String>> boxes = this.roteirizacaoService.getComboBoxPorRota(idRota);
+		
+		result.use(Results.json()).from(Arrays.asList(roteiros, boxes, rotas),"result").recursive().serialize();
+	}
+	
+	/**
+	 * Carrega o combo Rota e Box por Roteiro
+	 * @param idRoteiro
+	 */
+	@Post
+	@Path("/carregarCombosPorRoteiro")
+	public void carregarCombosPorRoteiro(Long idRoteiro) {
+		
+		List<ItemDTO<Long, String>> roteiros = this.roteirizacaoService.getComboTodosRoteiros();
+		
+		List<ItemDTO<Long, String>> rotas = this.roteirizacaoService.getComboRotaPorRoteiro(idRoteiro);
+		
+		List<ItemDTO<Long, String>> boxes = this.roteirizacaoService.getComboBoxPorRoteiro(idRoteiro);
+		
+		result.use(Results.json()).from(Arrays.asList(rotas, boxes, roteiros),"result").recursive().serialize();
+	}
 	
 	@Path("/obterProximaOrdemRoteiro")
 	public void obterProximaOrdemRoteiro() {

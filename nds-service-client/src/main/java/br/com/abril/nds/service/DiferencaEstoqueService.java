@@ -99,7 +99,7 @@ public interface DiferencaEstoqueService {
 	 * @param filtro - filtro de pesquisa
 	 * @param idUsuario - identificador do usuário
 	 */
-	void cancelarDiferencas(FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa, Long idUsuario);
+	void cancelarDiferencas(FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa, List<Long> idsDiferencasSelecionadas, Long idUsuario);
 
 	void excluirLancamentoDiferenca(Long idDiferenca);
 	

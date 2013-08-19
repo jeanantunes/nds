@@ -313,7 +313,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		sql.append("SELECT lcto FROM Lancamento lcto ");
 		sql.append("      JOIN FETCH lcto.produtoEdicao pe ");
 		sql.append("    WHERE pe = :produtoEdicao ");
-		sql.append("      AND lcto.dataLancamentoDistribuidor = :dataRecolhimentoLancamento ");
+		sql.append("      AND lcto.dataRecolhimentoPrevista = :dataRecolhimentoLancamento ");
 		sql.append(" ORDER BY lcto.dataLancamentoDistribuidor ASC");
 		
 		Query query = getSession().createQuery(sql.toString());

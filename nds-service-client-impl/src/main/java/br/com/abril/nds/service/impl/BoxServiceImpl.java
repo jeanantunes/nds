@@ -140,4 +140,54 @@ public class BoxServiceImpl implements BoxService {
 		
 		return cota.getBox();
 	}
+	
+	/**
+	 * Obtem lista de Box por intervalo de Código
+	 * @param codigoBoxDe
+	 * @param codigoBoxAte
+	 * @return List<Box>
+	 */
+	@Override
+	@Transactional(readOnly=true)
+	public List<Box> obterBoxPorIntervaloCodigo(Integer codigoBoxDe, Integer codigoBoxAte){
+		
+		Integer boxDe = codigoBoxDe==null?0:codigoBoxDe;
+		
+		Integer boxAte = codigoBoxAte==null?0:codigoBoxAte;
+		
+		if (boxDe.compareTo(boxAte) > 0 ){
+			
+			boxDe = codigoBoxAte;
+			
+			boxAte = codigoBoxDe;
+		}
+
+		List<Box> boxes = this.boxRepository.obterBoxPorIntervaloCodigo(boxDe, boxAte);
+		
+		return boxes;
+	}
+	
+	/**
+	 * Busca lista de Box por Rota
+	 * @param rotaId
+	 * @return List<Box>
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<Box> buscarBoxPorRota(Long rotaId) {
+
+		return boxRepository.buscarBoxPorRota(rotaId);
+	}
+
+	/**
+	 * Busca lista de Box por Roteiro
+	 * @param roteiroId
+	 * @return List<Box>
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public List<Box> buscarBoxPorRoteiro(Long roteiroId) {
+
+		return boxRepository.buscarBoxPorRoteiro(roteiroId);
+	}
 }

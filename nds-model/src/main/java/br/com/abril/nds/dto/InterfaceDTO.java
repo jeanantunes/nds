@@ -12,6 +12,8 @@ public class InterfaceDTO implements Serializable {
 
 	private String idLogProcessamento;
 	
+	private Long idLogExecucao;
+	
 	@Export(label="Interface")
 	private String nome;
 	
@@ -95,6 +97,14 @@ public class InterfaceDTO implements Serializable {
 
 	public void setDescricaoInterface(String descricaoInterface) {
 		this.descricaoInterface = descricaoInterface;
+	}
+
+	public Long getIdLogExecucao() {
+		return idLogExecucao;
+	}
+
+	public void setIdLogExecucao(Long idLogExecucao) {
+		this.idLogExecucao = idLogExecucao;
 	}
 
 }
