@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.util.CurrencyUtil;
 
 public class ProdutoAbastecimentoDTO implements Serializable{
@@ -28,6 +29,7 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	private String codigoBarra;
 	private Integer pacotePadrao;
 	private Long qtdeExms;
+	private Cota cota;
 	
 	public ProdutoAbastecimentoDTO() {
 		
@@ -253,5 +255,13 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	 */
 	public void setQtdeExms(Long qtdeExms) {
 		this.qtdeExms = qtdeExms;
+	}
+
+	public Cota getCota() {
+		return cota;
+	}
+
+	public void setCota(Cota cota) {
+		this.cota = cota;
 	}
 }

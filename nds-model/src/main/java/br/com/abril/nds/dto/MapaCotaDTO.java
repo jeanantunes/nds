@@ -3,13 +3,18 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.util.Map;
 
+import br.com.abril.nds.model.cadastro.Cota;
+
 public class MapaCotaDTO implements Serializable {
 
 	private static final long serialVersionUID = 8749680908347698341L;
 
 	private Integer numeroCota;
 	private String nomeCota;
+	
 	private Map<Long, ProdutoMapaCotaDTO> produtos;
+	
+	private Cota cota;
 	
 	public MapaCotaDTO() {
 	
@@ -61,6 +66,18 @@ public class MapaCotaDTO implements Serializable {
 	 */
 	public void setProdutos(Map<Long, ProdutoMapaCotaDTO> produtos) {
 		this.produtos = produtos;
+	}
+
+
+
+	public Cota getCota() {
+		return cota;
+	}
+
+
+
+	public void setCota(Cota cota) {
+		this.cota = cota;
 	}
 	
 	

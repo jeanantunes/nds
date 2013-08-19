@@ -4,9 +4,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,13 +21,11 @@ import br.com.abril.nds.dto.ProdutoMapaCotaDTO;
 import br.com.abril.nds.dto.ProdutoMapaDTO;
 import br.com.abril.nds.dto.ProdutoMapaRotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
-import br.com.abril.nds.enums.TipoMensagem;
-import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.service.MapaAbastecimentoService;
-import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
 public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
@@ -115,7 +111,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 					Integer novaQtdeTotal =  produtoPorBox.getReparte() + produtoMapa.get(keyProduto).getTotalReparte();
 					produtoMapa.get(keyProduto).setTotalReparte(novaQtdeTotal);
 			}
-			
+
 			preencheBoxNaoUtilizado(boxes, produtoMapa);	
 			
 			TreeMap<String,ProdutoMapaDTO> produtoMapaOrdenada = new TreeMap<String, ProdutoMapaDTO>(comparator);	
@@ -230,8 +226,9 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 		
 		List<ProdutoAbastecimentoDTO> produtosBoxRota = movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorProdutoEdicao(filtro);
 		
-		if(produtosBoxRota.size() == 0)
+		if(produtosBoxRota.size() == 0) {
 			return null;
+		}
 		
 		ProdutoEdicaoMapaDTO peMapaDTO = new ProdutoEdicaoMapaDTO(
 				produtosBoxRota.get(0).getCodigoProduto(), 
@@ -246,6 +243,10 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 				peMapaDTO.getBoxes().put(item.getCodigoBox(), new BoxRotasDTO(0, new HashMap<String, Integer>()));
 			
 			BoxRotasDTO box = peMapaDTO.getBoxes().get(item.getCodigoBox());
+			
+			box.setCotas(new ArrayList<Cota>());
+			box.getCotas().add(item.getCota());
+			
 			
 			if(!rotas.contains(item.getCodigoRota()))
 				rotas.add(item.getCodigoRota());			
@@ -316,6 +317,9 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 				ProdutoMapaCotaDTO produtoMapaCotaDTO = 
 					new ProdutoMapaCotaDTO(
 						item.getNomeProduto(), item.getNumeroEdicao(), item.getSequenciaMatriz(), 0);
+				
+				
+				//colocar a lista de cotas 
 				
 				produtoMapa.put(item.getIdProdutoEdicao(), produtoMapaCotaDTO);
 				

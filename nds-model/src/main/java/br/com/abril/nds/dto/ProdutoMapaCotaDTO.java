@@ -1,6 +1,9 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.util.List;
+
+import br.com.abril.nds.model.cadastro.Cota;
 
 public class ProdutoMapaCotaDTO implements  Serializable{
 
@@ -10,6 +13,8 @@ public class ProdutoMapaCotaDTO implements  Serializable{
 	private Long numeroEdicao;
 	private Integer sm;
 	private Integer total;
+	private List<Cota> cotas;
+	
 	
 	public ProdutoMapaCotaDTO(){
 		
@@ -70,6 +75,14 @@ public class ProdutoMapaCotaDTO implements  Serializable{
 	 */
 	public void setTotal(Integer total) {
 		this.total = total;
+	}
+
+	public List<Cota> getCotas() {
+		return cotas;
+	}
+
+	public void setCotas(List<Cota> cotas) {
+		this.cotas = cotas;
 	}
 	
 	

@@ -197,6 +197,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		query.setParameter("idCota", idCota);
 		query.setParameter("dataControleConferencia", dataControleConferencia);
 		
+		query.setCacheable(true);
+		
 		return query.list();
 		
 	}
@@ -1986,6 +1988,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		StringBuilder hql = new StringBuilder();
 				
 		hql.append(" select box.codigo as codigoBox, ");
+		hql.append(" 		produtoEdicao.id as idProdutoEdicao, ");
 	    hql.append(" 		produto.codigo as codigoProduto, ");
 		hql.append(" 		produto.nome as nomeProduto, ");
 		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");		
@@ -2147,7 +2150,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		lancamento.repartePromocional as materialPromocional, ");
 		hql.append(" 		sum(estudoCota.qtdeEfetiva) as reparte, ");
 		hql.append(" 		sum(estudoCota.qtdeEfetiva * produtoEdicao.precoVenda) as totalBox, ");
-		hql.append(" 		produtoEdicao.precoVenda as precoCapa ");
+		hql.append(" 		produtoEdicao.precoVenda as precoCapa, ");
+		hql.append(" 		estudoCota.cota as cota ");
 		
 								
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList, statusLancamento);
@@ -2246,7 +2250,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");		
 		hql.append(" 		sum(estudoCota.qtdeEfetiva) as reparte, ");
 		hql.append(" 		sum(estudoCota.qtdeEfetiva * produtoEdicao.precoVenda) as totalBox, ");
-		hql.append(" 		lancamento.sequenciaMatriz as sequenciaMatriz ");
+		hql.append(" 		lancamento.sequenciaMatriz as sequenciaMatriz, ");
+		hql.append(" 		estudoCota.cota as cota ");
+		
 		
 		filtro.setUseSM(true);
 		
