@@ -1,3 +1,0 @@
-/**
- * Bindings to Kanso events
- */

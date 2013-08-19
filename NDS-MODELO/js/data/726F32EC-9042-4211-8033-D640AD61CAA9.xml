@@ -1,8 +1,0 @@
-tocTab[tocTab.length] = new Array("0.1.1.1.2.3:1", "", "estoque", "EARoot/EA1/EA1/EA1/EA2/EA3/EA70.html", "175.png", "-490433284", "0", "", "Logical diagram0","{E1D3DC89-604E-4d53-875D-EBCCA8851CD0}");
-tocTab[tocTab.length] = new Array("0.1.1.1.2.3:2", "", "Diferenca", "EARoot/EA1/EA1/EA1/EA2/EA3/EA72.html", "5.png", "-687354925", "0", "", "Class0","{BFE63F37-DD6F-4bfa-B1D6-2113C16C4168}");
-tocTab[tocTab.length] = new Array("0.1.1.1.2.3:3", "", "EstoqueProduto", "EARoot/EA1/EA1/EA1/EA2/EA3/EA73.html", "5.png", "1483954874", "0", "", "Class0","{5860E5D8-32D6-4567-98A8-3941A5D38133}");
-tocTab[tocTab.length] = new Array("0.1.1.1.2.3:4", "", "EstoqueProdutoCota", "EARoot/EA1/EA1/EA1/EA2/EA3/EA74.html", "5.png", "-1844321371", "0", "", "Class0","{8D112512-9FD3-41c6-8E73-BD9EBEC04D82}");
-tocTab[tocTab.length] = new Array("0.1.1.1.2.3:5", "", "ItemRecebimentoFisico", "EARoot/EA1/EA1/EA1/EA2/EA3/EA75.html", "5.png", "814865428", "0", "", "Class0","{C5040065-8121-4fe3-A42B-7A97041313CF}");
-tocTab[tocTab.length] = new Array("0.1.1.1.2.3:6", "", "RateioDiferenca", "EARoot/EA1/EA1/EA1/EA2/EA3/EA76.html", "5.png", "-855342233", "0", "", "Class0","{CCF0FE32-E619-4a0e-B0DF-A9B1E7EE52FD}");
-tocTab[tocTab.length] = new Array("0.1.1.1.2.3:7", "", "RecebimentoFisico", "EARoot/EA1/EA1/EA1/EA2/EA3/EA77.html", "5.png", "-273106042", "0", "", "Class0","{8C64086E-3E78-4cb5-8183-6D5A62955B22}");
-tocTab[tocTab.length] = new Array("0.1.1.1.2.3:8", "", "«enumeration» TipoDiferenca", "EARoot/EA1/EA1/EA1/EA2/EA3/EA78.html", "5.png", "-1328982119", "0", "", "Class0","{1410202E-0B7F-416c-A562-AC9DAFC135B3}");

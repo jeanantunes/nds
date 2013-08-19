@@ -1,8 +1,0 @@
-tocTab[tocTab.length] = new Array("0.1.1.1.2.4:1", "", "movimentacao", "EARoot/EA1/EA1/EA1/EA2/EA4/EA71.html", "175.png", "-1728892653", "0", "", "Logical diagram0","{ABB6AB50-D08E-4818-BD9C-B42550D7A4D1}");
-tocTab[tocTab.length] = new Array("0.1.1.1.2.4:2", "", "FuroProduto", "EARoot/EA1/EA1/EA1/EA2/EA4/EA73.html", "5.png", "-2036944296", "0", "", "Class0","{6D2D9D5E-1905-4e22-9B43-EFAB8702087C}");
-tocTab[tocTab.length] = new Array("0.1.1.1.2.4:3", "", "MovimentoCota", "EARoot/EA1/EA1/EA1/EA2/EA4/EA74.html", "5.png", "-307196741", "0", "", "Class0","{5DC745ED-2572-4638-A260-9A0FF789AF34}");
-tocTab[tocTab.length] = new Array("0.1.1.1.2.4:4", "", "MovimentoEstoque", "EARoot/EA1/EA1/EA1/EA2/EA4/EA75.html", "5.png", "-1781498814", "0", "", "Class0","{FE44ED05-8079-47ac-A77A-B6F2715B64A4}");
-tocTab[tocTab.length] = new Array("0.1.1.1.2.4:5", "", "TipoMovimento", "EARoot/EA1/EA1/EA1/EA2/EA4/EA76.html", "5.png", "-929059523", "0", "", "Class0","{714B9A69-CFC3-463c-AFCA-8E9465443886}");
-tocTab[tocTab.length] = new Array("0.1.1.1.2.4:6", "", "«enumeration» TipoMovimentoCota", "EARoot/EA1/EA1/EA1/EA2/EA4/EA77.html", "5.png", "-1227349669", "0", "", "Class0","{0A229078-D426-418a-AEB7-CD43CC60E657}");
-tocTab[tocTab.length] = new Array("0.1.1.1.2.4:7", "", "«enumeration» TipoMovimentoEstoque", "EARoot/EA1/EA1/EA1/EA2/EA4/EA78.html", "5.png", "-1201640422", "0", "", "Class0","{017915C1-9A95-43eb-AED2-842C618ABB90}");
-tocTab[tocTab.length] = new Array("0.1.1.1.2.4:8", "", "«enumeration» TipoOperacao", "EARoot/EA1/EA1/EA1/EA2/EA4/EA79.html", "5.png", "290177513", "0", "", "Class0","{52D25F7D-E9B3-4544-B9AC-EFCFAEBBAAC2}");
