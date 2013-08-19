@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.Collection;
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -50,7 +51,7 @@ public class Diferenca implements Serializable {
 	@ManyToOne(optional = true)
 	private Usuario responsavel;
 	
-	@OneToOne(optional = true)
+	@OneToOne(optional = true, cascade = CascadeType.REFRESH)
 	private ItemRecebimentoFisico itemRecebimentoFisico;
 	
 	@ManyToOne(optional = false)

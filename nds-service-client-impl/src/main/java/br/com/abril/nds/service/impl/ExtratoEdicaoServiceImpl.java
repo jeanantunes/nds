@@ -53,10 +53,12 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 		
 		filtroExtratoEdicao.setGruposExcluidos(obterGruposMovimentoEstoqueExtratoEdicao());
 		
-		List<ExtratoEdicaoDTO> listaExtratoEdicao = new ArrayList<ExtratoEdicaoDTO>();
+		List<ExtratoEdicaoDTO> listaExtratoEdicao =  movimentoEstoqueRepository.obterListaExtratoEdicao(filtroExtratoEdicao, StatusAprovacao.APROVADO);
 		
-		List<ExtratoEdicaoDTO> movimentosPosterioresRecebimentoMercadoria = movimentoEstoqueRepository.obterListaExtratoEdicao(filtroExtratoEdicao, StatusAprovacao.APROVADO);
-		listaExtratoEdicao.addAll(movimentosPosterioresRecebimentoMercadoria);
+		if (listaExtratoEdicao.isEmpty()){
+			
+			return null;
+		}
 
 		for(int i = 0; i < listaExtratoEdicao.size(); i++) {	
 			

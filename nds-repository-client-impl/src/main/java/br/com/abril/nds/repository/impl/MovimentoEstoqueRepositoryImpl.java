@@ -11,7 +11,6 @@ import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ExtratoEdicaoDTO;
-import br.com.abril.nds.dto.FechamentoFisicoLogicoDTO;
 import br.com.abril.nds.dto.filtro.FiltroExtratoEdicaoDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
