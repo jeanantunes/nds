@@ -2,6 +2,7 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
@@ -28,8 +29,10 @@ public class NotaFiscalEntradaFornecedorDTO implements Serializable {
 	private String dataExpedicao;
 	
 	private String descricao;
-
+	
 	private String valorTotalNota;
+	
+	private String valorTotalNotaComDesconto;
 	
 	private String notaRecebida;
 	
@@ -72,6 +75,28 @@ public class NotaFiscalEntradaFornecedorDTO implements Serializable {
 		this.chaveAcesso = chaveAcesso;
 	}
 
+	public NotaFiscalEntradaFornecedorDTO(Long id, Long numero, String serie, Long numeroNotaEnvio,
+			Date dataEmissao, Date dataExpedicao, String descricao,
+			BigDecimal valorTotalNota, BigDecimal valorTotalNotaComDesconto, 
+			StatusNotaFiscalEntrada statusNotaFiscal, 
+			Date dataRecebimento, String razaoSocial,String chaveAcesso) {
+		this.id = id;
+		this.numero = (numero == null) ? "" : numero.toString();
+		this.serie = StringUtils.defaultString(serie);
+		this.numeroNotaEnvio = numeroNotaEnvio;
+		this.dataEmissao = DateUtil.formatarDataPTBR(dataEmissao);
+		this.dataExpedicao = DateUtil.formatarDataPTBR(dataExpedicao);
+		this.descricao = StringUtils.defaultString(descricao);
+		this.valorTotalNota = CurrencyUtil.formatarValor(MathUtil.round(valorTotalNota, 2));
+		this.valorTotalNotaComDesconto = CurrencyUtil.formatarValor(MathUtil.round(valorTotalNotaComDesconto, 2));
+		this.notaRecebida = 
+				StatusNotaFiscalEntrada.RECEBIDA.equals(statusNotaFiscal) 
+					? DateUtil.formatarDataPTBR(dataRecebimento)
+					: " ";		
+		this.razaoSocial = StringUtils.defaultString(razaoSocial);
+		this.chaveAcesso = chaveAcesso;
+	}
+	
 	public Long getId() {
 		return id;
 	}
@@ -118,6 +143,14 @@ public class NotaFiscalEntradaFornecedorDTO implements Serializable {
 
 	public void setValorTotalNota(String valorTotalNota) {
 		this.valorTotalNota = valorTotalNota;
+	}
+
+	public String getValorTotalNotaComDesconto() {
+		return valorTotalNotaComDesconto;
+	}
+
+	public void setValorTotalNotaComDesconto(String valorTotalNotaComDesconto) {
+		this.valorTotalNotaComDesconto = valorTotalNotaComDesconto;
 	}
 
 	public String getNotaRecebida() {

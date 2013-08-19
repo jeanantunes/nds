@@ -74,7 +74,11 @@ public class RecebimentoFisicoDTO implements Serializable {
 	
 	private Date dataRecolhimento;
 	
-	private TipoLancamento tipoLancamento;	
+	private TipoLancamento tipoLancamento;
+	
+	private BigDecimal percentualDesconto;
+	
+	private BigDecimal valorTotalDesconto;
 	
 	public RecebimentoFisicoDTO() {}
 	
@@ -120,7 +124,7 @@ public class RecebimentoFisicoDTO implements Serializable {
 		this.diferenca = diferenca;
 		this.tipoDiferenca = tipoDiferenca;
 		this.origemItemNota = origemItemNota;
-		
+		this.percentualDesconto = percentualDesconto;
 	}
 
 	public Long getIdItemNota() {
@@ -338,6 +342,22 @@ public class RecebimentoFisicoDTO implements Serializable {
 			return false;
 		}
 		return true;
+	}
+
+	public BigDecimal getPercentualDesconto() {
+		return percentualDesconto;
+	}
+
+	public void setPercentualDesconto(BigDecimal percentualDesconto) {
+		this.percentualDesconto = percentualDesconto;
+	}
+
+	public BigDecimal getValorTotalDesconto() {
+		return valorTotalDesconto;
+	}
+
+	public void setValorTotalDesconto(BigDecimal valorTotaDesconto) {
+		this.valorTotalDesconto = valorTotaDesconto;
 	}
 
 	

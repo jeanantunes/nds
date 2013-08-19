@@ -89,10 +89,14 @@
         	
         	<table width="220" border="0" cellspacing="1" cellpadding="1">
 				<tr>
-					<td width="20" class="view-estouque"><input name="direcionar" type="radio" id="paraEstoque" onchange="lancamentoNovoController.paraEstoque(true);"/></td>
-					<td width="72" class="view-estouque" >Estoque</td>
-					<td width="20"><input name="direcionar" type="radio" id="paraCota" onchange="lancamentoNovoController.paraEstoque(false);" /></td>
-					<td width="95">Cota</td>
+					<td width="20" class="view-estouque">
+						<input name="direcionar" type="radio" id="paraEstoque" onchange="lancamentoNovoController.paraEstoque(true);"/>
+					</td>
+					<td width="72" class="view-estouque">Estoque</td>
+					<td width="20" class="view-cota">
+						<input name="direcionar" type="radio" id="paraCota" onchange="lancamentoNovoController.paraEstoque(false);" />
+					</td>
+					<td width="95" class="view-cota">Cota</td>
 				</tr>
 			</table>
      	</fieldset>

@@ -36,12 +36,12 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.HistoricoSituacaoCotaRepository#obterHistoricosStatusCota(br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO)
 	 */
-	@SuppressWarnings("unchecked")
 	public List<HistoricoSituacaoCota> obterHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
 		
 		return obterHistorico(filtro,false,false);
 	}
 
+	@SuppressWarnings("unchecked")
 	private List<HistoricoSituacaoCota> obterHistorico(FiltroStatusCotaDTO filtro,boolean totalizarResultados  ,boolean filtrarUltimaDataHistorico) {
 		
 		String hql = this.criarQueryHistoricoStatusCota(filtro, totalizarResultados,filtrarUltimaDataHistorico);
@@ -87,6 +87,7 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 	 * 
 	 * @return Query string
 	 */
+	@SuppressWarnings("deprecation")
 	private String criarQueryHistoricoStatusCota(FiltroStatusCotaDTO filtro, boolean totalizarResultados, boolean filtrarUltimaDataHistorico) {
 		
 		String hql = "select ";
@@ -227,6 +228,7 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 	 * @param query - query
 	 * @param filtro - filtro de pesquisa
 	 */
+	@SuppressWarnings("deprecation")
 	private void configurarParametrosQueryHistoricoStatusCota(Query query, FiltroStatusCotaDTO filtro) {
 		
 		if (filtro != null) {
@@ -332,7 +334,6 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 		return (Date) criteria.uniqueResult();
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public List<HistoricoSituacaoCota> obterUltimoHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
 		
@@ -340,10 +341,10 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 		
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public Long obterTotalUltimoHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
 		
 		return obterTotalHistorico(filtro, true, true);
 	}
+	
 }

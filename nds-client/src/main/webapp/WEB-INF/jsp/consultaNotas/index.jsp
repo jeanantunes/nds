@@ -45,8 +45,13 @@ fieldset label
 	        <td width="106" align="right">
 	        	<span id="totalExemplares"></span>
 	        </td>
+	        <td width="275" align="right"><strong>Valor Total:</strong></td>
 	        <td width="168" align="right"> 
 	        	<span id="totalSumarizado"></span>
+	        </td>
+	        <td width="275" align="right"><strong>Total com Desconto:</strong></td>
+	        <td width="168" align="right"> 
+	        	<span id="totalSumarizadoComDesconto"></span>
 	        </td>
 	      </tr>
 	    </table>

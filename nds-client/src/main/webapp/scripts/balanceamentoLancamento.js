@@ -184,6 +184,8 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		
 		row.cell.nomeProduto = colunaProduto;
 		
+		row.cell.codigoProdutoFormatado = row.cell.codigoProduto;
+		
 		row.cell.novaDataLancamento = T.gerarInputDataDistrib(row.cell.novaDataLancamento, row.cell.bloquearData, i);
 		row.cell.reprogramar = T.gerarCheckReprogramar(row.cell.id.toString(), row.cell.bloquearData, i);
 		
@@ -764,7 +766,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 		$("#lancamentosProgramadosGrid", _workspace).flexigrid({
 			colModel : [  {
 				display : 'Código',
-				name : 'codigoProduto',
+				name : 'codigoProdutoFormatado',
 				width : 45,
 				sortable : true,
 				align : 'center'

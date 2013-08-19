@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.estoque;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -49,6 +50,7 @@ import br.com.abril.nds.service.PessoaJuridicaService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -104,6 +106,9 @@ public class RecebimentoFisicoController extends BaseController {
 	
 	@Autowired
 	private Validator validator;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 
 	public RecebimentoFisicoController(
 			Result result, 
@@ -126,6 +131,7 @@ public class RecebimentoFisicoController extends BaseController {
 		result.include("permissaoBotaoConfirmacao", usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_BOTAO_CONFIRMACAO));
 		result.include("permissaoGridColRepartePrevisto", usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_REPARTE_PREVISTO));
 		result.include("permissaoGridColDiferenca", usuarioPossuiRule(Permissao.ROLE_ESTOQUE_RECEBIMENTO_FISICO_COLUNA_DIFERENCA));
+		result.include("indConferenciaCega", this.distribuidorService.isConferenciaCegaRecebimentoFisico());
 	}
 	
 	/**
@@ -236,7 +242,8 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		Long idNotaFiscal = notaFiscal.getId();
 		
-		List<RecebimentoFisicoDTO> itensRecebimentoFisico = recebimentoFisicoService.obterListaItemRecebimentoFisico(idNotaFiscal);
+		List<RecebimentoFisicoDTO> itensRecebimentoFisico = 
+				recebimentoFisicoService.obterListaItemRecebimentoFisico(idNotaFiscal);
 				
 		if(itensRecebimentoFisico == null) {
 			itensRecebimentoFisico = new LinkedList<RecebimentoFisicoDTO>();
@@ -316,11 +323,8 @@ public class RecebimentoFisicoController extends BaseController {
 			
 			indChaveAcessoInformada = true;
 			
-			if(filtro.getChave() == null || filtro.getChave().trim().isEmpty()) {
-				
-				msgs.add("Chave de Acesso é Obrigatória!");
-				
-			} else if(!filtro.getChave().matches(regraParaChaveAcesso)) {
+			if(filtro.getChave() != null && 
+				!filtro.getChave().matches(regraParaChaveAcesso)) {
 				
 				msgs.add("Chave de Acesso deve possuir " + NFEImportUtil.QTD_DIGITOS_CHAVE_ACESSO_NFE +  " dígitos.");
 				
@@ -598,13 +602,18 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		BigDecimal precoItem = itemRecebimento.getPrecoItem() == null ? BigDecimal.ZERO :  itemRecebimento.getPrecoItem();
 		
-		BigDecimal valorTotal = new BigDecimal(0.0D);
+		BigDecimal valorTotal = BigDecimal.ZERO;
 		
 		BigInteger qtdeTotalItens = qtdePacote.multiply(qtdePacotePadrao).add(qtdeExemplares);
 		
 		valorTotal = precoItem.multiply(new BigDecimal(qtdeTotalItens));
   
 		itemRecebimento.setValorTotal(valorTotal);
+		
+		itemRecebimento.setValorTotalDesconto(
+			precoItem.subtract(
+				precoItem.multiply(
+					itemRecebimento.getPercentualDesconto())).multiply(new BigDecimal(qtdeTotalItens)));
 	}
 		
 	/**
@@ -833,7 +842,20 @@ public class RecebimentoFisicoController extends BaseController {
 		
 			
 		if(listaNotaFiscal != null && listaNotaFiscal.size()>1) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Mais de uma nota fiscal cadastrada com estes valores.");
+			
+			if (filtro.getNumeroNota() != null && 
+				(filtro.getIdFornecedor() == null || filtro.getIdFornecedor() == -1) && 
+				(filtro.getSerie() == null || filtro.getSerie().isEmpty())){
+				
+				throw new ValidacaoException(
+						TipoMensagem.WARNING, 
+						"Mais de uma nota fiscal cadastrada com estes valores, especifique um fornecedor.");
+			} else {
+			
+				throw new ValidacaoException(
+					TipoMensagem.WARNING, 
+					"Mais de uma nota fiscal encontrada com o filtro escolhido.");
+			}
 		} 
 		
 		NotaFiscalEntrada notaFiscal = null;
@@ -842,7 +864,7 @@ public class RecebimentoFisicoController extends BaseController {
 			notaFiscal = listaNotaFiscal.get(0);
 		} 
 		
-		if (notaFiscal == null){	
+		if (notaFiscal == null){
 						
 			List<String> msgs = new ArrayList<String>();
 			
@@ -857,7 +879,11 @@ public class RecebimentoFisicoController extends BaseController {
 			
 			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, msgs);
 													
-			result.use(Results.json()).from(new ResultadoNotaFiscalExistente(validacao, false, false ), "result").include("validacao").include("validacao.listaMensagens").serialize();
+			result.use(Results.json()).from(
+				new ResultadoNotaFiscalExistente(
+					validacao, false, false ), "result")
+						.include("validacao")
+						.include("validacao.listaMensagens").serialize();
 		
 		} else {
 			
@@ -877,9 +903,19 @@ public class RecebimentoFisicoController extends BaseController {
 			}
 			
 			boolean indRecebimentoFisicoConfirmado = verificarRecebimentoFisicoConfirmado(notaFiscal.getId());
-						
-			result.use(Results.json()).from(new ResultadoNotaFiscalExistente(validacao, indNotaInterface, indRecebimentoFisicoConfirmado ), "result").include("validacao").include("validacao.listaMensagens").serialize();
-
+			
+			if (cnpj == null || cnpj.isEmpty()){
+				if (notaFiscal instanceof NotaFiscalEntradaFornecedor){
+					cnpj = ((NotaFiscalEntradaFornecedor) notaFiscal).getEmitente().getCnpj();
+				}
+			}
+			
+			result.use(Results.json()).from(
+				new ResultadoNotaFiscalExistente(
+					validacao, indNotaInterface, indRecebimentoFisicoConfirmado,
+					cnpj, notaFiscal.getNumero(), notaFiscal.getSerie()), "result")
+						.include("validacao")
+						.include("validacao.listaMensagens").serialize();
 		}
 				
 	}
@@ -889,6 +925,8 @@ public class RecebimentoFisicoController extends BaseController {
 		private ValidacaoVO validacao;
 		private boolean indNotaInterface;		
         private boolean indRecebimentoFisicoConfirmado;
+        private String cnpj, serieNotaFiscal;
+        private Long numeroNotaFiscal;
 			
 		public ResultadoNotaFiscalExistente(ValidacaoVO validacao,
 				boolean indNotaInterface,
@@ -897,6 +935,18 @@ public class RecebimentoFisicoController extends BaseController {
 			this.validacao = validacao;
 			this.indNotaInterface = indNotaInterface;
 			this.indRecebimentoFisicoConfirmado = indRecebimentoFisicoConfirmado;
+		}
+		
+		public ResultadoNotaFiscalExistente(ValidacaoVO validacao,
+				boolean indNotaInterface,
+				boolean indRecebimentoFisicoConfirmado,
+				String cnpj, Long numeroNotaFiscal,
+				String serieNotaFiscal) {
+			this(validacao, indNotaInterface, indRecebimentoFisicoConfirmado);
+			this.cnpj = Util.adicionarMascaraCNPJ(cnpj);
+			this.serieNotaFiscal = serieNotaFiscal;
+			this.numeroNotaFiscal = numeroNotaFiscal;
+			
 		}
 		
 		public ValidacaoVO getValidacao() {
@@ -921,6 +971,29 @@ public class RecebimentoFisicoController extends BaseController {
 			this.indRecebimentoFisicoConfirmado = indRecebimentoFisicoConfirmado;
 		}
 
+		public String getCnpj() {
+			return cnpj;
+		}
+
+		public void setCnpj(String cnpj) {
+			this.cnpj = cnpj;
+		}
+
+		public String getSerieNotaFiscal() {
+			return serieNotaFiscal;
+		}
+
+		public void setSerieNotaFiscal(String serieNotaFiscal) {
+			this.serieNotaFiscal = serieNotaFiscal;
+		}
+
+		public Long getNumeroNotaFiscal() {
+			return numeroNotaFiscal;
+		}
+
+		public void setNumeroNotaFiscal(Long numeroNotaFiscal) {
+			this.numeroNotaFiscal = numeroNotaFiscal;
+		}
 	}
 	
 	private void carregarValoresQtdPacoteQtdExemplar(RecebimentoFisicoDTO itemRecebimento) {
@@ -988,6 +1061,19 @@ public class RecebimentoFisicoController extends BaseController {
 			String diferenca		 	 = (dto.getDiferenca() 			== null) 	? "0" : dto.getDiferenca().toString();
 			String valorTotal		 	 = (dto.getValorTotal() 		== null) 	? "0.0" : dto.getValorTotal().toString();
 			String pacotePadrao		 	 = (dto.getValorTotal() 		== null) 	? "0"   : Integer.toString(dto.getPacotePadrao());
+			String valorDesconto = null;
+			BigDecimal valorTotalDesconto = BigDecimal.ZERO;
+			
+			if (dto.getPrecoItem() != null){
+				
+				valorTotalDesconto = valorTotalDesconto.add(dto.getValorTotalDesconto());
+				
+				valorDesconto = dto.getPrecoItem().subtract(
+							dto.getPrecoItem().multiply(
+								dto.getPercentualDesconto())).toString();
+			} else {
+				valorDesconto = "0.0";
+			}
 			
 			String edicaoItemNotaPermitida 		= IND_SIM;
 			String edicaoItemRecFisicoPermitida = IND_SIM;
@@ -1018,11 +1104,15 @@ public class RecebimentoFisicoController extends BaseController {
 			recebFisico.setNomeProduto(nomeProduto);
 			recebFisico.setEdicao(edicao);
 			recebFisico.setPrecoCapa(precoItem);
+			
+			recebFisico.setPrecoDesconto(valorDesconto);
+			
 			recebFisico.setRepartePrevisto(repartePrevisto);
 			recebFisico.setQtdPacote(qtdPacote);
 			recebFisico.setQtdExemplar(qtdExemplar);
 			recebFisico.setDiferenca(diferenca);
-			recebFisico.setValorTotal(valorTotal);
+			recebFisico.setValorTotalCapa(valorTotal);
+			recebFisico.setValorTotalDesconto(valorTotalDesconto.setScale(2, RoundingMode.HALF_EVEN).toString());
 			recebFisico.setPacotePadrao(pacotePadrao);
 			
 			recebFisico.setEdicaoItemNotaPermitida(edicaoItemNotaPermitida);

@@ -22,6 +22,8 @@ public class ResultadoConsultaDetallheNFVO implements Serializable {
 	
 	private String totalSumarizado;
 	
+	private String totalSumarizadoComDesconto;
+	
 	private TableModel<CellModel> tableModel;
 	
 	/**
@@ -31,11 +33,12 @@ public class ResultadoConsultaDetallheNFVO implements Serializable {
 	 * @param totalExemplares - total de exemplares
 	 * @param totalSumarizado - total sumarizado
 	 */
-	public ResultadoConsultaDetallheNFVO(TableModel<CellModel> tableModel, String totalExemplares, String totalSumarizado) {
+	public ResultadoConsultaDetallheNFVO(TableModel<CellModel> tableModel, String totalExemplares, String totalSumarizado, String totalSumarizadoComDesconto) {
 		
 		this.tableModel = tableModel;
 		this.totalExemplares = totalExemplares;
 		this.totalSumarizado = totalSumarizado;
+	    this.totalSumarizadoComDesconto = totalSumarizadoComDesconto;
 	}
 
 	/**
@@ -71,6 +74,14 @@ public class ResultadoConsultaDetallheNFVO implements Serializable {
 	 */
 	public void setTotalSumarizado(String totalSumarizado) {
 		this.totalSumarizado = totalSumarizado;
+	}
+
+	public String getTotalSumarizadoComDesconto() {
+		return totalSumarizadoComDesconto;
+	}
+
+	public void setTotalSumarizadoComDesconto(String totalSumarizadoComDesconto) {
+		this.totalSumarizadoComDesconto = totalSumarizadoComDesconto;
 	}
 
 	/**

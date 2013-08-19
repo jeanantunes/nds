@@ -116,8 +116,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		   .append(" and   produtoEdicao.id                      = lancamento.produtoEdicao.id ")
 		   .append(" and   produto.codigo                        = :codigo ")
 		   .append(" and   produtoEdicao.numeroEdicao            = :edicao")
-		   .append(" and   lancamento.dataLancamentoDistribuidor = :dataLancamento ");
-		   
+		   .append(" and   lancamento.dataLancamentoDistribuidor = :dataLancamento ")
+		   .append(" and   ( lancamento.status = :balanceadoLancamento or ")
+		   .append(" lancamento.status = :expedido ) ");   
+		
 		   if (furado) {
 			   hql.append(" and   lancamento.status                     != :statusFuro");
 		   }
@@ -147,6 +149,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.setParameter("codigo", codigo);
 		query.setParameter("edicao", edicao);
 		query.setParameter("dataLancamento", dataLancamento);
+		query.setParameter("balanceadoLancamento", StatusLancamento.BALANCEADO);
+		query.setParameter("expedido", StatusLancamento.EXPEDIDO);
 		
 		if (furado) {
 			query.setParameter("statusFuro", StatusLancamento.FURO);

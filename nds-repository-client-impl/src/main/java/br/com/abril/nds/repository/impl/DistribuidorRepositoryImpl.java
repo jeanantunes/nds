@@ -551,5 +551,16 @@ public class DistribuidorRepositoryImpl extends
 		return (ParametrosAprovacaoDistribuidor)
 				this.getSession().createQuery("select parametrosAprovacaoDistribuidor from Distribuidor").uniqueResult();
 	}
+
+	@Override
+	public boolean isConferenciaCegaRecebimentoFisico() {
+		
+		StringBuilder hql = new StringBuilder("select ");
+		hql.append(" p.conferenciaCegaRecebimento ")
+		   .append(" from Distribuidor d ")
+		   .append(" join d.parametrosRecolhimentoDistribuidor p ");
+		
+		return (boolean) this.getSession().createQuery(hql.toString()).uniqueResult();
+	}
 	
 }

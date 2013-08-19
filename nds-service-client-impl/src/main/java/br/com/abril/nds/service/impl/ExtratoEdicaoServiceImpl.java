@@ -17,12 +17,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
-import br.com.abril.nds.model.estoque.MovimentoEstoque;
-import br.com.abril.nds.model.estoque.OperacaoEstoque;
-import br.com.abril.nds.model.estoque.TipoEstoque;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque.Dominio;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
@@ -57,53 +52,43 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 		
 		filtroExtratoEdicao.setGruposExcluidos(obterGruposMovimentoEstoqueExtratoEdicao());
 		
-		ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(filtroExtratoEdicao.getCodigoProduto(), filtroExtratoEdicao.getNumeroEdicao());
-		
-		List<MovimentoEstoque> listaMovimentoEstoque = movimentoEstoqueRepository.obterMovimentoEstoquePorIdProdutoEdicao(produtoEdicao);
-		
-		ExtratoEdicaoDTO extratoComMovimentoInicial = new ExtratoEdicaoDTO();
-		for(MovimentoEstoque movimentoEstoque : listaMovimentoEstoque) {
-			if(movimentoEstoque.getTipoMovimento().getDescricao().equals("Recebimento de Mercadoria")) {	
-				extratoComMovimentoInicial.setIdMovimento(movimentoEstoque.getId());
-				extratoComMovimentoInicial.setDataMovimento(movimentoEstoque.getDataCriacao());
-				extratoComMovimentoInicial.setQtdEdicaoEntrada(movimentoEstoque.getQtde());
-				extratoComMovimentoInicial.setQtdEdicaoSaida(BigInteger.ZERO);
-				extratoComMovimentoInicial.setDescMovimento(movimentoEstoque.getTipoMovimento().getDescricao());
-				extratoComMovimentoInicial.setQtdParcial(movimentoEstoque.getQtde());
-			}
-				
-		}
 		List<ExtratoEdicaoDTO> listaExtratoEdicao = new ArrayList<ExtratoEdicaoDTO>();
-		listaExtratoEdicao.add(extratoComMovimentoInicial);
 		
 		List<ExtratoEdicaoDTO> movimentosPosterioresRecebimentoMercadoria = movimentoEstoqueRepository.obterListaExtratoEdicao(filtroExtratoEdicao, StatusAprovacao.APROVADO);
 		listaExtratoEdicao.addAll(movimentosPosterioresRecebimentoMercadoria);
-		
-		
 
 		for(int i = 0; i < listaExtratoEdicao.size(); i++) {	
-			BigInteger qtdEdicaoEntrada = BigInteger.ZERO;
-			qtdEdicaoEntrada = listaExtratoEdicao.get(i).getQtdEdicaoEntrada();
 			
-			BigInteger qtdEdicaoSaida = BigInteger.ZERO;
-			qtdEdicaoSaida = listaExtratoEdicao.get(i).getQtdEdicaoSaida();
+			ExtratoEdicaoDTO itemExtratoEdicao = listaExtratoEdicao.get(i);
+			
+			BigInteger qtdEntrada = BigInteger.ZERO;
+			
+			qtdEntrada = itemExtratoEdicao.getQtdEdicaoEntrada();
+			
+			BigInteger qtdSaida = BigInteger.ZERO;
+			
+			qtdSaida = itemExtratoEdicao.getQtdEdicaoSaida();
+			
+			BigInteger qtdeParcial = qtdEntrada.subtract(qtdSaida);
 		
-			if(i > 0) {
-				listaExtratoEdicao.get(i).setQtdParcial(listaExtratoEdicao.get(i - 1).getQtdParcial().add(qtdEdicaoEntrada.subtract(qtdEdicaoSaida)));
-			}	
+			if (i > 0) {
+
+				itemExtratoEdicao.setQtdParcial(
+					listaExtratoEdicao.get(i - 1).getQtdParcial().add(qtdeParcial));
+				
+			} else {
+			
+				itemExtratoEdicao.setQtdParcial(qtdeParcial);
+			}
 		}
 			
-		
-		
 		InfoGeralExtratoEdicaoDTO infoGeralExtratoEdicao = new InfoGeralExtratoEdicaoDTO();
-		
-		//saldoTotalEdicao
+
 		infoGeralExtratoEdicao.setSaldoTotalExtratoEdicao(listaExtratoEdicao.get(listaExtratoEdicao.size() - 1).getQtdParcial());
 	
 		infoGeralExtratoEdicao.setListaExtratoEdicao(listaExtratoEdicao);
 		
 		return infoGeralExtratoEdicao;
-		
 	}
 	
 	private List<GrupoMovimentoEstoque> obterGruposMovimentoEstoqueExtratoEdicao() {

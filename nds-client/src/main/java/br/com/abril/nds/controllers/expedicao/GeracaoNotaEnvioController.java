@@ -145,6 +145,11 @@ public class GeracaoNotaEnvioController extends BaseController {
 		
 		Integer qtdResult = geracaoNotaEnvioService.buscaCotasNotasDeEnvioQtd(filtro);
 		
+		if (listaCotaExemplares == null || listaCotaExemplares.isEmpty()){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não há matriz confirmada na data.");
+		}
+		
 		result.use(FlexiGridJson.class).from(listaCotaExemplares).page(page).total(qtdResult).serialize();
 	}
 	

@@ -387,7 +387,7 @@ public abstract class Util {
 		return digito;
 	}
 	
-	private static String padLeft(String valor, String caractere, int tamanho){
+	public static String padLeft(String valor, String caractere, int tamanho){
 		while (valor.length() < tamanho){
 			valor = caractere + valor;
 		}

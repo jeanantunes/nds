@@ -1,6 +1,6 @@
 
 <div id="dialog-cancelar-cadastro-cota" title="Cota" style="display: none;">
-	<p>Informações das abas não salvas serão perdidos. Confirma ?</p>
+	<p>Informações das abas não salvas serão perdidas. Confirma ?</p>
 </div>
 
 <div id="workspaceCota">

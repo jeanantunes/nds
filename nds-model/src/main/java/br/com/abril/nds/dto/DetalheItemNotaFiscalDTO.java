@@ -23,10 +23,14 @@ public class DetalheItemNotaFiscalDTO implements Serializable {
 	private BigInteger sobrasFaltas;
 	
 	private BigDecimal precoVenda;
+	
+	private BigDecimal precoComDesconto;
 
 	private TipoDiferenca tipoDiferenca;
 	
 	private BigDecimal valorTotal;
+	
+	private BigDecimal valorTotalComDesconto;
 	
 	private Long idProdutoEdicao;
 	
@@ -104,6 +108,46 @@ public class DetalheItemNotaFiscalDTO implements Serializable {
 	 */
 	public void setSobrasFaltas(BigInteger sobrasFaltas) {
 		this.sobrasFaltas = sobrasFaltas;
+	}
+	
+	/**
+	 * @return the precoComDesconto
+	 */
+	public BigDecimal getPrecoComDesconto() {
+		
+		this.precoComDesconto = (this.getValorTotalComDesconto()
+				                    .divide(this.quantidadeExemplares == null ? BigDecimal.ONE
+										: new BigDecimal(
+												this.quantidadeExemplares),3));
+		
+		return precoComDesconto;
+	}
+
+	/**
+	 * @param precoComDesconto the precoComDesconto to set
+	 */
+	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
+		
+		this.precoComDesconto = precoComDesconto;
+	}
+
+	/**
+	 * @return the valorTotalComDesconto
+	 */
+	public BigDecimal getValorTotalComDesconto() {
+		
+		this.valorTotalComDesconto = this.valorTotal
+				.subtract(this.desconto == null ? BigDecimal.ZERO
+						: this.desconto);
+		
+		return valorTotalComDesconto;
+	}
+
+	/**
+	 * @param valorTotalComDesconto the valorTotalComDesconto to set
+	 */
+	public void setValorTotalComDesconto(BigDecimal valorTotalComDesconto) {
+		this.valorTotalComDesconto = valorTotalComDesconto;
 	}
 
 	/**
