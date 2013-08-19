@@ -1223,7 +1223,7 @@ var recebimentoFisicoController = $.extend(true, {
 				value.cell.qtdExemplar = '<input isEdicao="true" name="qtdExemplar" id="qtdExemplar_'+ lineId +
 				'" onkeypress="return recebimentoFisicoController.numericOnly(event)"  style="width: 45px;" type="text" value="'+qtdExemplar+
 				'" onchange="recebimentoFisicoController.alterarValor('+ lineId +
-				');recebimentoFisicoController.atualizarValoresTotais();" " />'; //onfocus="recebimentoFisicoController.tratarFocoInputQuantidade(this)
+				');recebimentoFisicoController.atualizarValoresTotais();" " />';
 				
 				$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).enable();
 			} else {
