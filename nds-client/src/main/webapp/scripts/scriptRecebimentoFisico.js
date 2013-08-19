@@ -2446,7 +2446,7 @@ var recebimentoFisicoController = $.extend(true, {
 				$(colunaQtdExemplar).find('input[name="itensRecebimento.qtdExemplarItem"]').val();
 			
 			var valuePacotePadrao =
-				$(colunaPacotePadrao).find('[name="itensRecebimento.pacotePadraoItem"]').val();
+				$(colunaPacotePadrao).find('[name="itensRecebimento.pacotePadraoItem"]').text();
 			
 			var valueDiferenca =
 				$(colunaDiferenca).find('input[name="itensRecebimento.diferencaItem"]').val();
