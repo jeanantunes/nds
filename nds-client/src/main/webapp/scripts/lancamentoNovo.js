@@ -233,13 +233,7 @@ var lancamentoNovoController = $.extend(true, {
 	
 	carregarDiferencaProduto:function(diferenca){
 		
-		if(diferenca.automatica && diferenca.automatica == true){
-			
-			$("#diferencaProdutoInput", lancamentoNovoController.workspace).attr("disabled", "disabled");
-		}
-		else{
-			$("#diferencaProdutoInput", lancamentoNovoController.workspace).removeAttr("disabled");
-		}
+		$("#diferencaProdutoInput", lancamentoNovoController.workspace).removeAttr("disabled");
 		
 		if (diferenca.codigoProduto){
 			
