@@ -89,7 +89,7 @@
 				<li><a href="#tabOperacao">Operação</a></li>
 				<li><a href="#tabDiferenciada">Operação Diferenciada</a></li>
 				<li><a href="#tabEmissao">Documentos</a></li>
-				<li><a href="#tabContratos">Contratos e Garantias</a></li>
+				<!--<li><a href="#tabContratos">Contratos e Garantias</a></li>-->
 			    <li><a href="#tabNegociacao">Negociação</a></li>
 			     <li><a href="#tabAprovacao">Aprovação</a></li>
 			</ul>
@@ -104,8 +104,8 @@
 						
 			<jsp:include page="tabEmissao.jsp"></jsp:include>
 			
-		    <!-- Aba Contratos e Garantias  -->	
-            <jsp:include page="tabContratosGarantias.jsp"/>
+		    <!-- Aba Contratos e Garantias  	
+            <jsp:include page="tabContratosGarantias.jsp"/>-->
             			
 			<jsp:include page="tabNegociacao.jsp"></jsp:include>
 		   
