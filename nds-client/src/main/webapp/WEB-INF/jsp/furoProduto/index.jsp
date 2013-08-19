@@ -35,7 +35,8 @@
 	        		</td>
 					<td width="64" align="right">Produto:</td>
 					<td width="196">
-						<input type="text" name="produto" id="produto" style="width:150px;" maxlength="255" onkeyup="furoProdutoController.pesquisarPorNomeProduto(event);"/>
+						<input type="text" name="produto" id="produto" style="width:150px;" maxlength="255" onkeypress="furoProdutoController.pesquisarPorNomeProduto();"/>
+
 					</td>
 					<td width="50" align="right">Edição:</td>
 					<td width="90">
