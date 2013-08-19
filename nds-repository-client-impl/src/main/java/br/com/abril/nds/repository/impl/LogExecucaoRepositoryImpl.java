@@ -255,7 +255,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 	@Override
 	public Long obterTotalMensagensErroLogInterface(FiltroDetalheProcessamentoDTO filtro) {
 		Criteria criteria = addMensagensLogInterfaceRestrictions(filtro.getCodigoLogExecucao());
-		criteria.add( Restrictions.between("logExecucao.dataInicio", this.getPeriodoInicialDia(filtro.getDataProcessamento()), this.getPeriodoFinalDia(filtro.getDataProcessamento())) );
+		criteria.add(Restrictions.eq("logExecucao.id", filtro.getIdLogExecucao()));
 		criteria.setProjection(Projections.rowCount());
 		return (Long) criteria.uniqueResult();
 	}
