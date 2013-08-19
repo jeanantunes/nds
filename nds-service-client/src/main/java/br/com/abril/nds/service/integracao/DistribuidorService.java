@@ -1,0 +1,137 @@
+package br.com.abril.nds.service.integracao;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
+import br.com.abril.nds.dto.DistribuidorDTO;
+import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.model.DiaSemana;
+import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
+import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
+import br.com.abril.nds.model.cadastro.PoliticaCobranca;
+import br.com.abril.nds.model.cadastro.TipoAtividade;
+import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
+import br.com.abril.nds.model.cadastro.TipoGarantia;
+import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
+import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
+import br.com.abril.nds.model.cadastro.TipoStatusGarantia;
+
+public interface DistribuidorService {
+	
+	public Distribuidor obter ();
+	
+	public boolean isDistribuidor(Integer codigo);
+	
+	public void alterar(Distribuidor distribuidor);
+
+	public DistribuidorDTO obterDadosEmissao();
+
+	List<String> obterNomeCNPJDistribuidor();
+
+	int obterOrdinalUltimoDiaRecolhimento();
+	
+	List<ItemDTO<TipoGarantia, String>> getComboTiposGarantia();
+	
+	List<ItemDTO<TipoStatusGarantia, String>> getComboTiposStatusGarantia();
+
+	Date obterDataOperacaoDistribuidor();
+
+	boolean utilizaGarantiaPdv();
+
+	boolean aceitaJuramentado();
+
+	int qtdDiasEncalheAtrasadoAceitavel();
+
+	boolean utilizaControleAprovacao();
+
+	Boolean utilizaTermoAdesao();
+
+	Boolean utilizaProcuracaoEntregadores();
+
+	DiaSemana inicioSemana();
+
+	Boolean utilizaSugestaoIncrementoCodigo();
+
+	String getEmail();
+
+	ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor();
+	
+	String obterRazaoSocialDistribuidor();
+
+	TipoImpressaoCE tipoImpressaoCE();
+
+	Integer qntDiasVencinemtoVendaEncalhe();
+
+	Integer negociacaoAteParcelas();
+
+	Integer qtdDiasLimiteParaReprogLancamento();
+
+	ObrigacaoFiscal obrigacaoFiscal();
+
+	TipoImpressaoNENECADANFE tipoImpressaoNENECADANFE();
+
+	String cidadeDistribuidor();
+
+	String codigoDistribuidorDinap();
+
+	String codigoDistribuidorFC();
+
+	Integer diasNegociacao();
+
+	TipoContabilizacaoCE tipoContabilizacaoCE();
+
+	Boolean preenchimentoAutomaticoPDV();
+
+	Long qntDiasReutilizacaoCodigoCota();
+
+	Set<PoliticaCobranca> politicasCobranca();
+	
+	Set<PoliticaCobranca> politicasCobrancaAtivas();
+
+	String assuntoEmailCobranca();
+
+	String mensagemEmailCobranca();
+
+	Boolean regimeEspecial();
+
+	TipoAtividade tipoAtividade();
+
+	Integer fatorRelancamentoParcial();
+
+	Long obterId();
+	
+	boolean utilizaControleAprovacaoFaltaSobra();
+	
+	List<Date> obterDatasAposFinalizacaoPrazoRecolhimento(Date dataRecolhimento, Long ...idsFornecedor);
+	
+	/**
+	 * Obtem o dia de recolhimento do distribuidor para a data de Conferencia divergente da data de Recolhimento prevista
+	 * @param dataConferencia
+	 * @param dataRecolhimento
+	 * @param long1
+	 * @return Integer
+	 */
+	Integer obterDiaDeRecolhimentoDaData(Date dataConferencia, Date dataRecolhimento, Long idProdutoEdicao);
+	
+	/**
+	 * Bloqueia os processos que alteram estudos ou balanceamentos de matriz
+	 */
+	void bloqueiaProcessosLancamentosEstudos();
+
+	/**
+	 * Desbloqueia os processos que alteram estudos ou balanceamentos de matriz
+	 */
+	void desbloqueiaProcessosLancamentosEstudos();
+
+	/**
+	 * Verifica se os processos que alteram estudos ou balanceamentos de matriz devem ser bloqueados
+	 * Tambem desbloqueia caso a interface esteja sendo executada a mais de uma hora (pois pode ser que a interface tenha travado)
+	 * @return boolean
+	 */
+	boolean verificaDesbloqueioProcessosLancamentosEstudos();
+	
+	boolean isConferenciaCegaRecebimentoFisico();
+	
+}

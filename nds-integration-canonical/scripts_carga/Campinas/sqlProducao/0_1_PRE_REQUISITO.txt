@@ -1,0 +1,3 @@
+dos2unix HVCTunix.txt
+mysql --local-infile -uroot -proot nds-client
+

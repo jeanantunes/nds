@@ -1,0 +1,584 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="romaneio_modelo03_subreport" pageWidth="802" pageHeight="555" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" whenResourceMissingType="Empty" isIgnorePagination="true">
+	<property name="ireport.zoom" value="1.464100000000007"/>
+	<property name="ireport.x" value="546"/>
+	<property name="ireport.y" value="0"/>
+	<style name="Crosstab Data Text" hAlign="Center"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
+	<parameter name="NOME_PRODUTO_0" class="java.lang.String"/>
+	<parameter name="NOME_PRODUTO_1" class="java.lang.String"/>
+	<parameter name="NOME_PRODUTO_2" class="java.lang.String"/>
+	<parameter name="NOME_PRODUTO_3" class="java.lang.String"/>
+	<parameter name="NOME_PRODUTO_4" class="java.lang.String"/>
+	<parameter name="NOME_PRODUTO_5" class="java.lang.String"/>
+	<parameter name="QTD_COLUNAS_PRODUTO" class="java.lang.Integer"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="numeroCota" class="java.lang.Integer">
+		<fieldDescription><![CDATA[numeroCota]]></fieldDescription>
+	</field>
+	<field name="nome" class="java.lang.String">
+		<fieldDescription><![CDATA[nome]]></fieldDescription>
+	</field>
+	<field name="logradouro" class="java.lang.String">
+		<fieldDescription><![CDATA[logradouro]]></fieldDescription>
+	</field>
+	<field name="bairro" class="java.lang.String">
+		<fieldDescription><![CDATA[bairro]]></fieldDescription>
+	</field>
+	<field name="cidade" class="java.lang.String">
+		<fieldDescription><![CDATA[cidade]]></fieldDescription>
+	</field>
+	<field name="uf" class="java.lang.String">
+		<fieldDescription><![CDATA[uf]]></fieldDescription>
+	</field>
+	<field name="qtdProduto0" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[qtdProduto0]]></fieldDescription>
+	</field>
+	<field name="qtdProduto1" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[qtdProduto1]]></fieldDescription>
+	</field>
+	<field name="qtdProduto2" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[qtdProduto2]]></fieldDescription>
+	</field>
+	<field name="qtdProduto3" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[qtdProduto3]]></fieldDescription>
+	</field>
+	<field name="qtdProduto4" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[qtdProduto4]]></fieldDescription>
+	</field>
+	<field name="qtdProduto5" class="java.math.BigInteger">
+		<fieldDescription><![CDATA[qtdProduto5]]></fieldDescription>
+	</field>
+	<field name="numeroNotaEnvio" class="java.lang.Long"/>
+	<variable name="TOTAL_PROD_1" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdProduto0}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_PROD_2" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdProduto1}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_PROD_3" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdProduto2}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_PROD_4" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdProduto3}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_PROD_5" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdProduto4}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_PROD_6" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{qtdProduto5}]]></variableExpression>
+	</variable>
+	<columnHeader>
+		<band height="14" splitType="Stretch">
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="40" y="0" width="40" height="14" backcolor="#999999"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cota]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="80" y="0" width="190" height="14" backcolor="#999999"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Nome]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="270" y="0" width="205" height="14" backcolor="#999999"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Endereço]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="475" y="0" width="42" height="14" backcolor="#999999">
+					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_0} != null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NOME_PRODUTO_0}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="517" y="0" width="42" height="14" backcolor="#999999">
+					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_1} != null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NOME_PRODUTO_1}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="559" y="0" width="42" height="14" backcolor="#999999">
+					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_2} != null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NOME_PRODUTO_2}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="601" y="0" width="42" height="14" backcolor="#999999">
+					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_3} != null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NOME_PRODUTO_3}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="643" y="0" width="42" height="14" backcolor="#999999">
+					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_4} != null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NOME_PRODUTO_4}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="685" y="0" width="42" height="14" backcolor="#999999">
+					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_5} != null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font size="7" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{NOME_PRODUTO_5}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="727" y="0" width="75" height="14" backcolor="#999999">
+					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 6]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Assinatura]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="685" y="0" width="117" height="14" backcolor="#999999">
+					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 5]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Assinatura]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="643" y="0" width="159" height="14" backcolor="#999999">
+					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 4]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Assinatura]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="601" y="0" width="201" height="14" backcolor="#999999">
+					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 3]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Assinatura]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="559" y="0" width="243" height="14" backcolor="#999999">
+					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} <= 2]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Assinatura]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="0" y="0" width="40" height="14" backcolor="#999999"/>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[ Nº NE]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="30" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="40" height="30"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numeroNotaEnvio}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="40" y="0" width="40" height="30"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numeroCota}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="80" y="0" width="190" height="30"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nome}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="270" y="0" width="205" height="30"/>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{logradouro} == null ? "" : $F{logradouro} + ", ")
++ ($F{bairro} == null ? "" : $F{bairro} + ", ")
++ ($F{cidade} == null ? "" : $F{cidade} + ", ")
++ ($F{uf} == null ? "" : $F{uf})]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="475" y="0" width="42" height="30">
+					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_0} != null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdProduto0}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="517" y="0" width="42" height="30">
+					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_1} != null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdProduto1}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="559" y="0" width="42" height="30">
+					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_2} != null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdProduto2}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="601" y="0" width="42" height="30">
+					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_3} != null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdProduto3}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="643" y="0" width="42" height="30">
+					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_4} != null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdProduto4}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="685" y="0" width="42" height="30">
+					<printWhenExpression><![CDATA[$P{NOME_PRODUTO_5} != null]]></printWhenExpression>
+				</reportElement>
+				<box>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
+					<font isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{qtdProduto5}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="727" y="0" width="75" height="30">
+					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 6]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="685" y="0" width="117" height="30">
+					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 5]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="643" y="0" width="159" height="30">
+					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 4]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToBandHeight" mode="Opaque" x="601" y="0" width="201" height="30">
+					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} == 3]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" mode="Opaque" x="559" y="0" width="243" height="30">
+					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} <= 2]]></printWhenExpression>
+				</reportElement>
+				<box leftPadding="0">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<lastPageFooter>
+		<band height="15">
+			<textField>
+				<reportElement x="0" y="0" width="100" height="15"/>
+				<textElement verticalAlignment="Middle" markup="html"/>
+				<textFieldExpression><![CDATA[" <b>Total Cotas:</b> " + $V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="375" y="0" width="100" height="15"/>
+				<textElement verticalAlignment="Middle" markup="html"/>
+				<textFieldExpression><![CDATA[" <b>Total Produtos:</b> "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="475" y="0" width="42" height="15"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$V{TOTAL_PROD_1}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="517" y="0" width="42" height="15"/>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$V{TOTAL_PROD_2}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="559" y="0" width="42" height="15">
+					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} >= 3]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$V{TOTAL_PROD_3}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="601" y="0" width="42" height="15">
+					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} >= 4]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$V{TOTAL_PROD_4}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="643" y="0" width="42" height="15">
+					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} >= 5]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$V{TOTAL_PROD_5}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="685" y="0" width="42" height="15">
+					<printWhenExpression><![CDATA[$P{QTD_COLUNAS_PRODUTO} >= 6]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Center"/>
+				<textFieldExpression><![CDATA[$V{TOTAL_PROD_6}]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+</jasperReport>

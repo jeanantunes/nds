@@ -1,0 +1,41 @@
+NOTA FISCAL|2|
+A|2.00||
+B|35|00000005|NF-e de Remessa em Consignação (NECE / DANFE)|0|55|5|5|2012-10-02|||1|3543402|1|1||1||0|
+C|Distribuidor Acme|Distribuidor Acme|110042490114||99.999-9||
+C02|56003315000147|
+C05|Rua João de Souza|51||Centro|3543402|São Paulo|SP|13222020|1058|BRASIL|019259633|
+E|Jose da Silva|||
+E05|Rua Jose|52||Vila Jose|3549706|São Jose do Rio Pardo|SP|13720000|1058|BRASIL|0199999999|
+H|1||
+I|1|111|Veja|49029000||5917|KG|20|20||111|KG|20|20|||0||
+M|
+N|
+N06|0|41|
+O||||||
+O07|99||
+O10||0|
+Q|
+S|
+W|
+W02|0|0|0|0|400|0|0|0||0|0|0|0|0|
+X|1|
+A|2.00||
+B|35|00000006|NF-e de Remessa em Consignação (NECE / DANFE)|0|55|5|6|2012-10-02|||1|3543402|1|1||1||0|
+C|Distribuidor Acme|Distribuidor Acme|110042490114||99.999-9||
+C02|56003315000147|
+C05|Rua João de Souza|51||Centro|3543402|São Paulo|SP|13222020|1058|BRASIL|019259633|
+E|Guilherme de Morais Leandro|||
+E05|Rua Jose da Silva|51||Vila Jose|3549706|São Jose do Rio Pardo|SP|13720000|1058|BRASIL||
+H|1||
+I|3333|3333|Cromo Brasileirão|48205000||5917|KG|40|100||3333|KG|40|100|||0||
+M|
+N|
+N06|0|41|
+O||||||
+O07|99||
+O10||0|
+Q|
+S|
+W|
+W02|0|0|0|0|4000|0|0|0||0|0|0|0|0|
+X|1|

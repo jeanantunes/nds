@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="resumo_CE_Devolucao_Fornecedor_itens" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="842" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<field name="linha" class="java.lang.Integer"/>
+	<field name="numeroDocumento" class="java.lang.Long"/>
+	<field name="dataVencimento" class="java.util.Date"/>
+	<field name="valorDocumento" class="java.math.BigDecimal"/>
+	<field name="valorMargem" class="java.math.BigDecimal"/>
+	<detail>
+		<band height="17" splitType="Stretch">
+			<textField>
+				<reportElement x="7" y="1" width="22" height="15"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{linha}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="28" y="1" width="7" height="15"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="34" y="1" width="111" height="15"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Top" markup="none">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA["TOTAL DOCTO N. - " + $F{numeroDocumento}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="144" y="1" width="7" height="15"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
+				<reportElement x="150" y="1" width="42" height="15"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Top" markup="none">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{dataVencimento}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="191" y="1" width="82" height="15"/>
+				<box rightPadding="2">
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" markup="none">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{valorDocumento}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="272" y="1" width="7" height="15"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<textField pattern="#,##0.00" isBlankWhenNull="true">
+				<reportElement x="278" y="1" width="82" height="15"/>
+				<box rightPadding="2">
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Top" markup="none">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<textFieldExpression class="java.lang.String"><![CDATA[$F{valorMargem}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="360" y="0" width="7" height="9"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="360" y="8" width="7" height="9"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="8" width="7" height="9"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="0" width="7" height="9"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="803" y="0" width="7" height="9"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="803" y="8" width="7" height="9"/>
+				<box>
+					<bottomPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Times New Roman" size="7"/>
+				</textElement>
+				<text><![CDATA[*]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

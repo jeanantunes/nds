@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cobranca" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="40" bottomMargin="40">
+	<property name="ireport.zoom" value="1.0263162364614133"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="cidade" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="data" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="nomeDistribuidor" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="enderecoDistribuidor" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="telefoneDistribuidor" class="java.lang.String" isForPrompting="false"/>
+	<queryString language="SQL">
+		<![CDATA[]]>
+	</queryString>
+	<field name="numeroCota" class="java.lang.Integer"/>
+	<field name="nomeCota" class="java.lang.String"/>
+	<field name="box" class="java.lang.String"/>
+	<field name="rota" class="java.lang.String"/>
+	<field name="roteiro" class="java.lang.String"/>
+	<field name="valor" class="java.math.BigDecimal"/>
+	<field name="vencimento" class="java.util.Date"/>
+	<field name="nomeBanco" class="java.lang.String"/>
+	<field name="agencia" class="java.lang.Integer"/>
+	<field name="conta" class="java.lang.String"/>
+	<field name="nomeFavorecido" class="java.lang.String"/>
+	<field name="tipoCobranca" class="java.lang.Object"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<pageHeader>
+		<band height="150" splitType="Stretch">
+			<image>
+				<reportElement x="0" y="0" width="168" height="60"/>
+				<imageExpression><![CDATA[Thread.currentThread().getContextClassLoader().getResource("/reports/logo.jpg").toURI().getPath()]]></imageExpression>
+			</image>
+			<staticText>
+				<reportElement x="187" y="0" width="72" height="20"/>
+				<textElement>
+					<font fontName="Calibri" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Cota:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="187" y="20" width="72" height="20"/>
+				<textElement>
+					<font fontName="Calibri" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Box:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="187" y="40" width="72" height="20"/>
+				<textElement>
+					<font fontName="Calibri" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Rota/Roteiro:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="259" y="0" width="296" height="20"/>
+				<textElement>
+					<font fontName="Calibri" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{numeroCota} + " - " + $F{nomeCota}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="259" y="20" width="296" height="20"/>
+				<textElement>
+					<font fontName="Calibri" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{box}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement x="259" y="40" width="296" height="20"/>
+				<textElement>
+					<font fontName="Calibri" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{rota} + " " + $F{roteiro}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="90" width="555" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="11" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cidade}+", "+ new java.text.SimpleDateFormat("dd 'de' MMMM 'de' yyyy").format($P{data})]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="240">
+			<textField>
+				<reportElement x="0" y="0" width="555" height="20" isRemoveLineWhenBlank="true"/>
+				<textElement markup="styled">
+					<font fontName="Arial" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Caro <u>" + $F{nomeCota} + "</u>"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="29" width="555" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DINHEIRO)]]></printWhenExpression>
+				</reportElement>
+				<textElement markup="styled">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Favor realizar o depósito no <b><u> valor de R$("+ ($F{valor}) +"),</u></b> na conta corrente informada abaixo, até <b><u>" + new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{vencimento}) + ":</u></b>"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="82" width="70" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DINHEIRO)]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[Banco:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="101" width="70" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DINHEIRO)]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[Agência:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="120" width="70" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DINHEIRO)]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[Conta:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="139" width="70" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DINHEIRO)]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[Favorecido:]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="70" y="82" width="485" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DINHEIRO)]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomeBanco}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="70" y="101" width="485" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DINHEIRO)]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{agencia}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="70" y="120" width="485" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DINHEIRO)]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{conta}]]></textFieldExpression>
+			</textField>
+			<textField isBlankWhenNull="true">
+				<reportElement positionType="Float" x="70" y="139" width="485" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[!$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DINHEIRO)]]></printWhenExpression>
+				</reportElement>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{nomeFavorecido}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="185" width="555" height="33"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[Lembrando que, caso o pagamento não seja realizado dentro do prazo informado, será considerada inadimplência do pagamento, cujo tratamento será de acordo com a política do Distribuidor.]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="0" y="49" width="555" height="20" isRemoveLineWhenBlank="true">
+					<printWhenExpression><![CDATA[$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DINHEIRO)]]></printWhenExpression>
+				</reportElement>
+				<textElement markup="styled">
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Favor realizar o pagamento no valor de <b> R$ "+ ($F{valor}) + "("
++ ($F{valor}) + "),</b> até a data <b><u>" + new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{vencimento}) + " </u></b> na sede da <b>" + $P{nomeDistribuidor} + ".</b>"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="292">
+			<staticText>
+				<reportElement x="0" y="0" width="555" height="20"/>
+				<textElement>
+					<font fontName="Arial" size="12"/>
+				</textElement>
+				<text><![CDATA[Atenciosamente.]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="33" width="555" height="20"/>
+				<textElement markup="none">
+					<font fontName="Calibri" size="11" isBold="true" isStrikeThrough="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{nomeDistribuidor}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="51" y="53" width="505" height="20"/>
+				<textElement markup="none">
+					<font fontName="Calibri" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{enderecoDistribuidor}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="1" y="53" width="51" height="20"/>
+				<textElement>
+					<font fontName="Calibri" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Endereço:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="73" width="51" height="20"/>
+				<textElement>
+					<font fontName="Calibri" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Telefone:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="50" y="73" width="505" height="20"/>
+				<textElement markup="none">
+					<font fontName="Calibri" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{telefoneDistribuidor}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+</jasperReport>

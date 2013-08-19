@@ -1,0 +1,4 @@
+tocTab[tocTab.length] = new Array("0.1.1.1.2.7:1", "", "seguranca", "EARoot/EA1/EA1/EA1/EA2/EA7/EA107.html", "175.png", "443467424", "0", "", "Logical diagram0","{DC282159-4343-4fc0-A0D8-B209AEC77D0A}");
+tocTab[tocTab.length] = new Array("0.1.1.1.2.7:2", "", "PerfilUsuario", "EARoot/EA1/EA1/EA1/EA2/EA7/EA109.html", "5.png", "607842677", "0", "", "Class0","{320BAF05-BB7A-42d4-AB58-FEB5D35E8B61}");
+tocTab[tocTab.length] = new Array("0.1.1.1.2.7:3", "", "Permissao", "EARoot/EA1/EA1/EA1/EA2/EA7/EA110.html", "5.png", "-391302424", "0", "", "Class0","{FDF728CE-AE1D-4a6d-8D2A-801BF15A6B89}");
+tocTab[tocTab.length] = new Array("0.1.1.1.2.7:4", "", "Usuario", "EARoot/EA1/EA1/EA1/EA2/EA7/EA111.html", "5.png", "1603367383", "0", "", "Class0","{ED0B1C42-BF4B-4780-B79F-5CD99A41B445}");

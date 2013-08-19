@@ -1,0 +1,227 @@
+function PesquisaCota(workspace) {
+
+	var pesquisaCota = this;
+	
+	this.workspace = workspace;
+		
+	//Pesquisa por número da cota
+	this.pesquisarPorNumeroCota = function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack,identificadorLinhaGrid) {
+		
+		var numeroCota = $(idCampoNumeroCota, pesquisaCota.workspace).val();
+
+		numeroCota = $.trim(numeroCota);
+		
+		$(idCampoNomeCota, pesquisaCota.workspace).val("");
+		
+		if (numeroCota && numeroCota.length > 0) {
+			
+			$.postJSON(contextPath + "/cadastro/cota/pesquisarPorNumero",
+					{numeroCota:numeroCota},
+				function(result) { 
+					pesquisaCota.pesquisarPorNumeroSuccessCallBack(result, idCampoNomeCota, successCallBack,identificadorLinhaGrid); 
+				},
+				function() {
+					pesquisaCota.pesquisarPorNumeroErrorCallBack(idCampoNumeroCota, errorCallBack,identificadorLinhaGrid); 
+				}, 
+				isFromModal
+			);
+
+		} else {
+			if (errorCallBack) {
+				errorCallBack();
+			}
+		}
+	},
+	
+	//Success callback para pesquisa por número da cota
+	this.pesquisarPorNumeroSuccessCallBack = function(result, idCampoNomeCota, successCallBack,identificadorLinhaGrid) {
+
+		pesquisaCota.pesquisaRealizada = true;
+		
+		$(idCampoNomeCota, pesquisaCota.workspace).val(result.nome);
+		
+		if (successCallBack) {
+			
+			successCallBack(result,identificadorLinhaGrid);
+		}
+	},
+	
+	//Error callback para pesquisa por número da cota
+	this.pesquisarPorNumeroErrorCallBack = function(idCampoNumeroCota, errorCallBack,identificadorLinhaGrid) {
+		
+		$(idCampoNumeroCota, pesquisaCota.workspace).val("");
+		
+		$(idCampoNumeroCota, pesquisaCota.workspace).focus();
+		
+		if (errorCallBack) {
+			
+			errorCallBack(identificadorLinhaGrid);
+		}
+	},
+	
+	//Busca dados para o auto complete do nome da cota
+	this.autoCompletarPorNome = function(idCampoNomeCota, isFromModal) {
+		
+		pesquisaCota.pesquisaRealizada = false;
+		
+		var nomeCota = $(idCampoNomeCota, pesquisaCota.workspace).val();
+		
+		nomeCota = $.trim(nomeCota);
+		
+		$(idCampoNomeCota, pesquisaCota.workspace).autocomplete({source: [""]});
+		
+		if (nomeCota && nomeCota.length > 2) {
+			
+			$.postJSON(
+				contextPath + "/cadastro/cota/autoCompletarPorNome", {nomeCota:nomeCota},
+				function(result) { 
+					pesquisaCota.exibirAutoComplete(result, idCampoNomeCota, 3);
+				},
+				null, 
+				isFromModal
+			);
+		}
+	},
+	
+	this.descricaoAtribuida = true,
+	
+	this.pesquisaRealizada = false,
+	
+	this.numeroCotaSelecionada = null,
+	
+	this.intervalo = null,
+	
+	//Exibe o auto complete no campo
+	this.exibirAutoComplete = function(result, idCampoCota, tamanhoInicial) {
+		
+		$(idCampoCota, pesquisaCota.workspace).autocomplete({
+			source: result,
+			focus : function(event, ui) {
+				pesquisaCota.descricaoAtribuida = false;
+			},
+			close : function(event, ui) {
+				pesquisaCota.descricaoAtribuida = true;
+				pesquisaCota.numeroCotaSelecionada = ui.item.chave.numero;
+			},
+			select : function(event, ui) {
+				pesquisaCota.descricaoAtribuida = true;
+				pesquisaCota.numeroCotaSelecionada = ui.item.chave.numero;
+			},
+			minLength: tamanhoInicial,
+			delay : 0,
+		});
+	},
+	
+	//Pesquisar por nome da cota
+	this.pesquisarPorNomeCota = function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack,identificadorLinhaGrid) {
+		
+		setTimeout(function() { clearInterval(pesquisaCota.intervalo); }, 10 * 1000);
+		
+		pesquisaCota.intervalo = $().interval(function() {
+			
+			if (pesquisaCota.descricaoAtribuida) {
+				
+				if (pesquisaCota.pesquisaRealizada) {
+					
+					clearInterval(pesquisaCota.intervalo);
+					
+					return;
+				}
+				
+				pesquisaCota.pesquisarPorNomeCotaAposIntervalo(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack,identificadorLinhaGrid);
+			}
+			
+		}, 100);
+	},
+	
+	//Pesquisa por nome da cota após o intervalo
+	this.pesquisarPorNomeCotaAposIntervalo = function(idCampoNumeroCota, idCampoNomeCota, isFromModal, successCallBack, errorCallBack,identificadorLinhaGrid) {
+		
+		clearInterval(pesquisaCota.intervalo);
+		
+		pesquisaCota.pesquisaRealizada = true;
+		
+		var nomeCota = $(idCampoNomeCota, pesquisaCota.workspace).val();
+		
+		nomeCota = $.trim(nomeCota);
+		
+		$(idCampoNumeroCota, pesquisaCota.workspace).val("");
+		
+		if (nomeCota && nomeCota.length > 0) {
+			$.postJSON(
+				contextPath + "/cadastro/cota/pesquisarPorNome", 
+				{nomeCota:nomeCota},
+				function(result) {
+					
+					if (result.length > 1){
+
+						if (pesquisaCota.numeroCotaSelecionada){
+							
+							$(idCampoNumeroCota, pesquisaCota.workspace).val(pesquisaCota.numeroCotaSelecionada);
+						}
+					}
+					else{
+					
+					    pesquisaCota.pesquisarPorNomeSuccessCallBack(result, idCampoNumeroCota, idCampoNomeCota, successCallBack,identificadorLinhaGrid);
+					}
+				},
+				function() {
+					pesquisaCota.pesquisarPorNomeErrorCallBack(idCampoNomeCota, errorCallBack,identificadorLinhaGrid);
+				}, 
+				isFromModal
+			);
+		} else {
+			
+			if (errorCallBack) {
+				errorCallBack();
+			}
+		}
+	},
+	
+	//Success callback para pesquisa por nome da cota
+	this.pesquisarPorNomeSuccessCallBack = function(result, idCampoNumeroCota, idCampoNomeCota, successCallBack,identificadorLinhaGrid) {
+		
+		if (result != "") {
+			
+			$(idCampoNumeroCota, pesquisaCota.workspace).val(result.numero);
+			$(idCampoNomeCota, pesquisaCota.workspace).val(result.nome);
+			
+			if (successCallBack) {
+				successCallBack(result,identificadorLinhaGrid);
+			}
+		}
+	},
+	
+	//Error callback para pesquisa por nome da cota
+	this.pesquisarPorNomeErrorCallBack = function(idCampoNomeCota, errorCallBack,identificadorLinhaGrid) {
+		
+		$(idCampoNomeCota, pesquisaCota.workspace).val("");
+		
+		$(idCampoNomeCota, pesquisaCota.workspace).focus();
+		
+		if (errorCallBack) {
+			
+			errorCallBack(identificadorLinhaGrid);
+		}
+	},
+	
+	//Obtém uma cota pelo número
+	this.obterPorNumeroCota = function(numeroCota, isFromModal, successCallback, errorCallBack) {
+		
+		if (numeroCota && numeroCota.length > 0) {
+
+			$.postJSON(contextPath + "/cadastro/cota/pesquisarPorNumero",
+				{numeroCota:numeroCota},
+				function(result) { 
+					successCallback(result); 
+				},
+				function() {
+					errorCallBack();
+				}, 
+				isFromModal
+			);
+		}
+	};
+	
+}
+//@ sourceURL=pesquisaCota.js

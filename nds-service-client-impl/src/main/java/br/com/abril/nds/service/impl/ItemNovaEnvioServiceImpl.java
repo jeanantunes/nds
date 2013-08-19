@@ -1,0 +1,50 @@
+package br.com.abril.nds.service.impl;
+
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
+import br.com.abril.nds.repository.ItemNotaEnvioRepository;
+import br.com.abril.nds.service.ItemNotaEnvioService;
+
+@Service
+public class ItemNovaEnvioServiceImpl implements ItemNotaEnvioService {
+
+	@Autowired
+	protected ItemNotaEnvioRepository itemNotaEnvioRepository;
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<DetalheItemNotaFiscalDTO> obterItensNotaEnvio(Date dataEmissao, Integer numeroCota) {
+		
+		return itemNotaEnvioRepository.obterItensNotaEnvio(dataEmissao, numeroCota);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public DetalheItemNotaFiscalDTO obterItemNotaEnvio(Date dataEmissao,
+													   Integer numeroCota,
+													   Long idProdutoEdicao) {
+		
+		return itemNotaEnvioRepository.obterItemNotaEnvio(dataEmissao, numeroCota, idProdutoEdicao);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public DetalheItemNotaFiscalDTO obterItemNotaEnvioLancamentoProduto(Date dataLancamento, Integer numeroCota,Long idProdutoEdicao) {
+		
+		return itemNotaEnvioRepository.obterItemNotaEnvioLancamentoProduto(dataLancamento, numeroCota, idProdutoEdicao);
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<DetalheItemNotaFiscalDTO> obterItensNotaEnvioLancamentoProduto(Date dataLancamento, Integer numeroCota) {
+		
+		return itemNotaEnvioRepository.obterItensNotaEnvioLancamentoProduto(dataLancamento, numeroCota);
+	}
+	
+}

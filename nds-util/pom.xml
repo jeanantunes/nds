@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<artifactId>nds</artifactId>
+		<groupId>br.com.abril</groupId>
+		<version>1.0</version>
+	</parent>
+
+	<artifactId>nds-util</artifactId>
+
+	<name>NDS - Util</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jrimum</groupId>
+			<artifactId>jrimum-bopepo</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.code.gson</groupId>
+			<artifactId>gson</artifactId>
+		</dependency>
+		
+		<dependency>
+		  <groupId>org.swinglabs</groupId>
+		  <artifactId>pdf-renderer</artifactId>
+		  <version>0.9.0</version>
+		</dependency>	
+				
+	</dependencies>
+
+</project>

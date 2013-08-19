@@ -1,0 +1,14 @@
+{
+    "_id": "logradouro/1001",
+    "nome": "Rua Avenida Paulista",
+    "localidade": {
+        "_id":"localidade/1001"
+    },
+    "bairroInicial": {
+        "_id":"bairro/1001"
+    },
+    "bairroFinal": {
+        "_id":"bairro/1002"
+    },
+    "cep": "04101001"
+}

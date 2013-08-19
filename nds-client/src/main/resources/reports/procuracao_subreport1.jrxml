@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="procuracao_subreport1" pageWidth="555" pageHeight="802" columnWidth="515" leftMargin="20" rightMargin="20" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="f05c78c7-c377-4807-a8be-c881a4c37b32">
+	<property name="ireport.zoom" value="1.4641000000000008"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="96"/>
+	<parameter name="cidade" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="data" class="java.util.Date" isForPrompting="false"/>
+	<parameter name="nomeDistribuidor" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="enderecoDistribuidor" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="telefoneDistribuidor" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="infoComp" class="java.lang.String"/>
+	<parameter name="LOGO" class="java.awt.Image"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="bairroPDV" class="java.lang.String">
+		<fieldDescription><![CDATA[bairroPDV]]></fieldDescription>
+	</field>
+	<field name="bairroProcurado" class="java.lang.String">
+		<fieldDescription><![CDATA[bairroProcurado]]></fieldDescription>
+	</field>
+	<field name="boxCota" class="java.lang.String">
+		<fieldDescription><![CDATA[boxCota]]></fieldDescription>
+	</field>
+	<field name="cidadePDV" class="java.lang.String">
+		<fieldDescription><![CDATA[cidadePDV]]></fieldDescription>
+	</field>
+	<field name="cidadeProcurado" class="java.lang.String">
+		<fieldDescription><![CDATA[cidadeProcurado]]></fieldDescription>
+	</field>
+	<field name="class" class="java.lang.Class">
+		<fieldDescription><![CDATA[class]]></fieldDescription>
+	</field>
+	<field name="cpfJornaleiro" class="java.lang.String">
+		<fieldDescription><![CDATA[cpfJornaleiro]]></fieldDescription>
+	</field>
+	<field name="enderecoDoProcurado" class="java.lang.String">
+		<fieldDescription><![CDATA[enderecoDoProcurado]]></fieldDescription>
+	</field>
+	<field name="enderecoPDV" class="java.lang.String">
+		<fieldDescription><![CDATA[enderecoPDV]]></fieldDescription>
+	</field>
+	<field name="estadoCivil" class="java.lang.String">
+		<fieldDescription><![CDATA[estadoCivil]]></fieldDescription>
+	</field>
+	<field name="estadoCivilProcurador" class="java.lang.String">
+		<fieldDescription><![CDATA[estadoCivilProcurador]]></fieldDescription>
+	</field>
+	<field name="nacionalidade" class="java.lang.String">
+		<fieldDescription><![CDATA[nacionalidade]]></fieldDescription>
+	</field>
+	<field name="nacionalidadeProcurador" class="java.lang.String">
+		<fieldDescription><![CDATA[nacionalidadeProcurador]]></fieldDescription>
+	</field>
+	<field name="nomeJornaleiro" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeJornaleiro]]></fieldDescription>
+	</field>
+	<field name="nomeProcurador" class="java.lang.String">
+		<fieldDescription><![CDATA[nomeProcurador]]></fieldDescription>
+	</field>
+	<field name="numeroPermissao" class="java.lang.String">
+		<fieldDescription><![CDATA[numeroPermissao]]></fieldDescription>
+	</field>
+	<field name="rgJornaleiro" class="java.lang.String">
+		<fieldDescription><![CDATA[rgJornaleiro]]></fieldDescription>
+	</field>
+	<field name="rgProcurador" class="java.lang.String">
+		<fieldDescription><![CDATA[rgProcurador]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch">
+			<image>
+				<reportElement uuid="94a69750-764f-4cf5-9f80-1e3c7aec7a62" x="0" y="0" width="68" height="35"/>
+				<imageExpression><![CDATA[$P{LOGO}]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement uuid="fc073e04-3b34-45db-85b7-7cabf3b25ec4" x="0" y="32" width="515" height="29"/>
+				<textElement textAlignment="Center" verticalAlignment="Top">
+					<font size="20" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Procuração]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="505" splitType="Stretch">
+			<textField>
+				<reportElement uuid="068436e1-6a84-44c4-a56e-64044fb3a0c8" x="0" y="0" width="515" height="372"/>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font fontName="Arial" size="14" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Pelo presente instrumento particular de procuração, " + ($F{nomeJornaleiro}==null || "".equals($F{nomeJornaleiro}) ? "" : $F{nomeJornaleiro} + ",") + "\n" +
+"Box Cota: " + ($F{boxCota}==null || "".equals($F{boxCota}) ? "" : $F{boxCota} + ", ") + ($F{nacionalidade}==null || "".equals($F{nacionalidade}) ? "" : $F{nacionalidade} + "," ) + ($F{estadoCivil}==null || "".equals($F{estadoCivil}) ? "" : $F{estadoCivil} + ",") + " jornaleiro estabelecido à " + ($F{enderecoPDV}==null || "".equals($F{enderecoPDV}) ? "" : $F{enderecoPDV} + ",") + ($F{bairroPDV}==null || "".equals($F{bairroPDV}) ? "" : $F{bairroPDV} + ",") + ($F{cidadePDV}==null || "".equals($F{cidadePDV}) ? "" : $F{cidadePDV} + ".") + "\n" +
+"TPU (Termo de Permissão de Uso da Prefeitura Municipal), sob o n° " + ($F{numeroPermissao}==null || "".equals($F{numeroPermissao}) ? "" : $F{numeroPermissao} + ",") + "\n" +
+"portador da cédula de identidade (RG) n° " + ($F{rgJornaleiro}==null || "".equals($F{rgJornaleiro}) ? "" : $F{rgJornaleiro}) + " e inscrito no CPF sob o n° " + ($F{cpfJornaleiro}==null || "".equals($F{cpfJornaleiro}) ? "" : $F{cpfJornaleiro} + ",") + "\n" +
+"nomeia e constitui seu bastante procurador " + ($F{nomeProcurador}==null || "".equals($F{nomeProcurador}) ? "" : $F{nomeProcurador} + ",") + " portador da cédula de identidade (RG) n° " + ($F{rgProcurador}==null || "".equals($F{rgProcurador}) ? "" : $F{rgProcurador} + ", ") + ($F{estadoCivilProcurador}==null || "".equals($F{estadoCivilProcurador}) ? "" : $F{estadoCivilProcurador} + ", ") + ($F{nacionalidadeProcurador}==null || "".equals($F{nacionalidadeProcurador}) ? "" : $F{nacionalidadeProcurador} + ",") + " residente e domiciliado " + ($F{enderecoDoProcurado}==null || "".equals($F{enderecoDoProcurado}) ? "" : $F{enderecoDoProcurado} + ",") + ($F{bairroProcurado}==null || "".equals($F{bairroProcurado}) ? "" : $F{bairroProcurado} + ",") + ($F{cidadeProcurado}==null || "".equals($F{cidadeProcurado}) ? "" : $F{cidadeProcurado} + ",") + "\n" +
+"\npara o qual confere poderes de representa-lo perante a "+$P{nomeDistribuidor}+", exclusivamente para retirar e conferir o seu reparte, o material de números atrasados, compra de encalhe e zona azul, conferir e entregar o seu encalhe e retirar o boleto para pagamento das publicações vendidas e praticar todos os atos inerentes as atividades do titular da banca de jornais e revistas junto a distribuidora acima citada." +
+"\nEsta procuração terá vigência por prazo indeterminado ou até que seja substituída por outra."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement uuid="65ea0ea8-3191-4e75-9763-fe400d384877" x="2" y="372" width="513" height="133"/>
+				<textElement markup="html"/>
+				<textFieldExpression><![CDATA[$P{infoComp}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="23" splitType="Stretch">
+			<textField>
+				<reportElement uuid="12c3ae4b-2708-4b2a-ada0-82f6469119d9" x="0" y="0" width="515" height="23"/>
+				<textElement textAlignment="Center">
+					<font fontName="Arial" size="11" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cidade}+", "+ new java.text.SimpleDateFormat("dd 'de' MMMM 'de' yyyy").format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

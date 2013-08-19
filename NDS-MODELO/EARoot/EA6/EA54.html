@@ -1,0 +1,91 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>fiscal</title>
+<link href="../../css/ea.css" rel="stylesheet" type="text/css" />
+<script>
+function initPage(src) {	
+	if(parent==this&&(this.location+"").indexOf('EARoot')!=-1)
+		document.location=(this.location+"").substring(0,(this.location+"").indexOf('EARoot'))+"index"+(this.location+"").substring((this.location+"").lastIndexOf('.'))+"?goto="+((this.location+"").substring((this.location+"").indexOf('EARoot')+7,(this.location+"").lastIndexOf('.')).replace(/\//g,':').replace(/EA/g,""));
+	else
+		parent.initPage(src);
+}
+
+function nameClassifier(name, separator)
+{
+  var str = name;
+  var classifierName;
+  var node = document.getElementById('name_classifier');
+  if(node != null)
+  {
+    classifierName = node.innerHTML;
+  }
+  if(classifierName != "")
+  {
+   str += separator + classifierName;
+  }
+  
+  return str;
+}
+</script>
+</head>
+<body onload="initPage(this);" class="Content">
+<div class="PageBody">
+	
+<img src="EA55.png" usemap="#EA55" border="0" />
+
+<MAP NAME="EA55">
+<area shape="rect" coords="309,148,417,218" href="EA65.html" target="_self">
+<area shape="rect" coords="534,10,632,102" href="EA66.html" target="_self">
+<area shape="rect" coords="195,746,381,834" href="../EA1/EA23.html" target="_self">
+<area shape="rect" coords="441,750,531,820" href="../EA1/EA18.html" target="_self">
+<area shape="rect" coords="618,439,764,559" href="../EA1/EA25.html" target="_self">
+<area shape="rect" coords="420,577,510,647" href="EA61.html" target="_self">
+<area shape="rect" coords="266,577,382,647" href="EA62.html" target="_self">
+<area shape="rect" coords="83,18,198,73" href="EA57.html" target="_self">
+<area shape="rect" coords="523,154,639,235" href="EA58.html" target="_self">
+<area shape="rect" coords="603,258,718,313" href="EA56.html" target="_self">
+<area shape="rect" coords="627,339,717,409" href="../EA10/EA86.html" target="_self">
+<area shape="rect" coords="57,547,147,617" href="EA63.html" target="_self">
+<area shape="rect" coords="52,154,200,268" href="../EA1/EA30.html" target="_self">
+<area shape="rect" coords="286,314,475,464" href="EA60.html" target="_self">
+<area shape="rect" coords="45,336,190,424" href="EA59.html" target="_self">
+</MAP>
+
+	<div class="ObjectTitle">fiscal : Class diagram</div>
+	<table border="0" cellpadding="0" cellspacing="0" class="ObjectDetails">
+		<tr>
+			<td width="15%" class="ObjectDetailsTopic">Created:</td>
+			<td width="85%" class="ObjectDetailsValue">09/02/2012 16:25:10</td>
+		</tr>
+		<tr>
+			<td width="15%" class="ObjectDetailsTopic">Modified:</td>
+			<td width="85%" class="ObjectDetailsValue">14/02/2012 10:43:46</td>
+		</tr>
+		<tr style="padding-top: 10px;">
+			<td width="15%" class="ObjectDetailsTopic"><img src="../../images/plus03.gif" align="absmiddle" id="proj" onclick="parent.toggleData(this.id)" />Project:</td>
+			<td width="85%" class="ObjectDetailsValue"></td>			
+		</tr>
+		<tr id="proj00" style="display: none;">
+			<td width="15%" class="ObjectDetailsTopic" style="padding-left: 18px;">Author:</td>
+			<td width="85%" class="ObjectDetailsValue">T30541</td>
+		</tr>
+		<tr id="proj01" style="display: none;">
+			<td width="15%" class="ObjectDetailsTopic" style="padding-left: 18px;">Version:</td>
+			<td width="85%" class="ObjectDetailsValue">1.0</td>
+		</tr>
+		<tr>
+			<td width="15%" class="ObjectDetailsTopic"><img src="../../images/plus03.gif" align="absmiddle" id="adv" onclick="parent.toggleData(this.id)" />Advanced:</td>
+			<td width="85%" class="ObjectDetailsValue"></td>			
+		</tr>
+		<tr id="adv00" style="display: none;">
+			<td width="15%" class="ObjectDetailsTopic" style="padding-left: 18px;">ID:</td>
+			<td width="85%" class="ObjectDetailsValue">{52C6DE3B-4824-414d-AAF4-9943F92E4007}</td>
+		</tr>
+	</table>
+	
+</div>
+ 
+</body>
+</html>
