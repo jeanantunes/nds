@@ -374,6 +374,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	
 	@Transactional
 	public void cancelarDiferencas(FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa,
+								   List<Long> idsDiferencasSelecionadas,
 								   Long idUsuario) {
 		
 		Usuario usuario = usuarioService.buscar(idUsuario);
@@ -385,6 +386,15 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			this.diferencaEstoqueRepository.obterDiferencasLancamento(filtroPesquisa);
 		
 		for (Diferenca diferenca : listaDiferencas) {
+			
+			if (idsDiferencasSelecionadas != null
+					&& !idsDiferencasSelecionadas.isEmpty()) {
+				
+				if (!idsDiferencasSelecionadas.contains(diferenca.getId())) {
+					
+					continue;
+				}
+			}
 			
 			diferenca.setStatusConfirmacao(StatusConfirmacao.CANCELADO);
 			diferenca.setResponsavel(usuario);
@@ -924,6 +934,8 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		rateioDiferencaRepository.removerRateioDiferencaPorDiferenca(idDiferenca);
 		
 		Diferenca diferenca = this.diferencaEstoqueRepository.buscarPorId(idDiferenca);
+		
+		diferenca.getItemRecebimentoFisico().setDiferenca(null);
 		
 		this.diferencaEstoqueRepository.remover(diferenca);
 	}

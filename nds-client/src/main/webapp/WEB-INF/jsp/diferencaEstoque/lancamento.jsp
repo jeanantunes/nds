@@ -159,13 +159,18 @@
 				
 				<table width="931" border="0" cellspacing="1" cellpadding="1">
 					<tr>
-						<td width="459">&nbsp;</td>
+						<td width="440">&nbsp;</td>
 						<td id="labelTotalGeral" width="99" class="total" style="display: none">
 							<strong>Total Geral:</strong>
 						</td>
-					    <td id="qtdeTotalDiferencas" width="108" class="total"></td>
-					    <td width="104" align="center" class="total">&nbsp;</td>
-					    <td id="valorTotalDiferencas" width="145" class="total"></td>
+					    <td id="qtdeTotalDiferencas" width="170" class="total"></td>
+					    <td id="valorTotalDiferencas" width="100" class="total" style="text-align: right;"></td>
+					    <td id="selecionarTodos" width="110">
+					    	<span class="bt_sellAll" style="float: right;">
+								<label for="sel">Selecionar Todos</label>					
+								<input isEdicao="true" type="checkbox" name="Todos" id="selecionarTodosID" onclick="lancamentoController.selecionarTodos(this);" style="float: left;">
+							</span>
+					    </td>
 					</tr>
 				</table>
 			</fieldset>
