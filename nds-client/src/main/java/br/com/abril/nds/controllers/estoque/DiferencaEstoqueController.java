@@ -2787,14 +2787,7 @@ public class DiferencaEstoqueController extends BaseController {
 		for (DetalheItemNotaFiscalDTO detalheItemNota : itensNotaEnvio) {
 		
 			diferencaVO = new DiferencaVO();
-			
-			if (this.containsDiferenca(
-					diferencasSessao, mapaRateioCotas, detalheItemNota.getIdProdutoEdicao(),
-					dateNotaEnvio, numeroCota)) {
-				
-				continue;
-			}
-			
+
 			diferencaVO.setCodigoProduto(detalheItemNota.getCodigoProduto());
 			diferencaVO.setDescricaoProduto(detalheItemNota.getNomeProduto());
 			diferencaVO.setNumeroEdicao(detalheItemNota.getNumeroEdicao().toString());
@@ -2832,54 +2825,6 @@ public class DiferencaEstoqueController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, listaMensagens);
 		}
 	}
-
-	private boolean containsDiferenca(Set<Diferenca> diferencasSessao,
-									  Map<Long, List<RateioCotaVO>> mapaRateioCotas,
-									  Long idProdutoEdicao,
-									  Date dataNotaEnvio,
-									  Integer numeroCota) {
-		
-		boolean existeDiferencaPorNota = 
-			this.diferencaEstoqueService.existeDiferencaPorNota(
-				idProdutoEdicao, dataNotaEnvio, numeroCota);
-		
-		if (existeDiferencaPorNota) {
-			return true;
-		}
-		
-		if (diferencasSessao == null) {
-			return false;
-		}
-		
-		for (Diferenca diferenca : diferencasSessao) {
-		
-			if (!diferenca.getTipoDirecionamento().equals(TipoDirecionamentoDiferenca.NOTA)
-					|| !diferenca.getProdutoEdicao().getId().equals(idProdutoEdicao)) {
-				
-				continue;
-			}
-				
-			List<RateioCotaVO> listaRateio = mapaRateioCotas.get(diferenca.getId());
-			
-			if (listaRateio == null || listaRateio.isEmpty()) { 
-			
-				continue;
-			}
-			
-			for (RateioCotaVO rateio : listaRateio) {
-				
-				if (rateio.getNumeroCota().equals(numeroCota)
-						&& rateio.getDataEnvioNota() != null
-						&& rateio.getDataEnvioNota().compareTo(dataNotaEnvio) == 0) {
-				
-					return true;
-				}
-			}
-		}
-		
-		return false;
-	}
-
 
 	@Post
 	@Path("/obterDetalhesDiferencaCota")

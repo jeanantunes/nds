@@ -53,20 +53,30 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<DetalheItemNotaFiscalDTO> obterItensNotaEnvioLancamentoProduto(Date dataEmissao, Integer numeroCota) {
-		/*
-		String hqlProx = "select proxLancamento.dataLancamentoDistribuidor "
-				       + " from MovimentoEstoqueCota mec "
-					   + " join mec.cota cota "
-					   + " join mec.lancamento proxLancamento "
-				       + " where proxLancamento.dataLancamentoDistribuidor > :dataEmissao "
-				       + " and proxLancamento.id <> lancamento.id "
-				       + " and cota.numeroCota = :numeroCota ";
-		*/
+
+		String hqlFaltasSobras = " select sum( "
+						       + "            case tm.grupoMovimentoEstoque when 'FALTA_EM_COTA' then (mEstCota.qtde * -1) else "
+						       + "            case tm.grupoMovimentoEstoque when 'FALTA_DE_COTA' then (mEstCota.qtde * -1) else "
+				               + "            case tm.grupoMovimentoEstoque when 'SOBRA_EM_COTA' then (mEstCota.qtde) else "
+				               + "            case tm.grupoMovimentoEstoque when 'SOBRA_DE_COTA' then (mEstCota.qtde) end end end end "
+						       + "            ) "
+						       + " from MovimentoEstoqueCota mEstCota "
+						       + " join mEstCota.tipoMovimento tm "
+						       + " join mEstCota.cota c "
+						       + " join mEstCota.produtoEdicao pEdicao "
+						       + " join mEstCota.lancamento lcto "
+		                       + " where pEdicao.id = produtoEdicao.id "
+		                       + " and c.numeroCota = cota.numeroCota "
+		                       + " and lcto.dataLancamentoDistribuidor = :dataEmissao ";
+		
+		String hqlFaltasSobrasTratado = " COALESCE(("+hqlFaltasSobras+"),0) ";
+		
 		String hql = " select produto.codigo as codigoProduto, "
 				   + " produto.nome as nomeProduto, "
 				   + " produtoEdicao.numeroEdicao as numeroEdicao, "
 				   + " produtoEdicao.precoVenda as precoVenda, "  
 				   + " sum(CASE mec.tipoMovimento.operacaoEstoque WHEN 'ENTRADA' THEN (mec.qtde) ELSE (mec.qtde * -1) END) as quantidadeExemplares,"
+				   +   hqlFaltasSobrasTratado + " as sobrasFaltas,"
 				   + " produtoEdicao.id as idProdutoEdicao, "
 				   + " produtoEdicao.pacotePadrao as pacotePadrao "
 				   + " from MovimentoEstoqueCota mec "
@@ -76,11 +86,9 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 				   + " join mec.produtoEdicao produtoEdicao "
 				   + " join produtoEdicao.produto produto "
 				   + " where lancamento.dataLancamentoDistribuidor = :dataEmissao "
-				   
-				   //+ " and lancamento.dataLancamentoDistribuidor < (" + hqlProx + ")"
-				   
 				   + " and cota.numeroCota = :numeroCota "
-				   + " group by produtoEdicao.id ";		
+				   + " group by produtoEdicao.id "
+				   + " order by produto.nome ";		
 		
 		Query query = super.getSession().createQuery(hql);
 		
