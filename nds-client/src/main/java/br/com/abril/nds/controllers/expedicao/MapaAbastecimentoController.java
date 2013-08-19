@@ -377,11 +377,11 @@ public class MapaAbastecimentoController extends BaseController {
 					
 					filtro.getPaginacao().setSortColumn("nomeEdicao");
 					filtro.getPaginacao().setOrdenacao(Ordenacao.ASC);
-					TreeMap<String, ProdutoMapaDTO> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBox(filtro);
+					TreeMap<String, ProdutoMapaDTO> produtosMapaBox = mapaAbastecimentoService.obterMapaDeImpressaoPorBox(filtro);
 					
 					boolean cotasSemRoteirizacao = false;
-					List<String> arrayCotasSemRoteirizacao = new ArrayList<String>();
-					Set<Entry<String, ProdutoMapaDTO>> entrySet = produtosMapa.entrySet();
+					List<String> arrayCotasSemRoteirizacaoBox = new ArrayList<String>();
+					Set<Entry<String, ProdutoMapaDTO>> entrySet = produtosMapaBox.entrySet();
 					java.util.Iterator<Entry<String, ProdutoMapaDTO>> iterator = entrySet.iterator();
 					
 					
@@ -390,25 +390,57 @@ public class MapaAbastecimentoController extends BaseController {
 						if(next.getValue() == null) {
 							cotasSemRoteirizacao = true;
 							
-							arrayCotasSemRoteirizacao.add(next.getKey());
+							arrayCotasSemRoteirizacaoBox.add(next.getKey());
 						}
 					}
 					
 					if(cotasSemRoteirizacao == true) {
-						result.include("result", arrayCotasSemRoteirizacao);
+						result.include("result", arrayCotasSemRoteirizacaoBox);
 					} else {
 						setaNomeParaImpressao();
-						result.forwardTo(MapaAbastecimentoController.class).impressaoPorBox(produtosMapa);
+						result.forwardTo(MapaAbastecimentoController.class).impressaoPorBox(produtosMapaBox);
 					}
 					break;
 					
 				case ROTA:
-					result.forwardTo(MapaAbastecimentoController.class).impressaoPorRota(filtro);
+					filtro.getPaginacao().setQtdResultadosPorPagina(null);
+					filtro.getPaginacao().setPaginaAtual(null);
+					
+					List<String> arrayCotasSemRoteirizacaoRota = new ArrayList<String>();
+					HashMap<Integer, HashMap<String, ProdutoMapaRotaDTO>> produtosMapaRota = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
+					
+					if(produtosMapaRota == null) {
+						List<ProdutoAbastecimentoDTO> boxProdutoRota = this.mapaAbastecimentoService.obterMapaAbastecimentoPorBoxRota(filtro);
+						
+						for(ProdutoAbastecimentoDTO produtoCotaRota : boxProdutoRota) {
+							if((produtoCotaRota.getCodigoBox() == null || produtoCotaRota.getCodigoRota() == null) && 
+									! arrayCotasSemRoteirizacaoRota.contains(produtoCotaRota.getCodigoCota() + " - " + produtoCotaRota.getNomeCota())) {
+								arrayCotasSemRoteirizacaoRota.add(produtoCotaRota.getCodigoCota() + " - " + produtoCotaRota.getNomeCota());
+							}
+						}
+						result.include("result", arrayCotasSemRoteirizacaoRota);
+					} else {
+						result.forwardTo(MapaAbastecimentoController.class).impressaoPorRota(filtro);
+					}
 					break;
 				case COTA:
-					result.forwardTo(MapaAbastecimentoController.class).impressaoPorCota(filtro);
+					filtro.getPaginacao().setQtdResultadosPorPagina(null);
+					filtro.getPaginacao().setPaginaAtual(null);
+					
+					List<String> arrayCotasSemRoteirizacaoCota = new ArrayList<String>();
+					HashMap<Integer, HashMap<String, ProdutoMapaRotaDTO>> produtosMapaCota = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
+					if(produtosMapaCota == null) {
+						
+						arrayCotasSemRoteirizacaoCota.add(filtro.getCodigoCota() + " - " + filtro.getNomeCota());
+						
+						result.include("result", arrayCotasSemRoteirizacaoCota);
+					} else {
+						setaNomeParaImpressao();
+						result.forwardTo(MapaAbastecimentoController.class).impressaoPorCota(filtro);
+					}
 					break;
 				case PRODUTO:
+					
 					if(filtro.getQuebraPorCota()) 
 						result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoQuebraCota(filtro);
 					else if(filtro.getEdicaoProduto()!=null)	
@@ -420,7 +452,11 @@ public class MapaAbastecimentoController extends BaseController {
 					result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoEdicao(filtro);
 					break;
 				case PRODUTO_X_COTA:
-					result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoQuebraCota(filtro);
+					if(filtro.getBox() == null) {						
+						result.include("result", filtro.getCodigoCota() + " - " + filtro.getNomeCota());
+					} else {
+						result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoQuebraCota(filtro);
+					}
 					break;					
 				case ENTREGADOR:				
 						result.forwardTo(MapaAbastecimentoController.class).impressaoPorEntregador(filtro);
@@ -609,7 +645,7 @@ public class MapaAbastecimentoController extends BaseController {
 	}
 	
 	private void popularGridPorRota(FiltroMapaAbastecimentoDTO filtro) {
-
+		
 		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaAbastecimentoPorBoxRota(filtro);
 		
 		if (lista == null || lista.isEmpty()) {
