@@ -21,10 +21,7 @@ import br.com.abril.nds.dto.ProdutoMapaCotaDTO;
 import br.com.abril.nds.dto.ProdutoMapaDTO;
 import br.com.abril.nds.dto.ProdutoMapaRotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
-<<<<<<< HEAD
 import br.com.abril.nds.model.cadastro.Cota;
-=======
->>>>>>> DGBti/master
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
@@ -114,19 +111,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 					Integer novaQtdeTotal = produtoPorBox.getReparte() + produtoMapa.get(keyProduto).getTotalReparte();
 					produtoMapa.get(keyProduto).setTotalReparte(novaQtdeTotal);
 			}
-<<<<<<< HEAD
-	
-		preencheBoxNaoUtilizado(boxes, produtoMapa);	
-		
-		TreeMap<String,ProdutoMapaDTO> produtoMapaOrdenada = new TreeMap<String, ProdutoMapaDTO>(comparator);	
-		
-		produtoMapaOrdenada.putAll(produtoMapa);
-		
-		return produtoMapaOrdenada;
-	
-	
-=======
-
+			
 			preencheBoxNaoUtilizado(boxes, produtoMapa);	
 			
 			TreeMap<String,ProdutoMapaDTO> produtoMapaOrdenada = new TreeMap<String, ProdutoMapaDTO>(comparator);	
@@ -134,9 +119,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 			produtoMapaOrdenada.putAll(produtoMapa);
 			
 			return produtoMapaOrdenada;
-			
-			
->>>>>>> DGBti/master
+
 		} else {
 	
 			return produtoMapa;
