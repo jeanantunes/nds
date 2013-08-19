@@ -10,6 +10,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -1318,6 +1319,8 @@ public class DiferencaEstoqueController extends BaseController {
 					(List<Diferenca>) this.httpSession.getAttribute(LISTA_DIFERENCAS_SESSION_ATTRIBUTE));*/
 		}
 		
+		this.validarDiferencasSelecionadas(listaNovasDiferencas);
+		
 		this.diferencaEstoqueService.efetuarAlteracoes(
 			listaNovasDiferencas, mapaRateioCotas, filtroPesquisa, this.getUsuarioLogado().getId(), modoNovaDiferenca);
 		
@@ -1326,6 +1329,35 @@ public class DiferencaEstoqueController extends BaseController {
 				Constantes.PARAM_MSGS).recursive().serialize();
 		
 		this.limparSessao();
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void validarDiferencasSelecionadas(Set<Diferenca> listaNovasDiferencas) {
+		
+		List<Long> idsDiferencasSelecionadas = null;
+		
+		if (this.httpSession.getAttribute("diferencasSelecionadas") != null) {
+			
+			idsDiferencasSelecionadas = 
+				(List<Long>) this.httpSession.getAttribute("diferencasSelecionadas");
+		}
+		
+		if (idsDiferencasSelecionadas == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Nenhuma diferença selecionada.");
+		}
+		
+		Iterator<Diferenca> iterator = listaNovasDiferencas.iterator();
+		
+		while (iterator.hasNext()) {
+			
+			Diferenca diferenca = iterator.next();
+			
+			if (!idsDiferencasSelecionadas.contains(diferenca.getId())) {
+				
+				iterator.remove();
+			}
+		}
 	}
 	
 	@Post
@@ -1364,6 +1396,7 @@ public class DiferencaEstoqueController extends BaseController {
 		this.limparSessao();
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Post
 	@Rules(Permissao.ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_ALTERACAO)
 	public void cancelarLancamentos() {
@@ -1377,8 +1410,21 @@ public class DiferencaEstoqueController extends BaseController {
 				(FiltroLancamentoDiferencaEstoqueDTO) this.httpSession.getAttribute(
 					FILTRO_PESQUISA_LANCAMENTO_SESSION_ATTRIBUTE);
 			
+			List<Long> idsDiferencasSelecionadas = null;
+			
+			if (this.httpSession.getAttribute("diferencasSelecionadas") != null) {
+				
+				idsDiferencasSelecionadas = 
+					(List<Long>) this.httpSession.getAttribute("diferencasSelecionadas");
+			}
+			
+			if (idsDiferencasSelecionadas == null) {
+				
+				throw new ValidacaoException(TipoMensagem.ERROR, "Nenhuma diferença selecionada.");
+			}
+			
 			this.diferencaEstoqueService.cancelarDiferencas(
-				filtroPesquisa, this.getUsuarioLogado().getId());
+				filtroPesquisa, idsDiferencasSelecionadas, this.getUsuarioLogado().getId());
 			
 		} else {
 			
@@ -2931,5 +2977,58 @@ public class DiferencaEstoqueController extends BaseController {
 			relatorio, FileType.PDF.getContentType(), nomeArquivoRelatorio, true);
 	}
 	
+	/**
+	 * Adiciona ou remove um item da lista de item adicionado
+	 * 
+	 * @param idDiferenca - id da diferença selecionada
+	 * @param selecionado - true(adiciona a lista) false(remove da lista)
+	 */
+	@Post
+	@Path("/selecionar")
+	@SuppressWarnings("unchecked")
+	public void selecionar(Long idDiferenca, Boolean selecionado) {
+		
+		List<Long> selecionados = (List<Long>) this.httpSession.getAttribute("diferencasSelecionadas");
+		
+		if (selecionados == null) {
+			
+			selecionados = new ArrayList<Long>();			
+		}
+
+		int index = selecionados.indexOf(idDiferenca); 
+		
+		if (index == -1) {
+			
+			selecionados.add(idDiferenca);
+			
+		} else {
+			
+			selecionados.remove(index);
+		}
+		
+		this.httpSession.setAttribute("diferencasSelecionadas", selecionados);
+		
+		this.result.nothing();
+	}
+	
+	/**
+	 * Adiciona ou remove todos os itens da pesquisa a lista de itens selecionados da sessão.
+	 * 
+	 * @param selecionado - true(adiciona todos) false (remove todos)
+	 */
+	@Post
+	public void selecionarTodos(Boolean selecionado, List<Long> listaIdsDiferencas){
+		
+		if (selecionado == false) {
+			
+			this.httpSession.setAttribute("diferencasSelecionadas", null);
+			
+		} else {
+							
+			this.httpSession.setAttribute("diferencasSelecionadas", listaIdsDiferencas);
+		}
+
+		this.result.nothing();
+	}
+	
 }
- 
