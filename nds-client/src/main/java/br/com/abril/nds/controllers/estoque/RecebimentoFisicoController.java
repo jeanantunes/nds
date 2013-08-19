@@ -235,12 +235,9 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		boolean indRecebimentoFisicoConfirmado = verificarRecebimentoFisicoConfirmado(notaFiscal.getId());
 		
-		List<CellModelKeyValue<RecebimentoFisicoVO>> rows = 
-			obterListaCellModelKeyValue(
-				getItensRecebimentoFisicoFromSession(), indRecebimentoFisicoConfirmado);
-		
-		TableModel<CellModelKeyValue<RecebimentoFisicoVO>> tableModel = 
-				new TableModel<CellModelKeyValue<RecebimentoFisicoVO>>();
+		List<CellModelKeyValue<RecebimentoFisicoVO>> rows = obterListaCellModelKeyValue(getItensRecebimentoFisicoFromSession(), indRecebimentoFisicoConfirmado, true);
+				
+		TableModel<CellModelKeyValue<RecebimentoFisicoVO>> tableModel = new TableModel<CellModelKeyValue<RecebimentoFisicoVO>>();
 
 		tableModel.setRows(rows);
 		tableModel.setTotal(rows.size());
@@ -270,7 +267,7 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		List<CellModelKeyValue<RecebimentoFisicoVO>> rows = 
 			obterListaCellModelKeyValue(
-					itensRecebimentoFisico, indRecebimentoFisicoConfirmado);
+					itensRecebimentoFisico, indRecebimentoFisicoConfirmado, false);
 		
 		setItensRecebimentoFisicoToSession(itensRecebimentoFisico);
 		
@@ -660,9 +657,9 @@ public class RecebimentoFisicoController extends BaseController {
 	 * 
 	 * @param itemRecebimento
 	 */
-	private void carregarValorTotal(RecebimentoFisicoDTO itemRecebimento) {
+	private void carregarValorTotal(RecebimentoFisicoDTO itemRecebimento, boolean isRefresh) {
 		
-		BigInteger qtdeExemplares = itemRecebimento.getQtdExemplar() == null ? BigInteger.ZERO : itemRecebimento.getQtdExemplar();
+		BigInteger qtdeExemplares = itemRecebimento.getRepartePrevisto() == null ? BigInteger.ZERO : itemRecebimento.getRepartePrevisto();
 		
 		BigInteger qtdePacote = itemRecebimento.getQtdPacote() == null ? BigInteger.ZERO : itemRecebimento.getQtdPacote();
 		
@@ -678,11 +675,13 @@ public class RecebimentoFisicoController extends BaseController {
 		
 		if (itemRecebimento.getPacotePadrao() == 0){
 			
-			qtdeTotalItens = 
-				itemRecebimento.getRepartePrevisto() == null ? BigInteger.ZERO : itemRecebimento.getRepartePrevisto();
+			qtdeTotalItens = itemRecebimento.getRepartePrevisto() == null ? BigInteger.ZERO : itemRecebimento.getRepartePrevisto();
 		} else {
 			
-			qtdeTotalItens = qtdePacote.multiply(qtdePacotePadrao).add(qtdeExemplares);
+			if(!isRefresh)
+				qtdeTotalItens = qtdePacote.multiply(qtdePacotePadrao).add(qtdeExemplares);
+			else
+				qtdeTotalItens = qtdeExemplares;
 		}
 		
 		valorTotal = precoItem.multiply(new BigDecimal(qtdeTotalItens));
@@ -690,9 +689,8 @@ public class RecebimentoFisicoController extends BaseController {
 		itemRecebimento.setValorTotal(valorTotal);
 		
 		BigDecimal precoDesc = new BigDecimal(itemRecebimento.getPrecoDesconto());
-		itemRecebimento.setValorTotalDesconto(
-			precoDesc.multiply(
-				new BigDecimal(qtdeTotalItens)).setScale(2, RoundingMode.HALF_EVEN));
+		
+		itemRecebimento.setValorTotalDesconto( precoDesc.multiply( new BigDecimal(qtdeTotalItens)).setScale(2, RoundingMode.HALF_EVEN));
 	}
 		
 	/**
@@ -1120,7 +1118,7 @@ public class RecebimentoFisicoController extends BaseController {
 	 */
 	private List<CellModelKeyValue<RecebimentoFisicoVO>> obterListaCellModelKeyValue(
 			List<RecebimentoFisicoDTO> itensRecebimentoFisico, 
-			boolean indRecebimentoFisicoConfirmado) {
+			boolean indRecebimentoFisicoConfirmado, boolean isRefresh) {
 		
 		int counter = 0;
 		
@@ -1147,7 +1145,7 @@ public class RecebimentoFisicoController extends BaseController {
 			}
 			dto.setPrecoDesconto(valorDesconto);
 			
-			carregarValorTotal(dto);
+			carregarValorTotal(dto, isRefresh);
 			
 			carregarValorDiferenca(dto);
 			
