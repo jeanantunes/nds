@@ -370,7 +370,7 @@ public class LancamentoRepositoryImpl extends
 			parametros.put("idFornecedor", idFornecedor);
 		}			
 		
-		hql.append(" and estoque.qtde>=estudo.qtdeReparte ");
+		//hql.append(" and estoque.qtde>=estudo.qtdeReparte ");
 		
 		hql.append(" group by lancamento ");
 		
