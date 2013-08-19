@@ -273,7 +273,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 							formaCobrancaService.obterFormaCobranca(
 									ultimaCota != null ? ultimaCota.getId() : null, 
 									ultimoFornecedor != null ? ultimoFornecedor.getId() : null, 
-									dataOperacao, valorMovimentos);
+									dataOperacao, valorMovimentos.compareTo(BigDecimal.ZERO) >= 0?valorMovimentos:valorMovimentos.negate());
 
 					if (formaCobranca.getPoliticaCobranca() != null){
 				    	
@@ -338,7 +338,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						formaCobrancaService.obterFormaCobranca(
 								ultimaCota != null ? ultimaCota.getId() : null, 
 								ultimoFornecedor != null ? ultimoFornecedor.getId() : null, 
-								dataOperacao, valorMovimentos);
+								dataOperacao, valorMovimentos.compareTo(BigDecimal.ZERO) > 0?valorMovimentos:valorMovimentos.negate());
 			}
 			
 			//Decide se gera movimento consolidado ou postergado para a ultima cota
@@ -540,7 +540,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			switch (((TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento()).getGrupoMovimentoFinaceiro()){
 				case CREDITO:
 					vlMovFinanTotal = vlMovFinanTotal.add(movimentoFinanceiroCota.getValor());
-					vlMovFinanDebitoCredito = vlMovFinanDebitoCredito.add(movimentoFinanceiroCota.getValor());
 				break;
 				case COMPRA_NUMEROS_ATRAZADOS:
 				case DEBITO:
@@ -549,11 +548,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 								movimentoFinanceiroCota.getValor() != null ? 
 										movimentoFinanceiroCota.getValor().negate() : 
 											BigDecimal.ZERO);
-					
-					vlMovFinanDebitoCredito = 
-							vlMovFinanDebitoCredito.add(movimentoFinanceiroCota.getValor() != null ? 
-									movimentoFinanceiroCota.getValor().negate() : 
-										BigDecimal.ZERO);
 				break;
 				
 				case ENVIO_ENCALHE:
@@ -670,6 +664,19 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 							movimentoFinanceiroCota.getValor() != null ?
 									movimentoFinanceiroCota.getValor():
 										BigDecimal.ZERO);
+				break;
+			}
+			
+			switch (((TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento()).getOperacaoFinaceira()){
+				case CREDITO:
+					vlMovFinanDebitoCredito = vlMovFinanDebitoCredito.add(movimentoFinanceiroCota.getValor());
+				break;
+				
+				case DEBITO:
+					vlMovFinanDebitoCredito = 
+					vlMovFinanDebitoCredito.add(movimentoFinanceiroCota.getValor() != null ? 
+							movimentoFinanceiroCota.getValor().negate() : 
+								BigDecimal.ZERO);
 				break;
 			}
 		}
@@ -1052,28 +1059,24 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				
 				if (divida != null){
 				
-					this.cobrancaControleConferenciaEncalheCotaRepository.excluirPorCobranca(
-							divida.getCobranca().getId());
+					this.cobrancaControleConferenciaEncalheCotaRepository.excluirPorCobranca(divida.getCobranca().getId());
 					this.cobrancaRepository.remover(divida.getCobranca());
 					this.dividaRepository.remover(divida);
-					
-					this.consolidadoFinanceiroRepository.remover(consolidado);
-					
-					List<TipoMovimentoFinanceiro> listaPostergados = Arrays.asList(
-						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-								GrupoMovimentoFinaceiro.POSTERGADO_CREDITO),
-								
-						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-								GrupoMovimentoFinaceiro.POSTERGADO_DEBITO)
-					);
-					
-					this.movimentoFinanceiroCotaService.removerPostergadosDia(
-							consolidado.getCota().getId(), 
-							listaPostergados);
-				} else {
-					
-					this.consolidadoFinanceiroRepository.remover(consolidado);
-				}
+				}	
+				
+				this.consolidadoFinanceiroRepository.remover(consolidado);
+				
+				List<TipoMovimentoFinanceiro> listaPostergados = Arrays.asList(
+					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+							GrupoMovimentoFinaceiro.POSTERGADO_CREDITO),
+							
+					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+							GrupoMovimentoFinaceiro.POSTERGADO_DEBITO)
+				);
+				
+				this.movimentoFinanceiroCotaService.removerPostergadosDia(
+						consolidado.getCota().getId(), 
+						listaPostergados);
 			}
 		}
 	}

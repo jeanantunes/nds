@@ -883,11 +883,16 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 	}
 	
 	@Test
+	public void obterDividaPorIdConsolidadoNaoNegociado(){
+		
+		Assert.assertNotNull(this.dividaRepository.obterDividaPorIdConsolidadoNaoNegociado(consolidado.getId()));
+	}
+	
+	@Test
 	public void obterDividaPorIdConsolidado(){
 		
 		Assert.assertNotNull(this.dividaRepository.obterDividaPorIdConsolidado(consolidado.getId()));
 	}
-	
 	
     @Test
     public void testSumarizacaoDividasReceberEm() {

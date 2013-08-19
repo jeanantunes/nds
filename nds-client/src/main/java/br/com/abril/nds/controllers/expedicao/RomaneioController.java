@@ -173,9 +173,16 @@ public class RomaneioController extends BaseController {
 	
 	private void validarEntrada(FiltroRomaneioDTO filtro) {
 		
+		final int MAX_PRODUTOS_ROMANEIO = 6;
+		
 		if (filtro.getData() == null){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha a data!");
+		}
+		
+		if (filtro.getProdutos() != null && filtro.getProdutos().size() > MAX_PRODUTOS_ROMANEIO) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "A quantidade máxima de produtos selecionados deve ser de '6'");
 		}
 	}
 	

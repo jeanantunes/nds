@@ -1593,4 +1593,9 @@ public class PdvServiceImpl implements PdvService {
 		return this.pdvRepository.obterPDVs(numeroCota);
 	}
 
+	@Override
+	public List<TipoGeradorFluxoPDV> obterTodosTiposGeradorFluxoOrdenado() {
+		return this.tipoGeradorFluxoPDVRepsitory.obterTiposGeradorFluxoOrdenado();
+	}
+
 }

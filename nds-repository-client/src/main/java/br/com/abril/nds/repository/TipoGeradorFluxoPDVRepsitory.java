@@ -11,4 +11,6 @@ public interface TipoGeradorFluxoPDVRepsitory extends Repository<TipoGeradorFlux
 	List<TipoGeradorFluxoPDV> obterTiposGeradorFluxoNotIn(Long... codigos );
 
 	public abstract List<TipoGeradorFluxoPDV> obterTodosTiposGeradorFluxo();
+	
+	List<TipoGeradorFluxoPDV> obterTiposGeradorFluxoOrdenado();
 }

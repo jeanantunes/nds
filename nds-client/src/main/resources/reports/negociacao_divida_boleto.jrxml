@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="negociacao_divida_boleto" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Empty" uuid="65863327-38c9-4008-a6c1-3e0f60984066">
 	<property name="ireport.zoom" value="1.6105100000000032"/>
-	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="22"/>
+	<property name="ireport.x" value="241"/>
+	<property name="ireport.y" value="107"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String"/>
 	<parameter name="TOTAL_PARCELAS" class="java.lang.String"/>
 	<parameter name="LOGO_DISTRIBUIDOR" class="java.io.InputStream"/>
