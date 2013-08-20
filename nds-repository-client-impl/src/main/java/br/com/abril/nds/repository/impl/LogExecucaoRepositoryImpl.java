@@ -19,6 +19,7 @@ import br.com.abril.nds.dto.filtro.FiltroDetalheProcessamentoDTO;
 import br.com.abril.nds.dto.filtro.FiltroInterfacesDTO;
 import br.com.abril.nds.model.integracao.LogExecucao;
 import br.com.abril.nds.model.integracao.LogExecucaoMensagem;
+import br.com.abril.nds.model.integracao.StatusExecucaoEnum;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.LogExecucaoRepository;
 
@@ -162,6 +163,7 @@ public class LogExecucaoRepositoryImpl extends AbstractRepositoryModel<LogExecuc
 	public List<LogExecucaoMensagem> obterMensagensErroLogInterface(FiltroDetalheProcessamentoDTO filtro) {
 		Criteria criteria = addMensagensLogInterfaceRestrictions(filtro.getCodigoLogExecucao());
 		criteria.add(Restrictions.eq("logExecucao.id", filtro.getIdLogExecucao()));
+		criteria.add(Restrictions.not(Restrictions.eq("logExecucao.status", StatusExecucaoEnum.SUCESSO)));//Ignorar casos de sucesso na apresentacao do detalhe
 
 		boolean desc = true;
 		if (filtro.getPaginacao() != null && filtro.getPaginacao().getSortOrder() != null) {
