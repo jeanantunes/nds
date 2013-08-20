@@ -1809,7 +1809,7 @@ public class DiferencaEstoqueController extends BaseController {
 				
 			}
 			
-			consultaDiferencaVO.setMotivoAprovacao(motivo);
+			consultaDiferencaVO.setMotivoAprovacao(diferenca.getLancamentoDiferenca().getStatus().toString());
 			
 			consultaDiferencaVO.setValorTotalDiferenca(
 				CurrencyUtil.formatarValor(diferenca.getValorTotalDiferenca()));

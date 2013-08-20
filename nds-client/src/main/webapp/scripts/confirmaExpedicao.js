@@ -172,8 +172,6 @@ var confirmaExpedicaoController = $.extend(true, {
 		
 		$(document.body).unbind('keydown');
 		
-		console.log(data);
-		
 		var grid = data[0];
 		var mensagens = data[1];
 		var status = data[2];
