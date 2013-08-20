@@ -284,7 +284,7 @@ var chamadaoController = $.extend(true, {
 		
 		$("#qtdProdutosTotal", chamadaoController.workspace).val(resultado.qtdProdutosTotal);
 		$("#qtdExemplaresTotal", chamadaoController.workspace).val(resultado.qtdExemplaresTotal);
-		$("#valorTotal", chamadaoController.workspace).val(resultado.valorTotal);
+		$("#valorTotal", chamadaoController.workspace).val(priceToFloat( resultado.valorTotal ));
 		
 		var checkAllSelected = chamadaoController.verifyCheckAll();
 		
@@ -308,7 +308,7 @@ var chamadaoController = $.extend(true, {
 		checkAll(input, "checkConsignado");
 		
 		$("input[name='checkConsignado']", chamadaoController.workspace).each(function() {
-		
+			
 			var checado = this.checked;
 			
 			clickLineFlexigrid(this, checado);
@@ -333,6 +333,7 @@ var chamadaoController = $.extend(true, {
 		$("input[name='checkConsignado']", chamadaoController.workspace).each(function() {
 		
 			var checado = this.checked;
+			
 			
 			clickLineFlexigrid(this, checado);
 			
