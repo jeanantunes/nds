@@ -43,6 +43,7 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModel;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
@@ -129,7 +130,7 @@ public class ConsultaNotasController extends BaseController {
 			
 			List<NotaFiscalEntradaFornecedorDTO> listaNotasFiscais =
 				notaFiscalService.obterNotasFiscaisCadastradasDTO(filtroConsultaNotaFiscal);
-
+			
  			Integer quantidadeRegistros = this.notaFiscalService.obterQuantidadeNotasFicaisCadastradas(filtroConsultaNotaFiscal);
 			
 			if (quantidadeRegistros <= 0) {
@@ -253,17 +254,24 @@ public class ConsultaNotasController extends BaseController {
 		for (NotaFiscalEntradaFornecedorDTO notaFiscal : listaNotasFiscais) {
 			
 			ConsultaNotaFiscalVO consultaNotaFiscalVO = new ConsultaNotaFiscalVO();
-			
 			try {
 				consultaNotaFiscalVO.setDataEmissao( sdf.parse(notaFiscal.getDataEmissao()) );
 				consultaNotaFiscalVO.setDataExpedicao( sdf.parse(notaFiscal.getDataExpedicao()) );
 			} catch (ParseException e) {
 				throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
 			}
+			
+			consultaNotaFiscalVO.setChaveAcesso(notaFiscal.getChaveAcesso());
 			consultaNotaFiscalVO.setNomeFornecedor(mapaFornecedorNotaFiscal.get(notaFiscal.getId()));
 			consultaNotaFiscalVO.setNotaRecebida(notaFiscal.getNotaRecebida());
-			consultaNotaFiscalVO.setNumeroNota( Long.parseLong(notaFiscal.getNumero()) );
-			consultaNotaFiscalVO.setTipoNotaFiscal(notaFiscal.getDescricao());
+			if(!StringUtil.isEmpty(notaFiscal.getNumero())) {
+				try {
+					consultaNotaFiscalVO.setNumeroNota( Long.parseLong(notaFiscal.getNumero()) );
+				} catch(Exception e) {
+					
+				}
+			}
+//			consultaNotaFiscalVO.setTipoNotaFiscal(notaFiscal.getDescricao());
 			consultaNotaFiscalVO.setValor(notaFiscal.getValorTotalNota());
 			consultaNotaFiscalVO.setValorComDesconto(notaFiscal.getValorTotalNotaComDesconto());
 			consultaNotaFiscalVO.setSerie(notaFiscal.getSerie());

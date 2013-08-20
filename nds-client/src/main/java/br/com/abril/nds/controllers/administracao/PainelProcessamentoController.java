@@ -1,6 +1,9 @@
 package br.com.abril.nds.controllers.administracao;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -25,6 +28,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.InterfaceExecucaoService;
 import br.com.abril.nds.service.PainelProcessamentoService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
@@ -179,15 +183,41 @@ public class PainelProcessamentoController extends BaseController {
 	 * @param rp
 	 * @param page
 	 */
-	public void pesquisarDetalhesInterfaceProcessamento(String idLogProcessamento, String sortname, String sortorder, int rp, int page) throws Exception {
+	public void pesquisarDetalhesInterfaceProcessamento(String idLogProcessamento, String dataProcessamento, String idLogExecucao,
+			String sortname, String sortorder, int rp, int page) throws Exception {
 
 		FiltroDetalheProcessamentoDTO filtro = carregarFiltroDetalhesProcessamento(sortorder, sortname, page, rp);
-
+		
 		List<DetalheProcessamentoVO> lista;
 		int quantidade = 0;
 		try {
-			lista = painelProcessamentoService.listardetalhesProcessamentoInterface(Long.parseLong(idLogProcessamento), filtro);
-			quantidade = Integer.valueOf( painelProcessamentoService.listarTotaldetalhesProcessamentoInterface(Long.parseLong(idLogProcessamento), filtro).toString() );
+
+			Long idProcessamentoLong = 0l;
+			if(!StringUtil.isEmpty(idLogProcessamento)){
+				idProcessamentoLong = Long.parseLong(idLogProcessamento);
+			}
+			
+			Long idLogExecucaoLong = 0l;
+			if(!StringUtil.isEmpty(idLogExecucao)){
+				idLogExecucaoLong = Long.parseLong(idLogExecucao);
+			}
+			
+			filtro.setCodigoLogExecucao(idProcessamentoLong);
+			filtro.setIdLogExecucao(idLogExecucaoLong);
+			
+			Date dataOperacao = null;
+			if(!StringUtil.isEmpty(dataProcessamento)){
+				try {
+					dataOperacao = new SimpleDateFormat("dd/MM/yyyy").parse(dataProcessamento);
+				} catch (ParseException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			filtro.setDataProcessamento(dataOperacao);
+			
+			lista = painelProcessamentoService.listardetalhesProcessamentoInterface(filtro);
+			quantidade = Integer.valueOf( painelProcessamentoService.listarTotaldetalhesProcessamentoInterface(filtro).toString() );
 			
 			if (lista == null || lista.isEmpty()) {
 				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");

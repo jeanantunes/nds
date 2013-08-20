@@ -873,30 +873,11 @@ var recebimentoFisicoController = $.extend(true, {
 	
 	replicarValorRepartePrevisto : function(lineId, elementoCheckBox) {
 		
-		$("#totalSemDescontoLbl", recebimentoFisicoController.workspace).text(
-			$.formatNumber(
-				(priceToFloat($("#totalSemDescontoLbl", recebimentoFisicoController.workspace).text()) - 
-				 priceToFloat($("#valorTotalCapa_"+lineId, recebimentoFisicoController.workspace).text()))
-				,{format:"#,##0.00", locale:"br"}
-			)
-		);
-		
-		$("#totalComDescontoLbl", recebimentoFisicoController.workspace).text(
-			$.formatNumber(
-				(priceToFloat($("#totalComDescontoLbl", recebimentoFisicoController.workspace).text()) -
-				 priceToFloat($("#valorTotalDesconto_"+lineId, recebimentoFisicoController.workspace).text()))
-				,{format:"#,##0.00", locale:"br"}
-			)
-		);
-		
 		if( $(elementoCheckBox).attr('checked') != 'checked') {
 			
-			$("#qtdPacote_"+lineId, recebimentoFisicoController.workspace).val(0);
-			$("#qtdExemplar_"+lineId, recebimentoFisicoController.workspace).val(0);
-			$("#diferenca_"+lineId, recebimentoFisicoController.workspace).text(0);
-			
-			$("#valorTotalCapa_"+lineId, recebimentoFisicoController.workspace).text("0,00");
-			$("#valorTotalDesconto_"+lineId, recebimentoFisicoController.workspace).text("0,00");
+			$("#qtdPacote_"+ lineId, recebimentoFisicoController.workspace).val(0);
+			$("#qtdExemplar_"+ lineId, recebimentoFisicoController.workspace).val(0);
+			$("#diferenca_"+ lineId, recebimentoFisicoController.workspace).text(0);
 			
 			$("#chBoxReplicaValorRepartePrevistoAll", recebimentoFisicoController.workspace).uncheck();
 			
@@ -909,34 +890,17 @@ var recebimentoFisicoController = $.extend(true, {
 
 		function(resultado) {
 
-			$("#qtdPacote_"+lineId, recebimentoFisicoController.workspace).val(resultado.qtdPacote);
-			$("#qtdExemplar_"+lineId, recebimentoFisicoController.workspace).val(resultado.qtdExemplar);
-			$("#diferenca_"+lineId, recebimentoFisicoController.workspace).text(0);
+			$("#qtdPacote_"+ lineId, recebimentoFisicoController.workspace).val(resultado.qtdPacote);
+			$("#qtdExemplar_"+ lineId, recebimentoFisicoController.workspace).val(resultado.qtdExemplar);
+			$("#diferenca_"+ lineId, recebimentoFisicoController.workspace).text(0);
 			
-			resultado.valorTotalCapa = 
-				$.formatNumber(resultado.valorTotalCapa, {format:"#,##0.00", locale:"br"});
+			resultado.valorTotalCapa = $.formatNumber(resultado.valorTotalCapa, {format:"#,##0.00", locale:"br"});
 			
-			resultado.valorTotalDesconto = 
-				$.formatNumber(resultado.valorTotalDesconto, {format:"#,##0.00", locale:"br"});
+			resultado.valorTotalDesconto = $.formatNumber(resultado.valorTotalDesconto, {format:"#,##0.00", locale:"br"});
 			
-			$("#valorTotalCapa_"+lineId, recebimentoFisicoController.workspace).text(resultado.valorTotalCapa);
-			$("#valorTotalDesconto_"+lineId, recebimentoFisicoController.workspace).text(resultado.valorTotalDesconto);
+			$("#valorTotalCapa_"+ lineId, recebimentoFisicoController.workspace).text(resultado.valorTotalCapa);
+			$("#valorTotalDesconto_"+ lineId, recebimentoFisicoController.workspace).text(resultado.valorTotalDesconto);
 			
-			$("#totalSemDescontoLbl", recebimentoFisicoController.workspace).text(
-				$.formatNumber(
-					parseFloat(priceToFloat($("#totalSemDescontoLbl", recebimentoFisicoController.workspace).text())) + 
-					parseFloat(priceToFloat(resultado.valorTotalCapa))
-					,{format:"#,##0.00", locale:"br"}
-				)
-			);
-			
-			$("#totalComDescontoLbl", recebimentoFisicoController.workspace).text(
-				$.formatNumber(
-					parseFloat(priceToFloat($("#totalComDescontoLbl", recebimentoFisicoController.workspace).text())) +
-					parseFloat(priceToFloat(resultado.valorTotalDesconto))
-					,{format:"#,##0.00", locale:"br"}
-				)
-			);
 		});
 		
 	},
@@ -959,12 +923,7 @@ var recebimentoFisicoController = $.extend(true, {
 				$(value).find('input[name="qtdPacote"]').val(0);
 				$(value).find('input[name="qtdExemplar"]').val(0);
 				$(value).find('input[name="diferenca"]').val(0);
-				$(value).find('[name="valorTotalCapa"]').text(0);
-				$(value).find('[name="valorTotalDesconto"]').text(0);
 			});
-			
-			$("#totalSemDescontoLbl", recebimentoFisicoController.workspace).text("0,00");
-			$("#totalComDescontoLbl", recebimentoFisicoController.workspace).text("0,00");
 			
 			return;
 		}
@@ -1099,9 +1058,13 @@ var recebimentoFisicoController = $.extend(true, {
 		} else {
 			$("#diferenca_"+idLinha, recebimentoFisicoController.workspace)[0].style.color = "black";			
 		}
+		
+		if (isNaN(diferenca)){
+			diferenca = 0;
+		}
 
 		$("#diferenca_"+idLinha, recebimentoFisicoController.workspace).text(diferenca);
-		
+		/*
 		$("#valorTotalCapa_" + idLinha, recebimentoFisicoController.workspace).text(
 			$.formatNumber(
 				(repartePrevisto + diferenca) * parseFloat(priceToFloat($("#precoCapa_" + idLinha, recebimentoFisicoController.workspace).text())),
@@ -1114,7 +1077,7 @@ var recebimentoFisicoController = $.extend(true, {
 				(repartePrevisto + diferenca) * parseFloat(priceToFloat($("#precoCapaDesconto_" + idLinha, recebimentoFisicoController.workspace).text())),
 				{format:"#,##0.00", locale:"br"}
 			)
-		);
+		);*/
 	},
 	
 	atualizarValoresTotais : function(){
@@ -1144,9 +1107,15 @@ var recebimentoFisicoController = $.extend(true, {
 		var precoDesconto = priceToFloat($("#precoDescontoItem"+idLinha, recebimentoFisicoController.workspace).text());
 		var preco = priceToFloat($("#precoCapa"+idLinha, recebimentoFisicoController.workspace).text());
 		
+		var qtdNota			= $("#qtdNotaItem"+idLinha).val();
 		var qtdPacote 		= $("#qtdPacoteItem"+idLinha).val();
 		var qtdQuebra 		= $("#qtdExemplarItem"+idLinha).val();
 
+		if (qtdNota == "") {
+			qtdNota = 0;
+			$("#qtdNotaItem"+idLinha).val(0);
+		}
+		
 		if (qtdPacote == "") {
 			qtdPacote = 0;
 			$("#qtdPacoteItem"+idLinha).val(0);
@@ -1163,8 +1132,11 @@ var recebimentoFisicoController = $.extend(true, {
 		var pacotePadrao 	= parseInt($("#pacotePadraoItem"+idLinha).text());
 		var diferenca 		= 0;
 
-		var valorDesconto = precoDesconto * ((qtdPacote * pacotePadrao) + qtdQuebra);
-		var valor = preco * ((qtdPacote * pacotePadrao) + qtdQuebra);
+		//var valorDesconto = precoDesconto * ((qtdPacote * pacotePadrao) + qtdQuebra);
+		//var valor = preco * ((qtdPacote * pacotePadrao) + qtdQuebra);
+		
+		var valorDesconto = precoDesconto * qtdNota;
+		var valor = preco * qtdNota;
 
 		$("#valorItemDesconto"+idLinha, recebimentoFisicoController.workspace).text($.formatNumber(valorDesconto,{locale:'br'}));
 		$("#valorItem"+idLinha, recebimentoFisicoController.workspace).text($.formatNumber(valor,{locale:'br'}));
@@ -1251,7 +1223,7 @@ var recebimentoFisicoController = $.extend(true, {
 				value.cell.qtdExemplar = '<input isEdicao="true" name="qtdExemplar" id="qtdExemplar_'+ lineId +
 				'" onkeypress="return recebimentoFisicoController.numericOnly(event)"  style="width: 45px;" type="text" value="'+qtdExemplar+
 				'" onchange="recebimentoFisicoController.alterarValor('+ lineId +
-				');recebimentoFisicoController.atualizarValoresTotais();" onfocus="recebimentoFisicoController.tratarFocoInputQuantidade(this)" />';
+				');recebimentoFisicoController.atualizarValoresTotais();" " />';
 				
 				$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).enable();
 			} else {
@@ -1262,8 +1234,6 @@ var recebimentoFisicoController = $.extend(true, {
 				
 				$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).disable();
 			}
-			
-			$('#chBoxReplicaValorRepartePrevistoAll', recebimentoFisicoController.workspace).uncheck();
 			
 			totalDescontoGeral += parseFloat(value.cell.valorTotalDesconto);
 			totalGeral += parseFloat(value.cell.valorTotalCapa);
@@ -1303,7 +1273,6 @@ var recebimentoFisicoController = $.extend(true, {
 			} else {
 				value.cell.replicaQtd = '<input title="Replicar Item" disabled="disabled" type="checkbox"/>';
 			}
-			
 			
 		});
 		
@@ -1846,8 +1815,8 @@ var recebimentoFisicoController = $.extend(true, {
 			 var checkBox =     '<input title="Replicar Item" type="checkbox" name="checkboxGrid" id="checkbox'+ index +
 			 					'" onclick="recebimentoFisicoController.replicarQtdLancamentoManual('+index+');" />';
 			 
-			 var btnExcluir =   '<a href="javascript:;"><img src="'+contextPath+'/images/ico_excluir.gif" width="15" height="15" hspace="5" border="0" onclick="$(this).parent().parent().parent().parent().remove();"/></a>';
-
+			 var btnExcluir =   '<a href="javascript:;"><img src="'+contextPath+'/images/ico_excluir.gif" width="15" height="15" hspace="5" border="0" onclick="recebimentoFisicoController.removerItem(this)"/></a>';
+			 
 		     row.cell[0] = codigo;
 		     row.cell[1] = produto;
 		     row.cell[2] = edicao;
@@ -1867,6 +1836,14 @@ var recebimentoFisicoController = $.extend(true, {
 		);
 
 		return resultado;
+	},
+	
+	removerItem : function(element) {
+		
+		$(element).parent().parent().parent().parent().remove();
+		
+		recebimentoFisicoController.obterValorTotalItens();
+		
 	},
 	
 	replicarQtdLancamentoManual: function(index){
@@ -1901,21 +1878,18 @@ var recebimentoFisicoController = $.extend(true, {
 				
 				$("#diferencaItem"+ index, recebimentoFisicoController.workspace).val(0);
 				
-				var qtdItens = 
-					parseFloat(priceToFloat($("#qtdNotaItem" + index, recebimentoFisicoController.workspace).val()));
-				var qtdExemp = 
-					parseFloat(priceToFloat($("#qtdExemplarItem" + index, recebimentoFisicoController.workspace).val()));
+				var qtdItens = parseFloat(priceToFloat($("#qtdNotaItem" + index, recebimentoFisicoController.workspace).val()));
 				
 				$("#valorItem" + index, recebimentoFisicoController.workspace).text(
 					$.formatNumber(
-						(qtdItens + qtdExemp) * parseFloat(priceToFloat($("#precoCapa" + index).text())),
+						(qtdItens) * parseFloat(priceToFloat($("#precoCapa" + index).text())),
 						{format:"#,##0.00", locale:"br"}
 					)	
 				);
 				
 				$("#valorItemDesconto" + index, recebimentoFisicoController.workspace).text(
 					$.formatNumber(
-						(qtdItens + qtdExemp) * parseFloat(priceToFloat($("#precoDescontoItem" + index).text())),
+						(qtdItens) * parseFloat(priceToFloat($("#precoDescontoItem" + index).text())),
 						{format:"#,##0.00", locale:"br"}
 					)	
 				);
@@ -1925,8 +1899,6 @@ var recebimentoFisicoController = $.extend(true, {
 				$("#qtdPacoteItem" + index, recebimentoFisicoController.workspace).val(0);
 				$("#qtdExemplarItem" + index, recebimentoFisicoController.workspace).val(0);
 				$("#diferencaItem"+ index, recebimentoFisicoController.workspace).val(0);
-				$("#valorItem" + index, recebimentoFisicoController.workspace).text("0,00");
-				$("#valorItemDesconto" + index, recebimentoFisicoController.workspace).text("0,00");
 			}
 		//caso o checkbox marcar todos tenha chamado essa função
 		} else {
@@ -1947,8 +1919,6 @@ var recebimentoFisicoController = $.extend(true, {
 						$("#qtdPacoteItem" + id, recebimentoFisicoController.workspace).val(0);
 						$("#qtdExemplarItem" + id, recebimentoFisicoController.workspace).val(0);
 						$("#diferencaItem"+ id, recebimentoFisicoController.workspace).val(0);
-						$("#valorItem" + id, recebimentoFisicoController.workspace).text("0,00");
-						$("#valorItemDesconto" + id, recebimentoFisicoController.workspace).text("0,00");
 					}
 				}
 			);
@@ -1967,8 +1937,7 @@ var recebimentoFisicoController = $.extend(true, {
 		$("#diferencaItem" + idLinha, recebimentoFisicoController.workspace).val("");
 		$("#valorItem" + idLinha, recebimentoFisicoController.workspace).val("");
 		$("#novoValorTotal", recebimentoFisicoController.workspace).val("0,00");
-		$("#labelValorTotal", recebimentoFisicoController.workspace).text("0,00");
-		$("#labelValorTotalDesconto", recebimentoFisicoController.workspace).text("0,00");
+		
 	},
 	
 	isAtributosLancamentoVazios : function(codigo, produto, edicao, precoDesconto, qtdNota, qtdPacote, qtdExemplar) {
@@ -2113,8 +2082,8 @@ var recebimentoFisicoController = $.extend(true, {
 		if(!this.novoValorTotalTyped){
 			$("#novoValorTotal", recebimentoFisicoController.workspace).val(floatToPrice(valorTotal/100));
 		}
-		
-        $("#labelValorTotal", recebimentoFisicoController.workspace).html(floatToPrice(valorTotal/100));
+
+		$("#labelValorTotal", recebimentoFisicoController.workspace).html(floatToPrice(valorTotal/100));
         $("#labelValorTotalDesconto", recebimentoFisicoController.workspace).html(floatToPrice(valorTotalDesconto/100));
 	},
     
@@ -2475,4 +2444,4 @@ var recebimentoFisicoController = $.extend(true, {
 	}
 }, BaseController);
 
-//@ sourceURL=meuScriptRecebimentoFisico.js
+//@ sourceURL=recebimentoFisico.js

@@ -329,12 +329,11 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			try {
 				validarExistenciaMatriz(DateUtil.parseData(dtLancamento, Constantes.DATE_PATTERN_PT_BR));
 				
-				grid = gerarGrid(
-						page, rp, sortname, sortorder, idFornecedor, dtLancamento, estudo);
+				grid = gerarGrid(page, rp, sortname, sortorder, idFornecedor, dtLancamento, estudo);
 			
 			} catch(ValidacaoException e) {
 				mensagens = e.getValidacao().getListaMensagens();
-				status=e.getValidacao().getTipoMensagem().name();
+				status = e.getValidacao().getTipoMensagem().name();
 				grid = new TableModel<CellModelKeyValue<LancamentoNaoExpedidoDTO>>();
 			
 			} catch (Exception e) {
@@ -385,7 +384,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			session.setAttribute("estudo",estudo);
 			
 			if(date == null && !dtLancamento.trim().isEmpty()) {
-				throw new ValidacaoException("/pesquisarExpedicoes", new ValidacaoVO(TipoMensagem.WARNING,DATA_INVALIDA));
+				throw new ValidacaoException("/pesquisarExpedicoes", new ValidacaoVO(TipoMensagem.WARNING, DATA_INVALIDA));
 			} else {
 			
 				List<LancamentoNaoExpedidoDTO> listaExpedicoes = 

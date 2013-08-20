@@ -5,6 +5,7 @@ var confirmaExpedicaoController = $.extend(true, {
 
 	init : function() {
 		definirAcaoPesquisaTeclaEnter();
+		
 		//Define foco inicial no campo Data Lançamento.
 		$('#idDataLancamento', confirmaExpedicaoController.workspace).focus();
 
@@ -169,7 +170,7 @@ var confirmaExpedicaoController = $.extend(true, {
 			
 	processaRetornoPesquisa : function(data) {
 		
-		console.log(data);
+		$(document.body).unbind('keydown');
 		
 		var grid = data[0];
 		var mensagens = data[1];
@@ -229,6 +230,15 @@ var confirmaExpedicaoController = $.extend(true, {
 			modal : true,
 			buttons : {
 				"Confirmar" : function() {
+					
+					$(document.body).on('keydown', function(e) {
+						
+						if ((e.which || e.keyCode) == 116) {
+							alert('Aguarde o término do processamento!');
+							e.preventDefault(); 
+						}
+						
+					});
 					
 					confirmaExpedicaoController.verificacaoExpedicao = setInterval(confirmaExpedicaoController.atualizarStatusExpedicao,5000);
 					

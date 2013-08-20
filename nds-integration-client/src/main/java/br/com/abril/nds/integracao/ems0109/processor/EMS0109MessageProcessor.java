@@ -70,7 +70,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.RELACIONAMENTO,
 					"Distribuidor nao encontrato.");
 
-			throw new RuntimeException("Distribuidor incorreto.");
+//			throw new RuntimeException("Distribuidor incorreto.");
 		}
 	}
 
@@ -126,10 +126,12 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 			this.ndsiLoggerFactory.getLogger().logWarning(message,
 					EventoExecucaoEnum.SEM_DOMINIO,
-					"Editor " + input.getCodigoEditor() + " nao encontrado.");
+					"Editor " + input.getCodigoEditor() + " nao encontrado, publicação: "+input.getCodigoPublicacao());
 
-			throw new RuntimeException("Editor " + input.getCodigoEditor() + " nao encontrado.");
+//			throw new RuntimeException("Editor " + input.getCodigoEditor() + " nao encontrado.");
 		}
+		
+		return editor;
 	}
 
 	private DescontoLogistica findDescontoLogisticaByTipoDesconto(
@@ -175,8 +177,9 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 					EventoExecucaoEnum.SEM_DOMINIO,
 					"Tipo Produto REVISTA nao encontrado.");
 
-			throw new RuntimeException("Tipo Produto nao encontrado.");
+//			throw new RuntimeException("Tipo Produto nao encontrado.");
 		}
+		return tipoProduto;
 	}
 
 	private Fornecedor findFornecedor(Integer codigoInterface) {
@@ -269,7 +272,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		String assunto = "Erro na Interface 109 PUB - TipoDesconto não cadastrado na DescontoLogistico";
 		String msg = "TipoDesconto não cadastrado na tabela DescontoLogistico arquivo .PUB vindo PRODIN, código de publicação:  "+codigoPublicacao;
 		sendEmailInterface(assunto, msg, message);
-		this.ndsiLoggerFactory.getLogger().logWarning(message,EventoExecucaoEnum.SEM_DOMINIO,msg);
+		this.ndsiLoggerFactory.getLogger().logWarning(message,EventoExecucaoEnum.RELACIONAMENTO,msg);
 	}
 
 	public void validarTipoDesconto(Message message, String tipoDesconto, String codigoPublicacao){
@@ -277,17 +280,18 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 			String assunto = "Erro na Interface 109 PUB - TipoDesconto não consta no arquivo";
 			String msg ="TipoDesconto não consta no arquivo .PUB de publicações vindo PRODIN, código de publicação:  "+codigoPublicacao;
 			sendEmailInterface(assunto, msg, message);
-			this.ndsiLoggerFactory.getLogger().logWarning(message,EventoExecucaoEnum.SEM_DOMINIO,msg);
+			this.ndsiLoggerFactory.getLogger().logWarning(message,EventoExecucaoEnum.HIERARQUIA,msg);
 		}
 	}
 	
 	private void sendEmailInterface(String assunto, String mensagem, Message message){
-		try {
-			emailService.enviar(assunto, mensagem, Constantes.MAILS_RECEBIMENTO_INTERFACE);
-		} catch (Exception e) {
-			e.printStackTrace();
-			ndsiLoggerFactory.getLogger().logError(message, EventoExecucaoEnum.HIERARQUIA, String.format("Erro ao tentar enviar e-mail Interface"));
-		}
+		//Descomentar p/ enviar e-mail quando resolver questoes de rede e conta de e-mail
+//		try {
+//			emailService.enviar(assunto, mensagem, Constantes.MAILS_RECEBIMENTO_INTERFACE);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//			ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.HIERARQUIA, String.format("Erro ao tentar enviar e-mail Interface"));
+//		}
 	}
 	
 	
@@ -443,6 +447,7 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 				produto.setDescontoLogistica(descontoLogistica);
 
 				this.ndsiLoggerFactory.getLogger().logInfo(message,EventoExecucaoEnum.INF_DADO_ALTERADO,"Atualizacao do Tipo Desconto para: " + descontoLogistica.getTipoDesconto());
+				
 			}
 		}else{
 			validarDescontoLogistico(message, input.getCodigoPublicacao());

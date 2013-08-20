@@ -1,7 +1,6 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigInteger;
-import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.ConsultaInterfacesDTO;
@@ -18,7 +17,7 @@ public interface LogExecucaoRepository extends Repository<LogExecucao, Long> {
 
 	List<LogExecucaoMensagem> obterMensagensLogInterface(Long codigoLogExecucao);
 
-	List<LogExecucaoMensagem> obterMensagensErroLogInterface(Long codigoLogExecucao, Date dataOperacao, FiltroDetalheProcessamentoDTO filtro);
+	List<LogExecucaoMensagem> obterMensagensErroLogInterface(FiltroDetalheProcessamentoDTO filtro);
 
 	List<ConsultaInterfacesDTO> obterInterfaces(FiltroInterfacesDTO filtro);
 
@@ -26,7 +25,7 @@ public interface LogExecucaoRepository extends Repository<LogExecucao, Long> {
 
 	void atualizar(LogExecucao logExecucao);
 
-	public Long obterTotalMensagensErroLogInterface(long codigoLogExecucao, Date obterDataOperacaoDistribuidor, FiltroDetalheProcessamentoDTO filtro);
+	public Long obterTotalMensagensErroLogInterface(FiltroDetalheProcessamentoDTO filtro);
 
 	public BigInteger obterTotalInterfaces(FiltroInterfacesDTO filtro);
 

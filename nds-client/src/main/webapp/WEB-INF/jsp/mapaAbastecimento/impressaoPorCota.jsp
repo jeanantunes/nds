@@ -22,8 +22,8 @@ p{margin:0px; padding:0px; font-size:11px;}
 </style>
 <script language="javascript" type="text/javascript">
 function imprimir(){
-	$( "#btImpressao", BaseController.workspace ).hide();
-	window.print();
+$( "#btImpressao", BaseController.workspace ).hide();
+window.print();
 }
 </script>
 </head>
@@ -33,11 +33,11 @@ function imprimir(){
 <table width="800" border="0" align="center" cellpadding="3" cellspacing="0" style="border:1px solid #000; margin-bottom:5px;">
   <tr>
     <td width="121" height="21" align="center">
-    	<span>
-    		<span class="">
-    		<img src="${pageContext.request.contextPath}/administracao/parametrosDistribuidor/getLogo?number=${pageContext.request.requestedSessionId}" border="0" height="70" width="110"  />
-    		</span>
-    	</span>
+     <span>
+     <span class="">
+     <img src="${pageContext.request.contextPath}/administracao/parametrosDistribuidor/getLogo?number=${pageContext.request.requestedSessionId}" border="0" height="70" width="110" />
+     </span>
+     </span>
     </td>
     <td width="269" align="center" valign="middle"><h3>${nomeDistribuidor}</h3></td>
     <td width="408" align="right" valign="middle"><h1>Mapa de Abastecimento por Cota&nbsp;</h1>
@@ -54,8 +54,8 @@ function imprimir(){
   <tr>
     <td width="390" align="left" valign="top"><table width="390" border="0" cellpadding="0" cellspacing="0" style="margin-top:5px;" class="relatorios">
       <tr class="class_linha_3">
-        <td width="174" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>PublicaÃ§Ã£o</strong></td>
-        <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>EdiÃ§Ã£o</strong></td>
+        <td width="174" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Publicação</strong></td>
+        <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>Edição</strong></td>
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>SM</strong></td>
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Total</strong></td>
       </tr>
@@ -77,8 +77,8 @@ function imprimir(){
     
     <table width="390" border="0" align="right" cellpadding="0" cellspacing="0" class="relatorios" style="margin-top:5px;">
       <tr class="class_linha_3">
-        <td width="174" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>PublicaÃ§Ã£o</strong></td>
-        <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>EdiÃ§Ã£o</strong></td>
+        <td width="174" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Publicação</strong></td>
+        <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>Edição</strong></td>
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>SM</strong></td>
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Total</strong></td>
       </tr>
@@ -97,9 +97,9 @@ function imprimir(){
     </td>
   </tr>
   <tr style="float: left; margin-top: 20px;">
-  	<td style="font-size: 12px; font-weight: bold;">
-  		* Cota possui produtos juramentados.
-  	</td>
+   <td style="font-size: 12px; font-weight: bold;">
+   * Cota possui produtos juramentados.
+   </td>
   </tr>
 </table>
 

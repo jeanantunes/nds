@@ -22,7 +22,7 @@ var furoProdutoController = $.extend(true, {
 			
 			focusSelectRefField($("#codigo"));
 			
-			$(document.body).keydown(function(e) {
+			$('#linkPesquisarFuro').keydown(function(e) {
 				
 				if(keyEventEnterAux(e)){
 					furoProdutoController.pesquisar();

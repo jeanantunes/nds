@@ -1786,7 +1786,11 @@ public class DiferencaEstoqueController extends BaseController {
 			consultaDiferencaVO.setTipoDiferenca(diferenca.getTipoDiferenca());
 			consultaDiferencaVO.setDescricaoTipoDiferenca(diferenca.getTipoDiferenca().getDescricao());
 			
-			if (diferenca.getItemRecebimentoFisico() != null) {
+			if (diferenca.getItemRecebimentoFisico() != null
+					&& diferenca.getItemRecebimentoFisico().getItemNotaFiscal() != null
+					&& diferenca.getItemRecebimentoFisico().getItemNotaFiscal().getNotaFiscal() != null
+					&& diferenca.getItemRecebimentoFisico().getItemNotaFiscal().getNotaFiscal().getNumero() != null) {
+				
 				consultaDiferencaVO.setNumeroNotaFiscal(
 					diferenca.getItemRecebimentoFisico().getItemNotaFiscal().getNotaFiscal().getNumero().toString());
 			} else {
@@ -1809,7 +1813,7 @@ public class DiferencaEstoqueController extends BaseController {
 				
 			}
 			
-			consultaDiferencaVO.setMotivoAprovacao(motivo);
+			consultaDiferencaVO.setMotivoAprovacao(diferenca.getLancamentoDiferenca().getStatus().toString());
 			
 			consultaDiferencaVO.setValorTotalDiferenca(
 				CurrencyUtil.formatarValor(diferenca.getValorTotalDiferenca()));
