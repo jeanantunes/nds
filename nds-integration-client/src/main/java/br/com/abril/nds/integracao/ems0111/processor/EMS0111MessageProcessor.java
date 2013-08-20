@@ -97,10 +97,8 @@ public class EMS0111MessageProcessor extends AbstractRepository implements
 		
 		
 		// Verificação de alteração do Preço Previsto para o ProdutoEdiçao:
-		final BigDecimal precoPrevistoAtual = this.tratarValorNulo(
-				produtoEdicao.getPrecoPrevisto());
-		final BigDecimal precoPrevistoCorrente = this.tratarValorNulo(
-				input.getPrecoPrevisto());
+		final BigDecimal precoPrevistoAtual = this.tratarValorNulo(produtoEdicao.getPrecoPrevisto());
+		final BigDecimal precoPrevistoCorrente = this.tratarValorNulo(input.getPrecoPrevisto());
 		if (!precoPrevistoAtual.equals(precoPrevistoCorrente)) {
 			this.ndsiLoggerFactory.getLogger().logInfo(message,
 					EventoExecucaoEnum.INF_DADO_ALTERADO,

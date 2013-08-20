@@ -118,7 +118,7 @@ public class EMS0116MessageProcessor extends AbstractRepository implements
 			}
 		} else {
 
-			ndsiLoggerFactory.getLogger().logWarning(
+			ndsiLoggerFactory.getLogger().logInfo(
 					message,
 					EventoExecucaoEnum.RELACIONAMENTO,
 					"O arquivo nao contem dados de telefone para a cota "
