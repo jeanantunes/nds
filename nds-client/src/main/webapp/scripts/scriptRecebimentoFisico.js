@@ -495,8 +495,6 @@ var recebimentoFisicoController = $.extend(true, {
 		$("#tipoLancamento", recebimentoFisicoController.workspace).val("");
 		$("#peso", recebimentoFisicoController.workspace).val("");
 		$("#pacotePadrao", recebimentoFisicoController.workspace).val("");
-		$("#novoValorTotal", recebimentoFisicoController.workspace).val("0,00");
-		
 	
 	},
 	
