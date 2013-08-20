@@ -465,7 +465,7 @@
 
 			<span class="bt_sellAll" style="float:right; margin-right:40px; margin-top:8px">
 			    <label for="textoSelTodos" id="textoSelTodos">
-	                Replicar qtde
+	                Selecionar Todos
 	            </label>
 			    <input type="checkbox"  id="selTodos" name="selTodos" onclick="recebimentoFisicoController.selecionarTodos(this.checked);" style="float:right; margin-left:10px"/>
 			</span>
