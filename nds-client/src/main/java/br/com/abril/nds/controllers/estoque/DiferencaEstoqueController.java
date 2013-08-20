@@ -1331,7 +1331,7 @@ public class DiferencaEstoqueController extends BaseController {
 		
 		this.limparSessao();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void validarDiferencasSelecionadas(Set<Diferenca> listaNovasDiferencas) {
 		
@@ -1349,7 +1349,7 @@ public class DiferencaEstoqueController extends BaseController {
 		}
 		
 		Iterator<Diferenca> iterator = listaNovasDiferencas.iterator();
-		
+
 		while (iterator.hasNext()) {
 			
 			Diferenca diferenca = iterator.next();
@@ -1360,7 +1360,7 @@ public class DiferencaEstoqueController extends BaseController {
 			}
 		}
 	}
-	
+
 	@Post
 	@SuppressWarnings("unchecked")
 	@Rules(Permissao.ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_ALTERACAO)
