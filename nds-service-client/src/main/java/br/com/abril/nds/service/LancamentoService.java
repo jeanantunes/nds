@@ -128,5 +128,7 @@ public interface LancamentoService {
 			Date data, Long idFornecedor);
 
 	boolean existeMatrizRecolhimentoConfirmado(Date dataChamadao);
+
+	Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao,Long idCota);
 }
  
