@@ -257,11 +257,11 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 								  FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa,
 								  Long idUsuario,Boolean isDiferencaNova) {
 		
-		listaNovasDiferencas = salvarDiferenca(listaNovasDiferencas, mapaRateioCotas, idUsuario, isDiferencaNova, StatusConfirmacao.PENDENTE);
+		listaNovasDiferencas = salvarDiferenca(listaNovasDiferencas, mapaRateioCotas, idUsuario, isDiferencaNova, StatusConfirmacao.CONFIRMADO);
 		
 		boolean isAprovacaoMovimentoDiferencaAutomatico = distribuidorService.utilizaControleAprovacaoFaltaSobra();
 		
-		this.confirmarLancamentosDiferenca(new ArrayList<>(listaNovasDiferencas), null,!isAprovacaoMovimentoDiferencaAutomatico);
+		this.confirmarLancamentosDiferenca(new ArrayList<>(listaNovasDiferencas), null, !isAprovacaoMovimentoDiferencaAutomatico);
 	} 
 	
 	@Transactional
@@ -404,7 +404,12 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	}
 	
 	private Cota obterCotaDaDiferenca(Diferenca diferenca){
+		
+		if (diferenca.getRateios() == null) {
 			
+			return null;
+		}
+		
 	    for (RateioDiferenca rd : diferenca.getRateios()){
 	    	
 	    	if (rd.getCota()!=null){
@@ -698,7 +703,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 
 	private StatusAprovacao obterStatusLancamento(Diferenca diferenca) {
 		
-		StatusAprovacao statusAprovacao  = StatusAprovacao.PENDENTE;
+		StatusAprovacao statusAprovacao  = StatusAprovacao.APROVADO;
 		
 		if (!this.validarDataLancamentoDiferenca(
 				diferenca.getDataMovimento(), diferenca.getProdutoEdicao().getId(), diferenca.getTipoDiferenca())) {
