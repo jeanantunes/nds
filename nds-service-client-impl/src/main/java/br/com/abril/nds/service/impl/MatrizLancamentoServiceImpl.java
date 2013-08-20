@@ -1044,8 +1044,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 												  Date dataLancamento) {
 		
 		Date dataLimiteReprogramacao =
-			DateUtil.subtrairDias(produtoLancamento.getDataRecolhimentoPrevista(),
-								  qtdDiasLimiteParaReprogLancamento);
+			this.calendarioService.subtrairDiasUteisComOperacao(
+				produtoLancamento.getDataRecolhimentoPrevista(), qtdDiasLimiteParaReprogLancamento);
 		
 		return (dataLancamento.compareTo(dataLimiteReprogramacao) == 1);
 	}
