@@ -281,7 +281,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		Usuario usuario = usuarioService.buscar(idUsuario);
 		
-		Set<Diferenca>diferencasAtualizadas = new HashSet<>();
+		Set<Diferenca> diferencasAtualizadas = new HashSet<>();
 		
 		for (Diferenca diferenca : listaNovasDiferencas) {
 

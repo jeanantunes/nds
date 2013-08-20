@@ -315,8 +315,7 @@ public class DiferencaEstoqueController extends BaseController {
 	@SuppressWarnings("unchecked")
 	public void pesquisarLancamentosNovos(Date dataMovimento, TipoDiferenca tipoDiferenca,
 										  String sortorder, String sortname, Integer page, Integer rp) {
-		
-		
+				
 		Boolean modoEdicaoNovaDiferenca = (Boolean) this.httpSession.getAttribute(MODO_NOVA_DIFERENCA_SESSION_ATTRIBUTE);
 		
 		if(modoEdicaoNovaDiferenca!= null && modoEdicaoNovaDiferenca){
@@ -359,6 +358,8 @@ public class DiferencaEstoqueController extends BaseController {
 				renderizarGridVazio();
 			}
 		}
+		
+		this.httpSession.setAttribute("diferencasSelecionadas", new ArrayList<Long>());
 	}
 
 	private void renderizarGridVazio() {
@@ -1342,9 +1343,9 @@ public class DiferencaEstoqueController extends BaseController {
 				(List<Long>) this.httpSession.getAttribute("diferencasSelecionadas");
 		}
 		
-		if (idsDiferencasSelecionadas == null) {
+		if (idsDiferencasSelecionadas == null || idsDiferencasSelecionadas.isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Nenhuma diferença selecionada.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma diferença selecionada.");
 		}
 		
 		Iterator<Diferenca> iterator = listaNovasDiferencas.iterator();
@@ -2949,10 +2950,13 @@ public class DiferencaEstoqueController extends BaseController {
 		if (index == -1) {
 			
 			selecionados.add(idDiferenca);
+		}
+		else{
 			
-		} else {
-			
-			selecionados.remove(index);
+			if (!selecionado){
+				
+				selecionados.remove(idDiferenca);
+			}
 		}
 		
 		this.httpSession.setAttribute("diferencasSelecionadas", selecionados);
