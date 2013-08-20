@@ -197,6 +197,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		query.setParameter("idCota", idCota);
 		query.setParameter("dataControleConferencia", dataControleConferencia);
 		
+		query.setCacheable(true);
+		
 		return query.list();
 		
 	}
@@ -1648,7 +1650,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		if(filtro.getPaginacao()!= null && filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
 			query.setMaxResults(filtro.getPaginacao().getQtdResultadosPorPagina());
 		
-		return query.list();
+		return  query.list();
 	
 	}
 
@@ -1662,16 +1664,17 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		hql.append("    join cota.pdvs pdv ");
 		hql.append("    join cota.pessoa pessoa ");
-		hql.append("    join pdv.rotas rotaPDV  ");
-		hql.append("    join rotaPDV.rota rota ");
-		hql.append("    join rota.roteiro roteiro ");
+		hql.append("    left join pdv.rotas rotaPDV  ");
+		hql.append("    left join rotaPDV.rota rota ");
+		hql.append("    left join rota.roteiro roteiro ");
 		
 		if(filtro.getIdEntregador() != null)
 			hql.append("    join rota.entregador entregador ");
 		
-		hql.append("    join roteiro.roteirizacao roteirizacao ");
+		hql.append("    left join roteiro.roteirizacao roteirizacao ");
 		
-		hql.append("    join cota.box box ");
+		hql.append("   left join cota.box box ");
+		
 		
 		// Criado pelo Eduardo Punk Rock - Comentado para realizar a busca através da data de lançamento do distribuidor e não a data de movimento que foi gerada
 		/*if(filtro.getUseSM() != null && filtro.getUseSM() == true) {
@@ -1991,7 +1994,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");		
 		hql.append(" 		sum(estudoCota.qtdeEfetiva) as reparte, ");
 		hql.append(" 		produtoEdicao.precoVenda as precoCapa, ");
-		hql.append(" 		pessoa.nome as nomeCota ");
+		hql.append(" 		pessoa.nome as nomeCota, ");
+		hql.append(" 		cota.numeroCota as codigoCota ");
 								
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList, statusLancamento);
 		
@@ -2146,7 +2150,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		lancamento.repartePromocional as materialPromocional, ");
 		hql.append(" 		sum(estudoCota.qtdeEfetiva) as reparte, ");
 		hql.append(" 		sum(estudoCota.qtdeEfetiva * produtoEdicao.precoVenda) as totalBox, ");
-		hql.append(" 		produtoEdicao.precoVenda as precoCapa ");
+		hql.append(" 		produtoEdicao.precoVenda as precoCapa, ");
+		hql.append(" 		estudoCota.cota as cota ");
 		
 								
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList, statusLancamento);
@@ -2245,7 +2250,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");		
 		hql.append(" 		sum(estudoCota.qtdeEfetiva) as reparte, ");
 		hql.append(" 		sum(estudoCota.qtdeEfetiva * produtoEdicao.precoVenda) as totalBox, ");
-		hql.append(" 		lancamento.sequenciaMatriz as sequenciaMatriz ");
+		hql.append(" 		lancamento.sequenciaMatriz as sequenciaMatriz, ");
+		hql.append(" 		estudoCota.cota as cota ");
+		
 		
 		filtro.setUseSM(true);
 		

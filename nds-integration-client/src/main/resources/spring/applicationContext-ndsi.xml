@@ -19,7 +19,6 @@
 	
 	<util:properties id="queries" location="classpath:/query.properties" />
 	
-	
 	<task:annotation-driven/>
 	
 	<task:executor id="executorWithPoolSizeRange"
@@ -29,4 +28,5 @@
 	<import resource="applicationContext-ndsi-persistence.xml" />
 	
 	<bean class="com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl"/>
+	
 </beans>

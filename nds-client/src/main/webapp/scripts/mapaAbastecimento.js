@@ -1,4 +1,4 @@
-function MapaAbastecimento(pathTela, objName, workspace) {
+ function MapaAbastecimento(pathTela, objName, workspace) {
 	
 	var _workspace = workspace;
 	
@@ -285,9 +285,18 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 	
 	this.processarMensagens = function(result) {
 
-		if(result.mensagens)
+		if(result.mensagens) {
 			exibirMensagem(result.mensagens.tipoMensagem,result.mensagens.listaMensagens);
-		
+		} else {
+			$(result.rows).each(function(){
+				if(this.cell.codigoBox == undefined) {
+					this.cell.codigoBox = "Sem box definido";
+				}
+				if(this.cell.codigoRota == undefined) {
+					this.cell.codigoRota = "Sem rota definida";
+				}
+			});	
+		}
 		return result;
 	},
 	
@@ -371,8 +380,10 @@ function MapaAbastecimento(pathTela, objName, workspace) {
 	
 	this.processarLinha = function(index,cell) {
 		
-		T.mapas.push(cell);
-		
+		if(cell.box == undefined || cell.box == 'undefined') {
+			cell.box = "Sem box definido";
+		}
+			
 		cell.acao =	'<a href="javascript:;" onclick="' + objName +'.carregarDetalhes(\''+ index + '\')">' +
 					'<img src="' + pathTela + '/images/ico_detalhes.png" alt="Detalhes do box" border="0" /></a>';
 	},

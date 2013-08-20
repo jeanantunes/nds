@@ -26,7 +26,7 @@
 		
 	<util:properties id="queries" location="classpath:/query.properties" />
 	
-	<!-- <bean id="ndsProfiler" class="br.com.abril.nds.client.aop.NdsProfiler"/> -->
+	<!-- <bean id="ndsProfiler" class="br.com.abril.nds.client.aop.profiler.NdsProfiler"/> -->
 	
 	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 		

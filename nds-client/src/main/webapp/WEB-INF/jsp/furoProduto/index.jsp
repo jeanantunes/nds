@@ -48,7 +48,7 @@
 					</td>
 					<td width="258">
 						<span style="cursor: pointer;" class="bt_novos" onclick="furoProdutoController.pesquisar();">
-							<a href="javascript:;" id="linkPesquisar"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
+							<a href="javascript:;" id="linkPesquisarFuro"><img src="${pageContext.request.contextPath}/images/ico_pesquisar.png" border="0" /></a>
 						</span>
 					</td>
 	  			</tr>
