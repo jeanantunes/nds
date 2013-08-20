@@ -145,7 +145,7 @@ var diferencaEstoqueController = $.extend(true, {
 	},
 	
 	executarAposProcessamento : function() {
-		$("span[name='statusAprovacao']", diferencaEstoqueController.workspace).tooltip();
+		//$("span[name='statusAprovacao']", diferencaEstoqueController.workspace).tooltip();
 	},
 	
 	executarPreProcessamento : function(resultado) {

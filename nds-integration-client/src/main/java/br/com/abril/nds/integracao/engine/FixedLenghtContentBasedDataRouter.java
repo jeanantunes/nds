@@ -34,7 +34,10 @@ import com.ancientprogramming.fixedformat4j.format.FixedFormatManager;
 
 @Component("fixedLenghtContentBasedDataRouter")
 public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
+	
 	private final Logger logger = LoggerFactory.getLogger(FixedLenghtContentBasedDataRouter.class);
+	
+	private static final int START_TIME_POSITION_COLON = 100;
 	
 	@Autowired
 	private FixedFormatManager fixedFormatManager;
@@ -150,10 +153,34 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 		
 									@Override
 									public Void doInTransaction(TransactionStatus status) {
+										
+										long start = System.currentTimeMillis();
+										//LOGGER.info("Interface: Chamando método: "+ pjp.toShortString() +".");
+										
+										/*StringBuilder msgRep = new StringBuilder("");
+										int indexRep = 0;
+										StringBuilder spacesRep = new StringBuilder("");*/
+										
 										messageProcessor.processMessage(message);
 										
 										getSession().flush();
 										getSession().clear();
+										/*
+										long elapsedTime = System.currentTimeMillis() - start;
+										
+										msgRep = new StringBuilder("");
+											
+										String str = "Interface: Tempo total da execução do método messageProcessor.processMessage(..) " + elapsedTime + " milisegundos ("+ ((double) elapsedTime / 1000) +" segundos).";
+										indexRep = str.toString().lastIndexOf(':');
+										while(indexRep < START_TIME_POSITION_COLON) {
+											spacesRep.append(" ");
+											indexRep++;
+										}
+										msgRep.append(str.substring(0, str.lastIndexOf(':')));
+										msgRep.append(spacesRep.toString());
+										msgRep.append(str.substring(str.lastIndexOf(':'), str.length()));
+										
+										logger.info(msgRep.toString());*/
 
 										return null;
 									}
