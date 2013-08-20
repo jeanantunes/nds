@@ -103,13 +103,14 @@ var lancamentoController = $.extend(true, {
 		else{
 			$("#btnsControleDiferenca", lancamentoController.workspace).show();
 		}
-
+		
 		return resultado.tableModel;
 	},
 	
 	adicionarSelecao : function(id, check) {
 		
 		if (check.checked == false) {
+			
 			$("#selecionarTodosID", lancamentoController.workspace).attr("checked", false);
 		}
 		
