@@ -138,7 +138,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 			cal.setTime(DateUtil.subtrairDias(cal.getTime(), 1));
 
-			while (DateUtil.isSabadoDomingo(cal) || isFeriadoSemOperacao(data)) {
+			while (DateUtil.isSabadoDomingo(cal) || isFeriadoSemOperacao(cal.getTime()) || isFeriadoMunicipalSemOperacao(cal.getTime())) {
 				cal.setTime(DateUtil.subtrairDias(cal.getTime(), 1));
 			}
 		}
@@ -786,7 +786,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 			for (Feriado feriado : feriados) {
 				
 				if (localidadeDistribuidor != null && feriado.getLocalidade() != null
-						&& feriado.getLocalidade().equals(localidadeDistribuidor)) {
+						&& feriado.getLocalidade().toUpperCase().equals(localidadeDistribuidor.toUpperCase())) {
 					
 					feriadoMunicipalSemOperacao = true;
 					
