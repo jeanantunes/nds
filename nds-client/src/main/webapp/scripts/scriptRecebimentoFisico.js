@@ -495,8 +495,6 @@ var recebimentoFisicoController = $.extend(true, {
 		$("#tipoLancamento", recebimentoFisicoController.workspace).val("");
 		$("#peso", recebimentoFisicoController.workspace).val("");
 		$("#pacotePadrao", recebimentoFisicoController.workspace).val("");
-		$("#novoValorTotal", recebimentoFisicoController.workspace).val("0,00");
-		
 	
 	},
 	
@@ -1064,20 +1062,7 @@ var recebimentoFisicoController = $.extend(true, {
 		}
 
 		$("#diferenca_"+idLinha, recebimentoFisicoController.workspace).text(diferenca);
-		/*
-		$("#valorTotalCapa_" + idLinha, recebimentoFisicoController.workspace).text(
-			$.formatNumber(
-				(repartePrevisto + diferenca) * parseFloat(priceToFloat($("#precoCapa_" + idLinha, recebimentoFisicoController.workspace).text())),
-				{format:"#,##0.00", locale:"br"}
-			)
-		);
 		
-		$("#valorTotalDesconto_" + idLinha, recebimentoFisicoController.workspace).text(
-			$.formatNumber(
-				(repartePrevisto + diferenca) * parseFloat(priceToFloat($("#precoCapaDesconto_" + idLinha, recebimentoFisicoController.workspace).text())),
-				{format:"#,##0.00", locale:"br"}
-			)
-		);*/
 	},
 	
 	atualizarValoresTotais : function(){
@@ -1132,9 +1117,6 @@ var recebimentoFisicoController = $.extend(true, {
 		var pacotePadrao 	= parseInt($("#pacotePadraoItem"+idLinha).text());
 		var diferenca 		= 0;
 
-		//var valorDesconto = precoDesconto * ((qtdPacote * pacotePadrao) + qtdQuebra);
-		//var valor = preco * ((qtdPacote * pacotePadrao) + qtdQuebra);
-		
 		var valorDesconto = precoDesconto * qtdNota;
 		var valor = preco * qtdNota;
 
@@ -1406,14 +1388,14 @@ var recebimentoFisicoController = $.extend(true, {
 			},{
 				display : 'Preço Capa',
 				name : 'precoCapa',
-				width : 90,
+				width : 70,
 				sortable : false,
 				align : 'right',
 				resizable : false
 			}, {
 				display : 'Preço Desc. R$',
 				name : 'precoDesconto',
-				width : 90,
+				width : 80,
 				sortable : false,
 				align : 'right',
 				resizable : false
@@ -1460,9 +1442,9 @@ var recebimentoFisicoController = $.extend(true, {
 				align : 'center',
 				resizable : false
 			}, {
-				display : 'Replicar',
+				display : 'Replicar Qtd',
 				name : 'replicar',
-				width : 40,
+				width : 80,
 				sortable : false,
 				align : 'center',
 				resizable : false
