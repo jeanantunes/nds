@@ -157,15 +157,15 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 										long start = System.currentTimeMillis();
 										//LOGGER.info("Interface: Chamando método: "+ pjp.toShortString() +".");
 										
-										StringBuilder msgRep = new StringBuilder("");
+										/*StringBuilder msgRep = new StringBuilder("");
 										int indexRep = 0;
-										StringBuilder spacesRep = new StringBuilder("");
+										StringBuilder spacesRep = new StringBuilder("");*/
 										
 										messageProcessor.processMessage(message);
 										
 										getSession().flush();
 										getSession().clear();
-										
+										/*
 										long elapsedTime = System.currentTimeMillis() - start;
 										
 										msgRep = new StringBuilder("");
@@ -180,7 +180,7 @@ public class FixedLenghtContentBasedDataRouter extends FileContentBasedRouter {
 										msgRep.append(spacesRep.toString());
 										msgRep.append(str.substring(str.lastIndexOf(':'), str.length()));
 										
-										logger.info(msgRep.toString());
+										logger.info(msgRep.toString());*/
 
 										return null;
 									}
