@@ -167,10 +167,10 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 				produto.setPeso(input.getPesoProduto());
 				this.getSession().merge(produto);
 				
-				ndsiLoggerFactory.getLogger().logWarning(
+				ndsiLoggerFactory.getLogger().logInfo(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						String.format( "Produto %1$s Edicao %2$s cadastrada. Necessário atualizar o preço.", input.getCodigoPublicacao(), produtoEdicaoLancamento.getNumeroEdicao().toString() )
+						String.format( "Produto %1$s Edicao %2$s cadastrada. ", input.getCodigoPublicacao(), produtoEdicaoLancamento.getNumeroEdicao().toString() )
 					);
 			} else {
 				produtoEdicaoLancamento = atualizarProdutoEdicao(input, produto, produtoEdicaoLancamento);
@@ -199,7 +199,7 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 				ndsiLoggerFactory.getLogger().logWarning(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						String.format( "Foi criado um lancamento para o Produto %1$s Edicao %2$s. Na data de lancamento %3$s", input.getCodigoPublicacao(), produtoEdicaoLancamento.getNumeroEdicao().toString(), input.getDataLancamentoRecolhimentoProduto().toString() )
+						String.format( "Foi criado um lancamento para o Produto %1$s Edicao %2$s. Na data de lancamento %3$s", input.getCodigoPublicacao(), produtoEdicaoLancamento.getNumeroEdicao().toString(), input.getDataMovimento() )
 					);				
 			} else {
 				if (!lancamento.getDataLancamentoDistribuidor().equals(input.getDataLancamentoRecolhimentoProduto())) {
