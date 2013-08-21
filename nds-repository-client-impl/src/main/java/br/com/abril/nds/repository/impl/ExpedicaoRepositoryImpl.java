@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.ExpedicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroResumoExpedicaoDTO;
 import br.com.abril.nds.model.estoque.Expedicao;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ExpedicaoRepository;
 
@@ -232,13 +233,15 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 	private void setParametersQueryResumoExpedicaoPorProduto(FiltroResumoExpedicaoDTO filtro, Query query) {
 		
 		query.setParameter("dataLancamento", filtro.getDataLancamento());
-		//query.setParameterList("tiposBox",  Arrays.asList(TipoBox.LANCAMENTO.name(),TipoBox.POSTO_AVANCADO.name()));
+		query.setParameter("statusExpedido", StatusLancamento.EXPEDIDO.name());
+
 	}
 	
 	private void setParametersQueryResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro, Query query) {
 		
 		query.setParameter("dataLancamento", filtro.getDataLancamento());
-		//query.setParameterList("tiposBox",  Arrays.asList(TipoBox.LANCAMENTO.name(),TipoBox.POSTO_AVANCADO.name()));
+		query.setParameter("statusExpedido", StatusLancamento.EXPEDIDO);
+
 		if(filtro != null && filtro.getCodigoBox() != null)
 			query.setParameter("codigoBox", filtro.getCodigoBox());
 	}
@@ -401,7 +404,8 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 				.append(" INNER JOIN ESTUDO_COTA estudoCota ON estudo.ID=estudoCota.ESTUDO_ID ")
 				.append(" INNER JOIN COTA cota ON estudoCota.COTA_ID=cota.ID ")
 				.append(" LEFT OUTER JOIN BOX box ON cota.BOX_ID=box.ID ")
-				.append(" WHERE lancamento.DATA_LCTO_DISTRIBUIDOR = :dataLancamento ");
+				.append(" WHERE lancamento.DATA_LCTO_DISTRIBUIDOR = :dataLancamento ")
+				.append(" AND lancamento.STATUS = :statusExpedido ");
 
 		sql.append(" FROM ( ")
 		   .append(innerQuery)
