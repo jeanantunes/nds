@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.DetalheItemNotaFiscalDTO;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
 import br.com.abril.nds.model.envio.nota.ItemNotaEnvioPK;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ItemNotaEnvioRepository;
 
@@ -75,7 +77,7 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 				   + " produto.nome as nomeProduto, "
 				   + " produtoEdicao.numeroEdicao as numeroEdicao, "
 				   + " produtoEdicao.precoVenda as precoVenda, "  
-				   + " sum(CASE mec.tipoMovimento.operacaoEstoque WHEN 'ENTRADA' THEN (mec.qtde) ELSE (mec.qtde * -1) END) as quantidadeExemplares,"
+				   + " sum(CASE tipoMovimento.operacaoEstoque WHEN 'ENTRADA' THEN (mec.qtde) ELSE (mec.qtde * -1) END) as quantidadeExemplares,"
 				   +   hqlFaltasSobrasTratado + " as sobrasFaltas,"
 				   + " produtoEdicao.id as idProdutoEdicao, "
 				   + " produtoEdicao.pacotePadrao as pacotePadrao "
@@ -83,10 +85,12 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 				   + " join mec.cota cota "
 				   + " join mec.lancamento lancamento "
 				   + " join mec.estudoCota estudoCota "
+				   + " join mec.tipoMovimento tipoMovimento "
 				   + " join mec.produtoEdicao produtoEdicao "
 				   + " join produtoEdicao.produto produto "
 				   + " where lancamento.dataLancamentoDistribuidor = :dataEmissao "
 				   + " and cota.numeroCota = :numeroCota "
+				   + " and tipoMovimento.grupoMovimentoEstoque not in (:gruposMovimentosEstoqueFaltasESobras) "
 				   + " group by produtoEdicao.id "
 				   + " order by produto.nome ";		
 		
@@ -96,7 +100,13 @@ public class ItemNotaEnvioRepositoryImpl extends AbstractRepositoryModel<ItemNot
 			new AliasToBeanResultTransformer(DetalheItemNotaFiscalDTO.class); 
 
 		query.setParameter("dataEmissao", dataEmissao);
+		
 		query.setParameter("numeroCota", numeroCota);
+		
+		query.setParameterList("gruposMovimentosEstoqueFaltasESobras", Arrays.asList(GrupoMovimentoEstoque.FALTA_DE_COTA,
+				                                                                     GrupoMovimentoEstoque.FALTA_EM_COTA,
+				                                                                     GrupoMovimentoEstoque.SOBRA_DE_COTA,
+				                                                                     GrupoMovimentoEstoque.SOBRA_EM_COTA));
 		
 		query.setResultTransformer(resultTransformer);
 		

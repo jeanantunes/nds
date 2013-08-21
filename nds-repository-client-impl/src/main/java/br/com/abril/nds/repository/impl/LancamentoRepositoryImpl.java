@@ -840,14 +840,21 @@ public class LancamentoRepositoryImpl extends
 		   .append(" join lancamento.movimentoEstoqueCotas mec ")
 		   .append(" join mec.cota cota ")
 		   .append(" where lancamento.dataLancamentoPrevista = ")
-		   .append(" (select max(lancamentoMaxDate.dataLancamentoPrevista) ")
-		   .append(" from Lancamento lancamentoMaxDate where lancamentoMaxDate.produtoEdicao.id=:idProdutoEdicao ) ")
+		   .append(" (")
+		   .append("   select max(lancamentoMaxDate.dataLancamentoPrevista) ")
+		   .append("   from Lancamento lancamentoMaxDate ")
+		   .append("   join lancamentoMaxDate.movimentoEstoqueCotas mecMaxDate ")
+		   .append("   join mecMaxDate.cota cotaMaxDate ")
+		   .append("   where lancamentoMaxDate.produtoEdicao.id = :idProdutoEdicao ")
+		   .append("   and cotaMaxDate.id = :idCota ")
+		   .append(" ) ")
 		   .append(" and lancamento.produtoEdicao.id=:idProdutoEdicao ")
 		   .append(" and cota.id=:idCota ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
 		query.setParameter("idCota", idCota);
 		
 		Object lancamento = query.uniqueResult();

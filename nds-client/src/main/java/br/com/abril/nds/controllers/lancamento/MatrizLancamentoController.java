@@ -536,8 +536,8 @@ public class MatrizLancamentoController extends BaseController {
 				DateUtil.parseDataPTBR(produtoLancamento.getDataRecolhimentoPrevista());
 			
 			Date dataLimiteReprogramacao =
-				DateUtil.subtrairDias(dataRecolhimentoPrevista,
-									  qtdDiasLimiteParaReprogLancamento);
+				calendarioService.subtrairDiasUteisComOperacao(dataRecolhimentoPrevista,
+															   qtdDiasLimiteParaReprogLancamento);
 			
 			if (novaData.compareTo(dataLimiteReprogramacao) == 1) {
 				
@@ -558,11 +558,12 @@ public class MatrizLancamentoController extends BaseController {
 		
 			listaMensagens.add(
 				"A nova data de lançamento não deve ultrapassar "
-				+ "a data de recolhimento prevista - a quantidade de dias limite [" 
+				+ "a data de recolhimento prevista menos a quantidade de dias limite [" 
 				+ qtdDiasLimiteParaReprogLancamento + "] para o(s) produto(s):"
 			);
 			
-			listaMensagens.add(produtos + "</table>");
+			listaMensagens.add(produtos + "</table> "
+				+ "Para lançar o produto na data informada, é necessário alterar a data de recolhimento da(s) edição(ões).");
 			
 			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, listaMensagens);
 			
