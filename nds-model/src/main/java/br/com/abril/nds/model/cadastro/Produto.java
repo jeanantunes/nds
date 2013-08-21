@@ -83,7 +83,7 @@ public class Produto implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date dataDesativacao;
 	
-	@ManyToOne(fetch=FetchType.LAZY, optional=true)
+	@ManyToOne(optional=true)
 	@JoinColumn(name="DESCONTO_LOGISTICA_ID", nullable=true)
 	private DescontoLogistica descontoLogistica;
 
