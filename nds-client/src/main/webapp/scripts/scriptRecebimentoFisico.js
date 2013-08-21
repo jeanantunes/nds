@@ -1113,10 +1113,10 @@ var recebimentoFisicoController = $.extend(true, {
 			$("#qtdExemplarItem"+idLinha).val(0);
 		}
 		
-		qtdPacote 		= parseInt(qtdPacote);
-		qtdQuebra 		= parseInt(qtdQuebra);
+		qtdPacote 			= parseInt(qtdPacote);
+		qtdQuebra 			= parseInt(qtdQuebra);
 		var repartePrevisto = parseInt($("#qtdNotaItem"+ idLinha).val());
-		var pacotePadrao 	= parseInt($("#pacotePadraoItem"+ idLinha).text());
+		var pacotePadrao 	= !isNaN(parseInt($("#pacotePadraoItem"+ idLinha).text())) ? parseInt($("#pacotePadraoItem"+ idLinha).text()) : 0;
 		var diferenca 		= 0;
 
 		var valorDesconto = precoDesconto * qtdNota;
