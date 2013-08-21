@@ -26,11 +26,11 @@ public class ExpedicaoDTO implements Serializable {
 	private String codigoBox;
 	private String nomeBox;
 	private Long numeroEdicao;
-	private BigDecimal precoCapa;
+	private BigDecimal precoCapa = BigDecimal.ZERO;
 	private BigDecimal desconto;
-	private BigInteger qntReparte;
-	private BigInteger qntDiferenca;
-	private BigDecimal valorFaturado;
+	private BigInteger qntReparte = BigInteger.ZERO;
+	private BigInteger qntDiferenca = BigInteger.ZERO;
+	private BigDecimal valorFaturado = BigDecimal.ZERO;
 	private Long qntProduto;
 	private String razaoSocial;
 	
