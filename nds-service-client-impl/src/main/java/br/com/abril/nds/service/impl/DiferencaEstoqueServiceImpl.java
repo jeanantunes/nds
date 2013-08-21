@@ -703,21 +703,22 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 
 	private StatusAprovacao obterStatusLancamento(Diferenca diferenca) {
 		
-		StatusAprovacao statusAprovacao  = StatusAprovacao.APROVADO;
+		StatusAprovacao statusAprovacao  = StatusAprovacao.PENDENTE;
 		
 		if (!this.validarDataLancamentoDiferenca(
-				diferenca.getDataMovimento(), diferenca.getProdutoEdicao().getId(), diferenca.getTipoDiferenca())) {
+				diferenca.getDataMovimento(), diferenca.getProdutoEdicao().getId(), 
+					diferenca.getTipoDiferenca())) {
 			
-			if( TipoDiferenca.FALTA_DE.equals(diferenca.getTipoDiferenca()) 
-					|| TipoDiferenca.FALTA_EM.equals(diferenca.getTipoDiferenca())){
+			if (diferenca.getTipoDiferenca().isFalta()) {
 				
 				statusAprovacao = StatusAprovacao.PERDA; 
 				
-			}else{
+			} else {
 				
 				statusAprovacao = StatusAprovacao.GANHO;
 			}
 		}
+		
 		return statusAprovacao;
 	}
 	
@@ -817,25 +818,20 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		for (ItemRecebimentoFisico itemRecebimentoFisico : listaItensRecebimentoFisico) {
 			
-			Calendar dataConfirmacaoRecebimentoFisico = Calendar.getInstance();
-			
 			if (itemRecebimentoFisico.getRecebimentoFisico().getDataConfirmacao() == null) {
 				
 				itemRecebimentoFisico.getRecebimentoFisico().setDataConfirmacao(Calendar.getInstance().getTime());
 			}
 			
-			dataConfirmacaoRecebimentoFisico.setTime(
+			Date dataConfirmacaoRecebimentoFisico =
 				DateUtil.removerTimestamp(
-					itemRecebimentoFisico.getRecebimentoFisico().getDataConfirmacao()));
+					itemRecebimentoFisico.getRecebimentoFisico().getDataConfirmacao());
 			
-			dataConfirmacaoRecebimentoFisico.add(Calendar.DAY_OF_MONTH, numeroDiasPermitidoLancamento);
+			long diferencaDias = DateUtil.obterDiferencaDias(
+				dataConfirmacaoRecebimentoFisico, dataLancamentoDiferenca);
 			
-			Calendar calendarLancamentoDiferenca = Calendar.getInstance();
-			
-			calendarLancamentoDiferenca.setTime(dataLancamentoDiferenca);
-			
-			if (dataConfirmacaoRecebimentoFisico.equals(calendarLancamentoDiferenca)
-					|| dataConfirmacaoRecebimentoFisico.after(calendarLancamentoDiferenca)) {
+			if (diferencaDias == numeroDiasPermitidoLancamento
+					|| diferencaDias < numeroDiasPermitidoLancamento) {
 				
 				return true;
 			}
