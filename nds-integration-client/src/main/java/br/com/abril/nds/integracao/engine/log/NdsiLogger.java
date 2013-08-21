@@ -145,7 +145,13 @@ public class NdsiLogger extends AbstractRepository {
 		logExecucaoMensagem = new LogExecucaoMensagem();
 		logExecucaoMensagem.setLogExecucao(this.logExecucao);
 		logExecucaoMensagem.setEventoExecucao(eventoExecucao);
-		logExecucaoMensagem.setMensagem(descricaoErro);
+		
+		String descricaoErroTamanhoLimitado = descricaoErro;
+		if(descricaoErro != null && descricaoErro.length() > 499){
+			descricaoErroTamanhoLimitado = descricaoErro.substring(0, 499);
+		}
+		
+		logExecucaoMensagem.setMensagem(descricaoErroTamanhoLimitado);
 		logExecucaoMensagem.setMensagemInfo(mensagemInfo);
 		if (message.getHeader().containsKey(MessageHeaderProperties.FILE_NAME.getValue()))
 			logExecucaoMensagem.setNomeArquivo((String) message.getHeader().get(MessageHeaderProperties.FILE_NAME.getValue()));
