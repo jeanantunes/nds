@@ -76,24 +76,27 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 						
 						MovimentoEstoque movimento = this.recuperaMovimento(eitem.getIdMovimento());
 											
-						movimento.setStatusIntegracao(StatusIntegracao.valueOf(eitem.getSituacaoAcerto().replace(" ", "_")));
 						movimento.setMotivo(eitem.getDescricaoMotivo());					
 						movimento.setNumeroDocumentoAcerto(eitem.getNumeroDocumentoAcerto());
 						movimento.setDataEmicaoDocumentoAcerto(eitem.getDataEmicaoDocumentoAcerto());
 						movimento.setCodigoOrigemMotivo(eitem.getCodigoOrigemMotivo());
+						
+						LancamentoDiferenca lancamentoDiferenca = recuperarLancamentoDiferenca(movimento.getId());
 						
 						if( StatusIntegracao.REJEITADO.equals(movimento.getStatusIntegracao())
 								|| StatusIntegracao.DESPREZADO.equals(movimento.getStatusIntegracao())){
 							
 							movimento.setStatus(StatusAprovacao.PERDA);
 							
-							LancamentoDiferenca lancamentoDiferenca  = recuperarLancamentoDiferenca(movimento.getId());
-							
-							if(lancamentoDiferenca!= null){
+							if(lancamentoDiferenca != null) {
 
 								lancamentoDiferenca.setStatus(StatusAprovacao.PERDA);
 								
 								getSession().merge(lancamentoDiferenca);
+							}
+						} else {
+							if(lancamentoDiferenca != null) {
+								lancamentoDiferenca.setStatus(StatusAprovacao.valueOf(eitem.getSituacaoAcerto().replace(" ", "_")));
 							}
 						}
 						
@@ -202,7 +205,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		sql.append("WHERE tm.grupoMovimentoEstoque in (:grupoMovimentoEstoque) ");
 		sql.append("	and me.statusIntegracao = :statusIntegracao ");
 		sql.append("	and me.status = :status ");
-		sql.append("	and lancamentoDiferenca.status = :status ");
+		sql.append("	and lancamentoDiferenca.status = :statusPendente ");
 		
 		Query query = getSession().createQuery(sql.toString());
 
@@ -215,6 +218,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		
 		query.setParameter("statusIntegracao", StatusIntegracao.NAO_INTEGRADO);
 		query.setParameter("status", StatusAprovacao.APROVADO);
+		query.setParameter("statusPendente", StatusAprovacao.PENDENTE);
 		
 		return query;
 	}
