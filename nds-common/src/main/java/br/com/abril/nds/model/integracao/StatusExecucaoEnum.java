@@ -4,7 +4,9 @@ public enum StatusExecucaoEnum {
 
 	SUCESSO("S"),
 	AVISO("A"),
-	FALHA("F");
+	VAZIO("V"),
+	FALHA("F"),
+	ERRO("E");
 	
 	private String descricao;
 	
@@ -26,6 +28,12 @@ public enum StatusExecucaoEnum {
 		}
 		else if ("F".equals(status)) {
 			return FALHA;
+		}
+		else if ("E".equals(status)) {
+			return ERRO;
+		}
+		else if ("V".equals(status)) {
+			return VAZIO;
 		}
 		
 		return null;
