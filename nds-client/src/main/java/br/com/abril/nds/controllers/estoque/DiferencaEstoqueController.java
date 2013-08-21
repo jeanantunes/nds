@@ -2797,7 +2797,7 @@ public class DiferencaEstoqueController extends BaseController {
 			diferencaVO.setDescricaoProduto(detalheItemNota.getNomeProduto());
 			diferencaVO.setNumeroEdicao(detalheItemNota.getNumeroEdicao().toString());
 			diferencaVO.setPrecoVenda(detalheItemNota.getPrecoVenda().toString());
-			diferencaVO.setQtdeEstoque(detalheItemNota.getQuantidadeExemplares());
+			diferencaVO.setQtdeEstoque(detalheItemNota.getQuantidadeExemplares().add(detalheItemNota.getSobrasFaltas()));
 			diferencaVO.setPacotePadrao(detalheItemNota.getPacotePadrao().toString());
 		
 			prods.add(diferencaVO);
