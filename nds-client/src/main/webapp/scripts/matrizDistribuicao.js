@@ -7,6 +7,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	
 	var opcoesAberto = false;
 	
+	var estudoSomado = null;
+	
 	this.instancia = descInstancia;
 	this.lancamentos = [];
 	this.isCliquePesquisar;
@@ -203,7 +205,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		}	
 		
 		row.cell.liberado = imgLiberado;
-		row.cell.reprogramar = T.gerarCheckDistribuicao(row.cell.idLancamento, i);
+		row.cell.reprogramar = T.gerarCheckDistribuicao(row.cell.idLancamento, i, row.cell.idEstudo);
 		
 		T.formataCampos(row);
 		
@@ -250,6 +252,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 					dataFinMatDistrib : row.cell.dataFinMatDistrib,
 					idCopia : row.cell.idCopia
 		});
+		
 		
 		
 //		
@@ -365,9 +368,14 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		T.lancamentos[index].sobra = vlr;
 	},
 	
-	this.gerarCheckDistribuicao = function(id, index) { 
-		return '<input id="checkDistribuicao' + index + '" type="checkbox" value="'+id+'" name="checkgroup" ' +
-			   ' onclick="' + T.instancia + '.selecionarCheck(this,\'' + index + '\');" />';
+	this.gerarCheckDistribuicao = function(id, index, estudo) {
+		if(estudo == estudoSomado){
+			return '<input id="checkDistribuicao' + index + '" type="checkbox" value="'+id+'" name="checkgroup" ' +
+			' onclick="' + T.instancia + '.selecionarCheck(this,\'' + index + '\');" checked="checked" />';			
+		}else{
+			return '<input id="checkDistribuicao' + index + '" type="checkbox" value="'+id+'" name="checkgroup" ' +
+			' onclick="' + T.instancia + '.selecionarCheck(this,\'' + index + '\');" />';
+		}
 	},
 	
 	this.dividirEstudo=function(){
@@ -395,7 +403,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.selecionarCheck = function(check, index) {
 		
 		T.lancamentos[index].selecionado = check.checked;
-		$("#selTodos", _workspace).uncheck();
+		$("#selTodos", _workspace).uncheck();			
 	},
 	
 	this.finalizaItem = function(index) {
@@ -1171,6 +1179,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		
 		$.postJSON(pathTela + "/matrizDistribuicao/somarEstudos", data,
 				function(result){
+					estudoSomado = result;
 					T.exibirMensagemSucesso();
 					$('#somarEstudo-statusOperacao').text('CONCLUIDO');
 					T.atualizarGrid();
