@@ -518,7 +518,10 @@ public class ProdutoEdicaoController extends BaseController {
 		if (produtoEdicao!=null){
 		    
 		    BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-		    BigDecimal percentualDesconto = Util.nvl(produtoEdicao.getDescontoProdutoEdicao()!=null?produtoEdicao.getDescontoProdutoEdicao().getValor():BigDecimal.ZERO, BigDecimal.ZERO);
+		    
+		    BigDecimal percentualDesconto = produtoEdicao.getProduto().getDescontoLogistica().getPercentualDesconto();
+		    
+		    percentualDesconto = percentualDesconto != null ? percentualDesconto : BigDecimal.ZERO;
 
             BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
 			

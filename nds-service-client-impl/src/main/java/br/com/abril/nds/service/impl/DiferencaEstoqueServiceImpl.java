@@ -257,11 +257,11 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 								  FiltroLancamentoDiferencaEstoqueDTO filtroPesquisa,
 								  Long idUsuario,Boolean isDiferencaNova) {
 		
-		listaNovasDiferencas = salvarDiferenca(listaNovasDiferencas, mapaRateioCotas, idUsuario, isDiferencaNova, StatusConfirmacao.PENDENTE);
+		listaNovasDiferencas = salvarDiferenca(listaNovasDiferencas, mapaRateioCotas, idUsuario, isDiferencaNova, StatusConfirmacao.CONFIRMADO);
 		
 		boolean isAprovacaoMovimentoDiferencaAutomatico = distribuidorService.utilizaControleAprovacaoFaltaSobra();
 		
-		this.confirmarLancamentosDiferenca(new ArrayList<>(listaNovasDiferencas), null,!isAprovacaoMovimentoDiferencaAutomatico);
+		this.confirmarLancamentosDiferenca(new ArrayList<>(listaNovasDiferencas), null, !isAprovacaoMovimentoDiferencaAutomatico);
 	} 
 	
 	@Transactional
@@ -281,7 +281,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		Usuario usuario = usuarioService.buscar(idUsuario);
 		
-		Set<Diferenca>diferencasAtualizadas = new HashSet<>();
+		Set<Diferenca> diferencasAtualizadas = new HashSet<>();
 		
 		for (Diferenca diferenca : listaNovasDiferencas) {
 
@@ -402,6 +402,24 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			this.diferencaEstoqueRepository.merge(diferenca);
 		}
 	}
+	
+	private Cota obterCotaDaDiferenca(Diferenca diferenca){
+		
+		if (diferenca.getRateios() == null) {
+			
+			return null;
+		}
+		
+	    for (RateioDiferenca rd : diferenca.getRateios()){
+	    	
+	    	if (rd.getCota()!=null){
+	    		
+	    		return rd.getCota();
+	    	}
+	    }
+		    
+		return null;
+	}
 
 	private void confirmarLancamentosDiferenca(List<Diferenca> listaDiferencas, StatusAprovacao statusAprovacao,boolean isMovimentoDiferencaAutomatico) {
 		
@@ -409,9 +427,21 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		for (Diferenca diferenca : listaDiferencas) {
 			
-			Lancamento ultimoLancamento =
-				this.lancamentoService.obterUltimoLancamentoDaEdicao(
-					diferenca.getProdutoEdicao().getId());
+			Lancamento ultimoLancamento = null;
+			
+			Cota cota = this.obterCotaDaDiferenca(diferenca);
+			
+			if (cota!=null){
+			
+				ultimoLancamento =
+					this.lancamentoService.obterUltimoLancamentoDaEdicaoParaCota(diferenca.getProdutoEdicao().getId(), cota.getId());
+			}
+			else{	
+				
+				ultimoLancamento =
+					this.lancamentoService.obterUltimoLancamentoDaEdicao(
+						diferenca.getProdutoEdicao().getId());
+			}
 			
 			boolean produtoRecolhido = 
 				this.verificarRecolhimentoProdutoEdicao(
@@ -673,7 +703,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 
 	private StatusAprovacao obterStatusLancamento(Diferenca diferenca) {
 		
-		StatusAprovacao statusAprovacao  = StatusAprovacao.PENDENTE;
+		StatusAprovacao statusAprovacao  = StatusAprovacao.APROVADO;
 		
 		if (!this.validarDataLancamentoDiferenca(
 				diferenca.getDataMovimento(), diferenca.getProdutoEdicao().getId(), diferenca.getTipoDiferenca())) {

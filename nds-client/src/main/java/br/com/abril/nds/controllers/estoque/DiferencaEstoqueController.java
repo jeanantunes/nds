@@ -315,8 +315,7 @@ public class DiferencaEstoqueController extends BaseController {
 	@SuppressWarnings("unchecked")
 	public void pesquisarLancamentosNovos(Date dataMovimento, TipoDiferenca tipoDiferenca,
 										  String sortorder, String sortname, Integer page, Integer rp) {
-		
-		
+				
 		Boolean modoEdicaoNovaDiferenca = (Boolean) this.httpSession.getAttribute(MODO_NOVA_DIFERENCA_SESSION_ATTRIBUTE);
 		
 		if(modoEdicaoNovaDiferenca!= null && modoEdicaoNovaDiferenca){
@@ -359,6 +358,8 @@ public class DiferencaEstoqueController extends BaseController {
 				renderizarGridVazio();
 			}
 		}
+		
+		this.httpSession.setAttribute("diferencasSelecionadas", new ArrayList<Long>());
 	}
 
 	private void renderizarGridVazio() {
@@ -1330,7 +1331,7 @@ public class DiferencaEstoqueController extends BaseController {
 		
 		this.limparSessao();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void validarDiferencasSelecionadas(Set<Diferenca> listaNovasDiferencas) {
 		
@@ -1342,13 +1343,13 @@ public class DiferencaEstoqueController extends BaseController {
 				(List<Long>) this.httpSession.getAttribute("diferencasSelecionadas");
 		}
 		
-		if (idsDiferencasSelecionadas == null) {
+		if (idsDiferencasSelecionadas == null || idsDiferencasSelecionadas.isEmpty()) {
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Nenhuma diferença selecionada.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma diferença selecionada.");
 		}
 		
 		Iterator<Diferenca> iterator = listaNovasDiferencas.iterator();
-		
+
 		while (iterator.hasNext()) {
 			
 			Diferenca diferenca = iterator.next();
@@ -1359,7 +1360,7 @@ public class DiferencaEstoqueController extends BaseController {
 			}
 		}
 	}
-	
+
 	@Post
 	@SuppressWarnings("unchecked")
 	@Rules(Permissao.ROLE_ESTOQUE_LANCAMENTO_FALTAS_SOBRAS_ALTERACAO)
@@ -1786,7 +1787,11 @@ public class DiferencaEstoqueController extends BaseController {
 			consultaDiferencaVO.setTipoDiferenca(diferenca.getTipoDiferenca());
 			consultaDiferencaVO.setDescricaoTipoDiferenca(diferenca.getTipoDiferenca().getDescricao());
 			
-			if (diferenca.getItemRecebimentoFisico() != null) {
+			if (diferenca.getItemRecebimentoFisico() != null
+					&& diferenca.getItemRecebimentoFisico().getItemNotaFiscal() != null
+					&& diferenca.getItemRecebimentoFisico().getItemNotaFiscal().getNotaFiscal() != null
+					&& diferenca.getItemRecebimentoFisico().getItemNotaFiscal().getNotaFiscal().getNumero() != null) {
+				
 				consultaDiferencaVO.setNumeroNotaFiscal(
 					diferenca.getItemRecebimentoFisico().getItemNotaFiscal().getNotaFiscal().getNumero().toString());
 			} else {
@@ -1809,7 +1814,7 @@ public class DiferencaEstoqueController extends BaseController {
 				
 			}
 			
-			consultaDiferencaVO.setMotivoAprovacao(motivo);
+			consultaDiferencaVO.setMotivoAprovacao(diferenca.getLancamentoDiferenca().getStatus().toString());
 			
 			consultaDiferencaVO.setValorTotalDiferenca(
 				CurrencyUtil.formatarValor(diferenca.getValorTotalDiferenca()));
@@ -2792,7 +2797,7 @@ public class DiferencaEstoqueController extends BaseController {
 			diferencaVO.setDescricaoProduto(detalheItemNota.getNomeProduto());
 			diferencaVO.setNumeroEdicao(detalheItemNota.getNumeroEdicao().toString());
 			diferencaVO.setPrecoVenda(detalheItemNota.getPrecoVenda().toString());
-			diferencaVO.setQtdeEstoque(detalheItemNota.getQuantidadeExemplares());
+			diferencaVO.setQtdeEstoque(detalheItemNota.getQuantidadeExemplares().add(detalheItemNota.getSobrasFaltas()));
 			diferencaVO.setPacotePadrao(detalheItemNota.getPacotePadrao().toString());
 		
 			prods.add(diferencaVO);
@@ -2945,10 +2950,13 @@ public class DiferencaEstoqueController extends BaseController {
 		if (index == -1) {
 			
 			selecionados.add(idDiferenca);
+		}
+		else{
 			
-		} else {
-			
-			selecionados.remove(index);
+			if (!selecionado){
+				
+				selecionados.remove(idDiferenca);
+			}
 		}
 		
 		this.httpSession.setAttribute("diferencasSelecionadas", selecionados);
