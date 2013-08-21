@@ -142,6 +142,10 @@ init : function() {
 				row.cell.ajusteAplicado = parseFloat(row.cell.ajusteAplicado).toFixed(1); 
 			}
 			
+			if(row.cell.formaAjusteAplicado == "Segmento"){
+				row.cell.ajusteAplicado = '';
+			}
+			
 		});
 		
 		$(".grids", ajusteReparteController.workspace).show();
@@ -436,19 +440,41 @@ init : function() {
 			buttons: {
 				"Confirmar": function() {
 					var data = ajusteReparteController.getDadosEditar();
-
+					
+					var arrayData = new Array();
+					
+//					arrayData.push(
+//						{ajuste:{name:"ajuste", value: ajusteReparteController.get("segmento1")},
+//						segmento:{name:"segmentos[0].id", value: ajusteReparteController.get("tipoSegmento1")}	
+//						}
+//					);
+//
+//					arrayData[0].ajuste.name;
+					
 					data.push({name: 'id', value:idAjusteReparte});
 
 					if (ajusteReparteController.isAjusteSegmento == true){
 						
 						if(ajusteReparteController.get("segmento1") != ""){
-							data.push({name:"ajuste", value: ajusteReparteController.get("segmento1")});
-							data.push({name:"segmentos[0].id", value: ajusteReparteController.get("tipoSegmento1")});
+//							data.push({name:"ajuste", value: ajusteReparteController.get("segmento1")});
+//							data.push({name:"segmentos[0].indice", value: ajusteReparteController.get("segmento1")});
+							data.push({name:"segmentos[0]", value: ajusteReparteController.get("tipoSegmento1")});
+							data.push({name:"ajuste[0]", value: ajusteReparteController.get("segmento1")});
 						}else{
 							 var erros = new Array();
 					           erros[0] = "Insira um índice para ajuste";
 					           exibirMensagemDialog('WARNING',   erros,"");
 					           return;
+						}
+						
+						if(ajusteReparteController.get("segmento2") != ""){
+							data.push({name:"segmentos[1]", value: ajusteReparteController.get("tipoSegmento2")});
+							data.push({name:"ajuste[1]", value: ajusteReparteController.get("segmento2")});
+						}
+						
+						if(ajusteReparteController.get("segmento3") != ""){
+							data.push({name:"segmentos[2]", value: ajusteReparteController.get("tipoSegmento3")});
+							data.push({name:"ajuste[2]", value: ajusteReparteController.get("segmento3")});
 						}
 						
 						$.postJSON(contextPath + "/distribuicao/ajusteReparte/alterarAjusteSegmento", 
@@ -561,15 +587,23 @@ init : function() {
 		$("#dataInicioEditar").val(result.dataInicio);
 		$("#dataFimEditar").val(result.dataFim);
 		
-		$("#tipoSegmento1").val(result.idSegmento);
-		$("#segmento1").val(parseFloat(result.ajusteAplicado).toFixed(1));
+//		$("#tipoSegmento1").val(result.idSegmento);
+//		$("#segmento1").val(parseFloat(result.ajusteAplicado).toFixed(1));
+//		
+//		$("#exibirSegmento1Editar").val(result.ajusteAplicado).disable();
+//	
+//		$("#segmento2").hide();
+//		$("#tipoSegmento2").hide();
+//		$("#segmento3").hide();
+//		$("#tipoSegmento3").hide();
 		
-		$("#exibirSegmento1Editar").val(result.ajusteAplicado).disable();
-	
-		$("#segmento2").hide();
-		$("#tipoSegmento2").hide();
-		$("#segmento3").hide();
-		$("#tipoSegmento3").hide();
+		$.each(result.ajustesSegmento, function(index, ajuste) {
+			$("#tipoSegmento"+(index+1)).val(ajuste.segmentoAplicado.id);
+			$("#segmento"+(index+1)).val(parseFloat(ajuste.ajusteAplicado).toFixed(1));
+			
+		});
+		
+		
 	},
 	
 //	CARREGAR COTAS QUE ESTÃO EM AJUSTE
@@ -681,9 +715,9 @@ init : function() {
 			$("#exibirSegmento3").val(segmt3).disable();
 			
 			//Editar
-			$("#exibirSegmento1Editar").val(segmt1).disable();
-			$("#exibirSegmento2Editar").val(segmt2).disable();
-			$("#exibirSegmento3Editar").val(segmt3).disable();
+			$("#exibirSegmentoEditar1").val(segmt1).disable();
+			$("#exibirSegmentoEditar2").val(segmt2).disable();
+			$("#exibirSegmentoEditar3").val(segmt3).disable();
 			
 			
 	},
@@ -698,6 +732,8 @@ init : function() {
 		if(seg01 !== "Selecione..."){
 			$("#tr_exibirSegmento1").show();
 			$("#colSegmento1").text(seg01+":");
+			$("#colSegmentoEditar1").text(seg01+":");
+			
 		}else{
 			$("#colSegmento1").text("Segmento1: ");
 		}
@@ -705,6 +741,8 @@ init : function() {
 		if(seg02 !== "Selecione..."){
 			$("#tr_exibirSegmento2").show();
 			$("#colSegmento2").text(seg02+":");
+			$("#colSegmentoEditar2").text(seg02+":");
+			
 		}else{
 			$("#colSegmento2").text("Segmento2: ");
 		}
@@ -712,6 +750,7 @@ init : function() {
 		if(seg03 !== "Selecione..."){
 			$("#tr_exibirSegmento3").show();
 			$("#colSegmento3").text(seg03+":");
+			$("#colSegmentoEditar3").text(seg03+":");
 		}else{
 			$("#colSegmento3").text("Segmento3: ");
 		}

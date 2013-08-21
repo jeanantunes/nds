@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.AjusteReparteDTO;
+import br.com.abril.nds.dto.AjustesSegmento_AjusteReparteDTO;
 import br.com.abril.nds.model.distribuicao.AjusteReparte;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.repository.AjusteReparteRepository;
@@ -75,5 +76,11 @@ public class AjusteReparteServiceImpl implements AjusteReparteService  {
 	@Transactional
 	public List<AjusteReparteDTO> buscarPorIdCota(Long numCota) {
 		return this.ajusteRepository.buscarPorIdCota(numCota);
+	}
+
+	@Override
+	@Transactional
+	public List<AjustesSegmento_AjusteReparteDTO> ajustesAplicado_Segmento(Integer numCota) {
+		return this.ajusteRepository.ajustesAplicados(numCota);
 	}
 }

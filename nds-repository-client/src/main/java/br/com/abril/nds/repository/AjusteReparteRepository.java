@@ -3,6 +3,7 @@ package br.com.abril.nds.repository;
 import java.util.List;
 
 import br.com.abril.nds.dto.AjusteReparteDTO;
+import br.com.abril.nds.dto.AjustesSegmento_AjusteReparteDTO;
 import br.com.abril.nds.model.distribuicao.AjusteReparte;
 
 public interface AjusteReparteRepository extends Repository<AjusteReparte, Long> {
@@ -17,4 +18,5 @@ public interface AjusteReparteRepository extends Repository<AjusteReparte, Long>
 	
 	int qtdAjusteSegmento (Long idCota);
 	
+	List<AjustesSegmento_AjusteReparteDTO> ajustesAplicados (Integer numCota);
 }

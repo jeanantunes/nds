@@ -308,6 +308,7 @@ $(function(){
 			</table>
 			
 			<table id="tableSegmentosEditar" style="display: none;">
+				<!-- 
 				<tr>
 		          <td width="80"><strong>Segmentos:</strong></td>
 					
@@ -318,6 +319,33 @@ $(function(){
 		           		<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir" border="0"
 		           			 onclick = "ajusteReparteController.limparExibicaoSegmento(exibirSegmento1, tipoSegmento1, segmento1);" /></td>
 				</tr>
+				 -->
+				<tr id="tr_exibirSegmentoEditar1">
+					<td width="220" id="colSegmentoEditar1">Segmento 1:</td>
+					<td width="40">
+						<input name="exibirSegmentoEditar1" id="exibirSegmentoEditar1" type="text" style="width: 30px;" align="middle"/>
+		            <td width="25">
+		           		<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir" border="0"
+		           			 onclick = "ajusteReparteController.limparExibicaoSegmento(exibirSegmento1, tipoSegmento1, segmento1, 'tr_exibirSegmentoEditar1');" /></td>
+					</tr>
+
+					<tr id="tr_exibirSegmentoEditar2">
+					<td width="220" id="colSegmentoEditar2">Segmento 2:</td>
+					<td width="40">
+						<input name="exibirSegmentoEditar2" id="exibirSegmentoEditar2" type="text" style="width: 30px;" align="middle"/>
+		            <td width="25">
+		            	<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir" border="0" 
+							 onclick = "ajusteReparteController.limparExibicaoSegmento(exibirSegmento2, tipoSegmento2, segmento2, 'tr_exibirSegmentoEditar2');" /></td>
+					</tr>					
+
+					<tr id="tr_exibirSegmentoEditar3">
+					<td width="220" id="colSegmentoEditar3">Segmento 3:</td>
+					<td width="40">
+						<input name="exibirSegmentoEditar3" id="exibirSegmentoEditar3" type="text" style="width: 30px;" align="middle"/>
+                    <td width="25">
+                    	<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir" border="0"
+                    		 onclick = "ajusteReparteController.limparExibicaoSegmento(exibirSegmento3, tipoSegmento3, segmento3, 'tr_exibirSegmentoEditar3');" /></td>
+					</tr>	
 			</table>
 
 			<table width="575" border="0" cellpadding="2" cellspacing="1">

@@ -3,6 +3,7 @@ package br.com.abril.nds.service;
 import java.util.List;
 
 import br.com.abril.nds.dto.AjusteReparteDTO;
+import br.com.abril.nds.dto.AjustesSegmento_AjusteReparteDTO;
 import br.com.abril.nds.model.distribuicao.AjusteReparte;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 
@@ -26,5 +27,7 @@ public interface AjusteReparteService {
 	List<TipoSegmentoProduto> buscarTodosSegmentos();
 	
 	TipoSegmentoProduto buscarSegmentoPorID (Long id);
+	
+	List<AjustesSegmento_AjusteReparteDTO> ajustesAplicado_Segmento (Integer numCota);
 	
 }
