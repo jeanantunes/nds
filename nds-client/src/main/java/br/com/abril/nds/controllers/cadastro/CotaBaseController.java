@@ -309,7 +309,13 @@ public class CotaBaseController extends BaseController {
 		
 		if(filtro == null){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não pode ser adicionada!");
-		}else if(filtroPrincipal.getNumeroCota().equals(filtro.getNumeroCota()) ){
+		}
+		
+		else if(filtro.getTpDistribCota().getDescTipoDistribuicaoCota().equalsIgnoreCase("Alternativo")){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + numeroCota + "\" não é do tipo Convencional!!");
+		}
+		
+		else if(filtroPrincipal.getNumeroCota().equals(filtro.getNumeroCota()) ){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Cota \"" + filtro.getNumeroCota() + "\" não pode ser adicionada!");
 		}else{
 			this.result.use(Results.json()).from(filtro, "result").recursive().serialize();			
