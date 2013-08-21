@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -141,7 +142,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 		
 		List<MovimentoEstoqueCotaDTO> movimentosCota = 
 			this.movimentoEstoqueCotaRepository.obterMovimentoCotasPorTipoMovimento(
-				data, numCotas, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+				data, numCotas, Arrays.asList(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE));
 		
 		for (MovimentoEstoqueCotaDTO movimentoEstoqueCota : movimentosCota) {
 			

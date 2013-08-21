@@ -365,11 +365,11 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * 
 	 * @param data
 	 * @param idCota
-	 * @param grupoMovimentoEstoque
+	 * @param gruposMovimentoEstoque
 	 * 
 	 * @return List - MovimentoEstoqueCota
 	 */
-	public List<MovimentoEstoqueCotaDTO> obterMovimentoCotasPorTipoMovimento(Date data, List<Integer> numCotas, GrupoMovimentoEstoque grupoMovimentoEstoque);
+	public List<MovimentoEstoqueCotaDTO> obterMovimentoCotasPorTipoMovimento(Date data, List<Integer> numCotas, List<GrupoMovimentoEstoque> gruposMovimentoEstoque);
 	
 	/**
 	 * Obtém movimentos de estoque da cota que ainda não geraram movimento financeiro
