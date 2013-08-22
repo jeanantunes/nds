@@ -111,8 +111,10 @@ public class NdsiLogger extends AbstractRepository {
 	
 	
 	public void logWarning(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro) {
+
+		if(this.statusProcesso != StatusExecucaoEnum.FALHA)//Nao deve sobrescrever fatal
+			this.statusProcesso = StatusExecucaoEnum.AVISO;
 		
-		this.statusProcesso = StatusExecucaoEnum.AVISO;
 		this.logMessage(message, eventoExecucaoEnum, descricaoErro, null);
 	}
 	
@@ -142,10 +144,18 @@ public class NdsiLogger extends AbstractRepository {
 		EventoExecucao eventoExecucao = new EventoExecucao();
 		eventoExecucao.setId(eventoExecucaoEnum.getCodigo());
 		
+		logExecucao.setStatus(this.statusProcesso);
+		
 		logExecucaoMensagem = new LogExecucaoMensagem();
 		logExecucaoMensagem.setLogExecucao(this.logExecucao);
 		logExecucaoMensagem.setEventoExecucao(eventoExecucao);
-		logExecucaoMensagem.setMensagem(descricaoErro);
+		
+		String descricaoErroTamanhoLimitado = descricaoErro;
+		if(descricaoErro != null && descricaoErro.length() > 499){
+			descricaoErroTamanhoLimitado = descricaoErro.substring(0, 499);
+		}
+		
+		logExecucaoMensagem.setMensagem(descricaoErroTamanhoLimitado);
 		logExecucaoMensagem.setMensagemInfo(mensagemInfo);
 		if (message.getHeader().containsKey(MessageHeaderProperties.FILE_NAME.getValue()))
 			logExecucaoMensagem.setNomeArquivo((String) message.getHeader().get(MessageHeaderProperties.FILE_NAME.getValue()));
