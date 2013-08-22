@@ -669,7 +669,7 @@ public class MatrizDistribuicaoController extends BaseController {
     @Post
     public void somarEstudos(Long idEstudoBase, ProdutoDistribuicaoVO distribuicaoVO) {
         somarEstudosService.somarEstudos(idEstudoBase, distribuicaoVO);
-        result.use(Results.json()).from(Results.nothing()).serialize();
+        result.use(Results.json()).from(distribuicaoVO.getIdEstudo().toString(), "result").serialize();
     }
 
     public HttpSession getSession() {
