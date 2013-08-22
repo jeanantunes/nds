@@ -252,7 +252,7 @@ var painelProcessamentoController = $.extend(true, {
 			btReprocessamento = "<a href='javascript:;' onclick='painelProcessamentoController.reprocessarInterface(\"" + row.cell.nome + "\")'><img border='0' style='margin-right:10px;' src= " + contextPath + "/images/bt_devolucao.png /></href>";
 			brDetalhes 		  = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterfaceProcessamento(" + row.cell.idLogProcessamento + ", \"" + row.cell.dataProcessmento + "\", \"" + row.cell.idLogExecucao + "\", \"" + row.cell.horaProcessamento + "\")'><img border='0' src= " + contextPath + "/images/ico_detalhes.png /></href>";
 
-			if(row.cell.idLogProcessamento != "" && row.cell.dataProcessmento != "" && row.cell.idLogExecucao != ""){
+			if(row.cell.idLogProcessamento != "" && row.cell.dataProcessmento != "" && row.cell.idLogExecucao != "" && row.cell.status != 'S' && row.cell.status != 'V'){
 				row.cell.reprocessar = btReprocessamento + brDetalhes;
 			}else{
 				row.cell.reprocessar = btReprocessamento;
@@ -260,14 +260,16 @@ var painelProcessamentoController = $.extend(true, {
 
 			//row.cell.nome = "<a href='javascript:;' onclick='painelProcessamentoController.abrirPopUpDetalhesInterface(" + row.cell.idLogProcessamento + ")'>" + row.cell.nome + "</href>";
 			
-			if (row.cell.status == 'S')//Sucesso
+			if (row.cell.status == 'S' || row.cell.status == 'A')//Sucesso ou Aviso
 				row.cell.status = "<img src= " + contextPath + "/images/ico_operando.png />";
-			else if (row.cell.status == 'F' || row.cell.status == 'A')//Falha ou Aviso
+			else if (row.cell.status == 'F')//Falha 
 				row.cell.status = "<img src= " + contextPath + "/images/ico_offline.png />";
-			else if (row.cell.status == 'V')//Sem informacoes
+			else if (row.cell.status == 'V')//Vazio Sem informacoes
 				row.cell.status = "<img src= " + contextPath + "/images/ico_semdados.png />";
-			else // Não processado
+			else if (row.cell.status == 'E')//Erro
 				row.cell.status = "<img src= " + contextPath + "/images/ico_encerrado.png />";
+			else // Não processado
+				row.cell.status = "<img src= " + contextPath + "/images/ico_semdados.png />";
 			
 		});
 		return resultado;
@@ -382,30 +384,48 @@ var painelProcessamentoController = $.extend(true, {
 		});
 	},
 	reprocessarInterface : function(classeInterface) {
-		var data = [{name: 'classeInterface', value: classeInterface}];
-		$.postJSON(contextPath + "/administracao/painelProcessamento/executarInterface",
-				   data,
-				   function (resultado) {
-
-						exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
-			
-						$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexOptions({
-							url : contextPath + '/administracao/painelProcessamento/pesquisarInterfaces',
-							params: [],
-							newp: 1,
-						});
-						$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexReload();
-			
-				   },function (resultado) {
-					   	$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexOptions({
-							url : contextPath + '/administracao/painelProcessamento/pesquisarInterfaces',
-							params: [],
-							newp: 1,
-						});
-						$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexReload();
-				   });
 		
+		$( "#dialog-excutarInterface" ).dialog({
+			resizable: false,
+			height:'auto',
+			width:400,
+			modal: true,
+			buttons: {
+				"Confirmar": function() {
+					$( this ).dialog( "close" );
+					
+					var data = [{name: 'classeInterface', value: classeInterface}];
+					$.postJSON(contextPath + "/administracao/painelProcessamento/executarInterface",
+							   data,
+							   function (resultado) {
+
+									exibirMensagem(resultado.tipoMensagem, resultado.listaMensagens);
+						
+									$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexOptions({
+										url : contextPath + '/administracao/painelProcessamento/pesquisarInterfaces',
+										params: [],
+										newp: 1,
+									});
+									$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexReload();
+						
+							   },function (resultado) {
+								   	$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexOptions({
+										url : contextPath + '/administracao/painelProcessamento/pesquisarInterfaces',
+										params: [],
+										newp: 1,
+									});
+									$(".painelInterfaceGrid", painelProcessamentoController.workspace).flexReload();
+							   });
+					
+				},
+				"Cancelar": function() {
+					$( this ).dialog( "close" );
+				}
+			}
+		});
 	},
+	
+	
 	reprocessarInterfacesEmOrdem : function() {
 		
 		$( "#dialog-excutarInterfacesEmOrdem" ).dialog({

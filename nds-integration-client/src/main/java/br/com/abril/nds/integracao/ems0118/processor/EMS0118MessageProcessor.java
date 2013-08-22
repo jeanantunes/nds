@@ -61,6 +61,7 @@ public class EMS0118MessageProcessor extends AbstractRepository implements
 		if (null != produtoEdicao) {
 			// Atualiza valor de venda (PREÇO CAPA)
 			produtoEdicao.setPrecoVenda(input.getPreco());
+			produtoEdicao.setPrecoPrevisto(input.getPreco());
 
 			// Define valor de custo
 			double preco = input.getPreco().doubleValue();
@@ -69,9 +70,12 @@ public class EMS0118MessageProcessor extends AbstractRepository implements
 			double precoCusto = preco * fator;
 
 			// Atualiza valor de custo
-			produtoEdicao.setPrecoCusto(new BigDecimal(precoCusto).setScale(2,
-					RoundingMode.HALF_DOWN));			
-
+			produtoEdicao.setPrecoCusto(new BigDecimal(precoCusto).setScale(2, RoundingMode.HALF_DOWN));		
+			
+			this.ndsiLoggerFactory.getLogger().logInfo(
+					message,
+					EventoExecucaoEnum.INF_DADO_ALTERADO,
+					"Atualizado preço para Produto: " + input.getCodigoPublicacao() + " e Edição: " + input.getEdicao() );
 		} else {
 			// NAO ENCONTROU Produto/Edicao, DEVE LOGAR
 			ndsiLoggerFactory.getLogger().logError(

@@ -36,8 +36,7 @@ public class NdsiLogger extends AbstractRepository {
 	private PlatformTransactionManager transactionManager;
 	
 	private Logger LOGGER = Logger.getLogger(NdsiLogger.class);
-	private boolean hasError = false;
-	private boolean hasWarning = false;
+	private StatusExecucaoEnum statusProcesso = StatusExecucaoEnum.SUCESSO;
 	private LogExecucao logExecucao = null;
 	private LogExecucaoMensagem logExecucaoMensagem = null;
 	
@@ -59,7 +58,7 @@ public class NdsiLogger extends AbstractRepository {
 		logExecucao.setDataInicio(new Date());
 		logExecucao.setInterfaceExecucao(interfaceExecucao);
 		logExecucao.setNomeLoginUsuario(route.getUserName());
-		logExecucao.setStatus(StatusExecucaoEnum.SUCESSO);
+		logExecucao.setStatus(StatusExecucaoEnum.ERRO);// Inicia o processo como Não processado - No final atualiza status
 		
 		try {
 			TransactionTemplate template = new TransactionTemplate(transactionManager, new DefaultTransactionAttribute(TransactionDefinition.PROPAGATION_REQUIRES_NEW));
@@ -84,13 +83,7 @@ public class NdsiLogger extends AbstractRepository {
 	
 	public void logEnd(RouteTemplate route) {
 		
-		if (hasError) {
-			logExecucao.setStatus(StatusExecucaoEnum.FALHA);
-		} else if (hasWarning) {
-			logExecucao.setStatus(StatusExecucaoEnum.AVISO);
-		} else {
-			logExecucao.setStatus(StatusExecucaoEnum.SUCESSO);
-		}
+		logExecucao.setStatus(this.statusProcesso);
 		logExecucao.setDataFim(new Date());
 		
 		try {
@@ -111,8 +104,7 @@ public class NdsiLogger extends AbstractRepository {
 	
 	public void logError(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro) {
 		
-		hasError = true;
-		//message.getHeader().put(MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue(), descricaoErro);
+		this.statusProcesso = StatusExecucaoEnum.FALHA;
 		message.getHeader().put(descricaoErro, MessageHeaderProperties.ERRO_PROCESSAMENTO.getValue());
 		this.logMessage(message, eventoExecucaoEnum, descricaoErro, null);
 	}
@@ -120,7 +112,7 @@ public class NdsiLogger extends AbstractRepository {
 	
 	public void logWarning(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro) {
 		
-		hasWarning = true;
+		this.statusProcesso = StatusExecucaoEnum.AVISO;
 		this.logMessage(message, eventoExecucaoEnum, descricaoErro, null);
 	}
 	
@@ -176,7 +168,7 @@ public class NdsiLogger extends AbstractRepository {
 		}
 	}
 	
-	/*public void setEntityManager(EntityManager entityManager) {
-		this.entityManager = entityManager;
-	}*/
+	public void setStatusProcesso(StatusExecucaoEnum status){
+		this.statusProcesso = status;
+	}
 }
