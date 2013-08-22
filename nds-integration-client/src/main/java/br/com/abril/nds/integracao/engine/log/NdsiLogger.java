@@ -111,8 +111,10 @@ public class NdsiLogger extends AbstractRepository {
 	
 	
 	public void logWarning(Message message, EventoExecucaoEnum eventoExecucaoEnum, String descricaoErro) {
+
+		if(this.statusProcesso != StatusExecucaoEnum.FALHA)//Nao deve sobrescrever fatal
+			this.statusProcesso = StatusExecucaoEnum.AVISO;
 		
-		this.statusProcesso = StatusExecucaoEnum.AVISO;
 		this.logMessage(message, eventoExecucaoEnum, descricaoErro, null);
 	}
 	
@@ -141,6 +143,8 @@ public class NdsiLogger extends AbstractRepository {
 		// TODO: criar enum
 		EventoExecucao eventoExecucao = new EventoExecucao();
 		eventoExecucao.setId(eventoExecucaoEnum.getCodigo());
+		
+		logExecucao.setStatus(this.statusProcesso);
 		
 		logExecucaoMensagem = new LogExecucaoMensagem();
 		logExecucaoMensagem.setLogExecucao(this.logExecucao);
