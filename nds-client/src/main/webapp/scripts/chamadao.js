@@ -81,13 +81,13 @@ var chamadaoController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Preço Venda R$',
+				display : 'Preço Capa R$',
 				name : 'precoVenda',
 				width : 80,
 				sortable : true,
 				align : 'right'
 			}, {
-				display : 'Preço Desconto R$',
+				display : 'Preço c/ Desc. R$',
 				name : 'precoDesconto',
 				width : 70,
 				sortable : true,
