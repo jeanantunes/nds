@@ -369,7 +369,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	},
 	
 	this.gerarCheckDistribuicao = function(id, index, estudo) {
-		if(estudo == estudoSomado){
+		if(estudo != undefined &&  estudo == estudoSomado){
 			return '<input id="checkDistribuicao' + index + '" type="checkbox" value="'+id+'" name="checkgroup" ' +
 			' onclick="' + T.instancia + '.selecionarCheck(this,\'' + index + '\');" checked="checked" />';			
 		}else{
