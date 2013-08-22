@@ -532,8 +532,17 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		
 		Integer ordem=0;
 		
+		//segundo o negócio, apenas um pdv deve ser roteirizado por cota
+		Integer idUltimaCota = null;
+		
 		for(PDV itemPdv:listaPdv){
 		    
+			if (itemPdv.getCota().getNumeroCota().equals(idUltimaCota)){
+				continue;
+			} else {
+				idUltimaCota = itemPdv.getCota().getNumeroCota();
+			}
+			
 			ordem++;
 			
 			pdvDTO = new PdvRoteirizacaoDTO();
@@ -559,14 +568,10 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 						
 						if (endPdv.isPrincipal()){
 							endereco = endPdv.getEndereco();
+							pdvDTO.setOrigem(OrigemEndereco.PDV.getDescricao());
+							break;
 						}
 					}
-					
-					if (endereco == null){
-						endereco = enderecosPDV.iterator().next().getEndereco();
-					}
-					
-					pdvDTO.setOrigem(OrigemEndereco.PDV.getDescricao());
 				}
 				
 				//EnderecoCota enderecoEscolhido = itemPdv.getCota().getEnderecoPrincipal();
