@@ -411,6 +411,9 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 
 		query.setParameter("numeroEdicao", edicao);
 		query.setParameter("codigoProduto", codigoPublicacao);
+		
+		query.setMaxResults(1);
+		query.setFetchSize(1);
 
 		return (ProdutoEdicao) query.uniqueResult();
 	}
@@ -426,6 +429,8 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		Query query = getSession().createQuery(sql.toString());
 
 		query.setParameter("codigoProduto", codigoPublicacao);
+		query.setMaxResults(1);
+		query.setFetchSize(1);
 
 		return (Produto) query.uniqueResult();
 	}

@@ -3,6 +3,7 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.List;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -30,6 +31,7 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	private Integer pacotePadrao;
 	private Long qtdeExms;
 	private Cota cota;
+	private List<String> cotasSemRoteirizacao;
 	
 	public ProdutoAbastecimentoDTO() {
 	
@@ -263,5 +265,13 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	
 	public void setCota(Cota cota) {
 		 this.cota = cota;
+	}
+
+	public List<String> getCotasSemRoteirizacao() {
+		return cotasSemRoteirizacao;
+	}
+
+	public void setCotasSemRoteirizacao(List<String> cotasSemRoteirizacao) {
+		this.cotasSemRoteirizacao = cotasSemRoteirizacao;
 	}
 }
