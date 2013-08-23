@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_rel_produtos_ne_modelo2" pageWidth="595" pageHeight="842" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty">
-	<property name="ireport.zoom" value="1.996500000000001"/>
-	<property name="ireport.x" value="278"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_rel_produtos_ne_modelo2" pageWidth="591" pageHeight="842" columnWidth="591" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty">
+	<property name="ireport.zoom" value="1.9965000000000013"/>
+	<property name="ireport.x" value="118"/>
 	<property name="ireport.y" value="0"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" pdfFontName="Arial" isPdfEmbedded="true">
@@ -115,7 +115,7 @@
 	<columnHeader>
 		<band height="13">
 			<staticText>
-				<reportElement style="campoPequeno" x="438" y="0" width="68" height="13" backcolor="#CCCCCC"/>
+				<reportElement style="campoPequeno" x="454" y="0" width="68" height="13" backcolor="#CCCCCC"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -128,7 +128,7 @@
 				<text><![CDATA[Reparte]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="campoPequeno" x="282" y="0" width="80" height="13" backcolor="#CCCCCC"/>
+				<reportElement style="campoPequeno" x="298" y="0" width="80" height="13" backcolor="#CCCCCC"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -142,7 +142,7 @@
 				<text><![CDATA[Edição]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="campoPequeno" x="57" y="0" width="225" height="13" backcolor="#CCCCCC"/>
+				<reportElement style="campoPequeno" x="57" y="0" width="241" height="13" backcolor="#CCCCCC"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -155,7 +155,7 @@
 				<text><![CDATA[Publicação]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="campoPequeno" x="362" y="0" width="76" height="13" backcolor="#CCCCCC"/>
+				<reportElement style="campoPequeno" x="378" y="0" width="76" height="13" backcolor="#CCCCCC"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -183,7 +183,7 @@
 				<text><![CDATA[Código]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="campoPequeno" x="506" y="0" width="69" height="13" backcolor="#CCCCCC"/>
+				<reportElement style="campoPequeno" x="522" y="0" width="69" height="13" backcolor="#CCCCCC"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -200,7 +200,7 @@
 	<detail>
 		<band height="16">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="282" y="0" width="80" height="16"/>
+				<reportElement x="298" y="0" width="80" height="16"/>
 				<box topPadding="0" bottomPadding="5">
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -224,7 +224,7 @@
 				<textFieldExpression><![CDATA[$F{codigoProduto}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00" isBlankWhenNull="true">
-				<reportElement x="362" y="0" width="76" height="16"/>
+				<reportElement x="378" y="0" width="76" height="16"/>
 				<box topPadding="0" bottomPadding="5">
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -236,7 +236,7 @@
 				<textFieldExpression><![CDATA[$F{valorUnitarioProduto}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement positionType="FixRelativeToBottom" mode="Transparent" x="57" y="0" width="225" height="16"/>
+				<reportElement positionType="FixRelativeToBottom" mode="Transparent" x="57" y="0" width="241" height="16"/>
 				<box topPadding="0" bottomPadding="5">
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -248,7 +248,7 @@
 				<textFieldExpression><![CDATA[$F{descricaoProduto}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="438" y="0" width="68" height="16"/>
+				<reportElement x="454" y="0" width="68" height="16"/>
 				<box topPadding="0" bottomPadding="5">
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -259,7 +259,7 @@
 				<textFieldExpression><![CDATA[$F{quantidadeProduto}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="506" y="0" width="69" height="16"/>
+				<reportElement x="522" y="0" width="69" height="16"/>
 				<box topPadding="0" bottomPadding="5">
 					<leftPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
@@ -270,7 +270,7 @@
 				<textFieldExpression><![CDATA[$F{sequencia}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement positionType="FixRelativeToBottom" x="0" y="15" width="575" height="1"/>
+				<reportElement positionType="FixRelativeToBottom" x="0" y="15" width="591" height="1"/>
 				<graphicElement>
 					<pen lineWidth="0.25"/>
 				</graphicElement>
