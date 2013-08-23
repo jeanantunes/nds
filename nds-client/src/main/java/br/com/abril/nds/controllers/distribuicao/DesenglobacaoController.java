@@ -102,7 +102,11 @@ public class DesenglobacaoController extends BaseController {
     @Post
     @Path("/inserirEnglobacao")
     public void inserirEnglobacao(List<DesenglobacaoDTO> desenglobaDTO, String alterando) {		
-
+    
+    for (DesenglobacaoDTO desenglobacao : desenglobaDTO) {
+    	this.validarDesenglobacao(desenglobacao);
+    }
+    	
 	boolean isOk = false;
 	if(StringUtils.isEmpty(alterando)){
 	    isOk = desenglobacaoService.inserirDesenglobacao(desenglobaDTO, super.getUsuarioLogado());
@@ -113,6 +117,15 @@ public class DesenglobacaoController extends BaseController {
 	    throw new ValidacaoException(TipoMensagem.WARNING, "Porcentagem supera o limite de 100%");
 	}
 	result.nothing();
+    }
+    
+    private void validarDesenglobacao(DesenglobacaoDTO desenglobacao) {
+		if((desenglobacao.getNumeroCotaDesenglobada() == null || desenglobacao.getNumeroCotaDesenglobada() == 0)){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Informe uma cota para Desenglobar");
+		}
+    	if((desenglobacao.getNumeroCotaEnglobada() == null || desenglobacao.getNumeroCotaEnglobada() == 0)){
+    		throw new ValidacaoException(TipoMensagem.WARNING, "Informe uma cota para englobar");
+		}
     }
 
     @Get
@@ -163,6 +176,21 @@ public class DesenglobacaoController extends BaseController {
 	}
 
 	result.use(Results.json()).from("OK").serialize();
+    }
+    
+    @Post
+    @Path("/verificarCota")
+    public void verificarCota(Integer numeroCota) {
+    
+    	Cota cotaPesquisada = cotaService.obterPorNumeroDaCota(numeroCota);
+
+    	String situacaoCadastro = cotaPesquisada.getSituacaoCadastro().toString();
+    	
+    	if((situacaoCadastro).equalsIgnoreCase("INATIVO")){
+    		throw new ValidacaoException(TipoMensagem.WARNING, "Cota " + numeroCota + " não está Ativa!");
+    	}
+    	
+	result.use(Results.json()).from(situacaoCadastro, "result").recursive().serialize();
     }
 }
 

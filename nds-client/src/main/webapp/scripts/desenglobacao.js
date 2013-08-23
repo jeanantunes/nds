@@ -11,6 +11,33 @@ var desenglobacaoController = $.extend(true, {
             $('#statusCota').val(result.status);
         }
     },
+    
+    sucessCallBackAutoCompleteCota : function errorCallBack(result){
+        if (result) {
+            $('#statusCota').val(result.status);
+        }
+        
+        numeroCota = '#inserirEnglobadaNumeroCota';
+        
+ 		$.postJSON(contextPath + "/distribuicao/desenglobacao/verificarCota",
+				{numeroCota:$(numeroCota).val().trim()}, 
+				function(result){
+					
+ 				}, function(result){					
+					if (result.mensagens) {
+						exibirMensagemDialog(
+								result.mensagens.tipoMensagem, 
+								result.mensagens.listaMensagens,""
+						);
+						
+						$('#inserirEnglobadaNumeroCota').val("");
+						$('#inserirEnglobadaNomePessoa').val("");
+						
+					}					
+				}, true,null
+		);
+        
+    },
 
     init : function() {
 
@@ -68,9 +95,9 @@ var desenglobacaoController = $.extend(true, {
         //FILTRO POPUP INSERIR COTA
         // FILTRO POR COTA
         $('#inserirEnglobadaNumeroCota').change(function (){
-            desenglobacaoController.pesquisaCota.pesquisarPorNumeroCota('#inserirEnglobadaNumeroCota','#inserirEnglobadaNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack,true);
+            desenglobacaoController.pesquisaCota.pesquisarPorNumeroCota('#inserirEnglobadaNumeroCota','#inserirEnglobadaNomePessoa', false, desenglobacaoController.sucessCallBackAutoCompleteCota, desenglobacaoController.errorCallBack,true);
         });
-
+        
         $('#inserirEnglobadaNomePessoa').keyup(function (){
             desenglobacaoController.pesquisaCota.autoCompletarPorNome('#inserirEnglobadaNomePessoa');
         });
@@ -444,6 +471,6 @@ var desenglobacaoController = $.extend(true, {
             }
         });
     },
-
+    
 }, BaseController);
 //@ sourceURL=desenglobacaoController.js
