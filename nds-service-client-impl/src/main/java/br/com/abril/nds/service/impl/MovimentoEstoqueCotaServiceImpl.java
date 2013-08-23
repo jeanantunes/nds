@@ -28,13 +28,8 @@ import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
-import br.com.abril.nds.repository.EstoqueProdutoRespository;
-import br.com.abril.nds.repository.LancamentoParcialRepository;
-import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
-import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
-import br.com.abril.nds.service.ControleAprovacaoService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.UsuarioService;
@@ -55,22 +50,7 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
 	
 	@Autowired
-	private ControleAprovacaoService controleAprovacaoService;
-	
-	@Autowired
 	private UsuarioService usuarioService;
-	
-	@Autowired
-	private EstoqueProdutoRespository estoqueProdutoRespository;
-	
-	@Autowired
-	private MovimentoEstoqueRepository movimentoEstoqueRepository;
-	
-	@Autowired
-	private LancamentoParcialRepository lancamentoParcialRepository;
-	
-	@Autowired
-	private LancamentoRepository lancamentoRepository;
 	
 	@Autowired
 	private MovimentoEstoqueService movimentoEstoqueService;
@@ -95,9 +75,9 @@ public class MovimentoEstoqueCotaServiceImpl implements MovimentoEstoqueCotaServ
 
 	@Override
 	@Transactional
-	public List<MovimentoEstoqueCotaDTO> obterMovimentoDTOCotaPorTipoMovimento(Date data, List<Integer> numCotas, GrupoMovimentoEstoque grupoMovimentoEstoque) {
+	public List<MovimentoEstoqueCotaDTO> obterMovimentoDTOCotaPorTipoMovimento(Date data, List<Integer> numCotas, List<GrupoMovimentoEstoque> gruposMovimentoEstoque) {
 	
-		return movimentoEstoqueCotaRepository.obterMovimentoCotasPorTipoMovimento(data, numCotas, grupoMovimentoEstoque);
+		return movimentoEstoqueCotaRepository.obterMovimentoCotasPorTipoMovimento(data, numCotas, gruposMovimentoEstoque);
 	}
 
 	/* (non-Javadoc)
