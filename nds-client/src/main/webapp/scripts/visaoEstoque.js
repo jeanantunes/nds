@@ -1,3 +1,27 @@
+$(document).ready(function() {
+
+	$('#pesquisarVisaoEstoqueForm').on('submit', function() {return false;});
+	
+	$(document.body).keydown(function(e) {	
+		
+		var eventoJs = e;
+		var keycode = e.which;
+		
+		if (window.event) {
+			eventoJs = window.event;
+			keycode = eventoJs.keyCode;
+		}
+
+		if(keycode == 13) {
+
+			visaoEstoqueController.pesquisar();
+			$(".grids", this.workspace).show();
+		}
+		
+	});
+		
+});
+
 var visaoEstoqueController = $.extend(true, {
 	
 	path : contextPath + '/estoque/visaoEstoque/',
@@ -41,7 +65,7 @@ var visaoEstoqueController = $.extend(true, {
 		
 		$(".visaoEstoqueGrid", this.workspace).flexOptions({
 			
-			url : this.path + 'pesquisar.json',
+			url : visaoEstoqueController.path + 'pesquisar.json',
 			params: formData,
 			preProcess : visaoEstoqueController.montaColunaAcao,
 			newp : 1
@@ -124,7 +148,7 @@ var visaoEstoqueController = $.extend(true, {
 			}
 			
 			value.cell.estoque = value.cell.qtde;
-			value.cell.transferir = '<input type="text" id="inputVisaoEstoqueTransferencia_' + value.cell.produtoEdicaoId + '" '+ (transferir != -1 ? 'value="'+ transferir +'"': '') +' style="width:80px; text-align:center;" onchange="visaoEstoqueController.ajustarSaldo(this,'+ value.cell.produtoEdicaoId +')"/>';
+			value.cell.transferir = '<input type="text" id="inputVisaoEstoqueTransferencia_' + value.cell.produtoEdicaoId + '" '+ (transferir != -1 ? 'value="'+ transferir +'"': '') +' style="width:80px; text-align:center;" onchange="visaoEstoqueController.ajustarSaldo(this,'+ value.cell.produtoEdicaoId +')" onkeyup="visaoEstoqueController.ajustarSaldo(this,'+ value.cell.produtoEdicaoId +')"/>';
 			
 		});
 		
@@ -227,8 +251,6 @@ var visaoEstoqueController = $.extend(true, {
 
 				visaoEstoqueController.visaoEstoqueTransferenciaArray = {};
 				
-				$('#dialog-visaoEstoque-transferencia').dialog('close');
-				
 				if (result.listaMensagens) {
 				
 					exibirMensagem(
@@ -238,6 +260,8 @@ var visaoEstoqueController = $.extend(true, {
 				}
 				
 				$(".visaoEstoqueGrid", this.workspace).flexReload();
+				
+				//$('#dialog-visaoEstoque-transferencia').dialog('close');
 			}
 		);
 	},
@@ -382,17 +406,21 @@ var visaoEstoqueController = $.extend(true, {
 			modal: true,
 			buttons: {
 				"Confirmar": function() {
-					//$(this).dialog("close");
+					
 					$("#effect").show("highlight", {}, 1000, callback);
+					
 					visaoEstoqueController.confirmarTransferencia();
+					
+					$(this).dialog("close");
+					
 				},
 				"Cancelar": function() {
 					visaoEstoqueController.visaoEstoqueTransferenciaArray = {};
 					$(this).dialog("close");
 				},
 			},
-			close: function(ev, ui) { visaoEstoqueController.visaoEstoqueTransferenciaArray = {}; $(this).close(); },
-			form: $("#dialog-visaoEstoque-transferencia", visaoEstoqueController.workspace).parents("form")
+			form: $("#dialog-visaoEstoque-transferencia", visaoEstoqueController.workspace).parents("form"),
+			close: function(ev, ui) { visaoEstoqueController.visaoEstoqueTransferenciaArray = {}; },
 		});
 	},
 	
