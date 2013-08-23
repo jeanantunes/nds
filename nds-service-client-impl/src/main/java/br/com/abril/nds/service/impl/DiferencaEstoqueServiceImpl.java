@@ -447,7 +447,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				TipoEstoque.LANCAMENTO.equals(diferenca.getTipoEstoque());
 			
 			if (diferenca.getRateios() != null && !diferenca.getRateios().isEmpty()) {
-					
+				
+				statusAprovacao = StatusAprovacao.APROVADO;
+				
 				listaMovimentosEstoqueCota = new ArrayList<MovimentoEstoqueCota>();
 				
 				BigInteger qntTotalRateio = BigInteger.ZERO;
@@ -511,6 +513,13 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			
 			diferencaEstoqueRepository.flush();
 		}
+	}
+	
+	private Boolean foraDoPrazoDoGFS(Diferenca diferenca) {
+		
+		return !this.validarDataLancamentoDiferenca(
+					diferenca.getDataMovimento(), diferenca.getProdutoEdicao().getId(), 
+						diferenca.getTipoDiferenca());
 	}
 	
 	private Lancamento obterUltimoLancamentoProduto(Diferenca diferenca) {
@@ -722,9 +731,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		StatusAprovacao statusAprovacao  = StatusAprovacao.PENDENTE;
 		
-		if (!this.validarDataLancamentoDiferenca(
-				diferenca.getDataMovimento(), diferenca.getProdutoEdicao().getId(), 
-					diferenca.getTipoDiferenca())) {
+		if (this.foraDoPrazoDoGFS(diferenca)) {
 			
 			if (diferenca.getTipoDiferenca().isFalta()) {
 				
@@ -1010,17 +1017,62 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 												   boolean validarTransfEstoqueDiferenca,
 												   Date dataLancamento) {
 		
-		TipoMovimentoEstoque tipoMovimentoEstoque =
-			this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(
-				diferenca.getTipoDiferenca().getTipoMovimentoEstoque());
+		GrupoMovimentoEstoque grupoMovimentoEstoque = null;
 		
-		if(tipoMovimentoEstoque == null)
-			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de Movimento de Estoque não encontrado.");
+		TipoDiferenca tipoDiferenca = diferenca.getTipoDiferenca();
+		
+		if (this.foraDoPrazoDoGFS(diferenca)) {
+			
+			grupoMovimentoEstoque = obterGrupoMovimentoEstoqueForaDoPrazo(tipoDiferenca);
+			
+		} else {
+			
+			grupoMovimentoEstoque = tipoDiferenca.getTipoMovimentoEstoque();
+		}
+		
+		TipoMovimentoEstoque tipoMovimentoEstoque = 
+			this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(grupoMovimentoEstoque);
+		
+		if (tipoMovimentoEstoque == null) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.ERROR, "Tipo de Movimento de Estoque não encontrado.");
+		}
 		
 		return this.movimentoEstoqueService.gerarMovimentoEstoqueDiferenca(
 			diferenca.getProdutoEdicao().getId(), idUsuario,
 				diferenca.getQtde(), tipoMovimentoEstoque, 
 					isAprovacaoAutomatica, validarTransfEstoqueDiferenca, dataLancamento);
+	}
+
+	private GrupoMovimentoEstoque obterGrupoMovimentoEstoqueForaDoPrazo(TipoDiferenca tipoDiferenca) {
+		
+		GrupoMovimentoEstoque grupoMovimentoEstoque;
+		
+		if (tipoDiferenca.isDiferencaDe()) {
+			
+			if (tipoDiferenca.isFalta()) {
+				
+				grupoMovimentoEstoque = GrupoMovimentoEstoque.PERDA_DE;
+				
+			} else {
+				
+				grupoMovimentoEstoque = GrupoMovimentoEstoque.FALTA_DE;
+			}
+			
+		} else {
+			
+			if (tipoDiferenca.isFalta()) {
+				
+				grupoMovimentoEstoque = GrupoMovimentoEstoque.PERDA_EM;
+				
+			} else {
+				
+				grupoMovimentoEstoque = GrupoMovimentoEstoque.FALTA_EM;
+			}
+		}
+		
+		return grupoMovimentoEstoque;
 	}
 	
 	/*
