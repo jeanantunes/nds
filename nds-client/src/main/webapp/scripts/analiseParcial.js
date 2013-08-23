@@ -389,10 +389,13 @@ var analiseParcialController = $.extend(true, {
         var reparteSubtraido = parseInt(reparteDigitado, 10) - parseInt(reparteAtual, 10);
         var $legenda = $input_reparte.closest('td').next().find('div');
 
+        /*
         if ((saldoReparte - reparteSubtraido) < 0) {
             $input_reparte.val($input_reparte.attr('reparteAtual'));
             analiseParcialController.exibirMsg('WARNING', ['Não há saldo suficiente para esta operação.']);
-        } else if (reparteAtual != reparteDigitado) {
+        } else
+        */
+        if (reparteAtual != reparteDigitado) {
             $saldoreparte.text(parseInt($saldoreparte.text(), 10) - reparteSubtraido);
 
             $.ajax({url: analiseParcialController.path +'/distribuicao/analise/parcial/mudarReparte',
@@ -975,9 +978,10 @@ var analiseParcialController = $.extend(true, {
     },
 
     validaMotivoCotaReparte : function(input) {
-        if ($('#saldoReparteNaoSelec').text() === '0') {
-            analiseParcialController.exibirMsg('WARNING', ['Não há saldo de reparte para distribuir!']);
-        } else {
+
+//        if ($('#saldoReparteNaoSelec').text() === '0') {
+//            analiseParcialController.exibirMsg('WARNING', ['Não há saldo de reparte para distribuir!']);
+//        } else {
             var $input = $(input);
             $input.data('valid', false);
 
@@ -1000,7 +1004,7 @@ var analiseParcialController = $.extend(true, {
             } else {
                 $input.val('');
             }
-        }
+//        }
     },
 
     popupConfirmaSenha : function($input, msg) {

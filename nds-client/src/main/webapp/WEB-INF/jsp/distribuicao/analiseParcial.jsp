@@ -36,7 +36,7 @@ function escondeDados(){
 .class_media{width:35px; color:#F00; font-weight:bold;}
 .class_vlrs{width:35px;}
 .class_vda{width:35px; color:#F00; font-weight:bold;}
-.detalhesDados{position:absolute; display:none; background:#fff; border:1px solid #ccc; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); }
+.detalhesDados{position:absolute; display:none; background:#fff; border:1px solid #ccc; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); width: 978px;}
 #tabelaDetalheAnalise tr { line-height: normal; }
 .class_linha_impar {background:#f0f0f0; }
 .class_linha_par {background:#f8f8f8; }
@@ -52,12 +52,20 @@ function escondeDados(){
 
 table.filtro td span {font-weight: normal;}
 .tableTotais {margin: 1px 0 3px; border: 1px solid white; border-collapse: collapse;}
+.dadosTab td:first-child { width: 130px; text-align: right; padding-right: 5px; }
 
 <c:if test="${tipoExibicao == 'NORMAL'}">
 .paddingTotais td {padding: 0 3px; text-align: right; width: 35px; border: 1px solid white;}
+table.dadosTab { margin-left: 320px;}
+.dadosTab td { width: 82px; text-align: center; }
 </c:if>
 <c:if test="${tipoExibicao == 'PARCIAL'}">
 .paddingTotais td {padding: 0 3px; text-align: right; width: 45px; border: 1px solid white;}
+table.dadosTab { margin-left: 370px;}
+.dadosTab td { width: 100px; text-align: center; }
+.dadosTab td:nth-child(5) {display: none;}
+.dadosTab td:nth-child(6) {display: none;}
+.dadosTab td:nth-child(7) {display: none;}
 </c:if>
 
 .paddingTotais td#lbl_qtd_cotas {text-align: left; width: 82px;}
@@ -94,7 +102,8 @@ table.filtro td span {font-weight: normal;}
 	</div>
 
     	<div class="detalhesDados">
-            <table width="976" border="0" cellpadding="2" cellspacing="2" class="dadosTab" id="tabelaDetalheAnalise" style="float: left;">
+            <div style="float: right;"><a href="javascript:;" onclick="escondeDados();"><img src="images/ico_excluir.gif" alt="Fechar" width="15" height="15" border="0" /></a></div>
+            <table border="0" cellpadding="2" cellspacing="2" class="dadosTab" id="tabelaDetalheAnalise">
                 <tr class="class_linha_impar">
                     <td><strong>Código:</strong></td>
                     <td></td>
@@ -150,7 +159,6 @@ table.filtro td span {font-weight: normal;}
                     <td></td>
                 </tr>
   	        </table>
-            <div style="float: right;"><a href="javascript:;" onclick="escondeDados();"><img src="images/ico_excluir.gif" alt="Fechar" width="15" height="15" border="0" /></a></div>
         </div>
 		<fieldset class="classFieldset">
 			<legend> Pesquisar </legend>
