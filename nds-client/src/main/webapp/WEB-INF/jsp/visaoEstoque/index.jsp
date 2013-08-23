@@ -114,7 +114,6 @@
 			<fieldset style="width:870px!important;">
 	        	<legend>Transfer&ecirc;ncia entre Estoques</legend>
 	        	<table class="visaoEstoqueTransferenciaGrid"></table>
-	        	<span class="bt_sellAll" style="float:right;"><label for="sel">Selecionar Todos</label><input type="checkbox" id="visaoEstoqueCheckSelecionarTodos" name="Todos" onclick="visaoEstoqueController.checkAll(this);" style="float:left; margin-right:40px;"/></span>
 			</fieldset>
 		</div>
 	</form>
