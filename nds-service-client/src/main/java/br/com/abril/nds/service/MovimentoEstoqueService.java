@@ -69,7 +69,9 @@ public interface MovimentoEstoqueService {
 	
 	MovimentoEstoque gerarMovimentoEstoqueDiferenca(Long idProdutoEdicao, Long idUsuario, 
 													   BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, 
-													   boolean isMovimentoDiferencaAutomatico, boolean validarTransfEstoqueDiferenca);
+													   boolean isMovimentoDiferencaAutomatico, 
+													   boolean validarTransfEstoqueDiferenca,
+													   Date dataLancamento);
 	
 	 MovimentoEstoqueCota gerarMovimentoCotaDiferenca(Date dataLancamento,Long idProdutoEdicao, 
 														Long idCota, Long idUsuario, 

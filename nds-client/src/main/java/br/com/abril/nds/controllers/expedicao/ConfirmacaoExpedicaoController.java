@@ -185,6 +185,10 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 				String sortorder, Long idFornecedor, 
 				String dtLancamento, Boolean estudo){
 			
+			
+			
+			
+			
 			String status = SUCESSO;
 			
 			List<String> mensagens = new ArrayList<String>();
@@ -211,10 +215,8 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 				Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 				
 				for(int i=0; i<selecionados.size(); i++) {
-					
 					lancamentoService.confirmarExpedicao(selecionados.get(i), getUsuarioLogado().getId(), dataOperacao, tipoMovimento, tipoMovimentoCota);
-					
-					session.setAttribute(STATUS_EXPEDICAO, getMsgProcessamento((i+1), selecionados.size()));
+					session.setAttribute(STATUS_EXPEDICAO, getMsgProcessamento((i+1), selecionados.size()));	
 				}
 				
 				mensagens.add(CONFIRMACAO_EXPEDICAO_SUCESSO);
@@ -311,7 +313,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 		public void pesquisarExpedicoes(Integer page, Integer rp, String sortname, 
 						String sortorder, Long idFornecedor, 
 						String dtLancamento, Boolean estudo, String ultimaPesquisa){
-			
+						
 			String status= SUCESSO;
 			
 			boolean isNewSearch = !ultimaPesquisa.equals((String)session.getAttribute("ultimaPesquisa"));

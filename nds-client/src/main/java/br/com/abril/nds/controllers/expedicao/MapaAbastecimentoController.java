@@ -40,6 +40,7 @@ import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
@@ -75,6 +76,9 @@ public class MapaAbastecimentoController extends BaseController {
 	
 	@Autowired
 	private MapaAbastecimentoService mapaAbastecimentoService;
+	
+	@Autowired
+	private CotaRepository cotaRepository;
 	
 	@Autowired
 	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
@@ -455,31 +459,21 @@ public class MapaAbastecimentoController extends BaseController {
 	
 	ProdutoEdicaoMapaDTO produtoEdicaoMapaEdicaoProduto = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoEdicao(filtro);
 	
-	List<String> arrayCotasSemRoteirizacaoEdicaoProduto = new ArrayList<String>();
-	Iterator<Entry<Integer, BoxRotasDTO>> iteratorProdMapaEspecifico = produtoEdicaoMapaEdicaoProduto.getBoxes().entrySet().iterator();
-	while(iteratorProdMapaEspecifico.hasNext()) {
-	List<Cota> listCota = iteratorProdMapaEspecifico.next().getValue().getCotas();
-	
-	for(Cota cota : listCota) {
-	if(cota.getBox() == null) {
-	arrayCotasSemRoteirizacaoEdicaoProduto.add(cota.getNumeroCota() + " - "+ cota.getPessoa().getNome());
-	}
-	}	
-	}
-	
-	if(! arrayCotasSemRoteirizacaoEdicaoProduto.isEmpty()) {
-	result.include("result", arrayCotasSemRoteirizacaoEdicaoProduto);
-	} else {
-	result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoEdicao(produtoEdicaoMapaEdicaoProduto);
-	}
+		if( produtoEdicaoMapaEdicaoProduto.getCotasSemRoteirizacao() != null ||  ! produtoEdicaoMapaEdicaoProduto.getCotasSemRoteirizacao().isEmpty()){
+			result.include("result", produtoEdicaoMapaEdicaoProduto.getCotasSemRoteirizacao());
+		} else {
+			result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoEdicao(produtoEdicaoMapaEdicaoProduto);
+		}
+		
 	} else {
 	
+	List<ProdutoAbastecimentoDTO> produtosBoxRota = movimentoEstoqueCotaRepository.obterMapaDeImpressaoPorProdutoQuebrandoPorCota(filtro);
 	List<ProdutoAbastecimentoDTO> listaMovimentoProdutoEdicao = this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorProdutoEdicao(filtro);
-	
+		
 	List<String> arrayCotasSemRoteirizacaoProduto= new ArrayList<String>();
 	for(ProdutoAbastecimentoDTO movimentoProdutoEdicao : listaMovimentoProdutoEdicao) {
 	if(movimentoProdutoEdicao.getCodigoBox() == null) {
-	arrayCotasSemRoteirizacaoProduto.add(movimentoProdutoEdicao.getCota().getNumeroCota() + " - " + movimentoProdutoEdicao.getCota().getPessoa().getNome());
+	//arrayCotasSemRoteirizacaoProduto.add(movimentoProdutoEdicao.getCota().getNumeroCota() + " - " + movimentoProdutoEdicao.getCota().getPessoa().getNome());
 	}
 	}
 	
@@ -497,41 +491,40 @@ public class MapaAbastecimentoController extends BaseController {
 	
 	ProdutoEdicaoMapaDTO produtoEdicaoMapaEspecifico = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoEdicao(filtro);
 	
-	List<String> arrayCotasSemRoteirizacaoProdutoEspecifico = new ArrayList<String>();
-	Iterator<Entry<Integer, BoxRotasDTO>> iteratorProdMapaEspecifico = produtoEdicaoMapaEspecifico.getBoxes().entrySet().iterator();
-	while(iteratorProdMapaEspecifico.hasNext()) {
-	List<Cota> listCota = iteratorProdMapaEspecifico.next().getValue().getCotas();
-	
-	for(Cota cota : listCota) {
-	if(cota.getBox() == null) {
-	arrayCotasSemRoteirizacaoProdutoEspecifico.add(cota.getNumeroCota() + " - "+ cota.getPessoa().getNome());
-	}
-	}	
-	}
-	
-	if(! arrayCotasSemRoteirizacaoProdutoEspecifico.isEmpty()) {
-	result.include("result", arrayCotasSemRoteirizacaoProdutoEspecifico);
+	if( produtoEdicaoMapaEspecifico.getCotasSemRoteirizacao() != null ||  ! produtoEdicaoMapaEspecifico.getCotasSemRoteirizacao().isEmpty()){
+		result.include("result", produtoEdicaoMapaEspecifico.getCotasSemRoteirizacao());
 	} else {
-	result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoEdicao(produtoEdicaoMapaEspecifico);
+		result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoEdicao(produtoEdicaoMapaEspecifico);
 	}
+	
 	break;
 	case PRODUTO_X_COTA:
-	if(filtro.getBox() == null) {	
-	result.include("result", filtro.getCodigoCota() + " - " + filtro.getNomeCota());
-	} else {
-	result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoQuebraCota(filtro);
-	}
-	break;	
-	case ENTREGADOR:	
-	result.forwardTo(MapaAbastecimentoController.class).impressaoPorEntregador(filtro);
-	break;
-	default:
-	throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de consulta inexistente.");
-	}
+		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaDeAbastecimentoPorProdutoQuebrandoPorCota(filtro);
+		List<String> arrayCotasNaoRoteirizadas = new ArrayList<String>();
+		for(ProdutoAbastecimentoDTO cotaMapa : lista ) {
+			Cota cota = this.cotaRepository.obterCotaPDVPorNumeroDaCota(cotaMapa.getCodigoCota());
+			
+			if(cota.getBox() == null) {
+				arrayCotasNaoRoteirizadas.add(cotaMapa.getCota().getNumeroCota() + " - " + cotaMapa.getCota().getPessoa().getNome());
+			}
+		}
+		
+		if(!arrayCotasNaoRoteirizadas.isEmpty()) {	
+			result.include("result", filtro.getCodigoCota() + " - " + filtro.getNomeCota());
+		} else {
+			result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoQuebraCota(filtro);
+		}
+			break;	
+		case ENTREGADOR:	
+			result.forwardTo(MapaAbastecimentoController.class).impressaoPorEntregador(filtro);
+			break;
+			default:
+				throw new ValidacaoException(TipoMensagem.WARNING, "Tipo de consulta inexistente.");
+		}
 	
-	}catch(ValidacaoException e) {
-	impressaoFalha(e.getMessage());
-	}
+		} catch(ValidacaoException e) {
+			impressaoFalha(e.getMessage());
+		}
 	
 	}
 	

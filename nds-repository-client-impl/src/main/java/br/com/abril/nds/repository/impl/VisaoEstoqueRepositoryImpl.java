@@ -168,7 +168,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 				
 				if (filtro.getPaginacao().getSortColumn().equals("codigo")){
 					
-					hql.append(" (LPAD(pe.produto.codigo, (select max(length(pe.produto.codigo)) from pe.produto), '0')) ");
+					hql.append(" (LPAD(pe.produto.codigo, (select max(length(pe.produto.codigo)) from pe.produto), '0')), pe.numeroEdicao ");
 				} else {
 					hql.append(filtro.getPaginacao().getSortColumn());
 				}
@@ -284,7 +284,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 				.append("       ,lan.dataRecolhimentoDistribuidor as rclto")
 				.append("       ,ep." + coluna + " as qtde");
 		
-		Query query = queryObterVisaoEstoqueDetalheHistorico(false, coluna,hql,filtro);
+		Query query = queryObterVisaoEstoqueDetalheHistorico(false, coluna, hql, filtro);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				VisaoEstoqueDetalheDTO.class));

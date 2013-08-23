@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.expedicao;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -456,7 +457,7 @@ public class CotaAusenteController extends BaseController {
 
 		List<MovimentoEstoqueCotaDTO> movimentos = 
 			this.movimentoEstoqueCotaService.obterMovimentoDTOCotaPorTipoMovimento(
-				dataOperacao, numCotas, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+				dataOperacao, numCotas, Arrays.asList(GrupoMovimentoEstoque.values()));
 		
 		if (movimentos == null || movimentos.isEmpty()) {
 			

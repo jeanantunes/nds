@@ -173,7 +173,6 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 				parameters.put("posicaoInicial",filtro.getPaginacao().getPosicaoInicial());
 				parameters.put("posicaoFinal",filtro.getPaginacao().getQtdResultadosPorPagina());
 			}
-			
 		}
 
 		@SuppressWarnings("rawtypes")
