@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_relatorio_produtos_ne" pageWidth="336" pageHeight="842" columnWidth="336" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sub_relatorio_produtos_ne" pageWidth="346" pageHeight="842" columnWidth="346" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty">
 	<property name="ireport.zoom" value="2.1961500000000163"/>
-	<property name="ireport.x" value="114"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="campoPequeno" backcolor="#C0C0C0" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="true"/>
 	<style name="borda" mode="Transparent" forecolor="#000000" fill="Solid" scaleImage="Clip" hAlign="Left" vAlign="Top" markup="none" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="true" isPdfEmbedded="true">
@@ -61,72 +61,72 @@
 		<groupFooter>
 			<band height="85">
 				<staticText>
-					<reportElement x="90" y="17" width="142" height="14"/>
+					<reportElement x="92" y="16" width="142" height="14"/>
 					<textElement textAlignment="Right">
 						<font size="6" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Reparte (exemplares)]]></text>
 				</staticText>
 				<textField pattern="">
-					<reportElement x="238" y="17" width="96" height="14"/>
+					<reportElement x="240" y="16" width="96" height="14"/>
 					<textElement textAlignment="Right">
 						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{SUM_TOTAL_REPARTE}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="234" y="29" width="100" height="1"/>
+					<reportElement x="236" y="28" width="100" height="1"/>
 				</line>
 				<staticText>
-					<reportElement x="90" y="35" width="142" height="14"/>
+					<reportElement x="92" y="34" width="142" height="14"/>
 					<textElement textAlignment="Right">
 						<font size="6" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Valor Reparte]]></text>
 				</staticText>
 				<textField pattern="#,##0.00;-#,##0.00">
-					<reportElement x="238" y="35" width="96" height="14"/>
+					<reportElement x="240" y="34" width="96" height="14"/>
 					<textElement textAlignment="Right">
 						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{SUM_VALOR_TOTAL_PRODUTO}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="234" y="47" width="100" height="1"/>
+					<reportElement x="236" y="46" width="100" height="1"/>
 				</line>
 				<staticText>
-					<reportElement x="90" y="53" width="142" height="14"/>
+					<reportElement x="92" y="52" width="142" height="14"/>
 					<textElement textAlignment="Right">
 						<font size="6" isBold="true"/>
 					</textElement>
 					<text><![CDATA[DESCONTO %]]></text>
 				</staticText>
 				<textField pattern="#,##0.00;-#,##0.00">
-					<reportElement x="238" y="53" width="96" height="14"/>
+					<reportElement x="240" y="52" width="96" height="14"/>
 					<textElement textAlignment="Right">
 						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[($V{SUM_VALOR_TOTAL_PRODUTO}.doubleValue() - $V{SUM_VALOR_TOTAL_COM_DESCONTO}.doubleValue()) * 100 / $V{SUM_VALOR_TOTAL_PRODUTO}.doubleValue()]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="234" y="65" width="100" height="1"/>
+					<reportElement x="236" y="64" width="100" height="1"/>
 				</line>
 				<staticText>
-					<reportElement x="90" y="71" width="142" height="14"/>
+					<reportElement x="92" y="70" width="142" height="14"/>
 					<textElement textAlignment="Right">
 						<font size="6" isBold="true"/>
 					</textElement>
 					<text><![CDATA[Valor Reparte Líquido R$]]></text>
 				</staticText>
 				<textField pattern="#,##0.00;-#,##0.00">
-					<reportElement x="238" y="71" width="96" height="14"/>
+					<reportElement x="240" y="70" width="96" height="14"/>
 					<textElement textAlignment="Right">
 						<font size="6"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$V{SUM_VALOR_TOTAL_COM_DESCONTO}]]></textFieldExpression>
 				</textField>
 				<line>
-					<reportElement x="234" y="83" width="100" height="1"/>
+					<reportElement x="236" y="82" width="100" height="1"/>
 				</line>
 			</band>
 		</groupFooter>
@@ -134,7 +134,7 @@
 	<columnHeader>
 		<band height="27">
 			<staticText>
-				<reportElement style="cabecalho" mode="Opaque" x="299" y="0" width="35" height="13"/>
+				<reportElement style="cabecalho" mode="Opaque" x="311" y="0" width="35" height="13"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -147,7 +147,7 @@
 				<text><![CDATA[Reparte]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="cabecalho" mode="Opaque" x="202" y="0" width="38" height="13"/>
+				<reportElement style="cabecalho" mode="Opaque" x="214" y="0" width="38" height="13"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -161,7 +161,7 @@
 				<text><![CDATA[Edição]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="cabecalho" mode="Opaque" x="80" y="0" width="122" height="13"/>
+				<reportElement style="cabecalho" mode="Opaque" x="80" y="0" width="134" height="13"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -174,7 +174,7 @@
 				<text><![CDATA[Publicação]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="cabecalho" mode="Opaque" x="240" y="0" width="59" height="13"/>
+				<reportElement style="cabecalho" mode="Opaque" x="252" y="0" width="59" height="13"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -229,7 +229,7 @@
 				<text><![CDATA[Código de Barras]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="cabecalho" mode="Opaque" x="139" y="13" width="63" height="14"/>
+				<reportElement style="cabecalho" mode="Opaque" x="139" y="13" width="75" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -242,7 +242,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="cabecalho" mode="Opaque" x="202" y="13" width="38" height="14"/>
+				<reportElement style="cabecalho" mode="Opaque" x="214" y="13" width="38" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -256,7 +256,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="cabecalho" mode="Opaque" x="299" y="13" width="35" height="14"/>
+				<reportElement style="cabecalho" mode="Opaque" x="311" y="13" width="35" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -269,7 +269,7 @@
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement style="cabecalho" mode="Opaque" x="240" y="13" width="59" height="14"/>
+				<reportElement style="cabecalho" mode="Opaque" x="252" y="13" width="59" height="14"/>
 				<box>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -287,7 +287,7 @@
 	<detail>
 		<band height="32">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="linha" mode="Opaque" x="202" y="0" width="38" height="16"/>
+				<reportElement style="linha" mode="Opaque" x="214" y="0" width="38" height="16"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -316,7 +316,7 @@
 				<textFieldExpression><![CDATA[$F{codigoProduto}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00" isBlankWhenNull="true">
-				<reportElement style="linha" mode="Opaque" x="240" y="0" width="59" height="16"/>
+				<reportElement style="linha" mode="Opaque" x="252" y="0" width="59" height="16"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -330,7 +330,7 @@
 				<textFieldExpression><![CDATA[$F{valorUnitarioProduto}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="linha" mode="Opaque" x="80" y="0" width="122" height="16"/>
+				<reportElement style="linha" mode="Opaque" x="80" y="0" width="134" height="16"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -344,7 +344,7 @@
 				<textFieldExpression><![CDATA[$F{descricaoProduto}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="linha" mode="Opaque" x="299" y="0" width="35" height="16"/>
+				<reportElement style="linha" mode="Opaque" x="311" y="0" width="35" height="16"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -384,7 +384,7 @@
 				<textFieldExpression><![CDATA[$F{codigoBarra}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="linha" positionType="Float" mode="Opaque" x="139" y="16" width="63" height="16"/>
+				<reportElement style="linha" positionType="Float" mode="Opaque" x="139" y="16" width="75" height="16"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -397,7 +397,7 @@
 				</textElement>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="###0.00;-###0.00" isBlankWhenNull="true">
-				<reportElement style="linha" mode="Opaque" x="240" y="16" width="59" height="16"/>
+				<reportElement style="linha" mode="Opaque" x="252" y="16" width="59" height="16"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -410,7 +410,7 @@
 				</textElement>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="linha" mode="Opaque" x="299" y="16" width="35" height="16"/>
+				<reportElement style="linha" mode="Opaque" x="311" y="16" width="35" height="16"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
@@ -422,7 +422,7 @@
 				</textElement>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="linha" mode="Opaque" x="202" y="16" width="38" height="16"/>
+				<reportElement style="linha" mode="Opaque" x="214" y="16" width="38" height="16"/>
 				<box topPadding="0" bottomPadding="5">
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
