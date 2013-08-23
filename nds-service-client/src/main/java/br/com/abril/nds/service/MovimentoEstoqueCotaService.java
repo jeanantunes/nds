@@ -17,7 +17,7 @@ public interface MovimentoEstoqueCotaService {
 	
 	List<MovimentoEstoqueCota> obterMovimentoCotaPorTipoMovimento(Date data, Integer numCota, GrupoMovimentoEstoque grupoMovimentoEstoque);
 
-	List<MovimentoEstoqueCotaDTO> obterMovimentoDTOCotaPorTipoMovimento(Date date,List<Integer> numCotas, GrupoMovimentoEstoque envioJornaleiro);
+	List<MovimentoEstoqueCotaDTO> obterMovimentoDTOCotaPorTipoMovimento(Date date,List<Integer> numCotas, List<GrupoMovimentoEstoque> gruposMovimentoEstoque);
 	
 	List<MovimentoEstoqueCota> obterMovimentoEstoqueCotaPor(ParametrosRecolhimentoDistribuidor parametrosRecolhimentoDistribuidor, Long idCota, 
 			TipoNotaFiscal tipoNotaFiscal, List<GrupoMovimentoEstoque> listaGrupoMovimentoEstoques, 

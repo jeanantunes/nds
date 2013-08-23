@@ -306,21 +306,64 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<String> obterLocalidadesPorUF(String uf) {
+	public List<String> obterLocalidadesPorUFPDVSemRoteirizacao(String uf) {
 
-		Query query = this.getSession().createQuery("select distinct(e.cidade) from Endereco e where e.uf = :uf");
+		StringBuilder hql = new StringBuilder("select distinct(e.cidade) ");
+		hql.append(" from Cota c ")
+		   .append(" join c.pdvs pdv")
+		   .append(" join pdv.enderecos assoEndereco ")
+		   .append(" join assoEndereco.endereco e ")
+		   .append(" where c.id not in (")
+		   .append("  select cota.id from RotaPDV rPdv ")
+		   .append("  join rPdv.pdv p ")
+		   .append("  join p.cota cota ")
+		   .append(")")
+		   .append(" and e.uf = :uf ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("uf", uf);
 
 		return query.list();
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<String>obterUFs(){
+	public List<String>obterUFsPDVSemRoteirizacao(){
 		
-		Query query = this.getSession().createQuery("select distinct(e.uf) from Endereco e, EnderecoCota ec, " +
-				" EnderecoPDV ep where e.id = ec.endereco.id or e.id = ep.endereco.id and e.uf is not null order by e.uf ");
+		StringBuilder hql = new StringBuilder("select distinct(e.uf) ");
+		hql.append(" from Cota c ")
+		   .append(" join c.pdvs pdv")
+		   .append(" join pdv.enderecos assoEndereco ")
+		   .append(" join assoEndereco.endereco e ")
+		   .append(" where c.id not in (")
+		   .append("  select cota.id from RotaPDV rPdv ")
+		   .append("  join rPdv.pdv p ")
+		   .append("  join p.cota cota ")
+		   .append(")");
 		
+		return this.getSession().createQuery(hql.toString()).list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<String>obterBairrosPDVSemRoteirizacao(String uf, String cidade){
 		
+		StringBuilder hql = new StringBuilder("select distinct(e.bairro) ");
+		hql.append(" from Cota c ")
+		   .append(" join c.pdvs pdv")
+		   .append(" join pdv.enderecos assoEndereco ")
+		   .append(" join assoEndereco.endereco e ")
+		   .append(" where c.id not in (")
+		   .append("  select cota.id from RotaPDV rPdv ")
+		   .append("  join rPdv.pdv p ")
+		   .append("  join p.cota cota ")
+		   .append(")")
+		   .append(" and e.uf = :uf ")
+		   .append(" and e.cidade = :cidade ")
+		   .append(" and e.bairro is not null ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("uf", uf);
+		query.setParameter("cidade", cidade);
 		
 		return query.list();
 	}

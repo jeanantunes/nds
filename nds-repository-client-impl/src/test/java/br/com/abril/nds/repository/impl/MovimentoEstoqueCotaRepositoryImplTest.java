@@ -2701,10 +2701,10 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		Date data = Fixture.criarData(1, Calendar.NOVEMBER, 2012);
 		List<Integer> numCotas = new ArrayList<Integer>();
 		numCotas.add(1);
-		GrupoMovimentoEstoque grupoMovimentoEstoque = GrupoMovimentoEstoque.ENVIO_ENCALHE;
+		List<GrupoMovimentoEstoque> gruposMovimentoEstoque = Arrays.asList(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 		
 		List<MovimentoEstoqueCotaDTO> listaMovimento = 
-				movimentoEstoqueCotaRepository.obterMovimentoCotasPorTipoMovimento(data, numCotas, grupoMovimentoEstoque);
+				movimentoEstoqueCotaRepository.obterMovimentoCotasPorTipoMovimento(data, numCotas, gruposMovimentoEstoque);
 		
 		Assert.assertNotNull(listaMovimento);
 
