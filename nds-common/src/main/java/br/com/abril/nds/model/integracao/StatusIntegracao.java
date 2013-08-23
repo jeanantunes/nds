@@ -8,5 +8,6 @@ public enum StatusIntegracao {
 	DESPREZADO,
 	NAO_INTEGRADO,
 	RE_INTEGRADO,
-	INTEGRADO 
+	INTEGRADO,
+	NAO_INTEGRAR;
 }
