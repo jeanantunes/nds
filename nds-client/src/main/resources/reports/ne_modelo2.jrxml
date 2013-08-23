@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ne_modelo2" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="567" leftMargin="14" rightMargin="14" topMargin="28" bottomMargin="28" whenResourceMissingType="Empty">
-	<property name="ireport.zoom" value="1.86276396917747"/>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ne_modelo2" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="575" leftMargin="10" rightMargin="10" topMargin="2" bottomMargin="2" whenResourceMissingType="Empty">
+	<property name="ireport.zoom" value="2.7272727272727346"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<style name="campoPequeno" hAlign="Left" vAlign="Top" markup="styled" pattern="" fontName="Arial" fontSize="5" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Arial" isPdfEmbedded="true"/>
@@ -286,30 +286,30 @@
 	<pageHeader>
 		<band height="145">
 			<frame>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="565" height="82"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="0" width="575" height="82"/>
 				<rectangle>
-					<reportElement style="borda" x="378" y="44" width="186" height="38"/>
+					<reportElement style="borda" x="388" y="44" width="187" height="38"/>
 				</rectangle>
 				<image scaleImage="RealSize" hAlign="Center" vAlign="Middle" isUsingCache="true" onErrorType="Blank" evaluationTime="Report">
 					<reportElement x="6" y="4" width="115" height="78"/>
 					<imageExpression><![CDATA[$P{LOGO_DISTRIBUIDOR}]]></imageExpression>
 				</image>
 				<staticText>
-					<reportElement style="campoPequeno" x="386" y="4" width="84" height="19"/>
+					<reportElement style="campoPequeno" x="396" y="4" width="84" height="19"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
 						<font size="9" isBold="true"/>
 					</textElement>
 					<text><![CDATA[NOTA DE ENVIO]]></text>
 				</staticText>
 				<staticText>
-					<reportElement style="campoPequeno" x="386" y="24" width="175" height="10"/>
+					<reportElement style="campoPequeno" x="396" y="24" width="175" height="10"/>
 					<textElement markup="styled">
 						<font size="6"/>
 					</textElement>
 					<text><![CDATA[Nota de Envio aprovada nos termos do Regime especial]]></text>
 				</staticText>
 				<textField pattern="">
-					<reportElement style="dados" x="295" y="41" width="83" height="17"/>
+					<reportElement style="dados" x="305" y="41" width="83" height="17"/>
 					<textElement textAlignment="Center">
 						<font fontName="Arial" size="8"/>
 					</textElement>
@@ -318,14 +318,14 @@ $F{emissorCNPJ}.substring(2,5) + "." + $F{emissorCNPJ}.substring(5,8) + "/" +
 $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{emissorCNPJ}]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement style="dados" positionType="Float" x="127" y="13" width="251" height="17"/>
+					<reportElement style="dados" positionType="Float" x="127" y="13" width="261" height="17"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Arial" size="8" isPdfEmbedded="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{emissorNome}.toUpperCase()]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement style="dados" positionType="Float" x="127" y="41" width="168" height="17"/>
+					<reportElement style="dados" positionType="Float" x="127" y="41" width="178" height="17"/>
 					<textElement>
 						<font fontName="Arial" size="8" isPdfEmbedded="true"/>
 					</textElement>
@@ -339,35 +339,35 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<textFieldExpression><![CDATA[$F{emissorMunicipio}.toUpperCase()]]></textFieldExpression>
 				</textField>
 				<textField>
-					<reportElement style="dados" positionType="Float" x="243" y="68" width="52" height="13"/>
+					<reportElement style="dados" positionType="Float" x="252" y="68" width="52" height="13"/>
 					<textElement textAlignment="Center">
 						<font fontName="Arial" size="8" isPdfEmbedded="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{emissorCEP}.substring(0,5) + "-" + $F{emissorCEP}.substring(5,8)]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement style="dados" x="474" y="7" width="19" height="15"/>
+					<reportElement style="dados" x="484" y="7" width="19" height="15"/>
 					<textElement>
 						<font size="12" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA["N: "]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="127" y="4" width="251" height="9"/>
+					<reportElement x="127" y="4" width="261" height="9"/>
 					<textElement>
 						<font size="7"/>
 					</textElement>
 					<text><![CDATA[Razão Social]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="128" y="31" width="167" height="9"/>
+					<reportElement x="128" y="31" width="177" height="9"/>
 					<textElement>
 						<font size="7"/>
 					</textElement>
 					<text><![CDATA[Endereço]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="295" y="31" width="83" height="9"/>
+					<reportElement x="305" y="31" width="83" height="9"/>
 					<textElement textAlignment="Center">
 						<font size="7"/>
 					</textElement>
@@ -381,72 +381,72 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<text><![CDATA[Cidade]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="226" y="59" width="17" height="9"/>
+					<reportElement x="226" y="59" width="26" height="9"/>
 					<textElement textAlignment="Center">
 						<font size="7"/>
 					</textElement>
 					<text><![CDATA[UF]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="243" y="59" width="52" height="9"/>
+					<reportElement x="252" y="59" width="52" height="9"/>
 					<textElement textAlignment="Center">
 						<font size="7"/>
 					</textElement>
 					<text><![CDATA[CEP]]></text>
 				</staticText>
 				<textField>
-					<reportElement style="dados" positionType="Float" x="228" y="68" width="15" height="13"/>
+					<reportElement style="dados" positionType="Float" x="228" y="68" width="24" height="13"/>
 					<textElement textAlignment="Center">
 						<font fontName="Arial" size="8" isPdfEmbedded="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{emissorUF}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="295" y="59" width="83" height="9"/>
+					<reportElement x="304" y="59" width="83" height="9"/>
 					<textElement textAlignment="Center">
 						<font size="7"/>
 					</textElement>
 					<text><![CDATA[Inscrição Estadual]]></text>
 				</staticText>
 				<textField pattern="">
-					<reportElement style="dados" x="296" y="68" width="82" height="13"/>
+					<reportElement style="dados" x="305" y="68" width="82" height="13"/>
 					<textElement textAlignment="Center">
 						<font fontName="Arial" size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{emissorInscricaoEstadual}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="386" y="33" width="175" height="10"/>
+					<reportElement x="396" y="33" width="175" height="10"/>
 					<textElement>
 						<font size="7"/>
 					</textElement>
 					<text><![CDATA[Via de Transporte Rodoviário]]></text>
 				</staticText>
 				<rectangle>
-					<reportElement style="borda" x="127" y="58" width="251" height="24"/>
+					<reportElement style="borda" x="127" y="58" width="261" height="24"/>
 				</rectangle>
 				<rectangle>
-					<reportElement style="borda" x="127" y="31" width="251" height="27"/>
+					<reportElement style="borda" x="127" y="31" width="261" height="27"/>
 				</rectangle>
 				<rectangle>
-					<reportElement style="borda" x="127" y="4" width="251" height="27"/>
+					<reportElement style="borda" x="127" y="4" width="261" height="27"/>
 				</rectangle>
 				<textField isBlankWhenNull="true">
-					<reportElement style="dados" x="499" y="4" width="62" height="19"/>
+					<reportElement style="dados" x="509" y="4" width="62" height="19"/>
 					<textElement>
 						<font size="14" isBold="true"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{numeroNF}]]></textFieldExpression>
 				</textField>
 				<staticText>
-					<reportElement x="381" y="48" width="100" height="14">
+					<reportElement x="391" y="48" width="100" height="14">
 						<printWhenExpression><![CDATA[$F{chave} != null && !$F{chave}.isEmpty()]]></printWhenExpression>
 					</reportElement>
 					<textElement/>
 					<text><![CDATA[Chave NF-e]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="381" y="63" width="100" height="15">
+					<reportElement x="391" y="63" width="100" height="15">
 						<printWhenExpression><![CDATA[$F{chave} != null && !$F{chave}.isEmpty()]]></printWhenExpression>
 					</reportElement>
 					<textElement>
@@ -456,33 +456,33 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 				</textField>
 			</frame>
 			<frame>
-				<reportElement stretchType="RelativeToBandHeight" x="0" y="82" width="565" height="59"/>
+				<reportElement stretchType="RelativeToBandHeight" x="0" y="82" width="575" height="59"/>
 				<rectangle>
 					<reportElement style="borda" x="0" y="4" width="308" height="24"/>
 				</rectangle>
 				<rectangle>
-					<reportElement style="borda" x="308" y="4" width="172" height="24"/>
+					<reportElement style="borda" x="308" y="4" width="182" height="24"/>
 				</rectangle>
 				<rectangle>
-					<reportElement style="borda" x="392" y="30" width="88" height="28"/>
+					<reportElement style="borda" x="402" y="30" width="88" height="28"/>
 				</rectangle>
 				<rectangle>
 					<reportElement style="borda" x="0" y="30" width="173" height="28"/>
 				</rectangle>
 				<rectangle>
-					<reportElement style="borda" x="480" y="4" width="85" height="24"/>
+					<reportElement style="borda" x="490" y="4" width="85" height="24"/>
 				</rectangle>
 				<rectangle>
 					<reportElement style="borda" x="217" y="30" width="91" height="28"/>
 				</rectangle>
 				<rectangle>
-					<reportElement style="borda" x="308" y="30" width="28" height="28"/>
+					<reportElement style="borda" x="308" y="30" width="38" height="28"/>
 				</rectangle>
 				<rectangle>
 					<reportElement style="borda" x="173" y="30" width="44" height="28"/>
 				</rectangle>
 				<rectangle>
-					<reportElement style="borda" x="336" y="30" width="56" height="28"/>
+					<reportElement style="borda" x="346" y="30" width="56" height="28"/>
 				</rectangle>
 				<textField>
 					<reportElement style="dados" x="218" y="38" width="91" height="20"/>
@@ -492,7 +492,7 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<textFieldExpression><![CDATA[$F{destinatarioMunicipio}.toUpperCase()]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd/MM/yyyy" isBlankWhenNull="true">
-					<reportElement style="dados" x="481" y="11" width="75" height="16"/>
+					<reportElement style="dados" x="499" y="11" width="75" height="16"/>
 					<textElement>
 						<font fontName="Arial" size="8"/>
 					</textElement>
@@ -513,14 +513,14 @@ $F{emissorCNPJ}.substring(8,12) + "-" + $F{emissorCNPJ}.substring(12,14) : $F{em
 					<textFieldExpression><![CDATA[$F{numeroCota}]]></textFieldExpression>
 				</textField>
 				<textField pattern="#####-###">
-					<reportElement style="dados" x="336" y="38" width="56" height="20"/>
+					<reportElement style="dados" x="346" y="38" width="56" height="20"/>
 					<textElement textAlignment="Center">
 						<font fontName="Arial" size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{destinatarioCEP}.substring( 0, 5 ) + "-" + $F{destinatarioCEP}.substring( 5, 8 )]]></textFieldExpression>
 				</textField>
 				<textField pattern="##.###.###/####-##">
-					<reportElement style="dados" x="398" y="38" width="82" height="20"/>
+					<reportElement style="dados" x="408" y="38" width="82" height="20"/>
 					<textElement>
 						<font fontName="Arial" size="8"/>
 					</textElement>
@@ -536,14 +536,14 @@ $F{destinatarioCNPJ}.substring(8,12) + "-" + $F{destinatarioCNPJ}.substring(12,1
 					<text><![CDATA[Destinatário]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="481" y="4" width="76" height="9"/>
+					<reportElement x="494" y="4" width="76" height="9"/>
 					<textElement>
 						<font size="7"/>
 					</textElement>
 					<text><![CDATA[Data Emissão]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="309" y="4" width="171" height="9"/>
+					<reportElement x="309" y="4" width="180" height="9"/>
 					<textElement>
 						<font size="7"/>
 					</textElement>
@@ -564,52 +564,52 @@ $F{destinatarioCNPJ}.substring(8,12) + "-" + $F{destinatarioCNPJ}.substring(12,1
 					<text><![CDATA[Endereço]]></text>
 				</staticText>
 				<rectangle>
-					<reportElement style="borda" stretchType="RelativeToTallestObject" x="480" y="30" width="85" height="28"/>
+					<reportElement style="borda" stretchType="RelativeToTallestObject" x="490" y="30" width="85" height="28"/>
 				</rectangle>
 				<staticText>
-					<reportElement x="308" y="30" width="27" height="9"/>
+					<reportElement x="308" y="30" width="38" height="9"/>
 					<textElement textAlignment="Center">
 						<font size="7"/>
 					</textElement>
 					<text><![CDATA[UF]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="336" y="30" width="56" height="9"/>
+					<reportElement x="346" y="30" width="56" height="9"/>
 					<textElement textAlignment="Center">
 						<font size="7"/>
 					</textElement>
 					<text><![CDATA[CEP]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="392" y="30" width="88" height="9"/>
+					<reportElement x="402" y="30" width="88" height="9"/>
 					<textElement textAlignment="Center">
 						<font size="7"/>
 					</textElement>
 					<text><![CDATA[CPF/CNPJ]]></text>
 				</staticText>
 				<staticText>
-					<reportElement x="481" y="30" width="83" height="9"/>
+					<reportElement x="491" y="30" width="83" height="9"/>
 					<textElement textAlignment="Center">
 						<font size="7"/>
 					</textElement>
 					<text><![CDATA[RG/Inscrição Estadual]]></text>
 				</staticText>
 				<textField>
-					<reportElement x="308" y="39" width="27" height="20"/>
+					<reportElement x="308" y="39" width="38" height="20"/>
 					<textElement textAlignment="Center">
 						<font fontName="Arial" size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{destinatarioUF}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="481" y="38" width="84" height="20"/>
+					<reportElement x="491" y="38" width="84" height="20"/>
 					<textElement verticalAlignment="Middle">
 						<font fontName="Arial" size="8"/>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{destinatarioInscricaoEstadual}]]></textFieldExpression>
 				</textField>
 				<textField isBlankWhenNull="true">
-					<reportElement x="309" y="13" width="171" height="15"/>
+					<reportElement x="309" y="13" width="180" height="15"/>
 					<textElement>
 						<font fontName="Arial" size="8"/>
 					</textElement>
@@ -642,13 +642,10 @@ $F{destinatarioCNPJ}.substring(8,12) + "-" + $F{destinatarioCNPJ}.substring(12,1
 	<detail>
 		<band height="27">
 			<subreport>
-				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="565" height="27"/>
+				<reportElement x="0" y="0" width="574" height="27"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{itensImpressaoNfe})]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_rel_produtos_ne_modelo2.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>
-	<pageFooter>
-		<band height="7" splitType="Stretch"/>
-	</pageFooter>
 </jasperReport>
