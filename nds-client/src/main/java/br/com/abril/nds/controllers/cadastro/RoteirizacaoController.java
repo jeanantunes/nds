@@ -277,7 +277,7 @@ public class RoteirizacaoController extends BaseController {
 	
 	@Path("/iniciaTelaCotas")
 	public void iniciaTelaCotas() {
-		List<String> uf = enderecoService.obterUnidadeFederativaAssociadaComEndereco();
+		List<String> uf = enderecoService.obterUnidadeFederativaPDVSemRoteirizacao();
 		result.use(Results.json()).from(uf, "result").serialize();
 	}
 	
@@ -403,14 +403,14 @@ public class RoteirizacaoController extends BaseController {
 	
 	@Path("/buscalistaMunicipio")
 	public void buscalistaMunicipio(String uf) {
-		List<String> lista = enderecoService.obterLocalidadesPorUF(uf);
+		List<String> lista = enderecoService.obterLocalidadesPorUFPDVSemRoteirizacao(uf);
 		result.use(Results.json()).from(lista, "result").serialize();
 	}
 	
 	
 	@Path("/buscalistaBairro")
-	public void buscalistaBairro(String municipio) {
-		List<String> bairro = enderecoService.obterBairrosPorCidade(municipio);
+	public void buscalistaBairro(String uf, String municipio) {
+		List<String> bairro = enderecoService.obterBairrosPDVSemRoteirizacao(uf, municipio);
 		result.use(Results.json()).from(bairro, "result").serialize();
 	}
 	
@@ -905,7 +905,7 @@ public class RoteirizacaoController extends BaseController {
     @Path("/obterDadosComboUF")
 	public void obterDadosComboUF() {
 		
-		List<String> ufs = this.enderecoService.obterUnidadeFederativaAssociadaComEndereco();
+		List<String> ufs = this.enderecoService.obterUnidadeFederativaPDVSemRoteirizacao();
 		
 		this.result.use(Results.json()).from(ufs, "result").serialize();
 	}

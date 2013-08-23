@@ -210,8 +210,14 @@ public class EnderecoServiceImpl implements EnderecoService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public List<String> obterUnidadeFederativaAssociadaComEndereco() {
-		return enderecoRepository.obterUFs();
+	public List<String> obterUnidadeFederativaPDVSemRoteirizacao() {
+		return enderecoRepository.obterUFsPDVSemRoteirizacao();
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<String> obterBairrosPDVSemRoteirizacao(String uf, String cidade){
+		return this.enderecoRepository.obterBairrosPDVSemRoteirizacao(uf, cidade);
 	}
 	
 
@@ -413,13 +419,13 @@ public class EnderecoServiceImpl implements EnderecoService {
 
 	@Override
 	@Transactional(readOnly = true)	
-	public List<String> obterLocalidadesPorUF(String uf) {
+	public List<String> obterLocalidadesPorUFPDVSemRoteirizacao(String uf) {
 		if (uf == null || uf.isEmpty()) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "A escolha da UF é obrigatória.");
 		}
 		
-		return this.enderecoRepository.obterLocalidadesPorUF(uf);
+		return this.enderecoRepository.obterLocalidadesPorUFPDVSemRoteirizacao(uf);
 	}
 
 
