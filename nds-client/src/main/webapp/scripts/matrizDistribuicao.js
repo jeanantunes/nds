@@ -862,16 +862,17 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		if(typeof(histogramaPosEstudoController)!="undefined"){
 			matrizSelecionado_estudo = histogramaPosEstudoController.matrizSelecionado.estudo;
 		}
-		
-        var idEstudo =  matrizSelecionado_estudo || estudo;
-        var urlAnalise = contextPath + '/distribuicao/analise/parcial/?id=' + idEstudo;
-        if ($('#parcial').val() === 'true') {
-			urlAnalise += '&modoAnalise=PARCIAL';
+		var data = [];
+		var idEstudo =  matrizSelecionado_estudo || estudo;
+		data.push({name: 'id', value: idEstudo});
+		if ($('#parcial').val() === 'true') {
+			data.push({name: 'modoAnalise', value: "PARCIAL"});
 		}
+        data.push({name: 'reparteCopiado', value: $("#copiarEstudo-copia-reparte").text()});
 
 		$.get(
-				urlAnalise,
-				null, // parametros
+				contextPath + '/distribuicao/analise/parcial/',
+				data, // parametros
 				function(html){ // onSucessCallBack
 					$(divToHide).hide();
 					$(divToShow).html(html);
