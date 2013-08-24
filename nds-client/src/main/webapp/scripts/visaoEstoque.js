@@ -13,7 +13,7 @@ $(document).ready(function() {
 		}
 
 		if(keycode == 13) {
-
+			e.preventDefault();
 			visaoEstoqueController.pesquisar();
 			$(".grids", this.workspace).show();
 		}
@@ -171,7 +171,7 @@ var visaoEstoqueController = $.extend(true, {
 			}
 			
 			value.cell.diferenca = '<div abbr="diferenca">' + value.cell.qtde + '</div>';
-			value.cell.estoque = '<input type="text" class="inputVisaoEstoqueInventario" id="inputVisaoEstoqueInventario_' + value.cell.produtoEdicaoId + '" '+ (inventario != -1 ? 'value="'+ inventario +'"': '') +' style="width:80px; text-align:center;" onchange="visaoEstoqueController.ajustarDiferenca(this,'+ value.cell.produtoEdicaoId +')"/>';
+			value.cell.estoque = '<input type="text" class="inputVisaoEstoqueInventario" id="inputVisaoEstoqueInventario_' + value.cell.produtoEdicaoId + '" '+ (inventario != -1 ? 'value="'+ visaoEstoqueController.visaoEstoqueInventarioArray[value.cell.produtoEdicaoId]['inventario'] +'"': '') +' style="width:80px; text-align:center;" onchange="visaoEstoqueController.ajustarDiferenca(this,'+ value.cell.produtoEdicaoId +')"/>';
 			
 		});
 		
@@ -203,12 +203,14 @@ var visaoEstoqueController = $.extend(true, {
 		var qtdeInventario = parseInt($.trim(element.value) == "" ? 0 : element.value); 
 		var qtde = parseInt($('td[abbr="qtde"] >div', tr).html()); 
 		
-		if(qtdeInventario > 0) {
+		if(!isNaN(qtdeInventario) && qtdeInventario > 0) {
 			$('div[abbr="diferenca"]', tr).html(qtdeInventario - qtde);
-			visaoEstoqueController.visaoEstoqueInventarioArray[produtoEdicaoId] = (qtdeInventario - qtde);
+			visaoEstoqueController.visaoEstoqueInventarioArray[produtoEdicaoId] = {};
+			visaoEstoqueController.visaoEstoqueInventarioArray[produtoEdicaoId]['inventario'] = (qtdeInventario);
+			visaoEstoqueController.visaoEstoqueInventarioArray[produtoEdicaoId]['diferenca']  = (qtdeInventario - qtde);
 		} else {
-			$('div[abbr="diferenca"]', tr).attr('value', (qtdeInventario - qtde));
-			$('div[abbr="diferenca"]', tr).html((qtdeInventario - qtde));
+			$('div[abbr="diferenca"]', tr).attr('value', (!isNaN(qtdeInventario)) ? (qtdeInventario - qtde) : qtde);
+			$('div[abbr="diferenca"]', tr).html(((!isNaN(qtdeInventario) && qtdeInventario > 0) ? (qtdeInventario - qtde) : qtde));
 			element.value = '';
 			delete visaoEstoqueController.visaoEstoqueInventarioArray[produtoEdicaoId];
 		}
@@ -310,7 +312,7 @@ var visaoEstoqueController = $.extend(true, {
 		
 		$.each( visaoEstoqueController.visaoEstoqueInventarioArray, function(produtoEdicaoId, qtde) {
 			
-			dados += '{name:"filtro.listaTransferencia['+index+'].produtoEdicaoId", value: '+ produtoEdicaoId +'}, {name:"filtro.listaTransferencia['+index+'].qtde", value: '+ ((qtde != "") ? qtde : 0) +'},';
+			dados += '{name:"filtro.listaTransferencia['+index+'].produtoEdicaoId", value: '+ produtoEdicaoId +'}, {name:"filtro.listaTransferencia['+index+'].qtde", value: '+ ((qtde['inventario'] != "") ? qtde['diferenca'] : 0) +'},';
 			index++;
 			
 		});
