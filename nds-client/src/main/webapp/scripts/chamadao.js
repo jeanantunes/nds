@@ -188,6 +188,9 @@ var chamadaoController = $.extend(true, {
 	},
 		
 	pesquisar : function() {
+		
+		dataHolder.clearAction('chamadaoHolder', chamadaoController.workspace);
+		
 		var followUp = $('#numeroCotaFollowUp', chamadaoController.workspace).val();
 		
 		var numeroCota;
@@ -267,12 +270,18 @@ var chamadaoController = $.extend(true, {
 			var spanValorTotalDesconto = "<span id='valorTotal" + row.id + "'>"
 						+ row.cell.valorTotalDesconto + "</span>";
 			
+			var idLancamento = (row.cell.idLancamento) ? row.cell.idLancamento : "";
+			
+			
+			
 			var inputCheck = '<input type="checkbox" id="ch' + row.id + '"'
 						   + ' name="checkConsignado"'
-						   + ' value="' + row.id + '"'
-						   + ' onclick="chamadaoController.calcularParcial()" />';
+						   + ' value="' + row.id + '"';
 			
-			var idLancamento = (row.cell.idLancamento) ? row.cell.idLancamento : "";
+			inputCheck = inputCheck.concat(row.cell.checked ? ' checked="checked"' : '');
+			
+			inputCheck = inputCheck.concat(' onclick="chamadaoController.calcularParcial()" '
+						    + ' onchange="dataHolder.hold(\'chamadaoHolder\', ' + idLancamento +', \'checado\', this.checked);" />');
 			
 			var inputHidden = '<input type="hidden" class="lancamentoHidden" value="' + idLancamento + '"/>';
 						   

@@ -13,8 +13,10 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.DataHolder;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ChamadaoVO;
+import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.ResultadoChamadaoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsignadoCotaChamadaoDTO;
@@ -94,6 +96,8 @@ public class ChamadaoController extends BaseController {
 	private static final String FILTRO_PESQUISA_CONSIGNADOS_SESSION_ATTRIBUTE = "filtroPesquisaConsignados";
 	
 	private static final String QTD_REGISTROS_PESQUISA_CONSIGNADOS_SESSION_ATTRIBUTE = "qtdRegistrosPesquisaConsignados";
+	
+	private static final String DATA_HOLDER_ACTION_KEY = "chamadaoHolder";
 	
 	@Get
 	@Path("/")
@@ -521,21 +525,32 @@ public class ChamadaoController extends BaseController {
 			
 			chamadaoVO.setValorTotalDesconto(
 				CurrencyUtil.formatarValorQuatroCasas(consignadoCotaChamadao.getValorTotalDesconto()));
-			
-			if (consignadoCotaChamadao.getIdLancamento() != null) {
-				
-				chamadaoVO.setIdLancamento(consignadoCotaChamadao.getIdLancamento().toString());
-			} else {
-				
-				chamadaoVO.setIdLancamento(null);
-			}
-			
+
+			String idLancamento = consignadoCotaChamadao.getIdLancamento() != null ? 
+					consignadoCotaChamadao.getIdLancamento().toString() : null;
+
+			chamadaoVO.setIdLancamento(idLancamento);
+
 			chamadaoVO.setBrinde(consignadoCotaChamadao.isPossuiBrinde() ? "Sim" : "Não");
+			
+			chamadaoVO.setChecked(getCheckedFromDataHolder(idLancamento));
 			
 			listaChamadao.add(chamadaoVO);
 		}
 		
 		return listaChamadao;
+	}
+	
+	private boolean getCheckedFromDataHolder(String idLancamento) {
+		
+		DataHolder dataHolder = (DataHolder) this.session.getAttribute(DataHolder.SESSION_ATTRIBUTE_NAME);
+		
+		if (dataHolder != null) {
+
+			return Boolean.parseBoolean(dataHolder.getData(DATA_HOLDER_ACTION_KEY, idLancamento, "checado"));
+		}
+		
+		return Boolean.FALSE;
 	}
 	
 	/**
