@@ -404,7 +404,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	
 	List<MovimentoEstoqueCota> obterMovimentoCotaLancamentoPorTipoMovimento(Date dataLancamento, 
 																			Long idCota, 
-																			GrupoMovimentoEstoque grupoMovimentoEstoque);
+																			List<GrupoMovimentoEstoque> gruposMovimentoEstoque);
 
 	/**
 	 * Obtém movimentos de estoque cota que não possuem estudos.

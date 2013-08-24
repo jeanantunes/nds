@@ -1514,7 +1514,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	@SuppressWarnings("unchecked")
 	public List<MovimentoEstoqueCota> obterMovimentoCotaLancamentoPorTipoMovimento(Date dataLancamento, 
 																				   Long idCota, 
-																				   GrupoMovimentoEstoque grupoMovimentoEstoque) {
+																				   List<GrupoMovimentoEstoque> gruposMovimentoEstoque) {
 		
 		StringBuffer hql = new StringBuffer("");
 		
@@ -1528,7 +1528,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" and lancamento.dataLancamentoDistribuidor = :data ");
 		
-		hql.append(" and movimento.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
+		hql.append(" and movimento.tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoEstoque) ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
@@ -1536,7 +1536,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		query.setParameter("idCota", idCota);
 		
-		query.setParameter("grupoMovimentoEstoque", grupoMovimentoEstoque);
+		query.setParameterList("gruposMovimentoEstoque", gruposMovimentoEstoque);
 		
 		return query.list();
 		
