@@ -1289,6 +1289,15 @@ var roteirizacao = $.extend(true, {
             exibirMensagemDialog("WARNING", ["Selecione uma Rota para adicionar PDV's"]);
             return;
         }
+        
+        if ($("input[name=boxRadio]:checked", roteirizacao.workspace).val() == -1){
+        	
+        	$("#tipoPesquisa", roteirizacao.workspace).val("pdv");
+        } else {
+        	
+        	$("#tipoPesquisa", roteirizacao.workspace).val("cota");
+        }
+        
         roteirizacao.iniciaCotasDisponiveisGrid();
 
         $("#cepPesquisa", roteirizacao.workspace).mask("99999-999");
@@ -2126,7 +2135,7 @@ var roteirizacao = $.extend(true, {
                     sortable : true,
                     align : 'left'
                 }, {
-                    display : 'Qtd. Cotas',
+                    display : 'Qtd. PDVs',
                     name : 'qntCotas',
                     width : 78,
                     sortable : true,
