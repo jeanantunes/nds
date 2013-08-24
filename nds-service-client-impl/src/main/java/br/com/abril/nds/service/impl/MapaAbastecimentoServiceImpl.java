@@ -235,6 +235,10 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 		
 		List<ProdutoAbastecimentoDTO> cotas = this.cotaRepository.obterCotaPorProdutoEdicaoData(filtro);
 		
+		if(cotas != null && !cotas.isEmpty()) {
+			peMapaDTO.setCotasSemRoteirizacao(new ArrayList<String>());
+		}
+		
 		for(ProdutoAbastecimentoDTO cota : cotas) {
 			String cotaString = cota.getCota().getNumeroCota() + " - " + cota.getCota().getPessoa().getNome();
 			

@@ -1,6 +1,8 @@
 package br.com.abril.nds.controllers.estoque;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -75,12 +77,13 @@ public class VisaoEstoqueController extends BaseController {
 	{
 		List<Fornecedor> listFornecedores = fornecedorService.obterFornecedores();
 		result.include("listFornecedores", listFornecedores);
-		result.include("dataAtual", DateUtil.formatarDataPTBR(new Date()));
+		result.include("dataAtual", DateUtil.formatarDataPTBR(distribuidorService.obterDataOperacaoDistribuidor()));
 	}
 	
 	
 	@Path("/pesquisar.json")
 	public void pesquisar(FiltroConsultaVisaoEstoque filtro) {
+		
 		tratarErro(validarDadosConsulta(filtro));
 		
 		this.atualizarDataMovimentacao(filtro);
@@ -88,7 +91,9 @@ public class VisaoEstoqueController extends BaseController {
 		this.session.setAttribute(FILTRO_VISAO_ESTOQUE, filtro);
 		
 		List<VisaoEstoqueDTO> listVisaoEstoque = visaoEstoqueService.obterVisaoEstoque(filtro);
+		
 		result.use(FlexiGridJson.class).from(listVisaoEstoque).total(listVisaoEstoque.size()).serialize();
+		
 	}
 	
 	@Path("/pesquisarDetalhe.json")
@@ -267,11 +272,19 @@ public class VisaoEstoqueController extends BaseController {
 		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
-		if (filtro.getDataMovimentacao() == null
+		if (filtro.getDataMovimentacao() == null || filtro.getDataMovimentacaoStr() == null
 				|| DateUtil.isDataInicialMaiorDataFinal(filtro.getDataMovimentacao(), dataOperacao)) {
 			
 			filtro.setDataMovimentacao(dataOperacao);
 		}
+		
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		try {
+			filtro.setDataMovimentacao(sdf.parse(filtro.getDataMovimentacaoStr()));
+		} catch (ParseException e) {
+			filtro.setDataMovimentacao(dataOperacao);
+		}
+		
 	}
 
 	private List<String> validarDadosConsulta(FiltroConsultaVisaoEstoque filtro){

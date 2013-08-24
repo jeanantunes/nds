@@ -14,7 +14,7 @@ public class ProdutoEdicaoMapaDTO implements Serializable {
 	private Long numeroEdicao;
 	private String precoCapa;
 	private HashMap<Integer, BoxRotasDTO> boxes;
-	private List<String> cotasSemRoteirizacao = new ArrayList<String>(); 
+	private List<String> cotasSemRoteirizacao; 
 	
 	public ProdutoEdicaoMapaDTO() {
 		

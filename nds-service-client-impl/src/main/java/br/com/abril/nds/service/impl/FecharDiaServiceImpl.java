@@ -547,9 +547,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     private FechamentoDiarioDTO salvarResumoFechamentoDiario(Usuario usuario, Date dataFechamento) throws FechamentoDiarioException{
     	
     	validarDadosFechamentoDiario(dataFechamento, "Data de fechamento inválida!");
-    	validarDadosFechamentoDiario(usuario, "Usúario informado inválido!");
+    	validarDadosFechamentoDiario(usuario, "Usuário informado inválido!");
     	
-    	validarDadosFechamentoDiario(usuario, "Usúario não identificado para operação de fechamento do dia!");
+    	validarDadosFechamentoDiario(usuario, "Usuário não identificado para operação de fechamento do dia!");
     	
     	FechamentoDiario fechamento = new FechamentoDiario();
     	FechamentoDiarioDTO.Builder builder = new FechamentoDiarioDTO.Builder(dataFechamento);

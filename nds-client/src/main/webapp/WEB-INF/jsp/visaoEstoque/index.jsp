@@ -37,7 +37,7 @@
 	<br/>
 
 
-	<form action="/estoque/visaoEstoque" id="pesquisarVisaoEstoqueForm">
+	<form action="${pageContext.request.contextPath}/estoque/visaoEstoque" id="pesquisarVisaoEstoqueForm" method="post">
 	<input type="hidden" name="filtro.tipoEstoque" id="visaoEstoque_filtro_tipoEstoque"/>
 	<input type="hidden" name="filtro.tipoEstoqueSelecionado" id="visaoEstoque_filtro_tipoEstoqueSelecionado"/>
 	
