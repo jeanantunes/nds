@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.SuplementarFecharDiaDTO;
 import br.com.abril.nds.fixture.Fixture;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.HistoricoEstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -31,21 +32,22 @@ public class ResumoSuplementarFecharDiaRepositoryImplTest extends AbstractDataUt
 
     @Before
     public void setUp() {
-        criarUsuarios();
+    	
+        //criarUsuarios();
         
-        criarDistribuidor();
+        //criarDistribuidor();
 
-        criarCotas();
+        //criarCotas();
 
-        criarFornecedores();
+        //criarFornecedores();
 
-        criarProdutos();
+        //criarProdutos();
 
-        criarLancamentos();
+        //criarLancamentos();
 
-        criarParametrosNotaFiscal();
+        //criarParametrosNotaFiscal();
 
-        criarNotaFiscalEntradaFornecedor();
+        //criarNotaFiscalEntradaFornecedor();
 
         criarHistoricoEstoqueProduto();
 
@@ -168,7 +170,7 @@ public class ResumoSuplementarFecharDiaRepositoryImplTest extends AbstractDataUt
     private void criarHistoricoEstoqueProduto() {
         historicoQuatroRodas1 = new HistoricoEstoqueProduto();
         historicoQuatroRodas1.setData(DateUtil.adicionarDias(distribuidor.getDataOperacao(), -1));
-        historicoQuatroRodas1.setProdutoEdicao(produtoEdicaoQuatroRodas1);
+        historicoQuatroRodas1.setProdutoEdicao(new ProdutoEdicao(169391L));
         historicoQuatroRodas1.setQtde(BigInteger.ZERO);
         historicoQuatroRodas1.setQtdeSuplementar(BigInteger.valueOf(5));
         save(historicoQuatroRodas1);
