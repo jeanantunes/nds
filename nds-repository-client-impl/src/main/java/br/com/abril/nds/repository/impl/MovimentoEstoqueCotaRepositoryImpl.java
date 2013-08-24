@@ -2056,7 +2056,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" select box.codigo as codigoBox, ");
 		hql.append(" 		rota.descricaoRota as codigoRota, ");
 		hql.append(" 		cota.numeroCota as codigoCota, ");
-		hql.append(" 		pessoa.nome as nomeCota, ");
+		hql.append(" 		coalesce(pessoa.nome, pessoa.nomeFantasia, pessoa.razaoSocial, '') as nomeCota, ");
 		hql.append(" 		produto.codigo as codigoProduto, ");
 		hql.append(" 		produto.nome as nomeProduto, ");
 		hql.append(" 		produtoEdicao.numeroEdicao as numeroEdicao, ");

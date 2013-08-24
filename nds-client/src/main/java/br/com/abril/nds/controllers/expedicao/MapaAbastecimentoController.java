@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -20,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AbastecimentoDTO;
-import br.com.abril.nds.dto.BoxRotasDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MapaCotaDTO;
 import br.com.abril.nds.dto.MapaProdutoCotasDTO;
@@ -459,7 +457,7 @@ public class MapaAbastecimentoController extends BaseController {
 
 					ProdutoEdicaoMapaDTO produtoEdicaoMapaEdicaoProduto = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoEdicao(filtro);
 
-					if( produtoEdicaoMapaEdicaoProduto.getCotasSemRoteirizacao() != null ||  ! produtoEdicaoMapaEdicaoProduto.getCotasSemRoteirizacao().isEmpty()){
+					if( produtoEdicaoMapaEdicaoProduto.getCotasSemRoteirizacao() != null &&  !produtoEdicaoMapaEdicaoProduto.getCotasSemRoteirizacao().isEmpty()){
 						result.include("result", produtoEdicaoMapaEdicaoProduto.getCotasSemRoteirizacao());
 					} else {
 						result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoEdicao(produtoEdicaoMapaEdicaoProduto);
@@ -491,7 +489,7 @@ public class MapaAbastecimentoController extends BaseController {
 
 				ProdutoEdicaoMapaDTO produtoEdicaoMapaEspecifico = mapaAbastecimentoService.obterMapaDeImpressaoPorProdutoEdicao(filtro);
 
-				if( produtoEdicaoMapaEspecifico.getCotasSemRoteirizacao() != null ||  ! produtoEdicaoMapaEspecifico.getCotasSemRoteirizacao().isEmpty()){
+				if( produtoEdicaoMapaEspecifico.getCotasSemRoteirizacao() != null && !produtoEdicaoMapaEspecifico.getCotasSemRoteirizacao().isEmpty()){
 					result.include("result", produtoEdicaoMapaEspecifico.getCotasSemRoteirizacao());
 				} else {
 					result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoEdicao(produtoEdicaoMapaEspecifico);
@@ -505,7 +503,7 @@ public class MapaAbastecimentoController extends BaseController {
 					Cota cota = this.cotaRepository.obterCotaPDVPorNumeroDaCota(cotaMapa.getCodigoCota());
 
 					if(cota.getBox() == null) {
-						arrayCotasNaoRoteirizadas.add(cotaMapa.getCota().getNumeroCota() + " - " + cotaMapa.getCota().getPessoa().getNome());
+						arrayCotasNaoRoteirizadas.add(cotaMapa.getCodigoCota() + " - " + cotaMapa.getNomeCota());
 					}
 				}
 
