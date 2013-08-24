@@ -58,6 +58,7 @@ import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.integracao.ParametroSistema;
+import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -1021,7 +1022,11 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		TipoDiferenca tipoDiferenca = diferenca.getTipoDiferenca();
 		
+		StatusIntegracao statusIntegracao = null;
+		
 		if (this.foraDoPrazoDoGFS(diferenca)) {
+			
+			statusIntegracao = StatusIntegracao.NAO_INTEGRAR;
 			
 			grupoMovimentoEstoque = obterGrupoMovimentoEstoqueForaDoPrazo(tipoDiferenca);
 			
@@ -1042,7 +1047,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		return this.movimentoEstoqueService.gerarMovimentoEstoqueDiferenca(
 			diferenca.getProdutoEdicao().getId(), idUsuario,
 				diferenca.getQtde(), tipoMovimentoEstoque, 
-					isAprovacaoAutomatica, validarTransfEstoqueDiferenca, dataLancamento);
+					isAprovacaoAutomatica, validarTransfEstoqueDiferenca, dataLancamento, statusIntegracao);
 	}
 
 	private GrupoMovimentoEstoque obterGrupoMovimentoEstoqueForaDoPrazo(TipoDiferenca tipoDiferenca) {
@@ -1057,7 +1062,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				
 			} else {
 				
-				grupoMovimentoEstoque = GrupoMovimentoEstoque.FALTA_DE;
+				grupoMovimentoEstoque = GrupoMovimentoEstoque.GANHO_DE;
 			}
 			
 		} else {
@@ -1068,7 +1073,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				
 			} else {
 				
-				grupoMovimentoEstoque = GrupoMovimentoEstoque.FALTA_EM;
+				grupoMovimentoEstoque = GrupoMovimentoEstoque.GANHO_EM;
 			}
 		}
 		
