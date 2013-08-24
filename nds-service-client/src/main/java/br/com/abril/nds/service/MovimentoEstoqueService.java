@@ -1,9 +1,11 @@
 package br.com.abril.nds.service;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.dto.MovimentosEstoqueCotaSaldoDTO;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -79,5 +81,11 @@ public interface MovimentoEstoqueService {
 														BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, 
 														Long idEstudoCota,
 														boolean isMovimentoDiferencaAutomatico);
-	
+
+    /**
+	 * Obtem Objeto com Lista de movimentos de estoque referentes à reparte e Map de edicoes com saidas e entradas diversas
+	 * @param listaMovimentoCota
+	 * @return MovimentosEstoqueCotaSaldoDTO
+	 */
+	MovimentosEstoqueCotaSaldoDTO getMovimentosEstoqueCotaSaldo(List<MovimentoEstoqueCota> listaMovimentoCota);
 }
