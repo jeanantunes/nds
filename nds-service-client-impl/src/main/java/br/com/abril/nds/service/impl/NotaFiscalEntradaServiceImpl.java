@@ -273,7 +273,11 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 	
 	}
 
+	@Override
+	public boolean existeNotaFiscalEntradaFornecedor(Long numeroNotaEnvio,
+			Long idPessoaJuridica, Date dataEmissao) {
+		
+		return this.notaFiscalEntradaRepository.existeNotaFiscalEntradaFornecedor(numeroNotaEnvio,
+				idPessoaJuridica, dataEmissao);
+	}
 }
-
-
-
