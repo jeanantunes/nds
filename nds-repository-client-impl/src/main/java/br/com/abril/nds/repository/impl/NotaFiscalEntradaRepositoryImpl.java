@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -498,4 +499,21 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 		return query.list();
 	}
 
+	@Override
+	public boolean existeNotaFiscalEntradaFornecedor(Long numeroNotaEnvio,
+			Long idPessoaJuridica, Date dataEmissao) {
+		
+		StringBuilder hql = new StringBuilder("select count(n.id) ");
+		hql.append(" from NotaFiscalEntrada n ")
+		   .append(" where n.numeroNotaEnvio = :numeroNotaEnvio ")
+		   .append(" and n.emitente.id = :idPessoaJuridica ")
+		   .append(" and n.dataEmissao = :dataEmissao ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("numeroNotaEnvio", numeroNotaEnvio);
+		query.setParameter("idPessoaJuridica", idPessoaJuridica);
+		query.setParameter("dataEmissao", dataEmissao);
+		
+		return (Long) query.uniqueResult() > 0;
+	}
 }

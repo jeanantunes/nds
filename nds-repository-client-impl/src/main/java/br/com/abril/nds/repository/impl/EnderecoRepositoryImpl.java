@@ -34,6 +34,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.dne.Bairro;
 import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.model.dne.Logradouro;
@@ -318,9 +319,12 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 		   .append("  join rPdv.pdv p ")
 		   .append("  join p.cota cota ")
 		   .append(")")
-		   .append(" and e.uf = :uf ");
+		   .append(" and e.uf = :uf ")
+		   .append(" and c.situacaoCadastro != :inativo ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("inativo", SituacaoCadastro.INATIVO);
 		query.setParameter("uf", uf);
 
 		return query.list();
@@ -338,9 +342,13 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 		   .append("  select cota.id from RotaPDV rPdv ")
 		   .append("  join rPdv.pdv p ")
 		   .append("  join p.cota cota ")
-		   .append(")");
+		   .append(") ")
+		   .append(" and c.situacaoCadastro != :inativo ");
 		
-		return this.getSession().createQuery(hql.toString()).list();
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("inativo", SituacaoCadastro.INATIVO);
+		
+		return query.list();
 	}
 	
 	@Override
@@ -359,11 +367,13 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 		   .append(")")
 		   .append(" and e.uf = :uf ")
 		   .append(" and e.cidade = :cidade ")
-		   .append(" and e.bairro is not null ");
+		   .append(" and e.bairro is not null ")
+		   .append(" and c.situacaoCadastro != :inativo ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("uf", uf);
 		query.setParameter("cidade", cidade);
+		query.setParameter("inativo", SituacaoCadastro.INATIVO);
 		
 		return query.list();
 	}

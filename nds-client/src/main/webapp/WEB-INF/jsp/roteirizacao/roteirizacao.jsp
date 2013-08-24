@@ -222,8 +222,8 @@
 		            <tr>
 		        		<td>Tipo:</td>
 		        		<td>
-		        			<select name="tipoPesquisa" id="tipoPesquisa" style="width:100px;">
-		        				<option selected="selected" value="">PDV</option>   	
+		        			<select name="tipoPesquisa" disabled="disabled" id="tipoPesquisa" style="width:100px;">
+		        				<option value="pdv">PDV</option>   	
 		        				<option value="cota">Cota</option>   
 		                  	</select>
 		                </td>

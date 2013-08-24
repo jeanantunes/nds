@@ -40,4 +40,10 @@ public class PessoaJuridicaServiceImpl implements PessoaJuridicaService {
 		return this.pessoaJuridicaRepository.buscarPorId(id);
 	}
 
+	@Override
+	@Transactional
+	public Long buscarIdPessoaJuridicaPorIdForncedor(Long idFornecedor){
+		
+		return this.pessoaJuridicaRepository.buscarIdPessoaJuridicaPorIdForncedor(idFornecedor);
+	}
 }
