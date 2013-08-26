@@ -25,6 +25,7 @@ public class MixCotaDTO implements Serializable{
 	private String nomeProduto;
 	
 	@Export(label="classificacao",exhibitionOrder = 3)
+	@XlsMapper(value="classificacao")
 	private String classificacaoProduto;
 	
 	@Export(label="Reparte Médio", exhibitionOrder = 4)
