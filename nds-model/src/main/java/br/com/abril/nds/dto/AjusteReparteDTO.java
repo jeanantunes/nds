@@ -3,7 +3,6 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -68,7 +67,6 @@ public class AjusteReparteDTO implements Serializable {
 	private SituacaoCadastro status;
 	private Long idSegmento;
 	private PaginacaoVO paginacao;
-	private List<AjustesSegmento_AjusteReparteDTO> ajustesSegmento;
 	
 	public PaginacaoVO getPaginacao() {
 		return paginacao;
@@ -236,14 +234,6 @@ public class AjusteReparteDTO implements Serializable {
 	}
 	public void setIdSegmento(Long idSegmento) {
 		this.idSegmento = idSegmento;
-	}
-	
-	public List<AjustesSegmento_AjusteReparteDTO> getAjustesSegmento() {
-		return ajustesSegmento;
-	}
-	public void setAjustesSegmento(
-			List<AjustesSegmento_AjusteReparteDTO> ajustesSegmento) {
-		this.ajustesSegmento = ajustesSegmento;
 	}
 	
 }

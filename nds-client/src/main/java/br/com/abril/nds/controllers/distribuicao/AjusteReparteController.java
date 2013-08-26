@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AjusteReparteDTO;
-import br.com.abril.nds.dto.AjustesSegmento_AjusteReparteDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -162,25 +161,19 @@ public class AjusteReparteController extends BaseController {
 	
 	@Post
 	@Path("/alterarAjusteSegmento")
-	public void alterarAjusteSegmento(AjusteReparteDTO ajusteDTO, Long id, BigDecimal[] ajuste, Long[] segmentos) {
+	public void alterarAjusteSegmento(AjusteReparteDTO ajusteDTO, Long id, BigDecimal ajuste, Long [] segmentos) {
 		
+		TipoSegmentoProduto segmento = ajusteService.buscarSegmentoPorID(segmentos[0]);
+		ajusteDTO.setAjusteAplicado(ajuste);
+		ajusteDTO.setTipoSegmento_Ajuste(segmento);
+		ajusteDTO.setIdAjusteReparte(id);
 
-		for (int i = 0; i < segmentos.length; i++) {
-			
-			TipoSegmentoProduto segmento = ajusteService.buscarSegmentoPorID(segmentos[0]);
-			ajusteDTO.setAjusteAplicado(ajuste[0]);
-			ajusteDTO.setTipoSegmento_Ajuste(segmento);
-			ajusteDTO.setIdAjusteReparte(id);
-			
-			validarEntradaAjuste(ajusteDTO);
-			evitarSegmentosRepetidos(ajusteDTO, segmento);
-			
-			AjusteReparte ajusteModel = DTOParaModel(ajusteDTO);
-			
-			ajusteService.alterarAjuste(ajusteModel);
-		}
+		validarEntradaAjuste(ajusteDTO);
+		evitarSegmentosRepetidos(ajusteDTO, segmento);
 		
+		AjusteReparte ajusteModel = DTOParaModel(ajusteDTO);
 		
+		ajusteService.alterarAjuste(ajusteModel);
 		
 		this.result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Ajuste alterado com sucesso."), 
@@ -227,16 +220,6 @@ public class AjusteReparteController extends BaseController {
 	public void buscarAjustePorId (Long id){
 		
 		AjusteReparteDTO ajuste = ajusteService.buscarPorIdAjuste(id);
-		
-		if(ajuste.getFormaAjuste().toString().equalsIgnoreCase("segmento")){
-			
-			List<AjustesSegmento_AjusteReparteDTO> ajustes = ajusteService.ajustesAplicado_Segmento(ajuste.getNumeroCota()); 
-			
-			for (AjustesSegmento_AjusteReparteDTO ajustesSegmento_AjusteReparteDTO : ajustes) {
-				ajustesSegmento_AjusteReparteDTO.getSegmentoAplicado().setProdutos(null);
-			}
-			ajuste.setAjustesSegmento(ajustes);
-		}
 		
 		result.use(Results.json()).withoutRoot().from(ajuste).recursive().serialize();
 	}
