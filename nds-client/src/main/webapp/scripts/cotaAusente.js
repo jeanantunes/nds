@@ -537,7 +537,7 @@ var cotaAusenteController = $.extend(true, {
 		
 		elemAtual.setAttribute(evento,valorEvento);	
 	},
-		
+	
 	gerarLinhaNova : function(indice,num, nome, qtd) {
 			
 		var tabRateios = $("#idRateios", cotaAusenteController.workspace);	
@@ -554,7 +554,7 @@ var cotaAusenteController = $.extend(true, {
 				"60px",
 				null,
 				null,
-				"pesquisaCotaCotaAusente.pesquisarPorNumeroCota('#idNum"+indice+"', '#idNom"+indice+"',true)"));
+				"pesquisaCotaCotaAusente.pesquisarPorNumeroCota('#idNum"+indice+"', '#idNom"+indice+"',true, function(){ $('#idQtde"+indice+"', cotaAusenteController.workspace).focus();} )"));
 		
 		nomeCota.append(cotaAusenteController.getInput(
 				nome,

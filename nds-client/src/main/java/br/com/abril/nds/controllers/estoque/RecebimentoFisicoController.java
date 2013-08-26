@@ -1578,6 +1578,15 @@ public class RecebimentoFisicoController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "O valor total da nota deve ser maior que 0.");
 		}
 		
+		if (nota.getNumeroNotaEnvio() != null && nota.getFornecedor() != null && nota.getDataEmissao() != null){
+			if (this.notaFiscalService.existeNotaFiscalEntradaFornecedor(nota.getNumeroNotaEnvio(),
+					this.pessoaJuridicaService.buscarIdPessoaJuridicaPorIdForncedor(nota.getFornecedor()),
+					nota.getDataEmissao())){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Nota de envio já cadastrada, favor utilizar o recebimento automático.");
+			}
+		}
+		
 		BigDecimal valorInformadoNotaFiscal = CurrencyUtil.converterValor(nota.getValorTotal());
 				
 		BigDecimal totalItem = BigDecimal.ZERO;

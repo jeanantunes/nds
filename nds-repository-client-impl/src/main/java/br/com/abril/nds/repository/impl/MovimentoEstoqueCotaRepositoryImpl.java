@@ -1514,7 +1514,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	@SuppressWarnings("unchecked")
 	public List<MovimentoEstoqueCota> obterMovimentoCotaLancamentoPorTipoMovimento(Date dataLancamento, 
 																				   Long idCota, 
-																				   GrupoMovimentoEstoque grupoMovimentoEstoque) {
+																				   List<GrupoMovimentoEstoque> gruposMovimentoEstoque) {
 		
 		StringBuffer hql = new StringBuffer("");
 		
@@ -1528,7 +1528,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" and lancamento.dataLancamentoDistribuidor = :data ");
 		
-		hql.append(" and movimento.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
+		hql.append(" and movimento.tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoEstoque) ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
@@ -1536,14 +1536,15 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		query.setParameter("idCota", idCota);
 		
-		query.setParameter("grupoMovimentoEstoque", grupoMovimentoEstoque);
+		query.setParameterList("gruposMovimentoEstoque", gruposMovimentoEstoque);
 		
 		return query.list();
 		
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<MovimentoEstoqueCotaDTO> obterMovimentoCotasPorTipoMovimento(Date data, List<Integer> numCotas, GrupoMovimentoEstoque grupoMovimentoEstoque){
+	@Override
+	public List<MovimentoEstoqueCotaDTO> obterMovimentoCotasPorTipoMovimento(Date data, List<Integer> numCotas, List<GrupoMovimentoEstoque> gruposMovimentoEstoque){
 		
 		StringBuffer hql = new StringBuffer();
 				
@@ -1557,7 +1558,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" 		 produto.nomeComercial as nomeProd, ");
 		
-		hql.append(" 		 sum(movimento.qtde) as qtdeReparte ");
+		hql.append(" 		 sum( case tipoMovimento.operacaoEstoque when 'ENTRADA' then (movimento.qtde) else (movimento.qtde * -1) end) as qtdeReparte ");
 		
 		hql.append(" from MovimentoEstoqueCota movimento");	
 		
@@ -1577,7 +1578,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" and lancamento.dataLancamentoDistribuidor = :data ");
 		
-		hql.append(" and tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque ");
+		hql.append(" and tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoEstoque) ");
+		
+		hql.append(" and tipoMovimento.grupoMovimentoEstoque not in (:gruposMovimentoEstoqueEstorno) ");
+		
+		hql.append(" and movimento.statusEstoqueFinanceiro = :statusEstoqueFinanceiro ");
 		
 		hql.append(" group by produtoEdicao.id ");
 				
@@ -1587,7 +1592,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		query.setParameterList("numCotas", numCotas);
 		
-		query.setParameter("grupoMovimentoEstoque", grupoMovimentoEstoque);
+		query.setParameterList("gruposMovimentoEstoque", gruposMovimentoEstoque);
+		
+		query.setParameterList("gruposMovimentoEstoqueEstorno", Arrays.asList(GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO));
+		
+		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
 		
 		query.setResultTransformer(Transformers.aliasToBean(MovimentoEstoqueCotaDTO.class));
 		
@@ -2967,5 +2976,17 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		return (BigDecimal) query.uniqueResult();
 	}
-	
+
+	/**
+	 * Adiciona/Altera lista de Movimentos de Estoque da Cota
+	 * @param movimentosEstoqueCota
+	 */
+	@Override
+	public void mergeAll(List<MovimentoEstoqueCota> movimentosEstoqueCota) {
+		
+		for (MovimentoEstoqueCota mec:movimentosEstoqueCota){
+			
+			this.merge(mec);
+		}
+	}
 }

@@ -365,11 +365,11 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * 
 	 * @param data
 	 * @param idCota
-	 * @param grupoMovimentoEstoque
+	 * @param gruposMovimentoEstoque
 	 * 
 	 * @return List - MovimentoEstoqueCota
 	 */
-	public List<MovimentoEstoqueCotaDTO> obterMovimentoCotasPorTipoMovimento(Date data, List<Integer> numCotas, GrupoMovimentoEstoque grupoMovimentoEstoque);
+	public List<MovimentoEstoqueCotaDTO> obterMovimentoCotasPorTipoMovimento(Date data, List<Integer> numCotas, List<GrupoMovimentoEstoque> gruposMovimentoEstoque);
 	
 	/**
 	 * Obtém movimentos de estoque da cota que ainda não geraram movimento financeiro
@@ -404,7 +404,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	
 	List<MovimentoEstoqueCota> obterMovimentoCotaLancamentoPorTipoMovimento(Date dataLancamento, 
 																			Long idCota, 
-																			GrupoMovimentoEstoque grupoMovimentoEstoque);
+																			List<GrupoMovimentoEstoque> gruposMovimentoEstoque);
 
 	/**
 	 * Obtém movimentos de estoque cota que não possuem estudos.
@@ -442,5 +442,11 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 			   											   Long idProdutoEdicao);
 	
 	BigDecimal obterValorReparteDaCotaNaData(Long idCota, Date data);
+	
+	/**
+	 * Adiciona/Altera lista de Movimentos de Estoque da Cota
+	 * @param movimentosEstoqueCota
+	 */
+	public void mergeAll(List<MovimentoEstoqueCota> movimentosEstoqueCota);
 	
 }

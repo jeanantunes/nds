@@ -45,12 +45,13 @@ public interface EnderecoRepository extends Repository<Endereco, Long> {
 	
 	List<String> pesquisarLocalidades(String nomeLocalidade);
 
-	List<String> obterLocalidadesPorUF(String uf);
+	List<String> obterLocalidadesPorUFPDVSemRoteirizacao(String uf);
 
 	List<String> obterBairrosCotas();
 	
-	List<String>obterUFs();
+	List<String> obterUFsPDVSemRoteirizacao();
 	
 	Endereco getEnderecoSaneado(String cep);
 
+	List<String> obterBairrosPDVSemRoteirizacao(String uf, String cidade);
 }

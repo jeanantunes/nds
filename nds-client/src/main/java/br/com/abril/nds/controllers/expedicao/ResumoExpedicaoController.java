@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.expedicao;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -472,7 +473,10 @@ public class ResumoExpedicaoController extends BaseController {
 		
 		ResumoExpedicaoVO resumoExpedicaoVO = null;
 		
-		for (ExpedicaoDTO expd  : list){
+		BigInteger totalDiferencas = BigInteger.ZERO;
+		BigDecimal totalValorDiferencas = BigDecimal.ZERO;
+		
+		for (ExpedicaoDTO expd  : list) {
 			
 			resumoExpedicaoVO = new ResumoExpedicaoVO();
 			
@@ -480,9 +484,21 @@ public class ResumoExpedicaoController extends BaseController {
 			resumoExpedicaoVO.setDescricaoProduto(expd.getNomeProduto());
 			resumoExpedicaoVO.setEdicaoProduto(getValor(expd.getNumeroEdicao()));
 			resumoExpedicaoVO.setPrecoCapa(CurrencyUtil.formatarValor(expd.getPrecoCapa()));
-			resumoExpedicaoVO.setReparte(expd.getQntReparte());
-			resumoExpedicaoVO.setValorFaturado(CurrencyUtil.formatarValor(expd.getValorFaturado()));
+			resumoExpedicaoVO.setReparte(expd.getQntReparte().add(expd.getQntDiferenca()));
 			resumoExpedicaoVO.setQntDiferenca(expd.getQntDiferenca());
+			
+			BigDecimal valorDiferenca = 
+				expd.getPrecoCapa().multiply(new BigDecimal(expd.getQntDiferenca()));
+			
+			resumoExpedicaoVO.setValorFaturado(
+				CurrencyUtil.formatarValor(expd.getValorFaturado().add(valorDiferenca)));
+			
+			totalDiferencas = totalDiferencas.add(expd.getQntDiferenca());
+			
+			if (!BigInteger.ZERO.equals(expd.getQntDiferenca())) {
+				
+				totalValorDiferencas = totalValorDiferencas.add(valorDiferenca);
+			}
 			
 			listaLancamentosExpedidos.add(resumoExpedicaoVO);
 		}
@@ -490,9 +506,10 @@ public class ResumoExpedicaoController extends BaseController {
 		ExpedicaoDTO expedicaoDTO = this.expedicaoService.obterTotaisResumoExpedicaoPorProduto(filtro);
 		
 		RetornoExpedicaoVO expedicaoVO = new RetornoExpedicaoVO();
+		
 		expedicaoVO.setResumosExpedicao(listaLancamentosExpedidos);
-		expedicaoVO.setTotalReparte(expedicaoDTO.getQntReparte());
-		expedicaoVO.setTotalValorFaturado(expedicaoDTO.getValorFaturado());
+		expedicaoVO.setTotalReparte(expedicaoDTO.getQntReparte().add(totalDiferencas));
+		expedicaoVO.setTotalValorFaturado(expedicaoDTO.getValorFaturado().add(totalValorDiferencas));
 		
 		return expedicaoVO;
 	}

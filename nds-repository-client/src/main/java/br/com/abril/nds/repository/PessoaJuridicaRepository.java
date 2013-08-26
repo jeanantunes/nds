@@ -22,5 +22,6 @@ public interface PessoaJuridicaRepository extends Repository<PessoaJuridica, Lon
 	 * @return
 	 */
 	public abstract boolean hasCnpj(String cnpj, Long idPessoa);
-
+	
+	Long buscarIdPessoaJuridicaPorIdForncedor(Long idFornecedor);
 }

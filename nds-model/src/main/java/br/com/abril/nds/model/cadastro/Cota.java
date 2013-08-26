@@ -559,16 +559,6 @@ public class Cota implements Serializable {
 	public void setCotaGarantia(CotaGarantia cotaGarantia) {
 		this.cotaGarantia = cotaGarantia;
 	}
-	
-	public EnderecoCota getEnderecoPrincipal(){
-		for(EnderecoCota item:this.getEnderecos()){
-			if(item.isPrincipal()){
-				return item;
-			}
-		}
-		return null;
-	}
-
 
 	public TipoDistribuicaoCota getTipoDistribuicaoCota() {
 		return tipoDistribuicaoCota;
@@ -578,10 +568,31 @@ public class Cota implements Serializable {
 	public void setTipoDistribuicaoCota(TipoDistribuicaoCota tipoDistribuicaoCota) {
 		this.tipoDistribuicaoCota = tipoDistribuicaoCota;
 	}
-
-
 	
+	public EnderecoCota getEnderecoPrincipal(){
+		for(EnderecoCota item:this.getEnderecos()){
+			if(item.isPrincipal()){
+				return item;
+			}
+		}
+		return null;
+	}
 	
+	public PDV getPDVPrincipal(){
+		for(PDV item : this.getPdvs()){
+			if(item.getCaracteristicas().isPontoPrincipal()){
+				return item;
+			}
+		}
+		return null;
+	}
 	
-
+	public EnderecoCota getEnderecoPorTipoEndereco(TipoEndereco tipoEndereco){
+		for(EnderecoCota item : this.getEnderecos()){
+			if(item.getTipoEndereco() == tipoEndereco){
+				return item;
+			}
+		}
+		return null;
+	}
 }

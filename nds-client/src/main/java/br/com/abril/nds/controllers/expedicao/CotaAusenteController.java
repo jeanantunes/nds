@@ -3,6 +3,7 @@ package br.com.abril.nds.controllers.expedicao;
 import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -19,17 +20,19 @@ import br.com.abril.nds.dto.CotaAusenteDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSuplementarDTO;
+import br.com.abril.nds.dto.RateioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO.ColunaOrdenacao;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.CotaAusenteService;
-import br.com.abril.nds.service.EstoqueProdutoService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.exception.TipoMovimentoEstoqueInexistenteException;
@@ -90,7 +93,7 @@ public class CotaAusenteController extends BaseController {
 	private DistribuidorService distribuidorService;
 	
 	@Autowired
-	private EstoqueProdutoService estoqueProdutoService;
+	private CotaService cotaService;
 	
 	@Autowired
 	private HttpSession session;
@@ -456,7 +459,7 @@ public class CotaAusenteController extends BaseController {
 
 		List<MovimentoEstoqueCotaDTO> movimentos = 
 			this.movimentoEstoqueCotaService.obterMovimentoDTOCotaPorTipoMovimento(
-				dataOperacao, numCotas, GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+				dataOperacao, numCotas, Arrays.asList(GrupoMovimentoEstoque.values()));
 		
 		if (movimentos == null || movimentos.isEmpty()) {
 			
@@ -480,6 +483,26 @@ public class CotaAusenteController extends BaseController {
 	}
 	
 	/**
+	 * Verifica se a redistribuição esta sendo direcionada para a mesma cota que esta sendo cadastrada como ausente.
+	 * @param movimentos
+	 */
+	private void verificarCotaRateios(List<MovimentoEstoqueCotaDTO> movimentos){
+		
+		for (MovimentoEstoqueCotaDTO mecDTO : movimentos){
+			
+			Cota cota  = this.cotaService.obterPorId(mecDTO.getIdCota());
+		
+			for (RateioDTO rateio : mecDTO.getRateios()){
+			
+			    if (cota.getNumeroCota().equals(rateio.getNumCota())){
+			    	
+		            throw new ValidacaoException(TipoMensagem.WARNING, "Não é permitido redistribuir para a cota ausente.");
+		    	}
+		    }
+		}
+	}
+	
+	/**
 	 * Realiza rateio preenchidos na tela
 	 * 
 	 * @param movimentos
@@ -493,6 +516,8 @@ public class CotaAusenteController extends BaseController {
 		TipoMensagem status = TipoMensagem.SUCCESS;
 		
 		List<String> mensagens = new ArrayList<String>();
+		
+		this.verificarCotaRateios(movimentos);
 		
 		try {
 			
