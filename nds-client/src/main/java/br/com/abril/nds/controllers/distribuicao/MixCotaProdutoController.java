@@ -32,9 +32,11 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FixacaoReparteService;
+import br.com.abril.nds.service.InformacoesProdutoService;
 import br.com.abril.nds.service.MixCotaProdutoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.ProdutoService;
@@ -42,6 +44,7 @@ import br.com.abril.nds.service.RepartePdvService;
 import br.com.abril.nds.service.TipoProdutoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.ListUtils;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -108,6 +111,9 @@ public class MixCotaProdutoController extends BaseController {
 
 	@Autowired
 	private CotaService cotaService;
+	
+	@Autowired
+	private InformacoesProdutoService infoProdService;
 	
 	@Rules(Permissao.ROLE_DISTRIBUICAO_MIX_COTA_PRODUTO)
 	@Path("/")
@@ -438,10 +444,24 @@ public class MixCotaProdutoController extends BaseController {
 		List<MixCotaProdutoDTO> mixCotaProdutoDTOList = new ArrayList<MixCotaProdutoDTO>();
 		for (MixCotaDTO mixCotaDTO : listMixExcel) {
 			MixCotaProdutoDTO mix = new MixCotaProdutoDTO();
-			mix.setCodigoProduto(mixCotaDTO.getCodigoProduto());
+			
+			if(mixCotaDTO.getCodigoProduto().length() == 6){
+				String codigoProdin = produtoService.obterCodigoProdinPorICD(mixCotaDTO.getCodigoProduto());  
+				mix.setCodigoProduto(codigoProdin);
+			}else{
+				
+				mix.setCodigoProduto(mixCotaDTO.getCodigoProduto());
+			}
+			
+			mix.setClassificacaoProduto(mixCotaDTO.getClassificacaoProduto());
+			
 			mix.setNumeroCota(mixCotaDTO.getNumeroCota().toString());
 			mix.setReparteMinimo(mixCotaDTO.getReparteMinimo().longValue());
 			mix.setReparteMaximo(mixCotaDTO.getReparteMaximo().longValue());
+			
+			
+			
+			
 			mixCotaProdutoDTOList.add(mix);
 		}
 		
@@ -510,20 +530,41 @@ public class MixCotaProdutoController extends BaseController {
 			return listCotaInconsistente;
 		}	
 		
-			// validar se o produto é um produtoValido
-			String[] codigoProdutoArray = new String[listMixExcel.size()];
-			for (int i = 0; i < listMixExcel.size(); i++) {
-				codigoProdutoArray[i]=listMixExcel.get(i).getCodigoProduto();
-			}
+		// validar se o produto é um produtoValido
+		String[] codigoProdutoArray = new String[listMixExcel.size()];
+		for (int i = 0; i < listMixExcel.size(); i++) {
+			codigoProdutoArray[i]=listMixExcel.get(i).getCodigoProduto();
+		}
+		
+		List<String> verificarProdutoExiste = this.produtoService.verificarProdutoExiste(codigoProdutoArray);
+		for (MixCotaDTO mixCotaDTO : listMixExcel) {
 			
-			List<String> verificarProdutoExiste = this.produtoService.verificarProdutoExiste(codigoProdutoArray);
-			for (MixCotaDTO mixCotaDTO : listMixExcel) {
-				if(!verificarProdutoExiste.contains(mixCotaDTO.getCodigoProduto())){
-					listCotaInconsistente.add(mixCotaDTO);
-				}
-			}
+			//length == 6 eh codigo ICD
+			if(mixCotaDTO.getCodigoProduto()!=null && mixCotaDTO.getCodigoProduto().length()==6)
+				continue;
 			
-			listMixExcel.removeAll(listCotaInconsistente);
+			if(!verificarProdutoExiste.contains(mixCotaDTO.getCodigoProduto())){
+				listCotaInconsistente.add(mixCotaDTO);
+			}
+		}
+		
+		listMixExcel.removeAll(listCotaInconsistente);
+
+		if (listMixExcel.isEmpty()) {
+			
+			return listCotaInconsistente;
+		}	
+		
+		List<TipoClassificacaoProduto> classificacoes = infoProdService.buscarClassificacao();
+		List<String> descricaoList = ListUtils.getValuePathList("descricao", classificacoes);
+		
+		for (MixCotaDTO mixCotaDTO : listMixExcel) {
+			if(!descricaoList.contains(mixCotaDTO.getClassificacaoProduto())){
+				listCotaInconsistente.add(mixCotaDTO);
+			}
+		}
+		
+		listMixExcel.removeAll(listCotaInconsistente);
 		
 		
 		return listCotaInconsistente;
@@ -607,5 +648,4 @@ public class MixCotaProdutoController extends BaseController {
 		
 		result.use(Results.json()).from(objects, "result").serialize();
 	}
-
 }

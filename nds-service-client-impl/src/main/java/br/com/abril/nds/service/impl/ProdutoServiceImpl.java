@@ -342,6 +342,25 @@ public class ProdutoServiceImpl implements ProdutoService {
 	@Transactional
 	public List<String> verificarProdutoExiste(String... codigoProduto) {
 
+		//tratamento para codigo ICD que possa vir do excel na tela de mix cota produto
+		List<String> l = new ArrayList<String>();
+		for (String s : codigoProduto) {
+			if(s.length()==8)
+				l.add(s);
+		}
+		
+		
+		 String[] verificarProdutoExiste = null;
+		
+		if(l.isEmpty())
+			verificarProdutoExiste = codigoProduto;
+		else{
+			verificarProdutoExiste = new String[l.size()];
+			for (int i = 0; i < l.size(); i++) {
+				verificarProdutoExiste[i] = l.get(i);
+			}
+		}
+		
 		return produtoRepository.verificarProdutoExiste(codigoProduto);
 	}
 	

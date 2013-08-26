@@ -26,6 +26,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.distribuicao.MixCotaProduto;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
@@ -425,23 +426,38 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		
 		List<String> mensagens = obterValidacaoListaEmLote(mixCotaProdutoDTOList);
 		
+		List<TipoClassificacaoProduto> classificacaoList = this.tipoClassificacaoProdutoRepository.buscarTodos();
+		
 		Usuario usuario = usuarioService.getUsuarioLogado();
 		
 		for (MixCotaProdutoDTO mixCotaProdutoDTO : mixCotaProdutoDTOList) {
+			
 			
 			if (!mixCotaProdutoDTO.isItemValido()) {
 				
 				continue;
 			}
 			
+
+			
 			Cota cota = cotaService.obterPorNumeroDaCota(new Integer(mixCotaProdutoDTO.getNumeroCota()));
 			Produto produto = produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto());
 				
+			
+			for (TipoClassificacaoProduto t : classificacaoList) {
+				if(t.getDescricao().equals(mixCotaProdutoDTO.getClassificacaoProduto())){
+					produto.setTipoClassificacaoProduto(t);
+					this.produtoRepository.alterar(produto);
+					break;
+				}
+			}
+			
 			MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.obterMixPorCotaProduto(cota.getId(), produto.getId());
 			if (mixCotaProduto == null) {
 				mixCotaProduto = new MixCotaProduto();
 				mixCotaProduto.setProduto(produto);
 				mixCotaProduto.setCota(cota);
+				
 			}
 				
 			mixCotaProduto.setDataHora(new Date());
