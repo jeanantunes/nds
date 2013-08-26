@@ -443,4 +443,10 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	
 	BigDecimal obterValorReparteDaCotaNaData(Long idCota, Date data);
 	
+	/**
+	 * Adiciona/Altera lista de Movimentos de Estoque da Cota
+	 * @param movimentosEstoqueCota
+	 */
+	public void mergeAll(List<MovimentoEstoqueCota> movimentosEstoqueCota);
+	
 }

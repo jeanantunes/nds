@@ -1,5 +1,9 @@
 var chamadaoController = $.extend(true, {
 	
+	checkAll: false,
+	
+	nonSelected: [],
+	
 	init : function() {
 		var followUp = $('#numeroCotaFollowUp', chamadaoController.workspace).val();
 		
@@ -55,6 +59,7 @@ var chamadaoController = $.extend(true, {
 		
 		$(".chamadaoGrid", chamadaoController.workspace).flexigrid({
 			preProcess: chamadaoController.executarPreProcessamento,
+			postProcess: function() { alert('oi');} ,
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
@@ -188,6 +193,11 @@ var chamadaoController = $.extend(true, {
 	},
 		
 	pesquisar : function() {
+		
+		dataHolder.clearAction('chamadaoHolder', chamadaoController.workspace);
+		
+		chamadaoController.nonSelected = [];
+		
 		var followUp = $('#numeroCotaFollowUp', chamadaoController.workspace).val();
 		
 		var numeroCota;
@@ -216,18 +226,22 @@ var chamadaoController = $.extend(true, {
 			$("#divBotoesChamadaEncalhe").hide();
 			$("#divBotaoConfirmarChamadao").show();
 		}
-		
+
 		$(".chamadaoGrid", chamadaoController.workspace).flexOptions({
 			url: contextPath + "/devolucao/chamadao/pesquisarConsignados",
 			onSuccess: function() {
 				
-				var checkAllSelected = chamadaoController.verifyCheckAll();
+				var checkAllSelected = chamadaoController.checkAll;
 				
 				if (checkAllSelected) {
 					
 					$("input[name='checkConsignado']", chamadaoController.workspace).each(function() {
 						
-						this.checked = true;
+						var idLancamento = eval($(this).closest("tr").find('.lancamentoHidden').val());
+
+						var checked = !($.inArray(idLancamento, chamadaoController.nonSelected) >= 0);
+						
+						this.checked = checked;
 					});
 				}
 			},
@@ -243,7 +257,7 @@ var chamadaoController = $.extend(true, {
 		
 		$(".chamadaoGrid", chamadaoController.workspace).flexReload();
 	},
-	
+
 	executarPreProcessamento : function(resultado) {
 		
 		if (resultado.mensagens) {
@@ -267,12 +281,9 @@ var chamadaoController = $.extend(true, {
 			var spanValorTotalDesconto = "<span id='valorTotal" + row.id + "'>"
 						+ row.cell.valorTotalDesconto + "</span>";
 			
-			var inputCheck = '<input type="checkbox" id="ch' + row.id + '"'
-						   + ' name="checkConsignado"'
-						   + ' value="' + row.id + '"'
-						   + ' onclick="chamadaoController.calcularParcial()" />';
-			
 			var idLancamento = (row.cell.idLancamento) ? row.cell.idLancamento : "";
+
+			var inputCheck = chamadaoController.getInputCheckBox(idLancamento, row.id, row.cell.checked);
 			
 			var inputHidden = '<input type="hidden" class="lancamentoHidden" value="' + idLancamento + '"/>';
 						   
@@ -303,6 +314,30 @@ var chamadaoController = $.extend(true, {
 		return resultado.tableModel;
 	},
 	
+	getInputCheckBox : function(idLancamento, rowId, checked) {
+
+		var inputCheck = '<input type="checkbox" id="ch' + rowId + '"'
+						   + ' name="checkConsignado"'
+						   + ' value="' + rowId + '"';
+		
+		inputCheck = inputCheck.concat(checked ? ' checked="checked"' : '');
+		
+		inputCheck = inputCheck.concat(' onclick="chamadaoController.calcularParcial()" '
+						+ ' onchange="chamadaoController.selecionarLinha(' + idLancamento + ', this.checked);" />');
+		
+		return inputCheck;
+	},
+	
+	selecionarLinha : function(idLancamento, checked) {
+		
+		if (!checked && chamadaoController.checkAll) {
+		
+			chamadaoController.nonSelected.push(idLancamento);
+		}
+		
+		dataHolder.hold('chamadaoHolder', idLancamento, 'checado', checked);
+	},
+
 	selecionarTodos : function(input) {
 		
 		checkAll(input, "checkConsignado");
@@ -322,6 +357,10 @@ var chamadaoController = $.extend(true, {
 			
 			chamadaoController.zerarCamposParciais();
 		}
+		
+		chamadaoController.nonSelected = [];
+		
+		this.checkAll = input.checked;
 	},
 	
 	calcularParcial : function() {
@@ -333,7 +372,6 @@ var chamadaoController = $.extend(true, {
 		$("input[name='checkConsignado']", chamadaoController.workspace).each(function() {
 		
 			var checado = this.checked;
-			
 			
 			clickLineFlexigrid(this, checado);
 			
@@ -431,6 +469,8 @@ var chamadaoController = $.extend(true, {
 		var param ={novaDataChamadaoFormatada:$("#novaDataChamadao").val(), chamarTodos:chamadaoController.verifyCheckAll()};
 		
 		param = serializeArrayToPost('listaChamadao', chamadaoController.getListaChamadao(), param);
+		
+		param.push({name: 'idsIgnorados', value: chamadaoController.nonSelected});
 		
 		$.postJSON(contextPath + "/devolucao/chamadao/confirmarChamadao",param,
 				   function(result) {

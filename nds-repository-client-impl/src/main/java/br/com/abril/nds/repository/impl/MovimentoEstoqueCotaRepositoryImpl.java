@@ -1473,9 +1473,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" from MovimentoEstoqueCota movimento join movimento.produtoEdicao produtoEdicao ");			
 		
+		hql.append(" left join movimento.lancamento l ");
+		
 		hql.append(" where movimento.cota.id = :idCota ");
 		
-		hql.append(" and movimento.data between :inicio and :fim ");
+		hql.append(" and (movimento.data between :inicio and :fim  or l.dataLancamentoDistribuidor between :inicio and :fim) ");
 		
 		hql.append(" and movimento.tipoMovimento.grupoMovimentoEstoque  in (:gruposMovimento) ");
 		
@@ -2979,5 +2981,17 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		return (BigDecimal) query.uniqueResult();
 	}
-	
+
+	/**
+	 * Adiciona/Altera lista de Movimentos de Estoque da Cota
+	 * @param movimentosEstoqueCota
+	 */
+	@Override
+	public void mergeAll(List<MovimentoEstoqueCota> movimentosEstoqueCota) {
+		
+		for (MovimentoEstoqueCota mec:movimentosEstoqueCota){
+			
+			this.merge(mec);
+		}
+	}
 }
