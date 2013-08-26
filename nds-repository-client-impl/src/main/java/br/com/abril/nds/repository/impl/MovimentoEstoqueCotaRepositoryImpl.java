@@ -2978,5 +2978,17 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		return (BigDecimal) query.uniqueResult();
 	}
-	
+
+	/**
+	 * Adiciona/Altera lista de Movimentos de Estoque da Cota
+	 * @param movimentosEstoqueCota
+	 */
+	@Override
+	public void mergeAll(List<MovimentoEstoqueCota> movimentosEstoqueCota) {
+		
+		for (MovimentoEstoqueCota mec:movimentosEstoqueCota){
+			
+			this.merge(mec);
+		}
+	}
 }
