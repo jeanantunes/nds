@@ -68,7 +68,16 @@ var visaoEstoqueController = $.extend(true, {
 			url : visaoEstoqueController.path + 'pesquisar.json',
 			params: formData,
 			preProcess : visaoEstoqueController.montaColunaAcao,
-			newp : 1
+			newp : 1,
+			onSuccess : function(result) {
+				if (result.listaMensagens) {
+					
+					exibirMensagem(
+						result.tipoMensagem, 
+						result.listaMensagens
+					);
+				}
+			}
 		});
 		
 		$(".visaoEstoqueGrid", this.workspace).flexReload();
@@ -200,10 +209,10 @@ var visaoEstoqueController = $.extend(true, {
 	ajustarDiferenca : function(element, produtoEdicaoId) {
 		
 		var tr = element.parentNode.parentNode.parentNode;
-		var qtdeInventario = parseInt($.trim(element.value) == "" ? 0 : element.value); 
+		var qtdeInventario = parseInt($.trim(element.value) == "" ? -1 : element.value); 
 		var qtde = parseInt($('td[abbr="qtde"] >div', tr).html()); 
 		
-		if(!isNaN(qtdeInventario) && qtdeInventario > 0) {
+		if(!isNaN(qtdeInventario) && qtdeInventario > -1) {
 			$('div[abbr="diferenca"]', tr).html(qtdeInventario - qtde);
 			visaoEstoqueController.visaoEstoqueInventarioArray[produtoEdicaoId] = {};
 			visaoEstoqueController.visaoEstoqueInventarioArray[produtoEdicaoId]['inventario'] = (qtdeInventario);
@@ -458,10 +467,12 @@ var visaoEstoqueController = $.extend(true, {
 					visaoEstoqueController.popupConfirmaInventario();
 				},
 				"Cancelar": function() {
+					visaoEstoqueController.visaoEstoqueInventarioArray = {};
 					$( this ).dialog( "close" );
 				},
 			},
-			form: $("#dialog-visaoEstoque-inventario", visaoEstoqueController.workspace).parents("form")
+			form: $("#dialog-visaoEstoque-inventario", visaoEstoqueController.workspace).parents("form"),
+			close: function(ev, ui) { visaoEstoqueController.visaoEstoqueInventarioArray = {}; },
 		});
 	},
 	

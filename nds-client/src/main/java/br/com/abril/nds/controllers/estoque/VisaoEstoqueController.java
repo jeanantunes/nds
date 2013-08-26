@@ -270,6 +270,10 @@ public class VisaoEstoqueController extends BaseController {
 		
 	private void atualizarDataMovimentacao(FiltroConsultaVisaoEstoque filtro) {
 		
+		if(filtro == null || filtro != null && filtro.getDataMovimentacaoStr() == null) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Valores de filtros inválidos.");
+		}
+		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		if (filtro.getDataMovimentacao() == null || filtro.getDataMovimentacaoStr() == null
