@@ -48,6 +48,7 @@ public interface ChamadaoService {
 	void confirmarChamadao(List<ConsignadoCotaChamadaoDTO> listaChamadao,
 						   FiltroChamadaoDTO filtro,
 						   boolean chamarTodos,
+						   List<Long> idsIgnorados,
 						   Usuario usuario,
 						   Date novaDataChamadao);
 	
