@@ -90,35 +90,35 @@
           
           </td>
         <td width="98" style="border-bottom:1px solid #ccc;">Cotas Ativas:</td>
-        <td width="45" style="border-bottom:1px solid #ccc;" id="cotasAtivasCell"> </td>
+        <td width="45" style="border:1px solid #ccc;" id="cotasAtivasCell"> </td>
         <td width="117" style="border-bottom:1px solid #ccc;" >Reparte Total:</td>
-        <td width="45" style="border-bottom:1px solid #ccc;">${reparteTotalDistribuidor}  </td>
+        <td width="45" style="border:1px solid #ccc;">${reparteTotalDistribuidor}  </td>
         <td style="border-bottom:1px solid #ccc;">Abrangência Distribuição:</td>
-        <td style="border-bottom:1px solid #ccc;" id="abrangenciaDistribuicaoCell"> </td>
+        <td style="border:1px solid #ccc;" id="abrangenciaDistribuicaoCell"> </td>
         </tr>
   <tr>
     <td style="border-bottom:1px solid #ccc;">Cotas Produto:</td>
-    <td style="border-bottom:1px solid #ccc;" id="cotasProdutoCell"> </td>
+    <td style="border:1px solid #ccc;" id="cotasProdutoCell"> </td>
     <td style="border-bottom:1px solid #ccc;">Reparte Distribuido:</td>
-    <td style="border-bottom:1px solid #ccc;" id="reparteDistribuidoCell"> </td>
+    <td style="border:1px solid #ccc;" id="reparteDistribuidoCell"> </td>
     <td width="130" style="border-bottom:1px solid #ccc;">Abrangência Venda:</td>
-    <td width="45" style="border-bottom:1px solid #ccc;" id="abrangenciaVendaCell"> </td>
+    <td width="45" style="border:1px solid #ccc;" id="abrangenciaVendaCell"> </td>
     </tr>
   <tr>
     <td style="border-bottom:1px solid #ccc;">Cotas Esmagadas:</td>
-    <td style="border-bottom:1px solid #ccc;" id="cotasEsmagadasCell"> </td>
+    <td style="border:1px solid #ccc;" id="cotasEsmagadasCell"> </td>
     <td style="border-bottom:1px solid #ccc;">Venda:</td>
-    <td style="border-bottom:1px solid #ccc;" id="vdaTotalCell"></td>
+    <td style="border:1px solid #ccc;" id="vdaTotalCell"></td>
     <td style="border-bottom:1px solid #ccc;">Reparte Médio:</td>
-    <td style="border-bottom:1px solid #ccc;" id="repMedioCell"> </td>
+    <td style="border:1px solid #ccc;" id="repMedioCell"> </td>
     </tr>
   <tr>
     <td height="19" style="border-bottom:1px solid #ccc;">Venda Esmagada:</td>
-    <td style="border-bottom:1px solid #ccc;" id="vendaEsmagadasCell"> </td>
+    <td style="border:1px solid #ccc;" id="vendaEsmagadasCell"> </td>
     <td style="border-bottom:1px solid #ccc;">Eficiência de Venda:</td>
-    <td style="border-bottom:1px solid #ccc;" id="eficienciaDeVendaCell"> </td>
+    <td style="border:1px solid #ccc;" id="eficienciaDeVendaCell"> </td>
     <td style="border-bottom:1px solid #ccc;">Venda Média:</td>
-    <td style="border-bottom:1px solid #ccc;" id="vdaMedioCell"> </td>
+    <td style="border:1px solid #ccc;" id="vdaMedioCell"> </td>
     </tr>
   <tr>
     <td height="19" style="border-bottom:1px solid #ccc;">&nbsp;</td>
@@ -126,7 +126,7 @@
     <td style="border-bottom:1px solid #ccc;">&nbsp;</td>
     <td style="border-bottom:1px solid #ccc;">&nbsp;</td>
     <td style="border-bottom:1px solid #ccc;">Encalhe Médio:</td>
-    <td style="border-bottom:1px solid #ccc;" id="encalheMedioCell"></td>
+    <td style="border:1px solid #ccc;" id="encalheMedioCell"></td>
   </tr>
         </table>
        </fieldset>

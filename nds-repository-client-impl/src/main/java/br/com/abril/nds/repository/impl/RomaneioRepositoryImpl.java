@@ -230,7 +230,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 				hql.insert(0, ", ");
 			}
 			
-			hql.insert(0, " roteiro.ordem asc, roteiro.id, rota.ordem asc, rota.descricaoRota asc, roteiro.roteirizacao asc, box.codigo asc ");
+			hql.insert(0, " box.codigo asc, roteiro.ordem asc, roteiro.descricaoRoteiro asc, rota.ordem asc, rota.descricaoRota asc, cota.numeroCota ");
 		}
 		
 		if (hql.length() > 0) {
@@ -375,7 +375,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 				
 				// Exibir os detalhes de um produto:
 				hql.append(", round(itemNota.reparte / lancamento.produtoEdicao.pacotePadrao) as pacote ");
-				hql.append(", mod(itemNota.reparte, (itemNota.reparte / lancamento.produtoEdicao.pacotePadrao)) as quebra ");
+				hql.append(", mod(itemNota.reparte, lancamento.produtoEdicao.pacotePadrao) as quebra ");
 				hql.append(", itemNota.reparte as reparteTotal ");
 			} else {
 				

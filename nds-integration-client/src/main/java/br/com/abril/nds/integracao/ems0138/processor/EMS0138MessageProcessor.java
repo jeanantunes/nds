@@ -16,7 +16,10 @@ import br.com.abril.nds.dto.chamadaencalhe.integracao.ChamadaEncalheFornecedorIn
 import br.com.abril.nds.enums.integracao.MessageHeaderProperties;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
+import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.NotaFiscalSaidaFornecedor;
+import br.com.abril.nds.model.fiscal.TipoOperacao;
+import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.integracao.EMS0138NotasCEIntegracao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
@@ -54,7 +57,7 @@ public class EMS0138MessageProcessor extends AbstractRepository implements Messa
 		
 		EMS0138NotasCEIntegracao notasCEIntegracao = new EMS0138NotasCEIntegracao(); 
 		
-		List<NotaFiscalSaidaFornecedor> notasFiscais = obterNotasFiscais();
+		List<NotaFiscal> notasFiscais = obterNotasFiscais();
 		List<ChamadaEncalheFornecedorIntegracaoDTO> chamadasEncalhe = obterChamadasEncalhe(message);
 		
 		notasCEIntegracao.setTipoDocumento("EMS0139");
@@ -80,12 +83,20 @@ public class EMS0138MessageProcessor extends AbstractRepository implements Messa
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<NotaFiscalSaidaFornecedor> obterNotasFiscais() {
+	private List<NotaFiscal> obterNotasFiscais() {
 		StringBuilder hql = new StringBuilder();
 		hql.append(" select nf ")
-			.append("from NotaFiscalSaidaFornecedor nf ");
+			.append("from NotaFiscal nf ")
+			.append("where nf.identificacao.tipoNotaFiscal.tipoOperacao = :tipoOperacao ")
+			.append("and nf.identificacao.tipoNotaFiscal.grupoNotaFiscal in (:grupoNotaFiscal) ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("tipoOperacao", TipoOperacao.SAIDA);
+		List<GrupoNotaFiscal> gruposNotaFiscal = new ArrayList<>();
+		gruposNotaFiscal.add(GrupoNotaFiscal.NF_DEVOLUCAO_MERCADORIA_RECEBIA_CONSIGNACAO);
+		gruposNotaFiscal.add(GrupoNotaFiscal.NF_DEVOLUCAO_REMESSA_DISTRIBUICAO);
+		query.setParameterList("grupoNotaFiscal", gruposNotaFiscal);
 		
 		return query.list();
 	}

@@ -287,18 +287,14 @@ function popup_detalhes(codigoProduto,numeroEdicao) {
 			
 			$("#imagemCapaEdicao")
 					.attr("src",contextPath
-							
 									+ "/capa/getCapaEdicaoJson?random="+randomnumber+"&codigoProduto="
-//									+ "/capas/revista-nautica-11.jpg?codigoProduto="
 									+ codigoProduto
 									+ "&numeroEdicao="
 									+ numeroEdicao);
-//			console.log($("#imagemCapaEdicao").attr("src"));
 		},
 		close:function(event, ui){
 			$("#imagemCapaEdicao").removeAttr("src").hide();
 			$("#loadingCapa").show();
-			
 		}
 	});
 };

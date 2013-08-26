@@ -16,40 +16,40 @@ public class AnaliseHistogramaDTO implements Serializable {
 
 	private static final long serialVersionUID = 23157883037782978L;
 
-	@Export(label="Faixa de Venda", alignment=Alignment.CENTER)
+	@Export(label="Faixa de Venda", alignment=Alignment.CENTER, exhibitionOrder = 1)
 	private String faixaVenda=StringUtils.EMPTY;
 	
-	@Export(label="Rep. Total", alignment=Alignment.CENTER)
+	@Export(label="Rep. Total", alignment=Alignment.CENTER, exhibitionOrder = 2)
 	private BigDecimal repTotal=BigDecimal.ZERO;
 	
-	@Export(label="Rep. Médio", alignment=Alignment.CENTER)
+	@Export(label="Rep. Médio", alignment=Alignment.CENTER, exhibitionOrder = 3)
 	private BigDecimal repMedio=BigDecimal.ZERO;
 	
-	@Export(label="Vda Média", alignment=Alignment.CENTER)
+	@Export(label="Vda Média", alignment=Alignment.CENTER, exhibitionOrder = 4)
 	private BigDecimal vdaMedio=BigDecimal.ZERO; 
 	
-	@Export(label="Vda Nominal", alignment=Alignment.CENTER)
+	@Export(label="Vda Nominal", alignment=Alignment.CENTER, exhibitionOrder = 5)
 	private BigDecimal vdaTotal=BigDecimal.ZERO;
 	
-	@Export(label="% Vda", alignment=Alignment.CENTER)
+	@Export(label="% Vda", alignment=Alignment.CENTER, exhibitionOrder = 6)
 	private BigDecimal percVenda=BigDecimal.ZERO;
 	
-	@Export(label="Enc. Médio", alignment=Alignment.CENTER)
+	@Export(label="Enc. Médio", alignment=Alignment.CENTER, exhibitionOrder = 7)
 	private BigDecimal encalheMedio=BigDecimal.ZERO;
 	
-	@Export(label="Part. Reparte", alignment=Alignment.CENTER)
+	@Export(label="Part. Reparte", alignment=Alignment.CENTER, exhibitionOrder = 8)
 	private BigDecimal partReparte=BigDecimal.ZERO;
 	
-	@Export(label="Part. Venda", alignment=Alignment.CENTER)
+	@Export(label="Part. Venda", alignment=Alignment.CENTER, exhibitionOrder = 9)
 	private BigDecimal partVenda=BigDecimal.ZERO;
 	
-	@Export(label="Qtde. Cotas", alignment=Alignment.CENTER)
+	@Export(label="Qtde. Cotas", alignment=Alignment.CENTER, exhibitionOrder = 10)
 	private BigInteger qtdeCotas=BigInteger.ZERO;
 	
-	@Export(label="Cotas Esmag.", alignment=Alignment.CENTER)
+	@Export(label="Cotas Esmag.", alignment=Alignment.CENTER, exhibitionOrder = 11)
 	private BigInteger cotasEsmagadas=BigInteger.ZERO;
 	
-	@Export(label="Vda Esmag.", alignment=Alignment.CENTER)
+	@Export(label="Vda Esmag.", alignment=Alignment.CENTER , exhibitionOrder = 12)
 	private BigDecimal vendaEsmagadas=BigDecimal.ZERO;
 	
 	private BigDecimal qtdeCotasAtivas=BigDecimal.ZERO;
@@ -200,7 +200,7 @@ public class AnaliseHistogramaDTO implements Serializable {
 	public void setIdCotasEsmagadas(String idCotasEsmagadas) {
 		this.idCotasEsmagadas = (idCotasEsmagadas == null ? "" : idCotasEsmagadas);
 	}
-	public int getReparteTotalDistribuidor() {
+	public Integer getReparteTotalDistribuidor() {
 		return reparteTotalDistribuidor;
 	}
 	public void setReparteTotalDistribuidor(int reparteTotalDistribuidor) {

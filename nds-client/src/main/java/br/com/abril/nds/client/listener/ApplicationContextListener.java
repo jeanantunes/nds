@@ -65,7 +65,7 @@ public class ApplicationContextListener implements ServletContextListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
-
+//
 //		this.agendarIntegracaoOperacionalDistribuidor();
 //		this.agendaExclusaoAjusteReparte();
 //		this.agendarExclusaoDeEstudos();

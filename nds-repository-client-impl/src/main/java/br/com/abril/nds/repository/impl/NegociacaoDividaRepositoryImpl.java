@@ -83,8 +83,10 @@ public class NegociacaoDividaRepositoryImpl extends AbstractRepositoryModel<Nego
 		
 		hql.append(" FROM Cobranca cobranca ");
 		hql.append(" JOIN cobranca.cota ");
+		hql.append(" JOIN cobranca.divida divida ");
 		hql.append(" WHERE cobranca.cota.numeroCota = :numCota ");
 		hql.append(" AND cobranca.statusCobranca = :status ");
+		hql.append(" AND divida.data < (select dataOperacao from Distribuidor)");
 		
 		if(!filtro.isLancamento()){
 			hql.append(" AND cobranca.dataVencimento <= current_date() ");

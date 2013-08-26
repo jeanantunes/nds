@@ -224,40 +224,49 @@ public class DistribuicaoVendaMediaController extends BaseController {
 		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();
     }
 
-    private ProdutoEdicaoDTO converterResultado(ProdutoEdicao produtoEdicao, Lancamento lancamento) {
-	ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
-
-	dto.setId(produtoEdicao.getId());
-	dto.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
-
-	dto.setNomeComercial(produtoEdicao.getProduto().getNomeComercial());
-	dto.setNomeProduto(produtoEdicao.getProduto().getNome());
-	dto.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
-
-	dto.setPeriodicidade(produtoEdicao.getProduto().getPeriodicidade());
-
-	if (lancamento == null) {
-	    lancamento = findLancamentoBalanceado(produtoEdicao);
-	}
-	if (lancamento != null) {
-	    dto.setDataLancamento(lancamento.getDataLancamentoDistribuidor());
-	    dto.setDataRecolhimentoDistribuidor(lancamento.getDataRecolhimentoDistribuidor());
-	    dto.setStatusSituacao(lancamento.getStatus());
-	} else {
-	    dto.setDataLancamentoFormatada("");
-	    dto.setDataRecolhimentoDistribuidorFormatada("");
-	}
-
-	dto.setPrecoVenda(produtoEdicao.getPrecoVenda());
-	dto.setPacotePadrao(produtoEdicao.getPacotePadrao());
-	if (produtoEdicao.getProduto().getTipoSegmentoProduto() != null) {
-	    dto.setSegmentacao(produtoEdicao.getProduto().getTipoSegmentoProduto().getDescricao());
-	}
-	if (produtoEdicao.getProduto().getTipoClassificacaoProduto() != null) {
-	    dto.setClassificacao(produtoEdicao.getProduto().getTipoClassificacaoProduto().getDescricao());
-	}
-
-	return dto;
+	private ProdutoEdicaoDTO converterResultado(ProdutoEdicao produtoEdicao, Lancamento lancamento){
+		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
+		
+		dto.setId(produtoEdicao.getId());
+		dto.setNumeroEdicao(produtoEdicao.getNumeroEdicao());
+		
+		dto.setNomeComercial(produtoEdicao.getProduto().getNomeComercial());
+		dto.setNomeProduto(produtoEdicao.getProduto().getNome());
+		dto.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
+		
+		dto.setPeriodicidade(produtoEdicao.getProduto().getPeriodicidade());
+		
+		if(lancamento == null){
+			lancamento = findLancamentoBalanceado(produtoEdicao);
+		}
+		if(lancamento != null){
+			dto.setDataLancamento(lancamento.getDataLancamentoDistribuidor());
+			dto.setDataRecolhimentoDistribuidor(lancamento.getDataRecolhimentoDistribuidor());
+			dto.setStatusSituacao(lancamento.getStatus());
+		}else{
+			dto.setDataLancamentoFormatada("");
+			//dto.setDataRecolhimentoDistribuidorFormatada("");
+		}
+		
+		dto.setPrecoVenda(produtoEdicao.getPrecoVenda());
+		dto.setPacotePadrao(produtoEdicao.getPacotePadrao());
+		if(produtoEdicao.getProduto().getTipoSegmentoProduto() != null){
+//			dto.setSegmentacao(produtoEdicao.getProduto().getTipoSegmentoProduto().getDescricao());
+		}
+		if(produtoEdicao.getProduto().getTipoClassificacaoProduto() != null){
+//			dto.setClassificacao(produtoEdicao.getProduto().getTipoClassificacaoProduto().getDescricao());
+		}
+		
+		dto.setPrecoVenda(produtoEdicao.getPrecoVenda());
+		dto.setPacotePadrao(produtoEdicao.getPacotePadrao());
+		if (produtoEdicao.getProduto().getTipoSegmentoProduto() != null) {
+		    dto.setSegmentacao(produtoEdicao.getProduto().getTipoSegmentoProduto().getDescricao());
+		}
+		if (produtoEdicao.getProduto().getTipoClassificacaoProduto() != null) {
+		    dto.setClassificacao(produtoEdicao.getProduto().getTipoClassificacaoProduto().getDescricao());
+		}
+	
+		return dto;
     }
 
     private Lancamento findLancamentoBalanceado(ProdutoEdicao produtoEdicao) {

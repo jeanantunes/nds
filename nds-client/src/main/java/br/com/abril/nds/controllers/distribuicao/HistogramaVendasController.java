@@ -5,6 +5,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +25,7 @@ import br.com.abril.nds.dto.AnaliseHistogramaDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.RegiaoDTO;
+import br.com.abril.nds.dto.RodapeHistogramaVendaDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -107,6 +111,8 @@ public class HistogramaVendasController extends BaseController {
 	@Autowired
 	private RegiaoService regiaoService;
 	
+	private static String reparteTotal;
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Post
 	@Path("/carregarElementos")
@@ -136,7 +142,7 @@ public class HistogramaVendasController extends BaseController {
 			}
 			break;
 		case GERADOR_DE_FLUXO:
-			for(TipoGeradorFluxoPDV tipo:pdvService.obterTodosTiposGeradorFluxo()){
+			for(TipoGeradorFluxoPDV tipo:pdvService.obterTodosTiposGeradorFluxoOrdenado()){
 				resultList.add(new ItemDTO(tipo.getCodigo(),tipo.getDescricao()));
 			}
 			break;
@@ -226,6 +232,7 @@ public class HistogramaVendasController extends BaseController {
 		
 		NumberFormat f = NumberFormat.getNumberInstance();
 		// informações do resumo do histograma (parte inferior da tela)
+		reparteTotal = f.format(reparteTotalDistribuidor / nrEdicoes.length);
 		result.include("reparteTotalDistribuidor", f.format(reparteTotalDistribuidor / nrEdicoes.length));
 		
 		
@@ -302,6 +309,9 @@ public class HistogramaVendasController extends BaseController {
 		
 		return tableModel;
 	}
+	
+	
+        
 
 	@SuppressWarnings("unchecked")
 	@Get
@@ -309,17 +319,74 @@ public class HistogramaVendasController extends BaseController {
 		
 		List<AnaliseHistogramaDTO> lista = (List<AnaliseHistogramaDTO>)session.getAttribute(HISTOGRAMA_SESSION_ATTRIBUTE);
 		
+		AnaliseHistogramaDTO footer = lista.get(lista.size() - 1);
+		
 		if (lista==null || lista.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING,
 					"A última pesquisa realizada não obteve resultado.");
 		}
+		
+		if(fileType.equals(FileType.XLS)){
+			RodapeHistogramaVendaDTO rodapeDTO = montarRodapeParaXLS(footer);
+			
+			FileExporter.to("Histórico_de_venda_por_faixa", fileType).inHTTPResponse(
+					this.getNDSFileHeader(), 
+					getFiltroSessao(), 
+					rodapeDTO, 
+					lista,
+					AnaliseHistogramaDTO.class, this.httpResponse);
+		}else{
+			FileExporter.to("Histórico_de_venda_por_faixa", fileType).inHTTPResponse(
+					this.getNDSFileHeader(), 
+					getFiltroSessao(), 
+					null, 
+					lista,
+					AnaliseHistogramaDTO.class, this.httpResponse);
+			
+		}
 
-		FileExporter.to("Histórico_de_venda_por_faixa", fileType).inHTTPResponse(
-				this.getNDSFileHeader(), getFiltroSessao(), null, lista,
-				AnaliseHistogramaDTO.class, this.httpResponse);
 		
 		result.nothing();
 	}
+
+	private RodapeHistogramaVendaDTO montarRodapeParaXLS(AnaliseHistogramaDTO footer) {
+		
+		String qtdeTotalCotasAtivasFormatada = footer.getQtdeTotalCotasAtivas().toString();
+		String cotasProduto = footer.getQtdeCotas().toString();
+		String cotaEsmagas = footer.getCotasEsmagadas().toString();
+		String vendaEsmagada = footer.getVendaEsmagadas().setScale(0).toString();		
+		String vendaTotal = footer.getVdaTotal().setScale(0, BigDecimal.ROUND_FLOOR) .toString();
+		
+		MathContext mc = new MathContext(2, RoundingMode.FLOOR);
+		String eficienciaVenda = ( footer.getVdaTotal().divide(footer.getRepTotal(),mc ))
+									.multiply(new BigDecimal(100)).toString() + "%" ;
+		
+		BigDecimal qtdeCotas = new BigDecimal(footer.getQtdeCotas()) ;
+		BigDecimal qtdeTotalCotasAtivas = new BigDecimal(footer.getQtdeTotalCotasAtivas());
+		String abrangenciaDistribuicaoFormatado =  (qtdeCotas.divide(qtdeTotalCotasAtivas,mc)
+														.multiply(new BigDecimal(100)).toString() + "%" );
+		
+		BigDecimal calculo = qtdeCotas.subtract(footer.getQtdeCotasSemVenda()).divide(qtdeTotalCotasAtivas, mc)  ;
+		BigDecimal resultado = calculo.multiply(new BigDecimal("100"));
+		String abrangenciaVendaFormatado =   resultado.toString() + "%";
+		
+		String reparteTotalFormatado = footer.getRepTotal().setScale(0, BigDecimal.ROUND_FLOOR).toString() ;
+		RodapeHistogramaVendaDTO rodapeDTO = new RodapeHistogramaVendaDTO(qtdeTotalCotasAtivasFormatada, 
+				cotasProduto, 
+				cotaEsmagas,
+				vendaEsmagada, 
+				reparteTotal,
+				reparteTotalFormatado,
+				vendaTotal,
+				eficienciaVenda,
+				abrangenciaDistribuicaoFormatado,
+				abrangenciaVendaFormatado,
+				footer.getRepMedio().toString(),
+				footer.getVdaMedio().toString(),
+				footer.getEncalheMedio().toString());
+		return rodapeDTO;
+	}
+	
 	
 
 	private void tratarFiltro(FiltroHistogramaVendas filtroAtual)throws ValidacaoException {

@@ -319,4 +319,17 @@ public class FeriadoRepositoryImpl extends
 		
 		
 	}
+	
+	@Override
+	public boolean isFeriado(Date data){
+		
+		StringBuilder hql = new StringBuilder("select ");
+		hql.append(" count(f.id) from Feriado f ")
+		   .append(" where f.data = :data");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("data", data);
+		
+		return (Long)query.uniqueResult() > 0;
+	}
 }
