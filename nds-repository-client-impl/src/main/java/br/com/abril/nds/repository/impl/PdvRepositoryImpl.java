@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPDV;
@@ -339,15 +340,16 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<PDV> obterPDVsDisponiveisPor(Integer numCota, String municipio, String uf, String bairro, String cep, boolean pesquisaPorCota, Long boxID) {
+	public List<PDV> obterCotasPDVsDisponiveisPor(Integer numCota, String municipio, String uf, String bairro, 
+			String cep, Long boxID) {
 
-		Criteria criteria  = getSession().createCriteria(PDV.class,"pdv" );
+		Criteria criteria  = getSession().createCriteria(PDV.class,"pdv");
 		criteria.setFetchMode("cota", FetchMode.JOIN);
 		criteria.createAlias("cota", "cota");
 		criteria.createAlias("enderecos", "enderecos") ;
 		criteria.createAlias("enderecos.endereco", "endereco");
 				
-		if(boxID > 0 || boxID == -1) {
+		if(boxID != -1) {
 			DetachedCriteria subquery = 
 					DetachedCriteria.forClass(RotaPDV.class, "rotaPdv")
 									.createAlias("rota", "rota")
@@ -360,11 +362,8 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 			
 			criteria.add(Subqueries.propertyNotIn("cota.id", subquery));
 			criteria.add(Restrictions.isNull("cota.box"));
-		}
-		
-		if (pesquisaPorCota) {
 			criteria.add(Restrictions.eq("caracteristicas.pontoPrincipal", true));
-		} 
+		}
 		
 		if (numCota != null && !numCota.equals("") ) {
 			criteria.add(Restrictions.eq("cota.numeroCota", numCota));
@@ -386,6 +385,8 @@ public class PdvRepositoryImpl extends AbstractRepositoryModel<PDV, Long> implem
 			}
 			
 		}
+		
+		criteria.add(Restrictions.not(Restrictions.eq("cota.situacaoCadastro", SituacaoCadastro.INATIVO)));
 		
 		criteria.addOrder(Order.asc("cota.numeroCota"));
 		criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);

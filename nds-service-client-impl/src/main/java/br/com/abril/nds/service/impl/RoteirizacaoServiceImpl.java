@@ -27,11 +27,13 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
+import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.Entregador;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteirizacao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoEndereco;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
@@ -524,61 +526,86 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		
 		List<PdvRoteirizacaoDTO> listaPdvDTO = new ArrayList<PdvRoteirizacaoDTO>();
 		
-		List<PDV> listaPdv = 
-			this.pdvRepository.obterPDVsDisponiveisPor(
-				numCota, municipio, uf, bairro, cep, pesquisaPorCota, boxID);
+		List<PDV> listaPdv = this.pdvRepository.obterCotasPDVsDisponiveisPor(
+				numCota, municipio, uf, bairro, cep, boxID);
 		
 		PdvRoteirizacaoDTO pdvDTO;
 		
 		Integer ordem=0;
 		
-		//segundo o negócio, apenas um pdv deve ser roteirizado por cota
-		Integer idUltimaCota = null;
-		
-		for(PDV itemPdv:listaPdv){
-		    
-			if (itemPdv.getCota().getNumeroCota().equals(idUltimaCota)){
-				continue;
-			} else {
-				idUltimaCota = itemPdv.getCota().getNumeroCota();
-			}
+		for(PDV itemPdv : listaPdv){
 			
+			Endereco endereco = null;
 			ordem++;
-			
 			pdvDTO = new PdvRoteirizacaoDTO();
-			
 			pdvDTO.setId(itemPdv.getId());
-			
-			pdvDTO.setNome(itemPdv.getCota().getPessoa().getNome());
-		
+			pdvDTO.setNome(itemPdv.getNome());
 			pdvDTO.setOrdem(ordem);
 			pdvDTO.setCota(itemPdv.getCota().getNumeroCota());
 			
-			Endereco endereco = null;
-			EnderecoPDV enderecoPdvEntrega  = itemPdv.getEnderecoEntrega();
-			if (enderecoPdvEntrega !=null){
-				endereco = enderecoPdvEntrega .getEndereco();
-				pdvDTO.setOrigem(OrigemEndereco.PDV.getDescricao());
-			} else {
+			//especial
+			if (boxID == -1){
 				
-				Set<EnderecoPDV> enderecosPDV = itemPdv.getEnderecos();
+				EnderecoPDV endPdv = itemPdv.getEnderecoEntrega();
 				
-				if (!enderecosPDV.isEmpty()){
-					for (EnderecoPDV endPdv : itemPdv.getEnderecos()){
+				if (endPdv != null){
+					
+					endereco = endPdv.getEndereco();
+					pdvDTO.setOrigem(OrigemEndereco.PDV.getDescricao());
+				} else {
+					
+					if (itemPdv.getCaracteristicas().isPontoPrincipal()){
+					
+						endPdv = itemPdv.getEnderecoPrincipal();
+						endPdv = (endPdv == null ? itemPdv.getEnderecos().iterator().next() : endPdv);
 						
-						if (endPdv.isPrincipal()){
+						if (endPdv != null){
+							
 							endereco = endPdv.getEndereco();
 							pdvDTO.setOrigem(OrigemEndereco.PDV.getDescricao());
-							break;
+						}
+					} else {
+						
+						endPdv = (endPdv == null ? itemPdv.getEnderecos().iterator().next() : endPdv);
+						
+						if (endPdv != null){
+							
+							endereco = endPdv.getEndereco();
+							pdvDTO.setOrigem(OrigemEndereco.PDV.getDescricao());
 						}
 					}
 				}
+			//normal
+			} else {
 				
-				//EnderecoCota enderecoEscolhido = itemPdv.getCota().getEnderecoPrincipal();
-				if (endereco == null){
-				    endereco = itemPdv.getCota().getEnderecoPrincipal().getEndereco();
+				EnderecoCota endCota = itemPdv.getCota().getEnderecoPorTipoEndereco(TipoEndereco.LOCAL_ENTREGA);
+				
+				if (endCota != null){
+					
+					endereco = endCota.getEndereco();
 				    pdvDTO.setOrigem(OrigemEndereco.COTA.getDescricao());
-				}  
+				}
+				
+				if (endereco == null){
+					
+					EnderecoPDV endPdv = itemPdv.getEnderecoPrincipal();	
+					if (endPdv != null){
+						
+						endereco = endPdv.getEndereco();
+						pdvDTO.setOrigem(OrigemEndereco.PDV.getDescricao());
+					}
+				}
+				
+				if (endereco == null){
+					
+					endCota = itemPdv.getCota().getEnderecoPrincipal();
+					
+					if (endCota != null){
+						endereco = endCota.getEndereco();
+						pdvDTO.setOrigem(OrigemEndereco.COTA.getDescricao());
+					}
+				}
+				
 			}
 			
 			pdvDTO.setEndereco(endereco != null ? 
