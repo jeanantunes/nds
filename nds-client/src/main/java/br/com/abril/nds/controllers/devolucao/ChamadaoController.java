@@ -341,7 +341,7 @@ public class ChamadaoController extends BaseController {
 	@Path("/confirmarChamadao")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CHAMADAO_ALTERACAO)
 	public void confirmarChamadao(List<ConsignadoCotaChamadaoDTO> listaChamadao,
-								  boolean chamarTodos,
+								  boolean chamarTodos, List<Long> idsIgnorados,
 								  String novaDataChamadaoFormatada) {
 		
 		FiltroChamadaoDTO filtroSessao =
@@ -366,7 +366,7 @@ public class ChamadaoController extends BaseController {
 		}
 		
 		this.chamadaoService.confirmarChamadao(
-			listaChamadao, filtro, chamarTodos, getUsuarioLogado(), novaDataChamadao);
+			listaChamadao, filtro, chamarTodos, idsIgnorados, getUsuarioLogado(), novaDataChamadao);
 		
 		result.use(Results.json()).from(
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Chamadão realizado com sucesso!"),
