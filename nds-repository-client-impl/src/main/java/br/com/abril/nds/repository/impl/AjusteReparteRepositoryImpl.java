@@ -199,36 +199,4 @@ public class AjusteReparteRepositoryImpl extends AbstractRepositoryModel<AjusteR
 			return 0;
 		}
 	}
-
-//	@SuppressWarnings("unchecked")
-//	@Override
-//	public List<AjustesSegmento_AjusteReparteDTO> ajustesAplicados(Integer numCota) {
-//		
-//		StringBuilder hql = new StringBuilder();
-//		
-//		/*
-//		 * select ar.AJUSTE_APLICADO, ar.TIPO_SEGMENTO_AJUSTE_ID 
-//				from Ajuste_reparte ar
-//				  Join cota 
-//				  ON ar.COTA_ID = cota.ID
-//				where cota.NUMERO_COTA = 6;
-//		 */
-//		
-//		hql.append(" SELECT ");
-//		hql.append(" ajuste.ajusteAplicado as ajusteAplicado, ");
-//		hql.append(" ajuste.tipoSegmentoAjuste as segmentoAplicado ");
-//		
-//		hql.append(" FROM AjusteReparte AS ajuste ");
-//		hql.append(" JOIN ajuste.cota AS cota ");
-//		hql.append(" WHERE cota.numeroCota = :numeroCota ");
-//
-//		Query query = super.getSession().createQuery(hql.toString());
-//
-//		query.setParameter("numeroCota", numCota);
-//		
-//		query.setResultTransformer(new AliasToBeanResultTransformer(AjustesSegmento_AjusteReparteDTO.class));
-//		
-//		return query.list();
-//		
-//	}
 }

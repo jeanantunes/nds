@@ -17,5 +17,4 @@ public interface AjusteReparteRepository extends Repository<AjusteReparte, Long>
 	
 	int qtdAjusteSegmento (Long idCota);
 	
-//	List<AjustesSegmento_AjusteReparteDTO> ajustesAplicados (Integer numCota);
 }
