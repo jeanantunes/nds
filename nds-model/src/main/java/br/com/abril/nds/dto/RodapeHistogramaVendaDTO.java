@@ -21,7 +21,7 @@ public class RodapeHistogramaVendaDTO {
     @Export(label = "Reparte Total:")
     private String reparteTotal;
     
-    @Export(label = "Reparte Distribuido:")
+    @Export(label = "Reparte Distribuído:")
     private String reparteDistribuido;
     
     @Export(label = "Venda:")
@@ -33,7 +33,7 @@ public class RodapeHistogramaVendaDTO {
     @Export(label = "Abrangência Distribuição:")
     private String abrangenciaDistribuicao;
     
-    @Export(label = "Abrangência Distribuição:")
+    @Export(label = "Abrangência Venda:")
     private String abrangenciaVenda;
     
     @Export(label = "Reparte Médio:")        
@@ -50,9 +50,12 @@ public class RodapeHistogramaVendaDTO {
 	public RodapeHistogramaVendaDTO(String cotasAtivas, String cotasProduto,
 			String cotasEsmagadas, String vendaEsmagada,
 			String reparteTotal, String reparteDistribuido, String venda,
-			String eficienciaVenda, String abrangenciaDistribuicao,
-			String abrangenciaVenda, String reparteMedio,
-			String vendaMedia, String encalheMedio) {
+			String eficienciaVenda, 
+			String abrangenciaDistribuicao,
+			String abrangenciaVenda,
+			String reparteMedio,
+			String vendaMedia,
+			String encalheMedio) {
 		super();
 		this.cotasAtivas = cotasAtivas;
 		this.cotasProduto = cotasProduto;

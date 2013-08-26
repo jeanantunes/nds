@@ -200,7 +200,7 @@ public class AnaliseHistogramaDTO implements Serializable {
 	public void setIdCotasEsmagadas(String idCotasEsmagadas) {
 		this.idCotasEsmagadas = (idCotasEsmagadas == null ? "" : idCotasEsmagadas);
 	}
-	public int getReparteTotalDistribuidor() {
+	public Integer getReparteTotalDistribuidor() {
 		return reparteTotalDistribuidor;
 	}
 	public void setReparteTotalDistribuidor(int reparteTotalDistribuidor) {
