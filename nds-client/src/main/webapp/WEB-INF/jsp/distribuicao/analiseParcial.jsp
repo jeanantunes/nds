@@ -5,6 +5,14 @@
 $(function() {
     $('.legendas').tipsy({gravity: $.fn.tipsy.autoNS});
     $('.asterisco').tipsy({live: true, gravity: $.fn.tipsy.autoNS, title: function(){return 'Reparte Alterado';}});
+    var estudoCopiado = $("#reparteCopiado").val();
+    
+    if(estudoCopiado != "" ){
+    	$("#tdEstudoCopiado").show();
+    	$("#spanReparteCopiado").text(estudoCopiado);
+    }else{
+    	$("#tdEstudoCopiado").hide();
+    }
   });
 
 function mostraDados(){
@@ -13,8 +21,7 @@ function mostraDados(){
 function escondeDados(){
 	$('.detalhesDados').hide();
 	}
-
-
+	
 </script>
 
 <style>
@@ -150,6 +157,7 @@ table.filtro td span {font-weight: normal;}
 			<input type="hidden" id="produtoEdicaoId" value="${estudoCota.estudo.produtoEdicao.id}" />
 			<input type="hidden" id="faixaDe" value="${faixaDe}" />
 			<input type="hidden" id="faixaAte" value="${faixaAte}" />
+			<input type="hidden" id="reparteCopiado" value="${reparteCopiado}" />
 			<input type="hidden" id="numeroEdicao" value="${estudoCota.estudo.produtoEdicao.numeroEdicao}" />
 			<input type="hidden" id="estudoId" value="${estudoCota.estudo.id}" />
 			<input type="hidden" id="codigoProduto" value="${estudoCota.estudo.produtoEdicao.produto.codigo}" />
@@ -171,6 +179,7 @@ table.filtro td span {font-weight: normal;}
                     <td>Status do Estudo: <span id="status_estudo">${estudoCota.estudo.isLiberado()?'Liberado':'Não Liberado'}</span></td>
                     <td>Data de Lancamento: <span><fmt:formatDate value="${lancamento.dataLancamentoPrevista}" /></span></td>
                     <td>Reparte Distribuido: <span id="total_reparte_estudo_cabecalho">${estudoCota.estudo.qtdeReparte}</span></td>
+                    <td id="tdEstudoCopiado">Reparte Copiado: <span id="spanReparteCopiado">${reparteCopiado}</span></td>
                     <td>Pacote Padrão: <span>${estudoCota.estudo.produtoEdicao.pacotePadrao}</span></td>
                 </tr>
             </table>

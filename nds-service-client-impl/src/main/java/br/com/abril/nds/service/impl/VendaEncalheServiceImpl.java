@@ -721,7 +721,8 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	private List<MovimentoFinanceiroCota> gerarMovimentoFinanceiroCotaDebito(Date dataVencimentoDebito, VendaProduto vendaProduto) {
 
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = 
-				tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.COMPRA_ENCALHE_SUPLEMENTAR);
+				tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+						GrupoMovimentoFinaceiro.COMPRA_ENCALHE_SUPLEMENTAR);
 
 		if (tipoMovimentoFinanceiro == null) {
 			throw new ValidacaoException(
@@ -1102,7 +1103,8 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			valorVendaDebitoCredito = valorVendaNovo.subtract(valorVendaAtual);
 
 			tipoMovimentoFinanceiro = 
-					tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.DEBITO);
+					tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+							GrupoMovimentoFinaceiro.DEBITO);
 		}
 		// Se o valor atual da venda for menor que o valor novo gerar credito
 		else if (valorVendaNovo.compareTo(valorVendaAtual) < 0) {
@@ -1110,7 +1112,8 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 			valorVendaDebitoCredito = valorVendaAtual.subtract(valorVendaNovo);
 
 			tipoMovimentoFinanceiro = 
-					tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.CREDITO);
+					tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+							GrupoMovimentoFinaceiro.CREDITO);
 		}
 
 		if (tipoMovimentoFinanceiro == null) {

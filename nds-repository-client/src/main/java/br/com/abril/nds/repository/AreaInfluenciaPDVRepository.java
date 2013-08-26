@@ -9,4 +9,5 @@ public interface AreaInfluenciaPDVRepository extends Repository<AreaInfluenciaPD
 	List<AreaInfluenciaPDV> obterAreaInfluenciaPDV(Long...codigos );
 
 	public abstract List<AreaInfluenciaPDV> obterTodasAreaInfluenciaPDV();
+	
 }

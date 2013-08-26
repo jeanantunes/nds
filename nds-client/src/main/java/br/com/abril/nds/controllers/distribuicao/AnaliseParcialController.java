@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.distribuicao;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -25,7 +26,6 @@ import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -75,7 +75,7 @@ public class AnaliseParcialController extends BaseController {
     private HttpSession session;
 
     @Path("/")
-    public void index(Long id, Long faixaDe, Long faixaAte, String modoAnalise) {
+    public void index(Long id, Long faixaDe, Long faixaAte, String modoAnalise, String reparteCopiado) {
 
         EstudoCota estudo = analiseParcialService.buscarPorId(id);
         Lancamento lancamento = lancamentoService.obterPorId(estudo.getEstudo().getLancamentoID());
@@ -91,6 +91,7 @@ public class AnaliseParcialController extends BaseController {
         result.include("estudoCota", estudo);
         result.include("faixaDe", faixaDe);
         result.include("faixaAte", faixaAte);
+        result.include("reparteCopiado", reparteCopiado);
         ClassificacaoCota[] vetor = ClassificacaoCota.values();
         Arrays.sort(vetor, new Comparator<ClassificacaoCota>() {
 

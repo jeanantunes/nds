@@ -758,7 +758,9 @@ public class MovimentoFinanceiroCotaServiceImpl implements
         
 		TipoCota tipoCota = parametro!=null?parametro.getTipoCota():null;	
 		
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
+		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = 
+				tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+						GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
 	
 		if ((tipoCota==null) || tipoCota.equals(TipoCota.A_VISTA)){
 		
@@ -849,7 +851,9 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 				return;
 			}
 			
-			tipoMovimentoFinanceiro = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
+			tipoMovimentoFinanceiro = 
+					tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+							GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
 						
 			this.gerarMovimentoFinanceiro(cota, 
 					                      fornecedor,
@@ -895,7 +899,9 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 						}
 					}
 					
-	                tipoMovimentoFinanceiro = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
+	                tipoMovimentoFinanceiro = 
+	                		tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+	                				GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
 					
 					this.gerarMovimentoFinanceiro(cota, 
 							                      fornecedor,
@@ -916,7 +922,9 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 				
 				if ((valorConsignadoPagar!=null) && (valorConsignadoPagar.floatValue() > 0)){
 				
-		            tipoMovimentoFinanceiro = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO);
+		            tipoMovimentoFinanceiro = 
+		            		tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+		            				GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO);
 					
 					this.gerarMovimentoFinanceiro(cota, 
 							                      fornecedor,

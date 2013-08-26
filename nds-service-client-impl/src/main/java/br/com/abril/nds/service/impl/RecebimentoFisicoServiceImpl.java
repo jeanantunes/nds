@@ -57,6 +57,7 @@ import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.RecebimentoFisicoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.MathUtil;
 
 @Service
@@ -766,7 +767,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		itemNota.setDataRecolhimento(recebimentoDTO.getDataRecolhimento());
 		itemNota.setTipoLancamento(recebimentoDTO.getTipoLancamento());
 		itemNota.setQtde(recebimentoDTO.getRepartePrevisto());
-		itemNota.setPreco(recebimentoDTO.getPrecoDesconto());
+		itemNota.setPreco(CurrencyUtil.converterValor(recebimentoDTO.getPrecoDesconto()));
 		itemNota.setProdutoEdicao(produtoEdicao);
 		itemNota.setUsuario(usuarioLogado);
 		itemNota.setNotaFiscal(notaFiscal);
@@ -972,21 +973,33 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 
 	@Override
 	@Transactional
-	public RecebimentoFisicoDTO obterRecebimentoFisicoDTO(String codigo,
-			String edicao) {
+	public RecebimentoFisicoDTO obterRecebimentoFisicoDTO(String codigo, String edicao) {
 		
-		ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigo, edicao);
+		ProdutoEdicao produtoEdicao = 
+			this.produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(
+				codigo, edicao);
+		
 		RecebimentoFisicoDTO recebimentoFisicoDTO = null;
 		
-		if(produtoEdicao!=null) {
+		if (produtoEdicao!=null) {
 			
 			recebimentoFisicoDTO = new RecebimentoFisicoDTO();
+			
 			BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
-			BigDecimal percentualDesconto = produtoEdicaoService.obterPorcentualDesconto(produtoEdicao);
-			BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
-			valorDesconto = valorDesconto.setScale(2, RoundingMode.HALF_EVEN);
-			recebimentoFisicoDTO.setPrecoDesconto(precoVenda.subtract(valorDesconto));
-            recebimentoFisicoDTO.setRepartePrevisto(produtoEdicao.getReparteDistribuido());
+			
+			BigDecimal percentualDesconto = 
+				this.produtoEdicaoService.obterPorcentualDesconto(produtoEdicao);
+			
+			BigDecimal valorDesconto = 
+				MathUtil.round(
+					MathUtil.calculatePercentageValue(
+						precoVenda, percentualDesconto), 2);
+
+			recebimentoFisicoDTO.setPrecoDesconto(
+				CurrencyUtil.formatarValor(precoVenda.subtract(valorDesconto)));
+			
+            recebimentoFisicoDTO.setRepartePrevisto(
+            	produtoEdicao.getReparteDistribuido());
 		
 		} else {
 			
