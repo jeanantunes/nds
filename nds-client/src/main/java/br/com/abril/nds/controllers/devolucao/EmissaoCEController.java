@@ -15,8 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
+import br.com.abril.nds.dto.DadosImpressaoEmissaoChamadaEncalhe;
 import br.com.abril.nds.dto.DistribuidorDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
@@ -243,27 +243,39 @@ public class EmissaoCEController extends BaseController {
 
 	public void modelo1() {
 				
-		setDados();		
+		setDados(TipoImpressaoCE.MODELO_1);		
 				
 	}
 	
-	public void setDados() {
+	public void setDados(TipoImpressaoCE tipoImpressao) {
 		
 		FiltroEmissaoCE filtro = getFiltroSessao();
 		
-		List<CotaEmissaoDTO> cotasEmissao = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);	
+		if(TipoImpressaoCE.MODELO_1.equals(tipoImpressao)) {
+			filtro.setQtdProdutosPorPagina(20);
+			filtro.setQtdCapasPorPagina(81);
+			filtro.setQtdMaximaProdutosComTotalizacao(19);
+		} else {
+			filtro.setQtdProdutosPorPagina(25);
+			filtro.setQtdCapasPorPagina(49);
+			filtro.setQtdMaximaProdutosComTotalizacao(20);
+		}
+		
+		boolean apresentaCapas = (filtro.getCapa() == null) ? false : filtro.getCapa();
+		
+		boolean apresentaCapasPersonalizadas = (filtro.getPersonalizada() == null) ? false : filtro.getPersonalizada();
+		
+		DadosImpressaoEmissaoChamadaEncalhe dados = 
+				chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(
+						filtro);	
 				
 		DistribuidorDTO dadosDistribuidor = distribuidorService.obterDadosEmissao();
 				
-		if(!filtro.getPersonalizada()) {
-			
-			List<CapaDTO> capas =  chamadaEncalheService.obterIdsCapasChamadaEncalhe(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte());
-			
-			result.include("capas", capas);
-			
+		if(apresentaCapas && !apresentaCapasPersonalizadas) {
+			result.include("capasPaginadas", dados.getCapasPaginadas());
 		}
 			
-		result.include("cotasEmissao", cotasEmissao);
+		result.include("cotasEmissao", dados.getCotasEmissao());
 		
 		result.include("dadosDistribuidor", dadosDistribuidor);
 		
@@ -275,7 +287,7 @@ public class EmissaoCEController extends BaseController {
 	
 	public void modelo2() {
 		
-		setDados();
+		setDados(TipoImpressaoCE.MODELO_2);
 	}
 
 	

@@ -28,7 +28,15 @@ public class CotaEmissaoDTO implements Serializable{
 	private String vlrTotalCe;
 	
 	private Long idChamEncCota;
+	
+	private List<List<ProdutoEmissaoDTO>> paginasProduto;
+	
+	private List<List<CapaDTO>> paginasCapa;
+	
 	private List<ProdutoEmissaoDTO> produtos;
+	
+	private boolean quebraTotalizacaoUltimaPagina;
+	
 	private String numeroNome;
 	private String cnpj;
 	private String endereco;
@@ -54,8 +62,9 @@ public class CotaEmissaoDTO implements Serializable{
 	private String vlrEncalhe;	
 	private String vlrTotalLiquido;
 
-	
-	
+	public CotaEmissaoDTO() {
+		
+	}
 	
 	public String getNomeBox() {
 		return nomeBox;
@@ -212,19 +221,7 @@ public class CotaEmissaoDTO implements Serializable{
 	public void setVlrTotalCe(BigDecimal vlrTotalCe) {
 		this.vlrTotalCe = CurrencyUtil.formatarValor( (vlrTotalCe == null)?BigDecimal.ZERO:vlrTotalCe);
 	}
-	/**
-	 * @return the produtos
-	 */
-	public List<ProdutoEmissaoDTO> getProdutos() {
-		return produtos;
-	}
-	/**
-	 * @param produtos the produtos to set
-	 */
-	public void setProdutos(List<ProdutoEmissaoDTO> produtos) {
-		this.produtos = produtos;
-	}
-
+	
 	/**
 	 * @return the numDocumento
 	 */
@@ -409,6 +406,40 @@ public class CotaEmissaoDTO implements Serializable{
 	public void setNomeRoteiro(String nomeRoteiro) {
 		this.nomeRoteiro = nomeRoteiro;
 	}
+
+	public List<List<ProdutoEmissaoDTO>> getPaginasProduto() {
+		return paginasProduto;
+	}
+
+	public void setPaginasProduto(List<List<ProdutoEmissaoDTO>> paginasProduto) {
+		this.paginasProduto = paginasProduto;
+	}
+
+	public List<ProdutoEmissaoDTO> getProdutos() {
+		return produtos;
+	}
+
+	public void setProdutos(List<ProdutoEmissaoDTO> produtos) {
+		this.produtos = produtos;
+	}
+
+	public List<List<CapaDTO>> getPaginasCapa() {
+		return paginasCapa;
+	}
+
+	public void setPaginasCapa(List<List<CapaDTO>> paginasCapa) {
+		this.paginasCapa = paginasCapa;
+	}
+
+	public boolean isQuebraTotalizacaoUltimaPagina() {
+		return quebraTotalizacaoUltimaPagina;
+	}
+
+	public void setQuebraTotalizacaoUltimaPagina(
+			boolean quebraTotalizacaoUltimaPagina) {
+		this.quebraTotalizacaoUltimaPagina = quebraTotalizacaoUltimaPagina;
+	}
+	
 	
 	
 }
