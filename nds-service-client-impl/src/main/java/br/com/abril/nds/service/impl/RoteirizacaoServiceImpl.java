@@ -944,15 +944,17 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 	 */
 	private void atribuirBoxCota(PdvRoteirizacaoDTO pdvDTO, Box box) {
 		
-		 PDV pdv = pdvRepository.buscarPorId(pdvDTO.getId());
-		 
-		 Cota cota  = pdv.getCota();
-		 
-		 if(pdv.getCaracteristicas()!= null && pdv.getCaracteristicas().isPontoPrincipal() ){
+		if (box != null){
+			 PDV pdv = pdvRepository.buscarPorId(pdvDTO.getId());
 			 
-			 cota.setBox(box);
-			 cotaRepository.merge(cota);
-		 }
+			 Cota cota  = pdv.getCota();
+			 
+			 if(pdv.getCaracteristicas()!= null && pdv.getCaracteristicas().isPontoPrincipal() ){
+				 
+				 cota.setBox(box);
+				 cotaRepository.merge(cota);
+			 }
+		}
 	}
 
 	
