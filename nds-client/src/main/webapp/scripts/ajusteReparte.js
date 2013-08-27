@@ -142,6 +142,10 @@ init : function() {
 				row.cell.ajusteAplicado = parseFloat(row.cell.ajusteAplicado).toFixed(1); 
 			}
 			
+			if(row.cell.formaAjusteAplicado == "Segmento"){
+				row.cell.ajusteAplicado = '';
+			}
+			
 		});
 		
 		$(".grids", ajusteReparteController.workspace).show();
@@ -681,9 +685,9 @@ init : function() {
 			$("#exibirSegmento3").val(segmt3).disable();
 			
 			//Editar
-			$("#exibirSegmento1Editar").val(segmt1).disable();
-			$("#exibirSegmento2Editar").val(segmt2).disable();
-			$("#exibirSegmento3Editar").val(segmt3).disable();
+			$("#exibirSegmentoEditar1").val(segmt1).disable();
+			$("#exibirSegmentoEditar2").val(segmt2).disable();
+			$("#exibirSegmentoEditar3").val(segmt3).disable();
 			
 			
 	},
@@ -698,6 +702,8 @@ init : function() {
 		if(seg01 !== "Selecione..."){
 			$("#tr_exibirSegmento1").show();
 			$("#colSegmento1").text(seg01+":");
+			$("#colSegmento1Editar").text(seg01+":");
+			
 		}else{
 			$("#colSegmento1").text("Segmento1: ");
 		}
@@ -705,6 +711,7 @@ init : function() {
 		if(seg02 !== "Selecione..."){
 			$("#tr_exibirSegmento2").show();
 			$("#colSegmento2").text(seg02+":");
+			
 		}else{
 			$("#colSegmento2").text("Segmento2: ");
 		}
@@ -808,6 +815,8 @@ init : function() {
 	},
 	
 	mostrarSegmentosEditar : function() {
+		$('#tipoSegmento1').show();
+		$('#segmento1').show();
 		
 		$( "#dialog-segmentos" ).dialog({
 			resizable: false,
