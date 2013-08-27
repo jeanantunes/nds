@@ -108,7 +108,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	@Transactional
 	public List<ConsultaNotaEnvioDTO> busca(FiltroConsultaNotaEnvioDTO filtro) {
 		
-		this.cotaService.verificarCotasSemRoteirizacao(filtro.getIntervaloCota());
+		this.cotaService.verificarCotasSemRoteirizacao(filtro.getIntervaloCota(),
+				filtro.getIntervaloMovimento(), null);
 		
 		if("EMITIDAS".equals(filtro.getExibirNotasEnvio())) {
 			return cotaRepository.obterDadosCotasComNotaEnvioEmitidas(filtro);
@@ -125,7 +126,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	@Transactional
 	public Integer buscaCotasNotasDeEnvioQtd(FiltroConsultaNotaEnvioDTO filtro) {
 		
-		this.cotaService.verificarCotasSemRoteirizacao(filtro.getIntervaloCota());
+		this.cotaService.verificarCotasSemRoteirizacao(filtro.getIntervaloCota(),
+				filtro.getIntervaloMovimento(), null);
 		
 		if("EMITIDAS".equals(filtro.getExibirNotasEnvio())) {
 			return cotaRepository.obterDadosCotasComNotaEnvioEmitidasCount(filtro);

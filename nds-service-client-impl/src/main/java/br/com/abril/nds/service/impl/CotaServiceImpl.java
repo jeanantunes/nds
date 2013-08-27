@@ -2682,15 +2682,17 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Transactional(readOnly = true)
 	@Override
-	public void verificarCotasSemRoteirizacao(Intervalo<Integer> intervaloCota){
+	public void verificarCotasSemRoteirizacao(Intervalo<Integer> intervaloCota, Intervalo<Date> intervaloDataLancamento,
+			Intervalo<Date> intervaloDataRecolhimento){
 		
-		List<Cota> cotasSemRoteirizacao = this.cotaRepository.obterCotasSemRoteirizacao(intervaloCota);
+		List<CotaDTO> cotasSemRoteirizacao = this.cotaRepository.obterCotasSemRoteirizacao(intervaloCota,
+				intervaloDataLancamento, intervaloDataRecolhimento);
 		
 		if (cotasSemRoteirizacao == null || !cotasSemRoteirizacao.isEmpty()){
 			
 			List<String> msgs = new ArrayList<String>();
-			for (Cota c : cotasSemRoteirizacao){
-				msgs.add("Cota sem roteirização: " + c.getNumeroCota() + " - " + c.getPessoa().getNome());
+			for (CotaDTO c : cotasSemRoteirizacao){
+				msgs.add("Cota sem roteirização: " + c.getNumeroCota() + " - " + c.getNomePessoa());
 			}
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, msgs);

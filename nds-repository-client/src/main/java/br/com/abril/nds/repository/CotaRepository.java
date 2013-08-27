@@ -378,5 +378,7 @@ public interface CotaRepository extends Repository<Cota, Long> {
 
 	List<Long> obterIdsCotasPorMunicipio(String municipio);
 
-	List<Cota> obterCotasSemRoteirizacao(Intervalo<Integer> intervaloCota);
+	List<CotaDTO> obterCotasSemRoteirizacao(Intervalo<Integer> intervaloCota,
+			Intervalo<Date> intervaloDataLancamento,
+			Intervalo<Date> intervaloDateRecolhimento);
 }

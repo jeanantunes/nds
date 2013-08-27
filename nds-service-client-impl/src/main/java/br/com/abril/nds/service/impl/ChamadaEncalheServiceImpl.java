@@ -19,12 +19,10 @@ import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.Capa;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
@@ -75,13 +73,16 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	@Transactional
 	public List<CotaEmissaoDTO> obterDadosEmissaoChamadasEncalhe(FiltroEmissaoCE filtro) {
 		
-		Intervalo<Integer> intervalo = null;
+		Intervalo<Integer> intervaloCotas = null;
 		
 		if (filtro.getNumCotaDe() != null && filtro.getNumCotaAte() != null){
-			intervalo = new Intervalo<Integer>(filtro.getNumCotaDe(), filtro.getNumCotaAte());
+			intervaloCotas = new Intervalo<Integer>(filtro.getNumCotaDe(), filtro.getNumCotaAte());
 		}
 		
-		this.cotaService.verificarCotasSemRoteirizacao(intervalo);
+		Intervalo<Date> intervaloDataRecolhimento = 
+			new Intervalo<Date>(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte());
+		
+		this.cotaService.verificarCotasSemRoteirizacao(intervaloCotas, null, intervaloDataRecolhimento);
 		
 		List<CotaEmissaoDTO> listaChamadaEncalhe = chamadaEncalheRepository.obterDadosEmissaoChamadasEncalhe(filtro);
 		
