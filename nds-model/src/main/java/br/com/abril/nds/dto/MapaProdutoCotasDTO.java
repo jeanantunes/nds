@@ -12,6 +12,7 @@ public class MapaProdutoCotasDTO implements Serializable{
 	private Long numeroEdicao;
 	private String precoCapa;
 	private Map<Integer, Integer> cotasQtdes;
+	private Map<String, Integer> boxQtdes;
 	
 	public MapaProdutoCotasDTO() {
 		
@@ -19,13 +20,14 @@ public class MapaProdutoCotasDTO implements Serializable{
 
 	public MapaProdutoCotasDTO(String codigoProduto, String nomeProduto,
 			Long numeroEdicao, String precoCapa,
-			Map<Integer, Integer> cotasQtdes) {
+			Map<Integer, Integer> cotasQtdes, Map<String, Integer> boxQtdes) {
 		super();
 		this.codigoProduto = codigoProduto;
 		this.nomeProduto = nomeProduto;
 		this.numeroEdicao = numeroEdicao;
 		this.precoCapa = precoCapa;
 		this.setCotasQtdes(cotasQtdes);
+		this.boxQtdes = boxQtdes;
 	}
 
 	/**
@@ -92,6 +94,20 @@ public class MapaProdutoCotasDTO implements Serializable{
 
 	public void setCotasQtdes(Map<Integer, Integer> cotasQtdes) {
 		this.cotasQtdes = cotasQtdes;
+	}
+
+	/**
+	 * @return the boxQtdes
+	 */
+	public Map<String, Integer> getBoxQtdes() {
+		return boxQtdes;
+	}
+
+	/**
+	 * @param boxQtdes the boxQtdes to set
+	 */
+	public void setBoxQtdes(Map<String, Integer> boxQtdes) {
+		this.boxQtdes = boxQtdes;
 	}
 	
 }
