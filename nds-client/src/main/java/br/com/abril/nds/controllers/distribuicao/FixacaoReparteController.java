@@ -161,14 +161,8 @@ public class FixacaoReparteController extends BaseController {
 		if(cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possivel fixar reparte para cota [ "+ numeroCota +" ] tipo[" +	TipoDistribuicaoCota.ALTERNATIVO.toString() + "].");
 	}else{
-//		result.forwardTo(0);
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
 	}
-	
-//		else{
-//		result.nothing();
-//		throw new ValidacaoException(TipoMensagem.SUCCESS, "");
-//	}
 }
 
 
