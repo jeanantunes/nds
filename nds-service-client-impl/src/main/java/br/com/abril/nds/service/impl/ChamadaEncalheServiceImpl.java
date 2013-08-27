@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -12,15 +13,18 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
+import br.com.abril.nds.dto.DadosImpressaoEmissaoChamadaEncalhe;
 import br.com.abril.nds.dto.FornecedoresBandeiraDTO;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.Capa;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
@@ -137,10 +141,151 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		return endereco;
 	}
 	
+
+	/**
+	 * Faz a paginação da lista de produtos contida nos objos CotaEmissaoDTO para 
+	 * que estes produtos sejam apresentados com quebra de página no relatório 
+	 * HTML.
+	 * 
+	 * @param cotasEmissao
+	 * 
+	 * @param qtdProdutosPorPagina - Quantidade maxima de produtos por página
+	 * 
+	 * @param qtdMaximaProdutosComTotalizacao - Quantidade maxima de produtos
+	 * em uma pagina que conseguira acomodar também a grid de totalização.
+	 */
+	private void paginarListaDeProdutosDasCotasEmissao(List<CotaEmissaoDTO> cotasEmissao, int qtdProdutosPorPagina, int qtdMaximaProdutosComTotalizacao) {
+		
+		for(CotaEmissaoDTO cota : cotasEmissao) {
+			
+			
+			cota.setPaginasProduto(obterListaPaginada(cota.getProdutos(), qtdProdutosPorPagina));
+			
+			cota.setQuebraTotalizacaoUltimaPagina(verificarQuebraDePaginaNaTotalizacao(cota, qtdMaximaProdutosComTotalizacao));
+		}
+	
+	}
+	
+	/**
+	 * Verifica a quantidade produtos na ultima pagina para decidir
+	 * se devera haver uma quebra de pagina ao apresentar a totalização
+	 * no relatorio de emissao ce.
+	 * 
+	 * @param cota 
+	 * 
+	 * @param qtdMaximaProdutosComTotalizacao - Quantidade maxima de produtos
+	 * em uma pagina que conseguira acomodar também a grid de totalização.
+	 * 
+	 * @return boolean
+	 * 
+	 */
+	private boolean verificarQuebraDePaginaNaTotalizacao(CotaEmissaoDTO cota, int qtdMaximaProdutosComTotalizacao) {
+		
+		if(cota.getPaginasProduto() != null && !cota.getPaginasProduto().isEmpty() ) {
+			
+			int qtdeItensUltimaPagina = cota.getPaginasProduto().get(cota.getPaginasProduto().size()-1).size();
+			
+			if(qtdeItensUltimaPagina>=qtdMaximaProdutosComTotalizacao) {
+				return true;
+			}
+			
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Faz a paginação da lista de capas personalizadas 
+	 * (utilizando os produtos que constam na lista) para
+	 * que estas capas sejam apresentadas com quebra de página
+	 * no relatório HTML.
+	 * 
+	 * 
+	 * @param cotasEmissao
+	 * @param qtdCapasPorPaginas
+	 */
+	private void paginarListaDeCapasPersonalizadas(List<CotaEmissaoDTO> cotasEmissao, int qtdCapasPorPaginas) {
+		
+		for(CotaEmissaoDTO cota : cotasEmissao) {
+			
+			List<List<ProdutoEmissaoDTO>> listaProdutosPaginados = 
+					obterListaPaginada(cota.getProdutos(), qtdCapasPorPaginas);
+			
+			List<List<CapaDTO>> listaCapasPaginadas = new ArrayList<List<CapaDTO>>();
+			
+			for(List<ProdutoEmissaoDTO> paginaProduto : listaProdutosPaginados) {
+				
+				List<CapaDTO> paginaCapa = new ArrayList<>();
+				
+				for(ProdutoEmissaoDTO produto : paginaProduto) {
+					
+					CapaDTO capa = new CapaDTO();
+					capa.setSequenciaMatriz(produto.getSequencia());
+					capa.setId(produto.getIdProdutoEdicao());
+					
+					paginaCapa.add(capa);
+					
+				}
+				
+				listaCapasPaginadas.add(paginaCapa);
+				
+				
+			}
+			
+			cota.setPaginasCapa(listaCapasPaginadas);
+			
+		}
+		
+	}
+	
+	private void carregarValoresTotalizados(CotaEmissaoDTO cota) {
+		
+		BigDecimal vlrReparte = BigDecimal.ZERO;	
+		BigDecimal vlrDesconto = BigDecimal.ZERO;
+		BigDecimal vlrEncalhe = BigDecimal.ZERO;	
+		
+		for(ProdutoEmissaoDTO produtoDTO : cota.getProdutos()) {
+			
+			produtoDTO.setReparte( (produtoDTO.getReparte()==null) ? BigInteger.ZERO : produtoDTO.getReparte());
+			
+			produtoDTO.setVlrDesconto( (produtoDTO.getVlrDesconto() == null) ? BigDecimal.ZERO :  produtoDTO.getVlrDesconto());
+			
+			produtoDTO.setQuantidadeDevolvida(  (produtoDTO.getQuantidadeDevolvida() == null) ? BigInteger.ZERO : produtoDTO.getQuantidadeDevolvida());
+			
+			produtoDTO.setVendido( produtoDTO.getReparte().subtract(produtoDTO.getQuantidadeDevolvida()));
+			
+			produtoDTO.setVlrVendido(CurrencyUtil.formatarValor(produtoDTO.getVlrPrecoComDesconto().multiply(BigDecimal.valueOf(produtoDTO.getVendido().longValue()))));
+			
+			vlrReparte = vlrReparte.add( produtoDTO.getPrecoVenda().multiply(BigDecimal.valueOf(produtoDTO.getReparte().longValue())));
+
+			vlrDesconto = vlrDesconto.add(produtoDTO.getPrecoVenda().subtract(produtoDTO.getVlrPrecoComDesconto())
+					.multiply(BigDecimal.valueOf(produtoDTO.getReparte().longValue())));
+			
+			vlrEncalhe = vlrEncalhe.add( vlrDesconto.multiply( BigDecimal.valueOf( produtoDTO.getQuantidadeDevolvida().longValue()) ));
+			
+			
+		}
+		
+		BigDecimal vlrReparteLiquido = vlrReparte.subtract(vlrDesconto);
+		
+		BigDecimal totalLiquido = vlrReparteLiquido.subtract(vlrEncalhe);
+		
+		cota.setVlrReparte(CurrencyUtil.formatarValor(vlrReparte));
+		cota.setVlrComDesconto(CurrencyUtil.formatarValor(vlrDesconto));
+		cota.setVlrReparteLiquido(CurrencyUtil.formatarValor(vlrReparteLiquido));
+		cota.setVlrEncalhe(CurrencyUtil.formatarValor(vlrEncalhe));
+		cota.setVlrTotalLiquido(CurrencyUtil.formatarValor(totalLiquido));	
+		
+		
+	}
+	
 	@Override
 	@Transactional
-	public List<CotaEmissaoDTO> obterDadosImpressaoEmissaoChamadasEncalhe(
-			FiltroEmissaoCE filtro) {
+	public DadosImpressaoEmissaoChamadaEncalhe obterDadosImpressaoEmissaoChamadasEncalhe(FiltroEmissaoCE filtro) {
+		
+		boolean apresentaCapas = (filtro.getCapa() == null) ? false : filtro.getCapa();
+		
+		boolean apresentaCapasPersonalizadas = (filtro.getPersonalizada() == null) ? false : filtro.getPersonalizada();
 		
 		List<CotaEmissaoDTO> lista = chamadaEncalheRepository.obterDadosEmissaoImpressaoChamadasEncalhe(filtro);
 		//verificar essa lista para ver a quiantidade de exemplares
@@ -177,43 +322,10 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			
 			dto.setProdutos(chamadaEncalheRepository.obterProdutosEmissaoCE(filtro,dto.getIdCota()));
 			
-			BigDecimal vlrReparte = BigDecimal.ZERO;	
-			BigDecimal vlrDesconto = BigDecimal.ZERO;
-			BigDecimal vlrEncalhe = BigDecimal.ZERO;	
+			carregarValoresTotalizados(dto);
 			
-			for(ProdutoEmissaoDTO produtoDTO : dto.getProdutos()) {
-				
-				produtoDTO.setReparte( (produtoDTO.getReparte()==null) ? BigInteger.ZERO : produtoDTO.getReparte());
-				
-				produtoDTO.setVlrDesconto( (produtoDTO.getVlrDesconto() == null) ? BigDecimal.ZERO :  produtoDTO.getVlrDesconto());
-				
-				produtoDTO.setQuantidadeDevolvida(  (produtoDTO.getQuantidadeDevolvida() == null) ? BigInteger.ZERO : produtoDTO.getQuantidadeDevolvida());
-				
-				produtoDTO.setVendido( produtoDTO.getReparte().subtract(produtoDTO.getQuantidadeDevolvida()));
-				
-				produtoDTO.setVlrVendido(CurrencyUtil.formatarValor(produtoDTO.getVlrPrecoComDesconto().multiply(BigDecimal.valueOf(produtoDTO.getVendido().longValue()))));
-				
-				vlrReparte = vlrReparte.add( produtoDTO.getPrecoVenda().multiply(BigDecimal.valueOf(produtoDTO.getReparte().longValue())));
-
-				vlrDesconto = vlrDesconto.add(produtoDTO.getPrecoVenda().subtract(produtoDTO.getVlrPrecoComDesconto())
-						.multiply(BigDecimal.valueOf(produtoDTO.getReparte().longValue())));
-				
-				vlrEncalhe = vlrEncalhe.add( vlrDesconto.multiply( BigDecimal.valueOf( produtoDTO.getQuantidadeDevolvida().longValue()) ));
-				
-				
-			}
 			
-			BigDecimal vlrReparteLiquido = vlrReparte.subtract(vlrDesconto);
-			
-			BigDecimal totalLiquido = vlrReparteLiquido.subtract(vlrEncalhe);
-			
-			dto.setVlrReparte(CurrencyUtil.formatarValor(vlrReparte));
-			dto.setVlrComDesconto(CurrencyUtil.formatarValor(vlrDesconto));
-			dto.setVlrReparteLiquido(CurrencyUtil.formatarValor(vlrReparteLiquido));
-			dto.setVlrEncalhe(CurrencyUtil.formatarValor(vlrEncalhe));
-			dto.setVlrTotalLiquido(CurrencyUtil.formatarValor(totalLiquido));			
 		}
-		
 		
 		for(CotaEmissaoDTO cotasEmissao : lista) {
 			
@@ -227,16 +339,70 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			}
 		}
 		
+		paginarListaDeProdutosDasCotasEmissao(lista, filtro.getQtdProdutosPorPagina(), filtro.getQtdMaximaProdutosComTotalizacao());
 		
-		return lista;
+		DadosImpressaoEmissaoChamadaEncalhe dados = new DadosImpressaoEmissaoChamadaEncalhe();
+		dados.setCotasEmissao(lista);
+		
+		if(apresentaCapas) {
+			
+			if(apresentaCapasPersonalizadas) {
+				
+				paginarListaDeCapasPersonalizadas(lista, filtro.getQtdCapasPorPagina());
+			
+			} else {
+				
+				dados.setCapasPaginadas(
+						obterIdsCapasChamadaEncalhe(
+								filtro.getDtRecolhimentoDe(), 
+								filtro.getDtRecolhimentoAte(), 
+								filtro.getQtdCapasPorPagina()));
+			}
+			
+		}
+		
+		return dados;
+		
 	}
 
-	@Override
-	@Transactional
-	public List<CapaDTO> obterIdsCapasChamadaEncalhe(Date dtRecolhimentoDe,
-			Date dtRecolhimentoAte) {
+	private static <T> List<List<T>> obterListaPaginada(List<T> listaTotal, final int qtdItensPorPagina){
 		
-		return chamadaEncalheRepository.obterIdsCapasChamadaEncalhe(dtRecolhimentoDe, dtRecolhimentoAte);
+		List<List<T>> itensPaginados = new ArrayList<List<T>>();
+			
+		if(listaTotal == null) {
+			return itensPaginados;
+		}
+		
+		if( listaTotal.size() <= qtdItensPorPagina) {
+			itensPaginados.add(listaTotal);
+			return itensPaginados;
+		} 
+			
+		int qtdeItens = listaTotal.size();
+		int qtdePaginas = (int) Math.ceil((double) qtdeItens / qtdItensPorPagina);
+		int indice = 0;
+		
+		for (int pagina = 0; pagina < qtdePaginas; pagina++) {
+			int toIndex = (indice + qtdItensPorPagina);
+			if(toIndex > qtdeItens) {
+				toIndex = qtdeItens;
+			}
+			itensPaginados.add(listaTotal.subList(indice, toIndex));
+			indice = toIndex;
+		}
+		
+		return itensPaginados;
+		
+	}
+	
+
+	private List<List<CapaDTO>> obterIdsCapasChamadaEncalhe(Date dtRecolhimentoDe,
+			Date dtRecolhimentoAte, int qtdCapasPorPagina) {
+		
+		List<CapaDTO> capasChamadaEncalhe = chamadaEncalheRepository.obterIdsCapasChamadaEncalhe(dtRecolhimentoDe, dtRecolhimentoAte);
+		
+		return obterListaPaginada(capasChamadaEncalhe, qtdCapasPorPagina);
+		
 	}
 	
 	@Override
