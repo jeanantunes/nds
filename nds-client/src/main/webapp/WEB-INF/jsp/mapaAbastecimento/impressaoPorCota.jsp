@@ -54,8 +54,8 @@ window.print();
   <tr>
     <td width="390" align="left" valign="top"><table width="390" border="0" cellpadding="0" cellspacing="0" style="margin-top:5px;" class="relatorios">
       <tr class="class_linha_3">
-        <td width="174" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Publicação</strong></td>
-        <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>Edição</strong></td>
+        <td width="174" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>PublicaÃ§Ã£o</strong></td>
+        <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>EdiÃ§Ã£o</strong></td>
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>SM</strong></td>
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Total</strong></td>
       </tr>
@@ -77,8 +77,8 @@ window.print();
     
     <table width="390" border="0" align="right" cellpadding="0" cellspacing="0" class="relatorios" style="margin-top:5px;">
       <tr class="class_linha_3">
-        <td width="174" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Publicação</strong></td>
-        <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>Edição</strong></td>
+        <td width="174" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>PublicaÃ§Ã£o</strong></td>
+        <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>EdiÃ§Ã£o</strong></td>
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>SM</strong></td>
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Total</strong></td>
       </tr>

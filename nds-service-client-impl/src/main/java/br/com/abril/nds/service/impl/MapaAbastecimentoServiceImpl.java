@@ -235,18 +235,39 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 		List<String> rotas = new ArrayList<String>();
 	
 		List<ProdutoAbastecimentoDTO> produtosBoxRota = movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorProdutoEdicao(filtro);
-	
-		if(produtosBoxRota.size() == 0) {
+		
+		ProdutoEdicaoMapaDTO peMapaDTO = new ProdutoEdicaoMapaDTO(
+				produtosBoxRota.get(0).getCodigoProduto(),
+				produtosBoxRota.get(0).getNomeProduto(),
+				produtosBoxRota.get(0).getNumeroEdicao().longValue(),
+				produtosBoxRota.get(0).getPrecoCapa(),
+				new HashMap<Integer, BoxRotasDTO>());
+		
+		
+		List<ProdutoAbastecimentoDTO> cotas = this.cotaRepository.obterCotaPorProdutoEdicaoData(filtro);
+		
+		if(cotas != null && !cotas.isEmpty()) {
+			peMapaDTO.setCotasSemRoteirizacao(new ArrayList<String>());
+		}
+		
+		for(ProdutoAbastecimentoDTO cota : cotas) {
+			String cotaString = cota.getCota().getNumeroCota() + " - " + cota.getCota().getPessoa().getNome();
+			
+			if(cota.getCota().getBox() == null) {
+				if(!peMapaDTO.getCotasSemRoteirizacao().contains(cotaString)) {
+					peMapaDTO.getCotasSemRoteirizacao().add(cotaString);
+				}
+				
+			}
+		}
+		
+		
+		
+		if(produtosBoxRota.size() == 0) {	
 			return null;
 		}
 	
-		ProdutoEdicaoMapaDTO peMapaDTO = new ProdutoEdicaoMapaDTO(
-		produtosBoxRota.get(0).getCodigoProduto(),
-		produtosBoxRota.get(0).getNomeProduto(),
-		produtosBoxRota.get(0).getNumeroEdicao().longValue(),
-		produtosBoxRota.get(0).getPrecoCapa(),
-		new HashMap<Integer, BoxRotasDTO>());
-	
+			
 		for(ProdutoAbastecimentoDTO item : produtosBoxRota) {
 	
 			if(!peMapaDTO.getBoxes().containsKey(item.getCodigoBox()))
@@ -254,8 +275,8 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 			BoxRotasDTO box = peMapaDTO.getBoxes().get(item.getCodigoBox());
 	
-			box.setCotas(new ArrayList<Cota>());
-			box.getCotas().add(item.getCota());
+//			box.setCotas(new ArrayList<Cota>());
+//			box.getCotas().add(item.getCota());
 	
 	
 			if(!rotas.contains(item.getCodigoRota()))

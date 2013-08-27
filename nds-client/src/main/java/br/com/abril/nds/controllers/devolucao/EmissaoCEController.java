@@ -23,6 +23,7 @@ import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
@@ -32,6 +33,7 @@ import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
 import br.com.abril.nds.service.ChamadaEncalheService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.RoteirizacaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
@@ -53,6 +55,9 @@ public class EmissaoCEController extends BaseController {
 	
 	@Autowired
 	private FornecedorService fornecedorService;
+	
+	@Autowired
+	private CotaService cotaService;
 	
 	@Autowired
 	private BoxService boxService;
@@ -106,6 +111,19 @@ public class EmissaoCEController extends BaseController {
 		this.setFiltroSessao(filtro);
 	
 		List<CotaEmissaoDTO> lista = chamadaEncalheService.obterDadosEmissaoChamadasEncalhe(filtro); 
+		
+		String cotasSemRoteirizacao = "";
+		for(CotaEmissaoDTO cotaEmissao : lista) {
+			Cota cota = cotaService.obterPorId(cotaEmissao.getIdCota());
+			if(cota.getBox() == null) {
+				cotasSemRoteirizacao = cotasSemRoteirizacao + cotaEmissao.getNumCota() + " - " + cotaEmissao.getNomeCota() + "<br />";	
+			}
+		}
+		
+		if(! cotasSemRoteirizacao.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING,"<p>As seguintes cotas não tem roteirização: </p><p>" + cotasSemRoteirizacao	+ "</p>");
+		}
+		
 		
 		if(lista == null || lista.isEmpty()){
 			

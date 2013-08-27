@@ -276,8 +276,14 @@ public class RoteirizacaoController extends BaseController {
 	
 	
 	@Path("/iniciaTelaCotas")
-	public void iniciaTelaCotas() {
-		List<String> uf = enderecoService.obterUnidadeFederativaPDVSemRoteirizacao();
+	public void iniciaTelaCotas(boolean boxEspecial) {
+		List<String> uf = new ArrayList<String>();
+		if(!boxEspecial) {
+			uf = enderecoService.obterUnidadeFederativaPDVSemRoteirizacao();
+		} else {
+			uf = enderecoService.obterUnidadeFederacaoBrasil();
+		}
+		
 		result.use(Results.json()).from(uf, "result").serialize();
 	}
 	
@@ -402,16 +408,26 @@ public class RoteirizacaoController extends BaseController {
 	
 	
 	@Path("/buscalistaMunicipio")
-	public void buscalistaMunicipio(String uf) {
-		List<String> lista = enderecoService.obterLocalidadesPorUFPDVSemRoteirizacao(uf);
+	public void buscalistaMunicipio(String uf, boolean boxEspecial) {
+		List<String> lista = new ArrayList<String>();
+		if(!boxEspecial) {
+			lista = enderecoService.obterLocalidadesPorUFPDVSemRoteirizacao(uf);
+		} else {
+			lista = enderecoService.obterLocalidadesPorUFPDVBoxEspecial(uf);
+		}
 		result.use(Results.json()).from(lista, "result").serialize();
 	}
 	
 	
 	@Path("/buscalistaBairro")
-	public void buscalistaBairro(String uf, String municipio) {
-		List<String> bairro = enderecoService.obterBairrosPDVSemRoteirizacao(uf, municipio);
-		result.use(Results.json()).from(bairro, "result").serialize();
+	public void buscalistaBairro(String uf, String municipio, boolean boxEspecial) {
+		List<String> bairros = new ArrayList<String>();
+		if(!boxEspecial) {
+			bairros = enderecoService.obterBairrosPDVSemRoteirizacao(uf, municipio);
+		} else {
+			bairros = enderecoService.obterBairrosPDVBoxEspecial(uf, municipio);
+		}	
+		result.use(Results.json()).from(bairros, "result").serialize();
 	}
 	
 	
@@ -916,7 +932,7 @@ public class RoteirizacaoController extends BaseController {
 	@Post
 	@Path("/obterPdvsDisponiveis")
 	public void obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, 
-			String cep, boolean pesquisaPorCota, Long boxID ,String sortname, String sortorder ){
+			String cep, boolean pesquisaPorCota, Long boxID, String sortname, String sortorder ){
         
 		List<PdvRoteirizacaoDTO> lista = 
 			this.roteirizacaoService.obterPdvsDisponiveis(numCota, municipio, uf, bairro, cep, pesquisaPorCota, boxID);

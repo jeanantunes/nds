@@ -37,7 +37,7 @@
 	<br/>
 
 
-	<form action="/estoque/visaoEstoque" id="pesquisarVisaoEstoqueForm">
+	<form action="${pageContext.request.contextPath}/estoque/visaoEstoque" id="pesquisarVisaoEstoqueForm" method="post">
 	<input type="hidden" name="filtro.tipoEstoque" id="visaoEstoque_filtro_tipoEstoque"/>
 	<input type="hidden" name="filtro.tipoEstoqueSelecionado" id="visaoEstoque_filtro_tipoEstoqueSelecionado"/>
 	
@@ -114,7 +114,6 @@
 			<fieldset style="width:870px!important;">
 	        	<legend>Transfer&ecirc;ncia entre Estoques</legend>
 	        	<table class="visaoEstoqueTransferenciaGrid"></table>
-	        	<span class="bt_sellAll" style="float:right;"><label for="sel">Selecionar Todos</label><input type="checkbox" id="visaoEstoqueCheckSelecionarTodos" name="Todos" onclick="visaoEstoqueController.checkAll(this);" style="float:left; margin-right:40px;"/></span>
 			</fieldset>
 		</div>
 	</form>

@@ -140,13 +140,37 @@ public class GeracaoNotaEnvioController extends BaseController {
 		if(listaIdFornecedores==null || listaIdFornecedores.isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum fornecedor foi selecionado.");
 		
+		
+		FiltroConsultaNotaEnvioDTO filtroCotaSemRoteirizacao = 
+				this.setFiltroNotaEnvioSessao(intervaloBoxDe, intervaloBoxAte, intervaloCotaDe, 
+						intervaloCotaAte, intervaloMovimentoDe, intervaloMovimentoAte, dataEmissao, 
+						listaIdFornecedores, idRoteiro, idRota, exibirNotasEnvio, sortname, sortorder, 0, 0);
+		
+		List<ConsultaNotaEnvioDTO> listaCotaExemplaresVerificacaoCotaSemRoteirizacao = this.geracaoNotaEnvioService.busca(filtroCotaSemRoteirizacao);
+		
+		String listaDeCotasSemRoteirizacao = "";
+		for(ConsultaNotaEnvioDTO cotaExemplar : listaCotaExemplaresVerificacaoCotaSemRoteirizacao) {
+			
+			String cotaString = cotaExemplar.getNumeroCota() + " - " + cotaExemplar.getNomeCota();
+			
+			if(cotaExemplar.getBox() == null && ! listaDeCotasSemRoteirizacao.contains(cotaString)) {
+				listaDeCotasSemRoteirizacao = listaDeCotasSemRoteirizacao + cotaString + "<br />";
+			}
+		}
+		
+		if(! listaDeCotasSemRoteirizacao.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "<p>As seguintes cotas não tem roteirização:</p><p> " + listaDeCotasSemRoteirizacao + "</p>");
+		}
+		
+		filtroCotaSemRoteirizacao = null;
+		listaCotaExemplaresVerificacaoCotaSemRoteirizacao = null;
+		
 		FiltroConsultaNotaEnvioDTO filtro = 
 				this.setFiltroNotaEnvioSessao(intervaloBoxDe, intervaloBoxAte, intervaloCotaDe, 
 						intervaloCotaAte, intervaloMovimentoDe, intervaloMovimentoAte, dataEmissao, 
 						listaIdFornecedores, idRoteiro, idRota, exibirNotasEnvio, sortname, sortorder, rp, page);
 		
 		List<ConsultaNotaEnvioDTO> listaCotaExemplares = this.geracaoNotaEnvioService.busca(filtro);
-		
 		Integer qtdResult = geracaoNotaEnvioService.buscaCotasNotasDeEnvioQtd(filtro);
 		
 		if (listaCotaExemplares == null || listaCotaExemplares.isEmpty()){

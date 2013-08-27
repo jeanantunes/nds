@@ -64,23 +64,23 @@ public class ApplicationContextListener implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
 		
-		try {
-			
-			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
-			
-//			this.agendarIntegracaoOperacionalDistribuidor(scheduler);
-//			this.agendaExeclusaoAjusteReparte(scheduler);
-//			this.agendarExclusaoDeEstudos(scheduler);
-//			this.agendarGeracaoRankings(scheduler);
-			
-			scheduler.start();
-			
-		} catch (SchedulerException e) {
-			
-			logger.fatal("Falha ao inicializar agendador do Quartz", e);
-
-			throw new RuntimeException(e);
-		}
+//		try {
+//			
+//			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+//			
+////			this.agendarIntegracaoOperacionalDistribuidor(scheduler);
+////			this.agendaExeclusaoAjusteReparte(scheduler);
+////			this.agendarExclusaoDeEstudos(scheduler);
+////			this.agendarGeracaoRankings(scheduler);
+//			
+//			scheduler.start();
+//			
+//		} catch (SchedulerException e) {
+//			
+//			logger.fatal("Falha ao inicializar agendador do Quartz", e);
+//
+//			throw new RuntimeException(e);
+//		}
 
 	}
 

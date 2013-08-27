@@ -655,10 +655,10 @@ var roteirizacao = $.extend(true, {
 
                     var id = value.cell.id;
                     var nome = value.cell.nome;
-                    var selecione = '<input type="radio" value="' + id +'" name="boxRadio" ';
+                    var selecione = '<input type="radio" value="' + id +'" name="boxRadio" id="radioBox'+nome+'" ';
                     selecione += 'onclick="roteirizacao.boxSelecionadoListener(\'' +  id  + '\',\'' + nome + '\');"';
                     if (id == roteirizacao.idBox) {
-                        selecione += 'checked';
+                        selecione += 'checked="checked"';
                     }
                     selecione += '/>';
                     value.cell.selecione = selecione;
@@ -1305,7 +1305,11 @@ var roteirizacao = $.extend(true, {
         $("#cotaPesquisaPdv", roteirizacao.workspace).justInput(/[0-9]/);
         $("#nomeCotaPesquisaPdv", roteirizacao.workspace).val('');
 
-        $.postJSON(contextPath + '/cadastro/roteirizacao/iniciaTelaCotas',null,
+        var params = {};
+        if($('#radioBoxEspecial').attr('checked') == 'checked')
+        	params = [{name:'boxEspecial', value: true}];
+        
+        $.postJSON(contextPath + '/cadastro/roteirizacao/iniciaTelaCotas', params,
             function(result) {
 
                 roteirizacao.populaComboUf(result);
@@ -1343,11 +1347,14 @@ var roteirizacao = $.extend(true, {
     },
 
     buscalistaMunicipio : function () {
+    	
+    	params = [{name:'uf', value: $('#comboUf', roteirizacao.workspace).val()}];
+    	if($('#radioBoxEspecial').attr('checked') == 'checked') {
+    		params.push({name:'boxEspecial', value: true});
+    	}    		
+    		
         $.postJSON(contextPath + '/cadastro/roteirizacao/buscalistaMunicipio',
-            {
-                'uf' :$('#comboUf', roteirizacao.workspace).val()
-            }
-            ,
+            params,
             function(result) {
                 roteirizacao.populaMunicipio(result);
             },
@@ -1358,12 +1365,17 @@ var roteirizacao = $.extend(true, {
     },
 
     buscalistaBairro : function () {
+    	
+    	params = [
+    	          	{name:'uf', value: $('#comboUf', roteirizacao.workspace).val()},
+    	          	{name:'municipio', value: $('#comboMunicipio', roteirizacao.workspace).val()}
+    	         ];
+    	if($('#radioBoxEspecial').attr('checked') == 'checked') {
+    		params.push({name:'boxEspecial', value: true});
+    	}   
+    	
         $.postJSON(contextPath + '/cadastro/roteirizacao/buscalistaBairro',
-            {
-                'uf' :$('#comboUf', roteirizacao.workspace).val(),
-                'municipio' :$('#comboMunicipio', roteirizacao.workspace).val()
-            }
-            ,
+        	params,
             function(result) {
                 roteirizacao.populaBairro(result);
             },
@@ -2335,6 +2347,7 @@ var roteirizacao = $.extend(true, {
         roteirizacao.definirTipoEdicao(TipoEdicao.NOVO);
         roteirizacao.prepararPopupRoteirizacao();
         roteirizacao.modificada = false;
+        $('#selecionarTodosPdv').attr('checked', false);
         
     },
 

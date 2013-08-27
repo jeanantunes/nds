@@ -25,7 +25,7 @@
 		<property name="username" value="${testDataSourceUsername}" />
 		<property name="password" value="${testDataSourcePassword}" />
 		 -->
-		<property name="url" value="jdbc:mysql://localhost:3306/nds-client-test" />
+		<property name="url" value="jdbc:mysql://localhost:3306/nds-client" />
 		<property name="username" value="root" />
 		<property name="password" value="root" />
     </bean> 

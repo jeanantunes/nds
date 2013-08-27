@@ -613,6 +613,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		for(ConferenciaEncalheDTO conferencia : listaConferenciaEncalheContingencia) {
 			long id = (-1 * (idInicial++));
 			conferencia.setIdConferenciaEncalhe(new Long(id));
+			conferencia.setDia(obterQtdeDiaAposDataRecolhimentoDistribuidor(conferencia.getDataRecolhimento()));
 		}
 		
 		return listaConferenciaEncalheContingencia;
@@ -720,7 +721,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		List<ConferenciaEncalheDTO> listaConferenciaEncalheDTO = null;
 		
-		if(controleConferenciaEncalheCota!=null) {
+		if(controleConferenciaEncalheCota != null) {
 			
 			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(controleConferenciaEncalheCota.getId());
 			

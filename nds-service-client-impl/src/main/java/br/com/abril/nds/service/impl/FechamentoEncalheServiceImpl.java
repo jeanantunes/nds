@@ -49,8 +49,6 @@ import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalheBox;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
-import br.com.abril.nds.model.estoque.LancamentoDiferenca;
-import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -1192,10 +1190,18 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Override
 	@Transactional(readOnly=true)
 	public Boolean existeFechamentoEncalheDetalhado(FiltroFechamentoEncalheDTO filtro) {
-		List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro.getDataEncalhe());
-		if (listaFechamento == null || listaFechamento.isEmpty() ){
+		
+		List<FechamentoEncalhe> listaFechamento = 
+			this.fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro.getDataEncalhe());
+		
+		if (listaFechamento == null 
+				|| listaFechamento.isEmpty() ){
+			
 			return Boolean.FALSE;
-		} else if (listaFechamento.get(0).getQuantidade() == null ){
+			
+		} else if (listaFechamento.get(0).getListFechamentoEncalheBox() != null
+						&& !listaFechamento.get(0).getListFechamentoEncalheBox().isEmpty()) {
+			
 			return Boolean.TRUE;
 		}
 		

@@ -38,6 +38,7 @@ import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.EnderecoAssociacaoDTO;
 import br.com.abril.nds.dto.HistoricoVendaPopUpCotaDto;
 import br.com.abril.nds.dto.MunicipioDTO;
+import br.com.abril.nds.dto.ProdutoAbastecimentoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.ProdutoValorDTO;
 import br.com.abril.nds.dto.RegistroCurvaABCCotaDTO;
@@ -45,6 +46,7 @@ import br.com.abril.nds.dto.filtro.FiltroChamadaAntecipadaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
@@ -1672,6 +1674,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			sql.append( " select lancamento_.STATUS as status, "
 				+ "	        cota_.ID as idCota, "
 				+ "	        cota_.NUMERO_COTA as numeroCota, "
+				+ "	        cota_.BOX_ID as box, "
 				+ "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
 				+ "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
 				+ "	        SUM(mec.QTDE) as exemplares, "
@@ -1785,14 +1788,15 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	}
 	
 	
-	private void montarQueryCotasComNotasEnvioEmitidas(FiltroConsultaNotaEnvioDTO filtro, StringBuilder sql, boolean isCount) {
 		
+	private void montarQueryCotasComNotasEnvioEmitidas(FiltroConsultaNotaEnvioDTO filtro, StringBuilder sql, boolean isCount) {
 		if(isCount) {
 			sql.append( " select cota_.ID ");
 		} else {
 			sql.append( " select lancamento_.STATUS as status,  "
 			+ "	        cota_.ID as idCota, "
 			+ "	        cota_.NUMERO_COTA as numeroCota, "
+			+ "	        cota_.BOX_ID as box, "
 			+ "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
 			+ "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
 			+ "	        SUM(coalesce(nei.reparte, 0)) as exemplares, "
@@ -1902,6 +1906,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			sql.append( " select lancamento_.STATUS as status,  "
 				+ "	        cota_.ID as idCota, "
 				+ "	        cota_.NUMERO_COTA as numeroCota, "
+				+ "	        cota_.BOX_ID as box, "
 				+ "	        coalesce(pessoa_cota_.nome,pessoa_cota_.razao_social) as nomeCota,  "
 				+ "	        cota_.SITUACAO_CADASTRO as situacaoCadastro, "
 				+ "	        SUM(ec_.QTDE_EFETIVA) as exemplares, "
@@ -2934,6 +2939,49 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProdutoAbastecimentoDTO> obterCotaPorProdutoEdicaoData(FiltroMapaAbastecimentoDTO filtro) {
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select distinct estudoCota.cota as cota");
+				
+		hql.append(" from EstudoCota estudoCota ");
+		hql.append(" join estudoCota.estudo estudo ");
+		
+		hql.append(" join estudoCota.cota cota ");
+		hql.append(" where estudo.dataLancamento in ( ");
+		hql.append(" select lancamento.dataLancamentoPrevista from Lancamento lancamento ");
+		hql.append(" join lancamento.produtoEdicao produtoEdicao ");
+		hql.append(" join produtoEdicao.produto produto ");
+		hql.append(" where ");
+		
+		for (int i = 0; i < filtro.getCodigosProduto().size(); i++ ) {
+			hql.append(" produto.codigo = :codigoProduto_" + i + " and ");
+		}
+		hql.append(" produtoEdicao.numeroEdicao = :numeroEdicao and ");
+		hql.append(" ( lancamento.status = :balanceado or lancamento.status = :expedido ) and ");
+		hql.append(" lancamento.dataLancamentoPrevista = :dataPrevista ");
+		
+		hql.append(" )");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		for(int i = 0; i < filtro.getCodigosProduto().size(); i++ ) {
+			query.setParameter("codigoProduto_" + i, filtro.getCodigosProduto().get(i));
+		}
+		query.setParameter("numeroEdicao", filtro.getEdicaoProduto());
+		query.setParameter("balanceado", StatusLancamento.BALANCEADO);
+		query.setParameter("expedido", StatusLancamento.EXPEDIDO);
+		query.setParameter("dataPrevista", filtro.getDataDate());
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoAbastecimentoDTO.class));
+		
+		return query.list();
+		
+	}
+	
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<CotaDTO> obterCotasSemRoteirizacao(Intervalo<Integer> intervaloCota, Intervalo<Date> intervaloDataLancamento,
