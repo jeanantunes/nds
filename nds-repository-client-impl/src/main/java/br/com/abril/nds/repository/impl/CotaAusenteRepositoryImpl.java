@@ -217,13 +217,7 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		hql.append(" produtoEdicao.id as idProdutoEdicao, ");
 		hql.append(" produtoEdicao.numeroEdicao as numeroEdicao, ");
 		hql.append(" sum(movimentosEstoqueCota.qtde) as reparte, ");
-		hql.append(" estoqueProduto.qtdeSuplementar + ");
-		hql.append(" (select coalesce(sum(rateioCotaAusente.qtde), 0) ");
-		hql.append(" from RateioCotaAusente rateioCotaAusente ");
-		hql.append(" inner join rateioCotaAusente.cotaAusente cotaAusenteSub ");
-		hql.append(" where cotaAusente.id = cotaAusenteSub.id ");
-		hql.append(" and rateioCotaAusente.produtoEdicao = estoqueProduto.produtoEdicao) ");
-		hql.append(" as quantidadeDisponivel ");
+		hql.append(" estoqueProduto.qtdeSuplementar as quantidadeDisponivel ");
 		hql.append(" from CotaAusente cotaAusente ");
 		hql.append(" inner join cotaAusente.movimentosEstoqueCota movimentosEstoqueCota ");
 		hql.append(" inner join movimentosEstoqueCota.produtoEdicao produtoEdicao ");
