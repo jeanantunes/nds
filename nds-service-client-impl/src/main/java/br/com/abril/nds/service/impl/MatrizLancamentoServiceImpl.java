@@ -129,7 +129,12 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				continue;
 			}
 			
+			Integer sequenciaMatriz =
+				this.lancamentoRepository.obterProximaSequenciaMatrizPorData(dataConfirmada);
+			
 			for (ProdutoLancamentoDTO produtoLancamento : listaProdutoLancamentoDTO) {
+				
+				produtoLancamento.setSequenciaMatriz(sequenciaMatriz++);
 				
 				Long idLancamento = produtoLancamento.getIdLancamento();
 				
@@ -486,6 +491,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		lancamento.setDataLancamentoDistribuidor(novaData);
 		lancamento.setStatus(statusLancamento);
 		lancamento.setDataStatus(new Date());
+		lancamento.setSequenciaMatriz(produtoLancamento.getSequenciaMatriz());
 	}
 
 	private void gerarHistoricoLancamento(Usuario usuario, Lancamento lancamento) {

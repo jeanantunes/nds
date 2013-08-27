@@ -219,7 +219,10 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 */
 	List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorBox(
 			FiltroMapaAbastecimentoDTO filtro);
-
+	
+	List<ProdutoAbastecimentoDTO> obterMapaAbastecimentoPorProdutoBoxRota(
+		FiltroMapaAbastecimentoDTO filtro);
+	
 	/**
 	 * Obtém dados do Mapa de Abastecimento por Rota
 	 * 

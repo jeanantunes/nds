@@ -31,9 +31,11 @@ import br.com.abril.nds.repository.ExpedicaoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -61,13 +63,19 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
+	@Autowired
+	private CotaService cotaService;
+	
 	@Override
 	@Transactional
 	public List<LancamentoNaoExpedidoDTO> obterLancamentosNaoExpedidos(PaginacaoVO paginacaoVO, Date data, Long idFornecedor, Boolean estudo) {
 		
+		Intervalo<Date> intervaloDataLancamento = new Intervalo<Date>(data, data);
+		
+		this.cotaService.verificarCotasSemRoteirizacao(null, intervaloDataLancamento, null);
+		
 		List<Lancamento> lancamentos = lancamentoRepository.obterLancamentosNaoExpedidos(
 				paginacaoVO, data, idFornecedor, estudo);
-		
 		
 		List<LancamentoNaoExpedidoDTO> dtos = new ArrayList<LancamentoNaoExpedidoDTO>();
 		

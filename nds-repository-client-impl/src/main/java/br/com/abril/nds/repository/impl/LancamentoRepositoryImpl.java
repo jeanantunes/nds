@@ -1997,4 +1997,24 @@ public class LancamentoRepositoryImpl extends
 		
 		return (Boolean) query.uniqueResult();
 	}
+	
+	public Integer obterProximaSequenciaMatrizPorData(Date dataLancamento) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select max(lancamento.sequenciaMatriz) ");
+		hql.append(" from Lancamento lancamento ");
+		hql.append(" where lancamento.dataLancamentoDistribuidor = :dataLancamento ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("dataLancamento", dataLancamento);
+		
+		Integer sequenciaMatriz = (Integer) query.uniqueResult();
+		
+		sequenciaMatriz = sequenciaMatriz != null ? sequenciaMatriz : 0;
+		
+		return ++sequenciaMatriz;
+	}
+	
 }

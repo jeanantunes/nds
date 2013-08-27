@@ -2981,4 +2981,112 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 	}
 	
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CotaDTO> obterCotasSemRoteirizacao(Intervalo<Integer> intervaloCota, Intervalo<Date> intervaloDataLancamento,
+			Intervalo<Date> intervaloDateRecolhimento) {
+		
+		StringBuilder hql = new StringBuilder("select c.numeroCota as numeroCota, ");
+		hql.append(" coalesce(pessoa.nome, pessoa.razaoSocial, pessoa.nomeFantasia) as nomePessoa ")
+		   .append(" from Cota c ")
+		   .append(" join c.pessoa pessoa ");
+		
+		if (intervaloDataLancamento != null){
+			hql.append(" join c.estudoCotas ec ")
+			   .append(" join ec.estudo estudo ")
+			   .append(" join estudo.lancamentos lancamento ");
+		}
+		
+		if (intervaloDateRecolhimento != null){
+			hql.append(" join c.chamadaEncalheCotas cec ")
+			   .append(" join cec.chamadaEncalhe ce ");
+		}
+		
+		hql.append(" where c.numeroCota not in ( ")
+		   .append(" select cota.numeroCota from Roteirizacao r ")
+		   .append(" join r.roteiros roteiro ")
+		   .append(" join roteiro.rotas rota ")
+		   .append(" join rota.rotaPDVs rotaPDV ")
+		   .append(" join rotaPDV.pdv pdv ")
+		   .append(" join pdv.cota cota ");
+		
+		if (intervaloDataLancamento != null){
+			hql.append(" join cota.estudoCotas ecIn ")
+			   .append(" join ecIn.estudo estudoIn ")
+			   .append(" join estudoIn.lancamentos lancamentoIn ");
+		}
+		
+		if (intervaloDateRecolhimento != null){
+			hql.append(" join cota.chamadaEncalheCotas cecIn ")
+			   .append(" join cecIn.chamadaEncalhe ceIn ");
+		}
+		
+		boolean indAnd = false;
+		if (intervaloCota != null && intervaloCota.getAte() != null && intervaloCota.getDe() != null){
+			hql.append(" where cota.numeroCota between :de and :ate ");
+			indAnd = true;
+		}
+		
+		if (intervaloDataLancamento != null){
+			if (indAnd){
+				hql.append(" and ");
+			} else {
+				hql.append(" where ");
+				indAnd = true;
+			}
+			
+			hql.append(" lancamentoIn.dataLancamentoDistribuidor between :dataLancamentoDe and :dataLancamentoAte ");
+		}
+		
+		if (intervaloDateRecolhimento != null){
+			if (indAnd){
+				hql.append(" and ");
+			} else {
+				hql.append(" where ");
+				indAnd = true;
+			}
+			
+			hql.append(" ceIn.dataRecolhimento between :dataRecolhimentoDe and :dataRecolhimentoAte ");
+		}
+		
+		hql.append(")");
+		
+		if (intervaloCota != null && intervaloCota.getAte() != null && intervaloCota.getDe() != null){
+			hql.append(" and c.numeroCota between :de and :ate ");
+		}
+		
+		if (intervaloDataLancamento != null){
+			
+			hql.append(" and lancamento.dataLancamentoDistribuidor between :dataLancamentoDe and :dataLancamentoAte ");
+		}
+		
+		if (intervaloDateRecolhimento != null){
+			
+			hql.append(" and ce.dataRecolhimento between :dataRecolhimentoDe and :dataRecolhimentoAte ");
+		}
+		
+		hql.append(" group by c.numeroCota order by c.numeroCota ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if (intervaloCota != null && intervaloCota.getAte() != null && intervaloCota.getDe() != null){
+			query.setParameter("de", intervaloCota.getDe());
+			query.setParameter("ate", intervaloCota.getAte());
+		}
+		
+		if (intervaloDataLancamento != null){
+			query.setParameter("dataLancamentoDe", intervaloDataLancamento.getDe());
+			query.setParameter("dataLancamentoAte", intervaloDataLancamento.getAte());
+		}
+		
+		if (intervaloDateRecolhimento != null){
+			query.setParameter("dataRecolhimentoDe", intervaloDateRecolhimento.getDe());
+			query.setParameter("dataRecolhimentoAte", intervaloDateRecolhimento.getAte());
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
+		
+		return query.list();
+	}
 }

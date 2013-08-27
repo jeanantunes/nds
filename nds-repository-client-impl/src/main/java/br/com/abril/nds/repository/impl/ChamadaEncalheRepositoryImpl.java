@@ -190,8 +190,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		sql.append(" group by cota3_.ID  ");
 		
 		gerarOrdenacao(filtro, sql);		
-				
-		@SuppressWarnings("rawtypes")
+		
 		RowMapper cotaRowMapper = new RowMapper() {
 
 			public Object mapRow(ResultSet rs, int arg1) throws SQLException {
@@ -219,7 +218,6 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		return lista;
 	}
 
-	
 	private void gerarFromWhereSQL(FiltroEmissaoCE filtro, StringBuilder sql, ArrayList<Object> param) {
 
 		sql.append(" from ");
@@ -247,25 +245,23 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		sql.append(" inner join ");
 		sql.append(" PESSOA pessoa4_ ");
 		sql.append(" on cota3_.PESSOA_ID=pessoa4_.ID ");
-		sql.append(" left join ");
+		sql.append(" inner join ");
 		sql.append(" BOX box9_ ");
 		sql.append(" on cota3_.BOX_ID=box9_.ID ");
-		sql.append(" left join ");
+		sql.append(" inner join ");
 		sql.append(" PDV pdvs10_ ");
 		sql.append(" on cota3_.ID=pdvs10_.COTA_ID ");
-		sql.append(" left join ");
+		sql.append(" inner join ");
 		sql.append(" ROTA_PDV rotas11_ ");
 		sql.append(" on pdvs10_.ID=rotas11_.PDV_ID ");
-		sql.append(" left join ");
+		sql.append(" inner join ");
 		sql.append(" ROTA rota12_ ");
 		sql.append(" on rotas11_.ROTA_ID=rota12_.ID ");
-		sql.append(" left join ");
-		sql.append(" ROTEIRO roteiro13_ ");				//cross
-		sql.append(" on rota12_.ROTEIRO_ID=roteiro13_.ID  ");
-//		sql.append(" join ");
-//		sql.append(" BOX box1_ ");
-//		sql.append(" where ");
-//		sql.append(" cota3_.BOX_ID=box9_.ID "); 
+		sql.append(" inner join ");
+		sql.append(" ROTEIRO roteiro13_ ");
+		sql.append(" on rota12_.ROTEIRO_ID=roteiro13_.ID ");
+		sql.append(" where ");
+		sql.append(" cel.CHAMADA_ENCALHE_ID=chamadaenc2_.ID "); 
         
 		setParamsFilterSqlPostergado(filtro, sql, param);
 	}
