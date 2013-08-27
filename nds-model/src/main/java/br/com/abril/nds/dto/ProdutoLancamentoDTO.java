@@ -76,6 +76,8 @@ public class ProdutoLancamentoDTO implements Serializable {
   	private boolean alteradoInteface;
   	
   	private BigInteger distribuicao;
+  	
+  	private Integer sequenciaMatriz;
 	
 	/**
 	 * Construtor padrão.
@@ -475,6 +477,20 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 */
 	public void setDistribuicao(BigInteger distribuicao) {
 		this.distribuicao = distribuicao;
+	}
+
+	/**
+	 * @return the sequenciaMatriz
+	 */
+	public Integer getSequenciaMatriz() {
+		return sequenciaMatriz;
+	}
+
+	/**
+	 * @param sequenciaMatriz the sequenciaMatriz to set
+	 */
+	public void setSequenciaMatriz(Integer sequenciaMatriz) {
+		this.sequenciaMatriz = sequenciaMatriz;
 	}
 
 	/* (non-Javadoc)
