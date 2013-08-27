@@ -932,7 +932,7 @@ public class RoteirizacaoController extends BaseController {
 	@Post
 	@Path("/obterPdvsDisponiveis")
 	public void obterPdvsDisponiveis(Integer numCota, String municipio, String uf, String bairro, 
-			String cep, boolean pesquisaPorCota, Long boxID ,String sortname, String sortorder ){
+			String cep, boolean pesquisaPorCota, Long boxID, String sortname, String sortorder ){
         
 		List<PdvRoteirizacaoDTO> lista = 
 			this.roteirizacaoService.obterPdvsDisponiveis(numCota, municipio, uf, bairro, cep, pesquisaPorCota, boxID);

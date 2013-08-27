@@ -806,7 +806,7 @@ public class EnderecoController extends BaseController {
 		
 		EnderecoDTO endereco = (enderecoAssociacaoAtual != null) ? enderecoAssociacaoAtual.getEndereco() : null;
 		
-		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecosSalvar) {
+		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecosExibir) {
 			if(!enderecoAssociacao.getEndereco().getId().equals(endereco.getId())
 					|| !enderecoAssociacao.getEndereco().getLogradouro().equals(endereco.getLogradouro())
 					|| !enderecoAssociacao.getEndereco().getNumero().equals(endereco.getNumero())) {
@@ -823,7 +823,7 @@ public class EnderecoController extends BaseController {
 								&& enderecoAssociacao.getEndereco().getId().equals(endereco.getId())) 
 						hasPrincipal = false;
 				} else {
-					hasPrincipal = false; //!hasPrincipal ? enderecoAssociacao.isEnderecoPrincipal() : hasPrincipal;	
+					hasPrincipal = false;	
 				}
 				
 			}

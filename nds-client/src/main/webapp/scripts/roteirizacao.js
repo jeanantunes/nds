@@ -2347,6 +2347,7 @@ var roteirizacao = $.extend(true, {
         roteirizacao.definirTipoEdicao(TipoEdicao.NOVO);
         roteirizacao.prepararPopupRoteirizacao();
         roteirizacao.modificada = false;
+        $('#selecionarTodosPdv').attr('checked', false);
         
     },
 
