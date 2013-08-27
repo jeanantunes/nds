@@ -181,7 +181,7 @@ function mostraIntervalo(){
             <tr>
            	  <td width="30" >Cota:</td>
                 <td width="91">
-                <input type="text" name="codigoCota" id="codigoCota" style="width:80px;" onchange="fixacaoReparteController.autoCompleteNumeroCota('#codigoCota','#nomeCota');"/></td>
+                <input type="text" name="codigoCota" id="codigoCota" style="width:80px;" onchange="pesquisaCota.pesquisarPorNumeroCota('#codigoCota','#nomeCota',false,undefined,undefined)"/></td>
                 <td width="37" >Nome:</td>
                 <td width="470"><input type="text" name="nomeCota" id="nomeCota" style="width:200px;"/></td>
               <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="fixacaoReparteController.pesquisarPorCota();">Pesquisar</a></span></td>
@@ -236,7 +236,7 @@ function mostraIntervalo(){
 		    <table width="588" border="0" cellpadding="2" cellspacing="1" class="filtro">
 		        <tr>
 		          <td width="41" id="label1">Cota:</td>
-		          <td width="66"><input type="text" name="codigoModal" id="codigoModal" style="width:60px;" onchange="pesquisaCota.pesquisarPorNumeroCota('#codigoModal','#nomeModal');"/></td>
+		          <td width="66"><input type="text" name="codigoModal" id="codigoModal" style="width:60px;"/></td>
 		          <td width="41" id="label2">Nome:</td>
 		          <td width="119">
 		          	<input type="text" name="nomeModal" id="nomeModal" style="width:110px;" onkeyup="fixacaoReparteController.autoCompleteNomeModal();"/>

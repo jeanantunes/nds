@@ -308,10 +308,11 @@ $(function(){
 			</table>
 			
 			<table id="tableSegmentosEditar" style="display: none;">
+				
 				<tr>
 		          <td width="80"><strong>Segmentos:</strong></td>
 					
-					<td width="60">Segmento 1: </td>
+					<td width="60" id="colSegmento1Editar">Segmento 1: </td>
 					<td width="40">
 						<input name="exibirSegmento1" id="exibirSegmento1Editar" type="text" style="width: 30px;" align="middle"/>
 		            <td width="25">

@@ -758,7 +758,10 @@ var fixacaoReparteController = $.extend(true, {
 		
 		if(fixacaoReparteController.validarFiltroPrincipal(codigoCota, nomeCota)){
 
-			fixacaoReparteController.escondeGridCota();
+//			fixacaoReparteController.escondeGridCota();
+			// fazer exibir grid cota
+			
+			$('#fixacaoReparte_porCota').show();
 			
 			$(".fixacaoCotaGrid", fixacaoReparteController.workspace).flexOptions({
 				url: contextPath + "/distribuicao/fixacaoReparte/pesquisarPorCota",
@@ -769,6 +772,7 @@ var fixacaoReparteController = $.extend(true, {
 			$(".fixacaoCotaGrid", fixacaoReparteController.workspace).flexReload();
 			
 		}else{
+			fixacaoReparteController.escondeGridCota();
 			exibirMensagem("WARNING", ["Por favor preencha os campos necessários!"]);
 		}
 				
@@ -964,7 +968,7 @@ var fixacaoReparteController = $.extend(true, {
 			$('#label1').text('Cota');
 			$('#label2').text('Nome');
 			$('#selectModal').hide();
-			$('#codigoModal').attr('onchange','pesquisaCota.pesquisarPorNumeroCota("#codigoModal","#nomeModal",false,undefined,undefined )');
+			$('#codigoModal').attr('onchange', 'fixacaoReparteController.autoCompleteNumeroCota("#codigoModal","#nomeModal")');
 			$('#pesquisaModal').attr('onClick','fixacaoReparteController.pesquisaHistoricoPorCota();');
 			$('#spanCodigoProduto').text($('#codigoProduto').val());
 			$('#spanNomeProduto').text($('#nomeProduto').val());
@@ -1021,15 +1025,31 @@ var fixacaoReparteController = $.extend(true, {
 
 		//Função que realiza a pesquisa que preenche os dados da grid historico produto
 		pesquisaHistoricoPorCota:function(){
-
+			
+			$(".historicoGrid").show();
+			
 			if(fixacaoReparteController.validarFiltroPrincipal(codigoModal, nomeModal)){
+				
+				$.postJSON(contextPath + '/distribuicao/fixacaoReparte/validarTipoCota', {numeroCota:$(codigoModal).val()},
+						function(result){
 
-				$(".historicoGrid").flexOptions({
-					url: contextPath + "/distribuicao/fixacaoReparte/carregarGridHistoricoCota",
-					dataType : 'json',
-					params: fixacaoReparteController.getDadosCotaHistorico()
-				});
-				$(".historicoGrid").flexReload();
+							$(".historicoGrid").flexOptions({
+								url: contextPath + "/distribuicao/fixacaoReparte/carregarGridHistoricoCota",
+								dataType : 'json',
+								params: fixacaoReparteController.getDadosCotaHistorico()
+							});
+							$(".historicoGrid").flexReload();
+							
+						},
+						function(result){
+
+							$('#codigoModal').val('');
+							$('#nomeModal').val('');
+							$("#edicaoDestaque").text("");
+							$("#statusDestaque").text("");
+							
+							$(".historicoGrid").hide();
+						});
 				
 			}else{
 				exibirMensagem("WARNING", ["Por favor preencha os campos necessários!"]);
@@ -1173,15 +1193,26 @@ var fixacaoReparteController = $.extend(true, {
 		},
 		
 		autoCompleteNumeroCota:function(codigoCota, nomeCota){
-			$('#fixacaoReparte_porCota').hide();
-			$('#fixacaoReparte_fixacaoProduto').hide();
 			
 			if($(codigoCota).val() != ""){
 				
-				pesquisaCota.pesquisarPorNumeroCota(codigoCota,nomeCota,false,undefined,undefined);
+				pesquisaCota.pesquisarPorNumeroCota(codigoCota,nomeCota,false,
 
-				$.postJSON(contextPath + '/distribuicao/fixacaoReparte/validarTipoCota', {numeroCota:$(codigoCota).val()});
-				
+				function(result){
+					$.postJSON(contextPath + '/distribuicao/fixacaoReparte/validarTipoCota', {numeroCota:$(codigoCota).val()},
+							function(result){
+						
+					},
+					function(result){
+						$('#codigoModal').val('');
+						$('#nomeModal').val('');
+						$("#edicaoDestaque").text("");
+						$("#statusDestaque").text("");
+						$(".historicoGrid").hide();
+					});
+				}		
+				,undefined);
+
 			}
 		},
 		
@@ -1262,7 +1293,7 @@ var fixacaoReparteController = $.extend(true, {
 			}
 		}
 		
-	}
-		
+	},
+	
 	}, BaseController);
 //@ sourceURL=fixacaoReparte.js

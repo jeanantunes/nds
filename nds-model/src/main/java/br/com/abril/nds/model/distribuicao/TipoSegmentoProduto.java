@@ -89,6 +89,16 @@ public class TipoSegmentoProduto implements Serializable {
 			return false;
 		return true;
 	}
+
+	public List<Produto> getProdutos() {
+		return produtos;
+	}
+
+	public void setProdutos(List<Produto> produtos) {
+		this.produtos = produtos;
+	}
+	
+	
 	
 	
 }

@@ -2,7 +2,7 @@ package br.com.abril.nds.util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Type;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -109,8 +109,19 @@ public class ListUtils {
 		});
 	}
 	
-	
-	
+	@SuppressWarnings("all")
+	public static List getValuePathList(final String path,List list){
+		List valueList = new ArrayList();
+		
+		for (Object object : list) {
+			Object valuePath1 = Util.getValuePath(object, path);
+			valueList.add(valuePath1);
+		}
+		
+		
+		return valueList;
+		
+	}
 	
     
 }
