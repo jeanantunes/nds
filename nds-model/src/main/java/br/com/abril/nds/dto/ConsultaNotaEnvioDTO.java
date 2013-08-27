@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import br.com.abril.nds.model.cadastro.Box;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -16,6 +18,7 @@ public class ConsultaNotaEnvioDTO implements Serializable {
 
 	private static final long serialVersionUID = -4249511518029888493L;
 
+	private BigInteger box;
 	
 	private Long idCota;
 	@Export(label="Cota", alignment=Alignment.LEFT)
@@ -37,6 +40,14 @@ public class ConsultaNotaEnvioDTO implements Serializable {
 	private StatusLancamento status;
 	
 	private SituacaoCadastro situacaoCadastro;
+
+	public BigInteger getBox() {
+		return box;
+	}
+
+	public void setBox(BigInteger box) {
+		this.box = box;
+	}
 
 	/**
 	 * @return the idCota

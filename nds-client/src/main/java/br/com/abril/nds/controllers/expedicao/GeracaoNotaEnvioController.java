@@ -4,18 +4,20 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
-import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -139,13 +141,37 @@ public class GeracaoNotaEnvioController extends BaseController {
 		if(listaIdFornecedores==null || listaIdFornecedores.isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum fornecedor foi selecionado.");
 		
+		
+		FiltroConsultaNotaEnvioDTO filtroCotaSemRoteirizacao = 
+				this.setFiltroNotaEnvioSessao(intervaloBoxDe, intervaloBoxAte, intervaloCotaDe, 
+						intervaloCotaAte, intervaloMovimentoDe, intervaloMovimentoAte, dataEmissao, 
+						listaIdFornecedores, idRoteiro, idRota, exibirNotasEnvio, sortname, sortorder, 0, 0);
+		
+		List<ConsultaNotaEnvioDTO> listaCotaExemplaresVerificacaoCotaSemRoteirizacao = this.geracaoNotaEnvioService.busca(filtroCotaSemRoteirizacao);
+		
+		String listaDeCotasSemRoteirizacao = "";
+		for(ConsultaNotaEnvioDTO cotaExemplar : listaCotaExemplaresVerificacaoCotaSemRoteirizacao) {
+			
+			String cotaString = cotaExemplar.getNumeroCota() + " - " + cotaExemplar.getNomeCota();
+			
+			if(cotaExemplar.getBox() == null && ! listaDeCotasSemRoteirizacao.contains(cotaString)) {
+				listaDeCotasSemRoteirizacao = listaDeCotasSemRoteirizacao + cotaString + "<br />";
+			}
+		}
+		
+		if(! listaDeCotasSemRoteirizacao.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "<p>As seguintes cotas não tem roteirização:</p><p> " + listaDeCotasSemRoteirizacao + "</p>");
+		}
+		
+		filtroCotaSemRoteirizacao = null;
+		listaCotaExemplaresVerificacaoCotaSemRoteirizacao = null;
+		
 		FiltroConsultaNotaEnvioDTO filtro = 
 				this.setFiltroNotaEnvioSessao(intervaloBoxDe, intervaloBoxAte, intervaloCotaDe, 
 						intervaloCotaAte, intervaloMovimentoDe, intervaloMovimentoAte, dataEmissao, 
 						listaIdFornecedores, idRoteiro, idRota, exibirNotasEnvio, sortname, sortorder, rp, page);
 		
 		List<ConsultaNotaEnvioDTO> listaCotaExemplares = this.geracaoNotaEnvioService.busca(filtro);
-		
 		Integer qtdResult = geracaoNotaEnvioService.buscaCotasNotasDeEnvioQtd(filtro);
 		
 		if (listaCotaExemplares == null || listaCotaExemplares.isEmpty()){

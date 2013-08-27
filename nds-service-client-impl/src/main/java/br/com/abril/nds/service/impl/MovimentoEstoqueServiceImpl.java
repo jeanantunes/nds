@@ -169,6 +169,20 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		List<EstudoCotaDTO> listaEstudoCota = estudoCotaRepository.
 			obterEstudoCotaPorDataProdutoEdicao(dataPrevista, idProdutoEdicao);
 
+		List<String> retornoCotasSemRoteirizacao = new ArrayList<String>();
+		for(EstudoCotaDTO estudoCota : listaEstudoCota ) {
+			Cota cota = this.cotaRepository.buscarCotaPorID(estudoCota.getIdCota());
+			if(cota.getBox() == null) {
+				retornoCotasSemRoteirizacao.add(cota.getNumeroCota() + " - " + cota.getPessoa().getNome());
+			}
+		}
+		
+		if(! retornoCotasSemRoteirizacao.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "As seguintes cotas não tem roteirização: " + retornoCotasSemRoteirizacao);
+		}
+		
+		
+		
 		BigInteger total = BigInteger.ZERO;		
 
 		for (EstudoCotaDTO estudoCota : listaEstudoCota) {

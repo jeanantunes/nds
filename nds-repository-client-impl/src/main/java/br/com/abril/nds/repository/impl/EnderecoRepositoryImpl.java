@@ -40,6 +40,7 @@ import br.com.abril.nds.model.dne.Localidade;
 import br.com.abril.nds.model.dne.Logradouro;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EnderecoRepository;
+import br.com.abril.nds.util.StringUtil;
 import br.com.abril.nds.vo.EnderecoVO;
 
 /**
@@ -182,10 +183,18 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 		Criteria criteria = super.getSession().createCriteria(Localidade.class);
 
 		criteria.createAlias("unidadeFederacao", "uf");
+		
+		criteria.add(Restrictions.eq("uf.sigla", siglaUF));
+				
+		if(!StringUtil.isEmpty(nome)) {
+			criteria.add(Restrictions.ilike("nome", nome, MatchMode.ANYWHERE));
+		}
 
+		/*
 		criteria.add(Restrictions.and(Restrictions.eq("uf.sigla", siglaUF),
 									  Restrictions.ilike("nome",
 											  nome, MatchMode.ANYWHERE)));
+		 */
 
 		return criteria.list();
 	}
@@ -460,6 +469,48 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 		}
 		
 		return ret;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> obterLocalidadesPorUFPDVBoxEspecial(String uf) {
+		StringBuilder hql = new StringBuilder("select distinct(e.cidade) ");
+		hql.append(" from Cota c ")
+		   .append(" join c.pdvs pdv")
+		   .append(" join pdv.enderecos assoEndereco ")
+		   .append(" join assoEndereco.endereco e ")
+		   .append(" where e.uf = :uf ");
+		   /*.append(" where c.id not in (")
+		   .append("  select cota.id from RotaPDV rPdv ")
+		   .append("  join rPdv.pdv p ")
+		   .append("  join p.cota cota ")
+		   .append(")")
+		   .append(" and e.uf = :uf ");*/
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("uf", uf);
+
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> obterBairrosPDVBoxEspecial(String uf, String cidade) {
+		StringBuilder hql = new StringBuilder("select distinct(e.bairro) ");
+		hql.append(" from Cota c ")
+		   .append(" join c.pdvs pdv")
+		   .append(" join pdv.enderecos assoEndereco ")
+		   .append(" join assoEndereco.endereco e ")
+		   .append(" where e.uf = :uf ")
+		   .append(" and e.cidade = :cidade ")
+		   .append(" and e.bairro is not null ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("uf", uf);
+		query.setParameter("cidade", cidade);
+		
+		return query.list();
 	}
 
 }
