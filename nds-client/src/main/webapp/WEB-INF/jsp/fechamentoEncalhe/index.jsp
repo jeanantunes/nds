@@ -2,6 +2,8 @@
 <input id="permissaoColExemplDevolucao" type="hidden" value="${permissaoColExemplDevolucao}">
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/data.holder.js"></script>
 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/fechamentoEncalhe.js"></script>
 	<script language="javascript" type="text/javascript">
@@ -19,32 +21,6 @@
 				  console.log( "success" );
 			});
 		});
-		
-		
-		$('.pButton', fechamentoEncalheController.workspace).click(function(){
-			
-			
-			linhasTabela = [];
-			$('.fechamentoGrid', fechamentoEncalheController.workspace).find('tr').each(function(){
-				var codigo = $(this).children('td[abbr="codigo"]').children('div').html().toString();
-				var produtoEdicao = $(this).children('td').children('div').children('input[name=fisico]').attr("id");//Envia o id que eh setado com produtoEdicaoId
-				var fisico = $(this).children('td').children('div').children('input[name=fisico]').val().toString();
-
-				var checkbox = $(this).children('td').children('div').children('input[name=checkgroupFechamento]:checked').val() == "on" ? true : false;
-				var envioController = {
-					"codigo"  		: 	codigo,
-					"produtoEdicao" : 	produtoEdicao,
-					"fisico"		:	fisico,
-					"checkbox" 		: 	checkbox
-				};			
-				$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/enviarGridAnteriorParaSession", envioController, function() {
-					  console.log( "success" );
-				});
-			});
-			
-			$('input[name=Todos]').attr("checked", false); 
-			
-		});	 	
 	});
 	</script>
 
