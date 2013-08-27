@@ -352,13 +352,7 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 			
 			var capa= "<a onclick='caracteristicaDistribuicaoController.popup_detalhes("+row.cell.codigoProduto+ "," +row.cell.numeroEdicao +");'  href='javascript:void(0);'><img src='images/ico_detalhes.png'></a>";
 
-			row.cell.acao=capa;
-			if(row.cell.reparteString){
-				row.cell.reparteString = parseFloat(row.cell.reparteString).toFixed(2);
-			}
-			if(row.cell.vendaString){
-				row.cell.vendaString = parseFloat(row.cell.vendaString).toFixed(2);
-			}
+			row.cell.acao=capa;			
 			if(row.cell.precoCapa){
 				row.cell.precoCapa = parseFloat(row.cell.precoCapa).toFixed(2);
 			};

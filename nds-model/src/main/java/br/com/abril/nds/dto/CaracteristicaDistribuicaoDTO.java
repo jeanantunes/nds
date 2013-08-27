@@ -135,7 +135,7 @@ public class CaracteristicaDistribuicaoDTO implements Serializable{
 	public void setReparte(BigDecimal repartePraca) {
 		this.reparte = repartePraca;
 		if(repartePraca!=null){
-			this.reparteString=repartePraca.toString();
+			this.reparteString=repartePraca.setScale(0, BigDecimal.ROUND_FLOOR).toString();
 		}else{
 			this.reparteString="";
 		}
@@ -146,7 +146,7 @@ public class CaracteristicaDistribuicaoDTO implements Serializable{
 	public void setVenda(BigDecimal vendaPraca) {
 		this.venda = vendaPraca;
 		if(vendaPraca!=null){
-			this.vendaString = vendaPraca.toString();
+			this.vendaString = vendaPraca.setScale(0, BigDecimal.ROUND_FLOOR).toString();
 		}else{
 			this.vendaString="";
 		}
@@ -187,7 +187,5 @@ public class CaracteristicaDistribuicaoDTO implements Serializable{
 	public void setIdProd(BigInteger idProd) {
 		this.idProd = idProd;
 	}
-	
-	
 	
 }
