@@ -77,10 +77,5 @@ public interface FechamentoEncalheService {
 	public List<FechamentoFisicoLogicoDTO> verificarListaDaSessao(
 			List<FechamentoFisicoLogicoDTO> listaEncalheSession, FiltroFechamentoEncalheDTO filtro, String sortname, String sortorder);
 
-	List<FechamentoFisicoLogicoDTO> ajustarGrids(
-			List<FechamentoFisicoLogicoDTO> listaEncalhe,
-			List<FechamentoFisicoLogicoDTO> listaEncalheSession);
-
-	
 	Integer buscarTotalCotasAusentesSemPostergado(Date dataEncalhe, boolean isSomenteCotasSemAcao);
 }

@@ -1326,36 +1326,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	}
 
 	@Override
-	public List<FechamentoFisicoLogicoDTO> ajustarGrids(List<FechamentoFisicoLogicoDTO> listaEncalhe,
-											List<FechamentoFisicoLogicoDTO> listaDeGrid) {
-		
-		if(listaDeGrid == null || listaDeGrid.isEmpty())
-		{
-			return listaEncalhe;
-		}
-		else
-		{
-			for(FechamentoFisicoLogicoDTO linhaGrid : listaDeGrid)
-			{
-				for(FechamentoFisicoLogicoDTO encalhe : listaEncalhe)
-				{
-					if(encalhe.getCodigo().equals(linhaGrid.getCodigo()))
-					{	
-						encalhe.setReplicar(linhaGrid.getReplicar());
-						
-						if(linhaGrid.getFisico() != null)
-						{
-							encalhe.setFisico(linhaGrid.getFisico());
-						}
-					}
-				}
-			}
-			return listaEncalhe;
-		}
-	}
-
-	
-	@Override
 	public List<GridFechamentoEncalheDTO> listaEncalheTotalParaGrid(
 			List<FechamentoFisicoLogicoDTO> listaEncalheSessao) {
 		
