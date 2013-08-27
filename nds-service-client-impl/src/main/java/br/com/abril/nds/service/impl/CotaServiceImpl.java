@@ -2680,5 +2680,20 @@ public class CotaServiceImpl implements CotaService {
 		return cotaRepository.buscarCota(numero);
 	}
 	
+	@Transactional(readOnly = true)
+	@Override
+	public void verificarCotasSemRoteirizacao(Intervalo<Integer> intervaloCota){
+		
+		List<Cota> cotasSemRoteirizacao = this.cotaRepository.obterCotasSemRoteirizacao(intervaloCota);
+		
+		if (cotasSemRoteirizacao == null || !cotasSemRoteirizacao.isEmpty()){
+			
+			List<String> msgs = new ArrayList<String>();
+			for (Cota c : cotasSemRoteirizacao){
+				msgs.add("Cota sem roteirização: " + c.getNumeroCota() + " - " + c.getPessoa().getNome());
+			}
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, msgs);
+		}
+	}
 }
-

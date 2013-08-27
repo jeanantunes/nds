@@ -54,6 +54,7 @@ import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TelefoneRepository;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.GeracaoNotaEnvioService;
 import br.com.abril.nds.util.Intervalo;
@@ -97,13 +98,18 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	@Autowired
 	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 	
+	@Autowired
+	private CotaService cotaService;
+	
 	// Trava para evitar duplicidade ao gerar notas de envio por mais de um usuario simultaneamente
 	// O HashMap suporta os mais detalhes e pode ser usado futuramente para restricoes mais finas
 	private static final Map<String, Object> TRAVA_GERACAO_NE = new HashMap<>();
 
 	@Transactional
 	public List<ConsultaNotaEnvioDTO> busca(FiltroConsultaNotaEnvioDTO filtro) {
-
+		
+		this.cotaService.verificarCotasSemRoteirizacao(filtro.getIntervaloCota());
+		
 		if("EMITIDAS".equals(filtro.getExibirNotasEnvio())) {
 			return cotaRepository.obterDadosCotasComNotaEnvioEmitidas(filtro);
 		} else if("AEMITIR".equals(filtro.getExibirNotasEnvio())) {
@@ -118,6 +124,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	@Override
 	@Transactional
 	public Integer buscaCotasNotasDeEnvioQtd(FiltroConsultaNotaEnvioDTO filtro) {
+		
+		this.cotaService.verificarCotasSemRoteirizacao(filtro.getIntervaloCota());
 		
 		if("EMITIDAS".equals(filtro.getExibirNotasEnvio())) {
 			return cotaRepository.obterDadosCotasComNotaEnvioEmitidasCount(filtro);

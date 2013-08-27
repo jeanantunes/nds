@@ -190,8 +190,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		sql.append(" group by cota3_.ID  ");
 		
 		gerarOrdenacao(filtro, sql);		
-				
-		@SuppressWarnings("rawtypes")
+		
 		RowMapper cotaRowMapper = new RowMapper() {
 
 			public Object mapRow(ResultSet rs, int arg1) throws SQLException {
@@ -260,11 +259,9 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		sql.append(" on rotas11_.ROTA_ID=rota12_.ID ");
 		sql.append(" inner join ");
 		sql.append(" ROTEIRO roteiro13_ ");
-		sql.append(" on rota12_.ROTEIRO_ID=roteiro13_.ID cross ");
-		sql.append(" join ");
-		sql.append(" BOX box1_ ");
+		sql.append(" on rota12_.ROTEIRO_ID=roteiro13_.ID ");
 		sql.append(" where ");
-		sql.append(" cota3_.BOX_ID=box9_.ID "); 
+		sql.append(" cel.CHAMADA_ENCALHE_ID=chamadaenc2_.ID "); 
         
 		setParamsFilterSqlPostergado(filtro, sql, param);
 	}

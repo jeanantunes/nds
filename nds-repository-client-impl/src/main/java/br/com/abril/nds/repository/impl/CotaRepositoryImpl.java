@@ -2933,5 +2933,38 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		return query.list();
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Cota> obterCotasSemRoteirizacao(Intervalo<Integer> intervaloCota) {
+		
+		StringBuilder hql = new StringBuilder("select c from Cota c where c.numeroCota not in ( ");
+		hql.append(" select cota.numeroCota from Roteirizacao r ")
+		   .append(" join r.roteiros roteiro ")
+		   .append(" join roteiro.rotas rota ")
+		   .append(" join rota.rotaPDVs rotaPDV ")
+		   .append(" join rotaPDV.pdv pdv ")
+		   .append(" join pdv.cota cota ");
+		
+		if (intervaloCota != null && intervaloCota.getAte() != null && intervaloCota.getDe() != null){
+			hql.append(" where cota.numeroCota between :de and :ate ");
+		}
+		
+		hql.append(")");
+		
+		if (intervaloCota != null && intervaloCota.getAte() != null && intervaloCota.getDe() != null){
+			hql.append(" and c.numeroCota between :de and :ate ");
+		}
+		
+		hql.append(" order by c.numeroCota ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		if (intervaloCota != null && intervaloCota.getAte() != null && intervaloCota.getDe() != null){
+			query.setParameter("de", intervaloCota.getDe());
+			query.setParameter("ate", intervaloCota.getAte());
+		}
+		
+		return query.list();
+	}
 }

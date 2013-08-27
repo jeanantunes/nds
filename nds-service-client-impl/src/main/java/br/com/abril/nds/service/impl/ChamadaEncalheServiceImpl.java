@@ -27,6 +27,7 @@ import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.service.ChamadaEncalheService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -60,12 +61,23 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	@Autowired
 	private DistribuidorService distribuidorService;
 	
+	@Autowired
+	private CotaService cotaService;
+	
 	private static final Integer CODIGO_DINAP_INTERFACE = 9999999;
 	private static final Integer CODIGO_FC_INTERFACE = 9999998;
 	
 	@Override
 	@Transactional
 	public List<CotaEmissaoDTO> obterDadosEmissaoChamadasEncalhe(FiltroEmissaoCE filtro) {
+		
+		Intervalo<Integer> intervalo = null;
+		
+		if (filtro.getNumCotaDe() != null && filtro.getNumCotaAte() != null){
+			intervalo = new Intervalo<Integer>(filtro.getNumCotaDe(), filtro.getNumCotaAte());
+		}
+		
+		this.cotaService.verificarCotasSemRoteirizacao(intervalo);
 		
 		List<CotaEmissaoDTO> listaChamadaEncalhe = chamadaEncalheRepository.obterDadosEmissaoChamadasEncalhe(filtro);
 		
