@@ -141,12 +141,6 @@ public class FixacaoReparteController extends BaseController {
 		//remove tipo cota adicionado no autocomplete	
 		filtro.setNomeCota(PessoaUtil.removerSufixoDeTipo(filtro.getNomeCota()));
 		
-		Cota cota = cotaService.obterPorNumeroDaCota(Integer.parseInt(filtro.getCota()));
-		if(cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possivel fixar reparte para cota tipo[" +
-					TipoDistribuicaoCota.ALTERNATIVO.toString() + "].");
-		}
-		
 		List<FixacaoReparteDTO>	resultadoPesquisa = fixacaoReparteService.obterFixacoesRepartePorCota(filtro);
 		
 		if(resultadoPesquisa.isEmpty()){
@@ -167,8 +161,14 @@ public class FixacaoReparteController extends BaseController {
 		if(cota.getTipoDistribuicaoCota().equals(TipoDistribuicaoCota.ALTERNATIVO)) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não é possivel fixar reparte para cota [ "+ numeroCota +" ] tipo[" +	TipoDistribuicaoCota.ALTERNATIVO.toString() + "].");
 	}else{
-		result.nothing();
+//		result.forwardTo(0);
+		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
 	}
+	
+//		else{
+//		result.nothing();
+//		throw new ValidacaoException(TipoMensagem.SUCCESS, "");
+//	}
 }
 
 
@@ -228,12 +228,25 @@ public class FixacaoReparteController extends BaseController {
 			this.session.removeAttribute(FILTRO_PRODUTO_SESSION_ATTRIBUTE);
 			
 		}
+		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		List<FixacaoReparteDTO>	resultadoPesquisa = fixacaoReparteService.obterHistoricoLancamentoPorCota(filtro);
+		
 		
 		if(resultadoPesquisa.size()>0){
 			FixacaoReparteDTO fixacaoReparteDTO = resultadoPesquisa.get(0);
 			this.result.include("ultimaEdicao",fixacaoReparteDTO);
+		}
+
+		if(filtro.getCodigoProduto().length() == 6){
+			filtro.setCodigoProduto(produtoService.obterCodigoProdinPorICD(filtro.getCodigoProduto()));
+		}
+
+		Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigoProduto());
+		
+		for (FixacaoReparteDTO fix : resultadoPesquisa) {
+			fix.setClassificacaoProduto(produto.getTipoClassificacaoProduto().getDescricao());
+			fix.setCodigoProduto(produto.getCodigoICD());
 		}
 		
 		TableModel<CellModelKeyValue<FixacaoReparteDTO>> tableModel = new TableModel<CellModelKeyValue<FixacaoReparteDTO>>();

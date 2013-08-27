@@ -234,7 +234,13 @@ public List<FixacaoReparteDTO> obterHistoricoEdicaoPorProduto(Produto produto){
 			sql.append("  			join historico_lancamento on historico_lancamento.LANCAMENTO_ID = lancamento.ID ");
 			sql.append(" 			join produto on produto.ID = produto_edicao.PRODUTO_ID");
 			sql.append(" where cota_id = :cotaBusca ");
-			sql.append(" and produto.CODIGO = :produtoBusca ");
+			
+			if(codigoProduto.length() == 6){
+				sql.append(" and produto.CODIGO_ICD = :produtoBusca ");
+			}else{
+				sql.append(" and produto.CODIGO = :produtoBusca ");
+			}
+			
 			sql.append("	group by edicao order by edicao desc limit 6");
 			
 			
