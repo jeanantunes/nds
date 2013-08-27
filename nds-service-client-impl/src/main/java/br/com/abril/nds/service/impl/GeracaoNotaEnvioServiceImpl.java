@@ -330,16 +330,28 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			BigInteger quantidade = quantidadeResultante.add(estudoCota.getQtdeEfetiva());
 
 			
+			ItemNotaEnvio itemNotaEnvio = null;
+			
+			for(ItemNotaEnvio item : listItemNotaEnvio) {
+				if(item.getProdutoEdicao().getId().equals(produtoEdicao.getId())) {
+					itemNotaEnvio = item;
+					break;
+				}
+			}
+			
+			boolean itemExistente = itemNotaEnvio != null;
+			
 			//Cria novo item nota caso o Estudo ainda não possua
-			ItemNotaEnvio itemNotaEnvio = criarNovoItemNotaEnvio(estudoCota,
+			itemNotaEnvio = criarNovoItemNotaEnvio(itemNotaEnvio, estudoCota,
 																 produtoEdicao,
 																 precoVenda,
 																 ((percentualDesconto != null && percentualDesconto.getValor() != null) ? 
 																   percentualDesconto.getValor() : 
 																   BigDecimal.ZERO), 
 																 quantidade);
-			
-			listItemNotaEnvio.add(itemNotaEnvio);
+			if(!itemExistente)
+				listItemNotaEnvio.add(itemNotaEnvio);
+					
 		}
 	}
 
@@ -366,11 +378,12 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		return nomeProduto;
 	}
 	
-	private ItemNotaEnvio criarNovoItemNotaEnvio(EstudoCota estudoCota,
+	private ItemNotaEnvio criarNovoItemNotaEnvio(ItemNotaEnvio itemNotaEnvio, EstudoCota estudoCota,
 			ProdutoEdicao produtoEdicao, BigDecimal precoVenda,
 			BigDecimal percentualDesconto, BigInteger quantidade) {
 
-		ItemNotaEnvio itemNotaEnvio = new ItemNotaEnvio();
+		if(itemNotaEnvio == null)
+			itemNotaEnvio = new ItemNotaEnvio();
 
 		itemNotaEnvio.setProdutoEdicao(produtoEdicao);
 		itemNotaEnvio.setCodigoProduto(produtoEdicao.getProduto().getCodigo());
