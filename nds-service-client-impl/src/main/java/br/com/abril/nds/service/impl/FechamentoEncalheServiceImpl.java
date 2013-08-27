@@ -16,7 +16,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,7 +67,6 @@ import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
-import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.FechamentoEncalheBoxRepository;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
@@ -76,7 +74,6 @@ import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
-import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.FechamentoEncalheService;
@@ -84,7 +81,6 @@ import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.NotaFiscalService;
-import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
@@ -106,9 +102,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 	@Autowired
 	private DistribuidorService distribuidorService;
-	
-	@Autowired
-	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
 	
 	@Autowired
 	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
@@ -154,18 +147,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Autowired
 	private ConferenciaEncalheRepository conferenciaEncalheRepository;
-	
-	@Autowired
-	private EstoqueProdutoRespository estoqueProdutoRespository;
-	
-	@Autowired
-	private ProdutoEdicaoRepository produtoEdicaoRepository;
-	
-	@Autowired
-	private PlatformTransactionManager transactionManager;
-	
-	@Autowired
-	private UsuarioService usuarioService;
 	
 	@Override
 	@Transactional
@@ -579,15 +560,16 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
 			this.fechamentoEncalheRepository.obterCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, sortorder, sortname, startSearch, rp);
-		
-		if (isSomenteCotasSemAcao) {
+
+		if (!isSomenteCotasSemAcao){
 			
-			return listaCotaAusenteEncalhe;
-		}
-		
-		for (CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotaAusenteEncalhe) {
-			
-			carregarDescricaoCotaAusente(cotaAusenteEncalheDTO);
+		    for (CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotaAusenteEncalhe) {
+
+			    if (cotaAusenteEncalheDTO.isFechado() || cotaAusenteEncalheDTO.isPostergado()){
+
+					carregarDescricaoCotaAusente(cotaAusenteEncalheDTO);
+				}
+			}
 		}
 		
 		return listaCotaAusenteEncalhe;
@@ -618,7 +600,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			} 
 			
 		}
-		
 		
 	}
 	
