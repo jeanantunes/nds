@@ -143,6 +143,7 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	public void confirmarChamadao(List<ConsignadoCotaChamadaoDTO> listaChamadao,
 								  FiltroChamadaoDTO filtro,
 								  boolean chamarTodos,
+								  List<Long> idsIgnorados,
 								  Usuario usuario,
 								  Date novaDataChamadao) {
 		
@@ -167,6 +168,11 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		
 		for (ConsignadoCotaChamadaoDTO consignadoCotaChamadao : listaChamadao) {
+			
+			if (idsIgnorados.contains(consignadoCotaChamadao.getIdLancamento())) {
+
+				continue;
+			}
 			
 			if (filtro.isChamadaEncalhe()) {
 				

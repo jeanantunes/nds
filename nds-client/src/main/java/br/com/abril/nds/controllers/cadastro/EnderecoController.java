@@ -251,7 +251,7 @@ public class EnderecoController extends BaseController {
 	 * Método responsável por incluir/alterar um endereço para a pessoa em questão. 
 	 * @param enderecoAssociacao
 	 */
-	public void incluirNovoEndereco(Tela tela,EnderecoAssociacaoDTO enderecoAssociacao) {
+	public void incluirNovoEndereco(Tela tela, EnderecoAssociacaoDTO enderecoAssociacao) {
 		
 		tela.setarParametros();
 		
@@ -500,7 +500,7 @@ public class EnderecoController extends BaseController {
 			
 			return;
 		}
-		
+	
 		List<String> localidades = this.enderecoService.obterLocalidadesPorUFNome(nomeLocalidade, siglaUF);
 		
 		List<ItemAutoComplete> listaAutoComplete = new ArrayList<ItemAutoComplete>();
@@ -802,13 +802,37 @@ public class EnderecoController extends BaseController {
 		listaEnderecos.addAll(listaEnderecosSalvar);
 		
 		boolean hasPrincipal = false;
+		boolean enderecoNovo = false;
 		
-		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecos) {
-			
-			hasPrincipal = !hasPrincipal?enderecoAssociacao.isEnderecoPrincipal():hasPrincipal;	
+		EnderecoDTO endereco = (enderecoAssociacaoAtual != null) ? enderecoAssociacaoAtual.getEndereco() : null;
+		
+		for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecosExibir) {
+			if(!enderecoAssociacao.getEndereco().getId().equals(endereco.getId())
+					|| !enderecoAssociacao.getEndereco().getLogradouro().equals(endereco.getLogradouro())
+					|| !enderecoAssociacao.getEndereco().getNumero().equals(endereco.getNumero())) {
+				enderecoNovo = true;
+			}
 		}
 		
-		if (!hasPrincipal && !enderecoAssociacaoAtual.isEnderecoPrincipal()) {
+		if(!enderecoAssociacaoAtual.isEnderecoPrincipal()) {
+			for (EnderecoAssociacaoDTO enderecoAssociacao : listaEnderecos) {
+				
+				if(enderecoAssociacao.isEnderecoPrincipal()) {
+					if(listaEnderecosSalvar != null && listaEnderecosSalvar.size() == 1
+							&& enderecoAssociacao.getEndereco() != null && enderecoAssociacao.getEndereco().getId() != null					 
+								&& enderecoAssociacao.getEndereco().getId().equals(endereco.getId())) 
+						hasPrincipal = false;
+				} else {
+					hasPrincipal = false;	
+				}
+				
+			}
+				
+		} else {
+			hasPrincipal = true;
+		}
+			
+		if (!enderecoNovo && !hasPrincipal && !enderecoAssociacaoAtual.isEnderecoPrincipal()) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "É necessário pelo menos um endereço principal.");
 		}

@@ -34,6 +34,24 @@ public class FiltroEmissaoCE implements Serializable {
 	private String colunaOrdenacao;
 	private String ordenacao;
 	
+	/**
+	 * Quantidade de produtos por página
+	 */
+	private int qtdProdutosPorPagina;
+			
+	/**
+	 * Quantidade de capas por página		
+	 */
+	private int qtdCapasPorPagina;
+	
+	/**
+	 * Quantidade máxima de produtos em uma pagina que ira comportar 
+	 * tambem a grid com totalização
+	 */
+	private int qtdMaximaProdutosComTotalizacao;
+	
+	
+	
 	public enum ColunaOrdenacao {
 
 		COTA("numCota"),
@@ -210,6 +228,43 @@ public class FiltroEmissaoCE implements Serializable {
 	 */
 	public void setOrdenacao(String ordenacao) {
 		this.ordenacao = ordenacao;
+	}
+	/**
+	 * @return the qtdProdutosPorPagina
+	 */
+	public int getQtdProdutosPorPagina() {
+		return qtdProdutosPorPagina;
+	}
+	/**
+	 * @param qtdProdutosPorPagina the qtdProdutosPorPagina to set
+	 */
+	public void setQtdProdutosPorPagina(int qtdProdutosPorPagina) {
+		this.qtdProdutosPorPagina = qtdProdutosPorPagina;
+	}
+	/**
+	 * @return the qtdCapasPorPagina
+	 */
+	public int getQtdCapasPorPagina() {
+		return qtdCapasPorPagina;
+	}
+	/**
+	 * @param qtdCapasPorPagina the qtdCapasPorPagina to set
+	 */
+	public void setQtdCapasPorPagina(int qtdCapasPorPagina) {
+		this.qtdCapasPorPagina = qtdCapasPorPagina;
+	}
+	/**
+	 * @return the qtdMaximaProdutosComTotalizacao
+	 */
+	public int getQtdMaximaProdutosComTotalizacao() {
+		return qtdMaximaProdutosComTotalizacao;
+	}
+	/**
+	 * @param qtdMaximaProdutosComTotalizacao the qtdMaximaProdutosComTotalizacao to set
+	 */
+	public void setQtdMaximaProdutosComTotalizacao(
+			int qtdMaximaProdutosComTotalizacao) {
+		this.qtdMaximaProdutosComTotalizacao = qtdMaximaProdutosComTotalizacao;
 	}
 	
 	
