@@ -1227,7 +1227,7 @@ var recebimentoFisicoController = $.extend(true, {
 									'</span>';
 			
 			value.cell.precoDesconto = '<span id="precoCapaDesconto_' + lineId + '">' +
-										$.formatNumber(value.cell.precoDesconto, {format:"#,##0.00", locale:"br"})+
+										$.formatNumber(value.cell.precoDesconto, {format:"#,####0.0000", locale:"br"})+
 										'</span>';
 			
 			value.cell.valorTotalCapa = '<span name="valorTotalCapa" id="valorTotalCapa_' + lineId + '">' + 
