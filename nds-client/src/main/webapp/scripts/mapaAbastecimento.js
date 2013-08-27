@@ -383,6 +383,8 @@
 		if(cell.box == undefined || cell.box == 'undefined') {
 			cell.box = "Sem box definido";
 		}
+		
+		T.mapas.push(cell);
 			
 		cell.acao =	'<a href="javascript:;" onclick="' + objName +'.carregarDetalhes(\''+ index + '\')">' +
 					'<img src="' + pathTela + '/images/ico_detalhes.png" alt="Detalhes do box" border="0" /></a>';
@@ -631,33 +633,27 @@ $(function() {
 		colModel: [ {
 			display : 'Box',
 			name : 'box',
-			width : 100,
+			width : 150,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Total de Produtos',
 			name : 'totalProduto',
-			width : 200,
+			width : 230,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Total Reparte',
 			name : 'totalReparte',
-			width : 200,
+			width : 230,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Total Box R$',
 			name : 'totalBox',
-			width : 200,
+			width : 225,
 			sortable : true,
 			align : 'right'
-		}, {
-			display : 'Reparte Promocional',
-			name : 'materialPromocional',
-			width : 135,
-			sortable : true,
-			align : 'center'
 		}, {
 			display : 'Ação',
 			name : 'acao',
@@ -685,39 +681,33 @@ $(function() {
 		},{
 			display : 'Nome',
 			name : 'nomeCota',
-			width : 200,
+			width : 220,
 			sortable : true,
 			align : 'left'
 		},{
 			display : 'Box',
 			name : 'box',
-			width : 100,
+			width : 120,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Total de Produtos',
 			name : 'totalProduto',
-			width : 100,
+			width : 120,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Total Reparte',
 			name : 'totalReparte',
-			width : 100,
+			width : 120,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Total Box R$',
 			name : 'totalBox',
-			width : 100,
+			width : 120,
 			sortable : true,
 			align : 'right'
-		},  {
-			display : 'Reparte Promocional',
-			name : 'materialPromocional',
-			width : 100,
-			sortable : true,
-			align : 'center'
 		},{
 			display : 'Ação',
 			name : 'acao',
@@ -824,7 +814,7 @@ $(function() {
 		colModel: [ {
 			display : 'Box',
 			name : 'codigoBox',
-			width : 100,
+			width : 150,
 			sortable : true,
 			align : 'left'
 		},{
@@ -836,27 +826,21 @@ $(function() {
 		}, {
 			display : 'Total de Produtos',
 			name : 'totalProduto',
-			width : 150,
+			width : 180,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Total Reparte',
 			name : 'reparte',
-			width : 150,
+			width : 180,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Total Box R$',
 			name : 'totalBox',
-			width : 150,
+			width : 175,
 			sortable : true,
 			align : 'right'
-		}, {
-			display : 'Reparte Promocional',
-			name : 'materialPromocional',
-			width : 135,
-			sortable : true,
-			align : 'center'
 		}],
 		sortname : "codigoBox",
 		sortorder : "asc",
@@ -879,25 +863,25 @@ $(function() {
 		},{
 			display : 'Nome',
 			name : 'nomeCota',
-			width : 150,
+			width : 180,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Box',
 			name : 'codigoBox',
-			width : 100,
+			width : 130,
 			sortable : true,
 			align : 'left'
 		},{
 			display : 'Rota',
 			name : 'codigoRota',
-			width : 100,
+			width : 130,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Total de Produtos',
 			name : 'totalProduto',
-			width : 100,
+			width : 110,
 			sortable : true,
 			align : 'center'
 		}, {
@@ -912,12 +896,6 @@ $(function() {
 			width : 100,
 			sortable : true,
 			align : 'right'
-		}, {
-			display : 'Reparte Promocional',
-			name : 'materialPromocional',
-			width : 100,
-			sortable : true,
-			align : 'center'
 		}],
 		sortname : "codigoBox",
 		sortorder : "asc",
@@ -971,27 +949,21 @@ $(function() {
 		colModel : [ {
 			display : 'Box',
 			name : 'codigoBox',
-			width : 140,
+			width : 240,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Total Reparte',
 			name : 'reparte',
-			width : 250,
+			width : 325,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Total Box R$',
 			name : 'totalBox',
-			width : 250,
+			width : 325,
 			sortable : true,
 			align : 'right'
-		}, {
-			display : 'Reparte Promocional',
-			name : 'materialPromocional',
-			width : 250,
-			sortable : true,
-			align : 'center'
 		}],
 		sortname : "codigoBox",
 		sortorder : "asc",
@@ -1008,33 +980,27 @@ $(function() {
 		colModel : [ {
 			display : 'Cota',
 			name : 'codigoCota',
-			width : 100,
+			width : 140,
 			sortable : true,
 			align : 'left'
 		},{
 			display : 'Nome',
 			name : 'nomeCota',
-			width : 300,
+			width : 340,
 			sortable : true,
 			align : 'left'
 		}, {
 			display : 'Total Reparte',
 			name : 'reparte',
-			width : 160,
+			width : 200,
 			sortable : true,
 			align : 'center'
 		}, {
 			display : 'Total Box R$',
 			name : 'totalBox',
-			width : 160,
+			width : 200,
 			sortable : true,
 			align : 'right'
-		}, {
-			display : 'Reparte Promocional',
-			name : 'materialPromocional',
-			width : 160,
-			sortable : true,
-			align : 'center'
 		}],
 		sortname : "codigoCota",
 		sortorder : "asc",
