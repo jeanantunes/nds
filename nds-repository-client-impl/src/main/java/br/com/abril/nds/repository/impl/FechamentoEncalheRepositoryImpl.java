@@ -479,7 +479,10 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	sql.append("		and pdv.PONTO_PRINCIPAL = :principal                            ");
 	
 	if (isSomenteCotasSemAcao) {
+		
 		sql.append(" and ( chamadaEncalheCota.FECHADO = false or chamadaEncalheCota.FECHADO is null ) 		");
+		
+		sql.append(" and ( chamadaEncalheCota.POSTERGADO = false or chamadaEncalheCota.POSTERGADO is null ) ");
 	}
 	
 	sql.append("	group by                                      ");
@@ -561,7 +564,10 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		sql.append("		and pdv.PONTO_PRINCIPAL = :principal                            ");
 		
 		if (isSomenteCotasSemAcao) {
+			
 			sql.append(" and ( chamadaEncalheCota.FECHADO = false or chamadaEncalheCota.FECHADO is null ) 		");
+			
+			sql.append(" and ( chamadaEncalheCota.POSTERGADO = false or chamadaEncalheCota.POSTERGADO is null ) ");
 		}
 		
 		sql.append("	group by                                      ");

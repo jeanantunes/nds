@@ -78,7 +78,6 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 			}
 		}*/
 		
-		
 		// regra para Registro de Lancamento 		
 		regraLancamento(message, input, produto);
 		
@@ -196,10 +195,17 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 					return;
 				}
 				
+				String dataMovimento = "";
+				if(input.getDataMovimento() != null){
+					try{
+						dataMovimento = new SimpleDateFormat("dd/MM/yyyy").format(input.getDataMovimento());
+					}catch(Exception e){}
+				}
+				
 				ndsiLoggerFactory.getLogger().logWarning(
 						message,
 						EventoExecucaoEnum.INF_DADO_ALTERADO,
-						String.format( "Foi criado um lancamento para o Produto %1$s Edicao %2$s. Na data de lancamento %3$s", input.getCodigoPublicacao(), produtoEdicaoLancamento.getNumeroEdicao().toString(), input.getDataMovimento() )
+						String.format( "Foi criado um lancamento para o Produto %1$s Edicao %2$s. Na data de lancamento %3$s", input.getCodigoPublicacao(), produtoEdicaoLancamento.getNumeroEdicao().toString(), dataMovimento)
 					);				
 			} else {
 				if (!lancamento.getDataLancamentoDistribuidor().equals(input.getDataLancamentoRecolhimentoProduto())) {
@@ -405,6 +411,9 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 
 		query.setParameter("numeroEdicao", edicao);
 		query.setParameter("codigoProduto", codigoPublicacao);
+		
+		query.setMaxResults(1);
+		query.setFetchSize(1);
 
 		return (ProdutoEdicao) query.uniqueResult();
 	}
@@ -420,6 +429,8 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 		Query query = getSession().createQuery(sql.toString());
 
 		query.setParameter("codigoProduto", codigoPublicacao);
+		query.setMaxResults(1);
+		query.setFetchSize(1);
 
 		return (Produto) query.uniqueResult();
 	}

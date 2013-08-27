@@ -57,7 +57,6 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 		NOME_PRODTO("nomeProduto"),
 		NUMERO_EDICAO("numeroEdicao"),
 		TOTAL("total"),
-		MATERIAL_PROMOCIONAL("materialPromocional"),
 		CODIGO_COTA("codigoCota"),
 		NOME_EDICAO("nomeEdicao");	
 		
@@ -73,6 +72,10 @@ public class FiltroMapaAbastecimentoDTO  implements Serializable {
 		}
 		
 		public static ColunaOrdenacao getPorDescricao(String descricao) {
+			if(descricao.equalsIgnoreCase("")) {
+				return null;
+			}
+			
 			for(ColunaOrdenacao coluna: ColunaOrdenacao.values()) {
 				if(coluna.toString().equals(descricao))
 					return coluna;

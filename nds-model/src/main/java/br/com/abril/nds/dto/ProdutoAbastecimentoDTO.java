@@ -3,6 +3,7 @@ package br.com.abril.nds.dto;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.util.List;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -19,6 +20,7 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	private String total;
 	private String codigoRota;	
 	private Integer codigoBox;
+	private String nomeBox;
 	private Long idProdutoEdicao;
 	private Integer codigoCota;
 	private String nomeCota;
@@ -28,8 +30,9 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	private Integer totalProduto;
 	private String codigoBarra;
 	private Integer pacotePadrao;
-	private Long qtdeExms;
+	private Integer qtdeExms;
 	private Cota cota;
+	private List<String> cotasSemRoteirizacao;
 	
 	public ProdutoAbastecimentoDTO() {
 	
@@ -128,6 +131,20 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 		this.codigoBox = codigoBox;
 	}
 	
+	/**
+	 * @return the nomeBox
+	 */
+	public String getNomeBox() {
+		return nomeBox;
+	}
+
+	/**
+	 * @param nomeBox the nomeBox to set
+	 */
+	public void setNomeBox(String nomeBox) {
+		this.nomeBox = nomeBox;
+	}
+
 	public String getCodigoRota() {
 		return codigoRota;
 	}
@@ -246,15 +263,16 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	/**
 	* @return the qtdeExms
 	*/
-	public Long getQtdeExms() {
+	public Integer getQtdeExms() {
 		return qtdeExms;
 	}
 	
 	/**
 	* @param qtdeExms the qtdeExms to set
 	*/
-	public void setQtdeExms(Long qtdeExms) {
-		this.qtdeExms = qtdeExms;
+	public void setQtdeExms(BigInteger qtdeExms) {
+		if(qtdeExms!=null)
+			this.qtdeExms = qtdeExms.intValue();
 	}
 	
 	public Cota getCota() {
@@ -263,5 +281,13 @@ public class ProdutoAbastecimentoDTO implements Serializable{
 	
 	public void setCota(Cota cota) {
 		 this.cota = cota;
+	}
+
+	public List<String> getCotasSemRoteirizacao() {
+		return cotasSemRoteirizacao;
+	}
+
+	public void setCotasSemRoteirizacao(List<String> cotasSemRoteirizacao) {
+		this.cotasSemRoteirizacao = cotasSemRoteirizacao;
 	}
 }

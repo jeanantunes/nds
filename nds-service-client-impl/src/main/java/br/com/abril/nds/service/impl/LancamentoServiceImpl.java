@@ -11,25 +11,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.EstudoCotaDTO;
 import br.com.abril.nds.dto.InformeEncalheDTO;
 import br.com.abril.nds.dto.LancamentoDTO;
 import br.com.abril.nds.dto.LancamentoNaoExpedidoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.ExpedicaoRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
@@ -38,6 +44,12 @@ public class LancamentoServiceImpl implements LancamentoService {
 
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
+	
+	@Autowired
+	private CotaRepository cotaRepository;
+	
+	@Autowired
+	private EstudoCotaRepository estudoCotaRepository;
 	
 	@Autowired
 	private HistoricoLancamentoRepository historicoLancamentoRepository;
@@ -51,13 +63,19 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
+	@Autowired
+	private CotaService cotaService;
+	
 	@Override
 	@Transactional
 	public List<LancamentoNaoExpedidoDTO> obterLancamentosNaoExpedidos(PaginacaoVO paginacaoVO, Date data, Long idFornecedor, Boolean estudo) {
 		
+		Intervalo<Date> intervaloDataLancamento = new Intervalo<Date>(data, data);
+		
+		this.cotaService.verificarCotasSemRoteirizacao(null, intervaloDataLancamento, null);
+		
 		List<Lancamento> lancamentos = lancamentoRepository.obterLancamentosNaoExpedidos(
 				paginacaoVO, data, idFornecedor, estudo);
-		
 		
 		List<LancamentoNaoExpedidoDTO> dtos = new ArrayList<LancamentoNaoExpedidoDTO>();
 		
@@ -123,8 +141,10 @@ public class LancamentoServiceImpl implements LancamentoService {
 	@Transactional
 	public boolean confirmarExpedicao(Long idLancamento, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota) {
 		
+		
 		LancamentoDTO lancamento = lancamentoRepository.obterLancamentoPorID(idLancamento);
 
+		
 		Expedicao expedicao = new Expedicao();
 		expedicao.setDataExpedicao(dataOperacao);
 		expedicao.setResponsavel(new Usuario(idUsuario));
@@ -143,8 +163,11 @@ public class LancamentoServiceImpl implements LancamentoService {
 		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
 		historicoLancamentoRepository.adicionar(historico);
 		
+		
 		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(lancamento.getDataPrevista(), lancamento.getDataDistribuidor(), 
-				lancamento.getIdProdutoEdicao(), idLancamento,idUsuario, dataOperacao, tipoMovimento, tipoMovimentoCota);
+					lancamento.getIdProdutoEdicao(), idLancamento,idUsuario, dataOperacao, tipoMovimento, tipoMovimentoCota);
+		
+				
 		
 		return true;
 	}

@@ -12,6 +12,7 @@ public class ProdutoMapaCotaDTO implements Serializable{
 	private String nomeProduto;
 	private Long numeroEdicao;
 	private Integer sm;
+	private String precoCapa;
 	private Integer total;
 	private List<Cota> cotas;
 	
@@ -21,11 +22,12 @@ public class ProdutoMapaCotaDTO implements Serializable{
 	}
 	
 	public ProdutoMapaCotaDTO(String nomeProduto, Long numeroEdicao,
-		Integer sm, Integer total) {
+		Integer sm, String precoCapa, Integer total) {
 		super();
 		this.nomeProduto = nomeProduto;
 		this.numeroEdicao = numeroEdicao;
 		this.sm = sm;
+		this.precoCapa = precoCapa;
 		this.total = total;
 	}
 	/**
@@ -64,6 +66,20 @@ public class ProdutoMapaCotaDTO implements Serializable{
 	public void setSm(Integer sm) {
 		this.sm = sm;
 	}
+	/**
+	 * @return the precoCapa
+	 */
+	public String getPrecoCapa() {
+		return precoCapa;
+	}
+
+	/**
+	 * @param precoCapa the precoCapa to set
+	 */
+	public void setPrecoCapa(String precoCapa) {
+		this.precoCapa = precoCapa;
+	}
+
 	/**
 	* @return the total
 	*/

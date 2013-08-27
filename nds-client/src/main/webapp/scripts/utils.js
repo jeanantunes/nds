@@ -1,8 +1,8 @@
 var messageTimeout;
 var messageDialogTimeout;
 
-$(document).ready(function(){
-	
+$(document).ready(function() {
+
 	jQuery(":input[maxlength]").keyup(function () {
 	    var focus = jQuery(this);
 	    var valFocus;
@@ -59,28 +59,28 @@ $(document).ready(function(){
 
 			focusFirstContentView(this);
 			
-		}else if( keycode == $.ui.keyCode.ENTER ) {
+		} else if( keycode == $.ui.keyCode.ENTER ) {
 			
 			//Confirmação genérica para modais por tec ENTER
 			
 			var refButtonsDialog = $(".ui-dialog:visible").find("button");
 			
 			//Considerar apenas bts Confirmação/Desistência pela abrangência sobre sistema.
-			if( refButtonsDialog.size()==2 ) {
+			if( refButtonsDialog.size() == 2 ) {
 
 				//Verifica se o segundo botão está selecionado / Caso sim não acionará Confirmação por ser Desistência selecionado
-				if(eventoJs.target!=refButtonsDialog[1]){
+				if(eventoJs.target != refButtonsDialog[1] && eventoJs.target != $('.pcontrol input:visible')[0]){
 					refButtonsDialog.first().click(); /* Assuming the first one is the action button */
 				}
 				return true;
 		    }
-		}else{
+		} else {
 			
 			//Navegação pelas abas por CTRL+(Seta Esquerda | Direita)
 			
 			var refTabs = $("li", $('.ui-tabs-nav'));
 			var qtdAbasAbertas =  $('.ui-corner-top').size();
-			if(qtdAbasAbertas > 1){
+			if(qtdAbasAbertas > 1) {
 				
 				if(keycode == 17){
 					pressedCtrl = true; 
@@ -92,20 +92,20 @@ $(document).ready(function(){
 					var indexSelecionar = indexSecionado;
 					
 					if(keycode == 37 && pressedCtrl == true) {//Esquerda
-						if(indexSecionado == 0){
+						if(indexSecionado == 0) {
 							indexSelecionar == qtdAbasAbertas-1;
-						}else{
+						} else {
 							indexSelecionar--;
 						}
 					}else if(keycode == 39 && pressedCtrl == true) {//Direita
-						if(indexSecionado == (qtdAbasAbertas-1)){
+						if(indexSecionado == (qtdAbasAbertas-1)) {
 							indexSelecionar = 0;
-						}else{
+						} else {
 							indexSelecionar++;
 						}
 					}
 					
-					if(indexSelecionar != -1){
+					if(indexSelecionar != -1) {
 						refTabs.children('a')[indexSelecionar].click();
 					}
 				}
