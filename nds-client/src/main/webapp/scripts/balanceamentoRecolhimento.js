@@ -999,7 +999,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				
 				var idLancamento = idLinha.replace("row", "");
 				
-				var novaData = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 15, "novaData");
 				var idFornecedor = balanceamentoRecolhimentoController.obterValorInputColuna(linha, 15, "hiddenIdFornecedor");
 				
 				listaProdutoRecolhimento.push({idFornecedor:idFornecedor,idLancamento:idLancamento,novaData:novaData});
