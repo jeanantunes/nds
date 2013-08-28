@@ -107,7 +107,7 @@ public class MatrizRecolhimentoController extends BaseController {
 	@Path("/")
 	public void index() {
 		
-		List<Fornecedor> fornecedores = this.fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO);
+		List<Fornecedor> fornecedores = this.fornecedorService.obterFornecedores(SituacaoCadastro.ATIVO);
 
 		removerAtributoAlteracaoSessao();
 		

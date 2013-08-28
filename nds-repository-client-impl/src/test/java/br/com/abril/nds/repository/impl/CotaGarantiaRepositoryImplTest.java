@@ -171,7 +171,7 @@ public class CotaGarantiaRepositoryImplTest extends AbstractRepositoryImplTest {
 		TipoFornecedor tipoFornecedorPublicacao;
 		
 		tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
-		fornecedor = Fixture.fornecedor(this.ciclana, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao, 0);
+		fornecedor = Fixture.fornecedor(this.ciclana, SituacaoCadastro.ATIVO, tipoFornecedorPublicacao, 0);
 		save(fornecedor);
 
 		

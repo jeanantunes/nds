@@ -82,13 +82,13 @@ public class DescontoCotaRepositoryImplTest extends AbstractRepositoryImplTest{
 				"56003315000142", "333533333333", "distrib_acme@mail.com", "99.999-9");
 		save(pessoa4);
 		
-		fornecedor1 = Fixture.fornecedor(pessoa1, SituacaoCadastro.ATIVO, false, tipoFornecedor,null);
+		fornecedor1 = Fixture.fornecedor(pessoa1, SituacaoCadastro.ATIVO, tipoFornecedor,null);
 		
-		Fornecedor fornecedor2 = Fixture.fornecedor(pessoa2, SituacaoCadastro.ATIVO, false, tipoFornecedor,null);
+		Fornecedor fornecedor2 = Fixture.fornecedor(pessoa2, SituacaoCadastro.ATIVO, tipoFornecedor,null);
 		
-		Fornecedor fornecedor3 = Fixture.fornecedor(pessoa3, SituacaoCadastro.ATIVO, false, tipoFornecedor,null);
+		Fornecedor fornecedor3 = Fixture.fornecedor(pessoa3, SituacaoCadastro.ATIVO, tipoFornecedor,null);
 		
-		Fornecedor fornecedor4 = Fixture.fornecedor(pessoa4, SituacaoCadastro.ATIVO, false, tipoFornecedor,null);
+		Fornecedor fornecedor4 = Fixture.fornecedor(pessoa4, SituacaoCadastro.ATIVO, tipoFornecedor,null);
 		
 		save(fornecedor1, fornecedor2, fornecedor3,fornecedor4);
 		
