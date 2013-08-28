@@ -19,7 +19,7 @@ public class ResumoPeriodoBalanceamentoVO implements Serializable {
 	private Long qtdeTitulos;
 	private BigInteger qtdeExemplares;
 	private String qtdeExemplaresFormatada;
-	private Long pesoTotal;
+	private BigDecimal pesoTotal;
 	private String pesoTotalFormatado;
 	private BigDecimal valorTotal;
 	private String valorTotalFormatado;
@@ -67,11 +67,11 @@ public class ResumoPeriodoBalanceamentoVO implements Serializable {
 		return qtdeExemplaresFormatada;
 	}
 	
-	public Long getPesoTotal() {
+	public BigDecimal getPesoTotal() {
 		return pesoTotal;
 	}
 
-	public void setPesoTotal(Long pesoTotal) {
+	public void setPesoTotal(BigDecimal pesoTotal) {
 		this.pesoTotal = pesoTotal;
 		if (pesoTotal != null) {
 			pesoTotalFormatado = pesoTotal.toString();
@@ -100,7 +100,7 @@ public class ResumoPeriodoBalanceamentoVO implements Serializable {
 	public static ResumoPeriodoBalanceamentoVO empty(Date data) {
 		ResumoPeriodoBalanceamentoVO resumo = new ResumoPeriodoBalanceamentoVO();
 		resumo.setData(data);
-		resumo.setPesoTotal(0L);
+		resumo.setPesoTotal(BigDecimal.ZERO);
 		resumo.setQtdeExemplares(BigInteger.ZERO);
 		resumo.setQtdeTitulos(0L);
 		resumo.setValorTotal(BigDecimal.ZERO);

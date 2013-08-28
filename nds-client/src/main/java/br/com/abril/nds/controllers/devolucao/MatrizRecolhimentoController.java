@@ -107,7 +107,7 @@ public class MatrizRecolhimentoController extends BaseController {
 	@Path("/")
 	public void index() {
 		
-		List<Fornecedor> fornecedores = this.fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO);
+		List<Fornecedor> fornecedores = this.fornecedorService.obterFornecedores(SituacaoCadastro.ATIVO);
 
 		removerAtributoAlteracaoSessao();
 		
@@ -1331,7 +1331,7 @@ public class MatrizRecolhimentoController extends BaseController {
 				itemResumoPeriodoBalanceamento.setExcedeCapacidadeDistribuidor(
 					excedeCapacidadeDistribuidor);
 				
-				itemResumoPeriodoBalanceamento.setPesoTotal(pesoTotal);
+				itemResumoPeriodoBalanceamento.setPesoTotal(new BigDecimal(pesoTotal/1000));
 				itemResumoPeriodoBalanceamento.setQtdeExemplares(qtdeExemplares.toBigInteger());
 				itemResumoPeriodoBalanceamento.setQtdeTitulos(qtdeTitulos);
 				
@@ -1402,9 +1402,9 @@ public class MatrizRecolhimentoController extends BaseController {
 				(itemResumoPeriodoBalanceamento.getQtdeExemplares() != null)
 					? itemResumoPeriodoBalanceamento.getQtdeExemplares() : BigInteger.ZERO;
 			
-			Long pesoTotal =
+			BigDecimal pesoTotal =
 				(itemResumoPeriodoBalanceamento.getPesoTotal() != null)
-					? itemResumoPeriodoBalanceamento.getPesoTotal() : 0L;
+					? itemResumoPeriodoBalanceamento.getPesoTotal() : BigDecimal.ZERO;
 			
 			BigDecimal valorTotal =
 				(itemResumoPeriodoBalanceamento.getValorTotal() != null)
@@ -1424,8 +1424,8 @@ public class MatrizRecolhimentoController extends BaseController {
 				
 				qtdeExemplares = qtdeExemplares.add(expectativaEncalhe.toBigInteger());
 				
-				pesoTotal = pesoTotal +
-					(cotaOperacaoDiferenciada.getPeso() * expectativaEncalhe.longValue());
+				pesoTotal = pesoTotal.add(
+					new BigDecimal((cotaOperacaoDiferenciada.getPeso() * expectativaEncalhe.longValue())));
 				
 				valorTotal = valorTotal.add(cotaOperacaoDiferenciada.getValorTotal());
 				
@@ -1445,7 +1445,7 @@ public class MatrizRecolhimentoController extends BaseController {
 			}
 			
 			itemResumoPeriodoBalanceamento.setQtdeExemplares(qtdeExemplares);
-			itemResumoPeriodoBalanceamento.setPesoTotal(pesoTotal);
+			itemResumoPeriodoBalanceamento.setPesoTotal(pesoTotal.divide(new BigDecimal(1000)));
 			itemResumoPeriodoBalanceamento.setValorTotal(valorTotal);
 			itemResumoPeriodoBalanceamento.setQtdeTitulos(qtdeTitulos);
 			itemResumoPeriodoBalanceamento.setQtdeTitulosParciais(qtdeTitulosParciais);
@@ -1465,9 +1465,9 @@ public class MatrizRecolhimentoController extends BaseController {
 				(itemResumoPeriodoBalanceamento.getQtdeExemplares() != null)
 					? itemResumoPeriodoBalanceamento.getQtdeExemplares() : BigInteger.ZERO;
 					
-			Long pesoTotal =
+			BigDecimal pesoTotal =
 				(itemResumoPeriodoBalanceamento.getPesoTotal() != null)
-					? itemResumoPeriodoBalanceamento.getPesoTotal() : 0L;
+					? itemResumoPeriodoBalanceamento.getPesoTotal() : BigDecimal.ZERO;
 			
 			BigDecimal valorTotal =
 				(itemResumoPeriodoBalanceamento.getValorTotal() != null)
@@ -1479,14 +1479,14 @@ public class MatrizRecolhimentoController extends BaseController {
 				
 				qtdeExemplares = qtdeExemplares.subtract(cotaOperacaoDiferenciada.getExpectativaEncalhe().toBigInteger());
 				
-				pesoTotal = pesoTotal -
-					(cotaOperacaoDiferenciada.getPeso() * expectativaEncalhe.longValue());
+				pesoTotal = pesoTotal.subtract(
+					new BigDecimal((cotaOperacaoDiferenciada.getPeso() * expectativaEncalhe.longValue())));
 				
 				valorTotal = valorTotal.subtract(cotaOperacaoDiferenciada.getValorTotal());
 			}
 			
 			itemResumoPeriodoBalanceamento.setQtdeExemplares(qtdeExemplares);
-			itemResumoPeriodoBalanceamento.setPesoTotal(pesoTotal);
+			itemResumoPeriodoBalanceamento.setPesoTotal(pesoTotal.divide(new BigDecimal(1000)));
 			itemResumoPeriodoBalanceamento.setValorTotal(valorTotal);
 		}
 	}

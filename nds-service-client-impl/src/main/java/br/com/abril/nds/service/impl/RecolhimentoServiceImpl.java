@@ -617,6 +617,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				periodoRecolhimento, produtosRecolhimento, dadosRecolhimento);
 		}
 		
+		this.atualizarEncalheSedeAtendidaDosProdutos(
+			produtosRecolhimento, dadosRecolhimento.getCotasOperacaoDiferenciada());
+		
 		return dadosRecolhimento;
 	}
 
@@ -992,6 +995,51 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				}
 			}
 		}
+	}
+	
+	private void atualizarEncalheSedeAtendidaDosProdutos(
+								List<ProdutoRecolhimentoDTO> produtosRecolhimento,
+								List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada) {
+		
+		if (cotasOperacaoDiferenciada == null || cotasOperacaoDiferenciada.isEmpty()) {
+			
+			return;
+		}
+
+		if (produtosRecolhimento == null || produtosRecolhimento.isEmpty()) {
+			
+			return;
+		}
+		
+		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
+			
+			List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciadaDoLancamento =
+				this.obterCotasOperacaoDiferenciadaPorLancamento(
+					cotasOperacaoDiferenciada, produtoRecolhimento.getIdLancamento());
+			
+			this.atualizarEncalheSedeAtendida(
+				produtoRecolhimento, cotasOperacaoDiferenciadaDoLancamento);
+		}
+	}
+	
+	private void atualizarEncalheSedeAtendida(
+						   ProdutoRecolhimentoDTO produtoRecolhimento,
+						   List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciadaDoLancamento) {
+		
+		BigDecimal expectativaEncalheAtendida = BigDecimal.ZERO;
+		BigDecimal expectativaEncalheSede = produtoRecolhimento.getExpectativaEncalhe();
+		
+		for (CotaOperacaoDiferenciadaDTO cotaOperacaoDiferenciada : cotasOperacaoDiferenciadaDoLancamento) {
+			
+			expectativaEncalheAtendida = 
+				expectativaEncalheAtendida.add(cotaOperacaoDiferenciada.getExpectativaEncalhe());
+			
+			expectativaEncalheSede =
+				expectativaEncalheSede.subtract(cotaOperacaoDiferenciada.getExpectativaEncalhe());
+		}
+		
+		produtoRecolhimento.setExpectativaEncalheAtendida(expectativaEncalheAtendida);
+		produtoRecolhimento.setExpectativaEncalheSede(expectativaEncalheSede);
 	}
 	
 	private List<CotaOperacaoDiferenciadaDTO> obterCotasOperacaoDiferenciadaPorLancamento(

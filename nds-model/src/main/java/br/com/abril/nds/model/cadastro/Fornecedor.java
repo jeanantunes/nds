@@ -60,9 +60,6 @@ public class Fornecedor implements Serializable {
 	@JoinColumn(name = "BANCO_ID")
 	private Banco banco;
 
-	@Column(name = "PERMITE_BALANCEAMENTO", nullable = false)
-	private boolean permiteBalanceamento;
-
 	@ManyToOne(optional = false)
 	@Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	@JoinColumn(name = "JURIDICA_ID",unique=true)
@@ -147,14 +144,6 @@ public class Fornecedor implements Serializable {
 
 	public void setInicioAtividade(Date inicioAtividade) {
 		this.inicioAtividade = inicioAtividade;
-	}
-
-	public boolean isPermiteBalanceamento() {
-		return permiteBalanceamento;
-	}
-
-	public void setPermiteBalanceamento(boolean permiteBalanceamento) {
-		this.permiteBalanceamento = permiteBalanceamento;
 	}
 
 	public PessoaJuridica getJuridica() {

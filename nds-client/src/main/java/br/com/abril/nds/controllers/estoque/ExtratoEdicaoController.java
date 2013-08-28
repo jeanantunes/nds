@@ -276,14 +276,15 @@ public class ExtratoEdicaoController extends BaseController {
 		
 		for(ExtratoEdicaoDTO extrato : listaExtratoEdicao) {
 			
+			int idMovimento				= (extrato.getIdMovimento() != null) ? extrato.getIdMovimento().intValue() : -1;
 			String dataMovimento 		= DateUtil.formatarDataPTBR(extrato.getDataMovimento());
 			String descTipoMovimento 	= extrato.getDescMovimento();
-			String qtdEntrada 			= extrato.getQtdEdicaoEntrada().doubleValue() < 0.0D ? "-" : extrato.getQtdEdicaoEntrada().toString();
-			String qtdSaida 			= extrato.getQtdEdicaoSaida().doubleValue() < 0.0D ? "-" : extrato.getQtdEdicaoSaida().toString();
-			String qtdParcial 			= extrato.getQtdParcial().toString();
+			String qtdEntrada 			= extrato.getQtdEdicaoEntrada().toString();
+			String qtdSaida 			= extrato.getQtdEdicaoSaida().toString();
+			String qtdParcial 			= (extrato.getQtdParcial() != null) ? extrato.getQtdParcial().toString() : "";
 			String destacarValor		= (extrato.getQtdParcial().doubleValue() < 0.0D) ? "S" : "N";
 			
-			listaModeloGenerico.add(new CellModel(extrato.getIdMovimento().intValue(), dataMovimento, descTipoMovimento, qtdEntrada, qtdSaida, qtdParcial, destacarValor));
+			listaModeloGenerico.add(new CellModel(idMovimento, dataMovimento, descTipoMovimento, qtdEntrada, qtdSaida, qtdParcial, destacarValor));
 			
 		}
 		

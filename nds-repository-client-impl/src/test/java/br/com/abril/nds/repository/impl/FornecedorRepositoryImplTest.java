@@ -123,16 +123,14 @@ public class FornecedorRepositoryImplTest extends AbstractRepositoryImplTest {
 	
 	@Test
 	public void obterFornecedoresPermitemBalanceamento() {
-		List<Fornecedor> fornecedores = fornecedorRepository.obterFornecedores(
-				true, SituacaoCadastro.ATIVO);
+		List<Fornecedor> fornecedores = fornecedorRepository.obterFornecedores(SituacaoCadastro.ATIVO);
 		Assert.assertEquals(1, fornecedores.size());
 		Assert.assertTrue(fornecedores.contains(fornecedor1));
 	}
 	
 	@Test
 	public void obterFornecedoresNaoPermitemBalanceamento() {
-		List<Fornecedor> fornecedores = fornecedorRepository.obterFornecedores(
-				false, SituacaoCadastro.ATIVO);
+		List<Fornecedor> fornecedores = fornecedorRepository.obterFornecedores(SituacaoCadastro.ATIVO);
 		Assert.assertEquals(1, fornecedores.size());
 		Assert.assertTrue(fornecedores.contains(fornecedor2));
 	}

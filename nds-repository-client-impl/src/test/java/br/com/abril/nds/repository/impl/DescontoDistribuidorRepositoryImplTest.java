@@ -67,13 +67,13 @@ public class DescontoDistribuidorRepositoryImplTest extends AbstractRepositoryIm
 				"56003315000142", "333333333335", "distrib_acme@mail.com", "99.999-9");
 		save(pessoa4);
 		
-		Fornecedor fornecedor = Fixture.fornecedor(pessoa1, SituacaoCadastro.ATIVO, false, tipoFornecedor,null);
+		Fornecedor fornecedor = Fixture.fornecedor(pessoa1, SituacaoCadastro.ATIVO, tipoFornecedor,null);
 		
-		Fornecedor fornecedor1 = Fixture.fornecedor(pessoa2, SituacaoCadastro.ATIVO, false, tipoFornecedor,null);
+		Fornecedor fornecedor1 = Fixture.fornecedor(pessoa2, SituacaoCadastro.ATIVO, tipoFornecedor,null);
 		
-		Fornecedor fornecedor2 = Fixture.fornecedor(pessoa3, SituacaoCadastro.ATIVO, false, tipoFornecedor,null);
+		Fornecedor fornecedor2 = Fixture.fornecedor(pessoa3, SituacaoCadastro.ATIVO, tipoFornecedor,null);
 		
-		fornecedor3 = Fixture.fornecedor(pessoa4, SituacaoCadastro.ATIVO, false, tipoFornecedor,null);
+		fornecedor3 = Fixture.fornecedor(pessoa4, SituacaoCadastro.ATIVO, tipoFornecedor,null);
 		
 		save(fornecedor, fornecedor1, fornecedor2,fornecedor3);
 		
