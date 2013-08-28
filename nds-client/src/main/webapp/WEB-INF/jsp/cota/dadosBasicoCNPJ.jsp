@@ -46,11 +46,9 @@
       <td>Status:</td>
       <td><input type="text" style="width:230px " id="status" disabled="disabled" name="cotaDTO.status" /></td>
       
-      <td>Classificação:</td>
+      <td>Classificação Cota:</td>
       <td>
-      		<select name="cotaDTO.classificacaoSelecionada" id="classificacaoSelecionada" style="width:300px;">
-             
-          	</select>
+      		<div id="selectClassificacao"></div>
       </td>
     </tr>
 </table>
