@@ -1001,12 +1001,12 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			BigDecimal percentualDesconto = 
 				this.produtoEdicaoService.obterPorcentualDesconto(produtoEdicao);
 			
-			BigDecimal valorDesconto = MathUtil.round( MathUtil.calculatePercentageValue( precoVenda, percentualDesconto ), 2);
+			BigDecimal valorDesconto = MathUtil.round( MathUtil.calculatePercentageValue( precoVenda, percentualDesconto ), 4);
 
 			recebimentoFisicoDTO.setPrecoCapa(precoVenda.setScale(2, RoundingMode.HALF_EVEN));
 			
 			recebimentoFisicoDTO.setPrecoDesconto(
-				precoVenda.subtract(valorDesconto).setScale(2, RoundingMode.HALF_EVEN).toString());
+				precoVenda.subtract(valorDesconto).setScale(4, RoundingMode.HALF_EVEN).toString());
 			
             recebimentoFisicoDTO.setRepartePrevisto(
             	produtoEdicao.getReparteDistribuido());
