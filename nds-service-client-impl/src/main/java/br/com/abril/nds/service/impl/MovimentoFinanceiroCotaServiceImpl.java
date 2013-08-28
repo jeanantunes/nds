@@ -26,7 +26,6 @@ import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoCota;
@@ -160,7 +159,9 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			movimentoFinanceiroCota.setBaixaCobranca(movimentoFinanceiroCotaDTO.getBaixaCobranca());
 			movimentoFinanceiroCota.setObservacao(movimentoFinanceiroCotaDTO.getObservacao());
 			movimentoFinanceiroCota.setMovimentos(movimentosEstoqueCota);
-			movimentoFinanceiroCota.setFornecedor(movimentoFinanceiroCotaDTO.getFornecedor());
+			movimentoFinanceiroCota.setFornecedor(movimentoFinanceiroCotaDTO.getFornecedor()!=null?
+					                              movimentoFinanceiroCotaDTO.getFornecedor():
+					                              movimentoFinanceiroCotaDTO.getCota().getParametroCobranca().getFornecedorPadrao());
 			
 			movimentoFinanceiroCotaMerged = this.movimentoFinanceiroCotaRepository.merge(movimentoFinanceiroCota);
 
@@ -373,6 +374,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		movimento.setMotivo("VIRADA NDS");
 		movimento.setAprovador(usuarioRepository.getUsuarioImportacao());
 		movimento.setUsuario(usuarioRepository.getUsuarioImportacao());
+		movimento.setFornecedor(cota.getParametroCobranca().getFornecedorPadrao());
 		
 		ConsolidadoFinanceiroCota cfc = consolidadoFinanceiroRepository.buscarPorCotaEData(cota.getId(), valorInput.getData());
 

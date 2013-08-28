@@ -473,7 +473,9 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 		novo.setData(movimentoFinanceiroCota.getData());
 		novo.setDataAprovacao(movimentoFinanceiroCota.getDataAprovacao());
 		novo.setDataIntegracao(movimentoFinanceiroCota.getDataIntegracao());
-		novo.setFornecedor(movimentoFinanceiroCota.getFornecedor());
+		novo.setFornecedor(movimentoFinanceiroCota.getFornecedor()!=null?
+				           movimentoFinanceiroCota.getFornecedor():
+				           movimentoFinanceiroCota.getCota().getParametroCobranca().getFornecedorPadrao());
 		//novo.setHistoricos(movimentoFinanceiroCota.getHistoricos());
 		novo.setLancamentoManual(movimentoFinanceiroCota.isLancamentoManual());
 		novo.setMotivo(movimentoFinanceiroCota.getMotivo());
