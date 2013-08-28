@@ -47,7 +47,7 @@ implements MovimentoEstoqueRepository {
 		
 		hql.append(" select new " + ExtratoEdicaoDTO.class.getCanonicalName() );		
 		
-		hql.append(" ( m.id, m.data, m.tipoMovimento.descricao, ");		
+		hql.append(" ( m.id, m.tipoMovimento.id, m.data, m.tipoMovimento.descricao, ");		
 		
 		hql.append(" sum(case when m.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada then m.qtde else 0 end), ");
 
