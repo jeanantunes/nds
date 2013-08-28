@@ -565,7 +565,9 @@ public class LancamentoRepositoryImpl extends
 		String[] arrayStatusParaBalanceamentoRecolhimento =
 			{StatusLancamento.EXPEDIDO.toString(),
 			 StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.toString(),
-			 StatusLancamento.BALANCEADO_RECOLHIMENTO.toString()};
+			 StatusLancamento.BALANCEADO_RECOLHIMENTO.toString(),
+			 StatusLancamento.EM_RECOLHIMENTO.toString(),
+			 StatusLancamento.RECOLHIDO.toString()};
 		
 		List<String> statusParaBalanceamentoRecolhimento =
 			Arrays.asList(arrayStatusParaBalanceamentoRecolhimento);
