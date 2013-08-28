@@ -73,6 +73,7 @@ import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.PdvService;
 import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.ListUtils;
 
 @Service
 public class PdvServiceImpl implements PdvService {

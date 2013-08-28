@@ -13,4 +13,5 @@ public interface TipoGeradorFluxoPDVRepsitory extends Repository<TipoGeradorFlux
 	public abstract List<TipoGeradorFluxoPDV> obterTodosTiposGeradorFluxo();
 	
 	List<TipoGeradorFluxoPDV> obterTiposGeradorFluxoOrdenado();
+
 }
