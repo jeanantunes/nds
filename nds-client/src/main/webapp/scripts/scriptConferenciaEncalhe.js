@@ -450,6 +450,8 @@ var ConferenciaEncalhe = $.extend(true, {
 					buttons : {
 						"Sim" : function() {
 							
+							window.event.preventDefault();
+							
 							ConferenciaEncalhe.carregarListaConferencia(data);
 							
 							$("#dialog-reabertura", ConferenciaEncalhe.workspace).dialog("close");
@@ -461,6 +463,8 @@ var ConferenciaEncalhe = $.extend(true, {
 							focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
 						},
 						"Não" : function() {
+							
+							window.event.preventDefault();
 							
 							$("#dialog-reabertura", ConferenciaEncalhe.workspace).dialog("close");
 							
@@ -1583,6 +1587,8 @@ var ConferenciaEncalhe = $.extend(true, {
 			buttons : {
 				"Confirmar" : function() {
 					
+					window.event.preventDefault();
+					
 					var data = [{name: 'indConferenciaContingencia', value: false}];
 					
 					$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/salvarConferencia', data,
@@ -1597,6 +1603,7 @@ var ConferenciaEncalhe = $.extend(true, {
 							exibirMensagem(result.tipoMensagem, result.listaMensagens);
 							
 							$("#dialog-salvar", ConferenciaEncalhe.workspace).dialog("close");
+							
 						}, function(conteudo) {
 							
 							var data = [
@@ -1613,14 +1620,18 @@ var ConferenciaEncalhe = $.extend(true, {
 				},
 				"Cancelar" : function() {
 					
+					window.event.preventDefault();
+					
 					$(this).dialog("close");
 				}
 
 			}, close : function(){
 				
 				ConferenciaEncalhe.modalAberta = false;
+				
 				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
 			},
+			
 			form: $("#dialog-salvar", this.workspace).parents("form")
 		});
 

@@ -1076,7 +1076,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				grupoMovimentoEstoque = GrupoMovimentoEstoque.GANHO_EM;
 			}
 		}
-		
+
 		return grupoMovimentoEstoque;
 	}
 	
