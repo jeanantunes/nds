@@ -86,7 +86,7 @@ var regiaoController = $.extend(true, {
 			dataType : 'json',
 			colModel : [{
 				display : 'Código',
-				name : 'codigo_icd',
+				name : 'codProduto',
 				width : 70,
 				sortable : true,
 				align : 'left',
