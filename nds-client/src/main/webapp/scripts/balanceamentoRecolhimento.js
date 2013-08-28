@@ -80,6 +80,13 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 					
 					balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(result);
 					$('#utilizaSedeAtendida').val(result.utilizaSedeAtendida);
+					
+					var dataPesquisa = 
+						$("#dataPesquisa", balanceamentoRecolhimentoController.workspace).val();
+					
+					balanceamentoRecolhimentoController.escolherDataParaVisualizacaoGrid(dataPesquisa);
+					
+					balanceamentoRecolhimentoController.visualizarMatrizBalanceamentoPorDia(null);
 				}
 
 			},
@@ -87,6 +94,35 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				balanceamentoRecolhimentoController.showResumo(false);
 			}
 		);
+	},
+	
+	exibirMatrizFornecedor : function() {
+	
+		$("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val(null);
+		
+		balanceamentoRecolhimentoController.visualizarMatrizBalanceamentoPorDia(null);
+	},
+	
+	escolherDataParaVisualizacaoGrid : function(dataPesquisa) {
+		
+		var dataSelecionada = null;
+		
+		var datasResumo = $("#dataResumo", balanceamentoRecolhimentoController.workspace);
+		
+		$.each(datasResumo, function(index, dataResumo) {
+			
+			if ($(dataResumo).html() == dataPesquisa) {
+				
+				var linkVisualizacao = $(dataResumo).parent().find("a")[0];
+				
+				if (linkVisualizacao) {
+				
+					dataSelecionada = $(dataResumo).html();
+				}	
+			}
+		});
+		
+		$("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val(dataSelecionada);
 	},
 	
 	verificarProdutosNaoBalanceadosAposConfirmacaoMatriz : function(result) {
@@ -131,10 +167,15 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		$.postJSON(
 				contextPath + "/devolucao/balanceamentoMatriz/processarProdutosNaoBalanceadosAposConfirmacaoMatriz",
 				null,function(result){
+					
 					balanceamentoRecolhimentoController.montarResumoPeriodoBalanceamento(results);
 					$('#utilizaSedeAtendida').val(results.utilizaSedeAtendida);
+
+					balanceamentoRecolhimentoController.visualizarMatrizBalanceamentoPorDia(null);
+					
 				},
 				function() {
+					
 					balanceamentoRecolhimentoController.showResumo(false);
 				}
 		);
@@ -157,7 +198,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				rows += '<div class="box_resumo">';
 			}
 			
-			rows += '<label>' + resumo.dataFormatada;
+			rows += '<label>' + '<spam id="dataResumo">' + resumo.dataFormatada + '</spam>';
 			
 			if (!resumo.bloquearVisualizacao) {
 			
@@ -276,11 +317,19 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	},
 	
 	visualizarMatrizBalanceamentoPorDia : function(data) {
+		
 		$(".hidden_buttons", balanceamentoRecolhimentoController.workspace).show();
+		
+		if (data == null) {
+			
+			data = $("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val();
+		}
+		
 		$("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val(data);
 		
 		$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexOptions({
 			url: contextPath + "/devolucao/balanceamentoMatriz/exibirMatrizFornecedor",
+			preProcess: balanceamentoRecolhimentoController.executarPreProcessamento,
 			onSuccess: balanceamentoRecolhimentoController.executarAposProcessamento,
 			params: [
 		         {name:'dataFormatada', value: data}
@@ -824,23 +873,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		$.postJSON(
 			contextPath + "/devolucao/balanceamentoMatriz/salvar"
 		);
-	},
-	
-	exibirMatrizFornecedor : function() {
-		
-		$("#dataBalanceamentoHidden", balanceamentoRecolhimentoController.workspace).val("");
-		
-		$(".hidden_buttons", balanceamentoRecolhimentoController.workspace).show();
-		
-		$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexOptions({
-			url: contextPath + "/devolucao/balanceamentoMatriz/exibirMatrizFornecedor",
-			preProcess: balanceamentoRecolhimentoController.executarPreProcessamento,
-			onSuccess: balanceamentoRecolhimentoController.executarAposProcessamento,
-			params: null,
-		    newp: 1,
-		});
-		
-		$(".balanceamentoGrid", balanceamentoRecolhimentoController.workspace).flexReload();
 	},
 	
 	voltarConfiguracaoInicial : function() {

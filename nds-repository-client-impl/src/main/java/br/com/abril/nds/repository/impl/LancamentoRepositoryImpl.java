@@ -38,7 +38,6 @@ import br.com.abril.nds.dto.SumarioLancamentosDTO;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
@@ -589,30 +588,6 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" lancamento.DATA_REC_DISTRIB as novaData, ");
 		sql.append(" produto.EDITOR_ID as idEditor, ");
 		sql.append(" pessoaEditor.RAZAO_SOCIAL as nomeEditor, ");
-	     
-		sql.append(" sum( ");
-		sql.append("  case when (box.TIPO_BOX = :tipoBoxPostoAvancado) ");
-		sql.append("  		then (case when (tipoProduto.GRUPO_PRODUTO = :grupoCromo and periodoLancamentoParcial.TIPO <> :tipoParcial) ");
-		sql.append("	  			then (((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, ");
-		sql.append("             	0) / 100)) / produtoEdicao.PACOTE_PADRAO)) ");
-		sql.append("         	else ((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, ");
-		sql.append("         		0) / 100))) ");  
-		sql.append("     	end) ");
-		sql.append("		else (0) ");
-		sql.append("	end ");
-		sql.append("  ) as expectativaEncalheAtendida, ");
-		  
-		sql.append("  sum( ");
-		sql.append("  case when (box.TIPO_BOX <> :tipoBoxPostoAvancado) ");
-		sql.append("  		then (case when (tipoProduto.GRUPO_PRODUTO = :grupoCromo and periodoLancamentoParcial.TIPO <> :tipoParcial) ");
-		sql.append("	  			then (((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, ");
-		sql.append("             	0) / 100)) / produtoEdicao.PACOTE_PADRAO)) ");
-		sql.append("         	else ((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, ");
-		sql.append("         		0) / 100))) ");  
-		sql.append("     	end) ");
-		sql.append("		else (0) ");
-		sql.append("	end ");
-		sql.append("  ) as expectativaEncalheSede, ");
 		  
 		sql.append("  sum( ");
 		sql.append("  case when (tipoProduto.GRUPO_PRODUTO = :grupoCromo and periodoLancamentoParcial.TIPO <> :tipoParcial) ");
@@ -774,8 +749,6 @@ public class LancamentoRepositoryImpl extends
 													  .addScalar("dataRecolhimentoPrevista")
 													  .addScalar("dataRecolhimentoDistribuidor")
 													  .addScalar("expectativaEncalhe")
-													  .addScalar("expectativaEncalheSede")
-													  .addScalar("expectativaEncalheAtendida")
 													  .addScalar("valorTotal", StandardBasicTypes.BIG_DECIMAL)
 													  .addScalar("desconto", StandardBasicTypes.BIG_DECIMAL)
 													  .addScalar("parcial")
@@ -798,7 +771,6 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("grupoCromo", grupoCromo);
 		query.setParameter("tipoParcial", TipoLancamentoParcial.PARCIAL.toString());
 		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.toString());
-		query.setParameter("tipoBoxPostoAvancado", TipoBox.POSTO_AVANCADO.toString());
 		
 		query.setParameterList("statusParaBalanceamentoRecolhimento", statusParaBalanceamentoRecolhimento);
 		
