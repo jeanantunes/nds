@@ -963,12 +963,12 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 		if( qntDiferenca.compareTo(BigInteger.ZERO ) < 0 ){
 		
-			diferenca.setTipoDiferenca(TipoDiferenca.PERDA_EM);
+			diferenca.setTipoDiferenca(TipoDiferenca.FALTA_EM);
 
 			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.PERDA, StatusAprovacao.APROVADO);
 		} else if(qntDiferenca.compareTo(BigInteger.ZERO) > 0){						
 			
-			diferenca.setTipoDiferenca(TipoDiferenca.GANHO_EM);
+			diferenca.setTipoDiferenca(TipoDiferenca.SOBRA_EM);
 
 			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.GANHO, StatusAprovacao.APROVADO);
 		}
@@ -1164,7 +1164,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 			fechamento.setFisico(qtd); // retorna valor pra tela
 		}
-		
 		
 	}
 

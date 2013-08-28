@@ -425,7 +425,6 @@ public class ConferenciaEncalheController extends BaseController {
 		
 	}
 	
-	
 	@Post
 	public void carregarListaConferencia(Integer numeroCota, boolean indObtemDadosFromBD,  boolean indConferenciaContingencia){
 		
