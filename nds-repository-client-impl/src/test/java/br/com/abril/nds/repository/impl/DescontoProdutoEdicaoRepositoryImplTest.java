@@ -57,7 +57,7 @@ public class DescontoProdutoEdicaoRepositoryImplTest extends AbstractRepositoryI
 				"56003315000148", "333333333333", "distrib_acme@mail.com", "99.999-9");
 		save(pessoa1);
 		
-		fornecedor = Fixture.fornecedor(pessoa1, SituacaoCadastro.ATIVO, false, tipoFornecedor,null);
+		fornecedor = Fixture.fornecedor(pessoa1, SituacaoCadastro.ATIVO, tipoFornecedor,null);
 		
 		save(fornecedor);
 		

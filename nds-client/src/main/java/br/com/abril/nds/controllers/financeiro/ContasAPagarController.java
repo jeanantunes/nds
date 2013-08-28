@@ -93,7 +93,7 @@ public class ContasAPagarController extends BaseController {
 	@Path("/")
 	public void index() {
 
-		List<Fornecedor> fornecedores = fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO);
+		List<Fornecedor> fornecedores = fornecedorService.obterFornecedores(SituacaoCadastro.ATIVO);
 		result.include("fornecedores", fornecedores);
 	}
 
