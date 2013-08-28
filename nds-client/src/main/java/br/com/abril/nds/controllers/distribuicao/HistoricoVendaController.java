@@ -213,6 +213,28 @@ public class HistoricoVendaController extends BaseController {
 	}
 	
 	@Post
+	public void pesquisarTodasAsCotas(FiltroHistoricoVendaDTO filtro){
+		
+		// valida se existem produtos selecionados
+		filtroValidate(filtro.validarListaProduto(), filtro);
+		
+		// valida se o código ou nome da cota foram informados
+		//filtroValidate(filtro.validarPorCota(), filtro);
+		
+//		filtro.getCotaDto().setNomePessoa(PessoaUtil.removerSufixoDeTipo(filtro.getCotaDto().getNomePessoa()));
+		
+		List<CotaDTO> cotas = cotaService.buscarCotasHistorico(filtro.getListProdutoEdicaoDTO(), filtro.isCotasAtivas());
+		
+		validarLista(cotas);
+		
+		TableModel<CellModelKeyValue<CotaDTO>> tableModel = new TableModel<CellModelKeyValue<CotaDTO>>();
+		
+		this.configurarTableModelSemPaginacao(cotas, tableModel);
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	@Post
 	public void pesquisaCotaPorComponentes(FiltroHistoricoVendaDTO filtro){
 		// valida se existem produtos selecionados
 		filtroValidate(filtro.validarListaProduto(), filtro);
@@ -320,7 +342,7 @@ public class HistoricoVendaController extends BaseController {
 			}
 			break;
 		case GERADOR_DE_FLUXO:
-			for(TipoGeradorFluxoPDV tipo : pdvService.obterTodosTiposGeradorFluxo()){
+			for(TipoGeradorFluxoPDV tipo : pdvService.obterTodosTiposGeradorFluxoOrdenado()){
 				resultList.add(new ItemDTO(tipo.getCodigo(),tipo.getDescricao()));
 			}
 			break;

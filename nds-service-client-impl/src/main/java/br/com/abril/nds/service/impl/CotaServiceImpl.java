@@ -2712,26 +2712,14 @@ public class CotaServiceImpl implements CotaService {
 		
 		return (tpDistribuicaoCota != null && tpDistribuicaoCota.equals(tipoDistribuicaoCota));
 	}
-	
-/*	
-	public static void main(String[] args) {
-		ArrayList a = new ArrayList<>();
-		
-		a.add("z");
-		a.add("x");
-		a.add("0");
-		
-		Collections.sort(a,new Comparator<String>() {
 
-			@Override
-			public int compare(String o1, String o2) {
-				
-				return o2.compareTo(o1);
-			}
-		});
+	@Transactional(readOnly = true)
+	@Override
+	public List<CotaDTO> buscarCotasHistorico(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas) {
 		
-		System.out.println(a);
-	}*/
+		return this.cotaRepository.buscarCotasHistorico(listProdutoEdicaoDto, cotasAtivas);
+	}
+	
 }
 
 

@@ -63,4 +63,5 @@ public class TipoGeradorFluxoPDVRepositoryImpl extends AbstractRepositoryModel<T
 		
 		return criteria.list();
 	}
+
 }
