@@ -1085,7 +1085,7 @@ public class MatrizLancamentoController extends BaseController {
 					excedeCapacidadeDistribuidor);
 				
 				itemResumoPeriodoBalanceamento.setExibeDestaque(exibeDestaque);
-				itemResumoPeriodoBalanceamento.setPesoTotal(pesoTotal);
+				itemResumoPeriodoBalanceamento.setPesoTotal(new BigDecimal(pesoTotal/1000));
 				itemResumoPeriodoBalanceamento.setQtdeExemplares(qtdeExemplares);
 				itemResumoPeriodoBalanceamento.setQtdeTitulos(qtdeTitulos);
 				

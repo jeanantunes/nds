@@ -4,6 +4,14 @@ var chamadaoController = $.extend(true, {
 	
 	nonSelected: [],
 	
+	parciais: {
+		
+		qtdProdutosParcial: 0,
+		qtdExemplaresParcial: 0,
+		valorParcial: 0
+		
+	},
+	
 	init : function() {
 		var followUp = $('#numeroCotaFollowUp', chamadaoController.workspace).val();
 		
@@ -198,6 +206,8 @@ var chamadaoController = $.extend(true, {
 		
 		chamadaoController.nonSelected = [];
 		
+		chamadaoController.zerarCamposParciais();
+		
 		var followUp = $('#numeroCotaFollowUp', chamadaoController.workspace).val();
 		
 		var numeroCota;
@@ -303,9 +313,6 @@ var chamadaoController = $.extend(true, {
 			
 			chamadaoController.duplicarCamposParciais();
 			
-		} else {
-			
-			chamadaoController.zerarCamposParciais();
 		}
 		
 		$(".grids", chamadaoController.workspace).show();
@@ -322,7 +329,7 @@ var chamadaoController = $.extend(true, {
 		
 		inputCheck = inputCheck.concat(checked ? ' checked="checked"' : '');
 		
-		inputCheck = inputCheck.concat(' onclick="chamadaoController.calcularParcial()" '
+		inputCheck = inputCheck.concat(' onclick="chamadaoController.calcularParcial(this)" '
 						+ ' onchange="chamadaoController.selecionarLinha(' + idLancamento + ', this.checked);" />');
 		
 		return inputCheck;
@@ -363,40 +370,44 @@ var chamadaoController = $.extend(true, {
 		this.checkAll = input.checked;
 	},
 	
-	calcularParcial : function() {
+	calcularParcial : function(input) {
 
-		var qtdProdutosParcial = 0;
-		var qtdExemplaresParcial = 0;
-		var valorParcial = 0;
+		var checado = input.checked;
 		
-		$("input[name='checkConsignado']", chamadaoController.workspace).each(function() {
+		clickLineFlexigrid(input, checado);
 		
-			var checado = this.checked;
+		if (checado) {
 			
-			clickLineFlexigrid(this, checado);
+			chamadaoController.parciais.qtdProdutosParcial += 1;
 			
-			if (checado) {
-				
-				qtdProdutosParcial = qtdProdutosParcial + 1;
-				
-				var reparte = $("#reparte" + this.value).html();
-				reparte = removeMascaraPriceFormat(reparte);
-				qtdExemplaresParcial = qtdExemplaresParcial + intValue(reparte);
-				
-				var valor = $("#valorTotal" + this.value).html();
-				
-				valor = priceToFloat(valor);
-				valorParcial = parseFloat(valorParcial) + parseFloat(valor);
+			var reparte = $("#reparte" + input.value).html();
+			reparte = removeMascaraPriceFormat(reparte);
+			chamadaoController.parciais.qtdExemplaresParcial += intValue(reparte);
 			
-			} else {
-				
-				$("#checkAll", chamadaoController.workspace).attr("checked", false);
-			}
-		});
-		valorParcial = parseFloat(valorParcial).toFixed(4);
-		$("#qtdProdutosParcial", chamadaoController.workspace).val(qtdProdutosParcial);
-		$("#qtdExemplaresParcial", chamadaoController.workspace).val(qtdExemplaresParcial);
-		$("#valorParcial", chamadaoController.workspace).val(floatToPrice(valorParcial));
+			var valor = $("#valorTotal" + input.value).html();
+			
+			valor = priceToFloat(valor);
+			chamadaoController.parciais.valorParcial = parseFloat(chamadaoController.parciais.valorParcial) + parseFloat(valor);
+		
+		} else {
+			
+			chamadaoController.parciais.qtdProdutosParcial -= 1;
+			
+			var reparte = $("#reparte" + input.value).html();
+			reparte = removeMascaraPriceFormat(reparte);
+			chamadaoController.parciais.qtdExemplaresParcial -= intValue(reparte);
+			
+			var valor = $("#valorTotal" + input.value).html();
+			
+			valor = priceToFloat(valor);
+			chamadaoController.parciais.valorParcial = parseFloat(chamadaoController.parciais.valorParcial) - parseFloat(valor);
+		}
+
+		chamadaoController.parciais.valorParcial = parseFloat(chamadaoController.parciais.valorParcial).toFixed(4);
+		
+		$("#qtdProdutosParcial", chamadaoController.workspace).val(chamadaoController.parciais.qtdProdutosParcial);
+		$("#qtdExemplaresParcial", chamadaoController.workspace).val(chamadaoController.parciais.qtdExemplaresParcial);
+		$("#valorParcial", chamadaoController.workspace).val(floatToPrice(chamadaoController.parciais.valorParcial));
 		
 		// chamadaoController.aplicarMascaraCampos();
 	},
@@ -417,6 +428,10 @@ var chamadaoController = $.extend(true, {
 		$("#qtdProdutosParcial", chamadaoController.workspace).val(0);
 		$("#qtdExemplaresParcial", chamadaoController.workspace).val(0);
 		$("#valorParcial", chamadaoController.workspace).val(floatToPrice(0));
+		
+		chamadaoController.parciais.qtdProdutosParcial = 0;
+		chamadaoController.parciais.qtdExemplaresParcial = 0;
+		chamadaoController.parciais.valorParcial = 0;
 		
 		//chamadaoController.aplicarMascaraCampos();
 	},
