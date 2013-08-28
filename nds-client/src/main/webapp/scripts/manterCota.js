@@ -374,8 +374,21 @@ var MANTER_COTA = $.extend(true, {
     montarCombo:function(result,idCombo){
 
         var comboClassificacao =  montarComboBox(result, false);
+        
+        if(idCombo == "#classificacaoSelecionadaCPF" ){
+        	var inicio = '<select name="cotaDTO.classificacaoSelecionada" id="classificacaoSelecionadaCPF" style="width:300px;" disabled="disabled">';
+        	var fim = '</select>';
+        	$("#selectClassificacaoCPF", MANTER_COTA._workspace).html(inicio + comboClassificacao + fim);
+        }else if(idCombo == "#classificacaoSelecionada"){
+        	var inicio = '<select name="cotaDTO.classificacaoSelecionada" id="classificacaoSelecionada" style="width:300px;" disabled="disabled">';
+        	var fim = '</select>';
+        	$("#selectClassificacao", MANTER_COTA._workspace).html(inicio + comboClassificacao + fim);
 
-        $(idCombo, MANTER_COTA._workspace).html(comboClassificacao);
+        }else{
+        	$(idCombo, MANTER_COTA._workspace).html(comboClassificacao);        	
+        	
+        }
+
     },
 
     salvarDadosCadastrais:function(){
