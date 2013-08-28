@@ -1432,8 +1432,7 @@ public class RecebimentoFisicoController extends BaseController {
 			
 			codigo = StringUtils.leftPad(codigo, 8, '0');
 			
-			RecebimentoFisicoDTO recebimentoFisicoDTO = 
-				this.recebimentoFisicoService.obterRecebimentoFisicoDTO(codigo, edicao);
+			RecebimentoFisicoDTO recebimentoFisicoDTO = this.recebimentoFisicoService.obterRecebimentoFisicoDTO(codigo, edicao);
 			
 			this.result.use(Results.json()).from(recebimentoFisicoDTO, "result").serialize();
 			

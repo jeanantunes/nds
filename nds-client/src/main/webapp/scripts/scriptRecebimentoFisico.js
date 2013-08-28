@@ -1597,7 +1597,9 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		$.postJSON(this.path + 'obterDadosEdicao', {codigo:codigo,edicao:edicao}, 
 			function(result) { 
-				$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).text(floatToPrice(result.precoDesconto));
+				$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).text(
+					$.formatNumber(result.precoDesconto, {format:"#,####0.0000", locale:"br"})
+				);
 				$("#precoCapa"+index, recebimentoFisicoController.workspace).text(
 					$.formatNumber(result.precoCapa, {format:"#,##0.00", locale:"br"})
 				);
