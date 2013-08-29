@@ -47,13 +47,15 @@ implements MovimentoEstoqueRepository {
 		
 		hql.append(" select new " + ExtratoEdicaoDTO.class.getCanonicalName() );		
 		
-		hql.append(" ( m.id, m.data, m.tipoMovimento.descricao, ");		
+		hql.append(" ( m.id, m.tipoMovimento.id, m.data, m.tipoMovimento.descricao, ld.id, ");		
 		
 		hql.append(" sum(case when m.tipoMovimento.operacaoEstoque  = :tipoOperacaoEntrada then m.qtde else 0 end), ");
 
 		hql.append(" sum(case when m.tipoMovimento.operacaoEstoque  = :tipoOperacaoSaida then m.qtde else 0 end) )  ");
 
-		hql.append(" from MovimentoEstoque m ");	
+		hql.append(" from MovimentoEstoque m ");
+		
+		hql.append(" left join m.lancamentoDiferenca ld ");
 			
 		hql.append(" where m.produtoEdicao.numeroEdicao = :numeroEdicao and ");		
 

@@ -5,7 +5,9 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -276,6 +278,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		
 		List<Object[]> listaResultados = query.list();
 		
+		Set<Diferenca> setDiferencas = new HashSet<Diferenca>();
+		
 		List<Diferenca> listaDiferencas = new ArrayList<Diferenca>();
 		
 		for (Object[] resultado : listaResultados) {
@@ -288,8 +292,10 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 									
 			diferenca.setQtde((BigInteger) resultado[3]);
 			
-			listaDiferencas.add(diferenca);
+			setDiferencas.add(diferenca);
 		}
+		
+		listaDiferencas.addAll(setDiferencas);
 		
 		return listaDiferencas;
 	}
@@ -335,7 +341,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			}
 			else{
 			
-				hqlCota += " (diferenca.qtde * coalesce(movimentoEstoqueCota.valoresAplicados.precoComDesconto,diferenca.produtoEdicao.precoVenda)) as valorTotalDiferenca ";
+				hqlCota += " (diferenca.qtde * coalesce(diferenca.produtoEdicao.precoVenda, 0)) as valorTotalDiferenca ";
 			}
 			
 			hql = " select distinct(diferenca), "

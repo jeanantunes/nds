@@ -88,10 +88,41 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 					
 					balanceamentoRecolhimentoController.visualizarMatrizBalanceamentoPorDia(null);
 				}
+				
+				balanceamentoRecolhimentoController.verificarMatrizesConfirmadas();
 
 			},
 			function() {
 				balanceamentoRecolhimentoController.showResumo(false);
+			}
+		);
+	},
+	
+	verificarMatrizesConfirmadas: function() {
+		
+		$.postJSON(
+			contextPath + "/devolucao/balanceamentoMatriz/obterAgrupamentoDiarioBalanceamento", 
+			null,
+			function(result) {
+				
+				var todasConfirmadas = true;
+
+				$(result).each(function(index, value) {
+
+					if (!value.confirmado) {
+						todasConfirmadas = false;
+						return -1;
+					}
+				});
+				
+				if (todasConfirmadas) {
+
+					balanceamentoRecolhimentoController.bloquearLinks();
+
+					balanceamentoRecolhimentoController.habilitarLink(
+						"linkConfirmar", balanceamentoRecolhimentoController.obterConfirmacaoBalanceamento
+					);
+				}
 			}
 		);
 	},
@@ -227,7 +258,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			
 			rows += '<span class="span_1">Qtde. Parciais:</span>';
 			rows += '<span class="span_2">' + resumo.qtdeTitulosParciais + '</span>';	
-			rows += '<span class="span_1">Peso Total:</span>';
+			rows += '<span class="span_1">Peso Total (kg):</span>';
 			rows += '<span class="span_2">' + resumo.pesoTotalFormatado + '</span>';
 			rows += '<span class="span_1">Valor Total:</span>';
 			rows += '<span class="span_2">' + resumo.valorTotalFormatado + '</span>';
@@ -799,6 +830,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				    	exibirMensagem(tipoMensagem, listaMensagens);
 			       	}
         	   	}
+				
+				balanceamentoRecolhimentoController.verificarMatrizesConfirmadas();
 			},
 			null,
 			true,

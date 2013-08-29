@@ -54,7 +54,7 @@ public class ImpressaoNFEServiceImpl implements ImpressaoNFEService {
 	public List<ProdutoDTO> obterProdutosExpedicaoConfirmada(FiltroImpressaoNFEDTO filtro) {
 		
 		//Filtra os produtos pelos fornecedores do distribuidor
-		List<Fornecedor> fornecedores = this.fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO);
+		List<Fornecedor> fornecedores = this.fornecedorService.obterFornecedores(SituacaoCadastro.ATIVO);
 		List<Long> idsFornecedores = new ArrayList<Long>();
 		for(Fornecedor f : fornecedores) {
 			idsFornecedores.add(f.getId());

@@ -15,6 +15,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.DataHolder;
 import br.com.abril.nds.client.vo.AnaliticoEncalheVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
@@ -98,6 +99,8 @@ public class FechamentoEncalheController extends BaseController {
 	
 	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaFechamentoEncalhe";
 	
+	private static final String DATA_HOLDER_ACTION_KEY = "fechamentoEncalhe";
+	
 	@Path("/")
 	public void index() {
 		
@@ -132,16 +135,13 @@ public class FechamentoEncalheController extends BaseController {
 		
 		List<FechamentoFisicoLogicoDTO> listaEncalhe = 
 				consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, aplicaRegraMudancaTipo,sortname, sortorder, rp, page);
-		
-		
-		List<FechamentoFisicoLogicoDTO> novaListaEncalhe = this.fechamentoEncalheService.ajustarGrids(listaEncalhe, listaEncalheSession);
-		
+
 		int quantidade = this.quantidadeItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, aplicaRegraMudancaTipo);
 		
-		if (novaListaEncalhe.isEmpty()) {
+		if (listaEncalhe.isEmpty()) {
 			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Não houve conferência de encalhe nesta data."), "mensagens").recursive().serialize();
 		} else {
-			this.result.use(FlexiGridJson.class).from(novaListaEncalhe).total(quantidade).page(page).serialize();
+			this.result.use(FlexiGridJson.class).from(listaEncalhe).total(quantidade).page(page).serialize();
 		}
 	}
 	
@@ -183,7 +183,25 @@ public class FechamentoEncalheController extends BaseController {
 		
 		
 		List<FechamentoFisicoLogicoDTO> listaEncalhe = fechamentoEncalheService.buscarFechamentoEncalhe(filtro, sortorder, this.resolveSort(sortname), page, rp);
+		
+		for (FechamentoFisicoLogicoDTO fechamentoFisicoLogico : listaEncalhe) {
+			
+			fechamentoFisicoLogico.setReplicar(getCheckedFromDataHolder(fechamentoFisicoLogico.getProdutoEdicao().toString()));
+		}
+		
 		return listaEncalhe;
+	}
+	
+	private String getCheckedFromDataHolder(String codigo) {
+		
+		DataHolder dataHolder = (DataHolder) this.session.getAttribute(DataHolder.SESSION_ATTRIBUTE_NAME);
+		
+		if (dataHolder != null) {
+
+			return dataHolder.getData(DATA_HOLDER_ACTION_KEY, codigo, "checado");
+		}
+		
+		return "false";
 	}
 	
 	

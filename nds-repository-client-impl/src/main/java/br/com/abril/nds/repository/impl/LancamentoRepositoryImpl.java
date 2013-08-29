@@ -67,16 +67,19 @@ public class LancamentoRepositoryImpl extends
 		hql.append("join lancamento.produtoEdicao produtoEdicao ");
 		hql.append("join produtoEdicao.produto produto ");
 		hql.append("join produto.fornecedores fornecedor ");
-		hql.append("where fornecedor.permiteBalanceamento = :permiteBalanceamento ");
+		
+		boolean hasWhere = false;
+		
 		if (data != null) {
-			hql.append("and lancamento.dataLancamentoPrevista = :data ");
+			hql.append(" where lancamento.dataLancamentoPrevista = :data ");
+			hasWhere = true;			
 		}
 		boolean filtraFornecedores = idsFornecedores != null && !idsFornecedores.isEmpty();
 		if (filtraFornecedores) {
-			hql.append("and fornecedor.id in (:idsFornecedores) ");
+			hql.append(hasWhere ? " and " : " where ");
+			hql.append(" fornecedor.id in (:idsFornecedores) ");
 		}
 		Query query = getSession().createQuery(hql.toString());
-		query.setParameter("permiteBalanceamento", true);
 		if (data != null) {
 			query.setParameter("data", data);
 		}
@@ -564,7 +567,9 @@ public class LancamentoRepositoryImpl extends
 		String[] arrayStatusParaBalanceamentoRecolhimento =
 			{StatusLancamento.EXPEDIDO.toString(),
 			 StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.toString(),
-			 StatusLancamento.BALANCEADO_RECOLHIMENTO.toString()};
+			 StatusLancamento.BALANCEADO_RECOLHIMENTO.toString(),
+			 StatusLancamento.EM_RECOLHIMENTO.toString(),
+			 StatusLancamento.RECOLHIDO.toString()};
 		
 		List<String> statusParaBalanceamentoRecolhimento =
 			Arrays.asList(arrayStatusParaBalanceamentoRecolhimento);

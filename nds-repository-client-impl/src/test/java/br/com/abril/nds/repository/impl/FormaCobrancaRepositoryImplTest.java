@@ -273,7 +273,7 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		fornecedor2.setId(null);
 		save(fornecedor2);
 		
-		fornecedor3 = Fixture.fornecedor((PessoaJuridica)pessoaPj, SituacaoCadastro.ATIVO, true, tipoFornecedor, 1);
+		fornecedor3 = Fixture.fornecedor((PessoaJuridica)pessoaPj, SituacaoCadastro.ATIVO, tipoFornecedor, 1);
 		fornecedor3.setId(null);
 		save(fornecedor3);
 		

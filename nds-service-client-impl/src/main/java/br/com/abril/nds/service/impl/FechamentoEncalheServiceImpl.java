@@ -963,14 +963,16 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 		if( qntDiferenca.compareTo(BigInteger.ZERO ) < 0 ){
 		
-			diferenca.setTipoDiferenca(TipoDiferenca.PERDA_EM);
+			diferenca.setTipoDiferenca(TipoDiferenca.FALTA_EM);
 
 			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.PERDA, StatusAprovacao.APROVADO);
+			
 		} else if(qntDiferenca.compareTo(BigInteger.ZERO) > 0){						
 			
-			diferenca.setTipoDiferenca(TipoDiferenca.GANHO_EM);
+			diferenca.setTipoDiferenca(TipoDiferenca.SOBRA_EM);
 
 			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.GANHO, StatusAprovacao.APROVADO);
+			
 		}
 	}
 
@@ -1041,12 +1043,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 		return tipoNotaFiscal;
 	}
-	
-	
-	
-	
-	
-	
+
 	@Transactional
 	private boolean validarEncerramentoOperacao(Date dataEncalhe) {
 		
@@ -1164,7 +1161,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 			fechamento.setFisico(qtd); // retorna valor pra tela
 		}
-		
 		
 	}
 
@@ -1325,36 +1321,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		return this.fechamentoEncalheRepository.buscaControleFechamentoEncalhe(data);
 	}
 
-	@Override
-	public List<FechamentoFisicoLogicoDTO> ajustarGrids(List<FechamentoFisicoLogicoDTO> listaEncalhe,
-											List<FechamentoFisicoLogicoDTO> listaDeGrid) {
-		
-		if(listaDeGrid == null || listaDeGrid.isEmpty())
-		{
-			return listaEncalhe;
-		}
-		else
-		{
-			for(FechamentoFisicoLogicoDTO linhaGrid : listaDeGrid)
-			{
-				for(FechamentoFisicoLogicoDTO encalhe : listaEncalhe)
-				{
-					if(encalhe.getCodigo().equals(linhaGrid.getCodigo()))
-					{	
-						encalhe.setReplicar(linhaGrid.getReplicar());
-						
-						if(linhaGrid.getFisico() != null)
-						{
-							encalhe.setFisico(linhaGrid.getFisico());
-						}
-					}
-				}
-			}
-			return listaEncalhe;
-		}
-	}
-
-	
 	@Override
 	public List<GridFechamentoEncalheDTO> listaEncalheTotalParaGrid(
 			List<FechamentoFisicoLogicoDTO> listaEncalheSessao) {

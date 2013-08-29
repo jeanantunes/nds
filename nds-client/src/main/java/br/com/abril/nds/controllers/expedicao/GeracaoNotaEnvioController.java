@@ -140,31 +140,6 @@ public class GeracaoNotaEnvioController extends BaseController {
 		if(listaIdFornecedores==null || listaIdFornecedores.isEmpty())
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum fornecedor foi selecionado.");
 		
-		
-		FiltroConsultaNotaEnvioDTO filtroCotaSemRoteirizacao = 
-				this.setFiltroNotaEnvioSessao(intervaloBoxDe, intervaloBoxAte, intervaloCotaDe, 
-						intervaloCotaAte, intervaloMovimentoDe, intervaloMovimentoAte, dataEmissao, 
-						listaIdFornecedores, idRoteiro, idRota, exibirNotasEnvio, sortname, sortorder, 0, 0);
-		
-		List<ConsultaNotaEnvioDTO> listaCotaExemplaresVerificacaoCotaSemRoteirizacao = this.geracaoNotaEnvioService.busca(filtroCotaSemRoteirizacao);
-		
-		String listaDeCotasSemRoteirizacao = "";
-		for(ConsultaNotaEnvioDTO cotaExemplar : listaCotaExemplaresVerificacaoCotaSemRoteirizacao) {
-			
-			String cotaString = cotaExemplar.getNumeroCota() + " - " + cotaExemplar.getNomeCota();
-			
-			if(cotaExemplar.getBox() == null && ! listaDeCotasSemRoteirizacao.contains(cotaString)) {
-				listaDeCotasSemRoteirizacao = listaDeCotasSemRoteirizacao + cotaString + "<br />";
-			}
-		}
-		
-		if(! listaDeCotasSemRoteirizacao.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "<p>As seguintes cotas não tem roteirização:</p><p> " + listaDeCotasSemRoteirizacao + "</p>");
-		}
-		
-		filtroCotaSemRoteirizacao = null;
-		listaCotaExemplaresVerificacaoCotaSemRoteirizacao = null;
-		
 		FiltroConsultaNotaEnvioDTO filtro = 
 				this.setFiltroNotaEnvioSessao(intervaloBoxDe, intervaloBoxAte, intervaloCotaDe, 
 						intervaloCotaAte, intervaloMovimentoDe, intervaloMovimentoAte, dataEmissao, 
@@ -259,7 +234,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontrado itens para exportar"));
 		}
 		
-		byte[] notasGeradas = nfeService.obterNEsPDF(notasEnvio, false);
+		byte[] notasGeradas = nfeService.obterNEsPDF(notasEnvio, false, filtro.getIntervaloMovimento());
 		
 		return notasGeradas;
 	}
@@ -367,6 +342,16 @@ public class GeracaoNotaEnvioController extends BaseController {
 		} else {
 			result.include("errorMessage", "É necessário informar o número da Cota.");
 		}
+		
+		String dataRecolhimento = null;
+
+		if(filtro.getIntervaloMovimento().getDe().equals(filtro.getIntervaloMovimento().getAte()))
+			dataRecolhimento =  DateUtil.formatarDataPTBR(filtro.getIntervaloMovimento().getDe());
+		else
+			dataRecolhimento =  "De "  + DateUtil.formatarDataPTBR(filtro.getIntervaloMovimento().getDe()) + "</br>" +
+								"até " + DateUtil.formatarDataPTBR(filtro.getIntervaloMovimento().getAte());
+		
+		result.include("dataLancamento", dataRecolhimento);
 		result.include("notaEnvio", notaEnvio);
 		
 	}

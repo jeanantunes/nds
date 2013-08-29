@@ -473,13 +473,13 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 					listaMovimentosEstoqueCota.add(movimentoEstoqueCota);
 				}
 				
-				if (diferenca.getTipoDiferenca().isSobra()) {
+				//if (diferenca.getTipoDiferenca().isSobra()) {
 					
-					this.gerarMovimentoEstoque(
+					movimentoEstoque = this.gerarMovimentoEstoque(
 						diferenca, diferenca.getResponsavel().getId(), diferenca.isAutomatica(),
 							validarTransfEstoqueDiferenca, 
 								ultimoLancamento.getDataLancamentoDistribuidor());
-				}
+				//}
 				
 				//Verifica se ha direcionamento de produtos para o estoque do distribuidor
 				if (diferenca.getQtde().compareTo(qntTotalRateio)>0) {
@@ -1076,7 +1076,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				grupoMovimentoEstoque = GrupoMovimentoEstoque.GANHO_EM;
 			}
 		}
-		
+
 		return grupoMovimentoEstoque;
 	}
 	

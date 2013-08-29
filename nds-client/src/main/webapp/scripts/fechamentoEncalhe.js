@@ -6,6 +6,8 @@ var fechamentoEncalheController = $.extend(true, {
 	isFechamento : false,
 	arrayCotasAusentesSession: [],
 	checkMarcarTodosCotasAusentes : false,
+	checkAllGrid: false,
+	nonSelected: [],
 	
 	init : function() {
 		$("#datepickerDe", fechamentoEncalheController.workspace).datepicker({
@@ -78,7 +80,10 @@ var fechamentoEncalheController = $.extend(true, {
 		});
 		$(".fechamentoGrid", fechamentoEncalheController.workspace).flexigrid({
 			dataType : 'json',
-			onSuccess: function() {bloquearItensEdicao(fechamentoEncalheController.workspace);},
+			onSuccess: function() {
+				bloquearItensEdicao(fechamentoEncalheController.workspace);
+				fechamentoEncalheController.replicarItens();
+			},
 			preProcess: fechamentoEncalheController.preprocessamentoGridFechamento,
 			colModel : [ {
 				display : 'Sequencia',
@@ -170,6 +175,9 @@ var fechamentoEncalheController = $.extend(true, {
 	},
 	
 	pesquisar : function(aplicaRegraMudancaTipo) {
+		
+		dataHolder.clearAction('fechamentoEncalhe', fechamentoEncalheController.workspace);
+		
 		if (aplicaRegraMudancaTipo == null ){
 			aplicaRegraMudancaTipo = false;
 		}
@@ -228,13 +236,13 @@ var fechamentoEncalheController = $.extend(true, {
 			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
 			row.cell.fisico = '<input class="" isEdicao="true" type="text" onkeypress="fechamentoEncalheController.nextInputExemplares('+index+',event); fechamentoEncalheController.retirarCheckBox('+index+');" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" value="' + valorFisico + '" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ')" ' + fechado + '/>';
 
-			if(row.cell.replicar == 'true')
+			if((row.cell.replicar == 'true' || fechamentoEncalheController.checkAllGrid) && ($.inArray(row.cell.produtoEdicao, fechamentoEncalheController.nonSelected) < 0))
 			{
-				row.cell.replicar = '<input isEdicao="true" type="checkbox"  id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index + ');"' + fechado+ ' checked />';
+				row.cell.replicar = '<input isEdicao="true" type="checkbox" onchange="fechamentoEncalheController.selecionarLinha('+ row.cell.produtoEdicao +', this.checked)" id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index + ');"' + fechado+ ' checked />';
 			}	
 			else
 			{
-				row.cell.replicar = '<input isEdicao="true" type="checkbox"  id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index + ');"' + fechado+ '/>';
+				row.cell.replicar = '<input isEdicao="true" type="checkbox" onchange="fechamentoEncalheController.selecionarLinha('+ row.cell.produtoEdicao +', this.checked)" id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index + ');"' + fechado+ '/>';
 			}	
 			
 			if (fechado != '') {
@@ -243,6 +251,16 @@ var fechamentoEncalheController = $.extend(true, {
 		});
 		
 		return resultado;
+	},
+	
+	selecionarLinha: function (idProdutoEdicao, checked) {
+		
+		if (fechamentoEncalheController.checkAllGrid && !checked) {
+			
+			fechamentoEncalheController.nonSelected.push(idProdutoEdicao);
+		}
+		
+		dataHolder.hold('fechamentoEncalhe', idProdutoEdicao , 'checado', checked);
 	},
 	
 	replicarTodos : function(replicar) {
@@ -258,6 +276,21 @@ var fechamentoEncalheController = $.extend(true, {
 				fechamentoEncalheController.limparInputsFisico(i);
 			}
 		}
+	},
+	
+	replicarItens : function() {
+		
+		var index = 0;
+		
+		$('.fechamentoGrid', fechamentoEncalheController.workspace).find('tr').each(function(){
+			
+			if ($(this).find('input[name="checkgroupFechamento"]').is(":checked")) {
+				
+				fechamentoEncalheController.replicarItem(index);
+			}
+			
+			index++;
+		});
 	},
 	
 	replicar:function(index){
@@ -349,6 +382,8 @@ var fechamentoEncalheController = $.extend(true, {
 				});
 			});
 		}
+		
+		fechamentoEncalheController.checkAllGrid = input.checked;
 	},
 	
 	onChangeFisico : function(campo, index) {
@@ -680,7 +715,7 @@ var fechamentoEncalheController = $.extend(true, {
 							} else {
 								checkBox = '<input checked="checked" isEdicao="true" type="checkbox" name="checkboxGridCotas" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this.checked)" value="' + row.cell.idCota + '" />';
 							}
-														
+
 							checked = true;
 						}
 					});
@@ -1070,8 +1105,11 @@ var fechamentoEncalheController = $.extend(true, {
 
 		 $("input[type=text][name='fisico']").each(function(index, value){
 			
-			 data.push({name: 'listaFechamento[' + index + '].produtoEdicao', value: $(value).attr('id')});
-			 data.push({name: 'listaFechamento[' + index + '].fisico', value: $(value).val()});
+			 if ($.inArray($(value).attr('id'), fechamentoEncalheController.nonSelected) < 0) {
+
+				 data.push({name: 'listaFechamento[' + index + '].produtoEdicao', value: $(value).attr('id')});
+				 data.push({name: 'listaFechamento[' + index + '].fisico', value: $(value).val()});
+			 }
 		 });
 		 
 		return data;

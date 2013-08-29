@@ -6190,7 +6190,7 @@ public class DataLoader {
 
 		save(session, telefonePrincipalAcme, telefoneFornecedorAcme);
 
-		Fornecedor fornecedor = Fixture.fornecedor(juridicaValida, SituacaoCadastro.ATIVO, false, tipoFornecedorOutros,123456);
+		Fornecedor fornecedor = Fixture.fornecedor(juridicaValida, SituacaoCadastro.ATIVO, tipoFornecedorOutros,123456);
 		fornecedor.setEmailNfe("email@email.com");
 		save(session, fornecedor);
 	}
@@ -6544,7 +6544,7 @@ public class DataLoader {
 			TipoFornecedor tipoFornecedorPublicacao = Fixture.tipoFornecedorPublicacao();
 			session.save(tipoFornecedorPublicacao);
 
-			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao, null);
+			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, tipoFornecedorPublicacao, null);
 			session.save(fornecedor);
 
 			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista, 5, 5, new Long(10000), TributacaoFiscal. TRIBUTADO);
@@ -7263,7 +7263,7 @@ public class DataLoader {
 					"30.000.000/0001-00", "000000000005", "acme@mail.com", "99.999-9");
 			save(session,juridica);
 
-			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, true, tipoFornecedorPublicacao, null);
+			Fornecedor fornecedor = Fixture.fornecedor(juridica, SituacaoCadastro.ATIVO, tipoFornecedorPublicacao, null);
 			save(session,fornecedor);
 
 			Produto produto = Fixture.produto("00"+i, "descricao"+i, "nome"+i, PeriodicidadeProduto.ANUAL, tipoRevista, 5, 5, new Long(10000), TributacaoFiscal. TRIBUTADO);

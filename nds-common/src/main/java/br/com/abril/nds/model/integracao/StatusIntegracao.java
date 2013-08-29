@@ -9,5 +9,6 @@ public enum StatusIntegracao {
 	NAO_INTEGRADO,
 	RE_INTEGRADO,
 	INTEGRADO,
-	NAO_INTEGRAR;
+	NAO_INTEGRAR,
+	AGUARDANDO_GFS;
 }
