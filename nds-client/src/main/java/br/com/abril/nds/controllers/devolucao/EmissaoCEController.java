@@ -278,6 +278,20 @@ public class EmissaoCEController extends BaseController {
 		if(apresentaCapas && !apresentaCapasPersonalizadas) {
 			result.include("capasPaginadas", dados.getCapasPaginadas());
 		}
+		
+		if(apresentaCapas && !apresentaCapasPersonalizadas) {
+			result.include("capasPaginadas", dados.getCapasPaginadas());
+		}
+		
+		String dataRecolhimento = null;
+		
+		if(filtro.getDtRecolhimentoDe().equals(filtro.getDtRecolhimentoAte()))
+			dataRecolhimento =  DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe());
+		else
+			dataRecolhimento =  "De " + DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()) 
+							 + " até " + DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoAte());
+		
+		result.include("dataRecolhimento",  dataRecolhimento);
 			
 		result.include("cotasEmissao", dados.getCotasEmissao());
 		
