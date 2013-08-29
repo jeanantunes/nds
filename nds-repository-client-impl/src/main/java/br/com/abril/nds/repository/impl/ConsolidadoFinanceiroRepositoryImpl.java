@@ -101,7 +101,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
            .append("	coalesce(movimentos4_.PRECO_COM_DESCONTO,produtoedi7_.PRECO_VENDA) as precoComDesconto, ")
            .append("	sum(movimentos4_.QTDE) * coalesce(movimentos4_.PRECO_COM_DESCONTO,produtoedi7_.PRECO_VENDA) as total,")
            .append("	sum(movimentos4_.QTDE) as encalhe,  ")
-           .append("	chamadaEncalhe.sequencia as sequencia ")
+           .append("	coalesce(chamadaEncalhe.sequencia, 'Postergado') as sequencia ")
            .append("from ")
            .append("	CONSOLIDADO_FINANCEIRO_COTA consolidad0_  ")
            .append("left outer join ")
@@ -149,6 +149,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
            .append("	and consolidad0_.DT_CONSOLIDADO = :dataConsolidado ")
            .append("	and tipomovime5_.GRUPO_MOVIMENTO_FINANCEIRO in (:grupoMovimentoFinanceiro) ")
            .append("    and movimentos4_.QTDE != 0 ")
+           .append("	and chamadaEncalheCota.postergado = :naoPostergado ")
            .append("group by ")
            .append("	produto8_.CODIGO , ")
            .append("	produto8_.NOME , ")
@@ -168,7 +169,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
            .append("	coalesce(movimentos2_.PRECO_COM_DESCONTO,produtoedi5_.PRECO_VENDA) as precoComDesconto, ")
            .append("	sum(movimentos2_.QTDE) * coalesce(movimentos2_.PRECO_COM_DESCONTO,produtoedi5_.PRECO_VENDA) as total,")
            .append("	sum(movimentos2_.QTDE) as encalhe,  ")
-           .append("	chamadaEncalhe.sequencia as sequencia ")
+           .append("	coalesce(chamadaEncalhe.sequencia, 'Postergado') as sequencia ")
            .append("from ")
            .append("	MOVIMENTO_FINANCEIRO_COTA movimentof0_  ")
            .append("left outer join ")
@@ -224,6 +225,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
            .append("			) ")
            .append("		)  ")
            .append("    and movimentos2_.QTDE != 0 ")
+           .append("	and chamadaEncalheCota.postergado = :naoPostergado ")
            .append("group by ")
            .append("	produto6_.CODIGO , ")
            .append("	produto6_.NOME , ")
@@ -297,7 +299,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		query.addScalar("precoComDesconto", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("total", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("encalhe", StandardBasicTypes.BIG_INTEGER);
-		query.addScalar("sequencia", StandardBasicTypes.INTEGER);
+		query.addScalar("sequencia", StandardBasicTypes.STRING);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(EncalheCotaDTO.class));
 		
@@ -307,6 +309,8 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 				Arrays.asList(
 					GrupoMovimentoFinaceiro.ENVIO_ENCALHE.toString()
 				));
+		
+		query.setParameter("naoPostergado", false);
 		
 		if (paginacao != null &&
 				paginacao.getQtdResultadosPorPagina() != null &&
@@ -528,7 +532,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("	coalesce(estudocota7_.QTDE_PREVISTA-estudocota7_.QTDE_EFETIVA,0) as diferenca, ")
 		   .append("	diferenca10_.TIPO_DIFERENCA as motivoTexto, ")
 		   .append("	sum(movimentos4_.QTDE) * coalesce(movimentos4_.PRECO_COM_DESCONTO,produtoedi8_.PRECO_VENDA) as total, ")
-		   .append("	chamadaEncalhe.sequencia as sequencia ")
+		   .append("	coalesce(chamadaEncalhe.sequencia, 'Postergado') as sequencia ")
 		   .append("from ")
 		   .append("	CONSOLIDADO_FINANCEIRO_COTA consolidad0_  ")
 		   .append("inner join ")
@@ -584,6 +588,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("	cota1_.NUMERO_COTA = :numeroCota ")
 		   .append("	and consolidad0_.DT_CONSOLIDADO = :dataConsolidado ")
 		   .append("	and tipomovime5_.GRUPO_MOVIMENTO_FINANCEIRO = :grupoMovimentoFinanceiro ")
+		   .append("	and chamadaEncalheCota.postergado = :naoPostergado ")
 		   .append("group by ")
 		   .append("	produto11_.CODIGO , ")
 		   .append("	produto11_.NOME , ")
@@ -606,7 +611,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("	estudocota5_.QTDE_PREVISTA-estudocota5_.QTDE_EFETIVA as diferenca, ")
 		   .append("	diferenca8_.TIPO_DIFERENCA as motivoTexto, ")
 		   .append("	sum(movimentos2_.QTDE) * coalesce(movimentos2_.PRECO_COM_DESCONTO,produtoedi6_.PRECO_VENDA) as total, ")
-		   .append("	chamadaEncalhe.sequencia as sequencia ")
+		   .append("	coalesce(chamadaEncalhe.sequencia, 'Postergado') as sequencia ")
 		   .append("from ")
 		   .append("	MOVIMENTO_FINANCEIRO_COTA movimentof0_  ")
 		   .append("inner join ")
@@ -656,6 +661,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("	cota1_.NUMERO_COTA = :numeroCota ")
 		   .append("	and movimentof0_.DATA = :dataConsolidado ")
 		   .append("	and tipomovime3_.GRUPO_MOVIMENTO_FINANCEIRO = :grupoMovimentoFinanceiro ")
+		   .append("	and chamadaEncalheCota.postergado = :naoPostergado ")
 		   .append("	and ( ")
 		   .append("		movimentof0_.ID not in  ( ")
 		   .append("			select ")
@@ -757,13 +763,15 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		query.addScalar("diferenca", StandardBasicTypes.BIG_INTEGER);
 		query.addScalar("motivoTexto", StandardBasicTypes.STRING);
 		query.addScalar("total", StandardBasicTypes.BIG_DECIMAL);
-		query.addScalar("sequencia", StandardBasicTypes.INTEGER);
+		query.addScalar("sequencia", StandardBasicTypes.STRING);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ConsignadoCotaDTO.class));
 		
 		query.setParameter("numeroCota", filtro.getNumeroCota());
 		query.setParameter("dataConsolidado", filtro.getDataConsolidado());		
 		query.setParameter("grupoMovimentoFinanceiro", GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE.toString());
+		
+		query.setParameter("naoPostergado", false);
 		
 		if (paginacao != null &&
 				paginacao.getQtdResultadosPorPagina() != null &&

@@ -24,7 +24,6 @@ import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.service.EmailService;
-import br.com.abril.nds.util.Constantes;
 
 @Component
 public class EMS0109MessageProcessor extends AbstractRepository implements
@@ -202,13 +201,12 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 
 		Produto produto = new Produto();
 
-		Fornecedor fornecedor = this
-				.findFornecedor(input.getCodigoFornecedor());
+		Fornecedor fornecedor = this.findFornecedor(input.getCodigoFornecedor());
 		
 		validarTipoDesconto(message, input.getTipoDesconto(), input.getCodigoPublicacao());
 		
-		DescontoLogistica descontoLogistica = this
-				.findDescontoLogisticaByTipoDesconto( Integer.parseInt( input.getTipoDesconto()) );
+		int tipoDescontoInt = Integer.parseInt( input.getTipoDesconto());
+		DescontoLogistica descontoLogistica = this.findDescontoLogisticaByTipoDesconto( tipoDescontoInt );
 
 		produto.setTipoProduto(tipoProduto);
 		produto.setNome(input.getNomePublicacao());
@@ -261,22 +259,22 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 			produto.setDescontoLogistica(descontoLogistica);
 
 		}else{
-			validarDescontoLogistico(message, input.getCodigoPublicacao());
+			validarDescontoLogistico(message, input.getCodigoPublicacao(), tipoDescontoInt);
 		}
 
 		this.getSession().persist(produto);
 
 	}
  
-	private void validarDescontoLogistico(Message message, String codigoPublicacao) {
+	private void validarDescontoLogistico(Message message, String codigoPublicacao, int tipoDescontoInt) {
 		String assunto = "Erro na Interface 109 PUB - TipoDesconto não cadastrado na DescontoLogistico";
-		String msg = "TipoDesconto não cadastrado na tabela DescontoLogistico arquivo .PUB vindo PRODIN, código de publicação:  "+codigoPublicacao;
+		String msg = "TipoDesconto: "+tipoDescontoInt+" não cadastrado na tabela DescontoLogistico arquivo .PUB vindo PRODIN, código de publicação:  "+codigoPublicacao;
 		sendEmailInterface(assunto, msg, message);
 		this.ndsiLoggerFactory.getLogger().logWarning(message,EventoExecucaoEnum.RELACIONAMENTO,msg);
 	}
 
 	public void validarTipoDesconto(Message message, String tipoDesconto, String codigoPublicacao){
-		if(tipoDesconto == null || tipoDesconto == "00" || tipoDesconto == ""){
+		if(tipoDesconto == null || tipoDesconto == "00" || tipoDesconto == "" || tipoDesconto == "0"){
 			String assunto = "Erro na Interface 109 PUB - TipoDesconto não consta no arquivo";
 			String msg ="TipoDesconto não consta no arquivo .PUB de publicações vindo PRODIN, código de publicação:  "+codigoPublicacao;
 			sendEmailInterface(assunto, msg, message);
@@ -306,7 +304,8 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 		
 		validarTipoDesconto(message, input.getTipoDesconto(), input.getCodigoPublicacao());
 		
-		DescontoLogistica descontoLogistica = this.findDescontoLogisticaByTipoDesconto(Integer.parseInt( input.getTipoDesconto()));
+		int tipoDescontoInt = Integer.parseInt( input.getTipoDesconto());
+		DescontoLogistica descontoLogistica = this.findDescontoLogisticaByTipoDesconto(tipoDescontoInt);
 		
 		produto.setOrigem(Origem.INTERFACE);
 		
@@ -440,17 +439,19 @@ public class EMS0109MessageProcessor extends AbstractRepository implements
 			}
 		}
 
-		if (null != produto.getDescontoLogistica() && null != descontoLogistica) {
+		if (descontoLogistica == null) {
+			validarDescontoLogistico(message, input.getCodigoPublicacao(), tipoDescontoInt);
+		}
+		
+		if (produto != null && descontoLogistica != null) {
 
-			if (!produto.getDescontoLogistica().equals(descontoLogistica)) {
+			if (produto.getDescontoLogistica() == null || !produto.getDescontoLogistica().equals(descontoLogistica)) {
 
 				produto.setDescontoLogistica(descontoLogistica);
 
 				this.ndsiLoggerFactory.getLogger().logInfo(message,EventoExecucaoEnum.INF_DADO_ALTERADO,"Atualizacao do Tipo Desconto para: " + descontoLogistica.getTipoDesconto());
 				
 			}
-		}else{
-			validarDescontoLogistico(message, input.getCodigoPublicacao());
 		}
 
 		TributacaoFiscal tributacaoFiscal = getTributacaoFiscal(input.getCodigoSituacaoTributaria());

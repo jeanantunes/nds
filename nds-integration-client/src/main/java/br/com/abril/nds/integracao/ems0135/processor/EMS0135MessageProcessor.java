@@ -117,10 +117,15 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 							, String.format("Nota Fiscal inserida no sistema: %1$s", input.getNotaFiscal()));
 				
 			} else {
+				
+				String msg = "Nota fiscal com produtos não encontrados no sistema";
+				if(input.getNotaFiscal() != null && input.getNotaFiscal() > 0){
+					msg = String.format("Nota fiscal com produtos não encontrados no sistema, número nota: %1$s", input.getNotaFiscal());
+				}
+				
 				// Validar código do distribuidor:
 				this.ndsiLoggerFactory.getLogger().logWarning(message,
-						EventoExecucaoEnum.RELACIONAMENTO, 
-						String.format("Nota Fiscal Com Produtos nao encontrados no sistema: %1$s", input.getNotaFiscal()));
+						EventoExecucaoEnum.RELACIONAMENTO, msg);
 				return;		
 			}
 			
@@ -179,7 +184,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 			if (produtoEdicao == null) {
 				
 				// Validar código do distribuidor:
-				this.ndsiLoggerFactory.getLogger().logWarning(message,
+				this.ndsiLoggerFactory.getLogger().logError(message,
 						EventoExecucaoEnum.HIERARQUIA, 
 						String.format( "Produto %1$s / edicao %2$s não cadastrado. A nota  %3$s não será Inserida", codigoProduto , edicao.toString(), nfEntrada.getNumero().toString() )
 						) ;

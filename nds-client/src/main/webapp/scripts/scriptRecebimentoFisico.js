@@ -1227,7 +1227,7 @@ var recebimentoFisicoController = $.extend(true, {
 									'</span>';
 			
 			value.cell.precoDesconto = '<span id="precoCapaDesconto_' + lineId + '">' +
-										$.formatNumber(value.cell.precoDesconto, {format:"#,##0.00", locale:"br"})+
+										$.formatNumber(value.cell.precoDesconto, {format:"#,####0.0000", locale:"br"})+
 										'</span>';
 			
 			value.cell.valorTotalCapa = '<span name="valorTotalCapa" id="valorTotalCapa_' + lineId + '">' + 
@@ -1597,7 +1597,9 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		$.postJSON(this.path + 'obterDadosEdicao', {codigo:codigo,edicao:edicao}, 
 			function(result) { 
-				$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).text(floatToPrice(result.precoDesconto));
+				$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).text(
+					$.formatNumber(result.precoDesconto, {format:"#,####0.0000", locale:"br"})
+				);
 				$("#precoCapa"+index, recebimentoFisicoController.workspace).text(
 					$.formatNumber(result.precoCapa, {format:"#,##0.00", locale:"br"})
 				);

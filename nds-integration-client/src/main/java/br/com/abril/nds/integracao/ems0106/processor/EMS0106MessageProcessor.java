@@ -3,6 +3,7 @@ package br.com.abril.nds.integracao.ems0106.processor;
 import java.math.BigInteger;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.hibernate.Criteria;
@@ -12,10 +13,13 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import br.com.abril.nds.dto.MovimentosEstoqueCotaSaldoDTO;
 import br.com.abril.nds.integracao.ems0106.inbound.EMS0106Input;
 import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.envio.nota.ItemNotaEnvio;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.Estudo;
@@ -52,7 +56,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		if (produtoEdicao == null) {
 			this.ndsiLoggerFactory.getLogger().logError(message,
 					EventoExecucaoEnum.RELACIONAMENTO,
-					"NAO ENCONTROU Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao);
+					"NAO ENCONTROU Produto de codigo: " + codigoPublicacao + " edicao: " + edicao);
 			return;
 		}
 			
@@ -63,15 +67,19 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			if (lancamento == null) {
 				this.ndsiLoggerFactory.getLogger().logError(message,
 						EventoExecucaoEnum.RELACIONAMENTO, 
-						"NAO ENCONTROU Lancamento para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao);
+						"NAO ENCONTROU Lancamento para o Produto de codigo: " + codigoPublicacao + " edicao: " + edicao);
 				return;
 			}
 		}
 		
-		if (lancamento.getStatus() == StatusLancamento.EXPEDIDO) {
-			this.ndsiLoggerFactory.getLogger().logError(message,
-					EventoExecucaoEnum.RELACIONAMENTO, 
-					"Lancamento para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao + " está com STATUS 'EXPEDIDO' e portanto, não gerará ou alterará o estudo!");
+		//Não continuar linha do arquivo caso esteja com algum desses status
+		if (lancamento.getStatus() == StatusLancamento.EXPEDIDO || lancamento.getStatus() == StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO || 
+				lancamento.getStatus() == StatusLancamento.FURO || lancamento.getStatus() == StatusLancamento.BALANCEADO_RECOLHIMENTO || 
+				lancamento.getStatus() == StatusLancamento.EM_RECOLHIMENTO || lancamento.getStatus() == StatusLancamento.RECOLHIDO ||
+				lancamento.getStatus() == StatusLancamento.FECHADO
+			) {
+			this.ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO, 
+					"Lancamento para o Produto de codigo: " + codigoPublicacao + " edicao: " + edicao + " está com STATUS: " +lancamento.getStatus().getDescricao()+" e portanto, não gerará ou alterará o estudo!");
 			return;
 		}
 		
@@ -96,10 +104,49 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 			this.getSession().merge(lancamento);
 		} else {
 			
+			//Cenário Lancamento.status in('PLANEJADO', 'CONFIRMADO', 'EM_BALANCEAMENTO', 'BALANCEADO', 'ESTUDO_FECHADO', 'CANCELADO')
+			
+			for(EstudoCota estudoCota : estudo.getEstudoCotas()){
+				
+				//Desvincula os ItemNotaEnvios dos EstudoCotas a serem deletados p/ nao apresentar erro de FK
+				for(ItemNotaEnvio itemNota : estudoCota.getItemNotaEnvios()){
+					
+					Query queryNotaItem = getSession().createQuery("delete from ItemNotaEnvio where itemNotaEnvioPK = :itemNotaEnvioPK");
+					queryNotaItem.setParameter("itemNotaEnvioPK", itemNota.getItemNotaEnvioPK());
+					queryNotaItem.executeUpdate();
+
+					this.ndsiLoggerFactory.getLogger().logWarning(message,
+							EventoExecucaoEnum.INF_DADO_ALTERADO,
+							"Excluído item nota de envio número: "
+									+ itemNota.getItemNotaEnvioPK().getNotaEnvio().getNumero()
+									+ " data de emissão: "+ itemNota.getItemNotaEnvioPK().getNotaEnvio().getDataEmissao()
+									+ " número cota: : " + estudoCota.getCota().getNumeroCota()
+									+ " publicação: " + codigoPublicacao);
+				}
+				
+				//Verifica se tem movimento_estoque_cota associado ao estudo_cota
+				boolean retornar = false;
+				for(MovimentoEstoqueCota movimentosEstoqueCota : estudoCota.getMovimentosEstoqueCota()){
+					
+					this.ndsiLoggerFactory.getLogger().logError(message,
+							EventoExecucaoEnum.INF_DADO_ALTERADO,
+							"Movimento desta publicação já foi consignado data: "
+									+ movimentosEstoqueCota.getData()
+									+ " número cota: : " + estudoCota.getCota().getNumeroCota()
+									+ " publicação: " + codigoPublicacao +" o estudo da cota não poderá ser excluído.");
+					retornar = true;
+				}
+				
+				if(retornar)
+					return;
+			}
+			
+			
 			// Remoção dos EstudoCotas que ficaram desatualizados:
-			Query query = getSession().createQuery("DELETE EstudoCota e WHERE e.estudo = :estudo");
-			query.setParameter("estudo", estudo);
-			query.executeUpdate();
+			Query queryEstudoCota = getSession().createQuery("DELETE EstudoCota e WHERE e.estudo = :estudo");
+			queryEstudoCota.setParameter("estudo", estudo);
+			queryEstudoCota.executeUpdate();
+
 			estudo.setEstudoCotas(Collections.<EstudoCota>emptySet());
 			
 			// Atualizar os dados do Estudo:
@@ -139,7 +186,7 @@ public class EMS0106MessageProcessor extends AbstractRepository implements Messa
 		
 		this.ndsiLoggerFactory.getLogger().logInfo(message,
 				EventoExecucaoEnum.INF_DADO_ALTERADO,
-				"EstudoCota processado: " + estudo.getId() + "para o Produto de codigo: " + codigoPublicacao + "/ edicao: " + edicao + 
+				"EstudoCota processado: " + estudo.getId() + " para o Produto de codigo: " + codigoPublicacao + " edicao: " + edicao + 
 				" no Lancamento: " + lancamento.getDataLancamentoPrevista().toString() + " Inserido com sucesso!");
 
 	}

@@ -2,6 +2,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -46,7 +47,10 @@ import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estoque.Diferenca;
+import br.com.abril.nds.model.estoque.EstoqueProduto;
+import br.com.abril.nds.model.estoque.EstoqueProdutoDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.HistoricoEstoqueProduto;
 import br.com.abril.nds.model.estoque.LancamentoDiferenca;
 import br.com.abril.nds.model.estoque.OperacaoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
@@ -85,6 +89,8 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
+import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
+import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.FechamentoDiarioConsolidadoCotaRepository;
 import br.com.abril.nds.repository.FechamentoDiarioConsolidadoDividaRepository;
 import br.com.abril.nds.repository.FechamentoDiarioConsolidadoEncalheRepository;
@@ -104,6 +110,7 @@ import br.com.abril.nds.repository.FechamentoDiarioResumoConsolidadoDividaReposi
 import br.com.abril.nds.repository.FechamentoDiarioResumoEstoqueRepository;
 import br.com.abril.nds.repository.FecharDiaRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
+import br.com.abril.nds.repository.HistoricoEstoqueProdutoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
@@ -247,6 +254,15 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
+	
+	@Autowired
+	private EstoqueProdutoRespository estoqueProdutoRepository;
+	
+	@Autowired
+	private EstoqueProdutoCotaJuramentadoRepository estoqueProdutoCotaJuramentadoRespository;
+	
+	@Autowired
+	private HistoricoEstoqueProdutoRepository historicoEstoqueProdutoRepository;
 	
 	@Override
 	@Transactional
@@ -987,8 +1003,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	private List<EncalheFecharDiaDTO> incluirLancamentosEncalhe(FechamentoDiario fechamento,FechamentoDiarioConsolidadoEncalhe consolidadoEncalhe)
 			throws FechamentoDiarioException {
 		
-		List<EncalheFecharDiaDTO> listaEncalhe = 
-		        this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(fechamento.getDataFechamento(), null);
+		List<EncalheFecharDiaDTO> listaEncalhe = this.resumoEncalheFecharDiaService.obterDadosGridEncalhe(fechamento.getDataFechamento(), null);
 		
 		if(listaEncalhe!= null && !listaEncalhe.isEmpty()){
 			
@@ -1139,8 +1154,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 				
 		try {
 		
-			FechamentoDiarioDTO fechamentoDiarioDTO =
-				salvarResumoFechamentoDiario(usuario, dataFechamento);
+			FechamentoDiarioDTO fechamentoDiarioDTO = salvarResumoFechamentoDiario(usuario, dataFechamento);
+			
+			atualizarHistoricoEstoqueProduto(dataFechamento);
 			
 			this.processarLancamentosRecolhimento();
 			
@@ -1152,10 +1168,29 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		}
 	}
 
+	private void atualizarHistoricoEstoqueProduto(Date dataFechamento) {
+		
+		List<EstoqueProdutoDTO> estoquesProdutos = estoqueProdutoRepository.buscarEstoquesProdutos();
+		
+		for(EstoqueProdutoDTO ep : estoquesProdutos) {
+			
+			HistoricoEstoqueProduto hep = new HistoricoEstoqueProduto();
+			hep.setData(dataFechamento);
+			hep.setProdutoEdicao(new ProdutoEdicao(ep.getProdutoEdicaoId()));
+			hep.setQtde(ep.getQtde() != null ? ep.getQtde() : BigInteger.ZERO);
+			hep.setQtdeDanificado(ep.getQtdeDanificado() != null ? ep.getQtdeDanificado() : BigInteger.ZERO);
+			hep.setQtdeDevolucaoEncalhe(ep.getQtdeDevolucaoEncalhe() != null ? ep.getQtdeDevolucaoEncalhe() : BigInteger.ZERO);
+			hep.setQtdeSuplementar(ep.getQtdeSuplementar() != null ? ep.getQtdeSuplementar() : BigInteger.ZERO);
+			hep.setQtdeJuramentado(ep.getQtdeJuramentado() != null ? ep.getQtdeJuramentado() : BigInteger.ZERO);
+			
+			historicoEstoqueProdutoRepository.adicionar(hep);
+		}
+		
+	}
+
 	private void processarLancamentosRecolhimento() {
 		
-		Date dataOperacao =
-			this.distribuidorRepository.obterDataOperacaoDistribuidor();
+		Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
 		
 		this.processarLancamentosEmRecolhimento(dataOperacao);
 		
@@ -1164,8 +1199,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 
 	private void processarLancamentosEmRecolhimento(Date dataOperacao) {
 		
-		List<Lancamento> lancamentos =
-			this.lancamentoRepository.obterLancamentosBalanceadosPorDataRecolhimentoDistrib(dataOperacao);
+		List<Lancamento> lancamentos = this.lancamentoRepository.obterLancamentosBalanceadosPorDataRecolhimentoDistrib(dataOperacao);
 		
 		for (Lancamento lancamento : lancamentos) {
 			
@@ -1179,11 +1213,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		Integer ultimoDiaRecolhimento = this.obterUltimoDiaRecolhimento();
 		
-		Date dataBase =
-			calendarioService.subtrairDiasUteisComOperacao(dataOperacao, ultimoDiaRecolhimento - 1);
+		Date dataBase = calendarioService.subtrairDiasUteisComOperacao(dataOperacao, ultimoDiaRecolhimento - 1);
 		
-		List<Lancamento> lancamentos =
-			this.lancamentoRepository.obterLancamentosEmRecolhimentoVencidos(dataBase);
+		List<Lancamento> lancamentos = this.lancamentoRepository.obterLancamentosEmRecolhimentoVencidos(dataBase);
 		
 		for (Lancamento lancamento : lancamentos) {
 			
@@ -1246,8 +1278,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	@Transactional
 	public void transferirDiferencasParaEstoqueDePerdaGanho(Date dataOperacao, Long idUsuario) {
 		
-		List<Diferenca> diferencasATransferir = 
-			this.diferencaRepository.obterDiferencas(dataOperacao, StatusConfirmacao.PENDENTE);
+		List<Diferenca> diferencasATransferir = this.diferencaRepository.obterDiferencas(dataOperacao, StatusConfirmacao.PENDENTE);
 		
 		for (Diferenca diferenca : diferencasATransferir) {
 			
