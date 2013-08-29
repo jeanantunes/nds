@@ -2691,8 +2691,9 @@ public class CotaServiceImpl implements CotaService {
 		if (cotasSemRoteirizacao == null || !cotasSemRoteirizacao.isEmpty()){
 			
 			List<String> msgs = new ArrayList<String>();
+			msgs.add("Cotas sem roteirização:");
 			for (CotaDTO c : cotasSemRoteirizacao){
-				msgs.add("Cota sem roteirização: " + c.getNumeroCota() + " - " + c.getNomePessoa());
+				msgs.add(+ c.getNumeroCota() + " - " + c.getNomePessoa());
 			}
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, msgs);

@@ -1,10 +1,15 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -1059,11 +1064,16 @@ public class ConferenciaEncalheController extends BaseController {
 			List<byte[]> arquivos = new ArrayList<byte[]>();
 			Map<String, byte[]> mapFileNameFile = new HashMap<String, byte[]>();
 			
+			boolean geraNovoNumeroSlip = true;
+			
 			if(dtoDoc.isUtilizaBoletoSlip()){//Slip-PDF+Boleto
 				
 				gerarSlipPDFFinalizacaoEncalhe(tiposDocumentoImpressao,
 						idControleConferenciaEncalheCota, arquivos,
-						mapFileNameFile);
+						mapFileNameFile, 
+						geraNovoNumeroSlip);
+				
+				geraNovoNumeroSlip = false;
 				
 				gerarBoletoFinalizacaoEncalhe(dtoDoc,
 						tiposDocumentoImpressao,
@@ -1095,7 +1105,7 @@ public class ConferenciaEncalheController extends BaseController {
 			if(dtoDoc.isUtilizaSlip()){//Slip-TXT / Matricial
 
 				gerarSlipMatricialFinalizacaoEncalhe(tiposDocumentoImpressao,
-						idControleConferenciaEncalheCota, mapFileNameFile);
+						idControleConferenciaEncalheCota, mapFileNameFile, geraNovoNumeroSlip);
 			}
 
 			this.session.setAttribute(TIPOS_DOCUMENTO_IMPRESSAO_ENCALHE, tiposDocumentoImpressao);
@@ -1124,7 +1134,14 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			byte[] bs = arquivos.get(tipo_documento_impressao_encalhe);
 			
+			try {
+				gerarArquivoNoServer(tipo_documento_impressao_encalhe,arquivos.get(tipo_documento_impressao_encalhe));
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			
 			Map<String, Object> dados = new HashMap<String, Object>();
+			
 			if(bs != null && bs.length > 0) {
 				
 				if(tipo_documento_impressao_encalhe.equals(TipoDocumentoConferenciaEncalhe.SLIP_TXT.name())){
@@ -1132,18 +1149,49 @@ public class ConferenciaEncalheController extends BaseController {
 				}else{
 					dados.put("resultado", Base64.encodeBytes(arquivos.get(tipo_documento_impressao_encalhe)));	
 				}
+				
 			}else{
 				dados.put("resultado", "");
 			}
 
 			dados.put("tipo_documento_impressao_encalhe", tipo_documento_impressao_encalhe);
+			
 			this.result.use(CustomJson.class).from(dados).serialize();
+			
 		} else {
 			
 			this.result.use(Results.nothing());
 		}
+	}	
+	
+	//TODO remover abaixo apos testes
+	private void gerarArquivoNoServer(String tipoArquivo, byte[] arquivo) throws Exception {
+		
+		
+		if(tipoArquivo.equals(TipoDocumentoConferenciaEncalhe.SLIP_TXT.name())){
+			
+			OutputStream out = new FileOutputStream(new File("docEncalhe"+System.currentTimeMillis()+".txt"));
+			
+			out.write(arquivo);
+			
+			out.flush();
+			
+			out.close();
+			
+		}else{
+			
+			OutputStream out = new FileOutputStream(new File("docConfEncalhe"+System.currentTimeMillis()+".pdf"));
+			
+			out.write(arquivo);
+			
+			out.flush();
+			
+			out.close();
+			
+		}
+		
 	}
-
+	
 	@Post
 	public void veificarCobrancaGerada(){
 		
@@ -2073,10 +2121,11 @@ public class ConferenciaEncalheController extends BaseController {
 	private void gerarSlipMatricialFinalizacaoEncalhe(
 			ArrayList<String> tiposDocumentoImpressao,
 			Long idControleConferenciaEncalheCota,
-			Map<String, byte[]> mapFileNameFile) {
+			Map<String, byte[]> mapFileNameFile, 
+			boolean geraNovoNumeroSlip) {
 		
 		//Imprime apenas SLIP txt, dados para matricial.
-		byte[] slipMatricial = conferenciaEncalheService.gerarSlipMatricial(idControleConferenciaEncalheCota, true);
+		byte[] slipMatricial = conferenciaEncalheService.gerarSlipMatricial(idControleConferenciaEncalheCota, geraNovoNumeroSlip);
 		mapFileNameFile.put(TipoDocumentoConferenciaEncalhe.SLIP_TXT.name(), slipMatricial);
 		tiposDocumentoImpressao.add(TipoDocumentoConferenciaEncalhe.SLIP_TXT.name());
 	}
@@ -2084,11 +2133,13 @@ public class ConferenciaEncalheController extends BaseController {
 	private void gerarSlipPDFFinalizacaoEncalhe(
 			ArrayList<String> tiposDocumentoImpressao,
 			Long idControleConferenciaEncalheCota, List<byte[]> arquivos,
-			Map<String, byte[]> mapFileNameFile) {
+			Map<String, byte[]> mapFileNameFile,
+			boolean geraNovoNumeroSlip) {
 		arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
 				idControleConferenciaEncalheCota, 
 				null, 
-				TipoDocumentoConferenciaEncalhe.SLIP_PDF));
+				TipoDocumentoConferenciaEncalhe.SLIP_PDF,
+				geraNovoNumeroSlip));
 		
 	}
 
@@ -2103,7 +2154,8 @@ public class ConferenciaEncalheController extends BaseController {
 			arquivos.add(conferenciaEncalheService.gerarDocumentosConferenciaEncalhe(
 					idControleConferenciaEncalheCota, 
 					nossoNumero,
-					TipoDocumentoConferenciaEncalhe.BOLETO_SLIP));
+					TipoDocumentoConferenciaEncalhe.BOLETO_SLIP,
+					false));
 			
 		}
 	}
