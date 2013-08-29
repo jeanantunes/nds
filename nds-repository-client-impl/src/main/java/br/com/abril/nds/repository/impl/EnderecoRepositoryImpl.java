@@ -26,6 +26,8 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -53,6 +55,8 @@ import br.com.abril.nds.vo.EnderecoVO;
 @Repository
 public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Long> implements
 		EnderecoRepository {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(EnderecoRepositoryImpl.class);
 	
 	/**
 	 * Construtor.
@@ -189,12 +193,6 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 		if(!StringUtil.isEmpty(nome)) {
 			criteria.add(Restrictions.ilike("nome", nome, MatchMode.ANYWHERE));
 		}
-
-		/*
-		criteria.add(Restrictions.and(Restrictions.eq("uf.sigla", siglaUF),
-									  Restrictions.ilike("nome",
-											  nome, MatchMode.ANYWHERE)));
-		 */
 
 		return criteria.list();
 	}
@@ -456,14 +454,11 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 				ret.setLocalidade(localidade.getNome());				
 				
 			} catch (JsonParseException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.error("", e);
 			} catch (JsonMappingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.error("", e);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				LOGGER.error("", e);
 			}
 						
 		}
@@ -480,12 +475,6 @@ public class EnderecoRepositoryImpl extends AbstractRepositoryModel<Endereco, Lo
 		   .append(" join pdv.enderecos assoEndereco ")
 		   .append(" join assoEndereco.endereco e ")
 		   .append(" where e.uf = :uf ");
-		   /*.append(" where c.id not in (")
-		   .append("  select cota.id from RotaPDV rPdv ")
-		   .append("  join rPdv.pdv p ")
-		   .append("  join p.cota cota ")
-		   .append(")")
-		   .append(" and e.uf = :uf ");*/
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		

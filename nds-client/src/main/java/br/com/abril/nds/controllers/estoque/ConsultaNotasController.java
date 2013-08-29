@@ -354,7 +354,7 @@ public class ConsultaNotasController extends BaseController {
 							itemExibicaoToString(detalheNotaFiscalVO.getNomeProduto()),
 							itemExibicaoToString(detalheNotaFiscalVO.getNumeroEdicao()),
 							itemExibicaoToString(CurrencyUtil.formatarValor(detalheNotaFiscalVO.getPrecoVenda())),
-							itemExibicaoToString(CurrencyUtil.formatarValor(detalheNotaFiscalVO.getPrecoComDesconto())),
+							itemExibicaoToString(CurrencyUtil.formatarValorQuatroCasas(detalheNotaFiscalVO.getPrecoComDesconto())),
 							itemExibicaoToString(qtdeExemplares.intValue()),
 							sobrasFaltas, 
 							itemExibicaoToString(CurrencyUtil.formatarValor(valorTotal)),
