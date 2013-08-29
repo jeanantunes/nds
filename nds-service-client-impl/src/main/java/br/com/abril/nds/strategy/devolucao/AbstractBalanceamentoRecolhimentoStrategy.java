@@ -161,12 +161,12 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	/**
 	 * Verifica se o produto de recolhimento pode ser balanceado ou não.
 	 */
-	private boolean isProdutoNaoBalanceavel(boolean isConfiguracaoInicial,
+	private boolean isProdutoNaoBalanceavel(boolean forcarBalanceamento,
 										 	ProdutoRecolhimentoDTO produtoRecolhimento) {
 		
 		return produtoRecolhimento.isPossuiChamada()
 				|| produtoRecolhimento.isBalanceamentoConfirmado()
-				|| (produtoRecolhimento.isBalanceamentoSalvo() && !isConfiguracaoInicial);
+				|| (produtoRecolhimento.isBalanceamentoSalvo() && !forcarBalanceamento);
 	}
 	
 	/*
@@ -404,11 +404,9 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	}
 	
 	/*
-	 * Configura a sequência, a data de recolhimento e a nova data dos produtos da matriz.
+	 * Configura a data de recolhimento e a nova data dos produtos da matriz.
 	 */
 	private void configurarMatrizRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento) {
-		
-		Integer sequencia = 1;
 		
 		for (Map.Entry<Date, List<ProdutoRecolhimentoDTO>> entryMatrizRecolhimento 
 				: matrizRecolhimento.entrySet()) {
@@ -421,7 +419,6 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 				
 				produtoRecolhimento.setDataRecolhimentoDistribuidor(dataRecolhimento);
 				produtoRecolhimento.setNovaData(dataRecolhimento);
-				produtoRecolhimento.setSequencia(sequencia++);
 			}
 		}
 	}
