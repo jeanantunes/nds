@@ -16,7 +16,7 @@ public class EncalheCotaDTO implements Serializable {
 	private static final long serialVersionUID = 2186060384671120600L;
 	
 	@Export(label = "Sequência", fontSize=9, widthPercent=7)
-	private Integer sequencia;
+	private String sequencia;
 	
 	@Export(label = "Código", fontSize=9)
 	private String codigoProduto;
@@ -116,11 +116,11 @@ public class EncalheCotaDTO implements Serializable {
 		this.desconto = desconto;
 	}
 
-	public Integer getSequencia() {
+	public String getSequencia() {
 		return sequencia;
 	}
 
-	public void setSequencia(Integer sequencia) {
+	public void setSequencia(String sequencia) {
 		this.sequencia = sequencia;
 	}
 }
