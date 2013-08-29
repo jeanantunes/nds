@@ -49,8 +49,8 @@ function imprimir(){
                 <tr>
                   <td width="9%"><strong>Produto</strong>: </td>
                   <td width="36%"><strong>${mapa.nomeProduto}</strong></td>
-                  <td width="23%"><strong>Código:</strong></td>
-                  <td width="32%">${mapa.codigoProduto}</td>
+                  <td width="23%"><strong>Código de Barras:</strong></td>
+                  <td width="32%">${mapa.codigoDeBarras}</td>
                 </tr>
                 <tr>
                   <td><strong>Edição:</strong></td>
