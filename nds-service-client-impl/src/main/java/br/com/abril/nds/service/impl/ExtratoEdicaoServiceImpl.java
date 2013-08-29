@@ -20,6 +20,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.AtualizacaoEstoqueGFS;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.LancamentoDiferenca;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
@@ -28,6 +29,7 @@ import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.repository.AtualizacaoEstoqueGFSRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.FornecedorRepository;
+import br.com.abril.nds.repository.LancamentoDiferencaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
@@ -55,6 +57,9 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 	
 	@Autowired
 	private TipoMovimentoEstoqueRepository tipoMovimentoEstoqueRepository;
+	
+	@Autowired
+	private LancamentoDiferencaRepository lancamentoDiferencaRepository;
 	
 	@Transactional
 	@Override
@@ -89,6 +94,11 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 			
 			ExtratoEdicaoDTO itemExtratoEdicao = listaExtratoEdicao.get(i);
 			
+			if (itemExtratoEdicao.getIdLancamentoDiferenca() != null) {
+				
+				this.processarItemExtratoEdicaoDiferenca(itemExtratoEdicao);
+			}
+			
 			BigInteger qtdEntrada = BigInteger.ZERO;
 			
 			qtdEntrada = itemExtratoEdicao.getQtdEdicaoEntrada();
@@ -119,6 +129,26 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 		infoGeralExtratoEdicao.setListaExtratoEdicao(listaExtratoEdicao);
 		
 		return infoGeralExtratoEdicao;
+	}
+	
+	private void processarItemExtratoEdicaoDiferenca(ExtratoEdicaoDTO itemExtratoEdicao) {
+
+		LancamentoDiferenca lancamentoDiferenca =
+			this.lancamentoDiferencaRepository.buscarPorId(
+				itemExtratoEdicao.getIdLancamentoDiferenca());
+		
+		Diferenca diferenca = lancamentoDiferenca.getDiferenca();
+		
+		String novaDescricao = itemExtratoEdicao.getDescMovimento();
+		
+		if (!TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento())) {
+			
+			novaDescricao = novaDescricao + " COTA";
+		}
+		
+		novaDescricao = novaDescricao + " (Pendente de Aprovação no GFS)";
+		
+		itemExtratoEdicao.setDescMovimento(novaDescricao);
 	}
 	
 	private void processarAtualizacaoEstoqueGFS(Long idProdutoEdicao,
@@ -201,9 +231,6 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 		
 		Diferenca diferenca = atualizacaoEstoqueGFS.getDiferenca();
 		
-		boolean diferencaDirecionadaParaCota =
-			!TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento());
-		
 		TipoDiferenca tipoDiferenca = diferenca.getTipoDiferenca();
 		
 		if (tipoDiferenca.isFalta()) {
@@ -222,12 +249,7 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 		}
 		
 		String novaDescricao = movimentoEstoque.getTipoMovimento().getDescricao();
-		
-		if (diferencaDirecionadaParaCota) {
-			
-			novaDescricao = novaDescricao + " COTA";
-		}
-		
+
 		itemExtratoEdicaoMovimento.setDescMovimento(novaDescricao + " (Reprovado pelo GFS)");
 		
 		return itemExtratoEdicaoMovimento;
