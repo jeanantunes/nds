@@ -18,9 +18,11 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.AtualizacaoEstoqueGFS;
+import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.repository.AtualizacaoEstoqueGFSRepository;
@@ -130,28 +132,14 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 			
 			return;
 		}
-		
-		BigInteger totalRecebimentoFisico = this.calcularTotalRecebimentoFisico(listaExtratoEdicao);
-		
-		BigInteger totalEnvioCota = this.calcularTotalEnvioCota(listaExtratoEdicao);
-		
+
 		for (AtualizacaoEstoqueGFS atualizacaoEstoqueGFS : atualizacoesEstoqueGFS) {
 			
-			int indiceParaUtilizacao = 0;
-			
-			for (int indice = 0; indice < listaExtratoEdicao.size(); indice++) {
-			
-				if (atualizacaoEstoqueGFS.getDataAtualizacao()
-						.compareTo(listaExtratoEdicao.get(indice).getDataMovimento()) >= 0) {
-					
-					indiceParaUtilizacao = indice;
-				}
-			}
+			int indiceParaUtilizacao = 
+				this.obterIndiceDaListaParaAtualizacaoEstoqueGFS(
+					listaExtratoEdicao, atualizacaoEstoqueGFS);
 			
 			MovimentoEstoque movimentoEstoque = atualizacaoEstoqueGFS.getMovimentoEstoque();
-			
-			TipoDiferenca tipoDiferenca = 
-				atualizacaoEstoqueGFS.getDiferenca().getTipoDiferenca();
 			
 			boolean isAprovadoGFS = 
 				StatusIntegracao.LIBERADO.equals(movimentoEstoque.getStatusIntegracao());
@@ -160,65 +148,156 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 			
 			if (isAprovadoGFS) {
 				
-				itemExtratoEdicaoMovimento = new ExtratoEdicaoDTO();
-				
-				itemExtratoEdicaoMovimento.setDataMovimento(
-					atualizacaoEstoqueGFS.getDataAtualizacao());
-
-				if (tipoDiferenca.isFalta()) {
-					
-					itemExtratoEdicaoMovimento.setQtdEdicaoEntrada(
-						movimentoEstoque.getQtde().negate());
-					
-				} else {
-					
-					itemExtratoEdicaoMovimento.setQtdEdicaoSaida(
-						movimentoEstoque.getQtde());
-				}
-				
-				itemExtratoEdicaoMovimento.setDescMovimento(
-					movimentoEstoque.getTipoMovimento().getDescricao() + " (Aprovado pelo GFS)");
-					
-				listaExtratoEdicao.add(++indiceParaUtilizacao, itemExtratoEdicaoMovimento);
+				itemExtratoEdicaoMovimento = 
+					this.gerarRegistroAprovacaoAtualizacaoEstoqueGFS(
+						listaExtratoEdicao, atualizacaoEstoqueGFS, ++indiceParaUtilizacao);
 				
 			} else {
 				
-				itemExtratoEdicaoMovimento = listaExtratoEdicao.get(indiceParaUtilizacao);
-				
-				itemExtratoEdicaoMovimento.setDescMovimento(
-					itemExtratoEdicaoMovimento.getDescMovimento() + " (Reprovado pelo GFS)");
-				
-				if (tipoDiferenca.isFalta()) {
-					
-					itemExtratoEdicaoMovimento.setQtdEdicaoEntrada(BigInteger.ZERO);
-					
-					itemExtratoEdicaoMovimento.setQtdEdicaoSaida(
-						movimentoEstoque.getQtde().negate());
-	
-				} else {
-					
-					itemExtratoEdicaoMovimento.setQtdEdicaoSaida(BigInteger.ZERO);
-					
-					itemExtratoEdicaoMovimento.setQtdEdicaoEntrada(
-						movimentoEstoque.getQtde());
-				}
+				itemExtratoEdicaoMovimento = 
+					this.atualizarRegistroReprovacaoAtualizacaoEstoqueGFS(
+						listaExtratoEdicao, atualizacaoEstoqueGFS, indiceParaUtilizacao);
 			}
 
-			ExtratoEdicaoDTO itemExtratoEdicaoAtualizacao = new ExtratoEdicaoDTO();
-			
-			itemExtratoEdicaoAtualizacao.setDataMovimento(
-				atualizacaoEstoqueGFS.getDataAtualizacao());
-			
-			itemExtratoEdicaoAtualizacao.setDescMovimento("ATUALIZAÇÃO");
-
-			itemExtratoEdicaoAtualizacao.setQtdEdicaoEntrada(
-				totalRecebimentoFisico.add(itemExtratoEdicaoMovimento.getQtdEdicaoEntrada()));
-		
-			itemExtratoEdicaoAtualizacao.setQtdEdicaoSaida(
-				totalEnvioCota.add(itemExtratoEdicaoMovimento.getQtdEdicaoSaida()));
-			
-			listaExtratoEdicao.add(++indiceParaUtilizacao, itemExtratoEdicaoAtualizacao);
+			this.gerarRegistroAtualizacaoEstoqueGFS(
+				listaExtratoEdicao, atualizacaoEstoqueGFS, 
+					itemExtratoEdicaoMovimento, ++indiceParaUtilizacao);
 		}
+	}
+	
+	private void gerarRegistroAtualizacaoEstoqueGFS(List<ExtratoEdicaoDTO> listaExtratoEdicao,
+													AtualizacaoEstoqueGFS atualizacaoEstoqueGFS,
+													ExtratoEdicaoDTO itemExtratoEdicaoMovimento,
+													int indiceParaUtilizacao) {
+		
+		ExtratoEdicaoDTO itemExtratoEdicaoAtualizacao = new ExtratoEdicaoDTO();
+		
+		BigInteger totalRecebimentoFisico = this.calcularTotalRecebimentoFisico(listaExtratoEdicao);
+		
+		BigInteger totalEnvioCota = this.calcularTotalEnvioCota(listaExtratoEdicao);
+		
+		itemExtratoEdicaoAtualizacao.setDataMovimento(
+			atualizacaoEstoqueGFS.getDataAtualizacao());
+		
+		itemExtratoEdicaoAtualizacao.setDescMovimento("ATUALIZAÇÃO");
+
+		itemExtratoEdicaoAtualizacao.setQtdEdicaoEntrada(
+			totalRecebimentoFisico.add(itemExtratoEdicaoMovimento.getQtdEdicaoEntrada()));
+	
+		itemExtratoEdicaoAtualizacao.setQtdEdicaoSaida(
+			totalEnvioCota.add(itemExtratoEdicaoMovimento.getQtdEdicaoSaida()));
+		
+		listaExtratoEdicao.add(indiceParaUtilizacao, itemExtratoEdicaoAtualizacao);
+	}
+	
+	private ExtratoEdicaoDTO atualizarRegistroReprovacaoAtualizacaoEstoqueGFS(
+															List<ExtratoEdicaoDTO> listaExtratoEdicao,
+															AtualizacaoEstoqueGFS atualizacaoEstoqueGFS,
+															int indiceParaUtilizacao) {
+		
+		ExtratoEdicaoDTO itemExtratoEdicaoMovimento = listaExtratoEdicao.get(indiceParaUtilizacao);
+		
+		MovimentoEstoque movimentoEstoque = atualizacaoEstoqueGFS.getMovimentoEstoque();
+		
+		Diferenca diferenca = atualizacaoEstoqueGFS.getDiferenca();
+		
+		boolean diferencaDirecionadaParaCota =
+			!TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento());
+		
+		TipoDiferenca tipoDiferenca = diferenca.getTipoDiferenca();
+		
+		if (tipoDiferenca.isFalta()) {
+			
+			itemExtratoEdicaoMovimento.setQtdEdicaoEntrada(BigInteger.ZERO);
+			
+			itemExtratoEdicaoMovimento.setQtdEdicaoSaida(
+				movimentoEstoque.getQtde().negate());
+
+		} else {
+			
+			itemExtratoEdicaoMovimento.setQtdEdicaoSaida(BigInteger.ZERO);
+			
+			itemExtratoEdicaoMovimento.setQtdEdicaoEntrada(
+				movimentoEstoque.getQtde());
+		}
+		
+		String novaDescricao = movimentoEstoque.getTipoMovimento().getDescricao();
+		
+		if (diferencaDirecionadaParaCota) {
+			
+			novaDescricao = novaDescricao + " COTA";
+		}
+		
+		itemExtratoEdicaoMovimento.setDescMovimento(novaDescricao + " (Reprovado pelo GFS)");
+		
+		return itemExtratoEdicaoMovimento;
+	}
+	
+	private ExtratoEdicaoDTO gerarRegistroAprovacaoAtualizacaoEstoqueGFS(
+														List<ExtratoEdicaoDTO> listaExtratoEdicao, 
+														AtualizacaoEstoqueGFS atualizacaoEstoqueGFS,
+														int indiceParaUtilizacao) {
+		
+		ExtratoEdicaoDTO itemExtratoEdicaoMovimento = new ExtratoEdicaoDTO();
+		
+		MovimentoEstoque movimentoEstoque = atualizacaoEstoqueGFS.getMovimentoEstoque();
+		
+		Diferenca diferenca = atualizacaoEstoqueGFS.getDiferenca();
+		
+		boolean diferencaDirecionadaParaCota =
+			!TipoDirecionamentoDiferenca.ESTOQUE.equals(diferenca.getTipoDirecionamento());
+		
+		TipoDiferenca tipoDiferenca = diferenca.getTipoDiferenca();
+		
+		itemExtratoEdicaoMovimento.setDataMovimento(
+			atualizacaoEstoqueGFS.getDataAtualizacao());
+
+		if (tipoDiferenca.isFalta()) {
+			
+			if (diferencaDirecionadaParaCota) {
+				
+				itemExtratoEdicaoMovimento.setQtdEdicaoSaida(
+					movimentoEstoque.getQtde().negate());
+			}
+			
+			itemExtratoEdicaoMovimento.setQtdEdicaoEntrada(
+				movimentoEstoque.getQtde().negate());
+
+		} else {
+			
+			itemExtratoEdicaoMovimento.setQtdEdicaoSaida(
+				movimentoEstoque.getQtde());
+		}
+		
+		String novaDescricao = movimentoEstoque.getTipoMovimento().getDescricao();
+		
+		if (diferencaDirecionadaParaCota) {
+			
+			novaDescricao = novaDescricao + " COTA";
+		}
+		
+		itemExtratoEdicaoMovimento.setDescMovimento(novaDescricao + " (Aprovado pelo GFS)");
+			
+		listaExtratoEdicao.add(indiceParaUtilizacao, itemExtratoEdicaoMovimento);
+		
+		return itemExtratoEdicaoMovimento;
+	}
+	
+	private int obterIndiceDaListaParaAtualizacaoEstoqueGFS(List<ExtratoEdicaoDTO> listaExtratoEdicao, 
+										   			 		AtualizacaoEstoqueGFS atualizacaoEstoqueGFS) {
+		
+		int indiceParaUtilizacao = 0;
+		
+		for (int indice = 0; indice < listaExtratoEdicao.size(); indice++) {
+			
+			if (atualizacaoEstoqueGFS.getDataAtualizacao()
+					.compareTo(listaExtratoEdicao.get(indice).getDataMovimento()) >= 0) {
+				
+				indiceParaUtilizacao = indice;
+			}
+		}
+		
+		return indiceParaUtilizacao;
 	}
 	
 	private BigInteger calcularTotalRecebimentoFisico(List<ExtratoEdicaoDTO> listaExtratoEdicao) {
