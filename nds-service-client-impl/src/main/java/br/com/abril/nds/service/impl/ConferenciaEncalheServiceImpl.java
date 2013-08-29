@@ -2888,14 +2888,15 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	public byte[] gerarDocumentosConferenciaEncalhe(			
 			Long idControleConferenciaEncalheCota,
 			String nossoNumero,
-			br.com.abril.nds.enums.TipoDocumentoConferenciaEncalhe tipoDocumentoConferenciaEncalhe			
+			br.com.abril.nds.enums.TipoDocumentoConferenciaEncalhe tipoDocumentoConferenciaEncalhe,
+			boolean geraNovoNumeroSlip
 			) {
 
 		switch(tipoDocumentoConferenciaEncalhe) {
 		
 		case SLIP_PDF :
 			
-			return gerarSlip(idControleConferenciaEncalheCota, true, TipoArquivo.PDF);
+			return gerarSlip(idControleConferenciaEncalheCota, geraNovoNumeroSlip, TipoArquivo.PDF);
 		
 		case BOLETO_SLIP:
 			
@@ -3321,6 +3322,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		slipDTO.setValorTotalPagar(totalPagar);
 
+		slipDTO.setValorLiquidoDevido(slipDTO.getValorTotalSemDesconto().subtract(slipDTO.getValorTotalDesconto()));
+		
+		parametersSlip.put("VALOR_LIQUIDO_DEVIDO", slipDTO.getValorLiquidoDevido());
+		
 		parametersSlip.put("VALOR_DEVIDO", valorTotalReparte);
 		
 		parametersSlip.put("VALOR_SLIP", slipDTO.getValorSlip());
@@ -3424,39 +3429,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 		
 		return inputStream;
-	}
-
-	public byte[] gerarSlipTxtJasper(SlipDTO slip, Map<String, Object> parameters){
-		try{
-			
-		    parameters.put("SUBREPORT_DIR", obterSlipSubReportPath());
-		}
-		catch(Exception e){
-			e.printStackTrace();
-		}
-
-		JRDataSource jrDataSource = new JRBeanCollectionDataSource(slip.getListaProdutoEdicaoSlipDTO());
-		
-		String path = null;
-		
-		try {
-			path = obterSlipReportPath();
-			
-			//Retorna um byte array de um TXT
-			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			JRTextExporter exporter = new JRTextExporter();  
-			exporter.setParameter( JRExporterParameter.JASPER_PRINT, JasperFillManager.fillReport(path, parameters, jrDataSource) );  
-			exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, out);  
-			exporter.setParameter(JRTextExporterParameter.CHARACTER_WIDTH, new Float(4));  
-			exporter.setParameter(JRTextExporterParameter.CHARACTER_HEIGHT, new Float(21.25));
-			exporter.exportReport();
-
-			return out.toByteArray();
-		} catch (JRException e) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatório Slip");
-		}catch (URISyntaxException e) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "Não foi possível gerar relatário Slip");
-		}
 	}
 	
 	public byte[] gerarSlipTxtMatricial(SlipDTO slipDTO){
@@ -3632,10 +3604,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			for(DebitoCreditoCotaDTO composicao : slipDTO.getListaComposicaoCobrancaDTO()) 
 			{
+				String observacoes = StringUtil.limparString(composicao.getObservacoes());
+				observacoes = observacoes == null ? "" : observacoes;
+				
 				String descricao = StringUtil.limparString(composicao.getDescricao());
+				descricao = (descricao == null) ? "" : " - " + descricao;
+				
+				observacoes = observacoes + descricao;
+				
+				
 				String valor = (composicao.getValor() == null) ? "0,00" : composicao.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
 				String operacaoFinanceira = (composicao.getTipoLancamento() == null) ? "" : composicao.getTipoLancamento().getDescricao();
-				e.adicionarCompleteEspaco(descricao + ": " + operacaoFinanceira, valor);
+				e.adicionarCompleteEspaco(observacoes + ": " + operacaoFinanceira, valor);
 				e.quebrarLinhaEscape();
 			}
 		}
