@@ -11,8 +11,9 @@
 
 	var pesquisaProduto= new PesquisaProduto(histogramaVendasController.workspace);
 	$(function(){
-		histogramaVendasController.init();
+		histogramaVendasController.init();		
 	});
+	
 
 </script>
 
