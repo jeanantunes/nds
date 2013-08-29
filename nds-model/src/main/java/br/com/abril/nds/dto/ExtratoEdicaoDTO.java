@@ -20,6 +20,8 @@ public class ExtratoEdicaoDTO implements Serializable {
 	
 	private Long idTipoMovimento;
 	
+	private Long idLancamentoDiferenca;
+	
 	@Export(label = "Data", alignment = Alignment.CENTER)
 	private Date dataMovimento;
 	
@@ -36,8 +38,9 @@ public class ExtratoEdicaoDTO implements Serializable {
 	private BigInteger qtdParcial = BigInteger.ZERO;
 	
 	public ExtratoEdicaoDTO(Long idMovimento, Long idTipoMovimento, Date dataMovimento,
-			String descMovimento, BigInteger qtdEdicaoEntrada, BigInteger qtdEdicaoSaida) {
-		super();
+			String descMovimento, Long idLancamentoDiferenca, 
+			BigInteger qtdEdicaoEntrada, BigInteger qtdEdicaoSaida) {
+		
 		this.idMovimento = idMovimento;
 		this.idTipoMovimento = idTipoMovimento;
 		this.dataMovimento = dataMovimento;
@@ -45,6 +48,7 @@ public class ExtratoEdicaoDTO implements Serializable {
 		this.qtdEdicaoEntrada = qtdEdicaoEntrada;
 		this.qtdEdicaoSaida = qtdEdicaoSaida;
 		this.qtdParcial = BigInteger.ZERO;
+		this.idLancamentoDiferenca = idLancamentoDiferenca;
 	}
 
 	public ExtratoEdicaoDTO(){
@@ -162,6 +166,14 @@ public class ExtratoEdicaoDTO implements Serializable {
 
 	public void setIdTipoMovimento(Long idTipoMovimento) {
 		this.idTipoMovimento = idTipoMovimento;
+	}
+
+	public Long getIdLancamentoDiferenca() {
+		return idLancamentoDiferenca;
+	}
+
+	public void setIdLancamentoDiferenca(Long idLancamentoDiferenca) {
+		this.idLancamentoDiferenca = idLancamentoDiferenca;
 	}
 	
 }
