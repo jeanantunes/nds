@@ -10,7 +10,9 @@ public enum PeriodicidadeProduto {
 	TRIMESTRAL(6), 
 	SEMESTRAL(7), 
 	ANUAL(8),
-	INDEFINIDO(9);
+	INDEFINIDO(9),
+	EXTRA(10)
+	;
 
 	private Integer ordem;
 	

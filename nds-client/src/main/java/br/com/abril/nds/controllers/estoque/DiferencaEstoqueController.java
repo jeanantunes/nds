@@ -1079,8 +1079,7 @@ public class DiferencaEstoqueController extends BaseController {
 										dataInicial, dataFinal, tipoDiferenca, numeroCota, nomeCota,
 										sortorder, sortname, page, rp);
 		
-		List<Diferenca> listaDiferencas =
-			diferencaEstoqueService.obterDiferencas(filtro);
+		List<Diferenca> listaDiferencas = diferencaEstoqueService.obterDiferencas(filtro);
 		
 		if (listaDiferencas == null || listaDiferencas.isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
