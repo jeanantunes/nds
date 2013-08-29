@@ -1000,7 +1000,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			movimentoFinanceiroCota.setStatus(StatusAprovacao.APROVADO);
 			movimentoFinanceiroCota.setMotivo(descPostergado);
 			movimentoFinanceiroCota.setTipoMovimento(tipoMovimentoFinanceiro);
-			movimentoFinanceiroCota.setFornecedor(fornecedor);
+			movimentoFinanceiroCota.setFornecedor(fornecedor!=null?fornecedor:cota.getParametroCobranca().getFornecedorPadrao());
 		}
 		
 		return movimentoFinanceiroCota;

@@ -371,4 +371,8 @@ public interface CotaService {
 	 * @return
 	 */
 	boolean isTipoCaracteristicaSegmentacaoConvencional(Long idCota);
+
+	void verificarCotasSemRoteirizacao(Intervalo<Integer> intervaloCota,
+			Intervalo<Date> intervaloDataLancamento,
+			Intervalo<Date> intervaloDataRecolhimento);
 }

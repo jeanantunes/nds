@@ -1,7 +1,6 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 
@@ -19,6 +18,8 @@ public class ExtratoEdicaoDTO implements Serializable {
 
 	private Long idMovimento;
 	
+	private Long idTipoMovimento;
+	
 	@Export(label = "Data", alignment = Alignment.CENTER)
 	private Date dataMovimento;
 	
@@ -26,18 +27,19 @@ public class ExtratoEdicaoDTO implements Serializable {
 	private String descMovimento;
 	
 	@Export(label = "Entrada", alignment = Alignment.CENTER)
-	private BigInteger qtdEdicaoEntrada ;
+	private BigInteger qtdEdicaoEntrada = BigInteger.ZERO;
 	
 	@Export(label = "Saída", alignment = Alignment.CENTER)
-	private BigInteger qtdEdicaoSaida ;
+	private BigInteger qtdEdicaoSaida = BigInteger.ZERO;
 	
 	@Export(label = "Parcial", alignment = Alignment.CENTER)
-	private BigInteger qtdParcial;
+	private BigInteger qtdParcial = BigInteger.ZERO;
 	
-	public ExtratoEdicaoDTO(Long idMovimento, Date dataMovimento,
+	public ExtratoEdicaoDTO(Long idMovimento, Long idTipoMovimento, Date dataMovimento,
 			String descMovimento, BigInteger qtdEdicaoEntrada, BigInteger qtdEdicaoSaida) {
 		super();
 		this.idMovimento = idMovimento;
+		this.idTipoMovimento = idTipoMovimento;
 		this.dataMovimento = dataMovimento;
 		this.descMovimento = descMovimento;
 		this.qtdEdicaoEntrada = qtdEdicaoEntrada;
@@ -152,6 +154,14 @@ public class ExtratoEdicaoDTO implements Serializable {
 	 */
 	public void setIdMovimento(Long idMovimento) {
 		this.idMovimento = idMovimento;
+	}
+
+	public Long getIdTipoMovimento() {
+		return idTipoMovimento;
+	}
+
+	public void setIdTipoMovimento(Long idTipoMovimento) {
+		this.idTipoMovimento = idTipoMovimento;
 	}
 	
 }

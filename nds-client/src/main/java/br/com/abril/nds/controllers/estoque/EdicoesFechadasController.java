@@ -76,7 +76,7 @@ public class EdicoesFechadasController extends BaseController {
 	public void index() {
 		String data = DateUtil.formatarData(new Date(), FORMATO_DATA);
 		result.include("data", data);
-		result.include("fornecedores", fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO));
+		result.include("fornecedores", fornecedorService.obterFornecedores(SituacaoCadastro.ATIVO));
 	}
 
 	/**

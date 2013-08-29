@@ -432,7 +432,9 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	 * @return the balanceamentoConfirmado
 	 */
 	public boolean isBalanceamentoConfirmado() {
-		return StatusLancamento.BALANCEADO_RECOLHIMENTO.equals(statusLancamento);
+		return StatusLancamento.BALANCEADO_RECOLHIMENTO.equals(statusLancamento) || 
+				StatusLancamento.EM_RECOLHIMENTO.equals(statusLancamento) ||  
+				StatusLancamento.RECOLHIDO.equals(statusLancamento);
 	}
 
 }

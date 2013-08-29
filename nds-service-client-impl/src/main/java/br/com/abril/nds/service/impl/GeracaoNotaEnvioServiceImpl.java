@@ -54,6 +54,7 @@ import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TelefoneRepository;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.GeracaoNotaEnvioService;
 import br.com.abril.nds.util.Intervalo;
@@ -97,13 +98,19 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	@Autowired
 	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 	
+	@Autowired
+	private CotaService cotaService;
+	
 	// Trava para evitar duplicidade ao gerar notas de envio por mais de um usuario simultaneamente
 	// O HashMap suporta os mais detalhes e pode ser usado futuramente para restricoes mais finas
 	private static final Map<String, Object> TRAVA_GERACAO_NE = new HashMap<>();
 
 	@Transactional
 	public List<ConsultaNotaEnvioDTO> busca(FiltroConsultaNotaEnvioDTO filtro) {
-
+		
+		this.cotaService.verificarCotasSemRoteirizacao(filtro.getIntervaloCota(),
+				filtro.getIntervaloMovimento(), null);
+		
 		if("EMITIDAS".equals(filtro.getExibirNotasEnvio())) {
 			return cotaRepository.obterDadosCotasComNotaEnvioEmitidas(filtro);
 		} else if("AEMITIR".equals(filtro.getExibirNotasEnvio())) {
@@ -118,6 +125,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	@Override
 	@Transactional
 	public Integer buscaCotasNotasDeEnvioQtd(FiltroConsultaNotaEnvioDTO filtro) {
+		
+		this.cotaService.verificarCotasSemRoteirizacao(filtro.getIntervaloCota(),
+				filtro.getIntervaloMovimento(), null);
 		
 		if("EMITIDAS".equals(filtro.getExibirNotasEnvio())) {
 			return cotaRepository.obterDadosCotasComNotaEnvioEmitidasCount(filtro);
@@ -330,16 +340,28 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			BigInteger quantidade = quantidadeResultante.add(estudoCota.getQtdeEfetiva());
 
 			
+			ItemNotaEnvio itemNotaEnvio = null;
+			
+			for(ItemNotaEnvio item : listItemNotaEnvio) {
+				if(item.getProdutoEdicao().getId().equals(produtoEdicao.getId())) {
+					itemNotaEnvio = item;
+					break;
+				}
+			}
+			
+			boolean itemExistente = itemNotaEnvio != null;
+			
 			//Cria novo item nota caso o Estudo ainda não possua
-			ItemNotaEnvio itemNotaEnvio = criarNovoItemNotaEnvio(estudoCota,
+			itemNotaEnvio = criarNovoItemNotaEnvio(itemNotaEnvio, estudoCota,
 																 produtoEdicao,
 																 precoVenda,
 																 ((percentualDesconto != null && percentualDesconto.getValor() != null) ? 
 																   percentualDesconto.getValor() : 
 																   BigDecimal.ZERO), 
 																 quantidade);
-			
-			listItemNotaEnvio.add(itemNotaEnvio);
+			if(!itemExistente)
+				listItemNotaEnvio.add(itemNotaEnvio);
+					
 		}
 	}
 
@@ -366,11 +388,12 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		return nomeProduto;
 	}
 	
-	private ItemNotaEnvio criarNovoItemNotaEnvio(EstudoCota estudoCota,
+	private ItemNotaEnvio criarNovoItemNotaEnvio(ItemNotaEnvio itemNotaEnvio, EstudoCota estudoCota,
 			ProdutoEdicao produtoEdicao, BigDecimal precoVenda,
 			BigDecimal percentualDesconto, BigInteger quantidade) {
 
-		ItemNotaEnvio itemNotaEnvio = new ItemNotaEnvio();
+		if(itemNotaEnvio == null)
+			itemNotaEnvio = new ItemNotaEnvio();
 
 		itemNotaEnvio.setProdutoEdicao(produtoEdicao);
 		itemNotaEnvio.setCodigoProduto(produtoEdicao.getProduto().getCodigo());

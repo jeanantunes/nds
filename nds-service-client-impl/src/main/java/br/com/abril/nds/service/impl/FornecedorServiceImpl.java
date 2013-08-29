@@ -100,10 +100,8 @@ public class FornecedorServiceImpl implements FornecedorService {
 	}
 
 	@Transactional(readOnly = true)
-	public List<Fornecedor> obterFornecedores(boolean permiteBalanceamento,
-			SituacaoCadastro... situacoes) {
-		return fornecedorRepository.obterFornecedores(permiteBalanceamento,
-				situacoes);
+	public List<Fornecedor> obterFornecedores(SituacaoCadastro... situacoes) {
+		return fornecedorRepository.obterFornecedores(situacoes);
 	}
 	
 	@Transactional

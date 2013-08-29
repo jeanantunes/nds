@@ -38,11 +38,11 @@ import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.serialization.custom.CustomMapJson;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.BoxService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EntregadorService;
 import br.com.abril.nds.service.MapaAbastecimentoService;
 import br.com.abril.nds.service.ProdutoService;
@@ -76,7 +76,7 @@ public class MapaAbastecimentoController extends BaseController {
 	private MapaAbastecimentoService mapaAbastecimentoService;
 
 	@Autowired
-	private CotaRepository cotaRepository;
+	private CotaService cotaService;
 
 	@Autowired
 	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
@@ -500,7 +500,7 @@ public class MapaAbastecimentoController extends BaseController {
 				List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaDeAbastecimentoPorProdutoQuebrandoPorCota(filtro);
 				List<String> arrayCotasNaoRoteirizadas = new ArrayList<String>();
 				for(ProdutoAbastecimentoDTO cotaMapa : lista ) {
-					Cota cota = this.cotaRepository.obterCotaPDVPorNumeroDaCota(cotaMapa.getCodigoCota());
+					Cota cota = this.cotaService.obterPorNumeroDaCota(cotaMapa.getCodigoCota());
 
 					if(cota.getBox() == null) {
 						arrayCotasNaoRoteirizadas.add(cotaMapa.getCodigoCota() + " - " + cotaMapa.getNomeCota());
@@ -513,7 +513,11 @@ public class MapaAbastecimentoController extends BaseController {
 					result.forwardTo(MapaAbastecimentoController.class).impressaoPorProdutoQuebraCota(filtro);
 				}
 				break;	
-			case ENTREGADOR:	
+			case ENTREGADOR:
+				
+				filtro.getPaginacao().setQtdResultadosPorPagina(null);
+				filtro.getPaginacao().setPaginaAtual(null);
+				
 				result.forwardTo(MapaAbastecimentoController.class).impressaoPorEntregador(filtro);
 				break;
 			default:
@@ -605,7 +609,8 @@ public class MapaAbastecimentoController extends BaseController {
 
 		List<MapaProdutoCotasDTO> maps = getMapaProdutoCotasDTO(produtoCotaMapa);
 
-		result.include("maps",maps);
+		result.include("maps", maps);
+		result.include("mapBoxQtdes", produtoCotaMapa.getBoxQtdes());
 		result.include("qtdMaxRow", qtdMaxRow);
 	}
 

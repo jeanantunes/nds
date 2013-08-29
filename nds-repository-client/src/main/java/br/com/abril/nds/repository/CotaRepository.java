@@ -380,6 +380,9 @@ public interface CotaRepository extends Repository<Cota, Long> {
 
 	List<Long> obterIdsCotasPorMunicipio(String municipio);
 
+	List<CotaDTO> obterCotasSemRoteirizacao(Intervalo<Integer> intervaloCota,
+			Intervalo<Date> intervaloDataLancamento,
+			Intervalo<Date> intervaloDateRecolhimento);
 	List<ProdutoAbastecimentoDTO> obterCotaPorProdutoEdicaoData(FiltroMapaAbastecimentoDTO filtro);
 	
 }

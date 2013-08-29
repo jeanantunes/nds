@@ -19,18 +19,17 @@ import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.Capa;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.service.ChamadaEncalheService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -64,12 +63,26 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	@Autowired
 	private DistribuidorService distribuidorService;
 	
+	@Autowired
+	private CotaService cotaService;
+	
 	private static final Integer CODIGO_DINAP_INTERFACE = 9999999;
 	private static final Integer CODIGO_FC_INTERFACE = 9999998;
 	
 	@Override
 	@Transactional
 	public List<CotaEmissaoDTO> obterDadosEmissaoChamadasEncalhe(FiltroEmissaoCE filtro) {
+		
+		Intervalo<Integer> intervaloCotas = null;
+		
+		if (filtro.getNumCotaDe() != null && filtro.getNumCotaAte() != null){
+			intervaloCotas = new Intervalo<Integer>(filtro.getNumCotaDe(), filtro.getNumCotaAte());
+		}
+		
+		Intervalo<Date> intervaloDataRecolhimento = 
+			new Intervalo<Date>(filtro.getDtRecolhimentoDe(), filtro.getDtRecolhimentoAte());
+		
+		this.cotaService.verificarCotasSemRoteirizacao(intervaloCotas, null, intervaloDataRecolhimento);
 		
 		List<CotaEmissaoDTO> listaChamadaEncalhe = chamadaEncalheRepository.obterDadosEmissaoChamadasEncalhe(filtro);
 		

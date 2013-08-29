@@ -17,9 +17,12 @@ import br.com.abril.nds.integracao.engine.MessageProcessor;
 import br.com.abril.nds.integracao.model.canonic.EMS0128Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0128InputItem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.estoque.AtualizacaoEstoqueGFS;
+import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.LancamentoDiferenca;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
+import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
@@ -83,28 +86,49 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 						
 						LancamentoDiferenca lancamentoDiferenca = recuperarLancamentoDiferenca(movimento.getId());
 						
-						if( StatusIntegracao.REJEITADO.equals(movimento.getStatusIntegracao())
-								|| StatusIntegracao.DESPREZADO.equals(movimento.getStatusIntegracao())){
+						StatusIntegracao statusIntegracao = 
+							StatusIntegracao.valueOf(doc.getSituacaoSolicitacao());
+						
+						if (StatusIntegracao.REJEITADO.equals(statusIntegracao)
+								|| StatusIntegracao.DESPREZADO.equals(statusIntegracao)) {
 							
-							movimento.setStatus(StatusAprovacao.PERDA);
+							TipoDiferenca tipoDiferenca =
+								lancamentoDiferenca.getDiferenca().getTipoDiferenca();
 							
-							if(lancamentoDiferenca != null) {
-
-								lancamentoDiferenca.setStatus(StatusAprovacao.PERDA);
+							StatusAprovacao statusAprovacao;
+							
+							if (tipoDiferenca.isFalta()) {
 								
-								getSession().merge(lancamentoDiferenca);
+								statusAprovacao = StatusAprovacao.PERDA;
+								
+							} else {
+								
+								statusAprovacao = StatusAprovacao.GANHO;
 							}
-						} else {
-							if(lancamentoDiferenca != null) {
-								lancamentoDiferenca.setStatus(StatusAprovacao.valueOf(eitem.getSituacaoAcerto().replace(" ", "_")));
-							}
+							
+							movimento.setStatus(statusAprovacao);
+
+							lancamentoDiferenca.setStatus(statusAprovacao);
+								
+							getSession().merge(lancamentoDiferenca);
+							
+							this.criarAtualizacaoEstoqueGFS(
+								movimento, lancamentoDiferenca.getDiferenca());
+							
+						} else if (StatusIntegracao.LIBERADO.equals(statusIntegracao)) {
+							
+							this.criarAtualizacaoEstoqueGFS(
+								movimento, lancamentoDiferenca.getDiferenca());
 						}
+						
+						movimento.setStatusIntegracao(statusIntegracao);
 						
 						getSession().merge(movimento);
 						getSession().flush();
 					}						
 					
 					if (doc.getSituacaoSolicitacao().equals("PROCESSADO")) {
+						
 						couchDbClient.remove(doc);
 					}
 				}
@@ -112,6 +136,18 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		} catch (NoDocumentException ex) {
 			
 		}
+	}
+	
+	private void criarAtualizacaoEstoqueGFS(MovimentoEstoque movimentoEstoque, Diferenca diferenca) {
+		
+		AtualizacaoEstoqueGFS atualizacaoEstoqueGFS = new AtualizacaoEstoqueGFS();
+		
+		atualizacaoEstoqueGFS.setMovimentoEstoque(movimentoEstoque);
+		atualizacaoEstoqueGFS.setDataAtualizacao(new Date());
+		atualizacaoEstoqueGFS.setDiferenca(diferenca);
+		
+		getSession().merge(atualizacaoEstoqueGFS);
+		getSession().flush();
 	}
 
 	private MovimentoEstoque recuperaMovimento(Long id) {

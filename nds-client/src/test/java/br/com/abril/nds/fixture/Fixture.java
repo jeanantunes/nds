@@ -316,19 +316,19 @@ public class Fixture {
 	}
 
 	public static Fornecedor fornecedorTreelog(TipoFornecedor tipoFornecedor) {
-		return fornecedor(juridicaTreelog(), SituacaoCadastro.ATIVO, true, tipoFornecedor, 2);
+		return fornecedor(juridicaTreelog(), SituacaoCadastro.ATIVO, tipoFornecedor, 2);
 	}
 	
 	public static Fornecedor fornecedorFC(TipoFornecedor tipoFornecedor) {
-		return fornecedor(juridicaFC(), SituacaoCadastro.ATIVO, true, tipoFornecedor, 9999998);
+		return fornecedor(juridicaFC(), SituacaoCadastro.ATIVO, tipoFornecedor, 9999998);
 	}
 
 	public static Fornecedor fornecedorDinap(TipoFornecedor tipoFornecedor) {
-		return fornecedor(juridicaDinap(), SituacaoCadastro.ATIVO, true, tipoFornecedor, 9999999);
+		return fornecedor(juridicaDinap(), SituacaoCadastro.ATIVO, tipoFornecedor, 9999999);
 	}
 	
 	public static Fornecedor fornecedorAcme(TipoFornecedor tipoFornecedor) {
-		return fornecedor(juridicaAcme(), SituacaoCadastro.ATIVO, false, tipoFornecedor, 3);
+		return fornecedor(juridicaAcme(), SituacaoCadastro.ATIVO, tipoFornecedor, 3);
 	}
 
 	public static Produto produtoVeja(TipoProduto tipoProduto) {
@@ -502,12 +502,11 @@ public class Fixture {
 	}
 
 	public static Fornecedor fornecedor(PessoaJuridica juridica,
-			SituacaoCadastro situacaoCadastro, boolean permiteBalanceamento,
+			SituacaoCadastro situacaoCadastro,
 			TipoFornecedor tipo, Integer codigoInterface) {
 		Fornecedor fornecedor = new Fornecedor();
 		fornecedor.setJuridica(juridica);
 		fornecedor.setSituacaoCadastro(situacaoCadastro);
-		fornecedor.setPermiteBalanceamento(permiteBalanceamento);
 		fornecedor.setTipoFornecedor(tipo);
 		fornecedor.setInicioAtividade(new Date());
 		fornecedor.setCodigoInterface(codigoInterface);

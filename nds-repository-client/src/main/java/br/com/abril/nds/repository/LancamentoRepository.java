@@ -359,4 +359,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	boolean existeMatrizRecolhimentoConfirmado(Date dataChamadao);
 
 	Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao,Long idCota);
+	
+	Integer obterProximaSequenciaMatrizPorData(Date dataLancamento);
+	
 }

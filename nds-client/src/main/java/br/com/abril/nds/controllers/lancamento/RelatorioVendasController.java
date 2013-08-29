@@ -113,7 +113,7 @@ public class RelatorioVendasController extends BaseController {
 	public void index() {
 		String data = DateUtil.formatarData(new Date(), FORMATO_DATA);
 		result.include("data", data);
-		result.include("fornecedores", fornecedorService.obterFornecedores(true, SituacaoCadastro.ATIVO));
+		result.include("fornecedores", fornecedorService.obterFornecedores(SituacaoCadastro.ATIVO));
 		result.include("editores", editorService.obterEditores());
 		result.include("municipios", enderecoService.obterMunicipiosCotas());
 	}
