@@ -24,4 +24,6 @@ public interface EstoqueProdutoCotaJuramentadoRepository extends Repository<Esto
 	
 	BigInteger buscarSomaEstoqueJuramentadoPorProdutoData(Long idProdutoEdicao, Date data);
 	
+	BigInteger buscarQtdeEstoquePorProdutoEdicaoNaData(Long idProdutoEdicao, Date data);
+	
 }

@@ -511,15 +511,13 @@ public class FecharDiaController extends BaseController {
 		
 		try {
 			
-			Date _dataOperacao = 
-					this.distribuidorService.obterDataOperacaoDistribuidor();
+			Date _dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 			
 			Boolean hasPendenciaValidacao = this.fecharDiaService.existePendenciasDeAprovacao(_dataOperacao);
 			
 			if (hasPendenciaValidacao == null || !hasPendenciaValidacao) {
 		        
-		        FechamentoDiarioDTO dto = this.fecharDiaService.processarFechamentoDoDia(getUsuarioLogado(), 
-		        		_dataOperacao);
+		        FechamentoDiarioDTO dto = this.fecharDiaService.processarFechamentoDoDia(getUsuarioLogado(), _dataOperacao);
 		        setFechamentoDiarioDTO(dto);
 		        
 		        //this.session.removeAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);

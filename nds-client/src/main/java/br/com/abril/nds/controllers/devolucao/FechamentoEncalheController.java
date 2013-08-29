@@ -186,7 +186,7 @@ public class FechamentoEncalheController extends BaseController {
 		
 		for (FechamentoFisicoLogicoDTO fechamentoFisicoLogico : listaEncalhe) {
 			
-			fechamentoFisicoLogico.setReplicar(getCheckedFromDataHolder(fechamentoFisicoLogico.getCodigo()));
+			fechamentoFisicoLogico.setReplicar(getCheckedFromDataHolder(fechamentoFisicoLogico.getProdutoEdicao().toString()));
 		}
 		
 		return listaEncalhe;
