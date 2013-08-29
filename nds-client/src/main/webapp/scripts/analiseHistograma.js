@@ -151,6 +151,15 @@ var anaLiseHistogramaController = $.extend(true, {
 		
 		var flexGridService = new FlexGridService();
 		
+		$('#a1').click(function(){
+
+			var abrangenciaDistribuicao = $("#abrangenciaDistribuicaoCell").text().replace("%","");
+			var abrangenciaVenda = $("#abrangenciaVendaCell").text().replace("%","");
+			var eficienciaVenda = $("#eficienciaDeVendaCell").text().replace("%","");
+			
+		    this.href = $(this).attr('data-href') + "?fileType=XLS&abrangenciaDistribuicao=" + '' + abrangenciaDistribuicao +''+'&abrangenciaVenda='+''+ abrangenciaVenda+''+'&eficienciaVenda='+''+ eficienciaVenda+'';;
+		});
+		
 		$('#alterarFaixaReparte').click(function(){
 			$( "#dialog-alterar-faixa" ).dialog({
 				resizable: false,

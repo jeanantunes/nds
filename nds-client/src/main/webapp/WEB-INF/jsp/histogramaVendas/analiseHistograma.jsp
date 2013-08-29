@@ -78,16 +78,14 @@
    		<legend>Resumo do Estudo</legend>
             <table width="950" border="0" cellspacing="2" cellpadding="2">
       <tr>
-        <td width="426" rowspan="5" valign="top"><!--<span class="bt_novos" title="Gerar Arquivo"><a href="javascript:;"><img src="../images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>-->
-          <!-- <span class="bt_novos" title="Imprimir"><a href="javascript:;"><img src="../images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>-->
-          
-          <span class="bt_novos" title="Gerar Arquivo"><a href="${pageContext.request.contextPath}/distribuicao/histogramaVendas/exportar?fileType=XLS"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
-    <span class="bt_novos" title="Imprimir"><a href="${pageContext.request.contextPath}/distribuicao/histogramaVendas/exportar?fileType=PDF" ><img src="images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
+        <td width="426" rowspan="5" valign="top">
+          <span class="bt_novos" title="Gerar Arquivo">
+          	<a id="a1" href="#" data-href="${pageContext.request.contextPath}/distribuicao/histogramaVendas/exportar">
+          	<img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a>
+          </span>
           <span class="bt_novos"><a href="javascript:;" id="alterarFaixaReparte" ><img src="images/ico_editar.gif" alt="Alterar Faixar" hspace="5" border="0" />Alterar Faixa</a></span><!-- <span class="bt_novos"><a href="javascript:;"><img src="../images/ico_negociar.png" alt="Reabrir" hspace="5" border="0" />Reabrir</a></span>-->
           <span class="bt_novos"><a href="javascript:anaLiseHistogramaController.voltarFiltro();"><img src="images/seta_voltar.gif" alt="Voltar" hspace="5" border="0" />Voltar</a></span><br clear="all" />
 
-          
-          
           </td>
         <td width="98" style="border-bottom:1px solid #ccc;">Cotas Ativas:</td>
         <td width="45" style="border:1px solid #ccc;" id="cotasAtivasCell"> </td>

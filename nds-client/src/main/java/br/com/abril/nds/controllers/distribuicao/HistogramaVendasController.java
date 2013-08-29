@@ -6,8 +6,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -315,7 +313,7 @@ public class HistogramaVendasController extends BaseController {
 
 	@SuppressWarnings("unchecked")
 	@Get
-	public void exportar(FileType fileType) throws IOException {
+	public void exportar(FileType fileType, String abrangenciaDistribuicao, String abrangenciaVenda, String eficienciaVenda) throws IOException {
 		
 		List<AnaliseHistogramaDTO> lista = (List<AnaliseHistogramaDTO>)session.getAttribute(HISTOGRAMA_SESSION_ATTRIBUTE);
 		
@@ -327,7 +325,7 @@ public class HistogramaVendasController extends BaseController {
 		}
 		
 		if(fileType.equals(FileType.XLS)){
-			RodapeHistogramaVendaDTO rodapeDTO = montarRodapeParaXLS(footer);
+			RodapeHistogramaVendaDTO rodapeDTO = montarRodapeParaXLS(footer, abrangenciaDistribuicao, abrangenciaVenda, eficienciaVenda);
 			
 			FileExporter.to("Histórico_de_venda_por_faixa", fileType).inHTTPResponse(
 					this.getNDSFileHeader(), 
@@ -335,41 +333,17 @@ public class HistogramaVendasController extends BaseController {
 					rodapeDTO, 
 					lista,
 					AnaliseHistogramaDTO.class, this.httpResponse);
-		}else{
-			FileExporter.to("Histórico_de_venda_por_faixa", fileType).inHTTPResponse(
-					this.getNDSFileHeader(), 
-					getFiltroSessao(), 
-					null, 
-					lista,
-					AnaliseHistogramaDTO.class, this.httpResponse);
-			
 		}
-
-		
 		result.nothing();
 	}
 
-	private RodapeHistogramaVendaDTO montarRodapeParaXLS(AnaliseHistogramaDTO footer) {
+	private RodapeHistogramaVendaDTO montarRodapeParaXLS(AnaliseHistogramaDTO footer, String abrangenciaDistribuicao, String abrangenciaVenda, String eficienciaVenda) {
 		
 		String qtdeTotalCotasAtivasFormatada = footer.getQtdeTotalCotasAtivas().toString();
 		String cotasProduto = footer.getQtdeCotas().toString();
 		String cotaEsmagas = footer.getCotasEsmagadas().toString();
 		String vendaEsmagada = footer.getVendaEsmagadas().setScale(0).toString();		
 		String vendaTotal = footer.getVdaTotal().setScale(0, BigDecimal.ROUND_FLOOR) .toString();
-		
-		MathContext mc = new MathContext(2, RoundingMode.FLOOR);
-		String eficienciaVenda = ( footer.getVdaTotal().divide(footer.getRepTotal(),mc ))
-									.multiply(new BigDecimal(100)).toString() + "%" ;
-		
-		BigDecimal qtdeCotas = new BigDecimal(footer.getQtdeCotas()) ;
-		BigDecimal qtdeTotalCotasAtivas = new BigDecimal(footer.getQtdeTotalCotasAtivas());
-		String abrangenciaDistribuicaoFormatado =  (qtdeCotas.divide(qtdeTotalCotasAtivas,mc)
-														.multiply(new BigDecimal(100)).toString() + "%" );
-		
-		BigDecimal calculo = qtdeCotas.subtract(footer.getQtdeCotasSemVenda()).divide(qtdeTotalCotasAtivas, mc)  ;
-		BigDecimal resultado = calculo.multiply(new BigDecimal("100"));
-		String abrangenciaVendaFormatado =   resultado.toString() + "%";
-		
 		String reparteTotalFormatado = footer.getRepTotal().setScale(0, BigDecimal.ROUND_FLOOR).toString() ;
 		RodapeHistogramaVendaDTO rodapeDTO = new RodapeHistogramaVendaDTO(qtdeTotalCotasAtivasFormatada, 
 				cotasProduto, 
@@ -378,9 +352,9 @@ public class HistogramaVendasController extends BaseController {
 				reparteTotal,
 				reparteTotalFormatado,
 				vendaTotal,
-				eficienciaVenda,
-				abrangenciaDistribuicaoFormatado,
-				abrangenciaVendaFormatado,
+				eficienciaVenda.concat("%"),
+				abrangenciaDistribuicao.concat("%"),
+				abrangenciaVenda.concat("%"),
 				footer.getRepMedio().toString(),
 				footer.getVdaMedio().toString(),
 				footer.getEncalheMedio().toString());
