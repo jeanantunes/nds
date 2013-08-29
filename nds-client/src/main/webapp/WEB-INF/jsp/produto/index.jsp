@@ -261,7 +261,7 @@
 										</tr>
 										
 										<tr>
-											<td><strong>Tipo Lançamento:</strong></td>
+											<td><strong>Classificação:</strong></td>
 											<td>
 												<select class="habilitarCampoInterfaceSegmentacao" name="comboClassifProd" id="comboClassifProd" style="width:150px;">
 							                        <option value="">Selecione</option>
@@ -273,7 +273,7 @@
 										</tr>
 										
 										<tr>
-											<td><strong>Tipo Segmento:</strong></td>
+											<td><strong>Segmento:</strong></td>
 											<td>
 												<select class="habilitarCampoInterfaceSegmentacao" name="comboTipoSegmento" id="comboTipoSegmento" style="width:150px;">
 							                        <option value="">Selecione</option>
