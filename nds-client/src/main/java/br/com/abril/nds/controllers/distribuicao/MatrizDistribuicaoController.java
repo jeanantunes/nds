@@ -495,9 +495,17 @@ public class MatrizDistribuicaoController extends BaseController {
             listProdutoDistribuicaoVO = new ArrayList<ProdutoDistribuicaoVO>();
         }
 
-        int qtdDuplicacoes = 1;
+        int qtdDuplicacoes = 0;
+        
+        for (ProdutoDistribuicaoVO produtoDistribuicaoVO : listProdutoDistribuicaoVO) {
+        	if (produtoDistribuicaoVO.getIdLancamento().equals(distribuicaoVOCopia.getIdLancamento())) {
+                qtdDuplicacoes++;
+            }
+		}
+        
 
-        for (ProdutoDistribuicaoVO distribVO : listProdutoDistribuicaoVO) {
+//        for (ProdutoDistribuicaoVO distribVO : listProdutoDistribuicaoVO) {
+          for (ProdutoDistribuicaoVO distribVO : totalizadorProdutoDistribuicaoVO.getListProdutoDistribuicao()) {
 
             if (distribVO.getIdLancamento().equals(distribuicaoVOCopia.getIdLancamento())) {
 

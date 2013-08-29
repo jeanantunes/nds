@@ -406,4 +406,6 @@ public interface CotaService {
 	public abstract boolean isTipoDistribuicaoCotaEspecifico(Integer numeroCota,
 			TipoDistribuicaoCota tipoDistribuicaoCota);
 
+	List<CotaDTO> buscarCotasHistorico(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
+	
 }

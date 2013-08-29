@@ -389,4 +389,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
     CotaDTO buscarCotaPorNumero(Integer numeroCota, String codigoProduto);
     
     List<CotaEstudo> getInformacoesCotaEstudo(ProdutoEdicao produtoEdicao);
+    
+    List<CotaDTO> buscarCotasHistorico(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas);
 }

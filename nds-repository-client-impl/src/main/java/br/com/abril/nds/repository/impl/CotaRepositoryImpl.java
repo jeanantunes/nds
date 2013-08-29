@@ -80,6 +80,7 @@ import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.ListUtils;
 
 /**
  * Classe de implementação referente ao acesso a dados da entidade
@@ -2278,9 +2279,17 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	return query.list();
     }
 
+    @SuppressWarnings("unchecked")
     private void setParameters(Query query, Map<String, Object> parameters) {
 	for (String key : parameters.keySet()) {
-	    query.setParameter(key, parameters.get(key));
+	    
+		Object val = parameters.get(key);
+		if(val instanceof List){
+			query.setParameterList(key, (List)val);
+		}else{
+			query.setParameter(key, val);
+			
+		}
 	}
     }
 
@@ -2500,6 +2509,51 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 
 	return query.list();
     }
+    
+    
+    public List<CotaDTO> buscarCotasHistorico(List<ProdutoEdicaoDTO> listProdutoEdicaoDto, boolean cotasAtivas) {
+    	Map<String, Object> parameters = new HashMap<String, Object>();
+
+    	StringBuilder hql = new StringBuilder();
+
+    	hql.append(" SELECT ");
+
+    	hql.append(" cota.numeroCota as numeroCota, ");
+    	hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomePessoa");
+
+    	hql.append(" FROM EstoqueProdutoCota estoqueProdutoCota ");
+    	hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
+    	hql.append(" LEFT JOIN estoqueProdutoCota.cota as cota ");
+    	hql.append(" LEFT JOIN produtoEdicao.produto as produto ");
+    	hql.append(" LEFT JOIN cota.pessoa as pessoa ");
+
+    	hql.append(" WHERE ");
+
+    	if (cotasAtivas) {
+    	    hql.append(" cota.situacaoCadastro = :statusCota and");
+    	    parameters.put("statusCota", SituacaoCadastro.ATIVO);
+    	}
+
+    	if (listProdutoEdicaoDto != null && listProdutoEdicaoDto.size() != 0) {
+
+    		hql.append(" produto.codigo in (:produtoCodigoList) and ");
+    		hql.append(" produtoEdicao.numeroEdicao in (:produtoEdicaoNumeroList)");
+    		
+    		parameters.put("produtoCodigoList", ListUtils.getValuePathList("codigoProduto", listProdutoEdicaoDto));
+    		parameters.put("produtoEdicaoNumeroList", ListUtils.getValuePathList("numeroEdicao", listProdutoEdicaoDto));
+    		
+    	 }
+
+    	hql.append(" GROUP BY cota.numeroCota ");
+
+    	Query query = super.getSession().createQuery(hql.toString());
+
+    	this.setParameters(query, parameters);
+
+    	query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
+
+    	return query.list();
+        }
 
     @SuppressWarnings("unchecked")
     @Override

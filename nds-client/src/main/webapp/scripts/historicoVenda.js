@@ -104,6 +104,14 @@ var historicoVendaController = $.extend(true, {
 			historicoVendaController.pesquisarCotasHistoricoCotaOuComponentes(url);
 		});
 		
+		$('#pesquisarTodasAsCotas').click(function (){
+
+			url = contextPath + "/distribuicao/historicoVenda/pesquisarTodasAsCotas";
+			
+			historicoVendaController.pesquisarCotasHistoricoCotaOuComponentes(url);
+		});
+		
+		
 		// Botão Cancelar
 		$('#botaoCancelar').click(historicoVendaController.botaoCancelar);
 		
