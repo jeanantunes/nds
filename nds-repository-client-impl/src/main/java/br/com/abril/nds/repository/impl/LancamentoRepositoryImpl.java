@@ -595,12 +595,10 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" pessoaEditor.RAZAO_SOCIAL as nomeEditor, ");
 		  
 		sql.append("  sum( ");
-		sql.append("  case when (tipoProduto.GRUPO_PRODUTO = :grupoCromo and periodoLancamentoParcial.TIPO <> :tipoParcial) ");
-		sql.append("		then (((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, ");
-		sql.append("      	0) / 100)) / produtoEdicao.PACOTE_PADRAO)) ");
-		sql.append("   	else ((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, ");
-		sql.append("   		0) / 100))) ");  
-		sql.append(" end ");
+		sql.append("  case when (tipoProduto.GRUPO_PRODUTO = :grupoCromo and periodoLancamentoParcial.TIPO = :tipoParcial) ");
+		sql.append("	then (((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) / produtoEdicao.PACOTE_PADRAO) ");
+		sql.append("   	else ((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) ");  
+		sql.append(" 	end ");
 		sql.append("  ) as expectativaEncalhe, ");
 		  
 		sql.append("  sum( ");
@@ -642,8 +640,6 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" inner join ");
 		sql.append("     COTA cota ");
 		sql.append("         on cota.ID = estudoCota.COTA_ID ");
-		sql.append(" inner join BOX box ");
-		sql.append(" 	  		on cota.BOX_ID = box.ID ");
 		sql.append(" inner join ");
 		sql.append("     PRODUTO_EDICAO produtoEdicao ");   
 		sql.append("         on lancamento.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
@@ -773,7 +769,7 @@ public class LancamentoRepositoryImpl extends
 		query.setParameterList("idsFornecedores", fornecedores);
 		query.setParameter("periodoInicial", periodoRecolhimento.getDe());
 		query.setParameter("periodoFinal", periodoRecolhimento.getAte());
-		query.setParameter("grupoCromo", grupoCromo);
+		query.setParameter("grupoCromo", grupoCromo.toString());
 		query.setParameter("tipoParcial", TipoLancamentoParcial.PARCIAL.toString());
 		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.toString());
 		

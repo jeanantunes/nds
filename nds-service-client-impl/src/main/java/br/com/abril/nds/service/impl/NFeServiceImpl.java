@@ -60,6 +60,8 @@ import br.com.abril.nds.repository.NotaFiscalRepository;
 import br.com.abril.nds.service.MonitorNFEService;
 import br.com.abril.nds.service.NFeService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
+import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.Intervalo;
 
 @Service
 public class NFeServiceImpl implements NFeService {
@@ -126,7 +128,7 @@ public class NFeServiceImpl implements NFeService {
 	}
 	
 	@Transactional
-	public byte[] obterNEsPDF(List<NotaEnvio> listaNfeImpressaoNE, boolean isNECA) {
+	public byte[] obterNEsPDF(List<NotaEnvio> listaNfeImpressaoNE, boolean isNECA, Intervalo<Date> intervaloLancamento) {
 				
 		List<NfeImpressaoWrapper> listaNEWrapper = new ArrayList<NfeImpressaoWrapper>();
 
@@ -135,6 +137,9 @@ public class NFeServiceImpl implements NFeService {
 			NfeImpressaoDTO nfeImpressao = obterDadosNENECA(ne);
 
 			if(nfeImpressao!=null) {
+				
+				if(intervaloLancamento != null)
+					nfeImpressao.setDataLancamentoDeAte(this.getStringDataDeAte(intervaloLancamento));
 				
 				listaNEWrapper.add(new NfeImpressaoWrapper(nfeImpressao));
 			}
@@ -991,6 +996,19 @@ public class NFeServiceImpl implements NFeService {
 
 		nfeImpressao.setItensImpressaoNfe(listaItemImpressaoNfe);
 
+	}
+	
+	private String getStringDataDeAte(Intervalo<Date> intervalo) {
+		
+		String dataRecolhimento = null;
+		
+		if(intervalo.getDe().equals(intervalo.getAte()))
+			dataRecolhimento =  DateUtil.formatarDataPTBR(intervalo.getDe());
+		else
+			dataRecolhimento =  "De "  + DateUtil.formatarDataPTBR(intervalo.getDe()) + 
+								" até " + DateUtil.formatarDataPTBR(intervalo.getAte());
+		
+		return dataRecolhimento;
 	}
 	
 }

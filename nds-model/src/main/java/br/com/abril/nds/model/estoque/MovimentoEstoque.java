@@ -4,6 +4,7 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
@@ -18,6 +19,9 @@ public class MovimentoEstoque extends AbstractMovimentoEstoque {
 	@OneToOne(optional = true)
 	@JoinColumn(name = "ITEM_REC_FISICO_ID")
 	private ItemRecebimentoFisico itemRecebimentoFisico;
+	
+	@OneToOne(optional = true, mappedBy = "movimentoEstoque", fetch = FetchType.LAZY)
+	private LancamentoDiferenca lancamentoDiferenca;
 	
 	@ManyToOne(optional = true)
 	@JoinColumn(name = "ESTOQUE_PRODUTO_ID")
