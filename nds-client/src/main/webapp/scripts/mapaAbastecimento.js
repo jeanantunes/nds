@@ -481,7 +481,7 @@
 			T.desbloquearLinkProdutos();
 			break;
 		case 'PRODUTO_ESPECIFICO':
-			T.bloquearCampos('box','rota','codigoCota','nomeCota','quebraPorCota');
+			T.bloquearCampos('box','rota','roteiro','codigoCota','nomeCota','quebraPorCota');
 			T.desbloquearCampos('codigoProduto','nomeProduto','edicao');
 			T.desbloquearLinkProdutos();
 			break;
@@ -502,6 +502,14 @@
 	this.bloquearCampos = function() {
 		for(var campo in arguments) {
 
+			if($('#' + arguments[campo], _workspace).is("select")) {
+				$('#' + arguments[campo], _workspace)
+			    .find('option')
+			    .remove()
+			    .end()
+			    .append('<option value="">Selecione</option>')
+			    .val('');
+			}
 			$('#' + arguments[campo], _workspace).val('');
 			$('#' + arguments[campo], _workspace).disable();
 		}
