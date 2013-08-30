@@ -87,4 +87,11 @@ public interface MovimentoEstoqueService {
 	 * @return MovimentosEstoqueCotaSaldoDTO
 	 */
 	MovimentosEstoqueCotaSaldoDTO getMovimentosEstoqueCotaSaldo(List<MovimentoEstoqueCota> listaMovimentoCota);
+
+	MovimentoEstoque gerarMovimentoEstoqueDiferenca(Long idProdutoEdicao,
+													Long idUsuario, BigInteger quantidade,
+													TipoMovimentoEstoque tipoMovimentoEstoque,
+													boolean isMovimentoDiferencaAutomatica,
+													boolean validarTransfEstoqueDiferenca, Date dataLancamento,
+													StatusIntegracao statusIntegracao, Origem origem);
 }
