@@ -38,8 +38,23 @@ public interface FechamentoEncalheService {
 	
 	void encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario, FiltroFechamentoEncalheDTO filtroSessao);
 	
+	/**
+	 * Verifica se existe pesquisa de fechamento de encalhe feita
+	 * por box, ou seja, detalhada.
+	 * 
+	 * @param filtro
+	 * 
+	 * @return Boolean
+	 */
 	Boolean existeFechamentoEncalheDetalhado(FiltroFechamentoEncalheDTO filtro);
 	
+	/**
+	 * Verifica se existe pesquisa de fechamento de encalhe feita
+	 * de modo consolidado, ou seja, independente de box.
+	 * 
+	 * @param filtro
+	 * @return
+	 */
 	Boolean existeFechamentoEncalheConsolidado(FiltroFechamentoEncalheDTO filtro);
 	
 	void converteFechamentoDetalhadoEmConsolidado(FiltroFechamentoEncalheDTO filtro);

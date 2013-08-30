@@ -3178,10 +3178,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				conferenciaEncalheRepository.obterDadosSlipConferenciaEncalhe(
 						idControleConferenciaEncalheCota);
 		
-		Long idCota	= controleConferenciaEncalheCota.getCota().getId();
-		
-		carregarListaProdutoEdicaoAusenteNoEncalhe(listaProdutoEdicaoSlip, idCota, dataOperacao);
-		
 		Integer numeroCota 		= controleConferenciaEncalheCota.getCota().getNumeroCota();
 	
 		String nomeCota 		= controleConferenciaEncalheCota.getCota().getPessoa().getNome();
@@ -3505,12 +3501,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				String valorTotalEncalhe = itemLista.getValorTotalEncalhe() == null ? "0" : itemLista.getValorTotalEncalhe();
 				e.adicionarCompleteEspaco("Total Encalhe  do dia "+ dataRecolhimentoStr +":", valorTotalEncalhe);
 				e.quebrarLinhaEscape();
-				e.quebrarLinhaEscape();
-				
-				
 				/*
 				 * 
 				 */
+				
+				e.adicionar("----------------------------------------");
+				e.quebrarLinhaEscape();
 			}
 		}
 		
@@ -3612,10 +3608,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 				observacoes = observacoes + descricao;
 				
-				
 				String valor = (composicao.getValor() == null) ? "0,00" : composicao.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
+				
 				String operacaoFinanceira = (composicao.getTipoLancamento() == null) ? "" : composicao.getTipoLancamento().getDescricao();
-				e.adicionarCompleteEspaco(observacoes + ": " + operacaoFinanceira, valor);
+				e.adicionarCompleteEspaco(observacoes + " " + operacaoFinanceira, valor);
 				e.quebrarLinhaEscape();
 			}
 		}

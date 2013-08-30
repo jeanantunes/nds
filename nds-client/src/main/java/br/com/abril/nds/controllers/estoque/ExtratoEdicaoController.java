@@ -32,6 +32,7 @@ import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.view.Results;
@@ -126,6 +127,8 @@ public class ExtratoEdicaoController extends BaseController {
 	 * 
 	 * @throws Exception
 	 */
+	@Post
+	@Path("/pesquisaExtratoEdicao")
 	public void pesquisaExtratoEdicao(FiltroProdutoDTO filtro, 
 									  Long numeroEdicao,
 									  BigDecimal precoCapa,
