@@ -126,35 +126,42 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	@SuppressWarnings("unchecked")
 	public List<MovimentoFinanceiroCota> obterMovimentoFinanceiroCota(Long idCota){
 		
-		StringBuilder hql = new StringBuilder("select mfc ");
-		hql.append(" from MovimentoFinanceiroCota mfc, Distribuidor d ")
-		   .append(" join mfc.cota cota ")   
-		   .append(" left join mfc.movimentos movimentoEstoque ")
-		   .append(" left join movimentoEstoque.produtoEdicao pe ")
-		   .append(" left join pe.produto p ")
-		   .append(" left join p.fornecedores fornecedor ")
-		   .append(" where mfc.data <= d.dataOperacao ")
-		   .append(" and mfc.status = :statusAprovado ");
+		StringBuilder hql = new StringBuilder("select mfc ")
+		
+	   .append(" from MovimentoFinanceiroCota mfc ")
+	
+	   .append(" join mfc.cota cota ")
+	   
+	   .append(" join mfc.fornecedor fornecedor ")
+	   
+	   .append(" where mfc.data <= (select d.dataOperacao from Distribuidor d) ")
+	   
+	   .append(" and mfc.status = :statusAprovado ");
 		
 		if (idCota != null){
+			
 			hql.append(" and cota.id = :idCota ");
 		}
 		
 		hql.append(" and cota.situacaoCadastro != :inativo and cota.situacaoCadastro != :pendente ")
-		   .append(" and mfc.id not in ")
-		   .append(" (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ");
+		
+		   .append(" and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ");
 		
 		hql.append(" group by mfc.id ")
+		
 		   .append(" order by cota.id, fornecedor.id ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
+		
 		query.setParameter("statusAprovado", StatusAprovacao.APROVADO);
 		
 		if (idCota != null){
+			
 			query.setParameter("idCota", idCota);
 		}
 		
 		query.setParameter("inativo", SituacaoCadastro.INATIVO);
+		
 		query.setParameter("pendente", SituacaoCadastro.PENDENTE);
 		
 		return query.list();
