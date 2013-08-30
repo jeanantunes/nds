@@ -3178,10 +3178,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				conferenciaEncalheRepository.obterDadosSlipConferenciaEncalhe(
 						idControleConferenciaEncalheCota);
 		
-		Long idCota	= controleConferenciaEncalheCota.getCota().getId();
-		
-		carregarListaProdutoEdicaoAusenteNoEncalhe(listaProdutoEdicaoSlip, idCota, dataOperacao);
-		
 		Integer numeroCota 		= controleConferenciaEncalheCota.getCota().getNumeroCota();
 	
 		String nomeCota 		= controleConferenciaEncalheCota.getCota().getPessoa().getNome();
