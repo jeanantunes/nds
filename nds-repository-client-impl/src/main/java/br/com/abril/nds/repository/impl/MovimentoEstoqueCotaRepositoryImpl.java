@@ -1671,12 +1671,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append("	join estudoCota.cota cota ");
 		hql.append("	join estudo.produtoEdicao produtoEdicao ");
 		hql.append("	join produtoEdicao.produto produto ");		
-
-		hql.append("    join cota.pdvs pdv ");
 		hql.append("    join cota.pessoa pessoa ");
-		hql.append("    left join pdv.rotas rotaPDV  ");
-		hql.append("    left join rotaPDV.rota rota ");
-		hql.append("    left join rota.roteiro roteiro ");
+		hql.append("    join cota.box box ");
+		hql.append("    join box.roteirizacao rtz ");
+		hql.append("    join rtz.roteiros roteiro ");
+		hql.append("    join roteiro.rotas rota ");
 		
 		if(filtro.getIdEntregador() != null)
 			hql.append("    join rota.entregador entregador ");
@@ -1746,6 +1745,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		}
 		
 		hql.append(" and lancamento.status in (:status) ");
+		
 		statusLancamento.add(StatusLancamento.BALANCEADO);
 		statusLancamento.add(StatusLancamento.EXPEDIDO);
 		
@@ -2122,7 +2122,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList, statusLancamento);
 		
-		//hql.append(" group by produtoEdicao.id, box.id, rota.id ");
 		hql.append(" group by box.id, rota.id ");
 		
 		if (filtro.getExcluirProdutoSemReparte()!=null && filtro.getExcluirProdutoSemReparte()) {
@@ -2170,7 +2169,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			
 		gerarFromWhereDadosAbastecimento(filtro, hql, param, paramList, statusLancamento);
 
-		hql.append(" group by produtoEdicao.id, box.id, rota.descricaoRota ");
+		hql.append(" group by box.id, rota.descricaoRota ");
 		
 		if (filtro.getExcluirProdutoSemReparte()!= null && filtro.getExcluirProdutoSemReparte()) {
 

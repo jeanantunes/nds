@@ -576,7 +576,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			lancamentoRepository.obterLancamentoPorItensRecebimentoFisico(
 				recebimentoFisicoDTO.getDataLancamento(), recebimentoFisicoDTO.getIdProdutoEdicao());
 		
-		ProdutoEdicao produtoEdicao =  produtoEdicaoService.buscarPorID(recebimentoFisicoDTO.getIdProdutoEdicao());
+		ProdutoEdicao produtoEdicao = produtoEdicaoService.buscarPorID(recebimentoFisicoDTO.getIdProdutoEdicao());
 				
 		if(lancamento != null) {
 			
