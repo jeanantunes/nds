@@ -334,7 +334,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				Date novaData = produtoRecolhimento.getNovaData();
 				
 				lancamento.setDataRecolhimentoDistribuidor(novaData);
-				lancamento.setSequenciaMatriz(produtoRecolhimento.getSequencia().intValue());
 				lancamento.setStatus(statusLancamento);
 				lancamento.setDataStatus(new Date());
 				
@@ -713,11 +712,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			getPeriodoRecolhimento(numeroSemana, anoBase);
 		
 		List<Lancamento> lancamentos =  lancamentoRepository.obterLancamentosARecolherNaSemana(periodoRecolhimento, fornecedores);
-		
-		if (lancamentos == null || lancamentos.size() <= 0){
-		
-			throw new ValidacaoException(TipoMensagem.WARNING ,"Não existem lançamentos à serem reiniciados.");
-		}	
 			
 		for(Lancamento lancamento: lancamentos) {
 			

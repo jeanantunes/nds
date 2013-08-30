@@ -18,6 +18,8 @@ public class NfeImpressaoDTO implements Serializable{
 	private Long numeroNF;
 
 	private Date dataEmissao;
+	
+	private String dataLancamentoDeAte;
 
 	private Date dataSaida;
 
@@ -796,6 +798,14 @@ public class NfeImpressaoDTO implements Serializable{
 	 */
 	public void setDataLancamento(Date dataLancamento) {
 		this.dataLancamento = dataLancamento;
+	}
+
+	public String getDataLancamentoDeAte() {
+		return dataLancamentoDeAte;
+	}
+
+	public void setDataLancamentoDeAte(String dataLancamentoDeAte) {
+		this.dataLancamentoDeAte = dataLancamentoDeAte;
 	}
 	
 }
