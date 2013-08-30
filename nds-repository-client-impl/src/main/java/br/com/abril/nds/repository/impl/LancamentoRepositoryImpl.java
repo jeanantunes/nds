@@ -454,7 +454,6 @@ public class LancamentoRepositoryImpl extends
 		statusLancamento.add(StatusLancamento.EM_BALANCEAMENTO);
 		statusLancamento.add(StatusLancamento.BALANCEADO);
 		statusLancamento.add(StatusLancamento.FURO);
-		statusLancamento.add(StatusLancamento.CONFIRMADO);
 		
 		query.setParameterList("statusLancamento", statusLancamento);
 		
