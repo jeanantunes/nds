@@ -599,42 +599,46 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					
 					BigInteger qtdePerda = estoqueProduto.getQtdePerda() == null ? BigInteger.ZERO : estoqueProduto.getQtdePerda();
 					
-					qtdePerda = qtdePerda.add( movimentoEstoque.getQtde() );
+					if (movimentoEstoque.getOrigem()!=null && movimentoEstoque.getOrigem().equals(Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE)){
+						
+					    novaQuantidade = estoqueProduto.getQtdeDevolucaoEncalhe().subtract(movimentoEstoque.getQtde());
+					    
+					    estoqueProduto.setQtdeDevolucaoEncalhe(novaQuantidade);
+					}
+					else{
+	
+						novaQuantidade = estoqueProduto.getQtde().subtract(movimentoEstoque.getQtde());
+						
+						estoqueProduto.setQtde(novaQuantidade);
+					}
 					
-					
-					
-					novaQuantidade = estoqueProduto.getQtde().subtract(movimentoEstoque.getQtde());
-					
-					
-					
-					//novaQuantidade = estoqueProduto.getQtdeDevolucaoEncalhe().subtract(movimentoEstoque.getQtde());
-					
-					
+					qtdePerda = qtdePerda.add( movimentoEstoque.getQtde());
 					
 					estoqueProduto.setQtdePerda(qtdePerda);
-					estoqueProduto.setQtde(novaQuantidade);
-	
+					
 					break;
 					 
 				case GANHO:
-					
+
 					BigInteger qtdeGanho = estoqueProduto.getQtdeGanho() == null ? BigInteger.ZERO : estoqueProduto.getQtdeGanho();
+					
+					if (movimentoEstoque.getOrigem()!=null && movimentoEstoque.getOrigem().equals(Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE)){
+						
+						novaQuantidade = estoqueProduto.getQtdeDevolucaoEncalhe().add(movimentoEstoque.getQtde());
+					    
+					    estoqueProduto.setQtdeDevolucaoEncalhe(novaQuantidade);
+					}
+					else{
+	
+						novaQuantidade = estoqueProduto.getQtde().add(movimentoEstoque.getQtde());	
+						
+						estoqueProduto.setQtde(novaQuantidade);
+					}
 					
 					qtdeGanho = qtdeGanho.add(movimentoEstoque.getQtde());
 					
-					
-					
-					novaQuantidade = estoqueProduto.getQtde().add(movimentoEstoque.getQtde());	
-					
-					
-					
-					//novaQuantidade = estoqueProduto.getQtdeDevolucaoEncalhe().add(movimentoEstoque.getQtde());
-					
-					
-					
 					estoqueProduto.setQtdeGanho(qtdeGanho);
-					estoqueProduto.setQtde(novaQuantidade);
-	
+					
 					break;
 					
 				default:
