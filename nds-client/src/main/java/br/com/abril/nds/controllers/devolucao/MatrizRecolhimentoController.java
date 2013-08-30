@@ -584,11 +584,16 @@ public class MatrizRecolhimentoController extends BaseController {
 		ValidacaoDataRecolhimento validacaoDataRecolhimento = 
 			this.verificarDataForaDaSemana(intervalo, novaDataBalanceamento);
 		
+		/*
+		 * TODO: Regra para permitir reprogramação em uma data já confirmada.
+		 * Está comentado, pois está análise para ser utilizada futuramente.
+		 *
 		if (validacaoDataRecolhimento == null) {
 			
 			validacaoDataRecolhimento =
 				this.verificarDataEmDiaConfirmado(novaDataBalanceamento);
 		}
+		*/
 		
 		if (validacaoDataRecolhimento == null) {
 			
@@ -615,6 +620,7 @@ public class MatrizRecolhimentoController extends BaseController {
 		return validacaoDataRecolhimento;
 	}
 	
+	@SuppressWarnings("unused")
 	private ValidacaoDataRecolhimento verificarDataEmDiaConfirmado(Date novaDataBalanceamento) {
 		
 		ValidacaoDataRecolhimento validacaoDataRecolhimento = null;
@@ -1203,6 +1209,21 @@ public class MatrizRecolhimentoController extends BaseController {
 	private void validarDataReprogramacao(Integer numeroSemana, Date novaData, Date dataBalanceamento) {
 		
 		this.recolhimentoService.verificaDataOperacao(novaData);
+		
+		List<ConfirmacaoVO> confirmacoes = this.montarListaDatasConfirmacao();
+		
+		for (ConfirmacaoVO confirmacao : confirmacoes) {
+			
+			if (DateUtil.parseDataPTBR(confirmacao.getMensagem()).equals(novaData)) {
+				
+				if (confirmacao.isConfirmado()) {
+					
+					throw new ValidacaoException(
+						TipoMensagem.WARNING,
+						"O recolhimento não pode ser reprogramado para uma data já confirmada!");
+				}
+			}
+		}
 	}
 
 	/**
