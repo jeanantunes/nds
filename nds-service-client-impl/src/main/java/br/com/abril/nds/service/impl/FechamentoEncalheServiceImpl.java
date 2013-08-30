@@ -36,6 +36,7 @@ import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -965,13 +966,17 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 			diferenca.setTipoDiferenca(TipoDiferenca.FALTA_EM);
 
-			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.PERDA, StatusAprovacao.APROVADO);
+			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.PERDA, 
+					                                          StatusAprovacao.APROVADO, 
+					                                          Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE);
 			
 		} else if(qntDiferenca.compareTo(BigInteger.ZERO) > 0){						
 			
 			diferenca.setTipoDiferenca(TipoDiferenca.SOBRA_EM);
 
-			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.GANHO, StatusAprovacao.APROVADO);
+			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.GANHO, 
+					                                          StatusAprovacao.APROVADO, 
+					                                          Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE);
 			
 		}
 	}

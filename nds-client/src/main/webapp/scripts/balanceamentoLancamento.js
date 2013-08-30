@@ -156,7 +156,7 @@ function BalanceamentoLancamento(pathTela, descInstancia, balancemento, workspac
 			  
 			  rows+='<span class="span_1">Qtde. Parciais:</span>';
 			  rows+='<span class="span_2">' + resumo.qtdeTitulosParciais + '</span>';
-			  rows+='<span class="span_1">Peso Total:</span>';
+			  rows+='<span class="span_1">Peso Total (kg):</span>';
 			  rows+='<span class="span_2">'+ resumo.pesoTotalFormatado +'</span>';
 			  rows+='<span class="span_1">Valor Total:</span>';
 			  rows+='<span class="span_2">'+ resumo.valorTotalFormatado +'</span>';

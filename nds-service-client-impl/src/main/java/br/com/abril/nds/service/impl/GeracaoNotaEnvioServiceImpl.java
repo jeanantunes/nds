@@ -603,7 +603,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 				
 				itemNotaEnvio.setItemNotaEnvioPK(new ItemNotaEnvioPK(notaEnvio, ++sequencia));
 				
-				itemNotaEnvioRepository.adicionar(itemNotaEnvio);
+				Integer seqMatrizlancamento = 0;
 				
 				if(itemNotaEnvio.getMovimentosProdutoSemEstudo() != null && !itemNotaEnvio.getMovimentosProdutoSemEstudo().isEmpty()) {
 					
@@ -611,9 +611,22 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 						
 						mec.setItemNotaEnvio(itemNotaEnvio);
 						
+						if (mec.getLancamento() != null){
+							
+							seqMatrizlancamento = mec.getLancamento().getSequenciaMatriz();
+						}
+
 						this.movimentoEstoqueCotaRepository.merge(mec);
 					}
+					
+				} else {
+					
+					seqMatrizlancamento = itemNotaEnvio.getEstudoCota().getEstudo().getLancamento().getSequenciaMatriz();
 				}
+				
+				itemNotaEnvio.setSequenciaMatrizLancamento(seqMatrizlancamento);
+
+				itemNotaEnvioRepository.adicionar(itemNotaEnvio);
 			}
 		}
 	}
