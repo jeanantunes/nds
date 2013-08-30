@@ -1168,7 +1168,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 		
 	}
-
+	
+	/**
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.FechamentoEncalheService#existeFechamentoEncalheDetalhado(br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO)
+	 */
 	@Override
 	@Transactional(readOnly=true)
 	public Boolean existeFechamentoEncalheDetalhado(FiltroFechamentoEncalheDTO filtro) {

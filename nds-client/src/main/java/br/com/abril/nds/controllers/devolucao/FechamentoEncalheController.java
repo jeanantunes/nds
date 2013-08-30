@@ -633,17 +633,38 @@ public class FechamentoEncalheController extends BaseController {
 		filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
 		filtro.setFornecedorId(fornecedorId);
 		filtro.setBoxId(boxId);
+		
 		if (boxId == null){
+			
 			if (fechamentoEncalheService.existeFechamentoEncalheDetalhado(filtro)){
-				this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, "Você está tentando fazer uma pesquisa em modo consolidado (soma de todos os boxes). Já existem dados salvos em modo de pesquisa por box. Não será possível realizar a pesquisa."), "result").recursive().serialize();
+				
+				String msgPesquisaConsolidado = "Você está tentando fazer uma " +
+						"pesquisa em modo consolidado (soma de todos os boxes). " +
+						"Já existem dados salvos em modo de pesquisa por box. " +
+						"Se você continuar, os dados serão perdidos. " +
+						"Tem certeza que deseja continuar ?";
+				
+				this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, msgPesquisaConsolidado), "result").recursive().serialize();
+			
 			} else {
+				
 				this.result.use(Results.json()).from("pesquisa","result").serialize() ;   
+			
 			}
+		
 		} else if ( fechamentoEncalheService.existeFechamentoEncalheConsolidado(filtro)){
-			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Você está tentando fazer uma pesquisa por box. Já existem dados salvos em modo de pesquisa consolidado (soma de todos os boxes). Se você continuar, os dados serão perdidos. Tem certeza que deseja continuar ?"), "result").recursive().serialize();
+			
+			String msgPesquisaPorBox = "Você está tentando fazer uma pesquisa por box. " +
+					"Já existem dados salvos em modo de pesquisa consolidado (soma de todos os boxes). " +
+					"Não será possível realizar a pesquisa.";
+			
+			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, msgPesquisaPorBox), "result").recursive().serialize();
+		
 		} else {
+		
 			this.result.use(Results.json()).from("pesquisa","result").serialize() ;   
-		 }
+		
+		}
 	}
 	
 	@Path("/salvarNoEncerrementoOperacao")
