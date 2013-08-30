@@ -260,7 +260,7 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 				statusAprovacao = StatusAprovacao.PERDA;
 			}
 			
-			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca, tipoEstoque, statusAprovacao);
+			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca, tipoEstoque, statusAprovacao, null);
 		}
 	}
 
