@@ -168,8 +168,8 @@ var relatorioVendasController = $.extend(true, {
 				sortable : false,
 				align : 'center'
 			} ],
-			sortname : "rkEditor",
-			sortorder : "asc",
+			sortname : "faturamentoCapa",
+			sortorder : "desc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
@@ -236,8 +236,8 @@ var relatorioVendasController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			} ],
-			sortname : "rkCota",
-			sortorder : "asc",
+			sortname : "faturamentoCapa",
+			sortorder : "desc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
@@ -293,7 +293,7 @@ var relatorioVendasController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Faturamento Capa R$',
-				name : 'faturamentoCapaFormatado',
+				name : 'faturamentoCapa',
 				width : 90,
 				sortable : true,
 				align : 'right'
@@ -310,8 +310,8 @@ var relatorioVendasController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			} ],
-			sortname : "rkProduto",
-			sortorder : "asc",
+			sortname : "faturamentoCapa",
+			sortorder : "desc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
@@ -367,7 +367,7 @@ var relatorioVendasController = $.extend(true, {
 				align : 'right'
 			}, {
 				display : 'Faturamento R$',
-				name : 'faturamentoFormatado',
+				name : 'faturamento',
 				width : 100,
 				sortable : true,
 				align : 'right'
@@ -384,7 +384,7 @@ var relatorioVendasController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			} ],
-			sortname : "participacaoAcumuladaFormatado",
+			sortname : "faturamento",
 			sortorder : "desc",
 			usepager : true,
 			useRp : true,
@@ -698,6 +698,7 @@ var relatorioVendasController = $.extend(true, {
 				resultado.mensagens.listaMensagens
 			);
 			$(".grids", relatorioVendasController.workspace).hide();
+			
 			return resultado;
 		}
 
@@ -705,6 +706,7 @@ var relatorioVendasController = $.extend(true, {
 		$("#totalFaturamentoCapaDistribuidor", relatorioVendasController.workspace).html("R$ " + resultado.totalFaturamentoFormatado);
 		
 		$(".grids", relatorioVendasController.workspace).show();
+		
 		return resultado.tableModel;
 	},
 
