@@ -455,6 +455,17 @@ init : function() {
 					           return;
 						}
 						
+						if(ajusteReparteController.isAjusteSegmento == true){
+							var indice = ajusteReparteController.get("segmento1");
+							
+							if(indice < 0.5 || indice > 1.5){
+								var erros = new Array();
+					           erros[0] = "Valor inválido para o ajuste!";
+					           exibirMensagemDialog('WARNING',   erros,"");
+					           return;
+							}
+						}
+						
 						$.postJSON(contextPath + "/distribuicao/ajusteReparte/alterarAjusteSegmento", 
 								data,
 								function(result) {
@@ -685,9 +696,9 @@ init : function() {
 			$("#exibirSegmento3").val(segmt3).disable();
 			
 			//Editar
-			$("#exibirSegmentoEditar1").val(segmt1).disable();
-			$("#exibirSegmentoEditar2").val(segmt2).disable();
-			$("#exibirSegmentoEditar3").val(segmt3).disable();
+			$("#exibirSegmento1Editar").val(segmt1).disable();
+			$("#exibirSegmento2Editar").val(segmt2).disable();
+			$("#exibirSegmento3Editar").val(segmt3).disable();
 			
 			
 	},
@@ -963,6 +974,11 @@ init : function() {
 		$("#segmento2").show();
 		$("#segmento3").show();
 		$("#tipoSegmento3").show();
+		
+		$("#tr_exibirSegmento1").show();
+		$("#tr_exibirSegmento2").show();
+		$("#tr_exibirSegmento3").show();
+		
 	},
 	
 	filtroPorSegmentoQtd_1 : function(){
@@ -972,6 +988,11 @@ init : function() {
 		$("#segmento2").show();
 		$("#segmento3").show();
 		$("#tipoSegmento3").show();
+		
+		$("#tr_exibirSegmento1").hide();
+		$("#tr_exibirSegmento2").show();
+		$("#tr_exibirSegmento3").show();
+		
 	},
 	
 	filtroPorSegmentoQtd_2 : function(){
@@ -981,6 +1002,10 @@ init : function() {
 		$("#segmento2").hide();
 		$("#segmento3").show();
 		$("#tipoSegmento3").show();
+		
+		$("#tr_exibirSegmento1").hide();
+		$("#tr_exibirSegmento2").hide();
+		$("#tr_exibirSegmento3").show();
 	},
 	
 	filtroPorSegmentoQtd_3 : function(){
@@ -990,6 +1015,11 @@ init : function() {
 		$("#segmento2").hide();
 		$("#segmento3").hide();
 		$("#tipoSegmento3").hide();
+		
+		$("#tr_exibirSegmento1").hide();
+		$("#tr_exibirSegmento2").hide();
+		$("#tr_exibirSegmento3").hide();
+		
 	},
 	
 	formatarAjusteAplicadoHistorico : function (){
