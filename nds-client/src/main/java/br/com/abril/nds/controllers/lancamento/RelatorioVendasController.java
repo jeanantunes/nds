@@ -30,6 +30,7 @@ import br.com.abril.nds.dto.filtro.FiltroCurvaABCCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCDistribuidorDTO.TipoConsultaCurvaABC;
 import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO;
+import br.com.abril.nds.dto.filtro.FiltroCurvaABCEditorDTO.ColunaOrdenacaoCurvaABCEditor;
 import br.com.abril.nds.dto.filtro.FiltroPesquisarHistoricoEditorDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -516,7 +517,7 @@ public class RelatorioVendasController extends BaseController {
 
 			List<RegistroCurvaABCDistribuidorVO> resultadoPaginado =
 				PaginacaoUtil.paginarEOrdenarEmMemoria(
-					resultadoCurvaABCDistribuidor, filtro.getPaginacao(), filtro.getOrdenacaoColuna().toString());
+					resultadoCurvaABCDistribuidor, filtro.getPaginacao(), (filtro.getOrdenacaoColuna() == null ? filtro.getPaginacao().getSortColumn() :  filtro.getOrdenacaoColuna().toString()));
 
 			TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>> tableModel =
 				new TableModel<CellModelKeyValue<RegistroCurvaABCDistribuidorVO>>();
@@ -609,7 +610,7 @@ public class RelatorioVendasController extends BaseController {
 				codigoCota, nomeCota, municipio, sortorder, sortname, page, rp);
 
 		List<RegistroCurvaABCEditorVO> resultadoCurvaABCEditor = null;
-		try {
+		try { 
 			resultadoCurvaABCEditor = this.relatorioVendasService.obterCurvaABCEditor(filtroCurvaABCEditorDTO);
 		} catch (Exception e) {
 
@@ -796,7 +797,9 @@ public class RelatorioVendasController extends BaseController {
 
 			int qtdeTotalRegistros = resultadoCurvaABCCota.size();
 
-			List<RegistroCurvaABCCotaDTO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(resultadoCurvaABCCota, filtroCurvaABCCotaDTO.getPaginacao(), filtroCurvaABCCotaDTO.getOrdenacaoColuna().toString());
+			List<RegistroCurvaABCCotaDTO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(resultadoCurvaABCCota, 
+					filtroCurvaABCCotaDTO.getPaginacao(), 
+					(filtroCurvaABCCotaDTO.getOrdenacaoColuna() == null ? filtroCurvaABCCotaDTO.getPaginacao().getSortColumn() :filtroCurvaABCCotaDTO.getOrdenacaoColuna().toString()));
 			
 			TableModel<CellModelKeyValue<RegistroCurvaABCCotaDTO>> tableModel = new TableModel<CellModelKeyValue<RegistroCurvaABCCotaDTO>>();
 	
@@ -1002,7 +1005,7 @@ public class RelatorioVendasController extends BaseController {
 	 */
 	private void configurarPaginacaoEditorPesquisa(FiltroCurvaABCEditorDTO filtro, String sortorder, String sortname, int page, int rp) {
 		if (filtro != null) {
-			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder, sortname);
 			filtro.setPaginacao(paginacao);
 			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroCurvaABCEditorDTO.ColunaOrdenacaoCurvaABCEditor.values(), sortname));
 		}
@@ -1018,7 +1021,7 @@ public class RelatorioVendasController extends BaseController {
 	 */
 	private void configurarPaginacaoCotaPesquisa(FiltroCurvaABCCotaDTO filtro, String sortorder, String sortname, int page, int rp) {
 		if (filtro != null) {
-			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder, sortname);
 			filtro.setPaginacao(paginacao);
 			filtro.setOrdenacaoColuna(
 					Util.getEnumByStringValue(
@@ -1036,7 +1039,7 @@ public class RelatorioVendasController extends BaseController {
 	 */
 	private void configurarPaginacaoDistribuidorPesquisa(FiltroCurvaABCDistribuidorDTO filtro, String sortorder, String sortname, int page, int rp) {
 		if (filtro != null) {
-			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder, sortname);
 			filtro.setPaginacao(paginacao);
 			filtro.setOrdenacaoColuna(Util.getEnumByStringValue(FiltroCurvaABCDistribuidorDTO.ColunaOrdenacaoCurvaABCDistribuidor.values(), sortname));
 		}

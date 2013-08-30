@@ -212,4 +212,13 @@ public abstract class CurrencyUtil {
 		
 		return valor;
 	}
+	
+	public static String pontuarNaCasaDoMilhar(Number valor) {
+		
+		String totalFormatadoComVirgula = CurrencyUtil.formatarValor(valor);
+		int indexOf = totalFormatadoComVirgula.indexOf(",");
+		totalFormatadoComVirgula.substring(0, indexOf);
+
+		return totalFormatadoComVirgula.substring(0, indexOf);
+	}
 }
