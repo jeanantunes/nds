@@ -234,7 +234,7 @@ public class GeracaoNotaEnvioController extends BaseController {
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontrado itens para exportar"));
 		}
 		
-		byte[] notasGeradas = nfeService.obterNEsPDF(notasEnvio, false);
+		byte[] notasGeradas = nfeService.obterNEsPDF(notasEnvio, false, filtro.getIntervaloMovimento());
 		
 		return notasGeradas;
 	}
@@ -342,6 +342,16 @@ public class GeracaoNotaEnvioController extends BaseController {
 		} else {
 			result.include("errorMessage", "É necessário informar o número da Cota.");
 		}
+		
+		String dataRecolhimento = null;
+
+		if(filtro.getIntervaloMovimento().getDe().equals(filtro.getIntervaloMovimento().getAte()))
+			dataRecolhimento =  DateUtil.formatarDataPTBR(filtro.getIntervaloMovimento().getDe());
+		else
+			dataRecolhimento =  "De "  + DateUtil.formatarDataPTBR(filtro.getIntervaloMovimento().getDe()) + "</br>" +
+								"até " + DateUtil.formatarDataPTBR(filtro.getIntervaloMovimento().getAte());
+		
+		result.include("dataLancamento", dataRecolhimento);
 		result.include("notaEnvio", notaEnvio);
 		
 	}
