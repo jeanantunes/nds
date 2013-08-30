@@ -17,6 +17,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.seguranca.Usuario;
@@ -25,7 +26,9 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
+import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 
@@ -43,6 +46,12 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 	
 	@Autowired
 	private UsuarioRepository usuarioRepository;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private FormaCobrancaService formaCobrancaService;
 	
 	@Autowired
 	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
@@ -87,7 +96,14 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		
 		if (fornecedor == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "A [Cota] necessita de um [Fornecedor Padrão] em [Parâmetros] Financeiros !");
+			FormaCobranca fc = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+			
+			fornecedor = fc.getPoliticaCobranca().getFornecedorPadrao();
+		}
+		
+		if (fornecedor == null){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "A [Cota "+cota.getNumeroCota()+"] necessita de um fornecedor padrão em parâmetros financeiros para a geração de movimentos financeiros de débito ou crédito !");
 		}
 		
 		movimentoFinanceiroCotaDTO.setFornecedor(fornecedor);

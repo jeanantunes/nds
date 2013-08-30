@@ -42,6 +42,7 @@ import br.com.abril.nds.service.RoteiroService;
 import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -248,14 +249,16 @@ public class ImpressaoNFEController extends BaseController {
 
 			List<NotaEnvio> nes = impressaoNFEService.buscarNotasEnvioParaImpressaoNFe(filtroPesquisa);
 
+			Intervalo<Date> intervalo = new Intervalo<Date>(filtro.getDataMovimentoInicial(), filtro.getDataMovimentoFinal());
+			
 			switch(tipoImpressaoNENECADANFE) {
 
 				case MODELO_1:
-					arquivo = nfeService.obterNEsPDF(nes, false);
+					arquivo = nfeService.obterNEsPDF(nes, false, intervalo);
 					nomeArquivo = "NEs";
 					break;
 				case MODELO_2:
-					arquivo = nfeService.obterNEsPDF(nes, true);
+					arquivo = nfeService.obterNEsPDF(nes, true, intervalo);
 					nomeArquivo = "NECAs";
 					break;
 

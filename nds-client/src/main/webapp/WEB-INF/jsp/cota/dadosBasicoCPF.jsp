@@ -19,7 +19,7 @@
    </tr>
    <tr>
      <td>CPF:</td>
-     <td><input type="text" style="width:150px" name="cotaDTO.numeroCPF" id="numeroCPF" onblur="COTA_CPF.carregarDadosCPF('#numeroCPF')"/></td>
+     <td><input type="text" style="width:150px" name="cotaDTO.numeroCPF" id="numeroCPF" onchange="COTA_CPF.carregarDadosCPF('#numeroCPF')"/></td>
      <td>R. G.:</td>
      <td ><input type="text" maxlength="20" style="width:300px" name="cotaDTO.numeroRG" id="numeroRG" /></td>
    </tr>

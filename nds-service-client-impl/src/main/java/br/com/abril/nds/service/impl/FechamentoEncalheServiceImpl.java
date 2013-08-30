@@ -966,11 +966,13 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			diferenca.setTipoDiferenca(TipoDiferenca.FALTA_EM);
 
 			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.PERDA, StatusAprovacao.APROVADO);
+			
 		} else if(qntDiferenca.compareTo(BigInteger.ZERO) > 0){						
 			
 			diferenca.setTipoDiferenca(TipoDiferenca.SOBRA_EM);
 
 			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.GANHO, StatusAprovacao.APROVADO);
+			
 		}
 	}
 
@@ -1041,12 +1043,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 		return tipoNotaFiscal;
 	}
-	
-	
-	
-	
-	
-	
+
 	@Transactional
 	private boolean validarEncerramentoOperacao(Date dataEncalhe) {
 		

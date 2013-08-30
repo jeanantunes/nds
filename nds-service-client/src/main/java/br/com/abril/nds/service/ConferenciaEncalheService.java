@@ -142,8 +142,10 @@ public interface ConferenciaEncalheService {
 	/**
 	 * Gera documentação referente a conferência de encalhe.
 	 * 
-	 * @param dadosDocumentacaoConfEncalheCotaDTO
+	 * @param idControleConferenciaEncalheCota
+	 * @param nossoNumero
 	 * @param tipoDocumentoConferenciaEncalhe
+	 * @param geraNovoNumeroSlip
 	 * 
 	 * @return byte
 	 */
@@ -151,8 +153,8 @@ public interface ConferenciaEncalheService {
 	public byte[] gerarDocumentosConferenciaEncalhe(			
 			Long idControleConferenciaEncalheCota,
 			String nossoNumero,
-			TipoDocumentoConferenciaEncalhe tipoDocumentoConferenciaEncalhe			
-			);
+			TipoDocumentoConferenciaEncalhe tipoDocumentoConferenciaEncalhe,
+			boolean geraNovoNumeroSlip);
 
 	
 	/**

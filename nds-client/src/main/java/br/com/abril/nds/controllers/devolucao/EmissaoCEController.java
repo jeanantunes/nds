@@ -23,7 +23,6 @@ import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
-import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Rota;
 import br.com.abril.nds.model.cadastro.Roteiro;
@@ -111,19 +110,6 @@ public class EmissaoCEController extends BaseController {
 		this.setFiltroSessao(filtro);
 	
 		List<CotaEmissaoDTO> lista = chamadaEncalheService.obterDadosEmissaoChamadasEncalhe(filtro); 
-		
-		String cotasSemRoteirizacao = "";
-		for(CotaEmissaoDTO cotaEmissao : lista) {
-			Cota cota = cotaService.obterPorId(cotaEmissao.getIdCota());
-			if(cota.getBox() == null) {
-				cotasSemRoteirizacao = cotasSemRoteirizacao + cotaEmissao.getNumCota() + " - " + cotaEmissao.getNomeCota() + "<br />";	
-			}
-		}
-		
-		if(! cotasSemRoteirizacao.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING,"<p>As seguintes cotas não tem roteirização: </p><p>" + cotasSemRoteirizacao	+ "</p>");
-		}
-		
 		
 		if(lista == null || lista.isEmpty()){
 			
@@ -292,6 +278,20 @@ public class EmissaoCEController extends BaseController {
 		if(apresentaCapas && !apresentaCapasPersonalizadas) {
 			result.include("capasPaginadas", dados.getCapasPaginadas());
 		}
+		
+		if(apresentaCapas && !apresentaCapasPersonalizadas) {
+			result.include("capasPaginadas", dados.getCapasPaginadas());
+		}
+		
+		String dataRecolhimento = null;
+		
+		if(filtro.getDtRecolhimentoDe().equals(filtro.getDtRecolhimentoAte()))
+			dataRecolhimento =  DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe());
+		else
+			dataRecolhimento =  "De " + DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoDe()) 
+							 + " até " + DateUtil.formatarDataPTBR(filtro.getDtRecolhimentoAte());
+		
+		result.include("dataRecolhimento",  dataRecolhimento);
 			
 		result.include("cotasEmissao", dados.getCotasEmissao());
 		

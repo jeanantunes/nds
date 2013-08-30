@@ -88,10 +88,41 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 					
 					balanceamentoRecolhimentoController.visualizarMatrizBalanceamentoPorDia(null);
 				}
+				
+				balanceamentoRecolhimentoController.verificarMatrizesConfirmadas();
 
 			},
 			function() {
 				balanceamentoRecolhimentoController.showResumo(false);
+			}
+		);
+	},
+	
+	verificarMatrizesConfirmadas: function() {
+		
+		$.postJSON(
+			contextPath + "/devolucao/balanceamentoMatriz/obterAgrupamentoDiarioBalanceamento", 
+			null,
+			function(result) {
+				
+				var todasConfirmadas = true;
+
+				$(result).each(function(index, value) {
+
+					if (!value.confirmado) {
+						todasConfirmadas = false;
+						return -1;
+					}
+				});
+				
+				if (todasConfirmadas) {
+
+					balanceamentoRecolhimentoController.bloquearLinks();
+
+					balanceamentoRecolhimentoController.habilitarLink(
+						"linkConfirmar", balanceamentoRecolhimentoController.obterConfirmacaoBalanceamento
+					);
+				}
 			}
 		);
 	},
@@ -799,6 +830,8 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				    	exibirMensagem(tipoMensagem, listaMensagens);
 			       	}
         	   	}
+				
+				balanceamentoRecolhimentoController.verificarMatrizesConfirmadas();
 			},
 			null,
 			true,

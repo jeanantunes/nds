@@ -26,6 +26,8 @@ public class SlipDTO {
 	
 	private BigDecimal valorEncalheDia;
 	
+	private BigDecimal valorLiquidoDevido;
+	
 	private BigInteger totalProdutoDia;
 	
 	private Long ceJornaleiro;
@@ -343,6 +345,20 @@ public class SlipDTO {
 
 	public void setParametersSlip(Map<String, Object> parametersSlip) {
 		this.parametersSlip = parametersSlip;
+	}
+
+	/**
+	 * @return the valorLiquidoDevido
+	 */
+	public BigDecimal getValorLiquidoDevido() {
+		return valorLiquidoDevido;
+	}
+
+	/**
+	 * @param valorLiquidoDevido the valorLiquidoDevido to set
+	 */
+	public void setValorLiquidoDevido(BigDecimal valorLiquidoDevido) {
+		this.valorLiquidoDevido = valorLiquidoDevido;
 	}
 	
 }

@@ -86,7 +86,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 		List<CotaEmissaoDTO> listaChamadaEncalhe = chamadaEncalheRepository.obterDadosEmissaoChamadasEncalhe(filtro);
 		
-		if (listaChamadaEncalhe == null) return null;
+		if (listaChamadaEncalhe == null) return new ArrayList<>();
 		
 		for(int i = 0; i < listaChamadaEncalhe.size(); i++) {
 			
