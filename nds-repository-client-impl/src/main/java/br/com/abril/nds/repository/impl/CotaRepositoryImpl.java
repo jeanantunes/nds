@@ -24,6 +24,7 @@ import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -3009,12 +3010,12 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 			.append(" c.NUMERO_COTA as numeroCota, ")
         	.append(" coalesce(p.NOME, p.RAZAO_SOCIAL, p.NOME_FANTASIA) as nomePessoa ")
         	.append(" from COTA c ")
-        	.append(" inner join PESSOA p on c.PESSOA_ID=p.ID ");
+        	.append(" inner join PESSOA p on c.PESSOA_ID=p.ID ")
+        	.append(" inner join ESTUDO_COTA ec on c.ID=ec.COTA_ID ")
+    		.append(" inner join ESTUDO e on ec.ESTUDO_ID=e.ID ");
         	
     	if (intervaloDataLancamento != null) {
-    		hql .append(" inner join ESTUDO_COTA ec on c.ID=ec.COTA_ID ")
-    			.append(" inner join ESTUDO e on ec.ESTUDO_ID=e.ID ") 
-    			.append(" inner join LANCAMENTO l on e.PRODUTO_EDICAO_ID=l.PRODUTO_EDICAO_ID and e.DATA_LANCAMENTO=l.DATA_LCTO_PREVISTA ");
+    		hql .append(" inner join LANCAMENTO l on e.PRODUTO_EDICAO_ID=l.PRODUTO_EDICAO_ID and e.DATA_LANCAMENTO=l.DATA_LCTO_PREVISTA ");
     	}
     	
     	if (intervaloDateRecolhimento != null) {
@@ -3031,25 +3032,24 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         	.append("     	inner join ROTA rota on r.ID=rota.ROTEIRO_ID ") 
         	.append("     	inner join ROTA_PDV rp on rota.ID=rp.ROTA_ID ") 
         	.append("     	inner join PDV pdv on rp.PDV_ID=pdv.ID ") 
-        	.append("     	inner join COTA c on pdv.COTA_ID=c.ID ");
-    	
-    	if (intervaloDateRecolhimento != null) {
-    		hql .append("     	inner join chamada_encalhe_cota cec on cec.cota_id = c.id ")
-    			.append("     	inner join chamada_encalhe ce on ce.id = cec.chamada_encalhe_id and ce.produto_edicao_id = e.produto_edicao_id ");
-    	}
+        	.append("     	inner join COTA c on pdv.COTA_ID=c.ID ")
+        	.append("     	inner join ESTUDO_COTA ec on c.ID=ec.COTA_ID ") 
+        	.append("     	inner join ESTUDO e on ec.ESTUDO_ID=e.ID ");
     	
     	if (intervaloDataLancamento != null) {
-        	hql	.append("     	inner join ESTUDO_COTA ec on c.ID=ec.COTA_ID ") 
-        		.append("     	inner join ESTUDO e on ec.ESTUDO_ID=e.ID ")
-        		.append("     	inner join ( ")
+        	hql	.append("     	inner join ( ")
         		.append("         	select produto_edicao_id, l.DATA_LCTO_PREVISTA ")
         		.append("         	from LANCAMENTO l ")
         		.append("         	where l.DATA_LCTO_DISTRIBUIDOR between :dataLancamentoDe and :dataLancamentoAte ) rs1 ")
         		.append("             	on e.PRODUTO_EDICAO_ID=rs1.PRODUTO_EDICAO_ID ")
         		.append("             	and e.DATA_LANCAMENTO=rs1.DATA_LCTO_PREVISTA ")
-        		.append(" 		) ")
-        		.append(" ) ");
+        		.append(" 		) ");
         }
+    	
+    	if (intervaloDateRecolhimento != null) {
+    		hql .append("     	inner join chamada_encalhe_cota cec on cec.cota_id = c.id ")
+    			.append("     	inner join chamada_encalhe ce on ce.id = cec.chamada_encalhe_id and ce.produto_edicao_id = e.produto_edicao_id ");
+    	}
     	
     	if (intervaloCota != null && intervaloCota.getAte() != null && intervaloCota.getDe() != null){
 			hql	.append(" and ( ")
@@ -3065,11 +3065,14 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     	
     	if (intervaloDateRecolhimento != null) {
     		hql	.append(" and ( ")
-    			.append(" 	ce.dataRecolhimento between :dataRecolhimentoDe and :dataRecolhimentoAte ")
-    			.append(" ) ");
+    			.append(" 	ce.data_recolhimento between :dataRecolhimentoDe and :dataRecolhimentoAte ")
+    			.append(" ) ")
+    			.append(" ) ")
+			;
     	}
 	    	
-    	hql	.append(" group by c.NUMERO_COTA ")
+    	hql	.append(" ) ")
+    		.append(" group by c.NUMERO_COTA ")
     		.append(" order by c.NUMERO_COTA ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
@@ -3091,6 +3094,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
 		query.setCacheable(true);
+		query.addScalar("nomePessoa", StandardBasicTypes.STRING);
+		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
 		
 		return query.list();
 	}
