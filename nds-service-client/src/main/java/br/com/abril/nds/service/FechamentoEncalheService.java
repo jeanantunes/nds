@@ -59,8 +59,6 @@ public interface FechamentoEncalheService {
 	
 	void converteFechamentoDetalhadoEmConsolidado(FiltroFechamentoEncalheDTO filtro);
 	
-	void removeFechamentoDetalhado(FiltroFechamentoEncalheDTO filtro);
-	
 	ControleFechamentoEncalhe buscaControleFechamentoEncalhePorData(Date dataFechamentoEncalhe);
 
 	Date buscaDataUltimoControleFechamentoEncalhe();
@@ -88,9 +86,6 @@ public interface FechamentoEncalheService {
 
 	public List<GridFechamentoEncalheDTO> listaEncalheTotalParaGrid(
 			List<FechamentoFisicoLogicoDTO> listaEncalheSessao);
-
-	public List<FechamentoFisicoLogicoDTO> verificarListaDaSessao(
-			List<FechamentoFisicoLogicoDTO> listaEncalheSession, FiltroFechamentoEncalheDTO filtro, String sortname, String sortorder);
 
 	Integer buscarTotalCotasAusentesSemPostergado(Date dataEncalhe, boolean isSomenteCotasSemAcao);
 }
