@@ -3042,14 +3042,22 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         		.append("         	from LANCAMENTO l ")
         		.append("         	where l.DATA_LCTO_DISTRIBUIDOR between :dataLancamentoDe and :dataLancamentoAte ) rs1 ")
         		.append("             	on e.PRODUTO_EDICAO_ID=rs1.PRODUTO_EDICAO_ID ")
-        		.append("             	and e.DATA_LANCAMENTO=rs1.DATA_LCTO_PREVISTA ")
-        		.append(" 		) ");
+        		.append("             	and e.DATA_LANCAMENTO=rs1.DATA_LCTO_PREVISTA ");
         }
     	
     	if (intervaloDateRecolhimento != null) {
     		hql .append("     	inner join chamada_encalhe_cota cec on cec.cota_id = c.id ")
     			.append("     	inner join chamada_encalhe ce on ce.id = cec.chamada_encalhe_id and ce.produto_edicao_id = e.produto_edicao_id ");
     	}
+    	
+    	if (intervaloDateRecolhimento != null) {
+    		hql	.append(" and ( ")
+    			.append(" 	ce.data_recolhimento between :dataRecolhimentoDe and :dataRecolhimentoAte ")
+    			.append(" ) ");
+    	}
+	    	
+    	hql	.append(" 	where rot.box_id is not null ) ")
+    		.append(" ) ");
     	
     	if (intervaloCota != null && intervaloCota.getAte() != null && intervaloCota.getDe() != null){
 			hql	.append(" and ( ")
@@ -3066,13 +3074,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     	if (intervaloDateRecolhimento != null) {
     		hql	.append(" and ( ")
     			.append(" 	ce.data_recolhimento between :dataRecolhimentoDe and :dataRecolhimentoAte ")
-    			.append(" ) ")
-    			.append(" ) ")
-			;
+    			.append(" ) ");
     	}
-	    	
-    	hql	.append(" ) ")
-    		.append(" group by c.NUMERO_COTA ")
+    	
+    	hql	.append(" group by c.NUMERO_COTA ")
     		.append(" order by c.NUMERO_COTA ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
