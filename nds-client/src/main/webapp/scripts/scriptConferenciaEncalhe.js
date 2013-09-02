@@ -1073,7 +1073,7 @@ var ConferenciaEncalhe = $.extend(true, {
 			close : function(){
 				
 				ConferenciaEncalhe.modalAberta = false;
-				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+				focusSelectRefField($("#numeroCota", ConferenciaEncalhe.workspace));
 			}
 		});
 		
@@ -1674,7 +1674,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				
 				ConferenciaEncalhe.modalAberta = false;
 				
-				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+				focusSelectRefField($("#numeroCota", ConferenciaEncalhe.workspace));
 			},
 			
 			form: $("#dialog-salvar", this.workspace).parents("form")
