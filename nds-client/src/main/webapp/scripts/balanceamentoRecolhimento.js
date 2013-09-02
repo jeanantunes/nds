@@ -805,7 +805,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 1024,
-			height : 180
+			height : 'auto'
 		});
 	},
 	
