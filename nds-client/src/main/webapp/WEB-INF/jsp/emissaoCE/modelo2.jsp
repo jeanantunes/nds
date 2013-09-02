@@ -1,4 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -177,10 +178,14 @@ function imprimir(){
     <td width="70" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">0028</td>
     <td width="22" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.tipoRecolhimento}</td>
     <td width="51" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.reparte}</td>
-    <td width="95" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; "></td>
-    <td width="95" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; "></td>
-    <td width="70" align="right" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.precoComDesconto}</td>
-    <td width="95" align="right" style="border-bottom:1px solid #000;padding-left:5px; border-right:1px solid #000; "></td>
+    <td width="95" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.quantidadeDevolvida}</td>
+    <td width="95" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.reparte - produto.quantidadeDevolvida}</td>
+    <td width="70" align="right" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">
+    	<fmt:formatNumber value="${produto.precoVenda.subtract(produto.precoVenda.multiply(produto.vlrDesconto).divide(100))}" maxFractionDigits="2" minFractionDigits="2" />
+    </td>
+    <td width="95" align="right" style="border-bottom:1px solid #000;padding-left:5px; border-right:1px solid #000; ">
+    	<fmt:formatNumber value="${produto.vlrPrecoComDesconto.multiply(produto.reparte - produto.quantidadeDevolvida)}" maxFractionDigits="2" minFractionDigits="2" />
+    </td>
   </tr>
  
  </c:forEach>
