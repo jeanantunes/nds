@@ -3,15 +3,21 @@ package br.com.abril.nds.client.vo;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
+
 /**
  * Value Object para filtro da pesquisa de balanceamento de recolhimento.
  * 
  * @author Discover Technology
  */
+@Exportable
 public class FiltroPesquisaMatrizRecolhimentoVO {
 	
+	@Export(label="Semana")
 	private Integer numeroSemana;
 	
+	@Export(label="Data")
 	private Date dataPesquisa;
 	
 	private List<Long> listaIdsFornecedores;
