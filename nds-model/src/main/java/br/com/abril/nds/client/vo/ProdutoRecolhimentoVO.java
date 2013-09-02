@@ -1,51 +1,84 @@
 package br.com.abril.nds.client.vo;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.Currency;
 import java.util.Date;
+
+import org.apache.commons.lang.NumberUtils;
+
+import br.com.abril.nds.util.CurrencyUtil;
+import br.com.abril.nds.util.Util;
+import br.com.abril.nds.util.export.ColumType;
+import br.com.abril.nds.util.export.Export;
+import br.com.abril.nds.util.export.Exportable;
 
 /**
  * Value Object para os produtos da matriz de recolhimento.
  * 
  * @author Discover Technology
  */
+@Exportable
 public class ProdutoRecolhimentoVO {
 
 	private String idLancamento;
 	
 	private Long idProdutoEdicao;
 	
+	@Export(label="Código")
 	private String codigoProduto;
 	
+	@Export(label="Produto", widthPercent=8f)
 	private String nomeProduto;
 	
+	@Export(label="Edição")
 	private Long numeroEdicao;
 	
+	@Export(label="Capa R$", columnType=ColumType.MOEDA)
 	private BigDecimal precoVenda;
 	
+	@Export(label="Desc R$", columnType=ColumType.MOEDA)
 	private BigDecimal precoDesconto;
 	
 	private Long idFornecedor;
 	
+	@Export(label="Fornecedor", widthPercent=8f)
 	private String nomeFornecedor;
 	
+	@Export(label="Editor", widthPercent=8f)
 	private String nomeEditor;
 	
+	@Export(label="Parcial")
 	private String parcial;
 	
+	@Export(label="Brinde")
 	private String brinde;
 	
+	@Export(label="Lçto")
 	private Date dataLancamento;
 	
+	@Export(label="Rcto")
 	private Date dataRecolhimento;
 	
-	private BigDecimal encalheSede;
+	@Export(label="Sede")
+	private String encalheSedeFormatado;
 	
+	@Export(label="Atendida")
+	private String encalheAtendidaFormatado;
+	
+	@Export(label="Exemplar")
+	private String encalheFormatado;
+	
+	private BigDecimal encalheSede;
+
 	private BigDecimal encalheAtendida;
 	
 	private BigDecimal encalhe;
 	
+	@Export(label="Total R$", columnType=ColumType.MOEDA)
 	private BigDecimal valorTotal;
 	
+	@Export(label="Nova Data")
 	private Date novaData;
 	
 	private boolean bloqueioAlteracaoBalanceamento;
@@ -244,6 +277,7 @@ public class ProdutoRecolhimentoVO {
 	 */
 	public void setEncalheSede(BigDecimal encalheSede) {
 		this.encalheSede = encalheSede;
+		this.encalheSedeFormatado = CurrencyUtil.formatarValor(encalheSede);
 	}
 
 	/**
@@ -258,6 +292,7 @@ public class ProdutoRecolhimentoVO {
 	 */
 	public void setEncalheAtendida(BigDecimal encalheAtendida) {
 		this.encalheAtendida = encalheAtendida;
+		this.encalheAtendidaFormatado = CurrencyUtil.formatarValor(encalheAtendida);
 	}
 
 	/**
@@ -272,6 +307,7 @@ public class ProdutoRecolhimentoVO {
 	 */
 	public void setEncalhe(BigDecimal encalhe) {
 		this.encalhe = encalhe;
+		this.encalheFormatado = CurrencyUtil.formatarValor(encalhe);
 	}
 
 	/**
@@ -331,4 +367,24 @@ public class ProdutoRecolhimentoVO {
 		this.idProdutoEdicao = idProdutoEdicao;
 	}
 
+	/**
+	 * @return the encalheSedeFormatado
+	 */
+	public String getEncalheSedeFormatado() {
+		return encalheSedeFormatado;
+	}
+
+	/**
+	 * @return the encalheAtendidaFormatado
+	 */
+	public String getEncalheAtendidaFormatado() {
+		return encalheAtendidaFormatado;
+	}
+
+	/**
+	 * @return the encalheFormatado
+	 */
+	public String getEncalheFormatado() {
+		return encalheFormatado;
+	}
 }

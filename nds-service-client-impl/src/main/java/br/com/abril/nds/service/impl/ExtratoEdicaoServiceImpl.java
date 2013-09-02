@@ -24,6 +24,7 @@ import br.com.abril.nds.model.estoque.LancamentoDiferenca;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
+import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.repository.AtualizacaoEstoqueGFSRepository;
@@ -145,9 +146,12 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 			
 			novaDescricao = novaDescricao + " COTA";
 		}
-		
-		novaDescricao = novaDescricao + " (Pendente de Aprovação no GFS)";
-		
+
+		if (!diferenca.getTipoEstoque().equals(TipoEstoque.GANHO) && !diferenca.getTipoEstoque().equals(TipoEstoque.PERDA)){
+		    
+			novaDescricao = novaDescricao + " (Pendente de Aprovação no GFS)";
+		}
+
 		itemExtratoEdicao.setDescMovimento(novaDescricao);
 	}
 	

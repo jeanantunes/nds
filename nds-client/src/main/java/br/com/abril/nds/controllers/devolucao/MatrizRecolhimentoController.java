@@ -1,5 +1,6 @@
 package br.com.abril.nds.controllers.devolucao;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.beanutils.BeanComparator;
@@ -52,6 +54,8 @@ import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
+import br.com.abril.nds.util.export.FileExporter;
+import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.ConfirmacaoVO;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -75,6 +79,9 @@ public class MatrizRecolhimentoController extends BaseController {
 
 	@Autowired
 	private HttpSession httpSession;
+	
+	@Autowired
+	private HttpServletResponse response;
 	
 	@Autowired
 	private Result result;
@@ -303,6 +310,27 @@ public class MatrizRecolhimentoController extends BaseController {
 		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
 	}
 	
+	@Get
+	public void exportar(FileType fileType) throws IOException {
+
+		if (fileType == null) {
+
+			throw new ValidacaoException(TipoMensagem.ERROR, "Tipo de arquivo não encontrado!");
+		}
+
+		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
+
+		List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoDTO = 
+				obterListaProdutoRecolhimentoDTO(DateUtil.formatarDataPTBR(filtro.getDataPesquisa()));
+
+		List<ProdutoRecolhimentoVO> listaProdutoRecolhimentoVO = 
+				obterListaProdutoRecolhimentoVO(listaProdutoRecolhimentoDTO);
+
+		FileExporter.to("matriz_recolhimento", fileType)
+			.inHTTPResponse(this.getNDSFileHeader(), filtro, null,
+					listaProdutoRecolhimentoVO, ProdutoRecolhimentoVO.class, this.response);
+	}
+
 	@Post
 	@Path("/balancearPorValor")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_BALANCEAMENTO_MATRIZ_ALTERACAO)
@@ -358,6 +386,22 @@ public class MatrizRecolhimentoController extends BaseController {
 	public void exibirMatrizFornecedor(String dataFormatada, String sortorder,
 									   String sortname, Integer page, Integer rp) {
 		
+		List<ProdutoRecolhimentoDTO> listaProdutoRecolhimento = obterListaProdutoRecolhimentoDTO(dataFormatada);
+		
+		if (listaProdutoRecolhimento != null && !listaProdutoRecolhimento.isEmpty()) {
+		
+			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+			
+			processarBalanceamento(listaProdutoRecolhimento,
+								   paginacao, sortname);
+		} else {
+			
+			this.result.use(Results.json()).from(Results.nothing()).serialize();
+		}
+	}
+	
+	private List<ProdutoRecolhimentoDTO> obterListaProdutoRecolhimentoDTO(String dataFormatada) {
+		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento =
 			(BalanceamentoRecolhimentoDTO)
 				httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
@@ -394,16 +438,7 @@ public class MatrizRecolhimentoController extends BaseController {
 			}
 		}
 		
-		if (listaProdutoRecolhimento != null && !listaProdutoRecolhimento.isEmpty()) {
-		
-			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
-			
-			processarBalanceamento(listaProdutoRecolhimento,
-								   paginacao, sortname);
-		} else {
-			
-			this.result.use(Results.json()).from(Results.nothing()).serialize();
-		}
+		return listaProdutoRecolhimento;
 	}
 	
 	@Post
@@ -549,11 +584,16 @@ public class MatrizRecolhimentoController extends BaseController {
 		ValidacaoDataRecolhimento validacaoDataRecolhimento = 
 			this.verificarDataForaDaSemana(intervalo, novaDataBalanceamento);
 		
+		/*
+		 * TODO: Regra para permitir reprogramação em uma data já confirmada.
+		 * Está comentado, pois está análise para ser utilizada futuramente.
+		 *
 		if (validacaoDataRecolhimento == null) {
 			
 			validacaoDataRecolhimento =
 				this.verificarDataEmDiaConfirmado(novaDataBalanceamento);
 		}
+		*/
 		
 		if (validacaoDataRecolhimento == null) {
 			
@@ -580,6 +620,7 @@ public class MatrizRecolhimentoController extends BaseController {
 		return validacaoDataRecolhimento;
 	}
 	
+	@SuppressWarnings("unused")
 	private ValidacaoDataRecolhimento verificarDataEmDiaConfirmado(Date novaDataBalanceamento) {
 		
 		ValidacaoDataRecolhimento validacaoDataRecolhimento = null;
@@ -906,8 +947,43 @@ public class MatrizRecolhimentoController extends BaseController {
 	private void processarBalanceamento(List<ProdutoRecolhimentoDTO> listaProdutoRecolhimento,
 										PaginacaoVO paginacao, String sortname) {
 		
+		List<ProdutoRecolhimentoVO> listaProdutoRecolhimentoVO = obterListaProdutoRecolhimentoVO(listaProdutoRecolhimento);		
 		
+		int totalRegistros = listaProdutoRecolhimentoVO.size();
 		
+		listaProdutoRecolhimentoVO =
+			PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoRecolhimentoVO,
+												   paginacao, sortname);
+				
+		TableModel<CellModelKeyValue<ProdutoRecolhimentoFormatadoVO>> tableModel =
+			new TableModel<CellModelKeyValue<ProdutoRecolhimentoFormatadoVO>>();
+		
+		tableModel.setPage(paginacao.getPaginaAtual());
+		tableModel.setTotal(totalRegistros);
+		
+		List<CellModelKeyValue<ProdutoRecolhimentoFormatadoVO>> listaCellModel =
+			new ArrayList<CellModelKeyValue<ProdutoRecolhimentoFormatadoVO>>();
+		
+		CellModelKeyValue<ProdutoRecolhimentoFormatadoVO> cellModel = null;
+		
+		for (ProdutoRecolhimentoVO vo : listaProdutoRecolhimentoVO) {
+			
+			ProdutoRecolhimentoFormatadoVO produtoRecolhimento = this.formatarProdutoRecolhimento(vo);
+			
+			cellModel =
+				new CellModelKeyValue<ProdutoRecolhimentoFormatadoVO>(Integer.valueOf(vo.getIdLancamento()),
+															 		  produtoRecolhimento);
+			
+			listaCellModel.add(cellModel);
+		}
+		
+		tableModel.setRows(listaCellModel);
+
+		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+	}
+	
+	private List<ProdutoRecolhimentoVO> obterListaProdutoRecolhimentoVO(List<ProdutoRecolhimentoDTO> listaProdutoRecolhimento) {
+
 		List<ProdutoRecolhimentoVO> listaProdutoRecolhimentoVO =
 			new LinkedList<ProdutoRecolhimentoVO>();
 		
@@ -979,38 +1055,9 @@ public class MatrizRecolhimentoController extends BaseController {
 				|| produtoRecolhimentoDTO.isBalanceamentoConfirmado());
 			
 			listaProdutoRecolhimentoVO.add(produtoRecolhimentoVO);
-		}
+		}		
 		
-		int totalRegistros = listaProdutoRecolhimentoVO.size();
-		
-		listaProdutoRecolhimentoVO =
-			PaginacaoUtil.paginarEOrdenarEmMemoria(listaProdutoRecolhimentoVO,
-												   paginacao, sortname);
-				
-		TableModel<CellModelKeyValue<ProdutoRecolhimentoFormatadoVO>> tableModel =
-			new TableModel<CellModelKeyValue<ProdutoRecolhimentoFormatadoVO>>();
-		
-		tableModel.setPage(paginacao.getPaginaAtual());
-		tableModel.setTotal(totalRegistros);
-		
-		List<CellModelKeyValue<ProdutoRecolhimentoFormatadoVO>> listaCellModel =
-			new ArrayList<CellModelKeyValue<ProdutoRecolhimentoFormatadoVO>>();
-		
-		CellModelKeyValue<ProdutoRecolhimentoFormatadoVO> cellModel = null;
-		
-		for (ProdutoRecolhimentoVO vo : listaProdutoRecolhimentoVO) {
-			
-			ProdutoRecolhimentoFormatadoVO produtoRecolhimento = this.formatarProdutoRecolhimento(vo);
-			
-			cellModel =
-				new CellModelKeyValue<ProdutoRecolhimentoFormatadoVO>(Integer.valueOf(vo.getIdLancamento()),
-															 		  produtoRecolhimento);
-			
-			listaCellModel.add(cellModel);
-		}
-		
-		tableModel.setRows(listaCellModel);
-		result.use(Results.json()).withoutRoot().from(tableModel).recursive().serialize();
+		return listaProdutoRecolhimentoVO;
 	}
 	
 	/**
@@ -1162,6 +1209,21 @@ public class MatrizRecolhimentoController extends BaseController {
 	private void validarDataReprogramacao(Integer numeroSemana, Date novaData, Date dataBalanceamento) {
 		
 		this.recolhimentoService.verificaDataOperacao(novaData);
+		
+		List<ConfirmacaoVO> confirmacoes = this.montarListaDatasConfirmacao();
+		
+		for (ConfirmacaoVO confirmacao : confirmacoes) {
+			
+			if (DateUtil.parseDataPTBR(confirmacao.getMensagem()).equals(novaData)) {
+				
+				if (confirmacao.isConfirmado()) {
+					
+					throw new ValidacaoException(
+						TipoMensagem.WARNING,
+						"O recolhimento não pode ser reprogramado para uma data já confirmada!");
+				}
+			}
+		}
 	}
 
 	/**
