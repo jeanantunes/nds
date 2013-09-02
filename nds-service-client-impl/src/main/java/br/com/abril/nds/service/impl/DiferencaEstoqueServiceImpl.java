@@ -213,7 +213,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		MovimentoEstoque movimentoEstoque = 
 			this.gerarMovimentoEstoque(diferenca, usuario.getId(), 
-				true, true, ultimoLancamento.getDataLancamentoDistribuidor());
+				true, true, ultimoLancamento.getDataLancamentoDistribuidor(), null);
 		
 		movimentoEstoque.setStatus(statusAprovacao);
 		
@@ -348,7 +348,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			this.gerarMovimentoEstoque(
 				diferencaRedirecionada, diferencaRedirecionada.getResponsavel().getId(),
 					diferencaRedirecionada.isAutomatica(), 
-						validarTransfEstoqueDiferenca, dataLancamento);
+						validarTransfEstoqueDiferenca, dataLancamento, null);
 		
 		LancamentoDiferenca lancamentoDiferenca =  
 				this.gerarLancamentoDiferenca(statusAprovacao, movimentoEstoque, null);
@@ -429,7 +429,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	}
 
 	private void confirmarLancamentosDiferenca(List<Diferenca> listaDiferencas, StatusAprovacao statusAprovacao, boolean isMovimentoDiferencaAutomatico, Origem origem) {
-		
+
 		Usuario usuario = usuarioService.getUsuarioLogado();
 		
 		for (Diferenca diferenca : listaDiferencas) {
@@ -473,14 +473,11 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 					
 					listaMovimentosEstoqueCota.add(movimentoEstoqueCota);
 				}
-				
-				//if (diferenca.getTipoDiferenca().isSobra()) {
 					
-					movimentoEstoque = this.gerarMovimentoEstoque(
-						diferenca, diferenca.getResponsavel().getId(), diferenca.isAutomatica(),
-							validarTransfEstoqueDiferenca, 
-								ultimoLancamento.getDataLancamentoDistribuidor());
-				//}
+				movimentoEstoque = this.gerarMovimentoEstoque(
+					diferenca, diferenca.getResponsavel().getId(), diferenca.isAutomatica(),
+						validarTransfEstoqueDiferenca, 
+							ultimoLancamento.getDataLancamentoDistribuidor(), origem);
 				
 				//Verifica se ha direcionamento de produtos para o estoque do distribuidor
 				if (diferenca.getQtde().compareTo(qntTotalRateio)>0) {
@@ -496,7 +493,8 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				movimentoEstoque = 
 					this.gerarMovimentoEstoque(diferenca, usuario.getId(),
 						isMovimentoDiferencaAutomatico, validarTransfEstoqueDiferenca,
-							ultimoLancamento.getDataLancamentoDistribuidor());
+							ultimoLancamento.getDataLancamentoDistribuidor(), origem);
+						
 			}
 
 			if (statusAprovacao == null) {
@@ -510,9 +508,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			diferenca.setLancamentoDiferenca(lancamentoDiferenca);
 			
 			diferenca = this.diferencaEstoqueRepository.merge(diferenca);
-					
+
 			this.processarTransferenciaEstoque(diferenca,usuario.getId(), origem);
-			
+
 			diferencaEstoqueRepository.flush();
 		}
 	}
@@ -618,6 +616,16 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		}
 		
 		if (diferenca.getRateios() != null && !diferenca.getRateios().isEmpty()) {
+			
+			return;
+		}
+		
+        if (TipoEstoque.GANHO.equals(diferenca.getTipoEstoque())) {
+			
+			return;
+		}
+        
+        if (TipoEstoque.PERDA.equals(diferenca.getTipoEstoque())) {
 			
 			return;
 		}
@@ -1017,7 +1025,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	private MovimentoEstoque gerarMovimentoEstoque(Diferenca diferenca, Long idUsuario,
 												   boolean isAprovacaoAutomatica, 
 												   boolean validarTransfEstoqueDiferenca,
-												   Date dataLancamento) {
+												   Date dataLancamento, Origem origem) {
 		
 		GrupoMovimentoEstoque grupoMovimentoEstoque = null;
 		
@@ -1048,7 +1056,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		return this.movimentoEstoqueService.gerarMovimentoEstoqueDiferenca(
 			diferenca.getProdutoEdicao().getId(), idUsuario,
 				diferenca.getQtde(), tipoMovimentoEstoque, 
-					isAprovacaoAutomatica, validarTransfEstoqueDiferenca, dataLancamento, statusIntegracao);
+					isAprovacaoAutomatica, validarTransfEstoqueDiferenca, dataLancamento, statusIntegracao, origem);
 	}
 
 	private GrupoMovimentoEstoque obterGrupoMovimentoEstoqueForaDoPrazo(TipoDiferenca tipoDiferenca) {
