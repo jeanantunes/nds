@@ -381,6 +381,20 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 														   BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, 
 														   boolean isMovimentoDiferencaAutomatica,
 														   boolean validarTransfEstoqueDiferenca,
+														   Date dataLancamento, StatusIntegracao statusIntegracao, Origem origem) {
+
+		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, 
+																		tipoMovimentoEstoque, origem, null, 
+																		false, isMovimentoDiferencaAutomatica, validarTransfEstoqueDiferenca, statusIntegracao);
+		return movimentoEstoque;
+	}
+	
+	@Override
+	@Transactional
+	public MovimentoEstoque gerarMovimentoEstoqueDiferenca(Long idProdutoEdicao, Long idUsuario, 
+														   BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, 
+														   boolean isMovimentoDiferencaAutomatica,
+														   boolean validarTransfEstoqueDiferenca,
 														   Date dataLancamento, StatusIntegracao statusIntegracao) {
 
 		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, 

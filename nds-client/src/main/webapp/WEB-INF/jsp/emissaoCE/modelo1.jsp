@@ -175,8 +175,8 @@ function imprimir(){
               <td width="30" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.tipoRecolhimento}</td>
               <td width="80" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.dataLancamento}</td>
               <td width="80" align="right" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.precoComDesconto}</td>
-              <td width="37" align="center" style="border-bottom:1px solid #000;padding-left:5px; "><font size="2"><strong>${produto.vendido}</strong></font></td>
-              <td width="50" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; "></td>
+              <td width="37" align="center" style="border-bottom:1px solid #000;padding-left:5px; "><font size="2"><strong>${produto.reparte}</strong></font></td>
+              <td width="50" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; "><strong>${produto.quantidadeDevolvida}</strong></td>
             </tr>
             <tr class="class_linha_${status.index%2==0?1:2}">
               <td colspan="2" style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;">${produto.codigoBarras}</td>
@@ -208,18 +208,18 @@ function imprimir(){
   </tr>
   <tr>
     <td>&nbsp;</td>
-    <td align="right"><strong>Vale Reparte Líquido R$</strong></td>
+    <td align="right"><strong>Valor Reparte Líquido R$</strong></td>
     <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrReparteLiquido}</td>
   </tr>
   <tr>
     <td>&nbsp;</td>
     <td align="right"><strong>Encalhe</strong></td>
-    <td align="right" style="border-bottom:1px solid #000;"></td>
+    <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrEncalhe}</td>
   </tr>
   <tr>
     <td>&nbsp;</td>
     <td align="right"><strong>Total Líquido R$</strong></td>
-    <td align="right" style="border-bottom:1px solid #000;"></td>
+    <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrTotalLiquido}</td>
   </tr>
 </table>
 
@@ -309,8 +309,8 @@ function imprimir(){
 	        <tr class="class_linha_1">
 	          <td width="61" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; ">${produto.sequencia}</td>
 	          <td colspan="2" width="224" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; "><font size="2"><strong>${produto.nomeProduto}</strong></font></td>
-	          <td width="61" align="center" style="border-left:1px solid #000; border-bottom:1px solid #000;padding-left:5px; "><font size="2"><strong>${produto.vendido}</strong></font></td>
-	          <td width="67" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; "></td>
+	          <td width="61" align="center" style="border-left:1px solid #000; border-bottom:1px solid #000;padding-left:5px; "><font size="2"><strong>${produto.reparte}</strong></font></td>
+	          <td width="67" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; "><strong>${produto.quantidadeDevolvida}</strong></td>
 	        </tr>
 	        <tr class="class_linha_1">
 	          <td style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;">${produto.codigoProduto}</td>
@@ -342,18 +342,18 @@ function imprimir(){
 	  </tr>
 	  <tr>
 	    <td>&nbsp;</td>
-	    <td  width="375" align="right"><strong>Vale Reparte Líquido R$</strong></td>
+	    <td  width="375" align="right"><strong>Valor Reparte Líquido R$</strong></td>
 	    <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrReparteLiquido}</td>
 	  </tr>
 	  <tr>
 	    <td>&nbsp;</td>
 	    <td align="right"><strong>Encalhe</strong></td>
-	    <td align="right" style="border-bottom:1px solid #000;"></td>
+	    <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrEncalhe}</td>
 	  </tr>
 	  <tr>
 	    <td>&nbsp;</td>
 	    <td align="right"><strong>Total Líquido R$</strong></td>
-	    <td align="right" style="border-bottom:1px solid #000;"></td>
+	    <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrTotalLiquido}</td>
 	  </tr>
 	</table>
   </c:if>     
@@ -486,18 +486,18 @@ function imprimir(){
 	  </tr>
 	  <tr>
 	    <td>&nbsp;</td>
-	    <td align="right"><strong>Vale Reparte Líquido R$</strong></td>
+	    <td align="right"><strong>Valor Reparte Líquido R$</strong></td>
 	    <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrReparteLiquido}</td>
 	  </tr>
 	  <tr>
 	    <td>&nbsp;</td>
 	    <td align="right"><strong>Encalhe</strong></td>
-	    <td align="right" style="border-bottom:1px solid #000;"></td>
+	    <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrEncalhe}</td>
 	  </tr>
 	  <tr>
 	    <td>&nbsp;</td>
 	    <td align="right"><strong>Total Líquido R$</strong></td>
-	    <td align="right" style="border-bottom:1px solid #000;"></td>
+	    <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrTotalLiquido}</td>
 	  </tr>
 	</table>    
     
@@ -583,18 +583,18 @@ function imprimir(){
 	  </tr>
 	  <tr>
 	    <td>&nbsp;</td>
-	    <td  width="375" align="right"><strong>Vale Reparte Líquido R$</strong></td>
+	    <td  width="375" align="right"><strong>Valor Reparte Líquido R$</strong></td>
 	    <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrReparteLiquido}</td>
 	  </tr>
 	  <tr>
 	    <td>&nbsp;</td>
 	    <td align="right"><strong>Encalhe</strong></td>
-	    <td align="right" style="border-bottom:1px solid #000;"></td>
+	    <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrEncalhe}</td>
 	  </tr>
 	  <tr>
 	    <td>&nbsp;</td>
 	    <td align="right"><strong>Total Líquido R$</strong></td>
-	    <td align="right" style="border-bottom:1px solid #000;"></td>
+	    <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrTotalLiquido}</td>
 	  </tr>
 	</table>
 	    

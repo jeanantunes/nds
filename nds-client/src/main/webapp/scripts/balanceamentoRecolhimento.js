@@ -805,7 +805,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			rp : 15,
 			showTableToggleBtn : true,
 			width : 1024,
-			height : 180
+			height : 'auto'
 		});
 	},
 	
@@ -1130,7 +1130,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 						
 						if (result == "DATA_VALIDA") {
 							
-							balanceamentoRecolhimentoController.efetivarReprogramacaoRecolhimentoUnico(parametros);
+							balanceamentoRecolhimentoController.efetivarReprogramacaoRecolhimentoUnico(parametros, idRow, dataAntiga);
 							
 						} else {
 							
@@ -1156,7 +1156,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 								buttons: {
 									"Confirmar": function() {
 										
-										balanceamentoRecolhimentoController.efetivarReprogramacaoRecolhimentoUnico(parametros);
+										balanceamentoRecolhimentoController.efetivarReprogramacaoRecolhimentoUnico(parametros, idRow, dataAntiga);
 										
 										$(this).dialog("close");
 									},
@@ -1176,14 +1176,17 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		});
 	},
 	
-	efetivarReprogramacaoRecolhimentoUnico : function(parametros) {
+	efetivarReprogramacaoRecolhimentoUnico : function(parametros, idRow, dataAntiga) {
 		
 		$.postJSON(
 			contextPath + "/devolucao/balanceamentoMatriz/reprogramarRecolhimentoUnico",
 			parametros,
 			function(result) {
 				balanceamentoRecolhimentoController.atualizarResumoBalanceamento();
-			}
+			},
+            function() {
+                balanceamentoRecolhimentoController.recolocacaoDataAntigaReprogramarRecolhimentoUnico(idRow, dataAntiga);
+            }
 		);
 	},
 	

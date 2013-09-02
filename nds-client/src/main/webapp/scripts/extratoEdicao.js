@@ -236,3 +236,5 @@ var jsExtratoEdicao = $.extend(true, {
 	}
 	
 }, BaseController);
+
+//@ sourceURL=extratoEdicao.js
