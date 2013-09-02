@@ -123,8 +123,7 @@ public class PaginacaoUtil {
 			throw new IllegalArgumentException("Nome do atributo para ordenação nulo!");
 		}
 		
-		Collections.sort(
-				listaAOrdenar, new BeanComparator(nomeAtributoOrdenacao, new NullComparator()));
+		Collections.sort(listaAOrdenar, new BeanComparator(nomeAtributoOrdenacao, new NullComparator()));
 
 		if (Ordenacao.DESC.equals(ordenacao)) {
 
