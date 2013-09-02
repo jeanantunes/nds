@@ -262,9 +262,8 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			vlrDesconto = vlrDesconto.add(produtoDTO.getPrecoVenda().subtract(produtoDTO.getVlrPrecoComDesconto())
 					.multiply(BigDecimal.valueOf(produtoDTO.getReparte().longValue())));
 			
-			vlrEncalhe = vlrEncalhe.add( vlrDesconto.multiply( BigDecimal.valueOf( produtoDTO.getQuantidadeDevolvida().longValue()) ));
-			
-			
+			vlrEncalhe = vlrEncalhe.add(produtoDTO.getVlrPrecoComDesconto()
+					.multiply( BigDecimal.valueOf(produtoDTO.getQuantidadeDevolvida().longValue()) ));
 		}
 		
 		BigDecimal vlrReparteLiquido = vlrReparte.subtract(vlrDesconto);
@@ -275,9 +274,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		cota.setVlrComDesconto(CurrencyUtil.formatarValor(vlrDesconto));
 		cota.setVlrReparteLiquido(CurrencyUtil.formatarValor(vlrReparteLiquido));
 		cota.setVlrEncalhe(CurrencyUtil.formatarValor(vlrEncalhe));
-		cota.setVlrTotalLiquido(CurrencyUtil.formatarValor(totalLiquido));	
-		
-		
+		cota.setVlrTotalLiquido(CurrencyUtil.formatarValor(totalLiquido));
 	}
 	
 	@Override
@@ -326,18 +323,6 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			carregarValoresTotalizados(dto);
 			
 			
-		}
-		
-		for(CotaEmissaoDTO cotasEmissao : lista) {
-			
-			List<ProdutoEmissaoDTO> listaProdutos = cotasEmissao.getProdutos();
-			
-			for(int i = 0; i < listaProdutos.size(); i++ ) {
-				
-				if(listaProdutos.get(i).getVendido().intValue() <= 0) {
-					listaProdutos.remove(i);
-				}
-			}
 		}
 		
 		paginarListaDeProdutosDasCotasEmissao(lista, filtro.getQtdProdutosPorPagina(), filtro.getQtdMaximaProdutosComTotalizacao());
