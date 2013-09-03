@@ -226,7 +226,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		sql.append(" CHAMADA_ENCALHE chamadaenc2_ ");
 		sql.append(" on chamadaenc0_.CHAMADA_ENCALHE_ID=chamadaenc2_.ID ");
 		
-		sql.append(" join CHAMADA_ENCALHE_LANCAMENTO cel on (cel.CHAMADA_ENCALHE_ID=chamadaenc2_.ID) ");
+		sql.append(" left join CHAMADA_ENCALHE_LANCAMENTO cel on (cel.CHAMADA_ENCALHE_ID=chamadaenc2_.ID) ");
 		sql.append(" join LANCAMENTO l on (l.ID=cel.LANCAMENTO_ID) ");
 		sql.append(" join PRODUTO_EDICAO produtoedi5_ on (l.PRODUTO_EDICAO_ID=produtoedi5_.ID) ");
 				
@@ -656,19 +656,16 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao 		")
 		   .append(" join produtoEdicao.produto produto 					")
 		   .append(" join produto.fornecedores fornecedores 				")
-		   .append(" join chamadaEncalhe.lancamentos lancamentos 			")
-		   .append(" join lancamentos.movimentoEstoqueCotas  movimentoCota 	")
-		   .append(" join movimentoCota.tipoMovimento tipoMovimento         ")
+		   .append(" left join chamadaEncalhe.lancamentos lancamentos 			")
+		   .append(" left join lancamentos.movimentoEstoqueCotas  movimentoCota 	")
+		   .append(" left join movimentoCota.tipoMovimento tipoMovimento         ")
 		   .append(" left join lancamentos.periodoLancamentoParcial  periodoLancamentoParcial ")
+		   .append(" left join movimentoCota.cota cotaMov ")
 		   .append(" where cota.id=:idCota 									")
-		   .append(" and lancamentos.produtoEdicao.id = produtoEdicao.id  	")
-		   .append(" and movimentoCota.cota.id = cota.id                    ")
-		   .append(" and tipoMovimento.grupoMovimentoEstoque =:grupoMovimento   ")
-		   .append(" and movimentoCota.data = (select max(mv.data) from MovimentoEstoqueCota mv where mv.lancamento.id = lancamentos.id and mv.id = movimentoCota.id) ")
+		   .append(" and produtoEdicao.id = produtoEdicao.id  	")
 		   .append(" and chamEncCota.qtdePrevista>0  ");
 		
 		param.put("idCota", idCota);
-		param.put("grupoMovimento", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
 		if(filtro.getDtRecolhimentoDe() != null) {
 			
