@@ -3,9 +3,12 @@ package br.com.abril.nds.service.impl;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.FormaCobrancaExcepion;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -316,7 +319,7 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	}
 
 	/**
-	 * Verifica se a Cota possui Parametro de Cobranca e Forma de Cobranca
+	 * Verifica se a Cota possui Parametro de Cobranca e Forma de Cobranca Ativa
 	 * cadastrados
 	 * 
 	 * @param cota
@@ -336,9 +339,22 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 
 				return false;
 			}
+			else{
+				
+				Set<FormaCobranca> formasCobranca = pcc.getFormasCobrancaCota(); 
+				
+				for(FormaCobranca fc : formasCobranca){
+					
+					if (fc.isAtiva()){
+						
+						return true;
+					}
+				}
+				
+			}
 		}
 
-		return true;
+		return false;
 	}
 
 	/**
@@ -441,6 +457,9 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	        formaCobranca = this.obterFormaCobrancaDistribuidor(idFornecedor,
 					data, valor);
 
+	        //Se a cota possuir uma Forma de Cobrança ativa, 
+	        //mesmo que não se enquadre nos parâmetros passados, 
+	        //retorna null e a Cobrança é postergada
 			if (cota!=null && this.cotaPossuiFormaCobranca(cota)) { 
 				  
 		        return null; 
