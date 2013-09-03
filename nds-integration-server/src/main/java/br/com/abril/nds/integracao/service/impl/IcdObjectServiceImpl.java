@@ -16,6 +16,7 @@ import br.com.abril.nds.model.integracao.icd.SolicitacaoFaltaSobra;
 import br.com.abril.nds.model.integracao.icd.pks.DfsPK;
 import br.com.abril.nds.model.integracao.icd.pks.MfsPK;
 import br.com.abril.nds.model.integracao.icd.pks.SfsPK;
+import br.com.abril.nds.util.Constantes;
 
 
 @Service
@@ -44,7 +45,7 @@ public class IcdObjectServiceImpl implements IcdObjectService {
 
 	@Override
 	public SolicitacaoFaltaSobra recuperaSolicitacao(Long distribuidor, EMS0128Input doc) {
-		return solicitacaoFaltasSobrasRepository.recuperaSolicitacao(distribuidor, doc.getDataSolicitacao(), DateFormatUtils.format(doc.getHoraDeCriacao(), "hh:mm:ss") );
+		return solicitacaoFaltasSobrasRepository.recuperaSolicitacao(distribuidor, doc.getDataSolicitacao(), DateFormatUtils.format(doc.getHoraDeCriacao(), "hh:mm:ss", Constantes.LOCALE_EN_US) );
 	}
 
 	@Override
@@ -76,10 +77,17 @@ public class IcdObjectServiceImpl implements IcdObjectService {
 			dfs.setCodigoTipoAcerto(item.getTipoAcerto());
 			dfs.setCodigoAcerto(doc.getSituacaoSolicitacao());
 			dfs.setCodigoPublicacaoAdabas(item.getNumeroEdicao());			
-			dfs.setNumeroEdicao(item.getNumeroEdicao());			
+			dfs.setNumeroEdicao(item.getNumeroEdicao());
+			
+			if(item.getQtd() != null)
 			dfs.setQtdSolicitada(item.getQtd().longValue());
-			dfs.setValorUnitario(item.getPrecoCapa().doubleValue());
-			dfs.setPctDesconto(item.getPercentualDesconto().doubleValue());			
+			
+			if(item.getPrecoCapa() != null)
+				dfs.setValorUnitario(item.getPrecoCapa().doubleValue());
+
+			if(item.getPercentualDesconto() != null)
+				dfs.setPctDesconto(item.getPercentualDesconto().doubleValue());			
+
 			dfs.setNumeroDocumentoOrigem(null);
 			dfs.setNumeroDocumentoAcerto(null);
 			dfs.setDataEmissaoDocumentoAcerto(null);

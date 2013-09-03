@@ -187,6 +187,24 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		return (ProdutoEdicao) query.uniqueResult();
 	}
 	
+	public ProdutoEdicao obterMaxProdutoEdicaoPorCodProdutoNumEdicao(String codigoProduto, Long numeroEdicao) {
+
+		StringBuilder hql = new StringBuilder();
+		   
+		hql.append(" from ProdutoEdicao pe where pe.id =(select max(produtoEdicao.id) from ProdutoEdicao produtoEdicao "); 
+		hql.append(" 												join produtoEdicao.produto produto ");
+		hql.append("					 							where ");
+		hql.append(" 												produto.codigo =:codigoProduto ");
+		hql.append(" 												and produtoEdicao.numeroEdicao=:numeroEdicao ) ");	
+					
+		Query query = super.getSession().createQuery(hql.toString());
+		
+		query.setParameter("codigoProduto", codigoProduto);
+		query.setParameter("numeroEdicao", numeroEdicao);
+		
+		return (ProdutoEdicao) query.uniqueResult();
+	}
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<ProdutoEdicao> obterProdutoEdicaoPorCodigoBarra(String codigoBarra) {

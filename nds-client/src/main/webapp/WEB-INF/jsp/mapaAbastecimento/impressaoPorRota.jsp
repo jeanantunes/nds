@@ -55,7 +55,7 @@ function imprimir(){
               <td width="560" rowspan="2" align="center" style=" border-right:1px solid #000; border-bottom:1px solid #000; border-top:1px solid #000;"><strong>${box.key}</strong></td>
             </tr>
             <tr class="class_linha_3">
-              <td width="151" class="relatorios" style="padding-left:5px; border-bottom:1px solid #000; border-left:1px solid #000;"><strong>Código</strong></td>
+              <td width="151" class="relatorios" style="padding-left:5px; border-bottom:1px solid #000; border-left:1px solid #000;"><strong>Código de Barras</strong></td>
               <td width="89" style="padding-left:5px; border-bottom:1px solid #000; border-right:1px solid #000;" class="relatorios"><strong>Preço Capa</strong></td>
             </tr>
             
@@ -82,7 +82,7 @@ function imprimir(){
 	              </table></td>
 	            </tr>
 	            <tr class="class_linha_${statusProduto.index%2==0?1:2}">
-	              <td style="padding-left:5px;  border-left:1px solid #000; border-bottom:1px solid #000;">${produto.value.codigoProduto}</td>
+	              <td style="padding-left:5px;  border-left:1px solid #000; border-bottom:1px solid #000;">${produto.value.codigoDeBarras}</td>
 	              <td style="padding-left:5px; border-right:1px solid #000; border-bottom:1px solid #000;"><strong> R$</strong> ${produto.value.precoCapa}</td>
 	            </tr>
 	            

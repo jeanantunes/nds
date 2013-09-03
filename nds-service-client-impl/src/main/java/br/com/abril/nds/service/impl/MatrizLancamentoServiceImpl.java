@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -36,6 +37,7 @@ import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
@@ -132,6 +134,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			Integer sequenciaMatriz =
 				this.lancamentoRepository.obterProximaSequenciaMatrizPorData(dataConfirmada);
 			
+			this.ordenarProdutos(listaProdutoLancamentoDTO);
+			
 			for (ProdutoLancamentoDTO produtoLancamento : listaProdutoLancamentoDTO) {
 				
 				produtoLancamento.setSequenciaMatriz(sequenciaMatriz++);
@@ -151,6 +155,40 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		}
 		
 		return matrizLancamentoRetorno;
+	}
+	
+	/**
+	 * Efetua a ordenação dos produtos por nome do produto e tipo de lançamento, se produto for parcial respeita a ordem de PARCIAL, FINAL
+	 * 
+	 * @param produtos
+	 */
+	private void ordenarProdutos(List<ProdutoLancamentoDTO> produtos){
+		
+		Collections.sort(produtos,  new Comparator<ProdutoLancamentoDTO>(){
+			
+			 public int compare(ProdutoLancamentoDTO p1, ProdutoLancamentoDTO p2) {  
+				 
+				 if(p1.getParcial()!= null && p2.getParcial()!= null){
+					 
+					 if(p1.getNomeProduto().equals(p2.getNomeProduto())){
+						 
+						 return(!p1.getParcial().equals(p2.getParcial())
+									&& p1.getParcial().equals(TipoLancamentoParcial.PARCIAL))?-1:1;
+					 }
+					 else{
+						 return (p1.getNomeProduto().compareTo(p2.getNomeProduto()));
+					 }
+				 }
+				 else{
+					 
+					if(p1.getParcial() == null && p2.getParcial()== null){
+						return (p1.getNomeProduto().compareTo(p2.getNomeProduto()));
+					}
+					
+					return (p1.getParcial() == null)?-1:1;
+				 } 
+           }  
+		});
 	}
 	
 	@Override

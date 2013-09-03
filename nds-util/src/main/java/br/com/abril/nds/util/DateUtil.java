@@ -79,6 +79,26 @@ public class DateUtil {
 		return formatarData(data, Constantes.DATE_PATTERN_PT_BR);
 	}
 
+	/**
+	 * Normaliza uma data, para comparações, zerando os valores de hora (hora,
+	 * minuto, segundo e milissendo).
+	 * 
+	 * @param dt
+	 * 
+	 * @return
+	 */
+	public static Date normalizarDataSemHora(Date dt) {
+		
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(dt);
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		
+		return cal.getTime();
+	}
+	
 	public static boolean isDataInicialMaiorDataFinal(Date dataInicial, Date dataFinal) {
 		
 		if (dataInicial != null && dataFinal != null) {
