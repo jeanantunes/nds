@@ -597,7 +597,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		StringBuffer hql = new StringBuffer();
 		
-		hql.append(" SELECT COUNT(1)	");
+		hql.append(" SELECT CONFERENCIA_ENCALHE_0.OBSERVACAO	");
 		
 		hql.append(" FROM CONFERENCIA_ENCALHE CONFERENCIA_ENCALHE_0 ");
 		
@@ -615,6 +615,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" CHAMADA_ENCALHE_0.ID = CHAMADA_ENCALHE.ID AND 					");
 		//hql.append(" CONFERENCIA_ENCALHE_0.DATA = CONFERENCIA_ENCALHE.DATA AND 		");
 		hql.append(" CONFERENCIA_ENCALHE_0.OBSERVACAO IS NOT NULL ");
+		
+		hql.append(" LIMIT 1 ");
 		
 		return hql;
 		
@@ -678,9 +680,14 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		sql.append("    CONTROLE_CONFERENCIA_ENCALHE_COTA.DATA_OPERACAO as dataMovimento,		");
 
+		if (filtro.getIdCota() == null) {
+
+			sql.append(" ( ").append(getSqlConferenciaEncalheComObservacao()).append(" ) AS observacaoConferenciaEncalhe ");
+
+		} else {
 		
-		sql.append(	" CASE WHEN ( ").append( getSqlConferenciaEncalheComObservacao() ).append( 
-					" ) > 0 THEN 'S' ELSE 'N' END AS indPossuiObservacaoConferenciaEncalhe ");
+			sql.append(" CONFERENCIA_ENCALHE.OBSERVACAO AS observacaoConferenciaEncalhe ");
+		}
 		
 		sql.append(getFromWhereConsultaEncalhe(filtro));
 		
@@ -781,7 +788,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				dto.setIdFornecedor(rs.getLong("idFornecedor"));
 				dto.setFornecedor(rs.getString("fornecedor"));
 				dto.setDataMovimento(rs.getDate("dataMovimento"));
-				dto.setIndPossuiObservacaoConferenciaEncalhe(rs.getString("indPossuiObservacaoConferenciaEncalhe"));
+				dto.setObservacaoConferenciaEncalhe(rs.getString("observacaoConferenciaEncalhe"));
 				
 				return dto;
 			}
@@ -828,7 +835,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append("	inner join PESSOA on                   	");
 		sql.append("	( PESSOA.ID = COTA.PESSOA_ID )	");
 
-		sql.append("	where 1=1	");
+		sql.append("	where CONFERENCIA_ENCALHE.OBSERVACAO IS NOT NULL	");
 		
 		if(filtro.getDataMovimento() != null) {
 			sql.append("	AND MOVIMENTO_ESTOQUE_COTA.DATA = :dataMovimento ");
