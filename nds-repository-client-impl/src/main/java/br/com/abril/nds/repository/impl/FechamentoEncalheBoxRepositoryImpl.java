@@ -2,12 +2,17 @@ package br.com.abril.nds.repository.impl;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.hibernate.Hibernate;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
+import org.hibernate.type.BooleanType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -81,5 +86,23 @@ public class FechamentoEncalheBoxRepositoryImpl extends AbstractRepositoryModel<
 		return namedParameterJdbcTemplate.query(sql.toString(), parameters, cotaRowMapper);
 	}
 	
+	public boolean verificarExistenciaFechamentoEncalheDetalhado(Date dataEncalhe) {
+		
+		StringBuffer sql = new StringBuffer();
+		
+		sql.append(" select case when (count(f.BOX_ID) > 0)  then true else false end as verificacao" );
+		sql.append(" from FECHAMENTO_ENCALHE_BOX f ");
+		sql.append(" where f.DATA_ENCALHE = :dataEncalhe and ");
+		sql.append(" f.QUANTIDADE > 0 ");
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		((SQLQuery) query ).addScalar("verificacao", BooleanType.INSTANCE);
+		
+		query.setParameter("dataEncalhe", dataEncalhe);
+		
+		return (Boolean) query.uniqueResult();
+		
+	}
 
 }
