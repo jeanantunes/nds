@@ -30,6 +30,7 @@ import br.com.abril.nds.model.integracao.icd.MotivoSituacaoFaltaSobra;
 import br.com.abril.nds.model.integracao.icd.SolicitacaoFaltaSobra;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
+import br.com.abril.nds.util.DateUtil;
 
 @Component
 public class EMS0128MessageProcessor extends AbstractRepository implements MessageProcessor  {
@@ -88,7 +89,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		
 			if (new File(diretorio + distribuidor + File.separator + pastaInterna + File.separator).exists()) {
 
-				CouchDbClient couchDbClient = this.getCouchDBClient("db_" + StringUtils.leftPad(distribuidor, 8, "0"));
+				CouchDbClient couchDbClient = this.getCouchDBClient(StringUtils.leftPad(distribuidor, 8, "0"));
 										
 				View view = couchDbClient.view("importacao/porTipoDocumento");
 								
@@ -99,6 +100,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 					for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {						
 						
 						EMS0128Input doc = (EMS0128Input) row.getDoc();
+						doc.setDataSolicitacao(DateUtil.normalizarDataSemHora(doc.getDataSolicitacao()));
 						
 						if (doc.getSituacaoSolicitacao().equals("SOLICITADO")) {
 							icdObjectService.insereSolicitacao(doc);
