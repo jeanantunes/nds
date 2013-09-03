@@ -911,6 +911,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		ControleFechamentoEncalhe controleFechamentoEncalhe = new ControleFechamentoEncalhe();
 		controleFechamentoEncalhe.setDataEncalhe(dataEncalhe);
+		controleFechamentoEncalhe.setUsuario(usuario);
 		
 		this.fechamentoEncalheRepository.salvarControleFechamentoEncalhe(controleFechamentoEncalhe);
 		

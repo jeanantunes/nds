@@ -155,6 +155,13 @@
 			<groupId>org.ektorp</groupId>
 			<artifactId>org.ektorp.spring</artifactId>
 		</dependency>
+		
+		<dependency>
+			<groupId>br.com.abril</groupId>
+			<artifactId>nds-util</artifactId>
+			<version>1.0</version>
+		</dependency>
+				
 		<dependency>
 			<groupId>br.com.abril</groupId>
 			<artifactId>nds-common</artifactId>

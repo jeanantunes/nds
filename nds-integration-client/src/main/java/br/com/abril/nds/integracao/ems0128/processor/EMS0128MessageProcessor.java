@@ -86,8 +86,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 						
 						LancamentoDiferenca lancamentoDiferenca = recuperarLancamentoDiferenca(movimento.getId());
 						
-						StatusIntegracao statusIntegracao = 
-							StatusIntegracao.valueOf(doc.getSituacaoSolicitacao());
+						StatusIntegracao statusIntegracao = StatusIntegracao.obterPelaDescricao(eitem.getSituacaoAcerto());
 						
 						if (StatusIntegracao.REJEITADO.equals(statusIntegracao)
 								|| StatusIntegracao.DESPREZADO.equals(statusIntegracao)) {
