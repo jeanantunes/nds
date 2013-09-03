@@ -593,35 +593,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		return sql;
 	}
 	
-	private StringBuffer getSqlConferenciaEncalheComObservacao() {
-		
-		StringBuffer hql = new StringBuffer();
-		
-		hql.append(" SELECT COUNT(1)	");
-		
-		hql.append(" FROM CONFERENCIA_ENCALHE CONFERENCIA_ENCALHE_0 ");
-		
-		hql.append(" INNER JOIN MOVIMENTO_ESTOQUE_COTA  MOVIMENTO_ESTOQUE_COTA_0 ON	");
-		hql.append(" ( MOVIMENTO_ESTOQUE_COTA_0.ID = CONFERENCIA_ENCALHE_0.MOVIMENTO_ESTOQUE_COTA_ID ) ");
-		
-		hql.append(" INNER JOIN CHAMADA_ENCALHE_COTA CHAMADA_ENCALHE_COTA_0 ON		");
-		hql.append(" ( CHAMADA_ENCALHE_COTA_0.ID = CONFERENCIA_ENCALHE_0.CHAMADA_ENCALHE_COTA_ID ) ");
-		
-		hql.append(" INNER JOIN CHAMADA_ENCALHE CHAMADA_ENCALHE_0 ON  ");
-		hql.append(" ( CHAMADA_ENCALHE_0.ID = CHAMADA_ENCALHE_COTA_0.CHAMADA_ENCALHE_ID ) ");
-		
-		hql.append(" WHERE ");
-
-		hql.append(" CHAMADA_ENCALHE_0.ID = CHAMADA_ENCALHE.ID AND 					");
-		//hql.append(" CONFERENCIA_ENCALHE_0.DATA = CONFERENCIA_ENCALHE.DATA AND 		");
-		hql.append(" CONFERENCIA_ENCALHE_0.OBSERVACAO IS NOT NULL ");
-		
-		return hql;
-		
-	}
-	
-	
-	
 	/*
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.MovimentoEstoqueCotaRepository#obterListaConsultaEncalhe(br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO)
@@ -678,9 +649,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		sql.append("    CONTROLE_CONFERENCIA_ENCALHE_COTA.DATA_OPERACAO as dataMovimento,		");
 
-		
-		sql.append(	" CASE WHEN ( ").append( getSqlConferenciaEncalheComObservacao() ).append( 
-					" ) > 0 THEN 'S' ELSE 'N' END AS indPossuiObservacaoConferenciaEncalhe ");
+		sql.append(" CONFERENCIA_ENCALHE.OBSERVACAO AS observacaoConferenciaEncalhe ");
 		
 		sql.append(getFromWhereConsultaEncalhe(filtro));
 		
@@ -781,7 +750,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 				dto.setIdFornecedor(rs.getLong("idFornecedor"));
 				dto.setFornecedor(rs.getString("fornecedor"));
 				dto.setDataMovimento(rs.getDate("dataMovimento"));
-				dto.setIndPossuiObservacaoConferenciaEncalhe(rs.getString("indPossuiObservacaoConferenciaEncalhe"));
+				dto.setObservacaoConferenciaEncalhe(rs.getString("observacaoConferenciaEncalhe"));
 				
 				return dto;
 			}
