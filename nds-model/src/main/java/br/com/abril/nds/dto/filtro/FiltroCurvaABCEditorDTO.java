@@ -50,12 +50,12 @@ public class  FiltroCurvaABCEditorDTO extends FiltroCurvaABCDTO implements Seria
 		REPARTE("reparteFormatado"),
 		VENDA_EXEMPLARES("vendaExemplaresFormatado"),
 		PORCENTAGEM_VENDA_EXEMPLARES("porcentagemVendaExemplaresFormatado"),
-		FATURAMENTO_CAPA("faturamentoCapaFormatado"),
+		FATURAMENTO_CAPA("faturamentoCapa"),
 		PARTICIPACAO("participacaoFormatado"),
 		PARTICIPACAO_ACUMULADA("participacaoAcumuladaFormatado"),
 		VALOR_MARGEM_DISTRIBUIDOR("valorMargemDistribuidorFormatado"),
 		PORCENTAGEM_MARGEM_DISTRIBUIDOR("porcentagemMargemDistribuidorFormatado");
-
+		
 		private String nomeColuna;
 		
 		private ColunaOrdenacaoCurvaABCEditor(String nomeColuna) {

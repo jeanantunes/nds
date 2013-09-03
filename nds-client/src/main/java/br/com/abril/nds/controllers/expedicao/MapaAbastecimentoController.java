@@ -543,7 +543,7 @@ public class MapaAbastecimentoController extends BaseController {
 
 		HashMap<Integer, HashMap<String, ProdutoMapaRotaDTO>> produtosMapa = mapaAbastecimentoService.obterMapaDeImpressaoPorBoxRota(filtro);
 		setaNomeParaImpressao();
-		result.include("mapa",produtosMapa);
+		result.include("mapa", produtosMapa);
 
 	}
 

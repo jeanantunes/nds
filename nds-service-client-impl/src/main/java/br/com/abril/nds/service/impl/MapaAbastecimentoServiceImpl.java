@@ -107,6 +107,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 					produtoPorBox.getCodigoProduto(),
 					produtoPorBox.getNomeProduto(),
 					produtoPorBox.getNumeroEdicao(),
+					produtoPorBox.getCodigoBarra(),
 					produtoPorBox.getPrecoCapa(),
 					0,
 					new HashMap<Integer, Integer>()));
@@ -181,6 +182,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 						new ProdutoMapaRotaDTO(item.getCodigoProduto(),
 								item.getNomeProduto(),
 								item.getNumeroEdicao(),
+								item.getCodigoBarra(),
 								item.getPrecoCapa(),
 								0,
 								new HashMap<String, Integer>()));
@@ -239,6 +241,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 				produtosBoxRota.get(0).getCodigoProduto(),
 				produtosBoxRota.get(0).getNomeProduto(),
 				produtosBoxRota.get(0).getNumeroEdicao().longValue(),
+				produtosBoxRota.get(0).getCodigoBarra(),
 				produtosBoxRota.get(0).getPrecoCapa(),
 				new HashMap<Integer, BoxRotasDTO>());
 		
@@ -314,8 +317,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	@Transactional
 	public MapaCotaDTO obterMapaDeImpressaoPorCota(FiltroMapaAbastecimentoDTO filtro) {
 	
-		List<ProdutoAbastecimentoDTO> produtosCota =
-			this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorCota(filtro);
+		List<ProdutoAbastecimentoDTO> produtosCota = this.movimentoEstoqueCotaRepository.obterMapaAbastecimentoPorCota(filtro);
 	
 		CompararProdutoMapaCotaDTO comparator = new CompararProdutoMapaCotaDTO();
 	
@@ -346,7 +348,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 				ProdutoMapaCotaDTO produtoMapaCotaDTO =
 						new ProdutoMapaCotaDTO(
-								item.getNomeProduto(), item.getNumeroEdicao(), item.getSequenciaMatriz(), item.getPrecoCapa(), 0);
+								item.getNomeProduto(), item.getNumeroEdicao(), item.getCodigoBarra(), item.getSequenciaMatriz(), item.getPrecoCapa(), 0);
 	
 	
 				//colocar a lista de cotas
@@ -386,6 +388,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 				produtosBoxRota.get(0).getCodigoProduto(),
 				produtosBoxRota.get(0).getNomeProduto(),
 				produtosBoxRota.get(0).getNumeroEdicao().longValue(),
+				produtosBoxRota.get(0).getCodigoBarra(),
 				produtosBoxRota.get(0).getPrecoCapa(),
 				new TreeMap<Integer, Integer>(),
 				new TreeMap<String, Integer>());
@@ -451,6 +454,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 						item.getCodigoProduto(),
 						item.getNomeProduto(),
 						item.getNumeroEdicao().longValue(),
+						item.getCodigoBarra(),
 						item.getPrecoCapa(),
 						new HashMap<Integer, Integer>(),
 						new TreeMap<String, Integer>());

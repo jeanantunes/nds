@@ -83,6 +83,9 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	ProdutoEdicao obterProdutoEdicaoPorCodProdutoNumEdicao(String codigoProduto,
 														   Long numeroEdicao);
 	
+	
+	ProdutoEdicao obterMaxProdutoEdicaoPorCodProdutoNumEdicao(String codigoProduto, Long numeroEdicao);
+	
 	/**
 	 * Obtém produtos edição de acordo com o 
 	 * produto e o produto edição.
