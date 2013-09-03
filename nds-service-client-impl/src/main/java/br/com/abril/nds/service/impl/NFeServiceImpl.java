@@ -987,7 +987,7 @@ public class NFeServiceImpl implements NFeService {
 			item.setValorUnitarioProduto(valorUnitarioProduto);
 			item.setValorTotalProduto(valorTotalProduto);
 			item.setValorDescontoProduto(valorTotalProduto.subtract(valorTotalProduto.multiply(valorDescontoProduto)));
-			item.setSequencia(itemNotaEnvio.getSequencia());
+			item.setSequencia(itemNotaEnvio.getSequenciaMatrizLancamento());
 			item.setCodigoBarra(itemNotaEnvio.getProdutoEdicao().getCodigoDeBarras());
 
 			listaItemImpressaoNfe.add(item);

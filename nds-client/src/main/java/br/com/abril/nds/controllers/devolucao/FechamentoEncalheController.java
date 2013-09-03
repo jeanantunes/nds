@@ -118,24 +118,11 @@ public class FechamentoEncalheController extends BaseController {
 	public void pesquisar(String dataEncalhe, Long fornecedorId, Long boxId, Boolean aplicaRegraMudancaTipo,
 			String sortname, String sortorder, int rp, int page) {
 		
-		@SuppressWarnings("unchecked")
-		List<FechamentoFisicoLogicoDTO> listaEncalheSession = (List<FechamentoFisicoLogicoDTO>) session.getAttribute("gridFechamentoEncalheDTO");
-		
-		if(listaEncalheSession == null || listaEncalheSession.isEmpty())
-		{
-			FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
-			filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
-			filtro.setFornecedorId(fornecedorId);
-			filtro.setBoxId(boxId);
-			
-			listaEncalheSession = this.fechamentoEncalheService.verificarListaDaSessao(listaEncalheSession, filtro, sortname, sortorder);
-			session.setAttribute("gridFechamentoEncalheDTO", listaEncalheSession);
-		}
-		
-		
 		List<FechamentoFisicoLogicoDTO> listaEncalhe = 
 				consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, aplicaRegraMudancaTipo,sortname, sortorder, rp, page);
 
+		session.setAttribute("gridFechamentoEncalheDTO", listaEncalhe);
+		
 		int quantidade = this.quantidadeItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, aplicaRegraMudancaTipo);
 		
 		if (listaEncalhe.isEmpty()) {
@@ -169,14 +156,14 @@ public class FechamentoEncalheController extends BaseController {
 		filtro.setFornecedorId(fornecedorId);
 		filtro.setBoxId(boxId);
 		
-		///verificar depois
-		
-		if (aplicaRegraMudancaTipo){
-			if (boxId != null) {
+		if (aplicaRegraMudancaTipo && boxId == null){
+				
 				FiltroFechamentoEncalheDTO filtroRevomecao = new FiltroFechamentoEncalheDTO(); 
+				
 				filtroRevomecao.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
-				fechamentoEncalheService.removeFechamentoDetalhado(filtroRevomecao);
-			}
+				
+				fechamentoEncalheService.converteFechamentoDetalhadoEmConsolidado(filtroRevomecao);
+				
 		} 
 		
 		this.session.setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE,filtro);
@@ -569,6 +556,33 @@ public class FechamentoEncalheController extends BaseController {
 		return validacao;
 	}
 	
+	/**
+	 * Caso a operação realizada seja de VERIFICACAO
+	 * 
+	 * 		Serão realizadas validações retornando
+	 * 		para view mensagens de sucesso ou erro 
+	 * 		em relação a estas validações. As validações são:
+	 * 		
+	 * 		- Verifica se existem cotas com conferencia não finalizada
+	 * 		  Caso existam retorna mensagem de WARNING com uma lista
+	 * 		  destas cota.
+	 * 
+	 * 		- Verifica se existem cota ausentes retornando uma 
+	 * 		  mensagem informando se foram encontradas ou não
+	 * 		  cotas ausentes.
+	 * 
+	 * 
+	 * Caso a operação seja de CONFIRMACAO
+	 * 	
+	 *		Sera realizada uma validação (Se existem
+	 *		cotas com conferencia não finalizada).
+	 *		Caso a validação seja de sucesso sera 
+	 *		efetuado o encerramento do encalhe
+	 * 	
+	 * 
+	 * @param dataEncalhe
+	 * @param operacao
+	 */
 	@Path("/verificarEncerrarOperacaoEncalhe")
 	public void verificarEncerrarOperacaoEncalhe(Date dataEncalhe, String operacao) {
 		
@@ -633,17 +647,38 @@ public class FechamentoEncalheController extends BaseController {
 		filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
 		filtro.setFornecedorId(fornecedorId);
 		filtro.setBoxId(boxId);
+		
 		if (boxId == null){
+			
 			if (fechamentoEncalheService.existeFechamentoEncalheDetalhado(filtro)){
-				this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, "Você está tentando fazer uma pesquisa em modo consolidado (soma de todos os boxes). Já existem dados salvos em modo de pesquisa por box. Não será possível realizar a pesquisa."), "result").recursive().serialize();
+				
+				String msgPesquisaConsolidado = "Você está tentando fazer uma " +
+						"pesquisa em modo consolidado (soma de todos os boxes). " +
+						"Já existem dados salvos em modo de pesquisa por box. " +
+						"Se você continuar, os dados serão perdidos. " +
+						"Tem certeza que deseja continuar ?";
+				
+				this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, msgPesquisaConsolidado), "result").recursive().serialize();
+			
 			} else {
+				
 				this.result.use(Results.json()).from("pesquisa","result").serialize() ;   
+			
 			}
+		
 		} else if ( fechamentoEncalheService.existeFechamentoEncalheConsolidado(filtro)){
-			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Você está tentando fazer uma pesquisa por box. Já existem dados salvos em modo de pesquisa consolidado (soma de todos os boxes). Se você continuar, os dados serão perdidos. Tem certeza que deseja continuar ?"), "result").recursive().serialize();
+			
+			String msgPesquisaPorBox = "Você está tentando fazer uma pesquisa por box. " +
+					"Já existem dados salvos em modo de pesquisa consolidado (soma de todos os boxes). " +
+					"Não será possível realizar a pesquisa.";
+			
+			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, msgPesquisaPorBox), "result").recursive().serialize();
+		
 		} else {
+		
 			this.result.use(Results.json()).from("pesquisa","result").serialize() ;   
-		 }
+		
+		}
 	}
 	
 	@Path("/salvarNoEncerrementoOperacao")

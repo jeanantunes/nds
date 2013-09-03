@@ -16,6 +16,7 @@ import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.BooleanType;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
@@ -373,6 +374,28 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		return criteria.list();
 	}
 	
+	public boolean verificarExistenciaFechamentoEncalheConsolidado(Date dataEncalhe) {
+		
+		StringBuffer sql = new StringBuffer();
+		
+		sql.append(" select case when (count(f.PRODUTO_EDICAO_ID) > 0)  then true else false end as verificacao " );
+		sql.append(" from FECHAMENTO_ENCALHE f ");
+		sql.append(" where f.DATA_ENCALHE = :dataEncalhe and ");
+		sql.append(" f.QUANTIDADE > 0 ");
+		
+		Query query = getSession().createSQLQuery(sql.toString());
+		
+		((SQLQuery) query ).addScalar("verificacao", BooleanType.INSTANCE);
+		
+		query.setParameter("dataEncalhe", dataEncalhe);
+		
+		return (Boolean) query.uniqueResult();
+		
+	}
+
+	
+
+	
 	
 	public Integer obterTotalCotasAusentes(Date dataEncalhe, 
 			boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp) {
@@ -691,10 +714,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	
 		StringBuilder sql = new StringBuilder();
 		
-		sql.append(getSqlCotaAusenteComChamadaEncalhe(false, isSomenteCotasSemAcao).toString());
-		sql.append(" union all ");
 		sql.append(getSqlCotaAusenteSemChamadaEncalhe(false, isSomenteCotasSemAcao).toString());
-		
 		
 		if("acao".equals(sortname)) {
 			sortname = "fechado";

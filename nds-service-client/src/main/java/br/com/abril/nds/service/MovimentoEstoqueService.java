@@ -1,6 +1,5 @@
 package br.com.abril.nds.service;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
@@ -88,4 +87,11 @@ public interface MovimentoEstoqueService {
 	 * @return MovimentosEstoqueCotaSaldoDTO
 	 */
 	MovimentosEstoqueCotaSaldoDTO getMovimentosEstoqueCotaSaldo(List<MovimentoEstoqueCota> listaMovimentoCota);
+
+	MovimentoEstoque gerarMovimentoEstoqueDiferenca(Long idProdutoEdicao,
+													Long idUsuario, BigInteger quantidade,
+													TipoMovimentoEstoque tipoMovimentoEstoque,
+													boolean isMovimentoDiferencaAutomatica,
+													boolean validarTransfEstoqueDiferenca, Date dataLancamento,
+													StatusIntegracao statusIntegracao, Origem origem);
 }

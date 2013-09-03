@@ -36,6 +36,7 @@ import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -965,13 +966,17 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 			diferenca.setTipoDiferenca(TipoDiferenca.FALTA_EM);
 
-			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.PERDA, StatusAprovacao.APROVADO);
+			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.PERDA, 
+					                                          StatusAprovacao.APROVADO, 
+					                                          Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE);
 			
 		} else if(qntDiferenca.compareTo(BigInteger.ZERO) > 0){						
 			
 			diferenca.setTipoDiferenca(TipoDiferenca.SOBRA_EM);
 
-			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.GANHO, StatusAprovacao.APROVADO);
+			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.GANHO, 
+					                                          StatusAprovacao.APROVADO, 
+					                                          Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE);
 			
 		}
 	}
@@ -1163,42 +1168,30 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 		
 	}
-
+	
+	/**
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.FechamentoEncalheService#existeFechamentoEncalheDetalhado(br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO)
+	 */
 	@Override
 	@Transactional(readOnly=true)
 	public Boolean existeFechamentoEncalheDetalhado(FiltroFechamentoEncalheDTO filtro) {
 		
-		List<FechamentoEncalhe> listaFechamento = 
-			this.fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro.getDataEncalhe());
-		
-		if (listaFechamento == null 
-				|| listaFechamento.isEmpty() ){
-			
-			return Boolean.FALSE;
-			
-		} else if (listaFechamento.get(0).getListFechamentoEncalheBox() != null
-						&& !listaFechamento.get(0).getListFechamentoEncalheBox().isEmpty()) {
-			
-			return Boolean.TRUE;
-		}
-		
-		return Boolean.FALSE;
+		return this.fechamentoEncalheBoxRepository.verificarExistenciaFechamentoEncalheDetalhado(filtro.getDataEncalhe());
 	 
 	}
 
+	/**
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.FechamentoEncalheService#existeFechamentoEncalheConsolidado(br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO)
+	 */
 	@Override
 	@Transactional(readOnly=true)
 	public Boolean existeFechamentoEncalheConsolidado(FiltroFechamentoEncalheDTO filtro) {
-		List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro.getDataEncalhe());
-		if (listaFechamento == null || listaFechamento.isEmpty() ){
-			return Boolean.FALSE;
-		} else if (listaFechamento.get(0).getQuantidade() != null ){
-			return Boolean.TRUE;
-		}
 		
-		return Boolean.FALSE;
+		return this.fechamentoEncalheRepository.verificarExistenciaFechamentoEncalheConsolidado(filtro.getDataEncalhe());
+
 	}
-	
 	
 	
 	@Transactional
@@ -1233,28 +1226,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 	}
 	
-	@Transactional
-	public void removeFechamentoDetalhado(FiltroFechamentoEncalheDTO filtro) {
-		filtro.setBoxId(null);
-		filtro.setFornecedorId(null);
-		List<FechamentoFisicoLogicoDTO> listaConferencia = this.buscarFechamentoEncalhe(filtro, null, "codigo", null, null);
-		FechamentoFisicoLogicoDTO fechamento;
-		for (int i=0; i < listaConferencia.size(); i++) {
-			fechamento = listaConferencia.get(i);
-			FechamentoEncalhePK id = new FechamentoEncalhePK();
-			id.setDataEncalhe(filtro.getDataEncalhe());
-			ProdutoEdicao pe = new ProdutoEdicao();
-			pe.setId(fechamento.getProdutoEdicao());
-			id.setProdutoEdicao(pe);
-			FechamentoEncalhe fechamentoEncalhe = fechamentoEncalheRepository.buscarPorId(id);
-			if ( fechamentoEncalhe == null){
-				continue;
-			}
-			fechamentoEncalheRepository.remover(fechamentoEncalhe);
-			
-		}
-		
-	}
 
 	@Override
 	@Transactional
@@ -1334,22 +1305,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			listaGrid.add(gridFechamento);
 		}
 		return listaGrid;
-	}
-
-	@Override
-	public List<FechamentoFisicoLogicoDTO> verificarListaDaSessao(
-			List<FechamentoFisicoLogicoDTO> listaEncalheSession, FiltroFechamentoEncalheDTO filtro, String sortname, String sortorder) {
-		
-		if(listaEncalheSession == null || listaEncalheSession.isEmpty())
-		{
-			if (sortname.endsWith("Formatado")) {
-				sortname = sortname.substring(0, sortname.indexOf("Formatado"));
-			}
-			
-			listaEncalheSession = this.buscarFechamentoEncalhe(filtro, sortorder, sortname, null, null);
-		}
-	
-		return listaEncalheSession;
 	}
 
 	@Override
