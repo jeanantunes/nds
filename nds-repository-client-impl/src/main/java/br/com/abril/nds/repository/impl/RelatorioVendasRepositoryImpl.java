@@ -65,6 +65,8 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 
 		hql.append(" ORDER BY faturamentoCapa ");
 		
+		
+		
 		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
 		
 		query.addScalar("idCota", StandardBasicTypes.LONG);
@@ -84,7 +86,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		query.setResultTransformer(Transformers.aliasToBean(RegistroCurvaABCDistribuidorVO.class));
 		
-		return query.list();
+ 		return query.list();
 	}
 
 	@Override
@@ -328,7 +330,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" AND movimentoEstoqueCota.DATA BETWEEN :dataDe AND :dataAte ");
+		hql.append(" AND lancamento.DATA_REC_DISTRIB BETWEEN :dataDe AND :dataAte ");
 		
 		param.put("dataDe",  filtro.getDataDe());
 		param.put("dataAte", filtro.getDataAte());
@@ -345,10 +347,22 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 			param.put("codigoProduto", filtro.getCodigoProduto().toString());
 		}
 
+		
+		
 		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
-			hql.append(" AND produtoEdicao.NUMERO_EDICAO = :edicaoProduto ");
 			
-			param.put("edicaoProduto", filtro.getCodigoProduto().toString());
+			for (int i = 0; i < filtro.getEdicaoProduto().size(); i++) {
+				if(i == 0) {
+					hql.append(" AND ( produtoEdicao.NUMERO_EDICAO = :edicaoProduto_" + i + " ");
+					param.put("edicaoProduto_" + i, filtro.getEdicaoProduto().get(i).toString());
+				} else {
+					hql.append(" OR produtoEdicao.NUMERO_EDICAO = :edicaoProduto_" + i + " ");
+					param.put("edicaoProduto_" + i, filtro.getCodigoProduto().toString());
+				}
+			}
+			
+			hql.append(" ) ");
+			
 		}
 
 		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty() && !filtro.getCodigoEditor().equals("0")) {
@@ -376,7 +390,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" AND movimentoEstoqueCota.DATA BETWEEN :dataDe AND :dataAte ");
+		hql.append(" AND lancamento.DATA_REC_DISTRIB BETWEEN :dataDe AND :dataAte ");
 		
 		param.put("dataDe",  filtro.getDataDe());
 		param.put("dataAte", filtro.getDataAte());
@@ -393,11 +407,24 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 			param.put("codigoProduto", filtro.getCodigoProduto().toString());
 		}
 
+		
 		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
-			hql.append(" AND produtoEdicao.NUMERO_EDICAO = :edicaoProduto ");
 			
-			param.put("edicaoProduto", filtro.getCodigoProduto().toString());
+			for (int i = 0; i < filtro.getEdicaoProduto().size(); i++) {
+				if(i == 0) {
+					hql.append(" AND ( produtoEdicao.NUMERO_EDICAO = :edicaoProduto_" + i + " ");
+					param.put("edicaoProduto_" + i, filtro.getEdicaoProduto().get(i).toString());
+				} else {
+					hql.append(" OR produtoEdicao.NUMERO_EDICAO = :edicaoProduto_" + i + " ");
+					param.put("edicaoProduto_" + i, filtro.getCodigoProduto().toString());
+				}
+			}
+			
+			hql.append(" ) ");
+			
 		}
+		
+		
 
 		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty() && !filtro.getCodigoEditor().equals("0")) {
 			hql.append(" AND produto.EDITOR_ID = :codigoEditor ");
@@ -424,7 +451,7 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" AND movimentoEstoqueCota.DATA BETWEEN :dataDe AND :dataAte ");
+		hql.append(" AND lancamento.DATA_REC_DISTRIB BETWEEN :dataDe AND :dataAte ");
 		
 		param.put("dataDe",  filtro.getDataDe());
 		param.put("dataAte", filtro.getDataAte());
@@ -442,11 +469,21 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		}
 
 		if (filtro.getEdicaoProduto() != null && !filtro.getEdicaoProduto().isEmpty()) {
-			hql.append(" AND produtoEdicao.NUMERO_EDICAO = :edicaoProduto ");
 			
-			param.put("edicaoProduto", filtro.getCodigoProduto().toString());
+			for (int i = 0; i < filtro.getEdicaoProduto().size(); i++) {
+				if(i == 0) {
+					hql.append(" AND ( produtoEdicao.NUMERO_EDICAO = :edicaoProduto_" + i + " ");
+					param.put("edicaoProduto_" + i, filtro.getEdicaoProduto().get(i).toString());
+				} else {
+					hql.append(" OR produtoEdicao.NUMERO_EDICAO = :edicaoProduto_" + i + " ");
+					param.put("edicaoProduto_" + i, filtro.getCodigoProduto().toString());
+				}
+			}
+			
+			hql.append(" ) ");
+			
 		}
-
+		
 		if (filtro.getCodigoEditor() != null && !filtro.getCodigoEditor().isEmpty() && !filtro.getCodigoEditor().equals("0")) {
 			hql.append(" AND produto.EDITOR_ID = :codigoEditor ");
 		

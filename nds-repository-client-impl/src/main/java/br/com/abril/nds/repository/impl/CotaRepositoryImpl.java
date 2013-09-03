@@ -13,6 +13,7 @@ import java.util.Set;
 import org.apache.commons.lang.Validate;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
@@ -23,6 +24,7 @@ import org.hibernate.transform.AliasToBeanConstructorResultTransformer;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -2950,6 +2952,20 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		hql.append(" join estudoCota.estudo estudo ");
 		
 		hql.append(" join estudoCota.cota cota ");
+		hql.append(" join estudo.produtoEdicao pe ");
+		hql.append(" join pe.produto p ");
+		hql.append(" join pe.lancamentos l ");
+		hql.append(" where ");
+		
+		for (int i = 0; i < filtro.getCodigosProduto().size(); i++ ) {
+			hql.append(" p.codigo = :codigoProduto_" + i + " and ");
+		}
+		hql.append(" pe.numeroEdicao = :numeroEdicao and ");
+		hql.append(" ( l.status = :balanceado or l.status = :expedido ) and ");
+		hql.append(" l.dataLancamentoPrevista = :dataPrevista ");
+		
+		
+		/*
 		hql.append(" where estudo.dataLancamento in ( ");
 		hql.append(" select lancamento.dataLancamentoPrevista from Lancamento lancamento ");
 		hql.append(" join lancamento.produtoEdicao produtoEdicao ");
@@ -2964,6 +2980,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		hql.append(" lancamento.dataLancamentoPrevista = :dataPrevista ");
 		
 		hql.append(" )");
+		*/
+		
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
@@ -2987,88 +3005,82 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	public List<CotaDTO> obterCotasSemRoteirizacao(Intervalo<Integer> intervaloCota, Intervalo<Date> intervaloDataLancamento,
 			Intervalo<Date> intervaloDateRecolhimento) {
 		
-		StringBuilder hql = new StringBuilder("select c.numeroCota as numeroCota, ");
-		hql.append(" coalesce(pessoa.nome, pessoa.razaoSocial, pessoa.nomeFantasia) as nomePessoa ")
-		   .append(" from Cota c ")
-		   .append(" join c.pessoa pessoa ");
-		
-		if (intervaloDataLancamento != null){
-			hql.append(" join c.estudoCotas ec ")
-			   .append(" join ec.estudo estudo ")
-			   .append(" join estudo.lancamentos lancamento ");
+		StringBuilder hql = new StringBuilder("")
+			.append(" select ")
+			.append(" c.NUMERO_COTA as numeroCota, ")
+        	.append(" coalesce(p.NOME, p.RAZAO_SOCIAL, p.NOME_FANTASIA) as nomePessoa ")
+        	.append(" from COTA c ")
+        	.append(" inner join PESSOA p on c.PESSOA_ID=p.ID ")
+        	.append(" inner join ESTUDO_COTA ec on c.ID=ec.COTA_ID ")
+    		.append(" inner join ESTUDO e on ec.ESTUDO_ID=e.ID ");
+        	
+    	if (intervaloDataLancamento != null) {
+    		hql .append(" inner join LANCAMENTO l on e.PRODUTO_EDICAO_ID=l.PRODUTO_EDICAO_ID and e.DATA_LANCAMENTO=l.DATA_LCTO_PREVISTA ");
+    	}
+    	
+    	if (intervaloDateRecolhimento != null) {
+    		hql .append(" inner join chamada_encalhe_cota cec on cec.cota_id = c.id ")
+    			.append(" inner join chamada_encalhe ce on ce.id = cec.chamada_encalhe_id and ce.produto_edicao_id = e.produto_edicao_id ");
+    	}
+    	
+    	hql	.append(" where 1=1")
+    		.append(" and ( ")
+        	.append(" 	c.NUMERO_COTA not in ( ")
+        	.append("     	select distinct c.NUMERO_COTA ")
+        	.append("     	from ROTEIRIZACAO rot ")
+        	.append("     	inner join ROTEIRO r on rot.ID=r.ROTEIRIZACAO_ID ") 
+        	.append("     	inner join ROTA rota on r.ID=rota.ROTEIRO_ID ") 
+        	.append("     	inner join ROTA_PDV rp on rota.ID=rp.ROTA_ID ") 
+        	.append("     	inner join PDV pdv on rp.PDV_ID=pdv.ID ") 
+        	.append("     	inner join COTA c on pdv.COTA_ID=c.ID ")
+        	.append("     	inner join ESTUDO_COTA ec on c.ID=ec.COTA_ID ") 
+        	.append("     	inner join ESTUDO e on ec.ESTUDO_ID=e.ID ");
+    	
+    	if (intervaloDataLancamento != null) {
+        	hql	.append("     	inner join ( ")
+        		.append("         	select produto_edicao_id, l.DATA_LCTO_PREVISTA ")
+        		.append("         	from LANCAMENTO l ")
+        		.append("         	where l.DATA_LCTO_DISTRIBUIDOR between :dataLancamentoDe and :dataLancamentoAte ) rs1 ")
+        		.append("             	on e.PRODUTO_EDICAO_ID=rs1.PRODUTO_EDICAO_ID ")
+        		.append("             	and e.DATA_LANCAMENTO=rs1.DATA_LCTO_PREVISTA ");
+        }
+    	
+    	if (intervaloDateRecolhimento != null) {
+    		hql .append("     	inner join chamada_encalhe_cota cec on cec.cota_id = c.id ")
+    			.append("     	inner join chamada_encalhe ce on ce.id = cec.chamada_encalhe_id and ce.produto_edicao_id = e.produto_edicao_id ");
+    	}
+    	
+    	if (intervaloDateRecolhimento != null) {
+    		hql	.append(" and ( ")
+    			.append(" 	ce.data_recolhimento between :dataRecolhimentoDe and :dataRecolhimentoAte ")
+    			.append(" ) ");
+    	}
+	    	
+    	hql	.append(" 	where rot.box_id is not null ) ")
+    		.append(" ) ");
+    	
+    	if (intervaloCota != null && intervaloCota.getAte() != null && intervaloCota.getDe() != null){
+			hql	.append(" and ( ")
+				.append(" 	c.NUMERO_COTA between :de and :ate ")
+				.append(" ) ");
 		}
+    	
+    	if (intervaloDataLancamento != null) {
+	    	hql	.append(" and ( ")
+	    		.append(" 	l.DATA_LCTO_DISTRIBUIDOR between :dataLancamentoDe and :dataLancamentoAte ")
+	    		.append(" ) ");
+    	}
+    	
+    	if (intervaloDateRecolhimento != null) {
+    		hql	.append(" and ( ")
+    			.append(" 	ce.data_recolhimento between :dataRecolhimentoDe and :dataRecolhimentoAte ")
+    			.append(" ) ");
+    	}
+    	
+    	hql	.append(" group by c.NUMERO_COTA ")
+    		.append(" order by c.NUMERO_COTA ");
 		
-		if (intervaloDateRecolhimento != null){
-			hql.append(" join c.chamadaEncalheCotas cec ")
-			   .append(" join cec.chamadaEncalhe ce ");
-		}
-		
-		hql.append(" where c.numeroCota not in ( ")
-		   .append(" select cota.numeroCota from Roteirizacao r ")
-		   .append(" join r.roteiros roteiro ")
-		   .append(" join roteiro.rotas rota ")
-		   .append(" join rota.rotaPDVs rotaPDV ")
-		   .append(" join rotaPDV.pdv pdv ")
-		   .append(" join pdv.cota cota ");
-		
-		if (intervaloDataLancamento != null){
-			hql.append(" join cota.estudoCotas ecIn ")
-			   .append(" join ecIn.estudo estudoIn ")
-			   .append(" join estudoIn.lancamentos lancamentoIn ");
-		}
-		
-		if (intervaloDateRecolhimento != null){
-			hql.append(" join cota.chamadaEncalheCotas cecIn ")
-			   .append(" join cecIn.chamadaEncalhe ceIn ");
-		}
-		
-		boolean indAnd = false;
-		if (intervaloCota != null && intervaloCota.getAte() != null && intervaloCota.getDe() != null){
-			hql.append(" where cota.numeroCota between :de and :ate ");
-			indAnd = true;
-		}
-		
-		if (intervaloDataLancamento != null){
-			if (indAnd){
-				hql.append(" and ");
-			} else {
-				hql.append(" where ");
-				indAnd = true;
-			}
-			
-			hql.append(" lancamentoIn.dataLancamentoDistribuidor between :dataLancamentoDe and :dataLancamentoAte ");
-		}
-		
-		if (intervaloDateRecolhimento != null){
-			if (indAnd){
-				hql.append(" and ");
-			} else {
-				hql.append(" where ");
-				indAnd = true;
-			}
-			
-			hql.append(" ceIn.dataRecolhimento between :dataRecolhimentoDe and :dataRecolhimentoAte ");
-		}
-		
-		hql.append(")");
-		
-		if (intervaloCota != null && intervaloCota.getAte() != null && intervaloCota.getDe() != null){
-			hql.append(" and c.numeroCota between :de and :ate ");
-		}
-		
-		if (intervaloDataLancamento != null){
-			
-			hql.append(" and lancamento.dataLancamentoDistribuidor between :dataLancamentoDe and :dataLancamentoAte ");
-		}
-		
-		if (intervaloDateRecolhimento != null){
-			
-			hql.append(" and ce.dataRecolhimento between :dataRecolhimentoDe and :dataRecolhimentoAte ");
-		}
-		
-		hql.append(" group by c.numeroCota order by c.numeroCota ");
-		
-		Query query = this.getSession().createQuery(hql.toString());
+		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
 		
 		if (intervaloCota != null && intervaloCota.getAte() != null && intervaloCota.getDe() != null){
 			query.setParameter("de", intervaloCota.getDe());
@@ -3086,6 +3098,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
+		query.setCacheable(true);
+		query.addScalar("nomePessoa", StandardBasicTypes.STRING);
+		query.addScalar("numeroCota", StandardBasicTypes.INTEGER);
 		
 		return query.list();
 	}

@@ -1,5 +1,7 @@
 package br.com.abril.nds.util;
 
+import java.util.Locale;
+
 /**
  * Classe utilitária para constantes comuns no sistema.
  * 
@@ -7,6 +9,10 @@ package br.com.abril.nds.util;
  *
  */
 public abstract class Constantes {
+	
+	public static final Locale LOCALE_EN_US = new Locale("en", "US");
+	
+	public static final Locale LOCALE_PT_BR = new Locale("pr", "BR");
 	
 	public static final String DATE_PATTERN_PT_BR = "dd/MM/yyyy";
 	

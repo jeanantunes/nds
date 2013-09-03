@@ -6,9 +6,13 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity
 @Table(name = "CONTROLE_FECHAMENTO_ENCALHE")
@@ -21,6 +25,11 @@ public class ControleFechamentoEncalhe implements Serializable {
 	@Column(name = "DATA_ENCALHE", nullable = false)
 	private Date dataEncalhe;
 	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "USUARIO_ID")
+	private Usuario usuario;
+
+	
 	public Date getDataEncalhe() {
 		return dataEncalhe;
 	}
@@ -28,4 +37,13 @@ public class ControleFechamentoEncalhe implements Serializable {
 	public void setDataEncalhe(Date dataEncalhe) {
 		this.dataEncalhe = dataEncalhe;
 	}
+
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
+	}
+	
 }
