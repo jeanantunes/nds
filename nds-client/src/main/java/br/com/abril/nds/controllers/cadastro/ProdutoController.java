@@ -45,6 +45,7 @@ import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.service.TipoProdutoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.Constantes;
@@ -103,6 +104,9 @@ public class ProdutoController extends BaseController {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private TipoClassificacaoProdutoService tipoClassificacaoProdutoService;
 	
 	private static List<ItemDTO<ClasseSocial,String>> listaClasseSocial =  new ArrayList<ItemDTO<ClasseSocial,String>>();
 	  
@@ -541,7 +545,6 @@ public class ProdutoController extends BaseController {
 		
 		this.carregarComboSegmento();
 		
-		this.carregarComboClassificacao();
     }
 	
 	/**
@@ -590,6 +593,8 @@ public class ProdutoController extends BaseController {
 	@Post
 	public void salvarProduto(Produto produto, Long codigoEditor, Long codigoFornecedor, Long codigoTipoDesconto, 
 			Long codigoTipoProduto) {
+		
+		produto.setTipoClassificacaoProduto(tipoClassificacaoProdutoService.buscarPorId(new Long(16)));
 		
 		this.validarProduto(
 			produto, codigoEditor, codigoFornecedor, 
@@ -718,10 +723,6 @@ public class ProdutoController extends BaseController {
 				listaMensagens.add("O preenchimento do campo [Tipo Segmento] é obrigatório!");
 			}
 			
-			if (produto.getTipoClassificacaoProduto().getId() == null) {
-				listaMensagens.add("O preenchimento do campo [Tipo Lançamento] é obrigatório!");
-			}
-			
 			if (produto.getGrupoEditorial() != null && !produto.getGrupoEditorial().trim().isEmpty()) {
 				produto.setGrupoEditorial(produto.getGrupoEditorial().trim());
 			}
@@ -831,21 +832,6 @@ public class ProdutoController extends BaseController {
 		result.include("listaSegmentoProduto",comboSegmento );
 	}
 	
-	/**
-	 * Popular combo lista de Tipo classificação produto.
-	 */
-	private void carregarComboClassificacao() {
-
-		List<ItemDTO<Long,String>> comboClassificacao =  new ArrayList<ItemDTO<Long,String>>();
-
-		List<TipoClassificacaoProduto> classificacao = produtoService.carregarClassificacaoProduto();
-
-		for (TipoClassificacaoProduto itemClassif : classificacao) {
-			comboClassificacao.add(new ItemDTO<Long,String>(itemClassif.getId(), itemClassif.getDescricao()));
-		}
-
-		result.include("listaClassifProduto",comboClassificacao);
-	}
 	
 	/**
 	 * Retorna o valor default para combo.
