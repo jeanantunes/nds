@@ -282,4 +282,6 @@ public interface ConferenciaEncalheService {
 	List<DebitoCreditoCotaDTO> obterListaDebitoCreditoCotaDTO(Cota cota, Date dataOperacao);
 	
 	List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(Integer numeroCota, String codigoBarras);
+	
+	boolean hasCotaAusenteFechamentoEncalhe(Integer numeroCota);
 }

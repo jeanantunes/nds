@@ -685,6 +685,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return false;
 		
 	}
+
+	@Transactional(readOnly = true)
+	public boolean hasCotaAusenteFechamentoEncalhe(Integer numeroCota) {
+
+		Date dataRecolhimento = distribuidorService.obterDataOperacaoDistribuidor();
+
+		BigInteger quantidadeCotasAusentes = this.chamadaEncalheCotaRepository.quantidadeCotaAusenteFechamentoEncalhe(numeroCota, dataRecolhimento);
+
+		return quantidadeCotasAusentes.compareTo(BigInteger.ZERO) > 0;
+	}
 	
 	/**
 	 * Atualiza campo Dia das ConferenciaEncalheDTO's com o Dia de Recolhimento do Distribuidor;
