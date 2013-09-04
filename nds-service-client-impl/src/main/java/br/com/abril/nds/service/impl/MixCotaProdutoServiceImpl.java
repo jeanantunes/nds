@@ -3,6 +3,7 @@ package br.com.abril.nds.service.impl;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -10,14 +11,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.ClassificacaoNaoRecebidaDTO;
 import br.com.abril.nds.dto.CopiaMixFixacaoDTO;
+import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.MixCotaDTO;
 import br.com.abril.nds.dto.MixCotaProdutoDTO;
 import br.com.abril.nds.dto.MixProdutoDTO;
 import br.com.abril.nds.dto.PdvDTO;
+import br.com.abril.nds.dto.ProdutoRecebidoDTO;
 import br.com.abril.nds.dto.RepartePDVDTO;
+import br.com.abril.nds.dto.SegmentoNaoRecebeCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaMixPorCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaMixPorProdutoDTO;
+import br.com.abril.nds.dto.filtro.FiltroExcecaoSegmentoParciaisDTO;
 import br.com.abril.nds.dto.filtro.FiltroPdvDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
@@ -27,6 +33,7 @@ import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.distribuicao.MixCotaProduto;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
@@ -37,9 +44,12 @@ import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.repository.RepartePDVRepository;
 import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
+import br.com.abril.nds.service.ClassificacaoNaoRecebidaService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.ExcecaoSegmentoParciaisService;
 import br.com.abril.nds.service.MixCotaProdutoService;
 import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.SegmentoNaoRecebidoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -78,7 +88,15 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
 	
-
+	@Autowired
+	private ClassificacaoNaoRecebidaService classificacaoNaoRecebidaService;
+	
+	@Autowired
+	private SegmentoNaoRecebidoService segmentoNaoRecebidoService;
+	
+	@Autowired
+	private ExcecaoSegmentoParciaisService excecaoSegmentoParciaisService;
+	
 	@Override
 	@Transactional(readOnly = true)
 	public List<MixCotaDTO> pesquisarPorCota(FiltroConsultaMixPorCotaDTO filtroConsultaMixCotaDTO) {
@@ -248,6 +266,43 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		
 		msgValidacao = obterValidacaoCota(cota);
 		
+		List<ClassificacaoNaoRecebidaDTO> classificacoesNaoRecebidasPelaCotaList = this.classificacaoNaoRecebidaService.obterClassificacoesNaoRecebidasPelaCota(cota);
+		
+		if(classificacoesNaoRecebidasPelaCotaList!=null){
+			for (ClassificacaoNaoRecebidaDTO classificacaoNaoRecebidaDTO : classificacoesNaoRecebidasPelaCotaList) {
+				if(classificacaoNaoRecebidaDTO.getNomeClassificacao().equals(mixCotaProdutoDTO.getClassificacaoProduto()))
+					return "Cota de número "+cota.getNumeroCota()+" não recebe classificação do tipo "+mixCotaProdutoDTO.getClassificacaoProduto();
+			}
+		}
+		
+		List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosNaCota = segmentoNaoRecebidoService.obterSegmentosNaoRecebidosCadastradosNaCota(cota);
+		
+		FiltroExcecaoSegmentoParciaisDTO filtroExcecaoSeg = new FiltroExcecaoSegmentoParciaisDTO() ;
+		CotaDTO cotadto = new CotaDTO();
+		cotadto.setNumeroCota(Integer.parseInt(mixCotaProdutoDTO.getNumeroCota()));
+		filtroExcecaoSeg.setExcecaoSegmento(true);
+		filtroExcecaoSeg.setCotaDto(cotadto);
+		
+		List<ProdutoRecebidoDTO> obterProdutosRecebidosPelaCotaList = this.excecaoSegmentoParciaisService.obterProdutosRecebidosPelaCota(filtroExcecaoSeg);
+		
+		Produto prd = this.produtoRepository.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto());
+		TipoSegmentoProduto tipoSegProd = prd.getTipoSegmentoProduto();
+		
+		loopSeg:for (SegmentoNaoRecebeCotaDTO seg : obterSegmentosNaoRecebidosCadastradosNaCota) {
+			if(seg.getNomeSegmento().equals(tipoSegProd.getDescricao())){
+				
+				for (ProdutoRecebidoDTO prodRecebidoDTO : obterProdutosRecebidosPelaCotaList) {
+					if(prodRecebidoDTO.getCodigoProdin().equals(mixCotaProdutoDTO.getCodigoProduto()))
+						continue loopSeg;
+				}
+				
+				return "Cota ["+mixCotaProdutoDTO.getNumeroCota()+"] não recebe segmento "+tipoSegProd.getDescricao();
+				
+				
+			}
+			
+		}
+		
 		if (!StringUtils.isEmpty(msgValidacao)) {
 			
 			return msgValidacao;
@@ -317,7 +372,50 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 				mixCotaProdutoDTO.setItemValido(true);
 			}
 			
+			Cota cota = cotaService.obterPorNumeroDaCota(new Integer(mixCotaProdutoDTO.getNumeroCota()));
+			List<ClassificacaoNaoRecebidaDTO> classificacoesNaoRecebidasPelaCotaList = this.classificacaoNaoRecebidaService.obterClassificacoesNaoRecebidasPelaCota(cota);
+			
+			for (ClassificacaoNaoRecebidaDTO classificacaoNaoRecebidaDTO : classificacoesNaoRecebidasPelaCotaList) {
+				if(classificacaoNaoRecebidaDTO.getNomeClassificacao().equals(mixCotaProdutoDTO.getClassificacaoProduto()))
+					mensagens.add("Cota de número "+cota.getNumeroCota()+" não recebe classificação do tipo "+mixCotaProdutoDTO.getClassificacaoProduto());
+					mixCotaProdutoDTO.setItemValido(false);
+					continue;
+			}
+			
+			
+			List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosNaCota = segmentoNaoRecebidoService.obterSegmentosNaoRecebidosCadastradosNaCota(cota);
+			
+			FiltroExcecaoSegmentoParciaisDTO filtroExcecaoSeg = new FiltroExcecaoSegmentoParciaisDTO() ;
+			CotaDTO cotadto = new CotaDTO();
+			cotadto.setNumeroCota(Integer.parseInt(mixCotaProdutoDTO.getNumeroCota()));
+			filtroExcecaoSeg.setExcecaoSegmento(true);
+			filtroExcecaoSeg.setCotaDto(cotadto);
+			
+			List<ProdutoRecebidoDTO> obterProdutosRecebidosPelaCotaList = this.excecaoSegmentoParciaisService.obterProdutosRecebidosPelaCota(filtroExcecaoSeg);
+			
+			Produto prd = this.produtoRepository.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto());
+			TipoSegmentoProduto tipoSegProd = prd.getTipoSegmentoProduto();
+			
+			loopSeg:for (SegmentoNaoRecebeCotaDTO seg : obterSegmentosNaoRecebidosCadastradosNaCota) {
+				if(seg.getNomeSegmento().equals(tipoSegProd.getDescricao())){
+					
+					for (ProdutoRecebidoDTO prodRecebidoDTO : obterProdutosRecebidosPelaCotaList) {
+						if(prodRecebidoDTO.getCodigoProdin().equals(mixCotaProdutoDTO.getCodigoProduto()))
+							continue loopSeg;
+					}
+					
+					mensagens.add("Cota ["+mixCotaProdutoDTO.getNumeroCota()+"] não recebe segmento "+tipoSegProd.getDescricao());
+					mixCotaProdutoDTO.setItemValido(false);
+					
+					
+				}
+				
+			}
+			
+			
+			
 		}
+		
 		
 		return mensagens;
 	}
@@ -428,9 +526,11 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		
 		List<TipoClassificacaoProduto> classificacaoList = this.tipoClassificacaoProdutoRepository.buscarTodos();
 		
+		
 		Usuario usuario = usuarioService.getUsuarioLogado();
 		
 		for (MixCotaProdutoDTO mixCotaProdutoDTO : mixCotaProdutoDTOList) {
+			
 			
 			
 			if (!mixCotaProdutoDTO.isItemValido()) {
@@ -443,7 +543,6 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			Cota cota = cotaService.obterPorNumeroDaCota(new Integer(mixCotaProdutoDTO.getNumeroCota()));
 			Produto produto = produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto());
 				
-			
 			for (TipoClassificacaoProduto t : classificacaoList) {
 				if(t.getDescricao().equals(mixCotaProdutoDTO.getClassificacaoProduto())){
 					produto.setTipoClassificacaoProduto(t);
@@ -542,5 +641,31 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 	public BigInteger obterSomaReparteMinimoPorProdutoUsuario(Long produtoId, Long idUsuario) {
 		
 		return mixCotaProdutoRepository.obterSomaReparteMinimoPorProdutoUsuario(produtoId, idUsuario);
+	}
+
+	@Override
+	@Transactional
+	public void updateReparteMixCotaProduto(Long novoValorReparte, String tipoCampo, Long idMix) {
+		MixCotaProduto mix = this.mixCotaProdutoRepository.buscarPorId(idMix);
+		
+		if(mix==null){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum MIX encontrado para cópia.");
+		}
+		
+		if(tipoCampo.equalsIgnoreCase("MAX")){
+			mix.setReparteMaximo(novoValorReparte);
+		}else if(tipoCampo.equalsIgnoreCase("MIN")){
+			mix.setReparteMinimo(novoValorReparte);
+		}
+		else{
+			throw new ValidacaoException(TipoMensagem.WARNING, "Erro ao atualizar Mix.");
+		}
+		
+		mix.setDataHora(GregorianCalendar.getInstance().getTime());
+		mix.setUsuario(usuarioService.getUsuarioLogado());
+		
+		this.mixCotaProdutoRepository.alterar(mix);
+			
+		
 	}
 }
