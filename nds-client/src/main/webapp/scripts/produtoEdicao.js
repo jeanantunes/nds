@@ -647,6 +647,7 @@ var produtoEdicaoController =$.extend(true,  {
 		var dataLancamentoAte = $("#produtoEdicaoController-pDateLanctoAte",this.workspace).val();
 		var situacaoLancamento = $("#produtoEdicaoController-pSituacaoLancamento",this.workspace).val();
 		var codigoDeBarras = $("#produtoEdicaoController-pCodigoDeBarras",this.workspace).val();
+		
 
 		$("#produtoEdicaoController-pBrinde",this.workspace).val(0);
 		if (document.getElementById('produtoEdicaoController-pBrinde').checked){
@@ -691,6 +692,7 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-idProdutoEdicao").val(result.id);
 							$("#produtoEdicaoController-codigoProdutoEdicao").val(result.codigoProduto);
 							$("#produtoEdicaoController-nomePublicacao").val(result.nomeProduto);
+							$("#produtoEdicaoController-comboClassificacao").val(result.idTipoClassificacaoProduto);
 							$("#produtoEdicaoController-nomeComercialProduto").val(result.nomeComercialProduto);
 							$("#produtoEdicaoController-nomeFornecedor").val(result.nomeFornecedor);
 							$("#produtoEdicaoController-situacao").val(result.situacao);
@@ -971,6 +973,7 @@ var produtoEdicaoController =$.extend(true,  {
 					}
 				}
 		);
+		$("#produtoEdicaoController-comboClassificacao").val('');
 	},
 	
 	carregarCapaTemporaria : function() {

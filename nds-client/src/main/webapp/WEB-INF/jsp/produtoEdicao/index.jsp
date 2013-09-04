@@ -57,7 +57,7 @@ fieldset {
 		<jsp:param value="dialogMensagemNovo" name="messageDialog"/>
 	</jsp:include> 
 
-	<div id="dialog-produto-edicao-periodos-lancamentos" title="PerÌodos de LanÁamentos" style="display:none">
+	<div id="dialog-produto-edicao-periodos-lancamentos" title="PerÔøΩodos de LanÔøΩamentos" style="display:none">
 		<table class="produtoEdicaoPeriodosLancamentosGrid"></table>
 	</div>
 
@@ -111,6 +111,19 @@ fieldset {
 									<td>Nome Comercial Produto:</td>
 									<td colspan="5"><input type="text" name="nomeComercialProduto" id="produtoEdicaoController-nomeComercialProduto" style="width:340px;" /></td>
 								</tr>
+								<tr>
+								
+								<td width="43">Classifica√ß√£o:</td>
+                				<td width="276">
+				                  <select name="select" id="produtoEdicaoController-comboClassificacao" style="width:200px;">
+			                  		<option selected="selected">Selecione...</option>
+				                  		<c:forEach items="${listaClassificacao}" var="classificacao">
+											<option value="${classificacao.key}">${classificacao.value}</option>
+								  		</c:forEach>
+				                  </select>
+				                </td>
+								</tr>
+								
 								<tr>
 									<td>Fornecedor:</td>
 									<td colspan="5"><input type="text" name="nomeFornecedor" id="produtoEdicaoController-nomeFornecedor" style="width:340px;" disabled="disabled" /></td>
@@ -449,7 +462,7 @@ fieldset {
 	<div class="areaBts">
 		<div class="area">
 			<span class="bt_novos">
-				<a href="javascript:;" onclick="produtoEdicaoController.novaEdicao();" rel="tipsy" title="Incluir Nova EdiÁ„o"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/></a>
+				<a href="javascript:;" onclick="produtoEdicaoController.novaEdicao();" rel="tipsy" title="Incluir Nova EdiÔøΩÔøΩo"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/></a>
 			</span>
 		</div>
 	</div>
