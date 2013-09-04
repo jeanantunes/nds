@@ -7,7 +7,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -93,11 +92,11 @@ public class DesenglobacaoController extends BaseController {
 	return tableModel;
     }
 
-    private void validarFiltroDesenglobacao(FiltroDesenglobacaoDTO filtro) {
-	if((filtro.getCotaDto().getNumeroCota() == null || filtro.getCotaDto().getNumeroCota() == 0) && 
-		(filtro.getCotaDto().getNomePessoa() == null || filtro.getCotaDto().getNomePessoa().trim().isEmpty()))
-	    throw new ValidacaoException(TipoMensagem.WARNING, "Informe um código ou nome.");
-    }
+//    private void validarFiltroDesenglobacao(FiltroDesenglobacaoDTO filtro) {
+//	if((filtro.getCotaDto().getNumeroCota() == null || filtro.getCotaDto().getNumeroCota() == 0) && 
+//		(filtro.getCotaDto().getNomePessoa() == null || filtro.getCotaDto().getNomePessoa().trim().isEmpty()))
+//	    throw new ValidacaoException(TipoMensagem.WARNING, "Informe um código ou nome.");
+//    }
 
     @Post
     @Path("/inserirEnglobacao")
@@ -126,7 +125,25 @@ public class DesenglobacaoController extends BaseController {
     	if((desenglobacao.getNumeroCotaEnglobada() == null || desenglobacao.getNumeroCotaEnglobada() == 0)){
     		throw new ValidacaoException(TipoMensagem.WARNING, "Informe uma cota para englobar");
 		}
+    	if((desenglobacao.getPorcentagemCota() == null || desenglobacao.getPorcentagemCota() <= 0)){
+    		throw new ValidacaoException(TipoMensagem.WARNING, "Cota ["+ desenglobacao.getNumeroCotaEnglobada() +" ], não englobada/alterada, pois estava sem porcentagem para cota!");
+    	}
+    	
+    	validarCota(desenglobacao.getNumeroCotaEnglobada());
+    	
     }
+
+	private void validarCota(Integer numeroCota) {
+		Cota cotaPesquisada = cotaService.obterPorNumeroDaCota(numeroCota);
+
+    	String situacaoCadastro = cotaPesquisada.getSituacaoCadastro().toString();
+    	
+    	if((situacaoCadastro).equalsIgnoreCase("INATIVO")){
+    		throw new ValidacaoException(TipoMensagem.WARNING, "Cota " + numeroCota + " não está Ativa!");
+    	}
+	}
+    
+    
 
     @Get
     @Path("/exportar")
@@ -182,15 +199,9 @@ public class DesenglobacaoController extends BaseController {
     @Path("/verificarCota")
     public void verificarCota(Integer numeroCota) {
     
-    	Cota cotaPesquisada = cotaService.obterPorNumeroDaCota(numeroCota);
-
-    	String situacaoCadastro = cotaPesquisada.getSituacaoCadastro().toString();
+    	this.validarCota(numeroCota);
     	
-    	if((situacaoCadastro).equalsIgnoreCase("INATIVO")){
-    		throw new ValidacaoException(TipoMensagem.WARNING, "Cota " + numeroCota + " não está Ativa!");
-    	}
-    	
-	result.use(Results.json()).from(situacaoCadastro, "result").recursive().serialize();
+	result.use(Results.json()).from("", "result").recursive().serialize();
     }
 }
 
