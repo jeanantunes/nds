@@ -52,7 +52,7 @@
 					<td width="50"><strong>C&oacute;digo:</strong></td>					
 					<td width="120"><input type="text"  name="codigoProdutoCadastro" id="codigoProdutoCadastro" style="width:80px;" maxlength="30" /></td>					
 					<td width="50" name="tdCodigoProdutoICDCadastro" ><strong>C&oacute;digo ICD:</strong></td>
-					<td width="120" name="tdCodigoProdutoICDCadastro"><input type="text"  name="codigoProdutoICDCadastro" id="codigoProdutoICDCadastro" style="width:80px;" maxlength="30" /></td>
+					<td width="120" name="tdCodigoProdutoICDCadastro"><input type="text"  name="codigoProdutoICDCadastro" id="codigoProdutoICDCadastro" style="width:80px;" maxlength="6" /></td>
 										
 				</tr>
 				<tr>
@@ -255,18 +255,6 @@
 							                        <option value="">Selecione</option>
 							                        <c:forEach varStatus="counter" var="itemFormato" items="${listaFormatoProduto}">
 									                    <option value="${itemFormato.key}">${itemFormato.value}</option>
-									                </c:forEach>
-							                    </select> 
-											</td>
-										</tr>
-										
-										<tr>
-											<td><strong>Classificação:</strong></td>
-											<td>
-												<select class="habilitarCampoInterfaceSegmentacao" name="comboClassifProd" id="comboClassifProd" style="width:150px;">
-							                        <option value="">Selecione</option>
-							                        <c:forEach varStatus="counter" var="itemClassif" items="${listaClassifProduto}">
-									                    <option value="${itemClassif.key}">${itemClassif.value}</option>
 									                </c:forEach>
 							                    </select> 
 											</td>

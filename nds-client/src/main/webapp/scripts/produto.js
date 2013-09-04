@@ -560,8 +560,7 @@ var produtoController = $.extend(true, {
 		$("#codigoProdutoCadastro", this.workspace).enable();
 		$("#comboTipoDesconto", produtoController.workspace).hide();
 		$("#tipoDescontoManual", produtoController.workspace).show();
-		$("#percentualDesconto", produtoController.workspace).removeAttr('disabled');
-		$("td[name='tdCodigoProdutoICDCadastro']", produtoController.workspace).hide();
+		$("#percentualDesconto", produtoController.workspace).removeAttr('disabled');		
 	},
 
 	carregarNovoProduto : function(callback) {
@@ -624,6 +623,7 @@ var produtoController = $.extend(true, {
 		
 		 var params = [{name:"produto.id",value:$("#idProduto", produtoController.workspace).val()},
         			   {name:"produto.codigo",value:$("#codigoProdutoCadastro", produtoController.workspace).val()},
+        			   {name:"produto.codigoICD",value:$("#codigoProdutoICDCadastro", produtoController.workspace).val()},
         			   {name:"produto.nome",value:$("#nomeProduto", produtoController.workspace).val()},
         			   {name:"produto.peb",value:$("#peb", produtoController.workspace).val()},
         			   {name:"produto.pacotePadrao",value:$("#pacotePadrao", produtoController.workspace).val()},
