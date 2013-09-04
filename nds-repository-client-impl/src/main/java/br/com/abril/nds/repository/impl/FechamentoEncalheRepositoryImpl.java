@@ -406,8 +406,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		sql.append(" ( ");
 		
-		sql.append(getSqlCotaAusenteComChamadaEncalhe(true, isSomenteCotasSemAcao).toString());
-		sql.append(" union all ");
 		sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, isSomenteCotasSemAcao).toString());		 
 
 		sql.append(" ) as ausentes	");
