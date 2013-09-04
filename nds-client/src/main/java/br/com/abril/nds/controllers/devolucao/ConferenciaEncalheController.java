@@ -377,7 +377,14 @@ public class ConferenciaEncalheController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não existe chamada de encalhe para essa cota.");
 		}
 		
-		boolean indCotaComRecolhimento = conferenciaEncalheService.isCotaComReparteARecolherNaDataOperacao(numeroCota);
+		boolean indCotaComRecolhimento = this.conferenciaEncalheService.isCotaComReparteARecolherNaDataOperacao(numeroCota);
+		
+		boolean hasCotaAusenteFechamentoEncalhe = this.conferenciaEncalheService.hasCotaAusenteFechamentoEncalhe(numeroCota);
+		
+		if (hasCotaAusenteFechamentoEncalhe) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Cota já inserida no processo de cota ausente. Por favor, verificar.");
+		}
 
 		this.session.setAttribute(NUMERO_COTA, numeroCota);
 		this.session.setAttribute(COTA, cota);
