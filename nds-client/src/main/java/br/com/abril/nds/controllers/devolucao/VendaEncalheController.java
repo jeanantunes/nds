@@ -702,7 +702,6 @@ public class VendaEncalheController extends BaseController {
 				
 				filtro.getPaginacao().setPaginaAtual(null);
 				filtro.getPaginacao().setQtdResultadosPorPagina(null);
-				filtro.setOrdenacaoColuna(null);
 			}
 			
 			if(filtro.getNumeroCota()!= null){

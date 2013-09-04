@@ -1255,7 +1255,7 @@ $(function() {
 			sortable : true,
 			align : 'center'
 		}],
-		sortname : "nomeCota",
+		sortname : "dataVenda",
 		sortorder : "asc",
 		usepager : true,
 		useRp : true,

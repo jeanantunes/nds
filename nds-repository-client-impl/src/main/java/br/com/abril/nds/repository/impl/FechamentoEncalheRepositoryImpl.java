@@ -261,35 +261,15 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	{
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("select chamadaEncalhe.sequencia as sequencia, ");
-		hql.append("produto.nome as produto, ");
-		hql.append("produto.codigo as codigo, ");
-		hql.append("produtoEdicao.numeroEdicao as edicao, ");
-		hql.append("produtoEdicao.precoVenda as precoCapa, ");
-		hql.append("produtoEdicao.origem as origem, ");
-		hql.append("descontoLogisticaProdEdicao.id as produtoEdicaoDescontoLogisticaId, ");
-		hql.append("descontoLogisticaProduto.id as produtoDescontoLogisticaId, ");
+		hql.append(" select count ( chamadaEncalhe.id) ");
+		hql.append(" from ChamadaEncalhe as chamadaEncalhe ");
+		hql.append(" join chamadaEncalhe.produtoEdicao as produtoEdicao ");
+		hql.append(" join produtoEdicao.produto as produto ");
+		hql.append(" left join produtoEdicao.descontoLogistica as descontoLogisticaProdEdicao ");
+		hql.append(" left join produto.descontoLogistica as descontoLogisticaProduto ");
+		hql.append(" join produto.fornecedores as fornecedor ");
 		
-		hql.append("coalesce(produtoEdicao.precoVenda, 0) - (coalesce(produtoEdicao.precoVenda, 0)  * ( ");
-		hql.append("   CASE WHEN produtoEdicao.origem = :origemInterface ");
-		hql.append("   THEN (coalesce(descontoLogisticaProdEdicao.percentualDesconto, descontoLogisticaProduto.percentualDesconto, 0 ) /100 ) ");
-		hql.append("   ELSE (coalesce(produtoEdicao.desconto, produto.desconto, 0) / 100) END ");
-		hql.append("   )) as precoCapaDesconto ");
-		
-		
-		hql.append(" , coalesce(produtoEdicao.precoVenda, 0) as precoCapa ");
-		hql.append(" , produtoEdicao.id as produtoEdicao ");
-		hql.append(" , case when  produtoEdicao.parcial  = true  then 'P' else 'N' end  as tipo ");
-		
-		
-		hql.append("from ChamadaEncalhe as chamadaEncalhe ");
-		hql.append("join chamadaEncalhe.produtoEdicao as produtoEdicao ");
-		hql.append("join produtoEdicao.produto as produto ");
-		hql.append("left join produtoEdicao.descontoLogistica as descontoLogisticaProdEdicao ");
-		hql.append("left join produto.descontoLogistica as descontoLogisticaProduto ");
-		hql.append("join produto.fornecedores as fornecedor ");
-		
-		hql.append("where chamadaEncalhe.dataRecolhimento = :dataRecolhimento ");
+		hql.append(" where chamadaEncalhe.dataRecolhimento = :dataRecolhimento ");
 		
 		if (filtro.getFornecedorId() != null) {
 			hql.append("and fornecedor.id = :fornecedorId ");
@@ -298,13 +278,12 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		Query query =  getSession().createQuery(hql.toString());
 		
 		query.setParameter("dataRecolhimento", filtro.getDataEncalhe());
-		query.setParameter("origemInterface", Origem.INTERFACE);
 
 		if (filtro.getFornecedorId() != null) {
 			query.setLong("fornecedorId", filtro.getFornecedorId());
 		}
 		
-		return query.list().size();
+		return ((Long) query.uniqueResult()).intValue();
 	}
 	
 	
@@ -406,8 +385,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		sql.append(" ( ");
 		
-		sql.append(getSqlCotaAusenteComChamadaEncalhe(true, isSomenteCotasSemAcao).toString());
-		sql.append(" union all ");
 		sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, isSomenteCotasSemAcao).toString());		 
 
 		sql.append(" ) as ausentes	");
