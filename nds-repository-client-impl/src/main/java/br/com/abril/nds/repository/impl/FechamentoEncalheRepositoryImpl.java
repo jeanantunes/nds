@@ -712,6 +712,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	
 		StringBuilder sql = new StringBuilder();
 		
+		sql.append(getSqlCotaAusenteComChamadaEncalhe(false, isSomenteCotasSemAcao).toString());
+		sql.append(" union all ");
 		sql.append(getSqlCotaAusenteSemChamadaEncalhe(false, isSomenteCotasSemAcao).toString());
 		
 		if("acao".equals(sortname)) {
