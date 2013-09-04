@@ -572,9 +572,19 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			return;
 		}
 		
+		Date dataLancamento = recebimentoFisicoDTO.getDataLancamento();
+		Long idProdutoEdicao = recebimentoFisicoDTO.getIdProdutoEdicao();
+		
 		Lancamento lancamento =
-			lancamentoRepository.obterLancamentoPorItensRecebimentoFisico(
-				recebimentoFisicoDTO.getDataLancamento(), recebimentoFisicoDTO.getIdProdutoEdicao());
+			lancamentoRepository.obterLancamentoPosteriorDataLancamento(
+				dataLancamento, idProdutoEdicao);
+		
+		if (lancamento == null) {
+			
+			lancamento = 
+				lancamentoRepository.obterLancamentoAnteriorDataLancamento(
+					dataLancamento, idProdutoEdicao);
+		}
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoService.buscarPorID(recebimentoFisicoDTO.getIdProdutoEdicao());
 				
@@ -602,7 +612,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 				lancamentoParcial.setStatus(StatusLancamentoParcial.PROJETADO);		
 			}
 			
-			lancamentoParcial.setLancamentoInicial(recebimentoFisicoDTO.getDataLancamento());
+			lancamentoParcial.setLancamentoInicial(dataLancamento);
 			lancamentoParcial.setRecolhimentoFinal(recebimentoFisicoDTO.getDataRecolhimento());
 			
 			lancamentoParcialRepository.merge(lancamentoParcial);
@@ -623,10 +633,10 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 
 			lancamento = new Lancamento();
 			
-			lancamento.setDataLancamentoDistribuidor(recebimentoFisicoDTO.getDataLancamento());
+			lancamento.setDataLancamentoDistribuidor(dataLancamento);
 			lancamento.setDataRecolhimentoDistribuidor(recebimentoFisicoDTO.getDataRecolhimento());
 
-			lancamento.setDataLancamentoPrevista(recebimentoFisicoDTO.getDataLancamento());
+			lancamento.setDataLancamentoPrevista(dataLancamento);
 			lancamento.setDataRecolhimentoPrevista(recebimentoFisicoDTO.getDataRecolhimento());
 			
 			lancamento.setTipoLancamento(recebimentoFisicoDTO.getTipoLancamento());		

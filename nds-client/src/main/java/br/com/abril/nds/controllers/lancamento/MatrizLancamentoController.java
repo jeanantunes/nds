@@ -297,10 +297,7 @@ public class MatrizLancamentoController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
 		}
 
-		if (datasConfirmadas == null || datasConfirmadas.size() <= 0){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione ao menos uma data!");
-		}
+		this.validarDatasConfirmacao(datasConfirmadas);
 	
 		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoSessao =
 			balanceamentoLancamento.getMatrizLancamento();
@@ -323,6 +320,26 @@ public class MatrizLancamentoController extends BaseController {
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,
 			"Balanceamento da matriz de lançamento confirmado com sucesso!"), "result").recursive().serialize();
+	}
+
+	private void validarDatasConfirmacao(List<Date> datasConfirmadas) {
+		
+		if (datasConfirmadas == null || datasConfirmadas.size() <= 0){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione ao menos uma data!");
+		}
+		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		for (Date dataConfirmada : datasConfirmadas) {
+			
+			if (dataConfirmada.before(dataOperacao)) {
+				
+				throw new ValidacaoException(TipoMensagem.WARNING,
+					"Não é possível confirmar uma data menor que a data de operação [ "
+						+ DateUtil.formatarDataPTBR(dataOperacao) + " ]");
+			}
+		}
 	}
 
 	@Post
