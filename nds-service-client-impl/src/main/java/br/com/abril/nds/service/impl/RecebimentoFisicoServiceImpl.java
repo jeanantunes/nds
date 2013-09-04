@@ -269,7 +269,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 			inserirMovimentoEstoque(usuarioLogado, recebimentoFisicoDTO);
 			
-			inserirLancamento(recebimentoFisicoDTO, dataAtual, usuarioLogado);
+			atualizarLancamento(recebimentoFisicoDTO, dataAtual, usuarioLogado);
 			
 		}
 		
@@ -298,7 +298,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 			inserirMovimentoEstoque(usuarioLogado, recebimentoFisicoDTO);
 			
-			inserirLancamento(recebimentoFisicoDTO, dataAtual, usuarioLogado);
+			atualizarLancamento(recebimentoFisicoDTO, dataAtual, usuarioLogado);
 			
 		}
 		
@@ -559,14 +559,11 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	
 	
 	/**
-	 * Caso não exista um registro um registro de lançamento, este será criado e amarrado ao itemRecebimentoFisico.
-	 * Caso o registro de lançamento exista, sera feito apenas a amarração deste com o itemRecebimentoFisico.
-	 * 
 	 * @param recebimentoFisicoDTO
 	 * @param dataAtual
 	 * @param usuarioLogado
 	 */
-	private void inserirLancamento(RecebimentoFisicoDTO recebimentoFisicoDTO, Date dataAtual, Usuario usuarioLogado) {
+	private void atualizarLancamento(RecebimentoFisicoDTO recebimentoFisicoDTO, Date dataAtual, Usuario usuarioLogado) {
 		
 		if(Origem.INTERFACE.equals(recebimentoFisicoDTO.getOrigemItemNota())) {
 			return;
@@ -631,59 +628,11 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 		} else {
 
-			lancamento = new Lancamento();
-			
-			lancamento.setDataLancamentoDistribuidor(dataLancamento);
-			lancamento.setDataRecolhimentoDistribuidor(recebimentoFisicoDTO.getDataRecolhimento());
-
-			lancamento.setDataLancamentoPrevista(dataLancamento);
-			lancamento.setDataRecolhimentoPrevista(recebimentoFisicoDTO.getDataRecolhimento());
-			
-			lancamento.setTipoLancamento(recebimentoFisicoDTO.getTipoLancamento());		
-
-			lancamento.setDataCriacao(dataAtual);
-		
-			lancamento.setReparte(recebimentoFisicoDTO.getRepartePrevisto());		
-			
-			lancamento.setStatus(StatusLancamento.CONFIRMADO);
-			
-			lancamento.setDataStatus(dataAtual);
-			
-			ItemRecebimentoFisico itemRecebimentoFisico = new ItemRecebimentoFisico();
-			itemRecebimentoFisico.setId(recebimentoFisicoDTO.getIdItemRecebimentoFisico());
-			
-			lancamento.getRecebimentos().add(itemRecebimentoFisico);
-			
-			lancamento.setProdutoEdicao(produtoEdicao);
-			
-			lancamentoRepository.adicionar(lancamento);
-			
-			inserirHistoricoLancamento(lancamento, dataAtual, usuarioLogado);
+			throw new ValidacaoException(TipoMensagem.WARNING,
+				"Lançamento não encontrado para o produto: " + produtoEdicao.getProduto().getNome()
+					+ " edição: " + produtoEdicao.getNumeroEdicao());
 		}
-
 		
-		
-		
-	}
-	
-	/**
-	 * Insere novo registro de historico de lancamento.
-	 * 
-	 * @param lancamento
-	 * @param dataAtual
-	 * @param usuarioLogado
-	 */
-	private void inserirHistoricoLancamento(Lancamento lancamento, Date dataAtual, Usuario usuarioLogado) {
-		
-		HistoricoLancamento historicoLancamento = new HistoricoLancamento();
-		
-		historicoLancamento.setDataEdicao(dataAtual);
-		historicoLancamento.setLancamento(lancamento);
-		historicoLancamento.setResponsavel(usuarioLogado);
-		historicoLancamento.setStatus(lancamento.getStatus());
-		historicoLancamento.setTipoEdicao(TipoEdicao.INCLUSAO);
-		
-		historicoLancamentoRepository.adicionar(historicoLancamento);
 	}
 	
 	private Diferenca obterDiferencaDeItemRecebimentoFisico(
