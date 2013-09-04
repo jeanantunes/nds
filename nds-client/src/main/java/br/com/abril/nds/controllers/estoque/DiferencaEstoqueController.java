@@ -657,6 +657,7 @@ public class DiferencaEstoqueController extends BaseController {
 			diferencaVO.setTipoDirecionamento(TipoDirecionamentoDiferenca.ESTOQUE);
 				
 			incluirDiferencaEstoque(diferencaVO, tipoDiferenca);		
+			
 		}
 		
 		this.httpSession.setAttribute(MODO_NOVA_DIFERENCA_SESSION_ATTRIBUTE,true);
@@ -900,6 +901,7 @@ public class DiferencaEstoqueController extends BaseController {
 		
 		Diferenca diferenca = this.obterDiferenca(diferencaVO, tipoDiferenca, id, dataMovimentacao); 
 		
+		listaDiferencas.removeAll(Collections.singleton(null));
 		HashMap<Long, Set<Diferenca>> mapaLongListaDiferencas = this.diferencaEstoqueService.verificarDiferencasIguais(listaDiferencas, diferenca);
 		Set<Entry<Long, Set<Diferenca>>> entrySet = mapaLongListaDiferencas.entrySet();
 		Entry<Long, Set<Diferenca>> iterator = entrySet.iterator().next();
