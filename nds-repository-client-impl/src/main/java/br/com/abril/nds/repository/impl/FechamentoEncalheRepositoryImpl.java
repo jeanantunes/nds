@@ -384,8 +384,12 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		sql.append(" select count(idCota) from  ");
 		
 		sql.append(" ( ");
+
+		sql.append(getSqlCotaAusenteComChamadaEncalhe(true, isSomenteCotasSemAcao).toString());
 		
-		sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, isSomenteCotasSemAcao).toString());		 
+		sql.append(" union all ");
+		
+		sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, isSomenteCotasSemAcao).toString()); 
 
 		sql.append(" ) as ausentes	");
 		
@@ -396,8 +400,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.setParameter("principal", true);
 
 		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO.name());
-		
-		query.setParameter("statusConcluido", StatusOperacao.CONCLUIDO.name());
 		
 		query.setParameter("inativo", SituacaoCadastro.INATIVO.name());
 		
@@ -473,8 +475,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	sql.append("            from                                                        ");
 	sql.append("                controle_conferencia_encalhe_cota cec                   ");
 	sql.append("            where                                                       ");
-	sql.append("                cec.data_operacao = :dataEncalhe                        ");
-	sql.append("                and  cec.status = :statusConcluido         				");     
+	sql.append("                cec.data_operacao = :dataEncalhe                        ");   
 	sql.append("        )                                                               ");
 	sql.append("		and pdv.PONTO_PRINCIPAL = :principal                            ");
 	
@@ -558,8 +559,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		sql.append("            from                                                        ");
 		sql.append("                controle_conferencia_encalhe_cota cec                   ");
 		sql.append("            where                                                       ");
-		sql.append("                cec.data_operacao = :dataEncalhe                        ");
-		sql.append("                and  cec.status = :statusConcluido         				");     
+		sql.append("                cec.data_operacao = :dataEncalhe                        ");    
 		sql.append("        )                                                               ");
 		sql.append("		and pdv.PONTO_PRINCIPAL = :principal                            ");
 		
@@ -657,7 +657,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		sql.append("                controle_conferencia_encalhe_cota cec       ");
 		sql.append("            where                                           ");
 		sql.append("                cec.data_operacao = :dataEncalhe            ");
-		sql.append("                and cec.status = :statusConcluido           ");
 		sql.append("        )                                                   ");
 		sql.append("		and pdv.PONTO_PRINCIPAL = :principal                ");
 		sql.append("		and cota.ID not in (                                ");
@@ -692,14 +691,18 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append(getSqlCotaAusenteComChamadaEncalhe(false, isSomenteCotasSemAcao).toString());
+		
 		sql.append(" union all ");
+		
 		sql.append(getSqlCotaAusenteSemChamadaEncalhe(false, isSomenteCotasSemAcao).toString());
 		
 		if("acao".equals(sortname)) {
+			
 			sortname = "fechado";
 		}
 		 
 		if (sortname != null && sortorder != null) {
+			
 			sql.append("  ORDER BY " + sortname + " " + sortorder);
 		}
 		
@@ -725,8 +728,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO.name());
 		
 		query.setParameter("dataEncalhe", dataEncalhe);
+		
 		query.setParameter("principal", true);
-		query.setParameter("statusConcluido", StatusOperacao.CONCLUIDO.name());
 
 		query.setParameter("inativo", SituacaoCadastro.INATIVO.name());
 		
@@ -796,8 +799,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         .append("  from                                             ")
         .append("      controle_conferencia_encalhe_cota cec        ")
         .append("  where                                            ")
-        .append("      cec.data_operacao = :dataEncalhe and         ")
-        .append("      cec.status = :statusConcluido                ")
+        .append("      cec.data_operacao = :dataEncalhe             ")
 		.append("   )												")
 		.append("	                                                ")
 		.append("	and pdv.PONTO_PRINCIPAL=:principal  ");
@@ -1315,8 +1317,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.setParameter("principal", true);
 
 		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO.name());
-		
-		query.setParameter("statusConcluido", StatusOperacao.CONCLUIDO.name());
 		
 		query.setParameter("inativo", SituacaoCadastro.INATIVO.name());
 		
