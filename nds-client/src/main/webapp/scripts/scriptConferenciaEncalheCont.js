@@ -184,6 +184,12 @@ var ConferenciaEncalheCont = $.extend(true, {
 					ConferenciaEncalheCont.ifCotaEmiteNfe(data, ConferenciaEncalheCont.popup_alert);
 					
 				}
+			},
+			function() {
+				
+				$("#numeroCota", ConferenciaEncalhe.workspace).val("");
+				
+				focusSelectRefField($("#numeroCota", ConferenciaEncalhe.workspace));
 			}
 		);
 	},
