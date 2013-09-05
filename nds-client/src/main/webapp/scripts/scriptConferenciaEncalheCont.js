@@ -60,6 +60,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 		
 		$("#numNotaFiscal", ConferenciaEncalheCont.workspace).numeric();
 		
+		$("#chaveAcessoNFE", ConferenciaEncalheCont.workspace).numeric();
+		
 		$("#qtdCE", ConferenciaEncalheCont.workspace).numeric();
 		
 		$("#dataNotaFiscal", ConferenciaEncalheCont.workspace).mask("99/99/9999");

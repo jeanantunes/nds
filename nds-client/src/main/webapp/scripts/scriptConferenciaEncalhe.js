@@ -143,7 +143,9 @@ var ConferenciaEncalhe = $.extend(true, {
 		$("#numNotaFiscal", ConferenciaEncalhe.workspace).numeric();
 		
 		$("#qtdCE", ConferenciaEncalhe.workspace).numeric();
-				
+		
+		$("#chaveAcessoNFE", ConferenciaEncalhe.workspace).numeric();
+
 		$("#dataNotaFiscal", ConferenciaEncalhe.workspace).mask("99/99/9999");
 		
 		$("#valorNotaFiscal", ConferenciaEncalhe.workspace).numeric();
