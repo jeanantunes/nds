@@ -31,6 +31,10 @@ public class ParametrosRecolhimentoDistribuidor implements Serializable {
 	@Column(name = "DIA_RECOLHIMENTO_QUINTO",nullable=true)
 	private boolean diaRecolhimentoQuinto;
 	
+	/**
+	 * Parâmetro que indica se o distribuidor aceita a
+	 * realização de conferência de encalhe antecipada.
+	 */
 	@Column(name = "PERMITE_RECOLHER_DIAS_POSTERIORES",nullable=true)
 	private boolean permiteRecolherDiasPosteriores;
 

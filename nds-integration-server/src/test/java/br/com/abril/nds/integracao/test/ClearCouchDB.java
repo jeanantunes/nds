@@ -14,7 +14,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import br.com.abril.nds.integracao.couchdb.CouchDbProperties;
 import br.com.abril.nds.integracao.fileimporter.StartBatch;
-import br.com.abril.nds.integracao.model.canonic.IntegracaoDocument;
+import br.com.abril.nds.integracao.model.canonic.EMS0127Input;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @TransactionConfiguration(transactionManager="transactionManager")
@@ -27,22 +27,24 @@ public class ClearCouchDB {
 
 	@Test
 	public void limparCouchDB() {
-		
+		try{
 		CouchDbClient couchDbClient = getCouchDBClient();
 		
 		View view = couchDbClient.view("importacao/porTipoDocumento");
 		
-		view.key("EMS0135");
+		view.key("EMS0127");
 		view.limit(couchDbProperties.getBachSize());
 		view.includeDocs(true);
-		ViewResult<String, Void, ?> result = view.queryView(String.class, Void.class, null);
+		
+		ViewResult<String, Void, ?> result = view.queryView(String.class, Void.class, EMS0127Input.class);
 
 		for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {
 			
-			IntegracaoDocument doc = (IntegracaoDocument) row.getDoc(); 
-		
-			couchDbClient.remove(doc);
+			couchDbClient.remove(row.getDoc());
 			
+		}
+		}catch(Exception e){
+			e.printStackTrace();
 		}
 
 	}
