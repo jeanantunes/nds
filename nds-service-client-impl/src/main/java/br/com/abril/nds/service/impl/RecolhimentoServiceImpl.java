@@ -173,8 +173,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			for (ProdutoRecolhimentoDTO produtoRecolhimento : listaProdutoRecolhimentoDTO) {
 			
-				if (!produtoRecolhimento.isBalanceamentoConfirmado()
-						&& !produtoRecolhimento.isPossuiChamada()) {
+				if (!produtoRecolhimento.isBalanceamentoConfirmado()) {
 				
 					mapaRecolhimentos.put(produtoRecolhimento.getIdLancamento(), produtoRecolhimento);
 					
@@ -444,11 +443,21 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 
 					boolean indNovaChamadaEncalhe = false;
 					
-					ProdutoEdicao produtoEdicao = estoqueProdutoCota
-							.getProdutoEdicao();
+					//TODO: tratar chamada encalhe cota que ja tem chamada
+					
+					ProdutoEdicao produtoEdicao = estoqueProdutoCota.getProdutoEdicao();
 
 					Cota cota = estoqueProdutoCota.getCota();
 
+					Boolean existeChamadaEncalheCota = 
+						this.chamadaEncalheCotaRepository.existeChamadaEncalheCota(
+							cota.getId(), produtoEdicao.getId());
+					
+					if (existeChamadaEncalheCota) {
+						
+						continue;
+					}
+					
 					ChamadaEncalhe chamadaEncalhe =
 						this.obterChamadaEncalheLista(
 							listaChamadaEncalhe, dataRecolhimento, produtoEdicao.getId());

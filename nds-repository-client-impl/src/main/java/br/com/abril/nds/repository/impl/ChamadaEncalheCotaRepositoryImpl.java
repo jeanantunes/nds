@@ -716,5 +716,27 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 		return query.list();
 	}
+	
+	@Override
+	public Boolean existeChamadaEncalheCota(Long idCota, Long idProdutoEdicao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select case when(count(cec) > 0) then true else false end ");
+		
+		hql.append(" from ChamadaEncalheCota cec ");
+		
+		hql.append(" where cec.cota.id = :idCota and ");
+		
+		hql.append(" cec.chamadaEncalhe.produtoEdicao.id = :idProdutoEdicao ");
 
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idCota", idCota);
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return (Boolean) query.uniqueResult();
+	}
+	
 }
