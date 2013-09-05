@@ -457,14 +457,6 @@ public class BalanceamentoRecolhimentoTest extends AbstractRepositoryImplTest {
 						Collections.singletonList(fornecedorDinap.getId()), GrupoProduto.CROMO);
 
 		Assert.assertEquals(4, resumos.size());
-
-		ProdutoRecolhimentoDTO produtoRecolhimento = resumos.get(0);
-		
-		Assert.assertFalse(produtoRecolhimento.isPossuiChamada());
-		
-		produtoRecolhimento = resumos.get(1);
-		
-		Assert.assertTrue(produtoRecolhimento.isPossuiChamada());
 		
 		boolean ordenacaoPorDataCorreta = !DateUtil.isDataInicialMaiorDataFinal(resumos.get(0).getDataRecolhimentoDistribuidor(), 
 																				resumos.get(1).getDataRecolhimentoDistribuidor());
