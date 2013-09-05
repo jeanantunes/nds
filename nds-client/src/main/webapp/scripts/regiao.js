@@ -1913,7 +1913,7 @@ var regiaoController = $.extend(true, {
 			var cotaJaExiste = $("#idLinhaCota" + num , regiaoController.workspace).length>0;
 			
 			if( cotaJaExiste ) {				
-				exibirMensagemDialog("WARNING",["Cota j� foi selecionada."]);
+				exibirMensagemDialog("WARNING",["Cota já foi selecionada."]);
 				$('#idNumCota' + atual , regiaoController.workspace).val('');
 				$('#idNomeCota' + atual , regiaoController.workspace).val('');
 			}
