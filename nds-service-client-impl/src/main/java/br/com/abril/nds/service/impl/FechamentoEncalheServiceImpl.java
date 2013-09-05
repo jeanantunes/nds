@@ -1092,6 +1092,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			chamadaEncalheCota.setPostergado(true);
 			this.chamadaEncalheCotaRepository.merge(chamadaEncalheCota);
 			
+			ChamadaEncalhe chamadaEncalheOriginal = chamadaEncalheCota.getChamadaEncalhe();
+			
 			// Criando chamada de encalhe
 			ChamadaEncalhe chamadaEncalhe = this.chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(
 					chamadaEncalheCota.getChamadaEncalhe().getProdutoEdicao(), 
@@ -1104,6 +1106,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				chamadaEncalhe.setDataRecolhimento(dataPostergacao);
 				chamadaEncalhe.setProdutoEdicao(chamadaEncalheCota.getChamadaEncalhe().getProdutoEdicao());
 				chamadaEncalhe.setTipoChamadaEncalhe(chamadaEncalheCota.getChamadaEncalhe().getTipoChamadaEncalhe());
+				
+				chamadaEncalhe.setLancamentos(chamadaEncalheOriginal.getLancamentos());
+				chamadaEncalhe.setSequencia(chamadaEncalheOriginal.getSequencia());
+				
 				this.chamadaEncalheRepository.adicionar(chamadaEncalhe);
 			} 
 			
