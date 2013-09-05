@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -233,14 +234,24 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 	private void setParametersQueryResumoExpedicaoPorProduto(FiltroResumoExpedicaoDTO filtro, Query query) {
 		
 		query.setParameter("dataLancamento", filtro.getDataLancamento());
-		query.setParameter("statusExpedido", StatusLancamento.EXPEDIDO.name());
+		query.setParameterList("statusAposExpedido", 
+							   Arrays.asList(StatusLancamento.EXPEDIDO.name(),
+											 StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name(),
+											 StatusLancamento.EM_RECOLHIMENTO.name(),
+											 StatusLancamento.RECOLHIDO.name(),
+											 StatusLancamento.FECHADO.name()));
 
 	}
 	
 	private void setParametersQueryResumoExpedicaoProdutosDoBox(FiltroResumoExpedicaoDTO filtro, Query query) {
 		
 		query.setParameter("dataLancamento", filtro.getDataLancamento());
-		query.setParameter("statusExpedido", StatusLancamento.EXPEDIDO);
+		query.setParameterList("statusAposExpedido", 
+				   Arrays.asList(StatusLancamento.EXPEDIDO.name(),
+								 StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name(),
+								 StatusLancamento.EM_RECOLHIMENTO.name(),
+								 StatusLancamento.RECOLHIDO.name(),
+								 StatusLancamento.FECHADO.name()));
 
 		if(filtro != null && filtro.getCodigoBox() != null)
 			query.setParameter("codigoBox", filtro.getCodigoBox());
@@ -344,8 +355,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 				.append("     and rd.data_movimento between innerQuery.dataLancamento ")
 				.append("     and COALESCE((select min(data_lcto_distribuidor) ")
 				.append("	  from lancamento where data_lcto_distribuidor > innerQuery.dataLancamento ")
-				.append("  	  and produto_edicao_id = produtoEdicaoId and status = 'EXPEDIDO'), innerQuery.dataLancamento) ")
-				
+				.append("  	  and produto_edicao_id = produtoEdicaoId and status IN( 'EXPEDIDO','EM_BALANCEAMENTO_RECOLHIMENTO', 'BALANCEADO_RECOLHIMENTO', 'EM_RECOLHIMENTO', 'RECOLHIDO', 'FECHADO')), innerQuery.dataLancamento) ")
 				.append("     group by d.PRODUTO_EDICAO_ID 							 ")
 				.append(" ), 0) AS qntDiferenca, 								 ")
 				.append(" sum(innerQuery.valorFaturado) AS valorFaturado, 		 ")
@@ -405,7 +415,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 				.append(" INNER JOIN COTA cota ON estudoCota.COTA_ID=cota.ID ")
 				.append(" LEFT OUTER JOIN BOX box ON cota.BOX_ID=box.ID ")
 				.append(" WHERE lancamento.DATA_LCTO_DISTRIBUIDOR = :dataLancamento ")
-				.append(" AND lancamento.STATUS = :statusExpedido ");
+				.append(" AND lancamento.STATUS IN ( :statusAposExpedido ) ");
 
 		sql.append(" FROM ( ")
 		   .append(innerQuery)

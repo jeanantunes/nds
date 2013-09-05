@@ -615,11 +615,21 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					
 					if (movimentoEstoque.getOrigem()!=null && movimentoEstoque.getOrigem().equals(Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE)){
 						
+						if (estoqueProduto.getQtdeDevolucaoEncalhe()==null){
+							
+							estoqueProduto.setQtdeDevolucaoEncalhe(BigInteger.ZERO);
+						}
+
 					    novaQuantidade = estoqueProduto.getQtdeDevolucaoEncalhe().subtract(movimentoEstoque.getQtde());
 					    
 					    estoqueProduto.setQtdeDevolucaoEncalhe(novaQuantidade);
 					}
 					else{
+						
+						if (estoqueProduto.getQtde()==null){
+								
+							estoqueProduto.setQtde(BigInteger.ZERO);
+						}
 	
 						novaQuantidade = estoqueProduto.getQtde().subtract(movimentoEstoque.getQtde());
 						
@@ -638,11 +648,21 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					
 					if (movimentoEstoque.getOrigem()!=null && movimentoEstoque.getOrigem().equals(Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE)){
 						
+						if (estoqueProduto.getQtdeDevolucaoEncalhe()==null){
+							
+							estoqueProduto.setQtdeDevolucaoEncalhe(BigInteger.ZERO);
+						}
+						
 						novaQuantidade = estoqueProduto.getQtdeDevolucaoEncalhe().add(movimentoEstoque.getQtde());
 					    
 					    estoqueProduto.setQtdeDevolucaoEncalhe(novaQuantidade);
 					}
 					else{
+						
+                        if (estoqueProduto.getQtde()==null){
+							
+							estoqueProduto.setQtde(BigInteger.ZERO);
+						}
 	
 						novaQuantidade = estoqueProduto.getQtde().add(movimentoEstoque.getQtde());	
 						
