@@ -11,7 +11,7 @@ $(".produtosInfosGrid").flexigrid({
 		dataType : 'json',
 		colModel : [{
 			display : 'Codigo',
-			name : 'codigoICD',
+			name : 'codProduto',
 			width : 55,
 			sortable : true,
 			align : 'center'
