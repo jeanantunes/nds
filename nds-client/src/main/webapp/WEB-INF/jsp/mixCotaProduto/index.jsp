@@ -53,7 +53,7 @@
           <span class="bt_novos" title="Adicionar em Lote"  id="btAddLoteMixCota"><a href="javascript:;" onclick="mixCotaProdutoController.addLoteMix();"><img src="images/ico_integrar.png" hspace="5" border="0" />Adicionar em Lote</a></span>
          
          <span class="bt_novos" title="Novo"  id="btNovoMixCota"><a href="javascript:mixCotaProdutoController.novoMixPorCota();"><img src="images/ico_salvar.gif" hspace="5" border="0" />Novo</a></span>
-         <!--<span class="bt_novos" title="Histï¿½rico"><a href="javascript:;" onclick="mostra_historico();"><img src="../images/ico_msg_anteriores.gif" hspace="5" border="0" />Histï¿½rico</a></span>-->
+         <!--<span class="bt_novos" title="Histórico"><a href="javascript:;" onclick="mostra_historico();"><img src="../images/ico_msg_anteriores.gif" hspace="5" border="0" />Histï¿½rico</a></span>-->
          <span class="bt_novos" title="Gerar Arquivo" id="btGerarArquivoMixCota"><a href="${pageContext.request.contextPath}/distribuicao/mixCotaProduto/exportarGridCota?fileType=XLS"><img src="images/ico_excel.png" hspace="5" border="0" />Arquivo</a></span>
          <span class="bt_novos" title="Imprimir" id="btImprimirMixCota"><a href="${pageContext.request.contextPath}/distribuicao/mixCotaProduto/exportarGridCota?fileType=PDF"><img src="images/ico_impressora.gif" alt="Imprimir" hspace="5" border="0" />Imprimir</a></span>
 		 <span class="bt_novos" title="Excluir Todos" id="btExcluirTudoCota"><a href="javascript:mixCotaProdutoController.excluirTodos();"><img src="images/ico_excluir.gif" alt="Excluir Todos" hspace="5" border="0" />Excluir Todos</a></span>
@@ -262,6 +262,36 @@
            		<td><input type="text"  style="width:80px;" maxlength="5"></td>
            		<td><input type="text"  style="width:80px;" maxlength="5"></td>
            		<td><input type="image" id="excluirLinha0" src="images/ico_excluir.gif" onclick="mixCotaProdutoController.excluirLinha($(this));" /></td>
+   			</tr>
+   			</tbody>
+        </table>
+	</div>
+	
+	<!-- DIALOG EDICAO MIX POR COTA -->	
+	<div id="dialog-editar-mix-cota" style="display:none;" title="Editar Mix">
+	<table id="tableEdicaoMixCota" border="0" cellspacing="1" cellpadding="1" >
+         <thead>
+        		<tr>
+         		<td><strong>C&oacute;digo:</strong></td>
+         		<td><strong>Produto:</strong></td>
+         		<td><strong>Classificação:</strong></td>
+         		<td><strong>Rep. Mínimo:</strong></td>
+         		<td><strong>Rep. Máximo:</strong></td>
+        		</tr>
+         </thead>
+         <tbody>
+           <tr> 
+           		<td><input id="codigoModal" class="codigoId" type="text"  style="width:80px;" onblur="mixCotaProdutoController.pesquisarPorCodigoProduto('#'+this.id,'#'+$(this).parent().parent().find('.target').attr('id'), '#'+$(this).parent().parent().find('.classificacao').attr('id'))"></td>
+           		<td><input id="produtoModal" type="text"  style="width:80px;" class="target"></td>
+           		<td width=80px;>
+	                <select name="select" id="classifMixModal" style="width:160px;" class="classificacao">
+				            <c:forEach items="${classificacao}" var="tipoProduto">
+								<option value="<c:out value="${tipoProduto.descricao}"/>" ${tipoProduto.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoProduto.descricao}"/></option>
+							</c:forEach>
+	          		</select>
+                </td>
+           		<td><input type="text"  style="width:80px;" maxlength="5"></td>
+           		<td><input type="text"  style="width:80px;" maxlength="5"></td>
    			</tr>
    			</tbody>
         </table>
