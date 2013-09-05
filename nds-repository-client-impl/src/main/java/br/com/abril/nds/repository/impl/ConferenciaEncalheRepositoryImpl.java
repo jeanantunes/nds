@@ -390,66 +390,46 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(Integer numeroCota, String codigoBarras, Date dataRecolhimento) {
+	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(Integer numeroCota, String codigoBarras) {
 		
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append(" select	 ");
-		sql.append(" PROD_EDICAO.ID as chave,	");
-		sql.append(" PROD_EDICAO.CODIGO_DE_BARRAS as value, ");
-		sql.append(" CONCAT(PROD_EDICAO.CODIGO_DE_BARRAS, ' - ', PROD.NOME,' - Ed.:', PROD_EDICAO.NUMERO_EDICAO) as label ");
 		
-		sql.append("    FROM    ");
-		sql.append("    CHAMADA_ENCALHE_COTA AS CH_ENCALHE_COTA 	");
-		sql.append("	inner join COTA AS COTA ON ");
-		sql.append("	(COTA.ID = CH_ENCALHE_COTA.COTA_ID)	");
-		sql.append("	inner join CHAMADA_ENCALHE AS CH_ENCALHE ON ");
-		sql.append("	(CH_ENCALHE_COTA.CHAMADA_ENCALHE_ID = CH_ENCALHE.ID)	");
-		sql.append("	inner join PRODUTO_EDICAO as PROD_EDICAO ON ");
-		sql.append("	(PROD_EDICAO.ID = CH_ENCALHE.PRODUTO_EDICAO_ID)	");
-		sql.append("	inner join PRODUTO as PROD ON ");
-		sql.append("	(PROD_EDICAO.PRODUTO_ID = PROD.ID)	");
-		sql.append("	inner join MOVIMENTO_ESTOQUE_COTA MEC ON ");
-		sql.append("	MEC.COTA_ID = CH_ENCALHE_COTA.COTA_ID AND MEC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
-		sql.append("	inner join TIPO_MOVIMENTO TIPO_MOV ON ");
-		sql.append("	MEC.TIPO_MOVIMENTO_ID = TIPO_MOV.ID AND  TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque ");
-
+		sql.append(" PRODUTO_EDICAO.ID as chave,	");
+		sql.append(" PRODUTO_EDICAO.CODIGO_DE_BARRAS as value, ");
+		sql.append(" CONCAT(PRODUTO_EDICAO.CODIGO_DE_BARRAS, ' - ', PRODUTO.NOME,' - Ed.:', PRODUTO_EDICAO.NUMERO_EDICAO) as label ");
+		
+		sql.append("    FROM COTA, MOVIMENTO_ESTOQUE_COTA, TIPO_MOVIMENTO, PRODUTO_EDICAO ");
+		
+		sql.append("	inner join PRODUTO ON ");
+		sql.append("	(PRODUTO_EDICAO.PRODUTO_ID = PRODUTO.ID)	");
+		
 		sql.append("	WHERE   ");
-		sql.append("	UPPER(PROD_EDICAO.CODIGO_DE_BARRAS) like :codigoBarras AND  ");
-		sql.append("	CH_ENCALHE.DATA_RECOLHIMENTO = :dataRecolhimento AND ");
-		sql.append("	CH_ENCALHE_COTA.FECHADO = :indFechado AND	");
-		sql.append("	CH_ENCALHE_COTA.POSTERGADO = :indPostergado 	");
-		sql.append("	AND MEC.DATA = (SELECT 	MAX(MEC.DATA) ");
-		sql.append("					FROM    MOVIMENTO_ESTOQUE_COTA MEC, TIPO_MOVIMENTO TIPO_MOV ");
-		sql.append("					WHERE   MEC.COTA_ID = CH_ENCALHE_COTA.COTA_ID ");
-		sql.append("					AND     MEC.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
-		sql.append("					AND 	MEC.TIPO_MOVIMENTO_ID = TIPO_MOV.ID ");
-		sql.append("					AND     TIPO_MOV.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque) ");
 
-		if (numeroCota != null) {
-			
-			sql.append("	AND COTA.NUMERO_COTA = :numeroCota ");
-		}
+		sql.append("	MOVIMENTO_ESTOQUE_COTA.COTA_ID = COTA.ID AND  							");
+		
+		sql.append("	MOVIMENTO_ESTOQUE_COTA.PRODUTO_EDICAO_ID = PRODUTO_EDICAO.ID AND		");
 
-		sql.append(" GROUP BY PROD_EDICAO.ID ");
+		sql.append("	MOVIMENTO_ESTOQUE_COTA.TIPO_MOVIMENTO_ID = TIPO_MOVIMENTO.ID AND  		");
+		
+		sql.append("	TIPO_MOVIMENTO.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovimentoEstoque  AND	");
+		
+		sql.append("	UPPER(PRODUTO_EDICAO.CODIGO_DE_BARRAS) like :codigoBarras AND			");
+
+		sql.append("	COTA.NUMERO_COTA = :numeroCota ");
+
+		sql.append(" GROUP BY PRODUTO_EDICAO.ID ");
+		
 		sql.append(" ORDER BY label ");
 		
 		Query query =  this.getSession().createSQLQuery(sql.toString());
 
 		query.setParameter("codigoBarras", codigoBarras.toUpperCase() + "%");
-		query.setParameter("dataRecolhimento", dataRecolhimento);
-		query.setParameter("indFechado", false);
-		query.setParameter("indPostergado", false);
 		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
-
-		if (numeroCota != null) {
-			query.setParameter("numeroCota", numeroCota);
-		}
+		query.setParameter("numeroCota", numeroCota);
 
 		query.setResultTransformer(Transformers.aliasToBean(ItemAutoComplete.class));
 		

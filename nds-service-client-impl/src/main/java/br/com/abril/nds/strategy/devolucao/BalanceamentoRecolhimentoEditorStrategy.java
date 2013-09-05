@@ -85,11 +85,6 @@ public class BalanceamentoRecolhimentoEditorStrategy extends AbstractBalanceamen
 			new HashMap<Long, List<ProdutoRecolhimentoDTO>>();
 
 		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
-
-			if (produtoRecolhimento.isPossuiChamada()) {
-				
-				continue;
-			}
 			
 			Long idEditor = produtoRecolhimento.getIdEditor();
 			
