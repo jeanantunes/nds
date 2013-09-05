@@ -443,8 +443,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 
 					boolean indNovaChamadaEncalhe = false;
 					
-					//TODO: tratar chamada encalhe cota que ja tem chamada
-					
 					ProdutoEdicao produtoEdicao = estoqueProdutoCota.getProdutoEdicao();
 
 					Cota cota = estoqueProdutoCota.getCota();
