@@ -43,7 +43,7 @@ public class ResultadoCurvaABCDistribuidor implements Serializable {
 	public void setTotalVendaExemplares(BigInteger totalVendaExemplares) {
 		this.totalVendaExemplares = totalVendaExemplares;
 		
-		this.totalVendaExemplaresFormatado = CurrencyUtil.formatarValor(totalVendaExemplares);
+		this.totalVendaExemplaresFormatado = totalVendaExemplares == null ? "0" : totalVendaExemplares.toString();
 	}
 
 	public BigDecimal getTotalFaturamento() {

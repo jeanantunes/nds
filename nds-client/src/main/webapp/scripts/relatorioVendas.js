@@ -168,8 +168,8 @@ var relatorioVendasController = $.extend(true, {
 				sortable : false,
 				align : 'center'
 			} ],
-			sortname : "rkEditor",
-			sortorder : "asc",
+			sortname : "faturamentoCapaFormatado",
+			sortorder : "desc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
@@ -236,8 +236,8 @@ var relatorioVendasController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			} ],
-			sortname : "rkCota",
-			sortorder : "asc",
+			sortname : "faturamentoCapaFormatado",
+			sortorder : "desc",
 			usepager : true,
 			useRp : true,
 			rp : 15,

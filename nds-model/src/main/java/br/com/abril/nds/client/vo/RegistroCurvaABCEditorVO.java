@@ -3,6 +3,7 @@ package br.com.abril.nds.client.vo;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.Date;
 
 import br.com.abril.nds.dto.RegistroCurvaABCDTO;
@@ -18,6 +19,8 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 	 * Serial Version UID
 	 */
 	private static final long serialVersionUID = 3849170873913801404L;
+	
+	private static final BigDecimal CEM = new BigDecimal(100);
 	
 	@Export(label="Ranking", exhibitionOrder = 1, widthPercent = 6)
 	private Long rkEditor;
@@ -96,8 +99,12 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 	}
 
 	public void setPorcentagemVendaExemplares(BigDecimal porcentagemVendaExemplares) {
-		this.porcentagemVendaExemplaresFormatado = CurrencyUtil.formatarValor(porcentagemVendaExemplares);
 		this.porcentagemVendaExemplares = porcentagemVendaExemplares;
+		
+		if (porcentagemVendaExemplares != null){
+			this.porcentagemVendaExemplaresFormatado = 
+				CurrencyUtil.formatarValor(porcentagemVendaExemplares.setScale(2, RoundingMode.HALF_EVEN));
+		}
 	}
 
 	public Long getCodigoEditor() {
@@ -199,7 +206,12 @@ public class RegistroCurvaABCEditorVO extends RegistroCurvaABCDTO implements
 
 	public void setPorcentagemMargemDistribuidor(BigDecimal porcentagemMargemDistribuidor) {
 		this.porcentagemMargemDistribuidor = porcentagemMargemDistribuidor;
-		this.porcentagemMargemDistribuidorFormatado = CurrencyUtil.formatarValor(porcentagemMargemDistribuidor);
+		
+		if (porcentagemMargemDistribuidor != null){
+			this.porcentagemMargemDistribuidorFormatado = 
+					CurrencyUtil.formatarValor(
+						porcentagemMargemDistribuidor.multiply(CEM).setScale(2, RoundingMode.HALF_EVEN));
+		}
 	}
 	
 	
