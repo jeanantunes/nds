@@ -378,6 +378,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		return qtde;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public ConsultaEncalheDTO obterValorTotalReparteEncalheDataCotaFornecedor(FiltroConsultaEncalheDTO filtro) {
 		
 		StringBuffer sql = new StringBuffer();
@@ -391,7 +392,15 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			sql.append("   COALESCE(MEC_REPARTE.PRECO_COM_DESCONTO, PRODUTO_EDICAO.PRECO_VENDA, 0) as precoComDesconto, ");
 		}else{
 			
-			sql.append("   COALESCE(PRODUTO_EDICAO.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0) - (COALESCE(PRODUTO_EDICAO.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0)*DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO/100) as precoComDesconto, ");
+			sql.append("   CASE WHEN DESCONTO_LOGISTICA.ID IS NOT NULL THEN ( ");
+			sql.append("   COALESCE(PRODUTO_EDICAO.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
+			sql.append("   (COALESCE(PRODUTO_EDICAO.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0) * ");
+			sql.append("   DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO/100)) ");
+			sql.append("   ELSE  ( ");
+			sql.append("   COALESCE(PRODUTO_EDICAO.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
+			sql.append("   (COALESCE(PRODUTO_EDICAO.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0)* ");
+			sql.append("   DESCONTO.VALOR/100)) ");
+			sql.append("   END AS precoComDesconto, "); 
 		}
 		
 		sql.append("  SUM(CHAMADA_ENCALHE_COTA.QTDE_PREVISTA) as reparte,   ");
@@ -415,7 +424,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append(" 																						 WHERE tm.GRUPO_MOVIMENTO_ESTOQUE = 'RECEBIMENTO_REPARTE' ))    ");
 		
 		if(filtro.getIdCota()==null) {
-			sql.append(" left join DESCONTO_LOGISTICA on (DESCONTO_LOGISTICA.ID = PRODUTO_EDICAO.DESCONTO_LOGISTICA_ID)   ");
+			sql.append(" LEFT JOIN DESCONTO_LOGISTICA ON ");
+			sql.append(" (DESCONTO_LOGISTICA.ID = PRODUTO_EDICAO.DESCONTO_LOGISTICA_ID OR DESCONTO_LOGISTICA.ID = PRODUTO.DESCONTO_LOGISTICA_ID ) ");
+			sql.append(" LEFT JOIN DESCONTO ON ");
+			sql.append(" (DESCONTO.ID = PRODUTO_EDICAO.DESCONTO_LOGISTICA_ID OR DESCONTO.ID = PRODUTO.DESCONTO_LOGISTICA_ID ) ");
 		}
 		
 		sql.append(" left join CONFERENCIA_ENCALHE on (CONFERENCIA_ENCALHE.CHAMADA_ENCALHE_COTA_ID = CHAMADA_ENCALHE_COTA.id                   ");
@@ -452,17 +464,21 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		parameters.put("dataRecolhimentoInicial", filtro.getDataRecolhimentoInicial());
 		parameters.put("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
 		parameters.put("isPostergado", false);
+
+		@SuppressWarnings("rawtypes")
+		RowMapper cotaRowMapper = new RowMapper() {
+
+			public Object mapRow(ResultSet rs, int arg1) throws SQLException {
+				
+				ConsultaEncalheDTO dto = new ConsultaEncalheDTO();
+				dto.setReparte(rs.getBigDecimal("totalReparte"));
+				dto.setEncalhe(rs.getBigDecimal("totalEncalhe"));
+				
+				return dto;
+			}
+		};
 		
-		Map<String, Object> queryForMap = namedParameterJdbcTemplate.queryForMap(sql.toString(), parameters);
-		
-		Object totalReparte = queryForMap.get("totalReparte");
-		Object totalEncalhe = queryForMap.get("totalEncalhe");
-		
-		ConsultaEncalheDTO dto = new ConsultaEncalheDTO();
-		dto.setReparte((BigDecimal) (totalReparte == null ? BigDecimal.ZERO : totalReparte));
-		dto.setEncalhe((BigDecimal) (totalEncalhe == null ? BigDecimal.ZERO : totalEncalhe));
-		
-		return dto;
+		return (ConsultaEncalheDTO) namedParameterJdbcTemplate.queryForObject(sql.toString(), parameters, cotaRowMapper);
 	}
 	
 	public BigDecimal obterValorTotalEncalhe(FiltroConsultaEncalheDTO filtro) {
@@ -562,7 +578,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		if (filtro.getIdCota() == null) {
 			
-			sql.append(" left join DESCONTO_LOGISTICA on (DESCONTO_LOGISTICA.ID = PRODUTO_EDICAO.DESCONTO_LOGISTICA_ID) ");
+			sql.append(" LEFT JOIN DESCONTO_LOGISTICA ON ");
+			sql.append(" (DESCONTO_LOGISTICA.ID = PRODUTO_EDICAO.DESCONTO_LOGISTICA_ID OR DESCONTO_LOGISTICA.ID = PRODUTO.DESCONTO_LOGISTICA_ID ) ");
+			sql.append(" LEFT JOIN DESCONTO ON ");
+			sql.append(" (DESCONTO.ID = PRODUTO_EDICAO.DESCONTO_LOGISTICA_ID OR DESCONTO.ID = PRODUTO.DESCONTO_LOGISTICA_ID ) ");
 		}
 		
 		sql.append(" left join CONFERENCIA_ENCALHE ");
@@ -649,9 +668,21 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			
 		} else {
 			
-			subSqlValoresDesconto.append("    COALESCE(PRODUTO_EDICAO.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0) - (COALESCE(PRODUTO_EDICAO.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0)*DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO/100) as precoComDesconto, ");
-			subSqlValoresDesconto.append("	COALESCE(DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO, 0) ").append(" as valorDesconto, ");
-			subSqlValoresDesconto.append("	( SUM( COALESCE(MEC_REPARTE.QTDE, 0)) * COALESCE(DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO , PRODUTO_EDICAO.PRECO_VENDA, 0) ) as valorComDesconto, ");		
+			subSqlValoresDesconto.append("   CASE WHEN DESCONTO_LOGISTICA.ID IS NOT NULL THEN ( ");
+			subSqlValoresDesconto.append("   COALESCE(PRODUTO_EDICAO.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
+			subSqlValoresDesconto.append("   (COALESCE(PRODUTO_EDICAO.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 1) * ");
+			subSqlValoresDesconto.append("   DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO/100)) ");
+			subSqlValoresDesconto.append("   ELSE  ( ");
+			subSqlValoresDesconto.append("   COALESCE(PRODUTO_EDICAO.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
+			subSqlValoresDesconto.append("   (COALESCE(PRODUTO_EDICAO.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 1)* ");
+			subSqlValoresDesconto.append("   DESCONTO.VALOR/100)) ");
+			subSqlValoresDesconto.append("   END AS precoComDesconto, ");
+
+			subSqlValoresDesconto.append("	COALESCE(DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO, DESCONTO.VALOR, 0) ").append(" as valorDesconto, ");
+			
+			subSqlValoresDesconto.append("	(SUM( COALESCE(MEC_REPARTE.QTDE, 1)) * (COALESCE(MEC_REPARTE.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
+			subSqlValoresDesconto.append("	(COALESCE(MEC_REPARTE.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 1)) * " );
+			subSqlValoresDesconto.append("	COALESCE(DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO/100, DESCONTO.VALOR/100, 1)) ) as valorComDesconto, ");		
 		}
 		
 		StringBuffer sql = new StringBuffer();
@@ -669,6 +700,15 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append(subSqlValoresDesconto);
 		
 		sql.append("	( SUM( COALESCE(MEC_REPARTE.QTDE, 0)) * COALESCE(MEC_REPARTE.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0) ) as valor, ");
+		
+		subSqlValoresDesconto.append("   CASE WHEN DESCONTO_LOGISTICA.ID IS NOT NULL THEN ( ");
+		subSqlValoresDesconto.append("   SUM( COALESCE(MEC_REPARTE.QTDE, 0) - ");
+		subSqlValoresDesconto.append("   (SUM( COALESCE(MEC_REPARTE.QTDE, 1) * ");
+		subSqlValoresDesconto.append("   DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO/100)) ");
+		subSqlValoresDesconto.append("   ELSE  ( ");
+		subSqlValoresDesconto.append("   SUM( COALESCE(MEC_REPARTE.QTDE, 0) - ");
+		subSqlValoresDesconto.append("   (SUM( COALESCE(MEC_REPARTE.QTDE, 1)* ");
+		subSqlValoresDesconto.append("   DESCONTO.VALOR/100)) ");
 		
 		sql.append("	SUM(CHAMADA_ENCALHE_COTA.QTDE_PREVISTA) as reparte, ");
 		

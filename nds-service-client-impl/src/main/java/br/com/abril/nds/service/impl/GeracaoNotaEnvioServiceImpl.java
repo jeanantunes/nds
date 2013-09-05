@@ -146,7 +146,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 		gerarItensNEMovimento(listaMovimentoEstoqueCota, cota, listItemNotaEnvio);
 		
-		gerarItensNEEstudo(listaEstudoCota, cota, listItemNotaEnvio,periodo);
+		gerarItensNEEstudo(listaEstudoCota, cota, listItemNotaEnvio, periodo);
 		
 		sortItensByProdutoNome(listItemNotaEnvio);
 		

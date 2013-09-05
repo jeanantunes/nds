@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
 
@@ -155,4 +156,6 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 			Date dataOperacao, Boolean conferido, Boolean postergado);
 	
 	ChamadaEncalheCota obterUltimaChamaEncalheCotaParcial(Cota cota,Long idProdutoEdicao,boolean postergado,Date dataOperacao);
+	
+	BigInteger quantidadeCotaAusenteFechamentoEncalhe(Integer numeroCota, Date dataRecolhimento);
 }

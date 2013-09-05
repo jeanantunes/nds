@@ -529,6 +529,8 @@ var ConferenciaEncalhe = $.extend(true, {
 		},
 		function() {
 			
+			$("#numeroCota", ConferenciaEncalhe.workspace).val("");
+			
 			focusSelectRefField($("#numeroCota", ConferenciaEncalhe.workspace));
 		});	
 	},
