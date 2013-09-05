@@ -592,7 +592,7 @@ public class ConferenciaEncalheRepositoryImplTest extends
 	@Test
 	public void obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarrasTest() {
 		
-		this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(1, "000", new Date());
+		this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(1, "000");
 	}
 	
 }
