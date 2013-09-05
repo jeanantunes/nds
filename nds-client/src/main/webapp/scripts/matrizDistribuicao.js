@@ -1536,6 +1536,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	    T.postGeracaoEstudoAutomatico(postData, false);
 	};
 	
+	z
 	
 	this.postGeracaoEstudoAutomatico = function(postData, confirmaUmaEdicaoBase) {
 		
