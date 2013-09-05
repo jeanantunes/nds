@@ -6,7 +6,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.sql.DataSource;
 
@@ -29,6 +31,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
@@ -834,6 +837,22 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		}
 		
 		return maiorSequencia;
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@Override		
+	public Set<Lancamento> obterLancamentos(Long idChamadaEncalhe) {
+
+		String hql = " select lancamentos from ChamadaEncalhe chamadaEncalhe "
+				+ " join chamadaEncalhe.lancamentos lancamentos"
+				+ " where chamadaEncalhe.id= :idChamadaEncalhe ";
+				
+		Query query = super.getSession().createQuery(hql);
+				
+		query.setParameter("idChamadaEncalhe", idChamadaEncalhe);
+		
+		return new HashSet(query.list());
+		
 	}
 	
 }
