@@ -1,11 +1,22 @@
 var desenglobacaoController = $.extend(true, {
 
 	pesquisaCota:null,    
+	
 	errorCallBack : function errorCallBack(){
 		$('#filtroDesenglobaNomePessoa,#statusCota,#filtroPrincipalNumeroCota,#filtroPrincipalNomePessoa,#filtroDesenglobaNumeroCota').val('');        
 
     },
 
+    errorCallBackCotasEnglobadas : function errorCallBack(){
+		$('#inserirEnglobadaNumeroCota,#inserirEnglobadaNomePessoa').val('');        
+
+    },
+    
+    errorCallBackDesenglobar : function errorCallBack(){
+		$('#filtroDesenglobaNumeroCota,#filtroDesenglobaNomePessoa').val('');        
+
+    },
+    
     sucessCallBack : function errorCallBack(result){
         if (result) {
             $('#statusCota').val(result.status);
@@ -78,7 +89,7 @@ var desenglobacaoController = $.extend(true, {
         //FILTRO DA TELA DE DESENGLOBACAO
         // FILTRO POR COTA
         $('#filtroDesenglobaNumeroCota').change(function (){
-            desenglobacaoController.pesquisaCota.pesquisarPorNumeroCota('#filtroDesenglobaNumeroCota','#filtroDesenglobaNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack,true);
+            desenglobacaoController.pesquisaCota.pesquisarPorNumeroCota('#filtroDesenglobaNumeroCota','#filtroDesenglobaNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBackDesenglobar,true);
         });
 
         $('#filtroDesenglobaNomePessoa').keyup(function (){
@@ -87,7 +98,7 @@ var desenglobacaoController = $.extend(true, {
 
         //FILTRO POR NOME
         $('#filtroDesenglobaNomePessoa').blur(function (){
-            desenglobacaoController.pesquisaCota.pesquisarPorNomeCota('#filtroDesenglobaNumeroCota','#filtroDesenglobaNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack,true);
+            desenglobacaoController.pesquisaCota.pesquisarPorNomeCota('#filtroDesenglobaNumeroCota','#filtroDesenglobaNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBackDesenglobar,true);
         });
 
 
@@ -95,7 +106,7 @@ var desenglobacaoController = $.extend(true, {
         //FILTRO POPUP INSERIR COTA
         // FILTRO POR COTA
         $('#inserirEnglobadaNumeroCota').change(function (){
-            desenglobacaoController.pesquisaCota.pesquisarPorNumeroCota('#inserirEnglobadaNumeroCota','#inserirEnglobadaNomePessoa', false, desenglobacaoController.sucessCallBackAutoCompleteCota, desenglobacaoController.errorCallBack,true);
+            desenglobacaoController.pesquisaCota.pesquisarPorNumeroCota('#inserirEnglobadaNumeroCota','#inserirEnglobadaNomePessoa', false, desenglobacaoController.sucessCallBackAutoCompleteCota, desenglobacaoController.errorCallBackCotasEnglobadas,true);
         });
         
         $('#inserirEnglobadaNomePessoa').keyup(function (){
@@ -104,7 +115,7 @@ var desenglobacaoController = $.extend(true, {
 
         //FILTRO POR NOME
         $('#inserirEnglobadaNomePessoa').blur(function (){
-            desenglobacaoController.pesquisaCota.pesquisarPorNomeCota('#inserirEnglobadaNumeroCota','#inserirEnglobadaNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBack,true);
+            desenglobacaoController.pesquisaCota.pesquisarPorNomeCota('#inserirEnglobadaNumeroCota','#inserirEnglobadaNomePessoa', false, desenglobacaoController.sucessCallBack, desenglobacaoController.errorCallBackCotasEnglobadas,true);
         });
 
         //###### FIM FILTRO DA POPUP INSERT ######
@@ -128,22 +139,12 @@ var desenglobacaoController = $.extend(true, {
         });
 
         $('#btnInserirCotaEnglobada').click(function(e){
-            e.preventDefault();
-
-            var indexInput = $('#tableCotasEnglobadas tr').length;
-
-
-            desenglobacaoController.adicionarCotaEnglobada(indexInput,$('#inserirEnglobadaNumeroCota').val(),$('#inserirEnglobadaNomePessoa').val(),$('#inserirEnglobadaPorcentagemCota').val(),
-                    $('#filtroDesenglobaNumeroCota').val(),$('#filtroDesenglobaNomePessoa').val());
-
-            clearFormEnglobada();
-            indexInput++;
+            
+        	desenglobacaoController.addCotaParaEnglobar(e);
+        	
         });
-
-        function clearFormEnglobada() {
-            $('#inserirEnglobadaNumeroCota,#inserirEnglobadaNomePessoa,#inserirEnglobadaPorcentagemCota').val('');
-        }
-
+        
+        
         desenglobacaoController.Url = {},
 
         desenglobacaoController.Grids = {
@@ -454,6 +455,46 @@ var desenglobacaoController = $.extend(true, {
         $('#tableCotasEnglobadas').append(html);
 
     },
+    
+    
+    addCotaParaEnglobar:function (e){
+    	e.preventDefault();
+
+    	if(desenglobacaoController.validarDadosEnglobacao()){
+	
+	        var indexInput = $('#tableCotasEnglobadas tr').length;
+	
+	
+	        desenglobacaoController.adicionarCotaEnglobada(indexInput,$('#inserirEnglobadaNumeroCota').val(),$('#inserirEnglobadaNomePessoa').val(),$('#inserirEnglobadaPorcentagemCota').val(),
+	                $('#filtroDesenglobaNumeroCota').val(),$('#filtroDesenglobaNomePessoa').val());
+	
+	        //Limpando dados
+	        $('#inserirEnglobadaNumeroCota,#inserirEnglobadaNomePessoa,#inserirEnglobadaPorcentagemCota').val('');
+	        
+	        indexInput++;
+    	}
+    },
+    
+    validarDadosEnglobacao : function(){
+    	
+    	if($('#inserirEnglobadaNumeroCota').val() == ""){
+    		exibirMensagemDialog("WARNING",["Insira o número da Cota!"]);
+    		return false;
+    	}else{
+    		if($('#inserirEnglobadaNomePessoa').val() == ""){
+    			exibirMensagemDialog("WARNING",["Insira o nome da Cota!"]);
+        		return false;
+    		}else{
+    			if($('#inserirEnglobadaPorcentagemCota').val() == ""){
+    				exibirMensagemDialog("WARNING",["Insira o % da Cota!"]);
+    	    		return false;
+    			}else{
+    				return true;
+    			}
+    		}
+    	}
+    },
+    
     //guarda resultado da pesquisa de desenglobacao
     listaDesenglobacaoLength: 0,
 
