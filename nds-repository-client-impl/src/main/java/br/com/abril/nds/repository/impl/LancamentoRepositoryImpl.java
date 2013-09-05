@@ -168,7 +168,7 @@ public class LancamentoRepositoryImpl extends
 			Map<String, Object> parametros, Date data, Long idFornecedor,
 			Boolean estudo) {
 	
-		StringBuilder hql = new StringBuilder();	
+		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" from Lancamento lancamento ");
 		
@@ -620,12 +620,6 @@ public class LancamentoRepositoryImpl extends
 		sql.append("     descontoLogisticaProduto.PERCENTUAL_DESCONTO / 100, ");
 		sql.append("     0)) ) ) ");
 		sql.append("  ) as valorTotal, ");
-	         
-		sql.append(" case ");
-		sql.append("     when (chamadaEncalhe.ID is not null) ");
-		sql.append("     and chamadaEncalhe.TIPO_CHAMADA_ENCALHE <> :tipoChamadaEncalhe then true ");  
-		sql.append("     else false ");
-		sql.append(" end as possuiChamada, ");
 	     
 		sql.append(" produtoEdicao.ID as idProdutoEdicao, ");
 		sql.append(" ((coalesce(descontoLogisticaProdutoEdicao.PERCENTUAL_DESCONTO, ");
@@ -676,10 +670,7 @@ public class LancamentoRepositoryImpl extends
 		sql.append("         on produto.EDITOR_ID = editor.ID ");        
 		sql.append(" inner join ");
 		sql.append("     PESSOA pessoaEditor ");  
-		sql.append("         on editor.JURIDICA_ID = pessoaEditor.ID ");        
-		sql.append(" left join ");
-		sql.append("     CHAMADA_ENCALHE chamadaEncalhe ");
-		sql.append("         on chamadaEncalhe.PRODUTO_EDICAO_ID=produtoEdicao.ID ");
+		sql.append("         on editor.JURIDICA_ID = pessoaEditor.ID ");
 		sql.append(" left join ");
 		sql.append("     LANCAMENTO_PARCIAL lancamentoParcial ");
 		sql.append("         on lancamentoParcial.PRODUTO_EDICAO_ID=produtoEdicao.ID ");  
@@ -712,10 +703,6 @@ public class LancamentoRepositoryImpl extends
 		sql.append("         fornecedor.ID in ( ");
 		sql.append("             :idsFornecedores ");
 		sql.append("         ) ");
-		sql.append("     ) ");
-		sql.append("     and ( ");
-		sql.append("         chamadaEncalhe.ID is null "); 
-		sql.append("         or  chamadaEncalhe.DATA_RECOLHIMENTO between :periodoInicial and :periodoFinal ");
 		sql.append("     ) ");
 
 		return sql.toString();
@@ -773,7 +760,6 @@ public class LancamentoRepositoryImpl extends
 													  .addScalar("idFornecedor", StandardBasicTypes.LONG)
 													  .addScalar("idProdutoEdicao", StandardBasicTypes.LONG)
 													  .addScalar("possuiBrinde", StandardBasicTypes.BOOLEAN)
-													  .addScalar("possuiChamada", StandardBasicTypes.BOOLEAN)
 													  .addScalar("novaData");													  
 
 		List<String> statusParaBalanceamentoRecolhimento =
@@ -784,7 +770,6 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("periodoFinal", periodoRecolhimento.getAte());
 		query.setParameter("grupoCromo", grupoCromo.toString());
 		query.setParameter("tipoParcial", TipoLancamentoParcial.PARCIAL.toString());
-		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.toString());
 		
 		query.setParameterList("statusParaBalanceamentoRecolhimento", statusParaBalanceamentoRecolhimento);
 		

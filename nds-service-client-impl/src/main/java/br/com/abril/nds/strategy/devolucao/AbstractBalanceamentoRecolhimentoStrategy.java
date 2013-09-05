@@ -164,8 +164,7 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 	private boolean isProdutoNaoBalanceavel(boolean forcarBalanceamento,
 										 	ProdutoRecolhimentoDTO produtoRecolhimento) {
 		
-		return produtoRecolhimento.isPossuiChamada()
-				|| produtoRecolhimento.isBalanceamentoConfirmado()
+		return produtoRecolhimento.isBalanceamentoConfirmado()
 				|| (produtoRecolhimento.isBalanceamentoSalvo() && !forcarBalanceamento);
 	}
 	

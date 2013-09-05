@@ -50,6 +50,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
@@ -101,6 +102,7 @@ import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
@@ -276,6 +278,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private ConsolidadoFinanceiroRepository consolidadoFinanceiroRepository;
+	
+	@Autowired
+	private DistribuidorRepository distribuidorRepository;
 	
 	@Transactional
 	public boolean isCotaEmiteNfe(Integer numeroCota) {
@@ -470,6 +475,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	private boolean isDataRecolhimentoValida(Date dataOperacao,Date dataRecolhimento,ProdutoEdicao produtoEdicao){
 		
+		validarAntecipacaoConferenciaEncalhe(produtoEdicao.getId(), dataOperacao, dataRecolhimento);
+		
 		if(dataRecolhimento.compareTo(dataOperacao)>-1){
 			return true;
 		}
@@ -489,6 +496,44 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 		
 		return false;
+	}
+	
+	/**
+	 * Caso esta seja uma antecipação de encalhe, sera verificado 
+	 * se o distribuidor aceita este tipo de operação, caso não 
+	 * aceite é lançado erro de validação.
+	 * 
+	 * @param dataOperacao
+	 * @param dataRecolhimento
+	 */
+	private void validarAntecipacaoConferenciaEncalhe(Long idProdutoEdicao, Date dataOperacao, Date dataRecolhimento) {
+		
+		if(dataRecolhimento.compareTo(dataOperacao)>0){
+			
+			ParametrosRecolhimentoDistribuidor parametroRecolhimento = this.distribuidorRepository.parametrosRecolhimentoDistribuidor();
+			
+			boolean distribuidorAceitaAntecipacao = parametroRecolhimento.isPermiteRecolherDiasPosteriores();
+			
+			if(!distribuidorAceitaAntecipacao) {
+			
+				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+				
+				if(produtoEdicao == null){
+					throw new ValidacaoException(TipoMensagem.ERROR, "Produto edição não encontrado");
+				}
+				
+				String nomeProdutoEdicao = produtoEdicao.getProduto().getNome();
+				
+				throw new ValidacaoException(
+						TipoMensagem.WARNING, 
+						"Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao  + "] " +
+						"Não é permitida antecipação de produtos pelo distribuidor. "   );
+				
+			}
+			
+		}
+		
+		
 	}
 	
 	public Long[] obterIdsFornecedorDoProduto(ProdutoEdicao produtoEdicao){
@@ -3670,9 +3715,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	@Override
 	public List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(Integer numeroCota, String codigoBarras) {
-		
-		Date dataRecolhimento = this.distribuidorService.obterDataOperacaoDistribuidor();
 
-		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarras, dataRecolhimento);
+		return this.conferenciaEncalheRepository.obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(numeroCota, codigoBarras);
 	}
 }

@@ -49,8 +49,6 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 
 	private TipoLancamentoParcial parcial;
 	
-	private boolean possuiChamada;
-
 	private Date dataLancamento;
 
 	private Date dataRecolhimentoPrevista;
@@ -277,20 +275,6 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	public void setParcial(String parcial) {
 		
 		this.parcial = Util.getEnumByStringValue(TipoLancamentoParcial.values(), parcial);
-	}
-	
-	/**
-	 * @return the possuiChamada
-	 */
-	public boolean isPossuiChamada() {
-		return possuiChamada;
-	}
-
-	/**
-	 * @param possuiChamada the possuiChamada to set
-	 */
-	public void setPossuiChamada(boolean possuiChamada) {
-		this.possuiChamada = possuiChamada;
 	}
 
 	/**
