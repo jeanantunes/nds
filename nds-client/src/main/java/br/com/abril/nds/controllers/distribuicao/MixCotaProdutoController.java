@@ -176,6 +176,15 @@ public class MixCotaProdutoController extends BaseController {
 		
 		result.use(Results.json()).withoutRoot().from(tableModelCota).recursive().serialize();
 	}
+	
+	
+	@Post
+	@Path("/updateReparteMixCotaProduto")
+	public void updateReparteMixCotaProduto(Long novoValorReparte,String tipoCampo, Long idMix){
+		mixCotaProdutoService.updateReparteMixCotaProduto(novoValorReparte,tipoCampo, idMix);
+		result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
+	}
+
 
 	@Post
 	@Path("/removerMixCotaProduto")

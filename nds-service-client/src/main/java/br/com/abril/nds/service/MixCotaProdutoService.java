@@ -1,5 +1,6 @@
 package br.com.abril.nds.service;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import br.com.abril.nds.dto.CopiaMixFixacaoDTO;
@@ -37,4 +38,6 @@ public interface MixCotaProdutoService {
 	public boolean gerarCopiaMix(CopiaMixFixacaoDTO copiaMix);
 
 	public String obterValidacaoLinha(MixCotaProdutoDTO mixCotaProdutoDTO);
+
+	public void updateReparteMixCotaProduto(Long novoValorReparte, String tipoCampo, Long idMix);
 }

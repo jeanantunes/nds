@@ -50,6 +50,7 @@ ExcecaoSegmentoParciaisRepository {
 	hql.append(" SELECT ");
 	hql.append(" excecaoProdutoCota.id as idExcecaoProdutoCota, "); // ID ExcessaoProdutoCota
 	hql.append(" produto.codigoICD as codigoProduto, "); // CODIGO PRODUTO
+	hql.append(" produto.codigo as codigoProdin, "); // CODIGO PRODUTO
 	hql.append(" produto.nome as nomeProduto, "); // NOME PRODUTO
 	hql.append(" usuario.nome as nomeUsuario, "); // NOME DO USUÁRIO
 	hql.append(" excecaoProdutoCota.dataAlteracao as dataAlteracao "); // DATA ALTERAÇÃO
