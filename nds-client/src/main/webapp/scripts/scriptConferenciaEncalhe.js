@@ -134,9 +134,16 @@ var ConferenciaEncalhe = $.extend(true, {
 			 defaultZero:false
 		});
 		
+		$("#valorNotaFiscal", this.workspace).maskMoney({
+			 thousands:'.', 
+			 decimal:',', 
+			 precision:2
+		});
+		
+		$("#numNotaFiscal", ConferenciaEncalhe.workspace).numeric();
+		
 		$("#qtdCE", ConferenciaEncalhe.workspace).numeric();
-		
-		
+				
 		$("#dataNotaFiscal", ConferenciaEncalhe.workspace).mask("99/99/9999");
 		
 		$("#valorNotaFiscal", ConferenciaEncalhe.workspace).numeric();
@@ -1916,7 +1923,7 @@ function confirmarPopup_notaFiscal(){
 		        {name : "notaFiscal.numero", value : $("#numNotaFiscal", ConferenciaEncalhe.workspace).val()},
 		        {name : "notaFiscal.serie", value : $("#serieNotaFiscal", ConferenciaEncalhe.workspace).val()},
 		        {name : "notaFiscal.dataEmissao", value : $("#dataNotaFiscal", ConferenciaEncalhe.workspace).val()},
-		        {name : "notaFiscal.valorProdutos", value : $("#valorNotaFiscal", ConferenciaEncalhe.workspace).val()},
+		        {name : "notaFiscal.valorProdutos", value : priceToFloat($("#valorNotaFiscal", ConferenciaEncalhe.workspace).val())},
 		        {name : "notaFiscal.chaveAcesso", value : $("#chaveAcessoNFE", ConferenciaEncalhe.workspace).val()}
 		        ];
 		
@@ -1926,7 +1933,7 @@ function confirmarPopup_notaFiscal(){
 		        {name : "notaFiscal.numero", value : $("#numNotaFiscal", ConferenciaEncalhe.workspace).val()},
 		        {name : "notaFiscal.serie", value : $("#serieNotaFiscal", ConferenciaEncalhe.workspace).val()},
 		        {name : "notaFiscal.dataEmissao", value : $("#dataNotaFiscal", ConferenciaEncalhe.workspace).val()},
-		        {name : "notaFiscal.valorProdutos", value : $("#valorNotaFiscal", ConferenciaEncalhe.workspace).val()}
+		        {name : "notaFiscal.valorProdutos", value : priceToFloat($("#valorNotaFiscal", ConferenciaEncalhe.workspace).val())}
 		        ];
 		
 	}
@@ -1938,6 +1945,8 @@ function confirmarPopup_notaFiscal(){
 		$("#dialog-notaFiscal", ConferenciaEncalhe.workspace).dialog("close");
 		
 		focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+		
+		$("#vlrCE", ConferenciaEncalhe.workspace).val($("#valorNotaFiscal", ConferenciaEncalhe.workspace).val());
 		
 	}, null, true, "dialog-notaFiscal"
 	);
