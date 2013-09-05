@@ -71,8 +71,7 @@ public class RegiaoServiceImpl implements RegiaoService  {
 	@Override
 	@Transactional
 	public void excluirRegistroCotaRegiao(Long id) {
-		RegistroCotaRegiao registro = this.registroCotaRegiaoRepository.buscarPorId(id); 
-		registroCotaRegiaoRepository.remover(registro);
+		registroCotaRegiaoRepository.removerPorId(id);
 		
 	}
 	
