@@ -679,7 +679,7 @@ public class ConsultaEncalheController extends BaseController {
 		FiltroConsultaEncalheDTO filtroSession = 
 				(FiltroConsultaEncalheDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
 		
-		if (filtroSession != null && !filtroSession.equals(filtro)) {
+		if (filtroSession != null && !filtroSession.equals(filtro) && filtroSession.getPaginacao() != null) {
 
 			filtroSession.getPaginacao().setPaginaAtual(1);
 		}
