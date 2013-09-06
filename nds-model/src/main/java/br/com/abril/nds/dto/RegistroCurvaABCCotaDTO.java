@@ -121,7 +121,7 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 	public void setPorcentagemVenda(BigDecimal porcentagemVenda) {
 		this.porcentagemVenda = porcentagemVenda;
 		
-		porcentagemVendaFormatado = CurrencyUtil.formatarValorTruncado(porcentagemVenda);
+		porcentagemVendaFormatado = CurrencyUtil.formatarValor(porcentagemVenda);
 	}
 
 	public BigDecimal getFaturamento() {
@@ -131,7 +131,7 @@ public class RegistroCurvaABCCotaDTO extends RegistroCurvaABCDTO implements Seri
 	public void setFaturamento(BigDecimal faturamento) {
 		this.faturamento = faturamento;
 		
-		faturamentoFormatado = CurrencyUtil.formatarValor( (faturamento==null)?BigInteger.ZERO:faturamento);
+		faturamentoFormatado = CurrencyUtil.formatarValor(faturamento == null ? BigInteger.ZERO : faturamento);
 	}
 
 	public Long getEdicaoProduto() {

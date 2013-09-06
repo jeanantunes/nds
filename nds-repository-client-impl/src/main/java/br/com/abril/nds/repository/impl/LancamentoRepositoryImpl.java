@@ -43,7 +43,6 @@ import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
-import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.LancamentoRepository;
@@ -1132,15 +1131,14 @@ public class LancamentoRepositoryImpl extends
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<ProdutoLancamentoDTO> obterBalanceamentoLancamento(Intervalo<Date> periodoDistribuicao,
-																   List<Long> fornecedores, Date dataOperacao) {
+																   List<Long> fornecedores) {
 
 		String sql = this.montarConsultaBalanceamentoLancamentoAnalitico()
 				   + " order by dataLancamentoDistribuidor ";
 		
 		Query query = this.getQueryBalanceamentoRecolhimento(periodoDistribuicao,
 															 fornecedores,
-															 sql,
-															 dataOperacao);
+															 sql);
 
 		return query.list();
 	}
@@ -1253,11 +1251,6 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" 		lancamento.DATA_LCTO_DISTRIBUIDOR between :periodoInicial and :periodoFinal ");
 		sql.append(" 		AND lancamento.STATUS in (:statusLancamentoDataEntrePeriodo) ");
 		sql.append(" 	) ");
-		sql.append(" 	OR ( ");
-		sql.append(" 		lancamento.DATA_LCTO_DISTRIBUIDOR between :periodoInicial and :periodoFinal ");
-		sql.append(" 		AND lancamento.STATUS = :statusLancamentoExpedido ");
-		sql.append(" 		AND DATE_FORMAT(expedicao.DATA_EXPEDICAO, '%Y-%m-%d') <= :dataOperacao ");
-		sql.append(" 	) ");
 		sql.append(" ) ");
 		
 		return sql.toString();
@@ -1265,8 +1258,7 @@ public class LancamentoRepositoryImpl extends
 	
 	private Query getQueryBalanceamentoRecolhimento(Intervalo<Date> periodoDistribuicao,
 											        List<Long> fornecedores,
-											        String sql,
-											        Date dataOperacao) {
+											        String sql) {
 
 		Query query = getSession().createSQLQuery(sql).addScalar("parcial")
 			.addScalar("statusLancamento")
@@ -1289,7 +1281,7 @@ public class LancamentoRepositoryImpl extends
 			.addScalar("alteradoInteface", StandardBasicTypes.BOOLEAN)
 			.addScalar("distribuicao", StandardBasicTypes.BIG_INTEGER);
 		
-		this.aplicarParametros(query, periodoDistribuicao, fornecedores, dataOperacao);
+		this.aplicarParametros(query, periodoDistribuicao, fornecedores);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ProdutoLancamentoDTO.class));
 
@@ -1298,23 +1290,23 @@ public class LancamentoRepositoryImpl extends
 	
 	private void aplicarParametros(Query query,
 								   Intervalo<Date> periodoDistribuicao,
-								   List<Long> fornecedores, Date dataOperacao) {
+								   List<Long> fornecedores) {
 		
 		List<String> statusLancamentoDataMenorFinal =
-			Arrays.asList(StatusLancamento.PLANEJADO.name(), StatusLancamento.CONFIRMADO.name(), StatusLancamento.FURO.name());
+			Arrays.asList(StatusLancamento.PLANEJADO.name(), StatusLancamento.CONFIRMADO.name(),
+						  StatusLancamento.FURO.name());
 		
 		List<String> statusLancamentoDataEntrePeriodo =
-			Arrays.asList(StatusLancamento.EM_BALANCEAMENTO.name(), StatusLancamento.BALANCEADO.name());
+			Arrays.asList(StatusLancamento.EM_BALANCEAMENTO.name(), StatusLancamento.BALANCEADO.name(),
+						  StatusLancamento.EXPEDIDO.name());
 		
 		query.setParameterList("statusLancamentoDataMenorFinal", statusLancamentoDataMenorFinal);
 		
 		query.setParameterList("statusLancamentoDataEntrePeriodo", statusLancamentoDataEntrePeriodo);
 		
-		query.setParameter("statusLancamentoExpedido", StatusLancamento.EXPEDIDO.name());
 		query.setParameterList("idsFornecedores", fornecedores);
 		query.setParameter("periodoInicial", periodoDistribuicao.getDe());
 		query.setParameter("periodoFinal", periodoDistribuicao.getAte());
-		query.setParameter("dataOperacao", dataOperacao);
 		query.setParameter("grupoCromo", GrupoProduto.CROMO.toString());
 	}
 

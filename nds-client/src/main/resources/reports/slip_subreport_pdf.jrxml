@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="slip_subreport" pageWidth="496" pageHeight="802" columnWidth="496" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isIgnorePagination="true" uuid="4153cc46-5208-4777-a70d-1f4d60ade565">
-	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.zoom" value="1.2396694214876032"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<parameter name="VALOR_TOTAL_PAGAR" class="java.lang.String"/>
@@ -27,12 +27,12 @@
 			<textField>
 				<reportElement uuid="f96e591b-a141-4a59-95da-7961a1fc0aea" mode="Opaque" x="0" y="0" width="208" height="28" isPrintInFirstWholeBand="true" backcolor="#F0F0F0"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{observacoes} + ($F{descricao} != null ? " - " + $F{descricao} : "")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{descricao} == null ? $F{observacoes} +":" : $F{observacoes} ) + ($F{descricao} != null ? " - " + $F{descricao} : "")]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement uuid="10f034c1-b3bd-411c-985c-b368dc704c4a" mode="Opaque" x="208" y="0" width="127" height="28" isPrintInFirstWholeBand="true" backcolor="#F0F0F0"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{tipoLancamento}.getDescricao()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{tipoLancamento}.getSiglaOperacao()]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00">
 				<reportElement uuid="77338aa4-4954-4504-8fde-0f1b1c5f6b71" mode="Opaque" x="334" y="0" width="162" height="28" isPrintInFirstWholeBand="true" backcolor="#F0F0F0"/>

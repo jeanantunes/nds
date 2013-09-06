@@ -37,6 +37,7 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
@@ -344,7 +345,7 @@ public class ConsultaEncalheController extends BaseController {
 		String valorVendaDia = ( infoConsultaEncalhe.getValorVendaDia() != null ) ? infoConsultaEncalhe.getValorVendaDia().toString() : "0" ;
 		String valorDebitoCredito = ( infoConsultaEncalhe.getValorDebitoCredito() != null ) ? infoConsultaEncalhe.getValorDebitoCredito().toString() : "0" ;
 		String valorPagar = ( infoConsultaEncalhe.getValorPagar() != null ) ? infoConsultaEncalhe.getValorPagar().toString() : "0" ;
-		String valorReparte = (infoConsultaEncalhe.getValorReparte() != null) ? infoConsultaEncalhe.getValorReparte().toString() : "0";
+		String valorReparte = (infoConsultaEncalhe.getValorReparte() != null) ? MathUtil.round(infoConsultaEncalhe.getValorReparte(), 2).toString() : "0";
 		String valorEncalhe = (infoConsultaEncalhe.getValorEncalhe() != null) ? infoConsultaEncalhe.getValorEncalhe().toString() : "0";
 
 		resultadoPesquisa.setValorReparte(valorReparte);
