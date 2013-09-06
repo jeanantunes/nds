@@ -43,7 +43,7 @@ public class ResultadoCurvaABCCotaDTO implements Serializable {
 	public void setTotalVendaExemplares(BigInteger totalVendaExemplares) {
 		this.totalVendaExemplares = totalVendaExemplares;
 		
-		totalVendaExemplaresFormatado = CurrencyUtil.formatarValorTruncado((totalVendaExemplares == null)?BigDecimal.ZERO:totalVendaExemplares);
+		totalVendaExemplaresFormatado = totalVendaExemplares == null ? "0" : totalVendaExemplares.toString();
 	}
 
 	public BigDecimal getTotalFaturamento() {
