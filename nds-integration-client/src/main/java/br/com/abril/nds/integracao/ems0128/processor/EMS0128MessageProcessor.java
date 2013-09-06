@@ -1,5 +1,6 @@
 package br.com.abril.nds.integracao.ems0128.processor;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
@@ -75,8 +76,8 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 				
 				if (!doc.getSituacaoSolicitacao().equals("SOLICITADO")) {
 				
-					for ( EMS0128InputItem eitem : doc.getItems()) {
-						
+					List<EMS0128InputItem> itemsRemove = new ArrayList<EMS0128InputItem>();
+					for (EMS0128InputItem eitem : doc.getItems()) {
 						MovimentoEstoque movimento = this.recuperaMovimento(eitem.getIdMovimento());
 											
 						movimento.setMotivo(eitem.getDescricaoMotivo());					
@@ -114,10 +115,13 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 							this.criarAtualizacaoEstoqueGFS(
 								movimento, lancamentoDiferenca.getDiferenca());
 							
+							itemsRemove.add(eitem);
 						} else if (StatusIntegracao.LIBERADO.equals(statusIntegracao)) {
 							
 							this.criarAtualizacaoEstoqueGFS(
 								movimento, lancamentoDiferenca.getDiferenca());
+							
+							itemsRemove.add(eitem);
 						}
 						
 						movimento.setStatusIntegracao(statusIntegracao);
@@ -126,8 +130,13 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 						getSession().flush();
 					}						
 					
-					if (doc.getSituacaoSolicitacao().equals(StatusIntegracao.LIBERADO.getDescricao()) || doc.getSituacaoSolicitacao().equals(StatusIntegracao.REJEITADO.getDescricao())) {
-						
+					
+					if(!itemsRemove.isEmpty()){
+						doc.getItems().removeAll(itemsRemove);
+						couchDbClient.update(doc);
+					}
+					
+					if (doc == null || doc.getItems() == null || doc.getItems().isEmpty()) {
 						couchDbClient.remove(doc);
 					}
 				}
@@ -139,11 +148,15 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 	
 	private void criarAtualizacaoEstoqueGFS(MovimentoEstoque movimentoEstoque, Diferenca diferenca) {
 		
-		AtualizacaoEstoqueGFS atualizacaoEstoqueGFS = new AtualizacaoEstoqueGFS();
+		AtualizacaoEstoqueGFS atualizacaoEstoqueGFS = recuperarAtualizacaoEstoqueGFS(movimentoEstoque, diferenca);
 		
-		atualizacaoEstoqueGFS.setMovimentoEstoque(movimentoEstoque);
+		if(atualizacaoEstoqueGFS ==null){
+			atualizacaoEstoqueGFS = new AtualizacaoEstoqueGFS();
+			atualizacaoEstoqueGFS.setMovimentoEstoque(movimentoEstoque);
+			atualizacaoEstoqueGFS.setDiferenca(diferenca);
+		}
+		
 		atualizacaoEstoqueGFS.setDataAtualizacao(new Date());
-		atualizacaoEstoqueGFS.setDiferenca(diferenca);
 		
 		getSession().merge(atualizacaoEstoqueGFS);
 		getSession().flush();
@@ -153,6 +166,24 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		
 		return (MovimentoEstoque) getSession().get(MovimentoEstoque.class, id);		
 		
+	}
+	
+	
+	private AtualizacaoEstoqueGFS recuperarAtualizacaoEstoqueGFS(MovimentoEstoque movimentoEstoque, Diferenca diferenca){
+		
+		StringBuilder sql = new StringBuilder();
+		sql.append(" SELECT atualizacaoEstoqueGFS ");
+		sql.append(" FROM AtualizacaoEstoqueGFS atualizacaoEstoqueGFS  ");
+		sql.append(" JOIN atualizacaoEstoqueGFS.movimentoEstoque me ");
+		sql.append(" JOIN atualizacaoEstoqueGFS.diferenca de ");
+		sql.append(" where me.id =:idMovimentoEstoque ");
+		sql.append(" and de.id =:idDiferenca ");
+		
+		Query query = getSession().createQuery(sql.toString());
+		query.setParameter("idMovimentoEstoque", movimentoEstoque.getId());
+		query.setParameter("idDiferenca", diferenca.getId());
+		
+		return (AtualizacaoEstoqueGFS) query.uniqueResult();
 	}
 	
 	private LancamentoDiferenca recuperarLancamentoDiferenca(Long idMovimentoEstoque){
