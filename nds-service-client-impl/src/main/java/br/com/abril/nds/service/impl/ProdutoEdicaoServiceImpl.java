@@ -1004,6 +1004,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 						
 						dto.setDataLancamentoPrevisto(lancamentoParcial.getLancamentoInicial());	
 						dto.setDataRecolhimentoPrevisto(lancamentoParcial.getRecolhimentoFinal());
+					}else{
+						
+						dto.setDataLancamentoPrevisto(uLancamento.getDataLancamentoPrevista());
+						dto.setDataRecolhimentoPrevisto(uLancamento.getDataRecolhimentoPrevista());
 					}
 					
 					PeriodoLancamentoParcial primeiroPeriodo = periodoLancamentoParcialRepository.obterPrimeiroLancamentoParcial(produtoEdicao.getId());
@@ -1011,11 +1015,16 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 					if(primeiroPeriodo!= null && primeiroPeriodo.getLancamento()!= null){
 						dto.setDataLancamento(primeiroPeriodo.getLancamento().getDataLancamentoDistribuidor());
 					}
+					else{
+						dto.setDataLancamento(uLancamento.getDataLancamentoDistribuidor());
+					}
 					
 					PeriodoLancamentoParcial ultimoPeriodo = periodoLancamentoParcialRepository.obterUltimoLancamentoParcial(produtoEdicao.getId());
 					
 					if(ultimoPeriodo!= null && ultimoPeriodo.getLancamento()!= null){
 						dto.setDataRecolhimentoReal(ultimoPeriodo.getLancamento().getDataRecolhimentoDistribuidor());
+					}else{
+						dto.setDataRecolhimentoReal(uLancamento.getDataRecolhimentoDistribuidor());
 					}
 					
 				}else{
@@ -1029,7 +1038,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				
 				dto.setRepartePrevisto(uLancamento.getReparte());
 				dto.setRepartePromocional(uLancamento.getRepartePromocional());
-				dto.setSemanaRecolhimento(DateUtil.obterNumeroSemanaNoAno(uLancamento.getDataRecolhimentoDistribuidor()));
+				
+				int semanaRecolhimento = 
+						DateUtil.obterNumeroSemanaNoAno(uLancamento.getDataRecolhimentoDistribuidor(), 
+														this.distribuidorService.inicioSemana().getCodigoDiaSemana());
+				
+				dto.setSemanaRecolhimento(semanaRecolhimento);
 			}
 			
 			SegmentacaoProduto segm = produtoEdicao.getSegmentacao();

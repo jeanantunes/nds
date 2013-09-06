@@ -2,6 +2,7 @@ package br.com.abril.nds.repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CapaDTO;
@@ -11,6 +12,7 @@ import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -46,5 +48,7 @@ public interface ChamadaEncalheRepository extends Repository<ChamadaEncalhe, Lon
 	List<ChamadaEncalhe> obterChamadaEncalhePorProdutoEdicao(ProdutoEdicao produtoEdicao,TipoChamadaEncalhe tipoChamadaEncalhe);
 
 	Integer obterMaiorSequenciaPorDia(Date dataRecolhimento);
+
+	Set<Lancamento> obterLancamentos(Long idChamadaEncalhe);
 	
 }

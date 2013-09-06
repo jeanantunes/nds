@@ -1051,8 +1051,7 @@ public class MatrizRecolhimentoController extends BaseController {
 			produtoRecolhimentoVO.setNovaData(produtoRecolhimentoDTO.getNovaData());
 			
 			produtoRecolhimentoVO.setBloqueioAlteracaoBalanceamento(
-				produtoRecolhimentoDTO.isPossuiChamada()
-				|| produtoRecolhimentoDTO.isBalanceamentoConfirmado());
+				produtoRecolhimentoDTO.isBalanceamentoConfirmado());
 			
 			listaProdutoRecolhimentoVO.add(produtoRecolhimentoVO);
 		}		
@@ -1650,8 +1649,7 @@ public class MatrizRecolhimentoController extends BaseController {
 			for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
 
 				confirmado =
-					produtoRecolhimento.isBalanceamentoConfirmado()
-						|| produtoRecolhimento.isPossuiChamada();
+					produtoRecolhimento.isBalanceamentoConfirmado();
 				
 				if (!confirmado) {
 					

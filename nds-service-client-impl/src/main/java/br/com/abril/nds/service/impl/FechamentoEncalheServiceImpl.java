@@ -62,6 +62,7 @@ import br.com.abril.nds.model.fiscal.nota.NotaFiscal;
 import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
+import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
@@ -961,12 +962,20 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 					dataPostergacao, 
 					chamadaEncalheCota.getChamadaEncalhe().getTipoChamadaEncalhe());
 			
+			ChamadaEncalhe chamadaEncalheOriginal = chamadaEncalheCota.getChamadaEncalhe();
+			
 			if (chamadaEncalhe == null) {
 				
 				chamadaEncalhe = new ChamadaEncalhe();
 				chamadaEncalhe.setDataRecolhimento(dataPostergacao);
 				chamadaEncalhe.setProdutoEdicao(chamadaEncalheCota.getChamadaEncalhe().getProdutoEdicao());
 				chamadaEncalhe.setTipoChamadaEncalhe(chamadaEncalheCota.getChamadaEncalhe().getTipoChamadaEncalhe());
+				
+				Set<Lancamento> lancamentos = chamadaEncalheRepository.obterLancamentos(chamadaEncalheOriginal.getId());
+				
+				chamadaEncalhe.setLancamentos(lancamentos);
+				chamadaEncalhe.setSequencia(chamadaEncalheOriginal.getSequencia());
+				
 				this.chamadaEncalheRepository.adicionar(chamadaEncalhe);
 			} 
 			

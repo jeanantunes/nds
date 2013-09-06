@@ -454,15 +454,7 @@ public class BalanceamentoRecolhimentoEditorTest extends AbstractRepositoryImplT
 						Collections.singletonList(fornecedorDinap.getId()), GrupoProduto.CROMO);
 
 		Assert.assertEquals(4, resumos.size());
-
-		ProdutoRecolhimentoDTO produtoRecolhimento = resumos.get(0);
-		
-		Assert.assertFalse(produtoRecolhimento.isPossuiChamada());
-		
-		produtoRecolhimento = resumos.get(1);
-		
-		Assert.assertTrue(produtoRecolhimento.isPossuiChamada());
-		
+	
 		boolean ordenacaoEditorCorreta = resumos.get(0).getIdEditor() > resumos.get(1).getIdEditor();
 		
 		Assert.assertFalse(ordenacaoEditorCorreta);

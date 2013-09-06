@@ -1245,9 +1245,11 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		Long idDiferenca = diferenca.getId();
 	
-		if(listaDiferencas != null && ! listaDiferencas.isEmpty()) {
+		if(listaDiferencas != null && !listaDiferencas.isEmpty()) {
 			
-			Iterator<Diferenca> iterator = listaDiferencas.iterator();
+			Set<Diferenca> listaDiferencasClone = new HashSet<Diferenca>();
+			listaDiferencasClone.addAll(listaDiferencas);
+			Iterator<Diferenca> iterator = listaDiferencasClone.iterator();
 			
 			while( iterator.hasNext() ) {
 				
@@ -1284,8 +1286,12 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		if(listaNovaDiferencaVO != null && ! listaNovaDiferencaVO.isEmpty()) {
 			
-			Iterator<DiferencaVO> iterator = listaNovaDiferencaVO.iterator();
+			Set<DiferencaVO> listaDiferencasClone = new HashSet<DiferencaVO>();
+			listaDiferencasClone.addAll(listaNovaDiferencaVO);
+			Iterator<DiferencaVO> iterator = listaDiferencasClone.iterator();
+			
 			while( iterator.hasNext() ) {
+				
 				DiferencaVO diferencaVoCadastrada = iterator.next();
 				
 				if( diferencaVoCadastrada.getCodigoProduto().equals(diferencaVO.getCodigoProduto())  

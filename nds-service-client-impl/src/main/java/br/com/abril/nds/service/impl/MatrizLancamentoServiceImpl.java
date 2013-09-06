@@ -37,7 +37,6 @@ import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
-import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
@@ -162,33 +161,36 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	 * 
 	 * @param produtos
 	 */
-	private void ordenarProdutos(List<ProdutoLancamentoDTO> produtos){
+	private void ordenarProdutos(List<ProdutoLancamentoDTO> produtos) {
 		
-		Collections.sort(produtos,  new Comparator<ProdutoLancamentoDTO>(){
+		Collections.sort(produtos,  new Comparator<ProdutoLancamentoDTO>() {
 			
 			 public int compare(ProdutoLancamentoDTO p1, ProdutoLancamentoDTO p2) {  
 				 
-				 if(p1.getParcial()!= null && p2.getParcial()!= null){
-					 
-					 if(p1.getNomeProduto().equals(p2.getNomeProduto())){
-						 
-						 return(!p1.getParcial().equals(p2.getParcial())
-									&& p1.getParcial().equals(TipoLancamentoParcial.PARCIAL))?-1:1;
-					 }
-					 else{
-						 return (p1.getNomeProduto().compareTo(p2.getNomeProduto()));
-					 }
+				 int tipoLancamentoP1 = 0;
+				 int tipoLancamentoP2 = 0;
+				 
+				 if(p1.getDescricaoLancamento().equalsIgnoreCase("Parcial")) {
+					 tipoLancamentoP1 = 1;
 				 }
-				 else{
-					 
-					if(p1.getParcial() == null && p2.getParcial()== null){
-						return (p1.getNomeProduto().compareTo(p2.getNomeProduto()));
-					}
-					
-					return (p1.getParcial() == null)?-1:1;
-				 } 
-           }  
+				 
+				 if(p2.getDescricaoLancamento().equalsIgnoreCase("Parcial")) {
+					 tipoLancamentoP2 = 1;
+				 }
+				 
+				 if(p1.getDescricaoLancamento().equalsIgnoreCase("Final")) {
+					 tipoLancamentoP1 = 2;
+				 }
+				 
+				 if(p2.getDescricaoLancamento().equalsIgnoreCase("Final")) {
+					 tipoLancamentoP2 = 2;
+				 }
+						 
+				 return (tipoLancamentoP1 + p1.getNomeProduto()).compareTo(tipoLancamentoP2 + p2.getNomeProduto());
+				 
+          }  
 		});
+				
 	}
 	
 	@Override
@@ -1513,8 +1515,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		List<ProdutoLancamentoDTO> produtosLancamento =
 			this.lancamentoRepository.obterBalanceamentoLancamento(periodoDistribuicao,
-																   filtro.getIdsFornecedores(),
-																   distribuidorRepository.obterDataOperacaoDistribuidor());
+																   filtro.getIdsFornecedores());
 		
 		dadosBalanceamentoLancamento.setProdutosLancamento(produtosLancamento);
 		

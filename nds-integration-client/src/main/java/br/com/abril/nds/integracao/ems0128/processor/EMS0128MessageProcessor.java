@@ -126,7 +126,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 						getSession().flush();
 					}						
 					
-					if (doc.getSituacaoSolicitacao().equals("PROCESSADO")) {
+					if (doc.getSituacaoSolicitacao().equals(StatusIntegracao.LIBERADO.getDescricao()) || doc.getSituacaoSolicitacao().equals(StatusIntegracao.REJEITADO.getDescricao())) {
 						
 						couchDbClient.remove(doc);
 					}
