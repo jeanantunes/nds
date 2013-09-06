@@ -404,9 +404,11 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		edicao.setBrinde(brinde);
 
 		String codigoDeBarras = input.getCodBarra();
-		validarCodigoBarras(produto.getCodigo(), input.getEdicaoProd(), message, codigoDeBarras);
+		boolean validarCodigoBarras = validarCodigoBarras(produto.getCodigo(), input.getEdicaoProd(), message, codigoDeBarras);
+		if(validarCodigoBarras){
+			edicao.setCodigoDeBarras(codigoDeBarras);
+		}
 		
-		edicao.setCodigoDeBarras(codigoDeBarras);
 		edicao.setNumeroEdicao(input.getEdicaoProd());
 		edicao.setPacotePadrao(input.getPactPadrao());
 		edicao.setPeb(input.getPeb());
@@ -431,10 +433,13 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		
 	}
 
-	private void validarCodigoBarras(String codigo, Long edicao, Message message,	String codigoDeBarras) {
+	private boolean validarCodigoBarras(String codigo, Long edicao, Message message,	String codigoDeBarras) {
+		 
 		if (codigoDeBarras == null || "".equals(codigoDeBarras) || new BigInteger(codigoDeBarras).compareTo(BigInteger.ZERO) <= 0){
 			this.ndsiLoggerFactory.getLogger().logWarning(message, EventoExecucaoEnum.RELACIONAMENTO, "Código de barras vazio para o Produto código: "+codigo +" edição: "+edicao);
+			return false;
 		}
+		return true;
 	}
 
 	/**
@@ -611,15 +616,18 @@ public class EMS0110MessageProcessor extends AbstractRepository implements
 		if (null != edicao.getCodigoDeBarras() && !edicao.getCodigoDeBarras().equals(input.getCodBarra())) {
 
 			String codigoDeBarras = input.getCodBarra();
-			validarCodigoBarras(edicao.getProduto().getCodigo(), edicao.getNumeroEdicao(), message, codigoDeBarras);
+			boolean validarCodigoBarras = validarCodigoBarras(edicao.getProduto().getCodigo(), edicao.getNumeroEdicao(), message, codigoDeBarras);
 			
-			edicao.setCodigoDeBarras(input.getCodBarra());
-			this.ndsiLoggerFactory.getLogger().logInfo(
-					message,
-					EventoExecucaoEnum.INF_DADO_ALTERADO,
-					"Atualizacao do Codigo de Barra para: "
-							+ input.getCodBarra());
+			if(validarCodigoBarras){
+				
+				edicao.setCodigoDeBarras(codigoDeBarras);
+				this.ndsiLoggerFactory.getLogger().logInfo(
+						message,
+						EventoExecucaoEnum.INF_DADO_ALTERADO,
+						"Atualizacao do Codigo de Barra para: " + input.getCodBarra());
+			}
 		}
+
 		if (null != edicao.getDataDesativacao() && !edicao.getDataDesativacao().equals(input.getDataDesativacao())) {
 
 			edicao.setDataDesativacao(input.getDataDesativacao());

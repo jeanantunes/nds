@@ -85,8 +85,22 @@ public class EMS0136MessageProcessor extends AbstractRepository implements
 		LancamentoParcial lancamentoParcial = this.obterLancalmentoParcial(input, produtoEdicao);
 
 		this.gerarPeriodoLancamentoParcial(input, lancamentoParcial);
+		
+		this.atualizarProdutoEdicaoParcial(produtoEdicao);
 	}
 	
+	/**
+	 * Atualiza o campo que identifica o produto edição como parcial. 
+	 * 
+	 * @param produtoEdicao
+	 */
+	private void atualizarProdutoEdicaoParcial(ProdutoEdicao produtoEdicao) {
+		
+		produtoEdicao.setParcial(true);
+		
+		this.getSession().persist(produtoEdicao);
+	}
+
 	/**
 	 * Obtém o Produto Edição cadastrado previamente.
 	 * 

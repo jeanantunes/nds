@@ -434,31 +434,44 @@ public class LancamentoRepositoryImpl extends
 		return (long) query.list().size();
 	}
 	
-	public Lancamento obterLancamentoPorItensRecebimentoFisico(Date dataLancamento, Long idProdutoEdicao){
+	public Lancamento obterLancamentoPosteriorDataLancamento(Date dataLancamento, Long idProdutoEdicao) {
 		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" from Lancamento lancamento ");
 		
-		hql.append(" where lancamento.status in (:statusLancamento) ");
+		hql.append(" where lancamento.produtoEdicao.id = :idProdutoEdicao ");
 		
-		hql.append(" and lancamento.produtoEdicao.id = :idProdutoEdicao ");
+		hql.append(" and lancamento.dataLancamentoDistribuidor >= :dataLancamento ");
 
 		hql.append(" order by lancamento.dataLancamentoDistribuidor ");
 		
 		Query query = getSession().createQuery(hql.toString());
-
-		List<StatusLancamento> statusLancamento = new ArrayList<>();
-		statusLancamento.add(StatusLancamento.CONFIRMADO);
-		statusLancamento.add(StatusLancamento.PLANEJADO);
-		statusLancamento.add(StatusLancamento.EM_BALANCEAMENTO);
-		statusLancamento.add(StatusLancamento.BALANCEADO);
-		statusLancamento.add(StatusLancamento.FURO);
-		statusLancamento.add(StatusLancamento.CONFIRMADO);
 		
-		query.setParameterList("statusLancamento", statusLancamento);
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setParameter("dataLancamento", dataLancamento);
 		
-		query.setLong("idProdutoEdicao", idProdutoEdicao);
+		query.setMaxResults(1);
+		
+		return (Lancamento) query.uniqueResult();
+	}
+	
+	public Lancamento obterLancamentoAnteriorDataLancamento(Date dataLancamento, Long idProdutoEdicao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" from Lancamento lancamento ");
+		
+		hql.append(" where lancamento.produtoEdicao.id = :idProdutoEdicao ");
+		
+		hql.append(" and lancamento.dataLancamentoDistribuidor < :dataLancamento ");
+		
+		hql.append(" order by lancamento.dataLancamentoDistribuidor desc ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setParameter("dataLancamento", dataLancamento);
 		
 		query.setMaxResults(1);
 		

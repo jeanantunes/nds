@@ -157,21 +157,13 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 					
 					dto.setRkProduto(mapRankingProdutoPorProduto.get(dto.getIdProduto()));
 					dto.setRkCota(mapRankingCotaPorProduto.get(dto.getIdCota()));
+					dto.setQuantidadePdvs(this.pdvRepository.obterQntPDV(dto.getIdCota(), null));
 					
 				} else {
 					
 					RegistroCurvaABCDistribuidorVO registro = sumarizador.get(dto.getIdCota());
-					registro.setFaturamentoCapa(
-						registro.getFaturamentoCapa().add(dto.getFaturamentoCapa())
-					);
-					
-					registro.setQuantidadePdvs(
-						registro.getQuantidadePdvs() + dto.getQuantidadePdvs()
-					);
-					
-					registro.setVendaExemplares(
-						registro.getVendaExemplares().add(dto.getVendaExemplares())
-					);
+					registro.setFaturamentoCapa(this.adicionarValor(registro.getFaturamentoCapa(), dto.getFaturamentoCapa()));
+					registro.setVendaExemplares(this.adicionarValor(registro.getVendaExemplares(), dto.getVendaExemplares()));
 				}
 			}
 		}
@@ -207,21 +199,10 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 					
 					RegistroCurvaABCCotaDTO registro = sumarizador.get(dto.getIdProdutoEdicao());
 					
-					registro.setReparte(
-							registro.getReparte().add(dto.getReparte())
-					);
-					
-					registro.setVendaExemplares(
-							registro.getVendaExemplares().add(dto.getVendaExemplares())
-					);
-					
-					registro.setPorcentagemVenda(
-							registro.getPorcentagemVenda().add(dto.getPorcentagemVenda())
-					);
-					
-					registro.setFaturamento(
-							registro.getFaturamento().add(dto.getFaturamento())
-					);
+					registro.setReparte(this.adicionarValor(registro.getReparte(), dto.getReparte()));
+					registro.setVendaExemplares(this.adicionarValor(registro.getVendaExemplares(), dto.getVendaExemplares()));
+					//registro.setPorcentagemVenda(this.adicionarValor(registro.getPorcentagemVenda(), dto.getPorcentagemVenda()));
+					registro.setFaturamento(this.adicionarValor(registro.getFaturamento(), dto.getFaturamento()));
 				}
 			}
 		}
@@ -248,7 +229,6 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		}
 
 		BigDecimal participacaoRegistro = BigDecimal.ZERO;
-		BigDecimal participacaoAcumulada = BigDecimal.ZERO;
 		
 		// Partipacao do registro em relacao a participacao total no periodo
 		if (participacaoTotal.compareTo(BigDecimal.ZERO) != 0) {
@@ -256,12 +236,9 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 			//Verifica o percentual dos valores em relação ao total de participacao
 			for (RegistroCurvaABCDistribuidorVO registro : lista) {
 				
-				participacaoRegistro = registro.getFaturamentoCapa().multiply(CEM).divide(participacaoTotal, RoundingMode.HALF_EVEN);
-				
-				participacaoAcumulada = participacaoAcumulada.add(participacaoRegistro);
-				
+				participacaoRegistro = 
+						registro.getFaturamentoCapa().multiply(CEM).divide(participacaoTotal, RoundingMode.HALF_EVEN);
 				registro.setParticipacao(participacaoRegistro);
-				registro.setParticipacaoAcumulada(participacaoAcumulada);
 			}
 		}
 
@@ -339,7 +316,6 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 		}
 
 		BigDecimal participacaoRegistro = BigDecimal.ZERO;
-		BigDecimal participacaoAcumulada = BigDecimal.ZERO;
 		
 		// Partipacao do registro em relacao a participacao total no periodo
 		if ( participacaoTotal.compareTo(BigDecimal.ZERO) != 0){
@@ -347,12 +323,14 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 			// Verifica o percentual dos valores em relação ao total de participacao
 			for (RegistroCurvaABCCotaDTO registro : lista) {
 				
-				participacaoRegistro = registro.getFaturamento().multiply(CEM).divide(participacaoTotal, RoundingMode.HALF_EVEN);
-				
-				participacaoAcumulada = participacaoAcumulada.add(participacaoRegistro);
+				participacaoRegistro =
+						registro.getFaturamento().multiply(CEM).divide(participacaoTotal, RoundingMode.HALF_EVEN);
 				
 				registro.setParticipacao(participacaoRegistro);
-				registro.setParticipacaoAcumulada(participacaoAcumulada);
+				
+				registro.setPorcentagemVenda(
+						MathUtil.divide(CEM.multiply(new BigDecimal(registro.getVendaExemplares())), 
+								new BigDecimal(registro.getReparte())));
 			}
 		}
 

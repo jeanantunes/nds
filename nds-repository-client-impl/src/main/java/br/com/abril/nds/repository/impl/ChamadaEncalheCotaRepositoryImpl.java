@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +39,27 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 
 	public ChamadaEncalheCotaRepositoryImpl() {
 		super(ChamadaEncalheCota.class);
+	}
+	
+	public BigInteger quantidadeCotaAusenteFechamentoEncalhe(Integer numeroCota, Date dataRecolhimento) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT COUNT(*) "); 
+		sql.append(" FROM CHAMADA_ENCALHE ce, CHAMADA_ENCALHE_COTA cec, COTA c ");
+		sql.append(" WHERE ce.ID = cec.CHAMADA_ENCALHE_ID ");
+		sql.append(" AND cec.COTA_ID = c.ID ");
+		sql.append(" AND ce.DATA_RECOLHIMENTO = :dataRecolhimento ");
+		sql.append(" AND NUMERO_COTA = :numeroCota ");
+		sql.append(" AND cec.FECHADO = :fechado " );
+
+		Query query = getSession().createSQLQuery(sql.toString());
+
+		query.setParameter("dataRecolhimento", dataRecolhimento);
+		query.setParameter("numeroCota", numeroCota);
+		query.setParameter("fechado", true);
+
+		return (BigInteger) query.uniqueResult();
 	}
 
 	@Override

@@ -529,6 +529,8 @@ var ConferenciaEncalhe = $.extend(true, {
 		},
 		function() {
 			
+			$("#numeroCota", ConferenciaEncalhe.workspace).val("");
+			
 			focusSelectRefField($("#numeroCota", ConferenciaEncalhe.workspace));
 		});	
 	},
@@ -1358,7 +1360,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				
 				ConferenciaEncalhe.preProcessarConsultaConferenciaEncalhe(result);	
 				
-                ConferenciaEncalhe.limparDadosProduto();
+                ConferenciaEncalhe.limparDadosProduto(true);
 				
 				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
 				
@@ -1366,7 +1368,7 @@ var ConferenciaEncalhe = $.extend(true, {
 			},
 			function(){
 				
-				ConferenciaEncalhe.limparDadosProduto();
+				ConferenciaEncalhe.limparDadosProduto(true);
 				
 				focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
 				
@@ -1375,7 +1377,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		);
 	},
 
-	limparDadosProduto : function(){
+	limparDadosProduto : function(keepQtdValorCE){
 		
 		$("#qtdeExemplar", ConferenciaEncalhe.workspace).val("1");
 		$("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace).val("");
@@ -1387,8 +1389,13 @@ var ConferenciaEncalhe = $.extend(true, {
 		$("#precoCapa", ConferenciaEncalhe.workspace).text("");
 		$("#desconto", ConferenciaEncalhe.workspace).text("");
 		$("#valorTotal", ConferenciaEncalhe.workspace).text("");
-		$("#vlrCE", ConferenciaEncalhe.workspace).val("");
-		$("#qtdCE", ConferenciaEncalhe.workspace).val("");
+		
+		if(keepQtdValorCE != true) {
+
+			$("#vlrCE", ConferenciaEncalhe.workspace).val("");
+			$("#qtdCE", ConferenciaEncalhe.workspace).val("");
+			
+		}
 		
 		ConferenciaEncalhe.ultimoCodeBar = "";
 		ConferenciaEncalhe.ultimoSM = "";

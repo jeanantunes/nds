@@ -261,35 +261,15 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	{
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("select chamadaEncalhe.sequencia as sequencia, ");
-		hql.append("produto.nome as produto, ");
-		hql.append("produto.codigo as codigo, ");
-		hql.append("produtoEdicao.numeroEdicao as edicao, ");
-		hql.append("produtoEdicao.precoVenda as precoCapa, ");
-		hql.append("produtoEdicao.origem as origem, ");
-		hql.append("descontoLogisticaProdEdicao.id as produtoEdicaoDescontoLogisticaId, ");
-		hql.append("descontoLogisticaProduto.id as produtoDescontoLogisticaId, ");
+		hql.append(" select count ( chamadaEncalhe.id) ");
+		hql.append(" from ChamadaEncalhe as chamadaEncalhe ");
+		hql.append(" join chamadaEncalhe.produtoEdicao as produtoEdicao ");
+		hql.append(" join produtoEdicao.produto as produto ");
+		hql.append(" left join produtoEdicao.descontoLogistica as descontoLogisticaProdEdicao ");
+		hql.append(" left join produto.descontoLogistica as descontoLogisticaProduto ");
+		hql.append(" join produto.fornecedores as fornecedor ");
 		
-		hql.append("coalesce(produtoEdicao.precoVenda, 0) - (coalesce(produtoEdicao.precoVenda, 0)  * ( ");
-		hql.append("   CASE WHEN produtoEdicao.origem = :origemInterface ");
-		hql.append("   THEN (coalesce(descontoLogisticaProdEdicao.percentualDesconto, descontoLogisticaProduto.percentualDesconto, 0 ) /100 ) ");
-		hql.append("   ELSE (coalesce(produtoEdicao.desconto, produto.desconto, 0) / 100) END ");
-		hql.append("   )) as precoCapaDesconto ");
-		
-		
-		hql.append(" , coalesce(produtoEdicao.precoVenda, 0) as precoCapa ");
-		hql.append(" , produtoEdicao.id as produtoEdicao ");
-		hql.append(" , case when  produtoEdicao.parcial  = true  then 'P' else 'N' end  as tipo ");
-		
-		
-		hql.append("from ChamadaEncalhe as chamadaEncalhe ");
-		hql.append("join chamadaEncalhe.produtoEdicao as produtoEdicao ");
-		hql.append("join produtoEdicao.produto as produto ");
-		hql.append("left join produtoEdicao.descontoLogistica as descontoLogisticaProdEdicao ");
-		hql.append("left join produto.descontoLogistica as descontoLogisticaProduto ");
-		hql.append("join produto.fornecedores as fornecedor ");
-		
-		hql.append("where chamadaEncalhe.dataRecolhimento = :dataRecolhimento ");
+		hql.append(" where chamadaEncalhe.dataRecolhimento = :dataRecolhimento ");
 		
 		if (filtro.getFornecedorId() != null) {
 			hql.append("and fornecedor.id = :fornecedorId ");
@@ -298,13 +278,12 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		Query query =  getSession().createQuery(hql.toString());
 		
 		query.setParameter("dataRecolhimento", filtro.getDataEncalhe());
-		query.setParameter("origemInterface", Origem.INTERFACE);
 
 		if (filtro.getFornecedorId() != null) {
 			query.setLong("fornecedorId", filtro.getFornecedorId());
 		}
 		
-		return query.list().size();
+		return ((Long) query.uniqueResult()).intValue();
 	}
 	
 	
@@ -405,10 +384,12 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		sql.append(" select count(idCota) from  ");
 		
 		sql.append(" ( ");
-		
+
 		sql.append(getSqlCotaAusenteComChamadaEncalhe(true, isSomenteCotasSemAcao).toString());
+		
 		sql.append(" union all ");
-		sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, isSomenteCotasSemAcao).toString());		 
+		
+		sql.append(getSqlCotaAusenteSemChamadaEncalhe(true, isSomenteCotasSemAcao).toString()); 
 
 		sql.append(" ) as ausentes	");
 		
@@ -419,8 +400,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.setParameter("principal", true);
 
 		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO.name());
-		
-		query.setParameter("statusConcluido", StatusOperacao.CONCLUIDO.name());
 		
 		query.setParameter("inativo", SituacaoCadastro.INATIVO.name());
 		
@@ -496,8 +475,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	sql.append("            from                                                        ");
 	sql.append("                controle_conferencia_encalhe_cota cec                   ");
 	sql.append("            where                                                       ");
-	sql.append("                cec.data_operacao = :dataEncalhe                        ");
-	sql.append("                and  cec.status = :statusConcluido         				");     
+	sql.append("                cec.data_operacao = :dataEncalhe                        ");   
 	sql.append("        )                                                               ");
 	sql.append("		and pdv.PONTO_PRINCIPAL = :principal                            ");
 	
@@ -581,8 +559,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		sql.append("            from                                                        ");
 		sql.append("                controle_conferencia_encalhe_cota cec                   ");
 		sql.append("            where                                                       ");
-		sql.append("                cec.data_operacao = :dataEncalhe                        ");
-		sql.append("                and  cec.status = :statusConcluido         				");     
+		sql.append("                cec.data_operacao = :dataEncalhe                        ");    
 		sql.append("        )                                                               ");
 		sql.append("		and pdv.PONTO_PRINCIPAL = :principal                            ");
 		
@@ -680,7 +657,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		sql.append("                controle_conferencia_encalhe_cota cec       ");
 		sql.append("            where                                           ");
 		sql.append("                cec.data_operacao = :dataEncalhe            ");
-		sql.append("                and cec.status = :statusConcluido           ");
 		sql.append("        )                                                   ");
 		sql.append("		and pdv.PONTO_PRINCIPAL = :principal                ");
 		sql.append("		and cota.ID not in (                                ");
@@ -714,13 +690,19 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	
 		StringBuilder sql = new StringBuilder();
 		
+		sql.append(getSqlCotaAusenteComChamadaEncalhe(false, isSomenteCotasSemAcao).toString());
+		
+		sql.append(" union all ");
+		
 		sql.append(getSqlCotaAusenteSemChamadaEncalhe(false, isSomenteCotasSemAcao).toString());
 		
 		if("acao".equals(sortname)) {
+			
 			sortname = "fechado";
 		}
 		 
 		if (sortname != null && sortorder != null) {
+			
 			sql.append("  ORDER BY " + sortname + " " + sortorder);
 		}
 		
@@ -746,8 +728,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO.name());
 		
 		query.setParameter("dataEncalhe", dataEncalhe);
+		
 		query.setParameter("principal", true);
-		query.setParameter("statusConcluido", StatusOperacao.CONCLUIDO.name());
 
 		query.setParameter("inativo", SituacaoCadastro.INATIVO.name());
 		
@@ -817,8 +799,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         .append("  from                                             ")
         .append("      controle_conferencia_encalhe_cota cec        ")
         .append("  where                                            ")
-        .append("      cec.data_operacao = :dataEncalhe and         ")
-        .append("      cec.status = :statusConcluido                ")
+        .append("      cec.data_operacao = :dataEncalhe             ")
 		.append("   )												")
 		.append("	                                                ")
 		.append("	and pdv.PONTO_PRINCIPAL=:principal  ");
@@ -1336,8 +1317,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.setParameter("principal", true);
 
 		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO.name());
-		
-		query.setParameter("statusConcluido", StatusOperacao.CONCLUIDO.name());
 		
 		query.setParameter("inativo", SituacaoCadastro.INATIVO.name());
 		

@@ -54,7 +54,7 @@ window.print();
   <tr>
     <td width="390" align="left" valign="top"><table width="390" border="0" cellpadding="0" cellspacing="0" style="margin-top:5px;" class="relatorios">
       <tr class="class_linha_3">
-        <td width="174" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Publicação</strong></td>
+        <td width="174" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Publicação</strong><br /><strong>Código de Barras</strong></td>
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>Edição</strong></td>
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>SM</strong></td>
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>Preço Capa R$</strong></td>
@@ -64,7 +64,7 @@ window.print();
       <c:forEach items="${mapa.produtos}" var="produto" varStatus="statusProduto" end="${mapa.produtos.size()%2==0?(mapa.produtos.size()/2)-1:(mapa.produtos.size()/2)}">
       
       <tr class="class_linha_${statusProduto.index%2==0?1:2}">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.nomeProduto}</td>
+        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.nomeProduto}<br />${produto.value.codigoDeBarras}</td>
         <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.numeroEdicao}</td>
         <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>${produto.value.sm}</strong></td>
         <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>${produto.value.precoCapa}</strong></td>
@@ -79,7 +79,7 @@ window.print();
     
     <table width="390" border="0" align="right" cellpadding="0" cellspacing="0" class="relatorios" style="margin-top:5px;">
       <tr class="class_linha_3">
-        <td width="174" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Publicação</strong></td>
+        <td width="174" style="border-left:1px solid #000;border-top:1px solid #000;border-bottom:1px solid #000;"><strong>Publicação</strong><br /><strong>Código de Barras</strong></td>
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>Edição</strong></td>
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>SM</strong></td>
         <td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>Preço Capa R$</strong></td>
@@ -88,7 +88,7 @@ window.print();
         <c:forEach items="${mapa.produtos}" var="produto" varStatus="statusProduto" begin="${mapa.produtos.size()%2==0?mapa.produtos.size()/2:(mapa.produtos.size()/2)+1}" >
       
       <tr class="class_linha_${statusProduto.index%2==0?1:2}">
-        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.nomeProduto}</td>
+        <td style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.nomeProduto}<br />${produto.value.codigoDeBarras}</td>
         <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.numeroEdicao}</td>
         <td align="center" class="class_sm" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>${produto.value.sm}</strong></td>
         <td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;"><strong>${produto.value.precoCapa}</strong></td>

@@ -1,7 +1,6 @@
 package br.com.abril.nds.service.impl;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -10,6 +9,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -22,12 +22,8 @@ import java.util.Set;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.export.JRTextExporter;
-import net.sf.jasperreports.engine.export.JRTextExporterParameter;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.ComparatorChain;
@@ -688,6 +684,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		return false;
 		
+	}
+
+	@Transactional(readOnly = true)
+	public boolean hasCotaAusenteFechamentoEncalhe(Integer numeroCota) {
+
+		Date dataRecolhimento = distribuidorService.obterDataOperacaoDistribuidor();
+
+		BigInteger quantidadeCotasAusentes = this.chamadaEncalheCotaRepository.quantidadeCotaAusenteFechamentoEncalhe(numeroCota, dataRecolhimento);
+
+		return quantidadeCotasAusentes.compareTo(BigInteger.ZERO) > 0;
 	}
 	
 	/**
@@ -3181,7 +3187,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		Integer numeroCota 		= controleConferenciaEncalheCota.getCota().getNumeroCota();
 	
 		String nomeCota 		= controleConferenciaEncalheCota.getCota().getPessoa().getNome();
-		Date dataConferencia 	= controleConferenciaEncalheCota.getDataFim();
+		Date dataConferencia 	= this.obterDataOperacaoConferencia(controleConferenciaEncalheCota.getDataFim(), controleConferenciaEncalheCota.getDataOperacao());
 		Integer codigoBox 		= controleConferenciaEncalheCota.getBox().getCodigo();
 		Long numeroSlip 		= controleConferenciaEncalheCota.getNumeroSlip();
 		
@@ -3212,17 +3218,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
  
 			produtoEdicaoSlip.setDia(dia);
 			
-			String ordinal = null;
-			
-			if (dia == 0) {
-				
-				ordinal = DateUtil.formatarDataPTBR(produtoEdicaoSlip.getDataOperacao());
-				
-			} else {
-				
-				ordinal = this.getDiaMesOrdinal(dia) + " DIA";
-			}
-			
+			String ordinal = DateUtil.formatarDataPTBR(produtoEdicaoSlip.getDataOperacao()) + " " +  this.getDiaMesOrdinal(dia +1) + " DIA";
+		
 			produtoEdicaoSlip.setOrdinalDiaConferenciaEncalhe(ordinal);	
 		}
 		
@@ -3335,6 +3332,27 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		parametersSlip.put("RAZAO_SOCIAL_DISTRIBUIDOR", this.distribuidorService.obterRazaoSocialDistribuidor());
 		
 		return slipDTO;
+	}
+	
+	/**
+	 * Retorna a data de operação do controle confernecia encalhe junto com o horario da data de finalização de controle conferencia encalhe.
+	 * 
+	 * @param dataFimConferencia - data de finalização de controle conferencia encalhe cota
+	 * @param dataOperacaoConferenia - data de operação de controle conferencia encalhe cota
+	 * @return Date - data de operação de controle conferencia encalhe cota com horario de finalização da conferencia 
+	 */
+	private Date obterDataOperacaoConferencia(Date dataFimConferencia, Date dataOperacaoConferenia){
+		
+		Calendar dataFinalConferencia =  Calendar.getInstance();
+		dataFinalConferencia.setTime(dataFimConferencia);
+		
+		Calendar  dataOperacaoConferencia  = Calendar.getInstance();
+		dataOperacaoConferencia.setTime(dataOperacaoConferenia);
+		dataOperacaoConferencia.add(Calendar.HOUR, dataFinalConferencia.get(Calendar.HOUR));
+		dataOperacaoConferencia.add(Calendar.MINUTE, dataFinalConferencia.get(Calendar.MINUTE));
+		dataOperacaoConferencia.add(Calendar.SECOND, dataFinalConferencia.get(Calendar.SECOND));
+		
+		return dataOperacaoConferencia.getTime();
 	}
 
 	private void calcularTotaisListaSlip(List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlip) {

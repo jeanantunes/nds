@@ -310,8 +310,8 @@ var relatorioVendasController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			} ],
-			sortname : "rkProduto",
-			sortorder : "asc",
+			sortname : "faturamentoCapaFormatado",
+			sortorder : "desc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
@@ -384,7 +384,7 @@ var relatorioVendasController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			} ],
-			sortname : "participacaoAcumuladaFormatado",
+			sortname : "faturamento",
 			sortorder : "desc",
 			usepager : true,
 			useRp : true,
@@ -698,6 +698,7 @@ var relatorioVendasController = $.extend(true, {
 				resultado.mensagens.listaMensagens
 			);
 			$(".grids", relatorioVendasController.workspace).hide();
+			
 			return resultado;
 		}
 
@@ -705,6 +706,7 @@ var relatorioVendasController = $.extend(true, {
 		$("#totalFaturamentoCapaDistribuidor", relatorioVendasController.workspace).html("R$ " + resultado.totalFaturamentoFormatado);
 		
 		$(".grids", relatorioVendasController.workspace).show();
+		
 		return resultado.tableModel;
 	},
 

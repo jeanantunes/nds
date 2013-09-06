@@ -79,7 +79,7 @@ function imprimir(){
 	        <td width="45"><strong>Edição:</strong></td>
 	        <td width="44">${produto.value.numeroEdicao}</td>
 	        <td width="119"><strong>Código de Barras:</strong></td>
-	        <td width="154">${produto.value.codigoProduto}</td>
+	        <td width="154">${produto.value.codigoDeBarras}</td>
 	        <td width="96"><strong>Preço Capa R$:</strong></td>
 	        <td width="63">${produto.value.precoCapa}</td>
 	      </tr>
