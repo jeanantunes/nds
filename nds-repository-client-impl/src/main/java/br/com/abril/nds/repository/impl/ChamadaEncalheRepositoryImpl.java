@@ -666,7 +666,10 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		   .append(" left join movimentoCota.cota cotaMov ")
 		   .append(" where cota.id=:idCota 									")
 		   .append(" and produtoEdicao.id = produtoEdicao.id  	")
-		   .append(" and chamEncCota.qtdePrevista>0  ");
+		   .append(" and chamEncCota.qtdePrevista>0  ")
+		   .append(" and chamEncCota.postergado = :isPostergado ");
+	
+		param.put("isPostergado", false);
 		
 		param.put("idCota", idCota);
 		
@@ -679,7 +682,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		if(filtro.getDtRecolhimentoAte() != null) {
 			hql.append(" and chamadaEncalhe.dataRecolhimento <=:dataAte ");
 			param.put("dataAte", filtro.getDtRecolhimentoAte());
-		}
+		}		
 	}
 
 	@Override
