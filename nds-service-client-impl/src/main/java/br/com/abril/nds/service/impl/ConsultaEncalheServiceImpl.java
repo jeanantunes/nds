@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -115,7 +116,7 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		valorTotalEncalhe = totalReparteEncalhe.getEncalhe();
 		
-		BigDecimal valorVendaDia = valorTotalReparte.subtract(valorTotalEncalhe); 
+		BigDecimal valorVendaDia = (valorTotalReparte==null?BigDecimal.ZERO:valorTotalReparte).subtract(valorTotalEncalhe==null?BigDecimal.ZERO:valorTotalEncalhe); 
 		
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCotaDTO = new ArrayList<DebitoCreditoCotaDTO>();
 		

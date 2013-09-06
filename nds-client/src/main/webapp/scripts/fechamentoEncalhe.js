@@ -732,8 +732,18 @@ var fechamentoEncalheController = $.extend(true, {
 				
 			} else {
 				
-				checkBox = '<input isEdicao="true" type="checkbox" disabled="disabled" checked="checked" name="checkboxGridCotas_comDivida" id="checkboxGridCotas" onclick="fechamentoEncalheController.preencherArrayCotasAusentes('+ row.cell.idCota +', this.checked)" value="' + row.cell.idCota + '" />';	
-			
+				if(row.cell.indMFCNaoConsolidado==true){
+				
+				    checkBox = '<input isEdicao="true" type="checkbox" onclick="return false" onkeydown="return false" checked="checked" name="checkboxGridCotas_comDivida" id="checkboxGridCotas" value="' + row.cell.idCota + '" />';	
+				    
+				    fechamentoEncalheController.preencherArrayCotasAusentes(row.cell.idCota, true);
+				}
+				else{
+					
+					checkBox = '<input isEdicao="true" type="checkbox" onclick="return false" onkeydown="return false" name="checkboxGridCotas_comDivida" id="checkboxGridCotas" value="' + row.cell.idCota + '" />';
+				    
+					fechamentoEncalheController.preencherArrayCotasAusentes(row.cell.idCota, false);
+				}
 			}
 			
 		    row.cell.check = checkBox;
@@ -906,9 +916,27 @@ var fechamentoEncalheController = $.extend(true, {
 		
 		var cobrarTodas  = $("#checkTodasCotas").attr("checked") == "checked";
 		
+		
+		
+		
+		
+		
+		
+		var idsCotas = fechamentoEncalheController.arrayCotasAusentesSession;
+		
+		
+		
+		//var idsCotasTESTE = fechamentoEncalheController.obterCotasMarcadas();
+		
+		
+		
+		
+		
+		
+		
 		$.postJSON(contextPath + '/devolucao/fechamentoEncalhe/veificarCobrancaGerada',
 				{
-					'idsCotas' : fechamentoEncalheController.arrayCotasAusentesSession,
+					'idsCotas' : idsCotas,
 					'cobrarTodasCotas': cobrarTodas
 				},
 		
