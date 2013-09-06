@@ -866,7 +866,7 @@ public class LancamentoRepositoryImplTest extends AbstractRepositoryImplTest {
 		fornecedores.add(1L);
 
 		List<ProdutoLancamentoDTO> produtoLancamentoDTOs = lancamentoRepository
-				.obterBalanceamentoLancamento(periodoDistribuicao, fornecedores, new Date());
+				.obterBalanceamentoLancamento(periodoDistribuicao, fornecedores);
 
 		Assert.assertNotNull(produtoLancamentoDTOs);
 	}
