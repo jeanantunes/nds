@@ -5,6 +5,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
@@ -14,10 +15,14 @@ import org.hibernate.criterion.DetachedCriteria;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.internal.TypeLocatorImpl;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BooleanType;
+import org.hibernate.type.EnumType;
 import org.hibernate.type.StandardBasicTypes;
+import org.hibernate.type.Type;
+import org.hibernate.type.TypeResolver;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.AnaliticoEncalheDTO;
@@ -124,66 +129,132 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<FechamentoFisicoLogicoDTO> buscarConferenciaEncalheNovo(FiltroFechamentoEncalheDTO filtro,
-			String sortorder, String sortname, Integer page, Integer rp) {
+																		String sortorder, 
+																		String sortname, 
+																		Integer page, 
+																		Integer rp) {
 		
-		StringBuilder hql = new StringBuilder();
+		String queryString = this.getQueryFechamentoEncalhe(filtro);
 		
-		hql.append("select chamadaEncalhe.sequencia as sequencia, ");
-		hql.append("produto.nome as produto, ");
-		hql.append("produto.codigo as codigo, ");
-		hql.append("produtoEdicao.numeroEdicao as edicao, ");
-		hql.append("produtoEdicao.precoVenda as precoCapa, ");
-		hql.append("produtoEdicao.origem as origem, ");
-		hql.append("descontoLogisticaProdEdicao.id as produtoEdicaoDescontoLogisticaId, ");
-		hql.append("descontoLogisticaProduto.id as produtoDescontoLogisticaId, ");
-		
-		hql.append("coalesce(produtoEdicao.precoVenda, 0) - (coalesce(produtoEdicao.precoVenda, 0)  * ( ");
-		hql.append("   CASE WHEN produtoEdicao.origem = :origemInterface ");
-		hql.append("   THEN (coalesce(descontoLogisticaProdEdicao.percentualDesconto, descontoLogisticaProduto.percentualDesconto, 0 ) /100 ) ");
-		hql.append("   ELSE (coalesce(produtoEdicao.desconto, produto.desconto, 0) / 100) END ");
-		hql.append("   )) as precoCapaDesconto ");
-		
-		
-		hql.append(" , coalesce(produtoEdicao.precoVenda, 0) as precoCapa ");
-		hql.append(" , produtoEdicao.id as produtoEdicao ");
-		hql.append(" , case when  produtoEdicao.parcial  = true  then 'P' else 'N' end  as tipo ");
-		
-		
-		hql.append("from ChamadaEncalhe as chamadaEncalhe ");
-		
-		hql.append("join chamadaEncalhe.lancamentos as lancamentos ");
-		hql.append("join lancamentos.produtoEdicao as produtoEdicao ");		
-		
-		hql.append("join produtoEdicao.produto as produto ");
-		hql.append("left join produtoEdicao.descontoLogistica as descontoLogisticaProdEdicao ");
-		hql.append("left join produto.descontoLogistica as descontoLogisticaProduto ");
-		hql.append("join produto.fornecedores as fornecedor ");
-		hql.append("where chamadaEncalhe.dataRecolhimento = :dataRecolhimento ");
-		
-		if (filtro.getFornecedorId() != null) {
-			hql.append("and fornecedor.id = :fornecedorId ");
-		}
-		
-		Query query =  getSession().createQuery(hql.toString());
+		Query query = getSession().createSQLQuery(queryString);
 		
 		query.setParameter("dataRecolhimento", filtro.getDataEncalhe());
 		query.setParameter("origemInterface", Origem.INTERFACE);
 
 		if (filtro.getFornecedorId() != null) {
+			
 			query.setLong("fornecedorId", filtro.getFornecedorId());
 		}
 		
-		if (page != null){
+		if (page != null) {
+			
 			query.setFirstResult(page);
 		}
 		
-		if (rp != null){
+		if (rp != null) {
+			
 			query.setMaxResults(rp);
 		}
 
-		query.setResultTransformer(Transformers.aliasToBean(FechamentoFisicoLogicoDTO.class));
+		query.setResultTransformer(new AliasToBeanResultTransformer(FechamentoFisicoLogicoDTO.class));
+		
+		Properties params = new Properties();
+		
+		params.put("enumClass", Origem.class.getCanonicalName());
+		params.put("type", "12");
+		
+		Type origemEnumType = new TypeLocatorImpl(new TypeResolver()).custom(EnumType.class, params);
+		
+		((SQLQuery) query).addScalar("produtoEdicao", StandardBasicTypes.LONG);
+		((SQLQuery) query).addScalar("sequencia", StandardBasicTypes.INTEGER);
+		((SQLQuery) query).addScalar("produto", StandardBasicTypes.STRING);
+		((SQLQuery) query).addScalar("codigo", StandardBasicTypes.STRING);
+		((SQLQuery) query).addScalar("edicao", StandardBasicTypes.LONG);
+		((SQLQuery) query).addScalar("origem", origemEnumType);
+		((SQLQuery) query).addScalar("produtoEdicaoDescontoLogisticaId", StandardBasicTypes.LONG);
+		((SQLQuery) query).addScalar("produtoDescontoLogisticaId", StandardBasicTypes.LONG);
+		((SQLQuery) query).addScalar("precoCapaDesconto", StandardBasicTypes.BIG_DECIMAL);
+		((SQLQuery) query).addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL);
+		((SQLQuery) query).addScalar("tipo", StandardBasicTypes.STRING);
 		
 		return query.list();
+	}
+	
+	private String getQueryFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro) {
+		
+		StringBuilder query = new StringBuilder();
+		
+		query.append("select * from (");
+		query.append("	select pe.ID as produtoEdicao,"); 
+		query.append("			 coalesce(ce.SEQUENCIA, 0) as sequencia,"); 
+		query.append("			 p.NOME as produto, ");
+		query.append("			 p.CODIGO as codigo, ");
+		query.append("			 pe.NUMERO_EDICAO as edicao,"); 
+		query.append("			 pe.ORIGEM as origem, ");
+		query.append("			 dlpe.ID as produtoEdicaoDescontoLogisticaId,"); 
+		query.append("			 dlp.ID as produtoDescontoLogisticaId,");
+		query.append("			 (coalesce(pe.PRECO_VENDA, 0) - (coalesce(pe.PRECO_VENDA, 0)  *");
+		query.append("			 CASE WHEN pe.ORIGEM = :origemInterface");
+		query.append("			 THEN (coalesce(dlpe.PERCENTUAL_DESCONTO, dlp.PERCENTUAL_DESCONTO, 0) / 100)");
+		query.append("			 ELSE (coalesce(pe.DESCONTO, p.desconto, 0) / 100) END");
+		query.append("			 )) as precoCapaDesconto,");
+		query.append("			 coalesce(pe.PRECO_VENDA, 0) as precoCapa,");
+		query.append("			 case when pe.PARCIAL = true  then 'P' else 'N' end as tipo");
+		query.append("	from chamada_encalhe_cota cec");
+		query.append("	inner join chamada_encalhe ce on (ce.ID = cec.CHAMADA_ENCALHE_ID)");
+		query.append("	inner join produto_edicao pe on (pe.ID = ce.PRODUTO_EDICAO_ID)");
+		query.append("	inner join produto p on (pe.PRODUTO_ID = p.ID)");
+		query.append("	inner join produto_fornecedor pf on (pf.PRODUTO_ID = p.ID)");
+		query.append("	left join desconto_logistica dlpe on (dlpe.ID = pe.DESCONTO_LOGISTICA_ID)");
+		query.append("	left join desconto_logistica dlp on (dlp.ID = p.DESCONTO_LOGISTICA_ID)");
+		query.append("	where ce.DATA_RECOLHIMENTO = :dataRecolhimento");
+		query.append("	and cec.postergado = false ");
+		
+		if (filtro.getFornecedorId() != null) {
+			
+			query.append("	and pf.fornecedores_ID = :fornecedorId");
+		}
+		
+		query.append("	group by ce.PRODUTO_EDICAO_ID");
+		query.append("	union all");
+		query.append("	select pe.ID as produtoEdicao, ");
+		query.append("			 ce.SEQUENCIA as sequencia,"); 
+		query.append("			 p.NOME as produto, ");
+		query.append("			 p.CODIGO as codigo, ");
+		query.append("			 pe.NUMERO_EDICAO as edicao,"); 
+		query.append("			 pe.ORIGEM as origem, ");
+		query.append("			 dlpe.ID as produtoEdicaoDescontoLogisticaId,"); 
+		query.append("			 dlp.ID as produtoDescontoLogisticaId,");
+		query.append("			 (coalesce(pe.PRECO_VENDA, 0) - (coalesce(pe.PRECO_VENDA, 0)  *");
+		query.append("			 CASE WHEN pe.ORIGEM = :origemInterface");
+		query.append("			 THEN (coalesce(dlpe.PERCENTUAL_DESCONTO, dlp.PERCENTUAL_DESCONTO, 0) / 100)");
+		query.append("			 ELSE (coalesce(pe.DESCONTO, p.desconto, 0) / 100) END");
+		query.append("			 )) as precoCapaDesconto,");
+		query.append("			 coalesce(pe.PRECO_VENDA, 0) as precoCapa,");
+		query.append("			 case when  pe.PARCIAL = true  then 'P' else 'N' end as tipo");
+		query.append("	from chamada_encalhe_cota cec");
+		query.append("	inner join chamada_encalhe ce on (ce.ID = cec.CHAMADA_ENCALHE_ID)");
+		query.append("	inner join conferencia_encalhe confenc on (confenc.CHAMADA_ENCALHE_COTA_ID = cec.ID)");
+		query.append("	inner join controle_conferencia_encalhe_cota ccec on (ccec.ID = confenc.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID)");
+		query.append("	inner join controle_conferencia_encalhe cce on (cce.ID = ccec.CTRL_CONF_ENCALHE_ID)");
+		query.append("	inner join produto_edicao pe on (pe.ID = ce.PRODUTO_EDICAO_ID)");
+		query.append("	inner join produto p on (pe.PRODUTO_ID = p.ID)");
+		query.append("	inner join produto_fornecedor pf on (pf.PRODUTO_ID = p.ID)");
+		query.append("	left join desconto_logistica dlpe on (dlpe.ID = pe.DESCONTO_LOGISTICA_ID)");
+		query.append("	left join desconto_logistica dlp on (dlp.ID = p.DESCONTO_LOGISTICA_ID)");
+		query.append("	where cce.`DATA` = :dataRecolhimento");
+		query.append("	and cec.postergado = false ");
+		
+		if (filtro.getFornecedorId() != null) {
+			
+			query.append("	and pf.fornecedores_ID = :fornecedorId");
+		}
+		
+		query.append("	group by ce.PRODUTO_EDICAO_ID");
+		query.append(") as unionEncalhe");
+		query.append(" group by unionEncalhe.produtoEdicao");
+		
+		return query.toString();
 	}
 	
 	@SuppressWarnings("unchecked")
