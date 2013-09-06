@@ -1506,8 +1506,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		List<ProdutoLancamentoDTO> produtosLancamento =
 			this.lancamentoRepository.obterBalanceamentoLancamento(periodoDistribuicao,
-																   filtro.getIdsFornecedores(),
-																   distribuidorRepository.obterDataOperacaoDistribuidor());
+																   filtro.getIdsFornecedores());
 		
 		dadosBalanceamentoLancamento.setProdutosLancamento(produtosLancamento);
 		

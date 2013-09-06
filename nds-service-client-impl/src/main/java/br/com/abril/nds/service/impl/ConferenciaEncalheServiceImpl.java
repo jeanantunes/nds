@@ -929,15 +929,15 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if (dataConsolidadoPostergado != null) {
 			
 			String dataConsolidadoPostergadoFormatada = 
-				DateUtil.formatarDataPTBR(dataConsolidadoPostergado);
+				DateUtil.formatarData(dataConsolidadoPostergado,"dd/MM/yy");
 			
 			adicionarDebitoCreditoDeConsolidado(
 					listaDebitoCredito,
 					consolidado.getValorPostergado(), 
-					"Credito Postergado: " + dataConsolidadoPostergadoFormatada,
-					"Pgto. Postergado: " + dataConsolidadoPostergadoFormatada,
+					"Credito Post. " + dataConsolidadoPostergadoFormatada,
+					"Pgto. Post. " + dataConsolidadoPostergadoFormatada,
 					consolidado.getDataConsolidado(), 
-					DateUtil.parseDataPTBR(DateUtil.formatarDataPTBR(consolidado.getDataConsolidado())));
+					DateUtil.parseDataPTBR(DateUtil.formatarData(consolidado.getDataConsolidado(),"dd/MM/yy")));
 		}
 						
 		adicionarDebitoCreditoDeConsolidado(
@@ -946,28 +946,28 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				OperacaoFinaceira.CREDITO.getDescricao(),
 				OperacaoFinaceira.DEBITO.getDescricao(),
 				consolidado.getDataConsolidado(), 
-				DateUtil.parseDataPTBR(DateUtil.formatarDataPTBR(consolidado.getDataConsolidado())));
+				DateUtil.parseDataPTBR(DateUtil.formatarData(consolidado.getDataConsolidado(),"dd/MM/yy")));
 
 		adicionarDebitoCreditoDeConsolidado(
 				listaDebitoCredito,
 				consolidado.getEncargos(),
 				"Encargos", "Encargos",
 				consolidado.getDataConsolidado(), 
-				DateUtil.parseDataPTBR(DateUtil.formatarDataPTBR(consolidado.getDataConsolidado())));
+				DateUtil.parseDataPTBR(DateUtil.formatarData(consolidado.getDataConsolidado(),"dd/MM/yy")));
 
 		adicionarDebitoCreditoDeConsolidado(
 				listaDebitoCredito,
 				consolidado.getPendente(),
 				"Pendente", "Pendente",
 				consolidado.getDataConsolidado(), 
-				DateUtil.parseDataPTBR(DateUtil.formatarDataPTBR(consolidado.getDataConsolidado())));
+				DateUtil.parseDataPTBR(DateUtil.formatarData(consolidado.getDataConsolidado(),"dd/MM/yy")));
 		
 		adicionarDebitoCreditoDeConsolidado(
 				listaDebitoCredito,
 				consolidado.getVendaEncalhe(),
 				"Venda Encalhe", "Venda Encalhe",
 				consolidado.getDataConsolidado(), 
-				DateUtil.parseDataPTBR(DateUtil.formatarDataPTBR(consolidado.getDataConsolidado())));
+				DateUtil.parseDataPTBR(DateUtil.formatarData(consolidado.getDataConsolidado(),"dd/MM/yy")));
 		
 		return listaDebitoCredito;
  	}
@@ -3333,6 +3333,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		List<DebitoCreditoCotaDTO> listaComposicaoCobranca = 
 				this.obterListaDebitoCreditoCotaDTO(controleConferenciaEncalheCota.getCota(), dataOperacao);
+		
 		slipDTO.setListaComposicaoCobrancaDTO(listaComposicaoCobranca);
 		
 		parametersSlip.put("LISTA_COMPOSICAO_COBRANCA",listaComposicaoCobranca);
@@ -3393,7 +3394,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		Calendar  dataOperacaoConferencia  = Calendar.getInstance();
 		dataOperacaoConferencia.setTime(dataOperacaoConferenia);
-		dataOperacaoConferencia.add(Calendar.HOUR, dataFinalConferencia.get(Calendar.HOUR));
+		dataOperacaoConferencia.add(Calendar.HOUR, dataFinalConferencia.get(Calendar.HOUR_OF_DAY));
 		dataOperacaoConferencia.add(Calendar.MINUTE, dataFinalConferencia.get(Calendar.MINUTE));
 		dataOperacaoConferencia.add(Calendar.SECOND, dataFinalConferencia.get(Calendar.SECOND));
 		
@@ -3549,7 +3550,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 				String dataRecolhimentoStr = "";
 				if(itemLista.getDataRecolhimento()!=null ){
-					dataRecolhimentoStr = new SimpleDateFormat("dd/MM/yyyy").format(itemLista.getDataRecolhimento());
+					dataRecolhimentoStr = new SimpleDateFormat("dd/MM/yy").format(itemLista.getDataRecolhimento());
 				}
 
 				/*
@@ -3572,11 +3573,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				e.quebrarLinhaEscape();
 			}
 		}
-		
-		
-		
-		
-		
+
 		e.adicionarCompleteEspaco("Reparte Capa", 
 			slipDTO.getValorTotalSemDesconto().setScale(2, RoundingMode.HALF_EVEN).toString());
 		e.quebrarLinhaEscape();
@@ -3609,12 +3606,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		//e.adicionarCompleteEspaco("Outros valores", slipDTO.getOutrosValores().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
 		e.adicionarCompleteEspaco("VALOR TOTAL A PAGAR", valorTotalPagar);
-		
-		
-		
-		
-		
-		
+	
 		e.quebrarLinhaEscape(9);//Espaços fim da impressao
 		
 		String saida = sb.toString();
@@ -3655,7 +3647,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		String valorSlip = slipDTO.getValorSlip() == null ? "0,00" : slipDTO.getValorSlip().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
 		
-		e.adicionarCompleteEspaco("Valor SLIP do dia: ( B - A ) D", valorSlip);
+		e.adicionarCompleteEspaco("Valor SLIP do dia: ( B - A ) ", valorSlip);
 
 		e.quebrarLinhaEscape();
 		
@@ -3667,13 +3659,15 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				observacoes = observacoes == null ? "" : observacoes;
 				
 				String descricao = StringUtil.limparString(composicao.getDescricao());
-				descricao = (descricao == null) ? "" : " - " + descricao;
 				
+				observacoes = (descricao == null) ? observacoes + ":" : observacoes;
+				
+				descricao = (descricao == null) ? "" : " - " + descricao + ":";
 				observacoes = observacoes + descricao;
 				
 				String valor = (composicao.getValor() == null) ? "0,00" : composicao.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
 				
-				String operacaoFinanceira = (composicao.getTipoLancamento() == null) ? "" : composicao.getTipoLancamento().getDescricao();
+				String operacaoFinanceira = (composicao.getTipoLancamento() == null) ? "" : composicao.getTipoLancamento().getSiglaOperacao();
 				e.adicionarCompleteEspaco(observacoes + " " + operacaoFinanceira, valor);
 				e.quebrarLinhaEscape();
 			}

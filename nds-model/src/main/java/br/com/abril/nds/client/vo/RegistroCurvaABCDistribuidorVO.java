@@ -27,7 +27,7 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABCDTO implemen
 	@Export(label = "Cota", exhibitionOrder = 4)
 	private String nomeCota;
 
-	private Integer quantidadePdvs;
+	private Long quantidadePdvs;
 
 	@Export(label = "Municipio", exhibitionOrder = 5)
 	private String municipio;
@@ -127,11 +127,11 @@ public class RegistroCurvaABCDistribuidorVO extends RegistroCurvaABCDTO implemen
 		this.nomeCota = nomeCota;
 	}
 
-	public Integer getQuantidadePdvs() {
+	public Long getQuantidadePdvs() {
 		return quantidadePdvs;
 	}
 
-	public void setQuantidadePdvs(Integer quantidadePdvs) {
+	public void setQuantidadePdvs(Long quantidadePdvs) {
 		this.quantidadePdvs = quantidadePdvs;
 	}
 
