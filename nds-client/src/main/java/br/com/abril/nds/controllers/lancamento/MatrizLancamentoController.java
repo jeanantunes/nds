@@ -111,11 +111,9 @@ public class MatrizLancamentoController extends BaseController {
 		
 		FiltroLancamentoDTO filtro = configurarFiltropesquisa(dataLancamento, idsFornecedores);
 		
-		BalanceamentoLancamentoDTO balanceamentoLancamento = 
-			this.obterBalanceamentoLancamento(filtro);
+		BalanceamentoLancamentoDTO balanceamentoLancamento = this.obterBalanceamentoLancamento(filtro);
 				
-		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = 
-			this.obterResultadoResumoLancamento(balanceamentoLancamento);
+		ResultadoResumoBalanceamentoVO resultadoResumoBalanceamento = this.obterResultadoResumoLancamento(balanceamentoLancamento);
 						
 		this.result.use(CustomJson.class).put("resultado", resultadoResumoBalanceamento).serialize();
 		
@@ -955,8 +953,7 @@ public class MatrizLancamentoController extends BaseController {
 	 */
 	private BalanceamentoLancamentoDTO obterBalanceamentoLancamento(FiltroLancamentoDTO filtro) {
 		
-		BalanceamentoLancamentoDTO balanceamento =
-			this.matrizLancamentoService.obterMatrizLancamento(filtro);
+		BalanceamentoLancamentoDTO balanceamento = this.matrizLancamentoService.obterMatrizLancamento(filtro);
 					
 		this.session.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_LANCAMENTO, balanceamento);
 		
@@ -964,8 +961,7 @@ public class MatrizLancamentoController extends BaseController {
 				|| balanceamento.getMatrizLancamento() == null
 				|| balanceamento.getMatrizLancamento().isEmpty()) {
 			
-			throw new ValidacaoException(
-				TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não houve carga de informações para o período escolhido!");
 		}
 		
 		return balanceamento;
