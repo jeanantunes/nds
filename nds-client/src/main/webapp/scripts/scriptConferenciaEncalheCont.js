@@ -472,7 +472,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					//innerTable += "<td style='text-align: right;' nowrap='nowrap'>" + parseFloat(value.desconto).toFixed(2) + "</td>";
 					innerTable += "<td style='text-align: right;' nowrap='nowrap'>" + parseFloat(value.precoComDesconto).toFixed(2) + "</td>";
 					
-					var valorExemplares = parseInt(value.qtdExemplar);
+					var valorExemplares = value.isContagemPacote ? parseInt(value.qtdExemplar) / value.pacotePadrao : parseInt(value.qtdExemplar);
 					
 					totalExemplaresFooter += valorExemplares;
 					

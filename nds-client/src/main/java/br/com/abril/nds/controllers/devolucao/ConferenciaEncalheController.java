@@ -862,7 +862,7 @@ public class ConferenciaEncalheController extends BaseController {
 		if(qtdExemplares == null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Quantidade de exemplares inválida.");
 		}
-		
+
 		ConferenciaEncalheDTO conf = null;
 		
 		if (idConferencia != null){
@@ -870,6 +870,11 @@ public class ConferenciaEncalheController extends BaseController {
 			for (ConferenciaEncalheDTO dto : listaConferencia){
 				
 				if (dto.getIdConferenciaEncalhe().equals(idConferencia)){
+
+					if (dto.getIsContagemPacote()) {
+
+						qtdExemplares = qtdExemplares * dto.getPacotePadrao();	
+					}
 					
 					this.validarExcedeReparte(qtdExemplares, dto, indConferenciaContingencia);
 					
