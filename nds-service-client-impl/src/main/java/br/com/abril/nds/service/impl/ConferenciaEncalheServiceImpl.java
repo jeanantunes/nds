@@ -429,10 +429,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	private ChamadaEncalheCota validarExistenciaChamadaEncalheParaCotaProdutoEdicao(Cota cota, ProdutoEdicao produtoEdicao) {
 
 		boolean postergado = false;
-		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
-		
 		ChamadaEncalheCota chamadaEncalheCota = null;
+		ParametrosRecolhimentoDistribuidor parametroRecolhimento = this.distribuidorRepository.parametrosRecolhimentoDistribuidor();
+		boolean distribuidorAceitaAntecipacao = parametroRecolhimento.isPermiteRecolherDiasPosteriores();
 		
 		if(produtoEdicao.isParcial()) {
 
@@ -441,7 +441,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			if(chamadaEncalheCota == null ) {
 				
-				validarProdutoEdicaoSemChamadaEncalheCota(cota.getId(), produtoEdicao.getId());
+				validarProdutoEdicaoSemChamadaEncalheCota(distribuidorAceitaAntecipacao, cota.getId(), produtoEdicao.getId());
 				
 				return null;	
 			}
@@ -455,47 +455,62 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 																			dataOperacao);
 			if(chamadaEncalheCota == null){
 				
-				validarProdutoEdicaoSemChamadaEncalheCota(cota.getId(), produtoEdicao.getId());
+				validarProdutoEdicaoSemChamadaEncalheCota(distribuidorAceitaAntecipacao, cota.getId(), produtoEdicao.getId());
 				
-				return null;
-			}
-		
-			Date dataRecolhimento = chamadaEncalheCota.getChamadaEncalhe().getDataRecolhimento();
 			
-			if(!isDataRecolhimentoValida(dataOperacao,dataRecolhimento,produtoEdicao)) {
+			} else {
 				
-				validarProdutoEdicaoSemChamadaEncalheCota(cota.getId(), produtoEdicao.getId());
-				
-				return null;	
+				isDataRecolhimentoValida(distribuidorAceitaAntecipacao, dataOperacao, chamadaEncalheCota.getChamadaEncalhe().getDataRecolhimento(), produtoEdicao.getId());
+			
 			}
+			
+			
+			
 		}
 		
 		return chamadaEncalheCota;
 	}
 	
-	private boolean isDataRecolhimentoValida(Date dataOperacao,Date dataRecolhimento,ProdutoEdicao produtoEdicao){
+	/**
+	 * Valida se o produto edição (de acordo com sua data de recolhimento encontrada) pode ser 
+	 * recolhido na data de operação informada.
+	 *    
+	 * @param dataOperacao
+	 * @param dataRecolhimento
+	 * @param idProdutoEdicao
+	 */
+	private void isDataRecolhimentoValida(boolean distribuidorAceitaAntecipacao, Date dataOperacao, Date dataRecolhimento, Long idProdutoEdicao){
 		
-		validarAntecipacaoConferenciaEncalhe(produtoEdicao.getId(), dataOperacao, dataRecolhimento);
-		
-		if(dataRecolhimento.compareTo(dataOperacao)>-1){
-			return true;
+		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+		if(produtoEdicao == null){
+			throw new ValidacaoException(TipoMensagem.ERROR, "Produto edição não encontrado");
 		}
+		String nomeProdutoEdicao = produtoEdicao.getProduto().getNome();
+		
+		validarAntecipacaoConferenciaEncalhe(distribuidorAceitaAntecipacao, nomeProdutoEdicao, dataOperacao, dataRecolhimento);
 		
 		List<Date> datasRecolhimento = 
 				distribuidorService.obterDatasAposFinalizacaoPrazoRecolhimento(dataRecolhimento,
 																			   this.obterIdsFornecedorDoProduto(produtoEdicao));
 		if(datasRecolhimento == null || datasRecolhimento.isEmpty()){
-			return false;
+			throw new ValidacaoException(
+					TipoMensagem.WARNING, 
+					" Distribuidor não possui parametrização de dias de recolhimento para o fornecedor do produto edição [" + nomeProdutoEdicao  + "]."   );		
 		}
 		
 		for(Date item : datasRecolhimento){
 			
-			if(item.compareTo(dataOperacao)>-1){
-				return true;
+			if(item.compareTo(dataOperacao)==0){
+				return;
 			}
+			
 		}
 		
-		return false;
+		throw new ValidacaoException(
+				TipoMensagem.WARNING, 
+				" Não é possível realiza a conferência do produto edição [" + nomeProdutoEdicao  + "]." +
+				" Data de operação excedendo ou fora dos dias de recolhimento possíveis. "   );		
+
 	}
 	
 	/**
@@ -503,34 +518,22 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * se o distribuidor aceita este tipo de operação, caso não 
 	 * aceite é lançado erro de validação.
 	 * 
+	 * @param distribuidorAceitaAntecipacao
+	 * @param nomeProdutoEdicao
 	 * @param dataOperacao
 	 * @param dataRecolhimento
 	 */
-	private void validarAntecipacaoConferenciaEncalhe(Long idProdutoEdicao, Date dataOperacao, Date dataRecolhimento) {
+	private void validarAntecipacaoConferenciaEncalhe(boolean distribuidorAceitaAntecipacao, String nomeProdutoEdicao, Date dataOperacao, Date dataRecolhimento) {
 		
-		if(dataRecolhimento.compareTo(dataOperacao)>0){
-			
-			ParametrosRecolhimentoDistribuidor parametroRecolhimento = this.distribuidorRepository.parametrosRecolhimentoDistribuidor();
-			
-			boolean distribuidorAceitaAntecipacao = parametroRecolhimento.isPermiteRecolherDiasPosteriores();
-			
-			if(!distribuidorAceitaAntecipacao) {
-			
-				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
-				
-				if(produtoEdicao == null){
-					throw new ValidacaoException(TipoMensagem.ERROR, "Produto edição não encontrado");
-				}
-				
-				String nomeProdutoEdicao = produtoEdicao.getProduto().getNome();
+		boolean recolhimentoMaiorQueDataOperacao = dataRecolhimento.compareTo(dataOperacao) > 0;
+		
+		if(recolhimentoMaiorQueDataOperacao && !distribuidorAceitaAntecipacao ){
 				
 				throw new ValidacaoException(
 						TipoMensagem.WARNING, 
 						"Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao  + "] " +
 						"Não é permitida antecipação de produtos pelo distribuidor. "   );
 				
-			}
-			
 		}
 		
 		
@@ -552,18 +555,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	/**
-	 * Caso não exista chamada encalhe dentro do período de tempo que se permite o 
-	 * recolhimento da cota para o produtoEdicao e cota em questão, 
-	 * serão feitas verificações para detectar:
+	 * Caso não tenha sido encontrada CE para o produtoEdicao e cota em questão, 
+	 * serão feitas as seguintes validações:
 	 * 
-	 * 1 - Se nunca existiu uma chamada de encalhe para o produto e cota em questão
-	 * sera permitido seu recolhimento. 
+	 * 1 - Caso o distribuidor não aceite antecipação de encalhe não sera permitida
+	 * a conferência deste item sem CE. 
 	 * 
-	 * 2 - Se o produtoEdição foi de fato expedido
-	 * para a cota e ainda constam itens e a serem devolvidos sera permitido o seu recolhimento.
+	 * 2 - Será verificado se o produtoEdição foi de fato expedido para a cota e ainda 
+	 * constam itens e a serem devolvidos sera permitido o seu recolhimento.
 	 */
-	private void validarProdutoEdicaoSemChamadaEncalheCota(Long idCota, Long idProdutoEdicao) {
-
+	private void validarProdutoEdicaoSemChamadaEncalheCota(boolean aceitaAntecipacao, Long idCota, Long idProdutoEdicao) {
+		
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 		
 		if(produtoEdicao == null){
@@ -572,15 +574,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		String nomeProdutoEdicao = produtoEdicao.getProduto().getNome();
 		
-		List<ChamadaEncalheCota> listaChamadaEncalheCota = chamadaEncalheCotaRepository.obterListaChamadaEncalheCota(idCota, idProdutoEdicao);
-		
-		if(listaChamadaEncalheCota != null && !listaChamadaEncalheCota.isEmpty()){
-				
+		if(!aceitaAntecipacao) {
+			
 			throw new ValidacaoException(
 					TipoMensagem.WARNING, 
-					"Já houve chamada de encalhe para o produto edição [" + nomeProdutoEdicao  + "] da cota. " +
-					" não é possível realizar a conferência de encalhe para o mesmo. "   );
-			
+					" Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao  + "] da cota. " +
+					" Distribuidor parametrizado para não aceitar antecipação e este produto não possui CE. "   );
 		}
 		
 		BigInteger qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos = obterQtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos(idCota, idProdutoEdicao);
