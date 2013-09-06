@@ -605,16 +605,16 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" lancamento.DATA_REC_DISTRIB as novaData, ");
 		sql.append(" produto.EDITOR_ID as idEditor, ");
 		sql.append(" pessoaEditor.RAZAO_SOCIAL as nomeEditor, ");
-		  
+		
 		sql.append("  sum( ");
 		sql.append("  case when (tipoProduto.GRUPO_PRODUTO = :grupoCromo and periodoLancamentoParcial.TIPO = :tipoParcial) ");
-		sql.append("	then (((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) / produtoEdicao.PACOTE_PADRAO) ");
-		sql.append("   	else ((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) ");  
+		sql.append("	then (((estoqueProdutoCota.QTDE_RECEBIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) / produtoEdicao.PACOTE_PADRAO) ");
+		sql.append("   	else ((estoqueProdutoCota.QTDE_RECEBIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) ");  
 		sql.append(" 	end ");
 		sql.append("  ) as expectativaEncalhe, ");
 		  
 		sql.append("  sum( ");
-		sql.append("  ((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, ");
+		sql.append("  ((estoqueProdutoCota.QTDE_RECEBIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, ");
 		sql.append("     0) / 100))) * (produtoEdicao.PRECO_VENDA - ( produtoEdicao.PRECO_VENDA * (coalesce(descontoLogisticaProdutoEdicao.PERCENTUAL_DESCONTO / 100, ");
 		sql.append("     descontoLogisticaProduto.PERCENTUAL_DESCONTO / 100, ");
 		sql.append("     0)) ) ) ");
@@ -717,9 +717,9 @@ public class LancamentoRepositoryImpl extends
 				   + " lancamento.DATA_REC_DISTRIB as dataRecolhimentoDistribuidor, "
 				   + " case "
 				   + " when tipoProduto.GRUPO_PRODUTO = :grupoCromo and periodoLancamentoParcial.TIPO <> :tipoParcial then "
-				   + " sum(((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) / produtoEdicao.PACOTE_PADRAO) "
+				   + " sum(((estoqueProdutoCota.QTDE_RECEBIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) / produtoEdicao.PACOTE_PADRAO) "
 				   + " else "
-				   + " sum((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA - estoqueProdutoCota.QTDE_DEVOLVIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) "
+				   + " sum((estoqueProdutoCota.QTDE_RECEBIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, 0) / 100))) "
 				   + " end as expectativaEncalhe ";
 		
 		String clausulaFrom = getConsultaBalanceamentoRecolhimentoAnalitico();
@@ -1892,15 +1892,15 @@ public class LancamentoRepositoryImpl extends
 		
 		hql.append(" ( ");
 		hql.append("  case when (tipoProduto.grupoProduto = :grupoCromo and periodoLancamentoParcial.tipo <> :tipoParcial) ");
-		hql.append("		then (((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) - ((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (coalesce(produtoEdicao.expectativaVenda, ");
+		hql.append("		then (((estoqueProdutoCota.qtdeRecebida) - ((estoqueProdutoCota.qtdeRecebida) * (coalesce(produtoEdicao.expectativaVenda, ");
 		hql.append("      	0) / 100)) / produtoEdicao.pacotePadrao)) ");
-		hql.append("   	else ((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) - ((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (coalesce(produtoEdicao.expectativaVenda, ");
+		hql.append("   	else ((estoqueProdutoCota.qtdeRecebida) - ((estoqueProdutoCota.qtdeRecebida) * (coalesce(produtoEdicao.expectativaVenda, ");
 		hql.append("   		0) / 100))) ");  
 		hql.append(" end ");
 		hql.append(" ) as expectativaEncalhe, ");
 		  
 		hql.append(" ( ");
-		hql.append("  (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) - ((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * (coalesce(produtoEdicao.expectativaVenda, ");
+		hql.append("  (estoqueProdutoCota.qtdeRecebida) - ((estoqueProdutoCota.qtdeRecebida) * (coalesce(produtoEdicao.expectativaVenda, ");
 		hql.append("     0) / 100))) * (produtoEdicao.precoVenda - ( produtoEdicao.precoVenda * (coalesce(descontoLogisticaProdutoEdicao.percentualDesconto / 100, ");
 		hql.append("     descontoLogisticaProduto.percentualDesconto / 100, ");
 		hql.append("     0)) )  ");

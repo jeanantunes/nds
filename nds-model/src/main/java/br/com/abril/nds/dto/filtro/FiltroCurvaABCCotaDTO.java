@@ -46,11 +46,11 @@ public class FiltroCurvaABCCotaDTO extends FiltroCurvaABCDTO implements Serializ
 		NOME_PRODUTO("nomeProduto"),
 		EDICAO_PRODUTO("edicaoProduto"),
 		REPARTE("reparteFormatado"),
-		VENDA_EXEMPLARES("vendaExemplaresFormatado"),
-		FATURAMENTO("faturamentoFormatado"),
-		PORCENTAGEM_VENDA("porcentagemVendaFormatado"),
-		PARTICIPACAO("participacaoFormatado"),
-		PARTICIPACAO_ACUMULADA("participacaoAcumuladaFormatado");
+		VENDA_EXEMPLARES("vendaExemplares"),
+		FATURAMENTO("faturamento"),
+		PORCENTAGEM_VENDA("porcentagemVenda"),
+		PARTICIPACAO("participacao"),
+		PARTICIPACAO_ACUMULADA("participacaoAcumulada");
 
 		private String nomeColuna;
 		

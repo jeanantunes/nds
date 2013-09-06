@@ -168,7 +168,7 @@ var relatorioVendasController = $.extend(true, {
 				sortable : false,
 				align : 'center'
 			} ],
-			sortname : "faturamentoCapa",
+			sortname : "faturamentoCapaFormatado",
 			sortorder : "desc",
 			usepager : true,
 			useRp : true,
@@ -236,7 +236,7 @@ var relatorioVendasController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			} ],
-			sortname : "faturamentoCapa",
+			sortname : "faturamentoCapaFormatado",
 			sortorder : "desc",
 			usepager : true,
 			useRp : true,
@@ -293,7 +293,7 @@ var relatorioVendasController = $.extend(true, {
 				align : 'center'
 			}, {
 				display : 'Faturamento Capa R$',
-				name : 'faturamentoCapa',
+				name : 'faturamentoCapaFormatado',
 				width : 90,
 				sortable : true,
 				align : 'right'
@@ -310,7 +310,7 @@ var relatorioVendasController = $.extend(true, {
 				sortable : true,
 				align : 'right'
 			} ],
-			sortname : "faturamentoCapa",
+			sortname : "faturamentoCapaFormatado",
 			sortorder : "desc",
 			usepager : true,
 			useRp : true,
@@ -367,7 +367,7 @@ var relatorioVendasController = $.extend(true, {
 				align : 'right'
 			}, {
 				display : 'Faturamento R$',
-				name : 'faturamento',
+				name : 'faturamentoFormatado',
 				width : 100,
 				sortable : true,
 				align : 'right'
