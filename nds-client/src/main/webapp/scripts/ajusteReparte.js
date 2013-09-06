@@ -142,10 +142,6 @@ init : function() {
 				row.cell.ajusteAplicado = parseFloat(row.cell.ajusteAplicado).toFixed(1); 
 			}
 			
-			if(row.cell.formaAjusteAplicado == "Segmento"){
-				row.cell.ajusteAplicado = '';
-			}
-			
 		});
 		
 		$(".grids", ajusteReparteController.workspace).show();
