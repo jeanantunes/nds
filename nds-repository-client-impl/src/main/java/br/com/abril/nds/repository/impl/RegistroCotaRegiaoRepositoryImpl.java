@@ -50,8 +50,19 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 		hql.append(" endereco.cidade as cidade, ");
 		hql.append(" usuario.nome as nomeUsuario, ");
 		hql.append(" registroCotaRegiao.dataAlteracao as data, ");
+		
+//		hql.append(" sum(  "); // FATURAMENTO
+//		hql.append(" CASE ");
+//		hql.append("		WHEN ");
+//		hql.append("	estoqueProdutoCota.qtdeRecebida is not null ");
+//		hql.append("		THEN	 ");
+//		hql.append(" (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * produtoEdicao.precoVenda ");
+//		hql.append("		ELSE ");
+//		hql.append("		0 ");
+//		hql.append(" ) as faturamento ");
+		
 		hql.append(" sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * produtoEdicao.precoVenda) as faturamento "); // FATURAMENTO
-
+		
 		hql.append(" FROM RegistroCotaRegiao AS registroCotaRegiao, EstoqueProdutoCota as estoqueProdutoCota ");
 		hql.append(" LEFT JOIN registroCotaRegiao.cota as cota ");
 		hql.append(" LEFT JOIN cota.enderecos as enderecoCota ");

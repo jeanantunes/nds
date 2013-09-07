@@ -350,16 +350,20 @@ public class RegiaoController extends BaseController {
 			if (objCota != null && regiao != null) {
 				
 				RegistroCotaRegiao registro = new RegistroCotaRegiao();
+				
+				if(!objCota.getSituacaoCadastro().toString().equalsIgnoreCase("inativo")){
+	
+					Date dataEHora = new Date();
+					Timestamp data = new Timestamp(dataEHora.getTime());
+	
+					registro.setRegiao(regiao);
+					registro.setCota(objCota);
+					registro.setUsuario(this.usuarioService.getUsuarioLogado());
+					registro.setDataAlteracao(data);
+				
+					regiaoService.addCotaNaRegiao(registro);
 
-				Date dataEHora = new Date();
-				Timestamp data = new Timestamp(dataEHora.getTime());
-
-				registro.setRegiao(regiao);
-				registro.setCota(objCota);
-				registro.setUsuario(this.usuarioService.getUsuarioLogado());
-				registro.setDataAlteracao(data);
-
-				regiaoService.addCotaNaRegiao(registro);
+				}
 			}
 		}
 		
