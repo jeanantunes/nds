@@ -822,13 +822,13 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					if (value.dia || value.dataRecolhimento){
 					
-						//if (value.dia && value.dia > 0){
+						if (value.dia && value.dia > 0){
 						
 							innerTable += "<td style='text-align: center;' nowrap='nowrap'>" + value.dia + "º" + "</td>";
-						/*} else {
+						} else {
 							
 							innerTable += "<td style='text-align: center;' nowrap='nowrap' style='width: 20px;'>" + value.dataRecolhimento + "</td>";
-						}*/
+						}
 					} else {
 						
 						innerTable += "<td></td>";
