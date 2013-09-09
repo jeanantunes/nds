@@ -915,25 +915,9 @@ var fechamentoEncalheController = $.extend(true, {
 	veificarCobrancaGerada: function(){
 		
 		var cobrarTodas  = $("#checkTodasCotas").attr("checked") == "checked";
-		
-		
-		
-		
-		
-		
-		
-		var idsCotas = fechamentoEncalheController.arrayCotasAusentesSession;
-		
-		
-		
-		//var idsCotasTESTE = fechamentoEncalheController.obterCotasMarcadas();
-		
-		
-		
-		
-		
-		
-		
+
+		var idsCotas = fechamentoEncalheController.obterCotasMarcadas();
+
 		$.postJSON(contextPath + '/devolucao/fechamentoEncalhe/veificarCobrancaGerada',
 				{
 					'idsCotas' : idsCotas,
