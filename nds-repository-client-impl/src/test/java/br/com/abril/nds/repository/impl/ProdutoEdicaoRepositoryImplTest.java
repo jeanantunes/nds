@@ -232,7 +232,7 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		String codigoNomeProduto = "produto55b";
 		
 			List<ProdutoEdicao> produtoEdicao =
-						produtoEdicaoRepository.obterProdutoPorCodigoNome(codigoNomeProduto, 10);
+						produtoEdicaoRepository.obterProdutoPorCodigoNome(codigoNomeProduto, 10, 1);
 			
 			Assert.assertNotNull(produtoEdicao);
 	}
