@@ -22,6 +22,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
+import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
@@ -170,13 +171,16 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			obterEstudoCotaPorDataProdutoEdicao(dataPrevista, idProdutoEdicao);
 		
 		BigInteger total = BigInteger.ZERO;		
+		
+		Map<String, DescontoDTO> descontos = descontoService.obterDescontoPorCotaProdutoEdicaoMap(idLancamento, idProdutoEdicao);
+		
 
 		for (EstudoCotaDTO estudoCota : listaEstudoCota) {
 
 			gerarMovimentoCota(
-				dataPrevista,idProdutoEdicao,estudoCota.getIdCota(),
-					idUsuario, estudoCota.getQtdeEfetiva(),tipoMovimentoCota,
-						dataDistribuidor,dataOperacao, idLancamento, estudoCota.getId());
+				dataPrevista, idProdutoEdicao, estudoCota.getIdCota(),
+					idUsuario, estudoCota.getQtdeEfetiva(), tipoMovimentoCota,
+						dataDistribuidor, dataOperacao, idLancamento, estudoCota.getId());
 
 			total = total.add(estudoCota.getQtdeEfetiva());
 		}
@@ -801,7 +805,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 															boolean isMovimentoDiferencaAutomatico) {
 		
 		return criarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, 
-				idUsuario, quantidade, tipoMovimentoEstoque, null, null, null, idEstudoCota,isMovimentoDiferencaAutomatico);
+				idUsuario, quantidade, tipoMovimentoEstoque, null, null, null, idEstudoCota, isMovimentoDiferencaAutomatico);
 	}
 	
 	
@@ -812,7 +816,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			Date dataMovimento, Date dataOperacao, Long idLancamento, Long idEstudoCota){
 		
 		return criarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, 
-						   		  tipoMovimentoEstoque, dataMovimento, dataOperacao, idLancamento, idEstudoCota,false);
+						   		  tipoMovimentoEstoque, dataMovimento, dataOperacao, idLancamento, idEstudoCota, false);
 	}
 
 	private MovimentoEstoqueCota criarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, 
