@@ -54,6 +54,18 @@ var ConferenciaEncalhe = $.extend(true, {
 	ultimoSM : "",
 	ultimoIdProdutoEdicao : "",
 	
+	numeroCotaEditavel : function(r){
+		
+		if (r==false){
+			
+			$("#numeroCota").attr('readonly', true);
+		}
+		else{
+			
+			$("#numeroCota").attr('readonly', false);
+		}
+	},
+	
 	pesquisaProduto : function(){
 		
 		if (ConferenciaEncalhe.ultimoIdProdutoEdicao != "" && 
@@ -474,6 +486,8 @@ var ConferenciaEncalhe = $.extend(true, {
 							ConferenciaEncalhe.ifCotaEmiteNfe(data, ConferenciaEncalhe.popup_alert);
 							
 							focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
+							
+							ConferenciaEncalhe.numeroCotaEditavel(false);
 						},
 						"Não" : function() {
 							
@@ -528,10 +542,9 @@ var ConferenciaEncalhe = $.extend(true, {
 				} else {
 					
 					focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
-					
 				}
-
 				
+				ConferenciaEncalhe.numeroCotaEditavel(false);
 			}
 			
 			ConferenciaEncalhe.limparDadosProduto();
@@ -1665,6 +1678,8 @@ var ConferenciaEncalhe = $.extend(true, {
 							
 							$("#dialog-salvar", ConferenciaEncalhe.workspace).dialog("close");
 							
+							ConferenciaEncalhe.numeroCotaEditavel(true);
+							
 						}, function(conteudo) {
 							
 							var data = [
@@ -1872,6 +1887,8 @@ var ConferenciaEncalhe = $.extend(true, {
 								window.event.preventDefault();
 								
 								confirmarVeificacaoCobrancaGerada();
+								
+								ConferenciaEncalhe.numeroCotaEditavel(true);
 							},
 							"Cancelar" : function(){
 							
@@ -1894,6 +1911,8 @@ var ConferenciaEncalhe = $.extend(true, {
 				} else {
 					
 					ConferenciaEncalhe.verificarValorTotalCE();
+					
+					ConferenciaEncalhe.numeroCotaEditavel(true);
 				}
 				
 			}, null, true, "dialog-confirmar-regerar-cobranca"
