@@ -664,9 +664,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		sqlMovimentoFinaceiroCotaNaoConsolidado.append("	and mfc.data <= :dataEncalhe ");
 		sqlMovimentoFinaceiroCotaNaoConsolidado.append("	and mfc.STATUS = :statusAprovacao ");
 		sqlMovimentoFinaceiroCotaNaoConsolidado.append("	and mfc.id not in ( ");
-		sqlMovimentoFinaceiroCotaNaoConsolidado.append(" select cmfc.MVTO_FINANCEIRO_COTA_ID from ");
-		sqlMovimentoFinaceiroCotaNaoConsolidado.append(" CONSOLIDADO_MVTO_FINANCEIRO_COTA cmfc ");
-		sqlMovimentoFinaceiroCotaNaoConsolidado.append(" )	) ");
+		sqlMovimentoFinaceiroCotaNaoConsolidado.append("                       select cmfc.MVTO_FINANCEIRO_COTA_ID from ");
+		sqlMovimentoFinaceiroCotaNaoConsolidado.append("                       CONSOLIDADO_MVTO_FINANCEIRO_COTA cmfc )");
+		sqlMovimentoFinaceiroCotaNaoConsolidado.append(" ) ");
 		
 		StringBuffer sql = new StringBuffer();
 		
@@ -747,8 +747,10 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		sql.append("    cota.ID, indMFCNaoConsolidado ");
 
-		sql.append(" having indMFCNaoConsolidado = 1 ");
-
+        if (isSomenteCotasSemAcao) {
+			
+        	sql.append(" having indMFCNaoConsolidado = true ");
+		}
         
 		return sql;
 	}
