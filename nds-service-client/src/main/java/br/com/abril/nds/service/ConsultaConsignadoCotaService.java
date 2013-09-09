@@ -12,8 +12,6 @@ public interface ConsultaConsignadoCotaService {
 	
 	List<ConsultaConsignadoCotaDTO> buscarConsignadoCota(FiltroConsultaConsignadoCotaDTO filtro, boolean limitar);
 	
-	Long buscarTodasMovimentacoesPorCota(FiltroConsultaConsignadoCotaDTO filtro);
-	
 	Long buscarTodosMovimentosCotaPeloFornecedor(FiltroConsultaConsignadoCotaDTO filtro);
 	
 	List<ConsultaConsignadoCotaPeloFornecedorDTO> buscarMovimentosCotaPeloFornecedor(FiltroConsultaConsignadoCotaDTO filtro, boolean limitar);

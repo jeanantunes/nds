@@ -429,7 +429,9 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	}
 	
 	/**
-	 * Obtem o dia de recolhimento do distribuidor para a data de Conferencia divergente da data de Recolhimento prevista
+	 * Obtem o dia de recolhimento do distribuidor para a data de 
+	 * Conferencia divergente da data de Recolhimento prevista
+	 * 
 	 * @param dataConferencia
 	 * @param dataRecolhimento
 	 * @param produtoEdicao
@@ -482,7 +484,10 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 			}
 			else{
 				
-				dataRecolhimentoValida = processarDataRecolhimento(DateUtil.adicionarDias(dataRecolhimento,1),diasSemanaDistribuidorOpera);
+				// A data de recolhimento referente ao primeiro dia
+				// equivale a própria data de recolhimento planejada
+				// para o produto edição.
+				dataRecolhimentoValida = dataRecolhimento;
 				
 				mapDataRecolhimentoValida.put(diasRecolhimento, dataRecolhimentoValida);
 			}

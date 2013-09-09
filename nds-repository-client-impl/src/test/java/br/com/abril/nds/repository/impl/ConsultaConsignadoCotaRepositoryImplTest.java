@@ -424,22 +424,6 @@ public class ConsultaConsignadoCotaRepositoryImplTest extends
 				
 	}
 	
-	@Test
-	public void buscarTodasMovimentacoesPorCota(){
-		
-		Long totalRegistros = 
-				this.consignadoCotaRepository.buscarTodasMovimentacoesPorCota(
-						this.filtroConsultaConsignadoCotaDTO);
-		
-		Assert.assertNotNull(totalRegistros);
-		
-		Long tamanhoEsperado = 3L;
-		
-		Assert.assertEquals(tamanhoEsperado, totalRegistros);
-		
-	}
-	
-	
 	
 	@Test
 	public void buscarTotalGeralDaCota(){
