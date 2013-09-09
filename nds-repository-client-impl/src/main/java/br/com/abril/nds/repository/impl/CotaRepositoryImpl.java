@@ -3059,7 +3059,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     	hql	.append(" 	where rot.box_id is not null ) ")
     		.append(" ) ");
     	
-    	if (intervaloCota != null && intervaloCota.getAte() != null && intervaloCota.getDe() != null){
+    	if (intervaloCota != null && intervaloCota.getAte() != null && intervaloCota.getDe() != null) {
 			hql	.append(" and ( ")
 				.append(" 	c.NUMERO_COTA between :de and :ate ")
 				.append(" ) ");
@@ -3077,22 +3077,27 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     			.append(" ) ");
     	}
     	
-    	hql	.append(" group by c.NUMERO_COTA ")
+    	hql	.append(" and ( ")
+    		.append(" 	c.SITUACAO_CADASTRO not in (:inativo, :suspenso) ")
+    		.append(" ) ")
+    		.append(" group by c.NUMERO_COTA ")
     		.append(" order by c.NUMERO_COTA ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
+		query.setParameter("inativo", SituacaoCadastro.INATIVO.name());
+		query.setParameter("suspenso", SituacaoCadastro.PENDENTE.name());
 		
-		if (intervaloCota != null && intervaloCota.getAte() != null && intervaloCota.getDe() != null){
+		if (intervaloCota != null && intervaloCota.getAte() != null && intervaloCota.getDe() != null) {
 			query.setParameter("de", intervaloCota.getDe());
 			query.setParameter("ate", intervaloCota.getAte());
 		}
 		
-		if (intervaloDataLancamento != null){
+		if (intervaloDataLancamento != null) {
 			query.setParameter("dataLancamentoDe", intervaloDataLancamento.getDe());
 			query.setParameter("dataLancamentoAte", intervaloDataLancamento.getAte());
 		}
 		
-		if (intervaloDateRecolhimento != null){
+		if (intervaloDateRecolhimento != null) {
 			query.setParameter("dataRecolhimentoDe", intervaloDateRecolhimento.getDe());
 			query.setParameter("dataRecolhimentoAte", intervaloDateRecolhimento.getAte());
 		}
