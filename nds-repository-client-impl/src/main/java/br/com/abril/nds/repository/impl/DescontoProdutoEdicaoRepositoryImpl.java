@@ -214,7 +214,7 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
     public Desconto obterDescontoPorCotaProdutoEdicao(Lancamento lancamento,
             Cota cota, ProdutoEdicao produtoEdicao) {
         
-		//TODO: Implementar a prioridade de desconto predoominante 
+		//TODO: Implementar a prioridade de desconto predominante 
 		Query query = null;
 		BigInteger descontoId;
 		Desconto desconto = null;

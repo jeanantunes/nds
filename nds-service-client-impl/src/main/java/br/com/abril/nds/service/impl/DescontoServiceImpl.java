@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
@@ -32,6 +33,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCotaProdutoExcessao;
+import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoCotaProdutoExcessao;
 import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoFornecedor;
 import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoProduto;
@@ -1061,6 +1063,13 @@ public class DescontoServiceImpl implements DescontoService {
 	public List<TipoDescontoDTO> obterMergeDescontosEspecificosEGerais(
 			Cota cota, String sortorder, String sortname) {		
 		return descontoRepository.obterMergeDescontosEspecificosEGerais(cota, sortorder, sortname);
+	}
+
+	@Override
+	public Map<String, DescontoDTO> obterDescontoPorCotaProdutoEdicaoMap(
+			Long lancamentoId, Long produtoEdicaoId) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
