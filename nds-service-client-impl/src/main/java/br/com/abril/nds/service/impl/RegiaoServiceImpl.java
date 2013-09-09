@@ -1,5 +1,6 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,4 +151,12 @@ public class RegiaoServiceImpl implements RegiaoService  {
 	public List<RegiaoNMaiores_CotaDTO> filtroRankingCotas(Integer numCota) {
 		return registroCotaRegiaoRepository.filtroRanking(numCota);
 	}
+
+	@Override
+	@Transactional
+	public BigDecimal calcularFaturamentoCota(Long cotaID) {
+
+		return registroCotaRegiaoRepository.calcularFaturamentoCota(cotaID);
+	}
+	
 }
