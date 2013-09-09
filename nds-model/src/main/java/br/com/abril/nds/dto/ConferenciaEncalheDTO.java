@@ -27,6 +27,8 @@ public class ConferenciaEncalheDTO implements Serializable {
 	
 	private boolean parcial;
 	
+	private boolean isContagemPacote;
+	
 	/**
 	 * Utilizado como referência para o valor do reparte.
 	 */
@@ -276,6 +278,20 @@ public class ConferenciaEncalheDTO implements Serializable {
 
 	public void setParcial(boolean parcial) {
 		this.parcial = parcial;
+	}
+
+	/**
+	 * @return the isContagemPacote
+	 */
+	public boolean getIsContagemPacote() {
+		return isContagemPacote;
+	}
+
+	/**
+	 * @param isContagemPacote the isContagemPacote to set
+	 */
+	public void setContagemPacote(boolean isContagemPacote) {
+		this.isContagemPacote = isContagemPacote;
 	}
 
 	public BigInteger getQtdReparte() {
