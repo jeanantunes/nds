@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import br.com.abril.nds.dto.RegiaoCotaDTO;
@@ -29,5 +30,7 @@ public interface RegistroCotaRegiaoRepository extends Repository<RegistroCotaReg
 	void removerRegistroCotaReagiaPorRegiao(Regiao regiao);
 
 	List<RegistroCotaRegiao> obterRegistroCotaReagiaPorRegiao(Regiao regiao);
+	
+	BigDecimal calcularFaturamentoCota (Long cotaID);
 	
 }

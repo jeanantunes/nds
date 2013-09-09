@@ -1,6 +1,7 @@
 package br.com.abril.nds.controllers.distribuicao;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -172,6 +173,8 @@ public class RegiaoController extends BaseController {
 	private TableModel<CellModelKeyValue<RegiaoCotaDTO>> efetuarConsultaCotasDaRegiao(FiltroCotasRegiaoDTO filtro) {
 		
 		List<RegiaoCotaDTO> listaCotasRegiaoDTO = regiaoService.carregarCotasRegiao(filtro);
+		
+		setFaturamentoCota(listaCotasRegiaoDTO);
 
 		removeRegiosInconsistentes(listaCotasRegiaoDTO, filtro);
 		
@@ -184,6 +187,21 @@ public class RegiaoController extends BaseController {
 		tableModel.setTotal(filtro.getPaginacao().getQtdResultadosTotal());
 
 		return tableModel;
+	}
+
+	private void setFaturamentoCota(List<RegiaoCotaDTO> listaCotasRegiaoDTO) {
+		
+		for (RegiaoCotaDTO regiaoCotaDTO : listaCotasRegiaoDTO) {
+			
+			BigDecimal faturamento = regiaoService.calcularFaturamentoCota(regiaoCotaDTO.getCotaId());
+			
+			if(faturamento != null){
+				regiaoCotaDTO.setFaturamento(faturamento);
+			}else{
+				regiaoCotaDTO.setFaturamento(new BigDecimal(0));
+			}
+		}
+		
 	}
 	
 	private void removeRegiosInconsistentes(List<RegiaoCotaDTO> listaCotasRegiaoDTO, FiltroCotasRegiaoDTO filtro) {
