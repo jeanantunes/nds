@@ -203,42 +203,6 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 				
 	}
 
-	private String createFromConsultaConsignadoCota(FiltroConsultaConsignadoCotaDTO filtro) {
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" FROM MovimentoEstoqueCota movimento, ProdutoEdicao pe ");
-		hql.append("  LEFT JOIN movimento.lancamento lancamento ");
-		hql.append("  JOIN movimento.cota as cota ");
-		hql.append("  JOIN movimento.tipoMovimento as tipoMovimento ");
-		hql.append("  JOIN pe.produto as produto ");
-		hql.append("  JOIN cota.parametroCobranca parametroCobranca ");
-		hql.append("  JOIN produto.fornecedores as fornecedor ");
-		hql.append("  JOIN fornecedor.juridica as pessoa ");		
-		hql.append("  JOIN cota.pessoa as pessoaCota ");
-		
-		hql.append(" WHERE movimento.produtoEdicao.id = pe.id " );
-		
-		hql.append(" AND movimento.movimentoEstoqueCotaFuro is null " );
-		
-		hql.append(" AND movimento.tipoMovimento.grupoMovimentoEstoque not in (:tipoMovimentoEstorno) " );
-		
-		 if(filtro.getIdCota() != null ) { 
-			hql.append(" AND cota.id = :idCota ");			
-		}
-		if(filtro.getIdFornecedor() != null) { 
-			hql.append(" AND fornecedor.id = :idFornecedor ");
-		}
-		
-		hql.append(" AND ( movimento.statusEstoqueFinanceiro is null or movimento.statusEstoqueFinanceiro = :statusEstoqueFinanceiro ) ");
-		
-		hql.append(" GROUP BY pe.id ");
-		
-		hql.append(" HAVING sum( (case when tipoMovimento.operacaoEstoque = 'ENTRADA'  then movimento.qtde else 0 end)  ");
-		hql.append("	-  (case when tipoMovimento.operacaoEstoque = 'SAIDA' then movimento.qtde else 0 end) ) <> 0 ");
-		  
-		
-		return hql.toString();
-	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -298,37 +262,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		return query.list();
 		 
 	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public Long buscarTodasMovimentacoesPorCota(
-			FiltroConsultaConsignadoCotaDTO filtro) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" SELECT count(movimento)  ");
-		
-		hql.append(createFromConsultaConsignadoCota(filtro));
-		
-		Query query =  getSession().createQuery(hql.toString());
-		
-		if(filtro.getIdCota() != null ) { 
-			query.setParameter("idCota", filtro.getIdCota());
-		}
-		
-		if(filtro.getIdFornecedor() != null ) { 
-			query.setParameter("idFornecedor", filtro.getIdFornecedor());
-		}
-		
-		query.setParameter("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO);
-		
-		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
-		
-		List<Long> totalRegistros = query.list();
-		
-		return (totalRegistros == null) ? 0L : totalRegistros.size();
 
-	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -477,16 +411,14 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		StringBuilder hql = new StringBuilder();
 	
 		hql.append(" FROM MovimentoEstoqueCota movimento ");
-		hql.append(" LEFT join movimento.lancamento lancamento ");
-		hql.append("  JOIN movimento.cota as cota ");
-		hql.append("  JOIN movimento.tipoMovimento as tipoMovimento ");
-		hql.append("  JOIN movimento.produtoEdicao as pe ");
-		hql.append("  JOIN pe.produto as produto ");
-		hql.append("  JOIN cota.parametroCobranca parametroCobranca ");
-		hql.append("  JOIN produto.fornecedores as fornecedor ");
-		hql.append("  JOIN fornecedor.juridica as pessoa ");		
-		hql.append("  JOIN cota.pessoa as pessoaCota ");
-		hql.append("  LEFT JOIN movimento.movimentoEstoqueCotaFuro as movimentoEstoqueCotaFuro ");
+		hql.append(" JOIN movimento.cota as cota ");
+		hql.append(" JOIN movimento.tipoMovimento as tipoMovimento ");
+		hql.append(" JOIN movimento.produtoEdicao as pe ");
+		hql.append(" JOIN pe.produto as produto ");
+		hql.append(" JOIN produto.fornecedores as fornecedor ");
+		hql.append(" JOIN fornecedor.juridica as pessoa ");		
+		hql.append(" JOIN cota.pessoa as pessoaCota ");
+		hql.append(" LEFT JOIN movimento.movimentoEstoqueCotaFuro as movimentoEstoqueCotaFuro ");
 		
 		hql.append(" WHERE tipoMovimento.grupoMovimentoEstoque IN (:tipoMovimentoEntrada) " );
 		
