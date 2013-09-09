@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -15,8 +16,6 @@ import br.com.abril.nds.dto.RegiaoNMaiores_ProdutoDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotasRegiaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.dto.filtro.FiltroRegiaoNMaioresProdDTO;
-import br.com.abril.nds.enums.TipoMensagem;
-import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.distribuicao.Regiao;
 import br.com.abril.nds.model.distribuicao.RegistroCotaRegiao;
@@ -43,16 +42,16 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 		hql.append("SELECT ");
 		hql.append(" registroCotaRegiao.id as registroCotaRegiaoId, ");
 		hql.append(" cota.numeroCota as numeroCota, ");
+		hql.append(" cota.id as cotaId, ");
 		hql.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '') as nomeCota,");
 		hql.append(" tipoPontoPDV.descricao as tipoPDV, ");
 		hql.append(" cota.situacaoCadastro as tipoStatus, ");
 		hql.append(" endereco.bairro as bairro, ");
 		hql.append(" endereco.cidade as cidade, ");
 		hql.append(" usuario.nome as nomeUsuario, ");
-		hql.append(" registroCotaRegiao.dataAlteracao as data, ");
-		hql.append(" sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * produtoEdicao.precoVenda) as faturamento "); // FATURAMENTO
+		hql.append(" registroCotaRegiao.dataAlteracao as data ");
 
-		hql.append(" FROM RegistroCotaRegiao AS registroCotaRegiao, EstoqueProdutoCota as estoqueProdutoCota ");
+		hql.append(" FROM RegistroCotaRegiao AS registroCotaRegiao ");
 		hql.append(" LEFT JOIN registroCotaRegiao.cota as cota ");
 		hql.append(" LEFT JOIN cota.enderecos as enderecoCota ");
 		hql.append(" LEFT JOIN enderecoCota.endereco as endereco ");
@@ -62,9 +61,8 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 		hql.append(" LEFT JOIN segmentacao.tipoPontoPDV as tipoPontoPDV ");
 		hql.append(" LEFT JOIN registroCotaRegiao.usuario  as usuario ");
 		hql.append(" LEFT JOIN registroCotaRegiao.regiao  as regiao ");
-		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
 
-		hql.append(" WHERE registroCotaRegiao.cota.id = estoqueProdutoCota.cota.id AND ");
+		hql.append(" WHERE ");
 		hql.append(" registroCotaRegiao.regiao.id = :ID_REGIAO ");
 		hql.append(" group by cota.id ");
 		hql.append(" order by cota.numeroCota ");
@@ -79,6 +77,27 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 		return query.list();
 		
 	}
+	
+	@Override
+	public BigDecimal calcularFaturamentoCota(Long cotaID) {
+		
+		StringBuilder sql = new StringBuilder();
+		
+		sql.append(" SELECT ");
+		sql.append(" sum((epc.QTDE_RECEBIDA-epc.QTDE_DEVOLVIDA)*pe.PRECO_VENDA) ");
+		sql.append(" from estoque_produto_cota epc  ");
+		sql.append(" JOIN produto_edicao pe ");
+		sql.append(" ON epc.PRODUTO_EDICAO_ID = pe.ID ");
+		sql.append(" where epc.COTA_ID = :idCota ");
+		
+		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
+		
+		query.setParameter("idCota", cotaID);
+		
+		return (BigDecimal)query.uniqueResult();
+		
+	}
+
 	
 	
 		@SuppressWarnings("unchecked")
@@ -362,6 +381,8 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 			return !query.list().isEmpty(); 
 		}
 		
+		
+		@SuppressWarnings("unchecked")
 		@Override
 		public List<RegistroCotaRegiao> obterRegistroCotaReagiaPorRegiao(Regiao regiao) {
 			
@@ -391,4 +412,5 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 			
 			query.executeUpdate();
 		}
-}
+
+	}
