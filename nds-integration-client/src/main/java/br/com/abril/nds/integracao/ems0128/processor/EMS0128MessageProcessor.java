@@ -133,12 +133,20 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 					
 					if(!itemsRemove.isEmpty()){
 						doc.getItems().removeAll(itemsRemove);
-						couchDbClient.update(doc);
+						
+						if (doc == null || doc.getItems() == null || doc.getItems().isEmpty()) {
+							couchDbClient.remove(doc);
+							doc = null;
+						}else{
+							couchDbClient.update(doc);
+						}
+
 					}
 					
 					if (doc == null || doc.getItems() == null || doc.getItems().isEmpty()) {
 						couchDbClient.remove(doc);
 					}
+					
 				}
 			}
 		} catch (NoDocumentException ex) {
