@@ -91,6 +91,7 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 	
 	private List<ProdutoDistribuicaoVO> produtoDistribuicoesDuplicados =  new ArrayList<ProdutoDistribuicaoVO>();
 	
+	private Boolean geracaoAutomatica;
 	
 	public void addItemDuplicado(ProdutoDistribuicaoVO produtoDistribuicaoVO, Integer row) {
 		
@@ -414,4 +415,14 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
     public void setEstoque(BigDecimal estoque) {
         this.estoque = estoque;
     }
+
+	public Boolean getGeracaoAutomatica() {
+		return geracaoAutomatica;
+	}
+
+	public void setGeracaoAutomatica(Boolean geracaoAutomatica) {
+		this.geracaoAutomatica = geracaoAutomatica;
+	}
+    
+    
 }
