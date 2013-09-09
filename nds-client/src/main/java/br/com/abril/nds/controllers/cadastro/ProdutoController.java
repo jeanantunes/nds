@@ -730,6 +730,10 @@ public class ProdutoController extends BaseController {
 			if (produto.getSubGrupoEditorial() != null && !produto.getSubGrupoEditorial().trim().isEmpty()) {
 				produto.setSubGrupoEditorial(produto.getSubGrupoEditorial().trim());
 			}
+			
+			if(produto.getCodigoICD() == null || produto.getCodigoICD().trim().isEmpty()){
+				produto.setCodigoICD("");
+			}
 	
 		}
 		

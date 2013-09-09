@@ -531,6 +531,8 @@ var produtoController = $.extend(true, {
 	novoProduto : function () {
 		produtoController.limparModalCadastro();
 		
+		$("td[name='tdCodigoProdutoICDCadastro']", produtoController.workspace).hide();
+		
 		$("#dialog-novo", this.workspace).dialog({
 			resizable: false,
 			height:550,
@@ -559,6 +561,7 @@ var produtoController = $.extend(true, {
 		
 		$("#codigoProdutoCadastro", this.workspace).enable();
 		$("#comboTipoDesconto", produtoController.workspace).hide();
+		
 		$("#tipoDescontoManual", produtoController.workspace).show();
 		$("#percentualDesconto", produtoController.workspace).removeAttr('disabled');		
 	},
@@ -623,7 +626,7 @@ var produtoController = $.extend(true, {
 		
 		 var params = [{name:"produto.id",value:$("#idProduto", produtoController.workspace).val()},
         			   {name:"produto.codigo",value:$("#codigoProdutoCadastro", produtoController.workspace).val()},
-        			   {name:"produto.codigoICD",value:$("#codigoProdutoICDCadastro", produtoController.workspace).val()},
+//        			   {name:"produto.codigoICD",value:$("#codigoProdutoICDCadastro", produtoController.workspace).val()},
         			   {name:"produto.nome",value:$("#nomeProduto", produtoController.workspace).val()},
         			   {name:"produto.peb",value:$("#peb", produtoController.workspace).val()},
         			   {name:"produto.pacotePadrao",value:$("#pacotePadrao", produtoController.workspace).val()},
