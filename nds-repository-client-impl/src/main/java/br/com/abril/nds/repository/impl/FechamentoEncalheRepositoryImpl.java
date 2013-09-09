@@ -134,7 +134,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 																		Integer page, 
 																		Integer rp) {
 		
-		String queryString = this.getQueryFechamentoEncalhe(filtro);
+		String queryString = this.getQueryFechamentoEncalhe(filtro, false);
 		
 		Query query = getSession().createSQLQuery(queryString);
 		
@@ -180,9 +180,14 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		return query.list();
 	}
 	
-	private String getQueryFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro) {
+	private String getQueryFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro, boolean count) {
 		
 		StringBuilder query = new StringBuilder();
+		
+		if (count) {
+			
+			query.append("select count(*) from (");
+		}
 		
 		query.append("select * from (");
 		query.append("	select pe.ID as produtoEdicao,"); 
@@ -253,6 +258,11 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.append("	group by ce.PRODUTO_EDICAO_ID");
 		query.append(") as unionEncalhe");
 		query.append(" group by unionEncalhe.produtoEdicao");
+		
+		if (count) {
+			
+			query.append(") as unionEncalheCount");
+		}
 		
 		return query.toString();
 	}
@@ -328,80 +338,19 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	}
 
 	@Override
-	public int buscarQuantidadeConferenciaEncalheNovo(FiltroFechamentoEncalheDTO filtro)
-	{
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select count ( chamadaEncalhe.id) ");
-		hql.append(" from ChamadaEncalhe as chamadaEncalhe ");
-		hql.append(" join chamadaEncalhe.produtoEdicao as produtoEdicao ");
-		hql.append(" join produtoEdicao.produto as produto ");
-		hql.append(" left join produtoEdicao.descontoLogistica as descontoLogisticaProdEdicao ");
-		hql.append(" left join produto.descontoLogistica as descontoLogisticaProduto ");
-		hql.append(" join produto.fornecedores as fornecedor ");
-		
-		hql.append(" where chamadaEncalhe.dataRecolhimento = :dataRecolhimento ");
-		
-		if (filtro.getFornecedorId() != null) {
-			hql.append("and fornecedor.id = :fornecedorId ");
-		}
-		
-		Query query =  getSession().createQuery(hql.toString());
+	public int buscarQuantidadeConferenciaEncalheNovo(FiltroFechamentoEncalheDTO filtro) {
+
+		Query query =  getSession().createSQLQuery(this.getQueryFechamentoEncalhe(filtro, true));
 		
 		query.setParameter("dataRecolhimento", filtro.getDataEncalhe());
-
-		if (filtro.getFornecedorId() != null) {
-			query.setLong("fornecedorId", filtro.getFornecedorId());
-		}
-		
-		return ((Long) query.uniqueResult()).intValue();
-	}
-	
-	
-	
-	@Override
-	public int buscarQuantidadeConferenciaEncalhe(FiltroFechamentoEncalheDTO filtro) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append("SELECT distinct  p.codigo as  codigo "); 
-		hql.append(" , p.nome as produto ");
-		hql.append(" , pe.numeroEdicao as edicao");
-		
-		hql.append(" , coalesce(pe.precoVenda, 0)  -  ( coalesce(pe.precoVenda, 0)  * ( ");
-		hql.append("   CASE WHEN pe.origem = :origemInterface ");
-		hql.append("   THEN ( coalesce(descLogProdEdicao.percentualDesconto, descLogProd.percentualDesconto, 0 ) ) ");
-		hql.append("   ELSE ( coalesce(pe.desconto, p.desconto, 0) / 100) END ");
-		hql.append(" ) ) as precoCapaDesconto ");
-		
-		hql.append(" , coalesce(pe.precoVenda, 0) as precoCapa ");
-		
-		hql.append(" , pe.id as produtoEdicao ");
-		hql.append(" , case when  pe.parcial  = true  then 'P' else 'N' end  as tipo ");
-		hql.append(" , che.dataRecolhimento as dataRecolhimento ");
-		hql.append(" , sum (mec.qtde) - ( "+ this.getQueryVendaProduto() +" )    as exemplaresDevolucao ");		
-
-		hql.append(this.getFromConferenciaEncalhe());
-	
-		hql.append(this.getWhereFechamentoEncalhe(filtro));
-		
-		Query query =  getSession().createQuery(hql.toString());
-		
-		query.setDate("dataEncalhe", filtro.getDataEncalhe());
-		query.setParameter("tipoVenda", TipoVendaEncalhe.ENCALHE);
-		query.setParameter("tipoComercializacaoVenda", FormaComercializacao.CONTA_FIRME);
 		query.setParameter("origemInterface", Origem.INTERFACE);
-		query.setParameter("statusOperacaoFinalizada", StatusOperacao.CONCLUIDO);
 
-		if (filtro.getBoxId() != null) {
-			query.setLong("boxId", filtro.getBoxId());
-		}
-		
 		if (filtro.getFornecedorId() != null) {
+			
 			query.setLong("fornecedorId", filtro.getFornecedorId());
 		}
-			
-		return query.list().size();
+		
+		return ((BigInteger) query.uniqueResult()).intValue();
 	}
 	
 	@Override
@@ -443,10 +392,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 	}
 
-	
-
-	
-	
 	public Integer obterTotalCotasAusentes(Date dataEncalhe, 
 			boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp) {
 			
@@ -564,7 +509,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		return sql;
 	}
 	
-	
 	private StringBuffer getSqlCotaAusenteComChamadaEncalheSemPostergado(boolean indCount, boolean isSomenteCotasSemAcao) {
 		
 		StringBuffer sql = new StringBuffer();
@@ -593,8 +537,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 
 			
 		}
-		
-		
+
 		sql.append("	from                                                                ");
 		sql.append("        Cota cota                                                       ");
 		sql.append("	inner join                                                          ");
@@ -647,11 +590,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		        
 		return sql;
 	}
-	
-	
-	
-	
-	
+
 	private StringBuffer getSqlCotaAusenteSemChamadaEncalhe(boolean indCount, boolean isSomenteCotasSemAcao) {
 		
 		StringBuffer sqlMovimentoFinaceiroCotaNaoConsolidado = new StringBuffer();
@@ -754,10 +693,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
         
 		return sql;
 	}
-	
-	
-	
-	
+
+	@SuppressWarnings("unchecked")
 	public List<CotaAusenteEncalheDTO> obterCotasAusentes(Date dataEncalhe, 
 			boolean isSomenteCotasSemAcao, String sortorder, String sortname, int page, int rp) {
 	
@@ -817,77 +754,6 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		}
 		
 		return query.list();
-		
-	}
-	
-	
-	
-	private String _getClausulaFromWhereQueryCotaAusentes(boolean isSomenteCotasSemAcao) {
-		
-		StringBuilder sql = new StringBuilder();
-		
-		sql.append("	from Cota cota	")
-		
-		.append("	    join                                                               ")
-		.append("	        CHAMADA_ENCALHE_COTA chamadaEncalheCota								")
-		.append("	            on chamadaEncalheCota.COTA_ID=cota.ID                           ")
-
-		.append("	    join                                                               ")
-		.append("	        CHAMADA_ENCALHE chamadaEncalhe 										")
-		.append("	            on chamadaEncalheCota.CHAMADA_ENCALHE_ID=chamadaEncalhe.ID      ")
-		
-		.append("	    inner join                                                              ")
-		.append("	        PESSOA pessoa                                                       ")
-		.append("	            on cota.PESSOA_ID=pessoa.ID                                     ")
-
-		.append("	    inner join                                                              ")
-		.append("	        BOX box                                                             ")
-		.append("	            on cota.BOX_ID=box.ID                                           ")
-		
-		.append("	    inner join                                                              ")
-		.append("	        PDV pdv                                                             ")
-		.append("	            on cota.ID=pdv.COTA_ID                                          ")
-		
-		.append("	    inner join                                                              ")
-		.append("	        ROTA_PDV rotaPdv                                                    ")
-		.append("	            on pdv.ID=rotaPdv.PDV_ID,                                       ")
-		
-		.append("	        ROTA rota,                                                          ")
-		
-		.append("	        ROTEIRO roteiro                                                     ")
-		
-		.append("	     where                                                                  ")
-		
-		.append("	        rotaPdv.ROTA_ID=rota.ID                                             ")
-		
-		.append(" and ( chamadaEncalheCota.POSTERGADO = false or chamadaEncalheCota.POSTERGADO is null ) ")
-		
-		.append("	        and rota.ROTEIRO_ID=roteiro.ID                                      ")
-
-		.append("	        and ( chamadaEncalhe.DATA_RECOLHIMENTO is null         				")
-		.append("	        or chamadaEncalhe.DATA_RECOLHIMENTO=:dataEncalhe )                  ")
-		
-		.append("   and cota.ID not in  ( select                    ")
-        .append("      distinct( cec.COTA_ID )                      ") 
-        .append("  from                                             ")
-        .append("      controle_conferencia_encalhe_cota cec        ")
-        .append("  where                                            ")
-        .append("      cec.data_operacao = :dataEncalhe             ")
-		.append("   )												")
-		.append("	                                                ")
-		.append("	and pdv.PONTO_PRINCIPAL=:principal  ");
-		
-		if (isSomenteCotasSemAcao) {
-			
-			sql.append(" and ( chamadaEncalheCota.FECHADO = false or chamadaEncalheCota.FECHADO is null ) 		");
-			   		
-		}
-		
-		sql.append(" group by ")
-		   .append(" cota.ID  ");
-		
-		return sql.toString();
-		
 	}
 	
 	@Override
