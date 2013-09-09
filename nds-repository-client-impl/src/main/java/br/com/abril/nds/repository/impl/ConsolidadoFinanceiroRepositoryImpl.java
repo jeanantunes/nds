@@ -821,20 +821,28 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 	@Override
 	public Long obterQuantidadeDividasGeradasData(List<Long> idsCota) {
 		
-		StringBuilder hql = new StringBuilder("select count(c.id) ");
-		hql.append(" from ConsolidadoFinanceiroCota c, Distribuidor d, Divida divida ")
-		   .append(" where c.dataConsolidado = d.dataOperacao ")
-		   .append(" and c.id = divida.consolidado.id ")
-		   .append(" and divida.data = d.dataOperacao ")
-		   .append(" and divida.origemNegociacao = false ");
+		StringBuilder hql = new StringBuilder("");
+		
+					  hql.append(" select count(divida.id) ")
+					
+					     .append(" from Divida divida ")
+					   
+					     .append(" join divida.consolidado consolidado ")
+					   
+					     .append(" join divida.cota cota ")
+					   
+					     .append(" where consolidado.dataConsolidado = (select d.dataOperacao from Distribuidor d) ")
+					   
+					     .append(" and divida.data = consolidado.dataConsolidado ")
+					   
+					     .append(" and divida.origemNegociacao = false ");
 		
 		if (idsCota != null) {
 			
-			hql.append("and c.cota.id in (:idsCota)");
+			hql.append("and cota.id in (:idsCota)");
 		}
 		
-		Query query = 
-				this.getSession().createQuery(hql.toString());
+		Query query = this.getSession().createQuery(hql.toString());
 		
 		if (idsCota != null) {
 			
