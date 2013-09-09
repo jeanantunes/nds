@@ -261,7 +261,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 	
 
 	/*
-	 * (non-Javadoc)
+	 * (non-Javadoc) 
 	 * @see br.com.abril.nds.repository.ConferenciaEncalheRepository#obterListaConferenciaEncalheDTOContingencia(java.lang.Long, java.lang.Integer, java.util.Date, java.util.Date, boolean, boolean, java.util.Set)
 	 */
 	@SuppressWarnings("unchecked")
@@ -283,6 +283,22 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" CH_ENCALHE.SEQUENCIA AS codigoSM, ");
 
 		hql.append(" 0 AS qtdExemplar, ");
+		
+		hql.append(" CASE WHEN ");
+		hql.append(" (SELECT plp.TIPO ");
+		hql.append(" FROM LANCAMENTO lanc  ");
+		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.LANCAMENTO_ID = lanc.id) ");
+		hql.append(" WHERE lanc.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
+		hql.append(" AND plp.TIPO = 'FINAL' ");
+		hql.append(" GROUP BY lanc.PRODUTO_EDICAO_ID) IS NULL THEN "); 
+		hql.append(" CASE WHEN (SELECT plp.TIPO ");
+		hql.append(" FROM LANCAMENTO lanc "); 
+		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.LANCAMENTO_ID = lanc.id) ");
+		hql.append(" WHERE lanc.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
+		hql.append(" AND plp.TIPO = 'PARCIAL' ");
+		hql.append(" GROUP BY lanc.PRODUTO_EDICAO_ID) IS NOT NULL THEN true ");
+		hql.append(" ELSE false END "); 
+		hql.append(" ELSE false END AS isContagemPacote, ");
 		
 		hql.append(" CH_ENCALHE_COTA.QTDE_PREVISTA AS qtdReparte, ");
 		
@@ -357,6 +373,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		((SQLQuery)query).addScalar("codigoSM", StandardBasicTypes.INTEGER);
 		
 		((SQLQuery)query).addScalar("qtdExemplar", StandardBasicTypes.BIG_INTEGER);
+		((SQLQuery)query).addScalar("isContagemPacote", StandardBasicTypes.BOOLEAN);
 		
 		((SQLQuery)query).addScalar("qtdReparte", StandardBasicTypes.BIG_INTEGER);
 		
@@ -373,7 +390,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		((SQLQuery)query).addScalar("precoCapa");
 		((SQLQuery)query).addScalar("parcial");
 		((SQLQuery)query).addScalar("desconto");
-		
+
 		query.setParameter("numeroCota", numeroCota);
 		query.setParameter("dataRecolhimento", dataRecolhimento);
 		query.setParameter("indFechado", indFechado);
@@ -448,6 +465,23 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" SELECT                                             		");
 		hql.append(" CONF_ENCALHE.ID AS idConferenciaEncalhe,           		");
 		hql.append(" CONF_ENCALHE.QTDE AS qtdExemplar,                  		");
+		
+		hql.append(" CASE WHEN ");
+		hql.append(" (SELECT plp.TIPO ");
+		hql.append(" FROM LANCAMENTO lanc  ");
+		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.LANCAMENTO_ID = lanc.id) ");
+		hql.append(" WHERE lanc.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
+		hql.append(" AND plp.TIPO = 'FINAL' ");
+		hql.append(" GROUP BY lanc.PRODUTO_EDICAO_ID) IS NULL THEN "); 
+		hql.append(" CASE WHEN (SELECT plp.TIPO ");
+		hql.append(" FROM LANCAMENTO lanc "); 
+		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.LANCAMENTO_ID = lanc.id) ");
+		hql.append(" WHERE lanc.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
+		hql.append(" AND plp.TIPO = 'PARCIAL' ");
+		hql.append(" GROUP BY lanc.PRODUTO_EDICAO_ID) IS NOT NULL THEN true ");
+		hql.append(" ELSE false END "); 
+		hql.append(" ELSE false END AS isContagemPacote, ");
+		
 		hql.append(" CH_ENCALHE_COTA.QTDE_PREVISTA AS qtdReparte, 				");
 		
 		hql.append(" CONF_ENCALHE.QTDE_INFORMADA AS qtdInformada,       		");
@@ -525,6 +559,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		((SQLQuery)query).addScalar("idConferenciaEncalhe", StandardBasicTypes.LONG);
 		((SQLQuery)query).addScalar("qtdExemplar", StandardBasicTypes.BIG_INTEGER);
+		((SQLQuery)query).addScalar("isContagemPacote", StandardBasicTypes.BOOLEAN);
 		((SQLQuery)query).addScalar("qtdReparte", StandardBasicTypes.BIG_INTEGER);
 		((SQLQuery)query).addScalar("qtdInformada", StandardBasicTypes.BIG_INTEGER);
 		((SQLQuery)query).addScalar("juramentada");
