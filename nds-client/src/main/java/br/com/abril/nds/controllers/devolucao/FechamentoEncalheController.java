@@ -757,7 +757,8 @@ public class FechamentoEncalheController extends BaseController {
 	public void imprimirArquivoAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro,
 			String sortname, String sortorder, int rp, int page, FileType fileType) {
 		
-		List<AnaliticoEncalheDTO> listDTO = fechamentoEncalheService.buscarAnaliticoEncalhe(filtro, sortorder, this.resolveSort(sortname), page, rp);
+		
+		List<AnaliticoEncalheDTO> listDTO = fechamentoEncalheService.buscarAnaliticoEncalhe(filtro, sortorder, this.resolveSort(sortname), null, null);
 		List<AnaliticoEncalheVO> listVO = new ArrayList<AnaliticoEncalheVO>();
 		for (AnaliticoEncalheDTO dto : listDTO) {
 			listVO.add(new AnaliticoEncalheVO(dto));
