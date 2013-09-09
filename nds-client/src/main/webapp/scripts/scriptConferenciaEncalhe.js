@@ -793,7 +793,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					innerTable += "<input type='hidden' id='idProdutoEdicaoGrid_"+index+"' value='" + value.idProdutoEdicao + "'/>";
 					
-					var valorExemplares = parseInt(value.qtdExemplar);
+					var valorExemplares = value.isContagemPacote ? parseInt(value.qtdExemplar) / value.pacotePadrao : parseInt(value.qtdExemplar);
 					
 					var inputExemplares = '<input isEdicao="true" id="qtdExemplaresGrid_' + index + '" class="input-numericE" onchange="ConferenciaEncalhe.atualizarValores('+ index +');" style="width:50px; text-align: center;" maxlength="255" value="' + valorExemplares + '"/>' +
 						'<input id="idConferenciaEncalheHidden_' + index + '" type="hidden" value="' + value.idConferenciaEncalhe + '"/>';
@@ -822,13 +822,13 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					if (value.dia || value.dataRecolhimento){
 					
-						//if (value.dia && value.dia > 0){
+						if (value.dia && value.dia > 0){
 						
 							innerTable += "<td style='text-align: center;' nowrap='nowrap'>" + value.dia + "º" + "</td>";
-						/*} else {
+						} else {
 							
 							innerTable += "<td style='text-align: center;' nowrap='nowrap' style='width: 20px;'>" + value.dataRecolhimento + "</td>";
-						}*/
+						}
 					} else {
 						
 						innerTable += "<td></td>";

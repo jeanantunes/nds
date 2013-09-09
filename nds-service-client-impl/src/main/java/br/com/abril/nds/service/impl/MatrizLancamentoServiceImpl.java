@@ -72,13 +72,11 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	
 		this.validarFiltro(filtro);
 		
-		DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento = 
-			this.obterDadosLancamento(filtro);
+		DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento = this.obterDadosLancamento(filtro);
 		
 		BalanceamentoLancamentoDTO matrizLancamento = this.balancear(dadosBalanceamentoLancamento);
 		
-		List<ProdutoLancamentoCanceladoDTO> produtosLancamentosCancelados = 
-													this.obterProdutosLancamentosCancelados(filtro);
+		List<ProdutoLancamentoCanceladoDTO> produtosLancamentosCancelados = this.obterProdutosLancamentosCancelados(filtro);
 		
 		if (produtosLancamentosCancelados != null && !produtosLancamentosCancelados.isEmpty()) {
 			matrizLancamento.setProdutosLancamentosCancelados(produtosLancamentosCancelados);
@@ -1486,32 +1484,25 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	 */
 	private DadosBalanceamentoLancamentoDTO obterDadosLancamento(FiltroLancamentoDTO filtro) {
 		
-		DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento =
-			new DadosBalanceamentoLancamentoDTO();
+		DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento = new DadosBalanceamentoLancamentoDTO();
 		
 		Date dataLancamento = filtro.getData();
 		
-		int codigoDiaSemana = 
-				this.distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
+		int codigoDiaSemana = this.distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
 		
-		int numeroSemana =
-			DateUtil.obterNumeroSemanaNoAno(dataLancamento, codigoDiaSemana);
+		int numeroSemana = DateUtil.obterNumeroSemanaNoAno(dataLancamento, codigoDiaSemana);
 		
-		Intervalo<Date> periodoDistribuicao = 
-			this.getPeriodoDistribuicao(codigoDiaSemana, dataLancamento, numeroSemana);
+		Intervalo<Date> periodoDistribuicao = this.getPeriodoDistribuicao(codigoDiaSemana, dataLancamento, numeroSemana);
 		
-		TreeSet<Date> datasDistribuicaoFornecedor = 
-			this.obterDatasDistribuicaoFornecedor(periodoDistribuicao, filtro.getIdsFornecedores());
+		TreeSet<Date> datasDistribuicaoFornecedor = this.obterDatasDistribuicaoFornecedor(periodoDistribuicao, filtro.getIdsFornecedores());
 		
 		dadosBalanceamentoLancamento.setPeriodoDistribuicao(periodoDistribuicao);
 		
 		dadosBalanceamentoLancamento.setNumeroSemana(numeroSemana);
 		
-		dadosBalanceamentoLancamento.setDatasDistribuicaoFornecedor(
-			datasDistribuicaoFornecedor);
+		dadosBalanceamentoLancamento.setDatasDistribuicaoFornecedor(datasDistribuicaoFornecedor);
 		
-		dadosBalanceamentoLancamento.setCapacidadeDistribuicao(
-			this.distribuidorRepository.capacidadeDistribuicao());
+		dadosBalanceamentoLancamento.setCapacidadeDistribuicao(this.distribuidorRepository.capacidadeDistribuicao());
 		
 		List<ProdutoLancamentoDTO> produtosLancamento =
 			this.lancamentoRepository.obterBalanceamentoLancamento(periodoDistribuicao,

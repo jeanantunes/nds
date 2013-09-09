@@ -430,10 +430,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 		    for (CotaAusenteEncalheDTO cotaAusenteEncalheDTO : listaCotaAusenteEncalhe) {
 
-			    if (cotaAusenteEncalheDTO.isFechado() || cotaAusenteEncalheDTO.isPostergado()){
-
-					carregarDescricaoCotaAusente(cotaAusenteEncalheDTO);
-				}
+				carregarDescricaoCotaAusente(cotaAusenteEncalheDTO);
 			}
 		}
 		
@@ -445,8 +442,13 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		if(!cotaAusenteEncalheDTO.isIndPossuiChamadaEncalheCota()) {
 			
 			if (cotaAusenteEncalheDTO.isIndMFCNaoConsolidado()) {
-				cotaAusenteEncalheDTO.setAcao(" Cota com Divida ");
+				
+				cotaAusenteEncalheDTO.setAcao(" Sem C.E.-Cota com Divida ");
 			} 
+			else{
+				
+				cotaAusenteEncalheDTO.setAcao(" Sem C.E.-Cobrado ");
+			}
 			
 		} else {
 			
