@@ -28,10 +28,10 @@ public class ProdutoRecolhimentoVO {
 	@Export(label="Código")
 	private String codigoProduto;
 	
-	@Export(label="Produto", widthPercent=8f)
+	@Export(label="Produto", widthPercent=13f)
 	private String nomeProduto;
 	
-	@Export(label="Edição")
+	@Export(label="Ed.", widthPercent=4f)
 	private Long numeroEdicao;
 	
 	@Export(label="Capa R$", columnType=ColumType.MOEDA)
@@ -45,7 +45,6 @@ public class ProdutoRecolhimentoVO {
 	@Export(label="Fornecedor", widthPercent=8f)
 	private String nomeFornecedor;
 	
-	@Export(label="Editor", widthPercent=8f)
 	private String nomeEditor;
 	
 	@Export(label="Parcial")

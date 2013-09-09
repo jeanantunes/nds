@@ -76,7 +76,7 @@ public interface ProdutoEdicaoService {
 	 */
 	List<ProdutoEdicao> obterProdutosEdicaoPorCodigoProduto(String codigoProduto);
 
-	List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto, Integer quantidadeRegisttros);
+	List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto, Integer numeroCota, Integer quantidadeRegisttros);
 	
 	
 	/**

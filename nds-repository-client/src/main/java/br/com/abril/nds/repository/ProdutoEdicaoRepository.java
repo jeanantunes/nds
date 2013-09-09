@@ -117,7 +117,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 
 	ProdutoEdicao obterProdutoEdicaoPorSM(Long sm);
 	
-	List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto, Integer quantidadeRegisttros);
+	List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto, Integer numeroCota, Integer quantidadeRegisttros);
 	
 	/**
 	 * Obtém uma lista de produtos edição de acordo com o parâmetro iformado.
