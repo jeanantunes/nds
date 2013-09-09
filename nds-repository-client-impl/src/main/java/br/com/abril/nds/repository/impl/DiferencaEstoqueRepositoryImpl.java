@@ -384,7 +384,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			
 			hql += " where diferenca.lancamentoDiferenca is not null "
 				+ " and diferenca.statusConfirmacao = :statusConfirmacao "
-				+ " and (movimentoEstoque.status=:statusAprovado or movimentoEstoqueCota.status=:statusAprovado)";
+				+ " and (movimentoEstoque.status=:statusAprovado or movimentoEstoqueCota.status=:statusAprovado or movimentoEstoqueCota.status is null)";
 				
 			if (filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()) {
 				hql += " and diferenca.produtoEdicao.produto.codigo = :codigoProduto ";
