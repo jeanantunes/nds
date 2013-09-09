@@ -53,8 +53,6 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
     
     int buscarQuantidadeConferenciaEncalheNovo(FiltroFechamentoEncalheDTO filtro);
     
-    int buscarQuantidadeConferenciaEncalhe(FiltroFechamentoEncalheDTO filtro);
-    
     BigDecimal obterValorTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro);
     
     public List<FechamentoFisicoLogicoDTO> buscarConferenciaEncalheNovo(FiltroFechamentoEncalheDTO filtro,
