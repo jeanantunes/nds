@@ -50,21 +50,7 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 		hql.append(" endereco.cidade as cidade, ");
 		hql.append(" usuario.nome as nomeUsuario, ");
 		hql.append(" registroCotaRegiao.dataAlteracao as data ");
-//		hql.append(" registroCotaRegiao.dataAlteracao as data, ");
-		
-//		hql.append(" sum(  "); // FATURAMENTO
-//		hql.append(" CASE ");
-//		hql.append("		WHEN ");
-//		hql.append("	estoqueProdutoCota.qtdeRecebida is not null ");
-//		hql.append("		THEN	 ");
-//		hql.append(" (estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * produtoEdicao.precoVenda ");
-//		hql.append("		ELSE ");
-//		hql.append("		0 ");
-//		hql.append(" ) as faturamento ");
-		
-//		hql.append(" sum((estoqueProdutoCota.qtdeRecebida - estoqueProdutoCota.qtdeDevolvida) * produtoEdicao.precoVenda) as faturamento "); // FATURAMENTO
-		
-//		hql.append(" FROM RegistroCotaRegiao AS registroCotaRegiao, EstoqueProdutoCota as estoqueProdutoCota ");
+
 		hql.append(" FROM RegistroCotaRegiao AS registroCotaRegiao ");
 		hql.append(" LEFT JOIN registroCotaRegiao.cota as cota ");
 		hql.append(" LEFT JOIN cota.enderecos as enderecoCota ");
@@ -75,9 +61,7 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 		hql.append(" LEFT JOIN segmentacao.tipoPontoPDV as tipoPontoPDV ");
 		hql.append(" LEFT JOIN registroCotaRegiao.usuario  as usuario ");
 		hql.append(" LEFT JOIN registroCotaRegiao.regiao  as regiao ");
-//		hql.append(" LEFT JOIN estoqueProdutoCota.produtoEdicao as produtoEdicao ");
 
-//		hql.append(" WHERE registroCotaRegiao.cota.id = estoqueProdutoCota.cota.id AND ");
 		hql.append(" WHERE ");
 		hql.append(" registroCotaRegiao.regiao.id = :ID_REGIAO ");
 		hql.append(" group by cota.id ");
@@ -98,15 +82,6 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 	public BigDecimal calcularFaturamentoCota(Long cotaID) {
 		
 		StringBuilder sql = new StringBuilder();
-		
-		/*
-		 * select 
-			sum((epc.QTDE_RECEBIDA-epc.QTDE_DEVOLVIDA)*pe.PRECO_VENDA)  
-			from estoque_produto_cota epc 
-			JOIN produto_edicao pe
-			ON epc.PRODUTO_EDICAO_ID = pe.ID
-			where epc.COTA_ID = 184;
-		 */
 		
 		sql.append(" SELECT ");
 		sql.append(" sum((epc.QTDE_RECEBIDA-epc.QTDE_DEVOLVIDA)*pe.PRECO_VENDA) ");
