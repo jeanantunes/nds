@@ -3078,14 +3078,14 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     	}
     	
     	hql	.append(" and ( ")
-    		.append(" 	c.SITUACAO_CADASTRO not in (:inativo, :suspenso) ")
+    		.append(" 	c.SITUACAO_CADASTRO not in (:inativo, :pendente) ")
     		.append(" ) ")
     		.append(" group by c.NUMERO_COTA ")
     		.append(" order by c.NUMERO_COTA ");
 		
 		SQLQuery query = this.getSession().createSQLQuery(hql.toString());
 		query.setParameter("inativo", SituacaoCadastro.INATIVO.name());
-		query.setParameter("suspenso", SituacaoCadastro.PENDENTE.name());
+		query.setParameter("pendente", SituacaoCadastro.PENDENTE.name());
 		
 		if (intervaloCota != null && intervaloCota.getAte() != null && intervaloCota.getDe() != null) {
 			query.setParameter("de", intervaloCota.getDe());
