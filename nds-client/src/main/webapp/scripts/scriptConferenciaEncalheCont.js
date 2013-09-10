@@ -474,13 +474,15 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					var valorExemplares = value.isContagemPacote ? parseInt(value.qtdExemplar) / value.pacotePadrao : parseInt(value.qtdExemplar);
 					
+					valorExemplares = isNaN(valorExemplares) ? 0 : valorExemplares;
+					
 					totalExemplaresFooter += valorExemplares;
 					
 					innerTable += "<td style='text-align: center;' nowrap='nowrap'>" + value.qtdReparte + "</td>";
 					
 					innerTable += "<td nowrap='nowrap' style='text-align: center;'>";
 					
-					var inputExemplares = '<input isEdicao="true" name="inputValorExemplares" tabindex="' + (++index) + '" onkeydown="ConferenciaEncalheCont.nextInputExemplares('+index+', window.event);" id="qtdExemplaresGrid_' + index + '" maxlength="255" onkeyup="ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter()" onchange="ConferenciaEncalheCont.atualizarValores('+ index +','+value.qtdInformada+');" style="width:90px; text-align: center;" value="' + value.qtdInformada + '"/>' +
+					var inputExemplares = '<input isEdicao="true" name="inputValorExemplares" tabindex="' + (++index) + '" onkeydown="ConferenciaEncalheCont.nextInputExemplares('+index+', window.event);" id="qtdExemplaresGrid_' + index + '" maxlength="255" onkeyup="ConferenciaEncalheCont.redefinirValorTotalExemplaresFooter()" onchange="ConferenciaEncalheCont.atualizarValores('+ index +','+ valorExemplares +');" style="width:90px; text-align: center;" value="' + valorExemplares + '"/>' +
 						'<input id="idConferenciaEncalheHidden_' + index + '" type="hidden" value="' + value.idConferenciaEncalhe + '"/>';
 					
 					innerTable += inputExemplares + "</td>";

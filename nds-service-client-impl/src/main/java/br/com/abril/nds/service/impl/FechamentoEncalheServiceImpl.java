@@ -186,19 +186,12 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			for(FechamentoFisicoLogicoDTO conferencia : listaConferencia)
 			{
 
-				
-				
-				
-				
-				
-				
-				
-				
 				//Soma as quantidades para os exemplares de devolucao
 				for(FechamentoFisicoLogicoDTO movimentoEstoqueCota : listaMovimentoEstoqueCota){
 					
 					if(conferencia.getProdutoEdicao().equals(movimentoEstoqueCota.getProdutoEdicao()) 
-							&& movimentoEstoqueCota.getExemplaresDevolucao() != null){
+							&& movimentoEstoqueCota.getExemplaresDevolucao() != null 
+							&& movimentoEstoqueCota.getDataRecolhimento().equals(conferencia.getDataRecolhimento())){
 						
 						if(conferencia.getExemplaresDevolucao() == null){
 							
@@ -208,15 +201,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 						conferencia.setExemplaresDevolucao(conferencia.getExemplaresDevolucao().add(movimentoEstoqueCota.getExemplaresDevolucao()));
 					}
 				}
-				
-				
-				
-				
-				
-				
-				
-				
-				
+
 				//Subtrai as quantidades para os exemplares de devolucao
 				for(FechamentoFisicoLogicoDTO movimentoEstoqueCotaVendaProduto : listaMovimentoEstoqueCotaVendaProduto)
 				{
@@ -225,14 +210,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 						
 						conferencia.setExemplaresDevolucao(conferencia.getExemplaresDevolucao().subtract(movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao()));
 					}
-				}
-				
-				
-				
-				
-				
-				
-				
+				}	
 			}
 						
 			int inicioDiaSemana = 
@@ -854,17 +832,17 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 		if( qntDiferenca.compareTo(BigInteger.ZERO ) < 0 ){
 		
-			diferenca.setTipoDiferenca(TipoDiferenca.FALTA_EM);
+			diferenca.setTipoDiferenca(TipoDiferenca.PERDA_EM);
 
-			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.PERDA, 
+			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.RECOLHIMENTO, 
 					                                          StatusAprovacao.APROVADO, 
 					                                          Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE);
 			
 		} else if(qntDiferenca.compareTo(BigInteger.ZERO) > 0){						
 			
-			diferenca.setTipoDiferenca(TipoDiferenca.SOBRA_EM);
+			diferenca.setTipoDiferenca(TipoDiferenca.GANHO_EM);
 
-			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.GANHO, 
+			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.RECOLHIMENTO, 
 					                                          StatusAprovacao.APROVADO, 
 					                                          Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE);
 			
