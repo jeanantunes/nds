@@ -485,7 +485,7 @@ var chamadaoController = $.extend(true, {
 		
 		param = serializeArrayToPost('listaChamadao', chamadaoController.getListaChamadao(), param);
 		
-		param.push({name: 'idsIgnorados', value: chamadaoController.nonSelected});
+		param.idsIgnorados = chamadaoController.nonSelected;
 		
 		$.postJSON(contextPath + "/devolucao/chamadao/confirmarChamadao",param,
 				   function(result) {
