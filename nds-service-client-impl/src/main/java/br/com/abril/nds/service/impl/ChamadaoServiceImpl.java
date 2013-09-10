@@ -169,9 +169,11 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 		
 		for (ConsignadoCotaChamadaoDTO consignadoCotaChamadao : listaChamadao) {
 			
-			if (idsIgnorados.contains(consignadoCotaChamadao.getIdLancamento())) {
-
-				continue;
+			if (idsIgnorados != null) {
+				if (idsIgnorados.contains(consignadoCotaChamadao.getIdLancamento())) {
+	
+					continue;
+				}
 			}
 			
 			if (filtro.isChamadaEncalhe()) {
@@ -237,6 +239,11 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 		ProdutoEdicao produtoEdicao =
 			this.produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
 				consignadoCotaChamadao.getCodigoProduto(), consignadoCotaChamadao.getNumeroEdicao());
+		
+//		if (this.chamadaEncalheCotaRepository.existeChamadaEncalheCota(cota.getId(), produtoEdicao.getId())) {
+//			
+//			return;
+//		}
 		
 		ChamadaEncalhe chamadaEncalhe =
 			this.chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(
