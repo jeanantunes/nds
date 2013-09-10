@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,8 +14,12 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.hibernate.jdbc.Work;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
@@ -58,6 +63,8 @@ import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
+
+import com.mysql.jdbc.PreparedStatement;
 
 @Repository
 public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<MovimentoEstoqueCota, Long> implements MovimentoEstoqueCotaRepository {
@@ -3042,5 +3049,75 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			
 			this.merge(mec);
 		}
+	}
+
+	@Override
+	public void bulkInsert(List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota) {
+		/*
+		if (movimentosEstoqueCota.isEmpty()) {
+	        return;
+	    }
+
+	    Session session = this.getSession();
+	    
+	    try {
+	    	session.doWork(new Work() {
+		    	@Override
+		        public void execute(Connection connection) throws SQLException {
+		            //connection, finally!
+		    		Transaction transaction = null;
+
+		    		Long entryCounter = 0L;
+
+		    		PreparedStatement batchUpdate = null;
+		    		
+		    		transaction = session.beginTransaction();
+			        batchUpdate = session.connection().prepareStatement(insertSql);
+
+			        for (MovimentoEstoqueCotaDTO entry : movimentosEstoqueCota) {
+			            entry.addEntry(batchUpdate);
+			            batchUpdate.addBatch();
+
+			            if (++entryCounter % BATCH_SIZE == 0) {
+			                // Reached limit for uncommitted entries, so commit
+			                batchUpdate.executeBatch();
+			            }
+			        }
+
+			        // Commit any entries that have not been committed yet
+			        batchUpdate.executeBatch();
+			        batchUpdate.close();
+			        batchUpdate = null;
+		        }
+		    });
+	    	
+	        
+	    }
+	    catch (HibernateException ex) {
+	        transaction.rollback();
+	        transaction = null;
+	    }
+	    catch (SQLException ex) {
+	        transaction.rollback();
+	        transaction = null;
+	    }
+	    finally {
+	        if (transaction != null) {
+	            transaction.commit();
+	        }
+
+	        if (batchUpdate != null) {
+	            try {
+	                batchUpdate.cancel();
+	                batchUpdate.close();
+	            }
+	            catch (SQLException ex) {
+
+	            }
+	        }
+
+	        session.close();
+	    }
+		*/
 	}
 }

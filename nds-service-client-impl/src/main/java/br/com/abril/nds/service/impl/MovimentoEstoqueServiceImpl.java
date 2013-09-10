@@ -22,6 +22,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
+import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
@@ -164,24 +165,45 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	@Override
 	@Transactional
-	public void gerarMovimentoEstoqueDeExpedicao(Date dataPrevista,Date dataDistribuidor, Long idProdutoEdicao, Long idLancamento, Long idUsuario,Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota) {
+	public void gerarMovimentoEstoqueDeExpedicao(Date dataPrevista,Date dataDistribuidor, Long idProdutoEdicao, Long idLancamento
+			, Long idUsuario, Date dataOperacao, TipoMovimentoEstoque tipoMovimento, TipoMovimentoEstoque tipoMovimentoCota) {
 		
 		List<EstudoCotaDTO> listaEstudoCota = estudoCotaRepository.
 			obterEstudoCotaPorDataProdutoEdicao(dataPrevista, idProdutoEdicao);
 		
 		BigInteger total = BigInteger.ZERO;		
 
+		Map<String, DescontoDTO> descontos = descontoService.obterDescontosPorLancamentoProdutoEdicaoMap(idLancamento, idProdutoEdicao);
+		
+		List<MovimentoEstoqueCota> movimentosEstoqueCota = new ArrayList<>();
 		for (EstudoCotaDTO estudoCota : listaEstudoCota) {
 
-			gerarMovimentoCota(
-				dataPrevista,idProdutoEdicao,estudoCota.getIdCota(),
+			MovimentoEstoqueCota mec = criarMovimentoExpedicaoCota(
+				dataPrevista, idProdutoEdicao, estudoCota.getIdCota(),
 					idUsuario, estudoCota.getQtdeEfetiva(),tipoMovimentoCota,
-						dataDistribuidor,dataOperacao, idLancamento, estudoCota.getId());
-
+						dataDistribuidor,dataOperacao, idLancamento, estudoCota.getId(), descontos, false);
+			
 			total = total.add(estudoCota.getQtdeEfetiva());
+			
+			movimentosEstoqueCota.add(mec);
 		}
 
 		gerarMovimentoEstoque(idProdutoEdicao, idUsuario, total, tipoMovimento, dataDistribuidor, false);
+		
+		int count = 0;
+		for(MovimentoEstoqueCota mec : movimentosEstoqueCota) {
+			movimentoEstoqueCotaRepository.merge(mec);
+			
+			if ( ++count % 20 == 0 ) {
+				movimentoEstoqueCotaRepository.flush();
+				movimentoEstoqueCotaRepository.clear();
+			}
+			
+		}
+		
+		movimentoEstoqueCotaRepository.flush();
+		movimentoEstoqueCotaRepository.clear();
+		
 	}
 
 	/**
@@ -812,7 +834,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			Date dataMovimento, Date dataOperacao, Long idLancamento, Long idEstudoCota){
 		
 		return criarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, 
-						   		  tipoMovimentoEstoque, dataMovimento, dataOperacao, idLancamento, idEstudoCota,false);
+						   		  tipoMovimentoEstoque, dataMovimento, dataOperacao, idLancamento, idEstudoCota, false);
 	}
 
 	private MovimentoEstoqueCota criarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, 
@@ -1208,6 +1230,134 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Domínio do grupo de movimento de estoque inválido");
 		}
+	}
+	
+	@Transactional
+	public MovimentoEstoqueCota criarMovimentoExpedicaoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, 
+			Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, 
+			Date dataMovimento, Date dataOperacao, Long idLancamento, Long idEstudoCota, Map<String, DescontoDTO> descontos, boolean isMovimentoDiferencaAutomatico) {
+
+		this.validarDominioGrupoMovimentoEstoque(tipoMovimentoEstoque, Dominio.COTA);
+		
+		if (dataOperacao == null) {
+			
+			dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		}
+		
+		MovimentoEstoqueCota movimentoEstoqueCota = new MovimentoEstoqueCota();
+		
+		movimentoEstoqueCota.setTipoMovimento(tipoMovimentoEstoque);
+		movimentoEstoqueCota.setCota(new Cota(idCota));
+		
+		movimentoEstoqueCota.setData(dataMovimento==null? dataOperacao : dataMovimento);
+
+		movimentoEstoqueCota.setDataLancamentoOriginal(dataMovimento);
+		
+		movimentoEstoqueCota.setDataCriacao(dataOperacao);
+		movimentoEstoqueCota.setProdutoEdicao(new ProdutoEdicao(idProdutoEdicao));
+		movimentoEstoqueCota.setQtde(quantidade);
+		movimentoEstoqueCota.setUsuario(new Usuario(idUsuario));
+		movimentoEstoqueCota.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
+
+		if (idEstudoCota != null) {
+			
+			movimentoEstoqueCota.setEstudoCota(new EstudoCota(idEstudoCota));
+		}
+		
+		if (dataLancamento != null && idProdutoEdicao != null) {
+			
+			if (idLancamento==null) {
+				
+				idLancamento = 
+					lancamentoRepository.obterLancamentoProdutoPorDataLancamentoDataLancamentoDistribuidor(
+						new ProdutoEdicao(idProdutoEdicao), null, dataLancamento);
+			}
+			
+				
+			if (idLancamento != null) {
+
+				Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);
+				
+				movimentoEstoqueCota.setLancamento(lancamento);
+				
+				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+
+				//Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(lancamento, new Cota(idCota), produtoEdicao);
+				String key = new StringBuilder()
+					.append(idCota)
+					.append(produtoEdicao.getProduto().getFornecedor().getId())
+					.append(produtoEdicao.getId())
+					.append(produtoEdicao.getProduto().getId())
+					.toString();
+				
+				DescontoDTO descontoDTO = descontos.get(key);
+				if(descontoDTO == null) {
+					key = new StringBuilder()
+						.append(idCota)
+						.append(produtoEdicao.getProduto().getFornecedor().getId())
+						.toString();
+				
+					descontoDTO = descontos.get(key);
+				}
+				
+				if(descontoDTO == null) {
+					key = new StringBuilder()
+						.append(produtoEdicao.getProduto().getFornecedor().getId())
+						.toString();
+				
+					descontoDTO = descontos.get(key);
+				}
+				
+				if(descontoDTO == null) {
+					key = new StringBuilder()
+						.append(produtoEdicao.getId())
+						.toString();
+				
+					descontoDTO = descontos.get(key);
+				}
+				
+				if(descontoDTO == null) {
+					key = new StringBuilder()
+						.append(produtoEdicao.getProduto().getId())
+						.toString();
+				
+					descontoDTO = descontos.get(key);
+				}
+				
+				BigDecimal desconto = descontoDTO.getValor();				
+				
+				BigDecimal precoComDesconto = 
+						produtoEdicao.getPrecoVenda().subtract(
+								MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), desconto));
+
+				ValoresAplicados valoresAplicados = new ValoresAplicados();
+				valoresAplicados.setPrecoVenda(produtoEdicao.getPrecoVenda());
+				valoresAplicados.setValorDesconto(desconto);
+				valoresAplicados.setPrecoComDesconto(precoComDesconto);
+				
+				movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
+				
+			}			
+		}
+		
+		if (tipoMovimentoEstoque.isAprovacaoAutomatica() || isMovimentoDiferencaAutomatico) {
+
+			movimentoEstoqueCota.setStatus(StatusAprovacao.APROVADO);
+			movimentoEstoqueCota.setAprovador(new Usuario(idUsuario));
+			movimentoEstoqueCota.setDataAprovacao(dataOperacao);
+			
+			//movimentoEstoqueCota = movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
+			
+			Long idEstoqueCota = this.atualizarEstoqueProdutoCota(tipoMovimentoEstoque, movimentoEstoqueCota);
+			
+			movimentoEstoqueCota.setEstoqueProdutoCota(new EstoqueProdutoCota(idEstoqueCota));
+
+		} else {
+			
+			//movimentoEstoqueCota = movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
+		}
+		
+		return movimentoEstoqueCota;
 	}
 
 }

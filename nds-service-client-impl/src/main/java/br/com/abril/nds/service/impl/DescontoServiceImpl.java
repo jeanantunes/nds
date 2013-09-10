@@ -4,9 +4,11 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.Validate;
@@ -32,6 +34,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.desconto.DescontoCotaProdutoExcessao;
+import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoCotaProdutoExcessao;
 import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoFornecedor;
 import br.com.abril.nds.model.cadastro.desconto.HistoricoDescontoProduto;
@@ -1061,6 +1064,26 @@ public class DescontoServiceImpl implements DescontoService {
 	public List<TipoDescontoDTO> obterMergeDescontosEspecificosEGerais(
 			Cota cota, String sortorder, String sortname) {		
 		return descontoRepository.obterMergeDescontosEspecificosEGerais(cota, sortorder, sortname);
+	}
+
+	@Override
+	public Map<String, DescontoDTO> obterDescontosPorLancamentoProdutoEdicaoMap(
+			Long lancamentoId, Long produtoEdicaoId) {
+		
+		Map<String, DescontoDTO> descontosMap = new HashMap<String, DescontoDTO>();
+		List<DescontoDTO> descontos = descontoProdutoEdicaoRepository.obterDescontosProdutoEdicao(lancamentoId, produtoEdicaoId);
+		
+		for(DescontoDTO desc : descontos) {
+			String key = new StringBuilder()
+				.append(desc.getCotaId() != null ? desc.getCotaId() : "")
+				.append(desc.getFornecedorId() != null ? desc.getFornecedorId() : "")
+				.append(desc.getProdutoEdicaoId() != null ? desc.getProdutoEdicaoId() : "")
+				.append(desc.getProdutoId() != null ? desc.getProdutoId() : "")
+				.toString();
+			descontosMap.put(key, desc);
+		}		
+		
+		return descontosMap;
 	}
 
 }
