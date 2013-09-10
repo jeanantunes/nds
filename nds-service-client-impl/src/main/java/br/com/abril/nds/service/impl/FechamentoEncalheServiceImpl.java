@@ -832,17 +832,17 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 		if( qntDiferenca.compareTo(BigInteger.ZERO ) < 0 ){
 		
-			diferenca.setTipoDiferenca(TipoDiferenca.FALTA_EM);
+			diferenca.setTipoDiferenca(TipoDiferenca.PERDA_EM);
 
-			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.PERDA, 
+			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.RECOLHIMENTO, 
 					                                          StatusAprovacao.APROVADO, 
 					                                          Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE);
 			
 		} else if(qntDiferenca.compareTo(BigInteger.ZERO) > 0){						
 			
-			diferenca.setTipoDiferenca(TipoDiferenca.SOBRA_EM);
+			diferenca.setTipoDiferenca(TipoDiferenca.GANHO_EM);
 
-			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.GANHO, 
+			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.RECOLHIMENTO, 
 					                                          StatusAprovacao.APROVADO, 
 					                                          Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE);
 			
