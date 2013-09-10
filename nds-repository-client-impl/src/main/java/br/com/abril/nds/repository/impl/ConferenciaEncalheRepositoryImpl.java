@@ -16,10 +16,12 @@ import org.springframework.stereotype.Repository;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSlipDTO;
+import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
+import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.util.ItemAutoComplete;
@@ -258,7 +260,39 @@ public class ConferenciaEncalheRepositoryImpl extends
 		return (ChamadaEncalheCota) query.uniqueResult();
 	}
 	
+
+	public boolean isLancamentoParcial(Long idProdutoEdicao) {
+		
+		String sql = this.getQueryIsLancamentoParcialFinal();
+		
+		Query query = this.getSession().createSQLQuery(sql);
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setParameter("tipoLancamento", TipoLancamentoParcial.PARCIAL.toString());
+		query.setParameter("grupoProdutoCromo", GrupoProduto.CROMO.toString());
+
+		String parcial = (String) query.uniqueResult();
+
+		return parcial != null ? TipoLancamentoParcial.PARCIAL.toString().equals(parcial) ? true : false : false;
+	}
 	
+	private String getQueryIsLancamentoParcialFinal() {
+
+		StringBuilder sql = new StringBuilder();
+
+		sql.append(" SELECT plp.TIPO as tipoLancamento");
+		sql.append(" FROM LANCAMENTO lanc "); 
+		sql.append(" JOIN periodo_lancamento_parcial plp ON (plp.LANCAMENTO_ID = lanc.id) ");
+		sql.append(" JOIN produto_edicao pe ON (lanc.PRODUTO_EDICAO_ID = pe.ID) ");
+		sql.append(" JOIN produto p ON (p.ID = pe.PRODUTO_ID) ");
+		sql.append(" JOIN tipo_produto tp ON (tp.ID = p.TIPO_PRODUTO_ID) ");
+		sql.append(" WHERE lanc.PRODUTO_EDICAO_ID = :idProdutoEdicao ");
+		sql.append(" AND plp.TIPO = :tipoLancamento "); 
+		sql.append(" AND tp.GRUPO_PRODUTO = :grupoProdutoCromo ");
+		sql.append(" GROUP BY lanc.PRODUTO_EDICAO_ID ");
+
+		return sql.toString();
+	}
 
 	/*
 	 * (non-Javadoc) 
@@ -280,6 +314,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append(" PROD_EDICAO.CODIGO_DE_BARRAS as codigoDeBarras, ");
 		
+		hql.append(" PROD_EDICAO.PACOTE_PADRAO as pacotePadrao, ");
+		
 		hql.append(" CH_ENCALHE.SEQUENCIA AS codigoSM, ");
 
 		hql.append(" 0 AS qtdExemplar, ");
@@ -288,13 +324,21 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" (SELECT plp.TIPO ");
 		hql.append(" FROM LANCAMENTO lanc  ");
 		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.LANCAMENTO_ID = lanc.id) ");
+		hql.append(" JOIN produto_edicao pe ON (lanc.PRODUTO_EDICAO_ID = pe.ID) ");
+		hql.append(" JOIN produto p ON (p.ID = pe.PRODUTO_ID) ");
+		hql.append(" JOIN tipo_produto tp ON (tp.ID = p.TIPO_PRODUTO_ID) ");
 		hql.append(" WHERE lanc.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
+		hql.append(" AND tp.GRUPO_PRODUTO = :grupoProdutoCromo ");
 		hql.append(" AND plp.TIPO = 'FINAL' ");
 		hql.append(" GROUP BY lanc.PRODUTO_EDICAO_ID) IS NULL THEN "); 
 		hql.append(" CASE WHEN (SELECT plp.TIPO ");
 		hql.append(" FROM LANCAMENTO lanc "); 
 		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.LANCAMENTO_ID = lanc.id) ");
+		hql.append(" JOIN produto_edicao pe ON (lanc.PRODUTO_EDICAO_ID = pe.ID) ");
+		hql.append(" JOIN produto p ON (p.ID = pe.PRODUTO_ID) ");
+		hql.append(" JOIN tipo_produto tp ON (tp.ID = p.TIPO_PRODUTO_ID) ");
 		hql.append(" WHERE lanc.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
+		hql.append(" AND tp.GRUPO_PRODUTO = :grupoProdutoCromo ");
 		hql.append(" AND plp.TIPO = 'PARCIAL' ");
 		hql.append(" GROUP BY lanc.PRODUTO_EDICAO_ID) IS NOT NULL THEN true ");
 		hql.append(" ELSE false END "); 
@@ -382,6 +426,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 		((SQLQuery)query).addScalar("precoComDesconto", StandardBasicTypes.BIG_DECIMAL);
 		((SQLQuery)query).addScalar("valorTotal", StandardBasicTypes.BIG_DECIMAL);
 		
+		((SQLQuery)query).addScalar("pacotePadrao");
+
 		((SQLQuery)query).addScalar("dataRecolhimento");
 		((SQLQuery)query).addScalar("tipoChamadaEncalhe");
 		((SQLQuery)query).addScalar("codigo");
@@ -396,6 +442,8 @@ public class ConferenciaEncalheRepositoryImpl extends
 		query.setParameter("indFechado", indFechado);
 		query.setParameter("indPostergado", indPostergado);
 		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+		query.setParameter("grupoProdutoCromo", GrupoProduto.CROMO.toString());
+		
 		
 		if(listaIdProdutoEdicao!=null && !listaIdProdutoEdicao.isEmpty()) {
 			
@@ -470,13 +518,21 @@ public class ConferenciaEncalheRepositoryImpl extends
 		hql.append(" (SELECT plp.TIPO ");
 		hql.append(" FROM LANCAMENTO lanc  ");
 		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.LANCAMENTO_ID = lanc.id) ");
+		hql.append(" JOIN produto_edicao pe ON (lanc.PRODUTO_EDICAO_ID = pe.ID) ");
+		hql.append(" JOIN produto p ON (p.ID = pe.PRODUTO_ID) ");
+		hql.append(" JOIN tipo_produto tp ON (tp.ID = p.TIPO_PRODUTO_ID) ");
 		hql.append(" WHERE lanc.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
+		hql.append(" AND tp.GRUPO_PRODUTO = :grupoProdutoCromo ");
 		hql.append(" AND plp.TIPO = 'FINAL' ");
 		hql.append(" GROUP BY lanc.PRODUTO_EDICAO_ID) IS NULL THEN "); 
 		hql.append(" CASE WHEN (SELECT plp.TIPO ");
 		hql.append(" FROM LANCAMENTO lanc "); 
 		hql.append(" JOIN periodo_lancamento_parcial plp ON (plp.LANCAMENTO_ID = lanc.id) ");
+		hql.append(" JOIN produto_edicao pe ON (lanc.PRODUTO_EDICAO_ID = pe.ID) ");
+		hql.append(" JOIN produto p ON (p.ID = pe.PRODUTO_ID) ");
+		hql.append(" JOIN tipo_produto tp ON (tp.ID = p.TIPO_PRODUTO_ID) ");
 		hql.append(" WHERE lanc.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
+		hql.append(" AND tp.GRUPO_PRODUTO = :grupoProdutoCromo ");
 		hql.append(" AND plp.TIPO = 'PARCIAL' ");
 		hql.append(" GROUP BY lanc.PRODUTO_EDICAO_ID) IS NOT NULL THEN true ");
 		hql.append(" ELSE false END "); 
@@ -587,6 +643,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 
 		
 		query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);
+		query.setParameter("grupoProdutoCromo", GrupoProduto.CROMO.toString());
 		
 		return query.list();
 		        		

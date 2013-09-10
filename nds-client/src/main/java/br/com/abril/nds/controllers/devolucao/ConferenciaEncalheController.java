@@ -1901,11 +1901,22 @@ public class ConferenciaEncalheController extends BaseController {
 		}
 		
 		BigInteger qtd = BigInteger.ZERO;
-		
+
 		try {
+			
 			qtd = BigInteger.valueOf(Long.parseLong(quantidade));
-		}catch(Exception e) {
+			
+			if (!conferenciaEncalheDTO.isParcialCalculado() && conferenciaEncalheDTO.getIsContagemPacote()) {
+				
+				qtd = qtd.multiply(BigInteger.valueOf(conferenciaEncalheDTO.getPacotePadrao()));
+				
+				conferenciaEncalheDTO.setParcialCalculado(true);
+			}
+
+		} catch(Exception e) {
+			
 			LOGGER.error("Erro no processar qtde exemplar: " + e.getMessage(), e);
+			
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Quantidade informada inválida"));
 		}
 
@@ -1957,6 +1968,8 @@ public class ConferenciaEncalheController extends BaseController {
 		conferenciaEncalheDTO.setPrecoCapaInformado(produtoEdicao.getPrecoVenda());
 		
 		conferenciaEncalheDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
+
+		conferenciaEncalheDTO.setContagemPacote(this.conferenciaEncalheService.isLancamentoParcial(produtoEdicao.getId()));
 		
 		if (produtoEdicao.getTipoChamadaEncalhe() != null) {
 			
