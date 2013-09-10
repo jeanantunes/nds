@@ -186,6 +186,14 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			for(FechamentoFisicoLogicoDTO conferencia : listaConferencia)
 			{
 
+				
+				
+				
+				
+				
+				
+				
+				
 				//Soma as quantidades para os exemplares de devolucao
 				for(FechamentoFisicoLogicoDTO movimentoEstoqueCota : listaMovimentoEstoqueCota){
 					
@@ -201,6 +209,14 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 					}
 				}
 				
+				
+				
+				
+				
+				
+				
+				
+				
 				//Subtrai as quantidades para os exemplares de devolucao
 				for(FechamentoFisicoLogicoDTO movimentoEstoqueCotaVendaProduto : listaMovimentoEstoqueCotaVendaProduto)
 				{
@@ -210,6 +226,13 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 						conferencia.setExemplaresDevolucao(conferencia.getExemplaresDevolucao().subtract(movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao()));
 					}
 				}
+				
+				
+				
+				
+				
+				
+				
 			}
 						
 			int inicioDiaSemana = 
