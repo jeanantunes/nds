@@ -69,7 +69,6 @@ import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.repository.VendaProdutoEncalheRepository;
 import br.com.abril.nds.service.ControleNumeracaoSlipService;
 import br.com.abril.nds.service.DescontoService;
-import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
@@ -160,9 +159,6 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	
 	@Autowired
 	private GerarCobrancaService cobrancaService;
-	
-	@Autowired
-	private FormaCobrancaService formaCobrancaService;
 		
 	private Image logoDistribuidor;
 	
