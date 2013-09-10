@@ -296,9 +296,8 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 						continue loopSeg;
 				}
 				
-				return "Cota ["+mixCotaProdutoDTO.getNumeroCota()+"] não recebe segmento "+tipoSegProd.getDescricao();
-				
-				
+				return "Cota ["+mixCotaProdutoDTO.getNumeroCota()+"] não recebe segmento "+tipoSegProd.getDescricao() + " do produto "+mixCotaProdutoDTO.getCodigoProduto();
+
 			}
 			
 		}
