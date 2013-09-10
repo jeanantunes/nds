@@ -620,6 +620,12 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			return;
 		}
 		
+		if (TipoEstoque.RECOLHIMENTO.equals(diferenca.getTipoEstoque())) {
+			
+			return;
+		}
+        
+		
         if (TipoEstoque.GANHO.equals(diferenca.getTipoEstoque())) {
 			
 			return;

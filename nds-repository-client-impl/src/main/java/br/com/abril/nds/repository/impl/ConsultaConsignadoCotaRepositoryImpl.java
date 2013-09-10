@@ -271,7 +271,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" SELECT count(movimento)  ");
+		hql.append(" SELECT count(cota.id)  ");
 		
 		hql.append(getHQLFromEWhereConsignadoCota(filtro));
 		

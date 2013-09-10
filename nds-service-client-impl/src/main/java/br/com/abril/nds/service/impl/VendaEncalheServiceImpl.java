@@ -37,6 +37,7 @@ import br.com.abril.nds.model.TipoSlip;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -68,6 +69,7 @@ import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.repository.VendaProdutoEncalheRepository;
 import br.com.abril.nds.service.ControleNumeracaoSlipService;
 import br.com.abril.nds.service.DescontoService;
+import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
@@ -158,6 +160,9 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	
 	@Autowired
 	private GerarCobrancaService cobrancaService;
+	
+	@Autowired
+	private FormaCobrancaService formaCobrancaService;
 		
 	private Image logoDistribuidor;
 	
@@ -1163,7 +1168,11 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		movimentoFinanceiroCotaDTO.setObservacao("Venda de Encalhe");
 		movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
 		movimentoFinanceiroCotaDTO.setLancamentoManual(true);
-		movimentoFinanceiroCotaDTO.setFornecedor( (cota.getParametroCobranca()!= null)? cota.getParametroCobranca().getFornecedorPadrao():null);
+
+		Fornecedor fornecedor = 
+			cota.getParametroCobranca() != null ? cota.getParametroCobranca().getFornecedorPadrao() : null;
+
+		movimentoFinanceiroCotaDTO.setFornecedor(fornecedor);
 
 		return movimentoFinanceiroCotaService
 				.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);

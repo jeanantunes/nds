@@ -537,6 +537,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		//sql.append(" where (CHAMADA_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal) ");
 		
 		sql.append(" AND CHAMADA_ENCALHE_COTA.POSTERGADO = :isPostergado ");
+		sql.append(" AND MEC_REPARTE.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
 		
 		if(filtro.getIdCota()!=null) {
 			sql.append(" and CHAMADA_ENCALHE_COTA.COTA_ID = :idCota  ");
@@ -548,7 +549,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		sql.append("	group by	");
 	
-		sql.append("	PRODUTO.ID                     		");
+		sql.append("	idProdutoEdicao                     		");
 
 		return sql;
 	}

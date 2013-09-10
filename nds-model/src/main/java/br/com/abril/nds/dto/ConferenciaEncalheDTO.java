@@ -29,6 +29,8 @@ public class ConferenciaEncalheDTO implements Serializable {
 	
 	private boolean isContagemPacote;
 	
+	private boolean parcialCalculado;
+	
 	/**
 	 * Utilizado como referência para o valor do reparte.
 	 */
@@ -312,6 +314,20 @@ public class ConferenciaEncalheDTO implements Serializable {
 
 	public Boolean isJuramentada() {
 		return juramentada;
+	}
+	
+	/**
+	 * @return the parcialCalculado
+	 */
+	public boolean isParcialCalculado() {
+		return parcialCalculado;
+	}
+
+	/**
+	 * @param parcialCalculado the parcialCalculado to set
+	 */
+	public void setParcialCalculado(boolean parcialCalculado) {
+		this.parcialCalculado = parcialCalculado;
 	}
 
 	@Override
