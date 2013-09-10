@@ -2019,7 +2019,7 @@ public class ConferenciaEncalheController extends BaseController {
 				                                                            conferenciaEncalheDTO.getDataRecolhimento(), 
 				                                                            produtoEdicao.getId());
 				
-		conferenciaEncalheDTO.setDia(diaRecolhimento + 1);
+		conferenciaEncalheDTO.setDia(diaRecolhimento != null ? diaRecolhimento + 1 : null);
 		
 		return conferenciaEncalheDTO;
 	}

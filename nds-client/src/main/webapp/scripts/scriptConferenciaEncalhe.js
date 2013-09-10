@@ -842,7 +842,7 @@ var ConferenciaEncalhe = $.extend(true, {
 							innerTable += "<td style='text-align: center;' nowrap='nowrap'>" + value.dia + "º" + "</td>";
 						} else {
 							
-							innerTable += "<td style='text-align: center;' nowrap='nowrap' style='width: 20px;'>" + value.dataRecolhimento + "</td>";
+							innerTable += "<td style='text-align: center;' nowrap='nowrap' style='width: 20px;'>" + $.datepicker.formatDate("dd/mm/yy",$.datepicker.parseDate("yy-mm-dd", value.dataRecolhimento)) + "</td>";
 						}
 					} else {
 						

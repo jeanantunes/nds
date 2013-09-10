@@ -443,11 +443,15 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoService.buscarPorID(produtoEdicaoId);
 		
-		if(dataRecolhimento.compareTo(dataConferencia) >= 0) {
+		if (dataRecolhimento.compareTo(dataConferencia) > 0) {
 			
-			return 0;			
+			return null;
+		
+		} else if (dataRecolhimento.compareTo(dataConferencia) == 0) {
+			
+			return 0;
 		} 
-			
+
 		Long[] listaIdsFornecedores = this.conferenciaEncalheService.obterIdsFornecedorDoProduto(produtoEdicao);
 
 		List<Integer> diasSemanaDistribuidorOpera = this.distribuicaoFornecedorRepository.obterCodigosDiaDistribuicaoFornecedor(OperacaoDistribuidor.RECOLHIMENTO,

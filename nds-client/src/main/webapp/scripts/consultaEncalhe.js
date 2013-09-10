@@ -136,7 +136,7 @@ var ConsultaEncalhe = $.extend(true, {
 			
 			$.each(resultado.tableModel.rows, function(index, row) {
 				var detalhes = '<a href="javascript:;" ' +
-					(!row.cell.indPossuiObservacaoConferenciaEncalhe ?'style="opacity: 0.5;"': 'onclick="ConsultaEncalhe.popupDetalhe(\'' + row.cell.idCota + '\', \'' + row.cell.idFornecedor + '\', \'' + row.cell.idProdutoEdicao + '\', \'' + '\', null,' + row.cell.recolhimento);" style="cursor:pointer"')
+				(!row.cell.indPossuiObservacaoConferenciaEncalhe ?'style="opacity: 0.5;"' : 'onclick="ConsultaEncalhe.popupDetalhe(\'' + row.cell.idCota + '\', \'' + row.cell.idFornecedor + '\', \'' + row.cell.idProdutoEdicao + '\', null, \'' + row.cell.recolhimento + '\');" style="cursor:pointer"')
 						+ '>' +
 						 	   '<img title="Detalhes do Encalhe" src="' + contextPath + '/images/ico_detalhes.png" hspace="5" border="0px" />' +
 							   '</a>';	
