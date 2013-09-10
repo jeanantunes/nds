@@ -675,19 +675,11 @@ public class Produto implements Serializable {
 	}
 
 	public String getCodigoICD() {
-		if(codigoICD.equals("0")){
-			this.codigoICD = "";
-		}
 		return codigoICD;
 	}
 
 	public void setCodigoICD(String codigoICD) {
-		if(codigoICD.equals("0")){
-			this.codigoICD = "";
-		}else{
-			this.codigoICD = codigoICD;			
-		}
+		this.codigoICD = codigoICD;			
 	}
-	
 	
 }

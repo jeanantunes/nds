@@ -51,7 +51,7 @@
 				<tr>
 					<td width="50"><strong>C&oacute;digo:</strong></td>					
 					<td width="120"><input type="text"  name="codigoProdutoCadastro" id="codigoProdutoCadastro" style="width:80px;" maxlength="30" /></td>					
-					<td width="50" name="tdCodigoProdutoICDCadastro" ><strong>C&oacute;digo ICD:</strong></td>
+					<td width="50"  name="tdCodigoProdutoICDCadastro" ><strong>C&oacute;digo ICD:</strong></td>
 					<td width="120" name="tdCodigoProdutoICDCadastro"><input type="text"  name="codigoProdutoICDCadastro" id="codigoProdutoICDCadastro" style="width:80px;" maxlength="6" /></td>
 										
 				</tr>
