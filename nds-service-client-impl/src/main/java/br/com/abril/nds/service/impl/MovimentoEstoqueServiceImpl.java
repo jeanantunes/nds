@@ -22,7 +22,6 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
-import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCota;
 import br.com.abril.nds.model.estoque.EstoqueProdutoCotaJuramentado;
@@ -172,9 +171,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 		BigInteger total = BigInteger.ZERO;		
 		
-		Map<String, DescontoDTO> descontos = descontoService.obterDescontoPorCotaProdutoEdicaoMap(idLancamento, idProdutoEdicao);
-		
-
 		for (EstudoCotaDTO estudoCota : listaEstudoCota) {
 
 			gerarMovimentoCota(
