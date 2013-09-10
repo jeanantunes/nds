@@ -181,6 +181,13 @@ public class MixCotaProdutoController extends BaseController {
 	@Post
 	@Path("/updateReparteMixCotaProduto")
 	public void updateReparteMixCotaProduto(Long novoValorReparte,String tipoCampo, Long idMix){
+		if(tipoCampo.equalsIgnoreCase("MIN") && novoValorReparte.compareTo(0l)==-1){
+			throw new ValidacaoException(TipoMensagem.WARNING,
+					"Número negativo não permitido para valor de reparte Mínimo.");
+		}else if(tipoCampo.equalsIgnoreCase("MAX") && (novoValorReparte.compareTo(0l)==-1 || novoValorReparte.compareTo(99999l)==1)){
+			throw new ValidacaoException(TipoMensagem.WARNING,"Valor não permitido para reparter máximo.");
+		}
+		
 		mixCotaProdutoService.updateReparteMixCotaProduto(novoValorReparte,tipoCampo, idMix);
 		result.use(Results.json()).from(SUCCESS_MSG, "result").recursive().serialize();
 	}
