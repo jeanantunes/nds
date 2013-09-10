@@ -47,6 +47,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.strategy.importacao.input.HistoricoFinanceiroInput;
 
@@ -81,7 +82,9 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	
 	@Autowired
 	private FornecedorRepository fornecedorRepository;
-
+	
+	@Autowired
+	private FormaCobrancaService formaCobrancaService;
 	
 	@Override
 	@Transactional
@@ -119,6 +122,8 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	 */
 	private MovimentoFinanceiroCota gerarMovimentoFinanceiroCota(MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO,
 										  					 	 List<MovimentoEstoqueCota> movimentosEstoqueCota) {
+		
+		this.validarFornecedor(movimentoFinanceiroCotaDTO);
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCota = null;
 		MovimentoFinanceiroCota movimentoFinanceiroCotaMerged = null;
@@ -159,9 +164,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			movimentoFinanceiroCota.setBaixaCobranca(movimentoFinanceiroCotaDTO.getBaixaCobranca());
 			movimentoFinanceiroCota.setObservacao(movimentoFinanceiroCotaDTO.getObservacao());
 			movimentoFinanceiroCota.setMovimentos(movimentosEstoqueCota);
-			movimentoFinanceiroCota.setFornecedor(movimentoFinanceiroCotaDTO.getFornecedor()!=null?
-					                              movimentoFinanceiroCotaDTO.getFornecedor():
-					                              movimentoFinanceiroCotaDTO.getCota().getParametroCobranca().getFornecedorPadrao());
+			movimentoFinanceiroCota.setFornecedor(movimentoFinanceiroCotaDTO.getFornecedor());
 			
 			movimentoFinanceiroCotaMerged = this.movimentoFinanceiroCotaRepository.merge(movimentoFinanceiroCota);
 
@@ -179,6 +182,46 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		}
 		
 		return movimentoFinanceiroCotaMerged;
+	}
+	
+	private void validarFornecedor(MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO) {
+		
+		Fornecedor fornecedor = movimentoFinanceiroCotaDTO.getFornecedor();
+		
+		Cota cota = movimentoFinanceiroCotaDTO.getCota();
+		
+		if (fornecedor == null) {
+			
+			if (cota.getParametroCobranca() != null) {
+				
+				fornecedor = cota.getParametroCobranca().getFornecedorPadrao();
+				
+			} else {
+				
+				Fornecedor fornecedorPadraoDistribuidor = 
+					this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor().
+						getPoliticaCobranca().getFornecedorPadrao();
+				
+				for (Fornecedor fornecedorCota : cota.getFornecedores()) {
+					
+					if (fornecedorPadraoDistribuidor.equals(fornecedorCota)) {
+						
+						fornecedor = fornecedorPadraoDistribuidor;
+						
+						break;
+					}
+				}
+			}
+		}
+		
+		if (fornecedor == null) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, 
+					"A [Cota " + cota.getNumeroCota() + "] necessita de um fornecedor padrão em parâmetros financeiros para a geração de movimentos financeiros de débito ou crédito !");
+		}
+		
+		movimentoFinanceiroCotaDTO.setFornecedor(fornecedor);
 	}
 	
 	

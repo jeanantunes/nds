@@ -37,6 +37,7 @@ import br.com.abril.nds.model.TipoSlip;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -1163,7 +1164,11 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		movimentoFinanceiroCotaDTO.setObservacao("Venda de Encalhe");
 		movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
 		movimentoFinanceiroCotaDTO.setLancamentoManual(true);
-		movimentoFinanceiroCotaDTO.setFornecedor( (cota.getParametroCobranca()!= null)? cota.getParametroCobranca().getFornecedorPadrao():null);
+
+		Fornecedor fornecedor = 
+			cota.getParametroCobranca() != null ? cota.getParametroCobranca().getFornecedorPadrao() : null;
+
+		movimentoFinanceiroCotaDTO.setFornecedor(fornecedor);
 
 		return movimentoFinanceiroCotaService
 				.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
