@@ -170,8 +170,6 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			obterEstudoCotaPorDataProdutoEdicao(dataPrevista, idProdutoEdicao);
 		
 		BigInteger total = BigInteger.ZERO;		
-		
-		//Map<String, DescontoDTO> descontos = descontoService.obterDescontoPorCotaProdutoEdicaoMap(idLancamento, idProdutoEdicao);
 
 		for (EstudoCotaDTO estudoCota : listaEstudoCota) {
 
