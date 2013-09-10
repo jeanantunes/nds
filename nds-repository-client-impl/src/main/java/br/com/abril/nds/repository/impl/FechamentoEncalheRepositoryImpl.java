@@ -685,12 +685,9 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		sql.append("	group by    ");
 		
 		sql.append("    cota.ID, indMFCNaoConsolidado ");
+		
+		sql.append(" having indMFCNaoConsolidado = true ");
 
-        if (isSomenteCotasSemAcao) {
-			
-        	sql.append(" having indMFCNaoConsolidado = true ");
-		}
-        
 		return sql;
 	}
 
