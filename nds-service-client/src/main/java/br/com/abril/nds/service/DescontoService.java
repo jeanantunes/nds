@@ -153,13 +153,4 @@ public interface DescontoService {
 
 	BigDecimal obterComissaoParametroDistribuidor();
 	
-	/**
-	 * Recupera o Map de Descontos para o produto edição de acordo com o tipo de produto visando desempenho
-	 * 
-	 * @param lancamento
-	 * @param cota
-	 * @param produtoEdicao
-	 * @return
-	 */
-	Map<String, DescontoDTO> obterDescontoPorCotaProdutoEdicaoMap(Long lancamentoId, Long produtoEdicaoId);
 }
