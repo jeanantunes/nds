@@ -596,6 +596,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
+	
+	public boolean isLancamentoParcial(Long idProdutoEdicao) {
+		
+		return this.conferenciaEncalheRepository.isLancamentoParcial(idProdutoEdicao);
+	}
+	
 	/**
 	 * Obtém lista de conferenciaEncalhe com os produtosEdicao que fazem parte da chamaEncalhe atual para 
 	 * a cota em questão ou que estejam dentro da semana de recolhimento. Caso uma operação de conferencia de 
@@ -2232,9 +2238,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if(dataOperacao == null) {
 			dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		}
-		
-	
-		
+
 		boolean indNovoRegistroConfEncalheCota = conferenciaEncalhe.getIdConferenciaEncalhe() == null || 
 				(conferenciaEncalhe.getIdConferenciaEncalhe() < 0);
 
