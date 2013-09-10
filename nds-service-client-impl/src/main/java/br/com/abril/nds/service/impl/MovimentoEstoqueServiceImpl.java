@@ -170,7 +170,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			obterEstudoCotaPorDataProdutoEdicao(dataPrevista, idProdutoEdicao);
 		
 		BigInteger total = BigInteger.ZERO;		
-		
+
 		for (EstudoCotaDTO estudoCota : listaEstudoCota) {
 
 			gerarMovimentoCota(
