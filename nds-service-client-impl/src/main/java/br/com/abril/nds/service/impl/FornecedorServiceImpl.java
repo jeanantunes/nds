@@ -721,6 +721,7 @@ public class FornecedorServiceImpl implements FornecedorService {
 	@Override
 	@Transactional
 	public Fornecedor obterPorId(Long idFornecedor) {
+		
 		return this.fornecedorRepository.buscarPorId(idFornecedor);
 	}
 

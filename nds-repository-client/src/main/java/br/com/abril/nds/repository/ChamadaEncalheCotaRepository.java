@@ -155,7 +155,7 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	BigDecimal obterTotalDaChamaEncalheCotaSemDesconto(Integer numeroCota,
 			Date dataOperacao, Boolean conferido, Boolean postergado);
 	
-	ChamadaEncalheCota obterUltimaChamaEncalheCotaParcial(Cota cota,Long idProdutoEdicao,boolean postergado,Date dataOperacao);
+	ChamadaEncalheCota obterChamadaEncalheCotaNaData(Cota cota,Long idProdutoEdicao,boolean postergado,Date dataOperacao);
 	
 	BigInteger quantidadeCotaAusenteFechamentoEncalhe(Integer numeroCota, Date dataRecolhimento);
 	

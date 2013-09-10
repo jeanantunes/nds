@@ -3,7 +3,6 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import br.com.abril.nds.dto.CotaDescontoProdutoDTO;
 import br.com.abril.nds.dto.DescontoProdutoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
@@ -162,4 +161,5 @@ public interface DescontoService {
 	 * @return
 	 */
 	Map<String, DescontoDTO> obterDescontosPorLancamentoProdutoEdicaoMap(Long lancamentoId, Long produtoEdicaoId);
+
 }

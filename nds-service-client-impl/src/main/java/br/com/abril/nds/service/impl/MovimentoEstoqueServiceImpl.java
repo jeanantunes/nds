@@ -823,7 +823,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 															boolean isMovimentoDiferencaAutomatico) {
 		
 		return criarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, 
-				idUsuario, quantidade, tipoMovimentoEstoque, null, null, null, idEstudoCota,isMovimentoDiferencaAutomatico);
+				idUsuario, quantidade, tipoMovimentoEstoque, null, null, null, idEstudoCota, isMovimentoDiferencaAutomatico);
 	}
 	
 	

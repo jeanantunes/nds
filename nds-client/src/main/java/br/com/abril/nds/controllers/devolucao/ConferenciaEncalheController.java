@@ -34,7 +34,6 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
@@ -1396,7 +1395,7 @@ public class ConferenciaEncalheController extends BaseController {
 	public void pesquisarProdutoPorCodigoNome(String codigoNomeProduto){
 		
 		List<ProdutoEdicao> listaProdutoEdicao =
-			this.produtoEdicaoService.obterProdutoPorCodigoNome(codigoNomeProduto, QUANTIDADE_MAX_REGISTROS);
+			this.produtoEdicaoService.obterProdutoPorCodigoNome(codigoNomeProduto, getNumeroCotaFromSession(), QUANTIDADE_MAX_REGISTROS);
 		
 		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 		
@@ -1896,36 +1895,31 @@ public class ConferenciaEncalheController extends BaseController {
 	 */
 	private BigInteger processarQtdeExemplar(Long idProdutoEdicao,
 			ConferenciaEncalheDTO conferenciaEncalheDTO, String quantidade, boolean indConferenciaContingencia) {
-		
-		Long pacotePadrao = (long) conferenciaEncalheDTO.getPacotePadrao();
-		
-		boolean quantidadeInformadaEmExemplares = false; 
-		
-		ProdutoEdicao produtoEdicao = this.produtoEdicaoService.obterProdutoEdicao(idProdutoEdicao, false);
-		
-		GrupoProduto grupoProduto = produtoEdicao.getProduto().getTipoProduto().getGrupoProduto();
-		
+
 		if(quantidade.contains("e")) {
 			quantidade = quantidade.replace("e", "");
-			quantidadeInformadaEmExemplares = true;
 		}
 		
 		BigInteger qtd = BigInteger.ZERO;
-		
+
 		try {
+			
 			qtd = BigInteger.valueOf(Long.parseLong(quantidade));
-		}catch(Exception e) {
+			
+			if (!conferenciaEncalheDTO.isParcialCalculado() && conferenciaEncalheDTO.getIsContagemPacote()) {
+				
+				qtd = qtd.multiply(BigInteger.valueOf(conferenciaEncalheDTO.getPacotePadrao()));
+				
+				conferenciaEncalheDTO.setParcialCalculado(true);
+			}
+
+		} catch(Exception e) {
+			
 			LOGGER.error("Erro no processar qtde exemplar: " + e.getMessage(), e);
+			
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Quantidade informada inválida"));
 		}
-		
-		if (GrupoProduto.CROMO.equals(grupoProduto)) {
-			if (!quantidadeInformadaEmExemplares && conferenciaEncalheDTO.isParcial()) {
-				qtd = qtd.divide(BigInteger.valueOf(pacotePadrao));
-			}
-		}
-		
-		
+
 		ConferenciaEncalheDTO conferenciaEncalheDTONaoValidado = null;
 		try {
 			conferenciaEncalheDTONaoValidado = (ConferenciaEncalheDTO)BeanUtils.cloneBean(conferenciaEncalheDTO);
@@ -1972,6 +1966,10 @@ public class ConferenciaEncalheController extends BaseController {
 		conferenciaEncalheDTO.setPrecoCapa(produtoEdicao.getPrecoVenda());
 		
 		conferenciaEncalheDTO.setPrecoCapaInformado(produtoEdicao.getPrecoVenda());
+		
+		conferenciaEncalheDTO.setPacotePadrao(produtoEdicao.getPacotePadrao());
+
+		conferenciaEncalheDTO.setContagemPacote(this.conferenciaEncalheService.isLancamentoParcial(produtoEdicao.getId()));
 		
 		if (produtoEdicao.getTipoChamadaEncalhe() != null) {
 			

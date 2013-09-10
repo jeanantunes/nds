@@ -306,14 +306,14 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	}
 	
 	@Transactional(readOnly = true)
-	public List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto, Integer quantidadeRegisttros) {
+	public List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto, Integer numeroCota, Integer quantidadeRegisttros) {
 		
 		if (codigoNomeProduto == null || codigoNomeProduto.trim().isEmpty()){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Codigo/nome produto é obrigatório.");
 		}
 		
-		return this.produtoEdicaoRepository.obterProdutoPorCodigoNome(codigoNomeProduto, quantidadeRegisttros);
+		return this.produtoEdicaoRepository.obterProdutoPorCodigoNome(codigoNomeProduto, numeroCota, quantidadeRegisttros);
 	}
 
 	@Override
