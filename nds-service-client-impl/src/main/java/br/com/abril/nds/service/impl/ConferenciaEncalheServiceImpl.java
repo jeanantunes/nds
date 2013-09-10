@@ -26,6 +26,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import org.apache.commons.beanutils.BeanComparator;
 import org.apache.commons.collections.comparators.ComparatorChain;
+import org.apache.commons.collections.comparators.NullComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -3147,7 +3148,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
  
 			produtoEdicaoSlip.setDia(dia);
 			
-			String ordinal = DateUtil.formatarDataPTBR(produtoEdicaoSlip.getDataOperacao()) + " " +  this.getDiaMesOrdinal(dia +1) + " DIA";
+			String ordinal = ((dia != null) ? DateUtil.formatarDataPTBR(produtoEdicaoSlip.getDataOperacao()) 
+											+ " " +  this.getDiaMesOrdinal(dia +1) + " DIA" : "PRODUTOS ANTECIPADOS");
 		
 			produtoEdicaoSlip.setOrdinalDiaConferenciaEncalhe(ordinal);	
 		}
@@ -3322,7 +3324,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		ComparatorChain comparatorChain = new ComparatorChain();
 		
-		comparatorChain.addComparator(new BeanComparator("dia"));
+		comparatorChain.addComparator(new BeanComparator("dia", new NullComparator()));
 		
 		Collections.sort(listaProdutoEdicaoSlip, comparatorChain);
 	}
