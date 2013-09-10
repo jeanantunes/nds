@@ -753,8 +753,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(controleConferenciaEncalheCota.getId());
 			
-			//this.atualizaDiaRecolhimentoEmListaConferenciaEncalheDTO(listaConferenciaEncalheDTO, dataOperacao);
-			
 			infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);
 			
 			infoConfereciaEncalheCota.setEncalhe(null);
