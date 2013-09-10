@@ -435,7 +435,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if(produtoEdicao.isParcial()) {
 
 			chamadaEncalheCota = 
-					chamadaEncalheCotaRepository.obterUltimaChamaEncalheCotaParcial(cota, produtoEdicao.getId(),postergado,dataOperacao);
+					chamadaEncalheCotaRepository.obterChamadaEncalheCotaNaData(cota, produtoEdicao.getId(),postergado,dataOperacao);
 			
 			if(chamadaEncalheCota == null ) {
 				
@@ -2602,53 +2602,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		
 		ChamadaEncalheCota chamadaEncalheCota = 
-				chamadaEncalheCotaRepository.obterUltimaChamaEncalheCota(cota, idProdutoEdicao, postergado,dataRecolhimentoReferencia);
-
-		StringBuffer errorMsg = new StringBuffer();
-		
-		if(chamadaEncalheCota==null ) {
-		
-			errorMsg.append(" Nenhum registro de chamada de encalhe para cota de nº:  ");
-			errorMsg.append(numeroCota);
-			errorMsg.append(" para o produto edição id: ");
-			errorMsg.append(idProdutoEdicao);				
-			
-			throw new IllegalStateException(errorMsg.toString());
-			
-		}
+				chamadaEncalheCotaRepository.obterChamadaEncalheCotaNaData(cota, idProdutoEdicao, postergado, dataRecolhimentoReferencia);
 		
 		return chamadaEncalheCota;
-
-		/*List<ChamadaEncalheCota> listaChamadaEncalheCota = 
-				chamadaEncalheCotaRepository.obterUltimaChamaEncalheCota(numeroCota, idProdutoEdicao, postergado,dataRecolhimentoReferencia);
-
-		StringBuffer errorMsg = new StringBuffer();
-
-		if(listaChamadaEncalheCota==null || listaChamadaEncalheCota.isEmpty()) {
-
-			errorMsg.append(" Nenhum registro de chamada de encalhe para cota de nº:  ");
-			errorMsg.append(numeroCota);
-			errorMsg.append(" para o produto edição id: ");
-			errorMsg.append(idProdutoEdicao);				
-			
-			throw new IllegalStateException(errorMsg.toString());
-			
-		}
-		
-		if(listaChamadaEncalheCota.size()>1) {
-
-			errorMsg.append(" Mais de um registro de chamada de encalhe para cota de nº:  ");
-			errorMsg.append(numeroCota);
-			errorMsg.append(" para o produto edição id: ");
-			errorMsg.append(idProdutoEdicao);				
-			
-			throw new IllegalStateException(errorMsg.toString());
-			
-		}
-		
-		
-		return listaChamadaEncalheCota.get(0);
-*/		
 		
 	}
 	
