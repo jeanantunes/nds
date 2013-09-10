@@ -416,8 +416,8 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		return (ChamadaEncalheCota) query.uniqueResult();
 	}
 	
-	public ChamadaEncalheCota obterUltimaChamaEncalheCotaParcial(Cota cota, Long idProdutoEdicao,
-			 													 boolean postergado,Date dataOperacao) {
+	public ChamadaEncalheCota obterChamadaEncalheCotaNaData(Cota cota, Long idProdutoEdicao,
+			 													 boolean postergado, Date dataOperacao) {
 		
 		return obterUltimaChamadaEncalheCota(cota, idProdutoEdicao, postergado, dataOperacao);
 	}
