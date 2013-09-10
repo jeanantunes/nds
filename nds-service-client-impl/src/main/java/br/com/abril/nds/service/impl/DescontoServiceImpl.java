@@ -1062,5 +1062,4 @@ public class DescontoServiceImpl implements DescontoService {
 			Cota cota, String sortorder, String sortname) {		
 		return descontoRepository.obterMergeDescontosEspecificosEGerais(cota, sortorder, sortname);
 	}
-
 }

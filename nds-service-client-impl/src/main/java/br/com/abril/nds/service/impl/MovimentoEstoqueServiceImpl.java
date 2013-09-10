@@ -174,9 +174,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		for (EstudoCotaDTO estudoCota : listaEstudoCota) {
 
 			gerarMovimentoCota(
-				dataPrevista,idProdutoEdicao,estudoCota.getIdCota(),
-					idUsuario, estudoCota.getQtdeEfetiva(),tipoMovimentoCota,
-						dataDistribuidor,dataOperacao, idLancamento, estudoCota.getId());
+				dataPrevista, idProdutoEdicao, estudoCota.getIdCota(),
+					idUsuario, estudoCota.getQtdeEfetiva(), tipoMovimentoCota,
+						dataDistribuidor, dataOperacao, idLancamento, estudoCota.getId());
 
 			total = total.add(estudoCota.getQtdeEfetiva());
 		}
@@ -801,7 +801,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 															boolean isMovimentoDiferencaAutomatico) {
 		
 		return criarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, 
-				idUsuario, quantidade, tipoMovimentoEstoque, null, null, null, idEstudoCota,isMovimentoDiferencaAutomatico);
+				idUsuario, quantidade, tipoMovimentoEstoque, null, null, null, idEstudoCota, isMovimentoDiferencaAutomatico);
 	}
 	
 	
@@ -812,7 +812,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			Date dataMovimento, Date dataOperacao, Long idLancamento, Long idEstudoCota){
 		
 		return criarMovimentoCota(dataLancamento, idProdutoEdicao, idCota, idUsuario, quantidade, 
-						   		  tipoMovimentoEstoque, dataMovimento, dataOperacao, idLancamento, idEstudoCota,false);
+						   		  tipoMovimentoEstoque, dataMovimento, dataOperacao, idLancamento, idEstudoCota, false);
 	}
 
 	private MovimentoEstoqueCota criarMovimentoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, 
