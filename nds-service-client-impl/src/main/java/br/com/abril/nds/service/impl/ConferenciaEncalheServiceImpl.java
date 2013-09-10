@@ -15,7 +15,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -31,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.abril.nds.dto.ComposicaoCobrancaSlipDTO;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
@@ -482,12 +480,28 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	private void isDataRecolhimentoValida(boolean distribuidorAceitaAntecipacao, Date dataOperacao, Date dataRecolhimento, Long idProdutoEdicao){
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+		
 		if(produtoEdicao == null){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Produto edição não encontrado");
 		}
-		String nomeProdutoEdicao = produtoEdicao.getProduto().getNome();
 		
-		validarAntecipacaoConferenciaEncalhe(distribuidorAceitaAntecipacao, nomeProdutoEdicao, dataOperacao, dataRecolhimento);
+		String nomeProdutoEdicao = produtoEdicao.getProduto().getNome();
+	
+		boolean recolhimentoMaiorQueDataOperacao = dataRecolhimento.compareTo(dataOperacao) > 0;
+
+		if(recolhimentoMaiorQueDataOperacao) {
+			
+			if(!distribuidorAceitaAntecipacao ){
+					
+					throw new ValidacaoException(
+							TipoMensagem.WARNING, 
+							"Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao  + "] " +
+							"Não é permitida antecipação de produtos pelo distribuidor. "   );
+					
+			}
+			
+			return;
+		}
 		
 		List<Date> datasRecolhimento = 
 				distribuidorService.obterDatasAposFinalizacaoPrazoRecolhimento(dataRecolhimento,
@@ -513,31 +527,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 	}
 	
-	/**
-	 * Caso esta seja uma antecipação de encalhe, sera verificado 
-	 * se o distribuidor aceita este tipo de operação, caso não 
-	 * aceite é lançado erro de validação.
-	 * 
-	 * @param distribuidorAceitaAntecipacao
-	 * @param nomeProdutoEdicao
-	 * @param dataOperacao
-	 * @param dataRecolhimento
-	 */
-	private void validarAntecipacaoConferenciaEncalhe(boolean distribuidorAceitaAntecipacao, String nomeProdutoEdicao, Date dataOperacao, Date dataRecolhimento) {
-		
-		boolean recolhimentoMaiorQueDataOperacao = dataRecolhimento.compareTo(dataOperacao) > 0;
-		
-		if(recolhimentoMaiorQueDataOperacao && !distribuidorAceitaAntecipacao ){
-				
-				throw new ValidacaoException(
-						TipoMensagem.WARNING, 
-						"Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao  + "] " +
-						"Não é permitida antecipação de produtos pelo distribuidor. "   );
-				
-		}
-		
-		
-	}
 	
 	public Long[] obterIdsFornecedorDoProduto(ProdutoEdicao produtoEdicao){
 		
@@ -605,6 +594,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		return produtoEdicao.isParcial();
 		
+	}
+	
+	
+	public boolean isLancamentoParcial(Long idProdutoEdicao) {
+		
+		return this.conferenciaEncalheRepository.isLancamentoParcial(idProdutoEdicao);
 	}
 	
 	/**
@@ -740,24 +735,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return quantidadeCotasAusentes.compareTo(BigInteger.ZERO) > 0;
 	}
 	
-	/**
-	 * Atualiza campo Dia das ConferenciaEncalheDTO's com o Dia de Recolhimento do Distribuidor;
-	 * Conforme à Data de recolhimento prevista e data real de recolhimento (Data de Operação).
-	 * @param listaConferenciaEncalheDTO
-	 * @param dataConferencia
-	 */
-	private void atualizaDiaRecolhimentoEmListaConferenciaEncalheDTO(List<ConferenciaEncalheDTO> listaConferenciaEncalheDTO, Date dataConferencia){
-		
-		if (listaConferenciaEncalheDTO!=null && !listaConferenciaEncalheDTO.isEmpty()){
-			
-			for (ConferenciaEncalheDTO ceDTO : listaConferenciaEncalheDTO){
-				
-				Date dataRecolhimento = ceDTO.getDataRecolhimento();
-				
-				ceDTO.setDia(this.distribuidorService.obterDiaDeRecolhimentoDaData(dataConferencia, dataRecolhimento, ceDTO.getIdProdutoEdicao()));
-			}
-		}
-	}
 	
 	@Transactional(readOnly = true)
 	public InfoConferenciaEncalheCota obterInfoConferenciaEncalheCota(Integer numeroCota, boolean indConferenciaContingencia) {
@@ -1119,7 +1096,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			}
 			else{
 				
-				atribuirDataRecolhimentoParaProdutoSemChamadaEncalhe(idProdutoEdicao, produtoEdicaoDTO);
+				atribuirDataRecolhimentoParaProdutoSemChamadaEncalhe(produtoEdicao, produtoEdicaoDTO);
 			}
 			
 			produtoEdicaoDTO.setId(produtoEdicao.getId());
@@ -1158,12 +1135,21 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	/*
 	 * Obtem a maior data de lançamnto de um produto edição
 	 */
-	private void atribuirDataRecolhimentoParaProdutoSemChamadaEncalhe(Long idProdutoEdicao, ProdutoEdicaoDTO produtoEdicaoDTO) {
+	private void atribuirDataRecolhimentoParaProdutoSemChamadaEncalhe(ProdutoEdicao produtoEdicao, ProdutoEdicaoDTO produtoEdicaoDTO) {
 		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
-		Date dataRecolhimentoDistribuidor = lancamentoRepository.obterDataUltimoLancamento(idProdutoEdicao, dataOperacao);
-		 
+		Date dataRecolhimentoDistribuidor = lancamentoRepository.obterDataUltimoLancamento(produtoEdicao.getId(), dataOperacao);
+		
+		if(dataRecolhimentoDistribuidor == null) {
+			
+			throw new ValidacaoException(
+					TipoMensagem.WARNING, 
+					" O produto edição [ " + produtoEdicao.getNomeComercial() + " ] não possui C.E. ou data de recolhimento prevista, " +
+					" portanto não poder adicionado a conferência de encalhe."   );
+			
+		}
+		
 		produtoEdicaoDTO.setDataRecolhimentoDistribuidor(dataRecolhimentoDistribuidor);
 		
 		Integer dia = obterQtdeDiaAposDataRecolhimentoDistribuidor(dataRecolhimentoDistribuidor);
@@ -1211,7 +1197,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			}
 			else{
 				
-				atribuirDataRecolhimentoParaProdutoSemChamadaEncalhe(produtoEdicao.getId(), produtoEdicaoDTO);
+				atribuirDataRecolhimentoParaProdutoSemChamadaEncalhe(produtoEdicao, produtoEdicaoDTO);
 			}
 			
 			produtoEdicaoDTO.setId(produtoEdicao.getId());
@@ -1326,7 +1312,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				}
 				else{
 					
-					atribuirDataRecolhimentoParaProdutoSemChamadaEncalhe(produtoEdicao.getId(), produtoEdicaoDTO);
+					atribuirDataRecolhimentoParaProdutoSemChamadaEncalhe(produtoEdicao, produtoEdicaoDTO);
 				}
 				
 				produtoEdicaoDTO.setId(produtoEdicao.getId());
@@ -2252,9 +2238,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if(dataOperacao == null) {
 			dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		}
-		
-	
-		
+
 		boolean indNovoRegistroConfEncalheCota = conferenciaEncalhe.getIdConferenciaEncalhe() == null || 
 				(conferenciaEncalhe.getIdConferenciaEncalhe() < 0);
 
@@ -3096,31 +3080,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 		
 	}
-
-	private void carregarListaProdutoEdicaoAusenteNoEncalhe(
-			List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoSlip, 
-			Long idCota, 
-			Date dataOperacao) {
-
-		if(listaProdutoEdicaoSlip == null) {
-			listaProdutoEdicaoSlip = new LinkedList<ProdutoEdicaoSlipDTO>();
-		}
-		
-		Set<Long> listaIdProdutoEdicaoNoEncalhe = new HashSet<Long>();
-		
-		for(ProdutoEdicaoSlipDTO produto: listaProdutoEdicaoSlip) {
-			listaIdProdutoEdicaoNoEncalhe.add(produto.getIdProdutoEdicao());
-		}
-		
-		List<ProdutoEdicaoSlipDTO> listaProdutoEdicaoAusenteConferenciaEncalhe = 
-				conferenciaEncalheRepository.obterDadosSlipProdutoEdicaoAusenteConferenciaEncalhe(
-						idCota, dataOperacao, false, listaIdProdutoEdicaoNoEncalhe);
-		
-		if( listaProdutoEdicaoAusenteConferenciaEncalhe != null ) {
-			listaProdutoEdicaoSlip.addAll(listaProdutoEdicaoAusenteConferenciaEncalhe);
-		}
-		
-	}
 	
 	/**
 	 * Obtém lista de debito crédito relativa a cobrança 
@@ -3137,80 +3096,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 	}
 	
-	
-	private List<DebitoCreditoCotaDTO> obterOutrosDebitoCreditoDeCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota) {
-		
-		//Obtem os movimentos consolidados de Cobrancas relacionadas com a conferência de encalhe
-		List<MovimentoFinanceiroCota> movimentosFinanceiros = new ArrayList<MovimentoFinanceiroCota>();
-		
-		List<CobrancaControleConferenciaEncalheCota> cobrancaControleConfEncCota = controleConferenciaEncalheCota.getCobrancasControleConferenciaEncalheCota();
-		for (CobrancaControleConferenciaEncalheCota item : cobrancaControleConfEncCota){
-			
-			movimentosFinanceiros.addAll(item.getCobranca().getDivida().getConsolidado().getMovimentos());
-		}
-		
-		
-        TipoMovimentoFinanceiro tipoMovimentoFinanceiroEnvioEncalhe = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
-		
-		TipoMovimentoFinanceiro tipoMovimentoFinanceiroRecebimentoReparte = tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
-		
-		
-		List<DebitoCreditoCotaDTO> listaDebitosCreditos = new ArrayList<DebitoCreditoCotaDTO>();
-		
-		DebitoCreditoCotaDTO dc = new DebitoCreditoCotaDTO();
-				
-		for(MovimentoFinanceiroCota item : movimentosFinanceiros){
-			
-			if ( !tipoMovimentoFinanceiroEnvioEncalhe.getId().equals(item.getTipoMovimento().getId()) && 
-				 !tipoMovimentoFinanceiroRecebimentoReparte.getId().equals(item.getTipoMovimento().getId() )){
-			
-				dc.setDataLancamento(item.getDataCriacao());
-				dc.setDataVencimento(item.getData());
-				dc.setNumeroCota(item.getCota().getNumeroCota());
-				dc.setObservacoes(item.getObservacao());
-				dc.setTipoMovimento(item.getTipoMovimento().getDescricao());
-				dc.setTipoLancamentoEnum(((TipoMovimentoFinanceiro)item.getTipoMovimento()).getOperacaoFinaceira());				
-				dc.setValor(item.getValor());
-				
-				listaDebitosCreditos.add(dc);
-			}
-		}
-		
-		return listaDebitosCreditos;
-		
-	}
-	
-	/**
-	 * Obtem informações dos Movimentos Financeiros que compõe a Cobrança relacionada com a Conferência de Encalhe
-	 * @param controleConferenciaEncalheCota
-	 * @return List<ComposicaoCobrancaSlipDTO>
-	 */
-	private List<ComposicaoCobrancaSlipDTO> obterListaComposicaoCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota){
-		
-		List<DebitoCreditoCotaDTO> listaDebitosCreditos = obterOutrosDebitoCreditoDeCobranca(controleConferenciaEncalheCota);
-		
-        List<ComposicaoCobrancaSlipDTO> listaComposicaoCobranca = new LinkedList<ComposicaoCobrancaSlipDTO>();
-
-		if(listaDebitosCreditos!=null && !listaDebitosCreditos.isEmpty()) {
-			
-			for(DebitoCreditoCotaDTO debitoCreditoCota : listaDebitosCreditos) {
-				
-				String debitoCredito = (OperacaoFinaceira.CREDITO.equals(debitoCreditoCota.getTipoLancamento())) ? 
-						                Constantes.COMPOSICAO_COBRANCA_CREDITO : 
-						                Constantes.COMPOSICAO_COBRANCA_DEBITO;
-				
-				ComposicaoCobrancaSlipDTO composicaoCobranca = new ComposicaoCobrancaSlipDTO();
-				
-				composicaoCobranca.setDescricao(debitoCreditoCota.getTipoMovimento());
-				composicaoCobranca.setOperacaoFinanceira(debitoCredito);
-				composicaoCobranca.setValor(debitoCreditoCota.getValor());
-				
-				listaComposicaoCobranca.add(composicaoCobranca);
-			}
-		}
-
-		return listaComposicaoCobranca;
-	}
 
 	@Transactional
 	public SlipDTO setParamsSlip(Long idControleConferenciaEncalheCota, boolean incluirNumeroSlip) {

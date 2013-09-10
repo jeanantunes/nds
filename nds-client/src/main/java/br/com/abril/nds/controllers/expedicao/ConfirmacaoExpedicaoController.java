@@ -185,10 +185,6 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 				String sortorder, Long idFornecedor, 
 				String dtLancamento, Boolean estudo){
 			
-			
-			
-			
-			
 			String status = SUCESSO;
 			
 			List<String> mensagens = new ArrayList<String>();
@@ -210,8 +206,10 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 				
 				TipoMovimentoEstoque tipoMovimento =
 					tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_JORNALEIRO);
+				
 				TipoMovimentoEstoque tipoMovimentoCota =
 						tipoMovimentoService.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+				
 				Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 				
 				for(int i=0; i<selecionados.size(); i++) {
@@ -221,9 +219,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 				
 				mensagens.add(CONFIRMACAO_EXPEDICAO_SUCESSO);
 				
-				
-				grid = gerarGrid(
-						page, rp, sortname, sortorder, idFornecedor, dtLancamento, estudo);
+				grid = gerarGrid(page, rp, sortname, sortorder, idFornecedor, dtLancamento, estudo);
 							
 				session.setAttribute("selecionados",null);
 				
@@ -237,7 +233,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 					status=TipoMensagem.WARNING.name();
 				}
 				
-			}catch(Exception e) {
+			} catch(Exception e) {
 				mensagens.clear();
 				mensagens.add(ERRO_CONFIRMAR_EXPEDICOES);
 				status=TipoMensagem.ERROR.name();

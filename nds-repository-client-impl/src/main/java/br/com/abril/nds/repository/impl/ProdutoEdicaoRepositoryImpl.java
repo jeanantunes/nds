@@ -33,6 +33,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
@@ -276,24 +277,45 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto, Integer quantidadeRegisttros) {
+	public List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto, Integer numeroCota, Integer quantidadeRegisttros) {
 		
-		StringBuilder hql = new StringBuilder("select produtoEdicao ");
-		hql.append(" from ProdutoEdicao produtoEdicao ")
-			.append(" join produtoEdicao.produto produto ")
-			.append(" join produtoEdicao.chamadaEncalhes chamadaEncalhe ")
-			.append(" join chamadaEncalhe.chamadaEncalheCotas chamadaEncalheCota ")
-			.append(" where chamadaEncalheCota.fechado = :fechado ")
-			.append(" and (produto.nome like :nomeProduto ")
-			.append(" or produto.codigo = :codigoProduto) ")
-			.append(" group by produtoEdicao.id ")
-			.append(" order by produto.nome asc, ")
-			.append(" produtoEdicao.numeroEdicao desc ");
+		StringBuilder hql = new StringBuilder(" select produtoEdicao ");
+		   
+		hql.append(" from MovimentoEstoqueCota mec 			 	 	")
+		
+			.append(" inner join mec.tipoMovimento tipoMovimento	")
+
+			.append(" inner join mec.cota cota					 	")
+			
+			.append(" inner join mec.produtoEdicao produtoEdicao 	")
+			
+			.append(" inner join produtoEdicao.produto produto		")
+			
+			.append(" where 										")
+			
+			.append(" (produto.nome like :nomeProduto 				")
+			
+			.append(" or produto.codigo = :codigoProduto) 	and		")
+			
+			.append(" tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque and	")
+
+			.append(" cota.numeroCota = :numeroCota ")
+			
+			.append(" group by produtoEdicao.id 					")
+			
+			.append(" order by produto.nome asc, 					")
+			
+			.append(" produtoEdicao.numeroEdicao desc 				");
 		
 		Query query = this.getSession().createQuery(hql.toString());
-		query.setParameter("fechado", false);
+		
 		query.setParameter("nomeProduto", "%" + codigoNomeProduto + "%");
+		
 		query.setParameter("codigoProduto", codigoNomeProduto);
+		
+		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
+		
+		query.setParameter("numeroCota", numeroCota);
 		
 		query.setMaxResults(quantidadeRegisttros);
 		

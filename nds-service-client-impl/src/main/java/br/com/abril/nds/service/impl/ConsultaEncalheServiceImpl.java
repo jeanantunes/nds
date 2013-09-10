@@ -1,7 +1,6 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -199,7 +198,7 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		
 		Integer qtdeRegistrosConsultaEncalheDetalhe = movimentoEstoqueCotaRepository.obterQtdeConsultaEncalheDetalhe(filtro);
 		
-		Date dataOperacao = filtro.getDataMovimento();
+		Date dataOperacao = filtro.getDataRecolhimento();
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(filtro.getIdProdutoEdicao());
 		

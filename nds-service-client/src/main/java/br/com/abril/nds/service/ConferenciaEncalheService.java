@@ -284,4 +284,6 @@ public interface ConferenciaEncalheService {
 	List<ItemAutoComplete> obterListaProdutoEdicaoParaRecolhimentoPorCodigoBarras(Integer numeroCota, String codigoBarras);
 	
 	boolean hasCotaAusenteFechamentoEncalhe(Integer numeroCota);
+	
+	boolean isLancamentoParcial(Long idProdutoEdicao);
 }
