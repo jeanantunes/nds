@@ -297,8 +297,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 				}
 				
 				return "Cota ["+mixCotaProdutoDTO.getNumeroCota()+"] não recebe segmento "+tipoSegProd.getDescricao() + " do produto "+mixCotaProdutoDTO.getCodigoProduto();
-				
-				
+
 			}
 			
 		}
