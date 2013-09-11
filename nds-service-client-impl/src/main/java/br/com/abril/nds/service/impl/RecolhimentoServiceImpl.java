@@ -449,7 +449,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 
 					Boolean existeChamadaEncalheCota = 
 						this.chamadaEncalheCotaRepository.existeChamadaEncalheCota(
-							cota.getId(), produtoEdicao.getId());
+							cota.getId(), produtoEdicao.getId(), null, null);
 					
 					if (existeChamadaEncalheCota) {
 						
