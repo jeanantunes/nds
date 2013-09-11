@@ -12,14 +12,7 @@ public class FiltroConsultaCaracteristicaDistribuicaoSimplesDTO extends FiltroDT
 	private String faixaPrecoDe;
 	private String faixaPrecoAte;
 	private boolean opcaoFiltroPublicacao;
-	private boolean opcaoFiltroEditor;
 	
-	public boolean isOpcaoFiltroEditor() {
-		return opcaoFiltroEditor;
-	}
-	public void setOpcaoFiltroEditor(boolean opcaoFiltroEditor) {
-		this.opcaoFiltroEditor = opcaoFiltroEditor;
-	}
 	public String getCodigoProduto() {
 		return codigoProduto;
 	}

@@ -118,7 +118,7 @@ public class CaracteristicaDistribuicaoRepositoryImpl   implements
 		}	
 		//tipo pesquisa editor
 		if(filtro.getNomeEditor()!=null && filtro.getNomeEditor()!="")	{	
-				if(filtro.getOpcaoFiltroEditor()){
+				if(filtro.getOpcaoFiltroPublicacao()){
 					//exato
 					sql.append(" and upper(pes2.NOME_FANTASIA) =").append(" upper('").append(filtro.getNomeEditor()).append("')");
 				}else{
@@ -130,7 +130,7 @@ public class CaracteristicaDistribuicaoRepositoryImpl   implements
 		
 		//chamada de capa
 		if(filtro.getChamadaCapa()!=null && filtro.getChamadaCapa()!=""){
-				if(filtro.getOpcaoFiltroChamadaCapa()){
+				if(filtro.getOpcaoFiltroPublicacao()){
 					//exato
 					sql.append(" and upper(ped.CHAMADA_CAPA) =").append(" upper('").append(filtro.getChamadaCapa()).append("')");
 				}else{
@@ -254,7 +254,13 @@ public class CaracteristicaDistribuicaoRepositoryImpl   implements
 		.append(" where  1=1 ");
 		
 		if(filtro.getCodigoProduto() !=null && filtro.getCodigoProduto() != ""){
-			sql.append(" and pro.codigo = " ).append(filtro.getCodigoProduto());
+			
+			if(filtro.getCodigoProduto().length() == 6){
+				sql.append(" and pro.codigo_icd = " ).append(filtro.getCodigoProduto());
+			}else{
+				sql.append(" and pro.codigo = " ).append(filtro.getCodigoProduto());
+			}
+			
 		}
 		
 		//tipo pesquisa publicacao
@@ -270,7 +276,7 @@ public class CaracteristicaDistribuicaoRepositoryImpl   implements
 		}
 		//tipo pesquisa editor
 		if(filtro.getNomeEditor()!=null && filtro.getNomeEditor()!="")	{	
-				if(filtro.isOpcaoFiltroEditor()){
+				if(filtro.isOpcaoFiltroPublicacao()){
 					//exato
 					sql.append(" and upper(pes2.NOME_FANTASIA) =").append(" upper('").append(filtro.getNomeEditor()).append("')");
 				}else{
