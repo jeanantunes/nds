@@ -101,6 +101,8 @@ public class FechamentoEncalheController extends BaseController {
 	
 	private static final String DATA_HOLDER_ACTION_KEY = "fechamentoEncalhe";
 	
+	private static final String STATUS_COBRANCA_COTA_SESSION = "statusCobrancaCotaSession";
+	
 	@Path("/")
 	public void index() {
 		
@@ -399,7 +401,7 @@ public class FechamentoEncalheController extends BaseController {
 				//idsCotas a serem retirados da lista
 				removerCotasAusentesLista(listaCotaAusenteEncalhe, idsCotas);
 				
-				this.fechamentoEncalheService.realizarCobrancaCotas(dataOperacao, getUsuarioLogado(), listaCotaAusenteEncalhe, null);				
+				this.realizarCobrancaCota(dataOperacao, listaCotaAusenteEncalhe);				
 			
 			} else {
 			
@@ -418,6 +420,44 @@ public class FechamentoEncalheController extends BaseController {
 		
 		this.result.use(Results.json()).from(
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Cotas cobradas com sucesso!"), "result").recursive().serialize();		
+	}
+
+	private void realizarCobrancaCota(Date dataOperacao, List<CotaAusenteEncalheDTO> listaCotasAusentes) throws GerarCobrancaValidacaoException {
+		
+		ValidacaoVO validacaoVO = new ValidacaoVO();
+		validacaoVO.setListaMensagens(new ArrayList<String>());
+
+		ValidacaoVO validacaoEmails = new ValidacaoVO();
+		validacaoEmails.setListaMensagens(new ArrayList<String>());
+
+		Date dataOperacaoDistribuidor = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		int statusCobrancaCota = 0;
+		int totalCotas = listaCotasAusentes.size();
+
+		for (CotaAusenteEncalheDTO c : listaCotasAusentes){
+			
+			this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "Cota " + statusCobrancaCota++ + " de " + totalCotas);
+
+			this.fechamentoEncalheService.realizarCobrancaCota(
+					dataOperacao, dataOperacaoDistribuidor, 
+					getUsuarioLogado(), c, null, 
+					validacaoVO, validacaoEmails);
+		}		
+
+		this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "FINALIZADO");
+		
+		if (validacaoVO.getListaMensagens() != null && !validacaoVO.getListaMensagens().isEmpty()){
+			
+			throw new GerarCobrancaValidacaoException(validacaoVO);
+		}
+	}
+	
+	public void obterStatusCobrancaCota() {
+		
+		String status = (String) this.session.getAttribute(STATUS_COBRANCA_COTA_SESSION);
+		
+		result.use(Results.json()).withoutRoot().from(status==null?"Processando Expedições..." : status).recursive().serialize();
 	}
 
 	private Collection<? extends Long> getIdsCotasAusentesComDivida(List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe) {

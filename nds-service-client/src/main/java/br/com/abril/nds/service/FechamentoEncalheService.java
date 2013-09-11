@@ -14,6 +14,7 @@ import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 public interface FechamentoEncalheService {
 
@@ -88,4 +89,9 @@ public interface FechamentoEncalheService {
 			List<FechamentoFisicoLogicoDTO> listaEncalheSessao);
 
 	Integer buscarTotalCotasAusentesSemPostergado(Date dataEncalhe, boolean isSomenteCotasSemAcao);
+	
+	void realizarCobrancaCota(Date dataOperacao, Date dataOperacaoDistribuidor, 
+							  Usuario usuario, 
+							  CotaAusenteEncalheDTO c, Cota cotaAusente, 
+							  ValidacaoVO validacaoVO, ValidacaoVO validacaoEmails);
 }
