@@ -670,12 +670,11 @@ public class CotaController extends BaseController {
 
 				
 				String maisDeUmPDV= dCC.getCodigoClassificacaoCota().toString().equals(ClassificacaoCotaDistribuidorEnum.AA) ? " (mais de 1 PDV)": "";
-				String descricao =  dCC.getCodigoClassificacaoCota().toString() + " - ("+
+				String descricao =  
 								    dCC.getCodigoClassificacaoCota().toString() + " - " +
 						            " R$ " + valorDe + " a " +
 						            " R$ " + valorAte+
-						            maisDeUmPDV +
-						            ")";
+						            maisDeUmPDV; 
 				listaClassificacao.add(new ItemDTO<String, String>(dCC.getCodigoClassificacaoCota().toString(), descricao));
 			}
 		}
