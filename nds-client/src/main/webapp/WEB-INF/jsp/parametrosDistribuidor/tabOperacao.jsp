@@ -301,18 +301,14 @@
                 <td>Dias</td>
               </tr>
               <tr>
-                <td>Aceita devolução antecipada cota:</td>
+              
+              
+                <td>&nbsp;</td>
                 <td>
-                  <c:if test="${parametrosDistribuidor.limiteCEProximaSemana}">
-                      <input name="parametrosDistribuidor.limiteCEProximaSemana" 
-                         type="checkbox" id="limiteCEProximaSemana" checked="checked" />
-                  </c:if>
-                  <c:if test="${not parametrosDistribuidor.limiteCEProximaSemana}">
-                      <input name="parametrosDistribuidor.limiteCEProximaSemana" 
-                         type="checkbox" id="limiteCEProximaSemana"/>
-                  </c:if>           
+                	 &nbsp;           
                 </td>
-                <td colspan="10">Limite CE Próxima Semana</td>
+                <td colspan="10">&nbsp;</td>
+              
               </tr>
                     <tr>
                       <td colspan="11">Em casos de Venda Negativa, solicita a senha de aprovação do Supervisor?</td>
