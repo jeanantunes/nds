@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 /*
 
 * Price Format jQuery Plugin
