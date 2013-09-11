@@ -10,12 +10,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.validation.ValidationException;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.slf4j.Logger;
@@ -23,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
+import br.com.abril.nds.client.util.Constants;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
@@ -242,7 +246,87 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		this.result.use(Results.json()).from("").serialize();
 	}
+	
 
+	
+	private void atribuirConferenciaCotaUsuario(Integer numeroCota) {
+		
+		String userSessionID = this.session.getId();
+		
+		verificarCotaAtribuidaUsuario(userSessionID, numeroCota);
+
+		ServletContext context = this.session.getServletContext();
+
+		@SuppressWarnings("unchecked")
+		Map<Integer, String> mapaCotaConferidaUsuario = 
+			(LinkedHashMap<Integer, String>) context.getAttribute(Constants.MAP_COTA_CONFERIDA_USUARIO);
+	
+	
+		if(mapaCotaConferidaUsuario == null) {
+			
+			mapaCotaConferidaUsuario = new LinkedHashMap<>();
+			
+			context.setAttribute(Constants.MAP_COTA_CONFERIDA_USUARIO, mapaCotaConferidaUsuario);
+		
+		}
+		
+		mapaCotaConferidaUsuario.put(numeroCota, userSessionID);
+		
+		
+	}
+	
+	private void removerTravaCotaConferidaUsuario() {
+
+		String userSessionID = session.getId();
+		
+		ServletContext context = this.session.getServletContext();
+		
+		@SuppressWarnings("unchecked")
+		Map<Integer, String> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, String>) context.getAttribute(Constants.MAP_COTA_CONFERIDA_USUARIO);
+		
+		if(mapaCotaConferidaUsuario == null || mapaCotaConferidaUsuario.isEmpty()) {
+			return;
+		}
+		
+		Set<Integer> cotasEmConferencia = mapaCotaConferidaUsuario.keySet();
+	
+		for(Integer numeroCota : cotasEmConferencia) {
+			if( mapaCotaConferidaUsuario.get(numeroCota).equals(userSessionID) ) {
+				mapaCotaConferidaUsuario.remove(numeroCota);
+			}
+		}
+		
+		
+	}
+	
+	private void verificarCotaAtribuidaUsuario(String userSessionID, Integer numeroCota) {
+		
+		ServletContext context = this.session.getServletContext();
+		
+		@SuppressWarnings("unchecked")
+		Map<Integer, String> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, String>) context.getAttribute(Constants.MAP_COTA_CONFERIDA_USUARIO);
+		
+		if(mapaCotaConferidaUsuario==null || mapaCotaConferidaUsuario.isEmpty()) {
+			return;
+		} 
+		
+		if(!mapaCotaConferidaUsuario.containsKey(numeroCota)) {
+			return;
+		}
+		
+		String donoDoLockCotaConferida = mapaCotaConferidaUsuario.get(numeroCota);
+		
+		if(userSessionID.equals(donoDoLockCotaConferida)) {
+			return;
+		}
+		
+		throw new ValidacaoException(TipoMensagem.WARNING, 
+				"Não é possível iniciar esta conferência de encalhe para esta cota, " +
+				"a mesma esta sendo conferido por outro usuário. ");
+		
+	}
+	
+	
 	class StatusConferenciaEncalheCota {
 		
 		private boolean indConferenciaEncalheCotaSalva;
