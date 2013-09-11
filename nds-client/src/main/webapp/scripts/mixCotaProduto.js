@@ -706,8 +706,11 @@ var mixCotaProdutoController = $.extend(true, {
 									  value : $("#classifMixModal"+idx).val()
 									  });
 							 });
-							 $.postJSON(contextPath + '/distribuicao/mixCotaProduto/adicionarMixCota',listaNovosMixCota,function(result){ mixCotaProdutoController.adicionarMixCotaSucesso();},
-									 function(result){ mixCotaProdutoController.adicionarMixCotaSucesso();});
+							 $.postJSON(contextPath + '/distribuicao/mixCotaProduto/adicionarMixCota',listaNovosMixCota,function(result){ 
+								 
+								 mixCotaProdutoController.adicionarMixCotaSucesso();
+								 },
+									 function(result){ /*mixCotaProdutoController.adicionarMixCotaSucesso();*/});
 							 $(this).dialog("close");
 					}
 				},
