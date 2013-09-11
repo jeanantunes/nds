@@ -209,6 +209,10 @@ function mostra_qtdeBancas(){
 		$('#lstExcecao').hide();
 	}
 	
+	$("#RDabrangenciaCriterio").val('');
+	$("#RDabrangencia").val(0);
+	
+	
 }
 	
 function mostrarTodasCotas(){
@@ -228,6 +232,8 @@ function mostraComponentes(){
 	$('#historico').hide();
 	$('#lstComponentes').show();
 	$('#lstExcecao').hide();
+	
+	$("#componenteRegiaoDistribuicao,#elementoRegiaoDistribuicao").val("");
 	}
 function mostra_PercBancas(){
 	$('#selRegiao').hide();
@@ -245,6 +251,13 @@ function mostra_redutor(){
 function esconde_redutor(){
 	$('.redutorManual').hide();
 	}
+
+function limparLstExcecao1(){
+
+	if($("#lstExcecao1").is(":visible")){
+		$("#componenteInformacoesComplementares,#elementoInformacoesComplementares1,#elementoInformacoesComplementares2,#elementoInformacoesComplementares3").val("");
+	}
+}
 
  var pesquisaProduto = new PesquisaProduto();
 
@@ -605,12 +618,12 @@ function esconde_redutor(){
                         <table width="600" border="0" cellspacing="2" cellpadding="2">
                           <tr>
                             <td width="20"><input name="regiao" type="radio" id="RDtodasAsCotas" value="radio" onclick="mostrarTodasCotas();" checked="checked"  /></td>
-                            <td width="85">Todas as Cotas</td>
+                            <td width="85"><label for="RDtodasAsCotas">Todas as Cotas</label></td>
                             <td width="475">&nbsp;</td>
                           </tr>
                           <tr>
                             <td><input type="radio" name="regiao" id="RDcomponente" value="radio" onclick="mostraComponentes();" /><!--mostra_regiao()--></td>
-                            <td>Componente:</td>
+                            <td><label for="RDcomponente">Componente:</label></td>
                  <td><table width="369" border="0" cellspacing="1" cellpadding="1" id="lstComponentes" style="display:none;">
                    <tr>
                      <td width="156">
@@ -633,7 +646,7 @@ function esconde_redutor(){
                           </tr>
                           <tr>
                             <td><input type="radio" name="regiao" id="RDAbrangencia" value="radio" onclick="mostra_qtdeBancas();" /></td>
-                            <td> % Abrangência</td>
+                            <td><label for="RDAbrangencia">% Abrangência</label> </td>
                             <td>
 	                            <div id="qtdeBancas" style="display:none;">Critério:&nbsp;
 		                            <select name="" style="margin-right:10px;" id="RDabrangenciaCriterio">
@@ -643,7 +656,7 @@ function esconde_redutor(){
 		                              <option>Histórico</option>
 		                            </select>
 		                            <input type="text"  style="width:40px; text-align:center; margin-right:5px;" value="0" id="RDabrangencia"/>%
-	                            </div>
+	                            </div>	
                             </td>
                           </tr>
                         </table>
@@ -653,7 +666,7 @@ function esconde_redutor(){
 
 				    <table width="600" border="0" cellspacing="2" cellpadding="2">
                         <tr>
-                          <td width="20"><input type="checkbox" name="checkbox" id="RDroteiroEntrega" onclick="$('#selRoteiro').toggle();" /></td>
+                          <td width="20"><input type="checkbox" name="checkbox" id="RDroteiroEntrega" onclick="$('#selRoteiro').toggle(); if($('#selRoteiro').is(':visible')){ $('#selRoteiro').val(''); }" /></td>
                           <td width="142">Roteiro de Entrega</td>
                           <td width="418">
                           <select name="selRoteiro" id="selRoteiro" style="width:200px; display:none;">
@@ -674,7 +687,7 @@ function esconde_redutor(){
                             <td>&nbsp;</td>
                           </tr>
                           <tr>
-                            <td><input type="checkbox" name="checkbox6" id="RDExcecaoBancas" onclick="$('#lstExcecao1').toggle();" /></td>
+                            <td><input type="checkbox" name="checkbox6" id="RDExcecaoBancas" onclick="$('#lstExcecao1').toggle(); limparLstExcecao1();" /></td>
                             <td>Exceção de Bancas</td>
                             <td><table width="369" border="0" cellspacing="1" cellpadding="1" id="lstExcecao1" style="display:none;">
                    <tr>
