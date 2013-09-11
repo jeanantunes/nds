@@ -126,7 +126,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		}
 
 		sql.append(" AND (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) "); 
-		
+
 		sql.append(" GROUP BY ");
 		
 		sql.append(" PE.ID ");
