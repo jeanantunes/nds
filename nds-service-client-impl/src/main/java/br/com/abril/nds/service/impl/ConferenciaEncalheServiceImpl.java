@@ -430,8 +430,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		boolean postergado = false;
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		ChamadaEncalheCota chamadaEncalheCota = null;
-		ParametrosRecolhimentoDistribuidor parametroRecolhimento = this.distribuidorRepository.parametrosRecolhimentoDistribuidor();
-		boolean distribuidorAceitaAntecipacao = parametroRecolhimento.isPermiteRecolherDiasPosteriores();
 		
 		if(produtoEdicao.isParcial()) {
 
@@ -440,9 +438,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			if(chamadaEncalheCota == null ) {
 				
-				validarProdutoEdicaoSemChamadaEncalheCota(distribuidorAceitaAntecipacao, cota.getId(), produtoEdicao.getId());
+				throw new ValidacaoException(
+						TipoMensagem.WARNING, 
+						" Não é possível realizar a conferência do produto edição [" + produtoEdicao.getNomeComercial()  + "] da cota. " +
+						" Este produto edição não possui CE. "   );
 				
-				return null;	
 			}
 			
 		} else {
@@ -454,12 +454,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 																			dataOperacao);
 			if(chamadaEncalheCota == null){
 				
-				validarProdutoEdicaoSemChamadaEncalheCota(distribuidorAceitaAntecipacao, cota.getId(), produtoEdicao.getId());
-				
+				throw new ValidacaoException(
+						TipoMensagem.WARNING, 
+						" Não é possível realizar a conferência do produto edição [" + produtoEdicao.getNomeComercial()  + "] da cota. " +
+						" Este produto edição não possui CE. "   );				
 			
 			} else {
 				
-				isDataRecolhimentoValida(distribuidorAceitaAntecipacao, dataOperacao, chamadaEncalheCota.getChamadaEncalhe().getDataRecolhimento(), produtoEdicao.getId());
+				isDataRecolhimentoValida(dataOperacao, chamadaEncalheCota.getChamadaEncalhe().getDataRecolhimento(), produtoEdicao.getId());
 			
 			}
 			
@@ -478,7 +480,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @param dataRecolhimento
 	 * @param idProdutoEdicao
 	 */
-	private void isDataRecolhimentoValida(boolean distribuidorAceitaAntecipacao, Date dataOperacao, Date dataRecolhimento, Long idProdutoEdicao){
+	private void isDataRecolhimentoValida(Date dataOperacao, Date dataRecolhimento, Long idProdutoEdicao){
 		
 		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 		
@@ -491,17 +493,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		boolean recolhimentoMaiorQueDataOperacao = dataRecolhimento.compareTo(dataOperacao) > 0;
 
 		if(recolhimentoMaiorQueDataOperacao) {
-			
-			if(!distribuidorAceitaAntecipacao ){
+				
+			throw new ValidacaoException(
+					TipoMensagem.WARNING, 
+					"Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao  + "]. <br> " +
+					"Não é permitida antecipação de produtos pelo distribuidor. "   );
 					
-					throw new ValidacaoException(
-							TipoMensagem.WARNING, 
-							"Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao  + "] " +
-							"Não é permitida antecipação de produtos pelo distribuidor. "   );
-					
-			}
-			
-			return;
 		}
 		
 		List<Date> datasRecolhimento = 
@@ -510,7 +507,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		if(datasRecolhimento == null || datasRecolhimento.isEmpty()){
 			throw new ValidacaoException(
 					TipoMensagem.WARNING, 
-					" Distribuidor não possui parametrização de dias de recolhimento para o fornecedor do produto edição [" + nomeProdutoEdicao  + "]."   );		
+					" Distribuidor não possui parametrização de dias de recolhimento para o " +
+					"<br> fornecedor do produto edição [" + nomeProdutoEdicao  + "]."   );		
 		}
 		
 		for(Date item : datasRecolhimento){
@@ -523,7 +521,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		throw new ValidacaoException(
 				TipoMensagem.WARNING, 
-				" Não é possível realiza a conferência do produto edição [" + nomeProdutoEdicao  + "]." +
+				" Não é possível realiza a conferência do produto edição [" + nomeProdutoEdicao  + "]. <br>" +
 				" Data de operação excedendo ou fora dos dias de recolhimento possíveis. "   );		
 
 	}
@@ -544,45 +542,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		return idsFornecedor;
 	}
 	
-	/**
-	 * Caso não tenha sido encontrada CE para o produtoEdicao e cota em questão, 
-	 * serão feitas as seguintes validações:
-	 * 
-	 * 1 - Caso o distribuidor não aceite antecipação de encalhe não sera permitida
-	 * a conferência deste item sem CE. 
-	 * 
-	 * 2 - Será verificado se o produtoEdição foi de fato expedido para a cota e ainda 
-	 * constam itens e a serem devolvidos sera permitido o seu recolhimento.
-	 */
-	private void validarProdutoEdicaoSemChamadaEncalheCota(boolean aceitaAntecipacao, Long idCota, Long idProdutoEdicao) {
-		
-		ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
-		
-		if(produtoEdicao == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Produto edição não encontrado");
-		}
-		
-		String nomeProdutoEdicao = produtoEdicao.getProduto().getNome();
-		
-		if(!aceitaAntecipacao) {
-			
-			throw new ValidacaoException(
-					TipoMensagem.WARNING, 
-					" Não é possível realizar a conferência do produto edição [" + nomeProdutoEdicao  + "] da cota. " +
-					" Distribuidor parametrizado para não aceitar antecipação e este produto não possui CE. "   );
-		}
-		
-		BigInteger qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos = obterQtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos(idCota, idProdutoEdicao);
-		
-		if(qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos == null || qtdItensEstoqueProdutoEdicaoDaCotaNaoDevolvidos.compareTo(BigInteger.ZERO) <= 0 ) {
-			
-			throw new ValidacaoException(
-					TipoMensagem.WARNING, 
-					"Não há itens do produto edição [" + nomeProdutoEdicao  + "] a serem devolvidos para a cota."   );
-		
-		}
-		
-	}
 	
 	/*
 	 * (non-Javadoc)
