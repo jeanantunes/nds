@@ -274,7 +274,7 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		}
 	};
 	
-	this.checkComponenteBonificaca = function(value, descricao, enumValue){
+	this.checkComponenteBonificacao = function(value, descricao, enumValue){
 		if(T.componenteBonificacaoSelecionado != null){
 			$("#componenteBonificacao" + T.componenteBonificacaoSelecionado.value).removeAttr("checked");
 		}
@@ -283,25 +283,57 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	};
 	
 	this.selectComponenteBonificacao = function(value, descricao, enumValue){
+		
+		if($("#componenteBonificacao"+value).is(":checked ")==false){
+		
+			T.checkComponenteBonificacao(value, descricao, enumValue);
+			T.loadBonificacoesGrid(value);
+		}else{
+			T.unloadBonificacoesGrid();
+			$("#componenteBonificacao" + value).removeAttr("checked");
+		}
+		
+		
+	};
+
+	this.unloadBonificacoesGrid=function(){
+		$("#bonificacoesGrid").flexAddData({
+			rows : [],
+			page : 1,
+			total : 0
+		});
+		
+	};
+	
+	this.loadBonificacoesGrid = function(value,descricao,enumValue){
 		var selectedItem = value;
-		T.checkComponenteBonificaca(value, descricao, enumValue);
 		$.postJSON(
 				url + "/distribuicao/historicoVenda/carregarElementos", 
-					{"componente":selectedItem},
-					function(result) {
-						T.elementosBonificacao = result;
-						$.each(result, function(index,row){ T.processarLinhaElemento(index, row);});
-						$("#bonificacoesGrid").flexAddData({
-							rows : toFlexiGridObject(result),
-							page : 1,
-							total : 1
-						});
-					},
-					
-					function(){
-						exibirMensagem("ERROR", ["Erro ao processar a pesquisa. Tente novamente mais tarde."]);
-					}
-				);
+				{"componente":selectedItem},
+				function(result) {
+					T.elementosBonificacao = result;
+					$.each(result, function(index,row){ T.processarLinhaElemento(index, row);});
+					$("#bonificacoesGrid").flexAddData({
+						rows : toFlexiGridObject(result),
+						page : 1,
+						total : 1
+					});
+				},
+				
+				function(){
+					exibirMensagem("ERROR", ["Erro ao processar a pesquisa. Tente novamente mais tarde."]);
+				}
+		);
+		
+		if(descricao && enumValue){
+			
+			if(T.componenteBonificacaoSelecionado != null){
+				$("#componenteBonificacao" + T.componenteBonificacaoSelecionado.value).removeAttr("checked");
+			}
+			
+			T.componenteBonificacaoSelecionado = {descricao : descricao, value : value, enumValue : enumValue};
+		}
+		
 		
 	};
 	
