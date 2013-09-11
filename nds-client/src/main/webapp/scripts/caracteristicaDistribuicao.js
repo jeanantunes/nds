@@ -547,9 +547,6 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 		data.push({name:'filtro.nomeProduto', value: $("#nomeProduto").val()});
 		data.push({name:'filtro.nomeEditor',  value: $("#nomeEditor").val()});
 		data.push({name:'filtro.opcaoFiltroPublicacao', value:$('#checkPublicacaoExato').is(":checked")});
-		data.push({name:'filtro.opcaoFiltroEditor', value:$('#checkEditorExato').is(":checked")});
-		data.push({name:'filtro.opcaoFiltroChamadaCapa', value:$('#checkChamadaCapaExato').is(":checked")});
-		
 		
 		data.push({name:'filtro.classificacaoProduto',  value: $("#classificacao option:selected").val()});
 		data.push({name:'filtro.segmento',  value: $("#segmento option:selected").val()});

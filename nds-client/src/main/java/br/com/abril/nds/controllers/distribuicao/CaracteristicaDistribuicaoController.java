@@ -115,6 +115,11 @@ public class CaracteristicaDistribuicaoController extends BaseController{
 		filtro.setOrdemColuna(Util.getEnumByStringValue(FiltroConsultaCaracteristicaDistribuicaoDetalheDTO.OrdemColuna.values(), sortname));
 		tratarFiltroDetalhe(filtro);
 		
+		if(filtro.getCodigoProduto() != null && filtro.getCodigoProduto().length() == 6){
+			filtro.setCodigoProduto(produtoService.obterCodigoProdinPorICD(filtro.getCodigoProduto()));
+		}
+		
+		
 		if(filtro.getCodigoProduto() != null && filtro.getCodigoProduto() != ""){
 			Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigoProduto());
 			filtro.setIdProduto(produto.getId());
@@ -142,6 +147,7 @@ public class CaracteristicaDistribuicaoController extends BaseController{
 	private TableModel<CellModelKeyValue<CaracteristicaDistribuicaoSimplesDTO>> montarTableModelPesquisaSimples(FiltroConsultaCaracteristicaDistribuicaoSimplesDTO filtro) {
 		
 		List<CaracteristicaDistribuicaoSimplesDTO> resultadoPesquisa = caracteristicaDistribuicaoService.buscarComFiltroSimples(filtro);
+		
 		TableModel<CellModelKeyValue<CaracteristicaDistribuicaoSimplesDTO>> tableModel = new TableModel<CellModelKeyValue<CaracteristicaDistribuicaoSimplesDTO>>();
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPesquisa));
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());

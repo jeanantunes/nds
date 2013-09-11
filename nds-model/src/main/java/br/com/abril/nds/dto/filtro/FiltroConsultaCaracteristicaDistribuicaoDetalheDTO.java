@@ -16,8 +16,6 @@ public class FiltroConsultaCaracteristicaDistribuicaoDetalheDTO extends FiltroDT
 	private String faixaPrecoDe;
 	private String faixaPrecoAte;
 	private boolean opcaoFiltroPublicacao;
-	private boolean opcaoFiltroEditor;
-	private boolean opcaoFiltroChamadaCapa;
 	private Long idProduto;
 	
 	private OrdemColuna ordemColuna;
@@ -113,18 +111,6 @@ public class FiltroConsultaCaracteristicaDistribuicaoDetalheDTO extends FiltroDT
 	}
 	public void setOpcaoFiltroPublicacao(boolean opcaoFiltroPublicacao) {
 		this.opcaoFiltroPublicacao = opcaoFiltroPublicacao;
-	}
-	public boolean getOpcaoFiltroEditor() {
-		return opcaoFiltroEditor;
-	}
-	public void setOpcaoFiltroEditor(boolean opcaoFiltroEditor) {
-		this.opcaoFiltroEditor = opcaoFiltroEditor;
-	}
-	public boolean getOpcaoFiltroChamadaCapa() {
-		return opcaoFiltroChamadaCapa;
-	}
-	public void setOpcaoFiltroChamadaCapa(boolean opcaoFiltroChamadaCapa) {
-		this.opcaoFiltroChamadaCapa = opcaoFiltroChamadaCapa;
 	}
 	public OrdemColuna getOrdemColuna() {
 		return ordemColuna;
