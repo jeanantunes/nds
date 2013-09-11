@@ -999,8 +999,11 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		Map<Long,List<MovimentoEstoqueCota>> movimentosEncalheAgrupadosPorFornecedor = null;
 		
 		if(idControleConferenciaEncalheCota!=null) {
+			
 			movimentosEncalheAgrupadosPorFornecedor = this.obterMovimentosEstoqueEncalhe(cota.getId(), idControleConferenciaEncalheCota);
-		} else {
+		} 
+		else {
+			
 			movimentosEncalheAgrupadosPorFornecedor = new HashMap<Long,List<MovimentoEstoqueCota>>();
 		}
 		

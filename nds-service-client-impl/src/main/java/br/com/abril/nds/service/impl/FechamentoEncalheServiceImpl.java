@@ -567,8 +567,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			listaCotasAusentes.add(cotaAusenteEncalheDTO);
 		}
 		
-		Date dataOperacaoDistribuidor = this.distribuidorService.obterDataOperacaoDistribuidor();
-		
 		for (CotaAusenteEncalheDTO c : listaCotasAusentes){
 			
 			Cota cota = this.cotaRepository.buscarCotaPorID(c.getIdCota());
@@ -585,7 +583,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 			movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(
 					cota, 
-					dataOperacaoDistribuidor,
+					dataOperacao,
 					usuario,
 					null,
 					FormaComercializacao.CONSIGNADO);
@@ -655,7 +653,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 			for (ChamadaEncalhe chamadaEncalhe : listaChamadaEncalhe) {
 				
-				chamadaEncalhe.setDataRecolhimento(dataOperacaoDistribuidor);
+				chamadaEncalhe.setDataRecolhimento(dataOperacao);
 				
 				List<ChamadaEncalheCota> listaChamadaEncalheCota = 
 						this.chamadaEncalheCotaRepository.obterListChamadaEncalheCota(chamadaEncalhe.getId(), cota.getId());
