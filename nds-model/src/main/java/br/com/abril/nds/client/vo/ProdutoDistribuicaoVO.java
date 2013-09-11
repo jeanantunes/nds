@@ -158,7 +158,7 @@ public class ProdutoDistribuicaoVO  implements Serializable, Comparable<ProdutoD
 		return periodo;
 	}
 
-	public void setPeriodo(Integer periodo) {
+	public void setPeriodo(Object periodo) {
 		if(periodo == null){
 			this.periodo = "";
 		}else{
