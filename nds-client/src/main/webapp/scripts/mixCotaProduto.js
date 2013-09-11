@@ -269,14 +269,17 @@ var mixCotaProdutoController = $.extend(true, {
 	
 	updateReparteMinMax:function(input,tipoCampo,idMix,lastValue){
 		
+			
 		var listaNovoReparte = new Array();
 		 
-		if(input.value.trim().length==0 || parseInt(input.value)==0){
+		if(input.value.trim().length==0 ){
 
 			listaNovoReparte.push({
 				  name : "novoValorReparte" , 
 				  value : lastValue
 				  });
+			
+			return;
 			
 		 }else{
 			 
@@ -306,7 +309,11 @@ var mixCotaProdutoController = $.extend(true, {
 				$(".mixProdutosGrid").flexReload();
 			}
 			
-		}, null);
+		}, function(){
+			input.value=lastValue;
+			
+			
+		});
 		
 		
 	},

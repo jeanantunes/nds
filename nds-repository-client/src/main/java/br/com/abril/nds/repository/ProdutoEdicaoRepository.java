@@ -341,4 +341,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
     BigInteger obterReparteDisponivel(Long idProdutoEdicao);
 
     boolean isEdicaoAberta(Long produtoEdicaoId);
+    
+    public List<Long> obterNumeroDas6UltimasEdicoesFechadas(Long idProduto);
+    
 }

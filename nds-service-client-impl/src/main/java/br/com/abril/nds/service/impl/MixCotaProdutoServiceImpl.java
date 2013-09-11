@@ -296,9 +296,8 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 						continue loopSeg;
 				}
 				
-				return "Cota ["+mixCotaProdutoDTO.getNumeroCota()+"] não recebe segmento "+tipoSegProd.getDescricao();
-				
-				
+				return "Cota ["+mixCotaProdutoDTO.getNumeroCota()+"] não recebe segmento "+tipoSegProd.getDescricao() + " do produto "+mixCotaProdutoDTO.getCodigoProduto();
+
 			}
 			
 		}
@@ -653,8 +652,14 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		}
 		
 		if(tipoCampo.equalsIgnoreCase("MAX")){
+			if(mix.getReparteMinimo().compareTo(novoValorReparte)==1){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Reparte mínimo não deve ser maior que o reparte Máximo.");
+			}
 			mix.setReparteMaximo(novoValorReparte);
 		}else if(tipoCampo.equalsIgnoreCase("MIN")){
+			if(novoValorReparte.compareTo(mix.getReparteMaximo())==1){
+				throw new ValidacaoException(TipoMensagem.WARNING, "Reparte mínimo não deve ser maior que o reparte Máximo.");
+			}
 			mix.setReparteMinimo(novoValorReparte);
 		}
 		else{
