@@ -263,7 +263,9 @@ public class ConferenciaEncalheDTO implements Serializable {
 	}
 
 	public void setTipoChamadaEncalhe(String tipoChamadaEncalhe) {
-		this.tipoChamadaEncalhe = TipoChamadaEncalhe.valueOf(tipoChamadaEncalhe);
+		if(tipoChamadaEncalhe != null && !tipoChamadaEncalhe.isEmpty()) {
+			this.tipoChamadaEncalhe = TipoChamadaEncalhe.valueOf(tipoChamadaEncalhe);
+		}
 	}
 
 	public BigDecimal getPrecoCapaInformado() {

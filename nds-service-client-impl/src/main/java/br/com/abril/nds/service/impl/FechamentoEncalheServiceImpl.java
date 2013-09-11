@@ -442,14 +442,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 		if(!cotaAusenteEncalheDTO.isIndPossuiChamadaEncalheCota()) {
 			
-			if (cotaAusenteEncalheDTO.isIndMFCNaoConsolidado()) {
-				
-				cotaAusenteEncalheDTO.setAcao(" Sem C.E.-Cota com Divida ");
-			} 
-			else{
-				
-				cotaAusenteEncalheDTO.setAcao(" Sem C.E.-Cobrado ");
-			}
+			cotaAusenteEncalheDTO.setAcao(" Sem C.E.-Cota com Divida ");
 			
 		} else {
 			
