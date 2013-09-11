@@ -115,7 +115,7 @@ fieldset {
 								
 								<td width="43">Classificação:</td>
                 				<td width="276">
-				                  <select name="select" id="produtoEdicaoController-comboClassificacao" style="width:200px;">
+				                  <select name="select" id="produtoEdicaoController-comboClassificacao" style="width:200px;" disabled="disabled">
 			                  		<option selected="selected">Selecione...</option>
 				                  		<c:forEach items="${listaClassificacao}" var="classificacao">
 											<option value="${classificacao.key}">${classificacao.value}</option>
