@@ -450,23 +450,23 @@ function limparLstExcecao1(){
                         </tr>
                       </table>
                    	  <table width="275" border="0" cellspacing="2" cellpadding="2">
-                   	    <tr>
+                   	    <!--  <tr>
                    	      <td width="91">Juramentado:</td>
                    	      <td colspan="2">${ juramentado }</td>
                	        </tr>
                    	    <tr>
                    	      <td>Suplementar:</td>
                    	      <td colspan="2">${ suplementar }</td>
-               	        </tr>
+               	        </tr>-->
                    	    <tr>
                    	      <td>Lançamento:</td>
                    	      <td colspan="2" id="reparteTotal">${ lancado }</td>
                	        </tr>
-                   	    <tr>
+                   	    <!--  <tr>
                    	      <td>Promocional:</td>
                    	      <td colspan="2">${ promocional }</td>
                	        </tr>
-                   	    <tr>
+                   	    <tr>-->
                    	      <td>Sobra:</td>
                    	      <td colspan="2" id="sobra">${sobra}</td>
                	        </tr>
@@ -560,9 +560,9 @@ function limparLstExcecao1(){
             <td width="281" valign="top">
                 <table class="lstComponentesGrid">
                 	<c:forEach items="${ componentes }" var="componente" varStatus="idx">
-	                	<tr onclick="distribuicaoVendaMedia.selectComponenteBonificacao(${ idx.count - 1 }, '${ componente.descricao }', '${ componente }')">
-	                		<td>${ componente.descricao }</td>
-	                		<td><input type="checkbox" id="componenteBonificacao${ idx.count - 1 }" ></<input></td>
+	                	<tr >
+	                		<td onclick="distribuicaoVendaMedia.selectComponenteBonificacao(${ idx.count - 1 }, '${ componente.descricao }', '${ componente }')">${ componente.descricao }</td>
+	                		<td><input type="checkbox" id="componenteBonificacao${ idx.count - 1 }" onclick="if($(this).is(':checked')){distribuicaoVendaMedia.loadBonificacoesGrid(${ idx.count - 1 },'${ componente.descricao }', '${ componente }');}else{distribuicaoVendaMedia.unloadBonificacoesGrid();}" ></<input></td>
 	                	</tr>
                 	</c:forEach>
                 </table>
