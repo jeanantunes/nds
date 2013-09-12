@@ -220,18 +220,14 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 			}],
 			width : 1100,
 			height : 200,
-			sortname : "nomeProduto",
-			sortorder : "asc",
+			sortname : "dataLancamentoString",
+			sortorder : "desc",
 			usepager : true,
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true
 		
 		});
-		
-		
-		
-		 
 	},
 	
 	
@@ -251,10 +247,10 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 
 			row.cell.acao=capa;
 			if(row.cell.reparteString){
-				row.cell.reparteString = parseFloat(row.cell.reparteString).toFixed(2);
+				row.cell.reparteString = parseFloat(row.cell.reparteString).toFixed(0);
 			}
 			if(row.cell.vendaString){
-				row.cell.vendaString = parseFloat(row.cell.vendaString).toFixed(2);
+				row.cell.vendaString = parseFloat(row.cell.vendaString).toFixed(0);
 			}
 			if(row.cell.precoCapa){
 				row.cell.precoCapa = parseFloat(row.cell.precoCapa).toFixed(2);
@@ -283,10 +279,10 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 //			var capa= "<a onclick='caracteristicaDistribuicaoController.popup_detalhes("+row.cell.codigoProduto+ "," +row.cell.numeroEdicao +");'  href='javascript:void(0);'><img src='images/ico_detalhes.png'></a>";
 			row.cell.acao=capa;
 			if(row.cell.reparteString){
-				row.cell.reparteString = parseFloat(row.cell.reparteString).toFixed(2);
+				row.cell.reparteString = parseFloat(row.cell.reparteString).toFixed(0);
 			}
 			if(row.cell.vendaString){
-				row.cell.vendaString = parseFloat(row.cell.vendaString).toFixed(2);
+				row.cell.vendaString = parseFloat(row.cell.vendaString).toFixed(0);
 			}
 			if(row.cell.precoCapa){
 				row.cell.precoCapa = parseFloat(row.cell.precoCapa).toFixed(2);
