@@ -240,10 +240,13 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 			this.produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(
 				consignadoCotaChamadao.getCodigoProduto(), consignadoCotaChamadao.getNumeroEdicao());
 		
-//		if (this.chamadaEncalheCotaRepository.existeChamadaEncalheCota(cota.getId(), produtoEdicao.getId())) {
-//			
-//			return;
-//		}
+		Long idCota = cota.getId();
+		Long idProdutoEdicao = produtoEdicao.getId();
+		
+		if (this.chamadaEncalheCotaRepository.existeChamadaEncalheCota(idCota, idProdutoEdicao, false, dataChamadao)) {
+			
+			this.tratarChamadaEncalheCotaExistente(idCota, idProdutoEdicao, dataChamadao);
+		}
 		
 		ChamadaEncalhe chamadaEncalhe =
 			this.chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(
@@ -297,6 +300,17 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 		chamadaEncalheCota.setQtdePrevista(qtdPrevista);
 		
 		this.chamadaEncalheCotaRepository.adicionar(chamadaEncalheCota);
+	}
+
+	private void tratarChamadaEncalheCotaExistente(Long idCota, Long idProdutoEdicao, Date dataChamadao) {
+		
+		ChamadaEncalheCota chamadaEncalheCota =
+			this.chamadaEncalheCotaRepository.obterChamadaEncalheCota(idCota, idProdutoEdicao, dataChamadao);
+		
+		if (chamadaEncalheCota != null) {
+			
+			this.chamadaEncalheCotaRepository.remover(chamadaEncalheCota);
+		}		
 	}
 
 	/**
