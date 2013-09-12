@@ -96,8 +96,13 @@
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
+	
 	<listener>
 		<listener-class>br.com.abril.nds.client.listener.ApplicationContextListener</listener-class>
+	</listener>
+
+	<listener>
+		<listener-class>br.com.abril.nds.client.listener.ControleSessionListener</listener-class>
 	</listener>
 
 	<welcome-file-list>
@@ -105,7 +110,7 @@
 	</welcome-file-list>
 
 	<session-config>
-		<session-timeout>30</session-timeout>
+		<session-timeout>1</session-timeout>
 	</session-config>
 
 	<jsp-config>

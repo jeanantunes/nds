@@ -357,6 +357,8 @@ var ConferenciaEncalhe = $.extend(true, {
 							
 							window.event.preventDefault();
 							
+							ConferenciaEncalhe.removerTravaConferenciaEncalheCotaUsuario();
+							
 							$("#dialog-conferencia-nao-salva", ConferenciaEncalhe.workspace).dialog("close");
 							
 							$(self).tabs("remove", index);
@@ -384,6 +386,8 @@ var ConferenciaEncalhe = $.extend(true, {
 				
 				
 			} else {
+				
+				ConferenciaEncalhe.removerTravaConferenciaEncalheCotaUsuario();
 				
 				$(self).tabs("remove", index);
 				
@@ -469,7 +473,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		            {name: 'indConferenciaContingencia', value: false}
 		           ];
 		
-		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/verificarReabertura", data,
+		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/iniciarConferenciaEncalhe", data,
 				
 		function(result){
 			
@@ -502,6 +506,8 @@ var ConferenciaEncalhe = $.extend(true, {
 						"Não" : function() {
 							
 							window.event.preventDefault();
+							
+							ConferenciaEncalhe.removerTravaConferenciaEncalheCotaUsuario();
 							
 							$("#dialog-reabertura", ConferenciaEncalhe.workspace).dialog("close");
 							
@@ -667,6 +673,12 @@ var ConferenciaEncalhe = $.extend(true, {
 					}
 				}
 		);
+	},
+	
+	removerTravaConferenciaEncalheCotaUsuario : function() {
+		
+		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/removerTravaConferenciaEncalheCotaUsuario');
+		
 	},
 	
 	carregarListaConferencia : function(data){

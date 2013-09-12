@@ -2,8 +2,6 @@ var ConferenciaEncalheCont = $.extend(true, {
 	
 	modalAberta: false,
 	
-	verificarReabertura: false,
-	
 	idProdutoEdicaoNovoEncalhe: "",
 
 	init : function() {
@@ -153,7 +151,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 		            {name: 'indConferenciaContingencia', value: true}
 		           ];
 		
-		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/verificarReabertura", data,
+		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/iniciarConferenciaEncalhe", data,
 			function(result){
 				
 				if (typeof result.IND_REABERTURA != 'undefined' && result.IND_REABERTURA == 'S'){
@@ -178,6 +176,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 							},
 							"Não" : function() {
 								
+								ConferenciaEncalheCont.removerTravaConferenciaEncalheCotaUsuario();
+								
 								$("#dialog-reabertura", ConferenciaEncalheCont.workspace).dialog("close");
 								
 								ConferenciaEncalheCont.numeroCotaEditavel(true);
@@ -185,8 +185,6 @@ var ConferenciaEncalheCont = $.extend(true, {
 						}, close : function(){
 							
 							ConferenciaEncalheCont.modalAberta = false;
-							
-							ConferenciaEncalheCont.verificarReabertura = false;
 							
 							$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
 							
@@ -409,7 +407,13 @@ var ConferenciaEncalheCont = $.extend(true, {
 			
 			}
 		);
-	},	
+	},
+	
+	removerTravaConferenciaEncalheCotaUsuario : function() {
+		
+		$.postJSON(contextPath + '/devolucao/conferenciaEncalhe/removerTravaConferenciaEncalheCotaUsuario');
+		
+	},
 	
 	carregarListaConferencia: function(data){
 		
@@ -1302,6 +1306,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 							
 							window.event.preventDefault();
 							
+							ConferenciaEncalheCont.removerTravaConferenciaEncalheCotaUsuario();
+							
 							$("#dialog-conferencia-nao-salva", ConferenciaEncalheCont.workspace).dialog("close");
 							
 							$(self).tabs("remove", index);
@@ -1329,6 +1335,8 @@ var ConferenciaEncalheCont = $.extend(true, {
 				
 				
 			} else {
+				
+				ConferenciaEncalheCont.removerTravaConferenciaEncalheCotaUsuario();
 				
 				$(self).tabs("remove", index);
 				
