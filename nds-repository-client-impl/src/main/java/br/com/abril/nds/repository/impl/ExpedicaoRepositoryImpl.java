@@ -237,6 +237,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		query.setParameterList("statusAposExpedido", 
 							   Arrays.asList(StatusLancamento.EXPEDIDO.name(),
 											 StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name(),
+											 StatusLancamento.BALANCEADO_RECOLHIMENTO.name(),											 
 											 StatusLancamento.EM_RECOLHIMENTO.name(),
 											 StatusLancamento.RECOLHIDO.name(),
 											 StatusLancamento.FECHADO.name()));
@@ -249,6 +250,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		query.setParameterList("statusAposExpedido", 
 				   Arrays.asList(StatusLancamento.EXPEDIDO.name(),
 								 StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name(),
+								 StatusLancamento.BALANCEADO_RECOLHIMENTO.name(),
 								 StatusLancamento.EM_RECOLHIMENTO.name(),
 								 StatusLancamento.RECOLHIDO.name(),
 								 StatusLancamento.FECHADO.name()));
