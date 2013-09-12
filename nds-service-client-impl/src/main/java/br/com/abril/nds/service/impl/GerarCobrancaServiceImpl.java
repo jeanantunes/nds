@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -31,6 +30,8 @@ import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -44,6 +45,7 @@ import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
+import br.com.abril.nds.model.financeiro.HistoricoMovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
@@ -60,7 +62,9 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.repository.HistoricoAcumuloDividaRepository;
+import br.com.abril.nds.repository.HistoricoMovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.ItemChamadaEncalheFornecedorRepository;
+import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.NegociacaoDividaRepository;
 import br.com.abril.nds.repository.ParcelaNegociacaoRepository;
@@ -87,6 +91,12 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 
 	@Autowired
 	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
+	
+	@Autowired
+	private HistoricoMovimentoFinanceiroCotaRepository historicoMovimentoFinanceiroCotaRepository;
+	
+	@Autowired
+	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 	
 	@Autowired
 	private ConsolidadoFinanceiroRepository consolidadoFinanceiroRepository;
@@ -1019,6 +1029,71 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
 	}
 	
+	/**
+	 * Remove movimentos financeiros do consolidado,
+	 * referentes à encalhe da cota, 
+	 * na reabertura da conferencia de encalhe
+	 * @param mfcs
+	 */
+	private void removerMovimentosFinanceirosReberturaConferencia(List<MovimentoFinanceiroCota> mfcs){
+		
+		List<Long> idsMfc = new ArrayList<Long>();
+		
+		List<Long> idsHmfc = new ArrayList<Long>();
+		
+		for (MovimentoFinanceiroCota mfc : mfcs){
+			
+			if (((TipoMovimentoFinanceiro) mfc.getTipoMovimento()).getGrupoMovimentoFinaceiro().equals(GrupoMovimentoFinaceiro.ENVIO_ENCALHE)){
+			
+				
+				List<MovimentoEstoqueCota> mecs = mfc.getMovimentos();
+				
+				if (mecs!=null && !mecs.isEmpty()){
+					
+					for (MovimentoEstoqueCota mec : mecs){
+						
+						mec.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
+						
+						mec.setMovimentoFinanceiroCota(null);
+						
+						mec.setMotivo( "Reabertura Conferencia Encalhe "+DateUtil.formatarDataPTBR((this.distribuidorService.obterDataOperacaoDistribuidor())));
+					
+					    this.movimentoEstoqueCotaRepository.alterar(mec);
+					}
+				}
+				
+				
+				List<HistoricoMovimentoFinanceiroCota> hmfcs = mfc.getHistoricos();
+
+                if (hmfcs != null && !hmfcs.isEmpty()){
+					
+					for (HistoricoMovimentoFinanceiroCota hmfc : hmfcs){
+						
+						idsHmfc.add(hmfc.getId());
+					}
+				}
+
+				mfc.setHistoricos(null);
+				
+				this.movimentoFinanceiroCotaRepository.alterar(mfc);
+				
+				
+				for (Long idHmfc : idsHmfc){
+					
+					this.historicoMovimentoFinanceiroCotaRepository.removerPorId(idHmfc);
+				}
+
+				
+			    idsMfc.add(mfc.getId());
+			}
+		}
+		
+		for (Long idMfc : idsMfc){
+		    
+			this.movimentoFinanceiroCotaRepository.removerPorId(idMfc);
+		}
+	}
+	
 	@Transactional
 	@Override
 	public void cancelarDividaCobranca(Long idMovimentoFinanceiroCota, Long idCota) {
@@ -1063,8 +1138,18 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						this.removerDividaCobrancaConsolidado(divida,consolidado, dataOperacao);
 					}
 				}
+
+				List<MovimentoFinanceiroCota> mfcs = consolidado.getMovimentos();
 				
 				consolidado.setMovimentos(null);
+				
+				this.consolidadoFinanceiroRepository.alterar(consolidado);
+				
+                if (mfcs!=null && !mfcs.isEmpty()){
+					
+			    	this.removerMovimentosFinanceirosReberturaConferencia(mfcs);
+				}
+				
 			    this.consolidadoFinanceiroRepository.remover(consolidado);
 			}
 		}
