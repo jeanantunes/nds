@@ -971,6 +971,8 @@ var fechamentoEncalheController = $.extend(true, {
 					
 				} else {
 					
+					fechamentoEncalheController.statusCobrancaCota = setInterval(fechamentoEncalheController.obterStatusCobrancaCota,5000);
+					
 					fechamentoEncalheController.cobrarCotas();
 				}
 				
