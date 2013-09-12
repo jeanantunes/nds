@@ -684,6 +684,8 @@ var fechamentoEncalheController = $.extend(true, {
 				if(!verificarPermissaoAcesso(fechamentoEncalheController.workspace))
 					return;
 				
+				fechamentoEncalheController.statusCobrancaCota = setInterval(fechamentoEncalheController.obterStatusCobrancaCota,5000);
+				
 				fechamentoEncalheController.veificarCobrancaGerada();
 				
 			},
