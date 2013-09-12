@@ -9,6 +9,8 @@ var fechamentoEncalheController = $.extend(true, {
 	checkAllGrid: false,
 	nonSelected: [],
 	
+	statusCobrancaCota: null,
+	
 	init : function() {
 		
 		var sizeNomeProduto = 110;
@@ -701,7 +703,7 @@ var fechamentoEncalheController = $.extend(true, {
 			height:500,
 			width:650,
 			modal: true,
-			buttons: buttons,
+			buttons: buttons,			
 			beforeClose: function() {
 				clearMessageDialogTimeout('dialogMensagemNovo');
 			},
@@ -954,6 +956,8 @@ var fechamentoEncalheController = $.extend(true, {
 						buttons : {
 							"Confirmar" : function() {
 								
+								fechamentoEncalheController.statusCobrancaCota = setInterval(fechamentoEncalheController.obterStatusCobrancaCota,5000);
+								
 								$("#dialog-confirmar-regerar-cobranca", fechamentoEncalheController.workspace).dialog("close");
 								fechamentoEncalheController.cobrarCotas();
 							},
@@ -1200,7 +1204,21 @@ var fechamentoEncalheController = $.extend(true, {
 		if($("#sel").is(":checked")) {
 			$("#sel").attr("checked", false);
 		}
-	}
+	},
+	
+	obterStatusCobrancaCota : function() {
+		
+		$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/obterStatusCobrancaCota", 
+			null,
+			function(result) {
+				if(result=='FINALIZADO') {
+					$('#mensagemLoading').text('Aguarde, carregando ...');
+					for (var i = 1; i <= fechamentoEncalheController.statusCobrancaCota; i++)
+				        window.clearInterval(i);
+				}	
+				$('#mensagemLoading').text(result);
+			});	
+	} 
 	
 }, BaseController);
 //@ sourceURL=fechamentoEncalhe.js

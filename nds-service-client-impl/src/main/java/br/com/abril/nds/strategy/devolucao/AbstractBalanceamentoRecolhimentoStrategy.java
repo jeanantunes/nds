@@ -69,13 +69,24 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		return balanceamentoRecolhimento;
 	}
 	
-	protected TreeSet<Date> obterDatasRecolhimento(TreeSet<Date> datasRecolhimento,Set<Date> datasConfirmadas) {
+	/*
+	 * Obtém as datas válidas para o balanceamento.
+	 */
+	protected TreeSet<Date> obterDatasParaBalanceamento(RecolhimentoDTO dadosRecolhimento) {
+		
+		Set<Date> obterDatasConfirmadas = 
+			this.obterDatasConfirmadas(dadosRecolhimento.getProdutosRecolhimento());
+		
+		return 
+			this.obterDatasRecolhimento(
+				dadosRecolhimento.getDatasRecolhimentoFornecedor(), obterDatasConfirmadas);
+	}
+	
+	protected TreeSet<Date> obterDatasRecolhimento(TreeSet<Date> datasRecolhimento,
+												   Set<Date> datasConfirmadas) {
 
-		for (Date dataConfirmada : datasConfirmadas) {
-	
-			datasRecolhimento.remove(dataConfirmada);
-		}
-	
+		datasRecolhimento.removeAll(datasConfirmadas);
+
 		return datasRecolhimento;
 	}
 	
