@@ -1558,7 +1558,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		return nossoNumeroCollection;
 	}
-
 	
 	/**
 	 * Faz o cancelamento de dados financeiros relativos a 
@@ -1573,26 +1572,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if(movimentosFinanceiroCota!=null && !movimentosFinanceiroCota.isEmpty()) {
 			
-			for (MovimentoFinanceiroCota movimentoFinanceiroCota : movimentosFinanceiroCota) {
-
-				gerarCobrancaService.cancelarDividaCobranca(movimentoFinanceiroCota.getId(), idCota);
-				
-				if (movimentoFinanceiroCota.getMovimentos() != null){
-					
-					for (MovimentoEstoqueCota mec : movimentoFinanceiroCota.getMovimentos()){
-						
-						mec.setMovimentoFinanceiroCota(null);
-						
-						mec.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
-						
-						this.movimentoEstoqueCotaRepository.merge(mec);
-					}
-				}
-
-				movimentoFinanceiroCota.setConsolidadoFinanceiroCota(null);
-				
-				this.movimentoFinanceiroCotaRepository.remover(movimentoFinanceiroCota);
-			}
+			gerarCobrancaService.cancelarDividaCobranca(null, idCota);
 		}
 	}
 	
