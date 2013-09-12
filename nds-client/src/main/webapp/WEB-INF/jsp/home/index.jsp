@@ -160,7 +160,10 @@
 									
 									$span = $("<span>").addClass(className);					
 									
-									if (url.indexOf("/devolucao/conferenciaEncalhe/") >= 0) {
+									if (url.indexOf("/devolucao/conferenciaEncalhe/contingencia") >= 0) {
+										$span = $($span).addClass("conferencia_encalhe_contigencia");
+									}
+									else if (url.indexOf("/devolucao/conferenciaEncalhe") >= 0) {
 										$span = $($span).addClass("conferencia_encalhe");
 									}else if (url.indexOf("/estoque/diferenca/lancamento") >= 0) {
 										$span = $($span).addClass("lancamento_faltas_sobras");
@@ -186,6 +189,7 @@
 												
 												var indAbaConferenciaEncalhe = $(this).parent().find('.conferencia_encalhe').index() > -1;
 												var indAbaLancamentoFaltasSobras = $(this).parent().find('.lancamento_faltas_sobras').index() > -1;
+												var indAbaConferenciaEncalheContigencia = $(this).parent().find('.conferencia_encalhe_contigencia').index() > -1;
 												
 												if(indAbaConferenciaEncalhe) {
 													
@@ -204,6 +208,14 @@
 													
 													lancamentoController.verificarAlteracoesLancamentoFaltasSobrasParaFecharAba(self, index);
 													
+												} else if (indAbaConferenciaEncalheContigencia){
+													
+													if((typeof(ConferenciaEncalheCont)  == 'undefined') || ConferenciaEncalheCont == null) {
+														return;
+													}
+													
+													ConferenciaEncalheCont.verificarAlteracoesConferenciaEncalheParaFecharAba(self, index);
+												
 												} else {
 													
 													$(self).tabs("remove", index);

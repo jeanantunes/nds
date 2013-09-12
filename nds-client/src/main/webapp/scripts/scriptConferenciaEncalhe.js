@@ -58,11 +58,11 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		if (r==false){
 			
-			$("#numeroCota").attr('readonly', true);
+			$("#numeroCota",ConferenciaEncalhe.workspace).attr('readonly', true);
 		}
 		else{
 			
-			$("#numeroCota").attr('readonly', false);
+			$("#numeroCota",ConferenciaEncalhe.workspace).attr('readonly', false);
 		}
 	},
 	
@@ -363,6 +363,8 @@ var ConferenciaEncalhe = $.extend(true, {
 							
 							ConferenciaEncalhe.modalAberta = false;
 							
+							ConferenciaEncalhe.numeroCotaEditavel(true);
+							
 						},
 						"Não" : function() {
 							
@@ -371,6 +373,8 @@ var ConferenciaEncalhe = $.extend(true, {
 							$("#dialog-conferencia-nao-salva", ConferenciaEncalhe.workspace).dialog("close");
 							
 							ConferenciaEncalhe.modalAberta = false;
+							
+							ConferenciaEncalhe.numeroCotaEditavel(false);
 							
 						}
 					},
@@ -451,7 +455,13 @@ var ConferenciaEncalhe = $.extend(true, {
 		});
 	},
 	
-	_pesquisarCota : function() {
+	pesquisarCota : function() {
+		
+		var numeroCotaDipopnivelPesquisa = $("#numeroCota",ConferenciaEncalhe.workspace).attr('readonly');
+		
+		if (numeroCotaDipopnivelPesquisa == 'readonly'){
+			return;
+		}
 		
 		var data = [
 		            {name: 'numeroCota', value : $("#numeroCota", ConferenciaEncalhe.workspace).val()}, 
@@ -544,7 +554,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					focusSelectRefField($("#cod_barras_conf_encalhe", ConferenciaEncalhe.workspace));
 				}
 				
-				ConferenciaEncalhe.numeroCotaEditavel(false);
+				ConferenciaEncalhe.numeroCotaEditavel(true);
 			}
 			
 			ConferenciaEncalhe.limparDadosProduto();
@@ -555,64 +565,6 @@ var ConferenciaEncalhe = $.extend(true, {
 			
 			focusSelectRefField($("#numeroCota", ConferenciaEncalhe.workspace));
 		});	
-	},
-	
-	pesquisarCota : function() {
-		var data = [
-		            {name: 'numeroCota', value : $("#numeroCota", ConferenciaEncalhe.workspace).val()}, 
-		            {name: 'indObtemDadosFromBD', value : true},
-		            {name: 'indConferenciaContingencia', value: false}
-		           ];
-		
-		$.postJSON(contextPath + "/devolucao/conferenciaEncalhe/verificarConferenciaEncalheCotaStatus", data,
-			function(result){
-			
-				if(	result.CONFERENCIA_ENCALHE_COTA_STATUS == 'INICIADA_NAO_SALVA') {
-					
-					ConferenciaEncalhe.modalAberta = true;
-					
-					$("#dialog-conferencia-nao-salva-troca-de-cota", ConferenciaEncalhe.workspace).dialog({
-						resizable : false,
-						height : 200,
-						width : 360,
-						modal : true,
-						buttons : {
-							
-							"Sim" : function() {
-								
-								window.event.preventDefault();
-								
-								$("#dialog-conferencia-nao-salva-troca-de-cota", ConferenciaEncalhe.workspace).dialog("close");
-								
-								ConferenciaEncalhe.modalAberta = false;
-								
-								ConferenciaEncalhe._pesquisarCota();
-								
-							},
-							"Não" : function() {
-								
-								window.event.preventDefault();
-								
-								$("#dialog-conferencia-nao-salva-troca-de-cota", ConferenciaEncalhe.workspace).dialog("close");
-								
-								ConferenciaEncalhe.modalAberta = false;
-								
-							}
-						},
-						
-						form: $("#dialog-conferencia-nao-salva-troca-de-cota", this.workspace).parents("form")
-						
-					});
-					
-					
-					
-				} else {
-					
-					ConferenciaEncalhe._pesquisarCota(result);		
-					
-				}
-			}
-		);
 	},
 	
 	verificarValorTotalNotaFiscal : function() {
@@ -1156,6 +1108,9 @@ var ConferenciaEncalhe = $.extend(true, {
 				$("#valorVendaDia", ConferenciaEncalhe.workspace).text(parseFloat(result.valorVendaDia).toFixed(2));
 				$("#totalOutrosValores", ConferenciaEncalhe.workspace).text(parseFloat(result.valorDebitoCredito).toFixed(2));
 				$("#valorAPagar", ConferenciaEncalhe.workspace).text(parseFloat(result.valorPagar).toFixed(2));
+				
+				ConferenciaEncalhe.numeroCotaEditavel(false);
+				
 			}, function(){
 				
 				var data = [
@@ -1399,6 +1354,8 @@ var ConferenciaEncalhe = $.extend(true, {
 				$("#qtdeExemplar", ConferenciaEncalhe.workspace).val(1);
 			}	
 		);
+		
+		ConferenciaEncalhe.numeroCotaEditavel(false);
 	},
 
 	limparDadosProduto : function(keepQtdValorCE){
