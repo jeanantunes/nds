@@ -351,13 +351,13 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		String nomeUsuario = "Não identificado";
 		
-		if(mapaSessionIDNomeUsuario != null && mapaSessionIDNomeUsuario.get(userSessionID) != null) {
-			nomeUsuario = mapaSessionIDNomeUsuario.get(userSessionID);
+		if(mapaSessionIDNomeUsuario != null && mapaSessionIDNomeUsuario.get(donoDoLockCotaConferida) != null) {
+			nomeUsuario = mapaSessionIDNomeUsuario.get(donoDoLockCotaConferida);
 		}
 		
 		throw new ValidacaoException(TipoMensagem.WARNING, 
 				" Não é possível iniciar a conferência de encalhe para esta cota, " +
-				" a mesma esta sendo conferida pelo usuário [ " + nomeUsuario  + " ] ");
+				" a mesma esta sendo conferida pelo(a) usuário(a) [ " + nomeUsuario  + " ] ");
 		
 	}
 	
