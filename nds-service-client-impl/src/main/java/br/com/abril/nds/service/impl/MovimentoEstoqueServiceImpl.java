@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.EstudoCotaDTO;
+import br.com.abril.nds.dto.MovimentoEstoqueCotaDTO;
 import br.com.abril.nds.dto.MovimentosEstoqueCotaSaldoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ImportacaoException;
@@ -175,10 +176,16 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 		Map<String, DescontoDTO> descontos = descontoService.obterDescontosPorLancamentoProdutoEdicaoMap(idLancamento, idProdutoEdicao);
 		
-		List<MovimentoEstoqueCota> movimentosEstoqueCota = new ArrayList<>();
+		for(String s : descontos.keySet()) {
+			System.out.println("key: "+ s);
+		}
+		
+		List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota = new ArrayList<MovimentoEstoqueCotaDTO>();
+		
+		System.out.println("Listagem Produto-Edicao / Cotas: "+ idProdutoEdicao +" / "+ listaEstudoCota.size());
 		for (EstudoCotaDTO estudoCota : listaEstudoCota) {
 
-			MovimentoEstoqueCota mec = criarMovimentoExpedicaoCota(
+			MovimentoEstoqueCotaDTO mec = criarMovimentoExpedicaoCota(
 				dataPrevista, idProdutoEdicao, estudoCota.getIdCota(),
 					idUsuario, estudoCota.getQtdeEfetiva(),tipoMovimentoCota,
 						dataDistribuidor,dataOperacao, idLancamento, estudoCota.getId(), descontos, false);
@@ -190,19 +197,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 		gerarMovimentoEstoque(idProdutoEdicao, idUsuario, total, tipoMovimento, dataDistribuidor, false);
 		
-		int count = 0;
-		for(MovimentoEstoqueCota mec : movimentosEstoqueCota) {
-			movimentoEstoqueCotaRepository.merge(mec);
-			
-			if ( ++count % 20 == 0 ) {
-				movimentoEstoqueCotaRepository.flush();
-				movimentoEstoqueCotaRepository.clear();
-			}
-			
-		}
-		
-		movimentoEstoqueCotaRepository.flush();
-		movimentoEstoqueCotaRepository.clear();
+		movimentoEstoqueCotaRepository.bulkInsert(movimentosEstoqueCota);
 		
 	}
 
@@ -1233,7 +1228,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	}
 	
 	@Transactional
-	public MovimentoEstoqueCota criarMovimentoExpedicaoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, 
+	public MovimentoEstoqueCotaDTO criarMovimentoExpedicaoCota(Date dataLancamento, Long idProdutoEdicao, Long idCota, 
 			Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, 
 			Date dataMovimento, Date dataOperacao, Long idLancamento, Long idEstudoCota, Map<String, DescontoDTO> descontos, boolean isMovimentoDiferencaAutomatico) {
 
@@ -1244,24 +1239,24 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		}
 		
-		MovimentoEstoqueCota movimentoEstoqueCota = new MovimentoEstoqueCota();
+		MovimentoEstoqueCotaDTO movimentoEstoqueCota = new MovimentoEstoqueCotaDTO();
 		
-		movimentoEstoqueCota.setTipoMovimento(tipoMovimentoEstoque);
-		movimentoEstoqueCota.setCota(new Cota(idCota));
+		movimentoEstoqueCota.setTipoMovimentoId(tipoMovimentoEstoque.getId());
+		movimentoEstoqueCota.setIdCota(idCota);
 		
 		movimentoEstoqueCota.setData(dataMovimento==null? dataOperacao : dataMovimento);
 
 		movimentoEstoqueCota.setDataLancamentoOriginal(dataMovimento);
 		
 		movimentoEstoqueCota.setDataCriacao(dataOperacao);
-		movimentoEstoqueCota.setProdutoEdicao(new ProdutoEdicao(idProdutoEdicao));
+		movimentoEstoqueCota.setIdProdEd(idProdutoEdicao);
 		movimentoEstoqueCota.setQtde(quantidade);
-		movimentoEstoqueCota.setUsuario(new Usuario(idUsuario));
-		movimentoEstoqueCota.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
+		movimentoEstoqueCota.setUsuarioId(idUsuario);
+		movimentoEstoqueCota.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.ordinal());
 
 		if (idEstudoCota != null) {
 			
-			movimentoEstoqueCota.setEstudoCota(new EstudoCota(idEstudoCota));
+			movimentoEstoqueCota.setEstudoCotaId(idEstudoCota);
 		}
 		
 		if (dataLancamento != null && idProdutoEdicao != null) {
@@ -1278,38 +1273,34 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 				Lancamento lancamento = lancamentoRepository.buscarPorId(idLancamento);
 				
-				movimentoEstoqueCota.setLancamento(lancamento);
+				movimentoEstoqueCota.setLancamentoId(lancamento.getId());
 				
 				ProdutoEdicao produtoEdicao = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 
 				//Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(lancamento, new Cota(idCota), produtoEdicao);
+				/**
+				 * A busca dos descontos é feita diretamente no Map, por chave, agilizando o retorno do resultado
+				 */
 				String key = new StringBuilder()
-					.append(idCota)
-					.append(produtoEdicao.getProduto().getFornecedor().getId())
-					.append(produtoEdicao.getId())
-					.append(produtoEdicao.getProduto().getId())
-					.toString();
+						.append("c")
+						.append(idCota)
+						.append("f")
+						.append(produtoEdicao.getProduto().getFornecedor().getId())
+						.append("pe")
+						.append(produtoEdicao.getId())
+						.append("p")
+						.append(produtoEdicao.getProduto().getId())
+						.toString();
 				
 				DescontoDTO descontoDTO = descontos.get(key);
+				
 				if(descontoDTO == null) {
 					key = new StringBuilder()
+						.append("c")
 						.append(idCota)
+						.append("f")
 						.append(produtoEdicao.getProduto().getFornecedor().getId())
-						.toString();
-				
-					descontoDTO = descontos.get(key);
-				}
-				
-				if(descontoDTO == null) {
-					key = new StringBuilder()
-						.append(produtoEdicao.getProduto().getFornecedor().getId())
-						.toString();
-				
-					descontoDTO = descontos.get(key);
-				}
-				
-				if(descontoDTO == null) {
-					key = new StringBuilder()
+						.append("pe")
 						.append(produtoEdicao.getId())
 						.toString();
 				
@@ -1318,10 +1309,64 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				
 				if(descontoDTO == null) {
 					key = new StringBuilder()
+						.append("c")
+						.append(idCota)
+						.append("f")
+						.append(produtoEdicao.getProduto().getFornecedor().getId())
+						.append("p")
 						.append(produtoEdicao.getProduto().getId())
 						.toString();
 				
 					descontoDTO = descontos.get(key);
+				}
+				
+				if(descontoDTO == null) {
+					key = new StringBuilder()
+						.append("pe")
+						.append(produtoEdicao.getId())
+						.toString();
+				
+					descontoDTO = descontos.get(key);
+				}
+				
+				if(descontoDTO == null) {
+					key = new StringBuilder()
+						.append("p")
+						.append(produtoEdicao.getProduto().getId())
+						.toString();
+				
+					descontoDTO = descontos.get(key);
+				}
+				
+				if(descontoDTO == null) {
+					key = new StringBuilder()
+						.append("c")
+						.append(idCota)
+						.append("f")
+						.append(produtoEdicao.getProduto().getFornecedor().getId())
+						.toString();
+				
+					descontoDTO = descontos.get(key);
+				}
+				
+				if(descontoDTO == null) {
+					key = new StringBuilder()
+						.append("f")
+						.append(produtoEdicao.getProduto().getFornecedor().getId())
+						.toString();
+				
+					descontoDTO = descontos.get(key);
+				}
+				
+				if(descontoDTO == null) {
+					
+					ProdutoEdicao pe = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+					
+					if(pe != null && pe.getProduto() != null)
+						throw new ValidacaoException(TipoMensagem.ERROR, "Produto sem desconto: "+ pe.getProduto().getCodigo() +" / "+ pe.getNumeroEdicao());
+					else
+						throw new ValidacaoException(TipoMensagem.ERROR, "Produto sem desconto.");
+					
 				}
 				
 				BigDecimal desconto = descontoDTO.getValor();				
@@ -1330,27 +1375,30 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 						produtoEdicao.getPrecoVenda().subtract(
 								MathUtil.calculatePercentageValue(produtoEdicao.getPrecoVenda(), desconto));
 
-				ValoresAplicados valoresAplicados = new ValoresAplicados();
-				valoresAplicados.setPrecoVenda(produtoEdicao.getPrecoVenda());
-				valoresAplicados.setValorDesconto(desconto);
-				valoresAplicados.setPrecoComDesconto(precoComDesconto);
-				
-				movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
+				movimentoEstoqueCota.setPrecoVenda(produtoEdicao.getPrecoVenda());
+				movimentoEstoqueCota.setPrecoComDesconto(precoComDesconto);				
+				movimentoEstoqueCota.setValorDesconto(desconto);
 				
 			}			
 		}
 		
 		if (tipoMovimentoEstoque.isAprovacaoAutomatica() || isMovimentoDiferencaAutomatico) {
 
-			movimentoEstoqueCota.setStatus(StatusAprovacao.APROVADO);
-			movimentoEstoqueCota.setAprovador(new Usuario(idUsuario));
+			movimentoEstoqueCota.setStatus(StatusAprovacao.APROVADO.name());
+			movimentoEstoqueCota.setUsuarioAprovadorId(idUsuario);
 			movimentoEstoqueCota.setDataAprovacao(dataOperacao);
 			
 			//movimentoEstoqueCota = movimentoEstoqueCotaRepository.merge(movimentoEstoqueCota);
 			
-			Long idEstoqueCota = this.atualizarEstoqueProdutoCota(tipoMovimentoEstoque, movimentoEstoqueCota);
+			// Necessario para gerar o id do estoque da cota utilizado na transacao
+			MovimentoEstoqueCota mec = new MovimentoEstoqueCota();
+			mec.setCota(new Cota(idCota));
+			mec.setProdutoEdicao(new ProdutoEdicao(idProdutoEdicao));		
+			mec.setStatus(StatusAprovacao.APROVADO);
+			mec.setQtde(quantidade);
+			Long idEstoqueCota = this.atualizarEstoqueProdutoCota(tipoMovimentoEstoque, mec);
 			
-			movimentoEstoqueCota.setEstoqueProdutoCota(new EstoqueProdutoCota(idEstoqueCota));
+			movimentoEstoqueCota.setEstoqueProdutoEdicaoCotaId(idEstoqueCota);
 
 		} else {
 			

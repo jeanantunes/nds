@@ -504,20 +504,15 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 			Long produtoEdicaoId) {
 
 		StringBuilder hql = new StringBuilder("")
-		.append(" select cota_id as cotaId, fornecedor_id as fornecedorId, produto_edicao_id as produtoEdicaoId, produto_id as produtoId, valor ")
-		.append(" from VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ")
-		.append(" union ")
-		.append(" select null as cotaId, f.id as fornecedorId, null as produtoEdicaoId, null as produtoId, valor ")
-		.append(" from FORNECEDOR f ")
-		.append(" inner join desconto d on d.id = f.desconto_id ")
-		.append(" union ")
-		.append(" select null as cotaId, null as fornecedorId, pe.id as produtoEdicaoId, null as produtoId, valor ")
-		.append(" from PRODUTO_EDICAO pe ")
-		.append(" inner join desconto d on d.id = pe.desconto_id ")
-		.append(" union ")
-		.append(" select null as cotaId, null as fornecedorId, null as produtoEdicaoId, p.id as produtoId, valor ")
-		.append(" from PRODUTO p ")
-		.append(" inner join desconto d on d.id = p.desconto_id ");
+			.append(" select cota_id as cotaId, fornecedor_id as fornecedorId, produto_edicao_id as produtoEdicaoId, produto_id as produtoId, valor ")
+			.append(" from VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ")
+			.append(" union ")
+			.append(" select null as cotaId, null as fornecedorId, PRODUTO_EDICAO_ID as produtoEdicaoId, PRODUTO_ID as produtoId, valor ")
+			.append(" from view_desconto_produtos_edicoes ")
+			.append(" union ")
+			.append(" select null as cotaId, f.id as fornecedorId, null as produtoEdicaoId, null as produtoId, valor ")
+			.append(" from FORNECEDOR f ")
+			.append(" inner join desconto d on d.id = f.desconto_id ");
 
 		SQLQuery query = getSession().createSQLQuery(hql.toString());
 		query.setResultTransformer(new AliasToBeanResultTransformer(DescontoDTO.class));

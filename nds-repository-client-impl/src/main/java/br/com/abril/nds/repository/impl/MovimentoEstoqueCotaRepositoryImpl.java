@@ -18,7 +18,6 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.hibernate.Transaction;
 import org.hibernate.jdbc.Work;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
@@ -26,7 +25,10 @@ import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.AbastecimentoDTO;
@@ -63,8 +65,6 @@ import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
-
-import com.mysql.jdbc.PreparedStatement;
 
 @Repository
 public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<MovimentoEstoqueCota, Long> implements MovimentoEstoqueCotaRepository {
@@ -3053,72 +3053,44 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	}
 
 	@Override
-	public void bulkInsert(List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota) {
-		/*
-		if (movimentosEstoqueCota.isEmpty()) {
-	        return;
-	    }
+	public void bulkInsert(final List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota) {
 
-	    Session session = this.getSession();
-	    
-	    try {
-	    	session.doWork(new Work() {
-		    	@Override
-		        public void execute(Connection connection) throws SQLException {
-		            //connection, finally!
-		    		Transaction transaction = null;
+		if (movimentosEstoqueCota == null || movimentosEstoqueCota.isEmpty()) {
+			return;
+		}
 
-		    		Long entryCounter = 0L;
+		Session session = this.getSession();
 
-		    		PreparedStatement batchUpdate = null;
-		    		
-		    		transaction = session.beginTransaction();
-			        batchUpdate = session.connection().prepareStatement(insertSql);
+		session.doWork(new Work() {
+			@Override
+			public void execute(Connection conn) throws SQLException {
+				
+				NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
 
-			        for (MovimentoEstoqueCotaDTO entry : movimentosEstoqueCota) {
-			            entry.addEntry(batchUpdate);
-			            batchUpdate.addBatch();
+				//.append("(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ");
+				StringBuilder sqlQry = new StringBuilder()
+					.append("insert ") 
+					.append("into MOVIMENTO_ESTOQUE_COTA ")
+					.append("(APROVADO_AUTOMATICAMENTE, APROVADOR_ID, DATA_APROVACAO, MOTIVO, STATUS, DATA, DATA_CRIACAO, ")
+					.append("DATA_INTEGRACAO, STATUS_INTEGRACAO, TIPO_MOVIMENTO_ID, USUARIO_ID, PRODUTO_EDICAO_ID, ")
+					.append("QTDE, COTA_ID, DATA_LANCAMENTO_ORIGINAL, ESTOQUE_PROD_COTA_ID, ESTOQUE_PROD_COTA_JURAMENTADO_ID, ")
+					.append("ESTUDO_COTA_ID, NOTA_ENVIO_ITEM_NOTA_ENVIO_ID, NOTA_ENVIO_ITEM_SEQUENCIA, LANCAMENTO_ID, ")
+					.append("MOVIMENTO_ESTOQUE_COTA_FURO_ID, MOVIMENTO_FINANCEIRO_COTA_ID, STATUS_ESTOQUE_FINANCEIRO, ")
+					.append("PRECO_COM_DESCONTO, PRECO_VENDA, VALOR_DESCONTO, ID) ") 
+					.append("values ")
+					.append("(:aprovadoAutomaticamente, :usuarioAprovadorId, :dataAprovacao, :motivo, :status, :data, :dataCriacao, ")
+					.append(":dataIntegracao, :statusIntegracao, :tipoMovimentoId, :usuarioId, :idProdEd, ")
+					.append(":qtde, :idCota, :dataLancamentoOriginal, :estoqueProdutoEdicaoCotaId, :estoqueProdutoCotaJuramentadoId, ")
+					.append(":estudoCotaId, :notaEnvioItemNotaEnvioId, :notaEnvioItemSequencia, :lancamentoId, ")
+					.append(":movimentoEstoqueCotaFuroId, :movimentoFinanceiroCotaId, :statusEstoqueFinanceiro, ")
+					.append(":precoComDesconto, :precoVenda, :valorDesconto, -1) ");
 
-			            if (++entryCounter % BATCH_SIZE == 0) {
-			                // Reached limit for uncommitted entries, so commit
-			                batchUpdate.executeBatch();
-			            }
-			        }
+				SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(movimentosEstoqueCota.toArray());
 
-			        // Commit any entries that have not been committed yet
-			        batchUpdate.executeBatch();
-			        batchUpdate.close();
-			        batchUpdate = null;
-		        }
-		    });
-	    	
-	        
-	    }
-	    catch (HibernateException ex) {
-	        transaction.rollback();
-	        transaction = null;
-	    }
-	    catch (SQLException ex) {
-	        transaction.rollback();
-	        transaction = null;
-	    }
-	    finally {
-	        if (transaction != null) {
-	            transaction.commit();
-	        }
+				namedParameterJdbcTemplate.batchUpdate(sqlQry.toString(), params);
 
-	        if (batchUpdate != null) {
-	            try {
-	                batchUpdate.cancel();
-	                batchUpdate.close();
-	            }
-	            catch (SQLException ex) {
+			}
+		});
 
-	            }
-	        }
-
-	        session.close();
-	    }
-		*/
 	}
 }

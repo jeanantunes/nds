@@ -1075,9 +1075,13 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		for(DescontoDTO desc : descontos) {
 			String key = new StringBuilder()
+				.append(desc.getCotaId() != null ? "c" : "")
 				.append(desc.getCotaId() != null ? desc.getCotaId() : "")
+				.append(desc.getFornecedorId() != null ? "f" : "")
 				.append(desc.getFornecedorId() != null ? desc.getFornecedorId() : "")
+				.append(desc.getProdutoEdicaoId() != null ? "pe" : "")
 				.append(desc.getProdutoEdicaoId() != null ? desc.getProdutoEdicaoId() : "")
+				.append(desc.getProdutoId() != null ? "p" : "")
 				.append(desc.getProdutoId() != null ? desc.getProdutoId() : "")
 				.toString();
 			descontosMap.put(key, desc);
