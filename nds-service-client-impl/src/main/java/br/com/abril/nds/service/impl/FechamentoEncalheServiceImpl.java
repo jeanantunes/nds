@@ -442,7 +442,14 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 		if(!cotaAusenteEncalheDTO.isIndPossuiChamadaEncalheCota()) {
 			
-			cotaAusenteEncalheDTO.setAcao(" Sem C.E.-Cota com Divida ");
+			if (cotaAusenteEncalheDTO.isIndMFCNaoConsolidado()) {
+				
+				cotaAusenteEncalheDTO.setAcao(" Sem C.E.-Cota com Divida ");
+			} 
+			else{
+				
+				cotaAusenteEncalheDTO.setAcao(" Sem C.E.-Cobrado ");
+			}
 			
 		} else {
 			
@@ -521,29 +528,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 	@Override
 	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
-	public void cobrarCotas(Date dataOperacao, Usuario usuario, List<Long> idsCotas) throws GerarCobrancaValidacaoException {
+	public void cobrarCota(Date dataOperacao, Usuario usuario, Long idCota) throws GerarCobrancaValidacaoException {
 
-		if (idsCotas == null || idsCotas.isEmpty()) {
-			throw new IllegalArgumentException("Lista de ids das cotas não pode ser nula e nem vazia.");
-		}
+		Cota cota = this.cotaRepository.buscarCotaPorID(idCota);
 		
-		List<Cota> listaCotas = 
-			this.cotaRepository.obterCotasPorIDS(idsCotas);
-		
-		GerarCobrancaValidacaoException ex = null;
-		for (Cota cota : listaCotas) {
-			
-			try {
-				realizarCobrancaCotas(dataOperacao, usuario, null, cota);
-			} catch (GerarCobrancaValidacaoException e) {
-				ex = e;
-			}
-		}
-		
-		if (ex != null){
-			
-			throw ex;
-		}
+		this.realizarCobrancaCotas(dataOperacao, usuario, null, cota);
 	}
 	
 	
@@ -567,124 +556,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			listaCotasAusentes.add(cotaAusenteEncalheDTO);
 		}
 		
-		for (CotaAusenteEncalheDTO c : listaCotasAusentes){
-			
-			Cota cota = this.cotaRepository.buscarCotaPorID(c.getIdCota());
-			
-			if(cota == null) {
-				
-				cota = this.cotaRepository.buscarPorId(c.getIdCota());
-				
-				if(cota == null) {
-					throw new ValidacaoException(TipoMensagem.ERROR, "Cota inexistente.");
-				}
-				
-			}
-			
-			movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(
-					cota, 
-					dataOperacao,
-					usuario,
-					null,
-					FormaComercializacao.CONSIGNADO);
-			
-			
-			Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
-			
-			GerarCobrancaValidacaoException ex = null;
-			
-			try {
-				this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), nossoNumeroEnvioEmail);
-			} catch (GerarCobrancaValidacaoException e) {
-				ex = e;
-				
-				if (validacaoVO.getListaMensagens() == null){
-					
-					validacaoVO.setListaMensagens(new ArrayList<String>());
-				}
-				
-				validacaoVO.getListaMensagens().addAll(e.getValidacaoVO().getListaMensagens());
-			}
-			
-			for (String nossoNumero : nossoNumeroEnvioEmail.keySet()){
-				
-				if (nossoNumeroEnvioEmail.get(nossoNumero)){
-					
-					String email = cota.getPessoa().getEmail();
-					
-					if (email == null || email.trim().isEmpty()){
-						
-						if (validacaoVO.getListaMensagens() == null){
-							validacaoVO.setListaMensagens(new ArrayList<String>());
-						}
-						
-						validacaoEmails.getListaMensagens().add(
-								"A cota "+ cota.getNumeroCota() +" não possui email cadastrado");
-					} else {
-					
-						try {
-							this.gerarCobrancaService.enviarDocumentosCobrancaEmail(nossoNumero, email);
-						} catch (AutenticacaoEmailException e) {
-							
-							if (validacaoVO.getListaMensagens() == null){
-								validacaoVO.setListaMensagens(new ArrayList<String>());
-							}
-							
-							// Caso dê erro para enviar o e-mail, mostra uma mensagem na tela
-							// Não mostramos mais este erro na tela
-							validacaoEmails.getListaMensagens().add("Erro ao enviar e-mail para cota " + 
-									cota.getNumeroCota() + ", " +
-									e.getMessage());
-						}
-					}
-				}
-			}
-	
-			List<ChamadaEncalhe> listaChamadaEncalhe = 
-				this.chamadaEncalheRepository.obterChamadasEncalhePor(dataOperacao, cota.getId());
+		Date dataOperacaoDistribuidor = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		for (CotaAusenteEncalheDTO c : listaCotasAusentes) {
 
-//TODO REMOVER GERACAO DE MEC COM QUANTDADE ZERO APOS OS TESTES...
-
-//			TipoMovimentoEstoque tipoMovimentoEstoque =
-//				this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
-//			
-//			TipoMovimentoEstoque tipoMovimentoEstoqueCota =
-//				this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_ENCALHE);
-			
-			for (ChamadaEncalhe chamadaEncalhe : listaChamadaEncalhe) {
-				
-				chamadaEncalhe.setDataRecolhimento(dataOperacao);
-				
-				List<ChamadaEncalheCota> listaChamadaEncalheCota = 
-						this.chamadaEncalheCotaRepository.obterListChamadaEncalheCota(chamadaEncalhe.getId(), cota.getId());
-				
-				for (ChamadaEncalheCota chamadaEncalheCota : listaChamadaEncalheCota) {
-					
-					chamadaEncalheCota.setFechado(true);
-				}
-
-				
-//				if (ex == null){
-//					
-//					this.movimentoEstoqueService.gerarMovimentoEstoque(
-//						chamadaEncalhe.getProdutoEdicao().getId(), 
-//							usuario.getId(), BigInteger.ZERO, tipoMovimentoEstoque);
-//					
-//					this.movimentoEstoqueService.gerarMovimentoCota(
-//							null, 
-//							chamadaEncalhe.getProdutoEdicao().getId(), 
-//							cota.getId(), 
-//							usuario.getId(), 
-//							BigInteger.ZERO, 
-//							tipoMovimentoEstoqueCota,
-//							dataOperacao);
-//				}
-	
-				this.chamadaEncalheRepository.merge(chamadaEncalhe);
-			}
-			
-			
-			
+			this.realizarCobrancaCota(dataOperacao, dataOperacaoDistribuidor, usuario, c, cotaAusente, validacaoVO, validacaoEmails);
 		}
 
 		// Se um dia precisar tratar as mensagens de erro de e-mail, elas estão nesta lista
@@ -694,6 +570,132 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		if (validacaoVO.getListaMensagens() != null && !validacaoVO.getListaMensagens().isEmpty()){
 			
 			throw new GerarCobrancaValidacaoException(validacaoVO);
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED, 
+				   noRollbackFor={GerarCobrancaValidacaoException.class, AutenticacaoEmailException.class})
+	public void realizarCobrancaCota(Date dataOperacao, Date dataOperacaoDistribuidor, 
+									 Usuario usuario,
+									 CotaAusenteEncalheDTO c, Cota cotaAusente, 
+									 ValidacaoVO validacaoVO, ValidacaoVO validacaoEmails) {
+
+		Cota cota = this.cotaRepository.buscarCotaPorID(c.getIdCota());
+		
+		if(cota == null) {
+			
+			cota = this.cotaRepository.buscarPorId(c.getIdCota());
+			
+			if(cota == null) {
+				throw new ValidacaoException(TipoMensagem.ERROR, "Cota inexistente.");
+			}
+			
+		}
+		
+		movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(
+				cota, 
+				dataOperacaoDistribuidor,
+				usuario,
+				null,
+				FormaComercializacao.CONSIGNADO);
+		
+		
+		Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
+		
+		GerarCobrancaValidacaoException ex = null;
+		
+		try {
+			this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), nossoNumeroEnvioEmail);
+		} catch (GerarCobrancaValidacaoException e) {
+			ex = e;
+			
+			if (validacaoVO.getListaMensagens() == null){
+				
+				validacaoVO.setListaMensagens(new ArrayList<String>());
+			}
+			
+			validacaoVO.getListaMensagens().addAll(e.getValidacaoVO().getListaMensagens());
+		}
+		
+		for (String nossoNumero : nossoNumeroEnvioEmail.keySet()){
+			
+			if (nossoNumeroEnvioEmail.get(nossoNumero)){
+				
+				String email = cota.getPessoa().getEmail();
+				
+				if (email == null || email.trim().isEmpty()){
+					
+					if (validacaoVO.getListaMensagens() == null){
+						validacaoVO.setListaMensagens(new ArrayList<String>());
+					}
+					
+					validacaoEmails.getListaMensagens().add(
+							"A cota "+ cota.getNumeroCota() +" não possui email cadastrado");
+				} else {
+				
+					try {
+						this.gerarCobrancaService.enviarDocumentosCobrancaEmail(nossoNumero, email);
+					} catch (AutenticacaoEmailException e) {
+						
+						if (validacaoVO.getListaMensagens() == null){
+							validacaoVO.setListaMensagens(new ArrayList<String>());
+						}
+						
+						// Caso dê erro para enviar o e-mail, mostra uma mensagem na tela
+						// Não mostramos mais este erro na tela
+						validacaoEmails.getListaMensagens().add("Erro ao enviar e-mail para cota " + 
+								cota.getNumeroCota() + ", " +
+								e.getMessage());
+					}
+				}
+			}
+		}
+
+		List<ChamadaEncalhe> listaChamadaEncalhe = 
+			this.chamadaEncalheRepository.obterChamadasEncalhePor(dataOperacao, cota.getId());
+
+//TODO REMOVER GERACAO DE MEC COM QUANTDADE ZERO APOS OS TESTES...
+
+//		TipoMovimentoEstoque tipoMovimentoEstoque =
+//			this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
+//		
+//		TipoMovimentoEstoque tipoMovimentoEstoqueCota =
+//			this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.ENVIO_ENCALHE);
+		
+		for (ChamadaEncalhe chamadaEncalhe : listaChamadaEncalhe) {
+			
+			chamadaEncalhe.setDataRecolhimento(dataOperacaoDistribuidor);
+			
+			List<ChamadaEncalheCota> listaChamadaEncalheCota = 
+					this.chamadaEncalheCotaRepository.obterListChamadaEncalheCota(chamadaEncalhe.getId(), cota.getId());
+			
+			for (ChamadaEncalheCota chamadaEncalheCota : listaChamadaEncalheCota) {
+				
+				chamadaEncalheCota.setFechado(true);
+			}
+
+			
+//			if (ex == null){
+//				
+//				this.movimentoEstoqueService.gerarMovimentoEstoque(
+//					chamadaEncalhe.getProdutoEdicao().getId(), 
+//						usuario.getId(), BigInteger.ZERO, tipoMovimentoEstoque);
+//				
+//				this.movimentoEstoqueService.gerarMovimentoCota(
+//						null, 
+//						chamadaEncalhe.getProdutoEdicao().getId(), 
+//						cota.getId(), 
+//						usuario.getId(), 
+//						BigInteger.ZERO, 
+//						tipoMovimentoEstoqueCota,
+//						dataOperacao);
+//			}
+
+			this.chamadaEncalheRepository.merge(chamadaEncalhe);
 		}
 	}
 
