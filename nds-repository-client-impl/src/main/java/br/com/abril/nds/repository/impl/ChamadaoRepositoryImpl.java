@@ -1,4 +1,5 @@
 package br.com.abril.nds.repository.impl;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -365,7 +366,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		hql.append(" 	  	 ON fornecedor.JURIDICA_ID = pessoa.ID ");
 		
 		hql.append(" WHERE tipo.GRUPO_MOVIMENTO_ESTOQUE = :grupoMovRecebimentoReparte ");
-		hql.append("      AND lancamento.STATUS IN (:statusLancamentoExpedido, :statusLancamentoEmBalanceamentoRec) ");
+		hql.append("      AND lancamento.STATUS IN (:statusLancamento) ");
 		hql.append("      AND lancamento.DATA_REC_PREVISTA >= :dataRecolhimento ");
 		hql.append("      AND (estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) > 0 ");
 		
@@ -454,10 +455,13 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		
 		query.setParameter("grupoMovRecebimentoReparte", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
 		
-		query.setParameter(
-			"statusLancamentoEmBalanceamentoRec", StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name());
+		List<String> statusLancamento = new ArrayList<>();
 		
-		query.setParameter("statusLancamentoExpedido", StatusLancamento.EXPEDIDO.name());
+		statusLancamento.add(StatusLancamento.EXPEDIDO.name());
+		statusLancamento.add(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name());
+		statusLancamento.add(StatusLancamento.BALANCEADO_RECOLHIMENTO.name());
+		
+		query.setParameterList("statusLancamento", statusLancamento);
 		
 		if (filtro == null) {
 			

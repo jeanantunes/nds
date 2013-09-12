@@ -308,3 +308,13 @@
 		</fieldset>
 	</div>
 </form>
+
+<form id="form-conferencia-nao-salva">
+<div id="dialog-conferencia-nao-salva" title="Confer&Ecirc;ncia de Encalhe" style="display: none;">
+	<fieldset style="width: 400px;">
+		<legend>Confer&ecirc;ncia de Encalhe da Cota</legend>
+	    <p>Confer&ecirc;ncia de encalhe da cota atual ainda n&atilde;o foi salva.</br> 
+	    Deseja realmente fechar esta aba?</p>
+	</fieldset>
+</div>
+</form>

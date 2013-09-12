@@ -718,7 +718,7 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 	}
 	
 	@Override
-	public Boolean existeChamadaEncalheCota(Long idCota, Long idProdutoEdicao) {
+	public Boolean existeChamadaEncalheCota(Long idCota, Long idProdutoEdicao, Boolean fechado, Date dataRecolhimento) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -726,17 +726,55 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		
 		hql.append(" from ChamadaEncalheCota cec ");
 		
-		hql.append(" where cec.cota.id = :idCota and ");
+		hql.append(" join cec.chamadaEncalhe chamadaEncalhe ");
 		
-		hql.append(" cec.chamadaEncalhe.produtoEdicao.id = :idProdutoEdicao ");
-
+		hql.append(" where cec.cota.id = :idCota ");
+		
+		hql.append(" and chamadaEncalhe.produtoEdicao.id = :idProdutoEdicao ");
+		
+		if (fechado != null) {
+			hql.append(" and cec.fechado = :fechado ");
+		}
+		
+		if (dataRecolhimento != null) {
+			hql.append(" and chamadaEncalhe.dataRecolhimento >= :dataRecolhimento ");
+		}
+		
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("idCota", idCota);
 		
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		
+		if (fechado != null) {
+			query.setParameter("fechado", fechado);
+		}
+		
+		if (dataRecolhimento != null) {
+			query.setParameter("dataRecolhimento", dataRecolhimento);
+		}
+		
 		return (Boolean) query.uniqueResult();
 	}
 	
+	public ChamadaEncalheCota obterChamadaEncalheCota(Long idCota, Long idProdutoEdicao, Date dataRecolhimento) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select chamadaEncalheCota from ChamadaEncalheCota chamadaEncalheCota ")
+			.append(" join chamadaEncalheCota.chamadaEncalhe chamadaEncalhe ")
+			.append(" WHERE chamadaEncalheCota.cota.id = :idCota ")
+			.append(" AND chamadaEncalhe.produtoEdicao.id = :idProdutoEdicao ")
+			.append(" and chamadaEncalhe.dataRecolhimento >= :dataRecolhimento ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idCota", idCota);
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setParameter("dataRecolhimento", dataRecolhimento);
+
+		query.setMaxResults(1);
+		
+		return (ChamadaEncalheCota) query.uniqueResult();
+	}
 }

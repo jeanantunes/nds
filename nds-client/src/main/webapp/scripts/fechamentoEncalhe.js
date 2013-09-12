@@ -1199,12 +1199,12 @@ var fechamentoEncalheController = $.extend(true, {
 		$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/obterStatusCobrancaCota", 
 			null,
 			function(result) {
-				$('#mensagemLoading').text(result);
-				
 				if(result=='FINALIZADO') {
 					$('#mensagemLoading').text('Aguarde, carregando ...');
-					window.clearInterval(fechamentoEncalheController.statusCobrancaCota);
-				}
+					for (var i = 1; i <= fechamentoEncalheController.statusCobrancaCota; i++)
+				        window.clearInterval(i);
+				}	
+				$('#mensagemLoading').text(result);
 			});	
 	} 
 	

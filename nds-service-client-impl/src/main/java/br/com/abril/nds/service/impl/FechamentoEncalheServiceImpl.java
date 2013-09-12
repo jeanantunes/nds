@@ -442,7 +442,14 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 		if(!cotaAusenteEncalheDTO.isIndPossuiChamadaEncalheCota()) {
 			
-			cotaAusenteEncalheDTO.setAcao(" Sem C.E.-Cota com Divida ");
+			if (cotaAusenteEncalheDTO.isIndMFCNaoConsolidado()) {
+				
+				cotaAusenteEncalheDTO.setAcao(" Sem C.E.-Cota com Divida ");
+			} 
+			else{
+				
+				cotaAusenteEncalheDTO.setAcao(" Sem C.E.-Cobrado ");
+			}
 			
 		} else {
 			
@@ -521,29 +528,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 	@Override
 	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
-	public void cobrarCotas(Date dataOperacao, Usuario usuario, List<Long> idsCotas) throws GerarCobrancaValidacaoException {
+	public void cobrarCota(Date dataOperacao, Usuario usuario, Long idCota) throws GerarCobrancaValidacaoException {
 
-		if (idsCotas == null || idsCotas.isEmpty()) {
-			throw new IllegalArgumentException("Lista de ids das cotas não pode ser nula e nem vazia.");
-		}
+		Cota cota = this.cotaRepository.buscarCotaPorID(idCota);
 		
-		List<Cota> listaCotas = 
-			this.cotaRepository.obterCotasPorIDS(idsCotas);
-		
-		GerarCobrancaValidacaoException ex = null;
-		for (Cota cota : listaCotas) {
-			
-			try {
-				realizarCobrancaCotas(dataOperacao, usuario, null, cota);
-			} catch (GerarCobrancaValidacaoException e) {
-				ex = e;
-			}
-		}
-		
-		if (ex != null){
-			
-			throw ex;
-		}
+		this.realizarCobrancaCotas(dataOperacao, usuario, null, cota);
 	}
 	
 	
@@ -569,7 +558,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		Date dataOperacaoDistribuidor = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
-		for (CotaAusenteEncalheDTO c : listaCotasAusentes){
+		for (CotaAusenteEncalheDTO c : listaCotasAusentes) {
 
 			this.realizarCobrancaCota(dataOperacao, dataOperacaoDistribuidor, usuario, c, cotaAusente, validacaoVO, validacaoEmails);
 		}
@@ -583,14 +572,18 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			throw new GerarCobrancaValidacaoException(validacaoVO);
 		}
 	}
-	
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	@Transactional(propagation=Propagation.REQUIRED, 
 				   noRollbackFor={GerarCobrancaValidacaoException.class, AutenticacaoEmailException.class})
 	public void realizarCobrancaCota(Date dataOperacao, Date dataOperacaoDistribuidor, 
-									 Usuario usuario, 
+									 Usuario usuario,
 									 CotaAusenteEncalheDTO c, Cota cotaAusente, 
 									 ValidacaoVO validacaoVO, ValidacaoVO validacaoEmails) {
-		
+
 		Cota cota = this.cotaRepository.buscarCotaPorID(c.getIdCota());
 		
 		if(cota == null) {
@@ -616,11 +609,14 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		GerarCobrancaValidacaoException ex = null;
 		
 		try {
-			
 			this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), nossoNumeroEnvioEmail);
-			
 		} catch (GerarCobrancaValidacaoException e) {
 			ex = e;
+			
+			if (validacaoVO.getListaMensagens() == null){
+				
+				validacaoVO.setListaMensagens(new ArrayList<String>());
+			}
 			
 			validacaoVO.getListaMensagens().addAll(e.getValidacaoVO().getListaMensagens());
 		}
@@ -633,6 +629,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				
 				if (email == null || email.trim().isEmpty()){
 					
+					if (validacaoVO.getListaMensagens() == null){
+						validacaoVO.setListaMensagens(new ArrayList<String>());
+					}
+					
 					validacaoEmails.getListaMensagens().add(
 							"A cota "+ cota.getNumeroCota() +" não possui email cadastrado");
 				} else {
@@ -640,6 +640,10 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 					try {
 						this.gerarCobrancaService.enviarDocumentosCobrancaEmail(nossoNumero, email);
 					} catch (AutenticacaoEmailException e) {
+						
+						if (validacaoVO.getListaMensagens() == null){
+							validacaoVO.setListaMensagens(new ArrayList<String>());
+						}
 						
 						// Caso dê erro para enviar o e-mail, mostra uma mensagem na tela
 						// Não mostramos mais este erro na tela
@@ -654,7 +658,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		List<ChamadaEncalhe> listaChamadaEncalhe = 
 			this.chamadaEncalheRepository.obterChamadasEncalhePor(dataOperacao, cota.getId());
 
-//		TODO REMOVER GERACAO DE MEC COM QUANTDADE ZERO APOS OS TESTES...
+//TODO REMOVER GERACAO DE MEC COM QUANTDADE ZERO APOS OS TESTES...
 
 //		TipoMovimentoEstoque tipoMovimentoEstoque =
 //			this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);

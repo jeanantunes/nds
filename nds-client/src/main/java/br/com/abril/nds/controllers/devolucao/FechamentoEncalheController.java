@@ -401,12 +401,11 @@ public class FechamentoEncalheController extends BaseController {
 				//idsCotas a serem retirados da lista
 				removerCotasAusentesLista(listaCotaAusenteEncalhe, idsCotas);
 				
-				this.realizarCobrancaCota(dataOperacao, listaCotaAusenteEncalhe);				
+				this.realizarCobrancaTodasCotas(dataOperacao, listaCotaAusenteEncalhe);				
 			
 			} else {
 			
-				idsCotas.addAll(getIdsCotasAusentesComDivida(listaCotaAusenteEncalhe));
-				this.fechamentoEncalheService.cobrarCotas(dataOperacao, getUsuarioLogado(), idsCotas);
+				this.realizarCobrancaCotasEspecificas(listaCotaAusenteEncalhe, idsCotas, dataOperacao);
 			}
 
 		} catch (ValidacaoException e) {
@@ -417,12 +416,55 @@ public class FechamentoEncalheController extends BaseController {
 				new ValidacaoException(TipoMensagem.WARNING, e.getValidacaoVO().getListaMensagens()).getValidacao(), "result").recursive().serialize();
 			return;
 		}
-		
+
 		this.result.use(Results.json()).from(
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Cotas cobradas com sucesso!"), "result").recursive().serialize();		
 	}
+	
+	private void realizarCobrancaCotasEspecificas(List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe, List<Long> idsCotas, Date dataOperacao) 
+																								throws GerarCobrancaValidacaoException {
 
-	private void realizarCobrancaCota(Date dataOperacao, List<CotaAusenteEncalheDTO> listaCotasAusentes) throws GerarCobrancaValidacaoException {
+		idsCotas.addAll(getIdsCotasAusentesComDivida(listaCotaAusenteEncalhe));
+		
+		if (idsCotas.isEmpty()) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Lista de ids das cotas não pode ser vazia.");
+		}
+		
+		GerarCobrancaValidacaoException ex = null;
+		
+		int statusCobrancaCota = 0;
+		int totalCotas = idsCotas.size();
+		
+		for (Long idCota : idsCotas) {
+
+			try {
+				
+				this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "Cota " + statusCobrancaCota++ + " de " + totalCotas);
+			
+				this.fechamentoEncalheService.cobrarCota(dataOperacao, getUsuarioLogado(), idCota);
+			
+			} catch (GerarCobrancaValidacaoException e) {
+				
+				ex = e;
+				
+			} catch (Exception e) {
+				
+				this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "FINALIZADO");
+				
+				throw e;
+			}
+		}	
+		
+		this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "FINALIZADO");
+
+		if (ex != null){
+			
+			throw ex;
+		}
+	}
+
+	private void realizarCobrancaTodasCotas(Date dataOperacao, List<CotaAusenteEncalheDTO> listaCotasAusentes) throws GerarCobrancaValidacaoException {
 		
 		ValidacaoVO validacaoVO = new ValidacaoVO();
 		validacaoVO.setListaMensagens(new ArrayList<String>());
@@ -437,12 +479,21 @@ public class FechamentoEncalheController extends BaseController {
 
 		for (CotaAusenteEncalheDTO c : listaCotasAusentes){
 			
-			this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "Cota " + statusCobrancaCota++ + " de " + totalCotas);
-
-			this.fechamentoEncalheService.realizarCobrancaCota(
-					dataOperacao, dataOperacaoDistribuidor, 
-					getUsuarioLogado(), c, null, 
-					validacaoVO, validacaoEmails);
+			try {
+			
+				this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "Cota " + statusCobrancaCota++ + " de " + totalCotas);
+	
+				this.fechamentoEncalheService.realizarCobrancaCota(
+						dataOperacao, dataOperacaoDistribuidor, 
+						getUsuarioLogado(), c, null, 
+						validacaoVO, validacaoEmails);
+			
+			} catch (Exception e) {
+				
+				this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "FINALIZADO");
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
+			}
 		}		
 
 		this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "FINALIZADO");

@@ -30,8 +30,7 @@ public interface FechamentoEncalheService {
 	
 	void postergarTodasCotas(Date dataEncalhe, Date dataPostergacao, List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe);
 
-	void cobrarCotas(Date dataOperacao, Usuario usuario, List<Long> idsCotas) throws GerarCobrancaValidacaoException;
-	
+	void cobrarCota(Date dataOperacao, Usuario usuario, Long idCota) throws GerarCobrancaValidacaoException;
 
 	BigDecimal buscarValorTotalEncalhe(Date dataEncalhe, Long idCota);
 	
