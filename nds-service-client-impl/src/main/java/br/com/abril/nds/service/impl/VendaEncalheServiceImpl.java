@@ -21,6 +21,7 @@ import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.export.JRPdfExporterParameter;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -1281,12 +1282,16 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	@Transactional(readOnly=true)
 	public VendaEncalheDTO buscarProdutoComEstoque(String codigoProduto,Long numeroEdicao, Long numeroCota){
 		
-		VendaEncalheDTO vendaEncalheDTO = new VendaEncalheDTO();
+		codigoProduto = StringUtils.leftPad(codigoProduto, 8, '0');
 		
 		ProdutoEdicao produtoEdicao  =  produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, numeroEdicao);
 		
+		VendaEncalheDTO vendaEncalheDTO = null;
+		
 		if(produtoEdicao!= null){
-			
+
+			vendaEncalheDTO = new VendaEncalheDTO();
+
 			EstoqueProduto estoqueProduto = estoqueProdutoRespository.buscarEstoquePorProduto(produtoEdicao.getId());
 			
 			if(estoqueProduto == null){

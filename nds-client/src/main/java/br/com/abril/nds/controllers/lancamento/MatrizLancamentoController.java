@@ -294,8 +294,8 @@ public class MatrizLancamentoController extends BaseController {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada!");
 		}
-
-		this.validarDatasConfirmacao(datasConfirmadas);
+		
+		this.validarDatasConfirmacao(datasConfirmadas.toArray(new Date[]{}));
 	
 		TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamentoSessao =
 			balanceamentoLancamento.getMatrizLancamento();
@@ -320,9 +320,9 @@ public class MatrizLancamentoController extends BaseController {
 			"Balanceamento da matriz de lançamento confirmado com sucesso!"), "result").recursive().serialize();
 	}
 
-	private void validarDatasConfirmacao(List<Date> datasConfirmadas) {
+	private void validarDatasConfirmacao(Date... datasConfirmadas) {
 		
-		if (datasConfirmadas == null || datasConfirmadas.size() <= 0){
+		if (datasConfirmadas == null || datasConfirmadas.length <= 0){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Selecione ao menos uma data!");
 		}
@@ -386,10 +386,12 @@ public class MatrizLancamentoController extends BaseController {
 		this.verificarExecucaoInterfaces();
 		
 		this.validarDadosReprogramar(novaDataFormatada);
-		
+	
 		adicionarAtributoAlteracaoSessao();
 		
 		Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
+		
+		this.validarDatasConfirmacao(novaData);
 		
 		this.validarListaParaReprogramacao(produtosLancamento);
 		
@@ -430,6 +432,8 @@ public class MatrizLancamentoController extends BaseController {
 		adicionarAtributoAlteracaoSessao();
 		
 		Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
+		
+		this.validarDatasConfirmacao(novaData);
 		
 		List<ProdutoLancamentoVO> produtosLancamento = new ArrayList<ProdutoLancamentoVO>();
 		
