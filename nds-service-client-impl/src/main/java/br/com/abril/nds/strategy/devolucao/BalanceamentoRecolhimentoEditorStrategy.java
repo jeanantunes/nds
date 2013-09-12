@@ -31,6 +31,8 @@ public class BalanceamentoRecolhimentoEditorStrategy extends AbstractBalanceamen
 		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoBalanceada =
 			new TreeMap<Date, List<ProdutoRecolhimentoDTO>>();
 		
+		TreeSet<Date> datasParaBalanceamento = super.obterDatasParaBalanceamento(dadosRecolhimento);
+		
 		this.processarProdutosRecolhimentoNaoBalanceaveis(
 			matrizRecolhimentoBalanceada, dadosRecolhimento);
 
@@ -39,8 +41,6 @@ public class BalanceamentoRecolhimentoEditorStrategy extends AbstractBalanceamen
 
 		Map<Long, List<ProdutoRecolhimentoDTO>> mapaProdutosRecolhimentoEditor = 
 			this.obterMapaProdutosRecolhimentoEditor(produtosRecolhimento);
-		
-		TreeSet<Date> datasParaBalanceamento = super.obterDatasParaBalanceamento(dadosRecolhimento);
 		
 		Map<Long, TreeMap<Date, BigDecimal>> mapaExpectativaEncalheEditor =
 			this.obterMapaExpectativaEncalhePorQuantidadeEditores(
