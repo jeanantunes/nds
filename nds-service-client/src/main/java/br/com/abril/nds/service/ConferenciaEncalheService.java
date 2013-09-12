@@ -20,7 +20,6 @@ import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
 import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
@@ -70,25 +69,16 @@ public interface ConferenciaEncalheService {
 			Date dataOperacao, 
 			boolean indConferenciaContingencia);
 	
+	
 	/**
-	 * Método faz seguintes verificações:
-	 * 
-	 * Se a cota ja possui uma conferencia de encalhe 
-	 * para a data de operação atual, caso positivo, será lancada 
-	 * uma exception para informando que é necessaria a reabertura
-	 * desta conferência.
-	 * 
-	 * Senão, é verificado se existe alguma chamada de encalhe para
-	 * a cota em questão. Se nenhuma chamada de encalhe atual ou 
-	 * futura for encontrada, é lançada exception informando que não
-	 * existe uma chamada de encalhe prevista para esta cota.
+	 * Verifica se a cota em questão possui uma conferencia de encalhe
+	 * ja finalizada na data de operação atual.
 	 * 
 	 * @param numeroCota
 	 * 
-	 * @throws ConferenciaEncalheExistenteException
-	 * @throws ChamadaEncalheCotaInexistenteException
+	 * @return boolean
 	 */
-	public void verificarChamadaEncalheCota(Integer numeroCota) throws ConferenciaEncalheExistenteException, ChamadaEncalheCotaInexistenteException;
+	public boolean verificarCotaComConferenciaEncalheFinalizada(Integer numeroCota);
 	
 	
 	/**
@@ -165,10 +155,9 @@ public interface ConferenciaEncalheService {
 	 * 
 	 * @return ProdutoEdicaoDTO
 	 * 
-	 * @throws ChamadaEncalheCotaInexistenteException
 	 * @throws EncalheRecolhimentoParcialException
 	 */
-	ProdutoEdicaoDTO pesquisarProdutoEdicaoPorId(Integer numeroCota, Long id) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException;
+	ProdutoEdicaoDTO pesquisarProdutoEdicaoPorId(Integer numeroCota, Long id) throws EncalheRecolhimentoParcialException;
 	
 	/**
 	 * Obtém dados do produtoEdicao através do código de barras do mesmo se houver chamada de encalhe.
@@ -178,10 +167,9 @@ public interface ConferenciaEncalheService {
 	 * 
 	 * @return List<ProdutoEdicaoDTO>
 	 * 
-	 * @throws ChamadaEncalheCotaInexistenteException
 	 * @throws EncalheRecolhimentoParcialException
 	 */
-	List<ProdutoEdicaoDTO> pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException;
+	List<ProdutoEdicaoDTO> pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws EncalheRecolhimentoParcialException;
 	
 	/**
 	 * Obtém dados do produtoEdicao através do código SM do mesmo se houver chamada de encalhe.
@@ -191,10 +179,9 @@ public interface ConferenciaEncalheService {
 	 * 
 	 * @return ProdutoEdicaoDTO
 	 * 
-	 * @throws ChamadaEncalheCotaInexistenteException
 	 * @throws EncalheRecolhimentoParcialException
 	 */
-	ProdutoEdicaoDTO pesquisarProdutoEdicaoPorSM(Integer numeroCota, Integer sm) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException;
+	ProdutoEdicaoDTO pesquisarProdutoEdicaoPorSM(Integer numeroCota, Integer sm) throws EncalheRecolhimentoParcialException;
 	
 	/**
 	 * Obtém detalhes do item de conferencia de encalhe.

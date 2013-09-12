@@ -11,6 +11,7 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 import br.com.abril.nds.client.util.Constants;
+import br.com.abril.nds.controllers.devolucao.ConferenciaEncalheController;
 
 
 public class ControleSessionListener implements HttpSessionListener {
@@ -26,7 +27,7 @@ public class ControleSessionListener implements HttpSessionListener {
 		
 		ServletContext context = session.getServletContext();
 		
-		removerTravaCotaConferidaUsuario(context, session);
+		removerTravaConferenciaCotaUsuario(context, session);
 
 	}
 	
@@ -37,25 +38,19 @@ public class ControleSessionListener implements HttpSessionListener {
 	 * @param context
 	 * @param session
 	 */
-	private void removerTravaCotaConferidaUsuario(ServletContext context, HttpSession session) {
+	private void removerTravaConferenciaCotaUsuario(ServletContext context, HttpSession session) {
 
 		String sessionID = session.getId();
 		
 		@SuppressWarnings("unchecked")
-		Map<Integer, String> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, String>) context.getAttribute(Constants.MAP_COTA_CONFERIDA_USUARIO);
+		Map<Integer, String> mapaCotaConferidaUsuario = (LinkedHashMap<Integer, String>) context.getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_USUARIO);
 		
-		if(mapaCotaConferidaUsuario == null || mapaCotaConferidaUsuario.isEmpty()) {
-			return;
-		}
+		@SuppressWarnings("unchecked")
+		Map<String, String> mapaSessionIDNomeUsuario = 
+			(LinkedHashMap<String, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_SESSION_ID_NOME_USUARIO);
+
 		
-		Set<Integer> cotasEmConferencia = mapaCotaConferidaUsuario.keySet();
-	
-		for(Integer numeroCota : cotasEmConferencia) {
-			if( mapaCotaConferidaUsuario.get(numeroCota).equals(sessionID) ) {
-				mapaCotaConferidaUsuario.remove(numeroCota);
-			}
-		}
-		
+		ConferenciaEncalheController.removerTravaConferenciaCotaUsuario(sessionID, mapaCotaConferidaUsuario, mapaSessionIDNomeUsuario);
 		
 	}
 
