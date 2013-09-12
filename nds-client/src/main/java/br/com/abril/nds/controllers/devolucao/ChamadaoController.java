@@ -294,7 +294,7 @@ public class ChamadaoController extends BaseController {
 	public void pesquisarConsignados(Integer numeroCota, String dataChamadaoFormatada, Long idFornecedor,
 									 Long idEditor, boolean chamadaEncalhe, String sortorder, String sortname, int page, int rp) {
 		
-		this.validarEntradaDadosPesquisa(numeroCota, dataChamadaoFormatada);
+		this.validarEntradaDadosPesquisa(numeroCota, dataChamadaoFormatada, chamadaEncalhe);
 		
 		Date dataChamadao = DateUtil.parseDataPTBR(dataChamadaoFormatada);
 		
@@ -558,8 +558,9 @@ public class ChamadaoController extends BaseController {
 	 * 
 	 * @param numeroCota - número da cota
 	 * @param dataChamadaoFormatada - data do chamadão
+	 * @param chamadaEncalhe 
 	 */
-	private void validarEntradaDadosPesquisa(Integer numeroCota, String dataChamadaoFormatada) {
+	private void validarEntradaDadosPesquisa(Integer numeroCota, String dataChamadaoFormatada, boolean chamadaEncalhe) {
 		
 		List<String> msgs = new ArrayList<String>();
 		
@@ -568,18 +569,14 @@ public class ChamadaoController extends BaseController {
 			msgs.add("O preenchimento da cota é obrigatório!");
 		}
 		
-		if (dataChamadaoFormatada == null 
-				|| dataChamadaoFormatada.trim().isEmpty()) {
+		Date dataChamadao = DateUtil.parseDataPTBR(dataChamadaoFormatada);
+		
+		if (!chamadaEncalhe && dataChamadao == null) {
 			
 			msgs.add("O preenchimento do campo [Data Chamadão] é obrigatório!");
 		}
 		
-		Date dataChamadao = DateUtil.parseDataPTBR(dataChamadaoFormatada);
-		
-		if (dataChamadao == null) {
-			
-			msgs.add("Data inválida");
-		} else {
+		if (dataChamadao != null) {
 			
 			Date dataAtual = DateUtil.removerTimestamp(this.distribuidorService.obterDataOperacaoDistribuidor());
 			
