@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -32,29 +31,29 @@ public class BalanceamentoRecolhimentoEditorStrategy extends AbstractBalanceamen
 		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimentoBalanceada =
 			new TreeMap<Date, List<ProdutoRecolhimentoDTO>>();
 		
-		Set<Date> obterDatasConfirmadas = super.obterDatasConfirmadas(dadosRecolhimento.getProdutosRecolhimento());
-		
-		TreeSet<Date> datasRecolhimento = super.obterDatasRecolhimento(dadosRecolhimento.getDatasRecolhimentoFornecedor(), obterDatasConfirmadas);
-		
-		this.processarProdutosRecolhimentoNaoBalanceaveis(matrizRecolhimentoBalanceada, dadosRecolhimento);
+		this.processarProdutosRecolhimentoNaoBalanceaveis(
+			matrizRecolhimentoBalanceada, dadosRecolhimento);
 
-		List<ProdutoRecolhimentoDTO> produtosRecolhimento = dadosRecolhimento.getProdutosRecolhimento();
+		List<ProdutoRecolhimentoDTO> produtosRecolhimento = 
+			dadosRecolhimento.getProdutosRecolhimento();
 
 		Map<Long, List<ProdutoRecolhimentoDTO>> mapaProdutosRecolhimentoEditor = 
 			this.obterMapaProdutosRecolhimentoEditor(produtosRecolhimento);
 		
+		TreeSet<Date> datasParaBalanceamento = super.obterDatasParaBalanceamento(dadosRecolhimento);
+		
 		Map<Long, TreeMap<Date, BigDecimal>> mapaExpectativaEncalheEditor =
-			this.obterMapaExpectativaEncalheEditor(mapaProdutosRecolhimentoEditor);
+			this.obterMapaExpectativaEncalhePorQuantidadeEditores(
+				mapaProdutosRecolhimentoEditor, datasParaBalanceamento);
 		
 		List<ProdutoRecolhimentoDTO> produtosRecolhimentoNaoBalanceados = 
 			this.alocarProdutosMatrizRecolhimento(
 				matrizRecolhimentoBalanceada, mapaExpectativaEncalheEditor, 
-				mapaProdutosRecolhimentoEditor, datasRecolhimento);
+					mapaProdutosRecolhimentoEditor, datasParaBalanceamento);
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento =
-			super.gerarBalanceamentoRecolhimentoDTO(matrizRecolhimentoBalanceada,
-													produtosRecolhimentoNaoBalanceados,
-													dadosRecolhimento);
+			super.gerarBalanceamentoRecolhimentoDTO(
+				matrizRecolhimentoBalanceada, produtosRecolhimentoNaoBalanceados, dadosRecolhimento);
 		
 		return balanceamentoRecolhimento;
 	}
@@ -106,6 +105,114 @@ public class BalanceamentoRecolhimentoEditorStrategy extends AbstractBalanceamen
 	/*
 	 * Obtém o mapa de expectativa de encalhe por editor.
 	 */
+	private Map<Long, TreeMap<Date, BigDecimal>> obterMapaExpectativaEncalhePorQuantidadeEditores(
+							Map<Long, List<ProdutoRecolhimentoDTO>> mapaProdutosRecolhimentoEditor,
+							TreeSet<Date> datasParaBalanceamento) {
+		
+		Map<Long, TreeMap<Date, BigDecimal>> mapaExpectativaEncalhePorQuantidadeEditores =
+			new HashMap<Long, TreeMap<Date,BigDecimal>>();
+		
+		int quantidadeEditores = mapaProdutosRecolhimentoEditor.size();
+		
+		int quantidadeDiasParaBalanceamento = datasParaBalanceamento.size();
+		
+		int quantidadeEditoresPorDiaBalanceamento;
+		
+		if (quantidadeEditores < quantidadeDiasParaBalanceamento) {
+			
+			quantidadeEditoresPorDiaBalanceamento = 1;
+			
+		} else {
+			
+			quantidadeEditoresPorDiaBalanceamento = 
+				quantidadeEditores / quantidadeDiasParaBalanceamento;
+		}
+		
+		Map<Date, Integer> mapaQuantidadeEditoresPorData = new HashMap<>();
+		
+		for (Date dataBalanceamento : datasParaBalanceamento) {
+			
+			for (Map.Entry<Long, List<ProdutoRecolhimentoDTO>> entryProdutosRecolhimentoEditor 
+					: mapaProdutosRecolhimentoEditor.entrySet()) {
+				
+				Long idEditor = entryProdutosRecolhimentoEditor.getKey();
+				
+				if (mapaExpectativaEncalhePorQuantidadeEditores.containsKey(idEditor)) {
+					
+					continue;
+				}
+				
+				Integer quantidadeEditoresAlocadosNaData =
+					mapaQuantidadeEditoresPorData.get(dataBalanceamento);
+				
+				if (quantidadeEditoresAlocadosNaData == null) {
+					
+					quantidadeEditoresAlocadosNaData = 0;
+				}
+				
+				if (quantidadeEditoresAlocadosNaData == quantidadeEditoresPorDiaBalanceamento
+						&& !datasParaBalanceamento.last().equals(dataBalanceamento)) {
+					
+					break;
+				}
+				
+				if (quantidadeEditoresAlocadosNaData < quantidadeEditoresPorDiaBalanceamento
+						|| datasParaBalanceamento.last().equals(dataBalanceamento)) {
+				
+					List<ProdutoRecolhimentoDTO> produtosRecolhimentoEditor = 
+						entryProdutosRecolhimentoEditor.getValue();
+					
+					Map<Date, BigDecimal> mapaExpectativaEncalheDiaria = new HashMap<Date, BigDecimal>();
+					
+					MapValueComparator<Date, BigDecimal> mapValueComparator =
+						new MapValueComparator<Date, BigDecimal>(mapaExpectativaEncalheDiaria, true);
+					
+					TreeMap<Date, BigDecimal> mapaExpectativaEncalheDiariaOrdenado = 
+						new TreeMap<Date, BigDecimal>(mapValueComparator);
+					
+					for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimentoEditor) {
+						
+						BigDecimal expectativaEncalheDiaria = 
+							mapaExpectativaEncalheDiaria.get(dataBalanceamento);
+						
+						BigDecimal expectativaEncalheProduto = 
+							produtoRecolhimento.getExpectativaEncalhe();
+						
+						if (expectativaEncalheDiaria == null) {
+							
+							expectativaEncalheDiaria = expectativaEncalheProduto;
+							
+						} else if (expectativaEncalheProduto != null) {
+							
+							expectativaEncalheDiaria = 
+								expectativaEncalheDiaria.add(expectativaEncalheProduto);
+						}
+						
+						mapaExpectativaEncalheDiaria.put(dataBalanceamento, expectativaEncalheDiaria);
+					}	
+					
+					mapaQuantidadeEditoresPorData.put(
+						dataBalanceamento, ++quantidadeEditoresAlocadosNaData);
+					
+					mapaExpectativaEncalheDiariaOrdenado.putAll(mapaExpectativaEncalheDiaria);
+					
+					mapaExpectativaEncalhePorQuantidadeEditores.put(
+						idEditor, mapaExpectativaEncalheDiariaOrdenado);
+				}
+			}
+		}
+
+		return mapaExpectativaEncalhePorQuantidadeEditores;
+	}
+	
+	/*
+	 * Obtém o mapa de expectativa de encalhe por editor.
+	 * 
+	 * DEPRECATED - Aguardando homologação do novo algoritmo 
+	 * do método obterMapaExpectativaEncalhePorQuantidadeEditores
+	 */
+	@Deprecated
+	@SuppressWarnings("unused")
 	private Map<Long, TreeMap<Date, BigDecimal>> obterMapaExpectativaEncalheEditor(
 											Map<Long, List<ProdutoRecolhimentoDTO>> mapaProdutosRecolhimentoEditor) {
 		
