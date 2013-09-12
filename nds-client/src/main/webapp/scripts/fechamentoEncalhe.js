@@ -12,6 +12,13 @@ var fechamentoEncalheController = $.extend(true, {
 	statusCobrancaCota: null,
 	
 	init : function() {
+		
+		var sizeNomeProduto = 110;
+		
+		if($("#permissaoColExemplDevolucao").val() != "true"){
+			sizeNomeProduto = 315;
+		}
+		
 		$("#datepickerDe", fechamentoEncalheController.workspace).datepicker({
 			showOn: "button",
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
@@ -102,7 +109,7 @@ var fechamentoEncalheController = $.extend(true, {
 			}, {
 				display : 'Produto',
 				name : 'produto',
-				width : 110,
+				width : sizeNomeProduto,
 				sortable : true,
 				align : 'left'
 			},{
@@ -173,6 +180,9 @@ var fechamentoEncalheController = $.extend(true, {
 		
 		if($("#permissaoColExemplDevolucao").val() != "true"){
 			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(6,false);
+			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(11,false);
+			$("#btnEncerrarOperacaoEncalhe", fechamentoEncalheController.workspace).hide();
+			$('.bt_sellAll', fechamentoEncalheController.workspace).hide();
 		}
 	},
 	
@@ -660,6 +670,34 @@ var fechamentoEncalheController = $.extend(true, {
 //			
 //		});
 		
+		var buttons = {
+			"Postergar": function() {
+				
+				if(!verificarPermissaoAcesso(fechamentoEncalheController.workspace))
+					return;
+				
+				fechamentoEncalheController.postergarCotas();
+				
+			},
+			"Cobrar": function() {
+				
+				if(!verificarPermissaoAcesso(fechamentoEncalheController.workspace))
+					return;
+				
+				fechamentoEncalheController.statusCobrancaCota = setInterval(fechamentoEncalheController.obterStatusCobrancaCota,5000);
+				
+				fechamentoEncalheController.veificarCobrancaGerada();
+				
+			},
+			"Cancelar": function() {
+				$(this).dialog( "close" );
+			}
+		};
+		
+		if($("#permissaoColExemplDevolucao").val() != "true"){
+			delete buttons.Postergar;
+			delete buttons.Cobrar;
+		}
 		
 		
 		$( "#dialog-encerrarEncalhe", fechamentoEncalheController.workspace ).dialog({
@@ -667,29 +705,7 @@ var fechamentoEncalheController = $.extend(true, {
 			height:500,
 			width:650,
 			modal: true,
-			buttons: {
-				"Postergar": function() {
-					
-					if(!verificarPermissaoAcesso(fechamentoEncalheController.workspace))
-						return;
-					
-					fechamentoEncalheController.postergarCotas();
-					
-				},
-				"Cobrar": function() {
-					
-					if(!verificarPermissaoAcesso(fechamentoEncalheController.workspace))
-						return;
-					
-					fechamentoEncalheController.statusCobrancaCota = setInterval(fechamentoEncalheController.obterStatusCobrancaCota,5000);
-
-					fechamentoEncalheController.veificarCobrancaGerada();
-					
-				},
-				"Cancelar": function() {
-					$(this).dialog( "close" );
-				}
-			},
+			buttons: buttons,			
 			beforeClose: function() {
 				clearMessageDialogTimeout('dialogMensagemNovo');
 			},
