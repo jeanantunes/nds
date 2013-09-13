@@ -370,6 +370,15 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		hql.append("      AND lancamento.DATA_REC_PREVISTA >= :dataRecolhimento ");
 		hql.append("      AND (estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) > 0 ");
 		
+		hql.append(" AND NOT EXISTS ( ");
+		hql.append(" 	SELECT chamadaEncalheCota.COTA_ID FROM CHAMADA_ENCALHE_COTA chamadaEncalheCota ");
+		hql.append(" 	JOIN CHAMADA_ENCALHE chamadaEncalhe ON chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.id ");
+		hql.append(" 	WHERE chamadaEncalheCota.COTA_ID = cota.ID ");
+		hql.append(" 	AND chamadaEncalhe.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
+		hql.append(" 	AND chamadaEncalhe.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalhe ");
+		hql.append(" 	AND chamadaEncalheCota.FECHADO = false ");
+		hql.append(" ) ");
+		
 		if (filtro != null) {
 		
 			if (filtro.getNumeroCota() != null ) {
@@ -454,6 +463,8 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 													 	 	  Query query) {
 		
 		query.setParameter("grupoMovRecebimentoReparte", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
+		
+		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.CHAMADAO.name());
 		
 		List<String> statusLancamento = new ArrayList<>();
 		

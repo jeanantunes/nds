@@ -49,7 +49,6 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
@@ -67,7 +66,6 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
-import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
@@ -123,7 +121,6 @@ import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
-import br.com.abril.nds.service.ConsolidadoFinanceiroService;
 import br.com.abril.nds.service.ControleNumeracaoSlipService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
@@ -133,8 +130,6 @@ import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
-import br.com.abril.nds.service.exception.ChamadaEncalheCotaInexistenteException;
-import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
 import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
@@ -153,9 +148,6 @@ import br.com.abril.nds.util.StringUtil;
 
 @Service
 public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService {
-	
-	@Autowired
-	private ConsolidadoFinanceiroService consolidadoFinanceiro;
 	
 	@Autowired
 	private FormaCobrancaService formaCobrancaService;
@@ -221,9 +213,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
 	
 	@Autowired
-	private ConsolidadoFinanceiroService consolidadoFinanceiroService;
-	
-	@Autowired
 	private NotaFiscalEntradaRepository notaFiscalEntradaRepository;
 	
 	@Autowired
@@ -243,7 +232,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 	@Autowired
 	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
-	
 	
 	@Autowired
 	private RecebimentoFisicoRepository recebimentoFisicoRepository;
@@ -379,12 +367,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 
-	/*
+	/**
 	 * (non-Javadoc)
-	 * @see br.com.abril.nds.service.ConferenciaEncalheService#verificarChamadaEncalheCota(java.lang.Integer)
+	 * @see br.com.abril.nds.service.ConferenciaEncalheService#verificarCotaComConferenciaEncalheFinalizada(java.lang.Integer)
 	 */
 	@Transactional(readOnly = true)
-	public void verificarChamadaEncalheCota(Integer numeroCota) throws ConferenciaEncalheExistenteException, ChamadaEncalheCotaInexistenteException {
+	public boolean verificarCotaComConferenciaEncalheFinalizada(Integer numeroCota) {
 		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
@@ -392,9 +380,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				controleConferenciaEncalheCotaRepository.obterControleConferenciaEncalheCota(numeroCota, dataOperacao);
 		
 		if(controleConferenciaEncalheCota != null && StatusOperacao.CONCLUIDO.equals(controleConferenciaEncalheCota.getStatus())) {
-			throw new ConferenciaEncalheExistenteException();
+			return true;
 		}
 		
+		return false;
 	}
 	
 	/**
@@ -914,7 +903,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		DebitoCreditoCotaDTO debitoCredito = new DebitoCreditoCotaDTO();
 		
-		if(BigDecimal.ZERO.compareTo(valor) < 0) {
+		if(BigDecimal.ZERO.compareTo(valor) > 0) {
 			
 			debitoCredito.setObservacoes(descricaoCredito);
 			debitoCredito.setTipoLancamentoEnum(OperacaoFinaceira.CREDITO);
@@ -1015,7 +1004,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	@Transactional(readOnly = true)
-	public ProdutoEdicaoDTO pesquisarProdutoEdicaoPorId(Integer numeroCota, Long idProdutoEdicao) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException {
+	public ProdutoEdicaoDTO pesquisarProdutoEdicaoPorId(Integer numeroCota, Long idProdutoEdicao) throws EncalheRecolhimentoParcialException {
 		
 		
 		if (numeroCota == null) {
@@ -1117,7 +1106,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	
 	@Transactional(readOnly = true)
-	public ProdutoEdicaoDTO pesquisarProdutoEdicaoPorSM(Integer numeroCota, Integer sm) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException {
+	public ProdutoEdicaoDTO pesquisarProdutoEdicaoPorSM(Integer numeroCota, Integer sm) throws EncalheRecolhimentoParcialException {
 		
 		if (numeroCota == null){
 			
@@ -1230,7 +1219,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	}
 	
 	@Transactional(readOnly = true)
-	public List<ProdutoEdicaoDTO> pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws ChamadaEncalheCotaInexistenteException, EncalheRecolhimentoParcialException {
+	public List<ProdutoEdicaoDTO> pesquisarProdutoEdicaoPorCodigoDeBarras(Integer numeroCota, String codigoDeBarras) throws EncalheRecolhimentoParcialException {
 		
 		if (numeroCota == null){
 			
@@ -1559,7 +1548,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		return nossoNumeroCollection;
 	}
-
 	
 	/**
 	 * Faz o cancelamento de dados financeiros relativos a 
@@ -1574,26 +1562,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if(movimentosFinanceiroCota!=null && !movimentosFinanceiroCota.isEmpty()) {
 			
-			for (MovimentoFinanceiroCota movimentoFinanceiroCota : movimentosFinanceiroCota) {
-
-				gerarCobrancaService.cancelarDividaCobranca(movimentoFinanceiroCota.getId(), idCota);
-				
-				if (movimentoFinanceiroCota.getMovimentos() != null){
-					
-					for (MovimentoEstoqueCota mec : movimentoFinanceiroCota.getMovimentos()){
-						
-						mec.setMovimentoFinanceiroCota(null);
-						
-						mec.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
-						
-						this.movimentoEstoqueCotaRepository.merge(mec);
-					}
-				}
-
-				movimentoFinanceiroCota.setConsolidadoFinanceiroCota(null);
-				
-				this.movimentoFinanceiroCotaRepository.remover(movimentoFinanceiroCota);
-			}
+			gerarCobrancaService.cancelarDividaCobranca(null, idCota);
 		}
 	}
 	
