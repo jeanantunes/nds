@@ -147,7 +147,7 @@ public class MixCotaProdutoController extends BaseController {
 					"Não foram encontrados resultados para a pesquisa.");
 		}
 		
-		TableModel<CellModelKeyValue<MixProdutoDTO>> tableModelProduto = montarTableModelProduto(filtro);
+		TableModel<CellModelKeyValue<MixProdutoDTO>> tableModelProduto = montarTableModelProduto(resultadoPesquisa,filtro);
 
 		result.use(Results.json()).withoutRoot().from(tableModelProduto)
 				.recursive().serialize();
@@ -222,12 +222,11 @@ public class MixCotaProdutoController extends BaseController {
 		return tableModel;
 	}
 
-	private TableModel<CellModelKeyValue<MixProdutoDTO>> montarTableModelProduto(
-			FiltroConsultaMixPorProdutoDTO filtro) {
+	private TableModel<CellModelKeyValue<MixProdutoDTO>> montarTableModelProduto(List<MixProdutoDTO> resultadoPesquisa,FiltroConsultaMixPorProdutoDTO filtro) {
 
-		List<MixProdutoDTO> resultadoPesquisa = mixCotaProdutoService
+/*		List<MixProdutoDTO> resultadoPesquisa = mixCotaProdutoService
 				.pesquisarPorProduto(filtro);
-
+*/
 		TableModel<CellModelKeyValue<MixProdutoDTO>> tableModel = new TableModel<CellModelKeyValue<MixProdutoDTO>>();
 
 		tableModel.setRows(CellModelKeyValue
