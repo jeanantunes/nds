@@ -913,7 +913,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		DebitoCreditoCotaDTO debitoCredito = new DebitoCreditoCotaDTO();
 		
-		if(BigDecimal.ZERO.compareTo(valor) < 0) {
+		if(BigDecimal.ZERO.compareTo(valor) > 0) {
 			
 			debitoCredito.setObservacoes(descricaoCredito);
 			debitoCredito.setTipoLancamentoEnum(OperacaoFinaceira.CREDITO);
