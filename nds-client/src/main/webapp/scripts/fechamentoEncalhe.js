@@ -16,7 +16,7 @@ var fechamentoEncalheController = $.extend(true, {
 		var sizeNomeProduto = 110;
 		
 		if($("#permissaoColExemplDevolucao").val() != "true"){
-			sizeNomeProduto = 315;
+			sizeNomeProduto = 465;
 		}
 		
 		$("#datepickerDe", fechamentoEncalheController.workspace).datepicker({
@@ -180,6 +180,8 @@ var fechamentoEncalheController = $.extend(true, {
 		
 		if($("#permissaoColExemplDevolucao").val() != "true"){
 			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(6,false);
+			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(7,false);
+			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(9,false);
 			$(".fechamentoGrid", fechamentoEncalheController.workspace).flexToggleCol(11,false);
 			$("#btnEncerrarOperacaoEncalhe", fechamentoEncalheController.workspace).hide();
 			$('.bt_sellAll', fechamentoEncalheController.workspace).hide();
