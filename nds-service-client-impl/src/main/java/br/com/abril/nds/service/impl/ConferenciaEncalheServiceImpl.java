@@ -49,7 +49,6 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
@@ -67,7 +66,6 @@ import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.RecebimentoFisico;
-import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
@@ -123,7 +121,6 @@ import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
-import br.com.abril.nds.service.ConsolidadoFinanceiroService;
 import br.com.abril.nds.service.ControleNumeracaoSlipService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
@@ -151,9 +148,6 @@ import br.com.abril.nds.util.StringUtil;
 
 @Service
 public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService {
-	
-	@Autowired
-	private ConsolidadoFinanceiroService consolidadoFinanceiro;
 	
 	@Autowired
 	private FormaCobrancaService formaCobrancaService;
@@ -219,9 +213,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
 	
 	@Autowired
-	private ConsolidadoFinanceiroService consolidadoFinanceiroService;
-	
-	@Autowired
 	private NotaFiscalEntradaRepository notaFiscalEntradaRepository;
 	
 	@Autowired
@@ -241,7 +232,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 	@Autowired
 	private TipoNotaFiscalRepository tipoNotaFiscalRepository;
-	
 	
 	@Autowired
 	private RecebimentoFisicoRepository recebimentoFisicoRepository;
