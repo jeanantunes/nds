@@ -222,7 +222,7 @@ var consultaConsignadoCotaController = $.extend(true, {
 	
 	pesquisar : function(){
 		
-		var cota = $('#codigoCota', consultaConsignadoCotaController.workspace).val();
+		var cota = $('#codigoCota', consultaConsignadoCotaController.workspace).val().trim();
 		var idFornecedor = $('#idFornecedor', consultaConsignadoCotaController.workspace).val();
 		
 		if(idFornecedor == "-1"){

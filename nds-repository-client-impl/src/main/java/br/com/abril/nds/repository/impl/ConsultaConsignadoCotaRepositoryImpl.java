@@ -12,7 +12,9 @@ import java.util.Map;
 import javax.sql.DataSource;
 
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
@@ -209,47 +211,100 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 	public List<ConsultaConsignadoCotaPeloFornecedorDTO> buscarMovimentosCotaPeloFornecedor(
 			FiltroConsultaConsignadoCotaDTO filtro, boolean limitar) {
 		
-		StringBuilder hql = new StringBuilder();
+		StringBuilder sql = new StringBuilder();
 		
-		hql.append(" SELECT cota.numeroCota as numeroCota, 		")
-		   .append(" (CASE WHEN (pessoaCota.nome is not null)	")
-		   .append(" THEN ( pessoaCota.nome ) 					")
-		   .append(" WHEN (pessoaCota.razaoSocial is not null) 	")
-		   .append(" THEN (pessoaCota.razaoSocial)  			")
-		   .append(" ELSE null END) as nomeCota, 			    ")
-		   
-		   .append(" SUM(movimento.qtde) as consignado, 				")
-		   
-		   .append(" SUM( coalesce(movimento.valoresAplicados.precoVenda, pe.precoVenda, 0)  * movimento.qtde) as total, ")
-		   
-		   .append(" SUM( coalesce(movimento.valoresAplicados.precoComDesconto, pe.precoVenda, 0) * movimento.qtde )  as totalDesconto, ")
-		   
-		   .append(" pessoa.razaoSocial as nomeFornecedor,  ")
-		   
-		   .append(" fornecedor.id as idFornecedor  ");
+		sql.append(" SELECT "); 
+		sql.append(" consignadoDistribuidor.numeroCota as numeroCota, ");
+		sql.append(" consignadoDistribuidor.nomeCota as nomeCota, ");
+		sql.append(" sum(consignadoDistribuidor.reparte) as consignado, ");
+		sql.append(" sum(consignadoDistribuidor.total) as total, ");
+		sql.append(" sum(consignadoDistribuidor.totalDesconto) as totalDesconto, ");
+		sql.append(" consignadoDistribuidor.nomeFornecedor as nomeFornecedor, ");
+		sql.append(" consignadoDistribuidor.idFornecedor as idFornecedor ");
+
+		sql.append(" FROM ( ");
+
+		sql.append(" SELECT  ");
+		sql.append(" c.NUMERO_COTA AS numeroCota, "); 
+
+		sql.append(" CASE WHEN p.NOME IS NOT NULL THEN p.NOME "); 
+		sql.append(" WHEN p.RAZAO_SOCIAL IS NOT NULL THEN p.RAZAO_SOCIAL ELSE NULL END AS nomeCota, "); 
+
+		sql.append(" SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END-(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' THEN MEC.QTDE ELSE 0 END)) AS reparte, "); 
+		sql.append(" COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0)	* SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END-(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' THEN MEC.QTDE ELSE 0 END)) AS total, "); 
+		sql.append(" COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0)* SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END-(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' THEN MEC.QTDE ELSE 0 END)) AS totalDesconto, ");
+
+		sql.append(" PJ.RAZAO_SOCIAL AS nomeFornecedor, "); 
+		sql.append(" forn.ID AS idFornecedor ");
+		sql.append(" FROM MOVIMENTO_ESTOQUE_COTA MEC ");
+		sql.append(" LEFT OUTER ");
+		sql.append(" JOIN LANCAMENTO LCTO ON MEC.LANCAMENTO_ID=LCTO.ID ");
+		sql.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ");
+		sql.append(" LEFT OUTER ");
+		sql.append(" JOIN PARAMETRO_COBRANCA_COTA PCC ON C.ID=PCC.COTA_ID ");
+		sql.append(" INNER JOIN PESSOA P ON C.PESSOA_ID=P.ID ");
+		sql.append(" INNER JOIN TIPO_MOVIMENTO TM ON MEC.TIPO_MOVIMENTO_ID=TM.ID ");
+		sql.append(" INNER JOIN PRODUTO_EDICAO PE ON MEC.PRODUTO_EDICAO_ID = PE.ID ");
+		sql.append(" INNER JOIN PRODUTO PR ON PE.PRODUTO_ID=PR.ID ");
+		sql.append(" INNER JOIN PRODUTO_FORNECEDOR F ON PR.ID=F.PRODUTO_ID ");
+		sql.append(" INNER JOIN FORNECEDOR forn ON F.fornecedores_ID=forn.ID ");
+		sql.append(" INNER JOIN PESSOA PJ ON forn.JURIDICA_ID=PJ.ID ");
+		sql.append(" WHERE (MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID IS NULL)  ");
+		sql.append(" AND (TM.GRUPO_MOVIMENTO_ESTOQUE NOT IN (:tipoMovimentoEstorno)) ");
 		
-		hql.append(getHQLFromEWhereConsignadoCota(filtro));
+		if(filtro.getIdFornecedor()!=null) {
 		
-		hql.append(getGroupBy(filtro));
+			sql.append(" AND forn.ID = :idFornecedor ");
+		}
+		
+		if(filtro.getIdCota()!=null) {
+		
+			sql.append(" AND c.ID = :idCota ");
+		}
+		
+		sql.append(" AND (MEC.STATUS_ESTOQUE_FINANCEIRO IS NULL OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) ");
+		sql.append(" GROUP BY pe.ID, c.id ");
+		sql.append(" HAVING SUM((CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END) -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' THEN MEC.QTDE ELSE 0 END))>0 ");
+
+		sql.append(" ) AS consignadoDistribuidor ");
+		sql.append(" GROUP BY numeroCota, idFornecedor ");
 
 		if (filtro.getPaginacao() != null) {
 			if (filtro.getPaginacao().getSortColumn() != null) {
-				hql.append(" ORDER BY ");
-				hql.append(filtro.getPaginacao().getSortColumn());		
+				sql.append(" ORDER BY ");
+				sql.append(filtro.getPaginacao().getSortColumn());		
 			
 				if (filtro.getPaginacao().getOrdenacao() != null) {
-					hql.append(" ");
-					hql.append( filtro.getPaginacao().getOrdenacao().toString());
+					sql.append(" ");
+					sql.append( filtro.getPaginacao().getOrdenacao().toString());
 				}
 			}
 		}
 		
-		Query query =  getSession().createQuery(hql.toString());
+		Query query =  getSession().createSQLQuery(sql.toString());
 		
-		buscarParametrosConsignadoCota(query, filtro);
+		if(filtro.getIdCota()!=null) {
+			query.setParameter("idCota", filtro.getIdCota());
+		}
+
+		if(filtro.getIdFornecedor() != null ) { 
+			query.setParameter("idFornecedor", filtro.getIdFornecedor());
+		}
+
+		query.setParameter("tipoMovimentoEstorno", GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_FURO_PUBLICACAO.name());
+
+		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.ordinal());
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				ConsultaConsignadoCotaPeloFornecedorDTO.class));
+		
+		((SQLQuery) query).addScalar("numeroCota", StandardBasicTypes.INTEGER);
+		((SQLQuery) query).addScalar("nomeCota", StandardBasicTypes.STRING);
+		((SQLQuery) query).addScalar("consignado", StandardBasicTypes.BIG_INTEGER);
+		((SQLQuery) query).addScalar("total", StandardBasicTypes.BIG_DECIMAL);
+		((SQLQuery) query).addScalar("totalDesconto", StandardBasicTypes.BIG_DECIMAL);
+		((SQLQuery) query).addScalar("nomeFornecedor", StandardBasicTypes.STRING);
+		((SQLQuery) query).addScalar("idFornecedor", StandardBasicTypes.LONG);
 		
 		if (filtro.getPaginacao() != null) {
 			if(filtro.getPaginacao().getQtdResultadosPorPagina() != null) 
@@ -303,13 +358,21 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 //		BigDecimal totalRegistros = (BigDecimal) query.uniqueResult();
 		
 		StringBuilder sql = new StringBuilder();
-		
-		sql.append(" SELECT ");
 
-		sql.append(" 	COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0)" +
-				   "		*SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END" +
-				   "		   -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' then MEC.QTDE ELSE 0 END)) AS totalDesconto ");
+		if (filtro.getIdCota() == null) {
+
+			sql.append(" SELECT SUM(totalGeral.total) AS totalDesconto FROM (  ");
+			sql.append(" SELECT	COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0)" +
+					   "		*SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END" +
+					   "		   -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' then MEC.QTDE ELSE 0 END)) AS total ");
+		} else {
 		
+			sql.append(" SELECT SUM(totalGeral.totalComDesconto) AS totalDesconto FROM (  ");
+			sql.append(" SELECT	COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0)" +
+					   "		*SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END" +
+					   "		   -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' then MEC.QTDE ELSE 0 END)) AS totalComDesconto ");
+		}
+
 		sql.append(" FROM ");
 		
 		sql.append(" MOVIMENTO_ESTOQUE_COTA MEC ");
@@ -350,6 +413,16 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		}
 
 		sql.append(" AND (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) "); 
+		
+		sql.append(" GROUP BY pe.id ");
+		
+		if(filtro.getIdCota() == null) {
+			sql.append(" , c.id ");
+		}
+		
+		sql.append(" HAVING SUM((CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END) -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' THEN MEC.QTDE ELSE 0 END))>0 ");
+		
+		sql.append(" ) AS totalGeral ");
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		
