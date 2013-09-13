@@ -282,7 +282,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		cotadto.setNumeroCota(Integer.parseInt(mixCotaProdutoDTO.getNumeroCota()));
 		filtroExcecaoSeg.setExcecaoSegmento(true);
 		filtroExcecaoSeg.setCotaDto(cotadto);
-		
+		 
 		List<ProdutoRecebidoDTO> obterProdutosRecebidosPelaCotaList = this.excecaoSegmentoParciaisService.obterProdutosRecebidosPelaCota(filtroExcecaoSeg);
 		
 		Produto prd = this.produtoRepository.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto());

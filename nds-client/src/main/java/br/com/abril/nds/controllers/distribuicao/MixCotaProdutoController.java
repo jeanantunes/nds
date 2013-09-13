@@ -142,6 +142,11 @@ public class MixCotaProdutoController extends BaseController {
 
 		List<MixProdutoDTO> resultadoPesquisa = mixCotaProdutoService.pesquisarPorProduto(filtro);
 
+		if (resultadoPesquisa.isEmpty()) {
+			throw new ValidacaoException(TipoMensagem.WARNING,
+					"Não foram encontrados resultados para a pesquisa.");
+		}
+		
 		TableModel<CellModelKeyValue<MixProdutoDTO>> tableModelProduto = montarTableModelProduto(filtro);
 
 		result.use(Results.json()).withoutRoot().from(tableModelProduto)
