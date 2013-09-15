@@ -163,7 +163,7 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 		return precoCapaFormatado;
 	}
 
-	@Export(label = "Preço Desc R$", alignment= Alignment.RIGHT, exhibitionOrder = 7, columnType = ColumType.MOEDA)
+	@Export(label = "Preço Desc R$", alignment= Alignment.RIGHT, exhibitionOrder = 7, columnType = ColumType.MOEDA_QUATRO_CASAS)
 	public BigDecimal getPrecoDesconto() {
 		return precoDesconto;
 	}
@@ -171,7 +171,7 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 	public void setPrecoDesconto(BigDecimal precoDesconto) {
 		this.precoDesconto = precoDesconto;
 		if(precoDesconto != null){
-			precoDescontoFormatado = CurrencyUtil.formatarValor(precoDesconto);
+			precoDescontoFormatado = CurrencyUtil.formatarValorQuatroCasas(precoDesconto);
 		}
 	}
 	
@@ -197,7 +197,7 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 		return totalFormatado;
 	}
 
-	@Export(label = "Total Desc $", alignment= Alignment.RIGHT, exhibitionOrder = 10, columnType = ColumType.MOEDA)
+	@Export(label = "Total Desc $", alignment= Alignment.RIGHT, exhibitionOrder = 10, columnType = ColumType.MOEDA_QUATRO_CASAS)
 	public BigDecimal getTotalDesconto() {
 		return totalDesconto;
 	}
@@ -205,7 +205,7 @@ public class ConsultaConsignadoCotaDTO implements Serializable {
 	public void setTotalDesconto(BigDecimal totalDesconto) {
 		this.totalDesconto = totalDesconto;
 		if(totalDesconto != null){
-			totalDescontoFormatado = CurrencyUtil.formatarValor(totalDesconto);
+			totalDescontoFormatado = CurrencyUtil.formatarValorQuatroCasas(totalDesconto);
 		}
 	}
 	

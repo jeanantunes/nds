@@ -95,7 +95,13 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		}
 		
 		BigDecimal totalGeral = this.consultaConsignadoCota.buscarTotalGeralDaCota(filtro);
-		String totalFormatado = CurrencyUtil.formatarValor(totalGeral);
+		String totalFormatado = "";
+		
+		if(filtro.getIdCota() != null){
+			totalFormatado = CurrencyUtil.formatarValorQuatroCasas(totalGeral);
+		} else {
+			totalFormatado = CurrencyUtil.formatarValor(totalGeral);
+		}
 		
 		this.result.use(Results.json()).from(totalFormatado, "result").recursive().serialize();
 		
