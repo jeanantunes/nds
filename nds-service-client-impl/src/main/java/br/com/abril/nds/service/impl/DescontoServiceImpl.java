@@ -549,10 +549,11 @@ public class DescontoServiceImpl implements DescontoService {
 				descontoProximosLancamentos.setDesconto(desconto);
 				descontoProximosLancamentos.setAplicadoATodasAsCotas(descontoDTO.isTodasCotas());
 				
-				if(descontoDTO.isTodasCotas()) 
+				if(descontoDTO.isTodasCotas()) {
 					descontoProximosLancamentos.setCotas(null);
-				else
+				} else {
 					descontoProximosLancamentos.setCotas(cotas);
+				}
 				
 				descontoProximosLancamentos.setUsuario(usuario);
 				descontoProximosLancamentos.setDistribuidor(distribuidor);
@@ -937,22 +938,41 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		List<Produto> produtos = descontoRepository.buscarProdutosQueUsamDescontoProduto(desconto);
 		
-		for(ProdutoEdicao produtoEdicao : produtosEdicoes) {
-			
-			HistoricoDescontoProdutoEdicao hdpe = historicoDescontoProdutoEdicaoRepository.buscarHistoricoPorDescontoEProduto(desconto, produtoEdicao);
-			historicoDescontoProdutoEdicaoRepository.remover(hdpe);
-			
-			produtoEdicao.setDescontoProdutoEdicao(null);
-			
-		}
+		List<DescontoProximosLancamentos> descontoProximosLancamentos = descontoRepository.buscarProximosLancamentosQueUsamDescontoProduto(desconto);
 		
-		for(Produto produto : produtos) {
+		if(!desconto.isUsado()) {
 			
-			HistoricoDescontoProduto hdp = historicoDescontoProdutoRepository.buscarHistoricoPorDescontoEProduto(desconto, produto);
-			historicoDescontoProdutoRepository.remover(hdp);
+			for(ProdutoEdicao produtoEdicao : produtosEdicoes) {
+				
+				HistoricoDescontoProdutoEdicao hdpe = historicoDescontoProdutoEdicaoRepository.buscarHistoricoPorDescontoEProduto(desconto, produtoEdicao);
+				historicoDescontoProdutoEdicaoRepository.remover(hdpe);
+				
+				produtoEdicao.setDescontoProdutoEdicao(null);
+				
+			}
 			
-			produto.setDescontoProduto(null);
+			for(Produto produto : produtos) {
+				
+				produto.setDescontoProduto(null);
+				
+				HistoricoDescontoProduto hdp = historicoDescontoProdutoRepository.buscarHistoricoPorDescontoEProduto(desconto, produto);				
+				historicoDescontoProdutoRepository.remover(hdp);
+				
+			}
 			
+			
+			for(DescontoProximosLancamentos dpl : descontoProximosLancamentos) {
+				
+				dpl.setDesconto(null);
+				descontoProximosLancamentosRepository.merge(dpl);
+			}
+			
+			if( (produtos != null && produtos.isEmpty()) 
+					&& (produtosEdicoes != null && produtosEdicoes.isEmpty())
+					&& (descontoProximosLancamentos != null && descontoProximosLancamentos.isEmpty())) {
+				
+				descontoRepository.removerPorId(idDesconto);
+			}
 		}
 		
 	}

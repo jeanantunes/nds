@@ -182,12 +182,12 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		
 		List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota = new ArrayList<MovimentoEstoqueCotaDTO>();
 		
-		System.out.println("Listagem Produto-Edicao / Cotas: "+ idProdutoEdicao +" / "+ listaEstudoCota.size());
+		//System.out.println("Listagem Produto-Edicao / Cotas: "+ idProdutoEdicao +" / "+ listaEstudoCota.size());
 		for (EstudoCotaDTO estudoCota : listaEstudoCota) {
 
 			MovimentoEstoqueCotaDTO mec = criarMovimentoExpedicaoCota(
 				dataPrevista, idProdutoEdicao, estudoCota.getIdCota(),
-					idUsuario, estudoCota.getQtdeEfetiva(),tipoMovimentoCota,
+					idUsuario, estudoCota.getQtdeEfetiva(), tipoMovimentoCota,
 						dataDistribuidor,dataOperacao, idLancamento, estudoCota.getId(), descontos, false);
 			
 			total = total.add(estudoCota.getQtdeEfetiva());

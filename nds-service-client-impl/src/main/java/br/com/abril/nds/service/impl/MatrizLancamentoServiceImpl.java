@@ -128,8 +128,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				continue;
 			}
 			
-			Integer sequenciaMatriz =
-				this.lancamentoRepository.obterProximaSequenciaMatrizPorData(dataConfirmada);
+			Integer sequenciaMatriz = this.lancamentoRepository.obterProximaSequenciaMatrizPorData(dataConfirmada);
 			
 			this.ordenarProdutos(listaProdutoLancamentoDTO);
 			
