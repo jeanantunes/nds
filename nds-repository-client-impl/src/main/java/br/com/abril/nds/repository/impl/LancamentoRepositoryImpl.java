@@ -1792,8 +1792,6 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" FROM Lancamento as lancamento");
 		hql.append(" WHERE lancamento.dataLancamentoDistribuidor = :data ");
 		
-
-		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("data", produtoLancamentoDTO.getNovaDataLancamento());
 		

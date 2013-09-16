@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.ProdutoLancamentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.DiaSemana;
@@ -31,6 +32,7 @@ import br.com.abril.nds.repository.ItemNotaEnvioRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.service.FuroProdutoService;
+import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.Constantes;
@@ -65,6 +67,9 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 
 	@Autowired
 	private ItemNotaEnvioRepository itemNovaEnvioRepository;
+	
+	@Autowired
+	private MatrizLancamentoService matrizLancamentoService; 
 
 	@Transactional
 	@Override
@@ -199,7 +204,15 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		}
 		
 		lancamento.setDataLancamentoDistribuidor(novaData);
-		lancamento.setStatus(StatusLancamento.FURO);
+		
+		ProdutoLancamentoDTO produtoLancamentoDTO = new ProdutoLancamentoDTO();
+		produtoLancamentoDTO.setNovaDataLancamento(novaData);
+		if(matrizLancamentoService.isDataConfirmada(produtoLancamentoDTO)) {
+			lancamento.setStatus(StatusLancamento.EM_BALANCEAMENTO);
+		} else {
+			lancamento.setStatus(StatusLancamento.FURO);
+		}
+		
 		lancamento.setExpedicao(null);
 		
 		FuroProduto furoProduto = new FuroProduto();

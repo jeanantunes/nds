@@ -118,12 +118,60 @@ var furoProdutoController = $.extend(true, {
 		$("#codigo", furoProdutoController.workspace).val(chave.codigoProduto);
 	},
 	
-	confirmar : function(){
-		var data = {codigoProduto:$("#codigoProdutoHidden", furoProdutoController.workspace).val(),
-				idProdutoEdicao:$("#produtoEdicaoHidden", furoProdutoController.workspace).val(),
-				novaData:$("#novaData", furoProdutoController.workspace).val(),
-				idLancamento:$("#lancamentoHidden", furoProdutoController.workspace).val()};
-		$.postJSON(contextPath + "/lancamento/furoProduto/validarFuro", data, function(result) { furoProdutoController.posProcessarConfirmacao(result, data); } );
+	confirmar : function() {
+		
+		var dataConfirmarFuro = {'produtoLancamento.novaDataLancamento': $("#novaData", furoProdutoController.workspace).val()};
+		$.postJSON(
+				contextPath + "/matrizLancamento/perguntarDataConfirmadaOuNao",
+				dataConfirmarFuro,
+				function(retorno) {
+
+					if(retorno.boolean)
+					{
+						$(furoProdutoController.workspace).append('<div id="confirm_button"></div>');
+
+						$( "#confirm_button", furoProdutoController.workspace )
+						.text('Essa data é uma data já confirmada. Você deseja continuar?');
+
+						$( "#confirm_button", furoProdutoController.workspace ).dialog({
+							resizable: false,
+							height:'auto',
+							width:300,
+							modal: true,
+							buttons: [
+							          {
+							        	  id: "dialogConfirmarBtnConfirmar",
+							        	  text: "Confirmar",
+							        	  click: function() {
+
+							        		  var data = {codigoProduto:$("#codigoProdutoHidden", furoProdutoController.workspace).val(),
+							        				  idProdutoEdicao:$("#produtoEdicaoHidden", furoProdutoController.workspace).val(),
+							        				  novaData:$("#novaData", furoProdutoController.workspace).val(),
+							        				  idLancamento:$("#lancamentoHidden", furoProdutoController.workspace).val()};
+
+							        		  $.postJSON(contextPath + "/lancamento/furoProduto/validarFuro", data, function(result) { furoProdutoController.posProcessarConfirmacao(result, data); } );
+
+							        		  $(this).dialog("close");
+							        	  }
+							          },
+							          {
+							        	  id: "dialogConfirmarBtnCancelar",
+							        	  text: "Cancelar",
+							        	  click: function() {
+
+							        		  $(this).dialog("close");
+							        	  }
+							          }
+							          ],
+							          beforeClose: function() {
+							        	  clearMessageDialogTimeout("#confirm_button");
+							          },
+							          form: $("#confirm_button", furoProdutoController.workspace).parents("form")
+						});
+					}
+
+				});
+
 	},
 	
 	posProcessarConfirmacao : function(result, data) {
