@@ -168,7 +168,15 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		   .append(" where chamadaEncalhe.dataRecolhimento = :dataRecolhimento ")
 		   .append(" and cec.postergado = :naoPostergado ")
 		   .append(" and peLanc.id = produtoEdicao.id ")
-		   .append(" and l.dataRecolhimentoPrevista = :dataRecolhimento ");
+		   .append(" and l.dataRecolhimentoPrevista = :dataRecolhimento ")
+		   
+		   //ignorar registros zerados
+		   .append(" and (")
+		   .append(" coalesce(estoqueProduto.qtde, 0) != 0 ")
+		   .append(" or coalesce(estoqueProduto.qtdeSuplementar, 0) != 0 ")
+		   .append(" or coalesce(estoqueProduto.qtdeDanificado, 0) != 0 ")
+		   .append(" or coalesce(estoqueProduto.qtdeDevolucaoEncalhe, 0) != 0 ")
+		   .append(")");
 	}
 	
 	private void setParametrosBuscarEstoqueProdutoRecolhimento(Query query, 
