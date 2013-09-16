@@ -850,48 +850,8 @@ public class BaixaFinanceiraController extends BaseController {
 		if (idCobrancas == null || idCobrancas.isEmpty()) {
 			listaMensagens.add("É necessário marcar ao menos uma dívida.");
 		}
-		
-		if (dataPostergacao == null || dataPostergacao.before(Calendar.getInstance().getTime())) {
-			listaMensagens.add("A Data para postergação tem que ser maior que a data atual!");
-		}
-		
-		// TODO: Pegar o id do usuário e passar.
-		Long idUsuario = 1L;
-		
-		if (idUsuario == null || idUsuario <= 0L) {
-			listaMensagens.add("Usuário inválido!");
-		}
 				
-		if (listaMensagens != null && !listaMensagens.isEmpty()) {
-			this.result.use(
-				Results.json()).from(
-					new ValidacaoVO(TipoMensagem.WARNING, listaMensagens), "result").recursive().serialize();
-			throw new ValidacaoException();
-		}
-		
-		try {
-		
-			this.dividaService.postergarCobrancaCota(idCobrancas, dataPostergacao, idUsuario, isIsento);
-			
-		} catch (Exception e) {
-			
-			if(e instanceof ValidacaoException){
-				
-				ValidacaoException ex = (ValidacaoException)e;
-				
-				this.result.use(
-						Results.json()).from(ex.getValidacao(), "result").recursive().serialize();
-				return;
-			}
-			else{
-			
-				this.result.use(
-					Results.json()).from(
-							new ValidacaoVO(
-								TipoMensagem.ERROR, "Ocorreu um erro ao tentar postergar as cobranças!"), "result").recursive().serialize();
-				throw new ValidacaoException();
-			}
-		}
+		this.dividaService.postergarCobrancaCota(idCobrancas, dataPostergacao, getUsuarioLogado().getId(), isIsento);
 		
 		this.result.use(
 			Results.json()).from(
