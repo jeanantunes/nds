@@ -1,6 +1,12 @@
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numberformatter-1.2.3.min.js"></script>
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.tinysort.min.js"></script>
 <script language="javascript" type="text/javascript" src="${pageContext.request.contextPath}/scripts/analiseParcial.js"></script>
+<!-- DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/css/jquery.dataTables.css">
+<!-- DataTables -->
+<script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/scripts/jquery.dataTables.js"></script>
+<script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/scripts/analiseParcial-dataTable.js"></script>
+
 <script language="javascript" type="text/javascript">
 $(function() {
     $('.legendas').tipsy({gravity: $.fn.tipsy.autoNS});
@@ -36,7 +42,7 @@ function escondeDados(){
 .class_media{width:35px; color:#F00; font-weight:bold;}
 .class_vlrs{width:35px;}
 .class_vda{width:35px; color:#F00; font-weight:bold;}
-.detalhesDados{position:absolute; display:none; background:#fff; border:1px solid #ccc; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); }
+.detalhesDados{position:absolute; display:none; background:#fff; border:1px solid #ccc; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); width: 978px;}
 #tabelaDetalheAnalise tr { line-height: normal; }
 .class_linha_impar {background:#f0f0f0; }
 .class_linha_par {background:#f8f8f8; }
@@ -52,12 +58,20 @@ function escondeDados(){
 
 table.filtro td span {font-weight: normal;}
 .tableTotais {margin: 1px 0 3px; border: 1px solid white; border-collapse: collapse;}
+.dadosTab td:first-child { width: 130px; text-align: right; padding-right: 5px; }
 
 <c:if test="${tipoExibicao == 'NORMAL'}">
 .paddingTotais td {padding: 0 3px; text-align: right; width: 35px; border: 1px solid white;}
+table.dadosTab { margin-left: 320px;}
+.dadosTab td { width: 82px; text-align: center; }
 </c:if>
 <c:if test="${tipoExibicao == 'PARCIAL'}">
 .paddingTotais td {padding: 0 3px; text-align: right; width: 45px; border: 1px solid white;}
+table.dadosTab { margin-left: 370px;}
+.dadosTab td { width: 100px; text-align: center; }
+.dadosTab td:nth-child(5) {display: none;}
+.dadosTab td:nth-child(6) {display: none;}
+.dadosTab td:nth-child(7) {display: none;}
 </c:if>
 
 .paddingTotais td#lbl_qtd_cotas {text-align: left; width: 82px;}
@@ -70,7 +84,7 @@ table.filtro td span {font-weight: normal;}
 .editaRepartePorPDV { text-decoration: underline; cursor: pointer; }
 .asteriscoCotaNova:after { content: "*"; font-size: 150%; font-weight: bold; position: absolute; left: 43px; }
 .asterisco:after { content: "*"; font-size: 150%; font-weight: bold; position: absolute; margin-left: 2px; }
-.reparteSugerido { width: 40px; font-weight: bold; text-align: right; }
+.reparteSugerido { width: 100%; font-weight: bold; text-align: right; box-sizing: border-box; -moz-box-sizing: border-box; -webkit-box-sizing: border-box; }
 #baseEstudoGridParcial td[abbr^="venda"] {color: red;}
 #baseEstudoGridParcial td[abbr^="venda"],
 #baseEstudoGridParcial td[abbr^="ultimoReparte"],
@@ -94,7 +108,8 @@ table.filtro td span {font-weight: normal;}
 	</div>
 
     	<div class="detalhesDados">
-            <table width="976" border="0" cellpadding="2" cellspacing="2" class="dadosTab" id="tabelaDetalheAnalise" style="float: left;">
+            <div style="float: right;"><a href="javascript:;" onclick="escondeDados();"><img src="images/ico_excluir.gif" alt="Fechar" width="15" height="15" border="0" /></a></div>
+            <table border="0" cellpadding="2" cellspacing="2" class="dadosTab" id="tabelaDetalheAnalise">
                 <tr class="class_linha_impar">
                     <td><strong>Código:</strong></td>
                     <td></td>
@@ -150,7 +165,6 @@ table.filtro td span {font-weight: normal;}
                     <td></td>
                 </tr>
   	        </table>
-            <div style="float: right;"><a href="javascript:;" onclick="escondeDados();"><img src="images/ico_excluir.gif" alt="Fechar" width="15" height="15" border="0" /></a></div>
         </div>
 		<fieldset class="classFieldset">
 			<legend> Pesquisar </legend>
@@ -195,6 +209,7 @@ table.filtro td span {font-weight: normal;}
 							<option value="ranking">Ranking</option>
 							<option value="percentual_de_venda">% de Venda</option>
 							<option value="reducao_de_reparte">% Variação de Reparte</option>
+							<option value="numero_cota">Cota</option>
 					</select></td>
 					<%--<td>Reparte: <input type="text" name="textfield6" id="textfield6" style="width: 40px;" /></td>--%>
 					<td>Abrangência: <span id="abrangencia"></span></td>
@@ -224,6 +239,7 @@ table.filtro td span {font-weight: normal;}
 					</select></td>
 					<td>
                         <span id="opcoesOrdenarPor" style="display: none;" class="label">
+                            <span id="label_numero_cota" style="display: none;" class="label"> Cota: </span>
                             <span id="label_reparte" style="display: none;" class="label"> Reparte: </span>
                             <span id="label_reducao_de_reparte" style="display: none;" class="label"> % Dê: </span>
                             <span id="label_ranking" style="display: none;" class="label"> Ranking: </span>
@@ -250,7 +266,13 @@ table.filtro td span {font-weight: normal;}
                     <td>
                         <span class="bt_novos">
                             <a href="javascript:;" onclick="analiseParcialController.alterarVisualizacaoGrid();">
-                                <img src="${pageContext.request.contextPath}/images/ico_change.png" alt="Alterar Visualização do Grid" hspace="5" border="0" /> <%--Alterar Visualização do Grid--%>
+                                <img src="${pageContext.request.contextPath}/images/ico_change.png" title="Alterar Visualização do Grid" hspace="5" border="0" /> <%--Alterar Visualização do Grid--%>
+                            </a>
+                        </span>
+                        <span class="bt_novos" title="Base Inicial">
+                            <a href="javascript:;" onclick="analiseParcialController.restauraBaseInicial();">
+                                <span class="ui-icon ui-icon-arrowreturnthick-1-w"></span>
+                                <%--<img src="${pageContext.request.contextPath}/images/seta_volta_todos.png" title="Base Inicial"/>--%>
                             </a>
                         </span>
                     </td>
@@ -343,7 +365,7 @@ table.filtro td span {font-weight: normal;}
 				</span>
             </c:if>
                 <%--<br/>--%>
-				<span style="font-weight: bold; font-size: 10px;">Saldo à Distribuir:</span>
+				<span style="font-weight: bold; font-size: 10px;" onclick="dataTableInit()">Saldo à Distribuir:</span>
 				<span id="saldo_reparte" style="font-weight: bold; font-size: 10px;">${estudoCota.estudo.sobra}</span>
 			</div>
 		</fieldset>
@@ -606,3 +628,155 @@ table.filtro td span {font-weight: normal;}
 			analiseParcialController.init('${estudoCota.estudo.id}', '${faixaDe}', '${faixaAte}', '${tipoExibicao}');
 		 });
  	</script>
+
+<style>
+    .dt-container {
+        clear: both; width: 990px; padding-top: 20px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 11px;
+        color: #000;
+        display: none;
+    }
+    .dt-container table {
+        border-collapse: collapse;
+        border-spacing: 0;
+        border: 1px solid #ccc;
+        table-layout: fixed;
+        /*word-wrap: break-word;*/
+    }
+    .dt-container thead th {
+        font-weight: bold;
+        border-right: 1px solid #ddd;
+        border-left: 1px solid #fff;
+    }
+    .dt-container thead th:first-child {
+        border-left: 1px solid #ccc;
+    }
+    .dt-container tbody {
+        overflow-x: hidden !important;
+    }
+    .dt-container tbody tr:hover {
+        background: #d9ebf5 !important;
+    }
+    .less-padding th {
+        padding: 2px 1px !important;
+    }
+    .dt-container tfoot th {
+        text-align: right;
+    }
+    .dt-container tbody tr.odd {
+        background: #f7f7f7;
+    }
+    .dt-container tbody td {
+        /*padding: 3px 10px;*/
+        padding: 2px 4px;
+        border-right: 1px solid #ddd;
+        border-left: 1px solid #fff;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    .dt-container tbody td:first-child {
+        border-left: 1px solid #ccc;
+    }
+    #dt-test_wrapper tfoot input {
+        width: 100%;
+        box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        -webkit-box-sizing: border-box;
+    }
+    td.tred { color: red; font-weight: bold; }
+    td.tbold { font-weight: bold; }
+    td.tleft { text-align: left; }
+    td.tright { text-align: right; }
+    td.tcenter { text-align: center; }
+
+    /* Data Table Overwrites */
+    table.dataTable thead {
+        background: #fafafa url(${pageContext.request.contextPath}/scripts/flexigrid-1.1/css/images/fhbg.gif) repeat-x bottom;
+    }
+    table.dataTable thead th {
+        /*padding: 3px 18px 3px 10px;*/
+        padding: 2px 16px 2px 4px;
+        border-bottom: 1px solid white;
+    }
+    table.dataTable tfoot th {
+        /*padding: 3px 18px 3px 10px;*/
+        padding: 2px 4px;
+    }
+    table.dataTable tr.odd td.sorting_1 {
+        background: #e3e3e3;
+        /*border-bottom: 1px solid #e3e3e3;*/
+    }
+    table.dataTable tr.even td.sorting_1 {
+        background: #f3f3f3;
+    }
+</style>
+<div class="dt-container">
+    <table id="dt-test" class="dataTable">
+        <%--<thead>
+            <th>Cota</th>
+            <th>Class.</th>
+            <th>Nome</th>
+            <th>NPDV</th>
+            <th>Últ. Rep.</th>
+            <th>Rep. Sug.</th>
+            <th>LEG</th>
+            <th>REP</th>
+            <th>VDA</th>
+            <th>REP</th>
+            <th>VDA</th>
+            <th>REP</th>
+            <th>VDA</th>
+            <th>REP</th>
+            <th>VDA</th>
+            <th>REP</th>
+            <th>VDA</th>
+            <th>REP</th>
+            <th>VDA</th>
+        </thead>--%>
+        <tfoot>
+            <tr>
+                <th colspan="2" style="text-align: left">Qtde Cotas:</th>
+                <th style="text-align: left"></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+                <th></th>
+            </tr>
+            <tr class="less-padding">
+                <th><input type="text"/></th>
+                <th><input type="text"/></th>
+                <th><input type="text"/></th>
+                <th><input type="text"/></th>
+                <th><input type="text"/></th>
+                <th><input type="text"/></th>
+                <th><input type="text"/></th>
+                <th><input type="text"/></th>
+                <th><input type="text"/></th>
+                <th><input type="text"/></th>
+                <th><input type="text"/></th>
+                <th><input type="text"/></th>
+                <th><input type="text"/></th>
+                <th><input type="text"/></th>
+                <th><input type="text"/></th>
+                <th><input type="text"/></th>
+                <th><input type="text"/></th>
+                <th><input type="text"/></th>
+                <th><input type="text"/></th>
+            </tr>
+        </tfoot>
+    </table>
+</div>

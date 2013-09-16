@@ -110,7 +110,7 @@
    <tr>
      <td>Status:</td>
      <td><input type="text" style="width:230px " id="statusCPF" disabled="disabled" name="cotaDTO.status" /></td>
-     <td>Classificação Cota:</td>
+     <td>Classificação da Cota:</td>
      <td >
      	<div id="selectClassificacaoCPF"></div>        
      </td>

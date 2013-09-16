@@ -2,6 +2,8 @@ var analiseParcialController = $.extend(true, {
 
     path: contextPath,
 
+    baseInicialAnalise: null, //para voltar ao estado original da analise
+
     linkNomeCota : '<a tabindex="-1" class="linkNomeCota" numeroCota="#numeroCota" >#nomeCota</a>',
     edicoesBase : [],
     inputReparteSugerido: '<input reducaoReparte="#redReparte" reparteInicial="#repEstudo" reparteAtual="#value" numeroCota="#numeroCota" value="#value" class="reparteSugerido" />',
@@ -389,10 +391,20 @@ var analiseParcialController = $.extend(true, {
         var reparteSubtraido = parseInt(reparteDigitado, 10) - parseInt(reparteAtual, 10);
         var $legenda = $input_reparte.closest('td').next().find('div');
 
+        /*
         if ((saldoReparte - reparteSubtraido) < 0) {
             $input_reparte.val($input_reparte.attr('reparteAtual'));
             analiseParcialController.exibirMsg('WARNING', ['Não há saldo suficiente para esta operação.']);
-        } else if (reparteAtual != reparteDigitado) {
+        } else
+        */
+        if (reparteAtual != reparteDigitado) {
+            var legendaText = $legenda.text();
+            if (legendaText.indexOf('FX') > -1 || legendaText.indexOf('MX') > -1) {
+                var senha = prompt('É necessario confirmar esta ação com senha.');
+                if (senha !== 'D68') {
+                    return;
+                }
+            }
             $saldoreparte.text(parseInt($saldoreparte.text(), 10) - reparteSubtraido);
 
             $.ajax({url: analiseParcialController.path +'/distribuicao/analise/parcial/mudarReparte',
@@ -431,7 +443,11 @@ var analiseParcialController = $.extend(true, {
         return Math.round((reducaoReparte / repEstudo) * 10000) / 100;
     },
 
-        preProcessGrid : function(resultado) {
+    restauraBaseInicial : function() {
+        $('#baseEstudoGridParcial').flexAddData(analiseParcialController.baseInicialAnalise);
+    },
+
+    preProcessGrid : function(resultado) {
 
         if (resultado.mensagens) {
             analiseParcialController.exibirMsg(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
@@ -451,6 +467,9 @@ var analiseParcialController = $.extend(true, {
             $header.find('tr').first().remove();
         }
 
+        if (null == analiseParcialController.baseInicialAnalise) {
+            analiseParcialController.baseInicialAnalise = $.extend(true, {}, resultado);
+        }
         analiseParcialController.edicoesBase = resultado.rows[0].cell.edicoesBase;
 
         // atualização dos valores da grid
@@ -975,9 +994,10 @@ var analiseParcialController = $.extend(true, {
     },
 
     validaMotivoCotaReparte : function(input) {
-        if ($('#saldoReparteNaoSelec').text() === '0') {
-            analiseParcialController.exibirMsg('WARNING', ['Não há saldo de reparte para distribuir!']);
-        } else {
+
+//        if ($('#saldoReparteNaoSelec').text() === '0') {
+//            analiseParcialController.exibirMsg('WARNING', ['Não há saldo de reparte para distribuir!']);
+//        } else {
             var $input = $(input);
             $input.data('valid', false);
 
@@ -1000,7 +1020,7 @@ var analiseParcialController = $.extend(true, {
             } else {
                 $input.val('');
             }
-        }
+//        }
     },
 
     popupConfirmaSenha : function($input, msg) {
@@ -1196,6 +1216,7 @@ var analiseParcialController = $.extend(true, {
     },
 
     apresentarOpcoesOrdenarPor : function(opcao) {
+        analiseParcialController.limparCamposDeAte();
         if (opcao === "") {
             $("#opcoesOrdenarPor").hide();
         } else {
@@ -1214,9 +1235,11 @@ var analiseParcialController = $.extend(true, {
     },
 
     filtrarOrdenarPor : function(estudo) {
-        analiseParcialController.limparCamposDeAte();
         var valueFiltroOrdenarPor = $("#filtroOrdenarPor").val();
         switch (valueFiltroOrdenarPor) {
+            case 'numero_cota':
+                analiseParcialController.filtrarCotas();
+                break;
             case 'percentual_de_venda':
                 analiseParcialController.filtrarOrdenarPercentualVenda();
                 break;
@@ -1238,9 +1261,46 @@ var analiseParcialController = $.extend(true, {
         return false;
     },
 
+    filtrarCotas: function () {
+        if ($("#ordenarPorDe").val() === '' && $("#ordenarPorAte").val() === '') {
+            $('#baseEstudoGridParcial tr').show().filter(':odd').addClass('erow')
+                .end().find('td').removeClass('sorted');
+        } else {
+            var de = $("#ordenarPorDe").val() * 1;
+            var ate = $("#ordenarPorAte").val() * 1;
+
+            var sortAtribute = 'td[abbr="cota"]';
+
+            $('#baseEstudoGridParcial tr')
+                .removeClass('erow')
+                .each(function(){
+                    var $tr = $(this);
+                    var cota = $tr.find(sortAtribute).text() * 1;
+
+                    $tr.hide();
+                    if (de === 0 || ate === 0) {
+                        if (de === cota || ate === cota) {
+                            $tr.show();
+                        }
+                    } else {
+                        if ((de < ate) && (de <= cota && cota <= ate)) {
+                            $tr.show();
+                        } else if (de >= cota && cota >= ate) {
+                            $tr.show();
+                        }
+                    }
+
+                })
+                .filter(':odd').addClass('erow')
+                .end().find('td').removeClass('sorted');
+        }
+        analiseParcialController.somarTotais();
+    },
+
     filtrarOrdenarPercentualVenda : function() {
         if ($("#ordenarPorDe").val() === '' || $("#ordenarPorAte").val() === '') {
-            $('#baseEstudoGridParcial tr').show();
+            $('#baseEstudoGridParcial tr').show().filter(':odd').addClass('erow')
+                .end().find('td').removeClass('sorted');
         } else {
             var de = $("#ordenarPorDe").val() * 1;
             var ate = $("#ordenarPorAte").val() * 1;
@@ -1276,7 +1336,8 @@ var analiseParcialController = $.extend(true, {
 
     filtrarOrdenarReducaoReparte : function() {
         if ($("#ordenarPorDe").val() === '' || $("#ordenarPorAte").val() === '') {
-            $('#baseEstudoGridParcial tr').show();
+            $('#baseEstudoGridParcial tr').show().filter(':odd').addClass('erow')
+                .end().find('td').removeClass('sorted');
         } else {
             var de = $("#ordenarPorDe").val() * -1;
             var ate = $("#ordenarPorAte").val() * -1;
