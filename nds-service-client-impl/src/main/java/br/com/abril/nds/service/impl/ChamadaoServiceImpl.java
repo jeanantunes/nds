@@ -16,8 +16,10 @@ import br.com.abril.nds.dto.ResumoConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -36,6 +38,8 @@ import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.ChamadaoService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.SituacaoCotaService;
+import br.com.abril.nds.service.UsuarioService;
 
 /**
  * Classe de implementação de serviços referentes
@@ -69,6 +73,12 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
+	
+	@Autowired
+	private UsuarioService usuarioService;
+	
+	@Autowired
+	private SituacaoCotaService situacaoCotaService;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -223,7 +233,26 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 			this.verificarRemoverChamadaEncalhe(chamadaEncalhe, chamadaEncalheCotaExcluir);
 		}
 		
-		this.cotaRepository.ativarCota(filtro.getNumeroCota());
+		this.atualizarStatusCotaParaAtivo(cota); 
+	}
+	
+	/**
+	 * Atualiza a situação de cadastro da cota para Ativo e gera historico de alteração da situação de cadastro da cota
+	 * @param cota
+	 */
+	private void atualizarStatusCotaParaAtivo(Cota cota){
+		
+		HistoricoSituacaoCota historico = new HistoricoSituacaoCota();
+		historico.setCota(cota);
+		historico.setDataEdicao(new Date());
+		historico.setNovaSituacao(SituacaoCadastro.ATIVO);
+		historico.setSituacaoAnterior(cota.getSituacaoCadastro());
+		historico.setResponsavel(usuarioService.getUsuarioLogado());
+		historico.setMotivo(MotivoAlteracaoSituacao.CHAMADAO);
+		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
+		historico.setDataInicioValidade(new Date());
+		
+		situacaoCotaService.atualizarSituacaoCota(historico);
 	}
 	
 	/**
