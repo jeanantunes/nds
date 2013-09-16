@@ -26,22 +26,11 @@
    	    	<legend>Pesquisar Produtos em Recolhimento</legend>
    	    	<table width="400" border="0" class="filtro">
    	    		<tr>
-   	    			<td nowrap="nowrap">Data Encalhe:</td>
+   	    			<td width="80" nowrap="nowrap">Data Encalhe:</td>
    	    			<td width="113">
-					
-					<input id="dataRecolhimento" value="${dataRecolhimento}" name="dataRecolhimento" type="text" style="width:70px;"/></td>
-    				
-    				<td>Estoque:</td>
-					<td width="91">
-					
-						<select id="estoque" name="estoque" style="width:110px;">
-							<option value="">Todos</option>	    
-								<c:forEach items="${listaEstoques}" var="estoque">
-									<option value="${estoque.key}">${estoque.value}</option>
-								</c:forEach>
-						</select>
+						<input id="dataRecolhimento" value="${dataRecolhimento}" 
+							name="dataRecolhimento" type="text" style="width:70px;"/>
 					</td>
-					
 					<td>
 						<span class="bt_pesquisar">
 							<a href="javascript:;" onclick="EstoqueProdutosRecolhimentoController.pesquisar();"></a>

@@ -141,8 +141,7 @@ var EstoqueProdutosRecolhimentoController = $.extend(true, {
 	
 	pesquisar: function(){
 		
-		var parametroPesquisa = [{name : 'dataRecolhimento', value : $("#dataRecolhimento").val()}, 
-		                         {name : 'tipoEstoque', value : $("#estoque").val()}];
+		var parametroPesquisa = [{name : 'dataRecolhimento', value : $("#dataRecolhimento").val()}];
 		
 		$("#gridResultado", EstoqueProdutosRecolhimentoController.workspace).flexOptions({
 			url : contextPath + '/estoqueProdutosRecolhimento/pesquisar', 

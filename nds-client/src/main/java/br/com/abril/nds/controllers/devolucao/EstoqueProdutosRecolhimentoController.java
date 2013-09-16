@@ -2,7 +2,6 @@ package br.com.abril.nds.controllers.devolucao;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,12 +12,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
-import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroEstoqueProdutosRecolhimento;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.estoque.EstoqueProdutoRecolimentoDTO;
-import br.com.abril.nds.model.estoque.TipoEstoque;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
 import br.com.abril.nds.service.EstoqueProdutoService;
@@ -63,30 +60,15 @@ public class EstoqueProdutosRecolhimentoController extends BaseController {
 			new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).format(
 				this.distribuidorService.obterDataOperacaoDistribuidor()));
 		
-		List<ItemDTO<TipoEstoque, String>> estoques = new ArrayList<ItemDTO<TipoEstoque, String>>();
-		estoques.add(
-			new ItemDTO<TipoEstoque, String>(TipoEstoque.LANCAMENTO, TipoEstoque.LANCAMENTO.getDescricao()));
-		
-		estoques.add(
-				new ItemDTO<TipoEstoque, String>(TipoEstoque.SUPLEMENTAR, TipoEstoque.SUPLEMENTAR.getDescricao()));
-		
-		estoques.add(
-				new ItemDTO<TipoEstoque, String>(TipoEstoque.DEVOLUCAO_ENCALHE, "Recolhimento"));
-		
-		estoques.add(
-				new ItemDTO<TipoEstoque, String>(TipoEstoque.DANIFICADO, TipoEstoque.DANIFICADO.getDescricao()));
-		
-		result.include("listaEstoques", estoques);
-		
 		result.forwardTo(EstoqueProdutosRecolhimentoController.class).estoqueProdutosRecolhimento();
 	}
 	
 	@Post
-	public void pesquisar(Date dataRecolhimento, TipoEstoque tipoEstoque, 
+	public void pesquisar(Date dataRecolhimento, 
 			int page, int rp, String sortname, String sortorder){
 		
 		FiltroEstoqueProdutosRecolhimento filtro = 
-			new FiltroEstoqueProdutosRecolhimento(dataRecolhimento, tipoEstoque, 
+			new FiltroEstoqueProdutosRecolhimento(dataRecolhimento, 
 				page, rp, sortname, sortorder);
 		
 		this.sessao.setAttribute(FILTRO_PESQUISA, filtro);
