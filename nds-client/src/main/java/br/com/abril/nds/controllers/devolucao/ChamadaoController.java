@@ -16,7 +16,6 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.DataHolder;
 import br.com.abril.nds.client.util.PaginacaoUtil;
 import br.com.abril.nds.client.vo.ChamadaoVO;
-import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.client.vo.ResultadoChamadaoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConsignadoCotaChamadaoDTO;
