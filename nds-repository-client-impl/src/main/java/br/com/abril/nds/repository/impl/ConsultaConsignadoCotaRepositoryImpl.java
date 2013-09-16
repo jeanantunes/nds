@@ -149,8 +149,6 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 					sql.append( filtro.getPaginacao().getOrdenacao().toString());
 				}
 			}
-		} else {
-			sql.append(" ORDER BY dataLancamento desc ");
 		}
 		
 		Map<String, Object> parameters = new HashMap<String, Object>();
