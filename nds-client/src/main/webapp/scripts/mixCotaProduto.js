@@ -364,10 +364,10 @@ var mixCotaProdutoController = $.extend(true, {
 	
 	//retorna msg de sucesso durante exclusao de mix por cota
 	exclusaoMixCotaSucesso:function(result){
-		if($("#radio").attr('checked') == 'checked'){
+		if($(".mixCotasGrid").is(":visible")){
 			$(".mixCotasGrid").flexReload();
 		}
-		else{
+		else if($(".mixProdutosGrid").is(":visible")){
 			$(".mixProdutosGrid").flexReload();
 		}
 		
@@ -817,13 +817,13 @@ var mixCotaProdutoController = $.extend(true, {
 										  });
 								 list.push({
 									  name : "listaNovosMixProduto["+idx+"].classificacaoProduto" , 
-									  value : $("#classifMixModal"+idx).val()
+									  value : $("#filtroClassificacaoMix").val()
 									  });
 //								 });
 							 });
 							 
 							 $.postJSON(contextPath + '/distribuicao/mixCotaProduto/adicionarMixProduto',list,function(result){ mixCotaProdutoController.adicionarMixProdutoSucesso();},
-									 function(result){ mixCotaProdutoController.adicionarMixProdutoSucesso();});
+									 function(result){ /*mixCotaProdutoController.adicionarMixProdutoSucesso();*/});
 							 $(this).dialog("close");
 				},
 				"Cancelar": function() {
