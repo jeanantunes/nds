@@ -12,6 +12,8 @@ var chamadaoController = $.extend(true, {
 		
 	},
 	
+	ACAO_TELA: "PESQUISAR",
+	
 	init : function() {
 		var followUp = $('#numeroCotaFollowUp', chamadaoController.workspace).val();
 		
@@ -202,6 +204,8 @@ var chamadaoController = $.extend(true, {
 		
 	pesquisar : function() {
 		
+		chamadaoController.ACAO_TELA = "PESQUISAR";
+		
 		dataHolder.clearAction('chamadaoHolder', chamadaoController.workspace);
 		
 		chamadaoController.nonSelected = [];
@@ -271,12 +275,15 @@ var chamadaoController = $.extend(true, {
 	executarPreProcessamento : function(resultado) {
 		
 		if (resultado.mensagens) {
-
-			exibirMensagem(
-				resultado.mensagens.tipoMensagem, 
-				resultado.mensagens.listaMensagens
-			);
 			
+			if(chamadaoController.ACAO_TELA == "PESQUISAR" ){
+				
+				exibirMensagem(
+					resultado.mensagens.tipoMensagem, 
+					resultado.mensagens.listaMensagens
+				);
+			}
+		
 			$(".grids", chamadaoController.workspace).hide();
 			$(".area", chamadaoController.workspace).hide();
 		
@@ -408,8 +415,6 @@ var chamadaoController = $.extend(true, {
 		$("#qtdProdutosParcial", chamadaoController.workspace).val(chamadaoController.parciais.qtdProdutosParcial);
 		$("#qtdExemplaresParcial", chamadaoController.workspace).val(chamadaoController.parciais.qtdExemplaresParcial);
 		$("#valorParcial", chamadaoController.workspace).val(parseFloat(chamadaoController.parciais.valorParcial).toFixed(2));
-		
-		// chamadaoController.aplicarMascaraCampos();
 	},
 	
 	verifyCheckAll : function() {
@@ -448,7 +453,7 @@ var chamadaoController = $.extend(true, {
 		});
 	},
 	
-	confirmar : function() {
+	confirmar : function(acao) {
 		
 		chamadaoController.limparNovaDataChamadao();
 		
@@ -460,7 +465,7 @@ var chamadaoController = $.extend(true, {
 			buttons: {
 				"Confirmar": function() {
 
-					chamadaoController.realizarChamadao();
+					chamadaoController.realizarChamadao(acao);
 				},
 				"Cancelar": function() {
 					
@@ -482,8 +487,13 @@ var chamadaoController = $.extend(true, {
 		$("#novaDataChamadao").val("");		
 	},
 	
-	realizarChamadao : function() {
-		var param ={novaDataChamadaoFormatada:$("#novaDataChamadao").val(), chamarTodos:chamadaoController.verifyCheckAll()};
+	realizarChamadao : function(acao) {
+		
+		var isReprogramacao = (acao == "REPROGRAMAR")?true:false;
+		
+		var param ={novaDataChamadaoFormatada:$("#novaDataChamadao").val(), 
+					chamarTodos:chamadaoController.verifyCheckAll(),
+					reprogramacao:isReprogramacao};
 		
 		param = serializeArrayToPost('listaChamadao', chamadaoController.getListaChamadao(), param);
 		
@@ -505,6 +515,8 @@ var chamadaoController = $.extend(true, {
 						$(".chamadaoGrid", chamadaoController.workspace).flexReload();
 						
 						$("#checkAll", chamadaoController.workspace).attr("checked", false);
+						
+						chamadaoController.ACAO_TELA = "";
 					},
 				   null,
 				   true
@@ -536,13 +548,15 @@ var chamadaoController = $.extend(true, {
 					var colunaCodProduto = linha.find("td")[0];
 					var colunaNumEdicao = linha.find("td")[2];
 					var inputHiddenLancamento = linha.find("td")[12];
+					var colunaDataRecolhimento = linha.find("td")[8];
 					
 					var codProduto = $(colunaCodProduto).find("div").html();
 					var numEdicao = $(colunaNumEdicao).find("div").html();
 					var lancamento = $($(inputHiddenLancamento).find("div").html()).val();
+					var dataRecolhimento = $(colunaDataRecolhimento).find("div").html();
 					
 					
-					listaChamadao.push({codigoProduto:codProduto,numeroEdicao:numEdicao,idLancamento:lancamento});
+					listaChamadao.push({codigoProduto:codProduto,numeroEdicao:numEdicao,idLancamento:lancamento,dataRecolhimento:dataRecolhimento});
 				}
 			});
 		}
@@ -570,6 +584,8 @@ var chamadaoController = $.extend(true, {
 						$(".chamadaoGrid", chamadaoController.workspace).flexReload();
 						
 						$("#checkAll", chamadaoController.workspace).attr("checked", false);
+						
+						chamadaoController.ACAO_TELA = "";
 					},
 				   null
 		);
