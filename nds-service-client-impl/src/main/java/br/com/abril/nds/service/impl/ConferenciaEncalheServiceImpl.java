@@ -2302,7 +2302,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			MovimentoEstoqueCota movimentoEstoqueCota,
 			MovimentoEstoque movimentoEstoque) {
 		
-		boolean juramentada = (conferenciaEncalheDTO.isJuramentada()) == null ? false : conferenciaEncalheDTO.isJuramentada();
+		boolean juramentada = (conferenciaEncalheDTO.getJuramentada()) == null ? false : conferenciaEncalheDTO.getJuramentada();
 		
 		conferenciaEncalheFromDB.setObservacao(conferenciaEncalheDTO.getObservacao());
 		conferenciaEncalheFromDB.setJuramentada(juramentada);
@@ -2355,7 +2355,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		TipoMovimentoEstoque tipoMovimentoEstoqueCota = mapaTipoMovimentoEstoque.get(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 		
-		boolean juramentada = (conferenciaEncalheDTO.isJuramentada()) == null ? false : conferenciaEncalheDTO.isJuramentada();
+		boolean juramentada = (conferenciaEncalheDTO.getJuramentada()) == null ? false : conferenciaEncalheDTO.getJuramentada();
 		
 		tipoMovimentoEstoqueCota.setIncideJuramentado(juramentada);
 		
@@ -2424,7 +2424,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			Map<GrupoMovimentoEstoque, TipoMovimentoEstoque> mapaTipoMovimentoEstoque,
 			Usuario usuario) {
 		
-		boolean juramentada = (conferenciaEncalheDTO.isJuramentada()) == null ? false : conferenciaEncalheDTO.isJuramentada();
+		boolean juramentada = (conferenciaEncalheDTO.getJuramentada()) == null ? false : conferenciaEncalheDTO.getJuramentada();
 		
 		TipoMovimentoEstoque tipoMovimentoEstoque = 
 				obterTipoMovimentoEstoqueDistribuidor(
@@ -2464,7 +2464,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			MovimentoEstoqueCota movimentoEstoqueCota,
 			MovimentoEstoque movimentoEstoque) {
 		
-		boolean juramentada = (conferenciaEncalheDTO.isJuramentada()) == null ? false : conferenciaEncalheDTO.isJuramentada();
+		boolean juramentada = (conferenciaEncalheDTO.getJuramentada()) == null ? false : conferenciaEncalheDTO.getJuramentada();
 		
 		ConferenciaEncalhe conferenciaEncalhe = new ConferenciaEncalhe();
 
