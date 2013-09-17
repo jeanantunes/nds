@@ -156,7 +156,7 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		sql.append(" JOIN produto.fornecedores fornecedor ");
 		sql.append(" WHERE cota.id IN (:idCotas) ");
 		sql.append(" AND estudo.dataLancamento = lancamento.dataLancamentoPrevista ");
-		sql.append(" AND lancamento.status NOT IN (:listaStatusLancamento) ");
+		sql.append(" AND lancamento.status NOT IN (:listaExclusaoStatusLancamento) ");
 		
 		if (listaIdsFornecedores != null && !listaIdsFornecedores.isEmpty()) {
 			
@@ -172,7 +172,7 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
 		
 		query.setParameterList("idCotas", idCotas);
 
-		query.setParameterList("listaStatusLancamento", new StatusLancamento[] {StatusLancamento.PLANEJADO, StatusLancamento.FECHADO, StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO});
+		query.setParameterList("listaExclusaoStatusLancamento", new StatusLancamento[] {StatusLancamento.FURO, StatusLancamento.PLANEJADO, StatusLancamento.FECHADO, StatusLancamento.CONFIRMADO, StatusLancamento.EM_BALANCEAMENTO});
 	
 		if (listaIdsFornecedores != null && !listaIdsFornecedores.isEmpty()) {
 			

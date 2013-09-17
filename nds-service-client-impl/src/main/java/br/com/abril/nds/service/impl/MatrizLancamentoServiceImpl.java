@@ -1458,8 +1458,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	
 	public boolean isDataConfirmada(ProdutoLancamentoDTO produtoLancamentoDTO) {
 
-		List<ProdutoLancamentoDTO> listaverificadaConfirmada = this.lancamentoRepository
-				.verificarDataConfirmada(produtoLancamentoDTO);
+		List<ProdutoLancamentoDTO> listaverificadaConfirmada = this.lancamentoRepository.verificarDataConfirmada(produtoLancamentoDTO);
 
 		if (listaverificadaConfirmada.isEmpty()) {
 
