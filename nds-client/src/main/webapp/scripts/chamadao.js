@@ -241,7 +241,7 @@ var chamadaoController = $.extend(true, {
 			url: contextPath + "/devolucao/chamadao/pesquisarConsignados",
 			onSuccess: function() {
 				
-				var checkAllSelected = chamadaoController.checkAll;
+				var checkAllSelected = $("#checkAll",chamadaoController.workspace).is(":checked");
 				
 				if (checkAllSelected) {
 					
@@ -407,7 +407,7 @@ var chamadaoController = $.extend(true, {
 		
 		$("#qtdProdutosParcial", chamadaoController.workspace).val(chamadaoController.parciais.qtdProdutosParcial);
 		$("#qtdExemplaresParcial", chamadaoController.workspace).val(chamadaoController.parciais.qtdExemplaresParcial);
-		$("#valorParcial", chamadaoController.workspace).val(floatToPrice(chamadaoController.parciais.valorParcial));
+		$("#valorParcial", chamadaoController.workspace).val(parseFloat(chamadaoController.parciais.valorParcial).toFixed(2));
 		
 		// chamadaoController.aplicarMascaraCampos();
 	},
@@ -421,6 +421,10 @@ var chamadaoController = $.extend(true, {
 		$("#qtdProdutosParcial", chamadaoController.workspace).val($("#qtdProdutosTotal", chamadaoController.workspace).val());
 		$("#qtdExemplaresParcial", chamadaoController.workspace).val($("#qtdExemplaresTotal", chamadaoController.workspace).val());
 		$("#valorParcial", chamadaoController.workspace).val($("#valorTotal", chamadaoController.workspace).val());
+		
+		chamadaoController.parciais.qtdProdutosParcial = $("#qtdProdutosTotal", chamadaoController.workspace).val();
+		chamadaoController.parciais.qtdExemplaresParcial = $("#qtdExemplaresTotal", chamadaoController.workspace).val();
+		chamadaoController.parciais.valorParcial = $("#valorTotal", chamadaoController.workspace).val();
 	},
 	
 	zerarCamposParciais : function() {
@@ -432,8 +436,6 @@ var chamadaoController = $.extend(true, {
 		chamadaoController.parciais.qtdProdutosParcial = 0;
 		chamadaoController.parciais.qtdExemplaresParcial = 0;
 		chamadaoController.parciais.valorParcial = 0;
-		
-		//chamadaoController.aplicarMascaraCampos();
 	},
 	
 	aplicarMascaraCampos : function() {

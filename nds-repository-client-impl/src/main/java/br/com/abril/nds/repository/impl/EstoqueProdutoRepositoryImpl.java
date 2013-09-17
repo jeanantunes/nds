@@ -10,10 +10,13 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.filtro.FiltroEstoqueProdutosRecolhimento;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoDTO;
+import br.com.abril.nds.model.estoque.EstoqueProdutoRecolimentoDTO;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
 public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<EstoqueProduto, Long> implements EstoqueProdutoRespository {
@@ -77,5 +80,109 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 		
 		return (List<EstoqueProdutoDTO>) query.list();
 	}
+
+	@Override
+	public Long buscarEstoqueProdutoRecolhimentoCount(FiltroEstoqueProdutosRecolhimento filtro) {
+		
+		StringBuilder hql = new StringBuilder("select (estoqueProduto.id) ");
+		this.getQueryBuscarEstoqueProdutoRecolhimento(hql);
+		
+		hql.append(" group by produtoEdicao.id ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		this.setParametrosBuscarEstoqueProdutoRecolhimento(query, filtro);
+		
+		return (long) query.list().size();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<EstoqueProdutoRecolimentoDTO> buscarEstoqueProdutoRecolhimento(
+			FiltroEstoqueProdutosRecolhimento filtro) {
+		
+		StringBuilder hqlRecolhimentoPDV = new StringBuilder();
+		hqlRecolhimentoPDV.append(" coalesce((select sum(conEnc.qtde) ")
+		   .append(" from ConferenciaEncalhe conEnc ")
+		   .append("	join conEnc.controleConferenciaEncalheCota conConfEncCota ")
+		   .append("	join conEnc.produtoEdicao pe ")
+		   .append("	where conConfEncCota.dataOperacao = :dataRecolhimento ")
+		   .append("	and pe.id = produtoEdicao.id),0) ");
+		
+		StringBuilder hql = new StringBuilder("select ");
+		hql.append(" chamadaEncalhe.sequencia as sequencia, ")
+		   .append(" produto.codigo as codigo, ")
+		   .append(" produto.nome as produto, ")
+		   .append(" produtoEdicao.numeroEdicao as numeroEdicao, ")
+		   .append(" coalesce(estoqueProduto.qtde, 0) as lancamento, ")
+		   .append(" coalesce(estoqueProduto.qtdeSuplementar, 0) as suplementar, ")
+		   .append(" coalesce(estoqueProduto.qtdeDanificado, 0) as danificado, ")
+		   .append(" (coalesce(estoqueProduto.qtdeDevolucaoEncalhe, 0) - ")
+		   .append(hqlRecolhimentoPDV)
+		   .append(" ) as recolhimento, ")
+		   .append(hqlRecolhimentoPDV)
+		   .append(" as recolhimentoPDV,")
+		   .append(" (coalesce(estoqueProduto.qtde, 0) + coalesce(estoqueProduto.qtdeSuplementar, 0) +  ")
+		   .append(" coalesce(estoqueProduto.qtdeDanificado, 0) + ")
+		   .append(hqlRecolhimentoPDV).append(" + ")
+		   .append(" coalesce(estoqueProduto.qtdeDevolucaoEncalhe, 0) - ")
+		   .append(hqlRecolhimentoPDV)
+		   .append(" )as total ");
+		
+		this.getQueryBuscarEstoqueProdutoRecolhimento(hql);
+		
+		PaginacaoVO paginacaoVO = filtro.getPaginacaoVO();
+		
+		hql.append(" group by produtoEdicao.id ");
+		
+		if (paginacaoVO != null){
+			
+			hql.append(" order by ")
+			   .append(paginacaoVO.getSortColumn())
+			   .append(" ")
+			   .append(paginacaoVO.getSortOrder());
+		}
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		this.setParametrosBuscarEstoqueProdutoRecolhimento(query, filtro);
+		
+		if (paginacaoVO != null && paginacaoVO.getPaginaAtual() != null){
+			
+			query.setFirstResult(paginacaoVO.getPosicaoInicial());
+			query.setMaxResults(paginacaoVO.getQtdResultadosPorPagina());
+		}
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(EstoqueProdutoRecolimentoDTO.class));
+		
+		return query.list();
+	}
 	
+	private void getQueryBuscarEstoqueProdutoRecolhimento(StringBuilder hql){
+		
+		hql.append(" from EstoqueProduto estoqueProduto, Lancamento l ")
+		   .append(" join estoqueProduto.produtoEdicao produtoEdicao ")
+		   .append(" join produtoEdicao.produto produto ")
+		   .append(" join produtoEdicao.chamadaEncalhes chamadaEncalhe ")
+		   .append(" join chamadaEncalhe.chamadaEncalheCotas cec ")
+		   .append(" join l.produtoEdicao peLanc ")
+		   .append(" where chamadaEncalhe.dataRecolhimento = :dataRecolhimento ")
+		   .append(" and cec.postergado = :naoPostergado ")
+		   .append(" and peLanc.id = produtoEdicao.id ")
+		   .append(" and l.dataRecolhimentoPrevista = :dataRecolhimento ")
+		   
+		   //ignorar registros zerados
+		   .append(" and (")
+		   .append(" coalesce(estoqueProduto.qtde, 0) != 0 ")
+		   .append(" or coalesce(estoqueProduto.qtdeSuplementar, 0) != 0 ")
+		   .append(" or coalesce(estoqueProduto.qtdeDanificado, 0) != 0 ")
+		   .append(" or coalesce(estoqueProduto.qtdeDevolucaoEncalhe, 0) != 0 ")
+		   .append(")");
+	}
+	
+	private void setParametrosBuscarEstoqueProdutoRecolhimento(Query query, 
+			FiltroEstoqueProdutosRecolhimento filtro){
+		
+		query.setParameter("dataRecolhimento", filtro.getDataRecolhimento());
+		query.setParameter("naoPostergado", false);
+	}
 }
