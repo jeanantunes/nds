@@ -507,6 +507,7 @@ var parametrosDistribuidorController = $.extend(true, {
 		
 		parametrosDistribuidorController.utilizaContratoCotasListener();
 		
+		
 		$("#tabDistribuidor", this.workspace).tabs();
 		
 		parametrosDistribuidorController.alternarControleAprovacao();
@@ -551,6 +552,21 @@ var parametrosDistribuidorController = $.extend(true, {
 		parametrosDistribuidorController.exibirAdesao();
 
 		parametrosDistribuidorController.exibirContratoCota();
+		
+		parametrosDistribuidorController.desabilitarItens();
+		
+	},
+	
+	desabilitarItens : function() {
+
+		$("#tabDistribuidor", this.workspace).tabs( "option", "disabled", [6] );
+		$("#chamadaoDiasSuspensao", this.workspace).disable();
+		$("#chamadaoValorConsignado", this.workspace).disable();
+		$("#utilizaDesconto", this.workspace).disable();
+		$("#percentualDesconto", this.workspace).disable();
+		$("#parcelamentoDividas", this.workspace).disable();
+		$("#negociacaoAteParcelas", this.workspace).disable();
+		
 	},
 	
 	dialogConfirmarGrupo: function() {
