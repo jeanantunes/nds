@@ -726,6 +726,8 @@ var ConferenciaEncalhe = $.extend(true, {
 		
 		$("#numeroCota", ConferenciaEncalhe.workspace).val("");
 		
+		$("#totalExemplaresFooter", ConferenciaEncalhe.workspace).text("");
+		
 		$("#numeroCota", ConferenciaEncalhe.workspace).select();
 		
 		$("#numeroCota", ConferenciaEncalhe.workspace).focus();
@@ -864,6 +866,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		$("#valorVendaDia", ConferenciaEncalhe.workspace).text(parseFloat(result.valorVendaDia).toFixed(2));
 		$("#totalOutrosValores", ConferenciaEncalhe.workspace).text(parseFloat(result.valorDebitoCredito).toFixed(2));
 		$("#valorAPagar", ConferenciaEncalhe.workspace).text(parseFloat(result.valorPagar).toFixed(2));
+		$("#totalExemplaresFooter", ConferenciaEncalhe.workspace).text(result.qtdRecebida);
 		
 		$(".dadosFiltro", ConferenciaEncalhe.workspace).show();
 		$("#nomeCota", ConferenciaEncalhe.workspace).text(result.razaoSocial);
@@ -1120,6 +1123,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				$("#valorVendaDia", ConferenciaEncalhe.workspace).text(parseFloat(result.valorVendaDia).toFixed(2));
 				$("#totalOutrosValores", ConferenciaEncalhe.workspace).text(parseFloat(result.valorDebitoCredito).toFixed(2));
 				$("#valorAPagar", ConferenciaEncalhe.workspace).text(parseFloat(result.valorPagar).toFixed(2));
+				$("#totalExemplaresFooter", ConferenciaEncalhe.workspace).text(result.qtdRecebida);
 				
 				ConferenciaEncalhe.numeroCotaEditavel(false);
 				
