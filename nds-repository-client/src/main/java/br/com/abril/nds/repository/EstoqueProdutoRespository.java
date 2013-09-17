@@ -2,8 +2,10 @@ package br.com.abril.nds.repository;
 
 import java.util.List;
 
+import br.com.abril.nds.dto.filtro.FiltroEstoqueProdutosRecolhimento;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoDTO;
+import br.com.abril.nds.model.estoque.EstoqueProdutoRecolimentoDTO;
 
 public interface EstoqueProdutoRespository extends Repository<EstoqueProduto, Long> {
 
@@ -13,4 +15,8 @@ public interface EstoqueProdutoRespository extends Repository<EstoqueProduto, Lo
 	
 	List<EstoqueProdutoDTO> buscarEstoquesProdutos();
 
+	Long buscarEstoqueProdutoRecolhimentoCount(FiltroEstoqueProdutosRecolhimento filtro);
+
+	List<EstoqueProdutoRecolimentoDTO> buscarEstoqueProdutoRecolhimento(
+			FiltroEstoqueProdutosRecolhimento filtro);
 }
