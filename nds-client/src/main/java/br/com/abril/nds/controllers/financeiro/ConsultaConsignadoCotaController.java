@@ -97,11 +97,7 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		BigDecimal totalGeral = this.consultaConsignadoCota.buscarTotalGeralDaCota(filtro);
 		String totalFormatado = "";
 		
-		if(filtro.getIdCota() != null){
-			totalFormatado = CurrencyUtil.formatarValorQuatroCasas(totalGeral);
-		} else {
-			totalFormatado = CurrencyUtil.formatarValor(totalGeral);
-		}
+		totalFormatado = CurrencyUtil.formatarValor(totalGeral);
 		
 		this.result.use(Results.json()).from(totalFormatado, "result").recursive().serialize();
 		
@@ -374,7 +370,7 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		FiltroConsultaConsignadoCotaDTO filtroSession = (FiltroConsultaConsignadoCotaDTO) session
 				.getAttribute(FILTRO_SESSION_ATTRIBUTE_CONSIGNADO_COTA);
 		
-		if (filtroSession != null && filtroSession.equals(filtroAtual)) {
+		if (filtroSession != null && (!filtroSession.equals(filtroAtual))) {
 
 			filtroAtual.getPaginacao().setPaginaAtual(1);
 		}

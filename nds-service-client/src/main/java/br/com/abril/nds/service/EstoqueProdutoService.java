@@ -1,6 +1,10 @@
 package br.com.abril.nds.service;
 
+import java.util.List;
+
+import br.com.abril.nds.dto.filtro.FiltroEstoqueProdutosRecolhimento;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
+import br.com.abril.nds.model.estoque.EstoqueProdutoRecolimentoDTO;
 
 /**
  * Interface que define serviços referentes a entidade
@@ -19,4 +23,8 @@ public interface EstoqueProdutoService {
 	 */
 	EstoqueProduto buscarEstoquePorProduto(Long idProdutoEdicao);
 
+	Long buscarEstoqueProdutoRecolhimentoCount(FiltroEstoqueProdutosRecolhimento filtro);
+
+	List<EstoqueProdutoRecolimentoDTO> buscarEstoqueProdutoRecolhimento(
+			FiltroEstoqueProdutosRecolhimento filtro);
 }

@@ -192,10 +192,10 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 					hql += "order by CASE WHEN p.class = 'J' THEN p.razaoSocial else p.nome END ";
 					break;
 				case DATA:
-					hql += "order by hsc.dataInicioValidade ";
+					hql += "order by hsc.dataInicioValidade  ";
 					break;
 				case DESCRICAO:
-					hql += "order by hsc.descricao ";
+					hql += "order by hsc.descricao  ";
 					break;
 				case MOTIVO:
 					hql += "order by hsc.motivo ";
@@ -215,7 +215,12 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 			
 			if (filtro.getPaginacao().getOrdenacao() != null) {
 				
-				hql += filtro.getPaginacao().getOrdenacao().toString();
+				if(filtro.getOrdenacaoColuna().equals(FiltroStatusCotaDTO.OrdenacaoColunasStatusCota.DATA)){
+					hql += filtro.getPaginacao().getOrdenacao().toString() + " ,hsc.dataEdicao desc ";
+				}
+				else{
+					hql += filtro.getPaginacao().getOrdenacao().toString();
+				}
 			}
 		}
 		
