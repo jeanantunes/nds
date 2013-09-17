@@ -330,10 +330,11 @@ public class XLSExporter implements Exporter {
 						
 						if(columnString.contains(",")) {
 							columnString = columnString.replace(".", "").replace(",",".");
+							cell.setCellValue(Double.valueOf(columnString));
+						} else {
+							
+							cell.setCellValue(columnString);
 						}
-						
-						cell.setCellValue(Double.valueOf(columnString));
-
 					} catch(Exception e) {
 						
 						cell.setCellValue(columnString);
