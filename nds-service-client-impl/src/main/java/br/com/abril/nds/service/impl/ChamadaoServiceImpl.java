@@ -189,7 +189,7 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 			if (filtro.isChamadaEncalhe()) {
 				
 				this.alterarChamadao(
-					consignadoCotaChamadao, dataChamadao, novaDataChamadao, cota);
+					consignadoCotaChamadao, consignadoCotaChamadao.getDataRecolhimento(), novaDataChamadao, cota);
 				
 			} else {
 				
@@ -223,12 +223,14 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 			
 			ChamadaEncalhe chamadaEncalhe =
 				this.chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(
-					produtoEdicao, filtro.getDataChamadao(), TipoChamadaEncalhe.CHAMADAO);
+					produtoEdicao, consignadoCotaChamadao.getDataRecolhimento(), TipoChamadaEncalhe.CHAMADAO);
 			
 			ChamadaEncalheCota chamadaEncalheCotaExcluir =
 				this.obterChamadaEncalheCota(cota, chamadaEncalhe);
 			
-			this.chamadaEncalheCotaRepository.remover(chamadaEncalheCotaExcluir);
+			if(chamadaEncalheCotaExcluir!= null){
+				this.chamadaEncalheCotaRepository.remover(chamadaEncalheCotaExcluir);
+			}
 			
 			this.verificarRemoverChamadaEncalhe(chamadaEncalhe, chamadaEncalheCotaExcluir);
 		}
@@ -426,19 +428,25 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	private ChamadaEncalheCota obterChamadaEncalheCota(Cota cota,
 													   ChamadaEncalhe chamadaEncalhe) {
 		
-		Set<ChamadaEncalheCota> listaChamadaEncalheCota = chamadaEncalhe.getChamadaEncalheCotas();
-		
-		ChamadaEncalheCota chamadaEncalheCotaAlterar = null;
-		
-		for (ChamadaEncalheCota chamadaEncalheCota : listaChamadaEncalheCota) {
+		if(chamadaEncalhe!= null && chamadaEncalhe.getChamadaEncalheCotas()!= null){
 			
-			if (chamadaEncalheCota.getCota().getId().equals(cota.getId())) {
+			Set<ChamadaEncalheCota> listaChamadaEncalheCota = chamadaEncalhe.getChamadaEncalheCotas();
+			
+			ChamadaEncalheCota chamadaEncalheCotaAlterar = null;
+			
+			for (ChamadaEncalheCota chamadaEncalheCota : listaChamadaEncalheCota) {
 				
-				chamadaEncalheCotaAlterar = chamadaEncalheCota;
+				if (chamadaEncalheCota.getCota().getId().equals(cota.getId())) {
+					
+					chamadaEncalheCotaAlterar = chamadaEncalheCota;
+				}
 			}
+			
+			return chamadaEncalheCotaAlterar;
 		}
 		
-		return chamadaEncalheCotaAlterar;
+		return null;
+		
 	}
 
 	/**
@@ -451,13 +459,16 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	private void verificarRemoverChamadaEncalhe(ChamadaEncalhe chamadaEncalhe,
 									   			ChamadaEncalheCota chamadaEncalheCota) {
 		
-		Set<ChamadaEncalheCota> chamadaEncalheCotas = chamadaEncalhe.getChamadaEncalheCotas();
-		
-		chamadaEncalheCotas.remove(chamadaEncalheCota);
-		
-		if (chamadaEncalheCotas.isEmpty()) {
+		if(chamadaEncalhe!= null && chamadaEncalhe.getChamadaEncalheCotas()!= null){
 			
-			this.chamadaEncalheRepository.remover(chamadaEncalhe);
+			Set<ChamadaEncalheCota> chamadaEncalheCotas = chamadaEncalhe.getChamadaEncalheCotas();
+			
+			chamadaEncalheCotas.remove(chamadaEncalheCota);
+			
+			if (chamadaEncalheCotas.isEmpty()) {
+				
+				this.chamadaEncalheRepository.remover(chamadaEncalhe);
+			}
 		}
 	}
 	

@@ -61,7 +61,7 @@
 			<div id="divBotaoConfirmarChamadao" style="display: none">
 	    			
    				<span class="bt_novos">
-   					<a isEdicao="true" onclick="chamadaoController.confirmar();" href="javascript:;" rel="tipsy"  title="Confirmar" >
+   					<a isEdicao="true" onclick="chamadaoController.confirmar('CONFIRMAR');" href="javascript:;" rel="tipsy"  title="Confirmar" >
    						<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
    					</a>
 				</span>
@@ -71,7 +71,7 @@
 			<div id="divBotoesChamadaEncalhe" style="display: none">
 							
 				<span class="bt_novos">
-					<a onclick="chamadaoController.confirmar();" href="javascript:;" rel="tipsy" title="Reprogramar">
+					<a onclick="chamadaoController.confirmar('REPROGRAMAR');" href="javascript:;" rel="tipsy" title="Reprogramar">
 						<img src="${pageContext.request.contextPath}/images/ico_reprogramar.gif" hspace="5" border="0" />
 					</a>
 				</span>
