@@ -248,10 +248,10 @@
 			<table width="950" height="32" border="0" cellpadding="1" cellspacing="1">
 				<tr>
 					<td width="380">&nbsp;</td>
-					<td width="128" style="float:left">&nbsp;</td>
-					<td width="62" style="float:left">&nbsp;</td>
 					<td width="120" align="center" style="float:left"><strong>Data de Operação:</strong></td>
 					<td width="70" style="float:left">${dataOperacao}</td>
+					<td width="128" style="float:left"><strong>Total de devolução:</strong></td>
+					<td width="62" style="float:left"><span id="totalExemplaresFooter"></span></td>
 				</tr>
 			</table>
 		</fieldset>

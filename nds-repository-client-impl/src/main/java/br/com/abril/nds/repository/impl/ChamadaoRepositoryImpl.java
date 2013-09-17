@@ -423,9 +423,9 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 			.append(" JOIN cota.movimentoEstoqueCotas mec ")
 			
 			.append(" WHERE chamadaEncalhe.tipoChamadaEncalhe = :tipoChamadaEncalhe ")
-			.append(" AND produto.tipoProduto.grupoProduto != :grupoProduto ")
 			.append(" AND mec.tipoMovimento.grupoMovimentoEstoque = :grupoMovimento ")
-			.append(" AND mec.lancamento.id in ( select lan.id from ChamadaEncalhe cham join cham.lancamentos lan where cham.id = chamadaEncalhe.id ) ");
+			.append(" AND mec.lancamento.id in ( select lan.id from ChamadaEncalhe cham join cham.lancamentos lan where cham.id = chamadaEncalhe.id ) ")
+			.append(" AND mec.movimentoEstoqueCotaFuro is null ");
 		
 		if (filtro != null) {
 		
@@ -506,7 +506,6 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 													 	 	 Query query) {
 		
 		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.CHAMADAO);
-		query.setParameter("grupoProduto", GrupoProduto.OUTROS);
 		query.setParameter("grupoMovimento", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
 		if (filtro == null) {
