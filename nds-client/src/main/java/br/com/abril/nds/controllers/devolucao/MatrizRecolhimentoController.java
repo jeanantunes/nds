@@ -325,6 +325,9 @@ public class MatrizRecolhimentoController extends BaseController {
 
 		List<ProdutoRecolhimentoVO> listaProdutoRecolhimentoVO = 
 				obterListaProdutoRecolhimentoVO(listaProdutoRecolhimentoDTO);
+		
+		PaginacaoUtil.ordenarEmMemoria(listaProdutoRecolhimentoVO, 
+				filtro.getPaginacaoVO().getOrdenacao(), filtro.getPaginacaoVO().getSortColumn());
 
 		FileExporter.to("matriz_recolhimento", fileType)
 			.inHTTPResponse(this.getNDSFileHeader(), filtro, null,
@@ -386,11 +389,16 @@ public class MatrizRecolhimentoController extends BaseController {
 	public void exibirMatrizFornecedor(String dataFormatada, String sortorder,
 									   String sortname, Integer page, Integer rp) {
 		
+		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
+		filtro.setDataPesquisa(DateUtil.parseDataPTBR(dataFormatada));
+		
 		List<ProdutoRecolhimentoDTO> listaProdutoRecolhimento = obterListaProdutoRecolhimentoDTO(dataFormatada);
 		
 		if (listaProdutoRecolhimento != null && !listaProdutoRecolhimento.isEmpty()) {
 		
-			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
+			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder, sortname);
+			
+			filtro.setPaginacaoVO(paginacao);
 			
 			processarBalanceamento(listaProdutoRecolhimento,
 								   paginacao, sortname);
