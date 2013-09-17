@@ -47,7 +47,7 @@ public class Estrategia implements Serializable {
     @Column(name = "OPORTUNIDADE_VENDA")
     private String oportunidadeVenda;
 
-    @Column(name = "CESTA")
+    @javax.persistence.Transient
     private String cesta;
 
     @OneToMany(mappedBy = "estrategia", fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
