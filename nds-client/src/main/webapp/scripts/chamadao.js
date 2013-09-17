@@ -276,14 +276,24 @@ var chamadaoController = $.extend(true, {
 		
 		if (resultado.mensagens) {
 			
-			if(chamadaoController.ACAO_TELA == "PESQUISAR" ){
+			if(resultado.mensagens.tipoMensagem!= "WARNING"){
 				
 				exibirMensagem(
-					resultado.mensagens.tipoMensagem, 
-					resultado.mensagens.listaMensagens
-				);
+						resultado.mensagens.tipoMensagem, 
+						resultado.mensagens.listaMensagens
+					);
 			}
-		
+			else{
+				
+				if(chamadaoController.ACAO_TELA == "PESQUISAR" ){
+					
+					exibirMensagem(
+						resultado.mensagens.tipoMensagem, 
+						resultado.mensagens.listaMensagens
+					);
+				}
+			}
+			
 			$(".grids", chamadaoController.workspace).hide();
 			$(".area", chamadaoController.workspace).hide();
 		
