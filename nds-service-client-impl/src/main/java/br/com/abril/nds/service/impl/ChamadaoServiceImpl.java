@@ -189,7 +189,7 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 			if (filtro.isChamadaEncalhe()) {
 				
 				this.alterarChamadao(
-					consignadoCotaChamadao, dataChamadao, novaDataChamadao, cota);
+					consignadoCotaChamadao, consignadoCotaChamadao.getDataRecolhimento(), novaDataChamadao, cota);
 				
 			} else {
 				
