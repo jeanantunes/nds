@@ -123,8 +123,7 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		
 		if (!this.distribuicaoFornecedorRepository.verificarDistribuicaoDiaSemana(
 				codigoProduto, idProdutoEdicao, DiaSemana.getByCodigoDiaSemana(calendar.get(Calendar.DAY_OF_WEEK)))){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Não existe distribuição para esse produto no dia " + 
-				new SimpleDateFormat(Constantes.DATE_PATTERN_PT_BR).format(novaData));
+			throw new ValidacaoException(TipoMensagem.WARNING, "A data de lançamento deve ser uma data em que o distribuidor realiza operação.");
 		}
 		
 		if (!this.distribuidorService.regimeEspecial()) {
@@ -186,6 +185,14 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 						
 		}
 		
+		ProdutoLancamentoDTO produtoLancamentoDTO = new ProdutoLancamentoDTO();
+		produtoLancamentoDTO.setNovaDataLancamento(novaData);
+		if(matrizLancamentoService.isDataConfirmada(produtoLancamentoDTO)) {
+			lancamento.setStatus(StatusLancamento.EM_BALANCEAMENTO);
+		} else {
+			lancamento.setStatus(StatusLancamento.FURO);
+		}
+		
 		// Ao furar um produto com nota de envio emitida, o item da nota eh removido
 		if (lancamento.getEstudo() != null) {
 			
@@ -204,14 +211,6 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		}
 		
 		lancamento.setDataLancamentoDistribuidor(novaData);
-		
-		ProdutoLancamentoDTO produtoLancamentoDTO = new ProdutoLancamentoDTO();
-		produtoLancamentoDTO.setNovaDataLancamento(novaData);
-		if(matrizLancamentoService.isDataConfirmada(produtoLancamentoDTO)) {
-			lancamento.setStatus(StatusLancamento.EM_BALANCEAMENTO);
-		} else {
-			lancamento.setStatus(StatusLancamento.FURO);
-		}
 		
 		lancamento.setExpedicao(null);
 		

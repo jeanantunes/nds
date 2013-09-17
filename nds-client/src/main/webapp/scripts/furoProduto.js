@@ -121,13 +121,18 @@ var furoProdutoController = $.extend(true, {
 	confirmar : function() {
 		
 		var dataConfirmarFuro = {'produtoLancamento.novaDataLancamento': $("#novaData", furoProdutoController.workspace).val()};
+		
+		var data = {codigoProduto:$("#codigoProdutoHidden", furoProdutoController.workspace).val(),
+				  idProdutoEdicao:$("#produtoEdicaoHidden", furoProdutoController.workspace).val(),
+				  novaData:$("#novaData", furoProdutoController.workspace).val(),
+				  idLancamento:$("#lancamentoHidden", furoProdutoController.workspace).val()};
+		
 		$.postJSON(
 				contextPath + "/matrizLancamento/perguntarDataConfirmadaOuNao",
 				dataConfirmarFuro,
 				function(retorno) {
 
-					if(retorno.boolean)
-					{
+					if(retorno.boolean) {
 						$(furoProdutoController.workspace).append('<div id="confirm_button"></div>');
 
 						$( "#confirm_button", furoProdutoController.workspace )
@@ -143,11 +148,6 @@ var furoProdutoController = $.extend(true, {
 							        	  id: "dialogConfirmarBtnConfirmar",
 							        	  text: "Confirmar",
 							        	  click: function() {
-
-							        		  var data = {codigoProduto:$("#codigoProdutoHidden", furoProdutoController.workspace).val(),
-							        				  idProdutoEdicao:$("#produtoEdicaoHidden", furoProdutoController.workspace).val(),
-							        				  novaData:$("#novaData", furoProdutoController.workspace).val(),
-							        				  idLancamento:$("#lancamentoHidden", furoProdutoController.workspace).val()};
 
 							        		  $.postJSON(contextPath + "/lancamento/furoProduto/validarFuro", data, function(result) { furoProdutoController.posProcessarConfirmacao(result, data); } );
 
@@ -168,6 +168,10 @@ var furoProdutoController = $.extend(true, {
 							          },
 							          form: $("#confirm_button", furoProdutoController.workspace).parents("form")
 						});
+					} else {
+
+		        		  $.postJSON(contextPath + "/lancamento/furoProduto/validarFuro", data, function(result) { furoProdutoController.posProcessarConfirmacao(result, data); } );
+
 					}
 
 				});
