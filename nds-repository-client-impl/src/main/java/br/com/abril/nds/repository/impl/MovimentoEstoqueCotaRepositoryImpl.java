@@ -721,20 +721,28 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		} else {
 			
 			subSqlValoresDesconto.append("   CASE WHEN DESCONTO_LOGISTICA.ID IS NOT NULL THEN ( ");
-			subSqlValoresDesconto.append("   COALESCE(PRODUTO_EDICAO.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
-			subSqlValoresDesconto.append("   (COALESCE(PRODUTO_EDICAO.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 1) * ");
+			subSqlValoresDesconto.append("   COALESCE(MEC_REPARTE.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
+			subSqlValoresDesconto.append("   (COALESCE(MEC_REPARTE.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 1) * ");
 			subSqlValoresDesconto.append("   DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO/100)) ");
-			subSqlValoresDesconto.append("   ELSE  ( ");
-			subSqlValoresDesconto.append("   COALESCE(PRODUTO_EDICAO.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
-			subSqlValoresDesconto.append("   (COALESCE(PRODUTO_EDICAO.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 1)* ");
+			subSqlValoresDesconto.append("   WHEN DESCONTO.ID IS NOT NULL THEN  ( ");
+			subSqlValoresDesconto.append("   COALESCE(MEC_REPARTE.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
+			subSqlValoresDesconto.append("   (COALESCE(MEC_REPARTE.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 1)* ");
 			subSqlValoresDesconto.append("   DESCONTO.VALOR/100)) ");
+			subSqlValoresDesconto.append("   ELSE 0");
 			subSqlValoresDesconto.append("   END AS precoComDesconto, ");
 
 			subSqlValoresDesconto.append("	COALESCE(DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO, DESCONTO.VALOR, 0) ").append(" as valorDesconto, ");
 			
-			subSqlValoresDesconto.append("	(SUM( COALESCE(MEC_REPARTE.QTDE, 1)) * (COALESCE(MEC_REPARTE.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
-			subSqlValoresDesconto.append("	(COALESCE(MEC_REPARTE.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 1)) * " );
-			subSqlValoresDesconto.append("	COALESCE(DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO/100, DESCONTO.VALOR/100, 1)) ) as valorComDesconto, ");		
+			subSqlValoresDesconto.append("  (CASE WHEN DESCONTO_LOGISTICA.ID IS NOT NULL THEN ( ");
+			subSqlValoresDesconto.append("	SUM(COALESCE(MEC_REPARTE.QTDE, 0)) * COALESCE(MEC_REPARTE.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
+			subSqlValoresDesconto.append("	(COALESCE(MEC_REPARTE.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 1) * " );
+			subSqlValoresDesconto.append("  COALESCE(DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO/100, 1)))");
+			subSqlValoresDesconto.append("  WHEN DESCONTO.ID IS NOT NULL THEN  ( ");
+			subSqlValoresDesconto.append("	SUM(COALESCE(MEC_REPARTE.QTDE, 0)) * COALESCE(MEC_REPARTE.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
+			subSqlValoresDesconto.append("	(COALESCE(MEC_REPARTE.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 1) * " );
+			subSqlValoresDesconto.append("  COALESCE(DESCONTO.VALOR/100, 1)))");
+			subSqlValoresDesconto.append("  ELSE SUM(COALESCE(MEC_REPARTE.QTDE, 0)) * COALESCE(MEC_REPARTE.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0) END");
+			subSqlValoresDesconto.append("	) as valorComDesconto, ");		
 		}
 		
 		StringBuffer sql = new StringBuffer();
