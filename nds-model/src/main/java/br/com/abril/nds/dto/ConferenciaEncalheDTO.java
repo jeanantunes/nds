@@ -314,7 +314,7 @@ public class ConferenciaEncalheDTO implements Serializable {
 		this.precoComDesconto = precoComDesconto;
 	}
 
-	public Boolean isJuramentada() {
+	public Boolean getJuramentada() {
 		return juramentada;
 	}
 	
