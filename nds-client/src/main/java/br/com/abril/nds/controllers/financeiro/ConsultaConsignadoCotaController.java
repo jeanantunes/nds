@@ -370,7 +370,7 @@ public class ConsultaConsignadoCotaController extends BaseController {
 		FiltroConsultaConsignadoCotaDTO filtroSession = (FiltroConsultaConsignadoCotaDTO) session
 				.getAttribute(FILTRO_SESSION_ATTRIBUTE_CONSIGNADO_COTA);
 		
-		if (filtroSession != null && filtroSession.equals(filtroAtual)) {
+		if (filtroSession != null && (!filtroSession.equals(filtroAtual))) {
 
 			filtroAtual.getPaginacao().setPaginaAtual(1);
 		}
