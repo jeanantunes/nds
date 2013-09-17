@@ -666,6 +666,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		   .append(" left join movimentoCota.cota cotaMov ")
 		   .append(" where cota.id=:idCota 									")
 		   .append(" and produtoEdicao.id = produtoEdicao.id  	")
+		   .append(" and (movimentoCota.id is null or ")
+		   .append(" 	  movimentoCota.cota.id = :idCota)	")
 		   .append(" and chamEncCota.qtdePrevista>0  ")
 		   .append(" and chamEncCota.postergado = :isPostergado ");
 	
