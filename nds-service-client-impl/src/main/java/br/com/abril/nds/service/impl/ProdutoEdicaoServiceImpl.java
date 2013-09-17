@@ -990,20 +990,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				dto.setClasseSocial(segm.getClasseSocial());
 				dto.setSexo(segm.getSexo());
 				dto.setFaixaEtaria(segm.getFaixaEtaria());
-				dto.setTemaPrincipal(segm.getTemaPrincipal());
-				dto.setTemaSecundario(segm.getTemaSecundario());
+			
 			}
-			else{
-
-				segm = pe.getProduto().getSegmentacao();
-				if(segm!=null){
-					dto.setClasseSocial(segm.getClasseSocial());
-					dto.setSexo(segm.getSexo());
-					dto.setFaixaEtaria(segm.getFaixaEtaria());
-					dto.setTemaPrincipal(segm.getTemaPrincipal());
-					dto.setTemaSecundario(segm.getTemaSecundario());
-				}
-			}	
 
 		} else {
 
@@ -1020,8 +1008,20 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				dto.setNumeroEdicao(ultimaEdicao + 1);
 			}
 			dto.setGrupoProduto(produto.getTipoProduto()!=null?produto.getTipoProduto().getGrupoProduto():null);
-		}	
+			
+			SegmentacaoProduto segm = produto.getSegmentacao();
+			if(segm!=null){
+				dto.setClasseSocial(segm.getClasseSocial());
+				dto.setSexo(segm.getSexo());
+				dto.setFaixaEtaria(segm.getFaixaEtaria());
+				
+			}
 
+			if (dto.getTipoSegmentoProdutoId() == null){
+				dto.setTipoSegmentoProdutoId(produto.getTipoSegmentoProduto().getId());
+			}
+			
+		}	
 
 		return dto;
 	}
