@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -907,7 +908,9 @@ public class RoteirizacaoController extends BaseController {
 	     
 	       OrdenacaoUtil.reordenarLista(pdv, pdvsAtuais);
 	       
-	       pdvsAtuais.add(pdv);
+	       pdvsAtuais.add(pdv.getOrdem() - 1, pdv);
+	       
+	       ordenarPdvsPeloIndiceDaLista(rota);
 	       
 	       result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Ordem válida!"), "result").recursive().serialize(); 
 	    }
@@ -1129,17 +1132,18 @@ public class RoteirizacaoController extends BaseController {
 		List<PdvRoteirizacaoDTO> pdvsAux = pdvs;
 		
 		for (int i=0; i < pdvs.size(); i++) {
-			for (int j=i+1; j < pdvsAux.size(); j++) {
+			for (int j = i+1; j < pdvsAux.size(); j++) {
 	            if (pdvsAux.get(j).getOrdem().equals(pdvs.get(i).getOrdem())) {
 	            	throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "[Ordem] inválida !"));
 	            }
 	        }
 		}
 		
-		if(pdvsAtual!=null){
+		if(pdvsAtual != null) {
 			
 			OrdenacaoUtil.reordenarListas(pdvs, pdvsAtual);
 		}
+		
 	}
 	
 	
@@ -1182,9 +1186,19 @@ public class RoteirizacaoController extends BaseController {
 		this.verificaOrdemPdvs(pdvs, pdvsAtual);
 		
 		rota.addAllPdv(pdvs);
+		
+		ordenarPdvsPeloIndiceDaLista(rota);
 			
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "PDV adicionado com sucesso."), "result").recursive().serialize(); 
 
+	}
+
+	private void ordenarPdvsPeloIndiceDaLista(RotaRoteirizacaoDTO rota) {
+		if(rota != null && rota.getPdvs() != null) {
+			for(int i = 0; i < rota.getPdvs().size(); i++ ) {
+				rota.getPdvs().get(i).setOrdem(i+1);
+			}
+		}
 	}
 	
 	/**

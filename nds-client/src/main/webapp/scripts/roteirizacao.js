@@ -1304,6 +1304,7 @@ var roteirizacao = $.extend(true, {
         $("#cotaPesquisaPdv", roteirizacao.workspace).val('');
         $("#cotaPesquisaPdv", roteirizacao.workspace).justInput(/[0-9]/);
         $("#nomeCotaPesquisaPdv", roteirizacao.workspace).val('');
+        $("#selTodos", roteirizacao.workspace).uncheck();
 
         var params = {};
         if($('#radioBoxEspecial').attr('checked') == 'checked')
@@ -2347,7 +2348,7 @@ var roteirizacao = $.extend(true, {
         roteirizacao.definirTipoEdicao(TipoEdicao.NOVO);
         roteirizacao.prepararPopupRoteirizacao();
         roteirizacao.modificada = false;
-        $('#selecionarTodosPdv').attr('checked', false);
+        $('#selecionarTodosPdv').uncheck();
         
     },
 
