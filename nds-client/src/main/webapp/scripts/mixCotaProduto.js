@@ -710,7 +710,9 @@ var mixCotaProdutoController = $.extend(true, {
 								 
 								 mixCotaProdutoController.adicionarMixCotaSucesso();
 								 },
-									 function(result){ /*mixCotaProdutoController.adicionarMixCotaSucesso();*/});
+									 function(result){ 
+									 $(".mixCotasGrid").flexReload();
+								 });
 							 $(this).dialog("close");
 					}
 				},
@@ -1358,7 +1360,7 @@ var mixCotaProdutoController = $.extend(true, {
 								$(idCodigo).val(result[0].codigo);
 							}
 							$(idProduto).val(result[0].nome);
-							$(idClassificacao).val(result[1]).disable();
+							$(idClassificacao).val(result[1]);
 						}
 					}
 			);
