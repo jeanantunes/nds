@@ -1376,12 +1376,14 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		List<Estrategia> produtosEstrategia = estrategiaRepository.buscarTodos();
 		List<Long> produtoEdicaoIds = new ArrayList<Long>();
 		for (Estrategia estrategia : produtosEstrategia) {
-			if (StringUtils.isNotEmpty(estrategia.getCesta())) {
+				
 				List<EdicaoBaseEstrategia> basesEstrategia = estrategia.getBasesEstrategia();
 				for (EdicaoBaseEstrategia edicaoBaseEstrategia : basesEstrategia) {
-					produtoEdicaoIds.add(edicaoBaseEstrategia.getProdutoEdicao().getId());
+					if(edicaoBaseEstrategia.getProdutoEdicao().getProduto().getIsGeracaoAutomatica()){
+						produtoEdicaoIds.add(edicaoBaseEstrategia.getProdutoEdicao().getId());
+					}
+					
 				}
-			}
 		}
 		return produtoEdicaoIds;
 	}
