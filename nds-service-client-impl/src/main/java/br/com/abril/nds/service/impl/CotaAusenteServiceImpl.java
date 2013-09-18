@@ -81,10 +81,19 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 			this.validarCotaAusenteNaData(numCota, data);
 			
 			Cota cota = this.cotaRepository.obterPorNumerDaCota(numCota);
-
+			
+			List<GrupoMovimentoEstoque> gruposMovimentoEstoqueCota = 
+				Arrays.asList(
+					GrupoMovimentoEstoque.RECEBIMENTO_REPARTE,
+					GrupoMovimentoEstoque.SOBRA_DE_COTA,
+					GrupoMovimentoEstoque.SOBRA_EM_COTA,
+					GrupoMovimentoEstoque.FALTA_DE_COTA,
+					GrupoMovimentoEstoque.FALTA_EM_COTA
+				); 
+			
 			List<MovimentoEstoqueCota> movimentosCota = 
 				this.movimentoEstoqueCotaRepository.obterMovimentoCotaLancamentoPorTipoMovimento(
-					data, cota.getId(), Arrays.asList(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE));
+					data, cota.getId(), gruposMovimentoEstoqueCota);
 			
 			List<MovimentoEstoqueCota> movimentosEstoqueCotaEnvio =
 				this.movimentoEstoqueService.enviarSuplementarCotaAusente(
