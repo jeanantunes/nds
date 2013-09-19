@@ -333,7 +333,7 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 			Expedicao expedicao);
 
 	List<Long> obterIdsLancamentosNaoExpedidos(PaginacaoVO paginacaoVO,
-			Date data, Long idFornecedor);
+			Date data, Long idFornecedor, Boolean isSaldoInsuficiente);
 
 	BigInteger obterQtdLancamentoProdutoEdicaoCopiados(ProdutoDistribuicaoVO produtoDistribuicaoVO);
 	
