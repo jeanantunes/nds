@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1185,7 +1184,21 @@ public class RoteirizacaoController extends BaseController {
 		
 		this.verificaOrdemPdvs(pdvs, pdvsAtual);
 		
-		rota.addAllPdv(pdvs);
+		for(PdvRoteirizacaoDTO pdv : pdvs) {
+			
+			if(pdv.getOrdem() != null) {
+				if(pdv.getOrdem() > pdvs.size()) {
+					throw new ValidacaoException(TipoMensagem.WARNING, "Ordem inválida. Excede o tamanho da lista.");
+				}
+				
+				if(pdv.getOrdem() < 0) {
+					throw new ValidacaoException(TipoMensagem.WARNING, "Ordem inválida. Valor inferior ao primeiro elemento da lista.");
+				}
+				
+			}
+			
+			rota.getPdvs().add(pdv.getOrdem() - 1, pdv);
+		}
 		
 		ordenarPdvsPeloIndiceDaLista(rota);
 			
@@ -1194,11 +1207,14 @@ public class RoteirizacaoController extends BaseController {
 	}
 
 	private void ordenarPdvsPeloIndiceDaLista(RotaRoteirizacaoDTO rota) {
+		
 		if(rota != null && rota.getPdvs() != null) {
+			
 			for(int i = 0; i < rota.getPdvs().size(); i++ ) {
 				rota.getPdvs().get(i).setOrdem(i+1);
 			}
 		}
+		
 	}
 	
 	/**
@@ -1216,6 +1232,8 @@ public class RoteirizacaoController extends BaseController {
 				rota.removerPdv(cotaId);
 			}
 		}	
+		
+		ordenarPdvsPeloIndiceDaLista(rota);
 
 		result.use(CustomJson.class).from("").serialize();
 	}
