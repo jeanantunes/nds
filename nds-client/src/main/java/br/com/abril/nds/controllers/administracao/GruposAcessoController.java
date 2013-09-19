@@ -422,14 +422,13 @@ public class GruposAcessoController extends BaseController {
 			for (Long id : usuarioDTO.getIdsGrupos()) {
 					grupos.add(grupoPermissaoService.buscar(id));
 			}
-			usuario.setGruposPermissoes(grupos);
 		}		
 		
+		usuario.setGruposPermissoes(grupos);
+
 		usuarioService.salvar(usuario);
-	
-		
+
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS,"Usuário salvo com Sucesso."),"result").recursive().serialize();
-	
 	}
 	
 	/**
