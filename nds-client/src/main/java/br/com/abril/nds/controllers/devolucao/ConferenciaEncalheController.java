@@ -2191,7 +2191,7 @@ public class ConferenciaEncalheController extends BaseController {
 				                                                            conferenciaEncalheDTO.getDataRecolhimento(), 
 				                                                            produtoEdicao.getId());
 				
-		conferenciaEncalheDTO.setDia(diaRecolhimento != null ? diaRecolhimento + 1 : null);
+		conferenciaEncalheDTO.setDia(diaRecolhimento != null ? diaRecolhimento : null);
 		
 		return conferenciaEncalheDTO;
 	}
