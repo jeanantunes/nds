@@ -616,13 +616,13 @@ public class LancamentoRepositoryImpl extends
 		sql.append("  sum( ");
 		sql.append("  ((estoqueProdutoCota.QTDE_RECEBIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, ");
 		sql.append("     0) / 100))) * (produtoEdicao.PRECO_VENDA - ( produtoEdicao.PRECO_VENDA * (coalesce(descontoLogisticaProdutoEdicao.PERCENTUAL_DESCONTO / 100, ");
-		sql.append("     descontoLogisticaProduto.PERCENTUAL_DESCONTO / 100, ");
+		sql.append("     descontoLogisticaProduto.PERCENTUAL_DESCONTO / 100, produtoEdicao.DESCONTO / 100 ,");
 		sql.append("     0)) ) ) ");
 		sql.append("  ) as valorTotal, ");
 	     
 		sql.append(" produtoEdicao.ID as idProdutoEdicao, ");
 		sql.append(" ((coalesce(descontoLogisticaProdutoEdicao.PERCENTUAL_DESCONTO, ");
-		sql.append(" descontoLogisticaProduto.PERCENTUAL_DESCONTO, ");
+		sql.append(" descontoLogisticaProduto.PERCENTUAL_DESCONTO, produtoEdicao.DESCONTO, ");
 		sql.append(" 0))) as desconto, ");
 		sql.append(" produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
 		sql.append(" produtoEdicao.PESO as peso, ");
