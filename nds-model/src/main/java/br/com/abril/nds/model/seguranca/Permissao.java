@@ -219,7 +219,7 @@ public enum Permissao {
 	ROLE_RECOLHIMENTO_VENDA_ENCALHE_ALTERACAO("Venda de Encalhe / Suplementar",								Permissao.ROLE_RECOLHIMENTO, true),
 	ROLE_RECOLHIMENTO_VENDA_ENCALHE("Venda de Encalhe / Suplementar",									   	Permissao.ROLE_RECOLHIMENTO, ROLE_RECOLHIMENTO_VENDA_ENCALHE_ALTERACAO, true),
 	
-	ROLE_ESTOQUE_PRODUTOS_EM_RECOLHIMENTO_ALTERACAO("Estoque Produtos em Recolhimento",					   	Permissao.ROLE_RECOLHIMENTO, false),
+	ROLE_ESTOQUE_PRODUTOS_EM_RECOLHIMENTO_ALTERACAO("Estoque Produtos em Recolhimento",					   	Permissao.ROLE_RECOLHIMENTO, true),
 	ROLE_ESTOQUE_PRODUTOS_EM_RECOLHIMENTO("Estoque Produtos em Recolhimento",					   			Permissao.ROLE_RECOLHIMENTO, ROLE_ESTOQUE_PRODUTOS_EM_RECOLHIMENTO_ALTERACAO, true),
 	
 	ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_ALTERACAO("Fechamento Encalhe",									Permissao.ROLE_RECOLHIMENTO, true),
