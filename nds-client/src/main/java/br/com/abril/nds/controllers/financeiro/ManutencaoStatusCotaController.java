@@ -26,6 +26,7 @@ import br.com.abril.nds.client.vo.CotaVO;
 import br.com.abril.nds.client.vo.HistoricoSituacaoCotaVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaConsignadoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO.OrdenacaoColunasStatusCota;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -36,6 +37,7 @@ import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.service.ConsultaConsignadoCotaService;
 import br.com.abril.nds.service.CotaGarantiaService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DividaService;
@@ -101,6 +103,9 @@ public class ManutencaoStatusCotaController extends BaseController {
 	@Autowired
 	private TelefoneService telefoneService;
 	
+	@Autowired
+	private ConsultaConsignadoCotaService consignadoCotaService;
+	
 	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaManutencaoStatusCota";
 	
 	@Get
@@ -154,6 +159,8 @@ public class ManutencaoStatusCotaController extends BaseController {
 	public void confirmarNovo(HistoricoSituacaoCota novoHistoricoSituacaoCota) throws SchedulerException {
 		
 		this.validarAlteracaoStatus(novoHistoricoSituacaoCota);
+		
+		this.validarInativacaoCota(novoHistoricoSituacaoCota.getNovaSituacao(), novoHistoricoSituacaoCota.getCota().getNumeroCota());
 		
 		novoHistoricoSituacaoCota.setTipoEdicao(TipoEdicao.INCLUSAO);
 		
@@ -588,7 +595,27 @@ public class ManutencaoStatusCotaController extends BaseController {
 			throw new ValidacaoException(validacao);
 		}
 	}
-	
+
+	private void validarInativacaoCota(SituacaoCadastro situacaoCadastro, Integer numeroCota) {
+		
+		if (!SituacaoCadastro.INATIVO.equals(situacaoCadastro)) {
+			
+			return;
+		}
+		
+		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
+
+		FiltroConsultaConsignadoCotaDTO filtro = new FiltroConsultaConsignadoCotaDTO();
+		filtro.setIdCota(cota.getId());
+		
+		BigDecimal totalConsignado = this.consignadoCotaService.buscarTotalGeralDaCota(filtro);
+		
+		if (totalConsignado != null && totalConsignado.compareTo(BigDecimal.ZERO) > 0) {
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "A cota ["+cota.getPessoa().getNome()+"] possui um total de "+ CurrencyUtil.formatarValorComSimbolo(totalConsignado.floatValue()) +" em consignado e não pode ser inativada!");
+		}
+	}
+
 	/**
 	 * Verifica se a cota possui dividas em aberto
 	 * @param numeroCota
@@ -596,7 +623,6 @@ public class ManutencaoStatusCotaController extends BaseController {
 	@Post
 	@Path("/dividasAbertoCota")
 	public void dividasAbertoCota(Integer numeroCota){
-		
 		Cota cota = this.cotaService.obterPorNumeroDaCota(numeroCota);
 		BigDecimal totalDividas = this.dividaService.obterTotalDividasAbertoCota(cota.getId());
 		ValidacaoVO validacao = null;
