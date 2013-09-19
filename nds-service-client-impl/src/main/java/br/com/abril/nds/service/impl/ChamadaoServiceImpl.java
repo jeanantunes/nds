@@ -16,8 +16,10 @@ import br.com.abril.nds.dto.ResumoConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -36,6 +38,8 @@ import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.ChamadaoService;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.SituacaoCotaService;
+import br.com.abril.nds.service.UsuarioService;
 
 /**
  * Classe de implementação de serviços referentes
@@ -69,6 +73,12 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	
 	@Autowired
 	private LancamentoRepository lancamentoRepository;
+	
+	@Autowired
+	private UsuarioService usuarioService;
+	
+	@Autowired
+	private SituacaoCotaService situacaoCotaService;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -179,7 +189,7 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 			if (filtro.isChamadaEncalhe()) {
 				
 				this.alterarChamadao(
-					consignadoCotaChamadao, dataChamadao, novaDataChamadao, cota);
+					consignadoCotaChamadao, consignadoCotaChamadao.getDataRecolhimento(), novaDataChamadao, cota);
 				
 			} else {
 				
@@ -213,17 +223,38 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 			
 			ChamadaEncalhe chamadaEncalhe =
 				this.chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(
-					produtoEdicao, filtro.getDataChamadao(), TipoChamadaEncalhe.CHAMADAO);
+					produtoEdicao, consignadoCotaChamadao.getDataRecolhimento(), TipoChamadaEncalhe.CHAMADAO);
 			
 			ChamadaEncalheCota chamadaEncalheCotaExcluir =
 				this.obterChamadaEncalheCota(cota, chamadaEncalhe);
 			
-			this.chamadaEncalheCotaRepository.remover(chamadaEncalheCotaExcluir);
+			if(chamadaEncalheCotaExcluir!= null){
+				this.chamadaEncalheCotaRepository.remover(chamadaEncalheCotaExcluir);
+			}
 			
 			this.verificarRemoverChamadaEncalhe(chamadaEncalhe, chamadaEncalheCotaExcluir);
 		}
 		
-		this.cotaRepository.ativarCota(filtro.getNumeroCota());
+		this.atualizarStatusCotaParaAtivo(cota); 
+	}
+	
+	/**
+	 * Atualiza a situação de cadastro da cota para Ativo e gera historico de alteração da situação de cadastro da cota
+	 * @param cota
+	 */
+	private void atualizarStatusCotaParaAtivo(Cota cota){
+		
+		HistoricoSituacaoCota historico = new HistoricoSituacaoCota();
+		historico.setCota(cota);
+		historico.setDataEdicao(new Date());
+		historico.setNovaSituacao(SituacaoCadastro.ATIVO);
+		historico.setSituacaoAnterior(cota.getSituacaoCadastro());
+		historico.setResponsavel(usuarioService.getUsuarioLogado());
+		historico.setMotivo(MotivoAlteracaoSituacao.CHAMADAO);
+		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
+		historico.setDataInicioValidade(new Date());
+		
+		situacaoCotaService.atualizarSituacaoCota(historico);
 	}
 	
 	/**
@@ -309,7 +340,13 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 		
 		if (chamadaEncalheCota != null) {
 			
+			ChamadaEncalhe chamadaEncalhe = chamadaEncalheCota.getChamadaEncalhe();
+			
 			this.chamadaEncalheCotaRepository.remover(chamadaEncalheCota);
+			
+			if(chamadaEncalhe.getChamadaEncalheCotas().isEmpty()){
+				chamadaEncalheRepository.remover(chamadaEncalhe);
+			}
 		}		
 	}
 
@@ -397,19 +434,25 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	private ChamadaEncalheCota obterChamadaEncalheCota(Cota cota,
 													   ChamadaEncalhe chamadaEncalhe) {
 		
-		Set<ChamadaEncalheCota> listaChamadaEncalheCota = chamadaEncalhe.getChamadaEncalheCotas();
-		
-		ChamadaEncalheCota chamadaEncalheCotaAlterar = null;
-		
-		for (ChamadaEncalheCota chamadaEncalheCota : listaChamadaEncalheCota) {
+		if(chamadaEncalhe!= null && chamadaEncalhe.getChamadaEncalheCotas()!= null){
 			
-			if (chamadaEncalheCota.getCota().getId().equals(cota.getId())) {
+			Set<ChamadaEncalheCota> listaChamadaEncalheCota = chamadaEncalhe.getChamadaEncalheCotas();
+			
+			ChamadaEncalheCota chamadaEncalheCotaAlterar = null;
+			
+			for (ChamadaEncalheCota chamadaEncalheCota : listaChamadaEncalheCota) {
 				
-				chamadaEncalheCotaAlterar = chamadaEncalheCota;
+				if (chamadaEncalheCota.getCota().getId().equals(cota.getId())) {
+					
+					chamadaEncalheCotaAlterar = chamadaEncalheCota;
+				}
 			}
+			
+			return chamadaEncalheCotaAlterar;
 		}
 		
-		return chamadaEncalheCotaAlterar;
+		return null;
+		
 	}
 
 	/**
@@ -422,13 +465,16 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	private void verificarRemoverChamadaEncalhe(ChamadaEncalhe chamadaEncalhe,
 									   			ChamadaEncalheCota chamadaEncalheCota) {
 		
-		Set<ChamadaEncalheCota> chamadaEncalheCotas = chamadaEncalhe.getChamadaEncalheCotas();
-		
-		chamadaEncalheCotas.remove(chamadaEncalheCota);
-		
-		if (chamadaEncalheCotas.isEmpty()) {
+		if(chamadaEncalhe!= null && chamadaEncalhe.getChamadaEncalheCotas()!= null){
 			
-			this.chamadaEncalheRepository.remover(chamadaEncalhe);
+			Set<ChamadaEncalheCota> chamadaEncalheCotas = chamadaEncalhe.getChamadaEncalheCotas();
+			
+			chamadaEncalheCotas.remove(chamadaEncalheCota);
+			
+			if (chamadaEncalheCotas.isEmpty()) {
+				
+				this.chamadaEncalheRepository.remover(chamadaEncalhe);
+			}
 		}
 	}
 	

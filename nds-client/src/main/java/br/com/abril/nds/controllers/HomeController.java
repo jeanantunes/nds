@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpSession;
 
@@ -104,7 +106,10 @@ public class HomeController {
 	 * @return
 	 */
 	private List<Permissao> getPermissoesUsuario() {
-		List<Permissao> permissoes = new ArrayList<Permissao>();
+		
+		//alterado para garantir que a ordem do enum de permissões seja respeitada e evitar
+		//que uma permissão filha seja carregada antes da permissão pai.
+		Set<Permissao> permissoes = new TreeSet<Permissao>();
 		for (GrantedAuthority grantedAuthority : SecurityContextHolder.getContext().getAuthentication().getAuthorities()) {
 			try {
 				permissoes.add(Permissao.valueOf(grantedAuthority.getAuthority()));
@@ -114,7 +119,7 @@ public class HomeController {
 				continue;
 			}
 		}
-		return permissoes;
+		return new ArrayList<>(permissoes);
 	}
 
 	/**

@@ -1788,11 +1788,9 @@ public class LancamentoRepositoryImpl extends
 	public List<ProdutoLancamentoDTO> verificarDataConfirmada(ProdutoLancamentoDTO produtoLancamentoDTO) {
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" SELECT lancamento.status as status");
+		hql.append(" SELECT distinct lancamento.status as status");
 		hql.append(" FROM Lancamento as lancamento");
 		hql.append(" WHERE lancamento.dataLancamentoDistribuidor = :data ");
-		
-
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		query.setParameter("data", produtoLancamentoDTO.getNovaDataLancamento());
