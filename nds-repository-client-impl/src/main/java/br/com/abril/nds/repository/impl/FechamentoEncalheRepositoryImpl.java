@@ -136,6 +136,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		String queryString = this.getQueryFechamentoEncalhe(filtro, false);
 		
+		queryString += " order by unionEncalhe.sequencia ";
+		
 		Query query = getSession().createSQLQuery(queryString);
 		
 		query.setParameter("dataRecolhimento", filtro.getDataEncalhe());
