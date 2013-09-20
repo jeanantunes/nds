@@ -141,7 +141,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		Query query = getSession().createSQLQuery(queryString);
 		
 		query.setParameter("dataRecolhimento", filtro.getDataEncalhe());
-		//query.setParameter("origemInterface", Origem.INTERFACE);
+		query.setParameter("origemInterface", Origem.INTERFACE);
 
 		if (filtro.getFornecedorId() != null) {
 			
@@ -172,7 +172,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		((SQLQuery) query).addScalar("produto", StandardBasicTypes.STRING);
 		((SQLQuery) query).addScalar("codigo", StandardBasicTypes.STRING);
 		((SQLQuery) query).addScalar("edicao", StandardBasicTypes.LONG);
-		//((SQLQuery) query).addScalar("origem", origemEnumType);
+		((SQLQuery) query).addScalar("origem", origemEnumType);
 		((SQLQuery) query).addScalar("produtoEdicaoDescontoLogisticaId", StandardBasicTypes.LONG);
 		((SQLQuery) query).addScalar("produtoDescontoLogisticaId", StandardBasicTypes.LONG);
 		((SQLQuery) query).addScalar("precoCapaDesconto", StandardBasicTypes.BIG_DECIMAL);
@@ -201,14 +201,10 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.append("			 dlpe.ID as produtoEdicaoDescontoLogisticaId,"); 
 		query.append("			 dlp.ID as produtoDescontoLogisticaId,");
 		
-//		query.append("			 (coalesce(pe.PRECO_VENDA, 0) - (coalesce(pe.PRECO_VENDA, 0)  *");
-//		query.append("			 CASE WHEN pe.ORIGEM = :origemInterface");
-//		query.append("			 THEN (coalesce(dlpe.PERCENTUAL_DESCONTO, dlp.PERCENTUAL_DESCONTO, 0) / 100)");
-//		query.append("			 ELSE (coalesce(pe.DESCONTO, p.desconto, 0) / 100) END");
-//		query.append("			 )) as precoCapaDesconto,");
-		
 		query.append("			 (coalesce(pe.PRECO_VENDA, 0) - (coalesce(pe.PRECO_VENDA, 0)  *");
-		query.append("			 (coalesce(pe.DESCONTO, p.desconto, 0) / 100)");
+		query.append("			 CASE WHEN pe.ORIGEM = :origemInterface");
+		query.append("			 THEN (coalesce(dlpe.PERCENTUAL_DESCONTO, dlp.PERCENTUAL_DESCONTO, pe.DESCONTO, p.desconto, 0) / 100)");
+		query.append("			 ELSE (coalesce(pe.DESCONTO, p.desconto, 0) / 100) END");
 		query.append("			 )) as precoCapaDesconto,");
 		
 		query.append("			 coalesce(pe.PRECO_VENDA, 0) as precoCapa,");
@@ -239,14 +235,10 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.append("			 dlpe.ID as produtoEdicaoDescontoLogisticaId,"); 
 		query.append("			 dlp.ID as produtoDescontoLogisticaId,");
 		
-//		query.append("			 (coalesce(pe.PRECO_VENDA, 0) - (coalesce(pe.PRECO_VENDA, 0)  *");
-//		query.append("			 CASE WHEN pe.ORIGEM = :origemInterface");
-//		query.append("			 THEN (coalesce(dlpe.PERCENTUAL_DESCONTO, dlp.PERCENTUAL_DESCONTO, 0) / 100)");
-//		query.append("			 ELSE (coalesce(pe.DESCONTO, p.desconto, 0) / 100) END");
-//		query.append("			 )) as precoCapaDesconto,");
-		
 		query.append("			 (coalesce(pe.PRECO_VENDA, 0) - (coalesce(pe.PRECO_VENDA, 0)  *");
-		query.append("			 (coalesce(pe.DESCONTO, p.desconto, 0) / 100)");
+		query.append("			 CASE WHEN pe.ORIGEM = :origemInterface");
+		query.append("			 THEN (coalesce(dlpe.PERCENTUAL_DESCONTO, dlp.PERCENTUAL_DESCONTO, pe.DESCONTO, p.desconto, 0) / 100)");
+		query.append("			 ELSE (coalesce(pe.DESCONTO, p.desconto, 0) / 100) END");
 		query.append("			 )) as precoCapaDesconto,");
 		
 		query.append("			 coalesce(pe.PRECO_VENDA, 0) as precoCapa,");
@@ -357,7 +349,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		Query query =  getSession().createSQLQuery(this.getQueryFechamentoEncalhe(filtro, true));
 		
 		query.setParameter("dataRecolhimento", filtro.getDataEncalhe());
-		//query.setParameter("origemInterface", Origem.INTERFACE);
+		query.setParameter("origemInterface", Origem.INTERFACE);
 
 		if (filtro.getFornecedorId() != null) {
 			

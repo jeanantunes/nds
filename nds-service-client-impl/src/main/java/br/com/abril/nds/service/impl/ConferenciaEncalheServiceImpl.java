@@ -909,7 +909,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		DebitoCreditoCotaDTO debitoCredito = new DebitoCreditoCotaDTO();
 		
-		if(BigDecimal.ZERO.compareTo(valor) > 0) {
+		if(BigDecimal.ZERO.compareTo(valor) < 0) {
 			
 			debitoCredito.setObservacoes(descricaoCredito);
 			debitoCredito.setTipoLancamentoEnum(OperacaoFinaceira.CREDITO);
@@ -3332,7 +3332,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				 */
 				
 				String qtdeTotalProdutos =  itemLista.getQtdeTotalProdutos() == null ? "0" : itemLista.getQtdeTotalProdutos();
-				e.adicionarCompleteEspaco("Total Exemps. do dia "+ dataRecolhimentoStr+":", qtdeTotalProdutos);
+				e.adicionarCompleteEspaco("Total Exems. do dia  "+ dataRecolhimentoStr+":", qtdeTotalProdutos);
 				
 				e.quebrarLinhaEscape();
 
@@ -3365,7 +3365,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		e.quebrarLinhaEscape();
 		
 		String totalProdutos = slipDTO.getTotalProdutos() == null ? "0" : slipDTO.getTotalProdutos().toString();
-		e.adicionarCompleteEspaco("Total de Exemps. :", totalProdutos);
+		e.adicionarCompleteEspaco("Total de Exems. :", totalProdutos);
 		e.quebrarLinhaEscape();
 		
 		String valorTotalEncalhe = slipDTO.getValorTotalEncalhe() == null ? "0,00" : slipDTO.getValorTotalEncalhe().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
