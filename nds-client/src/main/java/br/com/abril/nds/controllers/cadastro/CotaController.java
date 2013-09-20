@@ -207,13 +207,14 @@ public class CotaController extends BaseController {
 	    carregarTelefonesHistoricoTitularidade(idCota, idHistorico);
 	    
 	    
-	    // Ajuste 0153
-	    Cota cota = this.cotaService.obterPorId(idCota);
-	    BigDecimal totalPerc = BigDecimal.ZERO;
-	    for (ReferenciaCota refCota : cota.getBaseReferenciaCota().getReferenciasCota()) {
-	    	totalPerc = totalPerc.add(refCota.getPercentual());
-		}
-	    cotaDTO.setPercentualCotaBase(totalPerc);
+//	    // Ajuste 0153
+//	    Cota cota = this.cotaService.obterPorId(idCota);
+//	    BigDecimal totalPerc = BigDecimal.ZERO;
+//	   
+//	    for (ReferenciaCota refCota : cota.getBaseReferenciaCota().getReferenciasCota()) {
+//	    	totalPerc = totalPerc.add(refCota.getPercentual());
+//		}
+//	    cotaDTO.setPercentualCotaBase(totalPerc);
 	    
 	    result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}
@@ -884,7 +885,9 @@ public class CotaController extends BaseController {
 		
 		CotaDTO cotaDTO = cotaService.obterDadosCadastraisCota(idCota);
 		cotaDTO.setListaClassificacao(getListaClassificacao());
-
+		
+		// verificar se está buscando as cotas bases
+		
 		result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}
 	

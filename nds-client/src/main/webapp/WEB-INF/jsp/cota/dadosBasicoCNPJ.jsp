@@ -81,7 +81,7 @@
         </table> -->
         </td>
       </tr>
-      <!-- <tr class="linhas">
+      <tr class="linhas">
         <td valign="top"><strong>Utilizar Histórico:</strong></td>
         <td width="374"><table width="348" border="0" cellspacing="1" cellpadding="2">
           <tr>
@@ -109,7 +109,7 @@
             	<input type="text" name="cotaDTO.historicoTerceiraPorcentagem" id="historicoTerceiraPorcentagem" maxlength="4" style="width:50px;"/></td>
           </tr>
         </table></td>
-      </tr> -->
+      </tr> 
     </table>
    </td>
   </tr> 
