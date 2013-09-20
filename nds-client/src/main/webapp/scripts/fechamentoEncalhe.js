@@ -246,7 +246,7 @@ var fechamentoEncalheController = $.extend(true, {
 			
 			var valorFisico = row.cell.fisico == null ? '' : row.cell.fisico;
 			if ( ( row.cell.diferenca == "0" && valorFisico == '' ) ||  valorFisico == '' ) {
-					row.cell.diferenca = "";
+					row.cell.diferenca = "0";
 			}
 			
 			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
