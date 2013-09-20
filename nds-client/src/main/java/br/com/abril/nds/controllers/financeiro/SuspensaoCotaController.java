@@ -83,28 +83,17 @@ public class SuspensaoCotaController extends BaseController {
 		
 		session.setAttribute("selecionados",null);
 	}
-
-	private void verificarBaixaBancariaNaData() {
-		
-		boolean existeBaixa = 
-				this.baixaBancariaSerivice.verificarBaixaBancariaNaData(
-						this.distribuidorService.obterDataOperacaoDistribuidor());
-		
-		if ( !existeBaixa ) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, SEM_BAIXA_NA_DATA));
-		}
-	}
 	
 	public void obterCotasSuspensaoJSON(Integer page, Integer rp, String sortname, 
 			String sortorder) {
 		
 		TipoMensagem status = TipoMensagem.SUCCESS;
+		
 		List<String> mensagens = new ArrayList<String>();
 	
 		TableModel<CellModelKeyValue<CotaSuspensaoDTO>> grid = null;
 		
 		try {
-			verificarBaixaBancariaNaData();
 			
 			grid = obterCotasSuspensao(sortname,sortorder,page,rp);			
 				

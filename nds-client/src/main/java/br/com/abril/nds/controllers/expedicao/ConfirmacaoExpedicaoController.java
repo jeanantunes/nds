@@ -153,7 +153,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 				Long idFornecedor = (Long) session.getAttribute("idFornecedor");
 				
 				List<Long> listaIdsExpedicoes = 
-						lancamentoService.obterIdsLancamentosNaoExpedidos(null, date, idFornecedor, true);
+						lancamentoService.obterIdsLancamentosNaoExpedidos(null, date, idFornecedor);
 								
 				session.setAttribute("selecionados", listaIdsExpedicoes);
 			}

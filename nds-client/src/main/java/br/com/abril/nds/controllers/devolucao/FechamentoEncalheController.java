@@ -196,16 +196,31 @@ public class FechamentoEncalheController extends BaseController {
 	
 	@Path("/salvar")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_ALTERACAO)
-	public void salvar(List<FechamentoFisicoLogicoDTO> listaFechamento, String dataEncalhe, Long fornecedorId, Long boxId) {
+	public void salvar(List<FechamentoFisicoLogicoDTO> listaFechamento, List<Long> listaNaoReplicados,
+					   boolean isAllFechamentos, String dataEncalhe, Long fornecedorId, Long boxId) {
 		
-		@SuppressWarnings("unchecked")
-		List<FechamentoFisicoLogicoDTO> listaDeGrid = (List<FechamentoFisicoLogicoDTO>) this.session.getAttribute("gridFechamentoEncalheDTO");
-				
-		gravaFechamentoEncalhe(listaDeGrid, dataEncalhe, fornecedorId,boxId);
+		List<FechamentoFisicoLogicoDTO> todosFechamentos = this.consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, false, null, null, 0, 0);
+		
+		List<FechamentoFisicoLogicoDTO> fechamentos = mergeItensFechamento(todosFechamentos, listaFechamento);
+
+		gravaFechamentoEncalhe(fechamentos, listaNaoReplicados, isAllFechamentos, dataEncalhe, fornecedorId, boxId);
 		
 		this.session.removeAttribute("listaDeGrid");
 		
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Informação gravada com sucesso!"), "result").recursive().serialize();
+	}
+	
+	private List<FechamentoFisicoLogicoDTO> mergeItensFechamento(List<FechamentoFisicoLogicoDTO> fechamentosBanco,
+																 List<FechamentoFisicoLogicoDTO> fechamentoTela) {
+		
+		for (FechamentoFisicoLogicoDTO fechamento : fechamentoTela) {
+			
+			int index = fechamentosBanco.indexOf(fechamento);
+			
+			fechamentosBanco.get(index).setFisico(fechamento.getFisico());
+		}
+		
+		return fechamentosBanco;
 	}
 	
 	@Path("/cotasAusentesConfirmacao")
@@ -724,8 +739,8 @@ public class FechamentoEncalheController extends BaseController {
 	
 
 	private String resolveSort(String sortname) {
-		
-		if (sortname.endsWith("Formatado")) {
+
+		if (sortname != null && sortname.endsWith("Formatado")) {
 			return sortname.substring(0, sortname.indexOf("Formatado"));
 		} else {
 			return sortname;
@@ -774,11 +789,18 @@ public class FechamentoEncalheController extends BaseController {
 	
 	@Path("/salvarNoEncerrementoOperacao")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_ALTERACAO)
-	public void salvarNoEncerrementoOperacao(List<FechamentoFisicoLogicoDTO> listaFechamento, String dataEncalhe, Long fornecedorId, Long boxId) {
+	public void salvarNoEncerrementoOperacao(List<FechamentoFisicoLogicoDTO> listaFechamento,
+											 List<Long> listaNaoReplicados, boolean isAllFechamentos, 
+											 String dataEncalhe, Long fornecedorId, Long boxId) {
+		
+		if (isAllFechamentos || (listaNaoReplicados != null && !listaNaoReplicados.isEmpty())) {
+
+			listaFechamento = this.consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, false, null, null, 0, 0);
+		}
 		
 		if (listaFechamento !=null && !listaFechamento.isEmpty()) {
 			
-			gravaFechamentoEncalhe(listaFechamento, dataEncalhe, fornecedorId, boxId);
+			gravaFechamentoEncalhe(listaFechamento, listaNaoReplicados, isAllFechamentos, dataEncalhe, fornecedorId, boxId);
 		}
 		
 		this.result.use(Results.json()).from("", "result").serialize();
@@ -786,15 +808,17 @@ public class FechamentoEncalheController extends BaseController {
 	
 	private void gravaFechamentoEncalhe(
 			List<FechamentoFisicoLogicoDTO> listaFechamento,
+			List<Long> listaNaoSelecionados, boolean isAllFechamentos, 
 			String dataEncalhe, Long fornecedorId, Long boxId) {
 		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
 		filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
 		filtro.setFornecedorId(fornecedorId);
 		filtro.setBoxId(boxId);
+		filtro.setCheckAll(isAllFechamentos);
 		if (boxId == null){ 
-			fechamentoEncalheService.salvarFechamentoEncalhe(filtro,listaFechamento);
+			fechamentoEncalheService.salvarFechamentoEncalhe(filtro,listaFechamento, listaNaoSelecionados);
 		} else {
-			fechamentoEncalheService.salvarFechamentoEncalheBox(filtro, listaFechamento);
+			fechamentoEncalheService.salvarFechamentoEncalheBox(filtro, listaFechamento, listaNaoSelecionados);
 		}
 	}
 	
