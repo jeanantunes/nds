@@ -184,15 +184,15 @@
 		<groupFooter>
 			<band height="40">
 				<staticText>
-					<reportElement uuid="fdbbc306-4df0-4b63-9565-b611b8d85e9d" isPrintRepeatedValues="false" mode="Opaque" x="50" y="0" width="120" height="20" isPrintInFirstWholeBand="true" printWhenGroupChanges="dataRecolhimentoGroup" backcolor="#E3E3E3"/>
+					<reportElement uuid="fdbbc306-4df0-4b63-9565-b611b8d85e9d" isPrintRepeatedValues="false" mode="Opaque" x="50" y="0" width="131" height="20" isPrintInFirstWholeBand="true" printWhenGroupChanges="dataRecolhimentoGroup" backcolor="#E3E3E3"/>
 					<box>
 						<topPen lineWidth="1.0"/>
 					</box>
 					<textElement verticalAlignment="Middle"/>
-					<text><![CDATA[Total de Exemps. do dia]]></text>
+					<text><![CDATA[Total de Exems. do dia]]></text>
 				</staticText>
 				<staticText>
-					<reportElement uuid="660c2025-50ed-4240-aab7-67dfc00af1e8" isPrintRepeatedValues="false" mode="Opaque" x="50" y="20" width="120" height="20" isPrintInFirstWholeBand="true" printWhenGroupChanges="dataRecolhimentoGroup" backcolor="#F0F0F0"/>
+					<reportElement uuid="660c2025-50ed-4240-aab7-67dfc00af1e8" isPrintRepeatedValues="false" mode="Opaque" x="50" y="20" width="131" height="20" isPrintInFirstWholeBand="true" printWhenGroupChanges="dataRecolhimentoGroup" backcolor="#F0F0F0"/>
 					<textElement verticalAlignment="Middle"/>
 					<text><![CDATA[Total do Encalhe do dia]]></text>
 				</staticText>
@@ -210,7 +210,7 @@
 					<textFieldExpression><![CDATA[$F{valorTotalEncalhe} == null ? 0 : $F{valorTotalEncalhe}]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd/MM/yy">
-					<reportElement uuid="6fc189b5-d777-4661-a4a5-d6c9d38ddf51" isPrintRepeatedValues="false" mode="Opaque" x="170" y="0" width="89" height="20" isPrintInFirstWholeBand="true" printWhenGroupChanges="dataRecolhimentoGroup" backcolor="#E3E3E3"/>
+					<reportElement uuid="6fc189b5-d777-4661-a4a5-d6c9d38ddf51" isPrintRepeatedValues="false" mode="Opaque" x="181" y="0" width="78" height="20" isPrintInFirstWholeBand="true" printWhenGroupChanges="dataRecolhimentoGroup" backcolor="#E3E3E3"/>
 					<box>
 						<topPen lineWidth="1.0"/>
 					</box>
@@ -220,7 +220,7 @@
 					<textFieldExpression><![CDATA[$F{dataRecolhimento} == null ? "" : new SimpleDateFormat("dd/MM/yy").format($F{dataRecolhimento}) + ":"]]></textFieldExpression>
 				</textField>
 				<textField pattern="dd/MM/yy">
-					<reportElement uuid="f14a871b-1a6a-4b86-b78f-ca3377a4690d" isPrintRepeatedValues="false" mode="Opaque" x="170" y="20" width="89" height="20" isPrintInFirstWholeBand="true" printWhenGroupChanges="dataRecolhimentoGroup" backcolor="#F0F0F0"/>
+					<reportElement uuid="f14a871b-1a6a-4b86-b78f-ca3377a4690d" isPrintRepeatedValues="false" mode="Opaque" x="181" y="20" width="78" height="20" isPrintInFirstWholeBand="true" printWhenGroupChanges="dataRecolhimentoGroup" backcolor="#F0F0F0"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle" markup="none">
 						<font size="10" isBold="false"/>
 					</textElement>
@@ -393,7 +393,7 @@
 			<staticText>
 				<reportElement uuid="921e4711-f4be-49c1-9670-7e76f948c5ce" mode="Opaque" x="50" y="80" width="243" height="20" backcolor="#E3E3E3"/>
 				<textElement verticalAlignment="Middle"/>
-				<text><![CDATA[Total de Exemps:]]></text>
+				<text><![CDATA[Total de Exems:]]></text>
 			</staticText>
 			<textField pattern="###0" isBlankWhenNull="true">
 				<reportElement uuid="220c5124-d8dd-4eca-bf9f-726ea98122a6" isPrintRepeatedValues="false" mode="Opaque" x="293" y="81" width="254" height="19" backcolor="#E3E3E3"/>
