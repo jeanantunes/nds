@@ -169,4 +169,38 @@ public class RoteiroRepositoryImpl extends
 		return criteria.list();
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Roteiro> buscarRoteiroCodigoBox(Long codigoBoxDe, Long codigoBoxAte) {
+		
+		Criteria criteria = getSession().createCriteria(Roteiro.class, "roteiro");
+		if (codigoBoxDe != null) {
+			criteria.createAlias("roteiro.roteirizacao", "roteirizacao");
+			
+			if (codigoBoxDe < 1) {
+				
+				criteria.createAlias("roteirizacao.box", "box", JoinType.LEFT_OUTER_JOIN);
+				criteria.add(Restrictions.isNull("roteirizacao.box"));
+			
+			} else {
+			
+				criteria.createAlias("roteirizacao.box", "box");
+				if(codigoBoxDe != null && codigoBoxAte != null) {
+					criteria.add(Restrictions.between("box.codigo", codigoBoxDe.intValue(), codigoBoxAte.intValue()));
+				}
+				if(codigoBoxDe != null && codigoBoxAte == null) {
+					criteria.add(Restrictions.eq("box.codigo", codigoBoxDe.intValue()));
+				}
+				if(codigoBoxDe == null && codigoBoxAte != null) {
+					criteria.add(Restrictions.eq("box.codigo", codigoBoxAte.intValue()));
+				}
+			
+			}
+		}
+		
+		criteria.addOrder(Order.asc("descricaoRoteiro"));
+		return criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY).list();
+		
+	}
+
 }
