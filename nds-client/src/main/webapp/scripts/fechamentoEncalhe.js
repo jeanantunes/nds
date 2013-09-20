@@ -8,6 +8,7 @@ var fechamentoEncalheController = $.extend(true, {
 	checkMarcarTodosCotasAusentes : false,
 	checkAllGrid: false,
 	nonSelected: [],
+	fechamentosManuais: [],
 	
 	statusCobrancaCota: null,
 	
@@ -226,6 +227,7 @@ var fechamentoEncalheController = $.extend(true, {
 		vDataEncalhe = $('#datepickerDe', fechamentoEncalheController.workspace).val();
 		vFornecedorId = $('#selectFornecedor', fechamentoEncalheController.workspace).val();
 		vBoxId = $('#selectBoxEncalhe', fechamentoEncalheController.workspace).val();
+		
 	},
 	preprocessamentoGridFechamento : function(resultado) {
 		
@@ -244,11 +246,11 @@ var fechamentoEncalheController = $.extend(true, {
 			
 			var valorFisico = row.cell.fisico == null ? '' : row.cell.fisico;
 			if ( ( row.cell.diferenca == "0" && valorFisico == '' ) ||  valorFisico == '' ) {
-					row.cell.diferenca = "";
+					row.cell.diferenca = "0";
 			}
 			
 			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
-			row.cell.fisico = '<input class="" isEdicao="true" type="text" onkeypress="fechamentoEncalheController.nextInputExemplares('+index+',event); fechamentoEncalheController.retirarCheckBox('+index+');" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" value="' + valorFisico + '" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ')" ' + fechado + '/>';
+			row.cell.fisico = '<input class="" isEdicao="true" type="text" onkeypress="fechamentoEncalheController.nextInputExemplares('+index+',event); fechamentoEncalheController.retirarCheckBox('+index+', ' + row.cell.produtoEdicao + ');" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" value="' + valorFisico + '" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ', ' +row.cell.produtoEdicao+')" ' + fechado + '/>';
 
 			if((row.cell.replicar == 'true' || fechamentoEncalheController.checkAllGrid) && ($.inArray(row.cell.produtoEdicao, fechamentoEncalheController.nonSelected) < 0))
 			{
@@ -263,6 +265,10 @@ var fechamentoEncalheController = $.extend(true, {
 				$('.divBotoesPrincipais', fechamentoEncalheController.workspace).hide();
 			}
 		});
+		
+		fechamentoEncalheController.fechamentosManuais = new Array();
+		fechamentoEncalheController.nonSelected = new Array();
+
 		
 		return resultado;
 	},
@@ -365,8 +371,6 @@ var fechamentoEncalheController = $.extend(true, {
 	},
 	
 	checkAll:function(input){
-		
-		 
 		if($('input[name=Todos]').is(":checked"))
 		{
 			gridVerificacaoEscritos = [];
@@ -398,9 +402,14 @@ var fechamentoEncalheController = $.extend(true, {
 		}
 		
 		fechamentoEncalheController.checkAllGrid = input.checked;
+		
+		fechamentoEncalheController.fechamentosManuais = new Array();
+		fechamentoEncalheController.nonSelected = new Array();
+		 
+
 	},
 	
-	onChangeFisico : function(campo, index) {
+	onChangeFisico : function(campo, index, produtoEdicao) {
 		
 		var tabela = $('.fechamentoGrid', fechamentoEncalheController.workspace).get(0);
 		var devolucao = parseInt(tabela.rows[index].cells[6].firstChild.innerHTML);
@@ -411,6 +420,8 @@ var fechamentoEncalheController = $.extend(true, {
 		} else {
 			diferenca.innerHTML =campo.value - devolucao ;			
 		}
+		
+		fechamentoEncalheController.fechamentosManuais.push({produtoEdicao: produtoEdicao, fisico: campo.value});
 	},
 	
 	gerarArrayFisico : function() {
@@ -1140,14 +1151,20 @@ var fechamentoEncalheController = $.extend(true, {
 		 data.push({name:"dataEncalhe", value: $('#datepickerDe', fechamentoEncalheController.workspace).val()});
 		 data.push({name:"fornecedorId", value: $('#selectFornecedor', fechamentoEncalheController.workspace).val()});
 		 data.push({name:"boxId", value: $('#selectBoxEncalhe', fechamentoEncalheController.workspace).val()});
+		 
+		 if (fechamentoEncalheController.nonSelected) {
+		 
+			 $.each(fechamentoEncalheController.nonSelected, function(index, value) {
+				data.push({name:'listaNaoReplicados[' + index + ']', value: value});			 
+			 });
 
-		 $("input[type=text][name='fisico']").each(function(index, value){
+			 data.push({name:"isAllFechamentos", value: fechamentoEncalheController.checkAllGrid});
+		 }
+
+		 $.each(fechamentoEncalheController.fechamentosManuais, function(index, value) {
 			
-			 if ($.inArray($(value).attr('id'), fechamentoEncalheController.nonSelected) < 0) {
-
-				 data.push({name: 'listaFechamento[' + index + '].produtoEdicao', value: $(value).attr('id')});
-				 data.push({name: 'listaFechamento[' + index + '].fisico', value: $(value).val()});
-			 }
+			 data.push({name: 'listaFechamento[' + index + '].produtoEdicao', value: value.produtoEdicao});
+			 data.push({name: 'listaFechamento[' + index + '].fisico', value: value.fisico});
 		 });
 		 
 		return data;
@@ -1203,9 +1220,10 @@ var fechamentoEncalheController = $.extend(true, {
 		}
 	},
 	
-	retirarCheckBox : function(index) {
+	retirarCheckBox : function(index,idProdutoEdicao) {
 		if($("#ch" + index).is(":checked")) {
 			$("#ch" + index).attr("checked", false);
+			fechamentoEncalheController.nonSelected.push(idProdutoEdicao);
 		}
 		if($("#sel").is(":checked")) {
 			$("#sel").attr("checked", false);

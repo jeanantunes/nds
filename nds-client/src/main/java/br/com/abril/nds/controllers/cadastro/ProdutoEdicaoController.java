@@ -20,6 +20,7 @@ import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.ClasseSocial;
 import br.com.abril.nds.model.cadastro.FaixaEtaria;
@@ -236,7 +237,7 @@ public class ProdutoEdicaoController extends BaseController {
 			Date dataLancamentoPrevisto, Date dataRecolhimentoPrevisto,
 			BigInteger repartePrevisto, BigInteger repartePromocional,
 			String codigoDeBarras, String codigoDeBarrasCorporativo,
-			BigDecimal desconto, String descricaoDesconto,Long peso, 
+			String desconto, String descricaoDesconto,Long peso, 
 			BigDecimal largura, BigDecimal comprimento, BigDecimal espessura,
 			String chamadaCapa, boolean parcial, boolean possuiBrinde,
 			String boletimInformativo, Integer numeroLancamento, Long descricaoBrinde, String descricaoProduto,
@@ -244,6 +245,7 @@ public class ProdutoEdicaoController extends BaseController {
 			
 		BigDecimal pPrevisto = precoPrevisto!=null?new BigDecimal(this.getValorSemMascara(precoPrevisto)):null;
 		BigDecimal pVenda = precoVenda!=null?new BigDecimal(this.getValorSemMascara(precoVenda)):null;
+		BigDecimal vlDesconto = (desconto!= null) ? new BigDecimal(desconto.replace(",", ".")) :null;
 		
 		// DTO para transportar os dados:
 		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
@@ -265,7 +267,7 @@ public class ProdutoEdicaoController extends BaseController {
 		dto.setRepartePromocional(repartePromocional);
 		dto.setCodigoDeBarras(codigoDeBarras);
 		dto.setCodigoDeBarrasCorporativo(codigoDeBarrasCorporativo);
-		dto.setDesconto(desconto);
+		dto.setDesconto(vlDesconto);
 		dto.setDescricaoDesconto(descricaoDesconto);
 		dto.setPeso(peso);
 		dto.setLargura(largura == null ? 0 : largura.floatValue());
@@ -548,10 +550,21 @@ public class ProdutoEdicaoController extends BaseController {
 		    
 		    BigDecimal precoVenda = produtoEdicao.getPrecoVenda();
 		    
-		    BigDecimal percentualDesconto = produtoEdicao.getProduto().getDescontoLogistica().getPercentualDesconto();
+		    BigDecimal percentualDesconto = BigDecimal.ZERO;
 		    
-		    percentualDesconto = percentualDesconto != null ? percentualDesconto : BigDecimal.ZERO;
-
+		    if(Origem.INTERFACE.equals(produtoEdicao.getOrigem())){
+		    	
+		    	 percentualDesconto = (produtoEdicao.getProduto().getDescontoLogistica()!= null)
+				    		? produtoEdicao.getProduto().getDescontoLogistica().getPercentualDesconto()
+				    				:BigDecimal.ZERO;
+		    }
+		    else{
+		    	
+		    	percentualDesconto = (produtoEdicao.getDesconto()!= null)
+		    			? produtoEdicao.getDesconto()
+		    					: BigDecimal.ZERO;
+		    }
+		    
             BigDecimal valorDesconto = MathUtil.calculatePercentageValue(precoVenda, percentualDesconto);
 			
 			BigDecimal precoComDesconto = null;
@@ -578,7 +591,7 @@ public class ProdutoEdicaoController extends BaseController {
 													   produtoEdicao.getProduto().getNome(),
 													   produtoEdicao.getProduto().getCodigo(),
 										               (precoVenda!=null?CurrencyUtil.formatarValor(precoVenda):""),
-										               (precoComDesconto!=null?CurrencyUtil.formatarValor(precoComDesconto):""),
+										               (precoComDesconto!=null?CurrencyUtil.formatarValorQuatroCasas(precoComDesconto):""),
 										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getFornecedor()!=null?produtoEdicao.getProduto().getFornecedor().getJuridica().getNome():""):""),
 										               (produtoEdicao.getProduto()!=null?(produtoEdicao.getProduto().getEditor()!=null?produtoEdicao.getProduto().getEditor().getCodigo().toString():""):""),
 										               razaoSocial,

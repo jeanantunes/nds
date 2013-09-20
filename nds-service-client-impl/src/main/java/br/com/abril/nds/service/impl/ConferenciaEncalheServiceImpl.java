@@ -701,6 +701,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(controleConferenciaEncalheCota.getId());
 			
+			for(ConferenciaEncalheDTO item : listaConferenciaEncalheDTO){
+				Integer diaSemanaRecolhimento = 
+						distribuidorService.obterDiaDeRecolhimentoDaData(item.getDataConferencia(),item.getDataRecolhimento() ,item.getIdProdutoEdicao());
+				item.setDia(diaSemanaRecolhimento);
+			}
+			
 			infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);
 			
 			infoConfereciaEncalheCota.setEncalhe(null);
@@ -903,7 +909,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		DebitoCreditoCotaDTO debitoCredito = new DebitoCreditoCotaDTO();
 		
-		if(BigDecimal.ZERO.compareTo(valor) > 0) {
+		if(BigDecimal.ZERO.compareTo(valor) < 0) {
 			
 			debitoCredito.setObservacoes(descricaoCredito);
 			debitoCredito.setTipoLancamentoEnum(OperacaoFinaceira.CREDITO);
@@ -3031,7 +3037,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoSlip.setDia(dia);
 			
 			String ordinal = ((dia != null) ? DateUtil.formatarDataPTBR(produtoEdicaoSlip.getDataOperacao()) 
-											+ " " +  this.getDiaMesOrdinal(dia +1) + " DIA" : "PRODUTOS ANTECIPADOS");
+											+ " " +  this.getDiaMesOrdinal(dia+1) + " DIA" : "PRODUTOS ANTECIPADOS");
 		
 			produtoEdicaoSlip.setOrdinalDiaConferenciaEncalhe(ordinal);	
 		}
@@ -3326,12 +3332,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				 */
 				
 				String qtdeTotalProdutos =  itemLista.getQtdeTotalProdutos() == null ? "0" : itemLista.getQtdeTotalProdutos();
-				e.adicionarCompleteEspaco("Total Produtos do dia "+ dataRecolhimentoStr+":", qtdeTotalProdutos);
+				e.adicionarCompleteEspaco("Total Exems. do dia  "+ dataRecolhimentoStr+":", qtdeTotalProdutos);
 				
 				e.quebrarLinhaEscape();
 
 				String valorTotalEncalhe = itemLista.getValorTotalEncalhe() == null ? "0" : itemLista.getValorTotalEncalhe();
-				e.adicionarCompleteEspaco("Total Encalhe  do dia "+ dataRecolhimentoStr +":", valorTotalEncalhe);
+				e.adicionarCompleteEspaco("Total Encalhe do dia "+ dataRecolhimentoStr +":", valorTotalEncalhe);
 				e.quebrarLinhaEscape();
 				/*
 				 * 
@@ -3359,11 +3365,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		e.quebrarLinhaEscape();
 		
 		String totalProdutos = slipDTO.getTotalProdutos() == null ? "0" : slipDTO.getTotalProdutos().toString();
-		e.adicionarCompleteEspaco("Total de produtos:", totalProdutos);
+		e.adicionarCompleteEspaco("Total de Exems. :", totalProdutos);
 		e.quebrarLinhaEscape();
 		
 		String valorTotalEncalhe = slipDTO.getValorTotalEncalhe() == null ? "0,00" : slipDTO.getValorTotalEncalhe().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
-		e.adicionarCompleteEspaco("Valor total de encalhe: ( A )", valorTotalEncalhe);
+		e.adicionarCompleteEspaco("Valor total de Encalhe: ( A )", valorTotalEncalhe);
 		e.quebrarLinhaEscape();
 		e.quebrarLinhaEscape();
 	

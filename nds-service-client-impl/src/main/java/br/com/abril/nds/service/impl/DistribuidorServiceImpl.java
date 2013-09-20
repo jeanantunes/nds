@@ -449,7 +449,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		
 		} else if (dataRecolhimento.compareTo(dataConferencia) == 0) {
 			
-			return 0;
+			return 1;
 		} 
 
 		Long[] listaIdsFornecedores = this.conferenciaEncalheService.obterIdsFornecedorDoProduto(produtoEdicao);

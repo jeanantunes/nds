@@ -147,7 +147,7 @@ public class LancamentoRepositoryImpl extends
 		
 		hql.append(" select lancamento ");
 		
-		hql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, estudo, false));	
+		hql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, estudo));	
 		
 		if( paginacaoVO != null ) {
 			hql.append(gerarOrderByProdutosNaoExpedidos(
@@ -236,7 +236,8 @@ public class LancamentoRepositoryImpl extends
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Long> obterIdsLancamentosNaoExpedidos(PaginacaoVO paginacaoVO, Date data, Long idFornecedor, Boolean isSaldoInsuficiente) {
+	public List<Long> obterIdsLancamentosNaoExpedidos(
+			PaginacaoVO paginacaoVO, Date data, Long idFornecedor) {
 				
 		Map<String, Object> parametros = new HashMap<String, Object>();
 		 
@@ -244,7 +245,7 @@ public class LancamentoRepositoryImpl extends
 		
 		hql.append(" select lancamento.id ");
 		
-		hql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, true, isSaldoInsuficiente));	
+		hql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, true));	
 		
 		if( paginacaoVO != null ) {
 			hql.append(gerarOrderByProdutosNaoExpedidos(
@@ -321,7 +322,7 @@ public class LancamentoRepositoryImpl extends
 	 * @param sortOrder
 	 * @return
 	 */
-	private String gerarQueryProdutosNaoExpedidos(Map<String, Object> parametros, Date data, Long idFornecedor, Boolean estudo, Boolean isSaldoInsuficiente) {
+	private String gerarQueryProdutosNaoExpedidos(Map<String, Object> parametros, Date data, Long idFornecedor, Boolean estudo) {
 		
 
 		StringBuilder hql = new StringBuilder();	
@@ -376,9 +377,7 @@ public class LancamentoRepositoryImpl extends
 			parametros.put("idFornecedor", idFornecedor);
 		}			
 		
-		if(isSaldoInsuficiente){
-			hql.append(" and estoque.qtde>=estudo.qtdeReparte ");
-		}
+		//hql.append(" and estoque.qtde>=estudo.qtdeReparte ");
 		
 		hql.append(" group by lancamento ");
 		
@@ -429,7 +428,7 @@ public class LancamentoRepositoryImpl extends
 		
 		jpql.append(" select count(lancamento) ");	
 		
-		jpql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, estudo, false));	
+		jpql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, estudo));	
 										
 		Query query = getSession().createQuery(jpql.toString());
 		
@@ -623,13 +622,13 @@ public class LancamentoRepositoryImpl extends
 		sql.append("  sum( ");
 		sql.append("  ((estoqueProdutoCota.QTDE_RECEBIDA) - ((estoqueProdutoCota.QTDE_RECEBIDA) * (coalesce(produtoEdicao.EXPECTATIVA_VENDA, ");
 		sql.append("     0) / 100))) * (produtoEdicao.PRECO_VENDA - ( produtoEdicao.PRECO_VENDA * (coalesce(descontoLogisticaProdutoEdicao.PERCENTUAL_DESCONTO / 100, ");
-		sql.append("     descontoLogisticaProduto.PERCENTUAL_DESCONTO / 100, ");
+		sql.append("     descontoLogisticaProduto.PERCENTUAL_DESCONTO / 100, produtoEdicao.DESCONTO / 100 ,");
 		sql.append("     0)) ) ) ");
 		sql.append("  ) as valorTotal, ");
 	     
 		sql.append(" produtoEdicao.ID as idProdutoEdicao, ");
 		sql.append(" ((coalesce(descontoLogisticaProdutoEdicao.PERCENTUAL_DESCONTO, ");
-		sql.append(" descontoLogisticaProduto.PERCENTUAL_DESCONTO, ");
+		sql.append(" descontoLogisticaProduto.PERCENTUAL_DESCONTO, produtoEdicao.DESCONTO, ");
 		sql.append(" 0))) as desconto, ");
 		sql.append(" produtoEdicao.NUMERO_EDICAO as numeroEdicao, ");
 		sql.append(" produtoEdicao.PESO as peso, ");

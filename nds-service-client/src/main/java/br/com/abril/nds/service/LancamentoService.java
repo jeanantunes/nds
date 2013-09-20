@@ -125,7 +125,7 @@ public interface LancamentoService {
 	public List<Lancamento> obterLancamentosEdicao(Long idEdicao, String sortorder, String sortname);
 
 	List<Long> obterIdsLancamentosNaoExpedidos(PaginacaoVO paginacaoVO,
-			Date data, Long idFornecedor, Boolean isSaldoInsuficiente);
+			Date data, Long idFornecedor);
 
 	boolean existeMatrizRecolhimentoConfirmado(Date dataChamadao);
 

@@ -267,8 +267,9 @@ var produtoEdicaoController =$.extend(true,  {
 			 decimal:',', 
 			 precision:2
 		});
+
+		$("#produtoEdicaoController-desconto", this.workspace).mask("999,99"); 			
 		
-		$("#produtoEdicaoController-desconto").numeric();
 		$("#produtoEdicaoController-peso").numeric();
 		$("#produtoEdicaoController-largura").numeric();
 		$("#produtoEdicaoController-comprimento").numeric();
@@ -774,7 +775,7 @@ var produtoEdicaoController =$.extend(true,  {
 						    $("#produtoEdicaoController-categoria").val(result.grupoProduto);
 							$("#produtoEdicaoController-codigoDeBarras").val(result.codigoDeBarras);
 							$("#produtoEdicaoController-codigoDeBarrasCorporativo").val(result.codigoDeBarrasCorporativo);
-							$("#produtoEdicaoController-desconto").val(result.desconto);
+							$("#produtoEdicaoController-desconto", this.workspace).val($.formatNumber(result.desconto, {format:"###,##000.00", locale:"br"}));
 							$("#produtoEdicaoController-descricaoDesconto").val(result.descricaoDesconto);
 							$("#produtoEdicaoController-peso").val(result.peso);
 							$("#produtoEdicaoController-largura").val(result.largura);
@@ -1001,6 +1002,7 @@ var produtoEdicaoController =$.extend(true,  {
 	},
 	
 	submeterProdutoEdicao : function(closePopUp) {
+		
 		$("#produtoEdicaoController-formUpload").ajaxSubmit({
 			beforeSubmit: function(arr, formData, options) {
 				// Incluir aqui as validacoes;
@@ -1037,7 +1039,7 @@ var produtoEdicaoController =$.extend(true,  {
 			url:  contextPath + '/cadastro/edicao/salvar',
 			type: 'POST',
 			dataType: 'json',
-			data: { codigoProduto : $("#produtoEdicaoController-codigoProduto",this.workspace).val() }
+			data: { codigoProduto : $("#produtoEdicaoController-codigoProduto",this.workspace).val()}
 		});
 	},
 	
