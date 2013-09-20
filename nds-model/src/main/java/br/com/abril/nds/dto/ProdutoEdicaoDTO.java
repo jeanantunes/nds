@@ -16,7 +16,6 @@ import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
-import br.com.abril.nds.util.Util;
 
 public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoDTO> {
 
@@ -332,6 +331,13 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 		}
 	}
 	
+	public void setStatusLancamento(String statusLancamento) {
+		this.statusLancamento = "";
+		if (null != statusLancamento) {
+			this.statusLancamento = statusLancamento;
+		}
+	}
+	
 	/**
 	 * @return the situacaoLancamento
 	 */
@@ -342,6 +348,13 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 		this.statusSituacao = "";
 		if (null != statusSituacao) {
 			this.statusSituacao = statusSituacao.getDescricao();
+		}
+	}
+	
+	public void setStatusSituacao(String statusSituacao) {
+		this.statusSituacao = "";
+		if (null != statusSituacao) {
+			this.statusSituacao = statusSituacao;
 		}
 	}
 	

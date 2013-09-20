@@ -649,7 +649,7 @@ var roteirizacao = $.extend(true, {
     },
 
     iniciarGridBox : function(){
-        $(".boxGrid", roteirizacao.workspace).flexigrid({
+        $(".boxRoteirizacaoGrid", roteirizacao.workspace).flexigrid({
             preProcess: function(data) {
                 $.each(data.rows, function(index, value) {
 
@@ -686,7 +686,7 @@ var roteirizacao = $.extend(true, {
 
             url: contextPath + '/cadastro/roteirizacao/recarregarBox',
             onSubmit    : function(){
-                $('.boxGrid').flexOptions({params: [{name: 'nomeBox', value: $('#nomeBox').val()}]});
+                $('.boxRoteirizacaoGrid').flexOptions({params: [{name: 'nomeBox', value: $('#nomeBox').val()}]});
                 return true;
             }
         });
@@ -695,19 +695,19 @@ var roteirizacao = $.extend(true, {
 
     popularGridBox : function(data) {
         if (data) {
-            $(".boxGrid", roteirizacao.workspace).flexAddData({rows: toFlexiGridObject(data), page : 1, total : data.length});
+            $(".boxRoteirizacaoGrid", roteirizacao.workspace).flexAddData({rows: toFlexiGridObject(data), page : 1, total : data.length});
         } else {
             roteirizacao.limparGridBox();
         }
     },
 
     limparGridBox : function() {
-        $(".boxGrid", roteirizacao.workspace).flexAddData({rows: [], page : 0, total : 0});
+        $(".boxRoteirizacaoGrid", roteirizacao.workspace).flexAddData({rows: [], page : 0, total : 0});
     },
 
     pesquisarBox : function() {
         roteirizacao.limparInfoCotasRota();
-        $(".boxGrid", roteirizacao.workspace).flexReload();
+        $(".boxRoteirizacaoGrid", roteirizacao.workspace).flexReload();
         roteirizacao.idBox = "";
         roteirizacao.nomeBox = "";
         roteirizacao.limparGridRoteiros();
@@ -1304,6 +1304,7 @@ var roteirizacao = $.extend(true, {
         $("#cotaPesquisaPdv", roteirizacao.workspace).val('');
         $("#cotaPesquisaPdv", roteirizacao.workspace).justInput(/[0-9]/);
         $("#nomeCotaPesquisaPdv", roteirizacao.workspace).val('');
+        $("#selTodos", roteirizacao.workspace).uncheck();
 
         var params = {};
         if($('#radioBoxEspecial').attr('checked') == 'checked')
@@ -2347,7 +2348,7 @@ var roteirizacao = $.extend(true, {
         roteirizacao.definirTipoEdicao(TipoEdicao.NOVO);
         roteirizacao.prepararPopupRoteirizacao();
         roteirizacao.modificada = false;
-        $('#selecionarTodosPdv').attr('checked', false);
+        $('#selecionarTodosPdv').uncheck();
         
     },
 
