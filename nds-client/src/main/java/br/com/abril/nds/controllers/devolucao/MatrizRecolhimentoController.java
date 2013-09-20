@@ -1104,7 +1104,7 @@ public class MatrizRecolhimentoController extends BaseController {
 		
 		if (produtoRecolhimento.getPrecoDesconto() != null) {
 			produtoRecolhimentoFormatado.setPrecoDesconto(
-				CurrencyUtil.formatarValor(produtoRecolhimento.getPrecoDesconto()));
+				CurrencyUtil.formatarValorQuatroCasas(produtoRecolhimento.getPrecoDesconto()));
 		} else {
 			produtoRecolhimentoFormatado.setPrecoDesconto(null);
 		}

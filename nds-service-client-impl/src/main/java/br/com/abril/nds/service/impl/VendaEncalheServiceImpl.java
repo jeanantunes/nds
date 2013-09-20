@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
@@ -49,6 +50,7 @@ import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.estoque.ValoresAplicados;
 import br.com.abril.nds.model.estoque.VendaProduto;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.HistoricoMovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
@@ -62,7 +64,9 @@ import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
+import br.com.abril.nds.repository.HistoricoMovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
+import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
@@ -135,7 +139,13 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 	private TipoMovimentoFinanceiroRepository tipoMovimentoFinanceiroRepository;
 
 	@Autowired
+	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
+	
+	@Autowired
 	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
+	
+	@Autowired
+	private HistoricoMovimentoFinanceiroCotaRepository historicoMovimentoFinanceiroCotaRepository;
 
 	@Autowired
 	private ChamadaEncalheRepository chamadaEncalheRepository;
@@ -926,6 +936,63 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 		return venda;
 	}
 
+	/**
+	 * Exclui lista de HistoricoMovimentoFinanceiroCota de cada MovimentoFinanceiroCota
+	 * Retorna lista de MovimentoFinanceiroCota que tiveram seus respectivos historicos excluidos
+	 * @param movsFin
+	 * @return List<Long>
+	 */
+	private List<Long> exluirHistoricoMovimentoFinanceiroCota(Set<MovimentoFinanceiroCota> movsFin){
+	
+		List<Long> idsMovFin = new ArrayList<Long>();
+		
+		List<Long> idsHistMovFinExcluir = new ArrayList<Long>();
+	        
+        if (movsFin==null || movsFin.isEmpty()){
+        	
+        	return null;
+        }
+		
+		for (MovimentoFinanceiroCota mov : movsFin){
+			
+			List<HistoricoMovimentoFinanceiroCota> hMovs =  mov.getHistoricos();
+			
+			if (hMovs!=null && !hMovs.isEmpty()){ 
+			 
+				for (HistoricoMovimentoFinanceiroCota hMov : hMovs){
+					
+					idsHistMovFinExcluir.add(hMov.getId());
+				}
+				
+				idsMovFin.add(mov.getId());
+				
+				for (Long id : idsHistMovFinExcluir){
+				    
+					this.historicoMovimentoFinanceiroCotaRepository.removerPorId(id);
+				}
+			}
+		}
+			
+		return idsMovFin;	
+	}
+	
+	/**
+	 * Remove movimentos financeiros da cota ao excluir uma venda de encalhe
+	 * @param idMovsFin
+	 */
+	private void excluirMovimentosFinanceirosExclusaoVendaEncalhe(List<Long> idMovsFin){
+        
+        if (idMovsFin==null || idMovsFin.isEmpty()){
+        	
+        	return;
+        }
+
+		for (Long id : idMovsFin){
+		    
+			this.movimentoFinanceiroCotaRepository.removerPorId(id);
+		}
+	}
+	
 	@Override
 	@Transactional
 	public void excluirVendaEncalhe(Long idVendaEncalhe) {
@@ -957,9 +1024,17 @@ public class VendaEncalheServiceImpl implements VendaEncalheService {
 
 		vendaProduto.getMovimentoEstoque().add(movimento);
 		
+		Set<MovimentoFinanceiroCota> movsFin = vendaProduto.getMovimentoFinanceiro();
+		
+		List<Long> idMovsFin = this.exluirHistoricoMovimentoFinanceiroCota(movsFin);
+		
 		vendaProduto.setMovimentoEstoque(null);
+		
 		vendaProduto.setMovimentoFinanceiro(null);
+
 		vendaProdutoRepository.remover(vendaProduto);
+		
+		this.excluirMovimentosFinanceirosExclusaoVendaEncalhe(idMovsFin);
 	}
 
 	/**
