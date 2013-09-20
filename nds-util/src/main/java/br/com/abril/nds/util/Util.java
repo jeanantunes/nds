@@ -623,6 +623,16 @@ public abstract class Util {
         return Long.valueOf(System.identityHashCode(object));
     }
 
+    /**
+     * Verifica a diferença entre o primeiro e o segundo valor, return true se a dif for menor que o valorIgnorar passado no 3ºparam
+     * 
+     * Método útil para resolver casos de arredondamento 4 casas p/ 2 decimais
+     * 
+     * @param v1
+     * @param v2
+     * @param valorIgnorar
+     * @return
+     */
     public static Boolean isDiferencaMenorValor(BigDecimal v1, BigDecimal v2, BigDecimal valorIgnorar){
 		
     	if(v1 == null && v2 != null)
@@ -634,6 +644,15 @@ public abstract class Util {
 		return v1.subtract(v2).abs().setScale(4).compareTo(valorIgnorar) < 0;
     }
     
+    /**
+     * Verifica a diferença entre o primeiro e o segundo valor, return true se a dif for menor que 0,005 (meio) centavo
+     * 
+     * Método útil para resolver casos de arredondamento 4 casas p/ 2 decimais
+     *  
+     * @param v1
+     * @param v2
+     * @return
+     */
     public static Boolean isDiferencaMenorMeioCentavo(BigDecimal v1, BigDecimal v2){
 		
 		return isDiferencaMenorValor(v1, v2, new BigDecimal("0.005"));
