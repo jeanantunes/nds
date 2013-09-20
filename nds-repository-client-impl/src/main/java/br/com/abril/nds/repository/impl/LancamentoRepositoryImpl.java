@@ -23,6 +23,7 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
@@ -41,10 +42,12 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
+import br.com.abril.nds.model.movimentacao.FuroProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
+import br.com.abril.nds.repository.FuroProdutoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -54,6 +57,9 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 public class LancamentoRepositoryImpl extends
 		AbstractRepositoryModel<Lancamento, Long> implements LancamentoRepository {
 
+	@Autowired
+	FuroProdutoRepository furoProdutoRepository; 
+	
 	public LancamentoRepositoryImpl() {
 		super(Lancamento.class);
 	}
@@ -780,7 +786,6 @@ public class LancamentoRepositoryImpl extends
 
 	@Override
 	public Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao) {
-		
 
 		StringBuilder hql = new StringBuilder();
 
@@ -791,12 +796,18 @@ public class LancamentoRepositoryImpl extends
 		   .append(" from Lancamento lancamentoMaxDate where lancamentoMaxDate.produtoEdicao.id=:idProdutoEdicao ) ")
 		   .append(" and lancamento.produtoEdicao.id=:idProdutoEdicao ");
 		
-		
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		
-		Object lancamento = query.uniqueResult();
+		Lancamento lancamento = (Lancamento) query.uniqueResult();
+		
+		if(lancamento != null && lancamento.getProdutoEdicao() != null) {
+			FuroProduto fp = furoProdutoRepository.obterFuroProdutoPor(lancamento.getId(), lancamento.getProdutoEdicao().getId());
+			if(fp != null) {
+				lancamento.setStatus(StatusLancamento.FURO);
+			}
+		}
 		
 		return (lancamento!=null) ? (Lancamento) lancamento : null ;		
 	}
@@ -1183,10 +1194,9 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" (coalesce(estoqueProduto.QTDE,0)) as reparteFisico, ");
 		
 		sql.append(" case when ( ");
-		sql.append(" 	select furoProduto.ID ");
+		sql.append(" 	select MAX(LANCAMENTO_ID) ");
 		sql.append(" 		from FURO_PRODUTO furoProduto ");
 		sql.append(" 		where furoProduto.LANCAMENTO_ID = lancamento.ID ");
-		sql.append(" 		limit 1 ");
 		sql.append(" 	) is not null then ");
 		sql.append(" 	true ");
 		sql.append(" else ");

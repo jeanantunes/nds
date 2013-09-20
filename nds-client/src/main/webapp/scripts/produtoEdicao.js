@@ -256,14 +256,17 @@ var produtoEdicaoController =$.extend(true,  {
 			 precision:2
 		});
 		
-
-
 		$('#produtoEdicaoController-pPrecoDe', this.workspace).maskMoney({
 					 thousands:'.', 
 					 decimal:',', 
 					 precision:2
 				});
 				
+		$('#produtoEdicaoController-pPrecoAte', this.workspace).maskMoney({
+			 thousands:'.', 
+			 decimal:',', 
+			 precision:2
+		});
 		
 		$("#produtoEdicaoController-desconto").numeric();
 		$("#produtoEdicaoController-peso").numeric();
