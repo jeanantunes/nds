@@ -143,7 +143,7 @@
 		    <fieldset style="width:250px!important;">
 		    	<legend>Confirmar Balanceamento</legend>
 
-		        <table width="240" border="0" cellspacing="1" cellpadding="1" id="tableConfirmaBalanceamento">
+		        <table width="240" border="0" cellspacing="1" cellpadding="1" id="tableConfirmaBalanceamentoRecolhimento">
 		        </table>
 
 		    </fieldset>
