@@ -28,6 +28,8 @@ public class ProdutoEmissaoDTO implements Serializable{
 	
 	private BigInteger quantidadeDevolvida;
 	
+	private Boolean confereciaRealizada;
+	
 	private BigDecimal precoVenda;
 	private BigDecimal vlrPrecoComDesconto;
 	public BigDecimal vlrDesconto;
@@ -263,6 +265,14 @@ public class ProdutoEmissaoDTO implements Serializable{
 	 */
 	public void setIdProdutoEdicao(Long idProdutoEdicao) {
 		this.idProdutoEdicao = idProdutoEdicao;
+	}
+
+	public Boolean getConfereciaRealizada() {
+		return confereciaRealizada;
+	}
+
+	public void setConfereciaRealizada(Boolean confereciaRealizada) {
+		this.confereciaRealizada = confereciaRealizada;
 	}
 	
 }
