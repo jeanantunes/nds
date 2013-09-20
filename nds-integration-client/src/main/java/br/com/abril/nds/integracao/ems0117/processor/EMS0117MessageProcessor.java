@@ -441,6 +441,7 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 		}
 	}
 
+	
 	@SuppressWarnings("unchecked")
 	private void atualizarEnderecoExistenteCota(EMS0117Input input, Cota cota, Message message) {
 		
@@ -470,10 +471,12 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 			long idEndPrincipal = 0;
 			
 			String logradouro = getLogradouroSemTipo(input.getEndereco().split(",")[0].trim()).toUpperCase();
+			boolean persistiuEndereco = false;
 			
 			for (EnderecoCota ec : cota.getEnderecos()) {
 				
-				if(ec.getEndereco() != null && ec.getEndereco().getLogradouro() == null || (ec.getEndereco().getLogradouro() != null && "".equalsIgnoreCase(ec.getEndereco().getLogradouro().trim()))) {
+				if(ec.getEndereco() != null && ec.getEndereco().getLogradouro() == null || 
+						(ec.getEndereco().getLogradouro() != null && "".equalsIgnoreCase(ec.getEndereco().getLogradouro().trim()))) {
 					
 					getSession().delete(ec);
 					getSession().flush();
@@ -481,47 +484,77 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 					
 					continue;
 				}
-
+				
+				boolean objEndecoNDS_MDC_igual = compararObjEnderecoMdcNds(ec.getEndereco(), input);
+				
+				//Verifica alteracoes no mesmo endereco da cota
 				if(ec.getEndereco() != null && ec.getEndereco().getLogradouro() != null && ec.getEndereco().getLogradouro().equals(logradouro)) {
 					
-					idEndPrincipal = ec.getId();
-					
-					ec.setPrincipal(true);
-					ec.getEndereco().setCep(input.getCep());
-					ec.getEndereco().setCidade(input.getMunicipio() != null ? input.getMunicipio().toUpperCase() : input.getMunicipio());
-					ec.getEndereco().setLogradouro(logradouro != null ? logradouro.toUpperCase() : logradouro);
-					ec.getEndereco().setUf(input.getSiglaUF());
-					ec.getEndereco().setCodigoCidadeIBGE(input.getCodCidadeIbge());
-					Endereco endTmp = enderecoRepository.getEnderecoSaneado(input.getCep());
-					
-					if (null != endTmp) {
-						ec.getEndereco().setBairro(endTmp.getBairro() != null ? endTmp.getBairro().toUpperCase() : endTmp.getBairro());
-						ec.getEndereco().setTipoLogradouro(endTmp.getTipoLogradouro() != null ? endTmp.getTipoLogradouro().toUpperCase() : endTmp.getTipoLogradouro());
-					}
-
-					Integer numero = 0;
-					try {
-						numero = new Integer(input.getNumLogradouro());
-					} catch (Exception e) {
+					if(!objEndecoNDS_MDC_igual){
+						
+						idEndPrincipal = ec.getId();
+						
+						ec.setPrincipal(true);
+						ec.getEndereco().setCep(input.getCep());
+						ec.getEndereco().setCidade(input.getMunicipio() != null ? input.getMunicipio().toUpperCase() : input.getMunicipio());                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+						ec.getEndereco().setLogradouro(logradouro != null ? logradouro.toUpperCase() : logradouro);
+						ec.getEndereco().setUf(input.getSiglaUF());
+						ec.getEndereco().setCodigoCidadeIBGE(input.getCodCidadeIbge());
+						Endereco endTmp = enderecoRepository.getEnderecoSaneado(input.getCep());
+						
+						if (null != endTmp) {
+							ec.getEndereco().setBairro(endTmp.getBairro() != null ? endTmp.getBairro().toUpperCase() : endTmp.getBairro());
+							ec.getEndereco().setTipoLogradouro(endTmp.getTipoLogradouro() != null ? endTmp.getTipoLogradouro().toUpperCase() : endTmp.getTipoLogradouro());
+						}
+						
+						try {
+							ec.getEndereco().setNumero(new Integer(input.getNumLogradouro()).toString());
+						} catch (Exception e) {
+							ec.getEndereco().setNumero(input.getNumLogradouro());
+						}
+						
+						getSession().merge(ec);
+						
 						ndsiLoggerFactory.getLogger().logWarning(
 								message,
 								EventoExecucaoEnum.RELACIONAMENTO,
-								"Não foi possível extrair o número do endereço: "
-										+ cota.getNumeroCota() + " / Logradouro: "+ logradouro +", "+ input.getNumLogradouro());
+								"Endereço atualizado para cota: " + cota.getNumeroCota() + " / Logradouro: "+ logradouro +", "+ input.getNumLogradouro());
+						
+						persistiuEndereco = true;
 					}
 					
-					ec.getEndereco().setNumero(numero.toString());
-					
-					getSession().merge(ec);
-					
 					continue;
+				}else {
+					
+					//Compara se é principal e se o endereco do NDS é igual ao do MDC
+					if(ec.isPrincipal() && !objEndecoNDS_MDC_igual){
+						
+						// Há um novo endereço principal, deletar e persistir o novo do MDC
+						getSession().delete(ec);
+						getSession().flush();
+						getSession().clear();
+						
+						persistirEnderecoCotaSemEndereco(input, cota);
+						
+						ndsiLoggerFactory.getLogger().logWarning(
+								message,
+								EventoExecucaoEnum.RELACIONAMENTO,
+								"Endereço atualizado para cota: " + cota.getNumeroCota() + " / Logradouro: "+ logradouro +", "+ input.getNumLogradouro());
+						
+						persistiuEndereco = true;
+						
+						continue;
+					}
 				}
 				
 			}
 			
-			enderecos = (List<Endereco>) query.list();
-			if (enderecos.isEmpty()) {
-				persistirEnderecoCotaSemEndereco(input, cota);
+			if(!persistiuEndereco){
+				
+				enderecos = (List<Endereco>) query.list();
+				if (enderecos.isEmpty()) {
+					persistirEnderecoCotaSemEndereco(input, cota);
+				}
 			}
 			
 			// Ajusta os enderecos para existir apenas 1 como principal
@@ -664,6 +697,82 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 		return logradouro;
 	}
 
+private boolean compararObjEnderecoMdcNds(Endereco endereco, EMS0117Input input){
+		
+		if(endereco == null && input != null ){
+			return false;
+		}
+		
+		if(endereco != null && input == null ){
+			return false;
+		}
+		
+		if (input.getCep() == null) {
+			if (endereco.getCep() != null)
+				return false;
+		} else if (!input.getCep().equals(endereco.getCep()))
+			return false;
+		if (input.getMunicipio() == null) {
+			if (endereco.getCidade() != null)
+				return false;
+		} else if (!input.getMunicipio().equals(endereco.getCidade()))
+			return false;
+		if (input.getCodCidadeIbge() == null) {
+			if (endereco.getCodigoCidadeIBGE() != null)
+				return false;
+		} else if (!input.getCodCidadeIbge().equals(endereco.getCodigoCidadeIBGE()))
+			return false;
+		if (input.getEndereco() == null) {
+			if (endereco.getLogradouro() != null)
+				return false;
+		} else if (!getLogradouroSemTipo(input.getEndereco().split(",")[0].trim()).toUpperCase().equalsIgnoreCase(endereco.getLogradouro()))
+			return false;
+		
+		String numeroMDC = "";
+		try {
+			numeroMDC = new Integer(input.getNumLogradouro()).toString();
+		} catch (Exception e) {
+			//Numero com carcater não numérico
+			numeroMDC = input.getNumLogradouro();
+		}
+		
+		if (numeroMDC == null) {
+			if (endereco.getNumero() != null)
+				return false;
+		} else if (!numeroMDC.equals(endereco.getNumero()))
+			return false;
+		
+		Endereco endTmp = enderecoRepository.getEnderecoSaneado(input.getCep());
+		
+		if (null != endTmp) {
+			
+			String tipoEndereco = endTmp.getTipoLogradouro() != null ? endTmp.getTipoLogradouro().toUpperCase() : endTmp.getTipoLogradouro();
+			
+			if (tipoEndereco == null) {
+				if (endereco.getTipoLogradouro() != null)
+					return false;
+			} else if (!tipoEndereco.equals(endereco.getTipoLogradouro()))
+				return false;
+
+			
+			String bairro = endTmp.getBairro() != null ? endTmp.getBairro().toUpperCase() : endTmp.getBairro();
+
+			if (bairro == null) {
+				if (endereco.getBairro() != null)
+					return false;
+			} else if (!bairro.equals(endereco.getBairro()))
+				return false;
+			
+		}
+		
+		if (input.getSiglaUF() == null) {
+			if (endereco.getUf() != null)
+				return false;
+		} else if (!input.getSiglaUF().equals(endereco.getUf()))
+			return false;
+		
+		return true;
+	}
 	@Override
 	public void posProcess(Object tempVar) {
 		// TODO Auto-generated method stub

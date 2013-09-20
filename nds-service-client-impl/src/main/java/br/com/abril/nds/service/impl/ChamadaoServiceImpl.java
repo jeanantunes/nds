@@ -189,7 +189,7 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 			if (filtro.isChamadaEncalhe()) {
 				
 				this.alterarChamadao(
-					consignadoCotaChamadao, dataChamadao, novaDataChamadao, cota);
+					consignadoCotaChamadao, consignadoCotaChamadao.getDataRecolhimento(), novaDataChamadao, cota);
 				
 			} else {
 				
@@ -340,7 +340,13 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 		
 		if (chamadaEncalheCota != null) {
 			
+			ChamadaEncalhe chamadaEncalhe = chamadaEncalheCota.getChamadaEncalhe();
+			
 			this.chamadaEncalheCotaRepository.remover(chamadaEncalheCota);
+			
+			if(chamadaEncalhe.getChamadaEncalheCotas().isEmpty()){
+				chamadaEncalheRepository.remover(chamadaEncalhe);
+			}
 		}		
 	}
 

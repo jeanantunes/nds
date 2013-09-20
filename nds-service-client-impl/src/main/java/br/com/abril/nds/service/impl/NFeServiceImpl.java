@@ -747,6 +747,10 @@ public class NFeServiceImpl implements NFeService {
 		
 			path += "/ne_modelo2_wrapper.jasper";
 		
+		} else if (TipoImpressaoNENECADANFE.DANFE.equals(tipoImpressaoNENECADANFE)) {
+			
+			path += "/danfeWrapper.jasper";
+		
 		} else {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Falha na geração do documento da NE");

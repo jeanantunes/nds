@@ -341,7 +341,7 @@ public class ChamadaoController extends BaseController {
 	@Rules(Permissao.ROLE_RECOLHIMENTO_CHAMADAO_ALTERACAO)
 	public void confirmarChamadao(List<ConsignadoCotaChamadaoDTO> listaChamadao,
 								  boolean chamarTodos, List<Long> idsIgnorados,
-								  String novaDataChamadaoFormatada) {
+								  String novaDataChamadaoFormatada,boolean reprogramacao) {
 		
 		FiltroChamadaoDTO filtroSessao =
 			(FiltroChamadaoDTO) 
@@ -355,7 +355,7 @@ public class ChamadaoController extends BaseController {
 									  filtroSessao.isChamadaEncalhe());
 		
 		this.validarDadosConfirmarChamadao(
-			listaChamadao, chamarTodos, novaDataChamadaoFormatada, filtroSessao.isChamadaEncalhe());
+			listaChamadao, chamarTodos, novaDataChamadaoFormatada, filtroSessao.isChamadaEncalhe(),reprogramacao);
 		
 		Date novaDataChamadao = null;
 		
@@ -383,12 +383,18 @@ public class ChamadaoController extends BaseController {
 	private void validarDadosConfirmarChamadao(List<ConsignadoCotaChamadaoDTO> listaChamadao,
 											   boolean chamarTodos,
 											   String novaDataChamadaoFormatada,
-											   boolean isChamadaEncalhe) {
+											   boolean isChamadaEncalhe,
+											   boolean reprogramacao) {
 		
 		if (!chamarTodos && listaChamadao == null) {
 			
+			if(reprogramacao){
+				throw new ValidacaoException(TipoMensagem.WARNING,
+						"É necessário selecionar pelo menos um produto para reprogramação.");
+			}
+			
 			throw new ValidacaoException(TipoMensagem.WARNING,
-				"É necessário selecionar pelo menos um produto para realizar o chamadão!");
+					"É necessário selecionar pelo menos um produto para realizar o chamadão!");
 		}
 		
 		if (isChamadaEncalhe) {
@@ -401,6 +407,11 @@ public class ChamadaoController extends BaseController {
 					"É necessário informar a nova data de chamadão!");
 			}
 		}
+		
+		if (this.lancamentoService.existeMatrizRecolhimentoConfirmado(DateUtil.parseDataPTBR(novaDataChamadaoFormatada))){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,"Data escolhida já possui matriz de recolhimento confirmada.");
+		}
 	}
 	
 	@Post
@@ -411,7 +422,7 @@ public class ChamadaoController extends BaseController {
 		if (!chamarTodos && listaChamadao == null) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING,
-				"É necessário selecionar pelo menos um produto para realizar o chamadão!");
+				"É necessário selecionar pelo menos um produto para realizar o cancelamento do chamadão.");
 		}
 		
 		FiltroChamadaoDTO filtroSessao =

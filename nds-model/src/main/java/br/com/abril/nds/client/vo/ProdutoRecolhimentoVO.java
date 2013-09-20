@@ -1,14 +1,8 @@
 package br.com.abril.nds.client.vo;
 
 import java.math.BigDecimal;
-import java.text.NumberFormat;
-import java.util.Currency;
 import java.util.Date;
 
-import org.apache.commons.lang.NumberUtils;
-
-import br.com.abril.nds.util.CurrencyUtil;
-import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.ColumType;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -276,7 +270,8 @@ public class ProdutoRecolhimentoVO {
 	 */
 	public void setEncalheSede(BigDecimal encalheSede) {
 		this.encalheSede = encalheSede;
-		this.encalheSedeFormatado = CurrencyUtil.formatarValor(encalheSede);
+		this.encalheSedeFormatado = 
+			encalheSede == null ? "0" : String.valueOf(encalheSede.longValue());
 	}
 
 	/**
@@ -291,7 +286,8 @@ public class ProdutoRecolhimentoVO {
 	 */
 	public void setEncalheAtendida(BigDecimal encalheAtendida) {
 		this.encalheAtendida = encalheAtendida;
-		this.encalheAtendidaFormatado = CurrencyUtil.formatarValor(encalheAtendida);
+		this.encalheAtendidaFormatado = 
+			encalheAtendida == null ? "0" : String.valueOf(encalheAtendida.longValue());
 	}
 
 	/**
@@ -306,7 +302,8 @@ public class ProdutoRecolhimentoVO {
 	 */
 	public void setEncalhe(BigDecimal encalhe) {
 		this.encalhe = encalhe;
-		this.encalheFormatado = CurrencyUtil.formatarValor(encalhe);
+		this.encalheFormatado = 
+			encalhe == null ? "0" : String.valueOf(encalhe.longValue());
 	}
 
 	/**

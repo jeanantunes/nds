@@ -2302,7 +2302,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			MovimentoEstoqueCota movimentoEstoqueCota,
 			MovimentoEstoque movimentoEstoque) {
 		
-		boolean juramentada = (conferenciaEncalheDTO.isJuramentada()) == null ? false : conferenciaEncalheDTO.isJuramentada();
+		boolean juramentada = (conferenciaEncalheDTO.getJuramentada()) == null ? false : conferenciaEncalheDTO.getJuramentada();
 		
 		conferenciaEncalheFromDB.setObservacao(conferenciaEncalheDTO.getObservacao());
 		conferenciaEncalheFromDB.setJuramentada(juramentada);
@@ -2355,7 +2355,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		TipoMovimentoEstoque tipoMovimentoEstoqueCota = mapaTipoMovimentoEstoque.get(GrupoMovimentoEstoque.ENVIO_ENCALHE);
 		
-		boolean juramentada = (conferenciaEncalheDTO.isJuramentada()) == null ? false : conferenciaEncalheDTO.isJuramentada();
+		boolean juramentada = (conferenciaEncalheDTO.getJuramentada()) == null ? false : conferenciaEncalheDTO.getJuramentada();
 		
 		tipoMovimentoEstoqueCota.setIncideJuramentado(juramentada);
 		
@@ -2424,7 +2424,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			Map<GrupoMovimentoEstoque, TipoMovimentoEstoque> mapaTipoMovimentoEstoque,
 			Usuario usuario) {
 		
-		boolean juramentada = (conferenciaEncalheDTO.isJuramentada()) == null ? false : conferenciaEncalheDTO.isJuramentada();
+		boolean juramentada = (conferenciaEncalheDTO.getJuramentada()) == null ? false : conferenciaEncalheDTO.getJuramentada();
 		
 		TipoMovimentoEstoque tipoMovimentoEstoque = 
 				obterTipoMovimentoEstoqueDistribuidor(
@@ -2464,7 +2464,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			MovimentoEstoqueCota movimentoEstoqueCota,
 			MovimentoEstoque movimentoEstoque) {
 		
-		boolean juramentada = (conferenciaEncalheDTO.isJuramentada()) == null ? false : conferenciaEncalheDTO.isJuramentada();
+		boolean juramentada = (conferenciaEncalheDTO.getJuramentada()) == null ? false : conferenciaEncalheDTO.getJuramentada();
 		
 		ConferenciaEncalhe conferenciaEncalhe = new ConferenciaEncalhe();
 
@@ -3326,12 +3326,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				 */
 				
 				String qtdeTotalProdutos =  itemLista.getQtdeTotalProdutos() == null ? "0" : itemLista.getQtdeTotalProdutos();
-				e.adicionarCompleteEspaco("Total Produtos do dia "+ dataRecolhimentoStr+":", qtdeTotalProdutos);
+				e.adicionarCompleteEspaco("Total Exemps. do dia "+ dataRecolhimentoStr+":", qtdeTotalProdutos);
 				
 				e.quebrarLinhaEscape();
 
 				String valorTotalEncalhe = itemLista.getValorTotalEncalhe() == null ? "0" : itemLista.getValorTotalEncalhe();
-				e.adicionarCompleteEspaco("Total Encalhe  do dia "+ dataRecolhimentoStr +":", valorTotalEncalhe);
+				e.adicionarCompleteEspaco("Total Encalhe do dia "+ dataRecolhimentoStr +":", valorTotalEncalhe);
 				e.quebrarLinhaEscape();
 				/*
 				 * 
@@ -3359,11 +3359,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		e.quebrarLinhaEscape();
 		
 		String totalProdutos = slipDTO.getTotalProdutos() == null ? "0" : slipDTO.getTotalProdutos().toString();
-		e.adicionarCompleteEspaco("Total de produtos:", totalProdutos);
+		e.adicionarCompleteEspaco("Total de Exemps. :", totalProdutos);
 		e.quebrarLinhaEscape();
 		
 		String valorTotalEncalhe = slipDTO.getValorTotalEncalhe() == null ? "0,00" : slipDTO.getValorTotalEncalhe().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();
-		e.adicionarCompleteEspaco("Valor total de encalhe: ( A )", valorTotalEncalhe);
+		e.adicionarCompleteEspaco("Valor total de Encalhe: ( A )", valorTotalEncalhe);
 		e.quebrarLinhaEscape();
 		e.quebrarLinhaEscape();
 	

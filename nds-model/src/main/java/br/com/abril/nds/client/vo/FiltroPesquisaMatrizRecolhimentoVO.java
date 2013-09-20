@@ -5,6 +5,7 @@ import java.util.List;
 
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 /**
  * Value Object para filtro da pesquisa de balanceamento de recolhimento.
@@ -21,6 +22,8 @@ public class FiltroPesquisaMatrizRecolhimentoVO {
 	private Date dataPesquisa;
 	
 	private List<Long> listaIdsFornecedores;
+	
+	private PaginacaoVO paginacaoVO;
 
 	public FiltroPesquisaMatrizRecolhimentoVO(Integer numeroSemana,
 											  Date dataPesquisa,
@@ -71,6 +74,14 @@ public class FiltroPesquisaMatrizRecolhimentoVO {
 	 */
 	public void setListaIdsFornecedores(List<Long> listaIdsFornecedores) {
 		this.listaIdsFornecedores = listaIdsFornecedores;
+	}
+
+	public PaginacaoVO getPaginacaoVO() {
+		return paginacaoVO;
+	}
+
+	public void setPaginacaoVO(PaginacaoVO paginacaoVO) {
+		this.paginacaoVO = paginacaoVO;
 	}
 
 }

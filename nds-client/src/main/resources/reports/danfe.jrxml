@@ -173,8 +173,8 @@
 	<field name="informacoesComplementares" class="java.lang.String">
 		<fieldDescription><![CDATA[informacoesComplementares]]></fieldDescription>
 	</field>
-	<field name="itensDanfe" class="java.util.List">
-		<fieldDescription><![CDATA[itensDanfe]]></fieldDescription>
+	<field name="itensImpressaoNfe" class="java.util.List">
+		<fieldDescription><![CDATA[itensImpressaoNfe]]></fieldDescription>
 	</field>
 	<field name="naturezaOperacao" class="java.lang.String">
 		<fieldDescription><![CDATA[naturezaOperacao]]></fieldDescription>
@@ -1384,7 +1384,7 @@ $F{transportadoraCNPJ}.substring(8,12) + "-" + $F{transportadoraCNPJ}.substring(
 		<band height="27">
 			<subreport>
 				<reportElement uuid="cd3edf10-fb49-4fff-8f7f-9e22d4d4453c" stretchType="RelativeToTallestObject" x="0" y="0" width="565" height="27"/>
-				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{itensDanfe})]]></dataSourceExpression>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{itensImpressaoNfe})]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "sub_relatorio_produtos.jasper"]]></subreportExpression>
 			</subreport>
 		</band>

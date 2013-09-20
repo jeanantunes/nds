@@ -372,16 +372,28 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Override
 	@Transactional
-	public void salvarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento) {
-		
-		
+	public void salvarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento, 
+										List<Long> listaNaoReplicados) {
+
 		FechamentoFisicoLogicoDTO fechamento;
 		Long qtd;
 		
 		for (int i=0; i < listaFechamento.size(); i++) {
 			
 			fechamento = listaFechamento.get(i);
-			qtd = fechamento.getFisico();
+
+			if (listaNaoReplicados != null && listaNaoReplicados.contains(fechamento.getProdutoEdicao())) {
+			
+				qtd = fechamento.getFisico();
+
+			} else if (filtro.isCheckAll() || (listaNaoReplicados != null && !listaNaoReplicados.contains(fechamento.getProdutoEdicao()))) {
+
+				qtd = fechamento.getExemplaresDevolucao().longValue();
+			
+			} else {
+				
+				qtd = 0l;
+			}
 			
 			FechamentoEncalhePK id = new FechamentoEncalhePK();
 			id.setDataEncalhe(filtro.getDataEncalhe());
@@ -986,7 +998,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 	@Override
 	@Transactional
-	public void salvarFechamentoEncalheBox(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento) {
+	public void salvarFechamentoEncalheBox(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento, 
+										   List<Long> listaNaoSelecionados) {
 		
 		
 		FechamentoFisicoLogicoDTO fechamento;
