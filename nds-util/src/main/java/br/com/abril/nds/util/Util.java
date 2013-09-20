@@ -1,5 +1,6 @@
 package br.com.abril.nds.util;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -622,4 +623,28 @@ public abstract class Util {
         return Long.valueOf(System.identityHashCode(object));
     }
 
+    public static Boolean isDiferencaMenorValor(BigDecimal v1, BigDecimal v2, BigDecimal valorIgnorar){
+		
+    	if(v1 == null && v2 != null)
+    		return null;
+    	
+    	if(v1 != null && v2 == null)
+    		return null;
+    				
+		return v1.subtract(v2).abs().setScale(4).compareTo(valorIgnorar) < 0;
+    }
+    
+    public static Boolean isDiferencaMenorMeioCentavo(BigDecimal v1, BigDecimal v2){
+		
+		return isDiferencaMenorValor(v1, v2, new BigDecimal("0.005"));
+    }
+    
+    public static void main(String[] args) {
+		BigDecimal v1 = new BigDecimal("7.8549");
+		BigDecimal v2 = null;
+		
+		System.out.println(v1.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+		
+		System.out.println(isDiferencaMenorMeioCentavo(v1, v2));
+	}
 }
