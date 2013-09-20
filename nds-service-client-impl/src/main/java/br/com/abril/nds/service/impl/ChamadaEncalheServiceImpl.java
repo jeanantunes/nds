@@ -253,7 +253,10 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			
 			produtoDTO.setQuantidadeDevolvida(  (produtoDTO.getQuantidadeDevolvida() == null) ? BigInteger.ZERO : produtoDTO.getQuantidadeDevolvida());
 			
-			produtoDTO.setVendido( produtoDTO.getReparte().subtract(produtoDTO.getQuantidadeDevolvida()));
+			if(produtoDTO.getConfereciaRealizada()==true) 
+				produtoDTO.setVendido( produtoDTO.getReparte().subtract(produtoDTO.getQuantidadeDevolvida()));
+			else 
+				produtoDTO.setVendido(BigInteger.ZERO);
 			
 			produtoDTO.setVlrVendido(CurrencyUtil.formatarValor(produtoDTO.getVlrPrecoComDesconto().multiply(BigDecimal.valueOf(produtoDTO.getVendido().longValue()))));
 			
