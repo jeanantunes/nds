@@ -701,6 +701,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			listaConferenciaEncalheDTO = conferenciaEncalheRepository.obterListaConferenciaEncalheDTO(controleConferenciaEncalheCota.getId());
 			
+			for(ConferenciaEncalheDTO item : listaConferenciaEncalheDTO){
+				Integer diaSemanaRecolhimento = 
+						distribuidorService.obterDiaDeRecolhimentoDaData(item.getDataConferencia(),item.getDataRecolhimento() ,item.getIdProdutoEdicao());
+				item.setDia(diaSemanaRecolhimento);
+			}
+			
 			infoConfereciaEncalheCota.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);
 			
 			infoConfereciaEncalheCota.setEncalhe(null);
@@ -903,7 +909,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		DebitoCreditoCotaDTO debitoCredito = new DebitoCreditoCotaDTO();
 		
-		if(BigDecimal.ZERO.compareTo(valor) > 0) {
+		if(BigDecimal.ZERO.compareTo(valor) < 0) {
 			
 			debitoCredito.setObservacoes(descricaoCredito);
 			debitoCredito.setTipoLancamentoEnum(OperacaoFinaceira.CREDITO);
@@ -3031,7 +3037,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoSlip.setDia(dia);
 			
 			String ordinal = ((dia != null) ? DateUtil.formatarDataPTBR(produtoEdicaoSlip.getDataOperacao()) 
-											+ " " +  this.getDiaMesOrdinal(dia +1) + " DIA" : "PRODUTOS ANTECIPADOS");
+											+ " " +  this.getDiaMesOrdinal(dia+1) + " DIA" : "PRODUTOS ANTECIPADOS");
 		
 			produtoEdicaoSlip.setOrdinalDiaConferenciaEncalhe(ordinal);	
 		}
