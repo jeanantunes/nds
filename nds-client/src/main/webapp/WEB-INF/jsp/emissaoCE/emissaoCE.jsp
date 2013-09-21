@@ -119,8 +119,8 @@
     
 
 <!-- Roteiro --> 	
-<select id="roteiro"  style="width:100px;">
-    <option selected="selected"> </option>
+<select id="roteiro"  style="width:100px;" onchange="EmissaoCEController.changeRoteiro();">
+    <option selected="selected">Selecione...</option>
 	<c:forEach items="${listaRoteiros}" var="roteiro">
 		<option value="${roteiro.key}">${roteiro.value}</option>
 	</c:forEach>     
@@ -133,7 +133,7 @@
 
 <!-- Rota --> 	
 <select id="rota" name="select" style="width:130px;">
-    <option selected="selected"> </option>
+     <option selected="selected">Selecione...</option>
     <c:forEach items="${listaRotas}" var="rota">
 		<option value="${rota.key}">${rota.value}</option>
 	</c:forEach>

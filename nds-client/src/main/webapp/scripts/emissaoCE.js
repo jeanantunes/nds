@@ -105,6 +105,49 @@ var EmissaoCEController = $.extend(true, {
 		return result;
 	},
 	
+	/**
+	 * Recarregar combos por Roteiro
+	 */
+    changeRoteiro : function(){
+    	    	
+    	var idRoteiro = $('#roteiro', EmissaoCEController.workspace).val();
+     	
+     	var params = [{ name : "idRoteiro", value : idRoteiro }];
+     	
+     	$.postJSON(contextPath + '/cadastro/roteirizacao/carregarRotasPorRoteiro', params, 
+			function(result) {
+    		
+    		    var listaRota = result;
+    		    
+    		    EmissaoCEController.recarregarCombo($("#rota", EmissaoCEController.workspace), listaRota ,'');  
+    		     
+    	    }    
+		);
+	},
+	
+	/**
+	 * Recarregar combo
+	 */
+	recarregarCombo : function (comboNameComponent, content, valSelected){
+		
+		comboNameComponent.empty();
+
+		comboNameComponent.append(new Option('Selecione...', '', true, true));
+		
+	    $.each(content, function(index, row) {
+		    	
+	    	comboNameComponent.append(new Option(row.value.$, row.key.$, true, true));
+		});
+
+	    if (valSelected) {
+	    	
+	        $(comboNameComponent).val(valSelected);
+	    } else {
+	    	
+	        $(comboNameComponent).val('');
+	    }
+	},
+
 	
 	/**
 	 * Atribui valor a um campo da tela

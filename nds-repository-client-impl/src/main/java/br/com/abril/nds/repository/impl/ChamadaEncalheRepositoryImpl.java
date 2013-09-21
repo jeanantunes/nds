@@ -290,12 +290,12 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		}
 		
 		if(filtro.getIdRoteiro() != null) {
-			sql.append(" and roteiro13_.ID <= ? ");
+			sql.append(" and roteiro13_.ID = ? ");
 			param.add(filtro.getIdRoteiro());
 		}
 				
 		if(filtro.getIdRota() != null) {
-			sql.append(" and rota12_.ID <= ? ");
+			sql.append(" and rota12_.ID = ? ");
 			param.add(filtro.getIdRota());
 		}
 		
@@ -428,12 +428,12 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		}
 		
 		if(filtro.getIdRoteiro() != null) {
-			hql.append(" and roteiro.id <= :idRoteiro ");
+			hql.append(" and roteiro.id = :idRoteiro ");
 			param.put("idRoteiro", filtro.getIdRoteiro());
 		}
 				
 		if(filtro.getIdRota() != null) {
-			hql.append(" and rota.id <= :idRota ");
+			hql.append(" and rota.id = :idRota ");
 			param.put("idRota", filtro.getIdRota());
 		}
 		
