@@ -130,6 +130,17 @@ public class RoteirizacaoController extends BaseController {
 		result.use(Results.json()).from(roteiros, "result").serialize();
 	}
 	
+	/**
+	 * Carrega o combo de pesquisa por roteiro a partir de um Box
+	 * @param boxId
+	 */
+	@Path("/carregarComboRoteiroCodigoBox")
+	public void carregarComboRoteiroCodigoBox(Long codigoBoxDe, Long codigoBoxAte) {
+		
+		List<Roteiro> roteiros = roteirizacaoService.buscarRoteiroCodigoBox(codigoBoxDe, codigoBoxAte);
+		result.use(Results.json()).from(roteiros, "result").serialize();
+	}
+	
 	
 	/**
 	 * Carrega o combo de pesquisa por rota a partir de um Roteiro

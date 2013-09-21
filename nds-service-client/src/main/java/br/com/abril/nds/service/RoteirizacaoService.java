@@ -47,6 +47,8 @@ public interface RoteirizacaoService {
 	
 	List<Roteiro> buscarRoteiroDeBox(Long idBox);
 	
+	List<Roteiro> buscarRoteiroCodigoBox(Long codigoBoxDe, Long codigoBoxAte);
+	
 	List<Rota> buscarRotaDeBox(Long idBox);
 	
 	Roteirizacao buscarRoteirizacaoDeCota(Integer numeroCota);
