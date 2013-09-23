@@ -3,7 +3,7 @@ package br.com.abril.nds.model;
 import java.util.Calendar;
 import java.util.Date;
 
-import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.SemanaUtil;
 
 public enum DiaSemana {
 	
@@ -42,7 +42,7 @@ public enum DiaSemana {
 	
 	public static DiaSemana getByDate(Date date) {
 
-		return getByCodigoDiaSemana(DateUtil.obterDiaDaSemana(date));
+		return getByCodigoDiaSemana(SemanaUtil.obterDiaDaSemana(date));
 	}
 	
 }

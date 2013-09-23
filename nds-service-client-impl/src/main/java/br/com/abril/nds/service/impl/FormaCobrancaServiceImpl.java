@@ -27,6 +27,7 @@ import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.SemanaUtil;
 
 @Service
 public class FormaCobrancaServiceImpl implements FormaCobrancaService {
@@ -375,7 +376,7 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 
 		Integer diaDoMes = DateUtil.obterDiaDoMes(data);
 
-		Integer diaDaSemana = DateUtil.obterDiaDaSemana(data);
+		Integer diaDaSemana = SemanaUtil.obterDiaDaSemana(data);
 
 		FormaCobranca formaCobranca = this.formaCobrancaRepository
 				.obterFormaCobranca(idCota, idFornecedor, diaDoMes,
@@ -400,7 +401,7 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 
 		Integer diaDoMes = DateUtil.obterDiaDoMes(data);
 
-		Integer diaDaSemana = DateUtil.obterDiaDaSemana(data);
+		Integer diaDaSemana = SemanaUtil.obterDiaDaSemana(data);
 
 		FormaCobranca formaCobranca = this.formaCobrancaRepository
 				.obterFormaCobranca(idFornecedor, diaDoMes, diaDaSemana, valor);

@@ -4,15 +4,12 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
-import java.util.TreeSet;
 
 import org.apache.commons.lang.time.DateUtils;
 
 public class DateUtil {
     
-    private static final int QTD_MAXIMA_SEMANAS_POR_MES = 6;
 	public static final String PADRAO_HORA_MINUTO = "HH:mm";
 
 	public static boolean isValidDate(String valor, String pattern) {
@@ -261,160 +258,23 @@ public class DateUtil {
 		return quantidadeDias;
 	}
 	
-	/**
-	 * Obtém a número da semana no ano da data desejada utilizando o
-	 * código do dia de ínicio da semana.
-	 *  
-	 * @param data - data
-	 * @param diaInicioSemana - dia de início da semana (Utilizar as constantes da classe java.util.Calendar)
-	 * 
-	 * @return Número da semana no ano da data passada por parâmetro
-	 */
-	public static int obterNumeroSemanaNoAno(Date data, Integer diaInicioSemana) {
-				
-		Calendar calendar = getCalendarioDistribuidor(diaInicioSemana, data);
+	public static int obterMes(Date data) {
 		
-		return calendar.get(Calendar.WEEK_OF_YEAR);
+		Calendar calendar = toCalendar(data);
+		
+		return calendar.get(Calendar.MONTH);
 	}
 	
-	/**
-	 * Obtém a número da semana no ano da data desejada.
-	 * 
-	 * Será utilizado o padrão de acordo com o Locale do sistema.
-	 *  
-	 * @param data - data
-	 * 
-	 * @return Número da semana no ano da data passada por parâmetro
-	 */
-	public static int obterNumeroSemanaNoAno(Date data) {
+	public static int obterAno(Calendar calendar) {
 		
-		if (data == null) {
-			
-			throw new IllegalArgumentException("Data inválida!");
-		}
-		
-		Calendar calendar = Calendar.getInstance();
-		
-		calendar.setTime(data);
-
-		return calendar.get(Calendar.WEEK_OF_YEAR);
+		return calendar.get(Calendar.YEAR);
 	}
 	
-	/**
-	 * Obtém a data de acordo com o número e dia de ínicio de uma semana.
-	 * 
-	 * @param numeroSemana - número da semana no ano
-	 * @param diaInicioSemana - dia de início da semana (Utilizar as constantes da classe java.util.Calendar)
-	 * @param dataBase
-	 * @return Data
-	 */
-	public static Date obterDataDaSemanaNoAno(Integer numeroSemana, Integer diaInicioSemana, Date dataBase) {
+	public static int obterAno(Date data) {
 		
-		if (numeroSemana == null) {
-			
-			throw new IllegalArgumentException("Número da semana inválido!");
-		}
+		Calendar calendar = toCalendar(data);
 		
-		if (diaInicioSemana == null) {
-			
-			throw new IllegalArgumentException("Dia de ínicio da semana inválido!");
-		}
-		
-		Calendar calendar = Calendar.getInstance();
-		
-		int year = calendar.get(Calendar.YEAR);
-		
-		if (dataBase != null) {
-		
-			year = getBaseYear(numeroSemana, dataBase);
-		}
-		
-		calendar.clear();
-		
-		calendar.setMinimalDaysInFirstWeek(7);
-		
-		calendar.set(Calendar.YEAR, year);
-		
-		calendar.set(Calendar.WEEK_OF_YEAR, numeroSemana);
-		
-		calendar.setFirstDayOfWeek(diaInicioSemana);
-		
-		Date data = calendar.getTime();
-		
-		return removerTimestamp(data);
-	}
-	
-	private static int getBaseYear(Integer numeroSemana, Date data) {
-		
-		Calendar calendar = Calendar.getInstance();
-		
-		calendar.setTime(data);
-		
-		int year = calendar.get(Calendar.YEAR);
-		
-		int month = calendar.get(Calendar.MONTH);
-		
-		if (month == Calendar.JANUARY) {
-			
-			if (numeroSemana > QTD_MAXIMA_SEMANAS_POR_MES) {
-				
-				year--;
-			}
-		}
-		
-		return year;
-	}
-
-	private static Calendar getCalendarioDistribuidor(Integer diaInicioSemana, Date data) {
-		
-		if (data == null) {
-			
-			throw new IllegalArgumentException("Data inválida!");
-		}
-		
-		if (diaInicioSemana == null) {
-			
-			throw new IllegalArgumentException("Dia de ínicio da semana inválido!");
-		}
-		
-		Calendar calendar = Calendar.getInstance();
-		
-		calendar.setMinimalDaysInFirstWeek(7);
-		
-		calendar.setTime(data);
-		
-		if (diaInicioSemana != null) {
-		
-			calendar.setFirstDayOfWeek(diaInicioSemana);
-		}
-		
-		return calendar;
-	}
-	
-	/**
-	 * Retorna o código do dia da semana de uma determinada data.
-	 * 
-	 * @param data - data
-	 * 
-	 * @return Código do dia da semana (verificar constantes da classe java.util.Calendar)
-	 */
-	public static int obterDiaDaSemana(Date data) {
-		
-		if (data == null) {
-			
-			throw new IllegalArgumentException("Data inválida!");
-		}
-		
-		Calendar calendar = Calendar.getInstance();
-		
-		calendar.setTime(data);
-		
-		return calendar.get(Calendar.DAY_OF_WEEK);
-	}
-	
-	public static int obterDiaDaSemana(Calendar data) {
-		
-		return obterDiaDaSemana(data.getTime());
+		return obterAno(calendar);
 	}
 	
 	/**
@@ -436,51 +296,6 @@ public class DateUtil {
 		calendar.setTime(data);
 		
 		return calendar.get(Calendar.DAY_OF_MONTH);
-	}
-
-	/**
-	 * Obtém um período filtrado de acordo com os dias da semana desejados. 
-	 * 
-	 * @param dataInicial - data inicial do período
-	 * @param dataFinal - data final do período
-	 * @param listaCodigosDiasSemana - lista de códigos com os dias da semana
-	 * 
-	 * @return Período de datas filtrado pelos dias da semana
-	 */
-	public static TreeSet<Date> obterPeriodoDeAcordoComDiasDaSemana(Date dataInicial, 
-																	Date dataFinal,
-																	Collection<Integer> listaCodigosDiasSemana) {
-		
-		if (dataInicial == null) {
-			
-			throw new IllegalArgumentException("Data inicial inválida!");
-		}
-		
-		if (dataFinal == null) {
-			
-			throw new IllegalArgumentException("Data final inválida!");
-		}
-		
-		if (listaCodigosDiasSemana == null || listaCodigosDiasSemana.isEmpty()) {
-			
-			throw new IllegalArgumentException("Códigos de dias da semana inválidos!");
-		}
-		
-		TreeSet<Date> datas = new TreeSet<Date>();
-		
-		while (dataInicial.before(dataFinal) || dataInicial.equals(dataFinal)) {
-			
-			int diaDaSemana = obterDiaDaSemana(dataInicial);
-			
-			if (listaCodigosDiasSemana.contains(diaDaSemana)) {
-				
-				datas.add(dataInicial);
-			}
-			
-			dataInicial = DateUtil.adicionarDias(dataInicial, 1);
-		}
-		
-		return datas;
 	}
 
 	/**
@@ -508,28 +323,6 @@ public class DateUtil {
 		}
 		
 		return false;
-	}
-	
-	public static String obterDiaSemana(int codigoDiaSemana){
-		
-		switch(codigoDiaSemana){
-			case Calendar.SUNDAY:
-				return "Domingo";
-			case Calendar.MONDAY:
-				return "Segunda-feira";
-			case Calendar.TUESDAY:
-				return "Terça-feira";
-			case Calendar.WEDNESDAY:
-				return "Quarta-feira";
-			case Calendar.THURSDAY:
-				return "Quinta-feira";
-			case Calendar.FRIDAY:
-				return "Sexta-feira";
-			case Calendar.SATURDAY:
-				return "Sabado-feira";
-			default:
-				return "Segunda-feira";
-		}
 	}
 	
 	public static String obterDecricaoMes(int codigoMes){

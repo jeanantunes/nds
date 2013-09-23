@@ -553,13 +553,9 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 
 		var parametros = new Array();
 		
-		var anoSemanaNumero = $("#numeroSemana", balanceamentoRecolhimentoController.workspace).val();
-		var numeroSemana = '';
-		if(anoSemanaNumero && anoSemanaNumero.length>=5){
-			numeroSemana = anoSemanaNumero.substr(4);
-		}
+		var anoNumeroSemana = $("#numeroSemana", balanceamentoRecolhimentoController.workspace).val();
 
-		parametros.push({name:'numeroSemana', value:numeroSemana });
+		parametros.push({name:'anoNumeroSemana', value:anoNumeroSemana });
 		
 		parametros.push({name:'dataPesquisa', value: $("#dataPesquisa", balanceamentoRecolhimentoController.workspace).val()});
 		
@@ -580,21 +576,16 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			return;
 		}
 		
-//		var dataBase=new Date();
-		
 		var anoBase = numeroSemana.slice(0,4);
 		var nmSemana = numeroSemana.substr(4);
 		
-		var dataBase = this.w2date(anoBase,nmSemana,0);
-		dataBase = dataBase.getDate()+"/"+(dataBase.getMonth()+1)+"/"+dataBase.getFullYear();
-		
 		var data = [
 				{name: 'numeroSemana', value: nmSemana},
-				{name: 'dataBase', value: dataBase}
+				{name: 'anoBase', value: anoBase}
 			];
 		
 		$.getJSON(
-			contextPath + "/cadastro/distribuidor/obterDataDaSemana", 
+			contextPath + "/cadastro/distribuidor/obterDataDaSemana",
 			data,
 			function(result) {
 
@@ -604,13 +595,6 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 				}
 			}
 		);
-	},
-
-	w2date :function(year, wn, dayNb){
-	    var j10 = new Date( year,0,10,12,0,0),
-	        j4 = new Date( year,0,4,12,0,0),
-	        mon1 = j4.getTime() - j10.getDay() * 86400000;
-	    return new Date(mon1 + ((wn - 1)  * 7  + dayNb) * 86400000);
 	},
 	
 	carregarDiaSemana : function() {
@@ -637,7 +621,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 
 				if (result) {
 
-					$("#numeroSemana", balanceamentoRecolhimentoController.workspace).val((dataBase.substr(6))+(result.int));
+					$("#numeroSemana", balanceamentoRecolhimentoController.workspace).val(result.int);
 				}
 			}
 		);
@@ -1194,19 +1178,11 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 		
 		var parametros = new Array();
 		
-		var anoSemanaNumero = 
+		var anoNumeroSemana = 
 			$("#numeroSemana", balanceamentoRecolhimentoController.workspace).val();
 		
-		var numeroSemana = '';
-		
-		if (anoSemanaNumero && anoSemanaNumero.length>=5) {
-			
-			numeroSemana = anoSemanaNumero.substr(4);
-		}
-		
-		parametros.push({name:'numeroSemana', value:numeroSemana });
+		parametros.push({name:'anoNumeroSemana', value:anoNumeroSemana });
 		parametros.push({name:'novaDataBalanceamentoFormatada', value:novaData });
-		parametros.push({name:'dataBalanceamentoFormatada', value:dataAntiga });
 		
 		return parametros;
 	},

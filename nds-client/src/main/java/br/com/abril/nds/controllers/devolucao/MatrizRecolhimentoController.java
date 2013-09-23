@@ -52,6 +52,7 @@ import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.MathUtil;
+import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
 import br.com.abril.nds.util.export.FileExporter;
@@ -124,17 +125,16 @@ public class MatrizRecolhimentoController extends BaseController {
 	
 	@Post
 	@Path("/pesquisar")
-	public void pesquisar(Integer numeroSemana, Date dataPesquisa, List<Long> listaIdsFornecedores) {
+	public void pesquisar(Integer anoNumeroSemana, Date dataPesquisa, List<Long> listaIdsFornecedores) {
 		
-		dataPesquisa = this.tratarData(numeroSemana, dataPesquisa);
+		dataPesquisa = this.tratarData(anoNumeroSemana, dataPesquisa);
 		
-		numeroSemana = this.tratarSemana(numeroSemana, dataPesquisa);
+		anoNumeroSemana = this.tratarSemana(anoNumeroSemana, dataPesquisa);
 		
 		this.validarDadosPesquisa(dataPesquisa, listaIdsFornecedores);
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
-				this.obterBalanceamentoRecolhimento(dataPesquisa,
-													numeroSemana,
+				this.obterBalanceamentoRecolhimento(anoNumeroSemana,
 													listaIdsFornecedores,
 													TipoBalanceamentoRecolhimento.AUTOMATICO,
 													false);
@@ -150,7 +150,7 @@ public class MatrizRecolhimentoController extends BaseController {
 		
 		removerAtributoAlteracaoSessao();
 		
-		configurarFiltropesquisa(numeroSemana, dataPesquisa, listaIdsFornecedores);
+		configurarFiltropesquisa(anoNumeroSemana, dataPesquisa, listaIdsFornecedores);
 		
 		this.result.use(Results.json()).from(resultadoResumoBalanceamento, "result").recursive().serialize();
 	}
@@ -167,31 +167,32 @@ public class MatrizRecolhimentoController extends BaseController {
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
 		
 		recolhimentoService.processarProdutosProximaSemanaRecolhimento(balanceamentoRecolhimento.getProdutosRecolhimentoNaoBalanceados(),
-																	   filtro.getNumeroSemana(),
-																	   filtro.getDataPesquisa());
+																	   filtro.getAnoNumeroSemana());
 		
 		this.result.use(Results.json()).from(Results.nothing()).serialize();
 	}
 	
-	private Integer tratarSemana(Integer numeroSemana, Date dataPesquisa) {
+	private Integer tratarSemana(Integer anoNumeroSemana, Date dataPesquisa) {
 
-		if(numeroSemana==null && dataPesquisa!=null) {
+		if(anoNumeroSemana==null && dataPesquisa!=null) {
 			
-			return DateUtil.obterNumeroSemanaNoAno(
+			return SemanaUtil.obterAnoNumeroSemana(
 					dataPesquisa, 
 					this.distribuidorService.inicioSemana().getCodigoDiaSemana());
 		}
 		
-		return numeroSemana;
+		return anoNumeroSemana;
 	}
 
-	private Date tratarData(Integer numeroSemana, Date dataPesquisa) {
+	private Date tratarData(Integer anoNumeroSemana, Date dataPesquisa) {
 
-		if(numeroSemana!=null && dataPesquisa==null) {
+		if(anoNumeroSemana!=null && dataPesquisa==null) {
 			
-			return DateUtil.obterDataDaSemanaNoAno(
-					numeroSemana, 
-					this.distribuidorService.inicioSemana().getCodigoDiaSemana(), null);
+			int anoBase = SemanaUtil.getAno(anoNumeroSemana);
+			
+			return SemanaUtil.obterDataDaSemanaNoAno(
+					anoNumeroSemana, 
+					this.distribuidorService.inicioSemana().getCodigoDiaSemana(), anoBase);
 		}
 		
 		return dataPesquisa;
@@ -223,7 +224,7 @@ public class MatrizRecolhimentoController extends BaseController {
 		TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizConfirmada =
 			recolhimentoService.confirmarBalanceamentoRecolhimento(
 													matrizRecolhimento,
-													filtro.getNumeroSemana(),
+													filtro.getAnoNumeroSemana(),
 													datasConfirmadas,
 													getUsuarioLogado());
 		
@@ -293,8 +294,7 @@ public class MatrizRecolhimentoController extends BaseController {
 		this.validarDadosPesquisa(filtro.getDataPesquisa(), filtro.getListaIdsFornecedores());
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
-			this.obterBalanceamentoRecolhimento(filtro.getDataPesquisa(),
-												filtro.getNumeroSemana(),
+			this.obterBalanceamentoRecolhimento(filtro.getAnoNumeroSemana(),
 												filtro.getListaIdsFornecedores(),
 												TipoBalanceamentoRecolhimento.EDITOR,
 												true);
@@ -346,8 +346,7 @@ public class MatrizRecolhimentoController extends BaseController {
 		this.validarDadosPesquisa(filtro.getDataPesquisa(), filtro.getListaIdsFornecedores());
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
-			this.obterBalanceamentoRecolhimento(filtro.getDataPesquisa(),
-												filtro.getNumeroSemana(),
+			this.obterBalanceamentoRecolhimento(filtro.getAnoNumeroSemana(),
 												filtro.getListaIdsFornecedores(),
 												TipoBalanceamentoRecolhimento.VALOR,
 												true);
@@ -458,12 +457,11 @@ public class MatrizRecolhimentoController extends BaseController {
 		
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
 		
-		recolhimentoService.voltarConfiguracaoOriginal(filtro.getNumeroSemana(), 
-				filtro.getDataPesquisa(), filtro.getListaIdsFornecedores());
+		recolhimentoService.voltarConfiguracaoOriginal(
+			filtro.getAnoNumeroSemana(), filtro.getListaIdsFornecedores());
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
-			this.obterBalanceamentoRecolhimento(filtro.getDataPesquisa(),
-												filtro.getNumeroSemana(),
+			this.obterBalanceamentoRecolhimento(filtro.getAnoNumeroSemana(),
 												filtro.getListaIdsFornecedores(),
 												TipoBalanceamentoRecolhimento.AUTOMATICO,
 												false);
@@ -486,11 +484,11 @@ public class MatrizRecolhimentoController extends BaseController {
 		
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
 		
-		this.validarDadosReprogramar(novaDataFormatada, filtro.getNumeroSemana());
+		this.validarDadosReprogramar(novaDataFormatada, filtro.getAnoNumeroSemana());
 		
 		Date novaData = DateUtil.parseDataPTBR(novaDataFormatada);
 		
-		this.validarDataReprogramacao(filtro.getNumeroSemana(), novaData, filtro.getDataPesquisa());
+		this.validarDataReprogramacao(filtro.getAnoNumeroSemana(), novaData, filtro.getDataPesquisa());
 		
 		this.validarListaParaReprogramacao(listaProdutoRecolhimento);
 		
@@ -517,9 +515,9 @@ public class MatrizRecolhimentoController extends BaseController {
 		
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
 		
-		this.validarDadosReprogramar(novaDataFormatada, filtro.getNumeroSemana());
+		this.validarDadosReprogramar(novaDataFormatada, filtro.getAnoNumeroSemana());
 		
-		this.validarDataReprogramacao(filtro.getNumeroSemana(), novaData, filtro.getDataPesquisa());
+		this.validarDataReprogramacao(filtro.getAnoNumeroSemana(), novaData, filtro.getDataPesquisa());
 		
 		List<ProdutoRecolhimentoFormatadoVO> listaProdutoRecolhimento = new ArrayList<ProdutoRecolhimentoFormatadoVO>();
 		
@@ -580,14 +578,13 @@ public class MatrizRecolhimentoController extends BaseController {
 	}
 	
 	@Post
-	public void verificarDataReprogramacao(Integer numeroSemana, 
-										   String novaDataBalanceamentoFormatada,
-										   String dataBalanceamentoFormatada) {
+	public void verificarDataReprogramacao(Integer anoNumeroSemana, 
+										   String novaDataBalanceamentoFormatada) {
 		
 		Date novaDataBalanceamento = DateUtil.parseDataPTBR(novaDataBalanceamentoFormatada);
 		
 		Intervalo<Date> intervalo =
-			this.obterIntervaloSemana(numeroSemana, dataBalanceamentoFormatada);
+			this.recolhimentoService.getPeriodoRecolhimento(anoNumeroSemana);
 		
 		ValidacaoDataRecolhimento validacaoDataRecolhimento = 
 			this.verificarDataForaDaSemana(intervalo, novaDataBalanceamento);
@@ -661,22 +658,6 @@ public class MatrizRecolhimentoController extends BaseController {
 		return validacaoDataRecolhimento;
 	}
 	
-	private Intervalo<Date> obterIntervaloSemana(Integer numeroSemana, String dataBalanceamentoFormatada) {
-		
-		Date dataBalanceamento = DateUtil.parseDataPTBR(dataBalanceamentoFormatada);
-		
-		Date dataInicioSemana = 
-			DateUtil.obterDataDaSemanaNoAno(
-				numeroSemana, this.distribuidorService.inicioSemana().getCodigoDiaSemana(), 
-					dataBalanceamento);
-			
-		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
-		
-		Intervalo<Date> intervalo = new Intervalo<Date>(dataInicioSemana, dataFimSemana);
-		
-		return intervalo;
-	}
-	
 	/**
 	 * Método que atualiza a matriz de recolhimento de acordo com os produtos confirmados
 	 * 
@@ -731,14 +712,14 @@ public class MatrizRecolhimentoController extends BaseController {
 	/**
 	 * Configura o filtro informado na tela e o armazena na sessão.
 	 * 
-	 * @param numeroSemana - número da semana
+	 * @param anoNumeroSemana - número da semana
 	 * @param dataPesquisa - data da pesquisa
 	 * @param listaIdsFornecedores - lista de identificadores de fornecedores
 	 */
-	private void configurarFiltropesquisa(Integer numeroSemana, Date dataPesquisa, List<Long> listaIdsFornecedores) {
+	private void configurarFiltropesquisa(Integer anoNumeroSemana, Date dataPesquisa, List<Long> listaIdsFornecedores) {
 		
 		FiltroPesquisaMatrizRecolhimentoVO filtro =
-			new FiltroPesquisaMatrizRecolhimentoVO(numeroSemana, dataPesquisa, listaIdsFornecedores);
+			new FiltroPesquisaMatrizRecolhimentoVO(anoNumeroSemana, dataPesquisa, listaIdsFornecedores);
 		
 		this.httpSession.setAttribute(ATRIBUTO_SESSAO_FILTRO_PESQUISA_BALANCEAMENTO_RECOLHIMENTO,
 									  filtro);
@@ -1256,7 +1237,7 @@ public class MatrizRecolhimentoController extends BaseController {
 
 			Date novaData = DateUtil.parseDataPTBR(produto.getNovaData());
 			
-			int codigoDiaCorrente = DateUtil.obterDiaDaSemana(novaData);
+			int codigoDiaCorrente = SemanaUtil.obterDiaDaSemana(novaData);
 
 			if (!diasRecolhimentoFornecedor.contains(codigoDiaCorrente)) {
 
@@ -1279,28 +1260,26 @@ public class MatrizRecolhimentoController extends BaseController {
 	/**
 	 * Obtém a matriz de balanceamento de recolhimento.
 	 * 
-	 * @param dataBalanceamento - data de balanceamento
-	 * @param numeroSemana - número da semana
+	 * @param anoNumeroSemana - número da semana
 	 * @param listaIdsFornecedores - lista de identificadores dos fornecedores
 	 * @param tipoBalanceamentoRecolhimento - tipo de balanceamento de recolhimento
 	 * @param forcarBalanceamento - indicador para forçar a sugestão através do balanceamento
 	 * 
 	 * @return - objeto contendo as informações do balanceamento
 	 */
-	private BalanceamentoRecolhimentoDTO obterBalanceamentoRecolhimento(Date dataBalanceamento,
-																		Integer numeroSemana,
+	private BalanceamentoRecolhimentoDTO obterBalanceamentoRecolhimento(Integer anoNumeroSemana,
 																		List<Long> listaIdsFornecedores,
 																		TipoBalanceamentoRecolhimento tipoBalanceamentoRecolhimento,
 																		boolean forcarBalanceamento) {
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = null;
 		
-		if (numeroSemana != null && listaIdsFornecedores != null) {
+		if (anoNumeroSemana != null && listaIdsFornecedores != null) {
 
 			balanceamentoRecolhimento = 
 				this.recolhimentoService.obterMatrizBalanceamento(
-					numeroSemana, listaIdsFornecedores, tipoBalanceamentoRecolhimento,
-					forcarBalanceamento, dataBalanceamento);
+					anoNumeroSemana, listaIdsFornecedores, tipoBalanceamentoRecolhimento,
+					forcarBalanceamento);
 			
 			this.httpSession.setAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO,
 										  balanceamentoRecolhimento);
