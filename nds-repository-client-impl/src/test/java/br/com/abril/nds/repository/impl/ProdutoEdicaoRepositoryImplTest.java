@@ -272,7 +272,7 @@ public class ProdutoEdicaoRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		Long idProdutoEdicao = 1L;
 		
-				produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(idProdutoEdicao, null);
+				produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(idProdutoEdicao, null, null);
 			
 		}
 	
