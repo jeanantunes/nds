@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository;
 
-import java.math.BigInteger;
 import java.util.List;
 
 import br.com.abril.nds.dto.AnaliseEstudoDetalhesDTO;
@@ -10,7 +9,6 @@ import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 
 public interface AnaliseParcialRepository {
 	
@@ -26,4 +24,6 @@ public interface AnaliseParcialRepository {
 	List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId);
 	List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO);
     AnaliseEstudoDetalhesDTO historicoEdicaoBase(Long id, Integer numeroPeriodo);
+    public List<EdicoesProdutosDTO> carregarPublicacaoDoEstudo(Long estudoId);
+    AnaliseParcialDTO buscarReparteDoEstudo(Long estudoOrigem, Integer numeroCota);
 }

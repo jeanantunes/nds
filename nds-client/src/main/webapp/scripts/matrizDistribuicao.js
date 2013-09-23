@@ -13,7 +13,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 	this.lancamentos = [];
 	this.isCliquePesquisar;
 	this.parametrosDePesquisa = null;
-	
+	var estudoAserCopiado = null;
 	
 	this.definirAcaoPesquisaTeclaEnter = function() {
 		definirAcaoPesquisaTeclaEnter();
@@ -866,9 +866,12 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 		var idEstudo =  matrizSelecionado_estudo || estudo;
 		data.push({name: 'id', value: idEstudo});
 		if ($('#parcial').val() === 'true') {
-			data.push({name: 'modoAnalise', value: "PARCIAL"});
+			data.push({name: "modoAnalise", value: "PARCIAL"});
 		}
-        data.push({name: 'reparteCopiado', value: $("#copiarEstudo-copia-reparte").text()});
+        data.push({name: "reparteCopiado", value: $("#copiarEstudo-copia-reparte").text()});
+        
+        console.log(T.estudoAserCopiado);
+        data.push({name: "estudoOrigem", value: T.estudoAserCopiado});
 
 		$.get(
 				contextPath + '/distribuicao/analise/parcial/',
@@ -1028,6 +1031,8 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
 				$("#copiarEstudo-copia-dataLancto").text(result.dataLancto);
                 $("#copiarEstudo-copia-reparte").text(result.qtdeReparteEstudo)
                     .formatNumber({format:"#,###", locale:"br"});
+                
+                T.estudoAserCopiado = codEstudo;
 		  }
 		);
 	},

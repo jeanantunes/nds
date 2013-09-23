@@ -8,6 +8,7 @@
 <script type="text/javascript" charset="utf8" src="${pageContext.request.contextPath}/scripts/analiseParcial-dataTable.js"></script>
 
 <script language="javascript" type="text/javascript">
+
 $(function() {
     $('.legendas').tipsy({gravity: $.fn.tipsy.autoNS});
     $('.asterisco').tipsy({live: true, gravity: $.fn.tipsy.autoNS, title: function(){return 'Reparte Alterado';}});
@@ -177,6 +178,8 @@ table.dadosTab { margin-left: 370px;}
 			<input type="hidden" id="codigoProduto" value="${estudoCota.estudo.produtoEdicao.produto.codigo}" />
 			<input type="hidden" id="produtoId" value="${estudoCota.estudo.produtoEdicao.produto.id}" />
 			<input type="hidden" id="tipoSegmentoProduto" value="${estudoCota.estudo.produtoEdicao.produto.tipoSegmentoProduto.id}" />
+			<input type="hidden" id="estudoOrigem" value="${estudoOrigem}" />
+			
 			<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
 					<td>Código: <span>${estudoCota.estudo.produtoEdicao.produto.codigo}</span></td>

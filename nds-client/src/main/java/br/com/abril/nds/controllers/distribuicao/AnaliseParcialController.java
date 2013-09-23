@@ -75,7 +75,7 @@ public class AnaliseParcialController extends BaseController {
     private HttpSession session;
 
     @Path("/")
-    public void index(Long id, Long faixaDe, Long faixaAte, String modoAnalise, String reparteCopiado) {
+    public void index(Long id,Long estudoOrigem, Long faixaDe, Long faixaAte, String modoAnalise, String reparteCopiado) {
 
         EstudoCota estudo = analiseParcialService.buscarPorId(id);
         Lancamento lancamento = lancamentoService.obterPorId(estudo.getEstudo().getLancamentoID());
@@ -92,6 +92,8 @@ public class AnaliseParcialController extends BaseController {
         result.include("faixaDe", faixaDe);
         result.include("faixaAte", faixaAte);
         result.include("reparteCopiado", reparteCopiado);
+        result.include("estudoOrigem", (estudoOrigem==null)?0:estudoOrigem);
+        
         ClassificacaoCota[] vetor = ClassificacaoCota.values();
         Arrays.sort(vetor, new Comparator<ClassificacaoCota>() {
 
@@ -150,7 +152,7 @@ public class AnaliseParcialController extends BaseController {
 
     @Path("/init")
     public void init(Long id, String sortname, String sortorder, String filterSortName, Double filterSortFrom, Double filterSortTo, String elemento,
-                     Long faixaDe, Long faixaAte, List<EdicoesProdutosDTO> edicoesBase, String modoAnalise, String codigoProduto, Long numeroEdicao, String numeroCotaStr) {
+                     Long faixaDe, Long faixaAte, List<EdicoesProdutosDTO> edicoesBase, String modoAnalise, String codigoProduto, Long numeroEdicao, String numeroCotaStr,Long estudoOrigem) {
 
         AnaliseParcialQueryDTO queryDTO = new AnaliseParcialQueryDTO();
         queryDTO.setSortName(sortname);
@@ -167,6 +169,8 @@ public class AnaliseParcialController extends BaseController {
         queryDTO.setCodigoProduto(codigoProduto);
         queryDTO.setNumeroEdicao(numeroEdicao);
         queryDTO.setNumeroCotaStr(numeroCotaStr);
+        queryDTO.setEstudoOrigem(estudoOrigem);
+        
 
         List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
 
