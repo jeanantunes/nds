@@ -86,6 +86,7 @@ import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
@@ -214,15 +215,13 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			}
 						
 			int inicioDiaSemana = 
-					distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
-			
-			int numeroSemana = 
-					DateUtil.obterNumeroSemanaNoAno(dataAtual, inicioDiaSemana);
+				distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
+
+			Date dataInicioSemana =
+				SemanaUtil.obterDataInicioSemana(inicioDiaSemana, dataAtual);
 			
 			Date dataFimSemana = 
-					DateUtil.adicionarDias(DateUtil.obterDataDaSemanaNoAno(
-							numeroSemana, inicioDiaSemana, dataAtual),
-							6);
+				DateUtil.adicionarDias(dataInicioSemana, 6);
 			
 			if (filtro.getBoxId() == null ){ 
 				List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro.getDataEncalhe());
@@ -1157,12 +1156,13 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Transactional(readOnly=true)
 	public Date buscarUtimoDiaDaSemanaRecolhimento() {
 		
-		Integer numeroSemana = DateUtil.obterNumeroSemanaNoAno(new Date());
-		Date dataInicioSemana = 
-				DateUtil.obterDataDaSemanaNoAno(
-					numeroSemana, this.distribuidorService.inicioSemana().getCodigoDiaSemana(), null);
+		int codigoInicioSemana = 
+			this.distribuidorService.inicioSemana().getCodigoDiaSemana();
+		
+		Date dataInicioSemana =
+			SemanaUtil.obterDataInicioSemana(codigoInicioSemana, new Date());
 			
-			Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
+		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 
 		return dataFimSemana;
 	}

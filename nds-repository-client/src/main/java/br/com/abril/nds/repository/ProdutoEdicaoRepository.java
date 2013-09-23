@@ -34,10 +34,11 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * 
 	 * @param idProdutoEdicao
 	 * @param dataRecolhimento
+	 * @param numeroCota
 	 * 
 	 * @return Integer
 	 */
-	public Integer obterCodigoMatrizPorProdutoEdicao(Long idProdutoEdicao, Date dataRecolhimento);
+	public Integer obterCodigoMatrizPorProdutoEdicao(Long idProdutoEdicao, Date dataRecolhimento, Integer numeroCota);
 	
 	/**
 	 * Obtém o produtoEdicao através do código SM do mesmo produtoEdicao que esta amarrado a seu lancamento.

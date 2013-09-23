@@ -11,6 +11,7 @@ import br.com.abril.nds.model.DiaSemana;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.SemanaUtil;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Resource;
@@ -49,25 +50,25 @@ public class DistribuidorController extends BaseController {
 			throw new RuntimeException("Dados do distribuidor inexistentes: início semana");
 		}
 		
-		Integer numeroSemana = 
-			DateUtil.obterNumeroSemanaNoAno(data, diaSemana.getCodigoDiaSemana());
+		Integer anoSemana = 
+			SemanaUtil.obterAnoNumeroSemana(data, diaSemana.getCodigoDiaSemana());
 		
-		result.use(Results.json()).from(numeroSemana).serialize();
+		result.use(Results.json()).from(anoSemana).serialize();
 	}
 	
 	@Get
 	@Path("/obterDataDaSemana")
-	public void obterDataDaSemanaNoAno(Integer numeroSemana,Date dataBase) {
+	public void obterDataDaSemanaNoAno(Integer numeroSemana, Integer anoBase) {
 		
 		DiaSemana diaSemana = this.distribuidorService.inicioSemana();
 		
-		if (diaSemana == null){
+		if (diaSemana == null) {
 			
 			throw new RuntimeException("Dados do distribuidor inexistentes: inicio semana");
 		}
 		
 		Date data = 
-			DateUtil.obterDataDaSemanaNoAno(numeroSemana, diaSemana.getCodigoDiaSemana(), dataBase);
+			SemanaUtil.obterDataDaSemanaNoAno(numeroSemana, diaSemana.getCodigoDiaSemana(), anoBase);
 		
 		String dataFormatada = "";
 		

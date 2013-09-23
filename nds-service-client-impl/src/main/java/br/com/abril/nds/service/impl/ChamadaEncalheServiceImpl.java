@@ -401,7 +401,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		Intervalo<Date> periodoRecolhimento = null;
 		
 		try {
-			periodoRecolhimento = recolhimentoService.getPeriodoRecolhimento(semana, new Date());
+			periodoRecolhimento = recolhimentoService.getPeriodoRecolhimento(semana);
 		} catch (IllegalArgumentException e) {
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
@@ -416,7 +416,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		Intervalo<Date> periodoRecolhimento = null;
 		
 		try {
-			periodoRecolhimento = recolhimentoService.getPeriodoRecolhimento(semana, new Date());
+			periodoRecolhimento = recolhimentoService.getPeriodoRecolhimento(semana);
 		} catch (IllegalArgumentException e) {
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}
@@ -431,7 +431,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		Intervalo<Date> periodoRecolhimento = null;
 		
 		try {
-			periodoRecolhimento = recolhimentoService.getPeriodoRecolhimento(semana, new Date());
+			periodoRecolhimento = recolhimentoService.getPeriodoRecolhimento(semana);
 		} catch (IllegalArgumentException e) {
 			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 		}

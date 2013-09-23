@@ -1584,4 +1584,13 @@ public class RoteirizacaoServiceImpl implements RoteirizacaoService {
 		return lista;
 	}
 
+	@Override
+	public List<Roteiro> buscarRoteiroCodigoBox(Long codigoBoxDe, Long codigoBoxAte) {
+		
+		if(codigoBoxDe == null && codigoBoxDe == null) return new ArrayList<Roteiro>();
+		
+		return roteiroRepository.buscarRoteiroCodigoBox(codigoBoxDe, codigoBoxAte);
+		
+	}
+
 }

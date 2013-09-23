@@ -17,6 +17,8 @@ public interface RoteiroRepository extends Repository<Roteiro, Long> {
 	
 	List<Roteiro> buscarRoteiroDeBox(Long idBox);
 	
+	List<Roteiro> buscarRoteiroCodigoBox(Long codigoBoxDe, Long codigoBoxAte);
+	
 	Integer buscarMaiorOrdemRoteiro();
 	
     List<Roteiro> buscarRoteiroEspecial();

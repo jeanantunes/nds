@@ -64,6 +64,7 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.strategy.devolucao.BalanceamentoRecolhimentoStrategy;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.TipoBalanceamentoRecolhimento;
 
 /**
@@ -122,16 +123,15 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	 */
 	@Override
 	@Transactional(readOnly = true)
-	public BalanceamentoRecolhimentoDTO obterMatrizBalanceamento(Integer numeroSemana,
+	public BalanceamentoRecolhimentoDTO obterMatrizBalanceamento(Integer anoNumeroSemana,
 																 List<Long> listaIdsFornecedores,
 																 TipoBalanceamentoRecolhimento tipoBalanceamentoRecolhimento,
-																 boolean forcarBalanceamento,
-																 Date dataBalanceamento) {
+																 boolean forcarBalanceamento) {
 		
 		RecolhimentoDTO dadosRecolhimento =
 			this.obterDadosRecolhimento(
-				numeroSemana, listaIdsFornecedores, tipoBalanceamentoRecolhimento,
-				forcarBalanceamento, dataBalanceamento);
+				anoNumeroSemana, listaIdsFornecedores, tipoBalanceamentoRecolhimento,
+				forcarBalanceamento);
 		
 		BalanceamentoRecolhimentoStrategy balanceamentoRecolhimentoStrategy = 
 			BalanceamentoRecolhimentoFactory.getStrategy(tipoBalanceamentoRecolhimento);
@@ -569,16 +569,15 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	/**
 	 * Monta o DTO com as informações para realização do balanceamento.
 	 */
-	private RecolhimentoDTO obterDadosRecolhimento(Integer numeroSemana,
+	private RecolhimentoDTO obterDadosRecolhimento(Integer anoNumeroSemana,
 			 									   List<Long> listaIdsFornecedores,
 			 									   TipoBalanceamentoRecolhimento tipoBalanceamento,
-			 									   boolean forcarBalanceamento,
-			 									   Date dataBalanceamento) {
+			 									   boolean forcarBalanceamento) {
 		
 		RecolhimentoDTO dadosRecolhimento = new RecolhimentoDTO();
 		
 		Intervalo<Date> periodoRecolhimento =
-			getPeriodoRecolhimento(numeroSemana, dataBalanceamento);
+			getPeriodoRecolhimento(anoNumeroSemana);
 		
 		TreeSet<Date> datasRecolhimentoFornecedor = 
 			this.obterDatasRecolhimentoFornecedor(periodoRecolhimento, listaIdsFornecedores);
@@ -633,17 +632,20 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	 * Monta o perídodo de recolhimento de acordo com a semana informada.
 	 */
 	@Override
-	public Intervalo<Date> getPeriodoRecolhimento(Integer numeroSemana,
-												   Date dataBalanceamento) {
+	public Intervalo<Date> getPeriodoRecolhimento(Integer anoNumeroSemana) {
 		
 		int codigoInicioSemana = 
 				this.distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
 		
+		Integer anoBase = SemanaUtil.getAno(anoNumeroSemana);
+		
+		Integer numeroSemana = SemanaUtil.getSemana(anoNumeroSemana);
+		
 		Date dataInicioSemana = 
-			DateUtil.obterDataDaSemanaNoAno(
+			SemanaUtil.obterDataDaSemanaNoAno(
 				numeroSemana,
 				codigoInicioSemana, 
-				dataBalanceamento);
+				anoBase);
 		
 		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 		
@@ -689,7 +691,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 											 	 Set<Integer> diasRecolhimentoSemana) {
 		
 		TreeSet<Date> datasRecolhimento =
-			DateUtil.obterPeriodoDeAcordoComDiasDaSemana(
+			SemanaUtil.obterPeriodoDeAcordoComDiasDaSemana(
 				periodoRecolhimento.getDe(), periodoRecolhimento.getAte(), diasRecolhimentoSemana);
 		
 		TreeSet<Date> datasRecolhimentoComOperacao = new TreeSet<>();
@@ -713,10 +715,10 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 
 	@Override
 	@Transactional
-	public void voltarConfiguracaoOriginal(Integer numeroSemana, Date anoBase, List<Long> fornecedores) {
+	public void voltarConfiguracaoOriginal(Integer numeroSemana, List<Long> fornecedores) {
 		
 		Intervalo<Date> periodoRecolhimento =
-			getPeriodoRecolhimento(numeroSemana, anoBase);
+			getPeriodoRecolhimento(numeroSemana);
 		
 		List<Lancamento> lancamentos =  lancamentoRepository.obterLancamentosARecolherNaSemana(periodoRecolhimento, fornecedores);
 			
@@ -748,7 +750,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	
 	@Transactional
 	@Override
-	public void processarProdutosProximaSemanaRecolhimento(List<ProdutoRecolhimentoDTO> produtos, Integer numeroSemana, Date dataBalanceamento){
+	public void processarProdutosProximaSemanaRecolhimento(List<ProdutoRecolhimentoDTO> produtos, Integer numeroSemana){
 		
 		if(produtos == null || produtos.isEmpty()){
 			return;
@@ -756,15 +758,15 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		for(ProdutoRecolhimentoDTO item : produtos){
 			
-			Date dataRecolhimento = this.obterDataValidaRecolhimento(numeroSemana, dataBalanceamento, item.getIdFornecedor());
+			Date dataRecolhimento = this.obterDataValidaRecolhimento(numeroSemana, item.getIdFornecedor());
 			
 			lancamentoRepository.atualizarDataRecolhimentoDistribuidor(dataRecolhimento, item.getIdLancamento());
 		}		
 	}
 	
-	private Date obterDataValidaRecolhimento(Integer numeroSemana,Date dataBalanceamento, Long idFornecedor){
+	private Date obterDataValidaRecolhimento(Integer numeroSemana, Long idFornecedor){
 		
-		Intervalo<Date> periodoRecolhimento = getPeriodoRecolhimento(++numeroSemana, dataBalanceamento);
+		Intervalo<Date> periodoRecolhimento = getPeriodoRecolhimento(++numeroSemana);
 		
 		Date dataRecolhimento = periodoRecolhimento.getDe();
 		
@@ -782,7 +784,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}		
 				
 		if(dataValida == null){
-			dataValida = obterDataValidaRecolhimento(numeroSemana, dataBalanceamento, idFornecedor);
+			dataValida = obterDataValidaRecolhimento(numeroSemana, idFornecedor);
 		}
 		
 		return dataValida;
@@ -796,7 +798,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				this.distribuicaoFornecedorService.obterCodigosDiaDistribuicaoFornecedor(
 						fornecedor.getId(), OperacaoDistribuidor.RECOLHIMENTO);
 		
-		int codigoDiaCorrente = DateUtil.obterDiaDaSemana(dataRecolhimento);
+		int codigoDiaCorrente = SemanaUtil.obterDiaDaSemana(dataRecolhimento);
 		
 		return diasRecolhimentoFornecedor.contains(codigoDiaCorrente);
 	}
@@ -896,7 +898,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		
 		for (Calendar dataRecolhimento : datasDaSemana) {
 			
-			if (diasRecolhimentoNaSemana.contains(DateUtil.obterDiaDaSemana(dataRecolhimento))) {
+			if (diasRecolhimentoNaSemana.contains(SemanaUtil.obterDiaDaSemana(dataRecolhimento))) {
 				
 				datasRecolhimentoGrupo.add(dataRecolhimento.getTime());
 			}
