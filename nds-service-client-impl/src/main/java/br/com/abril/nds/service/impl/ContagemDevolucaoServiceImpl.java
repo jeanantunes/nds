@@ -83,8 +83,8 @@ import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
-import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
@@ -830,7 +830,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 				
 				itemNotaFiscal.setValorUnitario(produtoEdicao.getPrecoVenda());
 				
-				itemNotaFiscal.setInfoComplementar("Semana chamada encalhe: " + DateUtil.obterDiaDaSemana(contagem.getDataMovimento()));
+				itemNotaFiscal.setInfoComplementar("Semana chamada encalhe: " + SemanaUtil.obterDiaDaSemana(contagem.getDataMovimento()));
 
 				listItemNotaFiscal.add(itemNotaFiscal);
 				

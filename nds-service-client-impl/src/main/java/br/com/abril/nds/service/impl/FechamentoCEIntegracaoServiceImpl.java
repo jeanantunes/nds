@@ -2,7 +2,6 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -265,15 +264,16 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 	}
 
 	private Intervalo<Date> obterPeriodoDataRecolhimento(String anoSemana) {
-
-		Integer semana = SemanaUtil.get(anoSemana);
 		
-		Date data = SemanaUtil.getDateBase(anoSemana, this.distribuidorService.obterDataOperacaoDistribuidor()); 
+		Integer inicioSemana = this.distribuidorService.inicioSemana().getCodigoDiaSemana();
 		
-		Date dataInicioSemana = 
-				DateUtil.obterDataDaSemanaNoAno(
-					semana, this.distribuidorService.inicioSemana().getCodigoDiaSemana(), data);
-			
+		Integer anoBase = SemanaUtil.getAno(anoSemana);
+		
+		Integer numeroSemana = SemanaUtil.getSemana(anoSemana);
+		
+		Date dataInicioSemana = SemanaUtil.obterDataDaSemanaNoAno(
+			numeroSemana, inicioSemana, anoBase);
+		
 		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 		
 		Intervalo<Date> periodoRecolhimento = new Intervalo<Date>(dataInicioSemana, dataFimSemana);

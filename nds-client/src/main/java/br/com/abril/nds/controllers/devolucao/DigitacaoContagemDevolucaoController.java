@@ -92,8 +92,6 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	@Autowired
 	private HttpServletResponse httpResponse;
 	
-	private static final int NUMERO_MESES_PESQUISA_DESATIVACAO = 6;
-	
 	private static final String FILTRO_SESSION_ATTRIBUTE = "filtroPesquisaDigitacaoContagemDevolucao";
 	
 	private static final String USUARIO_PERFIL_OPERADOR = "userProfileOperador";
@@ -151,7 +149,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		FiltroDigitacaoContagemDevolucaoDTO filtro = 
 				new FiltroDigitacaoContagemDevolucaoDTO(
 					periodo,idFornecedor, 
-					SemanaUtil.get(semanaConferenciaEncalhe), 
+					SemanaUtil.getSemana(semanaConferenciaEncalhe), 
 					semanaConferenciaEncalhe
 				);
 		
@@ -186,12 +184,14 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		
 		try {
 		
-			Integer semana = SemanaUtil.get(anoSemanaConferenciaEncalhe);
+			Integer inicioSemana = this.distribuidorService.inicioSemana().getCodigoDiaSemana();
 			
-			Date dataBase = SemanaUtil.getDateBase(anoSemanaConferenciaEncalhe, this.distribuidorService.obterDataOperacaoDistribuidor());
+			Integer anoBase = SemanaUtil.getAno(anoSemanaConferenciaEncalhe);
 			
-			Date dataInicioSemana = DateUtil.obterDataDaSemanaNoAno(semana, 
-					this.distribuidorService.inicioSemana().getCodigoDiaSemana(), dataBase);
+			Integer numeroSemana = SemanaUtil.getSemana(anoSemanaConferenciaEncalhe);
+			
+			Date dataInicioSemana = SemanaUtil.obterDataDaSemanaNoAno(
+				numeroSemana, inicioSemana, anoBase);
 			
 			Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 			
