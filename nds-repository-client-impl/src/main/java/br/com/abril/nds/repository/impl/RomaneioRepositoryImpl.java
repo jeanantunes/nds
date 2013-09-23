@@ -139,10 +139,21 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 			hql.append(" and movEstCotaLancDif.id = movimentoEstoque.id ");
 		}*/
 
-		if(filtro.getIdBox() != null) {
+		if(filtro.getIdBox() == null ) {
 			
-			hql.append( " and box.id = :idBox ");
+			hql.append(" and roteiro.descricaoRoteiro <> 'Especial' ");
+			
+		} else if(filtro.getIdBox() != null && filtro.getIdBox() != -1) {
+			
+			hql.append(" and box.id = :idBox ");
+			hql.append(" and roteiro.descricaoRoteiro <> 'Especial' ");
+			
+		} else {
+			
+			hql.append(" and roteiro.descricaoRoteiro = 'Especial' ");
+			
 		}
+			
 		
 		if(filtro.getIdRoteiro() != null){
 			
@@ -232,7 +243,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 				hql.insert(0, ", ");
 			}
 			
-			hql.insert(0, " box.codigo asc, roteiro.ordem asc, roteiro.descricaoRoteiro asc, rota.ordem asc, rota.descricaoRota asc, cota.numeroCota ");
+			hql.insert(0, " box.codigo asc, rotaPDV.ordem "); //roteiro.ordem asc, roteiro.descricaoRoteiro asc, rota.ordem asc, rota.descricaoRota asc, cota.numeroCota "); , rotaPDV.ordem 
 		}
 		
 		if (hql.length() > 0) {
@@ -252,7 +263,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 			"statusLancamento", 
 				new StatusLancamento[] {StatusLancamento.BALANCEADO, StatusLancamento.EXPEDIDO});
 		
-		if(filtro.getIdBox() != null) { 
+		if(filtro.getIdBox() != null && filtro.getIdBox() != -1) {
 			
 			query.setParameter("idBox", filtro.getIdBox());
 		}
@@ -334,6 +345,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 			FiltroRomaneioDTO filtro) {
 		
 		Query query = this.createQueryBuscarRomaneioParaExportacao(filtro);
+		
 		query.setResultTransformer(new AliasToBeanResultTransformer(
 				RomaneioDTO.class));
 		
@@ -364,8 +376,8 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(", notaEnvio.destinatario.nome as nome ");
 		hql.append(", cota.id as idCota ");
 		hql.append(", notaEnvio.numero as numeroNotaEnvio ");
-		hql.append(", box.id as idBox ");
-		hql.append(", box.nome as nomeBox ");
+		hql.append(", case when roteiro.descricaoRoteiro <> 'Especial' then box.id else -1L end as idBox ");
+		hql.append(", case when roteiro.descricaoRoteiro <> 'Especial' then box.nome else 'Especial' end as nomeBox ");
 		hql.append(", roteiro.id as idRoteiro ");
 		hql.append(", roteiro.descricaoRoteiro as nomeRoteiro ");
 		hql.append(", rota.id as idRota ");

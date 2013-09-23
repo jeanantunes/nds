@@ -5,7 +5,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -429,6 +431,34 @@ public class ProdutoEdicaoController extends BaseController {
 	
 	private boolean validarDataLancamentoMenorRecolhimento(ProdutoEdicaoDTO dto) {
 		return DateUtil.isDataInicialMaiorDataFinal(dto.getDataRecolhimentoPrevisto(), dto.getDataLancamentoPrevisto());
+	}
+	
+	/**
+	 * Remove uma Edição.
+	 * 
+	 * @param idProdutoEdicao
+	 */
+	@Post
+	@Path("/validarRemocaoEdicao.json")
+	@Rules(Permissao.ROLE_CADASTRO_EDICAO_ALTERACAO)
+	public void validarRemocaoEdicao(Long idProdutoEdicao) {
+
+		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
+			throw new ValidacaoException(TipoMensagem.ERROR,
+					"Por favor, selecione uma Edição válida!");
+		}
+		
+		Map<String, String> validacaoMap = new HashMap<String, String>();
+		
+		try {
+			
+			validacaoMap = this.produtoEdicaoService.isProdutoEdicaoValidoParaRemocao(idProdutoEdicao);
+			
+		} catch (Exception e) {
+			
+		}
+
+		this.result.use(Results.json()).from(validacaoMap, "result").recursive().serialize();
 	}
 
 	/**
