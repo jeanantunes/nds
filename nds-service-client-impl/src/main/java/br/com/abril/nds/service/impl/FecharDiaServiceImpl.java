@@ -47,7 +47,6 @@ import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.estoque.Diferenca;
-import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.EstoqueProdutoDTO;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.HistoricoEstoqueProduto;
@@ -129,6 +128,7 @@ import br.com.abril.nds.service.ResumoReparteFecharDiaService;
 import br.com.abril.nds.service.ResumoSuplementarFecharDiaService;
 import br.com.abril.nds.service.exception.FechamentoDiarioException;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -636,7 +636,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		Date novaData = DateUtil.adicionarDias(dataAtual, 1);
 		
-		int codigoDiaCorrente = DateUtil.obterDiaDaSemana(novaData);
+		int codigoDiaCorrente = SemanaUtil.obterDiaDaSemana(novaData);
 
 		if ( 	diasSemanaDistribuidorOpera.contains(codigoDiaCorrente) && 
 				!calendarioService.isFeriadoSemOperacao(novaData) && 
