@@ -810,7 +810,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 	},
 	
 	confirmarBalanceamento : function() {
-		var param = serializeArrayToPost('datasConfirmadas', this.balanceamento.obterDatasMarcadasConfirmacao());
+		var param = serializeArrayToPost('datasConfirmadas', this.balanceamento.obterDatasMarcadasConfirmacaoRecolhimento());
 		$.postJSON(
 			contextPath + "/devolucao/balanceamentoMatriz/confirmar",
 			param,
@@ -1270,7 +1270,7 @@ var balanceamentoRecolhimentoController = $.extend(true, {
 			contextPath + "/devolucao/balanceamentoMatriz/obterAgrupamentoDiarioBalanceamento", 
 			null,
 			function(result) {
-				this.balanceamento.popularConfirmacaoBalanceamento(result,balanceamentoRecolhimentoController.workspace);
+				this.balanceamento.popularConfirmacaoBalanceamentoRecolhimento(result,balanceamentoRecolhimentoController.workspace);
 				balanceamentoRecolhimentoController.abrirPopupConfirmarBalanceamento();
 			},
 			function() {

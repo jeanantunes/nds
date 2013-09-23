@@ -29,7 +29,6 @@ import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE.ColunaOrdenacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
@@ -291,12 +290,12 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		}
 		
 		if(filtro.getIdRoteiro() != null) {
-			sql.append(" and roteiro13_.ID <= ? ");
+			sql.append(" and roteiro13_.ID = ? ");
 			param.add(filtro.getIdRoteiro());
 		}
 				
 		if(filtro.getIdRota() != null) {
-			sql.append(" and rota12_.ID <= ? ");
+			sql.append(" and rota12_.ID = ? ");
 			param.add(filtro.getIdRota());
 		}
 		
@@ -609,6 +608,18 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hqlQtdeEncalhe.append("	inner join conf.chamadaEncalheCota cec  ");
 		hqlQtdeEncalhe.append("	where cec.id = chamEncCota.id )			");
 		
+		StringBuffer hqlConferenciaRealizada = new StringBuffer();
+			
+		hqlConferenciaRealizada.append(" ( select (case when count(cecCtrl.id)>0 then true else false end) as result ");
+		hqlConferenciaRealizada.append(" 	from ChamadaEncalheCota cecCtrl ");
+		hqlConferenciaRealizada.append("	inner join cecCtrl.chamadaEncalhe chamadaEncalheCtrl ");
+		hqlConferenciaRealizada.append("	inner join cecCtrl.conferenciasEncalhe confEncalheCtrl ");
+		hqlConferenciaRealizada.append("    inner join confEncalheCtrl.controleConferenciaEncalheCota controle ");
+		hqlConferenciaRealizada.append("	inner join cecCtrl.cota cotaCtrl ");		
+		hqlConferenciaRealizada.append("	where controle.status='CONCLUIDO' ");
+		hqlConferenciaRealizada.append("	and cotaCtrl.id=cota.id ");
+		hqlConferenciaRealizada.append("	and chamadaEncalheCtrl.dataRecolhimento=chamadaEncalhe.dataRecolhimento ) ");
+				
 		HashMap<String, Object> param = new HashMap<String, Object>();
 		
 		StringBuilder hql = new StringBuilder();
@@ -629,6 +640,9 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" ) as reparte,	");
 		
 		hql.append(hqlQtdeEncalhe.toString()).append(" as quantidadeDevolvida, ");
+		
+		hql.append(hqlConferenciaRealizada.toString()).append(" as confereciaRealizada, ");
+				
 		hql.append("		chamadaEncalhe.sequencia as sequencia ");
 				
 		gerarFromWhereProdutosCE(filtro, hql, param, idCota);

@@ -1,5 +1,6 @@
 package br.com.abril.nds.util;
 
+import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -622,4 +623,47 @@ public abstract class Util {
         return Long.valueOf(System.identityHashCode(object));
     }
 
+    /**
+     * Verifica a diferença entre o primeiro e o segundo valor, return true se a dif for menor que o valorIgnorar passado no 3ºparam
+     * 
+     * Método útil para resolver casos de arredondamento 4 casas p/ 2 decimais
+     * 
+     * @param v1
+     * @param v2
+     * @param valorIgnorar
+     * @return
+     */
+    public static Boolean isDiferencaMenorValor(BigDecimal v1, BigDecimal v2, BigDecimal valorIgnorar){
+		
+    	if(v1 == null && v2 != null)
+    		return null;
+    	
+    	if(v1 != null && v2 == null)
+    		return null;
+    				
+		return v1.subtract(v2).abs().setScale(4).compareTo(valorIgnorar) < 0;
+    }
+    
+    /**
+     * Verifica a diferença entre o primeiro e o segundo valor, return true se a dif for menor que 0,005 (meio) centavo
+     * 
+     * Método útil para resolver casos de arredondamento 4 casas p/ 2 decimais
+     *  
+     * @param v1
+     * @param v2
+     * @return
+     */
+    public static Boolean isDiferencaMenorMeioCentavo(BigDecimal v1, BigDecimal v2){
+		
+		return isDiferencaMenorValor(v1, v2, new BigDecimal("0.005"));
+    }
+    
+    public static void main(String[] args) {
+		BigDecimal v1 = new BigDecimal("7.8549");
+		BigDecimal v2 = null;
+		
+		System.out.println(v1.setScale(2, BigDecimal.ROUND_HALF_EVEN));
+		
+		System.out.println(isDiferencaMenorMeioCentavo(v1, v2));
+	}
 }

@@ -65,8 +65,8 @@ import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.PDFUtil;
 import br.com.abril.nds.util.TableModel;
+import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
-import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
@@ -1836,7 +1836,8 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		BigDecimal valorEncalhe = ((BigDecimal) valoresMonetarios.get("valorEncalhe"));
 
-		if (valorEncalhe.compareTo(valorTotalCEMonetario)!=0){
+		//Comparacao ignora 0,005 (meio) centavo p/ resolver problema de arredondamento de 4 casas decimais p/ 2.
+		if (!Util.isDiferencaMenorMeioCentavo(valorEncalhe, valorTotalCEMonetario)){
 
 			resultadoValidacao.put("valorCEInformadoValido", false);
 			
@@ -2191,7 +2192,7 @@ public class ConferenciaEncalheController extends BaseController {
 				                                                            conferenciaEncalheDTO.getDataRecolhimento(), 
 				                                                            produtoEdicao.getId());
 				
-		conferenciaEncalheDTO.setDia(diaRecolhimento != null ? diaRecolhimento + 1 : null);
+		conferenciaEncalheDTO.setDia(diaRecolhimento != null ? diaRecolhimento : null);
 		
 		return conferenciaEncalheDTO;
 	}
