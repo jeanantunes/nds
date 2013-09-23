@@ -246,6 +246,7 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.EntityUtil;
+import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.TipoBaixaCobranca;
 import br.com.abril.nds.util.Util;
 
@@ -9642,15 +9643,8 @@ public class DataLoader {
 
 	private static void criarDadosBalanceamentoLancamento(Session session) {
 
-		Date dataAtual = new Date();
-		
-		int numeroSemana =
-			DateUtil.obterNumeroSemanaNoAno(
-				dataAtual, distribuidor.getInicioSemana().getCodigoDiaSemana());
-
 		Date dataLancamento =
-			DateUtil.obterDataDaSemanaNoAno(
-				numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), dataAtual);
+			SemanaUtil.obterDataInicioSemana(distribuidor.getInicioSemana().getCodigoDiaSemana(), new Date());
 
 		Date dataRecolhimento = DateUtil.adicionarDias(dataLancamento, 15);
 
@@ -10675,15 +10669,8 @@ public class DataLoader {
 
 	private static void criarDadosBalanceamentoRecolhimento(Session session) {
 
-		Date dataAtual = new Date();
-		
-		int numeroSemana =
-			DateUtil.obterNumeroSemanaNoAno(
-				dataAtual, distribuidor.getInicioSemana().getCodigoDiaSemana());
-
 		Date dataInicioSemanaAtual =
-			DateUtil.obterDataDaSemanaNoAno(
-				numeroSemana, distribuidor.getInicioSemana().getCodigoDiaSemana(), dataAtual);
+			SemanaUtil.obterDataInicioSemana(distribuidor.getInicioSemana().getCodigoDiaSemana(), new Date());
 
 		Date dataRecolhimentoProximaSemana = DateUtil.adicionarDias(dataInicioSemanaAtual, 7);
 

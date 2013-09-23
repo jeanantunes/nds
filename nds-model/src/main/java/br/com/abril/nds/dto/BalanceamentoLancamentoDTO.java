@@ -24,8 +24,6 @@ public class BalanceamentoLancamentoDTO implements Serializable {
 	
 	private BigInteger capacidadeDistribuicao;
 	
-	private int numeroSemana;
-	
 	private Date dataLancamento;
 	
 	private List<ProdutoLancamentoCanceladoDTO> produtosLancamentosCancelados;
@@ -66,20 +64,6 @@ public class BalanceamentoLancamentoDTO implements Serializable {
 	 */
 	public void setCapacidadeDistribuicao(BigInteger capacidadeDistribuicao) {
 		this.capacidadeDistribuicao = capacidadeDistribuicao;
-	}
-
-	/**
-	 * @return the numeroSemana
-	 */
-	public int getNumeroSemana() {
-		return numeroSemana;
-	}
-
-	/**
-	 * @param numeroSemana the numeroSemana to set
-	 */
-	public void setNumeroSemana(int numeroSemana) {
-		this.numeroSemana = numeroSemana;
 	}
 
 	/**

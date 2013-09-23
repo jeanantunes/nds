@@ -14,20 +14,11 @@ import org.junit.Test;
 public class DateUtilTest {
 	
 	@Test
-	public void obterNumeroPrimeiraSemanaAno2012() {
-		
-		int numeroSemana = 
-			DateUtil.obterNumeroSemanaNoAno(DateUtil.parseDataPTBR("01/01/2012"));
-		
-		Assert.assertEquals(1, numeroSemana);		
-	}
-	
-	@Test
 	public void obterNumeroSegundaSemanaAno2012ComInicioNaTerca() {
 		
-		int numeroSemana = DateUtil.obterNumeroSemanaNoAno(DateUtil.parseDataPTBR("10/01/2012"), Calendar.TUESDAY);
+		int semana = SemanaUtil.obterNumeroSemana(DateUtil.parseDataPTBR("10/01/2012"), Calendar.TUESDAY);
 		
-		Assert.assertEquals(2, numeroSemana);		
+		Assert.assertEquals(2, semana);
 	}
 	
 	@Test
@@ -35,7 +26,9 @@ public class DateUtilTest {
 		
 		Date dataEsperada = DateUtil.parseDataPTBR("06/01/2013");
 		
-		Date dataObtida = DateUtil.obterDataDaSemanaNoAno(1, Calendar.SUNDAY, null);
+		Integer anoBase = DateUtil.obterAno(new Date());
+		
+		Date dataObtida = SemanaUtil.obterDataDaSemanaNoAno(1, Calendar.SUNDAY, anoBase);
 		
 		Assert.assertEquals(dataEsperada, dataObtida);
 	}
@@ -45,7 +38,7 @@ public class DateUtilTest {
 		
 		Date data = DateUtil.parseDataPTBR("18/04/2012");
 		
-		int diaDaSemana = DateUtil.obterDiaDaSemana(data);
+		int diaDaSemana = SemanaUtil.obterDiaDaSemana(data);
 		
 		Assert.assertEquals(Calendar.WEDNESDAY, diaDaSemana);
 	}
@@ -64,7 +57,7 @@ public class DateUtilTest {
 		listaCodigosDiasSemana.add(Calendar.SUNDAY);
 		
 		Set<Date> periodo = 
-			DateUtil.obterPeriodoDeAcordoComDiasDaSemana(
+			SemanaUtil.obterPeriodoDeAcordoComDiasDaSemana(
 				dataInicial, dataFinal, listaCodigosDiasSemana);
 		
 		Set<Date> periodoEsperado = new TreeSet<Date>();
@@ -83,8 +76,10 @@ public class DateUtilTest {
 		Integer inicioSemana = 4;
 		Date data = DateUtil.parseDataPTBR("01/01/1999");
 
+		Integer anoBase = DateUtil.obterAno(data);
+		
 		Date expected = DateUtil.parseDataPTBR("30/12/1998");
-		Date actual = DateUtil.obterDataDaSemanaNoAno(numeroSemana, inicioSemana, data);
+		Date actual = SemanaUtil.obterDataDaSemanaNoAno(numeroSemana, inicioSemana, anoBase);
 		
 		Assert.assertEquals(expected, actual);
 	}

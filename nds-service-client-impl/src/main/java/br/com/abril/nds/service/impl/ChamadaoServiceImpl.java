@@ -1,11 +1,15 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigInteger;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.beanutils.BeanComparator;
+import org.apache.commons.collections.comparators.NullComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +44,7 @@ import br.com.abril.nds.service.ChamadaoService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.UsuarioService;
+import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
  * Classe de implementação de serviços referentes
@@ -177,6 +182,8 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 		
 		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		
+		listaChamadao = (List<ConsignadoCotaChamadaoDTO>) this.ordenarEmMemoria(listaChamadao, Ordenacao.ASC, "nomeProduto");
+				
 		for (ConsignadoCotaChamadaoDTO consignadoCotaChamadao : listaChamadao) {
 			
 			if (idsIgnorados != null) {
@@ -199,6 +206,45 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 		}
 		
 		this.tratarConfirmacaoChamadao(filtro, cota, usuario);
+	}
+	
+	/**
+	 * Efetua a ordenação de uma lista em memória.
+	 * 
+	 * @param listaAOrdenar - Lista que será ordenada.
+	 * @param ordenacao - Define se a ordenação será ascendente ou descendente.
+	 * @param nomeAtributoOrdenacao - nome do atributo que será usada para a ordenação.
+	 * 
+	 * @return Lista ordenada
+	 */
+	@SuppressWarnings("unchecked")
+	public <T extends Object> Collection<T> ordenarEmMemoria(List<T> listaAOrdenar,
+															  Ordenacao ordenacao,
+															  String nomeAtributoOrdenacao) {
+		
+		if (listaAOrdenar == null || listaAOrdenar.isEmpty()) {
+			
+			return listaAOrdenar;
+		}
+		
+		if (ordenacao == null) {
+			
+			throw new IllegalArgumentException("Tipo de ordenação nulo!");
+		}
+		
+		if (nomeAtributoOrdenacao == null) {
+			
+			throw new IllegalArgumentException("Nome do atributo para ordenação nulo!");
+		}
+		
+		Collections.sort(listaAOrdenar, new BeanComparator(nomeAtributoOrdenacao, new NullComparator()));
+
+		if (Ordenacao.DESC.equals(ordenacao)) {
+
+			Collections.reverse(listaAOrdenar);
+		}
+		
+		return listaAOrdenar;
 	}
 	
 	@Transactional

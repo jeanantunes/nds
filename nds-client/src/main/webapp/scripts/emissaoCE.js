@@ -104,8 +104,7 @@ var EmissaoCEController = $.extend(true, {
 		
 		return result;
 	},
-	
-	
+		
 	/**
 	 * Atribui valor a um campo da tela
 	 * Obs: Checkboxs devem ser atribuidos com o valor de true ou false
