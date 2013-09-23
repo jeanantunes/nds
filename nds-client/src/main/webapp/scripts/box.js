@@ -9,7 +9,7 @@ var boxController = $.extend(true, {
 	intGridBox : function() {
 		$(".boxGrid", this.workspace).flexigrid({
 			preProcess : function(data) {
-				if( typeof data.mensagens == "object") {
+				if(typeof data.mensagens == "object") {
 
 					exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
 

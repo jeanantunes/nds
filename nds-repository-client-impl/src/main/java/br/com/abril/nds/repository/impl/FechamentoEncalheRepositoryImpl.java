@@ -141,7 +141,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		Query query = getSession().createSQLQuery(queryString);
 		
 		query.setParameter("dataRecolhimento", filtro.getDataEncalhe());
-		query.setParameter("origemInterface", Origem.INTERFACE);
+		query.setParameter("origemInterface", Origem.INTERFACE.toString());
 
 		if (filtro.getFornecedorId() != null) {
 			
@@ -349,7 +349,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		Query query =  getSession().createSQLQuery(this.getQueryFechamentoEncalhe(filtro, true));
 		
 		query.setParameter("dataRecolhimento", filtro.getDataEncalhe());
-		query.setParameter("origemInterface", Origem.INTERFACE);
+		query.setParameter("origemInterface", Origem.INTERFACE.toString());
 
 		if (filtro.getFornecedorId() != null) {
 			
