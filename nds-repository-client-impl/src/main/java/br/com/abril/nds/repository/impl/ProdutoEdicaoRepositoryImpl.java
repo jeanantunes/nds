@@ -359,13 +359,15 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.ProdutoEdicaoRepository#obterCodigoMatrizPorProdutoEdicao(java.lang.Long, java.util.Date)
 	 */
-	public Integer obterCodigoMatrizPorProdutoEdicao(Long idProdutoEdicao, Date dataRecolhimento) {
+	public Integer obterCodigoMatrizPorProdutoEdicao(Long idProdutoEdicao, Date dataRecolhimento, Integer numeroCota) {
 		
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select chamadaEncalhe.sequencia from ChamadaEncalhe chamadaEncalhe ");
-		
+		hql.append(" join chamadaEncalhe.chamadaEncalheCotas cec ");
+		hql.append(" join cec.cota cota ");
 		hql.append(" where chamadaEncalhe.produtoEdicao.id = :idProdutoEdicao ");
+		hql.append(" and cota.numeroCota = :numeroCota ");
 
 		if(dataRecolhimento != null) {
 			
@@ -387,6 +389,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setParameter("numeroCota", numeroCota);
 		
 		if(dataRecolhimento!=null) {
 			query.setParameter("dataRecolhimento", dataRecolhimento);
