@@ -264,6 +264,19 @@ public class RoteirizacaoController extends BaseController {
 		result.use(Results.json()).from(Arrays.asList(rotas, boxes, roteiros),"result").recursive().serialize();
 	}
 	
+	/**
+	 * Carrega o combo Rota por Roteiro
+	 * @param idRoteiro
+	 */
+	@Post
+	@Path("/carregarRotasPorRoteiro")
+	public void carregarRotasPorRoteiro(Long idRoteiro) {
+				
+		List<ItemDTO<Long, String>> rotas = this.roteirizacaoService.getComboRotaPorRoteiro(idRoteiro);
+				
+		result.use(Results.json()).from(rotas,"result").recursive().serialize();
+	}
+	
 	@Path("/obterProximaOrdemRoteiro")
 	public void obterProximaOrdemRoteiro() {
 		RoteirizacaoDTO roteirizacao = getRoteirizacaoDTOSessao();
