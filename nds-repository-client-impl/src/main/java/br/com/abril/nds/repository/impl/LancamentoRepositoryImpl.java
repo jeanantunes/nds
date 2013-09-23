@@ -138,7 +138,7 @@ public class LancamentoRepositoryImpl extends
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<Lancamento> obterLancamentosNaoExpedidos(
+	public List<Lancamento> obterLancamentosNaoExpedidos( 
 			PaginacaoVO paginacaoVO, Date data, Long idFornecedor, Boolean estudo) {
 				
 		Map<String, Object> parametros = new HashMap<String, Object>();
@@ -147,7 +147,7 @@ public class LancamentoRepositoryImpl extends
 		
 		hql.append(" select lancamento ");
 		
-		hql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, estudo));	
+		hql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, estudo, false));	
 		
 		if( paginacaoVO != null ) {
 			hql.append(gerarOrderByProdutosNaoExpedidos(
@@ -236,8 +236,7 @@ public class LancamentoRepositoryImpl extends
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Long> obterIdsLancamentosNaoExpedidos(
-			PaginacaoVO paginacaoVO, Date data, Long idFornecedor) {
+	public List<Long> obterIdsLancamentosNaoExpedidos(PaginacaoVO paginacaoVO, Date data, Long idFornecedor, Boolean isSaldoInsuficiente) {
 				
 		Map<String, Object> parametros = new HashMap<String, Object>();
 		 
@@ -245,7 +244,7 @@ public class LancamentoRepositoryImpl extends
 		
 		hql.append(" select lancamento.id ");
 		
-		hql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, true));	
+		hql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, true, isSaldoInsuficiente));	
 		
 		if( paginacaoVO != null ) {
 			hql.append(gerarOrderByProdutosNaoExpedidos(
@@ -322,7 +321,7 @@ public class LancamentoRepositoryImpl extends
 	 * @param sortOrder
 	 * @return
 	 */
-	private String gerarQueryProdutosNaoExpedidos(Map<String, Object> parametros, Date data, Long idFornecedor, Boolean estudo) {
+	private String gerarQueryProdutosNaoExpedidos(Map<String, Object> parametros, Date data, Long idFornecedor, Boolean estudo, Boolean isSaldoInsuficiente) {
 		
 
 		StringBuilder hql = new StringBuilder();	
@@ -377,7 +376,9 @@ public class LancamentoRepositoryImpl extends
 			parametros.put("idFornecedor", idFornecedor);
 		}			
 		
-		//hql.append(" and estoque.qtde>=estudo.qtdeReparte ");
+		if(isSaldoInsuficiente){
+			hql.append(" and estoque.qtde>=estudo.qtdeReparte ");
+		}
 		
 		hql.append(" group by lancamento ");
 		
@@ -428,7 +429,7 @@ public class LancamentoRepositoryImpl extends
 		
 		jpql.append(" select count(lancamento) ");	
 		
-		jpql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, estudo));	
+		jpql.append(gerarQueryProdutosNaoExpedidos(parametros, data, idFornecedor, estudo, false));	
 										
 		Query query = getSession().createQuery(jpql.toString());
 		
