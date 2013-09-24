@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -1210,19 +1211,14 @@ public class RoteirizacaoController extends BaseController {
 		
 		for(PdvRoteirizacaoDTO pdv : pdvs) {
 			
-			if(pdv.getOrdem() != null) {
-				if(pdv.getOrdem() > pdvs.size()) {
-					throw new ValidacaoException(TipoMensagem.WARNING, "Ordem inválida. Excede o tamanho da lista.");
-				}
-				
-				if(pdv.getOrdem() < 0) {
-					throw new ValidacaoException(TipoMensagem.WARNING, "Ordem inválida. Valor inferior ao primeiro elemento da lista.");
-				}
-				
+			if(pdv.getOrdem() < 0) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Ordem inválida. Valor inferior ao primeiro elemento da lista.");
 			}
 			
-			rota.getPdvs().add(pdv.getOrdem() - 1, pdv);
+			rota.getPdvs().add(pdv);
 		}
+		
+		Collections.sort(rota.getPdvs());
 		
 		ordenarPdvsPeloIndiceDaLista(rota);
 			
