@@ -531,8 +531,8 @@ public class ConsultaEncalheController extends BaseController {
 			numeroEdicao 		= (consultaEncalheDTO.getNumeroEdicao() != null) ? consultaEncalheDTO.getNumeroEdicao().toString() : "";
 			precoVenda 			= CurrencyUtil.formatarValor(consultaEncalheDTO.getPrecoVenda());
 			precoComDesconto 	= CurrencyUtil.formatarValorQuatroCasas(consultaEncalheDTO.getPrecoComDesconto());
-			reparte 			= getValorQtdeIntegerFormatado(consultaEncalheDTO.getReparte().intValue());
-			encalhe 			= getValorQtdeIntegerFormatado(consultaEncalheDTO.getEncalhe().intValue());
+			reparte 			= getValorQtdeIntegerFormatado(consultaEncalheDTO.getReparte() == null ? 0 : consultaEncalheDTO.getReparte().intValue());
+			encalhe 			= getValorQtdeIntegerFormatado(consultaEncalheDTO.getEncalhe() == null ? 0 : consultaEncalheDTO.getEncalhe().intValue());
 			idFornecedor		= (consultaEncalheDTO.getIdFornecedor()!=null) ? consultaEncalheDTO.getIdFornecedor().toString() : "";
 			idCota				= (consultaEncalheDTO.getIdCota()!=null) ? consultaEncalheDTO.getIdCota().toString() : "";
 			fornecedor			= (consultaEncalheDTO.getFornecedor()!=null) ? consultaEncalheDTO.getFornecedor() : "";
