@@ -255,6 +255,8 @@ public class EmissaoCEController extends BaseController {
 		
 		FiltroEmissaoCE filtro = getFiltroSessao();
 		
+		filtro.setTipoImpressao(tipoImpressao);
+		
 		if(TipoImpressaoCE.MODELO_1.equals(tipoImpressao)) {
 			filtro.setQtdProdutosPorPagina(20);
 			filtro.setQtdCapasPorPagina(81);

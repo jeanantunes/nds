@@ -12,5 +12,7 @@ public interface FechamentoEncalheBoxRepository extends Repository<FechamentoEnc
 	 List<FechamentoEncalheBox> buscarFechamentoEncalheBox(	FiltroFechamentoEncalheDTO filtro);
 	 
 	 boolean verificarExistenciaFechamentoEncalheDetalhado(Date dataEncalhe);
+	 
+	 
 
 }
