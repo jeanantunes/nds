@@ -46,6 +46,7 @@ import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.util.BigIntegerUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
+import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.vo.ConfirmacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -87,16 +88,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	
 	private List<ProdutoLancamentoCanceladoDTO> obterProdutosLancamentosCancelados(FiltroLancamentoDTO filtro) {
 		
-		int codigoDiaSemana = 
-				this.distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
-		
 		Date dataLancamento = filtro.getData();
 		
-		int numeroSemana =
-			DateUtil.obterNumeroSemanaNoAno(dataLancamento, codigoDiaSemana);
-		
-		Intervalo<Date> periodoDistribuicao = 
-			this.getPeriodoDistribuicao(codigoDiaSemana, dataLancamento, numeroSemana);
+		Intervalo<Date> periodoDistribuicao = this.getPeriodoDistribuicao(dataLancamento);
 		
 		List<ProdutoLancamentoCanceladoDTO> produtosLancamentosCancelados = 
 				this.lancamentoRepository.obterLancamentosCanceladosPor(
@@ -637,8 +631,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		balanceamentoLancamento.setCapacidadeDistribuicao(
 			dadosBalanceamentoLancamento.getCapacidadeDistribuicao());
-		
-		balanceamentoLancamento.setNumeroSemana(dadosBalanceamentoLancamento.getNumeroSemana());
 		
 		balanceamentoLancamento.setDataLancamento(
 			dadosBalanceamentoLancamento.getDataLancamento());
@@ -1486,17 +1478,11 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		Date dataLancamento = filtro.getData();
 		
-		int codigoDiaSemana = this.distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
-		
-		int numeroSemana = DateUtil.obterNumeroSemanaNoAno(dataLancamento, codigoDiaSemana);
-		
-		Intervalo<Date> periodoDistribuicao = this.getPeriodoDistribuicao(codigoDiaSemana, dataLancamento, numeroSemana);
+		Intervalo<Date> periodoDistribuicao = this.getPeriodoDistribuicao(dataLancamento);
 		
 		TreeSet<Date> datasDistribuicaoFornecedor = this.obterDatasDistribuicaoFornecedor(periodoDistribuicao, filtro.getIdsFornecedores());
 		
 		dadosBalanceamentoLancamento.setPeriodoDistribuicao(periodoDistribuicao);
-		
-		dadosBalanceamentoLancamento.setNumeroSemana(numeroSemana);
 		
 		dadosBalanceamentoLancamento.setDatasDistribuicaoFornecedor(datasDistribuicaoFornecedor);
 		
@@ -1533,15 +1519,14 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	/**
 	 * Monta o perídodo da semana de distribuição referente à data informada.
 	 */
-	private Intervalo<Date> getPeriodoDistribuicao(int codigoDiaSemana,
-												   Date dataLancamento,
-												   int numeroSemana) {
+	private Intervalo<Date> getPeriodoDistribuicao(Date dataLancamento) {
 		
-		Date dataInicialSemana =
-			DateUtil.obterDataDaSemanaNoAno(numeroSemana, codigoDiaSemana, dataLancamento);
+		int codigoDiaSemana =
+			this.distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
 		
-		Date dataFinalSemana =
-			DateUtil.adicionarDias(dataInicialSemana, 6);
+		Date dataInicialSemana = SemanaUtil.obterDataInicioSemana(codigoDiaSemana, dataLancamento);
+		
+		Date dataFinalSemana = DateUtil.adicionarDias(dataInicialSemana, 6);
 		
 		Intervalo<Date> periodo = new Intervalo<Date>(dataInicialSemana, dataFinalSemana);
 		
@@ -1585,7 +1570,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 									 			 Set<Integer> codigosDiaSemana) {
 		
 		TreeSet<Date> datasDistribuicao =
-			DateUtil.obterPeriodoDeAcordoComDiasDaSemana(periodoRecolhimento.getDe(),  
+			SemanaUtil.obterPeriodoDeAcordoComDiasDaSemana(periodoRecolhimento.getDe(),  
 														 periodoRecolhimento.getAte(),
 														 codigosDiaSemana);
 		
@@ -1678,14 +1663,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data de lançamento não informada!");
 		}
 		
-		int codigoDiaSemana = 
-				this.distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
-		
-		int numeroSemana =
-			DateUtil.obterNumeroSemanaNoAno(dataLancamento, codigoDiaSemana);
-		
-		Intervalo<Date> periodoDistribuicao = 
-			this.getPeriodoDistribuicao(codigoDiaSemana, dataLancamento, numeroSemana);
+		Intervalo<Date> periodoDistribuicao = this.getPeriodoDistribuicao(dataLancamento);
 		
 		this.voltarConfiguracaoInicialLancamentosPrevistos(periodoDistribuicao);
 		

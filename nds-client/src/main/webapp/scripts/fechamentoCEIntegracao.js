@@ -88,8 +88,8 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 					data,
 					function(result) {	
 						if (result) {	
-							var d = new Date();
-							$("#semana", fechamentoCEIntegracaoController.workspace).val(d.getFullYear() +''+ result.int);
+							
+							$("#semana", fechamentoCEIntegracaoController.workspace).val(result.int);
 						}
 					}
 				);

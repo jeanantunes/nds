@@ -32,8 +32,6 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	
 	private Integer qtdDiasLimiteParaReprogLancamento;
 	
-	private int numeroSemana;
-	
 	private Date dataLancamento;
 	
 	private Set<Date> datasExpedicaoConfirmada;
@@ -117,20 +115,6 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	public void setQtdDiasLimiteParaReprogLancamento(
 			Integer qtdDiasLimiteParaReprogLancamento) {
 		this.qtdDiasLimiteParaReprogLancamento = qtdDiasLimiteParaReprogLancamento;
-	}
-
-	/**
-	 * @return the numeroSemana
-	 */
-	public int getNumeroSemana() {
-		return numeroSemana;
-	}
-
-	/**
-	 * @param numeroSemana the numeroSemana to set
-	 */
-	public void setNumeroSemana(int numeroSemana) {
-		this.numeroSemana = numeroSemana;
 	}
 
 	/**

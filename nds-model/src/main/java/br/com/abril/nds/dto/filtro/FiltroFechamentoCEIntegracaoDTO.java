@@ -124,7 +124,7 @@ public class FiltroFechamentoCEIntegracaoDTO implements Serializable {
 	
 	public Integer getNumeroSemana(){
 	
-		return SemanaUtil.get(semana);
+		return SemanaUtil.getSemana(semana);
 	}
 
 }

@@ -41,6 +41,7 @@ import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.JasperUtil;
+import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 
 /**
@@ -246,7 +247,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 		return Calendar.getInstance().getTime();
 	}
 
-	private boolean isFeriado(Calendar cal) {
+	protected boolean isFeriado(Calendar cal) {
 
 		if (cal != null) {
 			
@@ -652,7 +653,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 
 			int diaSemana = novaData.get(Calendar.DAY_OF_WEEK);
 
-			calendario.setDiaSemana(DateUtil.obterDiaSemana(diaSemana));
+			calendario.setDiaSemana(SemanaUtil.obterDiaSemana(diaSemana));
 
 			if (mapaFeriadosPorMes.get(mesFeriado) != null) {
 

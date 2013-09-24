@@ -1075,11 +1075,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			produtoEdicaoDTO.setEditor(this.obterEditor(produtoEdicao));
 			produtoEdicaoDTO.setChamadaCapa(produtoEdicao.getChamadaCapa());
 			
-			Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId(), produtoEdicaoDTO.getDataRecolhimentoDistribuidor());
-			
-			
-			produtoEdicaoDTO.setSequenciaMatriz(sequenciaMatriz);
-			
+			produtoEdicaoDTO.setSequenciaMatriz(
+				produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(
+					produtoEdicao.getId(), produtoEdicaoDTO.getDataRecolhimentoDistribuidor(),
+						numeroCota));
 		}
 		
 		return produtoEdicaoDTO;
@@ -1293,9 +1292,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				produtoEdicaoDTO.setEditor(this.obterEditor(produtoEdicao));
 				produtoEdicaoDTO.setChamadaCapa(produtoEdicao.getChamadaCapa());
 				
-				Integer sequenciaMatriz = produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(produtoEdicao.getId(), produtoEdicaoDTO.getDataRecolhimentoDistribuidor());
-				
-				produtoEdicaoDTO.setSequenciaMatriz(sequenciaMatriz);
+				produtoEdicaoDTO.setSequenciaMatriz(
+					produtoEdicaoRepository.obterCodigoMatrizPorProdutoEdicao(
+						produtoEdicao.getId(), produtoEdicaoDTO.getDataRecolhimentoDistribuidor(),
+							numeroCota));
 				
 				produtosEdicaoDTO.add(produtoEdicaoDTO);
 		    }
@@ -3332,7 +3332,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				 */
 				
 				String qtdeTotalProdutos =  itemLista.getQtdeTotalProdutos() == null ? "0" : itemLista.getQtdeTotalProdutos();
-				e.adicionarCompleteEspaco("Total Exems. do dia  "+ dataRecolhimentoStr+":", qtdeTotalProdutos);
+				e.adicionarCompleteEspaco("Total Exemps. do dia "+ dataRecolhimentoStr+":", qtdeTotalProdutos);
 				
 				e.quebrarLinhaEscape();
 
@@ -3365,7 +3365,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		e.quebrarLinhaEscape();
 		
 		String totalProdutos = slipDTO.getTotalProdutos() == null ? "0" : slipDTO.getTotalProdutos().toString();
-		e.adicionarCompleteEspaco("Total de Exems. :", totalProdutos);
+		e.adicionarCompleteEspaco("Total de Exemps. :", totalProdutos);
 		e.quebrarLinhaEscape();
 		
 		String valorTotalEncalhe = slipDTO.getValorTotalEncalhe() == null ? "0,00" : slipDTO.getValorTotalEncalhe().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString();

@@ -15,6 +15,7 @@ import javax.sql.DataSource;
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.DateType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -393,7 +394,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 
 	private void gerarFromWhere(FiltroEmissaoCE filtro, StringBuilder hql, HashMap<String, Object> param) {
 
-		hql.append(" from ChamadaEncalheCota chamEncCota, Box box ")
+		hql.append(" from ChamadaEncalheCota chamEncCota ")
 		   .append(" join chamEncCota.chamadaEncalhe  chamadaEncalhe ")
 		   .append(" join chamEncCota.cota cota ")
 		   .append(" join cota.pessoa pessoa ")
@@ -428,12 +429,12 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		}
 		
 		if(filtro.getIdRoteiro() != null) {
-			hql.append(" and roteiro.id <= :idRoteiro ");
+			hql.append(" and roteiro.id = :idRoteiro ");
 			param.put("idRoteiro", filtro.getIdRoteiro());
 		}
 				
 		if(filtro.getIdRota() != null) {
-			hql.append(" and rota.id <= :idRota ");
+			hql.append(" and rota.id = :idRota ");
 			param.put("idRota", filtro.getIdRota());
 		}
 		
@@ -596,10 +597,55 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 	}
 	
+	
+	private StringBuffer obterCaseApresentaQuantidadeEncalhe(List<Date> datasControleFechamentoEncalhe, 
+			List<Date> datasControleConferenciaEncalheCotaFinalizada) {
+		
+		StringBuffer hql  = new StringBuffer();
+		
+		if(	datasControleFechamentoEncalhe!=null &&
+			!datasControleFechamentoEncalhe.isEmpty() && 
+			datasControleConferenciaEncalheCotaFinalizada!=null &&
+			!datasControleConferenciaEncalheCotaFinalizada.isEmpty()) {
+			
+			hql.append(" case when ( chamadaEncalhe.dataRecolhimento in :datasControleFechamentoEncalhe  ");
+			hql.append(" or chamadaEncalhe.dataRecolhimento in :datasControleConferenciaEncalheCotaFinalizada )  ");
+			hql.append(" then true else false end as apresentaQuantidadeEncalhe,  ");
+			
+			return hql;
+				
+		}
+
+		if(	datasControleFechamentoEncalhe!=null &&
+			!datasControleFechamentoEncalhe.isEmpty()) {
+			
+			hql.append(" case when chamadaEncalhe.dataRecolhimento in :datasControleFechamentoEncalhe  ");
+			hql.append(" then true else false end as apresentaQuantidadeEncalhe,  ");
+			
+			return hql;
+				
+		}
+		
+		if(	datasControleConferenciaEncalheCotaFinalizada!=null &&
+			!datasControleConferenciaEncalheCotaFinalizada.isEmpty()) {
+				
+				hql.append(" case when chamadaEncalhe.dataRecolhimento in :datasControleConferenciaEncalheCotaFinalizada ");
+				hql.append(" then true else false end as apresentaQuantidadeEncalhe,  ");
+				
+				return hql;
+					
+		}
+		
+		return hql;
+		
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ProdutoEmissaoDTO> obterProdutosEmissaoCE(
-			FiltroEmissaoCE filtro, Long idCota) {
+			FiltroEmissaoCE filtro, Long idCota, 
+			List<Date> datasControleFechamentoEncalhe, 
+			List<Date> datasControleConferenciaEncalheCotaFinalizada) {
 
 		
 		StringBuffer hqlQtdeEncalhe = new StringBuffer();
@@ -633,14 +679,18 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append("		coalesce(movimentoCota.valoresAplicados.precoVenda, produtoEdicao.precoVenda, 0)  as precoVenda,    		");
 		hql.append(" 	    produtoEdicao.parcial as tipoRecolhimento, 		");
 		hql.append(" 	    lancamentos.dataLancamentoDistribuidor as dataLancamento, ");
-		hql.append("    	coalesce( movimentoCota.valoresAplicados.precoComDesconto, movimentoCota.valoresAplicados.precoVenda, 0 ) as precoComDesconto, ");
+		hql.append("    	coalesce( movimentoCota.valoresAplicados.precoComDesconto, movimentoCota.valoresAplicados.precoVenda, 0 ) as precoComDesconto, ");	
 		
 		hql.append(" ( ");
 		hql.append(obterSubHqlQtdeReparte(filtro));
-		hql.append(" ) as reparte,	");
+		hql.append(" ) as reparte,	");	
 		
+		hql.append(
+		obterCaseApresentaQuantidadeEncalhe(datasControleFechamentoEncalhe, 
+				datasControleConferenciaEncalheCotaFinalizada).toString());
+
 		hql.append(hqlQtdeEncalhe.toString()).append(" as quantidadeDevolvida, ");
-		
+
 		hql.append(hqlConferenciaRealizada.toString()).append(" as confereciaRealizada, ");
 				
 		hql.append("		chamadaEncalhe.sequencia as sequencia ");
@@ -655,6 +705,14 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));			
+		}
+		
+		if(datasControleFechamentoEncalhe!=null && !datasControleFechamentoEncalhe.isEmpty()) {
+			query.setParameterList("datasControleFechamentoEncalhe", datasControleFechamentoEncalhe, DateType.INSTANCE);
+		}
+		
+		if(datasControleConferenciaEncalheCotaFinalizada!=null && !datasControleConferenciaEncalheCotaFinalizada.isEmpty()){
+			query.setParameterList("datasControleConferenciaEncalheCotaFinalizada", datasControleConferenciaEncalheCotaFinalizada, DateType.INSTANCE);
 		}
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(

@@ -332,9 +332,8 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	void alterarLancamento(Long idLancamento,Date date, StatusLancamento expedido,
 			Expedicao expedicao);
 
-	List<Long> obterIdsLancamentosNaoExpedidos(PaginacaoVO paginacaoVO,
-			Date data, Long idFornecedor);
-
+	List<Long> obterIdsLancamentosNaoExpedidos(PaginacaoVO paginacaoVO, Date data, Long idFornecedor, Boolean isSaldoInsuficiente);
+	
 	BigInteger obterQtdLancamentoProdutoEdicaoCopiados(ProdutoDistribuicaoVO produtoDistribuicaoVO);
 	
 	List<Lancamento> obterLancamentosParcialEdicao(Long idProdutoEdicao, String sortorder, String sortname);

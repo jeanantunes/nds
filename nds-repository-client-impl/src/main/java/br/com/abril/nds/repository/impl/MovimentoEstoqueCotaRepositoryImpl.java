@@ -717,6 +717,22 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		subSqlVendaProduto.append(" and vp.DATA_OPERACAO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
 		subSqlVendaProduto.append(" and vp.TIPO_VENDA_ENCALHE = :tipoVendaProduto");
 		
+        StringBuilder subSqlReparte = new StringBuilder();
+		
+        subSqlReparte.append(" select sum( COALESCE(CHAMADA_ENCALHE_COTA_.QTDE_PREVISTA,0) ) ");
+        subSqlReparte.append(" from CHAMADA_ENCALHE_COTA CHAMADA_ENCALHE_COTA_, CHAMADA_ENCALHE CHAMADA_ENCALHE_");
+        subSqlReparte.append(" where CHAMADA_ENCALHE_COTA_.CHAMADA_ENCALHE_ID = CHAMADA_ENCALHE_.ID ");
+        subSqlReparte.append(" and CHAMADA_ENCALHE_.DATA_RECOLHIMENTO = CHAMADA_ENCALHE.DATA_RECOLHIMENTO ");
+        subSqlReparte.append(" and CHAMADA_ENCALHE_COTA_.COTA_ID = CHAMADA_ENCALHE_COTA.COTA_ID ");
+        subSqlReparte.append(" and CHAMADA_ENCALHE_.PRODUTO_EDICAO_ID = PRODUTO_EDICAO.ID ");
+
+        StringBuilder subSqlEncalhe = new StringBuilder();
+		
+        subSqlEncalhe.append(" select sum( COALESCE(CONFERENCIA_ENCALHE_1.QTDE,0) ) ");
+        subSqlEncalhe.append(" from CONFERENCIA_ENCALHE CONFERENCIA_ENCALHE_1, CHAMADA_ENCALHE_COTA CHAMADA_ENCALHE_COTA_1");
+        subSqlEncalhe.append(" where CONFERENCIA_ENCALHE_1.CHAMADA_ENCALHE_COTA_ID = CHAMADA_ENCALHE_COTA_1.ID ");
+        subSqlEncalhe.append(" and CHAMADA_ENCALHE_COTA_1.ID = CHAMADA_ENCALHE_COTA.ID");
+
 		StringBuilder subSqlValoresDesconto = new StringBuilder();
 		
 		if (filtro.getIdCota() != null) {
@@ -777,10 +793,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		subSqlValoresDesconto.append("   (SUM( COALESCE(MEC_REPARTE.QTDE, 1)* ");
 		subSqlValoresDesconto.append("   DESCONTO.VALOR/100)) ");
 		
-		sql.append("	SUM(CHAMADA_ENCALHE_COTA.QTDE_PREVISTA) as reparte, ");
+		sql.append("("+subSqlReparte.toString()+") as reparte, ");
 		
-		sql.append("	SUM(COALESCE(CONFERENCIA_ENCALHE.QTDE, 0)) - ( "+ subSqlVendaProduto.toString()  +" )  	as encalhe,     		");
-		
+		sql.append("( ("+subSqlEncalhe.toString()+") - ("+ subSqlVendaProduto.toString() +") ) as encalhe, ");
+
 		sql.append("	FORNECEDOR.ID						as idFornecedor,		");
 		
 		sql.append(" 	PESSOA.RAZAO_SOCIAL 				as fornecedor,  		");

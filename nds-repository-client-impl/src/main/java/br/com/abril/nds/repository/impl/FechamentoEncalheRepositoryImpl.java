@@ -141,7 +141,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		Query query = getSession().createSQLQuery(queryString);
 		
 		query.setParameter("dataRecolhimento", filtro.getDataEncalhe());
-		query.setParameter("origemInterface", Origem.INTERFACE);
+		query.setParameter("origemInterface", Origem.INTERFACE.toString());
 
 		if (filtro.getFornecedorId() != null) {
 			
@@ -349,7 +349,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		Query query =  getSession().createSQLQuery(this.getQueryFechamentoEncalhe(filtro, true));
 		
 		query.setParameter("dataRecolhimento", filtro.getDataEncalhe());
-		query.setParameter("origemInterface", Origem.INTERFACE);
+		query.setParameter("origemInterface", Origem.INTERFACE.toString());
 
 		if (filtro.getFornecedorId() != null) {
 			
@@ -366,6 +366,25 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		criteria.add(Restrictions.eq("cfe.dataEncalhe", dataEncalhe));
 		
 		return !criteria.list().isEmpty();
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<Date> obterDatasControleFechamentoEncalheRealizado(Date dataDe, Date dataAte) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select controle.dataEncalhe from ControleFechamentoEncalhe controle ");
+		hql.append(" where controle.dataEncalhe between :dataDe and :dataAte ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataDe", dataDe);
+
+		query.setParameter("dataAte", dataAte);
+		
+		return (List<Date>) query.list();
+		
 	}
 	
 	@Override

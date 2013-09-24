@@ -83,6 +83,7 @@ import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -391,16 +392,19 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	 * principal do fechamentoCEIntegração. A esta data são adicionados 2 dias
 	 * úteis.
 	 * 
-	 * @param semana
+	 * @param anoSemana
 	 * 
 	 * @return Date
 	 */
-	private Date obterDataVencimentoBoletoDistribuidor(int semana) {
+	private Date obterDataVencimentoBoletoDistribuidor(int anoSemana) {
+		
+		int anoBase = SemanaUtil.getAno(anoSemana);
+		
+		int semana = SemanaUtil.getSemana(anoSemana);
 		
 		Date dataFechamentoSemana = 
-				DateUtil.obterDataDaSemanaNoAno(
-						semana, DiaSemana.TERCA_FEIRA.getCodigoDiaSemana(), 
-						this.distribuidorRepository.obterDataOperacaoDistribuidor());
+			SemanaUtil.obterDataDaSemanaNoAno(
+				semana, DiaSemana.TERCA_FEIRA.getCodigoDiaSemana(), anoBase);
 		
 		Date dataVencimento = this.calendarioService.adicionarDiasUteis(dataFechamentoSemana, 2);
 				
