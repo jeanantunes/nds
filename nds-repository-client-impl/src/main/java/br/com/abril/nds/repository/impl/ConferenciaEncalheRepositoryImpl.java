@@ -597,7 +597,7 @@ public class ConferenciaEncalheRepositoryImpl extends
 		
 		hql.append(" WHERE ");
 		hql.append(" CONF_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = :idControleConferenciaEncalheCota   ");
-		hql.append(" ORDER BY codigoSM ");
+		hql.append(" ORDER BY dataRecolhimento desc,  codigoSM ");
 		
 		Query query =  this.getSession().createSQLQuery(hql.toString()).setResultTransformer(new AliasToBeanResultTransformer(ConferenciaEncalheDTO.class));
 		

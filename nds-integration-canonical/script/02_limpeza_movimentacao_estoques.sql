@@ -77,22 +77,21 @@ DELETE FROM produto_fornecedor WHERE fornecedores_id IN (
     AND p.nome_fantasia <> 'FC' 
     AND p.nome_fantasia <> 'Treelog'
 );
-DELETE FROM desconto_cota_produto_excessoes WHERE fornecedor_id IN (
-    SELECT f.id 
-    FROM fornecedor f 
-    INNER JOIN pessoa p ON p.id = f.juridica_id 
-    WHERE p.nome_fantasia <> 'Dinap' 
-    AND p.nome_fantasia <> 'FC' 
-    AND p.nome_fantasia <> 'Treelog'
-);
-DELETE FROM historico_desconto_cota_produto_excessoes WHERE fornecedor_id IN (
-    SELECT f.id 
-    FROM fornecedor f 
-    INNER JOIN pessoa p ON p.id = f.juridica_id 
-    WHERE p.nome_fantasia <> 'Dinap' 
-    AND p.nome_fantasia <> 'FC' 
-    AND p.nome_fantasia <> 'Treelog'
-);
+
+DELETE FROM desconto_cota_produto_excessoes ;
+
+DELETE FROM historico_desconto_cota_produto_excessoes;
+
+DELETE FROM HISTORICO_DESCONTO_PRODUTOS;
+
+delete FROM HISTORICO_DESCONTO_PRODUTO_EDICOES;
+
+delete from desconto_lancamento_cota;
+delete from DESCONTO_PROXIMOS_LANCAMENTOS;
+
+delete from COTA_FORNECEDOR;
+
+
 DELETE FROM forma_cobranca WHERE parametro_cobranca_cota_id IN (
     SELECT pcc.id 
     FROM parametro_cobranca_cota pcc WHERE fornecedor_id IN (
@@ -122,6 +121,12 @@ DELETE FROM item_nota_fiscal_entrada WHERE nota_fiscal_id IN (
         AND p.nome_fantasia <> 'Treelog'
     )
 );
+
+delete from item_nota_fiscal_entrada where NOTA_FISCAL_ID in (
+	select id from nota_fiscal_entrada where origem = 'MANUAL'
+)
+;
+
 DELETE FROM nota_fiscal_entrada WHERE fornecedor_id IN (
     SELECT f.id 
     FROM fornecedor f 

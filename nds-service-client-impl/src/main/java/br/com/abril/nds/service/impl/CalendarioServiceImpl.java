@@ -247,7 +247,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 		return Calendar.getInstance().getTime();
 	}
 
-	private boolean isFeriado(Calendar cal) {
+	protected boolean isFeriado(Calendar cal) {
 
 		if (cal != null) {
 			

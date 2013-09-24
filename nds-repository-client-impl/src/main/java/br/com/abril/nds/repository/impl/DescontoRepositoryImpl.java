@@ -13,7 +13,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
-import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
+import br.com.abril.nds.model.financeiro.DescontoProximosLancamentos;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.DescontoRepository;
 
@@ -263,5 +263,28 @@ public class DescontoRepositoryImpl extends AbstractRepositoryModel<Desconto, Lo
 		query.setParameter("numeroCota", numeroCota);
 		
 		return (BigDecimal) query.uniqueResult();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DescontoProximosLancamentos> buscarProximosLancamentosQueUsamDescontoProduto(
+			Desconto desconto) {
+		
+		if(desconto == null || desconto.getId() == null) {
+			return null;
+		}
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append("select dpl ");
+		hql.append("from DescontoProximosLancamentos dpl ");
+		hql.append("where dpl.desconto.id = :idDesconto ");
+		
+		Query q = getSession().createQuery(hql.toString());
+		
+		q.setParameter("idDesconto", desconto.getId());
+		
+		return q.list();
+		
 	}
 }

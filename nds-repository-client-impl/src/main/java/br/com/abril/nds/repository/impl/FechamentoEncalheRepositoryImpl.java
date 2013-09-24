@@ -368,6 +368,25 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		return !criteria.list().isEmpty();
 	}
 	
+	
+	@SuppressWarnings("unchecked")
+	public List<Date> obterDatasControleFechamentoEncalheRealizado(Date dataDe, Date dataAte) {
+		
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select controle.dataEncalhe from ControleFechamentoEncalhe controle ");
+		hql.append(" where controle.dataEncalhe between :dataDe and :dataAte ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("dataDe", dataDe);
+
+		query.setParameter("dataAte", dataAte);
+		
+		return (List<Date>) query.list();
+		
+	}
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<FechamentoEncalhe> buscarFechamentoEncalhe(Date dataEncalhe) {

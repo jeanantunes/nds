@@ -85,10 +85,9 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Override
 	@Transactional
-	public List<Long> obterIdsLancamentosNaoExpedidos(PaginacaoVO paginacaoVO, Date data, Long idFornecedor) {
+	public List<Long> obterIdsLancamentosNaoExpedidos(PaginacaoVO paginacaoVO, Date data, Long idFornecedor, Boolean isSaldoInsuficiente) {
 		
-		return lancamentoRepository.obterIdsLancamentosNaoExpedidos(
-				paginacaoVO, data, idFornecedor);
+		return lancamentoRepository.obterIdsLancamentosNaoExpedidos(paginacaoVO, data, idFornecedor, isSaldoInsuficiente);
 	}
 	
 	@Transactional

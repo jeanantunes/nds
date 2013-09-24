@@ -27,17 +27,24 @@ public class NdsProfiler {
 		
 		long elapsedTime = System.currentTimeMillis() - start;
 		
-		msgRep = new StringBuilder("");
-			
-		String str = "Repository: Tempo total da execução do método "+ pjp.toShortString() +": " + elapsedTime + " milisegundos ("+ ((double) elapsedTime / 1000) +" segundos).";
+		msgRep = new StringBuilder("");			
+		StringBuilder str = new StringBuilder("")
+			.append("Repository: Tempo total da execução do método ")
+			.append(pjp.toShortString())
+			.append(": ")
+			.append(elapsedTime)
+			.append(" milisegundos (")
+			.append(((double) elapsedTime / 1000))
+			.append(" segundos).");
+		
 		indexRep = str.toString().lastIndexOf(':');
 		while(indexRep < START_TIME_POSITION_COLON) {
 			spacesRep.append(" ");
 			indexRep++;
 		}
-		msgRep.append(str.substring(0, str.lastIndexOf(':')));
+		msgRep.append(str.substring(0, str.toString().lastIndexOf(':')));
 		msgRep.append(spacesRep.toString());
-		msgRep.append(str.substring(str.lastIndexOf(':'), str.length()));
+		msgRep.append(str.substring(str.toString().lastIndexOf(':'), str.length()));
 		
 		LOGGER.info(msgRep.toString());
 		return output;
@@ -58,15 +65,24 @@ public class NdsProfiler {
 		
 		long elapsedTime = System.currentTimeMillis() - start;
 		
-		String str = "Service: Tempo total da execução do método "+ pjp.toShortString() +": " + elapsedTime + " milisegundos ("+ ((double) elapsedTime / 1000) +" segundos).";
+		StringBuilder str = new StringBuilder("")
+			.append("Service: Tempo total da execução do método ")
+			.append(pjp.toShortString())
+			.append(": ")
+			.append(elapsedTime)
+			.append(" milisegundos (")
+			.append(((double) elapsedTime / 1000))
+			.append(" segundos).");
+		
 		indexServ = str.toString().lastIndexOf(':');
+		
 		while(indexServ < START_TIME_POSITION_COLON) {
 			spacesServ.append(" ");
 			indexServ++;
 		}
-		msgRep.append(str.substring(0, str.lastIndexOf(':')));
+		msgRep.append(str.substring(0, str.toString().lastIndexOf(':')));
 		msgRep.append(spacesServ.toString());
-		msgRep.append(str.substring(str.lastIndexOf(':'), str.length()));
+		msgRep.append(str.substring(str.toString().lastIndexOf(':'), str.length()));
 		
 		LOGGER.info(msgRep.toString());
 		return output;

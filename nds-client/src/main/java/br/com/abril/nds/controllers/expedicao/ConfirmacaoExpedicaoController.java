@@ -153,7 +153,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 				Long idFornecedor = (Long) session.getAttribute("idFornecedor");
 				
 				List<Long> listaIdsExpedicoes = 
-						lancamentoService.obterIdsLancamentosNaoExpedidos(null, date, idFornecedor);
+						lancamentoService.obterIdsLancamentosNaoExpedidos(null, date, idFornecedor, true);
 								
 				session.setAttribute("selecionados", listaIdsExpedicoes);
 			}
@@ -266,8 +266,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			
 			String status = (String) session.getAttribute(STATUS_EXPEDICAO);
 			
-			
-			result.use(Results.json()).withoutRoot().from(status==null?"Processando Expedições..." : status).recursive().serialize();
+			result.use(Results.json()).withoutRoot().from(status == null ? "Processando Expedições..." : status).recursive().serialize();
 		}
 		
 	

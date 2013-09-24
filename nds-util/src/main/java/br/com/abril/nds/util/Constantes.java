@@ -16,6 +16,8 @@ public abstract class Constantes {
 	
 	public static final String DATE_PATTERN_PT_BR = "dd/MM/yyyy";
 	
+	public static final String DAY_MONTH_PT_BR = "dd/MM";
+	
 	public static final String FORMATO_DATA_ARQUIVO_CNAB = "ddMMyy";
 	
 	public static final String DATE_TIME_PATTERN_PT_BR = "dd/MM/yyyy HH:mm:ss";

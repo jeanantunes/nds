@@ -10,6 +10,21 @@ import br.com.abril.nds.model.movimentacao.StatusOperacao;
 public interface ControleConferenciaEncalheCotaRepository  extends Repository<ControleConferenciaEncalheCota,Long> {
 	
 	/**
+	 * Obtém uma lista de datas em que foram 
+	 * realizadas finalização de conferência
+	 * de encalhe de acordo com o range de 
+	 * datas e cota informados.
+	 * 
+	 * @param idCota
+	 * @param dataDe
+	 * @param dataAte
+	 * 
+	 * @return List<Date>
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Date> obterDatasControleConferenciaEncalheCotaFinalizada(Long idCota, Date dataDe, Date dataAte);
+	
+	/**
 	 * Obtém registro de ControleConferenciaEncalheCota referente a uma 
 	 * cota e dataOperação.
 	 * 
