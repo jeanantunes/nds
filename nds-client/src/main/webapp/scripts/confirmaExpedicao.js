@@ -128,12 +128,12 @@ var confirmaExpedicaoController = $.extend(true, {
 		html+= ' onclick="confirmaExpedicaoController.adicionarSelecao('+idLancamento+',this);"';
 		html+= ' style="float: left;"';
 		
-		if(selecionado==true) {
-			html+= ' checked="checked" ' ;	
-		}
-		
 		if (desabilitado){
 			html+= ' disabled="disabled" title="Estoque insuficiente." ' ;
+		}else{
+			if(selecionado==true) {
+				html+= ' checked="checked" ' ;	
+			}
 		}
 		
 		html+= ' />';
