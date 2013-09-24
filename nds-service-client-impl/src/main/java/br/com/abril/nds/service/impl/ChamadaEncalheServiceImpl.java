@@ -4,7 +4,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.DadosImpressaoEmissaoChamadaEncalhe;
 import br.com.abril.nds.dto.FornecedoresBandeiraDTO;
+import br.com.abril.nds.dto.NotaEnvioProdutoEdicao;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroEmissaoCE;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -23,15 +26,21 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
 import br.com.abril.nds.model.cadastro.EnderecoCota;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
+import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.FechamentoEncalheRepository;
+import br.com.abril.nds.repository.NotaEnvioRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.service.ChamadaEncalheService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
@@ -66,7 +75,17 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	@Autowired
 	private CotaService cotaService;
 	
+	@Autowired
+	private FechamentoEncalheRepository fechamentoEncalheRepository;
+	
+	@Autowired
+	private ControleConferenciaEncalheCotaRepository controleConferenciaEncalheCotaRepository;
+	
+	@Autowired
+	private NotaEnvioRepository notaEnvioRepository;
+	
 	private static final Integer CODIGO_DINAP_INTERFACE = 9999999;
+	
 	private static final Integer CODIGO_FC_INTERFACE = 9999998;
 	
 	@Override
@@ -209,6 +228,8 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 		for(CotaEmissaoDTO cota : cotasEmissao) {
 			
+			removerProdutoEmissaoDetalheNota(cota.getProdutos());
+			
 			List<List<ProdutoEmissaoDTO>> listaProdutosPaginados = 
 					obterListaPaginada(cota.getProdutos(), qtdCapasPorPaginas);
 			
@@ -239,13 +260,49 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 	}
 	
-	private void carregarValoresTotalizados(CotaEmissaoDTO cota) {
+	/**
+	 * Remove os produto que possuem detalhes da 
+	 * nota de envio da lista original (não paginada)
+	 * de produtos da CE.
+	 * 
+	 * @param produtos
+	 */
+	protected void removerProdutoEmissaoDetalheNota(List<ProdutoEmissaoDTO> produtos) {
+		
+		int tamanho = produtos.size();
+	
+		List<ProdutoEmissaoDTO> listaRemocao = new ArrayList<>();
+		
+		for(int i = 0; i < tamanho; i++) {
+			
+			if(produtos.get(i).isProdutoDuplicadoDetalheNota()) {
+				listaRemocao.add(produtos.get(i));
+			}
+			
+		}
+		
+		for(ProdutoEmissaoDTO prodRemov : listaRemocao) {
+			produtos.remove(prodRemov);
+		}
+		
+	}
+
+	private void processarProdutosEmissaoEncalheDaCota(CotaEmissaoDTO cota) {
 		
 		BigDecimal vlrReparte = BigDecimal.ZERO;	
 		BigDecimal vlrDesconto = BigDecimal.ZERO;
 		BigDecimal vlrEncalhe = BigDecimal.ZERO;	
 		
+		List<Long> idsProdutoEdicao = new ArrayList<>();
+		
+		
 		for(ProdutoEmissaoDTO produtoDTO : cota.getProdutos()) {
+			
+			idsProdutoEdicao.add(produtoDTO.getEdicao());
+			
+			if(!produtoDTO.isApresentaQuantidadeEncalhe()) {
+				produtoDTO.setQuantidadeDevolvida(null);
+			}
 			
 			produtoDTO.setReparte( (produtoDTO.getReparte()==null) ? BigInteger.ZERO : produtoDTO.getReparte());
 			
@@ -278,7 +335,166 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		cota.setVlrReparteLiquido(CurrencyUtil.formatarValor(vlrReparteLiquido));
 		cota.setVlrEncalhe(CurrencyUtil.formatarValor(vlrEncalhe));
 		cota.setVlrTotalLiquido(CurrencyUtil.formatarValor(totalLiquido));
+		
+		Map<Long, List<NotaEnvioProdutoEdicao>> mapaNotaEnvioPE = gerarMapaProdutoEdicaoNotasEmitidas(
+				notaEnvioRepository.obterNotaEnvioProdutoEdicao(cota.getNumCota(), idsProdutoEdicao));
+		
+		carregarDadosNotaEnvioProdutoEdicao(mapaNotaEnvioPE, cota.getProdutos());
 	}
+	
+	/**
+	 * Carrega as informações da nota de envio nos 
+	 * produto de emissão CE pertinentes.
+	 * 
+	 * @param mapaNotaEnvioPE
+	 * @param listaProdutos
+	 */
+	protected void carregarDadosNotaEnvioProdutoEdicao(
+			Map<Long, List<NotaEnvioProdutoEdicao>> mapaNotaEnvioPE, 
+			List<ProdutoEmissaoDTO> listaProdutos) {
+		
+		for(ProdutoEmissaoDTO produtoDTO : listaProdutos) {
+			
+			List<NotaEnvioProdutoEdicao> notas = mapaNotaEnvioPE.get(produtoDTO.getIdProdutoEdicao());
+			
+			if(notas == null || notas.isEmpty()) {
+				continue;
+			}
+
+			Integer numeroNotaEnvio = notas.get(0).getNumeroNotaEnvio();
+
+			if(numeroNotaEnvio!=null) {
+				produtoDTO.setNotaEnvio(numeroNotaEnvio.toString());
+			}
+			
+			if(notas.size()>1){
+				produtoDTO.setDescricaoNotaEnvio(obterDescricaoNotasEnvio(notas));
+			}
+			
+		}
+		
+	}
+	
+	/**
+	 * Concatena informações das nota de envio e retorna
+	 * uma descrição das mesmas com a data de emissão 
+	 * e a quantidade de reparte das mesmas.
+	 * 
+	 * @param notas
+	 * 
+	 * @return String
+	 */
+	private String obterDescricaoNotasEnvio(List<NotaEnvioProdutoEdicao> notas ) {
+		
+		StringBuffer descricao = new StringBuffer();
+		
+		String plusSignal = "";
+		
+		for(NotaEnvioProdutoEdicao nota : notas) {
+			
+			descricao.append(plusSignal);
+			
+			if(nota.getReparte()!=null) {
+				descricao.append(nota.getReparte());
+				descricao.append(" exes. ");
+			}
+			
+			if(nota.getDataEmissao()!=null) {
+				String dataEmissao = DateUtil.formatarData(nota.getDataEmissao(), Constantes.DAY_MONTH_PT_BR);
+				descricao.append("(").append(dataEmissao).append(")");
+			}
+			
+			plusSignal = " + ";
+		}
+		
+		return descricao.toString();
+		
+	}
+	
+	
+	protected Map<Long, List<NotaEnvioProdutoEdicao>> gerarMapaProdutoEdicaoNotasEmitidas(List<NotaEnvioProdutoEdicao> listaNotaEnvioProdutoEdicao) {
+		
+		Map<Long, List<NotaEnvioProdutoEdicao>> mapaProdutoEdicaoNota = new HashMap<>();
+		
+		for(NotaEnvioProdutoEdicao nep : listaNotaEnvioProdutoEdicao) {
+			
+			if(mapaProdutoEdicaoNota.containsKey(nep.getIdProdutoEdicao())) {
+				
+				mapaProdutoEdicaoNota.get(nep.getIdProdutoEdicao()).add(nep);
+				
+			} else {
+				
+				mapaProdutoEdicaoNota.put(nep.getIdProdutoEdicao(), new ArrayList<NotaEnvioProdutoEdicao>());
+				
+				mapaProdutoEdicaoNota.get(nep.getIdProdutoEdicao()).add(nep);
+				
+			}
+			
+		}
+		
+		return mapaProdutoEdicaoNota;
+		
+	}
+	
+	private List<ProdutoEmissaoDTO> obterProdutosEmissaoCE(FiltroEmissaoCE filtro, Long idCota) {
+		
+		List<Date> datasControleFechamentoEncalhe = 
+				fechamentoEncalheRepository.
+				obterDatasControleFechamentoEncalheRealizado(
+						filtro.getDtRecolhimentoDe(), 
+						filtro.getDtRecolhimentoAte());
+		
+		List<Date> datasControleConferenciaEncalheCotaFinalizada = 
+				controleConferenciaEncalheCotaRepository.
+				obterDatasControleConferenciaEncalheCotaFinalizada(idCota, 
+						filtro.getDtRecolhimentoDe(), 
+						filtro.getDtRecolhimentoAte());
+
+		
+		return chamadaEncalheRepository.obterProdutosEmissaoCE(
+				filtro,
+				idCota, 
+				datasControleFechamentoEncalhe, 
+				datasControleConferenciaEncalheCotaFinalizada);
+	
+	}
+	
+	
+	/**
+	 * Para apresentar (no relatório de Emissao CE - modelo 2)
+	 * a linha adicional abaixo dos produtos que possuem informaçoes 
+	 * relativas a nota de envio. 
+	 * 
+	 * @param produtos
+	 */
+	protected void adicionarLinhasProdutoComInformacoesNotaEnvio(List<ProdutoEmissaoDTO> produtos){
+		
+		int tamanho = produtos.size();
+		
+		for ( int i =0; i < tamanho; i++ ) {
+			
+			ProdutoEmissaoDTO produto = produtos.get(i);
+			
+			if(produto.getDescricaoNotaEnvio()!=null) {
+				
+				ProdutoEmissaoDTO produtoNotaDetail = new ProdutoEmissaoDTO();
+				
+				produtoNotaDetail.setCodigoProduto(produto.getCodigoProduto());
+				produtoNotaDetail.setNomeProduto(produto.getNomeProduto());
+				produtoNotaDetail.setEdicao(produto.getEdicao());
+				produtoNotaDetail.setIdProdutoEdicao(produto.getIdProdutoEdicao());
+				produtoNotaDetail.setDescricaoNotaEnvio(produto.getDescricaoNotaEnvio());
+				produtoNotaDetail.setProdutoDuplicadoDetalheNota(true);
+				
+				produtos.add((i+1), produtoNotaDetail);
+				tamanho++;
+				i++;
+			}
+			
+		}
+		
+	}
+	
 	
 	@Override
 	@Transactional
@@ -321,12 +537,18 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 												
 			dto.setDataEmissao(DateUtil.formatarDataPTBR(new Date()));
 			
-			dto.setProdutos(chamadaEncalheRepository.obterProdutosEmissaoCE(filtro,dto.getIdCota()));
+			dto.setProdutos( obterProdutosEmissaoCE(filtro, dto.getIdCota()) );
 			
-			carregarValoresTotalizados(dto);
+			processarProdutosEmissaoEncalheDaCota(dto);
 			
+			if(TipoImpressaoCE.MODELO_2.equals(filtro.getTipoImpressao())) {
+				
+				adicionarLinhasProdutoComInformacoesNotaEnvio(dto.getProdutos());
+				
+			}
 			
 		}
+		
 		
 		paginarListaDeProdutosDasCotasEmissao(lista, filtro.getQtdProdutosPorPagina(), filtro.getQtdMaximaProdutosComTotalizacao());
 		
