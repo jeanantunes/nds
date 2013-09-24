@@ -282,7 +282,7 @@ var MANTER_COTA = $.extend(true, {
                 '<img src="'+ contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" title="Excluir Cota" />' +
                 '</a>';
 
-            row.cell.acao = linkEdicao + linkExclusao;
+            row.cell.acao = linkEdicao + linkExclusao; 
         });
 
         MANTER_COTA.resultCotaLength=resultado.rows.length;
@@ -1261,12 +1261,12 @@ var COTA_CNPJ = $.extend(true, {
         
         $("#percentualCotaBase", this.workspace).html(result.percentualCotaBase+"%");
         
-        /*$("#historicoPrimeiraCota", this.workspace).val(result.historicoPrimeiraCota);
-        $("#historicoPrimeiraPorcentagem", this.workspace).val( eval( result.historicoPrimeiraPorcentagem));
-        $("#historicoSegundaCota", this.workspace).val(result.historicoSegundaCota);
-        $("#historicoSegundaPorcentagem", this.workspace).val( eval( result.historicoSegundaPorcentagem));
-        $("#historicoTerceiraCota", this.workspace).val(result.historicoTerceiraCota);
-        $("#historicoTerceiraPorcentagem", this.workspace).val( eval( result.historicoTerceiraPorcentagem));*/
+        $("#historicoPrimeiraCota", this.workspace).val(result.historicoPrimeiraCota).disable();
+        $("#historicoPrimeiraPorcentagem", this.workspace).val( eval( result.historicoPrimeiraPorcentagem)).disable();
+        $("#historicoSegundaCota", this.workspace).val(result.historicoSegundaCota).disable();
+        $("#historicoSegundaPorcentagem", this.workspace).val( eval( result.historicoSegundaPorcentagem)).disable();
+        $("#historicoTerceiraCota", this.workspace).val(result.historicoTerceiraCota).disable();
+        $("#historicoTerceiraPorcentagem", this.workspace).val( eval( result.historicoTerceiraPorcentagem)).disable();
 
         if(result.inicioPeriodo){
             $("#periodoCotaDe", this.workspace).val(result.inicioPeriodo.$);
@@ -1478,15 +1478,15 @@ var COTA_CPF = $.extend(true, {
         $("#classificacaoSelecionadaCPF", this.workspace).val(result.classificacaoSelecionada);
         $('[name="cotaDTO.tipoCota"]', this.workspace).val(result.tipoCota);
         
-        //Ajuste 0153
-        $("#percentualCotaBase", this.workspace).html(result.percentualCotaBase+"%");
+//        //Ajuste 0153
+//        $("#percentualCotaBase", this.workspace).html(result.percentualCotaBase+"%");
         
-        /*$("#historicoPrimeiraCotaCPF", this.workspace).val(result.historicoPrimeiraCota);
-        $("#historicoPrimeiraPorcentagemCPF", this.workspace).val( eval( result.historicoPrimeiraPorcentagem));
-        $("#historicoSegundaCotaCPF", this.workspace).val(result.historicoSegundaCota);
-        $("#historicoSegundaPorcentagemCPF", this.workspace).val( eval( result.historicoSegundaPorcentagem));
-        $("#historicoTerceiraCotaCPF", this.workspace).val(result.historicoTerceiraCota);
-        $("#historicoTerceiraPorcentagemCPF", this.workspace).val( eval( result.historicoTerceiraPorcentagem));*/
+        $("#historicoPrimeiraCotaCPF", this.workspace).val(result.historicoPrimeiraCota).disable();
+        $("#historicoPrimeiraPorcentagemCPF", this.workspace).val( eval( result.historicoPrimeiraPorcentagem)).disable();
+        $("#historicoSegundaCotaCPF", this.workspace).val(result.historicoSegundaCota).disable();
+        $("#historicoSegundaPorcentagemCPF", this.workspace).val( eval( result.historicoSegundaPorcentagem)).disable();
+        $("#historicoTerceiraCotaCPF", this.workspace).val(result.historicoTerceiraCota).disable();
+        $("#historicoTerceiraPorcentagemCPF", this.workspace).val( eval( result.historicoTerceiraPorcentagem)).disable();
 
         if(result.dataNascimento){
             $("#dataNascimento", this.workspace).val(result.dataNascimento.$);
@@ -1596,14 +1596,14 @@ var COTA_CPF = $.extend(true, {
         $("#emailNFCPF", this.workspace).val("");
         $("#emiteNFECPF", this.workspace).attr("checked", null);
         $("#classificacaoSelecionadaCPF", this.workspace).val("");
-        /*$("#historicoPrimeiraCotaCPF", this.workspace).val("");
+        $("#historicoPrimeiraCotaCPF", this.workspace).val("");
         $("#historicoPrimeiraPorcentagemCPF", this.workspace).val("");
         $("#historicoSegundaCotaCPF", this.workspace).val("");
         $("#historicoSegundaPorcentagemCPF", this.workspace).val("");
         $("#historicoTerceiraCotaCPF", this.workspace).val("");
         $("#historicoTerceiraPorcentagemCPF", this.workspace).val("");
         $("#periodoCotaDeCPF", this.workspace).val("");
-        $("#periodoCotaAteCPF", this.workspace).val("");*/
+        $("#periodoCotaAteCPF", this.workspace).val("");
 
         clearMessageDialogTimeout(null);
     }
