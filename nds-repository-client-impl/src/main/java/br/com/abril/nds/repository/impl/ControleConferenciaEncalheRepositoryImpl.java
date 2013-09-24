@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
@@ -40,8 +41,6 @@ public class ControleConferenciaEncalheRepositoryImpl extends AbstractRepository
 		return (ControleConferenciaEncalhe) query.uniqueResult();
 		
 	}
-
-
 
 
 	
