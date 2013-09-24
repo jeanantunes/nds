@@ -48,5 +48,5 @@ public interface EstudoCotaRepository extends Repository<EstudoCota, Long> {
 	
 	public List<EstudoCota> obterEstudoCotaPorEstudo(Estudo estudo);
 	
-	void inserirPrudutoBase(Estudo estudo);
+	void inserirProdutoBase(Estudo estudo);
 }

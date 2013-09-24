@@ -21,6 +21,10 @@ public class AnaliseParcialQueryDTO {
 	private Long numeroEdicao;
 	private List<EdicoesProdutosDTO> edicoesBase;
 	private String numeroCotaStr;
+	/**
+	 * Id do estudo que foi copiado na tela de copia proporcional de estudo
+	 */
+	private Long estudoOrigem;
 	
 	public String getNumeroCotaStr() {
 		return numeroCotaStr;
@@ -202,4 +206,14 @@ public class AnaliseParcialQueryDTO {
 	public void setNumeroEdicao(Long numeroEdicao) {
 	    this.numeroEdicao = numeroEdicao;
 	}
+
+	public Long getEstudoOrigem() {
+		return estudoOrigem;
+	}
+
+	public void setEstudoOrigem(Long estudoOrigem) {
+		this.estudoOrigem = estudoOrigem;
+	}
+	
+	
 }

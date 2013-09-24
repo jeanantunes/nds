@@ -275,16 +275,29 @@ function carregarCombo(url, params, element, selected, idDialog, callback){
         function(result){
             var combo =  montarComboBox(result, false);
             combo = newOption('-1', 'Selecione...') + combo;
-            $(element).html(combo);
-            if (selected) {
-                $(element).val(selected);
-            } else {
-                $(element).val('-1');
-            }
             
+            if($(element).length>1){
+            	$.each(element,function(idx,cpm){
+            		$(cpm).html(combo);
+                	if (selected) {
+                		$(cpm).val(selected);
+                	} else {
+                		$(cpm).val('-1');
+                	}
+            		
+            	});
+            }else{
+            	$(element).html(combo);
+            	if (selected) {
+            		$(element).val(selected);
+            	} else {
+            		$(element).val('-1');
+            	}
+            	
+            }
             if (callback) {
-				callback();
-			}
+            	callback();
+            }
             
         },null,true, idDialog);
 }

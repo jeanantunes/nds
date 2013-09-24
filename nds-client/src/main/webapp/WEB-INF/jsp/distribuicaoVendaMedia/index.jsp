@@ -233,7 +233,7 @@ function mostraComponentes(){
 	$('#lstComponentes').show();
 	$('#lstExcecao').hide();
 	
-	$("#componenteRegiaoDistribuicao,#elementoRegiaoDistribuicao").val("");
+	$("#componenteRegiaoDistribuicao, select[name=elementoRegiaoDistribuicao]").val("");
 	}
 function mostra_PercBancas(){
 	$('#selRegiao').hide();
@@ -628,7 +628,7 @@ function limparLstExcecao1(){
                    <tr>
                      <td width="156">
 	                     <select name="componenteRegiaoDistribuicao" id="componenteRegiaoDistribuicao"
-	                     	onchange="distribuicaoVendaMedia.selectElementoRegiaoDistribuicao('componenteRegiaoDistribuicao', 'elementoRegiaoDistribuicao')"  
+	                     	onchange="distribuicaoVendaMedia.selectElementoRegiaoDistribuicao('componenteRegiaoDistribuicao',  $('select[name=elementoRegiaoDistribuicao]'))"  
 	                     	style="width:110px;" class="filtroComponentes">
 	                  		<option selected="selected">Selecione...</option>
 		                    <c:forEach items="${componentes}" var="componente" varStatus="idx">
@@ -640,6 +640,8 @@ function limparLstExcecao1(){
                      <td width="152">
                      	<select name="elementoRegiaoDistribuicao" id="elementoRegiaoDistribuicao" style="width:150px;">
                      	</select>
+                     	<select name="elementoRegiaoDistribuicao"  style="width:150px;"></select>
+                     	<select name="elementoRegiaoDistribuicao"  style="width:150px;"></select>
                      </td>
                    </tr>
                  </table></td>

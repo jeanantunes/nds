@@ -186,7 +186,8 @@ public class SelecaoBancas extends ProcessoAbstrato {
 	if (estudo.getDistribuicaoVendaMediaDTO().getComponente() != null && estudo.getDistribuicaoVendaMediaDTO().getElemento() != null) {
 	    estudo.setComplementarAutomatico(false);
 	    for (CotaEstudo cota : cotas) {
-		String [] vetor = {estudo.getDistribuicaoVendaMediaDTO().getElemento()};
+		String [] vetor = {estudo.getDistribuicaoVendaMediaDTO().getElemento(),
+				estudo.getDistribuicaoVendaMediaDTO().getElemento2(),estudo.getDistribuicaoVendaMediaDTO().getElemento3()};
 		if (!estudoAlgoritmoService.isCotaDentroDoComponenteElemento(estudo.getDistribuicaoVendaMediaDTO().getComponente(), vetor, cota)) {
 		    cota.setClassificacao(ClassificacaoCota.BancaForaDaRegiaoDistribuicao);
 		    cota.setReparteCalculado(BigInteger.ZERO, estudo);

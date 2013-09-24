@@ -770,7 +770,7 @@ public class MatrizDistribuicaoServiceImpl implements MatrizDistribuicaoService 
 	    estudoCotaRepository.adicionar(cota);
 	}
 	estudoCopia.setEstudoCotas(new HashSet<EstudoCota>(cotas));
-	estudoCotaRepository.inserirPrudutoBase(estudoCopia);
+	estudoCotaRepository.inserirProdutoBase(estudoCopia);
 	return estudoCopia;
     }
 
