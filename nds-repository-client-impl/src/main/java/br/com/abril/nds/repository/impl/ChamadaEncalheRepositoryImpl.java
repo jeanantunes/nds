@@ -394,7 +394,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 
 	private void gerarFromWhere(FiltroEmissaoCE filtro, StringBuilder hql, HashMap<String, Object> param) {
 
-		hql.append(" from ChamadaEncalheCota chamEncCota, Box box ")
+		hql.append(" from ChamadaEncalheCota chamEncCota ")
 		   .append(" join chamEncCota.chamadaEncalhe  chamadaEncalhe ")
 		   .append(" join chamEncCota.cota cota ")
 		   .append(" join cota.pessoa pessoa ")
