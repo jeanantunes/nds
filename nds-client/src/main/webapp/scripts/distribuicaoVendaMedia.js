@@ -263,10 +263,17 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 	this.selectElementoRegiaoDistribuicao = function(select, elementoSelect, callback){
 		var selectedItem = $("#" + select).val();
 		
+		var target = null;
+		if(typeof elementoSelect == "string"){
+			target = $("#" + elementoSelect, T._workspace);
+		}else if(typeof elementoSelect == "object"){
+			target = elementoSelect;
+		}
+		
 		if(selectedItem != 'Selecione...'){
 			carregarCombo(pathTela + "/distribuicao/historicoVenda/carregarElementos", 
 				  {"componente":selectedItem},
-		            $("#" + elementoSelect, T._workspace), null, null, callback);
+				  target, null, null, callback);
 		} else {
 			$('#' + elementoSelect).html('');
 			$('#' + elementoSelect).append("<option value='-1'>Selecione...</option>");
@@ -577,6 +584,8 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		if($("#RDcomponente")[0].checked){
 			data.push({name : "distribuicaoVendaMedia.componente", value : $("#componenteRegiaoDistribuicao").val() });
 			data.push({name : "distribuicaoVendaMedia.elemento", value : $("#elementoRegiaoDistribuicao").val() });
+			data.push({name : "distribuicaoVendaMedia.elemento2", value : $("select[name=elementoRegiaoDistribuicao]:eq(1)").val() });
+			data.push({name : "distribuicaoVendaMedia.elemento3", value : $("select[name=elementoRegiaoDistribuicao]:eq(2)").val() });
 		}
 		if($("#RDAbrangencia")[0].checked){
 			data.push({name : "distribuicaoVendaMedia.abrangenciaCriterio", value : $("#RDabrangenciaCriterio").val() });

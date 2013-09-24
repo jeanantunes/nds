@@ -20,7 +20,7 @@ public class DistribuicaoVendaMediaDTO {
 	
 	private Boolean todasAsCotas;
 	private ComponentesPDV componente;
-	private String elemento;
+	private String elemento,elemento2,elemento3;
 	private String abrangenciaCriterio;
 	private Double abrangencia;
 	private Date dataLancamento;
@@ -157,5 +157,18 @@ public class DistribuicaoVendaMediaDTO {
 	public void setMultiplo(BigInteger multiplo) {
 		this.multiplo = multiplo;
 	}
+	public String getElemento2() {
+		return elemento2;
+	}
+	public void setElemento2(String elemento2) {
+		this.elemento2 = elemento2;
+	}
+	public String getElemento3() {
+		return elemento3;
+	}
+	public void setElemento3(String elemento3) {
+		this.elemento3 = elemento3;
+	}
+
 	
 }

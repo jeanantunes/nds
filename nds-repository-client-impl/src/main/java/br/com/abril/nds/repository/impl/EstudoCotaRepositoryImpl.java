@@ -184,7 +184,7 @@ public class EstudoCotaRepositoryImpl extends AbstractRepositoryModel<EstudoCota
     
     @Override
     @Transactional
-    public void inserirPrudutoBase(Estudo estudo) {
+    public void inserirProdutoBase(Estudo estudo) {
 	StringBuilder sql = new StringBuilder();
 	sql.append("insert into estudo_produto_edicao_base ");
 	sql.append(" (estudo_id, produto_edicao_id, colecao, parcial, edicao_aberta, peso) ");
