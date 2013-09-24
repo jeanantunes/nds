@@ -1139,114 +1139,83 @@ var produtoEdicaoController =$.extend(true,  {
 	
 	removerEdicao: function (id) {
 
-		$( "#produtoEdicaoController-dialog-excluir").dialog({
-			resizable: false,
-			height:170,
-			width:380,
-			modal: true,
-			buttons: {
-				"Confirmar": function() {
+		$.postJSON(
+				 contextPath + '/cadastro/edicao/validarRemocaoEdicao.json',
+					{idProdutoEdicao : id},
+					function(result) {
 
-					$.postJSON(
-							 contextPath + '/cadastro/edicao/validarRemocaoEdicao.json',
-								{idProdutoEdicao : id},
-								function(result) {
+						$("#produtoEdicaoController-dialog-excluir").dialog("close");
+						
+						
+						if(result.map.length > 0) {
+							
+							var tipoMensagem = 'WARNING';
+							var listaMensagens = [];
+							
+							/*
+							for (var i=0; i<result.map.length; i++) {
+								listaMensagens[i] = result.map[i][1];
+							}
+							*/
+							
+							if(result.map.length > 0) {
+								listaMensagens[0] = "Existem restrições que impedem a exclusão desta edição.";
+							}
+							
+							if (tipoMensagem && listaMensagens) {
 
-									var temEstudo = false;
-									for (var i=0; i<result.map.length; i++) {
-										if(result.map[i][0] == 'edicaoPossuiEstudo') {
-											temEstudo = true;
-										}
-									}
-									
-									$("#produtoEdicaoController-dialog-excluir").dialog("close");
-									
-									if(temEstudo && result.map.length == 1) {
-									
-										$(this.workspace).append('<div id="confirm_button"></div>');
-	
-										$( "#confirm_button", this.workspace ).text('Essa edição possui estudo. Deseja continuar?');
-	
-										$( "#confirm_button", this.workspace ).dialog({
-											resizable : false,
-											height : 180,
-											width : 460,
-											modal : true,
-											buttons : {
-												"Sim" : function() {
-													
-													$.postJSON(
-														contextPath + '/cadastro/edicao/removerEdicao.json',
-														{idProdutoEdicao : id},
-														function(result) {
-															$("#produtoEdicaoController-dialog-excluir").dialog("close");
-															$( "#confirm_button", this.workspace ).dialog("close");
-															
-															var tipoMensagem = result.tipoMensagem;
-															var listaMensagens = result.listaMensagens;
+								exibirMensagem(tipoMensagem, listaMensagens);
+							}
+							
+							return;
+						}
+						
+						$( "#produtoEdicaoController-dialog-excluir").dialog({
+							resizable: false,
+							height:170,
+							width:380,
+							modal: true,
+							buttons: {
+								"Confirmar": function() {
 
-															if (tipoMensagem && listaMensagens) {
+									$.postJSON(
+											 contextPath + '/cadastro/edicao/removerEdicao.json',
+											{idProdutoEdicao : id},
+											function(result) {
+												$("#produtoEdicaoController-dialog-excluir").dialog("close");
 
-																exibirMensagem(tipoMensagem, listaMensagens);
-															}
+												var tipoMensagem = result.tipoMensagem;
+												var listaMensagens = result.listaMensagens;
 
-															produtoEdicaoController.carregarImagemCapa(null);
-															$(".edicoesGrid").flexReload();
-														},
-														null,
-														true
-													);
-													
-												},
-												"Não" : function() {
-													
-													$("#produtoEdicaoController-dialog-excluir").dialog("close");	
-													$( "#confirm_button", this.workspace ).dialog("close");
+												if (tipoMensagem && listaMensagens) {
+
+													exibirMensagem(tipoMensagem, listaMensagens);
 												}
+
+												produtoEdicaoController.carregarImagemCapa(null);
+												$(".edicoesGrid").flexReload();
 											},
-										});
-										
-										$("#produtoEdicaoController-dialog-excluir").dialog("close");
-										$( "#confirm_button", this.workspace ).dialog("close");
-										
-									} else {
+											null,
+											true
+									);
 									
-										$.postJSON(
-												 contextPath + '/cadastro/edicao/removerEdicao.json',
-												{idProdutoEdicao : id},
-												function(result) {
-													$("#produtoEdicaoController-dialog-excluir").dialog("close");
-	
-													var tipoMensagem = result.tipoMensagem;
-													var listaMensagens = result.listaMensagens;
-	
-													if (tipoMensagem && listaMensagens) {
-	
-														exibirMensagem(tipoMensagem, listaMensagens);
-													}
-	
-													produtoEdicaoController.carregarImagemCapa(null);
-													$(".edicoesGrid").flexReload();
-												},
-												null,
-												true
-										);
-									}
 								},
-								null,
-								true
-						);
-					
-				},
-				"Cancelar": function() {
-					$( this ).dialog( "close" );
-				}
-			},
-			beforeClose: function() {
-				clearMessageDialogTimeout();
-			},
-			form: $("#produtoEdicaoController-dialog-excluir", this.workspace).parents("form")
-		});
+								"Cancelar": function() {
+									$( this ).dialog( "close" );
+								}
+							},
+							beforeClose: function() {
+								clearMessageDialogTimeout();
+							},
+							form: $("#produtoEdicaoController-dialog-excluir", this.workspace).parents("form")
+						});
+						
+						
+					},
+					null,
+					true
+			);
+		
 	},
 	
 	popup_excluir_capa:			function () {
