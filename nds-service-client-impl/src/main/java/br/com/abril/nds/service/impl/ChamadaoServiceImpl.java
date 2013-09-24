@@ -14,6 +14,7 @@ import br.com.abril.nds.dto.ConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.ConsultaChamadaoDTO;
 import br.com.abril.nds.dto.ResumoConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO.OrdenacaoColunaChamadao;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
@@ -165,13 +166,12 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 			
 			if (filtro.isChamadaEncalhe()) {
 		
-				listaChamadao =
-					this.chamadaoRepository.obterConsignadosComChamadao(filtro);
+				listaChamadao = this.chamadaoRepository.obterConsignadosComChamadao(filtro);
 				
 			} else {
 			
-				listaChamadao =
-					this.chamadaoRepository.obterConsignadosParaChamadao(filtro);
+				filtro.setOrdenacaoColuna(OrdenacaoColunaChamadao.NOME_PRODUTO);
+				listaChamadao = this.chamadaoRepository.obterConsignadosParaChamadao(filtro);
 			}
 		}
 		
