@@ -461,7 +461,7 @@ public class ChamadaEncalheRepositoryImplTest extends
 		
 
 		List<ProdutoEmissaoDTO> lista = chamadaEncalheRepository
-				.obterProdutosEmissaoCE(filtro, idcota);
+				.obterProdutosEmissaoCE(filtro, idcota, null, null);
 
 		Assert.assertNotNull(lista);
 
