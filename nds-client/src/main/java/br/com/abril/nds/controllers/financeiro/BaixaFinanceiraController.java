@@ -573,7 +573,7 @@ public class BaixaFinanceiraController extends BaseController {
 		//CONFIGURAR PAGINA DE PESQUISA
 		FiltroConsultaDividasCotaDTO filtroAtual = 
 				new FiltroConsultaDividasCotaDTO(
-						numCota, this.distribuidorService.obterDataOperacaoDistribuidor(),StatusCobranca.NAO_PAGO);
+						numCota, this.distribuidorService.obterDataOperacaoDistribuidor(),null);
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		filtroAtual.setSomenteBaixadas(false);
 		filtroAtual.setPaginacao(paginacao);
@@ -635,7 +635,7 @@ public class BaixaFinanceiraController extends BaseController {
 		//CONFIGURAR PAGINA DE PESQUISA
 		FiltroConsultaDividasCotaDTO filtroAtual = 
 				new FiltroConsultaDividasCotaDTO(
-						numCota, this.distribuidorService.obterDataOperacaoDistribuidor() ,StatusCobranca.PAGO);
+						numCota, this.distribuidorService.obterDataOperacaoDistribuidor() ,null);
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		filtroAtual.setNossoNumero(nossoNumero);
 		filtroAtual.setSomenteBaixadas(true);
@@ -671,7 +671,7 @@ public class BaixaFinanceiraController extends BaseController {
 		}
 		
 
-		int qtdRegistros = this.cobrancaService.obterQuantidadeCobrancasPorCota(filtroAtual);
+		int qtdRegistros = this.baixaCobrancaService.countBuscarCobrancasBaixadas(filtroAtual).intValue();
 			
 		TableModel<CellModelKeyValue<CobrancaVO>> tableModel = new TableModel<CellModelKeyValue<CobrancaVO>>();
 			
