@@ -55,8 +55,22 @@ public class DescontoDistribuidorRepositoryImpl extends AbstractRepositoryModel<
 		}
 		
 		hql.append("group by hdf.desconto, hdf.dataAlteracao ");
-		hql.append("order by hdf.dataAlteracao desc ");
 		
+		if(filtro.getPaginacao()!=null){
+			
+			if (filtro.getPaginacao().getSortColumn() != null && 
+				!filtro.getPaginacao().getSortColumn().trim().isEmpty()) {
+				
+				hql.append(" ORDER BY ");
+				hql.append(filtro.getPaginacao().getSortColumn());		
+			
+				if ( filtro.getPaginacao().getOrdenacao() != null ) {
+					
+					hql.append(" ");
+					hql.append( filtro.getPaginacao().getOrdenacao().toString());
+				}
+			}
+		}
 		
 		if(filtro.getIdFornecedores()!=null && !filtro.getIdFornecedores().isEmpty()) {
 			hql.append(" and f.id in (:idFornecedores) ");
