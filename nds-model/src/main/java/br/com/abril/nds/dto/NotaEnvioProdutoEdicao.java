@@ -5,16 +5,16 @@ import java.util.Date;
 
 public class NotaEnvioProdutoEdicao {
 	
-	private Integer numeroNotaEnvio;
+	private Long numeroNotaEnvio;
 	private Date dataEmissao;
 	private Long idProdutoEdicao;
 	private BigInteger reparte;
 
-	public Integer getNumeroNotaEnvio() {
+	public Long getNumeroNotaEnvio() {
 		return numeroNotaEnvio;
 	}
 
-	public void setNumeroNotaEnvio(Integer numeroNotaEnvio) {
+	public void setNumeroNotaEnvio(Long numeroNotaEnvio) {
 		this.numeroNotaEnvio = numeroNotaEnvio;
 	}
 
