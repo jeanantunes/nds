@@ -293,7 +293,6 @@ public class ProdutoEmissaoDTO implements Serializable{
 		this.idProdutoEdicao = idProdutoEdicao;
 	}
 
-<<<<<<< HEAD
 	public String getNotaEnvio() {
 		return notaEnvio;
 	}
@@ -326,8 +325,6 @@ public class ProdutoEmissaoDTO implements Serializable{
 		this.produtoDuplicadoDetalheNota = produtoDuplicadoDetalheNota;
 	}
 	
-	
-=======
 	public Boolean getConfereciaRealizada() {
 		return confereciaRealizada;
 	}
@@ -335,6 +332,5 @@ public class ProdutoEmissaoDTO implements Serializable{
 	public void setConfereciaRealizada(Boolean confereciaRealizada) {
 		this.confereciaRealizada = confereciaRealizada;
 	}
->>>>>>> DGBti/release2
 	
 }
