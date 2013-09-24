@@ -130,6 +130,17 @@ public class RoteirizacaoController extends BaseController {
 		result.use(Results.json()).from(roteiros, "result").serialize();
 	}
 	
+	/**
+	 * Carrega o combo de pesquisa por roteiro a partir de um Box
+	 * @param boxId
+	 */
+	@Path("/carregarComboRoteiroCodigoBox")
+	public void carregarComboRoteiroCodigoBox(Long codigoBoxDe, Long codigoBoxAte) {
+		
+		List<Roteiro> roteiros = roteirizacaoService.buscarRoteiroCodigoBox(codigoBoxDe, codigoBoxAte);
+		result.use(Results.json()).from(roteiros, "result").serialize();
+	}
+	
 	
 	/**
 	 * Carrega o combo de pesquisa por rota a partir de um Roteiro
@@ -251,6 +262,19 @@ public class RoteirizacaoController extends BaseController {
 		List<ItemDTO<Long, String>> boxes = this.roteirizacaoService.getComboBoxPorRoteiro(idRoteiro);
 		
 		result.use(Results.json()).from(Arrays.asList(rotas, boxes, roteiros),"result").recursive().serialize();
+	}
+	
+	/**
+	 * Carrega o combo Rota por Roteiro
+	 * @param idRoteiro
+	 */
+	@Post
+	@Path("/carregarRotasPorRoteiro")
+	public void carregarRotasPorRoteiro(Long idRoteiro) {
+				
+		List<ItemDTO<Long, String>> rotas = this.roteirizacaoService.getComboRotaPorRoteiro(idRoteiro);
+				
+		result.use(Results.json()).from(rotas,"result").recursive().serialize();
 	}
 	
 	@Path("/obterProximaOrdemRoteiro")
@@ -907,7 +931,9 @@ public class RoteirizacaoController extends BaseController {
 	     
 	       OrdenacaoUtil.reordenarLista(pdv, pdvsAtuais);
 	       
-	       pdvsAtuais.add(pdv);
+	       pdvsAtuais.add(pdv.getOrdem() - 1, pdv);
+	       
+	       ordenarPdvsPeloIndiceDaLista(rota);
 	       
 	       result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Ordem válida!"), "result").recursive().serialize(); 
 	    }
@@ -1129,17 +1155,18 @@ public class RoteirizacaoController extends BaseController {
 		List<PdvRoteirizacaoDTO> pdvsAux = pdvs;
 		
 		for (int i=0; i < pdvs.size(); i++) {
-			for (int j=i+1; j < pdvsAux.size(); j++) {
+			for (int j = i+1; j < pdvsAux.size(); j++) {
 	            if (pdvsAux.get(j).getOrdem().equals(pdvs.get(i).getOrdem())) {
 	            	throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "[Ordem] inválida !"));
 	            }
 	        }
 		}
 		
-		if(pdvsAtual!=null){
+		if(pdvsAtual != null) {
 			
 			OrdenacaoUtil.reordenarListas(pdvs, pdvsAtual);
 		}
+		
 	}
 	
 	
@@ -1181,10 +1208,37 @@ public class RoteirizacaoController extends BaseController {
 		
 		this.verificaOrdemPdvs(pdvs, pdvsAtual);
 		
-		rota.addAllPdv(pdvs);
+		for(PdvRoteirizacaoDTO pdv : pdvs) {
+			
+			if(pdv.getOrdem() != null) {
+				if(pdv.getOrdem() > pdvs.size()) {
+					throw new ValidacaoException(TipoMensagem.WARNING, "Ordem inválida. Excede o tamanho da lista.");
+				}
+				
+				if(pdv.getOrdem() < 0) {
+					throw new ValidacaoException(TipoMensagem.WARNING, "Ordem inválida. Valor inferior ao primeiro elemento da lista.");
+				}
+				
+			}
+			
+			rota.getPdvs().add(pdv.getOrdem() - 1, pdv);
+		}
+		
+		ordenarPdvsPeloIndiceDaLista(rota);
 			
 		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "PDV adicionado com sucesso."), "result").recursive().serialize(); 
 
+	}
+
+	private void ordenarPdvsPeloIndiceDaLista(RotaRoteirizacaoDTO rota) {
+		
+		if(rota != null && rota.getPdvs() != null) {
+			
+			for(int i = 0; i < rota.getPdvs().size(); i++ ) {
+				rota.getPdvs().get(i).setOrdem(i+1);
+			}
+		}
+		
 	}
 	
 	/**
@@ -1202,6 +1256,8 @@ public class RoteirizacaoController extends BaseController {
 				rota.removerPdv(cotaId);
 			}
 		}	
+		
+		ordenarPdvsPeloIndiceDaLista(rota);
 
 		result.use(CustomJson.class).from("").serialize();
 	}

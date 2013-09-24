@@ -86,6 +86,7 @@ import br.com.abril.nds.service.NotaFiscalService;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
@@ -214,15 +215,13 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			}
 						
 			int inicioDiaSemana = 
-					distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
-			
-			int numeroSemana = 
-					DateUtil.obterNumeroSemanaNoAno(dataAtual, inicioDiaSemana);
+				distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
+
+			Date dataInicioSemana =
+				SemanaUtil.obterDataInicioSemana(inicioDiaSemana, dataAtual);
 			
 			Date dataFimSemana = 
-					DateUtil.adicionarDias(DateUtil.obterDataDaSemanaNoAno(
-							numeroSemana, inicioDiaSemana, dataAtual),
-							6);
+				DateUtil.adicionarDias(dataInicioSemana, 6);
 			
 			if (filtro.getBoxId() == null ){ 
 				List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro.getDataEncalhe());
@@ -372,16 +371,28 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Override
 	@Transactional
-	public void salvarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento) {
-		
-		
+	public void salvarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento, 
+										List<Long> listaNaoReplicados) {
+
 		FechamentoFisicoLogicoDTO fechamento;
 		Long qtd;
 		
 		for (int i=0; i < listaFechamento.size(); i++) {
 			
 			fechamento = listaFechamento.get(i);
-			qtd = fechamento.getFisico();
+
+			if (listaNaoReplicados != null && listaNaoReplicados.contains(fechamento.getProdutoEdicao())) {
+			
+				qtd = fechamento.getFisico();
+
+			} else if (filtro.isCheckAll() || (listaNaoReplicados != null && !listaNaoReplicados.contains(fechamento.getProdutoEdicao()))) {
+
+				qtd = fechamento.getExemplaresDevolucao().longValue();
+			
+			} else {
+				
+				qtd = 0l;
+			}
 			
 			FechamentoEncalhePK id = new FechamentoEncalhePK();
 			id.setDataEncalhe(filtro.getDataEncalhe());
@@ -986,7 +997,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 
 	@Override
 	@Transactional
-	public void salvarFechamentoEncalheBox(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento) {
+	public void salvarFechamentoEncalheBox(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento, 
+										   List<Long> listaNaoSelecionados) {
 		
 		
 		FechamentoFisicoLogicoDTO fechamento;
@@ -1144,12 +1156,13 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Transactional(readOnly=true)
 	public Date buscarUtimoDiaDaSemanaRecolhimento() {
 		
-		Integer numeroSemana = DateUtil.obterNumeroSemanaNoAno(new Date());
-		Date dataInicioSemana = 
-				DateUtil.obterDataDaSemanaNoAno(
-					numeroSemana, this.distribuidorService.inicioSemana().getCodigoDiaSemana(), null);
+		int codigoInicioSemana = 
+			this.distribuidorService.inicioSemana().getCodigoDiaSemana();
+		
+		Date dataInicioSemana =
+			SemanaUtil.obterDataInicioSemana(codigoInicioSemana, new Date());
 			
-			Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
+		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 
 		return dataFimSemana;
 	}

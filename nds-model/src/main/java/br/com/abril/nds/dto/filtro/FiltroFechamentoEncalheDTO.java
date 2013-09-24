@@ -13,6 +13,7 @@ public class FiltroFechamentoEncalheDTO implements Serializable {
 	private Long boxId;
 	private List<Long> fisico;
 	private boolean indAgrupaPorCota;
+	private boolean checkAll;
 	
 	public Date getDataEncalhe() {
 		return dataEncalhe;
@@ -43,6 +44,18 @@ public class FiltroFechamentoEncalheDTO implements Serializable {
 	}
 	public void setIndAgrupaPorCota(boolean indAgrupaPorCota) {
 		this.indAgrupaPorCota = indAgrupaPorCota;
+	}
+	/**
+	 * @return the checkAll
+	 */
+	public boolean isCheckAll() {
+		return checkAll;
+	}
+	/**
+	 * @param checkAll the checkAll to set
+	 */
+	public void setCheckAll(boolean checkAll) {
+		this.checkAll = checkAll;
 	}
 	
 }

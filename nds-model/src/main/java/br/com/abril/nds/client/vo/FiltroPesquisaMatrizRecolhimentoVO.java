@@ -16,7 +16,7 @@ import br.com.abril.nds.vo.PaginacaoVO;
 public class FiltroPesquisaMatrizRecolhimentoVO {
 	
 	@Export(label="Semana")
-	private Integer numeroSemana;
+	private Integer anoNumeroSemana;
 	
 	@Export(label="Data")
 	private Date dataPesquisa;
@@ -25,27 +25,27 @@ public class FiltroPesquisaMatrizRecolhimentoVO {
 	
 	private PaginacaoVO paginacaoVO;
 
-	public FiltroPesquisaMatrizRecolhimentoVO(Integer numeroSemana,
+	public FiltroPesquisaMatrizRecolhimentoVO(Integer anoNumeroSemana,
 											  Date dataPesquisa,
 											  List<Long> listaIdsFornecedores) {
 		
-		this.numeroSemana = numeroSemana;
+		this.anoNumeroSemana = anoNumeroSemana;
 		this.dataPesquisa = dataPesquisa;
 		this.listaIdsFornecedores = listaIdsFornecedores;
 	}
 	
 	/**
-	 * @return the numeroSemana
+	 * @return the anoNumeroSemana
 	 */
-	public Integer getNumeroSemana() {
-		return numeroSemana;
+	public Integer getAnoNumeroSemana() {
+		return anoNumeroSemana;
 	}
 
 	/**
-	 * @param numeroSemana the numeroSemana to set
+	 * @param anoNumeroSemana the anoNumeroSemana to set
 	 */
-	public void setNumeroSemana(Integer numeroSemana) {
-		this.numeroSemana = numeroSemana;
+	public void setAnoNumeroSemana(Integer anoNumeroSemana) {
+		this.anoNumeroSemana = anoNumeroSemana;
 	}
 
 	/**

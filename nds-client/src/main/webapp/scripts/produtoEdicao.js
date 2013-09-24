@@ -256,16 +256,20 @@ var produtoEdicaoController =$.extend(true,  {
 			 precision:2
 		});
 		
-
-
 		$('#produtoEdicaoController-pPrecoDe', this.workspace).maskMoney({
 					 thousands:'.', 
 					 decimal:',', 
 					 precision:2
 				});
 				
+		$('#produtoEdicaoController-pPrecoAte', this.workspace).maskMoney({
+			 thousands:'.', 
+			 decimal:',', 
+			 precision:2
+		});
+
+		$("#produtoEdicaoController-desconto", this.workspace).mask("999,99"); 			
 		
-		$("#produtoEdicaoController-desconto").numeric();
 		$("#produtoEdicaoController-peso").numeric();
 		$("#produtoEdicaoController-largura").numeric();
 		$("#produtoEdicaoController-comprimento").numeric();
@@ -771,7 +775,7 @@ var produtoEdicaoController =$.extend(true,  {
 						    $("#produtoEdicaoController-categoria").val(result.grupoProduto);
 							$("#produtoEdicaoController-codigoDeBarras").val(result.codigoDeBarras);
 							$("#produtoEdicaoController-codigoDeBarrasCorporativo").val(result.codigoDeBarrasCorporativo);
-							$("#produtoEdicaoController-desconto").val(result.desconto);
+							$("#produtoEdicaoController-desconto", this.workspace).val($.formatNumber(result.desconto, {format:"###,##000.00", locale:"br"}));
 							$("#produtoEdicaoController-descricaoDesconto").val(result.descricaoDesconto);
 							$("#produtoEdicaoController-peso").val(result.peso);
 							$("#produtoEdicaoController-largura").val(result.largura);
@@ -998,6 +1002,7 @@ var produtoEdicaoController =$.extend(true,  {
 	},
 	
 	submeterProdutoEdicao : function(closePopUp) {
+		
 		$("#produtoEdicaoController-formUpload").ajaxSubmit({
 			beforeSubmit: function(arr, formData, options) {
 				// Incluir aqui as validacoes;
@@ -1034,7 +1039,7 @@ var produtoEdicaoController =$.extend(true,  {
 			url:  contextPath + '/cadastro/edicao/salvar',
 			type: 'POST',
 			dataType: 'json',
-			data: { codigoProduto : $("#produtoEdicaoController-codigoProduto",this.workspace).val() }
+			data: { codigoProduto : $("#produtoEdicaoController-codigoProduto",this.workspace).val()}
 		});
 	},
 	
@@ -1132,7 +1137,7 @@ var produtoEdicaoController =$.extend(true,  {
 		});	      
 	},
 	
-	removerEdicao:function (id) {
+	removerEdicao: function (id) {
 
 		$( "#produtoEdicaoController-dialog-excluir").dialog({
 			resizable: false,
@@ -1143,25 +1148,94 @@ var produtoEdicaoController =$.extend(true,  {
 				"Confirmar": function() {
 
 					$.postJSON(
-							 contextPath + '/cadastro/edicao/removerEdicao.json',
-							{idProdutoEdicao : id},
-							function(result) {
-								$("#produtoEdicaoController-dialog-excluir").dialog("close");
+							 contextPath + '/cadastro/edicao/validarRemocaoEdicao.json',
+								{idProdutoEdicao : id},
+								function(result) {
 
-								var tipoMensagem = result.tipoMensagem;
-								var listaMensagens = result.listaMensagens;
+									var temEstudo = false;
+									for (var i=0; i<result.map.length; i++) {
+										if(result.map[i][0] == 'edicaoPossuiEstudo') {
+											temEstudo = true;
+										}
+									}
+									
+									$("#produtoEdicaoController-dialog-excluir").dialog("close");
+									
+									if(temEstudo && result.map.length == 1) {
+									
+										$(this.workspace).append('<div id="confirm_button"></div>');
+	
+										$( "#confirm_button", this.workspace ).text('Essa edição possui estudo. Deseja continuar?');
+	
+										$( "#confirm_button", this.workspace ).dialog({
+											resizable : false,
+											height : 180,
+											width : 460,
+											modal : true,
+											buttons : {
+												"Sim" : function() {
+													
+													$.postJSON(
+														contextPath + '/cadastro/edicao/removerEdicao.json',
+														{idProdutoEdicao : id},
+														function(result) {
+															$("#produtoEdicaoController-dialog-excluir").dialog("close");
+															$( "#confirm_button", this.workspace ).dialog("close");
+															
+															var tipoMensagem = result.tipoMensagem;
+															var listaMensagens = result.listaMensagens;
 
-								if (tipoMensagem && listaMensagens) {
+															if (tipoMensagem && listaMensagens) {
 
-									exibirMensagem(tipoMensagem, listaMensagens);
-								}
+																exibirMensagem(tipoMensagem, listaMensagens);
+															}
 
-								produtoEdicaoController.carregarImagemCapa(null);
-								$(".edicoesGrid").flexReload();
-							},
-							null,
-							true
-					);
+															produtoEdicaoController.carregarImagemCapa(null);
+															$(".edicoesGrid").flexReload();
+														},
+														null,
+														true
+													);
+													
+												},
+												"Não" : function() {
+													
+													$("#produtoEdicaoController-dialog-excluir").dialog("close");	
+													$( "#confirm_button", this.workspace ).dialog("close");
+												}
+											},
+										});
+										
+										$("#produtoEdicaoController-dialog-excluir").dialog("close");
+										$( "#confirm_button", this.workspace ).dialog("close");
+										
+									} else {
+									
+										$.postJSON(
+												 contextPath + '/cadastro/edicao/removerEdicao.json',
+												{idProdutoEdicao : id},
+												function(result) {
+													$("#produtoEdicaoController-dialog-excluir").dialog("close");
+	
+													var tipoMensagem = result.tipoMensagem;
+													var listaMensagens = result.listaMensagens;
+	
+													if (tipoMensagem && listaMensagens) {
+	
+														exibirMensagem(tipoMensagem, listaMensagens);
+													}
+	
+													produtoEdicaoController.carregarImagemCapa(null);
+													$(".edicoesGrid").flexReload();
+												},
+												null,
+												true
+										);
+									}
+								},
+								null,
+								true
+						);
 					
 				},
 				"Cancelar": function() {

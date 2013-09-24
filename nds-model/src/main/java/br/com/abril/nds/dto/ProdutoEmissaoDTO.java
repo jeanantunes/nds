@@ -41,6 +41,8 @@ public class ProdutoEmissaoDTO implements Serializable{
 	
 	private BigInteger quantidadeDevolvida;
 	
+	private Boolean confereciaRealizada;
+	
 	private BigDecimal precoVenda;
 	
 	private BigDecimal vlrPrecoComDesconto;
@@ -291,6 +293,7 @@ public class ProdutoEmissaoDTO implements Serializable{
 		this.idProdutoEdicao = idProdutoEdicao;
 	}
 
+<<<<<<< HEAD
 	public String getNotaEnvio() {
 		return notaEnvio;
 	}
@@ -324,5 +327,14 @@ public class ProdutoEmissaoDTO implements Serializable{
 	}
 	
 	
+=======
+	public Boolean getConfereciaRealizada() {
+		return confereciaRealizada;
+	}
+
+	public void setConfereciaRealizada(Boolean confereciaRealizada) {
+		this.confereciaRealizada = confereciaRealizada;
+	}
+>>>>>>> DGBti/release2
 	
 }

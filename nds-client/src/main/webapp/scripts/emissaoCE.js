@@ -67,8 +67,8 @@ var EmissaoCEController = $.extend(true, {
 		data.push({name:'filtro.codigoBoxAte',			value: this.get("boxAte")});
 		data.push({name:'filtro.numCotaDe',				value: this.get("cotaDe")});
 		data.push({name:'filtro.numCotaAte',			value: this.get("cotaAte")});
-		data.push({name:'filtro.idRoteiro',				value: this.get("roteiro")});
-		data.push({name:'filtro.idRota',				value: this.get("rota")});
+		data.push({name:'filtro.idRoteiro',				value: this.get("emissaoCERoteiro")});
+		data.push({name:'filtro.idRota',				value: this.get("emissaoCERota")});
 		data.push({name:'filtro.capa',					value: this.get("capa")});
 		data.push({name:'filtro.personalizada',			value: this.get("personalizada")});
 		
@@ -104,8 +104,7 @@ var EmissaoCEController = $.extend(true, {
 		
 		return result;
 	},
-	
-	
+		
 	/**
 	 * Atribui valor a um campo da tela
 	 * Obs: Checkboxs devem ser atribuidos com o valor de true ou false
@@ -239,7 +238,75 @@ var EmissaoCEController = $.extend(true, {
 				sortorder : "asc"
 			});
 			
-	}
+	},
+	
+	carregarComboRoteiro : function () {
+
+		var codigoBoxDe, codigoBoxAte;
+		codigoBoxDe = $('#boxDe', this.workspace).val();
+		codigoBoxAte= $('#boxAte', this.workspace).val();
+		
+		if(codigoBoxAte != '' && codigoBoxDe == '') {
+			$('#boxAte', this.workspace).val('');
+        	return;
+		}
+		
+		if(codigoBoxAte != '' && codigoBoxDe > codigoBoxAte) {
+			$('#boxAte', this.workspace).val('');
+			tipoMensagem = 'WARNING';
+			listaMensagens = [];
+			listaMensagens[0] = "Favor escolher o código de box 'De' antes do 'Até'.";
+			exibirMensagem(tipoMensagem, listaMensagens);
+        	return;
+		}
+        
+        var params = [];
+        params.push({name: 'codigoBoxDe', value: codigoBoxDe});
+        params.push({name: 'codigoBoxAte', value: codigoBoxAte});
+        
+        $.postJSON(contextPath + '/cadastro/roteirizacao/carregarComboRoteiroCodigoBox', params,
+            function(result) {
+
+				var tipoMensagem = result.tipoMensagem;
+				var listaMensagens = result.listaMensagens;
+		          
+		        if (tipoMensagem && listaMensagens) {
+		        	exibirMensagem(tipoMensagem, listaMensagens);
+		        	return;
+		        } 
+		        $("#emissaoCERoteiro > option", this.workspace).remove();
+		        $('#emissaoCERoteiro', this.workspace)
+            	.append('<option value=""></option>');
+                $.each(result, function(index, row){
+                        $('#emissaoCERoteiro', this.workspace)
+                        	.append('<option value="'+row.id+'">'+row.descricaoRoteiro+'</option>');
+                    }
+                );
+            },
+            null,
+            true
+        );
+    },
+    
+    carregarComboRota : function () {
+
+    	$('#emissaoCERota', this.workspace).empty();
+    	idRoteiro = $('#emissaoCERoteiro', this.workspace).val();
+
+        $.postJSON(contextPath + '/cadastro/roteirizacao/carregarComboRota', { 'roteiroId' : idRoteiro },
+            function(result) {
+        		$('#emissaoCERota', this.workspace).append('<option value=""></option>');
+                $.each(result, function(index, row){
+                        $('#emissaoCERota', this.workspace).append('<option value="'+row.id+'">'+row.descricaoRota+'</option>');
+                    }
+                );
+
+            },
+            null,
+            true
+        );
+
+    },
 	
 }, BaseController);
 

@@ -185,12 +185,13 @@ function imprimir(){
         </c:if>
     </td>
     
-    <td width="95" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.reparte - produto.quantidadeDevolvida}</td>
+    <td width="95" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.vendido}</td>
+
     <td width="70" align="right" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">
     	<fmt:formatNumber value="${produto.precoVenda.subtract(produto.precoVenda.multiply(produto.vlrDesconto).divide(100))}" maxFractionDigits="2" minFractionDigits="2" />
     </td>
     <td width="95" align="right" style="border-bottom:1px solid #000;padding-left:5px; border-right:1px solid #000; ">
-    	<fmt:formatNumber value="${produto.vlrPrecoComDesconto.multiply(produto.reparte - produto.quantidadeDevolvida)}" maxFractionDigits="2" minFractionDigits="2" />
+    	<fmt:formatNumber value="${produto.vlrPrecoComDesconto.multiply(produto.vendido)}" maxFractionDigits="2" minFractionDigits="2" />
     </td>
   </tr>
  

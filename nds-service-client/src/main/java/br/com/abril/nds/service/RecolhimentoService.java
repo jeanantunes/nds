@@ -23,19 +23,17 @@ public interface RecolhimentoService {
 	/**
 	 * Obtém a matriz de balanceamento de recolhimento.
 	 * 
-	 * @param numeroSemana - número da semana para balanceamento
+	 * @param anoNumeroSemana - número da semana para balanceamento
 	 * @param listaIdsFornecedores - lista de id's dos fornecedores
 	 * @param tipoBalanceamentoRecolhimento - tipo de balanceamento de recolhimento
 	 * @param forcarBalanceamento - indica se é necessário forçar o balanceamento da matriz
-	 * @param dataBalanceamento - data de balanceamento
 	 * 
 	 * @return {@link BalanceamentoRecolhimentoDTO}
 	 */
-	BalanceamentoRecolhimentoDTO obterMatrizBalanceamento(Integer numeroSemana,
+	BalanceamentoRecolhimentoDTO obterMatrizBalanceamento(Integer anoNumeroSemana,
 														  List<Long> listaIdsFornecedores,
 														  TipoBalanceamentoRecolhimento tipoBalanceamentoRecolhimento,
-														  boolean forcarBalanceamento,
-														  Date dataBalanceamento);
+														  boolean forcarBalanceamento);
 	
 	/**
 	 * Salva o balanceamento da matriz de recolhimento.
@@ -62,16 +60,15 @@ public interface RecolhimentoService {
 											List<Date> datasConfirmadas,
 											Usuario usuario);
 	
-	Intervalo<Date> getPeriodoRecolhimento(Integer numeroSemana, Date dataBalanceamento);
+	Intervalo<Date> getPeriodoRecolhimento(Integer anoNumeroSemana);
 
 	/**
 	 * Desfaz alterações de recolhimento sobre os lançamentos da semana desejada.
 	 * 
 	 * @param numeroSemana - Número da semana
-	 * @param date - Data contendo o ano 
 	 * @param fornecedores 
 	 */
-	void voltarConfiguracaoOriginal(Integer numeroSemana, Date date, List<Long> fornecedores);
+	void voltarConfiguracaoOriginal(Integer numeroSemana, List<Long> fornecedores);
 	
 	void verificaDataOperacao(Date data);
 	
@@ -80,10 +77,9 @@ public interface RecolhimentoService {
 	 * 
 	 * @param produtos - produtos a serem processados 
 	 * @param numeroSemana - número da semana 
-	 * @param dataBalanceamento - data de balanceamento
 	 * 
 	 */
-	void processarProdutosProximaSemanaRecolhimento(List<ProdutoRecolhimentoDTO> produtos, Integer numeroSemana,Date dataBalanceamento);
+	void processarProdutosProximaSemanaRecolhimento(List<ProdutoRecolhimentoDTO> produtos, Integer numeroSemana);
 	
 	void montarMapasOperacaoDiferenciada(Map<Date, List<CotaOperacaoDiferenciadaDTO>> mapOperacaoDifAdicionar,
 										 Map<Date, List<CotaOperacaoDiferenciadaDTO>> mapOperacaoDifRemover,

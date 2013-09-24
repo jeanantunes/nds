@@ -35,6 +35,7 @@ import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.SemanaUtil;
 
 @Service
 public class DistribuidorServiceImpl implements DistribuidorService {
@@ -449,7 +450,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 		
 		} else if (dataRecolhimento.compareTo(dataConferencia) == 0) {
 			
-			return 0;
+			return 1;
 		} 
 
 		Long[] listaIdsFornecedores = this.conferenciaEncalheService.obterIdsFornecedorDoProduto(produtoEdicao);
@@ -516,7 +517,7 @@ public class DistribuidorServiceImpl implements DistribuidorService {
 	
 	private Date obterDataValidaParaRecolhimento(Date novaData,List<Integer> diasSemanaDistribuidorOpera){
 		
-		int codigoDiaCorrente = DateUtil.obterDiaDaSemana(novaData);
+		int codigoDiaCorrente = SemanaUtil.obterDiaDaSemana(novaData);
 		
 		if( diasSemanaDistribuidorOpera.contains(codigoDiaCorrente) &&
 				!calendarioService.isFeriadoSemOperacao(novaData) &&

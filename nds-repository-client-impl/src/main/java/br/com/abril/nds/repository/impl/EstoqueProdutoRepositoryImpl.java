@@ -159,24 +159,22 @@ public class EstoqueProdutoRepositoryImpl extends AbstractRepositoryModel<Estoqu
 	
 	private void getQueryBuscarEstoqueProdutoRecolhimento(StringBuilder hql){
 		
-		hql.append(" from EstoqueProduto estoqueProduto, Lancamento l ")
+		hql.append(" from EstoqueProduto estoqueProduto ")
 		   .append(" join estoqueProduto.produtoEdicao produtoEdicao ")
 		   .append(" join produtoEdicao.produto produto ")
 		   .append(" join produtoEdicao.chamadaEncalhes chamadaEncalhe ")
 		   .append(" join chamadaEncalhe.chamadaEncalheCotas cec ")
-		   .append(" join l.produtoEdicao peLanc ")
 		   .append(" where chamadaEncalhe.dataRecolhimento = :dataRecolhimento ")
 		   .append(" and cec.postergado = :naoPostergado ")
-		   .append(" and peLanc.id = produtoEdicao.id ")
-		   .append(" and l.dataRecolhimentoPrevista = :dataRecolhimento ")
 		   
-		   //ignorar registros zerados
-		   .append(" and (")
-		   .append(" coalesce(estoqueProduto.qtde, 0) != 0 ")
-		   .append(" or coalesce(estoqueProduto.qtdeSuplementar, 0) != 0 ")
-		   .append(" or coalesce(estoqueProduto.qtdeDanificado, 0) != 0 ")
-		   .append(" or coalesce(estoqueProduto.qtdeDevolucaoEncalhe, 0) != 0 ")
-		   .append(")");
+		   //ignorar registros zerados - comentado a pedidos do negócio
+//		   .append(" and (")
+//		   .append(" coalesce(estoqueProduto.qtde, 0) != 0 ")
+//		   .append(" or coalesce(estoqueProduto.qtdeSuplementar, 0) != 0 ")
+//		   .append(" or coalesce(estoqueProduto.qtdeDanificado, 0) != 0 ")
+//		   .append(" or coalesce(estoqueProduto.qtdeDevolucaoEncalhe, 0) != 0 ")
+//		   .append(")")
+		   ;
 	}
 	
 	private void setParametrosBuscarEstoqueProdutoRecolhimento(Query query, 
