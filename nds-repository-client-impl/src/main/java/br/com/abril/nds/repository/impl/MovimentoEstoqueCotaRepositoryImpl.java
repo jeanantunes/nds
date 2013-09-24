@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -13,15 +14,21 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.jdbc.Work;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.AbastecimentoDTO;
@@ -3067,5 +3074,47 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			
 			this.merge(mec);
 		}
+	}
+
+	@Override
+	public void bulkInsert(final List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota) {
+
+		if (movimentosEstoqueCota == null || movimentosEstoqueCota.isEmpty()) {
+			return;
+		}
+
+		Session session = this.getSession();
+
+		session.doWork(new Work() {
+			@Override
+			public void execute(Connection conn) throws SQLException {
+				
+				NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+
+				//.append("(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ");
+				StringBuilder sqlQry = new StringBuilder()
+					.append("insert ") 
+					.append("into MOVIMENTO_ESTOQUE_COTA ")
+					.append("(APROVADO_AUTOMATICAMENTE, APROVADOR_ID, DATA_APROVACAO, MOTIVO, STATUS, DATA, DATA_CRIACAO, ")
+					.append("DATA_INTEGRACAO, STATUS_INTEGRACAO, TIPO_MOVIMENTO_ID, USUARIO_ID, PRODUTO_EDICAO_ID, ")
+					.append("QTDE, COTA_ID, DATA_LANCAMENTO_ORIGINAL, ESTOQUE_PROD_COTA_ID, ESTOQUE_PROD_COTA_JURAMENTADO_ID, ")
+					.append("ESTUDO_COTA_ID, NOTA_ENVIO_ITEM_NOTA_ENVIO_ID, NOTA_ENVIO_ITEM_SEQUENCIA, LANCAMENTO_ID, ")
+					.append("MOVIMENTO_ESTOQUE_COTA_FURO_ID, MOVIMENTO_FINANCEIRO_COTA_ID, STATUS_ESTOQUE_FINANCEIRO, ")
+					.append("PRECO_COM_DESCONTO, PRECO_VENDA, VALOR_DESCONTO, ID) ") 
+					.append("values ")
+					.append("(:aprovadoAutomaticamente, :usuarioAprovadorId, :dataAprovacao, :motivo, :status, :data, :dataCriacao, ")
+					.append(":dataIntegracao, :statusIntegracao, :tipoMovimentoId, :usuarioId, :idProdEd, ")
+					.append(":qtde, :idCota, :dataLancamentoOriginal, :estoqueProdutoEdicaoCotaId, :estoqueProdutoCotaJuramentadoId, ")
+					.append(":estudoCotaId, :notaEnvioItemNotaEnvioId, :notaEnvioItemSequencia, :lancamentoId, ")
+					.append(":movimentoEstoqueCotaFuroId, :movimentoFinanceiroCotaId, :statusEstoqueFinanceiro, ")
+					.append(":precoComDesconto, :precoVenda, :valorDesconto, -1) ");
+
+				SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(movimentosEstoqueCota.toArray());
+
+				namedParameterJdbcTemplate.batchUpdate(sqlQry.toString(), params);
+
+			}
+		});
+
 	}
 }

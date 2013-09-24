@@ -266,8 +266,7 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 			
 			String status = (String) session.getAttribute(STATUS_EXPEDICAO);
 			
-			
-			result.use(Results.json()).withoutRoot().from(status==null?"Processando Expedições..." : status).recursive().serialize();
+			result.use(Results.json()).withoutRoot().from(status == null ? "Processando Expedições..." : status).recursive().serialize();
 		}
 		
 	

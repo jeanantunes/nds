@@ -821,13 +821,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		if (produtoEdicao == null) {
 			
 			validacaoMap.put("edicaoInexistente", "Por favor, selecione uma Edição existente!");
-			//throw new ValidacaoException(TipoMensagem.ERROR, "Por favor, selecione uma Edição existente!");
 		}
 
 		if(produtoEdicao.getEstoqueProduto() != null) {
 			
 			validacaoMap.put("edicaoPossuiEstoque", "Esta Edição não pode ser excluida por já ter estoque!");
-			//throw new ValidacaoException(TipoMensagem.ERROR, "Esta Edição não pode ser excluida por já ter estoque!");
 		}
 		
 		Set<Lancamento> lancamentos = produtoEdicao.getLancamentos();
@@ -836,14 +834,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			
 			if(lancamento.getEstudo() != null) {
 				validacaoMap.put("edicaoPossuiEstudo", "Esta Edição já possui estudo!");
-				//throw new ValidacaoException(TipoMensagem.WARNING, "Esta Edição já possui estudo!");
 			}
 			
 			if (!(lancamento.getStatus().equals(StatusLancamento.PLANEJADO)
 					|| lancamento.getStatus().equals(StatusLancamento.CONFIRMADO))) {
 				
 				validacaoMap.put("edicaoEmBalanceamentoBalanceada", "Esta Edição não pode ser excluida por ter lancamentos em balanceamento ou já balanceados!");
-				//throw new ValidacaoException(TipoMensagem.ERROR, "Esta Edição não pode ser excluida por ter lancamentos em balanceamento ou já balanceados!");
 			}
 		}
 		

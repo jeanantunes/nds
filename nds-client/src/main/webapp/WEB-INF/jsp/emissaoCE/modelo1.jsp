@@ -174,7 +174,11 @@ function imprimir(){
               <td width="43" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; "><font size="2"><strong>${produto.edicao}</strong></font></td>
               <td width="30" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.tipoRecolhimento}</td>
               <td width="80" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.dataLancamento}</td>
-              <td width="80" align="right" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.precoComDesconto}</td>
+              <td width="80" align="right" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">
+              	
+              	<fmt:formatNumber value="${produto.precoVenda.subtract(produto.precoVenda.multiply(produto.vlrDesconto).divide(100))}" maxFractionDigits="4" minFractionDigits="4" />
+              	
+              </td>
               <td width="37" align="center" style="border-bottom:1px solid #000;padding-left:5px; "><font size="2"><strong>${produto.reparte}</strong></font></td>
               
               <td width="50" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">
@@ -327,7 +331,11 @@ function imprimir(){
 	        <tr class="class_linha_1">
 	          <td style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;">${produto.codigoProduto}</td>
 	          <td style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;"><font size="2"><strong>${produto.edicao}</strong></font></td>
-	          <td align="right" style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;">${produto.precoComDesconto}</td>
+	          <td align="right" style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;">
+	          
+	          	<fmt:formatNumber value="${produto.precoVenda.subtract(produto.precoVenda.multiply(produto.vlrDesconto).divide(100))}" maxFractionDigits="4" minFractionDigits="4" />
+	          
+	          </td>
 	          <td colspan="2" align="center" style="border-left:1px solid #000;padding-left:5px; border-bottom:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;">&nbsp;</td>
 	        </tr>
                
