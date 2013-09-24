@@ -86,6 +86,8 @@ public class FechamentoEncalheBoxRepositoryImpl extends AbstractRepositoryModel<
 		return namedParameterJdbcTemplate.query(sql.toString(), parameters, cotaRowMapper);
 	}
 	
+
+	
 	public boolean verificarExistenciaFechamentoEncalheDetalhado(Date dataEncalhe) {
 		
 		StringBuffer sql = new StringBuffer();
