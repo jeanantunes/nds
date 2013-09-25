@@ -547,12 +547,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append("		OR (CHAMADA_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal AND CONTROLE_CONFERENCIA_ENCALHE_COTA.DATA_OPERACAO IS NULL) ");
 		sql.append(" ) ");
 		
-		//sql.append(" where (CHAMADA_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal) ");
-		
 		sql.append(" AND CHAMADA_ENCALHE_COTA.POSTERGADO = :isPostergado ");
 		sql.append(" AND MEC_REPARTE.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
-		
-		//sql.append("  AND lanc.STATUS in ('BALANCEADO_RECOLHIMENTO','RECOLHIDO') ");
 		
 		if(filtro.getIdCota()!=null) {
 			sql.append(" and CHAMADA_ENCALHE_COTA.COTA_ID = :idCota  ");
