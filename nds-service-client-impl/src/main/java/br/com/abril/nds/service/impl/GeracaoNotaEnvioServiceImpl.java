@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.ConsultaNotaEnvioDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaEnvioDTO;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Endereco;
@@ -30,6 +31,7 @@ import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
@@ -43,6 +45,7 @@ import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
@@ -57,6 +60,10 @@ import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.GeracaoNotaEnvioService;
+import br.com.abril.nds.service.GerarCobrancaService;
+import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
+import br.com.abril.nds.service.UsuarioService;
+import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.util.Intervalo;
 
 @Service
@@ -99,7 +106,16 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 	
 	@Autowired
+	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
+
+	@Autowired
+	private GerarCobrancaService gerarCobrancaService;
+	
+	@Autowired
 	private CotaService cotaService;
+	
+	@Autowired
+	private UsuarioService usuarioService;
 	
 	// Trava para evitar duplicidade ao gerar notas de envio por mais de um usuario simultaneamente
 	// O HashMap suporta os mais detalhes e pode ser usado futuramente para restricoes mais finas
@@ -630,6 +646,50 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			}
 		}
 	}
+	
+	/**
+	 * Gera Cobrança para a Cota
+	 * Considera Movimentos Financeiros da Cota ainda não Consolidados
+	 * @param cota
+	 * @param usuario
+	 * @throws Exception
+	 */
+	private void gerarCobrancaCota(Cota cota,
+			                       Usuario usuario,
+			                       Date dataEmissao){
+		
+		//GERA MOVIMENTOS FINANCEIROS PARA A COTA NA EMISSAO DA NOTA DE ENVIO
+		
+		gerarCobrancaService.cancelarDividaCobranca(null, cota.getId(), dataEmissao);
+		
+		this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(cota, 
+                														 dataEmissao, 
+                														 usuario);
+		
+		//GERA COBRANÇA PARA A COTA NA EMISSAO DA NOTA DE ENVIO
+		
+        Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
+		
+        try {
+			
+			this.gerarCobrancaService.gerarCobranca(cota.getId(), 
+												    usuario.getId(), 
+												    nossoNumeroEnvioEmail);
+			
+		} catch (GerarCobrancaValidacaoException e) {
+
+			throw new ValidacaoException(TipoMensagem.ERROR,"Erro ao gerar Cobranca para a [Cota: "+ cota.getNumeroCota() +"]: "+e.getMessage());
+		}
+        
+		try {
+			
+			this.gerarCobrancaService.enviarDocumentosCobrancaEmail(cota, nossoNumeroEnvioEmail);
+			
+		} catch (AutenticacaoEmailException e) {
+
+			e.printStackTrace();
+		}
+	}
 
 	/**
 	 * Gera Nota de envio da Cota
@@ -674,9 +734,11 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		if(listaItemNotaEnvio != null && listaItemNotaEnvio.size() > 0) {
 
 			NotaEnvio notaEnvio = criarNotaEnvio(destinatarioAtualizado,
-								                   chaveAcesso,
-								                   codigoNaturezaOperacao, descricaoNaturezaOperacao, dataEmissao,
-								                   pessoaEmitente);
+								                 chaveAcesso,
+								                 codigoNaturezaOperacao, 
+								                 descricaoNaturezaOperacao, 
+								                 dataEmissao,
+								                 pessoaEmitente);
 	
 			notaEnvioRepository.adicionar(notaEnvio);
 			
@@ -688,18 +750,28 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			
 			notasEnvio.add(notaEnvio);
 		}
+
+        TipoCota tipoCota = cota!=null?cota.getTipoCota():null;	
+	
+        //GERA MOVIMENTOS FINANCEIROS E COBRANÇA PARA COTA A VISTA
+		if ((tipoCota==null) || tipoCota.equals(TipoCota.A_VISTA)){
+
+			Usuario usuario = this.usuarioService.getUsuarioLogado();
+			
+		    this.gerarCobrancaCota(cota, usuario, dataEmissao);
+		}   
 	}
 	
 	/*
 	 * Efetua o processamento das notas de envio já geradas
 	 */
 	private List<ItemNotaEnvio> processarNotasDeEnvioGeradas(Cota cota, 
-												            Long idRota, 
-												            List<NotaEnvio> notasEnvio, 
-												            Intervalo<Date> periodo,
-												            List<Long> listaIdFornecedores, 
-												            List<EstudoCota> listaEstudosCota,
-												            IdentificacaoDestinatario destinatarioAtualizado){
+												             Long idRota, 
+												             List<NotaEnvio> notasEnvio, 
+												             Intervalo<Date> periodo,
+												             List<Long> listaIdFornecedores, 
+												             List<EstudoCota> listaEstudosCota,
+												             IdentificacaoDestinatario destinatarioAtualizado){
 		
 		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = 
 				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaSemEstudoPor(cota.getId(), periodo, listaIdFornecedores, 
@@ -1181,5 +1253,4 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			throw new ValidacaoException(TipoMensagem.WARNING, cotasSemRoteirizacao);
 		}
 	}
-
 }
