@@ -30,8 +30,6 @@ import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
-import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
-import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.financeiro.Cobranca;
@@ -45,7 +43,6 @@ import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
-import br.com.abril.nds.model.financeiro.HistoricoMovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
@@ -62,16 +59,13 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.DividaRepository;
 import br.com.abril.nds.repository.HistoricoAcumuloDividaRepository;
-import br.com.abril.nds.repository.HistoricoMovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.ItemChamadaEncalheFornecedorRepository;
-import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.NegociacaoDividaRepository;
 import br.com.abril.nds.repository.ParcelaNegociacaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CalendarioService;
-import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.FormaCobrancaService;
@@ -82,7 +76,6 @@ import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
-import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -92,12 +85,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 
 	@Autowired
 	private MovimentoFinanceiroCotaRepository movimentoFinanceiroCotaRepository;
-	
-	@Autowired
-	private HistoricoMovimentoFinanceiroCotaRepository historicoMovimentoFinanceiroCotaRepository;
-	
-	@Autowired
-	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 	
 	@Autowired
 	private ConsolidadoFinanceiroRepository consolidadoFinanceiroRepository;
@@ -125,9 +112,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Autowired
 	private EmailService emailService;
-	
-	@Autowired
-	private CobrancaService cobrancaService;
 	
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
@@ -209,7 +193,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		Integer numeroDiasNovaCobranca = this.distribuidorRepository.obterNumeroDiasNovaCobranca(); 
 		
 		//cancela cobrança gerada para essa data de operação para efetuar recalculo
-		this.cancelarDividaCobranca(null, idCota);
+		this.cancelarDividaCobranca(null, idCota, dataOperacao);
 		
 		// buscar movimentos financeiros da cota, se informada, caso contrario de todas as cotas
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
@@ -1024,83 +1008,20 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	@Override
 	public void cancelarDividaCobranca(Set<Long> idsMovimentoFinanceiroCota) {
 		
+		Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
+		
 		if (idsMovimentoFinanceiroCota != null && !idsMovimentoFinanceiroCota.isEmpty()){
 			
 			for (Long idMovFinCota : idsMovimentoFinanceiroCota){
 				
-				this.cancelarDividaCobranca(idMovFinCota, null);
+				this.cancelarDividaCobranca(idMovFinCota, null, dataOperacao);
 			}
-		}
-	}
-	
-	/**
-	 * Remove movimentos financeiros do consolidado,
-	 * referentes à encalhe da cota, 
-	 * na reabertura da conferencia de encalhe
-	 * @param mfcs
-	 */
-	private void removerMovimentosFinanceirosReberturaConferencia(List<MovimentoFinanceiroCota> mfcs){
-		
-		List<Long> idsMfc = new ArrayList<Long>();
-		
-		List<Long> idsHmfc = new ArrayList<Long>();
-		
-		for (MovimentoFinanceiroCota mfc : mfcs){
-			
-			if (((TipoMovimentoFinanceiro) mfc.getTipoMovimento()).getGrupoMovimentoFinaceiro().equals(GrupoMovimentoFinaceiro.ENVIO_ENCALHE)){
-			
-				
-				List<MovimentoEstoqueCota> mecs = mfc.getMovimentos();
-				
-				if (mecs!=null && !mecs.isEmpty()){
-					
-					for (MovimentoEstoqueCota mec : mecs){
-						
-						mec.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
-						
-						mec.setMovimentoFinanceiroCota(null);
-						
-						mec.setMotivo( "Reabertura Conferencia Encalhe "+DateUtil.formatarDataPTBR((this.distribuidorService.obterDataOperacaoDistribuidor())));
-					
-					    this.movimentoEstoqueCotaRepository.alterar(mec);
-					}
-				}
-				
-				
-				List<HistoricoMovimentoFinanceiroCota> hmfcs = mfc.getHistoricos();
-
-                if (hmfcs != null && !hmfcs.isEmpty()){
-					
-					for (HistoricoMovimentoFinanceiroCota hmfc : hmfcs){
-						
-						idsHmfc.add(hmfc.getId());
-					}
-				}
-
-				mfc.setHistoricos(null);
-				
-				this.movimentoFinanceiroCotaRepository.alterar(mfc);
-				
-				
-				for (Long idHmfc : idsHmfc){
-					
-					this.historicoMovimentoFinanceiroCotaRepository.removerPorId(idHmfc);
-				}
-
-				
-			    idsMfc.add(mfc.getId());
-			}
-		}
-		
-		for (Long idMfc : idsMfc){
-		    
-			this.movimentoFinanceiroCotaRepository.removerPorId(idMfc);
 		}
 	}
 	
 	@Transactional
 	@Override
-	public void cancelarDividaCobranca(Long idMovimentoFinanceiroCota, Long idCota) {
+	public void cancelarDividaCobranca(Long idMovimentoFinanceiroCota, Long idCota, Date dataOperacao) {
 		
 		List<ConsolidadoFinanceiroCota> consolidados = null;
 		
@@ -1111,8 +1032,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			consolidados = this.consolidadoFinanceiroRepository.obterConsolidadosDataOperacao(idCota);
 		}
-		
-		Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
 		
 		if (consolidados != null) {
 			
@@ -1151,7 +1070,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				
                 if (mfcs!=null && !mfcs.isEmpty()){
 					
-			    	this.removerMovimentosFinanceirosReberturaConferencia(mfcs);
+			    	this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCota(mfcs);
 				}
 				
 			    this.consolidadoFinanceiroRepository.remover(consolidado);
@@ -1206,15 +1125,47 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	@Transactional
 	public void enviarDocumentosCobrancaEmail(String nossoNumero, String email) throws AutenticacaoEmailException{
 			
-		byte[]anexo = this.documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
+		byte[] anexo = this.documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
 		
-		this.emailService.enviar(
-				"Cobrança", 
-				"Segue documento de cobrança em anexo.", 
-				new String[]{email}, 
-				new AnexoEmail("Cobranca",anexo,TipoAnexo.PDF));
+		this.emailService.enviar("Cobrança", 
+								 "Segue documento de cobrança em anexo.", 
+								 new String[]{email}, 
+								 new AnexoEmail("Cobranca",anexo,TipoAnexo.PDF));
 		
 		this.cobrancaRepository.incrementarVia(nossoNumero);
+	}
+	
+	/**
+	 * Envia Cobranças para email da Cota
+	 * @param cota
+	 * @param nossoNumeroEnvioEmail
+	 * @throws AutenticacaoEmailException
+	 */
+	@Override
+	@Transactional
+	public void enviarDocumentosCobrancaEmail(Cota cota, Map<String, Boolean> nossoNumeroEnvioEmail) throws AutenticacaoEmailException{
+		
+        String email = cota.getPessoa().getEmail();
+		
+		if (email == null || email.trim().isEmpty()){
+
+			throw new ValidacaoException(TipoMensagem.ERROR,"A [cota: "+ cota.getNumeroCota() +"] não possui email cadastrado");
+		}
+		
+        for (String nossoNumero : nossoNumeroEnvioEmail.keySet()){
+			
+			if (nossoNumeroEnvioEmail.get(nossoNumero)){
+
+				try {
+					
+					this.enviarDocumentosCobrancaEmail(nossoNumero, email);
+					
+				} catch (AutenticacaoEmailException e) {
+					
+					throw new ValidacaoException(TipoMensagem.ERROR,"Erro ao Enviar Email de Cobrança para a [Cota:"+ cota.getNumeroCota() +"]: "+e.getMessage());
+				}
+			}
+		}	
 	}
 	
 	private FormaCobranca cloneFormaCobranca(FormaCobranca formaCobranca) {

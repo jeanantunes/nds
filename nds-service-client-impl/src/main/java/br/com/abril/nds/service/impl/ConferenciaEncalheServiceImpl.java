@@ -97,9 +97,7 @@ import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ConferenciaEncalheRepository;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.ControleConferenciaEncalheCotaRepository;
-import br.com.abril.nds.repository.ControleConferenciaEncalheRepository;
 import br.com.abril.nds.repository.CotaRepository;
-import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
@@ -119,12 +117,10 @@ import br.com.abril.nds.repository.RecebimentoFisicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
-import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ControleNumeracaoSlipService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
-import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
@@ -148,12 +144,6 @@ import br.com.abril.nds.util.StringUtil;
 
 @Service
 public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService {
-	
-	@Autowired
-	private FormaCobrancaService formaCobrancaService;
-	
-	@Autowired
-	private CalendarioService calendarioService;
 	
 	@Autowired
 	private BoxRepository boxRepository;
@@ -225,9 +215,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	private DocumentoCobrancaService documentoCobrancaService;
 	
 	@Autowired
-	private ControleConferenciaEncalheRepository controleConferenciaEncalheRepository;
-	
-	@Autowired
 	private ParametroEmissaoNotaFiscalRepository parametroEmissaoNotaFiscalRepository;
 
 	@Autowired
@@ -265,9 +252,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private ConsolidadoFinanceiroRepository consolidadoFinanceiroRepository;
-	
-	@Autowired
-	private DistribuidorRepository distribuidorRepository;
 	
 	@Transactional
 	public boolean isCotaEmiteNfe(Integer numeroCota) {
@@ -1538,19 +1522,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	private Map<String, Boolean> gerarCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota) throws GerarCobrancaValidacaoException {
 
-		this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(
-				controleConferenciaEncalheCota.getCota(),
-				controleConferenciaEncalheCota.getDataOperacao(),
-				controleConferenciaEncalheCota.getUsuario(),
-				controleConferenciaEncalheCota.getId(), 
-				FormaComercializacao.CONSIGNADO);
+		this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(controleConferenciaEncalheCota.getCota(),
+																		 controleConferenciaEncalheCota.getDataOperacao(),
+																		 controleConferenciaEncalheCota.getUsuario(),
+																		 controleConferenciaEncalheCota.getId(), 
+																		 FormaComercializacao.CONTA_FIRME);
 
 		Map<String, Boolean> nossoNumeroCollection = new HashMap<String, Boolean>();
 		
-		gerarCobrancaService.gerarCobranca(
-				controleConferenciaEncalheCota.getCota().getId(), 
-				controleConferenciaEncalheCota.getUsuario().getId(), 
-				nossoNumeroCollection);
+		gerarCobrancaService.gerarCobranca(controleConferenciaEncalheCota.getCota().getId(), 
+										   controleConferenciaEncalheCota.getUsuario().getId(), 
+										   nossoNumeroCollection);
 		
 		return nossoNumeroCollection;
 	}
@@ -1568,7 +1550,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if(movimentosFinanceiroCota!=null && !movimentosFinanceiroCota.isEmpty()) {
 			
-			gerarCobrancaService.cancelarDividaCobranca(null, idCota);
+			Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+			
+			gerarCobrancaService.cancelarDividaCobranca(null, idCota, dataOperacao);
 		}
 	}
 	
@@ -2141,7 +2125,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		if(StatusOperacao.CONCLUIDO.equals(controleConferenciaEncalheCota.getStatus())){
 			
-			this.gerarCobrancaService.cancelarDividaCobranca(null, controleConferenciaEncalheCota.getCota().getId());
+			Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+			
+			this.gerarCobrancaService.cancelarDividaCobranca(null, controleConferenciaEncalheCota.getCota().getId(), dataOperacao);
 			
 		}
 	}
