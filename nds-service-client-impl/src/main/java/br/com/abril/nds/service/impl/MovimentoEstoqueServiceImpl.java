@@ -519,22 +519,22 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 				return estoqueProduto.getId();
 			}
 			
-			BigInteger novaQuantidade;
+			BigInteger novaQuantidade = BigInteger.ZERO;
 			
 			BigInteger novaQuantidadeSomatorioEstoque = BigInteger.ZERO;
 
 			boolean isOperacaoEntrada = 
 				OperacaoEstoque.ENTRADA.equals(tipoMovimentoEstoque.getOperacaoEstoque());
-
+			
 			switch (tipoEstoque) {
 
 				case LANCAMENTO:
-	
+					
 					 novaQuantidade = isOperacaoEntrada ? estoqueProduto.getQtde().add(movimentoEstoque.getQtde()) :
-						 								  estoqueProduto.getQtde().subtract(movimentoEstoque.getQtde());
-					 
+						  								  estoqueProduto.getQtde().subtract(movimentoEstoque.getQtde());
+
 					 estoqueProduto.setQtde(novaQuantidade);
-	
+					
 					 break;
 	
 				case PRODUTOS_DANIFICADOS:
@@ -641,7 +641,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					    
 					    estoqueProduto.setQtdeDevolucaoEncalhe(novaQuantidade);
 					}
-					else{
+					// Se a origem para lançamento de PERDA for direcionada para Cota não deve movimentar estoque de lançamento
+					else if (movimentoEstoque.getOrigem() == null 
+							|| !movimentoEstoque.getOrigem().equals(Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_COTA)){
 						
 						if (estoqueProduto.getQtde()==null){
 								
@@ -674,7 +676,9 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 					    
 					    estoqueProduto.setQtdeDevolucaoEncalhe(novaQuantidade);
 					}
-					else{
+					// Se a origem para lançamento de GANHO for direcionada para Cota não deve movimentar estoque de lançamento
+					else if (movimentoEstoque.getOrigem() == null 
+							|| !movimentoEstoque.getOrigem().equals(Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_COTA)){
 						
                         if (estoqueProduto.getQtde()==null){
 							
