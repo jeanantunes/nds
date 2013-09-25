@@ -593,7 +593,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	public void realizarCobrancaCota(Date dataOperacao, Date dataOperacaoDistribuidor, 
 									 Usuario usuario,
 									 CotaAusenteEncalheDTO c, Cota cotaAusente, 
-									 ValidacaoVO validacaoVO, ValidacaoVO validacaoEmails) {
+									 ValidacaoVO validacaoVO, 
+									 ValidacaoVO validacaoEmails) {
 
 		Cota cota = this.cotaRepository.buscarCotaPorID(c.getIdCota());
 		
@@ -607,21 +608,21 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 		}
 		
-		movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(
-				cota, 
-				dataOperacaoDistribuidor,
-				usuario,
-				null,
-				FormaComercializacao.CONSIGNADO);
-		
+		movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(cota, 
+																	dataOperacaoDistribuidor,
+																	usuario,
+																	null,
+																	FormaComercializacao.CONTA_FIRME);
 		
 		Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
 		
 		GerarCobrancaValidacaoException ex = null;
 		
 		try {
+			
 			this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), nossoNumeroEnvioEmail);
 		} catch (GerarCobrancaValidacaoException e) {
+			
 			ex = e;
 			
 			if (validacaoVO.getListaMensagens() == null){
@@ -641,6 +642,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				if (email == null || email.trim().isEmpty()){
 					
 					if (validacaoVO.getListaMensagens() == null){
+						
 						validacaoVO.setListaMensagens(new ArrayList<String>());
 					}
 					
@@ -649,10 +651,12 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				} else {
 				
 					try {
+						
 						this.gerarCobrancaService.enviarDocumentosCobrancaEmail(nossoNumero, email);
 					} catch (AutenticacaoEmailException e) {
 						
 						if (validacaoVO.getListaMensagens() == null){
+							
 							validacaoVO.setListaMensagens(new ArrayList<String>());
 						}
 						
