@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
@@ -18,7 +19,7 @@ public interface GerarCobrancaService {
 	
 	void cancelarDividaCobranca(Set<Long> idMovimentoFinanceiroCota);
 
-	void cancelarDividaCobranca(Long idMovimentoFinanceiroCota, Long idCota);
+	void cancelarDividaCobranca(Long idMovimentoFinanceiroCota, Long idCota, Date dataOperacao);
 
 	boolean verificarCobrancasGeradas(List<Long> idsCota);
 	
@@ -30,4 +31,14 @@ public interface GerarCobrancaService {
 
 	void enviarDocumentosCobrancaEmail(String nossoNumero, String email)
 			throws AutenticacaoEmailException;
+
+	/**
+	 * Envia Cobranças para email da Cota
+	 * @param cota
+	 * @param nossoNumeroEnvioEmail
+	 * @throws AutenticacaoEmailException
+	 */
+	void enviarDocumentosCobrancaEmail(Cota cota,
+									   Map<String, 
+									   Boolean> nossoNumeroEnvioEmail) throws AutenticacaoEmailException;
 }

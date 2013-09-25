@@ -2,10 +2,12 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,15 +15,21 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.Session;
+import org.hibernate.jdbc.Work;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.namedparam.SqlParameterSource;
+import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.AbastecimentoDTO;
@@ -520,6 +528,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append("                 on (CONFERENCIA_ENCALHE.CHAMADA_ENCALHE_COTA_ID = CHAMADA_ENCALHE_COTA.id ");
 		sql.append("                 AND CONFERENCIA_ENCALHE.PRODUTO_EDICAO_ID = CHAMADA_ENCALHE.PRODUTO_EDICAO_ID ");
 		sql.append(" ) ");
+		
+		sql.append(" inner join CHAMADA_ENCALHE_LANCAMENTO celanc on (celanc.CHAMADA_ENCALHE_ID=CHAMADA_ENCALHE.ID) ");
+		
+		sql.append(" inner join LANCAMENTO lanc on (celanc.LANCAMENTO_ID=lanc.ID) ");
+		
 		sql.append(" left join CONTROLE_CONFERENCIA_ENCALHE_COTA  ");
 		sql.append("                 on (CONFERENCIA_ENCALHE.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID = CONTROLE_CONFERENCIA_ENCALHE_COTA.ID ");
 		sql.append("                 AND CONTROLE_CONFERENCIA_ENCALHE_COTA.COTA_ID = CHAMADA_ENCALHE_COTA.COTA_ID ");
@@ -534,8 +547,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append("		OR (CHAMADA_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal AND CONTROLE_CONFERENCIA_ENCALHE_COTA.DATA_OPERACAO IS NULL) ");
 		sql.append(" ) ");
 		
-		//sql.append(" where (CHAMADA_ENCALHE.DATA_RECOLHIMENTO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal) ");
-		
 		sql.append(" AND CHAMADA_ENCALHE_COTA.POSTERGADO = :isPostergado ");
 		sql.append(" AND MEC_REPARTE.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
 		
@@ -549,8 +560,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		sql.append("	group by	");
 	
-		sql.append("	idProdutoEdicao                     		");
+		sql.append("	idProdutoEdicao, CHAMADA_ENCALHE.DATA_RECOLHIMENTO      ");
 
+		
 		return sql;
 	}
 	
@@ -635,15 +647,19 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 						orderByColumn = " valorComDesconto ";
 						break;
 					default:
+						orderByColumn = " dataDoRecolhimentoDistribuidor ";
 						break;
 				}
 			
-			sql.append(orderByColumn);
+			sql.append(orderByColumn + ", nomeProduto ");
 			
 			if (paginacao.getOrdenacao() != null) {
 				sql.append(paginacao.getOrdenacao().toString());
 			}
+		} else {
+			sql.append(" order by dataDoRecolhimentoDistribuidor ");
 		}
+		
 
 		Map<String, Object> parameters = new HashMap<String, Object>();
 		NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
@@ -661,7 +677,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		parameters.put("dataRecolhimentoFinal", filtro.getDataRecolhimentoFinal());
 		parameters.put("isPostergado", false);
 		parameters.put("tipoVendaProduto",TipoVendaEncalhe.ENCALHE.name());
-
+		
 		if(filtro.getPaginacao()!=null) {
 			
 			if(filtro.getPaginacao().getPosicaoInicial()!=null && filtro.getPaginacao().getQtdResultadosPorPagina()!=null) {
@@ -711,20 +727,26 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		subSqlVendaProduto.append(" and vp.TIPO_VENDA_ENCALHE = :tipoVendaProduto");
 		
         StringBuilder subSqlReparte = new StringBuilder();
-		
+		//TODO TRATAR filtro por data
         subSqlReparte.append(" select sum( COALESCE(CHAMADA_ENCALHE_COTA_.QTDE_PREVISTA,0) ) ");
-        subSqlReparte.append(" from CHAMADA_ENCALHE_COTA CHAMADA_ENCALHE_COTA_, CHAMADA_ENCALHE CHAMADA_ENCALHE_");
-        subSqlReparte.append(" where CHAMADA_ENCALHE_COTA_.CHAMADA_ENCALHE_ID = CHAMADA_ENCALHE_.ID ");
-        subSqlReparte.append(" and CHAMADA_ENCALHE_.DATA_RECOLHIMENTO = CHAMADA_ENCALHE.DATA_RECOLHIMENTO ");
+        subSqlReparte.append(" from CHAMADA_ENCALHE_COTA CHAMADA_ENCALHE_COTA_ ");
+        subSqlReparte.append(" join CHAMADA_ENCALHE CHAMADA_ENCALHE_ on (CHAMADA_ENCALHE_COTA_.CHAMADA_ENCALHE_ID = CHAMADA_ENCALHE_.ID) ");
+     //   subSqlReparte.append(" join CONFERENCIA_ENCALHE confEnc on (CHAMADA_ENCALHE_COTA_.ID  = confEnc.CHAMADA_ENCALHE_COTA_ID) ");
+      // subSqlReparte.append(" join CONTROLE_CONFERENCIA_ENCALHE_COTA ctrlConfEncCot on confEnc.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID=ctrlConfEncCot.ID ");
+        subSqlReparte.append(" where CHAMADA_ENCALHE_.DATA_RECOLHIMENTO = CHAMADA_ENCALHE.DATA_RECOLHIMENTO ");
         subSqlReparte.append(" and CHAMADA_ENCALHE_COTA_.COTA_ID = CHAMADA_ENCALHE_COTA.COTA_ID ");
         subSqlReparte.append(" and CHAMADA_ENCALHE_.PRODUTO_EDICAO_ID = PRODUTO_EDICAO.ID ");
+        subSqlReparte.append(" and CHAMADA_ENCALHE.DATA_RECOLHIMENTO=CHAMADA_ENCALHE_.DATA_RECOLHIMENTO ");
+        //subSqlReparte.append(" and CONTROLE_CONFERENCIA_ENCALHE_COTA.DATA_OPERACAO=ctrlConfEncCot.DATA_OPERACAO ");
 
         StringBuilder subSqlEncalhe = new StringBuilder();
 		
         subSqlEncalhe.append(" select sum( COALESCE(CONFERENCIA_ENCALHE_1.QTDE,0) ) ");
-        subSqlEncalhe.append(" from CONFERENCIA_ENCALHE CONFERENCIA_ENCALHE_1, CHAMADA_ENCALHE_COTA CHAMADA_ENCALHE_COTA_1");
+        subSqlEncalhe.append(" from CONFERENCIA_ENCALHE CONFERENCIA_ENCALHE_1, CHAMADA_ENCALHE_COTA CHAMADA_ENCALHE_COTA_1, CHAMADA_ENCALHE CHAMADA_ENCALHE_1 ");
         subSqlEncalhe.append(" where CONFERENCIA_ENCALHE_1.CHAMADA_ENCALHE_COTA_ID = CHAMADA_ENCALHE_COTA_1.ID ");
         subSqlEncalhe.append(" and CHAMADA_ENCALHE_COTA_1.ID = CHAMADA_ENCALHE_COTA.ID");
+        subSqlEncalhe.append(" and CHAMADA_ENCALHE_COTA_1.CHAMADA_ENCALHE_ID=CHAMADA_ENCALHE_1.ID ");
+        subSqlEncalhe.append(" and CHAMADA_ENCALHE.DATA_RECOLHIMENTO=CHAMADA_ENCALHE_1.DATA_RECOLHIMENTO ");
 
 		StringBuilder subSqlValoresDesconto = new StringBuilder();
 		
@@ -765,7 +787,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		sql.append("	select	");
 
-		sql.append("	CHAMADA_ENCALHE.DATA_RECOLHIMENTO		as dataDoRecolhimentoDistribuidor, 	");
+		sql.append("	CHAMADA_ENCALHE.DATA_RECOLHIMENTO  	as dataDoRecolhimentoDistribuidor, 	");
 		sql.append("	PRODUTO.CODIGO 							as codigoProduto, 					");
 		sql.append("	PRODUTO.NOME 							as nomeProduto,   					");
 		sql.append("	PRODUTO_EDICAO.ID 						as idProdutoEdicao,  				");
@@ -3067,5 +3089,47 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			
 			this.merge(mec);
 		}
+	}
+
+	@Override
+	public void bulkInsert(final List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota) {
+
+		if (movimentosEstoqueCota == null || movimentosEstoqueCota.isEmpty()) {
+			return;
+		}
+
+		Session session = this.getSession();
+
+		session.doWork(new Work() {
+			@Override
+			public void execute(Connection conn) throws SQLException {
+				
+				NamedParameterJdbcTemplate namedParameterJdbcTemplate = new NamedParameterJdbcTemplate(dataSource);
+
+				//.append("(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ");
+				StringBuilder sqlQry = new StringBuilder()
+					.append("insert ") 
+					.append("into MOVIMENTO_ESTOQUE_COTA ")
+					.append("(APROVADO_AUTOMATICAMENTE, APROVADOR_ID, DATA_APROVACAO, MOTIVO, STATUS, DATA, DATA_CRIACAO, ")
+					.append("DATA_INTEGRACAO, STATUS_INTEGRACAO, TIPO_MOVIMENTO_ID, USUARIO_ID, PRODUTO_EDICAO_ID, ")
+					.append("QTDE, COTA_ID, DATA_LANCAMENTO_ORIGINAL, ESTOQUE_PROD_COTA_ID, ESTOQUE_PROD_COTA_JURAMENTADO_ID, ")
+					.append("ESTUDO_COTA_ID, NOTA_ENVIO_ITEM_NOTA_ENVIO_ID, NOTA_ENVIO_ITEM_SEQUENCIA, LANCAMENTO_ID, ")
+					.append("MOVIMENTO_ESTOQUE_COTA_FURO_ID, MOVIMENTO_FINANCEIRO_COTA_ID, STATUS_ESTOQUE_FINANCEIRO, ")
+					.append("PRECO_COM_DESCONTO, PRECO_VENDA, VALOR_DESCONTO, ID) ") 
+					.append("values ")
+					.append("(:aprovadoAutomaticamente, :usuarioAprovadorId, :dataAprovacao, :motivo, :status, :data, :dataCriacao, ")
+					.append(":dataIntegracao, :statusIntegracao, :tipoMovimentoId, :usuarioId, :idProdEd, ")
+					.append(":qtde, :idCota, :dataLancamentoOriginal, :estoqueProdutoEdicaoCotaId, :estoqueProdutoCotaJuramentadoId, ")
+					.append(":estudoCotaId, :notaEnvioItemNotaEnvioId, :notaEnvioItemSequencia, :lancamentoId, ")
+					.append(":movimentoEstoqueCotaFuroId, :movimentoFinanceiroCotaId, :statusEstoqueFinanceiro, ")
+					.append(":precoComDesconto, :precoVenda, :valorDesconto, -1) ");
+
+				SqlParameterSource[] params = SqlParameterSourceUtils.createBatch(movimentosEstoqueCota.toArray());
+
+				namedParameterJdbcTemplate.batchUpdate(sqlQry.toString(), params);
+
+			}
+		});
+
 	}
 }

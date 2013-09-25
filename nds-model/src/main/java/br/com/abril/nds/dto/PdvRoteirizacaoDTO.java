@@ -9,7 +9,7 @@ import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
 import br.com.abril.nds.util.Ordenavel;
 import br.com.abril.nds.util.Util;
 
-public class PdvRoteirizacaoDTO implements Serializable, Ordenavel {
+public class PdvRoteirizacaoDTO implements Serializable, Ordenavel, Comparable<PdvRoteirizacaoDTO> {
 
 	private static final long serialVersionUID = 1L;
 	
@@ -195,6 +195,12 @@ public class PdvRoteirizacaoDTO implements Serializable, Ordenavel {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
+	}
+
+	@Override
+	public int compareTo(PdvRoteirizacaoDTO other) {
+		
+		return this.ordem.compareTo(other.getOrdem());
 	}
 
 }

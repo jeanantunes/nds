@@ -394,7 +394,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 
 	private void gerarFromWhere(FiltroEmissaoCE filtro, StringBuilder hql, HashMap<String, Object> param) {
 
-		hql.append(" from ChamadaEncalheCota chamEncCota, Box box ")
+		hql.append(" from ChamadaEncalheCota chamEncCota ")
 		   .append(" join chamEncCota.chamadaEncalhe  chamadaEncalhe ")
 		   .append(" join chamEncCota.cota cota ")
 		   .append(" join cota.pessoa pessoa ")
@@ -608,8 +608,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			datasControleConferenciaEncalheCotaFinalizada!=null &&
 			!datasControleConferenciaEncalheCotaFinalizada.isEmpty()) {
 			
-			hql.append(" case when ( chamadaEncalhe.dataRecolhimento in :datasControleFechamentoEncalhe  ");
-			hql.append(" or chamadaEncalhe.dataRecolhimento in :datasControleConferenciaEncalheCotaFinalizada )  ");
+			hql.append(" case when ( chamadaEncalhe.dataRecolhimento in (:datasControleFechamentoEncalhe)  ");
+			hql.append(" or chamadaEncalhe.dataRecolhimento in (:datasControleConferenciaEncalheCotaFinalizada) )  ");
 			hql.append(" then true else false end as apresentaQuantidadeEncalhe,  ");
 			
 			return hql;
@@ -619,7 +619,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		if(	datasControleFechamentoEncalhe!=null &&
 			!datasControleFechamentoEncalhe.isEmpty()) {
 			
-			hql.append(" case when chamadaEncalhe.dataRecolhimento in :datasControleFechamentoEncalhe  ");
+			hql.append(" case when chamadaEncalhe.dataRecolhimento in (:datasControleFechamentoEncalhe)  ");
 			hql.append(" then true else false end as apresentaQuantidadeEncalhe,  ");
 			
 			return hql;
@@ -629,7 +629,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		if(	datasControleConferenciaEncalheCotaFinalizada!=null &&
 			!datasControleConferenciaEncalheCotaFinalizada.isEmpty()) {
 				
-				hql.append(" case when chamadaEncalhe.dataRecolhimento in :datasControleConferenciaEncalheCotaFinalizada ");
+				hql.append(" case when chamadaEncalhe.dataRecolhimento in (:datasControleConferenciaEncalheCotaFinalizada) ");
 				hql.append(" then true else false end as apresentaQuantidadeEncalhe,  ");
 				
 				return hql;

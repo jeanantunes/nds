@@ -139,7 +139,22 @@ public class DescontoCotaRepositoryImpl extends AbstractRepositoryModel<Desconto
 		}
 				
 		hql.append(" group by hdcpe.desconto, hdcpe.dataAlteracao ");
-		hql.append(" order by hdcpe.dataAlteracao desc ");
+		
+		if(filtro.getPaginacao()!=null){
+			
+			if (filtro.getPaginacao().getSortColumn() != null && 
+				!filtro.getPaginacao().getSortColumn().trim().isEmpty()) {
+				
+				hql.append(" ORDER BY ");
+				hql.append(filtro.getPaginacao().getSortColumn());		
+			
+				if ( filtro.getPaginacao().getOrdenacao() != null ) {
+					
+					hql.append(" ");
+					hql.append( filtro.getPaginacao().getOrdenacao().toString());
+				}
+			}
+		}
  
 		hql = ordenacaoDescontoCota(filtro,hql);
 		

@@ -8,7 +8,10 @@ import java.util.Set;
 import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -16,6 +19,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
+import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.financeiro.DescontoProximosLancamentos;
@@ -492,6 +496,34 @@ public class DescontoProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel
 		getSession().flush();
 		getSession().clear();
 		
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<DescontoDTO> obterDescontosProdutoEdicao(Long lancamentoId,
+			Long produtoEdicaoId) {
+
+		StringBuilder hql = new StringBuilder("")
+			.append(" select cota_id as cotaId, fornecedor_id as fornecedorId, produto_edicao_id as produtoEdicaoId, produto_id as produtoId, valor ")
+			.append(" from VIEW_DESCONTO_COTA_FORNECEDOR_PRODUTOS_EDICOES as vdcfpe ")
+			.append(" union ")
+			.append(" select null as cotaId, null as fornecedorId, PRODUTO_EDICAO_ID as produtoEdicaoId, PRODUTO_ID as produtoId, valor ")
+			.append(" from view_desconto_produtos_edicoes ")
+			.append(" union ")
+			.append(" select null as cotaId, f.id as fornecedorId, null as produtoEdicaoId, null as produtoId, valor ")
+			.append(" from FORNECEDOR f ")
+			.append(" inner join desconto d on d.id = f.desconto_id ");
+
+		SQLQuery query = getSession().createSQLQuery(hql.toString());
+		query.setResultTransformer(new AliasToBeanResultTransformer(DescontoDTO.class));
+		
+		query.addScalar("cotaId", StandardBasicTypes.LONG);
+		query.addScalar("produtoEdicaoId", StandardBasicTypes.LONG);
+		query.addScalar("produtoId", StandardBasicTypes.LONG);
+		query.addScalar("fornecedorId", StandardBasicTypes.LONG);
+		query.addScalar("valor", StandardBasicTypes.BIG_DECIMAL);
+
+		return query.list();
 	}
 
 }

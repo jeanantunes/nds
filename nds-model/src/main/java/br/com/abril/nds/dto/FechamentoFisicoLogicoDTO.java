@@ -29,6 +29,8 @@ public class FechamentoFisicoLogicoDTO {
 	
 	private String tipo;
 	
+	private boolean suplementar;
+	
 	private Date dataRecolhimento;
 	
 	private BigDecimal precoCapa;
@@ -317,6 +319,14 @@ public class FechamentoFisicoLogicoDTO {
 		} else if (!produtoEdicao.equals(other.produtoEdicao))
 			return false;
 		return true;
+	}
+
+	public boolean isSuplementar() {
+		return suplementar;
+	}
+
+	public void setSuplementar(boolean suplementar) {
+		this.suplementar = suplementar;
 	}
 	
 	

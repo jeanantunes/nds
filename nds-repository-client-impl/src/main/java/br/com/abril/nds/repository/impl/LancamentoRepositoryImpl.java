@@ -799,6 +799,7 @@ public class LancamentoRepositoryImpl extends
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setMaxResults(1);
 		
 		Lancamento lancamento = (Lancamento) query.uniqueResult();
 		
