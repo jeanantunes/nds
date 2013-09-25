@@ -399,7 +399,7 @@
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[SUB-TOTAL------------------------------------------------------------------------------------------------------------------]]></text>
+				<text><![CDATA[SUB-TOTAL----------------------------------------------------------------------------------------------------------------------]]></text>
 			</staticText>
 			<staticText>
 				<reportElement uuid="0ac03354-f461-4cc2-aeb7-d253f61b47aa" mode="Opaque" x="50" y="144" width="296" height="26" backcolor="#F0F0F0"/>
@@ -418,7 +418,7 @@
 				<textElement verticalAlignment="Middle">
 					<font isBold="true" isItalic="false"/>
 				</textElement>
-				<text><![CDATA[COMPOSIÇÃO COBRANÇA----------------------------------------------------------------------------------------------]]></text>
+				<text><![CDATA[COMPOSIÇÃO COBRANÇA-------------------------------------------------------------------------------------------------]]></text>
 			</staticText>
 			<textField pattern="###0.00" isBlankWhenNull="true">
 				<reportElement uuid="4191f347-ae1c-4d05-b8f2-02337d964aee" mode="Opaque" x="346" y="144" width="200" height="26" backcolor="#F0F0F0"/>
