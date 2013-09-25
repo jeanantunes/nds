@@ -549,7 +549,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		sql.append("	group by	");
 	
-		sql.append("	idProdutoEdicao                     		");
+		sql.append("	idProdutoEdicao, CONTROLE_CONFERENCIA_ENCALHE_COTA.DATA_OPERACAO      ");
 
 		return sql;
 	}
@@ -711,20 +711,25 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		subSqlVendaProduto.append(" and vp.TIPO_VENDA_ENCALHE = :tipoVendaProduto");
 		
         StringBuilder subSqlReparte = new StringBuilder();
-		
+		//TODO TRATAR filtro por data
         subSqlReparte.append(" select sum( COALESCE(CHAMADA_ENCALHE_COTA_.QTDE_PREVISTA,0) ) ");
-        subSqlReparte.append(" from CHAMADA_ENCALHE_COTA CHAMADA_ENCALHE_COTA_, CHAMADA_ENCALHE CHAMADA_ENCALHE_");
-        subSqlReparte.append(" where CHAMADA_ENCALHE_COTA_.CHAMADA_ENCALHE_ID = CHAMADA_ENCALHE_.ID ");
-        subSqlReparte.append(" and CHAMADA_ENCALHE_.DATA_RECOLHIMENTO = CHAMADA_ENCALHE.DATA_RECOLHIMENTO ");
+        subSqlReparte.append(" from CHAMADA_ENCALHE_COTA CHAMADA_ENCALHE_COTA_ ");
+        subSqlReparte.append(" join CHAMADA_ENCALHE CHAMADA_ENCALHE_ on (CHAMADA_ENCALHE_COTA_.CHAMADA_ENCALHE_ID = CHAMADA_ENCALHE_.ID) ");
+        subSqlReparte.append(" join CONFERENCIA_ENCALHE confEnc on (CHAMADA_ENCALHE_COTA_.ID  = confEnc.CHAMADA_ENCALHE_COTA_ID) ");
+        subSqlReparte.append(" join CONTROLE_CONFERENCIA_ENCALHE_COTA ctrlConfEncCot on confEnc.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID=ctrlConfEncCot.ID ");
+        subSqlReparte.append(" where CHAMADA_ENCALHE_.DATA_RECOLHIMENTO = CHAMADA_ENCALHE.DATA_RECOLHIMENTO ");
         subSqlReparte.append(" and CHAMADA_ENCALHE_COTA_.COTA_ID = CHAMADA_ENCALHE_COTA.COTA_ID ");
         subSqlReparte.append(" and CHAMADA_ENCALHE_.PRODUTO_EDICAO_ID = PRODUTO_EDICAO.ID ");
+        subSqlReparte.append(" and CONTROLE_CONFERENCIA_ENCALHE_COTA.DATA_OPERACAO=ctrlConfEncCot.DATA_OPERACAO ");
 
         StringBuilder subSqlEncalhe = new StringBuilder();
 		
         subSqlEncalhe.append(" select sum( COALESCE(CONFERENCIA_ENCALHE_1.QTDE,0) ) ");
-        subSqlEncalhe.append(" from CONFERENCIA_ENCALHE CONFERENCIA_ENCALHE_1, CHAMADA_ENCALHE_COTA CHAMADA_ENCALHE_COTA_1");
+        subSqlEncalhe.append(" from CONFERENCIA_ENCALHE CONFERENCIA_ENCALHE_1, CHAMADA_ENCALHE_COTA CHAMADA_ENCALHE_COTA_1, CONTROLE_CONFERENCIA_ENCALHE_COTA ctrlConfEncCot ");
         subSqlEncalhe.append(" where CONFERENCIA_ENCALHE_1.CHAMADA_ENCALHE_COTA_ID = CHAMADA_ENCALHE_COTA_1.ID ");
         subSqlEncalhe.append(" and CHAMADA_ENCALHE_COTA_1.ID = CHAMADA_ENCALHE_COTA.ID");
+        subSqlEncalhe.append(" and CONFERENCIA_ENCALHE_1.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID=ctrlConfEncCot.ID ");
+        subSqlEncalhe.append(" and CONTROLE_CONFERENCIA_ENCALHE_COTA.DATA_OPERACAO=ctrlConfEncCot.DATA_OPERACAO ");
 
 		StringBuilder subSqlValoresDesconto = new StringBuilder();
 		
