@@ -357,16 +357,18 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		conferencia.setTotal(new BigDecimal(conferencia.getExemplaresDevolucao()).multiply(conferencia.getPrecoCapaDesconto()));
 		conferencia.setFechado(fechado);
 		
-		  if ("P".equals(conferencia.getTipo())){
+		if (conferencia.isSuplementar()) {
 			  
-			  conferencia.setEstoque(TipoEstoque.LANCAMENTO.getDescricao());
-		  } else if (dataAtual.after(DateUtil.removerTimestamp(dataFimSemana)) ){
+			conferencia.setEstoque(TipoEstoque.SUPLEMENTAR.getDescricao());
 			  
-			  conferencia.setEstoque(TipoEstoque.SUPLEMENTAR.getDescricao());
-		  } else {
+		} else if ("P".equals(conferencia.getTipo())) {
 			  
-			  conferencia.setEstoque("Encalhe");
-		  }
+			conferencia.setEstoque(TipoEstoque.LANCAMENTO.getDescricao());
+  
+		} else {
+			  
+			conferencia.setEstoque("Encalhe");
+		}
 	}
 	
 	@Override

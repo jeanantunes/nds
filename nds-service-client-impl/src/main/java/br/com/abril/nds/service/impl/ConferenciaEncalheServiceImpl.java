@@ -88,6 +88,7 @@ import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.BoxRepository;
@@ -1709,21 +1710,30 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					usuario);
 		}
 			
-		if(movimentoEstoque!=null) {
+		if (movimentoEstoque != null) {
 		
 			atualizarMovimentoEstoque(movimentoEstoque, conferenciaEncalheDTO);
 			
 		} else {	
 		
-		movimentoEstoque = criarNovoRegistroMovimentoEstoque(
-				controleConferenciaEncalheCota, 
-				conferenciaEncalheDTO, 
-				numeroCota, 
-				dataRecolhimentoReferencia, 
-				dataCriacao, 
-				mapaTipoMovimentoEstoque, 
-				usuario);
-		
+			ChamadaEncalheCota chamadaEncalheCota = null;
+			
+			if (conferenciaEncalheDTO.getDataRecolhimento() != null) {
+				
+				chamadaEncalheCota = obterChamadaEncalheCotaParaConfEncalhe(
+					numeroCota, conferenciaEncalheDTO.getDataRecolhimento(), 
+						conferenciaEncalheDTO.getIdProdutoEdicao());
+			}
+			
+			movimentoEstoque = criarNovoRegistroMovimentoEstoque(
+					controleConferenciaEncalheCota, 
+					conferenciaEncalheDTO, 
+					numeroCota, 
+					dataRecolhimentoReferencia, 
+					dataCriacao, 
+					mapaTipoMovimentoEstoque, 
+					usuario,
+					chamadaEncalheCota);
 		}
 		
 		atualizarRegistroConferenciaEncalhe(
@@ -1756,6 +1766,15 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			Date dataRecolhimentoReferencia,
 			Usuario usuario){
 		
+		ChamadaEncalheCota chamadaEncalheCota = null;
+				
+		if (conferenciaEncalheDTO.getDataRecolhimento() != null) {
+			
+			chamadaEncalheCota = obterChamadaEncalheCotaParaConfEncalhe(
+				numeroCota, conferenciaEncalheDTO.getDataRecolhimento(), 
+					conferenciaEncalheDTO.getIdProdutoEdicao());
+		}
+		
 		MovimentoEstoqueCota movimentoEstoqueCota = null;
 		
 		MovimentoEstoque movimentoEstoque = null;
@@ -1776,7 +1795,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 					dataRecolhimentoReferencia, 
 					dataCriacao, 
 					mapaTipoMovimentoEstoque, 
-					usuario);
+					usuario,
+					chamadaEncalheCota);
 		
 		criarNovoRegistroConferenciaEncalhe(
 				controleConferenciaEncalheCota, 
@@ -1784,7 +1804,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				dataCriacao,
 				numeroCota, 
 				movimentoEstoqueCota,
-				movimentoEstoque);
+				movimentoEstoque,
+				chamadaEncalheCota);
 		
 	}
 	
@@ -1799,22 +1820,30 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @return TipoMovimentoEstoque
 	 */
 	private TipoMovimentoEstoque obterTipoMovimentoEstoqueDistribuidor(
-			boolean juramentada,
-			Date dataRecolhimentoDistribuidor,
-			Date dataConferenciaEncalhe,
-			Map<GrupoMovimentoEstoque, TipoMovimentoEstoque> mapaTipoMovimentoEstoque) {
+													boolean juramentada,
+													Date dataRecolhimentoDistribuidor,
+													Date dataConferenciaEncalhe,
+													Map<GrupoMovimentoEstoque, 
+													TipoMovimentoEstoque> mapaTipoMovimentoEstoque,
+													TipoChamadaEncalhe tipoChamadaEncalhe) {
 		
-		if(juramentada) {
-			return mapaTipoMovimentoEstoque.get(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE_JURAMENTADO);
+		if (juramentada) {
+			
+			return mapaTipoMovimentoEstoque.get(
+				GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE_JURAMENTADO);
 		}
 		
-		if(isDataRecolhimentoDistribuidorMenorIgualDataConferenciaEncalhe(dataRecolhimentoDistribuidor, dataConferenciaEncalhe)) {
+		if (isDataRecolhimentoDistribuidorMenorIgualDataConferenciaEncalhe(
+				dataRecolhimentoDistribuidor, dataConferenciaEncalhe)
+				&& TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.equals(tipoChamadaEncalhe)) {
 			
-			return mapaTipoMovimentoEstoque.get(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
+			return mapaTipoMovimentoEstoque.get(
+				GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
 			
 		} else {
 			
-			return mapaTipoMovimentoEstoque.get(GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO);
+			return mapaTipoMovimentoEstoque.get(
+				GrupoMovimentoEstoque.SUPLEMENTAR_ENVIO_ENCALHE_ANTERIOR_PROGRAMACAO);
 			
 		}
 	}
@@ -2408,34 +2437,42 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 * @return MovimentoEstoque
 	 */
 	private MovimentoEstoque criarNovoRegistroMovimentoEstoque(
-			ControleConferenciaEncalheCota controleConferenciaEncalheCota,
-			ConferenciaEncalheDTO conferenciaEncalheDTO,
-			Integer numeroCota, 
-			Date dataRecolhimentoReferencia,
-			Date dataCriacao,
-			Map<GrupoMovimentoEstoque, TipoMovimentoEstoque> mapaTipoMovimentoEstoque,
-			Usuario usuario) {
+									ControleConferenciaEncalheCota controleConferenciaEncalheCota,
+									ConferenciaEncalheDTO conferenciaEncalheDTO,
+									Integer numeroCota, 
+									Date dataRecolhimentoReferencia,
+									Date dataCriacao,
+									Map<GrupoMovimentoEstoque, 
+									TipoMovimentoEstoque> mapaTipoMovimentoEstoque,
+									Usuario usuario,
+									ChamadaEncalheCota chamadaEncalheCota) {
 		
-		boolean juramentada = (conferenciaEncalheDTO.getJuramentada()) == null ? false : conferenciaEncalheDTO.getJuramentada();
+		boolean juramentada = 
+			(conferenciaEncalheDTO.getJuramentada()) == null 
+				? false : conferenciaEncalheDTO.getJuramentada();
+		
+		ChamadaEncalhe chamadaEncalhe = 
+			(chamadaEncalheCota != null) ?
+				chamadaEncalheCota.getChamadaEncalhe() : null;
+				
+		TipoChamadaEncalhe tipoChamadaEncalhe = 
+			(chamadaEncalhe != null) ? chamadaEncalhe.getTipoChamadaEncalhe() : null;
 		
 		TipoMovimentoEstoque tipoMovimentoEstoque = 
-				obterTipoMovimentoEstoqueDistribuidor(
-						juramentada, 
-						conferenciaEncalheDTO.getDataRecolhimento(),
-						dataCriacao, 
-						mapaTipoMovimentoEstoque);
+			obterTipoMovimentoEstoqueDistribuidor(
+				juramentada, conferenciaEncalheDTO.getDataRecolhimento(),
+					dataCriacao, mapaTipoMovimentoEstoque, tipoChamadaEncalhe);
 
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+		
 		produtoEdicao.setId(conferenciaEncalheDTO.getIdProdutoEdicao());
 		
-		MovimentoEstoque movimentoEstoque = movimentoEstoqueService.gerarMovimentoEstoque(
-				produtoEdicao.getId(), 
-				usuario.getId(), 
-				conferenciaEncalheDTO.getQtdExemplar(), 
-				tipoMovimentoEstoque);
+		MovimentoEstoque movimentoEstoque = 
+			this.movimentoEstoqueService.gerarMovimentoEstoque(
+				produtoEdicao.getId(), usuario.getId(), 
+					conferenciaEncalheDTO.getQtdExemplar(), tipoMovimentoEstoque);
 		
 		return movimentoEstoque;
-		
 	}
 	
 	/**
@@ -2454,23 +2491,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			Date dataCriacao,
 			Integer numeroCota, 
 			MovimentoEstoqueCota movimentoEstoqueCota,
-			MovimentoEstoque movimentoEstoque) {
+			MovimentoEstoque movimentoEstoque,
+			ChamadaEncalheCota chamadaEncalheCota) {
 		
 		boolean juramentada = (conferenciaEncalheDTO.getJuramentada()) == null ? false : conferenciaEncalheDTO.getJuramentada();
 		
 		ConferenciaEncalhe conferenciaEncalhe = new ConferenciaEncalhe();
 
-		if(conferenciaEncalheDTO.getDataRecolhimento() != null) {
-
-			ChamadaEncalheCota chamadaEncalheCota = 
-					obterChamadaEncalheCotaParaConfEncalhe(
-							numeroCota, 
-							conferenciaEncalheDTO.getDataRecolhimento(), 
-							conferenciaEncalheDTO.getIdProdutoEdicao());
-
-			conferenciaEncalhe.setChamadaEncalheCota(chamadaEncalheCota);
-			
-		}
+		conferenciaEncalhe.setChamadaEncalheCota(chamadaEncalheCota);
 		
 		conferenciaEncalhe.setControleConferenciaEncalheCota(controleConferenciaEncalheCota);
 		
