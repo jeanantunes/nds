@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import br.com.abril.nds.dto.ComponenteElementoDTO;
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.AreaInfluenciaPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoGeradorFluxoPDV;
 import br.com.abril.nds.model.cadastro.pdv.TipoPontoPDV;
@@ -133,6 +134,14 @@ public class ComponenteElementoRepositoryImpl implements ComponenteElementoRepos
         List<ComponenteElementoDTO> retorno = new ArrayList<>();
         retorno.add(new ComponenteElementoDTO("cotas_novas", 1, "Sim"));
         //retorno.add(new ComponenteElementoDTO("cotas_novas", 0, "Não")); removido a pedido do cliente.
+        return retorno;
+    }
+
+    @Override
+    public List<ComponenteElementoDTO> buscaTipoDistribuicaoCotas() {
+        List<ComponenteElementoDTO> retorno = new ArrayList<>();
+        retorno.add(new ComponenteElementoDTO("tipo_distribuicao_cota", TipoDistribuicaoCota.CONVENCIONAL, "Convencional"));
+        retorno.add(new ComponenteElementoDTO("tipo_distribuicao_cota", TipoDistribuicaoCota.ALTERNATIVO, "Alternativo"));
         return retorno;
     }
 

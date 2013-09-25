@@ -1,5 +1,12 @@
 function dataTableInit() {
 
+    $('.dt-container').on('change', 'input.reparteSugerido', function () {
+        var tdNode = $(this).closest('td')[0];
+        var tdPosition = oTable.fnGetPosition(tdNode);
+        oTable.fnGetData(tdNode); //valor anterior
+        oTable.fnUpdate(this.value, tdPosition);
+    });
+
     var reparteSugerido  = function ( data, type, full ) {
         if (type === "display") {
             return '<input reducaoReparte="#redReparte" reparteInicial="#repEstudo" reparteAtual="#value" numeroCota="#numeroCota" value="#value" class="reparteSugerido" />'
@@ -23,7 +30,7 @@ function dataTableInit() {
         "bProcessing": true,
         "aaSorting": [[ 5, "desc" ]],
         "sServerMethod": "POST",
-        "sAjaxSource": "http://localhost:8080/nds-client/distribuicao/analise/parcial/init",
+        "sAjaxSource": "distribuicao/analise/parcial/init",
         "sAjaxDataProp": "rows",
         "fnServerParams": function ( aoData ) {
             aoData.push({name: 'id', value: $('#estudoId').val()});

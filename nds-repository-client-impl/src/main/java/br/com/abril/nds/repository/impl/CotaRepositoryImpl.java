@@ -2914,34 +2914,41 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     @Override
     @Transactional(readOnly = true)
     public CotaDTO buscarCotaPorNumero(Integer numeroCota, String codigoProduto) {
-	StringBuilder sql = new StringBuilder();
-	sql.append(" select ");
-	sql.append("  cota.numero_cota numeroCota, ");
-	sql.append("  coalesce(pe.nome, pe.razao_social, pe.nome_fantasia, '') nomePessoa, ");
-	sql.append("  cota.tipo_distribuicao_cota tipoCota, ");
-	sql.append("  rks.qtde qtdeRankingSegmento, ");
-	sql.append("  rkf.faturamento faturamento, ");
-	sql.append("  rkf.data_geracao_rank dataGeracaoRank, ");
-	sql.append("  mix.reparte_min mixRepMin, ");
-	sql.append("  mix.reparte_max mixRepMax, ");
-	sql.append("  u.nome nomeUsuario, ");
-	sql.append("  mix.datahora mixDataAlteracao ");
-	sql.append(" from cota");
-	sql.append("   left join pessoa pe on pe.id = cota.pessoa_id");
-	sql.append("   left join ranking_segmento rks on rks.cota_id = cota.id and rks.data_geracao_rank = (select max(data_geracao_rank) from ranking_segmento)");
-	sql.append("   left join ranking_faturamento rkf on rkf.cota_id = cota.id and rkf.data_geracao_rank = (select max(data_geracao_rank) from ranking_faturamento)");
-	sql.append("   left join produto p on p.tipo_segmento_produto_id = rks.tipo_segmento_produto_id and p.codigo = :codigoProduto"); //FIXME esta dando algum erro neste join
-	sql.append("   left join mix_cota_produto mix on mix.id_cota = cota.id and p.id = mix.id_produto");
-	sql.append("   left join usuario u on u.id = mix.id_usuario ");
-	sql.append(" where cota.numero_cota = :numeroCota ");
+	    StringBuilder sql = new StringBuilder();
+        sql.append(" select ");
+        sql.append("  cota.numero_cota numeroCota, ");
+        sql.append("  coalesce(pe.nome, pe.razao_social, pe.nome_fantasia, '') nomePessoa, ");
+        sql.append("  cota.tipo_distribuicao_cota tipoCota, ");
+        sql.append("  rks.qtde qtdeRankingSegmento, ");
+        sql.append("  rkf.faturamento faturamento, ");
+        sql.append("  rkf.data_geracao_rank dataGeracaoRank, ");
+        sql.append("  mix.reparte_min mixRepMin, ");
+        sql.append("  mix.reparte_max mixRepMax, ");
+        sql.append("  u.nome nomeUsuario, ");
+        sql.append("  mix.datahora mixDataAlteracao, ");
+        sql.append("  fx.data_hora  fxDataAlteracao, ");
+        sql.append("  fx.ed_inicial fxEdicaoInicial, ");
+        sql.append("  fx.ed_final fxEdicaoFinal, ");
+        sql.append("  fx.ed_atendidas fxEdicoesAtendidas, ");
+        sql.append("  fx.qtde_edicoes fxQuantidadeEdicoes, ");
+        sql.append("  fx.qtde_exemplares fxQuantidadeExemplares ");
+        sql.append(" from cota");
+        sql.append("   left join pessoa pe on pe.id = cota.pessoa_id");
+        sql.append("   left join produto p on p.codigo = :codigoProduto");
+        sql.append("   left join ranking_segmento rks on rks.cota_id = cota.id and p.tipo_segmento_produto_id = rks.tipo_segmento_produto_id and rks.data_geracao_rank = (select max(data_geracao_rank) from ranking_segmento)");
+        sql.append("   left join ranking_faturamento rkf on rkf.cota_id = cota.id and rkf.data_geracao_rank = (select max(data_geracao_rank) from ranking_faturamento)");
+        sql.append("   left join mix_cota_produto mix on mix.id_cota = cota.id and p.id = mix.id_produto");
+        sql.append("   left join usuario u on u.id = mix.id_usuario ");
+        sql.append("   left join fixacao_reparte fx on fx.id_cota = cota.id and p.id = fx.id_produto ");
+        sql.append(" where cota.numero_cota = :numeroCota ");
 
-	SQLQuery query = getSession().createSQLQuery(sql.toString());
+        SQLQuery query = getSession().createSQLQuery(sql.toString());
 
-	query.setParameter("codigoProduto", codigoProduto);
-	query.setParameter("numeroCota", numeroCota);
+        query.setParameter("codigoProduto", codigoProduto);
+        query.setParameter("numeroCota", numeroCota);
 
-	query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
-	return (CotaDTO) query.list().get(0); //uniqueResult();
+        query.setResultTransformer(new AliasToBeanResultTransformer(CotaDTO.class));
+        return (CotaDTO) query.uniqueResult(); //list().get(0);
     }
 
     @Override
