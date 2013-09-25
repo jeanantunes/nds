@@ -16,12 +16,12 @@
     http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd
     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
 
+	<context:annotation-config />
+	<context:property-placeholder location="classpath:nds-client.properties" />
 	<context:component-scan base-package="br.com.abril.nds" />
 	
 	<aop:aspectj-autoproxy/>
 	
-	<context:property-placeholder location="classpath:nds-client.properties" />
-			
 	<util:properties id="properties" location="classpath:nds-client.properties" />	
 		
 	<util:properties id="queries" location="classpath:/query.properties" />
