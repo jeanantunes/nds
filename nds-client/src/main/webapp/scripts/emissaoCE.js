@@ -1,4 +1,3 @@
-
 var EmissaoCEController = $.extend(true, {
 	
 	emissoes : [],
@@ -274,6 +273,8 @@ var EmissaoCEController = $.extend(true, {
 		        	exibirMensagem(tipoMensagem, listaMensagens);
 		        	return;
 		        } 
+		        
+		        $('#emissaoCERota', this.workspace).empty();
 		        $("#emissaoCERoteiro > option", this.workspace).remove();
 		        $('#emissaoCERoteiro', this.workspace)
             	.append('<option value=""></option>');

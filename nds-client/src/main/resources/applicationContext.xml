@@ -16,17 +16,17 @@
     http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.1.xsd
     http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
 
+	<context:annotation-config />
+	<context:property-placeholder location="classpath:nds-client.properties" />
 	<context:component-scan base-package="br.com.abril.nds" />
 	
 	<aop:aspectj-autoproxy/>
 	
-	<context:property-placeholder location="classpath:nds-client.properties" />
-			
 	<util:properties id="properties" location="classpath:nds-client.properties" />	
 		
 	<util:properties id="queries" location="classpath:/query.properties" />
 	
-	<bean id="ndsProfiler" class="br.com.abril.nds.client.aop.profiler.NdsProfiler"/>
+	<!-- <bean id="ndsProfiler" class="br.com.abril.nds.client.aop.profiler.NdsProfiler"/> -->
 	
 	<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor" />
 		
@@ -46,11 +46,10 @@
 		<property name="dataSource" ref="dataSource" />
 		<property name="packagesToScan" value="br.com.abril.nds.model" />
 		
-		
 		<property name="hibernateProperties">
 			<props>			
 				<prop key="hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</prop>
-				<prop key="hibernate.show_sql">false</prop>
+				<prop key="hibernate.show_sql">true</prop>
 				<prop key="hibernate.format_sql">true</prop>
 				<prop key="hibernate.jdbc.batch_size">100</prop>
 				<!-- <prop key="hibernate.hbm2ddl.auto">update</prop> -->

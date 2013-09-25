@@ -4,8 +4,12 @@ import java.lang.ref.WeakReference;
 
 import org.apache.commons.lang.StringUtils;
 import org.lightcouch.NoDocumentException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +26,11 @@ import br.com.abril.nds.service.InterfaceExecucaoService;
 @Service
 public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 
+	private static final Logger LOGGER = LoggerFactory.getLogger(InterfaceExecucaoServiceImpl.class);
+	
+	@Autowired
+	private ApplicationContext applicationContext;
+	
 	private static final String PACOTE_PRIMEIRA_PARTE = "br.com.abril.nds.integracao.";
 	
 	private static final String PACOTE_SEGUNDA_PARTE = ".route.";
@@ -54,6 +63,7 @@ public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 		} catch (NoDocumentException e) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum documento encontrado na base de dados!");
 		} catch(Exception e) {
+			LOGGER.error("Erro ao executar interface: "+ classeExecucao, e);
 			throw e;
 		}
 		
