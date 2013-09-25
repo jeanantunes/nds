@@ -7,6 +7,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
+import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.cadastro.desconto.DescontoProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.TipoDesconto;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -139,5 +140,15 @@ public interface DescontoProdutoEdicaoRepository extends Repository<DescontoProd
 	 * @param lista
 	 */
 	public void salvarListaDescontoProdutoEdicao(List<DescontoProdutoEdicao> lista);
+	
+	/**
+     * Recupera lista de descontos 
+	 * @param lancamento
+	 * @param produtoEdicao identificador do produto edição para recuperação do desconto
+     * 
+     * 
+     * @return lista de descontos
+     */
+	List<DescontoDTO> obterDescontosProdutoEdicao(Long lancamentoId, Long produtoEdicaoId);
 	
 }
