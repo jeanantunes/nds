@@ -10,7 +10,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 
 import br.com.abril.nds.enums.TipoMensagem;
@@ -48,9 +47,6 @@ public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 	 */
 	@Override
 	public void executarInterface(String classeExecucao, Usuario usuario) throws BeansException, ClassNotFoundException {
-		
-		ClassPathXmlApplicationContext applicationContext = 
-				new ClassPathXmlApplicationContext("spring/applicationContext-ndsi-web.xml");
 
 		// Inclui o pacote na classe
 		String classe = PACOTE_PRIMEIRA_PARTE + classeExecucao.toLowerCase() + PACOTE_SEGUNDA_PARTE + classeExecucao + ROUTE;
@@ -88,7 +84,9 @@ public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 			try {
 				this.executarInterface(classeExecucao.get(), usuario);
 			} catch (ValidacaoException ve) {
-				
+				LOGGER.error("Erro ao executar interface: "+ classeExecucao.get(), ve);
+			} catch(Exception e) {
+				LOGGER.error("Erro ao executar interface: "+ classeExecucao.get(), e);
 			}
 		}
 		
@@ -101,7 +99,9 @@ public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 			try {
 				this.executarInterface(classeExecucao.get(), usuario);
 			} catch (ValidacaoException ve) {
-				
+				LOGGER.error("Erro ao executar interface: "+ classeExecucao.get(), ve);
+			} catch(Exception e) {
+				LOGGER.error("Erro ao executar interface: "+ classeExecucao.get(), e);
 			}
 		}
 				
