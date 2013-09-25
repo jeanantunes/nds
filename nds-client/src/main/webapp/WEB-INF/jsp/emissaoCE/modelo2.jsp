@@ -194,12 +194,21 @@ function imprimir(){
 	        </c:if>
 	    </td>
 	    
-	    <td width="95" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; "></td>
+	    <td width="95" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">
+	    	<c:if test="${produto.apresentaQuantidadeEncalhe}">
+	    		${produto.vendido}
+	    	</c:if>
+	    </td>
 	
 	    <td width="70" align="right" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">
 	    	<fmt:formatNumber value="${produto.precoVenda.subtract(produto.precoVenda.multiply(produto.vlrDesconto).divide(100))}" maxFractionDigits="4" minFractionDigits="4" />
 	    </td>
-	    <td width="95" align="right" style="border-bottom:1px solid #000;padding-left:5px; border-right:1px solid #000; "></td>
+
+	    <td width="95" align="right" style="border-bottom:1px solid #000;padding-left:5px; border-right:1px solid #000; ">
+	    	<c:if test="${produto.apresentaQuantidadeEncalhe}">
+	    		<fmt:formatNumber value="${produto.vlrPrecoComDesconto.multiply(produto.vendido)}" maxFractionDigits="2" minFractionDigits="2" />
+	    	</c:if>
+	    </td>
     
     </c:if>
     

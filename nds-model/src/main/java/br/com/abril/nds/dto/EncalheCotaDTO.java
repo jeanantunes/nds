@@ -30,7 +30,7 @@ public class EncalheCotaDTO implements Serializable {
 	@Export(label = "Preço Capa R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA, fontSize=9)
 	private BigDecimal precoCapa;
 
-	@Export(label = "Preço c/ Desc. R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA, fontSize=9)
+	@Export(label = "Preço c/ Desc. R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA_QUATRO_CASAS, fontSize=9)
 	private BigDecimal precoComDesconto;
 	
 	@Export(label = "Encalhe", alignment = Alignment.CENTER, fontSize=9)
@@ -39,7 +39,7 @@ public class EncalheCotaDTO implements Serializable {
 	@Export(label = "Fornecedor", fontSize=9, widthPercent=7)
 	private String nomeFornecedor;
 
-	@Export(label = "Toral R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA, fontSize=9)
+	@Export(label = "Toral R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA_QUATRO_CASAS, fontSize=9)
 	private BigDecimal total;
 
 	private BigDecimal desconto;
@@ -81,7 +81,7 @@ public class EncalheCotaDTO implements Serializable {
 	}
 
 	public void setPrecoComDesconto(BigDecimal precoComDesconto) {
-		this.precoComDesconto = precoComDesconto == null ? null : precoComDesconto.setScale(2, RoundingMode.HALF_EVEN);
+		this.precoComDesconto = precoComDesconto == null ? BigDecimal.ZERO : precoComDesconto.setScale(4, RoundingMode.HALF_EVEN);
 	}
 
 	public String getNomeFornecedor() {
@@ -97,7 +97,7 @@ public class EncalheCotaDTO implements Serializable {
 	}
 
 	public void setTotal(BigDecimal total) {
-		this.total = total != null ? total.setScale(2, RoundingMode.HALF_EVEN) : null;
+		this.total = total != null ? total.setScale(4, RoundingMode.HALF_EVEN) : BigDecimal.ZERO;
 	}
 
 	public BigInteger getEncalhe() {

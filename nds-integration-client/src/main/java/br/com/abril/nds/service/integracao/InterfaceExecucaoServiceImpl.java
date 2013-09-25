@@ -10,6 +10,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.stereotype.Service;
 
 import br.com.abril.nds.enums.TipoMensagem;
@@ -41,13 +42,16 @@ public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 	
 	@Value("${interfacesMDCEntrada:}")
 	private String interfacesMDC;
-	
+
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.service.InterfaceExecucaoService#executarInterface(java.lang.String, java.lang.String)
 	 */
 	@Override
 	public void executarInterface(String classeExecucao, Usuario usuario) throws BeansException, ClassNotFoundException {
 		
+		ClassPathXmlApplicationContext applicationContext = 
+				new ClassPathXmlApplicationContext("spring/applicationContext-ndsi-web.xml");
+
 		// Inclui o pacote na classe
 		String classe = PACOTE_PRIMEIRA_PARTE + classeExecucao.toLowerCase() + PACOTE_SEGUNDA_PARTE + classeExecucao + ROUTE;
 		

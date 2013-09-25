@@ -399,7 +399,7 @@
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<text><![CDATA[SUB-TOTAL------------------------------------------------------------------------------------------------------------------------------]]></text>
+				<text><![CDATA[SUB-TOTAL-------------------------------------------------------------------------------------------------------------------]]></text>
 			</staticText>
 			<staticText>
 				<reportElement uuid="0ac03354-f461-4cc2-aeb7-d253f61b47aa" mode="Opaque" x="50" y="144" width="296" height="26" backcolor="#F0F0F0"/>
