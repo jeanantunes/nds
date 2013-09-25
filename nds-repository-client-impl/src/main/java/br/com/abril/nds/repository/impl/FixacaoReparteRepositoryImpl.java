@@ -91,6 +91,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		
 		if(isCodigoProdutoPreenchido){
 			sql.append(	" and (produto.id) = (:idProduto) ");
+			//sql.append(	" and produto.codigo like (:idProduto) ");
 		}
 
 		sql.append(" GROUP BY f.id ")
@@ -105,6 +106,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		
 		if(isCodigoProdutoPreenchido){
 			query.setParameter("idProduto", produto.getIdProduto());
+			//query.setParameter("idProduto", produto.getCodigoProduto().substring(0,6).concat("%"));
 		}
 		if(isClassificacaoPreenchida){
 			query.setParameter("classificacaoProduto", produto.getClassificacaoProduto());

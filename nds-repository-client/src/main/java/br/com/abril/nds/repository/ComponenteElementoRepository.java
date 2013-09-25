@@ -22,4 +22,5 @@ public interface ComponenteElementoRepository {
 
 	List<ComponenteElementoDTO> buscaDistritos(Long estudo);
 
+    List<ComponenteElementoDTO> buscaTipoDistribuicaoCotas();
 }

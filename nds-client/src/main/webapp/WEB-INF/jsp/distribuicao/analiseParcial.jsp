@@ -60,6 +60,7 @@ function escondeDados(){
 table.filtro td span {font-weight: normal;}
 .tableTotais {margin: 1px 0 3px; border: 1px solid white; border-collapse: collapse;}
 .dadosTab td:first-child { width: 130px; text-align: right; padding-right: 5px; }
+.dadosTab td {line-height: 20px;}
 
 <c:if test="${tipoExibicao == 'NORMAL'}">
 .paddingTotais td {padding: 0 3px; text-align: right; width: 35px; border: 1px solid white;}
@@ -210,6 +211,7 @@ table.dadosTab { margin-left: 370px;}
 							<option value="" selected="selected">Selecione...</option>
 							<option value="reparte">Reparte</option>
 							<option value="ranking">Ranking</option>
+							<option value="n_maiores">N Maiores</option>
 							<option value="percentual_de_venda">% de Venda</option>
 							<option value="reducao_de_reparte">% Variação de Reparte</option>
 							<option value="numero_cota">Cota</option>
@@ -233,6 +235,7 @@ table.dadosTab { margin-left: 370px;}
 							<option value="cotas_novas">Cotas Novas</option>
 							<option value="area_influencia">Área de Influência</option>
 							<option value="distrito">Distrito</option>
+                            <option value="tipo_distribuicao_cota">Tipo de Distribuição Cota</option>
 						</select>
 					</td>
 					<td>Elemento:</td>
@@ -245,7 +248,8 @@ table.dadosTab { margin-left: 370px;}
                             <span id="label_numero_cota" style="display: none;" class="label"> Cota: </span>
                             <span id="label_reparte" style="display: none;" class="label"> Reparte: </span>
                             <span id="label_reducao_de_reparte" style="display: none;" class="label"> % Dê: </span>
-                            <span id="label_ranking" style="display: none;" class="label"> Ranking: </span>
+                            <span id="label_ranking" style="display: none;" class="label"> Reparte: </span>
+                            <span id="label_n_maiores" style="display: none;" class="label"> Ranking: </span>
                             <span id="label_percentual_de_venda" style="display: none;" class="label"> % Venda: </span>
                             <input id="ordenarPorDe" type="text" style="width: 60px;" /> Até <input id="ordenarPorAte" type="text" style="width: 60px;" /> Exs.
                             <a href="javascript:analiseParcialController.filtrarOrdenarPor(${estudoCota.estudo.id});">
@@ -272,12 +276,11 @@ table.dadosTab { margin-left: 370px;}
                                 <img src="${pageContext.request.contextPath}/images/ico_change.png" title="Alterar Visualização do Grid" hspace="5" border="0" /> <%--Alterar Visualização do Grid--%>
                             </a>
                         </span>
-                        <span class="bt_novos" title="Base Inicial">
+                        <%--<span class="bt_novos" title="Base Inicial">
                             <a href="javascript:;" onclick="analiseParcialController.restauraBaseInicial();">
                                 <span class="ui-icon ui-icon-arrowreturnthick-1-w"></span>
-                                <%--<img src="${pageContext.request.contextPath}/images/seta_volta_todos.png" title="Base Inicial"/>--%>
                             </a>
-                        </span>
+                        </span>--%>
                     </td>
 				</tr>
 			</table>
@@ -427,6 +430,7 @@ table.dadosTab { margin-left: 370px;}
 							<option value="cotas_a_vista">Cotas A Vista</option>
 							<option value="area_influencia">Área de Influência</option>
 							<option value="distrito">Distrito</option>
+							<option value="tipo_distribuicao_cota">Tipo de Distribuição Cota</option>
 						</select>
 					</td>
 					<td width="52">Elemento:</td>
@@ -510,30 +514,44 @@ table.dadosTab { margin-left: 370px;}
 			</table>
 		</fieldset>
 
-		<fieldset style="width: 690px !important; margin-top: 5px;">
+		<fieldset style="width: 690px !important; margin-top: 5px;" id="dados-mix">
 			<legend>MIX</legend>
 
 			<table width="686" border="0" cellpadding="2" cellspacing="1">
 				<tr>
-					<td width="48"><strong>Código:</strong></td>
-					<td width="52">${estudoCota.estudo.produtoEdicao.produto.codigo}</td>
-					<td width="54"><strong>Produto:</strong></td>
-					<td width="511">${estudoCota.estudo.produtoEdicao.nomeComercial}</td>
+					<td style="width: 130px;"><strong>Código: </strong> ${estudoCota.estudo.produtoEdicao.produto.codigo}</td>
+					<td><strong>Produto: </strong> ${estudoCota.estudo.produtoEdicao.nomeComercial}</td>
 				</tr>
 			</table>
 			<table width="686" border="0" cellpadding="2" cellspacing="1">
 				<tr>
-					<td width="55"><strong>Rep.Mín.:</strong></td>
-					<td width="41"><span id="mixRepMin">05</span></td>
-					<td width="60"><strong>Rep. Máx.:</strong></td>
-					<td width="79"><span id="mixRepMax">9.999</span></td>
-					<td width="49"><strong>Usuário:</strong></td>
-					<td width="141"><span id="mixUsuario">Rodrigue</span></td>
-					<td width="105"><strong>Data Manutenção.:</strong></td>
-					<td width="115"><span id="mixDataAlteracao">28/03/2012 10:56</span></td>
+					<td><strong>Rep.Mín.: </strong><span id="mixRepMin">05</span></td>
+					<td><strong>Rep. Máx.: </strong><span id="mixRepMax">9.999</span></td>
+					<td><strong>Usuário: </strong><span id="mixUsuario">Rodrigue</span></td>
+					<td style="width: 160px;"><strong>Data Manutenção: </strong><span id="mixDataAlteracao">28/03/2012 10:56</span></td>
 				</tr>
 			</table>
 		</fieldset>
+        <fieldset style="width: 690px !important; margin-top: 5px;" id="dados-fixacao">
+            <legend>Fixação</legend>
+
+            <table width="686" border="0" cellpadding="2" cellspacing="1">
+                <tr>
+                    <td style="width: 130px;"><strong>Código: </strong> ${estudoCota.estudo.produtoEdicao.produto.codigo}</td>
+                    <td><strong>Produto: </strong> ${estudoCota.estudo.produtoEdicao.nomeComercial}</td>
+                </tr>
+            </table>
+            <table width="686" border="0" cellpadding="2" cellspacing="1">
+                <tr>
+                    <td><strong>Ed. Inicial: </strong><span id="fxEdicaoInicial">05</span></td>
+                    <td><strong>Ed. Final: </strong><span id="fxEdicaoFinal">10</span></td>
+                    <td><strong>Ed. Atendidas: </strong><span id="fxEdicoesAtendidas">6</span></td>
+                    <td><strong>Qtde. Edições: </strong><span id="fxQuantidadeEdicoes">6</span></td>
+                    <td><strong>Exemplares: </strong><span id="fxQuantidadeExemplares">20</span></td>
+                    <td style="width: 160px;"><strong>Data Manutenção: </strong><span id="fxDataAlteracao">28/03/2012 10:56</span></td>
+                </tr>
+            </table>
+        </fieldset>
 	</div>
 
     <div id="dialog-defineReparte" title="Define Reparte por PDV" style="display:none;">
