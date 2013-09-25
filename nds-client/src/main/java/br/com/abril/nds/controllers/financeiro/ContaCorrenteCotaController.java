@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -187,7 +188,7 @@ public class ContaCorrenteCotaController extends BaseController {
 				totalGeral = totalGeral.add(dto.getValorTotal());
 			}
 			
-			dados[2] = totalGeral;
+			dados[2] = totalGeral.setScale(2, RoundingMode.HALF_EVEN);
 						
 			result.use(Results.json()).from(dados, "result").recursive().serialize();
 		}else{
@@ -278,6 +279,10 @@ public class ContaCorrenteCotaController extends BaseController {
 			
 		}
 		
+		for (Entry<String, InfoTotalFornecedorDTO> info : mapFornecedores.entrySet()) {
+		
+			info.getValue().setValorTotal(info.getValue().getValorTotal().setScale(2, RoundingMode.HALF_EVEN));
+		}
 
 		List<InfoTotalFornecedorDTO> infoTotalFornecedorDTOs = new ArrayList<InfoTotalFornecedorDTO>();
 		infoTotalFornecedorDTOs.addAll( mapFornecedores.values() );
