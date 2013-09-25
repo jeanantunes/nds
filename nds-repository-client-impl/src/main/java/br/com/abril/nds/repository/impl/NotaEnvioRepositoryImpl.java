@@ -4,8 +4,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.NotaEnvioProdutoEdicao;
 import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -61,7 +63,11 @@ public class NotaEnvioRepositoryImpl  extends AbstractRepositoryModel<NotaEnvio,
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select nota.numero, item.reparte, nota.dataEmissao, pe.id		");
+		hql.append(" select nota.numero as numeroNotaEnvio, ");
+		hql.append(" nota.dataEmissao as dataEmissao, 		");
+		hql.append(" pe.id as idProdutoEdicao,				");
+		hql.append(" item.reparte as reparte				");
+		
 		hql.append(" from ItemNotaEnvio item 		");
 		hql.append(" inner join item.itemNotaEnvioPK.notaEnvio nota	");
 		hql.append(" inner join item.produtoEdicao pe 				");
@@ -74,7 +80,10 @@ public class NotaEnvioRepositoryImpl  extends AbstractRepositoryModel<NotaEnvio,
 		Query query = this.getSession().createQuery(hql.toString());
 
 		query.setParameter("numeroCota", numeroCota);
+		
 		query.setParameterList("idsProdutoEdicao", idsProdutoEdicao);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(NotaEnvioProdutoEdicao.class));
 		
 		return query.list();
 		

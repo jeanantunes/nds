@@ -298,7 +298,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 		for(ProdutoEmissaoDTO produtoDTO : cota.getProdutos()) {
 			
-			idsProdutoEdicao.add(produtoDTO.getEdicao());
+			idsProdutoEdicao.add(produtoDTO.getIdProdutoEdicao());
 			
 			if(!produtoDTO.isApresentaQuantidadeEncalhe()) {
 				produtoDTO.setQuantidadeDevolvida(null);
@@ -361,7 +361,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 				continue;
 			}
 
-			Integer numeroNotaEnvio = notas.get(0).getNumeroNotaEnvio();
+			Long numeroNotaEnvio = notas.get(0).getNumeroNotaEnvio();
 
 			if(numeroNotaEnvio!=null) {
 				produtoDTO.setNotaEnvio(numeroNotaEnvio.toString());

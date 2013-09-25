@@ -608,8 +608,8 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 			datasControleConferenciaEncalheCotaFinalizada!=null &&
 			!datasControleConferenciaEncalheCotaFinalizada.isEmpty()) {
 			
-			hql.append(" case when ( chamadaEncalhe.dataRecolhimento in :datasControleFechamentoEncalhe  ");
-			hql.append(" or chamadaEncalhe.dataRecolhimento in :datasControleConferenciaEncalheCotaFinalizada )  ");
+			hql.append(" case when ( chamadaEncalhe.dataRecolhimento in (:datasControleFechamentoEncalhe)  ");
+			hql.append(" or chamadaEncalhe.dataRecolhimento in (:datasControleConferenciaEncalheCotaFinalizada) )  ");
 			hql.append(" then true else false end as apresentaQuantidadeEncalhe,  ");
 			
 			return hql;
@@ -619,7 +619,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		if(	datasControleFechamentoEncalhe!=null &&
 			!datasControleFechamentoEncalhe.isEmpty()) {
 			
-			hql.append(" case when chamadaEncalhe.dataRecolhimento in :datasControleFechamentoEncalhe  ");
+			hql.append(" case when chamadaEncalhe.dataRecolhimento in (:datasControleFechamentoEncalhe)  ");
 			hql.append(" then true else false end as apresentaQuantidadeEncalhe,  ");
 			
 			return hql;
@@ -629,7 +629,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		if(	datasControleConferenciaEncalheCotaFinalizada!=null &&
 			!datasControleConferenciaEncalheCotaFinalizada.isEmpty()) {
 				
-				hql.append(" case when chamadaEncalhe.dataRecolhimento in :datasControleConferenciaEncalheCotaFinalizada ");
+				hql.append(" case when chamadaEncalhe.dataRecolhimento in (:datasControleConferenciaEncalheCotaFinalizada) ");
 				hql.append(" then true else false end as apresentaQuantidadeEncalhe,  ");
 				
 				return hql;
