@@ -41,7 +41,7 @@ public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 	public void executarInterface(String classeExecucao, Usuario usuario) throws BeansException, ClassNotFoundException {
 		
 		ClassPathXmlApplicationContext applicationContext = 
-				new ClassPathXmlApplicationContext("spring/applicationContext-ndsi-cli.xml");
+				new ClassPathXmlApplicationContext("spring/applicationContext-ndsi-web.xml");
 
 		// Inclui o pacote na classe
 		String classe = PACOTE_PRIMEIRA_PARTE + classeExecucao.toLowerCase() + PACOTE_SEGUNDA_PARTE + classeExecucao + ROUTE;
