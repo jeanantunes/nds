@@ -47,12 +47,4 @@ public class BaixaCobrancaServiceImpl implements BaixaCobrancaService {
 		return baixaCobrancaRepository.buscarCobrancasBaixadas(filtroConsultaDividasCota);
 	}
 
-	@Override
-	@Transactional
-	public Long countBuscarCobrancasBaixadas(
-			FiltroConsultaDividasCotaDTO filtroAtual) {
-		
-		return baixaCobrancaRepository.countBuscarCobrancasBaixadas(filtroAtual);
-	}
-
 }

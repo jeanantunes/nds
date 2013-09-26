@@ -837,9 +837,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			}
 			
 			if (!(lancamento.getStatus().equals(StatusLancamento.PLANEJADO)
-					|| lancamento.getStatus().equals(StatusLancamento.CONFIRMADO))) {
+					|| lancamento.getStatus().equals(StatusLancamento.CONFIRMADO)
+							|| lancamento.getStatus().equals(StatusLancamento.EM_BALANCEAMENTO))) {
 				
-				validacaoMap.put("edicaoEmBalanceamentoBalanceada", "Esta Edição não pode ser excluida por ter lancamentos em balanceamento ou já balanceados!");
+				validacaoMap.put("edicaoEmBalanceamentoBalanceada", "Esta Edição não pode ser excluida por ter lancamentos já balanceados!");
 			}
 		}
 		
@@ -867,9 +868,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		for (Lancamento lancamento : lancamentos) {
 			
 			if (!(lancamento.getStatus().equals(StatusLancamento.PLANEJADO)
-					|| lancamento.getStatus().equals(StatusLancamento.CONFIRMADO))) {
+					|| lancamento.getStatus().equals(StatusLancamento.CONFIRMADO)
+					|| lancamento.getStatus().equals(StatusLancamento.EM_BALANCEAMENTO))) {
 				
-				throw new ValidacaoException(TipoMensagem.WARNING, "Esta Edição não pode ser excluida por ter lancamentos em balanceamento ou já balanceados!");
+				throw new ValidacaoException(TipoMensagem.WARNING, "Esta Edição não pode ser excluida por ter lancamentos já balanceados!");
 			}
 		}
 
