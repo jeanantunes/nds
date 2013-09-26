@@ -2,7 +2,9 @@ package br.com.abril.nds.dto;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
@@ -64,6 +66,10 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	private BigDecimal valorTotal;
 
 	private Date novaData;
+	
+	private boolean produtoAgrupado;
+	
+	private List<Long> idsLancamentosAgrupados = new ArrayList<>();
 
 	/**
 	 * Construtor padrão.
@@ -394,6 +400,34 @@ public class ProdutoRecolhimentoDTO implements Serializable {
 	 */
 	public boolean isBalanceamentoSalvo() {
 		return StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.equals(statusLancamento);
+	}
+	
+	/**
+	 * @return the produtoAgrupado
+	 */
+	public boolean isProdutoAgrupado() {
+		return produtoAgrupado;
+	}
+	
+	/**
+	 * @param produtoAgrupado the produtoAgrupado to set
+	 */
+	public void setProdutoAgrupado(boolean produtoAgrupado) {
+		this.produtoAgrupado = produtoAgrupado;
+	}
+	
+	/**
+	 * @return the idsLancamentosAgrupados
+	 */
+	public List<Long> getIdsLancamentosAgrupados() {
+		return idsLancamentosAgrupados;
+	}
+
+	/**
+	 * @param idsLancamentosAgrupados the idsLancamentosAgrupados to set
+	 */
+	public void setIdsLancamentosAgrupados(List<Long> idsLancamentosAgrupados) {
+		this.idsLancamentosAgrupados = idsLancamentosAgrupados;
 	}
 
 	/**
