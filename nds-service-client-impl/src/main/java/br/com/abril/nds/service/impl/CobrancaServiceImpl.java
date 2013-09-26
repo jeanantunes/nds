@@ -534,7 +534,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 			saldoDivida = this.obterSaldoDivida(itemCobranca.getId());
 			valorPagar = itemCobranca.getValor().subtract(saldoDivida);
 			
-			valorPagamentoCobranca = valorPagamentoCobranca.subtract(valorPagar);
+			valorPagamentoCobranca = valorPagamentoCobranca.subtract(valorPagar.setScale(2, BigDecimal.ROUND_HALF_EVEN));
 			
 			if (valorPagamentoCobranca.floatValue() >=0 ){
 		    	itemCobranca.setDataPagamento(pagamento.getDataPagamento());

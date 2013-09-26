@@ -30,6 +30,8 @@ public interface BaixaCobrancaRepository extends Repository<BaixaCobranca,Long> 
 	
 	public List<CobrancaVO> buscarCobrancasBaixadas(FiltroConsultaDividasCotaDTO filtroConsultaDividasCota);
 	
+	public Long countBuscarCobrancasBaixadas(FiltroConsultaDividasCotaDTO filtro);
+	
 	public BaixaCobranca obterUltimaBaixaCobranca(Long idCobranca);
 	
 	List<BaixaManual> obterBaixasManual(List<Long> idsCobranca);

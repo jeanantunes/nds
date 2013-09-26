@@ -247,8 +247,8 @@ var contaCorrenteCotaController = $.extend(true, {
 			$.each(data.rows, function(index, value) {
 				
 				value.cell.precoCapa = floatToPrice(formatMoneyValue(value.cell.precoCapa));
-				value.cell.precoComDesconto = floatToPrice(formatMoneyValue(value.cell.precoComDesconto));
-				value.cell.total = floatToPrice(formatMoneyValue(value.cell.total));
+				value.cell.precoComDesconto = (value.cell.precoComDesconto).replace(".", ",");
+				value.cell.total = (value.cell.total).replace(".", ",");
 			});
 			
 			return data;
@@ -504,8 +504,8 @@ var contaCorrenteCotaController = $.extend(true, {
 				}
 				
 				value.cell.precoCapa = floatToPrice(formatMoneyValue(value.cell.precoCapa));
-				value.cell.precoComDesconto = floatToPrice(formatMoneyValue(value.cell.precoComDesconto));
-				value.cell.total = floatToPrice(formatMoneyValue(value.cell.total));
+				value.cell.precoComDesconto = (value.cell.precoComDesconto).replace(".", ",");
+				value.cell.total = (value.cell.total).replace(".", ",");
 			});
 			
 			return data;
