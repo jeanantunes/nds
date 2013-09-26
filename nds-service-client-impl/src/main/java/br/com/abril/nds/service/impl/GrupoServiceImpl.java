@@ -140,7 +140,16 @@ public class GrupoServiceImpl implements GrupoService {
 		HashSet<Cota> cotas = new HashSet<Cota>();
 		
 		for(Long id : idCotas) {
-			cotas.add(cotaRepository.buscarPorId(id));
+			
+			Cota cota = cotaRepository.buscarPorId(id);
+			
+			GrupoCota grupo = grupoRepository.obterGrupoPorCota(id);
+			
+			if(grupo != null)
+				throw new ValidacaoException(TipoMensagem.ERROR, "Cota " + cota.getNumeroCota() 
+						+ " já pertence ao grupo " + grupo.getNome() + ".");
+			
+			cotas.add(cota);
 		}
 		
 		GrupoCota grupo;
