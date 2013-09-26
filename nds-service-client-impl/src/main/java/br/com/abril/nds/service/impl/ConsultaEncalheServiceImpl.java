@@ -82,7 +82,7 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 				consultaEncalhe.setRecolhimento(dia);				
 			} else {
 				
-				consultaEncalhe.setRecolhimento(0);
+				consultaEncalhe.setRecolhimento(1);
 			}
 			
 		}

@@ -26,7 +26,13 @@
 <body>
 <input type="hidden" value="${numeroCotaFollowUp}" id="numeroCotaFollowUp" name="numeroCotaFollowUp">
 <input type="hidden" value="${dataCotaFollowUp}" id="dataCotaFollowUp" name="dataCotaFollowUp">
-
+	
+	<form id="formUsoMatrizRecolhimentoConfirmada">
+		<div id="dialogUsoMatrizRecolhimentoConfirmada" title="Atenção" style="display: none">
+			<p>A data escolhida já possui matriz de recolhimento confirmada. Deseja prosseguir mesmo assim?</p>
+		</div>
+	</form>
+	
 	<form id="form-confirm">
 		<div id="dialog-confirm" title="Chamadão">
 			
@@ -147,7 +153,7 @@
 			    </td>
 			    <td>
     				<span class="bt_pesquisar" title="Pesquisar">
-    					<a href="javascript:;" onclick="chamadaoController.pesquisar();">Pesquisar</a>
+    					<a href="javascript:;" onclick="chamadaoController.validarMatrizRecolhimentoConfirmada();">Pesquisar</a>
     				</span>
     			</td>
 		  </tr>

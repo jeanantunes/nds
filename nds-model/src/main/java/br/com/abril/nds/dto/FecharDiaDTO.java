@@ -9,23 +9,32 @@ public class FecharDiaDTO implements Serializable {
 
 	private static final long serialVersionUID = 4116643880953265518L;
 	
-	private Boolean baixaBancaria;
+	private Boolean baixaBancaria = false;
 	
-	private Boolean geracaoDeCobranca;
+	private Boolean geracaoDeCobranca = false;
 	
-	private Boolean recebimentoFisico;
+	private Boolean recebimentoFisico = false;
 	
-	private Boolean confirmacaoDeExpedicao;	
+	private Boolean confirmacaoDeExpedicao = false;	
 	
-	private Boolean lancamentoFaltasESobras;
+	private Boolean lancamentoFaltasESobras = false;
 	
-	private Boolean controleDeAprovacao;
+	private Boolean controleDeAprovacao = false;
 	
-	private Boolean manutencaoStatusCota;
+	private Boolean fechamentoEncalhe = false;
 	
-	private Boolean fechamentoEncalhe;
+	private Boolean habilitarConfirmar = false;
 	
-	private Boolean habilitarConfirmar;
+	public boolean isFechamentoPermitido() {
+		
+		return this.baixaBancaria 
+				&& this.geracaoDeCobranca 
+				&& this.recebimentoFisico 
+				&& this.confirmacaoDeExpedicao 
+				&& this.lancamentoFaltasESobras
+				&& this.controleDeAprovacao
+				&& this.fechamentoEncalhe;
+	}
 
 	public Boolean getBaixaBancaria() {
 		return baixaBancaria;
@@ -73,14 +82,6 @@ public class FecharDiaDTO implements Serializable {
 
 	public void setControleDeAprovacao(Boolean controleDeAprovacao) {
 		this.controleDeAprovacao = controleDeAprovacao;
-	}
-
-	public Boolean getManutencaoStatusCota() {
-		return manutencaoStatusCota;
-	}
-
-	public void setManutencaoStatusCota(Boolean manutencaoStatusCota) {
-		this.manutencaoStatusCota = manutencaoStatusCota;
 	}
 
 	public Boolean getFechamentoEncalhe() {

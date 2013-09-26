@@ -407,11 +407,6 @@ public class ChamadaoController extends BaseController {
 					"É necessário informar a nova data de chamadão!");
 			}
 		}
-		
-		if (this.lancamentoService.existeMatrizRecolhimentoConfirmado(DateUtil.parseDataPTBR(novaDataChamadaoFormatada))){
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,"Data escolhida já possui matriz de recolhimento confirmada.");
-		}
 	}
 	
 	@Post
@@ -441,6 +436,16 @@ public class ChamadaoController extends BaseController {
 		result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Chamadão cancelado com sucesso!"),
 								"result").recursive().serialize();
+	}
+	
+	@Post
+	public void validarMatrizRecolhimentoConfirmada(String dataPesquisa) {
+		
+		boolean matrizConfirmadaNaData = 
+			this.lancamentoService.existeMatrizRecolhimentoConfirmado(
+				DateUtil.parseDataPTBR(dataPesquisa));
+		
+		this.result.use(Results.json()).withoutRoot().from(matrizConfirmadaNaData).serialize();
 	}
 	
 	/**
@@ -593,11 +598,6 @@ public class ChamadaoController extends BaseController {
 			if (dataChamadao.compareTo(dataAtual) <= 0) {
 				
 				msgs.add("A Data do Chamadão deve ser maior que a data de operação!");
-			}
-			
-			if (this.lancamentoService.existeMatrizRecolhimentoConfirmado(dataChamadao)){
-				
-				msgs.add("Data escolhida já possui matriz de recolhimento confirmada.");
 			}
 		}
 		
