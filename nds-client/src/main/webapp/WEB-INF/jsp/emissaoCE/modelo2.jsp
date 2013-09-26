@@ -173,26 +173,44 @@ function imprimir(){
     <td width="58" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; height:30px ">${produto.codigoProduto}</td>
     <td width="230" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; "><strong>${produto.nomeProduto}</strong></td>
     <td width="34" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px; "><strong>${produto.edicao}</strong></td>
-    <td width="34" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px;border-right:1px solid #000;  "><strong>${produto.sequencia}</strong></td>
-    <td width="25" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.dataLancamento}</td>
-    <td width="70" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.notaEnvio}</td>
-    <td width="22" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.tipoRecolhimento}</td>
-    <td width="51" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.reparte}</td>
     
-    <td width="95" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">
-    	<c:if test="${produto.apresentaQuantidadeEncalhe}">
-              ${produto.quantidadeDevolvida}
-        </c:if>
-    </td>
+    <c:if test="${produto.produtoDuplicadoDetalheNota}">
+    	<td colspan="9" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px;border-right:1px solid #000;" >
+    		${produto.descricaoNotaEnvio}
+    	</td>
+    </c:if>
     
-    <td width="95" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.vendido}</td>
-
-    <td width="70" align="right" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">
-    	<fmt:formatNumber value="${produto.precoVenda.subtract(produto.precoVenda.multiply(produto.vlrDesconto).divide(100))}" maxFractionDigits="2" minFractionDigits="2" />
-    </td>
-    <td width="95" align="right" style="border-bottom:1px solid #000;padding-left:5px; border-right:1px solid #000; ">
-    	<fmt:formatNumber value="${produto.vlrPrecoComDesconto.multiply(produto.vendido)}" maxFractionDigits="2" minFractionDigits="2" />
-    </td>
+    <c:if test="${!produto.produtoDuplicadoDetalheNota}">
+    
+	    <td width="34" align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;padding-left:5px;border-right:1px solid #000;  "><strong>${produto.sequencia}</strong></td>
+	    <td width="25" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.dataLancamento}</td>
+	    <td width="70" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.notaEnvio}</td>
+	    <td width="22" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.tipoRecolhimento}</td>
+	    <td width="51" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">${produto.reparte}</td>
+	    
+	    <td width="95" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">
+	    	<c:if test="${produto.apresentaQuantidadeEncalhe}">
+	              ${produto.quantidadeDevolvida}
+	        </c:if>
+	    </td>
+	    
+	    <td width="95" align="center" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">
+	    	<c:if test="${produto.apresentaQuantidadeEncalhe}">
+	    		${produto.vendido}
+	    	</c:if>
+	    </td>
+	
+	    <td width="70" align="right" style="border-bottom:1px solid #000;border-right:1px solid #000;padding-left:5px; ">
+	    	<fmt:formatNumber value="${produto.precoVenda.subtract(produto.precoVenda.multiply(produto.vlrDesconto).divide(100))}" maxFractionDigits="4" minFractionDigits="4" />
+	    </td>
+	    <td width="95" align="right" style="border-bottom:1px solid #000;padding-left:5px; border-right:1px solid #000; ">
+	    	<c:if test="${produto.apresentaQuantidadeEncalhe}">
+	    		<fmt:formatNumber value="${produto.vlrPrecoComDesconto.multiply(produto.vendido)}" maxFractionDigits="2" minFractionDigits="2" />
+	    	</c:if>
+	    </td>
+    
+    </c:if>
+    
   </tr>
  
  </c:forEach>

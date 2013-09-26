@@ -442,11 +442,13 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		}
 		
 		if ( ! produtoEdicao.getOrigem().equals(br.com.abril.nds.model.Origem.INTERFACE)) {
-				
+		
+			Usuario usuario = usuarioService.getUsuarioLogado();
+			
 			if(TipoLancamento.PARCIAL.equals(dto.getTipoLancamento())) {							
-				this.salvarLancamentoParcial(dto, produtoEdicao,indNovoProdutoEdicao);
+				this.salvarLancamentoParcial(dto, produtoEdicao,indNovoProdutoEdicao, usuario);
 			} else {
-				this.salvarLancamento(dto, produtoEdicao,indNovoProdutoEdicao);
+				this.salvarLancamento(dto, produtoEdicao,indNovoProdutoEdicao, usuario);
 			}
 		}
 		
@@ -455,7 +457,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	}
 	
 	private void salvarLancamentoParcial(ProdutoEdicaoDTO dto,
-			ProdutoEdicao produtoEdicao, boolean indNovoProdutoEdicao) {
+			ProdutoEdicao produtoEdicao, boolean indNovoProdutoEdicao, Usuario usuario) {
 		
 		if(!indNovoProdutoEdicao) {
 			for(Lancamento lancamento : produtoEdicao.getLancamentos() ) {
@@ -483,7 +485,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				}
 				else{
 					
-					this.alterarPeriodoLancamentoParcial(dto, lancamentoParcial.getPeriodos().get(0));
+					this.alterarPeriodoLancamentoParcial(dto, lancamentoParcial.getPeriodos().get(0), usuario);
 				}
 			}
 		}
@@ -493,8 +495,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		lancamentoParcialRepository.merge(lancamentoParcial);
 		
-		Usuario usuario = usuarioService.getUsuarioLogado();
-		
 		if(lancamentoParcial.getPeriodos().isEmpty())
 			parciaisService.gerarPeriodosParcias(produtoEdicao, 1, usuario);
 		
@@ -502,11 +502,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		
 		periodo.setReparte(dto.getRepartePrevisto());
 		periodo.setRepartePromocional(dto.getRepartePromocional());
+		periodo.setUsuario(usuario);
 		
 		lancamentoRepository.merge(periodo);
 	}
 
-	private void alterarPeriodoLancamentoParcial(ProdutoEdicaoDTO dto,PeriodoLancamentoParcial periodoLancamentoParcial) {
+	private void alterarPeriodoLancamentoParcial(ProdutoEdicaoDTO dto,PeriodoLancamentoParcial periodoLancamentoParcial, Usuario usuario) {
 		
 		if(dto.getDataLancamentoPrevisto().compareTo(dto.getDataRecolhimentoPrevisto())>0){
 			
@@ -519,6 +520,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		lancamento.setDataLancamentoPrevista(dto.getDataLancamentoPrevisto());
 		lancamento.setDataRecolhimentoDistribuidor(dto.getDataRecolhimentoPrevisto());
 		lancamento.setDataRecolhimentoPrevista(dto.getDataRecolhimentoPrevisto());
+		lancamento.setUsuario(usuario);
 		
 		lancamentoRepository.merge(lancamento);
 	}
@@ -755,8 +757,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	 * @param dto
 	 * @param produtoEdicao
 	 * @param indNovoProdutoEdicao 
+	 * @param usuario 
 	 */
-	private void salvarLancamento(ProdutoEdicaoDTO dto, ProdutoEdicao produtoEdicao, boolean indNovoProdutoEdicao) {
+	private void salvarLancamento(ProdutoEdicaoDTO dto, ProdutoEdicao produtoEdicao, boolean indNovoProdutoEdicao, Usuario usuario) {
 		
 		if(!indNovoProdutoEdicao && produtoEdicao.getLancamentoParcial() != null) {
 			
@@ -786,6 +789,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				? BigInteger.ZERO : dto.getRepartePromocional();
 		lancamento.setReparte(repartePrevisto);
 		lancamento.setRepartePromocional(repartePromocional);
+		lancamento.setUsuario(usuario);
 		
 		if (produtoEdicao.getLancamentos().isEmpty()) {
 			lancamento.setDataLancamentoDistribuidor(dto.getDataLancamento() == null 
@@ -821,13 +825,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		if (produtoEdicao == null) {
 			
 			validacaoMap.put("edicaoInexistente", "Por favor, selecione uma Edição existente!");
-			//throw new ValidacaoException(TipoMensagem.ERROR, "Por favor, selecione uma Edição existente!");
 		}
 
 		if(produtoEdicao.getEstoqueProduto() != null) {
 			
 			validacaoMap.put("edicaoPossuiEstoque", "Esta Edição não pode ser excluida por já ter estoque!");
-			//throw new ValidacaoException(TipoMensagem.ERROR, "Esta Edição não pode ser excluida por já ter estoque!");
 		}
 		
 		Set<Lancamento> lancamentos = produtoEdicao.getLancamentos();
@@ -836,14 +838,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			
 			if(lancamento.getEstudo() != null) {
 				validacaoMap.put("edicaoPossuiEstudo", "Esta Edição já possui estudo!");
-				//throw new ValidacaoException(TipoMensagem.WARNING, "Esta Edição já possui estudo!");
 			}
 			
 			if (!(lancamento.getStatus().equals(StatusLancamento.PLANEJADO)
 					|| lancamento.getStatus().equals(StatusLancamento.CONFIRMADO))) {
 				
 				validacaoMap.put("edicaoEmBalanceamentoBalanceada", "Esta Edição não pode ser excluida por ter lancamentos em balanceamento ou já balanceados!");
-				//throw new ValidacaoException(TipoMensagem.ERROR, "Esta Edição não pode ser excluida por ter lancamentos em balanceamento ou já balanceados!");
 			}
 		}
 		
@@ -886,6 +886,10 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 				} else {
 					
 					lancamento.setStatus(StatusLancamento.CANCELADO);
+					
+					Usuario usuario = usuarioService.getUsuarioLogado();
+					
+					lancamento.setUsuario(usuario);
 					
 					if (lancamento.getPeriodoLancamentoParcial() != null) {
 

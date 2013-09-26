@@ -39,6 +39,7 @@ import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
@@ -178,6 +179,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		((SQLQuery) query).addScalar("precoCapaDesconto", StandardBasicTypes.BIG_DECIMAL);
 		((SQLQuery) query).addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL);
 		((SQLQuery) query).addScalar("tipo", StandardBasicTypes.STRING);
+		((SQLQuery) query).addScalar("suplementar", StandardBasicTypes.BOOLEAN);
 		
 		return query.list();
 	}
@@ -208,7 +210,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.append("			 )) as precoCapaDesconto,");
 		
 		query.append("			 coalesce(pe.PRECO_VENDA, 0) as precoCapa,");
-		query.append("			 case when pe.PARCIAL = true  then 'P' else 'N' end as tipo");
+		query.append("			 case when pe.PARCIAL = true  then 'P' else 'N' end as tipo,");
+		query.append("			 case when ce.TIPO_CHAMADA_ENCALHE = 'MATRIZ_RECOLHIMENTO' then false else true end as suplementar");
 		query.append("	from chamada_encalhe_cota cec");
 		query.append("	inner join chamada_encalhe ce on (ce.ID = cec.CHAMADA_ENCALHE_ID)");
 		query.append("	inner join produto_edicao pe on (pe.ID = ce.PRODUTO_EDICAO_ID)");
@@ -242,7 +245,8 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.append("			 )) as precoCapaDesconto,");
 		
 		query.append("			 coalesce(pe.PRECO_VENDA, 0) as precoCapa,");
-		query.append("			 case when  pe.PARCIAL = true  then 'P' else 'N' end as tipo");
+		query.append("			 case when  pe.PARCIAL = true  then 'P' else 'N' end as tipo,");
+		query.append("			 case when ce.TIPO_CHAMADA_ENCALHE = 'MATRIZ_RECOLHIMENTO' then false else true end as suplementar");
 		query.append("	from chamada_encalhe_cota cec");
 		query.append("	inner join chamada_encalhe ce on (ce.ID = cec.CHAMADA_ENCALHE_ID)");
 		query.append("	inner join conferencia_encalhe confenc on (confenc.CHAMADA_ENCALHE_COTA_ID = cec.ID)");
@@ -362,12 +366,23 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	@Override
 	public Boolean buscaControleFechamentoEncalhe(Date dataEncalhe) {
 		
-		Criteria criteria = this.getSession().createCriteria(ControleFechamentoEncalhe.class, "cfe");
+		Criteria criteria = this.getSession().createCriteria(ControleConferenciaEncalhe.class, "cce");
+		
+		criteria.add(Restrictions.eq("cce.data", dataEncalhe));
+		
+		boolean naoPossuiConferenciaEncalhe = criteria.list().isEmpty();
+		
+		if (naoPossuiConferenciaEncalhe) {
+			
+			return true;
+		}
+		
+		criteria = this.getSession().createCriteria(ControleFechamentoEncalhe.class, "cfe");
+		
 		criteria.add(Restrictions.eq("cfe.dataEncalhe", dataEncalhe));
 		
 		return !criteria.list().isEmpty();
 	}
-	
 	
 	@SuppressWarnings("unchecked")
 	public List<Date> obterDatasControleFechamentoEncalheRealizado(Date dataDe, Date dataAte) {

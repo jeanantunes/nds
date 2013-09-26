@@ -182,7 +182,12 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			}
 			
 			List<FechamentoFisicoLogicoDTO> listaMovimentoEstoqueCota = fechamentoEncalheRepository.buscarMovimentoEstoqueCota(filtro, listaDeIdsProdutoEdicao);
-			List<FechamentoFisicoLogicoDTO> listaMovimentoEstoqueCotaVendaProduto = fechamentoEncalheRepository.buscarMovimentoEstoqueCotaVendaProduto(filtro, listaDeIdsProdutoEdicao);
+			List<FechamentoFisicoLogicoDTO> listaMovimentoEstoqueCotaVendaProduto = null;
+			
+			//So ira apurar os exemplares de venda de encalhe se não informar box para consulta
+			if(filtro.getBoxId() == null){
+				listaMovimentoEstoqueCotaVendaProduto = fechamentoEncalheRepository.buscarMovimentoEstoqueCotaVendaProduto(filtro, listaDeIdsProdutoEdicao);
+			}
 		
 			for(FechamentoFisicoLogicoDTO conferencia : listaConferencia)
 			{
@@ -202,16 +207,19 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 						conferencia.setExemplaresDevolucao(conferencia.getExemplaresDevolucao().add(movimentoEstoqueCota.getExemplaresDevolucao()));
 					}
 				}
-
-				//Subtrai as quantidades para os exemplares de devolucao
-				for(FechamentoFisicoLogicoDTO movimentoEstoqueCotaVendaProduto : listaMovimentoEstoqueCotaVendaProduto)
-				{
-					if(conferencia.getProdutoEdicao().equals(movimentoEstoqueCotaVendaProduto.getProdutoEdicao()) 
-							&& movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao() != null){
-						
-						conferencia.setExemplaresDevolucao(conferencia.getExemplaresDevolucao().subtract(movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao()));
-					}
-				}	
+				
+				if(filtro.getBoxId() == null){
+					
+					//Subtrai as quantidades para os exemplares de devolucao
+					for(FechamentoFisicoLogicoDTO movimentoEstoqueCotaVendaProduto : listaMovimentoEstoqueCotaVendaProduto)
+					{
+						if(conferencia.getProdutoEdicao().equals(movimentoEstoqueCotaVendaProduto.getProdutoEdicao()) 
+								&& movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao() != null){
+							
+							conferencia.setExemplaresDevolucao(conferencia.getExemplaresDevolucao().subtract(movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao()));
+						}
+					}	
+				}
 			}
 						
 			int inicioDiaSemana = 
@@ -357,16 +365,18 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		conferencia.setTotal(new BigDecimal(conferencia.getExemplaresDevolucao()).multiply(conferencia.getPrecoCapaDesconto()));
 		conferencia.setFechado(fechado);
 		
-		  if ("P".equals(conferencia.getTipo())){
+		if (conferencia.isSuplementar()) {
 			  
-			  conferencia.setEstoque(TipoEstoque.LANCAMENTO.getDescricao());
-		  } else if (dataAtual.after(DateUtil.removerTimestamp(dataFimSemana)) ){
+			conferencia.setEstoque(TipoEstoque.SUPLEMENTAR.getDescricao());
 			  
-			  conferencia.setEstoque(TipoEstoque.SUPLEMENTAR.getDescricao());
-		  } else {
+		} else if ("P".equals(conferencia.getTipo())) {
 			  
-			  conferencia.setEstoque("Encalhe");
-		  }
+			conferencia.setEstoque(TipoEstoque.LANCAMENTO.getDescricao());
+  
+		} else {
+			  
+			conferencia.setEstoque("Encalhe");
+		}
 	}
 	
 	@Override
@@ -593,7 +603,8 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	public void realizarCobrancaCota(Date dataOperacao, Date dataOperacaoDistribuidor, 
 									 Usuario usuario,
 									 CotaAusenteEncalheDTO c, Cota cotaAusente, 
-									 ValidacaoVO validacaoVO, ValidacaoVO validacaoEmails) {
+									 ValidacaoVO validacaoVO, 
+									 ValidacaoVO validacaoEmails) {
 
 		Cota cota = this.cotaRepository.buscarCotaPorID(c.getIdCota());
 		
@@ -607,21 +618,21 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 		}
 		
-		movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(
-				cota, 
-				dataOperacaoDistribuidor,
-				usuario,
-				null,
-				FormaComercializacao.CONSIGNADO);
-		
+		movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(cota, 
+																	dataOperacaoDistribuidor,
+																	usuario,
+																	null,
+																	FormaComercializacao.CONTA_FIRME);
 		
 		Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
 		
 		GerarCobrancaValidacaoException ex = null;
 		
 		try {
+			
 			this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), nossoNumeroEnvioEmail);
 		} catch (GerarCobrancaValidacaoException e) {
+			
 			ex = e;
 			
 			if (validacaoVO.getListaMensagens() == null){
@@ -641,6 +652,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				if (email == null || email.trim().isEmpty()){
 					
 					if (validacaoVO.getListaMensagens() == null){
+						
 						validacaoVO.setListaMensagens(new ArrayList<String>());
 					}
 					
@@ -649,10 +661,12 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				} else {
 				
 					try {
+						
 						this.gerarCobrancaService.enviarDocumentosCobrancaEmail(nossoNumero, email);
 					} catch (AutenticacaoEmailException e) {
 						
 						if (validacaoVO.getListaMensagens() == null){
+							
 							validacaoVO.setListaMensagens(new ArrayList<String>());
 						}
 						

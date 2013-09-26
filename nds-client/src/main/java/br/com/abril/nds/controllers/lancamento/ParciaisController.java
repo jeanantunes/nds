@@ -356,7 +356,7 @@ public class ParciaisController extends BaseController {
 		if(DateUtil.isDataInicialMaiorDataFinal(lancamento, recolhimento))
 			throw new ValidacaoException(TipoMensagem.WARNING, "Data de Lançamento é inferior a de Recolhimento");
 				
-		parciaisService.alterarPeriodo(idLancamento, lancamento, recolhimento);
+		parciaisService.alterarPeriodo(idLancamento, lancamento, recolhimento, getUsuarioLogado());
 		
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();		
 	}

@@ -154,14 +154,29 @@ public class DescontoProdutoRepositoryImpl extends AbstractRepositoryModel<Desco
 		StringBuilder sql = new StringBuilder();
 			
 		sql = new StringBuilder();
-		sql.append(" SELECT c.NUMERO_COTA as numeroCota, coalesce(p.NOME, p.RAZAO_SOCIAL) as nome FROM COTA c "
-					+ " JOIN PESSOA p on (c.PESSOA_ID=p.ID) "
-					+ " LEFT OUTER JOIN HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSOES hdcpe on (hdcpe.COTA_ID=c.ID) "
-					+ " LEFT OUTER JOIN DESCONTO_LANCAMENTO_COTA dlc on(dlc.COTA_ID=c.ID) "
-					+ " WHERE hdcpe.DESCONTO_ID=:descontoID or dlc.DESCONTO_LANCAMENTO_ID=:descontoID "
-					+ " group by c.NUMERO_COTA ");
+		sql.append("  SELECT c.NUMERO_COTA as numeroCota, coalesce(p.NOME, p.RAZAO_SOCIAL) as nome ")
+			.append(" FROM COTA c ")
+			.append(" JOIN PESSOA p ON (c.PESSOA_ID=p.ID) ")
+			.append(" LEFT OUTER JOIN HISTORICO_DESCONTO_COTA_PRODUTO_EXCESSOES hdcpe on (hdcpe.COTA_ID=c.ID) ")
+			.append(" LEFT OUTER JOIN DESCONTO_LANCAMENTO_COTA dlc ON (dlc.COTA_ID=c.ID) ")
+			.append(" WHERE hdcpe.DESCONTO_ID = :descontoID OR dlc.DESCONTO_LANCAMENTO_ID = :descontoID ")
+			.append(" UNION ")
+			.append(" SELECT c.NUMERO_COTA as numeroCota, coalesce(p.NOME, p.RAZAO_SOCIAL) as nome ")
+			.append(" FROM COTA c ")
+			.append(" JOIN PESSOA p ON ( c.PESSOA_ID=p.ID ) ")
+			.append(" LEFT OUTER JOIN DESCONTO_LANCAMENTO_COTA dlc on( dlc.COTA_ID=c.ID ) ")
+			.append(" LEFT OUTER JOIN DESCONTO_PROXIMOS_LANCAMENTOS dpl ON dpl.id = dlc.desconto_lancamento_id ")
+			.append(" WHERE dpl.DESCONTO_ID = :descontoID ")
+			.append(" GROUP BY numeroCota ");
+/*
+		if (sortname != null && !sortname.isEmpty()) { 
 
-		sql.append(" order by c.NUMERO_COTA " + ordenacao.name() + " ");
+			sql.append(" order by ");
+			sql.append(sortname);
+			sql.append(" ");
+			sql.append(sortorder != null ? sortorder : "");
+		}*/
+		sql.append(" order by numeroCota " + ordenacao.name() + " ");
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 

@@ -122,8 +122,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				continue;
 			}
 			
-			Integer sequenciaMatriz =
-				this.lancamentoRepository.obterProximaSequenciaMatrizPorData(dataConfirmada);
+			Integer sequenciaMatriz = this.lancamentoRepository.obterProximaSequenciaMatrizPorData(dataConfirmada);
 			
 			this.ordenarProdutos(listaProdutoLancamentoDTO);
 			
@@ -288,7 +287,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 				this.gerarHistoricoLancamento(usuario, lancamento);
 			}
 			
-			this.alterarLancamento(produtoLancamento, lancamento, novaData, proximoStatusLancamento);
+			this.alterarLancamento(
+				produtoLancamento, lancamento, novaData, proximoStatusLancamento, usuario);
 			
 			this.montarMatrizLancamentosRetorno(matrizLancamentoRetorno, produtoLancamento,
 												lancamento, novaData, proximoStatusLancamento);
@@ -518,12 +518,14 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 
 	private void alterarLancamento(ProdutoLancamentoDTO produtoLancamento,
 								   Lancamento lancamento, Date novaData,
-								   StatusLancamento statusLancamento) {
+								   StatusLancamento statusLancamento,
+								   Usuario usuario) {
 		
 		lancamento.setDataLancamentoDistribuidor(novaData);
 		lancamento.setStatus(statusLancamento);
 		lancamento.setDataStatus(new Date());
 		lancamento.setSequenciaMatriz(produtoLancamento.getSequenciaMatriz());
+		lancamento.setUsuario(usuario);
 	}
 
 	private void gerarHistoricoLancamento(Usuario usuario, Lancamento lancamento) {
@@ -532,11 +534,12 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		historicoLancamento.setLancamento(lancamento);
 		historicoLancamento.setTipoEdicao(TipoEdicao.ALTERACAO);
-		historicoLancamento.setStatus(lancamento.getStatus());
+		historicoLancamento.setStatusNovo(lancamento.getStatus());
 		historicoLancamento.setDataEdicao(new Date());
 		historicoLancamento.setResponsavel(usuario);
 		
-		this.historicoLancamentoRepository.merge(historicoLancamento);
+		//TODO: geração de historico desativada devido a criação de trigger para realizar essa geração.
+		//this.historicoLancamentoRepository.merge(historicoLancamento);
 	}
 	
 	private void montarMatrizLancamentosConfirmadosRetorno(TreeMap<Date, List<ProdutoLancamentoDTO>> matrizLancamento,
@@ -1657,7 +1660,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	}
 	
 	@Transactional
-	public void voltarConfiguracaoInicial(Date dataLancamento, BalanceamentoLancamentoDTO balanceamentoLancamento) {
+	public void voltarConfiguracaoInicial(Date dataLancamento, BalanceamentoLancamentoDTO balanceamentoLancamento, Usuario usuario) {
 		
 		if (dataLancamento == null) {
 			
@@ -1666,12 +1669,12 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		Intervalo<Date> periodoDistribuicao = this.getPeriodoDistribuicao(dataLancamento);
 		
-		this.voltarConfiguracaoInicialLancamentosPrevistos(periodoDistribuicao);
+		this.voltarConfiguracaoInicialLancamentosPrevistos(periodoDistribuicao, usuario);
 		
-		this.voltarConfiguracaoInicialLancamentosDistribuidor(periodoDistribuicao);
+		this.voltarConfiguracaoInicialLancamentosDistribuidor(periodoDistribuicao, usuario);
 	}
 	
-	private void voltarConfiguracaoInicialLancamentosPrevistos(Intervalo<Date> periodoDistribuicao) {
+	private void voltarConfiguracaoInicialLancamentosPrevistos(Intervalo<Date> periodoDistribuicao, Usuario usuario) {
 		
 		List<Lancamento> lancamentos =
 			this.lancamentoRepository.obterLancamentosPrevistosPorPeriodo(periodoDistribuicao);
@@ -1681,12 +1684,13 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			lancamento.setDataLancamentoDistribuidor(lancamento.getDataLancamentoPrevista());
 			
 			lancamento.setStatus(StatusLancamento.CONFIRMADO);
+			lancamento.setUsuario(usuario);
 			
 			lancamentoRepository.merge(lancamento);
 		}
 	}
 	
-	private void voltarConfiguracaoInicialLancamentosDistribuidor(Intervalo<Date> periodoDistribuicao) {
+	private void voltarConfiguracaoInicialLancamentosDistribuidor(Intervalo<Date> periodoDistribuicao, Usuario usuario) {
 		
 		List<Lancamento> lancamentos =
 			this.lancamentoRepository.obterLancamentosDistribuidorPorPeriodo(periodoDistribuicao);
@@ -1694,6 +1698,7 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		for (Lancamento lancamento : lancamentos) {
 				
 			lancamento.setStatus(StatusLancamento.CONFIRMADO);
+			lancamento.setUsuario(usuario);
 			
 			lancamentoRepository.merge(lancamento);
 		}
