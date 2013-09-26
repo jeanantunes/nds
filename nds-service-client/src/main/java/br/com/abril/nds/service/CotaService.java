@@ -160,6 +160,8 @@ public interface CotaService {
 	List<CotaSuspensaoDTO> obterDTOCotasSujeitasSuspensao(String sortOrder, String sortColumn, Integer inicio, Integer rp);
 
 	Long obterTotalCotasSujeitasSuspensao();
+	
+	BigDecimal obterTotalDividaCotasSujeitasSuspensao();
 
 	String obterNomeResponsavelPorNumeroDaCota(Integer numeroCota);
 

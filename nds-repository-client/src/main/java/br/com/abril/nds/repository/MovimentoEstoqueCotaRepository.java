@@ -444,8 +444,6 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	public Date obterDataUltimaMovimentacaoReparteExpedida(Integer numeroCota,
 			   											   Long idProdutoEdicao);
 	
-	BigDecimal obterValorReparteDaCotaNaData(Long idCota, Date data);
-	
 	/**
 	 * Adiciona/Altera lista de Movimentos de Estoque da Cota
 	 * @param movimentosEstoqueCota
