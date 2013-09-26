@@ -63,7 +63,7 @@ public interface MatrizLancamentoService {
 	 */
 	List<ConfirmacaoVO> obterDatasConfirmacao(BalanceamentoLancamentoDTO balanceamentoLancamento);
 	
-	void voltarConfiguracaoInicial(Date dataLancamento, BalanceamentoLancamentoDTO balanceamentoLancamento);
+	void voltarConfiguracaoInicial(Date dataLancamento, BalanceamentoLancamentoDTO balanceamentoLancamento, Usuario usuario);
 	
 	void verificaDataOperacao(Date data);
 	

@@ -66,9 +66,10 @@ public interface RecolhimentoService {
 	 * Desfaz alterações de recolhimento sobre os lançamentos da semana desejada.
 	 * 
 	 * @param numeroSemana - Número da semana
-	 * @param fornecedores 
+	 * @param fornecedores
+	 * @param usuario
 	 */
-	void voltarConfiguracaoOriginal(Integer numeroSemana, List<Long> fornecedores);
+	void voltarConfiguracaoOriginal(Integer numeroSemana, List<Long> fornecedores, Usuario usuario);
 	
 	void verificaDataOperacao(Date data);
 	

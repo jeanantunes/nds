@@ -13,7 +13,7 @@ var ConsultaEncalhe = $.extend(true, {
 				dataType : 'json',
 				preProcess:ConsultaEncalhe.executarPreProcessamento,
 				colModel : colunas,
-				sortname : "codigoProduto",
+				sortname : "dataDoRecolhimentoDistribuidor",
 				sortorder : "asc",
 				usepager : true,
 				useRp : true,
