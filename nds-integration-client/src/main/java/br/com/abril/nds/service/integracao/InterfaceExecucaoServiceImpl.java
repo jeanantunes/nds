@@ -41,7 +41,7 @@ public class InterfaceExecucaoServiceImpl implements InterfaceExecucaoService {
 	
 	@Value("${interfacesMDCEntrada:}")
 	private String interfacesMDC;
-
+	
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.service.InterfaceExecucaoService#executarInterface(java.lang.String, java.lang.String)
 	 */
