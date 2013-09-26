@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -12,6 +13,8 @@ public class FiltroEmissaoCE implements Serializable {
 
 	private static final long serialVersionUID = -701275770998729277L;
 
+	private TipoImpressaoCE tipoImpressao;
+	
 	@Export(label="Dt. Recolhimento:")
 	private Date dtRecolhimentoDe;
 	@Export(label="Até:")
@@ -266,7 +269,11 @@ public class FiltroEmissaoCE implements Serializable {
 			int qtdMaximaProdutosComTotalizacao) {
 		this.qtdMaximaProdutosComTotalizacao = qtdMaximaProdutosComTotalizacao;
 	}
-	
-	
+	public TipoImpressaoCE getTipoImpressao() {
+		return tipoImpressao;
+	}
+	public void setTipoImpressao(TipoImpressaoCE tipoImpressao) {
+		this.tipoImpressao = tipoImpressao;
+	}
 	
 }

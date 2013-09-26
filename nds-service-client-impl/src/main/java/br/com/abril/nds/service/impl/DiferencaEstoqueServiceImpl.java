@@ -74,6 +74,7 @@ import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DebitoCreditoCotaService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
+import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueCotaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
@@ -151,6 +152,10 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	
 	@Autowired
 	private TipoMovimentoFinanceiroService tipoMovimentoFinanceiroService;
+	
+	@Autowired
+	private EstoqueProdutoService estoqueProdutoService;
+	
 	
 	@Transactional(readOnly = true)
 	public List<Diferenca> obterDiferencasLancamento(FiltroLancamentoDiferencaEstoqueDTO filtro) {
@@ -263,7 +268,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		boolean isAprovacaoMovimentoDiferencaAutomatico = distribuidorService.utilizaControleAprovacaoFaltaSobra();
 		
-		this.confirmarLancamentosDiferenca(new ArrayList<>(listaNovasDiferencas), null, !isAprovacaoMovimentoDiferencaAutomatico, null);
+		Origem origem  = (mapaRateioCotas!= null && mapaRateioCotas.size() > 0) ? Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_COTA  : null;
+		
+		this.confirmarLancamentosDiferenca(new ArrayList<>(listaNovasDiferencas), null, !isAprovacaoMovimentoDiferencaAutomatico, origem);
 	} 
 	
 	@Transactional
@@ -1047,7 +1054,16 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			
 		} else {
 			
-			grupoMovimentoEstoque = tipoDiferenca.getTipoMovimentoEstoque();
+			if(TipoDirecionamentoDiferenca.COTA.equals(diferenca.getTipoDirecionamento())
+					&& TipoDiferenca.FALTA_EM.equals(diferenca.getTipoDiferenca())){
+				
+				grupoMovimentoEstoque = GrupoMovimentoEstoque.PERDA_EM;
+			}
+			else{
+				
+				grupoMovimentoEstoque = tipoDiferenca.getTipoMovimentoEstoque();
+			}
+		
 		}
 		
 		TipoMovimentoEstoque tipoMovimentoEstoque = 
@@ -1064,7 +1080,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				diferenca.getQtde(), tipoMovimentoEstoque, 
 					isAprovacaoAutomatica, validarTransfEstoqueDiferenca, dataLancamento, statusIntegracao, origem);
 	}
-
+	
 	private GrupoMovimentoEstoque obterGrupoMovimentoEstoqueForaDoPrazo(TipoDiferenca tipoDiferenca) {
 		
 		GrupoMovimentoEstoque grupoMovimentoEstoque;

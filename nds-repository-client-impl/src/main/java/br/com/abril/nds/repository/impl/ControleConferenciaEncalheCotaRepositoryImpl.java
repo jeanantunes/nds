@@ -14,6 +14,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -32,6 +33,33 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 	public ControleConferenciaEncalheCotaRepositoryImpl() {
 		super(ControleConferenciaEncalheCota.class);
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Date> obterDatasControleConferenciaEncalheCotaFinalizada(Long idCota, Date dataDe, Date dataAte) {
+		
+		StringBuffer hql = new StringBuffer("");
+		
+		hql.append(" select c.dataOperacao from ControleConferenciaEncalheCota c ");		
+		
+		hql.append(" where ");		
+
+		hql.append(" c.dataOperacao between :dataDe and :dataAte and ");
+		
+		hql.append(" c.cota.id = :idCota ");
+		
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("dataDe", dataDe);
+
+		query.setParameter("dataAte", dataAte);
+		
+		query.setParameter("idCota", idCota);
+		
+		return (List<Date>) query.list();
+		
+	}
+	
 	
 	
 	/*

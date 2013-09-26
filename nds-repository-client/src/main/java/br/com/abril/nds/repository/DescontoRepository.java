@@ -9,6 +9,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
+import br.com.abril.nds.model.financeiro.DescontoProximosLancamentos;
 
 /**
  * Interface que define as regras de acesso a dados
@@ -27,6 +28,8 @@ public interface DescontoRepository extends Repository<Desconto, Long> {
 	List<Produto> buscarProdutosQueUsamDescontoProduto(Desconto desconto);
 	
 	List<ProdutoEdicao> buscarProdutosEdicoesQueUsamDescontoProduto(Desconto desconto);
+	
+	List<DescontoProximosLancamentos> buscarProximosLancamentosQueUsamDescontoProduto(Desconto desconto);
 	
 	Desconto buscarUltimoDescontoValido(Long idDesconto, Fornecedor fornecedor);
 
