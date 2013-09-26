@@ -182,7 +182,12 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			}
 			
 			List<FechamentoFisicoLogicoDTO> listaMovimentoEstoqueCota = fechamentoEncalheRepository.buscarMovimentoEstoqueCota(filtro, listaDeIdsProdutoEdicao);
-			List<FechamentoFisicoLogicoDTO> listaMovimentoEstoqueCotaVendaProduto = fechamentoEncalheRepository.buscarMovimentoEstoqueCotaVendaProduto(filtro, listaDeIdsProdutoEdicao);
+			List<FechamentoFisicoLogicoDTO> listaMovimentoEstoqueCotaVendaProduto = null;
+			
+			//So ira apurar os exemplares de venda de encalhe se não informar box para consulta
+			if(filtro.getBoxId() == null){
+				listaMovimentoEstoqueCotaVendaProduto = fechamentoEncalheRepository.buscarMovimentoEstoqueCotaVendaProduto(filtro, listaDeIdsProdutoEdicao);
+			}
 		
 			for(FechamentoFisicoLogicoDTO conferencia : listaConferencia)
 			{
@@ -202,16 +207,19 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 						conferencia.setExemplaresDevolucao(conferencia.getExemplaresDevolucao().add(movimentoEstoqueCota.getExemplaresDevolucao()));
 					}
 				}
-
-				//Subtrai as quantidades para os exemplares de devolucao
-				for(FechamentoFisicoLogicoDTO movimentoEstoqueCotaVendaProduto : listaMovimentoEstoqueCotaVendaProduto)
-				{
-					if(conferencia.getProdutoEdicao().equals(movimentoEstoqueCotaVendaProduto.getProdutoEdicao()) 
-							&& movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao() != null){
-						
-						conferencia.setExemplaresDevolucao(conferencia.getExemplaresDevolucao().subtract(movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao()));
-					}
-				}	
+				
+				if(filtro.getBoxId() == null){
+					
+					//Subtrai as quantidades para os exemplares de devolucao
+					for(FechamentoFisicoLogicoDTO movimentoEstoqueCotaVendaProduto : listaMovimentoEstoqueCotaVendaProduto)
+					{
+						if(conferencia.getProdutoEdicao().equals(movimentoEstoqueCotaVendaProduto.getProdutoEdicao()) 
+								&& movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao() != null){
+							
+							conferencia.setExemplaresDevolucao(conferencia.getExemplaresDevolucao().subtract(movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao()));
+						}
+					}	
+				}
 			}
 						
 			int inicioDiaSemana = 
