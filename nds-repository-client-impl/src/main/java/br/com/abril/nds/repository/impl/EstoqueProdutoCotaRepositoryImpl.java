@@ -2,7 +2,6 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.security.InvalidParameterException;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -151,39 +150,6 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 		}
 		
 		return (BigDecimal) query.uniqueResult();
-	}
-
-	@Override
-	public Double obterFaturamentoCota(Long idCota) {
-		
-		if (idCota == null)
-			throw new InvalidParameterException();
-				
-		StringBuilder hql = new StringBuilder();
-
-		hql.append(" SELECT sum((epc.qtdeRecebida - epc.qtdeDevolvida) * (mec.valoresAplicados.precoComDesconto)) ")
-		.append(" FROM EstoqueProdutoCota AS epc ")
-		.append(" JOIN epc.movimentos as mec ")
-		.append(" JOIN epc.cota as cota ")
-		.append(" JOIN epc.produtoEdicao as produtoEdicao ")
-		.append(" JOIN produtoEdicao.produto.fornecedores as fornecedor ");
-		
-		
-		hql.append(" WHERE cota.id = :idCota ");
-		
-
-		Query query = this.getSession().createQuery(hql.toString());
-		
-		query.setParameter("idCota",idCota);
-		
-		BigDecimal retorno = (BigDecimal) query.uniqueResult();
-		
-		if (retorno == null){
-			
-			return 0D;
-		}
-		
-		return retorno.doubleValue();
 	}
 	
 	@SuppressWarnings("unchecked")

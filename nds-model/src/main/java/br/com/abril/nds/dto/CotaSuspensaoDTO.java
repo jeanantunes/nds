@@ -41,7 +41,7 @@ public class CotaSuspensaoDTO implements Serializable{
 	private Double doubleDividaAcumulada;
 	
 	@Export(label = "Dias em Aberto", alignment=Alignment.CENTER)
-	private Long diasAberto;
+	private Integer diasAberto;
 	
 	private Double doubleConsignado;
 		
@@ -59,8 +59,8 @@ public class CotaSuspensaoDTO implements Serializable{
 		this.nome = nome;
 		this.vlrConsignado = vlrConsignado;
 		this.vlrReparte = vlrReparte;
-		this.dividaAcumulada = dividaAcumulada;
-		this.diasAberto = diasAberto;
+		//this.dividaAcumulada = dividaAcumulada;
+		//this.diasAberto = diasAberto;
 		this.selecionado = selecionado;
 	}
 		
@@ -116,15 +116,14 @@ public class CotaSuspensaoDTO implements Serializable{
 	}
 
 	public void setDividaAcumulada(BigDecimal dividaAcumulada) {
-		this.doubleDividaAcumulada = dividaAcumulada.doubleValue();
 		this.dividaAcumulada = CurrencyUtil.formatarValor(dividaAcumulada);
 	}
 
-	public Long getDiasAberto() {
+	public Integer getDiasAberto() {
 		return diasAberto;
 	}
 
-	public void setDiasAberto(Long diasAberto) {
+	public void setDiasAberto(Integer diasAberto) {
 		this.diasAberto = diasAberto;
 	}
 
@@ -145,7 +144,7 @@ public class CotaSuspensaoDTO implements Serializable{
 	}
 
 	public void setDataAbertura(Date dataInicioDivida) {
-		this.diasAberto = dataInicioDivida==null? 0L : (((new Date()).getTime() - dataInicioDivida.getTime()) / 86400000L);
+		//this.diasAberto = dataInicioDivida==null? 0L : (((new Date()).getTime() - dataInicioDivida.getTime()) / 86400000L);
 	}
 	
 	
@@ -163,8 +162,8 @@ public class CotaSuspensaoDTO implements Serializable{
 	/**
 	 * @param faturamento the faturamento to set
 	 */
-	public void setFaturamento(String faturamento) {
-		this.faturamento = faturamento;
+	public void setFaturamento(BigDecimal faturamento) {
+		this.faturamento = CurrencyUtil.formatarValor(faturamento);
 	}
 
 	/**
@@ -177,8 +176,8 @@ public class CotaSuspensaoDTO implements Serializable{
 	/**
 	 * @param percDivida the percDivida to set
 	 */
-	public void setPercDivida(String percDivida) {
-		this.percDivida = percDivida;
+	public void setPercDivida(BigDecimal percDivida) {
+		this.percDivida = CurrencyUtil.formatarValor(percDivida);
 	}
 
 	/**
