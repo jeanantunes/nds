@@ -157,9 +157,11 @@ public class LancamentoServiceImpl implements LancamentoService {
 		historico.setLancamento(new Lancamento(idLancamento));
 		
 		historico.setResponsavel(new Usuario(idUsuario));
-		historico.setStatus(StatusLancamento.EXPEDIDO);
+		historico.setStatusNovo(StatusLancamento.EXPEDIDO);
 		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
-		historicoLancamentoRepository.adicionar(historico);
+		
+		//TODO: geração de historico desativada devido a criação de trigger para realizar essa geração.
+		//historicoLancamentoRepository.adicionar(historico);
 		
 		
 		movimentoEstoqueService.gerarMovimentoEstoqueDeExpedicao(lancamento.getDataPrevista(), lancamento.getDataDistribuidor(), 
