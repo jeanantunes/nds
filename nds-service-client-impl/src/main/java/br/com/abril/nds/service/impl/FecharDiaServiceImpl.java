@@ -1158,7 +1158,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			
 			atualizarHistoricoEstoqueProduto(dataFechamento);
 			
-			this.processarLancamentosRecolhimento();
+			this.processarLancamentosRecolhimento(usuario);
 			
 			return fechamentoDiarioDTO;
 		
@@ -1188,28 +1188,29 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 	}
 
-	private void processarLancamentosRecolhimento() {
+	private void processarLancamentosRecolhimento(Usuario usuario) {
 		
 		Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
 		
-		this.processarLancamentosEmRecolhimento(dataOperacao);
+		this.processarLancamentosEmRecolhimento(dataOperacao, usuario);
 		
-		this.processarLancamentosVencidos(dataOperacao);
+		this.processarLancamentosVencidos(dataOperacao, usuario);
 	}
 
-	private void processarLancamentosEmRecolhimento(Date dataOperacao) {
+	private void processarLancamentosEmRecolhimento(Date dataOperacao, Usuario usuario) {
 		
 		List<Lancamento> lancamentos = this.lancamentoRepository.obterLancamentosBalanceadosPorDataRecolhimentoDistrib(dataOperacao);
 		
 		for (Lancamento lancamento : lancamentos) {
 			
 			lancamento.setStatus(StatusLancamento.EM_RECOLHIMENTO);
+			lancamento.setUsuario(usuario);
 			
 			this.lancamentoRepository.merge(lancamento);
 		}
 	}
 	
-	private void processarLancamentosVencidos(Date dataOperacao) {
+	private void processarLancamentosVencidos(Date dataOperacao, Usuario usuario) {
 		
 		Integer ultimoDiaRecolhimento = this.obterUltimoDiaRecolhimento();
 		
@@ -1220,6 +1221,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		for (Lancamento lancamento : lancamentos) {
 			
 			lancamento.setStatus(StatusLancamento.RECOLHIDO);
+			lancamento.setUsuario(usuario);
 			
 			this.lancamentoRepository.merge(lancamento);
 		}

@@ -335,11 +335,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 				lancamento.setDataRecolhimentoDistribuidor(novaData);
 				lancamento.setStatus(statusLancamento);
 				lancamento.setDataStatus(new Date());
+				lancamento.setUsuario(usuario);
 				
 				this.lancamentoRepository.merge(lancamento);
 				
 				if(TipoLancamento.PARCIAL.equals(lancamento.getTipoLancamento())){
-					parciaisService.atualizarReparteDoProximoLancamentoParcial(lancamento);
+					parciaisService.atualizarReparteDoProximoLancamentoParcial(lancamento, usuario);
 				}
 				
 				this.montarMatrizRecolhimentosConfirmados(matrizConfirmada, produtoRecolhimento,
@@ -351,11 +352,12 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 					
 					historicoLancamento.setLancamento(lancamento);
 					historicoLancamento.setTipoEdicao(TipoEdicao.ALTERACAO);
-					historicoLancamento.setStatus(lancamento.getStatus());
+					historicoLancamento.setStatusNovo(lancamento.getStatus());
 					historicoLancamento.setDataEdicao(new Date());
 					historicoLancamento.setResponsavel(usuario);
 					
-					this.historicoLancamentoRepository.merge(historicoLancamento);
+					//TODO: geração de historico desativada devido a criação de trigger para realizar essa geração.
+					//this.historicoLancamentoRepository.merge(historicoLancamento);
 				}
 			}
 		}
@@ -606,7 +608,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			this.lancamentoRepository.obterExpectativasEncalhePorData(periodoRecolhimento, 
 																	  listaIdsFornecedores, 
 																	  GrupoProduto.CROMO);
-
+		
 		dadosRecolhimento.setProdutosRecolhimento(produtosRecolhimento);
 		
 		dadosRecolhimento.setMapaExpectativaEncalheTotalDiaria(mapaExpectativaEncalheTotalDiaria);
@@ -715,7 +717,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 
 	@Override
 	@Transactional
-	public void voltarConfiguracaoOriginal(Integer numeroSemana, List<Long> fornecedores) {
+	public void voltarConfiguracaoOriginal(Integer numeroSemana, List<Long> fornecedores, Usuario usuario) {
 		
 		Intervalo<Date> periodoRecolhimento =
 			getPeriodoRecolhimento(numeroSemana);
@@ -726,6 +728,9 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			lancamento.setStatus(StatusLancamento.EXPEDIDO);
 			lancamento.setDataRecolhimentoDistribuidor(lancamento.getDataRecolhimentoPrevista());
+			
+			lancamento.setUsuario(usuario);
+			
 			lancamentoRepository.alterar(lancamento);
 		}
 	}

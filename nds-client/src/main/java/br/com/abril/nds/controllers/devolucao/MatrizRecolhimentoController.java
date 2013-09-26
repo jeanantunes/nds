@@ -458,7 +458,7 @@ public class MatrizRecolhimentoController extends BaseController {
 		FiltroPesquisaMatrizRecolhimentoVO filtro = obterFiltroSessao();
 		
 		recolhimentoService.voltarConfiguracaoOriginal(
-			filtro.getAnoNumeroSemana(), filtro.getListaIdsFornecedores());
+			filtro.getAnoNumeroSemana(), filtro.getListaIdsFornecedores(), getUsuarioLogado());
 		
 		BalanceamentoRecolhimentoDTO balanceamentoRecolhimento = 
 			this.obterBalanceamentoRecolhimento(filtro.getAnoNumeroSemana(),
