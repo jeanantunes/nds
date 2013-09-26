@@ -17,7 +17,6 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.StatusConfirmacao;
-import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
@@ -34,14 +33,11 @@ import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.model.fiscal.StatusNotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.TipoNotaFiscal;
 import br.com.abril.nds.model.fiscal.TipoOperacao;
-import br.com.abril.nds.model.planejamento.HistoricoLancamento;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.LancamentoParcial;
-import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CFOPRepository;
-import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.ItemNotaFiscalEntradaRepository;
 import br.com.abril.nds.repository.ItemRecebimentoFisicoRepository;
 import br.com.abril.nds.repository.LancamentoParcialRepository;
@@ -92,10 +88,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 	
 	@Autowired
 	private PessoaJuridicaRepository pessoaJuridicaRepository;
-	
-	@Autowired
-	private HistoricoLancamentoRepository historicoLancamentoRepository;
-	
+		
 	@Autowired
 	private DiferencaEstoqueService diferencaEstoqueService;
 	
@@ -596,6 +589,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			itemRecebimentoFisico.setId(recebimentoFisicoDTO.getIdItemRecebimentoFisico());
 			
 			lancamento.getRecebimentos().add(itemRecebimentoFisico);
+			lancamento.setUsuario(usuarioLogado);
 			
 			lancamentoRepository.alterar(lancamento);
 		
@@ -623,6 +617,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			
 			periodo.setReparte(recebimentoFisicoDTO.getRepartePrevisto());
 			periodo.setRepartePromocional(BigInteger.ZERO);
+			periodo.setUsuario(usuario);
 			
 			lancamentoRepository.merge(periodo);
 			

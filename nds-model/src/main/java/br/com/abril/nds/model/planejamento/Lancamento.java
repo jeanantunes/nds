@@ -33,6 +33,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
+import br.com.abril.nds.model.seguranca.Usuario;
 
 /**
  * @author T30541
@@ -132,6 +133,10 @@ public class Lancamento implements Serializable {
 	
 	@Column(name="ALTERADO_INTERFACE", nullable = false)
 	private boolean alteradoInteface = false;
+	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "USUARIO_ID")
+	private Usuario usuario;
 	
 	public Lancamento(Long id) {
 		this.id= id; 
@@ -371,6 +376,20 @@ public class Lancamento implements Serializable {
 	 */
 	public void setAlteradoInteface(boolean alteradoInteface) {
 		this.alteradoInteface = alteradoInteface;
+	}
+
+	/**
+	 * @return the usuario
+	 */
+	public Usuario getUsuario() {
+		return usuario;
+	}
+
+	/**
+	 * @param usuario the usuario to set
+	 */
+	public void setUsuario(Usuario usuario) {
+		this.usuario = usuario;
 	}
 
 	public Date getDataFinMatDistrib() {

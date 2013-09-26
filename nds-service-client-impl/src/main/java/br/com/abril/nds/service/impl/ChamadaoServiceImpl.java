@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.ConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.ConsultaChamadaoDTO;
 import br.com.abril.nds.dto.ResumoConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO;
+import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO.OrdenacaoColunaChamadao;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
@@ -170,19 +171,28 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 			
 			if (filtro.isChamadaEncalhe()) {
 		
-				listaChamadao =
-					this.chamadaoRepository.obterConsignadosComChamadao(filtro);
+				listaChamadao = this.chamadaoRepository.obterConsignadosComChamadao(filtro);
 				
 			} else {
 			
-				listaChamadao =
-					this.chamadaoRepository.obterConsignadosParaChamadao(filtro);
+				listaChamadao = this.chamadaoRepository.obterConsignadosParaChamadao(filtro);
+			}
+		} else {
+			for(ConsignadoCotaChamadaoDTO cc : listaChamadao) {
+				
+				ProdutoEdicao pe = null;
+				if(cc.getCodigoProduto() != null && cc.getNumeroEdicao() != null) {
+					pe = produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(cc.getCodigoProduto(), cc.getNumeroEdicao());
+				}
+				
+				cc.setNomeProduto((pe != null && pe.getProduto() != null) ? pe.getProduto().getNome() : "");
 			}
 		}
 		
 		Cota cota = cotaRepository.obterPorNumerDaCota(numeroCota);
 		
-		listaChamadao = (List<ConsignadoCotaChamadaoDTO>) this.ordenarEmMemoria(listaChamadao, Ordenacao.ASC, "nomeProduto");
+		listaChamadao = (List<ConsignadoCotaChamadaoDTO>) this.ordenarEmMemoria(listaChamadao, Ordenacao.ASC, "numeroEdicao");
+		listaChamadao = (List<ConsignadoCotaChamadaoDTO>) this.ordenarEmMemoria(listaChamadao, Ordenacao.ASC, "nomeProduto");		
 				
 		for (ConsignadoCotaChamadaoDTO consignadoCotaChamadao : listaChamadao) {
 			
@@ -195,13 +205,11 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 			
 			if (filtro.isChamadaEncalhe()) {
 				
-				this.alterarChamadao(
-					consignadoCotaChamadao, consignadoCotaChamadao.getDataRecolhimento(), novaDataChamadao, cota);
+				this.alterarChamadao(consignadoCotaChamadao, consignadoCotaChamadao.getDataRecolhimento(), novaDataChamadao, cota);
 				
 			} else {
 				
-				this.gerarChamadaEncalhe(
-					consignadoCotaChamadao, dataChamadao, cota);
+				this.gerarChamadaEncalhe(consignadoCotaChamadao, dataChamadao, cota);
 			}
 		}
 		
@@ -328,6 +336,12 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 		ChamadaEncalhe chamadaEncalhe =
 			this.chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(
 				produtoEdicao, dataChamadao, TipoChamadaEncalhe.CHAMADAO);
+		
+		if (chamadaEncalhe == null) {
+			chamadaEncalhe =
+					this.chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(
+						produtoEdicao, dataChamadao, TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO);
+		}
 		
 		if (chamadaEncalhe == null) {
 			

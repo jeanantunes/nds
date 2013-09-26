@@ -49,9 +49,10 @@ public interface ParciaisService {
 	 * @param idLancamento
 	 * @param dataLancamento
 	 * @param dataRecolhimento
+	 * @param usuario
 	 */
 	void alterarPeriodo(Long idLancamento, Date dataLancamento,
-			Date dataRecolhimento);
+			Date dataRecolhimento, Usuario usuario);
 
 	/**
 	 * Remove PeriodoLancamentoParcial e Lancamento referente ao mesmo
@@ -77,7 +78,7 @@ public interface ParciaisService {
 	 * 
 	 * @param lancamento
 	 */
-	void atualizarReparteDoProximoLancamentoParcial(Lancamento lancamento);
+	void atualizarReparteDoProximoLancamentoParcial(Lancamento lancamento, Usuario usuario);
 	
 	/**
 	 * Retorna a peb calculada de uma parcial referente a um produto edição

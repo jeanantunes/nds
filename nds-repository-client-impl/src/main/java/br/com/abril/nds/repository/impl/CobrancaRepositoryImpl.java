@@ -211,11 +211,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	public List<Cobranca> obterCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro) {
 
 		StringBuilder hql = new StringBuilder();
-		hql.append(" select c from Cobranca c ");		
-		hql.append(" left join c.baixasCobranca baixa ");
-		hql.append(" where c.cota.numeroCota = :ncota ");
-		hql.append(" and (baixa.statusAprovacao is null or baixa.statusAprovacao='PENDENTE') ");
-		
+		hql.append(" from Cobranca c where ");		
+		hql.append(" c.cota.numeroCota = :ncota ");
 		
 		if (filtro.getDataVencimento()!=null){
 		    hql.append(" and c.dataVencimento <= :vcto ");
@@ -280,7 +277,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 			}
 		}
 
-		return (List<Cobranca>)query.list();
+		return query.list();
 	}
 
 	@Override
