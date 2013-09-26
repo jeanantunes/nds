@@ -82,5 +82,22 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
 				
 		return query.list();
 	}
+
+	@Override
+	public GrupoCota obterGrupoPorCota(Long idCota) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select grupoCota from GrupoCota grupoCota " +
+				   " join grupoCota.cotas cota where cota.id = :idCota ");
+		
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("idCota", idCota);
+				
+		return (GrupoCota) query.uniqueResult();
+		
+	}
 	
 }
