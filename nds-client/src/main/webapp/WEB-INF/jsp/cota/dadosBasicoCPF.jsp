@@ -131,13 +131,17 @@
       </span>
       </td> 
 	  <td width="439" valign="top"><table width="439" border="0" cellspacing="2" cellpadding="2">
-	  <tr class="linhas">
+	 
+	  <!-- 
+	   <tr class="linhas">
         <td width="127" nowrap="nowrap"><strong>Cota Base:</strong></td>
         <td id="percentualCotaBase">
 			
 		</td>
       </tr>
-     <!-- <tr class="linhas">
+	   -->
+     
+      <tr class="linhas">
         <td width="127" nowrap="nowrap"><strong>Cota Base:</strong></td>
         <td><table width="348" border="0" cellspacing="1" cellpadding="2">
           <tr>
@@ -149,33 +153,37 @@
             	<input type="text" name="cotaDTO.fimPeriodo" id="periodoCotaAteCPF" style="width:80px;" /></td>
           </tr>
         </table></td>
-      </tr> -->
+      </tr> 
+
+	<br>
+    <br>
+      
        <tr class="linhas">
         <td valign="top"><strong>Utilizar Histórico:</strong></td>
         <td width="374"><table width="348" border="0" cellspacing="1" cellpadding="2">
           <tr>
             <td width="38">Cota:</td>
             <td width="127">
-            	<input type="text" name="cotaDTO.historicoPrimeiraCota" maxlength="16" id="historicoPrimeiraCotaCPF" style="width:70px; margin-right:10px;" onblur="MANTER_COTA.validarCotaHistoricoBase('#historicoPrimeiraCotaCPF,#historicoPrimeiraPorcentagemCPF')" /></td>
+            	<input type="text" name="cotaDTO.historicoPrimeiraCota" maxlength="16" id="historicoPrimeiraCotaCPF" style="width:50px; margin-right:10px;" onblur="MANTER_COTA.validarCotaHistoricoBase('#historicoPrimeiraCotaCPF,#historicoPrimeiraPorcentagemCPF')" /></td>
             <td width="30" align="center">%</td>
             <td width="132">
-            	<input type="text" name="cotaDTO.historicoPrimeiraPorcentagem" id="historicoPrimeiraPorcentagemCPF" maxlength="4" style="width:50px;"/></td>
+            	<input type="text" name="cotaDTO.historicoPrimeiraPorcentagem" id="historicoPrimeiraPorcentagemCPF" maxlength="4" style="width:190px;"/></td>
             </tr>
           <tr>
             <td>Cota:</td>
             <td>
-            	<input type="text" name="cotaDTO.historicoSegundaCota" maxlength="16" id="historicoSegundaCotaCPF" style="width:70px; margin-right:10px;" onblur="MANTER_COTA.validarCotaHistoricoBase('#historicoSegundaCotaCPF,#historicoSegundaPorcentagemCPF')"/></td>
+            	<input type="text" name="cotaDTO.historicoSegundaCota" maxlength="16" id="historicoSegundaCotaCPF" style="width:50px; margin-right:10px;" onblur="MANTER_COTA.validarCotaHistoricoBase('#historicoSegundaCotaCPF,#historicoSegundaPorcentagemCPF')"/></td>
             <td align="center">%</td>
             <td>
-            	<input type="text" name="cotaDTO.historicoSegundaPorcentagem" id="historicoSegundaPorcentagemCPF" maxlength="4" style="width:50px;"/></td>
+            	<input type="text" name="cotaDTO.historicoSegundaPorcentagem" id="historicoSegundaPorcentagemCPF" maxlength="4" style="width:190px;"/></td>
             </tr>
           <tr>
             <td>Cota:</td>
             <td>
-            	<input type="text" name="cotaDTO.historicoTerceiraCota" maxlength="16" id="historicoTerceiraCotaCPF" style="width:70px; margin-right:10px;" onblur="MANTER_COTA.validarCotaHistoricoBase('#historicoTerceiraCotaCPF,#historicoTerceiraPorcentagemCPF')" /></td>
+            	<input type="text" name="cotaDTO.historicoTerceiraCota" maxlength="16" id="historicoTerceiraCotaCPF" style="width:50px; margin-right:10px;" onblur="MANTER_COTA.validarCotaHistoricoBase('#historicoTerceiraCotaCPF,#historicoTerceiraPorcentagemCPF')" /></td>
             <td align="center">%</td>
             <td>
-            	<input type="text" name="cotaDTO.historicoTerceiraPorcentagem" id="historicoTerceiraPorcentagemCPF" maxlength="4" style="width:50px;"/></td>
+            	<input type="text" name="cotaDTO.historicoTerceiraPorcentagem" id="historicoTerceiraPorcentagemCPF" maxlength="4" style="width:190px;"/></td>
           </tr>
         </table></td>
       </tr> 

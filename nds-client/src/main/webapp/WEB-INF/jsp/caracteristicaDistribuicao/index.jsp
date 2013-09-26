@@ -58,15 +58,15 @@ $(function(){
 		             <td width="206"><input type="text" name="nomeProduto" id="nomeProduto"  style="width:100px;" class="inputField"></input></td>		            
 		             <td width="70">Nome Editor:</td>
 		             <td width="206"><input type="text" name="nomeEditor" id="nomeEditor" style="width:100px;" class="inputField"></input></td>
-		          	 <td width="148">Chamada de capa:</td>
+		          	 <td width="200">Chamada de capa:</td>
 		             <td width="206"><input type="text" name="chamadaCapa" id="chamadaCapa" style="width:100px;" class="inputField"></input>
 		             <td width="70">Exato</td>
 		             <td width="70"><input type="checkbox" name="checkPublicacao" id="checkPublicacaoExato" style="margin-right:0px;"/></td>
 		          </tr>
 	 	           <tr>
-		             <td width="148" >Faixa de Preço:  </td>
+		             <td width="200" >Faixa de Preço:  </td>
 	 	             <td colspan="2" >De: <input type="text" name="faixaDe" id="faixaDe" onkeyup="return caracteristicaDistribuicaoController.moeda(this);" maxlength="8" style="width:50px;" class="inputField"/> Até:<input type="text" name="faixaAte" maxlength="8" id="faixaAte" onkeyup="return caracteristicaDistribuicaoController.moeda(this);"  style="width:50px;" class="inputField"/></td>
-	 	             <td width="106" ><span class="bt_pesquisar"><a href="javascript:;" onclick="caracteristicaDistribuicaoController.pesquisar();">Pesquisar</a></span></td>
+	 	             <td width="106" ><span class="bt_pesquisar" style="width:35px;"><a href="javascript:;" onclick="caracteristicaDistribuicaoController.pesquisar();">Pesquisar</a></span></td>
 	 	             
 	 	           </tr>
 	        </table>

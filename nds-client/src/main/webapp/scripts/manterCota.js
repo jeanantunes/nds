@@ -1481,12 +1481,12 @@ var COTA_CPF = $.extend(true, {
 //        //Ajuste 0153
 //        $("#percentualCotaBase", this.workspace).html(result.percentualCotaBase+"%");
         
-        $("#historicoPrimeiraCotaCPF", this.workspace).val(result.historicoPrimeiraCota).disable();
-        $("#historicoPrimeiraPorcentagemCPF", this.workspace).val( eval( result.historicoPrimeiraPorcentagem)).disable();
-        $("#historicoSegundaCotaCPF", this.workspace).val(result.historicoSegundaCota).disable();
-        $("#historicoSegundaPorcentagemCPF", this.workspace).val( eval( result.historicoSegundaPorcentagem)).disable();
-        $("#historicoTerceiraCotaCPF", this.workspace).val(result.historicoTerceiraCota).disable();
-        $("#historicoTerceiraPorcentagemCPF", this.workspace).val( eval( result.historicoTerceiraPorcentagem)).disable();
+        $("#historicoPrimeiraCotaCPF", this.workspace).val(result.cotasBases[0].numeroCota).disable();
+        $("#historicoPrimeiraPorcentagemCPF", this.workspace).val(result.cotasBases[0].nomeCota).disable();
+        $("#historicoSegundaCotaCPF", this.workspace).val(result.cotasBases[1].numeroCota).disable();
+        $("#historicoSegundaPorcentagemCPF", this.workspace).val(result.cotasBases[1].nomeCota).disable();
+        $("#historicoTerceiraCotaCPF", this.workspace).val((result.cotasBases[2] != undefined) ? result.cotasBases[2].numeroCota : "").disable();
+        $("#historicoTerceiraPorcentagemCPF", this.workspace).val((result.cotasBases[2] != undefined) ? result.cotasBases[2].nomeCota : "").disable();
 
         if(result.dataNascimento){
             $("#dataNascimento", this.workspace).val(result.dataNascimento.$);

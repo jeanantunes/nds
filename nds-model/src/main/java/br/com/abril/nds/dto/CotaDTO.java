@@ -75,6 +75,8 @@ public class CotaDTO implements Serializable {
     private BigInteger mixRepMin;
     private BigInteger mixRepMax;
     private String nomeUsuario;
+    
+    private List<CotaBaseDTO> cotasBases;
 
     public String getNumeroRG() {
         return numeroRG;
@@ -694,4 +696,12 @@ public class CotaDTO implements Serializable {
     public enum TipoPessoa {
         JURIDICA, FISICA;
     }
+
+	public List<CotaBaseDTO> getCotasBases() {
+		return cotasBases;
+	}
+
+	public void setCotasBases(List<CotaBaseDTO> cotasBases) {
+		this.cotasBases = cotasBases;
+	}
 }

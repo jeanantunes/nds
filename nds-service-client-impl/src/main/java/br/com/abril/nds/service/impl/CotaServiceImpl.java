@@ -31,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.assembler.HistoricoTitularidadeCotaDTOAssembler;
 import br.com.abril.nds.dto.AnaliseHistoricoDTO;
+import br.com.abril.nds.dto.CotaBaseDTO;
 import br.com.abril.nds.dto.CotaDTO;
 import br.com.abril.nds.dto.CotaDTO.TipoPessoa;
 import br.com.abril.nds.dto.CotaResumoDTO;
@@ -59,6 +60,7 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.BaseReferenciaCota;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.CotaBase;
 import br.com.abril.nds.model.cadastro.DescricaoTipoEntrega;
 import br.com.abril.nds.model.cadastro.DistribuidorClassificacaoCota;
 import br.com.abril.nds.model.cadastro.Endereco;
@@ -122,6 +124,7 @@ import br.com.abril.nds.repository.SocioCotaRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.UsuarioRepository;
+import br.com.abril.nds.service.CotaBaseService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.EnderecoService;
@@ -263,6 +266,9 @@ public class CotaServiceImpl implements CotaService {
 
 	@Autowired
 	FixacaoReparteService fixacaoReparteService;	
+	
+	@Autowired
+	private CotaBaseService cotaBaseService;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -1071,7 +1077,23 @@ public class CotaServiceImpl implements CotaService {
 		
 		processarTitularidadeCota(cota, cotaDTO);
 		
+		cotaDTO.setCotasBases(atribuirCotaBase(cota.getNumeroCota()));
+		
 		return cotaDTO;
+	}
+
+	private List<CotaBaseDTO> atribuirCotaBase(Integer numeroCota) {
+	
+		List<CotaBaseDTO> listaCotaBase = new ArrayList<CotaBaseDTO>();
+
+		CotaBase cotaBase = this.cotaBaseService.obterCotaNova(numeroCota, true);
+		
+		if(cotaBase != null){
+			listaCotaBase = this.cotaBaseService.obterCotasBases(cotaBase, null);			
+		}
+		
+		return listaCotaBase;
+		
 	}
 
     /**
