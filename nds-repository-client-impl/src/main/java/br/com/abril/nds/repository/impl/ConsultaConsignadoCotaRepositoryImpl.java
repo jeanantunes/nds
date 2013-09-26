@@ -51,91 +51,38 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		StringBuilder sql = new StringBuilder();
 		
 		sql.append(" SELECT ");
-
 		sql.append(" 	PR.CODIGO AS codigoProduto, ");
-		
 		sql.append(" 	PR.NOME AS nomeProduto, ");
-		
 		sql.append(" 	C.ID AS cotaId, ");
-		
 		sql.append(" 	PE.ID AS produtoEdicaoId, ");
-		
 		sql.append(" 	PE.NUMERO_EDICAO AS numeroEdicao, ");
-		
 		sql.append(" 	PJ.RAZAO_SOCIAL AS nomeFornecedor, ");
-		
-		sql.append(" 	CASE " +
-				"			WHEN LCTO.ID IS NOT NULL " +
-				"			THEN LCTO.DATA_LCTO_DISTRIBUIDOR " +
-				"			ELSE MEC.DATA END AS dataLancamento, ");
-		
+		sql.append(" 	CASE ");
+		sql.append("			WHEN LCTO.ID IS NOT NULL ");
+		sql.append("			THEN LCTO.DATA_LCTO_DISTRIBUIDOR ");
+		sql.append("			ELSE MEC.DATA END AS dataLancamento, ");
 		sql.append(" 	COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) AS precoCapa, ");
-		
 		sql.append(" 	COALESCE(MEC.VALOR_DESCONTO, 0) AS desconto, ");
-		
 		sql.append(" 	COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0) AS precoDesconto, ");
-		
-		sql.append(" 	SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END " +
-				   "	  -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' THEN MEC.QTDE ELSE 0 END)) AS reparte, ");
-		
-		sql.append(" 	COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0)" +
-				   "		*SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END" +
-				   "		   -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' THEN MEC.QTDE ELSE 0 END)) AS total, ");
-		
-		sql.append(" 	COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0)" +
-				   "		*SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END" +
-				   "		   -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' then MEC.QTDE ELSE 0 END)) AS totalDesconto ");
-
-		
-		sql.append(" FROM ");
-		
-		sql.append(" MOVIMENTO_ESTOQUE_COTA MEC ");
-		
-		sql.append(" LEFT OUTER JOIN LANCAMENTO LCTO ON MEC.LANCAMENTO_ID=LCTO.ID");
-		
-		sql.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ");
-		
-		sql.append(" LEFT OUTER JOIN PARAMETRO_COBRANCA_COTA PCC ON C.ID=PCC.COTA_ID ");
-       	
-		sql.append(" INNER JOIN PESSOA P ON C.PESSOA_ID=P.ID ");
-		
-		sql.append(" INNER JOIN TIPO_MOVIMENTO TM ON MEC.TIPO_MOVIMENTO_ID=TM.ID ");
-		
-		sql.append(" INNER JOIN PRODUTO_EDICAO PE ON MEC.PRODUTO_EDICAO_ID = PE.ID ");
-		
-		sql.append(" INNER JOIN PRODUTO PR ON PE.PRODUTO_ID=PR.ID ");
-		
-		sql.append(" INNER JOIN PRODUTO_FORNECEDOR F ON PR.ID=F.PRODUTO_ID ");
-		
-		sql.append(" INNER JOIN FORNECEDOR fornecedor8_ ON F.fornecedores_ID=fornecedor8_.ID ");
-		
-		sql.append(" INNER JOIN PESSOA PJ ON fornecedor8_.JURIDICA_ID=PJ.ID ");
+		sql.append(" 	SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END ");
+		sql.append("	  ) AS reparte, ");
+		sql.append(" 	COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) ");
+		sql.append("		*SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END ");
+		sql.append("		   ) AS total, ");
+		sql.append(" 	COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0) ");
+		sql.append("		*SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END ");
+		sql.append("		   ) AS totalDesconto ");
 		
 		
-		sql.append(" WHERE ");
+		this.setarFromWhereConsultaConsignado(sql, filtro);
 		
-		sql.append(" ( MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ) ");
-		
-		sql.append(" AND ( TM.GRUPO_MOVIMENTO_ESTOQUE not in (:tipoMovimentoEstorno) ");
-		sql.append(" ) "); 
-
-		if(filtro.getIdCota() != null ) { 
-			sql.append(" AND C.ID = :idCota ");
-		}
-
-		if(filtro.getIdFornecedor() != null) { 
-			sql.append(" AND fornecedor8_.ID = :idFornecedor ");
-		}
-
-		sql.append(" AND (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) "); 
-
 		sql.append(" GROUP BY ");
-		
 		sql.append(" PE.ID ");
+//		sql.append(" ,dataLancamento ");
 		
-		sql.append(" HAVING ");
-		sql.append(" SUM((CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END)" +
-				   "    -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' then MEC.QTDE ELSE 0 END))>0 "); 
+//		sql.append(" HAVING ");
+//		sql.append(" SUM((CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END)" +
+//				   "    -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' then MEC.QTDE ELSE 0 END))>0 "); 
 
 		if(filtro.getPaginacao()!=null){
 			
@@ -168,7 +115,7 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		parameters.put("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.ordinal());
 
-		if(filtro.getPaginacao()!=null){
+		if(filtro.getPaginacao()!=null && limitar){
 			
 			if(filtro.getPaginacao().getPosicaoInicial()!=null && filtro.getPaginacao().getQtdResultadosPorPagina()!=null) {
 				sql.append(" LIMIT :posicaoInicial, :posicaoFinal");
@@ -203,6 +150,36 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		return (List<ConsultaConsignadoCotaDTO>) namedParameterJdbcTemplate.query(sql.toString(), parameters, cotaRowMapper);
 				
+	}
+	
+	private void setarFromWhereConsultaConsignado(StringBuilder sql, FiltroConsultaConsignadoCotaDTO filtro){
+		
+		sql.append(" FROM ");
+		sql.append(" MOVIMENTO_ESTOQUE_COTA MEC ");
+		sql.append(" LEFT OUTER JOIN LANCAMENTO LCTO ON MEC.LANCAMENTO_ID=LCTO.ID");
+		sql.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ");
+		sql.append(" JOIN PARAMETRO_COBRANCA_COTA PCC ON C.ID=PCC.COTA_ID ");
+		sql.append(" INNER JOIN PESSOA P ON C.PESSOA_ID=P.ID ");
+		sql.append(" INNER JOIN TIPO_MOVIMENTO TM ON MEC.TIPO_MOVIMENTO_ID=TM.ID ");
+		sql.append(" INNER JOIN PRODUTO_EDICAO PE ON MEC.PRODUTO_EDICAO_ID = PE.ID ");
+		sql.append(" INNER JOIN PRODUTO PR ON PE.PRODUTO_ID=PR.ID ");
+		sql.append(" INNER JOIN PRODUTO_FORNECEDOR F ON PR.ID=F.PRODUTO_ID ");
+		sql.append(" INNER JOIN FORNECEDOR fornecedor8_ ON F.fornecedores_ID=fornecedor8_.ID ");
+		sql.append(" INNER JOIN PESSOA PJ ON fornecedor8_.JURIDICA_ID=PJ.ID ");
+		
+		sql.append(" WHERE ");
+		sql.append(" MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ");
+		sql.append(" AND TM.GRUPO_MOVIMENTO_ESTOQUE not in (:tipoMovimentoEstorno) ");
+		
+		if(filtro.getIdCota() != null ) { 
+			sql.append(" AND C.ID = :idCota ");
+		}
+
+		if(filtro.getIdFornecedor() != null) { 
+			sql.append(" AND fornecedor8_.ID = :idFornecedor ");
+		}
+
+		sql.append(" AND (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) ");
 	}
 
 	
@@ -361,66 +338,27 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 
 		if (filtro.getIdCota() == null) {
 
-			sql.append(" SELECT SUM(totalGeral.total) AS totalDesconto FROM (  ");
-			sql.append(" SELECT	COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0)" +
-					   "		*SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END" +
-					   "		   -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' then MEC.QTDE ELSE 0 END)) AS total ");
+			sql.append(" SELECT (totalGeral.total) AS totalDesconto FROM (  ");
+			sql.append(" SELECT	sum(COALESCE(MEC.PRECO_VENDA, PE.PRECO_VENDA, 0) ");
+			sql.append("		*(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END ");
+			sql.append("		   )) AS total ");
 		} else {
 		
-			sql.append(" SELECT SUM(totalGeral.totalComDesconto) AS totalDesconto FROM (  ");
-			sql.append(" SELECT	COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0)" +
-					   "		*SUM(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END" +
-					   "		   -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' then MEC.QTDE ELSE 0 END)) AS totalComDesconto ");
+			sql.append(" SELECT (totalGeral.totalComDesconto) AS totalDesconto FROM (  ");
+			sql.append(" SELECT	sum(COALESCE(MEC.PRECO_COM_DESCONTO, PE.PRECO_VENDA, 0) ");
+			sql.append("		*(CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE MEC.QTDE * -1 END ");
+			sql.append("		   )) AS totalComDesconto ");
 		}
 
-		sql.append(" FROM ");
+		this.setarFromWhereConsultaConsignado(sql, filtro);
 		
-		sql.append(" MOVIMENTO_ESTOQUE_COTA MEC ");
+//		sql.append(" GROUP BY pe.id ");
+//		
+//		if(filtro.getIdCota() == null) {
+//			sql.append(" , c.id ");
+//		}
 		
-		sql.append(" LEFT OUTER JOIN LANCAMENTO LCTO ON MEC.LANCAMENTO_ID=LCTO.ID");
-		
-		sql.append(" INNER JOIN COTA C ON MEC.COTA_ID=C.ID ");
-		
-		sql.append(" LEFT OUTER JOIN PARAMETRO_COBRANCA_COTA PCC ON C.ID=PCC.COTA_ID ");
-       	
-		sql.append(" INNER JOIN PESSOA P ON C.PESSOA_ID=P.ID ");
-		
-		sql.append(" INNER JOIN TIPO_MOVIMENTO TM ON MEC.TIPO_MOVIMENTO_ID=TM.ID ");
-		
-		sql.append(" INNER JOIN PRODUTO_EDICAO PE ON MEC.PRODUTO_EDICAO_ID = PE.ID ");
-		
-		sql.append(" INNER JOIN PRODUTO PR ON PE.PRODUTO_ID=PR.ID ");
-		
-		sql.append(" INNER JOIN PRODUTO_FORNECEDOR F ON PR.ID=F.PRODUTO_ID ");
-		
-		sql.append(" INNER JOIN FORNECEDOR fornecedor8_ ON F.fornecedores_ID=fornecedor8_.ID ");
-		
-		sql.append(" INNER JOIN PESSOA PJ ON fornecedor8_.JURIDICA_ID=PJ.ID ");
-		
-		sql.append(" WHERE ");
-		
-		sql.append(" ( MEC.MOVIMENTO_ESTOQUE_COTA_FURO_ID is null ) ");
-		
-		sql.append(" AND ( TM.GRUPO_MOVIMENTO_ESTOQUE not in (:tipoMovimentoEstorno) ");
-		sql.append(" ) "); 
-
-		if(filtro.getIdCota() != null ) { 
-			sql.append(" AND C.ID = :idCota ");
-		}
-
-		if(filtro.getIdFornecedor() != null) { 
-			sql.append(" AND fornecedor8_.ID = :idFornecedor ");
-		}
-
-		sql.append(" AND (MEC.STATUS_ESTOQUE_FINANCEIRO is null OR MEC.STATUS_ESTOQUE_FINANCEIRO = :statusEstoqueFinanceiro) "); 
-		
-		sql.append(" GROUP BY pe.id ");
-		
-		if(filtro.getIdCota() == null) {
-			sql.append(" , c.id ");
-		}
-		
-		sql.append(" HAVING SUM((CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END) -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' THEN MEC.QTDE ELSE 0 END))>0 ");
+		//sql.append(" HAVING SUM((CASE WHEN TM.OPERACAO_ESTOQUE='ENTRADA' THEN MEC.QTDE ELSE 0 END) -(CASE WHEN TM.OPERACAO_ESTOQUE='SAIDA' THEN MEC.QTDE ELSE 0 END))>0 ");
 		
 		sql.append(" ) AS totalGeral ");
 
