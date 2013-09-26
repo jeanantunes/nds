@@ -155,13 +155,7 @@ public class FecharDiaController extends BaseController {
 		
 		dto.setHabilitarConfirmar(
 			dataOperacao.equals(this.distribuidorService.obterDataOperacaoDistribuidor())
-			&& dto.getBaixaBancaria()
-			&& dto.getGeracaoDeCobranca()
-			&& dto.getRecebimentoFisico()
-			&& dto.getConfirmacaoDeExpedicao()
-			&& dto.getLancamentoFaltasESobras()
-			&& dto.getControleDeAprovacao()
-			&& dto.getFechamentoEncalhe());
+			&& dto.isFechamentoPermitido());
 		
 		result.use(Results.json()).withoutRoot().from(dto).recursive().serialize();
 	}
