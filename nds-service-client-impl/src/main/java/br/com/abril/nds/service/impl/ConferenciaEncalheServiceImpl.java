@@ -1527,7 +1527,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 																		 controleConferenciaEncalheCota.getDataOperacao(),
 																		 controleConferenciaEncalheCota.getUsuario(),
 																		 controleConferenciaEncalheCota.getId(), 
-																		 FormaComercializacao.CONTA_FIRME);
+																		 FormaComercializacao.CONSIGNADO);
 
 		Map<String, Boolean> nossoNumeroCollection = new HashMap<String, Boolean>();
 		
