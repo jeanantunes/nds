@@ -78,6 +78,6 @@ public interface FechamentoEncalheRepository extends Repository<FechamentoEncalh
 	
 	boolean verificarExistenciaFechamentoEncalheConsolidado(Date dataEncalhe);
 	
-
+	Boolean buscaControleConferenciaEncalhe(Date dataEncalhe);
 	
 }
