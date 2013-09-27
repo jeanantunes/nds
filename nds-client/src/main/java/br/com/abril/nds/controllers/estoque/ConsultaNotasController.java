@@ -146,9 +146,11 @@ public class ConsultaNotasController extends BaseController {
 		}
 	}
 
-	public void pesquisarDetalhesNotaFiscal(Long idNota) {
+	public void pesquisarDetalhesNotaFiscal(Long idNota, int page, int rp, String sortname, String sortorder) {
 
-		DetalheNotaFiscalDTO detalheNotaFiscal = this.notaFiscalService.obterDetalhesNotaFical(idNota);
+		PaginacaoVO paginacao = new PaginacaoVO(sortname, sortorder);
+		
+		DetalheNotaFiscalDTO detalheNotaFiscal = this.notaFiscalService.obterDetalhesNotaFical(idNota, paginacao);
 
 		if (detalheNotaFiscal == null || detalheNotaFiscal.getItensDetalhados() == null
 									  || detalheNotaFiscal.getItensDetalhados().isEmpty()) {

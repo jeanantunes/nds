@@ -9,6 +9,7 @@ import br.com.abril.nds.dto.NotaFiscalEntradaFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 public interface NotaFiscalEntradaRepository extends Repository<NotaFiscalEntrada, Long> {
 
@@ -18,7 +19,7 @@ public interface NotaFiscalEntradaRepository extends Repository<NotaFiscalEntrad
 
 	List<NotaFiscalEntradaFornecedorDTO> obterNotasFiscaisCadastradasDTO(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal);
 	
-	List<DetalheItemNotaFiscalDTO> obterDetalhesNotaFical(Long idNotaFiscal);
+	List<DetalheItemNotaFiscalDTO> obterDetalhesNotaFical(Long idNotaFiscal, PaginacaoVO paginacao);
 
 	void inserirNotaFiscal(NotaFiscalEntrada notaFiscal);
 	
