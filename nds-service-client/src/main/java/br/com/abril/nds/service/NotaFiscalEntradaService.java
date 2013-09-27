@@ -12,6 +12,7 @@ import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaCota;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
+import br.com.abril.nds.vo.PaginacaoVO;
 
 public interface NotaFiscalEntradaService {
 
@@ -21,7 +22,7 @@ public interface NotaFiscalEntradaService {
 
 	List<NotaFiscalEntradaFornecedor> obterNotasFiscaisCadastradas(FiltroConsultaNotaFiscalDTO filtroConsultaNotaFiscal);
 	
-	DetalheNotaFiscalDTO obterDetalhesNotaFical(Long idNotaFiscal);
+	DetalheNotaFiscalDTO obterDetalhesNotaFical(Long idNotaFiscal, PaginacaoVO paginacao);
 
 	void inserirNotaFiscal(NotaFiscalEntradaCota notaFiscal, Integer numeroCota, Long idControleConferenciaEncalheCota);
 	

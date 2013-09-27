@@ -168,12 +168,13 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 				
 				if (filtro.getPaginacao().getSortColumn().equals("codigo")){
 					
-					hql.append(" (LPAD(pe.produto.codigo, (select max(length(pe.produto.codigo)) from pe.produto), '0')), pe.numeroEdicao ");
+					hql.append(" (LPAD(pe.produto.codigo, (select max(length(pe.produto.codigo)) from pe.produto), '0')) ");
 				} else {
 					hql.append(filtro.getPaginacao().getSortColumn());
 				}
 				
 				hql.append(" ").append(filtro.getPaginacao().getOrdenacao().name());
+				hql.append(" , pe.numeroEdicao DESC ");
 			}
 		}
 		
@@ -232,7 +233,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 	}
 	
 	public Query queryObterVisaoEstoqueDetalheHistorico(Boolean isCount, String coluna, StringBuilder hql, FiltroConsultaVisaoEstoque filtro) {
-		
+
 		hql.append("   FROM HistoricoEstoqueProduto as ep ")
 				.append("   JOIN ep.produtoEdicao as pe ")
 				.append("   JOIN pe.produto as pr ")
@@ -249,9 +250,15 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 			hql.append("    AND f.id = :idFornecedor ");
 		}
 		
-		if(!isCount)
+		if(!isCount) {
+		
+			String orderByCodigo = " (LPAD(pe.produto.codigo, (select max(length(pe.produto.codigo)) from pe.produto), '0')) ";
+			
 			QueryUtil.addOrderBy(hql, filtro.getPaginacao(), 
-				"codigo","produto","edicao","precoCapa","lcto","rclto","qtde","valor");
+				orderByCodigo, orderByCodigo,"produto","edicao","precoCapa","lcto","rclto","qtde");
+			
+			hql.append(" , pe.numeroEdicao DESC ");
+		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
@@ -325,7 +332,7 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 		
 		if(!isCount)
 			QueryUtil.addOrderBy(hql, filtro.getPaginacao(), 
-				"codigo","produto","edicao","precoCapa","lcto","rclto","qtde","valor");
+				"codigo","codigo","produto","edicao","precoCapa","lcto","rclto","qtde","valor");
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
