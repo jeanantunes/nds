@@ -47,18 +47,21 @@
      	
      	<fieldset style="margin-bottom: 10px;">
      		<legend>Dados Basicos</legend>
-			<table width="800" border="0" cellspacing="1" cellpadding="1">
+			<table width="785" border="0" cellspacing="1" cellpadding="1">
 				<tr>
 					<td width="50"><strong>C&oacute;digo:</strong></td>					
 					<td width="120"><input type="text"  name="codigoProdutoCadastro" id="codigoProdutoCadastro" style="width:80px;" maxlength="30" /></td>					
+
 					<td width="50"  name="tdCodigoProdutoICDCadastro" ><strong>C&oacute;digo ICD:</strong></td>
 					<td width="120" name="tdCodigoProdutoICDCadastro"><input type="text"  name="codigoProdutoICDCadastro" id="codigoProdutoICDCadastro" style="width:80px;" maxlength="6" /></td>
-										
+					
 				</tr>
+				
 				<tr>
 					<td width="142"><strong>Produto:</strong></td>
 					<td width="250"><input type="text" class="habilitarCampoInterface" name="nomeProduto" id="nomeProduto" style="width:250px;" maxlength="60" /></td>
 				</tr>
+				
 				<tr>
 					<td><strong>Fornecedor:</strong></td>
 					<td>
@@ -73,7 +76,7 @@
 				</tr>
 				<tr>
 					<td><strong> Slogan do Produto:</strong></td>
-					<td colspan="3"><input type="text" class="habilitarCampoInterface" name="sloganProduto" id="sloganProduto" maxlength="50" style="width:652px;" /></td>
+					<td colspan="3"><input type="text" class="habilitarCampoInterface" name="sloganProduto" id="sloganProduto" maxlength="50" style="width:600px;" /></td>
 				</tr>
 				<tr>
 					<td><strong>Tipo de Produto:</strong></td>
@@ -81,14 +84,14 @@
 						<select name="comboTipoProdutoCadastro" class="habilitarCampoInterface" id="comboTipoProdutoCadastro" style="width:200px;" >
 						</select>
 					</td>
-					<td><strong>Forma Comercializa&ccedil;&atilde;o:</strong></td>
+					<td width="110"><strong>Forma Comercializa&ccedil;&atilde;o:</strong></td>
 					<td>
-						<table width="229" border="0" cellspacing="1" cellpadding="1">
+						<table width="210" border="0" cellspacing="1" cellpadding="1">
 							<tr>
 								<td width="21"><input type="radio" class="habilitarCampoInterface" name="formaComercializacao" id="formaComercializacaoConsignado" value="CONSIGNADO" /></td>
-								<td width="86">Consignado</td>
+								<td width="65">Consignado</td>
 								<td width="21"><input type="radio" class="habilitarCampoInterface" name="formaComercializacao" id="formaComercializacaoContaFirme" value="CONTA_FIRME" /></td>
-								<td width="88">Conta Firme</td>
+								<td width="76">Conta Firme</td>
 							</tr>
 						</table>
 					</td>

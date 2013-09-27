@@ -10,7 +10,6 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -55,7 +54,6 @@ import br.com.abril.nds.model.cadastro.DistribuidorClassificacaoCota;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.ReferenciaCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.seguranca.Permissao;
@@ -207,13 +205,14 @@ public class CotaController extends BaseController {
 	    carregarTelefonesHistoricoTitularidade(idCota, idHistorico);
 	    
 	    
-	    // Ajuste 0153
-	    Cota cota = this.cotaService.obterPorId(idCota);
-	    BigDecimal totalPerc = BigDecimal.ZERO;
-	    for (ReferenciaCota refCota : cota.getBaseReferenciaCota().getReferenciasCota()) {
-	    	totalPerc = totalPerc.add(refCota.getPercentual());
-		}
-	    cotaDTO.setPercentualCotaBase(totalPerc);
+//	    // Ajuste 0153
+//	    Cota cota = this.cotaService.obterPorId(idCota);
+//	    BigDecimal totalPerc = BigDecimal.ZERO;
+//	   
+//	    for (ReferenciaCota refCota : cota.getBaseReferenciaCota().getReferenciasCota()) {
+//	    	totalPerc = totalPerc.add(refCota.getPercentual());
+//		}
+//	    cotaDTO.setPercentualCotaBase(totalPerc);
 	    
 	    result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}
@@ -884,7 +883,7 @@ public class CotaController extends BaseController {
 		
 		CotaDTO cotaDTO = cotaService.obterDadosCadastraisCota(idCota);
 		cotaDTO.setListaClassificacao(getListaClassificacao());
-
+		
 		result.use(Results.json()).from(cotaDTO, "result").recursive().serialize();
 	}
 	

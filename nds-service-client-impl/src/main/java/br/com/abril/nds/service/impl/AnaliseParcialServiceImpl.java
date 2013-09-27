@@ -8,6 +8,7 @@ import java.util.*;
 import br.com.abril.nds.dto.*;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
 import br.com.abril.nds.model.distribuicao.MixCotaProduto;
@@ -358,5 +359,10 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
         for (ClassificacaoCota classificacaoCota : ClassificacaoCota.values()) {
             mapClassificacaoCota.put(classificacaoCota.getCodigo(), classificacaoCota.getTexto());
         }
+    }
+
+    @Override
+    public Integer[] buscarCotasPorTipoDistribuicao(TipoDistribuicaoCota tipo) {
+        return analiseParcialRepository.buscarCotasPorTipoDistribuicao(tipo);
     }
 }

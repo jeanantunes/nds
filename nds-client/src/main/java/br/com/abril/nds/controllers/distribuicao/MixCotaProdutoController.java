@@ -268,13 +268,14 @@ public class MixCotaProdutoController extends BaseController {
 
 	@Post
 	@Path("/editarRepartePorPdv")
-	public void editarRepartePDV(FiltroConsultaMixPorCotaDTO filtro,
-			String sortorder, String sortname, int page, int rp) {
+	public void editarRepartePDV(FiltroConsultaMixPorCotaDTO filtro, String sortorder, String sortname, int page, int rp) {
 
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
+		
 		MixCotaProdutoDTO resultadoPesquisa = mixCotaProdutoService.obterPorId(filtro.getId());
-		result.use(Results.json()).withoutRoot().from(resultadoPesquisa)
-				.recursive().serialize();
+		
+		
+		result.use(Results.json()).withoutRoot().from(resultadoPesquisa).recursive().serialize();
 	}
 	
 	@Post
@@ -286,10 +287,16 @@ public class MixCotaProdutoController extends BaseController {
 		Produto produto = produtoService.obterProdutoPorID(filtro.getProdutoId());
 		
 		for (PdvDTO pdvDTO : listaPDVDTO) {
+			
 			RepartePDV reparteEncontrado = repartePdvService.obterRepartePorPdvMix(filtro.getId(), produto.getId(), pdvDTO.getId());
+			
 			if(reparteEncontrado !=null)
 				pdvDTO.setReparte( reparteEncontrado.getReparte());
+			
+			if(pdvDTO.getEndereco() == null){
+				pdvDTO.setEndereco(" ");
 			}
+		} 
 		
  		TableModel<CellModelKeyValue<PdvDTO>> tableModel = new TableModel<CellModelKeyValue<PdvDTO>>();
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaPDVDTO));

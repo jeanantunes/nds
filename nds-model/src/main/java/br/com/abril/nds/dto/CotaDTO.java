@@ -76,6 +76,13 @@ public class CotaDTO implements Serializable {
     private BigInteger mixRepMax;
     private String nomeUsuario;
 
+    private Date fxDataAlteracao;
+    private Integer fxEdicaoInicial;
+    private Integer fxEdicaoFinal;
+    private Integer fxEdicoesAtendidas;
+    private Integer fxQuantidadeEdicoes;
+    private Integer fxQuantidadeExemplares;
+
     public String getNumeroRG() {
         return numeroRG;
     }
@@ -693,5 +700,53 @@ public class CotaDTO implements Serializable {
 
     public enum TipoPessoa {
         JURIDICA, FISICA;
+    }
+
+    public Date getFxDataAlteracao() {
+        return fxDataAlteracao;
+    }
+
+    public void setFxDataAlteracao(Date fxDataAlteracao) {
+        this.fxDataAlteracao = fxDataAlteracao;
+    }
+
+    public Integer getFxEdicaoInicial() {
+        return fxEdicaoInicial;
+    }
+
+    public void setFxEdicaoInicial(Integer fxEdicaoInicial) {
+        this.fxEdicaoInicial = fxEdicaoInicial;
+    }
+
+    public Integer getFxEdicaoFinal() {
+        return fxEdicaoFinal;
+    }
+
+    public void setFxEdicaoFinal(Integer fxEdicaoFinal) {
+        this.fxEdicaoFinal = fxEdicaoFinal;
+    }
+
+    public Integer getFxEdicoesAtendidas() {
+        return fxEdicoesAtendidas;
+    }
+
+    public void setFxEdicoesAtendidas(Integer fxEdicoesAtendidas) {
+        this.fxEdicoesAtendidas = fxEdicoesAtendidas;
+    }
+
+    public Integer getFxQuantidadeEdicoes() {
+        return fxQuantidadeEdicoes;
+    }
+
+    public void setFxQuantidadeEdicoes(Integer fxQuantidadeEdicoes) {
+        this.fxQuantidadeEdicoes = fxQuantidadeEdicoes;
+    }
+
+    public Integer getFxQuantidadeExemplares() {
+        return fxQuantidadeExemplares;
+    }
+
+    public void setFxQuantidadeExemplares(Integer fxQuantidadeExemplares) {
+        this.fxQuantidadeExemplares = fxQuantidadeExemplares;
     }
 }

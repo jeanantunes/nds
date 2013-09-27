@@ -11,6 +11,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PessoaUtil;
@@ -270,5 +271,11 @@ public class AnaliseParcialController extends BaseController {
     public void defineRepartePorPDV(Long estudoId, Integer numeroCota, List<PdvDTO> reparteMap, String legenda, boolean manterFixa) {
         analiseParcialService.defineRepartePorPDV(estudoId, numeroCota, reparteMap, legenda, manterFixa);
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso.")).recursive().serialize();
+    }
+
+    @Post
+    public void tipoDistribuicaoCotaFiltro(TipoDistribuicaoCota tipo) {
+        Integer[] cotas = analiseParcialService.buscarCotasPorTipoDistribuicao(tipo);
+        result.use(Results.json()).withoutRoot().from(cotas).recursive().serialize();
     }
 }

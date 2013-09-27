@@ -7,6 +7,8 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.ScrollableResults;
+import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
@@ -19,6 +21,8 @@ import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.PdvDTO;
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.AnaliseParcialRepository;
@@ -84,7 +88,18 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
             }
 
             if (queryDTO.possuiOrdenacaoRanking()) {
+                where.append(" and case when ec.classificacao = 'S' then coalesce(ec.reparte, 0) else ec.reparte end between ? and ? ");
+                paramsWhere.add(queryDTO.getFilterSortFrom());
+                paramsWhere.add(queryDTO.getFilterSortTo());
+
                 sql.append(" left join ranking_segmento ranking on ranking.cota_id = c.id ");
+                sql.append(" and ranking.data_geracao_rank = (select max(data_geracao_rank) from ranking_segmento) ");
+                order.append(" ranking.qtde desc ");
+            }
+
+            if (queryDTO.possuiOrdenacaoNMaiores()) {
+                sql.append(" left join ranking_segmento ranking on ranking.cota_id = c.id ");
+                sql.append(" and ranking.data_geracao_rank = (select max(data_geracao_rank) from ranking_segmento) ");
                 order.append(" ranking.qtde desc ");
 
                 limit.append(" limit ");
@@ -99,9 +114,9 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 paramsWhere.add(queryDTO.getFilterSortFrom());
                 paramsWhere.add(queryDTO.getFilterSortTo());
             }
-            if (queryDTO.possuiReducaoReparte()) {
-                //Filtro feito diretamnete no JS.
-            }
+//            if (queryDTO.possuiReducaoReparte()) {
+//                //Filtro feito diretamnete no JS.
+//            }
         }
 
         if (queryDTO.possuiElemento()) {
@@ -165,7 +180,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
         sql.append(" where 1 = 1 ").append(where);
 
-        if (queryDTO.possuiOrdenacaoRanking()) {
+        if (queryDTO.possuiOrdenacaoNMaiores() || queryDTO.possuiOrdenacaoRanking()) {
             sql.append(" order by ").append(order).append(limit);
         } else if (queryDTO.possuiOrderBy()) {
             sql.append(" order by ").append(queryDTO.getSortName()).append(" ").append(queryDTO.getSortOrder());
@@ -623,4 +638,15 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 	        return (AnaliseParcialDTO) query.uniqueResult();
 		
 	}
+    @Override
+    public Integer[] buscarCotasPorTipoDistribuicao(TipoDistribuicaoCota tipo) {
+        ScrollableResults results = getSession().createCriteria(Cota.class).add(Restrictions.eq("tipoDistribuicaoCota", tipo)).scroll();
+
+        List<Integer> listNumeroCota = new ArrayList<>();
+        while (results.next()) {
+            Cota cota = (Cota) results.get()[0];
+            listNumeroCota.add(cota.getNumeroCota());
+        }
+        return (Integer[]) listNumeroCota.toArray(new Integer[0]);
+    }
 }

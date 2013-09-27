@@ -104,9 +104,13 @@ public class AnaliseParcialQueryDTO {
 				&& filterSortTo != null;
 	}
 
-	public boolean possuiOrdenacaoRanking() {
-		return possuiOrdenacaoPlusFiltro() && filterSortName.equals("ranking");
+	public boolean possuiOrdenacaoNMaiores() {
+		return possuiOrdenacaoPlusFiltro() && filterSortName.equals("n_maiores");
 	}
+
+    public boolean possuiOrdenacaoRanking() {
+        return possuiOrdenacaoPlusFiltro() && filterSortName.equals("ranking");
+    }
 
 	public String getTipoElemento() {
 		return elemento.substring(0, elemento.lastIndexOf("_"));
