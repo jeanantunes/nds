@@ -797,7 +797,7 @@ var ConferenciaEncalhe = $.extend(true, {
 					
 					innerTable += "<td style='text-align: right;' nowrap='nowrap'>" + parseFloat(value.precoCapa).toFixed(2) + "</td>";
 					
-					innerTable += "<td style='text-align: right;' nowrap='nowrap'>" + parseFloat(value.precoComDesconto).toFixed(2) + "</td>";
+					innerTable += "<td style='text-align: right;' nowrap='nowrap'>" + parseFloat(value.precoComDesconto).toFixed(4) + "</td>";
 					
 					innerTable += "<td align='right' nowrap='nowrap' id='valorTotalConferencia_" + index + "'>" + parseFloat(value.valorTotal).toFixed(2) + "</td>";
 					
@@ -1179,7 +1179,7 @@ var ConferenciaEncalhe = $.extend(true, {
 				$("#editor", ConferenciaEncalhe.workspace).text(result.nomeEditor);
 				$("#pacotePadrao", ConferenciaEncalhe.workspace).text(result.pacotePadrao);
 				
-				$("#precoDesconto", ConferenciaEncalhe.workspace).text((parseFloat(result.precoCapa) - parseFloat(result.desconto)).toFixed(2));
+				$("#precoDesconto", ConferenciaEncalhe.workspace).text((parseFloat(result.precoCapa) - parseFloat(result.desconto)).toFixed(4));
 				
 				$("#observacaoReadOnly", ConferenciaEncalhe.workspace).text(result.observacao ? result.observacao : "");
 				$("#observacao", ConferenciaEncalhe.workspace).val(result.observacao ? result.observacao : "");
@@ -1336,7 +1336,7 @@ var ConferenciaEncalhe = $.extend(true, {
 		$("#nomeProduto", ConferenciaEncalhe.workspace).text(result.nomeProduto);
 		$("#edicaoProduto", ConferenciaEncalhe.workspace).text(result.numeroEdicao);
 		$("#precoCapa", ConferenciaEncalhe.workspace).text(parseFloat(result.precoCapa).toFixed(2));
-		$("#desconto", ConferenciaEncalhe.workspace).text(parseFloat(result.desconto).toFixed(2));
+		$("#desconto", ConferenciaEncalhe.workspace).text(parseFloat(result.desconto).toFixed(4));
 		
 		$("#valorTotal", ConferenciaEncalhe.workspace).text(((parseFloat(result.precoCapa) - parseFloat(result.desconto)) * parseFloat(result.qtdExemplar)).toFixed(2));
 		
