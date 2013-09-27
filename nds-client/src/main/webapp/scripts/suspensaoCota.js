@@ -440,8 +440,6 @@ var suspensaoCotaController = $.extend(true, {
 				
 		if(!grid.rows || status=="error") {
 			
-			/*document.getElementById("total").innerText = "0,00";
-			document.getElementById("totalSugerida").innerText = "0";*/	
 			$("#total", suspensaoCotaController.workspace).text("0,00");
 			$("#totalSugerida", suspensaoCotaController.workspace).text("0");	
 
@@ -452,23 +450,16 @@ var suspensaoCotaController = $.extend(true, {
 		}
 		
 
-		var totalSugerida = grid.rows.length;
-		var total = 0.0;
-		
 		for(var i=0; i<grid.rows.length; i++) {			
 			
 			var cell = grid.rows[i].cell;
-			
-			total += parseFloat(cell.dividaAcumulada.replace(".","").replace(",","."));
 			
 			cell.acao = suspensaoCotaController.gerarAcoes(cell.idCota,cell.dividas,cell.nome);
 			cell.selecionado = suspensaoCotaController.gerarCheckbox('idCheck'+i,'selecao', cell.idCota,cell.selecionado);;					
 		}
 		
-		/*document.getElementById("total").innerHTML  = total.toFixed(2).replace(".",",");
-		document.getElementById("totalSugerida").innerHTML  = totalSugerida;*/	
-		$("#total", suspensaoCotaController.workspace).text(total.toFixed(2).replace(".",","));
-		$("#totalSugerida", suspensaoCotaController.workspace).text(totalSugerida);	
+		$("#total", suspensaoCotaController.workspace).text(data[4]);
+		$("#totalSugerida", suspensaoCotaController.workspace).text(data[3]);	
 
 		
 		return grid;
