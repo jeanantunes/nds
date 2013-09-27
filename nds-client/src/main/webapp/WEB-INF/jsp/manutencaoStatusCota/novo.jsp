@@ -28,7 +28,7 @@
 				<td>
 					<select name="novoStatusCota" id="novoStatusCota" style="width: 230px;" onchange="manutencaoStatusCotaController.ifInativo(this.value); manutencaoStatusCotaController.dividasAbertoCota(this.value);">
 						<option selected="selected">Selecione...</option>
-						<c:forEach var="statusCota" items="${listaSituacoesStatusCota}">
+						<c:forEach var="statusCota" items="${listaSituacoesNovoStatusCota}">
 							<option value="${statusCota.key}">${statusCota.value}</option>
 						</c:forEach>
 					</select>
