@@ -872,6 +872,7 @@ function MatrizDistribuicao(pathTela, descInstancia, workspace) {
         
         console.log(T.estudoAserCopiado);
         data.push({name: "estudoOrigem", value: T.estudoAserCopiado});
+        data.push({name: "dataLancamentoEdicao", value: $("#copiarEstudo-dataLancto").text()});
 
 		$.get(
 				contextPath + '/distribuicao/analise/parcial/',

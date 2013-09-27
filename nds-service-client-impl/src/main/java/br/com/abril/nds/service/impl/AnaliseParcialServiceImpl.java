@@ -99,7 +99,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
             }
         } else {
             if (queryDTO.getEdicoesBase() == null) {
-            	List<EdicoesProdutosDTO> l = analiseParcialRepository.carregarEdicoesBaseEstudo(queryDTO.getEstudoId());
+            	List<EdicoesProdutosDTO> l = analiseParcialRepository.carregarEdicoesBaseEstudo(queryDTO.getEstudoId(),queryDTO.getDataLancamentoEdicao());
             	List<EdicoesProdutosDTO> edicaoDoEstudoOrigem = null;
             	
             	if(queryDTO.getEstudoOrigem()!=null && queryDTO.getEstudoOrigem().compareTo(0l) ==1) {

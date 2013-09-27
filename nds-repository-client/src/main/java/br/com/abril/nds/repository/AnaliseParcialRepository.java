@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.AnaliseEstudoDetalhesDTO;
@@ -21,6 +22,7 @@ public interface AnaliseParcialRepository {
 	List<PdvDTO> carregarDetalhesPdv(Integer numeroCota, Long idEstudo);
 	List<EdicoesProdutosDTO> buscaHistoricoDeVendaParaCota(Long numeroCota, List<Long> listProdutoEdicaoId);
 	List<EdicoesProdutosDTO> getEdicoesBaseParciais(Long numeroCota, Long numeroEdicao, String codigoProduto, Long periodo);
+	List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId, Date date);
 	List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId);
 	List<CotaQueNaoEntrouNoEstudoDTO> buscarCotasQueNaoEntraramNoEstudo(CotasQueNaoEntraramNoEstudoQueryDTO queryDTO);
     AnaliseEstudoDetalhesDTO historicoEdicaoBase(Long id, Integer numeroPeriodo);
