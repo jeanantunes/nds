@@ -151,7 +151,7 @@ public class FecharDiaController extends BaseController {
 		dto.setConfirmacaoDeExpedicao(!this.fecharDiaService.existeConfirmacaoDeExpedicao(dataOperacao));
 		dto.setLancamentoFaltasESobras(this.fecharDiaService.existeLancamentoFaltasESobrasPendentes(dataOperacao));
 		dto.setControleDeAprovacao(this.distribuidorService.utilizaControleAprovacao());
-		dto.setFechamentoEncalhe(this.fechamentoEncalheService.buscaControleFechamentoEncalhe(dataOperacao));
+		dto.setFechamentoEncalhe(this.fechamentoEncalheService.validarEncerramentoOperacaoEncalhe(dataOperacao));
 		
 		dto.setHabilitarConfirmar(
 			dataOperacao.equals(this.distribuidorService.obterDataOperacaoDistribuidor())
