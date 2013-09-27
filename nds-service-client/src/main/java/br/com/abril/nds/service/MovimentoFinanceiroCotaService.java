@@ -10,10 +10,11 @@ import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
+import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
-import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.strategy.importacao.input.HistoricoFinanceiroInput;
 
@@ -31,27 +32,6 @@ public interface MovimentoFinanceiroCotaService {
 	MovimentoFinanceiroCota obterMovimentoFinanceiroCotaPorId(Long idMovimento);
 	
 	BigDecimal obterSomatorioValorMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
-	
-	/**
-	 * Obtém valores dos faturamentos bruto ou liquido das cotas no período
-	 * @param cotas
-	 * @param baseCalculo
-	 * @param dataInicial
-	 * @param dataFinal
-	 * @return Map<Long,BigDecimal>: Faturamentos das cotas
-	 */
-	Map<Long,BigDecimal> obterFaturamentoCotasPeriodo(List<Cota> cotas, BaseCalculo baseCalculo, Date dataInicial, Date dataFinal);
-	
-	/**
-	 * Gera movimento financeiro para cota a vista (crédito)
-	 * @param controleConferenciaEncalheCota
-	 */
-	void gerarMovimentoFinanceiroCota(
-			Cota cota,
-			Date dataOperacao,
-			Usuario usuario,
-			Long idControleConferenciaEncalheCota,
-			FormaComercializacao formaComercializacaoProduto);
 
 	void processarRegistrohistoricoFinanceiro(
 			HistoricoFinanceiroInput vendaInput, Date dataOperacao);
@@ -62,5 +42,69 @@ public interface MovimentoFinanceiroCotaService {
 			List<TipoMovimentoFinanceiro> tiposMovimentoPostergado, Date dataOperacao);
 	
 	List<GrupoMovimentoFinaceiro> getGrupoMovimentosFinanceirosDebitosCreditos();
+	
+	/**
+	 * Remove movimentos financeiros do consolidado ou postergado
+	 * Referentes à encalhe ou reparte da cota
+	 * @param mfcs
+	 */
+	void removerMovimentosFinanceirosCota(List<MovimentoFinanceiroCota> mfcs);
+	
+	/**
+	 * Obtém valores dos faturamentos bruto ou liquido das cotas no período
+	 * @param cotas
+	 * @param baseCalculo
+	 * @param dataInicial
+	 * @param dataFinal
+	 * @return Map<Long,BigDecimal>: Faturamentos das cotas
+	 */
+	Map<Long,BigDecimal> obterFaturamentoCotasPeriodo(List<Cota> cotas, BaseCalculo baseCalculo, Date dataInicial, Date dataFinal);
 
+	/**
+	 * Gera Financeiro para Movimentos de Estoque da Cota à Vista referentes à Envio de Reparte.
+	 * @param cota
+	 * @param fornecedor
+	 * @param movimentosEstoqueCotaOperacaoEnvioReparte
+	 * @param movimentosEstoqueCotaOperacaoEstorno
+	 * @param dataOperacao
+	 * @param usuario
+	 * @param formaComercializacaoProduto
+	 */
+	void gerarMovimentoFinanceiroCotaAVista(Cota cota,
+											Fornecedor fornecedor,
+											List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEnvioReparte,
+											List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEstorno,
+											Date dataOperacao, Usuario usuario,
+											FormaComercializacao formaComercializacaoProduto);
+
+	/**
+     * Distingue Movimentos de Estoque da Cota por Fornecedor; 
+     * Separa a lista de Movimentos de Estoque em outras listas;
+     * Cada lista separada possui Movimentos de Estoque de um único Fornecedor.
+     * @param movimentosEstoqueCota
+     * @return Map<Long,List<MovimentoEstoqueCota>>
+     */
+	Map<Long, List<MovimentoEstoqueCota>> agrupaMovimentosEstoqueCotaPorFornecedor(List<MovimentoEstoqueCota> movimentosEstoqueCota);
+
+	/**
+	 * Gera Movimentos Financeiros da Cota na Emissão da Nota de Envio
+	 * @param cota
+	 * @param dataOperacao
+	 * @param usuario
+	 */
+	void gerarMovimentoFinanceiroCota(Cota cota,
+			                          Date dataOperacao, 
+			                          Usuario usuario);
+	
+	/**
+	 * Gera movimento financeiro para cota na Conferencia de Encalhe
+	 * @param controleConferenciaEncalheCota
+	 * @param formaComercializacaoProduto
+	 */
+	void gerarMovimentoFinanceiroCota(Cota cota,
+									  Date dataOperacao,
+									  Usuario usuario,
+									  Long idControleConferenciaEncalheCota,
+									  FormaComercializacao formaComercializacaoProduto);
+	
 }

@@ -66,7 +66,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 	}
 	
 	@Override
-	public void atualizarReparteDoProximoLancamentoParcial(Lancamento lancamento) {
+	public void atualizarReparteDoProximoLancamentoParcial(Lancamento lancamento, Usuario usuario) {
 		
 		Lancamento proximoLancamento = 
 				periodoLancamentoParcialRepository.obterLancamentoPosterior(lancamento.getProdutoEdicao().getId(), 
@@ -75,6 +75,8 @@ public class ParciaisServiceImpl implements ParciaisService{
 		if(proximoLancamento!= null){
 			
 			proximoLancamento.setReparte(lancamento.getReparte());
+			
+			proximoLancamento.setUsuario(usuario);
 			
 			lancamentoRepository.alterar(proximoLancamento);
 		}
@@ -161,7 +163,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 				dtRecolhimento = lancamentoParcial.getRecolhimentoFinal();
 			}
 			
-			Lancamento novoLancamento =  gerarLancamento(produtoEdicao, dtLancamento, dtRecolhimento);
+			Lancamento novoLancamento =  gerarLancamento(produtoEdicao, dtLancamento, dtRecolhimento, usuario);
 			
 			HistoricoLancamento novoHistorico = gerarHistoricoLancamento(novoLancamento, usuario);
 			
@@ -169,7 +171,8 @@ public class ParciaisServiceImpl implements ParciaisService{
 			
 			lancamentoRepository.adicionar(novoLancamento);
 			
-			historicoLancamentoRepository.adicionar(novoHistorico);
+			//TODO: geração de historico desativada devido a criação de trigger para realizar essa geração.
+			//historicoLancamentoRepository.adicionar(novoHistorico);
 			
 			periodoLancamentoParcialRepository.adicionar(novoPeriodo);
 			
@@ -227,14 +230,14 @@ public class ParciaisServiceImpl implements ParciaisService{
 		HistoricoLancamento historico = new HistoricoLancamento();
 		historico.setLancamento(lancamento);
 		historico.setTipoEdicao(TipoEdicao.INCLUSAO);
-		historico.setStatus(lancamento.getStatus());
+		historico.setStatusNovo(lancamento.getStatus());
 		historico.setDataEdicao(new Date());
 		historico.setResponsavel(usuario);
 		
 		return historico;		
 	}
 
-	private Lancamento gerarLancamento(ProdutoEdicao produtoEdicao, Date dtLancamento, Date dtRecolhimento) {
+	private Lancamento gerarLancamento(ProdutoEdicao produtoEdicao, Date dtLancamento, Date dtRecolhimento, Usuario usuario) {
 		
 		Lancamento lancamento = new Lancamento();
 		lancamento.setTipoLancamento(TipoLancamento.PARCIAL);
@@ -248,6 +251,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 		lancamento.setDataCriacao(new Date());
 		lancamento.setDataStatus(new Date());
 		lancamento.setStatus(StatusLancamento.PLANEJADO);
+		lancamento.setUsuario(usuario);
 		
 		return lancamento;		
 	}
@@ -274,7 +278,7 @@ public class ParciaisServiceImpl implements ParciaisService{
 	@Override
 	@Transactional
 	public void alterarPeriodo(Long idLancamento, Date dataLancamento,
-			Date dataRecolhimento) {
+			Date dataRecolhimento, Usuario usuario) {
 		
 		if(dataLancamento.compareTo(dataRecolhimento) >= 0 ){
 			throw new ValidacaoException(TipoMensagem.WARNING,"Data de recolhimeno não pode ser menor ou igual a data de lançamento");
@@ -313,19 +317,20 @@ public class ParciaisServiceImpl implements ParciaisService{
 		lancamento.setDataLancamentoPrevista(dataLancamento);
 		lancamento.setDataRecolhimentoDistribuidor(dataRecolhimento);
 		lancamento.setDataRecolhimentoPrevista(dataRecolhimento);
+		lancamento.setUsuario(usuario);
 		
 		lancamentoRepository.merge(lancamento);
 		
 		if( !diferencaLancamento.equals(0) )
-			ajustarPeriodoAnterior(lancamento.getProdutoEdicao().getId(), dataLancamento, diferencaLancamento.intValue());
+			ajustarPeriodoAnterior(lancamento.getProdutoEdicao().getId(), dataLancamento, diferencaLancamento.intValue(), usuario);
 		
 		if( !diferencaRecolhimento.equals(0) )
-			ajustarPeriodoProximo(lancamento.getProdutoEdicao().getId(), dataRecolhimento, diferencaRecolhimento.intValue());
+			ajustarPeriodoProximo(lancamento.getProdutoEdicao().getId(), dataRecolhimento, diferencaRecolhimento.intValue(), usuario);
 		
 	}
 	
 	private void ajustarPeriodoProximo(Long idProdutoEdicao,
-			Date dataRecolhimento, Integer diferencaRecolhimento) {
+			Date dataRecolhimento, Integer diferencaRecolhimento, Usuario usuario) {
 
 		Lancamento lancamentoPosterior = periodoLancamentoParcialRepository.obterLancamentoPosterior(idProdutoEdicao,dataRecolhimento);
 		
@@ -338,11 +343,13 @@ public class ParciaisServiceImpl implements ParciaisService{
 		lancamentoPosterior.setDataLancamentoDistribuidor(
 				DateUtil.subtrairDias(lancamentoPosterior.getDataLancamentoDistribuidor(), diferencaRecolhimento));
 		
+		lancamentoPosterior.setUsuario(usuario);
+		
 		lancamentoRepository.merge(lancamentoPosterior);
 	}
 
 	private void ajustarPeriodoAnterior(Long idProdutoEdicao,
-			Date dataLancamento, Integer diferencaLancamento) {
+			Date dataLancamento, Integer diferencaLancamento, Usuario usuario) {
 		
 		Lancamento lancamentoAnterior = periodoLancamentoParcialRepository.obterLancamentoAnterior(idProdutoEdicao,dataLancamento);
 		
@@ -354,6 +361,8 @@ public class ParciaisServiceImpl implements ParciaisService{
 		
 		lancamentoAnterior.setDataRecolhimentoDistribuidor(
 				DateUtil.adicionarDias(lancamentoAnterior.getDataRecolhimentoDistribuidor(), diferencaLancamento));
+		
+		lancamentoAnterior.setUsuario(usuario);
 		
 		lancamentoRepository.merge(lancamentoAnterior);
 	}

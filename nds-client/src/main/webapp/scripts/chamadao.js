@@ -201,6 +201,64 @@ var chamadaoController = $.extend(true, {
 			popularGridPeloFollowUp(numeroCota,dataChamadaoFormatada);
 		}
 	},
+	
+	validarMatrizRecolhimentoConfirmada : function() {
+		
+		var followUp = $('#numeroCotaFollowUp', chamadaoController.workspace).val();
+		
+		var dataChamadaoFormatada;
+		
+		if (followUp != '') {
+			
+			dataChamadaoFormatada = $("#dataCotaFollowUp", chamadaoController.workspace).val();
+			
+		} else {
+			
+			dataChamadaoFormatada = $("#dataChamadao", chamadaoController.workspace).val();
+		}
+		
+		$.postJSON(
+			contextPath + "/devolucao/chamadao/validarMatrizRecolhimentoConfirmada",
+			{'dataPesquisa': dataChamadaoFormatada},
+			function(result) {
+				
+				if (result) {
+					
+					chamadaoController.popupUsoMatrizRecolhimentoConfirmada();
+					
+				} else {
+					
+					chamadaoController.pesquisar();
+				}
+			}
+		);
+	},
+	
+	popupUsoMatrizRecolhimentoConfirmada : function() {
+		
+		$("#dialogUsoMatrizRecolhimentoConfirmada", chamadaoController.workspace).dialog({
+			resizable: false,
+			height:'auto',
+			width:300,
+			modal: true,
+			buttons: 
+			{
+				"Confirmar": function() {
+					
+					chamadaoController.pesquisar();
+					
+					$(this).dialog("close");
+				
+				}, "Cancelar": function() {
+					
+					$(this).dialog("close");
+				}
+			},
+			form: $("#dialogUsoMatrizRecolhimentoConfirmada", this.workspace).parents("form")			
+		});
+		
+		$("#dialogUsoMatrizRecolhimentoConfirmada", chamadaoController.workspace).show();
+	},
 		
 	pesquisar : function() {
 		

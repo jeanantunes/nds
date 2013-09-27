@@ -30,7 +30,5 @@ public interface BaixaCobrancaService {
 	public Date buscarDiaUltimaBaixaAutomatica();
 	
 	public List<CobrancaVO> buscarCobrancasBaixadas(FiltroConsultaDividasCotaDTO filtroConsultaDividasCota);
-
-	public Long countBuscarCobrancasBaixadas(FiltroConsultaDividasCotaDTO filtroAtual);
 	
 }

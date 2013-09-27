@@ -1,6 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -31,11 +30,11 @@ import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.ItemNotaEnvioRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
+import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.FuroProdutoService;
 import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 @Service
@@ -69,7 +68,10 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 	private ItemNotaEnvioRepository itemNovaEnvioRepository;
 	
 	@Autowired
-	private MatrizLancamentoService matrizLancamentoService; 
+	private MatrizLancamentoService matrizLancamentoService;
+	
+	@Autowired
+	private UsuarioRepository usuarioRepository; 
 
 	@Transactional
 	@Override
@@ -210,8 +212,10 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 			}
 		}
 		
-		lancamento.setDataLancamentoDistribuidor(novaData);
+		Usuario usuario = this.usuarioRepository.buscarPorId(idUsuario);
 		
+		lancamento.setDataLancamentoDistribuidor(novaData);
+		lancamento.setUsuario(usuario);
 		lancamento.setExpedicao(null);
 		
 		FuroProduto furoProduto = new FuroProduto();
@@ -220,22 +224,21 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		produtoEdicao.setId(idProdutoEdicao);
 		furoProduto.setProdutoEdicao(produtoEdicao);
-		Usuario usuario = new Usuario();
-		usuario.setId(idUsuario);
 		furoProduto.setUsuario(usuario);
 		
 		HistoricoLancamento historicoLancamento = new HistoricoLancamento();
 		historicoLancamento.setDataEdicao(new Date());
 		historicoLancamento.setLancamento(lancamento);
 		historicoLancamento.setResponsavel(usuario);
-		historicoLancamento.setStatus(lancamento.getStatus());
+		historicoLancamento.setStatusNovo(lancamento.getStatus());
 		historicoLancamento.setTipoEdicao(TipoEdicao.ALTERACAO);
 		
 		this.furoProdutoRepository.adicionar(furoProduto);
 		
 		this.lancamentoRepository.alterar(lancamento);
 		
-		this.historicoLancamentoRepository.adicionar(historicoLancamento);
+		//TODO: geração de historico desativada devido a criação de trigger para realizar essa geração.
+		//this.historicoLancamentoRepository.adicionar(historicoLancamento);
 	}
 	
 }

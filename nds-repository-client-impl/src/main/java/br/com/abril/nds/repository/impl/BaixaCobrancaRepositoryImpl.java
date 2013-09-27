@@ -1,6 +1,5 @@
 package br.com.abril.nds.repository.impl;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import org.hibernate.Criteria;
@@ -13,10 +12,12 @@ import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.client.vo.CobrancaVO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaDividasCotaDTO;
+import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.financeiro.BaixaAutomatica;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
 import br.com.abril.nds.model.financeiro.BaixaManual;
+import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.BaixaCobrancaRepository;
 
@@ -66,56 +67,10 @@ public class BaixaCobrancaRepositoryImpl extends AbstractRepositoryModel<BaixaCo
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Long countBuscarCobrancasBaixadas(FiltroConsultaDividasCotaDTO filtro) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		HashMap<String, Object> param =  new HashMap<>();
-		
-		hql.append("select count(baixaManual.id) ");
-
-		this.whereFromBuscarCobrancasBaixadas(hql, param, filtro);
-		
-		Query query = getSession().createQuery(hql.toString());
-		
-		for (String key : param.keySet()) {
-			query.setParameter(key, param.get(key));
-		}
-		
-		return (Long) query.uniqueResult();
-	}
-	
-	private void whereFromBuscarCobrancasBaixadas(StringBuilder hql, HashMap<String, Object> param, FiltroConsultaDividasCotaDTO filtro) {
+	public List<CobrancaVO> buscarCobrancasBaixadas(FiltroConsultaDividasCotaDTO filtro) {
 		
 		Integer numCota = filtro.getNumeroCota();
 		String nossoNumero = filtro.getNossoNumero();
-		
-		hql.append(" FROM BaixaManual baixaManual ");
-		hql.append(" JOIN baixaManual.cobranca cobranca ");
-		hql.append(" JOIN cobranca.divida divida ");
-		hql.append(" JOIN divida.cota cota ");
-		hql.append(" JOIN cota.pessoa pessoa ");
-		hql.append(" WHERE baixaManual.statusAprovacao = :statusAprovacao ");
-		hql.append(" AND cota.numeroCota = :numCota ");
-		
-		if(nossoNumero !=  null && !nossoNumero.trim().isEmpty()){
-			hql.append(" AND cobranca.nossoNumero = :nossoNumero ");
-		}
-		
-		param.put("numCota", numCota);
-		param.put("statusAprovacao", StatusAprovacao.PENDENTE);
-			
-		if(nossoNumero !=  null && !nossoNumero.trim().isEmpty()){
-			param.put("nossoNumero", nossoNumero);
-		}
-		
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<CobrancaVO> buscarCobrancasBaixadas(FiltroConsultaDividasCotaDTO filtro) {
-		
-		HashMap<String, Object> param =  new HashMap<>();
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -124,9 +79,20 @@ public class BaixaCobrancaRepositoryImpl extends AbstractRepositoryModel<BaixaCo
 		hql.append(" cast(cobranca.dataEmissao as string) as dataEmissao, ");
 		hql.append(" cast(cobranca.dataVencimento as string) as dataVencimento, ");
 		hql.append(" cast(cobranca.valor as string) as valor ");
-				
-		this.whereFromBuscarCobrancasBaixadas(hql, param, filtro);
-	
+		hql.append(" FROM BaixaManual baixaManual ");
+		hql.append(" JOIN baixaManual.cobranca cobranca ");
+		hql.append(" JOIN cobranca.divida divida ");
+		hql.append(" JOIN divida.cota cota ");
+		hql.append(" JOIN cota.pessoa pessoa ");
+		hql.append(" WHERE baixaManual.statusAprovacao = :statusAprovacao ");
+		hql.append(" AND cobranca.statusCobranca = :statusCobranca ");
+		hql.append(" AND divida.status = :statusDivida ");
+		hql.append(" AND cota.numeroCota = :numCota ");
+		
+		if(nossoNumero !=  null && !nossoNumero.trim().isEmpty()){
+			hql.append(" AND cobranca.nossoNumero = :nossoNumero ");
+		}
+		
 		if (filtro.getPaginacao() != null) {
 			
 			String sortOrder = " " + filtro.getPaginacao().getSortOrder();
@@ -135,11 +101,16 @@ public class BaixaCobrancaRepositoryImpl extends AbstractRepositoryModel<BaixaCo
 			hql.append(filtro.getOrdenacaoColuna());
 			hql.append(filtro.getPaginacao().getSortOrder() == null ? " asc " : sortOrder);
 		}
-		
+
 		Query query = getSession().createQuery(hql.toString());
 		
-		for (String key : param.keySet()) {
-			query.setParameter(key, param.get(key));
+		query.setParameter("numCota", numCota);
+		query.setParameter("statusCobranca", StatusCobranca.PAGO);
+		query.setParameter("statusDivida", StatusDivida.QUITADA);
+		query.setParameter("statusAprovacao", StatusAprovacao.PENDENTE);
+		
+		if(nossoNumero !=  null && !nossoNumero.trim().isEmpty()){
+			query.setParameter("nossoNumero", nossoNumero);
 		}
 
 		if (filtro.getPaginacao() != null) {

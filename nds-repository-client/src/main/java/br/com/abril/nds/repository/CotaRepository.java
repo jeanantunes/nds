@@ -384,5 +384,6 @@ public interface CotaRepository extends Repository<Cota, Long> {
 			Intervalo<Date> intervaloDataLancamento,
 			Intervalo<Date> intervaloDateRecolhimento);
 	List<ProdutoAbastecimentoDTO> obterCotaPorProdutoEdicaoData(FiltroMapaAbastecimentoDTO filtro);
-	
+
+	BigDecimal obterTotalDividaCotasSujeitasSuspensao(Date dataOperacaoDistribuidor);
 }

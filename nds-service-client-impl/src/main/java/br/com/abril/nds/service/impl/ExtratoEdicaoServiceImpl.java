@@ -146,8 +146,14 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 			
 			novaDescricao = novaDescricao + " COTA";
 		}
+		
+		StatusIntegracao statusIntegracao = (lancamentoDiferenca.getMovimentoEstoque()!= null)
+												?lancamentoDiferenca.getMovimentoEstoque().getStatusIntegracao()
+														:null;
 
-		if (!diferenca.getTipoEstoque().equals(TipoEstoque.GANHO) && !diferenca.getTipoEstoque().equals(TipoEstoque.PERDA)){
+		if (!diferenca.getTipoEstoque().equals(TipoEstoque.GANHO) 
+				&& !diferenca.getTipoEstoque().equals(TipoEstoque.PERDA)
+				&& !StatusIntegracao.NAO_INTEGRAR.equals(statusIntegracao)){
 		    
 			novaDescricao = novaDescricao + " (Pendente de Aprovação no GFS)";
 		}
