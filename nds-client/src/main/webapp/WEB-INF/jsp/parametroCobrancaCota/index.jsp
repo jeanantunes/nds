@@ -82,8 +82,8 @@ $(function(){
 		<tbody>
 		
 			<tr>
-				<td width="195">Fator Vencimento de Cobrança em D+:</td>
-				<td width="157">
+				<td width="195" style="width: 274px; ">Fator Vencimento de Cobrança em D+:</td>
+				<td width="157" style="width: 147px; ">
 				<select id="fatorVencimento" name="fatorVencimento" size="1" style="width: 50px; height: 19px;">
 					    <option>0</option>
 						<option>1</option>
@@ -109,9 +109,9 @@ $(function(){
 				</select>
 				</td>
 				
-				<td width="10" style="width: 10px;">&nbsp;</td>
-				<td width="60">Contrato:</td>
-				<td width="20"><input id="contrato" name="contrato"
+				<td width="10" style="width: 118px;">&nbsp;</td>
+				<td width="60" style="width: 50px; ">Contrato:</td>
+				<td width="20" style="width: 16px; "><input id="contrato" name="contrato"
 					type="checkbox" style="float: left;"
 					onclick="parametroCobrancaCotaController.exibe_form_contrato(this.checked);" />
 				</td>
@@ -193,14 +193,18 @@ $(function(){
 			</tr>
 			<tr>
 				<td>Tipo de Cota:</td>
-				<td><select name="tipoCota" id="tipoCota" style="width: 150px;">
+				<td><select name="tipoCota" id="tipoCota" style="width: 150px;" onchange="parametroCobrancaCotaController.exibeDevolveEncalhe(this.value);">
 						<c:forEach varStatus="counter" var="itemTipoCota"
 							items="${listaTiposCota}">
 							<option value="${itemTipoCota.key}">${itemTipoCota.value}</option>
 						</c:forEach>
 				</select></td>
-				<td>&nbsp;</td>
-				<td>&nbsp;</td>
+				
+				<td id="tituloDevolveEncalhe">Devolve Encalhe?</td>
+				<td id="selectDevolveEncalhe"><select name="devolveEncalhe" id="devolveEncalhe">
+						<option value="0">Sim</option>
+						<option value="1">Não</option>
+				</select></td>
 			</tr>
 			<tr>
 				<td>Unifica Cobrança?</td>
@@ -234,7 +238,7 @@ $(function(){
 					<div class="form-suspensao-hidden-class">
 						<table width="100%" border="0" cellspacing="0" cellpadding="0">
 							<tr>
-								<td width="31%">Qtde de dividas em aberto:</td>
+								<td width="31%" style="width: 171px; ">Qtde de dividas em aberto:</td>
 								<td width="13%"><input maxlength="15" type="text"
 									name="qtdDividasAberto" id="qtdDividasAberto"
 									style="width: 60px;" /></td>
