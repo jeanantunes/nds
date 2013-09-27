@@ -366,20 +366,19 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	@Override
 	public Boolean buscaControleFechamentoEncalhe(Date dataEncalhe) {
 		
+		Criteria criteria = this.getSession().createCriteria(ControleFechamentoEncalhe.class, "cfe");
+		
+		criteria.add(Restrictions.eq("cfe.dataEncalhe", dataEncalhe));
+		
+		return !criteria.list().isEmpty();
+	}
+	
+	@Override
+	public Boolean buscaControleConferenciaEncalhe(Date dataEncalhe) {
+		
 		Criteria criteria = this.getSession().createCriteria(ControleConferenciaEncalhe.class, "cce");
 		
 		criteria.add(Restrictions.eq("cce.data", dataEncalhe));
-		
-		boolean naoPossuiConferenciaEncalhe = criteria.list().isEmpty();
-		
-		if (naoPossuiConferenciaEncalhe) {
-			
-			return true;
-		}
-		
-		criteria = this.getSession().createCriteria(ControleFechamentoEncalhe.class, "cfe");
-		
-		criteria.add(Restrictions.eq("cfe.dataEncalhe", dataEncalhe));
 		
 		return !criteria.list().isEmpty();
 	}
