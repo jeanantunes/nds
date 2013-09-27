@@ -405,25 +405,26 @@ public class ManutencaoStatusCotaController extends BaseController {
 		List<ItemDTO<SituacaoCadastro, String>> listaSituacoesStatusCota =
 			new ArrayList<ItemDTO<SituacaoCadastro, String>>();
 		
+		List<ItemDTO<SituacaoCadastro, String>> listaSituacoesNovoStatusCota =
+			new ArrayList<ItemDTO<SituacaoCadastro, String>>();
+		
 		for (SituacaoCadastro situacaoCadastro : SituacaoCadastro.values()) {
 			
 			listaSituacoesStatusCota.add(
+				new ItemDTO<SituacaoCadastro, String>(situacaoCadastro, situacaoCadastro.toString())
+			);
+
+			if (!SituacaoCadastro.PENDENTE.equals(situacaoCadastro)) {
+				
+				listaSituacoesNovoStatusCota.add(
 					new ItemDTO<SituacaoCadastro, String>(situacaoCadastro, situacaoCadastro.toString())
 				);
-		
-		/*
-		 * 		foi solicitado na homologação pra que incluisse o status pendente na pesquisa
-		 */
-			
-			
-//			if (!situacaoCadastro.equals(SituacaoCadastro.PENDENTE)) {
-//				listaSituacoesStatusCota.add(
-//					new ItemDTO<SituacaoCadastro, String>(situacaoCadastro, situacaoCadastro.toString())
-//				);
-//			}
+			}
 		}
 		
 		result.include("listaSituacoesStatusCota", listaSituacoesStatusCota);
+
+		result.include("listaSituacoesNovoStatusCota", listaSituacoesNovoStatusCota);
 	}
 	
 	/*
