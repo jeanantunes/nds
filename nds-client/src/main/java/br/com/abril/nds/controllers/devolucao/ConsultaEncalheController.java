@@ -9,6 +9,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -114,7 +115,7 @@ public class ConsultaEncalheController extends BaseController {
 		
 		InfoConsultaEncalheDTO infoConsultaEncalhe = consultaEncalheService.pesquisarEncalhe(filtroConsultaEncalhe);
 
-		List<ConsultaEncalheVO> listaConsultaEncalheVO =  getListaConsultaEncalheVO(infoConsultaEncalhe.getListaConsultaEncalhe());
+		List<ConsultaEncalheVO> listaConsultaEncalheVO =  getListaConsultaEncalheVO(infoConsultaEncalhe.getListaConsultaEncalhe(), filtroConsultaEncalhe);
 		
 		ResultadoConsultaEncalheVO resultadoPesquisa = new ResultadoConsultaEncalheVO();
 		
@@ -315,7 +316,7 @@ public class ConsultaEncalheController extends BaseController {
 
 		Integer quantidadeRegistros = infoConsultaEncalhe.getQtdeConsultaEncalhe();
 		
-		List<ConsultaEncalheVO> listaResultadosVO = getListaConsultaEncalheVO(listaResultado);
+		List<ConsultaEncalheVO> listaResultadosVO = getListaConsultaEncalheVO(listaResultado, filtro);
 		
 		TableModel<CellModelKeyValue<ConsultaEncalheVO>> tableModel = new TableModel<CellModelKeyValue<ConsultaEncalheVO>>();
 
@@ -497,10 +498,11 @@ public class ConsultaEncalheController extends BaseController {
 	 * Obtém lista de ConsultaEncalheVO a partir de um lista de ConsultaEncalheDTO
 	 * 
 	 * @param listaConsultaEncalheDTO
+	 * @param filtro 
 	 * 
 	 * @return List - ConsultaEncalheVO
 	 */
-	private List<ConsultaEncalheVO> getListaConsultaEncalheVO( List<ConsultaEncalheDTO> listaConsultaEncalheDTO ) {
+	private List<ConsultaEncalheVO> getListaConsultaEncalheVO( List<ConsultaEncalheDTO> listaConsultaEncalheDTO, FiltroConsultaEncalheDTO filtro ) {
 		
 		List<ConsultaEncalheVO> listaResultadosVO = new ArrayList<ConsultaEncalheVO>();
 		
@@ -541,8 +543,9 @@ public class ConsultaEncalheController extends BaseController {
 			dataRecolhimento	= (consultaEncalheDTO.getDataDoRecolhimentoDistribuidor() != null) ? DateUtil.formatarDataPTBR(consultaEncalheDTO.getDataDoRecolhimentoDistribuidor()) : "" ;
 			dataMovimento		= (consultaEncalheDTO.getDataMovimento() != null) ? DateUtil.formatarDataPTBR(consultaEncalheDTO.getDataMovimento()) : "" ;
 			
+			boolean diaUnico = DateUtils.isSameDay(filtro.getDataRecolhimentoInicial(), filtro.getDataRecolhimentoFinal());
 			
-			if(consultaEncalheDTO.getRecolhimento() == null || consultaEncalheDTO.getRecolhimento()<=0) {
+			if( !diaUnico ) {
 				
 				if(consultaEncalheDTO.getDataDoRecolhimentoDistribuidor()!=null) {
 					

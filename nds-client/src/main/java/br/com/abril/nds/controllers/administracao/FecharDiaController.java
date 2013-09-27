@@ -134,9 +134,12 @@ public class FecharDiaController extends BaseController {
 	@Rules(Permissao.ROLE_ADMINISTRACAO_FECHAR_DIA_ALTERACAO)
 	public void inicializarValidacoes(Date data){
 		
-		if (data != null && !data.equals(dataOperacao)){
+		if (data != null && !data.equals(dataOperacao)) {
+			
 			dataOperacao = data;
+			
 		} else {
+			
 			this.fecharDiaService.setLockBancoDeDados(true);
 		}
 		
@@ -148,8 +151,11 @@ public class FecharDiaController extends BaseController {
 		dto.setConfirmacaoDeExpedicao(!this.fecharDiaService.existeConfirmacaoDeExpedicao(dataOperacao));
 		dto.setLancamentoFaltasESobras(this.fecharDiaService.existeLancamentoFaltasESobrasPendentes(dataOperacao));
 		dto.setControleDeAprovacao(this.distribuidorService.utilizaControleAprovacao());
-		dto.setFechamentoEncalhe(this.fechamentoEncalheService.buscaControleFechamentoEncalhe(dataOperacao));
-		dto.setHabilitarConfirmar(dataOperacao.equals(this.distribuidorService.obterDataOperacaoDistribuidor()));
+		dto.setFechamentoEncalhe(this.fechamentoEncalheService.validarEncerramentoOperacaoEncalhe(dataOperacao));
+		
+		dto.setHabilitarConfirmar(
+			dataOperacao.equals(this.distribuidorService.obterDataOperacaoDistribuidor())
+			&& dto.isFechamentoPermitido());
 		
 		result.use(Results.json()).withoutRoot().from(dto).recursive().serialize();
 	}

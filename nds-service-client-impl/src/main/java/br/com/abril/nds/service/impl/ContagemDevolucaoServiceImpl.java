@@ -937,6 +937,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 	        for (Lancamento lancamento : lancamentos) {
 				
 				lancamento.setStatus(StatusLancamento.FECHADO);
+				lancamento.setUsuario(usuarioService.getUsuarioLogado());
 				
 				this.lancamentoRepository.merge(lancamento);
 			}

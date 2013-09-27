@@ -357,7 +357,7 @@ public class MatrizLancamentoController extends BaseController {
 		FiltroLancamentoDTO filtro = obterFiltroSessao();
 		
 		this.matrizLancamentoService.voltarConfiguracaoInicial(
-			filtro.getData(), balanceamentoLancamento);
+			filtro.getData(), balanceamentoLancamento, getUsuarioLogado());
 		
 		balanceamentoLancamento =
 			this.obterBalanceamentoLancamento(filtro);

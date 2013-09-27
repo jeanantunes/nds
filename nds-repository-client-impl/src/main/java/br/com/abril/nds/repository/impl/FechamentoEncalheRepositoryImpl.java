@@ -39,6 +39,7 @@ import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
 import br.com.abril.nds.model.estoque.TipoVendaEncalhe;
 import br.com.abril.nds.model.estoque.pk.FechamentoEncalhePK;
+import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
@@ -366,11 +367,21 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 	public Boolean buscaControleFechamentoEncalhe(Date dataEncalhe) {
 		
 		Criteria criteria = this.getSession().createCriteria(ControleFechamentoEncalhe.class, "cfe");
+		
 		criteria.add(Restrictions.eq("cfe.dataEncalhe", dataEncalhe));
 		
 		return !criteria.list().isEmpty();
 	}
 	
+	@Override
+	public Boolean buscaControleConferenciaEncalhe(Date dataEncalhe) {
+		
+		Criteria criteria = this.getSession().createCriteria(ControleConferenciaEncalhe.class, "cce");
+		
+		criteria.add(Restrictions.eq("cce.data", dataEncalhe));
+		
+		return !criteria.list().isEmpty();
+	}
 	
 	@SuppressWarnings("unchecked")
 	public List<Date> obterDatasControleFechamentoEncalheRealizado(Date dataDe, Date dataAte) {

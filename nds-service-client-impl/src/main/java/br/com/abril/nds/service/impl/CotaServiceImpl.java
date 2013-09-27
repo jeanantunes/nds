@@ -46,7 +46,6 @@ import br.com.abril.nds.dto.TermoAdesaoDTO;
 import br.com.abril.nds.dto.TipoDescontoCotaDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
 import br.com.abril.nds.dto.TitularidadeCotaDTO;
-import br.com.abril.nds.dto.filtro.FiltroConsultaConsignadoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.enums.TipoParametroSistema;
@@ -131,7 +130,6 @@ import br.com.abril.nds.service.TelefoneService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.ComponentesPDV;
-import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.JasperUtil;
@@ -766,30 +764,6 @@ public class CotaServiceImpl implements CotaService {
 			this.cotaRepository.obterCotasSujeitasSuspensao(sortOrder, sortColumn, inicio, rp, 
 					this.distribuidorRepository.obterDataOperacaoDistribuidor());
 		
-		for (CotaSuspensaoDTO cotaSujeitaSuspensao : cotasSujeitasSuspensao) {
-			
-			cotaSujeitaSuspensao.setVlrConsignado(
-				this.consignadoCotaRepository.buscarTotalGeralDaCota(
-					new FiltroConsultaConsignadoCotaDTO(cotaSujeitaSuspensao.getIdCota())));
-			
-			cotaSujeitaSuspensao.setVlrReparte(
-				this.movimentoEstoqueCotaRepository.obterValorReparteDaCotaNaData(
-					cotaSujeitaSuspensao.getIdCota(), 
-						this.distribuidorRepository.obterDataOperacaoDistribuidor()));
-			
-			cotaSujeitaSuspensao.setDividaAcumulada(
-				this.dividaService.obterTotalDividasAbertoCota(cotaSujeitaSuspensao.getIdCota()));
-			
-			Integer percentualDivida = 
-				(int) ((cotaSujeitaSuspensao.getDoubleDividaAcumulada() 
-							/ cotaSujeitaSuspensao.getDoubleConsignado() ) * 100);
-			
-			cotaSujeitaSuspensao.setPercDivida(percentualDivida.toString() + "%");
-			
-			cotaSujeitaSuspensao.setFaturamento(CurrencyUtil.formatarValor(
-				this.estoqueProdutoCotaRepository.obterFaturamentoCota(cotaSujeitaSuspensao.getIdCota())));
-		}
-		
 		return cotasSujeitasSuspensao;		
 	}
 
@@ -797,6 +771,14 @@ public class CotaServiceImpl implements CotaService {
 	@Transactional
 	public Long obterTotalCotasSujeitasSuspensao() {
 		return cotaRepository.obterTotalCotasSujeitasSuspensao(this.distribuidorRepository.obterDataOperacaoDistribuidor());
+	}
+	
+	@Override
+	@Transactional
+	public BigDecimal obterTotalDividaCotasSujeitasSuspensao() {
+		
+		return cotaRepository.obterTotalDividaCotasSujeitasSuspensao(
+			this.distribuidorRepository.obterDataOperacaoDistribuidor());
 	}
 	
 	@Override
