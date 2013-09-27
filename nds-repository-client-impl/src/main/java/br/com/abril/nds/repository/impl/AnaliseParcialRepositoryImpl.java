@@ -1,12 +1,9 @@
 package br.com.abril.nds.repository.impl;
 
-import br.com.abril.nds.dto.*;
-import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
-import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
-import br.com.abril.nds.model.planejamento.EstudoCota;
-import br.com.abril.nds.repository.AbstractRepositoryModel;
-import br.com.abril.nds.repository.AnaliseParcialRepository;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -17,8 +14,18 @@ import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import br.com.abril.nds.dto.AnaliseEstudoDetalhesDTO;
+import br.com.abril.nds.dto.AnaliseParcialDTO;
+import br.com.abril.nds.dto.CotaQueNaoEntrouNoEstudoDTO;
+import br.com.abril.nds.dto.CotasQueNaoEntraramNoEstudoQueryDTO;
+import br.com.abril.nds.dto.EdicoesProdutosDTO;
+import br.com.abril.nds.dto.PdvDTO;
+import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
+import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.repository.AbstractRepositoryModel;
+import br.com.abril.nds.repository.AnaliseParcialRepository;
 
 @Repository
 public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<EstudoCota, Long> implements AnaliseParcialRepository {
@@ -194,6 +201,42 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         return list;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId, Date date) {
+
+        StringBuilder sql = new StringBuilder();
+        sql.append("select distinct ");
+        sql.append("       pe.id produtoEdicaoId, ");
+        sql.append("       p.codigo codigoProduto, ");
+        sql.append("       p.nome nomeProduto, ");
+        sql.append("       pe.numero_edicao edicao, ");
+        sql.append("       epe.periodo_parcial periodo, ");
+        sql.append("       (case when l.tipo_lancamento = 'PARCIAL' then 1 else 0 end) parcial, ");
+        sql.append("       (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' then 0 else 1 end) edicaoAberta ");
+        sql.append("  from estudo_produto_edicao_base epe ");
+        sql.append("  join produto_edicao pe on pe.id = epe.produto_edicao_id ");
+        sql.append("  join produto p on p.id = pe.produto_id ");
+        sql.append("  join lancamento l on l.produto_edicao_id = pe.id ");
+        sql.append(" where epe.estudo_id = :estudoId and l.DATA_LCTO_PREVISTA= :dataLancamento ");
+        sql.append("  order by l.data_lcto_distribuidor desc ");
+        sql.append("  , pe.numero_edicao desc, epe.periodo_parcial desc ");
+
+        Query query = getSession().createSQLQuery(sql.toString())
+                .addScalar("produtoEdicaoId", StandardBasicTypes.LONG)
+                .addScalar("codigoProduto", StandardBasicTypes.STRING)
+                .addScalar("nomeProduto", StandardBasicTypes.STRING)
+                .addScalar("edicao", StandardBasicTypes.BIG_INTEGER)
+                .addScalar("periodo", StandardBasicTypes.STRING)
+                .addScalar("parcial", StandardBasicTypes.BOOLEAN)
+                .addScalar("edicaoAberta", StandardBasicTypes.BOOLEAN);
+        query.setParameter("estudoId", estudoId);
+        query.setParameter("dataLancamento", date);
+        query.setResultTransformer(new AliasToBeanResultTransformer(EdicoesProdutosDTO.class));
+
+        return query.list();
+    }
+    
     @Override
     @Transactional(readOnly = true)
     public List<EdicoesProdutosDTO> carregarEdicoesBaseEstudo(Long estudoId) {
