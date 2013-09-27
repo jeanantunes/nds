@@ -42,6 +42,7 @@ import br.com.abril.nds.service.TipoNotaFiscalService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
+import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.PeriodoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
 
@@ -231,13 +232,13 @@ public class NotaFiscalEntradaServiceImpl implements NotaFiscalEntradaService {
 
 	@Override
 	@Transactional
-	public DetalheNotaFiscalDTO obterDetalhesNotaFical(Long idNotaFiscal) {
+	public DetalheNotaFiscalDTO obterDetalhesNotaFical(Long idNotaFiscal, PaginacaoVO paginacao) {
 		
 		if (idNotaFiscal == null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Erro inesperado. ID da nota fiscal não pode ser nulo.");
 		}
 
-		List<DetalheItemNotaFiscalDTO> itensDetalhados = notaFiscalEntradaRepository.obterDetalhesNotaFical(idNotaFiscal);
+		List<DetalheItemNotaFiscalDTO> itensDetalhados = notaFiscalEntradaRepository.obterDetalhesNotaFical(idNotaFiscal, paginacao);
 
 		DetalheNotaFiscalDTO detalheNotaFiscalDTO = new DetalheNotaFiscalDTO();
 		
