@@ -24,4 +24,6 @@ public interface GrupoRepository extends Repository<GrupoCota,Long> {
 
 	List<GrupoCota> obterGrupos(String sortname, String sortorder);
 
+	GrupoCota obterGrupoPorCota(Long id);
+
 }
