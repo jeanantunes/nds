@@ -212,7 +212,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select count(boleto) as quantidadePrevisao ");
+		hql.append(" select count(boleto.banco.conta) as quantidadePrevisao ");
 		hql.append(this.obterFromWhereBoletosPrevistos());
 
 		Query query = this.obterQueryBoletosPrevistos(hql.toString(), data);
