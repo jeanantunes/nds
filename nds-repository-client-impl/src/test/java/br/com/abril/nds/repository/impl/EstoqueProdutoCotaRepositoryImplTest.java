@@ -253,14 +253,6 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 		
 		Assert.assertTrue(listaEstoqueProdutoCota.size() > 0);
 	}
-
-	@Test
-	public void testObterFaturamentoCota() {
-		Double faturamento = null;
-		
-		faturamento  = estoqueProdutoCotaRepository.obterFaturamentoCota(123L);
-		
-	}
 	
 	@Test
 	public void testarBuscarEstoquePorProdutoECota() {
@@ -336,19 +328,6 @@ public class EstoqueProdutoCotaRepositoryImplTest extends AbstractRepositoryImpl
 		boolean cotaInadimplente = true;
 		
 		consignado = estoqueProdutoCotaRepository.obterConsignado(cotaInadimplente);
-		
-	}
-	
-	@Test
-	public void testarObterFaturamentoCota() {
-		
-		Double faturamentoCota;
-		
-		Long idCota = 1L;
-		
-		faturamentoCota = estoqueProdutoCotaRepository.obterFaturamentoCota(idCota);
-		
-		Assert.assertNotNull(faturamentoCota);
 		
 	}
 	

@@ -622,7 +622,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 																	dataOperacaoDistribuidor,
 																	usuario,
 																	null,
-																	FormaComercializacao.CONTA_FIRME);
+																	FormaComercializacao.CONSIGNADO);
 		
 		Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
 		
