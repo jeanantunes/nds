@@ -512,6 +512,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		$("#qtdDividasAberto", this.workspace).val(resultado.qtdDividasAberto);
 		$("#vrDividasAberto", this.workspace).val( floatToPrice( resultado.vrDividasAberto ) );
 		$("#tipoCota", this.workspace).val(resultado.tipoCota);
+		$("#devolveEncalhe", this.workspace).val(resultado.devolveEncalhe?0:1);
 		
 		$("#unificaCobranca", this.workspace).val(resultado.unificaCobranca?0:1);
 
@@ -539,6 +540,8 @@ var parametroCobrancaCotaController = $.extend(true, {
         parametroCobrancaCotaController.financeiro.resultParametroCobranca = parametroCobrancaCotaController.buildParametroCobrancaDto();
         
         parametroCobrancaCotaController.financeiro.resultParametroCobranca['parametroCobranca.idFornecedor'] = resultado.idFornecedor;     
+        
+        parametroCobrancaCotaController.exibeDevolveEncalhe(resultado.tipoCota);
 	},
 
 	buildParametroCobrancaDto : function() {
@@ -571,6 +574,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var qtdDividasAberto = $("#qtdDividasAberto", this.workspace).val();
 		var vrDividasAberto = priceToFloat( $("#vrDividasAberto", this.workspace).val() );
 		var tipoCota = $("#tipoCota", this.workspace).val();
+		var devolveEncalhe = $("#devolveEncalhe", this.workspace).val() == 0 ? 1 : 0;
 		var fornecedorPadrao = $("#fornecedorPadrao", this.workspace).val();
 		var unificaCobranca = $("#unificaCobranca", this.workspace).val() == 0 ? 1 : 0;
 		
@@ -586,6 +590,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 				"parametroCobranca.qtdDividasAberto": qtdDividasAberto,  
 				"parametroCobranca.vrDividasAberto": vrDividasAberto,
 				"parametroCobranca.tipoCota": tipoCota,
+				"parametroCobranca.devolveEncalhe": devolveEncalhe,
 				"parametroCobranca.idFornecedor": fornecedorPadrao,
 				"parametroCobranca.unificaCobranca": unificaCobranca};
 		
@@ -634,6 +639,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 	    if(parametroCobrancaTela['parametroCobranca.qtdDividasAberto'] != parametroCobranca['parametroCobranca.qtdDividasAberto']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.sugereSuspensao'] != parametroCobranca['parametroCobranca.sugereSuspensao']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.unificaCobranca'] != parametroCobranca['parametroCobranca.unificaCobranca']){return true;}
+	    if(parametroCobrancaTela['parametroCobranca.devolveEncalhe'] != parametroCobranca['parametroCobranca.devolveEncalhe']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.valorMinimo'] != parametroCobranca['parametroCobranca.valorMinimo']){return true;}
 	    if(parametroCobrancaTela['parametroCobranca.vrDividasAberto'] != parametroCobranca['parametroCobranca.vrDividasAberto']){return true;}
 
@@ -681,10 +687,13 @@ var parametroCobrancaCotaController = $.extend(true, {
         
         var tipoCota            = $("#tipoCota", this.workspace).val();
         
+        var devolveEncalhe      = $("#devolveEncalhe", this.workspace).val();
+        
         var params =  {"idCota": idCota,
         		       "inicioContrato": inicioContrato,
 				       "terminoContrato": terminoContrato,
-				       "tipoCota": tipoCota};
+				       "tipoCota": tipoCota,
+				       "devolveEncalhe": devolveEncalhe};
         
 		$.postJSON(contextPath + "/cota/parametroCobrancaCota/salvarFinanceiroEspecificoDaCota",
 				   params,
@@ -719,7 +728,7 @@ var parametroCobrancaCotaController = $.extend(true, {
                
 			   
 			   
-			   /*VERIFICACAO DE EXISTENCIA DE FORNECEDORES CINCULADOS À COTA
+			   /*VERIFICACAO DE EXISTENCIA DE FORNECEDORES VINCULADOS À COTA
 			   var fornecedoresVinculados = 0;
 			   
 			   jQuery('fornecedorPadrao').find('option').each(function(){
@@ -1096,6 +1105,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var valorMinimo			= priceToFloat($("#valorMinimo", this.workspace).val());
 		var fatorVencimento		= $("#fatorVencimento", this.workspace).val();
 		var tipoCota 			= $("#tipoCota", this.workspace).val();
+		var devolveEncalhe		= $("#devolveEncalhe", this.workspace).val() == 0 ? 1 : 0;
 		var fornecedorPadrao 	= $("#fornecedorPadrao", this.workspace).val();
 		var unificaCobranca 	= $("#unificaCobranca", this.workspace).val() == 0 ? 1 : 0;
 		var sugereSuspensao 	= $("#sugereSuspensao", this.workspace).val();
@@ -1187,6 +1197,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 						 "parametroCobranca.valorMinimo": valorMinimo,
 						 "parametroCobranca.fatorVencimento": fatorVencimento,
 						 "parametroCobranca.tipoCota": tipoCota,
+						 "parametroCobranca.devolveEncalhe": devolveEncalhe,
 						 "parametroCobranca.idFornecedor": fornecedorPadrao,
 						 "parametroCobranca.unificaCobranca": unificaCobranca,
 						 "parametroCobranca.sugereSuspensao": sugereSuspensao,   
@@ -1434,6 +1445,24 @@ var parametroCobrancaCotaController = $.extend(true, {
 	//INCLUSÃO DE NOVA UNIFICAÇÃO SEM SAIR DO POPUP
 	incluirNovaUnificacao : function(){
 		parametroCobrancaCotaController.postarFormaCobranca(false,true);
+	},
+	
+	exibeDevolveEncalhe : function(val){
+		
+		if (val == 'A_VISTA'){
+		    
+			$('#tituloDevolveEncalhe', this.workspace).show();
+			
+			$('#selectDevolveEncalhe', this.workspace).show();
+		}
+		else{
+			
+			$('#devolveEncalhe', this.workspace).val(0);
+			
+			$('#tituloDevolveEncalhe', this.workspace).hide();
+			
+			$('#selectDevolveEncalhe', this.workspace).hide();
+		}
 	}
 	
 }, BaseController);
