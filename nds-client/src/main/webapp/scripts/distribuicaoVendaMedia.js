@@ -582,6 +582,26 @@ function DistribuicaoVendaMedia(pathTela, workspace) {
 		}
 		data.push({name : "distribuicaoVendaMedia.todasAsCotas", value : $("#RDtodasAsCotas")[0].checked });
 		if($("#RDcomponente")[0].checked){
+			
+			var v = new Array();
+			var validate = true;
+			$("select[name=elementoRegiaoDistribuicao]").each(function(idx,sel){
+				
+				if($(sel).val()!=-1 && v.indexOf($(sel).val())==-1){
+					v.push($(sel).val());
+				}else if($(sel).val()!=-1 && v.indexOf($(sel).val())>-1){
+					validate = false;
+					return;
+				}
+				
+				
+			});
+			
+			if(validate==false){
+				exibirMensagemDialog("WARNING", ["Favor selecionar diferentes elementos em:","Região Distribuição > Componentes"], "");
+				return;
+			}
+			
 			data.push({name : "distribuicaoVendaMedia.componente", value : $("#componenteRegiaoDistribuicao").val() });
 			data.push({name : "distribuicaoVendaMedia.elemento", value : $("#elementoRegiaoDistribuicao").val() });
 			data.push({name : "distribuicaoVendaMedia.elemento2", value : $("select[name=elementoRegiaoDistribuicao]:eq(1)").val() });

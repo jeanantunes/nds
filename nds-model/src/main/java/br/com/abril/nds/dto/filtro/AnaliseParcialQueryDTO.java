@@ -1,6 +1,6 @@
 package br.com.abril.nds.dto.filtro;
 
-import java.util.LinkedList;
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.EdicoesProdutosDTO;
@@ -21,6 +21,7 @@ public class AnaliseParcialQueryDTO {
 	private Long numeroEdicao;
 	private List<EdicoesProdutosDTO> edicoesBase;
 	private String numeroCotaStr;
+	private Date dataLancamentoEdicao;
 	/**
 	 * Id do estudo que foi copiado na tela de copia proporcional de estudo
 	 */
@@ -103,9 +104,13 @@ public class AnaliseParcialQueryDTO {
 				&& filterSortTo != null;
 	}
 
-	public boolean possuiOrdenacaoRanking() {
-		return possuiOrdenacaoPlusFiltro() && filterSortName.equals("ranking");
+	public boolean possuiOrdenacaoNMaiores() {
+		return possuiOrdenacaoPlusFiltro() && filterSortName.equals("n_maiores");
 	}
+
+    public boolean possuiOrdenacaoRanking() {
+        return possuiOrdenacaoPlusFiltro() && filterSortName.equals("ranking");
+    }
 
 	public String getTipoElemento() {
 		return elemento.substring(0, elemento.lastIndexOf("_"));
@@ -214,6 +219,15 @@ public class AnaliseParcialQueryDTO {
 	public void setEstudoOrigem(Long estudoOrigem) {
 		this.estudoOrigem = estudoOrigem;
 	}
+
+	public Date getDataLancamentoEdicao() {
+		return dataLancamentoEdicao;
+	}
+
+	public void setDataLancamentoEdicao(Date dataLancamentoEdicao) {
+		this.dataLancamentoEdicao = dataLancamentoEdicao;
+	}
+
 	
 	
 }

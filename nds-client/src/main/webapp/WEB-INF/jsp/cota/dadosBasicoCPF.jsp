@@ -155,9 +155,6 @@
         </table></td>
       </tr> 
 
-	<br>
-    <br>
-      
        <tr class="linhas">
         <td valign="top"><strong>Utilizar Histórico:</strong></td>
         <td width="374"><table width="348" border="0" cellspacing="1" cellpadding="2">
@@ -165,7 +162,7 @@
             <td width="38">Cota:</td>
             <td width="127">
             	<input type="text" name="cotaDTO.historicoPrimeiraCota" maxlength="16" id="historicoPrimeiraCotaCPF" style="width:50px; margin-right:10px;" onblur="MANTER_COTA.validarCotaHistoricoBase('#historicoPrimeiraCotaCPF,#historicoPrimeiraPorcentagemCPF')" /></td>
-            <td width="30" align="center">%</td>
+            <td width="30" align="center">Nome:</td>
             <td width="132">
             	<input type="text" name="cotaDTO.historicoPrimeiraPorcentagem" id="historicoPrimeiraPorcentagemCPF" maxlength="4" style="width:190px;"/></td>
             </tr>
@@ -173,7 +170,7 @@
             <td>Cota:</td>
             <td>
             	<input type="text" name="cotaDTO.historicoSegundaCota" maxlength="16" id="historicoSegundaCotaCPF" style="width:50px; margin-right:10px;" onblur="MANTER_COTA.validarCotaHistoricoBase('#historicoSegundaCotaCPF,#historicoSegundaPorcentagemCPF')"/></td>
-            <td align="center">%</td>
+            <td align="center">Nome:</td>
             <td>
             	<input type="text" name="cotaDTO.historicoSegundaPorcentagem" id="historicoSegundaPorcentagemCPF" maxlength="4" style="width:190px;"/></td>
             </tr>
@@ -181,7 +178,7 @@
             <td>Cota:</td>
             <td>
             	<input type="text" name="cotaDTO.historicoTerceiraCota" maxlength="16" id="historicoTerceiraCotaCPF" style="width:50px; margin-right:10px;" onblur="MANTER_COTA.validarCotaHistoricoBase('#historicoTerceiraCotaCPF,#historicoTerceiraPorcentagemCPF')" /></td>
-            <td align="center">%</td>
+            <td align="center">Nome:</td>
             <td>
             	<input type="text" name="cotaDTO.historicoTerceiraPorcentagem" id="historicoTerceiraPorcentagemCPF" maxlength="4" style="width:190px;"/></td>
           </tr>

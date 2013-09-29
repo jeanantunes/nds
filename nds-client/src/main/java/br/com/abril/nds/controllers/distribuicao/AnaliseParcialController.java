@@ -11,6 +11,7 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PessoaUtil;
@@ -34,6 +35,7 @@ import br.com.abril.nds.service.AnaliseParcialService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.util.CellModelKeyValue;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
@@ -75,7 +77,7 @@ public class AnaliseParcialController extends BaseController {
     private HttpSession session;
 
     @Path("/")
-    public void index(Long id,Long estudoOrigem, Long faixaDe, Long faixaAte, String modoAnalise, String reparteCopiado) {
+    public void index(Long id,Long estudoOrigem, Long faixaDe, Long faixaAte, String modoAnalise, String reparteCopiado,String dataLancamentoEdicao) {
 
         EstudoCota estudo = analiseParcialService.buscarPorId(id);
         Lancamento lancamento = lancamentoService.obterPorId(estudo.getEstudo().getLancamentoID());
@@ -93,6 +95,7 @@ public class AnaliseParcialController extends BaseController {
         result.include("faixaAte", faixaAte);
         result.include("reparteCopiado", reparteCopiado);
         result.include("estudoOrigem", (estudoOrigem==null)?0:estudoOrigem);
+        result.include("dataLancamentoEdicao", dataLancamentoEdicao);
         
         ClassificacaoCota[] vetor = ClassificacaoCota.values();
         Arrays.sort(vetor, new Comparator<ClassificacaoCota>() {
@@ -152,7 +155,7 @@ public class AnaliseParcialController extends BaseController {
 
     @Path("/init")
     public void init(Long id, String sortname, String sortorder, String filterSortName, Double filterSortFrom, Double filterSortTo, String elemento,
-                     Long faixaDe, Long faixaAte, List<EdicoesProdutosDTO> edicoesBase, String modoAnalise, String codigoProduto, Long numeroEdicao, String numeroCotaStr,Long estudoOrigem) {
+                     Long faixaDe, Long faixaAte, List<EdicoesProdutosDTO> edicoesBase, String modoAnalise, String codigoProduto, Long numeroEdicao, String numeroCotaStr,Long estudoOrigem,String dataLancamentoEdicao) {
 
         AnaliseParcialQueryDTO queryDTO = new AnaliseParcialQueryDTO();
         queryDTO.setSortName(sortname);
@@ -170,6 +173,7 @@ public class AnaliseParcialController extends BaseController {
         queryDTO.setNumeroEdicao(numeroEdicao);
         queryDTO.setNumeroCotaStr(numeroCotaStr);
         queryDTO.setEstudoOrigem(estudoOrigem);
+        queryDTO.setDataLancamentoEdicao(DateUtil.parseDataPTBR(dataLancamentoEdicao));
         
 
         List<AnaliseParcialDTO> lista = analiseParcialService.buscaAnaliseParcialPorEstudo(queryDTO);
@@ -267,5 +271,11 @@ public class AnaliseParcialController extends BaseController {
     public void defineRepartePorPDV(Long estudoId, Integer numeroCota, List<PdvDTO> reparteMap, String legenda, boolean manterFixa) {
         analiseParcialService.defineRepartePorPDV(estudoId, numeroCota, reparteMap, legenda, manterFixa);
         result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso.")).recursive().serialize();
+    }
+
+    @Post
+    public void tipoDistribuicaoCotaFiltro(TipoDistribuicaoCota tipo) {
+        Integer[] cotas = analiseParcialService.buscarCotasPorTipoDistribuicao(tipo);
+        result.use(Results.json()).withoutRoot().from(cotas).recursive().serialize();
     }
 }

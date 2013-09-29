@@ -45,6 +45,9 @@ var analiseParcialController = $.extend(true, {
             width : 550,
             modal : true,
             buttons : {
+                "Base Original" : function() {
+                    analiseParcialController.restauraBaseInicial();
+                },
                 "Confirmar" : function() {
                     var parameters = [];
                     var hasErros = false;
@@ -165,17 +168,36 @@ var analiseParcialController = $.extend(true, {
              {name: 'codigoProduto', value: $('#codigoProduto').val()}],
             function(result){
 
-                var $dialog = $('#dialog-cotas-detalhes');
+                var $dialog = $('#dialog-cotas-detalhes'),
+                    $mix = $dialog.find('#dados-mix'),
+                    $fixacao = $dialog.find('#dados-fixacao');
+                $mix.hide();
+                $fixacao.hide();
+
                 $dialog.find('#numeroCotaD').text(result.numeroCota || '');
                 $dialog.find('#nomeCotaD').text(result.nomePessoa || '');
                 $dialog.find('#tipoCotaD').text(result.tipoCota || '');
                 $dialog.find('#rankingCotaD').text(result.qtdeRankingSegmento || '');
                 $dialog.find('#faturamentoCotaD').text(result.faturamento || '');
                 $dialog.find('#mesAnoCotaD').text(result.dataGeracaoRank ? result.dataGeracaoRank.$ : '');
-                $dialog.find('#mixRepMin').text(result.mixRepMin || '');
-                $dialog.find('#mixRepMax').text(result.mixRepMax || '');
-                $dialog.find('#mixUsuario').text(result.nomeUsuario || '');
-                $dialog.find('#mixDataAlteracao').text(result.mixDataAlteracao ? result.mixDataAlteracao.$ : '');
+
+                if (result.mixDataAlteracao) {
+                    $dialog.find('#mixRepMin').text(result.mixRepMin || '');
+                    $dialog.find('#mixRepMax').text(result.mixRepMax || '');
+                    $dialog.find('#mixUsuario').text(result.nomeUsuario || '');
+                    $dialog.find('#mixDataAlteracao').text(result.mixDataAlteracao ? result.mixDataAlteracao.$ : '');
+                    $mix.show();
+                }
+
+                if (result.fxDataAlteracao) {
+                    $dialog.find('#fxEdicaoInicial').text(result.fxEdicaoInicial || '');
+                    $dialog.find('#fxEdicaoFinal').text(result.fxEdicaoFinal || '');
+                    $dialog.find('#fxEdicoesAtendidas').text(result.fxEdicoesAtendidas || '');
+                    $dialog.find('#fxQuantidadeEdicoes').text(result.fxQuantidadeEdicoes || '');
+                    $dialog.find('#fxQuantidadeExemplares').text(result.fxQuantidadeExemplares || '');
+                    $dialog.find('#fxDataAlteracao').text(result.fxDataAlteracao ? result.fxDataAlteracao.$ : '');
+                    $fixacao.show();
+                }
         });
 
 
@@ -391,12 +413,6 @@ var analiseParcialController = $.extend(true, {
         var reparteSubtraido = parseInt(reparteDigitado, 10) - parseInt(reparteAtual, 10);
         var $legenda = $input_reparte.closest('td').next().find('div');
 
-        /*
-        if ((saldoReparte - reparteSubtraido) < 0) {
-            $input_reparte.val($input_reparte.attr('reparteAtual'));
-            analiseParcialController.exibirMsg('WARNING', ['Não há saldo suficiente para esta operação.']);
-        } else
-        */
         if (reparteAtual != reparteDigitado) {
             var legendaText = $legenda.text();
             if (legendaText.indexOf('FX') > -1 || legendaText.indexOf('MX') > -1) {
@@ -904,6 +920,7 @@ var analiseParcialController = $.extend(true, {
         parameters.push({name: 'codigoProduto', value: $('#codigoProduto').val()});
         parameters.push({name: 'numeroEdicao', value: $('#numeroEdicao').val()});
         parameters.push({name: 'estudoOrigem', value: $('#estudoOrigem').val()});
+        parameters.push({name: 'dataLancamentoEdicao', value: $('#dataLancamentoEdicao').val()});
         
         if(typeof(histogramaPosEstudo_cotasRepMenorVenda)!="undefined"){
         	parameters.push({name: "numeroCotaStr", value: histogramaPosEstudo_cotasRepMenorVenda});
@@ -995,33 +1012,28 @@ var analiseParcialController = $.extend(true, {
     },
 
     validaMotivoCotaReparte : function(input) {
+        var $input = $(input);
+        $input.data('valid', false);
 
-//        if ($('#saldoReparteNaoSelec').text() === '0') {
-//            analiseParcialController.exibirMsg('WARNING', ['Não há saldo de reparte para distribuir!']);
-//        } else {
-            var $input = $(input);
-            $input.data('valid', false);
-
-            if ($input.val() !== '' && !isNaN($input.val())) {
-                switch ($input.attr('motivo')) {
-                    case 'SM': //Publicação não está no MIX da cota
-                        analiseParcialController.popupConfirmaSenha($input, 'Deseja incluir pulicação no mix?');
-                        break;
-                    case 'GN': //Cota não recebe esse Segmento
-                        analiseParcialController.popupConfirmaSenha($input, 'Deseja incluir publicaçao na lista de publicações recebida pela cota?');
-                        break;
-                    case 'SS': //Cota Suspensa
-                        analiseParcialController.popupConfirmaSenha($input, 'Cota suspensa, continuar mesmo assim?');
-                        break;
-                    default:
-                        analiseParcialController.atualizaQuantidadeTotal($input);
-                }
-            } else if ($input.val() === '') {
-                analiseParcialController.atualizaQuantidadeTotal($input);
-            } else {
-                $input.val('');
+        if ($input.val() !== '' && !isNaN($input.val())) {
+            switch ($input.attr('motivo')) {
+                case 'SM': //Publicação não está no MIX da cota
+                    analiseParcialController.popupConfirmaSenha($input, 'Deseja incluir pulicação no mix?');
+                    break;
+                case 'GN': //Cota não recebe esse Segmento
+                    analiseParcialController.popupConfirmaSenha($input, 'Deseja incluir publicaçao na lista de publicações recebida pela cota?');
+                    break;
+                case 'SS': //Cota Suspensa
+                    analiseParcialController.popupConfirmaSenha($input, 'Cota suspensa, continuar mesmo assim?');
+                    break;
+                default:
+                    analiseParcialController.atualizaQuantidadeTotal($input);
             }
-//        }
+        } else if ($input.val() === '') {
+            analiseParcialController.atualizaQuantidadeTotal($input);
+        } else {
+            $input.val('');
+}
     },
 
     popupConfirmaSenha : function($input, msg) {
@@ -1248,12 +1260,16 @@ var analiseParcialController = $.extend(true, {
                 analiseParcialController.filtrarOrdenarReducaoReparte();
                 break;
             default:
+                var elemento = $("#elementos :selected").val();
+                if (elemento.indexOf('tipo_distribuicao_cota') != -1) {
+                    analiseParcialController.filtrarTipoDistribuicaoCota(elemento.split('_').pop());
+                }
                 $("#baseEstudoGridParcial").flexOptions({
                     params: [{name:'filterSortName', value: valueFiltroOrdenarPor},
                         {name:'filterSortFrom', value: $("#ordenarPorDe").val()},
                         {name:'filterSortTo',   value: $("#ordenarPorAte").val()},
                         {name:'id',             value: estudo},
-                        {name:'elemento',       value: $("#elementos :selected").val()}]
+                        {name:'elemento',       value: elemento}]
                 }).flexReload();
         }
         if (event) {
@@ -1296,6 +1312,28 @@ var analiseParcialController = $.extend(true, {
                 .end().find('td').removeClass('sorted');
         }
         analiseParcialController.somarTotais();
+    },
+
+    filtrarTipoDistribuicaoCota: function (tipo) {
+        $.post(contextPath + '/distribuicao/analise/parcial/tipoDistribuicaoCotaFiltro', {tipo:tipo.toUpperCase()},
+            function(resp) {
+                var sortAtribute = 'td[abbr="cota"]';
+
+                $('#baseEstudoGridParcial tr')
+                    .removeClass('erow')
+                    .each(function(){
+                        var $tr = $(this);
+                        var cota = $tr.find(sortAtribute).text() * 1;
+
+                        $tr.hide();
+                        if (resp.indexOf(cota) != -1) {
+                            $tr.show();
+                        }
+                    })
+                    .filter(':odd').addClass('erow')
+                    .end().find('td').removeClass('sorted');
+                analiseParcialController.somarTotais();
+            });
     },
 
     filtrarOrdenarPercentualVenda : function() {
