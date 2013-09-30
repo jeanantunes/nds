@@ -209,8 +209,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.append("			 CASE WHEN ((SELECT COUNT(chEn.PRODUTO_EDICAO_ID) FROM CHAMADA_ENCALHE chEn ");
 		query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
 		query.append("			  AND chEn.DATA_RECOLHIMENTO = :dataRecolhimento ");
-		query.append("			  GROUP BY chEn.PRODUTO_EDICAO_ID ");
-		query.append("			  HAVING COUNT(chEn.PRODUTO_EDICAO_ID)) > 1 ");
+		query.append("			  GROUP BY chEn.PRODUTO_EDICAO_ID ) > 1 ");
 		query.append("			  AND 			");
 		query.append("			  (SELECT COUNT(chEn.PRODUTO_EDICAO_ID) FROM CHAMADA_ENCALHE chEn ");
 		query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
@@ -257,8 +256,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.append("			 CASE WHEN ((SELECT COUNT(chEn.PRODUTO_EDICAO_ID) FROM CHAMADA_ENCALHE chEn ");
 		query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
 		query.append("			  AND chEn.DATA_RECOLHIMENTO = :dataRecolhimento ");
-		query.append("			  GROUP BY chEn.PRODUTO_EDICAO_ID ");
-		query.append("			  HAVING COUNT(chEn.PRODUTO_EDICAO_ID)) > 1 ");
+		query.append("			  GROUP BY chEn.PRODUTO_EDICAO_ID) > 1 ");
 		query.append("			  AND 			");
 		query.append("			  (SELECT COUNT(chEn.PRODUTO_EDICAO_ID) FROM CHAMADA_ENCALHE chEn ");
 		query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
