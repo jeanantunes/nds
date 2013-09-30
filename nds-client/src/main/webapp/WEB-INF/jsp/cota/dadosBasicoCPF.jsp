@@ -130,6 +130,7 @@
         </a>
       </span>
       </td> 
+	  
 	  <td width="439" valign="top"><table width="439" border="0" cellspacing="2" cellpadding="2">
 	 
 	  <!-- 
@@ -142,7 +143,7 @@
 	   -->
      
       <tr class="linhas">
-        <td width="127" nowrap="nowrap"><strong>Cota Base:</strong></td>
+        <td width="127" nowrap="nowrap"><strong></strong></td>
         <td><table width="348" border="0" cellspacing="1" cellpadding="2">
           <tr>
             <td width="51">Período:</td>
@@ -156,7 +157,7 @@
       </tr> 
 
        <tr class="linhas">
-        <td valign="top"><strong>Utilizar Histórico:</strong></td>
+        <td valign="top"><strong>Cota Base:</strong></td>
         <td width="374"><table width="348" border="0" cellspacing="1" cellpadding="2">
           <tr>
             <td width="38">Cota:</td>

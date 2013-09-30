@@ -1082,6 +1082,7 @@ public class CotaServiceImpl implements CotaService {
 		return cotaDTO;
 	}
 
+	@Transactional
 	private List<CotaBaseDTO> atribuirCotaBase(Integer numeroCota) {
 	
 		List<CotaBaseDTO> listaCotaBase = new ArrayList<CotaBaseDTO>();
@@ -1090,6 +1091,16 @@ public class CotaServiceImpl implements CotaService {
 		
 		if(cotaBase != null){
 			listaCotaBase = this.cotaBaseService.obterCotasBases(cotaBase, null);			
+		}
+		
+		for (CotaBaseDTO itemCotaBase : listaCotaBase) {
+			
+			if(itemCotaBase.getDtInicio() == null)
+				itemCotaBase.setDtInicio(cotaBase.getDataInicio());
+			
+			if(itemCotaBase.getDtFinal() == null)
+				itemCotaBase.setDtFinal(cotaBase.getDataFim());
+			
 		}
 		
 		return listaCotaBase;
