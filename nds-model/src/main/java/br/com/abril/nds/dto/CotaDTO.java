@@ -75,6 +75,8 @@ public class CotaDTO implements Serializable {
     private BigInteger mixRepMin;
     private BigInteger mixRepMax;
     private String nomeUsuario;
+    
+    private List<CotaBaseDTO> cotasBases;
 
     private Date fxDataAlteracao;
     private Integer fxEdicaoInicial;
@@ -702,6 +704,13 @@ public class CotaDTO implements Serializable {
         JURIDICA, FISICA;
     }
 
+	public List<CotaBaseDTO> getCotasBases() {
+		return cotasBases;
+	}
+
+	public void setCotasBases(List<CotaBaseDTO> cotasBases) {
+		this.cotasBases = cotasBases;
+	}
     public Date getFxDataAlteracao() {
         return fxDataAlteracao;
     }
