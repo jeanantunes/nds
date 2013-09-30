@@ -228,20 +228,12 @@ public class CobrancaServiceImpl implements CobrancaService {
 	public List<CobrancaVO> obterDadosCobrancasPorCota(FiltroConsultaDividasCotaDTO filtro) {
 		
 		List<CobrancaVO> listaCobrancaVO = null;
-		boolean acumulaDivida = false;
 		
 	    Cota cota = this.cotaRepository.obterPorNumerDaCota(filtro.getNumeroCota());
 	    
 	    if (cota!=null){
 	    	
-	    	if (cota.getParametroCobranca()!=null){
-	    		if(cota.getParametroCobranca().getPoliticaSuspensao()!=null){
-	    			acumulaDivida = (cota.getParametroCobranca().getPoliticaSuspensao().getNumeroAcumuloDivida() > 0);
-	    		}
-	    	}
-		
-			filtro.setAcumulaDivida(acumulaDivida);
-			
+	    	filtro.setAcumulaDivida(false);
 		    List<Cobranca> cobrancas = this.cobrancaRepository.obterCobrancasPorCota(filtro);
 		    if ((cobrancas!=null)&&(cobrancas.size() > 0)){
 		    	
