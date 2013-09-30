@@ -8,8 +8,6 @@ import java.util.Set;
 import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -48,10 +46,10 @@ public class ParametroCobrancaCota implements Serializable {
 	private Integer fatorVencimento;
 	
 	@Column(name = "UNIFICA_COBRANCA")
-	private boolean unificaCobranca;
+	private Boolean unificaCobranca;
 	
 	@Column(name = "DEVOLVE_ENCALHE")
-	private boolean devolveEncalhe;
+	private Boolean devolveEncalhe;
 	
 	@Embedded
 	private PoliticaSuspensao politicaSuspensao;
@@ -116,19 +114,19 @@ public class ParametroCobrancaCota implements Serializable {
 		this.fornecedorPadrao = fornecedorPadrao;
 	}
 
-	public boolean isUnificaCobranca() {
+	public Boolean isUnificaCobranca() {
 		return unificaCobranca;
 	}
 
-	public void setUnificaCobranca(boolean unificaCobranca) {
+	public void setUnificaCobranca(Boolean unificaCobranca) {
 		this.unificaCobranca = unificaCobranca;
 	}
 
-	public boolean isDevolveEncalhe() {
+	public Boolean isDevolveEncalhe() {
 		return devolveEncalhe;
 	}
 
-	public void setDevolveEncalhe(boolean devolveEncalhe) {
+	public void setDevolveEncalhe(Boolean devolveEncalhe) {
 		this.devolveEncalhe = devolveEncalhe;
 	}
 }
