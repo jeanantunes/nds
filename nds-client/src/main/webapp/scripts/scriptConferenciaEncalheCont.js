@@ -489,7 +489,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					innerTable += "<td style='text-align: right;' nowrap='nowrap'>" + parseFloat(value.precoCapa).toFixed(2) + "</td>";
 					
 					//innerTable += "<td style='text-align: right;' nowrap='nowrap'>" + parseFloat(value.desconto).toFixed(2) + "</td>";
-					innerTable += "<td style='text-align: right;' nowrap='nowrap'>" + parseFloat(value.precoComDesconto).toFixed(2) + "</td>";
+					innerTable += "<td style='text-align: right;' nowrap='nowrap'>" + parseFloat(value.precoComDesconto).toFixed(4) + "</td>";
 					
 					var valorExemplares = value.isContagemPacote ? parseInt(value.qtdExemplar) / value.pacotePadrao : parseInt(value.qtdExemplar);
 					
@@ -660,7 +660,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 											$("#lstProdutos", ConferenciaEncalheCont.workspace).val(ui.item.chave.string);
 											$("#numEdicaoNovoEncalhe", ConferenciaEncalheCont.workspace).val(result2.numeroEdicao);
 											$("#precoCapaNovoEncalhe", ConferenciaEncalheCont.workspace).val(parseFloat(result2.precoVenda).toFixed(2));
-											$("#descontoNovoEncalhe", ConferenciaEncalheCont.workspace).val(parseFloat(result2.desconto).toFixed(2));
+											$("#descontoNovoEncalhe", ConferenciaEncalheCont.workspace).val(parseFloat(result2.desconto).toFixed(4));
 										}
 											
 										
@@ -795,7 +795,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					innerTable +=
 						'<td style="text-align: center;"><input id="precoCapaFinalizarConf_'+ index +'" onchange="ConferenciaEncalheCont.recalcularValoresFinalizar('+ index +');" maxlength="255" style="width:50px; text-align: right;" value="' + parseFloat(value.precoCapaInformado).toFixed(2) + '"/></td>';
 					
-					innerTable += "<td style='text-align: right;'>" + parseFloat(value.desconto).toFixed(2) + "</td>";
+					innerTable += "<td style='text-align: right;'>" + parseFloat(value.desconto).toFixed(4) + "</td>";
 					
 					innerTable += "<td style='text-align: right;' id='valorTotalConferenciaFinalizar_" + index + "'>" + parseFloat(value.valorTotal).toFixed(2) + "</td>";
 					

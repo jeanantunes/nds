@@ -622,7 +622,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 																	dataOperacaoDistribuidor,
 																	usuario,
 																	null,
-																	FormaComercializacao.CONTA_FIRME);
+																	FormaComercializacao.CONSIGNADO);
 		
 		Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
 		
@@ -1183,9 +1183,17 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public Boolean buscaControleFechamentoEncalhe(Date data){
+	public Boolean validarEncerramentoOperacaoEncalhe(Date data) {
 		
-		return this.fechamentoEncalheRepository.buscaControleFechamentoEncalhe(data);
+		boolean possuiControleConferenciaEncalhe =
+			this.fechamentoEncalheRepository.buscaControleConferenciaEncalhe(data);
+		
+		if (possuiControleConferenciaEncalhe) {
+			
+			return this.fechamentoEncalheRepository.buscaControleFechamentoEncalhe(data);
+		}
+		
+		return true;
 	}
 
 	@Override

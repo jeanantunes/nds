@@ -114,15 +114,13 @@ public class VisaoEstoqueServiceImpl implements VisaoEstoqueService {
 			list = visaoEstoqueRepository.obterVisaoEstoqueDetalheJuramentado(filtro);
 		} else {
 			
-			Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
-			
-			if (filtro.getDataMovimentacao().compareTo(dataOperacao) == 0) {
-				list = visaoEstoqueRepository.obterVisaoEstoqueDetalhe(filtro);
-			} else {
+			if (filtro.isBuscaHistorico()) {
 				list = visaoEstoqueRepository.obterVisaoEstoqueDetalheHistorico(filtro);
+			} else {
+				list = visaoEstoqueRepository.obterVisaoEstoqueDetalhe(filtro);
 			}
 		}
-				
+
 		return list;
 	}
 	

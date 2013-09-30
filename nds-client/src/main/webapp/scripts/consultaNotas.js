@@ -196,7 +196,7 @@ pesquisarDetalhesNota : function(idNota) {
 				dataType : 'json',
 				colModel : [ {
 					display : 'Código',
-					name : 'codigoItem',
+					name : 'codigoProduto',
 					width : 45,
 					sortable : true,
 					align : 'left'
@@ -214,7 +214,7 @@ pesquisarDetalhesNota : function(idNota) {
 					align : 'center'
 				}, {
 					display : 'Preço Capa R$',
-					name : 'precoCapa',
+					name : 'precoVenda',
 					width : 80,
 					sortable : true,
 					align : 'right'
@@ -222,7 +222,7 @@ pesquisarDetalhesNota : function(idNota) {
 					display : 'Preço C/Desc R$',
 					name : 'precoComDesconto',
 					width : 90,
-					sortable : true,
+					sortable : false,
 					align : 'right'
 				}, {
 					display : 'Exemplares',
@@ -238,19 +238,21 @@ pesquisarDetalhesNota : function(idNota) {
 					align : 'center'
 				}, {
 					display : 'Total R$',
-					name : 'total',
+					name : 'valorTotal',
 					width : 55,
 					sortable : true,
 					align : 'right'
 				}, {
 					display : 'Total C/Desc R$',
-					name : 'totalComDesconto',
+					name : 'valorTotalComDesconto',
 					width : 80,
-					sortable : true,
+					sortable : false,
 					align : 'right'
 				} ],
 				width : 840,
 				height : 230,
+				sortname : "codigoItem",
+				sortorder : "asc",
 				params : [ {
 					name : 'idNota',
 					value : idNota
