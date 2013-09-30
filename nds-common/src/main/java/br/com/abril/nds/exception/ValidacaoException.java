@@ -109,4 +109,22 @@ public class ValidacaoException extends RuntimeException implements Serializable
 		return url;
 	}
 	
+	@Override
+	public String getMessage() {
+		
+		if (this.validacao == null) {
+			
+			return "";
+		}
+		
+		StringBuilder fullMessage = new StringBuilder();
+		
+		for (String message : this.validacao.getListaMensagens()) {
+			
+			fullMessage.append(message);
+			fullMessage.append("\n");
+		}
+		
+		return fullMessage.toString();
+	}
 }
