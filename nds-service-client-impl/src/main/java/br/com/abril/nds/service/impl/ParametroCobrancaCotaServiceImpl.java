@@ -250,7 +250,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			parametroCobrancaDTO.setFatorVencimento((parametroCobranca.getFatorVencimento()==null) ? 0 : parametroCobranca.getFatorVencimento());
 			parametroCobrancaDTO.setValorMinimo((parametroCobranca.getValorMininoCobranca()!=null?parametroCobranca.getValorMininoCobranca():BigDecimal.ZERO));
 			parametroCobrancaDTO.setUnificaCobranca(parametroCobranca.isUnificaCobranca());
-			parametroCobrancaDTO.setDevolveEncalhe(parametroCobranca.isDevolveEncalhe());
+			parametroCobrancaDTO.setDevolveEncalhe(parametroCobranca.isDevolveEncalhe()!=null?parametroCobranca.isDevolveEncalhe():true);
 			parametroCobrancaDTO.setParametroDistribuidor(parametroDistribuidor);
 			
 			politicaSuspensao = parametroCobranca.getPoliticaSuspensao();
