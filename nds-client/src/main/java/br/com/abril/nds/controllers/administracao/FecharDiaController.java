@@ -145,7 +145,7 @@ public class FecharDiaController extends BaseController {
 		
 		FecharDiaDTO dto = new FecharDiaDTO();
 		
-		dto.setBaixaBancaria(this.fecharDiaService.existeCobrancaParaFecharDia(dataOperacao));
+		dto.setBaixaBancaria(!this.fecharDiaService.existeCobrancaParaFecharDia(dataOperacao));
 		dto.setGeracaoDeCobranca(this.fecharDiaService.existeGeracaoDeCobranca(dataOperacao));
 		dto.setRecebimentoFisico(this.fecharDiaService.existeNotaFiscalSemRecebimentoFisico(dataOperacao));
 		dto.setConfirmacaoDeExpedicao(!this.fecharDiaService.existeConfirmacaoDeExpedicao(dataOperacao));
