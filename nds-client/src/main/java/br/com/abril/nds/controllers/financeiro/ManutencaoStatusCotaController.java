@@ -171,7 +171,8 @@ public class ManutencaoStatusCotaController extends BaseController {
 		
 		if (novoHistoricoSituacaoCota.getDataInicioValidade() == null) {
 			
-			novoHistoricoSituacaoCota.setDataInicioValidade(new Date());
+			novoHistoricoSituacaoCota.setDataInicioValidade(
+				this.distribuidorService.obterDataOperacaoDistribuidor());
 		}
 
 		Long idCota = novoHistoricoSituacaoCota.getCota().getId();
