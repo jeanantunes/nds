@@ -527,9 +527,14 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			throw new IllegalArgumentException("Data de encalhe não pode ser nula.");
 		}
 		
+		List<CotaAusenteEncalheDTO> listaCotasAusentes = this.buscarCotasAusentes(dataEncalhe, true, null, null, 0, 0);
+		
+		Map<String, ChamadaEncalhe> chamadasEncalheAPostergar = obterChamadasEncalheAPostergar(
+				dataEncalhe, dataPostergacao, listaCotasAusentes);
+		
 		for (Long idCota : idsCotas) {
 		
-			this.postergar(dataEncalhe, dataPostergacao, idCota);
+			this.postergar(dataEncalhe, dataPostergacao, idCota, chamadasEncalheAPostergar);
 		}
 	}
 	
@@ -541,10 +546,41 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			throw new IllegalArgumentException("Data de encalhe não pode ser nula.");
 		}
 		
+		Map<String, ChamadaEncalhe> chamadasEncalheAPostergar = obterChamadasEncalheAPostergar(
+				dataEncalhe, dataPostergacao, listaCotaAusenteEncalhe);
+		
 		for (CotaAusenteEncalheDTO cotaAusente : listaCotaAusenteEncalhe) {
 		
-			this.postergar(dataEncalhe, dataPostergacao, cotaAusente.getIdCota());
+			this.postergar(dataEncalhe, dataPostergacao, cotaAusente.getIdCota(), chamadasEncalheAPostergar);
 		}
+	}
+
+	private Map<String, ChamadaEncalhe> obterChamadasEncalheAPostergar(
+			Date dataEncalhe, Date dataPostergacao,
+			List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe) {
+		
+		Integer sequencia = this.chamadaEncalheRepository.obterMaiorSequenciaPorDia(dataPostergacao);
+		
+		Set<ChamadaEncalhe> chamadasEncalheAPostergarSet = new HashSet<>();
+		for (CotaAusenteEncalheDTO cotaAusente : listaCotaAusenteEncalhe) {
+			chamadasEncalheAPostergarSet.addAll(chamadaEncalheRepository.obterChamadasEncalhePor(dataEncalhe, cotaAusente.getIdCota()));			
+		}
+		
+		List<ChamadaEncalhe> chamadasEncalheAPostergarList = new ArrayList<>(chamadasEncalheAPostergarSet);
+		Collections.sort(chamadasEncalheAPostergarList, new Comparator<ChamadaEncalhe>() {
+		    public int compare(ChamadaEncalhe o1, ChamadaEncalhe o2) {
+		        return (o1.getSequencia() == o2.getSequencia() ? 0 : (o1.getSequencia() < o2.getSequencia() ? -1 : 1));
+		    }
+		});
+		
+		Map<String, ChamadaEncalhe> chamadasEncalheAPostergar = new HashMap<>();
+		for(ChamadaEncalhe ce : chamadasEncalheAPostergarList) {
+			ce.setSequencia(++sequencia);
+			chamadasEncalheAPostergar.put(ce.getProdutoEdicao().getId().toString(), ce);
+		}
+		
+		return chamadasEncalheAPostergar;
+		
 	}
 
 	@Override
@@ -967,7 +1003,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	}
 	
 	@Transactional
-	private void postergar(Date dataEncalhe, Date dataPostergacao, Long idCota) {
+	private void postergar(Date dataEncalhe, Date dataPostergacao, Long idCota, Map<String, ChamadaEncalhe> chamadasEncalheAPostergar) {
+		
+		if(chamadasEncalheAPostergar == null) throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao obter sequência.");
 		
 		List<ChamadaEncalheCota> listChamadaEncalheCota = this.fechamentoEncalheRepository.buscarChamadaEncalheCota(dataEncalhe, idCota);
 
@@ -995,7 +1033,12 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				Set<Lancamento> lancamentos = chamadaEncalheRepository.obterLancamentos(chamadaEncalheOriginal.getId());
 				
 				chamadaEncalhe.setLancamentos(lancamentos);
-				chamadaEncalhe.setSequencia(chamadaEncalheOriginal.getSequencia());
+				if(chamadaEncalheCota.getChamadaEncalhe() != null 
+						&& chamadaEncalheCota.getChamadaEncalhe().getProdutoEdicao() != null
+							&& chamadaEncalheCota.getChamadaEncalhe().getProdutoEdicao().getId() != null) {
+					
+					chamadaEncalhe.setSequencia(chamadasEncalheAPostergar.get(chamadaEncalheCota.getChamadaEncalhe().getProdutoEdicao().getId().toString()).getSequencia());
+				}
 				
 				this.chamadaEncalheRepository.adicionar(chamadaEncalhe);
 			} 
@@ -1170,11 +1213,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Transactional(readOnly=true)
 	public Date buscarUtimoDiaDaSemanaRecolhimento() {
 		
-		int codigoInicioSemana = 
-			this.distribuidorService.inicioSemana().getCodigoDiaSemana();
+		int codigoInicioSemana = this.distribuidorService.inicioSemana().getCodigoDiaSemana();
 		
-		Date dataInicioSemana =
-			SemanaUtil.obterDataInicioSemana(codigoInicioSemana, new Date());
+		Date dataInicioSemana = SemanaUtil.obterDataInicioSemana(codigoInicioSemana, new Date());
 			
 		Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 
