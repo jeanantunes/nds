@@ -27,17 +27,22 @@
 			<textField>
 				<reportElement uuid="f96e591b-a141-4a59-95da-7961a1fc0aea" mode="Opaque" x="0" y="0" width="208" height="28" isPrintInFirstWholeBand="true" backcolor="#F0F0F0"/>
 				<textElement textAlignment="Left" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[($F{descricao} == null ? $F{observacoes} +":" : $F{observacoes} ) + ($F{descricao} != null ? " - " + $F{descricao} : "")]]></textFieldExpression>
+				<textFieldExpression><![CDATA[( ($F{descricao} == null)
+    ? ($F{observacoes}== null)? "": $F{observacoes} +":"
+    : ($F{observacoes}==null)?"":$F{observacoes} )
+
++ ($F{descricao} != null ? " - " + $F{descricao} : "")]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement uuid="10f034c1-b3bd-411c-985c-b368dc704c4a" mode="Opaque" x="208" y="0" width="127" height="28" isPrintInFirstWholeBand="true" backcolor="#F0F0F0"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{tipoLancamento}.getSiglaOperacao()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[( ($F{tipoLancamento}==null)?"":
+    ($F{tipoLancamento}.getSiglaOperacao()==null)?"": $F{tipoLancamento}.getSiglaOperacao())]]></textFieldExpression>
 			</textField>
 			<textField pattern="###0.00">
 				<reportElement uuid="77338aa4-4954-4504-8fde-0f1b1c5f6b71" mode="Opaque" x="334" y="0" width="162" height="28" isPrintInFirstWholeBand="true" backcolor="#F0F0F0"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$F{valor}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{valor}==null)?"":$F{valor}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

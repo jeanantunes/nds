@@ -76,8 +76,6 @@ public interface FechamentoEncalheService {
 	List<CotaDTO> obterListaCotaConferenciaNaoFinalizada(Date dataOperacao);
 	
 	int buscarQuantidadeConferenciaEncalhe(FiltroFechamentoEncalheDTO filtro);
-
-	Boolean buscaControleFechamentoEncalhe(Date data);
 	
 	BigDecimal obterValorTotalAnaliticoEncalhe(FiltroFechamentoEncalheDTO filtro);
 
@@ -93,4 +91,7 @@ public interface FechamentoEncalheService {
 							  Usuario usuario, 
 							  CotaAusenteEncalheDTO c, Cota cotaAusente, 
 							  ValidacaoVO validacaoVO, ValidacaoVO validacaoEmails);
+	
+	Boolean validarEncerramentoOperacaoEncalhe(Date data);
+	
 }

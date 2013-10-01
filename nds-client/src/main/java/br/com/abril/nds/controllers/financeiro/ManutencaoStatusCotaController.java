@@ -106,8 +106,6 @@ public class ManutencaoStatusCotaController extends BaseController {
 	@Autowired
 	private ConsultaConsignadoCotaService consignadoCotaService;
 	
-	private static final String FILTRO_PESQUISA_SESSION_ATTRIBUTE = "filtroPesquisaManutencaoStatusCota";
-	
 	@Get
 	@Path("/")
 	public void index() {
@@ -119,9 +117,11 @@ public class ManutencaoStatusCotaController extends BaseController {
 	@Path("/pesquisar")
 	public void pesquisar(FiltroStatusCotaDTO filtro, String sortorder, String sortname, int page, int rp) {
 		
-		this.validarPeriodoHistoricoStatusCota(filtro.getPeriodo());
+		if (filtro.getPeriodo() != null){
+			this.validarPeriodoHistoricoStatusCota(filtro.getPeriodo());
+		}
 		
-		this.configurarFiltroPesquisa(filtro, sortorder, sortname, page, rp);
+		this.configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
 		List<HistoricoSituacaoCota> listaHistoricoStatusCota =
 			this.situacaoCotaService.obterHistoricoStatusCota(filtro);
@@ -171,7 +171,8 @@ public class ManutencaoStatusCotaController extends BaseController {
 		
 		if (novoHistoricoSituacaoCota.getDataInicioValidade() == null) {
 			
-			novoHistoricoSituacaoCota.setDataInicioValidade(new Date());
+			novoHistoricoSituacaoCota.setDataInicioValidade(
+				this.distribuidorService.obterDataOperacaoDistribuidor());
 		}
 
 		Long idCota = novoHistoricoSituacaoCota.getCota().getId();
@@ -333,37 +334,6 @@ public class ManutencaoStatusCotaController extends BaseController {
 	}
 	
 	/*
-	 * Configura o filtro da pesquisa.
-	 * 
-	 * @param filtroAtual - filtro de pesquisa atual
-	 * @param sortorder - ordenação
-	 * @param sortname - coluna para ordenação
-	 * @param page - página atual
-	 * @param rp - quantidade de registros para exibição
-	 * 
-	 * @return Filtro
-	 */
-	private void configurarFiltroPesquisa(FiltroStatusCotaDTO filtroAtual, 
-										  String sortorder, 
-										  String sortname, 
-										  int page, 
-										  int rp) {
-
-		this.configurarPaginacaoPesquisa(filtroAtual, sortorder, sortname, page, rp);
-		
-		FiltroStatusCotaDTO filtroSessao =
-			(FiltroStatusCotaDTO) 
-				this.httpSession.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
-		
-		if (filtroSessao != null && !filtroSessao.equals(filtroAtual)) {
-		
-			filtroAtual.getPaginacao().setPaginaAtual(1);
-		}
-		
-		this.httpSession.setAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE, filtroAtual);
-	}
-	
-	/*
 	 * Configura a paginação do filtro de pesquisa.
 	 * 
 	 * @param filtro - filtro da pesquisa
@@ -379,6 +349,15 @@ public class ManutencaoStatusCotaController extends BaseController {
 											 int rp) {
 		
 		if (filtro != null) {
+			
+			if (filtro.getPeriodo() != null){
+				
+				if (filtro.getPeriodo().getDataInicial() == null ||
+					filtro.getPeriodo().getDataFinal() == null){
+					
+					filtro.setPeriodo(null);
+				}
+			}
 			
 			PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 	
@@ -405,25 +384,26 @@ public class ManutencaoStatusCotaController extends BaseController {
 		List<ItemDTO<SituacaoCadastro, String>> listaSituacoesStatusCota =
 			new ArrayList<ItemDTO<SituacaoCadastro, String>>();
 		
+		List<ItemDTO<SituacaoCadastro, String>> listaSituacoesNovoStatusCota =
+			new ArrayList<ItemDTO<SituacaoCadastro, String>>();
+		
 		for (SituacaoCadastro situacaoCadastro : SituacaoCadastro.values()) {
 			
 			listaSituacoesStatusCota.add(
+				new ItemDTO<SituacaoCadastro, String>(situacaoCadastro, situacaoCadastro.toString())
+			);
+
+			if (!SituacaoCadastro.PENDENTE.equals(situacaoCadastro)) {
+				
+				listaSituacoesNovoStatusCota.add(
 					new ItemDTO<SituacaoCadastro, String>(situacaoCadastro, situacaoCadastro.toString())
 				);
-		
-		/*
-		 * 		foi solicitado na homologação pra que incluisse o status pendente na pesquisa
-		 */
-			
-			
-//			if (!situacaoCadastro.equals(SituacaoCadastro.PENDENTE)) {
-//				listaSituacoesStatusCota.add(
-//					new ItemDTO<SituacaoCadastro, String>(situacaoCadastro, situacaoCadastro.toString())
-//				);
-//			}
+			}
 		}
 		
 		result.include("listaSituacoesStatusCota", listaSituacoesStatusCota);
+
+		result.include("listaSituacoesNovoStatusCota", listaSituacoesNovoStatusCota);
 	}
 	
 	/*

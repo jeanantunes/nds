@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,7 +14,6 @@ import java.util.Map;
 
 import javax.sql.DataSource;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -26,7 +24,6 @@ import org.hibernate.type.StandardBasicTypes;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.jdbc.core.namedparam.SqlParameterSourceUtils;
@@ -719,37 +716,51 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	private StringBuffer obterQueryListaConsultaEncalhe(FiltroConsultaEncalheDTO filtro) {
 		
 		StringBuilder subSqlVendaProduto = new StringBuilder();
-			
 		subSqlVendaProduto.append(" select COALESCE(sum( vp.QNT_PRODUTO ),0) ");
 		subSqlVendaProduto.append(" from venda_produto vp ");
 		subSqlVendaProduto.append(" where vp.ID_PRODUTO_EDICAO = PRODUTO_EDICAO.ID ");
 		subSqlVendaProduto.append(" and vp.DATA_OPERACAO BETWEEN :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
 		subSqlVendaProduto.append(" and vp.TIPO_VENDA_ENCALHE = :tipoVendaProduto");
 		
+		if (filtro.getIdCota() != null){
+			
+			subSqlVendaProduto.append(" and vp.ID_COTA = :idCota ");
+		}
+		
         StringBuilder subSqlReparte = new StringBuilder();
         subSqlReparte.append(" select sum( COALESCE(CHAMADA_ENCALHE_COTA_.QTDE_PREVISTA,0) ) ");
         subSqlReparte.append(" from CHAMADA_ENCALHE_COTA CHAMADA_ENCALHE_COTA_ ");
         subSqlReparte.append(" join CHAMADA_ENCALHE CHAMADA_ENCALHE_ on (CHAMADA_ENCALHE_COTA_.CHAMADA_ENCALHE_ID = CHAMADA_ENCALHE_.ID) ");
+
         subSqlReparte.append(" where CHAMADA_ENCALHE_.DATA_RECOLHIMENTO = CHAMADA_ENCALHE.DATA_RECOLHIMENTO ");
         subSqlReparte.append(" and CHAMADA_ENCALHE_COTA_.COTA_ID = CHAMADA_ENCALHE_COTA.COTA_ID ");
         subSqlReparte.append(" and CHAMADA_ENCALHE_.PRODUTO_EDICAO_ID = PRODUTO_EDICAO.ID ");
         subSqlReparte.append(" and CHAMADA_ENCALHE.DATA_RECOLHIMENTO=CHAMADA_ENCALHE_.DATA_RECOLHIMENTO ");
+
+        if (filtro.getIdCota() != null){
+        	subSqlReparte.append(" and CHAMADA_ENCALHE_COTA_.COTA_ID = :idCota ");
+        }
         
         StringBuilder subSqlEncalhe = new StringBuilder();
-		
-        subSqlEncalhe.append(" select sum( COALESCE(CONFERENCIA_ENCALHE_1.QTDE,0) ) ");
-        subSqlEncalhe.append(" from CONFERENCIA_ENCALHE CONFERENCIA_ENCALHE_1, CHAMADA_ENCALHE_COTA CHAMADA_ENCALHE_COTA_1, CHAMADA_ENCALHE CHAMADA_ENCALHE_1 ");
-        subSqlEncalhe.append(" where CONFERENCIA_ENCALHE_1.CHAMADA_ENCALHE_COTA_ID = CHAMADA_ENCALHE_COTA_1.ID ");
-        subSqlEncalhe.append(" and CHAMADA_ENCALHE_COTA_1.ID = CHAMADA_ENCALHE_COTA.ID");
-        subSqlEncalhe.append(" and CHAMADA_ENCALHE_COTA_1.CHAMADA_ENCALHE_ID=CHAMADA_ENCALHE_1.ID ");
-        subSqlEncalhe.append(" and CHAMADA_ENCALHE.DATA_RECOLHIMENTO=CHAMADA_ENCALHE_1.DATA_RECOLHIMENTO ");
-
-		StringBuilder subSqlValoresDesconto = new StringBuilder();
+        subSqlEncalhe.append(" select sum( COALESCE(CONFERENCIA_ENCALHE_1.QTDE_INFORMADA,0) ) ");
+        subSqlEncalhe.append(" from CONFERENCIA_ENCALHE CONFERENCIA_ENCALHE_1 ");
+        subSqlEncalhe.append(" join CONTROLE_CONFERENCIA_ENCALHE_COTA CCEC on ");
+        subSqlEncalhe.append("		(CCEC.ID = CONFERENCIA_ENCALHE_1.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID) ");
+        subSqlEncalhe.append(" where  ");
+        subSqlEncalhe.append(" CONFERENCIA_ENCALHE_1.PRODUTO_EDICAO_ID = PRODUTO_EDICAO.ID ");
+        subSqlEncalhe.append(" and CCEC.DATA_OPERACAO between :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
+        
+        if (filtro.getIdCota() != null){
+        	
+        	subSqlEncalhe.append(" and CCEC.COTA_ID = :idCota ");
+        }
+        
+        StringBuilder subSqlValoresDesconto = new StringBuilder();
 		
 		if (filtro.getIdCota() != null) {
 		
 			subSqlValoresDesconto.append("    COALESCE(MEC_REPARTE.PRECO_COM_DESCONTO, PRODUTO_EDICAO.PRECO_VENDA, 0) as precoComDesconto, ");
-			subSqlValoresDesconto.append("	COALESCE(MEC_REPARTE.VALOR_DESCONTO, 0) ").append(" as valorDesconto, ");
+			subSqlValoresDesconto.append("	COALESCE(MEC_REPARTE.VALOR_DESCONTO, 0) as valorDesconto, ");
 			subSqlValoresDesconto.append("	( SUM( COALESCE(MEC_REPARTE.QTDE, 0)) * COALESCE(MEC_REPARTE.PRECO_COM_DESCONTO , PRODUTO_EDICAO.PRECO_VENDA, 0) ) as valorComDesconto, ");
 			
 		} else {
@@ -765,7 +776,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			subSqlValoresDesconto.append("   ELSE 0");
 			subSqlValoresDesconto.append("   END AS precoComDesconto, ");
 
-			subSqlValoresDesconto.append("	COALESCE(DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO, DESCONTO.VALOR, 0) ").append(" as valorDesconto, ");
+			subSqlValoresDesconto.append("	COALESCE(DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO, DESCONTO.VALOR, 0) as valorDesconto, ");
 			
 			subSqlValoresDesconto.append("  (CASE WHEN DESCONTO_LOGISTICA.ID IS NOT NULL THEN ( ");
 			subSqlValoresDesconto.append("	SUM(COALESCE(MEC_REPARTE.QTDE, 0)) * COALESCE(MEC_REPARTE.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
@@ -795,18 +806,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		sql.append("	( SUM( COALESCE(MEC_REPARTE.QTDE, 0)) * COALESCE(MEC_REPARTE.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0) ) as valor, ");
 		
-		subSqlValoresDesconto.append("   CASE WHEN DESCONTO_LOGISTICA.ID IS NOT NULL THEN ( ");
-		subSqlValoresDesconto.append("   SUM( COALESCE(MEC_REPARTE.QTDE, 0) - ");
-		subSqlValoresDesconto.append("   (SUM( COALESCE(MEC_REPARTE.QTDE, 1) * ");
-		subSqlValoresDesconto.append("   DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO/100)) ");
-		subSqlValoresDesconto.append("   ELSE  ( ");
-		subSqlValoresDesconto.append("   SUM( COALESCE(MEC_REPARTE.QTDE, 0) - ");
-		subSqlValoresDesconto.append("   (SUM( COALESCE(MEC_REPARTE.QTDE, 1)* ");
-		subSqlValoresDesconto.append("   DESCONTO.VALOR/100)) ");
+		sql.append("( ").append(subSqlReparte).append(" ) as reparte, ");
 		
-		sql.append("("+subSqlReparte.toString()+") as reparte, ");
-		
-		sql.append("( ("+subSqlEncalhe.toString()+") - ("+ subSqlVendaProduto.toString() +") ) as encalhe, ");
+		sql.append("( ( ").append(subSqlEncalhe).append(" ) - ( ").append(subSqlVendaProduto).append(") ) as encalhe, ");
 
 		sql.append("	FORNECEDOR.ID						as idFornecedor,		");
 		
@@ -1889,6 +1891,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			case QTDE_EXEMPLARES:
 				nome = " qtdeExms ";
 				break;
+			default:
+				nome = " codigoProduto ";				
 		}
 		
 		hql.append( " order by " + nome + sortOrder + " ");

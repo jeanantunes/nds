@@ -74,6 +74,8 @@ public class FechamentoFisicoLogicoDTO {
 	
 	private BigDecimal desconto;
 	
+	private boolean chamadao; 
+	
 	public String getReplicar() {
 		return replicar;
 	}
@@ -328,6 +330,18 @@ public class FechamentoFisicoLogicoDTO {
 	public void setSuplementar(boolean suplementar) {
 		this.suplementar = suplementar;
 	}
-	
-	
+
+	/**
+	 * @return the chamadao
+	 */
+	public boolean isChamadao() {
+		return chamadao;
+	}
+
+	/**
+	 * @param chamadao the chamadao to set
+	 */
+	public void setChamadao(boolean chamadao) {
+		this.chamadao = chamadao;
+	}
 }

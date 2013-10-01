@@ -43,6 +43,8 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 	
 	private boolean unificaCobranca;
 	
+	private boolean devolveEncalhe;
+	
 	private boolean parametroDistribuidor;
 	
 	
@@ -206,6 +208,16 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 	
 	public void setParametroDistribuidor(boolean parametroDistribuidor) {
 		this.parametroDistribuidor = parametroDistribuidor;
+	}
+
+	
+	public boolean isDevolveEncalhe() {
+		return devolveEncalhe;
+	}
+
+	
+	public void setDevolveEncalhe(boolean devolveEncalhe) {
+		this.devolveEncalhe = devolveEncalhe;
 	}
 
 	

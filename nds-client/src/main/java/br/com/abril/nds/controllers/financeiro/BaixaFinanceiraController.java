@@ -574,6 +574,7 @@ public class BaixaFinanceiraController extends BaseController {
 		FiltroConsultaDividasCotaDTO filtroAtual = 
 				new FiltroConsultaDividasCotaDTO(
 						numCota, this.distribuidorService.obterDataOperacaoDistribuidor(),null);
+
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		filtroAtual.setSomenteBaixadas(false);
 		filtroAtual.setPaginacao(paginacao);

@@ -81,8 +81,16 @@ DELETE FROM produto_fornecedor WHERE fornecedores_id IN (
 update fornecedor set desconto_id = null;
 delete from desconto;
 
-select * from banco;
+delete from controle_baixa_bancaria;
+
+select * from forma_cobranca_fo
 ;
+
+delete from forma_cobranca
+;
+delete from banco
+;
+
 /*
 select * from desconto_cota;
 select * from desconto_produto_cota;

@@ -341,7 +341,7 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<DetalheItemNotaFiscalDTO> obterDetalhesNotaFical(Long idNotaFiscal) {
+	public List<DetalheItemNotaFiscalDTO> obterDetalhesNotaFical(Long idNotaFiscal, PaginacaoVO paginacao) {
 
 		String hql = 
 				" select "
@@ -361,8 +361,11 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 				   + " from ItemNotaFiscalEntrada itemNotaFiscal "
 				   
 				   + " left join itemNotaFiscal.recebimentoFisico.diferenca as diferenca "
-				   + " where itemNotaFiscal.notaFiscal.id = :idNotaFiscal "
-				   + " order by itemNotaFiscal.id ";
+				   + " where itemNotaFiscal.notaFiscal.id = :idNotaFiscal ";
+				   
+		if (paginacao != null) {
+			hql += " order by " + paginacao.getSortColumn() + " " + paginacao.getSortOrder(); 
+		}
 
 		ResultTransformer resultTransformer = new AliasToBeanResultTransformer(DetalheItemNotaFiscalDTO.class); 
 

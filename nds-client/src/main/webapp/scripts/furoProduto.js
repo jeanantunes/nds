@@ -16,7 +16,7 @@ var furoProdutoController = $.extend(true, {
 		
 		$("#dataLancamento", furoProdutoController.workspace).mask("99/99/9999");
 		$("#novaData", furoProdutoController.workspace).mask("99/99/9999");
-		$("#edicao", furoProdutoController.workspace).mask("?99999999999999999999", {placeholder:""});
+		$("#edicao", furoProdutoController.workspace).numeric();
 		
 		$(document).ready(function(){
 			
@@ -221,7 +221,7 @@ var furoProdutoController = $.extend(true, {
 		$("#resultado", furoProdutoController.workspace).hide();
 		$("#codigo", furoProdutoController.workspace).val("");
 		$("#produto", furoProdutoController.workspace).val("");
-		$("#edicao", furoProdutoController.workspace).mask("?99999999999999999999", {placeholder:""}).val("");
+		$("#edicao", furoProdutoController.workspace).val("");
 		$("#dataLancamento", furoProdutoController.workspace).val("");
 		$("#novaData", furoProdutoController.workspace).val("");
 		$("#codigo", furoProdutoController.workspace).focus();
@@ -235,12 +235,17 @@ var furoProdutoController = $.extend(true, {
 					if (result && result.string != ""){
 						$("#produto", furoProdutoController.workspace).val(result);
 						$("#edicao", furoProdutoController.workspace).focus();
+						$("#edicao", furoProdutoController.workspace).val("");
 					} else {
 						$("#produto", furoProdutoController.workspace).val("");
 						$("#produto", furoProdutoController.workspace).focus();
 					}
 				}
 			);
+		}
+		else{
+			$("#edicao", furoProdutoController.workspace).val("");
+			$("#produto", furoProdutoController.workspace).val("");
 		}
 	}
 	
