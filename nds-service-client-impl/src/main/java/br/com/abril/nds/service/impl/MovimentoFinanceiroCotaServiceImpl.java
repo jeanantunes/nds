@@ -193,7 +193,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		
 		Fornecedor fornecedor = movimentoFinanceiroCotaDTO.getFornecedor();
 		
-		Cota cota = movimentoFinanceiroCotaDTO.getCota();
+		Cota cota  = cotaService.obterPorId( movimentoFinanceiroCotaDTO.getCota().getId());
 		
 		if (fornecedor == null) {
 			
