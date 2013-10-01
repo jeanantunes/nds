@@ -485,8 +485,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 						listaChamadaEncalhe.add(chamadaEncalhe);
 					}
 					
-					this.criarChamadaEncalheCota(estoqueProdutoCota, cota,
-							chamadaEncalhe);
+					this.criarChamadaEncalheCota(estoqueProdutoCota, cota, chamadaEncalhe);
 				}
 			}
 		}
