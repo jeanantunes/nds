@@ -528,10 +528,49 @@ var produtoController = $.extend(true, {
 		});
 	},
 	
+	atualizaICD : function(){
+		var value = $("#codigoProdutoCadastro").val();
+		console.log(value);
+		var l = value.length;
+		
+		if(l>=6){
+			$("#codigoProdutoICDCadastro").val(value.substring(0,6));
+		}else{
+			$("#codigoProdutoICDCadastro").val(value.substring(0,(value.length)));
+		}
+	},
+	
 	novoProduto : function () {
 		produtoController.limparModalCadastro();
 		
 		$("td[name='tdCodigoProdutoICDCadastro']", produtoController.workspace).hide();
+		
+		$("#comboFornecedoresCadastro").change(function(){
+			
+			var fornecedores = [1,2,16];
+			var idFornecedor = parseInt($(this).val());
+			
+			console.log(idFornecedor);
+			
+			if(idFornecedor==0){
+				$("td[name='tdCodigoProdutoICDCadastro']", produtoController.workspace).hide();
+				$("#codigoProdutoICDCadastro").val('');
+				return;
+			}
+			
+			$("td[name='tdCodigoProdutoICDCadastro']", produtoController.workspace).show();
+			
+			
+			var disabled=(fornecedores.indexOf(idFornecedor)==-1);
+			$("#codigoProdutoICDCadastro").prop('disabled', disabled);
+			if(disabled == false){ 
+				$("#codigoProdutoICDCadastro").val('');
+			}else{
+				produtoController.atualizaICD();
+				
+			}
+		});
+		
 		
 		$("#dialog-novo", this.workspace).dialog({
 			resizable: false,
