@@ -18,7 +18,6 @@ import br.com.abril.nds.dto.ConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.ConsultaChamadaoDTO;
 import br.com.abril.nds.dto.ResumoConsignadoCotaChamadaoDTO;
 import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO;
-import br.com.abril.nds.dto.filtro.FiltroChamadaoDTO.OrdenacaoColunaChamadao;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
@@ -45,6 +44,7 @@ import br.com.abril.nds.service.ChamadaoService;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.SituacaoCotaService;
 import br.com.abril.nds.service.UsuarioService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
 
 /**
@@ -67,6 +67,9 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	
 	@Autowired
 	protected CotaRepository cotaRepository;
+	
+	@Autowired 
+	protected DistribuidorService distribuidorService;
 	
 	@Autowired
 	protected EstoqueProdutoCotaRepository estoqueProdutoCotaRepository;
@@ -298,6 +301,8 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	 */
 	private void atualizarStatusCotaParaAtivo(Cota cota){
 		
+		Date dataDeOperacao = distribuidorService.obterDataOperacaoDistribuidor();		
+		
 		HistoricoSituacaoCota historico = new HistoricoSituacaoCota();
 		historico.setCota(cota);
 		historico.setDataEdicao(new Date());
@@ -305,10 +310,10 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 		historico.setSituacaoAnterior(cota.getSituacaoCadastro());
 		historico.setResponsavel(usuarioService.getUsuarioLogado());
 		historico.setMotivo(MotivoAlteracaoSituacao.CHAMADAO);
-		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
-		historico.setDataInicioValidade(new Date());
+		historico.setTipoEdicao(TipoEdicao.ALTERACAO);		
+		historico.setDataInicioValidade(dataDeOperacao);
 		
-		situacaoCotaService.atualizarSituacaoCota(historico);
+		situacaoCotaService.atualizarSituacaoCota(historico, dataDeOperacao);
 	}
 	
 	/**
