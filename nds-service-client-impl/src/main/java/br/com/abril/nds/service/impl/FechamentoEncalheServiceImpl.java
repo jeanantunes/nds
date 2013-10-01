@@ -365,7 +365,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		conferencia.setTotal(new BigDecimal(conferencia.getExemplaresDevolucao()).multiply(conferencia.getPrecoCapaDesconto()));
 		conferencia.setFechado(fechado);
 		
-		if (conferencia.isSuplementar()) {
+		if (conferencia.isSuplementar() && conferencia.isChamadao()) {
 			  
 			conferencia.setEstoque(TipoEstoque.SUPLEMENTAR.getDescricao());
 			  
