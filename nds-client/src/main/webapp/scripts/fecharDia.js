@@ -966,9 +966,9 @@ var fecharDiaController =  $.extend(true, {
 		var baixaBancaria = "<tr class='class_linha_1' id='baixaBancaria'><td>Baixa Bancária</td>";					
 		var iconeBaixaBancaria = null;
 		if(result.baixaBancaria){
-			iconeBaixaBancaria = 'ico_bloquear.gif';
-		}else{
 			iconeBaixaBancaria = 'ico_check.gif';
+		}else{
+			iconeBaixaBancaria = 'ico_bloquear.gif';
 		}
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeBaixaBancaria+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
 		$('#tabela-validacao').append(baixaBancaria + imagem);

@@ -30,6 +30,8 @@ var visaoEstoqueController = $.extend(true, {
 	
 	visaoEstoqueInventarioArray : {}, 
 	
+	tipoEstoque: null,
+	
 	init : function() {
 		
 		$("#visaoEstoque_filtro_dataMovimentacao").datepicker({
@@ -345,6 +347,8 @@ var visaoEstoqueController = $.extend(true, {
 		
 		$("#visaoEstoque_filtro_tipoEstoque", this.workspace).val(tipoEstoque);
 		
+		visaoEstoqueController.tipoEstoque = tipoEstoque;
+		
 		var params = $("#pesquisarVisaoEstoqueForm", this.workspace).serialize();
 		
 		$("." + grid).flexOptions({
@@ -372,6 +376,13 @@ var visaoEstoqueController = $.extend(true, {
 	},
 	
 	preProcessPopupDetalhe : function(data) {
+	
+		if (visaoEstoqueController.tipoEstoque != 'LANCAMENTO_JURAMENTADO') {
+
+			visaoEstoqueController.toggleFlexiGridColumn("visaoEstoqueDetalheGrid", "valor", (!data.isBuscaHistorico));
+		}
+		
+		data = data.listDetalhe;
 		
 		$.each(data.rows, function(index, value) {
 			
@@ -385,6 +396,20 @@ var visaoEstoqueController = $.extend(true, {
 		});
 		
 		return data;
+	},
+	
+	toggleFlexiGridColumn: function(gridClassName, column, visible) {
+	
+		var grid = $("." + gridClassName).closest(".flexigrid");
+		
+		var colHeader = $('th[abbr="' + column + '"]', grid);
+		var colIndex = $(colHeader).attr('axis').replace(/col/, "");
+		
+		$(colHeader).toggle(visible);
+		
+		$('tbody tr', grid).each(function () {
+			$('td:eq(' + colIndex + ')', this).toggle(visible);
+		});
 	},
 	
 	popup_transferencia : function(tipoEstoque, estoque) {

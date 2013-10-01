@@ -1527,7 +1527,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 																		 controleConferenciaEncalheCota.getDataOperacao(),
 																		 controleConferenciaEncalheCota.getUsuario(),
 																		 controleConferenciaEncalheCota.getId(), 
-																		 FormaComercializacao.CONTA_FIRME);
+																		 FormaComercializacao.CONSIGNADO);
 
 		Map<String, Boolean> nossoNumeroCollection = new HashMap<String, Boolean>();
 		
@@ -2975,6 +2975,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		SlipDTO slipDTO = setParamsSlip(idControleConferenciaEncalheCota, incluirNumeroSlip);
 		
+		if(slipDTO.getListaComposicaoCobrancaDTO().isEmpty()){
+			slipDTO.getListaComposicaoCobrancaDTO().add(new DebitoCreditoCotaDTO());
+		}
+		
 		switch (tpArquivo) {
 		case PDF:
 			return gerarSlipPDF(slipDTO);
@@ -3143,7 +3147,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			}
 		}
 		
-		totalComposicao = slipDTO.getValorSlip().abs().add(totalComposicao);
+		totalComposicao = slipDTO.getValorSlip().add(totalComposicao).abs();
 		
 		BigDecimal totalPagar = totalComposicao;
 		

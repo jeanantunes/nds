@@ -2423,7 +2423,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
     public Cota buscarCotaPorID(Long idCota) {
     	
     	String queryString = " select cota from Cota cota "
-				   + " join fetch cota.fornecedores fornecedores "
+				   + " left join fetch cota.fornecedores fornecedores "
 				   + " where cota.id = :idCota ";
 
 		Query query = this.getSession().createQuery(queryString);
