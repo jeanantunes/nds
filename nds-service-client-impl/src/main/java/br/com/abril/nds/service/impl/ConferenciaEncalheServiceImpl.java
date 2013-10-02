@@ -2457,11 +2457,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 		TipoChamadaEncalhe tipoChamadaEncalhe = 
 			(chamadaEncalhe != null) ? chamadaEncalhe.getTipoChamadaEncalhe() : null;
-		
+			
+		Date dataConferenciaEncalhe = this.distribuidorService.obterDataOperacaoDistribuidor();
+
 		TipoMovimentoEstoque tipoMovimentoEstoque = 
 			obterTipoMovimentoEstoqueDistribuidor(
 				juramentada, conferenciaEncalheDTO.getDataRecolhimento(),
-					dataCriacao, mapaTipoMovimentoEstoque, tipoChamadaEncalhe);
+				dataConferenciaEncalhe, mapaTipoMovimentoEstoque, tipoChamadaEncalhe);
 
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		
