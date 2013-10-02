@@ -757,6 +757,38 @@ public class ChamadaEncalheCotaRepositoryImpl extends
 		return (Boolean) query.uniqueResult();
 	}
 	
+	@Override
+	public Boolean existeChamadaEncalheCota(Long idCota, Long idProdutoEdicao, Date dataRecolhimento) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select case when(count(cec) > 0) then true else false end ");
+		
+		hql.append(" from ChamadaEncalheCota cec ");
+		
+		hql.append(" join cec.chamadaEncalhe chamadaEncalhe ");
+		
+		hql.append(" where cec.cota.id = :idCota ");
+		
+		hql.append(" and chamadaEncalhe.produtoEdicao.id = :idProdutoEdicao ");
+		
+		if (dataRecolhimento != null) {
+			hql.append(" and chamadaEncalhe.dataRecolhimento = :dataRecolhimento ");
+		}
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idCota", idCota);
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		if (dataRecolhimento != null) {
+			query.setParameter("dataRecolhimento", dataRecolhimento);
+		}
+		
+		return (Boolean) query.uniqueResult();
+	}
+	
 	public ChamadaEncalheCota obterChamadaEncalheCota(Long idCota, Long idProdutoEdicao, Date dataRecolhimento) {
 
 		StringBuilder hql = new StringBuilder();
