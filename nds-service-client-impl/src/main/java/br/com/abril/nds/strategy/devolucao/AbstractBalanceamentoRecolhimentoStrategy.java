@@ -66,6 +66,9 @@ public abstract class AbstractBalanceamentoRecolhimentoStrategy implements Balan
 		balanceamentoRecolhimento.setCotasOperacaoDiferenciada(
 			dadosRecolhimento.getCotasOperacaoDiferenciada());
 		
+		balanceamentoRecolhimento.setProdutosRecolhimentoAgrupados(
+			dadosRecolhimento.getProdutosRecolhimentoAgrupados());
+		
 		return balanceamentoRecolhimento;
 	}
 	

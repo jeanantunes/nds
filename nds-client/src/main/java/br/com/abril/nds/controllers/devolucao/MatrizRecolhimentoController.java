@@ -226,7 +226,8 @@ public class MatrizRecolhimentoController extends BaseController {
 													matrizRecolhimento,
 													filtro.getAnoNumeroSemana(),
 													datasConfirmadas,
-													getUsuarioLogado());
+													getUsuarioLogado(),
+													balanceamentoRecolhimento.getProdutosRecolhimentoAgrupados());
 		
 		matrizRecolhimento =
 			this.atualizarMatizComProdutosConfirmados(matrizRecolhimento, matrizConfirmada);
@@ -374,7 +375,7 @@ public class MatrizRecolhimentoController extends BaseController {
 				this.httpSession.getAttribute(ATRIBUTO_SESSAO_BALANCEAMENTO_RECOLHIMENTO);
 		
 		recolhimentoService.salvarBalanceamentoRecolhimento(
-			balanceamentoRecolhimento.getMatrizRecolhimento(), getUsuarioLogado());
+			getUsuarioLogado(), balanceamentoRecolhimento);
 		
 		removerAtributoAlteracaoSessao();
 		
@@ -794,6 +795,7 @@ public class MatrizRecolhimentoController extends BaseController {
 										dataAntiga);
 		
 		removerEAdicionarMapa(matrizRecolhimento,
+							  balanceamentoRecolhimentoSessao.getProdutosRecolhimentoAgrupados(),
 							  listaProdutoRecolhimentoAdicionar,
 							  listaProdutoRecolhimentoRemover,
 							  novaData);
@@ -882,7 +884,8 @@ public class MatrizRecolhimentoController extends BaseController {
 	 * @param listaProdutoRecolhimentoRemover - lista de produtos que serão removidos
 	 * @param novaData - nova data de recolhimento
 	 */
-	private void removerEAdicionarMapa(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,   									 
+	private void removerEAdicionarMapa(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
+									   List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados,
 		     						   List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoAdicionar,
 		     						   List<ProdutoRecolhimentoDTO> listaProdutoRecolhimentoRemover,
 		     						   Date novaData) {
@@ -924,7 +927,6 @@ public class MatrizRecolhimentoController extends BaseController {
 			matrizRecolhimento.put(novaData, listaProdutoRecolhimentoDTO);
 		}
 	}
-	
 		
 	/**
 	 * Método que processa os balanceamentos para exibição no grid.

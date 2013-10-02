@@ -29,6 +29,8 @@ public class RecolhimentoDTO implements Serializable {
 	private boolean forcarBalanceamento;
 	
 	private List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada;
+	
+	private List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados;
 
 	/**
 	 * Construtor padrão.
@@ -124,6 +126,21 @@ public class RecolhimentoDTO implements Serializable {
 	public void setCotasOperacaoDiferenciada(
 		List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada) {
 		this.cotasOperacaoDiferenciada = cotasOperacaoDiferenciada;
+	}
+
+	/**
+	 * @return the produtosRecolhimentoAgrupados
+	 */
+	public List<ProdutoRecolhimentoDTO> getProdutosRecolhimentoAgrupados() {
+		return produtosRecolhimentoAgrupados;
+	}
+
+	/**
+	 * @param produtosRecolhimentoAgrupados the produtosRecolhimentoAgrupados to set
+	 */
+	public void setProdutosRecolhimentoAgrupados(
+		List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados) {
+		this.produtosRecolhimentoAgrupados = produtosRecolhimentoAgrupados;
 	}
 	
 }
