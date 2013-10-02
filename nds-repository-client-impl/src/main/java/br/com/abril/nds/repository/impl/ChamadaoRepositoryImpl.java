@@ -370,7 +370,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		 * Alteração feita em conjunto com Eduardo Candido em 01/10/2013 
 		 * 
 		 * Não retornava todos os consignados da cota devido a inconsistências de base por lancamento.DATA_REC_PREVISTA e lancamento.STATUS
-		 * Passado a validar por critério MOVIMENTO_ESTOQUE_COTA.status_estoque_financeiro=1 (Movimento COBRADO=1 Não COBRADO=0)
+		 * Passado a validar por critério MOVIMENTO_ESTOQUE_COTA.status_estoque_financeiro=1 (Movimento COBRADO=0 Não COBRADO=1)
 		 *  
 		 * hql.append("      AND lancamento.STATUS IN (:statusLancamento) ");
 		 * hql.append("      AND lancamento.DATA_REC_PREVISTA >= :dataRecolhimento ");
