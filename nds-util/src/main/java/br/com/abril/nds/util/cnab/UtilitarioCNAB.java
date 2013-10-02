@@ -1,7 +1,5 @@
 package br.com.abril.nds.util.cnab;
 
-import br.com.abril.nds.enums.TipoMensagem;
-import br.com.abril.nds.exception.ValidacaoException;
 
 
 

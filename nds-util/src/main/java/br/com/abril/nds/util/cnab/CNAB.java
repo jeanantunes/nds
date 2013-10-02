@@ -23,6 +23,7 @@ public class CNAB {
 	public int indiceNumeroContaInicio;
 	public int indiceNumeroContaFim;
 	
+
 	
 	public String obterDataPagamento(String linha) {
 		return linha.substring(indiceDataPagamentoInicio, indiceDataPagamentoFim);
@@ -45,8 +46,192 @@ public class CNAB {
 	}
 	
 	public String obterNumeroConta(String linha) {
-		return linha.substring(indiceNumeroContaInicio, indiceNumeroContaFim);
+		return linha.substring(indiceNumeroContaInicio, indiceNumeroContaFim); 
 	}
+
+	
+	
+	public static CNAB newInstanceCnab240CaixaEconomicaFederal(){
+		
+		//TODO: documentacao cnab 240 da caixa
+		// não possui o segmento de layout
+		// apresentado nos bancos:  
+		// - bradesco, 
+		// - banco do brasil
+		// - hsbc 
+		// - e itau...
+    	CNAB cnab = new CNAB();
+ 		
+//		cnab.indiceDataPagamentoInicio = ;
+//		cnab.indiceDataPagamentoFim = ;
+//		
+//		cnab.indiceNossoNumeroInicio = ;
+//		cnab.indiceNossoNumeroFim = ;
+//		
+//		cnab.indiceValorPagamentoInicio = ;
+//		cnab.indiceValorPagamentoFim = ;
+//		
+//		cnab.indiceNumeroRegistroInicio = ;
+//		cnab.indiceNumeroRegistroFim = ;
+//		
+//		
+//		//Informações abaixo no header de arquivo
+//		//Dígito Verificador da Ag/Conta 71 72 
+//		cnab.indiceNumeroAgenciaInicio = 52;
+//		cnab.indiceNumeroAgenciaFim = 58;
+//		
+//		cnab.indiceNumeroContaInicio = 58;
+//		cnab.indiceNumeroContaFim = 71;
+		
+		return cnab;    	
+    	
+    }	
+    public static CNAB newInstanceCnab240Santander(){
+
+    	CNAB cnab = new CNAB();
+    	
+    	//TODO : Não encontramos doc cnab 240 oficial
+    	// do 
+// 		
+//		cnab.indiceDataPagamentoInicio = ;
+//		cnab.indiceDataPagamentoFim = ;
+//		
+//		cnab.indiceNossoNumeroInicio = ;
+//		cnab.indiceNossoNumeroFim = ;
+//		
+//		cnab.indiceValorPagamentoInicio = ;
+//		cnab.indiceValorPagamentoFim = ;
+//		
+//		cnab.indiceNumeroRegistroInicio = ;
+//		cnab.indiceNumeroRegistroFim = ;
+//		
+//		
+//		//Informacoes abaixo no header de arquivo
+//		cnab.indiceNumeroAgenciaInicio = ;
+//		cnab.indiceNumeroAgenciaFim = ;
+//		
+//		cnab.indiceNumeroContaInicio = ;
+//		cnab.indiceNumeroContaFim = ;
+		
+		return cnab;    	
+    	
+    }
+	
+	
+    public static CNAB newInstanceCnab240Bradesco(){
+    	
+    	CNAB cnab = new CNAB();
+ 		
+		cnab.indiceDataPagamentoInicio = 144;
+		cnab.indiceDataPagamentoFim = 152;
+		
+		cnab.indiceNossoNumeroInicio = 202;
+		cnab.indiceNossoNumeroFim = 222;
+		
+		cnab.indiceValorPagamentoInicio = 152;
+		cnab.indiceValorPagamentoFim = 167;
+		
+		cnab.indiceNumeroRegistroInicio = 8;
+		cnab.indiceNumeroRegistroFim = 13;
+		
+		
+		//Informacoes abaixo no header de arquivo
+		//Dígito Verificador da Ag/Conta 71 72 
+		cnab.indiceNumeroAgenciaInicio = 52;
+		cnab.indiceNumeroAgenciaFim = 58;
+		
+		cnab.indiceNumeroContaInicio = 58;
+		cnab.indiceNumeroContaFim = 71;
+		
+		return cnab;    	
+    }
+	
+	
+    public static CNAB newInstanceCnab240BancoDoBrasil(){
+    	
+    	CNAB cnab = new CNAB();
+ 		
+		cnab.indiceDataPagamentoInicio = 144;
+		cnab.indiceDataPagamentoFim = 152;
+		
+		cnab.indiceNossoNumeroInicio = 202;
+		cnab.indiceNossoNumeroFim = 222;
+		
+		cnab.indiceValorPagamentoInicio = 152;
+		cnab.indiceValorPagamentoFim = 167;
+		
+		cnab.indiceNumeroRegistroInicio = 8;
+		cnab.indiceNumeroRegistroFim = 13;
+		
+		
+		//Informacoes abaixo no header de arquivo
+		//Dígito Verificador da Ag/Conta 71 72 
+		cnab.indiceNumeroAgenciaInicio = 52;
+		cnab.indiceNumeroAgenciaFim = 58;
+		
+		cnab.indiceNumeroContaInicio = 58;
+		cnab.indiceNumeroContaFim = 71;
+		
+		return cnab;
+	}
+	
+    public static CNAB newInstanceCnab240HSBC(){
+    	
+    	CNAB cnab = new CNAB();
+
+    	cnab.indiceDataPagamentoInicio = 144;
+    	cnab.indiceDataPagamentoFim = 152;
+		
+    	cnab.indiceNossoNumeroInicio = 202;
+    	cnab.indiceNossoNumeroFim = 218;
+		
+    	cnab.indiceValorPagamentoInicio = 154; 
+    	cnab.indiceValorPagamentoFim = 167;
+		
+    	cnab.indiceNumeroRegistroInicio = 8; 
+		cnab.indiceNumeroRegistroFim = 13;
+
+		//Informacoes abaixo no header de arquivo
+		//Dig. Verif. da Ag. Conta 71 72
+		//Informacoes abaixo no header de arquivo
+		cnab.indiceNumeroAgenciaInicio = 52;
+		cnab.indiceNumeroAgenciaFim = 57;
+		
+		
+		//Dig. Verif. da Conta 70 71
+		cnab.indiceNumeroContaInicio = 58;
+		cnab.indiceNumeroContaFim = 70;
+		
+		return cnab;
+	}
+
+	
+    public static CNAB newInstanceCnab240Itau(){
+    	
+    	CNAB cnab = new CNAB();
+
+    	cnab.indiceDataPagamentoInicio = 144;
+    	cnab.indiceDataPagamentoFim = 152;
+		
+    	cnab.indiceNossoNumeroInicio = 215;
+    	cnab.indiceNossoNumeroFim = 230;
+		
+    	cnab.indiceValorPagamentoInicio = 152; 
+    	cnab.indiceValorPagamentoFim = 167;
+		
+    	cnab.indiceNumeroRegistroInicio = 8; 
+		cnab.indiceNumeroRegistroFim = 13;
+
+		//Informacoes abaixo no header de arquivo
+		cnab.indiceNumeroAgenciaInicio = 52;
+		cnab.indiceNumeroAgenciaFim = 57;
+		
+		cnab.indiceNumeroContaInicio = 58;
+		cnab.indiceNumeroContaFim = 70;
+		
+		return cnab;
+	}
+	
 	
 	/**
 	 * Retorna Cnab configurado para o banco HSBC 
