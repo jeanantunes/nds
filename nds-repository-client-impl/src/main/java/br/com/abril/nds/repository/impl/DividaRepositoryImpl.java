@@ -105,7 +105,9 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
-	
+		
+		query.setResultTransformer(Transformers.aliasToBean(GeraDividaDTO.class)); 
+		
 		return query.list();
 	}
 	
@@ -291,7 +293,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 			switch (ordenacao) {
 				case BOX:	
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " box";
+						orderByColumn += " box ";
 					break;
 				case DATA_EMISSAO:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
