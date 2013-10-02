@@ -966,5 +966,9 @@ public class ProdutoEdicao implements Serializable {
 		return true;
 	}
 
-	
+	@Override
+	public String toString() {
+		return produto.toString() + "-" + numeroEdicao.toString();
+	}
+
 }
