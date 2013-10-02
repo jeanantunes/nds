@@ -468,7 +468,7 @@
 					<table width="230" border="0" cellspacing="2" cellpadding="0">
 			          <tr>
 			            <td width="121">Nova Data:</td>
-			            <td width="103"><input name="dtPostergada" type="text" id="dtPostergada" style="width:80px;" onchange="baixaFinanceiraController.obterPostergacao();" /></td>
+			            <td width="103"><input name="dtPostergada" type="text" id="dtPostergada" style="width:80px;" onchange="baixaFinanceiraController.obterPostergacao(true);" /></td>
 			          </tr>
 			          <tr>
 			            <td>Encargos R$:</td>
@@ -476,7 +476,7 @@
 			          </tr>
 			          <tr>
 			            <td>Isentos Encargos</td>
-			            <td><input type="checkbox" name="checkIsIsento" id="checkIsIsento" /></td>
+			            <td><input onchange="baixaFinanceiraController.alterarIsencao(this.checked === true)" type="checkbox" name="checkIsIsento" id="checkIsIsento" /></td>
 			          </tr>
 			        </table>
 			    </fieldset>
