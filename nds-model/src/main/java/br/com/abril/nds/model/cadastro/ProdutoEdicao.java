@@ -643,23 +643,6 @@ public class ProdutoEdicao implements Serializable {
 	public void setEstoqueProduto(EstoqueProduto estoqueProduto) {
 		this.estoqueProduto = estoqueProduto;
 	}
-
-	public Boolean getPossuiBrinde() {
-		return possuiBrinde;
-	}
-
-	public Boolean getPermiteValeDesconto() {
-		return permiteValeDesconto;
-	}
-
-	public Boolean getParcial() {
-		return parcial;
-	}
-
-	public Boolean getAtivo() {
-		return ativo;
-	}
-
 	
 	public Set<MovimentoEstoqueCota> getMovimentoEstoqueCotas() {
 		return movimentoEstoqueCotas;
