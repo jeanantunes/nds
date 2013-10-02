@@ -105,7 +105,9 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
-	
+		
+		query.setResultTransformer(Transformers.aliasToBean(GeraDividaDTO.class)); 
+		
 		return query.list();
 	}
 	
@@ -126,6 +128,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
+		
+		query.setResultTransformer(Transformers.aliasToBean(GeraDividaDTO.class)); 
 		
 		if (filtro.getPaginacao() != null) {
 			
@@ -193,20 +197,20 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		if(count) {
 			hql.append(" SELECT count(divida.id)");
 		} else {
-			hql.append(" SELECT new ").append(GeraDividaDTO.class.getCanonicalName())
-			.append("(")
-				.append(" cobranca.id,")
-				.append(" box.codigo || '-'|| box.nome,")
-				.append(" rota.descricaoRota,")
-				.append(" roteiro.descricaoRoteiro,")
-				.append(" cota.numeroCota,")
-				.append(" coalesce(pessoa.nome, pessoa.razaoSocial),")
-				.append(" cobranca.dataVencimento,")
-				.append(" cobranca.dataEmissao,")
-				.append(" cobranca.valor,")
-				.append(" cobranca.tipoCobranca,")
-				.append(" cobranca.vias, ")
-				.append(" cobranca.nossoNumero) ");
+			hql//.append(" SELECT new ").append(GeraDividaDTO.class.getCanonicalName())
+			//.append("(")
+				.append(" select cobranca.id as cobrancaId,")
+				.append(" box.codigo || '-'|| box.nome as box,")
+				.append(" rota.descricaoRota as rota,")
+				.append(" roteiro.descricaoRoteiro as roteiro,")
+				.append(" cota.numeroCota as numeroCota, ")
+				.append(" coalesce(pessoa.nome, pessoa.razaoSocial) as nomeCota,")
+				.append(" cobranca.dataVencimento as dataVencimento,")
+				.append(" cobranca.dataEmissao as dataEmissao,")
+				.append(" cobranca.valor as valor,")
+				.append(" cobranca.tipoCobranca as tipoCobranca,")
+				.append(" cobranca.vias as vias, ")
+				.append(" cobranca.nossoNumero as nossoNumero ");
 
 //				.append("(case when ("+
 //				        "             select count(f.parametroCobrancaCota) " +
@@ -291,43 +295,43 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 			switch (ordenacao) {
 				case BOX:	
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " box.codigo ";
+						orderByColumn += " box ";
 					break;
 				case DATA_EMISSAO:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " cobranca.dataVencimento ";
+						orderByColumn += " dataEmissao ";
 					break;
 				case DATA_VENCIMENTO:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " cobranca.dataEmissao ";
+						orderByColumn += " dataVencimento ";
 					break;
 				case NOME_COTA:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " cota.pessoa.nome ";
+						orderByColumn += " nomeCota ";
 					break;
 				case NUMERO_COTA:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " cota.numeroCota ";
+						orderByColumn += " numeroCota ";
 					break;
 				case ROTA:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " rota.descricaoRota ";
+						orderByColumn += " rota ";
 					break;
 				case ROTEIRO:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " roteiro.descricaoRoteiro ";
+						orderByColumn += " roteiro ";
 					break;
 				case TIPO_COBRANCA:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " cobranca.tipoCobranca ";
+						orderByColumn += " tipoCobranca ";
 					break;
 				case VALOR:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " cobranca.valor ";
+						orderByColumn += " valor ";
 					break;
 				case VIA:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " cobranca.vias ";
+						orderByColumn += " vias ";
 					break;
 			}
 		}
