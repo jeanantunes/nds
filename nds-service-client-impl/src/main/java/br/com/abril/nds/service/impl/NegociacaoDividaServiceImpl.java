@@ -360,11 +360,11 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 
 					consolidado.setEncalhe(BigDecimal.ZERO);
 					consolidado.setVendaEncalhe(BigDecimal.ZERO);
-					consolidado.setDebitoCredito(valorOriginalParcela.negate());
+					consolidado.setDebitoCredito(valorOriginalParcela);
 					consolidado.setPendente(BigDecimal.ZERO);
 					consolidado.setEncargos(parcelaNegociacao.getEncargos());
 					
-					consolidado.setTotal(valorTotalParcela.negate());
+					consolidado.setTotal(valorTotalParcela);
 					
 					this.consolidadoFinanceiroRepository.adicionar(consolidado);
 
