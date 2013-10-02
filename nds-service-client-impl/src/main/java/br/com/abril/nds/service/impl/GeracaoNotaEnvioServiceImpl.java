@@ -1179,6 +1179,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		TRAVA_GERACAO_NE.put("neCotasSendoGeradas", true);
 		
 		try {
+			
 			List<Long> listaIdCotas = this.cotaRepository.obterIdCotasEntre(
 					filtro.getIntervaloCota(), filtro.getIntervaloBox(),
 					situacoesCadastro, filtro.getIdRoteiro(), filtro.getIdRota(),
