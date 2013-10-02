@@ -355,18 +355,22 @@ public class FechamentoEncalheController extends BaseController {
 	private void removerCotasAusentesLista(List<CotaAusenteEncalheDTO> listaCotasAusentes, List<Long> idsCotas) {
 		
 		ArrayList<CotaAusenteEncalheDTO> newRefListaCotasAusentes = new ArrayList<CotaAusenteEncalheDTO>(listaCotasAusentes);
-		if(idsCotas != null){
+		
+		if(idsCotas != null) {
 			
-			for(Long idCota : idsCotas){
-				for(int i=0; i < newRefListaCotasAusentes.size(); i++){
+			for(Long idCota : idsCotas) {
+				for(int i=0; i < listaCotasAusentes.size(); i++) {
 					CotaAusenteEncalheDTO dto = newRefListaCotasAusentes.get(i);
 					
-					if(dto != null && dto.getIdCota().equals(idCota)){
-						listaCotasAusentes.remove(i);
+					if(dto != null && dto.getIdCota().equals(idCota)) {
+						newRefListaCotasAusentes.add(listaCotasAusentes.get(i));
 					}
 				}
 			}
+			
+			listaCotasAusentes.removeAll(newRefListaCotasAusentes);
 		}
+		
 	}
 
 	@Path("/dataSugestaoPostergarCota")

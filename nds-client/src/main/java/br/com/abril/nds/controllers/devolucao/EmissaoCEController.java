@@ -271,9 +271,7 @@ public class EmissaoCEController extends BaseController {
 		
 		boolean apresentaCapasPersonalizadas = (filtro.getPersonalizada() == null) ? false : filtro.getPersonalizada();
 		
-		DadosImpressaoEmissaoChamadaEncalhe dados = 
-				chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(
-						filtro);	
+		DadosImpressaoEmissaoChamadaEncalhe dados = chamadaEncalheService.obterDadosImpressaoEmissaoChamadasEncalhe(filtro);	
 				
 		DistribuidorDTO dadosDistribuidor = distribuidorService.obterDadosEmissao();
 				
