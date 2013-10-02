@@ -37,6 +37,7 @@ import br.com.abril.nds.model.cadastro.desconto.Desconto;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estoque.MovimentoEstoque;
+import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioLancamentoReparte;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.Lancamento;
@@ -88,10 +89,10 @@ public class ProdutoEdicao implements Serializable {
 	protected BigInteger reparteDistribuido;
 	
 	@Column(name = "PACOTE_PADRAO", nullable = false)
-	protected int pacotePadrao;
+	protected Integer pacotePadrao;
 	
 	@Column(name = "PEB", nullable = false)
-	protected int peb;
+	protected Integer peb;
 	
 	@Column(name = "CARACTERISTICA_PRODUTO")
 	protected String caracteristicaProduto;
@@ -116,10 +117,13 @@ public class ProdutoEdicao implements Serializable {
 	private Set<MovimentoEstoque> movimentoEstoques = new HashSet<MovimentoEstoque>();
 
 	@OneToMany(mappedBy = "produtoEdicao", fetch=FetchType.LAZY)
+	private Set<MovimentoEstoqueCota> movimentoEstoqueCotas = new HashSet<MovimentoEstoqueCota>();
+
+	@OneToMany(mappedBy = "produtoEdicao", fetch=FetchType.LAZY)
 	private Set<ChamadaEncalhe> chamadaEncalhes = new HashSet<ChamadaEncalhe>(); 
 
 	@Column(name = "POSSUI_BRINDE", nullable = true)
-	protected boolean possuiBrinde;
+	protected Boolean possuiBrinde;
 	
 	@ManyToOne(cascade = { CascadeType.MERGE , CascadeType.PERSIST } )
 	@JoinColumn(name = "BRINDE_ID")
@@ -139,19 +143,19 @@ public class ProdutoEdicao implements Serializable {
 	 * Flag indicando se o produto permite vale desconto
 	 */
 	@Column(name = "PERMITE_VALE_DESCONTO")
-	protected boolean permiteValeDesconto;
+	protected Boolean permiteValeDesconto;
 	
 	/**
 	 * Flag indicando se o produto permite recolhimentos parciais
 	 */
 	@Column(name = "PARCIAL")
-	private boolean parcial;
+	private Boolean parcial;
 
 	@Column(name = "CHAMADA_CAPA", nullable = true, length = 255)
 	private String chamadaCapa;
 	
 	@Column(name = "ATIVO", nullable = false)
-	private boolean ativo = true;
+	private Boolean ativo = true;
 	
 	@Column(name = "DATA_DESATIVACAO", nullable = true)
 	@Temporal(TemporalType.DATE)
@@ -247,19 +251,19 @@ public class ProdutoEdicao implements Serializable {
 		this.precoVenda = precoVenda;
 	}
 	
-	public int getPacotePadrao() {
+	public Integer getPacotePadrao() {
 		return pacotePadrao;
 	}
 	
-	public void setPacotePadrao(int pacotePadrao) {
+	public void setPacotePadrao(Integer pacotePadrao) {
 		this.pacotePadrao = pacotePadrao;
 	}
 	
-	public int getPeb() {
+	public Integer getPeb() {
 		return peb;
 	}
 	
-	public void setPeb(int peb) {
+	public void setPeb(Integer peb) {
 		this.peb = peb;
 	}
 	
@@ -304,11 +308,11 @@ public class ProdutoEdicao implements Serializable {
 		this.lancamentos = lancamentos;
 	}
 	
-	public boolean isPossuiBrinde() {
+	public Boolean isPossuiBrinde() {
 		return possuiBrinde;
 	}
 	
-	public void setPossuiBrinde(boolean possuiBrinde) {
+	public void setPossuiBrinde(Boolean possuiBrinde) {
 		this.possuiBrinde = possuiBrinde;
 	}
 	
@@ -320,11 +324,11 @@ public class ProdutoEdicao implements Serializable {
 		this.expectativaVenda = expectativaVenda;
 	}
 	
-	public boolean isPermiteValeDesconto() {
+	public Boolean isPermiteValeDesconto() {
 		return permiteValeDesconto;
 	}
 	
-	public void setPermiteValeDesconto(boolean permiteValeDesconto) {
+	public void setPermiteValeDesconto(Boolean permiteValeDesconto) {
 		this.permiteValeDesconto = permiteValeDesconto;
 	}
 	
@@ -357,14 +361,14 @@ public class ProdutoEdicao implements Serializable {
 	/**
 	 * @return the parcial
 	 */
-	public boolean isParcial() {
+	public Boolean isParcial() {
 		return parcial;
 	}
 
 	/**
 	 * @param parcial the parcial to set
 	 */
-	public void setParcial(boolean parcial) {
+	public void setParcial(Boolean parcial) {
 		this.parcial = parcial;
 	}
 
@@ -413,14 +417,14 @@ public class ProdutoEdicao implements Serializable {
 	/**
 	 * @return the ativo
 	 */
-	public boolean isAtivo() {
+	public Boolean isAtivo() {
 		return ativo;
 	}
 
 	/**
 	 * @param ativo the ativo to set
 	 */
-	public void setAtivo(boolean ativo) {
+	public void setAtivo(Boolean ativo) {
 		this.ativo = ativo;
 	}
 
@@ -640,13 +644,134 @@ public class ProdutoEdicao implements Serializable {
 		this.estoqueProduto = estoqueProduto;
 	}
 
+	public Boolean getPossuiBrinde() {
+		return possuiBrinde;
+	}
+
+	public Boolean getPermiteValeDesconto() {
+		return permiteValeDesconto;
+	}
+
+	public Boolean getParcial() {
+		return parcial;
+	}
+
+	public Boolean getAtivo() {
+		return ativo;
+	}
+
+	
+	public Set<MovimentoEstoqueCota> getMovimentoEstoqueCotas() {
+		return movimentoEstoqueCotas;
+	}
+
+	public void setMovimentoEstoqueCotas(
+			Set<MovimentoEstoqueCota> movimentoEstoquesCotas) {
+		this.movimentoEstoqueCotas = movimentoEstoquesCotas;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		result = prime * result + ((ativo == null) ? 0 : ativo.hashCode());
+		result = prime
+				* result
+				+ ((boletimInformativo == null) ? 0 : boletimInformativo
+						.hashCode());
+		result = prime * result + ((brinde == null) ? 0 : brinde.hashCode());
+		result = prime
+				* result
+				+ ((caracteristicaProduto == null) ? 0 : caracteristicaProduto
+						.hashCode());
+		result = prime * result
+				+ ((chamadaCapa == null) ? 0 : chamadaCapa.hashCode());
+		result = prime * result
+				+ ((chamadaEncalhes == null) ? 0 : chamadaEncalhes.hashCode());
+		result = prime
+				* result
+				+ ((codigoDeBarraCorporativo == null) ? 0
+						: codigoDeBarraCorporativo.hashCode());
+		result = prime * result
+				+ ((codigoDeBarras == null) ? 0 : codigoDeBarras.hashCode());
+		result = prime * result
+				+ ((dataDesativacao == null) ? 0 : dataDesativacao.hashCode());
+		result = prime * result
+				+ ((desconto == null) ? 0 : desconto.hashCode());
+		result = prime
+				* result
+				+ ((descontoLogistica == null) ? 0 : descontoLogistica
+						.hashCode());
+		result = prime
+				* result
+				+ ((descontoProdutoEdicao == null) ? 0 : descontoProdutoEdicao
+						.hashCode());
+		result = prime
+				* result
+				+ ((descricaoDesconto == null) ? 0 : descricaoDesconto
+						.hashCode());
+		result = prime * result
+				+ ((diferencas == null) ? 0 : diferencas.hashCode());
+		result = prime * result
+				+ ((dimensao == null) ? 0 : dimensao.hashCode());
+		result = prime * result
+				+ ((estoqueProduto == null) ? 0 : estoqueProduto.hashCode());
+		result = prime
+				* result
+				+ ((expectativaVenda == null) ? 0 : expectativaVenda.hashCode());
+		result = prime * result
+				+ ((grupoProduto == null) ? 0 : grupoProduto.hashCode());
+		result = prime
+				* result
+				+ ((historicoMovimentoRepartes == null) ? 0
+						: historicoMovimentoRepartes.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime
+				* result
+				+ ((lancamentoParcial == null) ? 0 : lancamentoParcial
+						.hashCode());
+		result = prime * result
+				+ ((lancamentos == null) ? 0 : lancamentos.hashCode());
+		result = prime
+				* result
+				+ ((movimentoEstoques == null) ? 0 : movimentoEstoques
+						.hashCode());
+		result = prime
+				* result
+				+ ((movimentoEstoqueCotas == null) ? 0 : movimentoEstoqueCotas
+						.hashCode());
+		result = prime * result
+				+ ((nomeComercial == null) ? 0 : nomeComercial.hashCode());
 		result = prime * result
 				+ ((numeroEdicao == null) ? 0 : numeroEdicao.hashCode());
+		result = prime
+				* result
+				+ ((numeroLancamento == null) ? 0 : numeroLancamento.hashCode());
+		result = prime * result + ((origem == null) ? 0 : origem.hashCode());
+		result = prime * result
+				+ ((pacotePadrao == null) ? 0 : pacotePadrao.hashCode());
+		result = prime * result + ((parcial == null) ? 0 : parcial.hashCode());
+		result = prime * result + ((peb == null) ? 0 : peb.hashCode());
+		result = prime
+				* result
+				+ ((permiteValeDesconto == null) ? 0 : permiteValeDesconto
+						.hashCode());
+		result = prime * result + ((peso == null) ? 0 : peso.hashCode());
+		result = prime * result
+				+ ((possuiBrinde == null) ? 0 : possuiBrinde.hashCode());
+		result = prime * result
+				+ ((precoCusto == null) ? 0 : precoCusto.hashCode());
+		result = prime * result
+				+ ((precoPrevisto == null) ? 0 : precoPrevisto.hashCode());
+		result = prime * result
+				+ ((precoVenda == null) ? 0 : precoVenda.hashCode());
 		result = prime * result + ((produto == null) ? 0 : produto.hashCode());
+		result = prime
+				* result
+				+ ((reparteDistribuido == null) ? 0 : reparteDistribuido
+						.hashCode());
+		result = prime * result
+				+ ((segmentacao == null) ? 0 : segmentacao.hashCode());
 		return result;
 	}
 
@@ -659,22 +784,204 @@ public class ProdutoEdicao implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		ProdutoEdicao other = (ProdutoEdicao) obj;
+		if (ativo == null) {
+			if (other.ativo != null)
+				return false;
+		} else if (!ativo.equals(other.ativo))
+			return false;
+		if (boletimInformativo == null) {
+			if (other.boletimInformativo != null)
+				return false;
+		} else if (!boletimInformativo.equals(other.boletimInformativo))
+			return false;
+		if (brinde == null) {
+			if (other.brinde != null)
+				return false;
+		} else if (!brinde.equals(other.brinde))
+			return false;
+		if (caracteristicaProduto == null) {
+			if (other.caracteristicaProduto != null)
+				return false;
+		} else if (!caracteristicaProduto.equals(other.caracteristicaProduto))
+			return false;
+		if (chamadaCapa == null) {
+			if (other.chamadaCapa != null)
+				return false;
+		} else if (!chamadaCapa.equals(other.chamadaCapa))
+			return false;
+		if (chamadaEncalhes == null) {
+			if (other.chamadaEncalhes != null)
+				return false;
+		} else if (!chamadaEncalhes.equals(other.chamadaEncalhes))
+			return false;
+		if (codigoDeBarraCorporativo == null) {
+			if (other.codigoDeBarraCorporativo != null)
+				return false;
+		} else if (!codigoDeBarraCorporativo
+				.equals(other.codigoDeBarraCorporativo))
+			return false;
+		if (codigoDeBarras == null) {
+			if (other.codigoDeBarras != null)
+				return false;
+		} else if (!codigoDeBarras.equals(other.codigoDeBarras))
+			return false;
+		if (dataDesativacao == null) {
+			if (other.dataDesativacao != null)
+				return false;
+		} else if (!dataDesativacao.equals(other.dataDesativacao))
+			return false;
+		if (desconto == null) {
+			if (other.desconto != null)
+				return false;
+		} else if (!desconto.equals(other.desconto))
+			return false;
+		if (descontoLogistica == null) {
+			if (other.descontoLogistica != null)
+				return false;
+		} else if (!descontoLogistica.equals(other.descontoLogistica))
+			return false;
+		if (descontoProdutoEdicao == null) {
+			if (other.descontoProdutoEdicao != null)
+				return false;
+		} else if (!descontoProdutoEdicao.equals(other.descontoProdutoEdicao))
+			return false;
+		if (descricaoDesconto == null) {
+			if (other.descricaoDesconto != null)
+				return false;
+		} else if (!descricaoDesconto.equals(other.descricaoDesconto))
+			return false;
+		if (diferencas == null) {
+			if (other.diferencas != null)
+				return false;
+		} else if (!diferencas.equals(other.diferencas))
+			return false;
+		if (dimensao == null) {
+			if (other.dimensao != null)
+				return false;
+		} else if (!dimensao.equals(other.dimensao))
+			return false;
+		if (estoqueProduto == null) {
+			if (other.estoqueProduto != null)
+				return false;
+		} else if (!estoqueProduto.equals(other.estoqueProduto))
+			return false;
+		if (expectativaVenda == null) {
+			if (other.expectativaVenda != null)
+				return false;
+		} else if (!expectativaVenda.equals(other.expectativaVenda))
+			return false;
+		if (grupoProduto != other.grupoProduto)
+			return false;
+		if (historicoMovimentoRepartes == null) {
+			if (other.historicoMovimentoRepartes != null)
+				return false;
+		} else if (!historicoMovimentoRepartes
+				.equals(other.historicoMovimentoRepartes))
+			return false;
+		if (id == null) {
+			if (other.id != null)
+				return false;
+		} else if (!id.equals(other.id))
+			return false;
+		if (lancamentoParcial == null) {
+			if (other.lancamentoParcial != null)
+				return false;
+		} else if (!lancamentoParcial.equals(other.lancamentoParcial))
+			return false;
+		if (lancamentos == null) {
+			if (other.lancamentos != null)
+				return false;
+		} else if (!lancamentos.equals(other.lancamentos))
+			return false;
+		if (movimentoEstoques == null) {
+			if (other.movimentoEstoques != null)
+				return false;
+		} else if (!movimentoEstoques.equals(other.movimentoEstoques))
+			return false;
+		if (movimentoEstoqueCotas == null) {
+			if (other.movimentoEstoqueCotas != null)
+				return false;
+		} else if (!movimentoEstoqueCotas.equals(other.movimentoEstoqueCotas))
+			return false;
+		if (nomeComercial == null) {
+			if (other.nomeComercial != null)
+				return false;
+		} else if (!nomeComercial.equals(other.nomeComercial))
+			return false;
 		if (numeroEdicao == null) {
 			if (other.numeroEdicao != null)
 				return false;
 		} else if (!numeroEdicao.equals(other.numeroEdicao))
+			return false;
+		if (numeroLancamento == null) {
+			if (other.numeroLancamento != null)
+				return false;
+		} else if (!numeroLancamento.equals(other.numeroLancamento))
+			return false;
+		if (origem != other.origem)
+			return false;
+		if (pacotePadrao == null) {
+			if (other.pacotePadrao != null)
+				return false;
+		} else if (!pacotePadrao.equals(other.pacotePadrao))
+			return false;
+		if (parcial == null) {
+			if (other.parcial != null)
+				return false;
+		} else if (!parcial.equals(other.parcial))
+			return false;
+		if (peb == null) {
+			if (other.peb != null)
+				return false;
+		} else if (!peb.equals(other.peb))
+			return false;
+		if (permiteValeDesconto == null) {
+			if (other.permiteValeDesconto != null)
+				return false;
+		} else if (!permiteValeDesconto.equals(other.permiteValeDesconto))
+			return false;
+		if (peso == null) {
+			if (other.peso != null)
+				return false;
+		} else if (!peso.equals(other.peso))
+			return false;
+		if (possuiBrinde == null) {
+			if (other.possuiBrinde != null)
+				return false;
+		} else if (!possuiBrinde.equals(other.possuiBrinde))
+			return false;
+		if (precoCusto == null) {
+			if (other.precoCusto != null)
+				return false;
+		} else if (!precoCusto.equals(other.precoCusto))
+			return false;
+		if (precoPrevisto == null) {
+			if (other.precoPrevisto != null)
+				return false;
+		} else if (!precoPrevisto.equals(other.precoPrevisto))
+			return false;
+		if (precoVenda == null) {
+			if (other.precoVenda != null)
+				return false;
+		} else if (!precoVenda.equals(other.precoVenda))
 			return false;
 		if (produto == null) {
 			if (other.produto != null)
 				return false;
 		} else if (!produto.equals(other.produto))
 			return false;
+		if (reparteDistribuido == null) {
+			if (other.reparteDistribuido != null)
+				return false;
+		} else if (!reparteDistribuido.equals(other.reparteDistribuido))
+			return false;
+		if (segmentacao == null) {
+			if (other.segmentacao != null)
+				return false;
+		} else if (!segmentacao.equals(other.segmentacao))
+			return false;
 		return true;
 	}
 
-	@Override
-	public String toString() {
-		return produto.toString() + "-" + numeroEdicao.toString();
-	}
 	
 }

@@ -81,7 +81,7 @@ public class ValeDesconto extends ProdutoEdicao {
 	 * @throws UnsupportedOperationException caso seja chamado
 	 */
 	@Override
-	public void setPermiteValeDesconto(boolean permiteValeDesconto) {
+	public void setPermiteValeDesconto(Boolean permiteValeDesconto) {
 		throw new UnsupportedOperationException("Vale desconto não permite vale desconto!");
 	}
 	
@@ -94,7 +94,7 @@ public class ValeDesconto extends ProdutoEdicao {
 	 * @throws UnsupportedOperationException caso seja chamado
 	 */
 	@Override
-	public void setPossuiBrinde(boolean possuiBrinde) {
+	public void setPossuiBrinde(Boolean possuiBrinde) {
 		throw new UnsupportedOperationException("Vale desconto não possui brinde!");
 	}
 	
