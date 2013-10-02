@@ -731,9 +731,12 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         subSqlReparte.append(" select sum( COALESCE(CHAMADA_ENCALHE_COTA_.QTDE_PREVISTA,0) ) ");
         subSqlReparte.append(" from CHAMADA_ENCALHE_COTA CHAMADA_ENCALHE_COTA_ ");
         subSqlReparte.append(" join CHAMADA_ENCALHE CHAMADA_ENCALHE_ on (CHAMADA_ENCALHE_COTA_.CHAMADA_ENCALHE_ID = CHAMADA_ENCALHE_.ID) ");
-        subSqlReparte.append(" where CHAMADA_ENCALHE_.PRODUTO_EDICAO_ID = PRODUTO_EDICAO.ID ");
-        subSqlReparte.append(" and CHAMADA_ENCALHE_.DATA_RECOLHIMENTO between :dataRecolhimentoInicial AND :dataRecolhimentoFinal ");
-        
+
+        subSqlReparte.append(" where CHAMADA_ENCALHE_.DATA_RECOLHIMENTO = CHAMADA_ENCALHE.DATA_RECOLHIMENTO ");
+        subSqlReparte.append(" and CHAMADA_ENCALHE_COTA_.COTA_ID = CHAMADA_ENCALHE_COTA.COTA_ID ");
+        subSqlReparte.append(" and CHAMADA_ENCALHE_.PRODUTO_EDICAO_ID = PRODUTO_EDICAO.ID ");
+        subSqlReparte.append(" and CHAMADA_ENCALHE.DATA_RECOLHIMENTO=CHAMADA_ENCALHE_.DATA_RECOLHIMENTO ");
+
         if (filtro.getIdCota() != null){
         	subSqlReparte.append(" and CHAMADA_ENCALHE_COTA_.COTA_ID = :idCota ");
         }
@@ -1888,6 +1891,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			case QTDE_EXEMPLARES:
 				nome = " qtdeExms ";
 				break;
+			default:
+				nome = " codigoProduto ";				
 		}
 		
 		hql.append( " order by " + nome + sortOrder + " ");
