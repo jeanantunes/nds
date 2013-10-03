@@ -665,10 +665,8 @@ public class MixCotaProdutoController extends BaseController {
 		produto = produtoService.obterProdutoPorCodigo(codigoProduto);
 		
 		if (produto != null) {
-			descricaoClassificacao = produto.getTipoClassificacaoProduto().getDescricao();
 
 			objects.add(produto);
-			objects.add(descricaoClassificacao);
 		}else {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código \"" + codigoProduto + "\" não encontrado!");
 		}	
