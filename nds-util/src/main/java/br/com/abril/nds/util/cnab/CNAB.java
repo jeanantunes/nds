@@ -231,7 +231,44 @@ public class CNAB {
 		
 		return cnab;
 	}
-	
+    
+    /**
+	 * Retorna Cnab configurado para o banco HSBC 
+	 * @param cnab
+	 */
+    public static CNAB newInstanceCnab400CaixaEconomicaFederal(){
+    	
+    	CNAB cnab = new CNAB();
+    	
+		cnab.indiceDataPagamentoInicio = 110;
+		cnab.indiceDataPagamentoFim = 116;
+		
+		cnab.indiceNossoNumeroInicio = 37;
+		cnab.indiceNossoNumeroFim = 53;
+		
+		cnab.indiceValorPagamentoInicio = 253;
+		cnab.indiceValorPagamentoFim = 266;
+		
+		cnab.indiceNumeroRegistroInicio = 394;
+		cnab.indiceNumeroRegistroFim = 400;
+		
+//		Código Agência
+		
+//		AAAAOOOCCCCCCCCD, onde
+//		AAAA = Código da Agência CAIXA que o cliente opera
+//		OOO = Operação
+//		CCCCCCCC = Número da Conta
+//		D = Dígito Verificador
+		
+		cnab.indiceNumeroAgenciaInicio = 17;
+		cnab.indiceNumeroAgenciaFim = 21;
+		
+		cnab.indiceNumeroContaInicio = 24;
+		cnab.indiceNumeroContaFim = 33;
+		
+		return cnab;
+	}
+    
 	
 	/**
 	 * Retorna Cnab configurado para o banco HSBC 

@@ -1,8 +1,5 @@
 package br.com.abril.nds.util.cnab;
 
-
-
-
 public class UtilitarioCNAB {
 
 	public static final String BANCO_HSBC = "399";
@@ -106,14 +103,17 @@ public class UtilitarioCNAB {
 	
 	public enum IndiceCNAB {
 		
-		IndiceCNAB240(7,8,0,3),
-		IndiceCNAB400(0,1,76,79);
+		IndiceCNAB240(7,8, 0,3, 13,14),
+		IndiceCNAB400(0,1, 76,79);
 
 		private int indiceInicioTipoRegistro;
 		private int indiceFimTipoRegistro;
 
 		private int indiceInicioBanco;
 		private int indiceFimBanco;
+		
+		private int indiceInicioTipoSegmento;
+		private int indiceFimTipoSegmento;
 
 		
 		IndiceCNAB(	int indiceInicioTipoRegistro, int indiceFimTipoRegistro,
@@ -126,6 +126,19 @@ public class UtilitarioCNAB {
 			this.indiceFimBanco = indiceFimBanco;
 		}
 
+		IndiceCNAB(	int indiceInicioTipoRegistro, int indiceFimTipoRegistro,
+				int indiceInicioBanco, int indiceFimBanco, 
+				int indiceInicioTipoSegmento, int indiceFimTipoSegmento) {
+		
+		this.indiceInicioTipoRegistro = indiceInicioTipoRegistro;
+		this.indiceFimTipoRegistro = indiceFimTipoRegistro;
+		
+		this.indiceInicioBanco = indiceInicioBanco;
+		this.indiceFimBanco = indiceFimBanco;
+		
+		this.indiceInicioTipoSegmento = indiceInicioTipoSegmento;
+		this.indiceFimTipoSegmento = indiceFimTipoSegmento;
+	}
 
 		public int getIndiceInicioTipoRegistro() {
 			return indiceInicioTipoRegistro;
@@ -141,6 +154,14 @@ public class UtilitarioCNAB {
 
 		public int getIndiceFimBanco() {
 			return indiceFimBanco;
+		}
+
+		public int getIndiceInicioTipoSegmento() {
+			return indiceInicioTipoSegmento;
+		}
+
+		public int getIndiceFimTipoSegmento() {
+			return indiceFimTipoSegmento;
 		}
 		
 	}
@@ -186,10 +207,20 @@ public class UtilitarioCNAB {
 			return line.substring(indiceCNAB.getIndiceInicioTipoRegistro(), indiceCNAB.getIndiceFimTipoRegistro());
 		}
 		
+		public String obterTipoSegmento(String line) {
+			
+			if(isDetalhe(line)) {
+				return line.substring(indiceCNAB.getIndiceInicioTipoSegmento(), indiceCNAB.getIndiceFimTipoSegmento());
+			} else {
+				return "-1";
+			}
+			
+		}
+		
 		public TipoRegistroCNAB getTipoRegistroCNAB() {
 			return tipoRegistroCNAB;
 		}
-
+		
 		public boolean isHeader(String line) {
 		  return  tipoRegistroCNAB.getHeader().equals(obterTipoRegistro(line));
 		}
@@ -217,12 +248,16 @@ public class UtilitarioCNAB {
 	    	switch (codigoBanco) {
 			
 				case BANCO_HSBC:
-					throw new IllegalStateException("Leitura desse padrao ainda nao implementada");
+					return CNAB.newInstanceCnab240HSBC();
 				case BANCO_BRADESCO:
-					throw new IllegalStateException("Leitura desse padrao ainda nao implementada");
+					return CNAB.newInstanceCnab240Bradesco();
 				case BANCO_ITAU:
-					throw new IllegalStateException("Leitura desse padrao ainda nao implementada");
+					return CNAB.newInstanceCnab240Itau();
 				case BANCO_DO_BRASIL:
+					return CNAB.newInstanceCnab240BancoDoBrasil();
+				case BANCO_CAIXA_ECONOMICA_FEDERAL:
+					throw new IllegalStateException("Leitura desse padrao ainda nao implementada");
+				case BANCO_SANTANDER:
 					throw new IllegalStateException("Leitura desse padrao ainda nao implementada");
 				default:
 					throw new IllegalStateException("Leitura desse padrao ainda nao implementada");
@@ -241,13 +276,18 @@ public class UtilitarioCNAB {
 					return CNAB.newInstanceCnab400Itau();
 				case BANCO_DO_BRASIL:
 					return CNAB.newInstanceCnab400BancoDoBrasil();
+				case BANCO_CAIXA_ECONOMICA_FEDERAL:
+					return CNAB.newInstanceCnab400CaixaEconomicaFederal();
+				case BANCO_SANTANDER:
+					throw new IllegalStateException("Leitura desse padrao ainda nao implementada");
 				default:
-					return null;
+					throw new IllegalStateException("Leitura desse padrao ainda nao implementada");
+					
 			}
 			
 		} else {
 			
-			return null;
+			throw new IllegalStateException("Leitura desse padrao ainda nao implementada");
 			
 		}
 		

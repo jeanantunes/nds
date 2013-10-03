@@ -106,7 +106,7 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 	}
 
 	
-	private ArquivoPagamentoBancoDTO lerLinhasCNAB(PadraoCNAB padraoCNAB, List<String> lines, String nomeArquivo) {
+	protected ArquivoPagamentoBancoDTO lerLinhasCNAB(PadraoCNAB padraoCNAB, List<String> lines, String nomeArquivo) {
 		
 		String primeiraLinha = lines.get(0);
 	
@@ -123,6 +123,7 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 		BigDecimal valorPagamento = BigDecimal.ZERO;
 		
 		ArquivoPagamentoBancoDTO arquivoPagamentoBanco = new ArquivoPagamentoBancoDTO();
+		arquivoPagamentoBanco.setCodigoBanco(codigoBanco);
 		
 		List<PagamentoDTO> listaPagamento = new ArrayList<PagamentoDTO>();
 		
@@ -132,30 +133,33 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 			
 			if (padraoCNAB.isHeader(line)) {
 				
-				codigoBanco = padraoCNAB.obterCodigoBanco(line);
-				strNumeroAgencia = bancoCNAB.obterNumeroAgencia(line);
-				strNumeroConta =   bancoCNAB.obterNumeroConta(line);
-
-				arquivoPagamentoBanco.setCodigoBanco(codigoBanco);
-				arquivoPagamentoBanco.setNumeroAgencia(this.parseLong(strNumeroAgencia));
-			    arquivoPagamentoBanco.setNumeroConta(this.parseLong(strNumeroConta));
+				if ( !UtilitarioCNAB.BANCO_BRADESCO.equals(codigoBanco)  &&
+					 !UtilitarioCNAB.BANCO_CAIXA_ECONOMICA_FEDERAL.equals(codigoBanco) ){
+					
+					strNumeroAgencia = bancoCNAB.obterNumeroAgencia(line);
+					strNumeroConta =   bancoCNAB.obterNumeroConta(line);
+					arquivoPagamentoBanco.setNumeroAgencia(this.parseLong(strNumeroAgencia));
+				    arquivoPagamentoBanco.setNumeroConta(this.parseLong(strNumeroConta));
+				    
+				}
 			    
 			} else if (padraoCNAB.isDetalhe(line)) {
 					
 				
-				if (  UtilitarioCNAB.BANCO_BRADESCO.equals(codigoBanco)){
-
+				if ( UtilitarioCNAB.BANCO_BRADESCO.equals(codigoBanco) ||
+					 UtilitarioCNAB.BANCO_CAIXA_ECONOMICA_FEDERAL.equals(codigoBanco)	){
+					
 					strNumeroAgencia 	= bancoCNAB.obterNumeroAgencia(line);
 					strNumeroConta 		= bancoCNAB.obterNumeroConta(line);
+					arquivoPagamentoBanco.setNumeroAgencia(this.parseLong(strNumeroAgencia));
+					arquivoPagamentoBanco.setNumeroConta(this.parseLong(strNumeroConta));
+					
 				}	           
 						                
 				strNumeroRegistro 	= bancoCNAB.obterNumeroRegistro(line);
 				strDataPagamento 	= bancoCNAB.obterDataPagamento(line);
 				strNossoNumero 		= bancoCNAB.obterNossoNumero(line);
 				valorPagamento 		= this.parseBigDecimal(bancoCNAB.obterValorPagamento(line));
-
-				arquivoPagamentoBanco.setNumeroAgencia(this.parseLong(strNumeroAgencia));
-				arquivoPagamentoBanco.setNumeroConta(this.parseLong(strNumeroConta));
 				
 				pagamento = new PagamentoDTO();
 				
