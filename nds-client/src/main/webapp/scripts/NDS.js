@@ -1,11 +1,16 @@
 // JavaScript Document
+var timeout = null;
 $(document).ajaxComplete(function(event, jqXHR, ajaxOptions) {
 	 if (jqXHR.status == 601) {
 		 exibirMensagem('ERROR',['Sua sessão expirou.\nVocê será redirecionado para a página de login.']);
-		 setTimeout(function() {
+		 timeout = setTimeout(function() {
 			 window.location.reload();
 		 }, 5000);
 		 
+		 $('#effectError').find('.ui-icon-info').click(function(){
+			 clearTimeout(timeout);
+			 esconde(false, $('#effectError'));
+		 });
     }
 });
 
@@ -213,7 +218,7 @@ function formatMoneyValue(value) {
     
     val = val.replace(",", ".");
     		
-    val = parseFloat(val);
+    val = parseFloat(val).toFixed(4);
             
     return val;
 }

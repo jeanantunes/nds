@@ -12,6 +12,7 @@ public class FiltroConsultaVisaoEstoque implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
+	private boolean buscaHistorico;
 	private Boolean paginar;
 	private Date dataMovimentacao;
 	private String dataMovimentacaoStr;
@@ -198,5 +199,17 @@ public class FiltroConsultaVisaoEstoque implements Serializable {
 	}
 	public void setPaginar(Boolean paginar) {
 		this.paginar = paginar;
+	}
+	/**
+	 * @return the buscaHistorico
+	 */
+	public boolean isBuscaHistorico() {
+		return buscaHistorico;
+	}
+	/**
+	 * @param buscaHistorico the buscaHistorico to set
+	 */
+	public void setBuscaHistorico(boolean buscaHistorico) {
+		this.buscaHistorico = buscaHistorico;
 	}
 }

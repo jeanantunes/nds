@@ -44,7 +44,7 @@ public interface CobrancaService {
 	 * @param dataVencimento - data de vencimento
 	 * @param dataCalculoJuros - data a ser calculado o juros
 	 * 
-	 * @return valor calculado com o juros
+	 * @return valor calculado com o juros 
 	 */	
 	public BigDecimal calcularJuros(Banco banco, Long idCota,
 									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros);
@@ -156,4 +156,6 @@ public interface CobrancaService {
 	void confirmarBaixaManualDividas(List<Long> idsBaixaCobranca);
 
 	List<TipoCobranca> obterTiposCobrancaCadastradas();
+
+	
 }

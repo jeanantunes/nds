@@ -1,5 +1,6 @@
 <input id="permissaoAlteracao" type="hidden" value="${permissaoAlteracao}">
 <head>
+	<script language="javascript" type="text/javascript" src='<c:url value="/"/>/scripts/jquery.numeric.js'></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/furoProduto.js"></script>
 	<script language="javascript" type="text/javascript">
 		$(function(){

@@ -16,7 +16,7 @@ public class QueryUtil {
 		}
     }
     
-    public static void addOrderBy(StringBuilder query, PaginacaoVO paginacaoVO, String... colunasValidas) {
+    public static void addOrderBy(StringBuilder query, PaginacaoVO paginacaoVO, String colunaDefault, String... colunasValidas) {
     	
     	if(paginacaoVO==null || paginacaoVO.getOrdenacao()==null || paginacaoVO.getSortColumn()==null)
     		return;
@@ -28,14 +28,23 @@ public class QueryUtil {
     	
     	for(String coluna : colunasValidas) {
     		
-    		if(coluna.equals(column))
+    		if(coluna.equals(column)) {
     			colunaValida = column;
+    			break;
+    		}
     	}
     	
-    	if(colunaValida==null)
+    	if(colunaValida == null && colunaDefault == null)
     		return;
     	
-    	query.append(" order by " + colunaValida + " " + order);
+    	if (colunaValida == null) {
+    		colunaValida = colunaDefault;
+    	}
+    	
+    	query.append(" order by ");
+    	query.append(colunaValida); 
+    	query.append(" ");
+    	query.append(order);
     	
     }
     

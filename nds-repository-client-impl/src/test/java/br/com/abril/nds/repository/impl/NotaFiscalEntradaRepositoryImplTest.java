@@ -336,13 +336,13 @@ public class NotaFiscalEntradaRepositoryImplTest extends
 	
 	@Test
 	public void obterDetalhesNotaFicalNulo(){
-		List<DetalheItemNotaFiscalDTO> lista = notaFiscalRepository.obterDetalhesNotaFical(null);
+		List<DetalheItemNotaFiscalDTO> lista = notaFiscalRepository.obterDetalhesNotaFical(null, null);
 		Assert.assertNotNull(lista);
 	}
 	
 	@Test
 	public void obterDetalhesNotaFical(){
-		List<DetalheItemNotaFiscalDTO> lista = notaFiscalRepository.obterDetalhesNotaFical(1L);
+		List<DetalheItemNotaFiscalDTO> lista = notaFiscalRepository.obterDetalhesNotaFical(1L, null);
 		Assert.assertNotNull(lista);
 	}
 	

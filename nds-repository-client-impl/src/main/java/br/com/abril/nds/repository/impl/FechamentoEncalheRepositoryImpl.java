@@ -43,6 +43,7 @@ import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
+import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.FechamentoEncalheRepository;
 
@@ -143,6 +144,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		query.setParameter("dataRecolhimento", filtro.getDataEncalhe());
 		query.setParameter("origemInterface", Origem.INTERFACE.toString());
+		query.setParameter("tipoChamadaEncalheChamadao", TipoChamadaEncalhe.CHAMADAO);
 
 		if (filtro.getFornecedorId() != null) {
 			
@@ -180,6 +182,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		((SQLQuery) query).addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL);
 		((SQLQuery) query).addScalar("tipo", StandardBasicTypes.STRING);
 		((SQLQuery) query).addScalar("suplementar", StandardBasicTypes.BOOLEAN);
+		((SQLQuery) query).addScalar("chamadao", StandardBasicTypes.BOOLEAN);
 		
 		return query.list();
 	}
@@ -203,6 +206,18 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.append("			 dlpe.ID as produtoEdicaoDescontoLogisticaId,"); 
 		query.append("			 dlp.ID as produtoDescontoLogisticaId,");
 		
+		query.append("			 CASE WHEN ((SELECT COUNT(chEn.PRODUTO_EDICAO_ID) FROM CHAMADA_ENCALHE chEn ");
+		query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
+		query.append("			  AND chEn.DATA_RECOLHIMENTO = :dataRecolhimento ");
+		query.append("			  GROUP BY chEn.PRODUTO_EDICAO_ID ) > 1 ");
+		query.append("			  AND 			");
+		query.append("			  (SELECT COUNT(chEn.PRODUTO_EDICAO_ID) FROM CHAMADA_ENCALHE chEn ");
+		query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
+		query.append("			  AND chEn.DATA_RECOLHIMENTO = :dataRecolhimento ");
+		query.append("			  AND chEn.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalheChamadao ");
+		query.append("			  GROUP BY chEn.PRODUTO_EDICAO_ID ");
+		query.append("			  HAVING COUNT(chEn.PRODUTO_EDICAO_ID) > 1) IS NULL) then true else false end as chamadao, ");
+
 		query.append("			 (coalesce(pe.PRECO_VENDA, 0) - (coalesce(pe.PRECO_VENDA, 0)  *");
 		query.append("			 CASE WHEN pe.ORIGEM = :origemInterface");
 		query.append("			 THEN (coalesce(dlpe.PERCENTUAL_DESCONTO, dlp.PERCENTUAL_DESCONTO, pe.DESCONTO, p.desconto, 0) / 100)");
@@ -237,6 +252,18 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.append("			 pe.ORIGEM as origem, ");
 		query.append("			 dlpe.ID as produtoEdicaoDescontoLogisticaId,"); 
 		query.append("			 dlp.ID as produtoDescontoLogisticaId,");
+		
+		query.append("			 CASE WHEN ((SELECT COUNT(chEn.PRODUTO_EDICAO_ID) FROM CHAMADA_ENCALHE chEn ");
+		query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
+		query.append("			  AND chEn.DATA_RECOLHIMENTO = :dataRecolhimento ");
+		query.append("			  GROUP BY chEn.PRODUTO_EDICAO_ID) > 1 ");
+		query.append("			  AND 			");
+		query.append("			  (SELECT COUNT(chEn.PRODUTO_EDICAO_ID) FROM CHAMADA_ENCALHE chEn ");
+		query.append("			  WHERE chEn.PRODUTO_EDICAO_ID = pe.ID ");
+		query.append("			  AND chEn.DATA_RECOLHIMENTO = :dataRecolhimento ");
+		query.append("			  AND chEn.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalheChamadao ");
+		query.append("			  GROUP BY chEn.PRODUTO_EDICAO_ID ");
+		query.append("			  HAVING COUNT(chEn.PRODUTO_EDICAO_ID) > 1) IS NULL) then true else false end as chamadao, ");
 		
 		query.append("			 (coalesce(pe.PRECO_VENDA, 0) - (coalesce(pe.PRECO_VENDA, 0)  *");
 		query.append("			 CASE WHEN pe.ORIGEM = :origemInterface");
@@ -354,6 +381,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		query.setParameter("dataRecolhimento", filtro.getDataEncalhe());
 		query.setParameter("origemInterface", Origem.INTERFACE.toString());
+		query.setParameter("tipoChamadaEncalheChamadao", TipoChamadaEncalhe.CHAMADAO);
 
 		if (filtro.getFornecedorId() != null) {
 			
@@ -1309,6 +1337,4 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		return ( qtde != null ) ? qtde.intValue() : 0;
 		
 	}
-	
-	
 }
