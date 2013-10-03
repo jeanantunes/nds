@@ -178,13 +178,6 @@ public class Produto implements Serializable {
 	@JoinColumn(name="TIPO_SEGMENTO_PRODUTO_ID")
 	private TipoSegmentoProduto tipoSegmentoProduto;
 	
-	/**
-	 * Classificação do Produto
-	 */
-	@OneToOne(fetch=FetchType.EAGER, optional=true)
-	@JoinColumn(name="TIPO_CLASSIFICACAO_PRODUTO_ID")
-	private TipoClassificacaoProduto tipoClassificacaoProduto;
-	
 	@Column(name = "GERACAO_AUTOMATICA", nullable = false)
 	private Boolean isGeracaoAutomatica;
 	
@@ -647,15 +640,6 @@ public class Produto implements Serializable {
 
 	public void setTipoSegmentoProduto(TipoSegmentoProduto tipoSegmentoProduto) {
 		this.tipoSegmentoProduto = tipoSegmentoProduto;
-	}
-
-	public TipoClassificacaoProduto getTipoClassificacaoProduto() {
-		return tipoClassificacaoProduto;
-	}
-
-	public void setTipoClassificacaoProduto(
-			TipoClassificacaoProduto tipoClassificacaoProduto) {
-		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
 	}
 
 	public List<ProdutoEdicao> getProdutoEdicao() {

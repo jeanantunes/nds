@@ -166,7 +166,8 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			mixCotaProdutoDTO.setProdutoId(mixCotaProduto.getProduto().getId());
 			mixCotaProdutoDTO.setNomeProduto(mixCotaProduto.getProduto().getNome());
 			mixCotaProdutoDTO.setCodigoProduto(mixCotaProduto.getProduto().getCodigo());
-			mixCotaProdutoDTO.setClassificacaoProduto(mixCotaProduto.getProduto().getTipoClassificacaoProduto().getDescricao());
+            //FIXME refazer... a classificação fica no ProdutoEdicao
+//			mixCotaProdutoDTO.setClassificacaoProduto(mixCotaProduto.getProduto().getTipoClassificacaoProduto().getDescricao());
 		}
 		if(mixCotaProduto.getRepartesPDV()!=null){
 			for(RepartePDV repartePDV: mixCotaProduto.getRepartesPDV()){
@@ -225,18 +226,19 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			
 				Produto produto = produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto());
 				MixCotaProduto mixCotaProduto = new MixCotaProduto();
-				
-				if(produto.getTipoClassificacaoProduto().getDescricao().equalsIgnoreCase(mixCotaProdutoDTO.getClassificacaoProduto())){
-					mixCotaProduto.setProduto(produto);
-					mixCotaProduto.setCota(cota);
-					mixCotaProduto.setDataHora(new Date());
-					mixCotaProduto.setReparteMinimo(mixCotaProdutoDTO.getReparteMinimo());
-					mixCotaProduto.setReparteMaximo(mixCotaProdutoDTO.getReparteMaximo());
-					mixCotaProduto.setUsuario(usuario);
-					
-					mixCotaProdutoRepository.adicionar(mixCotaProduto);
-					
-				}
+
+                //FIXME refazer... a classificação fica no ProdutoEdicao
+//				if(produto.getTipoClassificacaoProduto().getDescricao().equalsIgnoreCase(mixCotaProdutoDTO.getClassificacaoProduto())){
+//					mixCotaProduto.setProduto(produto);
+//					mixCotaProduto.setCota(cota);
+//					mixCotaProduto.setDataHora(new Date());
+//					mixCotaProduto.setReparteMinimo(mixCotaProdutoDTO.getReparteMinimo());
+//					mixCotaProduto.setReparteMaximo(mixCotaProdutoDTO.getReparteMaximo());
+//					mixCotaProduto.setUsuario(usuario);
+//
+//					mixCotaProdutoRepository.adicionar(mixCotaProduto);
+//
+//				}
 				
 		}
 		
@@ -317,11 +319,12 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			return "Produto ["+produto.getCodigo()+":"+produto.getNome()+"], Cota:["+mixCotaProdutoDTO.getNumeroCota()+","+mixCotaProdutoDTO.getNomeCota()+"] já foi cadastrado."; 
 					
 		}
-		
-		if(!produto.getTipoClassificacaoProduto().getDescricao().equalsIgnoreCase(mixCotaProdutoDTO.getClassificacaoProduto())){
-			
-			return "Produto "+produto.getCodigo()+ ":" +produto.getNome()+" com a classificação "+ mixCotaProdutoDTO.getClassificacaoProduto() +" não existe.";
-		}
+
+        //FIXME refazer... a classificação fica no ProdutoEdicao
+//		if(!produto.getTipoClassificacaoProduto().getDescricao().equalsIgnoreCase(mixCotaProdutoDTO.getClassificacaoProduto())){
+//
+//			return "Produto "+produto.getCodigo()+ ":" +produto.getNome()+" com a classificação "+ mixCotaProdutoDTO.getClassificacaoProduto() +" não existe.";
+//		}
 		
 		mixCotaProdutoDTO.setItemValido(true);
 		
@@ -546,7 +549,8 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 				
 			for (TipoClassificacaoProduto t : classificacaoList) {
 				if(t.getDescricao().equals(mixCotaProdutoDTO.getClassificacaoProduto())){
-					produto.setTipoClassificacaoProduto(t);
+                    //FIXME refazer... a classificação fica no ProdutoEdicao
+//					produto.setTipoClassificacaoProduto(t);
 					this.produtoRepository.alterar(produto);
 					break;
 				}
