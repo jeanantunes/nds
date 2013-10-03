@@ -738,7 +738,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         }
         
         subSqlReparte.append(" and CHAMADA_ENCALHE_.PRODUTO_EDICAO_ID = PRODUTO_EDICAO.ID ");
-        subSqlReparte.append(" and CHAMADA_ENCALHE_.DATA_RECOLHIMENTO BETWEEN CHAMADA_ENCALHE_.DATA_RECOLHIMENTO ");
+        subSqlReparte.append(" and CHAMADA_ENCALHE_.DATA_RECOLHIMENTO = CHAMADA_ENCALHE_.DATA_RECOLHIMENTO ");
 
         if (filtro.getIdCota() != null) {
         	subSqlReparte.append(" and CHAMADA_ENCALHE_COTA_.COTA_ID = :idCota ");
