@@ -161,6 +161,8 @@ public interface ChamadaEncalheCotaRepository extends Repository<ChamadaEncalheC
 	
 	Boolean existeChamadaEncalheCota(Long idCota, Long idProdutoEdicao, Boolean fechado, Date dataRecolhimento);
 	
+	Boolean existeChamadaEncalheCota(Long idCota, Long idProdutoEdicao, Date dataRecolhimento);
+	
 	ChamadaEncalheCota obterChamadaEncalheCota(Long idCota, Long idProdutoEdicao, Date dataRecolhimento);
 	
 }

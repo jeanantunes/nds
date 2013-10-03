@@ -338,12 +338,11 @@ var geracaoNotaEnvioController = $.extend({
             $.fileDownload(path, {
                 httpMethod : "POST",
                 failCallback : function(responseHtml, url) {
-                	var response = responseHtml; 
                 	if(responseHtml){
                 		var data =  $.parseJSON($(responseHtml).html());                   	 
                    	    exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
                 	} else {
-                		exibirMensagem("ERROR", ["Erro ao Imprimir NE/NECA! " + response]);
+                		exibirMensagem("ERROR", ["Erro ao Imprimir NE/NECA! " + responseHtml]);
                 	}
                 	//document.location = responseHtml;
 //                	if(responseHtml){

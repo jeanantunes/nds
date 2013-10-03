@@ -105,9 +105,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
-		
-		query.setResultTransformer(Transformers.aliasToBean(GeraDividaDTO.class)); 
-		
+	
 		return query.list();
 	}
 	
@@ -128,8 +126,6 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		for(String key : param.keySet()){
 			query.setParameter(key, param.get(key));
 		}
-		
-		query.setResultTransformer(Transformers.aliasToBean(GeraDividaDTO.class)); 
 		
 		if (filtro.getPaginacao() != null) {
 			
@@ -197,20 +193,20 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		if(count) {
 			hql.append(" SELECT count(divida.id)");
 		} else {
-			hql//.append(" SELECT new ").append(GeraDividaDTO.class.getCanonicalName())
-			//.append("(")
-				.append(" select cobranca.id as cobrancaId,")
-				.append(" box.codigo || '-'|| box.nome as box,")
-				.append(" rota.descricaoRota as rota,")
-				.append(" roteiro.descricaoRoteiro as roteiro,")
-				.append(" cota.numeroCota as numeroCota, ")
-				.append(" coalesce(pessoa.nome, pessoa.razaoSocial) as nomeCota,")
-				.append(" cobranca.dataVencimento as dataVencimento,")
-				.append(" cobranca.dataEmissao as dataEmissao,")
-				.append(" cobranca.valor as valor,")
-				.append(" cobranca.tipoCobranca as tipoCobranca,")
-				.append(" cobranca.vias as vias, ")
-				.append(" cobranca.nossoNumero as nossoNumero ");
+			hql.append(" SELECT new ").append(GeraDividaDTO.class.getCanonicalName())
+			.append("(")
+				.append(" cobranca.id,")
+				.append(" box.codigo || '-'|| box.nome,")
+				.append(" rota.descricaoRota,")
+				.append(" roteiro.descricaoRoteiro,")
+				.append(" cota.numeroCota,")
+				.append(" coalesce(pessoa.nome, pessoa.razaoSocial),")
+				.append(" cobranca.dataVencimento,")
+				.append(" cobranca.dataEmissao,")
+				.append(" cobranca.valor,")
+				.append(" cobranca.tipoCobranca,")
+				.append(" cobranca.vias, ")
+				.append(" cobranca.nossoNumero) ");
 
 //				.append("(case when ("+
 //				        "             select count(f.parametroCobrancaCota) " +
@@ -241,9 +237,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		.append(" divida.data =:data ")
 		.append(" AND divida.acumulada =:acumulaDivida ")
-		.append(" AND cobranca.statusCobranca=:statusCobranca ")
-		.append(" AND pdv.caracteristicas.pontoPrincipal = true ");
-		
+		.append(" AND cobranca.statusCobranca=:statusCobranca ");
 		
 		if(filtro.getNumeroCota()!= null  ){
 			hql.append(" AND cota.numeroCota =:numeroCota ");
@@ -295,43 +289,43 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 			switch (ordenacao) {
 				case BOX:	
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " box ";
+						orderByColumn += " box.codigo ";
 					break;
 				case DATA_EMISSAO:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " dataEmissao ";
+						orderByColumn += " cobranca.dataVencimento ";
 					break;
 				case DATA_VENCIMENTO:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " dataVencimento ";
+						orderByColumn += " cobranca.dataEmissao ";
 					break;
 				case NOME_COTA:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " nomeCota ";
+						orderByColumn += " cota.pessoa.nome ";
 					break;
 				case NUMERO_COTA:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " numeroCota ";
+						orderByColumn += " cota.numeroCota ";
 					break;
 				case ROTA:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " rota ";
+						orderByColumn += " rota.descricaoRota ";
 					break;
 				case ROTEIRO:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " roteiro ";
+						orderByColumn += " roteiro.descricaoRoteiro ";
 					break;
 				case TIPO_COBRANCA:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " tipoCobranca ";
+						orderByColumn += " cobranca.tipoCobranca ";
 					break;
 				case VALOR:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " valor ";
+						orderByColumn += " cobranca.valor ";
 					break;
 				case VIA:
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
-						orderByColumn += " vias ";
+						orderByColumn += " cobranca.vias ";
 					break;
 			}
 		}

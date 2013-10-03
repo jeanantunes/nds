@@ -430,7 +430,8 @@ var baixaFinanceiraController = $.extend(true, {
 				           text:"Confirmar", 
 				           click: function() {
 				        	   
-							   baixaFinanceiraController.validarDividasManual();  
+				        	   baixaFinanceiraController.popup_confirma_baixa_dividas();
+				        	   
 				           }
 			           },
 			           {
@@ -459,14 +460,8 @@ var baixaFinanceiraController = $.extend(true, {
 				           id:"bt_confirmar",
 				           text:"Confirmar", 
 				           click: function() {
-				        	   
-				        	   var pagamentoAVista = $('#formaRecebimentoDividas').val()==='DINHEIRO';
-				        	   
-				        	   if(pagamentoAVista)
-				        		   baixaFinanceiraController.baixaManualDividas(false);
-				        	   else
-				        		   baixaFinanceiraController.popup_confirma_pendente();
-								 
+				        	   baixaFinanceiraController.popup_confirma_pendente();
+								
 							   $( this ).dialog( "close" );
 				           }
 			           },
@@ -1118,7 +1113,7 @@ var baixaFinanceiraController = $.extend(true, {
     
     //EFETUA BAIXA MANUAL DE DIVIDAS SELECIONADAS E CALCULADAS
     baixaManualDividas : function(manterPendente) {
- 
+
     	var  param = {valorDividas : $("#valorDividas", baixaFinanceiraController.workspace).html(),
     			valorMulta : $("#multaDividas", baixaFinanceiraController.workspace).val(),
     			valorJuros : $("#jurosDividas", baixaFinanceiraController.workspace).val(),
@@ -1146,39 +1141,6 @@ var baixaFinanceiraController = $.extend(true, {
 		        	   }
 			           
 					   baixaFinanceiraController.buscaManual();
-	               },
-	               null,
-	               true);
-	},
-	
-	validarDividasManual : function() {
- 
-    	var  param = {	
-						valorMulta : $("#multaDividas", baixaFinanceiraController.workspace).val(),
-						valorJuros : $("#jurosDividas", baixaFinanceiraController.workspace).val(),
-						valorDesconto : $("#descontoDividas", baixaFinanceiraController.workspace).val(),
-						valorSaldo : $("#valorSaldoDividas", baixaFinanceiraController.workspace).html(),
-						tipoPagamento : $("#formaRecebimentoDividas", baixaFinanceiraController.workspace).val(),
-						idBanco : $("#bancoDividas", baixaFinanceiraController.workspace).val()};
-
-    	param = serializeArrayToPost('idCobrancas',baixaFinanceiraController.obterCobrancasDividasMarcadas(), param);
-		
-    	$.postJSON(contextPath + "/financeiro/baixa/validarBaixaManual",param,
-				   function(result) {
-					   
-			           if (result){
-						   
-						   var tipoMensagem = result.tipoMensagem;
-						   var listaMensagens = result.listaMensagens;
-						   
-						   if (tipoMensagem && listaMensagens) {
-						       exibirMensagem(tipoMensagem, listaMensagens);
-					       }
-						   else{
-								
-								baixaFinanceiraController.popup_confirma_baixa_dividas();
-						   }
-		        	   }
 	               },
 	               null,
 	               true);
@@ -1496,7 +1458,7 @@ var baixaFinanceiraController = $.extend(true, {
 	},
 	
 	//OBTEM VALIDAÇÃO DE PERMISSÃO DE POSTERGAÇÃO
-    obterPostergacao : function(calcularEncargo) {
+    obterPostergacao : function() {
     	var param = {dataPostergacao:$("#dtPostergada", baixaFinanceiraController.workspace).val()};
 		param = serializeArrayToPost('idCobrancas',baixaFinanceiraController.obterCobrancasDividasMarcadas(),param);
 		$.postJSON(contextPath + "/financeiro/baixa/obterPostergacao",param,
@@ -1513,10 +1475,7 @@ var baixaFinanceiraController = $.extend(true, {
 
 							if (!tipoMensagem) {
 								baixaFinanceiraController.postergarDivida();
-								
-								if(calcularEncargo===true)
-									$("#ecargosPostergacao", baixaFinanceiraController.workspace).val(result);
-									
+								$("#ecargosPostergacao", baixaFinanceiraController.workspace).val(result)
 							}	
 						}							
 					},
@@ -1524,23 +1483,9 @@ var baixaFinanceiraController = $.extend(true, {
 					true
 				);
 	},
-	
-	 alterarIsencao: function(isento) {
-		 
-		 if(isento) {
-			 $("#ecargosPostergacao", baixaFinanceiraController.workspace).hide();
-		 } else {
-			 $("#ecargosPostergacao", baixaFinanceiraController.workspace).show();
-		 }
 			
-	}, 
-				
 	postergarDivida : function() {
-		
-		var isento = $('#checkIsIsento').attr('checked') === 'checked';
-		
-		baixaFinanceiraController.alterarIsencao(isento);
-			
+	
 		$("#dialog-postergar", baixaFinanceiraController.workspace).dialog({
 			resizable: false,
 			height:220,
@@ -1695,8 +1640,6 @@ var baixaFinanceiraController = $.extend(true, {
 				   function() { baixaFinanceiraController.buscaManual(); }
 		);
 	},
-	
-	
 
 },
 BaseController);

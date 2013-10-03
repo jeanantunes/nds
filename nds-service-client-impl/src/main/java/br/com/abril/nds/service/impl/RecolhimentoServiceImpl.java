@@ -62,6 +62,7 @@ import br.com.abril.nds.service.ParciaisService;
 import br.com.abril.nds.service.RecolhimentoService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.strategy.devolucao.BalanceamentoRecolhimentoStrategy;
+import br.com.abril.nds.util.BigDecimalUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.SemanaUtil;
@@ -147,8 +148,11 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 	 */
 	@Override
 	@Transactional
-	public void salvarBalanceamentoRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
-												Usuario usuario) {
+	public void salvarBalanceamentoRecolhimento(Usuario usuario,
+												BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoDTO) {
+		
+		Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento =
+			balanceamentoRecolhimentoDTO.getMatrizRecolhimento();
 		
 		if (matrizRecolhimento == null
 				|| matrizRecolhimento.isEmpty()) {
@@ -173,11 +177,33 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			for (ProdutoRecolhimentoDTO produtoRecolhimento : listaProdutoRecolhimentoDTO) {
 			
-				if (!produtoRecolhimento.isBalanceamentoConfirmado()) {
+				Date novaDataRecolhimento = produtoRecolhimento.getNovaData();
 				
-					mapaRecolhimentos.put(produtoRecolhimento.getIdLancamento(), produtoRecolhimento);
+				if (produtoRecolhimento.isBalanceamentoConfirmado()) {
 					
-					idsLancamento.add(produtoRecolhimento.getIdLancamento());
+					continue;
+				}
+				
+				if (this.isProdutoAgrupado(produtoRecolhimento)) {
+					
+					continue;
+				}
+				
+				this.montarInformacoesSalvarBalanceamento(
+					mapaRecolhimentos, idsLancamento, produtoRecolhimento);
+				
+				if (!produtoRecolhimento.getIdsLancamentosAgrupados().isEmpty()) {
+					
+					for (Long idLancamento : produtoRecolhimento.getIdsLancamentosAgrupados()) {
+						
+						ProdutoRecolhimentoDTO produtoRecolhimentoAgrupado = this.obterProdutoRecolhimento(
+							balanceamentoRecolhimentoDTO.getProdutosRecolhimentoAgrupados(), idLancamento);
+						
+						produtoRecolhimentoAgrupado.setNovaData(novaDataRecolhimento);
+						
+						this.montarInformacoesSalvarBalanceamento(
+							mapaRecolhimentos, idsLancamento, produtoRecolhimentoAgrupado);
+					}
 				}
 			}
 		}
@@ -185,6 +211,22 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		this.atualizarLancamentos(
 			idsLancamento, usuario, mapaRecolhimentos,
 			StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO, null);
+	}
+
+	private void montarInformacoesSalvarBalanceamento(
+									Map<Long, ProdutoRecolhimentoDTO> mapaRecolhimentos,
+									Set<Long> idsLancamento,
+									ProdutoRecolhimentoDTO produtoRecolhimento) {
+		
+		mapaRecolhimentos.put(produtoRecolhimento.getIdLancamento(), produtoRecolhimento);
+		
+		idsLancamento.add(produtoRecolhimento.getIdLancamento());
+	}
+	
+	private boolean isProdutoAgrupado(ProdutoRecolhimentoDTO produtoRecolhimento) {
+		
+		return (produtoRecolhimento.isProdutoAgrupado()
+					&& produtoRecolhimento.getIdsLancamentosAgrupados().isEmpty());
 	}
 	
 	/**
@@ -196,7 +238,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 											Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
 											Integer numeroSemana,
 											List<Date> datasConfirmadas,
-											Usuario usuario) {
+											Usuario usuario,
+											List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados) {
 		
 		if (matrizRecolhimento == null
 				|| matrizRecolhimento.isEmpty()) {
@@ -208,8 +251,6 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			new TreeMap<Long, ProdutoRecolhimentoDTO>();
 		
 		Set<Long> idsLancamento = new TreeSet<Long>();
-		
-		Set<Long> idsProdutoEdicaoParcial = new TreeSet<Long>();
 		
 		Map<Date, Set<Long>> mapaDataRecolhimentoLancamentos = new TreeMap<Date, Set<Long>>();
 		
@@ -229,42 +270,40 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			
 			for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
 				
+				if (this.isProdutoAgrupado(produtoRecolhimento)) {
+					
+					continue;
+				}
+				
 				Date novaDataRecolhimento = produtoRecolhimento.getNovaData();
 				
 				if (produtoRecolhimento.isBalanceamentoConfirmado()) {
 					
 					this.montarMatrizRecolhimentosConfirmados(matrizConfirmada, produtoRecolhimento,
-															null, novaDataRecolhimento);
+															  null, novaDataRecolhimento);
 					
 					continue;
 				}
 				
-				Long idLancamento = produtoRecolhimento.getIdLancamento();
-
-				// Monta Map e Set para controlar a atualização dos lançamentos
+				this.montarInformacoesConfirmarBalanceamento(
+					mapaLancamentoRecolhimento, mapaDataRecolhimentoLancamentos,
+					idsLancamento, produtoRecolhimento, novaDataRecolhimento);
 				
-				mapaLancamentoRecolhimento.put(idLancamento, produtoRecolhimento);
-				
-				idsLancamento.add(idLancamento);
-				
-				// Monta Map para controlar a geração de chamada de encalhe
-				
-				Set<Long> idsLancamentoPorData = mapaDataRecolhimentoLancamentos.get(novaDataRecolhimento);
-				
-				if (idsLancamentoPorData == null) {
+				List<Long> idsLancamentosAgrupados = produtoRecolhimento.getIdsLancamentosAgrupados();
+			
+				if (!idsLancamentosAgrupados.isEmpty()) {
 					
-					idsLancamentoPorData = new LinkedHashSet<Long>();
-				}
-				
-				idsLancamentoPorData.add(idLancamento);
-				
-				mapaDataRecolhimentoLancamentos.put(novaDataRecolhimento, idsLancamentoPorData);
-				
-				// Monta Set para controlar a geração de períodos parciais
-				
-				if (produtoRecolhimento.getParcial() != null) {
-					
-					idsProdutoEdicaoParcial.add(produtoRecolhimento.getIdProdutoEdicao());
+					for (Long idLancamento : idsLancamentosAgrupados) {
+							
+						ProdutoRecolhimentoDTO produtoRecolhimentoAgrupado = this.obterProdutoRecolhimento(
+							produtosRecolhimentoAgrupados, idLancamento);
+						
+						produtoRecolhimentoAgrupado.setNovaData(novaDataRecolhimento);
+						
+						this.montarInformacoesConfirmarBalanceamento(
+							mapaLancamentoRecolhimento, mapaDataRecolhimentoLancamentos,
+							idsLancamento, produtoRecolhimentoAgrupado, novaDataRecolhimento);
+					}
 				}
 			}
 		}
@@ -278,6 +317,35 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		return matrizConfirmada;
 	}
 
+	private void montarInformacoesConfirmarBalanceamento(
+									Map<Long, ProdutoRecolhimentoDTO> mapaLancamentoRecolhimento,
+									Map<Date, Set<Long>> mapaDataRecolhimentoLancamentos,
+									Set<Long> idsLancamento,
+									ProdutoRecolhimentoDTO produtoRecolhimento,
+									Date novaDataRecolhimento) {
+
+		Long idLancamento = produtoRecolhimento.getIdLancamento();
+
+		// Monta Map e Set para controlar a atualização dos lançamentos
+		
+		mapaLancamentoRecolhimento.put(idLancamento, produtoRecolhimento);
+		
+		idsLancamento.add(idLancamento);
+		
+		// Monta Map para controlar a geração de chamada de encalhe
+		
+		Set<Long> idsLancamentoPorData = mapaDataRecolhimentoLancamentos.get(novaDataRecolhimento);
+		
+		if (idsLancamentoPorData == null) {
+			
+			idsLancamentoPorData = new LinkedHashSet<Long>();
+		}
+		
+		idsLancamentoPorData.add(idLancamento);
+		
+		mapaDataRecolhimentoLancamentos.put(novaDataRecolhimento, idsLancamentoPorData);
+	}
+	
 	@SuppressWarnings("unchecked")
 	private void ordenarProdutosRecolhimentoPorNome(List<ProdutoRecolhimentoDTO> produtosRecolhimento) {
 		
@@ -451,7 +519,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 
 					Boolean existeChamadaEncalheCota = 
 						this.chamadaEncalheCotaRepository.existeChamadaEncalheCota(
-							cota.getId(), produtoEdicao.getId(), null, null);
+							cota.getId(), produtoEdicao.getId(), dataRecolhimento);
 					
 					if (existeChamadaEncalheCota) {
 						
@@ -485,7 +553,8 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 						listaChamadaEncalhe.add(chamadaEncalhe);
 					}
 					
-					this.criarChamadaEncalheCota(estoqueProdutoCota, cota, chamadaEncalhe);
+					this.criarChamadaEncalheCota(estoqueProdutoCota, cota,
+							chamadaEncalhe);
 				}
 			}
 		}
@@ -607,6 +676,14 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 			this.lancamentoRepository.obterExpectativasEncalhePorData(periodoRecolhimento, 
 																	  listaIdsFornecedores, 
 																	  GrupoProduto.CROMO);
+		
+		List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados = new ArrayList<>();
+		
+		produtosRecolhimento =
+			this.tratarAgrupamentoLancamentosComMesmaEdicao(
+				produtosRecolhimento, produtosRecolhimentoAgrupados);
+		
+		dadosRecolhimento.setProdutosRecolhimentoAgrupados(produtosRecolhimentoAgrupados);
 		
 		dadosRecolhimento.setProdutosRecolhimento(produtosRecolhimento);
 		
@@ -1122,6 +1199,173 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		}
 		
 		return datasRecolhimento.get(0);
+	}
+	
+	private List<ProdutoRecolhimentoDTO> tratarAgrupamentoLancamentosComMesmaEdicao(
+											List<ProdutoRecolhimentoDTO> produtosRecolhimento,
+											List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados) {
+
+		Map<Long, List<Long>> mapProdutoEdicaoLancamento =
+			this.montarMapProdutoEdicaoLancamento(produtosRecolhimento);
+
+		List<ProdutoRecolhimentoDTO> produtosRecolhimentoRetorno = new ArrayList<>();
+
+		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
+
+			if (produtoRecolhimento.isProdutoAgrupado()) {
+
+				continue;
+			}
+
+			List<Long> idLancamentos =
+				mapProdutoEdicaoLancamento.get(produtoRecolhimento.getIdProdutoEdicao());
+
+			if (this.existeMaisDeUmLancamento(idLancamentos)) {
+
+				produtosRecolhimentoAgrupados.add(produtoRecolhimento);
+				
+				this.agruparProdutosRecolhimento(
+					produtoRecolhimento, idLancamentos,
+					produtosRecolhimento, produtosRecolhimentoAgrupados);
+			}
+
+			produtosRecolhimentoRetorno.add(produtoRecolhimento);
+		}
+
+		return produtosRecolhimentoRetorno;
+	}
+	
+	private Map<Long, List<Long>> montarMapProdutoEdicaoLancamento(List<ProdutoRecolhimentoDTO> produtosRecolhimento) {
+		
+		Map<Long, List<Long>> mapProdutoEdicaoLancamento = new HashMap<>();
+		
+		Long idLancamento = null;
+		Long idProdutoEdicao = null;
+		
+		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
+			
+			idLancamento = produtoRecolhimento.getIdLancamento();
+			idProdutoEdicao = produtoRecolhimento.getIdProdutoEdicao();
+			
+			List<Long> idLancamentos = mapProdutoEdicaoLancamento.get(idProdutoEdicao);
+			
+			if (idLancamentos == null) {
+				
+				idLancamentos = new ArrayList<>();
+			}
+			
+			idLancamentos.add(idLancamento);
+			
+			mapProdutoEdicaoLancamento.put(idProdutoEdicao, idLancamentos);
+		}
+		
+		return mapProdutoEdicaoLancamento;
+	}
+	
+	private void agruparProdutosRecolhimento(ProdutoRecolhimentoDTO produtoRecolhimento,
+											 List<Long> idLancamentos,
+											 List<ProdutoRecolhimentoDTO> produtosRecolhimento,
+											 List<ProdutoRecolhimentoDTO> produtosRecolhimentosAgrupados) {
+
+		for (Long idLancamento : idLancamentos) {
+
+			if (produtoRecolhimento.getIdLancamento().equals(idLancamento)) {
+
+				continue;
+			}
+
+			ProdutoRecolhimentoDTO produtoRecolhimentoMesmaEdicao =
+				this.obterProdutoRecolhimento(produtosRecolhimento, idLancamento);
+
+			ProdutoRecolhimentoDTO produtoRecolhimentoAntigo = null;
+			ProdutoRecolhimentoDTO produtoRecolhimentoNovo = null;
+
+			if (this.isLancamentoMaisAntigo(produtoRecolhimento, produtoRecolhimentoMesmaEdicao)) {
+
+				produtoRecolhimentoAntigo = produtoRecolhimento;
+				produtoRecolhimentoNovo = produtoRecolhimentoMesmaEdicao;
+
+			} else {
+
+				produtoRecolhimentoAntigo = produtoRecolhimentoMesmaEdicao;
+				produtoRecolhimentoNovo = produtoRecolhimento;
+			}
+
+			this.efetivarAgrupamento(
+				produtoRecolhimento, produtoRecolhimentoAntigo,
+				produtoRecolhimentoNovo,idLancamento);
+			
+			produtosRecolhimentosAgrupados.add(produtoRecolhimentoMesmaEdicao);
+		}
+	}
+	
+	private ProdutoRecolhimentoDTO obterProdutoRecolhimento(List<ProdutoRecolhimentoDTO> produtosRecolhimento,
+														   	Long idLancamento) {
+	
+		for (ProdutoRecolhimentoDTO produtoRecolhimento : produtosRecolhimento) {
+
+			if (produtoRecolhimento.getIdLancamento().equals(idLancamento)) {
+
+				return produtoRecolhimento;
+			}
+		}
+
+		return null;
+	}
+	
+	private void efetivarAgrupamento(ProdutoRecolhimentoDTO produtoRecolhimento,
+									 ProdutoRecolhimentoDTO produtoRecolhimentoAntigo,
+									 ProdutoRecolhimentoDTO produtoRecolhimentoNovo,
+									 Long idLancamento) {
+
+		BigDecimal encalhe =
+			BigDecimalUtil.soma(produtoRecolhimentoAntigo.getExpectativaEncalhe(),
+								produtoRecolhimentoNovo.getExpectativaEncalhe());
+		
+		BigDecimal encalheAtendida =
+			BigDecimalUtil.soma(produtoRecolhimentoAntigo.getExpectativaEncalheAtendida(), 
+								produtoRecolhimentoNovo.getExpectativaEncalheAtendida());
+		
+		BigDecimal encalheSede =
+			BigDecimalUtil.soma(produtoRecolhimentoAntigo.getExpectativaEncalheSede(), 
+								produtoRecolhimentoNovo.getExpectativaEncalheSede());
+		
+		BigDecimal valorTotal =
+			BigDecimalUtil.soma(produtoRecolhimentoAntigo.getValorTotal(), 
+								produtoRecolhimentoNovo.getValorTotal());
+		
+		Long peso =
+			produtoRecolhimentoAntigo.getPeso() + produtoRecolhimentoNovo.getPeso();
+		
+		produtoRecolhimento.setDataLancamento(produtoRecolhimentoAntigo.getDataLancamento());
+		produtoRecolhimento.setDataRecolhimentoPrevista(produtoRecolhimentoAntigo.getDataRecolhimentoPrevista());
+		produtoRecolhimento.setDataRecolhimentoDistribuidor(produtoRecolhimentoAntigo.getDataRecolhimentoDistribuidor());
+		produtoRecolhimento.setExpectativaEncalhe(encalhe);
+		produtoRecolhimento.setExpectativaEncalheAtendida(encalheAtendida);
+		produtoRecolhimento.setExpectativaEncalheSede(encalheSede);
+		produtoRecolhimento.setValorTotal(valorTotal);
+		produtoRecolhimento.setPeso(peso);
+		
+		produtoRecolhimento.getIdsLancamentosAgrupados().add(idLancamento);
+		produtoRecolhimentoAntigo.setProdutoAgrupado(true);
+		produtoRecolhimentoNovo.setProdutoAgrupado(true);
+	}
+
+	private boolean isLancamentoMaisAntigo(ProdutoRecolhimentoDTO produtoRecolhimentoDTO,
+										   ProdutoRecolhimentoDTO produtoRecolhimento) {
+
+		if (produtoRecolhimentoDTO.getDataLancamento().before(
+				produtoRecolhimento.getDataLancamento())) {
+
+			return true;
+		}
+
+		return false;
+	}
+	
+	private boolean existeMaisDeUmLancamento(List<Long> idLancamentos) {
+		
+		return idLancamentos.size() > 1;
 	}
 	
 }

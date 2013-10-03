@@ -124,8 +124,6 @@ public class FecharDiaController extends BaseController {
 	
 	private static final String FECHAMENTO_DIARIO_REPORT_EXPORT_NAME = "relatorio-fechamento-diario.pdf";
 	
-	private static final String INACTIVE_INTERVAL = "inactive_interval";
-	
 	@Path("/")
 	public void index(){
 		dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
@@ -517,12 +515,7 @@ public class FecharDiaController extends BaseController {
 		//Unlock na base de dados
 		this.fecharDiaService.setLockBancoDeDados(false);
 		
-		this.session.setAttribute(INACTIVE_INTERVAL, this.session.getMaxInactiveInterval());
-		
 		try {
-			
-			//evita que a sessão expire antes que o fechamento do dia seja finalizado
-			this.session.setMaxInactiveInterval(-1);
 			
 			Date _dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 			
@@ -639,15 +632,7 @@ public class FecharDiaController extends BaseController {
 	
     @Post
     public Download gerarRelatorioFechamentoDiario(ModoDownload modoDownload) {
-        
-    	//volta o valor original de inativação da sessão
-    	if (this.session.getAttribute(INACTIVE_INTERVAL) != null){
-    		
-    		this.session.setMaxInactiveInterval((int) this.session.getAttribute(INACTIVE_INTERVAL));
-    		this.session.removeAttribute(INACTIVE_INTERVAL);
-    	}
-    	
-    	FechamentoDiarioDTO dto = getFechamentoDiarioDTO();
+        FechamentoDiarioDTO dto = getFechamentoDiarioDTO();
         
         byte[] relatorio = RelatorioFechamentoDiario.exportPdf(dto);
 

@@ -70,7 +70,6 @@ import br.com.abril.nds.service.ControleBaixaBancariaService;
 import br.com.abril.nds.service.EmailService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
-import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
 import br.com.abril.nds.util.CorpoBoleto;
@@ -1222,7 +1221,7 @@ public class BoletoServiceImpl implements BoletoService {
 
         //INFORMAÇOES DO BOLETO
         //PARAMETROS ?
-        corpoBoleto.setBoletoLocalPagamento("Pagável em qualquer agência bancária até o vencimento. Não receber após o vencimento.");
+        corpoBoleto.setBoletoLocalPagamento("Local do pagamento.");
         corpoBoleto.setBoletoInstrucaoAoSacado("Instrução so Sacado");
         corpoBoleto.setBoletoInstrucao1(banco.getInstrucoes());
         corpoBoleto.setBoletoInstrucao2("");
@@ -1284,12 +1283,10 @@ public class BoletoServiceImpl implements BoletoService {
 					     destinatarios, 
 					     new AnexoEmail("Boleto-"+nossoNumero, anexo,TipoAnexo.PDF),
 					     true);
-		} catch(AutenticacaoEmailException e){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao conectar-se com o servidor de e-mail. ");
 		} catch(ValidacaoException e){
 			throw e;
 		}catch(Exception e){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Erro no envio. ");
+			throw new ValidacaoException(TipoMensagem.ERROR, "Erro no envio.");
 		}
 	}
 	

@@ -1,7 +1,5 @@
 package br.com.abril.nds.client.job;
 
-import java.util.Date;
-
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -9,10 +7,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
-import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.SituacaoCotaService;
-import br.com.abril.nds.service.integracao.DistribuidorService;
 
 /**
  * Job responsável pela atualização da situação das cotas.
@@ -28,8 +24,6 @@ public class StatusCotaJob implements Job {
 	
 	private SituacaoCotaService situacaoCotaService;
 	
-	private DistribuidorRepository distribuidorRepository;
-	
 	private CotaService cotaService;
 	
 	/**
@@ -41,8 +35,6 @@ public class StatusCotaJob implements Job {
 			new ClassPathXmlApplicationContext("applicationContext.xml");
 			
 		this.situacaoCotaService = applicationContext.getBean(SituacaoCotaService.class);
-		
-		this.distribuidorRepository = applicationContext.getBean(DistribuidorRepository.class);
 		
 		this.cotaService = applicationContext.getBean(CotaService.class);
 	}
@@ -75,10 +67,8 @@ public class StatusCotaJob implements Job {
 				historicoSituacaoCota.setSituacaoAnterior(cota.getSituacaoCadastro());
 			}
 		}
-		
-		Date dataDeOperacao = distribuidorRepository.obterDataOperacaoDistribuidor();	
 
-		this.situacaoCotaService.atualizarSituacaoCota(historicoSituacaoCota, dataDeOperacao);
+		this.situacaoCotaService.atualizarSituacaoCota(historicoSituacaoCota);
 	}
 
 }

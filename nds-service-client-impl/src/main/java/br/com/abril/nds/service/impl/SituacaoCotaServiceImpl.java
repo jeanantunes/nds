@@ -11,11 +11,8 @@ import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.repository.CotaRepository;
-import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 import br.com.abril.nds.service.SituacaoCotaService;
-import br.com.abril.nds.service.integracao.DistribuidorService;
-import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.QuartzUtil;
 
 /**
@@ -33,9 +30,6 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService {
 	@Autowired
 	private CotaRepository cotaRepository;
 	
-	@Autowired
-	private DistribuidorRepository distribuidorRepository;
-	
 	/*
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.service.SituacaoCotaService#obterHistoricoStatusCota(br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO)
@@ -43,7 +37,7 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService {
 	@Transactional(readOnly = true)
 	public List<HistoricoSituacaoCota> obterHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
 		
-		if(filtro.getPeriodo() != null) {
+		if(filtro.getNumeroCota() != null) {
 			
 			return this.historicoSituacaoCotaRepository.obterHistoricoStatusCota(filtro);
 		}
@@ -58,7 +52,7 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService {
 	@Transactional(readOnly = true)
 	public Long obterTotalHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
 		
-		if(filtro.getPeriodo() != null) {
+		if(filtro.getNumeroCota()!= null){
 			
 			return this.historicoSituacaoCotaRepository.obterTotalHistoricoStatusCota(filtro);
 		}
@@ -72,9 +66,7 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService {
 	 * @see br.com.abril.nds.service.SituacaoCotaService#atualizarSituacaoCota(br.com.abril.nds.model.cadastro.HistoricoSituacaoCota)
 	 */
 	@Transactional
-	public void atualizarSituacaoCota(HistoricoSituacaoCota historicoSituacaoCota, Date dataDeOperacao) {
-		
-		dataDeOperacao = distribuidorRepository.obterDataOperacaoDistribuidor();	
+	public void atualizarSituacaoCota(HistoricoSituacaoCota historicoSituacaoCota) {
 		
 		if (historicoSituacaoCota == null 
 				|| historicoSituacaoCota.getCota() == null
@@ -94,12 +86,7 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService {
 			throw new RuntimeException("Cota inexistente!");
 		}
 		
-		if(dataDeOperacao != null && DateUtil.obterDiferencaDias(dataDeOperacao, historicoSituacaoCota.getDataInicioValidade()) == 0) {
-		
-			cota.setSituacaoCadastro(historicoSituacaoCota.getNovaSituacao());
-			
-			cotaRepository.alterar(cota); 
-		}
+		cota.setSituacaoCadastro(historicoSituacaoCota.getNovaSituacao());
 	}
 
 	/*
@@ -115,6 +102,5 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService {
 		
 		QuartzUtil.removeJobsFromGroup(idCota.toString());
 	}
-
 
 }

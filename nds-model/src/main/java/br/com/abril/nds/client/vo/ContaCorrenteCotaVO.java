@@ -30,26 +30,19 @@ public class ContaCorrenteCotaVO implements Serializable {
 	
 	private Integer numeroCota;
 	
-	private Date dataRaiz;
-	
-	private String nomeBox;
-	
-	private boolean cobrado;
-	
 	@Export(label = "Data")
 	private Date dataConsolidado;
+	
+	private Date dataRaiz;
+	
+	@Export(label = "Vlr. Postergado", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
+	private BigDecimal valorPostergado;
 		
 	@Export(label = "Consignado", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal consignado;
 	
 	@Export(label = "Encalhe", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal encalhe;
-	
-	@Export(label = "Valor Venda Dia", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
-	private BigDecimal valorVendaDia;
-	
-	@Export(label = "Vlr. Postergado R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
-	private BigDecimal valorPostergado;
 	
 	@Export(label = "Venda Encalhe", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal vendaEncalhe;
@@ -66,11 +59,15 @@ public class ContaCorrenteCotaVO implements Serializable {
 	@Export(label = "Total R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal total;
 	
-	@Export(label = "Vlr. Pago R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal valorPago;
 	
-	@Export(label = "Saldo R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
+	private boolean cobrado;
+	
 	private BigDecimal saldo;
+	
+	private BigDecimal valorVendaDia;
+	
+	private String nomeBox;
 	
 	/**
 	 * Construtor padrão.

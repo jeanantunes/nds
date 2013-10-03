@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,8 +43,10 @@ import br.com.abril.nds.model.financeiro.CobrancaTransferenciaBancaria;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Negociacao;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
@@ -181,6 +184,47 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		this.geradorArquivoCobrancaBancoService.prepararGerarArquivoCobrancaCnab();
 	}
 
+	/**
+	 * Gera cobranças para Cotas específicas
+	 * @param cotas
+	 * @param idUsuario
+	 * @param enviaEmail
+	 * @throws GerarCobrancaValidacaoException
+	 */
+	@Override
+	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
+	public void gerarCobranca(List<Cota> cotas, 
+			                  Long idUsuario,
+			                  boolean enviaEmail)
+		throws GerarCobrancaValidacaoException {
+		
+		for (Cota cota : cotas){
+
+			try {
+				
+				Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
+				
+				this.gerarCobrancaCota(cota.getId(), idUsuario, nossoNumeroEnvioEmail);
+				
+				if (enviaEmail){
+				
+					try {
+						
+						this.enviarDocumentosCobrancaEmail(cota, nossoNumeroEnvioEmail);
+						
+					} catch (AutenticacaoEmailException e) {
+	
+						e.printStackTrace();
+					}
+				}
+				
+			} catch (GerarCobrancaValidacaoException e) {
+
+				throw new ValidacaoException(TipoMensagem.ERROR,"Erro ao gerar Cobranca para a [Cota: "+ cota.getNumeroCota() +"]: "+e.getMessage());
+			}
+		}
+	}
+	
 	private void gerarCobrancaCota(Long idCota, Long idUsuario, Map<String, Boolean> setNossoNumero) 
 			throws GerarCobrancaValidacaoException {
 
@@ -263,16 +307,24 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					fornecedorProdutoMovimento == ultimoFornecedor))){
 					
 					movimentos.add(movimentoFinanceiroCota);
-
-					valorMovimentos = valorMovimentos.add(movimentoFinanceiroCota.getValor());
 					
+					TipoMovimentoFinanceiro tipo = 
+							(TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento();
+					
+					if (tipo.getOperacaoFinaceira().equals(OperacaoFinaceira.CREDITO)){
+						
+						valorMovimentos = valorMovimentos.add(movimentoFinanceiroCota.getValor().negate());
+					} else {
+						
+						valorMovimentos = valorMovimentos.add(movimentoFinanceiroCota.getValor());
+					}
 				} else {
 					
 					formaCobranca = 
 							formaCobrancaService.obterFormaCobranca(
 									ultimaCota != null ? ultimaCota.getId() : null, 
 									ultimoFornecedor != null ? ultimoFornecedor.getId() : null, 
-									dataOperacao, valorMovimentos);
+									dataOperacao, valorMovimentos.compareTo(BigDecimal.ZERO) >= 0?valorMovimentos:valorMovimentos.negate());
 
 					formaCobrancaClone = this.cloneFormaCobranca(formaCobranca);
 					
@@ -329,7 +381,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 						formaCobrancaService.obterFormaCobranca(
 								ultimaCota != null ? ultimaCota.getId() : null, 
 								ultimoFornecedor != null ? ultimoFornecedor.getId() : null, 
-								dataOperacao, valorMovimentos);
+								dataOperacao, valorMovimentos.compareTo(BigDecimal.ZERO) > 0?valorMovimentos:valorMovimentos.negate());
 					
 				formaCobrancaClone = this.cloneFormaCobranca(formaCobranca);  
 			}
@@ -510,6 +562,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		return valorMinimo;
 	}
 	
+	@SuppressWarnings("null")
 	private String inserirConsolidadoFinanceiro(Cota cota, List<MovimentoFinanceiroCota> movimentos,
 			Usuario usuario, int qtdDiasNovaCobranca, Date dataOperacao, List<String> msgs,
 			Fornecedor fornecedor,FormaCobranca formaCobrancaPrincipal){
@@ -734,7 +787,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		Divida novaDivida = null;
 		
-//		HistoricoAcumuloDivida historicoAcumuloDivida = null;
+		HistoricoAcumuloDivida historicoAcumuloDivida = null;
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCota = null;
 		
@@ -845,10 +898,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				this.dividaRepository.alterar(novaDivida);
 			}
 			
-//			if (historicoAcumuloDivida != null){
-//				this.historicoAcumuloDividaRepository.adicionar(historicoAcumuloDivida);
-//			}
-//			
+			if (historicoAcumuloDivida != null){
+				this.historicoAcumuloDividaRepository.adicionar(historicoAcumuloDivida);
+			}
+			
 			switch (formaCobrancaPrincipal.getTipoCobranca()){
 				case BOLETO:
 					cobranca = new Boleto();
@@ -1093,15 +1146,21 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					dataOperacao);
 	}
 	
-	private BigDecimal adicionarValor(BigDecimal valor, 
-									  MovimentoFinanceiroCota movimentoFinanceiroCota) {
+	private BigDecimal adicionarValor(BigDecimal valor, MovimentoFinanceiroCota movimentoFinanceiroCota){
 		
-		if (movimentoFinanceiroCota.getValor() == null) {
+		if (movimentoFinanceiroCota.getValor() == null){
 			
 			return BigDecimal.ZERO;
 		}
 		
-		return valor.add(movimentoFinanceiroCota.getValor());
+		switch(((TipoMovimentoFinanceiro)movimentoFinanceiroCota.getTipoMovimento()).getGrupoMovimentoFinaceiro().getOperacaoFinaceira()){
+			case CREDITO:
+				return valor.add(movimentoFinanceiroCota.getValor());
+			case DEBITO:
+				return valor.add(movimentoFinanceiroCota.getValor().negate());
+			default:
+				return BigDecimal.ZERO;
+		}
 	}
 	
 	@Override
@@ -1125,7 +1184,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	 * @throws AutenticacaoEmailException
 	 */
 	@Override
-	@Transactional
+	@Transactional(noRollbackFor = AutenticacaoEmailException.class)
 	public void enviarDocumentosCobrancaEmail(Cota cota, Map<String, Boolean> nossoNumeroEnvioEmail) throws AutenticacaoEmailException{
 		
         String email = cota.getPessoa().getEmail();
@@ -1159,6 +1218,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
 		
 		try {
+			
+			if (formaCobranca == null) {
+				
+				return null;
+			}
 			
 			return (FormaCobranca) BeanUtils.cloneBean(formaCobranca);
 			

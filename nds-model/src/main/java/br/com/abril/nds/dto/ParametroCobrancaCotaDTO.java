@@ -21,15 +21,15 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 	
 	private long fatorVencimento;
 	
-	private Boolean sugereSuspensao;
+	private boolean sugereSuspensao;
 	
-	private Boolean contrato;
+	private boolean contrato;
 	
 	private Date inicioContrato;
 	
 	private Date terminoContrato;
 	
-	private Boolean contratoRecebido;
+	private boolean contratoRecebido;
 	
 	private BigDecimal valorMinimo = BigDecimal.ZERO;
 	
@@ -41,11 +41,11 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 	
 	private Long idFornecedor;
 	
-	private Boolean unificaCobranca;
+	private boolean unificaCobranca;
 	
-	private Boolean devolveEncalhe;
+	private boolean devolveEncalhe;
 	
-	private Boolean parametroDistribuidor;
+	private boolean parametroDistribuidor;
 	
 	
 	public Long getIdParametroCobranca() {
@@ -95,22 +95,22 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 	}
 
 
-	public Boolean isSugereSuspensao() {
+	public boolean isSugereSuspensao() {
 		return sugereSuspensao;
 	}
 
 
-	public void setSugereSuspensao(Boolean sugereSuspensao) {
+	public void setSugereSuspensao(boolean sugereSuspensao) {
 		this.sugereSuspensao = sugereSuspensao;
 	}
 
 
-	public Boolean isContrato() {
+	public boolean isContrato() {
 		return contrato;
 	}
 
 
-	public void setContrato(Boolean contrato) {
+	public void setContrato(boolean contrato) {
 		this.contrato = contrato;
 	}
 	
@@ -134,11 +134,11 @@ public class ParametroCobrancaCotaDTO implements Serializable {
         this.terminoContrato = terminoContrato;
     }
     
-    public Boolean isContratoRecebido() {
+    public boolean isContratoRecebido() {
         return contratoRecebido;
     }
 
-    public void setContratoRecebido(Boolean contratoRecebido) {
+    public void setContratoRecebido(boolean contratoRecebido) {
         this.contratoRecebido = contratoRecebido;
     }
 
@@ -191,32 +191,32 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 	}
 	
 
-	public Boolean isUnificaCobranca() {
+	public boolean isUnificaCobranca() {
 		return unificaCobranca;
 	}
 
 
-	public void setUnificaCobranca(Boolean unificaCobranca) {
+	public void setUnificaCobranca(boolean unificaCobranca) {
 		this.unificaCobranca = unificaCobranca;
 	}
 
 	
-	public Boolean isParametroDistribuidor() {
+	public boolean isParametroDistribuidor() {
 		return parametroDistribuidor;
 	}
 
 	
-	public void setParametroDistribuidor(Boolean parametroDistribuidor) {
+	public void setParametroDistribuidor(boolean parametroDistribuidor) {
 		this.parametroDistribuidor = parametroDistribuidor;
 	}
 
 	
-	public Boolean isDevolveEncalhe() {
+	public boolean isDevolveEncalhe() {
 		return devolveEncalhe;
 	}
 
 	
-	public void setDevolveEncalhe(Boolean devolveEncalhe) {
+	public void setDevolveEncalhe(boolean devolveEncalhe) {
 		this.devolveEncalhe = devolveEncalhe;
 	}
 

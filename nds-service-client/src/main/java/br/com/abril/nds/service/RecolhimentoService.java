@@ -38,11 +38,11 @@ public interface RecolhimentoService {
 	/**
 	 * Salva o balanceamento da matriz de recolhimento.
 	 * 
-	 * @param matrizRecolhimento - matriz de recolhimento
 	 * @param usuario - usuário
+	 * @param balanceamentoRecolhimentoDTO
 	 */
-	void salvarBalanceamentoRecolhimento(Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
-										 Usuario idUsuario);
+	void salvarBalanceamentoRecolhimento(Usuario idUsuario,
+										 BalanceamentoRecolhimentoDTO balanceamentoRecolhimentoDTO);
 
 	/**
 	 * Confirma o balanceamento da matriz de recolhimento.
@@ -51,6 +51,7 @@ public interface RecolhimentoService {
 	 * @param numeroSemana - número da semana
 	 * @param datasConfirmadas - datas para confirmação
 	 * @param usuario - usuário
+	 * @param produtosRecolhimentoAgrupados
 	 * 
 	 * @return matriz de recolhimento confirmada
 	 */
@@ -58,7 +59,8 @@ public interface RecolhimentoService {
 											Map<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
 											Integer numeroSemana,
 											List<Date> datasConfirmadas,
-											Usuario usuario);
+											Usuario usuario,
+											List<ProdutoRecolhimentoDTO> produtosRecolhimentoAgrupados);
 	
 	Intervalo<Date> getPeriodoRecolhimento(Integer anoNumeroSemana);
 
@@ -86,4 +88,5 @@ public interface RecolhimentoService {
 										 Map<Date, List<CotaOperacaoDiferenciadaDTO>> mapOperacaoDifRemover,
 										 TreeMap<Date, List<ProdutoRecolhimentoDTO>> matrizRecolhimento,
 										 List<CotaOperacaoDiferenciadaDTO> cotasOperacaoDiferenciada);
+	
 }

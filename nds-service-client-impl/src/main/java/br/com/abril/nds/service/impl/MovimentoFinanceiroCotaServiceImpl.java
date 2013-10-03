@@ -14,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.ProcessamentoFinanceiroCotaVO;
 import br.com.abril.nds.dto.CotaFaturamentoDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
+import br.com.abril.nds.dto.ProcessamentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ImportacaoException;
@@ -51,6 +53,7 @@ import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.strategy.importacao.input.HistoricoFinanceiroInput;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 
 @Service
@@ -551,7 +554,65 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			this.movimentoFinanceiroCotaRepository.remover(mfc);
 		}
 	}
+	
+	
+	/**
+	 * Obtem Quantidade de Informações para o processamento financeiro (Geração de MovimentoFinanceiroCota, Divida e Cobrança) das Cotas
+	 * @param numeroCota
+	 * @param data
+	 * @return int
+	 */
+	@Transactional
+	@Override
+	public int obterQuantidadeProcessamentoFinanceiroCota(Integer numeroCota, Date data){
+		
+		return this.movimentoFinanceiroCotaRepository.obterQuantidadeProcessamentoFinanceiroCota(numeroCota, data).intValue();
+	}
+	
+	/**
+	 * Obtem Informações para o processamento financeiro (Geração de MovimentoFinanceiroCota, Divida e Cobrança) das Cotas
+	 * @param numeroCota
+	 * @param data
+	 * @param sortorder
+	 * @param sortname
+	 * @param initialResult
+	 * @param maxResults
+	 * @return List<ProcessamentoFinanceiroCotaVO>
+	 */
+	@Transactional
+	@Override
+	public List<ProcessamentoFinanceiroCotaVO> obterProcessamentoFinanceiroCota(Integer numeroCota, 
+			                                                                    Date data, 
+			                                                                    String sortorder, 
+			                                                                    String sortname,
+																	            int initialResult, 
+																	            int maxResults){
+		
+		List<ProcessamentoFinanceiroCotaDTO> informacoesProcessamentoFinanceiroCota = new ArrayList<ProcessamentoFinanceiroCotaDTO>();
+		
+		List<ProcessamentoFinanceiroCotaVO> processamentoFinanceiroVO = new ArrayList<ProcessamentoFinanceiroCotaVO>(); 
+		
+		informacoesProcessamentoFinanceiroCota = this.movimentoFinanceiroCotaRepository.obterProcessamentoFinanceiroCota(numeroCota, 
+				                                                                                                         data, 
+				                                                                                                         sortorder, 
+				                                                                                                         sortname, 
+				                                                                                                         initialResult, 
+				                                                                                                         maxResults);
+		
+		for (ProcessamentoFinanceiroCotaDTO item : informacoesProcessamentoFinanceiroCota){
+			
+			processamentoFinanceiroVO.add(new ProcessamentoFinanceiroCotaVO(item.getNumeroCota().toString(),
+					                                                        item.getNomeCota(),
+					                                                        CurrencyUtil.formatarValor(item.getValorConsignado()),
+					                                                        CurrencyUtil.formatarValor(item.getValorEstornado()),
+					                                                        CurrencyUtil.formatarValor(item.getDebitos()),
+					                                                        CurrencyUtil.formatarValor(item.getCreditos()),
+					                                                        CurrencyUtil.formatarValor(item.getSaldo())));
 
+		}
+		
+		return processamentoFinanceiroVO;
+	}
 	
 	/**
 	 * Remove movimentos financeiros do consolidado ou postergado
@@ -734,6 +795,25 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		
 		return movimentosReparteAgrupadosPorFornecedor;
 	}
+    
+    /**
+     * Obtém movimentos de envio de reparte à cota que ainda não geraram financeiro com Chamada Encalhe
+     * Agrupados por fornecedor
+     * @param idCota
+     * @param dataOperacao
+     * @return Map<Long,List<MovimentoEstoqueCota>>
+     */
+    private Map<Long,List<MovimentoEstoqueCota>> obterMovimentosEstoqueReparteComChamadaEncalhe(Long idCota, Date dataOperacao){
+		
+		List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEnvioReparte = 
+				        movimentoEstoqueCotaRepository.obterMovimentosPendentesGerarFinanceiroComChamadaEncalhe(
+				        idCota, 
+				        dataOperacao);
+		
+		Map<Long,List<MovimentoEstoqueCota>> movimentosReparteAgrupadosPorFornecedor = this.agrupaMovimentosEstoqueCotaPorFornecedor(movimentosEstoqueCotaOperacaoEnvioReparte);
+		
+		return movimentosReparteAgrupadosPorFornecedor;
+	}
 	
     /**
      * Obtém movimentos da conferência de encalhe
@@ -770,15 +850,15 @@ public class MovimentoFinanceiroCotaServiceImpl implements
     }
     
     /**
-     * Obtém movimentos de envio de reparte à cota x fornecedor que ainda não geraram financeiro
+     * Obtém movimentos de envio de reparte à cota x fornecedor que ainda não geraram financeiro com Chamada de Encalhe
      * @param idFornecedor
      * @param idCota
      * @param dataOperacao
      * @return List<MovimentoEstoqueCota>
      */
-    private List<MovimentoEstoqueCota> obterMovimentosEstoqueReparte(Long idFornecedor, Long idCota, Date dataOperacao){
+    private List<MovimentoEstoqueCota> obterMovimentosEstoqueReparteComChamadaEncalhe(Long idFornecedor, Long idCota, Date dataOperacao){
 
-		Map<Long,List<MovimentoEstoqueCota>> movimentosReparteAgrupadosPorFornecedor = this.obterMovimentosEstoqueReparte(idCota, dataOperacao);
+		Map<Long,List<MovimentoEstoqueCota>> movimentosReparteAgrupadosPorFornecedor = this.obterMovimentosEstoqueReparteComChamadaEncalhe(idCota, dataOperacao);
 		
 		return movimentosReparteAgrupadosPorFornecedor.get(idFornecedor);
 	}
@@ -978,7 +1058,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 				                                formaComercializacaoProduto);
 		
 		//ATUALIZA MOVIMENTOS PENDENTES DE GERAR FINANCEIRO APÓS GERAR MOVIMENTOS FINANCEIROS DE REPARTE 
-		movimentosEstoqueCotaOperacaoEnvioReparte = this.obterMovimentosEstoqueReparte(fornecedor.getId(), cota.getId(), dataOperacao);
+		movimentosEstoqueCotaOperacaoEnvioReparte = this.obterMovimentosEstoqueReparteComChamadaEncalhe(fornecedor.getId(), cota.getId(), dataOperacao);
 
 		BigDecimal valorTotalEnvioReparte;
 		BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe;
@@ -1086,7 +1166,25 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	}
 	
 	/**
-	 * Gera Movimentos Financeiros da Cota na Emissão da Nota de Envio
+	 * Gera Movimentos Financeiros das Cotas
+	 * @param cotas
+	 * @param dataOperacao
+	 * @param usuario
+	 */
+	@Transactional
+	@Override
+	public void gerarMovimentoFinanceiroCota(List<Cota> cotas,
+            								 Date dataOperacao, 
+            								 Usuario usuario){	
+		
+		for (Cota cota : cotas){
+		
+			this.gerarMovimentoFinanceiroCota(cota, dataOperacao, usuario);
+		}
+	}
+	
+	/**
+	 * Gera Movimentos Financeiros da Cota
 	 * @param cota
 	 * @param dataOperacao
 	 * @param usuario
@@ -1151,7 +1249,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		}
 		
 		//MOVIMENTOS DE ENVIO DE REPARTE À COTA QUE AINDA NÃO GERARAM FINANCEIRO AGUPADOS POR FORNECEDOR
-		Map<Long,List<MovimentoEstoqueCota>> movimentosReparteAgrupadosPorFornecedor = this.obterMovimentosEstoqueReparte(cota.getId(), dataOperacao);
+		Map<Long,List<MovimentoEstoqueCota>> movimentosReparteAgrupadosPorFornecedor = this.obterMovimentosEstoqueReparteComChamadaEncalhe(cota.getId(), dataOperacao);
 
 		//MOVIMENTOS ESTORNADOS QUE ENTRAM COMO CREDITO À COTA AGUPADOS POR FORNECEDOR
 		Map<Long,List<MovimentoEstoqueCota>> movimentosEstornoAgrupadosPorFornecedor = this.obterMovimentosEstoqueEstorno(cota.getId());

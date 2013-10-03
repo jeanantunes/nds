@@ -1837,12 +1837,13 @@ public class LancamentoRepositoryImpl extends
 		hql.append(" select lancamento ")
 		   .append(" from Lancamento lancamento ")
 		   .append(" where lancamento.dataRecolhimentoDistribuidor = :dataRecolhimentoDistribuidor ")
-		   .append(" and lancamento.status = :statusLancamentoBalanceamento ");
+		   .append(" and lancamento.status in (:statusLancamentoBalanceamento) ");
 
 		Query query = getSession().createQuery(hql.toString());
 
 		query.setParameter("dataRecolhimentoDistribuidor", dataRecolhimentoDistribuidor);
-		query.setParameter("statusLancamentoBalanceamento", StatusLancamento.BALANCEADO_RECOLHIMENTO);
+		query.setParameterList("statusLancamentoBalanceamento",
+						   	   Arrays.asList(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO, StatusLancamento.BALANCEADO_RECOLHIMENTO));
 		
 		return query.list();
 	}

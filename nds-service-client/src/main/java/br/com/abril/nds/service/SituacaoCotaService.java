@@ -1,6 +1,5 @@
 package br.com.abril.nds.service;
 
-import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO;
@@ -38,7 +37,7 @@ public interface SituacaoCotaService {
 	 * 
 	 * @param historicoSituacaoCota - histórico situação da cota 
 	 */
-	void atualizarSituacaoCota(HistoricoSituacaoCota historicoSituacaoCota, Date dataDeOperacao); 
+	void atualizarSituacaoCota(HistoricoSituacaoCota historicoSituacaoCota); 
 	
 	/**
 	 * Remove todos os agendamentos de alteração de status para esta cota.

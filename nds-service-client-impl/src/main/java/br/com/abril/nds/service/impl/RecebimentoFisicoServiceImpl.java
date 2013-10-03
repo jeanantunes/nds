@@ -2,7 +2,6 @@ package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.Date;
 import java.util.HashSet;
@@ -477,15 +476,12 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		
 		RecebimentoFisico recebimentoFisico = inserirRecebimentoFisico(usuarioLogado, notaFiscal, dataAtual);	
 		
-		BigDecimal valorDesconto = new BigDecimal(BigInteger.ZERO, new MathContext(18));
-		valorDesconto.setScale(4,RoundingMode.HALF_EVEN);
+		BigDecimal valorDesconto = BigDecimal.ZERO;
 		
 		for( RecebimentoFisicoDTO recebimentoFisicoDTO : listaItensNota ){
 			
 			ProdutoEdicao produtoEdicao = produtoEdicaoServiceImpl.buscarPorID(recebimentoFisicoDTO.getIdProdutoEdicao());
-			
-			BigDecimal desconto = new BigDecimal(BigInteger.ZERO, new MathContext(18));
-			desconto.setScale(4,RoundingMode.HALF_EVEN);
+			BigDecimal desconto = BigDecimal.ZERO;
 			
 			if(produtoEdicao.getOrigem().equals(Origem.MANUAL)) {
 				if(produtoEdicao != null && produtoEdicao.getDesconto() != null) {
@@ -511,12 +507,10 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 			inserirItemRecebimentoFisico(recebimentoFisicoDTO, itemNotaFiscal, recebimentoFisico);
 			
 			if(produtoEdicao.getPrecoVenda() != null && desconto != null) {
-				
-				BigDecimal qntFisico =  new BigDecimal(recebimentoFisicoDTO.getQtdFisico().toString());
-				
-				BigDecimal precoVendaDesconto = produtoEdicao.getPrecoVenda().multiply(desconto.divide(new BigDecimal("100")));
-				
-				valorDesconto = valorDesconto.add(produtoEdicao.getPrecoVenda().multiply(qntFisico).subtract(precoVendaDesconto.multiply(qntFisico)));
+				valorDesconto = valorDesconto.add(produtoEdicao.getPrecoVenda()
+													.subtract(produtoEdicao.getPrecoVenda()
+															.multiply(desconto.divide(new BigDecimal("100")))))
+																.multiply(new BigDecimal(recebimentoFisicoDTO.getQtdFisico().toString()));
 			}
 
 		}

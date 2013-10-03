@@ -583,10 +583,7 @@ public class ContaCorrenteCotaController extends BaseController {
 			emailService.enviar(assunto, mensagem, destinatarios, anexos);
 			throw new ValidacaoException(TipoMensagem.SUCCESS, "E-mail enviado com sucesso");
 		} catch (AutenticacaoEmailException e) {
-			throw new ValidacaoException(
-				TipoMensagem.ERROR, 
-					"[Falha de autenticação] Não foi possível enviar o e-mail, "
-						+ "verifique o servidor de e-mail e os dados de autenticação.");
+			throw new ValidacaoException(TipoMensagem.ERROR, "[E-mail inválido] Não foi possível enviar o e-mail. Utilize ';' para separar e-mails.");
 		}
 		
 	}

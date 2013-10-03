@@ -12,8 +12,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -28,7 +26,6 @@ import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.ems0127.processor.EMS0127MessageProcessor;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoBox;
@@ -68,9 +65,6 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE)
 public class FechamentoEncalheController extends BaseController {
 
-	
-	private static final Logger LOGGER = LoggerFactory.getLogger(FechamentoEncalheController.class);
-	
 	@Autowired
 	private Result result;
 	
@@ -340,9 +334,6 @@ public class FechamentoEncalheController extends BaseController {
 			}
 			
 		} catch (Exception e) {
-			
-			LOGGER.error("Erro ao tentar postergar!", e);
-			
 			this.result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.ERROR, "Erro ao tentar postergar!"), "result").recursive().serialize();
 			throw new ValidacaoException();
@@ -355,22 +346,18 @@ public class FechamentoEncalheController extends BaseController {
 	private void removerCotasAusentesLista(List<CotaAusenteEncalheDTO> listaCotasAusentes, List<Long> idsCotas) {
 		
 		ArrayList<CotaAusenteEncalheDTO> newRefListaCotasAusentes = new ArrayList<CotaAusenteEncalheDTO>(listaCotasAusentes);
-		
-		if(idsCotas != null) {
+		if(idsCotas != null){
 			
-			for(Long idCota : idsCotas) {
-				for(int i=0; i < listaCotasAusentes.size(); i++) {
+			for(Long idCota : idsCotas){
+				for(int i=0; i < newRefListaCotasAusentes.size(); i++){
 					CotaAusenteEncalheDTO dto = newRefListaCotasAusentes.get(i);
 					
-					if(dto != null && dto.getIdCota().equals(idCota)) {
-						newRefListaCotasAusentes.add(listaCotasAusentes.get(i));
+					if(dto != null && dto.getIdCota().equals(idCota)){
+						listaCotasAusentes.remove(i);
 					}
 				}
 			}
-			
-			listaCotasAusentes.removeAll(newRefListaCotasAusentes);
 		}
-		
 	}
 
 	@Path("/dataSugestaoPostergarCota")
