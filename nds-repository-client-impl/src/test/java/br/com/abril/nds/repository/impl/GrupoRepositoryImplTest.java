@@ -15,11 +15,11 @@ public class GrupoRepositoryImplTest extends AbstractRepositoryImplTest {
 	private GrupoRepositoryImpl grupoRepositoryImpl;
 	
 	@Test
-	public void testarObterTodosGrupos() {
+	public void obterGruposCota() {
 		
 		List<GrupoCota> todosGrupos;
 		
-		todosGrupos = grupoRepositoryImpl.obterTodosGrupos(new Date());
+		todosGrupos = grupoRepositoryImpl.obterGruposCota(new Date());
 		
 		Assert.assertNotNull(todosGrupos);		
 		

@@ -911,7 +911,7 @@ public class RecolhimentoServiceImpl implements RecolhimentoService {
 		Map<Long, List<Date>> mapCotasDiasRecolhimento = new HashMap<>();
 		
 		List<GrupoCota> gruposCota =
-			this.grupoRepository.obterTodosGrupos(periodoRecolhimento.getDe());
+			this.grupoRepository.obterGruposCota(periodoRecolhimento.getDe());
 		
 		for (GrupoCota grupoCota : gruposCota) {
 			

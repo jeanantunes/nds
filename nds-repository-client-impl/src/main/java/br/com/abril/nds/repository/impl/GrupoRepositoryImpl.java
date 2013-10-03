@@ -23,7 +23,7 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<GrupoCota> obterTodosGrupos(Date data) {
+	public List<GrupoCota> obterGruposCota(Date data) {
 		
 		Criteria criteria = super.getSession().createCriteria(GrupoCota.class);
 

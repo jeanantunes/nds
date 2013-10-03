@@ -13,11 +13,7 @@ import br.com.abril.nds.model.cadastro.GrupoCota;
  */
 public interface GrupoRepository extends Repository<GrupoCota,Long> {
 	
-	/**
-	 * Obtém todos os Grupos
-	 * @return List<GrupoCota> grupos
-	 */
-	List<GrupoCota> obterTodosGrupos(Date data) ;
+	List<GrupoCota> obterGruposCota(Date data) ;
 
 	Boolean existeGrupoCota(String nome, Long idGrupo);
 	
