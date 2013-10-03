@@ -138,10 +138,9 @@ public class ContaCorrenteCotaController extends BaseController {
 		}
 
 		List<ContaCorrenteCotaVO> listaItensContaCorrenteCota = 
-				consolidadoFinanceiroService.obterContaCorrente(filtroViewContaCorrenteCotaDTO);
+			consolidadoFinanceiroService.obterContaCorrente(filtroViewContaCorrenteCotaDTO);
 		
 		result.use(FlexiGridJson.class).from(listaItensContaCorrenteCota).page(page).total(total.intValue()).serialize();
-
 	}
 
 	/**

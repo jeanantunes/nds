@@ -678,7 +678,7 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hql.append(" 	    coalesce(movimentoCota.valoresAplicados.valorDesconto, 0) as desconto, ");
 		hql.append("		coalesce(movimentoCota.valoresAplicados.precoVenda, produtoEdicao.precoVenda, 0)  as precoVenda,    		");
 		hql.append(" 	    produtoEdicao.parcial as tipoRecolhimento, 		");
-		//hql.append(" 	    lancamentos.dataLancamentoDistribuidor as dataLancamento, ");
+		hql.append(" 	    lancamentos.dataLancamentoDistribuidor as dataLancamento, ");
 		hql.append("    	coalesce( movimentoCota.valoresAplicados.precoComDesconto, movimentoCota.valoresAplicados.precoVenda, 0 ) as precoComDesconto, ");	
 		
 		hql.append(" ( ");
@@ -730,14 +730,11 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		   .append(" join cota.pessoa pessoa 								")
 		   .append(" join chamadaEncalhe.produtoEdicao produtoEdicao 		")
 		   .append(" join produtoEdicao.produto produto 					")
-		   
-		   .append(" join produtoEdicao.movimentoEstoqueCotas movimentoCota         ")
-		   
-		   
 		   .append(" join produto.fornecedores fornecedores 				")
-		   // .append(" left join chamadaEncalhe.lancamentos lancamentos 			")
-		   //.append(" left join lancamentos.movimentoEstoqueCotas  movimentoCota 	")
-		   //.append(" left join lancamentos.periodoLancamentoParcial  periodoLancamentoParcial ")
+		   .append(" left join chamadaEncalhe.lancamentos lancamentos 			")
+		   .append(" left join lancamentos.movimentoEstoqueCotas  movimentoCota 	")
+		   .append(" left join movimentoCota.tipoMovimento tipoMovimento         ")
+		   .append(" left join lancamentos.periodoLancamentoParcial  periodoLancamentoParcial ")
 		   .append(" left join movimentoCota.cota cotaMov ")
 		   .append(" where cota.id=:idCota 									")
 		   .append(" and produtoEdicao.id = produtoEdicao.id  	")
