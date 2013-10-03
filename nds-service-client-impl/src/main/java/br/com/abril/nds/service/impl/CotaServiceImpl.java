@@ -247,12 +247,6 @@ public class CotaServiceImpl implements CotaService {
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
 	@Autowired
-	private ConsultaConsignadoCotaRepository consignadoCotaRepository;
-	
-	@Autowired
-	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
-	
-	@Autowired
 	private UsuarioService usuarioService; 
 	
 	@Transactional(readOnly = true)
@@ -2681,4 +2675,25 @@ public class CotaServiceImpl implements CotaService {
 			throw new ValidacaoException(TipoMensagem.WARNING, msgs);
 		}
 	}
+	
+    /**
+     * Obtem lista de Cotas dos numeros de cotas passados como parametro
+     * @param numerosCota
+     * @return List<Cota>
+     */
+    @Transactional(readOnly = true)
+    @Override
+    public List<Cota> obterCotasPorNumeros(List<Integer> numerosCota){
+    
+        List<Cota> cotas = new ArrayList<Cota>();
+    
+        for (Integer numeroCota : numerosCota){
+      
+            Cota cota = this.obterPorNumeroDaCota(numeroCota);
+      
+            cotas.add(cota);
+        }
+        
+        return cotas;
+  }
 }

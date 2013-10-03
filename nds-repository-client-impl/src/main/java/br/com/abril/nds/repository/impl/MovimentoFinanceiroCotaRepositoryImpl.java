@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ import br.com.abril.nds.dto.CotaFaturamentoDTO;
 import br.com.abril.nds.dto.CotaTransportadorDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroDTO;
+import br.com.abril.nds.dto.ProcessamentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
@@ -34,6 +36,8 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCota;
+import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
+import br.com.abril.nds.model.estoque.StatusEstoqueFinanceiro;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
@@ -1214,5 +1218,333 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		query.setParameter("numeroCota", numeroCota);
 		
 		return (BigDecimal) query.uniqueResult();
+	}
+	
+	/**
+	 * Obtem Quantidade de Informações para o processamento financeiro (Geração de MovimentoFinanceiroCota, Divida e Cobrança) das Cotas
+	 * @param numeroCota
+	 * @param data
+	 * @return Long
+	 */
+	@Override
+	public Long obterQuantidadeProcessamentoFinanceiroCota(Integer numeroCota, Date data){
+	    
+	    StringBuilder hql = new StringBuilder("select ");
+	    
+	    hql.append(" count(c) ")
+	
+	       .append(" from Cota c ")
+	       
+	       .append(" where c.tipoCota = :tipoCota ");
+	    
+	    if (numeroCota != null){
+	      
+	      hql.append(" and c.numeroCota = :numeroCota ");
+	    }
+	    
+	    Query query = this.getSession().createQuery(hql.toString());
+	
+	    if (numeroCota != null){
+	      
+	      query.setParameter("numeroCota", numeroCota);
+	    }
+	    
+	    query.setParameter("tipoCota", TipoCota.A_VISTA);
+	    
+	    return (Long) query.uniqueResult();
+	}
+	
+	/**
+	 * Obtem Informações para o processamento financeiro (Geração de MovimentoFinanceiroCota, Divida e Cobrança) das Cotas
+	 * @param numeroCota
+	 * @param data
+	 * @param sortorder
+	 * @param sortname
+	 * @param initialResult
+	 * @param maxResults
+	 * @return List<ProcessamentoFinanceiroCotaDTO>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ProcessamentoFinanceiroCotaDTO> obterProcessamentoFinanceiroCota(Integer numeroCota, 
+	                                                                           Date data, 
+	                                                                           String sortorder, 
+	                                                                           String sortname,
+	                                                                           int initialResult, 
+	                                                                           int maxResults){
+	    
+	    StringBuilder hql = new StringBuilder("select ");
+	    
+	    hql.append(" c.numeroCota as numeroCota, ")
+	    
+	
+	       .append(" case when (p.nome is not null) then ( p.nome )")
+	       
+	       .append("      when (p.razaoSocial is not null) then ( p.razaoSocial )")
+	       
+	       .append("      else null end as nomeCota, ")
+	
+	      
+	       .append(" coalesce((")
+	       
+	       .append("  select sum(mec.qtde * (case when mec.valoresAplicados is not null then case when mec.valoresAplicados.precoComDesconto is not null then mec.valoresAplicados.precoComDesconto else pe.precoVenda end else pe.precoVenda end)) ")
+	      
+	       .append("  from MovimentoEstoqueCota mec ")
+	
+	       .append("  join mec.produtoEdicao pe ")
+	       
+	       .append("  join mec.cota c1 ")
+	       
+	       .append("  join mec.tipoMovimento tipoMovimento ")
+	       
+	       .append("  join mec.lancamento lancamento ")
+	       
+	       .append("  where ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusEstoqueFinanceiro )) ")
+	       
+	       .append("  and tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoReparte) ")
+	    
+	       .append("  and mec.status = :statusAprovacao ")
+	    
+	       .append("  and c1.id = c.id ")
+	       
+	       .append("  and lancamento.dataLancamentoDistribuidor <= :data")
+	    
+	       .append("),0) as valorConsignado, ")
+	
+	       
+	       .append(" coalesce((")
+	       
+	       .append("  select sum(mec.qtde * (case when mec.valoresAplicados is not null then case when mec.valoresAplicados.precoComDesconto is not null then mec.valoresAplicados.precoComDesconto else pe.precoVenda end else pe.precoVenda end)) ")
+	      
+	       .append("  from MovimentoEstoqueCota mec ")
+	
+	       .append("  join mec.produtoEdicao pe ")
+	       
+	       .append("  join mec.cota c2 ")
+	       
+	       .append("  join mec.tipoMovimento tipoMovimento ")
+	       
+	       .append("  join mec.lancamento lancamento ")
+	       
+	       .append("  where ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusEstoqueFinanceiro )) ")
+	       
+	       .append("  and tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoEstorno) ")
+	    
+	       .append("  and mec.status = :statusAprovacao ")
+	    
+	       .append("  and c2.id = c.id ")
+	       
+	       .append("  and lancamento.dataLancamentoDistribuidor <= :data")
+	    
+	       .append("),0) as valorEstornado, ")
+	       
+	
+	       .append(" coalesce((")
+	       
+	       .append("  select sum(mfc.valor) ")
+	      
+	       .append("  from MovimentoFinanceiroCota mfc ")
+	       
+	       .append("  join mfc.cota c3 ")
+	       
+	       .append("  join mfc.tipoMovimento tm ")
+	    
+	       .append("  where mfc.data <= :data ")
+	       
+	       .append("  and tm.grupoMovimentoFinaceiro in (:gruposMovimentoFinanceiroCredito) ")
+	    
+	       .append("  and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ")
+	    
+	       .append("  and c3.id = c.id ")
+	       
+	       .append("),0) as creditos, ")
+	       
+	 
+	       .append(" coalesce((")
+	       
+	       .append("  select sum(mfc.valor) ")
+	      
+	       .append("  from MovimentoFinanceiroCota mfc ")
+	       
+	       .append("  join mfc.cota c4 ")
+	       
+	       .append("  join mfc.tipoMovimento tm ")
+	    
+	       .append("  where mfc.data <= :data ")
+	       
+	       .append("  and tm.grupoMovimentoFinaceiro in (:gruposMovimentoFinanceiroDebito) ")
+	       
+	       .append("  and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ")
+	       
+	       .append("  and c4.id = c.id ")
+	    
+	       .append("),0) as debitos, ")
+	
+	       
+	       .append(" (")
+	       
+	         .append(" (")
+	         
+	           .append(" coalesce(((")
+	           
+	           .append("  select sum(mec.qtde * (case when mec.valoresAplicados is not null then case when mec.valoresAplicados.precoComDesconto is not null then mec.valoresAplicados.precoComDesconto else pe.precoVenda end else pe.precoVenda end)) ")
+	          
+	           .append("  from MovimentoEstoqueCota mec ")
+	    
+	           .append("  join mec.produtoEdicao pe ")
+	           
+	           .append("  join mec.cota c1 ")
+	           
+	           .append("  join mec.tipoMovimento tipoMovimento ")
+	           
+	           .append("  join mec.lancamento lancamento ")
+	           
+	           .append("  where ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusEstoqueFinanceiro )) ")
+	           
+	           .append("  and tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoReparte) ")
+	        
+	           .append("  and mec.status = :statusAprovacao ")
+	        
+	           .append("  and c1.id = c.id ")
+	           
+	           .append("  and lancamento.dataLancamentoDistribuidor <= :data")
+	        
+	           .append(")*(-1)),0) + ")
+	    
+	           
+	           .append(" coalesce((")
+	           
+	           .append("  select sum(mec.qtde * (case when mec.valoresAplicados is not null then case when mec.valoresAplicados.precoComDesconto is not null then mec.valoresAplicados.precoComDesconto else pe.precoVenda end else pe.precoVenda end)) ")
+	          
+	           .append("  from MovimentoEstoqueCota mec ")
+	    
+	           .append("  join mec.produtoEdicao pe ")
+	           
+	           .append("  join mec.cota c2 ")
+	           
+	           .append("  join mec.tipoMovimento tipoMovimento ")
+	           
+	           .append("  join mec.lancamento lancamento ")
+	           
+	           .append("  where ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusEstoqueFinanceiro )) ")
+	           
+	           .append("  and tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoEstorno) ")
+	        
+	           .append("  and mec.status = :statusAprovacao ")
+	        
+	           .append("  and c2.id = c.id ")
+	           
+	           .append("  and lancamento.dataLancamentoDistribuidor <= :data")
+	        
+	           .append("),0) ")
+	           
+	         .append(" ) + ")
+	         
+	         .append(" (")
+	         
+	           .append(" coalesce(((")
+	           
+	           .append("  select sum(coalesce(mfc.valor,0)) ")
+	          
+	           .append("  from MovimentoFinanceiroCota mfc ")
+	           
+	           .append("  join mfc.cota c4 ")
+	           
+	           .append("  join mfc.tipoMovimento tm ")
+	        
+	           .append("  where mfc.data <= :data ")
+	           
+	           .append("  and tm.grupoMovimentoFinaceiro in (:gruposMovimentoFinanceiroDebito) ")
+	           
+	           .append("  and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ")
+	           
+	           .append("  and c4.id = c.id ")
+	        
+	           .append(")*(-1)),0) + ")
+	           
+	    
+	           .append(" coalesce((")
+	           
+	           .append("  select sum(coalesce(mfc.valor,0)) ")
+	          
+	           .append("  from MovimentoFinanceiroCota mfc ")
+	           
+	           .append("  join mfc.cota c3 ")
+	           
+	           .append("  join mfc.tipoMovimento tm ")
+	        
+	           .append("  where mfc.data <= :data ")
+	           
+	           .append("  and tm.grupoMovimentoFinaceiro in (:gruposMovimentoFinanceiroCredito) ")
+	           
+	           .append("  and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ")
+	        
+	           .append("  and c3.id = c.id ")
+	           
+	           .append("),0) ")
+	
+	        .append(") ")
+	        
+	      .append(")*(-1) as saldo ")
+	       
+	       
+	      .append(" from Cota c ")
+	       
+	      .append(" join c.pessoa p ")
+	       
+	      .append(" where c.tipoCota = :tipoCota ");
+	    
+	    if (numeroCota != null){
+	      
+	        hql.append(" and c.numeroCota = :numeroCota ");
+	    }
+	
+	    if (sortname != null){
+	      
+	        hql.append(" order by ").append(sortname);
+	      
+	        if (sortorder != null){
+	        
+	            hql.append(" ").append(sortorder);
+	        }
+	    }
+	    
+	    Query query = this.getSession().createQuery(hql.toString());
+	    
+	    query.setFirstResult(initialResult > 1?maxResults:0);
+	    
+	    query.setMaxResults(maxResults);
+	    
+	    if (numeroCota != null){
+	      
+	        query.setParameter("numeroCota", numeroCota);
+	    }
+	    
+	    query.setParameter("tipoCota", TipoCota.A_VISTA);
+	    
+	    query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
+	    
+	    query.setParameterList("gruposMovimentoReparte", Arrays.asList(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR, 
+	                                               				       GrupoMovimentoEstoque.COMPRA_ENCALHE, 
+	                                                                   GrupoMovimentoEstoque.RECEBIMENTO_REPARTE));
+	    
+	    query.setParameterList("gruposMovimentoEstorno", Arrays.asList(GrupoMovimentoEstoque.ESTORNO_COMPRA_ENCALHE, 
+	                                                                   GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR));
+	    
+	    query.setParameterList("gruposMovimentoFinanceiroCredito", Arrays.asList(GrupoMovimentoFinaceiro.CREDITO,
+	                                                                             GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO));
+	    
+	    query.setParameterList("gruposMovimentoFinanceiroDebito", Arrays.asList(GrupoMovimentoFinaceiro.DEBITO,
+	                                                                            GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO,
+	                                                                            GrupoMovimentoFinaceiro.COMPRA_NUMEROS_ATRAZADOS));
+	
+	    query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
+	    
+	    query.setParameter("data", data);
+	
+	    
+	    query.setResultTransformer(new AliasToBeanResultTransformer(ProcessamentoFinanceiroCotaDTO.class));
+	    
+        return query.list();
 	}
 }
