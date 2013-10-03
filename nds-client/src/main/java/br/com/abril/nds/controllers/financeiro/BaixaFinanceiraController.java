@@ -754,6 +754,32 @@ public class BaixaFinanceiraController extends BaseController {
 		BigDecimal valorSaldoConvertido = CurrencyUtil.converterValor(valorSaldo);
 		BigDecimal valorPagamentoConvertido = CurrencyUtil.converterValor(valorPagamento);
 		
+		this.validarBaixaManualDividas(tipoPagamento, idCobrancas, idBanco,valorMultaConvertido, 
+								  		valorJurosConvertido,valorDescontoConvertido, valorSaldoConvertido);
+		
+		PagamentoDividasDTO pagamento = new PagamentoDividasDTO();
+		pagamento.setValorDividas(valorDividasConvertido);
+		pagamento.setValorMulta(valorMultaConvertido);
+		pagamento.setValorJuros(valorJurosConvertido);
+		pagamento.setValorDesconto(valorDescontoConvertido);
+		pagamento.setValorSaldo(valorSaldoConvertido);
+		pagamento.setValorPagamento(valorPagamentoConvertido);
+		pagamento.setTipoPagamento(tipoPagamento);
+		pagamento.setObservacoes(observacoes);
+		pagamento.setDataPagamento(this.distribuidorService.obterDataOperacaoDistribuidor());
+		pagamento.setUsuario(getUsuarioLogado());
+		pagamento.setBanco(idBanco!=null?bancoService.obterBancoPorId(idBanco):null);
+		
+		this.cobrancaService.baixaManualDividas(pagamento, idCobrancas, manterPendente);
+
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Dividas baixadas com sucesso."), "result").recursive().serialize();
+	}
+
+	private void validarBaixaManualDividas(TipoCobranca tipoPagamento,
+			List<Long> idCobrancas, Long idBanco,
+			BigDecimal valorMultaConvertido, BigDecimal valorJurosConvertido,
+			BigDecimal valorDescontoConvertido, BigDecimal valorSaldoConvertido) {
+		
 		if (valorDescontoConvertido.compareTo(
 				valorDescontoConvertido.add(valorJurosConvertido).add(valorMultaConvertido)) == 1) {	
         	throw new ValidacaoException(TipoMensagem.WARNING,"O desconto não deve ser maior do que o valor a pagar.");
@@ -772,23 +798,29 @@ public class BaixaFinanceiraController extends BaseController {
 			    throw new ValidacaoException(TipoMensagem.WARNING,"É obrigatório a escolha de uma [Banco].");
 		    }
 		}
+	}
+	
+	@Post
+	@Path("validarBaixaManual")
+	@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO)
+	public void validarBaixaManual(
+								   String valorMulta, 
+								   String valorJuros,
+								   String valorDesconto,
+								   String valorSaldo,
+					               TipoCobranca tipoPagamento,
+					               List<Long> idCobrancas,
+					               Long idBanco){
 		
-		PagamentoDividasDTO pagamento = new PagamentoDividasDTO();
-		pagamento.setValorDividas(valorDividasConvertido);
-		pagamento.setValorMulta(valorMultaConvertido);
-		pagamento.setValorJuros(valorJurosConvertido);
-		pagamento.setValorDesconto(valorDescontoConvertido);
-		pagamento.setValorSaldo(valorSaldoConvertido);
-		pagamento.setValorPagamento(valorPagamentoConvertido);
-		pagamento.setTipoPagamento(tipoPagamento);
-		pagamento.setObservacoes(observacoes);
-		pagamento.setDataPagamento(this.distribuidorService.obterDataOperacaoDistribuidor());
-		pagamento.setUsuario(getUsuarioLogado());
-		pagamento.setBanco(idBanco!=null?bancoService.obterBancoPorId(idBanco):null);
+		BigDecimal valorMultaConvertido = CurrencyUtil.converterValor(valorMulta);
+	    BigDecimal valorJurosConvertido = CurrencyUtil.converterValor(valorJuros);
+		BigDecimal valorDescontoConvertido = CurrencyUtil.converterValor(valorDesconto);
+		BigDecimal valorSaldoConvertido = CurrencyUtil.converterValor(valorSaldo);
 		
-		this.cobrancaService.baixaManualDividas(pagamento, idCobrancas, manterPendente);
-
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Dividas baixadas com sucesso."), "result").recursive().serialize();
+		this.validarBaixaManualDividas(tipoPagamento, idCobrancas, idBanco,valorMultaConvertido, 
+		  		valorJurosConvertido,valorDescontoConvertido, valorSaldoConvertido);
+		
+		this.result.use(Results.json()).from("", "result").recursive().serialize();
 	}
 		
 	/**
