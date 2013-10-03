@@ -143,68 +143,16 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		return query.list();
 		
 	}
-
-	/**
-	 * Obtém movimentos de estoque da cota que ainda não geraram movimento financeiro
-	 * Considera movimentos de estoque provenientes dos fluxos de Expedição
-	 * @param idCota
-	 * @param dataControleConferencia
-	 * @return List<MovimentoEstoqueCota>
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiro(Long idCota, Date dataLancamento) {
-		
-        StringBuilder hql = new StringBuilder();
-		
-		hql.append(" select mec ")
-	  
-	       .append("  from MovimentoEstoqueCota mec ")
-
-		   .append("  join mec.produtoEdicao pe ")
-		   
-		   .append("  join mec.cota c1 ")
-		   
-		   .append("  join mec.tipoMovimento tipoMovimento ")
-		   
-		   .append("  join mec.lancamento lancamento ")
-		   
-		   .append("  where ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusEstoqueFinanceiro )) ")
-		   
-		   .append("  and tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoReparte) ")
-		
-		   .append("  and mec.status = :statusAprovacao ")
-		
-		   .append("  and c1.id = :idCota ")
-		   
-		   .append("  and lancamento.dataLancamentoDistribuidor <= :data");
-		
-        Query query = getSession().createQuery(hql.toString());
-		
-		query.setParameterList("gruposMovimentoReparte", Arrays.asList(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR, 
-				                                                       GrupoMovimentoEstoque.COMPRA_ENCALHE, 
-				                                                       GrupoMovimentoEstoque.RECEBIMENTO_REPARTE));
-		
-		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
-		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
-		query.setParameter("idCota", idCota);
-		query.setParameter("data", dataLancamento);
-		
-        query.setCacheable(true);
-		
-		return query.list();
-	}
 	
 	/**
 	 * Obtém movimentos de estoque da cota que ainda não geraram movimento financeiro
 	 * Considera movimentos de estoque provenientes dos fluxos de Expedição e Conferência de Encalhe
 	 * @param idCota
-	 * @param dataControleConferencia
 	 * @return List<MovimentoEstoqueCota>
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiroComChamadaEncalhe(Long idCota, Date dataControleConferencia) {
+	public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiro(Long idCota, Date dataControleConferencia) {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -1946,6 +1894,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			case QTDE_EXEMPLARES:
 				nome = " qtdeExms ";
 				break;
+			default:
+				nome = " codigoProduto ";				
 		}
 		
 		hql.append( " order by " + nome + sortOrder + " ");

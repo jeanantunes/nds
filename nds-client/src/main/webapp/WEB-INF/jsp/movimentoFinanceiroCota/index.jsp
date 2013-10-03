@@ -7,11 +7,8 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/data.holder.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.form.js"></script>
     <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.price_format.1.7.js"></script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaCota.js"></script>
 
 	<script type="text/javascript">
-	
-	    var pesquisaCota = new PesquisaCota(movimentoFinanceiroCotaController.workspace);
 	
 		$(function(){
 		
@@ -32,15 +29,21 @@
 
 	<div class="areaBts">
 	
-		<div class="area">
+		<div class="area" style="display:none">
 		
             <div id="botoesDividasPagas">
                 <span class="bt_novos">
-	             	<a onclick="movimentoFinanceiroCotaController.processarFinanceiroCota();"
+	             	<a onclick="movimentoFinanceiroCotaController.confirmarBaixa();"
 	             	   href="javascript:;" rel="tipsy" title="Confirmar">
 	             	   	<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
 	             	</a>
                 </span>
+             	<span class="bt_novos">
+	             	<a onclick="movimentoFinanceiroCotaController.cancelarBaixa();"
+	             	    href="javascript:;" rel="tipsy" title="Cancelar">
+	             	   	<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_bloquear.gif">
+	             	</a>
+            	</span>
             </div>
 
 		</div>
@@ -54,37 +57,37 @@
 		
 		<!-- BAIXA MANUAL -->
 		
-		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro" id="tableFiltroCota">
+		<table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro" id="tableBaixaManual">
             <tr>
 				<td width="20">Cota:</td>
                 
-                <td style="width: 108px; ">
+                <td>
 	                <input name="filtroNumCota" 
 	             	       id="filtroNumCota" 
 	             		   type="text"
 	             		   maxlength="11"
-	             		   style="width: 80px; 
+	             		   style="width:60px; 
 	             		   float:left; 
 	             		   margin-right:5px;"
-	             		   onchange="pesquisaCota.pesquisarPorNumeroCota('#filtroNumCota', '#descricaoCota');" />
+	             		   onchange="pesquisaCotaBaixaFinanceira.pesquisarPorNumeroCota('#filtroNumCota', '#descricaoCota');" />
 				</td>
 				
 				<td width="30">Nome:</td>
              	
-             	<td width="150" style="width: 348px; ">
+             	<td width="150">
 		        	<input name="descricaoCota" 
 		      		 	   id="descricaoCota" 
 		      		 	   type="text"
 		      		 	   class="nome_jornaleiro" 
 		      		 	   maxlength="255"
-		      		 	   style="width: 322px;"
-		      		 	   onkeyup="pesquisaCota.autoCompletarPorNome('#descricaoCota');" 
-		      		 	   onblur="pesquisaCota.pesquisarPorNomeCota('#filtroNumCota', '#descricaoCota');" />
+		      		 	   style="width:130px;"
+		      		 	   onkeyup="pesquisaCotaBaixaFinanceira.autoCompletarPorNome('#descricaoCota');" 
+		      		 	   onblur="pesquisaCotaBaixaFinanceira.pesquisarPorNomeCota('#filtroNumCota', '#descricaoCota');" />
 		        </td>
 				
 				<td width="30">
 				    <span class="bt_pesquisar">
-				        <a href="javascript:;" onclick="movimentoFinanceiroCotaController.buscarCotas();"></a>
+				        <a href="javascript:;" onclick="movimentoFinanceiroCotaController.buscaCota();"></a>
 				    </span>
 				</td>
 				
@@ -99,10 +102,10 @@
 	
 	<form name="formularioListaCotas" id="formularioListaCotas">
 
-	    <input type="hidden" id="totalDividasHidden" />
-	    
-	    <input type="hidden" id="totalDividasSelecionadasHidden" />
+
+	    <input type="hidden" id="saldoDividaHidden" />
 	 
+	
 		<fieldset class="classFieldset" id="extratoBaixaManual" >
 		
 	      	<legend>Cotas</legend>
@@ -113,9 +116,9 @@
 			    <p>Deseja confirmar processamento financeiro para a Cota ?</p>
 		    </div>
 			
-	      	<div  id="divCotas">
+	      	<div  id="cotasAVista">
 	      	
-		       <table class="gridCotas" id="tabelaCotas"></table>
+		       <table class="liberaDividaGrid" id="tabelaDividas"></table>
 		    
 		       <table width="100%" border="0" cellspacing="2" cellpadding="2">
 		            <tr>
@@ -146,7 +149,7 @@
 		                            Marcar Todos
 		                        </label>
 		                        
-		                        <input isEdicao="true" title="Selecionar todas as Dívidas" type="checkbox" id="selTodos" name="selTodos" onclick="movimentoFinanceiroCotaController.selecionarTodos(this.checked);" style="float:left;"/>
+		                        <input isEdicao="true" title="Selecionar todas as Dívidas" type="checkbox" id="selTodos" name="selTodos" onclick="baixaFinanceiraController.selecionarTodos(this.checked);" style="float:left;"/>
 		                    </span>
 
 		                </td>

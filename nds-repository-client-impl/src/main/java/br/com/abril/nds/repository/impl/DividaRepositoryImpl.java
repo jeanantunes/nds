@@ -241,7 +241,9 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		.append(" divida.data =:data ")
 		.append(" AND divida.acumulada =:acumulaDivida ")
-		.append(" AND cobranca.statusCobranca=:statusCobranca ");
+		.append(" AND cobranca.statusCobranca=:statusCobranca ")
+		.append(" AND pdv.caracteristicas.pontoPrincipal = true ");
+		
 		
 		if(filtro.getNumeroCota()!= null  ){
 			hql.append(" AND cota.numeroCota =:numeroCota ");

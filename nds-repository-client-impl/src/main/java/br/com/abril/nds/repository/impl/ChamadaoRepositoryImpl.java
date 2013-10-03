@@ -14,7 +14,9 @@ import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ChamadaoRepository;
-ao acesso a dados
+
+/**
+ * Classe de implementação referente ao acesso a dados
  * para as pesquisas de consignados do chamadão.
  * 
  * @author Discover Technology
@@ -366,12 +368,12 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		 * Alteração feita em conjunto com Eduardo Candido em 01/10/2013 
 		 * 
 		 * Não retornava todos os consignados da cota devido a inconsistências de base por lancamento.DATA_REC_PREVISTA e lancamento.STATUS
-		 * Passado a validar por critério MOVIMENTO_ESTOQUE_COTA.status_estoque_financeiro=1 (Movimento COBRADO=0 Não COBRADO=1)
+		 * Passado a validar por critério MOVIMENTO_ESTOQUE_COTA.status_estoque_financeiro=1 (Movimento COBRADO=1 Não COBRADO=0)
 		 *  
 		 * hql.append("      AND lancamento.STATUS IN (:statusLancamento) ");
 		 * hql.append("      AND lancamento.DATA_REC_PREVISTA >= :dataRecolhimento ");
 		 */
-		hql.append("      AND mec.status_estoque_financeiro = :statusEstoqueFinanceiro ");
+		hql.append("      AND mec.status_estoque_financeiro = 1 ");
 		
 		hql.append("      AND (estoqueProdCota.QTDE_RECEBIDA - estoqueProdCota.QTDE_DEVOLVIDA) > 0 ");
 		
@@ -380,7 +382,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		hql.append(" 	JOIN CHAMADA_ENCALHE chamadaEncalhe ON chamadaEncalheCota.CHAMADA_ENCALHE_ID = chamadaEncalhe.id ");
 		hql.append(" 	WHERE chamadaEncalheCota.COTA_ID = cota.ID ");
 		hql.append(" 	AND chamadaEncalhe.PRODUTO_EDICAO_ID = produtoEdicao.ID ");
-		hql.append(" 	AND chamadaEncalhe.TIPO_CHAMADA_ENCALHE in (:tipoChamadaEncalhe) ");
+		hql.append(" 	AND chamadaEncalhe.TIPO_CHAMADA_ENCALHE = :tipoChamadaEncalhe ");
 		hql.append(" 	AND chamadaEncalheCota.FECHADO = false ");
 		hql.append(" ) ");
 		
@@ -469,39 +471,31 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		
 		query.setParameter("grupoMovRecebimentoReparte", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name());
 		
-		List<String> tipoChamadaEncalhe = new ArrayList<>();
+		query.setParameter("tipoChamadaEncalhe", TipoChamadaEncalhe.CHAMADAO.name());
 		
-		tipoChamadaEncalhe.add(TipoChamadaEncalhe.CHAMADAO.name());
-		tipoChamadaEncalhe.add(TipoChamadaEncalhe.MATRIZ_RECOLHIMENTO.name());
-		
-		query.setParameterList("tipoChamadaEncalhe", tipoChamadaEncalhe);
-		
-		query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.ordinal());
-		
-		List<String> statusLancamento = new ArrayList<String>();
 		/*
 		 * Alteração feita em conjunto com Eduardo Candido em 01/10/2013 
 		 * 
 		 * Parametros comentados statusLancamento e dataRecolhimento
 		 * Não retornava todos os consignados da cota devido a inconsistências de base por lancamento.DATA_REC_PREVISTA e lancamento.STATUS
-		 * Passado a validar por critério MOVIMENTO_ESTOQUE_COTA.status_estoque_financeiro=1 (Movimento COBRADO=0 Não COBRADO=1)
+		 * Passado a validar por critério MOVIMENTO_ESTOQUE_COTA.status_estoque_financeiro=1 (Movimento COBRADO=1 Não COBRADO=0)
 		 * 
-		 */
+		/*List<String> statusLancamento = new ArrayList<>();
 		
 		statusLancamento.add(StatusLancamento.EXPEDIDO.name());
 		statusLancamento.add(StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO.name());
 		statusLancamento.add(StatusLancamento.BALANCEADO_RECOLHIMENTO.name());
 		
-		query.setParameterList("statusLancamento", statusLancamento);
+		query.setParameterList("statusLancamento", statusLancamento);*/
 		
 		if (filtro == null) {
 			
 			return;
 		}
-		
+		/*
 		if (filtro.getDataChamadao() != null) {
 			query.setParameter("dataRecolhimento", filtro.getDataChamadao());
-		}
+		}*/
 		
 		if (filtro.getNumeroCota() != null) {
 			query.setParameter("numeroCota", filtro.getNumeroCota());

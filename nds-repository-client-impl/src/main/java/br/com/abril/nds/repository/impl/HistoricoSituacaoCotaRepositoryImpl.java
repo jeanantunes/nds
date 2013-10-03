@@ -70,8 +70,6 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 		
 		String hql = this.criarQueryHistoricoStatusCota(filtro, totalizarResultados,filtrarUltimaDataHistorico);
 		
-		hql = this.adicionarOrdenacaoQueryHistoricoStatusCota(hql, filtro);
-		
 		Query query = super.getSession().createQuery(hql);
 		
 		this.configurarParametrosQueryHistoricoStatusCota(query, filtro);
@@ -162,7 +160,14 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 				
 				hql += useWhere ? " where " : " and ";
 				
-				hql += " hsc.dataInicioValidade = ( select max(hs.dataInicioValidade) from HistoricoSituacaoCota hs where hs.cota.numeroCota = hsc.cota.numeroCota )  ";
+				hql += " hsc.dataInicioValidade = ( " +
+					"select max(hs.dataInicioValidade) from HistoricoSituacaoCota hs " +
+					"where hs.cota.numeroCota = hsc.cota.numeroCota " +
+					")  " +
+					"and hsc.id = ( " +
+					"select max(_h.id) from HistoricoSituacaoCota _h join _h.cota _cota where _cota.numeroCota = hsc.cota.numeroCota " +
+					")"
+					;
 				
 				useWhere = false;
 			}
@@ -192,7 +197,7 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 					hql += "order by CASE WHEN p.class = 'J' THEN p.razaoSocial else p.nome END ";
 					break;
 				case DATA:
-					hql += "order by hsc.dataInicioValidade  ";
+					hql += "order by hsc.dataInicioValidade, hsc.id  ";
 					break;
 				case DESCRICAO:
 					hql += "order by hsc.descricao  ";
