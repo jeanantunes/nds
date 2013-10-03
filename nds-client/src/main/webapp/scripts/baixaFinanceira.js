@@ -430,8 +430,7 @@ var baixaFinanceiraController = $.extend(true, {
 				           text:"Confirmar", 
 				           click: function() {
 				        	   
-				        	   baixaFinanceiraController.popup_confirma_baixa_dividas();
-				        	   
+							   baixaFinanceiraController.validarDividasManual();  
 				           }
 			           },
 			           {
@@ -1113,7 +1112,7 @@ var baixaFinanceiraController = $.extend(true, {
     
     //EFETUA BAIXA MANUAL DE DIVIDAS SELECIONADAS E CALCULADAS
     baixaManualDividas : function(manterPendente) {
-
+ 
     	var  param = {valorDividas : $("#valorDividas", baixaFinanceiraController.workspace).html(),
     			valorMulta : $("#multaDividas", baixaFinanceiraController.workspace).val(),
     			valorJuros : $("#jurosDividas", baixaFinanceiraController.workspace).val(),
@@ -1141,6 +1140,39 @@ var baixaFinanceiraController = $.extend(true, {
 		        	   }
 			           
 					   baixaFinanceiraController.buscaManual();
+	               },
+	               null,
+	               true);
+	},
+	
+	validarDividasManual : function() {
+ 
+    	var  param = {	
+						valorMulta : $("#multaDividas", baixaFinanceiraController.workspace).val(),
+						valorJuros : $("#jurosDividas", baixaFinanceiraController.workspace).val(),
+						valorDesconto : $("#descontoDividas", baixaFinanceiraController.workspace).val(),
+						valorSaldo : $("#valorSaldoDividas", baixaFinanceiraController.workspace).html(),
+						tipoPagamento : $("#formaRecebimentoDividas", baixaFinanceiraController.workspace).val(),
+						idBanco : $("#bancoDividas", baixaFinanceiraController.workspace).val()};
+
+    	param = serializeArrayToPost('idCobrancas',baixaFinanceiraController.obterCobrancasDividasMarcadas(), param);
+		
+    	$.postJSON(contextPath + "/financeiro/baixa/validarBaixaManual",param,
+				   function(result) {
+					   
+			           if (result){
+						   
+						   var tipoMensagem = result.tipoMensagem;
+						   var listaMensagens = result.listaMensagens;
+						   
+						   if (tipoMensagem && listaMensagens) {
+						       exibirMensagem(tipoMensagem, listaMensagens);
+					       }
+						   else{
+								
+								baixaFinanceiraController.popup_confirma_baixa_dividas();
+						   }
+		        	   }
 	               },
 	               null,
 	               true);
@@ -1640,6 +1672,8 @@ var baixaFinanceiraController = $.extend(true, {
 				   function() { baixaFinanceiraController.buscaManual(); }
 		);
 	},
+	
+	
 
 },
 BaseController);

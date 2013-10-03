@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -413,7 +412,7 @@ public class ImpressaoBoletosController extends BaseController {
 	private List<DividaGeradaVO> getListaDividaGeradaVO(
 			List<GeraDividaDTO> listaGeraDividaDTO) {
 
-		List<DividaGeradaVO> listaDividasGeradasVO = new LinkedList<DividaGeradaVO>();
+		List<DividaGeradaVO> listaDividasGeradasVO = new ArrayList<DividaGeradaVO>();
 
 		DividaGeradaVO dividaGeradaVO = null;
 
