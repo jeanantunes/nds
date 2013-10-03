@@ -83,7 +83,8 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		
 		hql.append("from Produto produto "); 
 		if(codigoProduto.length() == 6){
-			hql.append(" where produto.codigoICD = :codigoProduto");			
+			hql.append(" where produto.codigoICD = :codigoProduto");
+			hql.append(" group by produto.codigoICD ");
 		}else{
 			hql.append(" where produto.codigo = :codigoProduto");
 		}

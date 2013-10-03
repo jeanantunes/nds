@@ -1377,31 +1377,31 @@ var regiaoController = $.extend(true, {
 	// FUNCTION - FILTRO POR CEP
 	filtroPorCep : function() {
 		$('.porCep').show();
-		$('.porSegmento').hide("drop", { direction: "left" }, "slow");
-		$('.gridfaixaCep').hide("drop", { direction: "left" }, "slow");
-		$('.gridNMaiores').hide("drop", { direction: "left" }, "slow");
-		$('.gridsegmentos').hide("drop", { direction: "left" }, "slow");
+		$('.porSegmento').hide();
+		$('.gridfaixaCep').hide();
+		$('.gridNMaiores').hide();
+		$('.gridsegmentos').hide();
 		
 	},
 	
 	// FUNCTION - FILTRO POR N-MAIORES
 	filtroPorNMaiores : function() {
-		$('.porCep').hide("drop", { direction: "left" }, "slow");
-		$('.porSegmento').hide("drop", { direction: "left" }, "slow");
-		$('.gridfaixaCep').hide("drop", { direction: "left" }, "slow");
+		$('.porCep').hide();
+		$('.porSegmento').hide();
+		$('.gridfaixaCep').hide();
 		$('.gridNMaiores').show();
-		$('.gridsegmentos').hide("drop", { direction: "left" }, "slow");
+		$('.gridsegmentos').hide();
 		
 		$("#qtdCotasRanking").val("");
 	},
 
 	// FUNCTION - FILTRO POR SEGMENTO
 	filtroPorSegmento : function() {
-		$('.porCep').hide("drop", { direction: "left" }, "slow");
+		$('.porCep').hide();
 		$('.porSegmento').show();
-		$('.gridfaixaCep').hide("drop", { direction: "left" }, "slow");
-		$('.gridNMaiores').hide("drop", { direction: "left" }, "slow");
-		$('.gridsegmentos').hide("drop", { direction: "left" }, "slow");
+		$('.gridfaixaCep').hide();
+		$('.gridNMaiores').hide();
+		$('.gridsegmentos').hide();
 	
 	},
 	
