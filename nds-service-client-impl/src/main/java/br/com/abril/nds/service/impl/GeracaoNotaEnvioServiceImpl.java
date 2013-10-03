@@ -646,50 +646,6 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			}
 		}
 	}
-	
-	/**
-	 * Gera Cobrança para a Cota
-	 * Considera Movimentos Financeiros da Cota ainda não Consolidados
-	 * @param cota
-	 * @param usuario
-	 * @throws Exception
-	 */
-	private void gerarCobrancaCota(Cota cota,
-			                       Usuario usuario,
-			                       Date dataEmissao){
-		
-		//GERA MOVIMENTOS FINANCEIROS PARA A COTA NA EMISSAO DA NOTA DE ENVIO
-		
-		gerarCobrancaService.cancelarDividaCobranca(null, cota.getId(), dataEmissao);
-		
-		this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(cota, 
-                														 dataEmissao, 
-                														 usuario);
-		
-		//GERA COBRANÇA PARA A COTA NA EMISSAO DA NOTA DE ENVIO
-		
-        Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
-		
-        try {
-			
-			this.gerarCobrancaService.gerarCobranca(cota.getId(), 
-												    usuario.getId(), 
-												    nossoNumeroEnvioEmail);
-			
-		} catch (GerarCobrancaValidacaoException e) {
-
-			throw new ValidacaoException(TipoMensagem.ERROR,"Erro ao gerar Cobranca para a [Cota: "+ cota.getNumeroCota() +"]: "+e.getMessage());
-		}
-        
-		try {
-			
-			this.gerarCobrancaService.enviarDocumentosCobrancaEmail(cota, nossoNumeroEnvioEmail);
-			
-		} catch (AutenticacaoEmailException e) {
-
-			e.printStackTrace();
-		}
-	}
 
 	/**
 	 * Gera Nota de envio da Cota
@@ -749,17 +705,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			notaEnvio = notaEnvioRepository.merge(notaEnvio);
 			
 			notasEnvio.add(notaEnvio);
-		}
-
-        TipoCota tipoCota = cota!=null?cota.getTipoCota():null;	
-	
-        //GERA MOVIMENTOS FINANCEIROS E COBRANÇA PARA COTA A VISTA
-		if ((tipoCota==null) || tipoCota.equals(TipoCota.A_VISTA)){
-
-			Usuario usuario = this.usuarioService.getUsuarioLogado();
-			
-		    this.gerarCobrancaCota(cota, usuario, dataEmissao);
-		}   
+		} 
 	}
 	
 	/*

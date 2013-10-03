@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import br.com.abril.nds.client.vo.ProcessamentoFinanceiroCotaVO;
 import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
@@ -87,7 +88,17 @@ public interface MovimentoFinanceiroCotaService {
 	Map<Long, List<MovimentoEstoqueCota>> agrupaMovimentosEstoqueCotaPorFornecedor(List<MovimentoEstoqueCota> movimentosEstoqueCota);
 
 	/**
-	 * Gera Movimentos Financeiros da Cota na Emissão da Nota de Envio
+	 * Gera Movimentos Financeiros das Cotas
+	 * @param cotas
+	 * @param dataOperacao
+	 * @param usuario
+	 */
+	void gerarMovimentoFinanceiroCota(List<Cota> cotas,
+			                          Date dataOperacao, 
+			                          Usuario usuario);
+	
+	/**
+	 * Gera Movimentos Financeiros da Cota
 	 * @param cota
 	 * @param dataOperacao
 	 * @param usuario
@@ -106,5 +117,30 @@ public interface MovimentoFinanceiroCotaService {
 									  Usuario usuario,
 									  Long idControleConferenciaEncalheCota,
 									  FormaComercializacao formaComercializacaoProduto);
+
+	/**
+	 * Obtem Quantidade de Informações para o processamento financeiro (Geração de MovimentoFinanceiroCota, Divida e Cobrança) das Cotas
+	 * @param numeroCota
+	 * @param data
+	 * @return int
+	 */
+	int obterQuantidadeProcessamentoFinanceiroCota(Integer numeroCota, Date data);
+	
+	/**
+	 * Obtem Informações para o processamento financeiro (Geração de MovimentoFinanceiroCota, Divida e Cobrança) das Cotas
+	 * @param numeroCota
+	 * @param data
+	 * @param sortorder
+	 * @param sortname
+	 * @param initialResult
+	 * @param maxResults
+	 * @return List<ProcessamentoFinanceiroCotaVO>
+	 */
+	List<ProcessamentoFinanceiroCotaVO> obterProcessamentoFinanceiroCota(Integer numeroCota, 
+																		 Date data, 
+																		 String sortorder, 
+																		 String sortname,
+																         int initialResult, 
+																         int maxResults);
 	
 }

@@ -94,7 +94,6 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDescontoProd
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaDistribuicao;
 import br.com.abril.nds.repository.BaseReferenciaCotaRepository;
 import br.com.abril.nds.repository.CobrancaRepository;
-import br.com.abril.nds.repository.ConsultaConsignadoCotaRepository;
 import br.com.abril.nds.repository.CotaGarantiaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
@@ -105,13 +104,11 @@ import br.com.abril.nds.repository.EntregadorRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaRepository;
 import br.com.abril.nds.repository.HistoricoNumeroCotaRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
-import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.PessoaFisicaRepository;
 import br.com.abril.nds.repository.PessoaJuridicaRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
-import br.com.abril.nds.repository.RankingRepository;
 import br.com.abril.nds.repository.ReferenciaCotaRepository;
 import br.com.abril.nds.repository.RotaRepository;
 import br.com.abril.nds.repository.SocioCotaRepository;
@@ -229,9 +226,6 @@ public class CotaServiceImpl implements CotaService {
 	private HistoricoTitularidadeService historicoTitularidadeService;
 	
 	@Autowired
-	private RankingRepository rankingRepository;
-	
-	@Autowired
 	private ParametrosDistribuidorService parametrosDistribuidorService;
 	
 	@Autowired
@@ -245,12 +239,6 @@ public class CotaServiceImpl implements CotaService {
 	
 	@Autowired
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
-	
-	@Autowired
-	private ConsultaConsignadoCotaRepository consignadoCotaRepository;
-	
-	@Autowired
-	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 	
 	@Autowired
 	private UsuarioService usuarioService; 
@@ -2680,5 +2668,26 @@ public class CotaServiceImpl implements CotaService {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, msgs);
 		}
+	}
+	
+	/**
+	 * Obtem lista de Cotas dos numeros de cotas passados como parametro
+	 * @param numerosCota
+	 * @return List<Cota>
+	 */
+	@Transactional(readOnly = true)
+	@Override
+    public List<Cota> obterCotasPorNumeros(List<Integer> numerosCota){
+		
+		List<Cota> cotas = new ArrayList<Cota>();
+		
+        for (Integer numeroCota : numerosCota){
+			
+			Cota cota = this.obterPorNumeroDaCota(numeroCota);
+			
+			cotas.add(cota);
+		}
+        
+        return cotas;
 	}
 }
