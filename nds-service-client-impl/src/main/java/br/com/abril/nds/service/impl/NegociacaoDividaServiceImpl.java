@@ -55,6 +55,7 @@ import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Negociacao;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -360,7 +361,20 @@ public class NegociacaoDividaServiceImpl implements NegociacaoDividaService {
 
 					consolidado.setEncalhe(BigDecimal.ZERO);
 					consolidado.setVendaEncalhe(BigDecimal.ZERO);
-					consolidado.setDebitoCredito(valorOriginalParcela);
+					
+					GrupoMovimentoFinaceiro grupoMovimentoFinaceiro =
+						((TipoMovimentoFinanceiro) parcelaNegociacao.getMovimentoFinanceiroCota()
+							.getTipoMovimento()).getGrupoMovimentoFinaceiro();
+					
+					if (OperacaoFinaceira.CREDITO.equals(grupoMovimentoFinaceiro.getOperacaoFinaceira())) {
+						
+						consolidado.setDebitoCredito(valorOriginalParcela.negate());
+						
+					} else {
+						
+						consolidado.setDebitoCredito(valorOriginalParcela);
+					}
+					
 					consolidado.setPendente(BigDecimal.ZERO);
 					consolidado.setEncargos(parcelaNegociacao.getEncargos());
 					

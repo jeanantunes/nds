@@ -44,6 +44,7 @@ import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Negociacao;
+import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
@@ -74,6 +75,7 @@ import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
+import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.ValidacaoVO;
@@ -264,7 +266,19 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					
 					movimentos.add(movimentoFinanceiroCota);
 
-					valorMovimentos = valorMovimentos.add(movimentoFinanceiroCota.getValor());
+					TipoMovimentoFinanceiro tipo = 
+						(TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento();
+					  
+					if (tipo.getOperacaoFinaceira().equals(OperacaoFinaceira.CREDITO)){
+					    
+					    valorMovimentos = valorMovimentos.add(
+					    	movimentoFinanceiroCota.getValor().negate());
+					    
+					} else {
+					    
+						valorMovimentos = valorMovimentos.add(
+							movimentoFinanceiroCota.getValor());
+					}
 					
 				} else {
 					
@@ -534,51 +548,68 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			}
 			
 			GrupoMovimentoFinaceiro tipoMovimentoFinanceiro =
-					((TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento()).getGrupoMovimentoFinaceiro();
+				((TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento())
+					.getGrupoMovimentoFinaceiro();
 
-			switch (tipoMovimentoFinanceiro){
+			switch (tipoMovimentoFinanceiro) {
+			
 				case CREDITO:
 				case COMPRA_NUMEROS_ATRAZADOS:
 				case DEBITO:
 				case DEBITO_SOBRE_FATURAMENTO:
 				case POSTERGADO_NEGOCIACAO:
 				case CREDITO_SOBRE_FATURAMENTO:
+				case LANCAMENTO_CAUCAO_LIQUIDA:
+				case RESGATE_CAUCAO_LIQUIDA:
 				case VENDA_TOTAL:
 					
 					vlMovFinanDebitoCredito = 
 						this.adicionarValor(vlMovFinanDebitoCredito, movimentoFinanceiroCota);
-				break;
+					
+					break;
+					
 				case COMPRA_ENCALHE_SUPLEMENTAR:
 					
 					vlMovFinanVendaEncalhe = 
 						this.adicionarValor(vlMovFinanVendaEncalhe, movimentoFinanceiroCota);
-				break;
+					
+					break;
+					
 				case RECEBIMENTO_REPARTE:
 					
 					vlMovConsignado = 
 						this.adicionarValor(vlMovConsignado, movimentoFinanceiroCota);
-				break;
+					
+					break;
+					
 				case JUROS:
 				case MULTA:
 					
 					vlMovFinanEncargos = 
 						this.adicionarValor(vlMovFinanEncargos, movimentoFinanceiroCota);
-				break;
+					
+					break;
+					
 				case ENVIO_ENCALHE:
 
 					vlMovFinanEncalhe = 
 						this.adicionarValor(vlMovFinanEncalhe, movimentoFinanceiroCota);
-				break;
+					
+					break;
+					
 				case POSTERGADO_DEBITO:
 				case POSTERGADO_CREDITO:
 					
 					vlMovPostergado = 
 							this.adicionarValor(vlMovPostergado, movimentoFinanceiroCota);
-				break;
+					
+					break;
+					
 				case PENDENTE:
 					vlMovPendente =
 						this.adicionarValor(vlMovPendente, movimentoFinanceiroCota);
-				break;
+					
+					break;
 			}
 		}
 		
@@ -1101,7 +1132,18 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			return BigDecimal.ZERO;
 		}
 		
-		return valor.add(movimentoFinanceiroCota.getValor());
+		GrupoMovimentoFinaceiro grupoMovimentoFinaceiro =
+			((TipoMovimentoFinanceiro) movimentoFinanceiroCota.getTipoMovimento())
+				.getGrupoMovimentoFinaceiro();
+		
+		if (OperacaoFinaceira.CREDITO.equals(grupoMovimentoFinaceiro.getOperacaoFinaceira())) {
+
+			return MathUtil.defaultRound(
+					valor.add(movimentoFinanceiroCota.getValor().negate()));
+		}
+
+		return MathUtil.defaultRound(
+			valor.add(movimentoFinanceiroCota.getValor()));
 	}
 	
 	@Override
