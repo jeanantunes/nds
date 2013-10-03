@@ -76,10 +76,10 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 		
 		autoComplete.limparCampoOnChange('#nomeCotaFiltroPrincipal', new Array('#numeroCotaFiltroPrincipal'));
 		
-		$('#codigoProduto').blur(function (){
+		/*$('#codigoProduto').blur(function (){
 			
 			autoComplete.pesquisarPorCodigo("/produto/pesquisarPorCodigoProdutoAutoComplete",'#codigoProduto','#nomeProduto');
-		});
+		});*/
 		
 		autoComplete.limparCampoOnChange('#nomeProduto', new Array('#codigoProduto'));
 		
@@ -114,7 +114,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 		autoComplete.limparCampoOnChange('#nomeProdutoPrincipal', new Array('#codigoProdutoPrincipal','#fornecedorPrincipal','#segmentoProdutoPrincipal'));
 		
 		//pesquisarPorCodigoProduto
-		$('#codigoProdutoPrincipal').blur(function (){
+		/*$('#codigoProdutoPrincipal').blur(function (){
 			
 			autoComplete.pesquisarPorCodigo("/distribuicao/excecaoSegmentoParciais/pesquisarPorCodigoProdutoAutoComplete",
 					'#codigoProdutoPrincipal','#nomeProdutoPrincipal',
@@ -135,7 +135,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 					}
 			);
 			
-		});
+		});*/
 		
 		autoComplete.limparCampoOnChange('#codigoProdutoPrincipal', new Array('#nomeProdutoPrincipal','#fornecedorPrincipal','#segmentoProdutoPrincipal'));
 		
@@ -1100,11 +1100,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 	// Produtos não Recebidos - Secundário
 	pesquisarProdutoNaoRecebidoPeloNomeOuCodigo : function pesquisarProduto(produto){
 			
-			$("#codigoProduto").val('');
-			$("#nomeProduto").val('');
-			$("#cotasQueNaoRecebemNumeroCota").val('');
-			$("#cotasQueNaoRecebemNomeCota").val('');
-			$("#comboClassificacaoProdNRec").val('');
+			$("#codigoProduto,#nomeProduto,#cotasQueNaoRecebemNumeroCota,#cotasQueNaoRecebemNomeCota,#comboClassificacaoProdNRec").val('');
 		
 			var util = excecaoSegmentoParciaisController.Util,
 			ProdutosNaoRecebidosGrid = excecaoSegmentoParciaisController.Grids.ProdutosNaoRecebidosGrid;

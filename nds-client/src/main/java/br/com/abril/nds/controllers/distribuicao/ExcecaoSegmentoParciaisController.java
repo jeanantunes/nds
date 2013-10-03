@@ -123,10 +123,10 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 		
 		validarEntradaFiltroCota(filtro);
 		
-		if(filtro.getProdutoDto().getCodigoProduto().length() == 6){
+		/*if(filtro.getProdutoDto().getCodigoProduto().length() == 6){
 			String codigoProduto = produtoService.obterCodigoProdinPorICD(filtro.getProdutoDto().getCodigoProduto());
 			filtro.getProdutoDto().setCodigoProduto(codigoProduto);
-		}
+		}*/
 		
 		filtro.getCotaDto().setNomePessoa(PessoaUtil.removerSufixoDeTipo(filtro.getCotaDto().getNomePessoa()));
 		
@@ -145,9 +145,11 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 
 		validarEntradaFiltroProduto(filtro);
 		
-		String codigoProduto = produtoService.obterCodigoProdinPorICD(filtro.getProdutoDto().getCodigoProduto());
+		/*String codigoProduto = produtoService.obterCodigoProdinPorICD(filtro.getProdutoDto().getCodigoProduto());
 		
-		filtro.getProdutoDto().setCodigoProduto(codigoProduto);
+		filtro.getProdutoDto().setCodigoProduto(codigoProduto);*/
+		
+		filtro.getProdutoDto().setCodigoProduto(filtro.getProdutoDto().getCodigoProduto());
 		
 		List<CotaQueRecebeExcecaoDTO> listaCotaQueRecebeExcecaoDto = this.excecaoSegmentoParciaisService.obterCotasQueRecebemExcecaoPorProduto(filtro);
 		

@@ -131,8 +131,11 @@ ExcecaoSegmentoParciaisRepository {
 	}
 	hql.append(" ) ");
 
-	if (filtro.getProdutoDto() != null) {		
-	    hql.append(" and produto.codigo = :codProduto ");
+	if (filtro.getProdutoDto() != null) {
+		if(filtro.getProdutoDto().getCodigoProduto().length()==6)
+			hql.append(" and produto.codigoICD = :codProduto ");
+		else if(filtro.getProdutoDto().getCodigoProduto().length()>6)
+			hql.append(" and produto.codigo = :codProduto ");
 	}
 	
 	if (filtro.getProdutoDto().getIdClassificacaoProduto() != null) {		
@@ -252,8 +255,14 @@ ExcecaoSegmentoParciaisRepository {
 	}
 
 	if (filtro.getProdutoDto().getCodigoProduto() != null && !filtro.getProdutoDto().getCodigoProduto().equals(0)) {
-	    hql.append(" and p.codigo = :codigoProduto");
+		
+		if(filtro.getProdutoDto().getCodigoProduto().length()==6){
+			hql.append(" and p.codigoICD = :codigoProduto");
+		}else if(filtro.getProdutoDto().getCodigoProduto().length()>6){
+			hql.append(" and p.codigo = :codigoProduto");
+		}
 	    parameters.put("codigoProduto", filtro.getProdutoDto().getCodigoProduto());
+	    
 	} else if (filtro.getProdutoDto().getNomeProduto() != null && !filtro.getProdutoDto().getNomeProduto().isEmpty()) {
 	    hql.append("and p.nome = :nomeProduto");
 	    parameters.put("nomeProduto", filtro.getProdutoDto().getNomeProduto());
