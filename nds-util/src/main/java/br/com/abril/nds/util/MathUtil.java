@@ -41,6 +41,19 @@ public abstract class MathUtil {
 	}
 	
 	/**
+	 * Efetua o arredondamento de um BigDecimal utilizando 
+	 * o padrão de precisão de casas decimais do sistema (ver PADRAO_PRECISAO_DECIMAL).
+	 * 
+	 * @param value - valor
+	 * 
+	 * @return BigDecimal arredondado
+	 */
+	public static BigDecimal defaultRound(BigDecimal value) {
+		
+		return round(value, PADRAO_PRECISAO_DECIMAL);
+	}
+	
+	/**
 	 * Efetua a divisão de um BigDecimal.
 	 * 
 	 * @param dividend - dividendo

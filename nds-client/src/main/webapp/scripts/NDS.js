@@ -218,7 +218,7 @@ function formatMoneyValue(value) {
     
     val = val.replace(",", ".");
     		
-    val = parseFloat(val);
+    val = parseFloat(val).toFixed(4);
             
     return val;
 }
