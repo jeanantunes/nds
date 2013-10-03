@@ -468,7 +468,9 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 				
 				utilizarOr = true;
 				
-				params.put("dataAtual", new Date());
+				Date dataAtual = filtro.getDataOperacaoDistribuidor();
+				
+				params.put("dataAtual", (dataAtual == null)?new Date():dataAtual);
 				params.put("statusDividaAberto", StatusDivida.EM_ABERTO.name());
 			}
 			
