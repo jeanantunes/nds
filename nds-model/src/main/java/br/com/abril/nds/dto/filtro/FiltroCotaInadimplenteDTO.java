@@ -37,6 +37,8 @@ public class FiltroCotaInadimplenteDTO implements Serializable{
 	@Export(label = "Dívidas Negociadas")
 	private Boolean situacaoNegociada;
 	
+	private Date dataOperacaoDistribuidor;
+	
 	
 	private PaginacaoVO paginacao;
 	
@@ -163,6 +165,16 @@ public class FiltroCotaInadimplenteDTO implements Serializable{
 		}
 		
 	}
+
+	public Date getDataOperacaoDistribuidor() {
+		return dataOperacaoDistribuidor;
+	}
+
+	public void setDataOperacaoDistribuidor(Date dataOperacaoDistribuidor) {
+		this.dataOperacaoDistribuidor = dataOperacaoDistribuidor;
+	}
+	
+	
 	
 	
 }
