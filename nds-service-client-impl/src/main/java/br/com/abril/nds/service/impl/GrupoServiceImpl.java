@@ -22,6 +22,7 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.GrupoCota;
 import br.com.abril.nds.model.cadastro.pdv.TipoCaracteristicaSegmentacaoPDV;
 import br.com.abril.nds.repository.CotaRepository;
+import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.GrupoRepository;
 import br.com.abril.nds.service.EnderecoService;
 import br.com.abril.nds.service.GrupoService;
@@ -38,6 +39,9 @@ public class GrupoServiceImpl implements GrupoService {
 	
 	@Autowired
 	private EnderecoService enderecoService;
+	
+	@Autowired
+	private DistribuidorRepository distribuidorRepository;
 	
 	@Override
 	@Transactional
@@ -154,11 +158,13 @@ public class GrupoServiceImpl implements GrupoService {
 		
 		GrupoCota grupo;
 				
-		if(idGrupo == null)
+		if(idGrupo == null) {
 			grupo = new GrupoCota();
-		else
+			grupo.setDataCadastro(this.distribuidorRepository.obterDataOperacaoDistribuidor());
+		} else {
 			grupo = grupoRepository.buscarPorId(idGrupo);
-			
+		}
+		
 		grupo.setId(idGrupo);
 		grupo.setNome(nome);
 		grupo.setDiasRecolhimento(new HashSet<DiaSemana>(diasSemana));
@@ -178,11 +184,13 @@ public class GrupoServiceImpl implements GrupoService {
 		
 		GrupoCota grupo;
 		
-		if(idGrupo == null)
+		if(idGrupo == null) {
 			grupo = new GrupoCota();
-		else
+			grupo.setDataCadastro(this.distribuidorRepository.obterDataOperacaoDistribuidor());
+		} else {
 			grupo = grupoRepository.buscarPorId(idGrupo);
-						
+		}
+		
 		grupo.setId(idGrupo);
 		grupo.setNome(nome);
 		grupo.setDiasRecolhimento(new HashSet<DiaSemana>(diasSemana));

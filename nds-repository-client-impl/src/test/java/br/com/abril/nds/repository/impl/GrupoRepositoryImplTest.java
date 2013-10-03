@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.junit.Assert;
@@ -18,7 +19,7 @@ public class GrupoRepositoryImplTest extends AbstractRepositoryImplTest {
 		
 		List<GrupoCota> todosGrupos;
 		
-		todosGrupos = grupoRepositoryImpl.obterTodosGrupos();
+		todosGrupos = grupoRepositoryImpl.obterTodosGrupos(new Date());
 		
 		Assert.assertNotNull(todosGrupos);		
 		

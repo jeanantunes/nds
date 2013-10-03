@@ -1,10 +1,12 @@
 package br.com.abril.nds.repository.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.cadastro.GrupoCota;
@@ -21,10 +23,12 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<GrupoCota> obterTodosGrupos() {
+	public List<GrupoCota> obterTodosGrupos(Date data) {
 		
 		Criteria criteria = super.getSession().createCriteria(GrupoCota.class);
 
+		criteria.add(Restrictions.lt("dataCadastro", data));
+		
 		return criteria.list();
 	}
 	
