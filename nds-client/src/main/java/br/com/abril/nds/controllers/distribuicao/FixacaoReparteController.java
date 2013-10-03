@@ -239,7 +239,6 @@ public class FixacaoReparteController extends BaseController {
 		Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigoProduto());
 		
 		for (FixacaoReparteDTO fix : resultadoPesquisa) {
-			fix.setClassificacaoProduto(produto.getTipoClassificacaoProduto().getDescricao());
 			fix.setCodigoProduto(produto.getCodigoICD());
 		}
 		

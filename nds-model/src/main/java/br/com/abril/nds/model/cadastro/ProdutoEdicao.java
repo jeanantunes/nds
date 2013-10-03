@@ -34,6 +34,7 @@ import javax.persistence.UniqueConstraint;
 
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
@@ -206,6 +207,13 @@ public class ProdutoEdicao implements Serializable {
     @OneToOne(fetch=FetchType.EAGER, optional=true)
 	@JoinColumn(name="TIPO_SEGMENTO_PRODUTO_ID")
 	private TipoSegmentoProduto tipoSegmentoProduto;
+
+    /**
+     * Classificação do Produto
+     */
+    @OneToOne(fetch=FetchType.EAGER, optional=true)
+    @JoinColumn(name="TIPO_CLASSIFICACAO_PRODUTO_ID")
+    private TipoClassificacaoProduto tipoClassificacaoProduto;
     
 	public ProdutoEdicao() {
 	}
@@ -635,6 +643,14 @@ public class ProdutoEdicao implements Serializable {
 		this.tipoSegmentoProduto = tipoSegmentoProduto;
 	}
 
+    public TipoClassificacaoProduto getTipoClassificacaoProduto() {
+        return tipoClassificacaoProduto;
+    }
+
+    public void setTipoClassificacaoProduto(TipoClassificacaoProduto tipoClassificacaoProduto) {
+        this.tipoClassificacaoProduto = tipoClassificacaoProduto;
+    }
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -671,5 +687,5 @@ public class ProdutoEdicao implements Serializable {
 	public String toString() {
 		return produto.toString() + "-" + numeroEdicao.toString();
 	}
-	
+
 }

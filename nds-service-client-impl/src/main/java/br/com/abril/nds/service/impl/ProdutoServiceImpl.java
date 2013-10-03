@@ -237,7 +237,8 @@ public class ProdutoServiceImpl implements ProdutoService {
 				produtoExistente.setSegmentacao(produto.getSegmentacao());
 				produtoExistente.setIsGeracaoAutomatica(produto.getIsGeracaoAutomatica());
 				produtoExistente.setTipoSegmentoProduto(produto.getTipoSegmentoProduto());
-				produtoExistente.setTipoClassificacaoProduto(produto.getTipoClassificacaoProduto());
+                //FIXME refazer... a classificação fica no ProdutoEdicao
+//				produtoExistente.setTipoClassificacaoProduto(produto.getTipoClassificacaoProduto());
 				
 				produtoExistente.setEditor(editor);
 				produtoExistente.addFornecedor(fornecedor);

@@ -84,8 +84,7 @@ public class ProdutoCadastroVO implements Serializable {
 			String formaFisica, 
 			Long idTipoSegmentoProduto, 
 			Origem origem, 
-			Boolean isGeracaoAutomatica,
-			Long idTipoClassifProduto) {
+			Boolean isGeracaoAutomatica) {
 		
 		this.id = id;
 		this.codigo = codigo;
@@ -150,8 +149,7 @@ public class ProdutoCadastroVO implements Serializable {
 			produto.getSegmentacao()!=null?(produto.getSegmentacao().getFormaFisica()!=null?produto.getSegmentacao().getFormaFisica().name():""):"",											
 			(produto.getTipoSegmentoProduto()!=null)?produto.getTipoSegmentoProduto().getId():null,
 			produto.getOrigem(),
-			produto.getIsGeracaoAutomatica(),
-			(produto.getTipoClassificacaoProduto()!=null)?produto.getTipoClassificacaoProduto().getId():null
+			produto.getIsGeracaoAutomatica()
 			);
 		
 		if(Origem.INTERFACE.equals(produto.getOrigem()) && produto.getDescontoLogistica()!= null){

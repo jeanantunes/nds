@@ -319,12 +319,10 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 		if (produto != null) {
 			PessoaJuridica juridica = fornecedorService.obterFornecedorUnico(produto.getCodigo()).getJuridica();
 			tipoSegmentoProduto = produto.getTipoSegmentoProduto();
-			idClassificacao = produto.getTipoClassificacaoProduto().getId();
-			
+
 			objects.add(produto);
 			objects.add(juridica);
 			objects.add(tipoSegmentoProduto);
-			objects.add(idClassificacao);
 		}else {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código \"" + codigoProduto + "\" não encontrado!");
 		}	
