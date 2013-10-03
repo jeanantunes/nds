@@ -138,10 +138,9 @@ public class ContaCorrenteCotaController extends BaseController {
 		}
 
 		List<ContaCorrenteCotaVO> listaItensContaCorrenteCota = 
-				consolidadoFinanceiroService.obterContaCorrente(filtroViewContaCorrenteCotaDTO);
+			consolidadoFinanceiroService.obterContaCorrente(filtroViewContaCorrenteCotaDTO);
 		
 		result.use(FlexiGridJson.class).from(listaItensContaCorrenteCota).page(page).total(total.intValue()).serialize();
-
 	}
 
 	/**
@@ -583,7 +582,10 @@ public class ContaCorrenteCotaController extends BaseController {
 			emailService.enviar(assunto, mensagem, destinatarios, anexos);
 			throw new ValidacaoException(TipoMensagem.SUCCESS, "E-mail enviado com sucesso");
 		} catch (AutenticacaoEmailException e) {
-			throw new ValidacaoException(TipoMensagem.ERROR, "[E-mail inválido] Não foi possível enviar o e-mail. Utilize ';' para separar e-mails.");
+			throw new ValidacaoException(
+				TipoMensagem.ERROR, 
+					"[Falha de autenticação] Não foi possível enviar o e-mail, "
+						+ "verifique o servidor de e-mail e os dados de autenticação.");
 		}
 		
 	}

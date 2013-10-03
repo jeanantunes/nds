@@ -390,7 +390,7 @@ function priceToFloat(field) {
 	field = replaceAll(field, ".", "");
 	field = replaceAll(field, ",", ".");
 	
-	return parseFloat(field).toFixed(2);
+	return parseFloat(field).toFixed(4);
 }
 
 function floatToPrice(field) {
@@ -398,7 +398,7 @@ function floatToPrice(field) {
 	var price = String(field);
 
 	if (price.indexOf(".") == -1) {
-		price = price + ".00";
+		price = price + ".0000";
 	}
 	
 	if(price.indexOf(",") > -1) {

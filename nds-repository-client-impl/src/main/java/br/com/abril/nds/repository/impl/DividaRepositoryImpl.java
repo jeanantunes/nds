@@ -241,7 +241,9 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		.append(" divida.data =:data ")
 		.append(" AND divida.acumulada =:acumulaDivida ")
-		.append(" AND cobranca.statusCobranca=:statusCobranca ");
+		.append(" AND cobranca.statusCobranca=:statusCobranca ")
+		.append(" AND pdv.caracteristicas.pontoPrincipal = true ");
+		
 		
 		if(filtro.getNumeroCota()!= null  ){
 			hql.append(" AND cota.numeroCota =:numeroCota ");
@@ -466,7 +468,9 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 				
 				utilizarOr = true;
 				
-				params.put("dataAtual", new Date());
+				Date dataAtual = filtro.getDataOperacaoDistribuidor();
+				
+				params.put("dataAtual", (dataAtual == null)?new Date():dataAtual);
 				params.put("statusDividaAberto", StatusDivida.EM_ABERTO.name());
 			}
 			

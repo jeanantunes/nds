@@ -41,16 +41,4 @@ public interface GerarCobrancaService {
 	void enviarDocumentosCobrancaEmail(Cota cota,
 									   Map<String, 
 									   Boolean> nossoNumeroEnvioEmail) throws AutenticacaoEmailException;
-
-	/**
-	 * Gera cobranças para Cotas específicas
-	 * @param cotas
-	 * @param idUsuario
-	 * @param enviaEmail
-	 * @throws GerarCobrancaValidacaoException
-	 */
-	void gerarCobranca(List<Cota> cotas, 
-			           Long idUsuario,
-			           boolean enviaEmail)
-			throws GerarCobrancaValidacaoException;
 }

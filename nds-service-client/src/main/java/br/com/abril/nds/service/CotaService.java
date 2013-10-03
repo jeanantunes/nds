@@ -377,11 +377,4 @@ public interface CotaService {
 	void verificarCotasSemRoteirizacao(Intervalo<Integer> intervaloCota,
 			Intervalo<Date> intervaloDataLancamento,
 			Intervalo<Date> intervaloDataRecolhimento);
-
-	/**
-	 * Obtem lista de Cotas dos numeros de cotas passados como parametro
-	 * @param numerosCota
-	 * @return List<Cota>
-	 */
-	List<Cota> obterCotasPorNumeros(List<Integer> numerosCota);
 }

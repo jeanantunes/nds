@@ -6,13 +6,7 @@ package br.com.abril.nds.model.estoque;
  * @created 15-out-2012 13:47:33
  */
 public enum StatusEstoqueFinanceiro {
-	/**
-	 * COBRADO = 0
-	 */
-	FINANCEIRO_PROCESSADO,
 	
-	/**
-	 * Não COBRADO=1
-	 */
+	FINANCEIRO_PROCESSADO,
 	FINANCEIRO_NAO_PROCESSADO
 }
