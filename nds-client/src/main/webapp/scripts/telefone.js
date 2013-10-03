@@ -122,7 +122,7 @@ function Telefone(paramTela,message) {
 
 			var lastIndex = data.rows[i].cell.length;
 
-			data.rows[i].cell[lastIndex - 1] = data.rows[i].cell[lastIndex - 1] == "true" ? '<img src="/nds-client/images/ico_check.gif" border="0px"/>'
+			data.rows[i].cell[lastIndex - 1] = data.rows[i].cell[lastIndex - 1] == "true" ? '<img src="'+ contextPath +'/images/ico_check.gif" border="0px"/>'
 					: '&nbsp;';
 
 			data.rows[i].cell[lastIndex] = _this.getActions(data.rows[i].id);
@@ -149,7 +149,7 @@ function Telefone(paramTela,message) {
 				+ idTelefone
 				+ ')" '
 				+ ' style="cursor:pointer;border:0px;margin:5px" rel="tipsy" title="'+ title +'">'
-				+ '<img src="/nds-client/images/ico_editar.gif" border="0px"/>'
+				+ '<img src="'+ contextPath +'/images/ico_editar.gif" border="0px"/>'
 				+ '</a>';
 
         if (!this.readonly) {
@@ -157,7 +157,7 @@ function Telefone(paramTela,message) {
                 + idTelefone
                 + ')" '
                 + ' style="cursor:pointer;border:0px;margin:5px" rel="tipsy" title="Excluir telefone">'
-                + '<img src="/nds-client/images/ico_excluir.gif" border="0px"/>'
+                + '<img src="'+ contextPath +'/images/ico_excluir.gif" border="0px"/>'
                 + '</a>';
         }
         return retorno;

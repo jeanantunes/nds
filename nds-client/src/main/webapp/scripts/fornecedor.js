@@ -482,7 +482,7 @@ var fornecedorController = $.extend(true,{
 					+ idTelefone
 					+ ')" '
 					+ ' style="cursor:pointer;border:0px;margin:5px" title="Editar telefone">'
-					+ '<img src="/nds-client/images/ico_editar.gif" border="0px"/>'
+					+ '<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>'
 					+ '</a>'
 					+ '<img src="'+contextPath+'/images/ico_excluir.gif" style="opacity:0.4" border="0px"/>';
 					
@@ -493,7 +493,7 @@ var fornecedorController = $.extend(true,{
 					+ idTelefone
 					+ ')" '
 					+ ' style="cursor:pointer;border:0px;margin:5px" title="Editar telefone">'
-					+ '<img src="/nds-client/images/ico_editar.gif" border="0px"/>'
+					+ '<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>'
 					+ '</a>'
 					+ '<a href="javascript:;" onclick="FORNECEDOR.removerTelefone('
 					+ idTelefone

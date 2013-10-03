@@ -330,13 +330,13 @@ var parametroCobrancaCotaController = $.extend(true, {
             var linkExcluir = '';
             if (!parametroCobrancaCotaController.isReadOnly()) {
                 linkExcluir = '<a href="javascript:;" onclick="parametroCobrancaCotaController.popup_excluir_unificacao(' + row.cell.idFormaCobranca + ');" style="cursor:pointer">' +
-                    '<img title="Excluir Forma Pagamento" src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0px" />' +
+                    '<img title="Excluir Forma Pagamento" src="'+ contextPath +'/images/ico_excluir.gif" hspace="5" border="0px" />' +
                     '</a>';
             }
             
             row.cell.parametroDistribuidor = row.cell.parametroDistribuidor ? 'Sim' : 'Não';
             
-            row.cell.principal = row.cell.principal ? '<img src="/nds-client/images/ico_check.gif" hspace="5" border="0px" title="Forma de cobrança principal">' : '';
+            row.cell.principal = row.cell.principal ? '<img src="'+ contextPath +'/images/ico_check.gif" hspace="5" border="0px" title="Forma de cobrança principal">' : '';
             
 			row.cell.acao = linkEditar + linkExcluir;
 		});
