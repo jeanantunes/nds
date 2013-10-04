@@ -1200,7 +1200,7 @@ var fechamentoEncalheController = $.extend(true, {
 	},
 	
 	analiticoEncalhe : function() {
-		$('#workspace').tabs('addTab', "Anal&iacute;tico Encalhe", "/nds-client/devolucao/fechamentoEncalhe/analitico");
+		$('#workspace').tabs('addTab', "Anal&iacute;tico Encalhe", contextPath + "/devolucao/fechamentoEncalhe/analitico");
 	},
 	
 	nextInputExemplares : function(curIndex,evt) {

@@ -9,6 +9,7 @@ import br.com.abril.nds.dto.CotaFaturamentoDTO;
 import br.com.abril.nds.dto.CotaTransportadorDTO;
 import br.com.abril.nds.dto.DebitoCreditoCotaDTO;
 import br.com.abril.nds.dto.MovimentoFinanceiroDTO;
+import br.com.abril.nds.dto.ProcessamentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioServicosEntregaDTO;
@@ -168,4 +169,29 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 
 	BigDecimal obterSomatorioTipoMovimentoPorConsolidado(Long idConsolidado,
 			Date dataCriacao, Integer numeroCota, Collection<TipoMovimentoFinanceiro> tiposMovimento);
+	  
+   /**
+    * Obtem Quantidade de Informações para o processamento financeiro (Geração de MovimentoFinanceiroCota, Divida e Cobrança) das Cotas
+    * @param numeroCota
+    * @param data
+    * @return Long
+    */
+    Long obterQuantidadeProcessamentoFinanceiroCota(Integer numeroCota, Date data);
+	
+   /**
+    * Obtem Informações para o processamento financeiro (Geração de MovimentoFinanceiroCota, Divida e Cobrança) das Cotas
+    * @param numeroCota
+    * @param data
+    * @param sortorder
+    * @param sortname
+    * @param initialResult
+    * @param maxResults
+    * @return List<ProcessamentoFinanceiroCotaDTO>
+    */
+    List<ProcessamentoFinanceiroCotaDTO> obterProcessamentoFinanceiroCota(Integer numeroCota, 
+	                                                                      Date data, 
+	                                                                      String sortorder, 
+	                                                                      String sortname,
+	                                                                      int initialResult, 
+	                                                                      int maxResults);
 }

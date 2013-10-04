@@ -381,7 +381,7 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 * @param dataControleConferencia
 	 * @return List<MovimentoEstoqueCota>
 	 */
-	public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiro(Long idCota, Date dataControleConferencia);
+    public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiroComChamadaEncalhe(Long idCota, Date dataControleConferencia);
 	
 	/**
 	 * Obtém movimentos de estoque da cota que forão estornados
@@ -456,4 +456,12 @@ public interface MovimentoEstoqueCotaRepository extends Repository<MovimentoEsto
 	 */
 	public void bulkInsert(final List<MovimentoEstoqueCotaDTO> movimentosEstoqueCota);
 	
+    /**
+     * Obtém movimentos de estoque da cota que ainda não geraram movimento financeiro
+	 * Considera movimentos de estoque provenientes dos fluxos de Expedição
+	 * @param idCota
+	 * @param dataControleConferencia
+	 * @return List<MovimentoEstoqueCota>
+	 */
+	public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiro(Long idCota, Date dataLancamento);
 }

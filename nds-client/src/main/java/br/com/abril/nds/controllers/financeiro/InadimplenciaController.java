@@ -143,6 +143,7 @@ public class InadimplenciaController extends BaseController {
 			filtroAtual.setSituacaoEmAberto(situacaoEmAberto);
 			filtroAtual.setSituacaoPaga(situacaoPaga);
 			filtroAtual.setSituacaoNegociada(situacaoNegociada);
+			filtroAtual.setDataOperacaoDistribuidor(distribuidorService.obterDataOperacaoDistribuidor());
 			
 			if(statusCota!= null && !statusCota.equals("none")) {
 				
