@@ -86,8 +86,13 @@ public class DividaServiceImpl implements DividaService {
 		List<StatusDividaDTO> dividas = dividaRepository.obterInadimplenciasCota(filtro);
 		
 		if(!dividas.isEmpty()){
+		
+			Date dataOperacao = filtro.getDataOperacaoDistribuidor();
 			
-			Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+			if(dataOperacao == null){
+				
+				dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+			}
 			
 			for(StatusDividaDTO item : dividas){
 				
