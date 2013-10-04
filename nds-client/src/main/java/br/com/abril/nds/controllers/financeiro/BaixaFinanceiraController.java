@@ -571,8 +571,7 @@ public class BaixaFinanceiraController extends BaseController {
 
 		//CONFIGURAR PAGINA DE PESQUISA
 		FiltroConsultaDividasCotaDTO filtroAtual = 
-				new FiltroConsultaDividasCotaDTO(
-						numCota, this.distribuidorService.obterDataOperacaoDistribuidor(),null);
+				new FiltroConsultaDividasCotaDTO(numCota);
 
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		filtroAtual.setSomenteBaixadas(false);
@@ -634,8 +633,7 @@ public class BaixaFinanceiraController extends BaseController {
 
 		//CONFIGURAR PAGINA DE PESQUISA
 		FiltroConsultaDividasCotaDTO filtroAtual = 
-				new FiltroConsultaDividasCotaDTO(
-						numCota, this.distribuidorService.obterDataOperacaoDistribuidor() ,null);
+				new FiltroConsultaDividasCotaDTO(numCota);
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		filtroAtual.setNossoNumero(nossoNumero);
 		filtroAtual.setSomenteBaixadas(true);
