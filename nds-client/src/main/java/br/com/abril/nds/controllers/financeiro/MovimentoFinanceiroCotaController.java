@@ -118,6 +118,6 @@ public class MovimentoFinanceiroCotaController extends BaseController{
 			e.printStackTrace();
 		}
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Dividas baixadas com sucesso."), "result").recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Financeiro processado com sucesso."), "result").recursive().serialize();
 	}
 }
