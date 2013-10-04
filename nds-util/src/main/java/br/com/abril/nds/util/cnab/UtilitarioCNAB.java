@@ -169,26 +169,29 @@ public class UtilitarioCNAB {
 	
 	public enum PadraoCNAB {
 		
-		CNAB240(TipoRegistroCNAB.TipoRegistroCNAB240, IndiceCNAB.IndiceCNAB240, "CNAB 240", 240, 5),
-		CNAB400(TipoRegistroCNAB.TipoRegistroCNAB400, IndiceCNAB.IndiceCNAB400, "CNAB 400", 400, 3);
+		CNAB240(TipoRegistroCNAB.TipoRegistroCNAB240, IndiceCNAB.IndiceCNAB240, "CNAB 240", 240, 5, "ddMMyyyy"),
+		CNAB400(TipoRegistroCNAB.TipoRegistroCNAB400, IndiceCNAB.IndiceCNAB400, "CNAB 400", 400, 3, "ddMMyy");
 		
 		private TipoRegistroCNAB tipoRegistroCNAB;
 		private IndiceCNAB indiceCNAB;
 		private String descricao;
 		private int size;
 		private int qtdMinimaLinhas;
+		private String formatoDataArquivoCNAB;
 		
 		PadraoCNAB(
 				TipoRegistroCNAB tipoRegistroCNAB,
 			    IndiceCNAB indiceCNAB,
 				String descricao, 
 				int size,
-				int qtdMinimaLinhas) {
+				int qtdMinimaLinhas, 
+				String formatoDataArquivoCNAB) {
 			
 			this.tipoRegistroCNAB = tipoRegistroCNAB;
 			this.indiceCNAB = indiceCNAB;
 			this.descricao = descricao;
 			this.size = size;
+			this.formatoDataArquivoCNAB = formatoDataArquivoCNAB;
 		}
 		
 		public int getSize(){
@@ -233,11 +236,13 @@ public class UtilitarioCNAB {
 			  return  tipoRegistroCNAB.getTrailer().equals(obterTipoRegistro(line));
 		}
 		
-		
 		public boolean possuiQuantidadeMinimaLinhas(int qtdLinhas){
 			return qtdLinhas >= qtdMinimaLinhas;
 		}
-		
+
+		public String getFormatoDataArquivoCNAB() {
+			return formatoDataArquivoCNAB;
+		}
 		
 	}
 	

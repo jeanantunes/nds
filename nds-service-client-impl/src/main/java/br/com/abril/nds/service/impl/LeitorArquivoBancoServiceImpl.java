@@ -164,7 +164,7 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 				pagamento = new PagamentoDTO();
 				
 				pagamento.setNumeroRegistro(this.parseLong(strNumeroRegistro));
-				pagamento.setDataPagamento(DateUtil.parseData(strDataPagamento,Constantes.FORMATO_DATA_ARQUIVO_CNAB));
+				pagamento.setDataPagamento(DateUtil.parseData(strDataPagamento, padraoCNAB.getFormatoDataArquivoCNAB()));
 				pagamento.setNossoNumero(strNossoNumero);
 				pagamento.setValorPagamento(valorPagamento);
 				

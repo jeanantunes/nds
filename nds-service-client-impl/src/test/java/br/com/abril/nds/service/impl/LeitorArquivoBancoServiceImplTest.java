@@ -24,7 +24,7 @@ public class LeitorArquivoBancoServiceImplTest {
 	private File obterFileCnab() {
 		
 		try {
-			File arquivoCnab = new File(this.getClass().getResource("/cnab_mock.dat").getPath());
+			File arquivoCnab = new File(this.getClass().getResource("/cnab.dat").getPath());
 			return arquivoCnab;
 		} catch (Exception e) {
 			throw new RuntimeException("Arquivo de registros não encontrado");
@@ -66,7 +66,7 @@ public class LeitorArquivoBancoServiceImplTest {
 			
 			if(mapQtd.containsKey(tipoSegmento)) {
 				Integer qtd = mapQtd.get(tipoSegmento);
-				mapQtd.put(tipoSegmento, qtd++);
+				mapQtd.put(tipoSegmento, ++qtd);
 			} else {
 				mapQtd.put(tipoSegmento, 1);
 			}
@@ -91,7 +91,7 @@ public class LeitorArquivoBancoServiceImplTest {
 			String tipoRegistro = obterTipoRegistroDeCNAB(line);
 			if(mapQtd.containsKey(tipoRegistro)) {
 				Integer qtd = mapQtd.get(tipoRegistro);
-				mapQtd.put(tipoRegistro, qtd++);
+				mapQtd.put(tipoRegistro, ++qtd);
 			} else {
 				mapQtd.put(tipoRegistro, 1);
 			}
@@ -109,9 +109,11 @@ public class LeitorArquivoBancoServiceImplTest {
 		
 		Map<String, Integer> mapaQtdTipoSegmento = obterQuantidadePorTipoDeSegmentoCNAB240(obterFileCnab());
 		
+		System.out.println("teste");
+		
 		LeitorArquivoBancoServiceImpl service = new LeitorArquivoBancoServiceImpl();
 		
-		ArquivoPagamentoBancoDTO arquivoPagamento = service.obterPagamentosBanco(obterFileCnab(), "cnab");
+		ArquivoPagamentoBancoDTO arquivoPagamento = service.obterPagamentosBanco(obterFileCnab(), "cnab.dat");
 		
 		Integer qtdDetalhesEncontrados =  mapaQtdTipoRegistro.get(TipoRegistroCNAB.TipoRegistroCNAB240.getDetalhe());
 		
