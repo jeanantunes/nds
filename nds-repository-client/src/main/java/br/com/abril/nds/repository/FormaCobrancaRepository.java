@@ -48,9 +48,10 @@ public interface FormaCobrancaRepository extends Repository<FormaCobranca,Long>{
 	 * @param idFornecedor
 	 * @param data
 	 * @param valor
+	 * @param principal
 	 * @return FormaCobranca
 	 */
-	FormaCobranca obterFormaCobranca(Long idFornecedor, Integer diaDoMes, Integer diaDaSemana, BigDecimal valor);
+	FormaCobranca obterFormaCobranca(Long idFornecedor, Integer diaDoMes, Integer diaDaSemana, BigDecimal valor, boolean principal);
 	
 	/**
 	 * Obtem FormaCobranca principal da Cota
