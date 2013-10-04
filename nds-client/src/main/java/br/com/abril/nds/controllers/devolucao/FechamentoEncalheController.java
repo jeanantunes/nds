@@ -125,16 +125,22 @@ public class FechamentoEncalheController extends BaseController {
 	public void pesquisar(String dataEncalhe, Long fornecedorId, Long boxId, Boolean aplicaRegraMudancaTipo,
 			String sortname, String sortorder, int rp, int page) {
 		
-		List<FechamentoFisicoLogicoDTO> listaEncalhe = 
-				consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, aplicaRegraMudancaTipo,sortname, sortorder, rp, page);
-
-		session.setAttribute("gridFechamentoEncalheDTO", listaEncalhe);
-		
 		int quantidade = this.quantidadeItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, aplicaRegraMudancaTipo);
 		
-		if (listaEncalhe.isEmpty()) {
-			this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.WARNING, "Não houve conferência de encalhe nesta data."), "mensagens").recursive().serialize();
+		if (quantidade == 0) {
+			
+			session.removeAttribute("gridFechamentoEncalheDTO");
+			this.result.use(Results.json()).from(
+				new ValidacaoVO(
+						TipoMensagem.WARNING, 
+						"Não houve conferência de encalhe nesta data."), "mensagens").recursive().serialize();
 		} else {
+			List<FechamentoFisicoLogicoDTO> listaEncalhe = 
+					consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, 
+							aplicaRegraMudancaTipo,sortname, sortorder, rp, page);
+
+			session.setAttribute("gridFechamentoEncalheDTO", listaEncalhe);
+			
 			this.result.use(FlexiGridJson.class).from(listaEncalhe).total(quantidade).page(page).serialize();
 		}
 	}
