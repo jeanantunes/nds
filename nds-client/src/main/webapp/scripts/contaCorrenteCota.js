@@ -246,7 +246,7 @@ var contaCorrenteCotaController = $.extend(true, {
 		}else{			
 			$.each(data.rows, function(index, value) {
 				
-				value.cell.precoCapa = formatMoneyValue(value.cell.precoCapa);
+				value.cell.precoCapa = formatMoneyValue(value.cell.precoCapa, 2);
 				value.cell.precoComDesconto = formatMoneyValue(value.cell.precoComDesconto);
 				value.cell.total = formatMoneyValue(value.cell.total);
 			});
@@ -503,7 +503,7 @@ var contaCorrenteCotaController = $.extend(true, {
 					value.cell.motivoTexto = "";
 				}
 				
-				value.cell.precoCapa = formatMoneyValue(value.cell.precoCapa);
+				value.cell.precoCapa = formatMoneyValue(value.cell.precoCapa, 2);
 				value.cell.precoComDesconto = formatMoneyValue(value.cell.precoComDesconto);
 				value.cell.total = formatMoneyValue(value.cell.total);
 			});
