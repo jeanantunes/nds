@@ -156,7 +156,7 @@ var consultaBoletosController = $.extend(true, {
 		        	 else
 		        	 {
 		        		 linkEmail = '<img border="0px" hspace="5" style="opacity:0.4; filter:alpha(opacity=40)"' +
-		        		 'title="Divida não tem suporte para Envio de Arquivo por E-Mail" '+ 
+		        		 'title="Cota não tem suporte para Envio de Arquivo por E-Mail" '+ 
 		        		 'src="' + contextPath + '/images/ico_email.png">';
 		        	 } 
 			         		 					 

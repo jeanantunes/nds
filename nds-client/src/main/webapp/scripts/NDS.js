@@ -206,11 +206,14 @@ function floatValue(value) {
     return val;
 }
 
-function formatMoneyValue(value) {
+function formatMoneyValue(value, precision) {
 	
 	var val = value;
         	
-    if (!val) return; 
+    if (!val) return;
+    
+    //alguns pontos estavam passando números, isso evita erros no replace
+    val = val + "";
     
     if(getLocale(value) == "PT-BR") {
         val = val.replace(".", "");
@@ -218,7 +221,7 @@ function formatMoneyValue(value) {
     
     val = val.replace(",", ".");
     		
-    val = parseFloat(val).toFixed(4);
+    val = parseFloat(val).toFixed(precision ? precision : 4);
             
     return val;
 }

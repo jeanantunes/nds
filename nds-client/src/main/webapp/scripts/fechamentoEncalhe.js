@@ -697,8 +697,6 @@ var fechamentoEncalheController = $.extend(true, {
 				if(!verificarPermissaoAcesso(fechamentoEncalheController.workspace))
 					return;
 				
-				fechamentoEncalheController.statusCobrancaCota = setInterval(fechamentoEncalheController.obterStatusCobrancaCota,5000);
-				
 				fechamentoEncalheController.veificarCobrancaGerada();
 				
 			},
@@ -947,7 +945,7 @@ var fechamentoEncalheController = $.extend(true, {
 	
 	veificarCobrancaGerada: function(){
 		
-		var cobrarTodas  = $("#checkTodasCotas").attr("checked") == "checked";
+		var cobrarTodas  = $("#checkTodasCotas", fechamentoEncalheController.workspace).attr("checked") == "checked";
 
 		var idsCotas = fechamentoEncalheController.obterCotasMarcadas();
 
@@ -971,10 +969,8 @@ var fechamentoEncalheController = $.extend(true, {
 						buttons : {
 							"Confirmar" : function() {
 								
-								fechamentoEncalheController.statusCobrancaCota = setInterval(fechamentoEncalheController.obterStatusCobrancaCota,5000);
-								
-								$("#dialog-confirmar-regerar-cobranca", fechamentoEncalheController.workspace).dialog("close");
 								fechamentoEncalheController.cobrarCotas();
+								$("#dialog-confirmar-regerar-cobranca", fechamentoEncalheController.workspace).dialog("close");
 							},
 							"Cancelar" : function(){
 							
@@ -985,8 +981,6 @@ var fechamentoEncalheController = $.extend(true, {
 					});
 					
 				} else {
-					
-					fechamentoEncalheController.statusCobrancaCota = setInterval(fechamentoEncalheController.obterStatusCobrancaCota,5000);
 					
 					fechamentoEncalheController.cobrarCotas();
 				}
@@ -1003,38 +997,42 @@ var fechamentoEncalheController = $.extend(true, {
 		var idsCotas = fechamentoEncalheController.arrayCotasAusentesSession;
 
 		$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/cobrarCotas",
-					{ 
-						'dataOperacao' : dataOperacao, 
-						'idsCotas' : idsCotas,
-						'cobrarTodasCotas': cobrarTodas
-					},
-					function (result) {
-						
-						var tipoMensagem = result.tipoMensagem;
-						var listaMensagens = result.listaMensagens;
-						
-						if (tipoMensagem && listaMensagens) {
-							exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemEncerrarEncalhe');
-						}
+			{ 
+				'dataOperacao' : dataOperacao, 
+				'idsCotas' : idsCotas,
+				'cobrarTodasCotas': cobrarTodas
+			},
+			function (result) {
+				
+				var tipoMensagem = result.tipoMensagem;
+				var listaMensagens = result.listaMensagens;
+				
+				if (tipoMensagem && listaMensagens) {
+					exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemEncerrarEncalhe');
+				}
 
-						$(".cotasGrid", fechamentoEncalheController.workspace).dialog("close");
-						
-						fechamentoEncalheController.arrayCotasAusentesSession.length=[];
-						
-						fechamentoEncalheController.checkMarcarTodosCotasAusentes = false;
-						
-						fechamentoEncalheController.popup_encerrarEncalhe(false);
-						
-						if (fechamentoEncalheController.isFechamento) {
+				$(".cotasGrid", fechamentoEncalheController.workspace).dialog("close");
+				
+				fechamentoEncalheController.arrayCotasAusentesSession.length=[];
+				
+				fechamentoEncalheController.checkMarcarTodosCotasAusentes = false;
+				
+				fechamentoEncalheController.popup_encerrarEncalhe(false);
+				
+				if (fechamentoEncalheController.isFechamento) {
 
-				        	fechamentoEncalheController.isFechamento = false;
-				        	
-				        	//fechamentoEncalheController.verificarEncerrarOperacaoEncalhe();
-				        }
-					},
-				  	null,
-				   	true
-			);
+		        	fechamentoEncalheController.isFechamento = false;
+		        	
+		        	//fechamentoEncalheController.verificarEncerrarOperacaoEncalhe();
+		        }
+			},
+		  	null,
+		   	true
+		);
+		fechamentoEncalheController.statusCobrancaCota = setInterval(
+			fechamentoEncalheController.obterStatusCobrancaCota,
+			5000
+		);
 	},
 
 	gerarArquivoCotasAusentes : function(fileType) {
