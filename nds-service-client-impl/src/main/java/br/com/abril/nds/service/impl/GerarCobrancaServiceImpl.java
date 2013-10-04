@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -183,6 +184,47 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		this.geradorArquivoCobrancaBancoService.prepararGerarArquivoCobrancaCnab();
 	}
 
+	/**
+	 * Gera cobranças para Cotas específicas
+	 * @param cotas
+	 * @param idUsuario
+	 * @param enviaEmail
+	 * @throws GerarCobrancaValidacaoException
+	 */
+	@Override
+	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
+	public void gerarCobranca(List<Cota> cotas, 
+	                          Long idUsuario,
+	                          boolean enviaEmail)
+	    throws GerarCobrancaValidacaoException {
+	    
+	    for (Cota cota : cotas){
+	
+	        try {
+	        
+	            Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
+	        
+	            this.gerarCobrancaCota(cota.getId(), idUsuario, nossoNumeroEnvioEmail);
+	        
+	            if (enviaEmail){
+	        
+	                try {
+	            
+	                    this.enviarDocumentosCobrancaEmail(cota, nossoNumeroEnvioEmail);
+	            
+	                } catch (AutenticacaoEmailException e) {
+	  
+	                    e.printStackTrace();
+	                }
+	            }
+	        
+	        } catch (GerarCobrancaValidacaoException e) {
+	
+	            throw new ValidacaoException(TipoMensagem.ERROR,"Erro ao gerar Cobranca para a [Cota: "+ cota.getNumeroCota() +"]: "+e.getMessage());
+	        }
+	    }
+	}
+	
 	private void gerarCobrancaCota(Long idCota, Long idUsuario, Map<String, Boolean> setNossoNumero) 
 			throws GerarCobrancaValidacaoException {
 
@@ -1139,15 +1181,15 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		if (OperacaoFinaceira.CREDITO.equals(grupoMovimentoFinaceiro.getOperacaoFinaceira())) {
 
 			return MathUtil.defaultRound(
-					valor.add(movimentoFinanceiroCota.getValor().negate()));
+					valor.add(movimentoFinanceiroCota.getValor()));
 		}
 
 		return MathUtil.defaultRound(
-			valor.add(movimentoFinanceiroCota.getValor()));
+			valor.add(movimentoFinanceiroCota.getValor().negate()));
 	}
 	
 	@Override
-	@Transactional
+	@Transactional(noRollbackFor = AutenticacaoEmailException.class)
 	public void enviarDocumentosCobrancaEmail(String nossoNumero, String email) throws AutenticacaoEmailException{
 			
 		byte[] anexo = this.documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);

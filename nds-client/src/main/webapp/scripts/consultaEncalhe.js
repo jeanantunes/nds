@@ -248,7 +248,7 @@ var ConsultaEncalhe = $.extend(true, {
 			var colModel = [ {
 				display : 'Código',
 				name : 'codigoProduto',
-				width : 40,
+				width : 50,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -308,7 +308,7 @@ var ConsultaEncalhe = $.extend(true, {
 			}, {
 				display : 'Recolhimento',
 				name : 'recolhimento',
-				width : 80,
+				width : 70,
 				sortable : false,
 				align : 'center'
 			}, {

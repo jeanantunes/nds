@@ -28,7 +28,6 @@ import br.com.abril.nds.dto.filtro.FiltroFechamentoEncalheDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.integracao.ems0127.processor.EMS0127MessageProcessor;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoBox;
@@ -326,7 +325,7 @@ public class FechamentoEncalheController extends BaseController {
 				if(listaCotasAusentes != null){
 					
 					//idsCotas a serem retirados da lista 
-					removerCotasAusentesLista(listaCotasAusentes, idsCotas);
+					//removerCotasAusentesLista(listaCotasAusentes, idsCotas);
 					
 					this.fechamentoEncalheService.postergarTodasCotas(dataEncalhe, dataPostergacao, listaCotasAusentes);
 				}
@@ -352,26 +351,26 @@ public class FechamentoEncalheController extends BaseController {
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Cotas postergadas com sucesso!"), "result").recursive().serialize();
 	}
 		
-	private void removerCotasAusentesLista(List<CotaAusenteEncalheDTO> listaCotasAusentes, List<Long> idsCotas) {
-		
-		ArrayList<CotaAusenteEncalheDTO> newRefListaCotasAusentes = new ArrayList<CotaAusenteEncalheDTO>(listaCotasAusentes);
-		
-		if(idsCotas != null) {
-			
-			for(Long idCota : idsCotas) {
-				for(int i=0; i < listaCotasAusentes.size(); i++) {
-					CotaAusenteEncalheDTO dto = newRefListaCotasAusentes.get(i);
-					
-					if(dto != null && dto.getIdCota().equals(idCota)) {
-						newRefListaCotasAusentes.add(listaCotasAusentes.get(i));
-					}
-				}
-			}
-			
-			listaCotasAusentes.removeAll(newRefListaCotasAusentes);
-		}
-		
-	}
+//	private void removerCotasAusentesLista(List<CotaAusenteEncalheDTO> listaCotasAusentes, List<Long> idsCotas) {
+//		
+//		ArrayList<CotaAusenteEncalheDTO> newRefListaCotasAusentes = new ArrayList<CotaAusenteEncalheDTO>(listaCotasAusentes);
+//		
+//		if(idsCotas != null) {
+//			
+//			for(Long idCota : idsCotas) {
+//				for(int i=0; i < listaCotasAusentes.size(); i++) {
+//					CotaAusenteEncalheDTO dto = newRefListaCotasAusentes.get(i);
+//					
+//					if(dto != null && dto.getIdCota().equals(idCota)) {
+//						newRefListaCotasAusentes.add(listaCotasAusentes.get(i));
+//					}
+//				}
+//			}
+//			
+//			listaCotasAusentes.removeAll(newRefListaCotasAusentes);
+//		}
+//		
+//	}
 
 	@Path("/dataSugestaoPostergarCota")
 	public void carregarDataSugestaoPostergarCota(String dataEncalhe) throws ParseException {
@@ -427,7 +426,7 @@ public class FechamentoEncalheController extends BaseController {
 			if (cobrarTodasCotas) {
 				
 				//idsCotas a serem retirados da lista
-				removerCotasAusentesLista(listaCotaAusenteEncalhe, idsCotas);
+				//removerCotasAusentesLista(listaCotaAusenteEncalhe, idsCotas);
 				
 				this.realizarCobrancaTodasCotas(dataOperacao, listaCotaAusenteEncalhe);				
 			
@@ -518,17 +517,16 @@ public class FechamentoEncalheController extends BaseController {
 			
 			} catch (Exception e) {
 				
-				this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "FINALIZADO");
-				
 				throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
+			} finally {
+				
+				this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "FINALIZADO");
 			}
-		}		
-
-		this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "FINALIZADO");
+		}
 		
 		if (validacaoVO.getListaMensagens() != null && !validacaoVO.getListaMensagens().isEmpty()){
 			
-			throw new GerarCobrancaValidacaoException(validacaoVO);
+			throw new ValidacaoException(validacaoVO);
 		}
 	}
 	
@@ -536,7 +534,7 @@ public class FechamentoEncalheController extends BaseController {
 		
 		String status = (String) this.session.getAttribute(STATUS_COBRANCA_COTA_SESSION);
 		
-		result.use(Results.json()).withoutRoot().from(status==null?"Processando Expedições..." : status).recursive().serialize();
+		result.use(Results.json()).withoutRoot().from(status==null?"Processando cotas..." : status).recursive().serialize();
 	}
 
 	private Collection<? extends Long> getIdsCotasAusentesComDivida(List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe) {
