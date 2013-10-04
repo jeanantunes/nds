@@ -191,7 +191,7 @@ var contaCorrenteCotaController = $.extend(true, {
 										  ',\''+value.cell.nomeBox+'\');"/>' + (formatMoneyValue(value.cell.vendaEncalhe * -1)) + '</a>' : '0.0000';
 				
 				value.cell.debitoCredito = (value.cell.debitoCredito != null && value.cell.debitoCredito != 0)?'<a href="javascript:;" onclick="contaCorrenteCotaController.popup_debitoCredito('+
-										   [value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\',\'' + value.cell.debitoCredito +'\');"/>' +
+										   [value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\',\'' + value.cell.debitoCredito * -1 +'\');"/>' +
 											(formatMoneyValue(value.cell.debitoCredito * -1)) +'</a>' : '0.0000';
 
 				value.cell.encargos = (value.cell.encargos != null && value.cell.encargos != 0)?'<a href="javascript:;" onclick="contaCorrenteCotaController.popup_encargos('+
