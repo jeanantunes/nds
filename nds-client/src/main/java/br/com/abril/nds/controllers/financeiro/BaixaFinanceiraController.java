@@ -661,13 +661,19 @@ public class BaixaFinanceiraController extends BaseController {
 
     	//TRATAMENTO DE DIVIDAS SELECIONADAS
 		DataHolder dataHolder = (DataHolder) this.httpSession.getAttribute(DataHolder.SESSION_ATTRIBUTE_NAME);
-		if (dataHolder != null) {
-		    for (CobrancaVO itemCobrancaVO:cobrancasVO){
+	    for (CobrancaVO itemCobrancaVO:cobrancasVO){
+
+	    	if (dataHolder != null) {
+
 		    	String dividaMarcada = dataHolder.getData("baixaManual", itemCobrancaVO.getCodigo(), "checado");
 		    	if (dividaMarcada!=null){
 		    	    itemCobrancaVO.setCheck(dividaMarcada.equals("true")?true:false); 
 		    	}
 		    }
+
+	    	itemCobrancaVO.setDataEmissao(DateUtil.formatarDataPTBR(DateUtil.parseData(itemCobrancaVO.getDataEmissao(), "yyyy-MM-dd")));
+	    	itemCobrancaVO.setDataVencimento(DateUtil.formatarDataPTBR(DateUtil.parseData(itemCobrancaVO.getDataVencimento(), "yyyy-MM-dd")));
+	    	itemCobrancaVO.setValor(itemCobrancaVO.getValor()!=null?CurrencyUtil.convertValor(itemCobrancaVO.getValor(),2):"");
 		}
 		
 

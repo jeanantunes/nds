@@ -15,6 +15,10 @@ public enum StatusDivida {
 		this.descricao = descricao;
 	}
 	
+	public String getDescricao(){
+		return this.descricao;
+	}
+	
 	@Override
 	public String toString() {
 

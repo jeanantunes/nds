@@ -120,7 +120,7 @@ public class BaixaCobrancaRepositoryImpl extends AbstractRepositoryModel<BaixaCo
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" SELECT cast(cobranca.id as string) as codigo, ");
-		hql.append(" pessoa.nome as nome, ");
+		hql.append(" coalesce(pessoa.nome, pessoa.razaoSocial) as nome, ");
 		hql.append(" cast(cobranca.dataEmissao as string) as dataEmissao, ");
 		hql.append(" cast(cobranca.dataVencimento as string) as dataVencimento, ");
 		hql.append(" cast(cobranca.valor as string) as valor ");
