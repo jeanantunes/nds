@@ -168,6 +168,19 @@ public abstract class CurrencyUtil {
 		return converter.toWords(valor.doubleValue());
 	}
 	
+	public static String convertValor(String valor, int decimalScale) {
+		
+		if (valor == null) {
+
+			return "0,00";
+		}
+		
+		BigDecimal value = new BigDecimal(valor).setScale(decimalScale, BigDecimal.ROUND_HALF_EVEN);
+		
+		return formatarValor(value);
+	}
+	
+	
 	/**
 	 * Converte uma string em formato internacional para uma string em formato nacional
 	 * 
@@ -192,9 +205,9 @@ public abstract class CurrencyUtil {
 	
 	
 	/**
-	 * Converte uma string em formato internacional para uma string em formato nacional
+	 * Converte uma string em formato nacional para uma string em formato internacional 
 	 * 
-	 *  "1,000.00" to "1.000,00"
+	 *  "1.000,00" to "1000.00"
 	 * 
 	 * @param valor 
 	 * @return
