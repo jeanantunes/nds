@@ -185,6 +185,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				value.cell.valorVendaDia = (value.cell.valorVendaDia != null && value.cell.valorVendaDia != 0)?
 					                          (formatMoneyValue(value.cell.valorVendaDia * -1)) : '0.0000'; 
 					                          
+
 				value.cell.vendaEncalhe = (value.cell.vendaEncalhe != null && value.cell.vendaEncalhe != 0)?'<a href="javascript:;" onclick="vendaEncalhe.showDialog('+
 										  [value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\','+ $("#cotaHidden", contaCorrenteCotaController.workspace).val() +
 										  ',\''+value.cell.nomeBox+'\');"/>' + (formatMoneyValue(value.cell.vendaEncalhe * -1)) + '</a>' : '0.0000';
@@ -252,7 +253,7 @@ var contaCorrenteCotaController = $.extend(true, {
 		}else{			
 			$.each(data.rows, function(index, value) {
 				
-				value.cell.precoCapa = formatMoneyValue(value.cell.precoCapa);
+				value.cell.precoCapa = formatMoneyValue(value.cell.precoCapa, 2);
 				value.cell.precoComDesconto = formatMoneyValue(value.cell.precoComDesconto);
 				value.cell.total = formatMoneyValue(value.cell.total);
 			});
@@ -509,7 +510,7 @@ var contaCorrenteCotaController = $.extend(true, {
 					value.cell.motivoTexto = "";
 				}
 				
-				value.cell.precoCapa = formatMoneyValue(value.cell.precoCapa);
+				value.cell.precoCapa = formatMoneyValue(value.cell.precoCapa, 2);
 				value.cell.precoComDesconto = formatMoneyValue(value.cell.precoComDesconto);
 				value.cell.total = formatMoneyValue(value.cell.total);
 			});
