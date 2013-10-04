@@ -182,7 +182,7 @@ var contaCorrenteCotaController = $.extend(true, {
 									 [value.cell.id ? value.cell.id : '\'\'']+',\''+ value.cell.dataConsolidado +'\');"/>' + 
 									 (formatMoneyValue(value.cell.encalhe)) + '</a>' : '0.0000';
 				
-				value.cell.valorVendaDia = (formatMoneyValue(value.cell.valorVendaDia * -1));
+				value.cell.valorVendaDia = (formatMoneyValue(value.cell.valorVendaDia)* -1).toFixed(4);
 				
 				value.cell.vendaEncalhe = (value.cell.vendaEncalhe != null && value.cell.vendaEncalhe != 0)?'<a href="javascript:;" onclick="vendaEncalhe.showDialog('+
 										  [value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\','+ $("#cotaHidden", contaCorrenteCotaController.workspace).val() +
@@ -208,7 +208,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				
 				value.cell.total = (formatMoneyValue(value.cell.total * -1));
 				value.cell.valorPago = (formatMoneyValue(value.cell.valorPago));
-				value.cell.saldo = (formatMoneyValue(value.cell.saldo * -1));
+				value.cell.saldo = (formatMoneyValue(value.cell.saldo)* -1).toFixed(4);
 				
 				if (value.cell.cobrado){
 					
