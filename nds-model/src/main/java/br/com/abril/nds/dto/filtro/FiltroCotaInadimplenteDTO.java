@@ -173,6 +173,106 @@ public class FiltroCotaInadimplenteDTO implements Serializable{
 	public void setDataOperacaoDistribuidor(Date dataOperacaoDistribuidor) {
 		this.dataOperacaoDistribuidor = dataOperacaoDistribuidor;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((colunaOrdenacao == null) ? 0 : colunaOrdenacao.hashCode());
+		result = prime
+				* result
+				+ ((dataOperacaoDistribuidor == null) ? 0
+						: dataOperacaoDistribuidor.hashCode());
+		result = prime * result
+				+ ((nomeCota == null) ? 0 : nomeCota.hashCode());
+		result = prime * result + ((numCota == null) ? 0 : numCota.hashCode());
+		result = prime * result
+				+ ((paginacao == null) ? 0 : paginacao.hashCode());
+		result = prime * result
+				+ ((periodoAte == null) ? 0 : periodoAte.hashCode());
+		result = prime * result
+				+ ((periodoDe == null) ? 0 : periodoDe.hashCode());
+		result = prime
+				* result
+				+ ((situacaoEmAberto == null) ? 0 : situacaoEmAberto.hashCode());
+		result = prime
+				* result
+				+ ((situacaoNegociada == null) ? 0 : situacaoNegociada
+						.hashCode());
+		result = prime * result
+				+ ((situacaoPaga == null) ? 0 : situacaoPaga.hashCode());
+		result = prime * result
+				+ ((statusCota == null) ? 0 : statusCota.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FiltroCotaInadimplenteDTO other = (FiltroCotaInadimplenteDTO) obj;
+		if (colunaOrdenacao != other.colunaOrdenacao)
+			return false;
+		if (dataOperacaoDistribuidor == null) {
+			if (other.dataOperacaoDistribuidor != null)
+				return false;
+		} else if (!dataOperacaoDistribuidor
+				.equals(other.dataOperacaoDistribuidor))
+			return false;
+		if (nomeCota == null) {
+			if (other.nomeCota != null)
+				return false;
+		} else if (!nomeCota.equals(other.nomeCota))
+			return false;
+		if (numCota == null) {
+			if (other.numCota != null)
+				return false;
+		} else if (!numCota.equals(other.numCota))
+			return false;
+		if (paginacao == null) {
+			if (other.paginacao != null)
+				return false;
+		} else if (!paginacao.equals(other.paginacao))
+			return false;
+		if (periodoAte == null) {
+			if (other.periodoAte != null)
+				return false;
+		} else if (!periodoAte.equals(other.periodoAte))
+			return false;
+		if (periodoDe == null) {
+			if (other.periodoDe != null)
+				return false;
+		} else if (!periodoDe.equals(other.periodoDe))
+			return false;
+		if (situacaoEmAberto == null) {
+			if (other.situacaoEmAberto != null)
+				return false;
+		} else if (!situacaoEmAberto.equals(other.situacaoEmAberto))
+			return false;
+		if (situacaoNegociada == null) {
+			if (other.situacaoNegociada != null)
+				return false;
+		} else if (!situacaoNegociada.equals(other.situacaoNegociada))
+			return false;
+		if (situacaoPaga == null) {
+			if (other.situacaoPaga != null)
+				return false;
+		} else if (!situacaoPaga.equals(other.situacaoPaga))
+			return false;
+		if (statusCota == null) {
+			if (other.statusCota != null)
+				return false;
+		} else if (!statusCota.equals(other.statusCota))
+			return false;
+		return true;
+	}
+	
+	
 	
 	
 	
