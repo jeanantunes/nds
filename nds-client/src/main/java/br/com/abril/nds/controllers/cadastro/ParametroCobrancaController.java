@@ -392,7 +392,8 @@ public class ParametroCobrancaController extends BaseController {
 			//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR E DIA DA CONCENTRAÇÃO SEMANAL
 			if (parametros.getTipoFormaCobranca()==TipoFormaCobranca.SEMANAL){
 				
-				if (!this.formaCobrancaService.validarFormaCobrancaSemanal(parametros.getIdPolitica(),
+				if (!this.formaCobrancaService.validarFormaCobrancaSemanal(parametros.getTipoCobranca(),
+						                                                   parametros.getIdPolitica(),
 					                                                       idDistribuidor,
 					                                                       parametros.getTipoFormaCobranca(), 
 					                                                       parametros.getFornecedoresId(), 
@@ -412,7 +413,8 @@ public class ParametroCobrancaController extends BaseController {
 			//VERIFICA SE A FORMA DE COBRANÇA JA EXISTE PARA O FORNECEDOR E DIA DA CONCENTRAÇÃO MENSAL
 			else{
 				
-				if (!this.formaCobrancaService.validarFormaCobrancaMensal(parametros.getIdPolitica(),
+				if (!this.formaCobrancaService.validarFormaCobrancaMensal(parametros.getTipoCobranca(),
+						                                                  parametros.getIdPolitica(),
 					                                                      idDistribuidor,
 					                                                      parametros.getTipoFormaCobranca(), 
 					                                                      parametros.getFornecedoresId(), 

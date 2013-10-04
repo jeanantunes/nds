@@ -5,23 +5,26 @@ import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.model.cadastro.FormaCobranca;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 
 public interface FormaCobrancaService {
 	
 	 /**
 	 * Verifica se ja existe a Forma Cobranca Mensal que o usuário deseja cadastrar(Valida por Fornecedor e Concentração)
+	 * @param tipoCobranca
 	 * @param idPoliticaCobranca
 	 * @param idDistribuidor
 	 * @param idFornecedores
 	 * @param diasDoMes
 	 * @return Boolean
 	 */
-	boolean validarFormaCobrancaMensal(Long idPoliticaCobranca, Long idDistribuidor, TipoFormaCobranca tipoFormaCobranca,
+	boolean validarFormaCobrancaMensal(TipoCobranca tipoCobranca, Long idPoliticaCobranca, Long idDistribuidor, TipoFormaCobranca tipoFormaCobranca,
 			                           List<Long> idFornecedores, List<Integer> diasDoMes);
 	
 	 /**
 	 * Verifica se ja existe a Forma Cobranca Semanal que o usuário deseja cadastrar(Valida por Fornecedor e Concentração)
+	 * @param tipoCobranca
 	 * @param idPoliticaCobranca
 	 * @param idDistribuidor
 	 * @param tipoFormaCobranca
@@ -35,7 +38,7 @@ public interface FormaCobrancaService {
 	 * @param sabado
 	 * @return Boolean
 	 */
-	boolean validarFormaCobrancaSemanal(Long idPoliticaCobranca, Long idDistribuidor, TipoFormaCobranca tipoFormaCobranca,
+	boolean validarFormaCobrancaSemanal(TipoCobranca tipoCobranca, Long idPoliticaCobranca, Long idDistribuidor, TipoFormaCobranca tipoFormaCobranca,
 			List<Long> idFornecedores, Boolean domingo, Boolean segunda,
 			Boolean terca, Boolean quarta, Boolean quinta, Boolean sexta,
 			Boolean sabado);
