@@ -2465,13 +2465,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				juramentada, conferenciaEncalheDTO.getDataRecolhimento(),
 				dataConferenciaEncalhe, mapaTipoMovimentoEstoque, tipoChamadaEncalhe);
 
-		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
-		
-		produtoEdicao.setId(conferenciaEncalheDTO.getIdProdutoEdicao());
-		
 		MovimentoEstoque movimentoEstoque = 
 			this.movimentoEstoqueService.gerarMovimentoEstoque(
-				produtoEdicao.getId(), usuario.getId(), 
+					conferenciaEncalheDTO.getIdProdutoEdicao(), usuario.getId(), 
 					conferenciaEncalheDTO.getQtdExemplar(), tipoMovimentoEstoque);
 		
 		return movimentoEstoque;
