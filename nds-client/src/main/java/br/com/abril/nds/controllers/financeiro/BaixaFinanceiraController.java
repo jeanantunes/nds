@@ -42,7 +42,6 @@ import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO.OrdenacaoColunaDetalheBaixaBoleto;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -812,10 +811,10 @@ public class BaixaFinanceiraController extends BaseController {
 					               List<Long> idCobrancas,
 					               Long idBanco){
 		
-		BigDecimal valorMultaConvertido = CurrencyUtil.converterValor(valorMulta);
-	    BigDecimal valorJurosConvertido = CurrencyUtil.converterValor(valorJuros);
-		BigDecimal valorDescontoConvertido = CurrencyUtil.converterValor(valorDesconto);
-		BigDecimal valorSaldoConvertido = CurrencyUtil.converterValor(valorSaldo);
+		BigDecimal valorMultaConvertido = valorMulta == null ? BigDecimal.ZERO : CurrencyUtil.converterValor(valorMulta);
+	    BigDecimal valorJurosConvertido = valorJuros == null ? BigDecimal.ZERO : CurrencyUtil.converterValor(valorJuros);
+		BigDecimal valorDescontoConvertido = valorDesconto == null ? BigDecimal.ZERO : CurrencyUtil.converterValor(valorDesconto);
+		BigDecimal valorSaldoConvertido = valorSaldo == null ? BigDecimal.ZERO : CurrencyUtil.converterValor(valorSaldo);
 		
 		this.validarBaixaManualDividas(tipoPagamento, idCobrancas, idBanco,valorMultaConvertido, 
 		  		valorJurosConvertido,valorDescontoConvertido, valorSaldoConvertido);
