@@ -739,6 +739,8 @@ public class ParametroCobrancaCotaController extends BaseController {
 		
 			cota.setTipoCota(tipoCota);
 			
+			cota.setAlteracaoTipoCota(new Date());
+			
 			this.cotaService.alterarCota(cota);
 			
 			return true;
