@@ -133,12 +133,8 @@ var furoProdutoController = $.extend(true, {
 				function(retorno) {
 
 					if(retorno.boolean) {
-						$(furoProdutoController.workspace).append('<div id="confirm_button"></div>');
-
-						$( "#confirm_button", furoProdutoController.workspace )
-						.text('Essa data é uma data já confirmada. Você deseja continuar?');
-
-						$( "#confirm_button", furoProdutoController.workspace ).dialog({
+					
+						$( "#dialog-confirm_button", furoProdutoController.workspace ).dialog({
 							resizable: false,
 							height:'auto',
 							width:300,
@@ -164,10 +160,12 @@ var furoProdutoController = $.extend(true, {
 							          }
 							          ],
 							          beforeClose: function() {
-							        	  clearMessageDialogTimeout("#confirm_button");
+							        	  clearMessageDialogTimeout("#dialog-confirm_button");
 							          },
-							          form: $("#confirm_button", furoProdutoController.workspace).parents("form")
+							          form: $("#dialog-confirm_button", furoProdutoController.workspace).parents("form")
 						});
+						
+						$("#dialogConfirmarBtnConfirmar", furoProdutoController.workspace).focus();
 					} else {
 
 		        		  $.postJSON(contextPath + "/lancamento/furoProduto/validarFuro", data, function(result) { furoProdutoController.posProcessarConfirmacao(result, data); } );
@@ -227,15 +225,13 @@ var furoProdutoController = $.extend(true, {
 		$("#codigo", furoProdutoController.workspace).focus();
 	},
 	
-	buscarNomeProduto : function(){
+	buscarNomeProdutoFuro : function(){
 		if ($("#codigo", furoProdutoController.workspace).val().length > 0){
 			var data = {codigoProduto: $("#codigo", furoProdutoController.workspace).val()};
 			$.postJSON(contextPath + "/lancamento/furoProduto/buscarNomeProduto", data,
 				function(result){
 					if (result && result.string != ""){
 						$("#produto", furoProdutoController.workspace).val(result);
-						$("#edicao", furoProdutoController.workspace).focus();
-						$("#edicao", furoProdutoController.workspace).val("");
 					} else {
 						$("#produto", furoProdutoController.workspace).val("");
 						$("#produto", furoProdutoController.workspace).focus();
