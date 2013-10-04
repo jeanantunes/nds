@@ -42,6 +42,7 @@ import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
 
 @Service
@@ -75,12 +76,38 @@ public class DividaServiceImpl implements DividaService {
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+
 	
 	@Override
 	@Transactional
 	public List<StatusDividaDTO> obterInadimplenciasCota(
 			FiltroCotaInadimplenteDTO filtro) {
-		return dividaRepository.obterInadimplenciasCota(filtro);
+		
+		List<StatusDividaDTO> dividas = dividaRepository.obterInadimplenciasCota(filtro);
+		
+		if(!dividas.isEmpty()){
+			
+			Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+			
+			for(StatusDividaDTO item : dividas){
+				
+				long qntDias = 0L;
+				
+				if (StatusDivida.QUITADA.getDescricao().equals(item.getSituacao())){
+					
+					qntDias = DateUtil.obterDiferencaDias(DateUtil.parseDataPTBR(item.getDataVencimento()), 
+														  DateUtil.parseDataPTBR(item.getDataPagamento()));
+				}
+				else{
+					
+					qntDias = DateUtil.obterDiferencaDias(DateUtil.parseDataPTBR(item.getDataVencimento()), dataOperacao);
+				}
+					
+				item.setDiasAtraso( (qntDias <= 0) ? 0L : qntDias);
+			}
+		}
+		
+		return dividas;
 	}
 
 	@Override

@@ -267,8 +267,13 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	@Override
 	@Transactional
 	public boolean existeCobrancaParaFecharDia(Date dataOperacaoDistribuidor) {
-		Date diaDeOperaoMenosUm = DateUtil.subtrairDias(dataOperacaoDistribuidor, 1);
-		return this.fecharDiaRepository.existeCobrancaParaFecharDia(diaDeOperaoMenosUm);
+		
+		return false;
+		
+		//TODO verificar com o cesar com ficara a regra para validação de baixa de cobrança no fechamento diario
+		
+		//Date diaDeOperaoMenosUm = DateUtil.subtrairDias(dataOperacaoDistribuidor, 1);
+		//return this.fecharDiaRepository.existeCobrancaParaFecharDia(diaDeOperaoMenosUm);
 	}
 
 	@Override

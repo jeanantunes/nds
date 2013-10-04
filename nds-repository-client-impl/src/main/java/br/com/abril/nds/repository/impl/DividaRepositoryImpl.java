@@ -388,8 +388,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 				.addScalar("dataVencimento")
 				.addScalar("dataPagamento")
 				.addScalar("situacao")
-				.addScalar("dividaAcumulada")
-				.addScalar("diasAtraso", StandardBasicTypes.LONG);
+				.addScalar("dividaAcumulada");
 		
 		for(String key : params.keySet()){
 			query.setParameter(key, params.get(key));
@@ -467,10 +466,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 				sql.append(" AND DIVIDA_.STATUS = :statusDividaAberto) ");
 				
 				utilizarOr = true;
-				
-				Date dataAtual = filtro.getDataOperacaoDistribuidor();
-				
-				params.put("dataAtual", (dataAtual == null)?new Date():dataAtual);
+		
+				params.put("dataAtual", new Date());
 				params.put("statusDividaAberto", StatusDivida.EM_ABERTO.name());
 			}
 			
@@ -903,9 +900,6 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		sql.append(" where ");
 		sql.append(" ACUMULADAS_.id = DIVIDA_.DIVIDA_RAIZ_ID) ");
 		sql.append(" END as dividaAcumulada, ");
-		sql.append(" CASE WHEN DATEDIFF(CURRENT_DATE, COBRANCA_.DT_VENCIMENTO)<0 THEN 0 ");
-		sql.append(" ELSE DATEDIFF(CURRENT_DATE, COBRANCA_.DT_VENCIMENTO) ");
-		sql.append(" END as diasAtraso, ");
 		sql.append(" DIVIDA_.ID as idDivida, ");
 		sql.append(" COTA_.ID AS idCota, ");
 		sql.append(" COBRANCA_.ID AS idCobranca, ");
