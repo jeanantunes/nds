@@ -1139,11 +1139,11 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		if (OperacaoFinaceira.CREDITO.equals(grupoMovimentoFinaceiro.getOperacaoFinaceira())) {
 
 			return MathUtil.defaultRound(
-					valor.add(movimentoFinanceiroCota.getValor().negate()));
+					valor.add(movimentoFinanceiroCota.getValor()));
 		}
 
 		return MathUtil.defaultRound(
-			valor.add(movimentoFinanceiroCota.getValor()));
+			valor.add(movimentoFinanceiroCota.getValor().negate()));
 	}
 	
 	@Override
