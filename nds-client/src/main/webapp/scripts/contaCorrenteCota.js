@@ -182,8 +182,10 @@ var contaCorrenteCotaController = $.extend(true, {
 									 [value.cell.id ? value.cell.id : '\'\'']+',\''+ value.cell.dataConsolidado +'\');"/>' + 
 									 (formatMoneyValue(value.cell.encalhe)) + '</a>' : '0.0000';
 				
-				value.cell.valorVendaDia = (formatMoneyValue(value.cell.valorVendaDia)* -1).toFixed(4);
-				
+				value.cell.valorVendaDia = (value.cell.valorVendaDia != null && value.cell.valorVendaDia != 0)?
+					                          (formatMoneyValue(value.cell.valorVendaDia * -1)) : '0.0000'; 
+					                          
+
 				value.cell.vendaEncalhe = (value.cell.vendaEncalhe != null && value.cell.vendaEncalhe != 0)?'<a href="javascript:;" onclick="vendaEncalhe.showDialog('+
 										  [value.cell.id ? value.cell.id : '\'\'']+',\''+value.cell.dataConsolidado+'\','+ $("#cotaHidden", contaCorrenteCotaController.workspace).val() +
 										  ',\''+value.cell.nomeBox+'\');"/>' + (formatMoneyValue(value.cell.vendaEncalhe * -1)) + '</a>' : '0.0000';
@@ -206,9 +208,14 @@ var contaCorrenteCotaController = $.extend(true, {
 				value.cell.pendente = (value.cell.pendente != null && value.cell.pendente != 0)?'<span class="bt_tool">' + hint +
 					                   (formatMoneyValue(value.cell.pendente * -1)) +'</a></span>' : '0.0000';
 				
-				value.cell.total = (formatMoneyValue(value.cell.total * -1));
+				value.cell.total = (value.cell.total != null && value.cell.total != 0)?
+						            (formatMoneyValue(value.cell.total * -1)) : '0.0000'; 				
+				
 				value.cell.valorPago = (formatMoneyValue(value.cell.valorPago));
-				value.cell.saldo = (formatMoneyValue(value.cell.saldo)* -1).toFixed(4);
+				
+				
+				value.cell.saldo = (value.cell.saldo != null && value.cell.saldo != 0)?
+                        (formatMoneyValue(value.cell.saldo * -1)) : '0.0000'; 
 				
 				if (value.cell.cobrado){
 					
