@@ -18,6 +18,11 @@
 		<div id="dialog-novo" title="Furo de Produto">
 			<strong>Confirma o Furo de Produto?</strong>
 		</div>
+		
+		<div id="dialog-confirm_button" title="Furo de Produto" style="display:none;">
+			<strong>Essa data é uma data já confirmada. Você deseja continuar?</strong>
+		</div>
+		
 		<div class="areaBts">
 			<div class="area">
 				<span style="cursor: pointer;" class="bt_novos" rel="tipsy" title="Confirmar Furo de Produto">
@@ -32,7 +37,7 @@
 	        	<tr>
 	        		<td width="45" align="right">Código:</td>
 	        		<td width="79">
-	        			<input type="text" style="width:70px;" name="codigo" id="codigo" maxlength="255" onblur="furoProdutoController.buscarNomeProduto();"/>
+	        			<input type="text" style="width:70px;" name="codigo" id="codigo" maxlength="255" onblur="furoProdutoController.buscarNomeProdutoFuro();"/>
 	        		</td>
 					<td width="64" align="right">Produto:</td>
 					<td width="196">
