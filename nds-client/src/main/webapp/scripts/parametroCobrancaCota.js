@@ -70,16 +70,23 @@ var parametroCobrancaCotaController = $.extend(true, {
 		});
 
 		$("#fatorVencimento", this.workspace).numeric();
-		$("#valorMinimo", this.workspace).priceFormat({
-			centsSeparator: ',',
-		    thousandsSeparator: '.',
-		    centsLimit:2	
+		
+		$("#valorMinimo", this.workspace).maskMoney({
+			 thousands:'.', 
+			 decimal:',', 
+			 precision:2
 		});
-		$("#qtdDividasAberto", this.workspace).numeric();
-		$("#vrDividasAberto", this.workspace).priceFormat({
-			centsSeparator: ',',
-		    thousandsSeparator: '.',
-		    centsLimit:2	
+		
+		$("#qtdDividasAberto", this.workspace).maskMoney({
+			 thousands:'.', 
+			 decimal:',', 
+			 precision:0
+		});	
+		
+		$("#vrDividasAberto", this.workspace).maskMoney({
+			 thousands:'.', 
+			 decimal:',', 
+			 precision:2
 		});
 		
 		$("#numBanco", this.workspace).numeric();
@@ -508,9 +515,9 @@ var parametroCobrancaCotaController = $.extend(true, {
 
 		parametroCobrancaCotaController.exibe_form_contrato(resultado.contrato);
 		
-		$("#valorMinimo", this.workspace).val( floatToPrice( resultado.valorMinimo ) );
+		$("#valorMinimo", this.workspace).val( resultado.valorMinimo );
 		$("#qtdDividasAberto", this.workspace).val(resultado.qtdDividasAberto);
-		$("#vrDividasAberto", this.workspace).val( floatToPrice( resultado.vrDividasAberto ) );
+		$("#vrDividasAberto", this.workspace).val( resultado.vrDividasAberto );
 		$("#tipoCota", this.workspace).val(resultado.tipoCota);
 		$("#devolveEncalhe", this.workspace).val(resultado.devolveEncalhe?0:1);
 		
@@ -569,10 +576,10 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var inicioContrato = $("#parametroCobrancaDateInicio", this.workspace).val();
         var terminoContrato = $("#parametroCobrancaDateTermino", this.workspace).val();
 	 
-		var valorMinimo = priceToFloat( $("#valorMinimo", this.workspace).val() );
+		var valorMinimo = $("#valorMinimo", this.workspace).val();
 
 		var qtdDividasAberto = $("#qtdDividasAberto", this.workspace).val();
-		var vrDividasAberto = priceToFloat( $("#vrDividasAberto", this.workspace).val() );
+		var vrDividasAberto = $("#vrDividasAberto", this.workspace).val();
 		var tipoCota = $("#tipoCota", this.workspace).val();
 		var devolveEncalhe = $("#devolveEncalhe", this.workspace).val() == 0 ? 1 : 0;
 		var fornecedorPadrao = $("#fornecedorPadrao", this.workspace).val();
@@ -1102,7 +1109,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var primeiroDiaQuinzenal= $("#primeiroDiaQuinzenalParametroCobrancaCota", this.workspace).val();
 		var segundoDiaQuinzenal = $("#segundoDiaQuinzenalParametroCobrancaCota", this.workspace).val();
 		
-		var valorMinimo			= priceToFloat($("#valorMinimo", this.workspace).val());
+		var valorMinimo			= $("#valorMinimo", this.workspace).val();
 		var fatorVencimento		= $("#fatorVencimento", this.workspace).val();
 		var tipoCota 			= $("#tipoCota", this.workspace).val();
 		var devolveEncalhe		= $("#devolveEncalhe", this.workspace).val() == 0 ? 1 : 0;
@@ -1113,7 +1120,7 @@ var parametroCobrancaCotaController = $.extend(true, {
 		var inicioContrato 		= $("#parametroCobrancaDateInicio", this.workspace).val();
         var terminoContrato 	= $("#parametroCobrancaDateTermino", this.workspace).val();
 		var qtdDividasAberto	= $("#qtdDividasAberto", this.workspace).val();
-		var vrDividasAberto		= priceToFloat( $("#vrDividasAberto", this.workspace).val() );
+		var vrDividasAberto		= $("#vrDividasAberto", this.workspace).val();
 			
 		$("#recebeEmail", this.workspace).val(0);
 		//if (document.formularioDadosBoleto.recebeEmail.checked){

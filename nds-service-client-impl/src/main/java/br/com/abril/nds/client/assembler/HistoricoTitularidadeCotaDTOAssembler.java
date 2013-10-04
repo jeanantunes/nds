@@ -64,6 +64,7 @@ import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaFisica
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaPessoaJuridica;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaReferenciaCota;
 import br.com.abril.nds.model.titularidade.HistoricoTitularidadeCotaTelefone;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.Util;
 
@@ -418,11 +419,11 @@ public final class HistoricoTitularidadeCotaDTOAssembler {
         ParametroCobrancaCotaDTO dto = new ParametroCobrancaCotaDTO();
         if (financeiro != null) {
             dto.setFatorVencimento(financeiro.getFatorVencimento());
-            dto.setValorMinimo(financeiro.getValorMininoCobranca());
+            dto.setValorMinimo(CurrencyUtil.formatarValor(financeiro.getValorMininoCobranca()));
             PoliticaSuspensao politicaSuspensao = financeiro.getPoliticaSuspensao();
             if (politicaSuspensao != null) {
                 dto.setQtdDividasAberto(politicaSuspensao.getNumeroAcumuloDivida());
-                dto.setVrDividasAberto(politicaSuspensao.getValor());
+                dto.setVrDividasAberto(CurrencyUtil.formatarValor(politicaSuspensao.getValor()));
                 dto.setSugereSuspensao(true);
             }
             dto.setContrato(financeiro.isPossuiContrato() != null ? financeiro.isPossuiContrato() : false);

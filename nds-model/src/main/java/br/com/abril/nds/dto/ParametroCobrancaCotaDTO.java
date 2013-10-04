@@ -1,10 +1,8 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Date;
 
-import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.TipoCota;
 
 public class ParametroCobrancaCotaDTO implements Serializable {
@@ -31,11 +29,11 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 	
 	private Boolean contratoRecebido;
 	
-	private BigDecimal valorMinimo = BigDecimal.ZERO;
+	private String valorMinimo;
 	
-	private Integer qtdDividasAberto = Integer.valueOf(0);
+	private Integer qtdDividasAberto;
 	
-	private BigDecimal vrDividasAberto = BigDecimal.ZERO;
+	private String vrDividasAberto;
 	
 	private TipoCota tipoCota;
 	
@@ -142,12 +140,12 @@ public class ParametroCobrancaCotaDTO implements Serializable {
         this.contratoRecebido = contratoRecebido;
     }
 
-    public BigDecimal getValorMinimo() {
+    public String getValorMinimo() {
 		return valorMinimo;
 	}
 
 
-	public void setValorMinimo(BigDecimal valorMinimo) {
+	public void setValorMinimo(String valorMinimo) {
 		this.valorMinimo = valorMinimo;
 	}
 
@@ -161,12 +159,12 @@ public class ParametroCobrancaCotaDTO implements Serializable {
 	}
 
 
-	public BigDecimal getVrDividasAberto() {
+	public String getVrDividasAberto() {
 		return vrDividasAberto;
 	}
 
 
-	public void setVrDividasAberto(BigDecimal vrDividasAberto) {
+	public void setVrDividasAberto(String vrDividasAberto) {
 		this.vrDividasAberto = vrDividasAberto;
 	}
 
