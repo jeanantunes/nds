@@ -29,6 +29,8 @@ public class FechamentoFisicoLogicoDTO {
 	
 	private String tipo;
 	
+	private String recolhimento;
+	
 	private boolean suplementar;
 	
 	private Date dataRecolhimento;
@@ -180,6 +182,14 @@ public class FechamentoFisicoLogicoDTO {
 		return tipo;
 	}
 	
+	public String getRecolhimento() {
+		return recolhimento;
+	}
+
+	public void setRecolhimento(String recolhimento) {
+		this.recolhimento = recolhimento;
+	}
+
 	public void setEstoque(String estoque) {
 		this.estoque = estoque;
 	}

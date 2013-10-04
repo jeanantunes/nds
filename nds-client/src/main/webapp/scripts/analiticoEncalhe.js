@@ -1,7 +1,7 @@
 var analiticoEncalheController = $.extend(true, {
 	
 	path : contextPath + '/devolucao/fechamentoEncalhe/',
-
+//fechamentoEncalheController
 
 	init : function() {
 		
@@ -10,6 +10,8 @@ var analiticoEncalheController = $.extend(true, {
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
+		
+		$("#analiticoEncalhe_dataEncalhe").val(fechamentoEncalheController.vDataEncalhe);
 		
 		this.initGridFechamentoAnalitico();
 	},
