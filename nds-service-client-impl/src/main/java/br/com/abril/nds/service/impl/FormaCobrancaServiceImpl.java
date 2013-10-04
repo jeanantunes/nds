@@ -19,6 +19,7 @@ import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.FormaCobrancaRepository;
@@ -48,6 +49,7 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	 * Verifica se ja existe a Forma Cobranca Mensal que o usuário deseja
 	 * cadastrar(Valida por Fornecedor e Concentração)
 	 * 
+	 * @param tipoCobranca
 	 * @param idPoliticaCobranca
 	 * @param distribuidor
 	 * @param idFornecedores
@@ -56,7 +58,8 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	 */
 	@Override
 	@Transactional
-	public boolean validarFormaCobrancaMensal(Long idPoliticaCobranca,
+	public boolean validarFormaCobrancaMensal(TipoCobranca tipoCobranca,
+			                                  Long idPoliticaCobranca,
 											  Long idDistribuidor, 
 											  TipoFormaCobranca tipoFormaCobranca,
 											  List<Long> idFornecedores, 
@@ -76,6 +79,12 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 				.obterPorDistribuidor(idDistribuidor, idFormaCobrancaExcept);
 
 		for (FormaCobranca itemFormaCobranca : formas) {
+			
+			//Nos parametros de Cobrança do Distribuidor o Tipo de Cobranca é considerado na validação de cadastro de nova forma cobrança 
+			if (!tipoCobranca.equals(itemFormaCobranca.getTipoCobranca())){
+				
+				continue;
+			}
 
 			for (int i = 0; i < idFornecedores.size(); i++) {
 
@@ -112,6 +121,7 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	 * Verifica se ja existe a Forma Cobranca Semanal que o usuário deseja
 	 * cadastrar(Valida por Fornecedor e Concentração)
 	 * 
+	 * @param tipoCobranca
 	 * @param idPoliticaCobranca
 	 * @param distribuidor
 	 * @param tipoFormaCobranca
@@ -127,7 +137,8 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 	 */
 	@Override
 	@Transactional
-	public boolean validarFormaCobrancaSemanal(Long idPoliticaCobranca,
+	public boolean validarFormaCobrancaSemanal(TipoCobranca tipoCobranca,
+			                                   Long idPoliticaCobranca,
 											   Long idDistribuidor, 
 											   TipoFormaCobranca tipoFormaCobranca,
 											   List<Long> idFornecedores, 
@@ -153,6 +164,12 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 				.obterPorDistribuidor(idDistribuidor, idFormaCobrancaExcept);
 
 		for (FormaCobranca itemFormaCobranca : formas) {
+			
+			//Nos parametros de Cobrança do Distribuidor o Tipo de Cobranca é considerado na validação de cadastro de nova forma cobrança 
+			if (!tipoCobranca.equals(itemFormaCobranca.getTipoCobranca())){
+				
+				continue;
+			}
 
 			for (Long idFornecedor : idFornecedores) {
 
@@ -403,8 +420,9 @@ public class FormaCobrancaServiceImpl implements FormaCobrancaService {
 
 		Integer diaDaSemana = SemanaUtil.obterDiaDaSemana(data);
 
+		
 		FormaCobranca formaCobranca = this.formaCobrancaRepository
-				.obterFormaCobranca(idFornecedor, diaDoMes, diaDaSemana, valor);
+				.obterFormaCobranca(idFornecedor, diaDoMes, diaDaSemana, valor, true);
 
 		return formaCobranca;
 	}

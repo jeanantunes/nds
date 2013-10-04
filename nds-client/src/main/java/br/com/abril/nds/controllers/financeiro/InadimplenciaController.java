@@ -217,14 +217,6 @@ public class InadimplenciaController extends BaseController {
 	 */
 	private void tratarFiltro(FiltroCotaInadimplenteDTO filtroAtual) {
 
-		FiltroCotaInadimplenteDTO filtroSession = (FiltroCotaInadimplenteDTO) session
-				.getAttribute(FILTRO_SESSION_ATTRIBUTE);
-		
-		if (filtroSession != null && !filtroSession.equals(filtroAtual)) {
-
-			filtroAtual.getPaginacao().setPaginaAtual(1);
-		}
-		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroAtual);
 	}
 	
@@ -333,6 +325,8 @@ public class InadimplenciaController extends BaseController {
 	public void exportar(FileType fileType) throws IOException {
 		
 		FiltroCotaInadimplenteDTO filtro = (FiltroCotaInadimplenteDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+		
+		filtro.getPaginacao().setQtdResultadosPorPagina(null);
 		
 		List<StatusDividaDTO> listaInadimplencias = dividaService.obterInadimplenciasCota(filtro);
 		

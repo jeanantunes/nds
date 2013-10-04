@@ -196,7 +196,7 @@
 				
 				<td width="30">
 				    <span class="bt_pesquisar">
-				        <a href="javascript:;" onclick="baixaFinanceiraController.buscaManual();"></a>
+				        <a href="javascript:;" onclick="baixaFinanceiraController.buscaManual('PESQUISA');"></a>
 				    </span>
 				</td>
 				
