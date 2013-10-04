@@ -1149,7 +1149,7 @@ public class BoletoServiceImpl implements BoletoService {
 			corpoBoleto.setEnderecoSacadoLocalidade(enderecoSacado.getCidade());     
 			corpoBoleto.setEnderecoSacadoCep(enderecoSacado.getCep());         
 			corpoBoleto.setEnderecoSacadoBairro(enderecoSacado.getBairro()); 
-			corpoBoleto.setEnderecoSacadoLogradouro(enderecoSacado.getLogradouro()); 
+			corpoBoleto.setEnderecoSacadoLogradouro(enderecoSacado.getTipoLogradouro() + " " + enderecoSacado.getLogradouro()); 
 			corpoBoleto.setEnderecoSacadoNumero(enderecoSacado.getNumero()); 
 		}
 		else{
