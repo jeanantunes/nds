@@ -374,6 +374,11 @@ function replaceAll(string, token, newtoken) {
 
 function intValue(valor) {
 
+	if (!valor) {
+		
+		return 0;
+	}
+	
 	return parseInt(valor, 10);
 }
 

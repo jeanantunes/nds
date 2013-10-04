@@ -1069,6 +1069,8 @@ var baixaFinanceiraController = $.extend(true, {
     //CALCULA TOTAL CONFORME AÇÃO DO USUARIO NA TELA DE BAIXA POR COTA
 	calculaTotalManualDividas : function() {
     	
+		baixaFinanceiraController.validarCamposBaixa();
+		
 		var valorDividas = removeMascaraPriceFormat($("#valorDividasHidden", baixaFinanceiraController.workspace).val());
 		
 		var desconto = removeMascaraPriceFormat($("#descontoDividas", baixaFinanceiraController.workspace).val());
@@ -1091,6 +1093,8 @@ var baixaFinanceiraController = $.extend(true, {
 	//CALCULA SALDO CONFORME AÇÃO DO USUARIO NA TELA DE BAIXA POR COTA
 	calculaSaldoDividas : function() {
     	
+		baixaFinanceiraController.validarCamposBaixa();
+		
 		var valorDividas = removeMascaraPriceFormat($("#valorDividasHidden", baixaFinanceiraController.workspace).val());		
 		var valorPago = removeMascaraPriceFormat($("#valorPagoDividas", baixaFinanceiraController.workspace).val());
 		
@@ -1115,6 +1119,20 @@ var baixaFinanceiraController = $.extend(true, {
 		$("#valorSaldoDividas", baixaFinanceiraController.workspace).html($("#valorSaldoDividasHidden", baixaFinanceiraController.workspace).val());
 	},
     
+	validarCamposBaixa : function() {
+		
+		var nulos = new Array();
+		
+		$("#pagarDividas input[type='text']").each(function(index, component) {
+			
+			var val = $(this).val(); 
+			
+			if (!val || val == "") {
+				
+				$(this).val("0,00");
+			}
+		});
+	},
     
     //EFETUA BAIXA MANUAL DE DIVIDAS SELECIONADAS E CALCULADAS
     baixaManualDividas : function(manterPendente) {

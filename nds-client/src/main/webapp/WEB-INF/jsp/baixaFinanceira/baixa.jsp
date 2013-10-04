@@ -376,7 +376,7 @@
 				    <jsp:include page="../messagesDialog.jsp"></jsp:include>
 				    
 				
-					<table width="433" border="0" cellpadding="2" cellspacing="2">
+					<table width="433" border="0" cellpadding="2" cellspacing="2" id="pagarDividas">
 					  <tr>
 					    <td width="153"><strong>Valor Dívida R$:</strong>
 					    
