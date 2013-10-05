@@ -187,7 +187,7 @@ public class ContaCorrenteCotaController extends BaseController {
 				totalGeral = totalGeral.add(dto.getValorTotal());
 			}
 			
-			dados[2] = totalGeral.setScale(2, RoundingMode.HALF_EVEN);
+			dados[2] = totalGeral.setScale(4, RoundingMode.HALF_EVEN);
 						
 			result.use(Results.json()).from(dados, "result").recursive().serialize();
 		}else{
@@ -224,7 +224,7 @@ public class ContaCorrenteCotaController extends BaseController {
 			if(listaInfoTotalFornecedor != null && !listaInfoTotalFornecedor.isEmpty()) {
 				
 				for(InfoTotalFornecedorDTO info : listaInfoTotalFornecedor) {
-					info.setValorTotal(info.getValorTotal().setScale(2, RoundingMode.HALF_EVEN));
+					info.setValorTotal(info.getValorTotal().setScale(4, RoundingMode.HALF_EVEN));
 				}
 				
 			}
@@ -245,7 +245,7 @@ public class ContaCorrenteCotaController extends BaseController {
 				
 				total = total.add(c.getTotal());
 			}
-			total = total.setScale(2, RoundingMode.HALF_EVEN);
+			total = total.setScale(4, RoundingMode.HALF_EVEN);
 			dados[2] = total;
 						
 			result.use(Results.json()).from(dados, "result").recursive().serialize();
@@ -280,7 +280,7 @@ public class ContaCorrenteCotaController extends BaseController {
 		
 		for (Entry<String, InfoTotalFornecedorDTO> info : mapFornecedores.entrySet()) {
 		
-			info.getValue().setValorTotal(info.getValue().getValorTotal().setScale(2, RoundingMode.HALF_EVEN));
+			info.getValue().setValorTotal(info.getValue().getValorTotal().setScale(4, RoundingMode.HALF_EVEN));
 		}
 
 		List<InfoTotalFornecedorDTO> infoTotalFornecedorDTOs = new ArrayList<InfoTotalFornecedorDTO>();
@@ -660,13 +660,13 @@ public class ContaCorrenteCotaController extends BaseController {
 		
 		BigDecimal valor = this.contaCorrenteCotaService.consultarJurosCota(idConsolidado, data, numeroCota);
 		dados.add(valor == null ? 
-				BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN) : 
-				valor.setScale(2, RoundingMode.HALF_EVEN));
+				BigDecimal.ZERO.setScale(4, RoundingMode.HALF_EVEN) : 
+				valor.setScale(4, RoundingMode.HALF_EVEN));
 		
 		valor = this.contaCorrenteCotaService.consultarMultaCota(idConsolidado, data, numeroCota);
 		dados.add(valor == null ? 
-				BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN) : 
-				valor.setScale(2, RoundingMode.HALF_EVEN));
+				BigDecimal.ZERO.setScale(4, RoundingMode.HALF_EVEN) : 
+				valor.setScale(4, RoundingMode.HALF_EVEN));
 		
 		this.result.use(Results.json()).from(dados, "result").recursive().serialize();
 	}
