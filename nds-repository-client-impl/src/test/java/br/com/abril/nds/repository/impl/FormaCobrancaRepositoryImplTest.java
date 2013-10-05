@@ -491,7 +491,7 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		diaMes = null;
 		
-		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor);
+		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor, true);
 		
 		Assert.assertNotNull(formaCobranca);
 		
@@ -504,7 +504,7 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		diaMes = null;
 		
-		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor);
+		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor, true);
 		
 		Assert.assertNotNull(formaCobranca);
 		
@@ -519,7 +519,7 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		diaMes = 10;
 		
-		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor);
+		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor, true);
 		
 		Assert.assertNotNull(formaCobranca);
 		
@@ -534,7 +534,7 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		diaMes = 16;
 		
-		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor);
+		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor, true);
 		
 		Assert.assertNotNull(formaCobranca);
 		
@@ -549,7 +549,7 @@ public class FormaCobrancaRepositoryImplTest extends AbstractRepositoryImplTest 
 		
 		diaMes = null;
 		
-		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor);
+		formaCobranca = formaCobrancaRepositoryImpl.obterFormaCobranca(fornecedorId, diaMes, diaSemana, valor, true);
 		
 		Assert.assertNotNull(formaCobranca);
 		

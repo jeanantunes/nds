@@ -77,6 +77,7 @@ import br.com.abril.nds.service.FormaCobrancaService;
 import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
@@ -248,7 +249,11 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 
 			parametroCobrancaDTO.setIdParametroCobranca(parametroCobranca.getId());
 			parametroCobrancaDTO.setFatorVencimento((parametroCobranca.getFatorVencimento()==null) ? 0 : parametroCobranca.getFatorVencimento());
-			parametroCobrancaDTO.setValorMinimo((parametroCobranca.getValorMininoCobranca()!=null?parametroCobranca.getValorMininoCobranca():BigDecimal.ZERO));
+			
+			if (parametroCobranca.getValorMininoCobranca() != null) {
+				parametroCobrancaDTO.setValorMinimo(CurrencyUtil.formatarValor(parametroCobranca.getValorMininoCobranca()));
+			}
+			
 			parametroCobrancaDTO.setUnificaCobranca(parametroCobranca.isUnificaCobranca());
 			parametroCobrancaDTO.setDevolveEncalhe(parametroCobranca.isDevolveEncalhe()!=null?parametroCobranca.isDevolveEncalhe():true);
 			parametroCobrancaDTO.setParametroDistribuidor(parametroDistribuidor);
@@ -259,7 +264,10 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 				
 				parametroCobrancaDTO.setSugereSuspensao(true);
 				parametroCobrancaDTO.setQtdDividasAberto(politicaSuspensao.getNumeroAcumuloDivida());
-				parametroCobrancaDTO.setVrDividasAberto((politicaSuspensao.getValor()!=null?politicaSuspensao.getValor():BigDecimal.ZERO));
+				
+				if (politicaSuspensao.getValor() != null) {
+					parametroCobrancaDTO.setVrDividasAberto(CurrencyUtil.formatarValor(politicaSuspensao.getValor()));
+				}
 			}
 			
 			parametroCobrancaDTO.setIdFornecedor(parametroCobranca.getFornecedorPadrao()!=null?parametroCobranca.getFornecedorPadrao().getId():null);					
@@ -425,15 +433,23 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			}
 
 			parametroCobranca.setFatorVencimento((int) parametroCobrancaDTO.getFatorVencimento());
-			parametroCobranca.setValorMininoCobranca((parametroCobrancaDTO.getValorMinimo()!=null?parametroCobrancaDTO.getValorMinimo():BigDecimal.ZERO));
+			parametroCobranca.setValorMininoCobranca(CurrencyUtil.converterValor(parametroCobrancaDTO.getValorMinimo()));
 			parametroCobranca.setUnificaCobranca(parametroCobrancaDTO.isUnificaCobranca());
 
 			if (politicaSuspensao == null) {
 				politicaSuspensao = new PoliticaSuspensao();
 			}
 			
-			politicaSuspensao.setNumeroAcumuloDivida((parametroCobrancaDTO.getQtdDividasAberto() != null && parametroCobrancaDTO.isSugereSuspensao() ? parametroCobrancaDTO.getQtdDividasAberto() : 0));
-			politicaSuspensao.setValor((parametroCobrancaDTO.getVrDividasAberto() != null && parametroCobrancaDTO.isSugereSuspensao() ? parametroCobrancaDTO.getVrDividasAberto() : BigDecimal.ZERO));
+			if (parametroCobrancaDTO.isSugereSuspensao()) {
+				
+				politicaSuspensao.setNumeroAcumuloDivida(parametroCobrancaDTO.getQtdDividasAberto());
+				politicaSuspensao.setValor(CurrencyUtil.converterValor(parametroCobrancaDTO.getVrDividasAberto()));
+			
+			} else {
+			
+				politicaSuspensao.setNumeroAcumuloDivida(null);
+				politicaSuspensao.setValor(null);
+			}
 			
 			parametroCobranca.setPoliticaSuspensao(politicaSuspensao);
 			
@@ -1183,12 +1199,12 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			pcc.setFatorVencimento(new Integer(""+ parametroCobranca.getFatorVencimento()));
 			pcc.setFornecedorPadrao(fornecedorService.obterFornecedorPorId(parametroCobranca.getIdFornecedor()));
 			pcc.setUnificaCobranca(parametroCobranca.isUnificaCobranca());
-			pcc.setValorMininoCobranca(parametroCobranca.getValorMinimo());
+			pcc.setValorMininoCobranca(CurrencyUtil.converterValor(parametroCobranca.getValorMinimo()));
 			
 			PoliticaSuspensao politicaSuspensao = new PoliticaSuspensao();
 			
-			politicaSuspensao.setNumeroAcumuloDivida((parametroCobranca.getQtdDividasAberto() != null && parametroCobranca.isSugereSuspensao() ? parametroCobranca.getQtdDividasAberto() : 0));
-			politicaSuspensao.setValor((parametroCobranca.getVrDividasAberto() != null && parametroCobranca.isSugereSuspensao() ? parametroCobranca.getVrDividasAberto() : BigDecimal.ZERO));
+			politicaSuspensao.setNumeroAcumuloDivida(parametroCobranca.getQtdDividasAberto());
+			politicaSuspensao.setValor(CurrencyUtil.converterValor(parametroCobranca.getVrDividasAberto()));
 			
 			pcc.setPoliticaSuspensao(politicaSuspensao);
 			

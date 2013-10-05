@@ -1492,7 +1492,9 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	       
 	      .append(" join c.pessoa p ")
 	       
-	      .append(" where c.tipoCota = :tipoCota ");
+	      .append(" where c.tipoCota = :tipoCota ")
+	    
+	      .append(" and (c.alteracaoTipoCota is null or c.alteracaoTipoCota <= :data)");
 	    
 	    if (numeroCota != null){
 	      

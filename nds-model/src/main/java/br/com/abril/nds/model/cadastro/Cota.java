@@ -179,6 +179,10 @@ public class Cota implements Serializable {
 	@OneToOne(mappedBy="cota", fetch=FetchType.LAZY)
 	private CotaGarantia cotaGarantia;
 	
+	@Temporal(TemporalType.DATE)
+	@Column(name = "ALTERACAO_TIPO_COTA")
+	private Date alteracaoTipoCota;
+	
 	public Cota() {
         this.inicioAtividade = new Date();
         this.inicioTitularidade = new Date();
@@ -594,5 +598,15 @@ public class Cota implements Serializable {
 			}
 		}
 		return null;
+	}
+
+
+	public Date getAlteracaoTipoCota() {
+		return alteracaoTipoCota;
+	}
+
+
+	public void setAlteracaoTipoCota(Date alteracaoTipoCota) {
+		this.alteracaoTipoCota = alteracaoTipoCota;
 	}
 }

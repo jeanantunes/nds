@@ -138,10 +138,11 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 	 * @param idFornecedor
 	 * @param data
 	 * @param valor
+	 * @param principal
 	 * @return FormaCobranca
 	 */
 	@Override
-	public FormaCobranca obterFormaCobranca(Long idFornecedor, Integer diaDoMes, Integer diaDaSemana, BigDecimal valor) {
+	public FormaCobranca obterFormaCobranca(Long idFornecedor, Integer diaDoMes, Integer diaDaSemana, BigDecimal valor, boolean principal) {
 		
 		
 		StringBuilder hql = new StringBuilder();
@@ -170,6 +171,8 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 			
 		hql.append("             or ccc.codigoDiaSemana = :diaSemana ) )");
 		
+		hql.append(" and f.principal = :principal ");
+		
 
 		Query query = super.getSession().createQuery(hql.toString());
 		
@@ -188,6 +191,8 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
         query.setParameter("diaSemana", diaDaSemana);
         
         query.setParameter("tipoFormaCobranca", TipoFormaCobranca.DIARIA);
+        
+        query.setParameter("principal", principal);
         
         
         query.setMaxResults(1);
@@ -380,6 +385,7 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
         return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<FormaCobranca> obterFormasCobrancaAtivaCotas(Boolean ativa) {
 		
@@ -393,7 +399,6 @@ public class FormaCobrancaRepositoryImpl extends AbstractRepositoryModel<FormaCo
 		query.setParameter("ativa", ativa);
 
 		return query.list();
-		
 	}
 
 }
