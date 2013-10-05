@@ -593,14 +593,16 @@ public class ContaCorrenteCotaController extends BaseController {
 				TipoMensagem.ERROR, 
 					"[Falha de autenticação] Não foi possível enviar o e-mail, "
 						+ "verifique o servidor de e-mail e os dados de autenticação.");
-		}
-		
+		}		
 	}
 	
 	public void pesquisarEmailCota(Integer numeroCota){
+
 		String email = cotaService.obterPorNumeroDaCota(numeroCota).getPessoa().getEmail();
 		
-		result.use(Results.json()).from(email, "result").recursive().serialize();
+		email = email == null ? "" : email;
+
+		this.result.use(Results.json()).withoutRoot().from(email).recursive().serialize();
 	}
 	
 	private byte[] gerarAnexo(FileType tipo) throws IOException{
