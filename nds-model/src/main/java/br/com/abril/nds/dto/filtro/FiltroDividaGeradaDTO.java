@@ -71,7 +71,8 @@ public class FiltroDividaGeradaDTO implements Serializable {
 		VIA("vias"),
 		DATA_EMISSAO("dataEmissao"),
 		VALOR("valor"),
-		TIPO_COBRANCA("tipoCobranca");
+		TIPO_COBRANCA("tipoCobranca"),
+		ROTEIRIZACAO("roteirizacao");
 
 		private String nomeColuna;
 		
