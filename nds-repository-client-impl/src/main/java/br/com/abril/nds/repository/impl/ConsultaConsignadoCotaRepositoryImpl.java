@@ -201,17 +201,19 @@ public class ConsultaConsignadoCotaRepositoryImpl extends AbstractRepositoryMode
 		
 		sql.append("        ( ((C.TIPO_COTA = :tipoCota) AND (C.ALTERACAO_TIPO_COTA IS NULL OR MEC.DATA >= C.ALTERACAO_TIPO_COTA)) AND ");
 		
-		sql.append("           LCTO.ID NOT IN (SELECT CEL.LANCAMENTO_ID ");
+		sql.append("          ((SELECT PCC.DEVOLVE_ENCALHE FROM PARAMETRO_COBRANCA_COTA PCC WHERE PCC.COTA_ID = C.ID) = TRUE) AND ");
 		
-		sql.append("                           FROM CHAMADA_ENCALHE_LANCAMENTO CEL ");
+		sql.append("          LCTO.ID NOT IN (SELECT CEL.LANCAMENTO_ID ");
 		
-		sql.append("                           INNER JOIN CHAMADA_ENCALHE CE ON CE.ID = CEL.CHAMADA_ENCALHE_ID   "); 
+		sql.append("                          FROM CHAMADA_ENCALHE_LANCAMENTO CEL ");
 		
-		sql.append("                           INNER JOIN CHAMADA_ENCALHE_COTA CEC ON CEC.CHAMADA_ENCALHE_ID = CE.ID   "); 
+		sql.append("                          INNER JOIN CHAMADA_ENCALHE CE ON CE.ID = CEL.CHAMADA_ENCALHE_ID   "); 
 		
-		sql.append("                           INNER JOIN CONFERENCIA_ENCALHE CONFE ON CONFE.CHAMADA_ENCALHE_COTA_ID = CEC.ID  "); 
+		sql.append("                          INNER JOIN CHAMADA_ENCALHE_COTA CEC ON CEC.CHAMADA_ENCALHE_ID = CE.ID   "); 
 		
-		sql.append("                           WHERE CEC.COTA_ID = C.ID)  "); 
+		sql.append("                          INNER JOIN CONFERENCIA_ENCALHE CONFE ON CONFE.CHAMADA_ENCALHE_COTA_ID = CEC.ID  "); 
+		
+		sql.append("                          WHERE CEC.COTA_ID = C.ID)  "); 
 		
 		sql.append("        ) ");
 

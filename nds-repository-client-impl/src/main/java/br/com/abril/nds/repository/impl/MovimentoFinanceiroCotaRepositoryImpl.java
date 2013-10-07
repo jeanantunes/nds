@@ -1235,7 +1235,9 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	
 	       .append(" from Cota c ")
 	       
-	       .append(" where c.tipoCota = :tipoCota ");
+	       .append(" where c.tipoCota = :tipoCota ")
+	    
+	       .append(" and (c.alteracaoTipoCota is null or c.alteracaoTipoCota < :data) ");
 	    
 	    if (numeroCota != null){
 	      
@@ -1250,6 +1252,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	    }
 	    
 	    query.setParameter("tipoCota", TipoCota.A_VISTA);
+	    
+	    query.setParameter("data", data);
 	    
 	    return (Long) query.uniqueResult();
 	}
@@ -1508,7 +1512,9 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	       
 	      .append(" join c.pessoa p ")
 	       
-	      .append(" where c.tipoCota = :tipoCota ");
+	      .append(" where c.tipoCota = :tipoCota ")
+	    
+	      .append(" and (c.alteracaoTipoCota is null or c.alteracaoTipoCota < :data) ");
 	    
 	    if (numeroCota != null){
 	      
