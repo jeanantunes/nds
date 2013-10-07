@@ -719,14 +719,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 												             List<EstudoCota> listaEstudosCota,
 												             IdentificacaoDestinatario destinatarioAtualizado){
 		
-		
-		
-		List<GrupoMovimentoEstoque> listaGruposMovimentoEstoqueCota = new ArrayList<GrupoMovimentoEstoque>(); 
-		listaGruposMovimentoEstoqueCota.add(GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
-		listaGruposMovimentoEstoqueCota.add(GrupoMovimentoEstoque.FALTA_EM_COTA);
-
 		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = 
-				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaSemEstudoPor(cota.getId(), periodo, listaIdFornecedores, listaGruposMovimentoEstoqueCota);
+				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaSemEstudoPor(cota.getId(), periodo, listaIdFornecedores, 
+																						  GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
 		
 		List<ItemNotaEnvio> listaItemNotaEnvio = gerarItensNotaEnvio(listaEstudosCota, cota, listaMovimentoEstoqueCota,periodo);
 
