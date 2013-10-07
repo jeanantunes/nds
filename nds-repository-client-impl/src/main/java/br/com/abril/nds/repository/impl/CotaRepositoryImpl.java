@@ -3116,26 +3116,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         	.append("     	inner join COTA c on pdv.COTA_ID=c.ID ")
         	.append("     	inner join ESTUDO_COTA ec on c.ID=ec.COTA_ID ") 
         	.append("     	inner join ESTUDO e on ec.ESTUDO_ID=e.ID ");
-    	
-    	if (intervaloDataLancamento != null) {
-        	hql	.append("     	inner join ( ")
-        		.append("         	select produto_edicao_id, l.DATA_LCTO_PREVISTA ")
-        		.append("         	from LANCAMENTO l ")
-        		.append("         	where l.DATA_LCTO_DISTRIBUIDOR between :dataLancamentoDe and :dataLancamentoAte ) rs1 ")
-        		.append("             	on e.PRODUTO_EDICAO_ID=rs1.PRODUTO_EDICAO_ID ")
-        		.append("             	and e.DATA_LANCAMENTO=rs1.DATA_LCTO_PREVISTA ");
-        }
-    	
-    	if (intervaloDateRecolhimento != null) {
-    		hql .append("     	inner join chamada_encalhe_cota cec on cec.cota_id = c.id ")
-    			.append("     	inner join chamada_encalhe ce on ce.id = cec.chamada_encalhe_id and ce.produto_edicao_id = e.produto_edicao_id ");
-    	}
-    	
-    	if (intervaloDateRecolhimento != null) {
-    		hql	.append(" and ( ")
-    			.append(" 	ce.data_recolhimento between :dataRecolhimentoDe and :dataRecolhimentoAte ")
-    			.append(" ) ");
-    	}
 	    	
     	hql	.append(" 	where rot.box_id is not null ) ")
     		.append(" ) ");
