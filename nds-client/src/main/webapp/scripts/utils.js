@@ -452,9 +452,11 @@ function onlyNumeric(event){
         else {
             // Ensure that it is a number and stop the keypress
             if (event.shiftKey || (event.keyCode < 48 || event.keyCode > 57) && (event.keyCode < 96 || event.keyCode > 105 )) {
-                event.preventDefault(); 
+            	event.preventDefault();
             }   
         }
+        
+        
 }
 
 function formatarMilhar(num) {
