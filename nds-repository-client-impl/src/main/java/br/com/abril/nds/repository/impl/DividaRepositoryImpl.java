@@ -282,11 +282,16 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	 * @return String
 	 */
 	private String getOrdenacaoDivida(FiltroDividaGeradaDTO filtro){
+		
+		if(FiltroDividaGeradaDTO.ColunaOrdenacao.ROTEIRIZACAO.equals(filtro.getColunaOrdenacao())) {
+			return " ORDER BY box.codigo, roteiro.ordem, rota.ordem, rotaPdv.ordem ";
+		}
+		
 		if(filtro.getListaColunaOrdenacao().isEmpty() && filtro.getListaColunaOrdenacao()== null   )
 		{
 			return "";
 		}
-		
+	
 		
 		String orderByColumn = "";
 		
@@ -333,6 +338,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 						orderByColumn += orderByColumn.equals("") ? "" : ",";
 						orderByColumn += " vias ";
 					break;
+					
 			}
 		}
 		
