@@ -28,7 +28,6 @@ import javax.persistence.TemporalType;
 
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
-import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.util.export.Exportable;
 
@@ -177,13 +176,6 @@ public class Produto implements Serializable {
 	@OneToOne(fetch=FetchType.EAGER, optional=true)
 	@JoinColumn(name="TIPO_SEGMENTO_PRODUTO_ID")
 	private TipoSegmentoProduto tipoSegmentoProduto;
-	
-	/**
-	 * Classificação do Produto
-	 */
-	@OneToOne(fetch=FetchType.EAGER, optional=true)
-	@JoinColumn(name="TIPO_CLASSIFICACAO_PRODUTO_ID")
-	private TipoClassificacaoProduto tipoClassificacaoProduto;
 	
 	@Column(name = "GERACAO_AUTOMATICA", nullable = false)
 	private Boolean isGeracaoAutomatica;
@@ -647,15 +639,6 @@ public class Produto implements Serializable {
 
 	public void setTipoSegmentoProduto(TipoSegmentoProduto tipoSegmentoProduto) {
 		this.tipoSegmentoProduto = tipoSegmentoProduto;
-	}
-
-	public TipoClassificacaoProduto getTipoClassificacaoProduto() {
-		return tipoClassificacaoProduto;
-	}
-
-	public void setTipoClassificacaoProduto(
-			TipoClassificacaoProduto tipoClassificacaoProduto) {
-		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
 	}
 
 	public List<ProdutoEdicao> getProdutoEdicao() {

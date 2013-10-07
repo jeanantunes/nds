@@ -1,15 +1,5 @@
 package br.com.abril.nds.controllers.cadastro;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.vo.BaseComboVO;
 import br.com.abril.nds.client.vo.ProdutoCadastroVO;
@@ -20,45 +10,28 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.filtro.FiltroProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
-import br.com.abril.nds.model.cadastro.ClasseSocial;
-import br.com.abril.nds.model.cadastro.DescontoLogistica;
-import br.com.abril.nds.model.cadastro.Editor;
-import br.com.abril.nds.model.cadastro.FaixaEtaria;
-import br.com.abril.nds.model.cadastro.FormaFisica;
-import br.com.abril.nds.model.cadastro.FormatoProduto;
-import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
-import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
-import br.com.abril.nds.model.cadastro.Sexo;
-import br.com.abril.nds.model.cadastro.TemaProduto;
-import br.com.abril.nds.model.cadastro.TipoProduto;
-import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
+import br.com.abril.nds.model.cadastro.*;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.serialization.custom.FlexiGridJson;
-import br.com.abril.nds.service.DescontoLogisticaService;
-import br.com.abril.nds.service.DescontoService;
-import br.com.abril.nds.service.EditorService;
-import br.com.abril.nds.service.EstoqueProdutoService;
-import br.com.abril.nds.service.FornecedorService;
-import br.com.abril.nds.service.ProdutoEdicaoService;
-import br.com.abril.nds.service.ProdutoService;
-import br.com.abril.nds.service.TipoClassificacaoProdutoService;
-import br.com.abril.nds.service.TipoProdutoService;
+import br.com.abril.nds.service.*;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.ValidacaoVO;
-import br.com.caelum.vraptor.Get;
-import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
-import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.*;
 import br.com.caelum.vraptor.view.Results;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Classe responsável pelo controle das ações referentes a produtos.
@@ -594,8 +567,6 @@ public class ProdutoController extends BaseController {
 	public void salvarProduto(Produto produto, Long codigoEditor, Long codigoFornecedor, Long codigoTipoDesconto, 
 			Long codigoTipoProduto) {
 		
-		produto.setTipoClassificacaoProduto(tipoClassificacaoProdutoService.buscarPorId(new Long(16)));
-		
 		this.validarProduto(
 			produto, codigoEditor, codigoFornecedor, 
 			codigoTipoDesconto, codigoTipoProduto);
@@ -802,7 +773,6 @@ public class ProdutoController extends BaseController {
 	/**
 	 * Popular combo.
 	 * 
-	 * @param listaDescontoLogistica
 	 * @return List<BaseComboVO>
 	 */
 	private List<BaseComboVO> getComboDescontoLogistica() {

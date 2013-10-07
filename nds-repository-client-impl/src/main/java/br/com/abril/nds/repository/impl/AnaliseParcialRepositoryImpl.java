@@ -166,7 +166,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         paramsWhere.add(queryDTO.getEstudoId());
 
         if (StringUtils.isNotEmpty(queryDTO.getNumeroCotaStr())) {
-            where.append(" and c.numero_cota in (" + queryDTO.getNumeroCotaStr() + ") ");
+            where.append(" and c.numero_cota in (").append(queryDTO.getNumeroCotaStr()).append(") ");
         }
 
         if (queryDTO.getFaixaDe() != null) {
@@ -197,8 +197,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         }
 
         query.setResultTransformer(new AliasToBeanResultTransformer(AnaliseParcialDTO.class));
-        List list = query.list();
-        return list;
+        return query.list();
     }
 
     @Override
@@ -626,9 +625,9 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
 
 	@Override
 	public AnaliseParcialDTO buscarReparteDoEstudo(Long estudoOrigem,Integer numeroCota) {
-		StringBuilder sql = new StringBuilder("select estudo_cota.REPARTE as ultimoReparte from estudo_cota join cota ON estudo_cota.COTA_ID = cota.ID where estudo_id = :estudoID and cota.numero_cota= :numeroCota");
+		String sql = "select estudo_cota.REPARTE as ultimoReparte from estudo_cota join cota ON estudo_cota.COTA_ID = cota.ID where estudo_id = :estudoID and cota.numero_cota= :numeroCota";
 		
-		  SQLQuery query = getSession().createSQLQuery(sql.toString());
+		  SQLQuery query = getSession().createSQLQuery(sql);
 	        query.setParameter("estudoID", estudoOrigem);
 	        query.setParameter("numeroCota", numeroCota);
 	        query.addScalar("ultimoReparte", StandardBasicTypes.BIG_DECIMAL);
@@ -647,6 +646,6 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
             Cota cota = (Cota) results.get()[0];
             listNumeroCota.add(cota.getNumeroCota());
         }
-        return (Integer[]) listNumeroCota.toArray(new Integer[0]);
+        return listNumeroCota.toArray(new Integer[listNumeroCota.size()-1]);
     }
 }
