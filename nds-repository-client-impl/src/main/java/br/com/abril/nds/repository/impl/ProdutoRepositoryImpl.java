@@ -13,7 +13,6 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
-import br.com.abril.nds.dto.RegiaoNMaiores_ProdutoDTO;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
@@ -82,8 +81,8 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append("from Produto produto "); 
-		if(codigoProduto.length() == 6){
-			hql.append(" where produto.codigoICD = :codigoProduto");			
+		if(codigoProduto.length() <= 6){
+			hql.append(" where produto.codigoICD = :codigoProduto group by produto.codigoICD ");			
 		}else{
 			hql.append(" where produto.codigo = :codigoProduto");
 		}
@@ -395,7 +394,8 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		
 		return query.list();
 	}
-
+	
+	@Deprecated
 	@Override
 	public String obterCodigoProdinPorCodICD(String codigoICD) {
 		
