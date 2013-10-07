@@ -207,7 +207,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		hql.append(" select c from Cobranca c ");		
 		hql.append(" left join c.baixasCobranca baixa ");
 		hql.append(" where c.cota.numeroCota = :ncota ");
-		hql.append(" and (baixa.statusAprovacao is null or baixa.statusAprovacao='PENDENTE') ");
+		hql.append(" and baixa.statusAprovacao is null ");
 		
 		
 		if (filtro.getDataVencimento()!=null){

@@ -42,6 +42,7 @@ import br.com.abril.nds.model.fiscal.nota.ProdutoServico;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
@@ -367,7 +368,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 	@Override
 	@Transactional
-	public MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque,Origem origem) {
+	public MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, Origem origem) {
 
 		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque, origem, null, false,false, true, null);
 
@@ -377,7 +378,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	@Override
 	public MovimentoEstoque gerarMovimentoEstoque(Long idProdutoEdicao, Long idUsuario, BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque) {
 
-		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null, null, false,false, true, null);
+		MovimentoEstoque movimentoEstoque = this.criarMovimentoEstoque(null, idProdutoEdicao, idUsuario, quantidade, tipoMovimentoEstoque,null, null, false, false, true, null);
 
 		return movimentoEstoque;
 	}
@@ -421,10 +422,10 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 	}
 
 	private MovimentoEstoque criarMovimentoEstoque(Date dataLancamento, Long idProdutoEdicao, Long idUsuario, 
-												   BigInteger quantidade,TipoMovimentoEstoque tipoMovimentoEstoque, 
+												   BigInteger quantidade, TipoMovimentoEstoque tipoMovimentoEstoque, 
 												   Origem origem, Date dataOperacao, boolean isImportacao,
 												   boolean isMovimentoDiferencaAutomatica, boolean validarTransfEstoqueDiferenca, 
-												   StatusIntegracao statusIntegracao){
+												   StatusIntegracao statusIntegracao) {
 
 		this.validarDominioGrupoMovimentoEstoque(tipoMovimentoEstoque, Dominio.DISTRIBUIDOR);
 		
@@ -435,7 +436,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		}
 		
-		if (dataLancamento!= null) {
+		if (dataLancamento != null) {
 			
 			Long idItemRecebimentoFisico =
 				this.itemRecebimentoFisicoRepository.obterItemPorDataLancamentoIdProdutoEdicao(dataLancamento, idProdutoEdicao);
@@ -461,6 +462,22 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			movimentoEstoque.setStatus(StatusAprovacao.APROVADO);
 			movimentoEstoque.setAprovador(new Usuario(idUsuario));
 			movimentoEstoque.setDataAprovacao(this.distribuidorService.obterDataOperacaoDistribuidor());
+			
+			/*
+			 * 04/10/2013 - Regra adicionada a pedido do Ronaldo Pataro
+			 * Se o Regime de Recolhimento e o Tipo forem "Parcial" deve ser direcionado para o Estoque de Lancamentos
+			 * exceto se for Tipo "Final", que deve ir para o estoque de recolhimento
+			 * 
+			 */
+			ProdutoEdicao pe = produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+			if(pe.isParcial()) {
+				for(Lancamento l : pe.getLancamentos()) {
+					if(l.getPeriodoLancamentoParcial() != null 
+							&& l.getPeriodoLancamentoParcial().getTipo().equals(TipoLancamentoParcial.PARCIAL)) {
+						tipoMovimentoEstoque = tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
+					}
+				}
+			}
 			
 			Long idEstoque = this.atualizarEstoqueProduto(tipoMovimentoEstoque, movimentoEstoque, isImportacao, validarTransfEstoqueDiferenca);			
 			
@@ -496,23 +513,20 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			Long idProdutoEdicao = movimentoEstoque.getProdutoEdicao().getId();
 			
 			EstoqueProduto estoqueProduto = 
-				this.estoqueProdutoRespository.buscarEstoqueProdutoPorProdutoEdicao(
-					idProdutoEdicao);
+				this.estoqueProdutoRespository.buscarEstoqueProdutoPorProdutoEdicao(idProdutoEdicao);
 
 			if (estoqueProduto == null) {
 
 				estoqueProduto = new EstoqueProduto();
 				
-				ProdutoEdicao produtoEdicao = 
-					this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
+				ProdutoEdicao produtoEdicao = this.produtoEdicaoRepository.buscarPorId(idProdutoEdicao);
 				
 				estoqueProduto.setProdutoEdicao(produtoEdicao);
 
 				estoqueProduto.setQtde(BigInteger.ZERO);
 			}
 			
-			TipoEstoque tipoEstoque = 
-				tipoMovimentoEstoque.getGrupoMovimentoEstoque().getTipoEstoque();
+			TipoEstoque tipoEstoque = tipoMovimentoEstoque.getGrupoMovimentoEstoque().getTipoEstoque();
 			
 			if (TipoEstoque.COTA.equals(tipoEstoque)) {
 				
@@ -523,8 +537,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 			
 			BigInteger novaQuantidadeSomatorioEstoque = BigInteger.ZERO;
 
-			boolean isOperacaoEntrada = 
-				OperacaoEstoque.ENTRADA.equals(tipoMovimentoEstoque.getOperacaoEstoque());
+			boolean isOperacaoEntrada = OperacaoEstoque.ENTRADA.equals(tipoMovimentoEstoque.getOperacaoEstoque());
 			
 			switch (tipoEstoque) {
 

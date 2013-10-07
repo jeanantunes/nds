@@ -42,6 +42,7 @@ import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO.OrdenacaoColunaDetalheBaixaBoleto;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Pessoa;
@@ -571,8 +572,9 @@ public class BaixaFinanceiraController extends BaseController {
 
 		//CONFIGURAR PAGINA DE PESQUISA
 		FiltroConsultaDividasCotaDTO filtroAtual = 
-				new FiltroConsultaDividasCotaDTO(
-						numCota, this.distribuidorService.obterDataOperacaoDistribuidor(),null);
+				new FiltroConsultaDividasCotaDTO(numCota);
+		
+		filtroAtual.setStatusCobranca(StatusCobranca.NAO_PAGO);
 
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		filtroAtual.setSomenteBaixadas(false);
@@ -634,8 +636,7 @@ public class BaixaFinanceiraController extends BaseController {
 
 		//CONFIGURAR PAGINA DE PESQUISA
 		FiltroConsultaDividasCotaDTO filtroAtual = 
-				new FiltroConsultaDividasCotaDTO(
-						numCota, this.distribuidorService.obterDataOperacaoDistribuidor() ,null);
+				new FiltroConsultaDividasCotaDTO(numCota);
 		PaginacaoVO paginacao = new PaginacaoVO(page, rp, sortorder);
 		filtroAtual.setNossoNumero(nossoNumero);
 		filtroAtual.setSomenteBaixadas(true);

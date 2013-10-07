@@ -62,10 +62,10 @@ public class GeradorBoleto {
             enderecoSac.setUF(UnidadeFederativa.valueOf(corpoBoleto.getEnderecoSacadoUf()));
         }
         
-        enderecoSac.setLocalidade(corpoBoleto.getEnderecoSacadoBairro());
+        enderecoSac.setLocalidade(corpoBoleto.getEnderecoSacadoLocalidade());
         enderecoSac.setCep(new CEP(corpoBoleto.getEnderecoSacadoCep()));
-        enderecoSac.setBairro(corpoBoleto.getEnderecoSacadoLogradouro());
-        enderecoSac.setLogradouro(corpoBoleto.getEnderecoSacadoLocalidade());
+        enderecoSac.setBairro(corpoBoleto.getEnderecoSacadoBairro());
+        enderecoSac.setLogradouro(corpoBoleto.getEnderecoSacadoLogradouro());
         enderecoSac.setNumero(corpoBoleto.getEnderecoSacadoNumero());
         sacado.addEndereco(enderecoSac);
         
@@ -187,7 +187,7 @@ public class GeradorBoleto {
 	  */
 	 public byte[] getBytePdf() throws ValidationException  {
 	    Boleto boleto = this.createBoleto(corpoBoleto);
-	    BoletoViewer boletoViewer = new BoletoViewer(boleto);
+	    BoletoViewer boletoViewer = new BoletoViewer(boleto,getClass().getResource("/boletoTemplate/BoletoNDS.pdf"));
 	    byte[] byteArrayPdf = boletoViewer.getPdfAsByteArray();
 	    return byteArrayPdf;
 	 }

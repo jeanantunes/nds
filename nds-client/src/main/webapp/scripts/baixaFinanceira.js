@@ -2,6 +2,7 @@ var baixaFinanceiraController = $.extend(true, {
 	
 	dataOperacaoDistribuidor: null,
 	tipoBaixa: null,
+	acaoPesquisa:null,
 	
 	init : function() {
 		$("#filtroNumCota", baixaFinanceiraController.workspace).numeric();
@@ -704,10 +705,19 @@ var baixaFinanceiraController = $.extend(true, {
 		
 		//TRATAMENTO NA FLEXGRID PARA EXIBIR MENSAGENS DE VALIDACAO
 		if (resultado.mensagens) {
-			exibirMensagem(
+			if(baixaFinanceiraController.acaoPesquisa != null){
+				exibirMensagem(
 				resultado.mensagens.tipoMensagem, 
 				resultado.mensagens.listaMensagens
-			);
+				);
+			}else{
+				
+				$("#filtroNumCota",baixaFinanceiraController.workspace).val("");
+				$("#descricaoCota",baixaFinanceiraController.workspace).val("");
+				$("#filtroNossoNumero",baixaFinanceiraController.workspace).val("");
+				$("#checkCobrancasBaixadas",baixaFinanceiraController.workspace).attr("checked",false);
+				$("#extratoBaixaManual",baixaFinanceiraController.workspace).hide();	
+			}
 			$(".area", baixaFinanceiraController.workspace).hide();
 			$(".grids", baixaFinanceiraController.workspace).hide();
 			return resultado;
@@ -750,6 +760,9 @@ var baixaFinanceiraController = $.extend(true, {
 		
 		$(".area", baixaFinanceiraController.workspace).show();
 		$(".grids", baixaFinanceiraController.workspace).show();
+		$("#extratoBaixaManual",baixaFinanceiraController.workspace).show();
+		
+		baixaFinanceiraController.acaoPesquisa = null;
 		
 		return resultado;
 	},
@@ -828,8 +841,10 @@ var baixaFinanceiraController = $.extend(true, {
 	},
 	
 	//EFETUA BUSCA DE DIVIDAS(POR COTA) OU COBRANCA(POR NOSSO NUMERO)
-	buscaManual : function() {
-
+	buscaManual : function(acaoTela) {
+		
+		baixaFinanceiraController.acaoPesquisa = acaoTela;
+		
 		dataHolder.clearAction('baixaManual', baixaFinanceiraController.workspace);
 
 		var nossoNumero = $("#filtroNossoNumero", baixaFinanceiraController.workspace).val();
@@ -1069,6 +1084,8 @@ var baixaFinanceiraController = $.extend(true, {
     //CALCULA TOTAL CONFORME AÇÃO DO USUARIO NA TELA DE BAIXA POR COTA
 	calculaTotalManualDividas : function() {
     	
+		baixaFinanceiraController.validarCamposBaixa();
+		
 		var valorDividas = removeMascaraPriceFormat($("#valorDividasHidden", baixaFinanceiraController.workspace).val());
 		
 		var desconto = removeMascaraPriceFormat($("#descontoDividas", baixaFinanceiraController.workspace).val());
@@ -1091,6 +1108,8 @@ var baixaFinanceiraController = $.extend(true, {
 	//CALCULA SALDO CONFORME AÇÃO DO USUARIO NA TELA DE BAIXA POR COTA
 	calculaSaldoDividas : function() {
     	
+		baixaFinanceiraController.validarCamposBaixa();
+		
 		var valorDividas = removeMascaraPriceFormat($("#valorDividasHidden", baixaFinanceiraController.workspace).val());		
 		var valorPago = removeMascaraPriceFormat($("#valorPagoDividas", baixaFinanceiraController.workspace).val());
 		
@@ -1115,6 +1134,20 @@ var baixaFinanceiraController = $.extend(true, {
 		$("#valorSaldoDividas", baixaFinanceiraController.workspace).html($("#valorSaldoDividasHidden", baixaFinanceiraController.workspace).val());
 	},
     
+	validarCamposBaixa : function() {
+		
+		var nulos = new Array();
+		
+		$("#pagarDividas input[type='text']").each(function(index, component) {
+			
+			var val = $(this).val(); 
+			
+			if (!val || val == "") {
+				
+				$(this).val("0,00");
+			}
+		});
+	},
     
     //EFETUA BAIXA MANUAL DE DIVIDAS SELECIONADAS E CALCULADAS
     baixaManualDividas : function(manterPendente) {
@@ -1145,7 +1178,7 @@ var baixaFinanceiraController = $.extend(true, {
 					       }
 		        	   }
 			           
-					   baixaFinanceiraController.buscaManual();
+					   baixaFinanceiraController.buscaManual(null);
 	               },
 	               null,
 	               true);
@@ -1685,14 +1718,14 @@ var baixaFinanceiraController = $.extend(true, {
     confirmarBaixa : function() {
     	var param = serializeArrayToPost('idCobrancas',baixaFinanceiraController.obterCobrancasDividasMarcadas());
     	$.postJSON(contextPath + "/financeiro/baixa/confirmarBaixaDividas",param,
-				   function() { baixaFinanceiraController.buscaManual(); }
+				   function() { baixaFinanceiraController.buscaManual(null); }
     	);
 	},
 	
 	cancelarBaixa : function() {
 		var param = serializeArrayToPost('idCobrancas',baixaFinanceiraController.obterCobrancasDividasMarcadas());
 		$.postJSON(contextPath + "/financeiro/baixa/cancelarBaixaDividas",param,
-				   function() { baixaFinanceiraController.buscaManual(); }
+				   function() { baixaFinanceiraController.buscaManual(null); }
 		);
 	},
 	

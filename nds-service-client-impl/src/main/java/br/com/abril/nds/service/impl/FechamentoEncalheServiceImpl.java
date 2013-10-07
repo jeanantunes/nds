@@ -63,6 +63,7 @@ import br.com.abril.nds.model.fiscal.nota.NotaFiscalReferenciada;
 import br.com.abril.nds.model.planejamento.ChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.ChamadaEncalheCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.ChamadaEncalheCotaRepository;
 import br.com.abril.nds.repository.ChamadaEncalheRepository;
@@ -369,7 +370,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			  
 			conferencia.setEstoque(TipoEstoque.SUPLEMENTAR.getDescricao());
 			  
-		} else if ("P".equals(conferencia.getTipo())) {
+		} else if ("P".equals(conferencia.getTipo()) 
+				&& (conferencia.getRecolhimento() != null 
+					&& TipoLancamentoParcial.PARCIAL.name().equals(conferencia.getRecolhimento()))) {
 			  
 			conferencia.setEstoque(TipoEstoque.LANCAMENTO.getDescricao());
   

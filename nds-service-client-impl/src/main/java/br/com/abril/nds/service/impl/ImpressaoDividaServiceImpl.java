@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.dto.EnderecoAssociacaoDTO.ColunaOrdenacao;
 import br.com.abril.nds.dto.GeraDividaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDividaGeradaDTO;
 import br.com.abril.nds.enums.TipoMensagem;
@@ -36,9 +37,12 @@ public class ImpressaoDividaServiceImpl implements ImpressaoDividaService {
 	@Override
 	public byte[] gerarArquivoImpressao(FiltroDividaGeradaDTO filtro) {
 		
+		filtro.setColunaOrdenacao(FiltroDividaGeradaDTO.ColunaOrdenacao.ROTEIRIZACAO);
+		
 		List<GeraDividaDTO> dividas = null;
 		
 		if( TipoCobranca.BOLETO.equals(filtro.getTipoCobranca())){
+
 			dividas = dividaRepository.obterDividasGeradas(filtro);
 		}
 		else {

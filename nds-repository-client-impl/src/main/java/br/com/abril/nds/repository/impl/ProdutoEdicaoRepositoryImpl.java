@@ -445,23 +445,25 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	}
 	
 	@Override
-	public Long countPesquisarEdicoes(String codigoProduto, String nomeProduto,
+	public Integer countPesquisarEdicoes(String codigoProduto, String nomeProduto,
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde) {
 		
 		StringBuilder hql = new StringBuilder();
-		hql.append(" SELECT count(p.codigo) as total ");
+		hql.append(" SELECT pe.id as total ");
 		
 		// Corpo da consulta com os filtros:
 		SQLQuery query = this.queryBodyPesquisarEdicoes(hql, codigoProduto, nomeProduto, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, null, null);
 		
 		query.addScalar("total", StandardBasicTypes.LONG);
 		
-		try {
-			return (Long) query.uniqueResult();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
+		List idsProdutoEdicao = query.list();
+		
+		if(idsProdutoEdicao == null) {
+			return 0;
 		}
+		
+		return  idsProdutoEdicao.size();
 	}
 	
 	/**
@@ -495,9 +497,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append("   inner join PESSOA pessoa on f.JURIDICA_ID=pessoa.ID ");
 		hql.append("   left outer join LANCAMENTO l on pe.ID=l.PRODUTO_EDICAO_ID "); 
 		hql.append("   where pe.ATIVO = :indAtivo ");
-		hql.append("   and l.DATA_LCTO_PREVISTA=( ");
+		hql.append("   and l.id=( ");
 		hql.append("       select ");
-		hql.append("           max(l.DATA_LCTO_PREVISTA) "); 
+		hql.append("           max(l.id) "); 
 		hql.append("       from ");
 		hql.append("           LANCAMENTO l "); 
 		hql.append("       where ");
@@ -536,6 +538,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		if (brinde) {
 			hql.append("  AND pe.POSSUI_BRINDE = :possuiBrinde ");
 		}
+		
+		hql.append(" GROUP BY pe.id ");
 		
 		// Ordenacao:
 		if (sortname != null && sortorder != null) {

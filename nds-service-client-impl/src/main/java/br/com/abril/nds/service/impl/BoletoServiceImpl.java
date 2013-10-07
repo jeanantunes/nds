@@ -991,7 +991,7 @@ public class BoletoServiceImpl implements BoletoService {
 	}
 	
 	
-	private CorpoBoleto gerarCorpoBoletoCota(Boleto boleto){
+	private CorpoBoleto gerarCorpoBoletoCota(Boleto boleto, Pessoa pessoaCedente, boolean aceitaPagamentoVencido){
 		
 		String nossoNumero = boleto.getNossoNumero();
 		String digitoNossoNumero = boleto.getDigitoNossoNumero();
@@ -999,7 +999,6 @@ public class BoletoServiceImpl implements BoletoService {
 		Banco banco = boleto.getBanco();
 		Date dataEmissao = boleto.getDataEmissao();
 		Date dataVencimento = boleto.getDataVencimento();
-		Pessoa pessoaCedente = this.distribuidorRepository.juridica(); 
 		Pessoa pessoaSacado = boleto.getCota().getPessoa();
 		
 		Endereco endereco = null;
@@ -1027,11 +1026,12 @@ public class BoletoServiceImpl implements BoletoService {
 				pessoaSacado, 
 				endereco, 
 				boleto.getTipoCobranca(),
-				boleto.getCota().getNumeroCota());
+				boleto.getCota().getNumeroCota(),
+				aceitaPagamentoVencido);
 		
 	}
 	
-	private CorpoBoleto gerarCorpoBoletoDistribuidor(BoletoDistribuidor boleto) {
+	private CorpoBoleto gerarCorpoBoletoDistribuidor(BoletoDistribuidor boleto, Pessoa pessoaCedente, boolean aceitaPagamentoVencido) {
 		
 		String nossoNumero = boleto.getNossoNumeroDistribuidor();
 		String digitoNossoNumero = boleto.getDigitoNossoNumeroDistribuidor();
@@ -1039,7 +1039,6 @@ public class BoletoServiceImpl implements BoletoService {
 		Banco banco = boleto.getBanco();
 		Date dataEmissao = boleto.getDataEmissao();
 		Date dataVencimento = boleto.getDataVencimento();
-		Pessoa pessoaCedente = this.distribuidorRepository.juridica();
 		Pessoa pessoaSacado = boleto.getFornecedor().getJuridica();
 		
 		Endereco endereco = null;
@@ -1067,7 +1066,8 @@ public class BoletoServiceImpl implements BoletoService {
 				pessoaSacado, 
 				endereco,
 				boleto.getTipoCobranca(),
-				null
+				null,
+				aceitaPagamentoVencido
 				);
 		
 	}
@@ -1089,7 +1089,8 @@ public class BoletoServiceImpl implements BoletoService {
 			Pessoa pessoaCedente, 
 			Pessoa pessoaSacado,
 			Endereco enderecoSacado,
-			TipoCobranca tipoCobranca, Integer numeroCota
+			TipoCobranca tipoCobranca, Integer numeroCota,
+			boolean aceitaPagamentoVencido
 			
 			){
 
@@ -1149,7 +1150,7 @@ public class BoletoServiceImpl implements BoletoService {
 			corpoBoleto.setEnderecoSacadoLocalidade(enderecoSacado.getCidade());     
 			corpoBoleto.setEnderecoSacadoCep(enderecoSacado.getCep());         
 			corpoBoleto.setEnderecoSacadoBairro(enderecoSacado.getBairro()); 
-			corpoBoleto.setEnderecoSacadoLogradouro(enderecoSacado.getLogradouro()); 
+			corpoBoleto.setEnderecoSacadoLogradouro(enderecoSacado.getTipoLogradouro() + " " + enderecoSacado.getLogradouro()); 
 			corpoBoleto.setEnderecoSacadoNumero(enderecoSacado.getNumero()); 
 		}
 		else{
@@ -1213,11 +1214,19 @@ public class BoletoServiceImpl implements BoletoService {
         corpoBoleto.setTituloValor(valor.setScale(2, RoundingMode.HALF_EVEN));   
         corpoBoleto.setTituloDataDoDocumento(dataEmissao);   
         corpoBoleto.setTituloDataDoVencimento(dataVencimento);  
-        corpoBoleto.setTituloDesconto(BigDecimal.ZERO);
-        corpoBoleto.setTituloDeducao(BigDecimal.ZERO);
-        corpoBoleto.setTituloMora(BigDecimal.ZERO);
-        corpoBoleto.setTituloAcrecimo(BigDecimal.ZERO);
-        corpoBoleto.setTituloValorCobrado(BigDecimal.ZERO);
+        
+        BigDecimal valorParaPagamentosVencidos = null;
+        
+        if (!aceitaPagamentoVencido) {
+        	
+        	valorParaPagamentosVencidos = BigDecimal.ZERO;
+        } 
+        
+        corpoBoleto.setTituloDesconto(valorParaPagamentosVencidos);
+        corpoBoleto.setTituloDeducao(valorParaPagamentosVencidos);
+        corpoBoleto.setTituloMora(valorParaPagamentosVencidos);
+        corpoBoleto.setTituloAcrecimo(valorParaPagamentosVencidos);
+        corpoBoleto.setTituloValorCobrado(valorParaPagamentosVencidos);
         
 
         //INFORMAÇOES DO BOLETO
@@ -1250,7 +1259,11 @@ public class BoletoServiceImpl implements BoletoService {
 	 */
 	private byte[]  gerarAnexoBoleto(Boleto boleto) throws IOException, ValidationException {
 		
-		GeradorBoleto geradorBoleto = new GeradorBoleto(this.gerarCorpoBoletoCota(boleto));
+		Pessoa pessoaCedente = this.distribuidorRepository.juridica(); 
+		
+		boolean aceitaPagamentoVencido = this.distribuidorRepository.aceitaBaixaPagamentoVencido();
+		
+		GeradorBoleto geradorBoleto = new GeradorBoleto(this.gerarCorpoBoletoCota(boleto, pessoaCedente, aceitaPagamentoVencido));
 		
 		byte[] b = geradorBoleto.getBytePdf();
         
@@ -1306,7 +1319,11 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null);
 		
-		GeradorBoleto geradorBoleto = new GeradorBoleto(this.gerarCorpoBoletoCota(boleto));
+		Pessoa pessoaCedente = this.distribuidorRepository.juridica(); 
+		
+		boolean aceitaPagamentoVencido = this.distribuidorRepository.aceitaBaixaPagamentoVencido();
+		
+		GeradorBoleto geradorBoleto = new GeradorBoleto(this.gerarCorpoBoletoCota(boleto, pessoaCedente, aceitaPagamentoVencido));
 		
 		byte[] b = geradorBoleto.getBytePdf();
 		
@@ -1329,14 +1346,16 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		Boleto boleto = null;
 		
+		Pessoa pessoaCedente = this.distribuidorRepository.juridica(); 
+		
+		boolean aceitaPagamentoVencido = this.distribuidorRepository.aceitaBaixaPagamentoVencido();
+		
 		for(String nossoNumero  : nossoNumeros){
 			
 			boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null);
-			
-			
-			
+
 			if(boleto!= null){
-				corpos.add(this.gerarCorpoBoletoCota(boleto));
+				corpos.add(this.gerarCorpoBoletoCota(boleto, pessoaCedente, aceitaPagamentoVencido));
 			}
 		}
 		
@@ -1354,8 +1373,12 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		List<CorpoBoleto> corpos = new ArrayList<CorpoBoleto>();
 		
+		Pessoa pessoaCedente = this.distribuidorRepository.juridica();
+		
+		boolean aceitaPagamentoVencido = this.distribuidorRepository.aceitaBaixaPagamentoVencido();
+
 		for(BoletoDistribuidor boletoDistribuidor  : listaBoletoDistribuidor){
-				corpos.add(this.gerarCorpoBoletoDistribuidor(boletoDistribuidor));
+				corpos.add(this.gerarCorpoBoletoDistribuidor(boletoDistribuidor, pessoaCedente, aceitaPagamentoVencido));
 		}
 		
 		if(!corpos.isEmpty()){

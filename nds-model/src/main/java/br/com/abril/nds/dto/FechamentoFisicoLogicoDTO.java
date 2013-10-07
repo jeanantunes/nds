@@ -29,6 +29,8 @@ public class FechamentoFisicoLogicoDTO {
 	
 	private String tipo;
 	
+	private String recolhimento;
+	
 	private boolean suplementar;
 	
 	private Date dataRecolhimento;
@@ -141,7 +143,7 @@ public class FechamentoFisicoLogicoDTO {
 	}
 	public void setTotal(BigDecimal total) {
 		this.total = total;
-		this.totalFormatado = CurrencyUtil.formatarValor(this.total); 
+		this.totalFormatado = CurrencyUtil.formatarValorQuatroCasas(this.total); 
 	}
 	public Long getFisico() {
 		return fisico;
@@ -180,6 +182,14 @@ public class FechamentoFisicoLogicoDTO {
 		return tipo;
 	}
 	
+	public String getRecolhimento() {
+		return recolhimento;
+	}
+
+	public void setRecolhimento(String recolhimento) {
+		this.recolhimento = recolhimento;
+	}
+
 	public void setEstoque(String estoque) {
 		this.estoque = estoque;
 	}
@@ -196,8 +206,8 @@ public class FechamentoFisicoLogicoDTO {
 		this.precoCapaDesconto = precoCapaDesconto;
 		
 		this.precoCapaDescFormatado = (this.precoCapaDesconto!= null) 
-				? CurrencyUtil.formatarValor(this.precoCapaDesconto)
-				: CurrencyUtil.formatarValor(BigDecimal.ZERO);
+				? CurrencyUtil.formatarValorQuatroCasas(this.precoCapaDesconto)
+				: CurrencyUtil.formatarValorQuatroCasas(BigDecimal.ZERO);
 	}
 
 	public String getPrecoCapaDescFormatado() {

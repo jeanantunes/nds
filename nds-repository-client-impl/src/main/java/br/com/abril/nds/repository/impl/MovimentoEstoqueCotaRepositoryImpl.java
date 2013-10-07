@@ -177,7 +177,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	    
 	       .append("  and c1.id = :idCota ")
 	       
-	       .append("  and lancamento.dataLancamentoDistribuidor <= :data");
+	       .append("  and lancamento.dataLancamentoDistribuidor <= :data")
+	    
+	       .append("  and (c1.alteracaoTipoCota is null or c1.alteracaoTipoCota < lancamento.dataLancamentoDistribuidor)");
 	   
 	        Query query = getSession().createQuery(hql.toString());
 	    
@@ -823,7 +825,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 			subSqlValoresDesconto.append("    COALESCE(MEC_REPARTE.PRECO_COM_DESCONTO, PRODUTO_EDICAO.PRECO_VENDA, 0) as precoComDesconto, ");
 			subSqlValoresDesconto.append("	COALESCE(MEC_REPARTE.VALOR_DESCONTO, 0) as valorDesconto, ");
-			subSqlValoresDesconto.append("	( SUM( COALESCE(MEC_REPARTE.QTDE, 0)) * COALESCE(MEC_REPARTE.PRECO_COM_DESCONTO , PRODUTO_EDICAO.PRECO_VENDA, 0) ) as valorComDesconto, ");
+			subSqlValoresDesconto.append("	( ( "+ subSqlEncalhe +") * COALESCE(MEC_REPARTE.PRECO_COM_DESCONTO , PRODUTO_EDICAO.PRECO_VENDA, 0) ) as valorComDesconto, ");
 			
 		} else {
 			
@@ -841,14 +843,14 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			subSqlValoresDesconto.append("	COALESCE(DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO, DESCONTO.VALOR, 0) as valorDesconto, ");
 			
 			subSqlValoresDesconto.append("  (CASE WHEN DESCONTO_LOGISTICA.ID IS NOT NULL THEN ( ");
-			subSqlValoresDesconto.append("	COALESCE(( "+ subSqlReparte +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
-			subSqlValoresDesconto.append("	(COALESCE(( "+ subSqlReparte +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 1) * " );
+			subSqlValoresDesconto.append("	COALESCE(( "+ subSqlEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
+			subSqlValoresDesconto.append("	(COALESCE(( "+ subSqlEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 1) * " );
 			subSqlValoresDesconto.append("  COALESCE(DESCONTO_LOGISTICA.PERCENTUAL_DESCONTO/100, 1)))");
 			subSqlValoresDesconto.append("  WHEN DESCONTO.ID IS NOT NULL THEN  ( ");
-			subSqlValoresDesconto.append("	COALESCE(( "+ subSqlReparte +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
-			subSqlValoresDesconto.append("	(COALESCE(( "+ subSqlReparte +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 1) * " );
+			subSqlValoresDesconto.append("	COALESCE(( "+ subSqlEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) - ");
+			subSqlValoresDesconto.append("	(COALESCE(( "+ subSqlEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 1) * " );
 			subSqlValoresDesconto.append("  COALESCE(DESCONTO.VALOR/100, 1)))");
-			subSqlValoresDesconto.append("  ELSE COALESCE(( "+ subSqlReparte +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) END");
+			subSqlValoresDesconto.append("  ELSE COALESCE(( "+ subSqlEncalhe +" ), 0) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) END");
 			subSqlValoresDesconto.append("	) as valorComDesconto, ");		
 		}
 		
@@ -866,7 +868,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		sql.append(subSqlValoresDesconto);
 		
-		sql.append("	( SUM( COALESCE(MEC_REPARTE.QTDE, 0)) * COALESCE(MEC_REPARTE.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0) ) as valor, ");
+		if (filtro.getIdCota() != null) {
+			sql.append("	( ( "+ subSqlEncalhe +") * COALESCE(MEC_REPARTE.PRECO_VENDA, PRODUTO_EDICAO.PRECO_VENDA, 0) ) as valor, ");
+		} else {
+			sql.append("	( ( "+ subSqlEncalhe +" ) * COALESCE(PRODUTO_EDICAO.PRECO_VENDA, 0) ) as valor, ");
+		}
 		
 		sql.append("( ").append(subSqlReparte).append(" ) as reparte, ");
 		
