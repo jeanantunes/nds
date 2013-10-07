@@ -5,14 +5,13 @@ import java.util.Date;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.SituacaoCotaService;
-import br.com.abril.nds.service.integracao.DistribuidorService;
 
 /**
  * Job responsável pela atualização da situação das cotas.
@@ -26,26 +25,14 @@ public class StatusCotaJob implements Job {
 	
 	public static final String FIM_PERIODO_VALIDADE_SITUACAO_COTA_DATA_KEY = "fimPeriodoValidadeSituacaoCota";
 	
+	@Autowired
 	private SituacaoCotaService situacaoCotaService;
 	
+	@Autowired
 	private DistribuidorRepository distribuidorRepository;
 	
+	@Autowired
 	private CotaService cotaService;
-	
-	/**
-	 * Construtor.
-	 */
-	public StatusCotaJob() {
-		
-		ClassPathXmlApplicationContext applicationContext = 
-			new ClassPathXmlApplicationContext("applicationContext.xml");
-			
-		this.situacaoCotaService = applicationContext.getBean(SituacaoCotaService.class);
-		
-		this.distribuidorRepository = applicationContext.getBean(DistribuidorRepository.class);
-		
-		this.cotaService = applicationContext.getBean(CotaService.class);
-	}
 
 	/*
 	 * (non-Javadoc)

@@ -5,7 +5,6 @@ import java.util.Set;
 
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
-import org.quartz.impl.StdSchedulerFactory;
 import org.quartz.impl.matchers.GroupMatcher;
 
 /**
@@ -16,22 +15,35 @@ import org.quartz.impl.matchers.GroupMatcher;
  */
 public class QuartzUtil {
 	
+	private static QuartzUtil INSTANCE = new QuartzUtil();
+	
+	private Scheduler scheduler;
+	
+	private QuartzUtil() {
+		
+	}
+	
+	public static QuartzUtil doAgendador(Scheduler scheduler) {
+		
+		INSTANCE.scheduler = scheduler;
+		
+		return INSTANCE;
+	}
+	
 	/**
 	 * Remove os jobs atrelados ao grupo passado como parâmetro.
 	 * 
 	 * @param jobGroupName - nome do grupo
 	 */
-	public static void removeJobsFromGroup(String jobGroupName) {
+	public void removeJobsFromGroup(String jobGroupName) {
 		
 		try {
-			
-			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
 			
 			Set<JobKey> jobKeys = findJobKeysFromGroup(jobGroupName);
 			
 			for (JobKey jobKey : jobKeys) {
 				
-				scheduler.deleteJob(jobKey);
+				this.scheduler.deleteJob(jobKey);
 			}
 			
 		} catch (Exception e) {
@@ -47,15 +59,13 @@ public class QuartzUtil {
 	 * 
 	 * @return {@link List} de {@link JobKey}
 	 */
-	public static Set<JobKey> findJobKeysFromGroup(String jobGroupName) {
+	public Set<JobKey> findJobKeysFromGroup(String jobGroupName) {
 		
 		try {
 			
-			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
-			
 			GroupMatcher<JobKey> groupMatcher = GroupMatcher.groupContains(jobGroupName);
 			
-			return scheduler.getJobKeys(groupMatcher);
+			return this.scheduler.getJobKeys(groupMatcher);
 
 		} catch (Exception e) {
 
