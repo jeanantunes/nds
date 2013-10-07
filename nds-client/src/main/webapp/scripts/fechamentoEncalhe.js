@@ -224,7 +224,7 @@ var fechamentoEncalheController = $.extend(true, {
 		$(".fechamentoGrid", fechamentoEncalheController.workspace).flexReload();
 		$(".grids", fechamentoEncalheController.workspace).show();
 		
-		vDataEncalhe = $('#datepickerDe', fechamentoEncalheController.workspace).val();
+		this.vDataEncalhe = $('#datepickerDe', fechamentoEncalheController.workspace).val();
 		vFornecedorId = $('#selectFornecedor', fechamentoEncalheController.workspace).val();
 		vBoxId = $('#selectBoxEncalhe', fechamentoEncalheController.workspace).val();
 		

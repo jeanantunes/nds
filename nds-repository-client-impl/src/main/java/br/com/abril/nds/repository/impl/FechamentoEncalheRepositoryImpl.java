@@ -181,6 +181,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		((SQLQuery) query).addScalar("precoCapaDesconto", StandardBasicTypes.BIG_DECIMAL);
 		((SQLQuery) query).addScalar("precoCapa", StandardBasicTypes.BIG_DECIMAL);
 		((SQLQuery) query).addScalar("tipo", StandardBasicTypes.STRING);
+		((SQLQuery) query).addScalar("recolhimento", StandardBasicTypes.STRING);
 		((SQLQuery) query).addScalar("suplementar", StandardBasicTypes.BOOLEAN);
 		((SQLQuery) query).addScalar("chamadao", StandardBasicTypes.BOOLEAN);
 		
@@ -226,6 +227,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		query.append("			 coalesce(pe.PRECO_VENDA, 0) as precoCapa,");
 		query.append("			 case when pe.PARCIAL = true  then 'P' else 'N' end as tipo,");
+		query.append("			 case when plp.TIPO is not null then plp.TIPO else null end as recolhimento,");
 		query.append("			 case when ce.TIPO_CHAMADA_ENCALHE = 'MATRIZ_RECOLHIMENTO' then false else true end as suplementar");
 		query.append("	from chamada_encalhe_cota cec");
 		query.append("	inner join chamada_encalhe ce on (ce.ID = cec.CHAMADA_ENCALHE_ID)");
@@ -234,6 +236,10 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.append("	inner join produto_fornecedor pf on (pf.PRODUTO_ID = p.ID)");
 		query.append("	left join desconto_logistica dlpe on (dlpe.ID = pe.DESCONTO_LOGISTICA_ID)");
 		query.append("	left join desconto_logistica dlp on (dlp.ID = p.DESCONTO_LOGISTICA_ID)");
+		
+		query.append("	left outer join lancamento_parcial lp on lp.produto_edicao_id = pe.id ");
+		query.append("	left outer join periodo_lancamento_parcial plp on plp.lancamento_parcial_id = lp.id ");
+		
 		query.append("	where ce.DATA_RECOLHIMENTO = :dataRecolhimento");
 		query.append("	and cec.postergado = false ");
 		
@@ -273,6 +279,7 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		
 		query.append("			 coalesce(pe.PRECO_VENDA, 0) as precoCapa,");
 		query.append("			 case when  pe.PARCIAL = true  then 'P' else 'N' end as tipo,");
+		query.append("			 case when plp.TIPO is not null then plp.TIPO else null end as recolhimento,");
 		query.append("			 case when ce.TIPO_CHAMADA_ENCALHE = 'MATRIZ_RECOLHIMENTO' then false else true end as suplementar");
 		query.append("	from chamada_encalhe_cota cec");
 		query.append("	inner join chamada_encalhe ce on (ce.ID = cec.CHAMADA_ENCALHE_ID)");
@@ -284,6 +291,10 @@ public class FechamentoEncalheRepositoryImpl extends AbstractRepositoryModel<Fec
 		query.append("	inner join produto_fornecedor pf on (pf.PRODUTO_ID = p.ID)");
 		query.append("	left join desconto_logistica dlpe on (dlpe.ID = pe.DESCONTO_LOGISTICA_ID)");
 		query.append("	left join desconto_logistica dlp on (dlp.ID = p.DESCONTO_LOGISTICA_ID)");
+		
+		query.append("	left outer join lancamento_parcial lp on lp.produto_edicao_id = pe.id ");
+		query.append("	left outer join periodo_lancamento_parcial plp on plp.lancamento_parcial_id = lp.id ");
+		
 		query.append("	where cce.`DATA` = :dataRecolhimento");
 		query.append("	and cec.postergado = false ");
 		
