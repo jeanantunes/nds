@@ -534,7 +534,8 @@ var produtoController = $.extend(true, {
 		var l = value.length;
 		
 		if(l>=6){
-			$("#codigoProdutoICDCadastro").val(value.substring(0,6));
+//			$("#codigoProdutoICDCadastro").val(value.substring(0,6));
+			$("#codigoProdutoICDCadastro").val(value.substring(0,(value.length)));
 		}else{
 			$("#codigoProdutoICDCadastro").val(value.substring(0,(value.length)));
 		}
