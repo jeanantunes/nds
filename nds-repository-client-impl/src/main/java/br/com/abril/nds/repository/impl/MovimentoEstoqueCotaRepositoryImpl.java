@@ -3054,7 +3054,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append("   join mec.produtoEdicao pe   ");
 		sql.append("   join pe.produto p   ");
 		sql.append("   join p.fornecedores f   ");
-		sql.append("   where mec.estudoCota is null   ");
+		sql.append("   where 1=1  ");
 		
 		if(listaGruposMovimentoEstoqueCota != null && !listaGruposMovimentoEstoqueCota.isEmpty())
 			sql.append("  and tm.grupoMovimentoEstoque in (:gruposMovimentosEstoque)  ");
