@@ -16,8 +16,8 @@ import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
-import org.quartz.impl.StdSchedulerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.job.StatusCotaJob;
@@ -105,6 +105,9 @@ public class ManutencaoStatusCotaController extends BaseController {
 	
 	@Autowired
 	private ConsultaConsignadoCotaService consignadoCotaService;
+	
+	@Autowired
+	private SchedulerFactoryBean schedulerFactoryBean;
 	
 	@Get
 	@Path("/")
@@ -268,7 +271,7 @@ public class ManutencaoStatusCotaController extends BaseController {
 		    			.withMisfireHandlingInstructionFireNow()
 		    	).build();
 
-	    Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+	    Scheduler scheduler = this.schedulerFactoryBean.getScheduler();
 	    
 	    scheduler.scheduleJob(job, trigger);
 	}
