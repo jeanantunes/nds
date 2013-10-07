@@ -339,7 +339,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public Long countPesquisarEdicoes(String codigoProduto, String nome,
+	public Integer countPesquisarEdicoes(String codigoProduto, String nome,
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde) {
 		

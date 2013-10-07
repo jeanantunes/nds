@@ -195,7 +195,7 @@ public class ProdutoEdicaoController extends BaseController {
 		}	
 	
 		// Pesquisar:
-		Long qtd = produtoEdicaoService.countPesquisarEdicoes(
+		Integer qtd = produtoEdicaoService.countPesquisarEdicoes(
 				filtro.getCodigo(), filtro.getNome(), intervaloLancamento, 
 				intervaloPreco, situacaoLancamento, codigoDeBarras, brinde);
 		
