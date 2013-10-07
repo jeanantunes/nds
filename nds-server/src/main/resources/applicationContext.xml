@@ -50,5 +50,12 @@
 	</bean>
 	
 	<tx:annotation-driven transaction-manager="transactionManager" />
+	
+	<bean id="jobFactoryBean" class="br.com.abril.nds.server.quartz.AutowiringSpringBeanJobFactory"></bean>
+	
+	<bean id="schedulerFactoryBean" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+    	<property name="configLocation" value="classpath:quartz.properties"/>
+        <property name="jobFactory" ref="jobFactoryBean"/>
+	</bean>
 
 </beans>

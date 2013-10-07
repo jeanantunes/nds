@@ -187,7 +187,7 @@ public class GeradorBoleto {
 	  */
 	 public byte[] getBytePdf() throws ValidationException  {
 	    Boleto boleto = this.createBoleto(corpoBoleto);
-	    BoletoViewer boletoViewer = new BoletoViewer(boleto);
+	    BoletoViewer boletoViewer = new BoletoViewer(boleto,getClass().getResource("/boletoTemplate/BoletoNDS.pdf"));
 	    byte[] byteArrayPdf = boletoViewer.getPdfAsByteArray();
 	    return byteArrayPdf;
 	 }
