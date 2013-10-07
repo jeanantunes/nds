@@ -161,7 +161,7 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * @param dto
 	 * @return
 	 */
-	public Long countPesquisarEdicoes(String codigoProduto, String nomeProduto,
+	public Integer countPesquisarEdicoes(String codigoProduto, String nomeProduto,
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde);
 	
