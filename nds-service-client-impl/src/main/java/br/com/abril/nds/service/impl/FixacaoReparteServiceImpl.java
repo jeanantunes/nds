@@ -321,9 +321,10 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 			if(fixacaoReparte.getProdutoFixado()!=null){
 				fixacaoReparteDTO.setProdutoFixado((fixacaoReparte.getProdutoFixado().getCodigo()));
 				fixacaoReparteDTO.setNomeProduto(fixacaoReparte.getProdutoFixado().getNome());
-				if(fixacaoReparte.getProdutoFixado().getTipoClassificacaoProduto() !=null){
-					fixacaoReparteDTO.setClassificacaoProduto(fixacaoReparte.getProdutoFixado().getTipoClassificacaoProduto().getDescricao());
-				}
+                //FIXME refazer... a classificação fica no ProdutoEdicao
+//				if(fixacaoReparte.getProdutoFixado().getTipoClassificacaoProduto() !=null){
+//					fixacaoReparteDTO.setClassificacaoProduto(fixacaoReparte.getProdutoFixado().getTipoClassificacaoProduto().getDescricao());
+//				}
 			}
 			
 		}
