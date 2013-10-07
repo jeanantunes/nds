@@ -52,6 +52,7 @@ import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
+import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
@@ -100,6 +101,9 @@ public class ParametroCobrancaCotaController extends BaseController {
 
 	@Autowired
 	private FileService fileService;
+	
+	@Autowired
+	private DistribuidorService distribuidorService;
 
 	@Autowired
 	private EntregadorService entregadorService;
@@ -739,7 +743,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 		
 			cota.setTipoCota(tipoCota);
 			
-			cota.setAlteracaoTipoCota(new Date());
+			cota.setAlteracaoTipoCota(this.distribuidorService.obterDataOperacaoDistribuidor());
 			
 			this.cotaService.alterarCota(cota);
 			
