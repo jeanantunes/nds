@@ -103,13 +103,6 @@ public class InformacoesProdutoController extends BaseController {
 	
 	private TableModel<CellModelKeyValue<InformacoesProdutoDTO>> gridProdutos (FiltroInformacoesProdutoDTO filtro, String sortname) {
 		
-		String codigoProdin;
-		
-		if(filtro.getCodProduto().length() == 6){
-			codigoProdin = prodService.obterCodigoProdinPorICD(filtro.getCodProduto());
-			filtro.setCodProduto(codigoProdin);
-		}
-		
 		List<InformacoesProdutoDTO> produtos = infoProdService.buscarProduto(filtro);
 
 		if (produtos == null || produtos.isEmpty()) {
