@@ -120,6 +120,12 @@ public class EmailServiceImpl implements EmailService {
 		
 		autenticarSmtp();
 		
+		ParametroSistema remetente = 
+			this.parametroSistemaRepository.buscarParametroPorTipoParametro(
+				TipoParametroSistema.EMAIL_REMETENTE);
+		
+		validarParametrosAutenticacao(remetente, TipoParametroSistema.EMAIL_PROTOCOLO);
+		
 		MimeMessage message = mailSender.createMimeMessage();
 		
 		try {
@@ -128,7 +134,7 @@ public class EmailServiceImpl implements EmailService {
 			mimeMessageHelper.setSubject(assunto == null ? "" : assunto);
 			mimeMessageHelper.setTo(destinatarios);
 			mimeMessageHelper.setText(mensagem == null ? "" : mensagem, isHtml);
-			mimeMessageHelper.setFrom(mailSender.getUsername());
+			mimeMessageHelper.setFrom(remetente.getValor());
 			
 			if(anexos!= null && !anexos.isEmpty()){
 				
@@ -167,7 +173,6 @@ public class EmailServiceImpl implements EmailService {
 		validarParametrosAutenticacao(smtp, TipoParametroSistema.EMAIL_PROTOCOLO);
 		
 		ParametroSistema usuario = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.EMAIL_USUARIO);
-		validarParametrosAutenticacao(usuario, TipoParametroSistema.EMAIL_USUARIO);
 		
 		mailSender.setPort(Integer.valueOf(porta.getValor()));
 		mailSender.setHost(host.getValor());

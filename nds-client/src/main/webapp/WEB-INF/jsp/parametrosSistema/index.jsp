@@ -45,7 +45,7 @@ $(function(){
 							<table>
 								<tr>
 									<td>E-mail</td>
-									<td><input type="text" name="dto.emailUsuario" id="emailUsuario" style="width:220px;" value="${parametroSistemaGeralDTO.emailUsuario}" /></td>
+									<td><input type="text" name="dto.emailRemetente" id="emailRemetente" style="width:220px;" value="${parametroSistemaGeralDTO.emailRemetente}" /></td>
 								</tr>
 								<tr>
 									<td>Host</td>
@@ -58,6 +58,10 @@ $(function(){
 								<tr>
 									<td>Protocolo</td>
 									<td><input type="text" name="dto.protocolo" id="protocolo" style="width:220px;" value="${parametroSistemaGeralDTO.protocolo}" /></td>
+								</tr>
+								<tr>
+									<td>Usuário</td>
+									<td><input type="text" name="dto.emailUsuario" id="emailUsuario" style="width:220px;" value="${parametroSistemaGeralDTO.emailUsuario}" /></td>
 								</tr>
 								<tr>
 									<td>Senha</td>
