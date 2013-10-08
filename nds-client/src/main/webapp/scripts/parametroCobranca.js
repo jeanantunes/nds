@@ -254,6 +254,8 @@ var parametroCobrancaController = $.extend(true,
 			
 			parametroCobrancaController.obterParametro(idPolitica);
 			
+			parametroCobrancaController.tratarFornecedoresCobrancaUnificada();
+			
 			$( "#dialog-novo", this.workspace).dialog({
 				resizable: false,
 				height:580,
@@ -742,7 +744,32 @@ var parametroCobrancaController = $.extend(true,
 		    var comboFormasEmissao =  parametroCobrancaController.montarComboBox(result,"formaEmissao","",selected);
 			$("#formasEmissao", this.workspace).html(comboFormasEmissao);
 		},
+		
+		tratarFornecedoresCobrancaUnificada: function() {
+		
+			var isUnificada = $("#unificada").val();
+			
+			if (isUnificada == 'N') {
+			
+				$("input[name='checkGroupFornecedores']").prop("checked", false);
+				$("input[name='checkGroupFornecedores']").on('click', parametroCobrancaController.selectOneCheckBox);
+				
+			} else {
+				
+				$("input[name='checkGroupFornecedores']").off('click');
+			}
+		},
 	
+		selectOneCheckBox: function() {
+			
+			if ($(this).is(":checked")) {
+		        var group = "input:checkbox[name='checkGroupFornecedores']";
+		        $(group).prop("checked", false);
+		        $(this).prop("checked", true);
+		    } else {
+		        $(this).prop("checked", false);
+		    }
+		},
 		
 		obterDadosBancarios : function(idBanco){
 			
