@@ -796,7 +796,7 @@ var fixacaoReparteController = $.extend(true, {
 			var data = [];
 			data.push({name:'filtro.codigoProduto',	value: $("#codigoProduto", fixacaoReparteController.wsp).val()});
 			data.push({name:'filtro.nomeProduto',	value: $("#nomeProduto", fixacaoReparteController.wsp).val()});
-			data.push({name:'filtro.classificacaoProduto',	value: $("#filtroClassificacaoFixacao option:selected", fixacaoReparteController.wsp).html()});
+			data.push({name:'filtro.classificacaoProduto',	value: $("#filtroClassificacaoFixacao option:selected", fixacaoReparteController.wsp).val()});
 
 			return data;
 		},
@@ -852,6 +852,7 @@ var fixacaoReparteController = $.extend(true, {
 			data.push({name:'fixacaoReparteDTO.edicaoInicial',	value: $("#edInicialModal").val()});
 			data.push({name:'fixacaoReparteDTO.edicaoFinal',	value: $("#edFinalModal").val()});
 			data.push({name:'fixacaoReparteDTO.qtdeEdicoesMarcado',	value: $("#radioQtdeEdicoes").is(":checked")});
+            data.push({name:'fixacaoReparteDTO.classificacaoProduto',	value: $("#filtroClassificacaoFixacao option:selected", fixacaoReparteController.wsp).val()});
 
 			return data;
 		},
