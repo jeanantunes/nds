@@ -254,8 +254,6 @@ var parametroCobrancaController = $.extend(true,
 			
 			parametroCobrancaController.obterParametro(idPolitica);
 			
-			parametroCobrancaController.tratarFornecedoresCobrancaUnificada();
-			
 			$( "#dialog-novo", this.workspace).dialog({
 				resizable: false,
 				height:580,
@@ -479,6 +477,7 @@ var parametroCobrancaController = $.extend(true,
 	
 			parametroCobrancaController.opcaoPagto(resultado.tipoCobranca);
 			parametroCobrancaController.opcaoTipoFormaCobranca(resultado.tipoFormaCobranca);
+			parametroCobrancaController.tratarFornecedoresCobrancaUnificada();
 			
 			$("input[name='checkGroupFornecedores']", this.workspace).each(function(i) {			
 				$(this, this.workspace).attr('checked',false);
