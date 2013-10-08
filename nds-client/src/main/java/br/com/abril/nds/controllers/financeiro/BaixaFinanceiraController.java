@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -859,23 +858,35 @@ public class BaixaFinanceiraController extends BaseController {
 	@Path("obterPostergacao")
 	public void obterPostergacao(Date dataPostergacao, List<Long> idCobrancas) {
 		
-		if ((idCobrancas==null) || (idCobrancas.size() <=0)) {
-			this.result.use(
-				Results.json()).from(
-					new ValidacaoVO(TipoMensagem.WARNING, "É necessário marcar ao menos uma dívida."), "result").recursive().serialize();
-			throw new ValidacaoException();
+		if (idCobrancas == null || idCobrancas.isEmpty()) {
+
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, "É necessário marcar ao menos uma dívida.");
 		}
 		
-		if (dataPostergacao == null) {
-			dataPostergacao = Calendar.getInstance().getTime();
+		BigDecimal encargos = null;
+
+		if (dataPostergacao != null) {
+
+			if (!this.calendarioService.isDiaUtil(dataPostergacao)) {
+				
+				throw new ValidacaoException(
+					TipoMensagem.WARNING, 
+						"É necessário selecionar um dia útil para postergação da dívida.");
+			}
+			
+			encargos = this.dividaService.calcularEncargosPostergacao(idCobrancas, dataPostergacao);
 		}
-		
-		BigDecimal encargos = this.dividaService.calcularEncargosPostergacao(idCobrancas, dataPostergacao);
-		
-		String encargosResult = CurrencyUtil.formatarValor(encargos);
 		
 		if (encargos != null) {
+			
+			String encargosResult = CurrencyUtil.formatarValor(encargos);
+			
 			this.result.use(Results.json()).from(encargosResult, "result").recursive().serialize();
+			
+		} else {
+			
+			this.result.use(Results.json()).from("", "result").recursive().serialize();
 		}
 	}
 	
@@ -886,8 +897,17 @@ public class BaixaFinanceiraController extends BaseController {
 		
 		List<String> listaMensagens = new ArrayList<String>();
 
-		if (idCobrancas == null || idCobrancas.isEmpty()) {
+		if (idCobrancas == null 
+				|| idCobrancas.isEmpty()) {
+			
 			listaMensagens.add("É necessário marcar ao menos uma dívida.");
+		}
+		
+		if (!this.calendarioService.isDiaUtil(dataPostergacao)) {
+			
+			throw new ValidacaoException(
+				TipoMensagem.WARNING, 
+					"É necessário selecionar um dia útil para postergação da dívida.");
 		}
 				
 		this.dividaService.postergarCobrancaCota(idCobrancas, dataPostergacao, getUsuarioLogado().getId(), isIsento);
