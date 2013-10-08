@@ -42,6 +42,7 @@ implements ParametroSistemaRepository {
 
 		List<TipoParametroSistema> lst = new ArrayList<TipoParametroSistema>();
 		lst.add(TipoParametroSistema.DATA_OPERACAO_CORRENTE);
+		lst.add(TipoParametroSistema.EMAIL_REMETENTE);
 		lst.add(TipoParametroSistema.EMAIL_HOST);
 		lst.add(TipoParametroSistema.EMAIL_PORTA);
 		lst.add(TipoParametroSistema.EMAIL_PROTOCOLO);		
