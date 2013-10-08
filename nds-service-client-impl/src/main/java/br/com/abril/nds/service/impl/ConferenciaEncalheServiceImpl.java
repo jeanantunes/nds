@@ -46,7 +46,6 @@ import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.TipoSlip;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
@@ -54,6 +53,7 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.cadastro.TipoBox;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.estoque.CobrancaControleConferenciaEncalheCota;
 import br.com.abril.nds.model.estoque.ConferenciaEncalhe;
@@ -1526,14 +1526,16 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(controleConferenciaEncalheCota.getCota(),
 																		 controleConferenciaEncalheCota.getDataOperacao(),
 																		 controleConferenciaEncalheCota.getUsuario(),
-																		 controleConferenciaEncalheCota.getId(), 
-																		 FormaComercializacao.CONSIGNADO);
+																		 controleConferenciaEncalheCota.getId());
 
 		Map<String, Boolean> nossoNumeroCollection = new HashMap<String, Boolean>();
 		
-		gerarCobrancaService.gerarCobranca(controleConferenciaEncalheCota.getCota().getId(), 
-										   controleConferenciaEncalheCota.getUsuario().getId(), 
-										   nossoNumeroCollection);
+		if (controleConferenciaEncalheCota.getCota().getTipoCota().equals(TipoCota.CONSIGNADO)){
+		
+			gerarCobrancaService.gerarCobranca(controleConferenciaEncalheCota.getCota().getId(), 
+											   controleConferenciaEncalheCota.getUsuario().getId(), 
+											   nossoNumeroCollection);
+	    }
 		
 		return nossoNumeroCollection;
 	}
@@ -1553,7 +1555,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 			
-			gerarCobrancaService.cancelarDividaCobranca(null, idCota, dataOperacao);
+			gerarCobrancaService.cancelarDividaCobranca(null, idCota, dataOperacao, true);
 		}
 	}
 	
@@ -2156,7 +2158,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 			Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 			
-			this.gerarCobrancaService.cancelarDividaCobranca(null, controleConferenciaEncalheCota.getCota().getId(), dataOperacao);
+			this.gerarCobrancaService.cancelarDividaCobranca(null, controleConferenciaEncalheCota.getCota().getId(), dataOperacao, true);
 			
 		}
 	}

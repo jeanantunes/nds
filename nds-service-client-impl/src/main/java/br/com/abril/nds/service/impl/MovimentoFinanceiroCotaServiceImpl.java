@@ -803,10 +803,10 @@ public class MovimentoFinanceiroCotaServiceImpl implements
      * @param dataOperacao
      * @return Map<Long,List<MovimentoEstoqueCota>>
     */
-    private Map<Long,List<MovimentoEstoqueCota>> obterMovimentosEstoqueReparteComChamadaEncalhe(Long idCota, Date dataOperacao){
+    private Map<Long,List<MovimentoEstoqueCota>> obterMovimentosEstoqueReparteComChamadaEncalheOuProdutoContaFirme(Long idCota, Date dataOperacao){
         
         List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEnvioReparte = 
-                    movimentoEstoqueCotaRepository.obterMovimentosPendentesGerarFinanceiroComChamadaEncalhe(
+                    movimentoEstoqueCotaRepository.obterMovimentosPendentesGerarFinanceiroComChamadaEncalheOuProdutoContaFirme(
                     idCota, 
                     dataOperacao);
         
@@ -848,20 +848,6 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 
 		return movimentosEstornoAgrupadosPorFornecedor;
     }
-    
-    /**
-     * Obtém movimentos de envio de reparte à cota x fornecedor que ainda não geraram financeiro com Chamada de Encalhe
-     * @param idFornecedor
-     * @param idCota
-     * @param dataOperacao
-     * @return List<MovimentoEstoqueCota>
-     */
-    private List<MovimentoEstoqueCota> obterMovimentosEstoqueReparteComChamadaEncalhe(Long idFornecedor, Long idCota, Date dataOperacao){
-
-		Map<Long,List<MovimentoEstoqueCota>> movimentosReparteAgrupadosPorFornecedor = this.obterMovimentosEstoqueReparteComChamadaEncalhe(idCota, dataOperacao);
-		
-		return movimentosReparteAgrupadosPorFornecedor.get(idFornecedor);
-	}
    
     /**
      * Retorna o somatório dos valores dos Movimentos de Estoque
@@ -1028,7 +1014,6 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	 * @param cota
 	 * @param fornecedor
 	 * @param idControleConferenciaEncalheCota
-	 * @param formaComercializacaoProduto
 	 * @param dataOperacao
 	 * @param usuario
 	 * @param movimentosEstoqueCotaOperacaoEnvioReparte
@@ -1038,7 +1023,6 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	private void gerarMovimentoFinanceiroCotaRecolhimentoPorFornecedor(Cota cota,
 			                                                           Fornecedor fornecedor,
 															           Long idControleConferenciaEncalheCota,
-			                                                           FormaComercializacao formaComercializacaoProduto,
 			                                                           Date dataOperacao,
 			                                                           Usuario usuario,
 			                                                           List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEnvioReparte,
@@ -1047,18 +1031,6 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			                                                           ){
 
 		TipoCota tipoCota = cota!=null?cota.getTipoCota():null;
-
-		//GERA MOVIMENTOS FINANCEIROS PARA A COTA A VISTA E PRODUTOS CONTA FIRME
-		this.gerarMovimentoFinanceiroCotaAVista(cota, 
-				                                fornecedor,
-				                                movimentosEstoqueCotaOperacaoEnvioReparte, 
-				                                movimentosEstoqueCotaOperacaoEstorno,
-				                                dataOperacao,
-				                                usuario,
-				                                formaComercializacaoProduto);
-		
-		//ATUALIZA MOVIMENTOS PENDENTES DE GERAR FINANCEIRO APÓS GERAR MOVIMENTOS FINANCEIROS DE REPARTE 
-		movimentosEstoqueCotaOperacaoEnvioReparte = this.obterMovimentosEstoqueReparteComChamadaEncalhe(fornecedor.getId(), cota.getId(), dataOperacao);
 
 		BigDecimal valorTotalEnvioReparte;
 		BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe;
@@ -1179,7 +1151,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	    
 	    for (Cota cota : cotas){
 	    
-	      this.gerarMovimentoFinanceiroCota(cota, dataOperacao, usuario);
+	        this.gerarMovimentoFinanceiroCota(cota, dataOperacao, usuario);
 	    }
 	}
 	
@@ -1226,15 +1198,13 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	/**
 	 * Gera movimento financeiro para cota na Conferencia de Encalhe
 	 * @param controleConferenciaEncalheCota
-	 * @param formaComercializacaoProduto
 	 */
 	@Transactional
 	@Override
     public void gerarMovimentoFinanceiroCota(Cota cota,
 											 Date dataOperacao,
 											 Usuario usuario,
-											 Long idControleConferenciaEncalheCota,
-											 FormaComercializacao formaComercializacaoProduto){
+											 Long idControleConferenciaEncalheCota){
 
 		//MOVIMENTOS DA CONFERENCIA DE ENCALHE AGUPADOS POR FORNECEDOR
 		Map<Long,List<MovimentoEstoqueCota>> movimentosEncalheAgrupadosPorFornecedor = null;
@@ -1249,7 +1219,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		}
 		
 		//MOVIMENTOS DE ENVIO DE REPARTE À COTA QUE AINDA NÃO GERARAM FINANCEIRO AGUPADOS POR FORNECEDOR
-		Map<Long,List<MovimentoEstoqueCota>> movimentosReparteAgrupadosPorFornecedor = this.obterMovimentosEstoqueReparteComChamadaEncalhe(cota.getId(), dataOperacao);
+		Map<Long,List<MovimentoEstoqueCota>> movimentosReparteAgrupadosPorFornecedor = this.obterMovimentosEstoqueReparteComChamadaEncalheOuProdutoContaFirme(cota.getId(), dataOperacao);
 
 		//MOVIMENTOS ESTORNADOS QUE ENTRAM COMO CREDITO À COTA AGUPADOS POR FORNECEDOR
 		Map<Long,List<MovimentoEstoqueCota>> movimentosEstornoAgrupadosPorFornecedor = this.obterMovimentosEstoqueEstorno(cota.getId());
@@ -1268,8 +1238,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			
 	        this.gerarMovimentoFinanceiroCotaRecolhimentoPorFornecedor(cota, 
 	        		                                                   fornecedor, 
-	        		                                                   idControleConferenciaEncalheCota, 
-	        		                                                   formaComercializacaoProduto, 
+	        		                                                   idControleConferenciaEncalheCota,
 	        		                                                   dataOperacao,
 	        		                                                   usuario,
 	        		                                                   movimentosReparteAgrupadosPorFornecedor.get(fornecedorId), 
