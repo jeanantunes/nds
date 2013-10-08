@@ -112,7 +112,7 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 			}
 			
 		} catch (Exception e) {
-			e.printStackTrace();
+			
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao enviar e-mail de arquivo de cobrança para nosso número: " + nossoNumero + " - " + e.getMessage());
 		}
 		
