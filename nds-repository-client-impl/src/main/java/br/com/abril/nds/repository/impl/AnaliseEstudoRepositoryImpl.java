@@ -48,7 +48,7 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		hql.append(" Lancamento lancamento");
 		hql.append(" JOIN estudo.produtoEdicao as prodEdicao ");
 		hql.append(" JOIN prodEdicao.produto as produto ");
-		hql.append(" JOIN produto.tipoClassificacaoProduto as tpClassifProduto ");
+		hql.append(" JOIN prodEdicao.tipoClassificacaoProduto as tpClassifProduto ");
 		
 		hql.append(" WHERE estudo.produtoEdicao.id = lancamento.produtoEdicao.id ");
 		
@@ -78,10 +78,8 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 			hql.append(" AND estudo.id = :NUM_ESTUDO ");
 		}
 		if(filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()){
-			hql.append(" AND produto.codigo.id = :ID_PRODUTO ");
-		}
-		if(filtro.getNome() !=null && !filtro.getNome().isEmpty()){
-			hql.append(" AND produto.nome = :NOME_PRODUTO ");
+			hql.append(" AND produto.codigoICD = :COD_PRODUTO ");
+			
 		}
 		if(filtro.getNumeroEdicao() !=null && filtro.getNumeroEdicao() > 0){
 			hql.append(" AND prodEdicao.numeroEdicao = :NUM_EDICAO_PRODUTO ");
@@ -156,10 +154,7 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 			query.setParameter("NUM_ESTUDO", filtro.getNumEstudo());
 		}
 		if(filtro.getCodigoProduto() != null && !filtro.getCodigoProduto().isEmpty()){
-			query.setParameter("ID_PRODUTO", filtro.getIdProduto());
-		}
-		if(filtro.getNome() !=null && !filtro.getNome().isEmpty()){
-			query.setParameter("NOME_PRODUTO", filtro.getNome());
+			query.setParameter("COD_PRODUTO", filtro.getCodigoProduto());
 		}
 		if(filtro.getNumeroEdicao() !=null && filtro.getNumeroEdicao() > 0){
 			query.setParameter("NUM_EDICAO_PRODUTO", filtro.getNumeroEdicao());

@@ -1,6 +1,7 @@
 <head>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/produto.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/pesquisaProduto.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/utils.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numeric.js"></script>
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery.numberformatter-1.2.3.min.js"></script>
 	<script type="text/javascript">
@@ -50,10 +51,10 @@
 			<table width="785" border="0" cellspacing="1" cellpadding="1">
 				<tr>
 					<td width="50"><strong>C&oacute;digo:</strong></td>					
-					<td width="120"><input type="text"  name="codigoProdutoCadastro" id="codigoProdutoCadastro" style="width:80px;" maxlength="30" /></td>					
+					<td width="120"><input type="text"  name="codigoProdutoCadastro" id="codigoProdutoCadastro" onkeyup="produtoController.atualizaICD();" style="width:80px;" maxlength="30" onkeydown="onlyNumeric(event);" /></td>					
 
 					<td width="50"  name="tdCodigoProdutoICDCadastro" ><strong>C&oacute;digo ICD:</strong></td>
-					<td width="120" name="tdCodigoProdutoICDCadastro"><input type="text"  name="codigoProdutoICDCadastro" id="codigoProdutoICDCadastro" style="width:80px;" maxlength="6" /></td>
+					<td width="120" name="tdCodigoProdutoICDCadastro"><input type="text" onkeydown="onlyNumeric(event);" name="codigoProdutoICDCadastro" id="codigoProdutoICDCadastro" style="width:80px;" maxlength="6" /></td>
 					
 				</tr>
 				

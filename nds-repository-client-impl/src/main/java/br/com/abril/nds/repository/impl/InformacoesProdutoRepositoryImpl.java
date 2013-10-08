@@ -46,8 +46,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" lancamento.tipoLancamento AS status, ");
 		hql.append(" prodEdicao.reparteDistribuido AS reparteDistribuido, ");
 		hql.append(" produto.percentualAbrangencia AS percentualAbrangencia, ");
-//		hql.append(" (select t.descricao from TipoClassificacaoProduto t where t.id=produto.tipoClassificacaoProduto.id) as tipoClassificacaoProdutoDescricao, ");
-		hql.append(" (select t.descricao from TipoClassificacaoProduto t where t.id="+"16"+") as tipoClassificacaoProdutoDescricao, ");
+		hql.append(" (select t.descricao from TipoClassificacaoProduto t where t.id=prodEdicao.tipoClassificacaoProduto.id) as tipoClassificacaoProdutoDescricao, ");
 		hql.append(" lancamento.dataLancamentoPrevista AS dataLcto, ");
 		hql.append(" lancamento.dataRecolhimentoPrevista AS dataRcto, ");
 		hql.append(" CASE ");
@@ -84,16 +83,8 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		List<String> whereClauseList = new ArrayList<>();
 		
 		if(StringUtils.isNotEmpty(filtro.getCodProduto())){
-			if(filtro.getCodProduto().length()<=6){
-				whereClauseList.add(" produto.codigoICD = :COD_PRODUTO ");
-			}else{
-				whereClauseList.add(" produto.codigo = :COD_PRODUTO ");
-			}
-			
+			whereClauseList.add(" produto.codigoICD = :COD_PRODUTO ");
 		}
-		
-//		if(StringUtils.isNotEmpty(filtro.getNomeProduto()))
-//			whereClauseList.add(" produto.nome = :NOME_PRODUTO ");
 		
 		if(filtro.getNumeroEdicao()!=null){
 			whereClauseList.add(" prodEdicao.numeroEdicao = :NUMERO_EDICAO ");
@@ -104,7 +95,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		}
 		
 		if(filtro.getIdTipoClassificacaoProd() !=null && filtro.getIdTipoClassificacaoProd() > 0){
-			whereClauseList.add(" produto.tipoClassificacaoProduto.id = :ID_CLASSIFICACAO ");
+			whereClauseList.add(" prodEdicao.tipoClassificacaoProduto.id = :ID_CLASSIFICACAO ");
 		}
 		
 		if(!whereClauseList.isEmpty()){
@@ -229,9 +220,6 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		if(filtro.getCodProduto()!=null){
 			query.setParameter("COD_PRODUTO", filtro.getCodProduto());
 		}
-//		if(filtro.getNomeProduto()!=null){
-//			query.setParameter("NOME_PRODUTO", filtro.getNomeProduto());
-//		}
 		
 		if(filtro.getNumeroEdicao()!=null){
 			query.setParameter("NUMERO_EDICAO", filtro.getNumeroEdicao());
