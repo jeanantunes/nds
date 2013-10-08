@@ -1,6 +1,7 @@
 package br.com.abril.nds.service.impl;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -331,14 +332,16 @@ public class CobrancaServiceImpl implements CobrancaService {
 			cobranca.setJuros( CurrencyUtil.formatarValor(valorJurosCalculado) );
             cobranca.setMulta( CurrencyUtil.formatarValor(valorMultaCalculado) );
             
+            BigDecimal valor  = cob.getValor();
+            valor = valor.setScale(2, RoundingMode.HALF_EVEN);
+            
             //CALCULA VALOR TOTAL
-            BigDecimal valorTotal = cob.getValor().add(valorJurosCalculado).add(valorMultaCalculado);
+            BigDecimal valorTotal = valor.add(valorJurosCalculado).add(valorMultaCalculado);
 			cobranca.setValorTotal( CurrencyUtil.formatarValor(valorTotal) );
 			
 		}
 		return cobranca;
 	}
-	
 	
 	/**
 	 * Método responsável por obter dados somados de cobranças por códigos
@@ -351,20 +354,53 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 		CobrancaDividaVO pagamento = new CobrancaDividaVO();
 	
-		BigDecimal totalJuros = new BigDecimal(0);
-		BigDecimal totalMulta = new BigDecimal(0);
-		BigDecimal totalDividas = new BigDecimal(0);
-		BigDecimal totalSaldoDividas = new BigDecimal(0);
+		BigDecimal totalJuros = BigDecimal.ZERO;
+		BigDecimal totalMulta = BigDecimal.ZERO;
+		BigDecimal totalDividas = BigDecimal.ZERO;
+		BigDecimal totalSaldoDividas = BigDecimal.ZERO;
 		
-		for (int i = 0; i<idCobrancas.size(); i++){
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		dataOperacao = DateUtil.parseDataPTBR((DateUtil.formatarDataPTBR(dataOperacao)));
+		
+		for (Long item : idCobrancas){
         
-			CobrancaVO cobranca = this.obterDadosCobranca(idCobrancas.get(i));
+			Cobranca cobranca = cobrancaRepository.buscarPorId(item);
+			
+			if (cobranca!= null &&  StatusCobranca.NAO_PAGO.equals(cobranca.getStatusCobranca())){
+				
+				BigDecimal valorJurosCalculado = BigDecimal.ZERO;
+				BigDecimal valorMultaCalculado = BigDecimal.ZERO; 
+				
+				Date vencimentoDiaUtil = calendarioService.adicionarDiasUteis(cobranca.getDataVencimento(), 0);
 
-	        totalJuros = totalJuros.add(CurrencyUtil.converterValor(cobranca.getJuros()));
-	        totalMulta = totalMulta.add(CurrencyUtil.converterValor(cobranca.getMulta()));
-	        totalDividas = totalDividas.add(CurrencyUtil.converterValor(cobranca.getValor()));
-	        totalSaldoDividas = totalSaldoDividas.add(CurrencyUtil.converterValor(cobranca.getValorSaldo())); 
-	        
+			    Date dataVencimento = DateUtil.parseDataPTBR((DateUtil.formatarDataPTBR(vencimentoDiaUtil)));
+				
+				//CALCULA VALOR DO SALDO DA DIVIDA(MOVIMENTOS DE PAGAMENTO PARCIAL)
+				BigDecimal saldoDivida = this.obterSaldoDivida(cobranca.getId());
+				
+				
+				if (dataVencimento.compareTo(dataOperacao) < 0) {
+					
+					valorJurosCalculado =
+						this.calcularJuros(cobranca.getBanco(), cobranca.getCota(),
+										   cobranca.getValor().subtract(saldoDivida), 
+										   cobranca.getDataVencimento(),
+										   dataOperacao);
+					valorMultaCalculado =
+						this.calcularMulta(cobranca.getBanco(), cobranca.getCota(),
+								           cobranca.getValor().subtract(saldoDivida));
+				}
+				
+			    BigDecimal valor  = cobranca.getValor();
+	            valor = valor.setScale(2, RoundingMode.HALF_EVEN);
+	            
+				totalJuros = totalJuros.add(valorJurosCalculado);
+		        totalMulta = totalMulta.add(valorMultaCalculado);
+		        totalDividas = totalDividas.add(valor);
+		        totalSaldoDividas = totalSaldoDividas.add(saldoDivida); 
+				
+			} 
 		}
 		
 		pagamento.setValorJuros(CurrencyUtil.formatarValor(totalJuros));
