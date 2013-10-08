@@ -83,12 +83,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		List<String> whereClauseList = new ArrayList<>();
 		
 		if(StringUtils.isNotEmpty(filtro.getCodProduto())){
-			if(filtro.getCodProduto().length()<=6){
-				whereClauseList.add(" produto.codigoICD = :COD_PRODUTO ");
-			}else{
-				whereClauseList.add(" produto.codigo = :COD_PRODUTO ");
-			}
-			
+			whereClauseList.add(" produto.codigoICD = :COD_PRODUTO ");
 		}
 		
 		if(filtro.getNumeroEdicao()!=null){

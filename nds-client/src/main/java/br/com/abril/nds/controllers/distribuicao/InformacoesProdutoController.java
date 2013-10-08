@@ -25,6 +25,7 @@ import br.com.abril.nds.dto.ProdutoBaseSugeridaDTO;
 import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.InformacoesProdutoService;
@@ -102,6 +103,9 @@ public class InformacoesProdutoController extends BaseController {
 	}
 	
 	private TableModel<CellModelKeyValue<InformacoesProdutoDTO>> gridProdutos (FiltroInformacoesProdutoDTO filtro, String sortname) {
+		
+		Produto produto = prodService.obterProdutoPorCodigo(filtro.getCodProduto());
+		filtro.setCodProduto(produto.getCodigoICD());
 		
 		List<InformacoesProdutoDTO> produtos = infoProdService.buscarProduto(filtro);
 

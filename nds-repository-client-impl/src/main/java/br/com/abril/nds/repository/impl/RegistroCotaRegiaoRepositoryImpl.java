@@ -197,11 +197,7 @@ public class RegistroCotaRegiaoRepositoryImpl extends AbstractRepositoryModel<Re
 				
 				hql.append(" WHERE ");
 				
-				if(filtro.getCodigoProduto().length() == 6){
-					hql.append(" produto.codigoICD = :COD_PRODUTO ");			
-				}else{
-					hql.append(" produto.codigo = :COD_PRODUTO ");
-				}
+				hql.append(" produto.codigoICD = :COD_PRODUTO ");			
 
 				hql.append(this.getSqlWhereBuscarProdutos(filtro));
 				

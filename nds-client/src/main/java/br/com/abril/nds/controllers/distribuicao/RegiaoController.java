@@ -27,12 +27,14 @@ import br.com.abril.nds.dto.filtro.FiltroRegiaoNMaioresRankingDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.distribuicao.Regiao;
 import br.com.abril.nds.model.distribuicao.RegistroCotaRegiao;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.CotaService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RegiaoService;
 import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -61,6 +63,9 @@ public class RegiaoController extends BaseController {
 
 	@Autowired
 	private RegiaoService regiaoService;
+	
+	@Autowired
+	private ProdutoService prodService;
 	
 	@Autowired
 	private HttpSession session;
@@ -426,6 +431,9 @@ public class RegiaoController extends BaseController {
 	
 	private TableModel<CellModelKeyValue<RegiaoNMaiores_ProdutoDTO>> gridProdutos (FiltroRegiaoNMaioresProdDTO filtro) {
 		
+		Produto produto = prodService.obterProdutoPorCodigo(filtro.getCodigoProduto());
+		filtro.setCodigoProduto(produto.getCodigoICD());
+				
 		List<RegiaoNMaiores_ProdutoDTO> produtos = regiaoService.buscarProdutos(filtro);
 		
 		if (produtos == null || produtos.isEmpty()) {
