@@ -131,15 +131,10 @@ public class ProdutoController extends BaseController {
 	@Post
 	public void pesquisarPorCodigoProduto(String codigoProduto) throws ValidacaoException{
 		
-		if(codigoProduto == null || "".equals(codigoProduto.trim()))
-				throw new ValidacaoException(TipoMensagem.WARNING, "Código vazio!");
-		
 		Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
 		
 		if (produto == null) {
-			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Produto com o código \"" + codigoProduto + "\" não encontrado!");
-			
 		} else {
 			result.use(Results.json()).from(produto, "result").serialize();
 		}		

@@ -45,7 +45,7 @@ public class ProdutoRepositoryImplTest extends AbstractRepositoryImplTest {
 	@Test
 	public void obterProdutoPorCodigo() {
 		Produto produto = 
-				produtoRepository.obterProdutoPorCodigo("1");
+				produtoRepository.obterProdutoPorCodigoProdin("1");
 		
 		Assert.assertTrue(produto != null);
 	}
