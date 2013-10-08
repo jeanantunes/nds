@@ -1,29 +1,27 @@
 package br.com.abril.nds.repository.impl;
 
-import java.util.ArrayList;
-import java.util.GregorianCalendar;
-import java.util.List;
-
+import br.com.abril.nds.dto.FixacaoReparteDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoCotaDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoProdutoDTO;
+import br.com.abril.nds.dto.filtro.FiltroDTO;
+import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
+import br.com.abril.nds.model.distribuicao.FixacaoReparte;
+import br.com.abril.nds.model.distribuicao.FixacaoRepartePdv;
+import br.com.abril.nds.model.seguranca.Usuario;
+import br.com.abril.nds.repository.AbstractRepositoryModel;
+import br.com.abril.nds.repository.FixacaoRepartePdvRepository;
+import br.com.abril.nds.repository.FixacaoReparteRepository;
+import br.com.abril.nds.vo.PaginacaoVO;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import br.com.abril.nds.dto.FixacaoReparteDTO;
-import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoCotaDTO;
-import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoProdutoDTO;
-import br.com.abril.nds.dto.filtro.FiltroDTO;
-import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Produto;
-import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
-import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
-import br.com.abril.nds.model.distribuicao.FixacaoReparte;
-import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.repository.AbstractRepositoryModel;
-import br.com.abril.nds.repository.FixacaoReparteRepository;
-import br.com.abril.nds.repository.RepartePDVRepository;
-import br.com.abril.nds.vo.PaginacaoVO;
+import java.util.ArrayList;
+import java.util.GregorianCalendar;
+import java.util.List;
 /**
  * Classe de implementação referente ao acesso a dados da entidade
  *
@@ -32,30 +30,28 @@ import br.com.abril.nds.vo.PaginacaoVO;
 
 @Repository
 public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<FixacaoReparte, Long> implements FixacaoReparteRepository {
- 
-	@Autowired
-	private RepartePDVRepository repartePDVRepository;
-	
+
+    @Autowired
+    private FixacaoRepartePdvRepository fixacaoRepartePdvRepository;
+
 	public FixacaoReparteRepositoryImpl() {
 		super(FixacaoReparte.class);
 	}
-	
+
 	@Override
 	public FixacaoReparte buscarPorId(Long id){
 		return super.buscarPorId(id);
 	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<FixacaoReparteDTO> obterFixacoesRepartePorProduto(FiltroConsultaFixacaoProdutoDTO produto) {
-	
-		boolean isCodigoProdutoPreenchido = produto!= null && produto.getCodigoProduto() !=null;
-		boolean isClassificacaoPreenchida = StringUtils.isNotEmpty(produto.getClassificacaoProduto());
-		boolean isNomeProdutoPreenchido = StringUtils.isNotEmpty(produto.getNomeProduto());
-	
+
+		boolean isClassificacaoPreenchida = !StringUtils.equals(produto.getClassificacaoProduto(),"-1");
+
 		StringBuilder sql = new StringBuilder("");
 
 		sql.append(" select ")
-		
 		.append(" f.id as id, ")
 		.append(" f.qtdeExemplares as qtdeExemplares,")
 		.append(" f.qtdeEdicoes as qtdeEdicoes,")
@@ -66,57 +62,42 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		.append(" f.cotaFixada.numeroCota as cotaFixada,")
 		.append(" f.cotaFixada.id as cotaFixadaId,")
 		.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '')  as nomeCota,")
-		.append(" f.produtoFixado.tipoClassificacaoProduto.descricao as classificacaoProduto,")
-		.append(" f.usuario.login as usuario,")
-		.append(" produto.codigo as codigoProduto,")
+        .append(" coalesce(classificacao.descricao, '') as classificacaoProduto,")
+        .append(" f.usuario.login as usuario,")
+		.append(" f.codigoICD as codigoProduto,")
 		.append(" count(pdv.id) as qtdPdv")
-		
+
 		.append(" from ")
-		
 		.append(" FixacaoReparte f ")
+		.append(" left join f.classificacaoProdutoEdicao as classificacao ")
 		.append(" left join f.cotaFixada.pessoa as pessoa ")
 		.append(" left join f.cotaFixada.pdvs as pdv ")
-		.append(" inner join f.produtoFixado as produto ")
-		
+
 		.append(" where ");
-		
-		if(isNomeProdutoPreenchido){
-			sql.append( " UPPER(produto.nome) like  UPPER(:nomeProduto) ");
-		}
-		sql.append(" AND f.cotaFixada.tipoDistribuicaoCota = :tipoCota ");
-		
+
+		sql.append(" f.cotaFixada.tipoDistribuicaoCota = :tipoCota ");
+
 		if(isClassificacaoPreenchida){
-			sql.append(" and upper(f.produtoFixado.tipoClassificacaoProduto.descricao) = upper(:classificacaoProduto)");
+			sql.append(" and f.classificacaoProdutoEdicao.id = :classificacaoProduto");
 		}
-		
-		if(isCodigoProdutoPreenchido){
-			sql.append(	" and (produto.id) = (:idProduto) ");
-			//sql.append(	" and produto.codigo like (:idProduto) ");
-		}
+
+        sql.append(	" and f.codigoICD = :codigoICD ");
 
 		sql.append(" GROUP BY f.id ")
 		.append(" order by f.cotaFixada.numeroCota asc ");
-		
+
 		Query query = getSession().createQuery(sql.toString());
-		
-		
-		if(isNomeProdutoPreenchido){
-			query.setParameter("nomeProduto", produto.getNomeProduto() + "%");
-		}
-		
-		if(isCodigoProdutoPreenchido){
-			query.setParameter("idProduto", produto.getIdProduto());
-			//query.setParameter("idProduto", produto.getCodigoProduto().substring(0,6).concat("%"));
-		}
+        query.setParameter("codigoICD", produto.getCodigoProduto());
+
 		if(isClassificacaoPreenchida){
-			query.setParameter("classificacaoProduto", produto.getClassificacaoProduto());
+			query.setParameter("classificacaoProduto", Long.parseLong(produto.getClassificacaoProduto()));
 		}
 		query.setParameter("tipoCota", TipoDistribuicaoCota.CONVENCIONAL);
-		
+
 		query.setResultTransformer(new AliasToBeanResultTransformer(FixacaoReparteDTO.class));
 		configurarPaginacao(produto,query);
 		return query.list();
-		
+
 	}
 
 	@SuppressWarnings("unchecked")
@@ -124,12 +105,11 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 	public List<FixacaoReparteDTO> obterFixacoesRepartePorCota(FiltroConsultaFixacaoCotaDTO cota) {
 		boolean isNumeroCotaPreenchido = cota!= null && cota.getCota() !=null,
 				isNomeCotaPreenchido = StringUtils.isNotEmpty(cota.getNomeCota());
-		
+
 		StringBuilder sql = new StringBuilder("");
-		
-		sql.append(" select ");
-		
-		sql.append(" f.id as id, ")
+
+		sql.append(" select ")
+		 .append(" f.id as id, ")
 	     .append(" f.qtdeExemplares as qtdeExemplares, ")
 		 .append(" f.qtdeEdicoes as qtdeEdicoes, ")
 		 .append(" f.edicoesAtendidas as edicoesAtendidas, ")
@@ -139,43 +119,43 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		 .append(" f.edicaoFinal - f.edicaoInicial as edicoesAtendidas, ")
 		 .append(" f.cotaFixada.numeroCota as cotaFixada, ")
 		 .append(" f.cotaFixada.id as cotaFixadaId, ")
-		 .append(" f.produtoFixado.codigoICD as produtoFixado, ")
-		 .append(" f.produtoFixado.nome as nomeProduto, ")
-		 .append(" f.produtoFixado.id as produtoFixadoId, ")
-		 
-		 .append(" f.produtoFixado.tipoClassificacaoProduto.descricao as classificacaoProduto, ")
+		 .append(" f.codigoICD as codigoProduto, ")
+//		 .append(" f.produtoFixado.nome as nomeProduto, ")
+
+		 .append(" coalesce(classificacao.descricao,'') as classificacaoProduto, ")
 		 .append(" f.usuario.login as usuario, ")
 		 .append(" f.manterFixa as manterFixa, ")
 		 .append(" count(pdv.id) as qtdPdv ")
 
 		.append(" from ")
 		.append(" FixacaoReparte f ")
+		.append(" left join f.classificacaoProdutoEdicao as classificacao  ")
 		.append(" inner join f.cotaFixada as cota ")
 		.append(" inner join cota.pdvs as pdv ")
 		.append(" where ");
-		
+
 		if(isNomeCotaPreenchido){
 			sql.append(" (upper(cota.pessoa.nome) like  upper(:nomeCota) ")
 			.append(" or upper(cota.pessoa.nomeFantasia) like  upper(:nomeCota) ")
 			.append(" or upper(cota.pessoa.razaoSocial) like  upper(:nomeCota) ) and ");
-			
+
 		}
-		
+
 		sql.append(" f.cotaFixada.tipoDistribuicaoCota = :tipoCota ");
-		
+
 		if(isNumeroCotaPreenchido ){
 			sql.append(	" and cota.numeroCota = :numeroCota ");
 		}
 
-		sql.append(" GROUP BY f.id ")
-		.append(" order by f.produtoFixado.nome asc ");
-		
+		sql.append(" GROUP BY f.id ");
+		//.append(" order by f.produtoFixado.nome asc ");
+
 		Query query = getSession().createQuery(sql.toString());
-		
+
 		if(isNomeCotaPreenchido){
 			query.setParameter("nomeCota", "%"+ cota.getNomeCota() +"%");
 		}
-		
+
 		if(isNumeroCotaPreenchido ){
 			query.setParameter("numeroCota", new Integer(cota.getCota()));
 		}
@@ -184,13 +164,13 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		configurarPaginacao(cota, query);
 		return query.list();
 	}
-	
+
 	private void configurarPaginacao(FiltroDTO dto, Query query) {
 
 		  PaginacaoVO paginacao = dto.getPaginacao();
 
 		  if(paginacao==null)return;
-		  
+
 		  if (paginacao.getQtdResultadosTotal().equals(0)) {
 		   paginacao.setQtdResultadosTotal(query.list().size());
 		  }
@@ -203,71 +183,66 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		   query.setFirstResult(paginacao.getPosicaoInicial());
 		  }
 	 }
-	
 
 	@Override
-	public FixacaoReparte buscarPorProdutoCota(Cota cota, Produto produto) {
-		
+	public FixacaoReparte buscarPorProdutoCota(Cota cota, String codigoICD) {
+
 		StringBuilder sql = new StringBuilder();
-		
+
 		sql.append(" from ");
 		sql.append(" FixacaoReparte f ");
 		sql.append(" where f.cotaFixada = :cotaSelecionada ");
-		sql.append(" and f.produtoFixado = :produtoSelecionado  ");
-		
+		sql.append(" and f.codigoICD = :codigoICD  ");
+
 		Query query  = getSession().createQuery(sql.toString());
 		query.setParameter("cotaSelecionada",  cota);
-		query.setParameter("produtoSelecionado", produto);
-		
+		query.setParameter("codigoICD", codigoICD);
+
 		return (FixacaoReparte)query.uniqueResult();
 	}
-	
-	
-	
-	
+
 	@SuppressWarnings("unchecked")
 	public List<FixacaoReparte> buscarPorCota(Cota cota){
 		StringBuilder sql = new StringBuilder("");
-		
+
 		sql.append(" from ");
 		sql.append(" FixacaoReparte f ");
 		sql.append(" where f.cotaFixada = :cotaSelecionada ");
-		
+
 		Query query  = getSession().createQuery(sql.toString());
 		query.setParameter("cotaSelecionada",  cota);
-		
-		
+
+
 		return query.list();
 	}
-	
-	
+
 	public void removerPorCota(Cota cota){
 		StringBuilder sql = new StringBuilder("");
-		
+
 		sql.append("delete from ");
 
 		sql.append(" FixacaoReparte f ");
-		
+
 		sql.append(" where f.cotaFixada = :cotaSelecionada ");
-		
+
 		Query query  = getSession().createQuery(sql.toString());
 		query.setParameter("cotaSelecionada",  cota);
-		
+
 	}
 
 	@Override
 	public boolean isFixacaoExistente(FixacaoReparteDTO fixacaoReparteDTO) {
 		StringBuilder sql = new StringBuilder("");
-		
+
 		sql.append(" from ")
 		.append(" FixacaoReparte f ")
 		.append(" where f.cotaFixada.numeroCota = :cotaSelecionada ")
 		.append(" and f.produtoFixado.codigo = :produtoSelecionado  ");
-		
+
 		Query query  = getSession().createQuery(sql.toString());
 		query.setParameter("cotaSelecionada",  fixacaoReparteDTO.getCotaFixada());
 		query.setParameter("produtoSelecionado", fixacaoReparteDTO.getProdutoFixado());
-		
+
 		return query.list().size() > 0;
 	}
 
@@ -275,10 +250,10 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 	public void gerarCopiaPorCotaFixacaoReparte(List<FixacaoReparteDTO> mixCotaOrigem, Usuario usuarioLogado) {
 
 		StringBuilder hql = new StringBuilder("");
-		
+
 		hql.append(" INSERT INTO fixacao_reparte ")
 		.append(" (DATA_HORA, ED_FINAL, ED_INICIAL, QTDE_EDICOES, QTDE_EXEMPLARES, ID_COTA, ID_PRODUTO, ID_USUARIO, MANTER_FIXA) VALUES ") ;
-		
+
 		List<String> valuesAppendList = new ArrayList<String>();
 		for (FixacaoReparteDTO frDTO : mixCotaOrigem) {
 //			hql.append(" VALUES ('DATA_HORA', ED_FINAL, ED_INICIAL, QTDE_EDICOES, QTDE_EXEMPLARES, ID_COTA, ID_PRODUTO, ID_USUARIO, MANTER_FIXA); ");
@@ -286,73 +261,69 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		}
 
 		hql.append(StringUtils.join(valuesAppendList,","));
-		
+
 		Query query = getSession().createSQLQuery(hql.toString());
 		query.executeUpdate();
 	}
 
 	@Override
-	public void gerarCopiaPorProdutoFixacaoReparte(List<FixacaoReparteDTO> mixProdutoOrigem, Usuario usuarioLogado) {
+	public void gerarCopiaPorProdutoFixacaoReparte(List<FixacaoReparteDTO> fixacaoProdutoOrigem, Usuario usuarioLogado) {
 
-		for (FixacaoReparteDTO frDTO : mixProdutoOrigem) {
+		for (FixacaoReparteDTO frDTO : fixacaoProdutoOrigem) {
 			if(frDTO.getCotaFixadaId()==null){
 				throw new RuntimeException("Erro na consulta de Fixação de Repartes por produto");
-			}			
+			}
 		}
-		
+
 		int i=0;
-		
-		for (FixacaoReparteDTO frDTO : mixProdutoOrigem) {
+
+		for (FixacaoReparteDTO frDTO : fixacaoProdutoOrigem) {
 			FixacaoReparte fr = new FixacaoReparte();
-			fr.setRepartesPDV(new ArrayList<RepartePDV>());
+			fr.setRepartesPDV(new ArrayList<FixacaoRepartePdv>());
 			fr.setDataHora(GregorianCalendar.getInstance().getTime());
-			
+
 			fr.setEdicaoFinal(frDTO.getEdicaoFinal());
 			fr.setEdicaoInicial(frDTO.getEdicaoInicial());
 			fr.setQtdeEdicoes(frDTO.getQtdeEdicoes());
 			fr.setManterFixa(frDTO.isManterFixa());
 			fr.setQtdeExemplares(frDTO.getQtdeExemplares());
-			
+
 			Cota cotaFixada = new Cota();
-		
+
 			cotaFixada.setId(frDTO.getCotaFixadaId());
-			
-			Produto produtoFixado = new Produto();
-			produtoFixado.setId(frDTO.getProdutoFixadoId());
-			
-			fr.setProdutoFixado(produtoFixado);
+
+			fr.setCodigoICD(frDTO.getCodigoProduto());
 			fr.setCotaFixada(cotaFixada);
 			fr.setUsuario(usuarioLogado);
-			
-			List<RepartePDV> repartePdvFixacaoList = repartePDVRepository.buscarPorIdFixacao(frDTO.getId());
-			
-			for (RepartePDV repartePDV : repartePdvFixacaoList) {
-				
-				RepartePDV newReparte = new RepartePDV();
-				newReparte.setFixacaoReparte(fr);
-				
-				newReparte.setPdv(repartePDV.getPdv());
-				newReparte.setProduto(produtoFixado);
-				newReparte.setReparte(repartePDV.getReparte());
-				fr.getRepartesPDV().add(newReparte);
-				
+
+			List<FixacaoRepartePdv> fixacaoRepartePdvList = fixacaoRepartePdvRepository.obterFixacaoRepartePdvPorFixacaoReparteId(frDTO.getId());
+
+			for (FixacaoRepartePdv fixacaoRepartePdv : fixacaoRepartePdvList) {
+
+                FixacaoRepartePdv newFixacaoRepartePdv = new FixacaoRepartePdv();
+				newFixacaoRepartePdv.setFixacaoReparte(fr);
+
+				newFixacaoRepartePdv.setPdv(fixacaoRepartePdv.getPdv());
+				newFixacaoRepartePdv.setRepartePdv(fixacaoRepartePdv.getRepartePdv());
+				fr.getRepartesPDV().add(newFixacaoRepartePdv);
+
 			}
-			
+
 			getSession().save(fr);
-		}
-		
-	}
-	
-	@SuppressWarnings("unchecked")
-	@Override
-	public void execucaoQuartz() {
-		
-		Query q = getSession().createQuery("from FixacaoReparte where datediff(now(),dataHora)> 365 and manterFixa = 0 ");
-		List<FixacaoReparte> listaParaApagar = q.list();
-		for (FixacaoReparte fixacaoReparte : listaParaApagar) {
-			getSession().delete(fixacaoReparte);			
 		}
 
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void execucaoQuartz() {
+
+		Query q = getSession().createQuery("from FixacaoReparte where datediff(now(),dataHora)> 365 and manterFixa = 0 ");
+		List<FixacaoReparte> listaParaApagar = q.list();
+		for (FixacaoReparte fixacaoReparte : listaParaApagar) {
+			getSession().delete(fixacaoReparte);
+		}
+
+	}
+
 }

@@ -3,6 +3,8 @@ package br.com.abril.nds.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.model.distribuicao.FixacaoRepartePdv;
+import br.com.abril.nds.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,12 +15,6 @@ import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
 import br.com.abril.nds.model.distribuicao.MixCotaProduto;
-import br.com.abril.nds.repository.CotaRepository;
-import br.com.abril.nds.repository.FixacaoReparteRepository;
-import br.com.abril.nds.repository.MixCotaProdutoRepository;
-import br.com.abril.nds.repository.PdvRepository;
-import br.com.abril.nds.repository.ProdutoRepository;
-import br.com.abril.nds.repository.RepartePDVRepository;
 import br.com.abril.nds.service.RepartePdvService;
 
 @Service
@@ -26,6 +22,9 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 
 	@Autowired
 	RepartePDVRepository repartePDVRepository;
+
+    @Autowired
+    FixacaoRepartePdvRepository fixacaoRepartePdvRepository;
 	
 	@Autowired
 	FixacaoReparteRepository fixacaoReparteRepository;
@@ -61,7 +60,7 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 	@Transactional
 	public void salvarRepartesPDVMix(List<RepartePDVDTO> listaRepartes, String codProduto, Long idMix) {
 		int soma = 0;
-		Produto produto= produtoRepository.obterProdutoPorCodigo(codProduto);
+		Produto produto= produtoRepository.obterProdutoPorCodigoProdin(codProduto);
 		MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.buscarPorId(idMix);
 		PDV pdv = null;
 		
@@ -92,7 +91,6 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 	@Transactional
 	public void salvarRepartesPDV(List<RepartePDVDTO> listaRepartes, String codProduto, Long idFixacao, boolean manterFixa) {
 		int soma = 0;
-		Produto produto = produtoRepository.obterProdutoPorCodigo(codProduto);
 		FixacaoReparte fixacaoReparte = fixacaoReparteRepository.buscarPorId(idFixacao);
 		fixacaoReparte.setManterFixa(manterFixa);
 		PDV pdv = null;
@@ -101,19 +99,18 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 			if(repartePDVDTO.getCodigoPdv() !=null) {
 				pdv = pdvRepository.buscarPorId(repartePDVDTO.getCodigoPdv());
 			}
-			
-			RepartePDV repartePDV = repartePDVRepository.obterRepartePorPdv(idFixacao, produto.getId(), pdv.getId());
-			if(repartePDV == null) {
-				repartePDV = new RepartePDV();
+
+            FixacaoRepartePdv fixacaoRepartePdv = fixacaoRepartePdvRepository.obterPorFixacaoReparteEPdv(fixacaoReparte, pdv);
+            if(fixacaoRepartePdv == null) {
+                fixacaoRepartePdv = new FixacaoRepartePdv();
 			}
 			
-			repartePDV.setFixacaoReparte(fixacaoReparte);
-			repartePDV.setPdv(pdv);
-			repartePDV.setReparte(repartePDVDTO.getReparte().intValue());
-			repartePDV.setProduto(produto);
-			
-			soma += repartePDV.getReparte();
-			repartePDVRepository.merge(repartePDV);
+			fixacaoRepartePdv.setFixacaoReparte(fixacaoReparte);
+			fixacaoRepartePdv.setPdv(pdv);
+			fixacaoRepartePdv.setRepartePdv(repartePDVDTO.getReparte());
+
+			soma += fixacaoRepartePdv.getRepartePdv();
+			fixacaoRepartePdvRepository.merge(fixacaoRepartePdv);
 		}
 		fixacaoReparte.setDataHora(new Date());
 		fixacaoReparte.setQtdeExemplares(soma);

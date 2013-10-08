@@ -50,7 +50,7 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	 * 
 	 * @return {@link Produto}
 	 */
-	Produto obterProdutoPorCodigo(String codigoProduto);
+	Produto obterProdutoPorCodigoProdin(String codigoProduto);
 	
 	Produto obterProdutoBalanceadosPorCodigo(String codigoProduto, Date dataLancamento);
 	
@@ -79,5 +79,10 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	List<String> verificarProdutoExiste(String... codigoProduto);
 	
 	String obterCodigoProdinPorCodICD (String codigoProduto);
-	
+
+    Produto obterProdutoPorCodigoICD(String codigoProduto);
+
+    Produto obterProdutoPorCodigoICDLike(String codigoProduto);
+
+    Produto obterProdutoPorCodigoProdinLike(String codigoProduto);
 }

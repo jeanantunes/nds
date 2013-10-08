@@ -284,7 +284,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		 
 		List<ProdutoRecebidoDTO> obterProdutosRecebidosPelaCotaList = this.excecaoSegmentoParciaisService.obterProdutosRecebidosPelaCota(filtroExcecaoSeg);
 		
-		Produto prd = this.produtoRepository.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto());
+		Produto prd = this.produtoRepository.obterProdutoPorCodigoProdin(mixCotaProdutoDTO.getCodigoProduto());
 		TipoSegmentoProduto tipoSegProd = prd.getTipoSegmentoProduto();
 		
 		loopSeg:for (SegmentoNaoRecebeCotaDTO seg : obterSegmentosNaoRecebidosCadastradosNaCota) {
@@ -397,7 +397,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			
 			List<ProdutoRecebidoDTO> obterProdutosRecebidosPelaCotaList = this.excecaoSegmentoParciaisService.obterProdutosRecebidosPelaCota(filtroExcecaoSeg);
 			
-			Produto prd = this.produtoRepository.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto());
+			Produto prd = this.produtoRepository.obterProdutoPorCodigoProdin(mixCotaProdutoDTO.getCodigoProduto());
 			TipoSegmentoProduto tipoSegProd = prd.getTipoSegmentoProduto();
 			
 			loopSeg:for (SegmentoNaoRecebeCotaDTO seg : obterSegmentosNaoRecebidosCadastradosNaCota) {

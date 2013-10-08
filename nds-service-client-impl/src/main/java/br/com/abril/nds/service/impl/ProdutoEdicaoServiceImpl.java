@@ -395,7 +395,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 		if (indNovoProdutoEdicao) {
 			produtoEdicao = new ProdutoEdicao();
-			produtoEdicao.setProduto(produtoRepository.obterProdutoPorCodigo(codigoProduto));
+			produtoEdicao.setProduto(produtoRepository.obterProdutoPorCodigoProdin(codigoProduto));
 			produtoEdicao.setOrigem(Origem.MANUAL);
 		} else {
 			produtoEdicao = produtoEdicaoRepository.buscarPorId(dto.getId());
