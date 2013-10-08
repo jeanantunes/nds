@@ -1861,6 +1861,13 @@ var recebimentoFisicoController = $.extend(true, {
 					} else {
 						$("#qtdExemplarItem" + index, recebimentoFisicoController.workspace).val(0);
 					}
+					
+					var pacotePadrao = parseInt($("#pacotePadraoItem" + index, recebimentoFisicoController.workspace).text());
+					
+					if(pacotePadrao <= 0){
+						$("#qtdExemplarItem" + index, recebimentoFisicoController.workspace).val(qtdNotaDigitada);
+					}
+					
 				} else {
 					
 					$("#qtdPacoteItem" + index, recebimentoFisicoController.workspace).val(0);
