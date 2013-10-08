@@ -53,14 +53,12 @@ public class CalendarioServiceImplTest {
 		diasSemanaConcentracaoCobranca.add(Calendar.FRIDAY);
 		
 		
-		when(service.adicionarDiasUteis(Matchers.any(Date.class), Matchers.anyInt(), Matchers.anyListOf(Integer.class), Matchers.anyListOf(Integer.class))).thenCallRealMethod();		
-		
 		when(service.adicionarDiasUteis(Matchers.any(Date.class), Matchers.anyInt())).thenCallRealMethod();
 		
 		when(service.isFeriado(Matchers.any(Calendar.class))).thenReturn(false);
 		
 		
-		Date dataRetornada = service.adicionarDiasUteis(dataEmissao, numDias, diasSemanaConcentracaoCobranca, null);
+		Date dataRetornada = service.adicionarDiasUteis(dataEmissao, numDias);
 		
 		Assert.assertNotNull(dataRetornada);
 		

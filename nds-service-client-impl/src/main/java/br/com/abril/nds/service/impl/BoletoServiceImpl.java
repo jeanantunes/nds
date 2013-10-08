@@ -1298,10 +1298,13 @@ public class BoletoServiceImpl implements BoletoService {
 					     new AnexoEmail("Boleto-"+nossoNumero, anexo,TipoAnexo.PDF),
 					     true);
 		} catch(AutenticacaoEmailException e){
+			e.printStackTrace();
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao conectar-se com o servidor de e-mail. ");
 		} catch(ValidacaoException e){
+			e.printStackTrace();
 			throw e;
 		}catch(Exception e){
+			e.printStackTrace();
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro no envio. ");
 		}
 	}

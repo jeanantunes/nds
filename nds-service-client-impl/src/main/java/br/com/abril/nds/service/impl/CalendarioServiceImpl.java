@@ -92,6 +92,7 @@ public class CalendarioServiceImpl implements CalendarioService {
 		return cal.getTime();
 	}
 
+	
 	@Override
 	@Transactional(readOnly = true)
 	public Date adicionarDiasRetornarDiaUtil(Date data, int numDias) {
@@ -159,92 +160,6 @@ public class CalendarioServiceImpl implements CalendarioService {
 		cal.setTime(data);
 
 		return !(DateUtil.isSabadoDomingo(cal) || isFeriado(cal));
-	}
-
-	@Override
-	public Date adicionarDiasUteis(Date data, int numDias,
-			List<Integer> diasSemanaConcentracaoCobranca,
-			List<Integer> diasMesConcentracaoCobranca) {
-		
-		
-        //DIARIO
-		if (diasSemanaConcentracaoCobranca == null
-				|| diasSemanaConcentracaoCobranca.isEmpty()
-				&& (diasSemanaConcentracaoCobranca == null)) {
-
-			return this.adicionarDiasUteis(data, numDias);
-		}
-
-		//SEMANAL
-		if (diasSemanaConcentracaoCobranca != null
-				&& !diasSemanaConcentracaoCobranca.isEmpty()) {
-
-			Calendar dataBase = Calendar.getInstance();
-			dataBase.setTime(data);
-			dataBase.add(Calendar.DAY_OF_MONTH, numDias);
-
-			boolean dataValida = false;
-
-			while (!dataValida) {
-				while (!diasSemanaConcentracaoCobranca.contains(dataBase
-						.get(Calendar.DAY_OF_WEEK))) {
-					dataBase.add(Calendar.DAY_OF_MONTH, 1);
-				}
-
-				dataBase.setTime(this.adicionarDiasUteis(dataBase.getTime(), 0));
-
-				dataValida = diasSemanaConcentracaoCobranca.contains(dataBase
-						.get(Calendar.DAY_OF_WEEK));
-			}
-
-			return dataBase.getTime();
-		}
-		else if (diasMesConcentracaoCobranca != null) {
-			
-			Calendar dataVencimento = Calendar.getInstance();
-			
-			int diaMesConcentracaoCobranca;
-			
-			//MENSAL
-			if (diasMesConcentracaoCobranca.size()<2){
-			
-				diaMesConcentracaoCobranca = diasMesConcentracaoCobranca.get(0);
-	
-				if (Calendar.getInstance().getLeastMaximum(Calendar.DAY_OF_MONTH) > diaMesConcentracaoCobranca) {
-	
-					diaMesConcentracaoCobranca = Calendar.getInstance().getLeastMaximum(Calendar.DAY_OF_MONTH);
-				}
-
-				while (dataVencimento.get(Calendar.DAY_OF_MONTH) < diaMesConcentracaoCobranca) {
-	
-					dataVencimento.setTime(this.adicionarDiasUteis(dataVencimento.getTime(), 1));
-				}
-			}
-			//QUINZENAL
-			else{
-				
-				diaMesConcentracaoCobranca = diasMesConcentracaoCobranca.get(0);
-				
-				if (Calendar.getInstance().getLeastMaximum(Calendar.DAY_OF_MONTH) > diaMesConcentracaoCobranca) {
-					
-					diaMesConcentracaoCobranca = diasMesConcentracaoCobranca.get(1);
-					
-					if (Calendar.getInstance().getLeastMaximum(Calendar.DAY_OF_MONTH) > diaMesConcentracaoCobranca) {
-						
-						diaMesConcentracaoCobranca = Calendar.getInstance().getLeastMaximum(Calendar.DAY_OF_MONTH);
-					}
-				}
-
-				while (dataVencimento.get(Calendar.DAY_OF_MONTH) < diaMesConcentracaoCobranca) {
-	
-					dataVencimento.setTime(this.adicionarDiasUteis(dataVencimento.getTime(), 1));
-				}
-			}
-
-			return dataVencimento.getTime();
-		}
-
-		return Calendar.getInstance().getTime();
 	}
 
 	protected boolean isFeriado(Calendar cal) {

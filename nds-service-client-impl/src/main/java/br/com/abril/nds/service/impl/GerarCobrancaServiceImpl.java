@@ -58,7 +58,6 @@ import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.DividaRepository;
-import br.com.abril.nds.repository.HistoricoAcumuloDividaRepository;
 import br.com.abril.nds.repository.ItemChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.NegociacaoDividaRepository;
@@ -76,6 +75,7 @@ import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.AnexoEmail;
 import br.com.abril.nds.util.AnexoEmail.TipoAnexo;
+import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.SemanaUtil;
 import br.com.abril.nds.util.Util;
@@ -101,9 +101,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Autowired
 	private CalendarioService calendarioService;
-	
-	@Autowired
-	private HistoricoAcumuloDividaRepository historicoAcumuloDividaRepository;
 	
 	@Autowired
 	private CotaRepository cotaRepository;
@@ -235,7 +232,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		Integer numeroDiasNovaCobranca = this.distribuidorRepository.obterNumeroDiasNovaCobranca(); 
 		
 		//cancela cobrança gerada para essa data de operação para efetuar recalculo
-		this.cancelarDividaCobranca(null, idCota, dataOperacao);
+		this.cancelarDividaCobranca(null, idCota, dataOperacao, false);
 		
 		// buscar movimentos financeiros da cota, se informada, caso contrario de todas as cotas
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
@@ -719,72 +716,47 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		Calendar c = null;
 		
+		if(formaCobrancaPrincipal.isVencimentoDiaUtil()) {
+			dataVencimento = this.calendarioService.adicionarDiasUteis(consolidadoFinanceiroCota.getDataConsolidado(), 
+					  fatorVencimento);
+		} else {
+			dataVencimento = DateUtil.adicionarDias(consolidadoFinanceiroCota.getDataConsolidado(), fatorVencimento);
+		}
+		
 		//acertar a data de vencimento de a cota usa parametros de cobranca do distribuidor
 		if(formaCobrancaPrincipal.getTipoFormaCobranca() == null) {
-			dataVencimento = 
-					this.calendarioService.adicionarDiasUteis(consolidadoFinanceiroCota.getDataConsolidado(), 
-															  fatorVencimento);
 			cobrarHoje = true;
 		} else {
 			// switch usado para se é usado os parametros de cobranca da propria cota
 			switch(formaCobrancaPrincipal.getTipoFormaCobranca()){
 			
 				case DIARIA:
-					dataVencimento = 
-					this.calendarioService.adicionarDiasUteis(consolidadoFinanceiroCota.getDataConsolidado(), 
-															  fatorVencimento, 
-															  null, 
-															  null);
 					cobrarHoje = true;
-				break;
+					break;
 				
 				case QUINZENAL:
-					dataVencimento = 
-					this.calendarioService.adicionarDiasUteis(consolidadoFinanceiroCota.getDataConsolidado(), 
-															  fatorVencimento,
-															  null, 
-															  formaCobrancaPrincipal.getDiasDoMes());
 					c = Calendar.getInstance();
 					c.setTime(dataOperacao);
-					cobrarHoje = 
-							formaCobrancaPrincipal.getDiasDoMes().contains(
-									c.get(Calendar.DAY_OF_MONTH));
-				break;
+					cobrarHoje = formaCobrancaPrincipal.getDiasDoMes().contains(c.get(Calendar.DAY_OF_MONTH));
+					break;
 				
 				case MENSAL:
-					dataVencimento = 
-					this.calendarioService.adicionarDiasUteis(consolidadoFinanceiroCota.getDataConsolidado(), 
-															  fatorVencimento,
-															  null, 
-															  formaCobrancaPrincipal.getDiasDoMes());
 					c = Calendar.getInstance();
 					c.setTime(dataOperacao);
-					cobrarHoje =
-							formaCobrancaPrincipal.getDiasDoMes().get(0).equals(
-									c.get(Calendar.DAY_OF_MONTH));
-				break;
+					cobrarHoje = formaCobrancaPrincipal.getDiasDoMes().get(0).equals(c.get(Calendar.DAY_OF_MONTH));
+					break;
 				
 				case SEMANAL:
-					diasSemanaConcentracaoPagamento = this.cotaRepository.obterDiasConcentracaoPagamentoCota(cota.getId());
-					
-					dataVencimento = 
-							this.calendarioService.adicionarDiasUteis(consolidadoFinanceiroCota.getDataConsolidado(), 
-															  fatorVencimento,
-															  diasSemanaConcentracaoPagamento, 
-															  null);
 					c = Calendar.getInstance();
 					c.setTime(dataOperacao);
-					
 					for (ConcentracaoCobrancaCota conc : formaCobrancaPrincipal.getConcentracaoCobrancaCota()){
-						
-						cobrarHoje = 
-								c.get(Calendar.DAY_OF_WEEK) == conc.getDiaSemana().getCodigoDiaSemana();
-						
+						cobrarHoje = c.get(Calendar.DAY_OF_WEEK) == conc.getDiaSemana().getCodigoDiaSemana();
 						if (cobrarHoje){
 							break;
 						}
 					}
-				break;
+					break;
+					
 			}
 			
 		}
@@ -1068,7 +1040,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 
 	@Transactional
 	@Override
-	public void cancelarDividaCobranca(Set<Long> idsMovimentoFinanceiroCota) {
+	public void cancelarDividaCobranca(Set<Long> idsMovimentoFinanceiroCota, boolean excluiFinanceiro) {
 		
 		Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
 		
@@ -1076,14 +1048,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			for (Long idMovFinCota : idsMovimentoFinanceiroCota){
 				
-				this.cancelarDividaCobranca(idMovFinCota, null, dataOperacao);
+				this.cancelarDividaCobranca(idMovFinCota, null, dataOperacao, excluiFinanceiro);
 			}
 		}
 	}
 	
 	@Transactional
 	@Override
-	public void cancelarDividaCobranca(Long idMovimentoFinanceiroCota, Long idCota, Date dataOperacao) {
+	public void cancelarDividaCobranca(Long idMovimentoFinanceiroCota, Long idCota, Date dataOperacao, boolean excluiFinanceiro) {
 		
 		List<ConsolidadoFinanceiroCota> consolidados = null;
 		
@@ -1129,12 +1101,15 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				consolidado.setMovimentos(null);
 				
 				this.consolidadoFinanceiroRepository.alterar(consolidado);
-				
-                if (mfcs!=null && !mfcs.isEmpty()){
+								
+				if (excluiFinanceiro){
 					
-			    	this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCota(mfcs);
+	                if (mfcs!=null && !mfcs.isEmpty()){
+						
+				    	this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCota(mfcs);
+					}
 				}
-				
+                              				                        
 			    this.consolidadoFinanceiroRepository.remover(consolidado);
 			}
 		}
