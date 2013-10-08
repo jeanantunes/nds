@@ -17,7 +17,9 @@ import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.quartz.impl.StdSchedulerFactory;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import br.com.abril.nds.client.job.AjusteReparteJob;
 import br.com.abril.nds.client.job.IntegracaoOperacionalDistribuidorJob;
@@ -66,7 +68,14 @@ public class ApplicationContextListener implements ServletContextListener {
 		
 		try {
 			
-			Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
+			final WebApplicationContext springContext = 
+				WebApplicationContextUtils.getWebApplicationContext(
+					servletContextEvent.getServletContext());
+			
+			SchedulerFactoryBean schedulerFactoryBean =
+				springContext.getBean(SchedulerFactoryBean.class);
+			 
+			Scheduler scheduler = schedulerFactoryBean.getScheduler();
 			
 //			this.agendarIntegracaoOperacionalDistribuidor(scheduler);
 //			this.agendaExeclusaoAjusteReparte(scheduler);
@@ -94,7 +103,7 @@ public class ApplicationContextListener implements ServletContextListener {
 
 			String groupName = "integracaoGroup";
 
-			QuartzUtil.removeJobsFromGroup(groupName);
+			QuartzUtil.doAgendador(scheduler).removeJobsFromGroup(groupName);
 
 			PropertiesUtil propertiesUtil = new PropertiesUtil(
 					"integracao-distribuidor.properties");
@@ -129,7 +138,7 @@ public class ApplicationContextListener implements ServletContextListener {
 
 			String groupName = "exclusaoEstudoGroup";
 
-			QuartzUtil.removeJobsFromGroup(groupName);
+			QuartzUtil.doAgendador(scheduler).removeJobsFromGroup(groupName);
 
 			PropertiesUtil propertiesUtil = new PropertiesUtil("exclusao-estudos.properties");
 
@@ -161,7 +170,7 @@ public class ApplicationContextListener implements ServletContextListener {
 		
 		final String groupName = "gerarRankingGroup";
 		
-		QuartzUtil.removeJobsFromGroup(groupName);
+		QuartzUtil.doAgendador(scheduler).removeJobsFromGroup(groupName);
 		
 		PropertiesUtil propertiesUtil = new PropertiesUtil(
 				"integracao-distribuidor.properties");
@@ -214,7 +223,7 @@ public class ApplicationContextListener implements ServletContextListener {
 
 			String groupName = "integracaoGroup";
 
-			QuartzUtil.removeJobsFromGroup(groupName);
+			QuartzUtil.doAgendador(scheduler).removeJobsFromGroup(groupName);
 
 			PropertiesUtil propertiesUtil = new PropertiesUtil(
 					"integracao-distribuidor.properties");

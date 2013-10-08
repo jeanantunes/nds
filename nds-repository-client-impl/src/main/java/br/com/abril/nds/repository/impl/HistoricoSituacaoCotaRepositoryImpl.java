@@ -163,11 +163,7 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 				hql += " hsc.dataInicioValidade = ( " +
 					"select max(hs.dataInicioValidade) from HistoricoSituacaoCota hs " +
 					"where hs.cota.numeroCota = hsc.cota.numeroCota " +
-					")  " +
-					"and hsc.id = ( " +
-					"select max(_h.id) from HistoricoSituacaoCota _h join _h.cota _cota where _cota.numeroCota = hsc.cota.numeroCota " +
-					")"
-					;
+					")  ";
 				
 				useWhere = false;
 			}

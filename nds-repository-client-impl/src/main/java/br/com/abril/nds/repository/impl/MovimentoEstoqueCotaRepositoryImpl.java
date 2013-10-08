@@ -179,7 +179,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	       
 	       .append("  and lancamento.dataLancamentoDistribuidor <= :data")
 	    
-	       .append("  and (c1.alteracaoTipoCota is null or c1.alteracaoTipoCota <= :data)");
+	       .append("  and (c1.alteracaoTipoCota is null or c1.alteracaoTipoCota < lancamento.dataLancamentoDistribuidor)");
 	   
 	        Query query = getSession().createQuery(hql.toString());
 	    

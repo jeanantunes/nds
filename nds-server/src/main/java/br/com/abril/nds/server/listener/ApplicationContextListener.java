@@ -1,5 +1,9 @@
 package br.com.abril.nds.server.listener;
 
+import static org.quartz.CronScheduleBuilder.cronSchedule;
+import static org.quartz.JobBuilder.newJob;
+import static org.quartz.TriggerBuilder.newTrigger;
+
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -13,15 +17,13 @@ import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
-import org.quartz.impl.StdSchedulerFactory;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import br.com.abril.nds.server.job.IntegracaoOperacionalDistribuidorJob;
 import br.com.abril.nds.util.PropertiesUtil;
 import br.com.abril.nds.util.QuartzUtil;
-
-import static org.quartz.TriggerBuilder.*;
-import static org.quartz.CronScheduleBuilder.*;
-import static org.quartz.JobBuilder.*;
 
 /**
  * Listener do contexto da aplicação.
@@ -59,26 +61,33 @@ public class ApplicationContextListener implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
 		
-		this.agendarIntegracaoOperacionalDistribuidor();
+		final WebApplicationContext springContext = 
+			WebApplicationContextUtils.getWebApplicationContext(
+				servletContextEvent.getServletContext());
+		
+		SchedulerFactoryBean schedulerFactoryBean =
+			springContext.getBean(SchedulerFactoryBean.class);
+		 
+		Scheduler scheduler = schedulerFactoryBean.getScheduler();
+		
+		this.agendarIntegracaoOperacionalDistribuidor(scheduler);
 	}
 	
 	/*
 	 * Efetua o agendamento do serviço de integração operacional do distribuidor.
 	 */
-	private void agendarIntegracaoOperacionalDistribuidor() {
+	private void agendarIntegracaoOperacionalDistribuidor(Scheduler scheduler) {
 		
 		try {
 			
 			String groupName = "integracaoGroup";
 			
-			QuartzUtil.removeJobsFromGroup(groupName);
+			QuartzUtil.doAgendador(scheduler).removeJobsFromGroup(groupName);
 			
 			PropertiesUtil propertiesUtil = new PropertiesUtil("integracao-distribuidor.properties");
 			
 			String intervaloExecucaoIntegracaoOperacionalDistribuidor =
 				propertiesUtil.getPropertyValue("intervalo.execucao.integracao.operacional");
-			
-            Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
             
             JobDetail job = 
             	newJob(IntegracaoOperacionalDistribuidorJob.class)

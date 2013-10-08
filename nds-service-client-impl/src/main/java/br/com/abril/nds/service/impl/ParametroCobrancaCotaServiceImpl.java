@@ -831,8 +831,6 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		contratante.setDescEnderecoGestor(descEndereco);
 		
 		
-		
-		
 		String descTelefones = "";
 		for (Telefone itemTelefone: pessoaJuridica.getTelefones()){
 			descTelefones=descTelefones+"("+itemTelefone.getDdd()+")"+itemTelefone.getNumero()+"    ";

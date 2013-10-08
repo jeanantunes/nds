@@ -26,7 +26,7 @@ public class ParametroSistema {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name = "VALOR", nullable = false)
+	@Column(name = "VALOR", nullable = true)
 	private String valor;
 	
 	@Enumerated(EnumType.STRING)

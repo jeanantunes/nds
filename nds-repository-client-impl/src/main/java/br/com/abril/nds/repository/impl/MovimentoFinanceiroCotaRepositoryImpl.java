@@ -1235,7 +1235,9 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	
 	       .append(" from Cota c ")
 	       
-	       .append(" where c.tipoCota = :tipoCota ");
+	       .append(" where c.tipoCota = :tipoCota ")
+	    
+	       .append(" and (c.alteracaoTipoCota is null or c.alteracaoTipoCota < :data) ");
 	    
 	    if (numeroCota != null){
 	      
@@ -1250,6 +1252,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	    }
 	    
 	    query.setParameter("tipoCota", TipoCota.A_VISTA);
+	    
+	    query.setParameter("data", data);
 	    
 	    return (Long) query.uniqueResult();
 	}
@@ -1267,11 +1271,11 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<ProcessamentoFinanceiroCotaDTO> obterProcessamentoFinanceiroCota(Integer numeroCota, 
-	                                                                           Date data, 
-	                                                                           String sortorder, 
-	                                                                           String sortname,
-	                                                                           int initialResult, 
-	                                                                           int maxResults){
+	                                                                             Date data, 
+	                                                                             String sortorder, 
+	                                                                             String sortname,
+	                                                                             int initialResult, 
+	                                                                             int maxResults){
 	    
 	    StringBuilder hql = new StringBuilder("select ");
 	    
@@ -1308,6 +1312,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	       .append("  and c1.id = c.id ")
 	       
 	       .append("  and lancamento.dataLancamentoDistribuidor <= :data")
+	       
+	       .append(" and (c1.alteracaoTipoCota is null or c1.alteracaoTipoCota < lancamento.dataLancamentoDistribuidor)")
 	    
 	       .append("),0) as valorConsignado, ")
 	
@@ -1335,6 +1341,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	       .append("  and c2.id = c.id ")
 	       
 	       .append("  and lancamento.dataLancamentoDistribuidor <= :data")
+	       
+	       .append("  and (c2.alteracaoTipoCota is null or c2.alteracaoTipoCota < lancamento.dataLancamentoDistribuidor)")
 	    
 	       .append("),0) as valorEstornado, ")
 	       
@@ -1357,6 +1365,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	    
 	       .append("  and c3.id = c.id ")
 	       
+	       .append("  and (c3.alteracaoTipoCota is null or c3.alteracaoTipoCota < mfc.data)")
+	       
 	       .append("),0) as creditos, ")
 	       
 	 
@@ -1377,6 +1387,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	       .append("  and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ")
 	       
 	       .append("  and c4.id = c.id ")
+	       
+	       .append("  and (c4.alteracaoTipoCota is null or c4.alteracaoTipoCota < mfc.data)")
 	    
 	       .append("),0) as debitos, ")
 	
@@ -1408,6 +1420,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	           .append("  and c1.id = c.id ")
 	           
 	           .append("  and lancamento.dataLancamentoDistribuidor <= :data")
+	           
+	           .append("  and (c1.alteracaoTipoCota is null or c1.alteracaoTipoCota < lancamento.dataLancamentoDistribuidor)")
 	        
 	           .append(")*(-1)),0) + ")
 	    
@@ -1435,6 +1449,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	           .append("  and c2.id = c.id ")
 	           
 	           .append("  and lancamento.dataLancamentoDistribuidor <= :data")
+	           
+	           .append("  and (c2.alteracaoTipoCota is null or c2.alteracaoTipoCota < lancamento.dataLancamentoDistribuidor)")
 	        
 	           .append("),0) ")
 	           
@@ -1459,6 +1475,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	           .append("  and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ")
 	           
 	           .append("  and c4.id = c.id ")
+	           
+	           .append("  and (c4.alteracaoTipoCota is null or c4.alteracaoTipoCota < mfc.data)")
 	        
 	           .append(")*(-1)),0) + ")
 	           
@@ -1481,6 +1499,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	        
 	           .append("  and c3.id = c.id ")
 	           
+	           .append("  and (c3.alteracaoTipoCota is null or c3.alteracaoTipoCota < mfc.data)")
+	           
 	           .append("),0) ")
 	
 	        .append(") ")
@@ -1494,7 +1514,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	       
 	      .append(" where c.tipoCota = :tipoCota ")
 	    
-	      .append(" and (c.alteracaoTipoCota is null or c.alteracaoTipoCota <= :data)");
+	      .append(" and (c.alteracaoTipoCota is null or c.alteracaoTipoCota < :data) ");
 	    
 	    if (numeroCota != null){
 	      

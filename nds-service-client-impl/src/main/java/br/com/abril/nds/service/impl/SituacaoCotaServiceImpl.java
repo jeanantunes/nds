@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +15,6 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 import br.com.abril.nds.service.SituacaoCotaService;
-import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.QuartzUtil;
 
@@ -35,6 +35,9 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService {
 	
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
+	
+	@Autowired
+	private SchedulerFactoryBean schedulerFactoryBean;
 	
 	/*
 	 * (non-Javadoc)
@@ -72,9 +75,7 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService {
 	 * @see br.com.abril.nds.service.SituacaoCotaService#atualizarSituacaoCota(br.com.abril.nds.model.cadastro.HistoricoSituacaoCota)
 	 */
 	@Transactional
-	public void atualizarSituacaoCota(HistoricoSituacaoCota historicoSituacaoCota, Date dataDeOperacao) {
-		
-		dataDeOperacao = distribuidorRepository.obterDataOperacaoDistribuidor();	
+	public void atualizarSituacaoCota(HistoricoSituacaoCota historicoSituacaoCota, Date dataDeOperacao) {	
 		
 		if (historicoSituacaoCota == null 
 				|| historicoSituacaoCota.getCota() == null
@@ -113,7 +114,8 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService {
 			throw new IllegalArgumentException("ID da Cota nulo!");
 		}
 		
-		QuartzUtil.removeJobsFromGroup(idCota.toString());
+		QuartzUtil.doAgendador(this.schedulerFactoryBean.getScheduler())
+			.removeJobsFromGroup(idCota.toString());
 	}
 
 
