@@ -1530,32 +1530,36 @@ var baixaFinanceiraController = $.extend(true, {
 	
 	//OBTEM VALIDAÇÃO DE PERMISSÃO DE POSTERGAÇÃO
     obterPostergacao : function(calcularEncargo) {
-    	var param = {dataPostergacao:$("#dtPostergada", baixaFinanceiraController.workspace).val()};
-		param = serializeArrayToPost('idCobrancas',baixaFinanceiraController.obterCobrancasDividasMarcadas(),param);
-		$.postJSON(contextPath + "/financeiro/baixa/obterPostergacao",param,
-					function (result) {
-						if (result) {
-
-							var tipoMensagem = result.tipoMensagem;
-							var listaMensagens = result.listaMensagens;
+    	
+    	var param = {
+    		dataPostergacao : $("#dtPostergada", baixaFinanceiraController.workspace).val()
+    	};
+		
+    	param = 
+    		serializeArrayToPost('idCobrancas', 
+    			baixaFinanceiraController.obterCobrancasDividasMarcadas(), param);
+    	
+		$.postJSON(
+			contextPath + "/financeiro/baixa/obterPostergacao", 
+			param,
+			function (result) {
+	
+				if (result) {
 						
-							if (tipoMensagem && listaMensagens) {
-								
-								exibirMensagem(tipoMensagem, listaMensagens);
-							} 
-
-							if (!tipoMensagem) {
-								baixaFinanceiraController.postergarDivida();
-								
-								if(calcularEncargo===true)
-									$("#ecargosPostergacao", baixaFinanceiraController.workspace).val(result);
-									
-							}	
-						}							
-					},
-					null,
-					true
-				);
+					baixaFinanceiraController.postergarDivida();
+					
+					if (calcularEncargo === true) {
+						
+						$("#ecargosPostergacao", baixaFinanceiraController.workspace).val(result);
+					}
+				}					
+			},
+			function() {
+				$("#dtPostergada", baixaFinanceiraController.workspace).val('');
+				$("#ecargosPostergacao", baixaFinanceiraController.workspace).val('');
+			},
+			true
+		);
 	},
 	
 	 alterarIsencao: function(isento) {
