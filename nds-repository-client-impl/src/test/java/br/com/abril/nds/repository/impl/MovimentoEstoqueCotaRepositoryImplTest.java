@@ -3139,7 +3139,7 @@ public class MovimentoEstoqueCotaRepositoryImplTest extends AbstractRepositoryIm
 		this.setupFinanceiroReparteEncalhe();
 		
 		List<MovimentoEstoqueCota> movimentos = 
-				this.movimentoEstoqueCotaRepository.obterMovimentosPendentesGerarFinanceiroComChamadaEncalhe(
+				this.movimentoEstoqueCotaRepository.obterMovimentosPendentesGerarFinanceiroComChamadaEncalheOuProdutoContaFirme(
 						cotaValdomiro.getId(),
 						Fixture.criarData(28, Calendar.FEBRUARY, 2012));
 		

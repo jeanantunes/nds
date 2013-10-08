@@ -17,9 +17,9 @@ public interface GerarCobrancaService {
 	void gerarCobranca(Long idCota, Long idUsuario, Map<String, Boolean> mapNossoNumeroEnvioEmail)
 		throws GerarCobrancaValidacaoException;
 	
-	void cancelarDividaCobranca(Set<Long> idMovimentoFinanceiroCota);
+	void cancelarDividaCobranca(Set<Long> idMovimentoFinanceiroCota, boolean excluiFinanceiro);
 
-	void cancelarDividaCobranca(Long idMovimentoFinanceiroCota, Long idCota, Date dataOperacao);
+	void cancelarDividaCobranca(Long idMovimentoFinanceiroCota, Long idCota, Date dataOperacao, boolean excluiFinanceiro);
 
 	boolean verificarCobrancasGeradas(List<Long> idsCota);
 	

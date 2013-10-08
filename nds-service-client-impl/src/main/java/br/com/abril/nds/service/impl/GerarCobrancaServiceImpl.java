@@ -58,7 +58,6 @@ import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.DividaRepository;
-import br.com.abril.nds.repository.HistoricoAcumuloDividaRepository;
 import br.com.abril.nds.repository.ItemChamadaEncalheFornecedorRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.NegociacaoDividaRepository;
@@ -102,9 +101,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	
 	@Autowired
 	private CalendarioService calendarioService;
-	
-	@Autowired
-	private HistoricoAcumuloDividaRepository historicoAcumuloDividaRepository;
 	
 	@Autowired
 	private CotaRepository cotaRepository;
@@ -236,7 +232,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		Integer numeroDiasNovaCobranca = this.distribuidorRepository.obterNumeroDiasNovaCobranca(); 
 		
 		//cancela cobrança gerada para essa data de operação para efetuar recalculo
-		this.cancelarDividaCobranca(null, idCota, dataOperacao);
+		this.cancelarDividaCobranca(null, idCota, dataOperacao, false);
 		
 		// buscar movimentos financeiros da cota, se informada, caso contrario de todas as cotas
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
@@ -1044,7 +1040,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 
 	@Transactional
 	@Override
-	public void cancelarDividaCobranca(Set<Long> idsMovimentoFinanceiroCota) {
+	public void cancelarDividaCobranca(Set<Long> idsMovimentoFinanceiroCota, boolean excluiFinanceiro) {
 		
 		Date dataOperacao = this.distribuidorRepository.obterDataOperacaoDistribuidor();
 		
@@ -1052,14 +1048,14 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			
 			for (Long idMovFinCota : idsMovimentoFinanceiroCota){
 				
-				this.cancelarDividaCobranca(idMovFinCota, null, dataOperacao);
+				this.cancelarDividaCobranca(idMovFinCota, null, dataOperacao, excluiFinanceiro);
 			}
 		}
 	}
 	
 	@Transactional
 	@Override
-	public void cancelarDividaCobranca(Long idMovimentoFinanceiroCota, Long idCota, Date dataOperacao) {
+	public void cancelarDividaCobranca(Long idMovimentoFinanceiroCota, Long idCota, Date dataOperacao, boolean excluiFinanceiro) {
 		
 		List<ConsolidadoFinanceiroCota> consolidados = null;
 		
@@ -1105,12 +1101,15 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				consolidado.setMovimentos(null);
 				
 				this.consolidadoFinanceiroRepository.alterar(consolidado);
-				
-                if (mfcs!=null && !mfcs.isEmpty()){
+								
+				if (excluiFinanceiro){
 					
-			    	this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCota(mfcs);
+	                if (mfcs!=null && !mfcs.isEmpty()){
+						
+				    	this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCota(mfcs);
+					}
 				}
-				
+                              				                        
 			    this.consolidadoFinanceiroRepository.remover(consolidado);
 			}
 		}

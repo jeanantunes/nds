@@ -88,6 +88,21 @@ public class ParametroSistemaGeralDTO implements Serializable {
 	}
 	
 	/**
+	 * @param emailRemetente
+	 *            the email to set
+	 */
+	public void setEmailRemetente(String emailRemetente) {
+		this.params.put(TipoParametroSistema.EMAIL_REMETENTE, emailRemetente);
+	}
+
+	/**
+	 * @return the emailRemetente
+	 */
+	public String getEmailRemetente() {
+		return this.getParametroSistemaString(TipoParametroSistema.EMAIL_REMETENTE);
+	}
+	
+	/**
 	 * @param emailUsuario
 	 *            the email to set
 	 */

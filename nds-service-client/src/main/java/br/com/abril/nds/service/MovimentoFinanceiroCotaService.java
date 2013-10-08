@@ -110,13 +110,11 @@ public interface MovimentoFinanceiroCotaService {
 	/**
 	 * Gera movimento financeiro para cota na Conferencia de Encalhe
 	 * @param controleConferenciaEncalheCota
-	 * @param formaComercializacaoProduto
 	 */
 	void gerarMovimentoFinanceiroCota(Cota cota,
 									  Date dataOperacao,
 									  Usuario usuario,
-									  Long idControleConferenciaEncalheCota,
-									  FormaComercializacao formaComercializacaoProduto);
+									  Long idControleConferenciaEncalheCota);
 	
 	/**
 	 * Obtem Quantidade de Informações para o processamento financeiro (Geração de MovimentoFinanceiroCota, Divida e Cobrança) das Cotas

@@ -47,6 +47,7 @@ import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoDet
 import br.com.abril.nds.dto.filtro.FiltroMapaAbastecimentoDTO.ColunaOrdenacaoEntregador;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -179,7 +180,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	       
 	       .append("  and lancamento.dataLancamentoDistribuidor <= :data")
 	    
-	       .append("  and (c1.alteracaoTipoCota is null or c1.alteracaoTipoCota <= :data)");
+	       .append("  and (c1.alteracaoTipoCota is null or c1.alteracaoTipoCota < lancamento.dataLancamentoDistribuidor)");
 	   
 	        Query query = getSession().createQuery(hql.toString());
 	    
@@ -198,15 +199,15 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	}
 
 	/**
-	* Obtém movimentos de estoque da cota que ainda não geraram movimento financeiro
-	* Considera movimentos de estoque provenientes dos fluxos de Expedição e Conferência de Encalhe
-	* @param idCota
-	* @param dataControleConferencia
-	* @return List<MovimentoEstoqueCota>
-	*/
+	 * Obtém movimentos de estoque da cota que ainda não geraram movimento financeiro
+	 * Considera movimentos de estoque provenientes dos fluxos de Expedição e Conferência de Encalhe ou com Produtos Conta Firme
+	 * @param idCota
+	 * @param dataControleConferencia
+	 * @return List<MovimentoEstoqueCota>
+	 */
     @SuppressWarnings("unchecked")
 	@Override
-	public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiroComChamadaEncalhe(Long idCota, Date dataControleConferencia) {
+	public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiroComChamadaEncalheOuProdutoContaFirme(Long idCota, Date dataControleConferencia) {
 	
 		StringBuilder hql = new StringBuilder();
 		
@@ -220,6 +221,8 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" join mec.produtoEdicao produtoEdicao ");
 		
+		hql.append(" join produtoEdicao.produto produto ");
+		
 		hql.append(" where tipoMovimento.grupoMovimentoEstoque in (:gruposMovimento) ");
 		
 		hql.append(" and ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusFinanceiro )) ");
@@ -228,23 +231,29 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append(" and cota.id = :idCota ");
 		
-		hql.append(" and produtoEdicao.id in (");
+		hql.append(" and ((produto.formaComercializacao = :formaComercializacaoProduto) OR ");
 		
-		hql.append("     select pe.id ");
+		hql.append("      (produtoEdicao.id in (");
 		
-		hql.append("     from ChamadaEncalhe c ");
+		hql.append("                            select pe.id ");
 		
-		hql.append("     join c.chamadaEncalheCotas cc ");
+		hql.append("                            from ChamadaEncalhe c ");
 		
-		hql.append("     join cc.cota cota ");
+		hql.append("                            join c.chamadaEncalheCotas cc ");
 		
-		hql.append("     join c.produtoEdicao pe ");
+		hql.append("                            join cc.cota cota ");
 		
-		hql.append("     where c.dataRecolhimento = :dataControleConferencia ");
+		hql.append("                            join c.produtoEdicao pe ");
 		
-		hql.append("     and cota.id = :idCota ");
+		hql.append("                            where c.dataRecolhimento = :dataControleConferencia ");
 		
-		hql.append(")");
+		hql.append("                            and cota.id = :idCota ");
+		
+		hql.append("                            ) ");
+		
+		hql.append("       ) ");
+		
+		hql.append("      ) ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
@@ -256,11 +265,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
 		query.setParameter("idCota", idCota);
 		query.setParameter("dataControleConferencia", dataControleConferencia);
+		query.setParameter("formaComercializacaoProduto", FormaComercializacao.CONTA_FIRME);
 		
 		query.setCacheable(true);
 		
 		return query.list();
-		
 	}
 	
 	/**

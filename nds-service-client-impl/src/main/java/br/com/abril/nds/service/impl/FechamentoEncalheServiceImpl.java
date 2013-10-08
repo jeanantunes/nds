@@ -40,10 +40,10 @@ import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.Processo;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.ControleFechamentoEncalhe;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.FechamentoEncalhe;
@@ -652,6 +652,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			cota = this.cotaRepository.buscarPorId(c.getIdCota());
 			
 			if(cota == null) {
+				
 				throw new ValidacaoException(TipoMensagem.ERROR, "Cota inexistente.");
 			}
 			
@@ -660,17 +661,21 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(cota, 
 																	dataOperacaoDistribuidor,
 																	usuario,
-																	null,
-																	FormaComercializacao.CONSIGNADO);
+																	null);
 		
 		Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
 		
+		@SuppressWarnings("unused")
 		GerarCobrancaValidacaoException ex = null;
 		
 		try {
 			
-			this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), nossoNumeroEnvioEmail);
-		} catch (GerarCobrancaValidacaoException e) {
+			if (cota.getTipoCota().equals(TipoCota.CONSIGNADO)){
+			    
+				this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), nossoNumeroEnvioEmail);
+			}
+		} 
+		catch (GerarCobrancaValidacaoException e) {
 			
 			ex = e;
 			
