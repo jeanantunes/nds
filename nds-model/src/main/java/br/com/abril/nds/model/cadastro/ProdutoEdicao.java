@@ -118,7 +118,7 @@ public class ProdutoEdicao implements Serializable {
 	@OneToMany(mappedBy = "produtoEdicao", fetch=FetchType.LAZY)
 	private Set<ChamadaEncalhe> chamadaEncalhes = new HashSet<ChamadaEncalhe>(); 
 
-	@Column(name = "POSSUI_BRINDE", nullable = true)
+	@Column(name = "POSSUI_BRINDE", nullable = false)
 	protected boolean possuiBrinde;
 	
 	@ManyToOne(cascade = { CascadeType.MERGE , CascadeType.PERSIST } )
@@ -138,13 +138,13 @@ public class ProdutoEdicao implements Serializable {
 	/**
 	 * Flag indicando se o produto permite vale desconto
 	 */
-	@Column(name = "PERMITE_VALE_DESCONTO")
+	@Column(name = "PERMITE_VALE_DESCONTO", nullable = false)
 	protected boolean permiteValeDesconto;
 	
 	/**
 	 * Flag indicando se o produto permite recolhimentos parciais
 	 */
-	@Column(name = "PARCIAL")
+	@Column(name = "PARCIAL", nullable = false)
 	private boolean parcial;
 
 	@Column(name = "CHAMADA_CAPA", nullable = true, length = 255)
