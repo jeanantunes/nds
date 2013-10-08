@@ -960,19 +960,18 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("           and cfc.ID),0) as valorPago, ")
 		   //total
 		   .append(" cfc.TOTAL as total, ")
+		   
 		   //saldo = total - valorPago
-		   .append(" (")
-		   .append(" coalesce((select sum(bc.VALOR_PAGO - ((bc.VALOR_JUROS + bc.VALOR_MULTA)+bc.VALOR_DESCONTO)) ")
-		   .append("           from BAIXA_COBRANCA bc ")
-		   .append("           inner join COBRANCA cobranca ")
-		   .append("                 ON cobranca.ID = bc.COBRANCA_ID ")
-		   .append("           inner join DIVIDA divida ")
-		   .append("                 on divida.ID = cobranca.DIVIDA_ID ")
-		   .append("           where bc.STATUS not in (:statusBaixaCobranca) ")
-		   .append("           and cota.ID = cobranca.COTA_ID ")
-		   .append("           and divida.CONSOLIDADO_ID = cfc.ID ")
-		   .append("           and cfc.ID),0) ")
-		   .append(" + cfc.TOTAL) as saldo, ")
+		   	.append(" ( ")
+			.append(" 	 SELECT CASE WHEN bc.status = :naoPagoPostergado THEN 0 ")
+			.append(" 	 else cfc.TOTAL + coalesce(SUM(bc.VALOR_PAGO - ((bc.VALOR_JUROS + bc.VALOR_MULTA)+bc.VALOR_DESCONTO)),0) end ")
+			.append(" 	 FROM BAIXA_COBRANCA bc ")
+			.append(" 	 INNER JOIN COBRANCA cobranca ON cobranca.ID = bc.COBRANCA_ID ")
+			.append(" 	 INNER JOIN DIVIDA divida ON divida.ID = cobranca.DIVIDA_ID ")
+			.append(" 	 WHERE bc.STATUS NOT IN (:statusBaixaCobranca)  ")
+			.append(" 	 AND cota.ID = cobranca.COTA_ID AND divida.CONSOLIDADO_ID = cfc.ID AND cfc.ID  ")
+			.append(" ) as saldo, ")
+
 		   .append(" coalesce(cfc.CONSIGNADO,0) - coalesce(cfc.ENCALHE,0) as valorVendaDia ")
 		   .append(" from CONSOLIDADO_FINANCEIRO_COTA cfc ")
 		   .append(" inner join COTA cota on cota.ID = cfc.COTA_ID")
@@ -1316,13 +1315,12 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		query.setResultTransformer(new AliasToBeanResultTransformer(ContaCorrenteCotaVO.class));
 		
 		query.setParameter("numeroCota", filtro.getNumeroCota());
-		
-		List<StatusBaixa> statusBaixaCobranca = 
-				Arrays.asList(StatusBaixa.NAO_PAGO_BAIXA_JA_REALIZADA,
-						StatusBaixa.NAO_PAGO_DIVERGENCIA_DATA,
-						StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR,
-						StatusBaixa.NAO_PAGO_POSTERGADO);
-		
+
+		List<String> statusBaixaCobranca = 
+				Arrays.asList(StatusBaixa.NAO_PAGO_BAIXA_JA_REALIZADA.name(),
+						StatusBaixa.NAO_PAGO_DIVERGENCIA_DATA.name(),
+						StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR.name());
+
 		query.setParameterList("statusBaixaCobranca", statusBaixaCobranca);
 		
 		if(filtro.getInicioPeriodo()!= null && filtro.getFimPeriodo()!= null){
@@ -1339,6 +1337,8 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		query.setParameterList("tiposMovimentoPostergadoDebito", tiposMovimentoPostergadoDebito);
 		query.setParameterList("tipoMovimentoVendaEncalhe", tipoMovimentoVendaEncalhe);
 		query.setParameterList("tiposMovimentoConsignado", tiposMovimentoConsignado);
+		
+		query.setParameter("naoPagoPostergado", StatusBaixa.NAO_PAGO_POSTERGADO.name());
 		
 		PaginacaoVO paginacao = filtro.getPaginacao();
 		if (paginacao != null) {
