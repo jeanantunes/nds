@@ -615,26 +615,23 @@ public class ProdutoController extends BaseController {
 		if (produto != null) {
 
 			if (produto.getCodigo() == null || produto.getCodigo().trim().isEmpty()) {
-				
 				listaMensagens.add("O preenchimento do campo [Código] é obrigatório!");
-				
-			} else {
-				
+			}else{
 				Produto produtoExistente = produtoService.obterProdutoPorCodigo(produto.getCodigo());
-				
+
 				if(produtoExistente != null && !produtoExistente.getId().equals(produto.getId())){
-					
 					listaMensagens.add(" O código [" + produto.getCodigo() + "] já esta sendo utilizado por outro produto ");
 				}
-				
 				produto.setCodigo(produto.getCodigo().trim());
-				
-				
 			}
 
+			if(produto.getCodigoICD() == null || produto.getCodigoICD().trim().isEmpty()){
+				listaMensagens.add("O preenchimento do campo [Código ICD] é obrigatório!");
+			}
+			
 			if (produto.getNome() == null || produto.getNome().trim().isEmpty()) {
 				listaMensagens.add("O preenchimento do campo [Produto] é obrigatório!");
-			} else {
+			}else{
 				produto.setNome(produto.getNome().trim());
 			}
 			
@@ -644,13 +641,13 @@ public class ProdutoController extends BaseController {
 			
 			if (produto.getPeb() <= 0) {
 				listaMensagens.add("O preenchimento do campo [PEB] é obrigatório!");
-			} else {
+			}else{
 				produto.setPeb(produto.getPeb());
 			}
 			
 			if (produto.getPacotePadrao() <= 0) {
 				listaMensagens.add("O preenchimento do campo [Pacote Padrão] é obrigatório!");
-			} else {
+			}else{
 				produto.setPacotePadrao(produto.getPacotePadrao());
 			}
 			
@@ -697,10 +694,6 @@ public class ProdutoController extends BaseController {
 				produto.setSubGrupoEditorial(produto.getSubGrupoEditorial().trim());
 			}
 			
-			if(produto.getCodigoICD() == null || produto.getCodigoICD().trim().isEmpty()){
-				produto.setCodigoICD("");
-			}
-	
 		}
 		
 		if (listaMensagens != null && !listaMensagens.isEmpty()) {
