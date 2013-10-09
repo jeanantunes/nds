@@ -195,7 +195,7 @@ public class EmailServiceImpl implements EmailService {
 	 */
 	private void validarParametrosAutenticacao(ParametroSistema parametroSistema,TipoParametroSistema tipoParametroSistema) throws AutenticacaoEmailException{
 		
-		if(parametroSistema == null || parametroSistema.getValor().isEmpty()){
+		if(parametroSistema == null || parametroSistema.getValor() == null || parametroSistema.getValor().isEmpty()){
 			throw new AutenticacaoEmailException(getMensagemDeErroAutenticacao(tipoParametroSistema));
 		}
 	}

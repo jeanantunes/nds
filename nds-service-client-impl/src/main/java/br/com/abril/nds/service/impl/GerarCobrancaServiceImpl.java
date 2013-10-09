@@ -170,19 +170,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		return this.consolidadoFinanceiroRepository.obterQuantidadeDividasGeradasData(dataVencimentoDebito,idsCota) > 0;
 	}
-
-	@Override
-	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
-	public void gerarCobranca(Long idCota, Long idUsuario, Map<String, Boolean> setNossoNumero)
-		throws GerarCobrancaValidacaoException {
-		
-		this.gerarCobrancaCota(idCota, idUsuario, setNossoNumero);
-		
-		this.geradorArquivoCobrancaBancoService.prepararGerarArquivoCobrancaCnab();
-	}
-
+	
 	/**
 	 * Gera cobranças para Cotas específicas
+	 * 
 	 * @param cotas
 	 * @param idUsuario
 	 * @param enviaEmail
@@ -201,7 +192,10 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	        
 	            Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
 	        
-	            this.gerarCobrancaCota(cota.getId(), idUsuario, nossoNumeroEnvioEmail);
+	            this.gerarCobrancaCota(cota.getId(), 
+	            		               idUsuario, 
+	            		               nossoNumeroEnvioEmail,
+	            		               false);
 	        
 	            if (enviaEmail){
 	        
@@ -221,8 +215,68 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	        }
 	    }
 	}
+
+	/**
+	 * Consolida Financeiro, Gera Divida e Gera Cobrança
+	 * 
+	 * @param idCota
+	 * @param idUsuario
+	 * @param setNossoNumero
+	 * @throws GerarCobrancaValidacaoException
+	 */
+	@Override
+	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
+	public void gerarCobranca(Long idCota, 
+			                  Long idUsuario, 
+			                  Map<String, Boolean> setNossoNumero)
+		throws GerarCobrancaValidacaoException {
+		
+		this.gerarCobrancaCota(idCota, 
+				               idUsuario, 
+				               setNossoNumero,
+        		               false);
+		
+		this.geradorArquivoCobrancaBancoService.prepararGerarArquivoCobrancaCnab();
+	}
+
+	/**
+	 * Consolida Financeiro, Gera Divida e Posterga Divida Gerada
+	 * 
+	 * @param idCota
+	 * @param idUsuario
+	 * @param setNossoNumero
+	 * @throws GerarCobrancaValidacaoException
+	 */
+	@Override
+	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
+	public void gerarDividaPostergada(Long idCota, 
+			                          Long idUsuario, 
+			                          Map<String, Boolean> setNossoNumero)
+		throws GerarCobrancaValidacaoException {
+		
+		this.gerarCobrancaCota(idCota, 
+				               idUsuario, 
+				               setNossoNumero,
+        		               true);
+		
+		this.geradorArquivoCobrancaBancoService.prepararGerarArquivoCobrancaCnab();
+	}
 	
-	private void gerarCobrancaCota(Long idCota, Long idUsuario, Map<String, Boolean> setNossoNumero) 
+	/**
+	 * Gera Cobraça para uma ou todas as cotas com pendências financeiras
+	 * A divida pode ser postergada caso não hava forma de cobrança compativel com a pendência ou
+	 * se o parametro postergarDividas == true
+	 * 
+	 * @param idCota
+	 * @param idUsuario
+	 * @param setNossoNumero
+	 * @param postergarDividas
+	 * @throws GerarCobrancaValidacaoException
+	 */
+	private void gerarCobrancaCota(Long idCota, 
+			                       Long idUsuario, 
+			                       Map<String, Boolean> setNossoNumero,
+			                       boolean postergarDividas) 
 			throws GerarCobrancaValidacaoException {
 
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
@@ -348,7 +402,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 																	dataOperacao, 
 																	msgs, 
 																	ultimoFornecedor,
-																	formaCobrancaClone);
+																	formaCobrancaClone,
+																	postergarDividas);
 					
 					if (nossoNumero != null){
 						
@@ -395,7 +450,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 															dataOperacao, 
 															msgs, 
 															fornecedorProdutoMovimento, 
-															formaCobrancaClone);
+															formaCobrancaClone,
+															postergarDividas);
 			
 			if (nossoNumero != null){
 				
@@ -545,13 +601,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			}
 			
 			listaBoletoDistribuidor.add(boletoDistribuidor);
-			
 		}
 		
-		
 		return listaBoletoDistribuidor;
-		
-
 	}
 	
 	private BigDecimal obterValorMinino(Cota cota, BigDecimal valorMininoDistribuidor){
@@ -563,9 +615,29 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		return valorMinimo;
 	}
 	
+	/**
+	 * Consolida os movimentos financeiros
+	 * Gera Divida e Cobrança
+	 * Posterga as pendências financeiras caso os parametros postergarDividas==true ou formaCobrancaPrincipal==null
+	 * 
+	 * @param cota
+	 * @param movimentos
+	 * @param usuario
+	 * @param qtdDiasNovaCobranca
+	 * @param dataOperacao
+	 * @param msgs
+	 * @param fornecedor
+	 * @param formaCobrancaPrincipal
+	 * @return String
+	 */
 	private String inserirConsolidadoFinanceiro(Cota cota, List<MovimentoFinanceiroCota> movimentos,
-			Usuario usuario, int qtdDiasNovaCobranca, Date dataOperacao, List<String> msgs,
-			Fornecedor fornecedor,FormaCobranca formaCobrancaPrincipal){
+			                                    Usuario usuario, 
+			                                    int qtdDiasNovaCobranca, 
+			                                    Date dataOperacao, 
+			                                    List<String> msgs,
+			                                    Fornecedor fornecedor,
+			                                    FormaCobranca formaCobrancaPrincipal,
+			                                    boolean postergarDividas){
 		
 		ConsolidadoFinanceiroCota consolidadoFinanceiroCota = new ConsolidadoFinanceiroCota();
 		consolidadoFinanceiroCota.setCota(cota);
@@ -670,12 +742,19 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		consolidadoFinanceiroCota.setConsignado(vlMovConsignado.abs());
 		consolidadoFinanceiroCota.setPendente(vlMovPendente.abs());
 		
-		//insere postergado pois não encontrou forma de cobrança
-		if (formaCobrancaPrincipal == null){
+		//insere postergado pois não encontrou forma de cobrança ou parametros do método exigem postergação
+		if (formaCobrancaPrincipal == null || postergarDividas==true){
 			
-			MovimentoFinanceiroCota movPost = 
-					this.gerarPostergado(cota, qtdDiasNovaCobranca, msgs, fornecedor, 
-							consolidadoFinanceiroCota, vlMovFinanTotal, vlMovPostergado, usuario, null, dataOperacao);
+			MovimentoFinanceiroCota movPost = this.gerarPostergado(cota, 
+					                                               qtdDiasNovaCobranca, 
+					                                               msgs, 
+					                                               fornecedor, 
+							                                       consolidadoFinanceiroCota, 
+							                                       vlMovFinanTotal, 
+							                                       vlMovPostergado, 
+							                                       usuario, 
+							                                       null, 
+							                                       dataOperacao);
 			
 			this.consolidadoFinanceiroRepository.adicionar(consolidadoFinanceiroCota);
 			
@@ -767,8 +846,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		if(parametroCobrancaCota !=null && parametroCobrancaCota.getFatorVencimento() == null) {
 			formaCobrancaPrincipal.setTipoFormaCobranca(tipoFormaCobrancaAntiga);
 		}
-		
-		
 		
 		if (dataVencimento == null){
 			
@@ -874,9 +951,15 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		} else if (vlMovFinanTotal.compareTo(valorMinino) != 0) {
 
 			movimentoFinanceiroCota = this.gerarPostergado(cota,
-					qtdDiasNovaCobranca, msgs, fornecedor,
-					consolidadoFinanceiroCota, vlMovFinanTotal, vlMovFinanTotal, usuario,
-					diasSemanaConcentracaoPagamento, dataOperacao);
+					                                       qtdDiasNovaCobranca, 
+					                                       msgs, 
+					                                       fornecedor,
+					                                       consolidadoFinanceiroCota, 
+					                                       vlMovFinanTotal, 
+					                                       vlMovFinanTotal, 
+					                                       usuario,
+					                                       diasSemanaConcentracaoPagamento, 
+					                                       dataOperacao);
 		}
 		
 		this.consolidadoFinanceiroRepository.adicionar(consolidadoFinanceiroCota);
@@ -969,11 +1052,31 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		return null;
 	}
 
+	/**
+	 * Posterga as pendências financeiras da cota
+	 * 
+	 * @param cota
+	 * @param qtdDiasNovaCobranca
+	 * @param msgs
+	 * @param fornecedor
+	 * @param consolidadoFinanceiroCota
+	 * @param vlMovFinanTotal
+	 * @param vlMovFinanPostergado
+	 * @param usuario
+	 * @param diasSemanaConcentracaoPagamento
+	 * @param dataOperacao
+	 * @return MovimentoFinanceiroCota
+	 */
 	private MovimentoFinanceiroCota gerarPostergado(Cota cota,
-			int qtdDiasNovaCobranca, List<String> msgs, Fornecedor fornecedor,
-			ConsolidadoFinanceiroCota consolidadoFinanceiroCota,
-			BigDecimal vlMovFinanTotal, BigDecimal vlMovFinanPostergado, Usuario usuario,
-			List<Integer> diasSemanaConcentracaoPagamento, Date dataOperacao) {
+			                                        int qtdDiasNovaCobranca, 
+			                                        List<String> msgs, 
+			                                        Fornecedor fornecedor,
+			                                        ConsolidadoFinanceiroCota consolidadoFinanceiroCota,
+			                                        BigDecimal vlMovFinanTotal, 
+			                                        BigDecimal vlMovFinanPostergado, 
+			                                        Usuario usuario,
+			                                        List<Integer> diasSemanaConcentracaoPagamento, 
+			                                        Date dataOperacao) {
 		
 		//gerar postergado
 		consolidadoFinanceiroCota.setValorPostergado(vlMovFinanPostergado);
