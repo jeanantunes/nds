@@ -906,6 +906,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				break;
 				case DEPOSITO:
 					cobranca = new CobrancaDeposito();
+				break;
 				case TRANSFERENCIA_BANCARIA:
 					cobranca = new CobrancaTransferenciaBancaria();
 				break;
