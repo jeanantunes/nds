@@ -88,6 +88,10 @@ public class AnaliseEstudoController extends BaseController {
 	
 	private TableModel<CellModelKeyValue<AnaliseEstudoDTO>> efetuarConsultaEstudos(FiltroAnaliseEstudoDTO filtro) {
 
+		Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigoProduto());
+		
+		filtro.setCodigoProduto(produto.getCodigoICD());
+		
 		List<AnaliseEstudoDTO> listaEstudos = analiseEstudoService.buscarTodosEstudos(filtro);
 		
 		popularPeriodoEStatus(listaEstudos);

@@ -99,7 +99,7 @@ public class FixacaoReparteController extends BaseController {
 
 	@Rules(Permissao.ROLE_DISTRIBUICAO_FIXACAO_REPARTE)
 	@Path("/")
-	public void index(){
+	public void fixacaoReparte(){
 		result.include("classificacao",fixacaoReparteService.obterClassificacoesProduto());
 	}
 	
@@ -121,7 +121,7 @@ public class FixacaoReparteController extends BaseController {
 		List<FixacaoReparteDTO>	resultadoPesquisa = fixacaoReparteService.obterFixacoesRepartePorProduto(filtro);
 		
 		if(resultadoPesquisa.isEmpty()){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não Foram encontrados resultados para a pesquisa");	
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados resultados para a pesquisa");
 		}
 		
 		TableModel<CellModelKeyValue<FixacaoReparteDTO>> tableModelProduto = montarTableModelProduto(filtro);
@@ -283,14 +283,7 @@ public class FixacaoReparteController extends BaseController {
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		
 		List<PdvDTO> listaPDVDTO = fixacaoReparteService.obterListaPdvPorFixacao(filtro.getIdFixacao());
-		Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigoProduto());
-		
-		for (PdvDTO pdvDTO : listaPDVDTO) {
-			RepartePDV reparteEncontrado = repartePdvService.obterRepartePorPdv(filtro.getIdFixacao(), produto.getId(), pdvDTO.getId());
-			if(reparteEncontrado !=null)
-				pdvDTO.setReparte( reparteEncontrado.getReparte());
-			}
-		
+
  		TableModel<CellModelKeyValue<PdvDTO>> tableModel = new TableModel<CellModelKeyValue<PdvDTO>>();
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaPDVDTO));
 		tableModel.setPage(filtro.getPaginacao().getPosicaoInicial());

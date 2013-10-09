@@ -288,7 +288,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 repartePDVDTOs.add(repartePDVDTO);
             }
             Produto produto = estudo.getProdutoEdicao().getProduto();
-            FixacaoReparte fixacaoReparte = fixacaoReparteRepository.buscarPorProdutoCota(cota, produto);
+            FixacaoReparte fixacaoReparte = fixacaoReparteRepository.buscarPorProdutoCota(cota, produto.getCodigoICD());
             repartePdvService.salvarRepartesPDV(repartePDVDTOs, produto.getCodigo(),fixacaoReparte.getId(),manterFixa);
     }
 

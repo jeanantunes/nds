@@ -25,6 +25,7 @@ import br.com.abril.nds.dto.ProdutoBaseSugeridaDTO;
 import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.InformacoesProdutoService;
@@ -103,12 +104,8 @@ public class InformacoesProdutoController extends BaseController {
 	
 	private TableModel<CellModelKeyValue<InformacoesProdutoDTO>> gridProdutos (FiltroInformacoesProdutoDTO filtro, String sortname) {
 		
-		String codigoProdin;
-		
-		if(filtro.getCodProduto().length() == 6){
-			codigoProdin = prodService.obterCodigoProdinPorICD(filtro.getCodProduto());
-			filtro.setCodProduto(codigoProdin);
-		}
+		Produto produto = prodService.obterProdutoPorCodigo(filtro.getCodProduto());
+		filtro.setCodProduto(produto.getCodigoICD());
 		
 		List<InformacoesProdutoDTO> produtos = infoProdService.buscarProduto(filtro);
 
@@ -229,7 +226,7 @@ public class InformacoesProdutoController extends BaseController {
 		
 		BigDecimal abrang = infoProdService.buscarAbrangenciaApurada(codProduto, numEdicao);
 		
-		informacoes.setAbrangenciaApurada(abrang.equals(null) ? new BigDecimal(0): abrang);
+		informacoes.setAbrangenciaApurada((abrang==null) ? new BigDecimal(0): abrang);
 		
 		informacoes.setMinimoEstudoId(idEstudo);
 		

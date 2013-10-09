@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,6 +32,9 @@ import br.com.abril.nds.repository.TipoSegmentoProdutoRepository;
 import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
+
+import static org.apache.commons.lang.StringUtils.left;
+import static org.apache.commons.lang.StringUtils.leftPad;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -101,11 +105,19 @@ public class ProdutoServiceImpl implements ProdutoService {
 	@Override
 	@Transactional(readOnly = true)
 	public Produto obterProdutoPorCodigo(String codigoProduto) {
-		if (codigoProduto == null || codigoProduto.isEmpty()){
+
+		if (StringUtils.isBlank(codigoProduto)){
 			throw new ValidacaoException(TipoMensagem.ERROR, "Código é obrigatório.");
 		}
-		
-		return produtoRepository.obterProdutoPorCodigo(codigoProduto);
+        Produto produto = produtoRepository.obterProdutoPorCodigoICD(codigoProduto);
+        if (produto == null) {
+            produto = produtoRepository.obterProdutoPorCodigoICDLike(codigoProduto);
+        } if (produto == null) {
+            produto = produtoRepository.obterProdutoPorCodigoProdin(codigoProduto);
+        } if (produto == null) {
+            produto = produtoRepository.obterProdutoPorCodigoProdinLike(codigoProduto);
+        }
+        return produto;
 	}
 	
 	@Override

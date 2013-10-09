@@ -388,7 +388,7 @@ public class DescontoServiceImpl implements DescontoService {
 		
 			case 1:
 				
-				produto = produtoRepository.obterProdutoPorCodigo(descontoDTO.getCodigoProduto());
+				produto = produtoRepository.obterProdutoPorCodigoProdin(descontoDTO.getCodigoProduto());
 				
 				if(produto != null) {
 					produto.setDescontoProduto(desconto);
@@ -409,7 +409,7 @@ public class DescontoServiceImpl implements DescontoService {
 				
 			case 2:
 				
-				produto = produtoRepository.obterProdutoPorCodigo(descontoDTO.getCodigoProduto());
+				produto = produtoRepository.obterProdutoPorCodigoProdin(descontoDTO.getCodigoProduto());
 				
 				/*
 				 * Se existir o desconto, a mesma é atualizada, senão, cria-se uma nova entrada na tabela
@@ -535,7 +535,7 @@ public class DescontoServiceImpl implements DescontoService {
 				
 				Set<Cota> cotas = obterCotas(descontoDTO.getCotas());
 				
-				produto = produtoRepository.obterProdutoPorCodigo(descontoDTO.getCodigoProduto());
+				produto = produtoRepository.obterProdutoPorCodigoProdin(descontoDTO.getCodigoProduto());
 
 				DescontoProximosLancamentos descontoProximosLancamentos = new DescontoProximosLancamentos();
 

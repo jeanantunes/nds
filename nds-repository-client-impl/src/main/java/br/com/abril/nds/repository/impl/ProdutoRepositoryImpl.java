@@ -13,12 +13,14 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.ConsultaProdutoDTO;
-import br.com.abril.nds.dto.RegiaoNMaiores_ProdutoDTO;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ProdutoRepository;
+
+import static org.apache.commons.lang.StringUtils.left;
+import static org.apache.commons.lang.StringUtils.leftPad;
 
 /**
  * Classe de implementação referente ao acesso a dados da entidade 
@@ -77,22 +79,8 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 	}
 	
 	@Override
-	public Produto obterProdutoPorCodigo(String codigoProduto) {
-		
-		StringBuilder hql = new StringBuilder();
-		
-		hql.append("from Produto produto "); 
-		if(codigoProduto.length() == 6){
-			hql.append(" where produto.codigoICD = :codigoProduto");			
-		}else{
-			hql.append(" where produto.codigo = :codigoProduto");
-		}
-		
-		Query query = super.getSession().createQuery(hql.toString());
-
-		query.setParameter("codigoProduto", codigoProduto);
-		
-		return (Produto) query.uniqueResult();
+	public Produto obterProdutoPorCodigoProdin(String codigoProduto) {
+        return (Produto) getSession().createCriteria(Produto.class).add(Restrictions.eq("codigo", leftPad(codigoProduto, 8, "0"))).uniqueResult();
 	}
 	
 	@Override
@@ -395,7 +383,8 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		
 		return query.list();
 	}
-
+	
+	@Deprecated
 	@Override
 	public String obterCodigoProdinPorCodICD(String codigoICD) {
 		
@@ -412,5 +401,24 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		
 		return (String) query.uniqueResult();
 	}
+
+    @Override
+    public Produto obterProdutoPorCodigoICD(String codigoProduto) {
+        List list = getSession().createCriteria(Produto.class).add(Restrictions.eq("codigoICD", codigoProduto)).list();
+        return list.isEmpty() ? null : (Produto) list.get(0);
+    }
+
+    @Override
+    public Produto obterProdutoPorCodigoICDLike(String codigoProduto) {
+        List list = getSession().createCriteria(Produto.class).add(Restrictions.like("codigoICD", codigoProduto + "%")).list();
+        return list.isEmpty() ? null : (Produto) list.get(0);
+    }
+
+    @Override
+    public Produto obterProdutoPorCodigoProdinLike(String codigoProduto) {
+        String codigoProdutoLike = leftPad(left(codigoProduto, 6), 6, "0") + "%";
+        List list = getSession().createCriteria(Produto.class).add(Restrictions.like("codigo", codigoProdutoLike)).list();
+        return list.isEmpty() ? null : (Produto) list.get(0);
+    }
 
 }

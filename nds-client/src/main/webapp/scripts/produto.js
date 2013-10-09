@@ -531,13 +531,15 @@ var produtoController = $.extend(true, {
 	atualizaICD : function(){
 		var value = $("#codigoProdutoCadastro").val();
 		console.log(value);
-		var l = value.length;
+//		var l = value.length;
+
+		$("#codigoProdutoICDCadastro").val(value);
 		
-		if(l>=6){
-			$("#codigoProdutoICDCadastro").val(value.substring(0,6));
-		}else{
-			$("#codigoProdutoICDCadastro").val(value.substring(0,(value.length)));
-		}
+//		if(l>=6){
+//			$("#codigoProdutoICDCadastro").val(value.substring(0,6));
+//		}else{
+//			$("#codigoProdutoICDCadastro").val(value.substring(0,(value.length)));
+//		}
 	},
 	
 	novoProduto : function () {
@@ -665,7 +667,7 @@ var produtoController = $.extend(true, {
 		
 		 var params = [{name:"produto.id",value:$("#idProduto", produtoController.workspace).val()},
         			   {name:"produto.codigo",value:$("#codigoProdutoCadastro", produtoController.workspace).val()},
-//        			   {name:"produto.codigoICD",value:$("#codigoProdutoICDCadastro", produtoController.workspace).val()},
+        			   {name:"produto.codigoICD",value:$("#codigoProdutoICDCadastro", produtoController.workspace).val()},
         			   {name:"produto.nome",value:$("#nomeProduto", produtoController.workspace).val()},
         			   {name:"produto.peb",value:$("#peb", produtoController.workspace).val()},
         			   {name:"produto.pacotePadrao",value:$("#pacotePadrao", produtoController.workspace).val()},
