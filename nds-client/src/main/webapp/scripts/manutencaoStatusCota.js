@@ -128,10 +128,6 @@ obterColunasGridPesquisaSemCota:function(){
 	
 	configurarFlexiGrid : function(colunas) {
 		
-		$(".grids", this.workspace).empty();
-		
-		$(".grids", this.workspace).append($("<table>").attr("class", "manutencaoStatusCotaGrid"));
-
 		$(".manutencaoStatusCotaGrid", manutencaoStatusCotaController.workspace).flexigrid({
 			onSuccess: function() {bloquearItensEdicao(manutencaoStatusCotaController.workspace);},
 			preProcess: manutencaoStatusCotaController.executarPreProcessamento,
@@ -178,6 +174,8 @@ obterColunasGridPesquisaSemCota:function(){
 				row.cell.acao = linkEdicao;
 				
 				row.cell.statusAnterior = row.cell.statusAnterior ? row.cell.statusAnterior : "";
+				
+				row.cell.data = row.cell.data.$;
 			}
 			
 		});
@@ -333,14 +331,16 @@ obterColunasGridPesquisaSemCota:function(){
 			
 			filtro = manutencaoStatusCotaController.obterDadosFiltro();
 			
-			if(manutencaoStatusCotaController.isCotainformadaParaPesquisa()){
-				
-				colunas = manutencaoStatusCotaController.obterColunasGridPesquisaComCota();
-			}
-			else{
-				
-				colunas = manutencaoStatusCotaController.obterColunasGridPesquisaSemCota();
-			}
+			
+		}
+		
+		if(manutencaoStatusCotaController.isCotainformadaParaPesquisa()){
+			
+			colunas = manutencaoStatusCotaController.obterColunasGridPesquisaComCota();
+		}
+		else{
+			
+			colunas = manutencaoStatusCotaController.obterColunasGridPesquisaSemCota();
 		}
 		
 		manutencaoStatusCotaController.configurarFlexiGrid(colunas);

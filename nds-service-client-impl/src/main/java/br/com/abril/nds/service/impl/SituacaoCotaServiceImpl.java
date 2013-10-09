@@ -8,6 +8,7 @@ import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.abril.nds.client.vo.HistoricoSituacaoCotaVO;
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
@@ -44,9 +45,9 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService {
 	 * @see br.com.abril.nds.service.SituacaoCotaService#obterHistoricoStatusCota(br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO)
 	 */
 	@Transactional(readOnly = true)
-	public List<HistoricoSituacaoCota> obterHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
+	public List<HistoricoSituacaoCotaVO> obterHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
 		
-		if(filtro.getPeriodo() != null) {
+		if(filtro.getStatusCota() == null) {
 			
 			return this.historicoSituacaoCotaRepository.obterHistoricoStatusCota(filtro);
 		}
@@ -61,7 +62,7 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService {
 	@Transactional(readOnly = true)
 	public Long obterTotalHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
 		
-		if(filtro.getPeriodo() != null) {
+		if(filtro.getStatusCota() == null) {
 			
 			return this.historicoSituacaoCotaRepository.obterTotalHistoricoStatusCota(filtro);
 		}

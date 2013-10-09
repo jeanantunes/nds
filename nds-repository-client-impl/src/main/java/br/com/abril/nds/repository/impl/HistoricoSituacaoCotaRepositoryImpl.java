@@ -7,8 +7,10 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
+import br.com.abril.nds.client.vo.HistoricoSituacaoCotaVO;
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -36,13 +38,13 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 	 * (non-Javadoc)
 	 * @see br.com.abril.nds.repository.HistoricoSituacaoCotaRepository#obterHistoricosStatusCota(br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO)
 	 */
-	public List<HistoricoSituacaoCota> obterHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
+	public List<HistoricoSituacaoCotaVO> obterHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
 		
 		return obterHistorico(filtro,false,false);
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<HistoricoSituacaoCota> obterHistorico(FiltroStatusCotaDTO filtro,boolean totalizarResultados  ,boolean filtrarUltimaDataHistorico) {
+	private List<HistoricoSituacaoCotaVO> obterHistorico(FiltroStatusCotaDTO filtro,boolean totalizarResultados  ,boolean filtrarUltimaDataHistorico) {
 		
 		String hql = this.criarQueryHistoricoStatusCota(filtro, totalizarResultados,filtrarUltimaDataHistorico);
 		
@@ -53,6 +55,8 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 		this.configurarParametrosQueryHistoricoStatusCota(query, filtro);
 		
 		this.configurarPaginacaoQueryHistoricoStatusCota(query, filtro);
+		
+		query.setResultTransformer(new AliasToBeanResultTransformer(HistoricoSituacaoCotaVO.class));
 		
 		return query.list();
 	}
@@ -90,11 +94,25 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 		
 		String hql = "select ";
 		
-		hql += totalizarResultados ? " count(hsc) " : " hsc ";
+		if (totalizarResultados){
+			
+			hql += " count(hsc) ";
+		} else {
+			
+			hql += "c.numeroCota as numeroCota, ";
+			hql += "coalesce(p.nome, p.razaoSocial) as nomeCota, ";
+			hql += "hsc.dataInicioValidade as data, ";
+			hql += "hsc.situacaoAnterior as statusAnterior, ";
+			hql += "hsc.novaSituacao as statusAtualizado, ";
+			hql += "responsavel.nome as usuario, ";
+			hql += "hsc.motivo as motivo, ";
+			hql += "hsc.descricao as descricao ";
+		}
 		
 		hql += " from HistoricoSituacaoCota hsc ";
 		hql += " join hsc.cota c ";
 		hql += " join c.pessoa p ";
+		hql += " join hsc.responsavel responsavel ";
 		
 		if (filtro != null) {
 			
@@ -160,10 +178,12 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 				
 				hql += useWhere ? " where " : " and ";
 				
-				hql += " hsc.dataInicioValidade = ( " +
-					"select max(hs.dataInicioValidade) from HistoricoSituacaoCota hs " +
-					"where hs.cota.numeroCota = hsc.cota.numeroCota " +
-					")  ";
+				hql += " hsc.id = (";
+				hql += " select max(_h.id) from HistoricoSituacaoCota _h ";
+				hql += " where _h.dataInicioValidade <= (";
+				hql += " select dataOperacao from Distribuidor ";
+				hql += ") and _h.cota.id = hsc.cota.id ";
+				hql += ")";
 				
 				useWhere = false;
 			}
@@ -187,28 +207,28 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 			switch (filtro.getOrdenacaoColuna()) {
 			
 				case NUMERO_COTA :
-					hql += "order by c.numeroCota ";
+					hql += "order by numeroCota ";
 					break;
 				case NOME_COTA :
-					hql += "order by CASE WHEN p.class = 'J' THEN p.razaoSocial else p.nome END ";
+					hql += "order by nomeCota ";
 					break;
 				case DATA:
-					hql += "order by hsc.dataInicioValidade, hsc.id  ";
+					hql += "order by data  ";
 					break;
 				case DESCRICAO:
-					hql += "order by hsc.descricao  ";
+					hql += "order by descricao  ";
 					break;
 				case MOTIVO:
-					hql += "order by hsc.motivo ";
+					hql += "order by motivo ";
 					break;
 				case STATUS_ANTERIOR:
-					hql += "order by hsc.situacaoAnterior ";
+					hql += "order by statusAnterior ";
 					break;
 				case STATUS_ATUALIZADO:
-					hql += "order by hsc.novaSituacao ";
+					hql += "order by statusAtualizado ";
 					break;
 				case USUARIO:
-					hql += "order by hsc.responsavel ";
+					hql += "order by usuario ";
 					break;
 				default:
 					break;
@@ -341,7 +361,7 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 	}
 	
 	@Override
-	public List<HistoricoSituacaoCota> obterUltimoHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
+	public List<HistoricoSituacaoCotaVO> obterUltimoHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
 		
 		return obterHistorico(filtro, false, true);
 		

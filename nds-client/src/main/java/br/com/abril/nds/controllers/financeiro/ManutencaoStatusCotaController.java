@@ -126,19 +126,27 @@ public class ManutencaoStatusCotaController extends BaseController {
 		
 		this.configurarPaginacaoPesquisa(filtro, sortorder, sortname, page, rp);
 		
-		List<HistoricoSituacaoCota> listaHistoricoStatusCota =
-			this.situacaoCotaService.obterHistoricoStatusCota(filtro);
+		Long qtdeTotalRegistros = this.situacaoCotaService.obterTotalHistoricoStatusCota(filtro);
 		
-		if (listaHistoricoStatusCota == null || listaHistoricoStatusCota.isEmpty()) {
+		if (qtdeTotalRegistros == null || qtdeTotalRegistros == 0L){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
-			
 		} else {
+			
+			List<HistoricoSituacaoCotaVO> listaHistoricoStatusCota =
+					this.situacaoCotaService.obterHistoricoStatusCota(filtro);
+			
+			TableModel<CellModelKeyValue<HistoricoSituacaoCotaVO>> tableModel =
+				new TableModel<CellModelKeyValue<HistoricoSituacaoCotaVO>>();
+			
+			tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaHistoricoStatusCota));
 
-			this.processarHistoricoStatusCota(listaHistoricoStatusCota, filtro);
-		}
+			tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+			
+			tableModel.setTotal(qtdeTotalRegistros.intValue());
 		
-		result.nothing();
+			result.use(Results.json()).from(tableModel, "result").recursive().serialize();
+		}
 	}
 	
 	@Post
@@ -274,66 +282,6 @@ public class ManutencaoStatusCotaController extends BaseController {
 	    Scheduler scheduler = this.schedulerFactoryBean.getScheduler();
 	    
 	    scheduler.scheduleJob(job, trigger);
-	}
-	
-	/*
-	 * Processa o histórico da situação da cota.
-	 *  
-	 * @param listaHistoricoStatusCota - lista de histórico
-	 * @param filtro - filtro de pesquisa
-	 */
-	private void processarHistoricoStatusCota(List<HistoricoSituacaoCota> listaHistoricoStatusCota,
-											  FiltroStatusCotaDTO filtro) {
-		
-		List<HistoricoSituacaoCotaVO> listaHistoricoSituacaoCotaVO = new ArrayList<HistoricoSituacaoCotaVO>();
-		
-		for (HistoricoSituacaoCota historicoSituacaoCota : listaHistoricoStatusCota) {
-			
-			HistoricoSituacaoCotaVO historicoSituacaoCotaVO = new HistoricoSituacaoCotaVO();
-			
-			historicoSituacaoCotaVO.setData(
-				DateUtil.formatarDataPTBR(historicoSituacaoCota.getDataInicioValidade()));
-			
-			String descricao = 
-				historicoSituacaoCota.getDescricao() == null ? "" : historicoSituacaoCota.getDescricao();
-			
-			historicoSituacaoCotaVO.setDescricao(descricao);
-			
-			String motivo = 
-				historicoSituacaoCota.getMotivo() == null ? "" : historicoSituacaoCota.getMotivo().toString();
-
-			historicoSituacaoCotaVO.setMotivo(motivo);
-			
-			historicoSituacaoCotaVO.setUsuario(historicoSituacaoCota.getResponsavel().getNome());
-			
-			if (historicoSituacaoCota.getSituacaoAnterior() != null) {
-				historicoSituacaoCotaVO.setStatusAnterior(historicoSituacaoCota.getSituacaoAnterior().toString());
-			}
-			
-			historicoSituacaoCotaVO.setStatusAtualizado(historicoSituacaoCota.getNovaSituacao().toString());
-			
-			historicoSituacaoCotaVO.setNomeCota(historicoSituacaoCota.getCota().getPessoa().getNome());
-			
-			historicoSituacaoCotaVO.setNumeroCota(historicoSituacaoCota.getCota().getNumeroCota());
-			
-			listaHistoricoSituacaoCotaVO.add(historicoSituacaoCotaVO);
-		}
-		
-		TableModel<CellModelKeyValue<HistoricoSituacaoCotaVO>> tableModel =
-			new TableModel<CellModelKeyValue<HistoricoSituacaoCotaVO>>();
-		
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaHistoricoSituacaoCotaVO));
-
-		Long qtdeTotalRegistros = this.situacaoCotaService.obterTotalHistoricoStatusCota(filtro);
-		
-		if (qtdeTotalRegistros != null) {
-		
-			tableModel.setTotal(qtdeTotalRegistros.intValue());
-		}
-		
-		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
-	
-		result.use(Results.json()).from(tableModel, "result").recursive().serialize();
 	}
 	
 	/*
