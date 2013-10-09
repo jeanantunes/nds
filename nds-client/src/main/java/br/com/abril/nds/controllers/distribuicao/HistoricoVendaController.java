@@ -119,7 +119,7 @@ public class HistoricoVendaController extends BaseController {
 		filtro.setOrdemColuna(Util.getEnumByStringValue(FiltroHistoricoVendaDTO.OrdemColuna.values(), sortname));
 		
 		Produto produto = this.produtoService.obterProdutoPorCodigo(filtro.getProdutoDto().getCodigoProduto());
-		filtro.getProdutoDto().setIdProduto(produto.getId());
+		filtro.getProdutoDto().setCodigoProduto(produto.getCodigoICD());
 		
 		// valida se o filtro foi devidamente preenchido pelo usuário
 		filtroValidate(filtro.validarEntradaFiltroProduto(), filtro);

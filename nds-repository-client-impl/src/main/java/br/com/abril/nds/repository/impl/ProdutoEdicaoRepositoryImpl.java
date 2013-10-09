@@ -28,7 +28,6 @@ import br.com.abril.nds.dto.EdicoesProdutosDTO;
 import br.com.abril.nds.dto.FuroProdutoDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoDTO;
 import br.com.abril.nds.dto.TipoDescontoProdutoDTO;
-import br.com.abril.nds.dto.filtro.FiltroAnaliseEstudoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDTO;
 import br.com.abril.nds.dto.filtro.FiltroHistogramaVendas;
 import br.com.abril.nds.dto.filtro.FiltroHistoricoVendaDTO;
@@ -1327,26 +1326,22 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		hql.append(" sum(estoqueProduto.qtde - coalesce(estoqueProduto.qtdeDevolucaoFornecedor, 0)) as qtdeVendas,");
 		hql.append(" lancamento.status as situacaoLancamento, ");
 		hql.append(" produtoEdicao.chamadaCapa as chamadaCapa, ");
-		hql.append(" produto.tipoClassificacaoProduto as tipoClassificacaoProduto ");
+		hql.append(" produtoEdicao.tipoClassificacaoProduto as tipoClassificacaoProduto ");
 		hql.append(" FROM EstoqueProduto estoqueProduto");
 		hql.append(" LEFT JOIN estoqueProduto.movimentos as movimentos");
 		hql.append(" LEFT JOIN movimentos.tipoMovimento as tipoMovimento");
 		hql.append(" JOIN estoqueProduto.produtoEdicao as produtoEdicao");
 		hql.append(" JOIN produtoEdicao.lancamentos as lancamento ");
 		hql.append(" JOIN produtoEdicao.produto as produto ");
-		hql.append(" LEFT JOIN produto.tipoClassificacaoProduto as tipoClassificacaoProduto ");
+		hql.append(" LEFT JOIN produtoEdicao.tipoClassificacaoProduto as tipoClassificacaoProduto ");
 
 		hql.append(" WHERE ");
 		hql.append(" tipoMovimento.id = 13 and ");
 
 		if (filtro.getProdutoDto() != null) {
-			if (filtro.getProdutoDto().getIdProduto() != null && !filtro.getProdutoDto().getIdProduto().equals(0)) {
-				hql.append(" produto.id = :codigoProduto ");
-				parameters.put("codigoProduto", filtro.getProdutoDto().getIdProduto());
-			}
-			else if (filtro.getProdutoDto().getNomeProduto() != null && !filtro.getProdutoDto().getNomeProduto().isEmpty()) {
-				hql.append(" produto.nome = :nomeProduto ");
-				parameters.put("nomeProduto", filtro.getProdutoDto().getNomeProduto());
+			if (filtro.getProdutoDto().getCodigoProduto() != null && !filtro.getProdutoDto().getCodigoProduto().equals(0)) {
+				hql.append(" produto.codigoICD = :codigoProduto ");
+				parameters.put("codigoProduto", filtro.getProdutoDto().getCodigoProduto());
 			}
 		}
 
@@ -1378,7 +1373,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		if(filtro.getOrdemColuna() != null){
 			hql.append(this.ordenarConsultaHistoricoVendaProdutoEdicao(filtro));
 		}else{
-			hql.append(" ORDER BY produtoEdicao.numeroEdicao DESC ");			
+			hql.append(" ORDER BY lancamento.dataLancamentoPrevista DESC ");			
 		}
 
 		Query query = super.getSession().createQuery(hql.toString());

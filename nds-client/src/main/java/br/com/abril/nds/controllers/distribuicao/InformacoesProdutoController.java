@@ -226,7 +226,7 @@ public class InformacoesProdutoController extends BaseController {
 		
 		BigDecimal abrang = infoProdService.buscarAbrangenciaApurada(codProduto, numEdicao);
 		
-		informacoes.setAbrangenciaApurada(abrang.equals(null) ? new BigDecimal(0): abrang);
+		informacoes.setAbrangenciaApurada((abrang==null) ? new BigDecimal(0): abrang);
 		
 		informacoes.setMinimoEstudoId(idEstudo);
 		

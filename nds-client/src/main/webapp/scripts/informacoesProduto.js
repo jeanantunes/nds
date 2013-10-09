@@ -258,25 +258,7 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 			row.cell.estudo = numeroEstudo;
 			
 			//Validando campos vazios
-			var repMinimo = row.cell.reparteMinimo;
-			if(repMinimo == 0){
-			   row.cell.reparteMinimo = "";
-			}
-
-			var percAbrang = row.cell.percentualAbrangencia;
-			if(percAbrang == undefined){
-				row.cell.percentualAbrangencia = "";
-			}
-			
-			var venda = row.cell.venda;
-			if(venda == 0){
-				row.cell.venda = "";
-			}
-			
-			var repDist = row.cell.reparteDistribuido;
-			if(repDist == 0){
-				row.cell.reparteDistribuido = "";
-			}
+			informacoesProdutoController.validarCamposVaziosGrid(row);
 			
 		});
 		
@@ -363,6 +345,31 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		}
 		
 		$('#workspace').tabs("remove", $('#workspace').tabs('option', 'selected'));
+	},
+	
+	
+	validarCamposVaziosGrid : function (row){
+		
+		if(row.cell.reparteMinimo == 0){
+		   row.cell.reparteMinimo = "";
+		}
+
+		if(row.cell.percentualAbrangencia == undefined){
+			row.cell.percentualAbrangencia = "";
+		}
+		
+		if(row.cell.venda == 0){
+			row.cell.venda = "";
+		}
+		
+		if(row.cell.reparteDistribuido == 0){
+			row.cell.reparteDistribuido = "";
+		}
+		
+		if(row.cell.status == undefined){
+			row.cell.status = "";
+		}
+		
 	},
 	
 	filtroPrincipal : function(){
@@ -519,7 +526,7 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 	},
 	
 	validarCamposVazios : function (valor, campo){
-		if(valor == 0){
+		if((valor==0) || (valor==undefined)){
 			valor = "";
 			$(campo).val(valor).disable();
 		}else{
@@ -529,9 +536,10 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 	
 	//Formata os números excluindo as casas decimais.
 	formatarCasasDecimais : function (valor, campo){
-		var valorFormatado = parseFloat(valor).toFixed(0); 
-		
-		$(campo).val(valorFormatado).disable();
+		if((valor>0) || (valor!=undefined)){
+			var valorFormatado = parseFloat(valor).toFixed(0); 
+			$(campo).val(valorFormatado).disable();
+		} 
 	},
 	
 	detalhes_ReparteTotalEPromocional : function (codProd, numeroEdicao){
