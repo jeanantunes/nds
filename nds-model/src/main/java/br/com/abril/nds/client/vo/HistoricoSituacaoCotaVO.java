@@ -1,6 +1,10 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
+import java.util.Date;
+
+import br.com.abril.nds.model.cadastro.MotivoAlteracaoSituacao;
+import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 
 /**
  * Value Object de histórico de situação da cota.
@@ -15,7 +19,7 @@ public class HistoricoSituacaoCotaVO implements Serializable {
 	 */
 	private static final long serialVersionUID = -4573189935810707316L;
 	
-	private String data;
+	private Date data;
 
 	private String statusAnterior;
 	
@@ -76,14 +80,14 @@ public class HistoricoSituacaoCotaVO implements Serializable {
 	/**
 	 * @return the data
 	 */
-	public String getData() {
+	public Date getData() {
 		return data;
 	}
 
 	/**
 	 * @param data the data to set
 	 */
-	public void setData(String data) {
+	public void setData(Date data) {
 		this.data = data;
 	}
 
@@ -97,8 +101,8 @@ public class HistoricoSituacaoCotaVO implements Serializable {
 	/**
 	 * @param statusAnterior the statusAnterior to set
 	 */
-	public void setStatusAnterior(String statusAnterior) {
-		this.statusAnterior = statusAnterior;
+	public void setStatusAnterior(SituacaoCadastro statusAnterior) {
+		this.statusAnterior = statusAnterior == null ? "" : statusAnterior.toString();
 	}
 
 	/**
@@ -111,8 +115,8 @@ public class HistoricoSituacaoCotaVO implements Serializable {
 	/**
 	 * @param statusAtualizado the statusAtualizado to set
 	 */
-	public void setStatusAtualizado(String statusAtualizado) {
-		this.statusAtualizado = statusAtualizado;
+	public void setStatusAtualizado(SituacaoCadastro statusAtualizado) {
+		this.statusAtualizado = statusAtualizado == null ? "" : statusAtualizado.toString();
 	}
 
 	/**
@@ -139,8 +143,8 @@ public class HistoricoSituacaoCotaVO implements Serializable {
 	/**
 	 * @param motivo the motivo to set
 	 */
-	public void setMotivo(String motivo) {
-		this.motivo = motivo;
+	public void setMotivo(MotivoAlteracaoSituacao motivo) {
+		this.motivo = motivo == null ? "" : motivo.toString();
 	}
 
 	/**
@@ -154,7 +158,7 @@ public class HistoricoSituacaoCotaVO implements Serializable {
 	 * @param descricao the descricao to set
 	 */
 	public void setDescricao(String descricao) {
-		this.descricao = descricao;
+		this.descricao = descricao == null ? "" : descricao;
 	}
 
 	/* (non-Javadoc)

@@ -3,6 +3,7 @@ package br.com.abril.nds.repository;
 import java.util.Date;
 import java.util.List;
 
+import br.com.abril.nds.client.vo.HistoricoSituacaoCotaVO;
 import br.com.abril.nds.dto.filtro.FiltroStatusCotaDTO;
 import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 
@@ -21,7 +22,7 @@ public interface HistoricoSituacaoCotaRepository extends Repository<HistoricoSit
 	 * 
 	 * @return Histórico dos status da cota
 	 */
-	List<HistoricoSituacaoCota> obterHistoricoStatusCota(FiltroStatusCotaDTO filtro);
+	List<HistoricoSituacaoCotaVO> obterHistoricoStatusCota(FiltroStatusCotaDTO filtro);
 	
 	/**
 	 * Obtém o total do histórico de status da cota de acordo
@@ -61,7 +62,7 @@ public interface HistoricoSituacaoCotaRepository extends Repository<HistoricoSit
 	 * 
 	 * @return List<HistoricoSituacaoCota>
 	 */
-	List<HistoricoSituacaoCota> obterUltimoHistoricoStatusCota(FiltroStatusCotaDTO filtro);
+	List<HistoricoSituacaoCotaVO> obterUltimoHistoricoStatusCota(FiltroStatusCotaDTO filtro);
 	
 	Long obterTotalUltimoHistoricoStatusCota(FiltroStatusCotaDTO filtro);
 }
