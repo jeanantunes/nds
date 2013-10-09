@@ -18,7 +18,7 @@ public class CobrancaImpressaoDTO implements Serializable {
 	private BigDecimal valor;
 	private Date vencimento;
 	private String nomeBanco;
-	private Integer agencia;
+	private String agencia;
 	private String conta;
 	private String nomeFavorecido;
 	private TipoCobranca tipoCobranca;
@@ -87,11 +87,11 @@ public class CobrancaImpressaoDTO implements Serializable {
 		this.nomeBanco = nomeBanco;
 	}
 	
-	public Integer getAgencia() {
+	public String getAgencia() {
 		return agencia;
 	}
 	
-	public void setAgencia(Integer agencia) {
+	public void setAgencia(String agencia) {
 		this.agencia = agencia;
 	}
 	
