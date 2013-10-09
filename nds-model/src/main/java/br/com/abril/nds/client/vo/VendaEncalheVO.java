@@ -18,16 +18,16 @@ public class VendaEncalheVO implements Serializable {
 	
 	private Long idVenda;
 
-	@Export(label = "Data", alignment = Alignment.LEFT,widthPercent=9)
+	@Export(label = "Data", alignment = Alignment.LEFT,widthPercent=7)
 	private String dataVenda;
 	
 	@Export(label = "Cota", alignment = Alignment.LEFT,widthPercent=5)
 	private String numeroCota;
 	
-	@Export(label = "Nome", alignment = Alignment.LEFT,widthPercent=16)
+	@Export(label = "Nome", alignment = Alignment.LEFT,widthPercent=26)
 	private String nomeCota;
 	
-	@Export(label = "Código", alignment = Alignment.LEFT,widthPercent=8)
+	@Export(label = "Código", alignment = Alignment.LEFT,widthPercent=7)
 	private String codigoProduto;
 	
 	@Export(label = "Produto", alignment = Alignment.LEFT,widthPercent=15)
@@ -36,7 +36,7 @@ public class VendaEncalheVO implements Serializable {
 	@Export(label = "Edição", alignment = Alignment.CENTER,widthPercent=5)
 	private String numeroEdicao;
 	
-	@Export(label = "Quantidade", alignment = Alignment.CENTER,widthPercent=8)
+	@Export(label = "Qtde.", alignment = Alignment.CENTER,widthPercent=4)
 	private String qntProduto;
 	
 	@Export(label = "Preço Desc. R$", alignment = Alignment.RIGHT,widthPercent=6)
@@ -45,10 +45,10 @@ public class VendaEncalheVO implements Serializable {
 	@Export(label = "Total R$", alignment = Alignment.RIGHT,widthPercent=7)
 	private String valoTotalProduto;
 
-	@Export(label = "Tipo Venda", alignment = Alignment.CENTER,widthPercent=10)
+	@Export(label = "Tipo Venda", alignment = Alignment.CENTER,widthPercent=9)
 	private String tipoVendaEncalhe;
 
-	@Export(label = "Usuário", alignment = Alignment.LEFT,widthPercent=11)
+	@Export(label = "Usuário", alignment = Alignment.LEFT,widthPercent=9)
 	private String nomeUsuario;
 	
 	private String formaVenda;
