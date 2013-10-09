@@ -321,13 +321,22 @@ public class FechamentoEncalheController extends BaseController {
 	
 	@Path("/postergarCotas")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_ALTERACAO)
-	public void postergarCotas(Date dataPostergacao, Date dataEncalhe, List<Long> idsCotas, boolean postergarTodasCotas) {//TODO
+	public void postergarCotas(Date dataPostergacao, Date dataEncalhe, List<Long> idsCotas, boolean postergarTodasCotas) {
 		
 		if (dataEncalhe != null && dataEncalhe.after(dataPostergacao)) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Postergação não pode ser realizada antes da data atual!");
-		} else if (  fechamentoEncalheService.buscarUtimoDiaDaSemanaRecolhimento().before(dataPostergacao) ){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Postergação deve ter como limite, a data final da semana de recolhimento em vigência!");
+		} 
+		/**
+		 * 09/10/2013
+		 * Regra solicitada pela Magali / Rodrigo
+		 * Remover a validacao da semana de recolhimento e permitir qualquer data futura em relacao a data de operacao
+		 */
+		else if (dataPostergacao.after(distribuidorService.obterDataOperacaoDistribuidor())) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "A Data de Postergação deve ser maior que a data de operação!");
 		}
+		/*else if (  fechamentoEncalheService.buscarUtimoDiaDaSemanaRecolhimento().before(dataPostergacao) ){
+			throw new ValidacaoException(TipoMensagem.WARNING, "Postergação deve ter como limite, a data final da semana de recolhimento em vigência!");
+		}*/
 		
 		try {
 			List<CotaAusenteEncalheDTO> listaCotasAusentes = this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, true, null, null, 0, 0);
