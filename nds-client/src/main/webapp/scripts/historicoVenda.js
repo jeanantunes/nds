@@ -323,8 +323,8 @@ var historicoVendaController = $.extend(true, {
 					}],
 					width : 480,
 					height : 160,
-					sortname : "codigoProduto",
-		            sortorder : "asc"
+					sortname : "dataLancamentoFormatada",
+		            sortorder : "desc"
 				}
 			}),
 			EdicaoSelecionadaGrid : flexGridService.GridFactory.createGrid({
