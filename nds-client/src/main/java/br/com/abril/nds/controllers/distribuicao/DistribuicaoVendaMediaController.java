@@ -1,36 +1,59 @@
 package br.com.abril.nds.controllers.distribuicao;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import br.com.abril.nds.client.vo.ProdutoDistribuicaoVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dao.ProdutoEdicaoDAO;
-import br.com.abril.nds.dto.*;
+import br.com.abril.nds.dto.DistribuicaoVendaMediaDTO;
+import br.com.abril.nds.dto.EstrategiaDTO;
+import br.com.abril.nds.dto.ItemDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoDTO;
+import br.com.abril.nds.dto.ProdutoEdicaoVendaMediaDTO;
 import br.com.abril.nds.dto.filtro.FiltroEdicaoBaseDistribuicaoVendaMedia;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Roteiro;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.estoque.EstoqueProduto;
 import br.com.abril.nds.model.estudo.EstudoTransient;
 import br.com.abril.nds.model.estudo.ProdutoEdicaoEstudo;
-import br.com.abril.nds.model.planejamento.*;
+import br.com.abril.nds.model.planejamento.EdicaoBaseEstrategia;
+import br.com.abril.nds.model.planejamento.Estrategia;
+import br.com.abril.nds.model.planejamento.Estudo;
+import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.process.definicaobases.DefinicaoBases;
 import br.com.abril.nds.repository.DistribuicaoVendaMediaRepository;
-import br.com.abril.nds.service.*;
+import br.com.abril.nds.service.EstoqueProdutoService;
+import br.com.abril.nds.service.EstrategiaService;
+import br.com.abril.nds.service.EstudoAlgoritmoService;
+import br.com.abril.nds.service.EstudoService;
+import br.com.abril.nds.service.LancamentoService;
+import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.ProdutoService;
+import br.com.abril.nds.service.RoteiroService;
+import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.util.ComponentesPDV;
 import br.com.abril.nds.util.HTMLTableUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.vo.PaginacaoVO;
 import br.com.abril.nds.vo.ValidacaoVO;
-import br.com.caelum.vraptor.*;
+import br.com.caelum.vraptor.Path;
+import br.com.caelum.vraptor.Post;
+import br.com.caelum.vraptor.Resource;
+import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.view.Results;
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.List;
 
 @Path("/distribuicaoVendaMedia")
 @Resource
@@ -84,6 +107,9 @@ public class DistribuicaoVendaMediaController extends BaseController {
     
     @Autowired
     private ProdutoEdicaoDAO produtoEdicaoDAO;
+    
+    @Autowired
+    private ProdutoService prodService;
     
     private static final int QTD_MAX_PRODUTO_EDICAO = 6;
 
@@ -193,11 +219,15 @@ public class DistribuicaoVendaMediaController extends BaseController {
 
     @Path("pesquisarProdutosEdicao")
     @Post
-    public void pesquisarProdutosEdicao(FiltroEdicaoBaseDistribuicaoVendaMedia filtro, String sortorder,String sortname,int page, int rp) {
+    public void pesquisarProdutosEdicao(FiltroEdicaoBaseDistribuicaoVendaMedia filtro, String sortorder, String sortname, int page, int rp) {
     	
-    	filtro.setPaginacao( new PaginacaoVO(page, rp, sortorder));
+    	filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder));
     	filtro.setOrdemColuna(Util.getEnumByStringValue(FiltroEdicaoBaseDistribuicaoVendaMedia.OrdemColuna.values(), sortname));	
-		List<ProdutoEdicaoVendaMediaDTO> resultado = distribuicaoVendaMediaRepository.pesquisar(filtro);
+		
+    	Produto produto = prodService.obterProdutoPorCodigo(filtro.getCodigo());
+    	filtro.setCodigo(produto.getCodigoICD());
+    	
+    	List<ProdutoEdicaoVendaMediaDTO> resultado = distribuicaoVendaMediaRepository.pesquisar(filtro);
 	
 		session.setAttribute(RESULTADO_PESQUISA_PRODUTO_EDICAO, resultado);
 		result.use(Results.json()).withoutRoot().from(resultado).recursive().serialize();

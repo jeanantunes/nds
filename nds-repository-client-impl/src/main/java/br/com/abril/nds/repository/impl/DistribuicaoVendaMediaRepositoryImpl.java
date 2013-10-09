@@ -123,7 +123,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("  left join periodo_lancamento_parcial plp on plp.lancamento_id = l.id ");
 		sql.append("  join produto p on p.id = pe.produto_id ");
 		sql.append("  left join estoque_produto_cota epc on epc.produto_edicao_id = pe.id ");
-		sql.append("  join tipo_classificacao_produto tcp on tcp.id = p.tipo_classificacao_produto_id ");
+		sql.append("  join tipo_classificacao_produto tcp on tcp.id = pe.tipo_classificacao_produto_id ");
 		sql.append(" where l.status in ('EXPEDIDO', 'EM BALANC RECOLHIMENTO', 'BALANCEADO RECOLHIMENTO', 'EM RECOLHIMENTO', 'FECHADO') ");
 		
 		if (filtro.getEdicao() != null) {
@@ -135,9 +135,6 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 			}else{
 				sql.append("   and p.codigo = :codigo_produto ");				
 			}
-		}
-		if (filtro.getNome() != null) {
-		    sql.append("   and p.nome = :nome_produto ");
 		}
 		if (filtro.getClassificacao() != null) {
 			sql.append("   and tcp.id = :classificacao ");
@@ -153,9 +150,6 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		if (filtro.getCodigo() != null) {			
 			query.setString("codigo_produto", filtro.getCodigo());
 			
-		}
-		if (filtro.getNome() != null) {
-		    query.setString("nome_produto", filtro.getNome() );
 		}
 		if (filtro.getClassificacao()  != null) {
 		    query.setLong("classificacao", filtro.getClassificacao());
