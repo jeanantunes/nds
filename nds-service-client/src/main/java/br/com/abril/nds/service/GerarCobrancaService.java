@@ -13,9 +13,6 @@ import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.service.exception.AutenticacaoEmailException;
 
 public interface GerarCobrancaService {
-
-	void gerarCobranca(Long idCota, Long idUsuario, Map<String, Boolean> mapNossoNumeroEnvioEmail)
-		throws GerarCobrancaValidacaoException;
 	
 	void cancelarDividaCobranca(Set<Long> idMovimentoFinanceiroCota, boolean excluiFinanceiro);
 
@@ -34,6 +31,7 @@ public interface GerarCobrancaService {
 
 	/**
 	 * Envia Cobranças para email da Cota
+	 * 
 	 * @param cota
 	 * @param nossoNumeroEnvioEmail
 	 * @throws AutenticacaoEmailException
@@ -44,6 +42,7 @@ public interface GerarCobrancaService {
 	
 	/**
 	 * Gera cobranças para Cotas específicas
+	 * 
 	 * @param cotas
 	 * @param idUsuario
 	 * @param enviaEmail
@@ -52,4 +51,28 @@ public interface GerarCobrancaService {
 	void gerarCobranca(List<Cota> cotas, 
 	                   Long idUsuario,
 	                   boolean enviaEmail) throws GerarCobrancaValidacaoException;
+	
+	/**
+	 * Consolida Financeiro, Gera Divida e Gera Cobrança
+	 * 
+	 * @param idCota
+	 * @param idUsuario
+	 * @param setNossoNumero
+	 * @throws GerarCobrancaValidacaoException
+	 */
+	void gerarCobranca(Long idCota, 
+			           Long idUsuario, 
+			           Map<String, Boolean> mapNossoNumeroEnvioEmail) throws GerarCobrancaValidacaoException;
+
+	/**
+	 * Consolida Financeiro, Gera Divida e Posterga Divida Gerada
+	 * 
+	 * @param idCota
+	 * @param idUsuario
+	 * @param setNossoNumero
+	 * @throws GerarCobrancaValidacaoException
+	 */
+	void gerarDividaPostergada(Long idCota, 
+			                   Long idUsuario,
+			                   Map<String, Boolean> setNossoNumero) throws GerarCobrancaValidacaoException;
 }

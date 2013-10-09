@@ -150,7 +150,7 @@ var relatorioTiposProdutosController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}],
-			sortname : "edicao",
+			sortname : "codigo",
 			sortorder : "asc",
 			usepager : true,
 			useRp : true,
