@@ -131,13 +131,13 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 					}						
 					
 					
-					if(!itemsRemove.isEmpty()){
+					if(!itemsRemove.isEmpty()) {
 						doc.getItems().removeAll(itemsRemove);
 						
 						if (doc != null && (doc.getItems() == null || doc.getItems().isEmpty())) {
 							couchDbClient.remove(doc);
 							doc = null;
-						}else{
+						} else {
 							couchDbClient.update(doc);
 						}
 
@@ -214,8 +214,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		
 		EMS0128InputItem item = new EMS0128InputItem();
 		
-		MovimentoEstoque me = (MovimentoEstoque)message.getBody();
-		
+		MovimentoEstoque me = (MovimentoEstoque) message.getBody();
 		
 		item.setNumSequenciaDetalhe(itens++);
 		item.setIdMovimento(me.getId());
@@ -274,8 +273,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		sql.append("JOIN lancamentoDiferenca.movimentoEstoque me ");
 		sql.append("JOIN FETCH me.tipoMovimento tm ");
 		sql.append("JOIN FETCH me.produtoEdicao pe ");
-		sql.append("JOIN FETCH pe.produto pr ");
-		
+		sql.append("JOIN FETCH pe.produto pr ");		
 		sql.append("WHERE tm.grupoMovimentoEstoque in (:grupoMovimentoEstoque) ");
 		sql.append("	and me.statusIntegracao = :statusIntegracao ");
 		sql.append("	and me.status = :status ");
