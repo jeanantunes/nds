@@ -326,34 +326,43 @@ public class TipoProdutoRepositoryImpl extends AbstractRepositoryModel<TipoProdu
 		
 		if (filtro.getOrdenacaoColuna() != null ){
 			
+			hql.append(" order by ");
+			
 			switch (filtro.getOrdenacaoColuna()) {
 				
 				case CODIGO:
-					hql.append(" order by codigo " + filtro.getPaginacaoVO().getSortOrder());
+					hql.append(" codigo ");
 					break;
 				case DATA_LANCAMENTO:
-					hql.append(" order by lancamento " + filtro.getPaginacaoVO().getSortOrder());
+					hql.append(" lancamento ");
 					break;
 				case DATA_RECOLHIMENTO:
-					hql.append(" order by recolhimento " + filtro.getPaginacaoVO().getSortOrder());
+					hql.append(" recolhimento ");
 					break;
 				case FATURAMENTO:
-					hql.append(" order by faturamento " + filtro.getPaginacaoVO().getSortOrder());
+					hql.append(" faturamento ");
 					break;
 				case NOME_PRODUTO:
-					hql.append(" order by  produto " + filtro.getPaginacaoVO().getSortOrder());
+					hql.append(" produto ");
 					break;
 				case NUMERO_EDICAO:
-					hql.append(" order by edicao " + filtro.getPaginacaoVO().getSortOrder());
+					hql.append(" edicao ");
 					break;
 				case PRECO_CAPA:
-					hql.append(" order by precoCapa " + filtro.getPaginacaoVO().getSortOrder());
+					hql.append(" precoCapa ");
 					break;
 				case TIPO_PRODUTO:
-					hql.append(" order by tipoProduto " + filtro.getPaginacaoVO().getSortOrder());
+					hql.append(" tipoProduto ");
 					break;
 				default:
-					hql.append(" order by edicao " + filtro.getPaginacaoVO().getSortOrder());
+					hql.append(" codigo ");
+			}
+			
+			hql.append(filtro.getPaginacaoVO().getSortOrder());
+			
+			if (!filtro.getOrdenacaoColuna().equals(FiltroRelatorioTiposProdutos.OrdenacaoColuna.NUMERO_EDICAO)){
+				
+				hql.append(", edicao ");
 			}
 		}
 		
