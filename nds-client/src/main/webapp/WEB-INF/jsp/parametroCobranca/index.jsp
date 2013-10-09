@@ -91,7 +91,7 @@
                                 style="width: 70px; text-align:right;" /></td>
                             <td>Cobran&ccedil;a Unificada:</td>
                             <td><select name="unificada" id="unificada"
-                                style="width: 80px;">
+                                style="width: 80px;" onchange="parametroCobrancaController.tratarFornecedoresCobrancaUnificada()">
                                     <option value="S">Sim</option>
                                     <option value="N">N&atilde;o</option>
                             </select> <br clear="all" /></td>
@@ -231,8 +231,7 @@
                                                 name="checkGroupFornecedores"
                                                 id="ParamCob-fornecedor_<c:out value="${listaFornecedores[status.index].key}" />"
                                                 value='<c:out value="${listaFornecedores[status.index].key}" />' /></td>
-                                            <td><c:out
-                                                    value="${listaFornecedores[status.index].value}" /></td>
+                                            <td><c:out value="${listaFornecedores[status.index].value}" /></td>
                                             
                                         </tr>
                                     </c:forEach>

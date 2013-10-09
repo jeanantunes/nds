@@ -224,6 +224,11 @@ public class FechamentoEncalheController extends BaseController {
 	private List<FechamentoFisicoLogicoDTO> mergeItensFechamento(List<FechamentoFisicoLogicoDTO> fechamentosBanco,
 																 List<FechamentoFisicoLogicoDTO> fechamentoTela) {
 		
+		if (fechamentoTela == null) {
+			
+			return fechamentosBanco;
+		}
+		
 		for (FechamentoFisicoLogicoDTO fechamento : fechamentoTela) {
 			
 			int index = fechamentosBanco.indexOf(fechamento);
