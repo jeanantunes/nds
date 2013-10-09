@@ -311,6 +311,9 @@ public enum Permissao {
 	ROLE_FINANCEIRO_PARAMETROS_COBRANCA_ALTERACAO("Parâmetros de Cobrança",                                	Permissao.ROLE_FINANCEIRO, true), 
 	ROLE_FINANCEIRO_PARAMETROS_COBRANCA("Parâmetros de Cobrança",                                	 	   	Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_PARAMETROS_COBRANCA_ALTERACAO, true), 
 	
+	ROLE_MOVIMENTO_FINANCEIRO_COTA_ALTERACAO("Processamento Financeiro",                                	Permissao.ROLE_FINANCEIRO, true), 
+	ROLE_MOVIMENTO_FINANCEIRO_COTA("Processamento Financeiro",                                	 	   	    Permissao.ROLE_FINANCEIRO, ROLE_MOVIMENTO_FINANCEIRO_COTA_ALTERACAO, true),
+	
 	ROLE_FINANCEIRO_HELP_ALTERACAO("Help",           														Permissao.ROLE_FINANCEIRO, true),
 	ROLE_FINANCEIRO_HELP("Help",           															 	   	Permissao.ROLE_FINANCEIRO, ROLE_FINANCEIRO_HELP_ALTERACAO, true),
 	
