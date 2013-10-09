@@ -901,16 +901,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		//codigo = codigo do produto
 		if (StringUtils.isNotEmpty(filtro.getCodigo())) {
 
-			whereList.add(" produto5_.id = :idProduto");
-			parameterMap.put("idProduto",filtro.getIdProduto());
+			whereList.add(" produto5_.CODIGO_ICD = :idProduto");
+			
+			parameterMap.put("idProduto",filtro.getCodigo());
 
-		}
-
-		//produto = nome do produto
-		if (StringUtils.isNotEmpty(filtro.getProduto())) {
-
-			whereList.add(" produto5_.nome = :nomeProduto ");
-			parameterMap.put("nomeProduto",filtro.getProduto());
 		}
 
 		//edicao = numero da edicao
