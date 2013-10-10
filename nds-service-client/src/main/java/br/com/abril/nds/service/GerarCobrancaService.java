@@ -63,16 +63,25 @@ public interface GerarCobrancaService {
 	void gerarCobranca(Long idCota, 
 			           Long idUsuario, 
 			           Map<String, Boolean> mapNossoNumeroEnvioEmail) throws GerarCobrancaValidacaoException;
+	
+	/**
+	 * Consolida Financeiro, Gera Divida e Posterga Divida Gerada para Cotas especificas
+	 * 
+	 * @param List<Cota>
+	 * @param idUsuario
+	 * @throws GerarCobrancaValidacaoException
+	 */
+	void gerarDividaPostergadaCotas(List<Cota> cotas, 
+			                        Long idUsuario)
+			throws GerarCobrancaValidacaoException;
 
 	/**
-	 * Consolida Financeiro, Gera Divida e Posterga Divida Gerada
+	 * Consolida Financeiro, Gera Divida e Posterga Divida Gerada para Cota especifica
 	 * 
 	 * @param idCota
 	 * @param idUsuario
-	 * @param setNossoNumero
 	 * @throws GerarCobrancaValidacaoException
 	 */
 	void gerarDividaPostergada(Long idCota, 
-			                   Long idUsuario,
-			                   Map<String, Boolean> setNossoNumero) throws GerarCobrancaValidacaoException;
+			                   Long idUsuario) throws GerarCobrancaValidacaoException;
 }

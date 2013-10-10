@@ -14,6 +14,13 @@ var baixaFinanceiraController = $.extend(true, {
 			buttonImageOnly : true,
 			dateFormat : 'dd/mm/yy',
 		});
+		
+		$("#dtPagamentoManual", baixaFinanceiraController.workspace).datepicker({
+			showOn : "button",
+			buttonImage : contextPath + "/images/calendar.gif",
+			buttonImageOnly : true,
+			dateFormat : 'dd/mm/yy',
+		});
 		this.initGradeDividas();
 		this.initGridDadosDivida();
 
@@ -22,10 +29,9 @@ var baixaFinanceiraController = $.extend(true, {
 			buttonImage: contextPath + "/scripts/jquery-ui-1.8.16.custom/development-bundle/demos/datepicker/images/calendar.gif",
 			buttonImageOnly: true
 		});
-
+		
 		$("#ecargosPostergacao", baixaFinanceiraController.workspace).numeric();
-
-	
+		
 		var options = {
 			success: baixaFinanceiraController.tratarRespostaBaixaAutomatica,
 	    };
@@ -995,14 +1001,50 @@ var baixaFinanceiraController = $.extend(true, {
 		return dividasMarcadas;
 	},
 	
+	obterDataVencimentoDividaManual : function(){
+
+		var table = $("#tabelaDividas tr", baixaFinanceiraController.workspace);
+		
+		for(var i = 0; i < table.length; i++){   
+			if ($("#checkbox_"+table[i].cells[0].textContent, baixaFinanceiraController.workspace).attr("checked") == "checked") {				
+				return (table[i].cells[3].textContent);
+			}
+		} 		
+		return null;
+	},
+	
 	
 	//OBTEM DADOS CALCULADOS REFERENTES ÀS DAS DIVIDAS MARCADAS PARA A TELA DE BAIXA POR COTA
     obterPagamentoDividas : function() {
     	
-    	var param = serializeArrayToPost('idCobrancas',baixaFinanceiraController.obterCobrancasDividasMarcadas());
+		var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
+		
+		var dataPagamento = null;
+		
+		if(dividasMarcadas.length > 1){
+			$("#dtPagamentoManual", baixaFinanceiraController.workspace).val("");
+		}else{
+			dataPagamento = baixaFinanceiraController.obterDataVencimentoDividaManual();
+			$("#dtPagamentoManual", baixaFinanceiraController.workspace).val(dataPagamento);
+		}
+	
+		var  param = {dataPagamento :dataPagamento};
+		
+    	param = serializeArrayToPost('idCobrancas',dividasMarcadas, param);
+		
 		$.postJSON(contextPath + "/financeiro/baixa/obterPagamentoDividas",
 				   param,
-				   baixaFinanceiraController.sucessCallbackPagamentoDivida,
+				   function (resultado){
+					
+					if(dividasMarcadas.length > 1){
+						$(".dataPagamentoManual", baixaFinanceiraController.workspace).hide();
+					}else{
+						$(".dataPagamentoManual", baixaFinanceiraController.workspace).show();
+					}
+					
+					baixaFinanceiraController.sucessCallbackPagamentoDivida(resultado);
+					
+				   },
 				   null);
 	},
 	
@@ -1017,7 +1059,7 @@ var baixaFinanceiraController = $.extend(true, {
 		
 		$("#valorSaldoDividasHidden", baixaFinanceiraController.workspace).val(resultado.valorSaldo);
 		$("#valorDividasHidden", baixaFinanceiraController.workspace).val(resultado.valorDividas);
-		
+			
 		$('#valorDividas', baixaFinanceiraController.workspace).priceFormat({
 			allowNegative: true,
 		    centsSeparator: ',',
@@ -1076,7 +1118,7 @@ var baixaFinanceiraController = $.extend(true, {
 		
 		$("#valorSaldoDividas", baixaFinanceiraController.workspace).html($("#valorSaldoDividasHidden", baixaFinanceiraController.workspace).val());
 		$("#valorDividas", baixaFinanceiraController.workspace).html($("#valorDividasHidden", baixaFinanceiraController.workspace).val());
-		
+	
 		baixaFinanceiraController.popup_baixa_dividas();
 	},
     
@@ -1136,15 +1178,15 @@ var baixaFinanceiraController = $.extend(true, {
     
 	validarCamposBaixa : function() {
 		
-		var nulos = new Array();
-		
 		$("#pagarDividas input[type='text']").each(function(index, component) {
 			
 			var val = $(this).val(); 
 			
 			if (!val || val == "") {
 				
-				$(this).val("0,00");
+				if (component.id != "dtPagamentoManual"){
+					$(this).val("0,00");
+				}	
 			}
 		});
 	},
@@ -1161,7 +1203,8 @@ var baixaFinanceiraController = $.extend(true, {
     			tipoPagamento : $("#formaRecebimentoDividas", baixaFinanceiraController.workspace).val(),
     			observacoes : $("#observacoesDividas", baixaFinanceiraController.workspace).val(),
     			idBanco : $("#bancoDividas", baixaFinanceiraController.workspace).val(),
-    			manterPendente:manterPendente};
+    			manterPendente:manterPendente,
+				dataPagamento : $("#dtPagamentoManual", baixaFinanceiraController.workspace).val()};
 
     	param = serializeArrayToPost('idCobrancas',baixaFinanceiraController.obterCobrancasDividasMarcadas(), param);
 		
@@ -1192,7 +1235,8 @@ var baixaFinanceiraController = $.extend(true, {
 						valorDesconto : $("#descontoDividas", baixaFinanceiraController.workspace).val(),
 						valorSaldo : $("#valorSaldoDividas", baixaFinanceiraController.workspace).html(),
 						tipoPagamento : $("#formaRecebimentoDividas", baixaFinanceiraController.workspace).val(),
-						idBanco : $("#bancoDividas", baixaFinanceiraController.workspace).val()};
+						idBanco : $("#bancoDividas", baixaFinanceiraController.workspace).val(),
+						dataPagamento : $("#dtPagamentoManual", baixaFinanceiraController.workspace).val()};
 
     	param = serializeArrayToPost('idCobrancas',baixaFinanceiraController.obterCobrancasDividasMarcadas(), param);
 		
@@ -1216,8 +1260,32 @@ var baixaFinanceiraController = $.extend(true, {
 	               null,
 	               true);
 	},
-    
-    
+	
+	atualizarDadosCobrancaManual: function (){
+		
+var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
+		
+		var  param = {dataPagamento : $("#dtPagamentoManual", baixaFinanceiraController.workspace).val()};
+		
+		var valorDivida = $("#valorDividasHidden", baixaFinanceiraController.workspace).val();
+		
+    	param = serializeArrayToPost('idCobrancas',dividasMarcadas,param);
+		
+    	$.postJSON(contextPath + "/financeiro/baixa/obterPagamentoDividas",
+				   param,
+				   function (resultado){
+
+					baixaFinanceiraController.sucessCallbackPagamentoDivida(resultado);
+					
+					$("#valorDividasHidden", baixaFinanceiraController.workspace).val(valorDivida);
+				
+					$("#valorDividas", baixaFinanceiraController.workspace).html(valorDivida);
+					
+				   },
+				   null
+		);
+	},
+	
     //OBTEM VALIDAÇÃO DE PERMISSÃO DE NEGOCIAÇÃO
     obterNegociacao : function() {
     	var param = serializeArrayToPost('idCobrancas',baixaFinanceiraController.obterCobrancasDividasMarcadas());

@@ -3195,4 +3195,32 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		
 		return (BigDecimal) query.uniqueResult();
 	}
+	
+	
+	/**
+	 * Obtem Cotas do tipo À Vista, com data de alteração de status menor que a data atual
+	 * @param data
+	 * @return List<Cota>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Cota> obterCotasTipoAVista(Date data){
+	    
+	    StringBuilder hql = new StringBuilder("select c ")
+	
+	       .append(" from Cota c ")
+	       
+	       .append(" where c.tipoCota = :tipoCota ")
+	    
+	       .append(" and (c.alteracaoTipoCota is null or c.alteracaoTipoCota < :data) ");
+	    
+	    Query query = this.getSession().createQuery(hql.toString());
+	    
+	    query.setParameter("tipoCota", TipoCota.A_VISTA);
+	    
+	    query.setParameter("data", data);
+	    
+	    return query.list();
+	}
+	
 }
