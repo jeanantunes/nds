@@ -90,8 +90,8 @@
                                 maxlength="16" name="valorMinimo" id="valorMinimo"
                                 style="width: 70px; text-align:right;" /></td>
                             <td>Cobran&ccedil;a Unificada:</td>
-                            <td><select name="unificada" id="unificada"
-                                style="width: 80px;" onchange="parametroCobrancaController.tratarFornecedoresCobrancaUnificada()">
+                            <td><select name="unificada" id="unificada" style="width: 80px;" 
+                                onchange="parametroCobrancaController.tratarFornecedoresCobrancaUnificada(); parametroCobrancaController.tratarSelecaoFornecedorPadrao();">
                                     <option value="S">Sim</option>
                                     <option value="N">N&atilde;o</option>
                             </select> <br clear="all" /></td>
