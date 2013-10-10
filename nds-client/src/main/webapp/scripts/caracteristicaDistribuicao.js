@@ -84,7 +84,7 @@ var caracteristicaDistribuicaoController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}],
-			width : 1100,
+			width : 980,
 			height : 200,
 			sortname : "dataLancamentoString",
 			sortorder : "desc",
