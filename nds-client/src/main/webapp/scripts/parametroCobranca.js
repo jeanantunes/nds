@@ -326,6 +326,7 @@ var parametroCobrancaController = $.extend(true,
 				$('.tdMulta', this.workspace).show();			
 				$('.tdJuros', this.workspace).show();
 	
+				$("#dBanco", this.workspace).val("");
 		    }
 			
 			else if (op=='BOLETO_EM_BRANCO'){
@@ -341,6 +342,8 @@ var parametroCobrancaController = $.extend(true,
 				$('.tdValorMinimo', this.workspace).hide();			
 				$('.tdMulta', this.workspace).show();			
 				$('.tdJuros', this.workspace).show();
+				
+				$("#dBanco", this.workspace).val("");
 		    }
 			
 			if((op=='BOLETO') || (op=='BOLETO_EM_BRANCO')){
@@ -349,6 +352,7 @@ var parametroCobrancaController = $.extend(true,
 				$('.formPgto', this.workspace).hide();
 			}
 			
+			parametroCobrancaController.obterDadosBancarios($("#dBanco", this.workspace).val());
 		},
 		
 		
@@ -385,33 +389,6 @@ var parametroCobrancaController = $.extend(true,
 					   parametroCobrancaController.sucessCallbackObterParametro, 
 					   null,
 					   true);
-		},
-
-		obterSugestaoFornecedorPadrao : function(idFornecedorPadrao){
-			
-			var sel;
-
-			$.each($("#comboFornecedorPadrao option", this.workspace), function(index, value) { 
-
-				if(!idFornecedorPadrao){
-					
-					if (this.label=='Dinap'){
-						
-						sel = this.value;
-						
-						return false;
-					}
-				}
-				    
-				sel = idFornecedorPadrao;
-			});
-			
-			if (!sel){
-				
-				sel = 0;
-			}
-			
-			$("#comboFornecedorPadrao", this.workspace).val(sel);
 		},
 
 		sucessCallbackObterParametro : function(resultado) {
@@ -485,8 +462,6 @@ var parametroCobrancaController = $.extend(true,
 				 }
 			});
 
-			parametroCobrancaController.obterSugestaoFornecedorPadrao(resultado.idFornecedorPadrao);
-
 			parametroCobrancaController.tratarSelecaoFornecedorPadrao();
 			
 			$("input[name='radioFormaCobrancaBoleto']", this.workspace).each(function(i) {			
@@ -537,9 +512,9 @@ var parametroCobrancaController = $.extend(true,
 					idFornecedorPadrao : $("#comboFornecedorPadrao option:selected", this.workspace).val(),
 					fatorVencimento : $("#comboFatorVencimento option:selected", this.workspace).val(),
 					valorMinimo : floatValue($("#valorMinimo", this.workspace).val()),
-					taxaMulta : $("#taxaMulta", this.worspace).val(),
-					valorMulta : $("#valorMulta", this.worspace).val(),
-					taxaJuros : $("#taxaJuros", this.worspace).val(),
+					taxaMulta : floatValue($("#taxaMulta", this.worspace).val()),
+					valorMulta : floatValue($("#valorMulta", this.worspace).val()),
+					taxaJuros : floatValue($("#taxaJuros", this.worspace).val()),
 					instrucoes : $("#instrucoes", this.worspace).val(),
 					acumulaDivida : $("#acumulaDivida", this.workspace).val() == 'S',
 					vencimentoDiaUtil : $("#vencimentoDiaUtil", this.workspace).val() == 'S',
@@ -687,7 +662,8 @@ var parametroCobrancaController = $.extend(true,
 				$(this, this.workspace).attr('checked',false);
 			});	
 			$('[name=concentracaoPagamento]', this.workspace).attr('checked',false);
-	
+			
+			parametroCobrancaController.tratarSelecaoFornecedorPadrao();	
 		},	
 		
 		
@@ -736,48 +712,34 @@ var parametroCobrancaController = $.extend(true,
 			if (isUnificada == 'N') {
 			
 				$("input[name='checkGroupFornecedores']").prop("checked", false);
-				$("input[name='checkGroupFornecedores']").on('click', parametroCobrancaController.selectOneCheckBox);
+				
+				parametroCobrancaController.tratarSelecaoFornecedorPadrao();
+				
+				$("input[name='checkGroupFornecedores']").prop("disabled", true);
 				
 			} else {
 				
-				$("input[name='checkGroupFornecedores']").off('click');
+				parametroCobrancaController.habilitarTodosFornecedores();
+				
+				parametroCobrancaController.tratarSelecaoFornecedorPadrao();
 			}
-		},
-		
-		selectOneCheckBox: function() {
-			
-			if ($(this).is(":checked")) {
-		        var group = "input:checkbox[name='checkGroupFornecedores']";
-		        $(group).prop("checked", false);
-		        $(this).prop("checked", true);
-		    } else {
-		        $(this).prop("checked", false);
-		    }
 		},
 		
 		tratarSelecaoFornecedorPadrao: function() {
 		
-			parametroCobrancaController.desabilitarFornecedorPadrao();
-			
-			var isUnificada = $("#unificada").val();
-			
-			if (isUnificada == 'S') {
-
-				parametroCobrancaController.desabilitarFornecedorPadrao(true);
-			
-			} else {
-
-				$("#comboFornecedorPadrao", this.workspace).off('change');
-				
-				parametroCobrancaController.habilitarTodosFornecedores();
-			} 
+			parametroCobrancaController.desabilitarFornecedorPadrao(true);
 		},
 
-		desabilitarFornecedorPadrao: function(check) {		
-
+		desabilitarFornecedorPadrao: function(check) {
+		
 			$("#comboFornecedorPadrao", this.workspace).focus(function () {
 				previous = this.value;
 			}).on('change', function() {
+				var isUnificada = $("#unificada").val();
+				if (isUnificada == 'S') 
+					parametroCobrancaController.habilitarTodosFornecedores();
+				else
+					$("input[name='checkGroupFornecedores']").prop("checked", false);
 				$("#ParamCob-fornecedor_" + this.value, this.workspace).attr('disabled', true);
 				$("#ParamCob-fornecedor_" + this.value, this.workspace).attr('checked', check);
 			});
@@ -787,22 +749,20 @@ var parametroCobrancaController = $.extend(true,
 		
 		habilitarTodosFornecedores: function() {
 		
-			$.each($("#comboFornecedorPadrao option", this.workspace), function(index, row) {
-				$("#ParamCob-fornecedor_"+ index, this.workspace).attr('disabled', false);
-				// $("#ParamCob-fornecedor_"+ this.value, this.workspace).attr('checked', false);
-			});
+			$("input[name='checkGroupFornecedores']", this.workspace).attr('disabled', false);
 		},
 		
 		obterDadosBancarios : function(idBanco){
 			
 			if (idBanco == ""){
 				
-				$("#taxaMulta", this.workspace).val("0.00");
-				$("#valorMulta", this.workspace).val("0.00");
-				$("#taxaJuros", this.workspace).val("0.00");
-				$("#instrucoes", this.workspace).val("0.00");
-		        
+				parametroCobrancaController.bloquearCampos(false);
+				
 				return;
+				
+		    } else {
+		    	
+		    	parametroCobrancaController.bloquearCampos(true);
 		    }
 			
 			var data = [{name: 'idBanco', value: idBanco}];
@@ -813,6 +773,12 @@ var parametroCobrancaController = $.extend(true,
 					   true);
 		},
 		
+		bloquearCampos : function(bloquear) {
+			
+			$("#taxaMulta", this.workspace).attr('readonly', bloquear);
+			$("#valorMulta", this.workspace).attr('readonly', bloquear);
+			$("#taxaJuros", this.workspace).attr('readonly', bloquear);
+		},
 		
 		sucessCallbackCarregarDadosBancarios : function(result) {
 			$("#taxaMulta", this.workspace).val(result.multa);

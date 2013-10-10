@@ -91,7 +91,7 @@
                                 style="width: 70px; text-align:right;" /></td>
                             <td>Cobran&ccedil;a Unificada:</td>
                             <td><select name="unificada" id="unificada" style="width: 80px;" 
-                                onchange="parametroCobrancaController.tratarFornecedoresCobrancaUnificada(); parametroCobrancaController.tratarSelecaoFornecedorPadrao();">
+                                onchange="parametroCobrancaController.tratarFornecedoresCobrancaUnificada();">
                                     <option value="S">Sim</option>
                                     <option value="N">N&atilde;o</option>
                             </select> <br clear="all" /></td>
@@ -210,7 +210,7 @@
                             <td valign="middle">Fornecedor Padrão:</td>
                             <td>
                             	<select id="comboFornecedorPadrao">
-                            		<option value="-1">Selecione...</option>
+                            		<option>Selecione...</option>
                                 	<c:forEach step="1" items="${listaFornecedores}" varStatus="status">
                                     	<option value="${listaFornecedores[status.index].key}">${listaFornecedores[status.index].value}</option>
 									</c:forEach>

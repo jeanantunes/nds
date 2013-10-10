@@ -10,8 +10,6 @@ var fechamentoEncalheController = $.extend(true, {
 	nonSelected: [],
 	fechamentosManuais: [],
 	
-	statusCobrancaCota: null,
-	
 	init : function() {
 		
 		var sizeNomeProduto = 110;
@@ -1029,7 +1027,8 @@ var fechamentoEncalheController = $.extend(true, {
 		  	null,
 		   	true
 		);
-		fechamentoEncalheController.statusCobrancaCota = setInterval(
+		
+		setTimeout(
 			fechamentoEncalheController.obterStatusCobrancaCota,
 			5000
 		);
@@ -1233,13 +1232,20 @@ var fechamentoEncalheController = $.extend(true, {
 		$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/obterStatusCobrancaCota", 
 			null,
 			function(result) {
-				if(result=='FINALIZADO') {
+				if(!result || resutl == '' || result=='FINALIZADO') {
+					
 					$('#mensagemLoading').text('Aguarde, carregando ...');
-					for (var i = 1; i <= fechamentoEncalheController.statusCobrancaCota; i++)
-				        window.clearInterval(i);
-				}	
-				$('#mensagemLoading').text(result);
-			});	
+				} else {
+					
+					$('#mensagemLoading').text(result);
+					
+					setTimeout(
+						fechamentoEncalheController.obterStatusCobrancaCota,
+						5000
+					);
+				}
+			}
+		);	
 	} 
 	
 }, BaseController);

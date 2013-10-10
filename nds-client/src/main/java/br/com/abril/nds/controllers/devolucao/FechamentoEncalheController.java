@@ -108,6 +108,8 @@ public class FechamentoEncalheController extends BaseController {
 	
 	private static final String STATUS_COBRANCA_COTA_SESSION = "statusCobrancaCotaSession";
 	
+	private static final String STATUS_FINALIZADO = "FINALIZADO";
+	
 	@Path("/")
 	public void index() {
 		
@@ -440,19 +442,19 @@ public class FechamentoEncalheController extends BaseController {
 		
 		try {
 			
-			List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
-					this.fechamentoEncalheService.buscarCotasAusentes(dataOperacao, true, null, null, 0, 0);
-
 			if (cobrarTodasCotas) {
 				
 				//idsCotas a serem retirados da lista
 				//removerCotasAusentesLista(listaCotaAusenteEncalhe, idsCotas);
 				
+				List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe = 
+						this.fechamentoEncalheService.buscarCotasAusentes(dataOperacao, true, null, null, 0, 0);
+				
 				this.realizarCobrancaTodasCotas(dataOperacao, listaCotaAusenteEncalhe);				
 			
 			} else {
 			
-				this.realizarCobrancaCotasEspecificas(listaCotaAusenteEncalhe, idsCotas, dataOperacao);
+				this.realizarCobrancaCotasEspecificas(idsCotas, dataOperacao);
 			}
 
 		} catch (ValidacaoException e) {
@@ -468,15 +470,7 @@ public class FechamentoEncalheController extends BaseController {
 			new ValidacaoVO(TipoMensagem.SUCCESS, "Cotas cobradas com sucesso!"), "result").recursive().serialize();		
 	}
 	
-	private void realizarCobrancaCotasEspecificas(List<CotaAusenteEncalheDTO> listaCotaAusenteEncalhe, List<Long> idsCotas, Date dataOperacao) 
-																								throws GerarCobrancaValidacaoException {
-
-		idsCotas.addAll(getIdsCotasAusentesComDivida(listaCotaAusenteEncalhe));
-		
-		if (idsCotas.isEmpty()) {
-			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Lista de ids das cotas não pode ser vazia.");
-		}
+	private void realizarCobrancaCotasEspecificas(List<Long> idsCotas, Date dataOperacao) throws GerarCobrancaValidacaoException {
 		
 		GerarCobrancaValidacaoException ex = null;
 		
@@ -497,13 +491,13 @@ public class FechamentoEncalheController extends BaseController {
 				
 			} catch (Exception e) {
 				
-				this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "FINALIZADO");
+				this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, STATUS_FINALIZADO);
 				
 				throw e;
 			}
 		}	
 		
-		this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "FINALIZADO");
+		this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, STATUS_FINALIZADO);
 
 		if (ex != null){
 			
@@ -540,7 +534,7 @@ public class FechamentoEncalheController extends BaseController {
 				throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());
 			} finally {
 				
-				this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "FINALIZADO");
+				this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, STATUS_FINALIZADO);
 			}
 		}
 		
@@ -550,6 +544,7 @@ public class FechamentoEncalheController extends BaseController {
 		}
 	}
 	
+	@Post
 	public void obterStatusCobrancaCota() {
 		
 		String status = (String) this.session.getAttribute(STATUS_COBRANCA_COTA_SESSION);
@@ -974,12 +969,10 @@ public class FechamentoEncalheController extends BaseController {
 	}
 	
 	@Path("/limparDadosDaSessaoGrid")
-	public void limparDadosDaSessaoGrid()
-	{
-		if(this.session.getAttribute("gridFechamentoEncalheDTO") != null)
-		{
-			this.session.removeAttribute("gridFechamentoEncalheDTO");
-		}
+	public void limparDadosDaSessaoGrid(){
+		
+		this.session.removeAttribute("gridFechamentoEncalheDTO");
+		
 		this.result.use(Results.nothing());
 	}
 }

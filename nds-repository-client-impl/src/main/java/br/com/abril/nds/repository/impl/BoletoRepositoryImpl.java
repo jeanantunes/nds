@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.DetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaBoletosCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO;
 import br.com.abril.nds.dto.filtro.FiltroDetalheBaixaBoletoDTO.OrdenacaoColunaDetalheBaixaBoleto;
+import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
@@ -513,6 +514,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		hql.append(" from Boleto boleto ");
 		hql.append(" where boleto.dataVencimento = :data ");
+		hql.append(" and boleto.statusCobranca =:statusCobranca ");
 		
 		return hql.toString();
 	}
@@ -570,6 +572,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setParameter("data", data);
+		query.setParameter("statusCobranca", StatusCobranca.NAO_PAGO);
 		
 		return query;
 	}

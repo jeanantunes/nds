@@ -1220,6 +1220,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 		formaCobranca.setRecebeCobrancaEmail(formaCobrancaDistribuidor.isRecebeCobrancaEmail());
 		formaCobranca.setTaxaJurosMensal(formaCobrancaDistribuidor.getTaxaJurosMensal());
 		formaCobranca.setTaxaMulta(formaCobrancaDistribuidor.getTaxaMulta());
+		formaCobranca.setValorMulta(formaCobrancaDistribuidor.getValorMulta());
 		formaCobranca.setTipoCobranca(formaCobrancaDistribuidor.getTipoCobranca());
 		formaCobranca.setTipoFormaCobranca(formaCobrancaDistribuidor.getTipoFormaCobranca());
 		formaCobranca.setValorMinimoEmissao(formaCobrancaDistribuidor.getValorMinimoEmissao());

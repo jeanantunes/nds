@@ -29,7 +29,6 @@ import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
-import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
 import br.com.abril.nds.model.financeiro.BaixaManual;
@@ -105,40 +104,42 @@ public class CobrancaServiceImpl implements CobrancaService {
 	public BigDecimal calcularJuros(Banco banco, Long idCota,
 									BigDecimal valorDivida, Date dataVencimento, Date dataCalculoJuros) {
 
-		
 		//TODO: JUROS E MULTA - VERIFICAR NA COBRANÇA (POSSIVEL ALTERAÇÃO NO MODELO) - FALAR COM CÉSAR
-		FormaCobranca formaCobrancaPrincipalCota = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(idCota);
 		
-		FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();		
+		FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
 		
-		PoliticaCobranca politicaPrincipal = formaCobrancaPrincipal.getPoliticaCobranca();
+		Banco bancoFormaCobrancaPrincipal = null;
 		
+		if (formaCobrancaPrincipal != null) {
+			bancoFormaCobrancaPrincipal  =  formaCobrancaPrincipal.getBanco();
+		}
 		
-		BigDecimal taxaJurosMensal = BigDecimal.ZERO;
-
+		BigDecimal taxaJurosMensal = null;
 		BigDecimal valorCalculadoJuros = null;
+
+		// Obtém taxa de juros do banco informado (caso exista)
+		if (banco != null && banco.getJuros() != null) {
 		
-		if (banco != null && banco.getJuros() != null ) {
-			
 			taxaJurosMensal = banco.getJuros();
-		
-		} else if (formaCobrancaPrincipalCota != null 
-					&& formaCobrancaPrincipalCota.getTaxaJurosMensal() != null) {
-
-			taxaJurosMensal = formaCobrancaPrincipalCota.getTaxaJurosMensal();
 			
-		} else if (politicaPrincipal != null
-					&& politicaPrincipal.getFormaCobranca() != null
-					&& politicaPrincipal.getFormaCobranca().getTaxaJurosMensal() != null) {
-
-			taxaJurosMensal = politicaPrincipal.getFormaCobranca().getTaxaJurosMensal();
+		// Obtém taxa de juros do banco da forma de cobrança princial (caso exista)
+		} else if (bancoFormaCobrancaPrincipal != null
+						&& bancoFormaCobrancaPrincipal.getJuros() != null) {			
+			
+			taxaJurosMensal = bancoFormaCobrancaPrincipal.getJuros();
+			
+		// Obtém taxa de juros da forma de cobrança princial (caso exista)
+		} else if (formaCobrancaPrincipal != null 
+						&& formaCobrancaPrincipal.getTaxaJurosMensal() != null) {
+	
+			taxaJurosMensal = formaCobrancaPrincipal.getTaxaJurosMensal();
 		}
 		
-		if (BigDecimal.ZERO.compareTo(taxaJurosMensal) == 0){
+		if (taxaJurosMensal == null || taxaJurosMensal.equals(BigDecimal.ZERO)) {
 			
-			return valorDivida;
+			return BigDecimal.ZERO;
 		}
-
+		
 		long quantidadeDias = DateUtil.obterDiferencaDias(dataVencimento, dataCalculoJuros);
 
 		BigDecimal taxaJurosDiaria = MathUtil.divide(taxaJurosMensal, new BigDecimal(30));
@@ -155,43 +156,65 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 
 		//TODO: JUROS E MULTA - VERIFICAR NA COBRANÇA (POSSIVEL ALTERAÇÃO NO MODELO) - FALAR COM CÉSAR
-        FormaCobranca formaCobrancaPrincipalCota = this.formaCobrancaService.obterFormaCobrancaPrincipalCota(cota.getId());
 		
 		FormaCobranca formaCobrancaPrincipal = this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
 		
-		PoliticaCobranca politicaPrincipal = formaCobrancaPrincipal.getPoliticaCobranca();
+		Banco bancoFormaCobrancaPrincipal = null;
 		
+		if (formaCobrancaPrincipal != null) {
+			bancoFormaCobrancaPrincipal  =  formaCobrancaPrincipal.getBanco();
+		}
 		
-		BigDecimal taxaMulta = BigDecimal.ZERO;
-
+		BigDecimal taxaMulta = null;
 		BigDecimal valorCalculadoMulta = null;
 		
-		if (banco != null && banco.getVrMulta() != null) {
+		// Obtém valor ou taxa de multa do banco informado (caso exista)
+		if (banco != null && (banco.getVrMulta() != null || banco.getMulta() != null)) {
 		
-			valorCalculadoMulta = banco.getVrMulta();
-		
-		} else {
+			if (banco.getVrMulta() != null) {
 			
-			if (banco != null && banco.getMulta() != null) {
-			
+				valorCalculadoMulta = banco.getVrMulta();
+				
+			} else {
+				
 				taxaMulta = banco.getMulta();
-			
-			} else if (formaCobrancaPrincipalCota != null
-						&& formaCobrancaPrincipalCota.getTaxaMulta() != null) {
-	
-				taxaMulta = formaCobrancaPrincipalCota.getTaxaMulta();
-	
-			} else if (politicaPrincipal != null
-						&& politicaPrincipal.getFormaCobranca() != null
-						&& politicaPrincipal.getFormaCobranca().getTaxaMulta() != null) {
-	
-				taxaMulta = politicaPrincipal.getFormaCobranca().getTaxaMulta();
 			}
+			
+		// Obtém valor ou taxa de multa do banco da forma de cobrança princial (caso exista)
+		} else if (bancoFormaCobrancaPrincipal != null
+						&& (bancoFormaCobrancaPrincipal.getVrMulta() != null 
+								|| bancoFormaCobrancaPrincipal.getMulta() != null)) {
+			
+			if (bancoFormaCobrancaPrincipal.getVrMulta() != null) {
+				
+				valorCalculadoMulta = bancoFormaCobrancaPrincipal.getVrMulta();
+				
+			} else {
+				
+				taxaMulta = bancoFormaCobrancaPrincipal.getMulta();
+			}
+			
+		// Obtém valor ou taxa de multa da forma de cobrança princial (caso exista)
+		} else if (formaCobrancaPrincipal != null 
+						&& (formaCobrancaPrincipal.getValorMulta() != null
+								|| formaCobrancaPrincipal.getTaxaMulta() != null)) {
 	
+			if (formaCobrancaPrincipal.getValorMulta() != null) {
+			
+				valorCalculadoMulta = formaCobrancaPrincipal.getValorMulta();
+				
+			} else {
+				
+				taxaMulta = formaCobrancaPrincipal.getTaxaMulta();
+			}
+		}
+	
+		if (valorCalculadoMulta == null && taxaMulta != null) {
+		
 			valorCalculadoMulta = valor.multiply(MathUtil.divide(taxaMulta, new BigDecimal(100)));
 		}
 		
-		return valorCalculadoMulta;
+		return (valorCalculadoMulta != null) ? valorCalculadoMulta : BigDecimal.ZERO;
 	}
 	
 	
