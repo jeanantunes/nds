@@ -125,7 +125,7 @@ function incluirSegmento() {
           <table width="680" border="0" cellpadding="2" cellspacing="1" id="excecaoSegmentoParciais_filtroPorProduto" class="filtro filtroPorProduto" style="display:none;">
           <tr>
             <td width="42">Código:</td>
-            <td width="65"><input type="text" name="filtro.produtoDto.codigoProduto" id="codigoProdutoPrincipal" onkeydown='onlyNumeric(event);' style="width:60px; float:left; margin-right:5px;"/></td>
+            <td width="65"><input type="text" name="filtro.produtoDto.codigoProduto" id="codigoProdutoPrincipal" onkeydown='onlyNumeric(event);' style="width:60px; float:left; margin-right:5px;"  /></td>
             <td width="47">Produto:</td>
             <td width="100"><input type="text" name="filtro.produtoDto.nomeProduto" id="nomeProdutoPrincipal" style="width:120px;"/></td>
             <td width="49">Fornecedor:</td>
@@ -137,7 +137,6 @@ function incluirSegmento() {
             <td width="150">Classificação:</td>
             	<td width="180">
 	            <select name="filtro.produtoDto.idClassificacaoProduto" id="comboClassificacao" style="width:140px;">
-	              <option selected="selected">Selecione...</option>
 	              	<c:forEach items="${listaClassificacao}" var="classificacao">
 						<option value="${classificacao.id}">${classificacao.descricao}</option>
 					</c:forEach>
@@ -205,22 +204,20 @@ function incluirSegmento() {
        	  <table width="312" border="0" cellpadding="2" cellspacing="1" class="filtro">
        	    <tr>
        	      <td width="45">
-       	      	Código:
-       	      </td>
+       	      	Código        	      </td>
        	      <td width="60">
        	      	<input type="text" name="filtro.produtoDto.codigoProduto" id="codigoProduto" onkeydown='onlyNumeric(event);' style="width:60px;"/></td>
               <td width="54">
-              	Produto:
+              	<!-- Produto: -->
               </td>
               <td width="132">
-              	<input type="text" name="filtro.produtoDto.nomeProduto" id="nomeProduto" style="width:120px;"/>
+              	 <input type="text" name="filtro.produtoDto.nomeProduto" id="nomeProduto" style="width:120px;"/>
               </td>
             </tr>
             <tr>
-               <td width="78">Classificação:</td>
+               <td width="78">Classifica&ccedil;&atilde;o:</td>
             	<td width="152">
 	            <select name="filtro.produtoDto.idClassificacaoProduto" id="comboClassificacaoProdNRec" style="width:140px;">
-	              <option selected="selected">Selecione...</option>
 	              	<c:forEach items="${listaClassificacao}" var="classificacao">
 						<option value="${classificacao.id}">${classificacao.descricao}</option>
 					</c:forEach>

@@ -53,18 +53,24 @@ ExcecaoSegmentoParciaisRepository {
 	hql.append(" produto.codigo as codigoProdin, "); // CODIGO PRODUTO
 	hql.append(" produto.nome as nomeProduto, "); // NOME PRODUTO
 	hql.append(" usuario.nome as nomeUsuario, "); // NOME DO USUÁRIO
-	hql.append(" excecaoProdutoCota.dataAlteracao as dataAlteracao "); // DATA ALTERAÇÃO
+	hql.append(" excecaoProdutoCota.dataAlteracao as dataAlteracao, "); // DATA ALTERAÇÃO
+	hql.append(" excecaoProdutoCota.tipoClassificacaoProduto.descricao as classificacaoProduto "); 
 
 	hql.append(" FROM ExcecaoProdutoCota as excecaoProdutoCota ");
-	hql.append(" INNER JOIN excecaoProdutoCota.produto as produto ");
+//	hql.append(" INNER JOIN excecaoProdutoCota.produto as produto  ");
 
 
 	hql.append(" INNER JOIN excecaoProdutoCota.usuario as usuario ");
 	hql.append(" INNER JOIN excecaoProdutoCota.cota as cota ");
-	hql.append(" INNER JOIN cota.pessoa as pessoa ");
+	hql.append(" INNER JOIN excecaoProdutoCota.tipoClassificacaoProduto as tipoClassificacaoProduto ");
+	hql.append(" INNER JOIN cota.pessoa as pessoa, ");
+	
+	hql.append(" Produto produto ");
 
 	// O filtro sempre terá OU nomeCota OU codigoCota
 	hql.append(" WHERE ");
+	
+	hql.append(" produto.codigoICD = excecaoProdutoCota.codigoICD and ");
 
 	hql.append(" excecaoProdutoCota.tipoExcecao = :tipoExcecao ");
 
@@ -82,7 +88,7 @@ ExcecaoSegmentoParciaisRepository {
 	    parameters.put("nomePessoa", filtro.getCotaDto().getNomePessoa());
 	}
 	
-	hql.append(" order by nomeProduto, codigoProduto");
+	hql.append(" order by codigoProduto,classificacaoProduto,nomeProduto ");
 
 	Query query = getSession().createQuery(hql.toString());
 
@@ -110,37 +116,53 @@ ExcecaoSegmentoParciaisRepository {
 	hql.append(" FROM Produto AS produto ");
 	hql.append("  JOIN produto.fornecedores as f ");
 	hql.append("  JOIN f.juridica as j ");
-	hql.append("  JOIN produto.tipoClassificacaoProduto as tpClassifProduto ");
-	hql.append(" WHERE produto.id not in ");
-	hql.append(" 	(select distinct prod.id from ExcecaoProdutoCota e  ");
-	hql.append(" 		JOIN e.produto prod ");
+	// hql.append("  JOIN produto.tipoClassificacaoProduto as tpClassifProduto ");
+	
+	hql.append(" WHERE produto.codigoICD not in ");
+	hql.append(" 	(select distinct e.codigoICD from ExcecaoProdutoCota e  ");
+//	hql.append(" 		JOIN e.produto prod ");
 	hql.append(" 		JOIN e.cota cotaJoin ");
+	hql.append(" 		JOIN e.tipoClassificacaoProduto ");
 
 	hql.append(" 	where e.tipoExcecao = :tipoExcecao " );
 
 	if (filtro.getCotaDto() != null) {
 	    hql.append(" 	and cotaJoin.numeroCota = :numCota ");
 	}
+	
+	if(filtro.getProdutoDto().getIdClassificacaoProduto()  !=null && filtro.getProdutoDto().getIdClassificacaoProduto() > 0){
+		hql.append(" 	and e.tipoClassificacaoProduto.id = :id_tipo_class_produto ");
+	}
+	
 	hql.append(" 	) ");
-	hql.append(" and produto.id in (select p.id ");
+	hql.append("  and produto.codigoICD = :codProduto	");
+	
+	/*
+	hql.append(" and produto.id in (select distinct p.id ");
 	hql.append("                      from SegmentoNaoRecebido s ");
 	hql.append("                      join s.tipoSegmentoProduto t ");
-	hql.append("                      join t.produtos p with p.codigo = :codProduto ");
+	hql.append("                      join t.produtos p "); //with p.codigo = :codProduto 
+	
+	
 	if (filtro.getCotaDto() != null) {
 	    hql.append(" join s.cota c with c.numeroCota = :numCota ");
 	}
 	hql.append(" ) ");
 
+
 	if (filtro.getProdutoDto() != null) {
 		if(filtro.getProdutoDto().getCodigoProduto().length()==6)
 			hql.append(" and produto.codigoICD = :codProduto ");
 		else if(filtro.getProdutoDto().getCodigoProduto().length()>6)
-			hql.append(" and produto.codigo = :codProduto ");
+			hql.append(" and produto.codigo = :codProduto ");	
+		
 	}
 	
-	if (filtro.getProdutoDto().getIdClassificacaoProduto() != null) {		
-		hql.append(" AND tpClassifProduto.id = :id_tipo_class_produto ");
-	}
+	if (filtro.getProdutoDto().getIdClassificacaoProduto() != null) {
+		
+		hql.append(" AND (select count(*) from ProdutoEdicao pe left join pe.produto where pe.produto.codigoICD = produto.codigoICD and pe.tipoClassificacaoProduto.id = :id_tipo_class_produto) >= 1 ");
+	}	*/
+	
 
 	Query query = super.getSession().createQuery(hql.toString());
 
@@ -149,6 +171,7 @@ ExcecaoSegmentoParciaisRepository {
 	} else {
 	    query.setParameter("tipoExcecao", TipoExcecao.PARCIAL);
 	}
+	
 	if (filtro.getProdutoDto() != null) {	
 	    query.setParameter("codProduto", filtro.getProdutoDto().getCodigoProduto());
 	}
@@ -156,6 +179,7 @@ ExcecaoSegmentoParciaisRepository {
 	if (filtro.getCotaDto() != null) {
 	    query.setParameter("numCota", filtro.getCotaDto().getNumeroCota());
 	}
+	
 	if(filtro.getProdutoDto().getIdClassificacaoProduto()  !=null && filtro.getProdutoDto().getIdClassificacaoProduto() > 0){
 		query.setParameter("id_tipo_class_produto", filtro.getProdutoDto().getIdClassificacaoProduto());
 	}
@@ -188,14 +212,14 @@ ExcecaoSegmentoParciaisRepository {
 	    hql.append(" WHERE cota.id in ");
 	    hql.append(" (select cotaJoin.id from SegmentoNaoRecebido s ");
 	    hql.append(" join s.cota cotaJoin join s.tipoSegmentoProduto t ");
-	    hql.append(" join t.produtos p with p.codigo = :codProduto) ");
+	    hql.append(" join t.produtos p with p.codigoICD = :codProduto) ");
 	}
 	hql.append(" and cota.id not in ");
 	hql.append(" (select cotaJoin.id from ExcecaoProdutoCota e  ");
 	hql.append(" JOIN e.produto prod ");
 	hql.append(" JOIN e.cota cotaJoin ");
 	hql.append(" where e.tipoExcecao = :tipoExcecao " );
-	hql.append(" and prod.codigo = :codProduto ");
+	hql.append(" and prod.codigoICD = :codProduto ");
 	hql.append(" ) ");
 
 	if (filtro.getCotaDto() != null) {		
@@ -239,11 +263,12 @@ ExcecaoSegmentoParciaisRepository {
 	hql.append("       u.nome as nomeUsuario, ");
 	hql.append("       e.dataAlteracao as dataAlteracao ");
 	hql.append("  from ExcecaoProdutoCota as e ");
-	hql.append("  join e.produto as p ");
+//	hql.append("  join e.produto as p ");
 	hql.append("  join e.usuario as u ");
 	hql.append("  join e.cota as c ");
 	hql.append("  join c.pessoa as pe ");
-	hql.append("  join p.tipoClassificacaoProduto as tpClassifProduto ");
+	hql.append("  join e.tipoClassificacaoProduto as tpClassifProduto ");
+//	hql.append("  ,Produto p ");
 	hql.append(" where 1 = 1 ");
 	hql.append("   and e.tipoExcecao = :tipoExcecao ");
 
@@ -256,17 +281,19 @@ ExcecaoSegmentoParciaisRepository {
 
 	if (filtro.getProdutoDto().getCodigoProduto() != null && !filtro.getProdutoDto().getCodigoProduto().equals(0)) {
 		
-		if(filtro.getProdutoDto().getCodigoProduto().length()==6){
+		hql.append(" and e.codigoICD = :codigoProduto");
+		/*if(filtro.getProdutoDto().getCodigoProduto().length()==6){
 			hql.append(" and p.codigoICD = :codigoProduto");
 		}else if(filtro.getProdutoDto().getCodigoProduto().length()>6){
 			hql.append(" and p.codigo = :codigoProduto");
-		}
+		}*/
 	    parameters.put("codigoProduto", filtro.getProdutoDto().getCodigoProduto());
 	    
-	} else if (filtro.getProdutoDto().getNomeProduto() != null && !filtro.getProdutoDto().getNomeProduto().isEmpty()) {
+	} 
+	/*else if (filtro.getProdutoDto().getNomeProduto() != null && !filtro.getProdutoDto().getNomeProduto().isEmpty()) {
 	    hql.append("and p.nome = :nomeProduto");
 	    parameters.put("nomeProduto", filtro.getProdutoDto().getNomeProduto());
-	}
+	}*/
 	
 	if(filtro.getProdutoDto().getIdClassificacaoProduto()  !=null && filtro.getProdutoDto().getIdClassificacaoProduto() > 0){
 		hql.append(" AND tpClassifProduto.id = :ID_TIPO_CLASS_PRODUTO ");

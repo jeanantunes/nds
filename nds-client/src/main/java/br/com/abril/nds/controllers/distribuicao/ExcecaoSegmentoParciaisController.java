@@ -166,11 +166,6 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 	public void pesquisarCotasQueNaoRecebemExcecao(FiltroExcecaoSegmentoParciaisDTO filtro, String sortorder, String sortname, int page, int rp ){
 		validarEntradaFiltroProduto(filtro);
 		
-		if(filtro.getProdutoDto().getCodigoProduto().length() == 6){
-			String codigoProduto = produtoService.obterCodigoProdinPorICD(filtro.getProdutoDto().getCodigoProduto());
-			filtro.getProdutoDto().setCodigoProduto(codigoProduto);
-		}
-		
 		List<CotaQueNaoRecebeExcecaoDTO> listaCotaQueNaoRecebeExcecaoDto = this.excecaoSegmentoParciaisService.obterCotasQueNaoRecebemExcecaoPorProduto(filtro);
 		
 		TableModel<CellModelKeyValue<CotaQueNaoRecebeExcecaoDTO>> tableModel = new TableModel<CellModelKeyValue<CotaQueNaoRecebeExcecaoDTO>>();
@@ -188,17 +183,17 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 	}
 	
 	@Post
-	public void inserirExcecaoProdutoNaCota(Long[] listaIdProduto, FiltroExcecaoSegmentoParciaisDTO filtro){
+	public void inserirExcecaoProdutoNaCota(String[] listaIdProduto, FiltroExcecaoSegmentoParciaisDTO filtro){
 		ExcecaoProdutoCota element = null;
 		Cota cota = null;
 		Usuario usuario = usuarioService.getUsuarioLogado();
 		TipoExcecao tipoExcecao = null;
 		
-		if (listaIdProduto.length == 0 ) {
+	/*	if (listaIdProduto.length == 0 ) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum produto selecionado.");
 		}
 		
-		validarEntradaFiltroCota(filtro);
+		validarEntradaFiltroCota(filtro);*/
 
 		if (filtro.getCotaDto().getNumeroCota() != null && !filtro.getCotaDto().getNumeroCota().equals(0)) {
 			cota = (cotaService.obterPorNumeroDaCota(filtro.getCotaDto().getNumeroCota()));
@@ -214,9 +209,17 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 		
 		List<ExcecaoProdutoCota> listaExcessaoProdutoCota = new ArrayList<>();
 		
-		for (Long idProduto : listaIdProduto) {
+		for (String idProduto : listaIdProduto) {
 			element = new ExcecaoProdutoCota();
-			element.setProduto(produtoService.obterProdutoPorID(idProduto));
+//			element.setProduto(produtoService.obterProdutoPorID(idProduto));
+			//codigo ICD vindo da tela
+			element.setCodigoICD(idProduto);
+			
+			
+			TipoClassificacaoProduto tcp = new TipoClassificacaoProduto();
+			tcp.setId(filtro.getProdutoDto().getIdClassificacaoProduto());
+			element.setTipoClassificacaoProduto(tcp);
+			
 			element.setCota(cota);
 			element.setUsuario(usuario);
 			element.setDataAlteracao(new Date());
