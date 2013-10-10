@@ -399,6 +399,15 @@ public class ParametrosDistribuidorController extends BaseController {
 	    if (vo.getEndereco().getLogradouro() == null || vo.getEndereco().getLogradouro().trim().isEmpty()) {
 	        erros.add("É necessário informar o Logradouro!");
 	    }
+	    
+	    if (vo.getNumeroDDD() == null || vo.getNumeroDDD().trim().isEmpty()) {
+	        erros.add("É necessário informar o DDD do Telefone!");
+	    }
+	    
+	    if (vo.getNumeroTelefone() == null || vo.getNumeroTelefone().trim().isEmpty()) {
+	        erros.add("É necessário informar o número do Telefone!");
+	    }
+	    
 	    if (vo.getRegimeTributario() == null) {
 	        erros.add("É necessário informar o campo Regime Tributário!");
 	    }
