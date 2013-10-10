@@ -199,7 +199,7 @@ var fixacaoReparteController = $.extend(true, {
 			dataType : 'json',
 			colModel : [ {
 				display : 'Código',
-				name : 'produtoFixado',
+				name : 'codigoProduto',
 				width : 60,
 				sortable : true,
 				align : 'left'
@@ -529,11 +529,11 @@ var fixacaoReparteController = $.extend(true, {
 		$.postJSON(contextPath + '/distribuicao/fixacaoReparte/editarFixacao', fixacaoReparteController.getIdSelecionado(idFixacao)
 				,		
 				function(result){
-			$("#codigoCotaModalReparte").text(result.cotaFixadaString);
+			$("#codigoCotaModalReparte").text(result.cotaFixada);
 			$("#nomeCotaModalReparte").text(result.nomeCota);
-			$("#codigoProdutoModalReparte").text(result.produtoFixado);
+			$("#codigoProdutoModalReparte").text(result.codigoProduto);
 			$("#nomeProdutoModalReparte").text(result.nomeProduto);
-			$("#classificacaoModalReparte").text(result.classificacaoProduto);
+			$("#classificacaoModalReparte").text(result.classificacaoProduto || 'SEM CLASSIFICAÇÃO');
 		}		
 
 		);
@@ -679,12 +679,9 @@ var fixacaoReparteController = $.extend(true, {
 		}
 		var i;
 		for (i = 0 ; i < data.rows.length; i++) {
-
-			var lastIndex = data.rows[i].cell.length;
-
-			data.rows[i].cell["reparte"]=fixacaoReparteController.getInputReparte(data.rows[i].cell);
+            data.rows[i].cell["endereco"] = data.rows[i].cell["endereco"] || '';
+            data.rows[i].cell["reparte"] = fixacaoReparteController.getInputReparte(data.rows[i].cell);
 		}
-		//$('.excessaoCotaGrid').show();
 		if (data.result){
 			return data.result[1];
 		}
@@ -839,20 +836,21 @@ var fixacaoReparteController = $.extend(true, {
 			if($("#subtitulo1").text() == 'Produto'){
 				data.push({name:'fixacaoReparteDTO.cotaFixada',value: $("#codigoModal").val()});
 				data.push({name:'fixacaoReparteDTO.produtoFixado',value: $("#spanCodigoProduto").text()});
+                data.push({name:'fixacaoReparteDTO.classificacaoProduto',	value: $("#filtroClassificacaoFixacao option:selected", fixacaoReparteController.wsp).val()});
 			}
 
 			if($("#subtitulo1").text() == 'Cota'){
 				data.push({name:'fixacaoReparteDTO.cotaFixada',value: $("#spanCodigoProduto").text()});
 				data.push({name:'fixacaoReparteDTO.produtoFixado',value: $("#codigoModal").val()});
+                data.push({name:'fixacaoReparteDTO.classificacaoProduto',	value: $("#selectModal option:selected", fixacaoReparteController.wsp).val()});
 			}
-		
+
 			data.push({name:'fixacaoReparteDTO.edicao', 		value: $('#edicaoDestaque').text()});
 			data.push({name:'fixacaoReparteDTO.qtdeEdicoes',	value: $("#qtdeEdicoesModal").val()});
 			data.push({name:'fixacaoReparteDTO.qtdeExemplares',	value: $("#qtdeFixadaModal").val()});
 			data.push({name:'fixacaoReparteDTO.edicaoInicial',	value: $("#edInicialModal").val()});
 			data.push({name:'fixacaoReparteDTO.edicaoFinal',	value: $("#edFinalModal").val()});
 			data.push({name:'fixacaoReparteDTO.qtdeEdicoesMarcado',	value: $("#radioQtdeEdicoes").is(":checked")});
-            data.push({name:'fixacaoReparteDTO.classificacaoProduto',	value: $("#filtroClassificacaoFixacao option:selected", fixacaoReparteController.wsp).val()});
 
 			return data;
 		},

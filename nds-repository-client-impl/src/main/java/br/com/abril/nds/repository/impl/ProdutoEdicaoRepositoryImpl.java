@@ -442,7 +442,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			hql.append("  AND ln.status = :situacaoLancamento ");
 		}		
 		if (!StringUtil.isEmpty(codigoProduto)) {
-			hql.append("  AND UPPER(pr.codigo) LIKE UPPER(:codigoProduto) ");
+			hql.append("  AND UPPER(pr.codigoICD) LIKE UPPER(:codigoProduto) ");
 		}
 		if (!StringUtil.isEmpty(nome)) {
 			hql.append("  AND UPPER(pr.nome) LIKE UPPER(:nome) ");

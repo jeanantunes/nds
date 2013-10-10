@@ -112,7 +112,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	private DescontoProdutoEdicaoRepository descontoProdutoEdicaoRepository;
 
 	@Autowired
-	private ProdutoService pService;
+	private ProdutoService produtoService;
 
 	@Autowired
 	private LancamentoService lService;	
@@ -312,7 +312,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 		final int initialResult = ((page * maxResults) - maxResults);
 
-		List<ProdutoEdicaoDTO> edicoes = this.produtoEdicaoRepository.pesquisarEdicoes(codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, initialResult, maxResults);
+        Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
+        List<ProdutoEdicaoDTO> edicoes = this.produtoEdicaoRepository.pesquisarEdicoes(produto.getCodigoICD(), nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde, sortorder, sortname, initialResult, maxResults);
 
 		return edicoes;
 	}
@@ -322,9 +323,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	public Long countPesquisarEdicoes(String codigoProduto, String nome,
 			Intervalo<Date> dataLancamento, Intervalo<BigDecimal> preco , StatusLancamento statusLancamento,
 			String codigoDeBarras, boolean brinde) {
-
-		return this.produtoEdicaoRepository.countPesquisarEdicoes(codigoProduto, nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde);
-	}
+        Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
+        return this.produtoEdicaoRepository.countPesquisarEdicoes(produto.getCodigoICD(), nome, dataLancamento, preco, statusLancamento, codigoDeBarras, brinde);
+    }
 
 	/**
 	 * Insere os dados de desconto relativos ao produto edição em questão.
@@ -695,7 +696,8 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		}
 
 		//Campos editáveis, independente da Origem
-		produtoEdicao.setPrecoVenda(dto.getPrecoVenda()); // View: Preço Capa - Real;
+        produtoEdicao.setTipoClassificacaoProduto(dto.getTipoClassificacaoProduto());
+        produtoEdicao.setPrecoVenda(dto.getPrecoVenda()); // View: Preço Capa - Real;
 		produtoEdicao.setCodigoDeBarras(dto.getCodigoDeBarras());
 		produtoEdicao.setChamadaCapa(dto.getChamadaCapa());
 		produtoEdicao.setPeso(dto.getPeso());
@@ -862,7 +864,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	@Transactional(readOnly = true)
 	@Override
 	public ProdutoEdicaoDTO obterProdutoEdicaoDTO(String codigoProduto, String idProdutoEdicao) {
-		Produto produto = pService.obterProdutoPorCodigo(codigoProduto);
+		Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
 
 		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
 
@@ -871,8 +873,6 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		dto.setFase(produto.getFase());
 		dto.setPacotePadrao(produto.getPacotePadrao());
 		dto.setPeso(produto.getPeso());
-        //FIXME refazer... a classificação fica no ProdutoEdicao
-//		dto.setTipoClassificacaoProduto(produto.getTipoClassificacaoProduto());
 
 		String nomeFornecedor = "";
 		if (produto.getFornecedor() != null 
@@ -914,8 +914,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			dto.setPrecoPrevisto(pe.getPrecoPrevisto());
 			dto.setTipoSegmentoProdutoId(pe.getTipoSegmentoProduto() == null ? null : pe.getTipoSegmentoProduto().getId());
 
-			BigDecimal precoVenda = pe.getPrecoVenda();
-            dto.setPrecoVenda(precoVenda);
+            dto.setTipoClassificacaoProduto(pe.getTipoClassificacaoProduto());
+
+            dto.setPrecoVenda(pe.getPrecoVenda());
 			dto.setExpectativaVenda(pe.getExpectativaVenda());
 			dto.setCodigoDeBarras(pe.getCodigoDeBarras());
 			dto.setCodigoDeBarrasCorporativo(pe.getCodigoDeBarraCorporativo());
