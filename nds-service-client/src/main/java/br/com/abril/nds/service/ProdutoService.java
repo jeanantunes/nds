@@ -116,7 +116,8 @@ public interface ProdutoService {
 	List<TipoSegmentoProduto> carregarSegmentos();
 	
 	List<TipoClassificacaoProduto> carregarClassificacaoProduto();
-	
+
+    @Deprecated
 	String obterCodigoProdinPorICD (String codigoProduto);
 	
 }

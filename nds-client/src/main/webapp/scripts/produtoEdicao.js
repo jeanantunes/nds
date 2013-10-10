@@ -3,7 +3,6 @@ var produtoEdicaoController =$.extend(true,  {
 	
 	// Pesquisa por código de produto
 	pesquisarPorCodigoProduto : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
-		debugger;
 		var codigoProduto = $(idCodigo,this.workspace).val();
 
 		codigoProduto = $.trim(codigoProduto);
@@ -489,7 +488,7 @@ var produtoEdicaoController =$.extend(true,  {
 			         {name:'situacaoLancamento', value: situacaoLancamento },
 			         {name:'codigoDeBarras', value: codigoDeBarras },
 			         {name:'brinde', value : brinde }],
-			         newp: 1,
+			         newp: 1
 		});
 
 		$(".edicoesGrid",this.workspace).flexReload();
@@ -703,8 +702,8 @@ var produtoEdicaoController =$.extend(true,  {
 							$("#produtoEdicaoController-situacao").val(result.situacaoLancamento);
 							$("#produtoEdicaoController-tipoLancamento").val(result.tipoLancamento);	
 							
-							$("#produtoEdicaoController-precoPrevisto").val(result.precoPrevistoFormatado);
-							$("#produtoEdicaoController-precoVenda").val(result.precoVendaFormatado);
+							$("#produtoEdicaoController-precoPrevisto").val(result.precoPrevisto).formatNumber({format:'#.00', locale:'br'});;
+							$("#produtoEdicaoController-precoVenda").val(result.precoVenda).formatNumber({format:'#.00', locale:'br'});;
 							
 							$("#produtoEdicaoController-dataLancamentoPrevisto").val(result.dataLancamentoPrevisto == undefined ? '' : result.dataLancamentoPrevisto.$);
 							$("#produtoEdicaoController-dataLancamento").val(result.dataLancamento == undefined ? '' : result.dataLancamento.$);
@@ -1152,4 +1151,4 @@ var produtoEdicaoController =$.extend(true,  {
 
 }, BaseController);
 
-//@ sourceURL=scriptProdutoEdicao.js
+//@ sourceURL=produtoEdicao.js

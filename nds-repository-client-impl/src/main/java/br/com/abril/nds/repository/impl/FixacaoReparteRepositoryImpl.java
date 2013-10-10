@@ -120,7 +120,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		 .append(" f.cotaFixada.numeroCota as cotaFixada, ")
 		 .append(" f.cotaFixada.id as cotaFixadaId, ")
 		 .append(" f.codigoICD as codigoProduto, ")
-//		 .append(" f.produtoFixado.nome as nomeProduto, ")
+		 .append(" (select p.nome from Produto p where p.codigoICD = f.codigoICD) as nomeProduto, ")
 
 		 .append(" coalesce(classificacao.descricao,'') as classificacaoProduto, ")
 		 .append(" f.usuario.login as usuario, ")

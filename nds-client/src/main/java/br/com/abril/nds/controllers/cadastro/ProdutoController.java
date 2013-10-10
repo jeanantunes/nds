@@ -415,8 +415,12 @@ public class ProdutoController extends BaseController {
 			Long codigoTipoProduto, String sortorder, String sortname, int page, int rp, Boolean isGeracaoAutomatica) {
 		
 		int startSearch = page*rp - rp;
-		
-		FiltroProdutoDTO filtroProdutoDTO = 
+
+        //FIXME - POG pega o que foi digitado na tela(PRODIN ou ICD ou ???) e devolve o PRODIN
+        Produto produtoDB = produtoService.obterProdutoPorCodigo(codigo);
+        codigo = produtoDB.getCodigo();
+
+        FiltroProdutoDTO filtroProdutoDTO =
 				new FiltroProdutoDTO(codigo,produto,editor,fornecedor,codigoTipoProduto,sortorder,sortname,isGeracaoAutomatica);
 		
 		session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroProdutoDTO);

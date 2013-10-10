@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import br.com.caelum.vraptor.core.Localization;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -223,7 +224,7 @@ public class ProdutoEdicaoController extends BaseController {
 			}
 			intervaloPreco = new Intervalo<BigDecimal>(precoDe, precoAte);
 		}	
-	
+
 		// Pesquisar:
 		Long qtd = produtoEdicaoService.countPesquisarEdicoes(
 				codigoProduto, nomeProduto, intervaloLancamento, 
@@ -258,68 +259,16 @@ public class ProdutoEdicaoController extends BaseController {
 	
 	@Post
 	public void salvar(UploadedFile imagemCapa,
-			String codigoProduto, Long idProdutoEdicao,
-			String codigoProdutoEdicao, String nomeComercialProduto,Integer peb,
-			Long numeroEdicao, int pacotePadrao,
-			TipoLancamento tipoLancamento,
-			String precoPrevisto, String precoVenda,GrupoProduto categoria,
-			Date dataLancamentoPrevisto, Date dataRecolhimentoPrevisto,
-			BigInteger repartePrevisto, BigInteger repartePromocional,
-			String codigoDeBarras, String codigoDeBarrasCorporativo,
-			BigDecimal desconto, String descricaoDesconto,Long peso, 
-			BigDecimal largura, BigDecimal comprimento, BigDecimal espessura,
-			String chamadaCapa, boolean parcial, boolean possuiBrinde,
-			String boletimInformativo, Integer numeroLancamento, Long descricaoBrinde, String descricaoProduto,
-            ClasseSocial classeSocial,Sexo sexo,FaixaEtaria faixaEtaria, long tipoSegmentoProdutoId) {
+                       String codigoProduto,
+                       ProdutoEdicaoDTO produtoEdicaoDTO, Localization localization) {
 			
-		BigDecimal pPrevisto = precoPrevisto!=null?new BigDecimal(this.getValorSemMascara(precoPrevisto)):null;
-		BigDecimal pVenda = precoVenda!=null?new BigDecimal(this.getValorSemMascara(precoVenda)):null;
-		
-		// DTO para transportar os dados:
-		ProdutoEdicaoDTO dto = new ProdutoEdicaoDTO();
-		
-		dto.setId(idProdutoEdicao);
-		dto.setNomeComercialProduto(nomeComercialProduto);
-		dto.setPeb( (peb == null)?0:peb);
-		dto.setCaracteristicaProduto(descricaoProduto);
-		dto.setNumeroEdicao(numeroEdicao);
-		dto.setCodigoProduto(codigoProdutoEdicao);
-		dto.setPacotePadrao(pacotePadrao);
-		dto.setTipoLancamento(tipoLancamento);
-		dto.setPrecoPrevisto(pPrevisto);
-		dto.setPrecoVenda(pVenda);
-		dto.setDataLancamentoPrevisto(dataLancamentoPrevisto);
-		dto.setDataRecolhimentoPrevisto(dataRecolhimentoPrevisto);
-		dto.setDataRecolhimentoDistribuidor(dataRecolhimentoPrevisto);
-		dto.setRepartePrevisto(repartePrevisto);
-		dto.setRepartePromocional(repartePromocional);
-		dto.setCodigoDeBarras(codigoDeBarras);
-		dto.setCodigoDeBarrasCorporativo(codigoDeBarrasCorporativo);
-		dto.setDesconto(desconto);
-		dto.setDescricaoDesconto(descricaoDesconto);
-		dto.setPeso(peso);
-		dto.setLargura(largura == null ? 0 : largura.floatValue());
-		dto.setComprimento(comprimento == null ? 0 : comprimento.floatValue());
-		dto.setEspessura(espessura == null ? 0 : espessura.floatValue());
-		dto.setChamadaCapa(chamadaCapa);
-		dto.setParcial(parcial);
-		dto.setPossuiBrinde(possuiBrinde);
-		dto.setNumeroLancamento(numeroLancamento);
-		dto.setIdBrinde(descricaoBrinde);
-		dto.setBoletimInformativo(boletimInformativo);
-		dto.setGrupoProduto(categoria);
-		
-		//Segmentação
-		dto.setClasseSocial(classeSocial);
-		dto.setFaixaEtaria(faixaEtaria);
-		dto.setSexo(sexo);
-		dto.setTipoSegmentoProdutoId(tipoSegmentoProdutoId);
-		
+		produtoEdicaoDTO.setDataRecolhimentoDistribuidor(produtoEdicaoDTO.getDataRecolhimentoPrevisto());
+
 		ValidacaoVO vo = null;
 		 
 		try {
 			
-			this.validarProdutoEdicao(dto, codigoProduto);
+			this.validarProdutoEdicao(produtoEdicaoDTO, codigoProduto);
 			
 			// Dados da Imagem:
 			String contentType = null;
@@ -332,7 +281,7 @@ public class ProdutoEdicaoController extends BaseController {
 				imgInputStream = imagemCapa.getFile();
 			}
 			
-			produtoEdicaoService.salvarProdutoEdicao(dto, codigoProduto, contentType, imgInputStream);
+			produtoEdicaoService.salvarProdutoEdicao(produtoEdicaoDTO, codigoProduto, contentType, imgInputStream);
 			
 			vo = new ValidacaoVO(TipoMensagem.SUCCESS, "Edição salva com sucesso!");
 			
