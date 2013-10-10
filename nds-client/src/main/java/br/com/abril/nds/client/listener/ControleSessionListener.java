@@ -1,14 +1,14 @@
 package br.com.abril.nds.client.listener;
 
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import br.com.abril.nds.client.util.Constants;
 import br.com.abril.nds.controllers.devolucao.ConferenciaEncalheController;
@@ -18,7 +18,11 @@ public class ControleSessionListener implements HttpSessionListener {
 
 
 	@Override
-	public void sessionCreated(HttpSessionEvent sessionEvent) {}
+	public void sessionCreated(HttpSessionEvent sessionEvent) {
+		
+		sessionEvent.getSession().setAttribute("X9 LISTENER", 
+				SecurityContextHolder.getContext().getAuthentication().getName());
+	}
 
 	@Override
 	public void sessionDestroyed(HttpSessionEvent sessionEvent) {

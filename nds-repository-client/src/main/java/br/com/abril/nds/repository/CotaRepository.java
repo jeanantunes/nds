@@ -386,4 +386,11 @@ public interface CotaRepository extends Repository<Cota, Long> {
 	List<ProdutoAbastecimentoDTO> obterCotaPorProdutoEdicaoData(FiltroMapaAbastecimentoDTO filtro);
 
 	BigDecimal obterTotalDividaCotasSujeitasSuspensao(Date dataOperacaoDistribuidor);
+
+	/**
+	 * Obtem Cotas do tipo À Vista, com data de alteração de status menor que a data atual
+	 * @param data
+	 * @return List<Cota>
+	 */
+	List<Cota> obterCotasTipoAVista(Date data);
 }

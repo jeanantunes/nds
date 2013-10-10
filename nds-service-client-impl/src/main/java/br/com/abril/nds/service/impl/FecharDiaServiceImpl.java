@@ -38,9 +38,11 @@ import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO.ValorResumoEstoque
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
 import br.com.abril.nds.enums.TipoMensagem;
+import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
@@ -108,7 +110,6 @@ import br.com.abril.nds.repository.FechamentoDiarioResumoConsignadoRepository;
 import br.com.abril.nds.repository.FechamentoDiarioResumoConsolidadoDividaRepository;
 import br.com.abril.nds.repository.FechamentoDiarioResumoEstoqueRepository;
 import br.com.abril.nds.repository.FecharDiaRepository;
-import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.repository.HistoricoEstoqueProdutoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
@@ -117,12 +118,12 @@ import br.com.abril.nds.repository.MovimentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
-import br.com.abril.nds.repository.UsuarioRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.FecharDiaService;
-import br.com.abril.nds.service.ImpressaoDividaService;
+import br.com.abril.nds.service.GerarCobrancaService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
+import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.ResumoEncalheFecharDiaService;
 import br.com.abril.nds.service.ResumoReparteFecharDiaService;
 import br.com.abril.nds.service.ResumoSuplementarFecharDiaService;
@@ -137,12 +138,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private FecharDiaRepository fecharDiaRepository;
-	
-	@Autowired
-	private ImpressaoDividaService impressaoDividaService;
-	
-	@Autowired
-	private FormaCobrancaRepository formaCobrancaRepository;
 	
 	@Autowired
 	private DividaService dividaService;
@@ -223,9 +218,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	private FechamentoDiarioConsolidadoEncalheRepository fechamentoDiarioConsolidadoEncalheRepository;
 	
 	@Autowired
-	private UsuarioRepository usuarioRepository;
-	
-	@Autowired
 	private DiferencaEstoqueRepository diferencaRepository;
 	
 	@Autowired 
@@ -253,16 +245,19 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	private MovimentoEstoqueService movimentoEstoqueService;
 	
 	@Autowired
+	private GerarCobrancaService gerarCobrancaService;
+	
+	@Autowired
 	private LancamentoRepository lancamentoRepository;
 	
 	@Autowired
 	private EstoqueProdutoRespository estoqueProdutoRepository;
 	
 	@Autowired
-	private EstoqueProdutoCotaJuramentadoRepository estoqueProdutoCotaJuramentadoRespository;
+	private HistoricoEstoqueProdutoRepository historicoEstoqueProdutoRepository;
 	
 	@Autowired
-	private HistoricoEstoqueProdutoRepository historicoEstoqueProdutoRepository;
+	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
 	
 	@Override
 	@Transactional
@@ -1151,6 +1146,33 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		}
 	}
 	
+	/**
+	 * Processa financeiro das cotas à vista que não tiveram processamento financeiro realizado
+	 * Posterga a divida resultante do processamento financeiro do dia
+	 * 
+	 * @param usuario
+	 * @param dataFechamento
+	 */
+	private void processarEPostergarFinanceiroCotasAVista(Usuario usuario, 
+			                                              Date dataFechamento) throws FechamentoDiarioException{
+		
+		List<Cota> cotasAVista = this.cotaRepository.obterCotasTipoAVista(dataFechamento);
+		
+		if (cotasAVista!=null && !cotasAVista.isEmpty()){
+			
+			try {
+				
+				this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(cotasAVista, dataFechamento, usuario);
+				
+				this.gerarCobrancaService.gerarDividaPostergadaCotas(cotasAVista, usuario.getId());
+				
+			} catch (GerarCobrancaValidacaoException e) {
+
+				throw new FechamentoDiarioException("Erro ao Postergar Pendências Financeiras: "+e.getMessage());
+			}
+		}
+	}
+	
 	@Transactional
 	@Override
 	public FechamentoDiarioDTO processarFechamentoDoDia(Usuario usuario, Date dataFechamento){
@@ -1165,6 +1187,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			
 			this.processarLancamentosRecolhimento(usuario);
 			
+			this.processarEPostergarFinanceiroCotasAVista(usuario, dataFechamento);
+
 			return fechamentoDiarioDTO;
 		
 		} catch (FechamentoDiarioException e) {

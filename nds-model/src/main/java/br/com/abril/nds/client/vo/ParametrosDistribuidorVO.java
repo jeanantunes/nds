@@ -1,5 +1,6 @@
 package br.com.abril.nds.client.vo;
 
+import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
@@ -36,6 +37,10 @@ public class ParametrosDistribuidorVO {
     private boolean regimeEspecial;
     
     private EnderecoVO endereco = new EnderecoVO();
+    
+    private String numeroTelefone;
+    
+    private String numeroDDD;
     
     // Aba Operação
     
@@ -1269,5 +1274,23 @@ public class ParametrosDistribuidorVO {
 			boolean utilizaSugestaoIncrementoCodigo) {
 		this.utilizaSugestaoIncrementoCodigo = utilizaSugestaoIncrementoCodigo;
 	}
+
+	public String getNumeroTelefone() {
+		return numeroTelefone;
+	}
+
+	public void setNumeroTelefone(String numeroTelefone) {
+		this.numeroTelefone = numeroTelefone;
+	}
+
+	public String getNumeroDDD() {
+		return numeroDDD;
+	}
+
+	public void setNumeroDDD(String numeroDDD) {
+		this.numeroDDD = numeroDDD;
+	}
+	
+	
     
 }
