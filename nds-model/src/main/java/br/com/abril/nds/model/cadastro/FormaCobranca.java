@@ -61,6 +61,9 @@ public class FormaCobranca implements Serializable {
 	@Column(name = "TAXA_MULTA", precision=18, scale=4)
 	private BigDecimal taxaMulta;
 	
+	@Column(name = "VALOR_MULTA", precision=18, scale=4)
+	private BigDecimal valorMulta;
+	
 	@Column(name = "TAXA_JUROS_MENSAL", precision=18, scale=4)
 	private BigDecimal taxaJurosMensal;
 	
@@ -150,6 +153,20 @@ public class FormaCobranca implements Serializable {
 		this.taxaMulta = taxaMulta;
 	}
 	
+	/**
+	 * @return the valorMulta
+	 */
+	public BigDecimal getValorMulta() {
+		return valorMulta;
+	}
+
+	/**
+	 * @param valorMulta the valorMulta to set
+	 */
+	public void setValorMulta(BigDecimal valorMulta) {
+		this.valorMulta = valorMulta;
+	}
+
 	public BigDecimal getTaxaJurosMensal() {
 		return taxaJurosMensal;
 	}

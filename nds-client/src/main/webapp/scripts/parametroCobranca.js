@@ -326,6 +326,7 @@ var parametroCobrancaController = $.extend(true,
 				$('.tdMulta', this.workspace).show();			
 				$('.tdJuros', this.workspace).show();
 	
+				$("#dBanco", this.workspace).val("");
 		    }
 			
 			else if (op=='BOLETO_EM_BRANCO'){
@@ -341,6 +342,8 @@ var parametroCobrancaController = $.extend(true,
 				$('.tdValorMinimo', this.workspace).hide();			
 				$('.tdMulta', this.workspace).show();			
 				$('.tdJuros', this.workspace).show();
+				
+				$("#dBanco", this.workspace).val("");
 		    }
 			
 			if((op=='BOLETO') || (op=='BOLETO_EM_BRANCO')){
@@ -349,6 +352,7 @@ var parametroCobrancaController = $.extend(true,
 				$('.formPgto', this.workspace).hide();
 			}
 			
+			parametroCobrancaController.obterDadosBancarios($("#dBanco", this.workspace).val());
 		},
 		
 		
@@ -508,9 +512,9 @@ var parametroCobrancaController = $.extend(true,
 					idFornecedorPadrao : $("#comboFornecedorPadrao option:selected", this.workspace).val(),
 					fatorVencimento : $("#comboFatorVencimento option:selected", this.workspace).val(),
 					valorMinimo : floatValue($("#valorMinimo", this.workspace).val()),
-					taxaMulta : $("#taxaMulta", this.worspace).val(),
-					valorMulta : $("#valorMulta", this.worspace).val(),
-					taxaJuros : $("#taxaJuros", this.worspace).val(),
+					taxaMulta : floatValue($("#taxaMulta", this.worspace).val()),
+					valorMulta : floatValue($("#valorMulta", this.worspace).val()),
+					taxaJuros : floatValue($("#taxaJuros", this.worspace).val()),
 					instrucoes : $("#instrucoes", this.worspace).val(),
 					acumulaDivida : $("#acumulaDivida", this.workspace).val() == 'S',
 					vencimentoDiaUtil : $("#vencimentoDiaUtil", this.workspace).val() == 'S',
@@ -752,12 +756,13 @@ var parametroCobrancaController = $.extend(true,
 			
 			if (idBanco == ""){
 				
-				$("#taxaMulta", this.workspace).val("0.00");
-				$("#valorMulta", this.workspace).val("0.00");
-				$("#taxaJuros", this.workspace).val("0.00");
-				$("#instrucoes", this.workspace).val("0.00");
-		        
+				parametroCobrancaController.bloquearCampos(false);
+				
 				return;
+				
+		    } else {
+		    	
+		    	parametroCobrancaController.bloquearCampos(true);
 		    }
 			
 			var data = [{name: 'idBanco', value: idBanco}];
@@ -768,6 +773,12 @@ var parametroCobrancaController = $.extend(true,
 					   true);
 		},
 		
+		bloquearCampos : function(bloquear) {
+			
+			$("#taxaMulta", this.workspace).attr('readonly', bloquear);
+			$("#valorMulta", this.workspace).attr('readonly', bloquear);
+			$("#taxaJuros", this.workspace).attr('readonly', bloquear);
+		},
 		
 		sucessCallbackCarregarDadosBancarios : function(result) {
 			$("#taxaMulta", this.workspace).val(result.multa);

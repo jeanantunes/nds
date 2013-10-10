@@ -264,7 +264,9 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 				parametroCobrancaDTO.setVencimentoDiaUtil(formaCobranca.isVencimentoDiaUtil() ? true : false);
 				parametroCobrancaDTO.setValorMinimo(formaCobranca.getValorMinimoEmissao() != null ? formaCobranca.getValorMinimoEmissao().setScale(2, RoundingMode.HALF_UP) : BigDecimal.ZERO);
 				parametroCobrancaDTO.setFormaCobrancaBoleto(formaCobranca.getFormaCobrancaBoleto());
-				
+				parametroCobrancaDTO.setTaxaMulta(formaCobranca.getTaxaMulta());
+				parametroCobrancaDTO.setValorMulta(formaCobranca.getValorMulta());
+				parametroCobrancaDTO.setTaxaJuros(formaCobranca.getTaxaJurosMensal());
 				
 				if ((concentracoesCobranca != null) && (concentracoesCobranca.size() > 0)) {
 					for (ConcentracaoCobrancaCota itemConcentracaoCobranca:concentracoesCobranca) {
@@ -302,7 +304,7 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 				}
 				
 			}
-
+			
 			Banco banco = formaCobranca.getBanco();
 			if (banco != null) {
 				parametroCobrancaDTO.setIdBanco(banco.getId());
@@ -404,8 +406,14 @@ public class PoliticaCobrancaServiceImpl implements PoliticaCobrancaService {
 		
 		formaCobranca.setRecebeCobrancaEmail(parametroCobrancaDTO.isEnvioEmail());
 		formaCobranca.setAtiva(true);
-		formaCobranca.setTaxaJurosMensal(parametroCobrancaDTO.getTaxaJuros());
-	    formaCobranca.setTaxaMulta(parametroCobrancaDTO.getTaxaMulta());
+		
+		if (parametroCobrancaDTO.getIdBanco() == null) {
+		
+			formaCobranca.setTaxaJurosMensal(parametroCobrancaDTO.getTaxaJuros());
+		    formaCobranca.setTaxaMulta(parametroCobrancaDTO.getTaxaMulta());
+		    formaCobranca.setValorMulta(parametroCobrancaDTO.getValorMulta());
+		}
+		
 	    formaCobranca.setValorMinimoEmissao(parametroCobrancaDTO.getValorMinimo());
 	    formaCobranca.setVencimentoDiaUtil(parametroCobrancaDTO.isVencimentoDiaUtil());
 	    
