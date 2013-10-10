@@ -237,7 +237,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		sql.append(" from ")
 		.append(" FixacaoReparte f ")
 		.append(" where f.cotaFixada.numeroCota = :cotaSelecionada ")
-		.append(" and f.produtoFixado.codigo = :produtoSelecionado  ");
+		.append(" and f.codigoICD = :produtoSelecionado  ");
 
 		Query query  = getSession().createQuery(sql.toString());
 		query.setParameter("cotaSelecionada",  fixacaoReparteDTO.getCotaFixada());

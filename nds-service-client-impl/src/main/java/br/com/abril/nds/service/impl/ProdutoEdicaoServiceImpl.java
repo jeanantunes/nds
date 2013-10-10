@@ -689,10 +689,11 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			segm.setFaixaEtaria(dto.getFaixaEtaria());
 			segm.setTemaPrincipal(dto.getTemaPrincipal());
 			segm.setTemaSecundario(dto.getTemaSecundario());
-			produtoEdicao.setTipoSegmentoProduto(tipoSegmentoProdutoService.obterTipoProdutoSegmentoPorId(dto.getTipoSegmentoProdutoId()));
+            if (dto.getTipoSegmentoProdutoId() != null) {
+                produtoEdicao.setTipoSegmentoProduto(tipoSegmentoProdutoService.obterTipoProdutoSegmentoPorId(dto.getTipoSegmentoProdutoId()));
+            }
 
 			produtoEdicao.setSegmentacao(segm);
-
 		}
 
 		//Campos editáveis, independente da Origem

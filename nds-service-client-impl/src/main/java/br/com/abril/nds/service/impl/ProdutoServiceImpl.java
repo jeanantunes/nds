@@ -33,7 +33,6 @@ import br.com.abril.nds.service.EstoqueProdutoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
 import br.com.abril.nds.service.ProdutoService;
 
-import static org.apache.commons.lang.StringUtils.left;
 import static org.apache.commons.lang.StringUtils.leftPad;
 
 /**
@@ -47,7 +46,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 
 	@Autowired
 	private ProdutoRepository produtoRepository;
-	
+
 	@Autowired
 	private ProdutoEdicaoService produtoEdicaoService;
 	
@@ -353,31 +352,20 @@ public class ProdutoServiceImpl implements ProdutoService {
 
 	@Override
 	@Transactional
-	public List<String> verificarProdutoExiste(String... codigoProduto) {
+	public List<String> verificarProdutoExiste(String... codigosProduto) {
 
-		//tratamento para codigo ICD que possa vir do excel na tela de mix cota produto
-		List<String> l = new ArrayList<String>();
-		for (String s : codigoProduto) {
-			if(s.length()==8)
-				l.add(s);
-		}
-		
-		
-		 String[] verificarProdutoExiste = null;
-		
-		if(l.isEmpty())
-			verificarProdutoExiste = codigoProduto;
-		else{
-			verificarProdutoExiste = new String[l.size()];
-			for (int i = 0; i < l.size(); i++) {
-				verificarProdutoExiste[i] = l.get(i);
-			}
-		}
-		
-		return produtoRepository.verificarProdutoExiste(codigoProduto);
-	}
-	
-	@Override
+        List<String> produtosValidos = new ArrayList<>();
+        for (String codigoProduto : codigosProduto) {
+            Produto produto = obterProdutoPorCodigo(codigoProduto);
+            if (produto != null) {
+                produtosValidos.add(codigoProduto);
+            }
+        }
+
+        return produtosValidos;
+    }
+
+    @Override
 	@Transactional
 	public List<TipoSegmentoProduto> carregarSegmentos() {
 		return segmentoRepository.buscarTodos();
