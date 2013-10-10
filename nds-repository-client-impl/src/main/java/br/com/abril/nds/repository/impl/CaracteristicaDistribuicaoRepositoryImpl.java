@@ -78,28 +78,34 @@ public class CaracteristicaDistribuicaoRepositoryImpl   implements
 		.append(" from produto pro ")
 		.append(" left join produto_edicao ped on pro.ID = ped.PRODUTO_ID ")
 		.append(" left join tipo_segmento_produto tiposeg ON tiposeg.ID = pro.TIPO_SEGMENTO_PRODUTO_ID ")
-		.append(" left join tipo_classificacao_produto tipoclas ON tipoclas.ID = pro.tipo_classificacao_produto_id ")
+		.append(" left join tipo_classificacao_produto tipoclas ON tipoclas.ID = ped.tipo_classificacao_produto_id ")
 		.append(" left join brinde bri ON bri.ID = ped.BRINDE_ID  ")
 		.append(" left join editor edi on edi.id = pro.editor_id ")
 		.append(" left join pessoa pes2 on pes2.id = edi.JURIDICA_ID ")
 		.append(" left join lancamento lan on lan.ID = ped.ID  ")
 		.append(" left join estoque_produto est on est.PRODUTO_EDICAO_ID = ped.ID  ")
 		.append(" where  1=1 ");
+		
 		if(filtro.getCodigoProduto() !=null && filtro.getCodigoProduto() != ""){
-			sql.append(" and pro.id = " ).append(filtro.getIdProduto());
+			sql.append(" and pro.codigo_icd = " ).append(filtro.getCodigoProduto());
 		}
+		
 		if(filtro.getClassificacaoProduto()!=null && filtro.getClassificacaoProduto()!=""){
 			sql.append(" and upper(tipoclas.descricao) = upper('").append(filtro.getClassificacaoProduto()).append("')");
 		}
+		
 		if(filtro.getSegmento()!=null && filtro.getSegmento()!=""){
 	    sql.append(" and upper(tiposeg.DESCRICAO) = upper('").append(filtro.getSegmento()).append("')");
 		}
+		
 		if(filtro.getBrinde()!=null && filtro.getBrinde()!=""){
 			sql.append(" and upper(bri.DESCRICAO_BRINDE) = upper('").append(filtro.getBrinde()).append("')");
 		}
+		
 		if(filtro.getFaixaPrecoDe()!=null && filtro.getFaixaPrecoDe()!=""){
 			sql.append(" and ped.PRECO_VENDA >=" ).append(filtro.getFaixaPrecoDe()).append("");
 		}
+		
 		if(filtro.getFaixaPrecoAte()!=null && filtro.getFaixaPrecoAte()!=""){
 			sql.append(" and ped.PRECO_VENDA <=" ).append(filtro.getFaixaPrecoAte()).append("");
 		}
@@ -139,11 +145,14 @@ public class CaracteristicaDistribuicaoRepositoryImpl   implements
 				}
 				
 		}
-				sql.append(this.ordenarConsultaCaracteristicaDistribuicaoDetalhe(filtro));
-				Query  query = getSession().createSQLQuery(sql.toString()); 
-				 query.setResultTransformer(new AliasToBeanResultTransformer(CaracteristicaDistribuicaoDTO.class));
-				 configurarPaginacaoPesquisaDetalhe(filtro,query);
-				return query.list();
+		
+		sql.append(this.ordenarConsultaCaracteristicaDistribuicaoDetalhe(filtro));
+		
+			Query  query = getSession().createSQLQuery(sql.toString()); 
+			query.setResultTransformer(new AliasToBeanResultTransformer(CaracteristicaDistribuicaoDTO.class));
+			configurarPaginacaoPesquisaDetalhe(filtro,query);
+			
+		return query.list();
 	}
 	
 	private String ordenarConsultaCaracteristicaDistribuicaoDetalhe(FiltroConsultaCaracteristicaDistribuicaoDetalheDTO filtro) {
