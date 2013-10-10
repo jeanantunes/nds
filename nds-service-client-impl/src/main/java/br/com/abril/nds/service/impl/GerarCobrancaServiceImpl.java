@@ -238,28 +238,44 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		this.geradorArquivoCobrancaBancoService.prepararGerarArquivoCobrancaCnab();
 	}
+	
+	/**
+	 * Consolida Financeiro, Gera Divida e Posterga Divida Gerada para Cotas especificas
+	 * 
+	 * @param List<Cota>
+	 * @param idUsuario
+	 * @throws GerarCobrancaValidacaoException
+	 */
+	@Override
+	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
+	public void gerarDividaPostergadaCotas(List<Cota> cotas, 
+			                               Long idUsuario)
+		throws GerarCobrancaValidacaoException {
+		
+		for (Cota c : cotas){
+			
+			this.gerarDividaPostergada(c.getId(), 
+					                   idUsuario);
+		}
+	}
 
 	/**
-	 * Consolida Financeiro, Gera Divida e Posterga Divida Gerada
+	 * Consolida Financeiro, Gera Divida e Posterga Divida Gerada para Cota especifica
 	 * 
 	 * @param idCota
 	 * @param idUsuario
-	 * @param setNossoNumero
 	 * @throws GerarCobrancaValidacaoException
 	 */
 	@Override
 	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
 	public void gerarDividaPostergada(Long idCota, 
-			                          Long idUsuario, 
-			                          Map<String, Boolean> setNossoNumero)
+			                          Long idUsuario)
 		throws GerarCobrancaValidacaoException {
 		
 		this.gerarCobrancaCota(idCota, 
 				               idUsuario, 
-				               setNossoNumero,
+				               new HashMap<String, Boolean>(),
         		               true);
-		
-		this.geradorArquivoCobrancaBancoService.prepararGerarArquivoCobrancaCnab();
 	}
 	
 	/**
@@ -754,7 +770,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 							                                       vlMovPostergado, 
 							                                       usuario, 
 							                                       null, 
-							                                       dataOperacao);
+							                                       dataOperacao,
+							                                       postergarDividas?"Processamento Financeiro - Divida postergada":null);
 			
 			this.consolidadoFinanceiroRepository.adicionar(consolidadoFinanceiroCota);
 			
@@ -959,7 +976,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 					                                       vlMovFinanTotal, 
 					                                       usuario,
 					                                       diasSemanaConcentracaoPagamento, 
-					                                       dataOperacao);
+					                                       dataOperacao,
+					                                       null);
 		}
 		
 		this.consolidadoFinanceiroRepository.adicionar(consolidadoFinanceiroCota);
@@ -1065,6 +1083,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	 * @param usuario
 	 * @param diasSemanaConcentracaoPagamento
 	 * @param dataOperacao
+	 * @param descPostergado
 	 * @return MovimentoFinanceiroCota
 	 */
 	private MovimentoFinanceiroCota gerarPostergado(Cota cota,
@@ -1076,7 +1095,8 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			                                        BigDecimal vlMovFinanPostergado, 
 			                                        Usuario usuario,
 			                                        List<Integer> diasSemanaConcentracaoPagamento, 
-			                                        Date dataOperacao) {
+			                                        Date dataOperacao,
+			                                        String descPostergado) {
 		
 		//gerar postergado
 		consolidadoFinanceiroCota.setValorPostergado(vlMovFinanPostergado);
@@ -1105,18 +1125,19 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			return null;
 		}
 		
-		String descPostergado = null;
+		if (descPostergado == null){
 		
-		if (diasSemanaConcentracaoPagamento == null){
-			
-			descPostergado = "Forma de cobrança não encontrada para a cota: "+ cota.getNumeroCota() +", a cobrança será postergada.";
-		} else if (!diasSemanaConcentracaoPagamento.contains(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))){
-			
-			descPostergado = "Não existe acúmulo de pagamento para este dia (" + 
-					new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()) + ")";
-		} else {
-			
-			descPostergado = "Valor mínimo para dívida não atingido";
+			if (diasSemanaConcentracaoPagamento == null){
+				
+				descPostergado = "Forma de cobrança não encontrada para a cota: "+ cota.getNumeroCota() +", a cobrança será postergada.";
+			} else if (!diasSemanaConcentracaoPagamento.contains(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))){
+				
+				descPostergado = "Não existe acúmulo de pagamento para este dia (" + 
+						new SimpleDateFormat("dd/MM/yyyy").format(Calendar.getInstance().getTime()) + ")";
+			} else {
+				
+				descPostergado = "Valor mínimo para dívida não atingido";
+			}
 		}
 		
 		//gera movimento financeiro cota

@@ -1220,6 +1220,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		return (BigDecimal) query.uniqueResult();
 	}
 	
+	
 	/**
 	 * Obtem Quantidade de Informações para o processamento financeiro (Geração de MovimentoFinanceiroCota, Divida e Cobrança) das Cotas
 	 * @param numeroCota
