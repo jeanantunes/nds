@@ -387,33 +387,6 @@ var parametroCobrancaController = $.extend(true,
 					   true);
 		},
 
-		obterSugestaoFornecedorPadrao : function(idFornecedorPadrao){
-			
-			var sel;
-
-			$.each($("#comboFornecedorPadrao option", this.workspace), function(index, value) { 
-
-				if(!idFornecedorPadrao){
-					
-					if (this.label=='Dinap'){
-						
-						sel = this.value;
-						
-						return false;
-					}
-				}
-				    
-				sel = idFornecedorPadrao;
-			});
-			
-			if (!sel){
-				
-				sel = 0;
-			}
-			
-			$("#comboFornecedorPadrao", this.workspace).val(sel);
-		},
-
 		sucessCallbackObterParametro : function(resultado) {
 			
 			var formaEmissao = resultado.formaEmissao;
@@ -484,8 +457,6 @@ var parametroCobrancaController = $.extend(true,
 					this.selected = true;
 				 }
 			});
-
-			parametroCobrancaController.obterSugestaoFornecedorPadrao(resultado.idFornecedorPadrao);
 
 			parametroCobrancaController.tratarSelecaoFornecedorPadrao();
 			
@@ -687,7 +658,8 @@ var parametroCobrancaController = $.extend(true,
 				$(this, this.workspace).attr('checked',false);
 			});	
 			$('[name=concentracaoPagamento]', this.workspace).attr('checked',false);
-	
+			
+			parametroCobrancaController.tratarSelecaoFornecedorPadrao();	
 		},	
 		
 		
@@ -736,48 +708,34 @@ var parametroCobrancaController = $.extend(true,
 			if (isUnificada == 'N') {
 			
 				$("input[name='checkGroupFornecedores']").prop("checked", false);
-				$("input[name='checkGroupFornecedores']").on('click', parametroCobrancaController.selectOneCheckBox);
+				
+				parametroCobrancaController.tratarSelecaoFornecedorPadrao();
+				
+				$("input[name='checkGroupFornecedores']").prop("disabled", true);
 				
 			} else {
 				
-				$("input[name='checkGroupFornecedores']").off('click');
+				parametroCobrancaController.habilitarTodosFornecedores();
+				
+				parametroCobrancaController.tratarSelecaoFornecedorPadrao();
 			}
-		},
-		
-		selectOneCheckBox: function() {
-			
-			if ($(this).is(":checked")) {
-		        var group = "input:checkbox[name='checkGroupFornecedores']";
-		        $(group).prop("checked", false);
-		        $(this).prop("checked", true);
-		    } else {
-		        $(this).prop("checked", false);
-		    }
 		},
 		
 		tratarSelecaoFornecedorPadrao: function() {
 		
-			parametroCobrancaController.desabilitarFornecedorPadrao();
-			
-			var isUnificada = $("#unificada").val();
-			
-			if (isUnificada == 'S') {
-
-				parametroCobrancaController.desabilitarFornecedorPadrao(true);
-			
-			} else {
-
-				$("#comboFornecedorPadrao", this.workspace).off('change');
-				
-				parametroCobrancaController.habilitarTodosFornecedores();
-			} 
+			parametroCobrancaController.desabilitarFornecedorPadrao(true);
 		},
 
-		desabilitarFornecedorPadrao: function(check) {		
-
+		desabilitarFornecedorPadrao: function(check) {
+		
 			$("#comboFornecedorPadrao", this.workspace).focus(function () {
 				previous = this.value;
 			}).on('change', function() {
+				var isUnificada = $("#unificada").val();
+				if (isUnificada == 'S') 
+					parametroCobrancaController.habilitarTodosFornecedores();
+				else
+					$("input[name='checkGroupFornecedores']").prop("checked", false);
 				$("#ParamCob-fornecedor_" + this.value, this.workspace).attr('disabled', true);
 				$("#ParamCob-fornecedor_" + this.value, this.workspace).attr('checked', check);
 			});
@@ -787,10 +745,7 @@ var parametroCobrancaController = $.extend(true,
 		
 		habilitarTodosFornecedores: function() {
 		
-			$.each($("#comboFornecedorPadrao option", this.workspace), function(index, row) {
-				$("#ParamCob-fornecedor_"+ index, this.workspace).attr('disabled', false);
-				// $("#ParamCob-fornecedor_"+ this.value, this.workspace).attr('checked', false);
-			});
+			$("input[name='checkGroupFornecedores']", this.workspace).attr('disabled', false);
 		},
 		
 		obterDadosBancarios : function(idBanco){
