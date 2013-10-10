@@ -3,8 +3,11 @@ package br.com.abril.nds.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import org.quartz.impl.StdScheduler;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.quartz.SchedulerFactoryBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +29,7 @@ import br.com.abril.nds.util.QuartzUtil;
  *
  */
 @Service
-public class SituacaoCotaServiceImpl implements SituacaoCotaService {
+public class SituacaoCotaServiceImpl implements SituacaoCotaService, ApplicationContextAware {
 
 	@Autowired
 	private HistoricoSituacaoCotaRepository historicoSituacaoCotaRepository;
@@ -37,8 +40,11 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService {
 	@Autowired
 	private DistribuidorRepository distribuidorRepository;
 	
-	@Autowired
-	private SchedulerFactoryBean schedulerFactoryBean;
+	ApplicationContext applicationContext = null;
+	
+	public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
+        this.applicationContext = applicationContext;
+    }
 	
 	/*
 	 * (non-Javadoc)
@@ -115,8 +121,10 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService {
 			throw new IllegalArgumentException("ID da Cota nulo!");
 		}
 		
-		QuartzUtil.doAgendador(this.schedulerFactoryBean.getScheduler())
-			.removeJobsFromGroup(idCota.toString());
+		StdScheduler schedulerFactoryBean = (StdScheduler) applicationContext.getBean("schedulerFactoryBean");
+		
+		QuartzUtil.doAgendador(schedulerFactoryBean).removeJobsFromGroup(idCota.toString());
+		
 	}
 
 

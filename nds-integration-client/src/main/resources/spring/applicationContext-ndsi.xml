@@ -28,6 +28,5 @@
 	<import resource="applicationContext-ndsi-persistence.xml" />
 	
 	<bean class="com.ancientprogramming.fixedformat4j.format.impl.FixedFormatManagerImpl"/>
-	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean"/>
 	
 </beans>
