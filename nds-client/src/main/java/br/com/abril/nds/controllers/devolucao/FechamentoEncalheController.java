@@ -331,7 +331,7 @@ public class FechamentoEncalheController extends BaseController {
 		 * Regra solicitada pela Magali / Rodrigo
 		 * Remover a validacao da semana de recolhimento e permitir qualquer data futura em relacao a data de operacao
 		 */
-		else if (dataPostergacao.after(distribuidorService.obterDataOperacaoDistribuidor())) {
+		else if (!dataPostergacao.after(distribuidorService.obterDataOperacaoDistribuidor())) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "A Data de Postergação deve ser maior que a data de operação!");
 		}
 		/*else if (  fechamentoEncalheService.buscarUtimoDiaDaSemanaRecolhimento().before(dataPostergacao) ){
