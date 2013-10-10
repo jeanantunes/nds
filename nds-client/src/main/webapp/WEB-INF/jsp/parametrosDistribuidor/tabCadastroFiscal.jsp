@@ -167,6 +167,15 @@
 						   maxlength="60" />
 				</td>
 			</tr>
+			
+			<tr>
+				<td>Telefone: </td>
+				<td>
+					<input type="text" style="width:40px" id="numeroDDD" maxlength="2" value="${parametrosDistribuidor.numeroDDD}"/>-
+					<input type="text" style="width:70px" id="numeroTelefone" maxlength="8" value="${parametrosDistribuidor.numeroTelefone}"/>
+				</td>
+			</tr>
+			
 		</table>
 	</fieldset>
 	
