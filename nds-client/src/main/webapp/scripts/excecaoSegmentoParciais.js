@@ -165,12 +165,12 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 		autoComplete.limparCampoOnChange('#cotasQueNaoRecebemNomeCota', new Array('#cotasQueNaoRecebemNumeroCota'));
 		
 		$('#pesquisarProdutosParciaisNaoRecebidos').click(function (){
-			if (($('#idProduto').val() == '') && ($('#nomeProduto').val() == '')) {
-				exibirMensagem('WARNING', ["Informe pelo menos um filtro para a pesquisa."]);
+			if ($('#codigoProduto').val() == ''  ||  $('#comboClassificacaoProdNRec').val() == '') {
+				exibirMensagem('WARNING', ["Informe o filtro para a pesquisa."]);
 			} else {
 				excecaoSegmentoParciaisController.pesquisarProdutoNaoRecebidoPeloNomeOuCodigo({
 					codigo: $('#codigoProduto').val(), 
-					nome: $('#nomeProduto').val(),
+					//nome: $('#nomeProduto').val(),
 					classifProduto: $('#comboClassificacaoProdNRec').val()
 				});
 			}
@@ -298,6 +298,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 				PreProcess : {
 					_default : function(result){
 						
+						
 						if (result.mensagens) {
 
 							exibirMensagem(result.mensagens.tipoMensagem,
@@ -308,7 +309,14 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 							return result;
 						}
 
-						var isExist = false;
+						if(result.rows.length==0){
+							result.rows = 0;
+							exibirMensagem("WARNING",
+									["Não encontrado produtos para essa classificação."]);
+							return result;
+							
+						}
+						/*var isExist = false;
 
 						if(excecaoSegmentoParciaisController.tempArray!=null){
 							
@@ -347,13 +355,13 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 							if(result.rows.length > 0){
 								excecaoSegmentoParciaisController.tempArray = result.rows;
 							}
-						}
+						}*/
 						
 						$.each(result.rows, function(index, row) {
 							
 							var checkBox = '<input type="checkbox" name="produtoNaoRecebido" value="' + row.cell.idProduto + '" />';
 							
-							row.cell.sel = checkBox;
+							row.cell.sel = '';
 						});
 						
 						$(".grids").show();
@@ -445,13 +453,29 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 				},
 				init : 
 					$(".excessaoCotaGrid").flexigrid({
-						colModel : [ {
+						colModel : [{
+							display : 'Ação',
+							name : 'acao',
+							width : 30,
+							sortable : true,
+							align : 'center'
+						},
+						{
 							display : 'Código',
 							name : 'codigoProduto',
 							width : 60,
 							sortable : true,
 							align : 'left'
-						}, {
+						},
+						{
+							display : 'Classificação',
+							name : 'classificacaoProduto',
+							width : 80,
+							sortable : true,
+							align : 'left'
+						},
+						
+						{
 							display : 'Produto',
 							name : 'nomeProduto',
 							width : 90,
@@ -473,12 +497,6 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 							display : 'Hora',
 							name : 'horaAlteracaoFormatada',
 							width : 60,
-							sortable : true,
-							align : 'center'
-						},  {
-							display : 'Ação',
-							name : 'acao',
-							width : 30,
 							sortable : true,
 							align : 'center'
 						}],
@@ -832,16 +850,21 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 				"Confirmar": function() {
 					$( this ).dialog( "close" );
 
-					$("input[type=checkbox][name='produtoNaoRecebido']:checked").each(function(){
+//					$("input[type=checkbox][name='produtoNaoRecebido']:checked").each(function(){
 						params.push({
 							name : "listaIdProduto",
-							value : this.value
+							value : $("#codigoProduto").val()
 						});
-					});
+//					});
 					
 					params.push({
 						name : "filtro.excecaoSegmento",
 						value : $('#tipoExcecaoSegmento').is(':checked')
+					});
+					
+					params.push({
+						name : "filtro.produtoDto.idClassificacaoProduto",
+						value : $('#comboClassificacaoProdNRec').val()
 					});
 					
 					// jQuery.post( url [, data ] [, success(data, textStatus, jqXHR) ] [, dataType ] )
@@ -1100,11 +1123,7 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 	// Produtos não Recebidos - Secundário
 	pesquisarProdutoNaoRecebidoPeloNomeOuCodigo : function pesquisarProduto(produto){
 			
-			$("#codigoProduto").val('');
-			$("#nomeProduto").val('');
-			$("#cotasQueNaoRecebemNumeroCota").val('');
-			$("#cotasQueNaoRecebemNomeCota").val('');
-			$("#comboClassificacaoProdNRec").val('');
+			$("#cotasQueNaoRecebemNumeroCota,#cotasQueNaoRecebemNomeCota").val('');
 		
 			var util = excecaoSegmentoParciaisController.Util,
 			ProdutosNaoRecebidosGrid = excecaoSegmentoParciaisController.Grids.ProdutosNaoRecebidosGrid;

@@ -14,12 +14,16 @@ import br.com.abril.nds.dto.filtro.FiltroExcecaoSegmentoParciaisDTO;
 import br.com.abril.nds.model.distribuicao.ExcecaoProdutoCota;
 import br.com.abril.nds.repository.ExcecaoSegmentoParciaisRepository;
 import br.com.abril.nds.service.ExcecaoSegmentoParciaisService;
+import br.com.abril.nds.service.ProdutoService;
 
 @Service
 public class ExcecaoSegmentoParciaisServiceImpl implements ExcecaoSegmentoParciaisService {
 
 	@Autowired
 	private ExcecaoSegmentoParciaisRepository excecaoSegmentoParciaisRepository; 
+	
+	@Autowired
+	private ProdutoService produtoService;
 	
 	@Transactional(readOnly = true)
 	@Override
@@ -31,6 +35,7 @@ public class ExcecaoSegmentoParciaisServiceImpl implements ExcecaoSegmentoParcia
 	@Transactional(readOnly = true)
 	@Override
 	public List<ProdutoNaoRecebidoDTO> obterProdutosNaoRecebidosPelaCota(FiltroExcecaoSegmentoParciaisDTO filtro) {
+		checkCodigoProduto(filtro);
 		return excecaoSegmentoParciaisRepository.obterProdutosNaoRecebidosPelaCota(filtro);
 	}
 
@@ -38,6 +43,10 @@ public class ExcecaoSegmentoParciaisServiceImpl implements ExcecaoSegmentoParcia
 	@Override
 	public void inserirListaExcecao(List<ExcecaoProdutoCota> listaExcessaoProdutoCota) {
 		for (ExcecaoProdutoCota excessaoProdutoCota : listaExcessaoProdutoCota) {
+			if(excessaoProdutoCota.getCodigoICD().length()==8){
+				String icd = this.produtoService.obterProdutoPorCodigo(excessaoProdutoCota.getCodigoICD()).getCodigoICD();
+				excessaoProdutoCota.setCodigoICD(icd);
+			}
 			excecaoSegmentoParciaisRepository.adicionar(excessaoProdutoCota);
 		}
 	}
@@ -51,13 +60,22 @@ public class ExcecaoSegmentoParciaisServiceImpl implements ExcecaoSegmentoParcia
 	@Transactional(readOnly = true)
 	@Override
 	public List<CotaQueRecebeExcecaoDTO> obterCotasQueRecebemExcecaoPorProduto(	FiltroExcecaoSegmentoParciaisDTO filtro) {
+		checkCodigoProduto(filtro);
 		return excecaoSegmentoParciaisRepository.obterCotasQueRecebemExcecaoPorProduto(filtro);
 	}
 
 	@Transactional(readOnly = true)
 	@Override
 	public List<CotaQueNaoRecebeExcecaoDTO> obterCotasQueNaoRecebemExcecaoPorProduto(FiltroExcecaoSegmentoParciaisDTO filtro) {
+		checkCodigoProduto(filtro);
 		return excecaoSegmentoParciaisRepository.obterCotasQueNaoRecebemExcecaoPorProduto(filtro);
+	}
+
+	private void checkCodigoProduto(FiltroExcecaoSegmentoParciaisDTO filtro) {
+		if(filtro.getProdutoDto().getCodigoProduto().length()==8){
+			String icd = this.produtoService.obterProdutoPorCodigo(filtro.getProdutoDto().getCodigoProduto()).getCodigoICD();
+			filtro.getProdutoDto().setCodigoProduto(icd);
+		}
 	}
 	
 	@Transactional(readOnly = true)
