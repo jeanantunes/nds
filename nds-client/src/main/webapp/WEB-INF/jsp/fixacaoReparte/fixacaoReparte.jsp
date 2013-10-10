@@ -244,6 +244,7 @@ function mostraIntervalo(){
 			       </td>
 			       <td width="119">
 			       		<select name="selectModal" id="selectModal" style="width:160px;display:none;">
+                            <option value="-1">SELECIONE</option>
 				            <c:forEach items="${classificacao}" var="tipoProduto">
 								<option value="<c:out value="${tipoProduto.id}"/>" ${tipoProduto.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoProduto.descricao}"/></option>
 							</c:forEach>
@@ -346,11 +347,11 @@ function mostraIntervalo(){
     	<table width="500" border="0" cellspacing="1" cellpadding="1">
           <tr>
             <td width="42"><strong>Código:</strong></td>
-            <td width="92">&nbsp;<span id="codigoProdutoModalReparte"></td>
+            <td width="92">&nbsp;<span id="codigoProdutoModalReparte"/></td>
             <td width="44"><strong>Produto:</strong></td>
-            <td width="400">&nbsp;<span id="nomeProdutoModalReparte" ></td>
+            <td width="400">&nbsp;<span id="nomeProdutoModalReparte" /></td>
             <td width="44"><strong>Classificação:</strong></td>
-            <td width="155">&nbsp;<span id="classificacaoModalReparte"></td>
+            <td width="200">&nbsp;<span id="classificacaoModalReparte"/></td>
           </tr>
         </table>
 

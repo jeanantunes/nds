@@ -28,7 +28,7 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	/**
 	 * Obtém produtos cujo código começa com o código informado.
 	 * 
-	 * @param código - código do produto
+	 * @param codigo - código do produto
 	 * 
 	 * @return {@link List<Produto>}
 	 */
@@ -77,7 +77,8 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 	List<Produto> buscarProdutosBalanceadosOrdenadosNome(Date dataLancamento);
 
 	List<String> verificarProdutoExiste(String... codigoProduto);
-	
+
+    @Deprecated
 	String obterCodigoProdinPorCodICD (String codigoProduto);
 
     Produto obterProdutoPorCodigoICD(String codigoProduto);
