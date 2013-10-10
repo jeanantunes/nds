@@ -502,20 +502,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		return this.fechamentoEncalheRepository.obterTotalCotasAusentes(dataEncalhe, isSomenteCotasSemAcao, null, null, 0, 0);
 	}
-	
-	private class FechamentoAscComparator implements Comparator<FechamentoFisicoLogicoDTO> {
-		@Override
-		public int compare(FechamentoFisicoLogicoDTO o1, FechamentoFisicoLogicoDTO o2) {
-			return o1.getTotal().compareTo(o2.getTotal());
-		}
-	}
-	
-	private class FechamentoDescComparator implements Comparator<FechamentoFisicoLogicoDTO> {
-		@Override
-		public int compare(FechamentoFisicoLogicoDTO o1, FechamentoFisicoLogicoDTO o2) {
-			return o2.getTotal().compareTo(o1.getTotal());
-		}
-	}
 
 
 	@Override
