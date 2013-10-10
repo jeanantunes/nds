@@ -10,6 +10,8 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
+import org.springframework.security.core.context.SecurityContextHolder;
+
 import br.com.abril.nds.client.util.Constants;
 import br.com.abril.nds.controllers.devolucao.ConferenciaEncalheController;
 
@@ -18,7 +20,11 @@ public class ControleSessionListener implements HttpSessionListener {
 
 
 	@Override
-	public void sessionCreated(HttpSessionEvent sessionEvent) {}
+	public void sessionCreated(HttpSessionEvent sessionEvent) {
+		
+		sessionEvent.getSession().setAttribute("X9 LISTENER", 
+				SecurityContextHolder.getContext().getAuthentication().getName());
+	}
 
 	@Override
 	public void sessionDestroyed(HttpSessionEvent sessionEvent) {
