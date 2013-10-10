@@ -853,8 +853,10 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 
 	public void setTipoClassificacaoProduto(TipoClassificacaoProduto tipoClassificacaoProduto) {
 		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
-		this.tipoClassificacaoFormatado = tipoClassificacaoProduto.getDescricao();
-		this.idTipoClassificacaoProduto = tipoClassificacaoProduto.getId();
+        if (tipoClassificacaoProduto != null) {
+            this.tipoClassificacaoFormatado = tipoClassificacaoProduto.getDescricao();
+            this.idTipoClassificacaoProduto = tipoClassificacaoProduto.getId();
+        }
 	}
 
 	public String getStatus() {

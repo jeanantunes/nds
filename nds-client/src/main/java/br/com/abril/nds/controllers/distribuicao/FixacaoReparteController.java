@@ -482,8 +482,6 @@ public class FixacaoReparteController extends BaseController {
 		
 		if(msg.isEmpty()){
 			try {
-				
-				
 				boolean gerarCopiaMix = this.fixacaoReparteService.gerarCopiafixacao(copiaDTO);
 				if (gerarCopiaMix) {
 					tipoMsg = TipoMensagem.SUCCESS;
@@ -575,7 +573,8 @@ public class FixacaoReparteController extends BaseController {
 		if (fixacaoReparteDTO.getQtdeEdicoes() != null) {
 			return fixacaoReparteDTO.getQtdeEdicoes() > MAX_EDICOES;
 		}
-		return (fixacaoReparteDTO.getEdicaoFinal() - fixacaoReparteDTO.getEdicaoInicial()) > MAX_EDICOES;
+		return fixacaoReparteDTO.getEdicaoInicial() == null || fixacaoReparteDTO.getEdicaoFinal() == null
+                || ((fixacaoReparteDTO.getEdicaoFinal() - fixacaoReparteDTO.getEdicaoInicial()) > MAX_EDICOES);
 	}
 
 
