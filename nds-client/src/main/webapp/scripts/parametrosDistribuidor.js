@@ -98,6 +98,9 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.endereco.codigoCidadeIBGE', value: $('#codigoCidadeIBGE', this.workspace).val()},
 			{name:'parametrosDistribuidor.endereco.codigoBairro', value: $('#codigoBairro', this.workspace).val()},
 			
+			{name:'parametrosDistribuidor.numeroTelefone', value: $('#numeroTelefone', this.workspace).val()},
+			{name:'parametrosDistribuidor.numeroDDD', value: $('#numeroDDD', this.workspace).val()},
+			
 			{name:'parametrosDistribuidor.regimeTributario', value: $('#regimeTributario', this.workspace).val()},
 			{name:'parametrosDistribuidor.obrigacaoFiscal', value: $('#obrigacaoFiscal', this.workspace).val()},
 			{name:'parametrosDistribuidor.regimeEspecial', value: $('#regimeEspecial', this.workspace).is(':checked')},
@@ -554,6 +557,9 @@ var parametrosDistribuidorController = $.extend(true, {
 		parametrosDistribuidorController.exibirContratoCota();
 		
 		parametrosDistribuidorController.desabilitarItens();
+		
+		$("#numeroDDD", this.workspace).numeric();
+		$("#numeroTelefone", this.workspace).numeric();
 		
 	},
 	

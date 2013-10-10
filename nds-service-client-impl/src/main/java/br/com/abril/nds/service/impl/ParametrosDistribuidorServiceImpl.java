@@ -38,6 +38,8 @@ import br.com.abril.nds.model.cadastro.ParametrosRecolhimentoDistribuidor;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaChamadao;
 import br.com.abril.nds.model.cadastro.PoliticaSuspensao;
+import br.com.abril.nds.model.cadastro.Telefone;
+import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoGarantia;
 import br.com.abril.nds.model.cadastro.TipoGarantiaAceita;
 import br.com.abril.nds.model.cadastro.TipoImpressaoCE;
@@ -45,6 +47,7 @@ import br.com.abril.nds.model.cadastro.TipoImpressaoInterfaceLED;
 import br.com.abril.nds.model.cadastro.TipoImpressaoNENECADANFE;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorFaltasSobras;
+import br.com.abril.nds.model.cadastro.TipoTelefone;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
@@ -58,6 +61,8 @@ import br.com.abril.nds.repository.ParametroContratoCotaRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorEmissaoDocumentoRepository;
 import br.com.abril.nds.repository.ParametrosDistribuidorFaltasSobrasRepository;
 import br.com.abril.nds.repository.PessoaRepository;
+import br.com.abril.nds.repository.TelefoneDistribuidorRepository;
+import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.repository.TipoGarantiaAceitaRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
@@ -121,6 +126,14 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 	
 	private CouchDbClient couchDbClient;
 	
+	@Autowired
+	private TelefoneRepository telefoneRepository;
+	
+	@Autowired
+	private TelefoneDistribuidorRepository telefoneDistribuidorRepository;
+	
+	
+	
 	@PostConstruct
 	public void initCouchDbClient() {
 		this.couchDbClient = new CouchDbClient(DB_NAME, true,
@@ -159,6 +172,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		
 		parametrosDistribuidor.setEndereco(
 			this.popularEnderecoVO(distribuidor.getEnderecoDistribuidor()));
+		
+		this.atribuirDadosTelefoneDistribuidor(parametrosDistribuidor,distribuidor);
 		
 		parametrosDistribuidor.setRegimeTributario(distribuidor.getTipoAtividade());
 		parametrosDistribuidor.setObrigacaoFiscal(distribuidor.getObrigacaoFiscal());
@@ -375,6 +390,59 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		return parametrosDistribuidor;
 	}
 	
+	private void atribuirDadosTelefoneDistribuidor(ParametrosDistribuidorVO parametrosDistribuidor, Distribuidor distribuidor) {
+		
+		TelefoneDistribuidor telefone = this.getTefoneDistribuidorPrincipal(distribuidor);
+		
+		if(telefone!= null){
+			parametrosDistribuidor.setNumeroDDD(telefone.getTelefone().getDdd());
+			parametrosDistribuidor.setNumeroTelefone(telefone.getTelefone().getNumero());
+		}
+	}
+	
+	private TelefoneDistribuidor getTefoneDistribuidorPrincipal(Distribuidor distribuidor){
+		
+		for(TelefoneDistribuidor item : distribuidor.getTelefones()){
+			if(item.isPrincipal()){
+				return item;
+			}
+		}
+		
+		return null;
+	}
+	
+	private void gravarTelefoneDistribuidor(Distribuidor distribuidor, String numerotelefone, String numeroDD){
+		
+		TelefoneDistribuidor telefoneFDistribuidor = this.getTefoneDistribuidorPrincipal(distribuidor);
+		
+		if (telefoneFDistribuidor == null){
+			
+			Telefone telefone = new Telefone();
+			telefone.setDdd(numeroDD);
+			telefone.setNumero(numerotelefone);
+			
+			telefone.setId(telefoneRepository.adicionar(telefone));
+			
+			telefoneFDistribuidor = new TelefoneDistribuidor();
+			
+			telefoneFDistribuidor.setDistribuidor(distribuidor);
+			telefoneFDistribuidor.setPrincipal(true);
+			telefoneFDistribuidor.setTipoTelefone(TipoTelefone.COMERCIAL);
+			telefoneFDistribuidor.setTelefone(telefone);
+			
+			telefoneDistribuidorRepository.adicionar(telefoneFDistribuidor);
+			
+		}
+		else{
+			
+			Telefone telefone = telefoneFDistribuidor.getTelefone();
+			telefone.setDdd(numeroDD);
+			telefone.setNumero(numerotelefone);
+			
+			telefoneRepository.alterar(telefone);
+		}
+	}
+
 	private PessoaJuridica gravarPessoaJuridicaDistribuidor(Distribuidor distribuidor,
 															ParametrosDistribuidorVO parametrosDistribuidor) {
 		
@@ -816,6 +884,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 			this.gravarEnderecoDistribuidor(distribuidor, parametrosDistribuidor.getEndereco()));
 		
 		this.salvarLogo(imgLogotipo, imgContentType);
+		
+		this.gravarTelefoneDistribuidor(distribuidor, parametrosDistribuidor.getNumeroTelefone(), parametrosDistribuidor.getNumeroDDD());
 	}
 	
 	private void validarUtilizacaoControleAprovacao(ParametrosDistribuidorVO parametrosDistribuidor) {
