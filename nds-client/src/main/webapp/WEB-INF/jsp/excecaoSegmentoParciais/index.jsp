@@ -3,6 +3,7 @@
 	<script type="text/javascript" src="scripts/excecaoSegmentoParciais.js" ></script>
 	<script type="text/javascript" src="scripts/pesquisaCota.js"></script>
 	<script type="text/javascript" src="scripts/pesquisaProduto.js"></script>
+	<script type="text/javascript" src="scripts/utils.js"></script>
 	<script type="text/javascript">
 
 	var	pesquisaCota = new PesquisaCota(),
@@ -91,18 +92,19 @@ function incluirSegmento() {
 	        <table width="950" border="0" cellspacing="2" cellpadding="2" class="filtro">
 	          <tr>
 	            <td width="20"><input type="radio" name="tipoExcecao" id="tipoExcecaoSegmento" checked="checked" class="pesquisaPorSegmento"/></td>
-	            <td width="188">Por Exceção Segmento</td> 
+	            <td width="188"> <label for="tipoExcecaoSegmento"> Por Exce&ccedil;&atilde;o Segmento </label></td> 
 	            <td width="20"><input type="radio" name="tipoExcecao" id="tipoExcecaoSegmento" class="pesquisaPorParcial" onclick="excecaoSegmentoParciaisController.limparCampos();"/></td>
-	            <td width="696">Por Exceção de Parciais</td>
+	            <td width="696"><label for="tipoExcecaoSegmento">Por Exce&ccedil;&atilde;o de Parciais</label></td>
 	          </tr>
 	        </table>
         
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
           <tr>
-            <td width="22" align="right"><input type="radio" name="filtroPor" id="radio" value="radio" onclick="excecaoSegmentoParciaisController.filtroPorCota();" /></td>
-            <td width="50">Cota</td>
+            <td width="22" align="right">
+            	<input type="radio" name="filtroPor" id="radio" value="radio" onclick="excecaoSegmentoParciaisController.filtroPorCota();" /></td>
+            <td width="50"><label for="radio" >Cota</label></td>
             <td width="22"><input type="radio" name="filtroPor" id="radio2" value="radio" onclick="excecaoSegmentoParciaisController.filtroPorProduto()" /></td>
-            <td width="49">Produto</td>
+            <td width="49"><label for="radio2" >Produto</label></td>
             <td width="781">
             <form id="filtroPrincipalCota">
 	            <table width="500" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorCota" id="excecaoSegmentoParciais_filtroPorCota" style="display:none;">
@@ -123,7 +125,7 @@ function incluirSegmento() {
           <table width="680" border="0" cellpadding="2" cellspacing="1" id="excecaoSegmentoParciais_filtroPorProduto" class="filtro filtroPorProduto" style="display:none;">
           <tr>
             <td width="42">Código:</td>
-            <td width="65"><input type="text" name="filtro.produtoDto.codigoProduto" id="codigoProdutoPrincipal" style="width:60px; float:left; margin-right:5px;"/></td>
+            <td width="65"><input type="text" name="filtro.produtoDto.codigoProduto" id="codigoProdutoPrincipal" onkeydown='onlyNumeric(event);' style="width:60px; float:left; margin-right:5px;"  /></td>
             <td width="47">Produto:</td>
             <td width="100"><input type="text" name="filtro.produtoDto.nomeProduto" id="nomeProdutoPrincipal" style="width:120px;"/></td>
             <td width="49">Fornecedor:</td>
@@ -135,7 +137,6 @@ function incluirSegmento() {
             <td width="150">Classificação:</td>
             	<td width="180">
 	            <select name="filtro.produtoDto.idClassificacaoProduto" id="comboClassificacao" style="width:140px;">
-	              <option selected="selected">Selecione...</option>
 	              	<c:forEach items="${listaClassificacao}" var="classificacao">
 						<option value="${classificacao.id}">${classificacao.descricao}</option>
 					</c:forEach>
@@ -203,22 +204,20 @@ function incluirSegmento() {
        	  <table width="312" border="0" cellpadding="2" cellspacing="1" class="filtro">
        	    <tr>
        	      <td width="45">
-       	      	Código:
-       	      </td>
+       	      	Código        	      </td>
        	      <td width="60">
-       	      	<input type="text" name="filtro.produtoDto.codigoProduto" id="codigoProduto" style="width:60px;"/></td>
+       	      	<input type="text" name="filtro.produtoDto.codigoProduto" id="codigoProduto" onkeydown='onlyNumeric(event);' style="width:60px;"/></td>
               <td width="54">
-              	Produto:
+              	 Produto:
               </td>
               <td width="132">
-              	<input type="text" name="filtro.produtoDto.nomeProduto" id="nomeProduto" style="width:120px;"/>
+              	 <input type="text" name="filtro.produtoDto.nomeProduto" id="nomeProduto" style="width:120px;"/>
               </td>
             </tr>
             <tr>
-               <td width="78">Classificação:</td>
+               <td width="78">Classifica&ccedil;&atilde;o:</td>
             	<td width="152">
 	            <select name="filtro.produtoDto.idClassificacaoProduto" id="comboClassificacaoProdNRec" style="width:140px;">
-	              <option selected="selected">Selecione...</option>
 	              	<c:forEach items="${listaClassificacao}" var="classificacao">
 						<option value="${classificacao.id}">${classificacao.descricao}</option>
 					</c:forEach>

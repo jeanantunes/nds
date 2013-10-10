@@ -24,6 +24,8 @@ public class ProdutoRecebidoDTO extends UsuarioLogDTO {
 	
 	@Export(label="Produto", alignment=Alignment.LEFT,exhibitionOrder=2)
 	private String nomeProduto;
+	
+	private String classificacaoProduto;
 
 	@Export(label="Usuário", alignment=Alignment.LEFT,exhibitionOrder=3)
 	@Override
@@ -79,5 +81,14 @@ public class ProdutoRecebidoDTO extends UsuarioLogDTO {
 		this.codigoProdin = codigoProdin;
 	}
 
+	public String getClassificacaoProduto() {
+		return classificacaoProduto;
+	}
+
+	public void setClassificacaoProduto(String classificacaoProduto) {
+		this.classificacaoProduto = classificacaoProduto;
+	}
+
+	
 	
 }
