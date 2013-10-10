@@ -208,7 +208,7 @@ function incluirSegmento() {
        	      <td width="60">
        	      	<input type="text" name="filtro.produtoDto.codigoProduto" id="codigoProduto" onkeydown='onlyNumeric(event);' style="width:60px;"/></td>
               <td width="54">
-              	<!-- Produto: -->
+              	 Produto:
               </td>
               <td width="132">
               	 <input type="text" name="filtro.produtoDto.nomeProduto" id="nomeProduto" style="width:120px;"/>

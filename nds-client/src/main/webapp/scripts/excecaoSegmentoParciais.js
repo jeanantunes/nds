@@ -76,10 +76,10 @@ var excecaoSegmentoParciaisController = $.extend(true, {
 		
 		autoComplete.limparCampoOnChange('#nomeCotaFiltroPrincipal', new Array('#numeroCotaFiltroPrincipal'));
 		
-		/*$('#codigoProduto').blur(function (){
+		$('#codigoProduto').blur(function (){
 			
 			autoComplete.pesquisarPorCodigo("/produto/pesquisarPorCodigoProdutoAutoComplete",'#codigoProduto','#nomeProduto');
-		});*/
+		});
 		
 		autoComplete.limparCampoOnChange('#nomeProduto', new Array('#codigoProduto'));
 		
