@@ -100,7 +100,7 @@ public interface CobrancaService {
 	 * @param List<Long> idCobrancas
 	 * @return Data Transfer object com dados somados das cobrancas encontradas e calculadas.
 	 */
-	CobrancaDividaVO obterDadosCobrancas(List<Long> idCobrancas);
+	CobrancaDividaVO obterDadosCobrancas(List<Long> idCobrancas, Date dataPagamento);
 	
 	
 	/**

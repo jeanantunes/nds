@@ -720,15 +720,36 @@ public class BaixaFinanceiraController extends BaseController {
 	 */
 	@Post
 	@Path("obterPagamentoDividas")
-	public void obterPagamentoDividas(List<Long> idCobrancas){
+	public void obterPagamentoDividas(List<Long> idCobrancas, Date dataPagamento){
 		
 		if ((idCobrancas==null) || (idCobrancas.size() <=0)){
 			throw new ValidacaoException(TipoMensagem.WARNING, "É necessário selecionar ao menos uma dívida.");
 		}
 		
-		CobrancaDividaVO pagamento;
-	    pagamento = this.cobrancaService.obterDadosCobrancas(idCobrancas);
-
+		CobrancaDividaVO pagamento = null;
+		
+		if(idCobrancas.size() == 1 ){
+			
+			if ( dataPagamento == null){
+				pagamento = new CobrancaDividaVO();
+				pagamento.setValorJuros(CurrencyUtil.formatarValor(BigDecimal.ZERO));
+				pagamento.setValorMulta(CurrencyUtil.formatarValor(BigDecimal.ZERO));
+				pagamento.setValorDividas(CurrencyUtil.formatarValor(BigDecimal.ZERO));
+				pagamento.setValorPagamento(CurrencyUtil.formatarValor(BigDecimal.ZERO));
+				pagamento.setValorDesconto(CurrencyUtil.formatarValor(BigDecimal.ZERO));
+				pagamento.setValorSaldo(CurrencyUtil.formatarValor(BigDecimal.ZERO));
+			}
+			else{
+				pagamento = this.cobrancaService.obterDadosCobrancas(idCobrancas, dataPagamento);
+			}
+		}
+		else{
+			
+			Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+			
+			pagamento = this.cobrancaService.obterDadosCobrancas(idCobrancas, dataOperacao);
+		}
+		
 		result.use(Results.json()).from(pagamento,"result").recursive().serialize();
 	}
 	
@@ -750,7 +771,8 @@ public class BaixaFinanceiraController extends BaseController {
 	                               TipoCobranca tipoPagamento,
 	                               String observacoes,
 	                               List<Long> idCobrancas,
-	                               Long idBanco){
+	                               Long idBanco,
+	                               Date dataPagamento){
 		
 		BigDecimal valorDividasConvertido = CurrencyUtil.converterValor(valorDividas);
 		BigDecimal valorMultaConvertido = CurrencyUtil.converterValor(valorMulta);
@@ -760,7 +782,7 @@ public class BaixaFinanceiraController extends BaseController {
 		BigDecimal valorPagamentoConvertido = CurrencyUtil.converterValor(valorPagamento);
 		
 		this.validarBaixaManualDividas(tipoPagamento, idCobrancas, idBanco,valorMultaConvertido, 
-								  		valorJurosConvertido,valorDescontoConvertido, valorSaldoConvertido);
+								  		valorJurosConvertido,valorDescontoConvertido, valorSaldoConvertido,dataPagamento);
 		
 		PagamentoDividasDTO pagamento = new PagamentoDividasDTO();
 		pagamento.setValorDividas(valorDividasConvertido);
@@ -771,7 +793,7 @@ public class BaixaFinanceiraController extends BaseController {
 		pagamento.setValorPagamento(valorPagamentoConvertido);
 		pagamento.setTipoPagamento(tipoPagamento);
 		pagamento.setObservacoes(observacoes);
-		pagamento.setDataPagamento(this.distribuidorService.obterDataOperacaoDistribuidor());
+		pagamento.setDataPagamento( (dataPagamento == null) ? this.distribuidorService.obterDataOperacaoDistribuidor() : dataPagamento);
 		pagamento.setUsuario(getUsuarioLogado());
 		pagamento.setBanco(idBanco!=null?bancoService.obterBancoPorId(idBanco):null);
 		
@@ -783,7 +805,11 @@ public class BaixaFinanceiraController extends BaseController {
 	private void validarBaixaManualDividas(TipoCobranca tipoPagamento,
 			List<Long> idCobrancas, Long idBanco,
 			BigDecimal valorMultaConvertido, BigDecimal valorJurosConvertido,
-			BigDecimal valorDescontoConvertido, BigDecimal valorSaldoConvertido) {
+			BigDecimal valorDescontoConvertido, BigDecimal valorSaldoConvertido, Date dataPagamento) {
+		
+		if(idCobrancas.size() == 1 && dataPagamento == null){
+			 throw new ValidacaoException(TipoMensagem.WARNING,"É obrigatório a escolha de uma data de pagamento [Data Pagamento].");
+		}
 		
 		if (valorDescontoConvertido.compareTo(
 				valorDescontoConvertido.add(valorJurosConvertido).add(valorMultaConvertido)) == 1) {	
@@ -815,7 +841,8 @@ public class BaixaFinanceiraController extends BaseController {
 								   String valorSaldo,
 					               TipoCobranca tipoPagamento,
 					               List<Long> idCobrancas,
-					               Long idBanco){
+					               Long idBanco,
+					               Date dataPagamento){
 		
 		BigDecimal valorMultaConvertido = valorMulta == null ? BigDecimal.ZERO : CurrencyUtil.converterValor(valorMulta);
 	    BigDecimal valorJurosConvertido = valorJuros == null ? BigDecimal.ZERO : CurrencyUtil.converterValor(valorJuros);
@@ -823,7 +850,7 @@ public class BaixaFinanceiraController extends BaseController {
 		BigDecimal valorSaldoConvertido = valorSaldo == null ? BigDecimal.ZERO : CurrencyUtil.converterValor(valorSaldo);
 		
 		this.validarBaixaManualDividas(tipoPagamento, idCobrancas, idBanco,valorMultaConvertido, 
-		  		valorJurosConvertido,valorDescontoConvertido, valorSaldoConvertido);
+		  		valorJurosConvertido,valorDescontoConvertido, valorSaldoConvertido,dataPagamento);
 		
 		this.result.use(Results.json()).from("", "result").recursive().serialize();
 	}

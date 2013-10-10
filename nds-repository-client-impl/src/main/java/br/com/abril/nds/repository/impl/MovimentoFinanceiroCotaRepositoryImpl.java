@@ -1220,6 +1220,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		return (BigDecimal) query.uniqueResult();
 	}
 	
+	
 	/**
 	 * Obtem Quantidade de Informações para o processamento financeiro (Geração de MovimentoFinanceiroCota, Divida e Cobrança) das Cotas
 	 * @param numeroCota
@@ -1554,17 +1555,28 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	                                                                   GrupoMovimentoEstoque.ESTORNO_COMPRA_SUPLEMENTAR));
 	    
 	    query.setParameterList("gruposMovimentoFinanceiroCredito", Arrays.asList(GrupoMovimentoFinaceiro.CREDITO,
-	                                                                             GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO));
+	                                                                             GrupoMovimentoFinaceiro.CREDITO_SOBRE_FATURAMENTO,
+	                                                                             GrupoMovimentoFinaceiro.POSTERGADO_CREDITO,
+	                                                                             GrupoMovimentoFinaceiro.ENVIO_ENCALHE,
+	                                                                             GrupoMovimentoFinaceiro.RESGATE_CAUCAO_LIQUIDA));
 	    
 	    query.setParameterList("gruposMovimentoFinanceiroDebito", Arrays.asList(GrupoMovimentoFinaceiro.DEBITO,
 	                                                                            GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO,
-	                                                                            GrupoMovimentoFinaceiro.COMPRA_NUMEROS_ATRAZADOS));
+	                                                                            GrupoMovimentoFinaceiro.COMPRA_NUMEROS_ATRAZADOS,
+	                                                                            GrupoMovimentoFinaceiro.POSTERGADO_DEBITO,
+	                                                                            GrupoMovimentoFinaceiro.COMPRA_ENCALHE_SUPLEMENTAR,
+	                                                                            GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE,
+	                                                                            GrupoMovimentoFinaceiro.JUROS,
+	                                                                            GrupoMovimentoFinaceiro.MULTA,
+	                                                                            GrupoMovimentoFinaceiro.POSTERGADO_NEGOCIACAO,                                                            				
+	                                                                            GrupoMovimentoFinaceiro.LANCAMENTO_CAUCAO_LIQUIDA,	                                                             				
+	                                                                            GrupoMovimentoFinaceiro.VENDA_TOTAL,	                                                             				                                                          					                                                             				
+	                                                                            GrupoMovimentoFinaceiro.PENDENTE));
 	
 	    query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
 	    
 	    query.setParameter("data", data);
 	
-	    
 	    query.setResultTransformer(new AliasToBeanResultTransformer(ProcessamentoFinanceiroCotaDTO.class));
 	    
         return query.list();

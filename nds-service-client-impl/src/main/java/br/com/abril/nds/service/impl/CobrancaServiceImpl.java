@@ -350,7 +350,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 	 */
 	@Override
 	@Transactional(readOnly=true)
-	public CobrancaDividaVO obterDadosCobrancas(List<Long> idCobrancas) {
+	public CobrancaDividaVO obterDadosCobrancas(List<Long> idCobrancas, Date dataPagamento) {
 		
 		CobrancaDividaVO pagamento = new CobrancaDividaVO();
 	
@@ -359,9 +359,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 		BigDecimal totalDividas = BigDecimal.ZERO;
 		BigDecimal totalSaldoDividas = BigDecimal.ZERO;
 		
-		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
-		
-		dataOperacao = DateUtil.parseDataPTBR((DateUtil.formatarDataPTBR(dataOperacao)));
+	
+		dataPagamento = DateUtil.parseDataPTBR((DateUtil.formatarDataPTBR(dataPagamento)));
 		
 		for (Long item : idCobrancas){
         
@@ -380,13 +379,13 @@ public class CobrancaServiceImpl implements CobrancaService {
 				BigDecimal saldoDivida = this.obterSaldoDivida(cobranca.getId());
 				
 				
-				if (dataVencimento.compareTo(dataOperacao) < 0) {
+				if (dataVencimento.compareTo(dataPagamento) < 0) {
 					
 					valorJurosCalculado =
 						this.calcularJuros(cobranca.getBanco(), cobranca.getCota(),
 										   cobranca.getValor().subtract(saldoDivida), 
 										   cobranca.getDataVencimento(),
-										   dataOperacao);
+										   dataPagamento);
 					valorMultaCalculado =
 						this.calcularMulta(cobranca.getBanco(), cobranca.getCota(),
 								           cobranca.getValor().subtract(saldoDivida));
