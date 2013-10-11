@@ -807,7 +807,7 @@ public class BaixaFinanceiraController extends BaseController {
 			BigDecimal valorMultaConvertido, BigDecimal valorJurosConvertido,
 			BigDecimal valorDescontoConvertido, BigDecimal valorSaldoConvertido, Date dataPagamento) {
 		
-		if(idCobrancas.size() == 1 && dataPagamento == null){
+		if(dataPagamento == null){
 			 throw new ValidacaoException(TipoMensagem.WARNING,"É obrigatório a escolha de uma data de pagamento [Data Pagamento].");
 		}
 		
