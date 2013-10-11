@@ -631,8 +631,9 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			
 			GrupoMovimentoFinaceiro tmf = ((TipoMovimentoFinanceiro) mfc.getTipoMovimento()).getGrupoMovimentoFinaceiro();
 			
-			if (tmf.equals(GrupoMovimentoFinaceiro.ENVIO_ENCALHE) || 
-				tmf.equals(GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO)){
+			if (tmf.equals(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE)||
+				(tmf.equals(GrupoMovimentoFinaceiro.ENVIO_ENCALHE) || 
+				 tmf.equals(GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO))){
 			
 				
 				List<MovimentoEstoqueCota> mecs = mfc.getMovimentos();
