@@ -34,7 +34,7 @@ public class RepartePDVRepositoryImpl extends  AbstractRepositoryModel<RepartePD
 		 StringBuilder hql = new StringBuilder();
 		hql.append(" SELECT  pdv.nome as nomePDV, rep.reparte as reparte, " )
 			.append(" coalesce(mix.cota.pessoa.nomeFantasia, mix.cota.pessoa.razaoSocial, mix.cota.pessoa.nome, '')  as nomeCota, ")
-			.append("  mix.produto.tipoClassificacaoProduto.descricao as classificacaoProduto, ")
+//			.append("  mix.produto.tipoClassificacaoProduto.descricao as classificacaoProduto, ") //FIXME tipoClassificacaoProduto é atributo de produtoEdicao
 			.append("  endereco.logradouro  as  endereco ")
 			.append(" FROM RepartePDV rep, MixCotaProduto mix ")
 			.append(" RIGHT JOIN rep.pdv pdv ")
