@@ -644,13 +644,13 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 		}
 		
-		//CANCELA DIVIDA EXCLUI CONSOLIDADO E MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (ENVIO_ENCALHE E DEBITO_SOBRE_FATURAMENTO) PARA QUE SEJAM RECRIADOS
+		//CANCELA DIVIDA EXCLUI CONSOLIDADO E MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA QUE SEJAM RECRIADOS
 		this.gerarCobrancaService.cancelarDividaCobranca(null, 
 														 cota.getId(), 
 				                                         dataOperacaoDistribuidor, 
 				                                         true);
 
-		//CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (ENVIO_ENCALHE E DEBITO_SOBRE_FATURAMENTO)
+		//CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE)
 		movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(cota, 
 																	dataOperacaoDistribuidor,
 																	usuario,
