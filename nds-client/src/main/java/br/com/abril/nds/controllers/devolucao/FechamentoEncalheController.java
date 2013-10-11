@@ -335,10 +335,7 @@ public class FechamentoEncalheController extends BaseController {
 		 */
 		else if (!dataPostergacao.after(distribuidorService.obterDataOperacaoDistribuidor())) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "A Data de Postergação deve ser maior que a data de operação!");
-		}
-		/*else if (  fechamentoEncalheService.buscarUtimoDiaDaSemanaRecolhimento().before(dataPostergacao) ){
-			throw new ValidacaoException(TipoMensagem.WARNING, "Postergação deve ter como limite, a data final da semana de recolhimento em vigência!");
-		}*/
+		} 
 		
 		try {
 			List<CotaAusenteEncalheDTO> listaCotasAusentes = this.fechamentoEncalheService.buscarCotasAusentes(dataEncalhe, true, null, null, 0, 0);
