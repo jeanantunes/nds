@@ -118,7 +118,7 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService, Application
 			throw new IllegalArgumentException("ID da Cota nulo!");
 		}
 		
-		StdScheduler scheduler = (StdScheduler) this.applicationContext.getBean("schedulerFactoryBean");
+		StdScheduler scheduler = (StdScheduler) applicationContext.getBean("schedulerFactoryBean");
 
 		QuartzUtil.doAgendador(scheduler).removeJobsFromGroup(idCota.toString());
 	}
