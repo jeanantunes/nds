@@ -365,8 +365,8 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		hql.append(" 		(case when (boleto.cota.pessoa.nome is not null)");
 		hql.append("			then boleto.cota.pessoa.nome");
 		hql.append("			else boleto.cota.pessoa.razaoSocial end) as nomeCota, ");
-		hql.append("  baixaAutomatica.banco.apelido as nomeBanco, ");
-		hql.append("  concat(baixaAutomatica.banco.conta, '-', baixaAutomatica.banco.dvConta) as numeroConta, ");
+		hql.append("  banco.apelido as nomeBanco, ");
+		hql.append("  concat(banco.conta, '-', banco.dvConta) as numeroConta, ");
 		hql.append("  boleto.nossoNumero as nossoNumero, ");
 		hql.append("  baixaAutomatica.valorPago as valorBoleto, ");
 		hql.append("  baixaAutomatica.dataPagamento as dataVencimento");
@@ -514,7 +514,6 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		hql.append(" from Boleto boleto ");
 		hql.append(" where boleto.dataVencimento = :data ");
-		hql.append(" and boleto.statusCobranca =:statusCobranca ");
 		
 		return hql.toString();
 	}
@@ -523,9 +522,10 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" from BaixaAutomatica baixaAutomatica ");
+		hql.append(" from BaixaCobranca baixaAutomatica ");
 		hql.append(" join baixaAutomatica.cobranca boleto ");
-		hql.append(" where baixaAutomatica.dataPagamento = :data ");
+		hql.append(" join boleto.banco banco ");
+		hql.append(" where boleto.dataVencimento = :data ");
 		hql.append(" and baixaAutomatica.status in (:statusBaixa) ");
 		
 		return hql.toString();
@@ -548,9 +548,8 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" from Boleto boleto ");
-		hql.append(" left join boleto.baixasCobranca baixaCobranca ");
 		hql.append(" where boleto.dataVencimento = :data ");
-		hql.append(" and baixaCobranca is null ");
+		hql.append(" and boleto.statusCobranca =:statusCobranca");
 		
 		return hql.toString();
 	}
@@ -572,7 +571,6 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setParameter("data", data);
-		query.setParameter("statusCobranca", StatusCobranca.NAO_PAGO);
 		
 		return query;
 	}
@@ -628,6 +626,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		Query query = super.getSession().createQuery(hql.toString());
 		
 		query.setParameter("data", data);
+		query.setParameter("statusCobranca", StatusCobranca.NAO_PAGO);
 		
 		return query;
 	}
@@ -703,6 +702,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		Query query = this.getSession().createQuery(hql);
 		query.setParameter("data", data);
+		query.setParameter("statusCobranca", StatusCobranca.NAO_PAGO);
 		
 		return query.list();
 	}
