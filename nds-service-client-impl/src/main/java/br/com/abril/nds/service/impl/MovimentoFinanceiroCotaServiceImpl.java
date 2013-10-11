@@ -631,8 +631,9 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			
 			GrupoMovimentoFinaceiro tmf = ((TipoMovimentoFinanceiro) mfc.getTipoMovimento()).getGrupoMovimentoFinaceiro();
 			
-			if (tmf.equals(GrupoMovimentoFinaceiro.ENVIO_ENCALHE) || 
-				tmf.equals(GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO)){
+			if (tmf.equals(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE)||
+				(tmf.equals(GrupoMovimentoFinaceiro.ENVIO_ENCALHE) || 
+				 tmf.equals(GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO))){
 			
 				
 				List<MovimentoEstoqueCota> mecs = mfc.getMovimentos();
@@ -889,29 +890,21 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			                                         List<MovimentoEstoqueCota> movimentosEstoqueCota,
 			                                         List<MovimentoEstoqueCota> movimentosEstorno,
 										             Date dataOperacao,
-										             Usuario usuario,
-										             FormaComercializacao formaComercializacaoProduto){
+										             Usuario usuario){
 		
         BigDecimal precoVendaItem = BigDecimal.ZERO;
 		BigInteger quantidadeItem = BigInteger.ZERO;
 		BigDecimal totalItem = BigDecimal.ZERO;		
-		BigDecimal totalContaFirme = BigDecimal.ZERO;	
 		BigDecimal totalGeral = BigDecimal.ZERO;
 		BigDecimal totalEstorno = BigDecimal.ZERO;
 
 		totalEstorno = this.obterValorMovimentosEstoqueCota(movimentosEstorno);
-
-		List<MovimentoEstoqueCota> movimentosProdutosContaFirme = new ArrayList<MovimentoEstoqueCota>();
 		
 		if(movimentosEstoqueCota!=null){
 		
 			for (MovimentoEstoqueCota item : movimentosEstoqueCota){
 				
 				ProdutoEdicao produtoEdicao = item.getProdutoEdicao();
-				
-	            Produto produto = produtoEdicao.getProduto();
-	            
-				FormaComercializacao formaComercializacao = produto.getFormaComercializacao();
 				
 				ValoresAplicados va = item.getValoresAplicados();
 				
@@ -927,15 +920,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 				
 				totalItem = precoVendaItem.multiply(new BigDecimal(quantidadeItem.longValue()));
 						
-				totalGeral = totalGeral.add(totalItem);
-				
-				if ((formaComercializacao == null ) || formaComercializacao.equals(formaComercializacaoProduto)){
-	
-					totalContaFirme = totalContaFirme.add(totalItem);
-					
-					movimentosProdutosContaFirme.add(item);
-				}
-				
+				totalGeral = totalGeral.add(totalItem);		
 			}
 		}
         
@@ -957,22 +942,17 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 				                          totalGeral,
 				                          dataOperacao,
 				                          usuario);
-
 		}
 		else if (tipoCota.equals(TipoCota.CONSIGNADO)){
-			
-			if ((movimentosProdutosContaFirme!=null && movimentosProdutosContaFirme.size()>0)&& 
-				(totalContaFirme!=null && totalContaFirme.compareTo(BigDecimal.ZERO) > 0)){
-			    
-				this.gerarMovimentoFinanceiro(cota, 
-						                      fornecedor,
-					                          movimentosProdutosContaFirme, 
-					                          null,
-					                          tipoMovimentoFinanceiro,
-					                          totalContaFirme,
-					                          dataOperacao,
-					                          usuario);
-			}
+    
+			this.gerarMovimentoFinanceiro(cota, 
+					                      fornecedor,
+					                      movimentosEstoqueCota, 
+				                          null,
+				                          tipoMovimentoFinanceiro,
+				                          totalGeral,
+				                          dataOperacao,
+				                          usuario);
 		}
 	}
 	
@@ -996,7 +976,8 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 									               Usuario usuario,
 									               FormaComercializacao formaComercializacaoProduto){
 		
-		//GERA MOVIMENTOS FINANCEIROS PARA A COTA A VISTA E PRODUTOS CONTA FIRME
+		//GERA MOVIMENTO FINANCEIRO DOS MOVIMENTOS DE ESTOQUE DE REPARTE PARA COTA DO TIPO A_VISTA
+		
 		if(movimentosEstoqueCotaOperacaoEnvioReparte!=null && movimentosEstoqueCotaOperacaoEnvioReparte.size()>0){
 			
 			this.gerarMovimentoFinanceiroCotaReparte(cota, 
@@ -1004,8 +985,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 					                                 movimentosEstoqueCotaOperacaoEnvioReparte, 
 					                                 movimentosEstoqueCotaOperacaoEstorno,
 					                                 dataOperacao,
-					                                 usuario,
-					                                 formaComercializacaoProduto);
+					                                 usuario);
 		}
 	}
 	
@@ -1029,7 +1009,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			                                                           List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoConferenciaEncalhe,
 			                                                           List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEstorno
 			                                                           ){
-
+		
 		TipoCota tipoCota = cota!=null?cota.getTipoCota():null;
 
 		BigDecimal valorTotalEnvioReparte;
@@ -1064,6 +1044,15 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 
 		}
 		else if (tipoCota.equals(TipoCota.CONSIGNADO)){
+			
+			//GERA MOVIMENTO FINANCEIRO DOS MOVIMENTOS DE ESTOQUE DE REPARTE PARA COTA DO TIPO CONSIGNADO
+			
+			this.gerarMovimentoFinanceiroCotaReparte(cota, 
+									                 fornecedor,
+									                 movimentosEstoqueCotaOperacaoEnvioReparte, 
+									                 movimentosEstoqueCotaOperacaoEstorno,
+									                 dataOperacao,
+									                 usuario);
 			
 			//GERA DEBITOS DO CONSIGNADO
 
@@ -1156,7 +1145,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	}
 	
 	/**
-	 * Gera Movimentos Financeiros da Cota
+	 * Gera Movimentos Financeiros da Cota no Processamento Financeiro de Cotas à vista
 	 * @param cota
 	 * @param dataOperacao
 	 * @param usuario
@@ -1196,7 +1185,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	}
 	
 	/**
-	 * Gera movimento financeiro para cota na Conferencia de Encalhe
+	 * Gera movimento financeiro para cota na Conferencia/Fechamento de Encalhe
 	 * @param controleConferenciaEncalheCota
 	 */
 	@Transactional

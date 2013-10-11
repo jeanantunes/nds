@@ -164,10 +164,8 @@ public class EmailServiceImpl implements EmailService {
 		validarParametrosAutenticacao(host, TipoParametroSistema.EMAIL_HOST);
 		
 		ParametroSistema porta = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.EMAIL_PORTA);
-		validarParametrosAutenticacao(porta, TipoParametroSistema.EMAIL_PORTA);
 		
 		ParametroSistema senha =  parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.EMAIL_SENHA);
-		validarParametrosAutenticacao(senha, TipoParametroSistema.EMAIL_SENHA);
 		
 		ParametroSistema smtp = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.EMAIL_PROTOCOLO);
 		validarParametrosAutenticacao(smtp, TipoParametroSistema.EMAIL_PROTOCOLO);
@@ -180,9 +178,9 @@ public class EmailServiceImpl implements EmailService {
 		mailSender.setPassword(senha.getValor());
 		mailSender.setProtocol(smtp.getValor());
 		
-//		mailSender.getJavaMailProperties().setProperty("mail.smtps.auth", "true");
-//		mailSender.getJavaMailProperties().setProperty("mail.smtps.starttls.enable", "true");
-//		
+		mailSender.getJavaMailProperties().setProperty("mail.smtps.auth", "false");
+		mailSender.getJavaMailProperties().setProperty("mail.smtps.starttls.enable", "false");
+		
 //		mailSender.getJavaMailProperties().setProperty("mail.smtp.socketFactory.port", porta.getValor());
 //		mailSender.getJavaMailProperties().setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 	}
