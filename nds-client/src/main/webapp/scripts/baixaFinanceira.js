@@ -1022,7 +1022,9 @@ var baixaFinanceiraController = $.extend(true, {
 		var dataPagamento = null;
 		
 		if(dividasMarcadas.length > 1){
-			$("#dtPagamentoManual", baixaFinanceiraController.workspace).val("");
+				$("#dtPagamentoManual", baixaFinanceiraController.workspace).datepicker(
+			"setDate", baixaFinanceiraController.dataOperacaoDistribuidor
+		);
 		}else{
 			dataPagamento = baixaFinanceiraController.obterDataVencimentoDividaManual();
 			$("#dtPagamentoManual", baixaFinanceiraController.workspace).val(dataPagamento);
@@ -1036,16 +1038,10 @@ var baixaFinanceiraController = $.extend(true, {
 				   param,
 				   function (resultado){
 					
-					if(dividasMarcadas.length > 1){
-						$(".dataPagamentoManual", baixaFinanceiraController.workspace).hide();
-					}else{
-						$(".dataPagamentoManual", baixaFinanceiraController.workspace).show();
-					}
-					
 					baixaFinanceiraController.sucessCallbackPagamentoDivida(resultado);
 					
 				   },
-				   null);
+				   null); 
 	},
 	
     sucessCallbackPagamentoDivida : function(resultado) {
