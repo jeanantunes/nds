@@ -752,7 +752,13 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 
 	private StatusAprovacao obterStatusLancamento(Diferenca diferenca) {
 		
-		StatusAprovacao statusAprovacao  = StatusAprovacao.PENDENTE;
+		StatusAprovacao statusAprovacao = StatusAprovacao.PENDENTE;
+		
+		boolean utilizaControleAprovacao = parametrosDistribuidorService.getParametrosDistribuidor().getUtilizaControleAprovacao();
+		
+		if(!utilizaControleAprovacao) {
+			statusAprovacao = StatusAprovacao.APROVADO;
+		}
 		
 		if (this.foraDoPrazoDoGFS(diferenca)) {
 			
@@ -1048,7 +1054,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		if (this.foraDoPrazoDoGFS(diferenca)) {
 			
-			statusIntegracao = StatusIntegracao.NAO_INTEGRAR;
+			statusIntegracao = StatusIntegracao.FORA_DO_PRAZO;
 			
 			grupoMovimentoEstoque = obterGrupoMovimentoEstoqueForaDoPrazo(tipoDiferenca);
 			
