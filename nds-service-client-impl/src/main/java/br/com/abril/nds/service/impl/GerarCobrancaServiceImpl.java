@@ -301,9 +301,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		Integer numeroDiasNovaCobranca = this.distribuidorRepository.obterNumeroDiasNovaCobranca(); 
 		
-		//cancela cobrança gerada para essa data de operação para efetuar recalculo
-		this.cancelarDividaCobranca(null, idCota, dataOperacao, false);
-		
 		// buscar movimentos financeiros da cota, se informada, caso contrario de todas as cotas
 		List<MovimentoFinanceiroCota> listaMovimentoFinanceiroCota = 
 				this.movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroCota(idCota);
@@ -882,15 +879,12 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		BigDecimal valorMinino = 
 				this.obterValorMinino(cota, formaCobrancaPrincipal.getValorMinimoEmissao());
 		
+		Banco banco = formaCobrancaPrincipal.getBanco();
+		
 		//caso tenha alcançado o valor minino de cobrança e seja um dia de concentração de cobrança, ou a cota esteja suspensa
 		if ( (vlMovFinanTotal.compareTo(BigDecimal.ZERO) < 0) &&
 				(vlMovFinanTotal.abs().compareTo(valorMinino) > 0 && cobrarHoje) || 
 				(vlMovFinanTotal.abs().compareTo(valorMinino) > 0 && cotaSuspensa)){
-
-			if (formaCobrancaPrincipal.getBanco() == null) {
-				
-				return null;
-			}
 			
 			novaDivida = new Divida();
 			novaDivida.setValor(vlMovFinanTotal.abs());
@@ -1019,7 +1013,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 				break;
 			}
 			
-			cobranca.setBanco(formaCobrancaPrincipal.getBanco());
+			cobranca.setBanco(banco);
 			cobranca.setCota(cota);
 			cobranca.setDataEmissao(dataOperacao);
 			cobranca.setDivida(novaDivida);
@@ -1027,25 +1021,23 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			cobranca.setDataVencimento(dataVencimento);
 			cobranca.setVias(0);
 			
-			Banco banco = formaCobrancaPrincipal.getBanco();
-			
 			String nossoNumero =
 				Util.gerarNossoNumero(
 					cota.getNumeroCota(), 
 					cobranca.getDataEmissao(), 
-					banco.getNumeroBanco(),
+					banco!=null?banco.getNumeroBanco():"0",
 					fornecedor != null ? fornecedor.getId() : null,
 					movimentos.get(0).getId(),
-					banco.getAgencia(),
-					banco.getConta(),
-					banco.getCarteira());
+					banco!=null?banco.getAgencia():0,
+					banco!=null?banco.getConta():0,
+					banco!=null?banco.getCarteira():0);
 			
 			cobranca.setFornecedor(fornecedor);
 			cobranca.setNossoNumero(nossoNumero);
 			
 			String digitoVerificador =
 				Util.calcularDigitoVerificador(
-					nossoNumero, banco.getCodigoCedente(), cobranca.getDataVencimento());
+					nossoNumero, banco!=null?banco.getCodigoCedente():"0", cobranca.getDataVencimento());
 			
 			cobranca.setDigitoNossoNumero(digitoVerificador);
 			
