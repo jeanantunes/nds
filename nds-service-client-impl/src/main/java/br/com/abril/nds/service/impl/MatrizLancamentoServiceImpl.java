@@ -128,13 +128,21 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			
 			for (ProdutoLancamentoDTO produtoLancamento : listaProdutoLancamentoDTO) {
 				
-				produtoLancamento.setSequenciaMatriz(sequenciaMatriz++);
-				
-				Long idLancamento = produtoLancamento.getIdLancamento();
-				
-				// Monta Map para controlar a atualização dos lançamentos
-				
-				mapaLancamento.put(idLancamento, produtoLancamento);
+				if (!this.isProdutoConfirmado(produtoLancamento)) {
+					
+					produtoLancamento.setSequenciaMatriz(sequenciaMatriz++);
+					
+					Long idLancamento = produtoLancamento.getIdLancamento();
+					
+					// Monta Map para controlar a atualização dos lançamentos
+					
+					mapaLancamento.put(idLancamento, produtoLancamento);
+					
+				} else {
+					
+					this.montarMatrizLancamentosConfirmadosRetorno(
+						matrizLancamentoRetorno, produtoLancamento, dataConfirmada);
+				}
 			}
 		}
 		
