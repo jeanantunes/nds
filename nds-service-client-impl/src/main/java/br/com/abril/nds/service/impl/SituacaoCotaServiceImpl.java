@@ -8,6 +8,7 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,9 +37,10 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService, Application
 	@Autowired
 	private CotaRepository cotaRepository;
 	
-	ApplicationContext applicationContext = null;
+	private ApplicationContext applicationContext;
 
 	public void setApplicationContext(final ApplicationContext applicationContext) throws BeansException {
+		
 		this.applicationContext = applicationContext;
 	}
 	
@@ -117,10 +119,11 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService, Application
 			throw new IllegalArgumentException("ID da Cota nulo!");
 		}
 		
-		StdScheduler schedulerFactoryBean = (StdScheduler) applicationContext.getBean("schedulerFactoryBean");
+		SchedulerFactoryBean schedulerFactoryBean = 
+			(SchedulerFactoryBean) this.applicationContext.getBean("schedulerFactoryBean");
 
-		QuartzUtil.doAgendador(schedulerFactoryBean).removeJobsFromGroup(idCota.toString());
-		
+		QuartzUtil.doAgendador(
+			schedulerFactoryBean.getScheduler()).removeJobsFromGroup(idCota.toString());
 	}
 
 
