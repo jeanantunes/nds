@@ -506,7 +506,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 					
 					innerTable += inputExemplares + "</td>";
 					
-					innerTable += "<td align='right' nowrap='nowrap' id='valorTotalConferencia_" + index + "'>" + parseFloat(value.valorTotal).toFixed(2) + "</td>";
+					innerTable += "<td align='right' nowrap='nowrap' id='valorTotalConferencia_" + index + "'>" + parseFloat(value.valorTotal).toFixed(4) + "</td>";
 					
 					var inputCheckBoxJuramentada = '';
 					
@@ -603,7 +603,7 @@ var ConferenciaEncalheCont = $.extend(true, {
 			data, 
 			function(result){
 				
-				$("#valorTotalConferencia_" + index, ConferenciaEncalheCont.workspace).text(parseFloat(result.conf.valorTotal).toFixed(2));
+				$("#valorTotalConferencia_" + index, ConferenciaEncalheCont.workspace).text(parseFloat(result.conf.valorTotal).toFixed(4));
 				
 				$("#totalReparte", ConferenciaEncalheCont.workspace).text(parseFloat(result.reparte).toFixed(2));
 				$("#totalEncalhe", ConferenciaEncalheCont.workspace).text(parseFloat(result.valorEncalhe).toFixed(2));

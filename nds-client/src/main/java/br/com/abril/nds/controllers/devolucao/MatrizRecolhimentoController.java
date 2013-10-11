@@ -1124,7 +1124,7 @@ public class MatrizRecolhimentoController extends BaseController {
 			(produtoRecolhimento.getEncalhe() != null) ? MathUtil.round(produtoRecolhimento.getEncalhe(), 0).toString() : null);
 		
 		if (produtoRecolhimento.getValorTotal() != null) {
-			produtoRecolhimentoFormatado.setValorTotal(CurrencyUtil.formatarValor(produtoRecolhimento.getValorTotal()));
+			produtoRecolhimentoFormatado.setValorTotal(CurrencyUtil.formatarValorQuatroCasas(produtoRecolhimento.getValorTotal()));
 		} else {
 			produtoRecolhimentoFormatado.setValorTotal(null);
 		}

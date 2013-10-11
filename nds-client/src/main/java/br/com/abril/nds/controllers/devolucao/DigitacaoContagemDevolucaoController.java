@@ -466,7 +466,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 			
 			digitacaoContagemDevolucaoVO.setValorTotal( dto.getValorTotal()==null? "" : (CurrencyUtil.formatarValor(dto.getValorTotal())) );
 			
-			digitacaoContagemDevolucaoVO.setValorTotalComDesconto((CurrencyUtil.formatarValor(dto.getTotalComDesconto())));
+			digitacaoContagemDevolucaoVO.setValorTotalComDesconto((CurrencyUtil.formatarValorQuatroCasas(dto.getTotalComDesconto())));
 			
 			digitacaoContagemDevolucaoVO.setDataRecolhimentoDistribuidor(DateUtil.formatarDataPTBR((dto.getDataMovimento())));
 			

@@ -330,10 +330,10 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		BigDecimal totalLiquido = vlrReparteLiquido.subtract(vlrEncalhe);
 		
 		cota.setVlrReparte(CurrencyUtil.formatarValor(vlrReparte));
-		cota.setVlrComDesconto(CurrencyUtil.formatarValor(vlrDesconto));
-		cota.setVlrReparteLiquido(CurrencyUtil.formatarValor(vlrReparteLiquido));
-		cota.setVlrEncalhe(CurrencyUtil.formatarValor(vlrEncalhe));
-		cota.setVlrTotalLiquido(CurrencyUtil.formatarValor(totalLiquido));
+		cota.setVlrComDesconto(CurrencyUtil.formatarValorQuatroCasas(vlrDesconto));
+		cota.setVlrReparteLiquido(CurrencyUtil.formatarValorQuatroCasas(vlrReparteLiquido));
+		cota.setVlrEncalhe(CurrencyUtil.formatarValorQuatroCasas(vlrEncalhe));
+		cota.setVlrTotalLiquido(CurrencyUtil.formatarValorQuatroCasas(totalLiquido));
 		
 		Map<Long, List<NotaEnvioProdutoEdicao>> mapaNotaEnvioPE = gerarMapaProdutoEdicaoNotasEmitidas(
 				notaEnvioRepository.obterNotaEnvioProdutoEdicao(cota.getNumCota(), idsProdutoEdicao));

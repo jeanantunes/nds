@@ -896,7 +896,7 @@ var recebimentoFisicoController = $.extend(true, {
 			
 			resultado.valorTotalCapa = $.formatNumber(resultado.valorTotalCapa, {format:"#,##0.00", locale:"br"});
 			
-			resultado.valorTotalDesconto = $.formatNumber(resultado.valorTotalDesconto, {format:"#,##0.00", locale:"br"});
+			resultado.valorTotalDesconto = $.formatNumber(resultado.valorTotalDesconto, {format:"#,##0.0000", locale:"br"});
 			
 			$("#valorTotalCapa_"+ lineId, recebimentoFisicoController.workspace).text(resultado.valorTotalCapa);
 			$("#valorTotalDesconto_"+ lineId, recebimentoFisicoController.workspace).text(resultado.valorTotalDesconto);
@@ -1122,7 +1122,9 @@ var recebimentoFisicoController = $.extend(true, {
 		var valorDesconto = precoDesconto * qtdNota;
 		var valor = preco * qtdNota;
 
-		$("#valorItemDesconto"+idLinha, recebimentoFisicoController.workspace).text($.formatNumber(valorDesconto,{locale:'br'}));
+		$("#valorItemDesconto"+idLinha, recebimentoFisicoController.workspace).text(
+			$.formatNumber(valorDesconto,{format:"#,##0.0000", locale:'br'}));
+		
 		$("#valorItem"+idLinha, recebimentoFisicoController.workspace).text($.formatNumber(valor,{locale:'br'}));
 		
 		diferenca = ((qtdPacote * pacotePadrao) + qtdQuebra) - repartePrevisto; 
@@ -1227,7 +1229,7 @@ var recebimentoFisicoController = $.extend(true, {
 									'</span>';
 			
 			value.cell.precoDesconto = '<span id="precoCapaDesconto_' + lineId + '">' +
-										$.formatNumber(value.cell.precoDesconto, {format:"#,####0.0000", locale:"br"})+
+										$.formatNumber(value.cell.precoDesconto, {format:"#,##0.0000", locale:"br"})+
 										'</span>';
 			
 			value.cell.valorTotalCapa = '<span name="valorTotalCapa" id="valorTotalCapa_' + lineId + '">' + 
@@ -1235,7 +1237,7 @@ var recebimentoFisicoController = $.extend(true, {
 										'</span>';
 			
 			value.cell.valorTotalDesconto = '<span name="valorTotalDesconto" id="valorTotalDesconto_' + lineId + '">' + 
-											$.formatNumber(value.cell.valorTotalDesconto, {format:"#,##0.00", locale:"br"})+
+											$.formatNumber(value.cell.valorTotalDesconto, {format:"#,##0.0000", locale:"br"})+
 											'</span>';
 
 			if(edicaoItemNotaPermitida == "S") {
@@ -1308,7 +1310,7 @@ var recebimentoFisicoController = $.extend(true, {
 		if ($("#permissaoColValorTotalDesconto", recebimentoFisicoController.workspace).val() == "true"){
 			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(10, true);
 			$("#totalComDescontoLbl", recebimentoFisicoController.workspace).text(
-					$.formatNumber(totalDescontoGeral, {format:"#,##0.00", locale:"br"}));
+					$.formatNumber(totalDescontoGeral, {format:"#,##0.0000", locale:"br"}));
 			$("#spanTotalComDescontoLbl", recebimentoFisicoController.workspace).show();
 		} else {
 			$(".itemNotaGrid", recebimentoFisicoController.workspace).flexToggleCol(10, false);
@@ -1598,7 +1600,7 @@ var recebimentoFisicoController = $.extend(true, {
 		$.postJSON(this.path + 'obterDadosEdicao', {codigo:codigo,edicao:edicao}, 
 			function(result) { 
 				$("#precoDescontoItem"+index, recebimentoFisicoController.workspace).text(
-					$.formatNumber(result.precoDesconto, {format:"#,####0.0000", locale:"br"})
+					$.formatNumber(result.precoDesconto, {format:"#,##0.0000", locale:"br"})
 				);
 				$("#precoCapa"+index, recebimentoFisicoController.workspace).text(
 					$.formatNumber(result.precoCapa, {format:"#,##0.00", locale:"br"})
@@ -2082,7 +2084,9 @@ var recebimentoFisicoController = $.extend(true, {
 		}
 
 		$("#labelValorTotal", recebimentoFisicoController.workspace).html(floatToPrice(valorTotal/100));
-        $("#labelValorTotalDesconto", recebimentoFisicoController.workspace).html(floatToPrice(valorTotalDesconto/100));
+        //$("#labelValorTotalDesconto", recebimentoFisicoController.workspace).html(floatToPrice(valorTotalDesconto/100));
+		$("#labelValorTotalDesconto", recebimentoFisicoController.workspace).html($.formatNumber(
+				(valorTotalDesconto/10000),{format:"#,##0.0000", locale:'br'}));
 	},
     
     replicarQuantidadeItem : function(index){

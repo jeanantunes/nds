@@ -126,24 +126,17 @@ public class ConsultaNotasController extends BaseController {
 
 		this.session.setAttribute(FILTRO_SESSION_ATTRIBUTE, filtroConsultaNotaFiscal);
 		
-		try {
-			
-			List<NotaFiscalEntradaFornecedorDTO> listaNotasFiscais =
-				notaFiscalService.obterNotasFiscaisCadastradasDTO(filtroConsultaNotaFiscal);
-			
- 			Integer quantidadeRegistros = this.notaFiscalService.obterQuantidadeNotasFicaisCadastradas(filtroConsultaNotaFiscal);
-			
-			if (quantidadeRegistros <= 0) {
-				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
-			} 
-						
-			this.result.use(FlexiGridJson.class).noReference().from(listaNotasFiscais)
-			.total(quantidadeRegistros.intValue()).page(page).serialize();
-
-		} catch (IllegalArgumentException e) {
-
-			throw new ValidacaoException(TipoMensagem.WARNING, e.getMessage());			
+		Integer quantidadeRegistros = this.notaFiscalService.obterQuantidadeNotasFicaisCadastradas(filtroConsultaNotaFiscal);
+		
+		if (quantidadeRegistros <= 0) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
+		
+		List<NotaFiscalEntradaFornecedorDTO> listaNotasFiscais =
+				notaFiscalService.obterNotasFiscaisCadastradasDTO(filtroConsultaNotaFiscal);
+					
+		this.result.use(FlexiGridJson.class).noReference().from(listaNotasFiscais)
+		.total(quantidadeRegistros.intValue()).page(page).serialize();
 	}
 
 	public void pesquisarDetalhesNotaFiscal(Long idNota, int page, int rp, String sortname, String sortorder) {
@@ -162,13 +155,11 @@ public class ConsultaNotasController extends BaseController {
 		tableModelDetalhesNota.setPage(1);
 		tableModelDetalhesNota.setTotal(detalheNotaFiscal.getItensDetalhados().size());
 
-		DecimalFormat decimalFormat = new DecimalFormat("#,###.00");
-
 		ResultadoConsultaDetallheNFVO resultadoConsultaDetallheNF = 
 			new ResultadoConsultaDetallheNFVO(
 				tableModelDetalhesNota, String.valueOf(detalheNotaFiscal.getTotalExemplares().intValue()), 
-					decimalFormat.format(detalheNotaFiscal.getValorTotalSumarizado()), 
-					decimalFormat.format(detalheNotaFiscal.getValorTotalSumarizadoComDesconto()));
+					CurrencyUtil.formatarValor(detalheNotaFiscal.getValorTotalSumarizado()), 
+					CurrencyUtil.formatarValorQuatroCasas(detalheNotaFiscal.getValorTotalSumarizadoComDesconto()));
 
 		this.result.use(Results.json()).withoutRoot().from(resultadoConsultaDetallheNF).recursive().serialize();
 	}
@@ -360,7 +351,7 @@ public class ConsultaNotasController extends BaseController {
 							itemExibicaoToString(qtdeExemplares.intValue()),
 							sobrasFaltas, 
 							itemExibicaoToString(CurrencyUtil.formatarValor(valorTotal)),
-							itemExibicaoToString(CurrencyUtil.formatarValor(valorTotalComDesconto)));
+							itemExibicaoToString(CurrencyUtil.formatarValorQuatroCasas(valorTotalComDesconto)));
 
 			listaCellModels.add(cellModel);
 		}
