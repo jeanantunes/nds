@@ -2981,7 +2981,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	sql.append("  left join excecao_produto_cota ep ON ep.cota_id = c.id ");
 	sql.append("   and ep.produto_id = p.id and ep.tipo_excecao = 'SEGMENTO' ");
 	sql.append("  left join classificacao_nao_recebida cnr ON cnr.cota_id = c.id ");
-	sql.append("   and cnr.tipo_classificacao_produto_id = p.tipo_classificacao_produto_id ");
+	sql.append("   and cnr.tipo_classificacao_produto_id = pe.tipo_classificacao_produto_id ");
 	sql.append(" where c.situacao_cadastro in ('ATIVO' , 'SUSPENSO') ");
 	sql.append(" order by c.id ");
 

@@ -66,7 +66,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("          join periodo_lancamento_parcial plp ON plp.lancamento_id = l.id ");
 		sql.append("          join produto_edicao pe on pe.id = mec.produto_edicao_id ");
 		sql.append("          join produto p on p.id = pe.produto_id ");
-		sql.append("          join tipo_classificacao_produto tcp on tcp.id = p.tipo_classificacao_produto_id ");
+		sql.append("          join tipo_classificacao_produto tcp on tcp.id = pe.tipo_classificacao_produto_id ");
 		sql.append("         where l.status in ('EXPEDIDO', 'EM BALANC RECOLHIMENTO', 'BALANCEADO RECOLHIMENTO', 'EM RECOLHIMENTO', 'FECHADO') ");
 		
 		if (edicao != null) {
