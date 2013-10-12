@@ -204,6 +204,7 @@ public class ProdutoEdicao implements Serializable {
     @OneToOne(mappedBy = "produtoEdicao")
     private EstoqueProduto estoqueProduto;
 
+    @Deprecated
     @OneToOne(fetch=FetchType.EAGER, optional=true)
 	@JoinColumn(name="TIPO_SEGMENTO_PRODUTO_ID")
 	private TipoSegmentoProduto tipoSegmentoProduto;
