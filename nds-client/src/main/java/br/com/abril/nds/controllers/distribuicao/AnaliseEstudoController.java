@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -88,30 +89,31 @@ public class AnaliseEstudoController extends BaseController {
 	
 	private TableModel<CellModelKeyValue<AnaliseEstudoDTO>> efetuarConsultaEstudos(FiltroAnaliseEstudoDTO filtro) {
 
-		Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigoProduto());
-		
-		filtro.setCodigoProduto(produto.getCodigoICD());
-		
-		List<AnaliseEstudoDTO> listaEstudos = analiseEstudoService.buscarTodosEstudos(filtro);
-		
-		popularPeriodoEStatus(listaEstudos);
-		
-		if (listaEstudos == null || listaEstudos.isEmpty()) {
-			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
-		}
+        if (StringUtils.isNotBlank(filtro.getCodigoProduto())) {
+            Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigoProduto());
+            filtro.setCodigoProduto(produto.getCodigoICD());
+        }
 
-		TableModel<CellModelKeyValue<AnaliseEstudoDTO>> tableModel = new TableModel<CellModelKeyValue<AnaliseEstudoDTO>>();
+        List<AnaliseEstudoDTO> listaEstudos = analiseEstudoService.buscarTodosEstudos(filtro);
 
-		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaEstudos));
+        popularPeriodoEStatus(listaEstudos);
 
-		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+        if (listaEstudos == null || listaEstudos.isEmpty()) {
+            throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
+        }
 
-		tableModel.setTotal(filtro.getPaginacao().getQtdResultadosTotal());
-		
-		return tableModel;
-	}
-	
-	private void tratarAtributosFiltro (FiltroAnaliseEstudoDTO filtro, String sortorder, String sortname, int page, int rp){
+        TableModel<CellModelKeyValue<AnaliseEstudoDTO>> tableModel = new TableModel<CellModelKeyValue<AnaliseEstudoDTO>>();
+
+        tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(listaEstudos));
+
+        tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
+
+        tableModel.setTotal(filtro.getPaginacao().getQtdResultadosTotal());
+
+        return tableModel;
+    }
+
+    private void tratarAtributosFiltro (FiltroAnaliseEstudoDTO filtro, String sortorder, String sortname, int page, int rp){
 		
 		if(filtro.getNumEstudo() == null || filtro.getNumEstudo() < 0){
 			if(filtro.getCodigoProduto() == null || filtro.getCodigoProduto().isEmpty()){

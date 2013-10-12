@@ -340,8 +340,13 @@ public class FixacaoReparteServiceImpl implements FixacaoReparteService {
 	@Transactional
 	@Override
 	public boolean isFixacaoExistente(FixacaoReparteDTO fixacaoReparteDTO) {
-		return fixacaoReparteRepository.isFixacaoExistente(fixacaoReparteDTO);
-	}
+        Produto produto = produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getProdutoFixado());
+        if (StringUtils.isBlank(produto.getCodigoICD())) {
+            return true; //Não deixar fixar sem um codigo ICD cadastrado.
+        }
+        fixacaoReparteDTO.setProdutoFixado(produto.getCodigoICD());
+        return fixacaoReparteRepository.isFixacaoExistente(fixacaoReparteDTO);
+    }
 
 	@Transactional
 	@Override

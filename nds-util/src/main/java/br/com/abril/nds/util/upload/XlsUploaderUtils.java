@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -70,48 +71,57 @@ public class XlsUploaderUtils {
 	private static <T, K extends Sheet> void getContentUsingReflection(Class<T> clazz, List<T> list, K sheet) throws InstantiationException,
 			IllegalAccessException, InvocationTargetException {
 		
-		int header = 0;
-		int content = 1;
-		
 		Iterator<Row> rowIterator = sheet.rowIterator();
-		while (rowIterator.hasNext()) {
-			
-			if (sheet.getRow(content) != null) {
-				
-				T obj = clazz.newInstance();
-				
-				Row row = (Row) rowIterator.next();
-				Iterator<Cell> cellIterator = row.cellIterator();
-				while (cellIterator.hasNext()) {
-					Cell cell = (Cell) cellIterator.next();
-					
-					Cell headerCell = sheet.getRow(header).getCell(cell.getColumnIndex());
-					if (headerCell != null) {
-						String xlsHeader = headerCell.getStringCellValue();
-						
-						for (Field f : clazz.getDeclaredFields()) {
-							if(f.isAnnotationPresent(XlsMapper.class)){
-								XlsMapper mapper = f.getAnnotation(XlsMapper.class);
-								if(mapper.value().equals(xlsHeader)){
-									Cell cellIndex = sheet.getRow(content).getCell(cell.getColumnIndex(), Row.RETURN_BLANK_AS_NULL);
-									if (cellIndex != null) {
-										BeanUtils.setProperty(obj, f.getName(), returnCellValue(cellIndex));										
-									}
-								}
-							}
-						}
-					}
-				}
-				
-				verifyObjBeforeAddToList(clazz, list, obj);
-				content++;
-			} else {
-				break;
-			}
-		}
+        Row headerRow = getHearderRow(sheet, rowIterator);
+
+        if (headerRow != null) {
+            while (rowIterator.hasNext()) {
+
+                T obj = clazz.newInstance();
+
+                Row row = rowIterator.next();
+                Iterator<Cell> cellIterator = row.cellIterator();
+                while (cellIterator.hasNext()) {
+                    Cell cell = cellIterator.next();
+
+                    Cell headerCell = headerRow.getCell(cell.getColumnIndex());
+                    if (headerCell != null) {
+                        String xlsHeader = headerCell.getStringCellValue();
+
+                        for (Field f : clazz.getDeclaredFields()) {
+                            if(f.isAnnotationPresent(XlsMapper.class)){
+                                XlsMapper mapper = f.getAnnotation(XlsMapper.class);
+                                if(mapper.value().equals(xlsHeader)){
+                                    BeanUtils.setProperty(obj, f.getName(), returnCellValue(cell, f.getGenericType()));
+                                }
+                            }
+                        }
+                    }
+                }
+
+                verifyObjBeforeAddToList(clazz, list, obj);
+            }
+        }
 	}
 
-	private static <T> void verifyObjBeforeAddToList(Class<T> clazz, List<T> list, T obj) throws IllegalAccessException {
+    /**
+     * Verifies that the first row is the header row (LOGICAL == PHYSICAL)
+     * and returns it.
+     * @param sheet
+     * @param rowIterator
+     * @return
+     */
+    private static Row getHearderRow(Sheet sheet, Iterator<Row> rowIterator) {
+        if (rowIterator.hasNext()) {
+            Row row = rowIterator.next();
+            if (sheet.getFirstRowNum() == row.getRowNum()) {
+                return row;
+            }
+        }
+        return null;
+    }
+
+    private static <T> void verifyObjBeforeAddToList(Class<T> clazz, List<T> list, T obj) throws IllegalAccessException {
 		int nullable = 0;
 		int annotatedFields = 0;
 		Field[] fields = clazz.getDeclaredFields();
@@ -132,15 +142,20 @@ public class XlsUploaderUtils {
 	}
 	
 	/**
-	 * @param cell
-	 * @return retorna um objeto boolan, numeric ou string de acordo com a celula recebida.
+	 *
+     * @param cell
+     * @param genericType
+     * @return retorna um objeto boolan, numeric ou string de acordo com a celula recebida.
 	 */
-	private static Object returnCellValue(Cell cell) {
+	private static Object returnCellValue(Cell cell, Type genericType) {
 		switch (cell.getCellType()) {
 			case Cell.CELL_TYPE_BOOLEAN:
 				return cell.getBooleanCellValue();
 			case Cell.CELL_TYPE_NUMERIC:
-				return cell.getNumericCellValue();
+                if (genericType == String.class) {
+                    return ((Double) cell.getNumericCellValue()).intValue(); //Não queremos casas decimais nestes casos.
+                }
+                return cell.getNumericCellValue();
 			case Cell.CELL_TYPE_STRING:
 				return cell.getStringCellValue();
 		}

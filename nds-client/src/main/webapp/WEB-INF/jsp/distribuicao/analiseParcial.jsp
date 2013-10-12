@@ -205,7 +205,7 @@ table.dadosTab { margin-left: 370px;}
             </table>
             <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
 				<tr>
-					<td>Classificação: <span>${estudoCota.estudo.produtoEdicao.produto.tipoClassificacaoProduto.descricao}</span></td>
+					<td>Classificação: <span>${estudoCota.estudo.produtoEdicao.tipoClassificacaoProduto.descricao}</span></td>
 					<td>Segmento: <span>${estudoCota.estudo.produtoEdicao.produto.tipoSegmentoProduto.descricao}</span></td>
 					<td>Filtrar por:</td>
 					<td><select name="select5" id="filtroOrdenarPor" style="width: 145px;"
@@ -580,7 +580,7 @@ table.dadosTab { margin-left: 370px;}
                     <td width="44"><strong>Produto:</strong></td>
                     <td width="155"><span class="nomeProduto">${estudoCota.estudo.produtoEdicao.produto.nomeComercial}</span></td>
                     <td width="44"><strong>Classificação:</strong></td>
-                    <td width="155"><span class="tipoClassificacaoProduto">${estudoCota.estudo.produtoEdicao.produto.tipoClassificacaoProduto.descricao}</span></td>
+                    <td width="155"><span class="tipoClassificacaoProduto">${estudoCota.estudo.produtoEdicao.tipoClassificacaoProduto.descricao}</span></td>
                 </tr>
             </table>
 
