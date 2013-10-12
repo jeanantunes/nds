@@ -365,7 +365,7 @@ function definicaoReparte(){
             </tr>
             <tr>
               <td width="79">Classificação:</td>
-                <td width="111">${estudo.produtoEdicao.produto.tipoClassificacaoProduto.descricao}</td>
+                <td width="111">${estudo.produtoEdicao.tipoClassificacaoProduto.descricao}</td>
                 <td width="65">Segmento:</td>
                 <td>${estudo.produtoEdicao.produto.tipoSegmentoProduto.descricao}</td>
                 <td>Ordenar por:</td>

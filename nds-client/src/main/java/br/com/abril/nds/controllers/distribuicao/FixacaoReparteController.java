@@ -516,7 +516,7 @@ public class FixacaoReparteController extends BaseController {
 	}
 
 	private List<FixacaoReparteDTO> obterListaInvalidos (List<FixacaoReparteDTO> listaFixacaoExcel) {
-		List<FixacaoReparteDTO>invalidos = new ArrayList<FixacaoReparteDTO>();
+		List<FixacaoReparteDTO>invalidos = new ArrayList<>();
 		
 		List<Integer> cotaIds = new ArrayList<>();
 		List<String> codigoProdutos = new ArrayList<>();
@@ -612,13 +612,13 @@ public class FixacaoReparteController extends BaseController {
 	}
 
 	private boolean isPreechimentoInvalido(FixacaoReparteDTO fixacaoReparteDTO) {
-		boolean edIniOk= (fixacaoReparteDTO.getEdicaoInicial()!=null && fixacaoReparteDTO.getEdicaoInicial() > 0);
-		boolean edFinalOk= (fixacaoReparteDTO.getEdicaoFinal()!=null && fixacaoReparteDTO.getEdicaoFinal() > 0 && fixacaoReparteDTO.getEdicaoFinal() > fixacaoReparteDTO.getEdicaoInicial());
-		boolean qtdeEdicoesOk= (fixacaoReparteDTO.getQtdeEdicoes()!=null && fixacaoReparteDTO.getQtdeEdicoes()>0);
-		return ( edIniOk  && qtdeEdicoesOk) || (edFinalOk && qtdeEdicoesOk);
-	}
-	
-	private boolean isCotaValida(FixacaoReparteDTO fixacaoReparteDTO) {
+        boolean edIniOk = (fixacaoReparteDTO.getEdicaoInicial() != null && fixacaoReparteDTO.getEdicaoInicial() > 0);
+        boolean edFinalOk = (fixacaoReparteDTO.getEdicaoFinal() != null && fixacaoReparteDTO.getEdicaoFinal() > 0 && fixacaoReparteDTO.getEdicaoFinal() > fixacaoReparteDTO.getEdicaoInicial());
+        boolean qtdeEdicoesOk = (fixacaoReparteDTO.getQtdeEdicoes() != null && fixacaoReparteDTO.getQtdeEdicoes() > 0);
+        return !((edIniOk && edFinalOk) || qtdeEdicoesOk);
+    }
+
+    private boolean isCotaValida(FixacaoReparteDTO fixacaoReparteDTO) {
 		return fixacaoReparteService.isCotaValida(fixacaoReparteDTO) ;
 	}
 

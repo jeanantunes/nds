@@ -693,8 +693,8 @@ var produtoController = $.extend(true, {
         			   {name:"produto.tipoSegmentoProduto.id",value:$("#comboTipoSegmento", produtoController.workspace).val()},
         			   {name:"produto.tipoSegmentoProduto.descricao",value:$("#comboTipoSegmento :checked", produtoController.workspace).text()},
         			 
-        			   {name:"produto.tipoClassificacaoProduto.id",value:$("#comboClassifProd", produtoController.workspace).val()},
-        			   {name:"produto.tipoClassificacaoProduto.descricao",value:$("#comboClassifProd :checked", produtoController.workspace).text()},
+//        			   {name:"produto.tipoClassificacaoProduto.id",value:$("#comboClassifProd", produtoController.workspace).val()},
+//        			   {name:"produto.tipoClassificacaoProduto.descricao",value:$("#comboClassifProd :checked", produtoController.workspace).text()},
         			   
         			   {name:"produto.descricaoDesconto",value:$("#tipoDescontoManual", produtoController.workspace).val()}];
  

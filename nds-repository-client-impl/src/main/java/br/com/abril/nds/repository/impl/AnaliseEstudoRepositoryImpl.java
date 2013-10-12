@@ -34,7 +34,7 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		hql.append(" produto.codigo AS codigoProduto, ");
 		hql.append(" produto.nome AS nomeProduto, ");
 		hql.append(" produto.periodicidade AS periodoProduto, ");
-		hql.append(" tpClassifProduto.descricao AS descicaoTpClassifProd, ");
+		hql.append(" coalesce(tpClassifProduto.descricao, '') AS descicaoTpClassifProd, ");
 		
 		hql.append(" CASE ");
 		hql.append(" WHEN lancamento.status = :RECOLHIDO OR lancamento.status = :EXPEDIDO THEN lancamento.status ");
@@ -48,7 +48,7 @@ public class AnaliseEstudoRepositoryImpl extends AbstractRepositoryModel impleme
 		hql.append(" Lancamento lancamento");
 		hql.append(" JOIN estudo.produtoEdicao as prodEdicao ");
 		hql.append(" JOIN prodEdicao.produto as produto ");
-		hql.append(" JOIN prodEdicao.tipoClassificacaoProduto as tpClassifProduto ");
+		hql.append(" left JOIN prodEdicao.tipoClassificacaoProduto as tpClassifProduto ");
 		
 		hql.append(" WHERE estudo.produtoEdicao.id = lancamento.produtoEdicao.id ");
 		
