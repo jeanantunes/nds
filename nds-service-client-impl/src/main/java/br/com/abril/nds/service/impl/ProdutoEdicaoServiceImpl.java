@@ -541,19 +541,23 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 		 * 
 		 * Alteração: "Data de Lançamento do Distribuidor" > "Data 'de hoje'"
 		 */
-		if (produtoEdicaoRepository.isProdutoEdicaoJaPublicada(produtoEdicao.getId())) {
-
-
-			if (produtoEdicao.getProduto().getCodigo()!=null && !produtoEdicao.getProduto().getCodigo().equals(dto.getCodigoProduto())) {
-				throw new ValidacaoException(TipoMensagem.ERROR, 
-						"Não é permitido alterar o código de uma Edição já publicada!");
+		if(produtoEdicao.getId()!= null){
+			
+			if (produtoEdicaoRepository.isProdutoEdicaoJaPublicada(produtoEdicao.getId())) {
+	
+	
+				if (produtoEdicao.getProduto().getCodigo()!=null && !produtoEdicao.getProduto().getCodigo().equals(dto.getCodigoProduto())) {
+					throw new ValidacaoException(TipoMensagem.ERROR, 
+							"Não é permitido alterar o código de uma Edição já publicada!");
+				}
+	
+				// Campo: Número do ProdutoEdicao:
+				if (!produtoEdicao.getNumeroEdicao().equals(dto.getNumeroEdicao())) {
+					throw new ValidacaoException(TipoMensagem.ERROR, 
+							"Não é permitido alterar o número de uma Edição já publicada!");
+				}
 			}
-
-			// Campo: Número do ProdutoEdicao:
-			if (!produtoEdicao.getNumeroEdicao().equals(dto.getNumeroEdicao())) {
-				throw new ValidacaoException(TipoMensagem.ERROR, 
-						"Não é permitido alterar o número de uma Edição já publicada!");
-			}
+			
 		}
 
 		/* Regra: Se não existir nenhuma edição associada ao produto, salvar n. 1 */
@@ -689,10 +693,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 			segm.setFaixaEtaria(dto.getFaixaEtaria());
 			segm.setTemaPrincipal(dto.getTemaPrincipal());
 			segm.setTemaSecundario(dto.getTemaSecundario());
-            if (dto.getTipoSegmentoProdutoId() != null) {
-                produtoEdicao.setTipoSegmentoProduto(tipoSegmentoProdutoService.obterTipoProdutoSegmentoPorId(dto.getTipoSegmentoProdutoId()));
-            }
 
+//			if (dto.getTipoSegmentoProdutoId() != null) {
+//			produtoEdicao.setTipoSegmentoProduto(tipoSegmentoProdutoService.obterTipoProdutoSegmentoPorId(dto.getTipoSegmentoProdutoId()));
+//            }
+
+			
 			produtoEdicao.setSegmentacao(segm);
 		}
 
