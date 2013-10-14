@@ -579,47 +579,79 @@ public class CobrancaServiceImpl implements CobrancaService {
 		List<Cobranca> cobrancasOrdenadas = this.cobrancaRepository.obterCobrancasOrdenadasPorVencimento(idCobrancas);
 		
 		Cobranca cobrancaParcial = null;
-		for (Cobranca itemCobranca:cobrancasOrdenadas){
+		
+		Cobranca cobrancaTotal = null;
+		
+		BaixaManual baixaManualTotal = null; 
+		
+		
+		for (Cobranca itemCobranca:cobrancasOrdenadas) {
 			
 			saldoDivida = this.obterSaldoDivida(itemCobranca.getId());
 			valorPagar = itemCobranca.getValor().subtract(saldoDivida);
 			
-			valorPagamentoCobranca = valorPagamentoCobranca.subtract(valorPagar.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-			
-			if (valorPagamentoCobranca.floatValue() >=0 ){
+			if ( valorPagamentoCobranca.compareTo(valorPagar) >= 0 ) {
+				
 		    	itemCobranca.setDataPagamento(pagamento.getDataPagamento());
 		    	itemCobranca.setTipoBaixa(TipoBaixaCobranca.MANUAL);
 		    	itemCobranca.setStatusCobranca(StatusCobranca.PAGO);
 		    	itemCobranca.getDivida().setStatus(StatusDivida.QUITADA);
 		    	itemCobranca.setBanco( (pagamento.getBanco()==null)?itemCobranca.getBanco() :  pagamento.getBanco() );
-		    	this.cobrancaRepository.merge(itemCobranca);
-		    	this.lancamentoBaixaParcial(itemCobranca,pagamento,valorPagar,StatusBaixa.PAGO,  statusAprovacao);
-		    }
-		    else{
 		    	
-		    	valorPagamentoCobranca = valorPagamentoCobranca.add(valorPagar);
+		    	cobrancaTotal = this.cobrancaRepository.merge(itemCobranca);
 		    	
+		    	baixaManualTotal = this.criarRegistroBaixaManual(cobrancaTotal, pagamento, valorPagar, StatusBaixa.PAGO, statusAprovacao);
+		    	
+				valorPagamentoCobranca = valorPagamentoCobranca.subtract(valorPagar);
+
+		    
+			} else {
 		    	cobrancaParcial = itemCobranca;
 		    	break;
+		    	
 		    }
 		}
 		
-		valorPagamentoCobranca = valorPagamentoCobranca.add(valorJuros).add(valorMulta).subtract(valorDesconto);
 		
-		if ((valorPagamentoCobranca!=null)&&(valorPagamentoCobranca.floatValue()>0)&&(cobrancaParcial!=null)){
-	        this.lancamentoBaixaParcial(cobrancaParcial,pagamento,valorPagamentoCobranca,StatusBaixa.PAGAMENTO_PARCIAL,  statusAprovacao);
+		if(valorPagamentoCobranca.compareTo(BigDecimal.ZERO) > 0) {
+			
+			if(cobrancaParcial != null) {
+				
+				this.lancamentoBaixaParcial(cobrancaParcial, 
+						pagamento, 
+						valorPagamentoCobranca, 
+						StatusBaixa.PAGAMENTO_PARCIAL, 
+						statusAprovacao);
+				
+			} else {
+				
+				gerarMovimentoFinanceiroCota(
+						baixaManualTotal, cobrancaTotal.getCota(), pagamento.getUsuario(), valorPagamentoCobranca, 
+						cobrancaTotal.getDataVencimento(), pagamento.getDataPagamento(), 
+						pagamento.getObservacoes(), GrupoMovimentoFinaceiro.DEBITO,
+						cobrancaTotal.getFornecedor()
+				);
+				
+			}
+			
 		}
+		
+		
 	}
-	
-	private void lancamentoBaixaParcial(Cobranca cobrancaParcial,PagamentoDividasDTO pagamento,BigDecimal valor, StatusBaixa status, StatusAprovacao statusAprovacao){
 
-		//BAIXA COBRANCA
+	private BaixaManual criarRegistroBaixaManual(
+			Cobranca cobranca,
+			PagamentoDividasDTO pagamento,
+			BigDecimal valor,
+			StatusBaixa status, 
+			StatusAprovacao statusAprovacao){
+
 		BaixaManual baixaManual = new BaixaManual();
 		
 		baixaManual.setDataBaixa(pagamento.getDataPagamento());
 		baixaManual.setDataPagamento(pagamento.getDataPagamento());
 		baixaManual.setValorPago(valor);
-		baixaManual.setCobranca(cobrancaParcial);
+		baixaManual.setCobranca(cobranca);
 		baixaManual.setResponsavel(pagamento.getUsuario());
 		baixaManual.setValorJuros(pagamento.getValorJuros());
 		baixaManual.setValorMulta(pagamento.getValorMulta());
@@ -631,16 +663,53 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 		baixaCobrancaRepository.adicionar(baixaManual);
 
-		//MOVIMENTO FINANCEIRO
-		if (status == StatusBaixa.PAGAMENTO_PARCIAL){
+		return baixaManual;
+		
+	}
+	
+	
+	private void lancamentoBaixaParcial(
+			Cobranca cobrancaParcial,
+			PagamentoDividasDTO pagamento,
+			BigDecimal valorRestante, 
+			StatusBaixa status, 
+			StatusAprovacao statusAprovacao){
 
-			gerarMovimentoFinanceiroCota(
-				baixaManual, cobrancaParcial.getCota(), pagamento.getUsuario(), valor, 
-				cobrancaParcial.getDataVencimento(), pagamento.getDataPagamento(), 
-				pagamento.getObservacoes(), GrupoMovimentoFinaceiro.CREDITO,
-				cobrancaParcial.getFornecedor()
-			);
-		}
+		BigDecimal saldoDivida = this.obterSaldoDivida(cobrancaParcial.getId());
+		BigDecimal valorPagar  = cobrancaParcial.getValor().subtract(saldoDivida);
+		
+		cobrancaParcial.setDataPagamento(pagamento.getDataPagamento());
+		cobrancaParcial.setTipoBaixa(TipoBaixaCobranca.MANUAL);
+		cobrancaParcial.setStatusCobranca(StatusCobranca.PAGO);
+		cobrancaParcial.getDivida().setStatus(StatusDivida.QUITADA);
+		cobrancaParcial.setBanco( (pagamento.getBanco()==null)?cobrancaParcial.getBanco() :  pagamento.getBanco() );
+    	this.cobrancaRepository.merge(cobrancaParcial);
+    	
+    	BaixaManual baixaManual = new BaixaManual();
+		
+		baixaManual.setDataBaixa(pagamento.getDataPagamento());
+		baixaManual.setDataPagamento(pagamento.getDataPagamento());
+		baixaManual.setValorPago(valorRestante);
+		baixaManual.setCobranca(cobrancaParcial);
+		baixaManual.setResponsavel(pagamento.getUsuario());
+		baixaManual.setValorJuros(pagamento.getValorJuros());
+		baixaManual.setValorMulta(pagamento.getValorMulta());
+		baixaManual.setValorDesconto(pagamento.getValorDesconto());
+		baixaManual.setStatus(StatusBaixa.PAGAMENTO_PARCIAL);
+		baixaManual.setStatusAprovacao(statusAprovacao);
+		baixaManual.setObservacao(pagamento.getObservacoes());
+		baixaManual.setBanco(pagamento.getBanco());
+		
+		baixaCobrancaRepository.adicionar(baixaManual);
+		
+		BigDecimal valorEmDebito = valorPagar.subtract(valorRestante);
+		
+		gerarMovimentoFinanceiroCota(
+			baixaManual, cobrancaParcial.getCota(), pagamento.getUsuario(), valorEmDebito, 
+			cobrancaParcial.getDataVencimento(), pagamento.getDataPagamento(), 
+			pagamento.getObservacoes(), GrupoMovimentoFinaceiro.DEBITO,
+			cobrancaParcial.getFornecedor()
+		);
 	}
 
 	/**
