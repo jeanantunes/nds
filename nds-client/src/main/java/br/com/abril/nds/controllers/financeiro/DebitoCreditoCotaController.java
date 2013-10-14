@@ -738,11 +738,6 @@ public class DebitoCreditoCotaController extends BaseController{
 			movimentoEditavel = false;
 		}
 		
-		if (StatusAprovacao.APROVADO.equals(movimentoFinanceiroCota.getStatus())) {
-			
-			movimentoEditavel = false;
-		}
-		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		dataOperacao = DateUtil.removerTimestamp(dataOperacao);
