@@ -68,6 +68,20 @@ $(function(){
 									<td><input type="text" name="dto.senha" id="senha" style="width:220px;" value="${parametroSistemaGeralDTO.senha}" /></td>
 								</tr>
 								<tr>
+									<td>Autenticar e-mail?</td>
+									<td>
+										<c:choose>
+											<c:when test='${parametroSistemaGeralDTO.autenticaEmail == "TRUE"}'>
+												<input type="checkbox" id="autenticaEmail" name="autenticaEmail" checked="checked" value="TRUE" /> 
+											</c:when>
+											<c:otherwise>
+												<input type="checkbox" id="autenticaEmail" name="autenticaEmail" value="TRUE" />
+											</c:otherwise>
+										</c:choose>
+										<input type="hidden" name="dto.autenticaEmail" id="autenticaEmailHidden" />
+									</td>
+								</tr>
+								<tr>
 									<td>Interface CE Exporta&ccedil;&atilde;o:</td>
 									<td>
 										<input disabled="disabled"  type="text" name="dto.pathCeExportacao" id="pathCeExportacao" style="width:220px;" value="${parametroSistemaGeralDTO.pathCeExportacao}"/>

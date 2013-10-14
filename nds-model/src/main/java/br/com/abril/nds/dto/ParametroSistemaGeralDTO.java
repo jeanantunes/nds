@@ -103,6 +103,21 @@ public class ParametroSistemaGeralDTO implements Serializable {
 	}
 	
 	/**
+	 * @return the autenticaEmail
+	 */
+	public String getAutenticaEmail() {
+		return this.getParametroSistemaString(TipoParametroSistema.EMAIL_AUTENTICAR);
+	}
+
+	/**
+	 * @param autenticaEmail
+	 *            the autenticaEmail to set
+	 */
+	public void setAutenticaEmail(String autenticaEmail) {
+		this.params.put(TipoParametroSistema.EMAIL_AUTENTICAR, Boolean.valueOf(autenticaEmail) ? "TRUE" : "FALSE");
+	} 
+	
+	/**
 	 * @param emailUsuario
 	 *            the email to set
 	 */

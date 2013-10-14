@@ -76,6 +76,11 @@ public enum TipoParametroSistema {
 	EMAIL_REMETENTE,
 
 	/**
+	 * Autentica o envio de e-mail do sistema
+	 */
+	EMAIL_AUTENTICAR,
+	
+	/**
 	 * Representa a quantidade de meses que sera efetuado o expurgo do sistema
 	 */
 	FREQUENCIA_EXPURGO,
