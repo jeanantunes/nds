@@ -3,11 +3,11 @@ package br.com.abril.nds.service.impl;
 import java.util.Date;
 import java.util.List;
 
+import org.quartz.impl.StdScheduler;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.scheduling.quartz.SchedulerFactoryBean;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -118,12 +118,9 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService, Application
 			throw new IllegalArgumentException("ID da Cota nulo!");
 		}
 		
-		SchedulerFactoryBean schedulerFactoryBean = 
-			(SchedulerFactoryBean) this.applicationContext.getBean("schedulerFactoryBean");
+		StdScheduler scheduler = (StdScheduler) applicationContext.getBean("schedulerFactoryBean");
 
-		QuartzUtil.doAgendador(
-			schedulerFactoryBean.getScheduler()).removeJobsFromGroup(idCota.toString());
+		QuartzUtil.doAgendador(scheduler).removeJobsFromGroup(idCota.toString());
 	}
-
 
 }

@@ -1232,7 +1232,7 @@ var fechamentoEncalheController = $.extend(true, {
 		$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/obterStatusCobrancaCota", 
 			null,
 			function(result) {
-				if(!result || resutl == '' || result=='FINALIZADO') {
+				if(!result || result == '' || result=='FINALIZADO') {
 					
 					$('#mensagemLoading').text('Aguarde, carregando ...');
 				} else {

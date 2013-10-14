@@ -43,6 +43,10 @@ public class FechamentoDiario implements Serializable {
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
 	
+	@Column(name = "DATA_CRIACAO")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dataCriacao;
+	
 	@OneToOne(mappedBy = "fechamentoDiario")
 	private FechamentoDiarioConsolidadoReparte consolidadoReparte;
 	
@@ -90,6 +94,20 @@ public class FechamentoDiario implements Serializable {
 
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
+	}
+
+	/**
+	 * @return the dataCriacao
+	 */
+	public Date getDataCriacao() {
+		return dataCriacao;
+	}
+
+	/**
+	 * @param dataCriacao the dataCriacao to set
+	 */
+	public void setDataCriacao(Date dataCriacao) {
+		this.dataCriacao = dataCriacao;
 	}
 
 	public FechamentoDiarioConsolidadoReparte getConsolidadoReparte() {

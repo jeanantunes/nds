@@ -585,23 +585,21 @@ public class DiferencaEstoqueController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Campo [Diferença] é obrigatório!");
 		}
 		
-		if(idDiferenca == null){
+		if(idDiferenca == null) {
 			
 			incluirLancamentoDiferencaEstoqueRateio(tipoDiferenca,direcionadoParaEstoque,
 													codigoProduto,edicaoProduto, 
 													diferenca,reparteAtual,
 													qntReparteRateio,rateioCotas,
 													tipoEstoque, pacotePadrao);
-		}
-		else{
+		} else {
 			
 			TipoDirecionamentoDiferenca tipoDirecionamento = null;
 			
-			if (!direcionadoParaEstoque ){
+			if (!direcionadoParaEstoque ) {
 				
 				tipoDirecionamento  = TipoDirecionamentoDiferenca.COTA;
-			}
-			else{
+			} else {
 				
 				tipoDirecionamento  = TipoDirecionamentoDiferenca.ESTOQUE;
 			}
@@ -623,7 +621,7 @@ public class DiferencaEstoqueController extends BaseController {
 													List<RateioCotaVO> rateioCotas,
 													TipoEstoque tipoEstoque,
 													String pacotePadrao) {
-		if(!direcionadoParaEstoque){
+		if(!direcionadoParaEstoque) {
 			
 			validarTipoDiferenca(
 				tipoDiferenca, diferenca, 
@@ -644,14 +642,13 @@ public class DiferencaEstoqueController extends BaseController {
 			
 				cadastrarRateioCotas(rateioCotas, diferencaVO);
 				
-			}catch(ValidacaoException e){
+			} catch(ValidacaoException e) {
 				
 				excluirDiferenca(diferencaVO.getId());
 				
 				throw e;
 			}	
-		}
-		else{
+		} else {
 			
 			DiferencaVO diferencaVO = obterDiferencaVO(tipoDiferenca,codigoProduto,edicaoProduto, diferenca, reparteAtual,tipoEstoque,pacotePadrao);
 			diferencaVO.setTipoDirecionamento(TipoDirecionamentoDiferenca.ESTOQUE);

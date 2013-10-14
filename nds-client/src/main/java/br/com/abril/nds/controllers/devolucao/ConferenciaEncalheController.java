@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -2049,7 +2050,7 @@ public class ConferenciaEncalheController extends BaseController {
 			dados.put("valorEncalhe", valorEncalhe);
 			dados.put("valorVendaDia", valorVendaDia);
 			dados.put("valorDebitoCredito", valorDebitoCredito.abs());
-			dados.put("valorPagar", valorPagar);
+			dados.put("valorPagar", valorPagar.setScale(2, RoundingMode.HALF_EVEN));
 			dados.put("valorTotal", valorTotal);
 			dados.put("valorPagarAtualizado", valorPagarAtualizado);
 		}

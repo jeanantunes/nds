@@ -207,7 +207,7 @@ public class VendaEncalheController extends BaseController {
 		BigDecimal total = CurrencyUtil.converterValor(precoProduto).multiply((new BigDecimal(qntSolicitada)));
 		
 		Map<String, Object> mapa = new TreeMap<String, Object>();
-		mapa.put("totalFormatado", CurrencyUtil.formatarValor(total));
+		mapa.put("totalFormatado", CurrencyUtil.formatarValorQuatroCasas(total));
 		mapa.put("total",total);
 		
 		result.use(CustomJson.class).from(mapa).serialize();
@@ -420,13 +420,13 @@ public class VendaEncalheController extends BaseController {
 		
 		validarParametrosFiltro(filtro);
 		
-		List<VendaEncalheDTO> vendas = vendaEncalheService.buscarVendasProduto(filtro);
+		Long quantidade = vendaEncalheService.buscarQntVendasProduto(filtro);
 		
-		if(vendas.isEmpty()){
+		if(quantidade == null || quantidade.equals(0L)){
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		}
 		
-		Long quantidade = vendaEncalheService.buscarQntVendasProduto(filtro);
+		List<VendaEncalheDTO> vendas = vendaEncalheService.buscarVendasProduto(filtro);
 		
 		List<VendaEncalheVO> listaExibicaoGrid = new ArrayList<VendaEncalheVO>();
 		
@@ -434,12 +434,13 @@ public class VendaEncalheController extends BaseController {
 		
 		VendaEncalheVO vendaEncalheVO = null;
 		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
 		for(VendaEncalheDTO dto : vendas){
 			
 			vendaEncalheVO = getVendaEncalheVO(dto);
 			
-			if( this.distribuidorService.obterDataOperacaoDistribuidor().compareTo(
-					DateUtil.removerTimestamp(dto.getDataVenda())) <= 0){
+			if(dataOperacao.compareTo(DateUtil.removerTimestamp(dto.getDataVenda())) <= 0){
 				vendaEncalheVO.setEdicaoExclusaoItem(true);
 			}
 			else{
@@ -475,10 +476,10 @@ public class VendaEncalheController extends BaseController {
 		vendaEncalheVO.setNomeProduto(tratarValor(dto.getNomeProduto()));
 		vendaEncalheVO.setNumeroCota(tratarValor(dto.getNumeroCota()));
 		vendaEncalheVO.setNumeroEdicao(tratarValor(dto.getNumeroEdicao()));
-		vendaEncalheVO.setPrecoDesconto(CurrencyUtil.formatarValor((dto.getPrecoDesconto())));
+		vendaEncalheVO.setPrecoDesconto(CurrencyUtil.formatarValorQuatroCasas((dto.getPrecoDesconto())));
 		vendaEncalheVO.setQntProduto( tratarValor(dto.getQntProduto()));
 		vendaEncalheVO.setTipoVendaEncalhe( (dto.getTipoVendaEncalhe()!= null)?dto.getTipoVendaEncalhe().getVenda():"");
-		vendaEncalheVO.setValoTotalProduto(CurrencyUtil.formatarValor(dto.getValoTotalProduto()));
+		vendaEncalheVO.setValoTotalProduto(CurrencyUtil.formatarValorQuatroCasas(dto.getValoTotalProduto()));
 		vendaEncalheVO.setCodigoBarras(tratarValor(dto.getCodigoBarras()));
 		vendaEncalheVO.setQntDisponivelProduto(tratarValor(dto.getQntDisponivelProduto()));
 		vendaEncalheVO.setFormaVenda(tratarValor(dto.getFormaVenda()));		

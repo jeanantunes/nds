@@ -87,7 +87,7 @@ public class NotaFiscalEntradaFornecedorDTO implements Serializable {
 		this.dataExpedicao = DateUtil.formatarDataPTBR(dataExpedicao);
 		this.descricao = StringUtils.defaultString(descricao);
 		this.valorTotalNota = CurrencyUtil.formatarValor(MathUtil.round(valorTotalNota, 2));
-		this.valorTotalNotaComDesconto = CurrencyUtil.formatarValor(MathUtil.round(valorTotalNotaComDesconto, 2));
+		this.valorTotalNotaComDesconto = CurrencyUtil.formatarValorQuatroCasas(valorTotalNotaComDesconto);
 		this.notaRecebida = 
 				StatusNotaFiscalEntrada.RECEBIDA.equals(statusNotaFiscal) 
 					? DateUtil.formatarDataPTBR(dataRecebimento)
