@@ -262,6 +262,9 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 			element = new ExcecaoProdutoCota();
 			element.setProduto(produto);
 			element.setCota(cotaService.obterPorNumeroDaCota(numeroCota));
+			TipoClassificacaoProduto tcp = new TipoClassificacaoProduto();
+			tcp.setId(filtro.getProdutoDto().getIdClassificacaoProduto());
+			element.setTipoClassificacaoProduto(tcp);
 			element.setUsuario(usuario);
 			element.setDataAlteracao(new Date());
 			element.setTipoExcecao(tipoExcecao);
