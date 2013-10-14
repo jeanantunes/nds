@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.util.StringUtils;
+
 import br.com.abril.nds.enums.TipoParametroSistema;
 import br.com.abril.nds.model.integracao.ParametroSistema;
 
@@ -72,7 +74,7 @@ public class ParametroSistemaGeralDTO implements Serializable {
 		for (TipoParametroSistema tps : params.keySet()) {
 			ParametroSistema ps = new ParametroSistema();
 			ps.setTipoParametroSistema(tps);
-			ps.setValor(params.get(tps));
+			ps.setValor(StringUtils.trimWhitespace(params.get(tps)));
 			lst.add(ps);
 		}
 		
