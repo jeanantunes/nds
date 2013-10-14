@@ -572,6 +572,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     	
     	fechamento.setDataFechamento(dataFechamento);
     	fechamento.setUsuario(usuario);
+    	fechamento.setDataCriacao(new Date());
     	
     	fechamento = fechamentoDiarioRepository.merge(fechamento);
     	
