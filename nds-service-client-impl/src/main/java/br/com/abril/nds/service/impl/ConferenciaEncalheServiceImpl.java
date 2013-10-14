@@ -1523,13 +1523,13 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	private Map<String, Boolean> gerarCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota) throws GerarCobrancaValidacaoException {
 		
-		//CANCELA DIVIDA EXCLUI CONSOLIDADO E MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (ENVIO_ENCALHE E DEBITO_SOBRE_FATURAMENTO) PARA QUE SEJAM RECRIADOS
+		//CANCELA DIVIDA EXCLUI CONSOLIDADO E MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA QUE SEJAM RECRIADOS
 		this.gerarCobrancaService.cancelarDividaCobranca(null, 
 				                                         controleConferenciaEncalheCota.getCota().getId(), 
 				                                         controleConferenciaEncalheCota.getDataOperacao(), 
 				                                         true);
 
-		//CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (ENVIO_ENCALHE E DEBITO_SOBRE_FATURAMENTO)
+		//CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE)
 		this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(controleConferenciaEncalheCota.getCota(),
 																		 controleConferenciaEncalheCota.getDataOperacao(),
 																		 controleConferenciaEncalheCota.getUsuario(),

@@ -632,10 +632,8 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			GrupoMovimentoFinaceiro tmf = ((TipoMovimentoFinanceiro) mfc.getTipoMovimento()).getGrupoMovimentoFinaceiro();
 			
 			if (tmf.equals(GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE)||
-				(tmf.equals(GrupoMovimentoFinaceiro.ENVIO_ENCALHE) || 
-				 tmf.equals(GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO))){
+				tmf.equals(GrupoMovimentoFinaceiro.ENVIO_ENCALHE)){
 			
-				
 				List<MovimentoEstoqueCota> mecs = mfc.getMovimentos();
 				
 				if (mecs!=null && !mecs.isEmpty()){
@@ -651,7 +649,6 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 					    this.movimentoEstoqueCotaRepository.alterar(mec);
 					}
 				}
-				
 				
 				List<HistoricoMovimentoFinanceiroCota> hmfcs = mfc.getHistoricos();
 
@@ -673,7 +670,6 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 					this.historicoMovimentoFinanceiroCotaRepository.removerPorId(idHmfc);
 				}
 
-				
 			    idsMfc.add(mfc.getId());
 			}
 		}
@@ -923,37 +919,21 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 				totalGeral = totalGeral.add(totalItem);		
 			}
 		}
-        
-		TipoCota tipoCota = cota!=null?cota.getTipoCota():null;	
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro = 
 				tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
 						GrupoMovimentoFinaceiro.RECEBIMENTO_REPARTE);
 	
-		if ((tipoCota==null) || tipoCota.equals(TipoCota.A_VISTA)){
-		
-			totalGeral = totalGeral.subtract(totalEstorno!=null?totalEstorno:BigDecimal.ZERO);
-			
-			this.gerarMovimentoFinanceiro(cota, 
-					                      fornecedor,
-				                          movimentosEstoqueCota, 
-				                          movimentosEstorno,
-				                          tipoMovimentoFinanceiro,
-				                          totalGeral,
-				                          dataOperacao,
-				                          usuario);
-		}
-		else if (tipoCota.equals(TipoCota.CONSIGNADO)){
-    
-			this.gerarMovimentoFinanceiro(cota, 
-					                      fornecedor,
-					                      movimentosEstoqueCota, 
-				                          null,
-				                          tipoMovimentoFinanceiro,
-				                          totalGeral,
-				                          dataOperacao,
-				                          usuario);
-		}
+		totalGeral = totalGeral.subtract(totalEstorno!=null?totalEstorno:BigDecimal.ZERO);
+
+		this.gerarMovimentoFinanceiro(cota, 
+				                      fornecedor,
+			                          movimentosEstoqueCota, 
+			                          movimentosEstorno,
+			                          tipoMovimentoFinanceiro,
+			                          totalGeral,
+			                          dataOperacao,
+			                          usuario);
 	}
 	
 	/**
@@ -1012,9 +992,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		
 		TipoCota tipoCota = cota!=null?cota.getTipoCota():null;
 
-		BigDecimal valorTotalEnvioReparte;
 		BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe;
-		BigDecimal valorTotalEstorno; 
 		
 		TipoMovimentoFinanceiro tipoMovimentoFinanceiro;
 		
@@ -1045,7 +1023,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		}
 		else if (tipoCota.equals(TipoCota.CONSIGNADO)){
 			
-			//GERA MOVIMENTO FINANCEIRO DOS MOVIMENTOS DE ESTOQUE DE REPARTE PARA COTA DO TIPO CONSIGNADO
+			//GERA MOVIMENTO FINANCEIRO DOS MOVIMENTOS DE ESTOQUE DE REPARTE(DEBITO) PARA COTA DO TIPO CONSIGNADO
 			
 			this.gerarMovimentoFinanceiroCotaReparte(cota, 
 									                 fornecedor,
@@ -1054,74 +1032,34 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 									                 dataOperacao,
 									                 usuario);
 			
-			//GERA DEBITOS DO CONSIGNADO
-
-            valorTotalEstorno = this.obterValorMovimentosEstoqueCota(movimentosEstoqueCotaOperacaoEstorno);
+			//GERA MOVIMENTO FINANCEIRO DOS MOVIMENTOS DE ESTOQUE DE ENCALHE(CREDITO) PARA COTA DO TIPO CONSIGNADO
 
             valorTotalEncalheOperacaoConferenciaEncalhe = this.obterValorMovimentosEstoqueCota(movimentosEstoqueCotaOperacaoConferenciaEncalhe);
 
-            valorTotalEnvioReparte = this.obterValorMovimentosEstoqueCota(movimentosEstoqueCotaOperacaoEnvioReparte);
+			if (movimentosEstoqueCotaOperacaoConferenciaEncalhe!=null){
 
-            
-			BigDecimal valorConsignadoPagar = valorTotalEnvioReparte.subtract(valorTotalEstorno);
-			
-			
-			if (valorTotalEncalheOperacaoConferenciaEncalhe.compareTo(valorConsignadoPagar) > 0){
-				
-				//CONFERENCIA MAIOR QUE REPARTE, GERA CREDITO DA DIFERENÇA
-				
-				BigDecimal valorCredito = BigDecimal.ZERO;
-				
-				valorCredito = valorTotalEncalheOperacaoConferenciaEncalhe.subtract(valorConsignadoPagar);
-
-				if (movimentosEstoqueCotaOperacaoConferenciaEncalhe!=null){
-
-					for(MovimentoEstoqueCota mec : movimentosEstoqueCotaOperacaoConferenciaEncalhe) {
+				for(MovimentoEstoqueCota mec : movimentosEstoqueCotaOperacaoConferenciaEncalhe) {
+					
+					if (mec.getProdutoEdicao() == null || mec.getProdutoEdicao().getProduto() == null){
 						
-						if (mec.getProdutoEdicao() == null || mec.getProdutoEdicao().getProduto() == null){
-							
-							Long id = this.movimentoEstoqueCotaRepository.obterIdProdutoEdicaoPorControleConferenciaEncalhe(idControleConferenciaEncalheCota);
-							
-							mec.setProdutoEdicao(this.produtoEdicaoRepository.buscarPorId(id));
-						}
+						Long id = this.movimentoEstoqueCotaRepository.obterIdProdutoEdicaoPorControleConferenciaEncalhe(idControleConferenciaEncalheCota);
+						
+						mec.setProdutoEdicao(this.produtoEdicaoRepository.buscarPorId(id));
 					}
-					
-	                tipoMovimentoFinanceiro = 
-	                		tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-	                				GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
-					
-					this.gerarMovimentoFinanceiro(cota, 
-							                      fornecedor,
-						                          movimentosEstoqueCotaOperacaoConferenciaEncalhe, 
-						                          movimentosEstoqueCotaOperacaoEstorno,
-						                          tipoMovimentoFinanceiro,
-						                          valorCredito,
-						                          dataOperacao,
-						                          usuario);
-				
 				}
-			}
-			else{
 				
-				//CONFERENCIA MENOR QUE REPARTE, GERA DEBITO DA DIFERENÇA
-			
-				valorConsignadoPagar = valorConsignadoPagar.subtract(valorTotalEncalheOperacaoConferenciaEncalhe);
+                tipoMovimentoFinanceiro = 
+                		tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+                				GrupoMovimentoFinaceiro.ENVIO_ENCALHE);
 				
-				if ((valorConsignadoPagar!=null) && (valorConsignadoPagar.floatValue() > 0)){
-				
-		            tipoMovimentoFinanceiro = 
-		            		tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-		            				GrupoMovimentoFinaceiro.DEBITO_SOBRE_FATURAMENTO);
-					
-					this.gerarMovimentoFinanceiro(cota, 
-							                      fornecedor,
-						                          movimentosEstoqueCotaOperacaoEnvioReparte,
-						                          movimentosEstoqueCotaOperacaoEstorno,
-						                          tipoMovimentoFinanceiro,
-						                          valorConsignadoPagar,
-						                          dataOperacao,
-						                          usuario);
-				}
+				this.gerarMovimentoFinanceiro(cota, 
+						                      fornecedor,
+					                          movimentosEstoqueCotaOperacaoConferenciaEncalhe, 
+					                          movimentosEstoqueCotaOperacaoEstorno,
+					                          tipoMovimentoFinanceiro,
+					                          valorTotalEncalheOperacaoConferenciaEncalhe,
+					                          dataOperacao,
+					                          usuario);
 			}
 		}
 	}
