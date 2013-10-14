@@ -78,7 +78,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		if (periodo != null) {
 		    sql.append("   and plp.numero_periodo = :periodo ");
 		}
-		sql.append("         group by pe.numero_edicao, plp.numero_periodo) t ");
+		sql.append("         group by pe.numero_edicao, plp.numero_periodo) t group by t.id");
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		if (edicao != null) {
