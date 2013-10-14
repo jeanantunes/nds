@@ -26,9 +26,7 @@ import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
@@ -944,7 +942,6 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	 * @param movimentosEstoqueCotaOperacaoEstorno
 	 * @param dataOperacao
 	 * @param usuario
-	 * @param formaComercializacaoProduto
 	 */
 	@Transactional
 	@Override
@@ -953,8 +950,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 									               List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEnvioReparte,
 									               List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEstorno,								      
 									               Date dataOperacao,
-									               Usuario usuario,
-									               FormaComercializacao formaComercializacaoProduto){
+									               Usuario usuario){
 		
 		//GERA MOVIMENTO FINANCEIRO DOS MOVIMENTOS DE ESTOQUE DE REPARTE PARA COTA DO TIPO A_VISTA
 		
@@ -968,7 +964,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 					                                 usuario);
 		}
 	}
-	
+
 	/**
 	 * Gera movimentos financeiros Cota x Fornecedor
 	 * @param cota
@@ -1117,8 +1113,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 			                                        movimentosReparteAgrupadosPorFornecedor.get(fornecedorId), 
 			                                        movimentosEstornoAgrupadosPorFornecedor.get(fornecedorId),
 			                                        dataOperacao,
-			                                        usuario,
-			                                        FormaComercializacao.CONTA_FIRME);
+			                                        usuario);
 		}
 	}
 	
