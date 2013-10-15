@@ -209,13 +209,14 @@ var contaCorrenteCotaController = $.extend(true, {
 					                   (formatMoneyValue(value.cell.pendente * -1)) +'</a></span>' : '0.0000';
 				
 				value.cell.total = (value.cell.total != null && value.cell.total != 0)?
-						            (formatMoneyValue(value.cell.total * -1)) : '0.0000'; 				
+						           (formatMoneyValue(value.cell.total * -1, 2)) : '0.00'; 				
 				
-				value.cell.valorPago = (formatMoneyValue(value.cell.valorPago));
+				value.cell.valorPago = (value.cell.valorPago != null && value.cell.valorPago != 0)?
+						               (formatMoneyValue(value.cell.valorPago, 2)) : '0.00'; 
 				
-				
+						               
 				value.cell.saldo = (value.cell.saldo != null && value.cell.saldo != 0)?
-                        (formatMoneyValue(value.cell.saldo * -1)) : '0.0000'; 
+                                   (formatMoneyValue(value.cell.saldo * -1, 2)) : '0.00'; 
 				
 				if (value.cell.cobrado){
 					
@@ -223,7 +224,8 @@ var contaCorrenteCotaController = $.extend(true, {
 				} else {
 					
 					value.cell.cobrado = '<img src="'+ contextPath +'/images/ico_boletos.gif"/>';
-					value.cell.saldo = (formatMoneyValue(value.cell.total));
+					value.cell.saldo = (value.cell.total != null && value.cell.total != 0)?
+					                   (formatMoneyValue(value.cell.total, 2)) : '0.00';
 				}
 			});
 			

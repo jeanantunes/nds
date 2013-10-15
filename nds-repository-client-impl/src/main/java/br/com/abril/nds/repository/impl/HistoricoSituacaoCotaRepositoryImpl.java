@@ -113,27 +113,18 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 		hql += " join hsc.cota c ";
 		hql += " join c.pessoa p ";
 		hql += " join hsc.responsavel responsavel ";
+		hql += " where hsc.processado = true ";
 		
 		if (filtro != null) {
 			
-			boolean useWhere = true;
-			
 			if (filtro.getNumeroCota() != null) {
-				
-				hql += useWhere ? " where " : " and ";
-				
-				hql += " hsc.cota.numeroCota = :numeroCota ";
-				
-				useWhere = false;
+
+				hql += " and hsc.cota.numeroCota = :numeroCota ";
 			}
 			
 			if (filtro.getStatusCota() != null) {
 				
-				hql += useWhere ? " where " : " and ";
-				
-				hql += " hsc.novaSituacao = :statusCota ";
-				
-				useWhere = false;
+				hql += " and hsc.novaSituacao = :statusCota ";
 			}
 			
 			if (filtro.getPeriodo() != null) {
@@ -141,51 +132,31 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 				if (filtro.getPeriodo().getDataInicial() != null
 						&& filtro.getPeriodo().getDataFinal() != null) {
 					
-					hql += useWhere ? " where " : " and ";
-					
-					hql += " hsc.dataInicioValidade between :dataInicial and :dataFinal ";
-					
-					useWhere = false;
+					hql += " and hsc.dataInicioValidade between :dataInicial and :dataFinal ";
 					
 				} else if (filtro.getPeriodo().getDataInicial() != null) {
 					
-					hql += useWhere ? " where " : " and ";
-					
-					hql += " hsc.dataInicioValidade >= :dataInicial ";
-					
-					useWhere = false;
+					hql += " and hsc.dataInicioValidade >= :dataInicial ";
 					
 				} else if (filtro.getPeriodo().getDataFinal() != null) {
 					
-					hql += useWhere ? " where " : " and ";
-					
-					hql += " hsc.dataInicioValidade <= :dataFinal ";
-					
-					useWhere = false;
+					hql += " and hsc.dataInicioValidade <= :dataFinal ";
 				}
 			}
 			
 			if (filtro.getMotivoStatusCota() != null) {
 				
-				hql += useWhere ? " where " : " and ";
-				
-				hql += " hsc.motivo = :motivo ";
-				
-				useWhere = false;
+				hql += " and hsc.motivo = :motivo ";
 			}
 			
-			if(filtrarUltimaDataHistorico){
+			if (filtrarUltimaDataHistorico) {
 				
-				hql += useWhere ? " where " : " and ";
-				
-				hql += " hsc.id = (";
+				hql += " and hsc.id = (";
 				hql += " select max(_h.id) from HistoricoSituacaoCota _h ";
 				hql += " where _h.dataInicioValidade <= (";
 				hql += " select dataOperacao from Distribuidor ";
 				hql += ") and _h.cota.id = hsc.cota.id ";
 				hql += ")";
-				
-				useWhere = false;
 			}
 		}
 		
@@ -324,6 +295,7 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 		
 		hql.append(" select h from HistoricoSituacaoCota h JOIN h.cota cota ")
 		   .append(" where cota.numeroCota = :numeroCota ")
+		   .append(" and h.processado = true ")
 		   .append(" and cota.situacaoCadastro = h.novaSituacao ")
 		   .append(" and cota.situacaoCadastro = :situacaoCadastro ")
 		   .append(" order by cota.inicioAtividade, h.dataEdicao desc ");
@@ -347,6 +319,7 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 		criteria.setProjection(Projections.max("dataEdicao"));
 		criteria.add(Restrictions.eq("novaSituacao", SituacaoCadastro.SUSPENSO));
 		criteria.add(Restrictions.eq("dataEdicao", dataOperacao));
+		criteria.add(Restrictions.eq("processado", true));
 		return (Date) criteria.uniqueResult();
 	}
 
@@ -357,6 +330,7 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 	public Date buscarDataUltimaSuspensaoCotas() {
 		Criteria criteria = getSession().createCriteria(HistoricoSituacaoCota.class);
 		criteria.setProjection(Projections.max("dataEdicao"));
+		criteria.add(Restrictions.eq("processado", true));
 		return (Date) criteria.uniqueResult();
 	}
 	
@@ -371,6 +345,44 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 	public Long obterTotalUltimoHistoricoStatusCota(FiltroStatusCotaDTO filtro) {
 		
 		return obterTotalHistorico(filtro, true, true);
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<HistoricoSituacaoCota> obterNaoProcessadosComInicioEm(Date data) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select h from HistoricoSituacaoCota h ")
+		   .append(" where h.processado = :processado ")
+		   .append(" and h.dataInicioValidade = :data ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", data);
+		query.setParameter("processado", false);
+		
+		return query.list();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<HistoricoSituacaoCota> obterNaoRestauradosComTerminoEm(Date data) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select h from HistoricoSituacaoCota h ")
+		   .append(" where h.processado = :processado ")
+		   .append(" and h.dataFimValidade = :data ")
+		   .append(" and h.restaurado = :restaurado ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("data", data);
+		query.setParameter("processado", true);
+		query.setParameter("restaurado", false);
+		
+		return query.list();
 	}
 	
 }

@@ -63,13 +63,13 @@ public class ContaCorrenteCotaVO implements Serializable {
 	@Export(label = "Pendente", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA_QUATRO_CASAS)
 	private BigDecimal pendente;
 	
-	@Export(label = "Total R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA_QUATRO_CASAS)
+	@Export(label = "Total R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal total;
 	
-	@Export(label = "Vlr. Pago R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA_QUATRO_CASAS)
+	@Export(label = "Vlr. Pago R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal valorPago;
 	
-	@Export(label = "Saldo R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA_QUATRO_CASAS)
+	@Export(label = "Saldo R$", alignment = Alignment.RIGHT, columnType = ColumType.MOEDA)
 	private BigDecimal saldo;
 	
 	/**
