@@ -163,13 +163,16 @@ public class EmailServiceImpl implements EmailService {
 		ParametroSistema host = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.EMAIL_HOST);
 		validarParametrosAutenticacao(host, TipoParametroSistema.EMAIL_HOST);
 		
-		ParametroSistema porta = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.EMAIL_PORTA);
-		
-		ParametroSistema senha =  parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.EMAIL_SENHA);
-		
 		ParametroSistema smtp = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.EMAIL_PROTOCOLO);
 		validarParametrosAutenticacao(smtp, TipoParametroSistema.EMAIL_PROTOCOLO);
 		
+		ParametroSistema autenticar = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.EMAIL_AUTENTICAR);
+		validarParametrosAutenticacao(autenticar, TipoParametroSistema.EMAIL_AUTENTICAR);
+		
+		ParametroSistema porta = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.EMAIL_PORTA);
+		validarParametrosAutenticacao(porta, TipoParametroSistema.EMAIL_PORTA);
+		
+		ParametroSistema senha =  parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.EMAIL_SENHA);
 		ParametroSistema usuario = parametroSistemaRepository.buscarParametroPorTipoParametro(TipoParametroSistema.EMAIL_USUARIO);
 		
 		mailSender.setPort(Integer.valueOf(porta.getValor()));
@@ -178,11 +181,19 @@ public class EmailServiceImpl implements EmailService {
 		mailSender.setPassword(senha.getValor());
 		mailSender.setProtocol(smtp.getValor());
 		
-		mailSender.getJavaMailProperties().setProperty("mail.smtps.auth", "false");
-		mailSender.getJavaMailProperties().setProperty("mail.smtps.starttls.enable", "false");
+		if (Boolean.valueOf(autenticar.getValor())) {
+			
+			mailSender.getJavaMailProperties().setProperty("mail.smtps.auth", "true");
+			mailSender.getJavaMailProperties().setProperty("mail.smtps.starttls.enable", "true");
+			
+			mailSender.getJavaMailProperties().setProperty("mail.smtp.socketFactory.port", porta.getValor());
+			mailSender.getJavaMailProperties().setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			
+		} else {
 		
-//		mailSender.getJavaMailProperties().setProperty("mail.smtp.socketFactory.port", porta.getValor());
-//		mailSender.getJavaMailProperties().setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			mailSender.getJavaMailProperties().setProperty("mail.smtps.auth", "false");
+			mailSender.getJavaMailProperties().setProperty("mail.smtps.starttls.enable", "false");
+		}
 	}
 	
 	/**
