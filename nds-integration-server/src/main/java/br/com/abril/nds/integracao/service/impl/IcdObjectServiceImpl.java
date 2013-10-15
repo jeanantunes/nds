@@ -50,6 +50,7 @@ public class IcdObjectServiceImpl implements IcdObjectService {
 
 	@Override
 	public void insereSolicitacao(EMS0128Input doc) {
+		
 		SolicitacaoFaltaSobra sfs = new SolicitacaoFaltaSobra();
 
 		SfsPK sfsPK = new SfsPK();		
@@ -60,10 +61,9 @@ public class IcdObjectServiceImpl implements IcdObjectService {
 		
 		sfs.setCodigoForma(doc.getFormaSolicitacao());
 		sfs.setCodigoSituacao(doc.getSituacaoSolicitacao());
-
-
 				
 		for (EMS0128InputItem item : doc.getItems()) {
+			
 			DetalheFaltaSobra dfs = new DetalheFaltaSobra();
 			
 			//pk
@@ -76,7 +76,7 @@ public class IcdObjectServiceImpl implements IcdObjectService {
 						
 			dfs.setCodigoTipoAcerto(item.getTipoAcerto());
 			dfs.setCodigoAcerto(doc.getSituacaoSolicitacao());
-			dfs.setCodigoPublicacaoAdabas(item.getNumeroEdicao());			
+			dfs.setCodigoPublicacaoAdabas(item.getCodigoProduto());			
 			dfs.setNumeroEdicao(item.getNumeroEdicao());
 			
 			if(item.getQtd() != null)

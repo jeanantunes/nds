@@ -132,6 +132,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 					
 					
 					if(!itemsRemove.isEmpty()) {
+						
 						doc.getItems().removeAll(itemsRemove);
 						
 						if (doc != null && (doc.getItems() == null || doc.getItems().isEmpty())) {
@@ -158,7 +159,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		
 		AtualizacaoEstoqueGFS atualizacaoEstoqueGFS = recuperarAtualizacaoEstoqueGFS(movimentoEstoque, diferenca);
 		
-		if(atualizacaoEstoqueGFS ==null){
+		if(atualizacaoEstoqueGFS == null){
 			atualizacaoEstoqueGFS = new AtualizacaoEstoqueGFS();
 			atualizacaoEstoqueGFS.setMovimentoEstoque(movimentoEstoque);
 			atualizacaoEstoqueGFS.setDiferenca(diferenca);
@@ -235,9 +236,11 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		item.setNumeroEdicao(me.getProdutoEdicao().getNumeroEdicao());
 		item.setQtd(me.getQtde());
 		item.setPrecoCapa(me.getProdutoEdicao().getPrecoVenda());
+		
 		if (null != me.getProdutoEdicao().getProduto().getDescontoLogistica()) {
 			item.setPercentualDesconto(me.getProdutoEdicao().getProduto().getDescontoLogistica().getPercentualDesconto());
 		}
+		
 		item.setSituacaoAcerto("SOLICITADO");
 		
 		input.getItems().add(item);
@@ -277,7 +280,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		sql.append("WHERE tm.grupoMovimentoEstoque in (:grupoMovimentoEstoque) ");
 		sql.append("	and me.statusIntegracao = :statusIntegracao ");
 		sql.append("	and me.status = :status ");
-		sql.append("	and lancamentoDiferenca.status = :statusPendente ");
+		sql.append("	and lancamentoDiferenca.status in (:statusPendente) ");
 		
 		Query query = getSession().createQuery(sql.toString());
 
@@ -290,7 +293,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		
 		query.setParameter("statusIntegracao", StatusIntegracao.NAO_INTEGRADO);
 		query.setParameter("status", StatusAprovacao.APROVADO);
-		query.setParameter("statusPendente", StatusAprovacao.PENDENTE);
+		query.setParameterList("statusPendente", new StatusAprovacao[] {StatusAprovacao.APROVADO});
 		
 		return query;
 	}

@@ -756,7 +756,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		boolean utilizaControleAprovacao = parametrosDistribuidorService.getParametrosDistribuidor().getUtilizaControleAprovacao();
 		
-		if(!utilizaControleAprovacao) {
+		if(utilizaControleAprovacao) {
 			statusAprovacao = StatusAprovacao.APROVADO;
 		}
 		
