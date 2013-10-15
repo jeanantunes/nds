@@ -173,6 +173,8 @@ public class ManutencaoStatusCotaController extends BaseController {
 		
 		this.validarInativacaoCota(novoHistoricoSituacaoCota.getNovaSituacao(), novoHistoricoSituacaoCota.getCota().getNumeroCota());
 		
+		Date dataOperacaoDistribuidor = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
 		novoHistoricoSituacaoCota.setTipoEdicao(TipoEdicao.INCLUSAO);
 		
 		novoHistoricoSituacaoCota.setResponsavel(this.getUsuarioLogado());
@@ -182,17 +184,15 @@ public class ManutencaoStatusCotaController extends BaseController {
 		
 		if (novoHistoricoSituacaoCota.getDataInicioValidade() == null) {
 			
-			novoHistoricoSituacaoCota.setDataInicioValidade(
-				this.distribuidorService.obterDataOperacaoDistribuidor());
+			novoHistoricoSituacaoCota.setDataInicioValidade(dataOperacaoDistribuidor);
 		}
 
 		Long idCota = novoHistoricoSituacaoCota.getCota().getId();
 		
 		novoHistoricoSituacaoCota.setCota(new Cota(idCota));
 		
-		this.criarJobAtualizacaoNovaSituacaoCota(novoHistoricoSituacaoCota);
-		
-		this.criarJobAtualizacaoSituacaoAnteriorCota(novoHistoricoSituacaoCota);
+		this.situacaoCotaService.atualizarSituacaoCota(
+			novoHistoricoSituacaoCota, dataOperacaoDistribuidor);
 
 		ValidacaoVO validacao = 
 			new ValidacaoVO(TipoMensagem.SUCCESS, "A alteração do Status da Cota foi agendada com sucesso!");

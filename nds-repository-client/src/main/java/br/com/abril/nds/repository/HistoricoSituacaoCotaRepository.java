@@ -65,4 +65,9 @@ public interface HistoricoSituacaoCotaRepository extends Repository<HistoricoSit
 	List<HistoricoSituacaoCotaVO> obterUltimoHistoricoStatusCota(FiltroStatusCotaDTO filtro);
 	
 	Long obterTotalUltimoHistoricoStatusCota(FiltroStatusCotaDTO filtro);
+	
+	List<HistoricoSituacaoCota> obterNaoProcessadosComInicioEm(Date data);
+	
+	List<HistoricoSituacaoCota> obterNaoRestauradosComTerminoEm(Date data);
+	
 }
