@@ -816,10 +816,6 @@ public class BaixaFinanceiraController extends BaseController {
         	throw new ValidacaoException(TipoMensagem.WARNING,"O desconto não deve ser maior do que o valor a pagar.");
         }
 		
-		if (!this.cobrancaService.validaBaixaManualDividas(idCobrancas) && (valorSaldoConvertido.floatValue() > 0)){
-			throw new ValidacaoException(TipoMensagem.WARNING,"Não é permitida a baixa parcial de dívidas do tipo [Boleto].");
-		}
-		
 		if (tipoPagamento==null){
 			throw new ValidacaoException(TipoMensagem.WARNING,"É obrigatório a escolha de uma [Forma de Recebimento].");
 		}
