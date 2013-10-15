@@ -27,6 +27,7 @@ import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
@@ -588,6 +589,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 		for (Cobranca itemCobranca:cobrancasOrdenadas) {
 			
 			saldoDivida = this.obterSaldoDivida(itemCobranca.getId());
+			
 			valorPagar = itemCobranca.getValor().subtract(saldoDivida);
 			
 			if ( valorPagamentoCobranca.compareTo(valorPagar) >= 0 ) {
@@ -625,9 +627,11 @@ public class CobrancaServiceImpl implements CobrancaService {
 				
 			} else {
 				
+				Date dataVencimento = obterProximaDataVencimentoParaCota(cobrancaTotal.getCota().getId());
+				
 				gerarMovimentoFinanceiroCota(
 						baixaManualTotal, cobrancaTotal.getCota(), pagamento.getUsuario(), valorPagamentoCobranca, 
-						cobrancaTotal.getDataVencimento(), pagamento.getDataPagamento(), 
+						pagamento.getDataPagamento(), dataVencimento,
 						pagamento.getObservacoes(), GrupoMovimentoFinaceiro.DEBITO,
 						cobrancaTotal.getFornecedor()
 				);
@@ -704,9 +708,11 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 		BigDecimal valorEmDebito = valorPagar.subtract(valorRestante);
 		
+		Date dataVencimento = obterProximaDataVencimentoParaCota(cobrancaParcial.getCota().getId());
+		
 		gerarMovimentoFinanceiroCota(
 			baixaManual, cobrancaParcial.getCota(), pagamento.getUsuario(), valorEmDebito, 
-			cobrancaParcial.getDataVencimento(), pagamento.getDataPagamento(), 
+			cobrancaParcial.getDataVencimento(), dataVencimento, 
 			pagamento.getObservacoes(), GrupoMovimentoFinaceiro.DEBITO,
 			cobrancaParcial.getFornecedor()
 		);
@@ -759,13 +765,45 @@ public class CobrancaServiceImpl implements CobrancaService {
 		}
 	}
 
-	private void gerarMovimentoFinanceiroCota(BaixaCobranca baixaCobranca, Cota cota, Usuario usuario,
-											  BigDecimal valor, Date dataVencimento, Date dataPagamento,
-											  String observacoes, GrupoMovimentoFinaceiro grupoMovimentoFinaceiro,
+	/**
+	 * Obtém a próxima data de vencimento utilizada na criação do 
+	 * movimento financeiro de débito ou crédito (relativo a pagamento
+	 * a menor ou a maior na baixa financeira manual).
+	 * @param idCota
+	 * @return
+	 */
+	private Date obterProximaDataVencimentoParaCota(Long idCota) {
+		
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
+		Date dataVencimento = null;
+		
+		FormaCobranca frmCobranca = formaCobrancaService.obterFormaCobrancaPrincipalCota(idCota);
+		
+		if(frmCobranca == null ) {
+			frmCobranca = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+		} 
+		
+		if(frmCobranca != null && frmCobranca.isVencimentoDiaUtil()) {
+			dataVencimento = this.calendarioService.adicionarDiasUteis(dataOperacao, 1);
+		} else {
+			dataVencimento = DateUtil.adicionarDias(dataOperacao, 1);
+		}
+		
+		return dataVencimento;
+		
+	}
+	
+	private void gerarMovimentoFinanceiroCota(BaixaCobranca baixaCobranca, Cota cota, Usuario usuario,											 
+											  BigDecimal valor,  Date dataPagamento, Date dataVencimento, String observacoes, 
+											  GrupoMovimentoFinaceiro grupoMovimentoFinaceiro,
 											  Fornecedor fornecedor) {
 
 		TipoMovimentoFinanceiro tipoMovimento = 
 				this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(grupoMovimentoFinaceiro);
+		
+		
+		
 		
 		MovimentoFinanceiroCotaDTO movimento = new MovimentoFinanceiroCotaDTO();
 		movimento.setCota(cota);
@@ -776,7 +814,9 @@ public class CobrancaServiceImpl implements CobrancaService {
         movimento.setValor(valor);
         movimento.setDataCriacao(Calendar.getInstance().getTime());
 		movimento.setTipoEdicao(TipoEdicao.INCLUSAO);
+		
 		movimento.setDataVencimento(dataVencimento);
+		
 		movimento.setObservacao(observacoes);
 		
 		fornecedor = fornecedor!=null?fornecedor:cota.getParametroCobranca()!=null?cota.getParametroCobranca().getFornecedorPadrao():null;
