@@ -2,6 +2,7 @@ package br.com.abril.nds.service.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +13,7 @@ import br.com.abril.nds.dto.ProdutoNaoRecebidoDTO;
 import br.com.abril.nds.dto.ProdutoRecebidoDTO;
 import br.com.abril.nds.dto.filtro.FiltroExcecaoSegmentoParciaisDTO;
 import br.com.abril.nds.model.distribuicao.ExcecaoProdutoCota;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.repository.ExcecaoSegmentoParciaisRepository;
 import br.com.abril.nds.service.ExcecaoSegmentoParciaisService;
 import br.com.abril.nds.service.ProdutoService;
@@ -43,13 +45,31 @@ public class ExcecaoSegmentoParciaisServiceImpl implements ExcecaoSegmentoParcia
 	@Override
 	public void inserirListaExcecao(List<ExcecaoProdutoCota> listaExcessaoProdutoCota) {
 		for (ExcecaoProdutoCota excessaoProdutoCota : listaExcessaoProdutoCota) {
-			if(excessaoProdutoCota.getCodigoICD().length()==8){
-				String icd = this.produtoService.obterProdutoPorCodigo(excessaoProdutoCota.getCodigoICD()).getCodigoICD();
-				excessaoProdutoCota.setCodigoICD(icd);
+			
+			String icd = null;
+			if(excessaoProdutoCota.getProduto()!=null ){
+				if(excessaoProdutoCota.getProduto().getCodigo().length()==8){
+					icd = this.produtoService.obterProdutoPorCodigo(excessaoProdutoCota.getProduto().getCodigo()).getCodigoICD();
+				}else{
+					icd=excessaoProdutoCota.getProduto().getCodigo();
+				}
+				
+			}else if(StringUtils.isNotEmpty(excessaoProdutoCota.getCodigoICD())){
+				if(excessaoProdutoCota.getCodigoICD().length()==8){
+					icd = this.produtoService.obterProdutoPorCodigo(excessaoProdutoCota.getCodigoICD()).getCodigoICD();
+				}else{
+					icd=excessaoProdutoCota.getCodigoICD();
+				}
 			}
+			
+			
+			excessaoProdutoCota.setCodigoICD(icd);
+			
 			excecaoSegmentoParciaisRepository.adicionar(excessaoProdutoCota);
+		
+			}
+			
 		}
-	}
 
 	@Transactional
 	@Override
