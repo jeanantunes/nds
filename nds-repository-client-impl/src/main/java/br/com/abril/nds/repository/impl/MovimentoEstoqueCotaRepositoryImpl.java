@@ -1304,13 +1304,19 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		sql.append(" INNER JOIN CHAMADA_ENCALHE CE ON (");
 		sql.append("	PROD_EDICAO.ID = CE.PRODUTO_EDICAO_ID ");
 		sql.append(" ) ");
+		
+		sql.append(" JOIN ESTOQUE_PRODUTO EP ON (");
+		sql.append(" 	EP.PRODUTO_EDICAO_ID = PROD_EDICAO.ID ");
+		
+		sql.append(") ");
+		
+		sql.append(" WHERE (EP.QTDE != 0 ");
+		sql.append(" OR EP.QTDE_SUPLEMENTAR != 0 ");
+		sql.append(" OR EP.QTDE_DEVOLUCAO_ENCALHE != 0) ");
 
 		if( filtro.getIdFornecedor() != null ) {
 			
-			sql.append(" WHERE ");
-			
-			sql.append(" PROD_FORNEC.FORNECEDORES_ID = :idFornecedor ");
-			
+			sql.append(" AND PROD_FORNEC.FORNECEDORES_ID = :idFornecedor ");
 		}
 		
 		

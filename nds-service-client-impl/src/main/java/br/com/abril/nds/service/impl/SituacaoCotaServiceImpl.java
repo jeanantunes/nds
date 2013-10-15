@@ -83,14 +83,11 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService, Application
 		
 		if (historicoSituacaoCota == null 
 				|| historicoSituacaoCota.getCota() == null
-				|| historicoSituacaoCota.getCota().getId() == null) {
+				|| historicoSituacaoCota.getCota().getId() == null
+				|| dataDeOperacao == null) {
 			
 			throw new IllegalArgumentException("Parâmetros inválidos!");
 		}
-
-		historicoSituacaoCota.setDataEdicao(new Date());
-		
-		this.historicoSituacaoCotaRepository.adicionar(historicoSituacaoCota);
 		
 		Cota cota = this.cotaRepository.buscarPorId(historicoSituacaoCota.getCota().getId());
 		
@@ -98,13 +95,26 @@ public class SituacaoCotaServiceImpl implements SituacaoCotaService, Application
 			
 			throw new RuntimeException("Cota inexistente!");
 		}
+
+		if (DateUtil.obterDiferencaDias(
+				dataDeOperacao, historicoSituacaoCota.getDataInicioValidade()) == 0) {
 		
-		if(dataDeOperacao != null && DateUtil.obterDiferencaDias(dataDeOperacao, historicoSituacaoCota.getDataInicioValidade()) == 0) {
-		
+			historicoSituacaoCota.setProcessado(true);
+			
 			cota.setSituacaoCadastro(historicoSituacaoCota.getNovaSituacao());
 			
-			cotaRepository.alterar(cota); 
+			this.cotaRepository.alterar(cota);
+			
+		} else {
+			
+			historicoSituacaoCota.setProcessado(false);
 		}
+		
+		historicoSituacaoCota.setDataEdicao(new Date());
+
+		historicoSituacaoCota.setRestaurado(false);
+		
+		this.historicoSituacaoCotaRepository.adicionar(historicoSituacaoCota);
 	}
 
 	/*
