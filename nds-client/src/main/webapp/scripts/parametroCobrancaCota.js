@@ -222,74 +222,78 @@ var parametroCobrancaCotaController = $.extend(true, {
         }       
 	},
 
-    montarComboBox : function(result,name,onChange,selected) {
+    montarComboBox : function(result,name,onChange) {
 		
 		var options = "";
 		
 		options += "<select name='"+name+"' id='"+name+"' style='width:220px;' onchange='"+onChange+"'>";
 		options += "<option value=''>Selecione</option>";
 		$.each(result, function(index, row) {
-			if (selected == row.key.$){
-			    options += "<option selected='true' value='" + row.key.$ + "'>"+ row.value.$ +"</option>";	
-			}
-			else{
-				options += "<option value='" + row.key.$ + "'>"+ row.value.$ +"</option>";	
-			}
+			options += "<option value='" + row.key.$ + "'>"+ row.value.$ +"</option>";	
 		});
 		options += "</select>";
 		
 		return options;
 	},
 	
-	obterSugestaoFornecedorPadrao : function(resultado){
+	obterSugestaoFornecedorPadrao : function() {
 		
 		var selected;
 		
-		if (!resultado || resultado.length <= 0){
+		var options = $("#fornecedorPadrao", this.workspace).find("option");
+		
+		$.each(options, function(index, row) {
 			
-			return null;
+			if ('Dinap' == $(row).html()) {
+				
+				selected = row.value;
+				
+				return false;
+ 		    }
+		});
+		
+		if (!selected) {
+		
+			$.each(options, function(index, row) {
+				
+				if (row.value) {
+					
+					selected = row.value;
+					
+					return false;
+			    }
+			});
 		}
 		
-        $.each(resultado, function(index, row) {
-  		   
- 		    if ('Dinap' == row.value.$){
- 				   
- 			    selected = row.key.$	
- 				   
- 				return selected;
- 		    }	   
- 	    });
-  	   
-        if (!selected){
-  	        
-        	selected = resultado[0].key.$
-        }
-        
         return selected;
 	},
 	
-	carregarFornecedoresPadrao : function(selected){
+	carregarFornecedoresPadrao : function(idFornecedor) {
+		
 		var data = [{name: 'idCota', value: parametroCobrancaCotaController.idCota},
             {name: 'modoTela', value: parametroCobrancaCotaController.modoTela.value},
             {name: 'idFormaPagto', value: parametroCobrancaCotaController.idFormaPagto}];
+		
 		$.postJSON(contextPath + "/cota/parametroCobrancaCota/fornecedoresCota",
 				   data,
 				   function(resultado){
+					
+			       		parametroCobrancaCotaController.sucessCallbackCarregarFornecedoresPadrao(resultado);
+			       		
+			        	if (!idFornecedor) {
 
-			           if (!selected){
-
-			        	   selected = parametroCobrancaCotaController.obterSugestaoFornecedorPadrao(resultado);
-			           }
-
-			           parametroCobrancaCotaController.sucessCallbackCarregarFornecedoresPadrao(resultado,selected); 
+			        		idFornecedor = parametroCobrancaCotaController.obterSugestaoFornecedorPadrao();
+			        	}
+			        	
+			        	$("#fornecedorPadrao", this.workspace).val(idFornecedor);
 		           },
 				   null,
 				   true);
 	},
 	
-	sucessCallbackCarregarFornecedoresPadrao : function(result,selected) {
+	sucessCallbackCarregarFornecedoresPadrao : function(result) {
 		
-		var comboFornecedoresPadrao =  parametroCobrancaCotaController.montarComboBox(result,"fornecedorPadrao","",selected);
+		var comboFornecedoresPadrao =  parametroCobrancaCotaController.montarComboBox(result,"fornecedorPadrao","");
 		
 	    $("#fornecedoresPadrao", this.workspace).html(comboFornecedoresPadrao);
 	},
@@ -537,8 +541,7 @@ var parametroCobrancaCotaController = $.extend(true, {
             parametroCobrancaCotaController.carregarFornecedoresRelacionados();
         }
         
-        if(resultado && resultado.idFornecedor)
-        	parametroCobrancaCotaController.carregarFornecedoresPadrao(resultado.idFornecedor);
+        parametroCobrancaCotaController.carregarFornecedoresPadrao(resultado.idFornecedor);
         
         parametroCobrancaCotaController.carregarArquivoContrato();
 
