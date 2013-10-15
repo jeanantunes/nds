@@ -1891,7 +1891,7 @@ var recebimentoFisicoController = $.extend(true, {
 				$("#valorItemDesconto" + index, recebimentoFisicoController.workspace).text(
 					$.formatNumber(
 						(qtdItens) * parseFloat(priceToFloat($("#precoDescontoItem" + index).text())),
-						{format:"#,##0.00", locale:"br"}
+						{format:"#,##0.0000", locale:"br"}
 					)	
 				);
 			//caso o checkbox esteja deselecionado
