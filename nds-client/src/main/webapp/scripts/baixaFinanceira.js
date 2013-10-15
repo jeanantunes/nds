@@ -41,7 +41,7 @@ var baixaFinanceiraController = $.extend(true, {
 		$("#valorFinanceiro", baixaFinanceiraController.workspace).priceFormat({
 			centsSeparator: ',',
 		    thousandsSeparator: '.',
-			centsLimit: 2
+			centsLimit: 4
 		});
 		
 		baixaFinanceiraController.dataOperacaoDistribuidor = 
@@ -837,7 +837,7 @@ var baixaFinanceiraController = $.extend(true, {
 		    allowNegative: true,
 			centsSeparator: ',',
 			thousandsSeparator: '.',
-			centsLimit: 2
+			centsLimit: 4
 		});
 		$("#saldoDivida", baixaFinanceiraController.workspace).html($("#saldoDividaHidden", baixaFinanceiraController.workspace).val());
 		
@@ -980,7 +980,7 @@ var baixaFinanceiraController = $.extend(true, {
 			allowNegative: true,
 			centsSeparator: ',',
 		    thousandsSeparator: '.',
-			centsLimit: 2
+			centsLimit: 4
 		});
 
 		$("#valorTotal", baixaFinanceiraController.workspace).html($("#valorTotalHidden", baixaFinanceiraController.workspace).val());
@@ -1060,56 +1060,56 @@ var baixaFinanceiraController = $.extend(true, {
 			allowNegative: true,
 		    centsSeparator: ',',
 		    thousandsSeparator: '.',
-			centsLimit: 2
+			centsLimit: 4
 		});
 		
 		$('#multaDividas', baixaFinanceiraController.workspace).priceFormat({
 			allowNegative: true,
 			centsSeparator: ',',
 		    thousandsSeparator: '.',
-			centsLimit: 2
+			centsLimit: 4
 		});
 		
 		$('#jurosDividas', baixaFinanceiraController.workspace).priceFormat({
 			allowNegative: true,
 			centsSeparator: ',',
 		    thousandsSeparator: '.',
-			centsLimit: 2
+			centsLimit: 4
 		});
 		
 		$('#descontoDividas', baixaFinanceiraController.workspace).priceFormat({
 			allowNegative: true,
 			centsSeparator: ',',
 		    thousandsSeparator: '.',
-			centsLimit: 2
+			centsLimit: 4
 		});
 		
 		$('#valorPagoDividas', baixaFinanceiraController.workspace).priceFormat({
 			allowNegative: true,
 			centsSeparator: ',',
 		    thousandsSeparator: '.',
-			centsLimit: 2
+			centsLimit: 4
 		});
 		
 		$('#valorSaldoDividas', baixaFinanceiraController.workspace).priceFormat({
 			allowNegative: true,
 			centsSeparator: ',',
 		    thousandsSeparator: '.',
-			centsLimit: 2
+			centsLimit: 4
 		});
 		
 		$('#valorSaldoDividasHidden', baixaFinanceiraController.workspace).priceFormat({
 			allowNegative: true,
 			centsSeparator: ',',
 		    thousandsSeparator: '.',
-			centsLimit: 2
+			centsLimit: 4
 		});
 		
 		$('#valorDividasHidden', baixaFinanceiraController.workspace).priceFormat({
 			allowNegative: true,
 			centsSeparator: ',',
 		    thousandsSeparator: '.',
-			centsLimit: 2
+			centsLimit: 4
 		});
 		
 		$("#valorSaldoDividas", baixaFinanceiraController.workspace).html($("#valorSaldoDividasHidden", baixaFinanceiraController.workspace).val());
@@ -1138,7 +1138,7 @@ var baixaFinanceiraController = $.extend(true, {
 			allowNegative: true,
 			centsSeparator: ',',
 		    thousandsSeparator: '.',
-			centsLimit: 2
+			centsLimit: 4
 		});
 	},
 
@@ -1167,7 +1167,7 @@ var baixaFinanceiraController = $.extend(true, {
 			allowNegative: true,
 			centsSeparator: ',',
 		    thousandsSeparator: '.',
-			centsLimit: 2
+			centsLimit: 4
 		});
 		$("#valorSaldoDividas", baixaFinanceiraController.workspace).html($("#valorSaldoDividasHidden", baixaFinanceiraController.workspace).val());
 	},

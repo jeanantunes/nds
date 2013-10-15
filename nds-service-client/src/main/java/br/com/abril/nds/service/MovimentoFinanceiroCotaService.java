@@ -10,7 +10,6 @@ import br.com.abril.nds.dto.MovimentoFinanceiroCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
@@ -69,14 +68,12 @@ public interface MovimentoFinanceiroCotaService {
 	 * @param movimentosEstoqueCotaOperacaoEstorno
 	 * @param dataOperacao
 	 * @param usuario
-	 * @param formaComercializacaoProduto
 	 */
 	void gerarMovimentoFinanceiroCotaAVista(Cota cota,
 											Fornecedor fornecedor,
 											List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEnvioReparte,
 											List<MovimentoEstoqueCota> movimentosEstoqueCotaOperacaoEstorno,
-											Date dataOperacao, Usuario usuario,
-											FormaComercializacao formaComercializacaoProduto);
+											Date dataOperacao, Usuario usuario);
 
 	/**
      * Distingue Movimentos de Estoque da Cota por Fornecedor; 

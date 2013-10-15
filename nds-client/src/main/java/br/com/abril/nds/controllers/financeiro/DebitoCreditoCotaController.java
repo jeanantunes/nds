@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -738,11 +739,6 @@ public class DebitoCreditoCotaController extends BaseController{
 			movimentoEditavel = false;
 		}
 		
-		if (StatusAprovacao.APROVADO.equals(movimentoFinanceiroCota.getStatus())) {
-			
-			movimentoEditavel = false;
-		}
-		
 		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		dataOperacao = DateUtil.removerTimestamp(dataOperacao);
@@ -955,6 +951,8 @@ public class DebitoCreditoCotaController extends BaseController{
 		filtroDebitoCredito.setDataVencimentoInicio(DateUtil.parseDataPTBR(debitoCredito.getDataVencimento()));
 		filtroDebitoCredito.setDataVencimentoFim(DateUtil.parseDataPTBR(debitoCredito.getDataVencimento()));
 		filtroDebitoCredito.setNumeroCota(debitoCredito.getNumeroCota());
+		filtroDebitoCredito.setGrupoMovimentosFinanceirosDebitosCreditos(
+				Arrays.asList( debitoCredito.getTipoMovimentoFinanceiro().getGrupoMovimentoFinaceiro()));
 			
 		if (this.movimentoFinanceiroCotaService.existeOutrosMovimentosFinanceiroCota(filtroDebitoCredito, id)) {
 			ValidacaoVO validacao = new ValidacaoVO(TipoMensagem.WARNING, "Já existe um movimento para esta cota, nesta data.");

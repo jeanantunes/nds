@@ -45,6 +45,7 @@ import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaComercializacao;
+import br.com.abril.nds.model.cadastro.HistoricoSituacaoCota;
 import br.com.abril.nds.model.cadastro.ParametrosAprovacaoDistribuidor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
@@ -90,7 +91,6 @@ import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 import br.com.abril.nds.repository.DistribuicaoFornecedorRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
-import br.com.abril.nds.repository.EstoqueProdutoCotaJuramentadoRepository;
 import br.com.abril.nds.repository.EstoqueProdutoRespository;
 import br.com.abril.nds.repository.FechamentoDiarioConsolidadoCotaRepository;
 import br.com.abril.nds.repository.FechamentoDiarioConsolidadoDividaRepository;
@@ -111,6 +111,7 @@ import br.com.abril.nds.repository.FechamentoDiarioResumoConsolidadoDividaReposi
 import br.com.abril.nds.repository.FechamentoDiarioResumoEstoqueRepository;
 import br.com.abril.nds.repository.FecharDiaRepository;
 import br.com.abril.nds.repository.HistoricoEstoqueProdutoRepository;
+import br.com.abril.nds.repository.HistoricoSituacaoCotaRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
@@ -258,6 +259,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
+	
+	@Autowired
+	private HistoricoSituacaoCotaRepository historicoSituacaoCotaRepository;
 	
 	@Override
 	@Transactional
@@ -602,12 +606,83 @@ public class FecharDiaServiceImpl implements FecharDiaService {
     	List<DiferencaDTO> diferencasDTO = incluirFaltasSobras(fechamento);
     	builder.faltasSobras(diferencasDTO);
     	
-    	liberarNovaDataOperacionalParaDistribuidor(dataFechamento);
+    	Date novaDataOperacaoDistribuidor =
+    		liberarNovaDataOperacionalParaDistribuidor(dataFechamento);
+    	
+    	processarSituacoesCota(novaDataOperacaoDistribuidor, dataFechamento);
     	
     	return builder.build();
     }
 
-    private void liberarNovaDataOperacionalParaDistribuidor(Date dataFechamento) {
+    private void processarSituacoesCota(Date novaDataOperacaoDistribuidor, 
+    									Date antigaDataOperacaoDistribuidor) {
+
+    	List<HistoricoSituacaoCota> situacoesARestaurar = new ArrayList<>();
+    	
+    	situacoesARestaurar.addAll(
+    		this.historicoSituacaoCotaRepository.obterNaoRestauradosComTerminoEm(
+    			antigaDataOperacaoDistribuidor));
+    	
+    	situacoesARestaurar.addAll(
+        	this.historicoSituacaoCotaRepository.obterNaoRestauradosComTerminoEm(
+        		novaDataOperacaoDistribuidor));
+    	
+    	for (HistoricoSituacaoCota historicoSituacaoCota : situacoesARestaurar) {
+    		
+    		Cota cota = this.cotaRepository.buscarPorId(historicoSituacaoCota.getCota().getId());
+    		
+    		if (cota == null) {
+    			
+    			throw new RuntimeException("Cota inexistente!");
+    		}
+    		
+    		historicoSituacaoCota.setRestaurado(true);
+    		
+    		this.historicoSituacaoCotaRepository.alterar(historicoSituacaoCota);
+    		
+    		HistoricoSituacaoCota novoHistoricoSituacaoCota = new HistoricoSituacaoCota();
+    		
+    		novoHistoricoSituacaoCota.setDataInicioValidade(novaDataOperacaoDistribuidor);
+    		novoHistoricoSituacaoCota.setDataFimValidade(null);
+    		novoHistoricoSituacaoCota.setNovaSituacao(historicoSituacaoCota.getSituacaoAnterior());
+    		novoHistoricoSituacaoCota.setDescricao(null);
+    		novoHistoricoSituacaoCota.setMotivo(null);
+    		novoHistoricoSituacaoCota.setSituacaoAnterior(cota.getSituacaoCadastro());
+			novoHistoricoSituacaoCota.setDataEdicao(new Date());    		
+			novoHistoricoSituacaoCota.setProcessado(false);
+			novoHistoricoSituacaoCota.setRestaurado(false);
+
+    		this.historicoSituacaoCotaRepository.adicionar(novoHistoricoSituacaoCota);
+    	}
+    	
+    	List<HistoricoSituacaoCota> situacoesAProcessar = new ArrayList<>();
+    	
+    	situacoesAProcessar.addAll(
+    		this.historicoSituacaoCotaRepository.obterNaoProcessadosComInicioEm(
+    			novaDataOperacaoDistribuidor));
+    	
+    	for (HistoricoSituacaoCota historicoSituacaoCota : situacoesAProcessar) {
+    		
+    		Cota cota = this.cotaRepository.buscarPorId(historicoSituacaoCota.getCota().getId());
+    		
+    		if (cota == null) {
+    			
+    			throw new RuntimeException("Cota inexistente!");
+    		}
+
+    		historicoSituacaoCota.setDataEdicao(new Date());    		
+    		
+			historicoSituacaoCota.setProcessado(true);
+			
+			cota.setSituacaoCadastro(historicoSituacaoCota.getNovaSituacao());
+			
+			this.cotaRepository.alterar(cota);
+
+    		this.historicoSituacaoCotaRepository.alterar(historicoSituacaoCota);
+    	}
+    }
+    
+    private Date liberarNovaDataOperacionalParaDistribuidor(Date dataFechamento) {
     	
 		Distribuidor distribuidor = distribuidorRepository.obter();		
 		
@@ -622,7 +697,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		distribuidor.setDataOperacao(novaData);
 		
 		distribuidorRepository.alterar(distribuidor);
-		
+	
+		return novaData;
 	}
 	
     /**

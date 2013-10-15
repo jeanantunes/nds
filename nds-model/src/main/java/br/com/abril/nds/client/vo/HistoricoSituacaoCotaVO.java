@@ -35,6 +35,8 @@ public class HistoricoSituacaoCotaVO implements Serializable {
 	
 	private Integer numeroCota;
 	
+	private boolean processado;
+	
 	/**
 	 * Construtor padrão.
 	 */
@@ -159,6 +161,14 @@ public class HistoricoSituacaoCotaVO implements Serializable {
 	 */
 	public void setDescricao(String descricao) {
 		this.descricao = descricao == null ? "" : descricao;
+	}
+	
+	public boolean isProcessado() {
+		return processado;
+	}
+
+	public void setProcessado(boolean processado) {
+		this.processado = processado;
 	}
 
 	/* (non-Javadoc)
