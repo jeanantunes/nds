@@ -164,6 +164,10 @@ obterColunasGridPesquisaSemCota:function(){
 		}
 		
 		$.each(data.result.rows, function(index, row) {
+
+			row.cell.statusAtualizado = 
+				(row.cell.processado)
+					? row.cell.statusAtualizado : row.cell.statusAtualizado + ' (Não processado)';
 			
 			if(row.cell.numeroCota){
 				
