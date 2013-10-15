@@ -357,7 +357,6 @@ public class CobrancaServiceImpl implements CobrancaService {
             cobranca.setMulta( CurrencyUtil.formatarValor(valorMultaCalculado) );
             
             BigDecimal valor  = cob.getValor();
-            valor = valor.setScale(2, RoundingMode.HALF_EVEN);
             
             //CALCULA VALOR TOTAL
             BigDecimal valorTotal = valor.add(valorJurosCalculado).add(valorMultaCalculado);
@@ -416,7 +415,6 @@ public class CobrancaServiceImpl implements CobrancaService {
 				}
 				
 			    BigDecimal valor  = cobranca.getValor();
-	            valor = valor.setScale(2, RoundingMode.HALF_EVEN);
 	            
 				totalJuros = totalJuros.add(valorJurosCalculado);
 		        totalMulta = totalMulta.add(valorMultaCalculado);
@@ -426,12 +424,12 @@ public class CobrancaServiceImpl implements CobrancaService {
 			} 
 		}
 		
-		pagamento.setValorJuros(CurrencyUtil.formatarValor(totalJuros));
-		pagamento.setValorMulta(CurrencyUtil.formatarValor(totalMulta));
-		pagamento.setValorDividas(CurrencyUtil.formatarValor(totalDividas.subtract(totalSaldoDividas)));
-		pagamento.setValorPagamento(CurrencyUtil.formatarValor(totalDividas.add(totalJuros).add(totalMulta).subtract(totalSaldoDividas)));
-		pagamento.setValorDesconto(CurrencyUtil.formatarValor(BigDecimal.ZERO));
-		pagamento.setValorSaldo(CurrencyUtil.formatarValor(BigDecimal.ZERO));
+		pagamento.setValorJuros(CurrencyUtil.formatarValorQuatroCasas(totalJuros));
+		pagamento.setValorMulta(CurrencyUtil.formatarValorQuatroCasas(totalMulta));
+		pagamento.setValorDividas(CurrencyUtil.formatarValorQuatroCasas(totalDividas.subtract(totalSaldoDividas)));
+		pagamento.setValorPagamento(CurrencyUtil.formatarValorQuatroCasas(totalDividas.add(totalJuros).add(totalMulta).subtract(totalSaldoDividas)));
+		pagamento.setValorDesconto(CurrencyUtil.formatarValorQuatroCasas(BigDecimal.ZERO));
+		pagamento.setValorSaldo(CurrencyUtil.formatarValorQuatroCasas(BigDecimal.ZERO));
 
 		return pagamento;
 	}
