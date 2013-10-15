@@ -431,6 +431,7 @@ var geracaoNotaEnvioController = $.extend({
 			if (typeof data.mensagens == "object") {
 			
 				exibirMensagem(data.mensagens.tipoMensagem, data.mensagens.listaMensagens);
+				$("#geracaoNotaEnvio-pesquisa", geracaoNotaEnvioController.workspace).hide();
 			
 			} else {
 				
