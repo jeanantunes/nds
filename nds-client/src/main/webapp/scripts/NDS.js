@@ -465,7 +465,7 @@ function ajaxRequest(url, data, sucessCallBackFunction, errorCallBackFunction, d
 		url: url,
 		data: data,
 		async: true,
-		timeout: 172800000,
+		timeout: 18000000, //5 horas
 		dataType: dataType,
 		success: function(json) {
 			
