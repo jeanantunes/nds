@@ -25,6 +25,7 @@ import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
@@ -638,9 +639,48 @@ public class CobrancaServiceImpl implements CobrancaService {
 			
 		}
 		
+	}
+	
+	//TODO finalizar esta implementação e chama-la durante a baixa financeira manual
+	private void validarBaixaCobranca(List<Cobranca> cobrancas, BigDecimal valorPagamentoCobranca) {
+		
+		Distribuidor distrib = distribuidorService.obter();
+		
+		boolean aceitaPagamentoMaior 	= distrib.getAceitaBaixaPagamentoMaior();
+		boolean aceitaPagamentoMenor 	= distrib.getAceitaBaixaPagamentoMenor();
+		boolean aceitaPagamentoVencido 	= distrib.getAceitaBaixaPagamentoVencido();
+		
+		BigDecimal valorTotalAPagar = BigDecimal.ZERO;
+		
+		Date dataVencimento = null;
+		
+		for (Cobranca itemCobranca: cobrancas) {
+			
+			if(dataVencimento == null || dataVencimento.compareTo(itemCobranca.getDataVencimento()) > 0) {
+				dataVencimento = itemCobranca.getDataVencimento();
+			}
+			
+			BigDecimal saldoDivida = this.obterSaldoDivida(itemCobranca.getId());
+			
+			BigDecimal valorPagar = itemCobranca.getValor().subtract(saldoDivida);
+			
+			valorTotalAPagar.add(valorPagar);
+			
+		}
+		
+		
+//		if(!aceitaPagamentoMaior && valorPagamentoCobranca.compareTo(valorTotalAPagar))
+//		
+//		boolean valorPagamento
+//		
+//		if( valorPagamentoCobranca.compareTo(valorTotalAPagar) != 0 ) {
+//			return true;
+//		}
+//		
+//		return false;
 		
 	}
-
+	
 	private BaixaManual criarRegistroBaixaManual(
 			Cobranca cobranca,
 			PagamentoDividasDTO pagamento,
