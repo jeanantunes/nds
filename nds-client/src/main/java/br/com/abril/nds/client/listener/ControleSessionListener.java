@@ -20,8 +20,8 @@ public class ControleSessionListener implements HttpSessionListener {
 	@Override
 	public void sessionCreated(HttpSessionEvent sessionEvent) {
 		
-		sessionEvent.getSession().setAttribute("X9 LISTENER", 
-				SecurityContextHolder.getContext().getAuthentication().getName());
+//		sessionEvent.getSession().setAttribute("X9 LISTENER", 
+//				SecurityContextHolder.getContext().getAuthentication().getName());
 	}
 
 	@Override
@@ -54,7 +54,7 @@ public class ControleSessionListener implements HttpSessionListener {
 			(LinkedHashMap<String, String>) session.getServletContext().getAttribute(Constants.MAP_TRAVA_CONFERENCIA_COTA_SESSION_ID_NOME_USUARIO);
 
 		
-		ConferenciaEncalheController.removerTravaConferenciaCotaUsuario(sessionID, mapaCotaConferidaUsuario, mapaSessionIDNomeUsuario);
+		ConferenciaEncalheController.removerTravaConferenciaCotaUsuario(session.getServletContext(), sessionID, mapaCotaConferidaUsuario, mapaSessionIDNomeUsuario);
 		
 	}
 
