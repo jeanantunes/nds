@@ -945,7 +945,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" AND mfp.COTA_ID = cfc.COTA_ID ")
 		   .append(")")
 		   .append(" AS dataRaiz, ")
-		   .append(" coalesce((select sum(bc.VALOR_PAGO) ")
+		   .append(" coalesce((select SUM(bc.VALOR_PAGO + ((bc.VALOR_JUROS + bc.VALOR_MULTA) - bc.VALOR_DESCONTO)) ")
 		   .append("           from BAIXA_COBRANCA bc ")
 		   .append("           inner join COBRANCA cobranca ")
 		   .append("                 ON cobranca.ID = bc.COBRANCA_ID ")
