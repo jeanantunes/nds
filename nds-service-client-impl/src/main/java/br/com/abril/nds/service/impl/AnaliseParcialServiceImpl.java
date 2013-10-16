@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.filtro.AnaliseParcialQueryDTO;
-import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
 import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.service.AnaliseParcialService;
@@ -288,7 +287,7 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                 repartePDVDTOs.add(repartePDVDTO);
             }
             Produto produto = estudo.getProdutoEdicao().getProduto();
-            FixacaoReparte fixacaoReparte = fixacaoReparteRepository.buscarPorProdutoCota(cota, produto.getCodigoICD());
+            FixacaoReparte fixacaoReparte = fixacaoReparteRepository.buscarPorProdutoCotaClassificacao(cota, produto.getCodigoICD(), estudo.getProdutoEdicao().getTipoClassificacaoProduto());
             repartePdvService.salvarRepartesPDV(repartePDVDTOs, produto.getCodigo(),fixacaoReparte.getId(),manterFixa);
     }
 

@@ -46,6 +46,8 @@ public class FixacaoReparteDTO implements Serializable {
 	@Export(label ="classificacao")
 	@XlsMapper(value="classific")
 	private String classificacaoProduto;
+
+    private Long classificacaoProdutoId;
 	
 	@Export(label ="usuario")
 	private String usuario;
@@ -372,4 +374,11 @@ public class FixacaoReparteDTO implements Serializable {
 		this.produtoFixadoId = produtoFixadoId;
 	}
 
+    public Long getClassificacaoProdutoId() {
+        return classificacaoProdutoId;
+    }
+
+    public void setClassificacaoProdutoId(Long classificacaoProdutoId) {
+        this.classificacaoProdutoId = classificacaoProdutoId;
+    }
 }

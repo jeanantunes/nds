@@ -88,7 +88,8 @@ ExcecaoSegmentoParciaisRepository {
 	    parameters.put("nomePessoa", filtro.getCotaDto().getNomePessoa());
 	}
 	
-	hql.append(" order by codigoProduto,classificacaoProduto,nomeProduto ");
+	hql.append(" group by produto.codigoICD ,excecaoProdutoCota.tipoClassificacaoProduto.descricao  ");
+	hql.append(" order by excecaoProdutoCota.dataAlteracao");
 
 	Query query = getSession().createQuery(hql.toString());
 
