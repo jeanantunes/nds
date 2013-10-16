@@ -106,14 +106,15 @@ public class HistoricoSituacaoCotaRepositoryImpl extends AbstractRepositoryModel
 			hql += "hsc.novaSituacao as statusAtualizado, ";
 			hql += "responsavel.nome as usuario, ";
 			hql += "hsc.motivo as motivo, ";
-			hql += "hsc.descricao as descricao ";
+			hql += "hsc.descricao as descricao, ";
+			hql += "hsc.processado as processado ";
 		}
 		
 		hql += " from HistoricoSituacaoCota hsc ";
 		hql += " join hsc.cota c ";
 		hql += " join c.pessoa p ";
 		hql += " join hsc.responsavel responsavel ";
-		hql += " where hsc.processado = true ";
+		hql += " where 1 = 1 ";
 		
 		if (filtro != null) {
 			

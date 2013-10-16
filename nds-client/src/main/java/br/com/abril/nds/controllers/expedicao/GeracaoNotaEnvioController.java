@@ -145,13 +145,13 @@ public class GeracaoNotaEnvioController extends BaseController {
 						intervaloCotaAte, intervaloMovimentoDe, intervaloMovimentoAte, dataEmissao, 
 						listaIdFornecedores, idRoteiro, idRota, exibirNotasEnvio, sortname, sortorder, rp, page);
 		
-		List<ConsultaNotaEnvioDTO> listaCotaExemplares = this.geracaoNotaEnvioService.busca(filtro);
 		Integer qtdResult = geracaoNotaEnvioService.buscaCotasNotasDeEnvioQtd(filtro);
-		
-		if (listaCotaExemplares == null || listaCotaExemplares.isEmpty()){
+		if (qtdResult == null || qtdResult == 0){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Não há matriz confirmada na data.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Não existem notas a serem geradas para o filtro escolhido.");
 		}
+
+		List<ConsultaNotaEnvioDTO> listaCotaExemplares = this.geracaoNotaEnvioService.busca(filtro);
 		
 		result.use(FlexiGridJson.class).from(listaCotaExemplares).page(page).total(qtdResult).serialize();
 	}
