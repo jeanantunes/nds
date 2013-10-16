@@ -728,26 +728,18 @@ public class BaixaFinanceiraController extends BaseController {
 		
 		CobrancaDividaVO pagamento = null;
 		
-		if(idCobrancas.size() == 1 ){
 			
-			if ( dataPagamento == null){
-				pagamento = new CobrancaDividaVO();
-				pagamento.setValorJuros(CurrencyUtil.formatarValor(BigDecimal.ZERO));
-				pagamento.setValorMulta(CurrencyUtil.formatarValor(BigDecimal.ZERO));
-				pagamento.setValorDividas(CurrencyUtil.formatarValor(BigDecimal.ZERO));
-				pagamento.setValorPagamento(CurrencyUtil.formatarValor(BigDecimal.ZERO));
-				pagamento.setValorDesconto(CurrencyUtil.formatarValor(BigDecimal.ZERO));
-				pagamento.setValorSaldo(CurrencyUtil.formatarValor(BigDecimal.ZERO));
-			}
-			else{
-				pagamento = this.cobrancaService.obterDadosCobrancas(idCobrancas, dataPagamento);
-			}
+		if ( dataPagamento == null){
+			pagamento = new CobrancaDividaVO();
+			pagamento.setValorJuros(CurrencyUtil.formatarValor(BigDecimal.ZERO));
+			pagamento.setValorMulta(CurrencyUtil.formatarValor(BigDecimal.ZERO));
+			pagamento.setValorDividas(CurrencyUtil.formatarValor(BigDecimal.ZERO));
+			pagamento.setValorPagamento(CurrencyUtil.formatarValor(BigDecimal.ZERO));
+			pagamento.setValorDesconto(CurrencyUtil.formatarValor(BigDecimal.ZERO));
+			pagamento.setValorSaldo(CurrencyUtil.formatarValor(BigDecimal.ZERO));
 		}
 		else{
-			
-			Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
-			
-			pagamento = this.cobrancaService.obterDadosCobrancas(idCobrancas, dataOperacao);
+			pagamento = this.cobrancaService.obterDadosCobrancas(idCobrancas, dataPagamento);
 		}
 		
 		result.use(Results.json()).from(pagamento,"result").recursive().serialize();
