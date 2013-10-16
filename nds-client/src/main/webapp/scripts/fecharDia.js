@@ -686,6 +686,7 @@ var fecharDiaController =  $.extend(true, {
                     });
 				    
 				    $(".grids").hide();
+				    $("#btnConfirmarFechamento", fecharDiaController.workspace).hide();
 				}
 				
 			);
