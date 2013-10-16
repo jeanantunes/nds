@@ -5,11 +5,16 @@ import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+
+import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity(name="ACUMULO_DIVIDA")
 @SequenceGenerator(name="ACUMULO_DIVIDA_SEQ", initialValue = 1, allocationSize = 1)
@@ -41,6 +46,14 @@ public class AcumuloDivida {
 	
 	@Column(name="DATA_CRIACAO", nullable=false)
 	private Date dataCriacao;	
+	
+	@Enumerated(EnumType.STRING)
+	@Column(name = "STATUS", nullable = false)
+	private StatusInadimplencia status;
+	
+	@ManyToOne
+	@JoinColumn(name = "USUARIO_ID", nullable = false)
+	private Usuario responsavel;
 	
 	/**
 	 * @return the id
@@ -141,5 +154,33 @@ public class AcumuloDivida {
 	 */
 	public void setDataCriacao(Date dataCriacao) {
 		this.dataCriacao = dataCriacao;
+	}
+
+	/**
+	 * @return the status
+	 */
+	public StatusInadimplencia getStatus() {
+		return status;
+	}
+
+	/**
+	 * @param status the status to set
+	 */
+	public void setStatus(StatusInadimplencia status) {
+		this.status = status;
+	}
+
+	/**
+	 * @return the responsavel
+	 */
+	public Usuario getResponsavel() {
+		return responsavel;
+	}
+
+	/**
+	 * @param responsavel the responsavel to set
+	 */
+	public void setResponsavel(Usuario responsavel) {
+		this.responsavel = responsavel;
 	}
 }
