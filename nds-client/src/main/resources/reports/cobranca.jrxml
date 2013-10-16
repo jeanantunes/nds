@@ -24,6 +24,7 @@
 	<field name="conta" class="java.lang.String"/>
 	<field name="nomeFavorecido" class="java.lang.String"/>
 	<field name="tipoCobranca" class="java.lang.Object"/>
+	<field name="valorExtenso" class="java.lang.String"/>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
@@ -100,7 +101,8 @@
 				<textElement markup="styled">
 					<font fontName="Arial" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Favor realizar o depósito no <b><u> valor de R$("+ ($F{valor}) +"),</u></b> na conta corrente informada abaixo, até <b><u>" + new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{vencimento}) + ":</u></b>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Favor realizar o depósito no valor de <b> R$ "+ ($F{valor}) + " ("
++ ($F{valorExtenso}) + "),</b> na conta corrente informada abaixo, até <b><u>" + new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{vencimento}) + ":</u></b>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement uuid="2bf4fb9e-48d2-4824-a8f5-ea19f68f4bb8" positionType="Float" x="0" y="29" width="555" height="20" isRemoveLineWhenBlank="true">
@@ -109,8 +111,8 @@
 				<textElement markup="styled">
 					<font fontName="Arial" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Favor realizar o pagamento em dinheiro no valor de <b> R$ "+ ($F{valor}) + "("
-+ ($F{valor}) + "),</b> até a data <b><u>" + new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{vencimento}) + " </u></b> na sede da <b>" + $P{nomeDistribuidor} + ".</b>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Favor realizar o pagamento em dinheiro no valor de <b> R$ "+ ($F{valor}) + " ("
++ ($F{valorExtenso}) + "),</b> até a data <b><u>" + new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{vencimento}) + " </u></b> na sede da <b>" + $P{nomeDistribuidor} + ".</b>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement uuid="2bf4fb9e-48d2-4824-a8f5-ea19f68f4bb8" positionType="Float" x="0" y="29" width="555" height="20" isRemoveLineWhenBlank="true">
@@ -119,8 +121,8 @@
 				<textElement markup="styled">
 					<font fontName="Arial" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Favor realizar o pagamento em cheque no valor de <b> R$ "+ ($F{valor}) + "("
-+ ($F{valor}) + "),</b> até a data <b><u>" + new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{vencimento}) + " </u></b> na sede da <b>" + $P{nomeDistribuidor} + ".</b>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Favor realizar o pagamento em cheque no valor de <b> R$ "+ ($F{valor}) + " ("
++ ($F{valorExtenso}) + "),</b> até a data <b><u>" + new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{vencimento}) + " </u></b> na sede da <b>" + $P{nomeDistribuidor} + ".</b>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement uuid="2bf4fb9e-48d2-4824-a8f5-ea19f68f4bb8" positionType="Float" x="1" y="29" width="555" height="20" isRemoveLineWhenBlank="true">
@@ -129,8 +131,8 @@
 				<textElement markup="styled">
 					<font fontName="Arial" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Favor realizar o pagamento no valor de <b> R$ "+ ($F{valor}) + "("
-+ ($F{valor}) + "),</b> até a data <b><u>" + new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{vencimento}) + " </u></b> na sede da <b>" + $P{nomeDistribuidor} + ".</b>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Favor realizar o pagamento no valor de <b> R$ "+ ($F{valor}) + " ("
++ ($F{valorExtenso}) + "),</b> até a data <b><u>" + new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{vencimento}) + " </u></b> na sede da <b>" + $P{nomeDistribuidor} + ".</b>"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement uuid="2bf4fb9e-48d2-4824-a8f5-ea19f68f4bb8" positionType="Float" x="0" y="29" width="555" height="20" isRemoveLineWhenBlank="true">
@@ -139,12 +141,13 @@
 				<textElement markup="styled">
 					<font fontName="Arial" size="12"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Favor realizar a transferência no <b><u> valor de R$("+ ($F{valor}) +"),</u></b> na conta corrente informada abaixo, até <b><u>" + new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{vencimento}) + ":</u></b>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Favor realizar a transferência no valor de <b> R$ "+ ($F{valor}) + " ("
++ ($F{valorExtenso}) + "),</b> na conta corrente informada abaixo, até <b><u>" + new java.text.SimpleDateFormat("dd/MM/yyyy").format($F{vencimento}) + ":</u></b>"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement uuid="4756bba6-13cd-4b39-8a54-7187b6ebd3c7" positionType="Float" x="0" y="82" width="70" height="20" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DEPOSITO)
-|| $F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA) ]]></printWhenExpression>
+|| $F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA)]]></printWhenExpression>
 				</reportElement>
 				<textElement>
 					<font fontName="Arial" size="12"/>
@@ -154,7 +157,7 @@
 			<staticText>
 				<reportElement uuid="20fd721b-0696-446c-a4ae-5b2555ea2fb4" positionType="Float" x="0" y="101" width="70" height="20" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DEPOSITO)
-|| $F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA) ]]></printWhenExpression>
+|| $F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA)]]></printWhenExpression>
 				</reportElement>
 				<textElement>
 					<font fontName="Arial" size="12"/>
@@ -164,7 +167,7 @@
 			<staticText>
 				<reportElement uuid="581c6c65-8b85-4766-a6f0-043f62f6bf02" positionType="Float" x="0" y="120" width="70" height="20" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DEPOSITO)
-|| $F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA) ]]></printWhenExpression>
+|| $F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA)]]></printWhenExpression>
 				</reportElement>
 				<textElement>
 					<font fontName="Arial" size="12"/>
@@ -174,7 +177,7 @@
 			<staticText>
 				<reportElement uuid="64ff7243-e0e2-47a1-99ab-681b258071c9" positionType="Float" x="0" y="139" width="70" height="20" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DEPOSITO)
-|| $F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA) ]]></printWhenExpression>
+|| $F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA)]]></printWhenExpression>
 				</reportElement>
 				<textElement>
 					<font fontName="Arial" size="12"/>
@@ -184,7 +187,7 @@
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="2def4e3f-a081-414b-b9b9-15967f832a8d" positionType="Float" x="70" y="82" width="485" height="20" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DEPOSITO)
-|| $F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA) ]]></printWhenExpression>
+|| $F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA)]]></printWhenExpression>
 				</reportElement>
 				<textElement>
 					<font fontName="Arial" size="12"/>
@@ -194,7 +197,7 @@
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="f17f3a5d-5258-427e-9f15-6647ad79a9dc" positionType="Float" x="70" y="101" width="485" height="20" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DEPOSITO)
-|| $F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA) ]]></printWhenExpression>
+|| $F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA)]]></printWhenExpression>
 				</reportElement>
 				<textElement>
 					<font fontName="Arial" size="12"/>
@@ -204,7 +207,7 @@
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="0b6e57c2-ebc3-4c51-8281-57e0b07c90d7" positionType="Float" x="70" y="120" width="485" height="20" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DEPOSITO)
-|| $F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA) ]]></printWhenExpression>
+|| $F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA)]]></printWhenExpression>
 				</reportElement>
 				<textElement>
 					<font fontName="Arial" size="12"/>
@@ -214,7 +217,7 @@
 			<textField isBlankWhenNull="true">
 				<reportElement uuid="23c768f9-be3e-470c-85ba-1d757f8447e1" positionType="Float" x="70" y="139" width="485" height="20" isRemoveLineWhenBlank="true">
 					<printWhenExpression><![CDATA[$F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.DEPOSITO)
-|| $F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA) ]]></printWhenExpression>
+|| $F{tipoCobranca}.equals(br.com.abril.nds.model.cadastro.TipoCobranca.TRANSFERENCIA_BANCARIA)]]></printWhenExpression>
 				</reportElement>
 				<textElement>
 					<font fontName="Arial" size="12"/>
