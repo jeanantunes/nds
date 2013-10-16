@@ -251,7 +251,6 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	private void atribuirTravaConferenciaCotaUsuario(Integer numeroCota) {
 		
-		synchronized (this.session.getServletContext()) {
 		
 			String userSessionID = this.session.getId();
 			
@@ -283,7 +282,6 @@ public class ConferenciaEncalheController extends BaseController {
 			mapaSessionIDNomeUsuario.put(userSessionID, getIdentificacaoUsuarioLogado());
 			mapaCotaConferidaUsuario.put(numeroCota, userSessionID);
 		
-		}
 		
 	}
 	
@@ -310,7 +308,6 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	public static void removerTravaConferenciaCotaUsuario(ServletContext context, String userSessionID, Map<Integer, String> mapaCotaConferidaUsuario, Map<String, String> mapaSessionIDNomeUsuario) {
 		
-		synchronized (context) {
 			
 			if(mapaSessionIDNomeUsuario != null) {
 				mapaSessionIDNomeUsuario.remove(userSessionID);
@@ -327,8 +324,6 @@ public class ConferenciaEncalheController extends BaseController {
 					mapaCotaConferidaUsuario.remove(numeroCota);
 				}
 			}
-			
-		}
 		
 	}
 	
@@ -1135,7 +1130,7 @@ public class ConferenciaEncalheController extends BaseController {
 		InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
 		
 		if (info == null){
-			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
 		}
 		
 		controleConfEncalheCota.setCota(info.getCota());
@@ -1218,7 +1213,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if (horaInicio == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Conferência não iniciada.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de Encalhe não inicializada.");
 		}
 		
 	}
@@ -1367,12 +1362,12 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if (info == null){
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
 		}
 		
 		if (info.getCota() == null){
 			
-			throw new ValidacaoException(TipoMensagem.WARNING, "Informe a Cota.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
 		}
 		
 		List<Long> idsCota = new ArrayList<>();
@@ -1437,7 +1432,7 @@ public class ConferenciaEncalheController extends BaseController {
 			InfoConferenciaEncalheCota info = this.getInfoConferenciaSession();
 			
 			if (info == null){
-				throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada.");
+				throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
 			}
 			
 			controleConfEncalheCota.setCota(info.getCota());
@@ -1531,7 +1526,7 @@ public class ConferenciaEncalheController extends BaseController {
 		} else {
 			
 			this.result.use(Results.json()).from(
-					new ValidacaoVO(TipoMensagem.WARNING, "Conferência não iniciada."), "result").recursive().serialize();
+					new ValidacaoVO(TipoMensagem.WARNING, "Conferência de Encalh não inicializada."), "result").recursive().serialize();
 		}
 	}
 	
@@ -2234,7 +2229,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if (info == null){
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
 		}
 		
 		List<ConferenciaEncalheDTO> lista = info.getListaConferenciaEncalhe();
@@ -2253,7 +2248,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		if (info == null){
 			
-			throw new ValidacaoException(TipoMensagem.ERROR, "Sessão expirada.");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Conferência de encalhe não inicializada.");
 		}
 		
 		info.setListaConferenciaEncalhe(listaConferenciaEncalheDTO);

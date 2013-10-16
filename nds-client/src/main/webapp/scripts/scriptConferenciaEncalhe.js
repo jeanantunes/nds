@@ -436,7 +436,12 @@ var ConferenciaEncalhe = $.extend(true, {
 			
 			if (!ConferenciaEncalhe.modalAberta){
 				
-				ConferenciaEncalhe.popup_salvarInfos();
+				$("#numeroCota", ConferenciaEncalhe.workspace).focus();
+				
+				setTimeout(function() {
+					ConferenciaEncalhe.popup_salvarInfos();
+				}, 1000);
+				
 			}
 			
 		}));
@@ -444,7 +449,12 @@ var ConferenciaEncalhe = $.extend(true, {
 		$(document.body).bind('keydown.finalizarConferencia', jwerty.event('F9',function() {
 			if (!ConferenciaEncalhe.modalAberta){
 				
-				ConferenciaEncalhe.veificarCobrancaGerada();
+				$("#numeroCota", ConferenciaEncalhe.workspace).focus();
+				
+				setTimeout(function() {
+					ConferenciaEncalhe.veificarCobrancaGerada();
+				}, 1000);
+				
 			}
 			
 		}));
