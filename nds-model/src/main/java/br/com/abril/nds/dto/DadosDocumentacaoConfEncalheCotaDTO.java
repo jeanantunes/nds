@@ -38,6 +38,8 @@ public class DadosDocumentacaoConfEncalheCotaDTO implements Serializable {
 	
 	private boolean utilizaBoletoSlip;
 	
+	private boolean utilizaRecibo;
+	
 	private ValidacaoVO msgsGeracaoCobranca;
 	
 	
@@ -125,6 +127,20 @@ public class DadosDocumentacaoConfEncalheCotaDTO implements Serializable {
 
 	public void setUtilizaBoletoSlip(boolean utilizaBoletoSlip) {
 		this.utilizaBoletoSlip = utilizaBoletoSlip;
+	}
+
+	/**
+	 * @return the utilizaRecibo
+	 */
+	public boolean isUtilizaRecibo() {
+		return utilizaRecibo;
+	}
+
+	/**
+	 * @param utilizaRecibo the utilizaRecibo to set
+	 */
+	public void setUtilizaRecibo(boolean utilizaRecibo) {
+		this.utilizaRecibo = utilizaRecibo;
 	}
 
 	public ValidacaoVO getMsgsGeracaoCobranca() {
