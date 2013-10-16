@@ -20,6 +20,7 @@ import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
+import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.BoletoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -548,7 +549,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" from Boleto boleto ");
-		hql.append(" where boleto.dataVencimento = :data ");
+		hql.append(" where boleto.dataVencimento < :data ");
 		hql.append(" and boleto.statusCobranca =:statusCobranca");
 		
 		return hql.toString();
@@ -698,11 +699,14 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 	@Override
 	public List<Boleto> obterBoletosNaoPagos(Date data){
 		
-		String hql = "select boleto " + this.obterFromWhereBoletosInadimplentes();
+		String hql = "select boleto " + this.obterFromWhereBoletosInadimplentes()
+									  + " and boleto.divida.status != :statusPendente ";
+		
 		
 		Query query = this.getSession().createQuery(hql);
 		query.setParameter("data", data);
 		query.setParameter("statusCobranca", StatusCobranca.NAO_PAGO);
+		query.setParameter("statusPendente", StatusDivida.PENDENTE);
 		
 		return query.list();
 	}

@@ -922,7 +922,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 			List<Long> tiposMovimentoCredito, List<Long> tiposMovimentoDebito,
 			List<Long> tipoMovimentoEncalhe, List<Long> tiposMovimentoEncargos,
 			List<Long> tiposMovimentoPostergadoCredito, List<Long> tiposMovimentoPostergadoDebito,
-			List<Long> tipoMovimentoVendaEncalhe, List<Long> tiposMovimentoConsignado) {
+			List<Long> tipoMovimentoVendaEncalhe, List<Long> tiposMovimentoConsignado, List<Long> tiposMovimentoPendente) {
 		
 		StringBuilder sql = new StringBuilder("select ");
 		sql.append(" cfc.ID as id, ")
@@ -1065,7 +1065,18 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("),0) as encargos, ")
 		   
 		   //pendente
-		   .append(" 0 as pendente, ")
+		   .append("coalesce((select sum(m.VALOR) ")
+		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
+		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
+		   .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoPendente) ")
+		   .append(" and m.ID not in (")
+		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
+		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+		   .append(") and m.DATA = mfc.DATA ")
+		   .append("),0) as pendente, ")
 		   
 		   //valorPostergado
 		   //valorPostergado credito
@@ -1114,8 +1125,22 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" ((select count(cob.ID) from COBRANCA cob where cob.DT_EMISSAO = mfc.DATA and cob.COTA_ID = mfc.COTA_ID) > 0) as cobrado, ")
 		   
 		   //data raiz
-		   .append(" (select max(mfp.DT_CONSOLIDADO) from CONSOLIDADO_FINANCEIRO_COTA mfp where mfp.COTA_ID = mfc.COTA_ID and mfp.DT_CONSOLIDADO < mfc.DATA) ")
-		   .append("  as dataRaiz, ")
+//		   .append(" (select max(mfp.DT_CONSOLIDADO) from CONSOLIDADO_FINANCEIRO_COTA mfp ")
+//		   .append("  where mfp.COTA_ID = mfc.COTA_ID and mfp.DT_CONSOLIDADO < mfc.DATA) ")
+		   
+		   .append("(select min(m.DATA_CRIACAO) ")
+		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
+		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
+		   .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoPendente) ")
+		   .append(" and m.ID not in (")
+		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
+		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+		   .append("     group by m.ID ")
+		   .append(") and m.DATA = mfc.DATA ")
+		   .append(") as dataRaiz, ")
 		   
 		   //valor pago
 		   .append(" 0 as valorPago, ")
@@ -1334,6 +1359,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		query.setParameterList("tiposMovimentoPostergadoDebito", tiposMovimentoPostergadoDebito);
 		query.setParameterList("tipoMovimentoVendaEncalhe", tipoMovimentoVendaEncalhe);
 		query.setParameterList("tiposMovimentoConsignado", tiposMovimentoConsignado);
+		query.setParameterList("tiposMovimentoPendente", tiposMovimentoPendente);
 		
 		query.setParameter("naoPagoPostergado", StatusBaixa.NAO_PAGO_POSTERGADO.name());
 		

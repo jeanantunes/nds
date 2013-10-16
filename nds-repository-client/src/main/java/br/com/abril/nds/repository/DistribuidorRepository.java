@@ -154,4 +154,7 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 
 	boolean isConferenciaCegaRecebimentoFisico();
 	
+	boolean naoAcumulaDividas();
+	
+	Integer numeroMaximoAcumuloDividas();
 }

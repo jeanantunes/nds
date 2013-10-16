@@ -167,4 +167,12 @@ public interface BoletoService {
 
 	public List<Boleto> verificaEnvioDeEmail(List<Boleto> boletos);
 
+	/**
+	 * Gera movimentos para a próxima data, a partir dos boletos não pagos no dia.
+	 * 
+	 * @param dataPagamento
+	 * 
+	 * @param usuario
+	 */
+	void adiarDividaBoletosNaoPagos(Usuario usuario, Date dataPagamento);
 }

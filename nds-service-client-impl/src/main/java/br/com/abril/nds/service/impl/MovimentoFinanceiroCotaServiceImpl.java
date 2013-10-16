@@ -97,8 +97,8 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	public List<MovimentoFinanceiroCota> gerarMovimentosFinanceirosDebitoCredito(MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO) {
 
 		Map<Long, List<MovimentoEstoqueCota>> mapaMovimentoEstoqueCotaPorFornecedor = 
-			this.gerarMapaMovimentoEstoqueCotaPorFornecedor(movimentoFinanceiroCotaDTO.getMovimentos());
 		
+				this.gerarMapaMovimentoEstoqueCotaPorFornecedor(movimentoFinanceiroCotaDTO.getMovimentos());
 		List<MovimentoFinanceiroCota> movimentosFinanceirosCota = new ArrayList<MovimentoFinanceiroCota>();
 		
 		MovimentoFinanceiroCota movimentoFinanceiroCota;
@@ -198,25 +198,15 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		
 		if (fornecedor == null) {
 			
-			if (cota.getParametroCobranca() != null) {
+			if (cota.getParametroCobranca() != null && cota.getParametroCobranca().getFornecedorPadrao() != null) {
 				
 				fornecedor = cota.getParametroCobranca().getFornecedorPadrao();
 				
 			} else {
 				
-				Fornecedor fornecedorPadraoDistribuidor = 
+				fornecedor = 
 					this.formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor().
 						getPoliticaCobranca().getFornecedorPadrao();
-				
-				for (Fornecedor fornecedorCota : cota.getFornecedores()) {
-					
-					if (fornecedorPadraoDistribuidor.equals(fornecedorCota)) {
-						
-						fornecedor = fornecedorPadraoDistribuidor;
-						
-						break;
-					}
-				}
 			}
 		}
 		

@@ -319,6 +319,9 @@ public class Distribuidor {
 	@Column(name = "DATA_INICIO_INTERFACES_MATRIZ_EM_EXECUCAO")
 	private Date dataInicioInterfacesMatrizExecucao;
 	
+	@Column(name = "PARAR_ACUM_DIVIDAS", nullable = false)
+	private boolean pararAcumuloDividas;
+	
 	public Long getId() {
 		return id;
 	}
@@ -1142,5 +1145,18 @@ public class Distribuidor {
 			Date dataInicioInterfacesMatrizExecucao) {
 		this.dataInicioInterfacesMatrizExecucao = dataInicioInterfacesMatrizExecucao;
 	}
-	
+
+	/**
+	 * @return the pararAcumuloDividas
+	 */
+	public boolean isPararAcumuloDividas() {
+		return pararAcumuloDividas;
+	}
+
+	/**
+	 * @param pararAcumuloDividas the pararAcumuloDividas to set
+	 */
+	public void setPararAcumuloDividas(boolean pararAcumuloDividas) {
+		this.pararAcumuloDividas = pararAcumuloDividas;
+	}
 }

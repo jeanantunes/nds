@@ -2,11 +2,13 @@ package br.com.abril.nds.service.impl;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Set;
 
 import javax.xml.bind.ValidationException;
@@ -42,6 +44,7 @@ import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoEndereco;
+import br.com.abril.nds.model.financeiro.AcumuloDivida;
 import br.com.abril.nds.model.financeiro.BaixaAutomatica;
 import br.com.abril.nds.model.financeiro.BaixaCobranca;
 import br.com.abril.nds.model.financeiro.BaixaManual;
@@ -50,6 +53,7 @@ import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
+import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
@@ -61,8 +65,10 @@ import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.ControleBaixaBancariaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.DividaRepository;
+import br.com.abril.nds.repository.FormaCobrancaRepository;
 import br.com.abril.nds.repository.PoliticaCobrancaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
+import br.com.abril.nds.service.AcumuloDividasService;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
@@ -132,6 +138,12 @@ public class BoletoServiceImpl implements BoletoService {
 	
 	@Autowired
 	protected DividaRepository dividaRepository;
+	
+	@Autowired
+	protected AcumuloDividasService acumuloDividasService;
+	
+	@Autowired
+	protected FormaCobrancaRepository formaCobrancaRepository;
 	
 	/**
 	 * Método responsável por obter boletos por numero da cota
@@ -270,67 +282,7 @@ public class BoletoServiceImpl implements BoletoService {
 			resumoBaixaBoletos.setNomeArquivo(arquivoPagamento.getNomeArquivo());
 			resumoBaixaBoletos.setDataCompetencia(DateUtil.formatarDataPTBR(dataOperacao));
 			resumoBaixaBoletos.setSomaPagamentos(arquivoPagamento.getSomaPagamentos());
-			
-			//gerar movimentos financeiros para cobranças não pagas
-			List<Boleto> boletosNaoPagos = this.boletoRepository.obterBoletosNaoPagos(dataPagamento);
-			
-			for (Boleto boleto : boletosNaoPagos){
-				
-				Divida divida = boleto.getDivida();
-				divida.setStatus(StatusDivida.PENDENTE);
-				this.dividaRepository.alterar(divida);
-				
-				boleto.setStatusCobranca(StatusCobranca.NAO_PAGO);
-				this.boletoRepository.alterar(boleto);
-				
-				//movimentoFinanceiro do valor do boleto
-				this.gerarMovimentoFinanceiro(
-						dataOperacao,
-						usuario,
-						boleto.getCota(),
-						boleto.getValor(), 
-						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-								GrupoMovimentoFinaceiro.PENDENTE),
-						"Oriundo de cobrança não paga");
-				
-				BigDecimal valor = this.cobrancaService.calcularJuros(
-						boleto.getBanco(), 
-						boleto.getCota().getId(), 
-						boleto.getValor(), 
-						boleto.getDataVencimento(), 
-						this.calendarioService.adicionarDiasRetornarDiaUtil(dataOperacao, 1));
-					
-				if (valor != null && valor.compareTo(BigDecimal.ZERO) > 0){
-					
-					//movimento finaceiro juros
-					this.gerarMovimentoFinanceiro(
-							dataOperacao,
-							usuario,
-							boleto.getCota(),
-							valor,
-							this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-									GrupoMovimentoFinaceiro.JUROS),
-							"Juros oriundos de cobrança não paga");
-				}
-				
-				valor = this.cobrancaService.calcularMulta(
-						boleto.getBanco(), 
-						boleto.getCota(), 
-						boleto.getValor());
-				
-				if (valor != null && valor.compareTo(BigDecimal.ZERO) > 0){
-					
-					//movimento financeiro multa
-					this.gerarMovimentoFinanceiro(
-							dataOperacao,
-							usuario,
-							boleto.getCota(), 
-							valor,
-							this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
-									GrupoMovimentoFinaceiro.MULTA),
-							"Multa oriunda de cobrança não paga");
-				}
-			}
+
 		} catch (Exception e) {
 			
 			this.controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_ERROS,
@@ -347,16 +299,123 @@ public class BoletoServiceImpl implements BoletoService {
 			}
 		}
 	}
-	
-	private void gerarMovimentoFinanceiro(Date dataOperacao, Usuario usuario, Cota cota, 
-			BigDecimal valor, TipoMovimentoFinanceiro tipoMovimentoFinanceiro, String observacao) {
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Transactional
+	public void adiarDividaBoletosNaoPagos(Usuario usuario, Date dataPagamento) {
+
+		List<Boleto> boletosNaoPagos = this.boletoRepository.obterBoletosNaoPagos(dataPagamento);
 		
+		boolean naoAcumulaDividas = this.distribuidorRepository.naoAcumulaDividas();
+		
+		Integer numeroMaximoAcumulosDistribuidor = this.distribuidorRepository.numeroMaximoAcumuloDividas();
+
+		for (Boleto boleto : boletosNaoPagos) {
+			
+			Divida divida = boleto.getDivida();
+			divida.setStatus(StatusDivida.PENDENTE);
+			this.dividaRepository.alterar(divida);
+			
+			boleto.setStatusCobranca(StatusCobranca.NAO_PAGO);
+			this.boletoRepository.alterar(boleto);
+			
+			Date dataVencimento = this.obterNovaDataVencimentoAcumulo(dataPagamento);
+			
+			//movimentoFinanceiro do valor do boleto
+			MovimentoFinanceiroCota movimentoPendente = this.gerarMovimentoFinanceiro(
+					dataPagamento,
+					usuario,
+					boleto.getCota(),
+					dataVencimento,
+					boleto.getValor(), 
+					this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+							GrupoMovimentoFinaceiro.PENDENTE),
+					"Oriundo de cobrança não paga");
+			
+			MovimentoFinanceiroCota movimentoJuros = null;
+			
+			MovimentoFinanceiroCota movimentoMulta = null;
+			
+			BigDecimal valor = this.cobrancaService.calcularJuros(
+					boleto.getBanco(), 
+					boleto.getCota().getId(), 
+					boleto.getValor(), 
+					boleto.getDataVencimento(), 
+					this.calendarioService.adicionarDiasRetornarDiaUtil(dataPagamento, 1));
+				
+			if (valor != null && valor.compareTo(BigDecimal.ZERO) > 0){
+				
+				//movimento finaceiro juros
+				movimentoJuros = this.gerarMovimentoFinanceiro(
+						dataPagamento,
+						usuario,
+						boleto.getCota(),
+						dataVencimento,
+						valor,
+						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+								GrupoMovimentoFinaceiro.JUROS),
+						"Juros oriundos de cobrança não paga");
+			}
+			
+			valor = this.cobrancaService.calcularMulta(
+					boleto.getBanco(), 
+					boleto.getCota(), 
+					boleto.getValor());
+			
+			if (valor != null && valor.compareTo(BigDecimal.ZERO) > 0){
+				
+				//movimento financeiro multa
+				movimentoMulta = this.gerarMovimentoFinanceiro(
+						dataPagamento,
+						usuario,
+						boleto.getCota(), 
+						dataVencimento,
+						valor,
+						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
+								GrupoMovimentoFinaceiro.MULTA),
+						"Multa oriunda de cobrança não paga");
+			}
+			
+			try {
+
+				this.validarAcumuloDivida(divida, naoAcumulaDividas, numeroMaximoAcumulosDistribuidor);
+			
+				this.gerarAcumuloDivida(divida, movimentoPendente, movimentoJuros, movimentoMulta);
+
+			} catch (IllegalArgumentException e) {
+			
+				//Caso a dívida exceder o limite de acúmulos do distribuidor, 
+				//esta não será persistida, dando continuidade ao fluxo.
+				continue;
+			}
+		}
+	}
+	
+	private Date obterNovaDataVencimentoAcumulo(Date dataOperacao) {
+
+		boolean isVencimentoDiaUtil = this.formaCobrancaRepository.obterFormaCobranca().isVencimentoDiaUtil();
+		
+		if (isVencimentoDiaUtil) {
+			
+			return this.calendarioService.adicionarDiasUteis(dataOperacao, 1);
+		
+		} else {
+			
+			return this.calendarioService.adicionarDiasRetornarDiaUtil(dataOperacao, 1);
+		}
+	}
+	
+	private MovimentoFinanceiroCota gerarMovimentoFinanceiro(Date dataOperacao, Usuario usuario, Cota cota, 
+			Date dataVencimento, BigDecimal valor, TipoMovimentoFinanceiro tipoMovimentoFinanceiro, String observacao) {
+
 		MovimentoFinanceiroCotaDTO dto = new MovimentoFinanceiroCotaDTO();
 		dto.setAprovacaoAutomatica(true);
 		dto.setCota(cota);
 		dto.setDataCriacao(dataOperacao);
 		dto.setDataOperacao(dataOperacao);
-		dto.setDataVencimento(this.calendarioService.adicionarDiasRetornarDiaUtil(dataOperacao, 1));
+		dto.setDataVencimento(dataVencimento);
 		dto.setLancamentoManual(false);
 		dto.setObservacao(observacao);
 		dto.setTipoEdicao(TipoEdicao.INCLUSAO);
@@ -364,8 +423,74 @@ public class BoletoServiceImpl implements BoletoService {
 		dto.setValor(valor);
 		dto.setTipoMovimentoFinanceiro(tipoMovimentoFinanceiro);
 		dto.setFornecedor(this.obterFornecedorPadraoCota(cota));
+	
+		try {
+			
+			return this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(dto).get(0);
 		
-		this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(dto);
+		} catch (NoSuchElementException e) {
+			
+			return null;
+
+		} catch (IndexOutOfBoundsException e) {
+			
+			return null;
+		} 
+	}
+	
+	private AcumuloDivida gerarAcumuloDivida(Divida divida, MovimentoFinanceiroCota movimentoPendente,
+														    MovimentoFinanceiroCota movimentoJuros,
+														    MovimentoFinanceiroCota movimentoMulta) {
+
+		AcumuloDivida acumuloDivida = new AcumuloDivida();
+
+		acumuloDivida.setDividaAnterior(divida);
+
+		acumuloDivida.setMovimentoFinanceiroPendente(movimentoPendente);
+
+		acumuloDivida.setMovimentoFinanceiroJuros(movimentoJuros);
+
+		acumuloDivida.setMovimentoFinanceiroMulta(movimentoMulta);
+
+		acumuloDivida.setNumeroAcumulo(this.obterNumeroDeAcumulosDivida(divida));
+		
+		acumuloDivida.setDataCriacao(new Date());
+
+		return this.acumuloDividasService.atualizarAcumuloDivida(acumuloDivida);
+	}
+
+	private BigInteger obterNumeroDeAcumulosDivida(Divida divida) {
+
+		BigInteger numeroAcumulos = BigInteger.ONE;
+		
+		List<MovimentoFinanceiroCota> movimentos = divida.getConsolidado().getMovimentos();
+		
+		for (MovimentoFinanceiroCota movimento : movimentos) {
+			
+			if (GrupoMovimentoFinaceiro.PENDENTE.equals(((TipoMovimentoFinanceiro) movimento.getTipoMovimento()).getGrupoMovimentoFinaceiro())) {
+
+				AcumuloDivida acumuloDivida = this.acumuloDividasService.obterAcumuloDividaPorMovimentoPendente(movimento.getId());
+
+				if (acumuloDivida != null) {
+					
+					numeroAcumulos = acumuloDivida.getNumeroAcumulo().add(BigInteger.ONE);
+					
+					break;
+				}
+			}			
+		}
+		
+		return numeroAcumulos;
+	}
+
+	private void validarAcumuloDivida(Divida divida, boolean naoAcumulaDividas, Integer numeroMaximoAcumulosDistribuidor) {
+
+		Integer numeroAcumulos = this.obterNumeroDeAcumulosDivida(divida).intValue();
+		
+		if (!naoAcumulaDividas && (numeroAcumulos > numeroMaximoAcumulosDistribuidor)) {
+			
+			throw new IllegalArgumentException("Acumulo excedeu o limite do distribuidor.");
+		}
 	}
 
 	@Override
@@ -1570,7 +1695,7 @@ public class BoletoServiceImpl implements BoletoService {
 		Fornecedor fornecedor = cota.getParametroCobranca() == null ? 
 										null : cota.getParametroCobranca().getFornecedorPadrao();
 
-		if (fornecedor == null && cota.getFornecedores() != null) {
+		if (fornecedor == null && cota.getFornecedores() != null && !cota.getFornecedores().isEmpty()) {
 			
 			fornecedor = cota.getFornecedores().iterator().next();
 		}
