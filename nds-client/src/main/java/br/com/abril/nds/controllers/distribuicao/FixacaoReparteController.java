@@ -100,7 +100,7 @@ public class FixacaoReparteController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados resultados para a pesquisa");
 		}
 		
-		TableModel<CellModelKeyValue<FixacaoReparteDTO>> tableModelProduto = montarTableModelProduto(filtro);
+		TableModel<CellModelKeyValue<FixacaoReparteDTO>> tableModelProduto = montarTableModelProduto(filtro, resultadoPesquisa);
 		
 		result.use(Results.json()).withoutRoot().from(tableModelProduto).recursive().serialize();
 	}
@@ -123,7 +123,7 @@ public class FixacaoReparteController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Não foram encontrados resultados para a pesquisa.");	
 		}
 		
-		TableModel<CellModelKeyValue<FixacaoReparteDTO>> tableModelCota = montarTableModelCota(filtro);
+		TableModel<CellModelKeyValue<FixacaoReparteDTO>> tableModelCota = montarTableModelCota(filtro, resultadoPesquisa);
 		
 		result.use(Results.json()).withoutRoot().from(tableModelCota).recursive().serialize();
 	}
@@ -142,9 +142,7 @@ public class FixacaoReparteController extends BaseController {
 }
 
 
-	private TableModel<CellModelKeyValue<FixacaoReparteDTO>> montarTableModelProduto(FiltroConsultaFixacaoProdutoDTO filtro) {
-		
-		List<FixacaoReparteDTO> resultadoPesquisa = fixacaoReparteService.obterFixacoesRepartePorProduto(filtro);
+	private TableModel<CellModelKeyValue<FixacaoReparteDTO>> montarTableModelProduto(FiltroConsultaFixacaoProdutoDTO filtro, List<FixacaoReparteDTO> resultadoPesquisa) {
 		
 		TableModel<CellModelKeyValue<FixacaoReparteDTO>> tableModel = new TableModel<CellModelKeyValue<FixacaoReparteDTO>>();
 
@@ -157,9 +155,7 @@ public class FixacaoReparteController extends BaseController {
 		return tableModel;
 	}
 		
-	private TableModel<CellModelKeyValue<FixacaoReparteDTO>> montarTableModelCota(FiltroConsultaFixacaoCotaDTO filtro) {
-		
-		List<FixacaoReparteDTO> resultadoPesquisa = fixacaoReparteService.obterFixacoesRepartePorCota(filtro);
+	private TableModel<CellModelKeyValue<FixacaoReparteDTO>> montarTableModelCota(FiltroConsultaFixacaoCotaDTO filtro, List<FixacaoReparteDTO> resultadoPesquisa) {
 		
 		TableModel<CellModelKeyValue<FixacaoReparteDTO>> tableModel = new TableModel<CellModelKeyValue<FixacaoReparteDTO>>();
 

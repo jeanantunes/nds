@@ -143,6 +143,23 @@ function mostraIntervalo(){
    		  	</tr>
    		  </table>
    	  </fieldset>
+
+          <fieldset >
+              <legend>Classificaçao a copiar</legend>
+              <table border="0" cellspacing="1" cellpadding="1">
+                  <tr>
+                      <td><label><strong>Classificaçao:</strong></label></td>
+                      <td>
+                          <select id="tipoClassificacaoCopia">
+                              <option value="-1" selected>TODAS</option>
+                              <c:forEach items="${classificacao}" var="tipoProduto">
+                                  <option value="<c:out value="${tipoProduto.id}"/>"><c:out value="${tipoProduto.descricao}"/></option>
+                              </c:forEach>
+                          </select>
+                      </td>
+                  </tr>
+              </table>
+          </fieldset>
 	   
       </div>
      

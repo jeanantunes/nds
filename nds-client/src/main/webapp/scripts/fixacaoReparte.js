@@ -80,16 +80,22 @@ var fixacaoReparteController = $.extend(true, {
 			colModel : [ {
 				display : 'Cota',
 				name : 'cotaFixada',
-				width : 50,
+				width : 40,
 				sortable : true,
 				align : 'left'
-			}, {
+			},{
 				display : 'Nome',
 				name : 'nomeCota',
-				width : 170,
+				width : 160,
 				sortable : true,
 				align : 'left'
-			}, {
+			},{
+                display : 'Classificação',
+                name : 'classificacaoProduto',
+                width : 70,
+                sortable : true,
+                align : 'left'
+            },{
 				display : 'Edição Inicial',
 				name : 'edicaoInicial',
 				width : 70,
@@ -122,7 +128,7 @@ var fixacaoReparteController = $.extend(true, {
 			}, {
 				display : 'Usuário',
 				name : 'usuario',
-				width : 80,
+				width : 55,
 				sortable : true,
 				align : 'left'
 			}, {
@@ -150,7 +156,7 @@ var fixacaoReparteController = $.extend(true, {
 			useRp : true,
 			rp : 15,
 			showTableToggleBtn : true,
-			width : 960,
+			width : 980,
 			height : 250
 		});
 	//Grid de repartes por pdv	
@@ -1139,7 +1145,6 @@ var fixacaoReparteController = $.extend(true, {
 							len = $(idsCopiaCota).filter(function(){return this.value == "";}).length;
 						}else if(type=='produto'){
 							len = $(idsCopiaProduto).filter(function(){return this.value == "";}).length;
-							
 						}
 
 						if(len>0){
@@ -1160,7 +1165,6 @@ var fixacaoReparteController = $.extend(true, {
 						}
 						
 						var data = [];
-//						console.log(type);
 						data.push({name:"copiaDTO.tipoCopia",	value: type.toUpperCase()});
 						data.push({name:"copiaDTO.cotaNumeroOrigem",	value: $("#cotaFixacaoOrigemInput").val()});
 						data.push({name:"copiaDTO.nomeCotaOrigem",	value: $("#nomeCotaFixacaoOrigemInput").val()});
@@ -1171,7 +1175,9 @@ var fixacaoReparteController = $.extend(true, {
 						data.push({name:"copiaDTO.nomeProdutoOrigem",	value: $("#nomeProdutoFixacaoOrigemInput").val()});
 						data.push({name:"copiaDTO.codigoProdutoDestino",	value: $("#codigoProdutoFixacaoDestinoInput").val()});
 						data.push({name:"copiaDTO.nomeProdutoDestino",	value: $("#nomeProdutoFixacaoDestinoInput").val()});
-						
+
+						data.push({name:"copiaDTO.classificacaoProduto",	value: $("#tipoClassificacaoCopia option:selected").val()});
+
 						modal = this;
 						$.postJSON(contextPath + '/distribuicao/fixacaoReparte/gerarCopiaFixacao',  data, 
 								function(result){

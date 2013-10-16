@@ -17,12 +17,13 @@ public class CopiaMixFixacaoDTO implements Serializable {
 	private Integer cotaNumeroDestino;
 	private String nomeCotaDestino;
 	
-
 	private String codigoProdutoOrigem;
 	private String nomeProdutoOrigem;
 	
 	private String codigoProdutoDestino;
 	private String nomeProdutoDestino;
+
+    private String classificacaoProduto;
 	
 	public Cota getCotaOrigem(){
 		Cota cota = createCota(this.cotaNumeroOrigem,nomeCotaOrigem);
@@ -126,6 +127,12 @@ public class CopiaMixFixacaoDTO implements Serializable {
 		this.nomeProdutoDestino = nomeProdutoDestino;
 	}
 
-	
-	
+
+    public String getClassificacaoProduto() {
+        return classificacaoProduto;
+    }
+
+    public void setClassificacaoProduto(String classificacaoProduto) {
+        this.classificacaoProduto = classificacaoProduto;
+    }
 }
