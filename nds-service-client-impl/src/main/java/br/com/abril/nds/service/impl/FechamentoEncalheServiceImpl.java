@@ -843,7 +843,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 			for(FechamentoFisicoLogicoDTO item : listaEncalhe){
 				
-				gerarMovimentoFaltasSobras(item,usuario);
+				gerarMovimentoFaltasSobras(item, usuario);
 				
 			}
 		}
@@ -890,7 +890,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			diferenca.setTipoDiferenca(TipoDiferenca.PERDA_EM);
 
 			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.RECOLHIMENTO, 
-					                                          StatusAprovacao.APROVADO, 
+					                                          StatusAprovacao.PERDA, 
 					                                          Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE);
 			
 		} else if(qntDiferenca.compareTo(BigInteger.ZERO) > 0){						
@@ -898,7 +898,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			diferenca.setTipoDiferenca(TipoDiferenca.GANHO_EM);
 
 			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.RECOLHIMENTO, 
-					                                          StatusAprovacao.APROVADO, 
+					                                          StatusAprovacao.GANHO, 
 					                                          Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE);
 			
 		}

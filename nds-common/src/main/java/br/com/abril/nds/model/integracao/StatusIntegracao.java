@@ -14,7 +14,7 @@ public enum StatusIntegracao {
 	NAO_INTEGRAR("NÃO INTEGRAR"),
 	AGUARDANDO_GFS("AGUARDANDO GFS"),
 	FORA_DO_PRAZO("FORA DO PRAZO"),
-	FORA_DO_PRAZO_ENCALHE("FORA DO PRAZO - ENCALHE");
+	ENCALHE("ENCALHE");
 	
 	private String descricao;
 	

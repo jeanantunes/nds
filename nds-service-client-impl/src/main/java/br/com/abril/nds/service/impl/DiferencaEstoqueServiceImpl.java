@@ -516,7 +516,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			
 			diferenca = this.diferencaEstoqueRepository.merge(diferenca);
 
-			this.processarTransferenciaEstoque(diferenca,usuario.getId(), origem);
+			this.processarTransferenciaEstoque(diferenca, usuario.getId(), origem);
 
 			diferencaEstoqueRepository.flush();
 		}
@@ -1054,7 +1054,11 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		if (this.foraDoPrazoDoGFS(diferenca)) {
 			
-			statusIntegracao = StatusIntegracao.FORA_DO_PRAZO;
+			if(origem.equals(Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE)) {
+				statusIntegracao = StatusIntegracao.ENCALHE;
+			} else {
+				statusIntegracao = StatusIntegracao.FORA_DO_PRAZO;
+			}
 			
 			grupoMovimentoEstoque = obterGrupoMovimentoEstoqueForaDoPrazo(tipoDiferenca);
 			

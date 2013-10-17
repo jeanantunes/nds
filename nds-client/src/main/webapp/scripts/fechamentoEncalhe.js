@@ -248,25 +248,22 @@ var fechamentoEncalheController = $.extend(true, {
 			}
 			
 			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
-			row.cell.fisico = '<input class="" isEdicao="true" type="text" onkeypress="fechamentoEncalheController.nextInputExemplares('+index+',event); fechamentoEncalheController.retirarCheckBox('+index+', ' + row.cell.produtoEdicao + ');" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" value="' + valorFisico + '" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ', ' +row.cell.produtoEdicao+')" ' + fechado + '/>';
+			qtdFisico = fechamentoEncalheController.fechamentosManuais[row.cell.produtoEdicao] ;
+			row.cell.fisico = '<input class="" isEdicao="true" type="text" value="'+ (qtdFisico != undefined ? qtdFisico : "") +'" onkeypress="fechamentoEncalheController.nextInputExemplares('+index+',event); fechamentoEncalheController.retirarCheckBox('+index+', ' + row.cell.produtoEdicao + ');" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" value="' + valorFisico + '" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ', ' +row.cell.produtoEdicao+')" ' + fechado + '/>';
 
-			if((row.cell.replicar == 'true' || fechamentoEncalheController.checkAllGrid) && ($.inArray(row.cell.produtoEdicao, fechamentoEncalheController.nonSelected) < 0))
-			{
+			if((row.cell.replicar == 'true' || fechamentoEncalheController.checkAllGrid) && ($.inArray(row.cell.produtoEdicao, fechamentoEncalheController.nonSelected) < 0)) {
 				row.cell.replicar = '<input isEdicao="true" type="checkbox" onchange="fechamentoEncalheController.selecionarLinha('+ row.cell.produtoEdicao +', this.checked)" id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index + ');"' + fechado+ ' checked />';
-			}	
-			else
-			{
+			} else {
 				row.cell.replicar = '<input isEdicao="true" type="checkbox" onchange="fechamentoEncalheController.selecionarLinha('+ row.cell.produtoEdicao +', this.checked)" id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index + ');"' + fechado+ '/>';
 			}	
 			
 			if (fechado != '') {
 				$('.divBotoesPrincipais', fechamentoEncalheController.workspace).hide();
 			}
+			
+			row.cell.diferenca = row.cell.exemplaresDevolucaoFormatado - (qtdFisico != undefined ? qtdFisico : row.cell.exemplaresDevolucaoFormatado);
+			
 		});
-		
-		fechamentoEncalheController.fechamentosManuais = new Array();
-		fechamentoEncalheController.nonSelected = new Array();
-
 		
 		return resultado;
 	},
@@ -416,10 +413,11 @@ var fechamentoEncalheController = $.extend(true, {
 		if (campo.value == "") {
 			diferenca.innerHTML = "";
 		} else {
-			diferenca.innerHTML =campo.value - devolucao ;			
+			diferenca.innerHTML = campo.value - devolucao ;			
 		}
 		
-		fechamentoEncalheController.fechamentosManuais.push({produtoEdicao: produtoEdicao, fisico: campo.value});
+		fechamentoEncalheController.fechamentosManuais[produtoEdicao] = campo.value;
+		
 	},
 	
 	gerarArrayFisico : function() {
@@ -484,8 +482,6 @@ var fechamentoEncalheController = $.extend(true, {
 			contextPath + "/devolucao/fechamentoEncalhe/verificarEncerrarOperacaoEncalhe",
 			params,
 			function (result) {
-				
-				console.log(result);
 				
 				var tipoMensagem, listaMensagens;
 				
@@ -1158,11 +1154,17 @@ var fechamentoEncalheController = $.extend(true, {
 			 data.push({name:"isAllFechamentos", value: fechamentoEncalheController.checkAllGrid});
 		 }
 
+		 for(var index in fechamentoEncalheController.fechamentosManuais) { 
+			 data.push({name: 'listaFechamento[' + index + '].produtoEdicao', value: index});
+			 data.push({name: 'listaFechamento[' + index + '].fisico', value: fechamentoEncalheController.fechamentosManuais[index]});
+		 }
+		 /*
 		 $.each(fechamentoEncalheController.fechamentosManuais, function(index, value) {
 			
 			 data.push({name: 'listaFechamento[' + index + '].produtoEdicao', value: value.produtoEdicao});
 			 data.push({name: 'listaFechamento[' + index + '].fisico', value: value.fisico});
 		 });
+		 */
 		 
 		return data;
 	},
