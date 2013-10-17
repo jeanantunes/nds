@@ -767,6 +767,10 @@ public class BaixaFinanceiraController extends BaseController {
 		
 		vlSaldo = vlSaldo.setScale(2,RoundingMode.HALF_EVEN);
 		
+		if(BigDecimal.ZERO.compareTo(vlSaldo)>0){
+			vlSaldo = vlSaldo.abs();
+		}
+		
 		result.use(Results.json()).from(CurrencyUtil.formatarValor(vlSaldo),"result").recursive().serialize();
 	}
 	
