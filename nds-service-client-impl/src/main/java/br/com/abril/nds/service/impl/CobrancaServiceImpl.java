@@ -391,20 +391,30 @@ public class CobrancaServiceImpl implements CobrancaService {
 				//CALCULA VALOR DO SALDO DA DIVIDA(MOVIMENTOS DE PAGAMENTO PARCIAL)
 				BigDecimal saldoDivida = this.obterSaldoDivida(cobranca.getId());
 				
+				BigDecimal valorCobranca = cobranca.getValor();
+				valorCobranca = valorCobranca.setScale(2,RoundingMode.HALF_EVEN);
+				
+				BigDecimal valorCobrancaJuros = valorCobranca.subtract(saldoDivida);
+				valorCobrancaJuros = valorCobrancaJuros.setScale(2,RoundingMode.HALF_EVEN);
+				
 				
 				if (dataVencimento.compareTo(dataPagamento) < 0) {
 					
 					valorJurosCalculado =
 						this.calcularJuros(cobranca.getBanco(), cobranca.getCota().getId(),
-										   cobranca.getValor().subtract(saldoDivida), 
-										   cobranca.getDataVencimento(),
-										   dataPagamento);
+											valorCobrancaJuros, 
+										    cobranca.getDataVencimento(),
+										    dataPagamento);
 					valorMultaCalculado =
 						this.calcularMulta(cobranca.getBanco(), cobranca.getCota(),
-								           cobranca.getValor().subtract(saldoDivida));
+											valorCobranca.subtract(saldoDivida));
 				}
 				
 			    BigDecimal valor  = cobranca.getValor();
+			    valor = valor.setScale(2, RoundingMode.HALF_EVEN);
+			    
+			    valorJurosCalculado = valorJurosCalculado.setScale(4, RoundingMode.HALF_EVEN);
+			    valorMultaCalculado = valorMultaCalculado.setScale(4, RoundingMode.HALF_EVEN);
 	            
 				totalJuros = totalJuros.add(valorJurosCalculado);
 		        totalMulta = totalMulta.add(valorMultaCalculado);
@@ -414,10 +424,18 @@ public class CobrancaServiceImpl implements CobrancaService {
 			} 
 		}
 		
+		totalJuros = totalJuros.setScale(4,RoundingMode.HALF_EVEN);
+		totalMulta = totalMulta.setScale(4, RoundingMode.HALF_EVEN);
+		totalSaldoDividas = totalSaldoDividas.setScale(4, RoundingMode.HALF_EVEN);
+		
+		
+		BigDecimal valorPagamento = totalDividas.add(totalJuros).add(totalMulta).subtract(totalSaldoDividas);
+		valorPagamento=  valorPagamento.setScale(2,RoundingMode.HALF_EVEN);
+		
 		pagamento.setValorJuros(CurrencyUtil.formatarValorQuatroCasas(totalJuros));
 		pagamento.setValorMulta(CurrencyUtil.formatarValorQuatroCasas(totalMulta));
-		pagamento.setValorDividas(CurrencyUtil.formatarValorQuatroCasas(totalDividas.subtract(totalSaldoDividas)));
-		pagamento.setValorPagamento(CurrencyUtil.formatarValorQuatroCasas(totalDividas.add(totalJuros).add(totalMulta).subtract(totalSaldoDividas)));
+		pagamento.setValorDividas(CurrencyUtil.formatarValor(totalDividas.subtract(totalSaldoDividas)));
+		pagamento.setValorPagamento(CurrencyUtil.formatarValor(valorPagamento));
 		pagamento.setValorDesconto(CurrencyUtil.formatarValorQuatroCasas(BigDecimal.ZERO));
 		pagamento.setValorSaldo(CurrencyUtil.formatarValorQuatroCasas(BigDecimal.ZERO));
 
