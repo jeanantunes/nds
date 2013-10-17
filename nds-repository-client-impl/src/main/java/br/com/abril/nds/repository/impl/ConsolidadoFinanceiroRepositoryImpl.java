@@ -1174,7 +1174,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(") and m.DATA = mfc.DATA ")
 		   .append("),0)")
 		   .append(") ")
-		   .append(" + ")
+		   .append(" - ")
 		   .append("coalesce((select sum(m.VALOR) ")
 		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
 		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
