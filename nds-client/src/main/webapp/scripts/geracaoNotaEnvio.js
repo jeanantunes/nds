@@ -513,7 +513,7 @@ var geracaoNotaEnvioController = $.extend({
 			
 			comboNameComponent.empty();
 
-			comboNameComponent.append(new Option('Selecione...', '-1', true, true));
+			comboNameComponent.append(new Option('Selecione...', '', true, true));
 			
 		    $.each(content, function(index, row) {
 			    	
@@ -525,7 +525,7 @@ var geracaoNotaEnvioController = $.extend({
 		        $(comboNameComponent).val(valSelected);
 		    } else {
 		    	
-		        $(comboNameComponent).val('-1');
+		        $(comboNameComponent).val('');
 		    }
 		},
 

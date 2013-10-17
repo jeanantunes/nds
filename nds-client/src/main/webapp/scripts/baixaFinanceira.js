@@ -1019,16 +1019,17 @@ var baixaFinanceiraController = $.extend(true, {
     	
 		var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 		
-		var dataPagamento = null;
+		var dataPagamento;
 		
 		if(dividasMarcadas.length > 1){
-				$("#dtPagamentoManual", baixaFinanceiraController.workspace).datepicker(
-			"setDate", baixaFinanceiraController.dataOperacaoDistribuidor
-		);
+			$("#dtPagamentoManual", baixaFinanceiraController.workspace).datepicker(
+			"setDate", baixaFinanceiraController.dataOperacaoDistribuidor);
 		}else{
 			dataPagamento = baixaFinanceiraController.obterDataVencimentoDividaManual();
 			$("#dtPagamentoManual", baixaFinanceiraController.workspace).val(dataPagamento);
 		}
+	
+	   dataPagamento = $("#dtPagamentoManual", baixaFinanceiraController.workspace).val();
 	
 		var  param = {dataPagamento :dataPagamento};
 		
@@ -1158,7 +1159,9 @@ var baixaFinanceiraController = $.extend(true, {
 		var valorSaldo = intValue(valorDividas) + intValue(juros) + intValue(multa) - ( intValue(valorPago) + intValue(desconto) );
 		
 		if (valorSaldo < 0){
-			valorSaldo = 0;
+			
+			valorSaldo =  (valorSaldo * -1);
+			
 		}
 		
         $("#valorSaldoDividasHidden", baixaFinanceiraController.workspace).val(valorSaldo);

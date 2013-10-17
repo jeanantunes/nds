@@ -48,10 +48,12 @@ import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.FormaEmissao;
 import br.com.abril.nds.model.cadastro.Fornecedor;
+import br.com.abril.nds.model.cadastro.ParametroDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.PoliticaCobranca;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.cadastro.TipoBox;
+import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.cadastro.TipoParametrosDistribuidorEmissaoDocumento;
@@ -1379,7 +1381,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
 			Usuario usuario,
 			boolean indConferenciaContingencia) throws GerarCobrancaValidacaoException {
-				
+		
+		Cota cota = controleConfEncalheCota.getCota();
+		
 		if(	controleConfEncalheCota.getId() != null) {
 			
 			StatusOperacao statusAtualOperacaoConfEnc = 
@@ -1392,7 +1396,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 				resetarDadosFinanceirosConferenciaEncalheCota( 
 						controleConfEncalheCota.getId(), 
-						controleConfEncalheCota.getCota().getId());
+						cota.getId());
 			}
 		} 			
 		
@@ -1408,7 +1412,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			valorTotalEncalheOperacaoConferenciaEncalhe = valorTotalEncalheOperacaoConferenciaEncalhe.add(dto.getValorTotal());
 		}
 		
-		this.abaterNegociacaoPorComissao(controleConfEncalheCota.getCota().getId(), valorTotalEncalheOperacaoConferenciaEncalhe);
+		this.abaterNegociacaoPorComissao(cota.getId(), valorTotalEncalheOperacaoConferenciaEncalhe);
 		
 		Map<String, Boolean> nossoNumeroCollection = new LinkedHashMap<String, Boolean>();
 		
@@ -1424,22 +1428,34 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			
 		}
 		
+		ParametroDistribuicaoCota parametroDistribuicaoCota = cota.getParametroDistribuicao();
 		
 		PoliticaCobranca politicaCobranca = politicaCobrancaService.obterPoliticaCobrancaPrincipal();
 		
 		FormaEmissao formaEmissao = politicaCobranca.getFormaEmissao();
 		
-		boolean isUtililzaSlipImpressao = parametrosDistribuidorEmissaoDocumentoRepository.isUtilizaImpressao(TipoParametrosDistribuidorEmissaoDocumento.SLIP);
-		
 		boolean isUtililzaBoletoImpressao = parametrosDistribuidorEmissaoDocumentoRepository.isUtilizaImpressao(TipoParametrosDistribuidorEmissaoDocumento.BOLETO);
+		
+		boolean isUtililzaSlipImpressao = parametrosDistribuidorEmissaoDocumentoRepository.isUtilizaImpressao(TipoParametrosDistribuidorEmissaoDocumento.SLIP);
 		
 		boolean isUtililzaBoletoSlipImpressao = parametrosDistribuidorEmissaoDocumentoRepository.isUtilizaImpressao(TipoParametrosDistribuidorEmissaoDocumento.BOLETO_SLIP);
 		
+		boolean isUtililzaReciboImpressao = parametrosDistribuidorEmissaoDocumentoRepository.isUtilizaImpressao(TipoParametrosDistribuidorEmissaoDocumento.RECIBO);
+		
 		documentoConferenciaEncalhe.setIdControleConferenciaEncalheCota(controleConfEncalheCota.getId());
 		documentoConferenciaEncalhe.setIndGeraDocumentacaoConferenciaEncalhe(FormaEmissao.INDIVIDUAL_BOX.equals(formaEmissao));
-		documentoConferenciaEncalhe.setUtilizaBoleto(isUtililzaBoletoImpressao);
-		documentoConferenciaEncalhe.setUtilizaSlip(isUtililzaSlipImpressao);
-		documentoConferenciaEncalhe.setUtilizaBoletoSlip(isUtililzaBoletoSlipImpressao);
+		
+		documentoConferenciaEncalhe.setUtilizaBoleto(
+			this.getDocumentoImpressao(parametroDistribuicaoCota.getBoletoImpresso(), isUtililzaBoletoImpressao));
+		
+		documentoConferenciaEncalhe.setUtilizaSlip(
+			this.getDocumentoImpressao(parametroDistribuicaoCota.getSlipImpresso(), isUtililzaSlipImpressao));
+		
+		documentoConferenciaEncalhe.setUtilizaBoletoSlip(
+			this.getDocumentoImpressao(parametroDistribuicaoCota.getBoletoSlipImpresso(), isUtililzaBoletoSlipImpressao));
+		
+		documentoConferenciaEncalhe.setUtilizaRecibo(
+			this.getDocumentoImpressao(parametroDistribuicaoCota.getReciboImpresso(), isUtililzaReciboImpressao));
 		
 		documentoConferenciaEncalhe.setListaNossoNumero(new LinkedHashMap<String, Boolean>());
 		
@@ -1458,6 +1474,17 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		}
 		
 		return documentoConferenciaEncalhe;
+	}
+	
+	private boolean getDocumentoImpressao(Boolean documentoImpressaoCota,
+										  Boolean documentoImpressaoDistribuidor) {
+		
+		if (documentoImpressaoCota != null) {
+			
+			return documentoImpressaoCota;
+		}
+		
+		return (documentoImpressaoDistribuidor != null) ? documentoImpressaoDistribuidor : false; 
 	}
 	
 	//caso haja negociação por comissão da cota será abatida aqui
@@ -2838,17 +2865,52 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			br.com.abril.nds.enums.TipoDocumentoConferenciaEncalhe tipoDocumentoConferenciaEncalhe,
 			boolean geraNovoNumeroSlip
 			) {
-
+		
+		Cobranca cobranca = null;
+		TipoCobranca tipoCobranca = null;
+		
+		if (nossoNumero != null) {
+			
+			cobranca = this.cobrancaRepository.obterCobrancaPorNossoNumero(nossoNumero);
+			
+			if (cobranca != null) {
+			
+				tipoCobranca = cobranca.getTipoCobranca();
+			}
+		}
+		
 		switch(tipoDocumentoConferenciaEncalhe) {
 		
 		case SLIP_PDF :
 			
 			return gerarSlip(idControleConferenciaEncalheCota, geraNovoNumeroSlip, TipoArquivo.PDF);
 		
-		case BOLETO_SLIP:
+		case BOLETO:
 			
-			return documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
-		
+			if (tipoCobranca != null && tipoCobranca.equals(TipoCobranca.BOLETO)) {
+			
+				return documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
+				
+			} else {
+				
+				return null;
+			}
+			
+		case RECIBO:
+			
+			if (tipoCobranca != null && !tipoCobranca.equals(TipoCobranca.BOLETO)) {
+				
+				return documentoCobrancaService.gerarDocumentoCobranca(nossoNumero);
+				
+			} else {
+				
+				return null;
+			}
+			
+		case SLIP_TXT:
+			
+			return this.gerarSlipMatricial(idControleConferenciaEncalheCota, geraNovoNumeroSlip);
+			
 		default:
 			
 			return null;

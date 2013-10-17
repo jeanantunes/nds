@@ -25,6 +25,7 @@ import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Distribuidor;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
@@ -88,17 +89,6 @@ public class CobrancaServiceImpl implements CobrancaService {
 
 
 
-	/**
-	 * @deprecated Use {@link #calcularJuros(Banco,Long,BigDecimal,Date,Date)} instead
-	 */
-	@Override
-	@Transactional(propagation=Propagation.SUPPORTS)
-	public BigDecimal calcularJuros(Banco banco, Cota cota,
-									BigDecimal valor, Date dataVencimento, Date dataCalculoJuros) {
-										return calcularJuros(banco, cota.getId(),
-												valor, dataVencimento,
-												dataCalculoJuros);
-									}
 
 	@Override
 	@Transactional(propagation=Propagation.SUPPORTS)
@@ -342,7 +332,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 				
 				//CALCULA JUROS
 				valorJurosCalculado =
-					this.calcularJuros(cob.getBanco(), cob.getCota(),
+					this.calcularJuros(cob.getBanco(), cob.getCota().getId(),
 							           cob.getValor().subtract(saldoDivida), cob.getDataVencimento(),
 									   dataOperacao);
 				//CALCULA MULTA
@@ -405,7 +395,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 				if (dataVencimento.compareTo(dataPagamento) < 0) {
 					
 					valorJurosCalculado =
-						this.calcularJuros(cobranca.getBanco(), cobranca.getCota(),
+						this.calcularJuros(cobranca.getBanco(), cobranca.getCota().getId(),
 										   cobranca.getValor().subtract(saldoDivida), 
 										   cobranca.getDataVencimento(),
 										   dataPagamento);
@@ -583,6 +573,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 		BaixaManual baixaManualTotal = null; 
 		
+		validarBaixaCobranca(cobrancasOrdenadas, valorPagamentoCobranca);
 		
 		for (Cobranca itemCobranca:cobrancasOrdenadas) {
 			
@@ -638,9 +629,49 @@ public class CobrancaServiceImpl implements CobrancaService {
 			
 		}
 		
+	}
+	
+	private void validarBaixaCobranca(List<Cobranca> cobrancas, BigDecimal valorPagamentoCobranca) {
+		
+		Distribuidor distrib = distribuidorService.obter();
+		
+		boolean aceitaPagamentoMaior 	= distrib.getAceitaBaixaPagamentoMaior();
+		boolean aceitaPagamentoMenor 	= distrib.getAceitaBaixaPagamentoMenor();
+		boolean aceitaPagamentoVencido 	= distrib.getAceitaBaixaPagamentoVencido();
+		Date dataOperacao = distrib.getDataOperacao();		
+		
+		BigDecimal valorTotalAPagar = BigDecimal.ZERO;
+		
+		Date dataVencimento = null;
+		
+		for (Cobranca itemCobranca: cobrancas) {
+			
+			if(dataVencimento == null || dataVencimento.compareTo(itemCobranca.getDataVencimento()) > 0) {
+				dataVencimento = itemCobranca.getDataVencimento();
+			}
+			
+			BigDecimal saldoDivida = this.obterSaldoDivida(itemCobranca.getId());
+			BigDecimal valorPagar = itemCobranca.getValor().subtract(saldoDivida);
+			
+			valorTotalAPagar = valorTotalAPagar.add(valorPagar);
+			
+		}
+		
+		
+		if(!aceitaPagamentoMaior && valorPagamentoCobranca.compareTo(valorTotalAPagar) > 0) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Distribuidor não aceita pagamento excedendo o valor da cobrança.");
+		}
+		
+		if(!aceitaPagamentoMenor && valorPagamentoCobranca.compareTo(valorTotalAPagar) < 0) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Distribuidor não aceita pagamento menor que o valor da cobrança.");
+		}
+		
+		if(!aceitaPagamentoVencido && dataOperacao.compareTo(dataVencimento) > 0) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "Distribuidor não aceita pagamento de cobrança vencida.");
+		}
 		
 	}
-
+	
 	private BaixaManual criarRegistroBaixaManual(
 			Cobranca cobranca,
 			PagamentoDividasDTO pagamento,
@@ -827,24 +858,6 @@ public class CobrancaServiceImpl implements CobrancaService {
 		movimento.setFornecedor(fornecedor);
 		
 		this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimento);
-	}
-	
-	/**
-	 *Método responsável por validar baixa de dividas, verificando se existem boletos envolvidos 
-	 * @param idCobrancas
-	 */
-	@Override
-	@Transactional
-	public boolean validaBaixaManualDividas(List<Long> idCobrancas) {
-		boolean res=true;
-		for (Long id:idCobrancas){
-			Cobranca cobranca = this.cobrancaRepository.buscarPorId(id);
-			if (cobranca.getTipoCobranca()==TipoCobranca.BOLETO){
-				res=false;
-				break;
-			}
-		}
-		return res;
 	}
 	
 	
