@@ -519,7 +519,7 @@ public class FechamentoEncalheController extends BaseController {
 			
 			try {
 			
-				this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "Cota " + statusCobrancaCota++ + " de " + totalCotas);
+				this.session.setAttribute(STATUS_COBRANCA_COTA_SESSION, "Cota " + (++statusCobrancaCota) + " de " + totalCotas);
 	
 				this.fechamentoEncalheService.realizarCobrancaCota(
 						dataOperacao, dataOperacaoDistribuidor, 

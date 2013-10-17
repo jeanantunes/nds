@@ -121,7 +121,12 @@ var ConferenciaEncalheCont = $.extend(true, {
 			
 			if (!ConferenciaEncalheCont.modalAberta){
 				
-				ConferenciaEncalheCont.popup_salvarInfos();
+				$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
+				
+				setTimeout(function() {
+					ConferenciaEncalheCont.popup_salvarInfos();
+				}, 1000);
+				
 			}
 			
 		}));
@@ -129,8 +134,12 @@ var ConferenciaEncalheCont = $.extend(true, {
 		$(document.body).bind('keydown.finalizarConferencia', jwerty.event('F9',function() {
 			
 			if (!ConferenciaEncalheCont.modalAberta){
+
+				$("#numeroCota", ConferenciaEncalheCont.workspace).focus();
 				
-				ConferenciaEncalheCont.veificarCobrancaGerada();
+				setTimeout(function() {
+					ConferenciaEncalheCont.veificarCobrancaGerada();
+				}, 1000);
 			}
 			
 		}));
@@ -144,6 +153,13 @@ var ConferenciaEncalheCont = $.extend(true, {
 		if (numeroCotaDipopnivelPesquisa == 'readonly'){
 			return;
 		}
+		
+		var numeroCotaEmConferencia = $("#numeroCota", ConferenciaEncalheCont.workspace).val();
+		
+		ConferenciaEncalheCont.limpaTela();
+		
+		$("#numeroCota", ConferenciaEncalheCont.wokspace).val(numeroCotaEmConferencia);
+		
 		
 		var data = [
 		            {name: 'numeroCota', value : $("#numeroCota", ConferenciaEncalheCont.workspace).val()}, 
