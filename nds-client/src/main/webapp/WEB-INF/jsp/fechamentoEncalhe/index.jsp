@@ -6,22 +6,28 @@
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/data.holder.js"></script>
 
 	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/fechamentoEncalhe.js"></script>
+	
+	<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/cotaBloqueada.js"></script>
+	
 	<script language="javascript" type="text/javascript">
-	$(function(){
-		var contextoAplicacao = "${pageContext.request.contextPath}";
+	
+		$(function(){
 		
-		fechamentoEncalheController.init();
-		
-		bloquearItensEdicao(fechamentoEncalheController.workspace);
-		
-		
-		
-		$('#cancelar-sessao', fechamentoEncalheController.workspace).click(function(){
-			$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/limparDadosDaSessaoGrid", function() {
-				  console.log( "success" );
+			var contextoAplicacao = "${pageContext.request.contextPath}";
+			
+			fechamentoEncalheController.init();
+			
+			cotaBloqueadaController.init();
+			
+			bloquearItensEdicao(fechamentoEncalheController.workspace);
+			
+			$('#cancelar-sessao', fechamentoEncalheController.workspace).click(function(){
+				$.postJSON(contextPath + "/devolucao/fechamentoEncalhe/limparDadosDaSessaoGrid", function() {
+					  console.log( "success" );
+				});
 			});
 		});
-	});
+	
 	</script>
 
 	<style type="text/css">
@@ -143,4 +149,9 @@
 			
 		</div>
 	</fieldset>
+	
+	<form id="cotas-bloqueadas">
+		<jsp:include page="../cota/cotaBloqueada.jsp" />
+	</form>
+	
 </body>
