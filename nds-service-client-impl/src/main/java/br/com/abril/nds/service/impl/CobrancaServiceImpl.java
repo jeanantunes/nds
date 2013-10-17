@@ -579,6 +579,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 		BigDecimal valorPagamentoCobranca = pagamento.getValorPagamento().subtract(valorJuros).subtract(valorMulta).add(valorDesconto);
 		
+		valorPagamentoCobranca = valorPagamentoCobranca.setScale(2, RoundingMode.HALF_EVEN);
+		
 		BigDecimal saldoDivida = BigDecimal.ZERO;
 		BigDecimal valorPagar = BigDecimal.ZERO;
 		
@@ -598,6 +600,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 			saldoDivida = this.obterSaldoDivida(itemCobranca.getId());
 			
 			valorPagar = itemCobranca.getValor().subtract(saldoDivida);
+			
+			valorPagar = valorPagar.setScale(2, RoundingMode.HALF_EVEN);
 			
 			if ( valorPagamentoCobranca.compareTo(valorPagar) >= 0 ) {
 				
@@ -670,6 +674,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 			
 			BigDecimal saldoDivida = this.obterSaldoDivida(itemCobranca.getId());
 			BigDecimal valorPagar = itemCobranca.getValor().subtract(saldoDivida);
+			
+			valorPagar = valorPagar.setScale(2, RoundingMode.HALF_EVEN);
 			
 			valorTotalAPagar = valorTotalAPagar.add(valorPagar);
 			
