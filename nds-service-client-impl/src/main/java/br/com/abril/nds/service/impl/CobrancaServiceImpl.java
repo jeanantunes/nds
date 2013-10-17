@@ -621,7 +621,7 @@ public class CobrancaServiceImpl implements CobrancaService {
 				gerarMovimentoFinanceiroCota(
 						baixaManualTotal, cobrancaTotal.getCota(), pagamento.getUsuario(), valorPagamentoCobranca, 
 						pagamento.getDataPagamento(), dataVencimento,
-						pagamento.getObservacoes(), GrupoMovimentoFinaceiro.DEBITO,
+						pagamento.getObservacoes(), GrupoMovimentoFinaceiro.CREDITO,
 						cobrancaTotal.getFornecedor()
 				);
 				
