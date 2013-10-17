@@ -1159,7 +1159,9 @@ var baixaFinanceiraController = $.extend(true, {
 		var valorSaldo = intValue(valorDividas) + intValue(juros) + intValue(multa) - ( intValue(valorPago) + intValue(desconto) );
 		
 		if (valorSaldo < 0){
-			valorSaldo = 0;
+			
+			valorSaldo =  (valorSaldo * -1);
+			
 		}
 		
         $("#valorSaldoDividasHidden", baixaFinanceiraController.workspace).val(valorSaldo);
