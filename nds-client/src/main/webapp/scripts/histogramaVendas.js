@@ -231,10 +231,8 @@ var histogramaVendasController = $.extend(true, {
 			formData = new Array();
 		
 		if ($('#inserirComponentes').is(':checked')) {
-//			selector = "input[type='radio'][name='filtroPor']:checked,#inserirComponentes,#componente,#elemento,#codigo,#produto,#edicao,#idTipoClassificacaoProduto";
 			selector = "input[type='radio'][name='filtroPor']:checked,#inserirComponentes,#componente,#elemento,#codigo,#produto,#edicao";
 		}else {
-//			selector = "input[type='radio'][name='filtroPor']:checked,#codigo,#produto,#edicao,#idTipoClassificacaoProduto";
 			selector = "input[type='radio'][name='filtroPor']:checked,#codigo,#produto,#edicao";
 		}
 		
