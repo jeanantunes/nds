@@ -41,7 +41,7 @@ var baixaFinanceiraController = $.extend(true, {
 		$("#valorFinanceiro", baixaFinanceiraController.workspace).priceFormat({
 			centsSeparator: ',',
 		    thousandsSeparator: '.',
-			centsLimit: 4
+			centsLimit: 2
 		});
 		
 		baixaFinanceiraController.dataOperacaoDistribuidor = 
