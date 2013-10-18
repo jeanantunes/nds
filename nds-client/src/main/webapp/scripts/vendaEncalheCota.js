@@ -141,7 +141,7 @@ var vendaEncalhe = $.extend(true, {
 		showDialog:function(idConsolidado,dataEscolhida,numeroCota,numeroBox){			
 			this.dialog(this.dialogId);
 			this.loadData(this.url, idConsolidado, dataEscolhida,numeroCota);
-			this.exportButtons(idConsolidado);
+			this.exportButtons(idConsolidado,dataEscolhida,numeroCota);
 			
 			
 			 $("#datacotanome-venda-encalhe").html(dataEscolhida+" Cota: "+$("#cotaHidden").val()+" - "+$("#nomeCotaHidden").val());
