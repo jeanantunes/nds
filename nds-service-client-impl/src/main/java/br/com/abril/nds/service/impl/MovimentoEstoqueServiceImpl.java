@@ -1269,7 +1269,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 		movimentoEstoqueCota.setIdProdEd(idProdutoEdicao);
 		movimentoEstoqueCota.setQtde(quantidade);
 		movimentoEstoqueCota.setUsuarioId(idUsuario);
-		movimentoEstoqueCota.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.ordinal());
+		movimentoEstoqueCota.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO.name());
 
 		if (idEstudoCota != null) {
 			
