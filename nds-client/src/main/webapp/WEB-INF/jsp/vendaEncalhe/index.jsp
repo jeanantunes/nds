@@ -139,7 +139,7 @@ $(function(){
        		<legend>Venda de Encalhes</legend>
         	
 	    	<div class="gridVenda" id="gridVenda" style="display: none;">
-				<table id="vendaEncalheGrid" class="vendaEncalheGrid"></table>
+				<table id="vendaEncalheGridCota" class="vendaEncalheGridCota"></table>
 			</div>
 	        
 	       	<table width="100%" cellspacing="2" cellpadding="2" border="0">
