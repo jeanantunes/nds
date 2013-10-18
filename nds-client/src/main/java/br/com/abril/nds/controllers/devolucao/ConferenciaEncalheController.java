@@ -8,7 +8,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.client.util.Constants;
+import br.com.abril.nds.client.vo.CotaBloqueadaVO;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
 import br.com.abril.nds.dto.DadosDocumentacaoConfEncalheCotaDTO;
@@ -305,7 +305,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		this.result.nothing();
 	}
-	
+
 	public static void removerTravaConferenciaCotaUsuario(ServletContext context, String userSessionID, Map<Integer, String> mapaCotaConferidaUsuario, Map<String, String> mapaSessionIDNomeUsuario) {
 		
 			

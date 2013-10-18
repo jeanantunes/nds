@@ -50,6 +50,7 @@ import br.com.abril.nds.model.financeiro.BaixaCobranca;
 import br.com.abril.nds.model.financeiro.BaixaManual;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.BoletoDistribuidor;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
@@ -286,10 +287,12 @@ public class BoletoServiceImpl implements BoletoService {
 
 		} catch (Exception e) {
 			
-			this.controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_ERROS,
-														   dataOperacao, dataPagamento, usuario, banco);
+		
 			
-			if (e instanceof ValidacaoException) {
+			//gerar movimentos financeiros para cobranças não pagas
+			List<Cobranca> boletosNaoPagos = this.boletoRepository.obterBoletosNaoPagos(dataPagamento);
+			
+			for (Cobranca boleto : boletosNaoPagos){
 				
 				throw new ValidacaoException(((ValidacaoException) e).getValidacao());
 			
@@ -321,11 +324,12 @@ public class BoletoServiceImpl implements BoletoService {
 
 				this.validarAcumuloDivida(divida, naoAcumulaDividas, numeroMaximoAcumulosDistribuidor);
 	
+				
 				divida.setStatus(StatusDivida.PENDENTE);
 				this.dividaRepository.alterar(divida);
 				
 				boleto.setStatusCobranca(StatusCobranca.NAO_PAGO);
-				this.boletoRepository.alterar(boleto);
+				this.cobrancaRepository.alterar(boleto);
 				
 				Date dataVencimento = this.obterNovaDataVencimentoAcumulo(dataPagamento);
 				
@@ -1704,7 +1708,12 @@ public class BoletoServiceImpl implements BoletoService {
 
 		if (fornecedor == null && cota.getFornecedores() != null && !cota.getFornecedores().isEmpty()) {
 			
-			fornecedor = cota.getFornecedores().iterator().next();
+			if (cota.getFornecedores()!=null && !cota.getFornecedores().isEmpty()) {
+				
+				fornecedor = cota.getFornecedores().iterator().next();
+				
+			}
+			
 		}
 
 		return fornecedor;
