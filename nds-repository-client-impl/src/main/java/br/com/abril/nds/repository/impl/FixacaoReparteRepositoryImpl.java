@@ -8,12 +8,15 @@ import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
 import br.com.abril.nds.model.distribuicao.FixacaoRepartePdv;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.FixacaoRepartePdvRepository;
 import br.com.abril.nds.repository.FixacaoReparteRepository;
+import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 import org.hibernate.Query;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +37,10 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
     @Autowired
     private FixacaoRepartePdvRepository fixacaoRepartePdvRepository;
 
-	public FixacaoReparteRepositoryImpl() {
+    @Autowired
+    private TipoClassificacaoProdutoRepository tipoClassificacaoProdutoRepository;
+
+    public FixacaoReparteRepositoryImpl() {
 		super(FixacaoReparte.class);
 	}
 
@@ -47,7 +53,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 	@Override
 	public List<FixacaoReparteDTO> obterFixacoesRepartePorProduto(FiltroConsultaFixacaoProdutoDTO produto) {
 
-		boolean isClassificacaoPreenchida = !StringUtils.equals(produto.getClassificacaoProduto(),"-1");
+		boolean isClassificacaoPreenchida = NumberUtils.toInt(produto.getClassificacaoProduto()) > 0;
 
 		StringBuilder sql = new StringBuilder("");
 
@@ -63,6 +69,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		.append(" f.cotaFixada.id as cotaFixadaId,")
 		.append(" coalesce(pessoa.nomeFantasia, pessoa.razaoSocial, pessoa.nome, '')  as nomeCota,")
         .append(" coalesce(classificacao.descricao, '') as classificacaoProduto,")
+        .append(" classificacao.id as classificacaoProdutoId,")
         .append(" f.usuario.login as usuario,")
 		.append(" f.codigoICD as codigoProduto,")
 		.append(" count(pdv.id) as qtdPdv")
@@ -83,8 +90,8 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 
         sql.append(	" and f.codigoICD = :codigoICD ");
 
-		sql.append(" GROUP BY f.id ")
-		.append(" order by f.cotaFixada.numeroCota asc ");
+		sql.append(" GROUP BY f.id ");
+		sql.append(" order by f.cotaFixada.numeroCota asc ");
 
 		Query query = getSession().createQuery(sql.toString());
         query.setParameter("codigoICD", produto.getCodigoProduto());
@@ -120,9 +127,9 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		 .append(" f.cotaFixada.numeroCota as cotaFixada, ")
 		 .append(" f.cotaFixada.id as cotaFixadaId, ")
 		 .append(" f.codigoICD as codigoProduto, ")
-		 .append(" (select p.nome from Produto p where p.codigoICD = f.codigoICD) as nomeProduto, ")
-
+		 .append(" (select p.nome from Produto p where p.codigo = (select min(p1.codigo) from Produto p1 where p1.codigoICD = f.codigoICD)) as nomeProduto, ")
 		 .append(" coalesce(classificacao.descricao,'') as classificacaoProduto, ")
+		 .append(" classificacao.id as classificacaoProdutoId, ")
 		 .append(" f.usuario.login as usuario, ")
 		 .append(" f.manterFixa as manterFixa, ")
 		 .append(" count(pdv.id) as qtdPdv ")
@@ -148,7 +155,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		}
 
 		sql.append(" GROUP BY f.id ");
-		//.append(" order by f.produtoFixado.nome asc ");
+		sql.append(" order by nomeProduto asc ");
 
 		Query query = getSession().createQuery(sql.toString());
 
@@ -185,7 +192,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 	 }
 
 	@Override
-	public FixacaoReparte buscarPorProdutoCota(Cota cota, String codigoICD) {
+	public FixacaoReparte buscarPorProdutoCotaClassificacao(Cota cota, String codigoICD, TipoClassificacaoProduto classificacaoProduto) {
 
 		StringBuilder sql = new StringBuilder();
 
@@ -193,10 +200,16 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 		sql.append(" FixacaoReparte f ");
 		sql.append(" where f.cotaFixada = :cotaSelecionada ");
 		sql.append(" and f.codigoICD = :codigoICD  ");
+        if (classificacaoProduto != null) {
+            sql.append(" and f.classificacaoProdutoEdicao = :classificacaoProduto ");
+        }
 
 		Query query  = getSession().createQuery(sql.toString());
 		query.setParameter("cotaSelecionada",  cota);
 		query.setParameter("codigoICD", codigoICD);
+        if (classificacaoProduto != null) {
+            query.setParameter("classificacaoProduto", classificacaoProduto);
+        }
 
 		return (FixacaoReparte)query.uniqueResult();
 	}
@@ -247,18 +260,26 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 	}
 
 	@Override
-	public void gerarCopiaPorCotaFixacaoReparte(List<FixacaoReparteDTO> mixCotaOrigem, Usuario usuarioLogado) {
+	public void gerarCopiaPorCotaFixacaoReparte(List<FixacaoReparteDTO> fixacaoCotaOrigemList, Usuario usuarioLogado) {
 
 		StringBuilder hql = new StringBuilder("");
 
 		hql.append(" INSERT INTO fixacao_reparte ")
-		.append(" (DATA_HORA, ED_FINAL, ED_INICIAL, QTDE_EDICOES, QTDE_EXEMPLARES, ID_COTA, ID_PRODUTO, ID_USUARIO, MANTER_FIXA) VALUES ") ;
+		.append(" (DATA_HORA, ED_FINAL, ED_INICIAL, QTDE_EDICOES, QTDE_EXEMPLARES, ID_COTA, CODIGO_ICD, ID_CLASSIFICACAO_EDICAO, ID_USUARIO, MANTER_FIXA) VALUES ") ;
 
 		List<String> valuesAppendList = new ArrayList<String>();
-		for (FixacaoReparteDTO frDTO : mixCotaOrigem) {
-//			hql.append(" VALUES ('DATA_HORA', ED_FINAL, ED_INICIAL, QTDE_EDICOES, QTDE_EXEMPLARES, ID_COTA, ID_PRODUTO, ID_USUARIO, MANTER_FIXA); ");
-			valuesAppendList.add(" (now(), "+frDTO.getEdicaoFinal()+", "+frDTO.getEdicaoInicial()+", "+frDTO.getQtdeEdicoes()+", "+frDTO.getQtdeExemplares()+", "+frDTO.getCotaFixadaId()+", "+frDTO.getProdutoFixadoId()+", "+usuarioLogado.getId()+", "+frDTO.isManterFixa()+") ");
-		}
+		for (FixacaoReparteDTO frDTO : fixacaoCotaOrigemList) {
+            valuesAppendList.add(" (now(), "
+                    + frDTO.getEdicaoFinal() + ", "
+                    + frDTO.getEdicaoInicial() + ", "
+                    + frDTO.getQtdeEdicoes() + ", "
+                    + frDTO.getQtdeExemplares() + ", "
+                    + frDTO.getCotaFixadaId() + ", "
+                    + frDTO.getCodigoProduto() + ", "
+                    + frDTO.getClassificacaoProdutoId() + ", "
+                    + usuarioLogado.getId() + ", "
+                    + frDTO.isManterFixa() + ") ");
+        }
 
 		hql.append(StringUtils.join(valuesAppendList,","));
 
@@ -293,6 +314,7 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 			cotaFixada.setId(frDTO.getCotaFixadaId());
 
 			fr.setCodigoICD(frDTO.getCodigoProduto());
+            fr.setClassificacaoProdutoEdicao(getClassificacaoProduto(frDTO.getClassificacaoProdutoId()));
 			fr.setCotaFixada(cotaFixada);
 			fr.setUsuario(usuarioLogado);
 
@@ -314,7 +336,14 @@ public class FixacaoReparteRepositoryImpl extends  AbstractRepositoryModel<Fixac
 
 	}
 
-	@SuppressWarnings("unchecked")
+    private TipoClassificacaoProduto getClassificacaoProduto(Long classificacaoProdutoId) {
+        if (classificacaoProdutoId != null) {
+            return tipoClassificacaoProdutoRepository.buscarPorId(classificacaoProdutoId);
+        }
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
 	@Override
 	public void execucaoQuartz() {
 

@@ -882,7 +882,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 				 " inner join PRODUTO_EDICAO produtoedi1_ on estoqueProdutoCota.PRODUTO_EDICAO_ID=produtoedi1_.ID  " +
 				 " inner join LANCAMENTO lancamento2_ on produtoedi1_.ID=lancamento2_.PRODUTO_EDICAO_ID  " +	
 				 " inner join PRODUTO produto5_ on produtoedi1_.PRODUTO_ID=produto5_.ID  " +
-				 " inner join TIPO_CLASSIFICACAO_PRODUTO tipoclassi6_ on produto5_.TIPO_CLASSIFICACAO_PRODUTO_ID=tipoclassi6_.ID " +
+				 " inner join TIPO_CLASSIFICACAO_PRODUTO tipoclassi6_ on produtoedi1_.TIPO_CLASSIFICACAO_PRODUTO_ID=tipoclassi6_.ID " +
 				 " inner join TIPO_SEGMENTO_PRODUTO tiposegmen7_ on produto5_.TIPO_SEGMENTO_PRODUTO_ID=tiposegmen7_.ID " +
 				 " inner join COTA cota2_ on estoqueProdutoCota.COTA_ID=cota2_.ID  " +
 				 " inner join BOX box on cota2_.BOX_ID=box.ID  " +

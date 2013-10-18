@@ -45,6 +45,7 @@ $(function(){
               <td width="78">Classifica&ccedil;&atilde;o:</td>
               <td width="152">
 	            <select name="comboClassificacao" id="comboClassificacao" style="width:140px;">
+                    <option value="-1">SELECIONE</option>
 	              	<c:forEach items="${listaClassificacao}" var="classificacao">
 	              		 <c:choose>
 		              		 <c:when test="${classificacao.id == 16}">

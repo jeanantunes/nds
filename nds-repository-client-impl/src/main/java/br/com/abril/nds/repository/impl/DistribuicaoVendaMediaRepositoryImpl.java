@@ -66,7 +66,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("          join periodo_lancamento_parcial plp ON plp.lancamento_id = l.id ");
 		sql.append("          join produto_edicao pe on pe.id = mec.produto_edicao_id ");
 		sql.append("          join produto p on p.id = pe.produto_id ");
-		sql.append("          join tipo_classificacao_produto tcp on tcp.id = p.tipo_classificacao_produto_id ");
+		sql.append("          join tipo_classificacao_produto tcp on tcp.id = pe.tipo_classificacao_produto_id ");
 		sql.append("         where l.status in ('EXPEDIDO', 'EM BALANC RECOLHIMENTO', 'BALANCEADO RECOLHIMENTO', 'EM RECOLHIMENTO', 'FECHADO') ");
 		
 		if (edicao != null) {
@@ -78,7 +78,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		if (periodo != null) {
 		    sql.append("   and plp.numero_periodo = :periodo ");
 		}
-		sql.append("         group by pe.numero_edicao, plp.numero_periodo) t ");
+		sql.append("         group by pe.numero_edicao, plp.numero_periodo) t group by t.id");
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		if (edicao != null) {
@@ -117,13 +117,13 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("           round(sum(epc.qtde_recebida) - sum(epc.qtde_devolvida)) / sum(epc.qtde_recebida) * 100 ");
 		sql.append("       else 0 end) percentualVenda, ");
 		sql.append("       l.status status, ");
-		sql.append("       tcp.descricao classificacao ");
+		sql.append("       coalesce(tcp.descricao, '') classificacao ");
 		sql.append("  from lancamento l ");
 		sql.append("  join produto_edicao pe on pe.id = l.produto_edicao_id ");
 		sql.append("  left join periodo_lancamento_parcial plp on plp.lancamento_id = l.id ");
 		sql.append("  join produto p on p.id = pe.produto_id ");
 		sql.append("  left join estoque_produto_cota epc on epc.produto_edicao_id = pe.id ");
-		sql.append("  join tipo_classificacao_produto tcp on tcp.id = pe.tipo_classificacao_produto_id ");
+		sql.append("  left join tipo_classificacao_produto tcp on tcp.id = pe.tipo_classificacao_produto_id ");
 		sql.append(" where l.status in ('EXPEDIDO', 'EM BALANC RECOLHIMENTO', 'BALANCEADO RECOLHIMENTO', 'EM RECOLHIMENTO', 'FECHADO') ");
 		
 		if (filtro.getEdicao() != null) {
