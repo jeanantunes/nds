@@ -1717,5 +1717,24 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 	    List<Long> lista = query.list();
 	    return lista;
 	}
+	
+	public List<Long> obterNumeroDas6UltimasEdicoesFechadasPorICD(String codigoICD){
+		
+		StringBuilder sql = new StringBuilder();
+
+
+			sql.append(" select pe.NUMERO_EDICAO from produto_edicao pe left join produto p ON p.ID = pe.PRODUTO_ID ")
+				.append(" LEFT join lancamento l on l.PRODUTO_EDICAO_ID = pe.ID ") 
+				.append(" where p.codigo_icd= :idProduto ")
+				.append(" and l.STATUS='FECHADO' ")
+				.append(" order by l.DATA_LCTO_PREVISTA desc ")
+				.append(" limit 6  ");
+		
+	    Query query = getSession().createSQLQuery(sql.toString());
+	    query.setParameter("idProduto", codigoICD);
+	    
+	    List<Long> lista = query.list();
+	    return lista;
+	}
 
 }

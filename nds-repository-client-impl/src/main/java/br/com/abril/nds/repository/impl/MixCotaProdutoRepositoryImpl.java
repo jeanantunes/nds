@@ -84,13 +84,8 @@ public class MixCotaProdutoRepositoryImpl extends
 
 		.append(" where ")
 		.append(" produto.codigo_icd = mix_cota_produto.CODIGO_ICD and ");
-		if(filtroConsultaMixCotaDTO.getProdutoId()!=null ){
-			sql.append(" produto.CODIGO = :idProduto ");
-			
-		}else{
-			
-			sql.append(" mix_cota_produto.ID_COTA = :cota ");
-		}
+	
+		sql.append(" mix_cota_produto.ID_COTA = :cota ");
 		
 //		sql.append(" and lancamento.status='FECHADO'");
 //		   .append(" and epc.produto_edicao_id in (")
@@ -112,7 +107,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		List<MixCotaDTO> list = (List<MixCotaDTO>)query.list();
 		for (MixCotaDTO mixCotaDTO : list) {
 			
-			List<Long> obterNumeroDas6UltimasEdicoesFechadas = new ArrayList<Long>();//this.produtoEdicaoRepository.obterNumeroDas6UltimasEdicoesFechadas(mixCotaDTO.getIdProduto().longValue());
+			List<Long> obterNumeroDas6UltimasEdicoesFechadas = this.produtoEdicaoRepository.obterNumeroDas6UltimasEdicoesFechadasPorICD(mixCotaDTO.getCodigoICD());
 			if(obterNumeroDas6UltimasEdicoesFechadas.isEmpty()){
 				mixCotaDTO.setReparteMedio(BigDecimal.ZERO);
 				mixCotaDTO.setVendaMedia(BigDecimal.ZERO);
@@ -242,7 +237,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		List<MixProdutoDTO> list = (List<MixProdutoDTO>)query.list();
 		for (MixProdutoDTO mixCotaDTO : list) {
 			
-			List<Long> obterNumeroDas6UltimasEdicoesFechadas = this.produtoEdicaoRepository.obterNumeroDas6UltimasEdicoesFechadas(mixCotaDTO.getIdProduto().longValue());
+			List<Long> obterNumeroDas6UltimasEdicoesFechadas = this.produtoEdicaoRepository.obterNumeroDas6UltimasEdicoesFechadasPorICD(mixCotaDTO.getCodigoProduto());
 			if(obterNumeroDas6UltimasEdicoesFechadas.isEmpty()){
 				mixCotaDTO.setReparteMedio(BigDecimal.ZERO);
 				mixCotaDTO.setVendaMedia(BigDecimal.ZERO);

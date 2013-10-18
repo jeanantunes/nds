@@ -344,4 +344,6 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
     
     public List<Long> obterNumeroDas6UltimasEdicoesFechadas(Long idProduto);
     
+    public List<Long> obterNumeroDas6UltimasEdicoesFechadasPorICD(String codigoICD);
+    
 }
