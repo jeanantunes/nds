@@ -39,7 +39,7 @@ var historicoVendaController = $.extend(true, {
 			
 			var filtro = [];
 				filtro = $('#pesquisaPorProduto').serializeArray();
-			
+			console.log(filtro);
 			historicoVendaController.Grids.EdicaoProdCadastradosGrid.reload({
 				params : filtro
 			});

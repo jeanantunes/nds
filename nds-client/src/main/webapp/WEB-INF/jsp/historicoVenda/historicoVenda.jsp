@@ -112,7 +112,7 @@ function limparInputsFiltro(input1, input2, input3, input4, input5, input6, inpu
             <td width="40"><input type="text" name="filtro.numeroEdicao" id="filtroNumeroEdicao" style="width:60px;"/></td>
            	<td width="76">Classificação:</td>
              <td width="50">
-                <select name="filtro.tipoClassificacaoProdutoId" id="comboClassificacao" style="width:200px;">
+                <select name="tipoClassificacaoProdutoId" id="comboClassificacao" style="width:200px;">
                 	<option selected="selected">Selecione...</option>
                   		<c:forEach items="${listaClassificacao}" var="classificacao">
 							<option value="${classificacao.key}">${classificacao.value}</option>

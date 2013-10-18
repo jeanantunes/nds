@@ -901,9 +901,9 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		//codigo = codigo do produto
 		if (StringUtils.isNotEmpty(filtro.getCodigo())) {
 
-			whereList.add(" produto5_.CODIGO_ICD = :idProduto");
+			whereList.add(" produto5_.CODIGO_ICD = :codICD");
 			
-			parameterMap.put("idProduto",filtro.getCodigo());
+			parameterMap.put("codICD",filtro.getCodigo());
 
 		}
 

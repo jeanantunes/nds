@@ -231,15 +231,19 @@ var histogramaVendasController = $.extend(true, {
 			formData = new Array();
 		
 		if ($('#inserirComponentes').is(':checked')) {
-			selector = "input[type='radio'][name='filtroPor']:checked,#inserirComponentes,#componente,#elemento,#codigo,#produto,#edicao,#idTipoClassificacaoProduto";
+//			selector = "input[type='radio'][name='filtroPor']:checked,#inserirComponentes,#componente,#elemento,#codigo,#produto,#edicao,#idTipoClassificacaoProduto";
+			selector = "input[type='radio'][name='filtroPor']:checked,#inserirComponentes,#componente,#elemento,#codigo,#produto,#edicao";
 		}else {
-			selector = "input[type='radio'][name='filtroPor']:checked,#codigo,#produto,#edicao,#idTipoClassificacaoProduto";
+//			selector = "input[type='radio'][name='filtroPor']:checked,#codigo,#produto,#edicao,#idTipoClassificacaoProduto";
+			selector = "input[type='radio'][name='filtroPor']:checked,#codigo,#produto,#edicao";
 		}
 		
 		
 		$(selector).each(function(idx,comp){
 			formData.push({name:"filtro."+comp.getAttribute('name'),value:comp.value});
 		});
+		
+		formData.push({name:"classificacaoId", value:$("#idTipoClassificacaoProduto").val()});
 		
 		return formData;
 	},
