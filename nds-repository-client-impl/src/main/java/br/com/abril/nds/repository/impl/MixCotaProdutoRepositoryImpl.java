@@ -78,9 +78,8 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" tipo_classificacao_produto.descricao as classificacaoProduto, ")
 		.append(" tipo_classificacao_produto.id as tipoClassificacaoProdutoID ")
 		.append(" FROM mix_cota_produto ") 
-		.append(" LEFT join tipo_classificacao_produto ON tipo_classificacao_produto.ID = produto_edicao.TIPO_CLASSIFICACAO_PRODUTO_ID ")
+		.append(" LEFT join tipo_classificacao_produto ON tipo_classificacao_produto.ID = mix_cota_produto.TIPO_CLASSIFICACAO_PRODUTO_ID ")
 		.append(" LEFT join usuario on usuario.ID = mix_cota_produto.ID_USUARIO ")
-		    
 		.append(" , produto ")
 
 		.append(" where ")
@@ -197,7 +196,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" FROM mix_cota_produto ") 
 //		.append(" LEFT join produto on mix_cota_produto.ID_PRODUTO = produto.ID ")
 		.append(" LEFT join cota on mix_cota_produto.ID_COTA = cota.ID ")
-		.append(" LEFT join produto_edicao on produto_edicao.PRODUTO_ID = produto.ID ")
+//		.append(" LEFT join produto_edicao on produto_edicao.PRODUTO_ID = produto.ID ")
 //		.append(" LEFT join lancamento on lancamento.PRODUTO_EDICAO_ID = produto_edicao.ID")
 //		.append(" LEFT join estoque_produto_cota epc on epc.cota_id = cota.id ")
 //		.append(" and epc.produto_edicao_id in (select id from produto_edicao where produto_id = (produto.id)) ")
