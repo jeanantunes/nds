@@ -61,6 +61,13 @@ public class MixCotaProduto {
 	@Column(name = "REPARTE_MAX")
 	private Long reparteMaximo;
 	
+	@Column(name = "CODIGO_ICD")
+	private String codigoICD;
+	
+	@ManyToOne(optional = true)
+	@JoinColumn(name = "TIPO_CLASSIFICACAO_PRODUTO_ID")
+	private TipoClassificacaoProduto tipoClassificacaoProduto;
+	
 	@Cascade({CascadeType.REMOVE,CascadeType.SAVE_UPDATE})
 	@OneToMany(mappedBy="mixCotaProduto")
 	List<RepartePDV> repartesPDV;
@@ -151,6 +158,23 @@ public class MixCotaProduto {
 
 	public void setRepartesPDV(List<RepartePDV> repartesPDV) {
 		this.repartesPDV = repartesPDV;
+	}
+
+	public String getCodigoICD() {
+		return codigoICD;
+	}
+
+	public void setCodigoICD(String codigoICD) {
+		this.codigoICD = codigoICD;
+	}
+
+	public TipoClassificacaoProduto getTipoClassificacaoProduto() {
+		return tipoClassificacaoProduto;
+	}
+
+	public void setTipoClassificacaoProduto(
+			TipoClassificacaoProduto tipoClassificacaoProduto) {
+		this.tipoClassificacaoProduto = tipoClassificacaoProduto;
 	}
 	
 	

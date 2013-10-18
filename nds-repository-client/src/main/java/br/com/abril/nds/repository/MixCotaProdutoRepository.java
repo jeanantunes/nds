@@ -34,4 +34,6 @@ public interface MixCotaProdutoRepository extends
 	public MixCotaProduto obterMixPorCotaProduto(Long cotaId, Long produtoId);
 
 	public BigInteger obterSomaReparteMinimoPorProdutoUsuario(Long produtoId, Long idUsuario);
+
+	public MixCotaProduto obterMixPorCotaICDCLassificacao(Long cotaid, String codigoICD, String classificacaoProduto);
 }

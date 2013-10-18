@@ -28,6 +28,8 @@ public class MixCotaDTO implements Serializable{
 	@XlsMapper(value="classificacao")
 	private String classificacaoProduto;
 	
+	private BigInteger tipoClassificacaoProdutoID;
+	
 	@Export(label="Reparte Médio", exhibitionOrder = 4)
 	private BigDecimal reparteMedio;
 	
@@ -225,5 +227,13 @@ public class MixCotaDTO implements Serializable{
 	public void setCodigoICD(String codigoICD) {
 		this.codigoICD = codigoICD;
 	}
+	public BigInteger getTipoClassificacaoProdutoID() {
+		return tipoClassificacaoProdutoID;
+	}
+	public void setTipoClassificacaoProdutoID(BigInteger tipoClassificacaoProdutoID) {
+		this.tipoClassificacaoProdutoID = tipoClassificacaoProdutoID;
+	}
+	
+	
 }
 

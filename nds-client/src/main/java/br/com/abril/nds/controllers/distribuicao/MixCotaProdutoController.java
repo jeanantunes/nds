@@ -135,9 +135,10 @@ public class MixCotaProdutoController extends BaseController {
 
 		tratarFiltroPorProduto(filtro);
 		
-		if(filtro.getCodigoProduto().length() == 6){
-			String codigoProdin = produtoService.obterCodigoProdinPorICD(filtro.getCodigoProduto());  
-			filtro.setCodigoProduto(codigoProdin);
+		if(filtro.getCodigoProduto().length() == 8){
+			Produto produtoPorCodigo = produtoService.obterProdutoPorCodigo(filtro.getCodigoProduto());
+			String codigoICD = produtoPorCodigo.getCodigoICD();   
+			filtro.setCodigoProduto(codigoICD);
 		}
 
 		List<MixProdutoDTO> resultadoPesquisa = mixCotaProdutoService.pesquisarPorProduto(filtro);
@@ -374,6 +375,13 @@ public class MixCotaProdutoController extends BaseController {
 		
 		for (MixCotaProdutoDTO mixCotaProdutoDTO: listaNovosMixCota) {
 			
+			String codigoICD = null;
+			if(mixCotaProdutoDTO.getCodigoProduto().length()==8){
+				codigoICD = this.produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto()).getCodigoICD();
+			}else{
+				codigoICD = mixCotaProdutoDTO.getCodigoProduto();
+			}
+			mixCotaProdutoDTO.setCodigoICD(codigoICD);
 			mixCotaProdutoDTO.setNumeroCota(cotaId.toString());
 		}
 		
@@ -472,8 +480,9 @@ public class MixCotaProdutoController extends BaseController {
 		for (MixCotaDTO mixCotaDTO : listMixExcel) {
 			MixCotaProdutoDTO mix = new MixCotaProdutoDTO();
 			
-			if(mixCotaDTO.getCodigoProduto().length() == 6){
-				String codigoProdin = produtoService.obterCodigoProdinPorICD(mixCotaDTO.getCodigoProduto());  
+			if(mixCotaDTO.getCodigoProduto().length() == 8){
+				
+				String codigoProdin = produtoService.obterProdutoPorCodigo(mixCotaDTO.getCodigoProduto()).getCodigoICD();  
 				mix.setCodigoProduto(codigoProdin);
 			}else{
 				
