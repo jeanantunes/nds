@@ -6,7 +6,7 @@ var VENDA_PRODUTO = {
 	inicializar : function() {
 		$(function() {
 
-			$("#vendaEncalhesGrid", VENDA_PRODUTO.workspace).flexigrid({
+			$("#vendaEncalhesGridCota", VENDA_PRODUTO.workspace).flexigrid({
 				preProcess:VENDA_PRODUTO.executarPreProcessamentoGridVenda,
 				onSuccess: VENDA_PRODUTO.formatarCampos,
 				dataType : 'json',
@@ -151,13 +151,13 @@ var VENDA_PRODUTO = {
 		
 		VENDA_PRODUTO.processarVisualizacaoDataVencimento();
 		
-		$("#vendaEncalhesGrid", VENDA_PRODUTO.workspace).flexOptions({
+		$("#vendaEncalhesGridCota", VENDA_PRODUTO.workspace).flexOptions({
 			params:[{name:"idVendaEncalhe", value:idVenda}],
 			url: contextPath + "/devolucao/vendaEncalhe/prepararDadosEdicaoVenda",
 			newp: 1
 		});
 
-		$("#vendaEncalhesGrid", VENDA_PRODUTO.workspace).flexReload();		
+		$("#vendaEncalhesGridCota", VENDA_PRODUTO.workspace).flexReload();		
 	},
 	
 	excluir:function(idVenda){
@@ -252,12 +252,12 @@ var VENDA_PRODUTO = {
 	
 	pesquisarVendas:function(){
 			
-		$("#vendaEncalheGrid", VENDA_PRODUTO.workspace).flexOptions({
+		$("#vendaEncalheGridCota", VENDA_PRODUTO.workspace).flexOptions({
 			url: contextPath + "/devolucao/vendaEncalhe/pesquisarVendas",
 			params: VENDA_PRODUTO.params(),newp: 1
 		});
 		
-		$("#vendaEncalheGrid", VENDA_PRODUTO.workspace).flexReload();
+		$("#vendaEncalheGridCota", VENDA_PRODUTO.workspace).flexReload();
 	},
 	
 	processarVisualizcaoImpressao:function(isVisualiza){
@@ -327,17 +327,17 @@ var VENDA_PRODUTO = {
 					},null,true);
 		
 
-		$("#vendaEncalhesGrid", VENDA_PRODUTO.workspace).flexOptions({
+		$("#vendaEncalhesGridCota", VENDA_PRODUTO.workspace).flexOptions({
 			url: contextPath + "/devolucao/vendaEncalhe/prepararDadosVenda",
 			newp: 1
 		});
 		
-		$("#vendaEncalhesGrid", VENDA_PRODUTO.workspace).flexReload();
+		$("#vendaEncalhesGridCota", VENDA_PRODUTO.workspace).flexReload();
 	},
 	
 	showModalVendas:function(){
 		
-		$("#dialog-venda-encalhe", VENDA_PRODUTO.workspace).dialog({
+		$("#dialog-venda-encalhe-cota", VENDA_PRODUTO.workspace).dialog({
 			resizable: false,
 			height:510,
 			width:1030,
@@ -353,7 +353,7 @@ var VENDA_PRODUTO = {
 		        		}	  
 		        	}  
 				],
-			form: $("#dialog-venda-encalhe", this.workspace).parents("form")
+			form: $("#dialog-venda-encalhe-cota", this.workspace).parents("form")
 		});
 	},
 	
@@ -924,12 +924,12 @@ var VENDA_PRODUTO = {
 	},
 	
 	limparGridVenda: function (){
-		$('#vendaEncalhesGrid tr', VENDA_PRODUTO.workspace).remove();
+		$('#vendaEncalhesGridCota tr', VENDA_PRODUTO.workspace).remove();
 	},
 	
 	validaritemRepetido:function(indiceLinha){
 		
-		var linhasDaGrid = $("#vendaEncalhesGrid tr", VENDA_PRODUTO.workspace);
+		var linhasDaGrid = $("#vendaEncalhesGridCota tr", VENDA_PRODUTO.workspace);
 		var retorno  = false;
 		$.each(linhasDaGrid, function(index, value) {
 			
@@ -958,7 +958,7 @@ var VENDA_PRODUTO = {
 	
 	getListaProduto:function(){
 		
-		var linhasDaGrid = $("#vendaEncalhesGrid tr", VENDA_PRODUTO.workspace);
+		var linhasDaGrid = $("#vendaEncalhesGridCota tr", VENDA_PRODUTO.workspace);
 
 		var listaVendas= [];
 		
@@ -1044,7 +1044,7 @@ var VENDA_PRODUTO = {
 						result.listaMensagens
 					);
 				
-				$("#dialog-venda-encalhe", VENDA_PRODUTO.workspace).dialog( "close" );
+				$("#dialog-venda-encalhe-cota", VENDA_PRODUTO.workspace).dialog( "close" );
 				
 				VENDA_PRODUTO.imprimeSlipVendaEncalhe();	
 			},
@@ -1097,7 +1097,7 @@ var VENDA_PRODUTO = {
 			return;
 		}
 		
-		var linhasDaGrid = $("#vendaEncalhesGrid tr", VENDA_PRODUTO.workspace);
+		var linhasDaGrid = $("#vendaEncalhesGridCota tr", VENDA_PRODUTO.workspace);
 		var listaVendas = [];
 		
 		$.each(linhasDaGrid, function(index, value) {
@@ -1155,13 +1155,13 @@ var VENDA_PRODUTO = {
 			
 			listaVendas.push({name:"numeroCota",value:$("#numCotaVenda", VENDA_PRODUTO.workspace).val()});
 			
-			$("#vendaEncalhesGrid", VENDA_PRODUTO.workspace).flexOptions({
+			$("#vendaEncalhesGridCota", VENDA_PRODUTO.workspace).flexOptions({
 				url: contextPath + "/devolucao/vendaEncalhe/recalcularValorDescontoItensVenda",
 				params:listaVendas,
 				newp: 1
 			});
 			
-			$("#vendaEncalhesGrid", VENDA_PRODUTO.workspace).flexReload();
+			$("#vendaEncalhesGridCota", VENDA_PRODUTO.workspace).flexReload();
 		}	
 
 	}
@@ -1197,7 +1197,7 @@ $(function() {
 		}
 	});
 		
-	$(".vendaEncalheGrid", VENDA_PRODUTO.workspace).flexigrid({
+	$(".vendaEncalheGridCota", VENDA_PRODUTO.workspace).flexigrid({
 		preProcess:VENDA_PRODUTO.executarPreProcessamento,
 		onSuccess: function() {bloquearItensEdicao(VENDA_PRODUTO.workspace);},
 		dataType : 'json',
