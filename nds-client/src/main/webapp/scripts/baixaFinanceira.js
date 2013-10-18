@@ -2,7 +2,7 @@ var baixaFinanceiraController = $.extend(true, {
 	
 	dataOperacaoDistribuidor: null,
 	tipoBaixa: null,
-	acaoPesquisa:null,
+	acaoPesquisa:null, 
 	
 	init : function() {
 		$("#filtroNumCota", baixaFinanceiraController.workspace).numeric();
@@ -19,7 +19,7 @@ var baixaFinanceiraController = $.extend(true, {
 			showOn : "button",
 			buttonImage : contextPath + "/images/calendar.gif",
 			buttonImageOnly : true,
-			dateFormat : 'dd/mm/yy',
+			dateFormat : 'dd/mm/yy', 
 		});
 		this.initGradeDividas();
 		this.initGridDadosDivida();
@@ -41,7 +41,7 @@ var baixaFinanceiraController = $.extend(true, {
 		$("#valorFinanceiro", baixaFinanceiraController.workspace).priceFormat({
 			centsSeparator: ',',
 		    thousandsSeparator: '.',
-			centsLimit: 4
+			centsLimit: 2
 		});
 		
 		baixaFinanceiraController.dataOperacaoDistribuidor = 
@@ -1061,7 +1061,7 @@ var baixaFinanceiraController = $.extend(true, {
 			allowNegative: true,
 		    centsSeparator: ',',
 		    thousandsSeparator: '.',
-			centsLimit: 4
+			centsLimit: 2
 		});
 		
 		$('#multaDividas', baixaFinanceiraController.workspace).priceFormat({
@@ -1089,28 +1089,28 @@ var baixaFinanceiraController = $.extend(true, {
 			allowNegative: true,
 			centsSeparator: ',',
 		    thousandsSeparator: '.',
-			centsLimit: 4
+			centsLimit: 2
 		});
 		
 		$('#valorSaldoDividas', baixaFinanceiraController.workspace).priceFormat({
 			allowNegative: true,
 			centsSeparator: ',',
 		    thousandsSeparator: '.',
-			centsLimit: 4
+			centsLimit: 2
 		});
 		
 		$('#valorSaldoDividasHidden', baixaFinanceiraController.workspace).priceFormat({
 			allowNegative: true,
 			centsSeparator: ',',
 		    thousandsSeparator: '.',
-			centsLimit: 4
+			centsLimit: 2
 		});
 		
 		$('#valorDividasHidden', baixaFinanceiraController.workspace).priceFormat({
 			allowNegative: true,
 			centsSeparator: ',',
 		    thousandsSeparator: '.',
-			centsLimit: 4
+			centsLimit: 2
 		});
 		
 		$("#valorSaldoDividas", baixaFinanceiraController.workspace).html($("#valorSaldoDividasHidden", baixaFinanceiraController.workspace).val());
@@ -1125,22 +1125,30 @@ var baixaFinanceiraController = $.extend(true, {
     	
 		baixaFinanceiraController.validarCamposBaixa();
 		
-		var valorDividas = removeMascaraPriceFormat($("#valorDividasHidden", baixaFinanceiraController.workspace).val());
+		var valorDividas = formatMoneyValue($("#valorDividasHidden", baixaFinanceiraController.workspace).val(),2); 
+		var desconto = formatMoneyValue($("#descontoDividas", baixaFinanceiraController.workspace).val()); 
+		var juros = formatMoneyValue($("#jurosDividas", baixaFinanceiraController.workspace).val()); 
+		var multa = formatMoneyValue($("#multaDividas", baixaFinanceiraController.workspace).val()); 
 		
-		var desconto = removeMascaraPriceFormat($("#descontoDividas", baixaFinanceiraController.workspace).val());
-		var juros = removeMascaraPriceFormat($("#jurosDividas", baixaFinanceiraController.workspace).val());
-		var multa = removeMascaraPriceFormat($("#multaDividas", baixaFinanceiraController.workspace).val());
-
-		var valorPago = intValue(valorDividas) + intValue(juros) + intValue(multa) - intValue(desconto);
-			
-		$("#valorPagoDividas", baixaFinanceiraController.workspace).val(valorPago);
+		var param = {vlDivida : valorDividas , vlMulta : multa , vlJuros :juros, vlDesconto: desconto};
 		
-		$("#valorPagoDividas", baixaFinanceiraController.workspace).priceFormat({
-			allowNegative: true,
-			centsSeparator: ',',
-		    thousandsSeparator: '.',
-			centsLimit: 4
-		});
+		$.postJSON(contextPath + "/financeiro/baixa/calculaTotalManualDividas",param,
+		function(result) {
+		   
+			var valorPago = result;
+		   
+			$("#valorPagoDividas", baixaFinanceiraController.workspace).val(valorPago);
+		
+			$("#valorPagoDividas", baixaFinanceiraController.workspace).priceFormat({
+				allowNegative: true,
+				centsSeparator: ',',
+				thousandsSeparator: '.',
+				centsLimit: 2
+			});
+   
+		},
+		null,
+		true);
 	},
 
     
@@ -1149,30 +1157,38 @@ var baixaFinanceiraController = $.extend(true, {
     	
 		baixaFinanceiraController.validarCamposBaixa();
 		
-		var valorDividas = removeMascaraPriceFormat($("#valorDividasHidden", baixaFinanceiraController.workspace).val());		
-		var valorPago = removeMascaraPriceFormat($("#valorPagoDividas", baixaFinanceiraController.workspace).val());
-		
-		var desconto = removeMascaraPriceFormat($("#descontoDividas", baixaFinanceiraController.workspace).val());
-		var juros = removeMascaraPriceFormat($("#jurosDividas", baixaFinanceiraController.workspace).val());
-		var multa = removeMascaraPriceFormat($("#multaDividas", baixaFinanceiraController.workspace).val());
+		var valorDividas = formatMoneyValue($("#valorDividasHidden", baixaFinanceiraController.workspace).val(),2); 
+		var valorPago = formatMoneyValue($("#valorPagoDividas", baixaFinanceiraController.workspace).val(),2); 
+		var desconto = formatMoneyValue($("#descontoDividas", baixaFinanceiraController.workspace).val()); 
+		var juros = formatMoneyValue($("#jurosDividas", baixaFinanceiraController.workspace).val()); 
+		var multa = formatMoneyValue($("#multaDividas", baixaFinanceiraController.workspace).val()); 
 
-		var valorSaldo = intValue(valorDividas) + intValue(juros) + intValue(multa) - ( intValue(valorPago) + intValue(desconto) );
+		var param = {vlDivida : valorDividas , vlMulta : multa , vlJuros :juros, vlDesconto: desconto , vlPago: valorPago };
 		
-		if (valorSaldo < 0){
+		$.postJSON(contextPath + "/financeiro/baixa/calcularSaldoDivida",param,
+		function(result) {
+		   
+		   var valorSaldo = result;
+		   
+		   if (valorSaldo < 0){
 			
 			valorSaldo =  (valorSaldo * -1);
 			
-		}
+			}
 		
-        $("#valorSaldoDividasHidden", baixaFinanceiraController.workspace).val(valorSaldo);
-		
-		$("#valorSaldoDividasHidden", baixaFinanceiraController.workspace).priceFormat({
-			allowNegative: true,
-			centsSeparator: ',',
-		    thousandsSeparator: '.',
-			centsLimit: 4
-		});
-		$("#valorSaldoDividas", baixaFinanceiraController.workspace).html($("#valorSaldoDividasHidden", baixaFinanceiraController.workspace).val());
+			$("#valorSaldoDividasHidden", baixaFinanceiraController.workspace).val(valorSaldo);
+			
+			$("#valorSaldoDividasHidden", baixaFinanceiraController.workspace).priceFormat({
+				allowNegative: true,
+				centsSeparator: ',',
+				thousandsSeparator: '.',
+				centsLimit: 2
+			});
+			$("#valorSaldoDividas", baixaFinanceiraController.workspace).html($("#valorSaldoDividasHidden", baixaFinanceiraController.workspace).val());
+   
+		},
+		null,
+		true);
 	},
     
 	validarCamposBaixa : function() {
