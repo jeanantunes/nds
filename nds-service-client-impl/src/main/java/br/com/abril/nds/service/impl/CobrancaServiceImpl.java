@@ -5,7 +5,10 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -588,12 +591,12 @@ public class CobrancaServiceImpl implements CobrancaService {
 		List<Cobranca> cobrancasOrdenadas = this.cobrancaRepository.obterCobrancasOrdenadasPorVencimento(idCobrancas);
 		
 		Cobranca cobrancaParcial = null;
-		
 		Cobranca cobrancaTotal = null;
-		
 		BaixaManual baixaManualTotal = null; 
 		
 		validarBaixaCobranca(cobrancasOrdenadas, valorPagamentoCobranca);
+		
+		Map<Long, ComposicaoBaixaFinanceira> mapComposicaoBaixaFinanceira = obterMapaComposicaoBaixasFinanceira(pagamento, cobrancasOrdenadas);
 		
 		for (Cobranca itemCobranca:cobrancasOrdenadas) {
 			
@@ -613,7 +616,13 @@ public class CobrancaServiceImpl implements CobrancaService {
 		    	
 		    	cobrancaTotal = this.cobrancaRepository.merge(itemCobranca);
 		    	
-		    	baixaManualTotal = this.criarRegistroBaixaManual(cobrancaTotal, pagamento, valorPagar, StatusBaixa.PAGO, statusAprovacao);
+		    	baixaManualTotal = this.criarRegistroBaixaManual(
+		    			cobrancaTotal, 
+		    			pagamento, 
+		    			valorPagar, 
+		    			StatusBaixa.PAGO, 
+		    			statusAprovacao, 
+		    			mapComposicaoBaixaFinanceira.get(cobrancaTotal.getId()));
 		    	
 				valorPagamentoCobranca = valorPagamentoCobranca.subtract(valorPagar);
 
@@ -630,11 +639,14 @@ public class CobrancaServiceImpl implements CobrancaService {
 			
 			if(cobrancaParcial != null) {
 				
+				
+				
 				this.lancamentoBaixaParcial(cobrancaParcial, 
 						pagamento, 
 						valorPagamentoCobranca, 
 						StatusBaixa.PAGAMENTO_PARCIAL, 
-						statusAprovacao);
+						statusAprovacao, 
+						mapComposicaoBaixaFinanceira.get(cobrancaTotal.getId()));
 				
 			} else {
 				
@@ -701,8 +713,10 @@ public class CobrancaServiceImpl implements CobrancaService {
 			PagamentoDividasDTO pagamento,
 			BigDecimal valor,
 			StatusBaixa status, 
-			StatusAprovacao statusAprovacao){
-
+			StatusAprovacao statusAprovacao,
+			ComposicaoBaixaFinanceira composicaoBaixaFinanceira){
+		
+		
 		BaixaManual baixaManual = new BaixaManual();
 		
 		baixaManual.setDataBaixa(pagamento.getDataPagamento());
@@ -710,9 +724,11 @@ public class CobrancaServiceImpl implements CobrancaService {
 		baixaManual.setValorPago(valor);
 		baixaManual.setCobranca(cobranca);
 		baixaManual.setResponsavel(pagamento.getUsuario());
-		baixaManual.setValorJuros(pagamento.getValorJuros());
-		baixaManual.setValorMulta(pagamento.getValorMulta());
-		baixaManual.setValorDesconto(pagamento.getValorDesconto());
+		
+		baixaManual.setValorJuros(composicaoBaixaFinanceira.getJuros());
+		baixaManual.setValorMulta(composicaoBaixaFinanceira.getMulta());
+		baixaManual.setValorDesconto(composicaoBaixaFinanceira.getDesconto());
+		
 		baixaManual.setStatus(status);
 		baixaManual.setStatusAprovacao(statusAprovacao);
 		baixaManual.setObservacao(pagamento.getObservacoes());
@@ -724,13 +740,130 @@ public class CobrancaServiceImpl implements CobrancaService {
 		
 	}
 	
+	class ComposicaoBaixaFinanceira {
+		
+		private BigDecimal multa;
+		private BigDecimal juros;
+		private BigDecimal desconto;
+		
+		public BigDecimal getMulta() {
+			return multa;
+		}
+		public void setMulta(BigDecimal multa) {
+			this.multa = multa;
+		}
+		public BigDecimal getJuros() {
+			return juros;
+		}
+		public void setJuros(BigDecimal juros) {
+			this.juros = juros;
+		}
+		public BigDecimal getDesconto() {
+			return desconto;
+		}
+		public void setDesconto(BigDecimal desconto) {
+			this.desconto = desconto;
+		}
+		
+		
+	}
+	
+	protected Map<Long, ComposicaoBaixaFinanceira> obterMapaComposicaoBaixasFinanceira(
+			PagamentoDividasDTO pagamento, 
+			List<Cobranca> cobrancas) {
+		
+		Map<Long, ComposicaoBaixaFinanceira> map = new HashMap<Long, ComposicaoBaixaFinanceira>();
+		
+		Date dataPagamento = pagamento.getDataPagamento();
+		
+		BigDecimal totalJuros = BigDecimal.ZERO;
+		BigDecimal totalMulta = BigDecimal.ZERO;
+		
+		boolean jurosEncontrado = false;
+		
+		boolean multaEncontrada = false;
+		
+		for(Cobranca cobranca : cobrancas) {
+			
+			BigDecimal valorJurosCalculado = BigDecimal.ZERO;
+			BigDecimal valorMultaCalculado = BigDecimal.ZERO; 
+			
+			Date vencimentoDiaUtil = calendarioService.adicionarDiasUteis(cobranca.getDataVencimento(), 0);
+
+		    Date dataVencimento = DateUtil.parseDataPTBR((DateUtil.formatarDataPTBR(vencimentoDiaUtil)));
+			
+			//CALCULA VALOR DO SALDO DA DIVIDA(MOVIMENTOS DE PAGAMENTO PARCIAL)
+			BigDecimal saldoDivida = this.obterSaldoDivida(cobranca.getId());
+			
+			BigDecimal valorCobranca = cobranca.getValor();
+			valorCobranca = valorCobranca.setScale(2, RoundingMode.HALF_EVEN);
+			
+			BigDecimal valorCobrancaJuros = valorCobranca.subtract(saldoDivida);
+			valorCobrancaJuros = valorCobrancaJuros.setScale(2, RoundingMode.HALF_EVEN);
+			
+			
+			if (dataVencimento.compareTo(dataPagamento) < 0) {
+				
+				valorJurosCalculado =
+					this.calcularJuros(cobranca.getBanco(), cobranca.getCota().getId(),
+										valorCobrancaJuros, 
+									    cobranca.getDataVencimento(),
+									    dataPagamento);
+				
+				if(BigDecimal.ZERO.compareTo(valorJurosCalculado) > 0) {
+					jurosEncontrado = true;
+				}
+				
+				valorMultaCalculado =
+					this.calcularMulta(cobranca.getBanco(), cobranca.getCota(),
+										valorCobranca.subtract(saldoDivida));
+				
+				if(BigDecimal.ZERO.compareTo(valorMultaCalculado) > 0 ) {
+					multaEncontrada = true;
+				}
+			}
+			
+		    BigDecimal valor  = cobranca.getValor();
+		    valor = valor.setScale(2, RoundingMode.HALF_EVEN);
+		    
+		    valorJurosCalculado = valorJurosCalculado.setScale(4, RoundingMode.HALF_EVEN);
+		    valorMultaCalculado = valorMultaCalculado.setScale(4, RoundingMode.HALF_EVEN);
+            
+		    ComposicaoBaixaFinanceira composicao = new ComposicaoBaixaFinanceira();
+		    composicao.setJuros(valorJurosCalculado);
+		    composicao.setMulta(valorMultaCalculado);
+		    
+		    map.put(cobranca.getId(), composicao);
+		    
+			totalJuros = totalJuros.add(valorJurosCalculado);
+	        totalMulta = totalMulta.add(valorMultaCalculado);
+	        
+			
+		}
+		
+		Set<Long> listaIdCobranca = map.keySet();
+		
+		for(Long idCobranca : listaIdCobranca) {
+			
+			ComposicaoBaixaFinanceira composicaoBaixaFinanceira = map.get(idCobranca);
+			
+			//composicao
+			
+		}
+		
+		
+		return null; 
+		
+	}
+	
 	
 	private void lancamentoBaixaParcial(
 			Cobranca cobrancaParcial,
 			PagamentoDividasDTO pagamento,
 			BigDecimal valorRestante, 
 			StatusBaixa status, 
-			StatusAprovacao statusAprovacao){
+			StatusAprovacao statusAprovacao, 
+			ComposicaoBaixaFinanceira composicaoBaixaFinanceira){
 
 		BigDecimal saldoDivida = this.obterSaldoDivida(cobrancaParcial.getId());
 		BigDecimal valorPagar  = cobrancaParcial.getValor().subtract(saldoDivida);
