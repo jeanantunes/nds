@@ -666,10 +666,15 @@ var fechamentoEncalheController = $.extend(true, {
 	},
 
 	preprocessamentoGrid : function(resultado) {	
-				
+		
+		cotaBloqueadaController.verificaBloqueioCotaEncalhe(function(){}, function(){});
+		
 		if (resultado.mensagens) {
+			
 			exibirMensagem(resultado.mensagens.tipoMensagem, resultado.mensagens.listaMensagens);
+			
 			$(".cotasGrid", fechamentoEncalheController.workspace).hide();
+			
 			return resultado;
 		}
 		
@@ -681,24 +686,24 @@ var fechamentoEncalheController = $.extend(true, {
 //			
 //		});
 		
+		
 		var buttons = {
 			"Postergar": function() {
 				
 				if(!verificarPermissaoAcesso(fechamentoEncalheController.workspace))
 					return;
-				
-				fechamentoEncalheController.postergarCotas();
-				
+
+				cotaBloqueadaController.verificaBloqueioCotaEncalhe(fechamentoEncalheController.postergarCotas, function(){return;});
 			},
 			"Cobrar": function() {
 				
 				if(!verificarPermissaoAcesso(fechamentoEncalheController.workspace))
 					return;
 				
-				fechamentoEncalheController.veificarCobrancaGerada();
-				
+				cotaBloqueadaController.verificaBloqueioCotaEncalhe(fechamentoEncalheController.veificarCobrancaGerada, function(){return;});
 			},
 			"Cancelar": function() {
+				
 				$(this).dialog( "close" );
 			}
 		};

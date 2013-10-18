@@ -961,7 +961,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   //saldo = total - valorPago
 		   	.append(" ( ")
 			.append(" 	 SELECT CASE WHEN bc.status = :naoPagoPostergado THEN 0 ")
-			.append(" 	 else cfc.TOTAL + coalesce(SUM(bc.VALOR_PAGO - ((bc.VALOR_JUROS + bc.VALOR_MULTA)+bc.VALOR_DESCONTO)),0) end ")
+			.append(" 	 else cfc.TOTAL + coalesce(SUM(bc.VALOR_PAGO),0) end ")
 			.append(" 	 FROM BAIXA_COBRANCA bc ")
 			.append(" 	 INNER JOIN COBRANCA cobranca ON cobranca.ID = bc.COBRANCA_ID ")
 			.append(" 	 INNER JOIN DIVIDA divida ON divida.ID = cobranca.DIVIDA_ID ")
@@ -1174,7 +1174,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(") and m.DATA = mfc.DATA ")
 		   .append("),0)")
 		   .append(") ")
-		   .append(" + ")
+		   .append(" - ")
 		   .append("coalesce((select sum(m.VALOR) ")
 		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
 		   .append(" inner join COTA on COTA.ID = m.COTA_ID")

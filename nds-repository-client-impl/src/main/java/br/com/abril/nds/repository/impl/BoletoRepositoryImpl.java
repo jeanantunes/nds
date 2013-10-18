@@ -21,6 +21,7 @@ import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.Banco;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.BoletoRepository;
@@ -710,13 +711,14 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<Boleto> obterBoletosNaoPagos(Date data){
+	public List<Cobranca> obterBoletosNaoPagos(Date data){
 		
-		String hql = "select boleto " + this.obterFromWhereBoletosInadimplentes();
+		String hql = "select cobranca " + this.obterFromWhereBoletosInadimplentes();
 		
 		Query query = this.getSession().createQuery(hql);
 		query.setParameter("data", data);
 		query.setParameter("statusCobranca", StatusCobranca.NAO_PAGO);
+		query.setParameterList("tipoCobranca", Arrays.asList(TipoCobranca.BOLETO,TipoCobranca.BOLETO_EM_BRANCO));
 		
 		return query.list();
 	}
