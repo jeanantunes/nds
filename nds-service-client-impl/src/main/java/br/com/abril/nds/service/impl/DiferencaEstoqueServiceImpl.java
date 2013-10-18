@@ -1049,7 +1049,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		if (this.foraDoPrazoDoGFS(diferenca)) {
 			
-			if(origem.equals(Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE)) {
+			if(origem != null && origem.equals(Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE)) {
 				statusIntegracao = StatusIntegracao.ENCALHE;
 			} else {
 				statusIntegracao = StatusIntegracao.FORA_DO_PRAZO;
