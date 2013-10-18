@@ -272,12 +272,15 @@ public class BoletoServiceImpl implements BoletoService {
 			resumoBaixaBoletos.setDataCompetencia(DateUtil.formatarDataPTBR(dataOperacao));
 			resumoBaixaBoletos.setSomaPagamentos(arquivoPagamento.getSomaPagamentos());
 			
+		
+			
 			//gerar movimentos financeiros para cobranças não pagas
 			List<Cobranca> boletosNaoPagos = this.boletoRepository.obterBoletosNaoPagos(dataPagamento);
 			
 			for (Cobranca boleto : boletosNaoPagos){
 				
 				Divida divida = boleto.getDivida();
+				
 				divida.setStatus(StatusDivida.PENDENTE);
 				this.dividaRepository.alterar(divida);
 				
@@ -1573,7 +1576,12 @@ public class BoletoServiceImpl implements BoletoService {
 
 		if (fornecedor == null && cota.getFornecedores() != null) {
 			
-			fornecedor = cota.getFornecedores().iterator().next();
+			if (cota.getFornecedores()!=null && !cota.getFornecedores().isEmpty()) {
+				
+				fornecedor = cota.getFornecedores().iterator().next();
+				
+			}
+			
 		}
 
 		return fornecedor;
