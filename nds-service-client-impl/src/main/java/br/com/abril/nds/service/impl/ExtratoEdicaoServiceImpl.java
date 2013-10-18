@@ -152,7 +152,9 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 
 		if (!diferenca.getTipoEstoque().equals(TipoEstoque.GANHO) 
 				&& !diferenca.getTipoEstoque().equals(TipoEstoque.PERDA)
-				&& (!StatusIntegracao.NAO_INTEGRAR.equals(statusIntegracao) && !StatusIntegracao.ENCALHE.equals(statusIntegracao))) {
+				&& (!StatusIntegracao.NAO_INTEGRAR.equals(statusIntegracao) 
+						&& !StatusIntegracao.ENCALHE.equals(statusIntegracao)
+						&& !StatusIntegracao.FORA_DO_PRAZO.equals(statusIntegracao))) {
 		    
 			novaDescricao = novaDescricao + " (Pendente de Aprovação no GFS)";
 		}

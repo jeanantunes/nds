@@ -454,8 +454,6 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			
 			if (diferenca.getRateios() != null && !diferenca.getRateios().isEmpty()) {
 				
-				statusAprovacao = StatusAprovacao.APROVADO;
-				
 				listaMovimentosEstoqueCota = new ArrayList<MovimentoEstoqueCota>();
 				
 				BigInteger qntTotalRateio = BigInteger.ZERO;
@@ -751,7 +749,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		boolean utilizaControleAprovacao = parametrosDistribuidorService.getParametrosDistribuidor().getUtilizaControleAprovacao();
 		
-		if(utilizaControleAprovacao) {
+		if(!utilizaControleAprovacao) {
 			statusAprovacao = StatusAprovacao.APROVADO;
 		}
 		

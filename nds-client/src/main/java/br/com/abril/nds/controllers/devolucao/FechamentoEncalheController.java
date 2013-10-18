@@ -947,14 +947,14 @@ public class FechamentoEncalheController extends BaseController {
 				}
 			}
 
-		}else{
+		} else {
 			listaDeGrid = new ArrayList<FechamentoFisicoLogicoDTO>();
 		}
 	
-		if(insercao == true){
+		if(insercao == true) {
 			FechamentoFisicoLogicoDTO gridFechamentoEncalheDTO = new FechamentoFisicoLogicoDTO();
 			
-			if(fisico != null){
+			if(fisico != null) {
 				gridFechamentoEncalheDTO.setFisico(Long.parseLong(fisico));	
 			}
 			
