@@ -112,7 +112,9 @@ public class HistoricoVendaController extends BaseController {
 	}
 	
 	@Post
-	public void pesquisaProduto(FiltroHistoricoVendaDTO filtro, String sortorder, String sortname, int page, int rp){
+	public void pesquisaProduto(FiltroHistoricoVendaDTO filtro, Long tipoClassificacaoProdutoId, String sortorder, String sortname, int page, int rp){
+		
+		filtro.setTipoClassificacaoProdutoId(tipoClassificacaoProdutoId);
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 			

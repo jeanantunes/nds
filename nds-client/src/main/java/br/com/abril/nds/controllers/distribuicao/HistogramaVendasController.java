@@ -267,7 +267,9 @@ public class HistogramaVendasController extends BaseController {
 	
 	@Post
 	@Path("/consultar")
-	public void pesquisarFiltro(FiltroHistogramaVendas filtro, String sortorder, String sortname, int page, int rp) {
+	public void pesquisarFiltro(FiltroHistogramaVendas filtro, Long classificacaoId, String sortorder, String sortname, int page, int rp) {
+		
+		filtro.setIdTipoClassificacaoProduto(classificacaoId);
 		
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder,sortname));
 		

@@ -39,19 +39,16 @@ var historicoVendaController = $.extend(true, {
 			
 			var filtro = [];
 				filtro = $('#pesquisaPorProduto').serializeArray();
-			
 			historicoVendaController.Grids.EdicaoProdCadastradosGrid.reload({
 				params : filtro
 			});
 		});
 
 		$('#numeroCota').change(function (){
-//			pesquisaCota.pesquisarPorNumeroCota('#numeroCota', '#nomePessoa');
 			autoComp.pesquisarPorCodigo("/cadastro/cota/pesquisarPorNumero", '#numeroCota', '#nomePessoa', 'numeroCota', 'nome', 'numero');
 		});
 		
 		$('#nomePessoa').keyup(function (){
-//			pesquisaCota.autoCompletarPorNome('#nomePessoa');
 			autoComp.autoCompletarPorNome("/cadastro/cota/autoCompletarPorNome",'#numeroCota', '#nomePessoa', "nomeCota", 2);
 		});
 		
