@@ -513,7 +513,7 @@ var fechamentoEncalheController = $.extend(true, {
 					
 				}	
 				
-				fechamentoEncalheController.pesquisar();
+				fechamentoEncalheController.fechamentosManuais = [];
 				
 			},
 		  	null,

@@ -139,7 +139,7 @@ public class FechamentoEncalheController extends BaseController {
 		} else {
 			List<FechamentoFisicoLogicoDTO> listaEncalhe = 
 					consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, 
-							aplicaRegraMudancaTipo,sortname, sortorder, rp, page);
+							aplicaRegraMudancaTipo, sortname, sortorder, rp, page);
 
 			session.setAttribute("gridFechamentoEncalheDTO", listaEncalhe);
 			
@@ -638,10 +638,12 @@ public class FechamentoEncalheController extends BaseController {
 				return;
 			}
 			
-			FiltroFechamentoEncalheDTO filtroSessao = 
-					(FiltroFechamentoEncalheDTO) this.session.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
+			FiltroFechamentoEncalheDTO filtroSessao = (FiltroFechamentoEncalheDTO) this.session.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
 			
-			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe, getUsuarioLogado(),filtroSessao);
+			@SuppressWarnings("unchecked")
+			List<FechamentoFisicoLogicoDTO> listaEncalhe = (List<FechamentoFisicoLogicoDTO>) session.getAttribute("gridFechamentoEncalheDTO");
+			
+			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe, getUsuarioLogado(), filtroSessao, listaEncalhe);
 			
 		} catch (Exception e) {
 			
@@ -745,10 +747,12 @@ public class FechamentoEncalheController extends BaseController {
 			
 		try {
 			
-			FiltroFechamentoEncalheDTO filtroSessao = 
-					(FiltroFechamentoEncalheDTO) this.session.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
+			FiltroFechamentoEncalheDTO filtroSessao = (FiltroFechamentoEncalheDTO) this.session.getAttribute(FILTRO_PESQUISA_SESSION_ATTRIBUTE);
 			
-			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe, getUsuarioLogado(),filtroSessao);
+			@SuppressWarnings("unchecked")
+			List<FechamentoFisicoLogicoDTO> listaEncalhe = (List<FechamentoFisicoLogicoDTO>) session.getAttribute("gridFechamentoEncalheDTO");
+			
+			this.fechamentoEncalheService.encerrarOperacaoEncalhe(dataEncalhe, getUsuarioLogado(), filtroSessao, listaEncalhe);
 		
 		} catch(ValidacaoException ve){
 			throw ve;

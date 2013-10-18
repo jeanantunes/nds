@@ -73,8 +73,7 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 		
 		filtroExtratoEdicao.setGruposExcluidos(obterGruposMovimentoEstoqueExtratoEdicao());
 		
-		List<ExtratoEdicaoDTO> listaExtratoEdicao =  
-			movimentoEstoqueRepository.obterListaExtratoEdicao(filtroExtratoEdicao, StatusAprovacao.APROVADO);
+		List<ExtratoEdicaoDTO> listaExtratoEdicao = movimentoEstoqueRepository.obterListaExtratoEdicao(filtroExtratoEdicao, StatusAprovacao.APROVADO);
 		
 		if (listaExtratoEdicao.isEmpty()){
 			
@@ -153,7 +152,7 @@ public class ExtratoEdicaoServiceImpl implements ExtratoEdicaoService {
 
 		if (!diferenca.getTipoEstoque().equals(TipoEstoque.GANHO) 
 				&& !diferenca.getTipoEstoque().equals(TipoEstoque.PERDA)
-				&& !StatusIntegracao.NAO_INTEGRAR.equals(statusIntegracao)){
+				&& (!StatusIntegracao.NAO_INTEGRAR.equals(statusIntegracao) && !StatusIntegracao.ENCALHE.equals(statusIntegracao))) {
 		    
 			novaDescricao = novaDescricao + " (Pendente de Aprovação no GFS)";
 		}

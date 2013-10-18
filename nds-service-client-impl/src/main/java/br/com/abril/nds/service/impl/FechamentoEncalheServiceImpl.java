@@ -173,11 +173,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		List<FechamentoFisicoLogicoDTO> listaConferencia = 
 				fechamentoEncalheRepository.buscarConferenciaEncalheNovo(filtro, sortorder, sort, startSearch, rp);
 		
-		if(! listaConferencia.isEmpty())
-		{
+		if(! listaConferencia.isEmpty()) {
 			ArrayList<Long> listaDeIdsProdutoEdicao = new ArrayList<Long>();
-			for(FechamentoFisicoLogicoDTO conferencia : listaConferencia)
-			{
+			for(FechamentoFisicoLogicoDTO conferencia : listaConferencia) {
 				conferencia.setDataRecolhimento(filtro.getDataEncalhe());
 				listaDeIdsProdutoEdicao.add(conferencia.getProdutoEdicao());
 			}
@@ -186,12 +184,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			List<FechamentoFisicoLogicoDTO> listaMovimentoEstoqueCotaVendaProduto = null;
 			
 			//So ira apurar os exemplares de venda de encalhe se não informar box para consulta
-			if(filtro.getBoxId() == null){
+			if(filtro.getBoxId() == null) {
 				listaMovimentoEstoqueCotaVendaProduto = fechamentoEncalheRepository.buscarMovimentoEstoqueCotaVendaProduto(filtro, listaDeIdsProdutoEdicao);
 			}
 		
-			for(FechamentoFisicoLogicoDTO conferencia : listaConferencia)
-			{
+			for(FechamentoFisicoLogicoDTO conferencia : listaConferencia) {
 
 				//Soma as quantidades para os exemplares de devolucao
 				for(FechamentoFisicoLogicoDTO movimentoEstoqueCota : listaMovimentoEstoqueCota){
@@ -212,8 +209,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				if(filtro.getBoxId() == null){
 					
 					//Subtrai as quantidades para os exemplares de devolucao
-					for(FechamentoFisicoLogicoDTO movimentoEstoqueCotaVendaProduto : listaMovimentoEstoqueCotaVendaProduto)
-					{
+					for(FechamentoFisicoLogicoDTO movimentoEstoqueCotaVendaProduto : listaMovimentoEstoqueCotaVendaProduto) {
 						if(conferencia.getProdutoEdicao().equals(movimentoEstoqueCotaVendaProduto.getProdutoEdicao()) 
 								&& movimentoEstoqueCotaVendaProduto.getExemplaresDevolucao() != null){
 							
@@ -223,14 +219,11 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				}
 			}
 						
-			int inicioDiaSemana = 
-				distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
+			int inicioDiaSemana = distribuidorRepository.buscarInicioSemana().getCodigoDiaSemana();
 
-			Date dataInicioSemana =
-				SemanaUtil.obterDataInicioSemana(inicioDiaSemana, dataAtual);
+			Date dataInicioSemana = SemanaUtil.obterDataInicioSemana(inicioDiaSemana, dataAtual);
 			
-			Date dataFimSemana = 
-				DateUtil.adicionarDias(dataInicioSemana, 6);
+			Date dataFimSemana = DateUtil.adicionarDias(dataInicioSemana, 6);
 			
 			if (filtro.getBoxId() == null ){ 
 				List<FechamentoEncalhe> listaFechamento = fechamentoEncalheRepository.buscarFechamentoEncalhe(filtro.getDataEncalhe());
@@ -823,7 +816,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Override
 	@Transactional
-	public void encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario,FiltroFechamentoEncalheDTO filtroSessao)  {
+	public void encerrarOperacaoEncalhe(Date dataEncalhe, Usuario usuario, FiltroFechamentoEncalheDTO filtroSessao, List<FechamentoFisicoLogicoDTO> listaEncalheSessao)  {
 
 		Integer totalCotasAusentes = this.buscarTotalCotasAusentesSemPostergado(dataEncalhe, true);
 		
@@ -837,11 +830,21 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 		this.fechamentoEncalheRepository.salvarControleFechamentoEncalhe(controleFechamentoEncalhe);
 		
-		List<FechamentoFisicoLogicoDTO> listaEncalhe = this.buscarFechamentoEncalhe(filtroSessao, null,null, null, null);
+		//TODO: Refatorar a parte de fechamento de encalhe para melhor desempenho
+		List<FechamentoFisicoLogicoDTO> listaEncalhe = this.buscarFechamentoEncalhe(filtroSessao, null, null, null, null);
+		for (FechamentoFisicoLogicoDTO itemSessao : listaEncalheSessao) {
+			for(FechamentoFisicoLogicoDTO itemFechamento : listaEncalhe) {
+				if(itemSessao.getCodigo().equals(itemFechamento.getCodigo())
+						&& itemSessao.getEdicao().equals(itemFechamento.getEdicao())) {
+					itemFechamento.setFisico(itemSessao.getFisico());
+					itemFechamento.setDiferenca(itemSessao.getFisico().longValue() - itemFechamento.getExemplaresDevolucao().longValue());
+				}
+			}
+		}
 		
-		if(!listaEncalhe.isEmpty()){
+		if(!listaEncalhe.isEmpty()) {
 			
-			for(FechamentoFisicoLogicoDTO item : listaEncalhe){
+			for(FechamentoFisicoLogicoDTO item : listaEncalhe) {
 				
 				gerarMovimentoFaltasSobras(item, usuario);
 				
@@ -889,7 +892,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		
 			diferenca.setTipoDiferenca(TipoDiferenca.PERDA_EM);
 
-			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca,TipoEstoque.RECOLHIMENTO, 
+			diferencaEstoqueService.lancarDiferencaAutomatica(diferenca, TipoEstoque.RECOLHIMENTO, 
 					                                          StatusAprovacao.PERDA, 
 					                                          Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE);
 			
