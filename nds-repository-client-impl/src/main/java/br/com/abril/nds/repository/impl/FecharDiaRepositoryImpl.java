@@ -1,5 +1,6 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -166,29 +167,46 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 	public boolean existePendenciasDeAprovacao(Date dataOperacao, StatusAprovacao statusAprovacao, 
 			List<TipoMovimento> tiposMovimentoVerificaAprovacao) {
 		
-		StringBuilder jpql = new StringBuilder("select count(movimento.id) ");
-		jpql.append(" FROM Movimento movimento ");
-		jpql.append(" WHERE  movimento.dataCriacao = :dataOperacao ");
-		jpql.append(" AND  movimento.status = :statusAprovacao");
+		StringBuilder sql = new StringBuilder(" select SUM(qtde) from ( " );
+			    
+		sql.append(" 	select count(ID) as qtde from MOVIMENTO_ESTOQUE ");       
+		sql.append(" 	where DATA_CRIACAO=:dataOperacao ");
+		sql.append(" 	and STATUS=:statusAprovacao ");
+		sql.append(" 	and (TIPO_MOVIMENTO_ID in (:tiposMovimentoVerificaAprovacao)) ");
 		
-		if (tiposMovimentoVerificaAprovacao != null &&
-				!tiposMovimentoVerificaAprovacao.isEmpty()){
-			
-			jpql.append(" AND movimento.tipoMovimento in (:tiposMovimentoVerificaAprovacao) ");
-		}
+		sql.append("	union ");
+		sql.append(" 	select count(ID) as qtde from MOVIMENTO_ESTOQUE_COTA ");        
+		sql.append("    where DATA_CRIACAO=:dataOperacao "); 
+		sql.append(" 	and STATUS=:statusAprovacao "); 
+		sql.append(" 	and (TIPO_MOVIMENTO_ID in (:tiposMovimentoVerificaAprovacao)) ");
+
+		sql.append(" 	union ");
+		sql.append(" 	select count(ID) as qtde from MOVIMENTO_FINANCEIRO_COTA  ");       
+		sql.append(" 	where DATA_CRIACAO=:dataOperacao "); 
+		sql.append(" 	and STATUS=:statusAprovacao  ");
+		sql.append(" 	and (TIPO_MOVIMENTO_ID in (:tiposMovimentoVerificaAprovacao)) ");
+		sql.append(" ) as soma ");
+
 		
-		Query query = getSession().createQuery(jpql.toString());
+		
+		Query query = getSession().createSQLQuery(sql.toString());
 		
 		query.setParameter("dataOperacao", dataOperacao);
-		query.setParameter("statusAprovacao", statusAprovacao);
+		query.setParameter("statusAprovacao", statusAprovacao.name());
 		
 		if (tiposMovimentoVerificaAprovacao != null &&
 				!tiposMovimentoVerificaAprovacao.isEmpty()){
 			
-			query.setParameterList("tiposMovimentoVerificaAprovacao", tiposMovimentoVerificaAprovacao);
+			List<Long> ids = new ArrayList<Long>();
+			
+			for(TipoMovimento tipo : tiposMovimentoVerificaAprovacao) {
+				ids.add(tipo.getId());
+			}
+			
+			query.setParameterList("tiposMovimentoVerificaAprovacao", ids);
 		}
 		
-		return (Long)query.uniqueResult() > 0;
+		return ((BigDecimal)query.uniqueResult()).intValue() > 0;
 	}
 
 	@SuppressWarnings("unchecked")

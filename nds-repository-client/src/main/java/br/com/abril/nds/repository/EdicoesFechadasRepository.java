@@ -39,5 +39,8 @@ public interface EdicoesFechadasRepository extends Repository<MovimentoEstoque, 
 	public BigInteger obterResultadoTotalEdicoesFechadas(Date dataDe, Date dateAte, Long idFornecedor);
 
 
+	public Long countResultadoEdicoesFechadas(Date parse, Date parse2,
+			Long idFornecedor);
+
 
 }

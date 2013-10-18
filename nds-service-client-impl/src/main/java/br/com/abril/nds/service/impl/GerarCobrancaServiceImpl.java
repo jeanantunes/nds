@@ -780,8 +780,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			return null;
 		}
 		
-		Date dataVencimento = null;
-		
 		List<Integer> diasSemanaConcentracaoPagamento = null;
 		
 		//obtem a data de vencimento de acordo com o dia em que se concentram os pagamentos da cota
@@ -809,12 +807,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		Calendar c = null;
 		
-		if(formaCobrancaPrincipal.isVencimentoDiaUtil()) {
-			dataVencimento = this.calendarioService.adicionarDiasUteis(consolidadoFinanceiroCota.getDataConsolidado(), 
-					  fatorVencimento);
-		} else {
-			dataVencimento = DateUtil.adicionarDias(consolidadoFinanceiroCota.getDataConsolidado(), fatorVencimento);
-		}
+		Date dataVencimento = this.obterDataVencimentoCobrancaCota(consolidadoFinanceiroCota.getDataConsolidado(),fatorVencimento);
 		
 		//acertar a data de vencimento de a cota usa parametros de cobranca do distribuidor
 		if(formaCobrancaPrincipal.getTipoFormaCobranca() == null) {
@@ -1060,6 +1053,23 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
 		
 		return null;
+	}
+	
+
+	private Date obterDataVencimentoCobrancaCota(Date dataConsolidado, Integer fatorVencimento) {
+		
+		FormaCobranca formaCobranca = formaCobrancaService.obterFormaCobrancaPrincipalDistribuidor();
+		
+		if(formaCobranca == null){
+			return DateUtil.adicionarDias(dataConsolidado, fatorVencimento);
+		}
+		
+		//verifica se a forma de cobrança principal do distribuidor utiliza dias uteis para geração da data de vencimento da cobrança
+		if(formaCobranca.isVencimentoDiaUtil()) {
+			return this.calendarioService.adicionarDiasUteis(dataConsolidado, fatorVencimento);
+		}
+		
+		return DateUtil.adicionarDias(dataConsolidado, fatorVencimento);
 	}
 
 	/**
