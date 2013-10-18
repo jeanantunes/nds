@@ -1,5 +1,7 @@
 package br.com.abril.nds.service.impl;
 
+import java.math.BigInteger;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -53,5 +55,16 @@ public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 	public AcumuloDivida atualizarAcumuloDivida(AcumuloDivida acumuloDivida) {
 
 		return this.acumuloDividasRepository.merge(acumuloDivida);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public BigInteger obterNumeroMaximoAcumuloCota(Long idCota) {
+
+		BigInteger numeroAcumulo = this.acumuloDividasRepository.obterNumeroMaximoAcumuloCota(idCota);
+		
+		return numeroAcumulo == null ? BigInteger.ZERO : numeroAcumulo;
 	}
 }

@@ -32,6 +32,8 @@ public class ContaCorrenteCotaVO implements Serializable {
 	
 	private Date dataRaiz;
 	
+	private Date dataPendente;
+	
 	private String nomeBox;
 	
 	private boolean cobrado;
@@ -251,6 +253,20 @@ public class ContaCorrenteCotaVO implements Serializable {
 
 	public void setDataRaiz(Date dataRaiz) {
 		this.dataRaiz = dataRaiz;
+	}
+
+	/**
+	 * @return the dataPendente
+	 */
+	public Date getDataPendente() {
+		return dataPendente;
+	}
+
+	/**
+	 * @param dataPendente the dataPendente to set
+	 */
+	public void setDataPendente(Date dataPendente) {
+		this.dataPendente = dataPendente;
 	}
 
 	public BigDecimal getValorPago() {

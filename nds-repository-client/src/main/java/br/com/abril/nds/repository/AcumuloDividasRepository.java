@@ -1,5 +1,7 @@
 package br.com.abril.nds.repository;
 
+import java.math.BigInteger;
+
 import br.com.abril.nds.model.financeiro.AcumuloDivida;
 
 /**
@@ -26,5 +28,14 @@ public interface AcumuloDividasRepository extends Repository<AcumuloDivida, Long
 	 * 
 	 * @return {@link AcumuloDivida}
 	 */
-	AcumuloDivida obterAcumuloDividaPorDivida(Long idDivida);
+	AcumuloDivida obterAcumuloDividaPorDivida(Long idDivida);	
+	
+	/**
+	 * Obtém o número máximo de acúmulos já atingido por determinada Cota.
+	 * 
+	 * @param idCota - ID da cota a ser pesquisado.
+	 * 
+	 * @return - Número de maior acúmulo de suas dívidas.
+	 */
+	BigInteger obterNumeroMaximoAcumuloCota(Long idCota);
 }

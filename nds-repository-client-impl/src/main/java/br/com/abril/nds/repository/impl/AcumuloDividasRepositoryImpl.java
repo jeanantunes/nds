@@ -1,9 +1,13 @@
 package br.com.abril.nds.repository.impl;
 
+import java.math.BigInteger;
+
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.model.financeiro.AcumuloDivida;
+import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.AcumuloDividasRepository;
 
@@ -40,5 +44,18 @@ public class AcumuloDividasRepositoryImpl extends AbstractRepositoryModel<Acumul
 		return (AcumuloDivida) getSession().createCriteria(AcumuloDivida.class)
 				.add(Restrictions.eq("dividaAnterior.id", idDivida))
 				.uniqueResult();
-	}	
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public BigInteger obterNumeroMaximoAcumuloCota(Long idCota) {
+
+		return (BigInteger) getSession().createCriteria(AcumuloDivida.class)
+				.add(Restrictions.eq("cota.id", idCota))
+				.add(Restrictions.ne("status", StatusInadimplencia.QUITADA))
+				.setProjection(Projections.max("numeroAcumulo"))
+				.uniqueResult();
+	}
 }

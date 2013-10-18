@@ -167,7 +167,7 @@ var contaCorrenteCotaController = $.extend(true, {
 					dataRaizPostergado = value.cell.dataConsolidado;
 				}
 				
-				var dataRaizPendente =  value.cell.dataRaiz;
+				var dataRaizPendente =  value.cell.dataPendente;
 				
 				if(!dataRaizPendente){
 					

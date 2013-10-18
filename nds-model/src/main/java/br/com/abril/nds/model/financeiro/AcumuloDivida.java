@@ -10,10 +10,10 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
+import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.seguranca.Usuario;
 
 @Entity(name="ACUMULO_DIVIDA")
@@ -40,6 +40,14 @@ public class AcumuloDivida {
 	@OneToOne(optional=false)
 	@JoinColumn(name="MOV_MULTA_ID")
 	private MovimentoFinanceiroCota movimentoFinanceiroMulta; 
+
+	@OneToOne
+	@JoinColumn(name = "USUARIO_ID", nullable = false)
+	private Usuario responsavel;
+	
+	@OneToOne
+	@JoinColumn(name="COTA_ID", nullable = false)
+	private Cota cota;
 	
 	@Column(name="NUMERO_ACUMULO", nullable=false, columnDefinition="default 0")
 	private BigInteger numeroAcumulo;
@@ -51,9 +59,6 @@ public class AcumuloDivida {
 	@Column(name = "STATUS", nullable = false)
 	private StatusInadimplencia status;
 	
-	@ManyToOne
-	@JoinColumn(name = "USUARIO_ID", nullable = false)
-	private Usuario responsavel;
 	
 	/**
 	 * @return the id
@@ -183,4 +188,18 @@ public class AcumuloDivida {
 	public void setResponsavel(Usuario responsavel) {
 		this.responsavel = responsavel;
 	}
+
+	/**
+	 * @return the cota
+	 */
+	public Cota getCota() {
+		return cota;
+	}
+
+	/**
+	 * @param cota the cota to set
+	 */
+	public void setCota(Cota cota) {
+		this.cota = cota;
+	}	
 }
