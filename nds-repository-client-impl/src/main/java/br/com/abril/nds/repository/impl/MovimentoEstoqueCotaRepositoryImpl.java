@@ -259,7 +259,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		query.setParameterList("gruposMovimento", Arrays.asList(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR, 
 				                                                GrupoMovimentoEstoque.COMPRA_ENCALHE, 
-				                                                GrupoMovimentoEstoque.RECEBIMENTO_REPARTE));
+				                                                GrupoMovimentoEstoque.RECEBIMENTO_REPARTE,
+				                                                GrupoMovimentoEstoque.SOBRA_EM_COTA,                                                
+				                                                GrupoMovimentoEstoque.FALTA_EM_COTA                                                
+				));
 		
 		query.setParameter("statusFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
 		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
