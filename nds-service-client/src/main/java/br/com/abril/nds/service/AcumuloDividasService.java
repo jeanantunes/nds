@@ -3,6 +3,7 @@ package br.com.abril.nds.service;
 import java.math.BigInteger;
 
 import br.com.abril.nds.model.financeiro.AcumuloDivida;
+import br.com.abril.nds.model.financeiro.Divida;
 
 /**
  * Interface para reger a lógica de negócio de Acumulo de Dívidas.  
@@ -54,5 +55,6 @@ public interface AcumuloDividasService {
 	 * @return - Número de maior acúmulo de suas dívidas.
 	 */
 	BigInteger obterNumeroMaximoAcumuloCota(Long idCota);
-	
+
+	void quitarDividasAcumuladas(Divida dividaAtual);
 }

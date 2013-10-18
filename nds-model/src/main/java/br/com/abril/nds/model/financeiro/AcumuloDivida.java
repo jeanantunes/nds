@@ -25,15 +25,15 @@ public class AcumuloDivida {
 	@Column(name="ID")
 	private Long id;
 	
-	@OneToOne(optional=false)
+	@OneToOne
 	@JoinColumn(name="DIVIDA_ID")
 	private Divida dividaAnterior;
 	
-	@OneToOne(optional=false)
+	@OneToOne
 	@JoinColumn(name="MOV_PENDENTE_ID")
 	private MovimentoFinanceiroCota movimentoFinanceiroPendente; 
 	
-	@OneToOne(optional=false)
+	@OneToOne
 	@JoinColumn(name="MOV_JUROS_ID")
 	private MovimentoFinanceiroCota movimentoFinanceiroJuros; 
 	

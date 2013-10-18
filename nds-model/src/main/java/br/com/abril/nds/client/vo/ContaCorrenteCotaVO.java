@@ -2,6 +2,7 @@ package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.Date;
 
@@ -37,6 +38,8 @@ public class ContaCorrenteCotaVO implements Serializable {
 	private String nomeBox;
 	
 	private boolean cobrado;
+	
+	private BigInteger numeroAcumulo;
 	
 	@Export(label = "Data")
 	private Date dataConsolidado;
@@ -277,6 +280,20 @@ public class ContaCorrenteCotaVO implements Serializable {
 		this.valorPago = 
 				valorPago != null ? 
 						valorPago.setScale(4, RoundingMode.HALF_EVEN) : valorPago;
+	}
+
+	/**
+	 * @return the numeroAcumulo
+	 */
+	public BigInteger getNumeroAcumulo() {
+		return numeroAcumulo;
+	}
+
+	/**
+	 * @param numeroAcumulo the numeroAcumulo to set
+	 */
+	public void setNumeroAcumulo(BigInteger numeroAcumulo) {
+		this.numeroAcumulo = numeroAcumulo;
 	}
 
 	public boolean getCobrado() {

@@ -286,14 +286,13 @@ public class BoletoServiceImpl implements BoletoService {
 			resumoBaixaBoletos.setSomaPagamentos(arquivoPagamento.getSomaPagamentos());
 
 		} catch (Exception e) {
-			
-		
-			
+
 			//gerar movimentos financeiros para cobranças não pagas
-			List<Cobranca> boletosNaoPagos = this.boletoRepository.obterBoletosNaoPagos(dataPagamento);
+			this.controleBaixaService.alterarControleBaixa(StatusControle.CONCLUIDO_ERROS,
+                    dataOperacao, dataPagamento, usuario, banco);
 			
-			for (Cobranca boleto : boletosNaoPagos){
-				
+			if (e instanceof ValidacaoException) {
+
 				throw new ValidacaoException(((ValidacaoException) e).getValidacao());
 			
 			} else {
@@ -310,21 +309,20 @@ public class BoletoServiceImpl implements BoletoService {
 	@Transactional
 	public void adiarDividaBoletosNaoPagos(Usuario usuario, Date dataPagamento) {
 
-		List<Boleto> boletosNaoPagos = this.boletoRepository.obterBoletosNaoPagos(dataPagamento);
+		List<Cobranca> boletosNaoPagos = this.boletoRepository.obterBoletosNaoPagos(dataPagamento);
 		
 		boolean naoAcumulaDividas = this.distribuidorRepository.naoAcumulaDividas();
 		
 		Integer numeroMaximoAcumulosDistribuidor = this.distribuidorRepository.numeroMaximoAcumuloDividas();
 		
-		for (Boleto boleto : boletosNaoPagos) {
+		for (Cobranca boleto : boletosNaoPagos) {
 			
 			Divida divida = boleto.getDivida();
 			
 			try {
 
 				this.validarAcumuloDivida(divida, naoAcumulaDividas, numeroMaximoAcumulosDistribuidor);
-	
-				
+
 				divida.setStatus(StatusDivida.PENDENTE);
 				this.dividaRepository.alterar(divida);
 				
@@ -466,6 +464,8 @@ public class BoletoServiceImpl implements BoletoService {
 		acumuloDivida.setResponsavel(usuario);
 		
 		acumuloDivida.setStatus(StatusInadimplencia.ATIVA);
+		
+		acumuloDivida.setCota(divida.getCota());
 
 		return this.acumuloDividasService.atualizarAcumuloDivida(acumuloDivida);
 	}
@@ -498,7 +498,7 @@ public class BoletoServiceImpl implements BoletoService {
 
 		Integer numeroMaximoAcumuloCota = this.acumuloDividasService.obterNumeroMaximoAcumuloCota(divida.getCota().getId()).intValue();
 		
-		if (!naoAcumulaDividas && (numeroMaximoAcumuloCota > numeroMaximoAcumulosDistribuidor)) {
+		if (!naoAcumulaDividas && (numeroMaximoAcumuloCota >= numeroMaximoAcumulosDistribuidor)) {
 			
 			throw new IllegalArgumentException("Acumulo excedeu o limite do distribuidor.");
 		}

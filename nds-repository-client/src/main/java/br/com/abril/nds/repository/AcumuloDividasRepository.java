@@ -19,7 +19,7 @@ public interface AcumuloDividasRepository extends Repository<AcumuloDivida, Long
 	 * 
 	 * @return {@link AcumuloDivida}
 	 */
-	AcumuloDivida obterAcumuloDividaPorMovimentoFinanceiro(Long idMovimentoFinanceiro);
+	AcumuloDivida obterAcumuloDividaPorMovimentoFinanceiroPendente(Long idMovimentoFinanceiro);
 	
 	/**
 	 * Obtém uma acumulo através do ID de um {@link br.com.abril.nds.model.financeiro.Divida} 

@@ -28,10 +28,12 @@ public class AcumuloDividasRepositoryImpl extends AbstractRepositoryModel<Acumul
 	 * {@inheritDoc}
 	 */
 	@Override
-	public AcumuloDivida obterAcumuloDividaPorMovimentoFinanceiro(Long idMovimentoFinanceiro) {
+	public AcumuloDivida obterAcumuloDividaPorMovimentoFinanceiroPendente(Long idMovimentoFinanceiro) {
 		
-		return (AcumuloDivida) getSession().createCriteria(AcumuloDivida.class)
-				.add(Restrictions.eq("movimentoFinanceiroPendente.id", idMovimentoFinanceiro))
+		return (AcumuloDivida) getSession()
+				.createSQLQuery(" SELECT * FROM acumulo_divida WHERE MOV_PENDENTE_ID = :idMovimentoFinanceiro ")
+				.addEntity(AcumuloDivida.class)
+				.setParameter("idMovimentoFinanceiro", idMovimentoFinanceiro)
 				.uniqueResult();
 	}
 
@@ -41,8 +43,10 @@ public class AcumuloDividasRepositoryImpl extends AbstractRepositoryModel<Acumul
 	@Override
 	public AcumuloDivida obterAcumuloDividaPorDivida(Long idDivida) {
 		
-		return (AcumuloDivida) getSession().createCriteria(AcumuloDivida.class)
-				.add(Restrictions.eq("dividaAnterior.id", idDivida))
+		return (AcumuloDivida) getSession()
+				.createSQLQuery(" SELECT * FROM acumulo_divida WHERE DIVIDA_ID = :idDivida ")
+				.addEntity(AcumuloDivida.class)
+				.setParameter("idDivida", idDivida)
 				.uniqueResult();
 	}
 
