@@ -41,6 +41,7 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusConfirmacao;
+import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
 import br.com.abril.nds.model.cadastro.Distribuidor;
@@ -128,6 +129,7 @@ import br.com.abril.nds.service.MovimentoFinanceiroCotaService;
 import br.com.abril.nds.service.ResumoEncalheFecharDiaService;
 import br.com.abril.nds.service.ResumoReparteFecharDiaService;
 import br.com.abril.nds.service.ResumoSuplementarFecharDiaService;
+import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.exception.FechamentoDiarioException;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.SemanaUtil;
@@ -262,6 +264,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private HistoricoSituacaoCotaRepository historicoSituacaoCotaRepository;
+	
+	@Autowired
+	private UsuarioService usuarioService; 
 	
 	@Override
 	@Transactional
@@ -651,6 +656,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			novoHistoricoSituacaoCota.setDataEdicao(new Date());    		
 			novoHistoricoSituacaoCota.setProcessado(false);
 			novoHistoricoSituacaoCota.setRestaurado(false);
+			novoHistoricoSituacaoCota.setResponsavel(usuarioService.getUsuarioLogado());
+			novoHistoricoSituacaoCota.setTipoEdicao(TipoEdicao.INCLUSAO);
+			novoHistoricoSituacaoCota.setCota(cota);
 
     		this.historicoSituacaoCotaRepository.adicionar(novoHistoricoSituacaoCota);
     	}
