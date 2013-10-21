@@ -108,6 +108,7 @@
       <option value="PRODUTO_X_COTA">Produto X Cota</option>
       <option value="PRODUTO">Produto</option>
       <option value="ENTREGADOR">Entregador</option>
+      <option value="PROMOCIONAL">Reparte Promocional</option>
 </select>
 			  
 			  </td>
@@ -269,6 +270,11 @@
 			<div id="gridProduto" style="display:none;">
 				<table class="mapaAbastecimentoProdutoGrid"></table>
 			</div>
+			
+			<div id="gridPromocional" style="display:none;">
+				<table class="mapaAbastecimentoPromocionalGrid"></table>
+			</div>
+			
 			<div id="gridProdutoEspecifico" style="display:none;">
 				<span>
 					<strong>Código:</strong>  <span id="codigoProdutoHeader">  </span> - 
