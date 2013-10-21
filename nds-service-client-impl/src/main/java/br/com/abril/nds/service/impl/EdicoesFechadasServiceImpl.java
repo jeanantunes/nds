@@ -69,6 +69,13 @@ public class EdicoesFechadasServiceImpl implements EdicoesFechadasService {
 				dateAte, idFornecedor, sortorder, sortname, firstResult,
 				maxResults);
 	}
+
+
+	@Override
+	@Transactional(readOnly=true)
+	public Long countResultadoEdicoesFechadas(	Date dataDe, Date dateAte, Long idFornecedor) {
+		return edicoesFechadasRepository.countResultadoEdicoesFechadas(dataDe,dateAte, idFornecedor);
+	}
 	
 	
 }

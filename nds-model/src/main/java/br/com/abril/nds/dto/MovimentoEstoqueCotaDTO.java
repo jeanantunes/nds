@@ -68,7 +68,7 @@ public class MovimentoEstoqueCotaDTO implements Serializable {
 	
 	private Long movimentoFinanceiroCotaId;
 	
-	private int statusEstoqueFinanceiro;
+	private String statusEstoqueFinanceiro;
 	
 	private BigDecimal precoComDesconto;
 	
@@ -306,11 +306,11 @@ public class MovimentoEstoqueCotaDTO implements Serializable {
 		this.movimentoFinanceiroCotaId = movimentoFinanceiroCotaId;
 	}
 
-	public int getStatusEstoqueFinanceiro() {
+	public String getStatusEstoqueFinanceiro() {
 		return statusEstoqueFinanceiro;
 	}
 
-	public void setStatusEstoqueFinanceiro(int statusEstoqueFinanceiro) {
+	public void setStatusEstoqueFinanceiro(String statusEstoqueFinanceiro) {
 		this.statusEstoqueFinanceiro = statusEstoqueFinanceiro;
 	}
 

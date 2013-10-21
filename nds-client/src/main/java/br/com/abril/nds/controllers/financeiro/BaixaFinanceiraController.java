@@ -745,6 +745,58 @@ public class BaixaFinanceiraController extends BaseController {
 		result.use(Results.json()).from(pagamento,"result").recursive().serialize();
 	}
 	
+	@Post
+	@Path("calcularSaldoDivida")
+	public void calacularSaldo(BigDecimal vlDivida, BigDecimal vlMulta, BigDecimal vlJuros, BigDecimal vlDesconto, BigDecimal vlPago){
+		
+		vlDivida = vlDivida.setScale(2, RoundingMode.HALF_EVEN);
+		
+		vlMulta  = vlMulta.setScale(4,RoundingMode.HALF_EVEN);
+		
+		vlJuros = vlJuros.setScale(4,RoundingMode.HALF_EVEN);
+		
+		vlDesconto = vlDesconto.setScale(4,RoundingMode.HALF_EVEN);
+		
+		vlPago = vlPago.setScale(2,RoundingMode.HALF_EVEN);
+		
+		vlPago = vlPago.add(vlDesconto);
+		
+		BigDecimal vlSaldo = BigDecimal.ZERO;
+				
+		vlSaldo = vlSaldo.add(vlDivida).add(vlMulta).add(vlJuros).subtract(vlPago);
+		
+		vlSaldo = vlSaldo.setScale(2,RoundingMode.HALF_EVEN);
+		
+		if(BigDecimal.ZERO.compareTo(vlSaldo)>0){
+			vlSaldo = vlSaldo.abs();
+		}
+		
+		result.use(Results.json()).from(CurrencyUtil.formatarValor(vlSaldo),"result").recursive().serialize();
+	}
+	
+	@Post
+	@Path("calculaTotalManualDividas")
+	public void calculaTotalManualDividas(BigDecimal vlDivida, BigDecimal vlMulta, BigDecimal vlJuros, BigDecimal vlDesconto){
+		
+		vlDivida = vlDivida.setScale(2, RoundingMode.HALF_EVEN);
+		
+		vlMulta  = vlMulta.setScale(4,RoundingMode.HALF_EVEN);
+		
+		vlJuros = vlJuros.setScale(4,RoundingMode.HALF_EVEN);
+		
+		vlDesconto = vlDesconto.setScale(4,RoundingMode.HALF_EVEN);
+		
+		BigDecimal vlTotalDividas = BigDecimal.ZERO;
+				
+		vlTotalDividas = vlTotalDividas.add(vlDivida).add(vlMulta).add(vlJuros).subtract(vlDesconto);
+		
+		vlTotalDividas = vlTotalDividas.setScale(2,RoundingMode.HALF_EVEN);
+		
+		result.use(Results.json()).from(CurrencyUtil.formatarValor(vlTotalDividas),"result").recursive().serialize();
+	}
+	
+	
+	
 	/**
 	 * Método responsável por efetuar a baixa das dívidas marcadas pelo usuário
 	 * @param pagamento
