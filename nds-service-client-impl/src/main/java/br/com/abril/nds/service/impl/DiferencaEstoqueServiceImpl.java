@@ -507,6 +507,14 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			
 			diferenca.setLancamentoDiferenca(lancamentoDiferenca);
 			
+			//TODO: Verificar com negocio a obrigatoriedade de ter Recebimento Fisico para lancar Diferenca
+			ItemRecebimentoFisico itemRecebFisico = null;
+			List<ItemRecebimentoFisico> itensRecebFisico = recebimentoFisicoRepository.obterItensRecebimentoFisicoDoProduto(diferenca.getProdutoEdicao().getId());
+			if(itensRecebFisico != null && !itensRecebFisico.isEmpty()) {
+				itemRecebFisico = itensRecebFisico.get(0);
+				diferenca.setItemRecebimentoFisico(itemRecebFisico);
+			}
+			
 			diferenca = this.diferencaEstoqueRepository.merge(diferenca);
 
 			this.processarTransferenciaEstoque(diferenca, usuario.getId(), origem);
