@@ -1015,6 +1015,11 @@ public class BoletoServiceImpl implements BoletoService {
 			
 			return baixaAutomatica;
 		}
+		
+		if (boleto != null) {
+
+			this.acumuloDividasService.quitarDividasAcumuladas(boleto.getDivida());
+		}
 			
 		BigDecimal valorPagamento = BigDecimal.ZERO;
 		BigDecimal valorJuros = BigDecimal.ZERO;
