@@ -922,7 +922,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 			List<Long> tiposMovimentoCredito, List<Long> tiposMovimentoDebito,
 			List<Long> tipoMovimentoEncalhe, List<Long> tiposMovimentoEncargos,
 			List<Long> tiposMovimentoPostergadoCredito, List<Long> tiposMovimentoPostergadoDebito,
-			List<Long> tipoMovimentoVendaEncalhe, List<Long> tiposMovimentoConsignado) {
+			List<Long> tipoMovimentoVendaEncalhe, List<Long> tiposMovimentoConsignado, List<Long> tiposMovimentoPendente) {
 		
 		StringBuilder sql = new StringBuilder("select ");
 		sql.append(" cfc.ID as id, ")
@@ -930,7 +930,35 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" COTA.NUMERO_COTA as numeroCota, ")
 		   .append(" concat(box.codigo, ' - ', box.nome) as nomeBox, ")
 		   .append(" cfc.CONSIGNADO as consignado, ")
+		   
 		   .append(" cfc.DT_CONSOLIDADO as dataConsolidado, ")
+		   
+		   .append(" (select mf_ant.DATA ")
+		   .append(" from consolidado_financeiro_cota cfc_data ")
+		   .append(" join consolidado_mvto_financeiro_cota cmfc_data_data on cmfc_data_data.CONSOLIDADO_FINANCEIRO_ID=cfc_data.ID ")
+		   .append(" join movimento_financeiro_cota mfc_data on  mfc_data.ID=cmfc_data_data.MVTO_FINANCEIRO_COTA_ID ")
+		   .append(" join tipo_movimento tm on tm.ID=mfc_data.TIPO_MOVIMENTO_ID ")
+		   .append(" join acumulo_divida ad_data on ad_data.MOV_PENDENTE_ID=mfc_data.ID ")
+		   .append(" join divida d_data on d_data.ID=ad_data.DIVIDA_ID ")
+		   .append(" join consolidado_financeiro_cota cfc_ant on cfc_ant.ID=d_data.CONSOLIDADO_ID ")
+		   .append(" join consolidado_mvto_financeiro_cota cmfc_data_data_ant on cmfc_data_data_ant.CONSOLIDADO_FINANCEIRO_ID=cfc_ant.ID ")
+		   .append(" join movimento_financeiro_cota mf_ant on mf_ant.ID=cmfc_data_data_ant.MVTO_FINANCEIRO_COTA_ID ")
+		   .append(" join tipo_movimento tm_ant on tm_ant.ID=mf_ant.TIPO_MOVIMENTO_ID ")
+		   .append(" where tm.GRUPO_MOVIMENTO_FINANCEIRO=:grupoMovPendente ")
+		   .append(" and cfc_data.ID=cfc.ID ")
+		   .append(" group by 1) as dataPendente, ")//FIXME
+		   
+		   .append(" (select ad_data.NUMERO_ACUMULO ")
+		   .append(" from consolidado_financeiro_cota cfc_data ")
+		   .append(" join consolidado_mvto_financeiro_cota cmfc_data_data on cmfc_data_data.CONSOLIDADO_FINANCEIRO_ID=cfc_data.ID ")
+		   .append(" join movimento_financeiro_cota mfc_data on  mfc_data.ID=cmfc_data_data.MVTO_FINANCEIRO_COTA_ID ")
+		   .append(" join tipo_movimento tm on tm.ID=mfc_data.TIPO_MOVIMENTO_ID ")
+		   .append(" join acumulo_divida ad_data on ad_data.MOV_PENDENTE_ID=mfc_data.ID ")
+		   .append(" where tm.GRUPO_MOVIMENTO_FINANCEIRO=:grupoMovPendente ")
+		   .append(" and cfc_data.ID=cfc.ID ")
+		   .append(" and COTA.ID=cfc_data.COTA_ID ")
+		   .append(" group by mfc_data.DATA) as numeroAcumulo, ")
+		   
 		   .append(" cfc.DEBITO_CREDITO as debitoCredito, ")
 		   .append(" cfc.ENCALHE as encalhe, ")
 		   .append(" cfc.ENCARGOS as encargos, ")
@@ -1008,6 +1036,31 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   
 		   .append(" mfc.DATA as dataConsolidado, ")
 		   
+		   .append(" (select mf_ant.DATA ")
+		   .append(" from movimento_financeiro_cota mfc_data ")
+		   .append(" join tipo_movimento tm_data on tm_data.ID=mfc_data.TIPO_MOVIMENTO_ID ")
+		   .append(" join acumulo_divida ad_data on ad_data.MOV_PENDENTE_ID=mfc_data.ID ")
+		   .append(" join divida d_data on d_data.ID=ad_data.DIVIDA_ID ")
+		   .append(" join consolidado_financeiro_cota cfc_ant on cfc_ant.ID=d_data.CONSOLIDADO_ID ")
+		   .append(" join consolidado_mvto_financeiro_cota cmfc_data_ant on cmfc_data_ant.CONSOLIDADO_FINANCEIRO_ID=cfc_ant.ID ")
+		   .append(" join movimento_financeiro_cota mf_ant on mf_ant.ID=cmfc_data_ant.MVTO_FINANCEIRO_COTA_ID ")
+		   .append(" join tipo_movimento tm_ant on tm_ant.ID=mf_ant.TIPO_MOVIMENTO_ID ")
+		   .append(" where tm_data.GRUPO_MOVIMENTO_FINANCEIRO=:grupoMovPendente ")
+		   .append(" and mfc_data.ID=mfc.ID ")
+		   .append(" group by 1) as dataPendente, ")//FIXME
+
+		   .append(" (select ad_data.NUMERO_ACUMULO ")
+//		   .append(" from consolidado_financeiro_cota cfc_data ")
+//		   .append(" join consolidado_mvto_financeiro_cota cmfc_data_data on cmfc_data_data.CONSOLIDADO_FINANCEIRO_ID=cfc_data.ID ")
+//		   .append(" join movimento_financeiro_cota mfc_data on  mfc_data.ID=cmfc_data_data.MVTO_FINANCEIRO_COTA_ID ")
+		   .append(" from movimento_financeiro_cota mfc_data ")
+		   .append(" join tipo_movimento tm on tm.ID=mfc_data.TIPO_MOVIMENTO_ID ")
+		   .append(" join acumulo_divida ad_data on ad_data.MOV_PENDENTE_ID=mfc_data.ID ")
+		   .append(" where tm.GRUPO_MOVIMENTO_FINANCEIRO=:grupoMovPendente ")
+		   .append(" and mfc_data.ID=mfc.ID ")
+		   .append(" and COTA.ID=mfc_data.COTA_ID ")
+		   .append(" group by mfc_data.DATA) as numeroAcumulo, ")
+		   
 		   //crédito
 		   .append("(coalesce((select sum(m.VALOR) ")
 		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
@@ -1065,7 +1118,18 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("),0) as encargos, ")
 		   
 		   //pendente
-		   .append(" 0 as pendente, ")
+		   .append("coalesce((select sum(m.VALOR) ")
+		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
+		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
+		   .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoPendente) ")
+		   .append(" and m.ID not in (")
+		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
+		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+		   .append(") and m.DATA = mfc.DATA ")
+		   .append("),0) as pendente, ")
 		   
 		   //valorPostergado
 		   //valorPostergado credito
@@ -1115,7 +1179,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   
 		   //data raiz
 		   .append(" (select max(mfp.DT_CONSOLIDADO) from CONSOLIDADO_FINANCEIRO_COTA mfp where mfp.COTA_ID = mfc.COTA_ID and mfp.DT_CONSOLIDADO < mfc.DATA) ")
-		   .append("  as dataRaiz, ")
+           .append("  as dataRaiz, ")
 		   
 		   //valor pago
 		   .append(" 0 as valorPago, ")
@@ -1226,6 +1290,19 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
 		   .append(") and m.DATA = mfc.DATA ")
 		   .append("),0) ")
+		   .append(" + ")
+		   .append("coalesce((select sum(m.VALOR) ")
+		   .append(" from MOVIMENTO_FINANCEIRO_COTA m ")
+		   .append(" inner join COTA on COTA.ID = m.COTA_ID")
+		   .append(" where COTA.NUMERO_COTA = :numeroCota ")
+		   .append(" and m.TIPO_MOVIMENTO_ID in (:tiposMovimentoPendente) ")
+		   .append(" and m.ID not in (")
+		   .append("     select MVTO_FINANCEIRO_COTA_ID ")
+		   .append("     from CONSOLIDADO_MVTO_FINANCEIRO_COTA CCC ")
+		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
+		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
+		   .append(") and m.DATA = mfc.DATA ")
+		   .append("),0) ")
 		   .append(" ) as total, ")
 		   
 		   //saldo
@@ -1305,9 +1382,11 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		query.addScalar("vendaEncalhe", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("cobrado", StandardBasicTypes.BOOLEAN);
 		query.addScalar("dataRaiz", StandardBasicTypes.DATE);
+		query.addScalar("dataPendente", StandardBasicTypes.DATE);
 		query.addScalar("valorPago", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("saldo", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("valorVendaDia", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("numeroAcumulo", StandardBasicTypes.BIG_INTEGER);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ContaCorrenteCotaVO.class));
 		
@@ -1334,8 +1413,11 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		query.setParameterList("tiposMovimentoPostergadoDebito", tiposMovimentoPostergadoDebito);
 		query.setParameterList("tipoMovimentoVendaEncalhe", tipoMovimentoVendaEncalhe);
 		query.setParameterList("tiposMovimentoConsignado", tiposMovimentoConsignado);
+		query.setParameterList("tiposMovimentoPendente", tiposMovimentoPendente);
 		
 		query.setParameter("naoPagoPostergado", StatusBaixa.NAO_PAGO_POSTERGADO.name());
+		
+		query.setParameter("grupoMovPendente", GrupoMovimentoFinaceiro.PENDENTE.name());
 		
 		PaginacaoVO paginacao = filtro.getPaginacao();
 		if (paginacao != null) {

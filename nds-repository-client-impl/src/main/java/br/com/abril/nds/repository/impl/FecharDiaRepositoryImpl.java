@@ -87,16 +87,11 @@ public class FecharDiaRepositoryImpl extends AbstractRepository implements Fecha
 		jpql.append(" SELECT CASE WHEN COUNT(lancamento) > 0 THEN true ELSE false END ");	
 		jpql.append(" FROM Lancamento lancamento ");
 		jpql.append(" WHERE lancamento.dataLancamentoDistribuidor = :dataOperacao ")
-		    .append("   AND lancamento.status NOT IN (:status) ");
+		    .append("   AND lancamento.status = :status ");
 		
 		Query query = getSession().createQuery(jpql.toString());
-		
-		List<StatusLancamento> listaLancamentos = new ArrayList<StatusLancamento>();
-		
-		listaLancamentos.add(StatusLancamento.EXPEDIDO);
-		listaLancamentos.add(StatusLancamento.CANCELADO);
-		
-		query.setParameterList("status", listaLancamentos);
+
+		query.setParameter("status", StatusLancamento.BALANCEADO);
 		query.setParameter("dataOperacao", dataOperacaoDistribuidor);
 		
 		return (Boolean) query.uniqueResult();

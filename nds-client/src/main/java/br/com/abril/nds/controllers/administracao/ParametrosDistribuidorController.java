@@ -202,8 +202,8 @@ public class ParametrosDistribuidorController extends BaseController {
 		
 		String contentType = (String) session.getAttribute(ATRIBUTO_SESSAO_LOGOTIPO_CONTENT_TYPE);
 		
-		validarCadastroDistribuidor(parametrosDistribuidor);
 		
+		validarCadastroDistribuidor(parametrosDistribuidor);
 		parametrosDistribuidorService.salvarDistribuidor(
 			parametrosDistribuidor, imgLogotipo, contentType);
 		

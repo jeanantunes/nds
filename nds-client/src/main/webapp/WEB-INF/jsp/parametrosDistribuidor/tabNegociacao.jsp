@@ -20,13 +20,20 @@
 
                       </td>
                     </tr>
-                    <tr>
-                      <td colspan="4">&nbsp;</td>
-                    </tr>
-                    <tr>
-                      <td colspan="4">&nbsp;</td>
-                    </tr>
-                    <tr>
+					<tr>
+						<td><label>Parar de acumular dívidas?</label></td>
+						<td colspan="3">
+							<input type="hidden" value="${parametrosDistribuidor.pararAcumuloDividas}" id="pararAcumuloDividasHidden" />
+							<select name="pararAcumuloDividas" id="pararAcumuloDividas">
+								<option value="true">Sim</option>
+								<option value="false">Não</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td colspan="4">&nbsp;</td>
+					</tr>
+					<tr>
                       <td><label>Utiliza desconto da cota para negociação?</label></td>
                       <td width="27">
   
