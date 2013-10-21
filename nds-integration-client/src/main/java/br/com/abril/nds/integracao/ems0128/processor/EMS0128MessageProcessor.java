@@ -226,9 +226,12 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 			item.setTipoAcerto( 3 );
 		} else if ( gme.equals( GrupoMovimentoEstoque.FALTA_DE ) ) {			
 			item.setTipoAcerto( 4 );
-		} else if ( gme.equals( GrupoMovimentoEstoque.SOBRA_EM ) ) {
+		} else if ( gme.equals( GrupoMovimentoEstoque.SOBRA_EM ) 
+				|| gme.equals( GrupoMovimentoEstoque.SOBRA_EM_DIRECIONADA_PARA_COTA ) 
+				|| gme.equals( GrupoMovimentoEstoque.SOBRA_EM_COTA )) {
 			item.setTipoAcerto( 5 );
-		} else if ( gme.equals( GrupoMovimentoEstoque.SOBRA_DE ) ) {
+		} else if ( gme.equals( GrupoMovimentoEstoque.SOBRA_DE ) 
+				|| gme.equals( GrupoMovimentoEstoque.SOBRA_DE_DIRECIONADA_PARA_COTA ) ) {
 			item.setTipoAcerto( 6 );
 		}		
 		
@@ -280,7 +283,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 		sql.append("WHERE tm.grupoMovimentoEstoque in (:grupoMovimentoEstoque) ");
 		sql.append("	and me.statusIntegracao = :statusIntegracao ");
 		sql.append("	and me.status = :status ");
-		sql.append("	and lancamentoDiferenca.status in (:statusPendente) ");
+		sql.append("	and lancamentoDiferenca.status in (:statusLancamentoDiferenca) ");
 		
 		Query query = getSession().createQuery(sql.toString());
 
@@ -289,11 +292,13 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 				, GrupoMovimentoEstoque.SOBRA_DE
 				, GrupoMovimentoEstoque.FALTA_EM
 				, GrupoMovimentoEstoque.FALTA_DE
+				, GrupoMovimentoEstoque.SOBRA_DE_DIRECIONADA_PARA_COTA
+				, GrupoMovimentoEstoque.SOBRA_EM_DIRECIONADA_PARA_COTA
 		}) );
 		
 		query.setParameter("statusIntegracao", StatusIntegracao.NAO_INTEGRADO);
 		query.setParameter("status", StatusAprovacao.APROVADO);
-		query.setParameterList("statusPendente", new StatusAprovacao[] {StatusAprovacao.APROVADO});
+		query.setParameterList("statusLancamentoDiferenca", new StatusAprovacao[] {StatusAprovacao.APROVADO});
 		
 		return query;
 	}
