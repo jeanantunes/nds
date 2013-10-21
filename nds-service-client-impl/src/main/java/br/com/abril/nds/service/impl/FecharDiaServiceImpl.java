@@ -119,6 +119,7 @@ import br.com.abril.nds.repository.MovimentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
+import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DividaService;
 import br.com.abril.nds.service.FecharDiaService;
@@ -262,6 +263,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private HistoricoSituacaoCotaRepository historicoSituacaoCotaRepository;
+	
+	@Autowired
+	private BoletoService boletoService;
 	
 	@Override
 	@Transactional
@@ -1255,7 +1259,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	public FechamentoDiarioDTO processarFechamentoDoDia(Usuario usuario, Date dataFechamento){
 		
 		processarControleDeAprovacao();
-				
+
+		processarDividasNaoPagas(usuario, dataFechamento);
+		
 		try {
 		
 			FechamentoDiarioDTO fechamentoDiarioDTO = salvarResumoFechamentoDiario(usuario, dataFechamento);
@@ -1272,6 +1278,11 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
 		}
+	}
+	
+	private void processarDividasNaoPagas(Usuario usuario, Date dataPagamento) {
+
+		this.boletoService.adiarDividaBoletosNaoPagos(usuario, dataPagamento);
 	}
 
 	private void atualizarHistoricoEstoqueProduto(Date dataFechamento) {

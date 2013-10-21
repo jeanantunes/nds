@@ -167,7 +167,10 @@ var contaCorrenteCotaController = $.extend(true, {
 					dataRaizPostergado = value.cell.dataConsolidado;
 				}
 				
-				var dataRaizPendente =  value.cell.dataRaiz;
+				var dataRaizPendente =  value.cell.dataPendente;
+								
+				var hintNumeroAcumulo = ((value.cell.numeroAcumulo && value.cell.numeroAcumulo > 0) ? 
+						".\n " + value.cell.numeroAcumulo + "º acúmulo." : ""); 
 				
 				if(!dataRaizPendente){
 					
@@ -199,12 +202,12 @@ var contaCorrenteCotaController = $.extend(true, {
 									  (formatMoneyValue(Math.abs(value.cell.encargos))) +'</a>' : '0.0000';
 				
 				var hint = value.cell.valorPostergado && value.cell.valorPostergado != 0 ? '<a rel="tipsy" title="Valor Referente à '+ 
-						  dataRaizPendente + '">' : "";
+						dataRaizPostergado + '">' : "";
 				
 			    value.cell.valorPostergado = (value.cell.valorPostergado != null && value.cell.valorPostergado != 0)?'<span class="bt_tool">' + hint +
 					                          (formatMoneyValue(value.cell.valorPostergado * -1)) + '</a></span>' : '0.0000';
 
-				hint = value.cell.pendente && value.cell.pendente != 0 ? '<a rel="tipsy" title="Valor Referente à '+ dataRaizPendente + '">' : "";
+				hint = value.cell.pendente && value.cell.pendente != 0 ? '<a rel="tipsy" title="Valor Referente à '+ dataRaizPendente + hintNumeroAcumulo + '">' : "";
 				       
 				value.cell.pendente = (value.cell.pendente != null && value.cell.pendente != 0)?'<span class="bt_tool">' + hint +
 					                   (formatMoneyValue(Math.abs(value.cell.pendente))) +'</a></span>' : '0.0000';
