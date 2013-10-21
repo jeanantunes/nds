@@ -267,7 +267,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	private HistoricoSituacaoCotaRepository historicoSituacaoCotaRepository;
 	
 	@Autowired
-	private UsuarioService usuarioService; 
+	private UsuarioService usuarioService;
 	
 	@Autowired
 	private BoletoService boletoService;
@@ -660,7 +660,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			novoHistoricoSituacaoCota.setDataEdicao(new Date());    		
 			novoHistoricoSituacaoCota.setProcessado(false);
 			novoHistoricoSituacaoCota.setRestaurado(false);
-			novoHistoricoSituacaoCota.setResponsavel(usuarioService.getUsuarioLogado());
+			novoHistoricoSituacaoCota.setResponsavel(this.usuarioService.getUsuarioLogado());
 			novoHistoricoSituacaoCota.setTipoEdicao(TipoEdicao.INCLUSAO);
 			novoHistoricoSituacaoCota.setCota(cota);
 

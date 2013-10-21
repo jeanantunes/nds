@@ -88,6 +88,11 @@ public class AcumuloDividasServiceImpl implements AcumuloDividasService {
 	@Override
 	@Transactional
 	public void quitarDividasAcumuladas(Divida dividaAtual) {
+		
+		if (dividaAtual == null) {
+			
+			return;
+		}
 
 		AcumuloDivida acumuloDivida = this.acumuloDividasRepository.obterAcumuloDividaPorDivida(dividaAtual.getId());
 		
