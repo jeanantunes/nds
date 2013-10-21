@@ -173,6 +173,9 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.assuntoEmailCobranca', value: $('#assuntoEmailCobranca', this.workspace).val()},
 			{name:'parametrosDistribuidor.mensagemEmailCobranca', value: $('#mensagemEmailCobranca', this.workspace).val()},
 			{name:'parametrosDistribuidor.utilizaDesconto', value: $('#utilizaDesconto', this.workspace).is(':checked')},
+			
+			{name:'parametrosDistribuidor.pararAcumuloDividas', value: $('#pararAcumuloDividas', this.workspace).val()},
+			
 			{name:'parametrosDistribuidor.percentualDesconto', value: $('#percentualDesconto', this.workspace).val()},		
 			{name:'parametrosDistribuidor.utilizaControleAprovacao', value: $('#utilizaControleAprovacao', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.paraDebitosCreditos', value: $('#paraDebitosCreditos', this.workspace).is(':checked')},
@@ -494,6 +497,8 @@ var parametrosDistribuidorController = $.extend(true, {
 		$("#tipoEndereco", this.workspace).val($("#tipoEnderecoHidden").val());
 		$("#regimeTributario", this.workspace).val($("#regimeTributarioHidden").val());
 		$("#obrigacaoFiscal", this.workspace).val($("#obrigacaoFiscalHidden").val());
+		$("#obrigacaoFiscal", this.workspace).val($("#obrigacaoFiscalHidden").val());
+		$("#pararAcumuloDividas", this.workspace).val($("#pararAcumuloDividasHidden").val());
 		
 		var hasLogotipo = $("#hasLogotipoHidden").val();
 		

@@ -1,6 +1,5 @@
 package br.com.abril.nds.client.vo;
 
-import br.com.abril.nds.dto.TelefoneDTO;
 import br.com.abril.nds.model.cadastro.ObrigacaoFiscal;
 import br.com.abril.nds.model.cadastro.TipoAtividade;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
@@ -70,6 +69,8 @@ public class ParametrosDistribuidorVO {
     private boolean conferenciaCegaRecebimento;
 
     private boolean conferenciaCegaEncalhe;
+    
+    private boolean pararAcumuloDividas;
 
     // Frame Capacidade de Manuseio
     private Integer capacidadeManuseioHomemHoraLancamento;
@@ -513,8 +514,22 @@ public class ParametrosDistribuidorVO {
     public void setConferenciaCegaEncalhe(boolean conferenciaCegaEncalhe) {
         this.conferenciaCegaEncalhe = conferenciaCegaEncalhe;
     }
+    
+	/**
+	 * @return the pararAcumuloDividas
+	 */
+	public boolean isPararAcumuloDividas() {
+		return pararAcumuloDividas;
+	}
 
-    public Integer getCapacidadeManuseioHomemHoraLancamento() {
+	/**
+	 * @param pararAcumuloDividas the pararAcumuloDividas to set
+	 */
+	public void setPararAcumuloDividas(boolean pararAcumuloDividas) {
+		this.pararAcumuloDividas = pararAcumuloDividas;
+	}
+
+	public Integer getCapacidadeManuseioHomemHoraLancamento() {
         return capacidadeManuseioHomemHoraLancamento;
     }
 
