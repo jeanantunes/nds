@@ -32,6 +32,7 @@ import br.com.abril.nds.model.cadastro.Telefone;
 import br.com.abril.nds.model.cadastro.TelefoneDistribuidor;
 import br.com.abril.nds.model.cadastro.TipoRoteiro;
 import br.com.abril.nds.model.cadastro.desconto.Desconto;
+import br.com.abril.nds.model.cadastro.desconto.DescontoDTO;
 import br.com.abril.nds.model.cadastro.pdv.EnderecoPDV;
 import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.RotaPDV;
@@ -152,13 +153,13 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	}
 
 	private List<ItemNotaEnvio> gerarItensNotaEnvio(
-			List<EstudoCota> listaEstudoCota, Cota cota, List<MovimentoEstoqueCota> listaMovimentoEstoqueCota,Intervalo<Date> periodo) {
+			List<EstudoCota> listaEstudoCota, Cota cota, List<MovimentoEstoqueCota> listaMovimentoEstoqueCota, Intervalo<Date> periodo, Map<String, DescontoDTO> descontos) {
 
 		List<ItemNotaEnvio> listItemNotaEnvio = new ArrayList<ItemNotaEnvio>();
 
-		gerarItensNEMovimento(listaMovimentoEstoqueCota, cota, listItemNotaEnvio);
+		gerarItensNEMovimento(listaMovimentoEstoqueCota, cota, listItemNotaEnvio, descontos);
 		
-		gerarItensNEEstudo(listaEstudoCota, cota, listItemNotaEnvio, periodo);
+		gerarItensNEEstudo(listaEstudoCota, cota, listItemNotaEnvio, periodo, descontos);
 		
 		sortItensByProdutoNome(listItemNotaEnvio);
 		
@@ -199,10 +200,11 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	 * @param listaMovimentoEstoqueCota
 	 * @param cota
 	 * @param listItemNotaEnvio
+	 * @param descontos TODO
 	 */
 	private void gerarItensNEMovimento(
 			List<MovimentoEstoqueCota> listaMovimentoEstoqueCota, Cota cota,
-			List<ItemNotaEnvio> listItemNotaEnvio) {
+			List<ItemNotaEnvio> listItemNotaEnvio, Map<String, DescontoDTO> descontos) {
 		
         if (listaMovimentoEstoqueCota == null || listaMovimentoEstoqueCota.isEmpty()){
 			
@@ -223,9 +225,15 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			
 			BigDecimal valorDesconto = BigDecimal.ZERO;
 			
-			valorDesconto = obterValorDesconto(cota, mec, produtoEdicao,valorDesconto);
+			//valorDesconto = obterValorDesconto(cota, mec, produtoEdicao, valorDesconto);
+			DescontoDTO descontoDTO = null;
+			try {
+				descontoDTO = descontoService.obterDescontoPor(descontos, cota.getId(), produtoEdicao.getProduto().getFornecedor().getId(), produtoEdicao.getProduto().getId(), produtoEdicao.getId());
+			} catch (Exception e) {
+				
+			}			
 			
-			itemNotaEnvio.setDesconto(valorDesconto);
+			itemNotaEnvio.setDesconto(descontoDTO.getValor());
 			
 			BigInteger quantidade;
 			
@@ -256,22 +264,21 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 	private BigDecimal obterValorDesconto(Cota cota, MovimentoEstoqueCota mec,
 			ProdutoEdicao produtoEdicao, BigDecimal valorDesconto) {
+		
 		if(valorDesconto == null) {
 		
-			if(mec.getValoresAplicados()== null){
+			if(mec.getValoresAplicados() == null) {
 
-				Desconto desconto = 
-						descontoService.obterDescontoPorCotaProdutoEdicao(mec.getLancamento(), cota, produtoEdicao);
+				Desconto desconto = descontoService.obterDescontoPorCotaProdutoEdicao(mec.getLancamento(), cota, produtoEdicao);
 				
-				valorDesconto = (desconto != null && desconto.getValor() != null) ? 
-						desconto.getValor() : BigDecimal.ZERO;
+				valorDesconto = (desconto != null && desconto.getValor() != null) ? desconto.getValor() : BigDecimal.ZERO;
 				
-			}
-			else{
+			} else {
 				
 				valorDesconto = mec.getValoresAplicados().getValorDesconto();
 			}	
 		}
+		
 		return valorDesconto;
 	}
 
@@ -305,9 +312,10 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	 * @param listaEstudoCota
 	 * @param cota
 	 * @param listItemNotaEnvio
+	 * @param descontos TODO
 	 */
 	private void gerarItensNEEstudo(List<EstudoCota> listaEstudoCota,
-			Cota cota, List<ItemNotaEnvio> listItemNotaEnvio, Intervalo<Date> periodo) {
+			Cota cota, List<ItemNotaEnvio> listItemNotaEnvio, Intervalo<Date> periodo, Map<String, DescontoDTO> descontos) {
 		
 		if (listaEstudoCota == null || listaEstudoCota.isEmpty()){
 			
@@ -339,10 +347,14 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			
 			
 			//Desconto Produto x cota.
-			Desconto percentualDesconto = 
-					this.descontoService.obterDescontoPorCotaProdutoEdicao(estudoCota.getEstudo().getLancamento(), 
-																		   cota, 
-																		   produtoEdicao);
+			//Desconto percentualDesconto = this.descontoService.obterDescontoPorCotaProdutoEdicao(estudoCota.getEstudo().getLancamento(), cota, produtoEdicao);
+			//valorDesconto = obterValorDesconto(cota, mec, produtoEdicao, valorDesconto);
+			DescontoDTO descontoDTO = null;
+			try {
+				descontoDTO = descontoService.obterDescontoPor(descontos, cota.getId(), produtoEdicao.getProduto().getFornecedor().getId(), produtoEdicao.getProduto().getId(), produtoEdicao.getId());
+			} catch (Exception e) {
+				
+			}	
 
 			if(quantidadeResultante == null){
 			
@@ -367,10 +379,10 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			itemNotaEnvio = criarNovoItemNotaEnvio(itemNotaEnvio, estudoCota,
 																 produtoEdicao,
 																 precoVenda,
-																 ((percentualDesconto != null && percentualDesconto.getValor() != null) ? 
-																   percentualDesconto.getValor() : 
-																   BigDecimal.ZERO), 
-																 quantidade);
+																 ((descontoDTO != null && descontoDTO.getValor() != null) ? 
+																		 descontoDTO.getValor() : BigDecimal.ZERO)
+																 , quantidade);
+			
 			if(!itemExistente)
 				listItemNotaEnvio.add(itemNotaEnvio);
 					
@@ -719,7 +731,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaSemEstudoPor(cota.getId(), periodo, listaIdFornecedores, 
 																						  GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
 		
-		List<ItemNotaEnvio> listaItemNotaEnvio = gerarItensNotaEnvio(listaEstudosCota, cota, listaMovimentoEstoqueCota,periodo);
+		Map<String, DescontoDTO> descontos = descontoService.obterDescontosPorLancamentoProdutoEdicaoMap(null, null);
+		
+		List<ItemNotaEnvio> listaItemNotaEnvio = gerarItensNotaEnvio(listaEstudosCota, cota, listaMovimentoEstoqueCota, periodo, descontos);
 
 		if (listaItemNotaEnvio==null || listaItemNotaEnvio.isEmpty()) {
 
