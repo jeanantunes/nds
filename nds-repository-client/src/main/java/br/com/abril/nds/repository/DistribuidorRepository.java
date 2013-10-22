@@ -157,4 +157,8 @@ public interface DistribuidorRepository extends Repository<Distribuidor, Long> {
 	boolean naoAcumulaDividas();
 	
 	Integer numeroMaximoAcumuloDividas();
+	
+	List<DistribuicaoFornecedor> buscarDiasDistribuicaoFornecedor(
+			OperacaoDistribuidor operacaoDistribuidor);
+
 }
