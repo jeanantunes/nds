@@ -714,13 +714,16 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 	@Override
 	public List<Cobranca> obterBoletosNaoPagos(Date data){
 		
-		String hql = "select cobranca " + this.obterFromWhereBoletosInadimplentes()
-									  + " and cobranca.divida.status != :statusPendente ";
+		StringBuilder hql = new StringBuilder();
+		hql.append(" select cobranca ");
+		hql.append(" from Cobranca cobranca ");
+		hql.append(" where cobranca.dataVencimento < :data ");
+		hql.append(" and cobranca.statusCobranca =:statusCobranca");
+		hql.append(" and cobranca.tipoCobranca in (:tipoCobranca) ");
+		hql.append(" and cobranca.divida.status != :statusPendente ");
 		
-		Query query = this.obterQueryBoletosInadimplentes(hql, data);
+		Query query = this.obterQueryBoletosInadimplentes(hql.toString(), data);
 
-		query.setParameterList("tipoCobranca", Arrays.asList(TipoCobranca.BOLETO,TipoCobranca.BOLETO_EM_BRANCO));
-		
 		query.setParameter("statusPendente", StatusDivida.PENDENTE);
 		
 		return query.list();
