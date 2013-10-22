@@ -19,5 +19,32 @@ public class BigDecimalUtil {
 		}		
 		return soma;
 	}
+	
+	public static boolean isMaiorQueZero(BigDecimal valor) {
+		
+		if(valor!=null && valor.compareTo(BigDecimal.ZERO)>0) {
+			return true;
+		}
+		
+		return false;
+	}
+	
+	/**
+	 * Caso o valor passado for null,
+	 * retorna o BigDecimal ZERO.
+	 * 
+	 * @param valor
+	 * 
+	 * @return BigDecimal
+	 */
+	public static BigDecimal obterValorNaoNulo(BigDecimal valor) {
+		
+		if(valor == null) {
+			return BigDecimal.ZERO;
+		}
+		
+		return valor;
+		
+	}
 
 }

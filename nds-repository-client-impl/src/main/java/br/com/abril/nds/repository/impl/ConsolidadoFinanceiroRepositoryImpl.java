@@ -945,7 +945,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" AND mfp.COTA_ID = cfc.COTA_ID ")
 		   .append(")")
 		   .append(" AS dataRaiz, ")
-		   .append(" coalesce((select SUM(bc.VALOR_PAGO + ((bc.VALOR_JUROS + bc.VALOR_MULTA) - bc.VALOR_DESCONTO)) ")
+		   .append(" ( select SUM( coalesce(bc.VALOR_PAGO, 0) ) ")
 		   .append("           from BAIXA_COBRANCA bc ")
 		   .append("           inner join COBRANCA cobranca ")
 		   .append("                 ON cobranca.ID = bc.COBRANCA_ID ")
@@ -954,14 +954,14 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("           where bc.STATUS not in (:statusBaixaCobranca) ")
 		   .append("           and cota.ID = cobranca.COTA_ID ")
 		   .append("           and divida.CONSOLIDADO_ID = cfc.ID ")
-		   .append("           and cfc.ID),0) as valorPago, ")
+		   .append("           and cfc.ID) as valorPago, ")
 		   //total
 		   .append(" cfc.TOTAL as total, ")
 		   
-		   //saldo = total - valorPago
+		   //CALCULO DO SALDO = total - valorPago
 		   	.append(" ( ")
 			.append(" 	 SELECT CASE WHEN bc.status = :naoPagoPostergado THEN 0 ")
-			.append(" 	 else cfc.TOTAL + coalesce(SUM(bc.VALOR_PAGO),0) end ")
+			.append(" 	 else cfc.TOTAL + SUM(coalesce(bc.VALOR_PAGO,0)) - SUM(coalesce(bc.VALOR_JUROS, 0) + coalesce(bc.VALOR_MULTA, 0) - coalesce(bc.VALOR_DESCONTO,0)) end ")
 			.append(" 	 FROM BAIXA_COBRANCA bc ")
 			.append(" 	 INNER JOIN COBRANCA cobranca ON cobranca.ID = bc.COBRANCA_ID ")
 			.append(" 	 INNER JOIN DIVIDA divida ON divida.ID = cobranca.DIVIDA_ID ")
