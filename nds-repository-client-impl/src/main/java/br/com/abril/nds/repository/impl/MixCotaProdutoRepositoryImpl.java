@@ -366,7 +366,6 @@ public class MixCotaProdutoRepositoryImpl extends
 			
 			Produto produto = new Produto();
 			produto.setId(mixProdutoDTO.getIdProduto().longValue());
-			mcp.setProduto(produto);
 			mcp.setReparteMaximo(mixProdutoDTO.getReparteMaximo().longValue());
 			mcp.setReparteMedio(mixProdutoDTO.getReparteMedio().longValue());
 			mcp.setReparteMinimo(mixProdutoDTO.getReparteMinimo().longValue());

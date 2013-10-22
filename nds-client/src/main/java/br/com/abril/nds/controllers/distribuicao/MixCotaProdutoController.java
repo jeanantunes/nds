@@ -135,11 +135,9 @@ public class MixCotaProdutoController extends BaseController {
 
 		tratarFiltroPorProduto(filtro);
 		
-		if(filtro.getCodigoProduto().length() == 8){
-			Produto produtoPorCodigo = produtoService.obterProdutoPorCodigo(filtro.getCodigoProduto());
-			String codigoICD = produtoPorCodigo.getCodigoICD();   
-			filtro.setCodigoProduto(codigoICD);
-		}
+		Produto produtoPorCodigo = produtoService.obterProdutoPorCodigo(filtro.getCodigoProduto());
+		String codigoICD = produtoPorCodigo.getCodigoICD();
+		filtro.setCodigoProduto(codigoICD);
 
 		List<MixProdutoDTO> resultadoPesquisa = mixCotaProdutoService.pesquisarPorProduto(filtro);
 

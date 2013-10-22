@@ -17,7 +17,6 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.seguranca.Usuario;
 
@@ -34,10 +33,6 @@ public class MixCotaProduto {
 	@ManyToOne
 	@JoinColumn(name = "ID_COTA")
 	private Cota cota;
-	
-	@ManyToOne
-	@JoinColumn(name = "ID_PRODUTO")
-	private Produto produto;
 	
 	@ManyToOne
 	@JoinColumn(name = "ID_USUARIO")
@@ -86,14 +81,6 @@ public class MixCotaProduto {
 
 	public void setCota(Cota cota) {
 		this.cota = cota;
-	}
-
-	public Produto getProduto() {
-		return produto;
-	}
-
-	public void setProduto(Produto produto) {
-		this.produto = produto;
 	}
 
 	public Usuario getUsuario() {
