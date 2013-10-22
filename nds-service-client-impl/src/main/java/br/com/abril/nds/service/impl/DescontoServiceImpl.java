@@ -1109,5 +1109,96 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		return descontosMap;
 	}
+	
+	public DescontoDTO obterDescontoPor(Map<String, DescontoDTO> descontos, long cotaId, long fornecedorId, long produtoId, long produtoEdicaoId) throws Exception {
+		
+		/**
+		 * A busca dos descontos é feita diretamente no Map, por chave, agilizando o retorno do resultado
+		 */
+		String key = new StringBuilder()
+				.append("c")
+				.append(cotaId)
+				.append("f")
+				.append(fornecedorId)
+				.append("pe")
+				.append(produtoEdicaoId)
+				.append("p")
+				.append(produtoId)
+				.toString();
+		
+		DescontoDTO descontoDTO = descontos.get(key);
+		
+		if(descontoDTO == null) {
+			key = new StringBuilder()
+				.append("c")
+				.append(cotaId)
+				.append("f")
+				.append(fornecedorId)
+				.append("pe")
+				.append(produtoEdicaoId)
+				.toString();
+		
+			descontoDTO = descontos.get(key);
+		}
+		
+		if(descontoDTO == null) {
+			key = new StringBuilder()
+				.append("c")
+				.append(cotaId)
+				.append("f")
+				.append(fornecedorId)
+				.append("p")
+				.append(produtoId)
+				.toString();
+		
+			descontoDTO = descontos.get(key);
+		}
+		
+		if(descontoDTO == null) {
+			key = new StringBuilder()
+				.append("pe")
+				.append(produtoEdicaoId)
+				.toString();
+		
+			descontoDTO = descontos.get(key);
+		}
+		
+		if(descontoDTO == null) {
+			key = new StringBuilder()
+				.append("p")
+				.append(produtoId)
+				.toString();
+		
+			descontoDTO = descontos.get(key);
+		}
+		
+		if(descontoDTO == null) {
+			key = new StringBuilder()
+				.append("c")
+				.append(cotaId)
+				.append("f")
+				.append(fornecedorId)
+				.toString();
+		
+			descontoDTO = descontos.get(key);
+		}
+		
+		if(descontoDTO == null) {
+			key = new StringBuilder()
+				.append("f")
+				.append(fornecedorId)
+				.toString();
+		
+			descontoDTO = descontos.get(key);
+		}
+		
+		if(descontoDTO == null) {
+			
+			throw new ValidacaoException(TipoMensagem.ERROR, "Produto sem desconto.");
+			
+		}
+		
+		return null;
+	}
 
 }
