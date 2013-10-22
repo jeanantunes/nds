@@ -468,8 +468,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 			
 			if (filtro.getSituacaoEmAberto()) {
 				
-				sql.append(" (COBRANCA_.DT_VENCIMENTO <= :dataAtual ");
-				sql.append(" AND DIVIDA_.STATUS = :statusDividaAberto) ");
+				sql.append(" (COBRANCA_.DT_VENCIMENTO <= :dataAtual AND ");
+				sql.append(" DIVIDA_.STATUS in (:statusDividaAberto ,:statusDividaPendente)) ");
 				
 				utilizarOr = true;
 				
@@ -477,6 +477,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 				
 				params.put("dataAtual", (dataOperacao == null) ? new Date() : dataOperacao);
 				params.put("statusDividaAberto", StatusDivida.EM_ABERTO.name());
+				params.put("statusDividaPendente", StatusDivida.PENDENTE.name());
 			}
 			
 			if (filtro.getSituacaoNegociada()) {
