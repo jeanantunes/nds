@@ -166,13 +166,15 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 				mixCotaProdutoDTO.setNumeroCota(mixCotaProduto.getCota().getNumeroCota().toString());
 			}
 		}
-		if(mixCotaProduto.getProduto() !=null){
+		
+		/*if(mixCotaProduto.getProduto() !=null){
 			mixCotaProdutoDTO.setProdutoId(mixCotaProduto.getProduto().getId());
 			mixCotaProdutoDTO.setNomeProduto(mixCotaProduto.getProduto().getNome());
 			mixCotaProdutoDTO.setCodigoProduto(mixCotaProduto.getProduto().getCodigo());
             //FIXME refazer... a classificação fica no ProdutoEdicao
 //			mixCotaProdutoDTO.setClassificacaoProduto(mixCotaProduto.getProduto().getTipoClassificacaoProduto().getDescricao());
-		}
+		}*/
+		
 		if(mixCotaProduto.getRepartesPDV()!=null){
 			for(RepartePDV repartePDV: mixCotaProduto.getRepartesPDV()){
 				RepartePDVDTO repartePDVDTO = new RepartePDVDTO();
@@ -473,7 +475,6 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			
 			mixCotaProduto.setCodigoICD(mixCotaProdutoDTO.getCodigoProduto());
 			mixCotaProduto.setUsuario(usuario);
-			mixCotaProduto.setProduto(produto);
 			mixCotaProduto.setCota(cota);
 			mixCotaProduto.setDataHora(new Date());
 			mixCotaProduto.setReparteMinimo(mixCotaProdutoDTO.getReparteMinimo());
@@ -575,20 +576,11 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			
 			Cota cota = cotaService.obterPorNumeroDaCota(new Integer(mixCotaProdutoDTO.getNumeroCota()));
 			Produto produto = produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto());
-			/*	
-			for (TipoClassificacaoProduto t : classificacaoList) {
-				if(t.getDescricao().equals(mixCotaProdutoDTO.getClassificacaoProduto())){
-                    //FIXME refazer... a classificação fica no ProdutoEdicao
-//					produto.setTipoClassificacaoProduto(t);
-					this.produtoRepository.alterar(produto);
-					break;
-				}
-			}*/
+			
 			
 			MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.obterMixPorCotaICDCLassificacao(cota.getId(), mixCotaProdutoDTO.getCodigoProduto(),mixCotaProdutoDTO.getClassificacaoProduto());
 			if (mixCotaProduto == null) {
 				mixCotaProduto = new MixCotaProduto();
-				mixCotaProduto.setProduto(produto);
 				mixCotaProduto.setCota(cota);
 				mixCotaProduto.setCodigoICD(mixCotaProdutoDTO.getCodigoProduto());
 				for (TipoClassificacaoProduto classi : classificacaoList) {
