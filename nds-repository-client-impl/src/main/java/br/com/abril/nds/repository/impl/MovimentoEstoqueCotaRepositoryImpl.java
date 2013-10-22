@@ -259,7 +259,10 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		query.setParameterList("gruposMovimento", Arrays.asList(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR, 
 				                                                GrupoMovimentoEstoque.COMPRA_ENCALHE, 
-				                                                GrupoMovimentoEstoque.RECEBIMENTO_REPARTE));
+				                                                GrupoMovimentoEstoque.RECEBIMENTO_REPARTE,
+				                                                GrupoMovimentoEstoque.SOBRA_EM_COTA,                                                
+				                                                GrupoMovimentoEstoque.FALTA_EM_COTA                                                
+				));
 		
 		query.setParameter("statusFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
 		query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
@@ -1914,6 +1917,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			case REPARTE:
 				nome = " reparte ";
 				break;
+			case PROMOCIONAL:
+				nome = " materialPromocional ";
+				break;
 			case PRECO_CAPA:
 				nome = " precoCapa ";
 				break;
@@ -2442,6 +2448,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		hql.append(" 		sum(estudoCota.qtdeEfetiva) as reparte, ");
 		hql.append(" 		sum(estudoCota.qtdeEfetiva * produtoEdicao.precoVenda) as totalBox, ");
 		hql.append(" 		lancamento.sequenciaMatriz as sequenciaMatriz, ");
+		hql.append(" 		lancamento.repartePromocional as materialPromocional, ");
 		hql.append(" 		estudoCota.cota as cota ");
 		
 		

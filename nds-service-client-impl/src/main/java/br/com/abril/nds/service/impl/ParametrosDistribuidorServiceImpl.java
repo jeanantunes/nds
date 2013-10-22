@@ -688,6 +688,8 @@ public class ParametrosDistribuidorServiceImpl implements ParametrosDistribuidor
 		distribuidor.setArquivoInterfaceLedPicking1(parametrosDistribuidor.getNomeArquivoInterfaceLED1());;
 		distribuidor.setArquivoInterfaceLedPicking2(parametrosDistribuidor.getNomeArquivoInterfaceLED2());;
 		distribuidor.setArquivoInterfaceLedPicking3(parametrosDistribuidor.getNomeArquivoInterfaceLED3());;
+		
+		distribuidor.setPararAcumuloDividas(parametrosDistribuidor.isPararAcumuloDividas());
 
 		// Impressão NECA / Danfe
 		if (parametrosDistribuidor.getImpressaoNECADANFE() != null && !parametrosDistribuidor.getImpressaoNECADANFE().isEmpty() && !parametrosDistribuidor.getImpressaoNECADANFE().equalsIgnoreCase(UNDEFINED)) {

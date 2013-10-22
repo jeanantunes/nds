@@ -486,6 +486,10 @@ public class ContaCorrenteCotaController extends BaseController {
 				(eDTO.getTotal()==null)?BigDecimal.ZERO:
 					eDTO.getTotal().setScale(4,RoundingMode.HALF_EVEN));
 			
+			if(eDTO.getPrecoCapa() == null){
+				eDTO.setPrecoCapa(BigDecimal.ZERO);
+			}
+			
 			eDTO.setPrecoCapa(eDTO.getPrecoCapa().setScale(2,RoundingMode.HALF_EVEN));
 		}
 

@@ -3,7 +3,10 @@ package br.com.abril.nds.integracao.repository.impl;
 import java.util.Date;
 import java.util.Set;
 
+import org.apache.commons.lang.time.DateFormatUtils;
 import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
@@ -58,29 +61,17 @@ public class SolicitacaoFaltasSobrasRepositoryImpl extends AbstractRepositoryMod
 			.createCriteria(SolicitacaoFaltaSobra.class, "s")
 			.createAlias("s.itens", "d")			
 			.createAlias("d.motivoSituacaoFaltaSobra","m", JoinType.LEFT_OUTER_JOIN)
-			/*
-	        .setProjection(
-	       		 Projections.projectionList()	       		 	
-						.add(Projections.property("s.sfsPK.codigoDistribuidor"), "codigoDistribuidor")
-						.add(Projections.property("s.sfsPK.dataSolicitacao"), "solicitacao")
-						.add(Projections.property("d.codigoAcerto"), "codigoAcerto")
-						.add(Projections.property("d.codigoSituacao"), "codigoSituacao")
-						.add(Projections.property("m.numeroSequencia"), "numeroSequencia")
-						.add(Projections.property("m.descricaoMotivo"), "descricaoMotivo")
-						.add(Projections.property("m.codigoMotivo"), "codigoMotivo")
-						)
-	        .setResultTransformer(Transformers.aliasToBean(SolicitacaoDTO.class))
-	        */
 	        .add(
 	        	Restrictions.and(
-	        		Restrictions.eq("s.sfsPK.codigoDistribuidor", codigoDistribuidor )	
-	        		, Restrictions.eq("s.sfsPK.dataSolicitacao", dataSolicitacao )
-	        		, Restrictions.eq("s.sfsPK.horaSolicitacao", horaSolicitacao )
-	        	).add(Restrictions.in("s.codigoSituacao", 
+	        		Restrictions.eq("s.sfsPK.codigoDistribuidor", codigoDistribuidor )
+	        	)
+	        	.add(Restrictions.eq("s.sfsPK.dataSolicitacao", dataSolicitacao ))
+	        	.add(Restrictions.eq("s.sfsPK.horaSolicitacao", horaSolicitacao ))
+	        	.add(Restrictions.in("s.codigoSituacao", 
 	        			new String[] {"EM PROCESSAMENTO", "PROCESSADO"} 
 	        	))	        	
 	        )
-	        .uniqueResult();       		
+	        .uniqueResult();     		
 	}	
 	
 	@Override

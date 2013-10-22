@@ -2297,6 +2297,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				estoqueProdutoCota.setQtdeDevolvida(qtdeDevolvidaOriginal.subtract(movimentoEstoqueCota.getQtde()));
 
 				estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
+				estoqueProdutoCotaRepository.flush();
 				
 			}
 			
@@ -2742,6 +2743,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			validarAlteracaoEstoqueProdutoCota(estoqueProdutoCota.getQtdeDevolvida(), movimentoEstoqueCota.getProdutoEdicao());
 			
 			this.estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
+			this.estoqueProdutoCotaRepository.flush();
 		}
 	}
 	

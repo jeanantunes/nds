@@ -23,6 +23,7 @@ import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
+import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.BoletoRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -713,12 +714,17 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 	@Override
 	public List<Cobranca> obterBoletosNaoPagos(Date data){
 		
-		String hql = "select cobranca " + this.obterFromWhereBoletosInadimplentes();
+		StringBuilder hql = new StringBuilder();
+		hql.append(" select cobranca ");
+		hql.append(" from Cobranca cobranca ");
+		hql.append(" where cobranca.dataVencimento < :data ");
+		hql.append(" and cobranca.statusCobranca =:statusCobranca");
+		hql.append(" and cobranca.tipoCobranca in (:tipoCobranca) ");
+		hql.append(" and cobranca.divida.status != :statusPendente ");
 		
-		Query query = this.getSession().createQuery(hql);
-		query.setParameter("data", data);
-		query.setParameter("statusCobranca", StatusCobranca.NAO_PAGO);
-		query.setParameterList("tipoCobranca", Arrays.asList(TipoCobranca.BOLETO,TipoCobranca.BOLETO_EM_BRANCO));
+		Query query = this.obterQueryBoletosInadimplentes(hql.toString(), data);
+
+		query.setParameter("statusPendente", StatusDivida.PENDENTE);
 		
 		return query.list();
 	}

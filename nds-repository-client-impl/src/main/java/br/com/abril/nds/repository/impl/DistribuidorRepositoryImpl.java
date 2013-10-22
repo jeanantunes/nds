@@ -73,6 +73,23 @@ public class DistribuidorRepositoryImpl extends
 
 		return query.list();
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<DistribuicaoFornecedor> buscarDiasDistribuicaoFornecedor(
+			OperacaoDistribuidor operacaoDistribuidor) {
+
+		StringBuilder hql =
+			new StringBuilder(" from DistribuicaoFornecedor ");
+
+		hql.append(" where operacaoDistribuidor = :operacaoDistribuidor ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("operacaoDistribuidor", operacaoDistribuidor);
+
+		return query.list();
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -562,5 +579,30 @@ public class DistribuidorRepositoryImpl extends
 		
 		return (boolean) this.getSession().createQuery(hql.toString()).uniqueResult();
 	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean naoAcumulaDividas() {
+		
+		StringBuilder hql = new StringBuilder("select ");
+		hql.append(" d.pararAcumuloDividas ")
+		   .append(" from Distribuidor d ");
+		
+		return (boolean) this.getSession().createQuery(hql.toString()).uniqueResult();
+	}
 	
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Integer numeroMaximoAcumuloDividas() {
+		
+		StringBuilder hql = new StringBuilder("select ");
+		hql.append(" d.politicaSuspensao.numeroAcumuloDivida ")
+		   .append(" from Distribuidor d ");
+		
+		return (Integer) this.getSession().createQuery(hql.toString()).uniqueResult();
+	}
 }

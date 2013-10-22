@@ -121,10 +121,11 @@ public class DateUtil {
 		}
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(data);
+
 		cal.add(Calendar.DAY_OF_MONTH, numDias);
-		return cal.getTime();
+		return removerTimestamp(cal.getTime());
 	}
-	
+
 	public static Calendar adicionarDias(Calendar data, int numDias) {
 		
 		return toCalendar(adicionarDias(data.getTime(), numDias));

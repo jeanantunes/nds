@@ -14,6 +14,7 @@ public class ProdutoMapaCotaDTO implements Serializable{
 	private String codigoDeBarras;
 	private Integer sm;
 	private String precoCapa;
+	private Integer materialPromocional;
 	private Integer total;
 	private List<Cota> cotas;
 	
@@ -23,7 +24,7 @@ public class ProdutoMapaCotaDTO implements Serializable{
 	}
 	
 	public ProdutoMapaCotaDTO(String nomeProduto, Long numeroEdicao, String codigoDeBarras,
-		Integer sm, String precoCapa, Integer total) {
+		Integer sm, String precoCapa, Integer total, Integer materialPromocional) {
 		super();
 		this.nomeProduto = nomeProduto;
 		this.numeroEdicao = numeroEdicao;
@@ -31,6 +32,7 @@ public class ProdutoMapaCotaDTO implements Serializable{
 		this.sm = sm;
 		this.precoCapa = precoCapa;
 		this.total = total;
+		this.materialPromocional=materialPromocional;
 	}
 	/**
 	* @return the nomeProduto
@@ -109,6 +111,14 @@ public class ProdutoMapaCotaDTO implements Serializable{
 
 	public void setCodigoDeBarras(String codigoDeBarras) {
 		this.codigoDeBarras = codigoDeBarras;
+	}
+
+	public Integer getMaterialPromocional() {
+		return materialPromocional;
+	}
+
+	public void setMaterialPromocional(Integer materialPromocional) {
+		this.materialPromocional = materialPromocional;
 	}
 
 }

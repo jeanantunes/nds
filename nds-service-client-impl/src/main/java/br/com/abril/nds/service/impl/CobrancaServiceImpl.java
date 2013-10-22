@@ -49,6 +49,7 @@ import br.com.abril.nds.repository.CobrancaRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
+import br.com.abril.nds.service.AcumuloDividasService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.CobrancaService;
 import br.com.abril.nds.service.FormaCobrancaService;
@@ -90,9 +91,9 @@ public class CobrancaServiceImpl implements CobrancaService {
 	@Autowired
 	protected FormaCobrancaService formaCobrancaService;
 
-
-
-
+	@Autowired
+	protected AcumuloDividasService acumuloDividasService;
+	
 	@Override
 	@Transactional(propagation=Propagation.SUPPORTS)
 	public BigDecimal calcularJuros(Banco banco, Long idCota,
@@ -618,7 +619,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 		    			mapComposicaoBaixaFinanceira.get(cobrancaTotal.getId()));
 		    	
 				valorPagamentoCobranca = valorPagamentoCobranca.subtract(valorCobrancaCorrigida);
-
+				
+				this.acumuloDividasService.quitarDividasAcumuladas(itemCobranca.getDivida());
 		    
 			} else {
 		    	cobrancaParcial = itemCobranca;
