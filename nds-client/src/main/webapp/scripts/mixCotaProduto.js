@@ -610,14 +610,18 @@ var mixCotaProdutoController = $.extend(true, {
 								  value : $("#codigoCotaMix").val()
 								  });
 							 
+								var nomeCota = $("#nomeCotaMix").val();
+								var nrCota = $("#codigoCotaMix").val();
+								
 							 $("#tableEdicaoMixCota tbody tr").each(function(idx, linha){
+								 
 								 listaNovosMixCota.push({
 									  name : "listaNovosMixProduto["+idx+"].numeroCota" , 
-									  value : $("#codigoCotaMix").val()
+									  value : nrCota
 								 });
 								 listaNovosMixCota.push({
 									  name : "listaNovosMixProduto["+idx+"].nomeCota" , 
-									  value : $("#nomeCotaMix").val()
+									  value : nomeCota
 								 });
 								 listaNovosMixCota.push({
 									  name : "listaNovosMixCota["+idx+"].codigoProduto" , 
@@ -680,15 +684,15 @@ var mixCotaProdutoController = $.extend(true, {
 								  name : "cotaId" , 
 								  value : $("#codigoCotaMix").val()
 								  });
-							 
+					
 							 $("#tableNovoCota tbody tr").each(function(idx, linha){
 								 listaNovosMixCota.push({
-									  name : "listaNovosMixProduto["+idx+"].numeroCota" , 
-									  value : $("#codigoCotaMix").val()
+									  "name" : "listaNovosMixCota["+idx+"].numeroCota" , 
+									  "value" : $("#codigoCotaMix").val()
 								 });
 								 listaNovosMixCota.push({
-									  name : "listaNovosMixProduto["+idx+"].nomeCota" , 
-									  value : $("#nomeCotaMix").val()
+									  "name" : "listaNovosMixCota["+idx+"].nomeCota" , 
+									  "value" : $("#nomeCotaMix").val()
 								 });
 								 listaNovosMixCota.push({
 									  name : "listaNovosMixCota["+idx+"].codigoProduto" , 
@@ -712,6 +716,7 @@ var mixCotaProdutoController = $.extend(true, {
 									  });
 								 qntItens ++;
 							 });
+							 
 							 $.postJSON(contextPath + '/distribuicao/mixCotaProduto/adicionarMixCota',listaNovosMixCota,function(result){ 
 								 
 								 mixCotaProdutoController.adicionarMixCotaSucesso();

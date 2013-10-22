@@ -244,7 +244,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 							break;
 						}
 					}
-					mixCotaProduto.setCodigoICD(mixCotaProdutoDTO.getCodigoProduto());
+					mixCotaProduto.setCodigoICD(mixCotaProdutoDTO.getCodigoICD());
 					mixCotaProduto.setCota(cota);
 					mixCotaProduto.setDataHora(new Date());
 					mixCotaProduto.setReparteMinimo(mixCotaProdutoDTO.getReparteMinimo());
@@ -329,7 +329,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		}
 		
 		
-		MixCotaProduto mix = mixCotaProdutoRepository.obterMixPorCotaICDCLassificacao(cota.getId(),mixCotaProdutoDTO.getCodigoProduto(),mixCotaProdutoDTO.getClassificacaoProduto());
+		MixCotaProduto mix = mixCotaProdutoRepository.obterMixPorCotaICDCLassificacao(cota.getId(),mixCotaProdutoDTO.getCodigoICD(),mixCotaProdutoDTO.getClassificacaoProduto());
 		if (mix!=null) {
 			
 			return "Cota:["+mixCotaProdutoDTO.getNumeroCota()+","+mixCotaProdutoDTO.getNomeCota()+"], Produto ["+produto.getCodigo()+":"+produto.getNome()+"] e Classificação ["+mixCotaProdutoDTO.getClassificacaoProduto()+"] já foi cadastrado."; 
@@ -452,7 +452,6 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 		
 		List<String> mensagens = obterValidacaoLista(listaMixCota);
 		
-		Produto produto = produtoService.obterProdutoPorCodigo(produtoId);
 		Usuario usuario = usuarioService.getUsuarioLogado();
 		List<TipoClassificacaoProduto> obterTodos = this.tipoClassificacaoProdutoService.obterTodos();
 		
@@ -473,7 +472,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 				}
 			}
 			
-			mixCotaProduto.setCodigoICD(mixCotaProdutoDTO.getCodigoProduto());
+			mixCotaProduto.setCodigoICD(mixCotaProdutoDTO.getCodigoICD());
 			mixCotaProduto.setUsuario(usuario);
 			mixCotaProduto.setCota(cota);
 			mixCotaProduto.setDataHora(new Date());
