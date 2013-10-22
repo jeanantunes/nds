@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -28,7 +29,7 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	
 	private BigInteger capacidadeDistribuicao;
 	
-	private TreeSet<Date> datasDistribuicaoFornecedor;
+	private Map<Long, TreeSet<Date>> datasDistribuicaoPorFornecedor;
 	
 	private Integer qtdDiasLimiteParaReprogLancamento;
 	
@@ -87,20 +88,6 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 		this.produtosLancamento = produtosLancamento;
 	}
 
-	/**
-	 * @return the datasDistribuicaoFornecedor
-	 */
-	public TreeSet<Date> getDatasDistribuicaoFornecedor() {
-		return datasDistribuicaoFornecedor;
-	}
-
-	/**
-	 * @param datasDistribuicaoFornecedor the datasDistribuicaoFornecedor to set
-	 */
-	public void setDatasDistribuicaoFornecedor(
-			TreeSet<Date> datasDistribuicaoFornecedor) {
-		this.datasDistribuicaoFornecedor = datasDistribuicaoFornecedor;
-	}
 
 	/**
 	 * @return the qtdDiasLimiteParaReprogLancamento
@@ -157,6 +144,15 @@ public class DadosBalanceamentoLancamentoDTO implements Serializable {
 	 */
 	public void setPeriodoDistribuicao(Intervalo<Date> periodoDistribuicao) {
 		this.periodoDistribuicao = periodoDistribuicao;
+	}
+
+	public Map<Long, TreeSet<Date>> getDatasDistribuicaoPorFornecedor() {
+		return datasDistribuicaoPorFornecedor;
+	}
+
+	public void setDatasDistribuicaoPorFornecedor(
+			Map<Long, TreeSet<Date>> datasDistribuicaoPorFornecedor) {
+		this.datasDistribuicaoPorFornecedor = datasDistribuicaoPorFornecedor;
 	}
 	
 }
