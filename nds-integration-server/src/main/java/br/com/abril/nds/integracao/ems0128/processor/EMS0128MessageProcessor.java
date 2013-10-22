@@ -95,7 +95,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 								
 				view.key("EMS0128");
 				view.includeDocs(true);
-				try {
+				try { 
 					ViewResult<String, Void, ?> result = view.queryView(String.class, Void.class, EMS0128Input.class);
 					for (@SuppressWarnings("rawtypes") Rows row: result.getRows()) {						
 						
@@ -105,20 +105,24 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 						if (doc.getSituacaoSolicitacao().equals("SOLICITADO")) {
 							icdObjectService.insereSolicitacao(doc);
 							doc.setSituacaoSolicitacao("AGUARDANDO_GFS");
-						} else if (
-								doc.getSituacaoSolicitacao().equals("AGUARDANDO_GFS") 
-								|| doc.getSituacaoSolicitacao().equals("EM PROCESSAMENTO")) {
+						} else if (doc.getSituacaoSolicitacao().equals("AGUARDANDO_GFS") 
+								|| doc.getSituacaoSolicitacao().equals("EM PROCESSAMENTO")
+								|| doc.getSituacaoSolicitacao().equals("PROCESSADO")) {
 							
 							SolicitacaoFaltaSobra solicitacao = icdObjectService.recuperaSolicitacao(Long.valueOf(distribuidor), doc);
+							
+							if(solicitacao == null) continue;
 							
 							doc.setSituacaoSolicitacao(solicitacao.getCodigoSituacao());
 							
 							List<DetalheFaltaSobra> listaDetalhes = solicitacao.getItens();
 							
-							for (DetalheFaltaSobra item : listaDetalhes)
-							{
+							for (DetalheFaltaSobra item : listaDetalhes) {
+								
 								for ( EMS0128InputItem eitem : doc.getItems()) {
+									
 									if (item.getDfsPK().getNumeroSequencia().equals(eitem.getNumSequenciaDetalhe())) {
+										
 										eitem.setSituacaoAcerto(item.getCodigoAcerto());
 										eitem.setNumeroDocumentoAcerto(item.getNumeroDocumentoAcerto());
 										eitem.setDataEmicaoDocumentoAcerto(item.getDataEmissaoDocumentoAcerto());

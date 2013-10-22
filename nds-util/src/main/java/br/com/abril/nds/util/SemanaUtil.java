@@ -285,7 +285,7 @@ public class SemanaUtil {
 			
 			if (listaCodigosDiasSemana.contains(diaDaSemana)) {
 				
-				datas.add(dataInicial);
+				datas.add(DateUtil.removerTimestamp(dataInicial));
 			}
 			
 			dataInicial = DateUtil.adicionarDias(dataInicial, 1);

@@ -980,7 +980,7 @@ var baixaFinanceiraController = $.extend(true, {
 			allowNegative: true,
 			centsSeparator: ',',
 		    thousandsSeparator: '.',
-			centsLimit: 4
+			centsLimit: 2
 		});
 
 		$("#valorTotal", baixaFinanceiraController.workspace).html($("#valorTotalHidden", baixaFinanceiraController.workspace).val());

@@ -410,7 +410,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 			}
 			
 			if (filtro.getTipoDiferenca() != null) {
-				hql += " and diferenca.tipoDiferenca = :tipoDiferenca ";
+				hql += " and diferenca.tipoDiferenca in (:tipoDiferenca) ";
 			}
 		}
 		
@@ -460,7 +460,13 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		}
 		
 		if (filtro.getTipoDiferenca() != null) {
-			query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
+			if(filtro.getTipoDiferenca().equals(TipoDiferenca.SOBRA_DE)) {
+				query.setParameterList("tipoDiferenca", new TipoDiferenca[] {filtro.getTipoDiferenca(), TipoDiferenca.SOBRA_DE_DIRECIONADA_COTA});
+			} else if (filtro.getTipoDiferenca().equals(TipoDiferenca.SOBRA_EM)) {
+				query.setParameterList("tipoDiferenca", new TipoDiferenca[] {filtro.getTipoDiferenca(), TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA});
+			} else {
+				query.setParameter("tipoDiferenca", filtro.getTipoDiferenca());
+			}
 		}
 	}
 	

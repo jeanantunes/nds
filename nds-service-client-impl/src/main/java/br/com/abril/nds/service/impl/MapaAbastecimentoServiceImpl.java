@@ -348,7 +348,7 @@ public class MapaAbastecimentoServiceImpl implements MapaAbastecimentoService{
 	
 				ProdutoMapaCotaDTO produtoMapaCotaDTO =
 						new ProdutoMapaCotaDTO(
-								item.getNomeProduto(), item.getNumeroEdicao(), item.getCodigoBarra(), item.getSequenciaMatriz(), item.getPrecoCapa(), 0);
+								item.getNomeProduto(), item.getNumeroEdicao(), item.getCodigoBarra(), item.getSequenciaMatriz(), item.getPrecoCapa(), 0, item.getMaterialPromocional());
 	
 	
 				//colocar a lista de cotas

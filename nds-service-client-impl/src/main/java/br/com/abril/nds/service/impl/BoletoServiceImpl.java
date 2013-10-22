@@ -1045,15 +1045,12 @@ public class BoletoServiceImpl implements BoletoService {
 					
 			valorDesconto = pagamento.getValorDesconto();
 		}
-		
-		BigDecimal valorCalculadoPagamento = 
-			valorPagamento.add(valorJuros).add(valorMulta).subtract(valorDesconto);
 			
 		BaixaManual baixaManual = new BaixaManual();
 		
 		baixaManual.setDataBaixa(dataBaixa);
 		baixaManual.setDataPagamento(dataPagamento);
-		baixaManual.setValorPago(valorCalculadoPagamento);
+		baixaManual.setValorPago(valorPagamento);
 		baixaManual.setCobranca(boleto);
 		
 		baixaManual.setResponsavel(usuario);
