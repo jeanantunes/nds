@@ -236,6 +236,9 @@ public class MapaAbastecimentoController extends BaseController {
 		case PRODUTO:
 			this.popularGridPorProduto(filtro);
 			break;
+		case PROMOCIONAL:
+			this.popularGridPorRepartePromocional(filtro);
+			break;
 		case PRODUTO_ESPECIFICO:
 			this.popularGridPorProdutoEspecifico(filtro);
 			break;
@@ -296,6 +299,9 @@ public class MapaAbastecimentoController extends BaseController {
 		case PRODUTO:
 			if(filtroAtual.getCodigosProduto()==null)
 				throw new ValidacaoException(TipoMensagem.WARNING, "'Produto' não foi preenchido.");
+			break;
+		case PROMOCIONAL:
+			
 			break;
 		case PRODUTO_ESPECIFICO:
 
@@ -482,6 +488,12 @@ public class MapaAbastecimentoController extends BaseController {
 						result.forwardTo(MapaAbastecimentoController.class).impressaoPorProduto(filtro);
 					}	
 				}
+				break;
+				
+			case PROMOCIONAL:
+				result.include("isPromocional", true);
+				result.forwardTo(MapaAbastecimentoController.class).impressaoPorProduto(filtro);
+								
 				break;
 			case PRODUTO_ESPECIFICO:
 				filtro.getPaginacao().setQtdResultadosPorPagina(null);
@@ -715,6 +727,19 @@ public class MapaAbastecimentoController extends BaseController {
 
 	private void popularGridPorProduto(FiltroMapaAbastecimentoDTO filtro) {
 
+		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaAbastecimentoPorCota(filtro);
+
+		if (lista == null || lista.isEmpty()) {
+			mostrarMensagemListaVazia();
+		}
+
+		Long totalRegistros = mapaAbastecimentoService.countObterMapaAbastecimentoPorCota(filtro);
+
+		result.use(FlexiGridJson.class).from(lista).page(filtro.getPaginacao().getPaginaAtual()).total(totalRegistros.intValue()).serialize();
+	}
+	
+	private void popularGridPorRepartePromocional(FiltroMapaAbastecimentoDTO filtro) {
+		
 		List<ProdutoAbastecimentoDTO> lista = this.mapaAbastecimentoService.obterMapaAbastecimentoPorCota(filtro);
 
 		if (lista == null || lista.isEmpty()) {

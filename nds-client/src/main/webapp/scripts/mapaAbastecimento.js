@@ -168,6 +168,7 @@
 		$("#gridRota", _workspace).hide();
 		$("#gridRotaQuebraCota", _workspace).hide();
 		$("#gridProduto", _workspace).hide();
+		$("#gridPromocional", _workspace).hide();
 		$("#gridProdutoEspecifico", _workspace).hide();
 		$("#gridProdutoCota", _workspace).hide();
 		$("#gridEntregador", _workspace).hide();
@@ -228,6 +229,19 @@
 			);
 
 			break;
+		
+		case 'PROMOCIONAL':
+			
+			T.preencherGrid(
+				".mapaAbastecimentoPromocionalGrid", 
+				pathTela + "/mapaAbastecimento/pesquisar", 
+				T.processarMensagens, 
+				"#gridPromocional",
+				params
+			);
+
+			break;
+		
 		case 'PRODUTO_ESPECIFICO':
 
 			T.preencherGrid(
@@ -480,6 +494,12 @@
 			T.displayEntregador(false);
 			T.desbloquearLinkProdutos();
 			break;
+		case 'PROMOCIONAL':
+			T.bloquearCampos('box','rota','roteiro', 'codigoCota','nomeCota','quebraPorCota');
+			T.desbloquearCampos('codigoProduto','nomeProduto','edicao');
+			T.displayEntregador(false);
+			T.desbloquearLinkProdutos();
+			break;
 		case 'PRODUTO_ESPECIFICO':
 			T.bloquearCampos('box','rota','roteiro','codigoCota','nomeCota','quebraPorCota');
 			T.desbloquearCampos('codigoProduto','nomeProduto','edicao');
@@ -678,6 +698,49 @@ $(function() {
 		width : 960,
 		height : 255
 	})); 
+	
+	$(".mapaAbastecimentoPromocionalGrid", BaseController.workspace).flexigrid($.extend({},{
+		dataType : 'json',
+		colModel : [ {
+			display : 'Código',
+			name : 'codigoProduto',
+			width : 100,
+			sortable : true,
+			align : 'left'
+		},{
+			display : 'Produto',
+			name : 'nomeProduto',
+			width : 280,
+			sortable : true,
+			align : 'left'
+		}, {
+			display : 'Total Reparte',
+			name : 'reparte',
+			width : 175,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Reparte Promocional',
+			name : 'materialPromocional',
+			width : 175,
+			sortable : true,
+			align : 'center'
+		}, {
+			display : 'Total Box R$',
+			name : 'totalBox',
+			width : 150,
+			sortable : true,
+			align : 'right'
+		}],
+		sortname : "codigoProduto",
+		sortorder : "asc",
+		usepager : true,
+		useRp : true,
+		rp : 15,
+		showTableToggleBtn : true,
+		width : 960,
+		height : 255
+	}));
 	
 	$(".mapaAbastecimentoGridQuebraCota", BaseController.workspace).flexigrid($.extend({},{
 		colModel: [ {
