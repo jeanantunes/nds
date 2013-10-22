@@ -533,6 +533,8 @@ public class MatrizLancamentoController extends BaseController {
 		
 		this.matrizLancamentoService.verificaDataOperacao(novaData);
 		
+		this.matrizLancamentoService.validarDiaSemanaDistribuicaoFornecedores(novaData);
+		
 		List<String> listaMensagens = new ArrayList<String>();
 		
 		String produtos = "";
