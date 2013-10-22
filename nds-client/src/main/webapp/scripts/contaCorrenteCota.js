@@ -239,9 +239,6 @@ var contaCorrenteCotaController = $.extend(true, {
 			$("#msgFieldsetdebitosCreditos", contaCorrenteCotaController.workspace).
 				text("Cota: " + $("#cotaHidden", contaCorrenteCotaController.workspace).val()+" "+$("#nomeCotaHidden", contaCorrenteCotaController.workspace).val());
 			
-			$("#msgFieldsetEncargos", contaCorrenteCotaController.workspace).
-				text("Cota: " + $("#cotaHidden", contaCorrenteCotaController.workspace).val()+" "+$("#nomeCotaHidden", contaCorrenteCotaController.workspace).val());
-			
 			$(".grids", contaCorrenteCotaController.workspace).show();
 			
 			return data;
@@ -830,8 +827,11 @@ var contaCorrenteCotaController = $.extend(true, {
 		$.postJSON(contextPath + "/financeiro/contaCorrenteCota/consultarEncargosCota",
 			dadosPesquisa,
 			function (result){
-				
-				var texto = $("#msgFieldsetEncargos", contaCorrenteCotaController.workspace).text();
+
+				var texto = "Cota: " + $("#cotaHidden", contaCorrenteCotaController.workspace).val()
+									 + " "
+									 + $("#nomeCotaHidden", contaCorrenteCotaController.workspace).val();
+
 				$("#msgFieldsetEncargos", contaCorrenteCotaController.workspace).text(dataConsolidado + " - " + texto);
 				
 				$("#txtEncargosJuros", contaCorrenteCotaController.workspace).text(result[0]);
