@@ -211,13 +211,16 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("       p.nome nomeProduto, ");
         sql.append("       pe.numero_edicao edicao, ");
         sql.append("       epe.periodo_parcial periodo, ");
+        sql.append("       tcp.id idTipoClassificacao, ");
         sql.append("       (case when l.tipo_lancamento = 'PARCIAL' then 1 else 0 end) parcial, ");
         sql.append("       (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' then 0 else 1 end) edicaoAberta ");
         sql.append("  from estudo_produto_edicao_base epe ");
         sql.append("  join produto_edicao pe on pe.id = epe.produto_edicao_id ");
         sql.append("  join produto p on p.id = pe.produto_id ");
         sql.append("  join lancamento l on l.produto_edicao_id = pe.id ");
-        sql.append(" where epe.estudo_id = :estudoId and l.DATA_LCTO_PREVISTA= :dataLancamento ");
+        sql.append("  left join tipo_classificacao_produto tcp on tcp.id = pe.tipo_classificacao_produto_id ");
+        sql.append(" where epe.estudo_id = :estudoId ");
+//        sql.append(" and l.DATA_LCTO_PREVISTA= :dataLancamento ");
         sql.append("  order by l.data_lcto_distribuidor desc ");
         sql.append("  , pe.numero_edicao desc, epe.periodo_parcial desc ");
 
@@ -227,10 +230,11 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 .addScalar("nomeProduto", StandardBasicTypes.STRING)
                 .addScalar("edicao", StandardBasicTypes.BIG_INTEGER)
                 .addScalar("periodo", StandardBasicTypes.STRING)
+                .addScalar("idTipoClassificacao", StandardBasicTypes.BIG_INTEGER)
                 .addScalar("parcial", StandardBasicTypes.BOOLEAN)
                 .addScalar("edicaoAberta", StandardBasicTypes.BOOLEAN);
         query.setParameter("estudoId", estudoId);
-        query.setParameter("dataLancamento", date);
+//        query.setParameter("dataLancamento", date);
         query.setResultTransformer(new AliasToBeanResultTransformer(EdicoesProdutosDTO.class));
 
         return query.list();
@@ -247,12 +251,14 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
         sql.append("       p.nome nomeProduto, ");
         sql.append("       pe.numero_edicao edicao, ");
         sql.append("       epe.periodo_parcial periodo, ");
+        sql.append("       tcp.id idTipoClassificacao, ");
         sql.append("       (case when l.tipo_lancamento = 'PARCIAL' then 1 else 0 end) parcial, ");
         sql.append("       (case when l.status = 'FECHADO' or l.status = 'RECOLHIDO' then 0 else 1 end) edicaoAberta ");
         sql.append("  from estudo_produto_edicao_base epe ");
         sql.append("  join produto_edicao pe on pe.id = epe.produto_edicao_id ");
         sql.append("  join produto p on p.id = pe.produto_id ");
         sql.append("  join lancamento l on l.produto_edicao_id = pe.id ");
+        sql.append("  left join tipo_classificacao_produto tcp on tcp.id = pe.tipo_classificacao_produto_id ");
         sql.append(" where epe.estudo_id = :estudoId ");
         sql.append("  order by l.data_lcto_distribuidor desc ");
         sql.append("  , pe.numero_edicao desc, epe.periodo_parcial desc ");
@@ -263,6 +269,7 @@ public class AnaliseParcialRepositoryImpl extends AbstractRepositoryModel<Estudo
                 .addScalar("nomeProduto", StandardBasicTypes.STRING)
                 .addScalar("edicao", StandardBasicTypes.BIG_INTEGER)
                 .addScalar("periodo", StandardBasicTypes.STRING)
+                .addScalar("idTipoClassificacao", StandardBasicTypes.BIG_INTEGER)
                 .addScalar("parcial", StandardBasicTypes.BOOLEAN)
                 .addScalar("edicaoAberta", StandardBasicTypes.BOOLEAN);
         query.setParameter("estudoId", estudoId);

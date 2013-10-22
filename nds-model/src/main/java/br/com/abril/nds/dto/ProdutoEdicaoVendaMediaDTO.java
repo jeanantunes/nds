@@ -24,6 +24,7 @@ public class ProdutoEdicaoVendaMediaDTO implements Serializable {
     private BigDecimal percentualVenda;
     private String status;
     private String classificacao;
+    private BigInteger idClassificacao;
 
     public BigInteger getId() {
 	return id;
@@ -145,5 +146,13 @@ public class ProdutoEdicaoVendaMediaDTO implements Serializable {
 
     public void setIdProduto(BigInteger idProduto) {
         this.idProduto = idProduto;
+    }
+
+    public BigInteger getIdClassificacao() {
+        return idClassificacao;
+    }
+
+    public void setIdClassificacao(BigInteger idClassificacao) {
+        this.idClassificacao = idClassificacao;
     }
 }

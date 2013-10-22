@@ -24,6 +24,7 @@ public class EdicoesProdutosDTO implements Serializable {
 	private String sel;
 	private BigInteger reparte;
 	private String nomeProduto;
+	private Long idTipoClassificacao;
 	private String descricaoTipoClassificacao;
 	private String codigoProduto;
 	private String descricaoTipoSegmento;
@@ -175,5 +176,13 @@ public class EdicoesProdutosDTO implements Serializable {
 
     public void setEdicaoAberta(boolean edicaoAberta) {
         this.edicaoAberta = edicaoAberta;
+    }
+
+    public Long getIdTipoClassificacao() {
+        return idTipoClassificacao;
+    }
+
+    public void setIdTipoClassificacao(Long idTipoClassificacao) {
+        this.idTipoClassificacao = idTipoClassificacao;
     }
 }

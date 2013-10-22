@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
+import org.hibernate.type.StandardBasicTypes;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,9 +23,9 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 
     @Override
     @Transactional(readOnly = true)
-    public List<ProdutoEdicaoVendaMediaDTO> pesquisar(String codigoProduto, String nomeProduto, Long edicao) {
+    public List<ProdutoEdicaoVendaMediaDTO> pesquisar(String codigoProduto, String nomeProduto, Long edicao, Long idClassificacao) {
     	
-    	return pesquisar(new FiltroEdicaoBaseDistribuicaoVendaMedia(codigoProduto, nomeProduto, edicao, null));
+    	return pesquisar(new FiltroEdicaoBaseDistribuicaoVendaMedia(codigoProduto, nomeProduto, edicao, idClassificacao));
     }
     
     @SuppressWarnings("unchecked")
@@ -117,7 +118,8 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		sql.append("           round(sum(epc.qtde_recebida) - sum(epc.qtde_devolvida)) / sum(epc.qtde_recebida) * 100 ");
 		sql.append("       else 0 end) percentualVenda, ");
 		sql.append("       l.status status, ");
-		sql.append("       coalesce(tcp.descricao, '') classificacao ");
+        sql.append("       tcp.id idClassificacao, ");
+        sql.append("       coalesce(tcp.descricao, '') classificacao ");
 		sql.append("  from lancamento l ");
 		sql.append("  join produto_edicao pe on pe.id = l.produto_edicao_id ");
 		sql.append("  left join periodo_lancamento_parcial plp on plp.lancamento_id = l.id ");
@@ -130,11 +132,7 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 		    sql.append("   and pe.numero_edicao = :numero_edicao ");
 		}
 		if (filtro.getCodigo() != null) {
-			if(filtro.getCodigo().length() == 6){
-				sql.append("   and p.CODIGO_ICD = :codigo_produto ");
-			}else{
-				sql.append("   and p.codigo = :codigo_produto ");				
-			}
+            sql.append("   and p.codigo_icd = :codigo_produto ");
 		}
 		if (filtro.getClassificacao() != null) {
 			sql.append("   and tcp.id = :classificacao ");
@@ -163,51 +161,53 @@ public class DistribuicaoVendaMediaRepositoryImpl extends AbstractRepositoryMode
 
 		StringBuilder hql = new StringBuilder();
 
-		if (filtro.getOrdemColuna() != null) {
+        if (filtro.getOrdemColuna() != null) {
 
-		    switch (filtro.getOrdemColuna()) {
+            switch (filtro.getOrdemColuna()) {
 
-		    case CODIGO:
-			hql.append(" ORDER BY codigoProduto ");
-			break;
+                case CODIGO:
+                    hql.append(" ORDER BY codigoProduto ");
+                    break;
 
-		    case EDICAO:
-			hql.append(" ORDER BY numeroEdicao ");
-			break;
+                case EDICAO:
+                    hql.append(" ORDER BY numeroEdicao ");
+                    break;
 
-		    case DATA_LANCAMENTO:
-			hql.append(" ORDER BY dataLancamento ");
-			break;
+                case DATA_LANCAMENTO:
+                    hql.append(" ORDER BY dataLancamento ");
+                    break;
 
-		    case REPARTE:
-			hql.append(" ORDER BY reparte ");
-			break;
+                case REPARTE:
+                    hql.append(" ORDER BY reparte ");
+                    break;
 
-		    case PERIODO:
-			hql.append(" ORDER BY periodo ");
-			break;
+                case PERIODO:
+                    hql.append(" ORDER BY periodo ");
+                    break;
 
-		    case CLASSIFICACAO:
-			hql.append(" ORDER BY classificacao ");
-			break;
+                case CLASSIFICACAO:
+                    hql.append(" ORDER BY classificacao ");
+                    break;
 
-		    case STATUS:
-			hql.append(" ORDER BY status ");
-			break;
-			
-		    case VENDA:
-			hql.append("ORDER BY venda ");
-			break;
+                case STATUS:
+                    hql.append(" ORDER BY status ");
+                    break;
 
-		    default:
-			hql.append(" ORDER BY l.data_lcto_prevista ");
-		    }
+                case VENDA:
+                    hql.append("ORDER BY venda ");
+                    break;
 
-		    if (filtro.getPaginacao().getOrdenacao() != null) {
-		    	hql.append(filtro.getPaginacao().getOrdenacao().toString());
-		    }
+                default:
+                    hql.append(" ORDER BY l.data_lcto_prevista desc ");
+            }
 
-		}
+            if (filtro.getPaginacao().getOrdenacao() != null) {
+                hql.append(filtro.getPaginacao().getOrdenacao().toString());
+            }
+
+        } else {
+            hql.append(" ORDER BY l.data_lcto_prevista desc ");
+        }
 
 		return hql.toString();
 	}

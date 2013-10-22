@@ -30,8 +30,8 @@
                 <td width="11%">Classifica&ccedil;&atilde;o:</td>
                 <td width="25%">
 	                <select name="select" id="filtroClassificacaoMix" style="width:160px;">
-				            <c:forEach items="${classificacao}" var="tipoProduto">
-								<option value="<c:out value="${tipoProduto.descricao}"/>" ${tipoProduto.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoProduto.descricao}"/></option>
+				            <c:forEach items="${classificacao}" var="tipoClassificacao">
+								<option value="<c:out value="${tipoClassificacao.descricao}"/>" ${tipoClassificacao.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoClassificacao.descricao}"/></option>
 							</c:forEach>
 	          		</select>
                 </td>
@@ -254,8 +254,8 @@
            		<td><input id="produtoModal" type="text"  style="width:80px;" class="target"></td>
            		<td width=80px;>
 	                <select name="select" id="classifMixModal" style="width:160px;" class="classificacao">
-				            <c:forEach items="${classificacao}" var="tipoProduto">
-								<option value="<c:out value="${tipoProduto.descricao}"/>" ${tipoProduto.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoProduto.descricao}"/></option>
+				            <c:forEach items="${classificacao}" var="tipoClassificacao">
+								<option value="<c:out value="${tipoClassificacao.descricao}"/>" ${tipoClassificacao.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoClassificacao.descricao}"/></option>
 							</c:forEach>
 	          		</select>
                 </td>
@@ -285,8 +285,8 @@
            		<td><input id="produtoModal" type="text"  style="width:80px;" class="target"></td>
            		<td width=80px;>
 	                <select name="select" id="classifMixModal" style="width:160px;" class="classificacao">
-				            <c:forEach items="${classificacao}" var="tipoProduto">
-								<option value="<c:out value="${tipoProduto.descricao}"/>" ${tipoProduto.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoProduto.descricao}"/></option>
+				            <c:forEach items="${classificacao}" var="tipoClassificacao">
+								<option value="<c:out value="${tipoClassificacao.descricao}"/>" ${tipoClassificacao.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoClassificacao.descricao}"/></option>
 							</c:forEach>
 	          		</select>
                 </td>

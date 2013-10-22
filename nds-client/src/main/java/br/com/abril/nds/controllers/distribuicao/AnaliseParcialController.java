@@ -11,7 +11,10 @@ import java.util.List;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
+import br.com.abril.nds.repository.TipoClassificacaoProdutoRepository;
+import br.com.abril.nds.service.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.util.PessoaUtil;
@@ -76,6 +79,12 @@ public class AnaliseParcialController extends BaseController {
     @Autowired
     private HttpSession session;
 
+    @Autowired
+    private TipoClassificacaoProdutoRepository tipoClassificacaoProdutoRepository;
+
+    @Autowired
+    private ProdutoService produtoService;
+
     @Path("/")
     public void index(Long id,Long estudoOrigem, Long faixaDe, Long faixaAte, String modoAnalise, String reparteCopiado,String dataLancamentoEdicao) {
 
@@ -96,7 +105,8 @@ public class AnaliseParcialController extends BaseController {
         result.include("reparteCopiado", reparteCopiado);
         result.include("estudoOrigem", (estudoOrigem==null)?0:estudoOrigem);
         result.include("dataLancamentoEdicao", dataLancamentoEdicao);
-        
+        result.include("classificacaoList", tipoClassificacaoProdutoRepository.obterTodos());
+
         ClassificacaoCota[] vetor = ClassificacaoCota.values();
         Arrays.sort(vetor, new Comparator<ClassificacaoCota>() {
 
@@ -258,8 +268,9 @@ public class AnaliseParcialController extends BaseController {
     }
 
     @Post("/pesquisarProdutoEdicao")
-    public void pesquisarProdutoEdicao(String codigoProduto, String nomeProduto, Long edicao) {
-        List<ProdutoEdicaoVendaMediaDTO> edicoes = distribuicaoVendaMediaRepository.pesquisar(codigoProduto, nomeProduto, edicao);
+    public void pesquisarProdutoEdicao(String codigoProduto, String nomeProduto, Long edicao, Long idClassificacao) {
+        Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
+        List<ProdutoEdicaoVendaMediaDTO> edicoes = distribuicaoVendaMediaRepository.pesquisar(produto.getCodigoICD(), nomeProduto, edicao, idClassificacao);
         TableModel<CellModelKeyValue<ProdutoEdicaoVendaMediaDTO>> table = new TableModel<>();
         table.setRows(CellModelKeyValue.toCellModelKeyValue(edicoes));
         table.setTotal(edicoes.size());
