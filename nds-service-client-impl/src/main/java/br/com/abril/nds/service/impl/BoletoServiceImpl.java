@@ -337,7 +337,7 @@ public class BoletoServiceImpl implements BoletoService {
 						usuario,
 						boleto.getCota(),
 						dataVencimento,
-						boleto.getValor(), 
+						boleto.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN), 
 						this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
 								GrupoMovimentoFinaceiro.PENDENTE),
 						"Oriundo de cobrança não paga");
@@ -349,7 +349,7 @@ public class BoletoServiceImpl implements BoletoService {
 				BigDecimal valor = this.cobrancaService.calcularJuros(
 						boleto.getBanco(), 
 						boleto.getCota().getId(), 
-						boleto.getValor(), 
+						boleto.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN), 
 						boleto.getDataVencimento(), 
 						this.calendarioService.adicionarDiasRetornarDiaUtil(dataPagamento, 1));
 					
@@ -370,7 +370,7 @@ public class BoletoServiceImpl implements BoletoService {
 				valor = this.cobrancaService.calcularMulta(
 						boleto.getBanco(), 
 						boleto.getCota(), 
-						boleto.getValor());
+						boleto.getValor().setScale(2, BigDecimal.ROUND_HALF_EVEN));
 				
 				if (valor != null && valor.compareTo(BigDecimal.ZERO) > 0){
 					
