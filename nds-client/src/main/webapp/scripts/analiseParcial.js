@@ -18,16 +18,19 @@ var analiseParcialController = $.extend(true, {
         objEdicoesBase.page = 1;
         objEdicoesBase.total = 1;
         objEdicoesBase.rows = [];
+        var tipoClassificacao = $('#filtroClassificacao').html().replace('selected="selected"', '');
 
         for (var i = 0; i < analiseParcialController.edicoesBase.length; i++) {
             var edicao = analiseParcialController.edicoesBase[i];
+            var optionClassificacao = 'value="id"'.replace('id',edicao.idTipoClassificacao); //TODO
             objEdicoesBase.rows.push({ cell: {
-                codigo:  '<input class="inputCodigoEB" value="#">'.replace('#',edicao.codigoProduto),
-                produto: '<input class="inputProdutoEB" value="#">'.replace('#',edicao.nomeProduto),
-                edicao:  '<input id="$" class="inputEdicaoEB" value="#">'.replace('$',edicao.produtoEdicaoId).replace('#',edicao.edicao),
-                acao:    '<img src="images/ico_editar.gif" alt="Alterar Edição" class="icoEditarEB">' +
-                    '<img src="images/ico_excluir.gif" alt="Excluir Base" class="icoExcluirEB">' +
-                    '<img src="images/ico_arrow_resize.png" alt="Mover Base" class="icoMoverEB">'
+                codigo:         '<input class="inputCodigoEB" value="#">'.replace('#',edicao.codigoProduto),
+                produto:        '<input class="inputProdutoEB" value="#">'.replace('#',edicao.nomeProduto),
+                edicao:         '<input id="$" class="inputEdicaoEB" value="#">'.replace('$',edicao.produtoEdicaoId).replace('#',edicao.edicao),
+                classificacao:  '<select class="selectClassEB">#options#</select>'.replace('#options#', tipoClassificacao.replace(optionClassificacao, optionClassificacao + ' selected')),
+                acao:           '<img src="images/ico_editar.gif" alt="Alterar Edição" class="icoEditarEB">' +
+                                '<img src="images/ico_excluir.gif" alt="Excluir Base" class="icoExcluirEB">' +
+                                '<img src="images/ico_arrow_resize.png" alt="Mover Base" class="icoMoverEB">'
             } });
         }
         $("#prodCadastradosGrid").flexAddData(objEdicoesBase);
@@ -42,7 +45,7 @@ var analiseParcialController = $.extend(true, {
             escondeHeader: false,
             resizable : false,
             height : 470,
-            width : 550,
+            width : 650,
             modal : true,
             buttons : {
                 "Base Original" : function() {
@@ -98,7 +101,7 @@ var analiseParcialController = $.extend(true, {
                 url: analiseParcialController.path +'/produto/pesquisarPorCodigoProduto',
                 data: [{name: 'codigoProduto', value: elemento.value}],
                 type: 'POST',
-                global: false,
+                //global: false,
                 success: function(result) {
                     if (result.mensagens) {
                         analiseParcialController.exibirMsg(result.mensagens);
@@ -119,7 +122,7 @@ var analiseParcialController = $.extend(true, {
                 url: analiseParcialController.path +'/produto/pesquisarPorNomeProduto',
                 data: [{name: 'nomeProduto', value: elemento.value}],
                 type: 'POST',
-                global: false,
+                //global: false,
                 success: function(result) {
                     if (result.mensagens) {
                         analiseParcialController.exibirMsg(result.mensagens);
@@ -818,7 +821,7 @@ var analiseParcialController = $.extend(true, {
         });
 
         $("#dialog-edicoes-produtos").on('click', '.classPesquisar', function () {
-            var parameters = $('#inputCodigoProduto, #inputNomeProduto, #inputNumeroEdicao').filter('input[value!=""]').map(function () {
+            var parameters = $('#inputCodigoProduto, #inputNomeProduto, #inputNumeroEdicao, #filtroClassificacao').filter('input[value!=""]').map(function () {
                 return {name: this.name, value: this.value};
             });
             if (parameters) {
@@ -1493,26 +1496,29 @@ $(".pdvCotaGrid").flexigrid({
 });
 
 $("#prodCadastradosGrid").flexigrid({
-    colModel : [{display: 'Código',  name: 'codigo',  width: 80,  sortable: false, align: 'left'},
-                {display: 'Produto', name: 'produto', width: 190, sortable: false, align: 'left'},
-                {display: 'Edição',  name: 'edicao',  width: 80,  sortable: false, align: 'left'},
-                {display: 'Açao',    name: 'acao',    width: 80,  sortable: false, align: 'center'}],
+    colModel : [{display: 'Código',        name: 'codigo',        width: 80,  sortable: false, align: 'left'},
+                {display: 'Produto',       name: 'produto',       width: 180, sortable: false, align: 'left'},
+                {display: 'Edição',        name: 'edicao',        width: 80,  sortable: false, align: 'left'},
+                {display: 'Classificação', name: 'classificacao', width: 120,  sortable: false, align: 'left'},
+                {display: 'Açao',          name: 'acao',          width: 70,  sortable: false, align: 'center'}],
     dataType: 'json',
     striped: false,
-    width : 490,
+    width : 595,
     height : 225
 });
 
 $("#edicaoProdCadastradosGrid").flexigrid({
-    colModel: [ {display: 'Id Edição',   name: 'id',                      width: 1,   sortable: true, hide: true},
-                {display: 'Cod Produto', name: 'codigoProduto',           width: 1,   sortable: true, hide: true},
-                {display: 'Edição',      name: 'numeroEdicao',            width: 45,  sortable: true, align: 'left'},
-                {display: 'Data Lancto', name: 'dataLancamentoFormatada', width: 100, sortable: true, align: 'center'},
-                {display: 'Reparte',     name: 'reparte',                 width: 40,  sortable: true, align: 'right'},
-                {display: 'Venda',       name: 'venda',                   width: 40,  sortable: true, align: 'right'},
-                {display: 'Status',      name: 'status',                  width: 110, sortable: true, align: 'left'},
-                {display: 'Capa',        name: 'capa',                    width: 30,  sortable: true, align: 'center'},
-                {display: '',            name: 'sel',                     width: 30,  sortable: true, align: 'center'}],
+    colModel: [ {display: 'Id Edição',     name: 'id',                      width: 1,   sortable: true, hide: true},
+                {display: 'Id Class.',     name: 'idClassificacao',         width: 1,   sortable: true, hide: true},
+                {display: 'Cod Produto',   name: 'codigoProduto',           width: 80,  sortable: true, align: 'left'},
+                {display: 'Classificação', name: 'classificacao',           width: 95,   sortable: true, align: 'center'},
+                {display: 'Edição',        name: 'numeroEdicao',            width: 45,  sortable: true, align: 'left'},
+                {display: 'Data Lancto',   name: 'dataLancamentoFormatada', width: 100, sortable: true, align: 'center'},
+                {display: 'Reparte',       name: 'reparte',                 width: 40,  sortable: true, align: 'right'},
+                {display: 'Venda',         name: 'venda',                   width: 40,  sortable: true, align: 'right'},
+                {display: 'Status',        name: 'status',                  width: 110, sortable: true, align: 'left'},
+                {display: 'Capa',          name: 'capa',                    width: 30,  sortable: true, align: 'center'},
+                {display: '',              name: 'sel',                     width: 30,  sortable: true, align: 'center'}],
     url: analiseParcialController.path +'/distribuicao/analise/parcial/pesquisarProdutoEdicao',
     dataType: 'json',
     disableSelect: true,
@@ -1522,6 +1528,7 @@ $("#edicaoProdCadastradosGrid").flexigrid({
         var defaultCell = {
             id:'',
             codigoProduto:'',
+            classificacao:'',
             numeroEdicao:'',
             dataLancamentoFormatada:'',
             reparte:'',
@@ -1538,7 +1545,7 @@ $("#edicaoProdCadastradosGrid").flexigrid({
 
         return result;
     },
-    width : 500,
+    width : 700,
     height : 200
 });
 
@@ -1549,12 +1556,14 @@ function popup_edicoes_produto() {
         escondeHeader: false,
         resizable : false,
         height : 420,
-        width : 550,
+        width : 750,
         modal : true,
         buttons : {
             "Confirmar" : function() {
                 var $tbody = $('#dialog-mudar-base #prodCadastradosGrid tbody');
                 var $edicaoSelecao = $("#edicaoProdCadastradosGrid input.edicaoSelecao:checked");
+                var tipoClassificacao = $('#filtroClassificacao').html().replace('selected="selected"', '');
+                var optionClassificacao = 'value="id"';
                 if (($tbody.find('tr').length + $edicaoSelecao.length) > 6) {
                     analiseParcialController.exibirMsg('WARNING', ['Não é possivel selecionar mais do que 6 edições no total!']);
                 } else {
@@ -1563,6 +1572,7 @@ function popup_edicoes_produto() {
                         '<td align="left"><div style="text-align: left; width: 80px;"><input class="inputCodigoEB" value="#codigoProduto#"></div></td>' +
                         '<td align="left"><div style="text-align: left; width: 190px;"><input class="inputProdutoEB" value="#nomeProduto#"></div></td>' +
                         '<td align="left"><div style="text-align: left; width: 80px;"><input id="#idEdicao#" class="inputEdicaoEB" value="#numeroEdicao#"></div></td>' +
+                        '<td align="left"><div style="text-align: left; width: 80px;"><select id="#idClass#" class="selectClassEB">#options#</select></div></td>' +
                         '<td align="center"><div style="text-align: center; width: 80px;">' +
                             '<img src="images/ico_editar.gif" alt="Alterar Edição" class="icoEditarEB">' +
                             '<img src="images/ico_excluir.gif" alt="Excluir Base" class="icoExcluirEB">' +
@@ -1571,8 +1581,10 @@ function popup_edicoes_produto() {
                     modelRow = modelRow.replace(/#codigoProduto#/, $('#inputCodigoProduto').val()).replace(/#nomeProduto#/, $('#inputNomeProduto').val());
                     $edicaoSelecao.each(function(key, value){
                         var $thisTR = $(this).closest('tr');
+                        var idClassificacao = optionClassificacao.replace('id', $thisTR.find('td[abbr="idClassificacao"] div').text());
                         tbodyAppend += modelRow.replace(/#idEdicao#/, $thisTR.find('td[abbr="id"] div').text())
-                                               .replace(/#numeroEdicao#/, $thisTR.find('td[abbr="numeroEdicao"] div').text());
+                                               .replace(/#numeroEdicao#/, $thisTR.find('td[abbr="numeroEdicao"] div').text())
+                                               .replace(/#options#/, tipoClassificacao.replace(idClassificacao, idClassificacao + ' selected'));//TODO
                     });
                     $tbody.append(tbodyAppend);
                     $(this).dialog("close");

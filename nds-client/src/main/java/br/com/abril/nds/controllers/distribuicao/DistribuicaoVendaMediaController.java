@@ -146,9 +146,9 @@ public class DistribuicaoVendaMediaController extends BaseController {
 	    BeanUtils.copyProperties(estrategia, estrat);
 	    selecionados.clear();
 
-	    for (EdicaoBaseEstrategia base : estrategia.getBasesEstrategia()) {
+	    for (EdicaoBaseEstrategia base : estrategia.getBasesEstrategia()) { //TODO F2 - validar se é prodin ou ICD neste caso
 		selecionados.addAll(distribuicaoVendaMediaRepository.pesquisar(base.getProdutoEdicao().getProduto().getCodigo(), null, base
-			.getProdutoEdicao().getNumeroEdicao()));
+			.getProdutoEdicao().getNumeroEdicao(), null));
 	    }
 	} else {
 	    EstudoTransient estudoTemp = new EstudoTransient();
@@ -160,8 +160,8 @@ public class DistribuicaoVendaMediaController extends BaseController {
 		for (ProdutoEdicaoEstudo base : estudoTemp.getEdicoesBase()) {
 		    if (base.isParcial()) {
 			selecionados.addAll(distribuicaoVendaMediaRepository.pesquisarEdicoesParciais(base.getProduto().getCodigo(), base.getPeriodo(), base.getNumeroEdicao()));
-		    } else {
-			selecionados.addAll(distribuicaoVendaMediaRepository.pesquisar(base.getProduto().getCodigo(), null, base.getNumeroEdicao()));
+		    } else { //TODO F2 - validar se é prodin ou ICD neste caso
+			selecionados.addAll(distribuicaoVendaMediaRepository.pesquisar(base.getProduto().getCodigo(), null, base.getNumeroEdicao(), null));
 		    }
 		}
 	    } catch (Exception e) {

@@ -50,7 +50,7 @@ function escondeDados(){
 
 .icoEditarEB, .icoExcluirEB, .icoMoverEB { margin: 3px; cursor: pointer; }
 .inputCodigoEB, .inputEdicaoEB { width: 70px; }
-.inputProdutoEB { width: 180px; }
+.inputProdutoEB { width: 170px; }
 .icoMoverEB { cursor: grab; cursor: -moz-grab; cursor: -webkit-grab; }
 .icoMoverEB:active { cursor: grabbing; cursor: -moz-grabbing; cursor: -webkit-grabbing; }
 
@@ -455,10 +455,10 @@ table.dadosTab { margin-left: 370px;}
 
 	<div id="dialog-mudar-base" title="Mudar Base de Visualização" style="display: none;">
 
-		<fieldset style="width: 500px !important;">
+		<fieldset style="width: 600px !important;">
 			<legend>Base Produto</legend>
 
-			<table width="500" border="0" cellpadding="2" cellspacing="1">
+			<table width="600" border="0" cellpadding="2" cellspacing="1">
 				<tr>
 					<td width="45"><strong>Estudo:</strong></td>
 					<td width="76">${estudoCota.estudo.id}</td>
@@ -470,8 +470,10 @@ table.dadosTab { margin-left: 370px;}
 					<td width="49">${estudoCota.estudo.produtoEdicao.numeroEdicao}</td>
 				</tr>
 			</table>
-			<table width="500" border="0" cellpadding="2" cellspacing="1">
+			<table width="600" border="0" cellpadding="2" cellspacing="1">
 				<tr>
+                    <td width="40"><strong>Class.:</strong></td>
+                    <td width="49">${estudoCota.estudo.produtoEdicao.tipoClassificacaoProduto.descricao}</td>
 					<td width="104"><strong>Chamada de Capa:</strong></td>
 					<td width="385">${estudoCota.estudo.produtoEdicao.chamadaCapa}</td>
                     <td><a href="javascript:;" onclick="popup_edicoes_produto()"><img src="${pageContext.request.contextPath}/images/ico_editar.gif" alt="Adicionar Edição" border="0"/></a></td>
@@ -480,7 +482,7 @@ table.dadosTab { margin-left: 370px;}
 
 		</fieldset>
 
-		<fieldset style="width: 500px !important; margin-top: 10px;">
+		<fieldset style="width: 600px !important; margin-top: 10px;">
 			<legend>Produtos Cadastrados</legend>
 			<table class="prodCadastradosGrid" id="prodCadastradosGrid"></table>
 		</fieldset>
@@ -607,10 +609,10 @@ table.dadosTab { margin-left: 370px;}
     </div>
 
     <div id="dialog-edicoes-produtos" title="Pesquisar Edições de Produto" style="display:none;">
-        <fieldset style="width:500px!important;">
+        <fieldset style="width:700px!important;">
             <legend>Pesquisar Produto</legend>
 
-            <table width="500" border="0" cellpadding="2" cellspacing="1" class="filtro">
+            <table width="700" border="0" cellpadding="2" cellspacing="1" class="filtro">
                 <tr>
                     <td width="36">Código:</td>
                     <td width="76"><input type="text" class="inputCodigoEB" name="codigoProduto" id="inputCodigoProduto" style="width:60px;" /></td>
@@ -618,13 +620,22 @@ table.dadosTab { margin-left: 370px;}
                     <td width="180"><input type="text" class="inputProdutoEB" name="nomeProduto" id="inputNomeProduto" style="width:160px;" /></td>
                     <td width="35">Edição:</td>
                     <td width="61"><input type="text" class="inputEdicaoEB" name="edicao" id="inputNumeroEdicao" style="width:60px;" /></td>
+                    <td style="width: 80px;">Classificação:</td>
+                    <td>
+                        <select name="idClassificacao" id="filtroClassificacao" style="width:120px;">
+                            <option value="-1">SELECIONE</option>
+                            <c:forEach items="${classificacaoList}" var="tipoClassificacao">
+                                <option value="<c:out value="${tipoClassificacao.id}"/>" ${tipoClassificacao.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoClassificacao.descricao}"/></option>
+                            </c:forEach>
+                        </select>
+                    </td>
                     <td width="47"><span class="classPesquisar" style="margin: 0 5px;"><a href="javascript:;">&nbsp;</a></span></td>
                 </tr>
             </table>
 
         </fieldset>
 
-        <fieldset style="width:500px!important; margin-top:10px;">
+        <fieldset style="width:700px!important; margin-top:10px;">
             <legend>Edições do Produto</legend>
             <table id="edicaoProdCadastradosGrid"></table>
         </fieldset>

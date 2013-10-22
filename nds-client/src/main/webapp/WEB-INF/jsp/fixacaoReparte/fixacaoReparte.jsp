@@ -152,8 +152,8 @@ function mostraIntervalo(){
                       <td>
                           <select id="tipoClassificacaoCopia">
                               <option value="-1" selected>TODAS</option>
-                              <c:forEach items="${classificacao}" var="tipoProduto">
-                                  <option value="<c:out value="${tipoProduto.id}"/>"><c:out value="${tipoProduto.descricao}"/></option>
+                              <c:forEach items="${classificacao}" var="tipoClassificacao">
+                                  <option value="<c:out value="${tipoClassificacao.id}"/>"><c:out value="${tipoClassificacao.descricao}"/></option>
                               </c:forEach>
                           </select>
                       </td>
@@ -185,8 +185,8 @@ function mostraIntervalo(){
             <td width="167">
             	<select name="select" id="filtroClassificacaoFixacao" style="width:160px;">
                     <option value="-1">SELECIONE</option>
-                    <c:forEach items="${classificacao}" var="tipoProduto">
-                        <option value="<c:out value="${tipoProduto.id}"/>" ${tipoProduto.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoProduto.descricao}"/></option>
+                    <c:forEach items="${classificacao}" var="tipoClassificacao">
+                        <option value="<c:out value="${tipoClassificacao.id}"/>" ${tipoClassificacao.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoClassificacao.descricao}"/></option>
                     </c:forEach>
           		</select>
             
@@ -262,8 +262,8 @@ function mostraIntervalo(){
 			       <td width="119">
 			       		<select name="selectModal" id="selectModal" style="width:160px;display:none;">
                             <option value="-1">SELECIONE</option>
-				            <c:forEach items="${classificacao}" var="tipoProduto">
-								<option value="<c:out value="${tipoProduto.id}"/>" ${tipoProduto.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoProduto.descricao}"/></option>
+				            <c:forEach items="${classificacao}" var="tipoClassificacao">
+								<option value="<c:out value="${tipoClassificacao.id}"/>" ${tipoClassificacao.descricao eq 'NORMAL'? 'selected="selected"' : '' }><c:out value="${tipoClassificacao.descricao}"/></option>
 							</c:forEach>
 	          			</select>
 

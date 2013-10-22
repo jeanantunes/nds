@@ -356,8 +356,8 @@
 				<td>
 					<select id="comboTipoProduto" style="width:207px;">
 						<option value="0"></option>
-						<c:forEach items="${listaTipoProduto}" var="tipoProduto" >
-							<option value="${tipoProduto.id}">${tipoProduto.descricao}</option>
+						<c:forEach items="${listaTipoProduto}" var="tipoClassificacao" >
+							<option value="${tipoClassificacao.id}">${tipoClassificacao.descricao}</option>
 						</c:forEach>
 					</select>
 				</td>
