@@ -167,13 +167,11 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			}
 		}
 		
-		/*if(mixCotaProduto.getProduto() !=null){
-			mixCotaProdutoDTO.setProdutoId(mixCotaProduto.getProduto().getId());
-			mixCotaProdutoDTO.setNomeProduto(mixCotaProduto.getProduto().getNome());
-			mixCotaProdutoDTO.setCodigoProduto(mixCotaProduto.getProduto().getCodigo());
-            //FIXME refazer... a classificação fica no ProdutoEdicao
-//			mixCotaProdutoDTO.setClassificacaoProduto(mixCotaProduto.getProduto().getTipoClassificacaoProduto().getDescricao());
-		}*/
+		Produto produto = produtoService.obterProdutoPorCodigo(mixCotaProduto.getCodigoICD());
+		
+		mixCotaProdutoDTO.setNomeProduto(produto.getNomeComercial());
+		mixCotaProdutoDTO.setCodigoProduto(mixCotaProduto.getCodigoICD());
+		mixCotaProdutoDTO.setClassificacaoProduto(mixCotaProduto.getTipoClassificacaoProduto().getDescricao());
 		
 		if(mixCotaProduto.getRepartesPDV()!=null){
 			for(RepartePDV repartePDV: mixCotaProduto.getRepartesPDV()){
