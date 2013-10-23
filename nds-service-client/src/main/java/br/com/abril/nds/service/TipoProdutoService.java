@@ -18,14 +18,7 @@ import br.com.abril.nds.vo.PaginacaoVO.Ordenacao;
  *
  */
 public interface TipoProdutoService {
-	
-	/**
-	 * Busca o Tipo Produto pelo id. 
-	 * @param id
-	 * @return o TipoProduto
-	 */
-	public abstract TipoProduto obterPorId(Long id);
-	
+
 	/**
 	 * Remove o Tipo Produto do repositório de dados.
 	 * @param id

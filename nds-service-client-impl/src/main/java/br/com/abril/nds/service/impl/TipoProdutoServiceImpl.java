@@ -41,15 +41,6 @@ public class TipoProdutoServiceImpl implements TipoProdutoService {
 	
 	@Autowired
 	private NCMRepository ncmRepository;
-	
-	/* (non-Javadoc)
-	 * @see br.com.abril.nds.service.TipoProdutoService#obterPorId(java.lang.Long)
-	 */
-	@Override
-	@Transactional(readOnly=true)
-	public TipoProduto obterPorId(Long id) {
-		return this.tipoProdutoRepository.buscarPorId(id);
-	}
 
 	/* (non-Javadoc)
 	 * @see br.com.abril.nds.service.TipoProdutoService#remover(java.lang.Long)

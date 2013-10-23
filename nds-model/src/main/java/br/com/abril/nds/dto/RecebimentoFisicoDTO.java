@@ -80,6 +80,8 @@ public class RecebimentoFisicoDTO implements Serializable {
 	
 	private BigDecimal valorTotalDesconto;
 	
+	private boolean produtoSemCadastro;
+	
 	public RecebimentoFisicoDTO() {}
 	
 	public RecebimentoFisicoDTO(
@@ -88,6 +90,7 @@ public class RecebimentoFisicoDTO implements Serializable {
 			Long idItemRecebimentoFisico,
 			String codigoProduto, 
 			String nomeProduto, 
+			Origem origem,
 			Long edicao,
 			Long idProdutoEdicao,
 			BigDecimal precoCapa,
@@ -125,6 +128,10 @@ public class RecebimentoFisicoDTO implements Serializable {
 		this.tipoDiferenca = tipoDiferenca;
 		this.origemItemNota = origemItemNota;
 		this.percentualDesconto = percentualDesconto;
+		
+		if (origem != null && origem == Origem.PRODUTO_SEM_CADASTRO){
+			this.produtoSemCadastro = true;
+		}
 	}
 
 	public Long getIdItemNota() {
@@ -358,6 +365,14 @@ public class RecebimentoFisicoDTO implements Serializable {
 
 	public void setValorTotalDesconto(BigDecimal valorTotaDesconto) {
 		this.valorTotalDesconto = valorTotaDesconto;
+	}
+
+	public boolean isProdutoSemCadastro() {
+		return produtoSemCadastro;
+	}
+
+	public void setProdutoSemCadastro(boolean produtoSemCadastro) {
+		this.produtoSemCadastro = produtoSemCadastro;
 	}
 
 	

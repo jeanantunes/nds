@@ -437,11 +437,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.addScalar("statusSituacao", StandardBasicTypes.STRING);
 		query.addScalar("temBrinde", StandardBasicTypes.BOOLEAN);
 		
-		try {
-			return query.list();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		return query.list();
 	}
 	
 	@Override
@@ -492,10 +488,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		hql.append("   from PRODUTO_EDICAO pe ");
 		hql.append("   inner join PRODUTO p on pe.PRODUTO_ID=p.ID "); 
-		hql.append("   inner join PRODUTO_FORNECEDOR pf on p.ID=pf.PRODUTO_ID "); 
-		hql.append("   inner join FORNECEDOR f on pf.fornecedores_ID=f.ID ");
-		hql.append("   inner join PESSOA pessoa on f.JURIDICA_ID=pessoa.ID ");
-		hql.append("   left outer join LANCAMENTO l on pe.ID=l.PRODUTO_EDICAO_ID "); 
+		hql.append("   left join PRODUTO_FORNECEDOR pf on p.ID=pf.PRODUTO_ID "); 
+		hql.append("   left join FORNECEDOR f on pf.fornecedores_ID=f.ID ");
+		hql.append("   left join PESSOA pessoa on f.JURIDICA_ID=pessoa.ID ");
+		hql.append("   join LANCAMENTO l on pe.ID=l.PRODUTO_EDICAO_ID "); 
 		hql.append("   where pe.ATIVO = :indAtivo ");
 		hql.append("   and l.id=( ");
 		hql.append("       select ");
@@ -597,11 +593,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		query.setMaxResults(qtdEdicoes);
 		
-		try {
-			return query.list();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		return query.list();
 	}
 	
 	@Override

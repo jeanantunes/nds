@@ -42,6 +42,7 @@ public class RecebimentoFisicoRepositoryImpl extends AbstractRepositoryModel<Rec
 		hql.append(" 	itemRecebimentoFisico.id, 											");
 		hql.append(" 	produto.codigo, 													");
 		hql.append("  	produto.nome, 														");
+		hql.append("  	produtoEdicao.origem, 												");
 		hql.append("  	produtoEdicao.numeroEdicao, 										");
 		hql.append("  	produtoEdicao.id, 													");
 		hql.append(" 	produtoEdicao.precoVenda as precoCapa,							    ");

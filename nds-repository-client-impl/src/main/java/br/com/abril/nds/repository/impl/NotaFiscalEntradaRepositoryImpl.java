@@ -13,6 +13,7 @@ import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.NotaFiscalEntradaFornecedorDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaNotaFiscalDTO.ColunaOrdenacao;
+import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntrada;
 import br.com.abril.nds.model.fiscal.NotaFiscalEntradaFornecedor;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -356,7 +357,11 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 				   
 				   + " diferenca.qtde as sobrasFaltas, " 
 				   + " diferenca.tipoDiferenca as tipoDiferenca, " 
-				   + " itemNotaFiscal.desconto as desconto " 
+				   + " itemNotaFiscal.desconto as desconto, " 
+				   
+				   + " (case when itemNotaFiscal.produtoEdicao.origem = :origemProdutoSemCadastro "
+				   + " then true else false end "
+				   + " ) as produtoSemCadastro "
 				   
 				   + " from ItemNotaFiscalEntrada itemNotaFiscal "
 				   
@@ -373,6 +378,9 @@ public class NotaFiscalEntradaRepositoryImpl extends AbstractRepositoryModel<Not
 
 		query.setResultTransformer(resultTransformer);
 		query.setParameter("idNotaFiscal", idNotaFiscal);
+		
+		//Trac 784
+		query.setParameter("origemProdutoSemCadastro", Origem.PRODUTO_SEM_CADASTRO);
  
 		return query.list();
 	}
