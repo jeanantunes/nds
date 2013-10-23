@@ -153,7 +153,8 @@ public class AnaliseParcialController extends BaseController {
 
     @Post
     public void carregarDetalhesCota(Integer numeroCota, String codigoProduto) {
-        CotaDTO cotaDTO = analiseParcialService.buscarDetalhesCota(numeroCota, codigoProduto);
+        Produto produto = produtoService.obterProdutoPorCodigo(codigoProduto);
+        CotaDTO cotaDTO = analiseParcialService.buscarDetalhesCota(numeroCota, produto.getCodigoICD());
 
         result.use(Results.json()).withoutRoot().from(cotaDTO).recursive().serialize();
     }
