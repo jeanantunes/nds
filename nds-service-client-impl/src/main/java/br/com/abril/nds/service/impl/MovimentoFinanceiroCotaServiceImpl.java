@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.client.vo.ProcessamentoFinanceiroCotaVO;
@@ -706,13 +707,16 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 		movimentoFinanceiroCotaDTO.setFornecedor(fornecedor);
 		movimentoFinanceiroCotaDTO.setMovimentos(movimentosEstoqueCota);
 		
-		for(MovimentoEstoqueCota item:movimentosEstoqueCota){
-			
-			item.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_PROCESSADO);
-			
-			this.movimentoEstoqueCotaRepository.merge(item);
-		}
+		if (movimentosEstoqueCota != null) {
 		
+			for(MovimentoEstoqueCota item:movimentosEstoqueCota){
+				
+				item.setStatusEstoqueFinanceiro(StatusEstoqueFinanceiro.FINANCEIRO_PROCESSADO);
+				
+				this.movimentoEstoqueCotaRepository.merge(item);
+			}
+		}
+			
 		if (movimentosEstorno!=null){
 	        for(MovimentoEstoqueCota item:movimentosEstorno){
 				
@@ -1111,7 +1115,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	 * Gera movimento financeiro para cota na Conferencia/Fechamento de Encalhe
 	 * @param controleConferenciaEncalheCota
 	 */
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@Override
     public void gerarMovimentoFinanceiroCota(Cota cota,
 											 Date dataOperacao,
