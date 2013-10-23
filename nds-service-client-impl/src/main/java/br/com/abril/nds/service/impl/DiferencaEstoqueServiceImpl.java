@@ -1459,7 +1459,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		return mapaRateiosCadastrados;
 	}
 	
-	public void validarProdutoEmRecolhimento(ProdutoEdicao produtoEdicao){
+	public boolean validarProdutoEmRecolhimento(ProdutoEdicao produtoEdicao){
 		
    		if(produtoEdicao == null){
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Produto não encontrada."));
@@ -1482,15 +1482,10 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 								 StatusLancamento.RECOLHIDO,
 								 StatusLancamento.FECHADO).contains(lancamento.getStatus())){
 			
-			StringBuilder mensagem = new StringBuilder();
-			
-			mensagem.append(" Produto [").append(produtoEdicao.getProduto().getCodigo()).append(" - " )
-					.append(produtoEdicao.getProduto().getNomeComercial()).append( " - " )
-					.append(produtoEdicao.getNumeroEdicao()) 
-					.append("] já encontrasse em recolhimento.");
-			
-			throw new ValidacaoException(TipoMensagem.WARNING,mensagem.toString());
+			return false;
 		}
+		
+		return true;
 		
 	}
 	

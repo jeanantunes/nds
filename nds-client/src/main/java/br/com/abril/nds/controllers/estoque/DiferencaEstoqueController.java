@@ -625,7 +625,17 @@ public class DiferencaEstoqueController extends BaseController {
 				produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicaoProduto.toString());
 			}
 			
-			diferencaEstoqueService.validarProdutoEmRecolhimento(produtoEdicao);
+			if (!diferencaEstoqueService.validarProdutoEmRecolhimento(produtoEdicao)){
+				
+				StringBuilder mensagem = new StringBuilder();
+				
+				mensagem.append(" Produto [").append(produtoEdicao.getProduto().getCodigo()).append(" - " )
+						.append(produtoEdicao.getProduto().getNomeComercial()).append( " - " )
+						.append(produtoEdicao.getNumeroEdicao()) 
+						.append("] já encontrasse em recolhimento.");
+				
+				throw new ValidacaoException(TipoMensagem.WARNING,mensagem.toString());
+			}
 		}
 	}
 
@@ -2781,17 +2791,10 @@ public class DiferencaEstoqueController extends BaseController {
 	}
 
 	@Post
-	@SuppressWarnings("unchecked")
 	@Path("/lancamento/rateio/buscarProdutosCotaNota")
 	public void	buscarProdutosCotaNota(Date dateNotaEnvio, Integer numeroCota) {
 		
 		this.validarDadosBuscaProdutosNota(dateNotaEnvio, numeroCota);
-		
-		Set<Diferenca> diferencasSessao = 
-			(Set<Diferenca>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
-		
-		Map<Long, List<RateioCotaVO>> mapaRateioCotas =
-			(Map<Long, List<RateioCotaVO>>) this.httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
 		
 		List<DetalheItemNotaFiscalDTO> itensNotaEnvio = 
 			this.itemNotaEnvioService.obterItensNotaEnvioLancamentoProduto(dateNotaEnvio, numeroCota);
@@ -2801,7 +2804,13 @@ public class DiferencaEstoqueController extends BaseController {
 		DiferencaVO diferencaVO = null;
 
 		for (DetalheItemNotaFiscalDTO detalheItemNota : itensNotaEnvio) {
-		
+			
+			ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicao(detalheItemNota.getIdProdutoEdicao(), false);
+			
+			if (!diferencaEstoqueService.validarProdutoEmRecolhimento(produtoEdicao)){
+				continue;
+			}
+			
 			diferencaVO = new DiferencaVO();
 
 			diferencaVO.setCodigoProduto(detalheItemNota.getCodigoProduto());
