@@ -177,6 +177,7 @@ public class MovimentoEstoqueServiceImpl implements MovimentoEstoqueService {
 
 		Map<String, DescontoDTO> descontos = descontoService.obterDescontosPorLancamentoProdutoEdicaoMap(idLancamento, idProdutoEdicao);
 		
+		//FIXME: Remover essa parte
 		for(String s : descontos.keySet()) {
 			System.out.println("key: "+ s);
 		}

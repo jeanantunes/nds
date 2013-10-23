@@ -30,12 +30,12 @@ public class NdsProfiler {
 		msgRep = new StringBuilder("");			
 		StringBuilder str = new StringBuilder("")
 			.append("Repository: Tempo total da execução do método ")
-			.append(pjp.toShortString())
+			.append(pjp.toShortString().replace("execution(", "").replace("))", ")"))
 			.append(": ")
-			.append(elapsedTime)
-			.append(" milisegundos (")
-			.append(((double) elapsedTime / 1000))
-			.append(" segundos).");
+			.append(String.format("%5d", elapsedTime).toString())
+			.append(" ms (")
+			.append(String.format("%5.3f", ((double) elapsedTime / 1000)))
+			.append(" s).");
 		
 		indexRep = str.toString().lastIndexOf(':');
 		while(indexRep < START_TIME_POSITION_COLON) {
@@ -66,13 +66,13 @@ public class NdsProfiler {
 		long elapsedTime = System.currentTimeMillis() - start;
 		
 		StringBuilder str = new StringBuilder("")
-			.append("Service: Tempo total da execução do método ")
-			.append(pjp.toShortString())
+			.append("Service   : Tempo total da execução do método ")
+			.append(pjp.toShortString().replace("execution(", "").replace("))", ")") )
 			.append(": ")
-			.append(elapsedTime)
-			.append(" milisegundos (")
-			.append(((double) elapsedTime / 1000))
-			.append(" segundos).");
+			.append(String.format("%5d", elapsedTime))
+			.append(" ms (")
+			.append(String.format("%5.3f", ((double) elapsedTime / 1000)))
+			.append(" s).");
 		
 		indexServ = str.toString().lastIndexOf(':');
 		
