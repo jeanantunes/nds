@@ -326,7 +326,7 @@ var mixCotaProdutoController = $.extend(true, {
 		
 		components="";
 		
-		imgAlteracao =  '<a href="javascript:;" id="editar" onclick="mixCotaProdutoController.editarRepartePorPdv(' + cell.id + ',' + cell.reparteMinimo + ','+cell.reparteMaximo + ','+cell.idCota+', \'' + cell.idProduto + '\')" ' +
+		imgAlteracao =  '<a href="javascript:;" id="editar" onclick="mixCotaProdutoController.editarRepartePorPdv(' + cell.id + ',' + cell.reparteMinimo + ','+cell.reparteMaximo + ','+cell.idCota+', \'' + cell.codigoICD + '\')" ' +
 		' style="cursor:pointer;border:0px;margin:5px" title="Reparte por PDV ">' +
 		'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' +
 		'</a>' ;
@@ -449,7 +449,7 @@ var mixCotaProdutoController = $.extend(true, {
 	getActionsGridProduto: function (cell){
 	components="";
 		
-		imgAlteracao =  '<a href="javascript:;" id="editar" onclick="mixCotaProdutoController.editarRepartePorPdv(' + cell.id + ','+cell.reparteMinimo + ',' + cell.reparteMaximo + ','+cell.idCota+', \'' + cell.idProduto + '\')" ' +
+		imgAlteracao =  '<a href="javascript:;" id="editar" onclick="mixCotaProdutoController.editarRepartePorPdv(' + cell.id + ','+cell.reparteMinimo + ',' + cell.reparteMaximo + ','+cell.idCota+', \'' + cell.codigoProduto + '\')" ' +
 		' style="cursor:pointer;border:0px;margin:5px" title="Reparte por PDV ">' +
 		'<img src="'+contextPath+'/images/ico_editar.gif" border="0px"/>' +
 		'</a>' ;

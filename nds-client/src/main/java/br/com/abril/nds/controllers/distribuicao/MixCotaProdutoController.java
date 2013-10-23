@@ -283,7 +283,7 @@ public class MixCotaProdutoController extends BaseController {
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 		
 		List<PdvDTO> listaPDVDTO = mixCotaProdutoService.obterListaPdvPorMix(filtro.getId());
-		Produto produto = produtoService.obterProdutoPorID(filtro.getProdutoId());
+		Produto produto = produtoService.obterProdutoPorCodigo(filtro.getProdutoId().toString());
 		
 		for (PdvDTO pdvDTO : listaPDVDTO) {
 			
