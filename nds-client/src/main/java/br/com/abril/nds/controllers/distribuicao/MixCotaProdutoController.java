@@ -354,12 +354,7 @@ public class MixCotaProdutoController extends BaseController {
 		
 		for (MixCotaProdutoDTO mixCotaProdutoDTO: listaNovosMixProduto) {
 			
-			String codigoICD = null;
-			if(mixCotaProdutoDTO.getCodigoProduto().length()==8){
-				codigoICD = this.produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto()).getCodigoICD();
-			}else{
-				codigoICD = mixCotaProdutoDTO.getCodigoProduto();
-			}
+			String codigoICD = this.produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto()).getCodigoICD();
 			mixCotaProdutoDTO.setCodigoICD(codigoICD);
 			mixCotaProdutoDTO.setCodigoProduto(produtoId);
 		}
@@ -380,14 +375,8 @@ public class MixCotaProdutoController extends BaseController {
 		
 		for (MixCotaProdutoDTO mixCotaProdutoDTO: listaNovosMixCota) {
 			
-			String codigoICD = null;
-			if(mixCotaProdutoDTO.getCodigoProduto().length()==8){
-				codigoICD = this.produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto()).getCodigoICD();
-			}else{
-				codigoICD = mixCotaProdutoDTO.getCodigoProduto();
-			}
+			String codigoICD = this.produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto()).getCodigoICD();
 			mixCotaProdutoDTO.setCodigoICD(codigoICD);
-//			mixCotaProdutoDTO.setNumeroCota(cotaId.toString()); //numeroCota vem da tela
 		}
 		
 		List<String> mensagens = mixCotaProdutoService.adicionarListaMixPorCota(listaNovosMixCota,cotaId);

@@ -616,11 +616,11 @@ var mixCotaProdutoController = $.extend(true, {
 							 $("#tableEdicaoMixCota tbody tr").each(function(idx, linha){
 								 
 								 listaNovosMixCota.push({
-									  name : "listaNovosMixProduto["+idx+"].numeroCota" , 
+									  name : "listaNovosMixCota["+idx+"].numeroCota" , 
 									  value : nrCota
 								 });
 								 listaNovosMixCota.push({
-									  name : "listaNovosMixProduto["+idx+"].nomeCota" , 
+									  name : "listaNovosMixCota["+idx+"].nomeCota" , 
 									  value : nomeCota
 								 });
 								 listaNovosMixCota.push({
