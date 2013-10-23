@@ -361,4 +361,6 @@ public interface LancamentoRepository extends Repository<Lancamento, Long> {
 	Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao,Long idCota);
 	
 	Integer obterProximaSequenciaMatrizPorData(Date dataLancamento);
+	
+	Lancamento obterLancamentoParcialFinal(Long idProdutoEdicao);
 }

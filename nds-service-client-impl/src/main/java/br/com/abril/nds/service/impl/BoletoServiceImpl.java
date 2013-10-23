@@ -805,7 +805,7 @@ public class BoletoServiceImpl implements BoletoService {
 		gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.PAGO_DIVERGENCIA_DATA, boleto,
 						   dataOperacao, nomeArquivo, pagamento, usuario, banco, dataPagamento);
 
-		efetivarBaixaCobranca(boleto, dataOperacao);
+		efetivarBaixaCobranca(boleto, dataPagamento);
 	}
 	
 	private void baixarBoletoValorCorreto(TipoBaixaCobranca tipoBaixaCobranca, PagamentoDTO pagamento,
@@ -1022,30 +1022,12 @@ public class BoletoServiceImpl implements BoletoService {
 		}
 			
 		BigDecimal valorPagamento = BigDecimal.ZERO;
-		BigDecimal valorJuros = BigDecimal.ZERO;
-		BigDecimal valorMulta = BigDecimal.ZERO;
-		BigDecimal valorDesconto = BigDecimal.ZERO;
 		
 		if (pagamento.getValorPagamento() != null) {
 			
 			valorPagamento = pagamento.getValorPagamento();
 		}
-		
-		if (pagamento.getValorJuros() != null) {
-			
-			valorJuros = pagamento.getValorJuros();
-		}
-		
-		if (pagamento.getValorMulta() != null) {
-			
-			valorMulta = pagamento.getValorMulta();
-		}
-		
-		if (pagamento.getValorDesconto() != null) {
-					
-			valorDesconto = pagamento.getValorDesconto();
-		}
-			
+
 		BaixaManual baixaManual = new BaixaManual();
 		
 		baixaManual.setDataBaixa(dataBaixa);
@@ -1064,15 +1046,15 @@ public class BoletoServiceImpl implements BoletoService {
 		return baixaManual;
 	}
 	
-	private void efetivarBaixaCobranca(Boleto boleto, Date dataOperacao) {
+	private void efetivarBaixaCobranca(Boleto boleto, Date dataPagamento) {
 		
-		boleto.setDataPagamento(dataOperacao);
+		boleto.setDataPagamento(dataPagamento);
 		boleto.setStatusCobranca(StatusCobranca.PAGO);
 		boleto.getDivida().setStatus(StatusDivida.QUITADA);
 		
 		boletoRepository.alterar(boleto);
 		
-		this.pagarCobrancasRaizes(boleto.getDivida(), dataOperacao);	
+		this.pagarCobrancasRaizes(boleto.getDivida(), dataPagamento);	
 	}
 
 	private void pagarCobrancasRaizes(Divida divida, Date dataOperacao) {
@@ -1534,17 +1516,18 @@ public class BoletoServiceImpl implements BoletoService {
 	/**
 	 * Método responsável por obter os dados de uma cobrança
 	 * @param nossoNumero
+	 * @param dataPagamento
 	 * @return CobrancaVO: dados da cobrança
 	 */
 	@Override
 	@Transactional(readOnly=true)
-	public CobrancaVO obterDadosBoletoPorNossoNumero(String nossoNumero) {
+	public CobrancaVO obterDadosBoletoPorNossoNumero(String nossoNumero, Date dataPagamento) {
 		
 		CobrancaVO cobrancaVO = null;
 		
 		Boleto boleto = boletoRepository.obterPorNossoNumero(nossoNumero,null);
 		if (boleto!=null){
-		    cobrancaVO = this.cobrancaService.obterDadosCobranca(boleto.getId());
+		    cobrancaVO = this.cobrancaService.obterDadosCobranca(boleto.getId(), dataPagamento);
 		}
 		
 		return cobrancaVO;
