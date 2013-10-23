@@ -863,8 +863,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		
 		Divida novaDivida = null;
 		
-//		HistoricoAcumuloDivida historicoAcumuloDivida = null;
-		
 		MovimentoFinanceiroCota movimentoFinanceiroCota = null;
 		
 		boolean cotaSuspensa = SituacaoCadastro.SUSPENSO.equals(this.obterSitiacaoCadastroCota(cota.getId()));
@@ -888,70 +886,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			novaDivida.setResponsavel(usuario);
 			novaDivida.setOrigemNegociacao(false);
 			
-			/*
-			 * 
-			 * Código comentado por solicitação do Cesar, funcionalidade feita no momento da Baixa Financeira.
-			 * 16/05/2013 - Trac 581
-			 * 
-			BigDecimal valorCalculadoJuros = BigDecimal.ZERO;
-			
-			boolean isAcumulaDivida = 
-					formaCobrancaPrincipal != null && formaCobrancaPrincipal.getPoliticaCobranca() != null ?
-							formaCobrancaPrincipal.getPoliticaCobranca().isAcumulaDivida() : false;
-			
-			//se o distribuidor acumula divida
-			if (isAcumulaDivida) {
-
-				
-				Divida divida = this.dividaRepository.obterDividaParaAcumuloPorCota(cota.getId());
-
-				//caso não tenha divida anterior, ou tenha sido quitada
-				if (divida == null || StatusDivida.QUITADA.equals(divida.getStatus())){
-					divida = novaDivida;
-				} else {
-					
-					ConsolidadoFinanceiroCota consolidadoDivida = divida.getConsolidado();
-					
-					BigDecimal valorMulta = BigDecimal.ZERO;
-					
-					if (consolidadoDivida != null){
-						List<MovimentoFinanceiroCota> movimentoFinanceiroDivida = consolidadoDivida.getMovimentos();
-						for (MovimentoFinanceiroCota m : movimentoFinanceiroDivida){
-							if (((TipoMovimentoFinanceiro) m.getTipoMovimento()).getGrupoMovimentoFinaceiro().equals(GrupoMovimentoFinaceiro.MULTA)){
-								valorMulta = m.getValor();
-								break;
-							}
-						}
-					}
-
-					divida.setAcumulada(true);
-
-					valorCalculadoJuros = 
-							this.cobrancaService.calcularJuros(
-									null,
-									cota.getId(),
-									divida.getValor().abs(),
-									divida.getCobranca().getDataVencimento(),
-									dataOperacao);
-
-					this.dividaRepository.alterar(divida);
-
-					novaDivida.setDividaRaiz(divida);
-					
-					historicoAcumuloDivida = new HistoricoAcumuloDivida();
-					historicoAcumuloDivida.setDataInclusao(new Date());
-					historicoAcumuloDivida.setDivida(divida);
-					historicoAcumuloDivida.setResponsavel(usuario);
-					historicoAcumuloDivida.setStatus(StatusInadimplencia.ATIVA);
-
-					novaDivida.setValor(vlMovFinanTotal.abs().add(valorCalculadoJuros.abs()));
-				}
-
-			} else {
-				consolidadoFinanceiroCota.getTotal().subtract(consolidadoFinanceiroCota.getPendente().abs());
-				consolidadoFinanceiroCota.setPendente(BigDecimal.ZERO);
-			}*/
-
 		} else if (vlMovFinanTotal.compareTo(valorMinino) != 0) {
 
 			movimentoFinanceiroCota = this.gerarPostergado(cota,
@@ -977,11 +911,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			} else {
 				this.dividaRepository.alterar(novaDivida);
 			}
-			
-//			if (historicoAcumuloDivida != null){
-//				this.historicoAcumuloDividaRepository.adicionar(historicoAcumuloDivida);
-//			}
-//			
+						
 			switch (formaCobrancaPrincipal.getTipoCobranca()){
 				case BOLETO:
 					cobranca = new Boleto();

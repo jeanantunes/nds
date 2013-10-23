@@ -138,7 +138,7 @@ public class EstoqueProdutoCotaRepositoryImpl extends AbstractRepositoryModel<Es
 			
 			hql.append(" where es.cota.id not in ( ")
 			   .append(" select distinct hist.divida.cota.id ")
-			   .append(" from HistoricoAcumuloDivida hist ")
+			   .append(" from AcumuloDivida hist ")
 			   .append(" where hist.status != :quitada) ");
 		}
 		
