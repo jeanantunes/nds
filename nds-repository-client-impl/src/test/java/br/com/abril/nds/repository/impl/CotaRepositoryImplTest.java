@@ -63,10 +63,8 @@ import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Divida;
-import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.StatusDivida;
-import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
@@ -103,10 +101,7 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 	private Cota cota;
 	private Cota cotaInativa;
 	private Boleto boleto1;
-	private HistoricoAcumuloDivida histInadimplencia1;
-
 	private Boleto boleto2;
-	private HistoricoAcumuloDivida histInadimplencia2;
 	private Usuario usuario;
 	private PessoaJuridica pessoaJuridica;
 
@@ -245,14 +240,6 @@ public class CotaRepositoryImplTest extends AbstractRepositoryImplTest {
 				new BigDecimal(10.10), TipoBaixaCobranca.MANUAL, "acao",
 				StatusCobranca.NAO_PAGO, cota, bancoHSBC, divida2, 0);
 		save(boleto2);
-
-		histInadimplencia1 = Fixture.criarHistoricoAcumuloDivida(divida1,
-				new Date(), usuario, StatusInadimplencia.ATIVA);
-		save(histInadimplencia1);
-
-		histInadimplencia2 = Fixture.criarHistoricoAcumuloDivida(divida2,
-				new Date(), usuario, StatusInadimplencia.ATIVA);
-		save(histInadimplencia2);
 
 		FormaCobranca formaBoleto = Fixture.formaCobrancaBoleto(true,
 				new BigDecimal(200), true, bancoHSBC, BigDecimal.ONE,

@@ -162,7 +162,6 @@ import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
-import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
@@ -2418,19 +2417,6 @@ public class Fixture {
 		return mfc;
 	}
 
-
-
-	public static HistoricoAcumuloDivida criarHistoricoAcumuloDivida(
-			Divida divida, Date dataInclusao, Usuario usuario,
-			StatusInadimplencia status) {
-		HistoricoAcumuloDivida historicoInadimplencia = new HistoricoAcumuloDivida();
-		historicoInadimplencia.setDivida(divida);
-		historicoInadimplencia.setDataInclusao(dataInclusao);
-		historicoInadimplencia.setResponsavel(usuario);
-		historicoInadimplencia.setStatus(status);
-		return historicoInadimplencia;
-	}
-	
 	public static ConsolidadoFinanceiroCota consolidadoFinanceiroCota(
 			List<MovimentoFinanceiroCota> movimentos, Cota cota, Date data,
 			BigDecimal valorConsignado,BigDecimal valorVendaEncalhe,

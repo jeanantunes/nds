@@ -59,7 +59,6 @@ import br.com.abril.nds.model.financeiro.CobrancaDeposito;
 import br.com.abril.nds.model.financeiro.CobrancaDinheiro;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Divida;
-import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
@@ -259,7 +258,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
                 					   divida,0);
 		save(boleto);		
 		
-		HistoricoAcumuloDivida acumDividaGuilherme2;
 		CobrancaDinheiro cobrancaAcumuloGuilherme2;
 		
 		ConsolidadoFinanceiroCota consolidadoAcumuloGuilherme2 = Fixture
@@ -268,12 +266,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		
 		Divida dividaAcumuladaGuilherme2 = Fixture.divida(consolidadoAcumuloGuilherme2, cotaManoel, Fixture.criarData(2, 2, 2010),
 				usuarioJoao, StatusDivida.QUITADA, new BigDecimal(210),false);
-		
-		
-		acumDividaGuilherme2 = Fixture.criarHistoricoAcumuloDivida(
-				dividaAcumuladaGuilherme2, 
-				Fixture.criarData(1, 1, 2010), usuarioJoao, StatusInadimplencia.QUITADA);
-		
 		
 		
 		
@@ -286,7 +278,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		
 		dividaAcumuladaGuilherme2.getAcumulado().add(divida);
 		
-		save(consolidadoAcumuloGuilherme2,dividaAcumuladaGuilherme2,acumDividaGuilherme2,cobrancaAcumuloGuilherme2);
+		save(consolidadoAcumuloGuilherme2,dividaAcumuladaGuilherme2,cobrancaAcumuloGuilherme2);
 		
 		
 	}
