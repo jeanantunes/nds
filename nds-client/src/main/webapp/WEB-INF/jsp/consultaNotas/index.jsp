@@ -8,6 +8,24 @@ fieldset label
 	width: auto;
 	margin-bottom: 0px !important;
 }
+
+.gridLinhaDestacada {
+  background:#BEBEBE; 
+  font-weight:bold; 
+  color:#fff;
+}
+
+.gridLinhaDestacada:hover {
+   color:#000;
+}
+
+.gridLinhaDestacada a {
+   color:#fff;
+}
+
+.gridLinhaDestacada a:hover {
+   color:#000;
+}
 </style>
 
 </head>

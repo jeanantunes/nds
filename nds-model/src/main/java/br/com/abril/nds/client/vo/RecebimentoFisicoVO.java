@@ -39,6 +39,8 @@ public class RecebimentoFisicoVO implements Serializable {
 	
 	private String edicaoItemNotaPermitida;
 	private String edicaoItemRecFisicoPermitida;
+	
+	private boolean produtoSemCadastro;
 
 	/**
 	 * Obtém codigo
@@ -394,6 +396,14 @@ public class RecebimentoFisicoVO implements Serializable {
 
 	public void setValorTotalDesconto(String valorTotalDesconto) {
 		this.valorTotalDesconto = valorTotalDesconto;
+	}
+
+	public boolean isProdutoSemCadastro() {
+		return produtoSemCadastro;
+	}
+
+	public void setProdutoSemCadastro(boolean produtoSemCadastro) {
+		this.produtoSemCadastro = produtoSemCadastro;
 	}
 	
 	

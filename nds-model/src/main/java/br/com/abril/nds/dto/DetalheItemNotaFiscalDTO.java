@@ -38,6 +38,8 @@ public class DetalheItemNotaFiscalDTO implements Serializable {
 	
 	private BigDecimal desconto;
 	
+	private boolean produtoSemCadastro;
+	
 	public DetalheItemNotaFiscalDTO() { }
 
 	/**
@@ -236,5 +238,12 @@ public class DetalheItemNotaFiscalDTO implements Serializable {
 	public void setDesconto(BigDecimal desconto) {
 		this.desconto = desconto;
 	}
-	
+
+	public boolean isProdutoSemCadastro() {
+		return produtoSemCadastro;
+	}
+
+	public void setProdutoSemCadastro(boolean produtoSemCadastro) {
+		this.produtoSemCadastro = produtoSemCadastro;
+	}
 }
