@@ -533,6 +533,8 @@ public class MatrizLancamentoController extends BaseController {
 		
 		this.matrizLancamentoService.verificaDataOperacao(novaData);
 		
+		this.matrizLancamentoService.validarDiaSemanaDistribuicaoFornecedores(novaData);
+		
 		List<String> listaMensagens = new ArrayList<String>();
 		
 		String produtos = "";
@@ -768,7 +770,7 @@ public class MatrizLancamentoController extends BaseController {
 				new LinkedList<ProdutoLancamentoVO>();
 		
 		listaProdutoBalanceamentoPaginacaoVO = getProdutosLancamentoVO(listaProdutoLancamento);
-						
+
 		TableModel<CellModelKeyValue<ProdutoLancamentoVO>> tm = new TableModel<CellModelKeyValue<ProdutoLancamentoVO>>();
 		List<CellModelKeyValue<ProdutoLancamentoVO>> cells = CellModelKeyValue
 				.toCellModelKeyValue(listaProdutoBalanceamentoPaginacaoVO);

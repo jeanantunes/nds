@@ -482,13 +482,13 @@ public class BaixaFinanceiraController extends BaseController {
 	 */
 	@Post
 	@Path("/buscaBoleto")
-	public void buscaBoleto(String nossoNumero){
+	public void buscaBoleto(String nossoNumero, Date dataPagamento){
 		
 		if ((nossoNumero==null)||("".equals(nossoNumero.trim()))){
 		    throw new ValidacaoException(TipoMensagem.WARNING, "Digite o número da cota ou o número do boleto.");
 		}
 		
-		CobrancaVO cobranca = this.boletoService.obterDadosBoletoPorNossoNumero(nossoNumero);
+		CobrancaVO cobranca = this.boletoService.obterDadosBoletoPorNossoNumero(nossoNumero, dataPagamento);
 		if (cobranca==null) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum registro encontrado.");
 		} 
@@ -511,14 +511,10 @@ public class BaixaFinanceiraController extends BaseController {
 	@Rules(Permissao.ROLE_FINANCEIRO_BAIXA_BANCARIA_ALTERACAO)
 	public void baixaManualBoleto(String nossoNumero, 
 					              String valor,
-					              Date dataVencimento,
+					              Date dataPagamento,
 					              String desconto, 
 					              String juros,
 					              String multa) {        
-        
-		Date dataNovoMovimento =
-			calendarioService.adicionarDiasUteis(
-					this.distribuidorService.obterDataOperacaoDistribuidor(), 1);
 		
         BigDecimal valorConvertido = CurrencyUtil.converterValor(valor);
         BigDecimal jurosConvertido = CurrencyUtil.converterValor(juros);
@@ -533,7 +529,7 @@ public class BaixaFinanceiraController extends BaseController {
         }
 
         PagamentoDTO pagamento = new PagamentoDTO();
-		pagamento.setDataPagamento(dataNovoMovimento);
+		pagamento.setDataPagamento(dataPagamento);
 		pagamento.setNossoNumero(nossoNumero);
 		pagamento.setNumeroRegistro(null);
 		pagamento.setValorPagamento(valorConvertido);
@@ -543,7 +539,7 @@ public class BaixaFinanceiraController extends BaseController {
 		
 		boletoService.baixarBoleto(TipoBaixaCobranca.MANUAL, pagamento, getUsuarioLogado(),
 								   null, 
-								   dataNovoMovimento, null, null, new Date());
+								   dataPagamento, null, null, dataPagamento);
 			
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Boleto "+nossoNumero+" baixado com sucesso."),Constantes.PARAM_MSGS).recursive().serialize();
 	}

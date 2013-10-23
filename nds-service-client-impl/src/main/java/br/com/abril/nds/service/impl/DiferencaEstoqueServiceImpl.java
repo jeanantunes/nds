@@ -42,6 +42,8 @@ import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
@@ -61,11 +63,13 @@ import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.LancamentoDiferencaRepository;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.RateioDiferencaRepository;
@@ -85,6 +89,7 @@ import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.JasperUtil;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -155,6 +160,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	
 	@Autowired
 	private EstoqueProdutoService estoqueProdutoService;
+	
+	@Autowired
+	private LancamentoRepository lancamentoRepository;
 	
 	
 	@Transactional(readOnly = true)
@@ -247,7 +255,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		return diferenca;
 	}
 
-	private Diferenca processarDiferenca(Diferenca diferenca, TipoEstoque tipoEstoque,StatusConfirmacao statusConfirmacao) {
+	private Diferenca processarDiferenca(Diferenca diferenca, TipoEstoque tipoEstoque, StatusConfirmacao statusConfirmacao) {
 		
 		diferenca.setStatusConfirmacao(statusConfirmacao);
 		diferenca.setTipoDirecionamento(TipoDirecionamentoDiferenca.ESTOQUE);
@@ -443,21 +451,16 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			
 			Lancamento ultimoLancamento = this.obterUltimoLancamentoProduto(diferenca);
 			
-			boolean produtoRecolhido = 
-				this.verificarRecolhimentoProdutoEdicao(
-					ultimoLancamento, diferenca.getDataMovimento());
+			boolean produtoRecolhido = this.verificarRecolhimentoProdutoEdicao(ultimoLancamento, diferenca.getDataMovimento());
 			
 			diferenca.setStatusConfirmacao(StatusConfirmacao.CONFIRMADO);
 			
 			List<MovimentoEstoqueCota> listaMovimentosEstoqueCota = null;
 			MovimentoEstoque movimentoEstoque = null;
 			
-			boolean validarTransfEstoqueDiferenca = 
-				TipoEstoque.LANCAMENTO.equals(diferenca.getTipoEstoque());
+			boolean validarTransfEstoqueDiferenca = TipoEstoque.LANCAMENTO.equals(diferenca.getTipoEstoque());
 			
 			if (diferenca.getRateios() != null && !diferenca.getRateios().isEmpty()) {
-				
-				statusAprovacao = StatusAprovacao.APROVADO;
 				
 				listaMovimentosEstoqueCota = new ArrayList<MovimentoEstoqueCota>();
 				
@@ -474,8 +477,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 					
 					if (produtoRecolhido) {
 						
-						this.lancarDebitoCreditoCota(
-							diferenca, rateioDiferenca, movimentoEstoqueCota, usuario);
+						this.lancarDebitoCreditoCota(diferenca, rateioDiferenca, movimentoEstoqueCota, usuario);
 					}
 					
 					listaMovimentosEstoqueCota.add(movimentoEstoqueCota);
@@ -487,7 +489,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 							ultimoLancamento.getDataLancamentoDistribuidor(), origem);
 				
 				//Verifica se ha direcionamento de produtos para o estoque do distribuidor
-				if (diferenca.getQtde().compareTo(qntTotalRateio)>0) {
+				if (diferenca.getQtde().compareTo(qntTotalRateio) > 0) {
 					
 					this.direcionarItensEstoque(
 						diferenca, diferenca.getQtde().subtract(qntTotalRateio), 
@@ -509,14 +511,21 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 				statusAprovacao = obterStatusLancamento(diferenca);
 			}
 			
-			LancamentoDiferenca lancamentoDiferenca =  
-				this.gerarLancamentoDiferenca(statusAprovacao, movimentoEstoque, listaMovimentosEstoqueCota);
+			LancamentoDiferenca lancamentoDiferenca = this.gerarLancamentoDiferenca(statusAprovacao, movimentoEstoque, listaMovimentosEstoqueCota);
 			
 			diferenca.setLancamentoDiferenca(lancamentoDiferenca);
 			
+			//TODO: Verificar com negocio a obrigatoriedade de ter Recebimento Fisico para lancar Diferenca
+			ItemRecebimentoFisico itemRecebFisico = null;
+			List<ItemRecebimentoFisico> itensRecebFisico = recebimentoFisicoRepository.obterItensRecebimentoFisicoDoProduto(diferenca.getProdutoEdicao().getId());
+			if(itensRecebFisico != null && !itensRecebFisico.isEmpty()) {
+				itemRecebFisico = itensRecebFisico.get(0);
+				diferenca.setItemRecebimentoFisico(itemRecebFisico);
+			}
+			
 			diferenca = this.diferencaEstoqueRepository.merge(diferenca);
 
-			this.processarTransferenciaEstoque(diferenca,usuario.getId(), origem);
+			this.processarTransferenciaEstoque(diferenca, usuario.getId(), origem);
 
 			diferencaEstoqueRepository.flush();
 		}
@@ -1054,7 +1063,11 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		if (this.foraDoPrazoDoGFS(diferenca)) {
 			
-			statusIntegracao = StatusIntegracao.FORA_DO_PRAZO;
+			if(origem != null && origem.equals(Origem.TRANSFERENCIA_LANCAMENTO_FALTA_E_SOBRA_FECHAMENTO_ENCALHE)) {
+				statusIntegracao = StatusIntegracao.ENCALHE;
+			} else {
+				statusIntegracao = StatusIntegracao.FORA_DO_PRAZO;
+			}
 			
 			grupoMovimentoEstoque = obterGrupoMovimentoEstoqueForaDoPrazo(tipoDiferenca);
 			
@@ -1104,7 +1117,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			
 		} else {
 			
-			if (tipoDiferenca.isFalta()) {
+			if (tipoDiferenca.isFalta() || tipoDiferenca.isPerda()) {
 				
 				grupoMovimentoEstoque = GrupoMovimentoEstoque.PERDA_EM;
 				
@@ -1135,7 +1148,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 		return this.movimentoEstoqueService.gerarMovimentoCotaDiferenca(
 				dataLancamento, diferenca.getProdutoEdicao().getId(), rateioDiferenca.getCota().getId(),
-					idUsuario, rateioDiferenca.getQtde(), tipoMovimentoEstoqueCota,estudoCotaId,isAprovacaoAutomatica);
+					idUsuario, rateioDiferenca.getQtde(), tipoMovimentoEstoqueCota, estudoCotaId, isAprovacaoAutomatica);
 	}
 	
 	/*
@@ -1444,6 +1457,41 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		mapaRateiosCadastrados.put(id, listaRateiosCadastrados);
 		
 		return mapaRateiosCadastrados;
+	}
+	
+	public void validarProdutoEmRecolhimento(ProdutoEdicao produtoEdicao){
+		
+   		if(produtoEdicao == null){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Produto não encontrada."));
+		}
+		
+		Lancamento lancamento = null;
+		
+		if(produtoEdicao.isParcial()){
+			
+			lancamento = lancamentoRepository.obterLancamentoParcialFinal(produtoEdicao.getId());
+			
+		}else{
+			
+			lancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId());
+		}
+		
+		if(lancamento!= null 
+				&& Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO,
+								 StatusLancamento.EM_RECOLHIMENTO,
+								 StatusLancamento.RECOLHIDO,
+								 StatusLancamento.FECHADO).contains(lancamento.getStatus())){
+			
+			StringBuilder mensagem = new StringBuilder();
+			
+			mensagem.append(" Produto [").append(produtoEdicao.getProduto().getCodigo()).append(" - " )
+					.append(produtoEdicao.getProduto().getNomeComercial()).append( " - " )
+					.append(produtoEdicao.getNumeroEdicao()) 
+					.append("] já encontrasse em recolhimento.");
+			
+			throw new ValidacaoException(TipoMensagem.WARNING,mensagem.toString());
+		}
+		
 	}
 	
 }

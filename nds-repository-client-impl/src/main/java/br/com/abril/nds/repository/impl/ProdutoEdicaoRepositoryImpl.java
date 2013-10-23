@@ -417,7 +417,31 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		.append(" SELECT pe.id as id, p.codigo as codigoProduto, p.NOME_COMERCIAL as nomeComercial, ")
 		.append("        pe.NUMERO_EDICAO as numeroEdicao, coalesce(pessoa.nome, pessoa.RAZAO_SOCIAL) as nomeFornecedor, ")
 		.append("        l.TIPO_LANCAMENTO as statusLancamento, ") 
-		.append("		 case when (select max(fp.lancamento_id) from FURO_PRODUTO fp where (fp.lancamento_id = l.id and fp.produto_edicao_id = pe.id)) is not null then 'FURO' else l.status end as statusSituacao, ") //(br.com.abril.nds.model.planejamento.StatusLancamento.FURO)		
+		
+		/*
+		 * Obtem situcao da edicao 
+		 * 
+		 * (Caso tenha furo e a data_expedicao > data_furo) ou não tenha furo obtem o status da lancamento
+		 * 	
+		 * 	Caso contrário é um furo
+		 */
+		.append("		 case ")
+		.append("		 	when  ")
+		.append("		 		(select max(fp.lancamento_id)  from FURO_PRODUTO fp  where (fp.lancamento_id = l.id  and fp.produto_edicao_id = pe.id)) is not null then   ")
+		.append("		 			case when  ")
+		.append("		 				((select data_expedicao from expedicao where id = l.expedicao_id) >  ")
+		.append("		 				(select fur_pro.data from FURO_PRODUTO fur_pro where fur_pro.lancamento_id = (select max(fp.lancamento_id)   ")
+		.append("		 																				from FURO_PRODUTO fp   ")
+		.append("		 																				where (fp.lancamento_id = l.id  and fp.produto_edicao_id = pe.id)) ")
+		.append("		 				)) then ")
+		.append("		 				l.status	 ")
+		.append("		 			else ")
+		.append("		 				'FURO' ")
+		.append("		 			end ")
+		.append("		 	else l.status  ")
+		.append("		 end as statusSituacao, ")		
+		
+		
 		.append("        pe.possui_brinde as temBrinde ");
 		
 		// Corpo da consulta com os filtros:

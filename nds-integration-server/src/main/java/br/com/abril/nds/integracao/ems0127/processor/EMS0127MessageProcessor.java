@@ -160,7 +160,7 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 			.append("where ce.tipoStatus in (:status) ")
 			.append("and ce.codigoDistribuidor = :distribuidor ")
 			.append("and ce.indiceCEProvisoria = :nao ")
-			.append("and ce.dataAnoReferencia = 2013");
+			.append("and ce.dataAnoReferencia > 2012");
 		
 		Query query = this.getSessionIcd().createQuery(hql.toString());
 		

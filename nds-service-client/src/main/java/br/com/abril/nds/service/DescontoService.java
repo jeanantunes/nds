@@ -161,5 +161,16 @@ public interface DescontoService {
 	 * @return
 	 */
 	Map<String, DescontoDTO> obterDescontosPorLancamentoProdutoEdicaoMap(Long lancamentoId, Long produtoEdicaoId);
+	
+	/**
+	 * @param descontos
+	 * @param cotaId
+	 * @param fornecedorId
+	 * @param produtoId
+	 * @param produtoEdicaoId
+	 * @return
+	 * @throws Exception
+	 */
+	DescontoDTO obterDescontoPor(Map<String, DescontoDTO> descontos, long cotaId, long fornecedorId, long produtoId, long produtoEdicaoId) throws Exception;
 
 }

@@ -218,8 +218,16 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		lancamento.setUsuario(usuario);
 		lancamento.setExpedicao(null);
 		
+		
+		/*
+		 * Alterado data do furo p/ inserir com data do sistema
+		 * 
+		 * A data do furo deve estar de acordo com a expedição devido a possibilidade de data do sistema defasada.
+		 */
+		Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
+		
 		FuroProduto furoProduto = new FuroProduto();
-		furoProduto.setData(new Date());
+		furoProduto.setData(dataOperacao);
 		furoProduto.setLancamento(lancamento);
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
 		produtoEdicao.setId(idProdutoEdicao);
