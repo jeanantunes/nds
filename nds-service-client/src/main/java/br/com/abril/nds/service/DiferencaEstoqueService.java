@@ -141,6 +141,6 @@ public interface DiferencaEstoqueService {
 			Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados, Long id,
 			RateioCotaVO rateioCotaVO);
 	
-	void validarProdutoEmRecolhimento(ProdutoEdicao produtoEdicao);
+	boolean validarProdutoEmRecolhimento(ProdutoEdicao produtoEdicao);
 	
 }
