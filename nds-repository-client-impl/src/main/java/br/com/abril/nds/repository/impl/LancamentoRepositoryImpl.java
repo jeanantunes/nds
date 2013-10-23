@@ -801,16 +801,7 @@ public class LancamentoRepositoryImpl extends
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		query.setMaxResults(1);
 		
-		Lancamento lancamento = (Lancamento) query.uniqueResult();
-		
-		if(lancamento != null && lancamento.getProdutoEdicao() != null) {
-			FuroProduto fp = furoProdutoRepository.obterFuroProdutoPor(lancamento.getId(), lancamento.getProdutoEdicao().getId());
-			if(fp != null) {
-				lancamento.setStatus(StatusLancamento.FURO);
-			}
-		}
-		
-		return (lancamento!=null) ? (Lancamento) lancamento : null ;		
+		return  (Lancamento) query.uniqueResult();
 	}
 
 	@Override
@@ -1989,4 +1980,32 @@ public class LancamentoRepositoryImpl extends
 		return ++sequenciaMatriz;
 	}
 	
+	public Lancamento obterLancamentoParcialFinal(Long idProdutoEdicao){
+		
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select lancamento  ");			
+		
+		hql.append(" from LancamentoParcial lancamentoParcial 			");
+		
+		hql.append(" inner join lancamentoParcial.periodos as periodo 	");
+		
+		hql.append(" inner join periodo.lancamento as lancamento 		");
+		
+		hql.append(" where ");
+
+		hql.append(" lancamento.produtoEdicao.id = :idProdutoEdicao  ");
+		
+		hql.append(" and periodo.tipo =:tipoLancamento ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		query.setParameter("tipoLancamento", TipoLancamentoParcial.FINAL);
+		
+		query.setMaxResults(1);
+		
+		return (Lancamento) query.uniqueResult();
+	}	
 }

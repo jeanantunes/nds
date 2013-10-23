@@ -951,11 +951,14 @@ var lancamentoNovoController = $.extend(true, {
 		
 		lancamentoNovoController.limparCotas();
 		
+		var direcionadoParaEstoque = $('#paraEstoque', lancamentoNovoController.workspace).attr('checked') ? true : false;
+		
 		$.postJSON(
 			contextPath + "/estoque/diferenca/lancamento/rateio/buscarPrecoProdutoEdicao",
 			[
 			 	{name: "codigoProduto", value: $("#codigoProdutoInput", lancamentoNovoController.workspace).val()},
-			 	{name: "numeroEdicao", value: $("#edicaoProdutoInput", lancamentoNovoController.workspace).val()}
+			 	{name: "numeroEdicao", value: $("#edicaoProdutoInput", lancamentoNovoController.workspace).val()},
+			 	{name: "direcionadoParaEstoque", value:direcionadoParaEstoque}
 			],
 			function(result) {
 				$("#precoCapaProduto", lancamentoNovoController.workspace).text(result[0]);
@@ -972,7 +975,12 @@ var lancamentoNovoController = $.extend(true, {
 				}
 				
 			},
-			null,
+			function (){
+				$("#edicaoProdutoInput", lancamentoNovoController.workspace).val("");
+				$("#precoCapaProduto", lancamentoNovoController.workspace).text("");
+				$("#pacotePadrao", lancamentoNovoController.workspace).text("");
+				$("#idProdutoEdicao", lancamentoNovoController.workspace).val("");
+			},
 			true,
 			''
 		);
@@ -1183,12 +1191,12 @@ var lancamentoNovoController = $.extend(true, {
 	
 	tratarVisualizacaoOpcaoEstoque:function(value){
 
-		if (value == 'FALTA_DE') {
+		if (value == 'FALTA_DE' || value == 'SOBRA_DE' ) {
 			$(".view-estouque",this.workspace).show();
 			$(".view-cota", this.workspace).hide();
 			$("#paraEstoque", this.workspace).check();
 		} else {
-			$(".view-cota", this.workspace).show()
+			$(".view-cota", this.workspace).show();
 			$("#paraEstoque", this.workspace).check();
 		}
 	},
