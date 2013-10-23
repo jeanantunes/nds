@@ -14,6 +14,7 @@ import java.util.Set;
 import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.enums.TipoMensagem;
@@ -225,7 +226,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	 * @throws GerarCobrancaValidacaoException
 	 */
 	@Override
-	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
+	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class, propagation = Propagation.REQUIRES_NEW)
 	public void gerarCobranca(Long idCota, 
 			                  Long idUsuario, 
 			                  Map<String, Boolean> setNossoNumero)
@@ -911,7 +912,9 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			} else {
 				this.dividaRepository.alterar(novaDivida);
 			}
-						
+			
+			this.dividaRepository.flush();
+			
 			switch (formaCobrancaPrincipal.getTipoCobranca()){
 				case BOLETO:
 					cobranca = new Boleto();
@@ -1110,7 +1113,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		}
 	}
 	
-	@Transactional
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
 	@Override
 	public void cancelarDividaCobranca(Long idMovimentoFinanceiroCota, Long idCota, Date dataOperacao, boolean excluiFinanceiro) {
 		
