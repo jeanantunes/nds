@@ -311,7 +311,7 @@ public class ContaCorrenteCotaVO implements Serializable {
 	public void setSaldo(BigDecimal saldo) {
 		
 		if(saldo == null) {
-			this.saldo = BigDecimal.ZERO;
+			saldo = BigDecimal.ZERO;
 		}
 		
 		this.saldo = saldo.setScale(4, RoundingMode.HALF_EVEN);

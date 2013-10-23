@@ -906,10 +906,8 @@ public class CobrancaServiceImpl implements CobrancaService {
 	
 		Date dataVencimento = obterProximaDataVencimentoParaCota(cobrancaTotal.getCota().getId());
 		
-		valorExcedentePagamentoCobranca.setScale(2, RoundingMode.HALF_EVEN);
-		
 		gerarMovimentoFinanceiroCota(
-				baixaManualTotal, cobrancaTotal.getCota(), pagamento.getUsuario(), valorExcedentePagamentoCobranca, 
+				baixaManualTotal, cobrancaTotal.getCota(), pagamento.getUsuario(), valorExcedentePagamentoCobranca.setScale(2, RoundingMode.HALF_EVEN), 
 				pagamento.getDataPagamento(), dataVencimento,
 				pagamento.getObservacoes(), GrupoMovimentoFinaceiro.CREDITO,
 				cobrancaTotal.getFornecedor()
