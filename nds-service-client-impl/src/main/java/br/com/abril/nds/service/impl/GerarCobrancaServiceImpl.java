@@ -753,7 +753,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 		consolidadoFinanceiroCota.setVendaEncalhe(vlMovFinanVendaEncalhe.abs());
 		consolidadoFinanceiroCota.setValorPostergado(vlMovPostergado);
 		consolidadoFinanceiroCota.setConsignado(vlMovConsignado.abs());
-		consolidadoFinanceiroCota.setPendente(vlMovPendente.abs());
+		consolidadoFinanceiroCota.setPendente(vlMovPendente);
 		
 		//insere postergado pois não encontrou forma de cobrança ou parametros do método exigem postergação
 		if (formaCobrancaPrincipal == null || postergarDividas==true){
