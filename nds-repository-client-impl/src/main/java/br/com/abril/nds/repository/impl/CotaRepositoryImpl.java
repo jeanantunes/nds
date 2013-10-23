@@ -2939,8 +2939,9 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         sql.append("   left join ranking_faturamento rkf on rkf.cota_id = cota.id and rkf.data_geracao_rank = (select max(data_geracao_rank) from ranking_faturamento)");
         sql.append("   left join mix_cota_produto mix on mix.id_cota = cota.id and p.id = mix.id_produto");
         sql.append("   left join usuario u on u.id = mix.id_usuario ");
-        sql.append("   left join fixacao_reparte fx on fx.id_cota = cota.id and p.id = fx.id_produto ");
-        sql.append(" where cota.numero_cota = :numeroCota ");
+        sql.append("   left join fixacao_reparte fx on fx.id_cota = cota.id ");
+        sql.append("   and p.id in (select p.id from fixacao_reparte fr join produto p on fr.CODIGO_ICD = p.CODIGO_ICD group by p.ID) ");
+        sql.append(" where cota.numero_cota = :numeroCota group by cota.NUMERO_COTA ");
 
         SQLQuery query = getSession().createSQLQuery(sql.toString());
 
@@ -2972,7 +2973,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	sql.append("  join produto p ON p.id = :produto_id ");
 	sql.append("  join produto_edicao pe ON pe.produto_id = p.id and pe.numero_edicao = :numero_edicao ");
 	sql.append("  left join mix_cota_produto mcp ON mcp.id_cota = c.id and mcp.id_produto = p.id ");
-	sql.append("  left join fixacao_reparte fr ON fr.id_cota = c.id and fr.id_produto = p.id ");
+	sql.append("  left join fixacao_reparte fr ON fr.id_cota = c.id ");
+	sql.append("   and p.id in (select p.id from fixacao_reparte fr join produto p on fr.CODIGO_ICD = p.CODIGO_ICD group by p.ID) ");
 	sql.append("   and ((pe.numero_edicao between fr.ed_inicial and fr.ed_final) ");
 	sql.append("    or (coalesce(fr.ed_inicial, 0) = 0 and coalesce(fr.ed_final, 0) = 0 ");
 	sql.append("   and coalesce(fr.ed_atendidas, 0) < coalesce(fr.qtde_edicoes, 0))) ");
