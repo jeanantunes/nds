@@ -51,7 +51,7 @@ public interface BoletoService {
 
 	void enviarBoletoEmail(String nossoNumero);
 	
-	CobrancaVO obterDadosBoletoPorNossoNumero(String nossoNumero);
+	CobrancaVO obterDadosBoletoPorNossoNumero(String nossoNumero, Date dataPagamento);
 	
 	byte[] gerarImpressaoBoletos(List<String> nossoNumeros) throws IOException, ValidationException;
 	

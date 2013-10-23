@@ -21,6 +21,14 @@ var baixaFinanceiraController = $.extend(true, {
 			buttonImageOnly : true,
 			dateFormat : 'dd/mm/yy', 
 		});
+		
+		$("#dtPagamentoManualBoleto", baixaFinanceiraController.workspace).datepicker({
+			showOn : "button",
+			buttonImage : contextPath + "/images/calendar.gif",
+			buttonImageOnly : true,
+			dateFormat : 'dd/mm/yy', 
+		});
+		
 		this.initGradeDividas();
 		this.initGridDadosDivida();
 
@@ -908,8 +916,13 @@ var baixaFinanceiraController = $.extend(true, {
 			
 			else{
 				
+				$("#dtPagamentoManualBoleto", baixaFinanceiraController.workspace).val('');
+				
 				/*BAIXA INDIVIDUAL DE COBRANÇA(BOLETO)*/
-				var data = [{name: 'nossoNumero', value: nossoNumero}];
+				var data = [
+				   {name: 'nossoNumero', value: nossoNumero}
+				];
+				
 				$.postJSON(contextPath + "/financeiro/baixa/buscaBoleto",
 						   data,
 						   baixaFinanceiraController.sucessCallbackPesquisarBoleto, 
@@ -917,6 +930,25 @@ var baixaFinanceiraController = $.extend(true, {
 				
 			}
 		}
+	},
+	
+	atualizarDadosCobrancaManualBoleto : function() {
+		
+		var nossoNumero = $("#filtroNossoNumero", baixaFinanceiraController.workspace).val();
+		
+		var dataPagamento = 
+			$("#dtPagamentoManualBoleto", baixaFinanceiraController.workspace).val();
+		
+		/*BAIXA INDIVIDUAL DE COBRANÇA(BOLETO)*/
+		var data = [
+		   {name: 'nossoNumero', value: nossoNumero},
+		   {name: 'dataPagamento', value: dataPagamento}
+		];
+		
+		$.postJSON(contextPath + "/financeiro/baixa/buscaBoleto",
+				   data,
+				   baixaFinanceiraController.sucessCallbackPesquisarBoleto, 
+				   baixaFinanceiraController.errorCallbackPesquisarBoleto);
 	},
 	
 	sucessCallbackPesquisarBoleto : function(resultado) {
@@ -929,6 +961,7 @@ var baixaFinanceiraController = $.extend(true, {
 		
 		$("#dividaTotal", baixaFinanceiraController.workspace).html(resultado.dividaTotal);
 		$("#dataPagamento", baixaFinanceiraController.workspace).html(resultado.dataPagamento);
+		$("#dtPagamentoManualBoleto", baixaFinanceiraController.workspace).val(resultado.dataPagamento);
 		
 		$("#desconto", baixaFinanceiraController.workspace).val(resultado.desconto);
 		$("#juros", baixaFinanceiraController.workspace).val(resultado.juros);
@@ -952,7 +985,7 @@ var baixaFinanceiraController = $.extend(true, {
     baixaPorNossoNumero : function() {
 		
     	var param ={ nossoNumero : $("#nossoNumero", baixaFinanceiraController.workspace).html(),
-    			dataVencimento :$("#dataVencimento", baixaFinanceiraController.workspace).html(),
+    			dataPagamento :$("#dtPagamentoManualBoleto", baixaFinanceiraController.workspace).val(),
     			valor : $("#valorBoletoHidden", baixaFinanceiraController.workspace).val(),
     			desconto : $("#desconto", baixaFinanceiraController.workspace).val(),
     			juros : $("#juros", baixaFinanceiraController.workspace).val(),
