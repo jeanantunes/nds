@@ -49,6 +49,7 @@ var analiseParcialController = $.extend(true, {
             modal : true,
             buttons : {
                 "Base Original" : function() {
+                    $(this).dialog("close");
                     analiseParcialController.restauraBaseInicial();
                 },
                 "Confirmar" : function() {

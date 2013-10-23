@@ -2937,11 +2937,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
         sql.append("   left join produto p on p.codigo = :codigoProduto");
         sql.append("   left join ranking_segmento rks on rks.cota_id = cota.id and p.tipo_segmento_produto_id = rks.tipo_segmento_produto_id and rks.data_geracao_rank = (select max(data_geracao_rank) from ranking_segmento)");
         sql.append("   left join ranking_faturamento rkf on rkf.cota_id = cota.id and rkf.data_geracao_rank = (select max(data_geracao_rank) from ranking_faturamento)");
-        sql.append("   left join mix_cota_produto mix on mix.id_cota = cota.id and p.id = mix.id_produto");
+        sql.append("   left join mix_cota_produto mix on mix.id_cota = cota.id and p.codigo_icd = mix.codigo_icd");
         sql.append("   left join usuario u on u.id = mix.id_usuario ");
-        sql.append("   left join fixacao_reparte fx on fx.id_cota = cota.id ");
-        sql.append("   and p.id in (select p.id from fixacao_reparte fr join produto p on fr.CODIGO_ICD = p.CODIGO_ICD group by p.ID) ");
-        sql.append(" where cota.numero_cota = :numeroCota group by cota.NUMERO_COTA ");
+        sql.append("   left join fixacao_reparte fx on fx.id_cota = cota.id and p.codigo_icd = fx.codigo_icd ");
+        sql.append(" where cota.numero_cota = :numeroCota ");
 
         SQLQuery query = getSession().createSQLQuery(sql.toString());
 
@@ -2972,9 +2971,8 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 	sql.append("  from cota c ");
 	sql.append("  join produto p ON p.id = :produto_id ");
 	sql.append("  join produto_edicao pe ON pe.produto_id = p.id and pe.numero_edicao = :numero_edicao ");
-	sql.append("  left join mix_cota_produto mcp ON mcp.id_cota = c.id and mcp.id_produto = p.id ");
-	sql.append("  left join fixacao_reparte fr ON fr.id_cota = c.id ");
-	sql.append("   and p.id in (select p.id from fixacao_reparte fr join produto p on fr.CODIGO_ICD = p.CODIGO_ICD group by p.ID) ");
+	sql.append("  left join mix_cota_produto mcp ON mcp.id_cota = c.id and mcp.codigo_icd = p.codigo_icd ");
+	sql.append("  left join fixacao_reparte fr ON fr.id_cota = c.id and fr.codigo_icd = p.codigo_icd ");
 	sql.append("   and ((pe.numero_edicao between fr.ed_inicial and fr.ed_final) ");
 	sql.append("    or (coalesce(fr.ed_inicial, 0) = 0 and coalesce(fr.ed_final, 0) = 0 ");
 	sql.append("   and coalesce(fr.ed_atendidas, 0) < coalesce(fr.qtde_edicoes, 0))) ");

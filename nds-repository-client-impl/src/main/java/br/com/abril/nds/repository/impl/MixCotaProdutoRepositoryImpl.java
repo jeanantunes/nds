@@ -181,7 +181,7 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" mix_cota_produto.REPARTE_MAX as reparteMaximo, ")
 		.append(" mix_cota_produto.REPARTE_MIN as reparteMinimo, ")  
 		.append(" mix_cota_produto.ID_COTA as idCota, ")
-		.append(" mix_cota_produto.ID_PRODUTO as idProduto, ")
+//		.append(" mix_cota_produto.ID_PRODUTO as idProduto, ")
 		.append(" (select count(pdv.id) from pdv where cota.id = pdv.cota_id) as qtdPdv, ") 
 		.append(" usuario.login as usuario, ")
 		.append(" tipo_classificacao_produto.descricao as classificacaoProduto ")
@@ -315,9 +315,9 @@ public class MixCotaProdutoRepositoryImpl extends
 
 		hql.append("")
 				.append(" delete from mix_cota_produto   ")
-				.append(" where mix_cota_produto.ID_PRODUTO in")
-				.append(" (select  id_produto from mix_cota_produto ")
-				.append(" join produto on produto.ID = mix_cota_produto.ID_PRODUTO  ")
+				.append(" where mix_cota_produto.codigo_icd in")
+				.append(" (select codigo_icd from mix_cota_produto ")
+				.append(" join produto on produto.codigo_icd = mix_cota_produto.codigo_icd  ")
 				.append(" join produto_edicao on produto_edicao.PRODUTO_ID = produto.ID ")
 				.append(" join lancamento on lancamento.PRODUTO_EDICAO_ID = produto_edicao.ID ")
 				.append(" where lancamento.DATA_CRIACAO between date_format(DATE_SUB(CURDATE(),INTERVAL 180 DAY),'%d/%m/%Y')  and CURDATE() ");
