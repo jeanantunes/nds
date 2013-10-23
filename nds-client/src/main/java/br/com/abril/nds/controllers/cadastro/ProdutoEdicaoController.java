@@ -216,13 +216,18 @@ public class ProdutoEdicaoController extends BaseController {
 	@Post
 	@Path("/carregarDadosProdutoEdicao.json")
 	@Rules(Permissao.ROLE_CADASTRO_EDICAO_ALTERACAO)
-	public void carregarDadosProdutoEdicao(FiltroProdutoDTO filtro, String idProdutoEdicao) {
+	public void carregarDadosProdutoEdicao(FiltroProdutoDTO filtro, String idProdutoEdicao, String situacaoProdutoEdicao) {
 		
 		if (filtro.getCodigo() == null || filtro.getCodigo().trim().isEmpty()) {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Por favor, escolha um produto para adicionar a Edição!");
 		}
 		
 		ProdutoEdicaoDTO dto = produtoEdicaoService.obterProdutoEdicaoDTO(filtro.getCodigo(), idProdutoEdicao);
+		
+		/*
+		 * A situacao da edicao vem da query principal devido a regra de furo
+		 */
+		dto.setStatusSituacao(situacaoProdutoEdicao);
 		
 		this.result.use(Results.json()).from(dto, "result").serialize();
 	}

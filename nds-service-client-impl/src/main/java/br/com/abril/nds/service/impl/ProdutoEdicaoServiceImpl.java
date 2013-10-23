@@ -1057,7 +1057,12 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 
 		if (uLancamento != null) {
 			
-			dto.setSituacaoLancamento(uLancamento.getStatus());
+			/*
+			 * A situacao vem da query principal devido as regras de furo 
+			 * 
+			 * dto.setSituacaoLancamento(uLancamento.getStatus());
+			 */
+			
 			dto.setTipoLancamento(uLancamento.getTipoLancamento());
 			
 			if(TipoLancamento.PARCIAL.equals(uLancamento.getTipoLancamento())){
