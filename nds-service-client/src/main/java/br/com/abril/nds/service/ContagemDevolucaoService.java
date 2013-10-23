@@ -49,7 +49,8 @@ public interface ContagemDevolucaoService {
      *         fornecedor de acordo com os parâmetros
      */
 	public byte[] gerarImpressaoChamadaEncalheFornecedor(Long idFornecedor, Integer numeroSemana, Intervalo<Date> periodo);
-    
+
+	void gerarNotasFiscaisPorFornecedorFecharLancamentos(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario) throws FileNotFoundException, IOException;
     
 	
 }

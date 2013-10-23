@@ -262,8 +262,8 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 			 $.fileDownload(contextPath + "/devolucao/digitacao/contagem/gerarChamadaEncalheFornecedor", {
 	                httpMethod : "POST",
 	                data : [],
-	                failCallback : function() {
-	                    exibirMensagem("ERROR", ["Erro ao gerar CE Devolução!"]);
+	                failCallback : function(arg) {
+	                    exibirMensagem("WARNING", ["Não há CE Devolução no periodo informado!"]);
 	                }
 	         });
 		},

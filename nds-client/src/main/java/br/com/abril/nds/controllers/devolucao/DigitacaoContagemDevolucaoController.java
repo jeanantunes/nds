@@ -427,7 +427,7 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 		
 		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
 		
-		contagemDevolucaoService.gerarNotasFiscaisPorFornecedor(listaContagemDevolucaoDTO, getUsuarioLogado(), true);
+		contagemDevolucaoService.gerarNotasFiscaisPorFornecedorFecharLancamentos(listaContagemDevolucaoDTO, getUsuarioLogado());
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 										Constantes.PARAM_MSGS).recursive().serialize();

@@ -75,7 +75,6 @@ function imprimir(){
         </c:if>
         
         <c:if test="${isPromocional!=true}">
-        	<td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>Promocional&nbsp;</strong></td>
         	<td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Total</strong></td>
         </c:if>
         
@@ -94,7 +93,6 @@ function imprimir(){
        </c:if>
        		        
        <c:if test="${isPromocional!=true}">
-       		<td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.materialPromocional}</td>
        		<td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.total}</td>
        </c:if>
     	  
@@ -121,7 +119,6 @@ function imprimir(){
 		        </c:if>
 		        
 		        <c:if test="${isPromocional!=true}">
-		        	<td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;"><strong>Promocional&nbsp;</strong></td>
 		        	<td width="62" align="center" style=" border-bottom:1px solid #000; border-top:1px solid #000;border-left:1px solid #000;border-right:1px solid #000;"><strong>Total</strong></td>
 		        </c:if>  
 		      
@@ -139,7 +136,6 @@ function imprimir(){
 		        </c:if>
 		        		        
 		        <c:if test="${isPromocional!=true}">
-		        	<td align="center" style="border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.materialPromocional}</td>
 		        	<td align="center" class="class_total" style="border-right:1px solid #000;border-left:1px solid #000;border-bottom:1px solid #000;">${produto.value.total}</td>
 		        </c:if>
 		        
