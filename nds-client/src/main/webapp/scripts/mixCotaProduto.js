@@ -252,8 +252,8 @@ var mixCotaProdutoController = $.extend(true, {
 			var lastIndex = data.rows[i].cell.length;
 			
 			data.rows[i].cell["acao"]=mixCotaProdutoController.getActionsGridCota(data.rows[i].cell);
-			data.rows[i].cell["reparteMinimoInput"]="<input type='text' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMinimo"]+"' onblur='mixCotaProdutoController.updateReparteMinMax(this,\"MIN\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMinimo"]+")' />";
-			data.rows[i].cell["reparteMaximoInput"]="<input type='text' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMaximo"]+"' onblur='mixCotaProdutoController.updateReparteMinMax(this,\"MAX\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMaximo"]+")' />";
+			data.rows[i].cell["reparteMinimoInput"]="<input type='text' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMinimo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MIN\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMinimo"]+")' />";
+			data.rows[i].cell["reparteMaximoInput"]="<input type='text' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMaximo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MAX\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMaximo"]+")' />";
 				
 				
 			//arrumar formatacao campos bigdecimal para duas casas decimais
@@ -432,8 +432,8 @@ var mixCotaProdutoController = $.extend(true, {
 			var lastIndex = data.rows[i].cell.length;
 			
 			data.rows[i].cell["acao"]=mixCotaProdutoController.getActionsGridProduto(data.rows[i].cell);
-			data.rows[i].cell["reparteMinimoInput"]="<input type='text' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMinimo"]+"' onblur='mixCotaProdutoController.updateReparteMinMax(this,\"MIN\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMinimo"]+")' />";
-			data.rows[i].cell["reparteMaximoInput"]="<input type='text' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMaximo"]+"' onblur='mixCotaProdutoController.updateReparteMinMax(this,\"MAX\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMaximo"]+")' />";
+			data.rows[i].cell["reparteMinimoInput"]="<input type='text' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMinimo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MIN\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMinimo"]+")' />";
+			data.rows[i].cell["reparteMaximoInput"]="<input type='text' onkeydown='onlyNumeric(event);' size='7' value='"+data.rows[i].cell["reparteMaximo"]+"' onchange='mixCotaProdutoController.updateReparteMinMax(this,\"MAX\","+data.rows[i].cell["id"]+","+data.rows[i].cell["reparteMaximo"]+")' />";
 		}
 		
 		$('.mixProdutosGrid').show();
@@ -1242,7 +1242,7 @@ var mixCotaProdutoController = $.extend(true, {
 					
 						success: function(responseText, statusText, xhr, $form)  { 
 							
-							console.log(responseText.mixCotaDTOInconsistente);
+//							console.log(responseText.mixCotaDTOInconsistente);
 							
 							var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;
 							if(typeof(mensagens)!='undefined'){
@@ -1270,7 +1270,7 @@ var mixCotaProdutoController = $.extend(true, {
 										a.push("Produto["+responseText.mixCotaDTOInconsistente[int].codigoProduto+"]"
 												+", Cota["+responseText.mixCotaDTOInconsistente[int].numeroCota+"]"
 												+", Reparte Minimo["+responseText.mixCotaDTOInconsistente[int].reparteMinimo+"]"
-												+", Reparte Maximo["+responseText.mixCotaDTOInconsistente[int].reparteMaximo+"]");
+												+", Reparte Maximo["+responseText.mixCotaDTOInconsistente[int].reparteMaximo+"] : "+responseText.mixCotaDTOInconsistente[int].error);
 									}
 									exibirMensagemDialog("WARNING", a);
 									
@@ -1280,11 +1280,11 @@ var mixCotaProdutoController = $.extend(true, {
 							
 							$(this).dialog("close");
 							
-							if($("#radio").attr('checked') == 'checked'){
+							/*if($("#radio").attr('checked') == 'checked'){
 								$(".mixCotasGrid").flexReload();
 							}else{
 								$(".mixProdutosGrid").flexReload();
-							}
+							}*/
 							
 						}, 
 						type: 'POST',

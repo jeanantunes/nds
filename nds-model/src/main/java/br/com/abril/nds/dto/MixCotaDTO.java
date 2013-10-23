@@ -70,6 +70,7 @@ public class MixCotaDTO implements Serializable{
 	private PaginacaoVO paginacaoVO;
 	
 	private String codigoICD;
+	private String error;
 	
 	public String getCodigoProduto() {
 		return codigoProduto;
@@ -233,6 +234,13 @@ public class MixCotaDTO implements Serializable{
 	public void setTipoClassificacaoProdutoID(BigInteger tipoClassificacaoProdutoID) {
 		this.tipoClassificacaoProdutoID = tipoClassificacaoProdutoID;
 	}
+	public String getError() {
+		return error;
+	}
+	public void setError(String error) {
+		this.error = error;
+	}
+
 	
 	
 }
