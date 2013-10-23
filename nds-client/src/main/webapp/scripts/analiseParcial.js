@@ -22,7 +22,7 @@ var analiseParcialController = $.extend(true, {
 
         for (var i = 0; i < analiseParcialController.edicoesBase.length; i++) {
             var edicao = analiseParcialController.edicoesBase[i];
-            var optionClassificacao = 'value="id"'.replace('id',edicao.idTipoClassificacao); //TODO
+            var optionClassificacao = 'value="id"'.replace('id',edicao.idTipoClassificacao);
             objEdicoesBase.rows.push({ cell: {
                 codigo:         '<input class="inputCodigoEB" value="#">'.replace('#',edicao.codigoProduto),
                 produto:        '<input class="inputProdutoEB" value="#">'.replace('#',edicao.nomeProduto),
@@ -821,7 +821,7 @@ var analiseParcialController = $.extend(true, {
         });
 
         $("#dialog-edicoes-produtos").on('click', '.classPesquisar', function () {
-            var parameters = $('#inputCodigoProduto, #inputNomeProduto, #inputNumeroEdicao, #filtroClassificacao').filter('input[value!=""]').map(function () {
+            var parameters = $('#inputCodigoProduto, #inputNomeProduto, #inputNumeroEdicao, #filtroClassificacao').filter('input[value!=""], select[value!="-1"]').map(function () {
                 return {name: this.name, value: this.value};
             });
             if (parameters) {
@@ -1570,21 +1570,22 @@ function popup_edicoes_produto() {
                     var tbodyAppend = '';
                     var modelRow = '<tr>' +
                         '<td align="left"><div style="text-align: left; width: 80px;"><input class="inputCodigoEB" value="#codigoProduto#"></div></td>' +
-                        '<td align="left"><div style="text-align: left; width: 190px;"><input class="inputProdutoEB" value="#nomeProduto#"></div></td>' +
+                        '<td align="left"><div style="text-align: left; width: 180px;"><input class="inputProdutoEB" value="#nomeProduto#"></div></td>' +
                         '<td align="left"><div style="text-align: left; width: 80px;"><input id="#idEdicao#" class="inputEdicaoEB" value="#numeroEdicao#"></div></td>' +
-                        '<td align="left"><div style="text-align: left; width: 80px;"><select id="#idClass#" class="selectClassEB">#options#</select></div></td>' +
-                        '<td align="center"><div style="text-align: center; width: 80px;">' +
+                        '<td align="left"><div style="text-align: left; width: 120px;"><select id="#idClass#" class="selectClassEB">#options#</select></div></td>' +
+                        '<td align="center"><div style="text-align: center; width: 70px;">' +
                             '<img src="images/ico_editar.gif" alt="Alterar Edição" class="icoEditarEB">' +
                             '<img src="images/ico_excluir.gif" alt="Excluir Base" class="icoExcluirEB">' +
                             '<img src="images/ico_arrow_resize.png" alt="Mover Base" class="icoMoverEB">' +
                         '</div></td></tr>';
-                    modelRow = modelRow.replace(/#codigoProduto#/, $('#inputCodigoProduto').val()).replace(/#nomeProduto#/, $('#inputNomeProduto').val());
+                    modelRow = modelRow.replace(/#nomeProduto#/, $('#inputNomeProduto').val());
                     $edicaoSelecao.each(function(key, value){
                         var $thisTR = $(this).closest('tr');
                         var idClassificacao = optionClassificacao.replace('id', $thisTR.find('td[abbr="idClassificacao"] div').text());
-                        tbodyAppend += modelRow.replace(/#idEdicao#/, $thisTR.find('td[abbr="id"] div').text())
+                        tbodyAppend += modelRow.replace(/#codigoProduto#/, $thisTR.find('td[abbr="codigoProduto"] div').text())
+                                               .replace(/#idEdicao#/, $thisTR.find('td[abbr="id"] div').text())
                                                .replace(/#numeroEdicao#/, $thisTR.find('td[abbr="numeroEdicao"] div').text())
-                                               .replace(/#options#/, tipoClassificacao.replace(idClassificacao, idClassificacao + ' selected'));//TODO
+                                               .replace(/#options#/, tipoClassificacao.replace(idClassificacao, idClassificacao + ' selected'));
                     });
                     $tbody.append(tbodyAppend);
                     $(this).dialog("close");
