@@ -1876,12 +1876,12 @@ public class LancamentoRepositoryImpl extends
 		   .append(" from Lancamento lancamento ")
 		   .append(" join lancamento.produtoEdicao produtoEdicao ")
 		   .append(" where produtoEdicao.id in (:idsProdutoEdicao) ")
-		   .append(" and lancamento.status = :statusRecolhido ");
+		   .append(" and lancamento.status in (:status) ");
 
 		Query query = getSession().createQuery(hql.toString());
 
 		query.setParameterList("idsProdutoEdicao", idsProdutoEdicao);
-		query.setParameter("statusRecolhido", StatusLancamento.RECOLHIDO);
+		query.setParameterList("status", new StatusLancamento[] {StatusLancamento.RECOLHIDO,StatusLancamento.EM_RECOLHIMENTO});
 		
 		return query.list();
 	}

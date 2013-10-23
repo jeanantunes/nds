@@ -21,6 +21,7 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
+import org.apache.commons.digester.annotations.rules.ObjectCreate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -431,7 +432,7 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
 					numeroEdicao);
 			
 			aprovarConferenciaEncalheParcial(listaConferenciaEncalheParcial, dataOperacao, usuario);
-		
+			
 		}
 		
 		
@@ -911,23 +912,25 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
                 .criarChamadasEncalheFornecedorDTO(chamadasEncalheFornecedor,
                         distribuidor);
         
-        this.tratarLancamentosASeremFechados(chamadasEncalheFornecedor);
+        if(chamadasEncalheDTO.isEmpty())
+        	throw new ValidacaoException(TipoMensagem.WARNING, "");
         
         return gerarPDFChamadaEncalheFornecedor(chamadasEncalheDTO);
     }
 
-	private void tratarLancamentosASeremFechados(List<ChamadaEncalheFornecedor> chamadasEncalheFornecedor) {
+    @Override
+    @Transactional
+	public void gerarNotasFiscaisPorFornecedorFecharLancamentos(List<ContagemDevolucaoDTO> listaContagemDevolucao, Usuario usuario) throws FileNotFoundException, IOException {
 		
+    	this.gerarNotasFiscaisPorFornecedor(listaContagemDevolucao, usuario, true);
+    	
 		Set<Long> idsProdutoEdicao = new TreeSet<>();
         
-        for (ChamadaEncalheFornecedor chamadaEncalheFornecedor : chamadasEncalheFornecedor) {
+        for (ContagemDevolucaoDTO dto : listaContagemDevolucao) {
         	
-        	for (ItemChamadaEncalheFornecedor item : chamadaEncalheFornecedor.getItens()) {
-        		
-        		Long idProdutoEdicao = item.getProdutoEdicao().getId();
-        		
-        		idsProdutoEdicao.add(idProdutoEdicao);
-        	}
+        	ProdutoEdicao pe =produtoEdicaoRepository.obterProdutoEdicaoPorCodProdutoNumEdicao(dto.getCodigoProduto(), dto.getNumeroEdicao());
+        	
+        	idsProdutoEdicao.add(pe.getId());        	
         }
         
         if (!idsProdutoEdicao.isEmpty()){
