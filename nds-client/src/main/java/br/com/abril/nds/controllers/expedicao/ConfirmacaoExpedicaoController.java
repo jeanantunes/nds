@@ -145,15 +145,16 @@ public class ConfirmacaoExpedicaoController extends BaseController{
 		@Rules(Permissao.ROLE_EXPEDICAO_CONFIRMA_EXPEDICAO_ALTERACAO)
 		public void selecionarTodos(Boolean selecionado){
 			
-			if(selecionado==false) {
+			if(selecionado == false) {
+				
 				session.setAttribute("selecionados", null);
+				
 			} else {
 			
 				Date date = (Date) session.getAttribute("date");
 				Long idFornecedor = (Long) session.getAttribute("idFornecedor");
 				
-				List<Long> listaIdsExpedicoes = 
-						lancamentoService.obterIdsLancamentosNaoExpedidos(null, date, idFornecedor, true);
+				List<Long> listaIdsExpedicoes = lancamentoService.obterIdsLancamentosNaoExpedidos(null, date, idFornecedor, true);
 								
 				session.setAttribute("selecionados", listaIdsExpedicoes);
 			}
