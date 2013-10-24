@@ -29,7 +29,6 @@ import org.apache.commons.collections.comparators.ComparatorChain;
 import org.apache.commons.collections.comparators.NullComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
@@ -2297,14 +2296,15 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 				estoqueProdutoCota.setQtdeDevolvida(qtdeDevolvidaOriginal.subtract(movimentoEstoqueCota.getQtde()));
 
-				estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
+				this.estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
+				this.estoqueProdutoCotaRepository.flush();
 				
 			}
 			
 		}
 		
-		movimentoEstoqueCotaRepository.remover(movimentoEstoqueCota);
-		
+		this.movimentoEstoqueCotaRepository.remover(movimentoEstoqueCota);
+		this.movimentoEstoqueCotaRepository.flush();
 	}
 
 	/**
@@ -2743,6 +2743,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			validarAlteracaoEstoqueProdutoCota(estoqueProdutoCota.getQtdeDevolvida(), movimentoEstoqueCota.getProdutoEdicao());
 			
 			this.estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
+			this.estoqueProdutoCotaRepository.flush();
 		}
 	}
 	

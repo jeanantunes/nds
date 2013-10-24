@@ -2,6 +2,7 @@ package br.com.abril.nds.repository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.model.cadastro.GrupoCota;
 
@@ -21,6 +22,11 @@ public interface GrupoRepository extends Repository<GrupoCota,Long> {
 
 	List<GrupoCota> obterGrupos(String sortname, String sortorder);
 
-	GrupoCota obterGrupoPorCota(Long id);
+	String obterNomeGrupoPorCota(Long id, Long idGrupoIgnorar);
 
+	String obterNomeGrupoPorMunicipio(String municipio);
+
+	Set<Long> obterIdsCotasGrupo(Long idGrupo);
+
+	Set<String> obterMunicipiosCotasGrupo(Long idGrupo);
 }

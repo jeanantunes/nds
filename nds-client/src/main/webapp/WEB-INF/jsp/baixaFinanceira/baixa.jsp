@@ -292,17 +292,21 @@
 							<input onchange="baixaFinanceiraController.atualizarDadosCobrancaManualBoleto();" name="dtPagamentoManualBoleto" type="text" id="dtPagamentoManualBoleto" style="width:120px; text-align:right;" />
 						</td>
 				  </tr>
+		   	      
 		   	      <tr>
-		      	    <td class="linha_borda"><strong>Desconto R$:</strong></td>
-		      	    <td class="linha_borda">  <input maxlength="22" onblur="baixaFinanceiraController.calculaTotalManual();" id="desconto" type="text" style="width:120px; text-align:right;"/>  </td>
+		      	    <td class="linha_borda"><strong>Multa R$:</strong></td>
+		      	    <td class="linha_borda">  <input maxlength="22" onblur="baixaFinanceiraController.calculaTotalManual();" id="multa" type="text" style="width:120px; text-align:right;"/>  </td>
 		   	      </tr>
+		   	      
 		   	      <tr>
 		      	    <td class="linha_borda"><strong>Juros R$:</strong></td>
 		      	    <td class="linha_borda">  <input maxlength="22" onblur="baixaFinanceiraController.calculaTotalManual();" id="juros" type="text" style="width:120px; text-align:right;"/>  </td>
 		   	      </tr>
+		   	      
+		   	      
 		   	      <tr>
-		      	    <td class="linha_borda"><strong>Multa R$:</strong></td>
-		      	    <td class="linha_borda">  <input maxlength="22" onblur="baixaFinanceiraController.calculaTotalManual();" id="multa" type="text" style="width:120px; text-align:right;"/>  </td>
+		      	    <td class="linha_borda"><strong>Desconto R$:</strong></td>
+		      	    <td class="linha_borda">  <input maxlength="22" onblur="baixaFinanceiraController.calculaTotalManual();" id="desconto" type="text" style="width:120px; text-align:right;"/>  </td>
 		   	      </tr>
 		   	      
 		   	      <tr>
