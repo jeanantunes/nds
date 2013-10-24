@@ -227,8 +227,7 @@ public class DiferencaEstoqueController extends BaseController {
 			
 			consultaDiferencaVO.setId(diferenca.getId());
 			
-			consultaDiferencaVO.setDataLancamento(
-				DateUtil.formatarData(dataLancamento, Constantes.DATE_PATTERN_PT_BR));
+			consultaDiferencaVO.setDataLancamento(DateUtil.formatarData(dataLancamento, Constantes.DATE_PATTERN_PT_BR));
 			
 			consultaDiferencaVO.setCodigoProduto(diferenca.getProdutoEdicao().getProduto().getCodigo());
 			
@@ -251,28 +250,32 @@ public class DiferencaEstoqueController extends BaseController {
 				consultaDiferencaVO.setNumeroNotaFiscal(" - ");
 			}
 			
+			if(diferenca.getLancamentoDiferenca() != null
+					&& diferenca.getLancamentoDiferenca().getMovimentoEstoque() != null
+					&& diferenca.getLancamentoDiferenca().getMovimentoEstoque().getStatusIntegracao() != null) {
+				
+				consultaDiferencaVO.setStatusIntegracao(diferenca.getLancamentoDiferenca().getMovimentoEstoque().getStatusIntegracao().getDescricao());
+				
+			}
+			
 			consultaDiferencaVO.setQuantidade(diferenca.getQtde());
 			
 			consultaDiferencaVO.setStatusAprovacao(descricaoStatusAprovacao);
 			
 			consultaDiferencaVO.setMotivoAprovacao(motivo);
 			
-			consultaDiferencaVO.setValorTotalDiferenca(
-				CurrencyUtil.formatarValor(diferenca.getValorTotalDiferenca()));
+			consultaDiferencaVO.setValorTotalDiferenca(CurrencyUtil.formatarValor(diferenca.getValorTotalDiferenca()));
 			
 			listaConsultaDiferenca.add(consultaDiferencaVO);
 			
-			qtdeTotalDiferencas = 
-				qtdeTotalDiferencas.add(diferenca.getQtde());
+			qtdeTotalDiferencas = qtdeTotalDiferencas.add(diferenca.getQtde());
 			
 			valorTotalDiferencas = valorTotalDiferencas.add(diferenca.getValorTotalDiferenca());
 		}
 		
-		String valorTotalDiferencasFormatado = 
-			CurrencyUtil.formatarValorComSimbolo(valorTotalDiferencas);
+		String valorTotalDiferencasFormatado = CurrencyUtil.formatarValorComSimbolo(valorTotalDiferencas);
 		
-		ResultadoDiferencaVO resultadoDiferencaVO = 
-			new ResultadoDiferencaVO(null, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
+		ResultadoDiferencaVO resultadoDiferencaVO = new ResultadoDiferencaVO(null, qtdeTotalDiferencas, valorTotalDiferencasFormatado);
 		
 		FileExporter.to("consulta-faltas-sobras", fileType)
 			.inHTTPResponse(this.getNDSFileHeader(), filtroSessao, resultadoDiferencaVO, 
@@ -632,7 +635,7 @@ public class DiferencaEstoqueController extends BaseController {
 				mensagem.append(" Produto [").append(produtoEdicao.getProduto().getCodigo()).append(" - " )
 						.append(produtoEdicao.getProduto().getNomeComercial()).append( " - " )
 						.append(produtoEdicao.getNumeroEdicao()) 
-						.append("] já encontrasse em recolhimento.");
+						.append("] encontra-se em recolhimento.");
 				
 				throw new ValidacaoException(TipoMensagem.WARNING,mensagem.toString());
 			}
@@ -1162,8 +1165,7 @@ public class DiferencaEstoqueController extends BaseController {
 
 	private void validarNovosRateios(List<RateioCotaVO> listaNovosRateios,DiferencaVO diferencaVO) {
 		
-		if (listaNovosRateios == null 
-				|| listaNovosRateios.isEmpty()) {
+		if (listaNovosRateios == null || listaNovosRateios.isEmpty()) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Preencha os dados para o rateio!");
 		}
@@ -1180,8 +1182,7 @@ public class DiferencaEstoqueController extends BaseController {
 	@SuppressWarnings("unchecked")
 	public void limparDadosSessao(boolean confirmado) {
 	
-		Set<Diferenca> listaNovasDiferencas =
-			(Set<Diferenca>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
+		Set<Diferenca> listaNovasDiferencas = (Set<Diferenca>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
 		
 		Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados =
 			(Map<Long, List<RateioCotaVO>>) this.httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
@@ -1389,16 +1390,16 @@ public class DiferencaEstoqueController extends BaseController {
 		
 		Set<Diferenca> listaNovasDiferencas = null;
 		
-		if(modoNovaDiferenca != null && modoNovaDiferenca ){
-			listaNovasDiferencas =
-					(Set<Diferenca>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
-		}
-		else{
+		if(modoNovaDiferenca != null && modoNovaDiferenca ) {
+			
+			listaNovasDiferencas = (Set<Diferenca>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
+			
+		} else {
 			
 			listaNovasDiferencas = new HashSet<Diferenca>();
 			
-			listaNovasDiferencas.addAll(
-					(List<Diferenca>) this.httpSession.getAttribute(LISTA_DIFERENCAS_SESSION_ATTRIBUTE));
+			listaNovasDiferencas.addAll((List<Diferenca>) this.httpSession.getAttribute(LISTA_DIFERENCAS_SESSION_ATTRIBUTE));
+			
 		}
 		
 		Map<Long, List<RateioCotaVO>> mapaRateioCotas =
@@ -1406,7 +1407,7 @@ public class DiferencaEstoqueController extends BaseController {
 		
 		if(listaNovasDiferencas != null){
 						
-			this.diferencaEstoqueService.salvarLancamentosDiferenca(listaNovasDiferencas, mapaRateioCotas, this.getUsuarioLogado().getId(),modoNovaDiferenca);
+			this.diferencaEstoqueService.salvarLancamentosDiferenca(listaNovasDiferencas, mapaRateioCotas, this.getUsuarioLogado().getId(), modoNovaDiferenca);
 		}
 		
 		result.use(Results.json()).from(
@@ -1776,8 +1777,7 @@ public class DiferencaEstoqueController extends BaseController {
 				dataLancamento = diferenca.getLancamentoDiferenca().getMovimentoEstoque().getData();
 				
 				motivo = diferenca.getLancamentoDiferenca().getMovimentoEstoque().getMotivo();
-			}
-			else{
+			} else {
 				
 				if(diferenca.getLancamentoDiferenca()!= null 
 						&& diferenca.getLancamentoDiferenca().getMovimentosEstoqueCota()!= null 
@@ -1793,15 +1793,13 @@ public class DiferencaEstoqueController extends BaseController {
 			
 			consultaDiferencaVO.setId(diferenca.getId());
 			
-			consultaDiferencaVO.setDataLancamento(
-				DateUtil.formatarData(dataLancamento,Constantes.DATE_PATTERN_PT_BR));
+			consultaDiferencaVO.setDataLancamento(DateUtil.formatarData(dataLancamento,Constantes.DATE_PATTERN_PT_BR));
 			
 			consultaDiferencaVO.setCodigoProduto(diferenca.getProdutoEdicao().getProduto().getCodigo());
 			consultaDiferencaVO.setDescricaoProduto(diferenca.getProdutoEdicao().getProduto().getNome());
 			consultaDiferencaVO.setNumeroEdicao(diferenca.getProdutoEdicao().getNumeroEdicao().toString());
 			
-			consultaDiferencaVO.setPrecoVenda(
-				CurrencyUtil.formatarValor(diferenca.getProdutoEdicao().getPrecoVenda()));
+			consultaDiferencaVO.setPrecoVenda(CurrencyUtil.formatarValor(diferenca.getProdutoEdicao().getPrecoVenda()));
 			
 			consultaDiferencaVO.setTipoDiferenca(diferenca.getTipoDiferenca());
 			consultaDiferencaVO.setDescricaoTipoDiferenca(diferenca.getTipoDiferenca().getDescricao());
@@ -1829,14 +1827,13 @@ public class DiferencaEstoqueController extends BaseController {
 					&& diferenca.getLancamentoDiferenca().getMovimentoEstoque() != null
 					&& diferenca.getLancamentoDiferenca().getMovimentoEstoque().getStatusIntegracao() != null) {
 				
-				consultaDiferencaVO.setStatusIntegracao(diferenca.getLancamentoDiferenca().getMovimentoEstoque().getStatusIntegracao().name());
+				consultaDiferencaVO.setStatusIntegracao(diferenca.getLancamentoDiferenca().getMovimentoEstoque().getStatusIntegracao().getDescricao());
 				
 			}
 			
 			consultaDiferencaVO.setMotivoAprovacao(diferenca.getLancamentoDiferenca().getStatus().toString());
 			
-			consultaDiferencaVO.setValorTotalDiferenca(
-				CurrencyUtil.formatarValor(diferenca.getValorTotalDiferenca()));
+			consultaDiferencaVO.setValorTotalDiferenca(CurrencyUtil.formatarValor(diferenca.getValorTotalDiferenca()));
 			
 			consultaDiferencaVO.setTipoEstoque(diferenca.getTipoEstoque());
 			
@@ -1846,11 +1843,11 @@ public class DiferencaEstoqueController extends BaseController {
 
 			Fornecedor fornecedor = fornecedorService.obterFornecedorUnico(diferenca.getProdutoEdicao().getProduto().getCodigo());
 			
-			if(fornecedor != null)
+			if(fornecedor != null) {
 				consultaDiferencaVO.setFornecedor(fornecedor.getJuridica().getNomeFantasia());
+			}
 
-			qtdeTotalDiferencas = 
-				qtdeTotalDiferencas.add(diferenca.getQtde());
+			qtdeTotalDiferencas = qtdeTotalDiferencas.add(diferenca.getQtde());
 			
 			valorTotalDiferencas = valorTotalDiferencas.add(diferenca.getValorTotalDiferenca());
 		}
