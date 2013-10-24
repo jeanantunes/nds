@@ -1542,9 +1542,9 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		hql.append(" where chamadaEncalheCota.cota.id not in ( ");
 		hql.append(" select cota.id from ControleConferenciaEncalheCota controleConferenciaEncalheCota ");
 		hql.append(" join controleConferenciaEncalheCota.cota cota ");
-		hql.append(" where controleConferenciaEncalheCota.dataOperacao >= :dataRecolhimentoEncalhe ");
+		hql.append(" where controleConferenciaEncalheCota.dataOperacao = :dataRecolhimentoEncalhe ");
 		hql.append(" and controleConferenciaEncalheCota.status = :statusControleConferenciaEncalhe) ");
-		hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento >= :dataRecolhimentoEncalhe ");
+		hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento = :dataRecolhimentoEncalhe ");
 		hql.append(" group by chamadaEncalheCota.cota.id ");
 
 		Query query = this.getSession().createQuery(hql.toString());

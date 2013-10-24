@@ -1458,6 +1458,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		return mapaRateiosCadastrados;
 	}
 	
+	@Transactional(readOnly = true)
 	public boolean validarProdutoEmRecolhimento(ProdutoEdicao produtoEdicao){
 		
    		if(produtoEdicao == null){
