@@ -7,7 +7,9 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -115,6 +117,9 @@ public class ParametrosDistribuidorController extends BaseController {
 		result.include("listaObrigacaoFiscal", this.carregarComboObrigacaoFiscal());
 		
 		this.buscarLogoArmazenarSessao();
+		
+		session.removeAttribute(COTAS_SELECIONADAS);
+		session.removeAttribute(MUNICIPIOS_SELECIONADOS);
 	}
 	
 	private List<ItemDTO<TipoAtividade, String>> carregarComboRegimeTributario() {
@@ -501,7 +506,7 @@ public class ParametrosDistribuidorController extends BaseController {
 				
 		List<MunicipioDTO> municipios =	grupoService.obterQtdeCotaMunicipio(page, rp, sortname, sortorder);
 		
-		List<String> selecionados = getMunicipiosSelecionados();
+		Set<String> selecionados = getMunicipiosSelecionados();
 				
 		for(MunicipioDTO municipio : municipios) {
 			municipio.setSelecionado(selecionados.contains(municipio.getMunicipio()));
@@ -516,7 +521,7 @@ public class ParametrosDistribuidorController extends BaseController {
 		
 		session.setAttribute(TIPO_COTA, tipoCota);
 		
-		List<Long> selecionados = getCotasSelecionados();
+		Set<Long> selecionados = getCotasSelecionados();
 		
 		List<CotaTipoDTO> cotas =	grupoService.obterCotaPorTipo(tipoCota, page, rp, sortname, sortorder);
 		
@@ -529,17 +534,17 @@ public class ParametrosDistribuidorController extends BaseController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<Long> getCotasSelecionados() {
+	private Set<Long> getCotasSelecionados() {
 		
-		return session.getAttribute(COTAS_SELECIONADAS) == null ?  new ArrayList<Long>()
-				: (List<Long>)session.getAttribute(COTAS_SELECIONADAS);
+		return session.getAttribute(COTAS_SELECIONADAS) == null ?  new HashSet<Long>()
+				: (Set<Long>)session.getAttribute(COTAS_SELECIONADAS);
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<String> getMunicipiosSelecionados() {
+	private Set<String> getMunicipiosSelecionados() {
 		
-		return	session.getAttribute(MUNICIPIOS_SELECIONADOS) == null ?  
-					new ArrayList<String>() : (List<String>) session.getAttribute(MUNICIPIOS_SELECIONADOS);
+		return session.getAttribute(MUNICIPIOS_SELECIONADOS) == null ?  
+					new HashSet<String>() : (Set<String>) session.getAttribute(MUNICIPIOS_SELECIONADOS);
 	}
 	
 	/**
@@ -549,15 +554,12 @@ public class ParametrosDistribuidorController extends BaseController {
 	@Post
 	public void selecionarCota(Long idCota, Boolean selecionado, Boolean addResult) {
 		
+		Set<Long> selecionados = getCotasSelecionados();
 		
-		List<Long> selecionados = getCotasSelecionados();
-		
-		int index = selecionados.indexOf(idCota); 
-		
-		if(index==-1 && selecionado==true) {
+		if (selecionado){
 			selecionados.add(idCota);
-		} else if(index!=-1 && selecionado==false){
-			selecionados.remove(index);
+		} else {
+			selecionados.remove(idCota);
 		}
 		
 		session.setAttribute(COTAS_SELECIONADAS, selecionados);
@@ -573,16 +575,14 @@ public class ParametrosDistribuidorController extends BaseController {
 	 * 
 	 */
 	@Post
-	public void selecionarMunicipio(String  municipio, Boolean selecionado, Boolean addResult) {
+	public void selecionarMunicipio(String municipio, Boolean selecionado, Boolean addResult) {
 				
-		List<String> selecionados = getMunicipiosSelecionados();		
+		Set<String> selecionados = getMunicipiosSelecionados();		
 		
-		int index = selecionados.indexOf(municipio); 
-		
-		if(index==-1 && selecionado==true) {
+		if(selecionado) {
 			selecionados.add(municipio);
-		} else if(index!=-1 && selecionado==false){
-			selecionados.remove(index);
+		} else {
+			selecionados.remove(municipio);
 		}
 		
 		session.setAttribute(MUNICIPIOS_SELECIONADOS, selecionados);
@@ -624,24 +624,21 @@ public class ParametrosDistribuidorController extends BaseController {
 	@Post
 	public void limparSelecoes() {
 		
-		session.setAttribute(COTAS_SELECIONADAS, null);
-		session.setAttribute(MUNICIPIOS_SELECIONADOS, null);
+		session.removeAttribute(COTAS_SELECIONADAS);
+		session.removeAttribute(MUNICIPIOS_SELECIONADOS);
 		
 		result.use(Results.json()).withoutRoot().from("").recursive().serialize();
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Post
 	@Rules(Permissao.ROLE_ADMINISTRACAO_PARAMETROS_DISTRIBUIDOR_ALTERACAO)
 	public void cadastrarOperacaoDiferenciada(String nome,List<DiaSemana> diasSemana, Long idGrupo, TipoOperacaoDiferenciada tipoOperacaoDiferenciada){
 		
 		if (tipoOperacaoDiferenciada.equals(TipoOperacaoDiferenciada.TIPO_COTA)) {
 			
-			List<Long> cotas =
-				(List<Long>) (session.getAttribute(COTAS_SELECIONADAS) == null
-					? null : session.getAttribute(COTAS_SELECIONADAS));
+			Set<Long> cotas = this.getCotasSelecionados();
 			
-			if (cotas == null) {
+			if (cotas == null || cotas.isEmpty()) {
 				
 				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota foi selecionada!");
 			}
@@ -652,11 +649,9 @@ public class ParametrosDistribuidorController extends BaseController {
 			
 		} else {
 			
-			List<String> municipios =
-				(List<String>) (session.getAttribute(MUNICIPIOS_SELECIONADOS) == null
-					? null : session.getAttribute(MUNICIPIOS_SELECIONADOS));
+			Set<String> municipios = this.getMunicipiosSelecionados();
 			
-			if (municipios == null) {
+			if (municipios == null || municipios.isEmpty()) {
 				
 				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum município foi selecionado!");
 			}
@@ -672,15 +667,15 @@ public class ParametrosDistribuidorController extends BaseController {
 
 		if(tipoGrupo.equals(TipoGrupo.MUNICIPIO)) {
 		
-			List<String> municipios = grupoService.obterMunicipiosDoGrupo(idGrupo);
+			Set<String> municipios = grupoService.obterMunicipiosDoGrupo(idGrupo);
 			
-			session.setAttribute(COTAS_SELECIONADAS, null);
+			session.removeAttribute(COTAS_SELECIONADAS);
 			session.setAttribute(MUNICIPIOS_SELECIONADOS, municipios);
 		} else {
 			
-			List<Long> ids = grupoService.obterCotasDoGrupo(idGrupo);
+			Set<Long> ids = grupoService.obterCotasDoGrupo(idGrupo);
 			
-			session.setAttribute(MUNICIPIOS_SELECIONADOS, null);
+			session.removeAttribute(MUNICIPIOS_SELECIONADOS);
 			session.setAttribute(COTAS_SELECIONADAS, ids);
 		}
 		
