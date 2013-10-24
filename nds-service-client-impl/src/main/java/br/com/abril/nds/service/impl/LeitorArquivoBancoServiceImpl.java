@@ -187,7 +187,7 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 			
 		}
 		
-		List<PagamentoDTO> listaPagamento = (List<PagamentoDTO>) mapaPagamento.values();
+		List<PagamentoDTO> listaPagamento = new ArrayList(mapaPagamento.values());
 		
 		for(PagamentoDTO p : listaPagamento) {
 			validarLeituraLinha(p);
