@@ -500,7 +500,6 @@ public class CNAB {
      * @return boolean
      */
 	public boolean containsDataPagamento(String line) {
-		
 		if(PadraoCNAB.CNAB400.equals(this.padraoCNAB)) {
 			return true;
 		} else {
@@ -508,7 +507,6 @@ public class CNAB {
 			String tipoSegmento = br.com.abril.nds.util.cnab.UtilitarioCNAB.PadraoCNAB.CNAB240.obterTipoSegmento(line);
 			return this.segmentoDataPagamento.equals(tipoSegmento);
 		}
-		
 	}
 
 	/**
