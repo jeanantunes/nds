@@ -651,7 +651,7 @@ public class ParametrosDistribuidorController extends BaseController {
 			
 			Set<String> municipios = this.getMunicipiosSelecionados();
 			
-			if (municipios == null) {
+			if (municipios == null || municipios.isEmpty()) {
 				
 				throw new ValidacaoException(TipoMensagem.WARNING, "Nenhum município foi selecionado!");
 			}
