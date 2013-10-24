@@ -3,7 +3,6 @@ package br.com.abril.nds.service.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -136,25 +135,12 @@ public class GrupoServiceImpl implements GrupoService {
 	
 	@Override
 	@Transactional
-	public void salvarGrupoCotas(Long idGrupo, List<Long> idCotas, String nome,
+	public void salvarGrupoCotas(Long idGrupo, Set<Long> idCotas, String nome,
 			List<DiaSemana> diasSemana, TipoCaracteristicaSegmentacaoPDV tipoCota) {
 		
 		this.validarNomeGrupo(nome, idGrupo);
 		
-		HashSet<Cota> cotas = new HashSet<Cota>();
-		
-		for(Long id : idCotas) {
-			
-			Cota cota = cotaRepository.buscarPorId(id);
-			
-			GrupoCota grupo = grupoRepository.obterGrupoPorCota(id);
-			
-			if(grupo != null)
-				throw new ValidacaoException(TipoMensagem.ERROR, "Cota " + cota.getNumeroCota() 
-						+ " já pertence ao grupo " + grupo.getNome() + ".");
-			
-			cotas.add(cota);
-		}
+		Set<Cota> cotas = this.validarCotaJaPertenceGrupo(idGrupo, idCotas, null);
 		
 		GrupoCota grupo;
 				
@@ -165,7 +151,6 @@ public class GrupoServiceImpl implements GrupoService {
 			grupo = grupoRepository.buscarPorId(idGrupo);
 		}
 		
-		grupo.setId(idGrupo);
 		grupo.setNome(nome);
 		grupo.setDiasRecolhimento(new HashSet<DiaSemana>(diasSemana));
 		grupo.setTipoGrupo(TipoGrupo.TIPO_COTA);
@@ -177,10 +162,12 @@ public class GrupoServiceImpl implements GrupoService {
 
 	@Override
 	@Transactional
-	public void salvarGrupoMunicipios(Long idGrupo, List<String> municipios,
+	public void salvarGrupoMunicipios(Long idGrupo, Set<String> municipios,
 			String nome, List<DiaSemana> diasSemana) {
 		
 		this.validarNomeGrupo(nome, idGrupo);
+		
+		this.validarCotaJaPertenceGrupo(idGrupo, null, municipios);
 		
 		GrupoCota grupo;
 		
@@ -191,49 +178,103 @@ public class GrupoServiceImpl implements GrupoService {
 			grupo = grupoRepository.buscarPorId(idGrupo);
 		}
 		
-		grupo.setId(idGrupo);
 		grupo.setNome(nome);
 		grupo.setDiasRecolhimento(new HashSet<DiaSemana>(diasSemana));
 		grupo.setTipoGrupo(TipoGrupo.MUNICIPIO);
-		grupo.setMunicipios(new HashSet<String>(municipios));
+		grupo.setMunicipios(municipios);
 		
 		grupoRepository.merge(grupo);
 	}
 
 	private void validarNomeGrupo(String nome, Long idGrupo) {
 		
+		if (nome == null || nome.isEmpty()){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, "Informe um nome válido para o grupo!");
+		}
+		
 		if (this.grupoRepository.existeGrupoCota(nome, idGrupo)) {
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Já existe um grupo cadastrado com o nome: " + nome + "!");
 		}
 	}
-
-	@Override
-	@Transactional
-	public List<String> obterMunicipiosDoGrupo(Long idGrupo) {
-
-		GrupoCota grupo = grupoRepository.buscarPorId(idGrupo);
-		
-		//TODO: Corrigir este desvio tecnico emergencial
-		ArrayList<String> municipios = new ArrayList<String>();
-		for(Iterator<String> i = grupo.getMunicipios().iterator(); i.hasNext(); ) {
-			String s = i.next().toString();
-			municipios.add(s.replaceAll("municipio\\[", "").replaceAll("\\]", ""));
-		}
 	
-		return municipios;
+	private Set<Cota> validarCotaJaPertenceGrupo(Long idGrupo, Set<Long> idCotas, Set<String> municipios){
+		
+		List<String> msgs = new ArrayList<>();
+		
+		Set<Cota> cotas = null;
+		
+		if (idCotas != null && !idCotas.isEmpty()){
+			
+			cotas = new HashSet<Cota>();
+			for(Long id : idCotas) {
+				
+				Cota cota = cotaRepository.buscarPorId(id);
+				
+				String nomeGrupo = grupoRepository.obterNomeGrupoPorCota(id, idGrupo);
+				
+				if (nomeGrupo == null){
+					
+					if (cota.getEnderecoPrincipal() != null){
+						
+						nomeGrupo = this.grupoRepository.obterNomeGrupoPorMunicipio(
+							cota.getEnderecoPrincipal().getEndereco().getCidade());
+					}
+				}
+				
+				if(nomeGrupo != null){
+					msgs.add("Cota " + cota.getNumeroCota() + " já pertence ao grupo '" + nomeGrupo + "'.");
+				}
+				cotas.add(cota);
+			}
+		}
+		
+		if (municipios != null && !municipios.isEmpty()){
+			
+			for (String municipio : municipios){
+				
+				String nomeGrupo = this.grupoRepository.obterNomeGrupoPorMunicipio(municipio);
+				
+				if (nomeGrupo == null){
+					
+					List<Long> cotasNoMunicipio = this.cotaRepository.obterIdsCotasPorMunicipio(municipio);
+					
+					for (Long idCota : cotasNoMunicipio){
+						
+						nomeGrupo = this.grupoRepository.obterNomeGrupoPorCota(idCota, idGrupo);
+						
+						if(nomeGrupo != null){
+							msgs.add("Cota " + this.cotaRepository.buscarNumeroCotaPorId(idCota) + 
+							" (municipio de " + municipio + ")" +
+							" já pertence ao grupo '" + nomeGrupo + "'.");
+						}
+					}
+				} else {
+					msgs.add("Já existe grupo ('"+ nomeGrupo +"') para o municipio " + municipio);
+				}
+			}
+		}
+		
+		if (!msgs.isEmpty()){
+			
+			throw new ValidacaoException(TipoMensagem.WARNING, msgs);
+		}
+		
+		return cotas;
 	}
 
 	@Override
 	@Transactional
-	public List<Long> obterCotasDoGrupo(Long idGrupo) {
-		GrupoCota grupo = grupoRepository.buscarPorId(idGrupo);
+	public Set<String> obterMunicipiosDoGrupo(Long idGrupo) {
+
+		return this.grupoRepository.obterMunicipiosCotasGrupo(idGrupo);
+	}
+
+	@Override
+	@Transactional
+	public Set<Long> obterCotasDoGrupo(Long idGrupo) {
 		
-		List<Long> ids = new ArrayList<Long>();
-		
-		for(Cota cota : grupo.getCotas())
-			ids.add(cota.getId());
-				
-		return ids;
+		return this.grupoRepository.obterIdsCotasGrupo(idGrupo);
 	}
 }
