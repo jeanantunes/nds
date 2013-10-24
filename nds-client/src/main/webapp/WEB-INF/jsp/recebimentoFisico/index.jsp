@@ -32,6 +32,24 @@
 <style type="text/css">
     fieldset label {width: auto; margin-bottom: 0px!important;}
     .nfes{display:none; float: left; margin-top: 4px;line-height: 24px;}
+    
+    .gridLinhaDestacada {
+	  background:#BEBEBE; 
+	  font-weight:bold; 
+	  color:#fff;
+	}
+	
+	.gridLinhaDestacada:hover {
+	   color:#000;
+	}
+	
+	.gridLinhaDestacada a {
+	   color:#fff;
+	}
+	
+	.gridLinhaDestacada a:hover {
+	   color:#000;
+	}
 </style>
 
 </head>

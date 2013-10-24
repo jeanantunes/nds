@@ -169,7 +169,6 @@ import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.ControleBaixaBancaria;
 import br.com.abril.nds.model.financeiro.Divida;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
-import br.com.abril.nds.model.financeiro.HistoricoAcumuloDivida;
 import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.Negociacao;
 import br.com.abril.nds.model.financeiro.ParcelaNegociacao;
@@ -758,11 +757,6 @@ public class DataLoader {
 	private static Divida dividaAcumuladaMurilo1;
 	private static Divida dividaAcumuladaMariana1;
 
-	private static HistoricoAcumuloDivida acumDividaGuilherme1;
-	private static HistoricoAcumuloDivida acumDividaGuilherme2;
-	private static HistoricoAcumuloDivida acumDividaMurilo1;
-	private static HistoricoAcumuloDivida acumDividaMariana1;
-
 	private static EstoqueProdutoCota estoqueProdutoCotaVeja1;
 	private static EstoqueProdutoCota estoqueProdutoCotaVeja2;
 	private static EstoqueProdutoCota estoqueProdutoCotaVeja3;
@@ -1110,7 +1104,6 @@ public class DataLoader {
 		criarControleBaixaBancaria(session);
 		criarParametrosCobrancaCota(session);
 		gerarCotasAusentes(session);
-		gerarHistoricosAculoDivida(session);
 
 		//massaDadosContaCorrenteTipoMovimento(session);
 
@@ -2613,27 +2606,6 @@ public class DataLoader {
 		 tipoPontoPDVEtc = Fixture.criarTipoPontoPDV(4L, "Outros");
 		 
 		save(session, tipoPontoPDVBanca, tipoPontoPDVRevistaria, tipoPontoPDVLivraria, tipoPontoPDVEtc);
-	}
-
-	private static void gerarHistoricosAculoDivida(Session session) {
-
-		acumDividaGuilherme1 = Fixture.criarHistoricoAcumuloDivida(
-				dividaAcumuladaGuilherme1,
-				Fixture.criarData(1, 1, 2010), usuarioJoao, StatusInadimplencia.ATIVA);
-
-		acumDividaGuilherme2 = Fixture.criarHistoricoAcumuloDivida(
-				dividaAcumuladaGuilherme2,
-				Fixture.criarData(1, 1, 2010), usuarioJoao, StatusInadimplencia.QUITADA);
-
-		acumDividaMariana1 = Fixture.criarHistoricoAcumuloDivida(
-				dividaAcumuladaMariana1,
-				Fixture.criarData(1, 1, 2010), usuarioJoao, StatusInadimplencia.QUITADA);
-
-		acumDividaMurilo1 = Fixture.criarHistoricoAcumuloDivida(
-				dividaAcumuladaMurilo1,
-				Fixture.criarData(1, 1, 2010), usuarioJoao, StatusInadimplencia.QUITADA);
-
-		save(session, acumDividaGuilherme1,acumDividaGuilherme2,acumDividaMariana1,acumDividaMurilo1);
 	}
 
 	private static void tabelaNCM(Session session){
@@ -7238,42 +7210,6 @@ public class DataLoader {
 
 		save(session, boleto1, boleto2, boleto3, boleto4, boleto5, boleto6, boleto7, boleto8, boleto9);
 
-		HistoricoAcumuloDivida histInadimplencia1 =
-				Fixture.criarHistoricoAcumuloDivida( boleto1.getDivida(), Fixture.criarData(10, 3, 2012),
-						usuarioJoao, StatusInadimplencia.ATIVA);
-	    save(session, histInadimplencia1);
-	    HistoricoAcumuloDivida histInadimplencia2 =
-	    		Fixture.criarHistoricoAcumuloDivida( boleto2.getDivida(), Fixture.criarData(10, 3, 2012),
-	    				usuarioJoao, StatusInadimplencia.ATIVA);
-	    save(session, histInadimplencia2);
-	    HistoricoAcumuloDivida histInadimplencia3 =
-	    		Fixture.criarHistoricoAcumuloDivida( boleto3.getDivida(), Fixture.criarData(11, 3, 2012),
-	    				usuarioJoao, StatusInadimplencia.ATIVA);
-	    save(session, histInadimplencia3);
-	    HistoricoAcumuloDivida histInadimplencia4 =
-	    		Fixture.criarHistoricoAcumuloDivida( boleto4.getDivida(), Fixture.criarData(12, 3, 2012),
-	    				usuarioJoao, StatusInadimplencia.ATIVA);
-	    save(session, histInadimplencia4);
-	    HistoricoAcumuloDivida histInadimplencia5 =
-	    		Fixture.criarHistoricoAcumuloDivida( boleto5.getDivida(), Fixture.criarData(13, 3, 2012),
-	    				usuarioJoao, StatusInadimplencia.ATIVA);
-	    save(session, histInadimplencia5);
-	    HistoricoAcumuloDivida histInadimplencia6 =
-	    		Fixture.criarHistoricoAcumuloDivida( boleto6.getDivida(), Fixture.criarData(14, 3, 2012),
-	    				usuarioJoao, StatusInadimplencia.ATIVA);
-	    save(session, histInadimplencia6);
-	    HistoricoAcumuloDivida histInadimplencia7 =
-	    		Fixture.criarHistoricoAcumuloDivida( boleto7.getDivida(), Fixture.criarData(15, 3, 2012),
-	    				usuarioJoao, StatusInadimplencia.ATIVA);
-	    save(session, histInadimplencia7);
-	    HistoricoAcumuloDivida histInadimplencia8 =
-	    		Fixture.criarHistoricoAcumuloDivida( boleto8.getDivida(), Fixture.criarData(16, 3, 2012),
-	    				usuarioJoao, StatusInadimplencia.ATIVA);
-	    save(session, histInadimplencia8);
-	    HistoricoAcumuloDivida histInadimplencia =
-	    		Fixture.criarHistoricoAcumuloDivida( boleto9.getDivida(), Fixture.criarData(17, 3, 2012),
-	    				usuarioJoao, StatusInadimplencia.ATIVA);
-	    save(session, histInadimplencia);
 
 	    EstoqueProdutoCota estoqueProdutoCota = Fixture.estoqueProdutoCota(
 				produtoEdicaoVeja1, cotaJose, BigInteger.valueOf(10), BigInteger.ZERO);

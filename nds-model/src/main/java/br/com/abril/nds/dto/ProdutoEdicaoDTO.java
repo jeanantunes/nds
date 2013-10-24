@@ -300,7 +300,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	 *            the nomeFornecedor to set
 	 */
 	public void setNomeFornecedor(String nomeFornecedor) {
-		this.nomeFornecedor = nomeFornecedor;
+		this.nomeFornecedor = nomeFornecedor == null ? "" : nomeFornecedor;
 	}
 
 	/**

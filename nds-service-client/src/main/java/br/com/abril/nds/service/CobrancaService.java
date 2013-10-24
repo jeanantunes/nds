@@ -74,9 +74,10 @@ public interface CobrancaService {
 	/**
 	 * Método responsável por obter dados de cobrança por código
 	 * @param idCobranca
+	 * @param dataPagamento
 	 * @return value object com dados da cobranca encontrada
 	 */
-	CobrancaVO obterDadosCobranca(Long idCobranca);
+	CobrancaVO obterDadosCobranca(Long idCobranca, Date dataPagamento);
 	
 	
 	/**

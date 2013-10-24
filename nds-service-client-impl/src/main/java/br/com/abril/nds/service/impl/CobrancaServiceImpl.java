@@ -282,14 +282,13 @@ public class CobrancaServiceImpl implements CobrancaService {
 	/**
 	 * Método responsável por obter dados de cobrança por código
 	 * @param idCobranca
+	 * @param dataPagamento
 	 * @return value object com dados da cobranca encontrada
 	 */
 	@Override
 	@Transactional(readOnly=true)
-	public CobrancaVO obterDadosCobranca(Long idCobranca) {
+	public CobrancaVO obterDadosCobranca(Long idCobranca, Date dataPagamento) {
 		//PARAMETROS PARA CALCULO DE JUROS E MULTA
-		
-        Date dataOperacao = distribuidorService.obterDataOperacaoDistribuidor();
 		
 		CobrancaVO cobranca=null;
 		
@@ -325,27 +324,30 @@ public class CobrancaServiceImpl implements CobrancaService {
 			Date vencimentoDiaUtil = calendarioService.adicionarDiasUteis(cob.getDataVencimento(), 0);
 
 		    Date dataVencimento = DateUtil.parseDataPTBR((DateUtil.formatarDataPTBR(vencimentoDiaUtil)));
-	
-		    dataOperacao = DateUtil.parseDataPTBR((DateUtil.formatarDataPTBR(dataOperacao)));
 			
+		    if (dataPagamento == null) {
+				
+				dataPagamento = dataVencimento;
+			}
+		    
 			//CALCULA VALOR DO SALDO DA DIVIDA(MOVIMENTOS DE PAGAMENTO PARCIAL)
 			BigDecimal saldoDivida = this.obterSaldoDivida(cob.getId());
 			cobranca.setValorSaldo(CurrencyUtil.formatarValor(saldoDivida));
 			
-			if (dataVencimento.compareTo(dataOperacao) < 0) {
+			if (dataVencimento.compareTo(dataPagamento) < 0) {
 				
 				//CALCULA JUROS
 				valorJurosCalculado =
 					this.calcularJuros(cob.getBanco(), cob.getCota().getId(),
 							           cob.getValor().subtract(saldoDivida), cob.getDataVencimento(),
-									   dataOperacao);
+							           dataPagamento);
 				//CALCULA MULTA
 				valorMultaCalculado =
 					this.calcularMulta(cob.getBanco(), cob.getCota(),
 							           cob.getValor().subtract(saldoDivida));
 			}
 			
-			cobranca.setDataPagamento( DateUtil.formatarDataPTBR(dataOperacao) );
+			cobranca.setDataPagamento( DateUtil.formatarDataPTBR(dataPagamento) );
 			cobranca.setDesconto( CurrencyUtil.formatarValor(BigDecimal.ZERO) );
 			cobranca.setJuros( CurrencyUtil.formatarValor(valorJurosCalculado) );
             cobranca.setMulta( CurrencyUtil.formatarValor(valorMultaCalculado) );

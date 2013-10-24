@@ -286,7 +286,12 @@
 		      	    <td class="linha_borda"><strong>Valor R$:</strong></td>
 		      	    <td class="linha_borda" id="valorBoleto" />
 		   	      </tr>
-		   	      
+		   	      <tr>
+		   	      		<td class="dataPagamentoManualBoleto" width="100">Data Pagamento:</td>
+			            <td class="dataPagamentoManualBoleto">
+							<input onchange="baixaFinanceiraController.atualizarDadosCobrancaManualBoleto();" name="dtPagamentoManualBoleto" type="text" id="dtPagamentoManualBoleto" style="width:120px; text-align:right;" />
+						</td>
+				  </tr>
 		   	      <tr>
 		      	    <td class="linha_borda"><strong>Desconto R$:</strong></td>
 		      	    <td class="linha_borda">  <input maxlength="22" onblur="baixaFinanceiraController.calculaTotalManual();" id="desconto" type="text" style="width:120px; text-align:right;"/>  </td>

@@ -1205,6 +1205,7 @@ public class RecebimentoFisicoController extends BaseController {
 			recebFisico.setEdicaoItemNotaPermitida(edicaoItemNotaPermitida);
 			recebFisico.setEdicaoItemRecFisicoPermitida(edicaoItemRecFisicoPermitida);
 			recebFisico.setDestacarValorNegativo(destacarValorNegativo);
+			recebFisico.setProdutoSemCadastro(dto.isProdutoSemCadastro());
 
 			rows.add(new CellModelKeyValue<RecebimentoFisicoVO>(counter, recebFisico));
 		}

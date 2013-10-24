@@ -4,6 +4,8 @@ var recebimentoFisicoController = $.extend(true, {
 	
 	novoValorTotalTyped: false, 
 	
+	linhasDestacadas : [],
+	
 	init: function() {
 		var _this = this;
 
@@ -561,7 +563,8 @@ var recebimentoFisicoController = $.extend(true, {
 		
 		//ATENTO AO ALTERAR A ORDEM DAS COLUNAS DO GRID POIS HÁ COLUNAS NA POLÍTICA DE SEGURANÇA DO USUÁRIO
 		$(".itemNotaGrid", recebimentoFisicoController.workspace).flexigrid({
-				onSuccess: function() {bloquearItensEdicao(recebimentoFisicoController.workspace);},
+				onSuccess: function() {bloquearItensEdicao(recebimentoFisicoController.workspace);
+									   recebimentoFisicoController.marcarLinhas();},
 				preProcess: recebimentoFisicoController.getDataFromResultNota,
 				dataType : 'json',
 				colModel : [
@@ -657,6 +660,14 @@ var recebimentoFisicoController = $.extend(true, {
 		});
 		
 		recebimentoFisicoController.apresentarEsconderConteudoPermissao();
+	},
+	
+	marcarLinhas : function(){
+		$.each(recebimentoFisicoController.linhasDestacadas,
+			function(index, item){
+				$('#row' + item, recebimentoFisicoController.workspace).removeClass("erow").addClass("gridLinhaDestacada");
+			}
+		);
 	},
 	
 	apresentarEsconderConteudoPermissao : function() {
@@ -1163,6 +1174,7 @@ var recebimentoFisicoController = $.extend(true, {
 	 */
 	getDataFromResultNota : function(data) {
 		
+		recebimentoFisicoController.linhasDestacadas = [];
 		var totalDescontoGeral = 0, totalGeral = 0;
 		$.each(data.rows, function(index, value) {
 			
@@ -1260,6 +1272,9 @@ var recebimentoFisicoController = $.extend(true, {
 				value.cell.replicaQtd = '<input title="Replicar Item" disabled="disabled" type="checkbox"/>';
 			}
 			
+			if (value.cell.produtoSemCadastro){
+				recebimentoFisicoController.linhasDestacadas.push(value.id);
+			}
 		});
 		
 		$(".grids", recebimentoFisicoController.workspace).show();

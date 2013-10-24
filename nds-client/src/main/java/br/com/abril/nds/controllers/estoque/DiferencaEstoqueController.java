@@ -586,6 +586,8 @@ public class DiferencaEstoqueController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, "Campo [Diferença] é obrigatório!");
 		}
 		
+		this.validarProdutoEmRecolhimento(direcionadoParaEstoque, codigoProduto,edicaoProduto,null);
+		
 		if(idDiferenca == null) {
 			
 			incluirLancamentoDiferencaEstoqueRateio(tipoDiferenca, direcionadoParaEstoque,
@@ -609,6 +611,32 @@ public class DiferencaEstoqueController extends BaseController {
 		}
 		
 		result.use(Results.json()).from("").serialize();
+	}
+	
+	/*
+	 * Verifica se o produto informado esta em processo de recolhimento caso a diferença seja redirecionada para cota.
+	 */
+	private void validarProdutoEmRecolhimento(boolean direcionadoParaEstoque,String codigoProduto, Integer edicaoProduto, ProdutoEdicao produtoEdicao) {
+		
+		if (!direcionadoParaEstoque ) {
+			
+			if (produtoEdicao == null){
+				
+				produtoEdicao = produtoEdicaoService.obterProdutoEdicaoPorCodProdutoNumEdicao(codigoProduto, edicaoProduto.toString());
+			}
+			
+			if (!diferencaEstoqueService.validarProdutoEmRecolhimento(produtoEdicao)){
+				
+				StringBuilder mensagem = new StringBuilder();
+				
+				mensagem.append(" Produto [").append(produtoEdicao.getProduto().getCodigo()).append(" - " )
+						.append(produtoEdicao.getProduto().getNomeComercial()).append( " - " )
+						.append(produtoEdicao.getNumeroEdicao()) 
+						.append("] já encontrasse em recolhimento.");
+				
+				throw new ValidacaoException(TipoMensagem.WARNING,mensagem.toString());
+			}
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -2593,7 +2621,7 @@ public class DiferencaEstoqueController extends BaseController {
 	
 	@Post
 	@Path("/lancamento/rateio/buscarPrecoProdutoEdicao")
-	public void buscarPrecoProdutoEdicao(String codigoProduto, Long numeroEdicao){
+	public void buscarPrecoProdutoEdicao(String codigoProduto, Long numeroEdicao, boolean direcionadoParaEstoque){
 		
 		codigoProduto = StringUtils.leftPad(codigoProduto, 8, '0');
 		
@@ -2610,6 +2638,8 @@ public class DiferencaEstoqueController extends BaseController {
 		
 		if(estoque == null) 
 			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.ERROR, "Produto sem estoque cadastrado."));
+		
+		this.validarProdutoEmRecolhimento(direcionadoParaEstoque, null, null, pe);
 						
 		Object[] dados = new Object[4];
 		dados[0] = CurrencyUtil.formatarValor(pe.getPrecoVenda());
@@ -2761,17 +2791,10 @@ public class DiferencaEstoqueController extends BaseController {
 	}
 
 	@Post
-	@SuppressWarnings("unchecked")
 	@Path("/lancamento/rateio/buscarProdutosCotaNota")
 	public void	buscarProdutosCotaNota(Date dateNotaEnvio, Integer numeroCota) {
 		
 		this.validarDadosBuscaProdutosNota(dateNotaEnvio, numeroCota);
-		
-		Set<Diferenca> diferencasSessao = 
-			(Set<Diferenca>) this.httpSession.getAttribute(LISTA_NOVAS_DIFERENCAS_SESSION_ATTRIBUTE);
-		
-		Map<Long, List<RateioCotaVO>> mapaRateioCotas =
-			(Map<Long, List<RateioCotaVO>>) this.httpSession.getAttribute(MAPA_RATEIOS_CADASTRADOS_SESSION_ATTRIBUTE);
 		
 		List<DetalheItemNotaFiscalDTO> itensNotaEnvio = 
 			this.itemNotaEnvioService.obterItensNotaEnvioLancamentoProduto(dateNotaEnvio, numeroCota);
@@ -2781,7 +2804,13 @@ public class DiferencaEstoqueController extends BaseController {
 		DiferencaVO diferencaVO = null;
 
 		for (DetalheItemNotaFiscalDTO detalheItemNota : itensNotaEnvio) {
-		
+			
+			ProdutoEdicao produtoEdicao = produtoEdicaoService.obterProdutoEdicao(detalheItemNota.getIdProdutoEdicao(), false);
+			
+			if (!diferencaEstoqueService.validarProdutoEmRecolhimento(produtoEdicao)){
+				continue;
+			}
+			
 			diferencaVO = new DiferencaVO();
 
 			diferencaVO.setCodigoProduto(detalheItemNota.getCodigoProduto());

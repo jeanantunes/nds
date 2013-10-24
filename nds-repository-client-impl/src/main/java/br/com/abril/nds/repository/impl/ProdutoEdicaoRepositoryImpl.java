@@ -417,7 +417,31 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		.append(" SELECT pe.id as id, p.codigo as codigoProduto, p.NOME_COMERCIAL as nomeComercial, ")
 		.append("        pe.NUMERO_EDICAO as numeroEdicao, coalesce(pessoa.nome, pessoa.RAZAO_SOCIAL) as nomeFornecedor, ")
 		.append("        l.TIPO_LANCAMENTO as statusLancamento, ") 
-		.append("		 case when (select max(fp.lancamento_id) from FURO_PRODUTO fp where (fp.lancamento_id = l.id and fp.produto_edicao_id = pe.id)) is not null then 'FURO' else l.status end as statusSituacao, ") //(br.com.abril.nds.model.planejamento.StatusLancamento.FURO)		
+		
+		/*
+		 * Obtem situcao da edicao 
+		 * 
+		 * (Caso tenha furo e a data_expedicao > data_furo) ou não tenha furo obtem o status da lancamento
+		 * 	
+		 * 	Caso contrário é um furo
+		 */
+		.append("		 case ")
+		.append("		 	when  ")
+		.append("		 		(select max(fp.lancamento_id)  from FURO_PRODUTO fp  where (fp.lancamento_id = l.id  and fp.produto_edicao_id = pe.id)) is not null then   ")
+		.append("		 			case when  ")
+		.append("		 				((select data_expedicao from expedicao where id = l.expedicao_id) >  ")
+		.append("		 				(select fur_pro.data from FURO_PRODUTO fur_pro where fur_pro.lancamento_id = (select max(fp.lancamento_id)   ")
+		.append("		 																				from FURO_PRODUTO fp   ")
+		.append("		 																				where (fp.lancamento_id = l.id  and fp.produto_edicao_id = pe.id)) ")
+		.append("		 				)) then ")
+		.append("		 				l.status	 ")
+		.append("		 			else ")
+		.append("		 				'FURO' ")
+		.append("		 			end ")
+		.append("		 	else l.status  ")
+		.append("		 end as statusSituacao, ")		
+		
+		
 		.append("        pe.possui_brinde as temBrinde ");
 		
 		// Corpo da consulta com os filtros:
@@ -437,11 +461,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.addScalar("statusSituacao", StandardBasicTypes.STRING);
 		query.addScalar("temBrinde", StandardBasicTypes.BOOLEAN);
 		
-		try {
-			return query.list();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		return query.list();
 	}
 	
 	@Override
@@ -492,10 +512,10 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		hql.append("   from PRODUTO_EDICAO pe ");
 		hql.append("   inner join PRODUTO p on pe.PRODUTO_ID=p.ID "); 
-		hql.append("   inner join PRODUTO_FORNECEDOR pf on p.ID=pf.PRODUTO_ID "); 
-		hql.append("   inner join FORNECEDOR f on pf.fornecedores_ID=f.ID ");
-		hql.append("   inner join PESSOA pessoa on f.JURIDICA_ID=pessoa.ID ");
-		hql.append("   left outer join LANCAMENTO l on pe.ID=l.PRODUTO_EDICAO_ID "); 
+		hql.append("   left join PRODUTO_FORNECEDOR pf on p.ID=pf.PRODUTO_ID "); 
+		hql.append("   left join FORNECEDOR f on pf.fornecedores_ID=f.ID ");
+		hql.append("   left join PESSOA pessoa on f.JURIDICA_ID=pessoa.ID ");
+		hql.append("   join LANCAMENTO l on pe.ID=l.PRODUTO_EDICAO_ID "); 
 		hql.append("   where pe.ATIVO = :indAtivo ");
 		hql.append("   and l.id=( ");
 		hql.append("       select ");
@@ -597,11 +617,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		query.setMaxResults(qtdEdicoes);
 		
-		try {
-			return query.list();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		return query.list();
 	}
 	
 	@Override

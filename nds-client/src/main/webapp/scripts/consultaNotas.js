@@ -2,6 +2,8 @@ var consultaNotasController = $.extend(true, {
 
 init : function() {
 	
+	this.linhasDestacadas = [],
+	
 	$("#btnPesquisar", consultaNotasController.workspace).keypress(function(event) {
 
 		var keynum;
@@ -193,6 +195,7 @@ pesquisarDetalhesNota : function(idNota) {
 			{
 				url : contextPath + "/estoque/consultaNotas/pesquisarDetalhesNotaFiscal",
 				preProcess : consultaNotasController.montarGridComRodape,
+				onSuccess: consultaNotasController.onSuccesPesquisa,
 				dataType : 'json',
 				colModel : [ {
 					display : 'Código',
@@ -281,6 +284,15 @@ montarGridComRodape : function(data) {
 
 		return;
 	}
+	
+	consultaNotasController.linhasDestacadas = [];
+	$.each(data.tableModel.rows,
+		function(index, item){
+			if (item.cell[9] == "true"){
+				consultaNotasController.linhasDestacadas.push(item.id);
+			}
+		}
+	);
 
 	var jsonData = jQuery.toJSON(data);
 
@@ -309,6 +321,14 @@ popup : function() {
 		},
 		form: $("#dialog-novo", consultaNotasController.workspace).parents("form")
 	});
+},
+
+onSuccesPesquisa : function(){
+	$.each(consultaNotasController.linhasDestacadas,
+		function (index, item){	    	
+			$('#row' + item, consultaNotasController.workspace).removeClass("erow").addClass("gridLinhaDestacada");
+		}
+	);
 }
 
 }, BaseController);

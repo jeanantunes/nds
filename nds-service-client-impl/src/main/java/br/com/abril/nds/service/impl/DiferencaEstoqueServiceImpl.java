@@ -42,6 +42,8 @@ import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.Produto;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
@@ -61,11 +63,13 @@ import br.com.abril.nds.model.integracao.ParametroSistema;
 import br.com.abril.nds.model.integracao.StatusIntegracao;
 import br.com.abril.nds.model.planejamento.EstudoCota;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DiferencaEstoqueRepository;
 import br.com.abril.nds.repository.EstudoCotaRepository;
 import br.com.abril.nds.repository.LancamentoDiferencaRepository;
+import br.com.abril.nds.repository.LancamentoRepository;
 import br.com.abril.nds.repository.MovimentoEstoqueRepository;
 import br.com.abril.nds.repository.ParametroSistemaRepository;
 import br.com.abril.nds.repository.RateioDiferencaRepository;
@@ -85,6 +89,7 @@ import br.com.abril.nds.service.UsuarioService;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.JasperUtil;
+import br.com.abril.nds.vo.ValidacaoVO;
 
 /**
  * Classe de implementação de serviços referentes a entidade
@@ -155,6 +160,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	
 	@Autowired
 	private EstoqueProdutoService estoqueProdutoService;
+	
+	@Autowired
+	private LancamentoRepository lancamentoRepository;
 	
 	
 	@Transactional(readOnly = true)
@@ -1449,6 +1457,37 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		mapaRateiosCadastrados.put(id, listaRateiosCadastrados);
 		
 		return mapaRateiosCadastrados;
+	}
+	
+	@Transactional(readOnly = true)
+	public boolean validarProdutoEmRecolhimento(ProdutoEdicao produtoEdicao){
+		
+   		if(produtoEdicao == null){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Produto não encontrada."));
+		}
+		
+		Lancamento lancamento = null;
+		
+		if(produtoEdicao.isParcial()){
+			
+			lancamento = lancamentoRepository.obterLancamentoParcialFinal(produtoEdicao.getId());
+			
+		}else{
+			
+			lancamento = lancamentoRepository.obterUltimoLancamentoDaEdicao(produtoEdicao.getId());
+		}
+		
+		if(lancamento!= null 
+				&& Arrays.asList(StatusLancamento.BALANCEADO_RECOLHIMENTO,
+								 StatusLancamento.EM_RECOLHIMENTO,
+								 StatusLancamento.RECOLHIDO,
+								 StatusLancamento.FECHADO).contains(lancamento.getStatus())){
+			
+			return false;
+		}
+		
+		return true;
+		
 	}
 	
 }

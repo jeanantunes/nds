@@ -20,9 +20,11 @@ import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0135Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0135InputItem;
 import br.com.abril.nds.model.Origem;
-import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
+import br.com.abril.nds.model.cadastro.TipoProduto;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.GrupoNotaFiscal;
 import br.com.abril.nds.model.fiscal.ItemNotaFiscalEntrada;
@@ -33,9 +35,13 @@ import br.com.abril.nds.model.fiscal.TipoUsuarioNotaFiscal;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
 import br.com.abril.nds.model.planejamento.Lancamento;
+import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
+import br.com.abril.nds.repository.ProdutoRepository;
+import br.com.abril.nds.repository.TipoProdutoRepository;
 import br.com.abril.nds.service.integracao.DistribuidorService;
+import br.com.abril.nds.util.DateUtil;
 
 @Component
 public class EMS0135MessageProcessor extends AbstractRepository implements MessageProcessor {
@@ -45,6 +51,12 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 	
 	@Autowired
 	private DistribuidorService distribuidorService;
+	
+	@Autowired
+	private TipoProdutoRepository tipoProdutoRepository;
+	
+	@Autowired
+	private ProdutoRepository produtoRepository;
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
@@ -57,14 +69,14 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		EMS0135Input input = (EMS0135Input) message.getBody();
 	
 		// Validar código do distribuidor:
-		Distribuidor distribuidor = this.distribuidorService.obter();
-		if(!distribuidor.getCodigoDistribuidorDinap().equals(
-				input.getDistribuidor().toString())){			
-			this.ndsiLoggerFactory.getLogger().logWarning(message,
-					EventoExecucaoEnum.RELACIONAMENTO, 
-					"Código do distribuidor do arquivo não é o mesmo do arquivo.");
-			return;
-		}
+//		Distribuidor distribuidor = this.distribuidorService.obter();
+//		if(!distribuidor.getCodigoDistribuidorDinap().equals(
+//				input.getDistribuidor().toString())){			
+//			this.ndsiLoggerFactory.getLogger().logWarning(message,
+//					EventoExecucaoEnum.RELACIONAMENTO, 
+//					"Código do distribuidor do arquivo não é o mesmo do arquivo.");
+//			return;
+//		}
 
 		NotaFiscalEntradaFornecedor notafiscalEntrada = null;
 
@@ -172,57 +184,102 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 		
 		
 		List<EMS0135InputItem> items =  input.getItems();
-		boolean ItemNotFound = false;
+//		boolean ItemNotFound = false;
 
 		for(EMS0135InputItem imputItem : items) {
 					
 
 			final String codigoProduto = imputItem.getCodigoProduto();
 			final Long edicao = imputItem.getEdicao();
-			ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto,
-					edicao);
+			ProdutoEdicao produtoEdicao = this.obterProdutoEdicao(codigoProduto, edicao);
 			if (produtoEdicao == null) {
 				
 				// Validar código do distribuidor:
-				this.ndsiLoggerFactory.getLogger().logError(message,
-						EventoExecucaoEnum.HIERARQUIA, 
-						String.format( "Produto %1$s / edicao %2$s não cadastrado. A nota  %3$s não será Inserida", codigoProduto , edicao.toString(), nfEntrada.getNumero().toString() )
-						) ;
-				ItemNotFound = true;
-			}	else {					
-			
-				ItemNotaFiscalEntrada item = new ItemNotaFiscalEntrada();
-		
-				item.setQtde(new BigInteger(imputItem.getQtdExemplar().toString()));
-				item.setNotaFiscal(nfEntrada);
-				item.setProdutoEdicao(produtoEdicao);
-				item.setPreco( BigDecimal.valueOf( imputItem.getPreco() ));
-				item.setDesconto( BigDecimal.valueOf( imputItem.getDesconto() ));
+//				this.ndsiLoggerFactory.getLogger().logError(message,
+//						EventoExecucaoEnum.HIERARQUIA, 
+//						String.format( "Produto %1$s / edicao %2$s não cadastrado. A nota  %3$s não será Inserida", codigoProduto , edicao.toString(), nfEntrada.getNumero().toString() )
+//						) ;
+//				ItemNotFound = true;
 				
-				Lancamento lancamento = obterLancamentoProdutoEdicao(produtoEdicao.getId());
-				if (null == lancamento) {
-					Calendar cal = Calendar.getInstance();
+				//Trac 784
+				Produto produto = this.produtoRepository.obterProdutoPorCodigo(codigoProduto);
+				
+				if (produto == null){
 					
-					cal.add(Calendar.DAY_OF_MONTH, 2);					
-					item.setDataLancamento(cal.getTime());
+					TipoProduto tipoProduto = this.tipoProdutoRepository.buscarPorId(1L);
 					
-					cal.add(Calendar.DAY_OF_MONTH, produtoEdicao.getPeb());
-					item.setDataRecolhimento(cal.getTime());
-					
-					item.setTipoLancamento(TipoLancamento.LANCAMENTO);
-
-				} else {					
-					item.setDataLancamento(lancamento.getDataLancamentoPrevista());
-					item.setDataRecolhimento(lancamento.getDataRecolhimentoPrevista());
-					item.setTipoLancamento(lancamento.getTipoLancamento());
+					produto = new Produto();
+					produto.setCodigo(imputItem.getCodigoProduto());
+					produto.setPeriodicidade(PeriodicidadeProduto.MENSAL);
+					produto.setNome(imputItem.getNomeProduto());
+					produto.setOrigem(Origem.MANUAL);
+					produto.setTipoProduto(tipoProduto);
+					produto.setPacotePadrao(10);
+					produto.setPeb(35);
+					produto.setPeso(100L);
+					this.getSession().persist(produto);
 				}
-				nfEntrada.getItens().add(item);
+				
+				produtoEdicao = new ProdutoEdicao();
+				produtoEdicao.setProduto(produto);
+				produtoEdicao.setNumeroEdicao(imputItem.getEdicao());
+				produtoEdicao.setPacotePadrao(10);
+				produtoEdicao.setPeb(35);
+				produtoEdicao.setPeso(100L);
+				produtoEdicao.setPossuiBrinde(false);
+				produtoEdicao.setPermiteValeDesconto(false);
+				produtoEdicao.setParcial(true);
+				produtoEdicao.setAtivo(true);
+				produtoEdicao.setOrigem(Origem.PRODUTO_SEM_CADASTRO);
+				this.getSession().persist(produtoEdicao);
+				
+				Date dataAtual = new Date();
+				Date dataPrevista = DateUtil.adicionarDias(dataAtual, produto.getPeb());
+				Lancamento lancamento = new Lancamento();
+				lancamento.setDataCriacao(dataAtual);
+				lancamento.setDataLancamentoPrevista(dataAtual);
+				lancamento.setDataLancamentoDistribuidor(dataAtual);
+				lancamento.setDataRecolhimentoPrevista(dataPrevista);
+				lancamento.setDataRecolhimentoDistribuidor(dataPrevista);
+				lancamento.setProdutoEdicao(produtoEdicao);
+				lancamento.setTipoLancamento(TipoLancamento.NORMAL);
+				lancamento.setDataStatus(dataAtual);
+				lancamento.setStatus(StatusLancamento.CONFIRMADO);
+				lancamento.setReparte(new BigInteger(imputItem.getQtdExemplar().toString()));
+				this.getSession().persist(lancamento);
 			}
+			
+			ItemNotaFiscalEntrada item = new ItemNotaFiscalEntrada();
+	
+			item.setQtde(new BigInteger(imputItem.getQtdExemplar().toString()));
+			item.setNotaFiscal(nfEntrada);
+			item.setProdutoEdicao(produtoEdicao);
+			item.setPreco( BigDecimal.valueOf( imputItem.getPreco() ));
+			item.setDesconto( BigDecimal.valueOf( imputItem.getDesconto() ));
+			
+			Lancamento lancamento = obterLancamentoProdutoEdicao(produtoEdicao.getId());
+			if (null == lancamento) {
+				Calendar cal = Calendar.getInstance();
+				
+				cal.add(Calendar.DAY_OF_MONTH, 2);					
+				item.setDataLancamento(cal.getTime());
+				
+				cal.add(Calendar.DAY_OF_MONTH, produtoEdicao.getPeb());
+				item.setDataRecolhimento(cal.getTime());
+				
+				item.setTipoLancamento(TipoLancamento.LANCAMENTO);
+
+			} else {					
+				item.setDataLancamento(lancamento.getDataLancamentoPrevista());
+				item.setDataRecolhimento(lancamento.getDataRecolhimentoPrevista());
+				item.setTipoLancamento(lancamento.getTipoLancamento());
+			}
+			nfEntrada.getItens().add(item);
 		}
 		
-		if (ItemNotFound) {
-			return null;				
-		}
+//		if (ItemNotFound) {
+//			return null;				
+//		}
 		
 		return nfEntrada;
 	}

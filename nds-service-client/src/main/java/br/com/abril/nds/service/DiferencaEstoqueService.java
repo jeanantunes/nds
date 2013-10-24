@@ -15,6 +15,7 @@ import br.com.abril.nds.dto.filtro.FiltroDetalheDiferencaCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroLancamentoDiferencaEstoqueDTO;
 import br.com.abril.nds.model.Origem;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
+import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
 import br.com.abril.nds.model.estoque.TipoEstoque;
@@ -139,5 +140,7 @@ public interface DiferencaEstoqueService {
 	Map<Long, List<RateioCotaVO>> incluirSeNaoExisteNoMapa(
 			Map<Long, List<RateioCotaVO>> mapaRateiosCadastrados, Long id,
 			RateioCotaVO rateioCotaVO);
+	
+	boolean validarProdutoEmRecolhimento(ProdutoEdicao produtoEdicao);
 	
 }
