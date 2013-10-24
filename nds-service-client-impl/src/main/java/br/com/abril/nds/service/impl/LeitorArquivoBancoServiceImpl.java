@@ -4,7 +4,9 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.springframework.stereotype.Service;
@@ -14,7 +16,6 @@ import br.com.abril.nds.dto.PagamentoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.service.LeitorArquivoBancoService;
-import br.com.abril.nds.util.Constantes;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.cnab.CNAB;
 import br.com.abril.nds.util.cnab.UtilitarioCNAB;
@@ -112,7 +113,7 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 	
 		String codigoBanco = padraoCNAB.obterCodigoBanco(primeiraLinha);
 		
-		CNAB bancoCNAB = UtilitarioCNAB.obterCNAB(padraoCNAB, codigoBanco);
+		CNAB bancoCNAB = CNAB.obterCNAB(padraoCNAB, codigoBanco);
 		
 		String strNumeroAgencia = null;
 		String strNumeroConta = null;
@@ -125,7 +126,7 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 		ArquivoPagamentoBancoDTO arquivoPagamentoBanco = new ArquivoPagamentoBancoDTO();
 		arquivoPagamentoBanco.setCodigoBanco(codigoBanco);
 		
-		List<PagamentoDTO> listaPagamento = new ArrayList<PagamentoDTO>();
+		Map<Long, PagamentoDTO> mapaPagamento = new HashMap<Long, PagamentoDTO>();
 		
 		PagamentoDTO pagamento = null;
 		
@@ -157,25 +158,40 @@ public class LeitorArquivoBancoServiceImpl implements LeitorArquivoBancoService 
 				}	           
 						                
 				strNumeroRegistro 	= bancoCNAB.obterNumeroRegistro(line);
-				strDataPagamento 	= bancoCNAB.obterDataPagamento(line);
-				strNossoNumero 		= bancoCNAB.obterNossoNumero(line);
-				valorPagamento 		= this.parseBigDecimal(bancoCNAB.obterValorPagamento(line));
 				
-				pagamento = new PagamentoDTO();
+				if(mapaPagamento.containsKey(this.parseLong(strNumeroRegistro))) {
+					pagamento = mapaPagamento.get(this.parseLong(strNumeroRegistro));
+				} else {
+					pagamento = new PagamentoDTO();
+					pagamento.setNumeroRegistro(this.parseLong(strNumeroRegistro));
+					mapaPagamento.put(this.parseLong(strNumeroRegistro), pagamento);
+				}
 				
-				pagamento.setNumeroRegistro(this.parseLong(strNumeroRegistro));
-				pagamento.setDataPagamento(DateUtil.parseData(strDataPagamento, padraoCNAB.getFormatoDataArquivoCNAB()));
-				pagamento.setNossoNumero(strNossoNumero);
-				pagamento.setValorPagamento(valorPagamento);
+				if(bancoCNAB.containsDataPagamento(line)) {
+					strDataPagamento 	= bancoCNAB.obterDataPagamento(line);
+					pagamento.setDataPagamento(DateUtil.parseData(strDataPagamento, padraoCNAB.getFormatoDataArquivoCNAB()));
+
+				}
 				
-				validarLeituraLinha(pagamento);
+				if(bancoCNAB.containsNossoNumero(line)) {
+					strNossoNumero 		= bancoCNAB.obterNossoNumero(line);
+					pagamento.setNossoNumero(strNossoNumero);
+				}
 				
-				somaPagamentos = somaPagamentos.add(valorPagamento);
-				
-				listaPagamento.add(pagamento);
+				if(bancoCNAB.containsValorPagamento(line)) {
+					valorPagamento 		= this.parseBigDecimal(bancoCNAB.obterValorPagamento(line));
+					pagamento.setValorPagamento(valorPagamento);
+				}
 				
 			}
 			
+		}
+		
+		List<PagamentoDTO> listaPagamento = (List<PagamentoDTO>) mapaPagamento.values();
+		
+		for(PagamentoDTO p : listaPagamento) {
+			validarLeituraLinha(p);
+			somaPagamentos = somaPagamentos.add(p.getValorPagamento());
 		}
 		
 		arquivoPagamentoBanco.setListaPagemento(listaPagamento);
