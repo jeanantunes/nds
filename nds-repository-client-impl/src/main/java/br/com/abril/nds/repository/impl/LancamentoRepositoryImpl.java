@@ -1195,7 +1195,9 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" 	false ");
 		sql.append(" end as possuiFuro, ");
 		
-		sql.append(" estudo.QTDE_REPARTE as distribuicao ");
+		sql.append(" estudo.QTDE_REPARTE as distribuicao, ");
+		
+		sql.append(" fornecedor.id as idFornecedor ");
 		
 		sql.append(montarClausulaFromConsultaBalanceamentoLancamento());
 		
@@ -1216,6 +1218,14 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" inner join ");
 		sql.append(" PRODUTO produto ");
 		sql.append(" on produtoEdicao.PRODUTO_ID = produto.ID ");
+		
+		sql.append(" inner join ");
+		sql.append("     PRODUTO_FORNECEDOR produtoFornecedor ");
+		sql.append("         on produto.ID=produtoFornecedor.PRODUTO_ID ");
+		sql.append(" inner join ");
+		sql.append("     FORNECEDOR fornecedor ");
+		sql.append("         on produtoFornecedor.fornecedores_ID=fornecedor.ID ");  
+		
 		sql.append(" inner join ");
 		sql.append(" TIPO_PRODUTO tipoProduto ");
 		sql.append(" on tipoProduto.ID = produto.TIPO_PRODUTO_ID ");
@@ -1237,13 +1247,15 @@ public class LancamentoRepositoryImpl extends
 		
 		sql.append(" where ");
 		
-		sql.append(" ( ");
-		sql.append(" 	select fornecedor.ID from PRODUTO_FORNECEDOR produtoFornecedor, FORNECEDOR fornecedor ");
-		sql.append(" 		where produtoFornecedor.PRODUTO_ID = produto.ID ");
-		sql.append(" 		and produtoFornecedor.FORNECEDORES_ID = fornecedor.ID ");
-		sql.append(" 		and fornecedor.ID in ( :idsFornecedores ) ");
-		sql.append(" 		limit 1 ");
-		sql.append(" ) is not null ");
+		sql.append(" fornecedor.ID in (:idsFornecedores) ");
+		
+//		sql.append(" ( ");
+//		sql.append(" 	select fornecedor.ID from PRODUTO_FORNECEDOR produtoFornecedor, FORNECEDOR fornecedor ");
+//		sql.append(" 		where produtoFornecedor.PRODUTO_ID = produto.ID ");
+//		sql.append(" 		and produtoFornecedor.FORNECEDORES_ID = fornecedor.ID ");
+//		sql.append(" 		and fornecedor.ID in ( :idsFornecedores ) ");
+//		sql.append(" 		limit 1 ");
+//		sql.append(" ) is not null ");
 		
 		sql.append(" and ( ");
 		sql.append("     ( ");
@@ -1282,7 +1294,8 @@ public class LancamentoRepositoryImpl extends
 			.addScalar("periodicidadeProduto")
 			.addScalar("possuiFuro", StandardBasicTypes.BOOLEAN)
 			.addScalar("alteradoInteface", StandardBasicTypes.BOOLEAN)
-			.addScalar("distribuicao", StandardBasicTypes.BIG_INTEGER);
+			.addScalar("distribuicao", StandardBasicTypes.BIG_INTEGER)
+			.addScalar("idFornecedor", StandardBasicTypes.LONG);
 		
 		this.aplicarParametros(query, periodoDistribuicao, fornecedores);
 		
