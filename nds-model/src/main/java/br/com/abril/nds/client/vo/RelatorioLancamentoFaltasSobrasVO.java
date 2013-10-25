@@ -26,23 +26,25 @@ public class RelatorioLancamentoFaltasSobrasVO implements Serializable  {
 		
 		ProdutoEdicao produtoEdicao = impressaoDiferencaEstoqueDTO.getProdutoEdicao();
 		
-		Produto produto = produtoEdicao.getProduto();
-		
-		this.codigoProduto = produto.getCodigo();
-		this.descricaoProduto = produto.getNomeComercial();;
-		this.numeroEdicao = produtoEdicao.getNumeroEdicao().toString();
-		this.precoCapa = CurrencyUtil.formatarValor(produtoEdicao.getPrecoVenda());
-		
-		if (impressaoDiferencaEstoqueDTO.getQtdeFaltas() != null
-				&& BigInteger.ZERO.compareTo(impressaoDiferencaEstoqueDTO.getQtdeFaltas()) <= 0) {
+		if (produtoEdicao != null){
+			Produto produto = produtoEdicao.getProduto();
 			
-			this.qtdeFaltas = impressaoDiferencaEstoqueDTO.getQtdeFaltas().toString();
-		}
-		
-		if (impressaoDiferencaEstoqueDTO.getQtdeSobras() != null
-				&& BigInteger.ZERO.compareTo(impressaoDiferencaEstoqueDTO.getQtdeSobras()) <= 0) {
+			this.codigoProduto = produto.getCodigo();
+			this.descricaoProduto = produto.getNomeComercial();;
+			this.numeroEdicao = produtoEdicao.getNumeroEdicao().toString();
+			this.precoCapa = CurrencyUtil.formatarValor(produtoEdicao.getPrecoVenda());
 			
-			this.qtdeSobras = impressaoDiferencaEstoqueDTO.getQtdeSobras().toString();
+			if (impressaoDiferencaEstoqueDTO.getQtdeFaltas() != null
+					&& BigInteger.ZERO.compareTo(impressaoDiferencaEstoqueDTO.getQtdeFaltas()) <= 0) {
+				
+				this.qtdeFaltas = impressaoDiferencaEstoqueDTO.getQtdeFaltas().toString();
+			}
+			
+			if (impressaoDiferencaEstoqueDTO.getQtdeSobras() != null
+					&& BigInteger.ZERO.compareTo(impressaoDiferencaEstoqueDTO.getQtdeSobras()) <= 0) {
+				
+				this.qtdeSobras = impressaoDiferencaEstoqueDTO.getQtdeSobras().toString();
+			}
 		}
 		
 		this.rateios = impressaoDiferencaEstoqueDTO.getRateios();

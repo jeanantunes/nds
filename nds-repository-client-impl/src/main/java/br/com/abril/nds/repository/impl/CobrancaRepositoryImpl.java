@@ -136,11 +136,17 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	
 	public Cobranca obterCobrancaPorNossoNumero(String nossoNumero){
 		
-		Criteria criteria = this.getSession().createCriteria(Cobranca.class);
-		criteria.add(Restrictions.eq("nossoNumero", nossoNumero));
-		criteria.setMaxResults(1);
-	
-		return (Cobranca) criteria.uniqueResult();
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select c from Cobranca c where c.nossoNumero = :nossoNumero ");
+		
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("nossoNumero", nossoNumero);
+		
+		return (Cobranca) query.uniqueResult();
+		
 	}
 	
 	public void incrementarVia(String... nossoNumero){

@@ -2057,7 +2057,6 @@ public class Fixture {
 		estoqueProdutoCota.setProdutoEdicao(produtoEdicao);
 		estoqueProdutoCota.setQtdeDevolvida(qtde);
 		estoqueProdutoCota.setQtdeRecebida(qtde);
-		estoqueProdutoCota.setVersao(2L);
 		
 		return estoqueProdutoCota;
 	}

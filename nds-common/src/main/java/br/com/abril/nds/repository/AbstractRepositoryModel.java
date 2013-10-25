@@ -29,6 +29,7 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 		this.clazz = clazz;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public K adicionar(T entity) {
 		return (K) getSession().save(entity);		
 	}
@@ -39,6 +40,7 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 	}
 	
 	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void removerPorId(K... id) {		
 		String hql  = "DELETE FROM "+ clazz.getCanonicalName() + " WHERE id in (:ids)" ;
@@ -62,7 +64,7 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 	
 	@SuppressWarnings("unchecked")
 	public T buscarPorId(K id) {
-		return (T) getSession().load(clazz, id);
+		return (T) getSession().get(clazz, id);
 	}
 	
 	@SuppressWarnings("unchecked")
