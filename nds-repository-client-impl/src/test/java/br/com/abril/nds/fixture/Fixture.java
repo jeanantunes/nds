@@ -166,7 +166,6 @@ import br.com.abril.nds.model.financeiro.MovimentoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.StatusDivida;
-import br.com.abril.nds.model.financeiro.StatusInadimplencia;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.model.fiscal.CFOP;
 import br.com.abril.nds.model.fiscal.ControleNumeracaoNotaFiscal;
@@ -2030,7 +2029,6 @@ public class Fixture {
 		estoqueProdutoCota.setProdutoEdicao(produtoEdicao);
 		estoqueProdutoCota.setQtdeDevolvida(qtde);
 		estoqueProdutoCota.setQtdeRecebida(qtde);
-		estoqueProdutoCota.setVersao(2L);
 		
 		return estoqueProdutoCota;
 	}
