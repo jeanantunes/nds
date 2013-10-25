@@ -53,8 +53,10 @@ public class MixProdutoDTO implements Serializable {
 	private BigInteger idCota;
 	private BigInteger idProduto;
 	private String codigoProduto;
-	private String classificacaoProduto;
+	private String codigoICD;
 	
+	private String classificacaoProduto;
+	private BigInteger classificacaoProdutoID;
 	private PaginacaoVO paginacaoVO;
 	
 
@@ -219,6 +221,18 @@ public class MixProdutoDTO implements Serializable {
 	}
 	public void setClassificacaoProduto(String classificacaoProduto) {
 		this.classificacaoProduto = classificacaoProduto;
+	}
+	public String getCodigoICD() {
+		return codigoICD;
+	}
+	public void setCodigoICD(String codigoICD) {
+		this.codigoICD = codigoICD;
+	}
+	public BigInteger getClassificacaoProdutoID() {
+		return classificacaoProdutoID;
+	}
+	public void setClassificacaoProdutoID(BigInteger classificacaoProdutoID) {
+		this.classificacaoProdutoID = classificacaoProdutoID;
 	}
 	
 	

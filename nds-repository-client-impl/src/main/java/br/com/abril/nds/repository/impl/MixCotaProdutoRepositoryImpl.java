@@ -27,6 +27,7 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.distribuicao.MixCotaProduto;
+import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.MixCotaProdutoRepository;
@@ -181,10 +182,11 @@ public class MixCotaProdutoRepositoryImpl extends
 		.append(" mix_cota_produto.REPARTE_MAX as reparteMaximo, ")
 		.append(" mix_cota_produto.REPARTE_MIN as reparteMinimo, ")  
 		.append(" mix_cota_produto.ID_COTA as idCota, ")
-		.append(" mix_cota_produto.ID_PRODUTO as idProduto, ")
+//		.append(" mix_cota_produto.ID_PRODUTO as idProduto, ")
 		.append(" (select count(pdv.id) from pdv where cota.id = pdv.cota_id) as qtdPdv, ") 
 		.append(" usuario.login as usuario, ")
-		.append(" tipo_classificacao_produto.descricao as classificacaoProduto ")
+		.append(" tipo_classificacao_produto.descricao as classificacaoProduto, ")
+		.append(" tipo_classificacao_produto.id as classificacaoProdutoID ")
 //		.append(" round(coalesce(avg(epc.qtde_recebida),0), 0) as reparteMedio, ")
 //		.append(" round(coalesce(avg(epc.qtde_recebida - epc.qtde_devolvida),0), 0) as vendaMedia, ")
 //		.append(" coalesce((select round(lc.reparte,0) from lancamento lc where lc.produto_edicao_id=produto_edicao.id and lancamento.status in ('LAN�ADA','CALCULADA') limit 1),0) as ultimoReparte ")
@@ -315,9 +317,9 @@ public class MixCotaProdutoRepositoryImpl extends
 
 		hql.append("")
 				.append(" delete from mix_cota_produto   ")
-				.append(" where mix_cota_produto.ID_PRODUTO in")
-				.append(" (select  id_produto from mix_cota_produto ")
-				.append(" join produto on produto.ID = mix_cota_produto.ID_PRODUTO  ")
+				.append(" where mix_cota_produto.codigo_icd in")
+				.append(" (select codigo_icd from mix_cota_produto ")
+				.append(" join produto on produto.codigo_icd = mix_cota_produto.codigo_icd  ")
 				.append(" join produto_edicao on produto_edicao.PRODUTO_ID = produto.ID ")
 				.append(" join lancamento on lancamento.PRODUTO_EDICAO_ID = produto_edicao.ID ")
 				.append(" where lancamento.DATA_CRIACAO between date_format(DATE_SUB(CURDATE(),INTERVAL 180 DAY),'%d/%m/%Y')  and CURDATE() ");
@@ -366,22 +368,30 @@ public class MixCotaProdutoRepositoryImpl extends
 			
 			Produto produto = new Produto();
 			produto.setId(mixProdutoDTO.getIdProduto().longValue());
+			
+			mcp.setCodigoICD(mixProdutoDTO.getCodigoICD());
 			mcp.setReparteMaximo(mixProdutoDTO.getReparteMaximo().longValue());
 			mcp.setReparteMedio(mixProdutoDTO.getReparteMedio().longValue());
 			mcp.setReparteMinimo(mixProdutoDTO.getReparteMinimo().longValue());
 			mcp.setUltimoReparte(mixProdutoDTO.getUltimoReparte().longValue());
 			mcp.setVendaMedia(mixProdutoDTO.getVendaMedia().longValue());
 			mcp.setUsuario(usuarioLogado);
+			TipoClassificacaoProduto tcp = new TipoClassificacaoProduto();
+			tcp.setId(mixProdutoDTO.getClassificacaoProdutoID().longValue());
+			mcp.setTipoClassificacaoProduto(tcp);
 			
 			List<RepartePDV> repartePdvFixacaoList = repartePDVRepository.buscarPorIdMix(mixProdutoDTO.getId().longValue());
-			for (RepartePDV repartePDV : repartePdvFixacaoList) {
-				RepartePDV newReparte = new RepartePDV();
-				newReparte.setMixCotaProduto(mcp);
+			if(repartePdvFixacaoList!=null &&  repartePdvFixacaoList.isEmpty()){
+				for (RepartePDV repartePDV : repartePdvFixacaoList) {
+					RepartePDV newReparte = new RepartePDV();
+					newReparte.setMixCotaProduto(mcp);
+					
+					newReparte.setPdv(repartePDV.getPdv());
+					newReparte.setProduto(produto);
+					newReparte.setReparte(repartePDV.getReparte());
+					mcp.getRepartesPDV().add(newReparte);
+				}
 				
-				newReparte.setPdv(repartePDV.getPdv());
-				newReparte.setProduto(produto);
-				newReparte.setReparte(repartePDV.getReparte());
-				mcp.getRepartesPDV().add(newReparte);
 			}
 			adicionar(mcp);
 		}

@@ -167,13 +167,11 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			}
 		}
 		
-		/*if(mixCotaProduto.getProduto() !=null){
-			mixCotaProdutoDTO.setProdutoId(mixCotaProduto.getProduto().getId());
-			mixCotaProdutoDTO.setNomeProduto(mixCotaProduto.getProduto().getNome());
-			mixCotaProdutoDTO.setCodigoProduto(mixCotaProduto.getProduto().getCodigo());
-            //FIXME refazer... a classificação fica no ProdutoEdicao
-//			mixCotaProdutoDTO.setClassificacaoProduto(mixCotaProduto.getProduto().getTipoClassificacaoProduto().getDescricao());
-		}*/
+		Produto produto = produtoService.obterProdutoPorCodigo(mixCotaProduto.getCodigoICD());
+		
+		mixCotaProdutoDTO.setNomeProduto(produto.getNomeComercial());
+		mixCotaProdutoDTO.setCodigoProduto(mixCotaProduto.getCodigoICD());
+		mixCotaProdutoDTO.setClassificacaoProduto(mixCotaProduto.getTipoClassificacaoProduto().getDescricao());
 		
 		if(mixCotaProduto.getRepartesPDV()!=null){
 			for(RepartePDV repartePDV: mixCotaProduto.getRepartesPDV()){
@@ -396,10 +394,12 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			List<ClassificacaoNaoRecebidaDTO> classificacoesNaoRecebidasPelaCotaList = this.classificacaoNaoRecebidaService.obterClassificacoesNaoRecebidasPelaCota(cota);
 			
 			for (ClassificacaoNaoRecebidaDTO classificacaoNaoRecebidaDTO : classificacoesNaoRecebidasPelaCotaList) {
-				if(classificacaoNaoRecebidaDTO.getNomeClassificacao().equals(mixCotaProdutoDTO.getClassificacaoProduto()))
+				if(classificacaoNaoRecebidaDTO.getNomeClassificacao().equals(mixCotaProdutoDTO.getClassificacaoProduto())){
 					mensagens.add("Cota de número "+cota.getNumeroCota()+" não recebe classificação do tipo "+mixCotaProdutoDTO.getClassificacaoProduto());
 					mixCotaProdutoDTO.setItemValido(false);
 					continue;
+					
+				}
 			}
 			
 			
@@ -413,7 +413,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			
 			List<ProdutoRecebidoDTO> obterProdutosRecebidosPelaCotaList = this.excecaoSegmentoParciaisService.obterProdutosRecebidosPelaCota(filtroExcecaoSeg);
 			
-			Produto prd = this.produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto());
+			Produto prd = this.produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoICD());
 			TipoSegmentoProduto tipoSegProd = prd.getTipoSegmentoProduto();
 			
 			if(obterSegmentosNaoRecebidosCadastradosNaCota==null || obterSegmentosNaoRecebidosCadastradosNaCota.isEmpty()){
@@ -492,7 +492,7 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			return obterStringMensagemValidacaoProduto(mixCotaProdutoDTO) + " dados da cota devem ser preenchidos";
 		}
 		
-		if (StringUtils.isEmpty(mixCotaProdutoDTO.getCodigoProduto())) {
+		if (StringUtils.isEmpty(mixCotaProdutoDTO.getCodigoICD())) {
 			
 			return obterStringMensagemValidacaoCota(mixCotaProdutoDTO) + " dados do produto devem ser preenchidos";
 		}
@@ -574,14 +574,12 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 
 			
 			Cota cota = cotaService.obterPorNumeroDaCota(new Integer(mixCotaProdutoDTO.getNumeroCota()));
-			Produto produto = produtoService.obterProdutoPorCodigo(mixCotaProdutoDTO.getCodigoProduto());
 			
-			
-			MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.obterMixPorCotaICDCLassificacao(cota.getId(), mixCotaProdutoDTO.getCodigoProduto(),mixCotaProdutoDTO.getClassificacaoProduto());
+			MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.obterMixPorCotaICDCLassificacao(cota.getId(), mixCotaProdutoDTO.getCodigoICD(),mixCotaProdutoDTO.getClassificacaoProduto());
 			if (mixCotaProduto == null) {
 				mixCotaProduto = new MixCotaProduto();
 				mixCotaProduto.setCota(cota);
-				mixCotaProduto.setCodigoICD(mixCotaProdutoDTO.getCodigoProduto());
+				mixCotaProduto.setCodigoICD(mixCotaProdutoDTO.getCodigoICD());
 				for (TipoClassificacaoProduto classi : classificacaoList) {
 					if(classi.getDescricao().equals(mixCotaProdutoDTO.getClassificacaoProduto())){
 						mixCotaProduto.setTipoClassificacaoProduto(classi);
@@ -638,8 +636,10 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			
 			FiltroConsultaMixPorProdutoDTO fMixProduto = new FiltroConsultaMixPorProdutoDTO();
 			
+			Produto produtoOrigem = produtoService.obterProdutoPorCodigo(copiaMix.getCodigoProdutoOrigem());
 			Produto produtoDestino = produtoService.obterProdutoPorCodigo(copiaMix.getCodigoProdutoDestino());
-			fMixProduto.setCodigoProduto(copiaMix.getCodigoProdutoOrigem());
+			
+			fMixProduto.setCodigoProduto(produtoOrigem.getCodigoICD());
 			
 			List<MixProdutoDTO> mixProdutoOrigem = pesquisarPorProduto(fMixProduto);
 			if(mixProdutoOrigem==null || mixProdutoOrigem.isEmpty()){
@@ -647,7 +647,8 @@ public class MixCotaProdutoServiceImpl implements MixCotaProdutoService {
 			}
 			
 			for (MixProdutoDTO mixProdutoDTO : mixProdutoOrigem) {
-				mixProdutoDTO.setIdProduto(new BigInteger(produtoDestino.getId().toString()));
+				mixProdutoDTO.setCodigoICD(produtoDestino.getCodigoICD());
+				mixProdutoDTO.setIdProduto(BigInteger.valueOf(produtoDestino.getId()));
 			}
 			
 			try {

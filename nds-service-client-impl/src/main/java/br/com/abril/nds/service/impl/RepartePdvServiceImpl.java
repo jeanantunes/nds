@@ -15,6 +15,7 @@ import br.com.abril.nds.model.cadastro.pdv.PDV;
 import br.com.abril.nds.model.cadastro.pdv.RepartePDV;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
 import br.com.abril.nds.model.distribuicao.MixCotaProduto;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.RepartePdvService;
 
 @Service
@@ -39,6 +40,9 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 	ProdutoRepository produtoRepository;
 	
 	@Autowired
+	ProdutoService produtoService;
+	
+	@Autowired
 	PdvRepository pdvRepository;
 
 	@Transactional
@@ -60,7 +64,7 @@ public class RepartePdvServiceImpl implements RepartePdvService{
 	@Transactional
 	public void salvarRepartesPDVMix(List<RepartePDVDTO> listaRepartes, String codProduto, Long idMix) {
 		int soma = 0;
-		Produto produto= produtoRepository.obterProdutoPorCodigoProdin(codProduto);
+		Produto produto= this.produtoService.obterProdutoPorCodigo(codProduto);
 		MixCotaProduto mixCotaProduto = mixCotaProdutoRepository.buscarPorId(idMix);
 		PDV pdv = null;
 		
