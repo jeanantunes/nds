@@ -1178,8 +1178,15 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" ((select count(cob.ID) from COBRANCA cob where cob.DT_EMISSAO = mfc.DATA and cob.COTA_ID = mfc.COTA_ID) > 0) as cobrado, ")
 		   
 		   //data raiz
-		   .append(" (select max(mfp.DT_CONSOLIDADO) from CONSOLIDADO_FINANCEIRO_COTA mfp where mfp.COTA_ID = mfc.COTA_ID and mfp.DT_CONSOLIDADO < mfc.DATA) ")
-           .append("  as dataRaiz, ")
+		   .append(" (select ")
+           .append(" max(mfp.DT_CONSOLIDADO) ") 
+           .append(" from ")
+           .append(" CONSOLIDADO_FINANCEIRO_COTA mfp ") 
+           .append(" left join consolidado_mvto_financeiro_cota cmfc on cmfc.CONSOLIDADO_FINANCEIRO_ID=mfp.id ")
+           .append(" where ")
+           .append(" mfp.COTA_ID = mfc.COTA_ID ") 
+           .append(" and mfp.DT_CONSOLIDADO < mfc.DATA) ")
+           .append(" as dataRaiz, ")
 		   
 		   //valor pago
 		   .append(" 0 as valorPago, ")
@@ -1483,18 +1490,6 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		}
 		
 		return (BigInteger) query.uniqueResult();
-	}
-	
-	@Override
-	public Long obterQuantidadeConsolidadosDia(Date data){
-		
-		Query query = 
-			this.getSession().createQuery(
-				"select count (c.id) from ConsolidadoFinanceiroCota c where c.dataConsolidado = :data");
-		
-		query.setParameter("data", data);
-		
-		return (Long) query.uniqueResult();
 	}
 	
 	@Override
