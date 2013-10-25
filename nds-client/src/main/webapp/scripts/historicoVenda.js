@@ -148,32 +148,22 @@ var historicoVendaController = $.extend(true, {
 			    	  // tr produto
 			    	  $('#analiseHistoricoPopUpNomeProduto').html('');
 			    	  $('#analiseHistoricoPopUpNomeProduto').append("<td class='class_linha_1' width='39%' ><strong>Produto:</strong></td>");
-			    	  /*$('#analiseHistoricoPopUpNomeProduto').append('<td class="class_linha_1"></td>');
-			    	  $('#analiseHistoricoPopUpNomeProduto').append('<td class="class_linha_1"></td>');*/
 			    	  
 			    	  // tr numeroEdicao
 			    	  $('#analiseHistoricoPopUpNumeroEdicao').html('');
 			    	  $('#analiseHistoricoPopUpNumeroEdicao').append("<td class='class_linha_1'  ><strong>Edição:</strong></td>");
-			    	  /*$('#analiseHistoricoPopUpNumeroEdicao').append('<td class="class_linha_1"></td>');
-			    	  $('#analiseHistoricoPopUpNumeroEdicao').append('<td class="class_linha_1"></td>');*/
 			    	  
 			    	  // tr dataLancamento
 			    	  $('#analiseHistoricoPopUpDatalancamento').html('');
 			    	  $('#analiseHistoricoPopUpDatalancamento').append("<td class='class_linha_2' ><strong>Data Lançamento:</strong></td>");
-			    	  /*$('#analiseHistoricoPopUpDatalancamento').append('<td class="class_linha_1"></td>');
-			    	  $('#analiseHistoricoPopUpDatalancamento').append('<td class="class_linha_1"></td>');*/
 			    	  
 			    	  // tr reparte
 			    	  $('#analiseHistoricoPopUpReparte').html('');
 			    	  $('#analiseHistoricoPopUpReparte').append("<td class='class_linha_1' ><strong>Reparte:</strong></td>");
-			    	  /*$('#analiseHistoricoPopUpReparte').append('<td class="class_linha_1"></td>');
-			    	  $('#analiseHistoricoPopUpReparte').append('<td class="class_linha_1"></td>');*/
 			    	  
 			    	  // tr venda
 			    	  $('#analiseHistoricoPopUpVenda').html('');
 			    	  $('#analiseHistoricoPopUpVenda').append("<td class='class_linha_2' ><strong>Venda:</strong></td>");
-			    	  /*$('#analiseHistoricoPopUpVenda').append('<td class="class_linha_1"></td>');
-			    	  $('#analiseHistoricoPopUpVenda').append('<td class="class_linha_1"></td>');*/
 			    	  
 			    	  var qtdEdicoesSelecionadas = grids.EdicaoSelecionadaGrid.tableModel.rows.length;
 			    	  

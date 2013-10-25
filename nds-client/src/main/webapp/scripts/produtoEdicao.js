@@ -1,7 +1,6 @@
 
 var produtoEdicaoController =$.extend(true,  {
 	
-	
 	// Pesquisa por código de produto
 	pesquisarPorCodigoProduto : function(idCodigo, idProduto, isFromModal, successCallBack, errorCallBack) {
 		var codigoProduto = $(idCodigo,this.workspace).val();
@@ -61,9 +60,6 @@ var produtoEdicaoController =$.extend(true,  {
 		if (successCallBack) {
 			successCallBack();
 		}
-		
-		$('#edicao_novo').show();
-		$('#edicao_addLote').show();
 		
 	},
 
@@ -1158,7 +1154,6 @@ var produtoEdicaoController =$.extend(true,  {
 	
 	edicaoLote : function() {
 
-		
 		$("#dialog-lote").dialog({
 			resizable : false,
 			height : 250,

@@ -78,7 +78,6 @@ fieldset {
 					</fieldset>
 
 					<span class="bt_novos"><a href="javascript:;" onclick="produtoEdicaoController.salvarProdutoEdicao(false);" ><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /><b> Incluir Novo</b></a></span>
-					
 				</div>
 
 				<div class="ldForm">
@@ -576,10 +575,10 @@ fieldset {
 				<tr>
 				 <p>Utilize o modelo de exemplo para fazer upload para o sistema: </p>
 		      	<p ><span class="bt_novos" title="Download Modelo">
-		      	<!-- 
-		      	${pageContext.request.contextPath}/modelos/modelo_regiao.xls
-		      	 -->
-		      	<a href=""><img align="center" src="images/ico_excel.png" hspace="5" border="0" />Modelo de exemplo</a></span></p>
+		      	  		<a href="${pageContext.request.contextPath}/modelos/modelo_Edicao.xls">
+		      	  			<img align="center" src="images/ico_excel.png" hspace="5" border="0" />Modelo de exemplo
+		      	  		</a>
+		      	  	</span></p>
 		      	<br><br><br>
 		      	<hr>
 				 <p>Selecione um arquivo para upload:</p>
