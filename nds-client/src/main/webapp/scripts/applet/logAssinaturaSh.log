@@ -1,0 +1,424 @@
+
+s k     9360 Thu Oct 24 16:32:42 BRST 2013 META-INF/MANIFEST.MF
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+        9565 Thu Oct 24 16:54:50 BRST 2013 META-INF/IMPRESSA.SF
+        1364 Thu Oct 24 16:54:50 BRST 2013 META-INF/IMPRESSA.RSA
+           0 Tue Oct 22 16:54:26 BRST 2013 br/
+           0 Tue Oct 22 16:54:26 BRST 2013 br/com/
+           0 Tue Oct 22 16:54:26 BRST 2013 br/com/abril/
+           0 Tue Oct 22 16:54:26 BRST 2013 br/com/abril/nds/
+           0 Tue Oct 22 16:54:26 BRST 2013 br/com/abril/nds/enums/
+           0 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/
+           0 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/cnab/
+           0 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/export/
+           0 Thu Oct 24 11:32:22 BRST 2013 br/com/abril/nds/matricial/
+smk     1291 Tue Oct 22 16:54:26 BRST 2013 br/com/abril/nds/enums/TipoDocumentoConferenciaEncalhe.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1581 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/ImpressaoConstantes.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     5059 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/TipoSecao.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1111 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/OrdenacaoUtil$1.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     2452 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/OrdenacaoUtil.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1408 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/TableModel.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk      208 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/Ordenavel.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1355 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/ImpressoraThreadUtil$1.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk      905 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/ImpressoraThreadUtil.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1126 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/Util$1.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1211 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/Util$TipoAgrupamentoUf.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk    17211 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/Util.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1487 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/AnexoEmail$TipoAnexo.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1610 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/AnexoEmail.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1546 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/ImageUtil$FormatoImagem.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     2098 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/ImageUtil.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     2122 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/QuartzUtil.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     5193 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/ImpressoraUtil.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1093 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/TXTUtil.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     3386 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/UfEnum.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     2042 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/CampoSecao.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1411 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/PropertiesUtil.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1902 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/MathUtil.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     2797 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/NomeBanco.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     2073 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/CellModelKeyValue.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     5424 Tue Oct 22 17:54:02 BRST 2013 br/com/abril/nds/util/DateUtil.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1194 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/ItemAutoComplete.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1817 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/ZipFileUtil.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1029 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/ExceptionUtil.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk    11881 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/GeradorBoleto.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     5900 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/SemanaUtil.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1267 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/MapValueComparator.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1247 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/TipoImportacaoArquivo.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     2009 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/Intervalo.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1984 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/Constantes.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1116 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/MockPerfilUsuario.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     2280 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/TirarAcento.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk    12191 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/CorpoBoleto.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     2715 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/FileImportUtil.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     4397 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/JasperUtil.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1229 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/TipoBalanceamentoRecolhimento.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1347 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/TipoBaixaCobranca.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk      784 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/BigIntegerUtil.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     6757 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/ImpressaoMatricialUtil.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1018 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/StringUtil.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     4172 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/CurrencyUtil.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1201 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/CellModel.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1721 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/TemplateManager$TemplateNames.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     3799 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/TemplateManager.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1356 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/CouchDBUtil.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     4838 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/PDFUtil.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1915 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/ComponentesPDV.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     2040 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/ArquivoImportFileFilter.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1073 Thu Oct 24 11:31:56 BRST 2013 br/com/abril/nds/util/BigDecimalUtil.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     3849 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/cnab/CNAB.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     2409 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/cnab/UtilitarioCNAB$IndiceCNAB.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     3969 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/cnab/UtilitarioCNAB$PadraoCNAB.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     2999 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/cnab/UtilitarioCNAB$TipoRegistroCNAB.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     2402 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/cnab/UtilitarioCNAB.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     2529 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/export/ExportModel.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     2830 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/export/ExportParameters.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1281 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/export/ColumType.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     3213 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/export/ExportHeader.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1754 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/export/NDSFileHeader.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     2772 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/export/ExportColumn.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk    24709 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/export/XLSExporter.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     2656 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/export/FileExporter$FileType.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     4003 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/export/FileExporter.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     2282 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/export/ExportFilter.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1413 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/export/Export$Alignment.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     1070 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/export/Export.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     2587 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/export/PDFExporter$HeaderFooter.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk    16077 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/export/PDFExporter.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk    16347 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/export/ExportHandler.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     2284 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/export/ExportFooter.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk      533 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/export/Exporter.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk      953 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/export/ExportRow.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk      400 Tue Oct 22 16:54:38 BRST 2013 br/com/abril/nds/util/export/Exportable.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk     2659 Thu Oct 24 11:32:22 BRST 2013 br/com/abril/nds/matricial/ImpressaoFinalizacaoEncalheApplet$1.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+smk      994 Thu Oct 24 11:32:22 BRST 2013 br/com/abril/nds/matricial/ImpressaoFinalizacaoEncalheApplet.class
+
+      X.509, CN=abril, OU=abril, O=abril, L=Sao Paulo - BR, ST=Sao Paulo, C=BR (impressaofinalizacaoencalheapplet)
+      [certificate is valid from 10/24/13 4:54 PM to 3/11/41 3:54 PM]
+
+
+  s = signature was verified 
+  m = entry is listed in manifest
+  k = at least one certificate was found in keystore
+  i = at least one certificate was found in identity scope
+
+jar verified.

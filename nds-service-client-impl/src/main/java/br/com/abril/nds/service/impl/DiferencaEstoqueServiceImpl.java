@@ -433,7 +433,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 	    for (RateioDiferenca rd : diferenca.getRateios()){
 	    	
-	    	if (rd.getCota()!=null){
+	    	if (rd.getCota() != null) {
 	    		
 	    		return rd.getCota();
 	    	}
@@ -760,12 +760,13 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 
 	private StatusAprovacao obterStatusLancamento(Diferenca diferenca) {
 		
-		StatusAprovacao statusAprovacao = StatusAprovacao.PENDENTE;
-		
 		boolean utilizaControleAprovacao = parametrosDistribuidorService.getParametrosDistribuidor().getUtilizaControleAprovacao();
 		
+		StatusAprovacao statusAprovacao = null;
 		if(!utilizaControleAprovacao) {
 			statusAprovacao = StatusAprovacao.APROVADO;
+		} else {
+			statusAprovacao = StatusAprovacao.PENDENTE;
 		}
 		
 		if (this.foraDoPrazoDoGFS(diferenca)) {
@@ -1073,19 +1074,17 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		} else {
 			
 			if(TipoDirecionamentoDiferenca.COTA.equals(diferenca.getTipoDirecionamento())
-					&& TipoDiferenca.FALTA_EM.equals(diferenca.getTipoDiferenca())){
+					&& TipoDiferenca.FALTA_EM.equals(diferenca.getTipoDiferenca())) {
 				
 				grupoMovimentoEstoque = GrupoMovimentoEstoque.PERDA_EM;
-			}
-			else{
+			} else {
 				
 				grupoMovimentoEstoque = tipoDiferenca.getTipoMovimentoEstoque();
 			}
 		
 		}
 		
-		TipoMovimentoEstoque tipoMovimentoEstoque = 
-			this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(grupoMovimentoEstoque);
+		TipoMovimentoEstoque tipoMovimentoEstoque = this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(grupoMovimentoEstoque);
 		
 		if (tipoMovimentoEstoque == null) {
 			

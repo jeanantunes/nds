@@ -42,7 +42,6 @@ import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Expedicao;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.estoque.TipoMovimentoEstoque;
-import br.com.abril.nds.model.movimentacao.FuroProduto;
 import br.com.abril.nds.model.planejamento.Lancamento;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoLancamentoParcial;
@@ -1195,7 +1194,9 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" 	false ");
 		sql.append(" end as possuiFuro, ");
 		
-		sql.append(" estudo.QTDE_REPARTE as distribuicao ");
+		sql.append(" estudo.QTDE_REPARTE as distribuicao, ");
+		
+		sql.append(" fornecedor.id as idFornecedor ");
 		
 		sql.append(montarClausulaFromConsultaBalanceamentoLancamento());
 		
@@ -1216,6 +1217,14 @@ public class LancamentoRepositoryImpl extends
 		sql.append(" inner join ");
 		sql.append(" PRODUTO produto ");
 		sql.append(" on produtoEdicao.PRODUTO_ID = produto.ID ");
+		
+		sql.append(" inner join ");
+		sql.append("     PRODUTO_FORNECEDOR produtoFornecedor ");
+		sql.append("         on produto.ID=produtoFornecedor.PRODUTO_ID ");
+		sql.append(" inner join ");
+		sql.append("     FORNECEDOR fornecedor ");
+		sql.append("         on produtoFornecedor.fornecedores_ID=fornecedor.ID ");  
+		
 		sql.append(" inner join ");
 		sql.append(" TIPO_PRODUTO tipoProduto ");
 		sql.append(" on tipoProduto.ID = produto.TIPO_PRODUTO_ID ");
@@ -1237,13 +1246,15 @@ public class LancamentoRepositoryImpl extends
 		
 		sql.append(" where ");
 		
-		sql.append(" ( ");
-		sql.append(" 	select fornecedor.ID from PRODUTO_FORNECEDOR produtoFornecedor, FORNECEDOR fornecedor ");
-		sql.append(" 		where produtoFornecedor.PRODUTO_ID = produto.ID ");
-		sql.append(" 		and produtoFornecedor.FORNECEDORES_ID = fornecedor.ID ");
-		sql.append(" 		and fornecedor.ID in ( :idsFornecedores ) ");
-		sql.append(" 		limit 1 ");
-		sql.append(" ) is not null ");
+		sql.append(" fornecedor.ID in (:idsFornecedores) ");
+		
+//		sql.append(" ( ");
+//		sql.append(" 	select fornecedor.ID from PRODUTO_FORNECEDOR produtoFornecedor, FORNECEDOR fornecedor ");
+//		sql.append(" 		where produtoFornecedor.PRODUTO_ID = produto.ID ");
+//		sql.append(" 		and produtoFornecedor.FORNECEDORES_ID = fornecedor.ID ");
+//		sql.append(" 		and fornecedor.ID in ( :idsFornecedores ) ");
+//		sql.append(" 		limit 1 ");
+//		sql.append(" ) is not null ");
 		
 		sql.append(" and ( ");
 		sql.append("     ( ");
@@ -1282,7 +1293,8 @@ public class LancamentoRepositoryImpl extends
 			.addScalar("periodicidadeProduto")
 			.addScalar("possuiFuro", StandardBasicTypes.BOOLEAN)
 			.addScalar("alteradoInteface", StandardBasicTypes.BOOLEAN)
-			.addScalar("distribuicao", StandardBasicTypes.BIG_INTEGER);
+			.addScalar("distribuicao", StandardBasicTypes.BIG_INTEGER)
+			.addScalar("idFornecedor", StandardBasicTypes.LONG);
 		
 		this.aplicarParametros(query, periodoDistribuicao, fornecedores);
 		
@@ -1981,31 +1993,101 @@ public class LancamentoRepositoryImpl extends
 	}
 	
 	public Lancamento obterLancamentoParcialFinal(Long idProdutoEdicao){
-		
-		StringBuffer hql = new StringBuffer();
-		
-		hql.append(" select lancamento  ");			
-		
-		hql.append(" from LancamentoParcial lancamentoParcial 			");
-		
-		hql.append(" inner join lancamentoParcial.periodos as periodo 	");
-		
-		hql.append(" inner join periodo.lancamento as lancamento 		");
-		
-		hql.append(" where ");
+        
+        StringBuffer hql = new StringBuffer();
+        
+        hql.append(" select lancamento  ");                        
+        
+        hql.append(" from LancamentoParcial lancamentoParcial                         ");
+        
+        hql.append(" inner join lancamentoParcial.periodos as periodo         ");
+        
+        hql.append(" inner join periodo.lancamento as lancamento                 ");
+        
+        hql.append(" where ");
 
-		hql.append(" lancamento.produtoEdicao.id = :idProdutoEdicao  ");
+        hql.append(" lancamento.produtoEdicao.id = :idProdutoEdicao  ");
+        
+        hql.append(" and periodo.tipo =:tipoLancamento ");
+        
+        Query query = getSession().createQuery(hql.toString());
+        
+        query.setParameter("idProdutoEdicao", idProdutoEdicao);
+        
+        query.setParameter("tipoLancamento", TipoLancamentoParcial.FINAL);
+        
+        query.setMaxResults(1);
+        
+        return (Lancamento) query.uniqueResult();
+	}   
+	
+	@Override
+	public Lancamento obterPrimeiroLancamentoDaEdicao(Long idProdutoEdicao) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select lancamento ")
+		   .append(" from Lancamento lancamento ")
+		   .append(" where lancamento.id = ")
+		   .append(" (select min(lancamentoMin.id) ")
+		   .append(" from Lancamento lancamentoMin where lancamentoMin.produtoEdicao.id = :idProdutoEdicao) ");
 		
-		hql.append(" and periodo.tipo =:tipoLancamento ");
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setMaxResults(1);
+		
+		Lancamento lancamento = (Lancamento) query.uniqueResult();
+		
+		return lancamento;
+	}
+	
+	@Override
+	public Integer obterUltimoNumeroLancamento(Long idProdutoEdicao) {
+
+		StringBuilder hql = new StringBuilder();
+
+		hql.append(" select max(lancamento.numeroLancamento) ");
+		hql.append(" from Lancamento lancamento ");
+		hql.append(" where lancamento.produtoEdicao.id = :idProdutoEdicao ");
+
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return (Integer) query.uniqueResult();
+	}
+
+	@Override
+	public Date getMaiorDataLancamentoPrevisto(Long idProdutoEdicao) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" SELECT max(lancamento.dataLancamentoPrevista) ");
+		hql.append(" FROM Lancamento lancamento ");
+		hql.append(" WHERE lancamento.produtoEdicao.id = :idProdutoEdicao ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		
-		query.setParameter("tipoLancamento", TipoLancamentoParcial.FINAL);
+		return (Date) query.uniqueResult();
+	}
+	
+	@Override
+	public Date getMaiorDataLancamentoDistribuidor(Long idProdutoEdicao) {
 		
-		query.setMaxResults(1);
+		StringBuilder hql = new StringBuilder();
 		
-		return (Lancamento) query.uniqueResult();
-	}	
+		hql.append(" SELECT max(lancamento.dataLancamentoDistribuidor) ");
+		hql.append(" FROM Lancamento lancamento ");
+		hql.append(" WHERE lancamento.produtoEdicao.id = :idProdutoEdicao ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		
+		return (Date) query.uniqueResult();
+	}
+	
 }

@@ -138,6 +138,9 @@ public class Lancamento implements Serializable {
 	@JoinColumn(name = "USUARIO_ID")
 	private Usuario usuario;
 	
+	@Column(name = "NUMERO_LANCAMENTO", nullable = true)
+	private Integer numeroLancamento;
+	
 	public Lancamento(Long id) {
 		this.id= id; 
 	}
@@ -390,6 +393,20 @@ public class Lancamento implements Serializable {
 	 */
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
+	}
+
+	/**
+	 * @return the numeroLancamento
+	 */
+	public Integer getNumeroLancamento() {
+		return numeroLancamento;
+	}
+
+	/**
+	 * @param numeroLancamento the numeroLancamento to set
+	 */
+	public void setNumeroLancamento(Integer numeroLancamento) {
+		this.numeroLancamento = numeroLancamento;
 	}
 
 	public Date getDataFinMatDistrib() {

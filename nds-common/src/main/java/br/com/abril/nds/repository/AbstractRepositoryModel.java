@@ -62,7 +62,7 @@ public abstract class AbstractRepositoryModel<T, K extends Serializable> extends
 	
 	@SuppressWarnings("unchecked")
 	public T buscarPorId(K id) {
-		return (T) getSession().get(clazz, id);
+		return (T) getSession().load(clazz, id);
 	}
 	
 	@SuppressWarnings("unchecked")

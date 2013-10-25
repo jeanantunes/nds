@@ -393,7 +393,7 @@ public class DistribuidorRepositoryImpl extends
 	public String cidadeDistribuidor() {
 		
 		return (String) this.getSession().createQuery(
-				"select d.enderecoDistribuidor.endereco.cidade from Distribuidor d").uniqueResult();
+				"select d.enderecoDistribuidor.endereco.cidade from Distribuidor d").setCacheable(true).uniqueResult();
 	}
 
 	@Override
