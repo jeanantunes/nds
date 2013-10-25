@@ -19,6 +19,7 @@ import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.CobrancaRepository;
 
@@ -212,8 +213,10 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		StringBuilder hql = new StringBuilder();
 		hql.append(" select c from Cobranca c ");		
 		hql.append(" left join c.baixasCobranca baixa ");
+		hql.append(" left join c.divida divida ");
 		hql.append(" where c.cota.numeroCota = :ncota ");
 		hql.append(" and baixa.statusAprovacao is null ");
+		hql.append(" and divida.status != :statusPendente ");
 		
 		
 		if (filtro.getDataVencimento()!=null){
@@ -268,6 +271,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 			query.setParameter("acumulada", filtro.isAcumulaDivida());
 			query.setParameter("data", filtro.getDataVencimento());
 		}
+		
+		query.setParameter("statusPendente", StatusDivida.PENDENTE);
 
         if (filtro.getPaginacao() != null) {
 			if (filtro.getPaginacao().getPosicaoInicial() != null) {
