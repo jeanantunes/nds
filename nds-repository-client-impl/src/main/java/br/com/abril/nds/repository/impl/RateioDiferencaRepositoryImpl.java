@@ -242,12 +242,14 @@ public class RateioDiferencaRepositoryImpl extends AbstractRepositoryModel<Ratei
 					 " inner join rd.cota cota " +
 					 " where rd.diferenca.produtoEdicao.id = :idProdutoEdicao " +
 					 " and rd.diferenca.dataMovimento = :dataMovimento " +
+					 " and rd.diferenca.statusConfirmacao != :statusConfirmacao " +
 					 " order by cota.numeroCota";
 		
 		Query query = getSession().createQuery(hql);
 		
 		query.setParameter("idProdutoEdicao", idProdutoEdicao);
 		query.setParameter("dataMovimento", dataMovimento);
+		query.setParameter("statusConfirmacao", StatusConfirmacao.CANCELADO);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(RateioDiferencaDTO.class));
 		
