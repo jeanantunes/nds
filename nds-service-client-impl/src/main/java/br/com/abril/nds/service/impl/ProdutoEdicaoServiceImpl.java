@@ -707,7 +707,7 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
         produtoEdicao.setPrecoVenda(dto.getPrecoVenda()); // View: Preço Capa - Real;
 		produtoEdicao.setCodigoDeBarras(dto.getCodigoDeBarras());
 		produtoEdicao.setChamadaCapa(dto.getChamadaCapa());
-		produtoEdicao.setPeso(dto.getPeso());
+		produtoEdicao.setPeso(dto.getPeso()!=null?dto.getPeso():new Long("0"));
 		produtoEdicao.setNumeroLancamento(dto.getNumeroLancamento());
 		produtoEdicao.setPossuiBrinde(false);
 		produtoEdicao.setBrinde(null);

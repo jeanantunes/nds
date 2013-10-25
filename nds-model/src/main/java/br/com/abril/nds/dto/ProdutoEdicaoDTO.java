@@ -16,6 +16,7 @@ import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.util.DateUtil;
+import br.com.abril.nds.util.upload.XlsMapper;
 
 public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoDTO> {
 
@@ -24,30 +25,67 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	 */
 	private static final long serialVersionUID = 1L;
 	
+	//Atributos que também são utilizados para a funcionalidade Add_em_lote
+
+	@XlsMapper(value="cod_produto_prodin")
+	private String codigoProduto;
+	
+	@XlsMapper(value="num_edicao")
+	private Long numeroEdicao;
+	
+	@XlsMapper(value="classificacao")
+	private String classificacao;
+	
+	@XlsMapper(value="pacote_padrao")
+	private int pacotePadrao;
+	
+	@XlsMapper(value="nome_comercial_produto")
+	private String nomeComercial;
+	
+	@XlsMapper(value="tipo_distribuicao")
+	private String lancamento;
+	
+	@XlsMapper(value="preco_previsto")
+	private BigDecimal precoPrevisto;
+	
+	@XlsMapper(value="data_lancamento_previsto")
+	private String dtLancPrevisto;
+	
+	@XlsMapper(value="data_recolhimento_previsto")
+	private String dtRecPrevisto;
+	
+	@XlsMapper(value="reparte_previsto")
+	private BigInteger repartePrevisto;
+	
+	@XlsMapper(value="reparte_promocional")
+	private BigInteger repartePromocional;
+	
+	@XlsMapper(value="parcial")
+	private String recolhimentoParcial;
+	
+	@XlsMapper(value="cod_barras")
+	private String codigoDeBarras;
+	
+	@XlsMapper(value="cod_corporativo")
+	private String codigoDeBarrasCorporativo;
+	
 	private Long id;
 	private Integer sequenciaMatriz;
-	private String codigoDeBarras;
-	private Long numeroEdicao;
 	private BigDecimal precoVenda;
 	private BigDecimal desconto;
 	private BigDecimal precoComDesconto;
-	private int pacotePadrao;
 	private int peb;
 	private BigDecimal precoCusto;
 	private Long peso;
 	private Long idProduto;
-	private String codigoProduto;
 	private PeriodicidadeProduto periodicidade;
 	private Integer numeroPeriodicidade;
 	private TipoClassificacaoProduto tipoClassificacaoProduto;
 	private String nomeProduto;
-	private String nomeComercial;
 	private GrupoProduto grupoProduto;
-	
 	private boolean possuiBrinde;
 	private String descricaoBrinde;
 	private Long idBrinde;
-	
 	private BigDecimal expectativaVenda;
 	private boolean permiteValeDesconto;
 	private boolean parcial;
@@ -70,14 +108,12 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private String nomeComercialProduto;
 	private String fase;
 	private Integer numeroLancamento;	
-	// numeroEdicao; pacotePadrao;
-	private BigDecimal precoPrevisto;
+	// numeroEdicao; pacotePadrao; precoPrevisto
 	// precoVenda; (Real)
-	private BigInteger repartePrevisto;
-	private BigInteger repartePromocional;
-
+	// repartePrevisto; 
+	// repartePromocional
 	// codigoDeBarras
-	private String codigoDeBarrasCorporativo;
+	// codigoDeBarrasCorporativo
 	private String descricaoDesconto;
 	// desconto;
 	private String chamadaCapa;
@@ -90,7 +126,7 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private String boletimInformativo;
 	
 	// Lancamento:
-	// tipoLancamento;
+	// tipoLancamento; 
 	private Date dataLancamentoPrevisto;
 	private Date dataRecolhimentoPrevisto;
 	private Date dataRecolhimentoReal;
@@ -112,7 +148,6 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	private String qtdVendasFormatada = "0";
 	
 	private String segmentacao;
-	private String classificacao;
 	
 	private Double venda;
 	private Double percentualVenda;
@@ -882,4 +917,37 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	public void setIdProduto(Long idProduto) {
 	    this.idProduto = idProduto;
 	}
+	
+	public String getLancamento() {
+		return lancamento;
+	}
+
+	public void setLancamento(String lancamento) {
+		this.lancamento = lancamento;
+	}
+
+	public String getDtLancPrevisto() {
+		return dtLancPrevisto;
+	}
+
+	public void setDtLancPrevisto(String dtLancPrevisto) {
+		this.dtLancPrevisto = dtLancPrevisto;
+	}
+
+	public String getDtRecPrevisto() {
+		return dtRecPrevisto;
+	}
+
+	public void setDtRecPrevisto(String dtRecPrevisto) {
+		this.dtRecPrevisto = dtRecPrevisto;
+	}
+
+	public String getRecolhimentoParcial() {
+		return recolhimentoParcial;
+	}
+
+	public void setRecolhimentoParcial(String recolhimentoParcial) {
+		this.recolhimentoParcial = recolhimentoParcial;
+	}
+
 }

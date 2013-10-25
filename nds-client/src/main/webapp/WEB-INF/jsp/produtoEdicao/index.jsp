@@ -78,6 +78,7 @@ fieldset {
 					</fieldset>
 
 					<span class="bt_novos"><a href="javascript:;" onclick="produtoEdicaoController.salvarProdutoEdicao(false);" ><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /><b> Incluir Novo</b></a></span>
+					
 				</div>
 
 				<div class="ldForm">
@@ -465,6 +466,9 @@ fieldset {
 			<span class="bt_novos">
 				<a href="javascript:;" onclick="produtoEdicaoController.novaEdicao();" rel="tipsy" title="Incluir Nova Edi��o"><img src="${pageContext.request.contextPath}/images/ico_salvar.gif" hspace="5" border="0"/></a>
 			</span>
+			<span class="bt_novos" title="Adicionar em Lote">
+				<a href="javascript:;" onclick="produtoEdicaoController.edicaoLote();" rel="tipsy" title="Adicionar Ediçao em Lote"><img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0" /></a>
+			</span>
 		</div>
 	</div>
 
@@ -562,6 +566,31 @@ fieldset {
 
 	</div>
 	<!-- FIM GRID RESULTADO -->
+	
+	<!-- ADICIONAR EM LOTE -->
+
+	<div id="dialog-lote" title="Adicionar em Lote" style="display: none;">
+		<fieldset style="width: 300px;">
+			<legend>Adicionar em Lote</legend>
+			<table width="200" border="0" cellspacing="2" cellpadding="2">
+				<tr>
+				 <p>Utilize o modelo de exemplo para fazer upload para o sistema: </p>
+		      	<p ><span class="bt_novos" title="Download Modelo">
+		      	<!-- 
+		      	${pageContext.request.contextPath}/modelos/modelo_regiao.xls
+		      	 -->
+		      	<a href=""><img align="center" src="images/ico_excel.png" hspace="5" border="0" />Modelo de exemplo</a></span></p>
+		      	<br><br><br>
+		      	<hr>
+				 <p>Selecione um arquivo para upload:</p>
+				 <form name="arquivoUpLoadEdicao" id="arquivoUpLoadEdicao" method="post" enctype="multipart/form-data">
+					<input type="file" id="xls" name="xls" />
+				 </form>
+				</tr>
+			</table>
+			<div id="example2grid" class="dataTable" style="background: #FFF;"></div>
+		</fieldset>
+	</div>
 
 </body>
 

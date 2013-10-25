@@ -1,13 +1,12 @@
 package br.com.abril.nds.controllers.cadastro;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import br.com.caelum.vraptor.core.Localization;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -22,6 +21,7 @@ import br.com.abril.nds.model.cadastro.Brinde;
 import br.com.abril.nds.model.cadastro.ClasseSocial;
 import br.com.abril.nds.model.cadastro.FaixaEtaria;
 import br.com.abril.nds.model.cadastro.GrupoProduto;
+import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.TemaProduto;
@@ -36,6 +36,7 @@ import br.com.abril.nds.serialization.custom.PlainJSONSerialization;
 import br.com.abril.nds.service.BrindeService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.ProdutoEdicaoService;
+import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.service.TipoClassificacaoProdutoService;
 import br.com.abril.nds.service.TipoSegmentoProdutoService;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -44,12 +45,14 @@ import br.com.abril.nds.util.Intervalo;
 import br.com.abril.nds.util.ItemAutoComplete;
 import br.com.abril.nds.util.MathUtil;
 import br.com.abril.nds.util.Util;
+import br.com.abril.nds.util.upload.XlsUploaderUtils;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.Get;
 import br.com.caelum.vraptor.Path;
 import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.core.Localization;
 import br.com.caelum.vraptor.interceptor.multipart.UploadedFile;
 import br.com.caelum.vraptor.view.Results;
 
@@ -74,6 +77,9 @@ public class ProdutoEdicaoController extends BaseController {
 	
 	@Autowired
 	private TipoClassificacaoProdutoService tipoClassificacaoProdutoService;
+	
+	@Autowired
+	private ProdutoService prodService;
 	
 	private static List<ItemDTO<ClasseSocial,String>> listaClasseSocial =  new ArrayList<ItemDTO<ClasseSocial,String>>();
 	  
@@ -295,9 +301,148 @@ public class ProdutoEdicaoController extends BaseController {
 		
 		} finally {
 			
-			this.result.use(PlainJSONSerialization.class).from(vo, "result").recursive().serialize();
+			this.result.use(Results.json()).from(vo, "result").recursive().serialize();
 		}
 	}
+	
+	@Post
+	@Path("/addLote")
+	public void addCotasEmLote (UploadedFile xls) throws IOException {  
+
+		List<ProdutoEdicaoDTO> listaEdicaoDto = XlsUploaderUtils.getBeanListFromXls(ProdutoEdicaoDTO.class, xls);
+		
+		List<ProdutoEdicaoDTO> listaEdicaoDtoInvalidos = new ArrayList<>();
+		
+		formatarLista(listaEdicaoDto);
+		
+		List<String> validacaoEdicao = new ArrayList<>();
+		
+		
+		for (ProdutoEdicaoDTO prodEdicao : listaEdicaoDto) {
+			
+			List<String> mensagens = new ArrayList<>();
+			
+			if(prodEdicao.getCodigoProduto()==null || prodService.obterProdutoPorProdin(prodEdicao.getCodigoProduto())==null){
+				
+				if(prodEdicao.getCodigoProduto()!=null){
+					validacaoEdicao.add("Código "+prodEdicao.getCodigoProduto()+" de produto não existente! ");
+				}else{
+					if(prodEdicao.getNomeComercial()!=null){
+						validacaoEdicao.add("Código do produto cujo nome é "+ prodEdicao.getNomeComercial() +" não existe! ");
+					}else{
+						if(prodEdicao.getNumeroEdicao()!=null){
+							validacaoEdicao.add("Produto com a edicao "+ prodEdicao.getNumeroEdicao() +" não existente! ");
+						}else{
+							validacaoEdicao.add("Edição sem código, sem nome e sem Produto!");
+						}
+					}
+				}
+				
+				listaEdicaoDtoInvalidos.add(prodEdicao);
+			}else{
+				mensagens = validarDadosEdicao(prodEdicao, prodEdicao.getCodigoProduto());	
+				
+				if(!mensagens.isEmpty()){
+					
+					if(prodEdicao.getNumeroEdicao() != null){
+						
+						validacaoEdicao.add("Produto " +prodEdicao.getCodigoProduto() + " com a Edição " + prodEdicao.getNumeroEdicao()+" está inválido. Por favor revise-o.");
+					}else{
+						validacaoEdicao.add("Produto " +prodEdicao.getCodigoProduto() + " está inválido. Por favor revise-o.");
+					}
+					listaEdicaoDtoInvalidos.add(prodEdicao);
+				}
+			}
+			
+		}
+		
+		if(!listaEdicaoDtoInvalidos.isEmpty()){
+			listaEdicaoDto.removeAll(listaEdicaoDtoInvalidos);
+		}
+		
+		if(listaEdicaoDto.isEmpty()){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, validacaoEdicao));
+		}else{
+			addProdEdicaoLote(listaEdicaoDto, validacaoEdicao);
+		}
+		
+	}
+
+	private void addProdEdicaoLote(List<ProdutoEdicaoDTO> listaEdicaoDto, List<String> listaMensagem) {
+		
+		for (ProdutoEdicaoDTO prodEdicao : listaEdicaoDto) {
+			
+			try {
+				
+				// Dados da Imagem:
+				String contentType = null;
+				InputStream imgInputStream = null;
+				
+				produtoEdicaoService.salvarProdutoEdicao(prodEdicao, prodEdicao.getCodigoProduto(), contentType, imgInputStream);
+				
+			} 
+			catch (Throwable e) {
+				
+				listaMensagem.add("Produto " +prodEdicao.getCodigoProduto() + " com a Edição " + prodEdicao.getNumeroEdicao() + " está inválido. Por favor revise-o.");
+			
+			} 
+			
+		}
+		
+		if(listaMensagem.isEmpty()){
+		
+			this.result.use(PlainJSONSerialization.class).from(new ValidacaoVO(TipoMensagem.SUCCESS, "result"), "result").recursive().serialize();
+
+		}else{
+			
+			this.result.use(PlainJSONSerialization.class).from(new ValidacaoVO(TipoMensagem.WARNING, listaMensagem), "result").recursive().serialize();
+			
+		}
+		
+	}
+	
+
+	private void formatarLista(List<ProdutoEdicaoDTO> listaEdicaoDto) {
+		
+		for (ProdutoEdicaoDTO peDTO : listaEdicaoDto) {
+			
+			if(peDTO.getLancamento()!=null){
+				
+				try {
+
+					peDTO.setTipoLancamento(TipoLancamento.valueOf(peDTO.getLancamento()));
+					
+				} catch (Exception e) {
+					
+				}
+				
+			}
+			
+			if(peDTO.getDtLancPrevisto()!=null)
+			peDTO.setDataLancamentoPrevisto(DateUtil.parseDataPTBR(peDTO.getDtLancPrevisto()));
+			
+			if(peDTO.getDtRecPrevisto()!=null)
+			peDTO.setDataRecolhimentoPrevisto(DateUtil.parseDataPTBR(peDTO.getDtRecPrevisto()));
+			
+			peDTO.setNomeComercialProduto(peDTO.getNomeComercial());
+			
+			if(peDTO.getCodigoProduto()!=null){
+				Produto produto = prodService.obterProdutoPorCodigo(peDTO.getCodigoProduto());
+				
+				if(produto != null){
+					peDTO.setDesconto(produto.getDesconto()!=null?produto.getDesconto():new BigDecimal(0));
+					peDTO.setDescricaoDesconto(produto.getDescricaoDesconto()!=null?produto.getDescricaoDesconto():"PRODUTO");	
+				}
+			}
+			
+			
+			// baseado no método salvar, desta classe.
+			peDTO.setDataRecolhimentoDistribuidor(peDTO.getDataRecolhimentoPrevisto());
+			
+		}
+		
+	}
+	
 	
 	/**
 	 * Valida o preenchimento dos campos obrigatórios.
@@ -306,22 +451,49 @@ public class ProdutoEdicaoController extends BaseController {
 	 */
 	private void validarProdutoEdicao(ProdutoEdicaoDTO dto, String codigoProduto) {
 		
+		List<String> listaMensagensValidacao = new ArrayList<String>();
+		
+		listaMensagensValidacao = validarDadosBasicosEdicao(dto, codigoProduto);
+		
+		if (!listaMensagensValidacao.isEmpty()) {
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagensValidacao));
+		}else{
+			listaMensagensValidacao = validarDadosEdicao(dto, codigoProduto);
+			if (!listaMensagensValidacao.isEmpty()) {
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagensValidacao));
+			}
+		}
+		
+	}
+
+	private List<String> validarDadosBasicosEdicao(ProdutoEdicaoDTO dto, String codigoProduto) {
+		
 		List<String> listaMensagens = new ArrayList<String>();
-						
 		ProdutoEdicao pe = null;
 		
 		if(codigoProduto == null) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Código do produto inválido!"));
+			listaMensagens.add("Código do produto inválido!");
 		}
 		
 		if(dto.getId()!=null) {
 
 			pe = produtoEdicaoService.obterProdutoEdicao(dto.getId(), false);
-			
 			if(pe == null) {
-				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Produto Edição inválido!"));
+				listaMensagens.add("Produto Edição inválido!");
 			}
-			
+		}
+		return listaMensagens;
+	}
+	
+
+	private List<String> validarDadosEdicao(ProdutoEdicaoDTO dto, String codigoProduto) {
+		
+		List<String> listaMensagens = new ArrayList<String>();
+		
+		ProdutoEdicao pe = null;
+		
+		if(dto.getId()!=null) {
+			pe = produtoEdicaoService.obterProdutoEdicao(dto.getId(), false);
 		}
 		
 		if (pe == null || (pe.getOrigem().equals(br.com.abril.nds.model.Origem.MANUAL))) {
@@ -398,9 +570,7 @@ public class ProdutoEdicaoController extends BaseController {
 			
 		}
 		
-		if (!listaMensagens.isEmpty()) {
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, listaMensagens));
-		}
+		return listaMensagens;
 	}
 	
 	private boolean validarDataLancamentoMenorRecolhimento(ProdutoEdicaoDTO dto) {
