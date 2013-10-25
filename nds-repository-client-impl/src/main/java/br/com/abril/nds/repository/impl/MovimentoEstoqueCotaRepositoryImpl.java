@@ -74,6 +74,143 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	
 	@Autowired
 	private DataSource dataSource;
+	
+	/**
+	 * FROM: Consignado da cota com chamada de encalhe ou produto conta firme
+	 * @param paramIdCota
+	 * @return String
+	 */
+	@Override
+	public String getFromConsignadoCotaAVista(String paramIdCota){
+		
+		StringBuilder hql = new StringBuilder("")
+		
+		.append("  from MovimentoEstoqueCota mec ")
+		
+	       .append("  join mec.produtoEdicao pe ")
+	       
+	       .append("  join pe.produto produto ")
+	       
+	       .append("  join mec.cota c1 ")
+	       
+	       .append("  join mec.tipoMovimento tipoMovimento ")
+	       
+	       .append("  join mec.lancamento lancamento ")
+	       
+	       .append("  where ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusEstoqueFinanceiro )) ")
+	       
+	       .append("  and tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoReparte) ")
+	    
+	       .append("  and mec.status = :statusAprovacao ")
+	    
+	       .append("  and c1.id = ").append(paramIdCota)
+	       
+	       .append("  and lancamento.dataLancamentoDistribuidor <= :data")
+	       
+	       .append("  and (c1.alteracaoTipoCota is null or c1.alteracaoTipoCota >= lancamento.dataLancamentoDistribuidor)")
+	       
+	       .append("  and ( ")
+	    
+		   .append("            ((produto.formaComercializacao = :formaComercializacaoProduto) OR ")
+				
+		   .append("             (pe.id in (")
+				
+		   .append("                           select pe.id ")
+				
+		   .append("                           from ChamadaEncalhe c ")
+				
+		   .append("                           join c.chamadaEncalheCotas cc ")
+				
+		   .append("                           join cc.cota cota ")
+				
+		   .append("                           join c.produtoEdicao pe ")
+				
+		   .append("                           where c.dataRecolhimento = :data ")
+				
+		   .append("                           and cota.id = c1.id ")
+				
+		   .append("                       ) ")
+				
+		   .append("             ) ")
+				
+		   .append("            ) ")
+	    
+	       .append("      ) ");
+		
+		return hql.toString();
+	}
+	
+	/**
+	 * FROM: À Vista da cota sem chamada de encalhe e produtos diferentes de conta firme
+	 * @param paramIdCota
+	 * @return String
+	 */
+	@Override
+    public String getFromAVistaCotaAVista(String paramIdCota){
+    	
+    	StringBuilder hql = new StringBuilder("")
+    	
+    	.append("  from MovimentoEstoqueCota mec ")
+    	
+	       .append("  join mec.produtoEdicao pe ")
+	       
+	       .append("  join pe.produto produto ")
+	       
+	       .append("  join mec.cota c1 ")
+	       
+	       .append("  join mec.tipoMovimento tipoMovimento ")
+	       
+	       .append("  join mec.lancamento lancamento ")
+	       
+	       .append("  where ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusEstoqueFinanceiro )) ")
+	       
+	       .append("  and tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoReparte) ")
+	    
+	       .append("  and mec.status = :statusAprovacao ")
+	    
+	       .append("  and c1.id = ").append(paramIdCota)
+	       
+	       .append("  and lancamento.dataLancamentoDistribuidor <= :data")
+	       
+	       .append("  and (c1.alteracaoTipoCota is null or c1.alteracaoTipoCota < lancamento.dataLancamentoDistribuidor)");
+
+		return hql.toString();
+	}
+	
+	/**
+	 * FROM: Movimentos de Estorno da cota
+	 * @param paramIdCota
+	 * @return String
+	 */
+	@Override
+    public String getFromEstornoCotaAVista(String paramIdCota){
+		
+    	StringBuilder hql = new StringBuilder("")
+    	
+    	.append("  from MovimentoEstoqueCota mec ")
+    	
+	       .append("  join mec.produtoEdicao pe ")
+	       
+	       .append("  join mec.cota c2 ")
+	       
+	       .append("  join mec.tipoMovimento tipoMovimento ")
+	       
+	       .append("  join mec.lancamento lancamento ")
+	       
+	       .append("  where ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusEstoqueFinanceiro )) ")
+	       
+	       .append("  and tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoEstorno) ")
+	    
+	       .append("  and mec.status = :statusAprovacao ")
+	    
+	       .append("  and c2.id = ").append(paramIdCota)
+	       
+	       .append("  and lancamento.dataLancamentoDistribuidor <= :data")
+	       
+	       .append("  and (c2.alteracaoTipoCota is null or c2.alteracaoTipoCota < lancamento.dataLancamentoDistribuidor)");
+	       
+		return hql.toString();
+	}
 
 	@SuppressWarnings("unchecked")
 	public List<MovimentoEstoqueCotaGenericoDTO> obterListaMovimentoEstoqueCotaDevolucaoJuramentada(Date dataOperacao) {
@@ -112,10 +249,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		query.setParameter("juramentada", true);
 		
-		
-		
 		return query.list();
-		
 	}
 	
 	/*
@@ -124,7 +258,6 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 	 */
 	@SuppressWarnings("unchecked")
 	public List<MovimentoEstoqueCota> obterListaMovimentoEstoqueCotaParaOperacaoConferenciaEncalhe(Long idControleConferenciaEncalheCota) {
-		
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -140,54 +273,66 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		query.setParameter("idControleConferenciaEncalheCota", idControleConferenciaEncalheCota);
 		
-		
 		return query.list();
-		
 	}
 	
 	/**
-    * Obtém movimentos de estoque da cota que ainda não geraram movimento financeiro
-	* Considera movimentos de estoque provenientes dos fluxos de Expedição
-	* @param idCota
-	* @param dataControleConferencia
-	* @return List<MovimentoEstoqueCota>
-	*/
+     * Obtém movimentos de estoque da cota que ainda não geraram movimento financeiro
+	 * Considera movimentos de estoque provenientes dos fluxos de Expedição - movimentos à vista
+	 * @param idCota
+	 * @param dataControleConferencia
+	 * @return List<MovimentoEstoqueCota>
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public List<MovimentoEstoqueCota> obterMovimentosPendentesGerarFinanceiro(Long idCota, Date dataLancamento) {
+	public List<MovimentoEstoqueCota> obterMovimentosAVistaPendentesGerarFinanceiro(Long idCota, Date dataLancamento) {
+	    
+	    StringBuilder hql = new StringBuilder();
+	    
+	    hql.append(" select mec ")
+
+           .append(this.getFromAVistaCotaAVista(":idCota"));
+
+	        Query query = getSession().createQuery(hql.toString());
+	    
+	    query.setParameterList("gruposMovimentoReparte", Arrays.asList(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR, 
+	                                                                   GrupoMovimentoEstoque.COMPRA_ENCALHE, 
+	                                                                   GrupoMovimentoEstoque.RECEBIMENTO_REPARTE));
+	    
+	    query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
+	    query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
+	    query.setParameter("idCota", idCota);
+	    query.setParameter("data", dataLancamento);
+	    
+	    query.setCacheable(true);
+	    
+	    return query.list();
+	}
+
+	/**
+     * Obtém movimentos de estoque da cota que ainda não geraram movimento financeiro
+	 * Considera movimentos de estoque provenientes dos fluxos de Expedição - movimentos à vista ou consignados com conferencia prevista no dia
+	 * @param idCota
+	 * @param dataControleConferencia
+	 * @return List<MovimentoEstoqueCota>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<MovimentoEstoqueCota> obterMovimentosConsignadosCotaAVistaPrevistoDia(Long idCota, Date dataLancamento) {
 	    
 	    StringBuilder hql = new StringBuilder();
 	    
 	    hql.append(" select mec ")
 	    
-	       .append("  from MovimentoEstoqueCota mec ")
-	
-	       .append("  join mec.produtoEdicao pe ")
-	       
-	       .append("  join mec.cota c1 ")
-	       
-	       .append("  join mec.tipoMovimento tipoMovimento ")
-	       
-	       .append("  join mec.lancamento lancamento ")
-	       
-	       .append("  where ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusEstoqueFinanceiro )) ")
-	       
-	       .append("  and tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoReparte) ")
+	       .append(this.getFromConsignadoCotaAVista(":idCota"));
 	    
-	       .append("  and mec.status = :statusAprovacao ")
-	    
-	       .append("  and c1.id = :idCota ")
-	       
-	       .append("  and lancamento.dataLancamentoDistribuidor <= :data")
-	    
-	       .append("  and (c1.alteracaoTipoCota is null or c1.alteracaoTipoCota < lancamento.dataLancamentoDistribuidor)");
-	   
-	        Query query = getSession().createQuery(hql.toString());
+	    Query query = getSession().createQuery(hql.toString());
 	    
 	    query.setParameterList("gruposMovimentoReparte", Arrays.asList(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR, 
-	                                                               GrupoMovimentoEstoque.COMPRA_ENCALHE, 
-	                                                               GrupoMovimentoEstoque.RECEBIMENTO_REPARTE));
+	                                                                   GrupoMovimentoEstoque.COMPRA_ENCALHE, 
+	                                                                   GrupoMovimentoEstoque.RECEBIMENTO_REPARTE));
 	    
+	    query.setParameter("formaComercializacaoProduto", FormaComercializacao.CONTA_FIRME);
 	    query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
 	    query.setParameter("statusAprovacao", StatusAprovacao.APROVADO);
 	    query.setParameter("idCota", idCota);
@@ -251,9 +396,9 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		hql.append("                            ) ");
 		
-		hql.append("       ) ");
-		
 		hql.append("      ) ");
+		
+		hql.append("     ) ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
@@ -2744,6 +2889,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			}
 			
 			result.addAll(query.list());
+			
 			i++;
 		}
 

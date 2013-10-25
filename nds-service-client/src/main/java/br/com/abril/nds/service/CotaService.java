@@ -384,4 +384,12 @@ public interface CotaService {
 	 * @return List<Cota>
 	 */
 	List<Cota> obterCotasPorNumeros(List<Integer> numerosCota);
+
+	/**
+     * Verifica se a cota teve seu tipo alterado na data informada
+     * @param cota
+     * @param data
+     * @return boolean
+     */
+	boolean isCotaAlteradaNaData(Cota cota, Date data);
 }

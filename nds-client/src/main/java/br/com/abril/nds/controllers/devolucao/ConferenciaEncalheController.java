@@ -1113,6 +1113,35 @@ public class ConferenciaEncalheController extends BaseController {
 		this.result.use(CustomJson.class).from(dados == null ? "" : dados).serialize();
 		
 	}
+	
+	/**
+	 * Salva Conferencia de encalhe da Cota
+	 * @param controleConfEncalheCota
+	 * @param listaConferenciaEncalheCotaToSave
+	 * @param indConferenciaContingencia
+	 */
+	private void salvarConferenciaCota(ControleConferenciaEncalheCota controleConfEncalheCota,
+			                           List<ConferenciaEncalheDTO> listaConferenciaEncalheCotaToSave,
+			                           boolean indConferenciaContingencia){
+		
+		try {
+
+	        this.conferenciaEncalheService.salvarDadosConferenciaEncalhe(controleConfEncalheCota, 
+																         listaConferenciaEncalheCotaToSave, 
+																         this.getSetConferenciaEncalheExcluirFromSession(), 
+																         this.getUsuarioLogado(),
+																         indConferenciaContingencia);
+
+		} catch (EncalheSemPermissaoSalvarException e) {
+			LOGGER.error("Somente conferência de produtos de chamadão podem ser salvos, finalize a operação para não perder os dados: " + e.getMessage(), e);
+			throw new ValidacaoException(TipoMensagem.WARNING, "Somente conferência de produtos de chamadão podem ser salvos, finalize a operação para não perder os dados. ");
+			
+		} catch (ConferenciaEncalheFinalizadaException e) {
+			LOGGER.error("Conferência não pode ser salvar, finalize a operação para não perder os dados: " + e.getMessage(), e);
+			throw new ValidacaoException(TipoMensagem.WARNING, "Conferência não pode ser salvar, finalize a operação para não perder os dados.");
+			
+		}
+	}
 
 	/**
 	 * Salva os dados da conferência de encalhe.
@@ -1167,26 +1196,7 @@ public class ConferenciaEncalheController extends BaseController {
 		
 		limparIdsTemporarios(listaConferenciaEncalheCotaToSave);
 		
-		try {
-
-	        this.conferenciaEncalheService.salvarDadosConferenciaEncalhe(controleConfEncalheCota, 
-																         listaConferenciaEncalheCotaToSave, 
-																         this.getSetConferenciaEncalheExcluirFromSession(), 
-																         this.getUsuarioLogado(),
-																         indConferenciaContingencia);
-	       
-	
-	        limparDadosSessao();
-	
-		} catch (EncalheSemPermissaoSalvarException e) {
-			LOGGER.error("Somente conferência de produtos de chamadão podem ser salvos, finalize a operação para não perder os dados: " + e.getMessage(), e);
-			throw new ValidacaoException(TipoMensagem.WARNING, "Somente conferência de produtos de chamadão podem ser salvos, finalize a operação para não perder os dados. ");
-			
-		} catch (ConferenciaEncalheFinalizadaException e) {
-			LOGGER.error("Conferência não pode ser salvar, finalize a operação para não perder os dados: " + e.getMessage(), e);
-			throw new ValidacaoException(TipoMensagem.WARNING, "Conferência não pode ser salvar, finalize a operação para não perder os dados.");
-			
-		}
+		this.salvarConferenciaCota(controleConfEncalheCota, listaConferenciaEncalheCotaToSave, indConferenciaContingencia);
 		
 		this.result.use(Results.json()).from(
 				new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."), "result").recursive().serialize();
@@ -1531,6 +1541,8 @@ public class ConferenciaEncalheController extends BaseController {
 					obterCopiaListaConferenciaEncalheCota(this.getListaConferenciaEncalheFromSession());
 			
 			limparIdsTemporarios(listaConferenciaEncalheCotaToSave);
+			
+			// this.salvarConferenciaCota(controleConfEncalheCota, listaConferenciaEncalheCotaToSave, indConferenciaContingencia);
 			
 			dadosDocumentacaoConfEncalheCota = 
 					
