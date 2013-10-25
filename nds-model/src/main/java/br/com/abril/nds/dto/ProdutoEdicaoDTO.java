@@ -11,7 +11,6 @@ import br.com.abril.nds.model.cadastro.GrupoProduto;
 import br.com.abril.nds.model.cadastro.PeriodicidadeProduto;
 import br.com.abril.nds.model.cadastro.Sexo;
 import br.com.abril.nds.model.cadastro.TemaProduto;
-import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.model.planejamento.TipoChamadaEncalhe;
 import br.com.abril.nds.model.planejamento.TipoLancamento;
 import br.com.abril.nds.util.CurrencyUtil;
@@ -55,7 +54,6 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	
 	// Usados na listagem de Edições:
 	private Date dataLancamento;
-	private StatusLancamento situacaoLancamento;
 	private String nomeFornecedor;
 	private TipoLancamento tipoLancamento;
 	private String statusLancamento;
@@ -110,6 +108,8 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	
 	private String precoVendaFormatado;
 	private String precoPrevistoFormatado;
+	
+	private ModoTela modoTela;
 	
 	public ProdutoEdicaoDTO() {};
 	
@@ -272,21 +272,6 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 			this.dataLancamentoFormatada = DateUtil.formatarDataPTBR(dataLancamento); 
 		}
 	}
-	
-	/**
-	 * @return the situacaoLancamento
-	 */
-	public StatusLancamento getSituacaoLancamento() {
-		return situacaoLancamento;
-	}
-	
-	/**
-	 * @param situacaoLancamento
-	 *            the situacaoLancamento to set
-	 */
-	public void setSituacaoLancamento(StatusLancamento situacaoLancamento) {
-		this.situacaoLancamento = situacaoLancamento;
-	}
 
 	/**
 	 * @return the nomeFornecedor
@@ -324,12 +309,6 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	public String getStatusLancamento() {
 		return this.statusLancamento;
 	}
-	public void setStatusLancamento(TipoLancamento statusLancamento) {
-		this.statusLancamento = "";
-		if (null != statusLancamento) {
-			this.statusLancamento = statusLancamento.getDescricao();
-		}
-	}
 	
 	public void setStatusLancamento(String statusLancamento) {
 		this.statusLancamento = "";
@@ -343,12 +322,6 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	 */
 	public String getStatusSituacao() {
 		return this.statusSituacao;
-	}
-	public void setStatusSituacao(StatusLancamento statusSituacao) {
-		this.statusSituacao = "";
-		if (null != statusSituacao) {
-			this.statusSituacao = statusSituacao.getDescricao();
-		}
 	}
 	
 	public void setStatusSituacao(String statusSituacao) {
@@ -815,5 +788,24 @@ public class ProdutoEdicaoDTO implements Serializable, Comparable<ProdutoEdicaoD
 	 */
 	public void setPrecoPrevistoFormatado(String precoPrevistoFormatado) {
 		this.precoPrevistoFormatado = precoPrevistoFormatado;
-	}  
+	}
+	
+	/**
+	 * @return the modoTela
+	 */
+	public ModoTela getModoTela() {
+		return modoTela;
+	}
+
+	/**
+	 * @param modoTela the modoTela to set
+	 */
+	public void setModoTela(ModoTela modoTela) {
+		this.modoTela = modoTela;
+	}
+
+	public enum ModoTela {
+		NOVO, EDICAO, REDISTRIBUICAO;
+	}
+	
 }

@@ -1,6 +1,7 @@
 package br.com.abril.nds.client.vo;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Date;
 
 /**
@@ -22,8 +23,11 @@ public class PeriodoLancamentosProdutoEdicaoVO implements Serializable {
 	
 	private Date dataRecolhimentoPrevista;
 	
-	private String statusLancamento;
+	private String status;
 
+	private Integer numeroLancamento;
+	
+	private BigInteger reparte;
 	
 	
 	public Date getDataLancamentoDistribuidor() {
@@ -58,12 +62,40 @@ public class PeriodoLancamentosProdutoEdicaoVO implements Serializable {
 		this.dataRecolhimentoPrevista = dataRecolhimentoPrevista;
 	}
 
-	public String getStatusLancamento() {
-		return statusLancamento;
+	public String getStatus() {
+		return status;
 	}
 
-	public void setStatusLancamento(String statusLancamento) {
-		this.statusLancamento = statusLancamento;
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	/**
+	 * @return the numeroLancamento
+	 */
+	public Integer getNumeroLancamento() {
+		return numeroLancamento;
+	}
+
+	/**
+	 * @param numeroLancamento the numeroLancamento to set
+	 */
+	public void setNumeroLancamento(Integer numeroLancamento) {
+		this.numeroLancamento = numeroLancamento;
+	}
+
+	/**
+	 * @return the reparte
+	 */
+	public BigInteger getReparte() {
+		return reparte;
+	}
+
+	/**
+	 * @param reparte the reparte to set
+	 */
+	public void setReparte(BigInteger reparte) {
+		this.reparte = reparte;
 	}
 	
 }
