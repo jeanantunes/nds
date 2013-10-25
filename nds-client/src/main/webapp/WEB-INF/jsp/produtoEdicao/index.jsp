@@ -67,6 +67,10 @@ fieldset {
 		<table class="produtoEdicaoPeriodosLancamentosGrid"></table>
 	</div>
 	
+	<div id="dialog-redistribuicao-lancamento" title="Redistribuicao" style="display:none">
+		
+	</div>
+	
 		<div id="produtoEdicaoController-tabEdicoes">
 			<ul>
 				<li><a id="produtoEdicaoController-tabIdentificacao" href="#produtoEdicaoController-tabEdicoes-1">Identifica&ccedil;&atilde;o</a></li>
@@ -76,13 +80,28 @@ fieldset {
 			
 			<div id="produtoEdicaoController-tabEdicoes-1">
 				<input type="hidden" id="produtoEdicaoController-idProdutoEdicao" name="idProdutoEdicao" />
+				<input type="hidden" id="produtoEdicaoController-modoTela" name="modoTela" />
+				
 				<div class="ldPesq">
 					<fieldset id="produtoEdicaoController-pesqProdutos" style="width:200px!important;">
 						<legend>Produtos Pesquisados</legend>
 						<table class="prodsPesqGrid"></table>
 					</fieldset>
 					
-					<span class="bt_novos"><a href="javascript:;" onclick="produtoEdicaoController.salvarProdutoEdicao(false);" ><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /><b> Incluir Novo</b></a></span>
+					<span class="bt_novos">
+						<a name="linkIncluirNovo" href="javascript:;"
+						   onclick="produtoEdicaoController.salvarProdutoEdicao(false);" >
+							<img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" />
+							<b> Incluir Novo</b>
+						</a>
+					</span>
+					<span class="bt_novos">
+						<a name="linkRedistribuicao" href="javascript:;" style="display:none;"
+						   onclick="produtoEdicaoController.popupRedistribuicao();" >
+							<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" />
+							<b>Nova Redistribuição</b>
+						</a>
+					</span>
 				</div>
 				
 				<div class="ldForm">
@@ -104,9 +123,9 @@ fieldset {
 										</div>
 										
 										<br clear="all" />
-										<a href="javascript:;" onclick="produtoEdicaoController.popup_excluir_capa();">
+										<a id="linkExclusaoCapa" href="javascript:;" onclick="produtoEdicaoController.popup_excluir_capa();">
 											<img src="${pageContext.request.contextPath}/images/ico_excluir.gif" alt="Excluir Capa" width="15" height="15" hspace="5" vspace="3" border="0" />
-										</a>
+										</a>	
 									</td>
 								</tr>
 								<tr>
@@ -123,7 +142,10 @@ fieldset {
 								</tr>
 								<tr>
 									<td>Situa&ccedil;&atilde;o:</td>
-									<td colspan="5"><input type="text" name="situacao" id="produtoEdicaoController-situacao" style="width:340px;" disabled="disabled" /></td>
+									<td colspan="5">
+										<input type="text" name="situacao" id="produtoEdicaoController-situacao"
+											   style="width:340px;background-color:buttonface;" readonly="true" />
+									</td>
 								</tr>
 								<tr>
 									<td>Edi&ccedil;&atilde;o:</td>
@@ -147,7 +169,11 @@ fieldset {
 										</select>
 									</td>
 									<td>N&ordm; Lancto:</td>
-									<td><input type="text" name="numeroLancamento" id="produtoEdicaoController-numeroLancamento" style="width:50px;" maxlength="9" /></td>
+									<td>
+										<input type="text" name="numeroLancamento" id="produtoEdicaoController-numeroLancamento"
+											   readonly="true"
+											   style="width:50px; background-color:buttonface;" maxlength="9" />
+									</td>
 								</tr>
 								<tr>
 									<td>Capa da Edi&ccedil;&atilde;o:</td>
@@ -203,7 +229,12 @@ fieldset {
 									<td width="90"><input type="text" name="dataLancamentoPrevisto" id="produtoEdicaoController-dataLancamentoPrevisto" style="width:70px;" /></td>
 									<td width="30">Real:</td>
 									<td width="120"><input type="text" name="dataLancamento" id="produtoEdicaoController-dataLancamento" style="width:70px; text-align:center;" disabled="disabled" /></td>
-									<td width="50"><a href="javascript:;" onclick="produtoEdicaoController.mostrarPeriodosLancamento();" ><img src="${pageContext.request.contextPath}/images/ico_detalhes.png" border="0" /></a></td>
+									<td width="50">
+										<a id="idLinkMostrarPeriodos" href="javascript:;"
+										   onclick="produtoEdicaoController.mostrarPeriodosLancamento();" >
+											<img src="${pageContext.request.contextPath}/images/ico_detalhes.png" border="0" />
+										</a>
+									</td>
 								</tr>
 							</tbody>
 						</table>
@@ -233,7 +264,21 @@ fieldset {
 						<table class="prodsPesqGrid"></table>
 					</fieldset>
 					
-					<span class="bt_novos"><a href="javascript:;" onclick="produtoEdicaoController.salvarProdutoEdicao(false);" rel="tipsy" title="Incluir Novo Produto" ><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /><b> Incluir Novo</b></a></span>
+					<span class="bt_novos">
+						<a name="linkIncluirNovo" href="javascript:;"
+						   onclick="produtoEdicaoController.salvarProdutoEdicao(false);" >
+							<img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" />
+							<b> Incluir Novo</b>
+						</a>
+					</span>
+					<span class="bt_novos">
+						<a name="linkRedistribuicao" href="javascript:;" style="display:none;"
+						   onclick="produtoEdicaoController.popupRedistribuicao();" >
+							<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" />
+							<b>Nova Redistribuição</b>
+						</a>
+					</span>
+					
 				</div>
 				
 				<div class="ldForm">
@@ -257,7 +302,7 @@ fieldset {
 									<td>Cod. de Barras:</td>
 									<td><input type="text" name="codigoDeBarras" id="produtoEdicaoController-codigoDeBarras" style="width:180px;" maxlength="18" /></td>
 								</tr>
-								<tr class="target_visible">
+								<tr class="target_visible" style="visibility:hidden">
 									<td>Cod. Barras Corporativo:</td>
 									<td><input type="text" name="codigoDeBarrasCorporativo" id="produtoEdicaoController-codigoDeBarrasCorporativo" maxlength="25" style="width:180px;" /></td>
 								</tr>
@@ -359,7 +404,21 @@ fieldset {
 						<table class="prodsPesqGrid"></table>
 					</fieldset>
 					
-					<span class="bt_novos"><a href="javascript:;" onclick="produtoEdicaoController.salvarProdutoEdicao(false);" rel="tipsy" title="Incluir Novo Produto" ><img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" /><b> Incluir Novo</b></a></span>
+					<span class="bt_novos">
+						<a name="linkIncluirNovo" href="javascript:;"
+						   onclick="produtoEdicaoController.salvarProdutoEdicao(false);" >
+							<img src="${pageContext.request.contextPath}/images/ico_add.gif" border="0" />
+							<b> Incluir Novo</b>
+						</a>
+					</span>
+					<span class="bt_novos">
+						<a name="linkRedistribuicao" href="javascript:;" style="display:none;"
+						   onclick="produtoEdicaoController.popupRedistribuicao();" >
+							<img src="${pageContext.request.contextPath}/images/ico_salvar.gif" border="0" />
+							<b>Nova Redistribuição</b>
+						</a>
+					</span>
+					
 				</div>
 				
 				<div class="ldForm">

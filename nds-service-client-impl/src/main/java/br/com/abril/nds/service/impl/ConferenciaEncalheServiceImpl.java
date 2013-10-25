@@ -2297,14 +2297,11 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				estoqueProdutoCota.setQtdeDevolvida(qtdeDevolvidaOriginal.subtract(movimentoEstoqueCota.getQtde()));
 
 				this.estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
-				this.estoqueProdutoCotaRepository.flush();
-				
 			}
 			
 		}
 		
 		this.movimentoEstoqueCotaRepository.remover(movimentoEstoqueCota);
-		this.movimentoEstoqueCotaRepository.flush();
 	}
 
 	/**
@@ -2743,7 +2740,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			validarAlteracaoEstoqueProdutoCota(estoqueProdutoCota.getQtdeDevolvida(), movimentoEstoqueCota.getProdutoEdicao());
 			
 			this.estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
-			this.estoqueProdutoCotaRepository.flush();
 		}
 	}
 	
@@ -3372,10 +3368,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		e.quebrarLinhaEscape();
 		e.adicionar("Cota: "+slipDTO.getNumeroCota()+" - "+slipDTO.getNomeCota());
 		e.quebrarLinhaEscape();
-		e.adicionar("Data: "+new SimpleDateFormat("dd/MM/yyyy").format(slipDTO.getDataConferencia()));
-		e.quebrarLinhaEscape();
-		e.adicionar("Hora: "+new SimpleDateFormat("HH:mm:ss").format(slipDTO.getDataConferencia()));
-		e.quebrarLinhaEscape();
+//		e.adicionar("Data: "+new SimpleDateFormat("dd/MM/yyyy").format(slipDTO.getDataConferencia()));
+//		e.quebrarLinhaEscape();
+//		e.adicionar("Hora: "+new SimpleDateFormat("HH:mm:ss").format(slipDTO.getDataConferencia()));
+//		e.quebrarLinhaEscape();
 		e.adicionar("BOX:  "+slipDTO.getCodigoBox());e.darEspaco(2);e.adicionar("Num. Slip: "+(slipDTO.getNumSlip() == null ? 0 : slipDTO.getNumSlip()));
 		e.quebrarLinhaEscape();
 		e.adicionar("----------------------------------------");

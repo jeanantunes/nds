@@ -226,7 +226,7 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 	 * @throws GerarCobrancaValidacaoException
 	 */
 	@Override
-	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class, propagation = Propagation.REQUIRES_NEW)
+	@Transactional(noRollbackFor = GerarCobrancaValidacaoException.class)
 	public void gerarCobranca(Long idCota, 
 			                  Long idUsuario, 
 			                  Map<String, Boolean> setNossoNumero)
@@ -912,8 +912,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 			} else {
 				this.dividaRepository.alterar(novaDivida);
 			}
-			
-			this.dividaRepository.flush();
 			
 			switch (formaCobrancaPrincipal.getTipoCobranca()){
 				case BOLETO:

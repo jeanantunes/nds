@@ -114,7 +114,7 @@ var fecharDiaController =  $.extend(true, {
 				align : 'left'
 			}, {
 				display : 'Preço Capa R$',
-				name : 'precoVenda',
+				name : 'valorPrecoCapaFormatado',
 				width : 60,
 				sortable : false,
 				align : 'right'
@@ -125,13 +125,13 @@ var fecharDiaController =  $.extend(true, {
 				sortable : false,
 				align : 'center'
 			}, {
-				display : 'Sobra em',
+				display : 'Sobras',
 				name : 'qtdeSobra',
 				width : 50,
 				sortable : false,
 				align : 'center'
 			}, {
-				display : 'Falta em',
+				display : 'Faltas',
 				name : 'qtdeFalta',
 				width : 50,
 				sortable : false,
