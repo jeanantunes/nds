@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
@@ -25,7 +26,6 @@ public class ReparteFecharDiaDTO implements Serializable {
     @Export(label = "Edição", alignment = Alignment.LEFT, exhibitionOrder = 3)
 	private Long numeroEdicao;
 	
-    @Export(label = "Preço Capa", alignment = Alignment.LEFT, exhibitionOrder = 4)
 	private BigDecimal precoVenda;
 
     @Export(label = "Reparte", alignment = Alignment.CENTER, exhibitionOrder = 5)
@@ -71,6 +71,9 @@ public class ReparteFecharDiaDTO implements Serializable {
 	private BigDecimal distribuidos;
 	
 	private BigDecimal valorTotalReparte;
+	
+	@Export(label = "Preço Capa", alignment = Alignment.LEFT, exhibitionOrder = 4)
+	private String valorPrecoCapaFormatado;
 
 	public ReparteFecharDiaDTO() {
     }
@@ -97,10 +100,20 @@ public class ReparteFecharDiaDTO implements Serializable {
         this.qtdeSobraDistribuicao = this.qtdeDistribuir.subtract(this.qtdeDistribuido);
         this.qtdeDiferenca = this.qtdeDistribuido.subtract(this.qtdeSobraDistribuicao);
         this.qtdeDiferencaLogicoFisico = this.qtdeDistribuir.subtract(this.qtdeDistribuido);
+        this.valorPrecoCapaFormatado = (precoVenda == null) ? CurrencyUtil.formatarValor(BigDecimal.ZERO) :  CurrencyUtil.formatarValor(precoVenda);
+        
     }
+    
+    
+    public String getValorPrecoCapaFormatado(){
+		return valorPrecoCapaFormatado;
+	}
 
+    public void setValorPrecoCapaFormatado(String valorPrecoCapaFormatado) {
+		this.valorPrecoCapaFormatado = valorPrecoCapaFormatado;
+	}
 
-    /**
+	/**
      * @return the sobras
      */
     public BigDecimal getSobras() {

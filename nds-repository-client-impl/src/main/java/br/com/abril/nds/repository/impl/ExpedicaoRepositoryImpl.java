@@ -352,7 +352,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 				.append("     inner join rateio_diferenca rd on (rd.DIFERENCA_ID = d.id) ")
 				.append("     where d.produto_edicao_id = produtoEdicaoId 			 ")
 				.append("     and d.STATUS_CONFIRMACAO <> 'CANCELADO' 			 	 ")
-				.append("  	  and d.TIPO_DIRECIONAMENTO = 'COTA' 			 ")
+				.append("  	  and d.TIPO_DIRECIONAMENTO IN ('COTA', 'NOTA') 			 ")
 				
 				.append("     and rd.data_movimento between innerQuery.dataLancamento ")
 				.append("     and COALESCE((select min(data_lcto_distribuidor) ")
