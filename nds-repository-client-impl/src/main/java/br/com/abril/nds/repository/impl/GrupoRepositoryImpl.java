@@ -1,7 +1,9 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -88,20 +90,73 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
 	}
 
 	@Override
-	public GrupoCota obterGrupoPorCota(Long idCota) {
+	public String obterNomeGrupoPorCota(Long idCota, Long idGrupoIgnorar) {
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append(" select grupoCota from GrupoCota grupoCota " +
-				   " join grupoCota.cotas cota where cota.id = :idCota ");
+		hql.append(" select grupoCota.nome from GrupoCota grupoCota ")
+		   .append(" join grupoCota.cotas cota ")
+		   .append(" where cota.id = :idCota ");
 		
+		if (idGrupoIgnorar != null){
+			
+			hql.append(" and grupoCota.id != :idGrupoIgnorar ");
+		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
 		
 		query.setParameter("idCota", idCota);
-				
-		return (GrupoCota) query.uniqueResult();
 		
+		if (idGrupoIgnorar != null){
+			
+			query.setParameter("idGrupoIgnorar", idGrupoIgnorar);
+		}
+		
+		return (String) query.uniqueResult();
 	}
 	
+	@Override
+	public String obterNomeGrupoPorMunicipio(String municipio) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select grupoCota.nome from GrupoCota grupoCota ")
+		   .append(" join grupoCota.municipios mun ")
+		   .append(" where :municipio in (mun) ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		
+		query.setParameter("municipio", municipio);
+		
+		return (String) query.uniqueResult();
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public Set<Long> obterIdsCotasGrupo(Long idGrupo){
+		
+		StringBuilder hql = new StringBuilder("select cota.id ");
+		hql.append(" from GrupoCota g ")
+		   .append(" join g.cotas cota ")
+		   .append(" where g.id = :idGrupo ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idGrupo", idGrupo);
+		
+		return new HashSet<Long>(query.list());
+	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public Set<String> obterMunicipiosCotasGrupo(Long idGrupo){
+		
+		StringBuilder hql = new StringBuilder("select g.municipios ");
+		hql.append(" from GrupoCota g ")
+		   .append(" where g.id = :idGrupo ");
+		
+		Query query = this.getSession().createQuery(hql.toString());
+		query.setParameter("idGrupo", idGrupo);
+		
+		return new HashSet<String>(query.list());
+	}
 }

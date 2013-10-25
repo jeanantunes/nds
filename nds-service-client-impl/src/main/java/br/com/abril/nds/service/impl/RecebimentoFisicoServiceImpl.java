@@ -887,7 +887,7 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 		recebimentoFisicoRepository.alterar(recebimentoFisico);
 		
 	}
-	
+
 	/**
 	 * Inserir movimento estoque e estoque de produto
 	 */
@@ -902,11 +902,12 @@ public class RecebimentoFisicoServiceImpl implements RecebimentoFisicoService {
 					GrupoMovimentoEstoque.RECEBIMENTO_FISICO);
 
 		movimentoEstoqueService.gerarMovimentoEstoque(
-				recebimentoFisicoDTO.getDataLancamento(), 
 				recebimentoFisicoDTO.getIdProdutoEdicao(), 
 				usuarioLogado.getId(), 
 				recebimentoFisicoDTO.getRepartePrevisto(),
-				tipoMovimento);
+				tipoMovimento,
+				new Date(), 
+				false);
 		
 		boolean indDiferenca = verificarDiferencaExistente(recebimentoFisicoDTO.getRepartePrevisto(), recebimentoFisicoDTO.getQtdFisico());
 

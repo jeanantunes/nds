@@ -27,6 +27,8 @@ public class ProdutoLancamentoDTO implements Serializable {
 	
 	private Long idProduto;
 	
+	private Long idFornecedor;
+	
 	private Long numeroEdicao;
 
 	private BigDecimal precoVenda;
@@ -491,6 +493,20 @@ public class ProdutoLancamentoDTO implements Serializable {
 	 */
 	public void setSequenciaMatriz(Integer sequenciaMatriz) {
 		this.sequenciaMatriz = sequenciaMatriz;
+	}
+	
+	/**
+	 * @return the idFornecedor
+	 */
+	public Long getIdFornecedor() {
+		return idFornecedor;
+	}
+
+	/**
+	 * @param idFornecedor the idFornecedor to set
+	 */
+	public void setIdFornecedor(Long idFornecedor) {
+		this.idFornecedor = idFornecedor;
 	}
 
 	/* (non-Javadoc)

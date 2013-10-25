@@ -14,13 +14,18 @@ public class UtilitarioCNAB {
 	
 	public static final String BANCO_SANTANDER = "033";
 	
+	public static final String SEGMENTO_J = "J";
+	public static final String SEGMENTO_J52 = "J52";
+	public static final String SEGMENTO_T = "T";
+	public static final String SEGMENTO_U = "U";
+	
 	/**
 	 * Contém os códigos dos tipos de registros 
 	 * existentes nos padrões CNAB 240 e CNAB 400
 	 */
 	public enum TipoRegistroCNAB {
 		
-		TipoRegistroCNAB240("0", "1", "2", "3", "4", "5", "9", "J", "52"),
+		TipoRegistroCNAB240("0", "1", "2", "3", "4", "5", "9"),
 		TipoRegistroCNAB400("0", "1", "9");
 
 		private String header;
@@ -30,8 +35,6 @@ public class UtilitarioCNAB {
 		private String finalLote;
 		private String trailerLote;
 		private String trailer;
-		private String segmentoJ;
-		private String segmentoJ52;
 		
 		TipoRegistroCNAB(String header, String detalhe, String trailer) {
 			
@@ -48,9 +51,7 @@ public class UtilitarioCNAB {
 				String detalhe,
 				String finalLote,
 				String trailerLote,
-				String trailer,
-				String segmentoJ,
-				String segmentoJ52) {
+				String trailer) {
 			
 			this.header = header;
 			this.headerLote = headerLote;
@@ -59,8 +60,6 @@ public class UtilitarioCNAB {
 			this.finalLote = finalLote;
 			this.trailerLote = trailerLote;
 			this.trailer = trailer;
-			this.segmentoJ = segmentoJ;
-			this.segmentoJ52 = segmentoJ52;
 		}
 
 		public String getHeader() {
@@ -89,14 +88,6 @@ public class UtilitarioCNAB {
 
 		public String getTrailer() {
 			return trailer;
-		}
-
-		public String getSegmentoJ() {
-			return segmentoJ;
-		}
-
-		public String getSegmentoJ52() {
-			return segmentoJ52;
 		}
 		
 	}
@@ -246,57 +237,7 @@ public class UtilitarioCNAB {
 		
 	}
 	
-	public static CNAB obterCNAB(PadraoCNAB padraoCNAB, String codigoBanco){
-		
-		if(PadraoCNAB.CNAB240.equals(padraoCNAB)) {
-
-	    	switch (codigoBanco) {
-			
-				case BANCO_HSBC:
-					return CNAB.newInstanceCnab240HSBC();
-				case BANCO_BRADESCO:
-					return CNAB.newInstanceCnab240Bradesco();
-				case BANCO_ITAU:
-					return CNAB.newInstanceCnab240Itau();
-				case BANCO_DO_BRASIL:
-					return CNAB.newInstanceCnab240BancoDoBrasil();
-				case BANCO_CAIXA_ECONOMICA_FEDERAL:
-					throw new IllegalStateException("Leitura desse padrao ainda nao implementada");
-				case BANCO_SANTANDER:
-					throw new IllegalStateException("Leitura desse padrao ainda nao implementada");
-				default:
-					throw new IllegalStateException("Leitura desse padrao ainda nao implementada");
-			}
-
-			
-		} else if(PadraoCNAB.CNAB400.equals(padraoCNAB)) {
-
-	    	switch (codigoBanco) {
-			
-				case BANCO_HSBC:
-					return CNAB.newInstanceCnab400Hsbc();
-				case BANCO_BRADESCO:
-					return CNAB.newInstanceCnab400Bradesco();
-				case BANCO_ITAU:
-					return CNAB.newInstanceCnab400Itau();
-				case BANCO_DO_BRASIL:
-					return CNAB.newInstanceCnab400BancoDoBrasil();
-				case BANCO_CAIXA_ECONOMICA_FEDERAL:
-					return CNAB.newInstanceCnab400CaixaEconomicaFederal();
-				case BANCO_SANTANDER:
-					throw new IllegalStateException("Leitura desse padrao ainda nao implementada");
-				default:
-					throw new IllegalStateException("Leitura desse padrao ainda nao implementada");
-					
-			}
-			
-		} else {
-			
-			throw new IllegalStateException("Leitura desse padrao ainda nao implementada");
-			
-		}
-		
-    }
+	
 
    
     

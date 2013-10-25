@@ -1,6 +1,7 @@
 package br.com.abril.nds.service;
 
 import java.util.List;
+import java.util.Set;
 
 import br.com.abril.nds.dto.CotaTipoDTO;
 import br.com.abril.nds.dto.GrupoCotaDTO;
@@ -56,7 +57,7 @@ public interface GrupoService {
 	 * @param diasSemana
 	 * @param tipoCota 
 	 */
-	void salvarGrupoCotas(Long idGrupo, List<Long> cotas, String nomeDiferenca,
+	void salvarGrupoCotas(Long idGrupo, Set<Long> cotas, String nomeDiferenca,
 			List<DiaSemana> diasSemana, TipoCaracteristicaSegmentacaoPDV tipoCota);
 
 	/**
@@ -67,7 +68,7 @@ public interface GrupoService {
 	 * @param nomeDiferenca
 	 * @param diasSemana
 	 */
-	void salvarGrupoMunicipios(Long idGrupo, List<String> idMunicipios,
+	void salvarGrupoMunicipios(Long idGrupo, Set<String> idMunicipios,
 			String nome, List<DiaSemana> diasSemana);
 
 	/**
@@ -76,7 +77,7 @@ public interface GrupoService {
 	 * @param idGrupo
 	 * @return
 	 */
-	List<String> obterMunicipiosDoGrupo(Long idGrupo);
+	Set<String> obterMunicipiosDoGrupo(Long idGrupo);
 
 	/**
 	 * Obtém ids das Cotas do Grupo
@@ -84,7 +85,7 @@ public interface GrupoService {
 	 * @param idGrupo
 	 * @return
 	 */
-	List<Long> obterCotasDoGrupo(Long idGrupo);
+	Set<Long> obterCotasDoGrupo(Long idGrupo);
 
 	
 	Integer countTodosGrupos();
