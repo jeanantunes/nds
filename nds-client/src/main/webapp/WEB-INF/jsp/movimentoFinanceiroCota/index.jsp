@@ -37,8 +37,15 @@
             <div id="botoesDividasPagas">
                 <span class="bt_novos">
 	             	<a onclick="movimentoFinanceiroCotaController.processarFinanceiroCota();"
-	             	   href="javascript:;" rel="tipsy" title="Confirmar">
+	             	   href="javascript:;" rel="tipsy" title="Consolidar e Gerar Cobrança">
 	             	   	<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_check.gif">
+	             	</a>
+                </span>
+                
+                <span class="bt_novos">
+	             	<a onclick="movimentoFinanceiroCotaController.postergarFinanceiroCota();"
+	             	   href="javascript:;" rel="tipsy" title="Consolidar e Postergar Dívida">
+	             	   	<img border="0" hspace="5" src="${pageContext.request.contextPath}/images/ico_reprogramar.gif">
 	             	</a>
                 </span>
             </div>

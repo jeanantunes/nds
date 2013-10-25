@@ -924,10 +924,7 @@ var fecharDiaController =  $.extend(true, {
 				}
 			},
 			form: $("#dialog-processos", fecharDiaController.workspace).parents("form")
-		});
-		
-		
-		      
+		});		 
 	},
 	
 	limparTabela : function(){
@@ -938,7 +935,7 @@ var fecharDiaController =  $.extend(true, {
 		$('#fechamentoDeEncalhe').remove();
 		$('#lancamentoDeFaltasESobras').remove();
 		$('#controleDeAplicacao').remove();
-		
+		$('#consolidarFinanceiro').remove();
 	},
 	
 	iniciarValidacoes : function(){
@@ -952,6 +949,7 @@ var fecharDiaController =  $.extend(true, {
 				fecharDiaController.validacaoFechamentoDeEncalhe(result);
 				fecharDiaController.validacaoLancamentoFaltasESobras(result);
 				fecharDiaController.validacaoControleDeAprovacao(result);
+				fecharDiaController.validacaoConsolidarFinanceiro(result);
 				
 				if (result.habilitarConfirmar){
 					$('#btnConfirmarFechamento', fecharDiaController.workspace).show();
@@ -1124,6 +1122,29 @@ var fecharDiaController =  $.extend(true, {
 					}
 				);
 		}
+	},
+
+	validacaoConsolidarFinanceiro : function(result){
+		var consolidarFinanceiro = null;					
+		var iconeConsolidarFinanceiro = null;
+		if(result.consolidadoCota){
+			
+			consolidarFinanceiro = "<tr class='class_linha_2' id='consolidarFinanceiro'><td>Cobrar/Postergar Financeiro de Cotas À Vista</td>";
+			
+			iconeConsolidarFinanceiro = 'ico_check.gif';
+		}else{
+			
+			consolidarFinanceiro = "<tr class='class_linha_2' id='consolidarFinanceiro'><td><a href='javascript:;' onclick='fecharDiaController.redirecionarProcessamentoFinanceiro();'>Cobrar/Postergar Financeiro de Cotas À Vista</a>:</td>";
+			
+			iconeConsolidarFinanceiro = 'ico_bloquear.gif';
+		}
+		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeConsolidarFinanceiro+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
+		$('#tabela-validacao').append(consolidarFinanceiro + imagem);
+	},
+
+	redirecionarProcessamentoFinanceiro : function(){
+		
+		adicionarTab("Processamento Financeiro","/financeiro/movimentoFinanceiroCota/");
 	},
 	
 	iniciarResumoReparte : function(){

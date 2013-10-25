@@ -122,6 +122,7 @@ import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
 import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.ControleNumeracaoSlipService;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.DocumentoCobrancaService;
 import br.com.abril.nds.service.GerarCobrancaService;
@@ -201,6 +202,9 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	
 	@Autowired
 	private GerarCobrancaService gerarCobrancaService;
+	
+	@Autowired
+	private CotaService cotaService;
 	
 	@Autowired
 	private MovimentoFinanceiroCotaService movimentoFinanceiroCotaService;
@@ -1550,26 +1554,48 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	private Map<String, Boolean> gerarCobranca(ControleConferenciaEncalheCota controleConferenciaEncalheCota) throws GerarCobrancaValidacaoException {
 		
-		//CANCELA DIVIDA EXCLUI CONSOLIDADO E MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA QUE SEJAM RECRIADOS
-		this.gerarCobrancaService.cancelarDividaCobranca(null, 
-				                                         controleConferenciaEncalheCota.getCota().getId(), 
-				                                         controleConferenciaEncalheCota.getDataOperacao(), 
-				                                         true);
-
-		//CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE)
-		this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(controleConferenciaEncalheCota.getCota(),
-																		 controleConferenciaEncalheCota.getDataOperacao(),
-																		 controleConferenciaEncalheCota.getUsuario(),
-																		 controleConferenciaEncalheCota.getId());
-
 		Map<String, Boolean> nossoNumeroCollection = new HashMap<String, Boolean>();
 		
-		if (controleConferenciaEncalheCota.getCota().getTipoCota().equals(TipoCota.CONSIGNADO)){
+		//COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO CONSIGNADA ATÉ FECHAMENTO DO DIA
+        boolean isAlteracaoTipoCotaNaDataAtual = this.cotaService.isCotaAlteradaNaData(controleConferenciaEncalheCota.getCota(), 
+        		                                                                       controleConferenciaEncalheCota.getDataOperacao());
+		
+		if (controleConferenciaEncalheCota.getCota().getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual){
+			
+			//CANCELA DIVIDA EXCLUI CONSOLIDADO E MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA QUE SEJAM RECRIADOS
+			this.gerarCobrancaService.cancelarDividaCobranca(null, 
+					                                         controleConferenciaEncalheCota.getCota().getId(), 
+					                                         controleConferenciaEncalheCota.getDataOperacao(), 
+					                                         true);
+
+			//CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE)
+			this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(controleConferenciaEncalheCota.getCota(),
+																			 controleConferenciaEncalheCota.getDataOperacao(),
+																			 controleConferenciaEncalheCota.getUsuario(),
+																			 controleConferenciaEncalheCota.getId());
 		
 			gerarCobrancaService.gerarCobranca(controleConferenciaEncalheCota.getCota().getId(), 
 											   controleConferenciaEncalheCota.getUsuario().getId(), 
 											   nossoNumeroCollection);
 	    }
+		else if (controleConferenciaEncalheCota.getCota().getTipoCota().equals(TipoCota.A_VISTA)){
+			
+			boolean isConferenciaRealizada = this.controleConferenciaEncalheCotaRepository.isConferenciaEncalheCotaFinalizada(controleConferenciaEncalheCota.getCota().getId(), 
+					                                                                                                          controleConferenciaEncalheCota.getDataOperacao());
+			
+			if(isConferenciaRealizada){
+
+			    //EXLUI MOVIMENTOS FINANCEIROS COTA PARA CRIÁ-LOS NOVAMENTE
+			    this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCotaConferenciaNaoConsolidados(controleConferenciaEncalheCota.getCota().getNumeroCota(), 
+			    		                                                                                       controleConferenciaEncalheCota.getDataOperacao());
+			}
+			
+			//CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA COTA A VISTA COM CONSIGNADO PENDENTE
+			this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(controleConferenciaEncalheCota.getCota(),
+																			 controleConferenciaEncalheCota.getDataOperacao(),
+																			 controleConferenciaEncalheCota.getUsuario(),
+																			 controleConferenciaEncalheCota.getId());
+		}
 		
 		return nossoNumeroCollection;
 	}
@@ -1582,14 +1608,27 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 	 */
 	private void resetarDadosFinanceirosConferenciaEncalheCota(Long idControleConferenciaEncalheCota, Long idCota) {
 		
-		List<MovimentoFinanceiroCota> movimentosFinanceiroCota = 
-				movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota);
+		Cota cota = this.cotaRepository.buscarCotaPorID(idCota);
 		
-		if(movimentosFinanceiroCota!=null && !movimentosFinanceiroCota.isEmpty()) {
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		//COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO CONSIGNADA ATÉ FECHAMENTO DO DIA
+        boolean isAlteracaoTipoCotaNaDataAtual = this.cotaService.isCotaAlteradaNaData(cota,dataOperacao);
+		
+		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual){
+		
+			List<MovimentoFinanceiroCota> movimentosFinanceiroCota = 
+					movimentoFinanceiroCotaRepository.obterMovimentoFinanceiroDaOperacaoConferenciaEncalhe(idControleConferenciaEncalheCota);
 			
-			Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+			if(movimentosFinanceiroCota!=null && !movimentosFinanceiroCota.isEmpty()) {
+
+				gerarCobrancaService.cancelarDividaCobranca(null, idCota, dataOperacao, true);
+			}
+		}
+		else if (cota.getTipoCota().equals(TipoCota.A_VISTA)){
 			
-			gerarCobrancaService.cancelarDividaCobranca(null, idCota, dataOperacao, true);
+			//EXLUI MOVIMENTOS FINANCEIROS COTA PARA CRIÁ-LOS NOVAMENTE
+			this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCotaConferenciaNaoConsolidados(cota.getNumeroCota(), dataOperacao);
 		}
 	}
 	
@@ -1907,8 +1946,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 	}
 	
-	
-	
 	/**
 	 * Obtém um mapa de tipoMovimentoEstoque utilizados 
 	 * pela funcionalidade de conferência de encalhe.
@@ -2188,15 +2225,28 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
 				controleConferenciaEncalheCotaRepository.buscarPorId(idControleConferenciaEncalheCota);
 		
-		if(StatusOperacao.CONCLUIDO.equals(controleConferenciaEncalheCota.getStatus())){
-			
-			Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
-			
-			this.gerarCobrancaService.cancelarDividaCobranca(null, 
-					                                         controleConferenciaEncalheCota.getCota().getId(), 
-					                                         dataOperacao, 
-					                                         true);
-			
+        Cota cota = controleConferenciaEncalheCota.getCota();
+        
+        Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+        
+        //COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO CONSIGNADA ATÉ FECHAMENTO DO DIA
+        boolean isAlteracaoTipoCotaNaDataAtual = this.cotaService.isCotaAlteradaNaData(cota, dataOperacao);
+		
+		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || (isAlteracaoTipoCotaNaDataAtual)){
+		
+			if(StatusOperacao.CONCLUIDO.equals(controleConferenciaEncalheCota.getStatus())){
+
+				this.gerarCobrancaService.cancelarDividaCobranca(null, 
+						                                         cota.getId(), 
+						                                         dataOperacao, 
+						                                         true);
+				
+			}
+		}	
+		else if (cota.getTipoCota().equals(TipoCota.A_VISTA)){
+
+			//EXLUI MOVIMENTOS FINANCEIROS COTA PARA CRIÁ-LOS NOVAMENTE
+			this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCotaConferenciaNaoConsolidados(cota.getNumeroCota(), dataOperacao);	
 		}
 	}
 	
@@ -2434,7 +2484,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 			verificarValorAplicadoNulo(valoresAplicados);
 		}
 		
-		
 		movimentoEstoqueCota.setValoresAplicados(valoresAplicados);
 		
 		return movimentoEstoqueCota;
@@ -2554,12 +2603,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		conferenciaEncalhe.setData(dataCriacao);
 		
 		ProdutoEdicao produtoEdicao = new ProdutoEdicao();
+		
 		produtoEdicao.setId(conferenciaEncalheDTO.getIdProdutoEdicao());
 		
 		conferenciaEncalhe.setProdutoEdicao(produtoEdicao);
 		
 		conferenciaEncalheRepository.adicionar(conferenciaEncalhe);
-		
 	}
 	
 	/**

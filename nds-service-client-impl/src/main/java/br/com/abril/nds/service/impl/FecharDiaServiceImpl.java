@@ -38,7 +38,6 @@ import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO.ValorResumoEstoque
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
 import br.com.abril.nds.enums.TipoMensagem;
-import br.com.abril.nds.exception.GerarCobrancaValidacaoException;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.TipoEdicao;
@@ -80,6 +79,7 @@ import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoConsignado;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoConsolidadoDivida;
 import br.com.abril.nds.model.fechar.dia.FechamentoDiarioResumoEstoque;
 import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.movimentacao.Movimento;
 import br.com.abril.nds.model.movimentacao.TipoMovimento;
@@ -321,6 +321,30 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		return this.fecharDiaRepository.existeLancamentoFaltasESobrasPendentes(dataOperacaoDistribuidor);
 	}
 
+	/**
+	 * Verifica se cotas a vista tiveram seus movimentos financeiros consolidados
+	 * @param data
+	 * @return boolean
+	 */
+	@Override
+	@Transactional
+	public boolean isConsolidadoCotaAVista(Date data){
+
+		List<Cota> cotas = this.cotaRepository.obterCotasTipoAVista(data);
+		
+		for (Cota c : cotas){
+		
+		    ConsolidadoFinanceiroCota cfc = this.consolidadoFinanceiroRepository.buscarPorCotaEData(c.getId(), data);
+		    
+		    if (cfc == null){
+		    	
+		    	return false;
+		    }
+		}
+		
+		return true;
+	}
+	
 	@Override
 	@Transactional
 	public boolean existePendenciasDeAprovacao(Date dataOperacao) {
@@ -410,6 +434,14 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 						)
 					);
 				}
+
+                if (parametrosAprovacaoDistribuidor.isConsolidadoCota()){
+            	   
+            	   if (this.isConsolidadoCotaAVista(dataOperacao) == false){
+            		   
+            		   return true;
+            	   }
+				}	
 			}
 			
 			return this.fecharDiaRepository.existePendenciasDeAprovacao(
@@ -1172,7 +1204,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	    return listaReparte;
 	}
 
-	
 	private void processarControleDeAprovacao() {
 
 		List<GrupoMovimentoFinaceiro> gruposMovimentoFinanceiro = obterGruposMovimentoFinaceiro();
@@ -1218,34 +1249,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			throw new FechamentoDiarioException(mensagem);
 		}
 	}
-	
-	/**
-	 * Processa financeiro das cotas à vista que não tiveram processamento financeiro realizado
-	 * Posterga a divida resultante do processamento financeiro do dia
-	 * 
-	 * @param usuario
-	 * @param dataFechamento
-	 */
-	private void processarEPostergarFinanceiroCotasAVista(Usuario usuario, 
-			                                              Date dataFechamento) throws FechamentoDiarioException{
-		
-		List<Cota> cotasAVista = this.cotaRepository.obterCotasTipoAVista(dataFechamento);
-		
-		if (cotasAVista!=null && !cotasAVista.isEmpty()){
-			
-			try {
-				
-				this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(cotasAVista, dataFechamento, usuario);
-				
-				this.gerarCobrancaService.gerarDividaPostergadaCotas(cotasAVista, usuario.getId());
-				
-			} catch (GerarCobrancaValidacaoException e) {
 
-				throw new FechamentoDiarioException("Erro ao Postergar Pendências Financeiras: "+e.getMessage());
-			}
-		}
-	}
-	
 	@Transactional
 	@Override
 	public FechamentoDiarioDTO processarFechamentoDoDia(Usuario usuario, Date dataFechamento){
@@ -1261,8 +1265,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			atualizarHistoricoEstoqueProduto(dataFechamento);
 			
 			this.processarLancamentosRecolhimento(usuario);
-			
-			this.processarEPostergarFinanceiroCotasAVista(usuario, dataFechamento);
 
 			return fechamentoDiarioDTO;
 		
@@ -1294,7 +1296,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			
 			historicoEstoqueProdutoRepository.adicionar(hep);
 		}
-		
 	}
 
 	private void processarLancamentosRecolhimento(Usuario usuario) {

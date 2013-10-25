@@ -34,6 +34,7 @@ import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
 import br.com.abril.nds.dto.filtro.FiltroRelatorioServicosEntregaDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
+import br.com.abril.nds.model.cadastro.FormaComercializacao;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoCota;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -44,6 +45,7 @@ import br.com.abril.nds.model.financeiro.OperacaoFinaceira;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
+import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.MovimentoFinanceiroCotaRepository;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -54,6 +56,9 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 
 	@Autowired
 	private DataSource dataSource;
+	
+	@Autowired
+	private MovimentoEstoqueCotaRepository movimentoEstoqueCotaRepository;
 	
 	public MovimentoFinanceiroCotaRepositoryImpl() {
 		super(MovimentoFinanceiroCota.class);
@@ -337,9 +342,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 		query.setMaxResults(1);
 		
 		return query.list();
-		
 	}
-	
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -1242,6 +1245,62 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	    
 	    return (Long) query.uniqueResult();
 	}
+    
+    /**
+	 * FROM: Movimentos financeiros de Debito da cota
+	 * @param paramIdCota
+	 * @return String
+	 */
+    public String getFromDebitoCota(String paramIdCota){
+    	
+    	StringBuilder hql = new StringBuilder("")
+    	
+    	.append("  from MovimentoFinanceiroCota mfc ")
+	       
+	       .append("  join mfc.cota c3 ")
+	       
+	       .append("  join mfc.tipoMovimento tm ")
+	    
+	       .append("  where mfc.data <= :data ")
+	       
+	       .append("  and tm.grupoMovimentoFinaceiro in (:gruposMovimentoFinanceiroDebito) ")
+	    
+	       .append("  and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ")
+	    
+	       .append("  and c3.id = ").append(paramIdCota)
+	       
+	       .append("  and (c3.alteracaoTipoCota is null or c3.alteracaoTipoCota < mfc.data)");
+    	
+		return hql.toString();
+	}
+    
+    /**
+   	 * FROM: Movimentos financeiros de Credito da cota
+   	 * @param paramIdCota
+   	 * @return String
+   	 */
+    public String getFromCreditoCota(String paramIdCota){
+    	
+    	StringBuilder hql = new StringBuilder("")
+    	
+    	.append("  from MovimentoFinanceiroCota mfc ")
+	       
+	      .append("  join mfc.cota c4 ")
+	       
+	      .append("  join mfc.tipoMovimento tm ")
+	    
+	      .append("  where mfc.data <= :data ")
+	       
+	      .append("  and tm.grupoMovimentoFinaceiro in (:gruposMovimentoFinanceiroCredito) ")
+	       
+	      .append("  and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ")
+	       
+	      .append("  and c4.id = ").append(paramIdCota)
+	       
+	      .append("  and (c4.alteracaoTipoCota is null or c4.alteracaoTipoCota < mfc.data)");
+    	
+		return hql.toString();
+	}
 	
 	/**
 	 * Obtem Informações para o processamento financeiro (Geração de MovimentoFinanceiroCota, Divida e Cobrança) das Cotas
@@ -1277,57 +1336,26 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	       .append(" coalesce((")
 	       
 	       .append("  select sum(mec.qtde * (case when mec.valoresAplicados is not null then case when mec.valoresAplicados.precoComDesconto is not null then mec.valoresAplicados.precoComDesconto else pe.precoVenda end else pe.precoVenda end)) ")
-	      
-	       .append("  from MovimentoEstoqueCota mec ")
-	
-	       .append("  join mec.produtoEdicao pe ")
 	       
-	       .append("  join mec.cota c1 ")
+	       .append(this.movimentoEstoqueCotaRepository.getFromConsignadoCotaAVista("c.id"))
 	       
-	       .append("  join mec.tipoMovimento tipoMovimento ")
-	       
-	       .append("  join mec.lancamento lancamento ")
-	       
-	       .append("  where ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusEstoqueFinanceiro )) ")
-	       
-	       .append("  and tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoReparte) ")
-	    
-	       .append("  and mec.status = :statusAprovacao ")
-	    
-	       .append("  and c1.id = c.id ")
-	       
-	       .append("  and lancamento.dataLancamentoDistribuidor <= :data")
-	       
-	       .append(" and (c1.alteracaoTipoCota is null or c1.alteracaoTipoCota < lancamento.dataLancamentoDistribuidor)")
-	    
 	       .append("),0) as valorConsignado, ")
-	
+
+	       
+	       .append(" coalesce((")
+	       
+	       .append("  select sum(mec.qtde * (case when mec.valoresAplicados is not null then case when mec.valoresAplicados.precoComDesconto is not null then mec.valoresAplicados.precoComDesconto else pe.precoVenda end else pe.precoVenda end)) ")
+
+	       .append(this.movimentoEstoqueCotaRepository.getFromAVistaCotaAVista("c.id"))
+
+	       .append("),0) as valorAVista, ")
+
 	       
 	       .append(" coalesce((")
 	       
 	       .append("  select sum(mec.qtde * (case when mec.valoresAplicados is not null then case when mec.valoresAplicados.precoComDesconto is not null then mec.valoresAplicados.precoComDesconto else pe.precoVenda end else pe.precoVenda end)) ")
 	      
-	       .append("  from MovimentoEstoqueCota mec ")
-	
-	       .append("  join mec.produtoEdicao pe ")
-	       
-	       .append("  join mec.cota c2 ")
-	       
-	       .append("  join mec.tipoMovimento tipoMovimento ")
-	       
-	       .append("  join mec.lancamento lancamento ")
-	       
-	       .append("  where ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusEstoqueFinanceiro )) ")
-	       
-	       .append("  and tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoEstorno) ")
-	    
-	       .append("  and mec.status = :statusAprovacao ")
-	    
-	       .append("  and c2.id = c.id ")
-	       
-	       .append("  and lancamento.dataLancamentoDistribuidor <= :data")
-	       
-	       .append("  and (c2.alteracaoTipoCota is null or c2.alteracaoTipoCota < lancamento.dataLancamentoDistribuidor)")
+	       .append(this.movimentoEstoqueCotaRepository.getFromEstornoCotaAVista("c.id"))
 	    
 	       .append("),0) as valorEstornado, ")
 	       
@@ -1336,21 +1364,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	       
 	       .append("  select sum(mfc.valor) ")
 	      
-	       .append("  from MovimentoFinanceiroCota mfc ")
-	       
-	       .append("  join mfc.cota c3 ")
-	       
-	       .append("  join mfc.tipoMovimento tm ")
-	    
-	       .append("  where mfc.data <= :data ")
-	       
-	       .append("  and tm.grupoMovimentoFinaceiro in (:gruposMovimentoFinanceiroCredito) ")
-	    
-	       .append("  and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ")
-	    
-	       .append("  and c3.id = c.id ")
-	       
-	       .append("  and (c3.alteracaoTipoCota is null or c3.alteracaoTipoCota < mfc.data)")
+	       .append(this.getFromCreditoCota("c.id"))
 	       
 	       .append("),0) as creditos, ")
 	       
@@ -1359,21 +1373,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	       
 	       .append("  select sum(mfc.valor) ")
 	      
-	       .append("  from MovimentoFinanceiroCota mfc ")
-	       
-	       .append("  join mfc.cota c4 ")
-	       
-	       .append("  join mfc.tipoMovimento tm ")
-	    
-	       .append("  where mfc.data <= :data ")
-	       
-	       .append("  and tm.grupoMovimentoFinaceiro in (:gruposMovimentoFinanceiroDebito) ")
-	       
-	       .append("  and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ")
-	       
-	       .append("  and c4.id = c.id ")
-	       
-	       .append("  and (c4.alteracaoTipoCota is null or c4.alteracaoTipoCota < mfc.data)")
+	       .append(this.getFromDebitoCota("c.id"))
 	    
 	       .append("),0) as debitos, ")
 	
@@ -1386,27 +1386,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	           
 	           .append("  select sum(mec.qtde * (case when mec.valoresAplicados is not null then case when mec.valoresAplicados.precoComDesconto is not null then mec.valoresAplicados.precoComDesconto else pe.precoVenda end else pe.precoVenda end)) ")
 	          
-	           .append("  from MovimentoEstoqueCota mec ")
-	    
-	           .append("  join mec.produtoEdicao pe ")
-	           
-	           .append("  join mec.cota c1 ")
-	           
-	           .append("  join mec.tipoMovimento tipoMovimento ")
-	           
-	           .append("  join mec.lancamento lancamento ")
-	           
-	           .append("  where ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusEstoqueFinanceiro )) ")
-	           
-	           .append("  and tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoReparte) ")
-	        
-	           .append("  and mec.status = :statusAprovacao ")
-	        
-	           .append("  and c1.id = c.id ")
-	           
-	           .append("  and lancamento.dataLancamentoDistribuidor <= :data")
-	           
-	           .append("  and (c1.alteracaoTipoCota is null or c1.alteracaoTipoCota < lancamento.dataLancamentoDistribuidor)")
+	           .append(this.movimentoEstoqueCotaRepository.getFromConsignadoCotaAVista("c.id"))
 	        
 	           .append(")*(-1)),0) + ")
 	    
@@ -1415,27 +1395,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	           
 	           .append("  select sum(mec.qtde * (case when mec.valoresAplicados is not null then case when mec.valoresAplicados.precoComDesconto is not null then mec.valoresAplicados.precoComDesconto else pe.precoVenda end else pe.precoVenda end)) ")
 	          
-	           .append("  from MovimentoEstoqueCota mec ")
-	    
-	           .append("  join mec.produtoEdicao pe ")
-	           
-	           .append("  join mec.cota c2 ")
-	           
-	           .append("  join mec.tipoMovimento tipoMovimento ")
-	           
-	           .append("  join mec.lancamento lancamento ")
-	           
-	           .append("  where ((mec.statusEstoqueFinanceiro is null) or (mec.statusEstoqueFinanceiro = :statusEstoqueFinanceiro )) ")
-	           
-	           .append("  and tipoMovimento.grupoMovimentoEstoque in (:gruposMovimentoEstorno) ")
-	        
-	           .append("  and mec.status = :statusAprovacao ")
-	        
-	           .append("  and c2.id = c.id ")
-	           
-	           .append("  and lancamento.dataLancamentoDistribuidor <= :data")
-	           
-	           .append("  and (c2.alteracaoTipoCota is null or c2.alteracaoTipoCota < lancamento.dataLancamentoDistribuidor)")
+	           .append(this.movimentoEstoqueCotaRepository.getFromEstornoCotaAVista("c.id"))
 	        
 	           .append("),0) ")
 	           
@@ -1447,21 +1407,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	           
 	           .append("  select sum(coalesce(mfc.valor,0)) ")
 	          
-	           .append("  from MovimentoFinanceiroCota mfc ")
-	           
-	           .append("  join mfc.cota c4 ")
-	           
-	           .append("  join mfc.tipoMovimento tm ")
-	        
-	           .append("  where mfc.data <= :data ")
-	           
-	           .append("  and tm.grupoMovimentoFinaceiro in (:gruposMovimentoFinanceiroDebito) ")
-	           
-	           .append("  and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ")
-	           
-	           .append("  and c4.id = c.id ")
-	           
-	           .append("  and (c4.alteracaoTipoCota is null or c4.alteracaoTipoCota < mfc.data)")
+	           .append(this.getFromDebitoCota("c.id"))
 	        
 	           .append(")*(-1)),0) + ")
 	           
@@ -1470,21 +1416,7 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	           
 	           .append("  select sum(coalesce(mfc.valor,0)) ")
 	          
-	           .append("  from MovimentoFinanceiroCota mfc ")
-	           
-	           .append("  join mfc.cota c3 ")
-	           
-	           .append("  join mfc.tipoMovimento tm ")
-	        
-	           .append("  where mfc.data <= :data ")
-	           
-	           .append("  and tm.grupoMovimentoFinaceiro in (:gruposMovimentoFinanceiroCredito) ")
-	           
-	           .append("  and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ")
-	        
-	           .append("  and c3.id = c.id ")
-	           
-	           .append("  and (c3.alteracaoTipoCota is null or c3.alteracaoTipoCota < mfc.data)")
+	           .append(this.getFromCreditoCota("c.id"))
 	           
 	           .append("),0) ")
 	
@@ -1529,6 +1461,8 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	    
 	    query.setParameter("tipoCota", TipoCota.A_VISTA);
 	    
+	    query.setParameter("formaComercializacaoProduto", FormaComercializacao.CONTA_FIRME);
+	    
 	    query.setParameter("statusEstoqueFinanceiro", StatusEstoqueFinanceiro.FINANCEIRO_NAO_PROCESSADO);
 	    
 	    query.setParameterList("gruposMovimentoReparte", Arrays.asList(GrupoMovimentoEstoque.COMPRA_SUPLEMENTAR, 
@@ -1563,6 +1497,44 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	
 	    query.setResultTransformer(new AliasToBeanResultTransformer(ProcessamentoFinanceiroCotaDTO.class));
 	    
+        return query.list();
+	}
+	
+	/**
+	 * Obtem Movimentos Financeiros da Cota na data que ainda nao foram consolidados
+	 * Movimentos de reparte ou encalhe
+	 * @param numeroCota
+	 * @param dataOperacao
+	 * @return List<MovimentoFinanceiroCota>
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<MovimentoFinanceiroCota> obterMovimentosFinanceirosCotaConferenciaNaoConsolidados(Integer numeroCota, Date dataOperacao){
+		
+		StringBuilder hql = new StringBuilder("");
+		
+		hql.append("  select mfc from MovimentoFinanceiroCota mfc ");
+		
+		hql.append("  join mfc.cota c ");
+        
+        hql.append("  join mfc.tipoMovimento tm ");
+     
+        hql.append("  where mfc.data = :data ");
+        
+        hql.append("  and c.numeroCota = :numeroCota ");
+        
+        hql.append("  and tm.grupoMovimentoFinaceiro in (:gruposMovimentoFinanceiroReparteEncalhe) ");
+        
+        hql.append("  and mfc.id not in (select mov.id from ConsolidadoFinanceiroCota c join c.movimentos mov) ");
+        
+        Query query = this.getSession().createQuery(hql.toString());
+          
+        query.setParameter("data", dataOperacao);
+        
+        query.setParameter("numeroCota", numeroCota);
+        
+        query.setParameterList("gruposMovimentoFinanceiroReparteEncalhe", Arrays.asList(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE, 
+                															            GrupoMovimentoEstoque.ENVIO_ENCALHE));
         return query.list();
 	}
 }

@@ -118,6 +118,38 @@ public class MovimentoFinanceiroCotaController extends BaseController{
 			e.printStackTrace();
 		}
 		
-		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Financeiro processado com sucesso."), "result").recursive().serialize();
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Financeiro processado e cobrança gerada com sucesso."), "result").recursive().serialize();
+	}
+	
+	@Post
+	@Path("/postergarFinanceiroCota")
+	public void postergarFinanceiroCota(List<Integer> numerosCota){
+		
+		if (numerosCota==null){
+		    
+			throw new ValidacaoException(TipoMensagem.WARNING, "Nenhuma cota selecionada.");
+		}
+		
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		Usuario usuario = this.usuarioService.getUsuarioLogado();
+		
+        List<Cota> cotas = this.cotaService.obterCotasPorNumeros(numerosCota);
+
+		if (cotas!=null && !cotas.isEmpty()){
+			
+			try {
+				
+				this.movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(cotas, dataOperacao, usuario);
+				
+				this.gerarCobrancaService.gerarDividaPostergadaCotas(cotas, usuario.getId());
+				
+			} catch (GerarCobrancaValidacaoException e) {
+
+				e.printStackTrace();
+			}
+		}
+
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Financeiro processado e dívida postergada com sucesso."), "result").recursive().serialize();
 	}
 }
