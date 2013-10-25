@@ -187,4 +187,10 @@ public interface FecharDiaService {
 	 */
 	void transferirDiferencasParaEstoqueDePerdaGanho(Date dataOperacao, Long idUsuario);
 
+	/**
+	 * Verifica se cotas a vista tiveram seus movimentos financeiros consolidados
+	 * @param data
+	 * @return boolean
+	 */
+	boolean isConsolidadoCotaAVista(Date data);
 }
