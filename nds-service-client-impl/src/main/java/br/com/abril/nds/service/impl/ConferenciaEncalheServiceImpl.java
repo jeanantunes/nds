@@ -29,7 +29,6 @@ import org.apache.commons.collections.comparators.ComparatorChain;
 import org.apache.commons.collections.comparators.NullComparator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.ConferenciaEncalheDTO;
@@ -2297,14 +2296,12 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 				estoqueProdutoCota.setQtdeDevolvida(qtdeDevolvidaOriginal.subtract(movimentoEstoqueCota.getQtde()));
 
-				estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
-				
+				this.estoqueProdutoCotaRepository.alterar(estoqueProdutoCota);
 			}
 			
 		}
 		
-		movimentoEstoqueCotaRepository.remover(movimentoEstoqueCota);
-		
+		this.movimentoEstoqueCotaRepository.remover(movimentoEstoqueCota);
 	}
 
 	/**
@@ -3371,10 +3368,10 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		e.quebrarLinhaEscape();
 		e.adicionar("Cota: "+slipDTO.getNumeroCota()+" - "+slipDTO.getNomeCota());
 		e.quebrarLinhaEscape();
-		e.adicionar("Data: "+new SimpleDateFormat("dd/MM/yyyy").format(slipDTO.getDataConferencia()));
-		e.quebrarLinhaEscape();
-		e.adicionar("Hora: "+new SimpleDateFormat("HH:mm:ss").format(slipDTO.getDataConferencia()));
-		e.quebrarLinhaEscape();
+//		e.adicionar("Data: "+new SimpleDateFormat("dd/MM/yyyy").format(slipDTO.getDataConferencia()));
+//		e.quebrarLinhaEscape();
+//		e.adicionar("Hora: "+new SimpleDateFormat("HH:mm:ss").format(slipDTO.getDataConferencia()));
+//		e.quebrarLinhaEscape();
 		e.adicionar("BOX:  "+slipDTO.getCodigoBox());e.darEspaco(2);e.adicionar("Num. Slip: "+(slipDTO.getNumSlip() == null ? 0 : slipDTO.getNumSlip()));
 		e.quebrarLinhaEscape();
 		e.adicionar("----------------------------------------");

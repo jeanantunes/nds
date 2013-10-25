@@ -437,14 +437,12 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 		
 		if (chamadaEncalheAntiga == null) {
 			
-			throw new ValidacaoException(TipoMensagem.WARNING,
-				"Chamada de encalhe não encontrada!");
+			throw new ValidacaoException(TipoMensagem.WARNING, "Chamada de encalhe não encontrada!");
 		}
 		
 		Set<Lancamento> lancamentos = this.getLancamentos(chamadaEncalheAntiga.getLancamentos());
 		
-		ChamadaEncalheCota chamadaEncalheCotaAlterar =
-			this.obterChamadaEncalheCota(cota, chamadaEncalheAntiga);
+		ChamadaEncalheCota chamadaEncalheCotaAlterar = this.obterChamadaEncalheCota(cota, chamadaEncalheAntiga);
 		
 		ChamadaEncalhe chamadaEncalheNova =
 			this.chamadaEncalheRepository.obterPorNumeroEdicaoEDataRecolhimento(
@@ -452,7 +450,10 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 			
 		if (chamadaEncalheNova == null) {
 			
+			Integer sequencia = this.chamadaEncalheRepository.obterMaiorSequenciaPorDia(novaDataChamadao);
+			
 			chamadaEncalheNova = new ChamadaEncalhe();
+			chamadaEncalheNova.setSequencia(++sequencia);
 		}
 		
 		chamadaEncalheNova.setDataRecolhimento(novaDataChamadao);

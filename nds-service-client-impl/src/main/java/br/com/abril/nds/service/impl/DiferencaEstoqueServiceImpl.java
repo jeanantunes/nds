@@ -42,7 +42,6 @@ import br.com.abril.nds.model.StatusConfirmacao;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.Cota;
-import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.Diferenca;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
@@ -434,7 +433,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		
 	    for (RateioDiferenca rd : diferenca.getRateios()){
 	    	
-	    	if (rd.getCota()!=null){
+	    	if (rd.getCota() != null) {
 	    		
 	    		return rd.getCota();
 	    	}
@@ -761,12 +760,13 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 
 	private StatusAprovacao obterStatusLancamento(Diferenca diferenca) {
 		
-		StatusAprovacao statusAprovacao = StatusAprovacao.PENDENTE;
-		
 		boolean utilizaControleAprovacao = parametrosDistribuidorService.getParametrosDistribuidor().getUtilizaControleAprovacao();
 		
+		StatusAprovacao statusAprovacao = null;
 		if(!utilizaControleAprovacao) {
 			statusAprovacao = StatusAprovacao.APROVADO;
+		} else {
+			statusAprovacao = StatusAprovacao.PENDENTE;
 		}
 		
 		if (this.foraDoPrazoDoGFS(diferenca)) {
@@ -1074,19 +1074,17 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 		} else {
 			
 			if(TipoDirecionamentoDiferenca.COTA.equals(diferenca.getTipoDirecionamento())
-					&& TipoDiferenca.FALTA_EM.equals(diferenca.getTipoDiferenca())){
+					&& TipoDiferenca.FALTA_EM.equals(diferenca.getTipoDiferenca())) {
 				
 				grupoMovimentoEstoque = GrupoMovimentoEstoque.PERDA_EM;
-			}
-			else{
+			} else {
 				
 				grupoMovimentoEstoque = tipoDiferenca.getTipoMovimentoEstoque();
 			}
 		
 		}
 		
-		TipoMovimentoEstoque tipoMovimentoEstoque = 
-			this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(grupoMovimentoEstoque);
+		TipoMovimentoEstoque tipoMovimentoEstoque = this.tipoMovimentoRepository.buscarTipoMovimentoEstoque(grupoMovimentoEstoque);
 		
 		if (tipoMovimentoEstoque == null) {
 			
@@ -1189,48 +1187,46 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 	 	
 	 	for (ImpressaoDiferencaEstoqueDTO dadoImpressao : dadosImpressao) {
 			
-			Long idDiferenca = dadoImpressao.getIdDiferenca();
-			
-			if (idDiferenca != null) {
-				
-				List<RateioDiferencaDTO> rateios = 
+			List<RateioDiferencaDTO> rateios = 
 					this.rateioDiferencaRepository.obterRateiosParaImpressaoPorDiferenca(
-						idDiferenca);
+						dadoImpressao.getProdutoEdicao().getId(), dataMovimento);
+			
+			if (rateios != null) {
 				
-				if (rateios != null) {
+				if (rateios.size() <= qtdeRateiosPorLinha) {
 					
-					if (rateios.size() <= qtdeRateiosPorLinha) {
+					dadoImpressao.setRateios(rateios);
+					
+					listaRelatorio.add(
+						new RelatorioLancamentoFaltasSobrasVO(dadoImpressao));
+					
+				} else {
+					
+					int qtdeLinhas = 
+						(int) Math.ceil((double) rateios.size() / qtdeRateiosPorLinha);
+					
+					int indice = 0;
+					
+					for (int linha = 0; linha < qtdeLinhas; linha++) {
 						
-						dadoImpressao.setRateios(rateios);
+						ImpressaoDiferencaEstoqueDTO dadoImpressaoComRateio = 
+					 		new ImpressaoDiferencaEstoqueDTO();
+						
+						if (linha == 0){
+							dadoImpressaoComRateio.setIdDiferenca(dadoImpressao.getIdDiferenca());
+					 		dadoImpressaoComRateio.setProdutoEdicao(dadoImpressao.getProdutoEdicao());
+						}
+				 		
+				 		dadoImpressaoComRateio.setQtdeFaltas(dadoImpressao.getQtdeFaltas());
+				 		dadoImpressaoComRateio.setQtdeSobras(dadoImpressao.getQtdeSobras());
+				 		
+				 		dadoImpressaoComRateio.setRateios(
+				 			rateios.subList(indice, (indice += qtdeRateiosPorLinha) > rateios.size() ? rateios.size() : indice));
 						
 						listaRelatorio.add(
-							new RelatorioLancamentoFaltasSobrasVO(dadoImpressao));
-						
-					} else {
-						
-						int qtdeLinhas = 
-							(int) Math.ceil((double) rateios.size() / qtdeRateiosPorLinha);
-						
-						int indice = 0;
-						
-						for (int linha = 0; linha < qtdeLinhas; linha++) {
-							
-							ImpressaoDiferencaEstoqueDTO dadoImpressaoComRateio = 
-						 		new ImpressaoDiferencaEstoqueDTO();
-							
-							dadoImpressaoComRateio.setIdDiferenca(idDiferenca);
-					 		dadoImpressaoComRateio.setProdutoEdicao(dadoImpressao.getProdutoEdicao());
-					 		dadoImpressaoComRateio.setQtdeFaltas(dadoImpressao.getQtdeFaltas());
-					 		dadoImpressaoComRateio.setQtdeSobras(dadoImpressao.getQtdeSobras());
-					 		
-					 		dadoImpressaoComRateio.setRateios(
-					 			rateios.subList(indice, indice += qtdeRateiosPorLinha));
-							
-							listaRelatorio.add(
-								new RelatorioLancamentoFaltasSobrasVO(dadoImpressaoComRateio));
-						}
+							new RelatorioLancamentoFaltasSobrasVO(dadoImpressaoComRateio));
 					}
-				}				
+				}
 			}
             //Dados impressão sem rateio
 			else{

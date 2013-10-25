@@ -146,6 +146,8 @@ var visaoEstoqueController = $.extend(true, {
 	
 	montaInputTransferencia : function(data) {
 		
+		data = data.listDetalhe;
+		
 		$.each(data.rows, function(index, value) {
 			
 			if (!value.cell.precoCapa) {
@@ -168,6 +170,8 @@ var visaoEstoqueController = $.extend(true, {
 	
 	
 	montaInputInventario : function(data) {
+		
+		data = data.listDetalhe;
 		
 		$.each(data.rows, function(index, value) {
 			

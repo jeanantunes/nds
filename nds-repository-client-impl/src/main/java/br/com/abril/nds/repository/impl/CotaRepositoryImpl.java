@@ -1505,7 +1505,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 	@SuppressWarnings("unchecked")
 	public List<CotaResumoDTO> obterCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte) {
 		
-		StringBuilder hql = new StringBuilder(" select pessoa.nome as nome, cota.numeroCota as numero from CotaAusente cotaAusente ");
+		StringBuilder hql = new StringBuilder(" select coalesce(pessoa.nome, pessoa.razaoSocial) as nome, cota.numeroCota as numero from CotaAusente cotaAusente ");
 		
 		hql.append(" join cotaAusente.cota cota ");
 		
@@ -1534,7 +1534,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 	public List<CotaResumoDTO> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe) {
 		
 		StringBuilder hql = 
-			new StringBuilder(" select pessoa.nome as nome, cota.numeroCota as numero from ChamadaEncalheCota chamadaEncalheCota ");
+			new StringBuilder(" select coalesce(pessoa.nome, pessoa.razaoSocial) as nome, cota.numeroCota as numero from ChamadaEncalheCota chamadaEncalheCota ");
 		
 		hql.append(" join chamadaEncalheCota.cota cota ");
 		
@@ -1547,6 +1547,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		hql.append(" and controleConferenciaEncalheCota.status = :statusControleConferenciaEncalhe) ");
 		hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento = :dataRecolhimentoEncalhe ");
 		hql.append(" group by chamadaEncalheCota.cota.id ");
+		hql.append(" order by cota.numeroCota");
 
 		Query query = this.getSession().createQuery(hql.toString());
 

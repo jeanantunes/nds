@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository.impl;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -234,15 +235,19 @@ public class RateioDiferencaRepositoryImpl extends AbstractRepositoryModel<Ratei
 	
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<RateioDiferencaDTO> obterRateiosParaImpressaoPorDiferenca(Long idDiferenca) {
+	public List<RateioDiferencaDTO> obterRateiosParaImpressaoPorDiferenca(Long idProdutoEdicao, Date dataMovimento) {
 		
 		String hql = " select cota.numeroCota as numeroCota, rd.qtde as qtde " +
-					 " from RateioDiferenca rd inner join rd.cota cota " +
-					 " where rd.diferenca.id = :idDiferenca ";
+					 " from RateioDiferenca rd " +
+					 " inner join rd.cota cota " +
+					 " where rd.diferenca.produtoEdicao.id = :idProdutoEdicao " +
+					 " and rd.diferenca.dataMovimento = :dataMovimento " +
+					 " order by cota.numeroCota";
 		
 		Query query = getSession().createQuery(hql);
 		
-		query.setParameter("idDiferenca", idDiferenca);
+		query.setParameter("idProdutoEdicao", idProdutoEdicao);
+		query.setParameter("dataMovimento", dataMovimento);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(RateioDiferencaDTO.class));
 		

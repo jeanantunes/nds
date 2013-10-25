@@ -50,7 +50,11 @@ public class ImpressaoDiferencaEstoqueDTO implements Serializable {
 	}
 
 	public void setQtdeFaltas(BigInteger qtdeFaltas) {
-		this.qtdeFaltas = qtdeFaltas;
+		
+		if (qtdeFaltas != null && !qtdeFaltas.equals(BigInteger.ZERO)){
+		
+			this.qtdeFaltas = qtdeFaltas;
+		}
 	}
 
 	public BigInteger getQtdeSobras() {
@@ -58,7 +62,11 @@ public class ImpressaoDiferencaEstoqueDTO implements Serializable {
 	}
 
 	public void setQtdeSobras(BigInteger qtdeSobras) {
-		this.qtdeSobras = qtdeSobras;
+		
+		if (qtdeSobras != null && !qtdeSobras.equals(BigInteger.ZERO)){
+			
+			this.qtdeSobras = qtdeSobras;
+		}
 	}
 
 	public Long getIdDiferenca() {
