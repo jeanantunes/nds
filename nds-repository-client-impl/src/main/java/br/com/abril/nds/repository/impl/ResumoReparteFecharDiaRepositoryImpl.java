@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
 import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.TipoDiferenca;
+import br.com.abril.nds.model.estoque.TipoDirecionamentoDiferenca;
 import br.com.abril.nds.model.planejamento.StatusLancamento;
 import br.com.abril.nds.repository.AbstractRepository;
 import br.com.abril.nds.repository.ResumoReparteFecharDiaRepository;
@@ -42,18 +43,26 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         String templateHqlProdutoEdicaoExpedido = new StringBuilder("(select distinct(produtoEdicaoExpedido.id) from Expedicao expedicao ")
            .append("join expedicao.lancamentos lancamento join lancamento.produtoEdicao produtoEdicaoExpedido where " )
            .append("expedicao.dataExpedicao >= :dataInicio and expedicao.dataExpedicao < :dataFim and lancamento.status <> :statusFuro)").toString();
-
-        String templateHqlDiferenca =  new StringBuilder("(select sum(case when diferenca.tipoDiferenca = :%s then (diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * diferenca.produtoEdicao.precoVenda) ")
-        	.append("else (diferenca.qtde * diferenca.produtoEdicao.precoVenda) end) from Diferenca diferenca join diferenca.lancamentoDiferenca lancamentoDiferenca ")
-	        .append("left join lancamentoDiferenca.movimentosEstoqueCota movimentosEstoqueCota left join lancamentoDiferenca.movimentoEstoque movimentoEstoque ")
-	        .append("where (movimentosEstoqueCota.status = :movimentoAprovado OR movimentoEstoque.status = :movimentoAprovado) ")
-	        .append("and diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s, :%s) ")
-	        .append("and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(") as %s ").toString();
+        
+        String templateHqlDiferenca =  new StringBuilder("(select sum(diferenca.qtde * diferenca.produtoEdicao.precoVenda) ")
+	    	.append(" from Diferenca diferenca join diferenca.lancamentoDiferenca lancamentoDiferenca ")
+	        .append(" left join lancamentoDiferenca.movimentosEstoqueCota movimentosEstoqueCota left join lancamentoDiferenca.movimentoEstoque movimentoEstoque ")
+	        .append(" where (movimentosEstoqueCota.status = :movimentoAprovado OR movimentoEstoque.status = :movimentoAprovado) ")
+	        .append(" and diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s, :%s) ")
+	        .append(" and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(") as %s ").toString();
+        
+        String templateHqlDiferencaRateioCota =  new StringBuilder("(select sum(diferenca.qtde * diferenca.produtoEdicao.precoVenda) ")
+	    	.append(" from Diferenca diferenca join diferenca.lancamentoDiferenca lancamentoDiferenca ")
+	    	.append(" join diferenca.rateios rateios ")
+	        .append(" left join lancamentoDiferenca.movimentosEstoqueCota movimentosEstoqueCota left join lancamentoDiferenca.movimentoEstoque movimentoEstoque ")
+	        .append(" where (movimentosEstoqueCota.status = :movimentoAprovado OR movimentoEstoque.status = :movimentoAprovado) ")
+	        .append(" and diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s, :%s) ")
+	        .append(" and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(")").toString();
 
         StringBuilder hql = new StringBuilder(" select sum(me.qtde * produtoEdicao.precoVenda) as totalReparte, ");
         
-	    hql.append(String.format(templateHqlDiferenca, "tipoDiferencaSobraDe", "tipoDiferencaSobraDe", "tipoDiferencaSobraEm", "totalSobras")).append(",")
-	       .append(String.format(templateHqlDiferenca, "tipoDiferencaFaltaDe", "tipoDiferencaFaltaDe", "tipoDiferencaFaltaEm", "totalFaltas")).append(",");
+	    hql.append(String.format(templateHqlDiferenca,  "tipoDiferencaSobraDe", "tipoDiferencaSobraEm", "totalSobras")).append(",")
+	       .append(String.format(templateHqlDiferenca,  "tipoDiferencaFaltaDe", "tipoDiferencaFaltaEm", "totalFaltas")).append(",");
 	    
 	    hql.append("(select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque = :grupoTransferenciaLancamentoEntrada ")
            .append("then (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda) else (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda * -1) end) ")
@@ -65,7 +74,8 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
            .append("then (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda) else (movimentoEstoque.qtde * movimentoEstoque.produtoEdicao.precoVenda * -1) end) ")
            .append("from MovimentoEstoque movimentoEstoque where movimentoEstoque.data = :data and movimentoEstoque.status = :statusAprovado ")
            .append("and movimentoEstoque.tipoMovimento.grupoMovimentoEstoque in (:grupoMovimentoEnvioJornaleiro, :grupoMovimentoEstornoEnvioJornaleiro) ")
-           .append("and movimentoEstoque.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(") as totalDistribuido ");
+           .append("and movimentoEstoque.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(") - ")
+           .append(String.format(templateHqlDiferencaRateioCota,  "tipoDiferencaFaltaDe", "tipoDiferencaFaltaEm")).append(" as totalDistribuido ");
         
         hql.append(" from MovimentoEstoque me ")
            .append(" join me.produtoEdicao produtoEdicao ") 
@@ -93,7 +103,8 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         
         try {
         	
-            Constructor<SumarizacaoReparteDTO> constructor = SumarizacaoReparteDTO.class.getConstructor(BigDecimal.class, BigDecimal.class, BigDecimal.class, BigDecimal.class, BigDecimal.class);
+            Constructor<SumarizacaoReparteDTO> constructor = 
+            		SumarizacaoReparteDTO.class.getConstructor(BigDecimal.class, BigDecimal.class, BigDecimal.class, BigDecimal.class,BigDecimal.class);
             
             query.setResultTransformer(new AliasToBeanConstructorResultTransformer(constructor));
         
@@ -162,12 +173,11 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
         Date dataInicio = DateUtil.removerTimestamp(data);
         Date dataFim = DateUtil.adicionarDias(dataInicio, 1);
         
-        String exemplaresDiferencaDe = "diferenca.qtde * produtoEdicao.pacotePadrao";
-        String exemplaresDiferencaEm = "diferenca.qtde";
+        String exemplaresDiferenca = "diferenca.qtde";
         
         String templateHqlProdutoEdicaoExpedido = new StringBuilder("(select distinct(produtoEdicaoExpedido.id) from Expedicao expedicao ")
            .append("join expedicao.lancamentos lancamento join lancamento.produtoEdicao produtoEdicaoExpedido where " )
-           .append("expedicao.dataExpedicao >= :dataInicio and expedicao.dataExpedicao < :dataFim and lancamento.status <> :statusFuro)").toString();
+           .append("expedicao.dataExpedicao >= :dataInicio and expedicao.dataExpedicao < :dataFim and lancamento.status <> :statusFuro )").toString();
         
         
         String templateHqlDiferenca = new StringBuilder("(select sum(%s) from Diferenca diferenca join diferenca.lancamentoDiferenca lancamentoDiferenca left join lancamentoDiferenca.movimentosEstoqueCota movimentosEstoqueCota left join lancamentoDiferenca.movimentoEstoque movimentoEstoque ") 
@@ -180,10 +190,10 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 				      hql.append("me.qtde as qtdeReparte, ");
         
         //Diferenças, convertendo as qtde sempre para exemplares
-        hql.append(String.format(templateHqlDiferenca, exemplaresDiferencaDe, "tipoDiferencaSobraDe", "qtdeSobraDe")).append(",");
-        hql.append(String.format(templateHqlDiferenca, exemplaresDiferencaEm, "tipoDiferencaSobraEm", "qtdeSobraEm")).append(",");
-        hql.append(String.format(templateHqlDiferenca, exemplaresDiferencaDe, "tipoDiferencaFaltaDe", "qtdeFaltaDe")).append(",");
-        hql.append(String.format(templateHqlDiferenca, exemplaresDiferencaEm, "tipoDiferencaFaltaEm", "qtdeFaltaEm")).append(",");
+        hql.append(String.format(templateHqlDiferenca, exemplaresDiferenca, "tipoDiferencaSobraDe", "qtdeSobraDe")).append(",");
+        hql.append(String.format(templateHqlDiferenca, exemplaresDiferenca, "tipoDiferencaSobraEm", "qtdeSobraEm")).append(",");
+        hql.append(String.format(templateHqlDiferenca, exemplaresDiferenca, "tipoDiferencaFaltaDe", "qtdeFaltaDe")).append(",");
+        hql.append(String.format(templateHqlDiferenca, exemplaresDiferenca, "tipoDiferencaFaltaEm", "qtdeFaltaEm")).append(",");
         
         //Quantidade efetiva distribuída, considerando movimento de envio de reparte, como também o estorno, em caso de furo
         hql.append("(select sum(case when movimentoEstoque.tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEnvioJornaleiro ");
