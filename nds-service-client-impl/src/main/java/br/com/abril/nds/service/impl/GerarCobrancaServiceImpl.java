@@ -1234,7 +1234,6 @@ public class GerarCobrancaServiceImpl implements GerarCobrancaService {
 								 new String[]{email}, 
 								 new AnexoEmail("Cobranca",anexo,TipoAnexo.PDF));
 		
-		this.cobrancaRepository.incrementarVia(nossoNumero);
 	}
 	
 	/**
