@@ -349,16 +349,5 @@ public interface ProdutoEdicaoRepository extends Repository<ProdutoEdicao, Long>
 	 * @return Boolean
 	 */
 	public Boolean isEdicaoParcial(Long idProdutoEdicao);
-
-	/**
-	 * Obtem ProdutoEdicao por codigo do produto, numero de edição e numero de lançamento
-	 * @param codigoProduto
-	 * @param idProdutoEdicao
-	 * @param nEdicao
-	 * @param nLancamento
-	 * @return ProdutoEdicao
-	 */
-	ProdutoEdicao obterProdutoEdicaoPorNumeroEdicaoENumeroLancamento(
-			String codigoProduto, Long idProdutoEdicao, Long nEdicao, Integer nLancamento);
-
+	
 }

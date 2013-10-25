@@ -75,6 +75,8 @@ public interface LancamentoService {
 	  */
 	public Lancamento obterUltimoLancamentoDaEdicao(Long idProdutoEdicao);
 	
+	public Lancamento obterPrimeiroLancamentoDaEdicao(Long idProdutoEdicao);
+	
 	/**
 	 * Obtem Dados de informe encalhe dos lançamentos respeitando os parametros.
 	 * @param idFornecedor (Opcional) Identificador do {@link Fornecedor}
@@ -130,5 +132,8 @@ public interface LancamentoService {
 	boolean existeMatrizRecolhimentoConfirmado(Date dataChamadao);
 
 	Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao,Long idCota);
+	
+	Date getMaiorDataLancamento(Long idProdutoEdicao);
+	
 }
  
