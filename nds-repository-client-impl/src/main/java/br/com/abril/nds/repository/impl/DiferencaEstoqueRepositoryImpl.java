@@ -620,6 +620,7 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		   .append(" left join produtoEdicao.diferencas diferenca ")
 		   .append(" where lancamento.dataLancamentoDistribuidor = :dataBalanceamento ")
 		   .append(" and lancamento.status not in (:statusLancamento) ")
+		   .append(" and (diferenca.statusConfirmacao != :statusConfirmacao or diferenca.statusConfirmacao is null) ")
 		   .append(" group by produtoEdicao.id ")
 		   .append(" order by produtoEdicao.produto.nome, produtoEdicao.numeroEdicao ");
 		
@@ -631,6 +632,8 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 										                         StatusLancamento.PLANEJADO,
 										                         StatusLancamento.EM_BALANCEAMENTO,
 										                         StatusLancamento.FURO));
+		
+		query.setParameter("statusConfirmacao", StatusConfirmacao.CANCELADO);
 
 		query.setResultTransformer(
 			new AliasToBeanResultTransformer(ImpressaoDiferencaEstoqueDTO.class));
