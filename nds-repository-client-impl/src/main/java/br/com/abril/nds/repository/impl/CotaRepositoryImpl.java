@@ -240,9 +240,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		StringBuilder hqlDividaAcumulada = new StringBuilder();
 		hqlDividaAcumulada.append(" SELECT SUM(COALESCE(D.VALOR,0)) ")
 						  .append("	FROM DIVIDA D ")
+						  .append(" JOIN COBRANCA c on (c.DIVIDA_ID=d.ID) ")
 						  .append("	WHERE D.COTA_ID = COTA_.ID ")
 						  .append("	AND D.STATUS = :statusDividaEmAberto ")
-						  .append("	AND D.DATA <= :dataOperacao ");
+						  .append("	AND C.DT_VENCIMENTO < :dataOperacao ");
 		
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT COTA_.ID AS IDCOTA, ")
@@ -292,11 +293,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		.append("		(")
 		.append(hqlConsignado)
 		.append("		) * 100) as percDivida, ")
-		.append("		DATEDIFF(:dataOperacao, ")
+		.append("		COALESCE(DATEDIFF(:dataOperacao, ")
 		.append("				(SELECT MIN(D.DATA) FROM DIVIDA D WHERE D.COTA_ID = COTA_.ID ")
 		.append("												  AND D.STATUS = :statusDividaEmAberto ")
 		.append("												  AND D.DATA <= :dataOperacao) ")
-		.append("		) AS diasAberto ");
+		.append("		),0) AS diasAberto ");
 		
 		this.setFromWhereCotasSujeitasSuspensao(sql);
 		
