@@ -1,6 +1,7 @@
 package br.com.abril.nds.dto;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import br.com.abril.nds.model.financeiro.TipoMovimentoFinanceiro;
 
@@ -27,6 +28,8 @@ public class DebitoCreditoDTO implements Serializable {
 	private String observacao;
 
 	private boolean permiteAlteracao;
+	
+	private Date dataCriacao;
 	
 	/**
 	 * @return the id
@@ -181,6 +184,14 @@ public class DebitoCreditoDTO implements Serializable {
 		this.idUsuario = idUsuario;
 		this.valor = valor;
 		this.observacao = observacao;
+	}
+
+	public Date getDataCriacao() {
+		return dataCriacao;
+	}
+
+	public void setDataCriacao(Date dataCriacao) {
+		this.dataCriacao = dataCriacao;
 	}
 	
 	

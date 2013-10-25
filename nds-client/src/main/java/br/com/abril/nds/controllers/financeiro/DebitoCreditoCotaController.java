@@ -25,7 +25,6 @@ import br.com.abril.nds.dto.filtro.FiltroDebitoCreditoDTO.ColunaOrdenacao;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
-import br.com.abril.nds.model.aprovacao.StatusAprovacao;
 import br.com.abril.nds.model.cadastro.BaseCalculo;
 import br.com.abril.nds.model.cadastro.Box;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -558,6 +557,8 @@ public class DebitoCreditoCotaController extends BaseController{
 
 		validarPreenchimentoCampos(listaNovosDebitoCredito, idTipoMovimento);
 		
+		Date dataCriacao = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
 		for (DebitoCreditoDTO debitoCredito : listaNovosDebitoCredito) {
 
 			TipoMovimentoFinanceiro tipoMovimentoFinanceiro = new TipoMovimentoFinanceiro();
@@ -572,6 +573,8 @@ public class DebitoCreditoCotaController extends BaseController{
 			
 			debitoCredito.setId(null);
 			
+			debitoCredito.setDataCriacao(dataCriacao);
+			
 			MovimentoFinanceiroCotaDTO movimentoFinanceiroCotaDTO = 
 					debitoCreditoCotaService.gerarMovimentoFinanceiroCotaDTO(debitoCredito);
 			
@@ -580,11 +583,8 @@ public class DebitoCreditoCotaController extends BaseController{
 			this.movimentoFinanceiroCotaService.gerarMovimentosFinanceirosDebitoCredito(movimentoFinanceiroCotaDTO);
 		}
 		
-		List<String> listaMensagens = new ArrayList<String>();
-		
-		listaMensagens.add("Cadastro realizado com sucesso.");
-
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, listaMensagens), "result").recursive().serialize();
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Cadastro realizado com sucesso."), 
+				"result").recursive().serialize();
 	}
 	
 	@Post
