@@ -40,7 +40,7 @@ public class GrupoCota implements Serializable {
 	@Column(name = "ID")
 	private Long id;
 	
-	@Column(name="NOME")
+	@Column(name="NOME", nullable=false)
 	private String nome;
 	
 	@Enumerated(EnumType.STRING)

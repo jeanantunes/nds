@@ -32,7 +32,6 @@ import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.TipoEdicao;
 import br.com.abril.nds.model.cadastro.DistribuicaoFornecedor;
 import br.com.abril.nds.model.cadastro.OperacaoDistribuidor;
-import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.estoque.ItemRecebimentoFisico;
 import br.com.abril.nds.model.planejamento.Estudo;
 import br.com.abril.nds.model.planejamento.EstudoCota;
@@ -43,7 +42,6 @@ import br.com.abril.nds.model.seguranca.Usuario;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.HistoricoLancamentoRepository;
 import br.com.abril.nds.repository.LancamentoRepository;
-import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.MatrizLancamentoService;
 import br.com.abril.nds.util.BigIntegerUtil;
@@ -67,11 +65,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 	
 	@Autowired
 	private HistoricoLancamentoRepository historicoLancamentoRepository;
-	
-	@Autowired
-	private ProdutoEdicaoRepository produtoEdicaoRepository;
-	
-	private int indiceImpressao;
 
 	@Override
 	@Transactional(readOnly = true)
@@ -687,12 +680,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		List<ProdutoLancamentoDTO> produtosLancamentoNaoBalanceadosTotal = 
 			new ArrayList<ProdutoLancamentoDTO>();
 		
-		indiceImpressao = 1;
-		
-		this.imprimir("Id | Código | Nome | Edição | Reparte | Dt Prevista | Dt Distribuidor | Dt Balanceamento | Periodicidade");
-		
-		this.imprimir("=============== PRODUTOS SALVOS / CONFIRMADOS ===============");
-		
 		List<ProdutoLancamentoDTO> produtosLancamentoBalancear =
 			this.processarProdutosLancamentoNaoBalanceaveis(matrizLancamento,
 															dadosBalanceamentoLancamento);
@@ -716,8 +703,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			Set<Date> datasExpectativaReparteOrdenadas = 
 				ordenarMapaExpectativaRepartePorDatasDistribuicao(
 					datasExpectativaReparte, entry.getValue());
-			
-			this.imprimir("=============== PRODUTOS BALANCEÁVEIS ===============");
 			
 			for (Date dataLancamentoPrevista : datasExpectativaReparteOrdenadas) {
 				
@@ -747,8 +732,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			TreeSet<Date> datasDistribuicao = entry.getValue();
 			
 			if (!produtosLancamentoNaoBalanceadosTotal.isEmpty()) {
-	
-				this.imprimir("=============== REALOCAÇÃO DE PRODUTOS QUE SOBRARAM ===============");
 				
 				produtosLancamentoNaoBalanceadosTotal = 
 					this.realocarSobrasProdutosLancamento(
@@ -1055,12 +1038,9 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			new ArrayList<ProdutoLancamentoDTO>();
 		
 		for (ProdutoLancamentoDTO produtoLancamento : produtosLancamentoBalanceaveis) {
-			
-			ProdutoEdicao produtoEdicao = 
-				this.produtoEdicaoRepository.buscarPorId(produtoLancamento.getIdProdutoEdicao());
 				
 			boolean fornecedorCompativelParaDistribuicao =
-				idFornecedor.equals(produtoEdicao.getProduto().getFornecedor().getId());
+				idFornecedor.equals(produtoLancamento.getIdFornecedor());
 			
 			boolean excedeLimiteDataReprogramacao =
 				this.excedeLimiteDataReprogramacao(
@@ -1197,8 +1177,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 														   DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento,
 														   Long idFornecedor) {
 		
-		BigInteger capacidadeDistribuicaoExcedente = 
-			this.obterCapacidadeDistribuicaoExcedente(
+		BigInteger capacidadeDistribuicaoExcedenteMedia = 
+			this.obterCapacidadeDistribuicaoExcedenteMedia(
 				produtosLancamentoBalancear, datasDistribuicao, dadosBalanceamentoLancamento);
 		
 		Map<Date, BigInteger> mapaExpectativaReparteTotalDiariaAtual = null;
@@ -1206,8 +1186,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		long quantidadeProdutosBalancear = produtosLancamentoBalancear.size();
 		
 		long quantidadeProdutosNaoBalanceados = 0;
-		
-		this.imprimir("=============== REALOCAÇÃO DE PRODUTOS (EXCEDE CAPACIDADE DO DISTRIBUIDOR) ===============");
 		
 		while (!produtosLancamentoBalancear.isEmpty()
 					&& quantidadeProdutosBalancear != quantidadeProdutosNaoBalanceados) {
@@ -1225,16 +1203,11 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 											 	  produtosLancamentoBalancear,
 											 	  mapaExpectativaReparteTotalDiariaAtual,
 											 	  dadosBalanceamentoLancamento,
-											 	  capacidadeDistribuicaoExcedente,
+											 	  capacidadeDistribuicaoExcedenteMedia,
 											 	  false,
 											 	  idFornecedor);
 			
 			quantidadeProdutosNaoBalanceados = produtosLancamentoBalancear.size();
-		}
-		
-		if (!produtosLancamentoBalancear.isEmpty()) {
-			
-			this.imprimir("=============== REALOCAÇÃO DE PRODUTOS (BALANCEAR PARA PRIMEIRO DIA) ===============");
 		}
 		
 		mapaExpectativaReparteTotalDiariaAtual = 
@@ -1247,12 +1220,12 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 									 	  produtosLancamentoBalancear,
 									 	  mapaExpectativaReparteTotalDiariaAtual,
 									 	  dadosBalanceamentoLancamento,
-									 	  capacidadeDistribuicaoExcedente,
+									 	  capacidadeDistribuicaoExcedenteMedia,
 									 	  true,
 									 	  idFornecedor);
 	}
 
-	private BigInteger obterCapacidadeDistribuicaoExcedente(
+	private BigInteger obterCapacidadeDistribuicaoExcedenteMedia(
 										List<ProdutoLancamentoDTO> produtosLancamentoBalancear,
 										TreeSet<Date> datasDistribuicao,
 										DadosBalanceamentoLancamentoDTO dadosBalanceamentoLancamento) {
@@ -1260,17 +1233,11 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		BigInteger reparteTotalBalancear =
 			this.obterExpectativaReparteTotal(produtosLancamentoBalancear);
 		
-		BigInteger capacidadeDistribuicaoExcedente = null;
-		
-		BigInteger capacidadeDistribuicao = dadosBalanceamentoLancamento.getCapacidadeDistribuicao();
-		
 		BigInteger totalDiasDistribuicao = BigInteger.valueOf(datasDistribuicao.size());
 		
 		BigInteger mediaReparteExcedente = reparteTotalBalancear.divide(totalDiasDistribuicao);
 		
-		capacidadeDistribuicaoExcedente = capacidadeDistribuicao.add(mediaReparteExcedente);
-		
-		return capacidadeDistribuicaoExcedente;
+		return mediaReparteExcedente;
 	}
 	
 	/**
@@ -1340,8 +1307,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			produtosLancamentoBalanceaveis =
 				this.balancearProdutosLancamento(
 					matrizLancamento, produtosLancamentoBalanceaveis, dadosBalanceamentoLancamento,
-					expectativaReparteDataAtual, dataLancamento, capacidadeDistribuicao,
-					permiteExcederCapacidadeDistribuicao, idFornecedor);
+						expectativaReparteDataAtual, dataLancamento, 
+							capacidadeDistribuicao, permiteExcederCapacidadeDistribuicao, idFornecedor);
 		}
 		
 		return produtosLancamentoBalanceaveis;
@@ -1361,8 +1328,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 			
 			produtosLancamentoMatriz = new ArrayList<ProdutoLancamentoDTO>();
 		}
-		
-		this.imprimirProdutoLancamento(produtoLancamento, dataLancamento);
 		
 		produtoLancamento.setNovaDataLancamento(dataLancamento);
 		produtoLancamento.setDataLancamentoDistribuidor(dataLancamento);
@@ -1815,28 +1780,6 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		SALVAR,
 		CONFIRMAR;
-	}
-	
-	private void imprimirProdutoLancamento(ProdutoLancamentoDTO produtoLancamento, Date dataLancamento) {
-		
-		StringBuilder log = new StringBuilder();
-		
-		log.append(indiceImpressao++ + " | ");
-		log.append(produtoLancamento.getCodigoProduto() + " | ");
-		log.append(produtoLancamento.getNomeProduto() + " | ");
-		log.append(produtoLancamento.getNumeroEdicao() + " | ");
-		log.append(produtoLancamento.getRepartePrevisto() + " | ");
-		log.append(DateUtil.formatarDataPTBR(produtoLancamento.getDataLancamentoPrevista()) + " | ");
-		log.append(DateUtil.formatarDataPTBR(produtoLancamento.getDataLancamentoDistribuidor()) + " | ");
-		log.append(DateUtil.formatarDataPTBR(dataLancamento) + " | ");
-		log.append(produtoLancamento.getPeriodicidadeProduto().name());
-		
-		this.imprimir(log.toString());
-	}
-	
-	private void imprimir(String log) {
-		
-		System.out.println(log);
 	}
 	
 }
