@@ -147,36 +147,50 @@ var historicoVendaController = $.extend(true, {
 			    	  // limpando conteúdo
 			    	  // tr produto
 			    	  $('#analiseHistoricoPopUpNomeProduto').html('');
-			    	  $('#analiseHistoricoPopUpNomeProduto').append('<td class="class_linha_1"><strong>Produto:</strong></td>');
+			    	  $('#analiseHistoricoPopUpNomeProduto').append("<td class='class_linha_1' width='39%' ><strong>Produto:</strong></td>");
+			    	  /*$('#analiseHistoricoPopUpNomeProduto').append('<td class="class_linha_1"></td>');
+			    	  $('#analiseHistoricoPopUpNomeProduto').append('<td class="class_linha_1"></td>');*/
 			    	  
 			    	  // tr numeroEdicao
 			    	  $('#analiseHistoricoPopUpNumeroEdicao').html('');
-			    	  $('#analiseHistoricoPopUpNumeroEdicao').append('<td class="class_linha_1"><strong>Edição:</strong></td>');
+			    	  $('#analiseHistoricoPopUpNumeroEdicao').append("<td class='class_linha_1'  ><strong>Edição:</strong></td>");
+			    	  /*$('#analiseHistoricoPopUpNumeroEdicao').append('<td class="class_linha_1"></td>');
+			    	  $('#analiseHistoricoPopUpNumeroEdicao').append('<td class="class_linha_1"></td>');*/
 			    	  
 			    	  // tr dataLancamento
 			    	  $('#analiseHistoricoPopUpDatalancamento').html('');
-			    	  $('#analiseHistoricoPopUpDatalancamento').append('<td width="136" class="class_linha_2"><strong>Data Lançamento:</strong></td>');
+			    	  $('#analiseHistoricoPopUpDatalancamento').append("<td class='class_linha_2' ><strong>Data Lançamento:</strong></td>");
+			    	  /*$('#analiseHistoricoPopUpDatalancamento').append('<td class="class_linha_1"></td>');
+			    	  $('#analiseHistoricoPopUpDatalancamento').append('<td class="class_linha_1"></td>');*/
 			    	  
 			    	  // tr reparte
 			    	  $('#analiseHistoricoPopUpReparte').html('');
-			    	  $('#analiseHistoricoPopUpReparte').append('<td class="class_linha_1"><strong>Reparte:</strong></td>');
+			    	  $('#analiseHistoricoPopUpReparte').append("<td class='class_linha_1' ><strong>Reparte:</strong></td>");
+			    	  /*$('#analiseHistoricoPopUpReparte').append('<td class="class_linha_1"></td>');
+			    	  $('#analiseHistoricoPopUpReparte').append('<td class="class_linha_1"></td>');*/
 			    	  
 			    	  // tr venda
 			    	  $('#analiseHistoricoPopUpVenda').html('');
-			    	  $('#analiseHistoricoPopUpVenda').append('<td class="class_linha_2"><strong>Venda:</strong></td>');
-
+			    	  $('#analiseHistoricoPopUpVenda').append("<td class='class_linha_2' ><strong>Venda:</strong></td>");
+			    	  /*$('#analiseHistoricoPopUpVenda').append('<td class="class_linha_1"></td>');
+			    	  $('#analiseHistoricoPopUpVenda').append('<td class="class_linha_1"></td>');*/
+			    	  
 			    	  var qtdEdicoesSelecionadas = grids.EdicaoSelecionadaGrid.tableModel.rows.length;
 			    	  
 			    	  // carregando popUp_analiseHistoricoVenda
-			    	  for (var int = qtdEdicoesSelecionadas - 1; int >= 0; int--) {
+			    	  for ( var int = 0; int < qtdEdicoesSelecionadas; int++) {
+			    		  
 			    		  row = grids.EdicaoSelecionadaGrid.tableModel.rows[int];
 			    		  
-			    	      $('#analiseHistoricoPopUpNomeProduto').append('<td align="center" class="class_linha_1">'+row.cell.nomeProduto+'</td>');
+			    	      $('#analiseHistoricoPopUpNomeProduto').append('<td align="center" class="class_linha_1" width="10%">'+row.cell.nomeProduto+'</td>');
 			    	      $('#analiseHistoricoPopUpNumeroEdicao').append('<td align="center" class="class_linha_1">'+row.cell.numeroEdicao+'</td>');
 			    	      $('#analiseHistoricoPopUpDatalancamento').append('<td width="130" align="center" class="class_linha_2">' + row.cell.dataLancamentoFormatada + '</td>');
 			    	      $('#analiseHistoricoPopUpReparte').append('<td align="center" class="class_linha_1">' + row.cell.repartePrevisto +'</td>');
 			    	      $('#analiseHistoricoPopUpVenda').append('<td align="center" class="class_linha_1">' + row.cell.qtdVendasFormatada + '</td>');
 			    	  }
+			    	  
+			    	  $('#analiseHistoricoPopUpNomeProduto td:eq(1)').attr("width","9%");
+			    	  $('#analiseHistoricoPopUpNomeProduto td:eq(6)').attr("width","16%");
 			    	  
 			    	  qtdEdicoesSelecionadas = 6 - grids.EdicaoSelecionadaGrid.tableModel.rows.length; 
 
