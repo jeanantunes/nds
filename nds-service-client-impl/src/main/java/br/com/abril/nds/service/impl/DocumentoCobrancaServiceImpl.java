@@ -98,7 +98,11 @@ public class DocumentoCobrancaServiceImpl implements DocumentoCobrancaService {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Erro ao gerar arquivo de cobrança para nosso número: " + nossoNumero + " - " + e.getMessage());
 		}
 		
-		this.cobrancaRepository.incrementarVia(nossoNumero);
+		Integer vias = (cobranca.getVias() == null) ? 1 : (cobranca.getVias()+1);
+		
+		cobranca.setVias(vias);
+		
+		this.cobrancaRepository.merge(cobranca);
 		
 		return retorno;
 	}
