@@ -160,7 +160,7 @@ var contaCorrenteCotaController = $.extend(true, {
 		}else{			
 			$.each(data.rows, function(index, value) {	
 				
-				var dataRaizPostergado =  value.cell.dataRaizConsolidado;	
+				var dataRaizPostergado =  value.cell.dataRaiz;	
 				
 				if(!dataRaizPostergado){
 					

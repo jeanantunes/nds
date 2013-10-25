@@ -966,12 +966,17 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" cfc.VENDA_ENCALHE as vendaEncalhe, ")
 		   .append(" ((select count(cob.ID) from COBRANCA cob where cob.DT_EMISSAO = cfc.DT_CONSOLIDADO and cob.COTA_ID = cfc.COTA_ID) > 0) as cobrado, ")
 		   //data raiz postergado
-		   .append(" (select max(mfp.DATA_CRIACAO) from MOVIMENTO_FINANCEIRO_COTA mfp where mfp.COTA_ID = cfc.COTA_ID ")
-		   .append("  AND mfp.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoCredito) OR mfp.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoDebito) ")
-		   .append(" AND mfp.DATA = cfc.DT_CONSOLIDADO ")
-		   .append(" AND mfp.COTA_ID = cfc.COTA_ID ")
+		   
+		   .append(" (select max(mfp.DATA_CRIACAO)  ")
+		   .append(" from  MOVIMENTO_FINANCEIRO_COTA mfp ") 
+           .append(" join consolidado_mvto_financeiro_cota cmfc on cmfc.MVTO_FINANCEIRO_COTA_ID=mfp.id ")
+           .append(" where mfp.COTA_ID = cfc.COTA_ID ")
+           .append(" AND mfp.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoCredito) ")
+           .append(" OR mfp.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoDebito) ")   
+           .append(" AND cmfc.CONSOLIDADO_FINANCEIRO_ID=cfc.id ")
 		   .append(")")
 		   .append(" AS dataRaiz, ")
+
 		   .append(" ( select SUM( coalesce(bc.VALOR_PAGO, 0) ) ")
 		   .append("           from BAIXA_COBRANCA bc ")
 		   .append("           inner join COBRANCA cobranca ")
