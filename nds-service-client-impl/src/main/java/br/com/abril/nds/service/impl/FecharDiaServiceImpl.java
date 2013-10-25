@@ -420,22 +420,6 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		}
 	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public Boolean existeGeracaoDeCobranca(Date dataOperacao) {
-		
-		Long qtd = 
-				this.movimentoFinanceiroCotaRepository.obterQuantidadeMovimentoFinanceiroData(dataOperacao);
-		
-		if (qtd.equals(0L)){
-			
-			qtd = 
-				this.consolidadoFinanceiroRepository.obterQuantidadeConsolidadosDia(dataOperacao);
-		}
-		
-		return qtd > 0;
-	}
-	
 	/**
 	 * {@inheritDoc}
 	 */

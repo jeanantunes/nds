@@ -28,7 +28,6 @@ public class FecharDiaDTO implements Serializable {
 	public boolean isFechamentoPermitido() {
 		
 		return this.baixaBancaria 
-				&& this.geracaoDeCobranca 
 				&& this.recebimentoFisico 
 				&& this.confirmacaoDeExpedicao 
 				&& this.lancamentoFaltasESobras

@@ -403,22 +403,6 @@ public class MovimentoFinanceiroCotaRepositoryImpl extends AbstractRepositoryMod
 	}
 
 	@Override
-	public Long obterQuantidadeMovimentoFinanceiroData(Date data){
-		
-		StringBuilder hql = new StringBuilder("select count(mfc.data) ");
-		hql.append(" from MovimentoFinanceiroCota mfc ")
-		   .append(" where mfc.data <= :data ");
-		
-		hql.append(" and mfc.cota.id not in ")
-		   .append(" (select distinct c.cota.id from ConsolidadoFinanceiroCota c where c.dataConsolidado <= :data) ");
-		
-		Query query = this.getSession().createQuery(hql.toString());
-		query.setParameter("data", data);
-		
-		return (Long) query.uniqueResult();
-	}
-
-	@Override
 	public Integer obterContagemMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO) {
 		
 		String hql = " select count(movimentoFinanceiroCota) " + 

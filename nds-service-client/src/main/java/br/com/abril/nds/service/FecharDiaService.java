@@ -88,16 +88,7 @@ public interface FecharDiaService {
 	 * @return boolean
 	 */
 	boolean existePendenciasDeAprovacao(Date dataOperacao);
-	
 
-	/**
-	 * Verifica se tem concentração de cobrança para a data de operação e verifica se a divida não foi gerada.
-	 * @param dataOperacaoDistribuidor 
-	 * 
-	 * @return Boolean
-	 */
-	Boolean existeGeracaoDeCobranca(Date dataOperacao);
-	
 	/**
 	 * @see DividaService#sumarizacaoDividasReceberEm(Date)
 	 */
