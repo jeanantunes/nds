@@ -395,8 +395,7 @@ public class RegiaoController extends BaseController {
 			throw new ValidacaoException(TipoMensagem.WARNING, mensagens);
 		}
 		
-		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso!"), 
-				"result").recursive().serialize();
+		this.result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação realizada com sucesso!"),"result").recursive().serialize();
 	}
 	
 	@Post

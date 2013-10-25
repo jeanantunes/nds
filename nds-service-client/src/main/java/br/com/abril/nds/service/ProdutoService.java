@@ -119,5 +119,7 @@ public interface ProdutoService {
 
     @Deprecated
 	String obterCodigoProdinPorICD (String codigoProduto);
+    
+    Produto obterProdutoPorProdin (String codigoProdin);
 	
 }

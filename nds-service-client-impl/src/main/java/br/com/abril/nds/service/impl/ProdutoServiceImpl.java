@@ -382,4 +382,10 @@ public class ProdutoServiceImpl implements ProdutoService {
 	public String obterCodigoProdinPorICD(String codigoProduto) {
 		return produtoRepository.obterCodigoProdinPorCodICD(codigoProduto);
 	}
+
+	@Override
+	@Transactional
+	public Produto obterProdutoPorProdin(String codigoProdin) {
+		return produtoRepository.obterProdutoPorCodigoProdin(codigoProdin);
+	}
 }
