@@ -27,6 +27,9 @@ public class ParametrosAprovacaoDistribuidor implements Serializable {
 	
 	@Column(name = "FALTAS_SOBRAS",nullable=true)
 	private boolean faltasSobras;
+	
+	@Column(name = "CONSOLIDADO_COTA",nullable=true)
+	private boolean consolidadoCota;
 
 	public boolean isDebitoCredito() {
 		return debitoCredito;
@@ -75,5 +78,12 @@ public class ParametrosAprovacaoDistribuidor implements Serializable {
 	public void setFaltasSobras(boolean faltasSobras) {
 		this.faltasSobras = faltasSobras;
 	}
-	
+
+	public boolean isConsolidadoCota() {
+		return consolidadoCota;
+	}
+
+	public void setConsolidadoCota(boolean consolidadoCota) {
+		this.consolidadoCota = consolidadoCota;
+	}
 }

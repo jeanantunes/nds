@@ -215,6 +215,17 @@ public class LancamentoServiceImpl implements LancamentoService {
 	
 	@Override
 	@Transactional(readOnly=true)
+	public Lancamento obterPrimeiroLancamentoDaEdicao(Long idProdutoEdicao) {
+		
+		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
+			throw new ValidacaoException(TipoMensagem.WARNING, "O código da Edição é inválido!");
+		}
+		
+		return lancamentoRepository.obterPrimeiroLancamentoDaEdicao(idProdutoEdicao);
+	}
+	
+	@Override
+	@Transactional(readOnly=true)
 	public Lancamento obterUltimoLancamentoDaEdicaoParaCota(Long idProdutoEdicao, Long idCota) {
 		
 		if (idProdutoEdicao == null || Long.valueOf(0).equals(idProdutoEdicao)) {
@@ -288,4 +299,29 @@ public class LancamentoServiceImpl implements LancamentoService {
 		
 		return this.lancamentoRepository.existeMatrizRecolhimentoConfirmado(dataChamadao);
 	}
+	
+	@Override
+	@Transactional(readOnly=true)
+	public Date getMaiorDataLancamento(Long idProdutoEdicao) {
+		
+		Date maiorDataLancamentoPrevisto = 
+			this.lancamentoRepository.getMaiorDataLancamentoPrevisto(idProdutoEdicao);
+		
+		Date maiorDataLancamentoDistribuidor =
+			this.lancamentoRepository.getMaiorDataLancamentoDistribuidor(idProdutoEdicao);
+		
+		if (maiorDataLancamentoPrevisto == null || maiorDataLancamentoDistribuidor == null) {
+		
+			return null;
+		}
+		
+		if (maiorDataLancamentoPrevisto.after(maiorDataLancamentoDistribuidor)) {
+			
+			return maiorDataLancamentoPrevisto;
+		} else {
+			
+			return maiorDataLancamentoDistribuidor;
+		}
+	}
+	
 }

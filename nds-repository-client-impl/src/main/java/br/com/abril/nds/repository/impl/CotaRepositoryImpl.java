@@ -240,9 +240,10 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		StringBuilder hqlDividaAcumulada = new StringBuilder();
 		hqlDividaAcumulada.append(" SELECT SUM(COALESCE(D.VALOR,0)) ")
 						  .append("	FROM DIVIDA D ")
+						  .append(" JOIN COBRANCA c on (c.DIVIDA_ID=d.ID) ")
 						  .append("	WHERE D.COTA_ID = COTA_.ID ")
 						  .append("	AND D.STATUS = :statusDividaEmAberto ")
-						  .append("	AND D.DATA <= :dataOperacao ");
+						  .append("	AND C.DT_VENCIMENTO < :dataOperacao ");
 		
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT COTA_.ID AS IDCOTA, ")
@@ -292,11 +293,11 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		.append("		(")
 		.append(hqlConsignado)
 		.append("		) * 100) as percDivida, ")
-		.append("		DATEDIFF(:dataOperacao, ")
+		.append("		COALESCE(DATEDIFF(:dataOperacao, ")
 		.append("				(SELECT MIN(D.DATA) FROM DIVIDA D WHERE D.COTA_ID = COTA_.ID ")
 		.append("												  AND D.STATUS = :statusDividaEmAberto ")
 		.append("												  AND D.DATA <= :dataOperacao) ")
-		.append("		) AS diasAberto ");
+		.append("		),0) AS diasAberto ");
 		
 		this.setFromWhereCotasSujeitasSuspensao(sql);
 		
@@ -1504,7 +1505,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 	@SuppressWarnings("unchecked")
 	public List<CotaResumoDTO> obterCotasAusentesNaExpedicaoDoReparteEm(Date dataExpedicaoReparte) {
 		
-		StringBuilder hql = new StringBuilder(" select pessoa.nome as nome, cota.numeroCota as numero from CotaAusente cotaAusente ");
+		StringBuilder hql = new StringBuilder(" select coalesce(pessoa.nome, pessoa.razaoSocial) as nome, cota.numeroCota as numero from CotaAusente cotaAusente ");
 		
 		hql.append(" join cotaAusente.cota cota ");
 		
@@ -1533,7 +1534,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 	public List<CotaResumoDTO> obterCotasAusentesNoRecolhimentoDeEncalheEm(Date dataRecolhimentoEncalhe) {
 		
 		StringBuilder hql = 
-			new StringBuilder(" select pessoa.nome as nome, cota.numeroCota as numero from ChamadaEncalheCota chamadaEncalheCota ");
+			new StringBuilder(" select coalesce(pessoa.nome, pessoa.razaoSocial) as nome, cota.numeroCota as numero from ChamadaEncalheCota chamadaEncalheCota ");
 		
 		hql.append(" join chamadaEncalheCota.cota cota ");
 		
@@ -1546,6 +1547,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		hql.append(" and controleConferenciaEncalheCota.status = :statusControleConferenciaEncalhe) ");
 		hql.append(" and chamadaEncalheCota.chamadaEncalhe.dataRecolhimento = :dataRecolhimentoEncalhe ");
 		hql.append(" group by chamadaEncalheCota.cota.id ");
+		hql.append(" order by cota.numeroCota");
 
 		Query query = this.getSession().createQuery(hql.toString());
 

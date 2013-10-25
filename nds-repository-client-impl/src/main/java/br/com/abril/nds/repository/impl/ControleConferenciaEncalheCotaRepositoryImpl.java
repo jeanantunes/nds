@@ -14,7 +14,6 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.filtro.FiltroConsultaEncalheDTO;
-import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalhe;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.movimentacao.StatusOperacao;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -59,8 +58,6 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		return (List<Date>) query.list();
 		
 	}
-	
-	
 	
 	/*
 	 * (non-Javadoc)
@@ -344,5 +341,33 @@ public class ControleConferenciaEncalheCotaRepositoryImpl extends
 		
 	}
 	
-	
+	/**
+	 * Verifica se a cota possui conferencia de encalhe finalizada na data
+	 * @param idCota
+	 * @param dataOperacao
+	 * @return boolean
+	 */
+    @Override
+	public boolean isConferenciaEncalheCotaFinalizada(Long idCota, Date dataOperacao) {
+		
+		StringBuffer hql = new StringBuffer("");
+		
+		hql.append(" select c from ControleConferenciaEncalheCota c ");		
+		
+		hql.append(" where c.dataOperacao = :dataOperacao ");
+		
+		hql.append(" and c.cota.id = :idCota ");
+		
+		hql.append(" and c.status = :statusConcluido ");
+		
+		Query query = getSession().createQuery(hql.toString());
+
+		query.setParameter("dataOperacao", dataOperacao);
+		
+		query.setParameter("idCota", idCota);
+		
+		query.setParameter("statusConcluido", StatusOperacao.CONCLUIDO);
+		
+		return (query.list().size() > 0);
+	}
 }

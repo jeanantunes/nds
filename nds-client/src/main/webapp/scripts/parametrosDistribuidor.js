@@ -185,6 +185,7 @@ var parametrosDistribuidorController = $.extend(true, {
 			{name:'parametrosDistribuidor.devolucaoFornecedor', value: $('#devolucaoFornecedor', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.recibo', value: $('#recibo', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.faltasSobras', value: $('#faltasSobras', this.workspace).is(':checked')},
+			{name:'parametrosDistribuidor.cobranca', value: $('#cobranca', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.aprovacaoFaltaDe', value: $('#aprovacaoFaltaDe', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.aprovacaoSobraDe', value: $('#aprovacaoSobraDe', this.workspace).is(':checked')},
 			{name:'parametrosDistribuidor.aprovacaoFaltaEm', value: $('#aprovacaoFaltaEm', this.workspace).is(':checked')},
