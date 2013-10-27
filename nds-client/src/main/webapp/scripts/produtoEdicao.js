@@ -60,6 +60,7 @@ var produtoEdicaoController =$.extend(true,  {
 		if (successCallBack) {
 			successCallBack();
 		}
+		
 	},
 
 	pesquisarPorCodigoErrorCallBack : function(idCodigo, errorCallBack) {
@@ -1147,6 +1148,69 @@ var produtoEdicaoController =$.extend(true,  {
 	mostraLinhaProd:function (){
 
 		$( ".prodLinhas",this.workspace ).show('slow');
+	},
+	
+// FUNCTION - ADD EM LOTE
+	
+	edicaoLote : function() {
+
+		$("#dialog-lote").dialog({
+			resizable : false,
+			height : 250,
+			width : 350,
+			modal : true,
+			buttons : {
+				"Confirmar" : function() {
+					$(this).dialog("close");
+					
+					produtoEdicaoController.executarSubmitAddLote();
+					
+				},
+				"Cancelar" : function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+
+	},
+	
+	executarSubmitAddLote : function (){
+		 var fileName = $("#xls").val();
+	      
+	       var ext = fileName.substr(fileName.lastIndexOf(".")+1).toLowerCase();
+	       if(ext!="xls" & ext!="xlsx"){
+	    	   exibirMensagem("WARNING", ["Somente arquivos com extensão .XLS ou .XLSX são permitidos."]);
+	    	   $(this).val('');
+	    	   return;
+	       }else{
+	    	
+	    	   $("#arquivoUpLoadEdicao").ajaxSubmit({
+					beforeSubmit: function(arr, formData, options) {
+					},
+					success: function(responseText, statusText, xhr, $form)  { 
+						var mensagens = (responseText.mensagens) ? responseText.mensagens : responseText.result;   
+						var tipoMensagem = mensagens.tipoMensagem;
+						var listaMensagens = mensagens.listaMensagens;
+
+						if (tipoMensagem && listaMensagens) {
+							
+							if (tipoMensagem != 'SUCCESS') {
+								
+								exibirMensagemDialog(tipoMensagem, listaMensagens, 'dialogMensagemNovo');
+							
+							}else{
+								exibirMensagem(tipoMensagem, listaMensagens);	
+							}
+
+							$("#dialog-lote").dialog( "close" );
+							
+						}
+					}, 
+					url:  contextPath + '/cadastro/edicao/addLote',
+					type: 'POST',
+					dataType: 'json'
+				});
+	       }
 	}
 
 }, BaseController);

@@ -437,13 +437,10 @@ var regiaoController = $.extend(true, {
 			return resultado;
 		}
 		
-		var vlrCombo = $("#comboRegioes").val();
-		var idParaEliminar = "";
-		
 		$.each(resultado.rows, function(index, row) {
 			var checkBox = null;
 			
-			if(row.cell.idRegiao != vlrCombo){
+			if(row.cell.idRegiao){
 				
 				if(row.cell.isFixa){
 					checkBox = '<input type="checkbox" name="fixa" onchange="regiaoController.alterarRegiao('+row.cell.idRegiao+')" value="'+row.cell.isFixa+'" id="fixa" checked>';				
@@ -457,16 +454,9 @@ var regiaoController = $.extend(true, {
 				'<img src="' + contextPath + '/images/ico_excluir.gif" hspace="5" border="0" />'+	
 				'</a>';
 				row.cell.acao = linkExcluir;
-				
-			}else{
-				idParaEliminar = index;
 			}
-			
+						
 		});
-		
-		if(idParaEliminar){
-			resultado.rows.splice(idParaEliminar, 1);
-		}
 		
 		$(".grids", regiaoController.workspace).show();
 		
@@ -856,13 +846,14 @@ var regiaoController = $.extend(true, {
 									}
 					                 
 									$("#comboRegioes option[value='"+id+"']").remove();
-									$(".regioesCadastradasGrid").flexReload();
 					                 
+									$("#dialog-excluir").dialog("close");
+									$("#dialog-novo").dialog("close");
+									$(".grids", regiaoController.workspace).hide();
 							   },
 							   null,
 							   true
 					);
-					$("#dialog-excluir").dialog("close");
 				},
 				"Cancelar" : function() {
 					$(this).dialog("close");
