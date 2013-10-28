@@ -270,4 +270,7 @@ public interface ConferenciaEncalheService {
 	boolean hasCotaAusenteFechamentoEncalhe(Integer numeroCota);
 	
 	boolean isLancamentoParcial(Long idProdutoEdicao);
+	
+	void isDataRecolhimentoValida(Date dataOperacao, Date dataRecolhimento, Long idProdutoEdicao);
+	
 }

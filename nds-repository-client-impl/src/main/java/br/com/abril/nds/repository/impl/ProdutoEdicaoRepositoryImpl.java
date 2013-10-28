@@ -267,7 +267,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			
 			.append(" (produto.nome like :nomeProduto 				")
 			
-			.append(" or produto.codigo = :codigoProduto) 	and		")
+			.append(" or produto.codigo like :codigoProduto) 	and		")
 			
 			.append(" tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque and	")
 
@@ -283,7 +283,7 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		
 		query.setParameter("nomeProduto", "%" + codigoNomeProduto + "%");
 		
-		query.setParameter("codigoProduto", codigoNomeProduto);
+		query.setParameter("codigoProduto", "%" + codigoNomeProduto + "%");
 		
 		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
