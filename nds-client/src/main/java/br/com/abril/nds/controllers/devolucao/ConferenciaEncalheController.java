@@ -1611,7 +1611,8 @@ public class ConferenciaEncalheController extends BaseController {
 	public void pesquisarProdutoPorCodigoNome(String codigoNomeProduto){
 		
 		List<ProdutoEdicao> listaProdutoEdicao =
-			this.produtoEdicaoService.obterProdutoPorCodigoNome(codigoNomeProduto, getNumeroCotaFromSession(), QUANTIDADE_MAX_REGISTROS);
+			this.produtoEdicaoService.obterProdutoPorCodigoNomeParaRecolhimento(
+				codigoNomeProduto, getNumeroCotaFromSession(), QUANTIDADE_MAX_REGISTROS);
 		
 		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 		
