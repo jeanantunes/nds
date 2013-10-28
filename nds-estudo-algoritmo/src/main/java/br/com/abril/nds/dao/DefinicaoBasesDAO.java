@@ -92,6 +92,7 @@ public class DefinicaoBasesDAO {
 		produtoEdicao.setProduto(new Produto());
 		produtoEdicao.getProduto().setId(rs.getLong("PRODUTO_ID"));
 		produtoEdicao.getProduto().setCodigo(rs.getString("CODIGO"));
+		produtoEdicao.getProduto().setCodigoICD(rs.getString("CODIGO_ICD"));
 
 		return produtoEdicao;
 	}

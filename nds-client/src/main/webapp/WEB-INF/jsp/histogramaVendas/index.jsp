@@ -1,4 +1,4 @@
-<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"]></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/scripts/jquery-ui-1.8.16.custom/js/jquery-ui-1.8.16.custom.min.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/NDS.js"></script>
 <script  type="text/javascript" src="${pageContext.request.contextPath}/scripts/flexigrid-1.1/js/flexigrid.pack.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/scripts/autoCompleteController.js"></script>
@@ -43,13 +43,13 @@
     <br clear="all"/>
     <br />
    
-      <div class="grids" style="display:noneA;">
+      <div class="grids">
       
       <form id="pesquisaHistogramaVendas" name="pesquisaHistogramaVendas" method="post">
-      <fieldset class="classFieldset">
+      <fieldset class="classFieldset" style="width: 960px !important;">
   <legend> Pesquisar Histograma
   </legend>
-  <table width="950" border="0" cellpadding="2" cellspacing="1">
+  <table width="960" border="0" cellpadding="2" cellspacing="1">
     <tr>
             <td width="20"><input name="filtroPor" type="radio" id="radio" value="" checked="checked" onclick="filtroTodas();" /></td>
             <td width="103"><label for="radio"><strong>Todas as Cotas</strong></label></td>
@@ -109,7 +109,7 @@
 </form>
        
        <!--  href="javascript:histogramaVendasController.pesquisarFiltro(); href="/Lancamento/analise_histograma.htm"" -->
-    <fieldset class="classFieldset">
+    <fieldset class="classFieldset" style="width: 960px !important;">
     	<legend>Edições do Produto</legend>
         <table class="edicaoProdCadastradosGrid" id="edicaoProdCadastradosGrid"></table>
         <span class="bt_novos" title="Analisar"><a href="javascript:histogramaVendasController.realizarAnalise();"><img src="images/ico_copia_distrib.gif" hspace="5" border="0" />Analisar</a></span>

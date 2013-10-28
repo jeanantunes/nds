@@ -1573,7 +1573,7 @@ function popup_edicoes_produto() {
                         '<td align="left"><div style="text-align: left; width: 80px;"><input class="inputCodigoEB" value="#codigoProduto#"></div></td>' +
                         '<td align="left"><div style="text-align: left; width: 180px;"><input class="inputProdutoEB" value="#nomeProduto#"></div></td>' +
                         '<td align="left"><div style="text-align: left; width: 80px;"><input id="#idEdicao#" class="inputEdicaoEB" value="#numeroEdicao#"></div></td>' +
-                        '<td align="left"><div style="text-align: left; width: 120px;"><select id="#idClass#" class="selectClassEB">#options#</select></div></td>' +
+                        '<td align="left"><div style="text-align: left; width: 120px;"><select class="selectClassEB">#options#</select></div></td>' +
                         '<td align="center"><div style="text-align: center; width: 70px;">' +
                             '<img src="images/ico_editar.gif" alt="Alterar Edição" class="icoEditarEB">' +
                             '<img src="images/ico_excluir.gif" alt="Excluir Base" class="icoExcluirEB">' +

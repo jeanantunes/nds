@@ -90,13 +90,13 @@ var histogramaVendasController = $.extend(true, {
 			},{
 				display : 'Classificação',
 				name : 'descricaoTipoClassificacao',
-				width : 100,
+				width : 90,
 				sortable : true,
 				align : 'left'
 			},{
 				display : 'Edição',
 				name : 'edicao',
-				width : 60,
+				width : 55,
 				sortable : true,
 				align : 'left'
 			},{
@@ -108,31 +108,31 @@ var histogramaVendasController = $.extend(true, {
 			}, {
 				display : 'Reparte',
 				name : 'reparte',
-				width : 80,
+				width : 70,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Venda',
 				name : 'venda',
-				width : 80,
+				width : 70,
 				sortable : true,
 				align : 'right'
 			}, {
 				display : 'Data Lançamento',
 				name : 'dataLancamento',
-				width : 130,
+				width : 120,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Data Recolhimento',
 				name : 'dataRecolhimento',
-				width : 130,
+				width : 120,
 				sortable : true,
 				align : 'center'
 			}, {
 				display : 'Status',
 				name : 'status',
-				width : 100,
+				width : 90,
 				sortable : true,
 				align : 'left'
 			},
@@ -149,7 +149,7 @@ var histogramaVendasController = $.extend(true, {
 				sortable : true,
 				align : 'center'
 			}],
-			width : 960,
+			width : 950,
 			height : 160,
 			rp : 10,
 			showTableToggleBtn : true,
