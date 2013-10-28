@@ -313,59 +313,64 @@ public class ProdutoEdicaoController extends BaseController {
 		
 		List<ProdutoEdicaoDTO> listaEdicaoDtoInvalidos = new ArrayList<>();
 		
-		formatarLista(listaEdicaoDto);
+		if(listaEdicaoDto.size()<1){
+			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Documento vazio, por favor revise-o!"));
+		}else{
 		
-		List<String> validacaoEdicao = new ArrayList<>();
-		
-		
-		for (ProdutoEdicaoDTO prodEdicao : listaEdicaoDto) {
+			formatarLista(listaEdicaoDto);
 			
-			List<String> mensagens = new ArrayList<>();
+			List<String> validacaoEdicao = new ArrayList<>();
 			
-			if(prodEdicao.getCodigoProduto()==null || prodService.obterProdutoPorProdin(prodEdicao.getCodigoProduto())==null){
+			
+			for (ProdutoEdicaoDTO prodEdicao : listaEdicaoDto) {
 				
-				if(prodEdicao.getCodigoProduto()!=null){
-					validacaoEdicao.add("Código "+prodEdicao.getCodigoProduto()+" de produto não existente! ");
-				}else{
-					if(prodEdicao.getNomeComercial()!=null){
-						validacaoEdicao.add("Código do produto cujo nome é "+ prodEdicao.getNomeComercial() +" não existe! ");
+				List<String> mensagens = new ArrayList<>();
+				
+				if(prodEdicao.getCodigoProduto()==null || prodService.obterProdutoPorProdin(prodEdicao.getCodigoProduto())==null){
+					
+					if(prodEdicao.getCodigoProduto()!=null){
+						validacaoEdicao.add("Código "+prodEdicao.getCodigoProduto()+" de produto não existente! ");
 					}else{
-						if(prodEdicao.getNumeroEdicao()!=null){
-							validacaoEdicao.add("Produto com a edicao "+ prodEdicao.getNumeroEdicao() +" não existente! ");
+						if(prodEdicao.getNomeComercial()!=null){
+							validacaoEdicao.add("Código do produto cujo nome é "+ prodEdicao.getNomeComercial() +" não existe! ");
 						}else{
-							validacaoEdicao.add("Edição sem código, sem nome e sem Produto!");
+							if(prodEdicao.getNumeroEdicao()!=null){
+								validacaoEdicao.add("Produto com a edicao "+ prodEdicao.getNumeroEdicao() +" não existente! ");
+							}else{
+								validacaoEdicao.add("Edição sem código, sem nome e sem Produto!");
+							}
 						}
 					}
-				}
-				
-				listaEdicaoDtoInvalidos.add(prodEdicao);
-			}else{
-				mensagens = validarDadosEdicao(prodEdicao, prodEdicao.getCodigoProduto());	
-				
-				if(!mensagens.isEmpty()){
 					
-					if(prodEdicao.getNumeroEdicao() != null){
-						
-						validacaoEdicao.add("Produto " +prodEdicao.getCodigoProduto() + " com a Edição " + prodEdicao.getNumeroEdicao()+" está inválido. Por favor revise-o.");
-					}else{
-						validacaoEdicao.add("Produto " +prodEdicao.getCodigoProduto() + " está inválido. Por favor revise-o.");
-					}
 					listaEdicaoDtoInvalidos.add(prodEdicao);
+				}else{
+					mensagens = validarDadosEdicao(prodEdicao, prodEdicao.getCodigoProduto());	
+					
+					if(!mensagens.isEmpty()){
+						
+						if(prodEdicao.getNumeroEdicao() != null){
+							
+							validacaoEdicao.add("Produto " +prodEdicao.getCodigoProduto() + " com a Edição " + prodEdicao.getNumeroEdicao()+" está inválido. Por favor revise-o.");
+						}else{
+							validacaoEdicao.add("Produto " +prodEdicao.getCodigoProduto() + " está inválido. Por favor revise-o.");
+						}
+						listaEdicaoDtoInvalidos.add(prodEdicao);
+					}
 				}
+				
 			}
 			
-		}
+			if(!listaEdicaoDtoInvalidos.isEmpty()){
+				listaEdicaoDto.removeAll(listaEdicaoDtoInvalidos);
+			}
+			
+			if(listaEdicaoDto.isEmpty()){
+				throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, validacaoEdicao));
+			}else{
+				addProdEdicaoLote(listaEdicaoDto, validacaoEdicao);
+			}
 		
-		if(!listaEdicaoDtoInvalidos.isEmpty()){
-			listaEdicaoDto.removeAll(listaEdicaoDtoInvalidos);
 		}
-		
-		if(listaEdicaoDto.isEmpty()){
-			throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, validacaoEdicao));
-		}else{
-			addProdEdicaoLote(listaEdicaoDto, validacaoEdicao);
-		}
-		
 	}
 
 	private void addProdEdicaoLote(List<ProdutoEdicaoDTO> listaEdicaoDto, List<String> listaMensagem) {
