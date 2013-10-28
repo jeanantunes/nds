@@ -1373,20 +1373,14 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				cobrancaControleConferenciaEncalheCotaRepository.alterar(cobrancaControleConfEncCota);
 				
 			}
-			
 		}
-		
 	}
 	
-	@Transactional(rollbackFor=GerarCobrancaValidacaoException.class)
-	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
-			ControleConferenciaEncalheCota controleConfEncalheCota, 
-			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
-			Set<Long> listaIdConferenciaEncalheParaExclusao,
-			Usuario usuario,
-			boolean indConferenciaContingencia) throws GerarCobrancaValidacaoException {
-		
-		Cota cota = controleConfEncalheCota.getCota();
+	/**
+	 * Reseta dados financeiros na finalização da conferencia de encalhe
+	 * @param controleConfEncalheCota
+	 */
+	private void resetarDadosFinalizacaoConferencia(ControleConferenciaEncalheCota controleConfEncalheCota){
 		
 		if(	controleConfEncalheCota.getId() != null) {
 			
@@ -1400,14 +1394,77 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 				
 				resetarDadosFinanceirosConferenciaEncalheCota( 
 						controleConfEncalheCota.getId(), 
-						cota.getId());
+						controleConfEncalheCota.getCota().getId());
 			}
 		} 			
+	}
+	
+	/**
+	 * Inclui dados da conferencia de encalhe da cota
+	 * @param controleConfEncalheCota
+	 * @param listaConferenciaEncalhe
+	 * @param listaIdConferenciaEncalheParaExclusao
+	 * @param usuario
+	 * @param indConferenciaContingencia
+	 * @return ControleConferenciaEncalheCota
+	 */
+	private ControleConferenciaEncalheCota incluirDadosConferenciaEncalheCota(ControleConferenciaEncalheCota controleConfEncalheCota,
+			                                                                 List<ConferenciaEncalheDTO> listaConferenciaEncalhe,
+			                                                                 Set<Long> listaIdConferenciaEncalheParaExclusao,
+			                                                                 Usuario usuario,
+			                                                                 boolean indConferenciaContingencia){
 		
-		controleConfEncalheCota = 
-				inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, 
-						listaIdConferenciaEncalheParaExclusao, usuario, StatusOperacao.CONCLUIDO, indConferenciaContingencia);
+		controleConfEncalheCota = inserirDadosConferenciaEncalhe(controleConfEncalheCota, 
+				                                                 listaConferenciaEncalhe, 
+						                                         listaIdConferenciaEncalheParaExclusao, 
+						                                         usuario, 
+						                                         StatusOperacao.CONCLUIDO, 
+						                                         indConferenciaContingencia);
 		
+		return controleConfEncalheCota;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see br.com.abril.nds.service.ConferenciaEncalheService#salvarDadosConferenciaEncalhe(br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota, java.util.List, java.util.Set, br.com.abril.nds.model.seguranca.Usuario)
+	 */
+	@Transactional
+	public Long salvarDadosConferenciaEncalhe(
+			ControleConferenciaEncalheCota controleConfEncalheCota, 
+			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
+			Set<Long> listaIdConferenciaEncalheParaExclusao,
+			Usuario usuario, 
+			boolean indConferenciaContingencia) throws EncalheSemPermissaoSalvarException, ConferenciaEncalheFinalizadaException {
+
+		desfazerCobrancaConferenciaEncalheReaberta(controleConfEncalheCota.getId());
+		
+		//validarPermissaoSalvarConferenciaEncalhe(listaConferenciaEncalhe);
+		
+		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
+				inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, listaIdConferenciaEncalheParaExclusao, usuario, StatusOperacao.EM_ANDAMENTO, indConferenciaContingencia);
+		
+		return controleConferenciaEncalheCota.getId();
+		
+	}
+	
+	@Transactional(rollbackFor=GerarCobrancaValidacaoException.class)
+	public DadosDocumentacaoConfEncalheCotaDTO finalizarConferenciaEncalhe(
+			ControleConferenciaEncalheCota controleConfEncalheCota, 
+			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
+			Set<Long> listaIdConferenciaEncalheParaExclusao,
+			Usuario usuario,
+			boolean indConferenciaContingencia) throws GerarCobrancaValidacaoException {
+		
+		this.resetarDadosFinalizacaoConferencia(controleConfEncalheCota);
+		
+		this.incluirDadosConferenciaEncalheCota(controleConfEncalheCota, 
+				                                listaConferenciaEncalhe, 
+				                                listaIdConferenciaEncalheParaExclusao, 
+				                                usuario, 
+				                                indConferenciaContingencia);
+
+		Cota cota = controleConfEncalheCota.getCota();       
+
 		BigDecimal valorTotalEncalheOperacaoConferenciaEncalhe = BigDecimal.ZERO;
 				//conferenciaEncalheRepository.obterValorTotalEncalheOperacaoConferenciaEncalhe(controleConfEncalheCota.getId());
 		
@@ -1735,7 +1792,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		return controleConferenciaEncalheCota;
 	}
-	
 	
 	/**
 	 * Atualiza registro de ConferenciaEncalhe e entidades relacionadas.
@@ -2182,29 +2238,6 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		
 		itemRecebimentoFisicoRepository.adicionar(itemRecebimentoFisico);
 		
-		
-	}
-	
-	/*
-	 * (non-Javadoc)
-	 * @see br.com.abril.nds.service.ConferenciaEncalheService#salvarDadosConferenciaEncalhe(br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota, java.util.List, java.util.Set, br.com.abril.nds.model.seguranca.Usuario)
-	 */
-	@Transactional
-	public Long salvarDadosConferenciaEncalhe(
-			ControleConferenciaEncalheCota controleConfEncalheCota, 
-			List<ConferenciaEncalheDTO> listaConferenciaEncalhe, 
-			Set<Long> listaIdConferenciaEncalheParaExclusao,
-			Usuario usuario, 
-			boolean indConferenciaContingencia) throws EncalheSemPermissaoSalvarException, ConferenciaEncalheFinalizadaException {
-
-		desfazerCobrancaConferenciaEncalheReaberta(controleConfEncalheCota.getId());
-		
-		//validarPermissaoSalvarConferenciaEncalhe(listaConferenciaEncalhe);
-		
-		ControleConferenciaEncalheCota controleConferenciaEncalheCota = 
-				inserirDadosConferenciaEncalhe(controleConfEncalheCota, listaConferenciaEncalhe, listaIdConferenciaEncalheParaExclusao, usuario, StatusOperacao.EM_ANDAMENTO, indConferenciaContingencia);
-		
-		return controleConferenciaEncalheCota.getId();
 		
 	}
 	
