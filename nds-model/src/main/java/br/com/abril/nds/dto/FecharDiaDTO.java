@@ -31,7 +31,6 @@ public class FecharDiaDTO implements Serializable {
 				&& this.recebimentoFisico 
 				&& this.confirmacaoDeExpedicao 
 				&& this.lancamentoFaltasESobras
-				&& this.controleDeAprovacao
 				&& this.fechamentoEncalhe
 				&& this.consolidadoCota;
 	}
