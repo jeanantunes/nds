@@ -111,7 +111,7 @@
 
       </fieldset>
       <div class="linha_separa_fields">&nbsp;</div>
-      <div class="grids" style="display:noneA;">
+      <div class="grids">
       
       <div class="porSegmento" id="segmentoNaoRecebido_porSegmento" style="display:none;">
       <fieldset class="classFieldset" style="float:left; width:631px!important; margin-right:10px!important;">

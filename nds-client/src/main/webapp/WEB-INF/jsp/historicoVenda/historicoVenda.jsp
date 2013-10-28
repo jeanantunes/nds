@@ -92,9 +92,9 @@ function limparInputsFiltro(input1, input2, input3, input4, input5, input6, inpu
 				<p><span style="float: left; margin-right: .3em;" class="ui-icon ui-icon-info"></span>
 				<b>Segmentação Não Recebida < evento > com < status >.</b></p>
 	</div-->
-      <div class="grids" style="display:noneA;">
+      <div class="grids" >
       
-      <div class="porCota" style="display:noneA;">
+      <div class="porCota" >
       <div style="float:left; width:510px;">
       <fieldset class="classFieldset" style="width:480px!important;">
     <legend>Pesquisar Produto</legend>
@@ -185,7 +185,7 @@ function limparInputsFiltro(input1, input2, input3, input4, input5, input6, inpu
           <tr>
             <td width="20"><input type="radio" name="filtroPor" id="radio9" value="radio" onclick="filtroComponentes();" /></td>
             <td width="69"> <label for="radio9"> <strong>Componentes:</strong> </label></td>
-            <td width="523" colspan="10"><table border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorSegmento" style="display:noneA;">
+            <td width="523" colspan="10"><table border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorSegmento" >
               <tr>
                 <td width="110"><select name="filtro.componentesPdv" id="componente"  style="width:110px;" class="filtroComponentes">
                   <option selected="selected">Selecione...</option>

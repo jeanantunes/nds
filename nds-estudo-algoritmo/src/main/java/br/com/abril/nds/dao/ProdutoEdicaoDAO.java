@@ -111,6 +111,7 @@ public class ProdutoEdicaoDAO {
                     produtoEdicaoBase.setId(rs.getLong("ID"));
                     produtoEdicaoBase.setProduto(new Produto());
                     produtoEdicaoBase.getProduto().setId(rs.getLong("PRODUTO_ID"));
+                    produtoEdicaoBase.getProduto().setCodigoICD(rs.getString("CODIGO_ICD"));
                     produtoEdicaoBase.setNumeroEdicao(rs.getLong("NUMERO_EDICAO"));
                     produtoEdicaoBase.setPacotePadrao(rs.getInt("PACOTE_PADRAO"));
                     produtoEdicaoBase.getProduto().setCodigo(rs.getString("CODIGO"));
