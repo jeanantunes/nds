@@ -78,7 +78,7 @@ var anaLiseHistogramaController = $.extend(true, {
 	},
 	
 	createInput : function createInput(id, value){
-		return '<input type="text" id="input' + id + '" onkeydown="anaLiseHistogramaController.alterarFaixaAte(' + id + ', event);" value=' + value + ' />';
+		return '<input type="text" id="input' + id + '" onchange="anaLiseHistogramaController.alterarFaixaAte(' + id + ', event);" value=' + value + ' />';
 	},
 	
 	createImgExcluir : function createImgExcluir(rowId){
@@ -438,7 +438,7 @@ var anaLiseHistogramaController = $.extend(true, {
 			newRow = {};
 			
 		
-		if (event.keyIdentifier == "Enter") {
+		//if (event.keyIdentifier == "Enter") {
 			event.cancelBubble = true;
 			event.bubbles = false;
 
@@ -488,7 +488,7 @@ var anaLiseHistogramaController = $.extend(true, {
 			faixaReparteGrid.addTableModel(faixaReparteGrid.tableModel);
 			
 			$('#input'+ (selectedRow.id + 1)).focus();
-		}
+		//}
 	},
 	
 	excluirFaixa : function (rowId, event){

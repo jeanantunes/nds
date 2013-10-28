@@ -242,7 +242,7 @@ public class CotaDAO {
 	});
 	return retorno;
     }
- 
+
     public Map<Long, CotaEstudo> getHistoricoCota(final ProdutoEdicaoEstudo edicao) {
 	Map<String, Object> params = new HashMap<>();
 	params.put("produto_edicao_id", edicao.getId());
@@ -368,10 +368,14 @@ public class CotaDAO {
 
 	    @Override
 	    public CotaEstudo mapRow(ResultSet rs, int rowNum) throws SQLException {
-		CotaEstudo cota = new CotaEstudo();
-		cota.setId(rs.getLong("ID"));
-		cota.setNumeroCota(rs.getInt("NUMERO_COTA"));
-		return cota;
+		    CotaEstudo cota = new CotaEstudo();
+		    cota.setId(rs.getLong("ID"));
+		    cota.setNumeroCota(rs.getInt("NUMERO_COTA"));
+            cota.setSituacaoCadastro(SituacaoCadastro.valueOf(rs.getString("SITUACAO_CADASTRO")));
+            cota.setRecebeReparteComplementar(rs.getBoolean("RECEBE_COMPLEMENTAR"));
+            cota.setTipoDistribuicaoCota(TipoDistribuicaoCota.valueOf(rs.getString("TIPO_DISTRIBUICAO_COTA")));
+            cota.setRecebeParcial(rs.getBoolean("RECEBE_RECOLHE_PARCIAIS"));
+		    return cota;
 	    }
 	});
     }
