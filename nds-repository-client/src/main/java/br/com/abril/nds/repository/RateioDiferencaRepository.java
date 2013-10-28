@@ -1,6 +1,7 @@
 package br.com.abril.nds.repository;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import br.com.abril.nds.dto.DetalheDiferencaCotaDTO;
@@ -21,5 +22,5 @@ public interface RateioDiferencaRepository extends Repository<RateioDiferenca, L
 
 	Collection<RateioDiferenca> obterRateiosPorDiferenca(Long id);
 	
-	List<RateioDiferencaDTO> obterRateiosParaImpressaoPorDiferenca(Long idDiferenca);
+	List<RateioDiferencaDTO> obterRateiosParaImpressaoPorDiferenca(Long idProdutoEdicao, Date dataMovimento);
 }

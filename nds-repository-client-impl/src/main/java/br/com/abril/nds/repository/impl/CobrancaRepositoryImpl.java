@@ -19,6 +19,7 @@ import br.com.abril.nds.model.StatusCobranca;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
 import br.com.abril.nds.model.financeiro.Boleto;
 import br.com.abril.nds.model.financeiro.Cobranca;
+import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.CobrancaRepository;
 
@@ -136,11 +137,17 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 	
 	public Cobranca obterCobrancaPorNossoNumero(String nossoNumero){
 		
-		Criteria criteria = this.getSession().createCriteria(Cobranca.class);
-		criteria.add(Restrictions.eq("nossoNumero", nossoNumero));
-		criteria.setMaxResults(1);
-	
-		return (Cobranca) criteria.uniqueResult();
+		StringBuffer hql = new StringBuffer();
+		
+		hql.append(" select c from Cobranca c where c.nossoNumero = :nossoNumero ");
+		
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("nossoNumero", nossoNumero);
+		
+		return (Cobranca) query.uniqueResult();
+		
 	}
 	
 	public void incrementarVia(String... nossoNumero){
@@ -206,8 +213,10 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		StringBuilder hql = new StringBuilder();
 		hql.append(" select c from Cobranca c ");		
 		hql.append(" left join c.baixasCobranca baixa ");
+		hql.append(" left join c.divida divida ");
 		hql.append(" where c.cota.numeroCota = :ncota ");
 		hql.append(" and baixa.statusAprovacao is null ");
+		hql.append(" and divida.status != :statusPendente ");
 		
 		
 		if (filtro.getDataVencimento()!=null){
@@ -262,6 +271,8 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 			query.setParameter("acumulada", filtro.isAcumulaDivida());
 			query.setParameter("data", filtro.getDataVencimento());
 		}
+		
+		query.setParameter("statusPendente", StatusDivida.PENDENTE);
 
         if (filtro.getPaginacao() != null) {
 			if (filtro.getPaginacao().getPosicaoInicial() != null) {

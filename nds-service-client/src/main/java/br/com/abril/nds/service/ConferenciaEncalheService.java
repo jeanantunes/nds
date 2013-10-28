@@ -20,7 +20,6 @@ import br.com.abril.nds.model.cadastro.TipoArquivo;
 import br.com.abril.nds.model.cadastro.TipoContabilizacaoCE;
 import br.com.abril.nds.model.movimentacao.ControleConferenciaEncalheCota;
 import br.com.abril.nds.model.seguranca.Usuario;
-import br.com.abril.nds.service.exception.ConferenciaEncalheExistenteException;
 import br.com.abril.nds.service.exception.ConferenciaEncalheFinalizadaException;
 import br.com.abril.nds.service.exception.EncalheRecolhimentoParcialException;
 import br.com.abril.nds.service.exception.EncalheSemPermissaoSalvarException;
@@ -215,7 +214,6 @@ public interface ConferenciaEncalheService {
 			Usuario usuario,
 			boolean indConferenciaContingencia) throws EncalheSemPermissaoSalvarException, ConferenciaEncalheFinalizadaException;
 	
-	
 	/**
 	 * Finaliza uma conferência de encalhe gerando os movimentos financeiros 
 	 * relativos a mesma, faz chamada também ao rotinas relativas a cobrança.
@@ -235,7 +233,6 @@ public interface ConferenciaEncalheService {
 			Set<Long> listaIdConferenciaEncalheParaExclusao,
 			Usuario usuario,
 			boolean indConferenciaContingencia) throws GerarCobrancaValidacaoException;
-	
 	
 	/**
 	 * Gera arquivo de slip a partir do ControleConferenciaEncalheCota para impressora matricial

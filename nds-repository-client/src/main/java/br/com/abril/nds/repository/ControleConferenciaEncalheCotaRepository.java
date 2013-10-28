@@ -43,7 +43,6 @@ public interface ControleConferenciaEncalheCotaRepository  extends Repository<Co
 	 */
 	public List<ControleConferenciaEncalheCota> obterControleConferenciaEncalheCotaPorFiltro(FiltroConsultaEncalheDTO filtro);	
 	
-	
 	/**
 	 * Obtém o status do registro de controleConferenciaEncalheCota.
 	 * 
@@ -52,9 +51,7 @@ public interface ControleConferenciaEncalheCotaRepository  extends Repository<Co
 	 * @return StatusOperacao
 	 */
 	public StatusOperacao obterStatusControleConferenciaEncalheCota(Long idControleConferenciaEncalheCota);
-	
-	
-	
+
 	/**
 	 * Obtém lista de ids de controle conferencia de encalhe da cota associados
 	 * a chamada de encalhe dentro do periodo de tempo, fornecedor, e cota pesquisados.
@@ -73,5 +70,13 @@ public interface ControleConferenciaEncalheCotaRepository  extends Repository<Co
 	 * @return boolean
 	 */
 	public boolean obterAceitaJuramentado(Long idCota);
+
+	/**
+	 * Verifica se a cota possui conferencia de encalhe finalizada na data
+	 * @param idCota
+	 * @param dataOperacao
+	 * @return boolean
+	 */
+	boolean isConferenciaEncalheCotaFinalizada(Long idCota, Date dataOperacao);
 
 }

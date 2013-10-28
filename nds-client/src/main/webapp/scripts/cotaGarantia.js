@@ -791,9 +791,7 @@ ChequeCaucao.prototype.dataUnBind = function() {
     this.chequeCaucao.valor = $("#cotaGarantiaChequeCaucaoValor").unmask() / 100;
     this.chequeCaucao.emissao = $("#cotaGarantiaChequeCaucaoEmissao").val();
     this.chequeCaucao.validade = $("#cotaGarantiaChequeCaucaoValidade").val();
-    this.chequeCaucao.correntista = $("#cotaGarantiaChequeCaucaoCorrentista")
-        .val();
-
+    this.chequeCaucao.correntista = $("#cotaGarantiaChequeCaucaoCorrentista").val();
 };
 
 ChequeCaucao.prototype.bindEvents = function() {

@@ -13,6 +13,8 @@ public class ProcessamentoFinanceiroCotaDTO implements Serializable {
 	
 	private BigDecimal valorConsignado;
 	
+	private BigDecimal valorAVista;
+	
 	private BigDecimal valorEstornado;
 	
 	private BigDecimal debitos;
@@ -43,6 +45,14 @@ public class ProcessamentoFinanceiroCotaDTO implements Serializable {
 
 	public void setValorConsignado(BigDecimal valorConsignado) {
 		this.valorConsignado = valorConsignado;
+	}
+	
+	public BigDecimal getValorAVista() {
+		return valorAVista;
+	}
+
+	public void setValorAVista(BigDecimal valorAVista) {
+		this.valorAVista = valorAVista;
 	}
 
 	public BigDecimal getValorEstornado() {

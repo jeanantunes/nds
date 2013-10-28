@@ -337,9 +337,5 @@ public class MovimentoEstoqueCotaDTO implements Serializable {
 	public void setValorDesconto(BigDecimal valorDesconto) {
 		this.valorDesconto = valorDesconto;
 	}
-
-	public void setQtdeReparte(Integer qtdeReparte) {
-		this.qtdeReparte = qtdeReparte;
-	}
 	
 }

@@ -42,10 +42,6 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	
 	Integer obterContagemMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
 	
-
-	Long obterQuantidadeMovimentoFinanceiroData(Date dataAtual);
-
-	
 	BigDecimal obterSomatorioValorMovimentosFinanceiroCota(FiltroDebitoCreditoDTO filtroDebitoCreditoDTO);
 	
 	/**
@@ -194,4 +190,13 @@ public interface MovimentoFinanceiroCotaRepository extends Repository<MovimentoF
 	                                                                      String sortname,
 	                                                                      int initialResult, 
 	                                                                      int maxResults);
+
+    /**
+	 * Obtem Movimentos Financeiros da Cota na data que ainda nao foram consolidados
+	 * Movimentos de reparte ou encalhe
+	 * @param numeroCota
+	 * @param dataOperacao
+	 * @return List<MovimentoFinanceiroCota>
+	 */
+    List<MovimentoFinanceiroCota> obterMovimentosFinanceirosCotaConferenciaNaoConsolidados(Integer numeroCota, Date dataOperacao);
 }

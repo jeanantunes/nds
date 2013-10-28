@@ -2690,4 +2690,19 @@ public class CotaServiceImpl implements CotaService {
         
         return cotas;
   }
+  
+  /**
+   * Verifica se a cota teve seu tipo alterado na data informada
+   * @param cota
+   * @param data
+   * @return boolean
+   */
+  @Override  
+  public boolean isCotaAlteradaNaData(Cota cota, Date data){
+	  
+      boolean isAlteracaoTipoCotaNaDataAtual = (cota.getAlteracaoTipoCota()!=null && 
+      		                                    cota.getAlteracaoTipoCota().compareTo(data)==0);
+      
+      return isAlteracaoTipoCotaNaDataAtual;
+  }
 }
