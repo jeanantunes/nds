@@ -49,6 +49,12 @@
 <form id="salvarParametrosDistribuidor">
 </form>
 
+<form id="confirmarParametrosDistribuidor">
+	<div id="dialog-confirm" title="Salvar Parâmetro do Distribuidor">
+		<p>Confirma os Parâmetros do Distribuidor?</p>
+	</div>
+</form>
+
 <form action="<c:url value='/administracao/parametrosDistribuidor/salvarLogo' />" id="formParamentrosDistribuidor"
 	  method="post" enctype="multipart/form-data" >
 
@@ -129,9 +135,4 @@
 	</div>
 </form>
 
-<form id="confirmarParametrosDistribuidor">
-	<div id="dialog-confirm" title="Salvar Parâmetro do Distribuidor">
-		<p>Confirma os Parâmetros do Distribuidor?</p>
-	</div>
-</form>
 </body>

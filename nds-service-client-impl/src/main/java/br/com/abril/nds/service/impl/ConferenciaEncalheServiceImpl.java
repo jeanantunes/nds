@@ -774,8 +774,8 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 		//DEBITOS E CREDITOS DA COTA NA DATA DE OPERACAO
 		List<DebitoCreditoCotaDTO> listaDebitoCreditoCotaNaoConsolidado = 
 				movimentoFinanceiroCotaRepository.obterDebitoCreditoCotaDataOperacao(cota.getNumeroCota(), 
-																					 dataOperacao, 
-																					 tiposMovimentoFinanceiroIgnorados);
+													dataOperacao, 
+													tiposMovimentoFinanceiroIgnorados);
 
 		listaDebitoCreditoCompleta.addAll(listaDebitoCreditoCotaNaoConsolidado);
 		
@@ -835,21 +835,18 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
 
 		List<DebitoCreditoCotaDTO> listaDebitoCredito = new ArrayList<DebitoCreditoCotaDTO>();
 		
-		ConsolidadoFinanceiroCota consolidado = 
-			this.consolidadoFinanceiroRepository.buscarPorCotaEData(idCota, dataOperacao);
+		ConsolidadoFinanceiroCota consolidado = this.consolidadoFinanceiroRepository.buscarPorCotaEData(idCota, dataOperacao);
 		
 		if (consolidado == null) {
 			
 			return null;
 		}
 		
-		Date dataConsolidadoPostergado = 
-			this.consolidadoFinanceiroRepository.obterDataAnteriorImediataPostergacao(consolidado);
+		Date dataConsolidadoPostergado = this.consolidadoFinanceiroRepository.obterDataAnteriorImediataPostergacao(consolidado);
 
 		if (dataConsolidadoPostergado != null) {
 			
-			String dataConsolidadoPostergadoFormatada = 
-				DateUtil.formatarData(dataConsolidadoPostergado,"dd/MM/yy");
+			String dataConsolidadoPostergadoFormatada = DateUtil.formatarData(dataConsolidadoPostergado,"dd/MM/yy");
 			
 			adicionarDebitoCreditoDeConsolidado(
 					listaDebitoCredito,
