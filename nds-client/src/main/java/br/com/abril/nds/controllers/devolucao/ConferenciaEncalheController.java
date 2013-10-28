@@ -1524,11 +1524,20 @@ public class ConferenciaEncalheController extends BaseController {
 				notaFiscal.setValorProdutos((BigDecimal) dadosNotaFiscal.get("valorProdutos"));
 				
 			}
-			
-			/////
+
 			List<NotaFiscalEntradaCota> notaFiscalEntradaCotas = new ArrayList<NotaFiscalEntradaCota>();
 			notaFiscalEntradaCotas.add(notaFiscal);
 			controleConfEncalheCota.setNotaFiscalEntradaCota(notaFiscalEntradaCotas);
+			
+			if (controleConfEncalheCota.getDataOperacao()==null){
+			    
+				controleConfEncalheCota.setDataOperacao(this.distribuidorService.obterDataOperacaoDistribuidor());
+			}
+			
+            if (controleConfEncalheCota.getUsuario()==null){
+			    
+				controleConfEncalheCota.setUsuario(this.usuarioService.getUsuarioLogado());
+			}
 			
 			Box boxEncalhe = new Box();
 			Long idBox = conferenciaEncalheSessionScopeAttr.getIdBoxLogado();
@@ -1541,16 +1550,11 @@ public class ConferenciaEncalheController extends BaseController {
 			
 			limparIdsTemporarios(listaConferenciaEncalheCotaToSave);
 			
-			// this.salvarConferenciaCota(controleConfEncalheCota, listaConferenciaEncalheCotaToSave, indConferenciaContingencia);
-			
-			dadosDocumentacaoConfEncalheCota = 
-					
-					this.conferenciaEncalheService.finalizarConferenciaEncalhe(
-							controleConfEncalheCota, 
-							listaConferenciaEncalheCotaToSave, 
-							this.getSetConferenciaEncalheExcluirFromSession(), 
-							this.getUsuarioLogado(),
-							indConferenciaContingencia);
+			dadosDocumentacaoConfEncalheCota = this.conferenciaEncalheService.finalizarConferenciaEncalhe(controleConfEncalheCota, 
+																										  listaConferenciaEncalheCotaToSave, 
+																										  this.getSetConferenciaEncalheExcluirFromSession(), 
+																										  this.getUsuarioLogado(),
+																										  indConferenciaContingencia);
 			
 			this.session.removeAttribute(SET_CONFERENCIA_ENCALHE_EXCLUIR);
 			
@@ -1606,7 +1610,8 @@ public class ConferenciaEncalheController extends BaseController {
 	public void pesquisarProdutoPorCodigoNome(String codigoNomeProduto){
 		
 		List<ProdutoEdicao> listaProdutoEdicao =
-			this.produtoEdicaoService.obterProdutoPorCodigoNome(codigoNomeProduto, getNumeroCotaFromSession(), QUANTIDADE_MAX_REGISTROS);
+			this.produtoEdicaoService.obterProdutoPorCodigoNomeParaRecolhimento(
+				codigoNomeProduto, getNumeroCotaFromSession(), QUANTIDADE_MAX_REGISTROS);
 		
 		List<ItemAutoComplete> listaProdutos = new ArrayList<ItemAutoComplete>();
 		

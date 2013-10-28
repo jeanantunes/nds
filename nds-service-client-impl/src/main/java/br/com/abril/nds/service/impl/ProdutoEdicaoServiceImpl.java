@@ -65,6 +65,7 @@ import br.com.abril.nds.repository.PeriodoLancamentoParcialRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoRepository;
 import br.com.abril.nds.service.CapaService;
+import br.com.abril.nds.service.ConferenciaEncalheService;
 import br.com.abril.nds.service.DescontoService;
 import br.com.abril.nds.service.LancamentoService;
 import br.com.abril.nds.service.MovimentoEstoqueService;
@@ -146,6 +147,9 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	
 	@Autowired
 	private MovimentoEstoqueService movimentoEstoqueService;
+	
+	@Autowired
+	private ConferenciaEncalheService conferenciaEncalheService;
 	
 	@Override
 	@Transactional(readOnly = true)
@@ -299,14 +303,38 @@ public class ProdutoEdicaoServiceImpl implements ProdutoEdicaoService {
 	}
 	
 	@Transactional(readOnly = true)
-	public List<ProdutoEdicao> obterProdutoPorCodigoNome(String codigoNomeProduto, Integer numeroCota, Integer quantidadeRegisttros) {
+	public List<ProdutoEdicao> obterProdutoPorCodigoNomeParaRecolhimento(String codigoNomeProduto, 
+														 				 Integer numeroCota, 
+														 				 Integer quantidadeRegistros) {
 		
 		if (codigoNomeProduto == null || codigoNomeProduto.trim().isEmpty()){
 			
 			throw new ValidacaoException(TipoMensagem.WARNING, "Codigo/nome produto é obrigatório.");
 		}
 		
-		return this.produtoEdicaoRepository.obterProdutoPorCodigoNome(codigoNomeProduto, numeroCota, quantidadeRegisttros);
+		List<ProdutoEdicao> produtosEdicao = this.produtoEdicaoRepository.obterProdutoPorCodigoNome(
+			codigoNomeProduto, numeroCota, quantidadeRegistros);
+		
+		List<ProdutoEdicao> produtosEdicaoValidos = new ArrayList<>();
+		
+		Date dataOperacaoDistribuidor = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		for (ProdutoEdicao produtoEdicao : produtosEdicao) {
+			
+			try {
+				
+				this.conferenciaEncalheService.isDataRecolhimentoValida(
+					dataOperacaoDistribuidor, dataOperacaoDistribuidor, produtoEdicao.getId());
+				
+				produtosEdicaoValidos.add(produtoEdicao);
+				
+			} catch (ValidacaoException e) {
+				
+				continue;
+			}
+		}
+		
+		return produtosEdicaoValidos;
 	}
 
 	@Override

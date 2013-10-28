@@ -1177,7 +1177,7 @@ public class MovimentoFinanceiroCotaServiceImpl implements
 	 * Gera movimento financeiro para cota na Conferencia/Fechamento de Encalhe
 	 * @param idControleConferenciaEncalheCota
 	 */
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	@Transactional
 	@Override
     public void gerarMovimentoFinanceiroCota(Cota cota,
 											 Date dataOperacao,
