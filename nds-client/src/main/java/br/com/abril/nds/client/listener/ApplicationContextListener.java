@@ -65,21 +65,21 @@ public class ApplicationContextListener implements ServletContextListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent servletContextEvent) {
-//
-//		this.agendarIntegracaoOperacionalDistribuidor();
-//		this.agendaExclusaoAjusteReparte();
-//		this.agendarExclusaoDeEstudos();
-//		this.agendarGeracaoRankings();
-//		this.agendaExeclusaoFixacaoReparte();
-//		this.agendaExeclusaoRegiao();
-//		
-//		try {
-//			StdSchedulerFactory.getDefaultScheduler().start();
-//		} catch (SchedulerException e) {
-//			logger.fatal("Falha ao inicializar agendador do Quartz", e);
-//
-//			throw new RuntimeException(e);
-//		}
+
+		this.agendarIntegracaoOperacionalDistribuidor();
+		this.agendaExclusaoAjusteReparte();
+		this.agendarExclusaoDeEstudos();
+		this.agendarGeracaoRankings();
+		this.agendaExclusaoFixacaoReparte();
+		this.agendaExclusaoRegiao();
+		
+		try {
+			StdSchedulerFactory.getDefaultScheduler().start();
+		} catch (SchedulerException e) {
+			logger.fatal("Falha ao inicializar agendador do Quartz", e);
+
+			throw new RuntimeException(e);
+		}
 
 	}
 
@@ -256,7 +256,7 @@ public class ApplicationContextListener implements ServletContextListener {
 	 * Efetua o agendamento do serviço de exclusão de fixacao por reparte.
 	 * 
 	 */
-	private void agendaExeclusaoFixacaoReparte() {
+	private void agendaExclusaoFixacaoReparte() {
 
 		try {
 
@@ -298,7 +298,7 @@ public class ApplicationContextListener implements ServletContextListener {
 	 * Efetua o agendamento do serviço de exclusão de Regiões.
 	 * 
 	 */
-	private void agendaExeclusaoRegiao() {
+	private void agendaExclusaoRegiao() {
 
 		try {
 
