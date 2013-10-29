@@ -78,6 +78,7 @@ import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.ProdutoServicoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoNotaFiscalRepository;
+import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.DiferencaEstoqueService;
 import br.com.abril.nds.service.FechamentoEncalheService;
 import br.com.abril.nds.service.GerarCobrancaService;
@@ -151,6 +152,9 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	
 	@Autowired
 	private ConferenciaEncalheRepository conferenciaEncalheRepository;
+	
+	@Autowired
+	private CotaService cotaService;
 	
 	@Override
 	@Transactional
@@ -426,8 +430,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 		
 		fechamentoEncalheRepository.flush();
-		
-		
 	}
 
 	@Override
@@ -634,86 +636,96 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				
 				throw new ValidacaoException(TipoMensagem.ERROR, "Cota inexistente.");
 			}
-			
 		}
 		
-		//CANCELA DIVIDA EXCLUI CONSOLIDADO E MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA QUE SEJAM RECRIADOS
-		this.gerarCobrancaService.cancelarDividaCobranca(null, 
-														 cota.getId(), 
-				                                         dataOperacaoDistribuidor, 
-				                                         true);
+		//COTA COM TIPO ALTERADO NA DATA DE OPERAÇÃO AINDA É TRATADA COMO CONSIGNADA ATÉ FECHAMENTO DO DIA
+        boolean isAlteracaoTipoCotaNaDataAtual = this.cotaService.isCotaAlteradaNaData(cota,dataOperacao);
+		
+		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual){
+		
+			//CANCELA DIVIDA EXCLUI CONSOLIDADO E MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE) PARA QUE SEJAM RECRIADOS
+			this.gerarCobrancaService.cancelarDividaCobranca(null, 
+															 cota.getId(), 
+					                                         dataOperacaoDistribuidor, 
+					                                         true);
+		}
+		else if (cota.getTipoCota().equals(TipoCota.A_VISTA)){
 
+			//EXLUI MOVIMENTOS FINANCEIROS COTA PARA CRIÁ-LOS NOVAMENTE
+			this.movimentoFinanceiroCotaService.removerMovimentosFinanceirosCotaConferenciaNaoConsolidados(cota.getNumeroCota(), dataOperacaoDistribuidor);	
+		}	
+	
 		//CRIA MOVIMENTOS FINANCEIROS DE REPARTE X ENCALHE (RECEBIMENTO_REPARTE E ENVIO_ENCALHE)
 		movimentoFinanceiroCotaService.gerarMovimentoFinanceiroCota(cota, 
 																	dataOperacaoDistribuidor,
 																	usuario,
 																	null);
 		
-		Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
+		if (cota.getTipoCota().equals(TipoCota.CONSIGNADO) || isAlteracaoTipoCotaNaDataAtual){
 		
-		@SuppressWarnings("unused")
-		GerarCobrancaValidacaoException ex = null;
-		
-		try {
+			Map<String, Boolean> nossoNumeroEnvioEmail = new HashMap<String, Boolean>();
 			
-			if (cota.getTipoCota().equals(TipoCota.CONSIGNADO)){
-			    
+			@SuppressWarnings("unused")
+			GerarCobrancaValidacaoException ex = null;
+
+			try {
+				
 				this.gerarCobrancaService.gerarCobranca(cota.getId(), usuario.getId(), nossoNumeroEnvioEmail);
-			}
-		} 
-		catch (GerarCobrancaValidacaoException e) {
-			
-			ex = e;
-			
-			if (validacaoVO.getListaMensagens() == null){
+			} 
+			catch (GerarCobrancaValidacaoException e) {
 				
-				validacaoVO.setListaMensagens(new ArrayList<String>());
-			}
-			
-			validacaoVO.getListaMensagens().addAll(e.getValidacaoVO().getListaMensagens());
-		}
-		
-		for (String nossoNumero : nossoNumeroEnvioEmail.keySet()){
-			
-			if (nossoNumeroEnvioEmail.get(nossoNumero)){
+				ex = e;
 				
-				String email = cota.getPessoa().getEmail();
-				
-				if (email == null || email.trim().isEmpty()){
+				if (validacaoVO.getListaMensagens() == null){
 					
-					if (validacaoVO.getListaMensagens() == null){
-						
-						validacaoVO.setListaMensagens(new ArrayList<String>());
-					}
-					
-					validacaoEmails.getListaMensagens().add(
-							"A cota "+ cota.getNumeroCota() +" não possui email cadastrado");
-				} else {
+					validacaoVO.setListaMensagens(new ArrayList<String>());
+				}
+
+				validacaoVO.getListaMensagens().addAll(e.getValidacaoVO().getListaMensagens());
+			}
+			
+			for (String nossoNumero : nossoNumeroEnvioEmail.keySet()){
 				
-					try {
-						
-						this.gerarCobrancaService.enviarDocumentosCobrancaEmail(nossoNumero, email);
-					} catch (AutenticacaoEmailException e) {
+				if (nossoNumeroEnvioEmail.get(nossoNumero)){
+					
+					String email = cota.getPessoa().getEmail();
+					
+					if (email == null || email.trim().isEmpty()){
 						
 						if (validacaoVO.getListaMensagens() == null){
 							
 							validacaoVO.setListaMensagens(new ArrayList<String>());
 						}
 						
-						// Caso dê erro para enviar o e-mail, mostra uma mensagem na tela
-						// Não mostramos mais este erro na tela
-						validacaoEmails.getListaMensagens().add("Erro ao enviar e-mail para cota " + 
-								cota.getNumeroCota() + ", " +
-								e.getMessage());
+						validacaoEmails.getListaMensagens().add(
+								"A cota "+ cota.getNumeroCota() +" não possui email cadastrado");
+					} else {
+					
+						try {
+							
+							this.gerarCobrancaService.enviarDocumentosCobrancaEmail(nossoNumero, email);
+						} catch (AutenticacaoEmailException e) {
+							
+							if (validacaoVO.getListaMensagens() == null){
+								
+								validacaoVO.setListaMensagens(new ArrayList<String>());
+							}
+							
+							// Caso dê erro para enviar o e-mail, mostra uma mensagem na tela
+							// Não mostramos mais este erro na tela
+							validacaoEmails.getListaMensagens().add("Erro ao enviar e-mail para cota " + 
+									cota.getNumeroCota() + ", " +
+									e.getMessage());
+						}
 					}
 				}
 			}
 		}
-
+		
 		List<ChamadaEncalhe> listaChamadaEncalhe = 
 			this.chamadaEncalheRepository.obterChamadasEncalhePor(dataOperacao, cota.getId());
 
-//TODO REMOVER GERACAO DE MEC COM QUANTDADE ZERO APOS OS TESTES...
+//      TODO REMOVER GERACAO DE MEC COM QUANTDADE ZERO APOS OS TESTES...
 
 //		TipoMovimentoEstoque tipoMovimentoEstoque =
 //			this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(GrupoMovimentoEstoque.RECEBIMENTO_ENCALHE);
@@ -733,7 +745,6 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 				chamadaEncalheCota.setFechado(true);
 			}
 
-			
 //			if (ex == null){
 //				
 //				this.movimentoEstoqueService.gerarMovimentoEstoque(

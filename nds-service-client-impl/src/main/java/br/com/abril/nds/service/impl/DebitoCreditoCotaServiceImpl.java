@@ -56,7 +56,8 @@ public class DebitoCreditoCotaServiceImpl implements DebitoCreditoCotaService {
 		
 		movimentoFinanceiroCotaDTO.setIdMovimentoFinanceiroCota(idMovimento);
 		
-		movimentoFinanceiroCotaDTO.setDataCriacao(DateUtil.removerTimestamp(new Date()));
+		movimentoFinanceiroCotaDTO.setDataCriacao(
+			DateUtil.removerTimestamp(debitoCredito.getDataCriacao() == null ? new Date() : debitoCredito.getDataCriacao()));
 
 		Date dataVencimento = DateUtil.parseDataPTBR(debitoCredito.getDataVencimento());
 		

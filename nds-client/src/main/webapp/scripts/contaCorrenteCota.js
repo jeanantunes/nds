@@ -160,7 +160,7 @@ var contaCorrenteCotaController = $.extend(true, {
 		}else{			
 			$.each(data.rows, function(index, value) {	
 				
-				var dataRaizPostergado =  value.cell.dataRaizConsolidado;	
+				var dataRaizPostergado =  value.cell.dataRaiz;	
 				
 				if(!dataRaizPostergado){
 					
@@ -210,7 +210,7 @@ var contaCorrenteCotaController = $.extend(true, {
 				hint = value.cell.pendente && value.cell.pendente != 0 ? '<a rel="tipsy" title="Valor Referente à '+ dataRaizPendente + hintNumeroAcumulo + '">' : "";
 				       
 				value.cell.pendente = (value.cell.pendente != null && value.cell.pendente != 0)?'<span class="bt_tool">' + hint +
-					                   (formatMoneyValue(Math.abs(value.cell.pendente))) +'</a></span>' : '0.0000';
+					                   (formatMoneyValue(Math.abs(value.cell.pendente), 2)) +'</a></span>' : '0.00';
 				
 				value.cell.total = (value.cell.total != null && value.cell.total != 0)?
 						           (formatMoneyValue(value.cell.total * -1, 2)) : '0.00'; 				

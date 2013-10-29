@@ -16,6 +16,7 @@ import br.com.abril.nds.dto.BandeirasDTO;
 import br.com.abril.nds.dto.CapaDTO;
 import br.com.abril.nds.dto.CotaEmissaoDTO;
 import br.com.abril.nds.dto.DadosImpressaoEmissaoChamadaEncalhe;
+import br.com.abril.nds.dto.DistribuidorDTO;
 import br.com.abril.nds.dto.FornecedoresBandeiraDTO;
 import br.com.abril.nds.dto.NotaEnvioProdutoEdicao;
 import br.com.abril.nds.dto.ProdutoEmissaoDTO;
@@ -286,7 +287,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		
 	}
 
-	private void processarProdutosEmissaoEncalheDaCota(CotaEmissaoDTO cota) {
+	private void processarProdutosEmissaoEncalheDaCota(CotaEmissaoDTO cota, Date dataOperacaoDistribuidor) {
 		
 		BigDecimal vlrReparte = BigDecimal.ZERO;	
 		BigDecimal vlrDesconto = BigDecimal.ZERO;
@@ -336,7 +337,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 		cota.setVlrTotalLiquido(CurrencyUtil.formatarValorQuatroCasas(totalLiquido));
 		
 		Map<Long, List<NotaEnvioProdutoEdicao>> mapaNotaEnvioPE = gerarMapaProdutoEdicaoNotasEmitidas(
-				notaEnvioRepository.obterNotaEnvioProdutoEdicao(cota.getNumCota(), idsProdutoEdicao));
+				notaEnvioRepository.obterEmissoesAlemDoConsignado(cota.getIdCota(), idsProdutoEdicao, DateUtil.parseDataPTBR(cota.getDataRecolhimento()), dataOperacaoDistribuidor));
 		
 		carregarDadosNotaEnvioProdutoEdicao(mapaNotaEnvioPE, cota.getProdutos());
 	}
@@ -360,16 +361,17 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 				continue;
 			}
 
-			Long numeroNotaEnvio = notas.get(0).getNumeroNotaEnvio();
+			BigInteger numeroNotaEnvio = notas.get(0).getNumeroNotaEnvio();
 
 			if(numeroNotaEnvio!=null) {
 				produtoDTO.setNotaEnvio(numeroNotaEnvio.toString());
 			}
 			
-			if(notas.size()>1){
-				produtoDTO.setDescricaoNotaEnvio(obterDescricaoNotasEnvio(notas));
-			}
+			String descricaoQuebraRelatorioCE = obterDescricaoQuebraRelatorioCE(notas);
 			
+			if(descricaoQuebraRelatorioCE != null && !"".equals(descricaoQuebraRelatorioCE)){
+				produtoDTO.setDescricaoNotaEnvio(descricaoQuebraRelatorioCE);
+			}
 		}
 		
 	}
@@ -383,13 +385,16 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	 * 
 	 * @return String
 	 */
-	private String obterDescricaoNotasEnvio(List<NotaEnvioProdutoEdicao> notas ) {
+	private String obterDescricaoQuebraRelatorioCE(List<NotaEnvioProdutoEdicao> notas ) {
 		
 		StringBuffer descricao = new StringBuffer();
 		
 		String plusSignal = "";
 		
 		for(NotaEnvioProdutoEdicao nota : notas) {
+			
+			if(nota.getReparte() == null || nota.getReparte().intValue() < 1)
+				continue;
 			
 			descricao.append(plusSignal);
 			
@@ -398,9 +403,9 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 				descricao.append(" exes. ");
 			}
 			
-			if(nota.getDataEmissao()!=null) {
-				String dataEmissao = DateUtil.formatarData(nota.getDataEmissao(), Constantes.DAY_MONTH_PT_BR);
-				descricao.append("(").append(dataEmissao).append(")");
+			if(nota.getDataConsignacao()!=null) {
+				String dataConsignado = DateUtil.formatarData(nota.getDataConsignacao(), Constantes.DAY_MONTH_PT_BR);
+				descricao.append("(").append(dataConsignado).append(")");
 			}
 			
 			plusSignal = " + ";
@@ -499,6 +504,8 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 	@Transactional
 	public DadosImpressaoEmissaoChamadaEncalhe obterDadosImpressaoEmissaoChamadasEncalhe(FiltroEmissaoCE filtro) {
 		
+		Date dataOperacaoDistribuidor = distribuidorService.obterDataOperacaoDistribuidor();
+		
 		boolean apresentaCapas = (filtro.getCapa() == null) ? false : filtro.getCapa();
 		
 		boolean apresentaCapasPersonalizadas = (filtro.getPersonalizada() == null) ? false : filtro.getPersonalizada();
@@ -538,7 +545,7 @@ public class ChamadaEncalheServiceImpl implements ChamadaEncalheService {
 			
 			dto.setProdutos( obterProdutosEmissaoCE(filtro, dto.getIdCota()) );
 			
-			processarProdutosEmissaoEncalheDaCota(dto);
+			processarProdutosEmissaoEncalheDaCota(dto, dataOperacaoDistribuidor);
 			
 			if(TipoImpressaoCE.MODELO_2.equals(filtro.getTipoImpressao())) {
 				

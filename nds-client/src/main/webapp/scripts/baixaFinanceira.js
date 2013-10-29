@@ -8,18 +8,23 @@ var baixaFinanceiraController = $.extend(true, {
 		$("#filtroNumCota", baixaFinanceiraController.workspace).numeric();
 		$("#descricaoCota", baixaFinanceiraController.workspace).autocomplete({source: ""});
 		$("filtroNossoNumero", baixaFinanceiraController.workspace).numeric();
+		
 		$("#dataBaixa", baixaFinanceiraController.workspace).datepicker({
 			showOn : "button",
 			buttonImage : contextPath + "/images/calendar.gif",
 			buttonImageOnly : true,
-			dateFormat : 'dd/mm/yy',
+			dateFormat : 'dd/mm/yy'
 		});
-		
+
+		$("#dataBaixa", baixaFinanceiraController.workspace).change(function(){
+			$('#resultadoIntegracao', baixaFinanceiraController.workspace).hide();
+		});
+
 		$("#dtPagamentoManual", baixaFinanceiraController.workspace).datepicker({
 			showOn : "button",
 			buttonImage : contextPath + "/images/calendar.gif",
 			buttonImageOnly : true,
-			dateFormat : 'dd/mm/yy', 
+			dateFormat : 'dd/mm/yy'
 		});
 		
 		$("#dtPagamentoManualBoleto", baixaFinanceiraController.workspace).datepicker({
@@ -1202,13 +1207,6 @@ var baixaFinanceiraController = $.extend(true, {
 		function(result) {
 		   
 		   var valorSaldo = result;
-		   
-		   if (valorSaldo < 0){
-			
-			valorSaldo =  (valorSaldo * -1);
-			
-			}
-		
 			$("#valorSaldoDividasHidden", baixaFinanceiraController.workspace).val(valorSaldo);
 			
 			$("#valorSaldoDividasHidden", baixaFinanceiraController.workspace).priceFormat({
@@ -1584,7 +1582,7 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 			
 			baixaFinanceiraController.mostrarDadosResumoBaixaFinanceira(responseJson.result);
 			
-			baixaFinanceiraController.resetarCamposBaixaAutomatica();
+			baixaFinanceiraController.resetarCamposBaixaAutomatica(true);
 			
 			$("#tableDadosArquivo", baixaFinanceiraController.workspace).show();
 
@@ -1594,26 +1592,31 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 		}
 	},
 	
-	resetarCamposBaixaAutomatica: function() {
+	resetarCamposBaixaAutomatica: function(keepDadosAposBaixa) {
 		
-		baixaFinanceiraController.limparCamposBaixaAutomatica();
+		baixaFinanceiraController.limparCamposBaixaAutomatica(keepDadosAposBaixa);
 		
-		$("#dataBaixa", baixaFinanceiraController.workspace).datepicker(
-			"setDate", baixaFinanceiraController.dataOperacaoDistribuidor
-		);
+		if(!keepDadosAposBaixa) {
+			$("#dataBaixa", baixaFinanceiraController.workspace).datepicker(
+					"setDate", baixaFinanceiraController.dataOperacaoDistribuidor
+			);
+		}
+		
 
 		$("#btnIntegrar", baixaFinanceiraController.workspace).css("display", "none");
 		$("#btnExibirResumos", baixaFinanceiraController.workspace).css("display", "block");
 	},
 	
-	limparCamposBaixaAutomatica : function() {
+	limparCamposBaixaAutomatica : function(keepDadosAposBaixa) {
 
 		$("#uploadedFile", baixaFinanceiraController.workspace).replaceWith(
 			"<input name='uploadedFile' type='file' id='uploadedFile' size='25' " 
 				+ "onchange='baixaFinanceiraController.habilitarIntegracao();' />"
 		);
 		
-		$("#valorFinanceiro", baixaFinanceiraController.workspace).val("");
+		if(!keepDadosAposBaixa) {
+			$("#valorFinanceiro", baixaFinanceiraController.workspace).val("");
+		}
 	},
 	
 	//-----------------------------------------------------
@@ -1819,7 +1822,9 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 			result.quantidadeInadimplentes ? result.quantidadeInadimplentes : 0
 		);
 
-		var valorTotalBancario = result.valorTotalBancario ? result.valorTotalBancario : 0;
+		var valorTotalBancario = result.valorTotalBancario ? result.valorTotalBancario : 0.0;
+		
+		valorTotalBancario = floatToPrice(valorTotalBancario);
 		
 		$("#tdValorTotal", baixaFinanceiraController.workspace).html(
 			'<span id="valorTotalBancario">' + 

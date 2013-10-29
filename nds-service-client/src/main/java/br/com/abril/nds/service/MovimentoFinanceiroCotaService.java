@@ -106,7 +106,7 @@ public interface MovimentoFinanceiroCotaService {
 	
 	/**
 	 * Gera movimento financeiro para cota na Conferencia de Encalhe
-	 * @param controleConferenciaEncalheCota
+	 * @param idControleConferenciaEncalheCota
 	 */
 	void gerarMovimentoFinanceiroCota(Cota cota,
 									  Date dataOperacao,
@@ -137,5 +137,11 @@ public interface MovimentoFinanceiroCotaService {
 	                                                                     String sortname,
 	                                                                     int initialResult, 
 	                                                                     int maxResults);
-	
+
+	/**
+	 * Remove Movimentos Financeiros da Cota referentes a Conferencia na Data nao Consolidados
+	 * @param numeroCota
+	 * @param dataOperacao
+	 */
+	void removerMovimentosFinanceirosCotaConferenciaNaoConsolidados(Integer numeroCota, Date dataOperacao);
 }

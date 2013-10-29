@@ -5,16 +5,17 @@ import java.util.Date;
 
 public class NotaEnvioProdutoEdicao {
 	
-	private Long numeroNotaEnvio;
+	private BigInteger numeroNotaEnvio;
 	private Date dataEmissao;
+	private Date dataConsignacao;
 	private Long idProdutoEdicao;
 	private BigInteger reparte;
 
-	public Long getNumeroNotaEnvio() {
+	public BigInteger getNumeroNotaEnvio() {
 		return numeroNotaEnvio;
 	}
 
-	public void setNumeroNotaEnvio(Long numeroNotaEnvio) {
+	public void setNumeroNotaEnvio(BigInteger numeroNotaEnvio) {
 		this.numeroNotaEnvio = numeroNotaEnvio;
 	}
 
@@ -40,6 +41,14 @@ public class NotaEnvioProdutoEdicao {
 
 	public void setReparte(BigInteger reparte) {
 		this.reparte = reparte;
+	}
+
+	public Date getDataConsignacao() {
+		return dataConsignacao;
+	}
+
+	public void setDataConsignacao(Date dataConsignacao) {
+		this.dataConsignacao = dataConsignacao;
 	}
 	
 	

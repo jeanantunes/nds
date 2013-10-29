@@ -47,7 +47,7 @@ public class ChamadaEncalheServiceImplTest {
 		NotaEnvioProdutoEdicao nota = new NotaEnvioProdutoEdicao();
 		nota.setIdProdutoEdicao(1L);
 		nota.setDataEmissao(criarData(10, Calendar.JANUARY, 2013));
-		nota.setNumeroNotaEnvio(100L);
+		nota.setNumeroNotaEnvio(new BigInteger("100"));
 		nota.setReparte(BigInteger.TEN);
 		lista.add(nota);
 		
@@ -55,14 +55,14 @@ public class ChamadaEncalheServiceImplTest {
 		nota = new NotaEnvioProdutoEdicao();
 		nota.setIdProdutoEdicao(2L);
 		nota.setDataEmissao(criarData(13, Calendar.JANUARY, 2013));
-		nota.setNumeroNotaEnvio(200L);
+		nota.setNumeroNotaEnvio(new BigInteger("100"));
 		nota.setReparte(BigInteger.ONE);
 		lista.add(nota);
 		
 		nota = new NotaEnvioProdutoEdicao();
 		nota.setIdProdutoEdicao(2L);
 		nota.setDataEmissao(criarData(14, Calendar.JANUARY, 2013));
-		nota.setNumeroNotaEnvio(200L);
+		nota.setNumeroNotaEnvio(new BigInteger("100"));
 		nota.setReparte(BigInteger.TEN);
 		lista.add(nota);
 		
@@ -70,7 +70,7 @@ public class ChamadaEncalheServiceImplTest {
 		nota = new NotaEnvioProdutoEdicao();
 		nota.setIdProdutoEdicao(3L);
 		nota.setDataEmissao(criarData(15, Calendar.JANUARY, 2013));
-		nota.setNumeroNotaEnvio(300L);
+		nota.setNumeroNotaEnvio(new BigInteger("100"));
 		nota.setReparte(BigInteger.TEN);
 		lista.add(nota);
 		
@@ -78,7 +78,7 @@ public class ChamadaEncalheServiceImplTest {
 		nota = new NotaEnvioProdutoEdicao();
 		nota.setIdProdutoEdicao(4L);
 		nota.setDataEmissao(criarData(16, Calendar.JANUARY, 2013));
-		nota.setNumeroNotaEnvio(400L);
+		nota.setNumeroNotaEnvio(new BigInteger("100"));
 		nota.setReparte(BigInteger.TEN);
 		lista.add(nota);
 	
@@ -95,7 +95,7 @@ public class ChamadaEncalheServiceImplTest {
 		NotaEnvioProdutoEdicao nota = new NotaEnvioProdutoEdicao();
 		nota.setIdProdutoEdicao(1L);
 		nota.setDataEmissao(criarData(10, Calendar.JANUARY, 2013));
-		nota.setNumeroNotaEnvio(100L);
+		nota.setNumeroNotaEnvio(new BigInteger("100"));
 		nota.setReparte(BigInteger.TEN);
 		lista.add(nota);
 		mapa.put(1L, lista);
@@ -105,14 +105,14 @@ public class ChamadaEncalheServiceImplTest {
 		nota = new NotaEnvioProdutoEdicao();
 		nota.setIdProdutoEdicao(2L);
 		nota.setDataEmissao(criarData(13, Calendar.JANUARY, 2013));
-		nota.setNumeroNotaEnvio(200L);
+		nota.setNumeroNotaEnvio(new BigInteger("100"));
 		nota.setReparte(BigInteger.ONE);
 		lista.add(nota);
 		
 		nota = new NotaEnvioProdutoEdicao();
 		nota.setIdProdutoEdicao(2L);
 		nota.setDataEmissao(criarData(14, Calendar.JANUARY, 2013));
-		nota.setNumeroNotaEnvio(200L);
+		nota.setNumeroNotaEnvio(new BigInteger("100"));
 		nota.setReparte(BigInteger.TEN);
 		lista.add(nota);
 		mapa.put(2L, lista);
@@ -121,7 +121,7 @@ public class ChamadaEncalheServiceImplTest {
 		nota = new NotaEnvioProdutoEdicao();
 		nota.setIdProdutoEdicao(3L);
 		nota.setDataEmissao(criarData(15, Calendar.JANUARY, 2013));
-		nota.setNumeroNotaEnvio(300L);
+		nota.setNumeroNotaEnvio(new BigInteger("100"));
 		nota.setReparte(BigInteger.TEN);
 		lista.add(nota);
 		mapa.put(3L, lista);
@@ -132,21 +132,21 @@ public class ChamadaEncalheServiceImplTest {
 		nota = new NotaEnvioProdutoEdicao();
 		nota.setIdProdutoEdicao(4L);
 		nota.setDataEmissao(criarData(16, Calendar.JANUARY, 2013));
-		nota.setNumeroNotaEnvio(400L);
+		nota.setNumeroNotaEnvio(new BigInteger("100"));
 		nota.setReparte(BigInteger.ONE);
 		lista.add(nota);
 
 		nota = new NotaEnvioProdutoEdicao();
 		nota.setIdProdutoEdicao(4L);
 		nota.setDataEmissao(criarData(17, Calendar.JANUARY, 2013));
-		nota.setNumeroNotaEnvio(400L);
+		nota.setNumeroNotaEnvio(new BigInteger("100"));
 		nota.setReparte(BigInteger.ZERO);
 		lista.add(nota);
 
 		nota = new NotaEnvioProdutoEdicao();
 		nota.setIdProdutoEdicao(4L);
 		nota.setDataEmissao(criarData(18, Calendar.JANUARY, 2013));
-		nota.setNumeroNotaEnvio(400L);
+		nota.setNumeroNotaEnvio(new BigInteger("100"));
 		nota.setReparte(BigInteger.TEN);
 		lista.add(nota);
 		mapa.put(4L, lista);

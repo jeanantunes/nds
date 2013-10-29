@@ -12,6 +12,8 @@ public class ProcessamentoFinanceiroCotaVO implements Serializable {
 	
 	private String valorConsignado;
 	
+	private String valorAVista;
+	
 	private String valorEstornado;
 	
 	private String debitos;
@@ -24,18 +26,20 @@ public class ProcessamentoFinanceiroCotaVO implements Serializable {
 	 * @param numeroCota
 	 * @param nomeCota
 	 * @param valorConsignado
+	 * @param valorAVista
 	 * @param valorEstornado
 	 * @param debitos
 	 * @param creditos
 	 * @param saldo
 	 */
 	public ProcessamentoFinanceiroCotaVO(String numeroCota, String nomeCota,
-			String valorConsignado, String valorEstornado, String debitos,
-			String creditos, String saldo) {
+			String valorConsignado, String valorAVista, String valorEstornado,
+			String debitos, String creditos, String saldo) {
 		super();
 		this.numeroCota = numeroCota;
 		this.nomeCota = nomeCota;
 		this.valorConsignado = valorConsignado;
+		this.valorAVista = valorAVista;
 		this.valorEstornado = valorEstornado;
 		this.debitos = debitos;
 		this.creditos = creditos;
@@ -64,6 +68,14 @@ public class ProcessamentoFinanceiroCotaVO implements Serializable {
 
 	public void setValorConsignado(String valorConsignado) {
 		this.valorConsignado = valorConsignado;
+	}
+
+	public String getValorAVista() {
+		return valorAVista;
+	}
+
+	public void setValorAVista(String valorAVista) {
+		this.valorAVista = valorAVista;
 	}
 
 	public String getValorEstornado() {
