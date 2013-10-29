@@ -197,18 +197,17 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
         .append(" where confEncalhe.controleConferenciaEncalheCota.dataOperacao = :data ")
         .append(" and confEncalhe.controleConferenciaEncalheCota.status = :statusOperacao )  ").toString();
 	    
-	    String templateHqlDiferenca =  new StringBuilder("(select sum(case when diferenca.tipoDiferenca = :%s then (diferenca.qtde * diferenca.produtoEdicao.pacotePadrao * diferenca.produtoEdicao.precoVenda) ")
-	    .append(" else (diferenca.qtde * diferenca.produtoEdicao.precoVenda) end) from Diferenca diferenca  ")
+	    String templateHqlDiferenca =  new StringBuilder("(select sum(diferenca.qtde * diferenca.produtoEdicao.precoVenda) from Diferenca diferenca  ")
 	    .append(" inner join diferenca.lancamentoDiferenca lancamentoDiferenca ")
 	    .append(" inner join lancamentoDiferenca.movimentoEstoque movimentoEstoque ")
-        .append(" where diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s, :%s) ")
+        .append(" where diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s) ")
         .append(" and movimentoEstoque.status = :movimentoAprovado ")
         .append(" and lancamentoDiferenca.status in (:statusPerdaGanho) and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoEncalhe).append(") as %s ").toString();
 	    
         //TOTAL ENCALHE LÓGICO
         StringBuilder hql = new StringBuilder("select new map(sum(conferenciaEncalhe.qtde * produtoEdicao.precoVenda) as totalLogico, ");
         
-        //TOTAL ENCALHE FÍSICO
+        //TOTAL ENCALHE FÍSICO 
         
         hql.append(" ( select sum( coalesce(fechamentoEncalheBox.quantidade, fechamentoEncalhe.quantidade, 0) * fechamentoEncalhe.fechamentoEncalhePK.produtoEdicao.precoVenda) from  ");
         
@@ -226,10 +225,10 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
         hql.append("and vendaEncalhe.tipoComercializacaoVenda = :tipoComercializacaoVista) as totalVenda, ");
         
         //TOTAL SOBRAS
-        hql.append(String.format(templateHqlDiferenca, "tipoDiferencaSobraDe", "tipoDiferencaSobraDe", "tipoDiferencaSobraEm", "totalSobras")).append(",");
+        hql.append(String.format(templateHqlDiferenca, "tipoDiferencaSobras", "totalSobras")).append(",");
         
         //TOTAL FALTAS
-        hql.append(String.format(templateHqlDiferenca, "tipoDiferencaFaltaDe", "tipoDiferencaFaltaDe", "tipoDiferencaFaltaEm", "totalFaltas")).append(")");
+        hql.append(String.format(templateHqlDiferenca, "tipoDiferencaFaltas", "totalFaltas")).append(")");
 
         hql.append(" from ConferenciaEncalhe conferenciaEncalhe ");
         hql.append(" join conferenciaEncalhe.produtoEdicao produtoEdicao ");
@@ -243,10 +242,19 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
         query.setParameter("statusOperacao", StatusOperacao.CONCLUIDO);
         query.setParameter("tipoVendaEncalhe", TipoVendaEncalhe.ENCALHE);
         query.setParameter("tipoComercializacaoVista", FormaComercializacao.CONTA_FIRME);
-        query.setParameter("tipoDiferencaSobraDe", TipoDiferenca.SOBRA_DE);
-        query.setParameter("tipoDiferencaSobraEm", TipoDiferenca.SOBRA_EM);
-        query.setParameter("tipoDiferencaFaltaDe", TipoDiferenca.FALTA_DE);
-        query.setParameter("tipoDiferencaFaltaEm", TipoDiferenca.FALTA_EM);
+        
+        query.setParameterList("tipoDiferencaSobras", Arrays.asList(TipoDiferenca.SOBRA_DE,
+        															TipoDiferenca.SOBRA_DE_DIRECIONADA_COTA,
+        															TipoDiferenca.SOBRA_EM,
+        															TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA,
+        															TipoDiferenca.GANHO_DE, 
+        															TipoDiferenca.GANHO_EM));
+        
+        query.setParameterList("tipoDiferencaFaltas", Arrays.asList(TipoDiferenca.FALTA_DE, 
+        															TipoDiferenca.FALTA_EM, 
+        															TipoDiferenca.PERDA_DE, 
+        															TipoDiferenca.PERDA_EM));
+        
         query.setParameterList("statusPerdaGanho", Arrays.asList(StatusAprovacao.GANHO, StatusAprovacao.PERDA));
         
         @SuppressWarnings("unchecked")
@@ -264,10 +272,13 @@ public class ResumoEncalheFecharDiaRepositoryImpl extends AbstractRepository imp
         
         //Saldo = Lógico - (Físico + Lógico Juramentado) - Venda de Encalhe + Sobras - Faltas ;
         BigDecimal saldo = totalLogico.subtract(fisicoJuramentado).subtract(totalVenda).add(faltaSobras);
+        
+        // FISICO + sobras - faltas
+        BigDecimal valorFisico = totalFisico.add(faltaSobras);
      
         ResumoEncalheFecharDiaDTO dto = new ResumoEncalheFecharDiaDTO();
         dto.setTotalLogico(totalLogico);
-        dto.setTotalFisico(totalFisico);
+        dto.setTotalFisico(valorFisico);
         dto.setTotalJuramentado(totalJuramentado);
         dto.setVenda(totalVenda);
         dto.setTotalSobras(totalSobras);
