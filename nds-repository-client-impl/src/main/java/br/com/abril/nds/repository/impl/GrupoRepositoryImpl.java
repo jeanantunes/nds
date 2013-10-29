@@ -150,8 +150,9 @@ public class GrupoRepositoryImpl extends AbstractRepositoryModel<GrupoCota, Long
 	@SuppressWarnings("unchecked")
 	public Set<String> obterMunicipiosCotasGrupo(Long idGrupo){
 		
-		StringBuilder hql = new StringBuilder("select g.municipios ");
+		StringBuilder hql = new StringBuilder("select municipios ");
 		hql.append(" from GrupoCota g ")
+		   .append(" join g.municipios municipios ")
 		   .append(" where g.id = :idGrupo ");
 		
 		Query query = this.getSession().createQuery(hql.toString());
