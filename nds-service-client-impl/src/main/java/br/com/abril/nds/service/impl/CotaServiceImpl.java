@@ -2690,4 +2690,25 @@ public class CotaServiceImpl implements CotaService {
         
         return cotas;
   }
+    
+    @Transactional
+    @Override
+	public boolean salvarTipoCota(long idCota, TipoCota tipoCota){
+	
+		Cota cota = this.obterPorId(idCota);
+		
+		if (!cota.getTipoCota().equals(tipoCota)){
+		
+			cota.setTipoCota(tipoCota);
+			
+			cota.setAlteracaoTipoCota(this.distribuidorService.obterDataOperacaoDistribuidor());
+			
+			this.alterarCota(cota);
+			
+			return true;
+		}
+		
+		return false;
+	}
+
 }

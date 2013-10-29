@@ -384,4 +384,6 @@ public interface CotaService {
 	 * @return List<Cota>
 	 */
 	List<Cota> obterCotasPorNumeros(List<Integer> numerosCota);
+
+	boolean salvarTipoCota(long idCota, TipoCota tipoCota);
 }
