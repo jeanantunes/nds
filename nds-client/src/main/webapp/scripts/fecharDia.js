@@ -59,7 +59,7 @@ var fecharDiaController =  $.extend(true, {
 			height : 165
 		});
 		
-		$(".lctoFaltasSobrasGrid").flexigrid({
+		$(".lctoFaltasSobrasGrid", fecharDiaController.workspace).flexigrid({
 			preProcess: fecharDiaController.executarPreProcessamentoLancamentoFaltaESobra,
 			dataType : 'json',
 			colModel : [ {
@@ -91,7 +91,7 @@ var fecharDiaController =  $.extend(true, {
 			height : 155
 		});
 		
-		$(".reparteDialogGrid").flexigrid({
+		$(".reparteDialogGrid", fecharDiaController.workspace).flexigrid({
 			preProcess: fecharDiaController.executarPreProcessamentoReparte,
 			dataType : 'json',
 			colModel : [ {
@@ -177,7 +177,7 @@ var fecharDiaController =  $.extend(true, {
 			height : 255
 		});
 		
-		$(".vendasDialogGrid").flexigrid({
+		$(".vendasDialogGrid", fecharDiaController.workspace).flexigrid({
 			preProcess: fecharDiaController.executarPreProcessamentoVendaSuplementar,
 			dataType : 'json',
 			colModel : [ {
@@ -379,7 +379,7 @@ var fecharDiaController =  $.extend(true, {
             height : 220
         });
         
-        $(".recolhimentoDialogGrid").flexigrid({
+        $(".recolhimentoDialogGrid", fecharDiaController.workspace).flexigrid({
         	preProcess: fecharDiaController.executarPreProcessamentoEncalhe,
 			dataType : 'json',
 			colModel : [ {
@@ -447,7 +447,7 @@ var fecharDiaController =  $.extend(true, {
 			height : 255
 		});
         
-        $(".suplementarDialogGrid").flexigrid({
+        $(".suplementarDialogGrid", fecharDiaController.workspace).flexigrid({
         	preProcess: fecharDiaController.executarPreProcessamentoSuplementar,
 			dataType : 'json',
 			colModel : [ {
@@ -661,7 +661,7 @@ var fecharDiaController =  $.extend(true, {
 				null, 
 				function(result){
 					$('#dataDaOperacao', fecharDiaController.workspace).val(result.string);
-					$('.grids').find('legend').html('Confirmação de Valores em: ' + result.string);
+					$('.grids', fecharDiaController.workspace).find('legend').html('Confirmação de Valores em: ' + result.string);
 				});
 				
 		
@@ -685,7 +685,7 @@ var fecharDiaController =  $.extend(true, {
                         }
                     });
 				    
-				    $(".grids").hide();
+				    $(".grids", fecharDiaController.workspace).hide();
 				    $("#btnConfirmarFechamento", fecharDiaController.workspace).hide();
 				}
 				
@@ -773,14 +773,14 @@ var fecharDiaController =  $.extend(true, {
 	popup_vendasTot : function(tipoVenda) {
 		
 		if(tipoVenda == "encalhe"){
-			$("#tipoVenda").val(tipoVenda);
+			$("#tipoVenda", fecharDiaController.workspace).val(tipoVenda);
 			$(".vendasDialogGrid", fecharDiaController.workspace).flexOptions({
 				url: contextPath + "/administracao/fecharDia/obterGridVenda",
 				dataType : 'json',
 				params: [{name: "tipoVenda", value: tipoVenda}]
 			});
 		}else{
-			$("#tipoVenda").val(tipoVenda);
+			$("#tipoVenda", fecharDiaController.workspace).val(tipoVenda);
 			$(".vendasDialogGrid", fecharDiaController.workspace).flexOptions({
 				url: contextPath + "/administracao/fecharDia/obterGridVenda",
 				dataType : 'json',
@@ -816,11 +816,11 @@ var fecharDiaController =  $.extend(true, {
 		
 		var _this = this;
 		
-		$("#lnkExportacaoCotaXLS").click(function(event) {
+		$("#lnkExportacaoCotaXLS", fecharDiaController.workspace).click(function(event) {
 			_this.exportacaoDetalhesCota("XLS", tipoResumo);
 		});
 		
-		$("#lnkExportacaoCotaPDF").click(function(event) {
+		$("#lnkExportacaoCotaPDF", fecharDiaController.workspace).click(function(event) {
 			_this.exportacaoDetalhesCota("PDF", tipoResumo);
 		});
 		
@@ -893,7 +893,7 @@ var fecharDiaController =  $.extend(true, {
 	//callback function to bring a hidden box back
 	callback : function(){
 		setTimeout(function() {
-			$( "#effect:visible").removeAttr( "style" ).fadeOut();
+			$( "#effect:visible", fecharDiaController.workspace).removeAttr( "style" ).fadeOut();
 
 		}, 1000 );
 	},
@@ -912,7 +912,7 @@ var fecharDiaController =  $.extend(true, {
 			buttons: {
 				"Fechar": function() {
 					$( this ).dialog( "close" );
-					$(".grids").show();
+					$(".grids", fecharDiaController.workspace).show();
 					fecharDiaController.limparTabela();
 					fecharDiaController.iniciarResumoReparte();
 					fecharDiaController.iniciarResumoEncalhe();
@@ -928,21 +928,21 @@ var fecharDiaController =  $.extend(true, {
 	},
 	
 	limparTabela : function(){
-		$('#baixaBancaria').remove();
-		$('#geracaoDeCobranca').remove();
-		$('#recebimentoFisico').remove();
-		$('#confirmacaoDeExpedicao').remove();
-		$('#fechamentoDeEncalhe').remove();
-		$('#lancamentoDeFaltasESobras').remove();
-		$('#controleDeAplicacao').remove();
-		$('#consolidarFinanceiro').remove();
+		$('#baixaBancaria', fecharDiaController.workspace).remove();
+		$('#geracaoDeCobranca', fecharDiaController.workspace).remove();
+		$('#recebimentoFisico', fecharDiaController.workspace).remove();
+		$('#confirmacaoDeExpedicao', fecharDiaController.workspace).remove();
+		$('#fechamentoDeEncalhe', fecharDiaController.workspace).remove();
+		$('#lancamentoDeFaltasESobras', fecharDiaController.workspace).remove();
+		$('#controleDeAplicacao', fecharDiaController.workspace).remove();
+		$('#consolidarFinanceiro', fecharDiaController.workspace).remove();
 	},
 	
 	iniciarValidacoes : function(){
 		$.postJSON(contextPath + "/administracao/fecharDia/inicializarValidacoes",
 			{data: $('#dataDaOperacao', fecharDiaController.workspace).val()},
 			function(result){	
-				$('#tabela-validacao').clear();
+				$('#tabela-validacao', fecharDiaController.workspace).clear();
 				fecharDiaController.validacaoBaixaBancaria(result);
 				fecharDiaController.validacaoRecebimentoFisico(result);
 				fecharDiaController.validacaoConfirmacaoDeExpedicao(result);
@@ -969,7 +969,7 @@ var fecharDiaController =  $.extend(true, {
 			iconeBaixaBancaria = 'ico_bloquear.gif';
 		}
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeBaixaBancaria+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
-		$('#tabela-validacao').append(baixaBancaria + imagem);
+		$('#tabela-validacao', fecharDiaController.workspace).append(baixaBancaria + imagem);
 	},
 	
 	validacaoRecebimentoFisico : function(result){
@@ -983,7 +983,7 @@ var fecharDiaController =  $.extend(true, {
 			iconeRecebimentoFisico = 'ico_bloquear.gif';
 		}		
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeRecebimentoFisico+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
-		$('#tabela-validacao').append(recebimentoFisico + imagem);		
+		$('#tabela-validacao', fecharDiaController.workspace).append(recebimentoFisico + imagem);		
 	},
 	
 	popup_recebimentoFisico : function() {
@@ -1021,7 +1021,7 @@ var fecharDiaController =  $.extend(true, {
 			iconeConfirmacaoDeExpedicao = 'ico_bloquear.gif';
 		}		
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeConfirmacaoDeExpedicao+"' alt='Com Diferença' width='16' height='16' /></td></tr>";
-		$('#tabela-validacao').append(confirmacaoDeExpedicao + imagem);
+		$('#tabela-validacao', fecharDiaController.workspace).append(confirmacaoDeExpedicao + imagem);
 		
 	},
 	
@@ -1057,7 +1057,7 @@ var fecharDiaController =  $.extend(true, {
         "<td>Fechamento de Encalhe:</td>" +
         "<td align='center'><img src='"+ contextPath + img + "' width='16' height='16' alt='Com DiferenÃ§a' /></td>" +
         "</tr>";
-		$('#tabela-validacao').append(fechamentoDeEncalhe);
+		$('#tabela-validacao', fecharDiaController.workspace).append(fechamentoDeEncalhe);
 	},
 	
 	validacaoLancamentoFaltasESobras : function(result){
@@ -1071,7 +1071,7 @@ var fecharDiaController =  $.extend(true, {
 			iconeLancamentoFaltasESobras = 'ico_bloquear.gif';
 		}		
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeLancamentoFaltasESobras+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
-		$('#tabela-validacao').append(lancamentoFaltasESobras + imagem);		
+		$('#tabela-validacao', fecharDiaController.workspace).append(lancamentoFaltasESobras + imagem);		
 	},
 	
 	popup_lctoFaltas : function() {
@@ -1118,7 +1118,7 @@ var fecharDiaController =  $.extend(true, {
 							
 							imagem += "/images/ico_check.gif' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
 						}
-						$('#tabela-validacao').append(conferenciaDeAprovacao + imagem);
+						$('#tabela-validacao', fecharDiaController.workspace).append(conferenciaDeAprovacao + imagem);
 					}
 				);
 		}
@@ -1139,7 +1139,7 @@ var fecharDiaController =  $.extend(true, {
 			iconeConsolidarFinanceiro = 'ico_bloquear.gif';
 		}
 		var imagem = "<td align='center'><img src='"+ contextPath +"/images/"+iconeConsolidarFinanceiro+"' alt='Processo Efetuado' width='16' height='16' /></td></tr>";
-		$('#tabela-validacao').append(consolidarFinanceiro + imagem);
+		$('#tabela-validacao', fecharDiaController.workspace).append(consolidarFinanceiro + imagem);
 	},
 
 	redirecionarProcessamentoFinanceiro : function(){
@@ -1151,14 +1151,14 @@ var fecharDiaController =  $.extend(true, {
 		
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroReparte", null,
 				function(result){					
-					$("#totalReparte").html(result.totalReparteFormatado);
-					$("#totalSobras").html(result.totalSobrasFormatado);
-					$("#totalFaltas").html(result.totalFaltasFormatado);
-					$("#totalTransferencia").html(result.totalsTranferenciasFormatado);
-					$("#totalADistribuir").html(result.totalDistribuirFormatado);
-					$("#totalDistribuido").html(result.totalDistribuidoFormatado);
-					$("#totalSobraDistribuido").html(result.totalSobraDistribuicaoFormatado);
-					$("#totalDiferenca").html(result.totalDiferencaFormatado);
+					$("#totalReparte", fecharDiaController.workspace).html(result.totalReparteFormatado);
+					$("#totalSobras", fecharDiaController.workspace).html(result.totalSobrasFormatado);
+					$("#totalFaltas", fecharDiaController.workspace).html(result.totalFaltasFormatado);
+					$("#totalTransferencia", fecharDiaController.workspace).html(result.totalsTranferenciasFormatado);
+					$("#totalADistribuir", fecharDiaController.workspace).html(result.totalDistribuirFormatado);
+					$("#totalDistribuido", fecharDiaController.workspace).html(result.totalDistribuidoFormatado);
+					$("#totalSobraDistribuido", fecharDiaController.workspace).html(result.totalSobraDistribuicaoFormatado);
+					$("#totalDiferenca", fecharDiaController.workspace).html(result.totalDiferencaFormatado);
 				}
 			);
 	},
@@ -1166,13 +1166,13 @@ var fecharDiaController =  $.extend(true, {
 	iniciarResumoEncalhe : function(){
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroEncalhe", null,
 				function(result){
-					$("#totalEncalheLogico").html(result.totalLogicoFormatado);
-					$("#totalEncalheFisico").html(result.totalFisicoFormatado);
-					$("#totalEncalheJuramentada").html(result.totalJuramentadoFormatado);
-					$("#vendaEncalhe").html(result.vendaFormatado);
-					$("#totalSobraEncalhe").html(result.totalSobrasFormatado);
-					$("#totalFaltaEncalhe").html(result.totalFaltasFormatado);
-					$("#saldoEncalhe").html(result.saldoFormatado);
+					$("#totalEncalheLogico", fecharDiaController.workspace).html(result.totalLogicoFormatado);
+					$("#totalEncalheFisico", fecharDiaController.workspace).html(result.totalFisicoFormatado);
+					$("#totalEncalheJuramentada", fecharDiaController.workspace).html(result.totalJuramentadoFormatado);
+					$("#vendaEncalhe", fecharDiaController.workspace).html(result.vendaFormatado);
+					$("#totalSobraEncalhe", fecharDiaController.workspace).html(result.totalSobrasFormatado);
+					$("#totalFaltaEncalhe", fecharDiaController.workspace).html(result.totalFaltasFormatado);
+					$("#saldoEncalhe", fecharDiaController.workspace).html(result.saldoFormatado);
 				}
 			);
 	},
@@ -1180,10 +1180,10 @@ var fecharDiaController =  $.extend(true, {
 	iniciarResumoSuplementar : function(){
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroSuplementar", null,
 				function(result){
-					$("#totalSuplementarEstoqueLogico").html(result.totalEstoqueLogicoFormatado);
-					$("#totalSuplementarTransferencia").html(result.totalTransferenciaFormatado);
-					$("#totalSuplementarVenda").html(result.totalVendaFormatado);
-					$("#totalSuplementarSaldo").html(result.saldoFormatado);
+					$("#totalSuplementarEstoqueLogico", fecharDiaController.workspace).html(result.totalEstoqueLogicoFormatado);
+					$("#totalSuplementarTransferencia", fecharDiaController.workspace).html(result.totalTransferenciaFormatado);
+					$("#totalSuplementarVenda", fecharDiaController.workspace).html(result.totalVendaFormatado);
+					$("#totalSuplementarSaldo", fecharDiaController.workspace).html(result.saldoFormatado);
 				}
 			);
 	},
@@ -1448,7 +1448,7 @@ var fecharDiaController =  $.extend(true, {
 			'value' : tipoArquivo
 		},{
 			'name' : 'tipoVenda',
-			'value' : $("#tipoVenda").val()
+			'value' : $("#tipoVenda", fecharDiaController.workspace).val()
 		});
 		
 		
@@ -1466,14 +1466,14 @@ var fecharDiaController =  $.extend(true, {
 		var link = '<span class="bt_novos"> <a href="javascript:;" onclick="$(\'#workspace\').tabs(\'addTab\', \'Lançamento Faltas e Sobras\', ' + url + '),fecharDiaController.customizarDialogFaltasESobras(); "  style="cursor:pointer">' +
 						   	 '<img src="' + contextPath + '/images/ico_check.gif" hspace="5" border="0" />Sim' +
 						   '</a> </span>';
-		$("#linkParaFaltasESobra").html(link);
+		$("#linkParaFaltasESobra", fecharDiaController.workspace).html(link);
 		
 	},
 	
 	customizarDialogFaltasESobras : function(){		
 		
-		parent.$('#dialog-lancto-faltas-sobras').dialog("option", "modal", false);
-		parent.$('#dialog-lancto-faltas-sobras').dialog('close');
+		parent.$('#dialog-lancto-faltas-sobras', fecharDiaController.workspace).dialog("option", "modal", false);
+		parent.$('#dialog-lancto-faltas-sobras', fecharDiaController.workspace).dialog('close');
 		
 	},
 	
