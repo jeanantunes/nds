@@ -49,7 +49,7 @@
 					type="checkbox" id="faltasSobras" ${parametrosDistribuidor.faltasSobras ? "checked" : ""} /></td>
 				<td>Faltas e Sobras</td>
 				<td><input name="parametrosDistribuidor.cobranca"
-					type="checkbox" id="cobranca" ${parametrosDistribuidor.cobranca ? "checked" : ""} /></td>
+					type="checkbox" id="cobranca" ${parametrosDistribuidor.consolidadoCota ? "checked" : ""} /></td>
 				<td>Cobrança</td>
 			</tr>
 		</table>

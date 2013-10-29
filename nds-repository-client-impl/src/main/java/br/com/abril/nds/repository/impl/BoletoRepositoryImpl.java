@@ -260,7 +260,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select count(baixaAutomatica) as quantidadeRejeitados ");
-		hql.append(this.obterFromWhereConsultaBaixaBoletos());
+		hql.append(this.obterFromWhereConsultaBoletosRejeitados());
 		
 		Query query = this.obterQueryBoletosRejeitados(hql.toString(), data);
 		
@@ -273,7 +273,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		StringBuilder hql = new StringBuilder();
 		
 		hql.append(" select count(baixaAutomatica) as quantidadeBaixadosComDivergencia ");
-		hql.append(this.obterFromWhereConsultaBaixaBoletos());
+		hql.append(this.obterFromWhereConsultaBoletosBaixadosComDivergencia());
 
 		Query query = this.obterQueryBoletosBaixadosComDivergencia(hql.toString(), data);
 		
@@ -373,7 +373,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		hql.append("  concat(banco.conta, '-', banco.dvConta) as numeroConta, ");
 		hql.append("  cobranca.nossoNumero as nossoNumero, ");
 		hql.append("  baixaAutomatica.valorPago as valorBoleto, ");
-		hql.append("  baixaAutomatica.dataPagamento as dataVencimento");
+		hql.append("  cobranca.dataVencimento as dataVencimento");
 		hql.append(this.obterFromWhereBoletosBaixados());
 		
 		if (filtro.getOrdenacaoColuna() != null && filtro.getPaginacao() != null) {
@@ -403,7 +403,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		   .append(" 		baixaAutomatica.banco.apelido as nomeBanco, ")
 		   .append(" 		concat(baixaAutomatica.banco.conta, '-', baixaAutomatica.banco.dvConta) as numeroConta, ")
 		   .append(" 		baixaAutomatica.valorPago as valorBoleto ")
-		   .append(this.obterFromWhereConsultaBaixaBoletos());
+		   .append(this.obterFromWhereConsultaBoletosRejeitados());
 		
 		if (filtro.getOrdenacaoColuna() != null && filtro.getPaginacao() != null) {
 
@@ -434,7 +434,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		   .append(" 		cobranca.valor as valorBoleto, ")
 		   .append(" 		baixaAutomatica.valorPago as valorPago, ")
 		   .append(" 		cobranca.valor - baixaAutomatica.valorPago as valorDiferenca ")
-		   .append(this.obterFromWhereConsultaBaixaBoletos());
+		   .append(this.obterFromWhereConsultaBoletosBaixadosComDivergencia());
 		
 		if (filtro.getOrdenacaoColuna() != null && filtro.getPaginacao() != null) {
 
@@ -530,14 +530,27 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		hql.append(" from BaixaCobranca baixaAutomatica ");
 		hql.append(" join baixaAutomatica.cobranca cobranca ");
 		hql.append(" join cobranca.banco banco ");
-		hql.append(" where cobranca.dataVencimento = :data ");
+		hql.append(" where baixaAutomatica.dataPagamento = :data ");
 		hql.append(" and baixaAutomatica.status in (:statusBaixa) ");
 		hql.append(" and cobranca.tipoCobranca in (:tipoCobranca) ");
 		
 		return hql.toString();
 	}
 	
-	private String obterFromWhereConsultaBaixaBoletos() {
+	private String obterFromWhereConsultaBoletosRejeitados() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" from BaixaAutomatica baixaAutomatica ");
+		hql.append(" left join baixaAutomatica.cobranca cobranca ");
+		hql.append(" where baixaAutomatica.dataPagamento = :data ");
+		hql.append(" and baixaAutomatica.status in (:statusBaixa) ");
+		hql.append(" and ( cobranca.tipoCobranca is null or cobranca.tipoCobranca in (:tipoCobranca) ) ");
+		
+		return hql.toString();
+	}
+
+	private String obterFromWhereConsultaBoletosBaixadosComDivergencia() {
 		
 		StringBuilder hql = new StringBuilder();
 		
@@ -549,6 +562,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		return hql.toString();
 	}
+
 	
 	private String obterFromWhereBoletosInadimplentes() {
 		
@@ -570,7 +584,7 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		hql.append(" join baixaAutomatica.banco banco ");
 		hql.append(" left join baixaAutomatica.cobranca cobranca ");
 		hql.append(" where baixaAutomatica.dataPagamento = :data ");
-		hql.append(" and cobranca.tipoCobranca in (:tipoCobranca) ");
+		hql.append(" and (cobranca.tipoCobranca is null or cobranca.tipoCobranca in (:tipoCobranca)) ");
 		
 		return hql.toString();
 	}
@@ -606,8 +620,6 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		List<StatusBaixa> listaParametros = new ArrayList<StatusBaixa>();
 		
-		listaParametros.add(StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR);
-		listaParametros.add(StatusBaixa.NAO_PAGO_DIVERGENCIA_DATA);
 		listaParametros.add(StatusBaixa.NAO_PAGO_BAIXA_JA_REALIZADA);
 		listaParametros.add(StatusBaixa.PAGO_BOLETO_NAO_ENCONTRADO);
 		
