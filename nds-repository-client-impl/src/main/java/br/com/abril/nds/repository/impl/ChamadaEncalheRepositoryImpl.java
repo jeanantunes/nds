@@ -661,9 +661,9 @@ public class ChamadaEncalheRepositoryImpl extends AbstractRepositoryModel<Chamad
 		hqlConferenciaRealizada.append("	inner join cecCtrl.chamadaEncalhe chamadaEncalheCtrl ");
 		hqlConferenciaRealizada.append("	inner join cecCtrl.conferenciasEncalhe confEncalheCtrl ");
 		hqlConferenciaRealizada.append("    inner join confEncalheCtrl.controleConferenciaEncalheCota controle ");
-		hqlConferenciaRealizada.append("	inner join cecCtrl.cota cotaCtrl ");		
+		//hqlConferenciaRealizada.append("	inner join cecCtrl.cota cotaCtrl ");		
 		hqlConferenciaRealizada.append("	where controle.status='CONCLUIDO' ");
-		hqlConferenciaRealizada.append("	and cotaCtrl.id=cota.id ");
+		//hqlConferenciaRealizada.append("	and cotaCtrl.id=cota.id ");
 		hqlConferenciaRealizada.append("	and chamadaEncalheCtrl.dataRecolhimento=chamadaEncalhe.dataRecolhimento ) ");
 				
 		HashMap<String, Object> param = new HashMap<String, Object>();
