@@ -1207,13 +1207,6 @@ var baixaFinanceiraController = $.extend(true, {
 		function(result) {
 		   
 		   var valorSaldo = result;
-		   
-		   if (valorSaldo < 0){
-			
-			valorSaldo =  (valorSaldo * -1);
-			
-			}
-		
 			$("#valorSaldoDividasHidden", baixaFinanceiraController.workspace).val(valorSaldo);
 			
 			$("#valorSaldoDividasHidden", baixaFinanceiraController.workspace).priceFormat({
