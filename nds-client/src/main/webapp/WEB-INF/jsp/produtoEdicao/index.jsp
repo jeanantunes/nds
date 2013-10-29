@@ -575,7 +575,7 @@ fieldset {
 				<tr>
 				 <p>Utilize o modelo de exemplo para fazer upload para o sistema: </p>
 		      	<p ><span class="bt_novos" title="Download Modelo">
-		      	  		<a href="${pageContext.request.contextPath}/modelos/modelo_Edicao.xls">
+		      	  		<a href="${pageContext.request.contextPath}/modelos/modelo_edicao.xls">
 		      	  			<img align="center" src="images/ico_excel.png" hspace="5" border="0" />Modelo de exemplo
 		      	  		</a>
 		      	  	</span></p>
