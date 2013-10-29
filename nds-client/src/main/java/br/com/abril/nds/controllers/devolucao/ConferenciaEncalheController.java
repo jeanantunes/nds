@@ -585,8 +585,7 @@ public class ConferenciaEncalheController extends BaseController {
 	
 	private void recarregarInfoConferenciaEncalheCotaEmSession(Integer numeroCota, boolean indConferenciaContingencia) {
 		
-		InfoConferenciaEncalheCota infoConfereciaEncalheCota = 
-				conferenciaEncalheService.obterInfoConferenciaEncalheCota(numeroCota, indConferenciaContingencia);
+		InfoConferenciaEncalheCota infoConfereciaEncalheCota = conferenciaEncalheService.obterInfoConferenciaEncalheCota(numeroCota, indConferenciaContingencia);
 	
 		this.session.setAttribute(INFO_CONFERENCIA, infoConfereciaEncalheCota);
 		

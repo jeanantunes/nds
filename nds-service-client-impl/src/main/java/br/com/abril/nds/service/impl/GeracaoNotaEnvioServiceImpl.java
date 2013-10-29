@@ -371,6 +371,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 					itemNotaEnvio = item;
 					break;
 				}
+				
+				Integer sequenciaMatrizLancamento = item.getEstudoCota().getEstudo().getLancamento().getSequenciaMatriz();
+				item.setSequenciaMatrizLancamento(sequenciaMatrizLancamento);
 			}
 			
 			boolean itemExistente = itemNotaEnvio != null;
@@ -507,12 +510,12 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 			this.gerarNotaEnvioParaVisualizacao(pessoaEmitente,
 				                                idCota,  
 				                                filtro.getIdRota(), 
-												notasEnvio, 
-												filtro.getDataEmissao(), 
-												filtro.getIntervaloMovimento(), 
-												filtro.getIdFornecedores(), 
-												null,null,null, 
-												mapEstudosCota.get(idCota));
+								notasEnvio, 
+								filtro.getDataEmissao(), 
+								filtro.getIntervaloMovimento(), 
+								filtro.getIdFornecedores(), 
+								null, null, null, 
+								mapEstudosCota.get(idCota));
 		}
 		
 		return notasEnvio;
@@ -557,7 +560,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 				if (itemNotaEnvio.getItemNotaEnvioPK() == null) {
 					
-					itemNotaEnvio.setItemNotaEnvioPK(new ItemNotaEnvioPK(notaEnvio,++sequencia));
+					itemNotaEnvio.setItemNotaEnvioPK(new ItemNotaEnvioPK(notaEnvio, ++sequencia));
 				}
 			}
 
@@ -569,8 +572,8 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		for(NotaEnvio item : notasEnvio){
 			item.getListaItemNotaEnvio().isEmpty();
 		}
-		
-		/*if (listaItemNotaEnvio.isEmpty()) {
+		/*
+		if (listaItemNotaEnvio.isEmpty()) {
 
 			throw new ValidacaoException(TipoMensagem.ERROR,
 					"Não é possível gerar Nota de Envio para a Cota "
@@ -720,16 +723,18 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	 * Efetua o processamento das notas de envio já geradas
 	 */
 	private List<ItemNotaEnvio> processarNotasDeEnvioGeradas(Cota cota, 
-												             Long idRota, 
-												             List<NotaEnvio> notasEnvio, 
-												             Intervalo<Date> periodo,
-												             List<Long> listaIdFornecedores, 
-												             List<EstudoCota> listaEstudosCota,
-												             IdentificacaoDestinatario destinatarioAtualizado){
+								Long idRota, 
+								List<NotaEnvio> notasEnvio, 
+								Intervalo<Date> periodo,
+								List<Long> listaIdFornecedores, 
+								List<EstudoCota> listaEstudosCota,
+								IdentificacaoDestinatario destinatarioAtualizado){
 		
 		List<MovimentoEstoqueCota> listaMovimentoEstoqueCota = 
-				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaSemEstudoPor(cota.getId(), periodo, listaIdFornecedores, 
-																						  GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
+				this.movimentoEstoqueCotaRepository.obterMovimentoEstoqueCotaSemEstudoPor(cota.getId()
+													, periodo
+													, listaIdFornecedores
+													, GrupoMovimentoEstoque.RATEIO_REPARTE_COTA_AUSENTE);
 		
 		Map<String, DescontoDTO> descontos = descontoService.obterDescontosPorLancamentoProdutoEdicaoMap(null, null);
 		
@@ -830,14 +835,17 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		
 		for ( Map.Entry<Integer,List<NotaEnvio>> notasEnvioPorRoteirizacao : mapNotasEnvioPorRoteirizacao.entrySet()){
 			
+			/*
 			mapNotasEnvioPorNumeroCota = new TreeMap<Integer, NotaEnvio>();
+			
 
 			for (NotaEnvio notaEnvio : notasEnvioPorRoteirizacao.getValue()){
 				
 				mapNotasEnvioPorNumeroCota.put(notaEnvio.getDestinatario().getNumeroCota(), notaEnvio);
 			}
+			*/
 
-			notasEnvioPorRoteirizacaoENumeroCota.addAll(mapNotasEnvioPorNumeroCota.values());
+			notasEnvioPorRoteirizacaoENumeroCota.addAll(notasEnvioPorRoteirizacao.getValue());
 		}
 
 		return notasEnvioPorRoteirizacaoENumeroCota;
