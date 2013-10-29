@@ -209,11 +209,14 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 		
 		setSituacaoCadastro(input, cota);
 		
+		
+		/* NAO SERA ALTERADO O TIPO DE COTA NESSA INTERFACE
 		if (input.getCondPrazoPagamento().equals("S")) {				
 			cota.setTipoCota(TipoCota.CONSIGNADO);
 		} else {
 			cota.setTipoCota(TipoCota.A_VISTA);
 		}
+		*/
 
 		cota.setSugereSuspensao(true);			
 		cota.setPessoa(pessoa);
