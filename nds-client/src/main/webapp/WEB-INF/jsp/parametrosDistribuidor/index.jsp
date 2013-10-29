@@ -100,23 +100,20 @@
 			     <li><a href="#tabAprovacao">Aprovação</a></li>
 			</ul>
 			
-			<!--  Aba Cadastro / Fiscal -->
             <jsp:include page="tabCadastroFiscal.jsp"/>
 			
-            <!--  Aba Operação --> 
             <jsp:include page="tabOperacao.jsp"/>
 			
 			<jsp:include page="tabOperacaoDiferenciada.jsp"/>
 						
-			<jsp:include page="tabEmissao.jsp"></jsp:include>
+			<jsp:include page="tabEmissao.jsp" />
 			
-		    <!-- Aba Contratos e Garantias  	-->
+			<jsp:include page="tabNegociacao.jsp" />
+			
             <jsp:include page="tabContratosGarantias.jsp"/>
+            
+            <jsp:include page="tabAprovacao.jsp" />
             			
-			<jsp:include page="tabNegociacao.jsp"></jsp:include>
-		   
-		    <jsp:include page="tabAprovacao.jsp"></jsp:include>
-		    
 	   		<br clear="all" />
 		</div>
 	</fieldset>
