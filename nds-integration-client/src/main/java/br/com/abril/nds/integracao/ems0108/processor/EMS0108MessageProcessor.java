@@ -110,11 +110,16 @@ public class EMS0108MessageProcessor extends AbstractRepository implements
 				}
 				if (null != lancamento) {
 					
-					if (lancamento.getStatus() == StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO || lancamento.getStatus() == StatusLancamento.BALANCEADO_RECOLHIMENTO) {
+					if (lancamento.getStatus() == StatusLancamento.EM_BALANCEAMENTO_RECOLHIMENTO
+						|| lancamento.getStatus() == StatusLancamento.BALANCEADO_RECOLHIMENTO
+							|| lancamento.getStatus() == StatusLancamento.EM_RECOLHIMENTO
+							|| lancamento.getStatus() == StatusLancamento.RECOLHIDO
+							|| lancamento.getStatus() == StatusLancamento.FECHADO) {
+						
 						ndsiLoggerFactory.getLogger().logWarning(
 								message,
 								EventoExecucaoEnum.ERRO_INFRA,
-								String.format( "Registro não será atualizado pois já está em balanceamento / balanceado. Data de recolhimento: %1$s Produto: %2$s Edicao: %3$s.", input.getDataLancamentoRecolhimentoProduto(), input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString() ));
+								String.format( "Registro não será atualizado pois já está em processo de recolhimento. Data de recolhimento: %1$s Produto: %2$s Edicao: %3$s.", input.getDataLancamentoRecolhimentoProduto(), input.getCodigoPublicacao(), input.getEdicaoRecolhimento().toString() ));
 						return;
 					}
 					
