@@ -75,7 +75,7 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 //		hql.append(", cota.id as idCota ");
 //		hql.append(", rotaPDV.id as idRota ");
 		hql.append(", notaEnvio.numero as numeroNotaEnvio ");
-		hql.append(", endereco.logradouro as logradouro ");
+		hql.append(", concat(endereco.tipoLogradouro, ' ' , endereco.logradouro, ', ' , endereco.numero) as logradouro ");
 //		hql.append(", endereco.bairro as bairro ");		
 //		hql.append(", endereco.cidade as cidade ");
 //		hql.append(", endereco.uf as uf ");
