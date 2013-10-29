@@ -8,18 +8,23 @@ var baixaFinanceiraController = $.extend(true, {
 		$("#filtroNumCota", baixaFinanceiraController.workspace).numeric();
 		$("#descricaoCota", baixaFinanceiraController.workspace).autocomplete({source: ""});
 		$("filtroNossoNumero", baixaFinanceiraController.workspace).numeric();
+		
 		$("#dataBaixa", baixaFinanceiraController.workspace).datepicker({
 			showOn : "button",
 			buttonImage : contextPath + "/images/calendar.gif",
 			buttonImageOnly : true,
-			dateFormat : 'dd/mm/yy',
+			dateFormat : 'dd/mm/yy'
 		});
-		
+
+		$("#dataBaixa", baixaFinanceiraController.workspace).change(function(){
+			$('#resultadoIntegracao', baixaFinanceiraController.workspace).hide();
+		});
+
 		$("#dtPagamentoManual", baixaFinanceiraController.workspace).datepicker({
 			showOn : "button",
 			buttonImage : contextPath + "/images/calendar.gif",
 			buttonImageOnly : true,
-			dateFormat : 'dd/mm/yy', 
+			dateFormat : 'dd/mm/yy'
 		});
 		
 		$("#dtPagamentoManualBoleto", baixaFinanceiraController.workspace).datepicker({
@@ -1584,7 +1589,7 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 			
 			baixaFinanceiraController.mostrarDadosResumoBaixaFinanceira(responseJson.result);
 			
-			baixaFinanceiraController.resetarCamposBaixaAutomatica();
+			baixaFinanceiraController.resetarCamposBaixaAutomatica(true);
 			
 			$("#tableDadosArquivo", baixaFinanceiraController.workspace).show();
 
@@ -1594,13 +1599,16 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 		}
 	},
 	
-	resetarCamposBaixaAutomatica: function() {
+	resetarCamposBaixaAutomatica: function(keepDataPagamento) {
 		
 		baixaFinanceiraController.limparCamposBaixaAutomatica();
 		
-		$("#dataBaixa", baixaFinanceiraController.workspace).datepicker(
-			"setDate", baixaFinanceiraController.dataOperacaoDistribuidor
-		);
+		if(!keepDataPagamento) {
+			$("#dataBaixa", baixaFinanceiraController.workspace).datepicker(
+					"setDate", baixaFinanceiraController.dataOperacaoDistribuidor
+			);
+		}
+		
 
 		$("#btnIntegrar", baixaFinanceiraController.workspace).css("display", "none");
 		$("#btnExibirResumos", baixaFinanceiraController.workspace).css("display", "block");
@@ -1819,7 +1827,9 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 			result.quantidadeInadimplentes ? result.quantidadeInadimplentes : 0
 		);
 
-		var valorTotalBancario = result.valorTotalBancario ? result.valorTotalBancario : 0;
+		var valorTotalBancario = result.valorTotalBancario ? result.valorTotalBancario : 0.0;
+		
+		valorTotalBancario = floatToPrice(valorTotalBancario);
 		
 		$("#tdValorTotal", baixaFinanceiraController.workspace).html(
 			'<span id="valorTotalBancario">' + 

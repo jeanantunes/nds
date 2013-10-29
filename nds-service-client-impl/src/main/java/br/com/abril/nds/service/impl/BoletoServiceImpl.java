@@ -205,8 +205,11 @@ public class BoletoServiceImpl implements BoletoService {
 		resumoBaixaBoletos.setQuantidadeInadimplentes(
 			this.boletoRepository.obterQuantidadeBoletosInadimplentes(data).intValue());
 		
-		resumoBaixaBoletos.setValorTotalBancario(
-			this.boletoRepository.obterValorTotalBancario(data));
+		BigDecimal valorTotalBancario = this.boletoRepository.obterValorTotalBancario(data);
+		
+		valorTotalBancario = (valorTotalBancario == null) ? BigDecimal.ZERO : valorTotalBancario;
+		
+		resumoBaixaBoletos.setValorTotalBancario(valorTotalBancario.setScale(2, RoundingMode.HALF_EVEN));
 		
 		List<ControleBaixaBancaria> listaControleBaixa =
 			this.controleBaixaRepository.obterListaControleBaixaBancaria(
