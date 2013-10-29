@@ -207,7 +207,7 @@ public class ContaCorrenteCotaVO implements Serializable {
 	public void setPendente(BigDecimal pendente) {
 		this.pendente = 
 				pendente != null ? 
-						pendente.setScale(4, RoundingMode.HALF_EVEN) : pendente;
+						pendente.setScale(2, RoundingMode.HALF_EVEN) : pendente;
 	}
 
 	/**
