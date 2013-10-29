@@ -1599,11 +1599,11 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 		}
 	},
 	
-	resetarCamposBaixaAutomatica: function(keepDataPagamento) {
+	resetarCamposBaixaAutomatica: function(keepDadosAposBaixa) {
 		
-		baixaFinanceiraController.limparCamposBaixaAutomatica();
+		baixaFinanceiraController.limparCamposBaixaAutomatica(keepDadosAposBaixa);
 		
-		if(!keepDataPagamento) {
+		if(!keepDadosAposBaixa) {
 			$("#dataBaixa", baixaFinanceiraController.workspace).datepicker(
 					"setDate", baixaFinanceiraController.dataOperacaoDistribuidor
 			);
@@ -1614,14 +1614,16 @@ var dividasMarcadas = baixaFinanceiraController.obterCobrancasDividasMarcadas();
 		$("#btnExibirResumos", baixaFinanceiraController.workspace).css("display", "block");
 	},
 	
-	limparCamposBaixaAutomatica : function() {
+	limparCamposBaixaAutomatica : function(keepDadosAposBaixa) {
 
 		$("#uploadedFile", baixaFinanceiraController.workspace).replaceWith(
 			"<input name='uploadedFile' type='file' id='uploadedFile' size='25' " 
 				+ "onchange='baixaFinanceiraController.habilitarIntegracao();' />"
 		);
 		
-		$("#valorFinanceiro", baixaFinanceiraController.workspace).val("");
+		if(!keepDadosAposBaixa) {
+			$("#valorFinanceiro", baixaFinanceiraController.workspace).val("");
+		}
 	},
 	
 	//-----------------------------------------------------
