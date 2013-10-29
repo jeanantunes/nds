@@ -229,6 +229,8 @@ public class ParametrosDistribuidorVO {
     
     private boolean faltasSobras;
     
+    private boolean consolidadoCota;
+    
     private String aprovacaoFaltaDe;
     
     private String aprovacaoSobraDe;
@@ -1262,7 +1264,21 @@ public class ParametrosDistribuidorVO {
         this.percentualDesconto = percentualDesconto;
     }
     
-    /**
+	/**
+	 * @return the consolidadoCota
+	 */
+	public boolean isConsolidadoCota() {
+		return consolidadoCota;
+	}
+
+	/**
+	 * @param consolidadoCota the consolidadoCota to set
+	 */
+	public void setConsolidadoCota(boolean consolidadoCota) {
+		this.consolidadoCota = consolidadoCota;
+	}
+
+	/**
      * Verifica se alguma garantia foi marcada para utilização
      * @return true se ao menos uma ganatia esta sendo utilizada
      */
@@ -1305,7 +1321,4 @@ public class ParametrosDistribuidorVO {
 	public void setNumeroDDD(String numeroDDD) {
 		this.numeroDDD = numeroDDD;
 	}
-	
-	
-    
 }

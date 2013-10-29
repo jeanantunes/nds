@@ -18,6 +18,8 @@ var movimentoFinanceiroCotaController = $.extend(true, {
 		movimentoFinanceiroCotaController.dataOperacaoDistribuidor = $("#dataBaixa", movimentoFinanceiroCotaController.workspace).datepicker("getDate");
 		
 		movimentoFinanceiroCotaController.iniciarGridCotasAVista();
+		
+		movimentoFinanceiroCotaController.buscarCotas();
 	},
 	
 	iniciarGridCotasAVista : function() {
@@ -28,13 +30,13 @@ var movimentoFinanceiroCotaController = $.extend(true, {
 			colModel : [ {
 				display : 'Cota',
 				name : 'numeroCota',
-				width : 90,
+				width : 60,
 				sortable : true,
 				align : 'left'
 			},{
 				display : 'Nome',
 				name : 'nomeCota',
-				width : 270,
+				width : 250,
 				sortable : true,
 				align : 'left'
 			},{
@@ -44,21 +46,27 @@ var movimentoFinanceiroCotaController = $.extend(true, {
 				sortable : false,
 				align : 'left'
 			},{
+				display : 'Valor À Vista',
+				name : 'valorAVista',
+				width : 95,
+				sortable : false,
+				align : 'left'
+			},{
 				display : 'Valor Estornado',
 				name : 'valorEstornado',
-				width : 100,
+				width : 95,
 				sortable : false,
 				align : 'left'
 			},{
 				display : 'Débitos',
 				name : 'debitos',
-				width : 90,
+				width : 70,
 				sortable : false,
 				align : 'left'
 			},{
 				display : 'Créditos',
 				name : 'creditos',
-				width : 90,
+				width : 70,
 				sortable : false,
 				align : 'left'
 			},{
@@ -249,6 +257,31 @@ var movimentoFinanceiroCotaController = $.extend(true, {
 		var param = serializeArrayToPost('numerosCota',movimentoFinanceiroCotaController.obterCotasSelecionadas());
 		
     	$.postJSON(contextPath + "/financeiro/movimentoFinanceiroCota/processarFinanceiroCota",param,
+				   function(mensagens) {
+
+					   if (mensagens){
+						   
+						   var tipoMensagem = mensagens.tipoMensagem;
+						   
+						   var listaMensagens = mensagens.listaMensagens;
+						   
+						   if (tipoMensagem && listaMensagens) {
+							   
+						       exibirMensagem(tipoMensagem, listaMensagens);
+					       }
+		        	   }
+			           
+					   movimentoFinanceiroCotaController.buscarCotas();
+	               },
+	               null,
+	               true);
+	},
+	
+	postergarFinanceiroCota : function(){
+
+		var param = serializeArrayToPost('numerosCota',movimentoFinanceiroCotaController.obterCotasSelecionadas());
+		
+    	$.postJSON(contextPath + "/financeiro/movimentoFinanceiroCota/postergarFinanceiroCota",param,
 				   function(mensagens) {
 
 					   if (mensagens){

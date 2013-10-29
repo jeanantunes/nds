@@ -687,7 +687,7 @@ public class BoletoServiceImpl implements BoletoService {
 												  GrupoMovimentoFinaceiro.CREDITO,
 												  usuario, pagamento.getValorPagamento(),
 												  dataOperacao, baixaCobranca,
-												  dataNovoMovimento));
+												  dataNovoMovimento, null));
 	}
 	
 	private void baixarBoletoVencidoAutomatico(TipoBaixaCobranca tipoBaixaCobranca, PagamentoDTO pagamento,
@@ -716,7 +716,7 @@ public class BoletoServiceImpl implements BoletoService {
 												  GrupoMovimentoFinaceiro.CREDITO,
 												  usuario, pagamento.getValorPagamento(),
 												  dataOperacao, baixaCobranca,
-												  dataNovoMovimento));
+												  dataNovoMovimento, null));
 			
 			return;
 		}
@@ -746,7 +746,7 @@ public class BoletoServiceImpl implements BoletoService {
 												  GrupoMovimentoFinaceiro.JUROS,
 												  usuario, valorJurosCalculado,
 												  dataOperacao, baixaCobranca,
-												  dataNovoMovimento));
+												  dataNovoMovimento, null));
 		}
 		
 		BigDecimal valorMultaCalculado = 
@@ -761,14 +761,20 @@ public class BoletoServiceImpl implements BoletoService {
 												  GrupoMovimentoFinaceiro.MULTA,
 												  usuario, valorMultaCalculado,
 												  dataOperacao, baixaCobranca,
-												  dataNovoMovimento));
+												  dataNovoMovimento, null));
 		}
 		
 		BigDecimal diferencaValor = null;
 		
+		String observacao = null;
+		
+		String dataPagamentoFormatada = DateUtil.formatarDataPTBR(dataPagamento);
+		
 		if (pagamento.getValorPagamento().compareTo(boleto.getValor()) == 1) {
 		
 			diferencaValor = pagamento.getValorPagamento().subtract(boleto.getValor());
+			
+			observacao = "Diferença de Pagamento a Maior (" + dataPagamentoFormatada + ")";
 			
 			movimentoFinanceiroCotaService
 				.gerarMovimentosFinanceirosDebitoCredito(
@@ -776,11 +782,13 @@ public class BoletoServiceImpl implements BoletoService {
 												  GrupoMovimentoFinaceiro.CREDITO,
 												  usuario, diferencaValor,
 												  dataOperacao, baixaCobranca,
-												  dataNovoMovimento));
+												  dataNovoMovimento, observacao));
 			
 		} else if (pagamento.getValorPagamento().compareTo(boleto.getValor()) == -1) {
 			
 			diferencaValor = boleto.getValor().subtract(pagamento.getValorPagamento());
+			
+			observacao = "Diferença de Pagamento a Maior (" + dataPagamentoFormatada + ")";
 			
 			movimentoFinanceiroCotaService
 				.gerarMovimentosFinanceirosDebitoCredito(
@@ -788,7 +796,7 @@ public class BoletoServiceImpl implements BoletoService {
 											   	  GrupoMovimentoFinaceiro.DEBITO,
 											   	  usuario, diferencaValor,
 											   	  dataOperacao, baixaCobranca,
-											   	  dataNovoMovimento));
+											   	  dataNovoMovimento, observacao));
 		}
 	}
 	
@@ -850,7 +858,7 @@ public class BoletoServiceImpl implements BoletoService {
 							   						  GrupoMovimentoFinaceiro.CREDITO,
 							   						  usuario, pagamento.getValorPagamento(),
 							   						  dataOperacao, baixaCobranca,
-							   						  dataNovoMovimento));
+							   						  dataNovoMovimento, null));
 				
 				return;
 			}
@@ -869,13 +877,17 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		BigDecimal valorCredito = pagamento.getValorPagamento().subtract(boleto.getValor());
 		
+		String dataPagamentoFormatada = DateUtil.formatarDataPTBR(dataPagamento);
+		
+		String observacao = "Diferença de Pagamento a Maior (" + dataPagamentoFormatada + ")";
+		
 		movimentoFinanceiroCotaService
 			.gerarMovimentosFinanceirosDebitoCredito(
 				getMovimentoFinanceiroCotaDTO(boleto.getCota(),
 											  GrupoMovimentoFinaceiro.CREDITO,
 											  usuario, valorCredito,
 											  dataOperacao, baixaCobranca,
-											  dataNovoMovimento));
+											  dataNovoMovimento, observacao));
 	}
 	
 	private void baixarBoletoValorAbaixo(TipoBaixaCobranca tipoBaixaCobranca, PagamentoDTO pagamento,
@@ -896,14 +908,14 @@ public class BoletoServiceImpl implements BoletoService {
 			
 			baixaCobranca = gerarBaixaCobranca(tipoBaixaCobranca, StatusBaixa.NAO_PAGO_DIVERGENCIA_VALOR, boleto,
 					   						   dataOperacao, nomeArquivo, pagamento, usuario, banco, dataPagamento);
-
+			
 			movimentoFinanceiroCotaService
 				.gerarMovimentosFinanceirosDebitoCredito(
 					getMovimentoFinanceiroCotaDTO(boleto.getCota(),
 							   					  GrupoMovimentoFinaceiro.CREDITO,
 							   					  usuario, pagamento.getValorPagamento(),
 							   					  dataOperacao, baixaCobranca,
-							   					  dataNovoMovimento));
+							   					  dataNovoMovimento, null));
 			
 			return;
 		}
@@ -920,6 +932,10 @@ public class BoletoServiceImpl implements BoletoService {
 		efetivarBaixaCobranca(boleto, dataOperacao);
 		
 		BigDecimal valorDebito = boleto.getValor().subtract(pagamento.getValorPagamento());
+
+		String dataPagamentoFormatada = DateUtil.formatarDataPTBR(dataPagamento);
+		
+		String observacao = "Diferença de Pagamento a Menor (" + dataPagamentoFormatada + ")";
 		
 		movimentoFinanceiroCotaService
 			.gerarMovimentosFinanceirosDebitoCredito(
@@ -927,7 +943,7 @@ public class BoletoServiceImpl implements BoletoService {
 											  GrupoMovimentoFinaceiro.DEBITO,
 											  usuario, valorDebito,
 											  dataOperacao, baixaCobranca,
-											  dataNovoMovimento));
+											  dataNovoMovimento, observacao));
 	}
 	
 	private void validarDadosEntradaBaixaAutomatica(PagamentoDTO pagamento) {
@@ -1085,7 +1101,7 @@ public class BoletoServiceImpl implements BoletoService {
 	private MovimentoFinanceiroCotaDTO getMovimentoFinanceiroCotaDTO(Cota cota,
 			GrupoMovimentoFinaceiro grupoMovimentoFinaceiro, Usuario usuario,
 			BigDecimal valorPagamento, Date dataOperacao,
-			BaixaCobranca baixaCobranca, Date dataNovoMovimento) {
+			BaixaCobranca baixaCobranca, Date dataNovoMovimento, String observacao) {
 
 		TipoMovimentoFinanceiro tipoMovimento = this.tipoMovimentoFinanceiroRepository
 				.buscarTipoMovimentoFinanceiro(grupoMovimentoFinaceiro);
@@ -1109,6 +1125,8 @@ public class BoletoServiceImpl implements BoletoService {
 		movimentoFinanceiroCotaDTO.setDataVencimento(dataNovoMovimento);
 		
 		movimentoFinanceiroCotaDTO.setTipoEdicao(TipoEdicao.INCLUSAO);
+				
+		movimentoFinanceiroCotaDTO.setObservacao(observacao);
 
 		return movimentoFinanceiroCotaDTO;
 	}
