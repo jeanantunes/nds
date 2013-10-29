@@ -371,6 +371,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 					itemNotaEnvio = item;
 					break;
 				}
+				
+				Integer sequenciaMatrizLancamento = item.getEstudoCota().getEstudo().getLancamento().getSequenciaMatriz();
+				item.setSequenciaMatrizLancamento(sequenciaMatrizLancamento);
 			}
 			
 			boolean itemExistente = itemNotaEnvio != null;
