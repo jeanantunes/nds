@@ -244,7 +244,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 						  .append("	WHERE D.COTA_ID = COTA_.ID ")
 						  .append("	AND D.STATUS = :statusDividaEmAberto ")
 						  .append("	AND C.DT_VENCIMENTO < :dataOperacao ");
-		
+				
 		StringBuilder sql = new StringBuilder();
 		sql.append("SELECT COTA_.ID AS IDCOTA, ")
 		.append("		COTA_.NUMERO_COTA AS numCota, ")
@@ -354,7 +354,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		.append(" JOIN PARAMETRO_COBRANCA_COTA POLITICACOTA ON(POLITICACOTA.COTA_ID=COTA_.ID) ")
 		.append(" JOIN DISTRIBUIDOR AS POLITICADISTRIB ")
 		.append(" JOIN PESSOA AS PESSOA_ ON (PESSOA_.ID=COTA_.PESSOA_ID) ")
-		.append(" WHERE SITUACAO_CADASTRO = :ativo ")
+		.append(" WHERE SITUACAO_CADASTRO = :ativo AND COTA_.SUGERE_SUSPENSAO=true ")
 		
 		.append(" AND ((POLITICACOTA.NUM_ACUMULO_DIVIDA IS NOT NULL ")
 		.append(" 		AND POLITICACOTA.NUM_ACUMULO_DIVIDA <> 0 ")
@@ -370,17 +370,16 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		
 		.append("	   (POLITICACOTA.VALOR_SUSPENSAO IS NOT NULL ")
 		.append("       AND POLITICACOTA.VALOR_SUSPENSAO <> 0 ")
-		.append("		AND POLITICACOTA.VALOR_SUSPENSAO <= (SELECT SUM(VALOR) ")
-		.append("											FROM DIVIDA ")
-		.append("											WHERE DIVIDA.COTA_ID = COTA_.ID ")
-		.append("											AND DIVIDA.DATA = (SELECT MAX(DATA) ")
-		.append("															   FROM DIVIDA DIVIDA")
-		.append("															   JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
+		.append("		AND POLITICACOTA.VALOR_SUSPENSAO <= (SELECT SUM(DIVIDA.VALOR) ")
+		.append("											FROM DIVIDA DIVIDA ")
+		.append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
 		.append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
 		.append("															   AND DIVIDA.STATUS = :statusDividaEmAberto ")
-		.append("															   AND COBRANCA_.DT_VENCIMENTO <= :dataOperacao ")
-		.append("															   AND COBRANCA_.TIPO_DOCUMENTO = :tipoDocumento ) ")
-		.append("											)")
+		.append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao ")
+		.append("															   AND COBRANCA_.TIPO_DOCUMENTO = :tipoDocumento )")
+			
+		
+
 		.append("	   ) ")
 		.append("	   OR ")
 		
@@ -399,17 +398,14 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		.append("	   (POLITICACOTA.NUM_ACUMULO_DIVIDA IS NULL and POLITICACOTA.VALOR_SUSPENSAO IS NULL ")
 		.append("	    AND POLITICADISTRIB.VALOR_SUSPENSAO IS NOT NULL ")
 		.append("	    AND POLITICADISTRIB.VALOR_SUSPENSAO <> 0")
-		.append("		AND POLITICADISTRIB.VALOR_SUSPENSAO <= (SELECT SUM(VALOR) ")
-		.append("											   FROM DIVIDA ")
-		.append("											   WHERE DIVIDA.COTA_ID = COTA_.ID ")
-		.append("											   AND DIVIDA.DATA = (SELECT MAX(DATA) ")
-		.append("											   					  FROM DIVIDA DIVIDA ")
-		.append("											   					  JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
-		.append("											   					  WHERE DIVIDA.COTA_ID=COTA_.ID ")
-		.append("											   					  AND DIVIDA.STATUS = :statusDividaEmAberto ")
-		.append("											   					  AND COBRANCA_.DT_VENCIMENTO <= :dataOperacao ")
-		.append("											   					  AND COBRANCA_.TIPO_DOCUMENTO = :tipoDocumento) ")
-		.append("											   )")
+		.append("		AND POLITICADISTRIB.VALOR_SUSPENSAO <= (SELECT SUM(DIVIDA.VALOR) ")
+		.append("											FROM DIVIDA DIVIDA ")
+		.append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
+		.append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
+		.append("															   AND DIVIDA.STATUS = :statusDividaEmAberto ")
+		.append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao ")
+		.append("															   AND COBRANCA_.TIPO_DOCUMENTO = :tipoDocumento )")
+		
 		.append("	   ) ")
 		.append(")");
 	}
