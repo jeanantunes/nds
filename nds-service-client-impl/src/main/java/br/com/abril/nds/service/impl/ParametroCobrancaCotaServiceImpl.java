@@ -435,7 +435,7 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 			parametroCobranca.setFatorVencimento((int) parametroCobrancaDTO.getFatorVencimento());
 			parametroCobranca.setValorMininoCobranca(CurrencyUtil.converterValor(parametroCobrancaDTO.getValorMinimo()));
 			parametroCobranca.setUnificaCobranca(parametroCobrancaDTO.isUnificaCobranca());
-
+			
 			if (politicaSuspensao == null) {
 				politicaSuspensao = new PoliticaSuspensao();
 			}

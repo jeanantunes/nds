@@ -385,6 +385,8 @@ public interface CotaService {
 	 */
 	List<Cota> obterCotasPorNumeros(List<Integer> numerosCota);
 
+	boolean salvarTipoCota(long idCota, TipoCota tipoCota);
+
 	/**
      * Verifica se a cota teve seu tipo alterado na data informada
      * @param cota
@@ -392,4 +394,5 @@ public interface CotaService {
      * @return boolean
      */
 	boolean isCotaAlteradaNaData(Cota cota, Date data);
+
 }

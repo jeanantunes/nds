@@ -7,6 +7,8 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -971,6 +973,22 @@ public class NFeServiceImpl implements NFeService {
 		BigDecimal valorUnitarioProduto = BigDecimal.ZERO;
 		BigDecimal valorTotalProduto 	= BigDecimal.ZERO;
 		BigDecimal valorDescontoProduto = BigDecimal.ZERO;
+		
+		Collections.sort(itensNotaEnvio, new Comparator<ItemNotaEnvio>(){
+			@Override
+			public int compare(ItemNotaEnvio o1, ItemNotaEnvio o2) {
+			    
+			    	if(o1 != null && o1.getSequenciaMatrizLancamento() != null && o2 != null) {
+			    	    return o1.getSequenciaMatrizLancamento().compareTo(o2.getSequenciaMatrizLancamento());
+			    	} else if ((o1.getProdutoEdicao() != null && o1.getProdutoEdicao().getProduto() != null)
+			    		&& (o2.getProdutoEdicao() != null && o2.getProdutoEdicao().getProduto() != null)) {
+    						o1.getProdutoEdicao().getProduto().getNome().compareTo(o2.getProdutoEdicao().getProduto().getNome());
+    				}
+    							    	
+			    	return 0;
+			}
+			
+		});
 
 		for(ItemNotaEnvio itemNotaEnvio : itensNotaEnvio) {
 
