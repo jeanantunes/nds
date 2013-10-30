@@ -474,7 +474,6 @@ public class ResumoExpedicaoController extends BaseController {
 		ResumoExpedicaoVO resumoExpedicaoVO = null;
 		
 		BigInteger totalDiferencas = BigInteger.ZERO;
-		BigDecimal totalValorDiferencas = BigDecimal.ZERO;
 		
 		for (ExpedicaoDTO expd  : list) {
 			
@@ -495,11 +494,6 @@ public class ResumoExpedicaoController extends BaseController {
 			
 			totalDiferencas = totalDiferencas.add(expd.getQntDiferenca());
 			
-			if (!BigInteger.ZERO.equals(expd.getQntDiferenca())) {
-				
-				totalValorDiferencas = totalValorDiferencas.add(valorDiferenca);
-			}
-			
 			listaLancamentosExpedidos.add(resumoExpedicaoVO);
 		}
 		
@@ -509,7 +503,7 @@ public class ResumoExpedicaoController extends BaseController {
 		
 		expedicaoVO.setResumosExpedicao(listaLancamentosExpedidos);
 		expedicaoVO.setTotalReparte(expedicaoDTO.getQntReparte().add(totalDiferencas));
-		expedicaoVO.setTotalValorFaturado(expedicaoDTO.getValorFaturado().add(totalValorDiferencas));
+		expedicaoVO.setTotalValorFaturado(expedicaoDTO.getValorFaturado());
 		
 		return expedicaoVO;
 	}
