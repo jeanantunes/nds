@@ -39,6 +39,8 @@ public class ContaCorrenteCotaVO implements Serializable {
 	
 	private boolean cobrado;
 	
+	private boolean inadimplente;
+	
 	private BigInteger numeroAcumulo;
 	
 	@Export(label = "Data")
@@ -333,5 +335,19 @@ public class ContaCorrenteCotaVO implements Serializable {
 
 	public void setNomeBox(String nomeBox) {
 		this.nomeBox = nomeBox;
+	}
+
+	/**
+	 * @return the inadimplente
+	 */
+	public boolean isInadimplente() {
+		return inadimplente;
+	}
+
+	/**
+	 * @param inadimplente the inadimplente to set
+	 */
+	public void setInadimplente(boolean inadimplente) {
+		this.inadimplente = inadimplente;
 	}
 }
