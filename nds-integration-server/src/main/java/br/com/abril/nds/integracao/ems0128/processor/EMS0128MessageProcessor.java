@@ -38,7 +38,7 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 	private static final Logger LOGGER = LoggerFactory.getLogger(EMS0128MessageProcessor.class);
 	
 	@Autowired
-	private SessionFactory sessionFactoryIcd;
+	private SessionFactory sessionFactoryGfs;
 	
 	@Autowired
 	private ParametroSistemaRepository parametroSistemaRepository;
@@ -50,17 +50,17 @@ public class EMS0128MessageProcessor extends AbstractRepository implements Messa
 	
 	private String pastaInterna;
 
-	protected Session getSessionIcd() {
+	protected Session getSessionGfs() {
 		
 		Session session = null;
 		try {
-			session = sessionFactoryIcd.getCurrentSession();
+			session = sessionFactoryGfs.getCurrentSession();
 		} catch(Exception e) {
 			LOGGER.error("Erro ao obter sessão do Hibernate.", e);
 		}
 		
 		if(session == null) {
-			session = sessionFactoryIcd.openSession();
+			session = sessionFactoryGfs.openSession();
 		}
 		
 		return session;

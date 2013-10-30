@@ -13,6 +13,14 @@
 		<property name="password" value="${database.password}" />
 	</bean>	
 	
+	<bean id="dataSourceGfs" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close" >
+		<property name="driverClassName" value="${gfsdb.driverClassName}" />
+		<property name="url" value="${gfsdb.url}" />
+		<property name="username" value="${gfsdb.username}" />
+		<property name="password" value="${gfsdb.password}" />
+	</bean>	
+	
 	<bean id="dataSourceIcd" class="org.apache.commons.dbcp.BasicDataSource"
 		destroy-method="close" >
 		<property name="driverClassName" value="${icddb.driverClassName}" />
