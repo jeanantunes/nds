@@ -242,7 +242,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 						  .append("	FROM DIVIDA D ")
 						  .append(" JOIN COBRANCA c on (c.DIVIDA_ID=d.ID) ")
 						  .append("	WHERE D.COTA_ID = COTA_.ID ")
-						  .append("	AND D.STATUS = :statusDividaEmAberto ")
+						  .append("	AND D.STATUS in (:statusDividaEmAbertoPendente) ")
 						  .append("	AND C.DT_VENCIMENTO < :dataOperacao ");
 				
 		StringBuilder sql = new StringBuilder();
@@ -295,7 +295,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		.append("		) * 100) as percDivida, ")
 		.append("		COALESCE(DATEDIFF(:dataOperacao, ")
 		.append("				(SELECT MIN(D.DATA) FROM DIVIDA D WHERE D.COTA_ID = COTA_.ID ")
-		.append("												  AND D.STATUS = :statusDividaEmAberto ")
+		.append("												  AND D.STATUS in (:statusDividaEmAbertoPendente) ")
 		.append("												  AND D.DATA <= :dataOperacao) ")
 		.append("		),0) AS diasAberto ");
 		
@@ -345,7 +345,7 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		query.setParameter("dataOperacao", dataOperacao);
 		query.setParameter("ativo", SituacaoCadastro.ATIVO.name());
 		query.setParameter("acumulaDivida", StatusInadimplencia.ATIVA.name());
-		query.setParameter("statusDividaEmAberto", StatusDivida.EM_ABERTO.name());
+		query.setParameterList("statusDividaEmAbertoPendente", new String[]{StatusDivida.EM_ABERTO.name(), StatusDivida.PENDENTE.name()});
 	}
 
 private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
@@ -374,7 +374,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		.append("											FROM DIVIDA DIVIDA ")
 		.append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
 		.append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
-		.append("															   AND DIVIDA.STATUS = :statusDividaEmAberto ")
+		.append("															   AND DIVIDA.STATUS in (:statusDividaEmAbertoPendente) ")
 		.append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao ")
 		.append("															   AND COBRANCA_.TIPO_DOCUMENTO = :tipoDocumento )")
 			
@@ -402,7 +402,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		.append("											FROM DIVIDA DIVIDA ")
 		.append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
 		.append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
-		.append("															   AND DIVIDA.STATUS = :statusDividaEmAberto ")
+		.append("															   AND DIVIDA.STATUS in (:statusDividaEmAbertoPendente) ")
 		.append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao ")
 		.append("															   AND COBRANCA_.TIPO_DOCUMENTO = :tipoDocumento )")
 		
@@ -3186,7 +3186,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		this.setFromWhereCotasSujeitasSuspensao(hql);
 		
 		hql.insert(hql.indexOf("WHERE"), 
-			" JOIN DIVIDA AS D_ ON (D_.COTA_ID = COTA_.ID AND D_.STATUS = :statusDividaEmAberto AND D_.DATA <= :dataOperacao) ");
+			" JOIN DIVIDA AS D_ ON (D_.COTA_ID = COTA_.ID AND D_.STATUS in (:statusDividaEmAbertoPendente) AND D_.DATA <= :dataOperacao) ");
 		
 		Query query = this.getSession().createSQLQuery(hql.toString());
 		
