@@ -191,6 +191,7 @@ public class FuroProdutoServiceImpl implements FuroProdutoService {
 		produtoLancamentoDTO.setNovaDataLancamento(novaData);
 		
 		lancamento.setStatus(StatusLancamento.FURO);
+		lancamento.setSequenciaMatriz(null);
 		
 		// Ao furar um produto com nota de envio emitida, o item da nota eh removido
 		if (lancamento.getEstudo() != null) {
