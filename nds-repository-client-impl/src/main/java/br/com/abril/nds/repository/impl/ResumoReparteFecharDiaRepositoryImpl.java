@@ -49,7 +49,7 @@ public class ResumoReparteFecharDiaRepositoryImpl  extends AbstractRepository im
 	        .append(" where diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s) ")
 	        .append(" and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido).append(") as %s ").toString();
         
-        String templateHqlDiferencaRateioCota =  new StringBuilder("(select sum(diferenca.qtde * diferenca.produtoEdicao.precoVenda) ")
+        String templateHqlDiferencaRateioCota =  new StringBuilder("(select COALESCE( sum(diferenca.qtde * diferenca.produtoEdicao.precoVenda) ,0 ) ")
 	    	.append(" from Diferenca diferenca join diferenca.lancamentoDiferenca lancamentoDiferenca ")
 	        .append(" where  diferenca.dataMovimento = :data and diferenca.tipoDiferenca in (:%s) ")
 	        .append(" and diferenca.produtoEdicao.id in ").append(templateHqlProdutoEdicaoExpedido)
