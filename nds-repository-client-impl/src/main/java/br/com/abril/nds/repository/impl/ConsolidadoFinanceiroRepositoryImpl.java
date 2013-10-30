@@ -28,6 +28,7 @@ import br.com.abril.nds.dto.filtro.FiltroViewContaCorrenteCotaDTO;
 import br.com.abril.nds.model.financeiro.ConsolidadoFinanceiroCota;
 import br.com.abril.nds.model.financeiro.GrupoMovimentoFinaceiro;
 import br.com.abril.nds.model.financeiro.StatusBaixa;
+import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.ConsolidadoFinanceiroRepository;
 import br.com.abril.nds.vo.PaginacaoVO;
@@ -1001,7 +1002,10 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 			.append(" 	 AND cota.ID = cobranca.COTA_ID AND divida.CONSOLIDADO_ID = cfc.ID AND cfc.ID  ")
 			.append(" ) as saldo, ")
 
-		   .append(" coalesce(cfc.CONSIGNADO,0) - coalesce(cfc.ENCALHE,0) as valorVendaDia ")
+		   .append(" coalesce(cfc.CONSIGNADO,0) - coalesce(cfc.ENCALHE,0) as valorVendaDia, ")
+		   
+		   .append(" case when divida.STATUS = :statusPendenteInadimplencia then 1 else 0 end as inadimplente ")//FIXME
+		   
 		   .append(" from CONSOLIDADO_FINANCEIRO_COTA cfc ")
 		   .append(" inner join COTA cota on cota.ID = cfc.COTA_ID")
 		   .append(" inner join BOX box on cota.BOX_ID = box.ID ")
@@ -1340,7 +1344,9 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append("     inner join CONSOLIDADO_FINANCEIRO_COTA CON on CON.ID = CCC.CONSOLIDADO_FINANCEIRO_ID ")
 		   .append("     inner join COTA on COTA.ID = CON.COTA_ID ")
 		   .append(") and m.DATA = mfc.DATA ")
-		   .append("),0) as valorVendaDia ")
+		   .append("),0) as valorVendaDia, ")
+		   
+		   .append(" 0 as inadimplente ")
 		   
 		   .append(" from MOVIMENTO_FINANCEIRO_COTA mfc ")
 		   .append(" inner join COTA on COTA.ID = mfc.COTA_ID")
@@ -1394,6 +1400,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		query.addScalar("saldo", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("valorVendaDia", StandardBasicTypes.BIG_DECIMAL);
 		query.addScalar("numeroAcumulo", StandardBasicTypes.BIG_INTEGER);
+		query.addScalar("inadimplente", StandardBasicTypes.BOOLEAN);
 		
 		query.setResultTransformer(new AliasToBeanResultTransformer(ContaCorrenteCotaVO.class));
 		
@@ -1425,6 +1432,8 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		query.setParameter("naoPagoPostergado", StatusBaixa.NAO_PAGO_POSTERGADO.name());
 		
 		query.setParameter("grupoMovPendente", GrupoMovimentoFinaceiro.PENDENTE.name());
+		
+		query.setParameter("statusPendenteInadimplencia", StatusDivida.PENDENTE_INADIMPLENCIA.name());
 		
 		PaginacaoVO paginacao = filtro.getPaginacao();
 		if (paginacao != null) {

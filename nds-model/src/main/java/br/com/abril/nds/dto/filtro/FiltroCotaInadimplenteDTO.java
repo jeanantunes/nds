@@ -2,7 +2,9 @@ package br.com.abril.nds.dto.filtro;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
+import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.util.DateUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Exportable;
@@ -28,17 +30,9 @@ public class FiltroCotaInadimplenteDTO implements Serializable{
 	@Export(label = "Status")
 	private String statusCota;
 	
-	@Export(label = "Dividas Abertas")
-	private Boolean situacaoEmAberto; 
-	
-	@Export(label = "Dividas Pagas")
-	private Boolean situacaoPaga;
-	
-	@Export(label = "Dívidas Negociadas")
-	private Boolean situacaoNegociada;
+	private List<StatusDivida> statusDivida;
 	
 	private Date dataOperacaoDistribuidor;
-	
 	
 	private PaginacaoVO paginacao;
 	
@@ -110,28 +104,33 @@ public class FiltroCotaInadimplenteDTO implements Serializable{
 		this.statusCota = statusCota;
 	}
 
-	public Boolean getSituacaoEmAberto() {
-		return situacaoEmAberto;
+	/**
+	 * @param statusDivida the statusDivida to set
+	 */
+	public void setStatusDivida(List<StatusDivida> statusDivida) {
+		this.statusDivida = statusDivida;
 	}
 
-	public void setSituacaoEmAberto(Boolean situacaoEmAberto) {
-		this.situacaoEmAberto = situacaoEmAberto;
+	/**
+	 * @return the statusDivida
+	 */
+	public List<StatusDivida> getStatusDivida() {
+		return statusDivida;
 	}
 
-	public Boolean getSituacaoPaga() {
-		return situacaoPaga;
-	}
-
-	public void setSituacaoPaga(Boolean situacaoPaga) {
-		this.situacaoPaga = situacaoPaga;
-	}
-
-	public Boolean getSituacaoNegociada() {
-		return situacaoNegociada;
-	}
-
-	public void setSituacaoNegociada(Boolean situacaoNegociada) {
-		this.situacaoNegociada = situacaoNegociada;
+	@Export(label = "Status das dívidas")
+	public String getStatusDividaFormatado() {
+		
+		String statusFormatado = "";
+		
+		final String separator = ", ";
+		
+		for (StatusDivida status : this.statusDivida) {
+			
+			statusFormatado += separator + status.getDescricao();
+		}
+		
+		return statusFormatado.replaceFirst(separator, "");
 	}
 
 	/**
@@ -174,6 +173,9 @@ public class FiltroCotaInadimplenteDTO implements Serializable{
 		this.dataOperacaoDistribuidor = dataOperacaoDistribuidor;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -193,20 +195,16 @@ public class FiltroCotaInadimplenteDTO implements Serializable{
 				+ ((periodoAte == null) ? 0 : periodoAte.hashCode());
 		result = prime * result
 				+ ((periodoDe == null) ? 0 : periodoDe.hashCode());
-		result = prime
-				* result
-				+ ((situacaoEmAberto == null) ? 0 : situacaoEmAberto.hashCode());
-		result = prime
-				* result
-				+ ((situacaoNegociada == null) ? 0 : situacaoNegociada
-						.hashCode());
-		result = prime * result
-				+ ((situacaoPaga == null) ? 0 : situacaoPaga.hashCode());
 		result = prime * result
 				+ ((statusCota == null) ? 0 : statusCota.hashCode());
+		result = prime * result
+				+ ((statusDivida == null) ? 0 : statusDivida.hashCode());
 		return result;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -249,32 +247,16 @@ public class FiltroCotaInadimplenteDTO implements Serializable{
 				return false;
 		} else if (!periodoDe.equals(other.periodoDe))
 			return false;
-		if (situacaoEmAberto == null) {
-			if (other.situacaoEmAberto != null)
-				return false;
-		} else if (!situacaoEmAberto.equals(other.situacaoEmAberto))
-			return false;
-		if (situacaoNegociada == null) {
-			if (other.situacaoNegociada != null)
-				return false;
-		} else if (!situacaoNegociada.equals(other.situacaoNegociada))
-			return false;
-		if (situacaoPaga == null) {
-			if (other.situacaoPaga != null)
-				return false;
-		} else if (!situacaoPaga.equals(other.situacaoPaga))
-			return false;
 		if (statusCota == null) {
 			if (other.statusCota != null)
 				return false;
 		} else if (!statusCota.equals(other.statusCota))
 			return false;
+		if (statusDivida == null) {
+			if (other.statusDivida != null)
+				return false;
+		} else if (!statusDivida.equals(other.statusDivida))
+			return false;
 		return true;
-	}
-	
-	
-	
-	
-	
-	
+	}	
 }
