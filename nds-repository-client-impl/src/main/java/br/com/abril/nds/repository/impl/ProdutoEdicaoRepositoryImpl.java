@@ -2,6 +2,7 @@ package br.com.abril.nds.repository.impl;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -263,6 +264,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			
 			.append(" inner join produtoEdicao.produto produto		")
 			
+			.append(" inner join produtoEdicao.lancamentos lancamentos ")
+			
 			.append(" where 										")
 			
 			.append(" (produto.nome like :nomeProduto 				")
@@ -272,6 +275,8 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 			.append(" tipoMovimento.grupoMovimentoEstoque = :grupoMovimentoEstoque and	")
 
 			.append(" cota.numeroCota = :numeroCota ")
+			
+			.append(" and lancamentos.status in (:statusLancamento) ")
 			
 			.append(" group by produtoEdicao.id 					")
 			
@@ -288,6 +293,11 @@ public class ProdutoEdicaoRepositoryImpl extends AbstractRepositoryModel<Produto
 		query.setParameter("grupoMovimentoEstoque", GrupoMovimentoEstoque.RECEBIMENTO_REPARTE);
 		
 		query.setParameter("numeroCota", numeroCota);
+		
+		query.setParameterList(
+			"statusLancamento", 
+				Arrays.asList(
+					StatusLancamento.BALANCEADO_RECOLHIMENTO, StatusLancamento.EM_RECOLHIMENTO));
 		
 		query.setMaxResults(quantidadeRegisttros);
 		

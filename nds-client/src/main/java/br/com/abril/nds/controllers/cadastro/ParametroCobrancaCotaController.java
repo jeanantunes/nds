@@ -386,7 +386,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 		
 		this.salvarContrato(parametroCobranca.getInicioContrato(), parametroCobranca.getTerminoContrato());
 		
-		this.salvarTipoCota(parametroCobranca.getIdCota(), parametroCobranca.getTipoCota());
+		this.cotaService.salvarTipoCota(parametroCobranca.getIdCota(), parametroCobranca.getTipoCota());
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Parametros de Cobrança Cadastrados."),Constantes.PARAM_MSGS).recursive().serialize();
 	}
@@ -735,23 +735,6 @@ public class ParametroCobrancaCotaController extends BaseController {
 		return false;
 	}
 
-	private boolean salvarTipoCota(long idCota, TipoCota tipoCota){
-	
-		Cota cota = this.cotaService.obterPorId(idCota);
-		
-		if (!cota.getTipoCota().equals(tipoCota)){
-		
-			cota.setTipoCota(tipoCota);
-			
-			cota.setAlteracaoTipoCota(this.distribuidorService.obterDataOperacaoDistribuidor());
-			
-			this.cotaService.alterarCota(cota);
-			
-			return true;
-		}
-		
-		return false;
-	}
 
 	/**
 	 * Método responsável por postar os dados da aba financeiro que são específicos da cota.
@@ -772,7 +755,7 @@ public class ParametroCobrancaCotaController extends BaseController {
 			msg1 = "Contrato";
 		}
 		
-        if (this.salvarTipoCota(idCota, tipoCota)){
+        if (this.cotaService.salvarTipoCota(idCota, tipoCota)){
 			
         	msg2 = "Tipo da cota";
 		}

@@ -215,7 +215,7 @@ function imprimir(){
   </tr>
   <tr>
     <td>&nbsp;</td>
-    <td align="right"><strong> Desconto %</strong></td>
+    <td align="right"><strong>Valor Desconto R$</strong></td>
     <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrComDesconto}</td>
   </tr>
   <tr>
@@ -225,7 +225,7 @@ function imprimir(){
   </tr>
   <tr>
     <td>&nbsp;</td>
-    <td align="right"><strong>Encalhe</strong></td>
+    <td align="right"><strong>Valor Encalhe R$</strong></td>
     <td align="right" style="border-bottom:1px solid #000;">${cotaEmissao.vlrEncalhe}</td>
   </tr>
   <tr>

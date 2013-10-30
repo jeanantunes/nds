@@ -130,7 +130,7 @@ td { line-height: 20px!important; padding-left:3px; padding-right:3px; }
 				class="dadosNota"><strong><c:out value="${notaEnvio.destinatario.numeroCota}"/> - <c:out value="${notaEnvio.destinatario.nome}"/></strong></span></td>
 			<td colspan="3"
 				style="border-left: 1px solid #000; border-bottom: 1px solid #000;"><span
-				class="dadosNota">BOX:<c:out value="${notaEnvio.destinatario.codigoBox}"/> - ROTA:<c:out value="${notaEnvio.destinatario.codigoRota}"/> - <c:out value="${notaEnvio.destinatario.descricaoRota}"/></span></td>
+				class="dadosNota">BOX:<c:out value="${notaEnvio.destinatario.codigoBox}"/> - ROTA: <c:out value="${notaEnvio.destinatario.descricaoRota}"/></span></td>
 			<td
 				style="border-left: 1px solid #000; border-bottom: 1px solid #000; border-right: 1px solid #000;text-align: center;">
 			<span class="dadosNota">${dataLancamento}</span></td>
@@ -214,7 +214,7 @@ td { line-height: 20px!important; padding-left:3px; padding-right:3px; }
 				<td width="80" align="center"
 					style="border-bottom: 1px solid #000; padding-left: 5px;"><c:out value="${itemNotaEnvio.reparte}" /></td>
 				<td width="68" align="center"
-					style="border-left: 1px solid #000; border-bottom: 1px solid #000; border-right: 1px solid #000; padding-left: 5px;"><c:out value="${itemNotaEnvio.itemNotaEnvioPK.sequencia}" /></td>
+					style="border-left: 1px solid #000; border-bottom: 1px solid #000; border-right: 1px solid #000; padding-left: 5px;"><c:out value="${itemNotaEnvio.sequenciaMatrizLancamento}" /></td>
 			</tr>		
 		</c:forEach>
 		
