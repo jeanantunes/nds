@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -271,6 +273,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private BoletoService boletoService;
+	private static final Logger LOG = Logger.getLogger("fecharDiaLogger");
 	
 	@Override
 	@Transactional
@@ -1256,19 +1259,33 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		processarControleDeAprovacao();
 
+		LOG.info("FECHAMENTO DIARIO - PROCESSO CONTROLE DE APROVACAO CONCLUIDO");
+		
 		processarDividasNaoPagas(usuario, dataFechamento);
 		
-		try {
+		LOG.info("FECHAMENTO DIARIO - PROCESSADA DIVIDAS NAO PAGAS");
 		
+		try {
+
+			
 			FechamentoDiarioDTO fechamentoDiarioDTO = salvarResumoFechamentoDiario(usuario, dataFechamento);
+
+			LOG.info("FECHAMENTO DIARIO - SALVO RESUMO FECHAMENTO DIARIO");
 			
 			atualizarHistoricoEstoqueProduto(dataFechamento);
+
+			LOG.info("FECHAMENTO DIARIO - ATUALIZADO HISTORICO ESTOQUE PRODUTO ");
 			
 			this.processarLancamentosRecolhimento(usuario);
 
+			LOG.info("FECHAMENTO DIARIO - PROCESSADOS LANCAMENTO RECOLHIMENTO");
+
+			
 			return fechamentoDiarioDTO;
 		
 		} catch (FechamentoDiarioException e) {
+			
+			LOG.error("FALHA AO PROCESSAR FECHAMENTO DO DIA", e);
 			
 			throw new ValidacaoException(TipoMensagem.ERROR, e.getMessage());
 		}

@@ -13,6 +13,7 @@ import java.util.Set;
 
 import javax.xml.bind.ValidationException;
 
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -146,6 +147,8 @@ public class BoletoServiceImpl implements BoletoService {
 	
 	@Autowired
 	protected FormaCobrancaRepository formaCobrancaRepository;
+	
+	private static final Logger LOG = Logger.getLogger("fecharDiaLogger");
 	
 	/**
 	 * Método responsável por obter boletos por numero da cota
@@ -312,6 +315,8 @@ public class BoletoServiceImpl implements BoletoService {
 	@Transactional
 	public void adiarDividaBoletosNaoPagos(Usuario usuario, Date dataPagamento) {
 
+		LOG.info("INICIO PROCESSO ADIAMENTO DIVIDA BOLETO NAO PAGO");
+		
 		List<Cobranca> boletosNaoPagos = this.boletoRepository.obterBoletosNaoPagos(dataPagamento);
 		
 		boolean naoAcumulaDividas = this.distribuidorRepository.naoAcumulaDividas();
@@ -319,6 +324,8 @@ public class BoletoServiceImpl implements BoletoService {
 		Integer numeroMaximoAcumulosDistribuidor = this.distribuidorRepository.numeroMaximoAcumuloDividas();
 		
 		for (Cobranca boleto : boletosNaoPagos) {
+			
+			LOG.info("ADIANDO DIVIDA BOLETO NAO PAGO");
 			
 			Divida divida = boleto.getDivida();
 			
@@ -393,6 +400,8 @@ public class BoletoServiceImpl implements BoletoService {
 
 			} catch (IllegalArgumentException e) {
 			
+				LOG.error("FALHA AO ADIAR BOLETO DIVIDA NÃO PAGA", e);
+				
 				//Caso a dívida exceder o limite de acúmulos do distribuidor, 
 				//esta não será persistida, dando continuidade ao fluxo.
 				continue;
