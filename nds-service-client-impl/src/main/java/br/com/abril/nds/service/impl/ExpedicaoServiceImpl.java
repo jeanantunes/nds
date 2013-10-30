@@ -80,7 +80,7 @@ public class ExpedicaoServiceImpl implements ExpedicaoService {
 	@Override
 	public ExpedicaoDTO obterTotaisResumoExpedicaoPorProduto(FiltroResumoExpedicaoDTO filtro) {
 		
-		return expedicaoRepository.obterTotaisResumoExpedicaoPorProduto(filtro);
+		return expedicaoRepository.obterTotaisResumoExpedicaoPorProduto(false,false,filtro);
 	}
 	
 	@Transactional(readOnly = true)
