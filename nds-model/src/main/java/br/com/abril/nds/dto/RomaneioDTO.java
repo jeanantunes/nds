@@ -14,7 +14,11 @@ public class RomaneioDTO implements Serializable {
 	
 	private String nome;
 	
+	private String tipoLogradouro;
+	
 	private String logradouro;
+	
+	private String numeroLogradouro;
 	
 	private String bairro;
 	
@@ -96,11 +100,23 @@ public class RomaneioDTO implements Serializable {
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
+	public String getTipoLogradouro() {
+		return tipoLogradouro;
+	}
+	public void setTipoLogradouro(String tipoLogradouro) {
+		this.tipoLogradouro = tipoLogradouro;
+	}
 	public String getLogradouro() {
 		return logradouro;
 	}
 	public void setLogradouro(String logradouro) {
 		this.logradouro = logradouro;
+	}
+	public String getNumeroLogradouro() {
+		return numeroLogradouro;
+	}
+	public void setNumeroLogradouro(String numeroLogradouro) {
+		this.numeroLogradouro = numeroLogradouro;
 	}
 	public String getBairro() {
 		return bairro;

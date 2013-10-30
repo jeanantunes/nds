@@ -382,7 +382,9 @@ public class RomaneioRepositoryImpl extends AbstractRepositoryModel<Box, Long> i
 		hql.append(", roteiro.descricaoRoteiro as nomeRoteiro ");
 		hql.append(", rota.id as idRota ");
 		hql.append(", rota.descricaoRota as nomeRota ");
+		hql.append(", endereco.tipoLogradouro as tipoLogradouro ");
 		hql.append(", endereco.logradouro as logradouro ");
+		hql.append(", endereco.numero as numeroLogradouro ");
 		hql.append(", endereco.bairro as bairro ");		
 		hql.append(", endereco.cidade as cidade ");
 		hql.append(", endereco.uf as uf ");
