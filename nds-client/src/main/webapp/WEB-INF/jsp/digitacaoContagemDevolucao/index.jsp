@@ -103,12 +103,16 @@ $(function(){
 							</a> 
 							</span> 
 							
+							
+							<!-- NAO ESTA NA VRS STARDARD
 							<span class="bt_novos" title="Incluir Produtos">
 							<a isEdicao="true" href="javascript:;" onclick="digitacaoContagemDevolucaoController.incluirProdutoDialog();">
 							<img src="${pageContext.request.contextPath}/images/ico_add.gif" hspace="5" border="0">
 									Incluir Edições
 							</a>
 							</span>
+							-->
+							
 							
 							<span class="bt_novos" title="Gerar NF-e de Dev. ao Fornecedor" >
 							<a isEdicao="true" href="javascript:;" onclick="digitacaoContagemDevolucaoController.geraNota();">
