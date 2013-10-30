@@ -396,9 +396,10 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 		Collections.sort(listItemNotaEnvio, new Comparator<ItemNotaEnvio>(){
 			@Override
 			public int compare(ItemNotaEnvio o1, ItemNotaEnvio o2) {
+
 				return getNomeProdutoEdicao(o1).compareTo(getNomeProdutoEdicao(o2));
 			}
-			
+
 		});
 	}
 
