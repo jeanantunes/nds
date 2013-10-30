@@ -344,7 +344,6 @@ public class CotaRepositoryImpl extends AbstractRepositoryModel<Cota, Long> impl
 		query.setParameter("tipoDocumento", TipoCobranca.BOLETO.name());
 		query.setParameter("dataOperacao", dataOperacao);
 		query.setParameter("ativo", SituacaoCadastro.ATIVO.name());
-		query.setParameter("acumulaDivida", StatusInadimplencia.ATIVA.name());
 		query.setParameterList("statusDividaEmAbertoPendente", new String[]{StatusDivida.EM_ABERTO.name(), StatusDivida.PENDENTE.name()});
 	}
 
@@ -359,11 +358,13 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		.append(" AND ((POLITICACOTA.NUM_ACUMULO_DIVIDA IS NOT NULL ")
 		.append(" 		AND POLITICACOTA.NUM_ACUMULO_DIVIDA <> 0 ")
 		.append("		AND POLITICACOTA.NUM_ACUMULO_DIVIDA <= ( ")
-		.append("			SELECT COUNT(ACUMDIVIDA.DIVIDA_ID) AS QTDEDIVIDASATIVAS")
-		.append("				  FROM ACUMULO_DIVIDA ACUMDIVIDA ")
-		.append("				  JOIN DIVIDA DIVI ON DIVI.ID = ACUMDIVIDA.DIVIDA_ID ")
-		.append("				  JOIN COTA COTA_ACUMULO on (DIVI.COTA_ID=COTA_ACUMULO.ID) ")
-		.append("				  WHERE ACUMDIVIDA.STATUS = :acumulaDivida AND COTA_ACUMULO.ID=COTA_.ID) ")
+		.append("											SELECT count(DIVIDA.ID) ")
+		.append("											FROM DIVIDA DIVIDA ")
+		.append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
+		.append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
+		.append("															   AND DIVIDA.STATUS in (:statusDividaEmAbertoPendente) ")
+		.append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao ")
+		.append("															   AND COBRANCA_.TIPO_DOCUMENTO = :tipoDocumento )")
 		.append("	   ) ")
 		.append("	   OR ")
 		
@@ -387,11 +388,13 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 		.append("	    AND POLITICADISTRIB.NUM_ACUMULO_DIVIDA IS NOT NULL ")
 		.append("	    AND POLITICADISTRIB.NUM_ACUMULO_DIVIDA <> 0 ")
 		.append("		AND POLITICADISTRIB.NUM_ACUMULO_DIVIDA <= (")
-		.append("			SELECT COUNT(ACUMDIVIDA.DIVIDA_ID) AS QTDEDIVIDASATIVAS ")
-		.append("				  FROM ACUMULO_DIVIDA ACUMDIVIDA ")
-		.append("				  JOIN DIVIDA DIVI ON DIVI.ID = ACUMDIVIDA.DIVIDA_ID ")
-		.append("				  JOIN COTA COTA_ACUMULO on (DIVI.COTA_ID=COTA_ACUMULO.ID) ")
-		.append("				  WHERE ACUMDIVIDA.STATUS = :acumulaDivida AND COTA_ACUMULO.ID=COTA_.ID) ")
+		.append("											SELECT count(DIVIDA.ID) ")
+		.append("											FROM DIVIDA DIVIDA ")
+		.append("											JOIN COBRANCA COBRANCA_ ON (COBRANCA_.DIVIDA_ID=DIVIDA.ID) ")
+		.append("															   WHERE DIVIDA.COTA_ID=COTA_.ID ")
+		.append("															   AND DIVIDA.STATUS in (:statusDividaEmAbertoPendente) ")
+		.append("															   AND COBRANCA_.DT_VENCIMENTO < :dataOperacao ")
+		.append("															   AND COBRANCA_.TIPO_DOCUMENTO = :tipoDocumento )")
 		.append("	   ) ")
 		.append("	   OR ")
 		

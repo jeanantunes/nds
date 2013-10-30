@@ -52,6 +52,8 @@
 		<fieldDescription><![CDATA[qtdProduto5]]></fieldDescription>
 	</field>
 	<field name="numeroNotaEnvio" class="java.lang.Long"/>
+	<field name="tipoLogradouro" class="java.lang.String"/>
+	<field name="numeroLogradouro" class="java.lang.String"/>
 	<variable name="TOTAL_PROD_1" class="java.lang.Integer" calculation="Sum">
 		<variableExpression><![CDATA[$F{qtdProduto0}]]></variableExpression>
 	</variable>
@@ -352,7 +354,9 @@
 				<textElement verticalAlignment="Middle">
 					<font isStrikeThrough="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($F{logradouro} == null ? "" : $F{logradouro} + ", ")
+				<textFieldExpression><![CDATA[($F{tipoLogradouro} == null ? "" : $F{tipoLogradouro} + " ")
++ ($F{logradouro} == null ? "" : $F{logradouro} + ", ")
++ ($F{numeroLogradouro} == null ? "" : $F{numeroLogradouro} + ", ")
 + ($F{bairro} == null ? "" : $F{bairro} + ", ")
 + ($F{cidade} == null ? "" : $F{cidade} + ", ")
 + ($F{uf} == null ? "" : $F{uf})]]></textFieldExpression>

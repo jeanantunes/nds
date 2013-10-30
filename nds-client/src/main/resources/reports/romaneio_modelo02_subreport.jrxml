@@ -38,6 +38,8 @@
 	<field name="reparteTotal" class="java.lang.Number">
 		<fieldDescription><![CDATA[reparteTotal]]></fieldDescription>
 	</field>
+	<field name="tipoLogradouro" class="java.lang.String"/>
+	<field name="numeroLogradouro" class="java.lang.String"/>
 	<variable name="SOMA_REPARTE_TOTAL" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{reparteTotal}]]></variableExpression>
 	</variable>
@@ -242,7 +244,9 @@
 					<rightPen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[($F{logradouro} == null ? "" : $F{logradouro} + ", ")
+				<textFieldExpression><![CDATA[($F{tipoLogradouro} == null ? "" : $F{tipoLogradouro} + " ")
++ ($F{logradouro} == null ? "" : $F{logradouro} + ", ")
++ ($F{numeroLogradouro} == null ? "" : $F{numeroLogradouro} + ", ")
 + ($F{bairro} == null ? "" : $F{bairro} + ", ")
 + ($F{cidade} == null ? "" : $F{cidade} + ", ")
 + ($F{uf} == null ? "" : $F{uf})]]></textFieldExpression>
