@@ -554,11 +554,7 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNomeCota("Manoel da Silva");
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
-		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(true);
-		filtro.setSituacaoNegociada(false);
-		filtro.setStatusCota("Ativo");
+		filtro.setPeriodoAte("02/03/2012");		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
 		List<StatusDividaDTO> lista = dividaRepository.obterInadimplenciasCota(filtro);
@@ -576,9 +572,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(false);
-		filtro.setSituacaoNegociada(true);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -596,9 +589,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(false);
-		filtro.setSituacaoNegociada(true);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -616,9 +606,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(false);
-		filtro.setSituacaoNegociada(true);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(null);
 		
@@ -636,9 +623,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(true);
-		filtro.setSituacaoNegociada(false);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -657,9 +641,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(true);
-		filtro.setSituacaoNegociada(false);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -678,9 +659,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(true);
-		filtro.setSituacaoNegociada(false);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -699,9 +677,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(true);
-		filtro.setSituacaoNegociada(false);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -722,9 +697,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(true);
-		filtro.setSituacaoNegociada(false);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -743,9 +715,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(true);
-		filtro.setSituacaoNegociada(false);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -764,9 +733,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(true);
-		filtro.setSituacaoNegociada(false);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -785,9 +751,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(true);
-		filtro.setSituacaoNegociada(false);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -806,9 +769,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(true);
-		filtro.setSituacaoNegociada(false);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -835,9 +795,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(true);
-		filtro.setSituacaoNegociada(false);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		
@@ -863,9 +820,6 @@ public class DividaRepositoryImplTest extends AbstractRepositoryImplTest{
 		filtro.setNumCota(123);
 		filtro.setPeriodoDe("02/03/2009");
 		filtro.setPeriodoAte("02/03/2012");
-		filtro.setSituacaoEmAberto(true);
-		filtro.setSituacaoPaga(true);
-		filtro.setSituacaoNegociada(false);
 		filtro.setStatusCota("Ativo");
 		filtro.setPaginacao(new PaginacaoVO(1, 5, "ASC",ColunaOrdenacao.NOME.toString()));
 		

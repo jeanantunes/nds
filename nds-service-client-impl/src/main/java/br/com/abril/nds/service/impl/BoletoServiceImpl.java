@@ -333,7 +333,7 @@ public class BoletoServiceImpl implements BoletoService {
 
 				this.validarAcumuloDivida(divida, naoAcumulaDividas, numeroMaximoAcumulosDistribuidor);
 
-				divida.setStatus(StatusDivida.PENDENTE);
+				divida.setStatus(StatusDivida.PENDENTE_INADIMPLENCIA);
 				this.dividaRepository.alterar(divida);
 				
 				boleto.setStatusCobranca(StatusCobranca.NAO_PAGO);

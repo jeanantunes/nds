@@ -87,7 +87,7 @@ var inadimplenciaController = $.extend(true, {
 					display : 'Dias em Atraso',
 					name : 'diasAtraso',
 					width : 75,
-					sortable : true,
+					sortable : false,
 					align : 'center'
 				}, {
 					display : 'Detalhes',
@@ -115,24 +115,24 @@ var inadimplenciaController = $.extend(true, {
 		var numCota = $('#idNumCota', inadimplenciaController.workspace).attr('value');
 		var nomeCota = $('#idNomeCota', inadimplenciaController.workspace).attr('value');
 		var statusCota = $('#idStatusCota', inadimplenciaController.workspace).attr('value');
+
+		var params= [{name:'periodoDe',value : periodoDe},
+			        {name:'periodoAte',value : periodoAte},
+			        {name:'numCota',value : numCota},
+			        {name:'nomeCota',value : nomeCota},
+			        {name:'statusCota',value : statusCota}];
 		
-		var situacaoEmAberto = ( $('#idDividaEmAberto', inadimplenciaController.workspace).attr('checked') == "checked" ) ;	
-		var situacaoNegociada = ( $('#idDividaNegociada', inadimplenciaController.workspace).attr('checked') == "checked" );
-		var situacaoPaga = ( $('#idDividaPaga', inadimplenciaController.workspace).attr('checked') == "checked" );
+		$("input[name='checkgroup_menu_divida']").each(function(index, value) {
+			if (this.checked) {
+				params.push({name: 'statusDivida['+index+']', value:value.id});
+			}
+		});
 
 		$(".inadimplenciaGrid", inadimplenciaController.worlspace).flexOptions({			
 			url : contextPath + '/inadimplencia/pesquisar',
 			dataType : 'json',
 			preProcess:inadimplenciaController.processaRetornoPesquisa,
-			
-			params:[{name:'periodoDe',value : periodoDe},
-			        {name:'periodoAte',value : periodoAte},
-			        {name:'numCota',value : numCota},
-			        {name:'nomeCota',value : nomeCota},
-			        {name:'statusCota',value : statusCota},
-			        {name:'situacaoEmAberto',value : situacaoEmAberto},
-			        {name:'situacaoNegociada',value : situacaoNegociada},
-			        {name:'situacaoPaga',value : situacaoPaga}]		
+			params: params
 		});
 		
 		$(".inadimplenciaGrid", inadimplenciaController.workspace).flexReload();

@@ -2,6 +2,7 @@ package br.com.abril.nds.controllers.financeiro;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
@@ -92,7 +93,8 @@ public class InadimplenciaController extends BaseController {
 	@Path("/")
 	public void index() {
 		gerarListaStatus();
-		result.forwardTo(InadimplenciaController.class).inadimplencia();
+		this.result.include("statusDivida", StatusDivida.values());
+		this.result.forwardTo(InadimplenciaController.class).inadimplencia();
 	}
 
 	private void gerarListaStatus() {
@@ -109,13 +111,13 @@ public class InadimplenciaController extends BaseController {
 	
 	public void pesquisar( Integer page, Integer rp, String sortname, String sortorder,
 			String periodoDe, String periodoAte, String nomeCota, Integer numCota, String statusCota, 
-			boolean situacaoEmAberto, boolean situacaoNegociada, boolean situacaoPaga) {
+			List<StatusDivida> statusDivida) {
 		
 		List<String> mensagens = new ArrayList<String>();
 		TipoMensagem status = TipoMensagem.SUCCESS;
 		TableModel<CellModelKeyValue<StatusDividaDTO>> grid = new TableModel<CellModelKeyValue<StatusDividaDTO>>();
 		
-		if (!situacaoEmAberto && !situacaoNegociada && !situacaoPaga) {
+		if (statusDivida == null) {
 			
 			mensagens.add(WARNING_PESQUISA_VALIDACAO_SITUACAO);
 			status=TipoMensagem.WARNING;
@@ -140,9 +142,9 @@ public class InadimplenciaController extends BaseController {
 			filtroAtual.setNomeCota(nomeCota);
 			filtroAtual.setPeriodoDe(periodoDe);
 			filtroAtual.setPeriodoAte(periodoAte);
-			filtroAtual.setSituacaoEmAberto(situacaoEmAberto);
-			filtroAtual.setSituacaoPaga(situacaoPaga);
-			filtroAtual.setSituacaoNegociada(situacaoNegociada);
+			
+			filtroAtual.setStatusDivida(statusDivida);
+			
 			filtroAtual.setDataOperacaoDistribuidor(distribuidorService.obterDataOperacaoDistribuidor());
 			
 			if(statusCota!= null && !statusCota.equals("none")) {

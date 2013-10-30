@@ -221,10 +221,15 @@ var contaCorrenteCotaController = $.extend(true, {
 						               
 				value.cell.saldo = (value.cell.saldo != null && value.cell.saldo != 0)?
                                    (formatMoneyValue(value.cell.saldo * -1, 2)) : '0.00'; 
+
+               if (value.cell.inadimplente) {
 				
-				if (value.cell.cobrado){
+            	   value.cell.cobrado = '<img src="'+ contextPath +'/images/seta_sobe.gif"/>';
+               
+               } else if (value.cell.cobrado){
 					
 					value.cell.cobrado = '<img src="'+ contextPath +'/images/bt_financeiro.png"/>';
+				
 				} else {
 					
 					value.cell.cobrado = '<img src="'+ contextPath +'/images/ico_boletos.gif"/>';
