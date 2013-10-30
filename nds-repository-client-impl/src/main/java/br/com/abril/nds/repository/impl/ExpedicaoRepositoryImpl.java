@@ -96,7 +96,7 @@ public class ExpedicaoRepositoryImpl extends AbstractRepositoryModel<Expedicao,L
 		
 		sql.append(" FROM (");
 
-		sql.append("     SELECT SUM( innerQuery.qntReparte ) as qntReparte, ");
+		sql.append("     SELECT SUM(innerQuery.qntReparte) + COALESCE( "+ this.getQntDiferencaResumoLancamento() +", 0) as qntReparte, ");
 		
 		sql.append("            innerQuery.precoCapa * ( SUM(innerQuery.qntReparte) + COALESCE( "+ this.getQntDiferencaResumoLancamento() +", 0) ) AS totalValorFaturado ");
 		
