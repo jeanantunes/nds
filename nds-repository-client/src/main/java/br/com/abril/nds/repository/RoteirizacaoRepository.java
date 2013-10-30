@@ -96,5 +96,8 @@ public interface RoteirizacaoRepository extends Repository<Roteirizacao, Long> {
 	 * @return
 	 */
 	Box obterBoxDoPDV(Long... idPdv);
+	
+	List<Integer> obterNumerosCotaOrdenadosRoteirizacao();
+	
 }
 

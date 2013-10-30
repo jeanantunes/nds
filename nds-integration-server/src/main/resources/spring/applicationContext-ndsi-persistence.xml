@@ -35,6 +35,25 @@
 		</property>
 	</bean>
 	
+	<bean id="sessionFactoryGfs" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource" ref="dataSourceGfs" />
+		<property name="packagesToScan" value="br.com.abril.nds" />
+		<property name="hibernateProperties">
+			<props>			
+				<prop key="hibernate.dialect">org.hibernate.dialect.Oracle10gDialect</prop>
+				<prop key="hibernate.show_sql">true</prop>
+				<prop key="hibernate.format_sql">true</prop>				
+				<prop key="hibernate.connection.characterEncoding">UTF-8</prop>
+				<!-- prop key="hibernate.hbm2ddl.auto">update</prop -->
+				<prop key="hibernate.c3p0.min_size">5</prop>	
+				<prop key="hibernate.c3p0.max_size">20</prop>	
+				<prop key="hibernate.c3p0.timeout">300</prop>	
+				<prop key="hibernate.c3p0.max_statements">50</prop>	
+				<prop key="hibernate.c3p0.idle_test_period">3000</prop>				
+			</props>
+		</property>
+	</bean>
+	
 	<bean id="sessionFactoryIcd" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
 		<property name="dataSource" ref="dataSourceIcd" />
 		<property name="packagesToScan" value="br.com.abril.nds" />
@@ -65,8 +84,13 @@
 		<property name="sessionFactory" ref="sessionFactoryIcd" />
 	</bean>
 	
+	<bean id="transactionManagerGfs"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactoryGfs" />
+	</bean>
 		
 	<tx:annotation-driven transaction-manager="transactionManager" />
 	<tx:annotation-driven transaction-manager="transactionManagerIcd" />
+	<tx:annotation-driven transaction-manager="transactionManagerGfs" />
 	
 </beans>

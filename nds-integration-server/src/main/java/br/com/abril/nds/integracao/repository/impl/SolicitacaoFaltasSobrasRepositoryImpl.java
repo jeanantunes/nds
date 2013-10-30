@@ -3,10 +3,7 @@ package br.com.abril.nds.integracao.repository.impl;
 import java.util.Date;
 import java.util.Set;
 
-import org.apache.commons.lang.time.DateFormatUtils;
 import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
@@ -21,7 +18,7 @@ import br.com.abril.nds.model.integracao.icd.pks.DfsPK;
 import br.com.abril.nds.model.integracao.icd.pks.MfsPK;
 
 @Repository
-@Transactional("transactionManagerIcd")
+@Transactional("transactionManagerGfs")
 public class SolicitacaoFaltasSobrasRepositoryImpl extends AbstractRepositoryModel<SolicitacaoFaltaSobra, Long>
 		implements SolicitacaoFaltasSobrasRepository {
 
@@ -57,7 +54,7 @@ public class SolicitacaoFaltasSobrasRepositoryImpl extends AbstractRepositoryMod
 	@Override
 	public SolicitacaoFaltaSobra recuperaSolicitacao(Long codigoDistribuidor, Date dataSolicitacao, String horaSolicitacao) {
 
-		return (SolicitacaoFaltaSobra) getSessionIcd()
+		return (SolicitacaoFaltaSobra) getSessionGfs()
 			.createCriteria(SolicitacaoFaltaSobra.class, "s")
 			.createAlias("s.itens", "d")			
 			.createAlias("d.motivoSituacaoFaltaSobra","m", JoinType.LEFT_OUTER_JOIN)
@@ -76,7 +73,7 @@ public class SolicitacaoFaltasSobrasRepositoryImpl extends AbstractRepositoryMod
 	
 	@Override
 	public void save(SolicitacaoFaltaSobra sfs) {
-		this.getSessionIcd().persist(sfs);		
+		this.getSessionGfs().persist(sfs);		
 	}
 
 	@Override
@@ -88,7 +85,7 @@ public class SolicitacaoFaltasSobrasRepositoryImpl extends AbstractRepositoryMod
 		id.setDataSolicitacao(pkItem.getDataSolicitacao());
 		id.setHoraSolicitacao(pkItem.getHoraSolicitacao());
 		id.setNumeroSequencia(pkItem.getNumeroSequencia());
-		return (MotivoSituacaoFaltaSobra) getSessionIcd().get(MotivoSituacaoFaltaSobra.class, id);		
+		return (MotivoSituacaoFaltaSobra) getSessionGfs().get(MotivoSituacaoFaltaSobra.class, id);		
 	}
 	
 }

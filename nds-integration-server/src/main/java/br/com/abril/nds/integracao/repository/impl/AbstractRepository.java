@@ -15,6 +15,9 @@ public class AbstractRepository {
 		
 	@Autowired
 	private SessionFactory sessionFactoryIcd;
+	
+	@Autowired
+	private SessionFactory sessionFactoryGfs;
 		
 	@Autowired
 	private CouchDbProperties couchDbProperties;
@@ -29,6 +32,10 @@ public class AbstractRepository {
 	
 	protected Session getSessionIcd() {		
 		return sessionFactoryIcd.getCurrentSession();
+	}
+	
+	protected Session getSessionGfs() {		
+		return sessionFactoryGfs.getCurrentSession();
 	}
 	
 	/**
