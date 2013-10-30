@@ -598,6 +598,25 @@ public class RoteirizacaoRepositoryImpl extends AbstractRepositoryModel<Roteiriz
 		
 		return (Box) query.uniqueResult();
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Integer> obterNumerosCotaOrdenadosRoteirizacao() {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select cota.numeroCota from Roteirizacao r "); 
+		hql.append(" join r.box b ");
+		hql.append(" join r.roteiros roteiro ");
+		hql.append(" join roteiro.rotas rota ");
+		hql.append(" join rota.rotaPDVs rotaPdv ");
+		hql.append(" join rotaPdv.pdv pdv ");
+		hql.append(" join pdv.cota cota ");
+		hql.append(" order by b.id, roteiro.ordem, rota.ordem, rotaPdv.ordem ");
+		
+		Query query  = getSession().createQuery(hql.toString());
+		
+		return query.list();
+	}
 
 }
 

@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -53,6 +52,7 @@ import br.com.abril.nds.repository.MovimentoEstoqueCotaRepository;
 import br.com.abril.nds.repository.NotaEnvioRepository;
 import br.com.abril.nds.repository.PdvRepository;
 import br.com.abril.nds.repository.RotaRepository;
+import br.com.abril.nds.repository.RoteirizacaoRepository;
 import br.com.abril.nds.repository.TelefoneCotaRepository;
 import br.com.abril.nds.repository.TelefoneRepository;
 import br.com.abril.nds.service.CotaService;
@@ -113,6 +113,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	
 	@Autowired
 	private UsuarioService usuarioService;
+	
+	@Autowired
+	private RoteirizacaoRepository roteirizacaoRepository;
 	
 	// Trava para evitar duplicidade ao gerar notas de envio por mais de um usuario simultaneamente
 	// O HashMap suporta os mais detalhes e pode ser usado futuramente para restricoes mais finas
@@ -789,67 +792,48 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	}
 
 	/**
-	 * Agrupa Lista de Notas de Envio por Roteirização 
-	 * @param notasEnvio
-	 * @return Map<Integer,List<NotaEnvio>>
-	 */
-	private TreeMap<Integer,List<NotaEnvio>> ordenarNotasEnvioPorRoteirizacao(List<NotaEnvio> notasEnvio){
-		
-		TreeMap<Integer,List<NotaEnvio>> mapNotasEnvioPorRoteirizacao = new TreeMap<Integer, List<NotaEnvio>>();
-		
-		List<NotaEnvio> notasEnvioIteracao = new ArrayList<NotaEnvio>();
-		
-		for (NotaEnvio ne : notasEnvio){
-			
-			String roteirizacao = "";
-			
-			roteirizacao += ne.getDestinatario().getCodigoBox();
-			
-			roteirizacao += ne.getDestinatario().getCodigoRota();
-			
-			Integer roteirizacaoInt = Integer.valueOf(roteirizacao);
-	
-			notasEnvioIteracao = mapNotasEnvioPorRoteirizacao.get(roteirizacaoInt);
-				
-			notasEnvioIteracao = notasEnvioIteracao==null?new ArrayList<NotaEnvio>():notasEnvioIteracao;
-				
-			notasEnvioIteracao.add(ne);
-				
-			mapNotasEnvioPorRoteirizacao.put(roteirizacaoInt, notasEnvioIteracao);
-		}
-		
-		return mapNotasEnvioPorRoteirizacao;
-	}
-	
-	/**
-	 * Ordena Lista de Notas de Envio por Roteirização e Numero da Cota do Destinatário
-	 * @param notasEnvio
+	 * Ordena a lista de Notas de Envio por Roteirização. 
+	 * 
+	 * @param notasEnvio - lista de notas de envio
+	 * 
 	 * @return List<NotaEnvio>
 	 */
-	private List<NotaEnvio> ordenarNotasEnvioPorRoteirizacaoENumeroCota(List<NotaEnvio> notasEnvio){
+	private List<NotaEnvio> ordenarNotasEnvioPorRoteirizacao(List<NotaEnvio> notasEnvio) {
 		
-		List<NotaEnvio> notasEnvioPorRoteirizacaoENumeroCota = new ArrayList<NotaEnvio>();
+		HashMap<Integer, List<NotaEnvio>> mapaNotasEnvioPorCota = 
+			new HashMap<Integer, List<NotaEnvio>>();
 		
-		TreeMap<Integer,List<NotaEnvio>> mapNotasEnvioPorRoteirizacao = this.ordenarNotasEnvioPorRoteirizacao(notasEnvio);
-		
-		TreeMap<Integer, NotaEnvio> mapNotasEnvioPorNumeroCota;
-		
-		for ( Map.Entry<Integer,List<NotaEnvio>> notasEnvioPorRoteirizacao : mapNotasEnvioPorRoteirizacao.entrySet()){
+		for (NotaEnvio ne : notasEnvio) {
 			
-			/*
-			mapNotasEnvioPorNumeroCota = new TreeMap<Integer, NotaEnvio>();
+			Integer numeroCota = ne.getDestinatario().getNumeroCota();
 			
-
-			for (NotaEnvio notaEnvio : notasEnvioPorRoteirizacao.getValue()){
+			List<NotaEnvio> nes =
+				mapaNotasEnvioPorCota.get(numeroCota);
+			
+			if (nes == null) {
 				
-				mapNotasEnvioPorNumeroCota.put(notaEnvio.getDestinatario().getNumeroCota(), notaEnvio);
+				nes = new ArrayList<NotaEnvio>();
 			}
-			*/
-
-			notasEnvioPorRoteirizacaoENumeroCota.addAll(notasEnvioPorRoteirizacao.getValue());
+			
+			nes.add(ne);
+			
+			mapaNotasEnvioPorCota.put(numeroCota, nes);
 		}
-
-		return notasEnvioPorRoteirizacaoENumeroCota;
+		
+		List<Integer> numerosCotaOrdenadosPelaRoteirizacao = 
+			this.roteirizacaoRepository.obterNumerosCotaOrdenadosRoteirizacao();
+		
+		List<NotaEnvio> notasEnvioOrdenadas = new ArrayList<>();
+		
+		for (Integer numeroCota : numerosCotaOrdenadosPelaRoteirizacao) {
+			
+			if (mapaNotasEnvioPorCota.containsKey(numeroCota)) {
+			
+				notasEnvioOrdenadas.addAll(mapaNotasEnvioPorCota.get(numeroCota));
+			}
+		}
+		
+		return notasEnvioOrdenadas;
 	}
 
 	/**
@@ -897,7 +881,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 								  mapEstudosCota.get(idCota));
 		}
 		
-		return this.ordenarNotasEnvioPorRoteirizacaoENumeroCota(notasEnvio);
+		return this.ordenarNotasEnvioPorRoteirizacao(notasEnvio);
 	}
 
 	/**
