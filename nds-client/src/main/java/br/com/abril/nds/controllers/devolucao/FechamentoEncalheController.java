@@ -209,7 +209,7 @@ public class FechamentoEncalheController extends BaseController {
 	
 	@Path("/salvar")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_ALTERACAO)
-	public void salvar(List<FechamentoFisicoLogicoDTO> listaFechamento, List<Long> listaNaoReplicados,
+	public void salvar(List<FechamentoFisicoLogicoDTO> listaFechamento, List<FechamentoFisicoLogicoDTO> listaNaoReplicados,
 					   boolean isAllFechamentos, String dataEncalhe, Long fornecedorId, Long boxId) {
 		
 		List<FechamentoFisicoLogicoDTO> todosFechamentos = this.consultarItensFechamentoEncalhe(dataEncalhe, fornecedorId, boxId, false, null, null, 0, 0);
@@ -817,7 +817,7 @@ public class FechamentoEncalheController extends BaseController {
 	@Path("/salvarNoEncerrementoOperacao")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_FECHAMENTO_ENCALHE_ALTERACAO)
 	public void salvarNoEncerrementoOperacao(List<FechamentoFisicoLogicoDTO> listaFechamento,
-											 List<Long> listaNaoReplicados, boolean isAllFechamentos, 
+											 List<FechamentoFisicoLogicoDTO> listaNaoReplicados, boolean isAllFechamentos, 
 											 String dataEncalhe, Long fornecedorId, Long boxId) {
 		
 		if (isAllFechamentos || (listaNaoReplicados != null && !listaNaoReplicados.isEmpty())) {
@@ -835,7 +835,7 @@ public class FechamentoEncalheController extends BaseController {
 	
 	private void gravaFechamentoEncalhe(
 			List<FechamentoFisicoLogicoDTO> listaFechamento,
-			List<Long> listaNaoSelecionados, boolean isAllFechamentos, 
+			List<FechamentoFisicoLogicoDTO> listaNaoReplicados, boolean isAllFechamentos, 
 			String dataEncalhe, Long fornecedorId, Long boxId) {
 		FiltroFechamentoEncalheDTO filtro = new FiltroFechamentoEncalheDTO();
 		filtro.setDataEncalhe(DateUtil.parseDataPTBR(dataEncalhe));
@@ -843,9 +843,9 @@ public class FechamentoEncalheController extends BaseController {
 		filtro.setBoxId(boxId);
 		filtro.setCheckAll(isAllFechamentos);
 		if (boxId == null){ 
-			fechamentoEncalheService.salvarFechamentoEncalhe(filtro,listaFechamento, listaNaoSelecionados);
+			fechamentoEncalheService.salvarFechamentoEncalhe(filtro,listaFechamento, listaNaoReplicados);
 		} else {
-			fechamentoEncalheService.salvarFechamentoEncalheBox(filtro, listaFechamento, listaNaoSelecionados);
+			fechamentoEncalheService.salvarFechamentoEncalheBox(filtro, listaFechamento, listaNaoReplicados);
 		}
 	}
 	

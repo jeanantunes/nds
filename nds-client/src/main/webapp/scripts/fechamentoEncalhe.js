@@ -222,9 +222,9 @@ var fechamentoEncalheController = $.extend(true, {
 		$(".fechamentoGrid", fechamentoEncalheController.workspace).flexReload();
 		$(".grids", fechamentoEncalheController.workspace).show();
 		
-		this.vDataEncalhe = $('#datepickerDe', fechamentoEncalheController.workspace).val();
-		vFornecedorId = $('#selectFornecedor', fechamentoEncalheController.workspace).val();
-		vBoxId = $('#selectBoxEncalhe', fechamentoEncalheController.workspace).val();
+		fechamentoEncalheController.vDataEncalhe = $('#datepickerDe', fechamentoEncalheController.workspace).val();
+		fechamentoEncalheController.vFornecedorId = $('#selectFornecedor', fechamentoEncalheController.workspace).val();
+		fechamentoEncalheController.vBoxId = $('#selectBoxEncalhe', fechamentoEncalheController.workspace).val();
 		
 	},
 	preprocessamentoGridFechamento : function(resultado) {
@@ -248,8 +248,8 @@ var fechamentoEncalheController = $.extend(true, {
 			}
 			
 			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
-			qtdFisico = fechamentoEncalheController.fechamentosManuais[row.cell.produtoEdicao] ;
-			row.cell.fisico = '<input class="" isEdicao="true" type="text" value="'+ (qtdFisico != undefined ? qtdFisico : "") +'" onkeypress="fechamentoEncalheController.nextInputExemplares('+index+',event); fechamentoEncalheController.retirarCheckBox('+index+', ' + row.cell.produtoEdicao + ');" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" value="' + valorFisico + '" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ', ' +row.cell.produtoEdicao+')" ' + fechado + '/>';
+			
+			row.cell.fisico = '<input class="" isEdicao="true" type="text" value="'+ (valorFisico != undefined ? valorFisico : "") +'" onkeypress="fechamentoEncalheController.nextInputExemplares('+index+',event); fechamentoEncalheController.retirarCheckBox('+index+', ' + row.cell.produtoEdicao + ');" tabindex="'+index+'" style="width: 60px" id = "'+row.cell.produtoEdicao+'"  name="fisico" onchange="fechamentoEncalheController.onChangeFisico(this, ' + index + ', ' +row.cell.produtoEdicao+')" ' + fechado + '/>';
 
 			if((row.cell.replicar == 'true' || fechamentoEncalheController.checkAllGrid) && ($.inArray(row.cell.produtoEdicao, fechamentoEncalheController.nonSelected) < 0)) {
 				row.cell.replicar = '<input isEdicao="true" type="checkbox" onchange="fechamentoEncalheController.selecionarLinha('+ row.cell.produtoEdicao +', this.checked)" id="ch'+index+'" name="checkgroupFechamento" onclick="fechamentoEncalheController.replicar(' + index + ');"' + fechado+ ' checked />';
@@ -261,8 +261,7 @@ var fechamentoEncalheController = $.extend(true, {
 				$('.divBotoesPrincipais', fechamentoEncalheController.workspace).hide();
 			}
 			
-			row.cell.diferenca = row.cell.exemplaresDevolucaoFormatado - (qtdFisico != undefined ? qtdFisico : row.cell.exemplaresDevolucaoFormatado);
-			
+			row.cell.diferenca = (valorFisico != undefined ? valorFisico : row.cell.exemplaresDevolucaoFormatado) - parseInt(row.cell.exemplaresDevolucaoFormatado);
 		});
 		
 		return resultado;
@@ -271,6 +270,8 @@ var fechamentoEncalheController = $.extend(true, {
 	selecionarLinha: function (idProdutoEdicao, checked) {
 		
 		if (fechamentoEncalheController.checkAllGrid && !checked) {
+			
+			var fisico = $("#" + idProdutoEdicao, fechamentoEncalheController.workspace).val();
 			
 			fechamentoEncalheController.nonSelected.push(idProdutoEdicao);
 		}
@@ -1057,9 +1058,9 @@ var fechamentoEncalheController = $.extend(true, {
 		var dataEncalhe = $("#datepickerDe", fechamentoEncalheController.workspace).val();
 		
 		window.location = contextPath + "/devolucao/fechamentoEncalhe/imprimirArquivo?"
-			+ "dataEncalhe=" + vDataEncalhe
-			+ "&fornecedorId="+ vFornecedorId
-			+ "&boxId=" + vBoxId
+			+ "dataEncalhe=" + fechamentoEncalheController.vDataEncalhe
+			+ "&fornecedorId="+ fechamentoEncalheController.vFornecedorId
+			+ "&boxId=" + fechamentoEncalheController.vBoxId
 			+ "&sortname=" + $(".fechamentoGrid", fechamentoEncalheController.workspace).flexGetSortName()
 			+ "&sortorder=" + $(".fechamentoGrid", fechamentoEncalheController.workspace).getSortOrder()
 			+ "&rp=" + $(".fechamentoGrid", fechamentoEncalheController.workspace).flexGetRowsPerPage()
@@ -1151,9 +1152,10 @@ var fechamentoEncalheController = $.extend(true, {
 		 data.push({name:"boxId", value: $('#selectBoxEncalhe', fechamentoEncalheController.workspace).val()});
 		 
 		 if (fechamentoEncalheController.nonSelected) {
-		 
+
 			 $.each(fechamentoEncalheController.nonSelected, function(index, value) {
-				data.push({name:'listaNaoReplicados[' + index + ']', value: value});			 
+				data.push({name:'listaNaoReplicados[' + index + '].produtoEdicao', value: value});
+				data.push({name:'listaNaoReplicados[' + index + '].fisico', value: $("#" + value, fechamentoEncalheController.workspace).val()});
 			 });
 
 			 data.push({name:"isAllFechamentos", value: fechamentoEncalheController.checkAllGrid});
@@ -1225,13 +1227,18 @@ var fechamentoEncalheController = $.extend(true, {
 	},
 	
 	retirarCheckBox : function(index,idProdutoEdicao) {
-		if($("#ch" + index).is(":checked")) {
+		
+		if ($("#ch" + index).is(":checked")) {
+			
 			$("#ch" + index).attr("checked", false);
-			fechamentoEncalheController.nonSelected.push(idProdutoEdicao);
 		}
-		if($("#sel").is(":checked")) {
+		
+		if ($("#sel").is(":checked")) {
+			
 			$("#sel").attr("checked", false);
 		}
+		
+		fechamentoEncalheController.nonSelected.push(idProdutoEdicao);
 	},
 	
 	obterStatusCobrancaCota : function() {
