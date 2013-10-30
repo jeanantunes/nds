@@ -135,7 +135,7 @@ public interface CotaService {
 	 *
 	 * @return Cota - cota suspensa
 	 */
-	Cota suspenderCota(Long idCota, Usuario usuario, MotivoAlteracaoSituacao motivoAlteracaoSituacao);
+	Cota suspenderCota(Long idCota, Usuario usuario, Date dataInicioValidade, MotivoAlteracaoSituacao motivoAlteracaoSituacao);
 
 	/**
 	 * Suspende lista de cotas e retorna dados básicos das cota suspensas com

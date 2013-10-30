@@ -637,7 +637,9 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	 */
 	private void suspenderCota(Long idCota, Usuario usuario) {
 		
-		cotaService.suspenderCota(idCota, usuario, MotivoAlteracaoSituacao.CHAMADAO);
+		Date dataInicioValidade = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		cotaService.suspenderCota(idCota, usuario, dataInicioValidade, MotivoAlteracaoSituacao.CHAMADAO);
 	}
 	
 }
