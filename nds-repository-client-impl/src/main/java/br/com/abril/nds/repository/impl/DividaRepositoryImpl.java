@@ -156,6 +156,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		param.put("data", filtro.getDataMovimento());
 		param.put("acumulaDivida", Boolean.FALSE);
 		param.put("statusCobranca", StatusCobranca.NAO_PAGO);
+		param.put("pendenteAcumulada", StatusDivida.PENDENTE_INADIMPLENCIA);
 		
 		if(!isBoleto){
 			param.put("tipoCobrancaBoleto",TipoCobranca.BOLETO);
@@ -242,7 +243,8 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		.append(" divida.data =:data ")
 		.append(" AND divida.acumulada =:acumulaDivida ")
 		.append(" AND cobranca.statusCobranca=:statusCobranca ")
-		.append(" AND pdv.caracteristicas.pontoPrincipal = true ");
+		.append(" AND pdv.caracteristicas.pontoPrincipal = true ")
+		.append(" AND divida.status != :pendenteAcumulada ");
 		
 		
 		if(filtro.getNumeroCota()!= null  ){
@@ -363,9 +365,9 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		HashMap<String,Object> params = new HashMap<>();
 		
-		HashMap<String, List<String>> paramsList = new HashMap<>();
+		HashMap<String, List<?>> paramsList = new HashMap<>();
 		
-		tratarFiltro(sql,params,filtro);
+		tratarFiltro(sql,params,paramsList,filtro);
 		
 		paramsList.put("gruposMovimentoEstoque", Arrays.asList(GrupoMovimentoEstoque.RECEBIMENTO_REPARTE.name()));
 		
@@ -409,7 +411,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		return query.list();
 	}	
 		
-	private void tratarFiltro(StringBuilder sql, HashMap<String, Object> params, FiltroCotaInadimplenteDTO filtro) {
+	private void tratarFiltro(StringBuilder sql, HashMap<String, Object> params, HashMap<String, List<?>> paramsList, FiltroCotaInadimplenteDTO filtro) {
 		
 		boolean whereUtilizado = false;
 		
@@ -457,53 +459,48 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 			sql.append(" COTA_.SITUACAO_CADASTRO = :statusCota ");
 			params.put("statusCota",filtro.getStatusCota());
 		}
-		
-		if (filtro.getSituacaoEmAberto() != null && filtro.getSituacaoEmAberto()  
-				|| filtro.getSituacaoNegociada() != null && filtro.getSituacaoNegociada()  
-				|| filtro.getSituacaoPaga() != null && filtro.getSituacaoPaga()) {
-		
+		if (filtro.getStatusDivida() != null && !filtro.getStatusDivida().isEmpty()) {
+
 			sql.append(" AND ( ");
 			
-			boolean utilizarOr = false;
+			boolean utilizarAnd = false;
 			
-			if (filtro.getSituacaoEmAberto()) {
+			if (filtro.getStatusDivida().contains(StatusDivida.EM_ABERTO) || 
+					filtro.getStatusDivida().contains(StatusDivida.PENDENTE) ||
+					filtro.getStatusDivida().contains(StatusDivida.PENDENTE_INADIMPLENCIA) ||
+					filtro.getStatusDivida().contains(StatusDivida.POSTERGADA)) {
 				
-				sql.append(" (COBRANCA_.DT_VENCIMENTO <= :dataAtual AND ");
-				sql.append(" DIVIDA_.STATUS in (:statusDividaAberto ,:statusDividaPendente)) ");
-				
-				utilizarOr = true;
-				
-				Date dataOperacao = filtro.getDataOperacaoDistribuidor();
-				
-				params.put("dataAtual", (dataOperacao == null) ? new Date() : dataOperacao);
-				params.put("statusDividaAberto", StatusDivida.EM_ABERTO.name());
-				params.put("statusDividaPendente", StatusDivida.PENDENTE.name());
+				sql.append(" COBRANCA_.DT_VENCIMENTO <= :dataAtual ");
+				params.put("dataAtual", filtro.getDataOperacaoDistribuidor());
+				utilizarAnd = true;			
 			}
-			
-			if (filtro.getSituacaoNegociada()) {
+
+			if (filtro.getStatusDivida().contains(StatusDivida.NEGOCIADA) || 
+					filtro.getStatusDivida().contains(StatusDivida.QUITADA)) {
 				
-				sql.append(utilizarOr ? " OR " : "");
-				
-				sql.append(" (COBRANCA_.DT_PAGAMENTO > COBRANCA_.DT_VENCIMENTO ");
-				sql.append(" AND DIVIDA_.STATUS = :statusDividaNegogiada) ");
-				
-				utilizarOr = true;
-				
-				params.put("statusDividaNegogiada", StatusDivida.NEGOCIADA.name());
+				sql.append(utilizarAnd ? " AND ( COBRANCA_.DT_PAGAMENTO IS NULL OR " : "");
+				sql.append(" COBRANCA_.DT_PAGAMENTO > COBRANCA_.DT_VENCIMENTO ");
+				sql.append(utilizarAnd ? "  ) " : "");
 			}
-			
-			if (filtro.getSituacaoPaga()) {
-				
-				sql.append(utilizarOr ? " OR " : "");
-				
-				sql.append(" (COBRANCA_.DT_PAGAMENTO > COBRANCA_.DT_VENCIMENTO ");
-				sql.append(" AND DIVIDA_.STATUS = :statusDividaQuitada) ");
-				
-				params.put("statusDividaQuitada", StatusDivida.QUITADA.name());
-			}
-			
-			sql.append(" ) ");
 		}
+		
+		sql.append(" ) ");
+			
+		sql.append(" AND DIVIDA_.STATUS in (:statusDivida) ");
+		
+		paramsList.put("statusDivida", this.parseListaStatusDivida(filtro.getStatusDivida()));
+	}
+	
+	private List<String> parseListaStatusDivida(List<StatusDivida> statusDividas) {
+		
+		List<String> parsedStatus = new ArrayList<>();
+		
+		for (StatusDivida statusDivida : statusDividas) {
+			
+			parsedStatus.add(statusDivida.name());
+		}
+		
+		return parsedStatus;
 	}
 
 	private String obterOrderByInadimplenciasCota(FiltroCotaInadimplenteDTO filtro) {
@@ -560,12 +557,18 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		HashMap<String,Object> params = new HashMap<String, Object>();
 		
-		tratarFiltro(sql,params,filtro);
+		HashMap<String, List<?>> paramsList = new HashMap<>();
+		
+		tratarFiltro(sql,params,paramsList,filtro);
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		
 		for(String key : params.keySet()){
 			query.setParameter(key, params.get(key));
+		}
+		
+		for(String key : paramsList.keySet()){
+			query.setParameterList(key, paramsList.get(key));
 		}
 		
 		return ((BigInteger) query.uniqueResult()).longValue();
@@ -580,12 +583,18 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		HashMap<String,Object> params = new HashMap<String, Object>();
 		
-		tratarFiltro(sql,params,filtro);
+		HashMap<String, List<?>> paramsList = new HashMap<>();
+		
+		tratarFiltro(sql,params,paramsList,filtro);
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		
 		for(String key : params.keySet()){
 			query.setParameter(key, params.get(key));
+		}
+		
+		for(String key : paramsList.keySet()){
+			query.setParameterList(key, paramsList.get(key));
 		}
 		
 		return ((BigInteger) query.uniqueResult()).longValue();
@@ -600,12 +609,18 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		HashMap<String,Object> params = new HashMap<String, Object>();
 		
-		tratarFiltro(sql,params,filtro);
+		HashMap<String, List<?>> paramsList = new HashMap<>();
+		
+		tratarFiltro(sql,params,paramsList,filtro);
 		
 		Query query = getSession().createSQLQuery(sql.toString());
 		
 		for(String key : params.keySet()){
 			query.setParameter(key, params.get(key));
+		}
+		
+		for(String key : paramsList.keySet()){
+			query.setParameterList(key, paramsList.get(key));
 		}
 		
 		if (query.uniqueResult() == null)

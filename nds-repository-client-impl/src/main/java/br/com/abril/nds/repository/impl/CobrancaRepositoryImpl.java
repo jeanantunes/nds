@@ -216,7 +216,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 		hql.append(" left join c.divida divida ");
 		hql.append(" where c.cota.numeroCota = :ncota ");
 		hql.append(" and baixa.statusAprovacao is null ");
-		hql.append(" and divida.status != :statusPendente ");
+		hql.append(" and divida.status != :statusPendenteInadimplencia ");
 		
 		
 		if (filtro.getDataVencimento()!=null){
@@ -272,7 +272,7 @@ public class CobrancaRepositoryImpl extends AbstractRepositoryModel<Cobranca, Lo
 			query.setParameter("data", filtro.getDataVencimento());
 		}
 		
-		query.setParameter("statusPendente", StatusDivida.PENDENTE);
+		query.setParameter("statusPendenteInadimplencia", StatusDivida.PENDENTE_INADIMPLENCIA);
 
         if (filtro.getPaginacao() != null) {
 			if (filtro.getPaginacao().getPosicaoInicial() != null) {
