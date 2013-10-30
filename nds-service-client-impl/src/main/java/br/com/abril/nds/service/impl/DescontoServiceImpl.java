@@ -233,7 +233,7 @@ public class DescontoServiceImpl implements DescontoService {
 		if(fornecedores != null && !fornecedores.isEmpty()) {
 			
 			Distribuidor distribuidor = distribuidorRepository.obter();
-			Date dataAtual = new Date();
+			Date dataAtual = distribuidorRepository.obterDataOperacaoDistribuidor();
 			
 			/*
 			 * Cria um desconto a ser utilizado em um ou mais fornecedores
@@ -288,7 +288,7 @@ public class DescontoServiceImpl implements DescontoService {
 			throw new ValidacaoException(TipoMensagem.WARNING,"O campo Desconto deve ser preenchido!");
 		}
 
-		Date dataAtual = new Date();
+		Date dataAtual = distribuidorRepository.obterDataOperacaoDistribuidor();
 		
 		Distribuidor distribuidor = distribuidorRepository.obter(); 
 		
@@ -375,7 +375,7 @@ public class DescontoServiceImpl implements DescontoService {
 		
 		Distribuidor distribuidor = this.distribuidorRepository.obter();
 		
-		Date dataAtual = new Date();
+		Date dataAtual = distribuidorRepository.obterDataOperacaoDistribuidor();
 
 		/**
 		 * 		Produto | ProdutoEdicao | QuantidadeEdicoes | Cota Especifica

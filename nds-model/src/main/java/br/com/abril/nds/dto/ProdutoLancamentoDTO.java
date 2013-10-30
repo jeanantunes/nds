@@ -455,6 +455,10 @@ public class ProdutoLancamentoDTO implements Serializable {
 		this.alteradoInteface = alteradoInteface;
 	}
 	
+	public boolean isStatusLancamentoFuro() {
+		return StatusLancamento.FURO.equals(status);
+	}
+	
 	public boolean isStatusLancamentoEmBalanceamento() {
 		return StatusLancamento.EM_BALANCEAMENTO.equals(status);
 	}

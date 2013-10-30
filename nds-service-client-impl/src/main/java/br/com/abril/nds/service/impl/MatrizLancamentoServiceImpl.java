@@ -1445,7 +1445,8 @@ public class MatrizLancamentoServiceImpl implements MatrizLancamentoService {
 		
 		if (this.isProdutoConfirmado(produtoLancamento)
 				|| (produtoLancamento.isStatusLancamentoEmBalanceamento()
-						&& isDataNoPeriodo)) {
+					|| produtoLancamento.isStatusLancamentoFuro()
+					&& isDataNoPeriodo)) {
 			
 			return false;
 		}

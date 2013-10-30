@@ -1151,14 +1151,15 @@ var fecharDiaController =  $.extend(true, {
 		
 		$.postJSON(contextPath + "/administracao/fecharDia/obterResumoQuadroReparte", null,
 				function(result){					
-					$("#totalReparte", fecharDiaController.workspace).html(result.totalReparteFormatado);
-					$("#totalSobras", fecharDiaController.workspace).html(result.totalSobrasFormatado);
-					$("#totalFaltas", fecharDiaController.workspace).html(result.totalFaltasFormatado);
-					$("#totalTransferencia", fecharDiaController.workspace).html(result.totalsTranferenciasFormatado);
-					$("#totalADistribuir", fecharDiaController.workspace).html(result.totalDistribuirFormatado);
-					$("#totalDistribuido", fecharDiaController.workspace).html(result.totalDistribuidoFormatado);
-					$("#totalSobraDistribuido", fecharDiaController.workspace).html(result.totalSobraDistribuicaoFormatado);
-					$("#totalDiferenca", fecharDiaController.workspace).html(result.totalDiferencaFormatado);
+
+					$("#totalReparte").html(result.totalReparteFormatado);
+					$("#totalSobras").html(result.totalSobrasFormatado);
+					$("#totalFaltas").html(result.totalFaltasFormatado);
+					$("#totalTransferencia").html(result.totalTransferenciasFormatado);
+					$("#totalADistribuir").html(result.totalDistribuirFormatado);
+					$("#totalDistribuido").html(result.totalDistribuidoFormatado);
+					$("#totalSobraDistribuido").html(result.totalSobraDistribuicaoFormatado);
+					$("#totalDiferenca").html(result.totalDiferencaFormatado);
 				}
 			);
 	},
