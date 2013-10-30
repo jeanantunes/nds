@@ -704,9 +704,11 @@ public class CotaServiceImpl implements CotaService {
 		
 		Usuario usuario = usuarioRepository.buscarPorId(idUsuario);
 		
+		Date dataInicioValidade = this.distribuidorRepository.obterDataOperacaoDistribuidor();
+		
 		for(Long id:idCotas) {	
 			
-			cotasSuspensas.add(suspenderCota(id, usuario, motivoAlteracaoSituacao));
+			cotasSuspensas.add(suspenderCota(id, usuario, dataInicioValidade, motivoAlteracaoSituacao));
 		}	
 		
 		return cotasSuspensas;
@@ -714,7 +716,7 @@ public class CotaServiceImpl implements CotaService {
 
 	@Override
 	@Transactional
-	public Cota suspenderCota(Long idCota, Usuario usuario, MotivoAlteracaoSituacao motivoAlteracaoSituacao) {
+	public Cota suspenderCota(Long idCota, Usuario usuario, Date dataInicioValidade, MotivoAlteracaoSituacao motivoAlteracaoSituacao) {
 				
 		Cota cota = obterPorId(idCota);
 		
@@ -731,15 +733,16 @@ public class CotaServiceImpl implements CotaService {
 		historico.setResponsavel(usuario);
 		historico.setMotivo(motivoAlteracaoSituacao);
 		historico.setTipoEdicao(TipoEdicao.ALTERACAO);
-		historico.setDataInicioValidade(new Date());
+		historico.setDataInicioValidade(dataInicioValidade);
+		historico.setProcessado(true);
 		
-		historicoSituacaoCotaRepository.merge(historico);
+		this.historicoSituacaoCotaRepository.merge(historico);
 		
 		cota.setSituacaoCadastro(SituacaoCadastro.SUSPENSO);
 		
-		cotaRepository.alterar(cota);
+		this.cotaRepository.alterar(cota);
 		
-		situacaoCotaService.removerAgendamentosAlteracaoSituacaoCota(cota.getId());
+		this.situacaoCotaService.removerAgendamentosAlteracaoSituacaoCota(cota.getId());
 		
 		return cota;
 	}
