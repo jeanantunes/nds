@@ -11,19 +11,27 @@ import org.springframework.transaction.annotation.Transactional;
 import br.com.abril.nds.dto.ReparteFecharDiaDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
 import br.com.abril.nds.repository.ResumoReparteFecharDiaRepository;
+import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.ResumoReparteFecharDiaService;
 import br.com.abril.nds.vo.PaginacaoVO;
+
 
 @Service
 public class ResumoReparteFecharDiaServiceImpl  implements ResumoReparteFecharDiaService {
 
 	@Autowired
 	private ResumoReparteFecharDiaRepository resumoFecharDiaRepository;
+	
+	@Autowired
+	private CalendarioService calendarioService;
 
 	@Override
 	@Transactional
 	public List<ReparteFecharDiaDTO> obterResumoReparte(Date dataOperacao, PaginacaoVO paginacao) {
-		return this.resumoFecharDiaRepository.obterResumoReparte(dataOperacao, paginacao);
+		
+		Date dataReparteHistoico = calendarioService.subtrairDiasUteis(dataOperacao, 1);
+		
+		return this.resumoFecharDiaRepository.obterResumoReparte(dataOperacao, paginacao,dataReparteHistoico);
 	}
 
     @Override
@@ -40,7 +48,10 @@ public class ResumoReparteFecharDiaServiceImpl  implements ResumoReparteFecharDi
     @Transactional(readOnly = true)
     public SumarizacaoReparteDTO obterSumarizacaoReparte(Date data) {
         Objects.requireNonNull(data, "Data para sumarização do reparte não deve ser nula!");
-        return resumoFecharDiaRepository.obterSumarizacaoReparte(data);
+        
+        Date dataReparteHistoico = calendarioService.subtrairDiasUteis(data, 1);
+        
+        return resumoFecharDiaRepository.obterSumarizacaoReparte(data,dataReparteHistoico);
     }
 
 }

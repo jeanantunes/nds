@@ -15,8 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import br.com.abril.nds.client.annotation.Rules;
@@ -80,7 +79,7 @@ import br.com.caelum.vraptor.view.Results;
 @Rules(Permissao.ROLE_ADMINISTRACAO_FECHAR_DIA)
 public class FecharDiaController extends BaseController {
     
-    private static final Logger LOG = LoggerFactory.getLogger(FecharDiaController.class);
+	private static final Logger LOG = Logger.getLogger("fecharDiaLogger");
 	
 	@Autowired
 	private FecharDiaService fecharDiaService;
@@ -135,6 +134,8 @@ public class FecharDiaController extends BaseController {
 	@Post
 	@Rules(Permissao.ROLE_ADMINISTRACAO_FECHAR_DIA_ALTERACAO)
 	public void inicializarValidacoes(Date data){
+		
+		LOG.info("FAZENDO VALIDAÇÕES");
 		
 		if (data != null && !data.equals(dataOperacao)) {
 			
@@ -515,7 +516,12 @@ public class FecharDiaController extends BaseController {
 	@Post
 	public void confirmar() {
 		//Unlock na base de dados
+		
+		LOG.info("INICIO CONFIRMA FECHAMENTO DIA");
+		
 		this.fecharDiaService.setLockBancoDeDados(false);
+
+		LOG.info("LOCK DE BANCO ATIVADO");
 		
 		this.session.setAttribute(INACTIVE_INTERVAL, this.session.getMaxInactiveInterval());
 		
@@ -523,14 +529,22 @@ public class FecharDiaController extends BaseController {
 			
 			//evita que a sessão expire antes que o fechamento do dia seja finalizado
 			this.session.setMaxInactiveInterval(-1);
-			
+
+			LOG.info("SESSION CONFIGURADA PARA ATIVA PERMANENTE");
+
 			Date _dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 			
 			Boolean hasPendenciaValidacao = this.fecharDiaService.existePendenciasDeAprovacao(_dataOperacao);
 			
 			if (hasPendenciaValidacao == null || !hasPendenciaValidacao) {
-		        
+
+				LOG.info("INICIO PROCESSAMENTO FECHAMENTO DIA");
+				
 		        FechamentoDiarioDTO dto = this.fecharDiaService.processarFechamentoDoDia(getUsuarioLogado(), _dataOperacao);
+		        
+				LOG.info("FINALIZADO PROCESSAMENTO FECHAMENTO DIA");
+
+		        
 		        setFechamentoDiarioDTO(dto);
 		        
 		        //this.session.removeAttribute(ATRIBUTO_SESSAO_POSSUI_PENDENCIAS_VALIDACAO);
@@ -553,9 +567,13 @@ public class FecharDiaController extends BaseController {
 		    }
 		    
 		} catch (RuntimeException ex) {
-		    clearFechamentoDiarioDTO();
-		    LOG.error("ERRO AO CONFIRMAR FECHAMENTO DO DIA!", ex);
-		    throw ex;
+		    
+			LOG.error("ERRO AO CONFIRMAR FECHAMENTO DO DIA!", ex);
+
+			clearFechamentoDiarioDTO();
+
+			throw ex;
+			
 		}
 	}
 
@@ -640,16 +658,22 @@ public class FecharDiaController extends BaseController {
     @Post
     public Download gerarRelatorioFechamentoDiario(ModoDownload modoDownload) {
         
+    	LOG.info("FECHAMENTO DIARIO - INICIO GERACAO RELATORIO FECHAMENTO DIARIO");
+    	
     	//volta o valor original de inativação da sessão
     	if (this.session.getAttribute(INACTIVE_INTERVAL) != null){
     		
     		this.session.setMaxInactiveInterval((int) this.session.getAttribute(INACTIVE_INTERVAL));
     		this.session.removeAttribute(INACTIVE_INTERVAL);
     	}
+
+    	LOG.info("FECHAMENTO DIARIO - RETIRADA CONFIGURACAO DE SESSION PERMANENTE");
     	
     	FechamentoDiarioDTO dto = getFechamentoDiarioDTO();
         
         byte[] relatorio = RelatorioFechamentoDiario.exportPdf(dto);
+        
+    	LOG.info("FECHAMENTO DIARIO - OBTIDO BYTES RELATORIO FECHAR DIA");
 
         if (relatorio != null) {
             long size = relatorio.length;
@@ -664,8 +688,14 @@ public class FecharDiaController extends BaseController {
             
             InputStreamDownload download = new InputStreamDownload(inputStream, FileType.PDF.getContentType(),
                     FECHAMENTO_DIARIO_REPORT_EXPORT_NAME, true, size);
+            
+        	LOG.info("FECHAMENTO DIARIO - RETORNANDO RELATORIO FECHAR DIA");
+
             return download;
         }
+        
+    	LOG.info("FECHAMENTO DIARIO - RELATORIO NAO GERADO");
+        
         return null;
     }
     
