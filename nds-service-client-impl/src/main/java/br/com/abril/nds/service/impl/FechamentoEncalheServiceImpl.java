@@ -382,7 +382,7 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 	@Override
 	@Transactional
 	public void salvarFechamentoEncalhe(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento, 
-										List<Long> listaNaoReplicados) {
+										List<FechamentoFisicoLogicoDTO> listaNaoReplicados) {
 
 		FechamentoFisicoLogicoDTO fechamento;
 		Long qtd;
@@ -391,11 +391,14 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 			
 			fechamento = listaFechamento.get(i);
 
-			if (listaNaoReplicados != null && listaNaoReplicados.contains(fechamento.getProdutoEdicao())) {
+			FechamentoFisicoLogicoDTO fechamentoNaoReplicado =
+				this.selecionarFechamentoPorProdutoEdicao(listaNaoReplicados, fechamento.getProdutoEdicao());
 			
-				qtd = fechamento.getFisico();
+			if (fechamentoNaoReplicado != null) {
+				
+				qtd = fechamentoNaoReplicado.getFisico();
 
-			} else if (filtro.isCheckAll() || (listaNaoReplicados != null && !listaNaoReplicados.contains(fechamento.getProdutoEdicao()))) {
+			} else if (filtro.isCheckAll()) {
 
 				qtd = fechamento.getExemplaresDevolucao().longValue();
 			
@@ -1067,17 +1070,57 @@ public class FechamentoEncalheServiceImpl implements FechamentoEncalheService {
 		}
 	}
 
+	private FechamentoFisicoLogicoDTO selecionarFechamentoPorProdutoEdicao(List<FechamentoFisicoLogicoDTO> fechamentos, 
+																		   Long codigoProdutoEdicao) {
+		
+		if (fechamentos == null 
+				|| fechamentos.isEmpty()
+				|| codigoProdutoEdicao == null) {
+			
+			return null;
+		}
+		
+		for (FechamentoFisicoLogicoDTO fechamento : fechamentos) {
+			
+			if (codigoProdutoEdicao.equals(fechamento.getProdutoEdicao())) {
+				
+				return fechamento;
+			}
+		}
+		
+		return null;
+	}
+	
 	@Override
 	@Transactional
-	public void salvarFechamentoEncalheBox(FiltroFechamentoEncalheDTO filtro, List<FechamentoFisicoLogicoDTO> listaFechamento, 
-										   List<Long> listaNaoSelecionados) {
+	public void salvarFechamentoEncalheBox(FiltroFechamentoEncalheDTO filtro, 
+			                           	   List<FechamentoFisicoLogicoDTO> listaFechamento, 
+										   List<FechamentoFisicoLogicoDTO> listaNaoReplicados) {
 		
 		
 		FechamentoFisicoLogicoDTO fechamento;
 		Long qtd;
+		
 		for (int i=0; i < listaFechamento.size(); i++) {
+			
 			fechamento = listaFechamento.get(i);
-			qtd = fechamento.getFisico();
+			
+			FechamentoFisicoLogicoDTO fechamentoNaoReplicado =
+				this.selecionarFechamentoPorProdutoEdicao(listaNaoReplicados, fechamento.getProdutoEdicao());
+			
+			if (fechamentoNaoReplicado != null) {
+				
+				qtd = fechamentoNaoReplicado.getFisico();
+
+			} else if (filtro.isCheckAll()) {
+
+				qtd = fechamento.getExemplaresDevolucao().longValue();
+			
+			} else {
+				
+				qtd = 0l;
+			}
+			
 			FechamentoEncalhePK id = new FechamentoEncalhePK();
 			id.setDataEncalhe(filtro.getDataEncalhe());
 			ProdutoEdicao pe = new ProdutoEdicao();
