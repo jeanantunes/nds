@@ -193,7 +193,7 @@ public class ChamadaoRepositoryImpl extends AbstractRepositoryModel<Cota,Long> i
 		
 		StringBuilder hql = new StringBuilder();
 		
-		hql.append("select ")
+		hql.append("select distinct ")
 			.append("produto.codigo as codigoProduto, ")
 			.append("produto.nome as nomeProduto, ")
 			.append("produtoEdicao.numeroEdicao as numeroEdicao, ")
