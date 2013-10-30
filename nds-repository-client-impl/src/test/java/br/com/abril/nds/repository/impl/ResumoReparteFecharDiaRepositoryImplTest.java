@@ -54,7 +54,7 @@ public class ResumoReparteFecharDiaRepositoryImplTest extends AbstractDataUtilRe
 
     @Test
     public void testObterResumoReparte() {
-        List<ReparteFecharDiaDTO> resultado = repository.obterResumoReparte(distribuidor.getDataOperacao());
+        List<ReparteFecharDiaDTO> resultado = repository.obterResumoReparte(distribuidor.getDataOperacao(),null);
         Assert.assertNotNull(resultado);
         Assert.assertEquals(3, resultado.size());
         
@@ -116,7 +116,7 @@ public class ResumoReparteFecharDiaRepositoryImplTest extends AbstractDataUtilRe
     @Test
     public void testObterResumoRepartePaginado() {
         PaginacaoVO paginacao = new PaginacaoVO(1, 2, null);
-        List<ReparteFecharDiaDTO> resultado = repository.obterResumoReparte(distribuidor.getDataOperacao(), paginacao);
+        List<ReparteFecharDiaDTO> resultado = repository.obterResumoReparte(distribuidor.getDataOperacao(), paginacao,null);
         Assert.assertEquals(2, resultado.size());
         
         ReparteFecharDiaDTO reparteVeja = resultado.get(0);
@@ -126,7 +126,7 @@ public class ResumoReparteFecharDiaRepositoryImplTest extends AbstractDataUtilRe
         Assert.assertEquals(produtoQuatroRodas.getNome(), reparteQuatroRodas.getNomeProduto());
         
         paginacao = new PaginacaoVO(2, 2, null);
-        resultado = repository.obterResumoReparte(distribuidor.getDataOperacao(), paginacao);
+        resultado = repository.obterResumoReparte(distribuidor.getDataOperacao(), paginacao,null);
         Assert.assertEquals(1, resultado.size()); 
         
         ReparteFecharDiaDTO reparteSuper = resultado.get(0);
@@ -150,13 +150,13 @@ public class ResumoReparteFecharDiaRepositoryImplTest extends AbstractDataUtilRe
     public void testObterSumarioReparte_por_data_operacao() {
     	
         @SuppressWarnings("deprecation")
-		SumarizacaoReparteDTO sumario = repository.obterSumarizacaoReparte(distribuidor.getDataOperacao());  
+		SumarizacaoReparteDTO sumario = repository.obterSumarizacaoReparte(distribuidor.getDataOperacao(),null);  
     }
     
     @Test
     public void testObterSumarioReparte() {
         
-    	repository.obterSumarizacaoReparte(distribuidor.getDataOperacao());
+    	repository.obterSumarizacaoReparte(distribuidor.getDataOperacao(),null);
         
         Assert.assertTrue(true);
         
