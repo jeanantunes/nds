@@ -402,11 +402,9 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 			open: informacoesProdutoController.itensRegiao(estudo),
 			open: informacoesProdutoController.baseEstudo(estudo),
 			open: informacoesProdutoController.caracteristicasProduto(codProd, numeroEdicao),
-			open: informacoesProdutoController.openDetalhe(codProd, numeroEdicao),
-			open: informacoesProdutoController.detalhes_MinimoEAbrangencia(estudo, codProd, numeroEdicao),
-			open: informacoesProdutoController.detalhes_ReparteTotalEPromocional(codProd, numeroEdicao),
-			open: informacoesProdutoController.detalhes_ReparteDistribuido(codProd),
-			open: informacoesProdutoController.detalhes_ReparteSobra(estudo),
+			open: informacoesProdutoController.openDetalhe(codProd, numeroEdicao), //CAPA
+//			open: informacoesProdutoController.detalhes_ReparteDistribuido(codProd),
+			open: informacoesProdutoController.detalhes_estudo(estudo),
 			open: informacoesProdutoController.detalhes_venda(codProd, numeroEdicao),
 			
 			buttons: {
@@ -472,7 +470,7 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		
 		var precoCapa = "#precoCapa";
 		informacoesProdutoController.validarCamposVazios(result.precoVenda, precoCapa);
-		informacoesProdutoController.formatarCasasDecimais(result.precoVenda, precoCapa);
+//		informacoesProdutoController.formatarCasasDecimais(result.precoVenda, precoCapa);
 		
 		var pctPadrao = "#pctPadrao";
 		informacoesProdutoController.validarCamposVazios(result.pacotePadrao, pctPadrao);
@@ -489,41 +487,6 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		
 	},
 	
-	detalhes_MinimoEAbrangencia : function (estudo, codProd, numeroEdicao){
-		
-		$.postJSON(contextPath + "/distribuicao/informacoesProduto/buscarAbrangenciaEMinimo",
-				{
-			"idEstudo":estudo,
-			"codProduto":codProd,
-			"numEdicao":numeroEdicao
-				},
-				function(result) {
-					informacoesProdutoController.dadosMinimoEAbrangencia(result);
-				});
-		
-	},
-	
-	dadosMinimoEAbrangencia : function(result){
-		
-		
-		var sgAbrang = "#sugeridoAbrang";
-		informacoesProdutoController.validarCamposVazios(result.abrangenciaSugerida, sgAbrang);
-		informacoesProdutoController.formatarCasasDecimais(result.abrangenciaSugerida, sgAbrang);
-
-		var apAbrang = "#apuradaAbrang"; 
-		informacoesProdutoController.validarCamposVazios(result.abrangenciaApurada, apAbrang);
-		informacoesProdutoController.formatarCasasDecimais(result.abrangenciaApurada, apAbrang);
-		
-		var sgMin = "#sugeridoMinimo";
-		informacoesProdutoController.validarCamposVazios(result.minimoSugerido, sgMin);
-		informacoesProdutoController.formatarCasasDecimais(result.minimoSugerido, sgMin);
-		
-		var estudoMin = "#estudoMinimo";
-		informacoesProdutoController.validarCamposVazios(result.minimoEstudoId, estudoMin);
-		informacoesProdutoController.formatarCasasDecimais(result.minimoEstudoId, estudoMin);
-		
-
-	},
 	
 	validarCamposVazios : function (valor, campo){
 		if((valor==0) || (valor==undefined)){
@@ -542,31 +505,7 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 		} 
 	},
 	
-	detalhes_ReparteTotalEPromocional : function (codProd, numeroEdicao){
-		
-		$.postJSON(contextPath + "/distribuicao/informacoesProduto/buscarRepartesTotalEPromocional",
-				{
-			"codProduto":codProd,
-			"numEdicao":numeroEdicao
-				},
-				function(result) {
-					informacoesProdutoController.dadosReparte(result);
-				});
-	},
-	
-	dadosReparte : function(result){
-		
-		var repTotal = "#reparteTotal";
-		informacoesProdutoController.validarCamposVazios(result.reparteTotal, repTotal);
-		informacoesProdutoController.formatarCasasDecimais(result.reparteTotal, repTotal);
-		
-		var repProm = "#repartePromocional";
-		informacoesProdutoController.validarCamposVazios(result.repartePromocional, repProm);
-		informacoesProdutoController.formatarCasasDecimais(result.repartePromocional, repProm);
-		
-	},
-	
-	detalhes_ReparteSobra : function (estudo){
+	detalhes_estudo : function (estudo){
 		
 		$.postJSON(contextPath + "/distribuicao/informacoesProduto/buscarReparteSobra",
 				{
@@ -579,27 +518,38 @@ $(".itensRegioesEspecificasGrid").flexigrid({
 	
 	dadosReparteSobra : function(result){
 		
-		var sobra = "#sobra";
-		informacoesProdutoController.validarCamposVazios(result, sobra);
-		informacoesProdutoController.formatarCasasDecimais(result, sobra);
-	},
-	
-	detalhes_ReparteDistribuido : function (codProd){
+		var sgAbrang = "#sugeridoAbrang";
+		informacoesProdutoController.validarCamposVazios(result.abrangenciaSugerida, sgAbrang);
+		informacoesProdutoController.formatarCasasDecimais(result.abrangenciaSugerida, sgAbrang);
 		
-		$.postJSON(contextPath + "/distribuicao/informacoesProduto/buscarReparteDist",
-				{
-			"codProduto":codProd,
-				},
-				function(result) {
-					informacoesProdutoController.dadosReparteDistribuido(result);
-				});
-	},
-	
-	dadosReparteDistribuido : function(result){
+		var apAbrang = "#apuradaAbrang"; 
+		informacoesProdutoController.validarCamposVazios(result.abrangenciaEstudo, apAbrang);
+		informacoesProdutoController.formatarCasasDecimais(result.abrangenciaEstudo, apAbrang);
+		
+		var sgMin = "#sugeridoMinimo";
+		informacoesProdutoController.validarCamposVazios(result.qtdReparteMinimoSugerido, sgMin);
+		informacoesProdutoController.formatarCasasDecimais(result.qtdReparteMinimoSugerido, sgMin);
+		
+		var estudoMin = "#estudoMinimo";
+		informacoesProdutoController.validarCamposVazios(result.qtdReparteMinimoEstudo, estudoMin);
+		informacoesProdutoController.formatarCasasDecimais(result.qtdReparteMinimoEstudo, estudoMin);
+		
+		var repTotal = "#reparteTotal";
+		informacoesProdutoController.validarCamposVazios(result.qtdReparteDistribuidor, repTotal);
+		informacoesProdutoController.formatarCasasDecimais(result.qtdReparteDistribuidor, repTotal);
+		
+		var repProm = "#repartePromocional";
+		informacoesProdutoController.validarCamposVazios(result.qtdRepartePromocional, repProm);
+		informacoesProdutoController.formatarCasasDecimais(result.qtdRepartePromocional, repProm);
+		
+		var sobra = "#sobra";
+		informacoesProdutoController.validarCamposVazios(result.qtdSobraEstudo, sobra);
+		informacoesProdutoController.formatarCasasDecimais(result.qtdSobraEstudo, sobra);
 		
 		var repDist = "#reparteDistribuido";
-		informacoesProdutoController.validarCamposVazios(result, repDist);
-		informacoesProdutoController.formatarCasasDecimais(result, repDist);
+		informacoesProdutoController.validarCamposVazios(result.qtdReparteDistribuidoEstudo, repDist);
+		informacoesProdutoController.formatarCasasDecimais(result.qtdReparteDistribuidoEstudo, repDist);
+
 	},
 	
 	detalhes_venda : function (codProd, numeroEdicao){

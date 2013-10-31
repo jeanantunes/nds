@@ -15,19 +15,19 @@ import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
 import br.com.abril.nds.dto.InfoProdutosItemRegiaoEspecificaDTO;
-import br.com.abril.nds.dto.InformacoesAbrangenciaEMinimoProdDTO;
 import br.com.abril.nds.dto.InformacoesCaracteristicasProdDTO;
 import br.com.abril.nds.dto.InformacoesProdutoDTO;
-import br.com.abril.nds.dto.InformacoesReparteTotalEPromocionalDTO;
 import br.com.abril.nds.dto.InformacoesVendaEPerceDeVendaDTO;
 import br.com.abril.nds.dto.ItemDTO;
 import br.com.abril.nds.dto.ProdutoBaseSugeridaDTO;
+import br.com.abril.nds.dto.ResumoEstudoHistogramaPosAnaliseDTO;
 import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.distribuicao.TipoClassificacaoProduto;
 import br.com.abril.nds.model.seguranca.Permissao;
+import br.com.abril.nds.service.EstudoService;
 import br.com.abril.nds.service.InformacoesProdutoService;
 import br.com.abril.nds.service.ProdutoService;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -55,6 +55,9 @@ public class InformacoesProdutoController extends BaseController {
 	
 	@Autowired
 	private ProdutoService prodService;
+	
+	@Autowired
+	private EstudoService estudoService;
 	
 	@Autowired
 	private HttpSession session;
@@ -211,40 +214,6 @@ public class InformacoesProdutoController extends BaseController {
 	}
 	
 	@Post
-	@Path("/buscarAbrangenciaEMinimo")
-	public void buscarAbrangenciaEMinimo(Long idEstudo, String codProduto, Long numEdicao){
-
-		InformacoesAbrangenciaEMinimoProdDTO informacoes = infoProdService.buscarAbrangenciaEMinimo(idEstudo);
-		
-		if(informacoes == null){
-			
-			informacoes = new InformacoesAbrangenciaEMinimoProdDTO();
-			informacoes.setAbrangenciaSugerida(new BigDecimal(0));
-			informacoes.setMinimoSugerido(new BigInteger("0"));
-			
-		}
-		
-		BigDecimal abrang = infoProdService.buscarAbrangenciaApurada(codProduto, numEdicao);
-		
-		informacoes.setAbrangenciaApurada((abrang==null) ? new BigDecimal(0): abrang);
-		
-		informacoes.setMinimoEstudoId(idEstudo);
-		
-		result.use(Results.json()).from(informacoes, "result").serialize();
-
-	}
-	
-	@Post
-	@Path("/buscarRepartesTotalEPromocional")
-	public void buscarRepartesTotalEPromocional(String codProduto, Long numEdicao){
-
-		InformacoesReparteTotalEPromocionalDTO repartes = infoProdService.buscarReparteTotalEPromocional(codProduto, numEdicao);
-		
-		result.use(Results.json()).from(repartes, "result").serialize();
-
-	}
-	
-	@Post
 	@Path("/buscarVendas")
 	public void buscarVendas (String codProduto, Long numEdicao){
 
@@ -254,26 +223,52 @@ public class InformacoesProdutoController extends BaseController {
 	}
 	
 	@Post
-	@Path("/buscarReparteDist")
-	public void buscarReparteDist (String codProduto){
-
-		BigInteger reparteDistrb = infoProdService.obterReparteDistribuido(codProduto);
-		if (reparteDistrb == null){
-			reparteDistrb = new BigInteger("0");
-		}
-		result.use(Results.json()).from(reparteDistrb, "result").serialize();
-	}
-	
-	@Post
 	@Path("/buscarReparteSobra")
 	public void buscarReparteSobra(Long idEstudo){
 
-		BigInteger sobra = infoProdService.buscarSobra(idEstudo);
-		if (sobra == null){
-			sobra = new BigInteger("0");
-		}
-		result.use(Results.json()).from(sobra, "result").serialize();
+		ResumoEstudoHistogramaPosAnaliseDTO resumo = estudoService.obterResumoEstudo(idEstudo);
+		
+		validarDadosReparteEstudo(resumo);
+		
+		result.use(Results.json()).from(resumo, "result").serialize();
 
+	}
+
+	private void validarDadosReparteEstudo(ResumoEstudoHistogramaPosAnaliseDTO resumo) {
+		// Validar dados do Resumo
+		
+		//abrangencia prevista
+		if(resumo.getAbrangenciaSugerida()==null)
+			resumo.setAbrangenciaSugerida(new BigDecimal(0));
+		
+		//abrangência real
+		if(resumo.getAbrangenciaEstudo()==null)
+			resumo.setAbrangenciaEstudo(new BigDecimal(0));
+		
+		//reparte minimo previsto
+		if(resumo.getQtdReparteMinimoSugerido()==null)
+			resumo.setQtdReparteMinimoSugerido(new BigInteger("0"));
+		
+		//reparte minimo real
+		if(resumo.getQtdReparteMinimoEstudo()==null)
+			resumo.setQtdReparteMinimoEstudo(new BigInteger("0"));
+		
+		//reparte Total
+		if(resumo.getQtdReparteDistribuidor()==null)
+			resumo.setReparteDistribuido(new BigDecimal(0));
+		
+		//reparte Promocional
+		if(resumo.getQtdRepartePromocional()==null)
+			resumo.setQtdRepartePromocional(new BigDecimal(0));
+		
+		//reparteDistribuido
+		if(resumo.getQtdReparteDistribuidoEstudo()==null)
+			resumo.setQtdReparteDistribuidoEstudo(new BigDecimal(0));
+		
+		//sobra
+		if(resumo.getQtdSobraEstudo()==null)
+			resumo.setQtdSobraEstudo(new BigDecimal(0));
+		
 	}
 	
 	private void tratarFiltro(FiltroInformacoesProdutoDTO filtroAtual) {
