@@ -323,9 +323,21 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		Integer numeroMaximoAcumulosDistribuidor = this.distribuidorRepository.numeroMaximoAcumuloDividas();
 		
+		int contador = 0;
+		
+		int qtdBoletosNaoPagos = 0;
+		
+		if(boletosNaoPagos!=null) {
+			qtdBoletosNaoPagos = boletosNaoPagos.size();
+		}
+		
+		String nossoNumero = "";
+		
 		for (Cobranca boleto : boletosNaoPagos) {
 			
-			LOG.info("ADIANDO DIVIDA BOLETO NAO PAGO");
+			LOG.info("ADIANDO DIVIDA BOLETO NAO PAGO [" + ++contador + "]  DE [" + qtdBoletosNaoPagos + "].");
+			
+			nossoNumero = boleto.getNossoNumero();
 			
 			Divida divida = boleto.getDivida();
 			
@@ -400,7 +412,7 @@ public class BoletoServiceImpl implements BoletoService {
 
 			} catch (IllegalArgumentException e) {
 			
-				LOG.error("FALHA AO ADIAR BOLETO DIVIDA NÃO PAGA", e);
+				LOG.error("FALHA AO ADIAR BOLETO DIVIDA NÃO PAGA NOSSO NUMERO [" + nossoNumero + "]", e);
 				
 				//Caso a dívida exceder o limite de acúmulos do distribuidor, 
 				//esta não será persistida, dando continuidade ao fluxo.

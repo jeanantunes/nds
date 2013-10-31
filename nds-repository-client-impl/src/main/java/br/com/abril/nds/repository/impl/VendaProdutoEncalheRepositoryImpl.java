@@ -54,12 +54,12 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 		
 		if(filtro.getPeriodoInicial()!= null && filtro.getPeriodoFinal()!= null){
 			
-			hql.append(" and venda.dataVenda between :periodoInicial and :periodoFinal  ");
+			hql.append(" and venda.dataOperacao between :periodoInicial and :periodoFinal  ");
 		}
 		
-		hql.append(" group by venda.cota, venda.dataVenda, venda.horarioVenda ");
+		hql.append(" group by venda.cota, venda.dataOperacao, venda.horarioVenda ");
 		
-		hql.append(" order by venda.dataVenda, venda.horarioVenda, ")
+		hql.append(" order by venda.dataOperacao, venda.horarioVenda, ")
 			.append(" case venda.cota.pessoa.class when 'F' then venda.cota.pessoa.nome when 'J' then venda.cota.pessoa.razaoSocial end ");
 		
 		Query query = getSession().createQuery(hql.toString());
@@ -85,7 +85,7 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 		
 		hql.append(" venda.cota.numeroCota=:numeroCota "); 
 			
-		hql.append(" and venda.dataVenda between :periodoInicial and :periodoFinal  ");
+		hql.append(" and venda.dataOperacao between :periodoInicial and :periodoFinal  ");
 		
 		hql.append(" and venda.tipoVenda=:tipoVenda ");
 		
@@ -148,7 +148,7 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 		else{
 			
 			hql.append(" venda.id as idVenda ,")
-			.append(" venda.dataVenda as dataVenda ,")
+			.append(" venda.dataOperacao as dataVenda ,")
 			.append(" case venda.cota.pessoa.class when 'F' then venda.cota.pessoa.nome when 'J' then venda.cota.pessoa.razaoSocial end  as nomeCota ,")
 			.append(" venda.cota.numeroCota as numeroCota ,")
 			.append(" venda.tipoVenda as tipoVendaEncalhe ,")
@@ -175,7 +175,7 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 		}
 		
 		if(filtro.getPeriodoInicial()!= null && filtro.getPeriodoFinal()!= null){
-			hql.append(" and venda.dataVenda between :periodoInicial and :periodoFinal ");
+			hql.append(" and venda.dataOperacao between :periodoInicial and :periodoFinal ");
 		}
 		
 		if(filtro.getTipoVendaEncalhe()!= null){
@@ -218,7 +218,7 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 				hql.append(" order by venda.produtoEdicao.produto.codigo ");
 				break;
 			case DATA:	
-				hql.append(" order by venda.dataVenda ");
+				hql.append(" order by venda.dataOperacao ");
 				break;
 			case NOME_COTA:	
 				hql.append(" order by case venda.cota.pessoa.class when 'F' then venda.cota.pessoa.nome when 'J' then venda.cota.pessoa.razaoSocial end ");
@@ -263,7 +263,7 @@ public class VendaProdutoEncalheRepositoryImpl extends AbstractRepositoryModel<V
 
 		hql.append(" select ")
 			.append(" venda.id as idVenda ,")
-			.append(" venda.dataVenda as dataVenda ,")
+			.append(" venda.dataOperacao as dataVenda ,")
 			.append(" case venda.cota.pessoa.class when 'F' then venda.cota.pessoa.nome when 'J' then venda.cota.pessoa.razaoSocial end  as nomeCota ,")
 			.append(" venda.cota.numeroCota as numeroCota ,")
 			.append(" venda.produtoEdicao.numeroEdicao as numeroEdicao ,")

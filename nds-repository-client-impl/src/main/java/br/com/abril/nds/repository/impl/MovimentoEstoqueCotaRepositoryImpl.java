@@ -1358,7 +1358,13 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		
 		StringBuffer sql = new StringBuffer("");
 		
-		sql.append(" SELECT "); 
+		if (indBuscaQtd){
+			
+			sql.append("select count(quantidadeTotal) as quantidadeTotal, sum(valorTotalGeral) as valorTotalGeral from (");
+		} else {
+		
+			sql.append(" SELECT ");
+		}
 		
 		StringBuilder qtdDevolucaoSubQuery = new StringBuilder();
 		qtdDevolucaoSubQuery.append(" ( SELECT SUM(  		");
@@ -1377,7 +1383,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 
 		if(indBuscaQtd) {
 			
-			sql.append(" COUNT(PROD_EDICAO.ID) as quantidadeTotal, ");
+			sql.append(" SELECT COUNT(PROD_EDICAO.ID) as quantidadeTotal, ");
 			sql.append(" SUM(PROD_EDICAO.PRECO_VENDA * ");
 
 			sql.append(" CASE WHEN ( ");
@@ -1467,6 +1473,11 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			sql.append(" AND PROD_FORNEC.FORNECEDORES_ID = :idFornecedor ");
 		}
 		
+		sql.append(" GROUP BY PROD_EDICAO.ID ");
+		
+		if (indBuscaQtd){
+			sql.append(") as temp ");
+		}
 		
 		PaginacaoVO paginacao = filtro.getPaginacao();
 
@@ -1503,7 +1514,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 			
 			sql.append(orderByColumn);
 			
-			if (paginacao.getOrdenacao() != null) {
+			if (paginacao != null && paginacao.getOrdenacao() != null) {
 				
 				sql.append(paginacao.getOrdenacao().toString());
 				

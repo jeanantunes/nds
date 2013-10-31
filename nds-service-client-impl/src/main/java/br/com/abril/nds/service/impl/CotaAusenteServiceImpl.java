@@ -269,25 +269,15 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 	* Obtém movimentos de estoque de rateios de cota ausente e fornece quantidade de cada produto por referência
 	* Atraves de lançamentos inversos
 	* @param rateios
-	* @param cotaAusente
-	* @param idUsuario
-	* @param tipoMovimentoCotaEstorno
-	* @param dataOperacao
 	* @param edicaoXRateio
 	* @return List<MovimentoEstoqueCota>
 	*/
-	private List<MovimentoEstoqueCota> obterMovimentosDeRateios(List<RateioCotaAusente> rateios, 
-					                                            CotaAusente cotaAusente, 
-											                    Long idUsuario, 
-											                    TipoMovimentoEstoque tipoMovimentoCotaEstorno, 
-											                    Date dataOperacaoDistribuidor,
-											                    Map<Long, BigInteger> edicaoXRateio){
+	private Map<Long, BigInteger> obterMovimentosDeRateios(List<RateioCotaAusente> rateios) {
+		
+		Map<Long, BigInteger> edicaoXRateio = new HashMap<Long, BigInteger>();
 		
         BigInteger quantidadeRateio = BigInteger.ZERO;
-		
-		List<MovimentoEstoqueCota> movimentosCota = new ArrayList<MovimentoEstoqueCota>();
 
-		//Estorno Rateios
 		if (rateios != null) {
 			
 			for (RateioCotaAusente rateio : rateios) {
@@ -299,12 +289,10 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 				quantidadeRateio = quantidadeRateio.add(rateio.getQtde());
 				
 				edicaoXRateio.put(rateio.getProdutoEdicao().getId(), quantidadeRateio);
-
-				movimentosCota.addAll(rateio.getCotaAusente().getMovimentosEstoqueCota());	
 			}
 		}
 		
-		return movimentosCota;
+		return edicaoXRateio;
 	}
 	
 	/**
@@ -397,10 +385,6 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 			this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
 				GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE);
 		
-		TipoMovimentoEstoque tipoMovimentoCotaEstorno =
-			this.tipoMovimentoEstoqueRepository.buscarTipoMovimentoEstoque(
-				GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
-		
 		if (tipoMovimento == null) {
 			
 		 	throw new TipoMovimentoEstoqueInexistenteException(
@@ -413,22 +397,11 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
 				GrupoMovimentoEstoque.RESTAURACAO_REPARTE_COTA_AUSENTE);
 		}
 		
-		if (tipoMovimentoCotaEstorno == null) {
-			
-			throw new TipoMovimentoEstoqueInexistenteException(
-				GrupoMovimentoEstoque.ESTORNO_REPARTE_COTA_AUSENTE);
-		}
-		
 		List<RateioCotaAusente> rateios = cotaAusente.getRateios();
-		
-		Map<Long, BigInteger> edicaoXRateio = new HashMap<Long, BigInteger>();
 		                          
-		List<MovimentoEstoqueCota> movimentosCota =  this.obterMovimentosDeRateios(rateios, 
-						                                                           cotaAusente, 
-						                                                           idUsuario, 
-						                                                           tipoMovimentoCotaEstorno, 
-						                                                           dataOperacaoDistribuidor,
-						                                                           edicaoXRateio);
+		List<MovimentoEstoqueCota> movimentosCota = cotaAusente.getMovimentosEstoqueCota();
+				
+		Map<Long, BigInteger> edicaoXRateio = this.obterMovimentosDeRateios(rateios);
 
 		this.restituiEstoqueCotaEDistribuidor(movimentosCota,
                                               cotaAusente, 
@@ -438,11 +411,7 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
                                               dataOperacaoDistribuidor, 
                                               edicaoXRateio);		
 		
-		List<MovimentoEstoqueCota> backupMovimentosCotaAusente = cotaAusente.getMovimentosEstoqueCota();
-		
 		this.cotaAusenteRepository.remover(cotaAusente);
-		
-		this.movimentoEstoqueCotaRepository.mergeAll(backupMovimentosCotaAusente);
 	}
 
 	private BigInteger obterQuantidadeSuplementarExistente(Long idProdutoEdicao) {
