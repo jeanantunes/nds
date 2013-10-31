@@ -207,8 +207,12 @@ public class EMS0117MessageProcessor extends AbstractRepository implements
 		cota.setNumeroCota(input.getCodCota());
 		cota.setPossuiContrato(false);
 		
-		setSituacaoCadastro(input, cota);
-		
+		/*
+		 * Conforme conversado com a Kaina, não serão mais atualizados os Status desta interface.
+		 * 
+		 * setSituacaoCadastro(input, cota);
+		 * 
+		*/
 		
 		/* NAO SERA ALTERADO O TIPO DE COTA NESSA INTERFACE
 		if (input.getCondPrazoPagamento().equals("S")) {				

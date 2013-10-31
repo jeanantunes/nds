@@ -1135,7 +1135,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 					null, null, null, null);
 			
 			if (idCotasSuspensasAusentes != null) {
-				listaIdCotas.addAll(idCotasSuspensasAusentes);
+				listaIdCotas.removeAll(idCotasSuspensasAusentes);
 			}
 	
 			validarRoteirizacaoCota(filtro, listaIdCotas);

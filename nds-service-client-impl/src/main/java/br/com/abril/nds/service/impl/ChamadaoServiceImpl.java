@@ -206,6 +206,10 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 				}
 			}
 			
+			if(consignadoCotaChamadao.getDataRecolhimento().equals(novaDataChamadao)) {
+				throw new ValidacaoException(TipoMensagem.WARNING, "Já existe Chamada de encalhe para esta data!");
+			}
+			
 			if (filtro.isChamadaEncalhe()) {
 				
 				this.alterarChamadao(consignadoCotaChamadao, consignadoCotaChamadao.getDataRecolhimento(), novaDataChamadao, cota);
@@ -637,7 +641,9 @@ public class ChamadaoServiceImpl implements ChamadaoService {
 	 */
 	private void suspenderCota(Long idCota, Usuario usuario) {
 		
-		cotaService.suspenderCota(idCota, usuario, MotivoAlteracaoSituacao.CHAMADAO);
+		Date dataInicioValidade = this.distribuidorService.obterDataOperacaoDistribuidor();
+		
+		cotaService.suspenderCota(idCota, usuario, dataInicioValidade, MotivoAlteracaoSituacao.CHAMADAO);
 	}
 	
 }
