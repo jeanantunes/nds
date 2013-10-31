@@ -778,11 +778,10 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 		
 		if (tipoDivida == TipoDivida.DIVIDA_A_VENCER){
 			
-			hql.append(" where cobranca.dataVencimento = :data  ");
+			hql.append(" where cobranca.dataVencimento >= :data and cobranca.statusCobranca = :statusNaoPago   ");
 		} else {
 			
-			hql.append(" where cobranca.dataEmissao = :data  ")
-			   .append(" and cobranca.statusCobranca = :statusNaoPago ");
+			hql.append(" where cobranca.dataVencimento < :data  and cobranca.statusCobranca = :statusNaoPago ");
 		}
 		
 		Query query = this.getSession().createQuery(hql.toString());
@@ -864,13 +863,14 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	    hql.append("from Cobranca cobranca ");
 	    hql.append(" join cobranca.cota as cota ");
 	    
+	    
+	    
 	    if (tipoDivida == TipoDivida.DIVIDA_A_VENCER){
 			
-			hql.append(" where cobranca.dataVencimento = :data  ");
+			hql.append(" where cobranca.dataVencimento >= :data and cobranca.statusCobranca = :statusNaoPago   ");
 		} else {
 			
-			hql.append(" where cobranca.dataEmissao = :data  ");
-			hql.append(" and cobranca.statusCobranca = :status ");
+			hql.append(" where cobranca.dataVencimento < :data  and cobranca.statusCobranca = :statusNaoPago ");
 		}
 	    
 	    if (!count) {
@@ -879,11 +879,7 @@ public class DividaRepositoryImpl extends AbstractRepositoryModel<Divida, Long> 
 	    
 	    Query query = getSession().createQuery(hql.toString());
 	    query.setParameter("data", data);
-	   
-	    if (tipoDivida != TipoDivida.DIVIDA_A_VENCER){
-			
-	    	query.setParameter("status", StatusCobranca.NAO_PAGO);
-		}
+    	query.setParameter("statusNaoPago", StatusCobranca.NAO_PAGO);
 	    
 	    if (!count && paginacao != null) {
 	        query.setFirstResult(paginacao.getPosicaoInicial());
