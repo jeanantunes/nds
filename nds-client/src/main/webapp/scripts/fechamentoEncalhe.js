@@ -243,8 +243,12 @@ var fechamentoEncalheController = $.extend(true, {
 		$.each(resultado.rows, function(index, row) {
 			
 			var valorFisico = row.cell.fisico == null ? '' : row.cell.fisico;
-			if ( ( row.cell.diferenca == "0" && valorFisico == '' ) ||  valorFisico == '' ) {
-					row.cell.diferenca = "0";
+			
+			if ( ( row.cell.diferenca == "" && valorFisico == '' ) ||  valorFisico == '' ) {
+					row.cell.diferenca = "";
+			} else {
+				
+				row.cell.diferenca = (valorFisico != undefined ? valorFisico : row.cell.exemplaresDevolucaoFormatado) - parseInt(row.cell.exemplaresDevolucaoFormatado);
 			}
 			
 			var fechado = row.cell.fechado == false ? '' : 'disabled="disabled"';
@@ -260,8 +264,6 @@ var fechamentoEncalheController = $.extend(true, {
 			if (fechado != '') {
 				$('.divBotoesPrincipais', fechamentoEncalheController.workspace).hide();
 			}
-			
-			row.cell.diferenca = (valorFisico != undefined ? valorFisico : row.cell.exemplaresDevolucaoFormatado) - parseInt(row.cell.exemplaresDevolucaoFormatado);
 		});
 		
 		return resultado;
