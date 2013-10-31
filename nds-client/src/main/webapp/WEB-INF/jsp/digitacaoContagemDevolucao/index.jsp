@@ -128,14 +128,6 @@ $(function(){
 							Devolução Parcial
 							</a> 
 							</span>
-							
-							<span class="bt_novos" title="Replicar Quantidades">
-							<a isEdicao="true" href="javascript:digitacaoContagemDevolucaoController.replicarValores();">
-							<img src="${pageContext.request.contextPath}/images/ico_integrar.png" hspace="5" border="0">
-							Replicar
-							</a>
-							</span>
-							
 					</td>
 					
 					<td width="17%">

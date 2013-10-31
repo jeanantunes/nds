@@ -133,7 +133,8 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	
 	@Post
 	@Path("/pesquisar")
-	public void pesquisar(String dataDe, String dataAte, Long idFornecedor, String semanaConferenciaEncalhe, Long idDestinatario, String sortorder, String sortname, int page, int rp){
+	public void pesquisar(String dataDe, String dataAte, Long idFornecedor, String semanaConferenciaEncalhe, 
+			Long idDestinatario, String sortorder, String sortname, int page, int rp){
 		
 		Intervalo<Date> periodo = null;
 
@@ -379,15 +380,48 @@ public class DigitacaoContagemDevolucaoController extends BaseController {
 	@Post
 	@Path("/salvar")
 	@Rules(Permissao.ROLE_RECOLHIMENTO_DIGICACAO_CONTAGEM_DEVOLUCAO_ALTERACAO)
-	public void salvar(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao) {
+	public void salvar(List<DigitacaoContagemDevolucaoVO> listaDigitacaoContagemDevolucao, boolean replicarTodos) {
 		
-		if (listaDigitacaoContagemDevolucao == null || listaDigitacaoContagemDevolucao.isEmpty()) {
+		if (listaDigitacaoContagemDevolucao == null || listaDigitacaoContagemDevolucao.isEmpty() && !replicarTodos) {
 			throw new ValidacaoException(TipoMensagem.ERROR, "Preencha os dados para contagem de devolução!");
 		}
 		
-		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
+		List<ContagemDevolucaoDTO> listaContagemDevolucaoDTO = null;
 		
-		contagemDevolucaoService.inserirListaContagemDevolucao(listaContagemDevolucaoDTO, getUsuarioLogado(), isPerfilUsuarioEncarregado());
+		if (replicarTodos){
+			
+			FiltroDigitacaoContagemDevolucaoDTO filtro = (FiltroDigitacaoContagemDevolucaoDTO) session.getAttribute(FILTRO_SESSION_ATTRIBUTE);
+			
+			if (filtro == null){
+				
+				throw new ValidacaoException(TipoMensagem.WARNING, "Pesquisa inválida.");
+			}
+			
+			PaginacaoVO paginacaoVO = filtro.getPaginacao();
+			
+			filtro.setPaginacao(null);
+			
+			listaContagemDevolucaoDTO = 
+				contagemDevolucaoService.obterListaContagemDevolucao(filtro, isPerfilUsuarioEncarregado());
+			
+			filtro.setPaginacao(paginacaoVO);
+			
+			listaContagemDevolucaoDTO.addAll(0, this.obterListaEdicoesFechadas());
+			
+			for (ContagemDevolucaoDTO dto : listaContagemDevolucaoDTO){
+				
+				dto.setDiferenca(BigInteger.ZERO);
+				dto.setQtdNota(dto.getQtdDevolucao());
+			}
+			
+		} else {
+			
+			listaContagemDevolucaoDTO = 
+					getListaContagemDevolucaoDTO(listaDigitacaoContagemDevolucao);
+		}
+		
+		this.contagemDevolucaoService.inserirListaContagemDevolucao(
+				listaContagemDevolucaoDTO, getUsuarioLogado(), isPerfilUsuarioEncarregado());
 		
 		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, "Operação efetuada com sucesso."),
 										Constantes.PARAM_MSGS).recursive().serialize();

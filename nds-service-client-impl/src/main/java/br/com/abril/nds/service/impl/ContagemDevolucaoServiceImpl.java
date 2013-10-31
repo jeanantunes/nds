@@ -966,4 +966,10 @@ public class ContagemDevolucaoServiceImpl implements ContagemDevolucaoService {
         }
     }
     
+    @Override
+    @Transactional(readOnly = true)
+    public List<ContagemDevolucaoDTO> obterListaContagemDevolucao(FiltroDigitacaoContagemDevolucaoDTO filtro, boolean perfilEncarregado){
+    	
+    	return this.movimentoEstoqueCotaRepository.obterListaContagemDevolucao(filtro, perfilEncarregado);
+    }
 }
