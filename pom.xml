@@ -392,6 +392,7 @@
 			<url>http://jrimum.org/maven/content/groups/public/</url>
 			<snapshots>
 				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
 			</snapshots>
 		</repository>
 	</repositories>
