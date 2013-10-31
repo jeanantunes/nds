@@ -412,17 +412,6 @@ public class CotaAusenteServiceImpl implements CotaAusenteService {
                                               edicaoXRateio);		
 		
 		this.cotaAusenteRepository.remover(cotaAusente);
-		
-//		List<MovimentoEstoqueCota> backupMovimentosCotaAusente = cotaAusente.getMovimentosEstoqueCota();
-//		
-//		for (MovimentoEstoqueCota movimentoEstoqueCota : backupMovimentosCotaAusente) {
-//			
-//			movimentoEstoqueCota.setTipoMovimento(tipoMovimentoCota);
-//		}
-//		
-//		this.cotaAusenteRepository.remover(cotaAusente);
-//		
-//		this.movimentoEstoqueCotaRepository.mergeAll(backupMovimentosCotaAusente);
 	}
 
 	private BigInteger obterQuantidadeSuplementarExistente(Long idProdutoEdicao) {
