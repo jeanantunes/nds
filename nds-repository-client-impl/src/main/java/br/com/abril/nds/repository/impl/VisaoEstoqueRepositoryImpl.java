@@ -36,14 +36,14 @@ public class VisaoEstoqueRepositoryImpl extends AbstractRepository implements
 						+ "), 0) as valor  ")
 				.append("   FROM EstoqueProduto as ep ")
 				.append("   JOIN ep.produtoEdicao as pe ");
-		if (filtro.getIdFornecedor() != -1) {
+		if (filtro.getIdFornecedor() != null && filtro.getIdFornecedor() != -1) {
 			hql.append("   JOIN pe.produto.fornecedores f ");
 			hql.append("  WHERE f.id = :idFornecedor ");
 		}
 
 		Query query = getSession().createQuery(hql.toString());
 
-		if (filtro.getIdFornecedor() != -1) {
+		if (filtro.getIdFornecedor() != null && filtro.getIdFornecedor() != -1) {
 			query.setParameter("idFornecedor", filtro.getIdFornecedor());
 		}
 
