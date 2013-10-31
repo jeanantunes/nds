@@ -1191,7 +1191,7 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 					this.rateioDiferencaRepository.obterRateiosParaImpressaoPorDiferenca(
 						dadoImpressao.getProdutoEdicao().getId(), dataMovimento);
 			
-			if (rateios != null) {
+			if (rateios != null && !rateios.isEmpty()) {
 				
 				if (rateios.size() <= qtdeRateiosPorLinha) {
 					
@@ -1230,6 +1230,9 @@ public class DiferencaEstoqueServiceImpl implements DiferencaEstoqueService {
 			}
             //Dados impressão sem rateio
 			else{
+				
+				dadoImpressao.setQtdeFaltas(null);
+				dadoImpressao.setQtdeSobras(null);
 				
 				listaRelatorio.add(
 						new RelatorioLancamentoFaltasSobrasVO(dadoImpressao));
