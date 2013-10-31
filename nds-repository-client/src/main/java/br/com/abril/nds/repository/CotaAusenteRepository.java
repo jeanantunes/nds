@@ -7,6 +7,7 @@ import br.com.abril.nds.dto.CotaAusenteDTO;
 import br.com.abril.nds.dto.ProdutoEdicaoSuplementarDTO;
 import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
+import br.com.abril.nds.util.Intervalo;
 
 public interface CotaAusenteRepository extends Repository<CotaAusente,Long> {
 	
@@ -17,4 +18,7 @@ public interface CotaAusenteRepository extends Repository<CotaAusente,Long> {
 	 CotaAusente obterCotaAusentePor(Long idCota, Date data);
 	 
 	 List<ProdutoEdicaoSuplementarDTO> obterDadosExclusaoCotaAusente(Long idCotaAusente);
+	 
+	 List<Long> obterIdsCotasAusentesNoPeriodo(Intervalo<Date> periodo);
+	 
 }

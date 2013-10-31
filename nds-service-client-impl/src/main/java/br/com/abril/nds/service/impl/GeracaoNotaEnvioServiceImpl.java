@@ -43,6 +43,7 @@ import br.com.abril.nds.model.envio.nota.NotaEnvio;
 import br.com.abril.nds.model.estoque.GrupoMovimentoEstoque;
 import br.com.abril.nds.model.estoque.MovimentoEstoqueCota;
 import br.com.abril.nds.model.planejamento.EstudoCota;
+import br.com.abril.nds.repository.CotaAusenteRepository;
 import br.com.abril.nds.repository.CotaRepository;
 import br.com.abril.nds.repository.DistribuidorRepository;
 import br.com.abril.nds.repository.EnderecoRepository;
@@ -116,6 +117,9 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 	
 	@Autowired
 	private RoteirizacaoRepository roteirizacaoRepository;
+	
+	@Autowired
+	private CotaAusenteRepository cotaAusenteRepository;
 	
 	// Trava para evitar duplicidade ao gerar notas de envio por mais de um usuario simultaneamente
 	// O HashMap suporta os mais detalhes e pode ser usado futuramente para restricoes mais finas
@@ -1113,8 +1117,7 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 
 	@Override
 	@Transactional
-	public List<NotaEnvio> gerarNotasEnvio(FiltroConsultaNotaEnvioDTO filtro,
-			List<Long> idCotasSuspensasAusentes) {
+	public List<NotaEnvio> gerarNotasEnvio(FiltroConsultaNotaEnvioDTO filtro) {
 		
 		List<NotaEnvio> listaNotaEnvio = new ArrayList<NotaEnvio>();
 		List<SituacaoCadastro> situacoesCadastro = new ArrayList<SituacaoCadastro>();
@@ -1134,8 +1137,13 @@ public class GeracaoNotaEnvioServiceImpl implements GeracaoNotaEnvioService {
 					situacoesCadastro, filtro.getIdRoteiro(), filtro.getIdRota(),
 					null, null, null, null);
 			
-			if (idCotasSuspensasAusentes != null) {
-				listaIdCotas.removeAll(idCotasSuspensasAusentes);
+			List<Long> idCotasAusentes =
+				this.cotaAusenteRepository.obterIdsCotasAusentesNoPeriodo(
+					filtro.getIntervaloMovimento());
+			
+			if (idCotasAusentes != null) {
+				
+				listaIdCotas.removeAll(idCotasAusentes);
 			}
 	
 			validarRoteirizacaoCota(filtro, listaIdCotas);
