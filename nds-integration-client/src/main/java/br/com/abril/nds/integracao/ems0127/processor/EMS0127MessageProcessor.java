@@ -3,6 +3,7 @@ package br.com.abril.nds.integracao.ems0127.processor;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.commons.lang.StringUtils;
@@ -18,6 +19,7 @@ import br.com.abril.nds.integracao.engine.log.NdsiLoggerFactory;
 import br.com.abril.nds.integracao.model.canonic.EMS0127Input;
 import br.com.abril.nds.integracao.model.canonic.EMS0127InputItem;
 import br.com.abril.nds.model.cadastro.Distribuidor;
+import br.com.abril.nds.model.cadastro.Fornecedor;
 import br.com.abril.nds.model.cadastro.ProdutoEdicao;
 import br.com.abril.nds.model.integracao.EventoExecucaoEnum;
 import br.com.abril.nds.model.integracao.Message;
@@ -25,6 +27,7 @@ import br.com.abril.nds.model.planejamento.fornecedor.ChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.ItemChamadaEncalheFornecedor;
 import br.com.abril.nds.model.planejamento.fornecedor.RegimeRecolhimento;
 import br.com.abril.nds.repository.AbstractRepository;
+import br.com.abril.nds.repository.FornecedorRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.service.integracao.DistribuidorService;
 
@@ -40,7 +43,10 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 	private ProdutoEdicaoRepository produtoEdicaoRepository;
 	
 	@Autowired
-	private NdsiLoggerFactory ndsiLoggerFactory; 
+	private NdsiLoggerFactory ndsiLoggerFactory;
+	
+	@Autowired
+	private FornecedorRepository fornecedorRepository;
 	
 	@Override
 	public void preProcess(AtomicReference<Object> tempVar) {
@@ -126,8 +132,18 @@ public class EMS0127MessageProcessor extends AbstractRepository implements Messa
 		ce.setTotalVendaApurada(input.getValorTotalVendaApurada());
 		ce.setTotalVendaInformada(input.getValorTotalVendaInformada());
 		
-		if(ce.getItens() == null && input.getItems().size() > 0) {
+		if(input.getItems() != null && !input.getItems().isEmpty()) {
 			ce.setItens(new ArrayList<ItemChamadaEncalheFornecedor>());
+			
+			//orientação de Cesar - item 5, planilha sprint 5, as informações faltantes dizem respeito a fornecedor
+			//que nunca foi inserido
+			String codigoProduto = input.getItems().get(0).getLancamentoEdicaoPublicacao().getCodigoPublicacao();
+			
+			List<Fornecedor> fornecedores = this.fornecedorRepository.obterFornecedoresDeProduto(codigoProduto, null);
+			
+			if (fornecedores != null && !fornecedores.isEmpty()){
+				ce.setFornecedor(fornecedores.get(0));
+			}
 		}
 
 		montarItensChamadaEncalheFornecedor(message, input, ce);

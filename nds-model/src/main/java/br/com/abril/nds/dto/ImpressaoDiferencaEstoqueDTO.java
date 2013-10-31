@@ -51,7 +51,10 @@ public class ImpressaoDiferencaEstoqueDTO implements Serializable {
 
 	public void setQtdeFaltas(BigInteger qtdeFaltas) {
 		
-		if (qtdeFaltas != null && !qtdeFaltas.equals(BigInteger.ZERO)){
+		if (qtdeFaltas == null || BigInteger.ZERO.compareTo(qtdeFaltas) == 0){
+			
+			this.qtdeFaltas = null;
+		} else {
 		
 			this.qtdeFaltas = qtdeFaltas;
 		}
@@ -63,7 +66,10 @@ public class ImpressaoDiferencaEstoqueDTO implements Serializable {
 
 	public void setQtdeSobras(BigInteger qtdeSobras) {
 		
-		if (qtdeSobras != null && !qtdeSobras.equals(BigInteger.ZERO)){
+		if (qtdeSobras == null || BigInteger.ZERO.compareTo(qtdeSobras) == 0){
+			
+			this.qtdeSobras = null;
+		} else {
 			
 			this.qtdeSobras = qtdeSobras;
 		}

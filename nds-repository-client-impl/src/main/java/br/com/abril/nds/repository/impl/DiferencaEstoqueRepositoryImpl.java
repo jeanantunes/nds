@@ -606,16 +606,17 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 		hql.append(" select distinct produtoEdicao as produtoEdicao, ")
 		   .append(" sum( ")
 		   .append(" coalesce( ")
-		   .append(" case when (diferenca.tipoDiferenca = 'FALTA_DE' or diferenca.tipoDiferenca = 'FALTA_EM') ")
+		   .append(" case when (diferenca.tipoDiferenca = :faltaDe or diferenca.tipoDiferenca = :faltaEm) ")
 		   .append(" then diferenca.qtde else 0 end ")
 		   .append(" , 0)) as qtdeFaltas, ")
 		   .append(" sum( ")
 		   .append(" coalesce( ")
-		   .append(" case when (diferenca.tipoDiferenca = 'SOBRA_DE' or diferenca.tipoDiferenca = 'SOBRA_EM') ")
+		   .append(" case when (diferenca.tipoDiferenca = :sobraDe or diferenca.tipoDiferenca = :sobraEm or ")
+		   .append(" 	diferenca.tipoDiferenca = :sobraDeDirCota or diferenca.tipoDiferenca = :sobraEmDirCota) ")
 		   .append(" then diferenca.qtde else 0 end ")
 		   .append(" , 0)) as qtdeSobras, ")
 		   .append(" diferenca.id as idDiferenca ")
-		   .append(" from Lancamento lancamento ")    
+		   .append(" from Lancamento lancamento ")
 		   .append(" join lancamento.produtoEdicao produtoEdicao ")
 		   .append(" left join produtoEdicao.diferencas diferenca ")
 		   .append(" where lancamento.dataLancamentoDistribuidor = :dataBalanceamento ")
@@ -634,7 +635,14 @@ public class DiferencaEstoqueRepositoryImpl extends AbstractRepositoryModel<Dife
 										                         StatusLancamento.FURO));
 		
 		query.setParameter("statusConfirmacao", StatusConfirmacao.CANCELADO);
-
+		query.setParameter("faltaDe", TipoDiferenca.FALTA_DE);
+		query.setParameter("faltaEm", TipoDiferenca.FALTA_EM);
+		
+		query.setParameter("sobraDe", TipoDiferenca.SOBRA_DE);
+		query.setParameter("sobraEm", TipoDiferenca.SOBRA_EM);
+		query.setParameter("sobraDeDirCota", TipoDiferenca.SOBRA_DE_DIRECIONADA_COTA);
+		query.setParameter("sobraEmDirCota", TipoDiferenca.SOBRA_EM_DIRECIONADA_COTA);
+		
 		query.setResultTransformer(
 			new AliasToBeanResultTransformer(ImpressaoDiferencaEstoqueDTO.class));
 
