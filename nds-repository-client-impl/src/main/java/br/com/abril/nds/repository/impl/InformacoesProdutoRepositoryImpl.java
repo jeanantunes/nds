@@ -1,7 +1,5 @@
 package br.com.abril.nds.repository.impl;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,10 +10,8 @@ import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
 
 import br.com.abril.nds.dto.InfoProdutosItemRegiaoEspecificaDTO;
-import br.com.abril.nds.dto.InformacoesAbrangenciaEMinimoProdDTO;
 import br.com.abril.nds.dto.InformacoesCaracteristicasProdDTO;
 import br.com.abril.nds.dto.InformacoesProdutoDTO;
-import br.com.abril.nds.dto.InformacoesReparteTotalEPromocionalDTO;
 import br.com.abril.nds.dto.InformacoesVendaEPerceDeVendaDTO;
 import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
@@ -56,7 +52,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" estudoG.liberado AS estudoLiberado, ");
 		hql.append(" estudoG.qtdeReparte AS qtdeReparteEstudo, ");
 
-		hql.append(" (select sum(estCota.reparteMinimo)    					" + 
+		hql.append(" (select min(estCota.reparteMinimo)    					" + 
 				   "	from EstudoCota estCota  							" +
 				   "  	inner join estCota.estudo as estRM                  " + 
 				   "	where estRM.id in (estudoG.id)) as reparteMinimo,   ");
@@ -249,7 +245,7 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		hql.append(" FROM ProdutoEdicao AS prodEdicao ");
 		hql.append(" WHERE produto.codigo = :COD_PRODUTO AND ");
 		hql.append(" prodEdicao.numeroEdicao = :NUM_EDICAO ");
-		hql.append(" order by nomeComercial ");
+		hql.append(" group by nomeComercial ");
 		
 		Query query = super.getSession().createQuery(hql.toString());
 
@@ -261,58 +257,6 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		return (InformacoesCaracteristicasProdDTO) query.uniqueResult();
 	}
 	
-	@Override
-	public InformacoesAbrangenciaEMinimoProdDTO buscarAbrangenciaEMinimo(Long estudoId) {
-
-		StringBuilder sql = new StringBuilder();
-		
-		sql.append(" select ");
-		sql.append("     distinct ");
-		sql.append("         est.reparte_minimo as minimoSugerido, ");
-		sql.append("         est.ABRANGENCIA as abrangenciaSugerida ");
-		sql.append("     FROM ");
-		sql.append("         estrategia est ");
-		sql.append("     INNER JOIN ");
-		sql.append("         produto_edicao prodEdic  ");
-		sql.append("             ON est.PRODUTO_EDICAO_ID = prodEdic.ID ");
-		sql.append("     INNER JOIN  ");
-		sql.append("         estudo estud ");
-		sql.append("             ON estud.PRODUTO_EDICAO_ID = prodEdic.ID ");
-		sql.append("     where ");
-		sql.append("         estud.id = ");
-		sql.append(estudoId);
-
-		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(InformacoesAbrangenciaEMinimoProdDTO.class));
-		 
-		return (InformacoesAbrangenciaEMinimoProdDTO) query.uniqueResult();
-		
-	}
-	
-	@Override
-	public BigDecimal buscarAbrangenciaApurada(String codProduto, Long numEdicao) {
-
-		StringBuilder sql = new StringBuilder();
-		
-		sql.append(" select ");
-		sql.append("   sum( ");
-		sql.append("   		(select sum(reparte) from lancamento ");
-		sql.append("       		JOIN produto_edicao on produto_edicao.ID = lancamento.PRODUTO_EDICAO_ID ");
-		sql.append("        	JOIN PRODUTO ON produto_edicao.PRODUTO_ID=PRODUTO.ID ");
-		sql.append("        	where produto.CODIGO = :COD_PRODUTO ");
-		sql.append("         	and produto_Edicao.NUMERO_EDICAO in (:NUM_EDICAO)) ");
-		sql.append("         /estd.REPARTE_DISTRIBUIR)");
-		sql.append("         from estudo estd");
-
-		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
-		
-		query.setParameter("COD_PRODUTO", codProduto);
-		query.setParameter("NUM_EDICAO", numEdicao);
-		
-		return (BigDecimal)query.uniqueResult();	
-		}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<InfoProdutosItemRegiaoEspecificaDTO> buscarItensRegiao(Long idEstudo) {
@@ -356,87 +300,6 @@ public class InformacoesProdutoRepositoryImpl extends AbstractRepositoryModel<In
 		if (paginacao.getPosicaoInicial() != null) {
 			query.setFirstResult(paginacao.getPosicaoInicial());
 		}
-	}
-
-	@Override
-	public InformacoesReparteTotalEPromocionalDTO buscarRepartes(String codProduto, Long numEdicao) {
-
-		StringBuilder sql = new StringBuilder();
-		
-		sql.append(" select ");
-		sql.append("         sum(lanc.reparte) as reparteTotal, ");
-		sql.append("         lanc.REPARTE_PROMOCIONAL as repartePromocional ");
-		sql.append("     FROM ");
-		sql.append("         lancamento lanc ");
-		sql.append("     JOIN ");
-		sql.append("         produto_edicao prodEdic  ");
-		sql.append("             ON prodEdic.ID=lanc.PRODUTO_EDICAO_ID ");
-		sql.append("     JOIN  ");
-		sql.append("         PRODUTO prod ");
-		sql.append("             ON prodEdic.PRODUTO_ID=prod.ID ");
-		sql.append("     where ");
-		sql.append("         prod.CODIGO = :COD_PRODUTO ");
-		sql.append("	 and prodEdic.NUMERO_EDICAO = :NUM_EDICAO ");
-
-		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
-		
-		query.setParameter("COD_PRODUTO", codProduto);
-		query.setParameter("NUM_EDICAO", numEdicao);
-		
-		query.setResultTransformer(new AliasToBeanResultTransformer(InformacoesReparteTotalEPromocionalDTO.class));
-		 
-		return (InformacoesReparteTotalEPromocionalDTO) query.uniqueResult();
-	}
-
-	@Override
-	public BigInteger buscarReparteDaEdica_Sobra(Long estudoID) {
-		
-		StringBuilder hql = new StringBuilder();
-
-		hql.append(" SELECT ");
-		
-		hql.append(" (lanc.reparte - lanc.repartePromocional - estud.reparteDistribuir) as sobra ");
-
-		hql.append(" FROM Lancamento AS lanc ");
-		
-		hql.append(" inner join lanc.estudo AS estud ");
-		
-		hql.append(" WHERE estud.id = :estudo_id ");
-		
-		Query query = super.getSession().createQuery(hql.toString());
-		
-		query.setParameter("estudo_id", estudoID);
-		
-		return (BigInteger)query.uniqueResult();
-
-	}
-
-	@Override
-	public BigInteger buscarVendaTotal(String codProduto, Long numEdicao) {
-
-		StringBuilder sql = new StringBuilder();
-		
-		sql.append(" select ");
-		sql.append("         sum(estqPC.QTDE_RECEBIDA - estqPC.QTDE_DEVOLVIDA) as totalVenda ");
-		sql.append("     FROM ");
-		sql.append("         movimento_estoque_cota movEC ");
-		sql.append("     JOIN ");
-		sql.append("         estoque_produto_cota estqPC  ");
-		sql.append("             ON movEC.ESTOQUE_PROD_COTA_ID = estqPC.ID ");
-		sql.append("     where ");
-		sql.append("         estqPC.PRODUTO_EDICAO_ID in ( ");
-		sql.append("         	select prodEdic.ID from produto_edicao prodEdic ");
-		sql.append("         		inner join produto prod ");
-		sql.append("        			ON prodEdic.PRODUTO_ID = prod.ID ");
-		sql.append("				where prod.CODIGO = :COD_PRODUTO and prodEdic.NUMERO_EDICAO = :NUM_EDICAO ");
-
-		SQLQuery query = this.getSession().createSQLQuery(sql.toString());
-		
-		query.setParameter("COD_PRODUTO", codProduto);
-		query.setParameter("NUM_EDICAO", numEdicao);
-		
-		return (BigInteger) query.uniqueResult();
-		
 	}
 
 	@Override

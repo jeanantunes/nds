@@ -98,12 +98,12 @@ $(function(){
     <td width="576" valign="top">
    	 
    	  <fieldset style="width:250px; margin-right:0px!important;margin-left:5px !important; float:left; ">
-   	    <legend>% Abrangência</legend>
+   	    <legend> Abrangência</legend>
                   <table width="240" border="0" cellpadding="2" cellspacing="1">
                       <tr>
-                         <td width="52">Sugerido:</td>
+                         <td width="52">Previsto:</td>
                         <td width="55"><input type="text" name="dataLcto5" id="sugeridoAbrang" style="width:35px; text-align:left;" /></td>
-                       <td width="45">Apurada:</td>
+                       <td width="45">Real:</td>
                         <td width="35"><input type="text" name="dataLcto2" id="apuradaAbrang" style="width:55px; text-align:left;" /></td>
                       </tr>
                 </table>
@@ -113,9 +113,9 @@ $(function(){
                	  <legend>Mínimo</legend>
                   <table width="230" border="0" cellpadding="2" cellspacing="1">
                       <tr>
-                        <td width="52">Sugerido:</td>
+                        <td width="52">Previsto:</td>
                         <td width="55"><input type="text" name="dataLcto5" id="sugeridoMinimo" style="width:35px; text-align:left;" /></td>
-                        <td width="44">Estudo:</td>
+                        <td width="44">Real:</td>
                         <td width="59"><input type="text" name="dataLcto5" id="estudoMinimo" style="width:35px; text-align:left;" /></td>
                       </tr>
                 </table>

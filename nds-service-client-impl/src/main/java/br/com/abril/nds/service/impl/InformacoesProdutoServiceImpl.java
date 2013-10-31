@@ -1,7 +1,5 @@
 package br.com.abril.nds.service.impl;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.com.abril.nds.dto.EdicaoBaseEstudoDTO;
 import br.com.abril.nds.dto.InfoProdutosItemRegiaoEspecificaDTO;
-import br.com.abril.nds.dto.InformacoesAbrangenciaEMinimoProdDTO;
 import br.com.abril.nds.dto.InformacoesCaracteristicasProdDTO;
 import br.com.abril.nds.dto.InformacoesProdutoDTO;
-import br.com.abril.nds.dto.InformacoesReparteTotalEPromocionalDTO;
 import br.com.abril.nds.dto.InformacoesVendaEPerceDeVendaDTO;
 import br.com.abril.nds.dto.ProdutoBaseSugeridaDTO;
 import br.com.abril.nds.dto.filtro.FiltroInformacoesProdutoDTO;
@@ -82,44 +78,8 @@ public class InformacoesProdutoServiceImpl implements InformacoesProdutoService 
 
 	@Override
 	@Transactional
-	public InformacoesAbrangenciaEMinimoProdDTO buscarAbrangenciaEMinimo(Long idEstudo) {
-		return infoProdutosRepo.buscarAbrangenciaEMinimo(idEstudo);
-	}
-
-	@Override
-	@Transactional
-	public BigDecimal buscarAbrangenciaApurada(String codProduto, Long numEdicao) {
-		return infoProdutosRepo.buscarAbrangenciaApurada(codProduto, numEdicao);
-	}
-
-	@Override
-	@Transactional
-	public InformacoesReparteTotalEPromocionalDTO buscarReparteTotalEPromocional(String codProduto, Long numEdicao) {
-		return infoProdutosRepo.buscarRepartes(codProduto, numEdicao);
-	}
-
-	@Override
-	@Transactional
-	public BigInteger buscarSobra(Long idEstudo) {
-		return infoProdutosRepo.buscarReparteDaEdica_Sobra(idEstudo);
-	}
-
-	@Override
-	@Transactional
-	public BigInteger buscarTotalVenda(String codProduto, Long numEdicao) {
-		return infoProdutosRepo.buscarVendaTotal(codProduto, numEdicao);
-	}
-	
-	@Override
-	@Transactional
 	public InformacoesVendaEPerceDeVendaDTO buscarVendas(String codProduto, Long numEdicao) {
 		return infoProdutosRepo.buscarVendas(codProduto, numEdicao);
-	}
-
-	@Override
-	@Transactional
-	public BigInteger obterReparteDistribuido(String codProduto) {
-		return movimentoEstoqRepo.obterReparteDistribuidoProduto(codProduto);
 	}
 
 }
