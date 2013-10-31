@@ -892,7 +892,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
 		parameters.put("isPostergado", false);
 		parameters.put("tipoVendaProduto",TipoVendaEncalhe.ENCALHE.name());
 		
-		if(filtro.getPaginacao()!=null) {
+		if(filtro.getPaginacao() != null) {
 			
 			if(filtro.getPaginacao().getPosicaoInicial()!=null && filtro.getPaginacao().getQtdResultadosPorPagina()!=null) {
 				sql.append(" limit :posicaoInicial, :posicaoFinal");
@@ -963,7 +963,7 @@ public class MovimentoEstoqueCotaRepositoryImpl extends AbstractRepositoryModel<
         }
 
         StringBuilder subSqlEncalhe = new StringBuilder();
-        subSqlEncalhe.append(" select sum( COALESCE(CONFERENCIA_ENCALHE_1.QTDE_INFORMADA, 0) ) ");
+        subSqlEncalhe.append(" select coalesce(sum( COALESCE(CONFERENCIA_ENCALHE_1.QTDE_INFORMADA, 0) ), 0) ");
         subSqlEncalhe.append(" from CONFERENCIA_ENCALHE CONFERENCIA_ENCALHE_1 ");
         subSqlEncalhe.append(" join CONTROLE_CONFERENCIA_ENCALHE_COTA CCEC on ");
         subSqlEncalhe.append("		(CCEC.ID = CONFERENCIA_ENCALHE_1.CONTROLE_CONFERENCIA_ENCALHE_COTA_ID) ");
