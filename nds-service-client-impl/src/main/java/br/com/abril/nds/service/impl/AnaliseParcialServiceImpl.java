@@ -108,8 +108,10 @@ public class AnaliseParcialServiceImpl implements AnaliseParcialService {
                     filtro.setNumeroEstudo(queryDTO.getEstudoOrigem());
                     List<InformacoesProdutoDTO> buscarProduto = this.infoProdService.buscarProduto(filtro);*/
             		
-            		edicaoDoEstudoOrigem = analiseParcialRepository.carregarPublicacaoDoEstudo(queryDTO.getEstudoOrigem());
-            		
+            		edicaoDoEstudoOrigem = analiseParcialRepository.carregarEdicoesBaseEstudo(queryDTO.getEstudoOrigem(),null);
+            		if(edicaoDoEstudoOrigem.size()==6){
+            			edicaoDoEstudoOrigem.remove(edicaoDoEstudoOrigem.size()-1);
+            		}
             	}
             	if(edicaoDoEstudoOrigem!=null && edicaoDoEstudoOrigem.size()>0){
             		List<EdicoesProdutosDTO> listConcat = new ArrayList<EdicoesProdutosDTO>();
