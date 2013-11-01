@@ -72,8 +72,7 @@ public class ResumoSuplementarFecharDiaServiceImp implements
 		dto.setTotalVenda(totalVenda);
 		listaDeSuplementares.add(totalVenda);
 		
-		BigDecimal totalFisico = this.obterValorFisico(dataOperacional);
-		dto.setSaldo(totalEstoqueLogico.subtract(totalFisico));
+		dto.setSaldo(totalEstoqueLogico.subtract(totalTransferencia).subtract(totalVenda));
 		
 		return dto;
 	}

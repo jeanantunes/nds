@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import br.com.abril.nds.util.CurrencyUtil;
 import br.com.abril.nds.util.export.Export;
 import br.com.abril.nds.util.export.Export.Alignment;
 import br.com.abril.nds.util.export.Exportable;
@@ -53,6 +54,7 @@ public class SuplementarFecharDiaDTO implements Serializable {
      */
     private BigInteger quantidadeTransferenciaSaida;
 
+    private String precoVendaFormatado;
 	
 	public String getCodigo() {
 		return codigo;
@@ -84,6 +86,7 @@ public class SuplementarFecharDiaDTO implements Serializable {
 
 	public void setPrecoVenda(BigDecimal precoVenda) {
 		this.precoVenda = precoVenda;
+		this.precoVendaFormatado = CurrencyUtil.formatarValorQuatroCasas(precoVenda);
 	}
 
 	public BigInteger getQuantidadeContabil() {
@@ -142,4 +145,17 @@ public class SuplementarFecharDiaDTO implements Serializable {
 		this.idProdutoEdicao = idProdutoEdicao;
 	}
 
+	/**
+	 * @return the precoVendaFormatado
+	 */
+	public String getPrecoVendaFormatado() {
+		return precoVendaFormatado;
+	}
+
+	/**
+	 * @param precoVendaFormatado the precoVendaFormatado to set
+	 */
+	public void setPrecoVendaFormatado(String precoVendaFormatado) {
+		this.precoVendaFormatado = precoVendaFormatado;
+	}
 }

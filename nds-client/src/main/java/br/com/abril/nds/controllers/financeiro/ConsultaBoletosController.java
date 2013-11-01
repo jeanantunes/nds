@@ -31,6 +31,7 @@ import br.com.abril.nds.model.cadastro.Pessoa;
 import br.com.abril.nds.model.cadastro.PessoaFisica;
 import br.com.abril.nds.model.cadastro.PessoaJuridica;
 import br.com.abril.nds.model.financeiro.Boleto;
+import br.com.abril.nds.model.financeiro.StatusDivida;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CotaService;
@@ -212,7 +213,9 @@ public class ConsultaBoletosController extends BaseController {
 			  (boleto.getEncargos()!=null? formatoMoeda.format(boleto.getEncargos()) : ""),
 			  (boleto.getValor()!=null? formatoMoeda.format(boleto.getValor()) : ""),
 			  (boleto.getTipoBaixa()!=null?boleto.getTipoBaixa().getDescricao():""),
-			  (boleto.getStatusCobranca()!=null?boleto.getStatusCobranca().toString():""),
+			  ((boleto.getDivida() != null && StatusDivida.PENDENTE_INADIMPLENCIA.equals(boleto.getDivida().getStatus())) ?  
+					  StatusDivida.PENDENTE_INADIMPLENCIA.getDescricao() : 
+						  (boleto.getStatusCobranca()!=null?boleto.getStatusCobranca().toString():"")),
 			  (boleto.isRecebeCobrancaEmail())
 			)
           );
