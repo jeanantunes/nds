@@ -1209,6 +1209,8 @@ var fixacaoReparteController = $.extend(true, {
 						
 					},
 					function(result){
+						$(codigoCota).val('');
+						$(nomeCota).val('');
 						$('#codigoModal').val('');
 						$('#nomeModal').val('');
 						$("#edicaoDestaque").text("");
