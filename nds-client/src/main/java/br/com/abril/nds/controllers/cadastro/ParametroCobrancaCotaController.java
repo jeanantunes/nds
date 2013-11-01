@@ -48,11 +48,9 @@ import br.com.abril.nds.service.CotaService;
 import br.com.abril.nds.service.EntregadorService;
 import br.com.abril.nds.service.FileService;
 import br.com.abril.nds.service.FormaCobrancaService;
-import br.com.abril.nds.service.FornecedorService;
 import br.com.abril.nds.service.ParametroCobrancaCotaService;
 import br.com.abril.nds.service.ParametrosDistribuidorService;
 import br.com.abril.nds.service.PoliticaCobrancaService;
-import br.com.abril.nds.service.integracao.DistribuidorService;
 import br.com.abril.nds.service.integracao.ParametroSistemaService;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.Constantes;
@@ -94,16 +92,10 @@ public class ParametroCobrancaCotaController extends BaseController {
 	private ParametrosDistribuidorService parametroDistribuidorService;
 
 	@Autowired
-	private FornecedorService fornecedorService;
-
-	@Autowired
 	private Validator validator;	
 
 	@Autowired
 	private FileService fileService;
-	
-	@Autowired
-	private DistribuidorService distribuidorService;
 
 	@Autowired
 	private EntregadorService entregadorService;
@@ -243,6 +235,18 @@ public class ParametroCobrancaCotaController extends BaseController {
 	@Path("/carregarBancos")
 	public void carregarBancos(){
 		result.use(Results.json()).from(bancoService.getComboBancos(true), "result").recursive().serialize();
+	}
+
+	/**
+	 * Obtem valor minimo e quantidade de dividas em aberto do distribuidor
+	 */
+	@Post
+	@Path("/obterPoliticaSuspensaoDistribuidor")
+	public void obterPoliticaSuspensaoDistribuidor(){
+		
+		ParametroCobrancaCotaDTO parametroCobrancaCotaDTO = this.parametroCobrancaCotaService.obterPoliticaSuspensaoDistribuidor();
+		
+		result.use(Results.json()).from(parametroCobrancaCotaDTO, "result").recursive().serialize();
 	}
 
 	/**
