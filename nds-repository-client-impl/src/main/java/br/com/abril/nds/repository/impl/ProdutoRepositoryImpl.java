@@ -8,6 +8,7 @@ import org.hibernate.Criteria;
 import org.hibernate.FetchMode;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Repository;
@@ -203,7 +204,7 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		String auxHql = " where ";
 		
 		if (codigo != null && !codigo.isEmpty()) {
-			hql.append(auxHql).append(" upper(produto.codigo) = :codigo ");
+			hql.append(auxHql).append(" upper(produto.codigo_icd) = :codigo ");
 			auxHql = " and ";
 		}
 		
@@ -383,41 +384,23 @@ public class ProdutoRepositoryImpl extends AbstractRepositoryModel<Produto, Long
 		
 		return query.list();
 	}
-	
-	@Deprecated
-	@Override
-	public String obterCodigoProdinPorCodICD(String codigoICD) {
-		
-		StringBuffer hql = new StringBuffer();
-		
-		hql.append(" SELECT ");
-		hql.append(" p.codigo ");
-		hql.append(" from Produto p ");
-		
-		hql.append(" where p.codigoICD = :codigoProduto");			
-		
-		Query query = super.getSession().createQuery(hql.toString());
-		query.setParameter("codigoProduto", codigoICD);
-		
-		return (String) query.uniqueResult();
-	}
 
     @Override
     public Produto obterProdutoPorCodigoICD(String codigoProduto) {
-        List list = getSession().createCriteria(Produto.class).add(Restrictions.eq("codigoICD", codigoProduto)).list();
+        List list = getSession().createCriteria(Produto.class).add(Restrictions.eq("codigoICD", codigoProduto)).addOrder(Order.asc("nome")).list();
         return list.isEmpty() ? null : (Produto) list.get(0);
     }
 
     @Override
     public Produto obterProdutoPorCodigoICDLike(String codigoProduto) {
-        List list = getSession().createCriteria(Produto.class).add(Restrictions.like("codigoICD", codigoProduto + "%")).list();
+        List list = getSession().createCriteria(Produto.class).add(Restrictions.like("codigoICD", codigoProduto + "%")).addOrder(Order.asc("nome")).list();
         return list.isEmpty() ? null : (Produto) list.get(0);
     }
 
     @Override
     public Produto obterProdutoPorCodigoProdinLike(String codigoProduto) {
         String codigoProdutoLike = leftPad(left(codigoProduto, 6), 6, "0") + "%";
-        List list = getSession().createCriteria(Produto.class).add(Restrictions.like("codigo", codigoProdutoLike)).list();
+        List list = getSession().createCriteria(Produto.class).add(Restrictions.like("codigo", codigoProdutoLike)).addOrder(Order.asc("nome")).list();
         return list.isEmpty() ? null : (Produto) list.get(0);
     }
 

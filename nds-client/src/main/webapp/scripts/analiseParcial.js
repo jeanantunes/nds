@@ -1187,18 +1187,17 @@ var analiseParcialController = $.extend(true, {
                         }
                         if ($inputsPreenchidos.filter('[motivo="GN"]').length > 0) {
 
-                            var produtoId = $('#produtoId').val();
+                            var params = [];
+                            params.push({name: 'filtro.produtoDto.codigoProduto', value: $('#codigoProduto').val()});
+                            params.push({name: 'filtro.produtoDto.idClassificacaoProduto', value: $('#tipoClassificacaoProdutoId').val()});
+                            params.push({name: 'filtro.excecaoSegmento', value: true});
 
                             $inputsPreenchidos.filter('[motivo="GN"]').each(function(key){
-                                var params = [];
                                 var $this = $(this);
-
-                                params.push({name: 'listaIdProduto[0]', value: produtoId});
-                                params.push({name: 'filtro.excecaoSegmento', value: true});
-                                params.push({name: 'filtro.cotaDto.numeroCota', value: $this.attr('numerocota')});
-
-                                $.postJSON(analiseParcialController.path + '/distribuicao/excecaoSegmentoParciais/inserirExcecaoProdutoNaCota', params);
+                                params.push({name: 'listaNumeroCota[' + key + ']', value: $this.attr('numerocota')});
                             });
+
+                            $.postJSON(analiseParcialController.path + '/distribuicao/excecaoSegmentoParciais/inserirCotaNaExcecao', params);
                         }
                         analiseParcialController.postMudarReparteLote();
                         $(this).dialog("close");
