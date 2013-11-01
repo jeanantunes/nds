@@ -238,18 +238,6 @@ public class ParametroCobrancaCotaController extends BaseController {
 	}
 
 	/**
-	 * Obtem valor minimo e quantidade de dividas em aberto do distribuidor
-	 */
-	@Post
-	@Path("/obterPoliticaSuspensaoDistribuidor")
-	public void obterPoliticaSuspensaoDistribuidor(){
-		
-		ParametroCobrancaCotaDTO parametroCobrancaCotaDTO = this.parametroCobrancaCotaService.obterPoliticaSuspensaoDistribuidor();
-		
-		result.use(Results.json()).from(parametroCobrancaCotaDTO, "result").recursive().serialize();
-	}
-
-	/**
 	 * Método responsável por obter os parametros de cobranca da Cota para a aba 'Financeiro'.
 	 * @throws Mensagens de Validação.
 	 * @param idCota
