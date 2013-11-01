@@ -183,8 +183,15 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 				
 				if (valorAux || valorAux == "0"){
 					$("#valorExemplarNota" + index, digitacaoContagemDevolucaoController.workspace).val(valorAux);
+					
+					$("#difernca" + index, digitacaoContagemDevolucaoController.workspace).text(
+						parseInt($("#qtdDevolucao_" + index, digitacaoContagemDevolucaoController.workspace).text())-
+						valorAux
+					);
+					
 				} else {
 					$("#valorExemplarNota" + index, digitacaoContagemDevolucaoController.workspace).val("");
+					$("#difernca" + index, digitacaoContagemDevolucaoController.workspace).text("");
 				}
 			}
 		},
@@ -227,12 +234,13 @@ var digitacaoContagemDevolucaoController = $.extend(true, {
 					
 					if (valorAux || valorAux == "0"){
 						qtdNota.val(valorAux);
+						$("#difernca" + index, digitacaoContagemDevolucaoController.workspace).text(value - valorAux);
 					} else {
 						qtdNota.val("");
+						$("#difernca" + index, digitacaoContagemDevolucaoController.workspace).text("");
 					}
 					
 					//qtdNota.prop('disabled', false);
-					$("#difernca" + index, digitacaoContagemDevolucaoController.workspace).text("");
 				}
 				
 			});
