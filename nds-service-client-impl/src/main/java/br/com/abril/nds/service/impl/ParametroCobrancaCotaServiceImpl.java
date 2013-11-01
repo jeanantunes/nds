@@ -277,6 +277,30 @@ public class ParametroCobrancaCotaServiceImpl implements ParametroCobrancaCotaSe
 	}
 	
 	
+	
+	/**
+	 * Obtem numero de acumulo de dividas e valor da politica de suspensão do distribuidor
+	 * @return ParametroCobrancaCotaDTO
+	 */
+	@Override
+	@Transactional(readOnly = true)
+	public ParametroCobrancaCotaDTO obterPoliticaSuspensaoDistribuidor(){
+		
+		ParametroCobrancaCotaDTO parametroCobrancaDTO = new ParametroCobrancaCotaDTO();
+		
+		Distribuidor distribuidor = distribuidorRepository.obter();
+		
+        if(distribuidor.getPoliticaSuspensao()!=null){
+			
+			parametroCobrancaDTO.setValorMinimo(CurrencyUtil.formatarValor(distribuidor.getPoliticaSuspensao().getValor()));
+			
+			parametroCobrancaDTO.setQtdDividasAberto(distribuidor.getPoliticaSuspensao().getNumeroAcumuloDivida());				
+		}
+        
+        return parametroCobrancaDTO;
+	}
+	
+	
     
 	/**
 	 * Método responsável por obter os dados da forma de cobranca

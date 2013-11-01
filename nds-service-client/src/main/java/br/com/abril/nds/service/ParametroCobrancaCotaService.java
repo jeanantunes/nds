@@ -14,7 +14,6 @@ import br.com.abril.nds.dto.ParametroCobrancaCotaDTO;
 import br.com.abril.nds.model.cadastro.FormaCobranca;
 import br.com.abril.nds.model.cadastro.ParametroCobrancaCota;
 import br.com.abril.nds.model.cadastro.TipoCobranca;
-import br.com.abril.nds.model.cadastro.TipoFormaCobranca;
 
 /**
 * Interface que define serviços referentes a entidade
@@ -195,4 +194,10 @@ public interface ParametroCobrancaCotaService {
 	List<BigDecimal> comboValoresMinimos();
 	
 	void inserirFormaCobrancaDoDistribuidorNaCota(ParametroCobrancaCotaDTO parametroCobranca);
+
+	/**
+	 * Obtem numero de acumulo de dividas e valor da politica de suspensão do distribuidor
+	 * @return ParametroCobrancaCotaDTO
+	 */
+	ParametroCobrancaCotaDTO obterPoliticaSuspensaoDistribuidor();
 }
