@@ -172,9 +172,9 @@ function mostraIntervalo(){
         <table width="950" border="0" cellpadding="2" cellspacing="1" class="filtro">
           <tr>
             <td width="22" align="right"><input type="radio" name="filtroPrincipalRadio" id="radio"  value="Cota" onclick="filtroPorCota();" /></td>
-            <td width="50">Cota</td>
+            <td width="50"><label for="radio">Cota</label></td>
             <td width="22"><input type="radio" name="filtroPrincipalRadio" id="radio2" value="Produto" onclick="filtroPorProduto()" /></td>
-            <td width="49">Produto</td>
+            <td width="49"><label for="radio2">Produto</label></td>
             <td width="781"><table width="760" border="0" cellpadding="2" cellspacing="1" class="filtro filtroPorProduto" id="fixacaoReparte_filtroPorProduto" style="display:none;">
           <tr>
             <td width="52">Código:</td>
@@ -199,7 +199,8 @@ function mostraIntervalo(){
             <tr>
            	  <td width="30" >Cota:</td>
                 <td width="91">
-                <input type="text" name="codigoCota" id="codigoCota" style="width:80px;" onchange="pesquisaCota.pesquisarPorNumeroCota('#codigoCota','#nomeCota',false,undefined,undefined)"/></td>
+                <!-- pesquisaCota.pesquisarPorNumeroCota('#codigoCota','#nomeCota',false,undefined,undefined) -->
+                <input type="text" name="codigoCota" id="codigoCota" style="width:80px;" onchange="fixacaoReparteController.autoCompleteNumeroCota('#codigoCota','#nomeCota')"/></td>
                 <td width="37" >Nome:</td>
                 <td width="470"><input type="text" name="nomeCota" id="nomeCota" style="width:200px;"/></td>
               <td width="104"><span class="bt_pesquisar"><a href="javascript:;" onclick="fixacaoReparteController.pesquisarPorCota();">Pesquisar</a></span></td>
