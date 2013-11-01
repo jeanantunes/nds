@@ -231,6 +231,8 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 				produtoEdicao.setParcial(true);
 				produtoEdicao.setAtivo(true);
 				produtoEdicao.setOrigem(Origem.PRODUTO_SEM_CADASTRO);
+				produtoEdicao.setPrecoPrevisto(new BigDecimal(imputItem.getPreco()));
+				produtoEdicao.setPrecoVenda(produtoEdicao.getPrecoPrevisto());
 				this.getSession().persist(produtoEdicao);
 				
 				Date dataAtual = new Date();
@@ -242,7 +244,7 @@ public class EMS0135MessageProcessor extends AbstractRepository implements Messa
 				lancamento.setDataRecolhimentoPrevista(dataPrevista);
 				lancamento.setDataRecolhimentoDistribuidor(dataPrevista);
 				lancamento.setProdutoEdicao(produtoEdicao);
-				lancamento.setTipoLancamento(TipoLancamento.NORMAL);
+				lancamento.setTipoLancamento(TipoLancamento.LANCAMENTO);
 				lancamento.setDataStatus(dataAtual);
 				lancamento.setStatus(StatusLancamento.CONFIRMADO);
 				lancamento.setReparte(new BigInteger(imputItem.getQtdExemplar().toString()));
