@@ -25,12 +25,14 @@ public class FechamentoDiarioResumoConsignadoRepositoryImpl extends AbstractRepo
 		hql.append(" select resumoConsignado.saldoAtual ")
 		.append(" from FechamentoDiarioResumoConsignado resumoConsignado ")
 		.append(" inner join resumoConsignado.fechamentoDiario fd ")
-		.append(" where fd.dataCriacao < :dataAtual ")
-		.append(" order by fd.dataCriacao desc limit 1 ");
+		.append(" where fd.dataFechamento < :dataAtual ")
+		.append(" order by fd.dataFechamento desc ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("dataAtual", dataAtual);
+		
+		query.setMaxResults(1);
 		
 		return (BigDecimal) query.uniqueResult();
 		

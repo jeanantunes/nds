@@ -28,12 +28,14 @@ public class FechamentoDiarioResumoAvistaRepositoryImpl extends AbstractReposito
 		hql.append(" select resumoAVista.saldoAtual ")
 		.append(" from FechamentoDiarioResumoAvista resumoAVista ")
 		.append(" inner join resumoAVista.fechamentoDiario fd ")
-		.append(" where fd.dataCriacao < :dataAtual ")
-		.append(" order by fd.dataCriacao desc limit 1 ");
+		.append(" where fd.dataFechamento < :dataAtual ")
+		.append(" order by fd.dataFechamento desc ");
 		
 		Query query = getSession().createQuery(hql.toString());
 		
 		query.setParameter("dataAtual", dataAtual);
+		
+		query.setMaxResults(1);
 		
 		return (BigDecimal) query.uniqueResult();
 		
