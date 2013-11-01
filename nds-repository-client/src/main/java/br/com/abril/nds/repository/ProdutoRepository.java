@@ -78,9 +78,6 @@ public interface ProdutoRepository extends Repository<Produto, Long> {
 
 	List<String> verificarProdutoExiste(String... codigoProduto);
 
-    @Deprecated
-	String obterCodigoProdinPorCodICD (String codigoProduto);
-
     Produto obterProdutoPorCodigoICD(String codigoProduto);
 
     Produto obterProdutoPorCodigoICDLike(String codigoProduto);

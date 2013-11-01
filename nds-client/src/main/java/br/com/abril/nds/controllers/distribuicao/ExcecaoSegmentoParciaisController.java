@@ -123,11 +123,6 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 		
 		validarEntradaFiltroCota(filtro);
 		
-		/*if(filtro.getProdutoDto().getCodigoProduto().length() == 6){
-			String codigoProduto = produtoService.obterCodigoProdinPorICD(filtro.getProdutoDto().getCodigoProduto());
-			filtro.getProdutoDto().setCodigoProduto(codigoProduto);
-		}*/
-		
 		filtro.getCotaDto().setNomePessoa(PessoaUtil.removerSufixoDeTipo(filtro.getCotaDto().getNomePessoa()));
 		
 		List<ProdutoNaoRecebidoDTO> listaProdutoNaoRecebidoDto = this.excecaoSegmentoParciaisService.obterProdutosNaoRecebidosPelaCota(filtro);
@@ -144,10 +139,6 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 		filtro.setPaginacao(new PaginacaoVO(page, rp, sortorder, sortname));
 
 		validarEntradaFiltroProduto(filtro);
-		
-		/*String codigoProduto = produtoService.obterCodigoProdinPorICD(filtro.getProdutoDto().getCodigoProduto());
-		
-		filtro.getProdutoDto().setCodigoProduto(codigoProduto);*/
 		
 		filtro.getProdutoDto().setCodigoProduto(filtro.getProdutoDto().getCodigoProduto());
 		
@@ -235,7 +226,7 @@ public class ExcecaoSegmentoParciaisController extends BaseController {
 	
 	@Post
 	public void inserirCotaNaExcecao(Integer[] listaNumeroCota, FiltroExcecaoSegmentoParciaisDTO filtro){
-		ExcecaoProdutoCota element = null;
+		ExcecaoProdutoCota element;
 		Produto produto = null;
 		Usuario usuario = usuarioService.getUsuarioLogado();
 		TipoExcecao tipoExcecao = null;

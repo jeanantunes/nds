@@ -248,9 +248,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 				produtoExistente.setSegmentacao(produto.getSegmentacao());
 				produtoExistente.setIsGeracaoAutomatica(produto.getIsGeracaoAutomatica());
 				produtoExistente.setTipoSegmentoProduto(produto.getTipoSegmentoProduto());
-                //FIXME refazer... a classificação fica no ProdutoEdicao
-//				produtoExistente.setTipoClassificacaoProduto(produto.getTipoClassificacaoProduto());
-				
+
 				produtoExistente.setEditor(editor);
 				produtoExistente.addFornecedor(fornecedor);
 				produtoExistente.setTipoProduto(tipoProduto);
@@ -377,13 +375,7 @@ public class ProdutoServiceImpl implements ProdutoService {
 		return tipoClassRepo.buscarTodos();
 	}
 
-	@Override
-	@Transactional
-	public String obterCodigoProdinPorICD(String codigoProduto) {
-		return produtoRepository.obterCodigoProdinPorCodICD(codigoProduto);
-	}
-
-	@Override
+    @Override
 	@Transactional
 	public Produto obterProdutoPorProdin(String codigoProdin) {
 		return produtoRepository.obterProdutoPorCodigoProdin(codigoProdin);

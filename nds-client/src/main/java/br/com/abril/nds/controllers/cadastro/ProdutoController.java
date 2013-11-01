@@ -24,6 +24,7 @@ import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.ValidacaoVO;
 import br.com.caelum.vraptor.*;
 import br.com.caelum.vraptor.view.Results;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletResponse;
@@ -416,9 +417,10 @@ public class ProdutoController extends BaseController {
 		
 		int startSearch = page*rp - rp;
 
-        //FIXME - POG pega o que foi digitado na tela(PRODIN ou ICD ou ???) e devolve o PRODIN
-        Produto produtoDB = produtoService.obterProdutoPorCodigo(codigo);
-        codigo = produtoDB.getCodigo();
+        if (StringUtils.isNotBlank(codigo)) {
+            Produto produtoDB = produtoService.obterProdutoPorCodigo(codigo);
+            codigo = produtoDB.getCodigoICD();
+        }
 
         FiltroProdutoDTO filtroProdutoDTO =
 				new FiltroProdutoDTO(codigo,produto,editor,fornecedor,codigoTipoProduto,sortorder,sortname,isGeracaoAutomatica);

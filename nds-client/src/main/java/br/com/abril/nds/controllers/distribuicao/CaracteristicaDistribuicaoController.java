@@ -1,19 +1,5 @@
 package br.com.abril.nds.controllers.distribuicao;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
 import br.com.abril.nds.client.annotation.Rules;
 import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.CaracteristicaDistribuicaoDTO;
@@ -24,23 +10,23 @@ import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.seguranca.Permissao;
-import br.com.abril.nds.service.BrindeService;
-import br.com.abril.nds.service.CapaService;
-import br.com.abril.nds.service.CaracteristicaDistribuicaoService;
-import br.com.abril.nds.service.ProdutoService;
-import br.com.abril.nds.service.TipoSegmentoProdutoService;
+import br.com.abril.nds.service.*;
 import br.com.abril.nds.util.CellModelKeyValue;
 import br.com.abril.nds.util.TableModel;
 import br.com.abril.nds.util.Util;
 import br.com.abril.nds.util.export.FileExporter;
 import br.com.abril.nds.util.export.FileExporter.FileType;
 import br.com.abril.nds.vo.PaginacaoVO;
-import br.com.caelum.vraptor.Get;
-import br.com.caelum.vraptor.Path;
-import br.com.caelum.vraptor.Post;
-import br.com.caelum.vraptor.Resource;
-import br.com.caelum.vraptor.Result;
+import br.com.caelum.vraptor.*;
 import br.com.caelum.vraptor.view.Results;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.*;
+import java.util.List;
 
 @Resource
 @Path("/distribuicao/caracteristicaDistribuicao")
@@ -64,13 +50,15 @@ public class CaracteristicaDistribuicaoController extends BaseController{
 	@Autowired
 	private ProdutoService produtoService;
 	
-	@Autowired
+	@SuppressWarnings("SpringJavaAutowiringInspection")
+    @Autowired
 	private Result result;
 	
 	@Autowired
 	HttpSession session;
 	
-	@Autowired
+	@SuppressWarnings("SpringJavaAutowiringInspection")
+    @Autowired
 	private HttpServletResponse httpResponse;
 	
 	@Autowired
@@ -115,12 +103,7 @@ public class CaracteristicaDistribuicaoController extends BaseController{
 		filtro.setOrdemColuna(Util.getEnumByStringValue(FiltroConsultaCaracteristicaDistribuicaoDetalheDTO.OrdemColuna.values(), sortname));
 		tratarFiltroDetalhe(filtro);
 		
-//		if(filtro.getCodigoProduto() != null && filtro.getCodigoProduto().length() == 6){
-//			filtro.setCodigoProduto(produtoService.obterCodigoProdinPorICD(filtro.getCodigoProduto()));
-//		}
-		
-		
-		if(filtro.getCodigoProduto() != null && filtro.getCodigoProduto() != ""){
+		if(StringUtils.isNotBlank(filtro.getCodigoProduto())){
 			Produto produto = produtoService.obterProdutoPorCodigo(filtro.getCodigoProduto());
 			filtro.setCodigoProduto(produto.getCodigoICD());
 		}
@@ -137,7 +120,7 @@ public class CaracteristicaDistribuicaoController extends BaseController{
 			 throw new ValidacaoException(TipoMensagem.WARNING, "Não Foram encontrados resultados para a pesquisa");
 	    }
 		
-		TableModel<CellModelKeyValue<CaracteristicaDistribuicaoDTO>> tableModel = new TableModel<CellModelKeyValue<CaracteristicaDistribuicaoDTO>>();
+		TableModel<CellModelKeyValue<CaracteristicaDistribuicaoDTO>> tableModel = new TableModel<>();
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPesquisa));
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		tableModel.setTotal(filtro.getPaginacao().getQtdResultadosTotal());
@@ -150,7 +133,7 @@ public class CaracteristicaDistribuicaoController extends BaseController{
 		
 		List<CaracteristicaDistribuicaoSimplesDTO> resultadoPesquisa = caracteristicaDistribuicaoService.buscarComFiltroSimples(filtro);
 		
-		TableModel<CellModelKeyValue<CaracteristicaDistribuicaoSimplesDTO>> tableModel = new TableModel<CellModelKeyValue<CaracteristicaDistribuicaoSimplesDTO>>();
+		TableModel<CellModelKeyValue<CaracteristicaDistribuicaoSimplesDTO>> tableModel = new TableModel<>();
 		tableModel.setRows(CellModelKeyValue.toCellModelKeyValue(resultadoPesquisa));
 		tableModel.setPage(filtro.getPaginacao().getPaginaAtual());
 		tableModel.setTotal(filtro.getPaginacao().getQtdResultadosTotal());
@@ -187,10 +170,9 @@ public class CaracteristicaDistribuicaoController extends BaseController{
 	@Path("/exportarDetalhe")
 	@Get
 	public void exportar(FileType fileType, String tipoExportacao) throws IOException {
-		List dto = new ArrayList<>();
-		Class clazz = null;
-		List<CaracteristicaDistribuicaoDTO> resultadoPesquisaDetalhe = null;
-		FiltroConsultaCaracteristicaDistribuicaoDetalheDTO filtroDetalhe = null;
+        Class<CaracteristicaDistribuicaoDTO> clazz;
+		List<CaracteristicaDistribuicaoDTO> resultadoPesquisaDetalhe;
+		FiltroConsultaCaracteristicaDistribuicaoDetalheDTO filtroDetalhe;
 		
 		filtroDetalhe=(FiltroConsultaCaracteristicaDistribuicaoDetalheDTO)  session.getAttribute(FILTRO_DETALHE_SESSION_ATTRIBUTE);
 		if(filtroDetalhe!=null){
@@ -207,10 +189,9 @@ public class CaracteristicaDistribuicaoController extends BaseController{
 	@Path("/exportarSimples")
 	@Get
 	public void exportarSimples(FileType fileType, String tipoExportacao) throws IOException {
-		List dto = new ArrayList<>();
-		Class clazz = null;
-		List<CaracteristicaDistribuicaoSimplesDTO> resultadoPesquisaSimples = null;
-		FiltroConsultaCaracteristicaDistribuicaoSimplesDTO filtroSimples = null;
+        Class<CaracteristicaDistribuicaoSimplesDTO> clazz;
+		List<CaracteristicaDistribuicaoSimplesDTO> resultadoPesquisaSimples;
+		FiltroConsultaCaracteristicaDistribuicaoSimplesDTO filtroSimples;
 		
 		filtroSimples=(FiltroConsultaCaracteristicaDistribuicaoSimplesDTO)  session.getAttribute(FILTRO_SIMPLES_SESSION_ATTRIBUTE);
 		if(filtroSimples!=null){
@@ -226,7 +207,7 @@ public class CaracteristicaDistribuicaoController extends BaseController{
 	@Path("/exibirCapa")
 	@Post
 	public File exibirCapa(String codProduto, Long numeroEdicao){
-		  InputStream att = null;
+		  InputStream att;
 		  File file = new File("temp"+CapaService.DEFAULT_EXTENSION);
 		  try {
 		   att = capaService.getCapaInputStream(codProduto,numeroEdicao);
@@ -234,7 +215,7 @@ public class CaracteristicaDistribuicaoController extends BaseController{
 		     // write the inputStream to a FileOutputStream
 		     OutputStream out = new FileOutputStream(file);
 		     
-		     int read = 0;
+		     int read;
 		     byte[] bytes = new byte[1024];
 		     
 		     while ((read = att.read(bytes)) != -1) {
