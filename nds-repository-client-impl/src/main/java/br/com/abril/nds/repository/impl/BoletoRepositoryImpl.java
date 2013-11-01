@@ -98,7 +98,6 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		StringBuilder hql = new StringBuilder();
 		hql.append(" from Boleto b where ");		
 		hql.append(" b.cota.numeroCota = :ncota ");
-		hql.append(" and b.divida.status != :pendenteAcumulada ");
 
 		if (filtro.getDataVencimentoDe()!=null){
 		    hql.append(" and b.dataVencimento >= :vctode ");
@@ -146,7 +145,6 @@ public class BoletoRepositoryImpl extends AbstractRepositoryModel<Boleto,Long> i
 		
 		Query query = super.getSession().createQuery(hql.toString());
 		query.setParameter("ncota", filtro.getNumeroCota());
-		query.setParameter("pendenteAcumulada", StatusDivida.PENDENTE_INADIMPLENCIA);
 		
 		if (filtro.getDataVencimentoDe()!=null){
 		    query.setDate("vctode", filtro.getDataVencimentoDe());
