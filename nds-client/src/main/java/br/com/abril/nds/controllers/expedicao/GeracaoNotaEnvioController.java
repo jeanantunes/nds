@@ -159,20 +159,20 @@ public class GeracaoNotaEnvioController extends BaseController {
     @Post
     public void hasCotasAusentes() {
 
-	boolean hasCotasAusentes = false;
-
-	FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
-
-	filtro.setCadastro(SituacaoCadastro.SUSPENSO);
-	filtro.setPaginacaoVO(new PaginacaoVO());
-
-	List<ConsultaNotaEnvioDTO> cotasAusentes =
-		geracaoNotaEnvioService.busca(filtro);
-
-	if (cotasAusentes != null && !cotasAusentes.isEmpty())
-	    hasCotasAusentes = true;
-
-	result.use(CustomJson.class).from(hasCotasAusentes).serialize();
+		boolean hasCotasAusentes = false;
+	
+		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
+	
+		filtro.setCadastro(SituacaoCadastro.SUSPENSO);
+		filtro.setPaginacaoVO(new PaginacaoVO());
+	
+		List<ConsultaNotaEnvioDTO> cotasAusentes =
+			geracaoNotaEnvioService.busca(filtro);
+	
+		if (cotasAusentes != null && !cotasAusentes.isEmpty())
+		    hasCotasAusentes = true;
+	
+		result.use(CustomJson.class).from(hasCotasAusentes).serialize();
     }
 
     @Post
@@ -214,64 +214,60 @@ public class GeracaoNotaEnvioController extends BaseController {
     @Rules(Permissao.ROLE_EXPEDICAO_GERACAO_NOTA_ENVIO_ALTERACAO)
     public void gerarNotaEnvio(List<Long> listaIdCotas) {
 
-	session.setAttribute(COTAS_ID, listaIdCotas);
-
-	result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, 
-		"Geração de NE."),Constantes.PARAM_MSGS).recursive().serialize();
+		session.setAttribute(COTAS_ID, listaIdCotas);
+	
+		result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.SUCCESS, 
+			"Geração de NE."),Constantes.PARAM_MSGS).recursive().serialize();
     }
 
     private byte[] getNotas(){
 
-	FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
-
-	@SuppressWarnings("unchecked")
-	List<Long> idCotas = (List<Long>) session.getAttribute(COTAS_ID);
-
-	List<NotaEnvio> notasEnvio = this.geracaoNotaEnvioService.gerarNotasEnvio(filtro, idCotas);
-
-	if(notasEnvio == null || (notasEnvio != null && notasEnvio.size() < 1)) {
-
-	    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontrado itens para exportar"));
-	}
-
-	byte[] notasGeradas = nfeService.obterNEsPDF(notasEnvio, false, filtro.getIntervaloMovimento());
-
-	return notasGeradas;
+		FiltroConsultaNotaEnvioDTO filtro = this.getFiltroNotaEnvioSessao();
+	
+		List<NotaEnvio> notasEnvio = this.geracaoNotaEnvioService.gerarNotasEnvio(filtro);
+	
+		if(notasEnvio == null || (notasEnvio != null && notasEnvio.size() < 1)) {
+	
+		    throw new ValidacaoException(new ValidacaoVO(TipoMensagem.WARNING, "Não foram encontrado itens para exportar"));
+		}
+	
+		byte[] notasGeradas = nfeService.obterNEsPDF(notasEnvio, false, filtro.getIntervaloMovimento());
+	
+		return notasGeradas;
     }
 
     @Post
     public void getArquivoNotaEnvio() {
 
-
-	try {
-	    byte[] notasGeradas = this.getNotas();
-
-	    if (notasGeradas != null) {
-
-		DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
-
-		this.httpResponse.setHeader("Content-Disposition", "attachment; filename=notas-envio" + sdf.format(new Date()) + ".pdf");
-
-		OutputStream output;
-
-		output = this.httpResponse.getOutputStream();
-
-		output.write(notasGeradas);
-
-		httpResponse.getOutputStream().close();
-
-		session.setAttribute(COTAS_ID, null);
-
-		result.use(Results.nothing());
-
-	    }
-	} catch (ValidacaoException e) {
-	    LOGGER.error("Erro de validação ao gerar arquivos de notas de envio: " + e.getMessage(), e);
-	    result.use(Results.json()).from(e.getValidacao(), Constantes.PARAM_MSGS).recursive().serialize();
-	}catch (Exception e) {
-	    LOGGER.error("Erro genérico ao gerar arquivos de notas de envio: " + e.getMessage(), e);
-	    result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()),Constantes.PARAM_MSGS).recursive().serialize();
-	}
+		try {
+		    byte[] notasGeradas = this.getNotas();
+	
+		    if (notasGeradas != null) {
+	
+			DateFormat sdf = new SimpleDateFormat("yyyy-MM-ddhhmmss");
+	
+			this.httpResponse.setHeader("Content-Disposition", "attachment; filename=notas-envio" + sdf.format(new Date()) + ".pdf");
+	
+			OutputStream output;
+	
+			output = this.httpResponse.getOutputStream();
+	
+			output.write(notasGeradas);
+	
+			httpResponse.getOutputStream().close();
+	
+			session.setAttribute(COTAS_ID, null);
+	
+			result.use(Results.nothing());
+	
+		    }
+		} catch (ValidacaoException e) {
+		    LOGGER.error("Erro de validação ao gerar arquivos de notas de envio: " + e.getMessage(), e);
+		    result.use(Results.json()).from(e.getValidacao(), Constantes.PARAM_MSGS).recursive().serialize();
+		}catch (Exception e) {
+		    LOGGER.error("Erro genérico ao gerar arquivos de notas de envio: " + e.getMessage(), e);
+		    result.use(Results.json()).from(new ValidacaoVO(TipoMensagem.ERROR, e.getMessage()),Constantes.PARAM_MSGS).recursive().serialize();
+		}
     }
 
     /**

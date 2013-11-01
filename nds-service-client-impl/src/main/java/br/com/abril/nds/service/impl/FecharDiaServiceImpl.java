@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +28,7 @@ import br.com.abril.nds.dto.ValidacaoConfirmacaoDeExpedicaoFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoLancamentoFaltaESobraFecharDiaDTO;
 import br.com.abril.nds.dto.ValidacaoRecebimentoFisicoFecharDiaDTO;
 import br.com.abril.nds.dto.VendaFechamentoDiaDTO;
+import br.com.abril.nds.dto.VisaoEstoqueDTO;
 import br.com.abril.nds.dto.fechamentodiario.DiferencaDTO;
 import br.com.abril.nds.dto.fechamentodiario.DividaDTO;
 import br.com.abril.nds.dto.fechamentodiario.FechamentoDiarioDTO;
@@ -39,6 +39,7 @@ import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO.ResumoEstoqueProdu
 import br.com.abril.nds.dto.fechamentodiario.ResumoEstoqueDTO.ValorResumoEstoque;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoDividasDTO;
 import br.com.abril.nds.dto.fechamentodiario.SumarizacaoReparteDTO;
+import br.com.abril.nds.dto.filtro.FiltroConsultaVisaoEstoque;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.StatusConfirmacao;
@@ -122,6 +123,7 @@ import br.com.abril.nds.repository.MovimentoRepository;
 import br.com.abril.nds.repository.ProdutoEdicaoRepository;
 import br.com.abril.nds.repository.TipoMovimentoEstoqueRepository;
 import br.com.abril.nds.repository.TipoMovimentoFinanceiroRepository;
+import br.com.abril.nds.repository.VisaoEstoqueRepository;
 import br.com.abril.nds.service.BoletoService;
 import br.com.abril.nds.service.CalendarioService;
 import br.com.abril.nds.service.DividaService;
@@ -270,6 +272,9 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	
 	@Autowired
 	private UsuarioService usuarioService;
+	
+	@Autowired
+	private VisaoEstoqueRepository visaoEstoqueRepository;
 	
 	@Autowired
 	private BoletoService boletoService;
@@ -1239,7 +1244,58 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 	@Override
 	@Transactional(readOnly=true)
 	public ResumoEstoqueDTO obterResumoEstoque(Date dataOperacao){		
-		return  this.fecharDiaRepository.obterResumoEstoque(dataOperacao);
+		
+		ResumoEstoqueDTO resumoDTO = new ResumoEstoqueDTO();
+		ResumoEstoqueDTO.ResumoEstoqueExemplar exemplar = resumoDTO.new ResumoEstoqueExemplar();
+		ResumoEstoqueDTO.ResumoEstoqueProduto produto = resumoDTO.new ResumoEstoqueProduto();
+		ResumoEstoqueDTO.ValorResumoEstoque valor = resumoDTO.new ValorResumoEstoque();
+		
+		FiltroConsultaVisaoEstoque filtro = new FiltroConsultaVisaoEstoque();
+		
+		filtro.setDataMovimentacao(dataOperacao);
+		
+		VisaoEstoqueDTO visaoEstoqueDTO = null;
+		
+		filtro.setTipoEstoque(TipoEstoque.LANCAMENTO.toString());
+		visaoEstoqueDTO = visaoEstoqueRepository.obterVisaoEstoque(filtro);
+		
+		exemplar.setQuantidadeLancamento(visaoEstoqueDTO.getExemplares().intValue());
+		produto.setQuantidadeLancamento(visaoEstoqueDTO.getProdutos().intValue());
+		valor.setValorLancamento(visaoEstoqueDTO.getValor());
+		
+		filtro.setTipoEstoque(TipoEstoque.LANCAMENTO_JURAMENTADO.toString());
+		visaoEstoqueDTO = visaoEstoqueRepository.obterVisaoEstoqueJuramentado(filtro);
+		
+		exemplar.setQuantidadeJuramentado(visaoEstoqueDTO.getExemplares().intValue());
+		produto.setQuantidadeJuramentado(visaoEstoqueDTO.getProdutos().intValue());
+		valor.setValorJuramentado(visaoEstoqueDTO.getValor());
+		
+		filtro.setTipoEstoque(TipoEstoque.SUPLEMENTAR.toString());
+		visaoEstoqueDTO = visaoEstoqueRepository.obterVisaoEstoque(filtro);
+		
+		exemplar.setQuantidadeSuplementar(visaoEstoqueDTO.getExemplares().intValue());
+		produto.setQuantidadeSuplementar(visaoEstoqueDTO.getProdutos().intValue());
+		valor.setValorSuplementar(visaoEstoqueDTO.getValor());
+		
+		filtro.setTipoEstoque(TipoEstoque.RECOLHIMENTO.toString());
+		visaoEstoqueDTO = visaoEstoqueRepository.obterVisaoEstoque(filtro);
+		
+		exemplar.setQuantidadeRecolhimento(visaoEstoqueDTO.getExemplares().intValue());
+		produto.setQuantidadeRecolhimento(visaoEstoqueDTO.getProdutos().intValue());
+		valor.setValorRecolhimento(visaoEstoqueDTO.getValor());
+		
+		filtro.setTipoEstoque(TipoEstoque.PRODUTOS_DANIFICADOS.toString());
+		visaoEstoqueDTO = visaoEstoqueRepository.obterVisaoEstoque(filtro);
+		
+		exemplar.setQuantidadeDanificados(visaoEstoqueDTO.getExemplares().intValue());
+		produto.setQuantidadeDanificados(visaoEstoqueDTO.getProdutos().intValue());
+		valor.setValorDanificados(visaoEstoqueDTO.getValor());
+		
+		resumoDTO.setResumEstoqueExemplar(exemplar);
+		resumoDTO.setResumoEstoqueProduto(produto);
+		resumoDTO.setValorResumoEstoque(valor);
+		
+		return resumoDTO;
 	}
 	
 	private void validarDadosFechamentoDiario(Object objeto, String mensagem) throws FechamentoDiarioException{
