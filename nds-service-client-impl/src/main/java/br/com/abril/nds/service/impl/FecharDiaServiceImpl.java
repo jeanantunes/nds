@@ -496,9 +496,8 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 
 		//Consignado
 		resumoConsignado.setSaldoAnterior(
-			this.movimentoEstoqueRepository.obterSaldoDistribuidor(
-				DateUtil.subtrairDias(dataFechamento, 1), null, FormaComercializacao.CONSIGNADO));
-
+				this.fechamentoDiarioResumoConsignadoRepository.obterSaldoConsignadoFechamentoDiarioAnterior(dataFechamento));
+		
 		resumoConsignado.setValorEntradas(
 			this.movimentoEstoqueRepository.obterSaldoDistribuidor(
 				dataFechamento, OperacaoEstoque.ENTRADA, FormaComercializacao.CONSIGNADO));
@@ -511,6 +510,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 			resumoConsignado.getSaldoAnterior().add(
 				resumoConsignado.getValorEntradas()).subtract(resumoConsignado.getValorSaidas()));
 		
+		
 		resumoFechamentoDiarioConsignado.setResumoConsignado(resumoConsignado);
 		
 		ResumoFechamentoDiarioConsignadoDTO.ResumoAVista resumoAVista = 
@@ -518,8 +518,7 @@ public class FecharDiaServiceImpl implements FecharDiaService {
 		
 		//A Vista
 		resumoAVista.setSaldoAnterior(
-			this.movimentoEstoqueRepository.obterSaldoDistribuidor(
-				DateUtil.subtrairDias(dataFechamento, 1), null, FormaComercializacao.CONTA_FIRME));
+				this.fechamentoDiarioResumoAvistaRepository.obterSaldoAVistaFechamentoDiarioAnterior(dataFechamento));
 
 		resumoAVista.setValorEntradas(
 			this.movimentoEstoqueRepository.obterSaldoDistribuidor(
