@@ -1873,6 +1873,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 						&& filtro.getIntervaloMovimento().getDe() != null 
 						&& filtro.getIntervaloMovimento().getAte() != null) {
 					sql.append(" and lancamento_.DATA_LCTO_DISTRIBUIDOR between :dataDe and :dataAte  ");
+					sql.append(" and cota_.ID not in (select COTA_ID from COTA_AUSENTE where COTA_ID = cota_.ID and DATA between :dataDe and :dataAte)  ");
 				}
 				
 				sql.append(
@@ -2094,6 +2095,7 @@ private void setFromWhereCotasSujeitasSuspensao(StringBuilder sql) {
 						&& filtro.getIntervaloMovimento().getDe() != null 
 						&& filtro.getIntervaloMovimento().getAte() != null) {
 					sql.append(" and lancamento_.DATA_LCTO_DISTRIBUIDOR between :dataDe and :dataAte  ");
+					sql.append(" and cota_.ID not in (select COTA_ID from COTA_AUSENTE where COTA_ID = cota_.ID and DATA between :dataDe and :dataAte)  ");
 				}
 				
 				sql.append(

@@ -3204,8 +3204,7 @@ public class ConferenciaEncalheServiceImpl implements ConferenciaEncalheService 
  
 			produtoEdicaoSlip.setDia(dia);
 			
-			String ordinal = ((dia != null) ? DateUtil.formatarDataPTBR(produtoEdicaoSlip.getDataOperacao()) 
-											+ " " +  this.getDiaMesOrdinal(dia+1) + " DIA" : "PRODUTOS ANTECIPADOS");
+			String ordinal = ((dia != null) ? this.getDiaMesOrdinal(dia) + " DIA" : "PRODUTOS ANTECIPADOS");
 		
 			produtoEdicaoSlip.setOrdinalDiaConferenciaEncalhe(ordinal);	
 		}

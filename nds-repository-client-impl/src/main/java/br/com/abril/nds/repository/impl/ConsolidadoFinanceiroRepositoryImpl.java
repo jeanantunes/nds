@@ -946,7 +946,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" join movimento_financeiro_cota mf_ant on mf_ant.ID=cmfc_data_data_ant.MVTO_FINANCEIRO_COTA_ID ")
 		   .append(" join tipo_movimento tm_ant on tm_ant.ID=mf_ant.TIPO_MOVIMENTO_ID ")
 		   .append(" where tm.GRUPO_MOVIMENTO_FINANCEIRO=:grupoMovPendente ")
-		   .append(" and cfc_data.ID=cfc.ID ) as dataPendente, ")
+		   .append(" and cfc_data.ID=cfc.ID limit 1) as dataPendente, ")
 		   
 		   .append(" (select max(ad_data.NUMERO_ACUMULO) ")
 		   .append(" from consolidado_financeiro_cota cfc_data ")
@@ -956,8 +956,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" join acumulo_divida ad_data on ad_data.MOV_PENDENTE_ID=mfc_data.ID ")
 		   .append(" where tm.GRUPO_MOVIMENTO_FINANCEIRO=:grupoMovPendente ")
 		   .append(" and cfc_data.ID=cfc.ID ")
-		   .append(" and COTA.ID=cfc_data.COTA_ID ")
-		   .append(" group by mfc_data.DATA) as numeroAcumulo, ")
+		   .append(" and COTA.ID=cfc_data.COTA_ID limit 1) as numeroAcumulo, ")
 		   
 		   .append(" cfc.DEBITO_CREDITO as debitoCredito, ")
 		   .append(" cfc.ENCALHE as encalhe, ")
@@ -975,7 +974,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
            .append(" AND mfp.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoCredito) ")
            .append(" OR mfp.TIPO_MOVIMENTO_ID in (:tiposMovimentoPostergadoDebito) ")   
            .append(" AND cmfc.CONSOLIDADO_FINANCEIRO_ID=cfc.id ")
-		   .append(")")
+		   .append(" limit 1 )")
 		   .append(" AS dataRaiz, ")
 
 		   .append(" ( select SUM( coalesce(bc.VALOR_PAGO, 0) ) ")
@@ -1054,7 +1053,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" join movimento_financeiro_cota mf_ant on mf_ant.ID=cmfc_data_ant.MVTO_FINANCEIRO_COTA_ID ")
 		   .append(" join tipo_movimento tm_ant on tm_ant.ID=mf_ant.TIPO_MOVIMENTO_ID ")
 		   .append(" where tm_data.GRUPO_MOVIMENTO_FINANCEIRO=:grupoMovPendente ")
-		   .append(" and mfc_data.ID=mfc.ID ) as dataPendente, ")
+		   .append(" and mfc_data.ID=mfc.ID limit 1) as dataPendente, ")
 
 		   .append(" (select max(ad_data.NUMERO_ACUMULO) ")
 		   .append(" from movimento_financeiro_cota mfc_data ")
@@ -1062,8 +1061,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
 		   .append(" join acumulo_divida ad_data on ad_data.MOV_PENDENTE_ID=mfc_data.ID ")
 		   .append(" where tm.GRUPO_MOVIMENTO_FINANCEIRO=:grupoMovPendente ")
 		   .append(" and mfc_data.ID=mfc.ID ")
-		   .append(" and COTA.ID=mfc_data.COTA_ID ")
-		   .append(" group by mfc_data.DATA) as numeroAcumulo, ")
+		   .append(" and COTA.ID=mfc_data.COTA_ID limit 1) as numeroAcumulo, ")
 		   
 		   //crédito
 		   .append("(coalesce((select sum(m.VALOR) ")
@@ -1189,7 +1187,7 @@ public class ConsolidadoFinanceiroRepositoryImpl extends
            .append(" left join consolidado_mvto_financeiro_cota cmfc on cmfc.CONSOLIDADO_FINANCEIRO_ID=mfp.id ")
            .append(" where ")
            .append(" mfp.COTA_ID = mfc.COTA_ID ") 
-           .append(" and mfp.DT_CONSOLIDADO < mfc.DATA) ")
+           .append(" and mfp.DT_CONSOLIDADO < mfc.DATA limit 1) ")
            .append(" as dataRaiz, ")
 		   
 		   //valor pago

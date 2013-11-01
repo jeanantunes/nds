@@ -18,6 +18,7 @@ import br.com.abril.nds.dto.filtro.FiltroCotaAusenteDTO.ColunaOrdenacao;
 import br.com.abril.nds.model.movimentacao.CotaAusente;
 import br.com.abril.nds.repository.AbstractRepositoryModel;
 import br.com.abril.nds.repository.CotaAusenteRepository;
+import br.com.abril.nds.util.Intervalo;
 
 @Repository
 public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusente, Long> implements CotaAusenteRepository { 
@@ -232,6 +233,21 @@ public class CotaAusenteRepositoryImpl extends AbstractRepositoryModel<CotaAusen
 		
 		query.setResultTransformer(
 			Transformers.aliasToBean(ProdutoEdicaoSuplementarDTO.class));
+		
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Long> obterIdsCotasAusentesNoPeriodo(Intervalo<Date> periodo) {
+		
+		StringBuilder hql = new StringBuilder();
+		
+		hql.append(" select ca.cota.id from CotaAusente ca where ca.data between :inicioPeriodo and :fimPeriodo ");
+		
+		Query query = getSession().createQuery(hql.toString());
+		
+		query.setParameter("inicioPeriodo", periodo.getDe());
+		query.setParameter("fimPeriodo", periodo.getAte());
 		
 		return query.list();
 	}

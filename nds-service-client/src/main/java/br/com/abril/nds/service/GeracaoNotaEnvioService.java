@@ -14,6 +14,6 @@ public interface GeracaoNotaEnvioService {
 	
 	public abstract List<NotaEnvio> visualizar(FiltroConsultaNotaEnvioDTO filtro);
 	
-	public abstract List<NotaEnvio> gerarNotasEnvio(FiltroConsultaNotaEnvioDTO filtro, List<Long> idCotasSuspensasAusentes);
+	public abstract List<NotaEnvio> gerarNotasEnvio(FiltroConsultaNotaEnvioDTO filtro);
 
 }

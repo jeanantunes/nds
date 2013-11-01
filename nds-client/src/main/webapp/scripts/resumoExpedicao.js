@@ -5,7 +5,7 @@ var resumoExpedicaoController = $.extend(true, {
 	
 	inicializar : function() {
 		
-		$("#dataLancamentoResumo", this.workspace).datepicker({
+		$("#dataLancamentoResumo", resumoExpedicaoController.workspace).datepicker({
 			showOn : "button",
 			buttonImage: contextPath + "/images/calendar.gif",
 			buttonImageOnly : true,
@@ -13,8 +13,8 @@ var resumoExpedicaoController = $.extend(true, {
 			defaultDate: new Date()
 		});
 		
-		$("#dataLancamentoResumo", this.workspace).mask("99/99/9999");
-		$("#dataLancamentoResumo", this.workspace).focus();
+		$("#dataLancamentoResumo", resumoExpedicaoController.workspace).mask("99/99/9999");
+		$("#dataLancamentoResumo", resumoExpedicaoController.workspace).focus();
 		
 		this.inicializarGridResumoExpedicaoBox();
 		this.inicializarGridResumoExpedicaoProduto();
@@ -23,7 +23,7 @@ var resumoExpedicaoController = $.extend(true, {
 	
 	inicializarGridResumoExpedicaoBox : function() {
 		
-		$("#resumoExpedicaoGridBox", this.workspace).flexigrid({
+		$("#resumoExpedicaoGridBox", resumoExpedicaoController.workspace).flexigrid({
 			preProcess: this.executarPreProcessamento,
 			dataType : 'json',
 			colModel : [ 
@@ -86,7 +86,7 @@ var resumoExpedicaoController = $.extend(true, {
 	
 	inicializarGridResumoExpedicaoProduto : function() {
 		
-		$("#resumoExpedicaoGridProduto", this.workspace).flexigrid({
+		$("#resumoExpedicaoGridProduto", resumoExpedicaoController.workspace).flexigrid({
 			preProcess: this.executarPreProcessamento,
 			dataType : 'json',
 			colModel : [
@@ -146,7 +146,7 @@ var resumoExpedicaoController = $.extend(true, {
 	
 	inicializarGridVendaEncalhe : function() {
 		
-		$("#venda-encalhe-grid", this.workspace).flexigrid({
+		$("#venda-encalhe-grid", resumoExpedicaoController.workspace).flexigrid({
 			preProcess: this.executarPreProcessamentoDetalheResumoExpedicao,
 			dataType : 'json',
 			colModel : [
@@ -228,20 +228,20 @@ var resumoExpedicaoController = $.extend(true, {
 				resultado.mensagens.listaMensagens
 			);
 			
-			$("#grid", this.workspace).hide();
+			$("#grid", resumoExpedicaoController.workspace).hide();
 	
 			return resultado.tableModel;
 		}
 		
-		$("#totalReparte", this.workspace).html(resultado.qtdeTotalReparte);
+		$("#totalReparte", resumoExpedicaoController.workspace).html(resultado.qtdeTotalReparte);
 		
-		$("#totalValorFaturado", this.workspace).html(resultado.valorTotalFaturado);
+		$("#totalValorFaturado", resumoExpedicaoController.workspace).html(resultado.valorTotalFaturado);
 		
-		$("#grid", this.workspace).show();
+		$("#grid", resumoExpedicaoController.workspace).show();
 		
 		resumoExpedicaoController.mudarLegendaFielsSet('idFiledResultResumo','resumo');
 		
-		$("#dataLancamentoResumo", this.workspace).focus();
+		$("#dataLancamentoResumo", resumoExpedicaoController.workspace).focus();
 		
 		$.each(resultado.tableModel.rows, function(index, row) {
 			
@@ -283,23 +283,23 @@ var resumoExpedicaoController = $.extend(true, {
 			return resultado;
 		}
 		
-		$("#valorTotal", this.workspace).html(resultado.somaTotal);
+		$("#valorTotal", resumoExpedicaoController.workspace).html(resultado.somaTotal);
 		
 		return resultado.resultado;
 	},
 	
 	detalharResumoExpedicao : function(index) { 
 		
-		this._codigoBox = $("#codigoBox" + index, this.workspace).val();
-		this._dataLancamento = $("#dataLanc" + index, this.workspace).text();
+		this._codigoBox = $("#codigoBox" + index, resumoExpedicaoController.workspace).val();
+		this._dataLancamento = $("#dataLanc" + index, resumoExpedicaoController.workspace).text();
 		
 		var originalCodigoBox = this._codigoBox.split('-')[0];
 		
-		$("#box-resumo-expedicao", this.workspace).html(originalCodigoBox);
+		$("#box-resumo-expedicao", resumoExpedicaoController.workspace).html(originalCodigoBox);
 		
-		$("#nome-box-resumo-expedicao", this.workspace).html($("#descricaoBox"+ index, this.workspace).val());
+		$("#nome-box-resumo-expedicao", resumoExpedicaoController.workspace).html($("#descricaoBox"+ index, resumoExpedicaoController.workspace).val());
 		
-		$("#venda-encalhe-grid", this.workspace).flexOptions({
+		$("#venda-encalhe-grid", resumoExpedicaoController.workspace).flexOptions({
 			
 			url: contextPath + '/expedicao/resumo/pesquisar/detalhe',
 			dataType : 'json',
@@ -310,18 +310,18 @@ var resumoExpedicaoController = $.extend(true, {
 		
 		});
 		
-		$("#venda-encalhe-grid", this.workspace).flexReload();
+		$("#venda-encalhe-grid", resumoExpedicaoController.workspace).flexReload();
 		
-		$("#dialog-venda-encalhe", this.workspace).dialog({
+		$("#dialog-venda-encalhe", resumoExpedicaoController.workspace).dialog({
 			resizable: false,
 			width:1000,
 			modal: true,
 			buttons: {
 				"Fechar": function() {
-					$(this, this.workspace).dialog("close");
+					$(this, resumoExpedicaoController.workspace).dialog("close");
 				}
 			},
-			form: $("#dialog-venda-encalhe", this.workspace).parents("form")
+			form: $("#dialog-venda-encalhe", resumoExpedicaoController.workspace).parents("form")
 		});
 	},
 	
@@ -330,8 +330,8 @@ var resumoExpedicaoController = $.extend(true, {
 	 */
 	pesquisar : function() {
 		
-		var dataLancamento = $('#dataLancamentoResumo', this.workspace).val();
-		var tipoPesquisa = $('#tipoPesquisa', this.workspace).val();
+		var dataLancamento = $('#dataLancamentoResumo', resumoExpedicaoController.workspace).val();
+		var tipoPesquisa = $('#tipoPesquisa', resumoExpedicaoController.workspace).val();
 		
 		var formData = [
             {name:"dataLancamento",value:dataLancamento},
@@ -340,16 +340,16 @@ var resumoExpedicaoController = $.extend(true, {
 		
 		if (tipoPesquisa === 'PRODUTO') {
 			this.carregarGridProduto(formData);
-			$("#gridBox", this.workspace).hide();
+			$("#gridBox", resumoExpedicaoController.workspace).hide();
 		} else if (tipoPesquisa === 'BOX') {
 			this.carregarGridbox(formData);
-			$("#gridProduto", this.workspace).hide();
+			$("#gridProduto", resumoExpedicaoController.workspace).hide();
 		} else {
 			var mensagens = new Array('O preenchimento do campo \'Tipo de Consulta\' é obrigatório.') ;
 			exibirMensagem('WARNING',mensagens);
 		}
 		
-		$("#dataLancamentoResumo", this.workspace).focus();
+		$("#dataLancamentoResumo", resumoExpedicaoController.workspace).focus();
 	},
 	
 	/*
@@ -357,17 +357,17 @@ var resumoExpedicaoController = $.extend(true, {
 	 */
 	carregarGridProduto : function(formData) {
 	
-		$('#idFiledResultResumo', this.workspace).html('Resumo Expedição Por Produto');
+		$('#idFiledResultResumo', resumoExpedicaoController.workspace).html('Resumo Expedição Por Produto');
 		
-		$("#resumoExpedicaoGridProduto", this.workspace).flexOptions({
+		$("#resumoExpedicaoGridProduto", resumoExpedicaoController.workspace).flexOptions({
 			url: contextPath + "/expedicao/resumo/pesquisar/produto",
 			params: formData,
 			newp: 1
 		});
 		
-		$("#resumoExpedicaoGridProduto", this.workspace).flexReload();
+		$("#resumoExpedicaoGridProduto", resumoExpedicaoController.workspace).flexReload();
 		
-		$("#gridProduto", this.workspace).show();
+		$("#gridProduto", resumoExpedicaoController.workspace).show();
 	},
 	
 	/*
@@ -375,17 +375,17 @@ var resumoExpedicaoController = $.extend(true, {
 	 */
 	carregarGridbox : function(formData) {
 	
-		$('#idFiledResultResumo', this.workspace).html('Resumo Expedição Por Box');
+		$('#idFiledResultResumo', resumoExpedicaoController.workspace).html('Resumo Expedição Por Box');
 		
-		$("#resumoExpedicaoGridBox", this.workspace).flexOptions({
+		$("#resumoExpedicaoGridBox", resumoExpedicaoController.workspace).flexOptions({
 			url: contextPath + "/expedicao/resumo/pesquisar/box",
 			params: formData,
 			newp: 1
 		});
 		
-		$("#resumoExpedicaoGridBox", this.workspace).flexReload();
+		$("#resumoExpedicaoGridBox", resumoExpedicaoController.workspace).flexReload();
 		
-		$("#gridBox", this.workspace).show();
+		$("#gridBox", resumoExpedicaoController.workspace).show();
 	},
 	
 	/*
@@ -394,9 +394,9 @@ var resumoExpedicaoController = $.extend(true, {
 	mudarLegendaFielsSet : function(id, tipo) {
 		
 		 if (tipo === "pesquisar") {
-			 $(id, this.workspace).html(this.getTituloFieldSetPesquisa());
+			 $(id, resumoExpedicaoController.workspace).html(this.getTituloFieldSetPesquisa());
 		 } else {
-			 $(id, this.workspace).html(this.getTituloFieldSet());
+			 $(id, resumoExpedicaoController.workspace).html(this.getTituloFieldSet());
 		 }
 	},
 	
@@ -405,7 +405,7 @@ var resumoExpedicaoController = $.extend(true, {
 	 */
 	getTituloFieldSetPesquisa : function() {
 		
-		return ($('#tipoPesquisa', this.workspace).val() === 'BOX')
+		return ($('#tipoPesquisa', resumoExpedicaoController.workspace).val() === 'BOX')
 				? 'Pesquisar Expedição por Box'
 						:'Pesquisar Expedição por Produto';
 	},
@@ -415,7 +415,7 @@ var resumoExpedicaoController = $.extend(true, {
 	 */
 	getTituloFieldSet : function() {
 		
-		return ($('#tipoPesquisa', this.workspace).val() === 'BOX')
+		return ($('#tipoPesquisa', resumoExpedicaoController.workspace).val() === 'BOX')
 				? 'Resumo  Expedição por Box'
 						:'Resumo  Expedição por Produto';
 	},
@@ -425,7 +425,7 @@ var resumoExpedicaoController = $.extend(true, {
   	 */
 	exportar : function(fileType) {
 
-		var tipoPesquisa = $("#tipoPesquisa", this.workspace).val();
+		var tipoPesquisa = $("#tipoPesquisa", resumoExpedicaoController.workspace).val();
 
 		if (!tipoPesquisa || !fileType) {
 

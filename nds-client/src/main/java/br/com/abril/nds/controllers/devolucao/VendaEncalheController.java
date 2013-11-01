@@ -214,21 +214,22 @@ public class VendaEncalheController extends BaseController {
 	}
 	
 	@Post
-	public void obterDatavenda(){
+	public void obterDatavenda() {
 		
-		Date dataVencimentoDebito = new Date();
+		Date dataOperacao = this.distribuidorService.obterDataOperacaoDistribuidor();
 		
 		Integer qntDias = this.distribuidorService.qntDiasVencinemtoVendaEncalhe();
 		
-		qntDias = (qntDias == null)?0: qntDias;
+		qntDias = (qntDias == null) ? 0 : qntDias;
 		
-		dataVencimentoDebito = DateUtil.adicionarDias(dataVencimentoDebito,qntDias);
+		Date dataVencimentoDebito = DateUtil.adicionarDias(dataOperacao, qntDias);
 		
 		Map<String, Object> mapa = new TreeMap<String, Object>();
-		mapa.put("data", DateUtil.formatarDataPTBR(new Date()));
+		
+		mapa.put("data", DateUtil.formatarDataPTBR(dataOperacao));
 		mapa.put("dataVencimentoDebito",DateUtil.formatarDataPTBR(dataVencimentoDebito));
 		
-		result.use(CustomJson.class).from(mapa).serialize();
+		this.result.use(CustomJson.class).from(mapa).serialize();
 	}
 	
 	@Post
