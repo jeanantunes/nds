@@ -134,9 +134,9 @@ public class RelatorioVendasRepositoryImpl extends AbstractRepositoryModel<Distr
 		hql.append("   ) AS valorMargemDistribuidor, ");
 		  
 		hql.append("   (( ");
-		hql.append(" 	  (produtoEdicao.PRECO_VENDA ");
+		hql.append(" 	  (movimentoEstoqueCota.PRECO_COM_DESCONTO - (produtoEdicao.PRECO_VENDA ");
 		hql.append(" 	  		- (produtoEdicao.PRECO_VENDA * COALESCE(descontoLogistica.PERCENTUAL_DESCONTO, 0) / 100) ");
-		hql.append(" 			- movimentoEstoqueCota.PRECO_COM_DESCONTO) ");
+		hql.append(" 			) ) ");
 		hql.append(" 			* (CASE WHEN (tipoMovimento.OPERACAO_ESTOQUE = 'ENTRADA') ");
 		hql.append(" 			  		THEN (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN movimentoEstoqueCota.QTDE ELSE 0 END) ");
 		hql.append(" 					ELSE (CASE WHEN (fechamentoEncalhe.DATA_ENCALHE IS NOT NULL) THEN - movimentoEstoqueCota.QTDE ELSE 0 END) ");
