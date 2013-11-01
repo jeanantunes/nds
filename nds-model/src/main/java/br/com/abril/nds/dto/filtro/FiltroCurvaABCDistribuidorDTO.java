@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import br.com.abril.nds.util.export.Exportable;
 
 /**
@@ -36,7 +38,7 @@ public class FiltroCurvaABCDistribuidorDTO extends FiltroCurvaABCDTO implements 
 		this.setDataDe(dataDe);
 		this.setDataAte(dataAte);
 		this.setCodigoFornecedor(codigoFornecedor);
-		this.setCodigoProduto(codigoProduto);
+		this.setCodigoProduto(StringUtils.leftPad(codigoProduto, 8, '0'));
 		this.setNomeProduto(nomeProduto);
 		this.setEdicaoProduto(edicaoProduto);
 		this.setCodigoEditor(codigoEditor);
