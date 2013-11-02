@@ -66,6 +66,17 @@
       	<input name="fornecedorDTO.validadeContrato" type="text" style="width:100px;" id="fornecedorController-validadeContrato" />
       </td>
     </tr>
+    <tr>
+      <td>Banco:</td>
+      <td>
+      	<select name="fornecedorDTO.idBanco" id="fornecedorController-banco" style="width: 150px;">
+			<option value=""></option>
+			<c:forEach varStatus="counter" var="banco" items="${listaBancos}">
+				<option value="${banco.key}">${banco.value}</option>
+			</c:forEach>
+		</select>
+      </td>
+    </tr>
     </table>
     <br />
 </div>

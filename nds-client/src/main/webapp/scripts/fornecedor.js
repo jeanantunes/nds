@@ -130,6 +130,7 @@ var fornecedorController = $.extend(true,{
 			$("#fornecedorController-responsavel", 			fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
 			$("#fornecedorController-email", 				fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
 			$("#fornecedorController-tipoFornecedor", 		fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
+			$("#fornecedorController-banco", 				fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
 			$("#fornecedorController-validadeContrato", 	fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
 			$("#fornecedorController-emailNfe", 			fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
 			$("#fornecedorController-possuiContrato", 		fornecedorController.workspace).prop('disabled', indBloqueiaCampo);
@@ -270,6 +271,7 @@ var fornecedorController = $.extend(true,{
 				$("#fornecedorController-responsavel", fornecedorController.workspace).val("");
 				$("#fornecedorController-email", fornecedorController.workspace).val("");
 				$("#fornecedorController-tipoFornecedor", fornecedorController.workspace).val("");
+				$("#fornecedorController-banco", fornecedorController.workspace).val("");
 				$("#fornecedorController-validadeContrato", fornecedorController.workspace).val("");
 				$("#fornecedorController-emailNfe", fornecedorController.workspace).val("");
 				$("#fornecedorController-possuiContrato", fornecedorController.workspace).uncheck();
@@ -426,6 +428,7 @@ var fornecedorController = $.extend(true,{
 						$("#fornecedorController-email", fornecedorController.workspace).val(result.email);
 						$("#fornecedorController-emailNfe", fornecedorController.workspace).val(result.emailNfe);
 						$("#fornecedorController-tipoFornecedor", fornecedorController.workspace).val(result.tipoFornecedor);
+						$("#fornecedorController-banco", fornecedorController.workspace).val(result.idBanco);
 						
 						if (result.possuiContrato) {
 

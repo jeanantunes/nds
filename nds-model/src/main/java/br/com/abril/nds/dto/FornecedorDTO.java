@@ -33,6 +33,8 @@ public class FornecedorDTO implements Serializable {
 	private String inscricaoEstadual;
 	
 	private Long tipoFornecedor;
+	
+	private Long idBanco;
 
 	private String inicioAtividade;
 	
@@ -182,6 +184,20 @@ public class FornecedorDTO implements Serializable {
 	 */
 	public void setTipoFornecedor(Long tipoFornecedor) {
 		this.tipoFornecedor = tipoFornecedor;
+	}
+
+	/**
+	 * @return the idBanco
+	 */
+	public Long getIdBanco() {
+		return idBanco;
+	}
+
+	/**
+	 * @param idBanco the idBanco to set
+	 */
+	public void setIdBanco(Long idBanco) {
+		this.idBanco = idBanco;
 	}
 
 	/**
