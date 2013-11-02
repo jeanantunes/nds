@@ -11,10 +11,16 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 	},
 	
 	verificarDataFechamentoCE : function(fechada) {
-		
+			
+			$("#btnReabertura", fechamentoCEIntegracaoController.workspace).unbind("click");
+			
+			$("#btnImpBoleto", fechamentoCEIntegracaoController.workspace).unbind("click");
+			
+			$("#btnImpBoletoEmBranco", fechamentoCEIntegracaoController.workspace).unbind("click");
+			
+			$("#btnFechamento", fechamentoCEIntegracaoController.workspace).unbind("click");
+			
 			if (fechada) {					
-				
-				$("#btnFechamento", fechamentoCEIntegracaoController.workspace).unbind("click");
 				
 				$("#imagemFechamento", fechamentoCEIntegracaoController.workspace).css("opacity", "0.2");
 				
@@ -37,11 +43,6 @@ var fechamentoCEIntegracaoController = $.extend(true, {
 				});
 				
 			} else {
-				$("#btnReabertura", fechamentoCEIntegracaoController.workspace).unbind("click");
-				
-				$("#btnImpBoleto", fechamentoCEIntegracaoController.workspace).unbind("click");
-				
-				$("#btnImpBoletoEmBranco", fechamentoCEIntegracaoController.workspace).unbind("click");
 				
 				$("#imagemReabertura", fechamentoCEIntegracaoController.workspace).css("opacity", "0.2");
 				
