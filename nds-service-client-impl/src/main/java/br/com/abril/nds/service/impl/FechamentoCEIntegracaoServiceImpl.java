@@ -83,7 +83,7 @@ public class FechamentoCEIntegracaoServiceImpl implements FechamentoCEIntegracao
 		}
 		
 		List<BoletoDistribuidor> listaBoletoDistribuidor = 
-				gerarCobrancaService.gerarCobrancaBoletoDistribuidor(listaChamadaEncalheFornecedor, tipoCobranca, filtro.getNumeroSemana());
+				gerarCobrancaService.gerarCobrancaBoletoDistribuidor(listaChamadaEncalheFornecedor, tipoCobranca, Integer.valueOf(filtro.getSemana()));
 		
 		try {
 			
