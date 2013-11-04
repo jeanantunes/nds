@@ -624,10 +624,7 @@ public class RelatorioVendasController extends BaseController {
 
 			int qtdeTotalRegistros = resultadoCurvaABCEditor.size();
 			
-			List<RegistroCurvaABCEditorVO> resultadoPaginado =
-				PaginacaoUtil.paginarEOrdenarEmMemoria(
-					resultadoCurvaABCEditor, filtroCurvaABCEditorDTO.getPaginacao(), 
-					filtroCurvaABCEditorDTO.getOrdenacaoColuna().toString());
+			List<RegistroCurvaABCEditorVO> resultadoPaginado = PaginacaoUtil.paginarEOrdenarEmMemoria(resultadoCurvaABCEditor, filtroCurvaABCEditorDTO.getPaginacao(), sortname);
 			
 			for (int index = 0 ; index < resultadoPaginado.size() ; index++){
 				

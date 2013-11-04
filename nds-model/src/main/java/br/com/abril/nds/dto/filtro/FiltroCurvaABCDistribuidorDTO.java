@@ -38,7 +38,7 @@ public class FiltroCurvaABCDistribuidorDTO extends FiltroCurvaABCDTO implements 
 		this.setDataDe(dataDe);
 		this.setDataAte(dataAte);
 		this.setCodigoFornecedor(codigoFornecedor);
-		this.setCodigoProduto(StringUtils.leftPad(codigoProduto, 8, '0'));
+		this.setCodigoProduto(codigoProduto);
 		this.setNomeProduto(nomeProduto);
 		this.setEdicaoProduto(edicaoProduto);
 		this.setCodigoEditor(codigoEditor);
