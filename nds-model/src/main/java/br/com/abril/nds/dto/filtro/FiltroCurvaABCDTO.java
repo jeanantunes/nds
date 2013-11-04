@@ -3,6 +3,8 @@ package br.com.abril.nds.dto.filtro;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import br.com.abril.nds.util.export.Exportable;
 import br.com.abril.nds.vo.PaginacaoVO;
 
@@ -57,7 +59,7 @@ public abstract class FiltroCurvaABCDTO extends FiltroDTO {
 	}
 
 	public void setCodigoProduto(String codigoProduto) {
-		this.codigoProduto = codigoProduto;
+		this.codigoProduto = StringUtils.leftPad(codigoProduto, 8, '0');
 	}
 
 	public String getNomeProduto() {

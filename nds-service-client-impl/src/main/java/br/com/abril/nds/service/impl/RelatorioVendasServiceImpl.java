@@ -55,20 +55,17 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 	@Transactional
 	public List<RegistroCurvaABCDistribuidorVO> obterCurvaABCDistribuidor(FiltroCurvaABCDistribuidorDTO filtroCurvaABCDistribuidorDTO) {
 		
-		List<RegistroCurvaABCDistribuidorVO> lista =
-			this.relatorioVendasRepository.obterCurvaABCDistribuidor(filtroCurvaABCDistribuidorDTO);
+		List<RegistroCurvaABCDistribuidorVO> lista = this.relatorioVendasRepository.obterCurvaABCDistribuidor(filtroCurvaABCDistribuidorDTO);
 		
-		Map<Long, RegistroCurvaABCDistribuidorVO> sumarizador = 
-				new HashMap<Long, RegistroCurvaABCDistribuidorVO>();
+		Map<Long, RegistroCurvaABCDistribuidorVO> sumarizador = new HashMap<Long, RegistroCurvaABCDistribuidorVO>();
 		
 		if(!lista.isEmpty()){
 			
-			Map<Long, Long> mapRankingCota =
-					this.rankingRepository.obterRankingCota();
+			Map<Long, Long> mapRankingCota = this.rankingRepository.obterRankingCota();
 			
-			for(RegistroCurvaABCDistribuidorVO dto : lista){
+			for(RegistroCurvaABCDistribuidorVO dto : lista) {
 				
-				if (!sumarizador.containsKey(dto.getIdCota())){
+				if (!sumarizador.containsKey(dto.getIdCota())) {
 					
 					sumarizador.put(dto.getIdCota(), dto);
 					dto.setRkCota(mapRankingCota.get(dto.getIdCota()));
@@ -79,9 +76,7 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 					RegistroCurvaABCDistribuidorVO registro = sumarizador.get(dto.getIdCota());
 					registro.setFaturamentoCapa(this.adicionarValor(registro.getFaturamentoCapa(), dto.getFaturamentoCapa()));
 					
-					registro.setVendaExemplares(
-						registro.getVendaExemplares().add(dto.getVendaExemplares())
-					);
+					registro.setVendaExemplares(registro.getVendaExemplares().add(dto.getVendaExemplares()));
 				}
 			}
 		}
@@ -93,20 +88,17 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 	@Transactional
 	public List<RegistroCurvaABCEditorVO> obterCurvaABCEditor(FiltroCurvaABCEditorDTO filtroCurvaABCEditorDTO) {
 		
-		List<RegistroCurvaABCEditorVO> lista = 
-			this.relatorioVendasRepository.obterCurvaABCEditor(filtroCurvaABCEditorDTO);
+		List<RegistroCurvaABCEditorVO> lista = this.relatorioVendasRepository.obterCurvaABCEditor(filtroCurvaABCEditorDTO);
 		
-		Map<Long, RegistroCurvaABCEditorVO> sumarizador = 
-				new HashMap<Long, RegistroCurvaABCEditorVO>();
+		Map<Long, RegistroCurvaABCEditorVO> sumarizador = new HashMap<Long, RegistroCurvaABCEditorVO>();
 		
-		if(!lista.isEmpty()){
+		if(!lista.isEmpty()) {
 			
-			Map<Long, Long> mapRankingEditor =
-					this.rankingRepository.obterRankingEditor();
+			Map<Long, Long> mapRankingEditor = this.rankingRepository.obterRankingEditor();
 			
-			for(RegistroCurvaABCEditorVO dto : lista){
+			for(RegistroCurvaABCEditorVO dto : lista) {
 				
-				if (!sumarizador.containsKey(dto.getCodigoEditor())){
+				if (!sumarizador.containsKey(dto.getCodigoEditor())) {
 					
 					sumarizador.put(dto.getCodigoEditor(), dto);
 					dto.setRkEditor(mapRankingEditor.get(dto.getCodigoEditor()));
@@ -175,22 +167,19 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 	@Transactional(readOnly = true)
 	public List<RegistroCurvaABCCotaDTO> obterCurvaABCCota(FiltroCurvaABCCotaDTO filtroCurvaABCCotaDTO) {
 		
-		List<RegistroCurvaABCCotaDTO> lista =
-			this.relatorioVendasRepository.obterCurvaABCCota(filtroCurvaABCCotaDTO);
+		List<RegistroCurvaABCCotaDTO> lista = this.relatorioVendasRepository.obterCurvaABCCota(filtroCurvaABCCotaDTO);
 		
-		Map<Long, RegistroCurvaABCCotaDTO> sumarizador = 
-				new HashMap<Long, RegistroCurvaABCCotaDTO>();
+		Map<Long, RegistroCurvaABCCotaDTO> sumarizador = new HashMap<Long, RegistroCurvaABCCotaDTO>();
 		
-		if(!lista.isEmpty()){
+		if(!lista.isEmpty()) {
 			
 			Cota cota = this.cotaRepository.obterPorNumerDaCota(filtroCurvaABCCotaDTO.getCodigoCota());
 			
-			Map<Long, Long> mapRanking =
-				this.rankingRepository.obterRankingProdutoPorCota(cota.getId());
+			Map<Long, Long> mapRanking = this.rankingRepository.obterRankingProdutoPorCota(cota.getId());
 			
-			for(RegistroCurvaABCCotaDTO dto : lista){
+			for(RegistroCurvaABCCotaDTO dto : lista) {
 				
-				if (!sumarizador.containsKey(dto.getIdProdutoEdicao())){
+				if (!sumarizador.containsKey(dto.getIdProdutoEdicao())) {
 					
 					sumarizador.put(dto.getIdProdutoEdicao(), dto);
 					
@@ -236,8 +225,7 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 			//Verifica o percentual dos valores em relação ao total de participacao
 			for (RegistroCurvaABCDistribuidorVO registro : lista) {
 				
-				participacaoRegistro = 
-						registro.getFaturamentoCapa().multiply(CEM).divide(participacaoTotal, RoundingMode.HALF_EVEN);
+				participacaoRegistro = registro.getFaturamentoCapa().multiply(CEM).divide(participacaoTotal, RoundingMode.HALF_EVEN);
 				registro.setParticipacao(participacaoRegistro);
 			}
 		}
@@ -280,7 +268,7 @@ public class RelatorioVendasServiceImpl implements RelatorioVendasService {
 				registro.setDataDe(filtro.getDataDe());
 				registro.setDataAte(filtro.getDataAte());
 				
-				if (registro.getFaturamentoCapa().compareTo(BigDecimal.ZERO) != 0){
+				if (registro.getFaturamentoCapa().compareTo(BigDecimal.ZERO) != 0) {
 				
 					registro.setPorcentagemMargemDistribuidor(
 						registro.getValorMargemDistribuidor().divide(
