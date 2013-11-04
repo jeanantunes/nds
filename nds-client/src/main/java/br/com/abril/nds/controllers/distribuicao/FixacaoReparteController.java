@@ -6,6 +6,7 @@ import br.com.abril.nds.controllers.BaseController;
 import br.com.abril.nds.dto.*;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoCotaDTO;
 import br.com.abril.nds.dto.filtro.FiltroConsultaFixacaoProdutoDTO;
+import br.com.abril.nds.dto.filtro.FiltroExcecaoSegmentoParciaisDTO;
 import br.com.abril.nds.enums.TipoMensagem;
 import br.com.abril.nds.exception.ValidacaoException;
 import br.com.abril.nds.model.cadastro.Cota;
@@ -13,6 +14,8 @@ import br.com.abril.nds.model.cadastro.Produto;
 import br.com.abril.nds.model.cadastro.SituacaoCadastro;
 import br.com.abril.nds.model.cadastro.TipoDistribuicaoCota;
 import br.com.abril.nds.model.distribuicao.FixacaoReparte;
+import br.com.abril.nds.model.distribuicao.TipoSegmentoProduto;
+import br.com.abril.nds.model.estudo.ClassificacaoCota;
 import br.com.abril.nds.model.seguranca.Permissao;
 import br.com.abril.nds.service.*;
 import br.com.abril.nds.util.CellModelKeyValue;
@@ -45,6 +48,15 @@ public class FixacaoReparteController extends BaseController {
 	private static final String FILTRO_COTA_SESSION_ATTRIBUTE = "filtroPorCota";
 	private static final int MAX_EDICOES =6;
 	private List<String> errosUpload=new ArrayList<String>();
+	
+	@Autowired
+	private ClassificacaoNaoRecebidaService classificacaoNaoRecebidaService;
+	
+	@Autowired
+	private SegmentoNaoRecebidoService segmentoNaoRecebidoService;
+	
+	@Autowired
+	private ExcecaoSegmentoParciaisService excecaoSegmentoParciaisService;
 	
 	@Autowired
 	private Result result;
@@ -602,6 +614,49 @@ public class FixacaoReparteController extends BaseController {
 					return "Quantidade de exemplares não pode ser vazia ou 0.";
 				}
 			}
+			
+			//tratamento para restrigir Classificacao nao recebida
+			Cota cota = this.cotaService.obterPorNumeroDaCota(fixacaoReparteDTO.getCotaFixada());
+			
+			List<ClassificacaoNaoRecebidaDTO> classificacoesNaoRecebidasPelaCotaList = this.classificacaoNaoRecebidaService.obterClassificacoesNaoRecebidasPelaCota(cota);
+			
+			if(classificacoesNaoRecebidasPelaCotaList!=null){
+				for (ClassificacaoNaoRecebidaDTO classificacaoNaoRecebidaDTO : classificacoesNaoRecebidasPelaCotaList) {
+					if(classificacaoNaoRecebidaDTO.getNomeClassificacao().equals(fixacaoReparteDTO.getClassificacaoProduto()))
+						return "Cota de número "+cota.getNumeroCota()+" não recebe classificação do tipo "+classificacaoNaoRecebidaDTO.getNomeClassificacao();
+				}
+			}
+			
+			
+			//tratamento para segmento
+			List<SegmentoNaoRecebeCotaDTO> obterSegmentosNaoRecebidosCadastradosNaCota = segmentoNaoRecebidoService.obterSegmentosNaoRecebidosCadastradosNaCota(cota);
+			
+			FiltroExcecaoSegmentoParciaisDTO filtroExcecaoSeg = new FiltroExcecaoSegmentoParciaisDTO() ;
+			CotaDTO cotadto = new CotaDTO();
+			cotadto.setNumeroCota(cota.getNumeroCota());
+			filtroExcecaoSeg.setExcecaoSegmento(true);
+			filtroExcecaoSeg.setCotaDto(cotadto);
+			 
+			List<ProdutoRecebidoDTO> obterProdutosRecebidosPelaCotaList = this.excecaoSegmentoParciaisService.obterProdutosRecebidosPelaCota(filtroExcecaoSeg);
+			
+			Produto prd = this.produtoService.obterProdutoPorCodigo(fixacaoReparteDTO.getCodigoProduto());
+			TipoSegmentoProduto tipoSegProd = prd.getTipoSegmentoProduto();
+			
+			loopSeg:for (SegmentoNaoRecebeCotaDTO seg : obterSegmentosNaoRecebidosCadastradosNaCota) {
+				if(seg.getNomeSegmento().equals(tipoSegProd.getDescricao())){
+					
+					for (ProdutoRecebidoDTO prodRecebidoDTO : obterProdutosRecebidosPelaCotaList) {
+						if(prodRecebidoDTO.getCodigoProdin().equals(fixacaoReparteDTO.getCodigoProduto()))
+							continue loopSeg;
+					}
+					
+					return "Cota ["+cota.getNumeroCota()+"] não recebe segmento "+tipoSegProd.getDescricao() + " do produto "+fixacaoReparteDTO.getCodigoProduto();
+
+				}
+				
+			}
+			
+			
 		}
 		
 		return null;
