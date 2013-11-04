@@ -386,7 +386,7 @@ public class BoletoServiceImpl implements BoletoService {
 							valor,
 							this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
 									GrupoMovimentoFinaceiro.JUROS),
-							"Juros oriundos de cobrança não paga");
+							"Oriundos de cobrança não paga");
 				}
 				
 				valor = this.cobrancaService.calcularMulta(
@@ -405,7 +405,7 @@ public class BoletoServiceImpl implements BoletoService {
 							valor,
 							this.tipoMovimentoFinanceiroRepository.buscarTipoMovimentoFinanceiro(
 									GrupoMovimentoFinaceiro.MULTA),
-							"Multa oriunda de cobrança não paga");
+							"Oriunda de cobrança não paga");
 				}
 
 				this.gerarAcumuloDivida(usuario, divida, movimentoPendente, movimentoJuros, movimentoMulta);
@@ -1193,7 +1193,7 @@ public class BoletoServiceImpl implements BoletoService {
 		
 	}
 	
-	private CorpoBoleto gerarCorpoBoletoDistribuidor(BoletoDistribuidor boleto, Pessoa pessoaCedente, boolean aceitaPagamentoVencido) {
+	private CorpoBoleto gerarCorpoBoletoDistribuidor(BoletoDistribuidor boleto, Pessoa pessoaSacado, boolean aceitaPagamentoVencido) {
 		
 		String nossoNumero = boleto.getNossoNumeroDistribuidor();
 		String digitoNossoNumero = boleto.getDigitoNossoNumeroDistribuidor();
@@ -1201,7 +1201,7 @@ public class BoletoServiceImpl implements BoletoService {
 		Banco banco = boleto.getBanco();
 		Date dataEmissao = boleto.getDataEmissao();
 		Date dataVencimento = boleto.getDataVencimento();
-		Pessoa pessoaSacado = boleto.getFornecedor().getJuridica();
+		Pessoa pessoaCedente = boleto.getFornecedor().getJuridica();
 		
 		Endereco endereco = null;
 		
@@ -1225,7 +1225,7 @@ public class BoletoServiceImpl implements BoletoService {
 				dataEmissao, 
 				dataVencimento, 
 				pessoaCedente, 
-				pessoaSacado, 
+				pessoaSacado,
 				endereco,
 				boleto.getTipoCobranca(),
 				null,
@@ -1538,12 +1538,12 @@ public class BoletoServiceImpl implements BoletoService {
 		
 		List<CorpoBoleto> corpos = new ArrayList<CorpoBoleto>();
 		
-		Pessoa pessoaCedente = this.distribuidorRepository.juridica();
+		Pessoa pessoaSacado = this.distribuidorRepository.juridica();
 		
 		boolean aceitaPagamentoVencido = this.distribuidorRepository.aceitaBaixaPagamentoVencido();
 
 		for(BoletoDistribuidor boletoDistribuidor  : listaBoletoDistribuidor){
-				corpos.add(this.gerarCorpoBoletoDistribuidor(boletoDistribuidor, pessoaCedente, aceitaPagamentoVencido));
+				corpos.add(this.gerarCorpoBoletoDistribuidor(boletoDistribuidor, pessoaSacado, aceitaPagamentoVencido));
 		}
 		
 		if(!corpos.isEmpty()){

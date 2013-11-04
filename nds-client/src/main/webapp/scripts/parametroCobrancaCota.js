@@ -367,39 +367,11 @@ var parametroCobrancaCotaController = $.extend(true, {
 		}
 	},
 	
-	obterValorMinimoEQtdDividasAbertoDistribuidor : function(){
-		
-		$.postJSON(contextPath + "/cota/parametroCobrancaCota/obterPoliticaSuspensaoDistribuidor",
-				   null,
-				   function(result){
-					
-			       		if (result){
-			       			
-			       			if ($('#qtdDividasAberto', this.workspace).val() == ''){
-			       			
-			       			    $('#qtdDividasAberto', this.workspace).val(result.qtdDividasAberto);
-			       		    }
-			       			
-			       			if ($('#vrDividasAberto', this.workspace).val() == ''){
-			       			    
-			       				$('#vrDividasAberto', this.workspace).val(result.valorMinimo);
-			       			}
-			       		}
-		           },
-				   null,
-				   true);
-	},
-	
 	exibe_form_suspencao : function(exibir) {
 		
 		if(exibir){
 			
 			$(".form-suspensao-hidden-class").show();
-
-			if ($('#qtdDividasAberto', this.workspace).val() == '' || $('#vrDividasAberto', this.workspace).val() == ''){
-			
-			    this.obterValorMinimoEQtdDividasAbertoDistribuidor();
-			}
 		}	
 		else{
 			

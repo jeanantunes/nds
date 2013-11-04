@@ -218,8 +218,7 @@ public class ConsultaEncalheServiceImpl implements ConsultaEncalheService {
 		byte[] retorno = null; 
 		byte[] arquivo; 
 	
-		List<Long> listaConferenciaEncalheCotas = 
-				controleConferenciaEncalheCotaRepository.obterListaIdControleConferenciaEncalheCota(filtro);
+		List<Long> listaConferenciaEncalheCotas = controleConferenciaEncalheCotaRepository.obterListaIdControleConferenciaEncalheCota(filtro);
 		
 		if (listaConferenciaEncalheCotas != null) {
 			
