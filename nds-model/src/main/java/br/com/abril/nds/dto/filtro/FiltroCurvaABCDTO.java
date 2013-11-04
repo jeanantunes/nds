@@ -59,7 +59,7 @@ public abstract class FiltroCurvaABCDTO extends FiltroDTO {
 	}
 
 	public void setCodigoProduto(String codigoProduto) {
-		this.codigoProduto = StringUtils.leftPad(codigoProduto, 8, '0');
+		this.codigoProduto = (codigoProduto != null && !"".equals(codigoProduto)) ? StringUtils.leftPad(codigoProduto, 8, '0') : null;
 	}
 
 	public String getNomeProduto() {
